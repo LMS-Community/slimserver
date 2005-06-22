@@ -1,0 +1,304 @@
+package Slim::Buttons::BrowseTree;
+
+# $Id$
+
+# SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+use strict;
+use Slim::Buttons::Block;
+use Slim::Buttons::Common;
+use Slim::Buttons::Playlist;
+use Slim::Buttons::TrackInfo;
+use Slim::Music::Info;
+use Slim::Music::MusicFolderScan;
+use Slim::Utils::Misc;
+
+our %functions = ();
+
+sub init {
+
+	Slim::Buttons::Block::init();
+
+	my $name = 'BROWSE_MUSIC_FOLDER';
+	my $mode = 'browsetree';
+	my $menu = {
+		'useMode'  => $mode,
+		'hierarchy' => '',
+	};
+
+	Slim::Buttons::Common::addMode($mode, Slim::Buttons::BrowseTree::getFunctions(), \&Slim::Buttons::BrowseTree::setMode);
+
+	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menu);
+	Slim::Buttons::Home::addMenuOption($name, $menu);
+
+	%functions = (
+		'play' => sub {
+			my $client = shift;
+			my $button = shift;
+			my $addorinsert = shift || 0;
+
+			my $items       = $client->param('listRef');
+			my $listIndex   = $client->param('listIndex');
+			my $descend     = $client->param('descend');
+			my $currentItem = $items->[$listIndex] || return;
+
+			my ($command, $line1, $line2);
+
+			# Based on the button pressed, we determine what to display
+			# and which command to send to modify the playlis
+			if ($addorinsert == 1) {
+
+				$line1 = $client->string('ADDING_TO_PLAYLIST');
+				$command = "add";	
+
+			} elsif ($addorinsert == 2) {
+
+				$line1 = $client->string('INSERT_TO_PLAYLIST');
+				$command = "insert";
+
+			} else {
+
+				$command = "play";
+
+				if (Slim::Player::Playlist::shuffle($client)) {
+					$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+				} else {
+					$line1 = $client->string('NOW_PLAYING_FROM');
+				}
+			}
+	
+			# Get the name of the items we're currently displaying
+			$line2 = browseTreeItemName($client, $currentItem);
+
+			$client->showBriefly(
+				$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')),
+				undef,
+				1
+			);
+
+			if ($descend) {
+
+				$client->execute(['playlist', $command, $currentItem]);
+
+			} else {
+
+				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+
+				Slim::Player::Playlist::shuffle($client, 0);
+
+				$client->execute(['playlist', 'clear']);
+				$client->execute(['playlist', $command, $currentItem]);
+				$client->execute(['playlist', 'jump', $listIndex]);
+
+				if ($wasShuffled) {
+					$client->execute(['playlist', 'shuffle', 1]);
+				}
+			}
+		},
+	);
+}
+
+sub getFunctions {
+	return \%functions;
+}
+
+# Callback invoked by INPUT.List when we're going to leave this mode
+sub browseTreeExitCallback {
+	my ($client, $exittype) = @_;
+
+	$exittype = uc($exittype);
+
+	# Left means pop out of this mode
+	if ($exittype eq 'LEFT') {
+
+		Slim::Buttons::Common::popModeRight($client);
+		return;
+
+	} elsif ($exittype ne 'RIGHT') {
+
+		$client->bumpRight();
+		return;
+	}
+
+	my $currentItem = ${$client->param('valueRef')};
+
+	my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
+
+	my @levels      = split(/\//, $client->param('hierarchy'));
+
+	if (!defined $currentItem) {
+
+		$client->bumpRight();
+
+	} elsif ($descend) {
+
+		my $params = {};
+
+		# If this is a playlist - send the user over to browsedb
+		if ($currentItem->isPlaylist) {
+
+			$params->{'hierarchy'}    = 'playlist,playlistTrack';
+			$params->{'level'}        = 1;
+			$params->{'findCriteria'} = { 'playlist' => $currentItem->id };
+
+			Slim::Buttons::Common::pushModeLeft($client, 'browsedb', $params);
+
+		} else {
+
+			$params->{'hierarchy'} = join('/', @levels, $currentItem->id);
+
+			# Push recursively in to the same mode for the next level down.
+			Slim::Buttons::Common::pushModeLeft($client, 'browsetree', $params);
+		}
+
+	} else {
+
+		# For a track, push into the track information mode
+		Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', { 'track' => $currentItem });
+	}
+}
+
+# Method invoked by INPUT.List to map an item in the list
+# to a display name.
+sub browseTreeItemName {
+	my ($client, $item, $index) = @_;
+
+	if (!ref($item)) {
+		# Dynamically pull the object from the DB. This prevents us from
+		# having to do so at initial load time of possibly hundreds of items.
+
+		my $ds    = Slim::Music::Info::getCurrentDataStore();
+
+		my $url   = Slim::Utils::Misc::fixPath($item, $client->param('topLevelPath')) || return;
+
+		if (Slim::Music::Info::isWinShortcut($url)) {
+
+			$url = Slim::Utils::Misc::pathFromWinShortcut($url);
+		}
+
+		my $items = $client->param('listRef');
+
+		$item = $items->[$index] = $ds->objectForUrl($url, 1, 0, 1) || return $url;
+
+		${$client->param('valueRef')} = $item;
+	}
+
+	return Slim::Music::Info::standardTitle($client, $item);
+}
+
+# Method invoked by INPUT.List to map an item in the list
+# to overlay characters.
+sub browseTreeOverlay {
+	my $client = shift;
+	my $item   = shift || return;
+
+	my ($overlay1, $overlay2);
+
+	# A text item generally means ALL_, so overlay an arrow
+	unless (ref $item) {
+		return (undef, Slim::Display::Display::symbol('rightarrow'));
+	}
+
+	if ($client->param('descend')) {
+		$overlay2 = Slim::Display::Display::symbol('rightarrow');
+	} else {
+		$overlay2 = Slim::Display::Display::symbol('notesymbol');
+	}
+
+	return ($overlay1, $overlay2);
+}
+
+sub setMode {
+	my $client = shift;
+	my $method = shift;
+
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	# Parse the hierarchy list into an array
+	my $hierarchy   = $client->param('hierarchy');
+	my @levels      = split(/\//, $hierarchy);
+	my $ds          = Slim::Music::Info::getCurrentDataStore();
+
+	my ($topLevelObj, $items, $count) = Slim::Music::MusicFolderScan::findAndScanDirectoryTree(\@levels);
+
+	# Next get the first line of the mode
+	my @headers = ();
+
+	# top level, we show MUSIC FOLDER
+	if (scalar @levels == 1) {
+			push @headers, $client->string('MUSIC');
+	} else {
+		my $obj;
+		# one level down we show the folder name, below that we show two levels
+		if (scalar @levels > 2) {
+			$obj = $ds->objectForId('track', $levels[-2]);
+			push @headers, $obj->title if $obj;
+		}
+		$obj = $ds->objectForId('track', $levels[-1]);
+		push @headers, $obj->title if $obj;
+	}
+	
+	# Finally get the last selection position within the list	
+	my $listIndex    = $client->lastID3Selection($hierarchy) || 0;
+	my $topLevelPath = $topLevelObj->path;
+
+	my %params = (
+
+		# Parameters for INPUT.List
+		header         => join('/', @headers),
+		headerAddCount => ($count > 0),
+		listRef        => $items,
+		listIndex      => $listIndex,
+		noWrap         => ($count <= 1),
+		callback       => \&browseTreeExitCallback,
+
+		# Have the callback give us the listIndex - which is needed
+		# for on-the-fly object creation.
+		externRef      => \&browseTreeItemName,
+		externRefArgs  => 'CVI',
+
+		overlayRef     => \&browseTreeOverlay,
+
+		onChange       => sub {
+			my ($client, $curDepth) = @_;
+
+			$client->lastID3Selection($hierarchy, $curDepth);
+		},
+
+		onChangeArgs   => 'CI',
+
+		# Parameters that reflect the state of this mode
+		hierarchy      => join('/', @levels),
+		descend        => 1,
+		topLevelPath   => $topLevelPath,
+	);
+
+	if ($client->param('descend')) {
+
+		$params{'isSorted'} = 'L';
+
+		$params{'lookupRef'} = sub {
+			my $index = shift;
+
+			return $items->[$index]->title;
+		};
+	}
+
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+}
+
+1;
+
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:
+

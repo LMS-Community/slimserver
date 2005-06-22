@@ -7,7 +7,7 @@
   </head>
   <body>
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browse.html?player=[% player | uri %]&amp;dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a></li>[% pwd_list %]</ul></div>
+    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li><li> / <a href="browsedb.html?player=[% player | uri %]&amp;hierarchy=playlist,playlistTrack&level=0">[% "SAVED_PLAYLISTS" | string %]</a></li>[% pwd_list %]</ul></div>
    [%- IF warn %]
     <div id="warning">
       <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %]
@@ -19,7 +19,7 @@
     </div>
    [%- END %]
    [%- IF playlistname %]
-    <form method="get" action="browse.html">
+    <form method="get" action="edit_playlist.html">
       [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]
       <input name="newname" value="[% playlistname %]" size=40>
       <input type=submit value="[% savebuttonname %]">
@@ -28,7 +28,7 @@
     </form>
    [%- END %]
    [%- IF titled %]
-    <p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
+    <p><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
    [%- END %]
    [%- IF playlistname %]
     <hr />

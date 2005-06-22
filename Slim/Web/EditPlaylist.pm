@@ -7,59 +7,55 @@ package Slim::Web::EditPlaylist;
 
 use strict;
 
+use File::Spec::Functions;
 use Slim::Formats::Parse;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
+use Slim::Utils::Text;
 use Slim::Web::HTTP;
 
-# -------------------------------------------------------------
-# The default playlist name is: Radio Station.pls
-# Can be overwritten by adding ?dir=<playlistname.pls> to the calling URL
-# -------------------------------------------------------------
+# Subversion Change 134 says that I can blame Felix for adding this
+# "functionality" to SlimServer :)
+#
+# http://svn.slimdevices.com/trunk/server/Slim/Web/EditPlaylist.pm?rev=134&view=rev
+
 sub editplaylist {
 	my ($client, $params) = @_;
 
-	my $dir = defined( $params->{'dir'}) ? $params->{'dir'} : "Radio Station.pls";
-	my $ds  = Slim::Music::Info::getCurrentDataStore();
+	# This is a dispatcher to parts of the playlist editing that at one
+	# time was contained in the mess of Slim::Web::Pages::browser()
+	#
+	# Now that playlists reside in the db - these functions are much
+	# smaller and easier to work with.
+	if ($params->{'saveCurrentPlaylist'}) {
 
-	my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
-	my $dirObj  = $ds->objectForUrl($fulldir) || do {
+		return saveCurrentPlaylist($client, $params);
 
-		$::d_playlist && Slim::Utils::Misc::msg("Couldn't find a directory entry for: [$fulldir]\n");
+	} elsif ($params->{'renamePlaylist'}) {
 
-		return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
-	};
+		return renamePlaylist($client, $params);
 
-	my $filehandle = FileHandle->new(Slim::Utils::Misc::pathFromFileURL($fulldir), "r");
+	} elsif ($params->{'deletePlaylist'}) {
 
-	my $count = 0;
-	my $playlist;
-	my $changed = 1;
+		return deletePlaylist($client, $params);
+	}
 
-	$params->{'dir'} = $dir;
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
 
-	$::d_http && msg( "browse virtual path: " . $dir . "\n");
-	$::d_http && msg( "with absolute path: " . $fulldir . "\n");
+	my $obj     = $ds->objectForId('track', $params->{'id'}) || return [];
+	my @items   = $obj->tracks;
 
-	my @items = Slim::Formats::Parse::parseList($dir, $filehandle);
+	# 0 base
+	my $itemPos = ($params->{'item'} || 1) - 1;
 
-	$filehandle->close if defined($filehandle);
-	
+	my $changed = 0;
+
 	# Edit function - fill the to fields in the form
-	if (defined($params->{'edit'})) {
-
-		my $value = $params->{'edit'};
-		my $track = $ds->objectForUrl($items[$value]);
-		
-		$params->{'form_url'}   = $items[$value];
-		$params->{'form_title'} = $track->title();
-
-	} elsif (defined($params->{'delete'})) {
+	if ($params->{'delete'}) {
 
 		# Delete function - Remove entry from list
-		my $value = $params->{'delete'};
-
-		splice(@items, $value, 1);
+		splice(@items, $itemPos, 1);
 
 		$changed = 1;
 
@@ -68,83 +64,220 @@ sub editplaylist {
 		# Add function - Add entry it not already in list
 		my $found = 0;
 		my $title = $params->{'form_title'};
-		my $newitem = $params->{'form_url'};
+		my $url   = $params->{'form_url'};
 
-		if ($title && $newitem) {
+		if ($title && $url) {
 
-			Slim::Music::Info::setTitle($newitem, $title);
+			my $obj = $ds->updateOrCreate({
+				'url'      => $url,
+				'readTags' => 1,
+				'commit'   => 1,
+			});
+
 			for my $item (@items) {
 
-				if ($item eq $newitem) {
+				if ($item eq $obj) {
 					$found = 1;
 					last;
 				}
-				::idleStreams();
 			}
 
 			if ($found == 0) {
-				push( @items, $newitem);
+				push @items, $obj;
 			}
 
 			$changed = 1;
 		}
 
-	} elsif (defined($params->{'up'})) {
+	} elsif ($params->{'up'}) {
 
 		# Up function - Move entry up in list
-		my $value = $params->{'up'};
+		if ($itemPos != 0) {
 
-		if ($value != 0) {
-
-			my $item = $items[$value];
-			$items[$value] = $items[$value - 1];
-			$items[$value - 1] = $item;
+			my $item = $items[$itemPos];
+			$items[$itemPos] = $items[$itemPos - 1];
+			$items[$itemPos - 1] = $item;
 
 			$changed = 1;
 		}
 
-	} elsif (defined($params->{'down'})) {
+	} elsif ($params->{'down'}) {
 
 		# Down function - Move entry down in list
-		my $value = $params->{'down'};
+		if ($itemPos != scalar(@items) - 1) {
 
-		if ($value != scalar(@items) - 1) {
+			my $item = $items[$itemPos];
+			$items[$itemPos] = $items[$itemPos + 1];
+			$items[$itemPos + 1] = $item;
 
-			my $item = $items[$value];
-			$items[$value] = $items[$value + 1];
-			$items[$value + 1] = $item;
-			$changed = 1;			
+			$changed = 1;
 		}
 	}
 
 	if ($changed) {
-		Slim::Formats::Parse::writeList(\@items, undef, $fulldir);
-	}
-	
-	my %list_form = %$params;
+		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
 
-	for my $item (@items) {
-
-		$::d_playlist && Slim::Utils::Misc::msg("Adding item: [$item] to playlist edit.\n");
-
-		my $track = $ds->objectForUrl($item) || next;
-		my $title = $track->title();
-
-		$list_form{'num'}   = $count++;
-		$list_form{'odd'}   = $count % 2;
-		$list_form{'dir'}   = $dir;
-		$list_form{'title'} = $title;
-		$list_form{'itempath'} = $item;
-
-		$playlist .= ${Slim::Web::HTTP::filltemplatefile("edit_playlist_list.html", \%list_form)};
-
-		::idleStreams();
+		$obj->setTracks(\@items);
 	}
 
-	$params->{'playlist'}     = $playlist;
-	$params->{'playlistname'} = $dirObj->title();
+	# This is our display - dispatch to browsedb ?
+	$params->{'listTemplate'} = 'edit_playlist_list.html';
+	$params->{'items'}        = \@items;
+	$params->{'playlist'}     = $obj;
 
 	return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
+}
+
+sub saveCurrentPlaylist {
+	my ($client, $params) = @_;
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	if (defined $client && Slim::Player::Playlist::count($client)) {
+
+		my $title = $client->string('UNTITLED');
+
+		$client->execute(['playlist', 'save', $title]);
+
+		if (my $playlistObj = $ds->objectForUrl("playlist://$title")) {
+
+			$params->{'playlist'} = $playlistObj->id;
+
+			scheduleWriteOfPlaylist($client, $playlistObj);
+		}
+
+		# setup browsedb params to view the current playlist
+		$params->{'hierarchy'} = 'playlist,playlistTrack';
+		$params->{'level'}     = 1;
+
+		$params->{'untitledString'} = $title;
+	}
+
+	return Slim::Web::Pages::browsedb($client, $params);
+}
+
+sub renamePlaylist {
+	my ($client, $params) = @_;
+
+	# 
+	$params->{'hierarchy'} = 'playlist,playlistTrack';
+	$params->{'level'}     = 0;
+
+	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $playlistObj = $ds->objectForId('track', $params->{'id'});
+
+	# if they are renaming the playlist, let 'em.
+	if ($playlistObj && $params->{'newname'}) {
+
+		my $newName  = $params->{'newname'};
+
+		# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
+		$newName     =~ tr|.:\x00-\x1f\/\\| |s;
+
+		my $newUrl   = "playlist://$newName";
+
+		my $existing = $ds->objectForUrl($newUrl);
+
+		# Warn the user if the playlist already exists.
+		if (defined $existing && !$params->{'overwrite'}) {
+
+			$params->{'RENAME_WARNING'} = 1;
+
+		} elsif (defined $existing && $params->{'overwrite'}) {
+
+			removePlaylistFromDisk($existing);
+
+			$ds->delete($existing, 1);
+		}
+
+		if (!$params->{'RENAME_WARNING'}) {
+
+			removePlaylistFromDisk($playlistObj);
+
+			$ds->updateOrCreate({
+				'url'        => $playlistObj,
+				'attributes' => {
+					'url'   => $newUrl,
+					'title' => $newName,
+				},
+				'commit'     => 1,
+			});
+
+			scheduleWriteOfPlaylist($client, $playlistObj);
+		}
+
+		$params->{'level'}     = 1;
+		$params->{'playlist'}  = $playlistObj->id;
+	}
+
+	return Slim::Web::Pages::browsedb($client, $params);
+}
+
+sub deletePlaylist {
+	my ($client, $params) = @_;
+
+	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $playlistObj = $ds->objectForId('track', $params->{'id'});
+
+	if ($playlistObj) {
+
+		removePlaylistFromDisk($playlistObj);
+
+		# Do a fast delete, and then commit it.
+		$playlistObj->setTracks([]);
+
+		$ds->delete($playlistObj, 1);
+	}
+
+	# Send the user off to the top level browse playlists
+	$params->{'hierarchy'} = 'playlist,playlistTrack';
+	$params->{'level'}     = 0;
+
+	return Slim::Web::Pages::browsedb($client, $params);
+}
+
+sub removePlaylistFromDisk {
+	my $playlistObj = shift;
+
+	my $path = $playlistObj->path;
+
+	if (-e $path) {
+
+		unlink $path;
+
+	} else {
+
+		unlink catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u');
+	}
+}
+
+# This should probably move elsewhere - I don't know where though.
+# Slim::Player::Playlist, maybe? It's not really player specific.
+sub scheduleWriteOfPlaylist {
+	my ($client, $playlistObj) = @_;
+
+	# This should proably be more configurable / have writeM3U or a
+	# wrapper know about the scheduler, so we can write out a file at a
+	# time.
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 30,
+
+		sub {
+			Slim::Utils::Scheduler::add_task(sub {
+
+				Slim::Formats::Parse::writeM3U( 
+					[ $playlistObj->tracks ],
+					undef,
+					catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u'),
+					1,
+					Slim::Player::Source::playingSongIndex($client),
+				);
+
+				return 0;
+			});
+		},
+	);
 }
 
 1;

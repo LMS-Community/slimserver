@@ -42,8 +42,6 @@ sub startScan {
 			}
 		}
 	}
-
-	Slim::Music::Info::generatePlaylists() unless stillScanning();
 }
 
 sub cleanupDatabase {

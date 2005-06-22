@@ -32,7 +32,12 @@
 				
   <td valign="top" height="100%">
     <br>
-    <p> <a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a><p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a> </p>
+    <p>
+    <a href="status_header.html?command=playlist&subcommand=loadtracks&track=[% track.id %]&player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+    <p>
+    <a href="status_header.html?command=playlist&subcommand=addtracks&track=[% track.id %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+    </p>
+
 <table cellspacing="5">
       <tr> 
         <td class="nowrap">[% "TITLE" | string; "COLON" | string %]</td>

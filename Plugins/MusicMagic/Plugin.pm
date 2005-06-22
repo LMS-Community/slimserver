@@ -69,10 +69,6 @@ sub canUseMusicMagic {
 	return $initialized || initPlugin();
 }
 
-sub playlists {
-	return Slim::Music::Info::playlists;
-}
-
 sub getDisplayName {
 	return 'SETUP_MUSICMAGIC';
 }
@@ -329,8 +325,6 @@ sub doneScanning {
 
 		$http->close();
 	}
-	
-	Slim::Music::Info::generatePlaylists();
 	
 	Slim::Music::Import::endImporter('MUSICMAGIC');
 }
@@ -638,12 +632,12 @@ sub exportFunction {
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 				$url = Slim::Utils::Misc::fixPath($url);
 
-				if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-					$::d_musicmagic && msg("MusicMagic: Found playlist: $url\n");
-				}
-
 				# add this playlist to our playlist library
-				$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MusicMagicplaylistprefix') . $name . Slim::Utils::Prefs::get('MusicMagicplaylistsuffix');
+				$cacheEntry{'TITLE'} = join('', 
+					Slim::Utils::Prefs::get('MusicMagicplaylistprefix'),
+					$name,
+					Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
+				);
 				
 				my @list;
 				for (my $j = 0; $j < $count2; $j++) {
@@ -686,12 +680,12 @@ sub exportFunction {
 			my $name = "Duplicates";
 			my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 
-			if ($count && (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name)) {
-				$::d_musicmagic && msg("MusicMagic: Found duplicates list.\n");
-			}
-
 			# add this list of duplicates to our playlist library
-			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('MusicMagicplaylistprefix') . $name . Slim::Utils::Prefs::get('MusicMagicplaylistsuffix');
+			$cacheEntry{'TITLE'} = join('', 
+				Slim::Utils::Prefs::get('MusicMagicplaylistprefix'),
+				$name,
+				Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
+			);
 			
 			my @list;
 			for (my $j = 0; $j < $count; $j++) {
@@ -709,7 +703,8 @@ sub exportFunction {
 
 	doneScanning();
 
-	$::d_musicmagic && msgf("exportFunction: finished export ($count records, %d playlists)\n", scalar @{Slim::Music::Info::playlists()});
+	$::d_musicmagic && msg("exportFunction: finished export ($count records)\n");
+
 	$export = 'done';
 	
 	return 0;

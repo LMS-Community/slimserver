@@ -93,11 +93,8 @@ our %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 		}
 		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SELECT_PLAYLIST')) {
-			my @dirItems=();	
-			Slim::Utils::Scan::addToList(\@dirItems, Slim::Utils::Prefs::get('playlistdir'), 0);
-			push @dirItems, @{Slim::Music::Info::playlists()};
 			my %params = (
-				'listRef' => \@dirItems
+				'listRef' => Slim::Music::Info::playlists()
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'

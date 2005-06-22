@@ -1,0 +1,34 @@
+[% pagetitle = "EDIT_PLAYLIST" | string %]
+[% PROCESS pageheader.html %] 
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+		<tr>
+			<td>/ [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a></td>
+		</tr>
+	</table>
+
+	<p>
+		<form method="get" action="edit_playlist.html">
+			<table>	
+				<tr>
+					<td>[% "TITLE" | string %]:</td>
+					<td><input type=text class="stdedit" name="form_title" value="[% items.first.title %]" size=30></td>
+					<td><input type=submit class="stdclick" value=[% "ADD" | string %]></td>
+				</tr>
+				<tr>
+					<td>[% "URL" | string %]:</td>
+					<td colspan="2"><input type=text class="stdedit" name="form_url" value="[% items.first.url %]" size=40></td>
+				</tr>
+			</table>
+			<input type=hidden name="id" value="[% playlist.id %]">
+			<input type=hidden name="player" value="[% player %]">
+		</form>
+	</p>
+	<p><a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% "DONE_EDITING" | string %]</a>
+	<p>
+		<table border="0" cellspacing="0" cellpadding="4" width="100%">
+			[% FOREACH item = items %]
+				[% PROCESS $listTemplate %]
+			[% END %]
+		</table>
+	</p>
+[% PROCESS pagefooter.html %]

@@ -50,6 +50,7 @@ our %functions = (
 					my @args;
 					push @args, $client if $onChangeArgs =~ /c/i;
 					push @args, $$valueRef if $onChangeArgs =~ /v/i;
+					push @args, $newIndex if $onChangeArgs =~ /i/i;
 					$onChange->(@args);
 				}
 			}
@@ -165,6 +166,7 @@ sub getExtVal {
 		my $argtype = $client->param($source . 'Args');
 		push @args, $client if $argtype =~ /c/i;
 		push @args, $value if $argtype =~ /v/i;
+		push @args, $listIndex if $argtype =~ /i/i;
 		return $extref->(@args);
 	} elsif (ref($extref) eq 'HASH') {
 		return $extref->{$value};
@@ -204,10 +206,10 @@ sub setMode {
 # listIndex = 0 or position of valueRef in listRef
 # noWrap = undef # whether or not the list wraps at the ends
 # externRef = undef
-# externRefArgs = CV # accepts C and V
+# externRefArgs = CV # accepts C, V and I
 # stringExternRef = undef # same as with stringHeader, but for the value of externRef
 # overlayRef = undef
-# overlayRefArgs = CV # accepts C and V
+# overlayRefArgs = CV # accepts C, V and I
 # onChange = undef
 # onChangeArgs = CV # accepts C, V and I
 # for the *Args parameters, the letters indicate what values to send to the code ref

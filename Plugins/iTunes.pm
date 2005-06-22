@@ -429,10 +429,6 @@ sub findMusicLibrary {
 	return $path;
 }
 
-sub playlists {
-	return \@Slim::Music::Info::playlists;
-}
-
 sub isMusicLibraryFileChanged {
 	my $file = $ituneslibraryfile || findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
@@ -551,8 +547,6 @@ sub doneScanning {
 	}
 
 	Slim::Utils::Prefs::set('iTunesXMLModificationDate', $lastITunesMusicLibraryDate);
-	
-	Slim::Music::Info::generatePlaylists();
 	
 	Slim::Music::Import::endImporter('ITUNES');
 }
@@ -817,9 +811,11 @@ sub scanFunction {
 
 			%curPlaylist = ();
 			%cacheEntry  = ();
-		
-			$::d_itunes && msg("iTunes: playlists now has " . scalar @{Slim::Music::Info::playlists()} . " items...\n");
+	
+			# This is inaccurate.	
+			#$::d_itunes && msg("iTunes: playlists now has " . scalar Slim::Music::Info::playlists() . " items...\n");
 		}
+
 	} else {
 		if ($curLine eq "<key>Major Version</key>") {
 		

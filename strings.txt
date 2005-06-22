@@ -6321,18 +6321,6 @@ LCALBUMS
 	PT	álbums
 	SE	album
 
-ALL
-	DE	Alle
-	DK	Alle
-	EN	All
-	ES	Todas
-	FR	Tous
-	JP	全て
-	NL	Alle
-	NO	Alle
-	PT	Todas
-	SE	Alla
-
 ALL_SONGS
 	DE	Alle Titel
 	DK	Alle sange

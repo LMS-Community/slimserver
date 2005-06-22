@@ -197,7 +197,7 @@ sub init {
 		'audiodir' => sub {
 			my $newvalue = shift;
 
-			Slim::Buttons::Browse::menuInit();
+			Slim::Buttons::BrowseTree::init();
 
 			if (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir")) {
 
@@ -221,8 +221,6 @@ sub init {
 			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
 				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 			}
-
-			Slim::Buttons::Browse::init();
 
 			for my $client (Slim::Player::Client::clients()) {
 				Slim::Buttons::Home::updateMenu($client);

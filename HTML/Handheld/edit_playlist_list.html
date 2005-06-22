@@ -1,0 +1,23 @@
+[% IF loop.count % 2; bgColor = "#d0d0d0"; ELSE; bgColor = "#ffffff"; END %]
+
+<tr bgcolor=[% bgColor %]>
+  <td width="100%">[% item.title | html %]</td>
+
+  <td><a href="edit_playlist.html?player=[% player | uri %]&up=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_up.gif" width="13" height="13"></a></td>
+  <td>&nbsp;</td>
+
+  <td><a class="down" href="edit_playlist.html?player=[% player | uri %]&down=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_down.gif" width="13" height="13"></a></td>
+  <td>&nbsp;</td>
+
+  <td>
+[% IF item.isRemoteUrl %]
+    <a class="edit" href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_edit.gif" width="13" height="13"></a>
+    &nbsp;
+[% END %]
+  </td>
+
+  <td>
+    <a class="delete" href="edit_playlist.html?player=[% player | uri %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_delete.gif" width="13" height="13"></a>
+  </td>
+
+</tr>

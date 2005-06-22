@@ -117,7 +117,7 @@ sub init {
 		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
 		qr/^browsedb\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsedb,
-		qr/^browse\.(?:htm|xml)/	=> \&Slim::Web::Pages::browser,
+		qr/^browsetree\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsetree,
 		qr/^edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
 		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
 		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
@@ -1637,7 +1637,7 @@ sub _generateContentFromFile {
 	$::d_http && msg("generating from $path\n");
 
 	if ($type eq 'fill') {
-
+		
 		my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
 		my $output = '';
 

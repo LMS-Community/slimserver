@@ -9,7 +9,7 @@
     <p>([% dir %])</p>
     <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
     <a href="edit_playlist.html?player=[% player | uri %]">[% "EDIT_PLAYLIST" | string %]</a> /
-    <a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]">[% playlistname %]</a>
+    <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
     <p></p>
     <hr>
     <p>
@@ -20,7 +20,7 @@
             [% "TITLE" | string %][% "COLON" | string %]
           </td>
           <td>
-            <input type="text" class="stdedit" name="form_title" value="[% form_title %]" size=30>
+            <input type="text" class="stdedit" name="form_title" value="[% items.first.title %]" size=30>
           </td>
           <td>
             <input type="submit" class="stdclick" value=[% "ADD" | string %]>
@@ -31,17 +31,19 @@
             [% "URL" | string %][% "COLON" | string %]
           </td>
           <td colspan="2">
-            <input type=text class="stdedit" name="form_url" value="[% form_url %]" size=40>
+            <input type=text class="stdedit" name="form_url" value="[% items.first.url %]" size=40>
           </td>
         </tr>
       </table>
-      <input type="hidden" name="dir" value="[% dir %]">
+      <input type="hidden" name="id" value="[% playlist.id %]">
       <input type="hidden" name="player" value="[% player %]">
       </form>
     </p>
     <p>
       <table border="0" cellspacing="0" cellpadding="4" width="100%">
-        [% playlist %]
+	[% FOREACH item = items %]
+		[% PROCESS $listTemplate %]
+	[% END %]
       </table>
     </p>
   </body>

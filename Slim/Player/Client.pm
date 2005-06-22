@@ -624,7 +624,7 @@ sub new {
 	my $clientAlreadyKnown = 0;
 	bless $client, $class;
 
-	$::d_protocol && msg "new client id: ($id)\n";
+	$::d_protocol && msg("new client id: ($id)\n");
 
 	assert(!defined(getClient($id)));
 
@@ -852,6 +852,14 @@ sub defaultName {
 	return $name;
 }
 
+sub debug {
+	my $self = shift;
+
+	if ($::d_client) {
+		Slim::Utils::Misc::msg(sprintf("%s : %s\n", $self->name(), @_));
+	}
+}
+
 sub getClient {
 	my $id = shift;
 	my $ret = $clientHash{$id};
@@ -864,6 +872,7 @@ sub getClient {
 			return $value if (name($value) eq $id);
 		}
 	}
+
 	return($ret);
 }
 
@@ -877,53 +886,78 @@ sub forgetClient {
 	}	
 }
 
+# Don't bother with idle streams if we only have clients with large buffers.
+sub needIdleStreams {
+
+	my $needIdleStreams = 0;
+
+	for my $client (clients()) {
+
+		if ($client->model =~ /^(?:squeezebox2|softsqueeze|http)$/) {
+			next;
+		}
+
+		$needIdleStreams = 1;
+		last;
+	}
+
+	return $needIdleStreams;
+}
+
 sub startup {
 	my $client = shift;
 
-	my $restoredPlaylist;
-	my $currsong = 0;
-	my $id = $client->id;
-	
 	Slim::Player::Sync::restoreSync($client);
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!Slim::Player::Sync::isSynced($client)) {	
+	if (!Slim::Player::Sync::isSynced($client) && Slim::Utils::Prefs::get('persistPlaylists')) {	
 
-		if (Slim::Utils::Prefs::get('defaultPlaylist')) {
+		my $playlist = Slim::Music::Info::playlistForClient($client);
+		my $currsong = Slim::Utils::Prefs::clientGet($client, 'currentSong');
 
-			$restoredPlaylist = Slim::Utils::Prefs::get('defaultPlaylist');
+		if (defined $playlist) {
 
-		} elsif (Slim::Utils::Prefs::get('persistPlaylists') && Slim::Utils::Prefs::get('playlistdir')) {
+			my $tracks = [ $playlist->tracks ];
 
-			my $playlistname = "__$id.m3u";
+			# Only add on to the playlist if there are tracks.
+			if (scalar @$tracks && defined $tracks->[0] && ref $tracks->[0] && $tracks->[0]->id != 0) {
 
-			$playlistname =~ s/\:/_/g;
-			$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
-			$currsong = Slim::Utils::Prefs::clientGet($client,'currentSong');
+				$client->debug("found nowPlayingPlaylist - will loadtracks");
 
-			if (-e $playlistname) {
-				$restoredPlaylist = $playlistname;
+				# We don't want to re-setTracks on load - so mark a flag.
+				$client->param('startupPlaylistLoading', 1);
+
+				$client->execute(
+					['playlist', 'addtracks', 'listref', $tracks ],
+					\&initial_add_done, [$client, $currsong],
+				);
+
+				$client->param('startupPlaylistLoading', 0);
 			}
-		}
-	
-		if (defined $restoredPlaylist) {
-			Slim::Control::Command::execute($client,['playlist','add',$restoredPlaylist],\&initial_add_done,[$client,$currsong]);
 		}
 	}
 }
 
 sub initial_add_done {
-	my ($client,$currsong) = @_;
-	
+	my ($client, $currsong) = @_;
+
 	return unless defined($currsong);
-	
-	if (Slim::Player::Playlist::shuffle($client) == 1) {
+
+	my $shuffleType = Slim::Player::Playlist::shuffleType($client);
+
+	$client->debug("shuffleType is: $shuffleType");
+
+	if ($shuffleType eq 'track') {
+
 		my $i = 0;
+
 		foreach my $song (@{Slim::Player::Playlist::shuffleList($client)}) {
+
 			if ($song == $currsong) {
-				Slim::Control::Command::execute($client,['playlist','move',$i,0]);
+				$client->execute(['playlist', 'move', $i, 0]);
 				last;
 			}
+
 			$i++;
 		}
 		
@@ -931,24 +965,32 @@ sub initial_add_done {
 		
 		Slim::Player::Source::streamingSongIndex($client,$currsong, 1);
 		
-	} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
+	} elsif ($shuffleType eq 'album') {
+
 		# reshuffle set this properly, for album shuffle
 		# no need to move the streamingSongIndex
+
 	} else {
+
 		if (Slim::Player::Playlist::count($client) == 0) {
+
 			$currsong = 0;
-		}
-		elsif ($currsong >= Slim::Player::Playlist::count($client)) {
+
+		} elsif ($currsong >= Slim::Player::Playlist::count($client)) {
+
 			$currsong = Slim::Player::Playlist::count($client) - 1;
 		}
-		Slim::Player::Source::streamingSongIndex($client,$currsong, 1);
+
+		Slim::Player::Source::streamingSongIndex($client, $currsong, 1);
 	}
-	
-	Slim::Utils::Prefs::clientSet($client,'currentSong',$currsong);
+
+	Slim::Utils::Prefs::clientSet($client, 'currentSong', $currsong);
+
 	if (Slim::Utils::Prefs::get('autoPlay') || Slim::Utils::Prefs::clientGet($client,'autoPlay')) {
-		Slim::Control::Command::execute($client,['play']);
+
+		$client->execute(['play']);
 	}
-}	
+}
 
 # Wrapper method so "execute" can be called as an object method on $client.
 sub execute {

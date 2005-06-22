@@ -1,6 +1,6 @@
 <!-- Page playlist.html -->
 	[% pagetitle = "PLAYLIST" | string %]
-	[%- PROCESS pageheader.html -%]
+	[% PROCESS pageheader.html %]
 
 	<table bgcolor="#c5c5c5" width=100%>
 		<tr><td align="center">
@@ -27,7 +27,7 @@
 	<table bgcolor="#dfdfdf" width=100%>
 		<tr><td align="center">
 			[% IF cansave %]
-				<a href="browse.html?player=[% player | uri %]&dir=__playlists%2f__current.m3u">[% "SAVE" | string %]</a> | 
+				<a href="edit_playlist.html?player=[% player | uri %]&saveCurrentPlaylist=1">[% "SAVE" | string %]</a> | 
 			[% END %]
 			<a href="status.m3u?player=[% player | uri %]">[% "DOWNLOAD" | string %]</a> |
 			<a href="status.html?p0=playlist&p1=clear&player=[% player | uri %]">[% "CLEAR" | string %]</a></small></font>

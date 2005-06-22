@@ -8,14 +8,11 @@ package Slim::Buttons::BrowseDB;
 # version 2.
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
-
 
 our %functions = ();
 our $mixer;
@@ -54,6 +51,12 @@ sub init {
 		'BROWSE_BY_SONG'   => {
 			'useMode'  => 'browsedb',
 			'hierarchy' => 'track',
+			'level' => 0,
+		},
+
+		'SAVED_PLAYLISTS'  => {
+			'useMode'  => 'browsedb',
+			'hierarchy' => 'playlist,track',
 			'level' => 0,
 		},
 	);
@@ -153,9 +156,8 @@ sub init {
 				if ($all && $search) {
 					$info = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
 					my $items = &{$info->{'search'}}($ds, $search, 'track');
-					$client->param('searchResults', $items);
 
-					$client->execute(["playlist", $command, 'listref=searchResults&']);
+					$client->execute(["playlist", $command, 'listref', $items]); 
 				}
 				# Otherwise rely on the execute to do the search for us
 				else {
@@ -168,11 +170,11 @@ sub init {
 
 				# In some cases just deal with the song individually
 				if ($addorinsert || !$album || !Slim::Utils::Prefs::get('playtrackalbum')) {
-					$command = 'play';
-					$command = 'append' if $addorinsert == 1;
-					$command = 'insert' if $addorinsert == 2;
+					$command = 'playtracks';
+					$command = 'addtracks'    if $addorinsert == 1;
+					$command = 'inserttracks' if $addorinsert == 2;
 
-					$client->execute(["playlist", $command, $currentItem->url()]);
+					$client->execute(["playlist", $command, 'listref', [ $currentItem ]]); 
 				}
 				# Otherwise deal with it in the context of the 
 				# containing album.
@@ -383,8 +385,7 @@ sub browsedbItemName {
 				use Data::Dumper;
 				print Dumper($item);
 			}
-			
-	
+
 			if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
 				$name .= " by $artist";
 			}

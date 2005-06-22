@@ -49,6 +49,7 @@ package Slim::Utils::Scan;
 #     <--- increment index <-------------------------------------
 
 use strict;
+use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::String;
@@ -384,21 +385,13 @@ sub addToList_run {
 
 	######### If it's a directory or playlist and we're recursing, push it onto the stack, othwerwise add it to the list
 
-	$::d_scan && msg("isList($itempath) == ". Slim::Music::Info::isList($itempath) . "\n");
+	$::d_scan && msg("isList($itempath) == ". (Slim::Music::Info::isList($itempath) || 0) . "\n");
 
 	# todo: don't let us recurse indefinitely
 	if (Slim::Music::Info::isList($itempath)) {
 
 		# if we're recursing and it's a remote playlist, then recurse
 		if ($jobState->recursive && !Slim::Music::Info::isRemoteURL($itempath)) {
-
-			# don't recurse into playlists, only into directories	
-			if (Slim::Music::Info::isPlaylist($itempath) && 
-			   !Slim::Music::Info::isCUE($itempath) && 
-			   !Slim::Utils::Misc::inPlaylistFolder($itempath)) { 
-
-				return 1;
-			}
 
 			my $newdir = addToList_dirState->new();
 			$newdir->path($itempath);
@@ -513,7 +506,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 				$playlistpath = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 
-				Slim::Music::Info::cachePlaylist($playlisturl, [$playlistpath]);
+				Slim::Music::Info::cacheDirectory($playlisturl, [$playlistpath]);
 			}
 
 			if ($playlistpath eq "") {
@@ -593,18 +586,24 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 			my @dircontents = Slim::Utils::Misc::readDirectory($playlistpathpath);
 
-			for my $dir (@dircontents) {
+			for my $item (@dircontents) {
 
-				$::d_scan && msg(" directory entry:" . Slim::Utils::Misc::fileURLFromPath(catfile($playlistpathpath, $dir)) . "\n");
+				my $url = Slim::Utils::Misc::fileURLFromPath(catfile($playlistpathpath, $item));
 
-				push @$listref, $dir;
+				$::d_scan && msg(" directory entry: $url\n");
+
+				push @$listref, $ds->objectForUrl($url, 1);
+
 				$numitems++;
 			}
 
 			# add the loaded dir to the cache...
 			if ($numitems) {
+
 				my @cachelist = @$listref[ (0 - $numitems) .. -1];
-				Slim::Music::Info::cachePlaylist($playlistpath, \@cachelist, $playlistpathAge);
+
+				#Slim::Music::Info::cacheDirectory($playlistpath, \@cachelist, $playlistpathAge);
+
 				$::d_scan && msg("adding $numitems to playlist cache: $playlistpath\n"); 
 			}
 
@@ -634,12 +633,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# it's a playlist file
 			$playlist_filehandle = FileHandle->new();
 
-			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($playlistpath))) {
+			open($playlist_filehandle, $playlistpathpath) || do {
 
 				$::d_scan && msg("Couldn't open playlist file $playlistpath : $!\n");
 				$playlist_filehandle = undef;
 				$numitems = undef;
-			}
+			};
 		}
 	}
 	
@@ -647,11 +646,10 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		my $playlist_base = undef;
 
 		if (Slim::Music::Info::isFileURL($playlisturl)) {
-			my $path = Slim::Utils::Misc::pathFromFileURL($playlisturl);
-			my @parts = splitdir($path);
-			pop(@parts);			
+			my @parts = splitdir($playlistpath);
+			pop(@parts);
 			$playlist_base = Slim::Utils::Misc::fileURLFromPath(catdir(@parts));
-			$::d_scan && msg("gonna scan $playlisturl, with path $path, for base: $playlist_base\n");
+			$::d_scan && msg("gonna scan $playlisturl, with path $playlistpath, for base: $playlist_base\n");
 		}
 
 		if (ref($playlist_filehandle) eq 'Slim::Player::Protocols::HTTP') {
@@ -680,7 +678,33 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		}
 
 		undef $playlist_filehandle;
-					
+
+		# Add playlists to the database.
+		if ($numitems && scalar @$listref) {
+
+			# Create a playlist container
+			my $title = basename($playlisturl);
+			   $title =~ s/\.\w{3}$//;
+
+			my $ct    = Slim::Music::Info::contentType($playlisturl);
+
+			# With the special url if the playlist is in the
+			# designated playlist folder. Otherwise, Dean wants
+			# people to still be able to browse into playlists
+			# from the Music Folder, but for those items not to
+			# show up under Browse Playlists.
+			if (Slim::Utils::Misc::inPlaylistFolder($playlisturl)) {
+
+				$playlisturl =~ s/^file:/playlist:/;
+			}
+
+			Slim::Music::Info::updateCacheEntry($playlisturl, {
+				'TITLE' => $title,
+				'CT'    => $ct,
+				'LIST'  => $listref,
+			});
+		}
+
 		$::d_scan && msg("Scan::readList loaded playlist with $numitems items\n");
 	}
 

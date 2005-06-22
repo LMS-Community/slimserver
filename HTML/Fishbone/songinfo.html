@@ -11,8 +11,9 @@
 
 <H3>[% "SONG_INFO" | string %] [% "FOR" | string %] <i>[% track.title %]</i></H3>
 <p>
-<p><a href="status_header.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a></p>
-<p><a href="status_header.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a></p>
+<a href="status_header.html?command=playlist&subcommand=loadtracks&track=[% track.id %]&player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+<p>
+<a href="status_header.html?command=playlist&subcommand=addtracks&track=[% track.id %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
 </p>
 <table width="100%" border="0">
 	<tr>

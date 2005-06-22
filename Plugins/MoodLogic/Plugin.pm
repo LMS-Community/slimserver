@@ -70,10 +70,6 @@ sub canUseMoodLogic {
 	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
 }
 
-sub playlists {
-	return Slim::Music::Info::playlists;
-}
-
 sub getDisplayName {
 	return 'SETUP_MOODLOGIC';
 }
@@ -284,8 +280,6 @@ sub doneScanning {
 
 	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
 	
-	Slim::Music::Info::generatePlaylists();
-	
 	Slim::Music::Import::endImporter('MOODLOGIC');
 }
 
@@ -457,9 +451,7 @@ sub exportFunction {
 		my %cacheEntry = ();
 		my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 
-		if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
-		}
+		$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
 
 		# add this playlist to our playlist library
 		$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
@@ -484,9 +476,7 @@ sub exportFunction {
 			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
 			$url = Slim::Utils::Misc::fixPath($url);
 
-			if (!defined($Slim::Music::Info::playlists[-1]) || $Slim::Music::Info::playlists[-1] ne $name) {
-				$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");
-			}
+			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");
 
 			# add this playlist to our playlist library
 			$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
@@ -507,7 +497,9 @@ sub exportFunction {
 	$conn->Close;
 	
 	doneScanning();
-	$::d_moodlogic && msg("MoodLogic: finished export ($isScanning records, ".scalar @{Slim::Music::Info::playlists()}." playlists)\n");
+
+	$::d_moodlogic && msg("MoodLogic: finished export ($isScanning records)\n");
+
 	return 0;
 }
 

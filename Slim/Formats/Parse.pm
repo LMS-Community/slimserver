@@ -92,7 +92,7 @@ sub _updateMetaData {
 		$attributes->{'TITLE'} = $title;
 	}	
 
-	$ds->updateOrCreate({
+	return $ds->updateOrCreate({
 		'url' => $entry,
 		'attributes' => $attributes,
 		'readTags' => 1
@@ -104,7 +104,6 @@ sub readM3U {
 	my $m3udir = shift;
 
 	my @items  = ();
-	my $title;
 	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
 
 	if ($] > 5.007) {
@@ -135,6 +134,8 @@ sub readM3U {
 
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
+		my $title;
+
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
 		}
@@ -148,9 +149,7 @@ sub readM3U {
 		
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-		_updateMetaData($entry, $title);
-		$title = undef;
-		push @items, $entry;
+		push @items, _updateMetaData($entry, $title);
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
@@ -178,7 +177,7 @@ sub readPLS {
 	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $pls \n");
 	
 	while (<$pls>) {
-		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $_\n");
+		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $_");
 
 		# strip carriage return from dos playlists
 		s/\cM//g;  
@@ -201,15 +200,9 @@ sub readPLS {
 
 		next unless defined $urls[$i];
 
-		my $entry = $urls[$i];
-
-		$entry = Slim::Utils::Misc::fixPath($entry);
+		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
 		
-		my $title = $titles[$i];
-
-		_updateMetaData($entry, $title);
-
-		push @items, $entry;
+		push @items, _updateMetaData($entry, $titles[$i]);
 	}
 
 	close $pls if (ref($pls) ne 'IO::String');
@@ -584,22 +577,17 @@ sub writeM3U {
 				next;
 			};
 			
-			my $title = $track->title();
-
-			if ($] > 5.007) {
-				$title = Encode::decode_utf8($title);
-			}
+			my $title = Slim::Utils::Misc::utf8decode( $track->title );
 
 			if ($title) {
 				print $output "#EXTINF:-1,$title\n";
 			}
 		}
 
-		my $path = _pathForItem($item, 1);
-
-		if ($] > 5.007) {
-			$path = Encode::decode_utf8($path);
-		}
+		# XXX - we still have a problem where there can be decomposed
+		# unicode characters. I don't know how this happens - it's
+		# coming from the filesystem.
+		my $path = Slim::Utils::Misc::utf8decode( _pathForItem($item, 1) );
 
 		print $output "$path\n";
 	}
@@ -643,8 +631,7 @@ sub readWPL {
 		
 			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-			_updateMetaData($entry, undef);
-			push @items, $entry;
+			push @items, _updateMetaData($entry, undef);
 		}
 	}
 
@@ -782,8 +769,7 @@ sub readASX {
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 					
-					_updateMetaData($path, $title);
-					push @items, $path;
+					push @items, _updateMetaData($path, $title);
 				}
 			}
 		}
@@ -850,8 +836,7 @@ sub readPodcast {
 				if ($item->{title}) {
 					# associate a title with the url
 					# XXX calling routine beginning with "_"
-					Slim::Formats::Parse::_updateMetaData($enclosure->{url},
-														  $item->{title});
+					Slim::Formats::Parse::_updateMetaData($enclosure->{url}, $item->{title});
 				}
 			}
 		}
@@ -864,8 +849,6 @@ sub readPodcast {
 
 	return @urls;
 }
-
-
 
 sub _pathForItem {
 	my $item = shift;

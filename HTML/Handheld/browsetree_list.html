@@ -1,0 +1,30 @@
+[% oddC = '#ffffff' %]
+[% evenC = '#d0d0d0' %]
+[% IF odd; SET class = "odd"; ELSE; SET class = "even"; END %]
+<tr [% IF odd %]bgcolor="[% oddC %]"[% ELSE %]bgcolor="[% evenC %]"[% END %]>
+	<td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+		[% IF descend %]
+
+			[% IF itemobj.isPlaylist %]
+
+				<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %]&player=[% player | uri %]">[% text | h>tml %]</a>
+				
+			[% ELSE %]
+
+				<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
+			[% END %]
+
+		[% ELSE %]
+			<a href="[% webroot %]songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% text | html %]</a>
+		[% END %]
+	</td>
+
+	<td width="13">
+		<a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itemobj.url | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+	</td>
+	<td>&nbsp;</td>
+
+	<td width="13">
+		<a href="[% webroot %]status.html?p0=playlist&p1=add&p2=[% itemobj.url | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+	</td>
+</tr>

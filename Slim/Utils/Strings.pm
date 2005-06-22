@@ -233,6 +233,7 @@ sub string {
 	}
 
 	unless ($dontWarn) {
+		Slim::Utils::Misc::bt();
 		Slim::Utils::Misc::msg(
 			"Undefined string: $stringname\nrequested language: $language\nfailsafe language: $failsafe_language\n"
 		);

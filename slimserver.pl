@@ -205,7 +205,6 @@ use Slim::Display::Animation;
 use Slim::Display::Display;
 use Slim::Hardware::VFD;
 use Slim::Buttons::Common;
-use Slim::Buttons::Browse;
 use Slim::Buttons::Home;
 use Slim::Buttons::Power;
 use Slim::Buttons::Search;
@@ -228,6 +227,7 @@ use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::Import;
 use Slim::Music::MusicFolderScan;
+use Slim::Music::PlaylistFolderScan;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
@@ -486,6 +486,7 @@ sub start {
 		Slim::Music::Info::init();
 
 		Slim::Music::MusicFolderScan::init();
+		Slim::Music::PlaylistFolderScan::init();
 
 		Slim::Buttons::Plugins::init();
 
@@ -539,6 +540,9 @@ sub start {
 
 	$::d_server && msg("SlimServer MusicFolderScan init...\n");
 	Slim::Music::MusicFolderScan::init();
+
+	$::d_server && msg("SlimServer PlaylistFolderScan init...\n");
+	Slim::Music::PlaylistFolderScan::init();
 
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Buttons::Plugins::init();
@@ -1120,9 +1124,17 @@ sub cleanup {
 
 	$::d_server && msg("SlimServer cleaning up.\n");
 
-	remove_pid_file();
+	# Make sure to flush anything in the database to disk.
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	if ($ds) {
+		$ds->forceCommit;
+	}
+
 	Slim::Networking::mDNS::stopAdvertise();
 	Slim::Buttons::Plugins::shutdownPlugins();
+
+	remove_pid_file();
 }
 
 sub save_pid_file {

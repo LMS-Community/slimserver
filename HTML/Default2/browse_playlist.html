@@ -2,7 +2,7 @@
 
 <p id="pagetitle">
  <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a> /
- <a class="fakelink" onclick="parent.browseurl('browse.html?dir=__playlists')">[% "SAVED_PLAYLISTS" | string %]</a>
+ <a class="fakelink" onclick="parent.browseurl('browsedb.html?hierarchy=playlist,playlistTrack&level=0')">[% "SAVED_PLAYLISTS" | string %]</a>
  [% pwd_list %]
 </p>
  
@@ -10,7 +10,7 @@
  <p class="listing">
   <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
   [% IF audiodir %]
-   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="browseurl('browse.html')">[% "HERE" | string %]</a>.
+   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="browseurl('browsetree.html')">[% "HERE" | string %]</a>.
   [% END %]
  </p>
 [% END %]
@@ -24,7 +24,7 @@
 [% IF playlistname %]
  <p class="listing" style="margin-top: 5px;">
   [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]<br>
-  <form method="get" action="browse.html">
+  <form method="get" action="edit_playlist.html">
    <input name="newname" value="[% IF current; current; ELSIF newname; newname; ELSE; playlistname; END %]" size=40>
    <input name="submit" type=submit value="[% savebuttonname %]">
    <input type=hidden value="[% player %]" name="player">
@@ -39,7 +39,7 @@
  <p class="listing" style="margin-bottom: 5px;">
   <!--<a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?dir=[% dir | html %]&quot;)">[% "EDIT_PLAYLIST"
    | string %]</a><br> playlist editing, not complete yet - the html files are there but they don't work right yet -->
-  <a class="fakelink" onclick="parent.browseurl(&quot;browse.html?dir=[% dir | uri %]&amp;delete=1&quot;)">[%
+  <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
    "DELETE_THIS_PLAYLIST" | string %]</a><br>
  </p>
 [% END %]

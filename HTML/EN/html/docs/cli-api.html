@@ -1011,12 +1011,12 @@ preferences values.</p>
 		<td><b>Description</b></td>
 	</tr>
 	<tr>
-		<td>dir</td>
-		<td>Virtual playlist directory, as returned below (dig down).</td>
+		<td>id</td>
+		<td>Id of a playlist, as returned below (dig down).</td>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search substring. The search is case insensitive and performed on the item name (song title, directory name or playlist name).</td>
+		<td>Search substring. The search is case insensitive and performed on the item name (song title or playlist name).</td>
 	</tr>
 	<tr>
 		<td>tags</td>
@@ -1047,16 +1047,16 @@ preferences values.</p>
 		<td>Item index, zero-based. Item delimiter.</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<em>If item is path:</em></td>
+		<td>&nbsp;&nbsp;<em>If item is a playlist:</em></td>
 		<td></td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;item</td>
-		<td>Name of the playlist or directory</td>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;title</td>
+		<td>Name of the playlist</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;dir</td>
-		<td>Virtual playlist directory to dig down into playlist or directory</td>
+		<td>&nbsp;&nbsp;&nbsp;&nbsp;id</td>
+		<td>Id of playlist to dig down</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;<em>If item is song:</em></td>
@@ -1070,10 +1070,10 @@ preferences values.</p>
 <p>Example:</p>
 <blockquote> 
   <p> Request: &quot;playlists 0 2&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlists 0 2 count:2 index:0 item:ShoutcastBrowser%20Recently%20Played 
-  	 dir:__playlists/ShoutcastBrowser_Recently_Played index:1 item:SUPER dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;playlists 0 2 dir:__playlists/SUPER.m3u&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlists 0 2 dir:__playlists/SUPER.m3u count:3 id:1 
+  	 Response: &quot;playlists 0 2 count:2 index:0 title:Funky%20Beats
+  	 id:57 index:1 title:SUPER id:213&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;playlists 0 2 id:213&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlists 0 2 id:213 count:3 id:1 
   	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard 
   	 album:Anastacia duration:257.488975 disc:1 track:2 year:2004 
   	 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 

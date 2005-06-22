@@ -10,13 +10,11 @@
 		</td>
 	
 		<td align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?command=playlist&subcommand=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a></nobr> [% END %]
-			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a></nobr> [% END %]
+			<nobr><a href="status_header.html?command=playlist&subcommand=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a></nobr>
 		</td>
 	
 		<td  align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?command=playlist&subcommand=addtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a></nobr> [% END %]	
-			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a></nobr> [% END %]
+			<nobr><a href="status_header.html?command=playlist&subcommand=addtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a></nobr>
 		</td>
 	</table></td></tr>
 </table></div>

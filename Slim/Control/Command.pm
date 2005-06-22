@@ -451,112 +451,77 @@ sub execute {
  	} elsif ($p0 eq "playlists") {
 
  		$pushParams = 0;
+
+ 		my %params   = parseParams($parrayref, \@returnArray);
  	
- 		my $tags = "gald";
- 		my $dir = "__playlists";
- 		my $search = "*";
- 		
- 		my %params = parseParams($parrayref, \@returnArray);
- 		
- 		$search = $params{'search'} if defined($params{'search'});
- 		$tags = $params{'tags'} if defined($params{'tags'});
- 		$dir = $params{'dir'} if defined($params{'dir'});
- 		
- 		my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
- 		my $badconfig = 0;
- 		my $dirscan = 1;
- 		
- 		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Info::playlists()) {
- 			# No valid playlists directory!
- 			$badconfig = 1;
- 		}
- 		
- 		if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {	
- 			# check if we're just showing external playlists
- 			if (Slim::Music::Info::playlists()) {
- 				$dirscan = 0;
- 			} else {
- 				# The selected playlist $fulldir isn't good!
- 				$badconfig = 1;
- 			}
- 		}
+ 		my $tags     = $params{'tags'}   || 'gald';
+		my $search   = $params{'search'} || '*';
+		my $playlist = $params{'id'};
+		my $iterator;
 
 		if (Slim::Utils::Misc::stillScanning()) {
 			push @returnArray, "rescan:1";
 		}
- 		
- 		if ($badconfig) {
 
- 			push @returnArray, "count:0";
+		# Pull a specific playlist if requested.
+		if ($playlist) {
 
- 		} else {
+			my $obj = $ds->objectForId('track', $playlist);
 
- 			# Get all playlist items
- 			my  $items = [];
- 					
- 			if ($dirscan) {
- 				Slim::Utils::Scan::addToList($items, $fulldir, 0, undef, undef);
- 			}
- 
- 			if ($dir eq '__playlists' && Slim::Music::Info::playlists()) {
- 				push @$items, @{Slim::Music::Info::playlists()};
- 			}
- 			
- 			my $numitems = scalar @{$items};
- 			
- 			# Perform search if necessary
- 			if ($numitems && $search ne "*") {
+			if ($obj) {
+				$iterator = $obj->tracks;
+			}
 
- 				my $search_pats = Slim::Music::Info::filterPats(Slim::Web::Pages::searchStringSplit($search));
- 				
- 				my @found = ();
- 				ITEM: for my $eachitem (@{$items}) {
+		} else {
 
- 					my $text = Slim::Music::Info::standardTitle(undef, $eachitem);
+			# Should this get internal and external playlists?
+			$iterator = $ds->getInternalPlaylists;
+		}
 
- 					for my $pat (@{$search_pats}) {
+		if (defined $iterator) {
 
- 						if ($text !~ $pat) {
- 							::idleStreams();
- 							next ITEM;
- 						}
- 					}
+			my $numitems = $iterator->count;
+			
+			# Perform search if necessary
+			push @returnArray, "count:" . $numitems;
+			
+			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
+			my $cur = $start;
 
- 					push @found, $eachitem;
- 				}
- 				
- 				my $foundqty = scalar(@found);
- 				@$items = @found;
- 			}
- 			
- 			push @returnArray, "count:" . $numitems;
- 			
- 			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
- 			my $cur = $start ;
- 
- 			if ($valid) {
+			if ($valid) {
 
- 				for my $eachitem (@{$items}[$start..$end]) {
- 					::idleStreams();
- 					
- 					next if $eachitem =~ /__current.m3u$/;
- 					
-					push @returnArray, "index:" . ($cur);
+				# Normalize any search parameters
+				if ($search ne '*') {
+					$search = Slim::Utils::Text::ignoreCaseArticles($search);
+				}
 
- 					if (Slim::Music::Info::isList($eachitem)) {
+				for my $eachitem ($iterator->slice($start, $end)) {
 
- 						push @returnArray, "item:" . Slim::Music::Info::standardTitle(undef, $eachitem);
- 						push @returnArray, "dir:"  . Slim::Utils::Misc::descendVirtual($dir, $eachitem, $cur);
+					# Search and didn't match? Skip it.
+					if ($search ne '*' && $eachitem->titlesort !~ /$search/) {
+						next;
+					}
+					
+					push @returnArray, "index:$cur";
 
- 					} elsif (Slim::Music::Info::isSong($eachitem)) {
+					if (Slim::Music::Info::isList($eachitem)) {
 
- 						push @returnArray, pushSong($eachitem, $tags);
- 					}
- 	
- 					$cur++;
- 				}
- 			}
- 		}
+						push @returnArray, "title:" . Slim::Music::Info::standardTitle(undef, $eachitem);
+						push @returnArray, "id:"  . $eachitem->id;
+
+					} elsif (Slim::Music::Info::isSong($eachitem)) {
+
+						push @returnArray, pushSong($eachitem, $tags);
+					}
+
+					$cur++;
+				}
+			}
+
+		} else {
+
+			push @returnArray, "count:0";
+		}
 
  		$client = undef;
  
@@ -1076,25 +1041,25 @@ sub execute {
 					
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
-				
-				unless ($p2 =~ /listref/) {	
-					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
-				} else {
+
+				if ($p2 =~ /listref/i) {
 					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));
+				} else {
+					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($client, $p2));
 				}
 					
 				Slim::Player::Playlist::reshuffle($client,1);
 				Slim::Player::Source::jumpto($client, 0);
 
+				$client->currentPlaylistModified(0);
 				$client->currentPlaylistChangeTime(time());
-				$client->currentPlaylist(undef);
 			
 			} elsif ($p1 eq "addtracks") {
-					
-				unless ($p2 =~ /listref/) {	
-					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($p2));
-				} else {
+
+				if ($p2 =~ /listref/i) {
 					push(@{Slim::Player::Playlist::playList($client)}, parseListRef($client,$p2,$p3));
+				} else {
+					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($client, $p2));
 				}
 
 				Slim::Player::Playlist::reshuffle($client);
@@ -1103,7 +1068,7 @@ sub execute {
 			
 			} elsif ($p1 eq "inserttracks") {
 					
-				my @songs = $p2 =~ /listref/ ? parseListRef($client,$p2,$p3) : parseSearchTerms($p2);
+				my @songs = $p2 =~ /listref/i ? parseListRef($client,$p2,$p3) : parseSearchTerms($client, $p2);
 				my $size  = scalar(@songs);
 
 				my $playListSize = Slim::Player::Playlist::count($client);
@@ -1117,41 +1082,40 @@ sub execute {
 			
 			} elsif ($p1 eq "deletetracks") {
 
-				my @listToRemove = $p2 =~ /listref/ ? parseListRef($client,$p2,$p3) : parseSearchTerms($p2);
+				my @listToRemove = $p2 =~ /listref/i ? parseListRef($client,$p2,$p3) : parseSearchTerms($client, $p2);
  
 				Slim::Player::Playlist::removeMultipleTracks($client, \@listToRemove);
 				$client->currentPlaylistModified(1);
 				$client->currentPlaylistChangeTime(time());
-			
-			} elsif ($p1 eq "save") {
-					
-				if (Slim::Utils::Prefs::get('playlistdir')) {
 
-					# just use the filename to avoid nasties
-					my $savename = basename($p2);
-					# save the current playlist position as a comment at the head of the list
-					my $annotatedlistRef;
-					
-					if (Slim::Utils::Prefs::get('saveShuffled')) {
-					
-						for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
-							push (@$annotatedlistRef,@{Slim::Player::Playlist::playList($client)}[$shuffleitem]);
-						}
-					
-					} else {
-						$annotatedlistRef = Slim::Player::Playlist::playList($client);
+			} elsif ($p1 eq "save") {
+
+				my $title = $p2;
+
+				my $playlistObj = $ds->updateOrCreate({
+					'url'        => "playlist://$title",
+					'attributes' => {
+						'TITLE' => $title,
+						'CT'    => 'ssp',
+					},
+				});
+
+				my $annotatedList;
+
+				if (Slim::Utils::Prefs::get('saveShuffled')) {
+				
+					for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
+						push (@$annotatedList, @{Slim::Player::Playlist::playList($client)}[$shuffleitem]);
 					}
-					
-					Slim::Formats::Parse::writeM3U( 
-						$annotatedlistRef,
-						undef,
-						catfile(Slim::Utils::Prefs::get('playlistdir'),
-						$savename . ".m3u"),
-						1,
-						Slim::Player::Source::playingSongIndex($client),
-					);
+				
+				} else {
+
+					$annotatedList = Slim::Player::Playlist::playList($client);
 				}
-			
+
+				$playlistObj->setTracks($annotatedList);
+				$playlistObj->update();
+
 			} elsif ($p1 eq "deletealbum") {
 
 				Slim::Player::Playlist::removeMultipleTracks($client, $results);
@@ -1796,14 +1760,18 @@ sub insert_done {
 			push @{$client->shufflelist}, @reshuffled;
 		}
 	} else {
+
 		if (Slim::Player::Playlist::count($client) != $size) {
 			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);
 		}
+
 		Slim::Player::Playlist::reshuffle($client);
 	}
 
 	Slim::Player::Playlist::refreshPlaylist($client);
+
 	$callbackf && (&$callbackf(@$callbackargs));
+
 	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
 }
 
@@ -1852,9 +1820,9 @@ sub mute {
 	$client->mute();
 }
 
-
 sub parseSearchTerms {
-	my $terms = shift;
+	my $client = shift;
+	my $terms  = shift;
 
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my %find   = ();
@@ -1876,7 +1844,26 @@ sub parseSearchTerms {
 	# default to a sort
 	$sort ||= exists $find{'album'} ? 'tracknum' : 'track';
 
-	return @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
+	# Treat playlists specially - they are containers.
+	if ($find{'playlist'}) {
+
+		my $obj = $ds->objectForId('track', $find{'playlist'});
+
+		if ($obj) {
+
+			# Side effect - (this would never fly in Haskell! :)
+			# We want to add the playlist name to the client object.
+			$client->currentPlaylist($obj);
+
+			return $obj->tracks;
+		}
+
+		return ();
+
+	} else {
+
+		return @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
+	}
 }
 
 sub parseListRef {
@@ -1884,11 +1871,12 @@ sub parseListRef {
 	my $term    = shift;
 	my $listRef = shift;
 
-	if ($term =~ /listref=(.+?)&/) {
+	if ($term =~ /listref=(\w+)&?/i) {
 		$listRef = $client->param($1);
 	}
 
 	if (defined $listRef && ref $listRef eq "ARRAY") {
+
 		return @$listRef;
 	}
 }
@@ -1935,17 +1923,17 @@ sub pushSong {
 
 	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
-	my @returnArray;
 	
-	if (!defined $track){
+	if (!defined $track) {
 		msg("Slim::Control::Command::pushSong called on undefined track!\n");
 		return;
 	}
 
-	
-	push @returnArray, sprintf('id:%s', $track->id());	
-	push @returnArray, sprintf('title:%s', $track->title());
-	
+	my @returnArray = (
+		sprintf('id:%s', $track->id()),
+		sprintf('title:%s', $track->title()),
+	);
+
 	for my $tag (split //, $tags) {
 
 		if (my $method = $cliTrackMap{$tag}) {

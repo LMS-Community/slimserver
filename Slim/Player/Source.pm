@@ -50,10 +50,11 @@ our %binaries = ();
 # the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
 # built-in protocols are exist in the hash, but have a zero value
 our %protocolHandlers = ( 
-	http => qw(Slim::Player::Protocols::HTTP),
-	icy => qw(Slim::Player::Protocols::HTTP),
-	mms => qw(Slim::Player::Protocols::MMS),
-	file => '0'
+	http     => qw(Slim::Player::Protocols::HTTP),
+	icy      => qw(Slim::Player::Protocols::HTTP),
+	mms      => qw(Slim::Player::Protocols::MMS),
+	file     => 0,
+	playlist => 0,
 );
 
 sub systell {

@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::DirlistTrack;
 
-# $Id: DirlistTrack.pm,v 1.1 2004/12/17 20:33:03 dsully Exp $
+# $Id$
 #
 # Directory to track mapping class
 
@@ -14,8 +14,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->columns(Essential => qw/id position dirlist item/);
 
 	$class->has_a(dirlist => 'Slim::DataStores::DBI::Track');
+	$class->has_a(item => 'Slim::DataStores::DBI::LightWeightTrack');
 
 	$class->add_constructor('tracksOf' => 'dirlist = ? ORDER BY position');
+
+	$class->set_sql('deleteDirItems' => 'DELETE FROM __TABLE__ WHERE dirlist = ?');
 }
 
 1;

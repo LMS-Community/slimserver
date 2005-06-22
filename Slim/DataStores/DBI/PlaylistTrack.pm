@@ -1,6 +1,6 @@
 package Slim::DataStores::DBI::PlaylistTrack;
 
-# $Id: PlaylistTrack.pm,v 1.1 2004/12/17 20:33:04 dsully Exp $
+# $Id$
 #
 # Playlist to track mapping class
 
@@ -14,9 +14,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->columns(Essential => qw/id position playlist track/);
 
 	$class->has_a(playlist => 'Slim::DataStores::DBI::Track');
-	$class->has_a(track => 'Slim::DataStores::DBI::Track');
+	$class->has_a(track => 'Slim::DataStores::DBI::LightWeightTrack');
 
 	$class->add_constructor('tracksOf' => 'playlist = ? ORDER BY position');
+
+	$class->set_sql('deletePlaylist' => 'DELETE FROM __TABLE__ WHERE playlist = ?');
 }
 
 1;

@@ -49,7 +49,7 @@ my %display_cache = ();
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 our %currentTitleCallbacks = ();
 
-my ($currentDB, $localDB, $ncElemstring, $ncElems, $elemstring, $elems);
+my ($currentDB, $localDB, $ncElemstring, $ncElems, $elemstring, $elems, $validTypeRegex);
 
 # Save our stats.
 tie our %isFile, 'Tie::Cache::LRU', 16;
@@ -144,6 +144,9 @@ sub init {
 	$elems = qr/$elemstring/;
 
 	loadTypesConfig();
+
+	# precompute the valid extensions
+	validTypeExtensions();
 
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
 	
@@ -271,22 +274,18 @@ sub total_time {
 	return $currentDB->totalTime();
 }
 
+sub playlistForClient {
+	my $client = shift;
+
+	return $currentDB->getPlaylistForClient($client);
+}
+
 sub clearPlaylists {
 	return $currentDB->clearExternalPlaylists(shift) if defined($currentDB);
 }
 
 sub playlists {
-	return $currentDB->getExternalPlaylists();
-}
-
-sub addPlaylist {
-	my $url = shift;
-
-	$currentDB->addExternalPlaylist($url);
-}
-
-sub generatePlaylists {
-	$currentDB->generateExternalPlaylists();
+	return ($currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists);
 }
 
 sub cacheItem {
@@ -333,7 +332,7 @@ sub updateCacheEntry {
 
 	if ($list) {
 		my @tracks = map { $currentDB->objectForUrl($_, 1, 0); } @$list;
-		$song->setTracks(@tracks);
+		$song->setTracks(\@tracks);
 	}
 }
 
@@ -991,26 +990,15 @@ sub cachedPlaylist {
 	return undef;
 }
 
-sub cachePlaylist {
-	my $url = shift;
-	my $list = shift;
-	my $age = shift;
+sub cacheDirectory {
+	my ($url, $list, $age) = @_;
 
-	my $song = $currentDB->objectForUrl($url, 1, 1);
+	my $obj = $currentDB->objectForUrl($url, 1, 1) || return;
 
-	if (scalar(@$list) && isURL($list->[0])) {
+	$obj->setDirItems($list);
+	$obj->timestamp( ($age || time) );
 
-		$song->setTracks(map { $currentDB->objectForUrl($_, 1); } @$list);
-
-	} else {
-
-		$song->setDirItems(@$list);
-	}
-
-	$age = time() unless defined $age;
-
-	$song->timestamp($age);
-	$currentDB->updateTrack($song);
+	$currentDB->updateTrack($obj);
 	
 	$::d_info && Slim::Utils::Misc::msg("cached an " . (scalar @$list) . " item playlist for $url\n");
 }
@@ -1766,6 +1754,35 @@ sub isContainer {
 	}
 
 	return 0;
+}
+
+sub validTypeExtensions {
+
+	# Try and use the pre-computed version
+	if ($validTypeRegex) {
+		return $validTypeRegex;
+	}
+
+	my @extensions = ();
+
+	while (my ($ext, $type) = each %slimTypes) {
+
+		next unless $type;
+		next unless $type =~ /(?:list|audio)/;
+
+		while (my ($suffix, $value) = each %suffixes) {
+
+			if ($ext eq $value && $suffix !~ /playlist:/) {
+				push @extensions, $suffix;
+			}
+		}
+	}
+
+	my $regex = join('|', @extensions);
+
+	$validTypeRegex = qr/\.(?:$regex)$/;
+
+	return $validTypeRegex;
 }
 
 sub mimeType {

@@ -62,15 +62,24 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 
-			
+				if (defined $findCriteria->{'playlist'}) {
+
+					my $obj = $ds->objectForId('track', $findCriteria->{'playlist'}) || return [];
+
+					return [ $obj->tracks() ];
+				}
+
 				if (defined $findCriteria->{'album'}) {
+
 					# Don't filter by genre - it's unneccesary and
 					# creates a intensive query. We're already at
 					# the track level for an album. Same goes for artist.
 					delete $findCriteria->{'genre'};
 					delete $findCriteria->{'artist'};
 					delete $findCriteria->{'contributor_track.role'};
+
 				} elsif (defined($findCriteria->{'artist'})) {
+
 					# Don't filter by genre - it's unneccesary and
 					# creates a intensive query. We're already at
 					# the track level for an artist.
@@ -221,6 +230,7 @@ sub init {
 				my $findCriteria = shift;
 
 				if (defined $findCriteria->{'artist'}) {
+
 					# Don't filter by genre - it's unneccesary and
 					# creates a intensive query. We're already at
 					# the album level for an artist
@@ -492,6 +502,69 @@ sub init {
 		'alphaPageBar' => 0
 	};
 
+	$fieldInfo{'playlist'} = {
+		'title' => 'SAVED_PLAYLISTS',
+
+		'idToName'           => $fieldInfo{'track'}->{'idToName'},
+		'resultToId'         => $fieldInfo{'track'}->{'resultToId'},
+		'resultToName'       => $fieldInfo{'track'}->{'resultToName'},
+		'resultToSortedName' => $fieldInfo{'track'}->{'resultToSortedName'},
+		'listItem'           => $fieldInfo{'track'}->{'listItem'},
+		'search'             => $fieldInfo{'track'}->{'search'},
+
+		'find' => sub {
+			my ($ds, $level, $findCriteria) = @_;
+
+			return [ $ds->getInternalPlaylists, $ds->getExternalPlaylists ];
+		},
+
+		'ignoreArticles' => 0,
+		'alphaPageBar' => 0,
+		'suppressAll' => 1,
+	};
+
+	$fieldInfo{'playlistTrack'} = {
+		'title' => 'SAVED_PLAYLISTS',
+
+		'idToName'           => $fieldInfo{'track'}->{'idToName'},
+		'resultToId'         => $fieldInfo{'track'}->{'resultToId'},
+		'resultToName'       => $fieldInfo{'track'}->{'resultToName'},
+		'resultToSortedName' => $fieldInfo{'track'}->{'resultToSortedName'},
+		'search'             => $fieldInfo{'track'}->{'search'},
+
+		'find' => sub {
+			my ($ds, $level, $findCriteria) = @_;
+
+			if (defined $findCriteria->{'playlist'}) {
+
+				my $obj = $ds->objectForId('track', $findCriteria->{'playlist'}) || return [];
+
+				return [ $obj->tracks() ];
+			}
+
+			return [];
+		},
+
+		'listItem' => sub {
+			my ($ds, $form, $item) = @_;
+
+			&{$fieldInfo{'track'}->{'listItem'}}($ds, $form, $item);
+
+			# Don't use the caller's attributes - those will be
+			# referring to playlist,playlistTrack, which isn't
+			# what we want. Everything else is the same as 'track' though'
+			$form->{'attributes'} = sprintf('&track=%d', $item->id);
+		},
+
+		'browseBodyTemplate' => 'browse_playlist.html',
+		#'browsePwdTemplate'  => 
+		#'browseListTemplate' => 
+
+		'ignoreArticles' => 0,
+		'alphaPageBar' => 0,
+		'suppressAll' => 1,
+	};
+
 	addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
@@ -556,14 +629,15 @@ sub home {
 	}
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => "browse.html?dir="});
+		#addLinks("browse",{'BROWSE_MUSIC_FOLDER' => "browse.html?dir="});
+		addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html?level=0"});
 	} else {
 		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 		$params->{'nofolder'}=1;
 	}
 	
 	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::Import::countImporters()) {
-		addLinks("browse",{'SAVED_PLAYLISTS' => "browse.html?dir=__playlists"});
+		addLinks("browse",{'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
 	} else {
 		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
 	}
@@ -649,418 +723,6 @@ sub addLibraryStats {
 
 		$params->{'genre_count'}  = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
 	}
-}
-
-sub browser {
-	my ($client, $params, $callback, $httpClient, $response) = @_;
-
-	my $dir = defined($params->{'dir'}) ? $params->{'dir'} : "";
-
-	my ($item, $itempath, $playlist, $current_player);
-	my  $items = [];
-
-	my $fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
-
-	$::d_http && msg("browse virtual path: " . $dir . "\n");
-	$::d_http && msg("with absolute path: " . $fulldir . "\n");
-
-	if (defined($client)) {
-		$current_player = $client->id();
-	}
-
-	if ($dir =~ /^__playlists/) {
-
-		$playlist = 1;
-		$params->{'playlist'} = 1;
-
-		if (!Slim::Utils::Prefs::get("playlistdir") && !Slim::Music::Import::countImporters()) {
-			$::d_http && msg("no valid playlists directory!!\n");
-			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
-		}
-
-		if ($dir =~ /__current.m3u$/) {
-
-			# write out the current playlist to a file with the special name __current
-			if (defined($client)) {
-
-				my $count = Slim::Player::Playlist::count($client);
-
-				$::d_http && msg("Saving playlist of $count items to $fulldir\n");
-
-				$client->execute(['playlist', 'save', '__current']) if $count;
-
-			} else {
-				$::d_http && msg("no client, so we can't save a file!!\n");
-				return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
-			}
-		}
-
-	} else {
-
-		if (!Slim::Utils::Prefs::get("audiodir")) {
-			$::d_http && msg("no audiodir, so we can't save a file!!\n");
-			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
-		}
-	}
-
-	if (!$fulldir || !Slim::Music::Info::isList($fulldir)) {
-
-		# check if we're just showing external playlists
-		if (Slim::Music::Import::countImporters()) {
-			browser_addtolist_done($current_player, $callback, $httpClient, $params, [], $response);
-			return undef;
-		} else {
-			$::d_http && msg("the selected playlist $fulldir isn't good!!.\n");
-			return Slim::Web::HTTP::filltemplatefile("badpath.html", $params);
-		}
-	}
-
-	my $suffix = Slim::Formats::Parse::getPlaylistSuffix($fulldir);
-
-	# if they are renaming the playlist, let 'em.
-	if ($playlist && $params->{'newname'}) {
-
-		my $newname = $params->{'newname'};
-
-		# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
-		$newname =~ tr|.:\x00-\x1f\/\\| |s;
-
-		if (defined($suffix)) {
-			$newname .= $suffix;
-		};
-		
-		if ($newname) {
-
-			my @newpath = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
-			pop @newpath;
-
-			my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
-
-			push @newpath, $newname;
-
-			my $newfullname = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
-
-			$::d_http && msg("renaming $fulldir to $newfullname\n");
-
-			if ($newfullname ne $fulldir && (!-e Slim::Utils::Misc::pathFromFileURL($newfullname) || defined $params->{'overwrite'}) && rename(Slim::Utils::Misc::pathFromFileURL($fulldir), Slim::Utils::Misc::pathFromFileURL($newfullname))) {
-
-				Slim::Music::Info::clearCache($container);
-				Slim::Music::Info::clearCache($fulldir);
-
-				$fulldir = $newfullname;
-
-				$dir = Slim::Utils::Misc::descendVirtual(Slim::Utils::Misc::ascendVirtual($dir), $newname);
-
-				$params->{'dir'} = $dir;
-				$::d_http && msg("new dir value: $dir\n");
-
-			} else {
-
-				$::d_http && msg("Rename failed!\n");
-				$params->{'RENAME_WARNING'} = 1;
-			}
-		}
-
-	} elsif ($playlist && $params->{'delete'} ) {
-
-		my $path = Slim::Utils::Misc::pathFromFileURL($fulldir);
-		
-		if ($path && -f $path && unlink $path) {
-
-			$::d_http && msg("deleted playlist: $path\n");
-
-			my @newpath  = splitdir(Slim::Utils::Misc::pathFromFileURL($fulldir));
-			pop @newpath;
-	
-			my $container = Slim::Utils::Misc::fileURLFromPath(catdir(@newpath));
-	
-			Slim::Music::Info::clearCache($container);
-			Slim::Music::Info::clearCache($fulldir);
-	
-			$dir = Slim::Utils::Misc::ascendVirtual($dir);
-			$params->{'dir'} = $dir;
-			$fulldir = Slim::Utils::Misc::virtualToAbsolute($dir);
-			$suffix = Slim::Formats::Parse::getPlaylistSuffix($fulldir);
-
-		} else {
-
-			$::d_http && msg("couldn't delete playlist: $path\n");
-		}
-	}
-
-	#
-	# Make separate links for each component of the pwd
-	#
-	my %list_form = %$params;
-	
-	$list_form{'player'}        = $current_player;
-	$list_form{'myClientState'} = $client;
-	$list_form{'skinOverride'}  = $params->{'skinOverride'};
-	$params->{'pwd_list'} = " ";
-
-	my $lastpath;
-	my $aggregate = $playlist ? "__playlists" : "";
-
-	for my $c (splitdir($dir)) {
-
-		if ($c ne "" && $c ne "__playlists" && $c ne "__current.m3u") {
-
-			# incrementally build the path for each link
-			$aggregate = (defined($aggregate) && $aggregate ne '') ? catdir($aggregate, $c) : $c;
-
-			$list_form{'dir'} = Slim::Web::HTTP::escape($aggregate);
-			
-			$list_form{'shortdir'} = Slim::Music::Info::standardTitle(undef, Slim::Utils::Misc::virtualToAbsolute($aggregate));
-
-			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_pwdlist.html", \%list_form)};
-		}
-
-		$lastpath = $c if $c;
-	}
-
-	if (defined($suffix)) {
-
-		$::d_http && msg("lastpath equals $lastpath\n");
-
-		if ($lastpath eq "__current.m3u") {
-			$params->{'playlistname'}   = string("UNTITLED");
-			$params->{'savebuttonname'} = string("SAVE");
-		} else {
-
-			$lastpath =~ s/(.*)\.(.*)$/$1/;
-			$params->{'playlistname'}   = $lastpath;
-			$params->{'savebuttonname'} = string("RENAME");
-			$params->{'titled'} = 1;
-		}
-	}
-
-	my $fixedpath = Slim::Utils::Misc::fixPath($fulldir);
-
-	# Scan the directories - don't recurse
-	Slim::Utils::Scan::addToList(
-		$items, $fulldir, 0, undef,  
-		\&browser_addtolist_done, $current_player, $callback, 
-		$httpClient, $params, $items, $response
-	);
-
-	# when this finishes, it calls the next function, browser_addtolist_done:
-	#
-	# return undef means we'll take care of sending the output to the
-	# client (special case because we're going into the background)
-	return undef;
-}
-
-sub browser_addtolist_done {
-	my ($current_player, $callback, $httpClient, $params, $itemsref, $response) = @_;
-
-	if (defined $params->{'dir'} && $params->{'dir'} eq '__playlists' && (Slim::Music::Import::countImporters())) {
-
-		$::d_http && msg("just showing imported playlists\n");
-
-		my $importedPlaylists = Slim::Music::Info::playlists();
-		if (scalar(@$importedPlaylists)) {
-			push @$itemsref, @$importedPlaylists;
-			# Re-sort with imported playlists
-			@$itemsref = Slim::Music::Info::sortByTitles(@$itemsref);
-		}
-
-		if (Slim::Music::Import::stillScanning()) {
-			$params->{'warn'} = 1;
-		}
-	}
-	
-	my $numitems = scalar @{$itemsref};
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	
-	$::d_http && msg("browser_addtolist_done with $numitems items (". scalar @{ $itemsref } . " " . $params->{'dir'} . ")\n");
-
-	$params->{'browse_list'} = " ";
-
-	if ($numitems) {
-
-		my ($start, $end, $cover, $thumb, $lastAnchor) = '';
-
-		my $otherparams = '&';
-		
-		$otherparams .= 'dir=' . Slim::Web::HTTP::escape($params->{'dir'}) . '&' if ($params->{'dir'});
-		$otherparams .= 'player=' . Slim::Web::HTTP::escape($current_player) . '&' if ($current_player);
-
-		if (defined $params->{'nopagebar'}) {
-
-			($start, $end) = simpleHeader(
-				$numitems,
-				 \$params->{'start'},
-				\$params->{'browselist_header'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-				0,
-			);
-		} elsif (defined $params->{'dir'} && 
-				 $params->{'dir'} =~ '__playlists') {
-			# Numeric page bar for playlists, since they shouldn't
-			# be sorted.
-			($start, $end) = pageBar(
-				$numitems,
-				$params->{'path'},
-				0,
-				$otherparams,
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				\$params->{'browselist_pagebar'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-			);
-		} else {
-
-			my $alphaItems = [ map { Slim::Utils::Text::ignoreArticles(Slim::Utils::Text::ignorePunct(Slim::Utils::Text::matchCase(Slim::Music::Info::fileName($_)))) } @{$itemsref} ];
-
-			($start, $end) = alphaPageBar(
-				$alphaItems,
-				$params->{'path'},
-				$otherparams,
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-			);
-		}
-
-		my $itemnumber = $start;
-		my $offset     = $start % 2 ? 0 : 1;
-		my $filesort   = Slim::Utils::Prefs::get('filesort') && 
-			(!$params->{'dir'} || $params->{'dir'} !~ /^__playlists/);
-
-		# don't look up cover art info if we're browsing a playlist or
-		# the top level directory
-		if (!$params->{'dir'} || 
-			$params->{'dir'} =~ /^__playlists/ || 
-			$params->{'dir'} eq '') {
-			
-			$thumb = 1;
-			$cover = 1;
-
-		} else {
-
-			if (scalar(@{$itemsref}) > 1) {
-
-				my %list_form = %$params;
-
-				$list_form{'title'}        = string('ALL_SUBFOLDERS');
-				$list_form{'nobrowse'}     = 1;
-				$list_form{'itempath'}     = Slim::Utils::Misc::virtualToAbsolute($params->{'dir'});
-				$list_form{'player'}       = $current_player;
-				$list_form{'descend'}      = 1;
-				$list_form{'odd'}	   = 0;
-				$list_form{'skinOverride'} = $params->{'skinOverride'};
-
-				$itemnumber++;
-				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browse_list.html", \%list_form)};
-			}
-		}
-
-		my $noArtist = Slim::Utils::Strings::string('NO_ARTIST');
-		my $noAlbum  = Slim::Utils::Strings::string('NO_ALBUM');
-		my $osName   = Slim::Utils::OSDetect::OS();
-	
-		for my $item (@{$itemsref}[$start..$end]) {
-			
-			# make sure the players get some time...
-			::idleStreams();
-			
-			# don't display and old unsaved playlist
-			next if $item =~ /__current.m3u$/;
-
-			my %list_form = %$params;
-			
-			# There are different templates for directories and playlist items:
-			my $shortitem = Slim::Utils::Misc::descendVirtual($params->{'dir'}, $item, $itemnumber);
-
-			# Create objects, and read tags if needed.
-			my $obj = $ds->objectForUrl($item, 1, 1, 1) || next;
-			my $id  = $obj->id();
-
-			if (Slim::Music::Info::isList($obj)) {
-
-				$list_form{'descend'} = $shortitem;
-
-			} elsif (Slim::Music::Info::isSong($obj)) {
-
-				$list_form{'descend'} = 0;
-			
-				if (!$filesort) {
-
-					my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
-					my $artist    = ($obj->contributors)[0];
-					my $album     = $obj->album();
-
-					$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-					$list_form{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-
-					$list_form{'artist'} = $list_form{'includeArtist'} && ($artist ne $noArtist ? $artist : undef);
-					$list_form{'album'}  = $list_form{'includeAlbum'}  && ($album  ne $noAlbum  ? $album  : undef);
-
-				}
-
-				if (!defined $cover) {
-
-					if ($obj->coverArt('cover')) {
-						$params->{'coverArt'} = $id;
-						$cover = 1;
-					}
-				}
-
-				if (!defined $thumb) {
-
-					if ($obj->coverArt('thumb')) {
-						$params->{'coverThumb'} = $id;
-						$thumb = 1;
-					}
-				}
-			}
-
-			if ($filesort || Slim::Music::Info::isDir($obj)) {
-				$list_form{'title'}  = Slim::Music::Info::fileName($item);
-			} else {
-				$list_form{'title'}  = Slim::Music::Info::standardTitle(undef, $obj);
-			}
-
-			# Decode the string for proper display - Mac only
-			# though. Everyone else is correct without this.
-			if ($Slim::Utils::Misc::locale eq 'utf8' && $osName eq 'mac') {
-				$list_form{'title'} = Slim::Utils::Misc::utf8decode($list_form{'title'});
-			}
-
-			$list_form{'item'}	= $id;
-			$list_form{'itempath'}	= Slim::Utils::Misc::virtualToAbsolute($item);
-			$list_form{'itemobj'}	= $obj;
-			$list_form{'odd'}	= ($itemnumber + $offset) % 2;
-			$list_form{'player'}	= $current_player;
-
-			my $anchor = anchor(Slim::Utils::Text::getSortName($list_form{'title'}),1);
-
-			if ($lastAnchor && $lastAnchor ne $anchor) {
-				$list_form{'anchor'} = $lastAnchor = $anchor;
-			}
-
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
-
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile(
-				($params->{'playlist'} ? "browse_playlist_list.html" : "browse_list.html"), \%list_form
-			)};
-
-			$itemnumber++;
-		}
-
-	} else {
-
-		$params->{'browse_list'} = ${Slim::Web::HTTP::filltemplatefile(
-			"browse_list_empty.html", {'skinOverride' => $params->{'skinOverride'}}
-		)};
-	}
-
-	my $output = Slim::Web::HTTP::filltemplatefile(($params->{'playlist'} ? "browse_playlist.html" : "browse.html"), $params);
-
-	$callback->($current_player, $params, $output, $httpClient, $response);
 }
 
 # Send the status page (what we're currently playing, contents of the playlist)
@@ -1212,6 +874,7 @@ sub status {
 		} else {
 			$params->{'playlist'} = ${$params->{'playlist'}};
 		}
+
 	} else {
 		# Special case, we need the playlist info even if we don't want
 		# the playlist itself
@@ -1263,7 +926,11 @@ sub playlist {
 	$params->{'skinOverride'} ||= '';
 	
 	my $count = Slim::Utils::Prefs::get('itemsPerPage');
-	$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count) unless (defined($params->{'start'}) && $params->{'start'} ne '');
+
+	unless (defined($params->{'start'}) && $params->{'start'} ne '') {
+
+		$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count);
+	}
 
 	if ($client->currentPlaylist()) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
@@ -1273,13 +940,13 @@ sub playlist {
 
 	if ($::d_playlist && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
-		Slim::Utils::Misc::msg("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()) . "\n");
-		Slim::Utils::Misc::msg("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
-		Slim::Utils::Misc::msg("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1] . "\n");
-		Slim::Utils::Misc::msg("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2] . "\n");
+		msg("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()) . "\n");
+		msg("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
+		msg("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1] . "\n");
+		msg("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2] . "\n");
 
-		Slim::Utils::Misc::msg("skinOverride: $params->{'skinOverride'}\n");
-		Slim::Utils::Misc::msg("start: $params->{'start'}\n");
+		msg("skinOverride: $params->{'skinOverride'}\n");
+		msg("start: $params->{'start'}\n");
 	}
 
 	# Only build if we need to.
@@ -1298,72 +965,160 @@ sub playlist {
 			$params->{'cansave'} = 1;
 		}
 
-		$::d_playlist && Slim::Utils::Misc::msg("Skipping playlist build - not modified.\n");
+		$::d_playlist && msg("Skipping playlist build - not modified.\n");
 
 		$params->{'playlist_header'}  = $client->currentPlaylistRender()->[3];
 		$params->{'playlist_pagebar'} = $client->currentPlaylistRender()->[4];
 		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[5];
 
-	} elsif ($songcount > 0) {
-
-		my %listBuild = ();
-		my $item;
-		my %list_form;
-
-		if (Slim::Utils::Prefs::get("playlistdir")) {
-			$params->{'cansave'} = 1;
-		}
-		
-		my ($start, $end);
-		
-		if (defined $params->{'nopagebar'}) {
-
-			($start, $end) = simpleHeader(
-				$songcount,
-				\$params->{'start'},
-				\$params->{'playlist_header'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-				0
-			);
-
-		} else {
-
-			($start, $end) = pageBar(
-				$songcount,
-				$params->{'path'},
-				Slim::Player::Source::playingSongIndex($client),
-				"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
-				\$params->{'start'}, 
-				\$params->{'playlist_header'},
-				\$params->{'playlist_pagebar'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'}
-			);
-		}
-
-		$listBuild{'start'} = $start;
-		$listBuild{'end'}   = $end;
-
-		$listBuild{'offset'} = $listBuild{'start'} % 2 ? 0 : 1; 
-
-		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
-
-		$listBuild{'includeArtist'} = ($webFormat !~ /ARTIST/);
-		$listBuild{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
-		$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
-		$listBuild{'item'}          = $listBuild{'start'};
-
-		# Without the scheduler may be faster.
-		#buildPlaylist($client, $params, $callback, $httpClient, $response, \%listBuild);
-		Slim::Utils::Scheduler::add_task(
-			\&buildPlaylist, $client, $params, $callback, $httpClient, $response, \%listBuild,
-		);
-
-		return undef;
+		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	}
 
-	return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+	if (!$songcount) {
+		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+	}
+
+	my %listBuild = ();
+	my $item;
+	my %list_form;
+
+	$params->{'cansave'} = 1;
+	
+	my ($start, $end);
+	
+	if (defined $params->{'nopagebar'}) {
+
+		($start, $end) = simpleHeader(
+			$songcount,
+			\$params->{'start'},
+			\$params->{'playlist_header'},
+			$params->{'skinOverride'},
+			$params->{'itemsPerPage'},
+			0
+		);
+
+	} else {
+
+		($start, $end) = pageBar(
+			$songcount,
+			$params->{'path'},
+			Slim::Player::Source::playingSongIndex($client),
+			"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
+			\$params->{'start'}, 
+			\$params->{'playlist_header'},
+			\$params->{'playlist_pagebar'},
+			$params->{'skinOverride'},
+			$params->{'itemsPerPage'}
+		);
+	}
+
+	$listBuild{'start'} = $start;
+	$listBuild{'end'}   = $end;
+
+	$listBuild{'offset'} = $listBuild{'start'} % 2 ? 0 : 1; 
+
+	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+	$listBuild{'includeArtist'} = ($webFormat !~ /ARTIST/);
+	$listBuild{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
+	$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
+	$listBuild{'item'}          = $listBuild{'start'};
+
+	my $itemCount    = 0;
+	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
+	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
+	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
+	my $starttime    = Time::HiRes::time();
+
+	my $ds           = Slim::Music::Info::getCurrentDataStore();
+
+	$params->{'playlist_items'} = '';
+	$params->{'myClientState'}  = $client;
+	$params->{'noArtist'}       = Slim::Utils::Strings::string('NO_ARTIST');
+	$params->{'noAlbum'}        = Slim::Utils::Strings::string('NO_ALBUM');;
+
+	my $needIdleStreams = Slim::Player::Client::needIdleStreams();
+
+	# This is a hot loop.
+	# But it's better done all at once than through the scheduler.
+	while ($listBuild{'item'} < ($listBuild{'end'} + 1) && $itemCount < $itemsPerPage) {
+
+		# These should all be objects - but be safe.
+		my $objOrUrl = Slim::Player::Playlist::song($client, $listBuild{'item'});
+		my $track    = $objOrUrl;
+
+		if (!ref $objOrUrl) {
+
+			$track = $ds->objectForUrl($objOrUrl) || do {
+				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
+				$listBuild{'item'}++;
+				$itemCount++;
+				next;
+			};
+		}
+
+		my %list_form = %$params;
+
+		$list_form{'num'} = $listBuild{'item'};
+		$list_form{'odd'} = ($listBuild{'item'} + $listBuild{'offset'}) % 2;
+
+		if ($listBuild{'item'} == $listBuild{'currsongind'}) {
+			$list_form{'currentsong'} = "current";
+			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef, $track);
+		} else {
+			$list_form{'currentsong'} = undef;
+			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
+		}
+
+		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
+		$list_form{'album'}       = $listBuild{'includeAlbum'}  ? $track->album() : undef;
+
+		$list_form{'item'}     = $track->id();
+		$list_form{'itemobj'}  = $track;
+
+		if ($listBuild{'includeArtist'}) {
+
+			if ($composerIn) {
+				$list_form{'artists'} = $track->contributors();
+			} else {
+				$list_form{'artists'} = $track->artists();
+			}
+		}
+
+		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
+
+		$listBuild{'item'}++;
+		$itemCount++;
+
+		# don't neglect the streams for over 0.25 seconds
+		if ($needIdleStreams && $itemCount > 1 && $itemCount % $itemsPerPass && (Time::HiRes::time() - $starttime) > 0.25) {
+
+			main::idleStreams();
+		}
+	}
+
+	$::d_playlist && msg("End playlist build. $itemCount items\n");
+
+	undef %listBuild;
+
+	# Give some player time after the loop, but before rendering.
+	main::idleStreams();
+
+	if ($client) {
+
+		# Stick the rendered data into the client object as a stopgap
+		# solution to the cpu spike issue.
+		$client->currentPlaylistRender([
+			time(),
+			($params->{'skinOverride'} || ''),
+			($params->{'start'}),
+			$params->{'playlist_header'},
+			$params->{'playlist_pagebar'},
+			$params->{'playlist_items'}
+		]);
+	}
+
+	return Slim::Web::HTTP::filltemplatefile("playlist.html", $params),
 }
 
 sub _addPlayerList {
@@ -1388,122 +1143,6 @@ sub _addPlayerList {
 		}
 
 		$params->{'player_chooser_list'} = options($client->id(), \%clientlist, $params->{'skinOverride'});
-	}
-}
-
-sub buildPlaylist {
-	my ($client, $params, $callback, $httpClient, $response, $listBuild) = @_;
-
-	my $itemCount    = 0;
-	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
-	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
-	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
-	my $starttime    = Time::HiRes::time();
-
-	my $ds           = Slim::Music::Info::getCurrentDataStore();
-
-	my $noArtist     = Slim::Utils::Strings::string('NO_ARTIST');
-	my $noAlbum      = Slim::Utils::Strings::string('NO_ALBUM');
-
-	$params->{'playlist_items'} = '';
-
-	$::d_playlist && Slim::Utils::Misc::msg("Starting playlist build.\n");
-
-	# This is a hot loop.
-	# But it's better done all at once than through the scheduler.
-	while ($listBuild->{'item'} < ($listBuild->{'end'} + 1) && $itemCount < $itemsPerPage) {
-
-		my $song = Slim::Player::Playlist::song($client, $listBuild->{'item'});
-
-		my $track = $ds->objectForUrl($song) || do {
-			Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$song] - skipping!\n");
-			$listBuild->{'item'}++;
-			$itemCount++;
-			next;
-		};
-
-		my %list_form = %$params;
-
-		$list_form{'myClientState'} = $client;
-		$list_form{'num'}           = $listBuild->{'item'};
-		$list_form{'odd'}           = ($listBuild->{'item'} + $listBuild->{'offset'}) % 2;
-
-		#
-		$list_form{'noArtist'}      = $noArtist;
-		$list_form{'noAlbum'}       = $noAlbum;
-
-		if ($listBuild->{'item'} == $listBuild->{'currsongind'}) {
-			$list_form{'currentsong'} = "current";
-			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef, $track->url());
-		} else {
-			$list_form{'currentsong'} = undef;
-			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
-		}
-
-		$list_form{'nextsongind'} = $listBuild->{'currsongind'} + (($listBuild->{'item'} > $listBuild->{'currsongind'}) ? 1 : 0);
-		$list_form{'album'}       = $listBuild->{'includeAlbum'}  ? $track->album() : undef;
-
-		$list_form{'itempath'} = $track->url();
-		$list_form{'item'}     = $track->id();
-		$list_form{'itemobj'}  = $track;
-
-		if ($listBuild->{'includeArtist'}) {
-
-			if ($composerIn) {
-				$list_form{'artists'} = $track->contributors();
-			} else {
-				$list_form{'artists'} = $track->artists();
-			}
-		}
-
-		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
-
-		$listBuild->{'item'}++;
-		$itemCount++;
-
-		# don't neglect the streams for over 0.25 seconds
-		if ($itemCount > 1 && $itemCount % $itemsPerPass && (Time::HiRes::time() - $starttime) > 0.25) {
-			::idleStreams();
-		}
-	}
-
-	$::d_playlist && Slim::Utils::Misc::msg("End playlist build. $itemCount items\n");
-
-	undef %$listBuild;
-
-	if ($client) {
-
-		# Stick the rendered data into the client object as a stopgap
-		# solution to the cpu spike issue.
-		$client->currentPlaylistRender([
-			time(),
-			($params->{'skinOverride'} || ''),
-			($params->{'start'}),
-			$params->{'playlist_header'},
-			$params->{'playlist_pagebar'},
-			$params->{'playlist_items'}
-		]);
-	}
-
-	playlist_done($client, $params, $callback, $httpClient, $response);
-
-	return 0;
-}
-
-sub playlist_done {
-	my ($client, $params, $callback, $httpClient, $response) = @_;
-
-	$params->{'playercount'} = Slim::Player::Client::clientCount();
-
-	if (ref($callback) eq 'CODE') {
-
-		$callback->(
-			$client,
-			$params,
-			Slim::Web::HTTP::filltemplatefile("playlist.html", $params),
-			$httpClient,
-			$response
-		);
 	}
 }
 
@@ -2006,11 +1645,6 @@ sub browsedb {
 	# Just go directly to the params.
 	addLibraryStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
 
-	# warn the user if the scanning isn't complete.
-	if (Slim::Utils::Misc::stillScanning()) {
-		$params->{'warn'} = 1;
-	}
-
 	# This pulls the appropriate anonymous function list out of the
 	# fieldInfo hash, which we then retrieve data from.
 	my $firstLevelInfo = $fieldInfo{$levels[0]} || $fieldInfo{'default'};
@@ -2068,8 +1702,15 @@ sub browsedb {
 				 'level'	=> $i+1,
 				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 			 );
-			
+
 			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+
+			# Send down the attributes down to the template
+			#
+			# These may be overwritten below.
+			# This is useful/needed for the playlist case where we
+			# want access to the containing playlist object.
+			$params->{$attr} = $ds->objectForId($attr, $params->{$attr});
 		}
 	}
 
@@ -2129,6 +1770,8 @@ sub browsedb {
 			);
 		}
 
+		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+
 		$descend = ($level >= $maxLevel) ? undef : 'true';
 
 		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
@@ -2154,7 +1797,9 @@ sub browsedb {
 				$list_form{'level'}	= $descend ? $level+1 : $level;
 			}
 
-			$list_form{'text'} = string($nextLevelInfo->{'allTitle'});
+			if ($nextLevelInfo->{'allTitle'}) {
+				$list_form{'text'} = string($nextLevelInfo->{'allTitle'});
+			}
 
 			$list_form{'descend'}      = 1;
 			$list_form{'player'}       = $player;
@@ -2166,6 +1811,9 @@ sub browsedb {
 				
 			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		}
+
+		# Don't bother with idle streams if we only have SB2 clients
+		my $needIdleStreams = Slim::Player::Client::needIdleStreams();
 
 		for my $item ( @{$items}[$start..$end] ) {
 
@@ -2185,7 +1833,6 @@ sub browsedb {
 			$list_form{'levelName'}	    = $attrName;
 			$list_form{'text'}	    = $itemname;
 			$list_form{'descend'}	    = $descend;
-			$list_form{'player'}	    = $player;
 			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
 			$list_form{$levels[$level]} = $itemid;
 			$list_form{'skinOverride'}  = $params->{'skinOverride'};
@@ -2209,7 +1856,9 @@ sub browsedb {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 			}
 
-			main::idleStreams();
+			if ($needIdleStreams) {
+				main::idleStreams();
+			}
 		}
 
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
@@ -2220,7 +1869,127 @@ sub browsedb {
 		}
 	}
 
+	# Give players a bit of time.
+	main::idleStreams();
+
 	$params->{'descend'} = $descend;
+
+	if (Slim::Music::Import::stillScanning()) {
+		$params->{'warn'} = 1;
+	}
+
+	# override the template for the playlist case.
+	my $template = $levelInfo->{'browseBodyTemplate'} || 'browsedb.html';
+
+	return Slim::Web::HTTP::filltemplatefile($template, $params);
+}
+
+sub browsetree {
+	my ($client, $params) = @_;
+
+	my $hierarchy  = $params->{'hierarchy'} || '';
+	my $player     = $params->{'player'};
+	my $itemsPer   = $params->{'itemsPerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+
+	my $ds         = Slim::Music::Info::getCurrentDataStore();
+	my @levels     = split(/\//, $hierarchy);
+	my $itemnumber = 0;
+
+	# Pull the directory list, which will be used for looping.
+	my ($topLevelObj, $items, $count) = Slim::Music::MusicFolderScan::findAndScanDirectoryTree(\@levels);
+
+	# Page title
+	$params->{'browseby'} = 'MUSIC';
+
+	for (my $i = 0; $i < scalar @levels; $i++) {
+
+		my $obj = $ds->objectForId('track', $levels[$i]);
+
+		my %list_form = (
+			'player'       => $player,
+			'skinOverride' => $params->{'skinOverride'},
+			'title'        => $i == 0 ? string('MUSIC') : $obj->title,
+			'hierarchy'    => join('/', @levels[0..$i]),
+		);
+
+		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_pwdlist.html", \%list_form)};
+	}
+
+	my ($start, $end) = (0, $count);
+
+	# Create a numeric pagebar if we need to.
+	if ($count > $itemsPer) {
+
+		($start, $end) = pageBar(
+			$count,
+			$params->{'path'},
+			0,
+			"hierarchy=$hierarchy",
+			\$params->{'start'},
+			\$params->{'browselist_header'},
+			\$params->{'browselist_pagebar'},
+			$params->{'skinOverride'},
+			$params->{'itemsPerPage'},
+		);
+	}
+
+	# Setup an 'All' button.
+	# I believe this will play only songs, and not playlists.
+	if ($count) {
+		my %list_form = %$params;
+
+		$list_form{'hierarchy'}	    = join('/', @levels);
+		$list_form{'text'}	    = string('ALL_SONGS');
+		$list_form{'itemobj'}	    = $topLevelObj;
+
+		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+	}
+
+	#
+	my $topPath = $topLevelObj->path;
+	my $osName  = Slim::Utils::OSDetect::OS();
+
+	for my $relPath (@$items[$start..$end]) {
+
+		my $url  = Slim::Utils::Misc::fixPath($relPath, $topPath) || next;
+
+		# Amazingly, this just works. :)
+		# Do the cheap compare for osName first - so non-windows users
+		# won't take the penalty for the lookup.
+		if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
+			$url = Slim::Utils::Misc::pathFromWinShortcut($url);
+		}
+
+		my $item = $ds->objectForUrl($url, 1) || next;
+
+		my %list_form = %$params;
+
+		# Decode the string for proper display - Mac only
+		# though. Everyone else is correct without this.
+		if ($Slim::Utils::Misc::locale eq 'utf8' && $osName eq 'mac') {
+			$relPath = Slim::Utils::Misc::utf8decode($relPath);
+		}
+
+		$list_form{'hierarchy'}	    = join('/', @levels, $item->id);
+		$list_form{'text'}	    = $relPath;
+		$list_form{'descend'}	    = Slim::Music::Info::isList($item) ? 1 : 0;
+		$list_form{'odd'}	    = ($itemnumber + 1) % 2;
+		$list_form{'itemobj'}	    = $item;
+
+		$itemnumber++;
+
+		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+
+		if (!$params->{'coverArt'} && $item->coverArt) {
+			$params->{'coverArt'} = $item->id;
+		}
+	}
+
+	$params->{'descend'} = 1;
+	
+	if (Slim::Music::Import::stillScanning()) {
+		$params->{'warn'} = 1;
+	}
 	
 	return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
 }

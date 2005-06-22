@@ -80,10 +80,13 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
 
 	# And some custom sql
+	$class->add_constructor(internalPlaylists => qq{url LIKE 'playlist:%' ORDER BY titlesort});
+
 	$class->add_constructor(externalPlaylists => qq{
 		url LIKE 'itunesplaylist:%' OR
 		url LIKE 'moodlogicplaylist:%' OR
 		url LIKE 'musicmagicplaylist:%'
+		ORDER BY titlesort
 	});
 }
 
@@ -256,6 +259,19 @@ sub bitrate {
 	return 0;
 }
 
+# Wrappers around common functions
+sub isRemoteURL {
+	my $self = shift;
+
+	return Slim::Music::Info::isRemoteURL($self);
+}
+
+sub isPlaylist {
+	my $self = shift;
+
+	return Slim::Music::Info::isPlaylist($self);
+}
+
 # we cache whether we had success reading the cover art.
 sub coverArt {
 	my $self = shift;
@@ -327,48 +343,87 @@ sub coverArt {
 	}
 }
 
+sub path {
+	my $self = shift;
+
+	my $url  = $self->url;
+
+	# Turn playlist special files back into file urls
+	$url =~ s/^playlist:/file:/;
+
+	if (Slim::Music::Info::isFileURL($url)) {
+
+		return Slim::Utils::Misc::pathFromFileURL($url);
+	}
+
+	return $url;
+}
+
 sub setTracks {
 	my $self   = shift;
-	my @tracks = @_;
+	my $tracks = shift;
 
-	for my $track (Slim::DataStores::DBI::PlaylistTrack->tracksOf($self->id)) {
-		$track->delete();
+	# One fell swoop to delete.
+	eval {
+		Slim::DataStores::DBI::PlaylistTrack->sql_deletePlaylist->execute($self->id);
+	};
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	if ($tracks && ref($tracks) eq 'ARRAY') {
+
+		my $i = 0;
+
+		for my $track (@$tracks) {
+
+			# If tracks are being added via Browse Music Folder -
+			# which still deals with URLs - get the objects to add.
+			unless (ref($track)) {
+				$track = $ds->objectForUrl($track, 1, 0, 1) || next;
+			}
+
+			Slim::DataStores::DBI::PlaylistTrack->create({
+				playlist => $self,
+				track    => $track->id,
+				position => $i++
+			});
+		}
 	}
 
-	my $i = 0;
-
-	for my $track (@tracks) {
-
-		Slim::DataStores::DBI::PlaylistTrack->create({
-			playlist => $self,
-			track    => $track,
-			position => $i++
-		});
-	}
+	# With playlists in the database - we want to make sure the playlist
+	# is consistent to the user.
+	$ds->forceCommit;
 }
 
 sub setDirItems {
 	my $self  = shift;
-	my @items = @_;
+	my $items = shift;
 	
-	for my $item (Slim::DataStores::DBI::DirlistTrack->tracksOf($self->id)) {
-		$item->delete();
-	}
+	# One fell swoop to delete.
+	eval {
+		Slim::DataStores::DBI::DirlistTrack->sql_deleteDirItems->execute($self->id);
+	};
 
-	my $i = 0;
+	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	for my $item (@items) {
+	if ($items && ref($items) eq 'ARRAY') {
 
-		# Store paths properly encoded as utf8 in the db.
-		if ($Slim::Utils::Misc::locale ne 'utf8') {
-			$item = Slim::Utils::Misc::utf8encode($item);
+		my $i = 0;
+
+		for my $item (@$items) {
+
+			# If tracks are being added via Browse Music Folder -
+			# which still deals with URLs - get the objects to add.
+			unless (ref($item)) {
+				$item = $ds->objectForUrl($item, 1, 0, 1) || next;
+			}
+
+			Slim::DataStores::DBI::DirlistTrack->create({
+				dirlist  => $self,
+				item     => $item->id,
+				position => $i++
+			});
 		}
-
-		Slim::DataStores::DBI::DirlistTrack->create({
-			dirlist  => $self,
-			item     => $item,
-			position => $i++
-		});
 	}
 }
 

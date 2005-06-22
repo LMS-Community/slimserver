@@ -78,8 +78,6 @@ sub new {
 		# Optimization to cache last track accessed rather than retrieve it again. 
 		lastTrackURL => '',
 		lastTrack => {},
-		# Selected list of external playlists.
-		externalPlaylists => [],
 		# Tracks that are out of date and should be deleted the next time
 		# we get around to it.
 		zombieList => {},
@@ -90,7 +88,6 @@ sub new {
 	Slim::DataStores::DBI::Track->setLoader($self);
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
-	$self->generateExternalPlaylists();
 	
 	$self->_commitDBTimer();
 
@@ -167,11 +164,13 @@ sub objectForId {
 	my $field = shift;
 	my $id    = shift;
 
-	if ($field eq 'track') {
+	if ($field eq 'track' || $field eq 'playlist') {
 
 		my $track = Slim::DataStores::DBI::Track->retrieve($id) || return;
 
-		return $self->_checkValidity($track);
+	} elsif ($field eq 'lightweighttrack') {
+
+		my $track = Slim::DataStores::DBI::LightWeightTrack->retrieve($id) || return;
 
 	} elsif ($field eq 'genre') {
 
@@ -316,12 +315,6 @@ sub totalTime {
 	my $self = shift;
 
 	return $self->{'totalTime'};
-}
-
-sub externalPlaylists {
-	my $self = shift;
-
-	return $self->{'externalPlaylists'};
 }
 
 #
@@ -515,6 +508,9 @@ sub delete {
 	}
 
 	if (defined($track)) {
+
+		# XXX - make sure that playlisttracks are deleted on cascade 
+		# otherwise call $track->setTracks() with an empty list
 
 		delete $validityCache{$url};
 
@@ -779,24 +775,11 @@ sub forceCommit {
 	%lastFind = ();
 }
 
-sub addExternalPlaylist {
-	my $self = shift;
-	my $url  = shift;
-
-	my $playlists = $self->{'externalPlaylists'};
-
-	return if grep $_ eq $url, @$playlists;
-
-	push @$playlists, $url;
-}
-
 sub clearExternalPlaylists {
 	my $self = shift;
 	my $url = shift;
 
-	$self->{'externalPlaylists'} = [];
-
-	my $playLists = Slim::DataStores::DBI::Track->externalPlaylists();
+	my $playLists = getExternalPlaylists();
 
 	# We can specify a url prefix to only delete certain types of external
 	# playlists - ie: only iTunes, or only MusicMagic.
@@ -808,20 +791,25 @@ sub clearExternalPlaylists {
 	$self->forceCommit();
 }
 
-sub generateExternalPlaylists {
-	my $self = shift;
-
-	# dsully - Mon Mar 21 22:10:48 PST 2005
-	# XXX - this can probably use LightWeightTrack - test after 6.0 is out.
-	$self->{'externalPlaylists'} = [ Slim::Utils::Text::sortIgnoringCase(
-		map { $_->url() } Slim::DataStores::DBI::Track->externalPlaylists
-	) ];
-}
-
 sub getExternalPlaylists {
 	my $self = shift;
 
-	return $self->{'externalPlaylists'};
+	return Slim::DataStores::DBI::Track->externalPlaylists();
+}
+
+sub getInternalPlaylists {
+	my $self = shift;
+
+	return Slim::DataStores::DBI::Track->internalPlaylists();
+}
+
+sub getPlaylistForClient {
+	my $self   = shift;
+	my $client = shift;
+
+	return (Slim::DataStores::DBI::Track->search({
+		'url' => sprintf('playlist://%s', $client->id())
+	}))[0];
 }
 
 sub readTags {
@@ -892,32 +880,6 @@ sub readTags {
 				$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
 			}
 		}
-
-#       moved this out to Slim::Formats::Parse::processAnchor()
-#		# rewrite the size, offset and duration if it's just a fragment
-#		# This is mostly (always?) for cue sheets.
-#		if ($anchor && $anchor =~ /([\d\.]+)-([\d\.]+)/ && $attributesHash->{'SECS'}) {
-#			my $start = $1;
-#			my $end = $2;
-#			
-#			my $duration = $end - $start;
-#			my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-#			my $header = $attributesHash->{'OFFSET'};
-#			my $startbytes = int($byterate * $start);
-#			my $endbytes = int($byterate * $end);
-#			
-#			$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-#			$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-#			
-#			$attributesHash->{'OFFSET'} = $header + $startbytes;
-#			$attributesHash->{'SIZE'} = $endbytes - $startbytes;
-#			$attributesHash->{'SECS'} = $duration;
-#
-#			if ($::d_info) {
-#				Slim::Utils::Misc::msg("readTags: calculating duration for anchor: $duration\n");
-#				Slim::Utils::Misc::msg("readTags: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
-#			}
-#		}
 	}
 
 	# Last resort
@@ -928,7 +890,7 @@ sub readTags {
 		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
 
-	if (Slim::Music::Info::isFile($filepath)) {
+	if (-e $filepath) {
 		# cache the file size & date
 		($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
 	}

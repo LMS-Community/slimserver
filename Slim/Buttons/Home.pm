@@ -9,8 +9,11 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Buttons::BrowseDB;
+use Slim::Buttons::BrowseTree;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
+use Slim::Buttons::TrackInfo;
+use Slim::Buttons::RemoteTrackInfo;
 
 our %home = ();
 our %defaultParams = ();
@@ -528,15 +531,15 @@ sub updateMenu {
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
-	# Refresh browse menu items in case of any changes.
-	Slim::Buttons::Browse::menuInit();
-	
 	for my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
+
 		if (exists $pluginsRef->{$menuItem}) {
 			$menuItem = $pluginsRef->{$menuItem};
 		}
+
 		push @home, $menuItem;
 	}
 
@@ -546,7 +549,7 @@ sub updateMenu {
 
 	$homeChoices{$client} = \@home;
 
-	$client->param('listRef',\@home);
+	$client->param('listRef', \@home);
 }
  
 1;

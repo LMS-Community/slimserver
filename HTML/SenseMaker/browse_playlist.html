@@ -26,7 +26,7 @@ cellPadding=0 width=90% border=0>
 <BODY 
 style="BORDER-RIGHT: white 2px solid; BACKGROUND: #333; BORDER-BOTTOM: 0px" 
 leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
-<P class=menu1><B><a href="home.html?player=[% player | uri %]"><font color="#FFFFFF">[% "HOME" | string %]</font></a><a href="home.html"></a> / <a href="http://172.16.30.103:9000/browse.html?player=%7Bplayer%7D&dir=__playlists"><font color="#CCCCCC">Saved 
+<P class=menu1><B><a href="home.html?player=[% player | uri %]"><font color="#FFFFFF">[% "HOME" | string %]</font></a><a href="home.html"></a> / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0"><font color="#CCCCCC">Saved 
   Playlists </font></a><font color="#CCCCCC"> [% pwd_list %]</font></B></P>
 <P class=menu2>&nbsp;</P>
 
@@ -45,12 +45,12 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
       </TR>
       <TR> 
         <TD colspan="7" class=listing><p>[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
-            [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %][% END %]
+            [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %][% END %]
           <p> [% IF RENAME_WARNING %] 
           <p><b>[% "NOTE" | string %]</b> [S RENAME_WARNIN
           <hr>
           [% END %] [% IF playlistname %] 
-          <form method="get" action="browse.html">
+          <form method="get" action="edit_playlist.html">
             [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
             <input name="newname" value="[% playlistname %]" size=40>
             <input name="submit" type=submit value="[% savebuttonname %]">
@@ -58,7 +58,7 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
             <input type=hidden name="dir" value="[% dir %]">
           </form>
           [% END %] [% IF titled %] 
-          <p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
+          <p><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>
           [% END %] [% IF playlistname %]
 <hr>
           [% END %] [% IF browselist_header %][% browselist_header %] 

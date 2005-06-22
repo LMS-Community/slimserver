@@ -1,0 +1,35 @@
+<tr>
+  <td class="listing">
+    [% item.title | html %]
+  </td>
+
+	<td class="listing" width="11" align="center">
+	<a href="edit_playlist.html?player=[% player | uri %]&up=1&id=[% playlist.id %]&item=[% loop.count %]">
+		<img src="html/move.up.gif" border="0" width="11" height="9" align="center"
+			title='[% "MOVEUP" | string %]' onMouseOver="self.status='[% "MOVEUP" | string %]';return true">
+		</a>
+	</td>
+	<td class="listing" width="3" align="center">&nbsp;</td>
+	
+	<td class="listing" width="11" align="center">
+	<a href="edit_playlist.html?player=[% player | uri %]&down=1&id=[% playlist.id %]&item=[% loop.count %]">
+		<img src="html/move.down.gif" border="0" width="11" height="9" align="center"
+			title='[% "MOVEDOWN" | string %]' onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true">
+		</a>
+	</td>
+	<td class="listing" width="3" align="center">&nbsp;</td>
+	
+[% IF item.isRemoteUrl %]
+ 	<td class="listing" width="11" align="center">
+		<a href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
+	</td>
+	<td class="listing" width="3" align="center">&nbsp;</td>
+[% END %]
+
+	<td class="listing" width="11" align="center">
+	<a href="edit_playlist.html?player=[% player | uri %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]">
+		<img src="[% webroot %]html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' 
+			title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true">
+		</a>
+  </td>
+</tr>

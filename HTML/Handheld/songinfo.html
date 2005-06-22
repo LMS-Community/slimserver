@@ -8,11 +8,11 @@
 				/ [% "SONG_INFO" | string %] / [% track.title %]
 			</td>
 			<td>
-				<a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+				<a href="status_header.html?command=playlist&subcommand=loadtracks&track=[% track.id %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
 			</td>
 			<td>&nbsp;</td>
 			<td>
-				<a href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+				<a href="status_header.html?command=playlist&subcommand=addtracks&track=[% track.id %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
 			</td>
 		</tr>
 	</table>

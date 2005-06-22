@@ -5,7 +5,7 @@
 		<td width="100%">
 			[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 			[% IF descend %]
-				<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
+				<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 				<!-- Include the artist for the album view -->
 				[% IF level == 1 && includeArtist && artist %]
@@ -16,7 +16,7 @@
 				[% END %]
 
 			[% ELSE %]
-				<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
+				<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 				[% IF includeAlbum && album %][% "FROM" | string %]
 					<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]">[% album | html %]</a></i>
 				[% END %]
@@ -26,20 +26,12 @@
 			[% END %]
 		</td>
 		<td width="13">
-			[% IF descend %]
-				<a href="status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
-			[% ELSE %]
-				<a href="status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
-			[% END %]
+			<a href="status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
 		</td>
 		<td>&nbsp;</td>
 		
 		<td width="13">
-			[% IF descend %]
-				<a href="status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
-			[% ELSE %]
-				<a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
-			[% END %]
+			<a href="status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
 		</td>
 		[% FOREACH mixer = mixerlinks.values.sort %]
 			[% PROCESS $mixer %]

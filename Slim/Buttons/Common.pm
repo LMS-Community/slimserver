@@ -65,8 +65,8 @@ sub init {
 	Slim::Buttons::Home::init();
 
 	Slim::Buttons::AlarmClock::init();
-	Slim::Buttons::Browse::init();
 	Slim::Buttons::BrowseDB::init();
+	Slim::Buttons::BrowseTree::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::PodcastBrowser::init();
@@ -285,8 +285,7 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'track', 'level' => 0});
 			$jump = 'BROWSE_BY_SONG';
 		} elsif ($button eq 'menu_browse_music') {
-			Slim::Buttons::Common::pushMode($client, 'browse');
-			Slim::Buttons::Browse::loadDir($client, '', undef, \@oldlines);
+			Slim::Buttons::Common::pushMode($client, 'browsetree', {'hierarchy' => ''});
 			$jump = 'BROWSE_MUSIC_FOLDER';
 		} elsif ($button eq 'menu_synchronize') {
 			Slim::Buttons::Common::pushMode($client, 'settings');
@@ -304,9 +303,8 @@ our %functions = (
 			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
 			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
 			$jump = 'SEARCH_FOR_SONGS';
-		} elsif ($button eq 'menu_browse_playlists' && Slim::Utils::Prefs::get('playlistdir')) {
-			Slim::Buttons::Common::pushMode($client, 'browse');
-			Slim::Buttons::Browse::loadDir($client, '__playlists', undef, \@oldlines);
+		} elsif ($button eq 'menu_browse_playlists') {
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'playlist,playlistTrack', 'level' => 0});
 			$jump = 'SAVED_PLAYLISTS';
 		} elsif ($buttonarg =~ /^plugin/i) {
 			if (exists($modes{$buttonarg})) {

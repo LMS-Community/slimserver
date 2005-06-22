@@ -323,6 +323,7 @@ sub utf8off {
 	return $string;
 }
 
+<<<<<<< .working
 sub utf8on {
 	my $string = shift;
 
@@ -483,6 +484,167 @@ sub encodingFromFile {
 
 ########
 
+=======
+sub utf8on {
+	my $string = shift;
+
+	if ($string && $] > 5.007) {
+		Encode::_utf8_on($string);
+	}
+
+	return $string;
+}
+
+sub looks_like_ascii { 
+
+	return 1 if $_[0] !~ /([^\x{00}-\x{7f}])/;
+}
+
+sub looks_like_latin1 { 
+
+	return 1 if $_[0] !~ /([^\x{00}-\x{ff}])/;
+}
+
+sub looks_like_utf8 {
+
+	return 1 if $_[0] =~ /($utf8_re_bits)/o;
+}
+
+sub latin1toUTF8 {
+	my $data = shift;
+
+	if ($] > 5.007) {
+
+		$data = eval { Encode::encode('utf8', $data, Encode::FB_QUIET()) } || $data;
+
+	} else {
+
+		$data =~ s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg;
+	}
+
+	return $data;
+}
+
+sub utf8toLatin1 {
+	my $data = shift;
+
+	if ($] > 5.007) {
+
+		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
+
+	} else {
+
+		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
+		$data =~ s/[\xE2][\x80][\x99]/'/g;
+	}
+
+	return $data;
+}
+
+sub encodingFromString {
+
+	my $encoding = 'raw';
+
+	# Don't copy a potentially large string - just read it from the stack.
+	if (looks_like_ascii($_[0])) {
+
+		$encoding = 'ascii';
+
+	} elsif (looks_like_utf8($_[0])) {
+	
+		$encoding = 'utf8';
+
+	} elsif (looks_like_latin1($_[0])) {
+	
+		$encoding = 'iso-8859-1';
+	}
+
+	return $encoding;
+}
+
+sub encodingFromFileHandle {
+	my $fh = shift;
+
+	# If we didn't get a filehandle, not much we can do.
+	if (!fileno $fh) {
+
+		msg("Warning: Not a filehandle in encodingFromFileHandle()\n");
+		bt();
+
+		return;
+	}
+
+	local $/ = undef;
+
+	# Save the old position (if any)
+	# And find the file size.
+	my $pos  = sysseek($fh, 0, SEEK_CUR);
+	my $size = sysseek($fh, 0, SEEK_END);
+
+	# Don't do any translation.
+	binmode($fh, ":raw");
+
+	# Try to find a BOM on the file - otherwise check the string
+	#
+	# Although get_encoding_from_filehandle tries to determine if
+	# the handle is seekable or not - the Protocol handlers don't
+	# implement a seek() method, and even if they did, File::BOM
+	# internally would try to read(), which doesn't mix with
+	# sysread(). So skip those m3u files entirely.
+	my $enc = '';
+
+	if (ref($fh) && $fh->can('seek')) {
+		$enc = File::BOM::get_encoding_from_filehandle($fh);
+	}
+
+	# File::BOM got something - let's get out of here.
+	return $enc if $enc;
+
+	# Seek to the beginning of the file.
+	sysseek($fh, 0, SEEK_SET);
+
+	#
+	sysread($fh, my $string, $size);
+
+	# Seek back to where we started.
+	sysseek($fh, $pos, SEEK_SET);
+
+	return encodingFromString($string);
+}
+
+# Handle either a filename or filehandle
+sub encodingFromFile {
+	my $file = shift;
+
+	my $encoding = $locale;
+
+	if (ref($file) && fileno($file)) {
+
+		$encoding = encodingFromFileHandle($file);
+
+	} elsif (-r $file) {
+
+		my $fh = new FileHandle;
+		$fh->open($file) or do {
+			msg("Couldn't open file: [$file] : $!\n");
+			return $encoding;
+		};
+
+		$encoding = encodingFromFileHandle($fh);
+
+		$fh->close();
+
+	} else {
+
+		msg("Warning: Not a filename or filehandle encodingFromFile( $file )\n");
+		bt();
+	}
+
+	return $encoding;
+}
+
+########
+
 sub anchorFromURL {
 	my $url = shift;
 
@@ -585,7 +747,7 @@ sub fixPath {
 	}
 
 	if (Slim::Music::Info::isFileURL($base)) {
-		$base = Slim::Utils::Misc::pathFromFileURL($base);
+		$base = pathFromFileURL($base);
 	} 
 
 	# the only kind of absolute file we like is one in 
@@ -643,7 +805,7 @@ sub fixPath {
 	if (Slim::Music::Info::isFileURL($fixed)) {
 		return $fixed;
 	} else {
-		return Slim::Utils::Misc::fileURLFromPath($fixed, $donttranslate);  
+		return fileURLFromPath($fixed, $donttranslate);  
 	}
 }
 
@@ -658,101 +820,22 @@ sub stripRel {
 	return $file;
 }
 
-sub ascendVirtual {
-	my $curVP = shift;
-	my @components = splitdir($curVP);
-	
-	pop @components;
-	
-	if ((@components == 0) || (@components == 1 && $components[0] eq '')) {
-		return '';
-	} else {
-		return catdir(@components);
-	}
-}
-
-sub descendVirtual {
-	my $curVP = shift;
-	my $item = shift;
-	my $itemindex = shift;
-	my $component;
-	my $curAP;
-
-	$curAP = virtualToAbsolute($curVP);
-
-	if (!defined($curVP)) {
-		$curVP = "";
-	}
-
-	$::d_paths && msg("descendVirtual(curVP = $curVP, item = $item, itemindex = $itemindex, curAP = $curAP)\n");
-	
-	if (Slim::Music::Info::isPlaylist($curAP)) {
-		$component = $itemindex;
-	} elsif (Slim::Music::Info::isPlaylistURL($item)) {
-		$component = $item;
-	} elsif (Slim::Music::Info::isURL($item)) {
-		$component = Slim::Web::HTTP::unescape((split(m|/|,$item))[-1]);
-	} else {
-		$component = (splitdir($item))[-1];
-	}
-
-	# Always turn the utf8 flag back on - pathFromFileURL 
-	# (via virtualToAbsolute) will strip it.
-	if ($component && $] > 5.007) {
-		Encode::_utf8_on($component);
-	}
-
-	# On MacOS, catdir works a little differently. Since absolute paths *don't* start
-	# with the path separator, catdir('','foo') will return something unexpected like
-	# 'Macintosh HD:foo'.	I guess this is a bug in catdir...
-	my $ret;
-
-	if (!defined($curVP) || $curVP eq '') {
-		$ret = $component;
-	} else {
-		$ret = catdir($curVP,$component);
-	}
-
-	$::d_paths && msg("descendVirtual returning catdir($curVP, $component) == $ret\n");
-
-	return $ret;
-}
-
 sub virtualToAbsolute {
-	my $virtual = shift;
-	my $recursion = shift;
-	my $curdir = Slim::Utils::Prefs::get('audiodir');
-	my $playdir = Slim::Utils::Prefs::get('playlistdir');
-	if (!defined($virtual)) { $virtual = "" };
+	my ($virtual, $recursion) = @_;
+
+	my $curdir  = Slim::Utils::Prefs::get('audiodir') || return undef;
+
+	if (!defined $virtual) {
+		$virtual = ""
+	}
 	
 	if (Slim::Music::Info::isURL($virtual)) {
 		return $virtual;
 	}
 	
-	if (file_name_is_absolute($virtual)) {
+	if (File::Spec::file_name_is_absolute($virtual)) {
 		$::d_paths && msg("virtualToAbsolute: $virtual is already absolute.\n");
 		return $virtual;
-	}
-
-	$::d_paths && msg("virtualToAbsolute: " . ($virtual ? $virtual : 'UNDEF') . "\n");
-		
-	if ($virtual && $virtual =~ /^__playlists/) {
-		# get rid of the leading __playlists
-		my @v = splitdir($virtual);
-		shift @v;
-		
-		if (Slim::Music::Info::isPlaylistURL($v[0])) {
-			$curdir = shift @v;
-		} else {
-			$curdir = Slim::Utils::Prefs::get('playlistdir');
-		}
-
-		$virtual = catdir(@v);
-		#we are already doing a virtual path starting with __playlists so don't recurse
-		$recursion = 1;
-		
-	} else {
-		$curdir = Slim::Utils::Prefs::get('audiodir');
 	}
 
 	# Always unescape ourselves
@@ -763,9 +846,10 @@ sub virtualToAbsolute {
 		Encode::_utf8_on($virtual);
 	}
 
-	return undef if (!$curdir);
 	$curdir = fileURLFromPath($curdir);	
+
 	my @levels = ();
+
 	if (defined($virtual)) {
 		@levels = splitdir($virtual);
 	}
@@ -788,13 +872,13 @@ sub virtualToAbsolute {
 
 		# optimization for pre-cached imported playlists.
 		if (Slim::Music::Info::isPlaylistURL($curdir)) {
-			my $listref = Slim::Music::Info::cachedPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir));
+			my $listref = Slim::Music::Info::cachedPlaylist(fileURLFromPath($curdir));
 			if ($listref) {
 				return @{$listref}[$level];
 			}
 		} 
 		
-		if (Slim::Music::Info::isPlaylist(Slim::Utils::Misc::fileURLFromPath($curdir))) {
+		if (Slim::Music::Info::isPlaylist(fileURLFromPath($curdir))) {
 			@items = ();
 			Slim::Utils::Scan::addToList(\@items,$curdir, 0, 0);
 			if (scalar(@items)) {
@@ -805,7 +889,7 @@ sub virtualToAbsolute {
 				}
 				#continue traversing if the item was found in the list
 				#and the item found is itself a list
-				next if (Slim::Music::Info::isList(Slim::Utils::Misc::fileURLFromPath($curdir)));
+				next if (Slim::Music::Info::isList(fileURLFromPath($curdir)));
 				#otherwise stop traversing, curdir is either the playlist
 				#if no entry found or the located entry in the playlist
 				last;
@@ -818,42 +902,38 @@ sub virtualToAbsolute {
 				$curdir = catdir($curdir,$level);
 			}
 		}
-		next if (Slim::Music::Info::isDir(Slim::Utils::Misc::fileURLFromPath($curdir)));
-		if (Slim::Music::Info::isWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir))) {
-			if (defined($Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)})) {
-				$curdir = $Slim::Utils::Scan::playlistCache{Slim::Utils::Misc::fileURLFromPath($curdir)}
+
+		next if (Slim::Music::Info::isDir(fileURLFromPath($curdir)));
+
+		if (Slim::Music::Info::isWinShortcut(fileURLFromPath($curdir))) {
+			if (defined($Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)})) {
+				$curdir = $Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)}
 			} else {
-				$curdir = pathFromWinShortcut(Slim::Utils::Misc::fileURLFromPath($curdir));
+				$curdir = pathFromWinShortcut(fileURLFromPath($curdir));
 			}
 		}
 		#continue traversing if curdir is a list
-		next if (Slim::Music::Info::isList(Slim::Utils::Misc::fileURLFromPath($curdir)));
+		next if (Slim::Music::Info::isList(fileURLFromPath($curdir)));
 		#otherwise stop traversing, non-list items cannot be traversed
 		last;
 	}
 	
 	$::d_paths && msg("became: $curdir\n");
 	
-	if (!$recursion && $virtual =~ /\.(.+)$/ && 
-		exists $Slim::Formats::Parse::playlistInfo{$1} &&  
-		$virtual !~ /^__playlists/ && !-e pathFromFileURL($curdir)) {
-
-		# Not a real file, could be a naked saved playlist
-		return virtualToAbsolute(catdir('__playlists',$virtual),1);
-	}
-
 	if (Slim::Music::Info::isFileURL($curdir)) {
 		return $curdir;
 	} else {
-		return Slim::Utils::Misc::fileURLFromPath($curdir);  
+		return fileURLFromPath($curdir);  
 	}
 }
 
 sub inPlaylistFolder {
-	my $path = shift;
+	my $path = shift || return;
 
-	$path = fixPath($path);
-	$path = virtualToAbsolute($path);
+	# Fully qualify the path - and strip out any url prefix.
+	$path = fixPath($path) || return 0;
+	$path = virtualToAbsolute($path) || return 0;
+	$path = pathFromFileURL($path) || return 0;
 
 	my $playlistdir = Slim::Utils::Prefs::get("playlistdir");
 
@@ -894,7 +974,8 @@ my %_ignoredItems = (
 );
 
 sub readDirectory {
-	my $dirname = shift;
+	my $dirname  = shift;
+	my $validRE  = shift || Slim::Music::Info::validTypeExtensions();
 	my @diritems = ();
 	
 	$::d_files && msg("reading directory: $dirname\n");
@@ -911,17 +992,18 @@ sub readDirectory {
 		return @diritems;
 	};
 
-	for my $dir (readdir(DIR)) {
+	for my $item (readdir(DIR)) {
 
-		# Ignore items starting with a period on non-windows machines
-		next if $dir =~ /^\.\.?$/ && (Slim::Utils::OSDetect::OS() ne 'win');
+		next if exists $_ignoredItems{$item};
 
-		my $fullpath = catdir($dirname, $dir);
-
-		next if (exists $_ignoredItems{$dir} && -d $fullpath);
-		
 		# Ignore our special named files and directories
-		next if $dir =~ /^__/;  
+		next if $item =~ /^__/;  
+
+		if ($ignore ne '') {
+			next if $item =~ /$ignore/;
+		}
+
+		my $fullpath = catdir($dirname, $item);
 
 		# We only want files, directories and symlinks Bug #441
 		# Otherwise we'll try and read them, and bad things will happen.
@@ -930,13 +1012,14 @@ sub readDirectory {
 			next;
 		}
 
-		if ($ignore ne '') {
-			next if $dir =~ /$ignore/;
+		# Don't bother with file types we don't understand.
+		if ($validRE && -l _ || -f _) {
+			next unless $item =~ $validRE;
 		}
 
-		push @diritems, $dir;
+		push @diritems, $item;
 	}
-	
+
 	closedir(DIR);
 	
 	$::d_files && msg("directory: $dirname contains " . scalar(@diritems) . " items\n");
@@ -1333,6 +1416,30 @@ sub watchVariable {
 			return $new_val;
 		},
 	);
+}
+
+sub deparseCoderef {
+	my $coderef = shift;
+
+	eval "use B::Deparse ()";
+	my $deparse = B::Deparse->new('-si8T') unless $@ =~ /Can't locate/;
+
+	eval "use Devel::Peek ()";
+	my $peek = 1 unless $@ =~ /Can't locate/;
+
+	return 0 unless $deparse;
+		
+	my $body = $deparse->coderef2text($coderef) || return 0;
+	my $name;
+
+	if ($peek) {
+		my $gv = Devel::Peek::CvGV($coderef);
+		$name  = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'});
+	}
+
+	$name ||= 'ANON';
+
+	return "sub $name $body";
 }
 
 1;

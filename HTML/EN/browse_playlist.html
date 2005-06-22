@@ -10,30 +10,53 @@
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3><p>
 
     <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
-    <a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>
+    <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0">[% "SAVED_PLAYLISTS" | string %]</a>
 	[% pwd_list %]
     <p><hr>
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 
 	[% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]<p><hr>[% END %]
-	
-	[% IF playlistname %]<p><form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
-			<input name="newname" value="[% IF newname %][% newname %][% ELSE %][% playlistname %][% END %]" size=40>
-			<input type=submit value="[% savebuttonname %]"><input type=hidden value="[% player %]" name="player">
-			<input type=hidden name="dir" value="[% dir %]"></form>
-			[% IF RENAME_WARNING %]<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %][% END %]
+
+	[% IF playlist.title && playlist.title == untitledString %]
+		[% SET saveButtonName = "SAVE" %]
+	[% ELSE %]
+		[% SET saveButtonName = "RENAME" %]
 	[% END %]
 	
-	[% IF titled %]<p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
+	<p>
+	<form method="get" action="edit_playlist.html">[% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %] 
+		<input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size=40>
+		<input type="submit" value="[% saveButtonName | string %]">
+		<input type="hidden" value="[% player %]" name="player">
+		<input type="hidden" name="renamePlaylist" value="1">
+		<input type="hidden" name="id" value="[% playlist.id %]">
+	</form>
+
+	[% IF RENAME_WARNING %]<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %][% END %]
 	
-	[% IF playlistname %]<p><hr><p>[% END %]
+	<a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a>
+	<p>
+	<a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a>
 	
-	[% IF browselist_header %][% browselist_header %]<p>[% END %]
-   [% browselist_pagebar %]
-   <table border="0" cellspacing="0" cellpadding="4">
-	[% IF playlistname %]<tr><td class="odd" bgcolor="#FFFFFF">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>[% END %]
- 	[% IF playlistname %]<td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr></td>[% END %]
-	[% IF playlistname %]<td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr></td></tr> [% END %]
+	<p><hr><p>
+	
+	[% IF browselist_header; browselist_header; "<p>"; END %]
+
+	[% browselist_pagebar %]
+
+	<table border="0" cellspacing="0" cellpadding="4">
+
+	[% IF playlist %]
+		<tr>
+			<td class="odd" bgcolor="#FFFFFF">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+
+			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr></td>
+
+			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr></td>
+
+		</tr>
+	[% END %]
+
        [% browse_list %]
     </table>
     [% browselist_pagebar %]

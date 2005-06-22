@@ -16,12 +16,29 @@ use Slim::Utils::Prefs;
 
 our %validSubCommands = map { $_ => 1 } qw(play append load_done loadalbum addalbum loadtracks addtracks clear delete move sync);
 
+our %shuffleTypes = (
+	1 => 'track',
+	2 => 'album',
+);
+
 #
 # accessors for playlist information
 #
 sub count {
 	my $client = shift;
 	return scalar(@{playList($client)});
+}
+
+sub shuffleType {
+	my $client = shift;
+
+	my $shuffleMode = shuffle($client);
+
+	if (defined $shuffleTypes{$shuffleMode}) {
+		return $shuffleTypes{$shuffleMode};
+	}
+
+	return 'none';
 }
 
 sub song {
@@ -286,13 +303,13 @@ sub moveSong {
 	}
 
 	if (defined $src && defined $dest && 
-		$src < Slim::Player::Playlist::count($client) && 
-		$dest < Slim::Player::Playlist::count($client) && $src >= 0 && $dest >= 0) {
+		$src < count($client) && 
+		$dest < count($client) && $src >= 0 && $dest >= 0) {
 
-		if (Slim::Player::Playlist::shuffle($client)) {
-			$listref = Slim::Player::Playlist::shuffleList($client);
+		if (shuffle($client)) {
+			$listref = shuffleList($client);
 		} else {
-			$listref = Slim::Player::Playlist::playList($client);
+			$listref = playList($client);
 		}
 
 		if (defined $listref) {		
@@ -312,8 +329,8 @@ sub moveSong {
 				Slim::Player::Source::flushStreamingSong($client);
 			}
 
-
 			my $queue = $client->currentsongqueue();
+
 			for my $song (@$queue) {
 				my $index = $song->{index};
 				if ($src == $index) {
@@ -324,7 +341,7 @@ sub moveSong {
 				}
 			}
 
-			Slim::Player::Playlist::refreshPlaylist($client);
+			refreshPlaylist($client);
 		}
 	}
 }
@@ -332,9 +349,9 @@ sub moveSong {
 sub clear {
 	my $client = shift;
 
-	@{Slim::Player::Playlist::playList($client)} = ();
+	@{playList($client)} = ();
 
-	Slim::Player::Playlist::reshuffle($client);
+	reshuffle($client);
 }
 
 sub fischer_yates_shuffle {
@@ -396,12 +413,15 @@ sub reshuffle {
 		for (my $i = 0; $i < $songcount; $i++) {
 
 			if ($listRef->[$i] == $realsong) {
+
 				if (shuffle($client)) {
+
 					my $temp = $listRef->[$i];
 					$listRef->[$i] = $listRef->[0];
 					$listRef->[0] = $temp;
 					$i = 0;
 				}
+
 				last;
 			}
 		}
@@ -437,7 +457,7 @@ sub reshuffle {
 			# object to a poisition in the playlist.
 			if (defined $trackObj && ref $trackObj) {
 
-				my $albumid  = $trackObj->albumid() || 0;
+				my $albumid = $trackObj->albumid() || 0;
 
 				push @{$albumTracks{$albumid}}, $trackObj;
 
@@ -452,12 +472,25 @@ sub reshuffle {
 
 		# Not quite sure what this is doing - not changing the current song?
 		if ($realsong == -1 && !$dontpreservecurrsong) {
-			$realsong = $listRef->[Slim::Utils::Prefs::clientGet($client,'currentSong')];
+
+			my $index = Slim::Utils::Prefs::clientGet($client,'currentSong');
+
+			if (defined $index && defined $listRef->[$index]) {
+				$realsong = $listRef->[$index];
+			}
 		}
 
-		my $currentTrack = $ds->objectForUrl(${playList($client)}[$realsong]);
+		my $currentTrack = ${playList($client)}[$realsong];
+		my $currentAlbum = 0;
 
-		my $currentAlbum = $currentTrack->albumid() || 0;
+		# This shouldn't happen - but just in case.
+		unless (ref $currentTrack) {
+			$currentTrack = $ds->objectForUrl($currentTrack);
+		}
+
+		if (ref $currentTrack) {
+			$currentAlbum = $currentTrack->albumid() || 0;
+		}
 
 		# @albums is now a list of Album names. Shuffle that list.
 		my @albums = keys %albumTracks;
@@ -486,7 +519,7 @@ sub reshuffle {
 				push @{$listRef}, $trackToPosition{$track};
 			}
 		}
-	} 
+	}
 	
 	for (my $i = 0; $i < $songcount; $i++) {
 		for (my $j = 0; $j <= $#$queue; $j++) {
@@ -516,14 +549,23 @@ sub reshuffle {
 # DEPRICATED
 # for backwards compatibility with plugins and the like, this stuff was moved to Slim::Control::Command
 sub executecommand {
+
+	warn "Slim::Player::Playlist::executecommand() will be removed in SlimServer v6.2 - please update your plugins.\n";
+
 	Slim::Control::Command::execute(@_);
 }
 
 sub setExecuteCommandCallback {
+
+	warn "Slim::Player::Playlist::setExecuteCommandCallback() will be removed in SlimServer v6.2 - please update your plugins.\n";
+
 	Slim::Control::Command::setExecuteCallback(@_);
 }
 
 sub clearExecuteCommandCallback {
+
+	warn "Slim::Player::Playlist::clearExecuteCommandCallback() will be removed in SlimServer v6.2 - please update your plugins.\n";
+
 	Slim::Control::Command::clearExecuteCallback(@_);
 }
 
@@ -545,24 +587,39 @@ sub modifyPlaylistCallback {
 
 		return if !$savecurrsong;
 
-		my @syncedclients = Slim::Player::Sync::syncedWith($client);
-		push @syncedclients,$client;
-		my $playlistref = Slim::Player::Playlist::playList($client);
+		my @syncedclients = (Slim::Player::Sync::syncedWith($client), $client);
+
+		my $playlist = Slim::Player::Playlist::playList($client);
 		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
+		my $ds       = Slim::Music::Info::getCurrentDataStore();
 
 		$client->currentPlaylistChangeTime(time());
 
 		for my $eachclient (@syncedclients) {
 
-			if ($saveplaylist) {
-				my $playlistname = "__" . $eachclient->id() . ".m3u";
-				$playlistname =~ s/\:/_/g;
-				$playlistname = catfile(Slim::Utils::Prefs::get('playlistdir'),$playlistname);
-				Slim::Formats::Parse::writeM3U($playlistref,$playlistname,$playlistname);
+			# Don't save all the tracks again if we're just starting up!
+			if (!$eachclient->param('startupPlaylistLoading') && $saveplaylist) {
+
+				# Create a virtual track that is our pointer
+				# to the list of tracks that make up this playlist.
+				my $playlistObj = $ds->updateOrCreate({
+
+					'url'        => sprintf('playlist://%s', $eachclient->id()),
+					'attributes' => {
+						'TITLE' => sprintf('%s - %s', 
+							$eachclient->string('NOW_PLAYING'),
+							($eachclient->name || $eachclient->ip),
+						),
+
+						'CT'    => 'ssp',
+					},
+				});
+
+				$playlistObj->setTracks($playlist);
 			}
 
 			if ($savecurrsong) {
-				Slim::Utils::Prefs::clientSet($eachclient,'currentSong',$currsong);
+				Slim::Utils::Prefs::clientSet($eachclient, 'currentSong', $currsong);
 			}
 		}
 	}

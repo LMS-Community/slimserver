@@ -2586,20 +2586,17 @@ sub removeExtraArrayEntries {
 }
 
 sub playlists {
-	my %list_hash;
-	my @list;
-	
-	return undef unless Slim::Utils::Prefs::get('playlistdir');
-	Slim::Utils::Scan::addToList(\@list, Slim::Utils::Prefs::get('playlistdir'), 0);
-	if (scalar  @{Slim::Music::Info::playlists()}) {
-		push @list, @{Slim::Music::Info::playlists()};
-	}
-	foreach my $item ( @list) {
-		if (Slim::Music::Info::isURL($item)) {
-			$list_hash{$item} = Slim::Music::Info::standardTitle(undef, $item);
+	my %lists = ();
+
+	for my $playlist (Slim::Music::Info::playlists()) {
+
+		if (Slim::Music::Info::isURL($playlist)) {
+
+			$lists{$playlist} = Slim::Music::Info::standardTitle(undef, $playlist);
 		}
 	}
-	return \%list_hash;
+
+	return \%lists;
 }
 
 sub skins {

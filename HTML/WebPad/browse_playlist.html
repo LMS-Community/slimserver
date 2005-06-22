@@ -10,19 +10,19 @@
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3><p>
 
     <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
-    <a href="browse.html?player=[% player | uri %]&dir=__playlists">[% "SAVED_PLAYLISTS" | string %]</a>
+    <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0">[% "SAVED_PLAYLISTS" | string %]</a>
 	[% pwd_list %]
     <p><hr>
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 
 	[% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]<p><hr>[% END %]
 	
-	[% IF playlistname %]<p><form method="get" action="browse.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>
+	[% IF playlistname %]<p><form method="get" action="edit_playlist.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>
 			<input type=submit value="[% savebuttonname %]"><input type=hidden value="[% player %]" name="player">
 			<input type=hidden name="dir" value="[% dir %]"></form>
 	[% END %]
 	
-	[% IF titled %]<p><a href="browse.html?player=[% player | uri %]&dir=[% dir | uri %]&delete=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
+	[% IF titled %]<p><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
 	
 	[% IF playlistname %]<p><hr><p>[% END %]
 	
