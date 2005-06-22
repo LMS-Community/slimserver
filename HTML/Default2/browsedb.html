@@ -23,6 +23,12 @@
 [% IF browselist_pagebar ; browselist_pagebar ; END %]
 </p>
 
+[% IF coverArt %]
+ <p>
+  <a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg"></a>
+ </p>
+[% END %]
+
 <table class="browsetable">
 [% browse_list %]
 </table>

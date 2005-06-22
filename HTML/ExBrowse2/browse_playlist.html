@@ -3,15 +3,14 @@
 <div id="pwd">
  [% IF browselist_pagebar %]
  <span class="pagebar">[% browselist_pagebar %]</span>[% END %]
- <a class="fakelink" onclick="browseurl('browsedb.html?hierarchy=playlist,playlistTrack&level=0')">[% "SAVED_PLAYLISTS" | string %]</a>
- [% pwd_list %] /
+ [% pwd_list %]
 </div>
  
 [% IF warn %]
  <p class="listing">
   <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
   [% IF audiodir %]
-   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="browseurl('browsetree.html')">[% "HERE" | string %]</a>.
+   [% "SCAN_CLICK" | string %] <a class="fakelink" onclick="parent.browseurl('browsetree.html?level=0')">[% "HERE" | string %]</a>.
   [% END %]
  </p>
 [% END %]
@@ -21,29 +20,34 @@
  <b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
 </p>
 [% END %]
- 
-[% IF playlistname %]
- <p class="listing" style="margin-top: 5px;">
-  [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]<br>
-  <form method="get" action="edit_playlist.html">
-   <input name="newname" value="[% IF current; current; ELSIF newname; newname; ELSE; playlistname; END %]" size=40>
-   <input name="submit" type=submit value="[% savebuttonname %]">
-   <input type=hidden value="[% player %]" name="player">
-   <input type=hidden name="dir" value="[% dir %]">
-   [% IF RENAME_WARNING %]<input type="checkbox" name="overwrite" class="stdedit">
-   [% "CONFIRM_OVERWRITE" | string %][% END %]
-  </form>
- </p>
-[% END %]
 
-[% IF titled %]
- <p class="listing" style="margin-bottom: 5px;">
-  <!--<a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?dir=[% dir | html %]&quot;)">[% "EDIT_PLAYLIST"
-   | string %]</a><br> playlist editing, not complete yet - the html files are there but they don't work right yet -->
-  <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
-   "DELETE_THIS_PLAYLIST" | string %]</a><br>
- </p>
-[% END %]
+[%
+IF playlist.title && playlist.title == "'UNTITLED' | string ";
+  SET saveButtonName = "SAVE" ;
+ELSE ;
+  SET saveButtonName = "RENAME" ;
+END
+%]
+
+<p class="listing" style="margin-top: 5px;">
+ [% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %]<br>
+ <form method="get" action="edit_playlist.html">
+  <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="40"/>
+  <input name="submit" type="submit" value="[% saveButtonName | string %]"/>
+  <input type="hidden" name="renamePlaylist" value="1"/>
+  <input type="hidden" name="id" value="[% playlist.id %]"/>
+  <input type="hidden" value="[% player %]" name="player"/>
+  [% IF RENAME_WARNING %]<input type="checkbox" name="overwrite" class="stdedit"/>
+  [% "CONFIRM_OVERWRITE" | string %][% END %]
+ </form>
+</p>
+
+<p class="listing" style="margin-bottom: 5px;">
+ <!--<a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?dir=[% dir | html %]&quot;)">[% "EDIT_PLAYLIST"
+  | string %]</a><br> playlist editing, not complete yet - need to implement with jxtk -->
+ <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
+  "DELETE_THIS_PLAYLIST" | string %]</a><br>
+</p>
 
 <table>
  [% IF playlistname %] 

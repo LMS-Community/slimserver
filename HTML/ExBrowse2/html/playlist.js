@@ -109,7 +109,7 @@ function playlistDragEndHandler(movecount, elementpos) {
 function doSave() {
 	// XXX FIXME: Consider whether a JXTK::TextButton widget would be good for these buttons
 
-	browseurl("browse.html?dir=__playlists/__current.m3u");
+	browseurl("edit_playlist.html?saveCurrentPlaylist=1");
 }
 
 function doDownload() {

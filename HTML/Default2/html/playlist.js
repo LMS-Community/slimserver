@@ -304,7 +304,7 @@ function doAlbum(e) {
 }
 
 function doSave() {
-	browseurl("browse.html?dir=__playlists/__current.m3u");
+	browseurl("edit_playlist.html?saveCurrentPlaylist=1");
 }
 
 function doDownload() {
