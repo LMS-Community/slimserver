@@ -1964,10 +1964,11 @@ sub browsetree {
 
 		my %list_form = %$params;
 
-		# Decode the string for proper display - Mac only
-		# though. Everyone else is correct without this.
-		if ($Slim::Utils::Misc::locale eq 'utf8' && $osName eq 'mac') {
-			$relPath = Slim::Utils::Misc::utf8decode($relPath);
+		# Turn the utf8 flag on for proper display - since this is
+		# coming directly from the filesystem.
+		if ($Slim::Utils::Misc::locale eq 'utf8') {
+
+			$relPath = Slim::Utils::Misc::utf8on($relPath);
 		}
 
 		$list_form{'hierarchy'}	    = join('/', @levels, $item->id);
