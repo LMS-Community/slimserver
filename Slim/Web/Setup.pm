@@ -291,6 +291,7 @@ sub initSetupConfig {
 						} else {
 							$pageref->{'GroupOrder'}[1] = 'TextSize';
 							$pageref->{'GroupOrder'}[2] = undef;
+							$pageref->{'GroupOrder'}[6] = undef;
 						}
 
 					} else {
