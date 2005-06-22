@@ -401,7 +401,7 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'contributor';
 
-				return $ds->find($type, { "contributor.namesort" => $terms }, 'contributor');
+				return $ds->find($type, { "contributor.namesort" => $terms }, $type);
 			},
 
 			'listItem' => sub {
