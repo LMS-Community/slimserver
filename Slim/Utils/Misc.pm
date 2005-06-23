@@ -851,7 +851,7 @@ sub readDirectory {
 		}
 
 		# Don't bother with file types we don't understand.
-		if ($validRE && -l _ || -f _) {
+		if ($validRE && -f _) {
 			next unless $item =~ $validRE;
 		}
 
