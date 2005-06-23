@@ -693,7 +693,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# people to still be able to browse into playlists
 			# from the Music Folder, but for those items not to
 			# show up under Browse Playlists.
-			if (Slim::Utils::Misc::inPlaylistFolder($playlisturl)) {
+			#
+			# Don't include the Shoutcast playlists in our Browse
+			# Playlist view either.
+			if (Slim::Utils::Misc::inPlaylistFolder($playlisturl) &&
+				$playlisturl !~ /ShoutcastBrowser_Recently_Played/
+			) {
 
 				$playlisturl =~ s/^file:/playlist:/;
 			}
