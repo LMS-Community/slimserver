@@ -836,7 +836,7 @@ sub gotoNext {
 				# send xpl to tell them we're done
 				if (Slim::Utils::Prefs::get('xplsupport')) {
 					Slim::Control::xPL::sendXplStatusMsg($client,"end of list");
-                		}
+				}
 
 				$client->update();
 
@@ -1552,16 +1552,14 @@ sub checkBin {
 	
 	$::d_source && msg("checking formats for: $profile\n");
 	
-	# if the user's disabled the profile, then skip it...
-	return undef unless enabledFormat($profile);
-	
-	$::d_source && msg("   enabled\n");
-	
 	# get the command for this profile
 	$command = $commandTable{$profile};
+	
+	# if the user's disabled the profile, then skip it...
+	return undef unless $command && enabledFormat($profile);
+	
+	$::d_source && msg("   enabled\n");
 	$::d_source && $command && msg("  Found command: $command\n");
-
-	return undef unless $command;
 	
 	# if we don't have one or more of the requisite binaries, then move on.
 	while ($command && $command =~ /\[([^]]+)\]/g) {
