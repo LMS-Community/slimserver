@@ -993,7 +993,9 @@ sub _checkValidity {
 
 	# Don't bother checking the validity over and over for a cue sheet
 	# referenced URL. Just get the base name.
-	$url = Slim::Utils::Misc::stripAnchorFromURL($url);
+	# XXX - this doesn't really do what I want. It should definitely check
+	# the first time around.
+	# $url = Slim::Utils::Misc::stripAnchorFromURL($url);
 
 	return undef if $self->{'zombieList'}->{$url};
 
