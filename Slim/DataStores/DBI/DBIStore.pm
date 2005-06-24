@@ -989,8 +989,11 @@ sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
 
-	my $id  = $track->get('id');
-	my $url = $track->get('url');
+	my ($id, $url) = $track->get(qw(id url));
+
+	# Don't bother checking the validity over and over for a cue sheet
+	# referenced URL. Just get the base name.
+	$url = Slim::Utils::Misc::stripAnchorFromURL($url);
 
 	return undef if $self->{'zombieList'}->{$url};
 
@@ -1036,7 +1039,7 @@ sub _hasChanged {
 	# As this is an internal cache function we don't sanity check our arguments...	
 
 	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
-		
+
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
 	#return 0 if -d $filepath;

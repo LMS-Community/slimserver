@@ -497,6 +497,16 @@ sub anchorFromURL {
 	return undef;
 }
 
+sub stripAnchorFromURL {
+	my $url = shift;
+
+	if ($url =~ /^(.*)#[\d\.]+-.*$/) {
+		return $1;
+	}
+
+	return undef;
+}
+
 #################################################################################
 #
 # split a URL into (host, port, path)
@@ -675,7 +685,7 @@ sub virtualToAbsolute {
 		return $virtual;
 	}
 	
-	if (File::Spec::file_name_is_absolute($virtual)) {
+	if (file_name_is_absolute($virtual)) {
 		$::d_paths && msg("virtualToAbsolute: $virtual is already absolute.\n");
 		return $virtual;
 	}
