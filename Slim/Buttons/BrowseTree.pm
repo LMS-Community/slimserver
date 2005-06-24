@@ -277,18 +277,18 @@ sub setMode {
 		hierarchy      => join('/', @levels),
 		descend        => 1,
 		topLevelPath   => $topLevelPath,
-	);
 
-	if ($client->param('descend')) {
+		# This allows a sort to be done on the list.
+		# There might be a more optimized way to handle this, but it's
+		# good for now.
+		'isSorted'     => 'L',
 
-		$params{'isSorted'} = 'L';
-
-		$params{'lookupRef'} = sub {
+		'lookupRef'    => sub {
 			my $index = shift;
 
-			return $items->[$index]->title;
-		};
-	}
+			return Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
+		},
+	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
