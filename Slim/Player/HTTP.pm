@@ -70,7 +70,7 @@ sub _dummyToggle {
 	my $toggle = shift;
 
 	if ($toggle) {
-		Slim::Web::HTTP::clearOutputBuffer($toggle);
+		Slim::Web::HTTP::clearOutputBuffer($client);
 	}
 
 	return 1;
