@@ -105,6 +105,7 @@ sub readM3U {
 
 	my @items  = ();
 	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
+	my $title  = '';
 
 	if ($] > 5.007) {
 		binmode($m3u, ":encoding($enc)");
@@ -134,10 +135,10 @@ sub readM3U {
 
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
-		my $title;
-
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
+
+			$::d_parse && Slim::Utils::Misc::msg("  found title: $title\n");
 		}
 		
 		next if $entry =~ /^#/;
