@@ -504,7 +504,7 @@ sub stripAnchorFromURL {
 		return $1;
 	}
 
-	return undef;
+	return $url;
 }
 
 #################################################################################
