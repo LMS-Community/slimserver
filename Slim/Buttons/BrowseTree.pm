@@ -202,10 +202,10 @@ sub browseTreeOverlay {
 		return (undef, Slim::Display::Display::symbol('rightarrow'));
 	}
 
-	if ($client->param('descend')) {
-		$overlay2 = Slim::Display::Display::symbol('rightarrow');
-	} else {
+	if (Slim::Music::Info::isSong($item)) {
 		$overlay2 = Slim::Display::Display::symbol('notesymbol');
+	} else {
+		$overlay2 = Slim::Display::Display::symbol('rightarrow');
 	}
 
 	return ($overlay1, $overlay2);
