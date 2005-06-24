@@ -634,7 +634,6 @@ sub fixPath {
 				$fixed = fixPath(stripRel(catfile($base, $file)));
 			}
 		}
-
 	} elsif (file_name_is_absolute($file)) {
 		$fixed = $file;
 	} else {
@@ -656,7 +655,7 @@ sub stripRel {
 	my $file = shift;
 	
 	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
-		$file =~ s#([\/\\])\w+[\/\\]\.\.[\///]#$1#isg;
+		$file =~ s#\w+[\/\\]\.\.[\///]##isg;
 	}
 	
 	$::d_paths && msg("stripRel result: $file\n");
@@ -979,7 +978,7 @@ sub settingsDiagString {
 		$::VERSION,
 		$::REVISION,
 		$osDetails->{'osName'},
-		get('language'),
+		Slim::Utils::Prefs::get('language'),
 		$Slim::Utils::Misc::locale,
 	);
 
