@@ -49,6 +49,9 @@ sub connected {
 # dummy methods
 sub update		{ }
 sub isPlayer		{ 0 }
+sub stop		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
+sub play		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
+sub pause		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
 sub playout		{ 1 }
 sub resume		{ 1 }
 sub volume		{ 1 }
@@ -60,12 +63,7 @@ sub decoder		{ 'http' }
 sub vfdmodel		{ 'http' }
 sub vfd			{ undef }
 
-*power = \&_dummyToggle;
-*stop  = \&_dummyToggle;
-*play  = \&_dummyToggle;
-*pause = \&_dummyToggle;
-
-sub _dummyToggle {
+sub power {
 	my $client = shift;
 	my $toggle = shift;
 
