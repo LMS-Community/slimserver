@@ -1,8 +1,6 @@
 package Slim::Utils::OSDetect;
 
-use Slim::Utils::Misc;
-
-# $Id: OSDetect.pm,v 1.5 2004/01/26 05:44:22 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,44 +8,118 @@ use Slim::Utils::Misc;
 # version 2.
 
 use strict;
+use Config;
+use Slim::Utils::Misc;
 
 my $detectedOS = undef;
+my %osDetails  = ();
 
 sub OS {
 	if (!$detectedOS) { init(); }
 	return $detectedOS;
 }
 
-#
 # Figures out where the preferences file should be on our platform, and loads it.
 # also sets the global $detectedOS to 'unix' 'win'
-#
 sub init {
 	if (!$detectedOS) {
 
 		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
 
 		if ($^O =~/darwin/i) {
+
 			$detectedOS = 'mac';
+
+			initDetailsForOSX();
+
 		} elsif ($^O =~ /^m?s?win/i) {
+
 			$detectedOS = 'win';
 
+			initDetailsForWin32();
+
+		} elsif ($^O =~ /linux/i) {
+
+			$detectedOS = 'unix';
+
+			initDetailsForLinux();
+
 		} else {
+
 			$detectedOS = 'unix';
 		}
 
 		$::d_os && Slim::Utils::Misc::msg("I think it's \"$detectedOS\".\n");
 
 	} else {
+
 		$::d_os && Slim::Utils::Misc::msg("OS detection skipped, using \"$detectedOS\".\n");
 	}
+}
 
-	# figure out where the prefs file should be on this platform:
-#	if ($detectedOS eq 'mac') {
-#
-#		die "Sorry, the SlimServer runs on MacOS X, but not Mac OS Classic (9.X)"
-#	}
-	
+sub details {
+	return \%osDetails;
+}
+
+sub initDetailsForWin32 {
+
+	%osDetails = (
+		'os'     => 'Windows',
+
+		'osName' => (Win32::GetOSName())[0],
+
+		'osArch' => Win32::GetChipName(),
+
+		'uid'    => Win32::LoginName(),
+
+		'fsType' => (Win32::FsType())[0],
+	);
+
+	# Do a little munging for pretty names.
+	$osDetails{'osName'} =~ s/Win/Windows /;
+	$osDetails{'osName'} =~ s/\/.Net//;
+	$osDetails{'osName'} =~ s/2003/Server 2003/;
+}
+
+sub initDetailsForOSX {
+
+	open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
+
+	while (<SYS>) {
+
+		if (/System Version: (.+)/) {
+
+			$osDetails{'osName'} = $1;
+			last;
+		}
+	}
+
+	close SYS;
+
+	$osDetails{'os'}     = 'Macintosh';
+	$osDetails{'uid'}    = getpwuid($>);
+	$osDetails{'osArch'} = $Config{'myarchname'};
+}
+
+sub initDetailsForLinux {
+
+	$osDetails{'os'}     = 'Linux';
+
+	if (-f '/etc/debian_version') {
+
+		$osDetails{'osName'} = 'Debian';
+
+	} elsif (-f '/etc/redhat_release') {
+
+		$osDetails{'osName'} = 'RedHat';
+
+	} else {
+
+		$osDetails{'osName'} = 'Linux';
+	}
+
+	$osDetails{'uid'}    = getpwuid($>);
+	$osDetails{'osArch'} = $Config{'myarchname'};
 }
 
 1;

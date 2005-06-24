@@ -71,7 +71,7 @@ sub format_request {
 	}
 
 	# more headers copied from Slim::Player::Protocol::HTTP
-	$headers{'User-Agent'} = "iTunes/3.0 ($^O; SlimServer $::VERSION)";
+	$headers{'User-Agent'} = Slim::Utils::Misc::userAgentString();
 	$headers{'Accept'} = "*/*";
 	$headers{'Cache-Control'} = "no-cache";
 	$headers{'Connection'} = "close";

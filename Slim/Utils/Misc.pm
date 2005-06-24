@@ -12,14 +12,16 @@ use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
 use Fcntl qw(:seek);
-use Slim::Music::Info;
-use Slim::Utils::OSDetect;
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
 use Sys::Hostname;
 use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use URI;
 use URI::file;
+
+use Slim::Music::Info;
+use Slim::Utils::OSDetect;
+use Slim::Utils::Strings qw(string);
 
 if ($] > 5.007) {
 	require Encode;
@@ -46,6 +48,9 @@ BEGIN {
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
 	}
 }
+
+# Cache our user agent string.
+my $userAgentString;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our $locale = '';
@@ -938,6 +943,47 @@ sub fracSecToMinSec {
 	$frac = substr($fracrounded, -2, 2);
 									
 	return "$min:$sec.$frac";
+}
+
+# Utility functions for strings we send out to the world.
+sub userAgentString {
+
+	if (defined $userAgentString) {
+		return $userAgentString;
+	}
+
+	my $osDetails = Slim::Utils::OSDetect::details();
+
+	# We masquerade as iTunes for radio stations that really want it.
+	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) SlimServer/$::VERSION/$::REVISION",
+
+		$osDetails->{'os'},
+		$osDetails->{'osName'},
+		($osDetails->{'osArch'} || 'Unknown'),
+		Slim::Utils::Prefs::get('language'),
+		$locale,
+	);
+
+	return $userAgentString;
+}
+
+sub settingsDiagString {
+
+	my $osDetails = Slim::Utils::OSDetect::details();
+
+	# We masquerade as iTunes for radio stations that really want it.
+	my $diagString = sprintf("%s%s %s - %s - %s - %s - %s",
+
+		string('SERVER_VERSION'),
+		string('COLON'),
+		$::VERSION,
+		$::REVISION,
+		$osDetails->{'osName'},
+		get('language'),
+		$Slim::Utils::Misc::locale,
+	);
+
+	return $diagString;
 }
 
 sub assert {

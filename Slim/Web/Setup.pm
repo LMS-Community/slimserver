@@ -1199,11 +1199,8 @@ sub initSetupConfig {
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 
-				$paramref->{'versionInfo'} = sprintf('%s%s %s - %s - locale: %s',
-					string('SERVER_VERSION'), string("COLON"), $::VERSION, $::REVISION, $Slim::Utils::Misc::locale,
-				);
-
-				$paramref->{'newVersion'} = $::newVersion;
+				$paramref->{'versionInfo'} = Slim::Utils::Misc::settingsDiagString();
+				$paramref->{'newVersion'}  = $::newVersion;
 			}
 		,'GroupOrder' => ['language', 'Default','Rescan']
 		#,'template' => 'setup_server.html'

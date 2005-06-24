@@ -554,7 +554,7 @@ sub requestString {
 		"$type $path HTTP/1.0",
 		"Accept: */*",
 		"Cache-Control: no-cache",
-		"User-Agent: iTunes/4.7.1 ($^O; SlimServer $::VERSION)",
+		"User-Agent: " . Slim::Utils::Misc::userAgentString(),
 		"Icy-MetaData: 1",
 		"Connection: close",
 		"Host: $host" . $CRLF
