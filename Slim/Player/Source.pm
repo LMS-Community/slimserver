@@ -568,7 +568,8 @@ sub underrun {
 sub skipahead {
 	my $client = shift;
 
-	if (!$client->reportsTrackStart()) {
+	if (!$client->reportsTrackStart() || 
+		Slim::Player::Sync::isSynced($client)) {
 		$::d_source && msg("**skipahead: stopping\n");
 		playmode($client, 'stop');
 	}
@@ -958,7 +959,7 @@ sub streamingSongIndex {
 	my $queue = $client->currentsongqueue();
 	if (defined($index)) {
 		$::d_source && msg("Adding song index $index to song queue\n");
-		if (!$client->reportsTrackStart() || $clear) {
+		if (!$client->reportsTrackStart() || $clear || Slim::Player::Sync::isSynced($client)) {
 			$::d_source && msg("Clearing out song queue first\n");
 			$#{$queue} = -1;
 		}
