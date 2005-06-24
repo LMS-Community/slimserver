@@ -542,6 +542,10 @@ sub reshuffle {
 		Slim::Player::Source::playingSongIndex($client) != Slim::Player::Source::streamingSongIndex($client)) {
 		Slim::Player::Source::flushStreamingSong($client);
 	}
+	elsif ($client->playmode() eq 'playout-stop' &&
+		   Slim::Player::Source::playingSongIndex($client) != (count($client) - 1)) {
+		Slim::Player::Source::playmode($client, 'playout-play');
+	}
 
 	refreshPlaylist($client);
 }
