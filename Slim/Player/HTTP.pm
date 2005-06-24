@@ -49,10 +49,6 @@ sub connected {
 # dummy methods
 sub update		{ }
 sub isPlayer		{ 0 }
-sub power 	   	{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
-sub stop		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
-sub play		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
-sub pause		{ Slim::Web::HTTP::clearOutputBuffer(shift); 1 }
 sub playout		{ 1 }
 sub resume		{ 1 }
 sub volume		{ 1 }
@@ -61,7 +57,23 @@ sub bufferFullness	{ 0 }
 sub formats		{ 'mp3' }
 sub model		{ 'http' }
 sub decoder		{ 'http' }
-sub vfdmodel	{ 'http' }
+sub vfdmodel		{ 'http' }
 sub vfd			{ undef }
+
+*power = \&_dummyToggle;
+*stop  = \&_dummyToggle;
+*play  = \&_dummyToggle;
+*pause = \&_dummyToggle;
+
+sub _dummyToggle {
+	my $client = shift;
+	my $toggle = shift;
+
+	if ($toggle) {
+		Slim::Web::HTTP::clearOutputBuffer($toggle);
+	}
+
+	return 1;
+}
 
 1;
