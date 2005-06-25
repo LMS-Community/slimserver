@@ -58,17 +58,17 @@ my $score = 0;
 # button functions for top-level home directory
 sub defaultHandler {
 		my $client = shift;
-		my @oldlines;
+		my $oldlines;
 		if ($gamemode eq 'attract') {
-			@oldlines = Slim::Display::Display::curLines($client);
+			$oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'play';
 			resetGame();
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft($oldlines, Slim::Display::Display::curLines($client));
 			return 1;
 		} elsif ($gamemode eq 'gameover') {
-			@oldlines = Slim::Display::Display::curLines($client);
+			$oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'attract';
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft($oldlines, Slim::Display::Display::curLines($client));
 			return 1;
 		}
 		return 0;
@@ -79,6 +79,10 @@ sub defaultMap {
 		,'play.repeat' => 'rotate_1'
 		,'add' => 'rotate_-1'
 		,'add.repeat' => 'rotate_-1'
+		,'play.single' => 'dead'
+		,'play.hold'   => 'dead'
+		,'add.single'  => 'dead'
+		,'add.hold'    => 'dead'
 	}
 }
 
@@ -334,14 +338,20 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
+	my $parts;
+
 	if ($gamemode eq 'attract') {
-		$line1 = Slim::Display::Display::center("- S - L - I - M - T - R - I - S -");
-		$line2 = Slim::Display::Display::center("1 coin 1 play");
-		return ($line1, $line2);
+		$parts = {
+		    'center1' => "- S - L - I - M - T - R - I - S -",
+		    'center2' => "1 coin 1 play",
+		};
+		return $parts;
 	} elsif ($gamemode eq 'gameover') {
-		$line1 = Slim::Display::Display::center("Game over man, game over!");
-		$line2 = Slim::Display::Display::center("Score: $score");
-		return ($line1, $line2);
+		$parts = {
+		    'center1' => "Game over man, game over!",
+		    'center2' => "Score: $score",
+		};
+		return $parts;
 	}
 
 	if (Time::HiRes::time() - $lastdrop > .5)
@@ -364,35 +374,40 @@ sub lines {
 	}
 
 	if ($client->isa( "Slim::Player::Squeezebox2")) {
-		$line1 = Slim::Display::Display::symbol('framebuf');
+		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
 			{	
 				my $column = ($bitmaps2[$dispgrid[$x][1]] | $bitmaps2[$dispgrid[$x][2]*2]) . "\x00\x00";
 				
 				$column |= "\x00\x00" . ($bitmaps2[$dispgrid[$x][3]] | $bitmaps2[$dispgrid[$x][4]*2]);
 				
-				$line1 .= $column;
+				$bits .= $column;
 			}
-		$line1 .=  Slim::Display::Display::symbol('/framebuf');
+		$parts->{bits} = $bits;
 	} elsif ($client->isa( "Slim::Player::SqueezeboxG")) {
-		$line1 = Slim::Display::Display::symbol('framebuf');
+		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
 			{	
 				my $column = ($bitmaps[$dispgrid[$x][1]] | $bitmaps[$dispgrid[$x][2]*2]) . "\x00";
 				
 				$column |= "\x00" . ($bitmaps[$dispgrid[$x][3]] | $bitmaps[$dispgrid[$x][4]*2]);
 				
-				$line1 .= $column;
+				$bits .= $column;
 			}
-		$line1 .=  Slim::Display::Display::symbol('/framebuf');
+		$parts->{bits} = $bits;
 	} else {
+		my ($line1, $line2);
 		for (my $x = 1; $x < $width+2; $x++)
 			{
 				$line1 .= grid2char($dispgrid[$x][1] * 2 + $dispgrid[$x][2]);
 				$line2 .= grid2char($dispgrid[$x][3] * 2 + $dispgrid[$x][4]);
 			}
-		return ($line1, $line2);
+		$parts = {
+		    'line1' => $line1,
+		    'line2' => $line2,
+		};
 	}
+	return $parts;
 }	
 
 #
