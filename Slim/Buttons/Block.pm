@@ -36,6 +36,7 @@ sub block {
 	my $client = shift;
 	my $line1 = shift;
 	my $line2 = shift;
+	my $size = shift;
 	
 	# since we'll be doing an in-place replacement of the overlay, 
 	# we need to parse out the text, in case it's already been
@@ -43,7 +44,9 @@ sub block {
 	$client->blocklines($client->parseLines([$line1,$line2]));
 
 	Slim::Buttons::Common::pushMode($client,'block');
-
+	$client->param('oldsize',$client->textSize());
+	$client->textSize($size) if (defined $size && $size >= 0 && $size < $client->maxTextSize());
+	
 	if (defined $line1) {
 		$client->showBriefly($line1, $line2);
 	}
@@ -66,6 +69,7 @@ sub unblock {
 	Slim::Utils::Timers::killTimers($client, \&updateBlockedStatus);
 	Slim::Buttons::ScreenSaver::wakeup($client);
 	if (Slim::Buttons::Common::mode($client) eq 'block') {
+		$client->textSize($client->param('oldsize')) if defined $client->param('oldsize');
 		Slim::Buttons::Common::popMode($client);
 	}
 }

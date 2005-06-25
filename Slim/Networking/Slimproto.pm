@@ -344,8 +344,8 @@ sub process_slimproto_frame {
 		
 		if ($client->needsUpgrade()) {
 			$client->brightness($client->maxBrightness());
-			$client->textSize(0);
-			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'));
+			
+			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'),0);
 		} else {
 			# workaround to handle multiple firmware versions causing blocking modes to stack
 			while (Slim::Buttons::Common::mode($client) eq 'block') {

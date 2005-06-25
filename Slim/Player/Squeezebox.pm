@@ -322,6 +322,7 @@ sub upgradeFirmware_SDK5 {
 	Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
 	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
 	
+	my $oldsize = $client->textSize();
 	$client->textSize(0);
 	
 	# disable visualizer in this mode
@@ -370,6 +371,8 @@ sub upgradeFirmware_SDK5 {
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
 	
+	$client->textSize($oldsize);
+
 #	Slim::Utils::Misc::blocking($client->tcpsock, 0);
 	
 	return undef;
