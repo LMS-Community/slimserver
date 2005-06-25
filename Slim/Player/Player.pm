@@ -1414,16 +1414,23 @@ sub renderOverlay {
 	my $line2 = shift;
 	my $overlay1 = shift;
 	my $overlay2 = shift;
+	my $center1;
+	my $center2;
 	
 	return $line1 if (ref($line1) eq 'HASH');
 	return $line1 if $line1 =~ /\x1e(framebuf|linebreak|right)\x1e/s;
 
 	my $parts;
 
+	($line1, $center1) = split("\x1ecenter\x1e", $line1) if $line1;
+	($line2, $center2) = split("\x1ecenter\x1e", $line2) if $line2;
+
 	$parts->{line1} = defined($line1) ? $client->symbols($line1) : undef;
 	$parts->{line2} = defined($line2) ? $client->symbols($line2) : undef;
 	$parts->{overlay1} = defined($overlay1) ? $client->symbols($overlay1) : undef;
 	$parts->{overlay2} = defined($overlay2) ? $client->symbols($overlay2) : undef;
+	$parts->{center1} = defined($center1) ? $client->symbols($center1) : undef;
+	$parts->{center2} = defined($center2) ? $client->symbols($center2) : undef;
 
 	return $parts;
 }
