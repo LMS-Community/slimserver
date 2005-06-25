@@ -338,14 +338,14 @@ sub utf8on {
 	return $string;
 }
 
-sub looks_like_ascii { 
+sub looks_like_ascii {
 
-	return 1 if $_[0] !~ /([^\x{00}-\x{7f}])/;
+	return 1 if $_[0] !~ /([^\x00-\x7F])/;
 }
 
-sub looks_like_latin1 { 
+sub looks_like_latin1 {
 
-	return 1 if $_[0] !~ /([^\x{00}-\x{ff}])/;
+	return 1 if $_[0] !~ /([^\x00-\xFF])/;
 }
 
 sub looks_like_utf8 {
