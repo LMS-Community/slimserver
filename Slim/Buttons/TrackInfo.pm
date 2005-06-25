@@ -371,8 +371,13 @@ sub lines {
 
 	# Show the title of the song with a note symbol
 	my $line1 = Slim::Music::Info::standardTitle($client, track($client));
-	my $overlay1 = Slim::Display::Display::symbol('notesymbol');
 
+	# add position string
+	my $overlay1 = ' (' . (currentLine($client)+1)
+				. ' ' . $client->string('OF') .' ' . scalar(@{$client->trackInfoLines}) . ')';
+	
+	$overlay1 .= Slim::Display::Display::symbol('notesymbol');
+	
 	my $line2 = $client->trackInfoLines->[currentLine($client)];
 	my $overlay2 = defined($client->trackInfoContent->[currentLine($client)]) ? Slim::Display::Display::symbol('rightarrow') : undef;
 
