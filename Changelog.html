@@ -1,3 +1,215 @@
+<h2><a name="v6.1b1" id="v6.1b1"></a>Version 6.1b1 - 2005-06-24</h2>
+<ul>
+	<li>SqueezeNetwork:<p>
+		<ul>
+			<li>Added support for Slim Devices' Always-On Network Service: SqueezeNetwork.
+
+			<li>Select the 'SqueezeNetwork' item from the Player UI Main Menu to connect.
+
+			<li>See <a href="http://www.squeezenetwork.com/">www.squeezenetwork.com</a> for more details.
+		</ul>
+	</li>
+	<br>
+
+	<li>Squeezebox2 Firmware (Revision 13):<p>
+		<ul>
+			<li>Support for SqueezeNetwork & DirectStreaming
+
+			<li>TCP out-of-order packet reassembly has been added. This improves direct streaming performance for many stations.
+
+			<li>Fix a problem where some versions of the firmware would hang on completing an upgrade.
+		</ul>
+	</li>
+	<br>
+
+	<li>Performance Improvements:<p>
+		<ul>
+			<li>Playlists are now stored in the database, which drastically increases the speed for loading & shuffling large playlists.
+
+	  		User created playlists are written out to the filesystem as a backup.
+
+			<li>Browse Music Folder has been completely rewritten, and can now load a directory with 2000 items in 1 second.
+
+			<li>The webserver now supports HTTP 304 Reponses & ETag Headers to allow smart caching of images for improved performance. These changes don't fully work in Safari however.
+
+			<li>Rewritten Player update / Render Cache from Adrian
+
+			<li>Browsing Albums & Tracks at the Genre & Artist level is now much faster. 
+		</ul>
+	</li>
+	<br>
+
+	<li>Internet Radio:<p>
+		<ul>
+			<li>Michael Herger added a Web Interface for the Shoutcast & RadioIO plugins. Large portions of the Shoutcast plugin were rewritten for improved performance and memory savings.
+
+			<li>Dave Cohen added a Podcast Plugin with some presets.
+
+			<li>Live365 plugin now uses async HTTP connections for fetching catalog and current song information. 
+
+			<li>Web-enabled Live365 plugin from chrisp810. The packages in the old Live365.pm are factored out into individual files in the Live365 directory. Also included are templates for the Default and EN skins. Thanks chrisp810!
+		</ul>
+	</li>
+	<br>
+
+	<li>Usability:<p>
+		<ul>
+			<li>The WipeDB checkbox now resides on the first page as part of the Rescan button.
+
+			<li>Turn on active cleanup of removed tracks - if you remove a track from your filesystem, it will now be removed from the DB on rescan.
+
+			<li>New display code including "ticker mode" scrolling for the RSS Plugin.
+
+			<li>Unicode / Character set updates, which fix file encoding that was causing SlimServer to skip files with accented characters.
+		</ul>
+	</li>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>Fixes to the Handheld Skin from Michael Herger
+
+			<li>Jacob Potter updated ExBrowse2 to use his JXTK, and to have Drag-n-Drop playlist modification.
+		</ul>
+	</li>
+	<br>
+
+	<li>Windows Platform Support:<p>
+		<ul>
+			<li>SlimServer.exe has been replaced with SlimTray.exe.
+
+			<li>The tray tool can check the status of SlimServer, stop and start the service, and launch the web interface in the user's default browser. SlimServer is now always installed as a Windows service (the option of starting automatically at boot time still exists).
+		</ul>
+	</li>
+	<br>
+
+	<li>SoftSqueeze (revision 2.0b9):<p>
+		<ul>
+			<li>Added support for direct streaming.
+
+			<li>Fix audio buffer to ensure that changes in the audio format are always correctly detected. This stops the white noise when playing aac files in sync. 
+
+			<li>Fixed up/down animations.
+
+			<li>Added Excession-Thin skin, contributed by Josh Eckels.
+		</ul>
+	</li>
+	<br>
+
+	<li>3rd Party Integration:<p>
+		<ul>
+			<li>Improved MusicMagicMixer support. Don't try and scan the MMM database, while it's still analyzing music. This would cause Slimserver to grind to a halt. We recommend upgrading to the latest version of MusicMagicMixer.
+
+			<li>XPL Updates - patch from John Gorst, including doc update.
+		</ul>
+	</li>
+	<br>
+
+	<li>Bugs Fixed:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=330">#330</a> - reloading  Handheld skin can cause unexpected behavior
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=354">#354</a> - Add (artist name) to album view in web interface
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=527">#527</a> - irmap preference should not use absolute path
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=648">#648</a> - leave brightness unchanged when entering screensaver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=739">#739</a> - Request: option to show year with 'browse artists'
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=939">#939</a> - &quot;Standby text size&quot; item &quot;bumps&quot; to the right
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1154">#1154</a> - Duration not being respected by Slimp3 in 'display' command
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1160">#1160</a> - Problem with shuffle modes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1160">#1160</a> - Problem with shuffle modes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1180">#1180</a> - merge track list handling to common code
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1206">#1206</a> - Include artist in 'new' albums
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1211">#1211</a> - new formatting in 2 steps works - not in 1.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1238">#1238</a> - removing songs from playlist with add button can be annoying
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1241">#1241</a> - Shuffle (song) -&gt; Shuffle (off) goes back to beginning of playlist, not to current song
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1242">#1242</a> - First song skipped on play in random iTunes playlist
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1266">#1266</a> - Large Playlists cannot be saved
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1286">#1286</a> - Squeezebox no longer displays (Disc M of N) for multi-CD
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1289">#1289</a> - Playlist stops at track boundary
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1311">#1311</a> - Squeezebox2 FLAC decoder needs REPLAY-GAIN type capability
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1319">#1319</a> - Images Not Cached in SS Web Interface - Performance
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1334">#1334</a> - Genre-&gt;Artist-&gt;Album navigation is slow
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1347">#1347</a> - Consolidate &quot;Wipe Cache&quot; and &quot;Rescan&quot;
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1347">#1347</a> - Consolidate &quot;Wipe Cache&quot; and &quot;Rescan&quot;
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1370">#1370</a> - removing Now Playing from player menu creates weird behavior
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1438">#1438</a> - Pluging appear in Browse Menu list, even when disabled
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1438">#1438</a> - Pluging appear in Browse Menu list, even when disabled
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1440">#1440</a> - sysseek causes crash while playing 'net radio
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1440">#1440</a> - sysseek causes crash while playing 'net radio
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1441">#1441</a> - Option to disable automatic iTunes scanning
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1444">#1444</a> - Browsing an artist's albums in player UI unnecessarily includes artist name
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1445">#1445</a> - Powering off players should cancel sleep
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1446">#1446</a> - MusicMagic plugin eats memory and cpu
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1446">#1446</a> - MusicMagic plugin eats memory and cpu
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1457">#1457</a> - Won't advance if song added to playlist while last song playing.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1464">#1464</a> - slimserver crashes when given m3u file for an internet radio stream
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1466">#1466</a> - save playlist link disappears
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1475">#1475</a> - disabled itunes tracks require wipe cache to re-enable
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1483">#1483</a> - if current playlist spans multiple pages, current song is not on first page, it doesn't load the proper page
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1484">#1484</a> - status.xml reporting incorrect song names in playlist
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1484">#1484</a> - status.xml reporting incorrect song names in playlist
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1485">#1485</a> - Javascript Error loading postback: undefined -- Default2 skin in Safari on 10.3 or 10.4
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1485">#1485</a> - Javascript Error loading postback: undefined -- Default2 skin in Safari on 10.3 or 10.4
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1492">#1492</a> - Slimserver fails to start when using Solaris 10 service framework
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1498">#1498</a> - Back buttons don't always go back
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1500">#1500</a> - XML skin returns extra / for cover art URL
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1501">#1501</a> - d_mp3 debug option from web interface gives error
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1504">#1504</a> - link to csrf help points to localhost, should be relative
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1506">#1506</a> - WPL playlists with relative paths cause the server to crash
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1506">#1506</a> - WPL playlists with relative paths cause the server to crash
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1510">#1510</a> - Slimserver terminates when attempting to play Live365 station
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1511">#1511</a> - Error message generated when Shoutcast station is selected
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1513">#1513</a> - Play other songs in album doesn't work in some case
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1516">#1516</a> - search on the player crashes slimserver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1520">#1520</a> - status.html does not always return content-type
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1523">#1523</a> - server crashes whenever web interface is loaded
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1523">#1523</a> - server crashes whenever web interface is loaded
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1523">#1523</a> - server crashes whenever web interface is loaded
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1524">#1524</a> - Too much hard coded html and text in livesearch
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1529">#1529</a> - jump to letters in Browse Music Folder look messed up sometimes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1532">#1532</a> - disabled plugins added to prefs repeatedly
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1535">#1535</a> - CLI artists does not follow server setting about composer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1537">#1537</a> - CLI debug command toggle returns toggled value
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1538">#1538</a> - Sync info is missing from CLI API doc about status
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1539">#1539</a> - CLI status does not report signalstrength for squeezebox2
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1540">#1540</a> - Synchronization playing each song twice
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1541">#1541</a> - AAC files &quot;hiccup&quot; during playback.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1542">#1542</a> - RSS News connection problem
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1548">#1548</a> - Artist, Album and Genre should be case insenstive
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1552">#1552</a> - RadioIO HTTP URLs are visible in title area of song info on player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1554">#1554</a> - Animation glitch when moving RIGHT off of home menu
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1570">#1570</a> - signoff from squeezenetwork doesn't stop playing audio
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1580">#1580</a> - Connecting or reconnecting to SqueezeNetwork should wake the player from the screensaver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1580">#1580</a> - Connecting or reconnecting to SqueezeNetwork should wake the player from the screensaver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1583">#1583</a> - Missing display update in Podcast plugin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1589">#1589</a> - Connections to remote streams/pls files not being closed.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1590">#1590</a> - songinfo.xml does not return correct information
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1602">#1602</a> - plugins that fail initPlugin should NOT be disabled permanently
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1602">#1602</a> - plugins that fail initPlugin should NOT be disabled permanently
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1603">#1603</a> - Mix from remote does not include seed song
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1609">#1609</a> - execute method crash on startup
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1610">#1610</a> - r3291: Rescan creashes slimserver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1621">#1621</a> - Songs added in reverse order when using All Albums
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1621">#1621</a> - Songs added in reverse order when using All Albums
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1637">#1637</a> - savePlaylist plugin always enabled
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1642">#1642</a> - spectrum analyzer screensaver pushes on but doesn't push off
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1643">#1643</a> - Screensaver (Stopped) player setting missing in SlimServer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1644">#1644</a> - firmware update clears current playlist
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1645">#1645</a> - SB2 display doesn't power off when server is not present
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1650">#1650</a> - plugins sort in server settings is case sensitive
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1653">#1653</a> - Web interface broken
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1654">#1654</a> - No Album displayed in now playing on Squeezebox
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1657">#1657</a> - RSS News Ticker scroll should end at the end of the item, not at a fixed time
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1660">#1660</a> - Add To Favorites should be first item in track info screen
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1671">#1671</a> - ExBrowse2 skin keeps giving me an OK dialog box
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1676">#1676</a> - Force scroll on sb using remote control.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1688">#1688</a> - Need a &quot;Do Nothing&quot; screensaver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1702">#1702</a> - checking formats could be more optimised
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1705">#1705</a> - Undefined subroutine crasher in Misc.pm (with patch)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1707">#1707</a> - Playlists with '#' duration notiation aren't parsed correctly
+		</ul>
+	<br>
+</ul>
+
 <h2><a name="v6.0.2" id="v6.0.2"></a>Version 6.0.2 - 2005-04-27</h2>
 <ul>
 	<li>Squeezebox2 Firmware (revision 11):<p>
