@@ -779,11 +779,9 @@ sub clearExternalPlaylists {
 	my $self = shift;
 	my $url = shift;
 
-	my $playLists = getExternalPlaylists();
-
 	# We can specify a url prefix to only delete certain types of external
 	# playlists - ie: only iTunes, or only MusicMagic.
-	while (my $track = $playLists->next()) {
+	for my $track ($self->getExternalPlaylists) {
 
 		$track->delete() if (defined $url ? $track->url() =~ /^$url/ : 1);
 	}
