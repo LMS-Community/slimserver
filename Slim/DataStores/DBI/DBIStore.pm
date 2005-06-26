@@ -794,13 +794,18 @@ sub clearExternalPlaylists {
 sub getExternalPlaylists {
 	my $self = shift;
 
-	return Slim::DataStores::DBI::Track->externalPlaylists();
+	# Use find()'s caching mechanism.
+	return $self->find('playlist', {
+		'url' => [ qw(itunesplaylist:* moodlogicplaylist:* musicmagicplaylist:*) ],
+	},
+	'title');
 }
 
 sub getInternalPlaylists {
 	my $self = shift;
 
-	return Slim::DataStores::DBI::Track->internalPlaylists();
+	# Use find()'s caching mechanism.
+	return $self->find('playlist', { 'url' => 'playlist:*' }, 'title');
 }
 
 sub getPlaylistForClient {

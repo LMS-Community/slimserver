@@ -78,16 +78,6 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
 	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist');
 	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
-
-	# And some custom sql
-	$class->add_constructor(internalPlaylists => qq{url LIKE 'playlist:%' ORDER BY titlesort});
-
-	$class->add_constructor(externalPlaylists => qq{
-		url LIKE 'itunesplaylist:%' OR
-		url LIKE 'moodlogicplaylist:%' OR
-		url LIKE 'musicmagicplaylist:%'
-		ORDER BY titlesort
-	});
 }
 
 our $loader;

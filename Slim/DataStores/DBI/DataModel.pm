@@ -276,6 +276,7 @@ sub getWhereValues {
 our %fieldHasClass = (
 	'track' => 'Slim::DataStores::DBI::Track',
 	'lightweighttrack' => 'Slim::DataStores::DBI::LightWeightTrack',
+	'playlist' => 'Slim::DataStores::DBI::LightWeightTrack',
 	'genre' => 'Slim::DataStores::DBI::Genre',
 	'album' => 'Slim::DataStores::DBI::Album',
 	'artist' => 'Slim::DataStores::DBI::Contributor',
