@@ -189,14 +189,14 @@
 		</tr>
 	[% END %]
 </table>
-[% IF itempath %]
+[% IF track.path %]
 	<table>
 		<tr>
 			<td>
 				[% "LOCATION" | string; "COLON" | string %]&nbsp;
 			</td>
 			<td>
-				[% itempath | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
+				[% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
 			</td>
 		</tr>
 	</table>
@@ -208,7 +208,7 @@
 				[% "COVERART" | string; "COLON" | string %]
 			</td>
 			<td>
-				<a href="/music/[% track.id %]/cover.jpg" target="cover" width="100%")><img src="/music/[% track.id %]/cover.jpg"></a>
+				<a href="/music/[% track.id %]/cover.jpg" target="cover" width="100%")><img src="/music/[% track.id %]/cover.jpg" width="100%"></a>
 				<br>(click image for full size)
 			</td>
 		</tr>

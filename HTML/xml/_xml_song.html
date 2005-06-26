@@ -37,7 +37,7 @@
 	[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
 	[% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
 	[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
- 	<song_url><![CDATA[[% itempath %]]]></song_url>
+ 	<song_url><![CDATA[[% track.path %]]]></song_url>
 	<download_url><![CDATA[[% download %]]]></download_url>
   	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
  	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]

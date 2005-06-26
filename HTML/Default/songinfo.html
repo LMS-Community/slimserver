@@ -150,10 +150,10 @@
       </tr>
      [% END %]
 
-     [% IF itempath %] 
+     [% IF track.path %] 
       <tr> 
         <td class="nowrap"> [% "LOCATION" | string; "COLON" | string %]</td>
-        <td>[% itempath | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
+        <td>[% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
       </tr>
      [% END %]
 

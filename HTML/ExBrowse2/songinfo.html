@@ -88,10 +88,10 @@
   <td class="listing"> [% "TYPE" | string %][% "COLON" | string %] </td>
   <td class="listing"> [% track.content_type | string %] </td>
  </tr>
- [% END %]  [% IF url %] 
+ [% END %]  [% IF track.path %] 
  <tr>
   <td class="listing"> [% "LOCATION" | string %][% "COLON" | string %] </td>
-  <td class="listing"> <a href="[% url | uri %]">[% itempath | html %]</a> </td>
+  <td class="listing"> <a href="[% url | uri %]">[% track.path | html %]</a> </td>
  </tr>
  [% END %] [% IF track.modificationTime %] 
  <tr>
