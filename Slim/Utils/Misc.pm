@@ -409,7 +409,7 @@ sub encodingFromFileHandle {
 	my $fh = shift;
 
 	# If we didn't get a filehandle, not much we can do.
-	if (!fileno $fh) {
+	if (!ref($fh) || !$fh->can('seek')) {
 
 		msg("Warning: Not a filehandle in encodingFromFileHandle()\n");
 		bt();
@@ -436,7 +436,8 @@ sub encodingFromFileHandle {
 	# sysread(). So skip those m3u files entirely.
 	my $enc = '';
 
-	if (ref($fh) && $fh->can('seek')) {
+	# Explitly check for IO::String - as it does have a seek() method!
+	if (ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
 		$enc = File::BOM::get_encoding_from_filehandle($fh);
 	}
 
@@ -461,7 +462,7 @@ sub encodingFromFile {
 
 	my $encoding = $locale;
 
-	if (ref($file) && fileno($file)) {
+	if (ref($file) && $file->can('seek')) {
 
 		$encoding = encodingFromFileHandle($file);
 
