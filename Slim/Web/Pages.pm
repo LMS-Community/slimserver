@@ -1643,7 +1643,11 @@ sub browsedb {
 	}
 
 	# Just go directly to the params.
-	addLibraryStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
+	# Don't show stats when only showing playlists - extra queries that
+	# aren't needed.
+	if (!grep { /playlist/ } @levels) {
+		addLibraryStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
+	}
 
 	# This pulls the appropriate anonymous function list out of the
 	# fieldInfo hash, which we then retrieve data from.
@@ -1966,7 +1970,7 @@ sub browsetree {
 
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
-		if ($Slim::Utils::Misc::locale eq 'utf8') {
+		if (Slim::Utils::Misc::looks_like_utf8($relPath)) {
 
 			$relPath = Slim::Utils::Misc::utf8on($relPath);
 		}
