@@ -769,6 +769,8 @@ sub directBodyFrame {
 
 				$client->failedDirectStream()
 			}
+
+			$client->directBody('');
 		} else {
 			$::d_directstream && msg("actually, the body was empty.  Got nobody...\n");
 		}
