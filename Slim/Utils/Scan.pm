@@ -696,7 +696,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			#
 			# Don't include the Shoutcast playlists in our Browse
 			# Playlist view either.
-			if (Slim::Utils::Misc::inPlaylistFolder($playlisturl) &&
+			if (Slim::Music::Info::isFileURL($playlisturl) &&
+				Slim::Utils::Misc::inPlaylistFolder($playlisturl) &&
 				$playlisturl !~ /ShoutcastBrowser_Recently_Played/
 			) {
 
