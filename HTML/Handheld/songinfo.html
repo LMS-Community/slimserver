@@ -61,6 +61,13 @@
 		</tr>
 		[% END %]
 		
+		[% IF track.album.disc %] 
+		<tr> 
+			<td>[% "DISC" | string; "COLON" | string %]</td>
+			<td>[% track.album.disc | html %] </td>
+		</tr>
+		[% END %]
+
 		[% IF track.tracknum %]
 		<tr>
 			<td>[% "TRACK" | string %][% "COLON" | string %]</td>
@@ -68,6 +75,13 @@
 		</tr>
 		[% END %]
 		
+		[% IF track.content_type %] 
+		<tr>
+			<td>[% "TYPE" | string; "COLON" | string %]</td>
+			<td>[% track.content_type | string %]</td>
+		</tr>
+		[% END %]
+
 		[% IF track.duration %]
 		<tr>
 			<td>[% "LENGTH" | string %][% "COLON" | string %]</td>
@@ -78,7 +92,7 @@
 		[% IF track.year %]
 		<tr>
 			<td>[% "YEAR" | string %][% "COLON" | string %]</td>
-			<td>[% track.year %]</td>
+			<td><a href="browsedb.html?hierarchy=year,album,track&level=1&year=[% track.year %]&amp;player=[% player | uri %]">[% track.year| html %]</a></td>
 		</tr>
 		[% END %]
 		
@@ -102,13 +116,42 @@
 			<td>[% track.bitrate %]</td>
 		</tr>
 		[% END %]
-		
+
+		[% IF track.bpm %]
+		<tr>
+			<td>[% "BPM" | string; "COLON" | string %] </td>
+			<td>[% track.bpm | html %] </td>
+		</tr>
+		[% END %]
+
 		[% IF track.tagversion %]
 		<tr>
 			<td>[% "TAGVERSION" | string %][% "COLON" | string %]</td>
 			<td>[% track.tagversion %]</td>
 		</tr>
 		[% END %]
+
+		[% IF track.path %] 
+		<tr> 
+			<td>[% "LOCATION" | string; "COLON" | string %]</td>
+			<td>[% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
+		</tr>
+		[% END %]
+
+		[% IF track.modificationTime %] 
+		<tr> 
+			<td>[% "MODTIME" | string; "COLON" | string %]</td>
+			<td>[% track.modificationTime | html %] </td>
+		</tr>
+		[% END %]
+
+		[% IF track.drm %]
+		<tr>
+			<td>[% "NOTE" | string %]</td>
+			<td>[% "DRM" | string %]</td>
+		</tr>
+		[% END %]
+
 	</table>
 	
 	[% PROCESS pagefooter.html %]
