@@ -3694,6 +3694,7 @@ SCREENSAVER_JUMP_BACK_NAME
 	SE	Nu spelas (Hoppa tillbaka när spelaren 'vaknar').
 
 SCREENSAVER_NONE
+	DE	Keiner
 	EN	None
 
 SETUP_DISPLAYTEXTTIMEOUT
@@ -3782,15 +3783,19 @@ SETUP_SEARCHSUBSTRING_DESC
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
 SETUP_NOGENREFILTER
+	DE	Musikstil auf Album- und Trackebene ausfiltern
 	EN	Filter genres at the album & track level.
 
 SETUP_NOGENREFILTER_1
+	DE	Zeige für einen Artisten nur Alben und Tracks des gewählten Stils
 	EN	Only show tracks & albums matching the selected genre for an artist
 
 SETUP_NOGENREFILTER_0
+	DE	Zeige für einen Artisten Tracks und Alben beliebiger Stile
 	EN	Show any tracks or albums matching the selected genre for an artist
 
 SETUP_NOGENREFILTER_DESC
+	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören. Das Aktivieren dieser Option reduziert die Anzeigegeschwindigkeit. Sie kann jedoch bei Interpreten mit mehreren Musikstilen sinnvoll sein.
 	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre. There is a performance penalty for turning this on, however, your results may be better for "Multi-Genre Artists".
 
 SETUP_COMPOSERINARTISTS
