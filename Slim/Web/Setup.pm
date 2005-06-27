@@ -1548,7 +1548,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['displaytexttimeout', 'composerInArtists'
+					'PrefOrder' => ['displaytexttimeout', 'composerInArtists', 'noGenreFilter',
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'commonAlbumTitles' ,'checkVersion']
@@ -1592,6 +1592,15 @@ sub initSetupConfig {
 							,'0' => string('SETUP_COMPOSERINARTISTS_0') 	 
 						} 	 
 					}
+
+			,'noGenreFilter' => { 	 
+						'validate' => \&validateTrueFalse 	 
+						,'options' => { 	 
+							'1' => string('SETUP_NOGENREFILTER_1')
+							,'0' => string('SETUP_NOGENREFILTER_0')
+						} 	 
+					}
+
 			,'searchSubString' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {

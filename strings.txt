@@ -3781,6 +3781,18 @@ SETUP_SEARCHSUBSTRING_DESC
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
+SETUP_NOGENREFILTER
+	EN	Filter genres at the album & track level.
+
+SETUP_NOGENREFILTER_1
+	EN	Only show tracks & albums matching the selected genre for an artist
+
+SETUP_NOGENREFILTER_0
+	EN	Show any tracks or albums matching the selected genre for an artist
+
+SETUP_NOGENREFILTER_DESC
+	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre. There is a performance penalty for turning this on, however, your results may be better for "Multi-Genre Artists".
+
 SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten
 	DK	Komponist, band og orkester som kunstner
