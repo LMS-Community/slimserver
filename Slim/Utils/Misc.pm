@@ -676,7 +676,7 @@ sub stripRel {
 sub virtualToAbsolute {
 	my ($virtual, $recursion) = @_;
 
-	my $curdir  = Slim::Utils::Prefs::get('audiodir') || return undef;
+	my $curdir  = Slim::Utils::Prefs::get('audiodir') || return $virtual;
 
 	if (!defined $virtual) {
 		$virtual = ""
