@@ -632,8 +632,7 @@ sub home {
 	}
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		#addLinks("browse",{'BROWSE_MUSIC_FOLDER' => "browse.html?dir="});
-		addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html?level=0"});
+		addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
 		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 		$params->{'nofolder'}=1;
