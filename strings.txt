@@ -6782,6 +6782,9 @@ SCAN_WARNING
 	PT	O SlimServer ainda está a analisar o arquivo musical, portanto é possível que não apareçam ainda alguns items nesta àrea.
 	SE	SlimServer läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
 
+HOME_SCAN_WARNING
+	EN	SlimServer is still scanning your music library, please be patient as this may take a while.
+
 SCAN_CLICK
 	DE	Klicken Sie, um ihre Musikverzeichnis direkt zu durchsuchen,
 	DK	For at gennemse hele din musiksamling, klik

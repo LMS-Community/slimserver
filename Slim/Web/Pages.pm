@@ -706,8 +706,10 @@ sub _lcPlural {
 sub addLibraryStats {
 	my ($params, $genre, $artist, $album) = @_;
 	
-	return if Slim::Utils::Misc::stillScanning();
-
+	if (Slim::Music::Import::stillScanning()) {
+		$params->{'warn'} = 1;
+		return;
+	}
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $find  = {};
 
@@ -1879,10 +1881,6 @@ sub browsedb {
 	main::idleStreams();
 
 	$params->{'descend'} = $descend;
-
-	if (Slim::Music::Import::stillScanning()) {
-		$params->{'warn'} = 1;
-	}
 
 	# override the template for the playlist case.
 	my $template = $levelInfo->{'browseBodyTemplate'} || 'browsedb.html';

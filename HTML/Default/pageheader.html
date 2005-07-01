@@ -6,8 +6,24 @@
 	<style type="text/css"> <!--
 		[% INSERT slimserver.css %]
 	--> </style>
+	[% IF warn %]
+		<script language="JavaScript">
+		<!-- Start Hiding the Script
+	
+		function doLoad() {
+			setTimeout( "refresh()", 300*1000);
+		}
+	
+		function refresh() {
+			window.location.replace("home.html?player=[% player | uri %]");
+		}
+	
+		// Stop Hiding script --->
+		</script>
+	[% END %]
+	
 	<link rel="shortcut icon" href="[% webroot %]favicon.ico" type="image/x-icon">
-    <link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon">
+	<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon">
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
 	<table cellspacing="0" width="100%">
