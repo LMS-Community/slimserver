@@ -2,9 +2,9 @@ var p = 1;
 
 
 function to_currentsong() {
-	//if (window.location.hash == '') {
+	if (window.location.hash == '') {
 		window.location.hash = 'currentsong';
-	//}
+	}
 }
 
 function openRemote(player,playername)

@@ -7,7 +7,9 @@
  	<script type="text/javascript">
 		<!--
 		function to_currentsong() {
-			window.location.hash = 'currentsong';
+			if (window.location.hash == '') {
+				window.location.hash = 'currentsong';
+			}
 		}
 		-->
 	</script>
