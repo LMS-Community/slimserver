@@ -217,6 +217,8 @@ sub isMusicLibraryFileChanged {
 	
 	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime");
 
+	$http->close();
+
 	$http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/getStatus",
 		'create' => 0,
