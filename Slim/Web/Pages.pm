@@ -1928,7 +1928,7 @@ sub browsetree {
 			$count,
 			$params->{'path'},
 			0,
-			"hierarchy=$hierarchy",
+			"hierarchy=$hierarchy&player=$player",
 			\$params->{'start'},
 			\$params->{'browselist_header'},
 			\$params->{'browselist_pagebar'},
