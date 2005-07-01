@@ -288,8 +288,9 @@ sub render {
 		$cache->{scrolling} = 0;
 		$cache->{ticker} = 0 if ($scroll != 2);
 		$cache->{changed} = 1;
-	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
+	} elsif (!defined($parts->{line2}) && (defined($cache->{line2})) || $cache->{restartticker}) {
 		$cache->{line2} = undef;
+		$cache->{line1text} = '' if $double;
 		$cache->{line2text} = '';
 		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
