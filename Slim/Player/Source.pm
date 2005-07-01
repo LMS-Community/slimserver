@@ -1719,20 +1719,17 @@ sub tokenizeConvertCommand {
 
 	# Special case for FLAC cuesheets. We pass the start and end
 	# of the track within the FLAC file.
-	if ($type eq 'flc') {
+	if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
 
-		if ($fullpath =~ /#([^-]+)-([^-]+)$/) {
+		my ($start, $end) = ($1, $2);
 
-			my ($start, $end) = ($1, $2);
+		$command =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
+		$command =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
 
-			$command =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
-			$command =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
+	} else {
 
-		} else {
-
-			$command =~ s/\$START\$/0/g;
-			$command =~ s/\$END\$/-0/g;
-		}
+		$command =~ s/\$START\$/0/g;
+		$command =~ s/\$END\$/-0/g;
 	}
 
 	# This must come above the FILE substitutions, otherwise it will break
