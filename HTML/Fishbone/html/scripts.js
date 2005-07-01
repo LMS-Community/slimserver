@@ -2,7 +2,7 @@ var p = 1;
 
 
 function to_currentsong() {
-	if (window.location.hash == '') {
+	if (window.location.hash == '') || (navigator.appName=="Microsoft Internet Explorer")) {
 		window.location.hash = 'currentsong';
 	}
 }
