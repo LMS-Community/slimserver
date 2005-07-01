@@ -834,13 +834,26 @@ sub scrollUpdateDisplay {
 	my $scroll = shift;
 
 	my ($line1, $line2);
+	
+	my $padlen = $scroll->{overlay2start} - ($scroll->{endscroll} - $scroll->{offset});
+	$padlen = 0 if ($padlen < 0);
+	my $pad = ' ' x $padlen;
 
 	if (!($scroll->{double})) {
 		$line1 = ${$scroll->{line1ref}};
-		$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $scroll->{overlay2start}) . $scroll->{overlay2text};
+		if ($padlen) {
+			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, $scroll->{overlay2start}) . $scroll->{overlay2text};
+		} else {
+			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $scroll->{overlay2start}) . $scroll->{overlay2text};
+		}
 	} else {
-		$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
-		$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
+		if ($padlen) {
+			$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, 40);
+			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, 40);
+		} else {
+			$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
+			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
+		}
 	}
 
 	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);
