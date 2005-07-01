@@ -509,7 +509,7 @@ sub _parseVorbisComments {
 		push(@$rawTags, $tagStr);
 
 		# Match the key and value
-		if ($tagStr =~ /^(.*?)=(.*)$/s) {
+		if ($tagStr =~ /^(.*?)=(.*?)[\r\n]*$/s) {
 			# Make the key uppercase
 			my $tkey = $1;
 			$tkey =~ tr/a-z/A-Z/;

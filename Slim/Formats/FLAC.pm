@@ -701,7 +701,7 @@ sub getStackedVCs {
 	for my $tag (@$rawTags) {
 
 		# Match the key and value
-		if ($tag =~ /^(.*?)=(.*)$/) {
+		if ($tag =~ /^(.*?)=(.*?)[\r\n]*$/) {
 
 			# Make the key uppercase
 			my $tkey  = uc($1);
