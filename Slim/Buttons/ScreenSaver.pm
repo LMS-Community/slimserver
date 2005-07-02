@@ -116,7 +116,9 @@ sub screenSaver {
 	} elsif (!$client->power()) {
 		$saver = Slim::Utils::Prefs::clientGet($client,'offsaver');
 		$saver =~ s/^SCREENSAVER\./OFF\./;
-		if ($mode ne $saver) {
+		if ($saver eq 'nosaver') {
+			# do nothing
+		} elsif ($mode ne $saver) {
 			if (Slim::Buttons::Common::validMode($saver)) {
 				Slim::Buttons::Common::pushMode($client, $saver);
 			} else {
