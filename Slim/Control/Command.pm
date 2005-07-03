@@ -249,7 +249,7 @@ sub execute {
 	} elsif ($p0 eq "rescan") {
 	
 		if (defined $p1 && $p1 eq '?') {
-			$p1 = Slim::Utils::Misc::stillScanning();
+			$p1 = Slim::Utils::Misc::stillScanning()?1:0;
 		}
 		elsif (!Slim::Utils::Misc::stillScanning()) {
 			Slim::Music::Import::cleanupDatabase(1);
@@ -479,10 +479,13 @@ sub execute {
 		}
 
 		if (defined $iterator) {
+		
+#			use Data::Dumper;
+#			print Dumper($iterator);
 
-			my $numitems = $iterator->count;
+#			my $numitems = $iterator->count;
+			my $numitems = scalar @$iterator;
 			
-			# Perform search if necessary
 			push @returnArray, "count:" . $numitems;
 			
 			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
@@ -495,7 +498,8 @@ sub execute {
 					$search = Slim::Utils::Text::ignoreCaseArticles($search);
 				}
 
-				for my $eachitem ($iterator->slice($start, $end)) {
+#				for my $eachitem ($iterator->slice($start, $end)) {
+	 			for my $eachitem (@$iterator[$start..$end]) {
 
 					# Search and didn't match? Skip it.
 					if ($search ne '*' && $eachitem->titlesort !~ /$search/) {
@@ -1934,6 +1938,9 @@ sub pushSong {
 		sprintf('title:%s', $track->title()),
 	);
 
+#			use Data::Dumper;
+#			print Dumper($track);
+
 	for my $tag (split //, $tags) {
 
 		if (my $method = $cliTrackMap{$tag}) {
@@ -1990,18 +1997,22 @@ sub pushSong {
 	
 		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
 			push @returnArray, sprintf('type:%s', string(uc($ct)));
+			next;
+		}
+
+		if ($tag eq 'i' && defined(my $disc = $track->disc())) {
+			push @returnArray, "disc:$disc";
+			next;
 		}
 
 		# Handle album specifics
 		if (defined(my $album = $track->album())) {
+		
+#			use Data::Dumper;
+#			print Dumper($album);
 
-			if (defined(my $id = $album->id())) {
+			if ($tag eq 'e' && defined(my $id = $album->id())) {
 				push @returnArray, "album_id:$id";
-				next;
-			}
-
-			if ($tag eq 'i' && defined(my $disc = $album->disc)) {
-				push @returnArray, "disc:$disc";
 				next;
 			}
 	
