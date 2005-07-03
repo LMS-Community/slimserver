@@ -155,8 +155,6 @@ sub wakeup {
 	if ($curBrightnessPref != $client->brightness()) {
 		$client->brightness($curBrightnessPref);
 	}
-	# restore preferred scrollpause
-	$client->param('scrollPause',Slim::Utils::Prefs::clientGet($client,'scrollPause'));
 	# wake up our display if it is off and the player isn't in standby and we're not adjusting the 
 	# brightness
 	if ($button && 
