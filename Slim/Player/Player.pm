@@ -685,7 +685,7 @@ sub pushUpdate {
 	}
 }
 
-sub bumpUp {
+sub bumpDown {
 	my $client = shift;
 	my $render = $client->render(Slim::Display::Display::curLines($client));
 	my $line1 = ${$render->{line2ref}};
@@ -696,7 +696,7 @@ sub bumpUp {
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
-sub bumpDown {
+sub bumpUp {
 	my $client = shift;
 	my $render = $client->render(Slim::Display::Display::curLines($client));
 	my $line1 = ' ' x 40;

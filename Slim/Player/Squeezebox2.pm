@@ -440,8 +440,7 @@ sub bumpRight {
 	$client->drawFrameBuf($startbits, undef, 'R', 0);
 }
 
-# bump left against the edge
-sub bumpUp {
+sub bumpDown {
 	my $client = shift;
 	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	
@@ -451,8 +450,7 @@ sub bumpUp {
 	$client->drawFrameBuf($startbits, undef, 'U', 0);
 }
 
-# bump right against the edge
-sub bumpDown {
+sub bumpUp {
 	my $client = shift;
 	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 

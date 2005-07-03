@@ -615,7 +615,7 @@ sub pushUpdate {
 	}
 }
 
-sub bumpDown {
+sub bumpUp {
 	my $client = shift;
 
 	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
@@ -630,7 +630,7 @@ sub bumpDown {
 	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
-sub bumpUp {
+sub bumpDown {
 	my $client = shift;
 	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
 	$startbits = substr(($$startbits . chr(0)) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 1, $client->screenBytes());
