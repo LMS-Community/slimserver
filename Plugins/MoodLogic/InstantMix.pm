@@ -24,10 +24,11 @@ sub init {
 	%functions = (
 		'up' => sub  {
 			my $client = shift;
+			my $button;
 			my $count = scalar @instantMix;
 			
 			if ($count < 2) {
-				$client->bumpUp();
+				$client->bumpUp() if ($button !~ /repeat/);
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 				setSelection($client, 'instant_mix_index', $newposition);
@@ -37,10 +38,11 @@ sub init {
 		
 		'down' => sub  {
 			my $client = shift;
+			my $button = shift;
 			my $count = scalar @instantMix;
 
 			if ($count < 2) {
-				$client->bumpDown();
+				$client->bumpDown() if ($button !~ /repeat/);;
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
 				setSelection($client, 'instant_mix_index', $newposition);

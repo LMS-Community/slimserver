@@ -169,6 +169,7 @@ sub setMode {
 our %mainModeFunctions = (
 	'up' => sub {
 		my $client = shift;
+		my $button = shift;
 		my $newpos = Slim::Buttons::Common::scroll(
 			$client,
 			-1,
@@ -176,7 +177,7 @@ our %mainModeFunctions = (
 			$mainModeIdx
 		);
 		if (scalar(@mainModeItems) < 2) {
-			$client->bumpUp();
+			$client->bumpUp() if ($button !~ /repeat/);
 		} elsif ($newpos != $mainModeIdx) {
 			$mainModeIdx = $newpos;
 			$client->pushUp();
@@ -185,6 +186,7 @@ our %mainModeFunctions = (
 
 	'down' => sub {
 		my $client = shift;
+		my $button = shift;
 		my $newpos = Slim::Buttons::Common::scroll(
 			$client,
 			1,
@@ -192,7 +194,7 @@ our %mainModeFunctions = (
 			$mainModeIdx
 		);
 		if (scalar(@mainModeItems) < 2) {
-			$client->bumpDown();
+			$client->bumpDown() if ($button !~ /repeat/);
 		} elsif ($newpos != $mainModeIdx) {
 			$mainModeIdx = $newpos;
 			$client->pushDown();
@@ -430,8 +432,9 @@ our $noGenreMode = sub {
 our %genreModeFunctions = (
 	'up' => sub {
 		my $client = shift;
+		my $button = shift;
 		if (!scalar(@genreList)) {
-			$client->bumpUp();
+			$client->bumpUp() if ($button !~ /repeat/);
 			return;
 		}
 		my $genrePointer = $live365->{$client}->getGenrePointer();
@@ -449,8 +452,9 @@ our %genreModeFunctions = (
 
 	'down' => sub {
 		my $client = shift;
+		my $button = shift;
 		if (!scalar(@genreList)) {
-			$client->bumpDown();
+			$client->bumpDown() if ($button !~ /repeat/);
 			return;
 		}
 		my $genrePointer = $live365->{$client}->getGenrePointer();
@@ -614,12 +618,13 @@ my $noChannelMode = sub {
 our %channelModeFunctions = (
     'up' => sub {
         my $client = shift;
+	my $button = shift;
 
 		# Since we haven't necessarially loaded out to the end of the list yet, 
 		# we can't wrap around from the top. This will be addressed in a later
 		# version.
 		if( $live365->{$client}->getStationListPointer() == 0 ) {
-			$client->bumpUp();
+			$client->bumpUp() if ($button !~ /repeat/);
 			return;
 		}
 
@@ -638,9 +643,10 @@ our %channelModeFunctions = (
 
     'down' => sub {
         my $client = shift;
+	my $button = shift;
 
 		if (!$live365->{$client}->getStationListLength()) {
-			$client->bumpDown();
+			$client->bumpDown() if ($button !~ /repeat/);
 			return;
 		}
 		

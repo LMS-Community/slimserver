@@ -24,10 +24,11 @@ sub init {
 		
 		'up' => sub  {
 			my $client = shift;
+			my $button = shift;
 			my $count = scalar @browseMoodChoices;
 			
 			if ($count < 2) {
-				$client->bumpUp();
+				$client->bumpUp() if ($button !~ /repeat/);
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll(
 					$client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
@@ -40,10 +41,11 @@ sub init {
 		
 		'down' => sub  {
 			my $client = shift;
+			my $button = shift;
 			my $count = scalar @browseMoodChoices;
 
 			if ($count < 2) {
-				$client->bumpDown();
+				$client->bumpDown() if ($button !~ /repeat/);
 			} else {
 				my $newposition = Slim::Buttons::Common::scroll(
 					$client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')

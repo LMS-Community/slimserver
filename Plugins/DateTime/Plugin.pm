@@ -74,11 +74,13 @@ sub setMode {
 our %functions = (
 	'up' => sub  {
 		my $client = shift;
-		$client->bumpUp();
+		my $button = shift;
+		$client->bumpUp() if ($button !~ /repeat/);
 	},
 	'down' => sub  {
 	    my $client = shift;
-		$client->bumpDown();
+		my $button = shift;
+		$client->bumpDown() if ($button !~ /repeat/);;
 	},
 	'left' => sub  {
 		my $client = shift;
