@@ -20,11 +20,11 @@ our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;
-			changePos($client,-1);
+			changePos($client,-1,$funct);
 		}
 	,'down' => sub {
 			my ($client,$funct,$functarg) = @_;
-			changePos($client,1);
+			changePos($client,1,$funct);
 		}
 	,'numberScroll' => sub {
 			my ($client,$funct,$functarg) = @_;
@@ -74,17 +74,17 @@ our %functions = (
 );
 
 sub changePos {
-	my ($client, $dir) = @_;
+	my ($client, $dir, $funct) = @_;
 	my $listRef = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
 	if ($client->param('noWrap')) {
 		#not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
-			$client->bumpUp();
+			$client->bumpUp() if ($funct !~ /repeat/);
 			return;
 		}
 		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
-			$client->bumpDown();
+			$client->bumpDown() if ($funct !~ /repeat/);
 			return;
 		}
 	}
@@ -104,9 +104,9 @@ sub changePos {
 	
 	if (scalar(@$listRef) < 2) {
 		if ($dir < 0) {
-			$client->bumpUp();
+			$client->bumpUp() if ($funct !~ /repeat/);
 		} else {
-			$client->bumpDown();
+			$client->bumpDown() if ($funct !~ /repeat/);
 		}
 	} elsif ($newposition != $listIndex) {
 		if ($dir < 0) {
