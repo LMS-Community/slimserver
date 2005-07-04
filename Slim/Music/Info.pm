@@ -285,7 +285,7 @@ sub clearPlaylists {
 }
 
 sub playlists {
-	return ($currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists);
+	return [$currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists];
 }
 
 sub cacheItem {
