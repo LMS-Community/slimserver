@@ -6783,6 +6783,7 @@ SCAN_WARNING
 	SE	SlimServer läser fortfarande in ditt musikbibliotek, så vissa poster kanske inte visas i det här fältet ännu.
 
 HOME_SCAN_WARNING
+	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Bitte gedulden Sie sich etwas, da dieser Prozess einige Zeit in Anspruch nehmen kann.
 	EN	SlimServer is still scanning your music library, please be patient as this may take a while.
 
 SCAN_CLICK
