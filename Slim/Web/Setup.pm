@@ -2595,7 +2595,7 @@ sub removeExtraArrayEntries {
 sub playlists {
 	my %lists = ();
 
-	for my $playlist (Slim::Music::Info::playlists()) {
+	for my $playlist (@{Slim::Music::Info::playlists()}) {
 
 		if (Slim::Music::Info::isURL($playlist)) {
 
