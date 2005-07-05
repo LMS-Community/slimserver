@@ -210,7 +210,6 @@ sub pathFromWinShortcut {
 
 sub pathFromFileURL {
 	my $url = shift;
-	my $donttranslate = shift;
 	my $file;
 	
 	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
@@ -237,11 +236,6 @@ sub pathFromFileURL {
 		bt();
 	}
 
-	# convert from the utf8 back to the local codeset.
-	if (!$donttranslate && $file && $] > 5.007 && $locale ne 'utf8') {
-		eval { Encode::from_to($file, 'utf8', $locale) };
-	}
-
 	if (!defined($file))  {
 		$::d_files && msg("bad file: url $url\n");
 	} else {
@@ -256,11 +250,6 @@ sub fileURLFromPath {
 	my $donttranslate = shift;
 	
 	return $path if (Slim::Music::Info::isURL($path));
-
-	# convert from the the local codeset to utf8
-	if (!$donttranslate && $path && $] > 5.007 && $locale ne 'utf8') {
-		eval { Encode::from_to($path, $locale, 'utf8') };
-	}
 
 	my $uri  = URI::file->new($path);
 	$uri->host('');
@@ -331,7 +320,7 @@ sub utf8off {
 sub utf8on {
 	my $string = shift;
 
-	if ($string && $] > 5.007) {
+	if ($string && $] > 5.007 && looks_like_utf8($string)) {
 		Encode::_utf8_on($string);
 	}
 
@@ -693,11 +682,6 @@ sub virtualToAbsolute {
 
 	# Always unescape ourselves
 	$virtual = Slim::Web::HTTP::unescape($virtual);
-
-	# The incoming may be utf8 - flag it.
-	if ($locale eq 'utf8' && $] > 5.007) {
-		Encode::_utf8_on($virtual);
-	}
 
 	$curdir = fileURLFromPath($curdir);	
 

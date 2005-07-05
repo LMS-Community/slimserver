@@ -663,13 +663,6 @@ sub plainTitle {
 	} else {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
-
-			# pathFromFileURL turns the file url from utf8 into
-			# the local code page - but we need to store utf8 in
-			# the database for the TITLE, so flip it back.
-			if ($] > 5.007) {
-				Encode::from_to($file, $Slim::Utils::Misc::locale, 'utf8');
-			}
 		}
 
 		if ($file) {

@@ -43,7 +43,7 @@
 
  	<track_url><![CDATA[[% itempath %]]]></track_url>
 
- 	[% IF itemobj.url %]<path>[% itemobj.url | unuri | utf8decode | html %]</path>[% END %]
+ 	[% IF itemobj.url %]<path>[% itemobj.url | unuri | utf8on | html %]</path>[% END %]
 
   	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[music/[% itemobj.id %]/cover.jpg]]></coverart>[% END %]
 

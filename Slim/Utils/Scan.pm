@@ -390,7 +390,6 @@ sub addToList_run {
 	# todo: don't let us recurse indefinitely
 	if (Slim::Music::Info::isList($itempath)) {
 
-		# if we're recursing and it's a remote playlist, then recurse
 		if ($jobState->recursive && !Slim::Music::Info::isRemoteURL($itempath)) {
 
 			my $newdir = addToList_dirState->new();
@@ -556,16 +555,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			if ($pls) {
 
 				for my $entry (@$pls) {
-
-					# pathFromFileURL above will turn utf8
-					# into the local code page. If that
-					# happens to be utf8, make sure the
-					# octet sequence is correct.
-					if ($Slim::Utils::Misc::locale eq 'utf8') {
-						$entry = Slim::Utils::Misc::utf8encode($entry);
-					} else {
-						$entry = Slim::Utils::Misc::utf8off($entry);
-					}
 
 					push @$listref, $entry;
 				}

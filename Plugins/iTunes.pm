@@ -664,7 +664,11 @@ sub scanFunction {
 				# UTF-8 which iTunes stores it's data in to
 				# the current locale - which on Windows is
 				# cp1252 for most Western speakers.
-				my $file  = Slim::Utils::Misc::pathFromFileURL($url, 0);
+				my $file  = Slim::Utils::Misc::pathFromFileURL($url);
+
+				if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
+					eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
+				}
 
 				# dsully - Sun Mar 20 22:50:41 PST 2005
 				# iTunes has a last 'Date Modified' field, but

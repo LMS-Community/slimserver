@@ -1597,6 +1597,8 @@ sub newSkinTemplate {
 			'unuri' => \&URI::Escape::uri_unescape,
 			'utf8decode' => \&Slim::Utils::Misc::utf8decode,
 			'utf8encode' => \&Slim::Utils::Misc::utf8encode,
+			'utf8on' => \&Slim::Utils::Misc::utf8on,
+			'utf8off' => \&Slim::Utils::Misc::utf8off,
 		},
 
 		EVAL_PERL => 1,

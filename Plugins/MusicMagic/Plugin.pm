@@ -464,20 +464,18 @@ sub exportFunction {
 
 			$::d_musicmagic && msg("MusicMagic: Exporting song $scan: $songInfo{'file'}\n");
 
-			# fileURLFromPath will turn this into UTF-8 - so we
-			# need to make sure we're in the current locale first.
 			if ($] > 5.007) {
-				$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
 
-				for my $key (qw(album artist genre name)) {
+				# Both Linux & Windows need conversion to the current charset.
+				if (Slim::Utils::OSDetect::OS() ne 'mac') {
+					$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
+				}
 
-					# Work around for bug #881
-					# The windows version of MMM doesn't send back proper UTF-8
-					if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
+				# tag information in the windows version of
+				# MMM isn't returned as utf8 - we need to encode.
+				if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-						$songInfo{$key} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{$key}, Encode::FB_QUIET());
-
-					} else {
+					for my $key (qw(album artist genre name)) {
 
 						$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
 					}
