@@ -508,6 +508,8 @@ sub startScan {
 	# start the checker
 	checker();
 	
+	Slim::Music::Info::clearPlaylists('itunesplaylist:');
+	
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
 } 
 
