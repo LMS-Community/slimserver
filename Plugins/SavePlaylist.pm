@@ -106,11 +106,8 @@ sub lines {
 sub savePlaylist {
 	my $client = shift;
 	my $playlistfile = shift;
-	my $playlistref = Slim::Player::Playlist::playList($client);
-	my $playlistdir = Slim::Utils::Prefs::get('playlistdir');
-	my $playlistfilename = catfile($playlistdir,$playlistfile . ".m3u");
-	Slim::Formats::Parse::writeM3U($playlistref,$playlistfile,$playlistfilename);
-	$client->showBriefly($client->string('PLAYLIST_SAVING'),$playlistfilename);
+	$client->execute(['playlist', 'save', $playlistfile]);
+	$client->showBriefly($client->string('PLAYLIST_SAVING'),$playlistfile);
 }
 
 sub getFunctions {
