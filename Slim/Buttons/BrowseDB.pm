@@ -387,7 +387,7 @@ sub browsedbItemName {
 			}
 
 			if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
-				$name .= " by $artist";
+				$name .= ' ' . Slim::Utils::Strings::string('BY') . " $artist";
 			}
 		}
 
