@@ -88,7 +88,7 @@ sub _updateMetaData {
 	my $attributes = {};
 
 	# Update title MetaData only if its not a local file with Title information already cached.
-	if (defined($title) && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
+	if (defined($title) && $title ne '' && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
 		$attributes->{'TITLE'} = $title;
 	}	
 
@@ -105,7 +105,7 @@ sub readM3U {
 
 	my @items  = ();
 	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
-	my $title  = '';
+	my $title;
 
 	if ($] > 5.007) {
 		binmode($m3u, ":encoding($enc)");
