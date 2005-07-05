@@ -98,6 +98,7 @@ our %functions = (
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'
+				,'headerAddCount' => 1
 				,'stringHeader' => 1
 				,'onChange' => sub { 	Slim::Utils::Prefs::clientSet($_[0], "alarmplaylist", $_[1]); }
 				,'onChangeArgs' => 'CV'
