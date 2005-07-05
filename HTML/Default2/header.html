@@ -11,4 +11,4 @@
  <script type="text/javascript" src="[% webroot %]html/postback.js"></script>
  <script type="text/javascript" src="[% webroot %]html/search.js"></script>[% END %]
 </head>
-<body onload="parent.pushpwd(document.getElementById('pwd').innerHTML);document.onkeypress=function(e){if(!e)e=window.event;return parent.[% IF nokbd %]abortkey[% ELSE %]handlekey[% END %](e);};">
+<body onload="parent.pushpwd(document.getElementById('pwd').innerHTML);document.onkeydown=function(e){if(!e)e=window.event;return parent.[% IF nokbd %]abortkey[% ELSE %]handlekey[% END %](e);};">

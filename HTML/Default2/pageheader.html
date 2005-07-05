@@ -11,7 +11,7 @@
  <script type="text/javascript" src="[% webroot %]html/search.js"></script>[% END %]
 </head>
 
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"[% IF not nokbd %] onload="document.onkeydown=function(e){if(!e)e=window.event;return parent.handlekey(e);};"[% END %]>
 
 <div id="pagehead1">
  <a href="http://www.slimdevices.com/" target="slimdevices" style="border: 0;">

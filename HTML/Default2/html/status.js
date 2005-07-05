@@ -47,27 +47,26 @@ function initStatus() {
 /*
 	updateCounterPeriodically();
 */
-	document.onkeypress = handlekey;
+	document.onkeydown = handlekey;
 }
 
 function handlekey(e) {
 	if (!e) e = window.event;
-	if (e.keyCode) kcval = e.keyCode;
-	else if (e.which) kcval = e.which;
+	if (e.keyCode) kc = e.keyCode;
+	else if (e.which) kc = e.which;
 	else return true;
-	kc = String.fromCharCode(kcval);
 
         if (e.ctrlKey || e.altKey) return true;
 
-	if (kc == 'c') doPause();
-	else if (kc == 'x') doPlay();
-	else if (kc == 'b') doNext();
-	else if (kc == 'z') doPrev();
-	else if (kc == 'v') doStop();
-	else if (kc == 'r') rotateRepeat();
-	else if (kc == 's') rotateShuffle();
-	else if (kc == '-') decVolume();
-	else if (kc == '+' || kc == '=') incVolume();
+	if (kc == 67) doPause();	// c
+	else if (kc == 88) doPlay();	// x
+	else if (kc == 66) doNext();	// b
+	else if (kc == 90) doPrev();	// z
+	else if (kc == 86) doStop();	// v
+	else if (kc == 82) rotateRepeat();	// r
+	else if (kc == 83) rotateShuffle();	// s
+	else if (kc == 109 || kc == 189) decVolume();	// - (firefox 109, others 189)
+	else if (kc == 61 || kc == 187) incVolume();	// = (firefox 61, others 187)
 	else return true;
 
 	return false;
