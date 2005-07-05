@@ -691,6 +691,12 @@ sub generateHTTPResponse {
 	# default to 200
 	$response->code(RC_OK);
 
+	# We don't support pipelining, so respond as HTTP 1.0 for now.
+	if ($response->protocol =~ /1\.1/) {
+
+		$response->protocol('HTTP/1.0');
+	}
+
 	$params->{'player'} = '';
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'noserver'} = 1   if $::noserver;
