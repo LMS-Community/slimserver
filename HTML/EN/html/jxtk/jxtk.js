@@ -43,6 +43,10 @@ var JXTK = {
 		return JXTK._CookieFactory;
 	},
 
+	Key : function() {
+		return JXTK._Key;
+	},
+
 	ListBox : function() {
 		if (!JXTK._ListBoxFactory) {
 			throw "JXTK ListBox module not found";
@@ -76,9 +80,36 @@ JXTK._Misc = {
 
 		e.targ = e.target;
 		if (e.srcElement) e.targ = e.srcElement; // IE
-		if (e.targ.nodeType == 3) e.targ = e.targ.parentElement; // Safari
+		if (e.targ && e.targ.nodeType == 3) e.targ = e.targ.parentElement; // Safari
+
+		if (!e.keyCode) e.keyCode = e.which;
+
 		return e;
 	}
+};
+
+JXTK._Key = {
+	attach : function (prop) {
+		var key = this;
+		eval(prop + "=function(e){key.handleEvent(e);}");
+	},
+
+	registerKey : function(kc, handler) {
+		this._handlers[kc] = handler;
+	},
+
+	handleEvent : function(e) {
+		e = JXTK.Misc().fixEvent(e);
+
+		if (this._handlers[e.keyCode]) {
+			this._handlers[e.keyCode]();
+			return false;
+		} else {
+			return true;
+		}
+	},
+	
+	_handlers : new Array()
 };
 
 JXTK._Strings = {

@@ -16,6 +16,8 @@ var progressAt, progressEnd, progressEndText;
 var curPlayMode;
 var lastCoverArt, currentSong, songCount;
 
+var curRep, curShuf;
+
 function getStatusPeriodically() {
 	statusbackend.submit();
 	setTimeout(getStatusPeriodically, 5000);
@@ -27,6 +29,7 @@ function makeRepShufClosure(i, buttonlist, cmdstring) {
 			buttonlist[j].setState(j == i ? true : false);
 		}
 		statusbackend.submit(cmdstring + i);
+		curRep = i;
 	}
 }
 
@@ -117,6 +120,9 @@ function statusMiscHandler(resp) {
 	curPlayMode = resp.getTag("playmode");
 	updatePlayInfo();
 
+	curRep = resp.getTag("repeat");
+	curShuf = resp.getTag("shuffle");
+
 	progressAt = resp.getTag("songtime");
 	var newProgressEnd = resp.getTag("songlength");
 	if (progressEnd != newProgressEnd) {
@@ -125,6 +131,34 @@ function statusMiscHandler(resp) {
 	}
 
 	updateProgressBar();
+}
+
+function incVolume() {
+	var cv = volumebar.getValue();
+	cv++;
+        if (cv > 10) cv = 10;
+	volumebar.setValue(cv);
+	statusbackend.submit("&p0=mixer&p1=volume&p2=" + (cv * 10));
+}
+
+function decVolume() {
+	var cv = volumebar.getValue();
+	cv--;
+        if (cv < 0) cv = 0;
+	volumebar.setValue(cv);
+	statusbackend.submit("&p0=mixer&p1=volume&p2=" + (cv * 10));
+}
+
+function rotateRepeat() {
+	curRep++;
+	if (curRep == 3) curRep = 0;
+	makeRepShufClosure(curRep, repeatbuttons, "&p0=playlist&p1=repeat&p2=")();
+}
+
+function rotateShuffle() {
+	curShuf++;
+	if (curShuf == 3) curShuf = 0;
+	makeRepShufClosure(curShuf, shufflebuttons, "&p0=playlist&p1=shuffle&p2=")();
 }
 
 function statusFirstLoad() {
@@ -146,6 +180,9 @@ function initStatusControls() {
 		statusbackend.submit("&p0=pause");
 	});
 
+	playbutton.useKey(88); // x
+	playbutton.useKey(67); // c
+
 	stopbutton = JXTK.Button().createSimpleButton(statusbackend, "stopbutton", "playmode", "stop", function() {
 		curPlayMode = "stop";
 		updatePlayInfo();
@@ -153,6 +190,8 @@ function initStatusControls() {
 		updateProgressBar();
 		statusbackend.submit("&p0=stop");
 	});
+
+	stopbutton.useKey(86); // v
 
 	prevbutton = JXTK.Button().createButton("prevbutton");
 	prevbutton.addClickHandler(function() {
@@ -167,6 +206,8 @@ function initStatusControls() {
 		statusbackend.submit("&p0=playlist&p1=jump&p2=-1");
 	});
 
+	prevbutton.useKey(90); // z
+
 	nextbutton = JXTK.Button().createButton("nextbutton");
 	nextbutton.addClickHandler(function() {
 		currentSong++;
@@ -179,6 +220,8 @@ function initStatusControls() {
 		updateProgressBar();
 		statusbackend.submit("&p0=playlist&p1=jump&p2=%2b1");
 	});
+
+	nextbutton.useKey(66); // b
 
 	for (var i = 0; i < 3; i++) {
 		repeatbuttons[i] = JXTK.Button().createSimpleButton(
@@ -213,15 +256,22 @@ function initStatusControls() {
 		return resp.getTag("volume") / 10;
 	});
 	volumebar.addClickHandler(function (button) {
-		var volindex = button.el.index;
-		volumebar.setValue(volindex);
-		statusbackend.submit("&p0=mixer&p1=volume&p2=" + volindex * 10);
+		var cv = button.el.index;
+		volumebar.setValue(cv);
+		statusbackend.submit("&p0=mixer&p1=volume&p2=" + cv * 10);
 	});
 
 	progressbar = JXTK.ButtonBar().createButtonBar("progressbar");
 	progressbar.populate("IMG", 50, "html/images/pixel.gif");
 
 	progresstext = JXTK.Textbox().createTextbox("progresstext");
+
+	JXTK.Key().registerKey(61, incVolume);  // = (firefox)
+	JXTK.Key().registerKey(187, incVolume); // = (others)
+	JXTK.Key().registerKey(109, decVolume); // - (firefox)
+	JXTK.Key().registerKey(189, decVolume); // - (others)
+	JXTK.Key().registerKey(82, rotateRepeat);  // r
+	JXTK.Key().registerKey(83, rotateShuffle); // s
 
 	statusbackend.addHandler(statusFirstLoad);
 }

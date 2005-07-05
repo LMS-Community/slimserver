@@ -19,8 +19,10 @@ function displayreload() {
 }
 
 function mainload() {
-	JXTK.Backend().reloadTrigger = displayreload;
+	document.getElementById("loading").firstChild.innerHTML = "Loading...";
 	document.getElementById("loading").style.display = "block";
+	JXTK.Backend().reloadTrigger = displayreload;
+
 	setTimeout(continueload, 100);
 }
 
@@ -33,13 +35,13 @@ function continueload() {
 }
 
 function maybeDoneLoading() {
-        // if (statusRefs > 0 && playlistRefs > 0 && homeRefs > 0) {
         if (statusRefs > 0 && homeRefs > 0) {
 		setTimeout(hideLoadingScreen, 100);
         }
 }
 
 function hideLoadingScreen() {
+	JXTK.Key().attach("document.onkeydown");
 	document.getElementById("loading").style.display = "none";
 	document.getElementById("browsemode").style.display = "inline";
 	document.getElementById("playersel").style.display = "inline";
@@ -62,8 +64,9 @@ function scrollfix(divname, scrollbase) {
 	scrollcurrent = divname;
 }
 
-function handlekey() {
-	// XXX FIXME: the iframe's onkeypress event will call this. Just a stub until keyboard shortcuts are done.
+function handlekey(e) {
+	// this is called from the iframe
+	JXTK.Key().handleEvent(e);
 }
 
 function abortkey() {

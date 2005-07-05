@@ -56,6 +56,14 @@ _JXTKButton.prototype = {
 		this.setState(false);
 	},
 
+	doPress : function() {
+		if (this._controlLockout || this.factory.controlLockout) return;
+		var clickhandlers = this._handlers['click'];
+		for (var i = 0; i < clickhandlers.length; i++) {
+			clickhandlers[i](this);
+		}
+	},
+
 	getState : function () {
 		return this._state;
 	},
@@ -66,6 +74,11 @@ _JXTKButton.prototype = {
 			if (newstate) this.el.className = this._activeClass;
 			else this.el.className = this._inactiveClass;
 		}
+	},
+
+	useKey : function (keycode) {
+		var button = this;
+		JXTK.Key().registerKey(keycode, function() { button.doPress(); });
 	},
 
 	_controlLockout : 0,
@@ -81,16 +94,7 @@ function _JXTKButton(factory, el) {
 	this._handlers['click'] = new Array();
 
 	var button = this;
-
-	el.onclick = function(e) {
-		// pres butan
-		e = JXTK.Misc().fixEvent(e);
-		if (button._controlLockout || factory.controlLockout) return;
-		var clickhandlers = button._handlers['click'];
-		for (var i = 0; i < clickhandlers.length; i++) {
-			clickhandlers[i](button);
-		}
-	}
+	el.onclick = function() { button.doPress(); }
 }
 
 
@@ -132,6 +136,11 @@ _JXTKButtonBar.prototype = {
 		for (i = 0; i < this.buttons.length; i++) {
 			this.buttons[i].setState(i <= value);
 		}
+		this._value = value;
+	},
+
+	getValue : function () {
+		return this._value;
 	},
 
 	useXMLValue : function (backend, respfunc) {
@@ -139,7 +148,9 @@ _JXTKButtonBar.prototype = {
 		backend.addHandler(function(resp) {
 			bbar.setValue(respfunc(resp));
 		});
-	}
+	},
+
+	_value : 0
 };
 
 function _JXTKButtonBar(parent) {

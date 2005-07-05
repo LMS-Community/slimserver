@@ -12,4 +12,4 @@
  <script type="text/javascript" src="[% webroot %]html/jxtk/backend.js"></script>
  <script type="text/javascript" src="[% webroot %]html/search.js"></script>[% END %]
 </head>
-<body onload="if(parent.pushpwd){parent.pushpwd(document.getElementById('pwd').innerHTML);}document.onkeypress=function(e){if(!e)e=window.event;return parent.[% IF nokbd %]abortkey[% ELSE %]handlekey[% END %](e);};">
+<body onload="if(parent.pushpwd){parent.pushpwd(document.getElementById('pwd').innerHTML);}document.onkeydown=function(e){if(!e)e=window.event;return parent.[% IF nokbd %]abortkey[% ELSE %]handlekey[% END %](e)}">
