@@ -462,7 +462,7 @@ sub updateOrCreate {
 
 		while (my ($key, $val) = each %$attributeHash) {
 
-			if (defined $val && exists $trackAttrs->{lc $key}) {
+			if (defined $val && $val ne '' && exists $trackAttrs->{lc $key}) {
 
 				$::d_info && Slim::Utils::Misc::msg("Updating $url : $key to $val\n");
 
