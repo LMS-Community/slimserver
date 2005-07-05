@@ -227,8 +227,13 @@ add					= dead
 add.single				= play_1
 add.hold				= play_2
 
-[browse]
-add.hold				= insert
+[browsetree]
+play					= dead
+play.single				= play_0
+play.hold				= create_mix
+add					= dead
+add.single				= play_1
+add.hold				= play_2
 
 [moodlogic_instant_mix]
 play.single				= play_0
