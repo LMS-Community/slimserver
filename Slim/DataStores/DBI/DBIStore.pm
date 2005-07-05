@@ -644,6 +644,11 @@ sub cleanupStaleTrackEntries {
 		return 0;
 	};
 
+	# Not sure how we get here, but we can. See bug 1756
+	if (!defined $track) {
+		return 1;
+	}
+
 	my $url = $track->url;
 
 	# return 1 to move onto the next track
