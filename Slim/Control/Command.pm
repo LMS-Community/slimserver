@@ -759,7 +759,7 @@ sub execute {
 				# send xpl message when power toggles
 				if (Slim::Utils::Prefs::get('xplsupport')) {
 					Slim::Control::xPL::sendXplHBeatMsg($client,1);
-                		}
+				}
 				
 				if ($p1 eq "0") {
 					# Powering off cancels sleep...
@@ -1269,7 +1269,7 @@ sub execute {
 			
 			} elsif ($p1 eq "zap") {
 
-				my $zapped   = catfile(Slim::Utils::Prefs::get('playlistdir'), string('ZAPPED_SONGS') . '.m3u');
+				my $zapped   = string('ZAPPED_SONGS');
 				my $zapsong  = Slim::Player::Playlist::song($client,$p2);
 				my $zapindex = $p2 || Slim::Player::Source::playingSongIndex($client);;
  
@@ -1279,19 +1279,20 @@ sub execute {
 					# Callo ourselves.
 					execute($client, ["playlist", "delete", $zapindex]);
 				}
-  
-				# Append the zapped song to the zapped playlist
-				# This isn't as nice as it should be, but less work than loading and rewriting the whole list
-				my $zapref = FileHandle->new($zapped, "a");
 
-				if ($zapref) {
-					my @zaplist = ($zapsong);
-					my $zapitem = Slim::Formats::Parse::writeM3U(\@zaplist);
-					print $zapref $zapitem;
-					close $zapref;
-				} else {
-					msg("Could not open $zapped for writing.\n");
-				}
+				my $playlistObj = $ds->updateOrCreate({
+					'url'        => "playlist://$zapped",
+					'attributes' => {
+						'TITLE' => $zapped,
+						'CT'    => 'ssp',
+					},
+				});
+
+				my @list = $playlistObj->tracks;
+				push @list,$zapsong;
+
+				$playlistObj->setTracks(\@list);
+				$playlistObj->update();
 
 				$client->currentPlaylistModified(1);
 				$client->currentPlaylistChangeTime(time());
