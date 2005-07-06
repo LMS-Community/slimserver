@@ -426,7 +426,7 @@ sub encodingFromFileHandle {
 	my $enc = '';
 
 	# Explitly check for IO::String - as it does have a seek() method!
-	if (ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
+	if ($] > 5.007 && ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
 		$enc = File::BOM::get_encoding_from_filehandle($fh);
 	}
 
