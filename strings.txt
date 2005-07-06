@@ -3787,9 +3787,11 @@ SETUP_NOGENREFILTER
 	EN	Filter genres at the album & track level.
 
 SETUP_NOGENREFILTER_1
+	DE	Zeige alle Tracks und Alben eines Interpreten
 	EN	Show any tracks & albums for an artist
 
 SETUP_NOGENREFILTER_0
+	DE	Zeige nur zum gewählten Musikstil passende Alben und Tracks für den Interpreten
 	EN	Only show tracks or albums matching the selected genre for an artist
 
 SETUP_NOGENREFILTER_DESC
