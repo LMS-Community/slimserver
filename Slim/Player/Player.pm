@@ -273,6 +273,14 @@ sub render {
 	if (defined($parts->{line2}) && 
 		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
 		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+
+		if (Slim::Utils::Misc::encodingFromString($parts->{line2}) eq 'raw') {
+
+			# SliMP3 / Pre-G can't handle wide characters outside the
+			# latin1 range - turn off the utf8 flag.
+			$parts->{line2} = Slim::Utils::Misc::utf8off($parts->{line2});
+		}
+
 		$cache->{line2} = $parts->{line2};
 		if (!$double) {
 			$cache->{line2text} = $parts->{line2};
