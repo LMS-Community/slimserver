@@ -3787,12 +3787,10 @@ SETUP_NOGENREFILTER
 	EN	Filter genres at the album & track level.
 
 SETUP_NOGENREFILTER_1
-	DE	Zeige für einen Artisten nur Alben und Tracks des gewählten Stils
-	EN	Only show tracks & albums matching the selected genre for an artist
+	EN	Show any tracks & albums for an artist
 
 SETUP_NOGENREFILTER_0
-	DE	Zeige für einen Artisten Tracks und Alben beliebiger Stile
-	EN	Show any tracks or albums matching the selected genre for an artist
+	EN	Only show tracks or albums matching the selected genre for an artist
 
 SETUP_NOGENREFILTER_DESC
 	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören. Das Aktivieren dieser Option reduziert die Anzeigegeschwindigkeit. Sie kann jedoch bei Interpreten mit mehreren Musikstilen sinnvoll sein.
