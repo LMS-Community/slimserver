@@ -509,7 +509,7 @@ sub setMode {
 		}
 	}
 	elsif ($level == 1) {
-		$header = $names{$levels[$level-1]};
+		$header = $names{$fieldInfo->{$levels[$level-1]}->{'nameTransform'} || $levels[$level-1]};
 	}
 	else {
 		$header = $names{$levels[$level-2]} . "/" . $names{$levels[$level-1]};
