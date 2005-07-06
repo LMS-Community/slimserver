@@ -1296,7 +1296,13 @@ sub _postCheckAttributes {
 			# Add disc to the search criteria, so we get
 			# the right object for multi-disc sets with
 			# the same album name.
-			$search->{'disc'} = $disc if $disc;
+			# 
+			# Don't add this search criteria if there is only one
+			# disc in the set - iTunes does this for some bizzare
+			# reason.
+			if (($disc && $discc && $discc > 1) || ($disc && !$discc)) {
+				$search->{'disc'} = $disc;
+			}
 
 			# Check if the album name is one of the "common album names"
 			# we've identified in prefs. If so, we require a match on
