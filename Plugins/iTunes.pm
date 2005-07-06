@@ -508,8 +508,6 @@ sub startScan {
 	# start the checker
 	checker();
 	
-	Slim::Music::Info::clearPlaylists('itunesplaylist:');
-	
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
 } 
 
@@ -862,8 +860,10 @@ sub scanFunction {
 			$inPlaylists = 1;
 
 			$inTracks = 0;
-		
-			$::d_itunes && msg("iTunes: starting playlist parsing\n");
+			
+			Slim::Music::Info::clearPlaylists('itunesplaylist:');
+			
+			$::d_itunes && msg("iTunes: starting playlist parsing, cleared old playlists\n");
 		
 		}
 	}
@@ -1106,7 +1106,6 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($client);
 				}
 				Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
-				Slim::Music::Info::clearPlaylists('itunesplaylist:');
 				Slim::Music::Import::startScan('ITUNES');
 			}
 			,'optionSort' => 'KR'
