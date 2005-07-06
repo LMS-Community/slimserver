@@ -729,7 +729,12 @@ sub readASX {
 		$asxstr =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
 
 		eval {
-			$asx_playlist = XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF']);
+			# We need to send a ProtocolEncoding option to XML::Parser,
+			# but XML::Simple carps at it. Unfortunately, we don't 
+			# have a choice - we can't change the XML, as the
+			# XML::Simple warning suggests.
+			no warnings;
+			$asx_playlist = XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 		
 		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
@@ -757,6 +762,11 @@ sub readASX {
 						$::d_parse && Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
 						
 						my $scheme = $url->scheme();
+
+						if ($scheme =~ s/^mms(.?)/mms/) {
+							$url->scheme($scheme);
+							$href = $url->as_string();
+						}
 
 						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
 
