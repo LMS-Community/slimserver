@@ -37,8 +37,8 @@
       <input type="hidden" name="player" value="[% player %]">
       </form>
     </p>
-    <p>
-      <table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<p><a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% "DONE_EDITING" | string %]</a>
+	<p>      <table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% FOREACH item = items %]
 				[% PROCESS $listTemplate %]
             [% END %]
