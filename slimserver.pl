@@ -406,9 +406,6 @@ sub init {
 		unshift @INC, "/Library/SlimDevices/";
 	}
 
-	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
-	changeEffectiveUserAndGroup();
-
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
@@ -478,6 +475,10 @@ sub start {
 			}
 		}
 	};
+
+	# Change UID/GID after the pid & logfiles have been opened.
+	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
+	changeEffectiveUserAndGroup();
 
 	# If we're only scanning, just do that. 
 	if ($scanOnly) {
@@ -931,7 +932,6 @@ sub initSettings {
 		$cachedir = Slim::Utils::Misc::fixPathCase($cachedir);
 		Slim::Utils::Prefs::set("cachedir",$cachedir);
 	}
-	
 }
 
 sub daemonize {
@@ -1138,18 +1138,15 @@ sub cleanup {
 }
 
 sub save_pid_file {
-	 my $process_id = shift || $$;
-
+	my $process_id = shift || $$;
 
 	$::d_server && msg("SlimServer saving pid file.\n");
-	 if (defined $pidfile && -e $pidfile) {
-	 	die "Process ID file: $pidfile already exists";
-	 }
-	 
-	 if (defined $pidfile and open PIDFILE, ">$pidfile") {
-		print PIDFILE "$process_id\n";
-		close PIDFILE;
-	 }
+
+	return unless defined $pidfile;
+
+	open PIDFILE, ">$pidfile" or die "Couldn't open pidfile: [$pidfile] for writing!: $!";
+	print PIDFILE "$process_id\n";
+	close PIDFILE;
 }
  
 sub remove_pid_file {
