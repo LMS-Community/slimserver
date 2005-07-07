@@ -82,7 +82,8 @@ JXTK._Misc = {
 		if (e.srcElement) e.targ = e.srcElement; // IE
 		if (e.targ && e.targ.nodeType == 3) e.targ = e.targ.parentElement; // Safari
 
-		if (!e.keyCode) e.keyCode = e.which;
+		e.key = e.keyCode;
+		if (e.which) e.key = e.which;
 
 		return e;
 	}
@@ -101,8 +102,8 @@ JXTK._Key = {
 	handleEvent : function(e) {
 		e = JXTK.Misc().fixEvent(e);
 
-		if (this._handlers[e.keyCode]) {
-			this._handlers[e.keyCode]();
+		if (this._handlers[e.key]) {
+			this._handlers[e.key]();
 			return false;
 		} else {
 			return true;
