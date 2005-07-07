@@ -2,8 +2,7 @@
   <head>
     <title>[% "SEARCH" | string %]</title>
     <link rel="stylesheet" href="slimserver.css">
-	<script type="text/javascript" src="/html/livesearch.js"></script>
-	<script type="text/javascript"> liveSearchInit(); </script>
+	<script type="text/javascript" src="/html/prototype.js"></script>
   </head>
   <body bgcolor="#FFFFFF" onload="document.searchForm.query.focus();">
     <p>
@@ -21,22 +20,21 @@
 	[% IF liveSearch %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" autocomplete="off" onkeydown="liveSearchStart()" />
+		<input type="text" id="query" name="query" size="40" autocomplete="off" />
 
 	[% ELSE %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="livesearch.html">
-		<input type="text" id="livesearch" name="query" size="40" value="[% query %]"/>
+		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
 
 	[% END %]
 
 		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
-		<!-- <div id="LSResult" style="display: none;"><ul id="LSShadow"><li>&#160;</li></ul></div> -->
 	</form>
 
-	<div id="LSResult" style="display: none;"></div>
+	<div id="search-results"></div>
 
 		[% IF searchError %]
 			[% searchError %]
@@ -63,6 +61,8 @@
 	[% IF searchlist_pagebar %]
 		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
 	[% END %] 
+
+[% IF liveSearch; INCLUDE "search-observer.html"; END %]
 
   </body>
 </html>

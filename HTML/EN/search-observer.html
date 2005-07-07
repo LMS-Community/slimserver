@@ -1,0 +1,11 @@
+<script type="text/javascript">
+
+	new Form.Element.Observer('query', 1, function(element, value) {
+
+		new Ajax.Updater('search-results', 'livesearch.xml', {
+
+			parameters:'query=' + value + '&player=' + document.forms.searchForm.player.value,
+			evalScripts:true, asynchronous:true, method:'get'
+		})
+	})
+</script>  
