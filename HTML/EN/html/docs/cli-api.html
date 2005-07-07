@@ -12,7 +12,8 @@
   SlimServer will listen for connections on TCP/IP port 9090. This format is designed for ease of integration 
   into AMX, Crestron and other automation systems.</p>
 <p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10, hexadecimal 0x0A). The server accepts LF or 
-  CRLF as end of line, but always terminates replies with LF. For strings, SlimServer uses the UTF-8 charset.</p>
+  CR (or any combination thereof) as end of line, but always terminates replies with LF. For strings, 
+  SlimServer uses the UTF-8 charset.</p>
   
 <p>To use the command line interface interactively, use the telnet command from your system's command prompt:
   <em>telnet localhost 9090</em> and when it connects, you can start typing commands. Beware that the server
@@ -32,6 +33,8 @@
 	smarter about repeating when shuffling is on.</li>
 <li>Removed field &quot;coverThumb&quot; in all queries returning song
 	information to align data with SlimServer behaviour.</li>
+<li>Corrected anomaly introduced in SlimServer 6.0 where query &quot;<a href="#title">title</a>&quot;
+	was returning formatted title (i.e. shown by the player) instead of just the title.</li>
 </ul>
 
 <h4>General command format</h4>
@@ -1130,7 +1133,7 @@ preferences values.</p>
     <p>Request: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; genre ?</code></strong><br>
+<br><p id="title"><strong><code>&lt;playerid&gt; genre ?</code></strong><br>
   <strong><code>&lt;playerid&gt; artist ?</code></strong><br>
   <strong><code>&lt;playerid&gt; album ?</code></strong><br>
   <strong><code>&lt;playerid&gt; title ?</code></strong><br>
@@ -1138,8 +1141,7 @@ preferences values.</p>
   <strong><code>&lt;playerid&gt; path ?</code></strong></p>
 <p>The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, &quot;title&quot; 
   &quot;duration&quot; and &quot;path&quot; commands allow for querying information 
-  about the song currently playing. &quot;title&quot; returns the title as shown
-  by the player and as configured in the player preferences.</p>
+  about the song currently playing.</p>
 <p>Examples: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 genre ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 genre Rock&lt;LF&gt;&quot;</p>

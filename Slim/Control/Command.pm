@@ -696,11 +696,7 @@ sub execute {
 
 			if ($track) {
 
-				if ($p0 eq 'title') {
-
-					$p1 = Slim::Music::Info::getCurrentTitle($client, $track->url());
-
-				} elsif ($p0 eq 'duration') {
+				if ($p0 eq 'duration') {
 				
 					$p1 = $track->secs() || 0;
 					
