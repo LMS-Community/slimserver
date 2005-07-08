@@ -6,8 +6,7 @@
   <body bgcolor="#FFFFFF">
     <p></p>
     <h3>[% "EDIT_PLAYLIST" | string %]</h3>
-    <a href="edit_playlist.html?player=[% player | uri %]">[% "EDIT_PLAYLIST" | string %]</a> /
-    <a href="edit_playlist.html?player=[% player | uri %]&dir=[% dir | uri %]">[% playlistname %]</a>
+    [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
     <p></p>
     <hr>
     <p>
