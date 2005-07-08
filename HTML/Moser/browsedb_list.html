@@ -22,7 +22,7 @@
           [%- IF descend %]
             <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% text | html %]</a>
 		<!-- Include the artist for the album view -->
-		[% IF level == 1 && includeArtist && artist %]
+		[% IF includeArtist && artist %]
 		 
 			[% "BY" | string %]
 			<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]">[% artist.name | html %]</a></i>

@@ -257,6 +257,7 @@ sub init {
 				my $item = shift;
 				my $itemname = shift;
 				my $descend = shift;
+				my $findCriteria = shift;
 
 				my ($track) = $item->tracks();
 
@@ -275,7 +276,7 @@ sub init {
 
 					if ($artist) {
 						$form->{'artist'} = $artist;
-						$form->{'includeArtist'} = 1;
+						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 					}
 				}
 				
@@ -1848,7 +1849,7 @@ sub browsedb {
 			$list_form{'itemobj'}	    = $item;
 
 			# This is calling into the %fieldInfo hash
-			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend);
+			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria);
 
 			my $anchor = substr($itemsort, 0, 1);
 

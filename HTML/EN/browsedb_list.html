@@ -8,7 +8,7 @@
 	<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
 
 	<!-- Include the artist for the album view -->
-	[% IF level == 1 && includeArtist && artist %]
+	[% IF includeArtist && artist %]
 	 
 		[% "BY" | string %]
 		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
