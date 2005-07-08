@@ -32,6 +32,7 @@ our $defaultPrefs = {
 	'idleBrightness'	=> 2,
 	'transitionType'		=> 0,
 	'transitionDuration'		=> 0,
+	'playingDisplayMode'		=> 6,
 };
 
 # Parameters for the vumeter:
