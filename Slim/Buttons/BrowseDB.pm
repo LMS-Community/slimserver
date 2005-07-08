@@ -166,10 +166,11 @@ sub init {
 			}
 			# Else if we pick a single song
 			else {
-				my $album = ${$client->param('findCriteria')}{'album'};
+				# find out if this item is part of a container, such as an album or playlist previously selected.
+				my $container = ${$client->param('findCriteria')}{'album'} || ${$client->param('findCriteria')}{'playlist'};
 
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$album || !Slim::Utils::Prefs::get('playtrackalbum')) {
+				if ($addorinsert || !$container || !Slim::Utils::Prefs::get('playtrackalbum')) {
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;
 					$command = 'inserttracks' if $addorinsert == 2;
@@ -177,7 +178,7 @@ sub init {
 					$client->execute(["playlist", $command, 'listref', [ $currentItem ]]); 
 				}
 				# Otherwise deal with it in the context of the 
-				# containing album.
+				# containing album or playlist.
 				else {
 					my $wasShuffled = Slim::Player::Playlist::shuffle($client);
 

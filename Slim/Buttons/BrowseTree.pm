@@ -42,8 +42,8 @@ sub init {
 
 			my $items       = $client->param('listRef');
 			my $listIndex   = $client->param('listIndex');
-			my $descend     = $client->param('descend');
 			my $currentItem = $items->[$listIndex] || return;
+			my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
 
 			my ($command, $line1, $line2);
 
@@ -79,18 +79,18 @@ sub init {
 				1
 			);
 
-			if ($descend) {
-
+			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum')) {
 				$client->execute(['playlist', $command, $currentItem]);
 
 			} else {
 
+				$command .= 'tracks';
 				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
 
 				Slim::Player::Playlist::shuffle($client, 0);
 
 				$client->execute(['playlist', 'clear']);
-				$client->execute(['playlist', $command, $currentItem]);
+				$client->execute(['playlist', $command, 'listref', $items]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
 				if ($wasShuffled) {
@@ -251,32 +251,32 @@ sub setMode {
 	my %params = (
 
 		# Parameters for INPUT.List
-		header         => join('/', @headers),
-		headerAddCount => ($count > 0),
-		listRef        => $items,
-		listIndex      => $listIndex,
-		noWrap         => ($count <= 1),
-		callback       => \&browseTreeExitCallback,
+		'header'         => join('/', @headers),
+		'headerAddCount' => ($count > 0),
+		'listRef'        => $items,
+		'listIndex'      => $listIndex,
+		'noWrap'         => ($count <= 1),
+		'callback'       => \&browseTreeExitCallback,
 
 		# Have the callback give us the listIndex - which is needed
 		# for on-the-fly object creation.
-		externRef      => \&browseTreeItemName,
-		externRefArgs  => 'CVI',
+		'externRef'      => \&browseTreeItemName,
+		'externRefArgs'  => 'CVI',
 
-		overlayRef     => \&browseTreeOverlay,
+		'overlayRef'     => \&browseTreeOverlay,
 
-		onChange       => sub {
+		'onChange'       => sub {
 			my ($client, $curDepth) = @_;
 
 			$client->lastID3Selection($hierarchy, $curDepth);
 		},
 
-		onChangeArgs   => 'CI',
+		'onChangeArgs'   => 'CI',
 
 		# Parameters that reflect the state of this mode
-		hierarchy      => join('/', @levels),
-		descend        => 1,
-		topLevelPath   => $topLevelPath,
+		'hierarchy'      => join('/', @levels),
+		'descend'        => 1,
+		'topLevelPath'   => $topLevelPath,
 
 		# This allows a sort to be done on the list.
 		# There might be a more optimized way to handle this, but it's
