@@ -1848,7 +1848,7 @@ sub browsedb {
 			$list_form{'text'}	    = $itemname;
 			$list_form{'descend'}	    = $descend;
 			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
-			$list_form{$levels[$level]} = $itemid;
+			$list_form{$levelInfo->{'nameTransform'} || $levels[$level]} = $itemid;
 			$list_form{'skinOverride'}  = $params->{'skinOverride'};
 			$list_form{'itemnumber'}    = $itemnumber;
 			$list_form{'itemobj'}	    = $item;
