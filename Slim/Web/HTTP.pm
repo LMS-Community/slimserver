@@ -82,9 +82,6 @@ our %peerclient     = ();
 our %keepAlives     = ();
 our %skinTemplates  = ();
 
-my $mdnsIDslimserver;
-my $mdnsIDhttp;
-
 our @templateDirs = ();
 
 our %pageFunctions = ();
@@ -201,9 +198,9 @@ sub openport {
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
 	
 	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
-	
-	$mdnsIDhttp = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_http._tcp', $listenerport);
-	$mdnsIDslimserver = Slim::Networking::mDNS::advertise(Slim::Utils::Prefs::get('mDNSname'), '_slimhttp._tcp', $listenerport);
+
+	Slim::Networking::mDNS->addService('_http._tcp', $listenerport);
+	Slim::Networking::mDNS->addService('_slimhttp._tcp', $listenerport);
 }
 
 sub checkHTTP {
@@ -216,8 +213,8 @@ sub checkHTTP {
 	# if we've already opened a socket, let's close it
 	if ($openedport) {
 
-		if ($mdnsIDslimserver) { Slim::Networking::mDNS::stopAdvertise($mdnsIDslimserver); };
-		if ($mdnsIDhttp) { Slim::Networking::mDNS::stopAdvertise($mdnsIDhttp); };
+		Slim::Networking::mDNS->removeService('_http._tcp');
+		Slim::Networking::mDNS->removeService('_slimhttp._tcp');
 		
 		$::d_http && msg("closing http server socket\n");
 		Slim::Networking::Select::addRead($http_server_socket, undef);

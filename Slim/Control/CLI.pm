@@ -24,7 +24,6 @@ use Slim::Web::HTTP;
 
 my $cli_socket;				# server socket
 my $cli_socket_port = 0;	# CLI port on which socket is opened
-my $cli_socket_mdnsID;		# mDNS advertising about this port
 
 my $client_socket_count = 0;# number of connected clients
 my %client_socket_id;		# id of each client_sock IP:PORT (for debug)
@@ -83,9 +82,7 @@ sub cli_socket_open {
 	
 		Slim::Networking::Select::addRead($cli_socket, \&cli_socket_accept);
 	
-		$cli_socket_mdnsID = Slim::Networking::mDNS::advertise(
-			Slim::Utils::Prefs::get('mDNSname'), '_slimcli._tcp', $listenerport
-		);
+		Slim::Networking::mDNS->addService('_slimcli._tcp', $listenerport);
 	
 		Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::commandCallback);
 		
@@ -101,9 +98,7 @@ sub cli_socket_close {
 
 		$::d_cli && msg("CLI: Closing socket $cli_socket_port\n");
 	
-		if ($cli_socket_mdnsID) {
-			Slim::Networking::mDNS::stopAdvertise($cli_socket_mdnsID);
-		}
+		Slim::Networking::mDNS->removeService('_slimcli._tcp');
 		
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();

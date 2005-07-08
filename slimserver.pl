@@ -527,11 +527,17 @@ sub start {
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
 
+	$::d_server && msg("mDNS init...\n");
+	Slim::Networking::mDNS->init;
+
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
 
 	$::d_server && msg("SlimServer CLI init...\n");
 	Slim::Control::CLI::init();
+
+	$::d_server && msg("mDNS startAdvertising...\n");
+	Slim::Networking::mDNS->startAdvertising;
 
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
@@ -1131,7 +1137,7 @@ sub cleanup {
 		$ds->forceCommit;
 	}
 
-	Slim::Networking::mDNS::stopAdvertise();
+	Slim::Networking::mDNS->stopAdvertising;
 	Slim::Buttons::Plugins::shutdownPlugins();
 
 	remove_pid_file();
