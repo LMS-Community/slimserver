@@ -1,16 +1,16 @@
 [% pagetitle = pagetitle %] [% pageicon = 'MUSIC' %] [% setup = '0' %] [% browse = '1' %][% PROCESS pageheader.html %]
 
-    <p>
+	<p>
 
-    <h3>[% browseby | string %]</h3><p>
+	<h3>[% browseby | string %]</h3><p>
 
-    [% pwd_list %]
+	[% pwd_list %]
 
 	[% IF song_count %]<p>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</p>[% END %]
-    <p><hr><p>
+	<p><hr><p>
 	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?level=0&player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
-    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 			[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverArt %]<center>
 			<a href="status_header.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]" target="status"><img src="/music/[% coverArt %]/cover.jpg" border="0" width="200"></a></center>
 		[% END %][% END %]<p>

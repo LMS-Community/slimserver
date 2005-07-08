@@ -7,20 +7,21 @@
 	[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 	</div>[% END %]
 	<center><p>[% IF song_count %]Browsing <b>[% album_count %]</b> [% "WITH" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
-   <h3>[% "MOODLOGIC_INSTANT_MIX" | string %]</h3><p>
-   <table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<h3>[% "MOODLOGIC_INSTANT_MIX" | string %]</h3><p>
+	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td>[% pwd_list %]</td></tr></table>
 	[% IF browselist_pagebar %]<p>[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
-    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-    <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      [% instant_mix_list %]
-    </table>
-   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-   <p><a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-      <a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
-   </p>
-
+	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+	<table cellspacing="0" border="0" cellpadding="0" width="100%">
+			<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"><img src="[% webroot %]html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="3" align="center">&nbsp;</td>
+				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"><img src="[% webroot %]html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="3" align="center">&nbsp;</td></tr>
+		[% instant_mix_list %]
+	</table>
+	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 <script language="JavaScript">
 <!-- Hide
 parent.status.location="[% webroot %]status_header.html?player=[% player | uri %]&start=[% start %]";
