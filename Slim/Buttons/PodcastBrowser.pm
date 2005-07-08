@@ -637,12 +637,17 @@ sub parseRSS {
 		$item{'title'} = unescapeAndTrim($itemXML->{title});
 		$item{'link'} = unescapeAndTrim($itemXML->{link});
 		$item{'slim:link'} = unescapeAndTrim($itemXML->{'slim:link'});
-		if ($itemXML->{enclosure}) {
-			my %enclosure;
-			$enclosure{'url'} = trim($itemXML->{enclosure}->{url});
-			$enclosure{'type'} = trim($itemXML->{enclosure}->{type});
-			$enclosure{'length'} = trim($itemXML->{enclosure}->{length});
-			$item{'enclosure'} = \%enclosure;
+
+		my $enclosure = $itemXML->{enclosure};
+
+		if (ref $enclosure eq 'ARRAY') {
+			$enclosure = $enclosure->[0];
+		}
+
+		if ($enclosure) {
+			$item{'enclosure'}->{'url'} = trim($enclosure->{url});
+			$item{'enclosure'}->{'type'} = trim($enclosure->{type});
+			$item{'enclosure'}->{'length'} = trim($enclosure->{length});
 		}
 		# this is a convencience for using INPUT.Choice later.
 		# it expects each item in it list to have some 'value'
