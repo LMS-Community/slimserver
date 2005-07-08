@@ -124,8 +124,11 @@ sub init {
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
 				$form->{'item'}	               = $id;
-				$form->{'itempath'}	       = $url;
+				$form->{'itempath'}	           = $url;
 				$form->{'itemobj'}             = $item;
+				$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
+				$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
+
 
 				my $Imports = Slim::Music::Import::importers();
 				for my $mixer (keys %{$Imports}) {
@@ -364,6 +367,7 @@ sub init {
 			},
 
 			'nameTransform' => 'album',
+			'descendTransform' => 'album,track',
 			'ignoreArticles' => 1,
 			'alphaPageBar' => 0,
 			'suppressAll' => 1
@@ -481,6 +485,7 @@ sub init {
 		},
 
 		'nameTransform' => 'album',
+		'descendTransform' => 'track',
 		'ignoreArticles' => 1,
 		'alphaPageBar' => 0,
 	};
@@ -1040,7 +1045,7 @@ sub playlist {
 	$params->{'playlist_items'} = '';
 	$params->{'myClientState'}  = $client;
 	$params->{'noArtist'}       = Slim::Utils::Strings::string('NO_ARTIST');
-	$params->{'noAlbum'}        = Slim::Utils::Strings::string('NO_ALBUM');;
+	$params->{'noAlbum'}        = Slim::Utils::Strings::string('NO_ALBUM');
 
 	my $needIdleStreams = Slim::Player::Client::needIdleStreams();
 
@@ -1799,7 +1804,7 @@ sub browsedb {
 			}
 
 			if ($level == 0) {
-				$list_form{'hierarchy'}	= join(',', @levels[1..$#levels]);
+				$list_form{'hierarchy'}	= $levelInfo->{'descendTransform'} ? $levelInfo->{'descendTransform'} : join(',', @levels[1..$#levels]);
 				$list_form{'level'}	= 0;
 			} else {
 				$list_form{'hierarchy'}	= $hierarchy;
