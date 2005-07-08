@@ -116,14 +116,8 @@ function _JXTKBackendRequest(backend, args, sync) {
 	this.url = backend.baseurl + backend.globalArg;
 	if (args) this.url += args;
 
-	var ua = navigator.userAgent;
-	if (ua.indexOf("AppleWebKit/")) {
-		var wkversion = ua.substring(ua.indexOf("AppleWebKit/") + 12);
-		wkversion = wkversion.substring(0, wkversion.indexOf(" "));
-		if (wkversion <= 412 && wkversion > 126) {
-			this.url += '&safariworkaround=' + Date.parse(new Date); 
-		}
-	}
+	/* This is only needed for IE and Safari 1.3/2.0, but it can't hurt */
+	this.url += '&nocache=' + Date.parse(new Date); 
 
 	try {
 		if (window.ActiveXObject) {
