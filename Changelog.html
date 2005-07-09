@@ -1,3 +1,72 @@
+<h2><a name="v6.1b2" id="v6.1b2"></a>Version 6.1b2 - 2005-07-09</h2>
+<ul>
+	<li>Squeezebox2 Firmware (Revision 14):<p>
+		<ul>
+			<li>Fix some issues where we would take excessive time connecting to SqueezeNetwork:
+			<li>Reduced DNS timeout to 5 seconds
+			<li>If DHCP only hands us one DNS server, clear the second entry.
+		</ul>
+	<br>
+
+	<li>Platform Support:<p>
+		<ul>
+			<li>mDNS/Rendezvous/Bonjour cleanup - only spawn one mDNSResponder, better launching semantics, no fork & exec.
+
+			<li>CLI Updates from Fred.
+
+			<li>Fixed a hang in the MusicMagic plugin.
+
+			<li>Unicode handling fixes.
+		</ul>
+	<br>
+
+	<li>Bugs Fixed:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=673"># 673</a> - RSS Ticker activation freezes Squeezebox/large text on slimp3
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1278">#1278</a> - itunes playlists coming up empty or not at all
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1337">#1337</a> - when sb2 requires firmware update, web interface links to firmware.html
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1341">#1341</a> - ExBrowse2 skin catches F11
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1399">#1399</a> - slimserver should write the pid file before changing uid
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1474">#1474</a> - Directory scan ignores lots of files
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1477">#1477</a> - Audio stops if quoted display command entered via telnet
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1482">#1482</a> - WAV CUE files start playing on first track always
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1486">#1486</a> - &quot;High&quot; Unicode characters cause Slimserver crash with SliMP3 player.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1547">#1547</a> - bounce up and bounce down animations are backwards?  for everything?
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1567">#1567</a> - Safari crashes when using the search feature of the server interface
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1573">#1573</a> - bounce animation repeats to muchly.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1596">#1596</a> - metadata errors during scan
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1694">#1694</a> - Need scanning feedback on home page of web interface
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1695">#1695</a> - Feature request (from Bugzilla Bug 1678: Navigation anomaly?)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1696">#1696</a> - When browsing by year, would be great to see artist name as well as album name
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1699">#1699</a> - Service stops Web interface becomes inaccessible
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1703">#1703</a> - ISO-8859-1 accented file/directory names
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1719">#1719</a> - Playlist edit or overwrite crashes slimserver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1731">#1731</a> - 6.1b1:  skyradio doesn't play but it works fine in windows media player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1736">#1736</a> - Some tracks have no title after rescan
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1738">#1738</a> - &quot;Coming Next&quot; listing
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1739">#1739</a> - Next page links within Browse Music Folder now lose track of selected player
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1741">#1741</a> - Slimserver crashes loading podcast for Make blog
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1742">#1742</a> - CLI playlist command fails...
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1743">#1743</a> - Automatically stored &quot;Now playing&quot; playlist miss umlauts
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1744">#1744</a> - Edit Zapped Songs playlist crashes Slimserver
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1748">#1748</a> - Add no longer works from &quot;Browse Music Folder&quot;
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1751">#1751</a> - CRASHER:  Press left to go into Choose Playlist For Alarm
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1753">#1753</a> - Choose Playlist for Alarm list needs (N of M)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1754">#1754</a> - Browsing playlist, press PLAY, should play entire playlist starting at selected song`
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1756">#1756</a> - Song titles missing in Now Playing playlist after rescan.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1757">#1757</a> - save playlist plugin doesn't use db.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1758">#1758</a> - Deleted iTunes Playlists Persist in SlimServer Database
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1765">#1765</a> - Non-functional header links in ExBrowse2 skin
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1767">#1767</a> - Browsing New Music -&gt; Any Artist shows incorrect info on top line
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1768">#1768</a> - Play/Add to Playlist link on top of MusicMagic mix list
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1769">#1769</a> - integration of iTunes' podcasts into SlimServer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1770">#1770</a> - Browse New Music - All Songs list errors
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1771">#1771</a> - SlimServer 6.1b1 quits itself less than 30 seconds after launch
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1780">#1780</a> - lLive 365 Internet Radio appears in browse menu list, with Plugin disabled
+		</ul>
+	<br>
+</ul>
+
 <h2><a name="v6.1b1" id="v6.1b1"></a>Version 6.1b1 - 2005-06-24</h2>
 <ul>
 	<li>SqueezeNetwork:<p>
