@@ -635,9 +635,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		my $playlist_base = undef;
 
 		if (Slim::Music::Info::isFileURL($playlisturl)) {
-			my @parts = splitdir($playlistpath);
+			#XXX This was removed before in 3427, but it really works best this way
+			#XXX There is another method that comes close if this shouldn't be used.
+			my $path = Slim::Utils::Misc::pathFromFileURL($playlisturl);
+			my @parts = splitdir($path);
 			pop(@parts);
-			shift(@parts);
 			$playlist_base = Slim::Utils::Misc::fileURLFromPath(catdir(@parts));
 			$::d_scan && msg("gonna scan $playlisturl, with path $playlistpath, for base: $playlist_base\n");
 		}
