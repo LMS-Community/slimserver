@@ -19,12 +19,10 @@
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
 	
-[% IF item.isRemoteUrl %]
- 	<td class="listing" width="11" align="center">
+	<td class="listing" width="11" align="center">
 		<a href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
-[% END %]
 
 	<td class="listing" width="11" align="center">
 	<a href="edit_playlist.html?player=[% player | uri %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]">
