@@ -248,9 +248,18 @@ my $recomposeTable = {
 	"i\x{30f}" => "\x{209}"
 };
 
+my $decomposeTable = {};
+
+while (my ($key, $value) = each %{$recomposeTable}) {
+	$decomposeTable->{$value} = $key;
+}
+
 # Create a compiled regex.
 my $recomposeRE = join "|", reverse sort keys %{$recomposeTable};
    $recomposeRE = qr/($recomposeRE)/o;
+
+my $decomposeRE = join "|", reverse sort keys %{$decomposeTable};
+   $decomposeRE = qr/($decomposeRE)/o;
 
 sub recomposeUnicode {
 	my $string = shift;
@@ -263,6 +272,23 @@ sub recomposeUnicode {
 	$string = Encode::decode('utf8', $string);
 
 	$string =~ s/$recomposeRE/$recomposeTable->{$1}/go;
+
+	$string = Encode::encode('utf8', $string);
+
+	return $string;
+}
+
+sub decomposeUnicode {
+	my $string = shift;
+
+	if ($] <= 5.007) {
+		return $string;
+	}
+
+	# Make sure we're on.
+	$string = Encode::decode('utf8', $string);
+
+	$string =~ s/$decomposeRE/$decomposeTable->{$1}/go;
 
 	$string = Encode::encode('utf8', $string);
 
