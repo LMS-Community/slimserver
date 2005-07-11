@@ -1424,14 +1424,17 @@ PLUGIN_SHOUTCASTBROWSER_CONNECTING
 PLUGIN_SHOUTCASTBROWSER_REDIRECT
 	DE	Bitte haben Sie etwas Geduld, während die Stream-Informationen von der SHOUTcast Website geladen werden...
 	EN	Please stay tuned while I'm looking up stream information on the SHOUTcast web site...
+	ES	Por favor, permanezca conectado mientras busco información de streams en el sitio web de SHOUTcast...
 
 PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT
 	DE	Klicken Sie hier, falls die Seite nicht automatisch aktualisiert wird
 	EN	Click here if this page isn't updated automatically
+	ES	Presionar aqui si  esta página no se actualiza automáticamente
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH
 	DE	Aktualisieren
 	EN	Refresh
+	ES	Refrescar
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
@@ -1441,6 +1444,7 @@ PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	DE	Beim Auswerten der Stream-Informationen ist ein Fehler aufgetreten. Reduzieren Sie allenfalls die Anzahl Streams, falls Sie eine grosse Zahl anfordern wollten.
 	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
+	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
@@ -1490,9 +1494,11 @@ PLUGIN_SHOUTCASTBROWSER_SORTING
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	DE	Spielte zuletzt
 	EN	Was playing
+	ES	Se estaba escuchando
 
 PLUGIN_SHOUTCASTBROWSER_STREAM_NAME
 	EN	Name
+	ES	Nombre
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
@@ -1631,10 +1637,14 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_KEYWORD_REVERSE
 SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE
 	DE	Musikstile normalisieren
 	EN	Normalise genres
+	ES	Normalizar géneros
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE_DESC
 	DE	Standardmässig wird versucht, die Musikstile zu normalisieren, weil sonst beinahe so viele Stile wie Streams aufgeführt werden. Falls Sie alle Stile unverändert aufführen wollen, so deaktivieren Sie diese Option.
-	EN	By default, genres are normalised based on keywords, because otherwise there are nearly as many genres as there are streams. If you would like to see the genre listing as defined by each stream, turn off this parameter.^;
+	EN	By default, genres are normalised based on keywords, because otherwise there are nearly as many genres as there are streams. If you would like to see the genre listing as defined by each stream, turn off this parameter.
+	ES	Por defecto, los géneros se normalizan en base a palabras clave, ya que de lo contrario existen casi tantos géneros como streams. Si se quiere ver la lista de géneros tal cual se la define en cada stream,   desactivar este parámetro.
+	
+	^;
 }
 
 1;

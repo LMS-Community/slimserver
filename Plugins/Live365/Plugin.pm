@@ -1225,10 +1225,12 @@ SETUP_PLUGIN_LIVE365_SORT_LISTENERS
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS
 	DE	Detaillierte Live365 Suchresultate
 	EN	Detailed Live365 search results
+	ES	Resultados detallados de búsqueda en Live365
 
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
 	DE	Zeige detaillierte Suchresultate, wenn im Live365 Webinterface gesucht wird. Dies beinhaltet Interpreten, Titel und Albuminformationen wenn nach einem dieser Kriterien gesucht wird. Dies kann die Suchresultate etwas unübersichtlicher machen.
 	EN	Show detailed results when searching Live365 through the web interface.  Includes artist, track, and album info when searching for one of these.  May make your search results longer and harder to browse.
+	ES	Mostrar resultados detallados cuando se busca en Live365 a través de la interface web. Se incluye información de  artista, canción y disco cuando se busca por alguno de ellos. Esto puede generar resultados más largos y dificiles de recorrer.
 
 PLUGIN_LIVE365_GENRES
 	DE	Live365 Musikstile
@@ -1256,22 +1258,27 @@ PLUGIN_LIVE365_NO_INFO
 TACMATCHING
 	DE	Passende Interpreten/Titel/Alben
 	EN	Tracks/Artists/CDs matching
+	ES	Canciones/Artistas/CDs coincidentes
 
 STATIONSMATCHING
 	DE	Passende Sender
 	EN	Stations matching
+	ES	Estaciones coinciden
 
 LOCATIONSMATCHING
 	DE	Passende Region
 	EN	Locations matching
+	ES	Ubicaciones coincidentes
 
 BROADCASTERSMATCHING
 	DE	Passende Broadcaster
 	EN	Broadcasters matching
+	ES	Emisoras coincidentes
 
 PLUGIN_LIVE365_NO_INFO
 	DE	Fehler beim Laden der Informationen
 	EN	Error loading info
+	ES	Error al cargar información
 
 	^;
 }

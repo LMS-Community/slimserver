@@ -225,18 +225,22 @@ sub strings {
 PLUGIN_FAVORITES_MODULE_NAME
 	DE	Favoriten
 	EN	Favorites
+	ES	Favoritas
 
 PLUGIN_FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht!
 	EN	Favorite #%s not defined.
+	ES	Favorita #%s no definida
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...
 	EN	Playing favorite #%s
+	ES	Se está escuchando favorita #%s
 
 PLUGIN_FAVORITES_ADDING
-	DE	F�ge Favorit Nr. %s zur Playlist hinzu...
+	DE	Füge Favorit Nr. %s zur Playlist hinzu...
 	EN	Adding favorite #%s
+	ES	Añadiendo favorita #%s
 ";}
 
 1;

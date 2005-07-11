@@ -2281,11 +2281,13 @@ SETUP_SHOWYEAR_DESC
 SETUP_SHOWARTIST
 	DE	Artist beim Durchsuchen der Alben anzeigen
 	EN	Show Artist with Albums
+	ES	Mostrar Artista junto con Albums
 	FR	Affichage de l'artiste avec l'album
 
 SETUP_SHOWARTIST_DESC
 	DE	Sie können den Artisten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album' artist will be shown next to the album title.
+	ES	Se puede elegir el mostrar el artista cuando se examina por Discos. Cuando se habilita, el artista del disco se mostrará junto al título del disco.
 	FR	Vous pouvez afficher l'artiste d'un album en mode Parcourir les albums. Si ce réglage est activé, l'artiste sera affichée à la suite du titre de l'album.
 
 SETUP_GUESSFILEFORMATS
@@ -2485,7 +2487,7 @@ SETUP_ARTFOLDER
 SETUP_ARTFOLDER_DESC
 	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
-	ES	Se puede elegir alamcenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
+	ES	Se puede elegir almacenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
 	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Entrez l'emplacement des fichiers de pochettes ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le SlimServer la cherchera à l'emplacement du fichier de musique.
 	JP	アートワークを１つのフォルダーにまとめて保存しても構いません。以下に入力してください。フォルダー名を指定しても、もし見つからなければ、音楽ファイルがある場所を探します。
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
@@ -2556,6 +2558,7 @@ SETUP_PLAYLISTDIR_DESC
 SETUP_RESCAN
 	DE	Musiksammlung neu einlesen
 	EN	Rescan Music Library
+	ES	Volver a recopilar la Colección Musical
 	FR	Répertorier le dossier de musique
 
 SETUP_RESCAN_BUTTON
@@ -2574,11 +2577,13 @@ SETUP_RESCAN_BUTTON
 SETUP_RESCAN_DESC
 	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht. Kreuzen Sie die Checkbox an, damit SlimServer die bestehende Datenbank vor dem Durchsuchen löscht und diese von Grund auf neu aufbaut.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.  Click the checkbox and then click Rescan to make SlimServer forget about your entire library and rescan from scratch.
+	ES	Presionar en Recopilar para que SlimServer recorrar la colección musical y añada nueva música o actualice canciones que hayan cambiado. Marque el checkbox y luego presion Recopilar para que Slimserver elimine completamente la historia previa y recopile nuevamente desde cero.
 	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu. Si vous cochez la case, SlimServer va remettre à zéro la bibliothèque existante.
 	
 SETUP_WIPECACHE
 	DE	Datenbank vor dem Durchsuchen löschen
 	EN	Clear library before rescan
+	ES	Limpiar la información previa de la colección antes de volver a recopilar
 	FR	Initialiser la bibliothèque avant de répertorier
 
 RESCANNING
@@ -2905,6 +2910,7 @@ SETUP_MOODLOGICSCANINTERVAL
 SETUP_MOODLOGICSCANINTERVAL_DESC
 	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again. A value of zero disables the reload.
+	ES	Cuando la Base de Datos de Moodlogic cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de Moodlogic. Usar un valor 0 deshabilita la recarga.
 	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic. La valeur zéro désactive cette fonctionnalité.
 
 SETUP_MUSICMAGICSCANINTERVAL
@@ -2915,6 +2921,7 @@ SETUP_MUSICMAGICSCANINTERVAL
 SETUP_MUSICMAGICSCANINTERVAL_DESC
 	DE	Sobald MusicMagic seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again. A value of zero disables the reload.
+	ES	Cuando la Base de Datos de MusicMagic cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de MusicMagic. Usar un valor 0 deshabilita la recarga.
 
 SETUP_MMSPORT
 	EN	MusicMagic HTTP Port
@@ -2945,6 +2952,7 @@ SETUP_ITUNESSCANINTERVAL
 SETUP_ITUNESSCANINTERVAL_DESC
 	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
+	ES	Cuando la iTunes Music Library cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la iTunes Music Library. Usar un valor 0 deshabilita la recarga.
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
 
 SETUP_ITUNESSCANINTERVAL_OK
@@ -3609,7 +3617,7 @@ SETUP_HISTORYLENGTH_DESC
 	DE	Der Server kann eine Liste der kürzlich gespielten Lieder speichern. Wählen Sie die Anzahl der Lieder, die berücksichtigt werden sollen.
 	DK	Serveren kan gemme en liste over de senest afspillede sange. Angive antallet af sange der skal gemmes.
 	EN	The server can retain a list of the most recently played songs. Choose the number of songs to retain.
-	ES	El servidor puede retenet una lista de las canciones escuchadas recientemente. Elegir el número de canciones que el servidor debe retener.
+	ES	El servidor puede retener una lista de las canciones escuchadas recientemente. Elegir el número de canciones que el servidor debe retener.
 	FR	Le serveur peut tenir à jour une liste des morceaux joués les plus récemment. Choisissez le nombre de morceaux à conserver.
 	JP	サーバーは、最近再生された曲のリストを保存することができます。何曲まで保存するが指定してください。
 	NL	De server kan een lijst bijhouden van de laatst gespeelde liedjes. Stel het aantal liedjes dat bijgehouden moet worden in.
@@ -3696,6 +3704,7 @@ SCREENSAVER_JUMP_BACK_NAME
 SCREENSAVER_NONE
 	DE	Keiner
 	EN	None
+	ES	Ninguno
 
 SETUP_DISPLAYTEXTTIMEOUT
 	DE	Text Zeiteingabe
@@ -3785,18 +3794,22 @@ SETUP_SEARCHSUBSTRING_DESC
 SETUP_NOGENREFILTER
 	DE	Musikstil auf Album- und Trackebene ausfiltern
 	EN	Filter genres at the album & track level.
+	ES	Filtrar géneros a nivel de album y pista
 
 SETUP_NOGENREFILTER_1
 	DE	Zeige alle Tracks und Alben eines Interpreten
 	EN	Show any tracks & albums for an artist
+	ES	Mostrar calquier canción y album de un artista
 
 SETUP_NOGENREFILTER_0
 	DE	Zeige nur zum gewählten Musikstil passende Alben und Tracks für den Interpreten
 	EN	Only show tracks or albums matching the selected genre for an artist
+	ES	Mostrar solo canciones o discos que correspondan al género seleccionado, para un artista.
 
 SETUP_NOGENREFILTER_DESC
 	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören. Das Aktivieren dieser Option reduziert die Anzeigegeschwindigkeit. Sie kann jedoch bei Interpreten mit mehreren Musikstilen sinnvoll sein.
 	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre. There is a performance penalty for turning this on, however, your results may be better for "Multi-Genre Artists".
+	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido. Existe una penalidad en la parformance por habilitar esto, sin embargo los resultados pueden ser mejores para artistas "multi-género".
 
 SETUP_COMPOSERINARTISTS
 	DE	Komponist, Gruppe und Orchester in Interpreten
@@ -6583,7 +6596,7 @@ BROWSE_BY_SONG_DBL
 BROWSE_BY_YEAR
 	DE	Jahrgänge nachschlagen
 	EN	Browse Years
-	ES	Examinar Años
+	ES	Examinar por Año
 
 BROWSE_MUSIC_FOLDER
 	DE	Musikverzeichnis durchsuchen
@@ -6785,6 +6798,7 @@ SCAN_WARNING
 HOME_SCAN_WARNING
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Bitte gedulden Sie sich etwas, da dieser Prozess einige Zeit in Anspruch nehmen kann.
 	EN	SlimServer is still scanning your music library, please be patient as this may take a while.
+	ES	SlimServer está todavía recopilando la colección musical, por favor sea paciente ya que esto puede llevar un cierto tiempo.
 
 SCAN_CLICK
 	DE	Klicken Sie, um ihre Musikverzeichnis direkt zu durchsuchen,
@@ -7161,16 +7175,20 @@ CHOOSE_PLAYING_DISPLAY_MODE
 VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	DE	Kleines Spectrum
 	EN	Small Spectrum
+	ES	Espectro pequeño
 
 VISUALIZER_VUMETER_SMALL
 	DE	Kleiner VU
 	EN	Small VU
+	ES	VU pequeño
 
 VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum
+	ES	Espectro
 
 VISUALIZER_VUMETER
 	EN	VU Meter
+	ES	VU metro
 
 BLANK
 	DE	Nichts
@@ -7949,6 +7967,7 @@ TRACKSMATCHING
 MORE_MATCHES
 	DE	Mehr Treffer...
 	EN	More matches...
+	ES	Más coincidencias...
 
 SYNC_WITH
 	DE	RIGHT drücken zum synchronisieren mit:
@@ -8631,6 +8650,7 @@ ANY_TYPE
 WMA_NO_CONVERT_CMD
 	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen
 	EN	WMA convert error - check file types
+	ES	Error de conversión WMA - verificar tipo de archivos
 
 MIDWORDS_UPPER
 	DE	1
@@ -8639,26 +8659,32 @@ MIDWORDS_UPPER
 FAVORITES_FAVORITE_NUM
 	DE	Favorit Nr.
 	EN	Favorite #
+	ES	Favorita #
 
 FAVORITES_RIGHT_TO_DELETE
 	DE	 (RECHTS zum löschen)
 	EN	 (RIGHT to delete)
+	ES	 (RIGHT para eliminar)
 
 FAVORITES_NOT_A_FAVORITE
 	DE	Kein Favorit
 	EN	Not a favorite
+	ES	No es una favorita...
 
 FAVORITES_RIGHT_TO_ADD
 	DE	RECHTS drücken um den Favoriten zuzuordnen
 	EN	Press RIGHT to add to favorites
+	ES	Presionar RIGHT para añadir a favoritas
 
 FAVORITES_ADDING
 	DE	Favoriten werden gespeichert...
 	EN	Saving favorites...
+	ES	Guardando favoritas...
 
 FAVORITES_DELETING
 	DE	Favorit wird gelöscht...
 	EN	Deleting favorite...
+	ES	Borrando favorita...
 
 SQUEEZENETWORK
 	EN	SqueezeNetwork
@@ -8669,30 +8695,37 @@ SQUEEZENETWORK_CONNECT
 SQUEEZENETWORK_CONNECTING
 	DE	Verbinde zum SqueezeNetwork...
 	EN	Connecting to SqueezeNetwork...
+	ES	Conectándose a SqueezeNetwork...
 	FR	Connecte à SqueezeNetwork...
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine Squeezebox2.
 	EN	Sorry, requires Squeezebox2.
+	ES	Lo siento, requiere Squeezebox2
 	FR	Cette fonction nécessite Squeezebox2.
 
 SETUP_SCROLLMODE
 	DE	Scroll Modus
 	EN	Scroll Mode
+	ES	Modo de Desplazamiento
 
 SETUP_SCROLLMODE_DESC
 	DE	Sie können wählen, wie Text, der zu breit für eine Zeile ist, auf der zweiten Zeile angezeigt werden soll. Der normale Scrollmodus wartet erst während der definierten Zeitdauer, bevor die Zeile vorbei gescrollt wird. Dies wiederholt sich so lange, wie der Text angezeigt werden soll. Alternativ kann der Scrollvorgang nach einmaligem Scrollen unterdrückt oder gänzlich deaktiviert werden.
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
+	ES	Se puede elegir la forma en que un reproductor mostrará texto en la segunda línea en los casos en que sea demasiado largo para mostrarse en la pantalla. El modo de desplazamiento horizontal esperará por el intervalo de Pausa de Desplazamiento y luego desplazará el texto para mostrar la línea completa. El desplazamiento continuará mientras el reproductor esé mostrando esta pantalla. Los modos alternativos permiten desplazar el texto una sola vez y luego parar, o no desplazar el texto en ningún momento.
 
 SETUP_SCROLLMODE_DEFAULT
 	DE	Normales Scrollen
 	EN	Standard scrolling
+	ES	Desplazamiento estándar
 
 SETUP_SCROLLMODE_SCROLLONCE
 	DE	Einmal scrollen, dann anhalten
 	EN	Scroll once and stop
+	ES	Desplazar una vez y parar
 
 SETUP_SCROLLMODE_NOSCROLL
 	DE	Nicht scrollen
 	EN	Do not scroll
+	ES	No desplazar
 

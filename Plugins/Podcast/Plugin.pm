@@ -327,6 +327,7 @@ sub getFeedXml {
 sub strings { return q!
 PLUGIN_PODCAST
 	EN	Podcast Browser
+	ES	Navegador de Podcasts
 
 PODCAST_ERROR
 	DE	Fehler
@@ -335,13 +336,16 @@ PODCAST_ERROR
 PODCAST_GET_FAILED
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
+	ES	Error de parse
 
 PODCAST_LOADING
 	DE	Hole Casts...
 	EN	Fetching...
+	ES	Recuperando...
 
 PODCAST_LINK
 	EN	Link
+	ES	Vínculo
 
 PODCAST_URL
 	EN	Url
@@ -349,6 +353,7 @@ PODCAST_URL
 PODCAST_DATE
 	DE	Datum
 	EN	Date
+	ES	Fecha
 
 PODCAST_EDITOR
 	DE	Herausgeber
@@ -364,26 +369,32 @@ PODCAST_AUDIO_ENCLOSURES
 PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play
+	ES	Nada para escuchar
 
 PODCAST_FEED_DESCRIPTION
 	DE	Über diesen Podcast
 	EN	About this podcast
+	ES	Acerca de este podcast
 
 PODCAST_GROUP_DESC
 	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
+	ES	El plugin Navegador de Podcasts permite ver y escuchar podcasts.
 
 PODCAST_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
+	ES	Reinicializar
 
 PODCAST_RESETTING
 	DE	Setze Podcasts zurück
 	EN	Resetting to default podcasts
+	ES	Reestableciendo podcasts por defecto
 
 PODCAST_FEEDS_CHANGE
 	DE	Die Podcast Liste wurde geändert.
 	EN	Podcast list changed.
+	ES	Lista de Podcast modificada.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
@@ -391,7 +402,7 @@ SETUP_PLUGIN_PODCAST_FEEDS
 SETUP_PLUGIN_PODCAST_RESET
 	DE	Podcasts zurücksetzen
 	EN	Reset default Podcasts
-
+	ES	Reinicializar Podcasts por defecto
 
 !};
 
