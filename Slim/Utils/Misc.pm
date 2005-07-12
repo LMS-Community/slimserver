@@ -247,7 +247,6 @@ sub pathFromFileURL {
 
 sub fileURLFromPath {
 	my $path = shift;
-	my $donttranslate = shift;
 	
 	return $path if (Slim::Music::Info::isURL($path));
 
@@ -573,7 +572,6 @@ sub fixPathCase {
 sub fixPath {
 	my $file = shift || return;
 	my $base = shift;
-	my $donttranslate = shift;
 
 	my $fixed;
 
@@ -647,7 +645,7 @@ sub fixPath {
 	if (Slim::Music::Info::isFileURL($fixed)) {
 		return $fixed;
 	} else {
-		return fileURLFromPath($fixed, $donttranslate);  
+		return fileURLFromPath($fixed);
 	}
 }
 
