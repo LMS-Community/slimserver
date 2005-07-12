@@ -41,31 +41,40 @@ JXTK._ComboListFactory = {
 		}
 
 		var previous = helpers.previousItem(item, item.nodeName);
-		while (previous != null) {
-			var bottomRight = coordinates.bottomRightOffset(previous);
-			if (xmouse.y <= (bottomRight.y - oplTop) && xmouse.x <= bottomRight.x) {
-				moveTo = previous;
-				dragEvent.group.movecount--;
+		var next = helpers.nextItem(item, item.nodeName);
+
+		if (previous && xmouse.y <= (coordinates.bottomRightOffset(previous).y - oplTop)) {
+			while (previous != null) {
+				var bottomRight = coordinates.bottomRightOffset(previous);
+				if (xmouse.y <= (bottomRight.y - oplTop)) {
+					moveTo = previous;
+					dragEvent.group.movecount--;
+					previous = helpers.previousItem(previous, item.nodeName);
+				} else {
+					previous = null;
+				}
 			}
-			previous = helpers.previousItem(previous, item.nodeName);
-		}
-		if (moveTo != null) {
-			helpers.moveBefore(item, moveTo);
-			return;
+			if (moveTo != null) {
+				helpers.moveBefore(item, moveTo);
+				return;
+			}
 		}
 
-		var next = helpers.nextItem(item, item.nodeName);
-		while (next != null) {
-			var topLeft = coordinates.topLeftOffset(next);
-			if ((topLeft.y - oplTop) <= xmouse.y && topLeft.x <= xmouse.x) {
-				moveTo = next;
-				dragEvent.group.movecount++;
+		if (next && xmouse.y >= (coordinates.topLeftOffset(next).y - oplTop)) {
+			while (next != null) {
+				var topLeft = coordinates.topLeftOffset(next);
+				if ((topLeft.y - oplTop) <= xmouse.y) {
+					moveTo = next;
+					dragEvent.group.movecount++;
+					next = helpers.nextItem(next, item.nodeName);
+				} else {
+					next = null;
+				}
 			}
-			next = helpers.nextItem(next, item.nodeName);
-		}
-		if (moveTo != null) {
-			helpers.moveBefore(item, helpers.nextItem(moveTo, item.nodeName));
-			return;
+			if (moveTo != null) {
+				helpers.moveBefore(item, helpers.nextItem(moveTo, item.nodeName));
+				return;
+			}
 		}
 	},
 
@@ -81,8 +90,11 @@ JXTK._ComboListFactory = {
 		}
 
 		for (i = 0; i < elementparent.childNodes.length; i++) {
-			elementparent.childNodes[i].index = i;
-			elementparent.childNodes[i].childNodes[1].innerHTML = i + 1;
+			var cn = elementparent.childNodes[i];
+			cn.childNodes[1].innerHTML = i + 1;
+			cn.index = i;
+			cn.className = (i % 2) ? "odd" : "even";
+			if (cn.isSelected) cn.className += " active";
 		}
 	},
 
@@ -117,14 +129,15 @@ _JXTKComboList.prototype = {
 				var theRow = document.createElement('li');
 
 				theRow.index = i;
+				theRow.className = (i % 2) ? "odd" : "even";
 
 				var indexD = document.createElement('div');
 				indexD.innerHTML = i + 1;
-				indexD.className = "playlistindex";
+				indexD.className = "comboindex";
 
 				var titleD = document.createElement('div');
 				titleD.innerHTML = newlist[i].title;
-				titleD.className = "playlistlisting";
+				titleD.className = "combolisting";
 
 				var buttonsD = this.buttonsDiv.cloneNode(true);
 
@@ -153,11 +166,13 @@ _JXTKComboList.prototype = {
 	highlightSelected : function() {
 		for (i = 0; i < this.list.length; i++) {
 			if (this.parent.childNodes[i]) {
-				this.parent.childNodes[i].className = "";
+				this.parent.childNodes[i].className = (i % 2) ? "odd" : "even";
+				this.parent.childNodes[i].isSelected = 0;
 			}
 		}
 		if (this.selectedIndex >= 0 && this.parent.childNodes[this.selectedIndex]) {
-			this.parent.childNodes[this.selectedIndex].className = "active";
+			this.parent.childNodes[this.selectedIndex].className += " active";
+			this.parent.childNodes[this.selectedIndex].isSelected = 1;
 		}
 	},
 
@@ -174,8 +189,11 @@ _JXTKComboList.prototype = {
 
 		// Renumber the elements after the removed row
 		for (i = index; i < this.list.length; i++) {
-			this.parent.childNodes[i].childNodes[1].innerHTML = i + 1;
-			this.parent.childNodes[i].index = i;
+			var cn = this.parent.childNodes[i];
+			cn.childNodes[1].innerHTML = i + 1;
+			cn.index = i;
+			cn.className = (i % 2) ? "odd" : "even";
+			if (cn.isSelected) cn.className += " active";
 		}
 	},
 

@@ -596,20 +596,20 @@ img.dragbutton {
 	cursor: move;
 }
 
-.playlistindex {
+#playlist li div.comboindex {
 	width: 20px;
 	left: 25px;
 	text-align: right;
 	color: white;
 }
 
-.playlistlisting {
+#playlist li div.combolisting {
 	left: 50px;
 	white-space: nowrap;
 	color: #ccc;
 }
 
-.playlistlisting a {
+#playlist li div.combolisting a {
 	font-weight: bold;
 	cursor: pointer;
 }

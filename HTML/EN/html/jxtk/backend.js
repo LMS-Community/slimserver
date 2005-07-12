@@ -17,7 +17,7 @@ JXTK._BackendFactory = {
 	reloadTrigger : null,
 	lostContact : 0,
 	errorCount : 0,
-	contactTimeout : 5000,	// Lost contact after waiting 5 seconds for a response
+	contactTimeout : 10000,	// Lost contact after waiting 10 seconds for a response
 	errorThresh : 2,	// Lost contact after 2 consecutive XMLHTTPRequest errors
 	reloadDelay : 5000	// Reload 5 seconds after losing contact
 }
@@ -117,7 +117,7 @@ function _JXTKBackendRequest(backend, args, sync) {
 	if (args) this.url += args;
 
 	/* This is only needed for IE and Safari 1.3/2.0, but it can't hurt */
-	this.url += '&nocache=' + Date.parse(new Date); 
+	this.url += '&nocache=' + new Date().getTime(); 
 
 	try {
 		if (window.ActiveXObject) {
