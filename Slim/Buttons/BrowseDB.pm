@@ -367,20 +367,21 @@ sub browsedbItemName {
 	} elsif (($levels[$level] eq 'album') && $level == 0) {
 
 		my $name = &{$levelInfo->{'resultToName'}}($item);
-		my ($track) = $item->tracks();
 		
 		if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
-			my $year = $track->year() if $track;
-			
-			$name .= " (".$year.")" if $year;
+
+			my $year = $item->year;
+
+			$name .= " ($year)" if $year;
 		}
 		
 		if (my $showArtist = Slim::Utils::Prefs::get('showArtist')) {
 			
 			my $artist;
+			my ($track) = $item->tracks;
 			
 			if ($track) {
-				$artist  = $track->artist();
+				$artist  = $track->artist;
 			} else {
 				msg("Item has no tracks\n");
 				use Data::Dumper;

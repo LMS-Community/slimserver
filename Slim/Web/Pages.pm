@@ -262,20 +262,20 @@ sub init {
 				my $descend = shift;
 				my $findCriteria = shift;
 
-				my ($track) = $item->tracks();
-
 				$form->{'text'} = $item->title();
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
 					$form->{'showYear'} = $showYear;
-					$form->{'year'} = $track->year() if $track;
+					$form->{'year'} = $item->year;
 				}
 
 				# Show the artist in the album view
-				if ($track && Slim::Utils::Prefs::get('showArtist')) {
+				# This will be simpler once ALBUM ARTIST is implemented.
+				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					my $artist = $track->artist();
+					my ($track) = $item->tracks();
+					my $artist  = $track->artist();
 
 					if ($artist) {
 						$form->{'artist'} = $artist;
@@ -284,12 +284,14 @@ sub init {
 				}
 				
 				my $Imports = Slim::Music::Import::importers();
+
 				for my $mixer (keys %{$Imports}) {
 				
 					if (defined $Imports->{$mixer}->{'mixerlink'}) {
 						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,$descend);
 					}
 				}
+
 				$form->{'mixerlinks'} = $additionalLinks{'mixer'};
 			},
 

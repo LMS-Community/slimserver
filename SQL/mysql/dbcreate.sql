@@ -103,6 +103,7 @@ CREATE TABLE albums (
   title varchar(255),
   titlesort varchar(255),
   contributors varchar(255),
+  year  int(10) unsigned,
   artwork_path varchar(255),
   disc  int(10) unsigned,
   discc  int(10) unsigned,

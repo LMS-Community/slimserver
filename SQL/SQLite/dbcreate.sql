@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (8, 0, 0);
+INSERT INTO metainformation VALUES (9, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -86,6 +86,7 @@ CREATE TABLE albums (
   title varchar,           -- title
   titlesort varchar,       -- version of title used for sorting
   contributors varchar,    -- stringified list of contributors
+  year integer,            -- year
   artwork_path varchar,    -- path to cover art
   disc integer,            -- album number in set
   discc integer,           -- number of albums in set

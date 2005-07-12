@@ -1350,6 +1350,7 @@ sub _postCheckAttributes {
 
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;
+		$albumObj->year($track->year) if $track->year;
 		$albumObj->update();
 
 		$track->album($albumObj);

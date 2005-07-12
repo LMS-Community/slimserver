@@ -10,7 +10,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('albums');
 
-	$class->columns(Essential => qw/id title titlesort contributors artwork_path disc discc musicmagic_mixable/);
+	$class->columns(Essential => qw/id title titlesort contributors year artwork_path disc discc musicmagic_mixable/);
 
 	$class->columns(Stringify => qw/title/);
 
