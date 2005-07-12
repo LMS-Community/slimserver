@@ -89,7 +89,7 @@ sub init {
 					}
 				}
 
-				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'track');
+				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'title');
 			},
 
 			'search' => sub {
