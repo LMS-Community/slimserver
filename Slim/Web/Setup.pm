@@ -2930,7 +2930,7 @@ sub addPrefToGroup {
 	my ($category,$groupname,$prefname,$position) = @_;
 	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
 		# either the category or the group within the category is invalid
-		warn "Group $groupname in category $category does not exist\n";
+		$::d_prefs && msg("Group $groupname in category $category does not exist\n");
 		return;
 	}
 	if (!defined $position || $position > scalar(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}})) {
@@ -2947,7 +2947,7 @@ sub removePrefFromGroup {
 	# Find $prefname in $setup{$category}{'Groups'}{$groupname}{'PrefOrder'} array
 	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
 		# either the category or the group within the category is invalid
-		warn "Group $groupname in category $category does not exist\n";
+		$::d_prefs && msg("Group $groupname in category $category does not exist\n");
 		return;
 	}
 	my $i = 0;
@@ -2960,7 +2960,7 @@ sub removePrefFromGroup {
 		$i++;
 	}
 	if ($i > 0 && !$noWarn) {
-		warn "Preference $prefname not found in group $groupname in category $category\n";
+		$::d_prefs && msg("Preference $prefname not found in group $groupname in category $category\n");
 	}
 	return;
 }
@@ -2970,7 +2970,7 @@ sub removePrefFromGroup {
 sub addPref {
 	my ($category,$prefname,$prefref,$groupname,$position) = @_;
 	unless (exists $setup{$category}) {
-		warn "Category $category does not exist\n";
+		$::d_prefs && msg("Category $category does not exist\n");
 		return;
 	}
 	$setup{$category}{'Prefs'}{$prefname} = $prefref;
@@ -2987,7 +2987,7 @@ sub delPref {
 	my ($category,$prefname,$andGroupRefs) = @_;
 	
 	unless (exists $setup{$category}) {
-		warn "Category $category does not exist\n";
+		$::d_prefs && msg("Category $category does not exist\n");
 		return;
 	}
 	delete $setup{$category}{'Prefs'}{$prefname};
@@ -3006,7 +3006,7 @@ sub addGroup {
 	my ($category,$groupname,$groupref,$position,$prefsref,$categoryKey) = @_;
 
 	unless (exists $setup{$category}) {
-		warn "Category $category does not exist\n";
+		$::d_prefs && msg("Category $category does not exist\n");
 		return;
 	}
 	unless (defined $groupname && (defined $groupref || defined $categoryKey)) {
@@ -3047,7 +3047,7 @@ sub delGroup {
 	my ($category,$groupname,$andPrefs) = @_;
 	
 	unless (exists $setup{$category}) {
-		warn "Category $category does not exist\n";
+		$::d_prefs && msg("Category $category does not exist\n");
 		return;
 	}
 	
