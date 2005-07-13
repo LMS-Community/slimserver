@@ -1975,7 +1975,7 @@ sub browsetree {
 		my $item = $ds->objectForUrl($url, 1) || next;
 
 		# Bug: 1360 - Don't show files referenced in a cuesheet
-		next if ($item->{'ct'} eq 'cur');
+		next if ($item->content_type eq 'cur');
 
 		my %list_form = %$params;
 
