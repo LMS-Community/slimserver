@@ -5,7 +5,7 @@
 
 	<td class="listing" width="11" align="center">
 	<a href="edit_playlist.html?player=[% player | uri %]&up=1&id=[% playlist.id %]&item=[% loop.count %]">
-		<img src="html/move.up.gif" border="0" width="11" height="9" align="center"
+		<img src="html/move.up.gif" border="0" width="11" height="9" align="center" alt='[% "MOVEUP" | string %]'
 			title='[% "MOVEUP" | string %]' onMouseOver="self.status='[% "MOVEUP" | string %]';return true">
 		</a>
 	</td>
@@ -13,21 +13,26 @@
 	
 	<td class="listing" width="11" align="center">
 	<a href="edit_playlist.html?player=[% player | uri %]&down=1&id=[% playlist.id %]&item=[% loop.count %]">
-		<img src="html/move.down.gif" border="0" width="11" height="9" align="center"
+		<img src="html/move.down.gif" border="0" width="11" height="9" align="center" alt='[% "MOVEDOWN" | string %]'
 			title='[% "MOVEDOWN" | string %]' onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true">
 		</a>
 	</td>
 	<td class="listing" width="3" align="center">&nbsp;</td>
+	
+[% IF item.isRemoteURL %]
+ 	<td class="listing" width="11" align="center">
+		<a href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]">
+		<img src="html/edit.gif" border="0" width="11" height="9" align="center" alt='[% "EDIT" | string %]'
+			title='[% "EDIT" | string %]' onMouseOver="self.status='[% "EDIT" | string %]';return true">
+		</a>
+	</td>
+	<td class="listing" width="3" align="center">&nbsp;</td>
+[% END %]
 
 	<td class="listing" width="11" align="center">
 	<a href="edit_playlist.html?player=[% player | uri %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]">
-		<img src="[% webroot %]html/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' 
+		<img src="[% webroot %]html/subtract.gif" border=0 align="center" width="9" height="9" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' 
 			title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true">
 		</a>
   </td>
-	<td class="listing" width="3" align="center">&nbsp;</td>
-	
-	<td class="listing" width="11" align="center">
-		<a href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
-	</td>
 </tr>
