@@ -647,7 +647,7 @@ sub scanFunction {
 			$tracks{$id} = $url;
 
 			# skip track if Disabled in iTunes
-			if ($curTrack{'Disabled'} && Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+			if ($curTrack{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
 
 				$::d_itunes && msg("iTunes: deleting disabled track $url\n");
 
