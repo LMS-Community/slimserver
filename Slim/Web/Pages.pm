@@ -1974,8 +1974,8 @@ sub browsetree {
 
 		my $item = $ds->objectForUrl($url, 1) || next;
 
-		# Bug: 1360 - Don't show the container files.
-		next if $item->isContainer;
+		# Bug: 1360 - Don't show files referenced in a cuesheet
+		next if ($item->{'ct'} eq 'cur');
 
 		my %list_form = %$params;
 
