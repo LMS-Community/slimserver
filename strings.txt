@@ -2407,7 +2407,7 @@ SETUP_LANGUAGE
 	SE	Språk
 
 SETUP_LANGUAGE_DESC
-	DE	Sie können die Sprache auswählen, die Sie für das SlimServer verwenden wollen.
+	DE	Sie können die Sprache auswählen, die Sie für den SlimServer verwenden wollen.
 	DK	Du kan ændre sproget for dit Slim-system.
 	EN	You can change the language that you'd like SlimServer to use.
 	ES	Puede cambiar el idioma que quiere que use el SlimServer.
@@ -4010,11 +4010,11 @@ SETUP_PLAYTRACKALBUM_DESC
 	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
 
 SETUP_IGNOREDARTICLES
-	DE	Artikel, die nicht bei der Sortierung berücksichtigt werden sollen
+	DE	Artikel, die bei der Sortierung nicht berücksichtigt werden sollen
 	DK	Artikler der skal ignoreres ved sortering af kunstnernavne
-	EN	Articles to ignore when sorting artist names
+	EN	Articles to ignore when sorting artist, album and  names
 	ES	Artículos a ignorar cuando se ordenan nombres de artistas
-	FR	Articles à ignorer lors du tri des noms d'artiste
+	FR	Articles à ignorer lors du tri
 	JP	アーチスト名を並べ替える場合に無視する単語
 	NL	Voorzetsels die moeten worden genegeerd bij het sorteren op artiest
 	NO	Artikler som skal ignoreres ved sortering av artistnavn
@@ -4022,11 +4022,11 @@ SETUP_IGNOREDARTICLES
 	SE	Artiklar att ignorera vid sortering på artist
 
 SETUP_IGNOREDARTICLES_DESC
-	DE	Eine Liste von Artikeln ("the" "les" "los" etc..), die am Anfang des Interpreten unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Freizeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen.
+	DE	Eine Liste von Artikeln ("the" "die" "les" etc..), die beim Sortieren am Anfang von Interpreten, Albumnamen oder Liedern unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen.
 	DK	En liste af artikler ("the", "den", "det", etc.) der skal ignoreres fra begyndelsen af kunstner- eller albumnavne ved sortering. Adskil artiklerne med mellemrum eller tøm listen for at slå denne funktionalitet fra.
-	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.
+	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.
 	ES	Una lista de artículos ("the", "les", "los", etc.) a ignorar al comienzo del nombre de artistas o discos cuando se ordena. Separar múltiples artículos con espacios o dejar la lista en blanco , para deshabilitar este comportamiento.
-	FR	Une liste d'articles ("the", "les", "los", etc.) à ignorer au début des noms d'artistes lors du tri alphabetique. Séparer les articles par des espaces. Laisser la zone de saisie vide pour désactiver ce comportement.
+	FR	Une liste d'articles ("the", "les", "los", etc.) à ignorer au début des noms d'artistes, chansons ou albums lors du tri alphabetique. Séparer les articles par des espaces. Laisser la zone de saisie vide pour désactiver ce comportement.
 	JP	"the" , "les" , "los" ,等、アーチスト名やアルバム名の最初にくる単語で、無視したいもののリストです。単語をスペースで区切って下さい。ブランクにすると、その機能は働きません。
 	NL	Een lijst van voorzetsels ("de" "the" "les" "los" etc..) die moeten worden genegeerd bij het sorteren op Artiest.
 	NO	En liste med artikler ("the" "les" "los"...) i artistnavn som skal ignoreres ved sortering. Skill flere artikler med opphåld eller la feltet stå tomt for å deaktivere.
