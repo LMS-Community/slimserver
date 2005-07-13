@@ -27,7 +27,7 @@
 				
 			<table border="0" cellspacing="0" cellpadding="0" class="nowplaying">
 				<tr><td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></td>
-				<td>&nbsp;&nbsp;<img src="html/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
+				<td>&nbsp;&nbsp;<img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
 				<td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a></td></tr>
 			</table>
 		</div>
@@ -38,9 +38,9 @@
 		[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="html/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td>
-				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="html/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td></tr>
 			[% browse_list %]
 		</table>
