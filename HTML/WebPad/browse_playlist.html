@@ -16,7 +16,9 @@
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 
 	[% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]<p><hr>[% END %]
-	
+
+	[% UNLESS noEdit %]
+
 	[% IF playlistname %]<p><form method="get" action="edit_playlist.html">[% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] <input name="newname" value="[% playlistname %]" size=40>
 			<input type=submit value="[% savebuttonname %]"><input type=hidden value="[% player %]" name="player">
 			<input type=hidden name="dir" value="[% dir %]"></form>
@@ -25,6 +27,8 @@
 	[% IF titled %]<p><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></p>[% END %]
 	
 	[% IF playlistname %]<p><hr><p>[% END %]
+
+	[% END %]
 	
 	[% IF browselist_header %][% browselist_header %]<p>[% END %]
    [% browselist_pagebar %]

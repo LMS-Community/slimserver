@@ -93,7 +93,7 @@ sub getTag {
 	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
 
 	# suck in metadata for all these tags
-	my $items = getSubFileTags($flac, $tracks);	
+	my $items = getSubFileTags($flac, $tracks);
 
 	# fallback if we can't parse metadata
 	if ($items < 1) {
@@ -110,7 +110,8 @@ sub getTag {
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
 
 	# Do the actual data store
-	for my $key (keys %$tracks) {
+	for my $key (sort { $a <=> $b } keys %$tracks) {
+
 		my $track = $tracks->{$key};
 
 		next unless exists $track->{'URI'};
@@ -118,7 +119,6 @@ sub getTag {
 		# Handle all the UTF-8 decoding into perl's native format.
 		# for each track
 		_decodeUTF8($track);
-
 
 		Slim::Formats::Parse::processAnchor($track);
 
@@ -130,11 +130,10 @@ sub getTag {
 
 		# if we were passed in an anchor, then the caller is expecting back tags for
 		# the single track indicated.
-		if (($anchor) && ($track->{'URI'} eq "$fileurl")) {
+		if ($anchor && $track->{'URI'} eq $fileurl) {
 			$tags = $track;
 			$::d_parse && Slim::Utils::Misc::msg("    found tags for $file#$anchor\n");	
 		}
-
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("    returning: $items items\n");	
@@ -213,7 +212,7 @@ sub addInfoTags {
 	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
 }
 
-sub	getSubFileTags {
+sub getSubFileTags {
 	my $flac   = shift;
 	my $tracks = shift;
 
@@ -245,11 +244,26 @@ sub	getSubFileTags {
 	$items = getStackedVCs($flac, $tracks);
 	return $items if $items > 0;
 
+	# This won't yield good results - but without it, we regress from 6.0.2
+	my $tags = getStandardTag($flac->{'FILENAME'}, $flac);
+
+	if (scalar keys %$tags) {
+
+		for my $num (sort keys %$tracks) {
+
+			while (my ($key, $value) = each %$tags) {
+				$tracks->{$num}->{$key} = $value unless defined $tracks->{$num}->{$key};
+			}
+		}
+
+		return scalar keys %$tracks;
+	}
+
 	# if we really wanted to, we could parse "standard" tags and apply to every track
 	# but that doesn't seem very useful.
-	$::d_mp3 && Slim::Utils::Misc::msg("No useable metadata found for this flac");
-	return 0;
+	$::d_parse && Slim::Utils::Misc::msg("No useable metadata found for this FLAC file.\n");
 
+	return 0;
 }
 
 sub getXMLTags {
@@ -339,7 +353,7 @@ sub getXMLTags {
 	# grab artist info
 	my $artistHash = {};
 
-	while ($xml =~ s|<mm:Artist\s+rdf:about="([^"]+)">(.+?)</mm:Artist>||s) {
+	while ($xml =~ s|<mm:Artist\s+rdf:about="([^"]+)">(.+?)</mm:Artist>||s) { #"
 		my $artistid = $1;
 		my $artistSegment = $2;
 		$artistHash->{$artistid} = {};
@@ -393,15 +407,13 @@ sub getXMLTags {
 				if ($trackSegment =~ m|<dc:title>(.+?)</dc:title>|s) {
 					$tracks->{$cuesheetTrack}->{'TITLE'} = $1;
 
-					$::d_parse && Slim::Utils::Misc::msg("    TITLE: "
-														 . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
+					$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
 				}
 
-				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) {
+				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) { #"
 					%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$artistHash->{$1}});
 
-					$::d_parse && Slim::Utils::Misc::msg("    ARTIST: "
-														 . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
+					$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
 				}
 			}
 			
@@ -412,7 +424,6 @@ sub getXMLTags {
 
 	return $cuesheetTrack;
 }
-
 
 sub getNumberedVCs {
 	my $flac   = shift;
@@ -465,8 +476,8 @@ sub getNumberedVCs {
 
 	if ($titletags != $cuetracks) {
 		$::d_parse && Slim::Utils::Misc::msg("ERROR: This file has tags for "
-											 . $titletags . " tracks but the cuesheet has "
-											 . $cuetracks . " tracks\n");
+			. $titletags . " tracks but the cuesheet has "
+			. $cuetracks . " tracks\n");
 		return 0;
 	}
 
@@ -501,14 +512,14 @@ sub getNumberedVCs {
 			}
 		}
 	}
-	
+
 	# merge in the global tags
 	for (my $num = 1; $num <= $titletags; $num++) {
 		%{$tracks->{$num}} = (%{$defaultTags}, %{$tracks->{$num}});
 		doTagMapping($tracks->{$num});
 		$tracks->{$num}->{'TRACKNUM'} = $num unless exists $tracks->{$num}->{'TRACKNUM'};
 	}
-		
+
 	return $titletags;
 }
 

@@ -18,6 +18,9 @@
       <b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
     </div>
    [%- END %]
+
+   [% UNLESS noEdit %]
+
    [%- IF playlistname %]
     <form method="get" action="edit_playlist.html">
       [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %]
@@ -33,6 +36,8 @@
    [%- IF playlistname %]
     <hr />
    [%- END %]
+   [% END %]
+
    [%- IF browselist_header %]
     <div id="browselist_header">[% browselist_header %]<div>
    [%- END %]

@@ -22,7 +22,8 @@
 	[% ELSE %]
 		[% SET saveButtonName = "RENAME" %]
 	[% END %]
-	
+
+	[% UNLESS noEdit %]
 	<p>
 	<form method="get" action="edit_playlist.html">[% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %] 
 		<input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size=40>
@@ -39,6 +40,7 @@
 	<a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a>
 	
 	<p><hr><p>
+	[% END %]
 	
 	[% IF browselist_header; browselist_header; "<p>"; END %]
 

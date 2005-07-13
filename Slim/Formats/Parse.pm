@@ -350,7 +350,7 @@ sub parseCUE {
 		if (!defined $track->{'CT'}) {
 			$track->{'CT'} = Slim::Music::Info::typeFromPath($filename, 'mp3');
 		}
-		
+
 		$track->{'TRACKNUM'} = $key;
 		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
 
@@ -451,7 +451,8 @@ sub readCUE {
 	}
 
 	# Process through the individual tracks
-	for my $key (keys %$tracks) {
+	for my $key (sort { $a <=> $b } keys %$tracks) {
+
 		my $track = $tracks->{$key};
 
 		if (!defined $track->{'URI'}) {

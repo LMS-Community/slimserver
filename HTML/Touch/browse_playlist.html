@@ -43,6 +43,7 @@
 </table>
 [% IF browselist_pagebar %]<font class="pagebartext">[% browselist_pagebar %][% END %]
 
+[% UNLESS noEdit %]
 
 [% IF playlistname %]
 <table><tr><td height="20"></td></tr></table>
@@ -58,6 +59,8 @@
 [% IF titled %]<tr><td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1"><font class="actiontext">[% "DELETE_THIS_PLAYLIST" | string %]</a></td></tr>[% END %]
 [% IF playlistname %]
 </table>
+[% END %]
+
 [% END %]
 
 [% IF song_count %]

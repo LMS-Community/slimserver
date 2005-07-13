@@ -13,6 +13,8 @@
 		[% ELSE %]
 			[% SET saveButtonName = "RENAME" %]
 		[% END %]
+
+		[% UNLESS noEdit %]
 		<div class="nowplaying">
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 				<tr><form method="get" action="edit_playlist.html"><td width="325">[% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %]
@@ -31,6 +33,8 @@
 				<td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a></td></tr>
 			</table>
 		</div>
+		[% END %]
+
 		<center><p>[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td>[% pwd_list %]</td></tr>

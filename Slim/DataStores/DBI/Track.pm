@@ -76,7 +76,12 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->has_many(genres => ['Slim::DataStores::DBI::GenreTrack' => 'genre'] => 'track');
 	$class->has_many(comments => ['Slim::DataStores::DBI::Comment' => 'value'] => 'track');
 	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
-	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist');
+
+	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => {
+		'foreign_key' => 'playlist',
+		'order_by'    => 'position',
+	});
+
 	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
 }
 
@@ -260,6 +265,18 @@ sub isPlaylist {
 	my $self = shift;
 
 	return Slim::Music::Info::isPlaylist($self);
+}
+
+sub isCUE {
+	my $self = shift;
+
+	return Slim::Music::Info::isCUE($self);
+}
+
+sub isContainer {
+	my $self = shift;
+
+	return Slim::Music::Info::isContainer($self);
 }
 
 # we cache whether we had success reading the cover art.

@@ -548,7 +548,7 @@ sub init {
 
 			if (defined $findCriteria->{'playlist'}) {
 
-				my $obj = $ds->objectForId('track', $findCriteria->{'playlist'}) || return [];
+				my $obj = $ds->objectForId('playlist', $findCriteria->{'playlist'}) || return [];
 
 				return [ $obj->tracks() ];
 			}
@@ -645,13 +645,10 @@ sub home {
 		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 		$params->{'nofolder'}=1;
 	}
-	
-	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Music::Import::countImporters()) {
-		addLinks("browse",{'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
-	} else {
-		addLinks("browse",{'SAVED_PLAYLISTS' => undef});
-	}
-	
+
+	# Always show Browse Playlists, as it's stored in the db now.
+	addLinks("browse",{'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
+
 	# fill out the client setup choices
 	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
 
@@ -1858,10 +1855,13 @@ sub browsedb {
 			# This is calling into the %fieldInfo hash
 			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria);
 
-			my $anchor = substr($itemsort, 0, 1);
+			if (defined $itemsort) {
 
-			if ($lastAnchor ne $anchor) {
-				$list_form{'anchor'} = $lastAnchor = $anchor;
+				my $anchor = substr($itemsort, 0, 1);
+
+				if ($lastAnchor ne $anchor) {
+					$list_form{'anchor'} = $lastAnchor = $anchor;
+				}
 			}
 
 			$itemnumber++;
@@ -1974,6 +1974,9 @@ sub browsetree {
 
 		my $item = $ds->objectForUrl($url, 1) || next;
 
+		# Bug: 1360 - Don't show the container files.
+		next if $item->isContainer;
+
 		my %list_form = %$params;
 
 		# Turn the utf8 flag on for proper display - since this is
@@ -1984,6 +1987,11 @@ sub browsetree {
 		$list_form{'descend'}	    = Slim::Music::Info::isList($item) ? 1 : 0;
 		$list_form{'odd'}	    = ($itemnumber + 1) % 2;
 		$list_form{'itemobj'}	    = $item;
+
+		# Don't display the edit dialog for cue sheets.
+		if ($item->isCUE) {
+			$list_form{'noEdit'} = '&noEdit=1';
+		}
 
 		$itemnumber++;
 

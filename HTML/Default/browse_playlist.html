@@ -46,6 +46,7 @@
 			[% SET saveButtonName = "RENAME" %]
 		[% END %]
 
+		[% UNLESS noEdit %]
 		<p>
 		<form method="get" action="edit_playlist.html">
 			[% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %] 
@@ -64,6 +65,7 @@
 		<p>
 		<a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a>
 		</p>
+		[% END %]
 
 		[% IF playlistname %] <p> <hr> <p> [% END %]
 

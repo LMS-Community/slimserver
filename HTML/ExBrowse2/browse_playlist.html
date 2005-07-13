@@ -29,6 +29,7 @@ ELSE ;
 END
 %]
 
+[% UNLESS noEdit %]
 <p class="listing" style="margin-top: 5px;">
  [% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %]<br>
  <form method="get" action="edit_playlist.html">
@@ -48,6 +49,7 @@ END
  <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
   "DELETE_THIS_PLAYLIST" | string %]</a><br>
 </p>
+[% END %]
 
 <table>
  [% IF playlistname %] 

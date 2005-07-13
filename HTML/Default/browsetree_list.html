@@ -8,7 +8,7 @@
 
 	[% IF itemobj.isPlaylist %]
 
-		<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %]&player=[% player | uri %]">[% text | html %]</a>
+		<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %][% noEdit %]&player=[% player | uri %]">[% text | html %]</a>
 	[% ELSE %]
 
 		<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>

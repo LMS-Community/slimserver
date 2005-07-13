@@ -49,7 +49,11 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
           <p> [% IF RENAME_WARNING %] 
           <p><b>[% "NOTE" | string %]</b> [S RENAME_WARNIN
           <hr>
-          [% END %] [% IF playlistname %] 
+          [% END %]
+
+          [% UNLESS noEdit %] 
+
+          [% IF playlistname %] 
           <form method="get" action="edit_playlist.html">
             [% savebuttonname %] [% "THIS_PLAYLIST_AS" | string %] 
             <input name="newname" value="[% playlistname %]" size=40>
@@ -72,7 +76,10 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
               [% END %] [% IF playlistname %] 
               <td class="odd" bgcolor="#FFFFFF"><nobr><a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr></td>
             </tr>
-            [% END %] [% browse_list %] 
+            [% END %]
+           [% END %]
+
+	   [% browse_list %] 
           </table>
           
         </TD>
