@@ -108,7 +108,10 @@ sub reconnect {
 	$client->epochirtime($now);
 
 	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+
+	# update display and force visualizer to correct mode if SB2
 	$client->update();	
+	$client->visualizer(1) if ($client->isa('Slim::Player::Squeezebox2'));
 }
 
 sub connected { 

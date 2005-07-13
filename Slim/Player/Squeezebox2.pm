@@ -297,7 +297,12 @@ sub periodicScreenRefresh {
 sub updateScreen {
 	my $client = shift;
 	my $render = shift;
-	$client->drawFrameBuf($render->{bitsref}) if $render->{changed};
+	if ($render->{changed}) {
+	    $client->drawFrameBuf($render->{bitsref});
+	} else {
+	    # check to see if visualiser has changed even if screen display has not
+	    $client->visualizer();
+	}
 }
 
 # update visualizer and init scrolling
@@ -326,6 +331,7 @@ sub scrollHeader {
 # set the visualizer and update the player.  If blank, just update the player with the current mode setting.
 sub visualizer {
 	my $client = shift;
+	my $forceSend = shift || 0;
 	
 	my $paramsref = $client->modeParam('visu');
 	
@@ -345,7 +351,7 @@ sub visualizer {
 		$paramsref = $modes[$visu]{params};
 	}
 	
-	return if (defined($paramsref) && ($paramsref == $client->lastVisMode())); 
+	return if (!$forceSend && defined($paramsref) && ($paramsref == $client->lastVisMode())); 
 
 	my @params = @{$paramsref};
 	
