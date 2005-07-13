@@ -841,6 +841,11 @@ sub readPodcast {
 
 	for my $item (@$items) {
 		my $enclosure = $item->{enclosure};
+
+		if (ref $enclosure eq 'ARRAY') {
+			$enclosure = $enclosure->[0];
+		}
+
 		if ($enclosure) {
 			if ($enclosure->{type} =~ /audio/) {
 				push @urls, $enclosure->{url};
