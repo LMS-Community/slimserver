@@ -56,33 +56,25 @@
                         <font size="+2">[% track.title %]
                 </td>
         </tr>
-        [% IF artist %]
-        <tr>
-                <td><font size="+1">
-                        [% "ARTIST" | string %]:
-                </td>
-                <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% artist %]</a>
-                </td>
-        </tr>
-        [% END %] [% IF composer %]
-        <tr>
-                <td><font size="+1">
-                        [% "COMPOSER" | string %]:
-                </td>
-                <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% composer | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% composer %]</a>
-                </td>
-        </tr>
-       [% END %] [% IF conductor %]
-        <tr>
-                <td><font size="+1">
-                        [% "CONDUCTOR" | string %]:
-                </td>
-                <td>
-                        <font size="+2"><a href="browseid3.html?genre=*&amp;artist=[% conductor | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% conductor %]</a>
-                </td>
-        </tr>
+
+	[% FOREACH role = track.contributorRoles.sort %]
+
+		[% contributors = track.contributorsOfType(role) %]
+		[% IF contributors %]
+		<tr>
+			<td><font size="+1">
+				[% role | upper | string; "COLON" | string %]
+			</td>
+			<td>
+
+			[% FOREACH contributor = contributors.sort %]
+				<font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" style="text-decoration:none">[% contributor.name | html %]</a>
+			[% END %]
+
+			</td>
+		</tr>
+		[% END %]
+
         [% END %] [% IF track.album %]
         <tr>
                 <td><font size="+1">
@@ -92,13 +84,18 @@
 			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]" style="text-decoration:none">[% track.album.title %]</a>
                 </td>
         </tr>
-        [% END %] [% IF genre %]
+        [% END %] 
+        
+        [% genres = track.genres %]
+        [% IF genres %]
         <tr>
                 <td><font size="+1">
                         [% "GENRE" | string %]:
                 </td>
                 <td>
-                        <font size="+2"><a href="browseid3.html?genre=[% genre | uri %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]</a>
+                [% FOREACH genre = genres %]
+                        <font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]</a>
+                [% END %]
                 </td>
         </tr><tr><td height="30"></td><td>
         [% END %] [% IF track.tracknum %]

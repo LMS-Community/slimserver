@@ -2,6 +2,8 @@
 [% pagetitle = BLOCK %]
 [%- playermodel | string %] : [% "PLAYING" | string -%]
 [%- END -%]
+[% IF player_name %][% player_name = player_name %][% END %]
+[% player.name %]
 [%- pageicon = 'MUSIC'
     setup    = '1'
     music    = '0'
@@ -44,20 +46,20 @@
 <tr><td height="10"></td></tr>
 <tr><td height="50"></td><td><p align="left"><font class="actiontext">[% "TITLE" | string %]:&nbsp;&nbsp;</p></td>
 
-[% IF songtitle %]<td width="500"><a href="songinfo.html?item=[% item %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% songtitle %]</a></td>[% END %]
+[% IF songtitle %]<td width="500"><a href="songinfo.html?item=[% track.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% songtitle %]</a></td>[% END %]
 
 <tr><td></td><td height="55"><p align="left"><font class="actiontext">[% "ARTIST" | string %]:&nbsp;&nbsp;</p></td>
    
-[% IF artist %]<td><a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% artist %]</a></td>
+[% IF track.artist.id %]<td><a href="browsedb.html?hierarchy=album,track&level=0&artist=[% track.artist.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.artist %]</a></td>
 [% END %]
 </tr><tr>
           
 <td height="55"></td><td><p align="left"><font class="actiontext">[% "ALBUM" | string %]:&nbsp;&nbsp;</p></td>
-<td>[% IF album %]<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% album %]</a></td></tr>
+<td>[% IF track.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.album %]</a></td></tr>
 [% END %]
 
 <tr><td height="55"></td><td><p align="left"><font class="actiontext">[% "GENRE" | string %]:&nbsp;&nbsp;</p></td>
-[% IF genre %]<td><a href="browseid3.html?genre=[% genre | uri %]&player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% genre %]</a></td>
+[% IF track.genre.id %]<td><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% track.genre.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.genre %]</a></td>
 [% END %]
 
 </tr>
@@ -291,7 +293,7 @@ if (document.all||document.getElementById)
 
 </tr></table>
 
-<table width="100%" border="0"><tr><td height="40"></td></tr></table>
+<table width="100%" border="0"><tr><td height="25"></td></tr></table>
 
 
 
@@ -370,6 +372,24 @@ if (document.all||document.getElementById)
 -->
 
 </table>
+<br>
+
+<table bgcolor="#EEEEEE" width="100%" cellspacing="0" cellpadding="0" border="0" align="left">
+<tr>
+<td width="40" height="40" align="left"><img src="html/images/lefttopcorner.gif" height="40" width="40"></td>
+<td><img src="html/images/trans.gif"></td>
+<td width="40" height="40" align="right"><img src="html/images/righttopcorner.gif" height="40" width="40"></td>
+</tr>
+</table><br>
+<table width="100%" bgcolor="#666666" align="left"><tr><td width="4"></td>
+
+<td align="right"><a href="html/about.html" style="text-decoration:none"><font class="statusbartext">About</a>&nbsp;|&nbsp;
+<a href="[% webroot %]setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]"><font class="statusbartext">[% "PLAYER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
+<a href="home.html?p0=rescan" style="text-decoration:none"><font class="statusbartext">[% "SETUP_RESCAN" | string %]</a></td>
+<td width="4"></td>
+</tr></table>
+
+
 </font>
 
 [% PROCESS pagefooter.html %]

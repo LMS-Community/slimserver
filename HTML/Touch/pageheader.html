@@ -8,9 +8,9 @@
 
 <table width="100%" bgcolor="#333333">
       <tr>
-      <td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td></tr>
+      <td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17">
+      [% IF player_name %]<font class="statusbartext">[% player_name %]</font>[% END %]
+      </td>
+      </tr>
 </table>
-
-
-
 <!-- /Element pageheader.html -->

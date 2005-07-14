@@ -6,19 +6,32 @@
 
 [% IF descend %]
 
-	&nbsp;<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]"><font class="itemtext">[% text | html %]</font></a>
+	&nbsp;[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %]<font class="itemtext">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
 
 	<!-- Include the artist for the album view -->
 	[% IF includeArtist && artist %]
  
 		[% "BY" | string %]
-		<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]"><font class="itemtext">[% artist.name | html %]</font></a></i>
+		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]"><font class="itemtext">[% artist.name | html %]</font></a></i>
 
 	[% END %]
 
 [% ELSE %]
+	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]"><font class="itemtext">:[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
 
-	&nbsp;<a href="songinfo.html?item=[% item %]&player=[% player | uri %]"><font class="itemtext">:[% text | html %][% IF showYear %] ([% year %])[% END %]</font></a>
+	[% IF includeAlbum && album %]
+
+		[% "FROM" | string %]
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% album | html %]</font></a></i>
+
+	[% END %]
+
+	[% IF includeArtist && artist %]
+
+		[% "BY" | string %]
+		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% artist | html %]</font></a></i>
+
+	[% END %]
 
 [% END %]
 
@@ -26,36 +39,22 @@
 <td align="right" style="padding-right:15px;">
  
 <nobr>
-[% IF descend %]<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]">
-<font class="actiontext">[% "PLAY" | string %]</a>[% END %]
-
-
-[% IF not descend %]<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% attributes %]&player=[% player | uri %]"><font class="actiontext">[% "PLAY" | string %]</a>[% END %]
+<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]">
+<font class="actiontext">[% "PLAY" | string %]</a>
 
 |&nbsp;
 
-[% IF descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
-<font class="actiontext">[% "NEXT" | string %]</a>[% END %]
- 
-
-[% IF not descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "NEXT" | string %]</a>[% END %]
+<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% attributes | html %]&player=[% player | uri %]">
+<font class="actiontext">[% "NEXT" | string %]</a>
 
 |&nbsp;
 
-[% IF descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
-<font class="actiontext">[% "ADD" | string %]</a>[% END %]
-      
-
-[% IF not descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]"><font class="actiontext">[% "ADD" | string %]</a>[% END %]
-</nobr>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]">
+<font class="actiontext">[% "ADD" | string %]</a>
 
 |&nbsp;
 
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]"><font class="actiontext">[% "DELETE" | string %]</a>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=deletetracks[% attributes | html %]&player=[% player | uri %]"><font class="actiontext">[% "DELETE" | string %]</a>
 
 </td>
 

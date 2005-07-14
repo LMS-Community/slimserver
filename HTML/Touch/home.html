@@ -7,7 +7,7 @@
 
 <table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0">
 <tr><td width="40" height="20"></td>
-<td rowspan="2"valign="center"><font class="headertext">[% "BROWSE_MUSIC" | string %]</td><td width="40"></td></tr>
+<td rowspan="2"valign="center"><font class="headertext">[% IF browse_radio %][% "RADIO" | string %][% ELSE %][% "BROWSE_MUSIC" | string %][% END %]</td><td width="40"></td></tr>
 <td align="left"><img src="html/images/leftcorner.gif" border="0"></td><td></td>
 <td align="right"><img src="html/images/rightcorner.gif" border="0"></td></tr>
 
@@ -19,7 +19,7 @@
 <table bgcolor="FFFFFF" width="100%" border="0">
 <tr><td height="45"></td></tr>
 
-
+[% IF ! browse_radio %]
 <tr>
 <td><a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/playlist_active.gif';">
 <center><img src="html/images/playlist.gif" border="0" name="bild1"></a></td>
@@ -44,13 +44,13 @@
 <td><a href="browsedb.html?hierarchy=artwork,track&level=0&player=[% player | uri %]&artwork=1" style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/artwork_active.gif';">
 <center><img src="html/images/artwork.gif" name="bild5" border="0"></a></td>
 
-<td><center><a href="browsedb.html?hierarchy=playlist,playlistTrack&level=0&player=[% player | uri %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"></a>
+<td><center><a href="home.html?browse_radio=1&player=[% player | uri %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"></a>
 </td></tr>
 
 <tr>
 <td align="center"><font class="menutext">[% "ALBUM" | string %]</td>
 <td align="center"><font class="menutext">[% "COVERART" | string %]</td>
-<td align="center"><font class="menutext">Radio</td>
+<td align="center"><font class="menutext">[% "RADIO" | string %]</td>
 </tr>
 <tr><td height="45"></td></tr>
 <tr>
@@ -75,11 +75,16 @@
 <td align="center"><font class="menutext">[% "SEARCH" | string %]</td>
 <td align="center"><font class="menutext">Statistics</td>
 </tr>
+[% END %]
 
-
+	[% IF browse_radio %]
+		[% FOREACH key = additionalLinks.radio.keys %]
+				<tr><td height="15" valign="center"><a href="[% additionalLinks.radio.$key %]player=[% player | uri %]" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"><font class="menutext">[% key | string %]</font></a></td></tr>
+		[% END %]
+	[% END %]
+	
 <tr><td height="45"></td></tr>
 </table>
-
 
 <table bgcolor="#EEEEEE" width="100%" cellspacing="0" cellpadding="0" border="0">
 <tr>
@@ -88,14 +93,7 @@
 <td width="40" height="40" align="right"><img src="html/images/righttopcorner.gif" height="40" width="40"></td>
 </tr>
 
-
-
 </table>
-
-
-
-
-
 
 [% IF song_count %]
 <table width="100%" bgcolor="#666666"><tr><td width="4"></td><td>
