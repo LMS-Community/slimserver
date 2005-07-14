@@ -20,7 +20,7 @@
           </div>
           <div class="browseline">
           [%- IF descend %]
-            <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% text | html %]</a>
+            [% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% END %][% text | html %]</a>
 		<!-- Include the artist for the album view -->
 		[% IF includeArtist && artist %]
 		 

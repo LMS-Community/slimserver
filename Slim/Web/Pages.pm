@@ -1950,7 +1950,8 @@ sub browsetree {
 	if ($count) {
 		my %list_form = %$params;
 
-		$list_form{'hierarchy'}	    = join('/', @levels);
+		$list_form{'hierarchy'}	    = undef;
+		$list_form{'descend'}	    = 1;
 		$list_form{'text'}	    = string('ALL_SONGS');
 		$list_form{'itemobj'}	    = $topLevelObj;
 

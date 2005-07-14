@@ -11,7 +11,7 @@
 				
 			[% ELSE %]
 
-				<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %]</a>
+				[% IF hierarchy %]<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %]</a>
 			[% END %]
 
 		[% ELSE %]

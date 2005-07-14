@@ -5,7 +5,7 @@
 		<td width="100%">
 			[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 			[% IF descend %]
-				<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+				[% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 				<!-- Include the artist for the album view -->
 				[% IF includeArtist && artist %]

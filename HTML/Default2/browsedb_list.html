@@ -3,7 +3,7 @@
   [% IF anchor %]<a name="[% anchor | uri %]"></a>[% END %]
 
   [% IF descend %]
-   <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[%hierarchy%]&amp;level=[%level;attributes|html%]&quot;)">
+   [% IF hierarchy %]<a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[%hierarchy%]&amp;level=[%level;attributes|html%]&quot;)">[% END %]
     [% text | html %]
    </a>
    [% IF level == 1 && includeArtist && artist ; "BY" | string %]
