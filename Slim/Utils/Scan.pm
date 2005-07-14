@@ -617,6 +617,25 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				$numitems++;
 			}
 
+			# Add contained tracks as if they were playlist entries
+			# This allows them to be read in Browse Music Folder
+			# but we can still avoid showing up in Browse Playlists
+			# as long as we don't add playlist:// urls
+			if ($numitems && scalar @$listref) {
+
+				# Create a playlist container
+				my $title = Slim::Web::HTTP::unescape(basename($playlisturl));
+				$title =~ s/\.\w{3}$//;
+
+				my $ct    = Slim::Music::Info::contentType($playlisturl);
+
+				Slim::Music::Info::updateCacheEntry($playlisturl, {
+					'TITLE' => $title,
+					'CT'    => $ct,
+					'LIST'  => $listref,
+				});
+			}
+
 		} else {
 
 			# it's a playlist file
@@ -686,11 +705,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# from the Music Folder, but for those items not to
 			# show up under Browse Playlists.
 			#
-			# Don't include the Shoutcast playlists in our Browse
-			# Playlist view either.
+			# Don't include the Shoutcast playlists or cuesheets
+			# in our Browse Playlist view either.
 			if (Slim::Music::Info::isFileURL($playlisturl) &&
 				Slim::Utils::Misc::inPlaylistFolder($playlisturl) &&
-				$playlisturl !~ /ShoutcastBrowser_Recently_Played/
+				$playlisturl !~ /ShoutcastBrowser_Recently_Played/ &&
+				!Slim::Music::Info::isCUE($playlisturl)
 			) {
 
 				$playlisturl =~ s/^file:/playlist:/;
