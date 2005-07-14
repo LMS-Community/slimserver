@@ -145,6 +145,10 @@ sub init {
 			},
 
 			'ignoreArticles' => 1,
+			'alphaPageBar' => sub {
+				my $findCriteria = shift;
+				return ! exists $findCriteria->{'album'};
+			},
 		},
 
 		'genre' => {
@@ -200,7 +204,9 @@ sub init {
 			},
 
 			'ignoreArticles' => 0,
-			'alphaPageBar' => 1
+			'alphaPageBar' => sub {
+				 return 1;
+			},
 		},
 
 		'album' => {
@@ -296,7 +302,9 @@ sub init {
 			},
 
 			'ignoreArticles' => 1,
-			'alphaPageBar' => 1
+			'alphaPageBar' => sub {
+				 return 1;
+			},
 		},
 
 		'artwork' => {
@@ -371,7 +379,9 @@ sub init {
 			'nameTransform' => 'album',
 			'descendTransform' => 'album,track',
 			'ignoreArticles' => 1,
-			'alphaPageBar' => 0,
+			'alphaPageBar' => sub {
+				 return 0;
+			},
 			'suppressAll' => 1
 		},
 
@@ -444,7 +454,9 @@ sub init {
 			},
 
 			'ignoreArticles' => 1,
-			'alphaPageBar' => 1
+			'alphaPageBar' => sub {
+				 return 1;
+			},
 		},
 
 		'default' => {
@@ -489,7 +501,9 @@ sub init {
 		'nameTransform' => 'album',
 		'descendTransform' => 'track',
 		'ignoreArticles' => 1,
-		'alphaPageBar' => 0,
+		'alphaPageBar' => sub {
+				 return 0;
+			},
 	};
 
 	$fieldInfo{'year'} = {
@@ -510,7 +524,9 @@ sub init {
 		},
 
 		'ignoreArticles' => 1,
-		'alphaPageBar' => 0
+		'alphaPageBar' => sub {
+				 return 0;
+			},
 	};
 
 	$fieldInfo{'playlist'} = {
@@ -530,7 +546,9 @@ sub init {
 		},
 
 		'ignoreArticles' => 0,
-		'alphaPageBar' => 0,
+		'alphaPageBar' => sub {
+				 return 0;
+			},
 		'suppressAll' => 1,
 	};
 
@@ -572,7 +590,9 @@ sub init {
 		#'browseListTemplate' => 
 
 		'ignoreArticles' => 0,
-		'alphaPageBar' => 0,
+		'alphaPageBar' => sub {
+				 return 0;
+			},
 		'suppressAll' => 1,
 	};
 
@@ -1754,7 +1774,7 @@ sub browsedb {
 				$ignoreArticles ? (scalar(@$items) > 1) : 0,
 			);
 
-		} elsif ($levelInfo->{'alphaPageBar'}) {
+		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria)) {
 
 			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
 

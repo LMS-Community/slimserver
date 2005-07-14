@@ -478,7 +478,7 @@ sub setMode {
 		}
 
 		if (defined($findCriteria->{$field})) {
-			$names{$field} = &{$info->{'idToName'}}($ds, $findCriteria->{$field});
+			$names{$levels[$i]} = &{$info->{'idToName'}}($ds, $findCriteria->{$field});
 			$setAllName = 0;
 		}
 		else {
@@ -511,7 +511,7 @@ sub setMode {
 		}
 	}
 	elsif ($level == 1) {
-		$header = $names{$fieldInfo->{$levels[$level-1]}->{'nameTransform'}} || $names{$levels[$level-1]}; 
+		$header = $names{$levels[$level-1]}; 
 	}
 	else {
 		$header = $names{$levels[$level-2]} . "/" . $names{$levels[$level-1]};
@@ -581,7 +581,8 @@ sub setMode {
 
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
-	if ($descend && !$search) {
+	# sort at simple track level as well.
+	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $findCriteria->{'album'} && !$search)) {
 		$params{'isSorted'} = 'L';
 		$params{'lookupRef'} = sub {
 			my $index = shift;
