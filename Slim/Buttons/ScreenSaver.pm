@@ -86,7 +86,7 @@ sub screenSaver {
 		# don't change whilst updates blocked or animating (non scrolling)
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
-	} elsif ($saver eq 'nosaver') {
+	} elsif ($saver eq 'nosaver' && $client->power()) {
 		# don't change modes when none (just dim) is the screensaver.
 	} elsif ($timeout && 
 			$irtime < $now - $timeout && 
