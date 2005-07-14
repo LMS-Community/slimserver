@@ -204,7 +204,17 @@ sub initPlugin {
 	# what we want. That needs to be set when we're really done scanning.
 	checker($initialized);
 
+	setPodcasts();
+	
 	return 1;
+}
+
+sub setPodcasts {
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $podcast = $ds->find('playlist', {
+		'url' => [ qw(itunesplaylist:podcasts*) ],
+	},);
+	Slim::Web::Pages::addLinks("browse",{'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id()}) if @$podcast[0];
 }
 
 # This will be called when wipeDB is run - we always want to rescan at that point.
@@ -541,6 +551,8 @@ sub doneScanning {
 	my $mtime = (stat($file))[9];
 
 	$lastITunesMusicLibraryDate = $mtime;
+
+	setPodcasts();
 
 	if ($::d_itunes) {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));

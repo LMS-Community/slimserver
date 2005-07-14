@@ -2083,6 +2083,9 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
 	SE	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 
+ITUNES_PODCASTS
+	EN	iTunes Podcasts
+
 SETUP_MOODLOGICPLAYLISTFORMAT
 	DE	MoodLogic Playlist Format
 	EN	MoodLogic Playlist Format
