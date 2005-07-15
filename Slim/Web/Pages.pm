@@ -2078,10 +2078,14 @@ sub browseid3 {
 
 			# Search for each real name - normalize the query,
 			# then turn it into the ID suitable for browsedb()
-			$params->{$category} = (@{$ds->find(
+			my $cat = $params->{$category} = (@{$ds->find(
 				$category,
 				{ $queryMap{$category} => $params->{$category} }
-			)})[0]->id();
+			)})[0];
+
+			return browsedb($client, $params) unless $cat;
+
+			$params->{$category} = $cat->id;
 		}
 	}
 
