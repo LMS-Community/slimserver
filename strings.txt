@@ -3525,7 +3525,7 @@ SETUP_SAVEHISTORY_0
 	SE	Spara INTE historia
 
 SETUP_CHECKVERSION
-	DE	Software Aktualisierungen
+	DE	Software Aktualisierung
 	DK	Softwareopdateringer
 	EN	Software Updates
 	ES	Actualizaciones de Software
@@ -7602,6 +7602,14 @@ UPGRADE_COMPLETE
 	JP	ファームウェアアップデート
 	NO	Programvareoppdatering avsluttet
 	SE	Mjukvaruuppdatering ('firmware') avslutad
+
+CHECKVERSION_PROBLEM
+	DE	Beim Suchen nach einem SlimServer Update trat ein Problem auf. (Fehlercode %s)
+	EN	There was a problem while checking for updates to SlimServer. (Error code %s)
+
+CHECKVERSION_ERROR
+	DE	Beim Suchen nach einem SlimServer Update trat ein Fehler auf:
+	EN	There was an error while checking for updates to SlimServer:
 
 NEED_PATH
 	DE	Sie müssen einen Pfad zum Verzeichnis mit ihren Musikdateien angeben.

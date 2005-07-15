@@ -1080,16 +1080,21 @@ sub checkVersion {
 sub checkVersionCB {
 	my $http = shift;
 	# store result in global variable, to be displayed by browser
-	$::newVersion = $http->content();
-	chomp($::newVersion);
-	# msg("CheckVersionCB: '" . $::newVersion . "'\n"); # temp
+	if ($http->{code} =~ /^2\d\d/) {
+		$::newVersion = $http->content();
+		chomp($::newVersion);
+		# msg("CheckVersionCB: '" . $::newVersion . "' (Error code $http->{code})\n"); # temp
+	}
+	else {
+		$::newVersion = 0;
+		msg(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}) . "\n");
+	}
 }
 
 # called only if check version request fails
 sub checkVersionError {
 	my $http = shift;
-	# TODO: l10n
-	msg("Error while checking for updates to SlimServer:\n" . $http->error . "\n");
+	msg(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error . "\n");
 }
 
 
