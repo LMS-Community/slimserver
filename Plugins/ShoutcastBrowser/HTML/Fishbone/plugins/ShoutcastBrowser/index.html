@@ -62,7 +62,7 @@
 				[% FOREACH genre = genres %]
 					<tr>
 						<td class="listing"><a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% genre %]</a></td>
-						<td align="right" class="listing"><a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/next.gif" width="9" height="11" alt="[% "NEXT" | string %]"></a>
+						<td align="right" class="listing"><a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/next.gif" width="9" height="11" alt="[% "NEXT" | string %]"></a>
 					</tr>
 					[% genreID = genreID + 1 %]
 				[% END %]
@@ -78,22 +78,22 @@
 							</td>
 
 							<td class="listing" width="11" align="center">
-								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=insert&player=[% player | uri %]"><img src="[% webroot %]html/queue.gif" border=0 align="center" width="6" height="9"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a>
+								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=insert&player=[% player | uri %]"><img src="[% webroot %]html/images/queue.gif" border=0 align="center" width="6" height="9"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a>
 							</td>
 							<td class="listing" width="3" align="center">&nbsp;</td>
 								
 							<td class="listing" width="11" align="center">
-								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=play&player=[% player | uri %]"><img src="[% webroot %]html/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=play&player=[% player | uri %]"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
 							</td>
 							<td class="listing" width="3" align="center">&nbsp;</td>
 							
 							<td class="listing" width="11" align="center">
-								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=add&player=[% player | uri %]"><img src="[% webroot %]html/add.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
+								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=add&player=[% player | uri %]"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8"  alt='Play' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
 							</td>
 							<td class="listing" width="3" align="center">&nbsp;</td>
 								
 							<td class="listing" width="11" align="center">
-								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=delete&player=[% player | uri %]"><img src="[% webroot %]html/subtract.gif" border=0 align="center" width="8" height="8"  alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=delete&player=[% player | uri %]"><img src="[% webroot %]html/images/subtract.gif" border=0 align="center" width="8" height="8"  alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
 							</td>
 						</tr>
 					[% END %]
