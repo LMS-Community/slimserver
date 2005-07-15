@@ -94,7 +94,7 @@ sub init {
 
 				if (Slim::Utils::Prefs::get('playtrackalbum')) {
 
-					$client->execute(['playlist', $command, 'listref', $items);
+					$client->execute(['playlist', $command, 'listref', $items]);
 
 				} else {
 
