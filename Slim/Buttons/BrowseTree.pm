@@ -90,7 +90,7 @@ sub init {
 				Slim::Player::Playlist::shuffle($client, 0);
 
 				$client->execute(['playlist', 'clear']);
-				$client->execute(['playlist', $command, 'listref', $items]);
+				$client->execute(['playlist', $command, 'listref', [ $items->[$listIndex] ]]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
 				if ($wasShuffled) {
