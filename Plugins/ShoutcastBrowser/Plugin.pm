@@ -128,6 +128,7 @@ my (%genre_aka, @genre_keywords, @legit_genres);
 use constant SORT_BITRATE_UP => 0;
 use constant RECENT_DIRNAME => 'ShoutcastBrowser_Recently_Played';
 use constant UPDATEINTERVAL => 86400;
+use constant ERRORINTERVAL => 60;
 
 my (%custom_genres, %keyword_index);
 
@@ -358,9 +359,10 @@ sub extractStreamInfoXML {
 	
 	eval { require Compress::Zlib };
 	$data = Compress::Zlib::uncompress($data) unless ($@);
-	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => '', ForceArray => ['entry']); };
+	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => ''); };
 
-	if ($@) {
+	if ($@ || !exists $data->{'playlist'} || 
+	    ref($data->{'playlist'}->{'entry'}) ne 'ARRAY') {
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: problem reading XML: $@\n");
 		return 0;
 	}
@@ -1407,7 +1409,7 @@ sub getWebStreamList {
 }
 
 sub check4Update {
-	$httpError = undef if (time() - $last_time > UPDATEINTERVAL);
+	$httpError = undef if (defined($httpError) && ($httpError > 0) && (time() - $last_time > ERRORINTERVAL)) || (time() - $last_time > UPDATEINTERVAL);
 }
 
 sub strings {
