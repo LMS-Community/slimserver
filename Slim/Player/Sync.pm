@@ -156,6 +156,7 @@ sub sync {
 	push (@{$client->master->slaves}, $client);
 	
 	if (Slim::Player::Source::playmode($buddy) eq "play") {
+		$buddy->execute(["stop"]);
 		$client->execute(["playlist", "jump", "+0"]);
 	}
 	
