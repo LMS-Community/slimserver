@@ -358,7 +358,8 @@ sub extractStreamInfoXML {
 	
 	eval { require Compress::Zlib };
 	$data = Compress::Zlib::uncompress($data) unless ($@);
-	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => ''); };
+	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => '', ForceArray => ['entry']); };
+
 	if ($@) {
 		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: problem reading XML: $@\n");
 		return 0;
@@ -511,7 +512,10 @@ sub sortGenres {
 	}
 	$genres_data{top} = [ sort { $topHelper{$b} <=> $topHelper{$a} } keys %topHelper ];
 
-	splice @{$genres_data{top}}, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
+	if (Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular') < $#{$genres_data{top}}) {
+		splice @{$genres_data{top}}, Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_popular');
+	}
+
 	$stream_data{getMostPopularName($client)} = $stream_data{$allName};
 }
 
