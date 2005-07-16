@@ -783,8 +783,8 @@ sub readASX {
 				
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
-					
-					push @items, _updateMetaData($path, $title) if (Slim::Music::Info::isRemoteURL($entry) || -r $entry);
+
+					push @items, _updateMetaData($path, $title) if (Slim::Music::Info::isRemoteURL($path) || -r $path);
 				}
 			}
 		}
