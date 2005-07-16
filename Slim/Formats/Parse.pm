@@ -147,6 +147,7 @@ sub readM3U {
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir, $donttranslate);
+		next unless -r $entry;
 		
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
@@ -202,7 +203,8 @@ sub readPLS {
 		next unless defined $urls[$i];
 
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
-		
+		next unless -r $entry;
+
 		push @items, _updateMetaData($entry, $titles[$i]);
 	}
 
@@ -630,10 +632,10 @@ sub readWPL {
 			$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
-		
+
 			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-			push @items, _updateMetaData($entry, undef);
+			push @items, _updateMetaData($entry, undef) if -r $entry;
 		}
 	}
 
@@ -781,7 +783,7 @@ sub readASX {
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 					
-					push @items, _updateMetaData($path, $title);
+					push @items, _updateMetaData($path, $title) if -r $entry;
 				}
 			}
 		}
