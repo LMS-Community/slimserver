@@ -1290,7 +1290,7 @@ sub _postCheckAttributes {
 		} else {
 
 			my $search = {
-				'titlesort' => $sortable_title,
+				'title' => $album,
 			};
 
 			# Add disc to the search criteria, so we get
