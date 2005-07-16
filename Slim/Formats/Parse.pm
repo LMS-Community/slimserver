@@ -147,7 +147,7 @@ sub readM3U {
 		$entry =~ s|$LF||g;
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir, $donttranslate);
-		next unless -r $entry;
+		next unless (Slim::Music::Info::isRemoteURL($entry) || -r $entry);
 		
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
@@ -203,7 +203,7 @@ sub readPLS {
 		next unless defined $urls[$i];
 
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
-		next unless -r $entry;
+		next unless (Slim::Music::Info::isRemoteURL($entry) || -r $entry);
 
 		push @items, _updateMetaData($entry, $titles[$i]);
 	}
@@ -632,10 +632,11 @@ sub readWPL {
 			$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
+			next unless (Slim::Music::Info::isRemoteURL($entry) || -r $entry);
 
 			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-			push @items, _updateMetaData($entry, undef) if -r $entry;
+			push @items, _updateMetaData($entry, undef);
 		}
 	}
 
@@ -783,7 +784,7 @@ sub readASX {
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 					
-					push @items, _updateMetaData($path, $title) if -r $entry;
+					push @items, _updateMetaData($path, $title) if (Slim::Music::Info::isRemoteURL($entry) || -r $entry);
 				}
 			}
 		}
@@ -799,6 +800,8 @@ sub readASX {
 			if ($url->scheme() eq 'http') {
 				$url->scheme('mms');
 			}
+			
+			next unless (Slim::Music::Info::isRemoteURL($url->as_string) || -r $url->as_string);
 			push @items, $url->as_string;
 		}
 	}
@@ -806,6 +809,7 @@ sub readASX {
 	# And finally version 1.0 ASX
 	else {
 		while ($asxstr =~ /^(.*)$/gm) {
+			next unless (Slim::Music::Info::isRemoteURL($1) || -r $1);
 			push @items, $1;
 		}
 	}
