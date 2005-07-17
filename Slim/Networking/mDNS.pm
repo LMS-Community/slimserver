@@ -44,9 +44,17 @@ sub addService {
 
 	my $name = Slim::Utils::Prefs::get('mDNSname');
 
-	$::d_mdns && msg("mDNS: Adding service: $name - $service - TXT - $port\n");
+	if (!defined $name || $name eq '') {
 
-	$services{$service} = [ $name, $port ];
+		$::d_mdns && msg("mDNS: Blank name, skipping service: $service - TXT - $port\n");
+
+	} else {
+
+		$::d_mdns && msg("mDNS: Adding service: $name - $service - TXT - $port\n");
+
+		$services{$service} = [ $name, $port ];
+
+	}
 }
 
 sub removeService {
@@ -101,7 +109,7 @@ sub startAdvertising {
 
 	if (-z $confFile) {
 
-		$::d_mdns && msg("mDNS: Config has 0 size!\n");
+		$::d_mdns && msg("mDNS: Config has 0 size - disabling mDNS\n");
 		return;
 	}
 
