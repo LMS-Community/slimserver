@@ -10,6 +10,7 @@
 # NOTE: Please keep the languages in alphabetical order by two-letter identifier.
 
 CREDITS
+	CZ	Roman Smetak
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	DK	Ulrik Mehr, Morten Fischer-Madsen
 	ES	Andy Spiers, Néstor Spedalieri
@@ -23,6 +24,7 @@ CREDITS
 	SE	Andreas Olsson, Hans Nystrom, Johan Hübner, Peter Nõu
 
 CHOOSE_A_LANGUAGE
+	CZ	Vyberte jazyk
 	DE	Wählen Sie bitte eine Sprache aus
 	DK	Vælg sprog
 	EN	Please choose a language
@@ -37,6 +39,7 @@ CHOOSE_A_LANGUAGE
 	SE	Välj språk
 
 BASE_SKIN
+	CZ	Světlý
 	DE	Light
 	EN	Light
 	ES	Liviana
@@ -48,12 +51,14 @@ BASE_SKIN
 	SE	Lätt-utseende
 
 DEFAULT_SKIN
+	CZ	Výchozí
 	DE	Standard
 	EN	Default
 	ES	Por defecto
 	JP	スタンダード
 
 DEFAULT_MAP
+	CZ	Standardní
 	DE	Standard
 	EN	Standard
 	ES	Estandar
@@ -66,6 +71,7 @@ DEFAULT_MAP
 	SE	Standard
 
 HIT_RELOAD
+	CZ	Klikněte pro obnovení a zobrazení nového skinu.
 	DE	<a href="/" target="_top">Klicken Sie hier</a>, um den neuen Skin zu aktivieren.
 	DK	<a href="/" target="_top">Genindlæs denne side</a> for at opdatere layoutet.
 	EN	<a href="/" target="_top">Click here</a> to refresh and see the new skin.
@@ -79,6 +85,7 @@ HIT_RELOAD
 	SE	<a href="/" target="_top">Klicka här</a> för att ladda om sidan med det nya utseendet.
 
 LANGUAGE_CHOICES
+	CZ	Česky
 	DE	Deutsch
 	DK	Dansk
 	EN	English
@@ -93,6 +100,7 @@ LANGUAGE_CHOICES
 	SE	Svenska
 
 SERVER_VERSION
+	CZ	Verze SlimServeru
 	DE	SlimServer Version
 	EN	SlimServer Version
 	ES	Versión del SlimServer
@@ -104,6 +112,7 @@ SERVER_VERSION
 	SE	SlimServer-version
 
 PLAYER_VERSION
+	CZ	Verze firmwaru přehrávače
 	DE	Player Firmware Version
 	EN	Player Firmware Version
 	ES	Versión del firmware
@@ -115,6 +124,7 @@ PLAYER_VERSION
 	SE	Spelar-version
 
 ABOUT_SLIMDEVICES
+	CZ	O Slim Devices
 	DE	Über Slim Devices
 	EN	About Slim Devices
 	ES	Acerca de Slim Devices
@@ -181,6 +191,7 @@ SOFTSQUEEZE_HOME
 	SE	SoftSqueeze huvudmeny
 
 LIBRARY_CONTAINS
+	CZ	Hudební archiv obsahuje
 	DE	Die Musikbibliothek enthält
 	DK	Musiksamlingen indeholder
 	EN	Your music library contains
@@ -193,6 +204,7 @@ LIBRARY_CONTAINS
 	SE	Musikbiblioteket innehåller
 
 BROWSEMENU
+	CZ	Procházet muziku
 	DE	Musik nachschlagen
 	DK	Gennemse musik
 	EN	Browse Music
@@ -206,6 +218,7 @@ BROWSEMENU
 	SE	Bläddra musik
 
 MUSIC
+	CZ	Hudební archiv
 	DE	Musikverzeichnis
 	DK	Musik
 	EN	Music Folder
@@ -219,6 +232,7 @@ MUSIC
 	SE	Musikmapp
 
 SETTINGS
+	CZ	Nastavení
 	DE	Einstellungen
 	DK	Indstillinger
 	EN	Settings
@@ -232,6 +246,7 @@ SETTINGS
 	SE	Inställningar
 
 EMPTY
+	CZ	Prázdné
 	DE	Leer
 	DK	Tom
 	EN	Empty
@@ -246,6 +261,7 @@ EMPTY
 	SE	Tom
 
 NOTHING
+	CZ	Nic
 	DE	Nichts
 	DK	Intet
 	EN	Nothing
@@ -260,6 +276,7 @@ NOTHING
 	SE	Inget
 
 ONLY_ONE
+	CZ	Jenom jedna položka!
 	DE	Hier gibt es nur eine Auswahl!
 	DK	Der er kun et valg her!
 	EN	There is only one item here!
@@ -274,6 +291,7 @@ ONLY_ONE
 	SE	Det finns bara en fil här!
 
 SCREENSAVERS
+	CZ	Spořiče
 	DE	Bildschirmschoner
 	EN	Screensavers
 	ES	Salvapantallas
@@ -282,6 +300,7 @@ SCREENSAVERS
 	SE	Skärmsläckare
 
 RADIO
+	CZ	Internetová radia
 	EN	Internet Radio
 	ES	Radio por Internet
 	FR	Radio Internet
@@ -289,6 +308,7 @@ RADIO
 	SE	Internetradio
 
 GAMES
+	CZ	Hry
 	DE	Spiele
 	EN	Games
 	ES	Juegos
@@ -311,6 +331,7 @@ PLAYLIST
 	SE	Låtlista
 
 PAUSED_ON
+	CZ	Zapnuta pauza
 	DE	Pause bei
 	DK	Pause
 	EN	Now paused on
@@ -324,6 +345,7 @@ PAUSED_ON
 	SE	Nu pausad på
 
 STOPPED_ON
+	CZ	Zastaveno
 	DE	Gestoppt bei
 	DK	Stop
 	EN	Now stopped on
@@ -337,6 +359,7 @@ STOPPED_ON
 	SE	Nu stoppad på
 
 NOW_PLAYING
+	CZ	Nyní hraje
 	DE	Es läuft gerade...
 	DK	Aktiv playliste
 	EN	Now Playing
@@ -350,6 +373,7 @@ NOW_PLAYING
 	SE	Nu spelas
 
 NOW_SCANNING
+	CZ	Nyní skenuji
 	DE	Suche...
 	DK	Scanner
 	EN	Now Scanning
@@ -361,6 +385,7 @@ NOW_SCANNING
 	SE	Scannar
 
 NOW_REWINDING
+	CZ	Přetáčím dozadu
 	DE	Spule zurück...
 	DK	Spoler tilbage
 	EN	Now Rewinding
@@ -372,6 +397,7 @@ NOW_REWINDING
 	SE	Spolar tillbaka
 
 EVERYTHING
+	CZ	Cokoliv
 	DE	Alles
 	DK	Alt
 	EN	Everything
@@ -384,6 +410,7 @@ EVERYTHING
 	SE	Allt
 
 PLAYING
+	CZ	Nyní hraje
 	DE	Wiedergabe von
 	DK	Afspiller
 	EN	Now playing
@@ -398,6 +425,7 @@ PLAYING
 	SE	Spelar
 
 PLAYING_RANDOMLY
+	CZ	Nyní hraje
 	DE	Es läuft gerade...
 	DK	Aktiv playliste
 	EN	Now Playing
@@ -411,6 +439,7 @@ PLAYING_RANDOMLY
 	SE	Nu spelas
 
 OUT_OF
+	CZ	z
 	DE	aus
 	DK	af
 	EN	of
@@ -425,6 +454,7 @@ OUT_OF
 	SE	av
 
 PAUSED
+	CZ	Pauza
 	DE	Pause
 	DK	Pause
 	EN	Paused
@@ -432,8 +462,8 @@ PAUSED
 	FI	Tauko
 	FR	Pause
 	IT	Pausa
-	JP	一時停止
 	IT	Pausa
+	JP	一時停止
 	NL	Pause
 	NO	Pause
 	PT	Pausado
@@ -446,6 +476,7 @@ SLIMSERVER
 	SE	SlimServer
 
 ABOUT
+	CZ	SlimServer V.%s, autor:
 	DE	SlimServer V.%s, entwickelt von:
 	DK	SlimServer V.%s, skrevet af:
 	EN	SlimServer V.%s, written by:
@@ -460,6 +491,7 @@ ABOUT
 	SE	SlimServer v.%s, skriven av:
 
 REMOVING_FROM_PLAYLIST
+	CZ	Odstranit z playlistu:
 	DE	Aus der Playliste löschen:
 	DK	Fjerner fra playlisten:
 	EN	Removing from playlist:
@@ -498,6 +530,7 @@ ZAPPED_SONGS
 	SE	Zappade låtar
 
 ADDING_TO_PLAYLIST
+	CZ	Přidat na konec playlistu
 	DE	Am Ende der Playliste hinzufügen:
 	DK	Tilføjer til slutning af playlisten:
 	EN	Adding to end of playlist:
@@ -512,6 +545,7 @@ ADDING_TO_PLAYLIST
 	SE	Lägger till i låtlista:
 
 INSERT_TO_PLAYLIST
+	CZ	Přidat do seznamu:
 	DE	Hinzufügen und als nächstes spielen:
 	DK	Tilføjer til afspilning næste gang:
 	EN	Adding to play next:
@@ -524,6 +558,7 @@ INSERT_TO_PLAYLIST
 	SE	Lägger till som nästa låt:
 
 STOPPING
+	CZ	Zastavuji...
 	DE	Stopp
 	DK	Stopper
 	EN	Stopping
@@ -538,6 +573,7 @@ STOPPING
 	SE	Stoppar
 
 PLAYING_RANDOMLY_FROM
+	CZ	Hraje se náhodně z:
 	DE	Zufällig abspielen von:
 	DK	Afspiller vilkårligt fra:
 	EN	Playing shuffled from:
@@ -552,6 +588,7 @@ PLAYING_RANDOMLY_FROM
 	SE	Spelar blandat från:
 
 CLEARING_PLAYLIST
+	CZ	Vyčistit playlist...
 	DE	Playliste leeren...
 	DK	Tømmer playlisten...
 	EN	Clearing playlist...
@@ -565,6 +602,7 @@ CLEARING_PLAYLIST
 	SE	Rensar låtlistan...
 
 VIEWING_PLAYLIST
+	CZ	Nyní hraje...
 	DE	Playlist anschauen...
 	DK	Viser playlisten...
 	EN	Now Playing...
@@ -579,6 +617,7 @@ VIEWING_PLAYLIST
 	SE	Visar låtlistan...
 
 PLAYLIST_EMPTY
+	CZ	Playlist je prázdný
 	DE	Playlist ist leer
 	DK	Playlisten er tom
 	EN	Playlist Empty
@@ -593,6 +632,7 @@ PLAYLIST_EMPTY
 	SE	Låtlistan är tom
 
 BROWSING_MUSIC
+	CZ	Procházet muziku...
 	DE	Durchsuchen der Musik...
 	DK	Gennemser musik
 	EN	Browsing music...
@@ -607,6 +647,7 @@ BROWSING_MUSIC
 	SE	Bläddrar...
 
 NOW_PLAYING_FROM
+	CZ	Právě se hraje z
 	DE	Starte Wiedergabe von:
 	DK	Spiller nu fra:
 	EN	Now playing from:
@@ -621,6 +662,7 @@ NOW_PLAYING_FROM
 	SE	Nu spelas:
 
 REPEAT_OFF
+	CZ	Opakování vypnuto
 	DE	Wiederholung ausgeschaltet
 	DK	Gentag ikke
 	EN	Repeat off
@@ -635,6 +677,7 @@ REPEAT_OFF
 	SE	Repetition avstängd
 
 REPEAT_ONE
+	CZ	Opakovat aktuální skladbu
 	DE	Wiederholen des aktuellen Titels
 	DK	Gentag denne
 	EN	Repeat current song
@@ -649,6 +692,7 @@ REPEAT_ONE
 	SE	Repetera låt
 
 REPEAT_ALL
+	CZ	Opakovat playlist
 	DE	Playlist wiederholen
 	DK	Gentag playlisten
 	EN	Repeat playlist
@@ -663,6 +707,7 @@ REPEAT_ALL
 	SE	Repetera låtlista
 
 CANCEL_SLEEP
+	CZ	Sleep zrušen.
 	DE	Schlafmodus abgebrochen
 	DK	Slumrefunktion fravalgt.
 	EN	Sleep cancelled.
@@ -676,6 +721,7 @@ CANCEL_SLEEP
 	SE	Insomning avbruten
 
 SLEEPING_IN
+	CZ	Sleep za
 	DE	Schlafmodus eingeschaltet
 	DK	Slumrefunktion om
 	EN	Sleeping in
@@ -689,6 +735,7 @@ SLEEPING_IN
 	SE	Insomning om
 
 POWERING_OFF
+	CZ	Přecházím do standby...
 	DE	Wird ausgeschaltet...
 	DK	Lukker ned
 	EN	Going to standby...
@@ -710,6 +757,7 @@ POWER
 	SE	Strömförsörjning
 
 ALARM
+	CZ	Budík
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm Clock
@@ -722,6 +770,7 @@ ALARM
 	SE	Väckarklocka
 
 ALARM_SET
+	CZ	Nastav čas buzení
 	DE	Stellen der Weckzeit
 	DK	Indstil alarmtid
 	EN	Set Alarm Time
@@ -734,6 +783,7 @@ ALARM_SET
 	SE	Ställ väckningstid
 
 ALARM_ON
+	CZ	Budík zapnut
 	DE	An (Drücken Sie RIGHT um auszuschalten)
 	DK	Til (Tryk HØJRE for at slå fra)
 	EN	On (Press RIGHT to turn off)
@@ -746,6 +796,7 @@ ALARM_ON
 	SE	På (Tryck HÖGER för att avaktivera)
 
 ALARM_OFF
+	CZ	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
 	DE	Aus (Drücken Sie RIGHT um anzuschalten)
 	DK	Fra (Tryk HØJRE for at slå til)
 	EN	Off (Press RIGHT to turn on)
@@ -758,6 +809,7 @@ ALARM_OFF
 	SE	Av (Tryck HÖGER för att aktivera)
 
 ALARM_SELECT_PLAYLIST
+	CZ	Vyber playlist pro budík
 	DE	Wählen Sie eine Playliste für den Wecker
 	DK	Vælg playliste for alarmen
 	EN	Select Playlist for Alarm
@@ -770,6 +822,7 @@ ALARM_SELECT_PLAYLIST
 	SE	Välj låtlista för väckning
 
 ALARM_SET_VOLUME
+	CZ	Nastavit hlasitost buzení
 	DE	Stellen Sie die Lautstärke für den Wecker
 	DK	Indstil volume for alarmen
 	EN	Set Alarm Volume
@@ -782,6 +835,7 @@ ALARM_SET_VOLUME
 	SE	Välj volym för väckning
 
 ALARM_SET_VOLUME_SHORT
+	CZ	Hlasitost
 	DE	Wecker Lautstärke
 	DK	Alarm vol:
 	EN	Alarm Vol
@@ -794,6 +848,7 @@ ALARM_SET_VOLUME_SHORT
 	SE	Väckningsvolym
 
 ALARM_SET_ENTRY
+	CZ	Čas buzení
 	DE	Stellen der Weckzeit
 	DK	Alarmtid
 	EN	Alarm Clock Set Time
@@ -806,6 +861,7 @@ ALARM_SET_ENTRY
 	SE	Ställ väckningstid
 
 ALARM_TURNING_ON
+	CZ	Zapnout buzení...
 	DE	Einschalten des Weckers...
 	DK	Alarmen slås til...
 	EN	Turning alarm on...
@@ -818,6 +874,7 @@ ALARM_TURNING_ON
 	SE	Aktiverar väckarklocka...
 
 ALARM_TURNING_OFF
+	CZ	Vypnout buzení...
 	DE	Ausschalten des Weckers...
 	DK	Alarmen slås fra...
 	EN	Turning alarm off...
@@ -830,6 +887,7 @@ ALARM_TURNING_OFF
 	SE	Avaktiverar väckarklocka...
 
 ALARM_NOW_PLAYING
+	CZ	Budík nyní hraje
 	DE	Der Wecker spielt jetzt
 	DK	Alarmen afspiller nu
 	EN	Alarm Clock Now Playing
@@ -855,6 +913,7 @@ SOFTSQUEEZE
 	ES	SoftSqueeze
 
 WELCOME_TO_SLIMP3
+	CZ	Vítá Vás SLIMP3
 	DE	Willkommen bei SLIMP3
 	DK	Velkommen til SLIMP3
 	EN	Welcome to SLIMP3
@@ -869,6 +928,7 @@ WELCOME_TO_SLIMP3
 	SE	Välkommen till SLIMP3
 
 WELCOME_TO_SLIMSERVER
+	CZ	Vitejte na radi(o)ctarna
 	DE	Willkommen bei SlimServer
 	DK	Velkommen til SlimServer
 	EN	Welcome to SlimServer
@@ -883,6 +943,7 @@ WELCOME_TO_SLIMSERVER
 	SE	Välkommen till SlimServer
 
 WELCOME_TO_SQUEEZEBOX
+	CZ	Vítá Vás Squeezebox
 	DE	Willkommen bei Squeezebox
 	DK	Velkommen til Squeezebox
 	EN	Welcome to Squeezebox
@@ -897,6 +958,7 @@ WELCOME_TO_SQUEEZEBOX
 	SE	Välkommen till Squeezebox
 
 WELCOME_TO_SQUEEZEBOX2
+	CZ	Vítá Vás Squeezebox2
 	DE	Willkommen bei Squeezebox2
 	DK	Velkommen til Squeezebox2
 	EN	Welcome to Squeezebox2
@@ -911,6 +973,7 @@ WELCOME_TO_SQUEEZEBOX2
 	SE	Välkommen till Squeezebox2
 
 WELCOME_TO_SOFTSQUEEZE
+	CZ	Vítejte v SoftSqueeze
 	DE	Willkommen bei SoftSqueeze
 	DK	Velkommen til SoftSqueeze
 	EN	Welcome to SoftSqueeze
@@ -925,6 +988,7 @@ WELCOME_TO_SOFTSQUEEZE
 	SE	Välkommen till SoftSqueeze
 
 FREE_YOUR_MUSIC
+	CZ	Svobodu Tvojí muzice
 	DK	Lyt til din musik!
 	EN	Free your music
 	ES	Libera tu música
@@ -935,6 +999,7 @@ FREE_YOUR_MUSIC
 	SE	Frige din musik
 
 UPDATING_FIRMWARE_SQUEEZEBOX
+	CZ	Aktualizuji Squeezebox firmware.
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
@@ -955,6 +1020,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	SE	Uppdaterar spelarens mjukvara
 
 CONNECTING_FOR
+	CZ	Připojuji ke hraní:
 	DE	Verbinde zum Abspielen:
 	DK	Forbinder for afspilning:
 	EN	Connecting to play:
@@ -967,6 +1033,7 @@ CONNECTING_FOR
 	SE	Ansluter för uppspelning:
 
 PROBLEM_CONNECTING
+	CZ	Chyba: nelze se připojit k serveru:
 	DE	Problem: Der Player kann nicht zum Server verbinden:
 	DK	Problem: Kan ikke forbinde til server:
 	EN	Problem: Can't connect to server for:
@@ -979,6 +1046,7 @@ PROBLEM_CONNECTING
 	SE	Problem: Kan inte ansluta till server för:
 
 PROBLEM_OPENING
+	CZ	Chyba: Nelze otevřít soubor pro:
 	DE	Problem: Der Player kann die Datei nicht öffnen:
 	DK	Problem: Kan ikke åbne filen:
 	EN	Problem: Can't open file for:
@@ -991,6 +1059,7 @@ PROBLEM_OPENING
 	SE	Problem: Kan inte öppna fil för:
 
 NO_PLAYLIST_DIR
+	CZ	Chyba: Není uložen žádný playlist.
 	DE	Problem: kein Playlist Ordner
 	EN	Problem: No Saved Playlist folder.
 	ES	Problem: No existe una carpeta de Listas Guardadas
@@ -999,6 +1068,7 @@ NO_PLAYLIST_DIR
 	SE	Problem: Det finns ingen mapp för sparade spellistor
 
 NO_PLAYLIST_DIR_MORE
+	CZ	Přejít na nastavení serveru a opravit.
 	DE	Bitte Server Einstellungen überprüfen
 	EN	Visit Server Settings to fix this.
 	ES	Ver Configuración del Servidor para solucionar esto.
@@ -1007,6 +1077,7 @@ NO_PLAYLIST_DIR_MORE
 	SE	Ändra serverinställningar för att korrigera detta
 
 HOME
+	CZ	Hlavní menu
 	DE	Startseite
 	DK	Hovedmenu
 	EN	Home
@@ -1020,6 +1091,7 @@ HOME
 	SE	huvudmeny
 
 STATUS
+	CZ	Stav
 	DE	Status
 	EN	Status
 	ES	Estado
@@ -1040,6 +1112,7 @@ SERVER
 	SE	Server
 
 ABOUT_SHORT
+	CZ	O programu
 	DE	Über...
 	EN	About
 	ES	Acerca de
@@ -1055,6 +1128,7 @@ ABOUT_SHORT
 # SETUP_GROUP_$groupname_DESC == Long description of group, used in web page, so length not important
 
 SETUP_GROUP_BRIGHTNESS
+	CZ	Jas
 	DE	Helligkeit
 	DK	Lysstyrke
 	EN	Brightness
@@ -1068,6 +1142,7 @@ SETUP_GROUP_BRIGHTNESS
 	SE	Ljusstyrka
 
 SETUP_GROUP_BRIGHTNESS_DESC
+	CZ	Jas displeje přehrávače může být nastaven pro  různé stavy přehrávače: zapnut, vypnut, nehraje. Může být také nastaven automaticky když zmáčknete tlačítko, začnete přehrávat skladbu, nebo necháte přehrávač chvíli bez ovládání. Je možno také vypnout toto automatické chování.
 	DE	Die Helligkeit der Anzeige kann für die drei Zustände ein, aus und Bildschirmschoner definiert werden. Sie kann auch automatisch geregelt werden, sobald Sie einen Knopf drücken, die Wiedergabe starten oder eine Weile nicht benutzen. Diese Automatik kann deaktiviert werden.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	La luminosidad del display del reproductor se puede establecer para cuando está encendido, apagado, o inactivo (salvapantalla). También puede ajustarse automaticamente cuando se aprieta un botón, al comenzar una canción, o al estar sin actividad por un tiempo. Se puede elegir deshabilitar este comportamiento.
@@ -1076,6 +1151,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	SE	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
 
 SETUP_GROUP_TCP_PARAMS
+	CZ	Nastavení TCP/IP
 	DE	TCP Parameter
 	DK	TCP parametre
 	EN	TCP parameters
@@ -1089,6 +1165,7 @@ SETUP_GROUP_TCP_PARAMS
 	SE	TCP-parametrar
 
 SETUP_GROUP_TCP_PARAMS_DESC
+	CZ	Tato volba nastavuje parametry protokolu TCP/IP serveru.
 	DE	Diese Einstellung passt die TCP/IP Netzwerk-Einstellungen des Servers an.
 	DK	Disse indstillinger påvirker hvorledes serveren håndterer TCP over netværket.
 	EN	These settings adjust the parameters of the TCP/IP networking in the server.
@@ -1102,6 +1179,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	SE	Detta är inställningar för nätverksprotokollet TCP.
 
 SETUP_GROUP_TITLEFORMATS_DESC
+	CZ	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
 	DE	Die verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
 	DK	Dette er sangtitel-formaterne, der er tilgængelige både ovenfor og i afspiller-indstillingerne. Tøm indholdet i en teksboks for at fjerne formatet. For at tilføje et format indtastes tekst i den tomme tekstboks nederst. Tilgængelige elementer er: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
@@ -1115,6 +1193,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	SE	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
 
 SETUP_GROUP_MENUITEMS
+	CZ	Hlavní menu
 	DE	Anpassung des Player-Hauptmenüs
 	DK	Tilpas hovedmenuen
 	EN	Home Menu
@@ -1139,6 +1218,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	SE	Du kan välja vilka alternativ som skall finnas tillgängliga på din huvudmeny. Klicka för att flytta upp, ner eller ta bort menyval. Klicka på "Lägg till" för att återställa ett menyval.
 
 SETUP_GROUP_PLUGINITEMS_INTRO
+	CZ	Pluginy:
 	DE	Plugins:
 	DK	Moduler:
 	EN	Plugins:
@@ -1151,6 +1231,7 @@ SETUP_GROUP_PLUGINITEMS_INTRO
 	SE	Tillägg:
 
 SETUP_GROUP_NONMENUITEMS_INTRO
+	CZ	Neaktivní položky menu:
 	DE	Inaktiver Menüeintrag:
 	DK	Inaktive menupunkter:
 	EN	Inactive menu items:
@@ -1180,6 +1261,7 @@ SETUP_GROUP_XPL_DESC
 	SE	Detta är inställningar för xPL-protokollet
 
 SETUP_FONTLIST
+	CZ	nabídka fontů
 	DE	Schriftartenliste
 	EN	Font List
 	ES	Lista de Fuentes
@@ -1188,6 +1270,7 @@ SETUP_FONTLIST
 	SE	Typsnittslista
 
 SETUP_ACTIVEFONT
+	CZ	Font písma
 	DE	Schriftart
 	EN	Font
 	ES	Fuente
@@ -1196,6 +1279,7 @@ SETUP_ACTIVEFONT
 	SE	Typsnitt
 
 SETUP_ACTIVEFONT_DESC
+	CZ	Můžete použít tlačítko SIZE na dvém dálkovém ovladači, nebo přepínače níže abyste  změnili velikost písma na displeji přehrávače. Také můžete použít volbu, co se bude objevovat, použitím menu níže.
 	DE	Sie können den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um zwischen den verschiedenen Schriften des Displays umzuschalten. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
 	ES	Se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reproductor. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
@@ -1220,6 +1304,7 @@ SETUP_IDLEFONT_DESC
 	SE	När en spelare är i vänteläge kan du använda SIZE-knappen på fjärrkontrollen eller knapparna nedan för att växla typsnitt. Du kan även kontrollera den ordning som typsnitt visas i. 
 
 SETUP_DOUBLESIZE
+	CZ	Velikost textu
 	DE	Textgröße
 	DK	Tekststørrelse
 	EN	Text Size
@@ -1233,6 +1318,7 @@ SETUP_DOUBLESIZE
 	SE	Textstorlek
 
 SETUP_DOUBLESIZE_DESC
+	CZ	Vyberte velikost písma textu na displeji přehrávače
 	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
@@ -1298,17 +1384,20 @@ SETUP_SCROLLRATE_DESC
 	SE	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot
 
 DOUBLE-LINE
+	CZ	Dvojnásobná velikost
 	DE	Doppelte Höhe
 	EN	Double-Size
 	ES	Tamaño Doble
 	JP	ダブルサイズ
 
 SINGLE-LINE
+	CZ	Jediný řádek
 	DE	Einzelne Zeile
 	EN	Single Line
 	ES	Línea única
 
 SETUP_GROUP_ALARM
+	CZ	Budík
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm Clock
@@ -1321,6 +1410,7 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 
 SETUP_GROUP_ALARM_DESC
+	CZ	Nastavení času buzení. Každý přehrávač může mít nastavený svůj budík. Pokud je budík aktivován, spouští se v zadaném čase každých 24hodin.
 	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
 	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
 	ES	Configuración del reloj de Alarma. Cada reproductor puede tener una alarma configurada. Si está activada, se repetirá cada 24 horas.
@@ -1330,6 +1420,7 @@ SETUP_GROUP_ALARM_DESC
 	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
 
 SETUP_GROUP_IRSETS
+	CZ	Dálkové ovládání
 	DE	Fernbedienungen
 	DK	Fjernbetjeninger
 	EN	Remote Controls
@@ -1342,6 +1433,7 @@ SETUP_GROUP_IRSETS
 	SE	Fjärrkontroller
 
 SETUP_GROUP_IRSETS_DESC
+	CZ	Zde mpžete nastavit, zda má přehrávač reagovat na určité infračervené dálkové ovládání. To enable a remote control code set, put a check next to the name below. To disable a remote control code set, clear the check mark.
 	DE	Sie können wählen ob der Player auf bestimmte Infrarot Signale reagieren soll oder nicht. Zum Aktivieren einer Fernbedienung wählen Sie den entsprechenden Namen aus. Zum Deaktivieren einer Fernbedienung deaktivieren Sie die Auswahlbox.
 	DK	Du kan vælge hvilke fjernbetjeninger denne afspiller skal svare på. Afspilleren svarer på de fjernbetjeninger der er afkrydset nedenfor. Fjern afkrydsningen hvis afspilleren ikke skal lytte til den type fjernbetjening.
 	EN	You can choose to have this player respond to or ignore certain infrared remote signals. To enable a remote control code set, put a check next to the name below. To disable a remote control code set, clear the check mark.
@@ -1354,6 +1446,7 @@ SETUP_GROUP_IRSETS_DESC
 	SE	Du kan välja om denna spelare skall svara till eller ignorera signaler från vissa fjärrkontroller. För att aktivera en fjärrkontrolls koduppsättning, markera rutan bredvid namnet nedan och klicka på "Ändra". För att avaktivera en koduppsättning avmarkera rutan och klick på "Ändra".
 
 SETUP_GROUP_PLUGINS
+	CZ	Pluginy
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
@@ -1366,6 +1459,7 @@ SETUP_GROUP_PLUGINS
 	SE	Tillägg
 
 SETUP_GROUP_PLUGINS_DESC
+	CZ	SlimSever obsahuje některé zvláštní schopnosti. Tyto schopnosti mu dodávají moduly - pluginy, které můžet používat pomocí ovladače. Můžete povolit, nebo zakázat libovolně pluginy z jejich adresáře. K aktivaci/deaktivaci použijte ovládací prvek u jména pluginu. <br>Také můžete zvolit, kdy se mají pluginy načítat, zda pouze při procházení voleb Pluginy v menu, nebo při startování serveru. Defaultně je nastaveno pouze při startu. Pro uložení změn klikněte na tlačítko 'Změnit'.
 	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Sie können den Player auch so konfigurieren, dass er bei jedem Öffnen des Plugin Menüs erneut nach Plugins sucht. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	DK	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
 	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for plugins each time you navigate to the player plugins menu or the plugins settings. Default is to load on startup only.  To save your changes, click Change.
@@ -1378,6 +1472,7 @@ SETUP_GROUP_PLUGINS_DESC
 	SE	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
 
 SETUP_PLUGINS-ONTHEFLY
+	CZ	Načítat pluginy za běhu
 	DE	Plugins während der Programmausführung laden
 	EN	Load Plugins On-The-Fly
 	ES	Cargar Plugins en el momento
@@ -1386,6 +1481,7 @@ SETUP_PLUGINS-ONTHEFLY
 	SE	Ladda tilläggsprogram On-the-Fly
 
 SETUP_PLUGINS-ONTHEFLY_0
+	CZ	Načítat pluginy pouze při startu
 	DE	Plugins nur beim Programmstart laden
 	EN	Load Plugins at startup Only
 	ES	Cargar plugins solo al inicio
@@ -1402,6 +1498,7 @@ SETUP_PLUGINS-ONTHEFLY_1
 	SE	Laddar tilläggsprogram
 
 SETUP_GROUP_FORMATS
+	CZ	Nastavení konverze formátů
 	DE	Dateikonvertierungseinstellungen
 	EN	File Format Conversion Setup
 	ES	Configuración de Conversión de Formatos de Archivo
@@ -1411,6 +1508,7 @@ SETUP_GROUP_FORMATS
 	SE	Inställningar för konvertering mellan filformat
 
 SETUP_GROUP_FORMATS_DESC
+	CZ	SlimServer kovertuje formát audio souborů pro okamžité přehrávání v přehrávači. Můúžete zakázat některé formáty tím, že je odznačíte. Je zde zobrazováno jen jméno. Pro editaci/prohlížení použijte příkazový řádek. Možná budete potřebovat editovat soubor convert.conf. Změny uložite teprve kliknutím na tlačítko 'Změnit'.
 	DE	SlimServer kann Audio-Dateien während der Laufzeit für die Wiedergabe konvertieren. Sie können hier einzelne Formate deaktivieren.
 	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Only the name of the binary is shown here. To see/edit the entire command line, you will need to open convert.conf.  Click Change to save your changes.
 	ES	SlimServer puede convertir formatos de archivos de audio en-el-momento para escuchar en su reproductor. Se puede deshabilitar formatos específicos debajo, desmarcándolos. Solo el nombre del binario se muestra aqui. Para ver/editar la línea de comando entera, se debe abrir el archivo convert.conf. Hacer Click en Cambiar para guardar los cambios.
@@ -1420,6 +1518,7 @@ SETUP_GROUP_FORMATS_DESC
 	SE	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren.
 
 SETUP_FORMATSLIST_CHANGE
+	CZ	Nastavení bylo změněno
 	DE	Einstellungen wurden gespeichert.
 	DK	Indstillingen blev ændret.
 	EN	Setting was changed.
@@ -1432,6 +1531,7 @@ SETUP_FORMATSLIST_CHANGE
 	SE	Inställning är ändrad.
 
 SETUP_FORMATSLIST_MISSING_BINARY
+	CZ	Požadovaný binární soubor nenalezen:
 	DE	Ausführbare Datei wurde nicht gefunden:
 	EN	Required binary was not found:
 	ES	El ejecutable reuqerido no ha sido encontrado:
@@ -1440,6 +1540,7 @@ SETUP_FORMATSLIST_MISSING_BINARY
 	SE	Programmet kunde inte hittas:
 
 SETUP_FORMATSLIST
+	CZ	Konverze formátu souborů
 	DE	Dateikonvertierung
 	EN	File Format Conversions
 	ES	Conversiones de Formato de Archivo
@@ -1449,6 +1550,7 @@ SETUP_FORMATSLIST
 	SE	Filformat, konverteringar
 
 FILE_FORMAT
+	CZ	Formát souborů
 	DE	Dateiformat
 	EN	File Format
 	ES	Formato de Archivo
@@ -1458,6 +1560,7 @@ FILE_FORMAT
 	SE	Filformat
 
 STREAM_FORMAT
+	CZ	Formát streamu
 	DE	Streamingformat
 	EN	Stream Format
 	ES	Formato de transmisión
@@ -1467,6 +1570,7 @@ STREAM_FORMAT
 	SE	Format för strömmande ljud
 
 PLAYER_TYPE
+	CZ	Typ přehrávače
 	DE	Wiedergabegerät
 	EN	Player Type
 	ES	Tipo de Reproductor
@@ -1476,6 +1580,7 @@ PLAYER_TYPE
 	SE	Spelartyp
 
 PLAYER_ID
+	CZ	ID přehrávače
 	DE	Player ID
 	EN	Player ID
 	ES	ID del Reproductor
@@ -1485,6 +1590,7 @@ PLAYER_ID
 	SE	SpelarID
 
 COMMAND
+	CZ	Příkaz
 	DE	Befehl
 	EN	Command
 	ES	Comando
@@ -1494,6 +1600,7 @@ COMMAND
 	SE	Kommando
 
 DECODER
+	CZ	Dekodér
 	DE	Decoder
 	EN	Decoder
 	ES	Decodificador
@@ -1526,6 +1633,7 @@ SETUP_PLAYERNAME
 	SE	Spelarnamn
 
 SETUP_PLAYERNAME_OK
+	CZ	Nový název pro tento přehrávač je:
 	DE	Der neue Name für diesen Player ist:
 	DK	Det nye navn for afspilleren er:
 	EN	The new name for this player is:
@@ -1539,6 +1647,7 @@ SETUP_PLAYERNAME_OK
 	SE	Det nya namnet för denna spelare är:
 
 SETUP_PLAYERNAME_DESC
+	CZ	Můžete dát přehrávači jméno pod kterým se bude zde zobrazovat v tomto webovém rozhraní.
 	DE	Sie können dem Player einen Namen geben, um ihn besser von den anderen unterscheiden zu können.
 	DK	Du kan give denne afspiller et navn som vil blive brugt til at identificere afspilleren på disse web-sider.
 	EN	You can give this player a name that will be used to identify the player on these web pages.
@@ -1552,6 +1661,7 @@ SETUP_PLAYERNAME_DESC
 	SE	Du kan ange ett namn för spelaren. Namnet användas sedan för att identifiera spelaren på dessa websidor.
 
 SETUP_PLAYERNAME_CHOOSE
+	CZ	Název přehrávače:
 	DE	Wählen Sie einen Namen für diesen Player:
 	DK	Afspiller-navn:
 	EN	Player name:
@@ -1565,6 +1675,7 @@ SETUP_PLAYERNAME_CHOOSE
 	SE	Spelarens namn:
 
 SETUP_POWERONBRIGHTNESS
+	CZ	Jas pro 'zapnuto'
 	DE	Helligkeit im eingeschalteten Zustand
 	DK	Lysstyrke når tændt
 	EN	Brightness when on
@@ -1578,6 +1689,7 @@ SETUP_POWERONBRIGHTNESS
 	SE	Ljusstyrka i påslaget läge
 
 SETUP_POWERONBRIGHTNESS_CHOOSE
+	CZ	Jas pro 'zapnuto':
 	DE	Helligkeit im eingeschalteten Zustand:
 	DK	Lysstyrke når tændt:
 	EN	Brightness when on:
@@ -1591,6 +1703,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka i påslaget läge:
 
 SETUP_POWEROFFBRIGHTNESS
+	CZ	Jas pro 'vypnuto'
 	DE	Helligkeit im ausgeschalteten Zustand
 	DK	Lysstyrke når slukket
 	EN	Brightness when off
@@ -1604,6 +1717,7 @@ SETUP_POWEROFFBRIGHTNESS
 	SE	Ljusstyrka i avslaget läge
 
 SETUP_POWEROFFBRIGHTNESS_CHOOSE
+	CZ	Jas pro 'vypnuto':
 	DE	Helligkeit im ausgeschalteten Zustand:
 	DK	Lysstyrke når slukket:
 	EN	Brightness when off:
@@ -1617,6 +1731,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka i avslaget läge:
 
 SETUP_IDLEBRIGHTNESS
+	CZ	Jas pro stav 'nečinný'
 	DE	Helligkeit wenn im Standby Modus
 	EN	Brightness when idle
 	ES	Luminosidad cuando está inactivo:
@@ -1625,6 +1740,7 @@ SETUP_IDLEBRIGHTNESS
 	SE	Ljusstyrka i viloläge
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
+	CZ	Jas pro stav 'nečinný':
 	DE	Helligkeit wenn im Standby Modus:
 	EN	Brightness when idle:
 	ES	Luminosidad cuando está inactivo:
@@ -1633,6 +1749,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	SE	Ljusstyrka i viloläge
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
+	CZ	Automaticjý jas displeje:
 	DE	Automatische Anzeigehelligkeit:
 	DK	Automatisk lysstyrkeindstilling:
 	EN	Automatic Display Brightness:
@@ -1645,6 +1762,7 @@ SETUP_AUTOBRIGHTNESS_CHOOSE
 	SE	Automatisk ljusstyrka:
 
 SETUP_AUTOBRIGHTNESS_OFF
+	CZ	Nastavit jas ručně
 	DE	Helligkeit manuell anpassen
 	DK	Indstil lysstyrke manuelt
 	EN	Adjust Brightness Manually
@@ -1657,6 +1775,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	SE	Ändra ljusstyrka manuellt
 
 SETUP_AUTOBRIGHTNESS_ON
+	CZ	Nastavit jas automaticky
 	DE	Helligkeit automatisch anpassen
 	DK	Indstil lysstyrke automatisk
 	EN	Adjust Brightness Automatically
@@ -1669,6 +1788,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	SE	Ändra ljusstyrka automatiskt
 
 SETUP_ALARM
+	CZ	Budík
 	DE	Wecker
 	DK	Alarm
 	EN	Alarm
@@ -1681,6 +1801,7 @@ SETUP_ALARM
 	SE	Väckarklocka
 
 SETUP_ALARMVOLUME
+	CZ	Nastavení hlasitosti buzení (0-100)
 	DE	Lautstärke für den Wecker einstellen (0-100)
 	DK	Indstil volume for alarmen (0-100)
 	EN	Set Alarm Volume (0-100)
@@ -1693,6 +1814,7 @@ SETUP_ALARMVOLUME
 	SE	Välj volym för väckning (0-100)
 
 SETUP_ALARMPLAYLIST
+	CZ	Playlist budíku
 	DE	Playlist für den Wecker
 	DK	Playliste for alarmen
 	EN	Playlist for Alarm
@@ -1705,12 +1827,14 @@ SETUP_ALARMPLAYLIST
 	SE	Låtlista för alarm-funktion
 
 SETUP_PLAYINGDISPLAYMODE
+	CZ	Informace při přehrávání skladby
 	DE	Aktuelle Wiedergabeinformationen
 	EN	Now Playing Information
 	ES	Información de lo que se está escuchando
 	FR	Affichage en mode Lecture
 	JP	現在再生中の曲の情報
 	SE	Information i läge "Nu spelas"
+Informace (hraje se)
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
@@ -1739,6 +1863,7 @@ SETUP_PLAYINGDISPLAYMODE_DESC
 	SE	Spelaren kan visa information om aktuell låt. Välj vilken information du vill skall visas.
 
 SETUP_SYNCHRONIZE
+	CZ	Synchronizovat
 	DE	Synchronisieren
 	DK	Synkronisér
 	EN	Synchronize
@@ -1764,6 +1889,7 @@ SETUP_SYNCHRONIZE_DESC
 	SE	Spelaren kan synkroniseras med andra spelare. Detta innebär att alla spelare spelar upp samma musik samtidigt. Välj vilken spelare du vill synkronisera med från listan av tillgängliga synkroniseringsgrupper. Välj den nuvarande spelaren för att stoppa synkroniseringen.
 
 SETUP_NO_SYNCHRONIZATION
+	CZ	Žádná synchronizace
 	DE	Keine Synchronisation
 	DK	Ingen synkronisering
 	EN	No Synchronization
@@ -1788,6 +1914,7 @@ SETUP_SYNCHRONIZE_OK
 	SE	Går med i synkroniseringsgrupp:
 
 SETUP_SYNCVOLUME_ON
+	CZ	Synchronizovat hlasitost přehrávače
 	DE	Player-Lautsärke synchronisieren
 	DK	Synkroniser afspillerens lydstyrke
 	EN	Sync player's volume
@@ -1799,6 +1926,7 @@ SETUP_SYNCVOLUME_ON
 	SE	Synkronisera spelarens volym
 
 SETUP_SYNCVOLUME_OFF
+	CZ	Nesynchronizovat hlasitost přehrávače
 	DE	Player-Lautstärke nicht synchronisieren
 	DK	Synkroniser ikke afspillerens lydstyrke
 	EN	Don't sync player's volume
@@ -1810,6 +1938,7 @@ SETUP_SYNCVOLUME_OFF
 	SE	Synkronisera inte spelarens volym
 
 SETUP_SYNCVOLUME
+	CZ	Synchronizovat hlasitost
 	DE	Lautstärke synchronisieren
 	DK	Synkroniser lydstyrke
 	EN	Synchronize Volume
@@ -1877,6 +2006,7 @@ SETUP_DIGITALVOLUMECONTROL_ON
 	SE	Volymkontrollen påverkar den digitala utsignalen
 
 SETUP_DIGITALVOLUMECONTROL_OFF
+	CZ	Digitální výstupní hlasitost je nastavena
 	DE	Lautstärke der digitalen Ausgabe ist fixiert
 	EN	Digital output level is fixed
 	ES	El nivel de la salida digital es fijo
@@ -1886,6 +2016,7 @@ SETUP_DIGITALVOLUMECONTROL_OFF
 	SE	Den digitala utnivån är fixerad
 
 SETUP_DIGITALVOLUMECONTROL
+	CZ	Digitální ovladač hlasitosti
 	DE	Lautstärkekontrolle des digitalen Ausgangs
 	EN	Digital Volume Control
 	ES	Control Digital de Volumen
@@ -1928,6 +2059,7 @@ SETUP_MP3BITRATE_DESC
 	SE	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer så att lägre datatakt skickas till din spelare. Detta är värdefullt om du kopplar mot en server över Internet eller via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om.
 
 CONVERTED_TO
+	CZ	Konvertovat do
 	DE	Konvertiert nach
 	EN	Converted to
 	ES	Convertido a 
@@ -1945,6 +2077,7 @@ SETUP_LAME_NOT_FOUND
 	SE	(<b>Notera</b>: LAME verkar inte vara installerat i ditt system. SlimServer behöver använda LAME MP3-kodaren för att konvertera till MP3.  Läs mer om LAME <a href="http://lame.sourceforge.net/">här</a>.)
 
 SETUP_LAME_FOUND
+	CZ	Vypadá to, že LAME encoder je korektně nainstalován.
 	DE	LAME scheint korrekt auf ihrem System installiert zu sein.
 	EN	The LAME encoder appears to be installed correctly on your system.
 	ES	El codificador LAME parece estar instalado correctamente en el sistema.
@@ -1953,12 +2086,14 @@ SETUP_LAME_FOUND
 	SE	LAME verkar vara korrekt installerad i ditt system.
 
 LAME0
+	CZ	Nejlepší kvalita, velmi pomalé
 	DE	Höchste Qualität, sehr langsam
 	EN	Highest Quality, very slow
 	ES	Mejor calidad posible, muy lento
 	SE	Högsta kvalitet, långsamt
 
 LAME9
+	CZ	Horší kvalita, ale rychlější
 	DE	Geringe Qualität, aber schnell
 	EN	Poor Quality, but fast
 	ES	Baja calidad, pero rápido
@@ -2002,11 +2137,13 @@ SETUP_TRANSITIONTYPE_DESC
 	ES	Squeezebox2 puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
 
 SETUP_TRANSITIONDURATION
+	CZ	Délka trvání prolnutí
 	DE	Dauer der Überblendung
 	EN	Crossfade duration
 	ES	Duración de la transición
 
 SETUP_TRANSITIONDURATION_DESC
+	CZ	Zadejte hodntou pro mezeru mezi skladbami v sekundách. Macimální hodnota je 10 sekund.
 	DE	Definieren Sie die Dauer der Überblendung zwischen Songs (in Sekunden).
 	EN	Enter the amount of time to take to crossfade between songs, in seconds.  The maximum is 10 seconds.
 	ES	Ingresar la cantidad de tiempo que se utilizará para la transición entre canciones, en segundos.
@@ -2020,19 +2157,23 @@ TRANSITION_CROSSFADE
 	EN	Crossfade
 
 TRANSITION_FADE_IN
+	CZ	Zesílení
 	DE	Einblenden
 	EN	Fade in
 
 TRANSITION_FADE_OUT
+	CZ	Zeslabení
 	DE	Ausblenden
 	EN	Fade out
 
 TRANSITION_FADE_IN_OUT
+	CZ	Mixování
 	DE	Ein- und Ausblenden
 	EN	Fade in and out
 	ES	Fade in y Fade out
 
 SETUP_TITLEFORMATCURR
+	CZ	Aktuální formát názvu skladby
 	DE	Aktuelles Titelformat
 	DK	Valgt sangtitelformat
 	EN	Current title format
@@ -2046,6 +2187,7 @@ SETUP_TITLEFORMATCURR
 	SE	Aktuellt titelformat
 
 SETUP_TITLEFORMAT
+	CZ	Formát skladby
 	DE	Titelformat
 	DK	Sangtitelformat
 	EN	Title format
@@ -2059,6 +2201,7 @@ SETUP_TITLEFORMAT
 	SE	Titelformat
 
 SETUP_TITLEFORMAT_DESC
+	CZ	Zde můžete zvolit, jaké informace o skladbě se mají zobrazovat při přehrávání na vašem přehrávači. Taty volby je také dotupná v menu vašeho přehrávače Natavení -> Informace o přehrávané skladbě. Stisknutím tlačítka v 'aktuálním' sloupci lze změnit formát. Pokud budete se  změnami spokojeni stiskněte tlačltko 'Změnit'. Tím uložíte provedené  změny.
 	DE	Sie können die Anzeige des Liedertitels auf dem Display ihres Players definieren, indem Sie eines der Formate im Menü wählen. Diese Auswahl steht im Menü Einstellungen -> Titelformat des Players zur Verfügung. Klicken Sie auf einen Knopf in der Aktuell-Spalte, um die aktuelle Anzeige zu ändern.
 	EN	You can customize the song title display on your player by choosing the format you'd like to see from the menus below. These choices available below will be available in Settings -> Song Title Format on the player.  Click on a button in the "Current" column to change the current format. When you are done, press the "Change" button to save your choices.
 	ES	Se puede personalizar cómo se muestra el título de la canción en el reproductor eligiendo el formato que se desea ver de los menus debajo. Estas opciones disponibles debajo estarán disponibles en Configuración -> Formato de Título de Canción en el reproductor. Hacer click en un botón en la columna "Actual" para cambiar el formato actual. Al finalizar, presionar el botón "Cambiar" para guardar los cambios.
@@ -2066,6 +2209,7 @@ SETUP_TITLEFORMAT_DESC
 	JP	ディスプレーに表示される曲のタイトルのフォーマットを指定することができます。セッティング->曲タイトル、で選択してください。選択の後「変更」をクリックして下さい。
 
 SETUP_ITUNESPLAYLISTFORMAT
+	CZ	Formát playlistu iTunes
 	DE	iTunes Playlisten Format
 	EN	iTunes Playlist Format
 	ES	Formato de Lista de iTunes
@@ -2136,6 +2280,7 @@ SETUP_MMMSIZE
 	ES	Tamaño de mezcla de MusicMagic
 
 SETUP_MMMSIZE_DESC
+	CZ	Vyberte Mix Size
 	DE	Wählen Sie die Mix-Grösse
 	EN	Choose Mix Size
 	ES	Elegir tamaño de Mezcla
@@ -2188,6 +2333,7 @@ MOODLOGIC_MIXING
 	ES	Mezcla MoodLogic
 
 FOLDER
+	CZ	Složka
 	DE	Ordner
 	EN	Folder
 	ES	Carpeta
@@ -2268,6 +2414,7 @@ SETUP_ITUNESPLAYLISTSUFFIX
 	ES	Sufijo de listas de iTunes cambiado a:
 
 SETUP_SHOWYEAR
+	CZ	Zobrazovat rok s albem
 	DE	Jahr beim Durchsuchen der Alben anzeigen
 	EN	Show Year with Albums
 	ES	Mostrar Año con Discos
@@ -2275,6 +2422,7 @@ SETUP_SHOWYEAR
 	JP	アルバム年を表示する
 
 SETUP_SHOWYEAR_DESC
+	CZ	Můžete vybrat, zda se mají při procházení podle alb nebo obalů zobrazovat spolu s názvy alb i roky vydání. Pokud tuto volbu aktivujete bude rok zobrazen za názvem alba.
 	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie nach Album oder Plattencover nachschlagen. Das Jahr wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
 	ES	Se puede elegir mostrar el año de edición de un disco cuando se recorre por Disco o Arte de Tapa. Cuando está habilitado, el año del disco se mostrará junto al título del disco.
@@ -2303,6 +2451,7 @@ SETUP_GUESSFILEFORMATS
 	SE	Gissa tag-format
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
+	CZ	Pro formáty souborl, které nemají smysluplné tagy, může se pokusit server nahradit tyko tagy pomocí názvu souboru a jeho cesty. Použitím stejných promněnných jako ve vobe formát skladeb je možné vytvořit předpis pro konverzi názvu souboru do jména tak aby server vytvářel pokud možno dobrou náhražku tagů. priorita se volí pořadím níže. První platný vzorec bude použit.
 	DE	Für Dateien, welche keine sinnvollen Tags enthalten, kann der Server versuchen, die Informationen aus dem Pfad und Dateinamen zu gewinnen. Mit denselben Variablen wie für das Titelformat können Sie Dateinamenskonventionen definieren, damit der Server besser erraten kann, wo die Informationen stehen. Das erste passende der folgenden Muster wird verwendet.
 	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 	ES	Para los archivos que no tienen  tags razonables, se puede hacer que el servidor suponga los tags utilizando el camino y nombre de archivo. Utilizando las mismas variables que en el Formato del Título, se pueden crear patrones que coincidan con las convenciones de nombres, de forma que el servidor pueda hacer buenas suposiciones sobre qué tendrán que ser los tags. La primera coincidencia con un patrón válido será utilizada.
@@ -2312,6 +2461,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	SE	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används.
 
 SETUP_IRMAP
+	CZ	Funkce tlačítek dálkového ovládání
 	DE	Funktionen der Fernbedienungstasten
 	DK	Fjernbetjeningens funktion
 	EN	Remote Button Functions
@@ -2336,6 +2486,7 @@ SETUP_IRMAP_DESC
 	SE	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "Standard"-gruppen är den som beskrivs i manualen.
 
 SETUP_IRSETLIST_OK
+	CZ	Dálkové ovladače:
 	DE	Fernbedienungen:
 	DK	Fjernbetjeninger:
 	EN	Remote Controls:
@@ -2346,8 +2497,13 @@ SETUP_IRSETLIST_OK
 	NO	Fjernkontroller:
 	PT	Controlos Remotos
 	SE	Fjärrkontroller:
+(INTERPRET - ALBUM) CISLO - SKLADBA
+/INTERPRET/ALBUM/CISLO - SKLADBA
+/INTERPRET/ALBUM/CISLO SKLADBA
+TRACKNUM. TITLE
 
 SETUP_IRSETLIST_CHANGE
+	CZ	Nastavení pro %s bylo změněno.
 	DE	Einstellungen für %s wurden gespeichert.
 	DK	Indstillingen for %s blev ændret.
 	EN	Setting for %s was changed.
@@ -2360,6 +2516,7 @@ SETUP_IRSETLIST_CHANGE
 	SE	Inställningen för %s är ändrad.
 
 SETUP_PLUGINLIST_OK
+	CZ	Pluginy:
 	DE	Plugins:
 	DK	Moduler:
 	EN	Plugins:
@@ -2397,6 +2554,7 @@ SETUP_PASSWORD_CHANGED
 
 # Server Settings
 SETUP_LANGUAGE
+	CZ	Jazyk
 	DE	Sprache
 	DK	Sprog
 	EN	Language
@@ -2410,6 +2568,7 @@ SETUP_LANGUAGE
 	SE	Språk
 
 SETUP_LANGUAGE_DESC
+	CZ	Můžete  změnit nastavení jazyka pro SlimServer.
 	DE	Sie können die Sprache auswählen, die Sie für den SlimServer verwenden wollen.
 	DK	Du kan ændre sproget for dit Slim-system.
 	EN	You can change the language that you'd like SlimServer to use.
@@ -2423,6 +2582,7 @@ SETUP_LANGUAGE_DESC
 	SE	Du kan ange vilket språk du vill att Slim-systemet skall använda sig av.
 
 SETUP_LANGUAGE_OK
+	CZ	Aktuálně nastavenáý jezyk:
 	DE	Ihre Sprache ist nun:
 	DK	Sproget er nu:
 	EN	Your language is now:
@@ -2436,6 +2596,7 @@ SETUP_LANGUAGE_OK
 	SE	Valt språk är:
 
 SETUP_AUDIODIR
+	CZ	Hudební archiv
 	DE	Musikverzeichnis
 	EN	Music Folder
 	ES	Carpeta de Música
@@ -2444,6 +2605,7 @@ SETUP_AUDIODIR
 	SE	Musikmapp
 
 SETUP_AUDIODIR_DESC
+	CZ	Zde můžete určit složku obsahující hudební soubory, kterou bude SlimServer kontrolovat a obsah přidávat do hudebního archivu. Vložte cestu k této složce. Můžete také hodnotu nechat prázdnou, pakliže chcete importovat hudebni archiv prostřednictvím iTunes nebo MoodLogic.
 	DE	Sie können ein Verzeichnis definieren, dessen Musikdateien vom SlimServer durchsucht und zur Musiksammlung hinzugefügt werden sollen. Definieren Sie den Pfad zum Ordner im folgenden Feld. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
 	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 	ES	Se puede especificar una carpeta que contenga archivos de música que SlimServer va a recopilar y añadir a la colección musical. Ingrese el camino a la carpeta debajo. Se puede dejar este campo en blanco si se está importando la información de la colección musical desde iTunes o MoodLogic.
@@ -2452,6 +2614,7 @@ SETUP_AUDIODIR_DESC
 	SE	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange läget nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
 
 SETUP_AUDIODIR_OK
+	CZ	SlimServer použije cestu k složce s hudebním archivem:
 	DE	Der Server verwendet den folgenden Pfad zu ihren MP3 Dateien:
 	DK	OK, anvender:
 	EN	The server will use the following path to your music files:
@@ -2466,6 +2629,7 @@ SETUP_AUDIODIR_OK
 	SE	Använder nu följande sökväg till dina MP3-filer:
 
 SETUP_PLAYLISTDIR
+	CZ	Složka s playlisty
 	DE	Playlisten-Ordner:
 	DK	Gemte playlister
 	EN	Playlists Folder
@@ -2479,6 +2643,7 @@ SETUP_PLAYLISTDIR
 	SE	Mapp för sparade spellistor:
 
 SETUP_ARTFOLDER
+	CZ	Složka obalů
 	DE	Ordner für Plattencover
 	EN	Artwork Folder
 	ES	Carpeta de Arte de Tapa
@@ -2488,6 +2653,7 @@ SETUP_ARTFOLDER
 	SE	Grafikmapp
 
 SETUP_ARTFOLDER_DESC
+	CZ	Můžete zvolit způsob ukládání obrázků obalů alb do zvláštního adresáře. Tuto volbu aktivujete použitím názvů souborů výše. Zadejte lokaci, kam se mají obrázky obalů ukládat. I přes použití této volby bude server stále hledat obrázky alb v adresáři s hudebními soubory, pokud nenajde příslušný obrázek v zadaném adresáři obalů.
 	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	ES	Se puede elegir almacenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
@@ -2497,6 +2663,7 @@ SETUP_ARTFOLDER_DESC
 	SE	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
 
 SETUP_BAD_FILE
+	CZ	Chyba: "%s" není platný formát souboru. Zkuste to znovu.
 	DE	Ups! "%s" scheint keine korrekte Datei zu sein. Bitte versuchen Sie es erneut.
 	EN	Oops - "%s" doesn't seem to be a valid file. Try again.
 	ES	Upsss - "%s" no parece ser un tipo de archivo válido. Intente de nuevo.
@@ -2505,6 +2672,7 @@ SETUP_BAD_FILE
 	SE	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
 
 SETUP_BAD_DIRECTORY
+	CZ	Chyba: "%s" není platný adresář. Zkuste to znovu.
 	DE	Ups! "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
 	DK	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
@@ -2533,6 +2701,7 @@ SETUP_OK_USING
 	SE	Ok, använder:
 
 SETUP_PLAYLISTDIR_OK
+	CZ	Server bude nyní používat tento adresář pro ukládání playlistů:
 	DE	Der Server wird nun Playlisten in diesem Verzeichnis abspeichern:
 	DK	Serveren vil nu bruge følgende mappe til gemte playlister:
 	EN	The server will now use this directory for saving playlists:
@@ -2546,6 +2715,7 @@ SETUP_PLAYLISTDIR_OK
 	SE	Använder nu följande mapp för sparade spellistor:
 
 SETUP_PLAYLISTDIR_DESC
+	CZ	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
 	DE	Sie können hier das Verzeichnis angeben, in welchem Sie ihre Playlisten auf der Festplatte abgespeichert haben. (Sie können dieses Feld leer lassen, wenn Sie keine Playlisten speichern wollen.)
 	DK	Du kan indtaste stien til mappen hvor dine gemte playlister er placeret på din harddisk. (Lad feltet være tomt, hvis du ikke ønsker at benytte gemte playlister).
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
@@ -2559,12 +2729,14 @@ SETUP_PLAYLISTDIR_DESC
 	SE	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
 
 SETUP_RESCAN
+	CZ	Aktualizovat informace z hudebního archivu
 	DE	Musiksammlung neu einlesen
 	EN	Rescan Music Library
 	ES	Volver a recopilar la Colección Musical
 	FR	Répertorier le dossier de musique
 
 SETUP_RESCAN_BUTTON
+	CZ	Aktualizovat
 	DE	Musiksammlung aktualisieren
 	DK	Genindlæs
 	EN	Rescan
@@ -2576,20 +2748,25 @@ SETUP_RESCAN_BUTTON
 	NO	Scan musikkfolderen på nytt
 	PT	Ler Directoria
 	SE	Scanna musikmappen på nytt
+Aktualizovat informace z hudebního archivu
+Způsob prohledávání
 
 SETUP_RESCAN_DESC
+	CZ	Pokud přidáte, odstraníte, nebo změníte soubory ve svém hudebním archivu, můžete nastavit aby SlimServer provedl kontrolu souborů tak, aby uchoval hudební databázi stále aktuální.
 	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht. Kreuzen Sie die Checkbox an, damit SlimServer die bestehende Datenbank vor dem Durchsuchen löscht und diese von Grund auf neu aufbaut.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.  Click the checkbox and then click Rescan to make SlimServer forget about your entire library and rescan from scratch.
 	ES	Presionar en Recopilar para que SlimServer recorrar la colección musical y añada nueva música o actualice canciones que hayan cambiado. Marque el checkbox y luego presion Recopilar para que Slimserver elimine completamente la historia previa y recopile nuevamente desde cero.
 	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu. Si vous cochez la case, SlimServer va remettre à zéro la bibliothèque existante.
-	
+
 SETUP_WIPECACHE
+	CZ	Vyčistit cache
 	DE	Datenbank vor dem Durchsuchen löschen
 	EN	Clear library before rescan
 	ES	Limpiar la información previa de la colección antes de volver a recopilar
 	FR	Initialiser la bibliothèque avant de répertorier
 
 RESCANNING
+	CZ	Server právě aktualizuje informace z hudebního archivu.
 	DE	Der Server durchsucht nun ihre Musiksammlung.
 	DK	Serveren genindlæser nu musikinformationerne fra din musiksamling.
 	EN	The server is now rescanning your Music Library.
@@ -2603,6 +2780,7 @@ RESCANNING
 	SE	Servern läser nu om din musikbibliotek.
 
 USING_ITUNES
+	CZ	Server importuje iTunes informace.
 	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
@@ -2619,6 +2797,7 @@ NOT_USING_ITUNES
 	SE	SlimServer kommer inte att importera iTunes-information längre.
 
 USE_ITUNES
+	CZ	Použít iTunes
 	DE	Verwendung von iTunes
 	DK	Anvend iTunes
 	EN	Use iTunes
@@ -2631,6 +2810,7 @@ USE_ITUNES
 	SE	Använd iTunes
 
 DONT_USE_ITUNES
+	CZ	Nepoužívat iTunes
 	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
 	ES	No Utilizar iTunes
@@ -2650,6 +2830,7 @@ SETUP_ITUNES
 	SE	iTunes
 
 SETUP_ITUNES_OK
+	CZ	Server bude importovat iTunes informace.
 	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
@@ -2666,6 +2847,7 @@ SETUP_ITUNES_DESC
 	SE	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 
 USE_MOODLOGIC
+	CZ	Použít MoodLogic
 	DE	MoodLogic verwenden
 	DK	Anvend MoodLogic
 	EN	Use MoodLogic
@@ -2678,6 +2860,7 @@ USE_MOODLOGIC
 	SE	Använd MoodLogic
 
 DONT_USE_MOODLOGIC
+	CZ	Nepouživat MoodLogic
 	DE	MoodLogic nicht verwenden
 	DK	Anvend ikke MoodLogic
 	EN	Don't use MoodLogic
@@ -2690,6 +2873,7 @@ DONT_USE_MOODLOGIC
 	SE	Använd inte MoodLogic
 
 USE_MUSICMAGIC
+	CZ	Použít MusicMagic
 	DE	MusicMagic verwenden
 	DK	Anvend MusicMagic
 	EN	Use MusicMagic
@@ -2701,6 +2885,7 @@ USE_MUSICMAGIC
 	SE	Använd MusicMagic
 
 DONT_USE_MUSICMAGIC
+	CZ	Nepoužívat MusicMagic
 	DE	MusicMagic nicht verwenden
 	DK	Anvend ikke MusicMagic
 	EN	Don't use MusicMagic
@@ -2732,16 +2917,19 @@ SETUP_MUSICMAGIC_DESC
 	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic. 
 
 MMMMIXTYPE_TRACKS
+	CZ	Číslo skladby
 	DE	Anzahl Tracks
 	EN	Number of Tracks
 	ES	Número de Pistas
 
 MMMMIXTYPE_MIN
+	CZ	Počet minut
 	DE	Dauer in Minuten
 	EN	Number of Minutes
 	ES	Número de Minutos
 
 MMMMIXTYPE_MBYTES
+	CZ	MB
 	DE	Anzahl Megabytes
 	EN	Number of MegaBytes
 	ES	Número de MegaBytes
@@ -2764,6 +2952,7 @@ SETUP_INSTANTMIXMAX
 	SE	Max antal låtar för "Instant Mix"
 
 SETUP_INSTANTMIXMAX_DESC
+	CZ	Tato volba určuje maximální počet skladeb, které můžete přidat do playlistu jako Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Playlist erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
 	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 	ES	Este es el número máximo de canciones que se quiere en listas creadas como Mezclas Instantáneas. Las Mezclas Instantáneas pueden tener menos canciones, dependiendo del valor de Variedad.
@@ -2801,6 +2990,7 @@ SETUP_VARIETYCOMBO_DESC
 
 # advanced server settings
 SETUP_MENUITEM
+	CZ	Položka menu
 	DE	Menüauswahl
 	DK	Menupunkt
 	EN	Menu item
@@ -2813,6 +3003,7 @@ SETUP_MENUITEM
 	SE	Meny-val
 
 SETUP_SKIN
+	CZ	Vzhled
 	DE	Web-Interface
 	DK	Web-interface
 	EN	Web Interface
@@ -2826,6 +3017,7 @@ SETUP_SKIN
 	SE	Webgränssnitt
 
 SETUP_SKIN_DESC
+	CZ	Z následujícího seznamu můžete vybrat vzhled neboli 'skin' tohoto webového rozhraní.
 	DE	Sie können einen Skin für ihr Web-Interface aus der folgenden Liste auswählen.
 	DK	Du kan her vælge et layout ("skin") for web-interfacet.
 	EN	You can choose a look or "skin" for the web interface from the list below.
@@ -2839,6 +3031,7 @@ SETUP_SKIN_DESC
 	SE	Välj ett utseende för webgränssnittet ('skin') från listan nedan:
 
 SETUP_SKIN_OK
+	CZ	Aktuální skin je nyní:
 	DE	Ihr aktueller Skin:
 	DK	Det valgte layout er:
 	EN	Your skin is now:
@@ -2852,6 +3045,7 @@ SETUP_SKIN_OK
 	SE	Det nyvalda utseendet är:
 
 SETUP_PLUGINS
+	CZ	Pluginy
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
@@ -2876,6 +3070,7 @@ SETUP_PLUGINS_DESC
 	SE	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
 
 SETUP_REFRESHRATE
+	CZ	Interval mezi obnovením webového rozhraní
 	DE	Automatische Browser Aktualisierung
 	EN	Browser Refresh Timing
 	ES	Intervalo entre refrescos del navegador.
@@ -2885,6 +3080,7 @@ SETUP_REFRESHRATE
 	SE	Refresh-intervall för webgränssnittet
 
 SETUP_REFRESHRATE_DESC
+	CZ	Nastavení času mezi obnovením stránky v sekundách. Jestliže hraje skladba, server nastavi obnovování dříve nebo méně než tato hodnota. (Dafaultně je nastaveno 30, minimum je 2)
 	DE	Setzen Sie die gewünschte Wartezeit in Sekunden zwischen automatischen Browser Aktualisierungen. Während dem Abspielen eines Liedes wird der Server den Refresh nahe dem Lied-Ende durchführen, falls er vor Ablauf der gewünschten Wartezeit liegt. (Vorgabe 30, minimum 2)
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
 	ES	Establecer el intervalo entre refrescos del navegador, en segundos. Mientras se escucha una canción, el servidor pondrá el refresco cerca del final de esta, si es menor que este valor. (Por defecto es 30, el mínimo es 2)
@@ -2894,6 +3090,7 @@ SETUP_REFRESHRATE_DESC
 	SE	Ställ in tiden mellan uppdatering av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh närs slutet på sången, om återstående tid är mindre än angivet värde.
 
 SETUP_REFRESHRATE_OK
+	CZ	Interval obnovování
 	DE	Browser Aktualisierung gesetzt auf
 	EN	Refresh time set to
 	ES	Intervalo de refresco puesto en 
@@ -2984,6 +3181,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
 	SE	Du kan välja mellan att låta SlimServer försöka finna iTunes automatiskt eller specificera var det är intstallerat. Klicka nedan för att specificera manuellt och ange läget på "iTunes Music Library.xml"-fil och ditt iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
+	CZ	Zadejte cestu k složce obsahující knihovnu iTunes.
 	DE	iTunes Musiksammlung manuell suchen
 	EN	Specify iTunes Library Locations
 	ES	Especificar las ubicaciones de iTunes Library
@@ -2992,6 +3190,7 @@ SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
 	SE	Specificera var iTunes musikbibliotek är installerat
 
 SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
+	CZ	Najít knihovnu iTunes automaticky
 	DE	iTunes Musiksammlung automatisch finden
 	EN	Find iTunes Library Automatically
 	ES	Encontrar iTunes Library Automaticamente
@@ -3024,6 +3223,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	SE	iTunes musikbibliotek
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
+	CZ	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
 	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad zu ihrem iTunes Musik Ordner an.
 	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
@@ -3032,6 +3232,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	SE	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 
 SETUP_COVERART
+	CZ	Nastavení názvů souborů pro obaly alb
 	DE	Plattencover
 	DK	Cover-billeder
 	EN	Artwork
@@ -3044,6 +3245,7 @@ SETUP_COVERART
 	SE	Albumomslag
 
 SETUP_COVERART_DESC
+	CZ	Obrázky s náhledy obalů alb, pokud jsou dostupné, jsou zobrazovány na stránce s informacemi o albu, nebo obsažené skladbě. Tyto náhledy jsou uloženy v ID3 tagu pro každou skladbu, nebo je nastaven soubor ve stejném adresáři, jako jsou soubory skladeb. Soubory obrázku se mohou jmenovat "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", nebo "thumb.jpg". Zde můžete určita další dodatečné názvy souborů, které budou brány jako obrázky náhledů alb. Můžete specifikovat rozdílné názvy pro náhledy a pro zobrazení v plné velikosti. Prefix pro tuto volbu je %, za ním následuje volba stejná jako jsou volby pro formát názvu skladby (např. %ARTIST - ALBUM  will look for Artist - Album.jpg to fit the artist and album information found.
 	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden. Verwenden Sie % als Prefix um dieselben Elemente wie für Titelinformationen zu verwenden. So wird z.B. %ARTIST - %ALBUM nach einer Datei "Artist - Album.jpg" passend zum aktuellen Musikstück suchen.
 	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
@@ -3056,6 +3258,7 @@ SETUP_COVERART_DESC
 	SE	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
 
 SETUP_COVERART_OK
+	CZ	Jméno souboru obalů nastaveno na
 	DE	Dateiname des Plattencovers:
 	DK	Filnavne for cover-billeder gemt som:
 	EN	Artwork image file name set to
@@ -3068,6 +3271,7 @@ SETUP_COVERART_OK
 	SE	Filnamn för albumomslag är satt till:
 
 SETUP_COVERTHUMB
+	CZ	Náhledy obalů
 	DE	Dateiname des Plattencovers (klein)
 	DK	Små cover-billeder
 	EN	Artwork Thumbnail
@@ -3080,11 +3284,13 @@ SETUP_COVERTHUMB
 	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
+	CZ	Pro procházení podle náhledů obalů, server použije stejné nastavení názvů souboru jako výše a hodnoty obsažené v ID3 tazích. Nicméně pokud sii přejete použít odlišné názvy, nebo vlastní soubory, zadejte jejich jména zde.
 	DE	Für das Nachschlagen von Plattencovers wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 
 SETUP_COVERTHUMB_OK
+	CZ	Název souboru náhledu alba nastaven na
 	DE	Dateiname des Plattencovers (klein):
 	DK	Filnavne for cover-billeder gemt som:
 	EN	Artwork thumbnail image file name set to
@@ -3097,6 +3303,7 @@ SETUP_COVERTHUMB_OK
 	SE	Filnamn för albumomslags-miniatyrer är satt till:
 
 SETUP_THUMBSIZE
+	CZ	Velikost náhledů
 	DE	Grösse der Vorschaubilder
 	EN	Thumbnail Size
 	ES	Tamaño de imagen de muestra
@@ -3106,6 +3313,7 @@ SETUP_THUMBSIZE
 	SE	Storlek på miniatyrer
 
 SETUP_THUMBSIZE_DESC
+	CZ	Zvolte velikost v pixelech (25-250) pro výchozí náhled obrázku obalu alba při procházení podle obalů. Defaultně je nastaveno 100.
 	DE	Wählen Sie die Grösse der Plattencover Vorschaubilder in Pixeln (25-250). Voreinstellung ist 100.
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	ES	Elegir el tamaño en pixels (25-250) para el tamaño por defecto de la imagen de muestra cuando se examina por arte de tapa. Por defecto es 100.
@@ -3115,6 +3323,7 @@ SETUP_THUMBSIZE_DESC
 	SE	Välj storlek i antal pixlar (25-250) som albumomslagsminatyrer normalt ska presenteras i. Standardvärdet är 100
 
 SETUP_INCLUDENOART_0
+	CZ	Nezobrazovat alba bez obalu
 	DE	Keine Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Delete placeholders from the list
 	ES	Borrar los discos sin Arte de Tapa
@@ -3124,6 +3333,7 @@ SETUP_INCLUDENOART_0
 	SE	Visa inte tomma bildramar i listan
 
 SETUP_INCLUDENOART_1
+	CZ	Vložit všechna alba, použít prázdná místa
 	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattencovers verwenden.
 	EN	Include all albums, using placeholders
 	ES	Incluir todos los discos, utilizando aquellos sin Arte de Tapa
@@ -3133,6 +3343,7 @@ SETUP_INCLUDENOART_1
 	SE	Visa alla album i listan, använd ramar när miniatyr saknas
 
 SETUP_INCLUDENOART
+	CZ	Procházet podle obalů
 	DE	Plattencover nachschlagen
 	EN	Browse By Artwork
 	ES	Examinar por Arte de Tapa
@@ -3142,6 +3353,7 @@ SETUP_INCLUDENOART
 	SE	Bläddra bland albumomslag
 
 SETUP_INCLUDENOART_DESC
+	CZ	Vyberte, zda-li si přejete při procházení podle obalů zobrazovat všechna alba a na místa alb s chybějícím obrázkem vložit prázdné místo, nebo tyto alba nezobrazovat.
 	DE	Legen Sie fest, ob Albums ohne Plattencover beim Nachschlagen nach Plattencover angezeigt werden sollen. Fehlt das Plattencover, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	ES	Elegir si se debe incluir o no los discos qeu actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
@@ -3151,6 +3363,7 @@ SETUP_INCLUDENOART_DESC
 	SE	Välj om album som inte har någon associerad bild ska inkluderas i listan eller ej. En tom bild (standardstorlek) och albumnamn kan visas, eller exkluderas helt.
 
 SETUP_IGNOREMP3TAGS
+	CZ	Ignorovat mp3 tagy
 	DE	MP3 Tags ignorieren
 	EN	Ignore MP3 Tags
 	ES	Ignorar Tags MP3
@@ -3189,6 +3402,7 @@ SETUP_PLUGINS_OK
 	SE	Din Tilläggsmeny är nu:
 
 SETUP_CLIPORT
+	CZ	Číslo portu příkazové řádky
 	DE	Kommandozeilen-Schnittstellen Port-Nummer
 	DK	Port-nummer for Command Line Interface
 	EN	Command Line Interface Port Number
@@ -3201,6 +3415,7 @@ SETUP_CLIPORT
 	SE	Portnummer för terminalgränssnitt
 
 SETUP_CLIPORT_DESC
+	CZ	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky (nastavením nuly tuto možnost zakážete).
 	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll. (Null schaltet die Kommandozeilen-Schnittstelle aus.)
 	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet. (Angiv port nummer 0 (nul) for at slå command line interfacet fra).
 	EN	You can change the port number that is used to by a command line interface to control the player. (Set this to zero to disable the command line interface.)
@@ -3213,6 +3428,7 @@ SETUP_CLIPORT_DESC
 	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
 
 SETUP_CLIPORT_OK
+	CZ	Nyní bude používán následující port pro ovládaní příkazovým řádkem
 	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
 	DK	Anvender nu følgende port til Command Line Interfacet:
 	EN	Now using the following port for the command line interface:
@@ -3225,6 +3441,7 @@ SETUP_CLIPORT_OK
 	SE	Använder nu följande portnummer för terminalgränssnittet:
 
 SETUP_HTTPPORT
+	CZ	Číslo portu web serveru
 	DE	Verwendeter Web-Server Port
 	DK	Port-nummer for Web Server
 	EN	Web Server Port Number
@@ -3238,6 +3455,7 @@ SETUP_HTTPPORT
 	SE	Portnummer för webserver
 
 SETUP_HTTPPORT_DESC
+	CZ	Zde zadejte číslo portu, na kterém se bude zobrazovat webové rozhraní SlimServeru (defaultně je nastaveno 100).
 	DE	Sie können die Port-Nummer wechseln, die Sie für den Web-Server Zugriff verwenden wollen. (Der Standardwert ist 9000.)
 	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SlimServer via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
@@ -3251,6 +3469,7 @@ SETUP_HTTPPORT_DESC
 	SE	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
 
 SETUP_HTTPPORT_OK
+	CZ	Nyní bude používán port:
 	DE	Verwender Port:
 	DK	Anvender nu dette port-nummer:
 	EN	Now using port:
@@ -3299,6 +3518,7 @@ SETUP_TRANSCODE-OGG_OK
 	SE	Ogg Vorbis-filer
 
 SETUP_TRANSCODE-OGG_1
+	CZ	Konvertovat automaticky
 	DE	Automatisch konvertieren
 	DK	Konverter automatisk
 	EN	Convert automatically
@@ -3311,6 +3531,7 @@ SETUP_TRANSCODE-OGG_1
 	SE	Konvertera automatiskt
 
 SETUP_TRANSCODE-OGG_0
+	CZ	Nekonvertovat automaticky
 	DE	Nicht automatisch konvertieren
 	DK	Konverter ikke automatisk
 	EN	Don't convert automatically
@@ -3358,6 +3579,7 @@ SETUP_TRANSCODE-WAV_OK
 	SE	WAV- och AIFF-filer
 
 SETUP_TRANSCODE-WAV_1
+	CZ	Konvertovat automaticky
 	DE	Automatisch konvertieren
 	DK	Konverter automatisk
 	EN	Convert automatically
@@ -3429,6 +3651,7 @@ SETUP_TRANSCODE-MOV_1
 	SE	Konvertera automatiskt
 
 SETUP_TRANSCODE-MOV_0
+	CZ	Nekonvertovat automaticky
 	DE	Nicht automatisch konvertieren
 	DK	Konverter ikke automatisk
 	EN	Don't convert automatically
@@ -3441,6 +3664,7 @@ SETUP_TRANSCODE-MOV_0
 	SE	Konvertera INTE automatiskt
 
 SETUP_SAVESHUFFLED
+	CZ	Ukládání náhodně hraných playlistů
 	DE	Zufalls-Playliste speichern
 	EN	Save Shuffled Playlist
 	ES	Guardar Lista Desordenada
@@ -3450,6 +3674,7 @@ SETUP_SAVESHUFFLED
 	SE	Spara blandad låtlista
 
 SETUP_SAVESHUFFLED_DESC
+	CZ	Pokud zvolíte 'uložit playlist' a ten je přehráván náhodně, můžete zvolit, zda se má playlist uložit ve Vámi zadaném pořadí, nebo v náhodném.
 	DE	Wenn Sie eine Playlist speichern, die in zufälliger Reihenfolge wiedergegeben wird, können Sie diese in der Reihenfolge abspeichern, in welcher die Musikstücke hinzugefügt wurden, oder die zufällige Reihenfolge beibehalten.
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
 	ES	Cuando se elige guardar una lista, y esta ha sido desordenada, se puede elegir guardarla en su orden original, o en el orden en que quedaron despues de "desordenarlas al azar"
@@ -3459,6 +3684,7 @@ SETUP_SAVESHUFFLED_DESC
 	SE	När du väljer att spara en låtlista som blivit 'blandad', kan du ange om den ska sparas i orginalordning eller blandad
 
 SETUP_SAVESHUFFLED_1
+	CZ	Uložit playlist v zamíchaném pořadí
 	DE	Playlist in zufälliger Reihenfolge speichern
 	EN	Save playlists in shuffled order
 	ES	Guardar listas en forma desordenada
@@ -3468,6 +3694,7 @@ SETUP_SAVESHUFFLED_1
 	SE	Spara låtlistor blandade
 
 SETUP_SAVESHUFFLED_0
+	CZ	Uložit playlist v zadaném pořadí
 	DE	Playliste so abspeichern, wie die Musikstücke hinzugefügt wurden.
 	EN	Save playlists in order songs were added
 	ES	Guardar las canciones en el orden en que fueron añadidas
@@ -3477,6 +3704,7 @@ SETUP_SAVESHUFFLED_0
 	SE	Spara låtlistor i orginalordning
 
 SETUP_SAVEHISTORY
+	CZ	Ukládat historii
 	DE	Speichern des Verlaufs
 	DK	Gem historik
 	EN	Save History
@@ -3501,6 +3729,7 @@ SETUP_SAVEHISTORY_DESC
 	SE	Servern kan spara låthistoria mellan omstarter.
 
 SETUP_SAVEHISTORY_1
+	CZ	Uložit historii
 	DE	Speichern des Verlaufs
 	DK	Gem historik
 	EN	Save history
@@ -3513,6 +3742,7 @@ SETUP_SAVEHISTORY_1
 	SE	Spara historia
 
 SETUP_SAVEHISTORY_0
+	CZ	Neukládat historii
 	DE	Kein Speichern des Verlaufs
 	DK	Gem ikke historik
 	EN	Don't save history
@@ -3523,8 +3753,10 @@ SETUP_SAVEHISTORY_0
 	NO	Ikke lagre historikk
 	PT	Não gravar historial
 	SE	Spara INTE historia
+Obnovování stránky
 
 SETUP_CHECKVERSION
+	CZ	Automatická aktualizace
 	DE	Software Aktualisierung
 	DK	Softwareopdateringer
 	EN	Software Updates
@@ -3536,6 +3768,7 @@ SETUP_CHECKVERSION
 	SE	Mjukvaruupgraderingar
 
 SETUP_CHECKVERSION_DESC
+	CZ	SlimServer se může každý den automaticky připojit k www.slimdevice.com a kontrolovat, zda je dostupná akutualizace software. Pakliže ani, server zobrazi  hlášku na webovém rozhraní.
 	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SlimServer Web Interface.
 	DK	Serveren kan automatisk forbinde til www.slimdevices.com hver dag for at checke om der er kommet en opdateret version af softwaren. Hvis der er, vises en besked i Slim-webinterfacet.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SlimServer's web interface.
@@ -3547,6 +3780,7 @@ SETUP_CHECKVERSION_DESC
 	SE	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
 
 SETUP_CHECKVERSION_1
+	CZ	Automaticky zjišťovat dostupné aktualizace
 	DE	Automatisch nach aktueller Software suchen
 	DK	Check automatisk for softwareopdateringer
 	EN	Automatically Check For Software Updates
@@ -3558,6 +3792,7 @@ SETUP_CHECKVERSION_1
 	SE	Kontrollera automatiskt
 
 SETUP_CHECKVERSION_0
+	CZ	Kontrolovat nové verze
 	DE	Nicht automatisch nach aktueller Software suchen
 	DK	Check ikke automatisk for softwareopdateringer
 	EN	Don't Check For Software Updates
@@ -3569,6 +3804,7 @@ SETUP_CHECKVERSION_0
 	SE	Kontrollera INTE automatiskt
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
+	CZ	Ignorovat skladby zakázané iTunes
 	DE	In iTunes deaktiverte Musikstücke ignorieren
 	EN	Ignore Songs Disabled in iTunes
 	ES	Ignorar Canciones deshabilitadas en iTunes
@@ -3629,6 +3865,7 @@ SETUP_HISTORYLENGTH_DESC
 	SE	Servern kan spara en lista på de senaste spelade låtarna. Välj antalet låtar att spara.
 
 SETUP_SCREENSAVER
+	CZ	Spořič (hraje se)
 	DE	Bildschirmschoner (Wiedergabe)
 	DK	Pauseskærm
 	EN	Screensaver (Playing)
@@ -3642,18 +3879,21 @@ SETUP_SCREENSAVER
 	SE	Skärmsläckare
 
 SETUP_OFFSAVER
+	CZ	Spořič (vypnut)
 	DE	Bildschirmschoner (Aus)
 	EN	Screensaver (Off)
 	ES	Salvapantalla (Apagado)
 	SE	Skärmsläckare i avslaget läge
 
 SETUP_IDLESAVER
+	CZ	Spořič (zastaven)
 	DE	Bildschirmschoner (gestoppt)
 	EN	Screensaver (Stopped)
 	ES	Salvapantalla (Parado)
 	SE	Skärmsläckare i stoppat läge
 
 SETUP_SCREENSAVER_CHOOSE
+	CZ	Vyberte spořič pro dobu, kdy přehrávač hraje:
 	DE	Wählen Sie einen Bildschirmschoner
 	EN	Choose a screensaver to use when playing:
 	ES	Elegir un salvapantalla para utilizar cuando se está escuchando:
@@ -3663,21 +3903,25 @@ SETUP_SCREENSAVER_CHOOSE
 	SE	Välj din anpassade skärmsläckare
 
 SETUP_IDLESAVER_CHOOSE
+	CZ	Vyberte spořič pro dobu, kdy přehrávač nehraje.
 	DE	Wählen Sie den Bildschirmschoner, der bei Inaktivität angezeigt wird:
 	EN	Choose a screensaver to use when not playing:
 	ES	Elegir un salvapantalla para utilizar cuando no se está escuchando:
 
 SETUP_OFFSAVER_CHOOSE
+	CZ	Vyberte spořič pro dobu, kdy bude přehrávač vypnut:
 	DE	Wählen Sie den Bildschirmschoner, der in ausgeschaltetem Zustand angezeigt wird:
 	EN	Choose a screensaver to use when powered off:
 	ES	Elegir un salvapantalla para utilizar cuando está apagado:
 
 SETUP_SCREENSAVER_DESC
+	CZ	Můžete zvolit spořič k zobrazení informací v době kdy přehrávač neovládáte. Můžete nastavit dobu neaktivity, po které se spořič zobrazí. Můžete si také vybrat různé spořiče, pro různé stavy přehrávače: hraje, je zastaven, vypnut apod.
 	DE	Sie können einen Bildschirmschoner wählen, der nach einiger Zeit der Inaktivität aktiviert wird. Wählen Sie die Zeit, die ohne Eingabe verstreichen muss, bevor der Bildschirmschoner aktiv wird. Auch können Sie aus unterschiedliche Bildschirmschoner für die Zustände Wiedergabe, gestoppt und ausgeschaltet definieren.
 	EN	You can choose screensavers to display information after some duration of inactivity from the remote control.  You can choose and the duration to wait before enabling the screensaver. You can also choose different screensavers depending on if the player is playing audio, stopped, or powered off.
 	ES	Se pueden elegir salvapantallas que muestren información despues de algún tiempo de inactividad, desde el control remoto. Se puede elegir la duración de la espera antes de habilitar el salvapantalla. También se pueden elegir diferentes salvapantallas de acuerdo a si el reproductor está tocando, está parado, o apagado.
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
+	CZ	Prodlení spořiče v sekundách:
 	DE	Wartezeit des Bildschirmschoners in Sekunden:
 	DK	Ventetid for pauseskærm i sekunder:
 	EN	Screensaver delay time in seconds:
@@ -3691,11 +3935,13 @@ SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	SE	Fördröjning innan skärmsläckare aktiveras, i sekunder:
 
 SETUP_SCREENSAVERTIMEOUT
+	CZ	Prodleva pro zapnutí spořiče:
 	DE	Bildschirmschoner Verzögerung:
 	EN	Screensaver Timeout:
 	ES	Tiempo de espera para Salvapantalla:
 
 SCREENSAVER_JUMP_BACK_NAME
+	CZ	Nyní hraje (Skočí zpátky při probuzení.)
 	DE	Es läuft gerade... (beim Aufwachen zurückspringen)
 	EN	Now Playing (Jump back on wake.)
 	ES	Se está escuchando... (Volver al despertarse)
@@ -3710,6 +3956,7 @@ SCREENSAVER_NONE
 	ES	Ninguno
 
 SETUP_DISPLAYTEXTTIMEOUT
+	CZ	Časová prodleva zadávání
 	DE	Text Zeiteingabe
 	DK	Tid for indtastning af tekst
 	EN	Text Entry Timing
@@ -3723,6 +3970,7 @@ SETUP_DISPLAYTEXTTIMEOUT
 	SE	Fördröjning vid textinmatning
 
 SETUP_DISPLAYTEXTTIMEOUT_DESC
+	CZ	Pokud zadávate text, například pro vyhledávání, přehrávač se přesune po určité době na další písmeno. Zde můžete nastavit tuto prodlevu.
 	DE	Wenn Sie einen Suchtext eingeben, dann wird der Player nach einer gewissen Zeit zum nächsten Buchstaben wechseln. Ändern Sie hier die Wartezeit zwischen zwei Tastendrucken.
 	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
@@ -3736,6 +3984,7 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa teckenposition efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
 
 SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
+	CZ	Prodleva v sekundách:
 	DE	Wartezeit in Sekunden:
 	DK	Ventetid i sekunder:
 	EN	Timeout in seconds:
@@ -3775,21 +4024,25 @@ SETUP_THROTTLESCAN_DESC
 	SE	När servern startar läser den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
 
 SETUP_SEARCHSUBSTRING
+	CZ	Způsob prohledávání
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_0
+	CZ	Hledat začátek slov
 	DE	Am Wortanfang suchen
 	EN	Search Beginning of Words
 	ES	Buscar Comienzos de Palabras
 
 SETUP_SEARCHSUBSTRING_1
+	CZ	Hledat kdekoliv
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 
 SETUP_SEARCHSUBSTRING_DESC
+	CZ	Pokud prohledáváte hudební archiv, SlimServer může vyhledávat zadaný řetězec od začátků názvů alb a interpretů, nebo kdekoliv ve slově. Např. výsledek vyhledávání retězce "RAIN" při vyhledávání od začátku najde pouze položku začínající na "RAINBOW", kdežto při prohledávání kdekoliv ve slově nalezne také "TRAIN".
 	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findet die Suche nach dem Wortanfang "RAIN" den Begriff "RAINBOW". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
@@ -3815,6 +4068,7 @@ SETUP_NOGENREFILTER_DESC
 	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido. Existe una penalidad en la parformance por habilitar esto, sin embargo los resultados pueden ser mejores para artistas "multi-género".
 
 SETUP_COMPOSERINARTISTS
+	CZ	Zobrazování autora
 	DE	Komponist, Gruppe und Orchester in Interpreten
 	DK	Komponist, band og orkester som kunstner
 	EN	Composer, Band and Orchestra in Artists
@@ -3826,6 +4080,7 @@ SETUP_COMPOSERINARTISTS
 	SE	Kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_1
+	CZ	Vložit skladatele, skupinu nebo orchestr do interpreta
 	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
 	DK	Vis komponist, band og orkester som kunstner
 	EN	Include composer, band and orchestra in artists
@@ -3837,6 +4092,7 @@ SETUP_COMPOSERINARTISTS_1
 	SE	Inkludera kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_0
+	CZ	Nevkládat autora, skupinu nebo orchestr do interpreta
 	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
 	DK	Vis ikke komponist, band og orkester som kunstner
 	EN	Don't include composer, band and orchestra in artists
@@ -3848,6 +4104,7 @@ SETUP_COMPOSERINARTISTS_0
 	SE	Inkludera INTE kompositör, grupp och orkester i Artister
 
 SETUP_COMPOSERINARTISTS_DESC
+	CZ	Informace o autorovi, skupině nebo orchestu mohou být vloženy do nabídky interpretů pro procházení nebo vyhledávání.
 	DE	Titelinformationen über Komponist, Gruppe und Orchester können in der Interpretenliste und beim Suchen eingeschlossen werden.
 	DK	Sanginformation om komponister, bands og orkestre kan vises i kunstnerlisten ved gennemsøgning af din musik.
 	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
@@ -3871,6 +4128,7 @@ SETUP_PERSISTPLAYLISTS
 	SE	Behåll spellistor
 
 SETUP_PERSISTPLAYLISTS_DESC
+	CZ	Server si může pamatovat poslední playlist, který byl hrán před vypnutím.
 	DE	Der Server kann sich die letzte Playlist merken, die beim Starten des Servers abgespielt wurde.
 	DK	Serveren kan bevare den sidste playliste for afpillere selvom serveren genstartes.
 	EN	The server can remember the last playlist of songs that were Now Playing when the server starts.
@@ -3883,6 +4141,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 	SE	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara låtlistan efter varje ändring. Låtlistan laddas in när spelaren startar igen.
 
 SETUP_PERSISTPLAYLISTS_1
+	CZ	Pamatovat playlist
 	DE	Playliste beibehalten
 	DK	Bevar sidste playliste
 	EN	Remember playlist
@@ -3895,6 +4154,7 @@ SETUP_PERSISTPLAYLISTS_1
 	SE	Behåll spellistor
 
 SETUP_PERSISTPLAYLISTS_0
+	CZ	Nepamatovat playlist
 	DE	Playliste nicht beibehalten
 	DK	Bevar ikke sidste playliste
 	EN	Do not remember playlist
@@ -3907,16 +4167,19 @@ SETUP_PERSISTPLAYLISTS_0
 	SE	Behåll inte låtlistor
 
 SETUP_COMMONALBUMTITLES
+	CZ	Časté tituly alb
 	DE	Geläufige Albentitel
 	EN	Common Album Titles
 	ES	Títulos Comunes de Discos
 
 SETUP_COMMONALBUMTITLES_DESC
+	CZ	Standardně SlimServer seskupuje skladby ze stejného alba do jedné skupiny, přestože jsou skladby umístěné v různých adresářích. Pro velice často používané názvy alb, jako například "Greatest Hits", je ještě vyždadováno, aby se pro skladby jednoho alba shodovalo jmého interpreta. Seznam níže reprezentuje skupinu utakovýchto názvů, kde bude tato dodatečné kontrola uplatňována.
 	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
 	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
 
 SETUP_RESHUFFLEONREPEAT
+	CZ	Zamíchat při opakování
 	DE	Erneutes Mischen bei Wiederholung
 	DK	Ny vilkårlig rækkefølge ved gentag
 	EN	Reshuffle on Repeat
@@ -3929,6 +4192,7 @@ SETUP_RESHUFFLEONREPEAT
 	SE	Blanda om vid repetering
 
 SETUP_RESHUFFLEONREPEAT_DESC
+	CZ	Pokud si budete přát, server může promíchat pořadí playlistu před jeho každým přehráním.
 	DE	Der Server kann nach dem kompletten Durchspielen einer Zufalls-Playlist diese erneut mischen.
 	DK	Serveren kan lave en ny vilkårlig rækkefølge af playlisten når playlisten starter forfra ved gentagelse.
 	EN	The server can reshuffle shuffled playlists after each complete pass through the list, if desired.
@@ -3953,6 +4217,7 @@ SETUP_RESHUFFLEONREPEAT_0
 	SE	Behåll ursprunglig lista
 
 SETUP_RESHUFFLEONREPEAT_1
+	CZ	Zamíchat pokaždé
 	DE	Jedes mal neu mischen
 	DK	Ny vilkårlig rækkefølge ved hver gentagelse
 	EN	Reshuffle each time
@@ -3965,6 +4230,7 @@ SETUP_RESHUFFLEONREPEAT_1
 	SE	Blanda om listan
 
 SETUP_PLAYTRACKALBUM
+	CZ	Hrát ostatní skladby z alba
 	DE	Abspielen weiterer Titel des Albums
 	DK	Afspil andre sange i album
 	EN	Play other songs in album
@@ -3977,6 +4243,7 @@ SETUP_PLAYTRACKALBUM
 	SE	Spela alla låtar i albumet
 
 SETUP_PLAYTRACKALBUM_1
+	CZ	Hrát ostatní skladby alba nebo adresáře
 	DE	Auch andere Titel aus dem Album oder dem Verzeichnis spielen
 	DK	Afspil andre sange i album eller mappe
 	EN	Play other songs in album or directory
@@ -3989,6 +4256,7 @@ SETUP_PLAYTRACKALBUM_1
 	SE	Spela alla låtar i albumet eller mappen
 
 SETUP_PLAYTRACKALBUM_0
+	CZ	Hrát pouze vybranou skladbu
 	DE	Nur den ausgewählten Titel spielen
 	DK	Afspil kun den valgte sang
 	EN	Play only selected song
@@ -3999,8 +4267,10 @@ SETUP_PLAYTRACKALBUM_0
 	NO	Spill bare valgte sang
 	PT	Tocar apenas a música selecionada
 	SE	Spela endast vald sång
+Číslo. Interpret - Skladba
 
 SETUP_PLAYTRACKALBUM_DESC
+	CZ	Pokud vyberete jednu skladbu a stisknete PLAY na dálkovém ovladači, můžete zvolit zda se má hrát pouze tato skladba, nebo celé album obsahující tuto skladbu, nebo celý adresář, začíníjící touto skladbou.
 	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
 	DK	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
 	EN	When you select a single song and press PLAY on the remote, you can choose to play just that song or all the songs in that album or directory, starting with that song.
@@ -4013,6 +4283,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
 
 SETUP_IGNOREDARTICLES
+	CZ	Položky, které budou ignorovány při třídění podle jména interpretů.
 	DE	Artikel, die bei der Sortierung nicht berücksichtigt werden sollen
 	DK	Artikler der skal ignoreres ved sortering af kunstnernavne
 	EN	Articles to ignore when sorting artist, album and  names
@@ -4025,6 +4296,7 @@ SETUP_IGNOREDARTICLES
 	SE	Artiklar att ignorera vid sortering på artist
 
 SETUP_IGNOREDARTICLES_DESC
+	CZ	Seznam slov ("the", "les", "los" atd.), které mají být ignorovány v řazení interpretů s názvů alb. Vložte jednotlivé slova, oddělená čárkou nebo mezerou, nebo nechte prázdné a tím vypněte toto chování.
 	DE	Eine Liste von Artikeln ("the" "die" "les" etc..), die beim Sortieren am Anfang von Interpreten, Albumnamen oder Liedern unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen.
 	DK	En liste af artikler ("the", "den", "det", etc.) der skal ignoreres fra begyndelsen af kunstner- eller albumnavne ved sortering. Adskil artiklerne med mellemrum eller tøm listen for at slå denne funktionalitet fra.
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.
@@ -4055,6 +4327,7 @@ SETUP_SPLITLIST_DESC
 	SE	SlimServer kan läsa multipla artister, album och genres från taggarna i dina musikfiler. Om SlimServer finner något av tecknen nedan i taggarna, skapas individuella låtar för vart och ett. Exempelvis: "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" och "Michael Tilson Thomas" som artist.
 
 SETUP_FILESORT
+	CZ	Seřadit podle názvů souborů
 	DE	Sortieren nach Dateinamen
 	DK	Sorter efter filnavn
 	EN	Sort By File Name
@@ -4067,6 +4340,7 @@ SETUP_FILESORT
 	SE	Sortera efter filnamn
 
 SETUP_FILESORT_DESC
+	CZ	Pokud procházíte adresář hudebního archivu, můžete zvolit zda se mají skladby třídit podle názvu souboru, nebo podle informací z ID3 tagu (Interpret, Album, Číslo skladby).
 	DE	Wenn Sie ihr Musikverzeichnis durchsuchen, dann können Sie wählen, ob Sie die Lieder nach den Dateinamen oder den ID3-Tags (Interpret, Album, Liednummer) sortiert haben möchten.
 	DK	Når du gennemser din musiksamling kan du vælge at dine sangtitler skal sorteres efter filnavn eller efter ID3-tag-informationen (Kunstner, Album, Track-nummer).
 	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
@@ -4079,6 +4353,7 @@ SETUP_FILESORT_DESC
 	SE	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
 
 SORTID3
+	CZ	Setřídit podle informací o skladbách
 	DE	Sortieren nach den ID3-Tags
 	DK	Sorter efter sangtitelinformation
 	EN	Sort by song information
@@ -4091,6 +4366,7 @@ SORTID3
 	SE	Sortera efter ID3-information
 
 SORTBYFILENAME
+	CZ	Setřídit dle názvu souboru
 	DE	Sortieren nach dem Dateinamen
 	DK	Sorter efter filnavn
 	EN	Sort by file name
@@ -4103,16 +4379,19 @@ SORTBYFILENAME
 	SE	Sortera efter filnamn
 
 SETUP_BROWSEAGELIMIT
+	CZ	Počet zobrazovaných novinek
 	DE	Anzahl neuer Musikstücke
 	EN	New Music Limit
 	ES	Límite para Música Nueva
 
 SETUP_BROWSEAGELIMIT_DESC
+	CZ	Vyberte počet zobrazovaných skladeb při pocházení novinkami. Defaultně je nastaveno 100.
 	DE	Geben Sie an, wieviele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
 	EN	Choose the number of tracks to display when browsing for new music. Default is 100
 	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
 
 SETUP_ANIMATIONLEVEL
+	CZ	Animace
 	DE	Animation
 	EN	Animation
 	ES	Animación
@@ -4125,6 +4404,7 @@ SETUP_ANIMATIONLEVEL
 	SE	Animering
 
 SETUP_ANIMATIONLEVEL_DESC
+	CZ	Tato volba určuje počet povolených animací. Animace obsažené v zobrazení krátkých zpráv, obrazovka během navigace a scrollování dlouhých vět.
 	DE	Diese Option legt die Menge der verwendeten Animationen fest. Animationen bestehen aus kurzen Mitteilungen, Löschen der Anzeige während der Navigation und Scrollen langer Titel.
 	DK	Denne indstilling angiver hvor meget animation der skal være på SlimServer. Animationer inkluderer visning af små beskeder, menu-navigation og rulletekster ved lange tekster.
 	EN	This option determines the amount of animation allowed. Animations include showing brief messages, screen wipes during navigation, and scrolling long titles.
@@ -4138,6 +4418,7 @@ SETUP_ANIMATIONLEVEL_DESC
 	SE	Detta val avgör tillåten animering. Animering är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
 
 SETUP_LOOKFORARTWORK
+	CZ	Hledat obal
 	DE	Plattencovers nachschlagen
 	EN	Look For Artwork
 	ES	Buscar Arte de Tapa
@@ -4193,6 +4474,7 @@ SETUP_PREFSWRITEDELAY_DESC
 	ES	Esta configuración determina que tan seguido se graban en disco las preferencias. Poner en 0 para escribir cada cambio en el momento, o valores mayores para agrupar los cambios y grabarlos después del número indicado de segundos.
 
 SETUP_LONGDATEFORMAT
+	CZ	Formát datumu douhý
 	DE	Format des langen Datums
 	DK	Langt dato-format
 	EN	Long Date Format
@@ -4206,6 +4488,7 @@ SETUP_LONGDATEFORMAT
 	SE	Långt datumformat
 
 SETUP_LONGDATEFORMAT_DESC
+	CZ	Tato volba určuje formát, použitý pro dlouhé datum (takové, jako přehrávač používá, když je vypnutý). Následující konvence je použita ve volbách níže:  WWWW je plný název dne týdne  WWW je zkratka pro den týdne  DD je číslo dne v měsíci  MM je číslo měsíce v roce  YYYY je čtyřmístné číslo roku
 	DE	Diese Option bestimmt das Format des langen Datums, wie es beim ausgeschaltetem Player angezeigt wird. Es gibt die folgenden Alternativen: <br>WWWW ist der voll ausgeschriebene Tag (Samstag, Sonntag usw.)<br>WWW ist die abgekürzte Schreibweise (Sam, Son usw.)<br>DD ist das Tageszahl (ohne führende Null)<br>MM ist der Monat<br>YY ist das zweistellige Jahr<br>YYYY ist das vierstellige Jahr
 	DK	Denne indstilling angiver formatet for lange datoer (vises fx. når afspilleren er slukket). Følgende syntax anvendes nedenfor:<br>WWWW er det fulde navn for ugedagen (lørdag, søndag, etc.)<br>WWW er det forkortede navn for ugedagen (lør, søn, etc.)<br>DD er dagen på måneden (indledende nul fjernes)<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal
 	EN	This option determines the format used for long dates (such as displayed when the player is off). The following conventions are used in the choices presented below:<br>WWWW is the full day of the week (Saturday, Sunday, etc)<br>WWW is the abbreviated day of the week (Sat, Sun, etc)<br>DD is the day of the month (leading zero removed)<br>MM is the month of the year<br>YY is the two digit year<br>YYYY is the four digit year
@@ -4219,6 +4502,7 @@ SETUP_LONGDATEFORMAT_DESC
 	SE	Detta val avgör hur långt datumformat presenteras (som bland annat visas när spelaren är avstängd). Följande konventioner används för valen nedan:<br>WWWW är veckodag (lördag, söndag, osv)<br>WWW är veckodag förkortad (lör, sön, osv)<br>DD är dag i månaden (inledande nolla borttagen)<br>MM är månaden<BR>YY är tvåsiffrigt årtal<BR>YYYY är fyrsiffrigt årtal
 
 SETUP_SHORTDATEFORMAT
+	CZ	Formát datumu krátký
 	DE	Format des kurzen Datums
 	DK	Kort dato-format
 	EN	Short Date Format
@@ -4232,6 +4516,7 @@ SETUP_SHORTDATEFORMAT
 	SE	Kort datumformat
 
 SETUP_SHORTDATEFORMAT_DESC
+	CZ	Tato volba určuje formát, použitý pro formát krátkého datumu. Následující konvence je použita ve volbách níže:  YYYY je čtyřmístné číslo roku  YY je dvojmístné číslo roku  MM je číslo měsíce v roce  DD je číslo dne v měsíci  Cokoliv na konci v závorkách je komentář a ten nebude zobrazován.
 	DE	Diese Option bestimmt das Format des kurzen Datums. Es gibt die folgenden Alternativen: <br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist das Tagesdatum<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
 	DK	Denne indstilling angiver formatet for korte datoer. Følgende syntax anvendes nedenfor:<br>DD er dagen på måneden<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal<br>Alt i slutningen og i parantes er bare en kommentar og vises ikke.
 	EN	This option determines the format used for short dates. The following conventions are used in the choices presented below:<br>YYYY is the four digit year<br>YY is the two digit year<br>MM is the month of the year<br>DD is the day of the month<br>Anything at the end in parentheses is just a comment and is not displayed.
@@ -4245,6 +4530,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	SE	Detta val hur kort datumformat presenteras. Följande konventioner används för valen nedan:<br>YYYY är fyrsiffrigt årtal<br>YY är tvåsiffrigt årtal<br>MM är månadsnummret<br>DD är dagen i månaden<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 
 SETUP_TIMEFORMAT
+	CZ	Formát času
 	DE	Zeitformat
 	DK	Tidsformat
 	EN	Time Format
@@ -4271,6 +4557,7 @@ SETUP_TIMEFORMAT_DESC
 	SE	Detta val avgör formatet för tidvisning. Följande konventioner används i valen nedan:<br>hh är timmen<br>h är timmen med inledande nolla borttagen<br>mm är minuten<br>ss är sekunden<br>pm är antingen AM eller PM<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
 
 SETUP_ITEMSPERPAGE
+	CZ	Položek na stránku
 	DE	Angezeigte Elemente pro Seite
 	DK	Antal elementer pr. side
 	EN	Items Per Page
@@ -4284,6 +4571,7 @@ SETUP_ITEMSPERPAGE
 	SE	Poster per sida
 
 SETUP_ITEMSPERPAGE_DESC
+	CZ	Tato volba určuje, kolik položek se bude maximálně vypisovat na jednu stránku.
 	DE	Diese Auswahl beeinflusst die Anzahl der angezeigten Elemente auf den Web-Seiten.
 	DK	Denne indstilling angiver antallet af elementer der vises pr. web-side (fx. antal sangtitler).
 	EN	This option controls the number of items displayed on the web on each page.
@@ -4297,6 +4585,7 @@ SETUP_ITEMSPERPAGE_DESC
 	SE	Detta val kontrollerar det maximala antalet poster per sida i webbgränssnittet.
 
 SETUP_ITEMSPERPAGE_CHOOSE
+	CZ	Položek na stránku:
 	DE	Angezeigte Elemente pro Seite:
 	DK	Elementer pr. side:
 	EN	Items per page:
@@ -4310,6 +4599,7 @@ SETUP_ITEMSPERPAGE_CHOOSE
 	SE	Poster per sida:
 
 SETUP_ITEMSPERPAGE_OK
+	CZ	Počet položek zobrazených na jednu stránku displeje je nyní:
 	DE	Die Anzahl der Elemente pro Seite:
 	DK	Antal elementer der vises pr. side er nu:
 	EN	Number of items to display per page is now:
@@ -4399,6 +4689,7 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	SE	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3):
 
 SETUP_WEBPROXY
+	CZ	Nastavení Proxy
 	DE	Web Proxy
 	EN	Web Proxy
 	ES	Proxy Web
@@ -4408,6 +4699,7 @@ SETUP_WEBPROXY
 	SE	WebProxy
 
 SETUP_WEBPROXY_DESC
+	CZ	Můžete zadat IP adresu a port pro HTTP/Ewb proxy, pokud jej používáte pro spojení se servery mimo lokální sít. <br>Použijte formát xx.xx.xx.xx:yyyy kde xx.xx.xx.xx je IP adresa proxy serveru a yyyy je číslo portu. Nechte pole prázdná, pokud nepoužíváte HTTP web proxy.
 	DE	Sie können die IP Adresse und den Port eines HTTP/Web Proxys definieren, den SlimServer verwenden soll, um auf Server ausserhalb ihres Netzwerkes zugreifen zu können. Benutzen Sie das Format xxx.xxx.xxx.xxx:yyy. xxx.xxx.xxx.xxx bezeichnet die IP Adresse des Servers, während yyy die Port-Nummer definiert. Lassen Sie das Feld frei, falls Sie keinen HTTP/Web Proxy verwenden.
 	EN	You can specify the IP address and port for an HTTP/Web proxy to use when SlimServer connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank of you don't use a HTTP web proxy.
 	ES	Se puede especificar la dirección IP y el puerto del proxy HTTP/Web para usar cuando el SlimServer se conecta a servidores que están fuera de la red local. Utilizar el formato xx.xx.xx.xx:yyyy donde xx.xx.xx.xx es la dirección IP del proxy, e yyyy es el número de puerto. Si no se utiliza un proxy HTTP/Web, dejar este campo en blanco.
@@ -4417,6 +4709,7 @@ SETUP_WEBPROXY_DESC
 	SE	Du kan specificera IP-adress och -port på den HTTP/WebProxy som SlimServer ska ansluta sig till när den skapar anslutnignar utanför ditt lokala nätverk. Använd formatet xx.xx.xx.xx:yyyy där xx.xx.xx.xx är proxyns IP-adress, och yyyy är portnumret.  Lämna blankt om du inte använder webproxy.
 
 SETUP_WEBPROXY_CHOOSE
+	CZ	Adresa proxy
 	DE	Web Proxy Adresse
 	EN	Web Proxy Address
 	ES	Dirección del Proxy de Web
@@ -4459,6 +4752,7 @@ SETUP_XPLSUPPORT_CHOOSE
 	SE	xPL-stöd:
 
 SETUP_XPLINTERVAL
+	CZ	Interval kontrolního taktu
 	DE	Heartbeat Intervall
 	EN	Heartbeat Interval
 	ES	Intervalo de latidos
@@ -4468,6 +4762,7 @@ SETUP_XPLINTERVAL
 	SE	Hjärtrytm, intervall
 
 SETUP_XPLINTERVAL_CHOOSE
+	CZ	Interval kontrolního taktu:
 	DE	Heartbeat Intervall:
 	EN	Heartbeat Interval:
 	ES	Intervalo de latidos:
@@ -4495,6 +4790,7 @@ SETUP_XPLIR_CHOOSE
 	SE	Infraröd, hantering:
 
 SETUP_XPLIR_NONE
+	CZ	Není
 	DE	Keine
 	EN	None
 	ES	Ninguno
@@ -4504,6 +4800,7 @@ SETUP_XPLIR_NONE
 	SE	Ingen
 
 SETUP_XPLIR_BUTTONS
+	CZ	Tlačítka
 	DE	Tasten
 	EN	Buttons
 	ES	Botones
@@ -4522,6 +4819,7 @@ SETUP_XPLIR_RAW
 	SE	Rå
 
 SETUP_XPLIR_BOTH
+	CZ	Oba
 	DE	Beide
 	EN	Both
 	ES	Ambos
@@ -4531,6 +4829,7 @@ SETUP_XPLIR_BOTH
 	SE	Båda
 
 SETUP_TITLEFORMATWEB
+	CZ	Aktuální formát skladby na webu
 	DE	Aktuelles Web-Format
 	DK	Valgt format for web-titel
 	EN	Current web title format
@@ -4544,6 +4843,7 @@ SETUP_TITLEFORMATWEB
 	SE	Aktuellt titelformat för webgränssnittet
 
 SETUP_CSRFPROTECTIONLEVEL
+	CZ	Úroveň CSRF ochrany
 	DE	CSRF Schutzlevel
 	EN	CSRF Protection Level
 	ES	Nivel de Protección CSRF
@@ -4554,6 +4854,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
 
 SETUP_IPFILTER_HEAD
+	CZ	Blokování příchozích požadavků
 	DE	Blockieren eingehender Verbindungen
 	DK	Blokér indgående forbindelser
 	EN	Block Incoming Connections
@@ -4566,6 +4867,7 @@ SETUP_IPFILTER_HEAD
 	SE	Blockera inkommande anslutningar
 
 SETUP_IPFILTER_DESC
+	CZ	Tato volba umnožňuje zablokovat příchozí CLI a HTTP požadavky ze zdrojových IP adres.
 	DE	Diese Option ermöglicht ihnen das Blockieren eingehender CLI und HTTP Anfragen durch Angabe der Quell-IP-Adresse.
 	DK	Denne funktion giver dig mulighed for at blokere for indgående CLI- og HTTP-forbindelsesr baseret på den indgående IP-adresse.
 	EN	This option allows you to enable blocking of incoming CLI and HTTP requests by source IP address.
@@ -4578,6 +4880,7 @@ SETUP_IPFILTER_DESC
 	SE	Detta val tillåter dig att, beroende på IP-adress, blockera inkommande CLI och HTTP anslutningar.
 
 SETUP_IPFILTER
+	CZ	Blokovat
 	DE	Blockieren
 	DK	Blokér
 	EN	Block
@@ -4590,6 +4893,7 @@ SETUP_IPFILTER
 	SE	Blockera
 
 SETUP_NO_IPFILTER
+	CZ	Neblokkovat
 	DE	Nicht Blockieren
 	DK	Blokér ikke
 	EN	Do not block
@@ -4602,6 +4906,7 @@ SETUP_NO_IPFILTER
 	SE	Blockera inte
 
 SETUP_FILTERRULE_HEAD
+	CZ	Povolené IP adresy
 	DE	Erlaubte IP-Adressen
 	DK	Tilladte IP-adresser
 	EN	Allowed IP Addresses
@@ -4614,6 +4919,7 @@ SETUP_FILTERRULE_HEAD
 	SE	Tillåtna IP-adresser
 
 SETUP_FILTERHOSTS
+	CZ	Blokovat příchozí spojení
 	DE	Blockieren eingehender Verbindungen
 	DK	Blokér indgående forbindelser
 	EN	Block incoming connections
@@ -4626,6 +4932,7 @@ SETUP_FILTERHOSTS
 	SE	Blockera inkommande anslutningar
 
 SETUP_ALLOWEDHOSTS
+	CZ	IP adresa povolena prro příchozí spojení
 	DE	IP-Adressen, denen eingehende Verbindungen erlaubt sind
 	DK	Tilladte IP-adresser ved indgående forbindelser
 	EN	IP addresses allowed to make incoming connections
@@ -4638,6 +4945,7 @@ SETUP_ALLOWEDHOSTS
 	SE	IP-adresser som tillåts att skapa inkommande anslutningar
 
 SETUP_FILTERRULE_DESC
+	CZ	Jestliže zapnete blokování, zde vypište adresy, zekterých je možno na SlimServer přistupovat.    <br>  V polích se mohou používat IP adresy, zástupný znak *, rozsahy adres a jednotlivé adresy oddělené čárkou. Například:      <br>  <b>10.1.2.2</b> povolí přístup z adresy 10.1.2.2   <br>  <b>10.1.2.*</b> povolí přístup z jakékoliv adresy začínající na  10.1.2.  <br>  <b>10.1.2.2-50</b> povolí přístup z adres v rozsahu  10.1.2.2 - 10.1.2.50  <br>  Nakonec, několikanásobné adresy mohou být definovány jednoduše výčtem oddělovaným čárkou, jako <b>10.1.1.1, 192.168.1.*, 10.1.2.2-50</b>  <br>  Speciální adresa 127.0.0 povoluje připojit se internetovému prohlížeči k SlimServeru běžícím na stejném počítači.
 	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu ihrem SlimServer dennoch gestatten möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen, die mit 10.1.2. beginnen, den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem SlimServer auf dem gleichen Computer.
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to SlimServer.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to SlimServer running on that same computer.
 	ES	Si se se ha activado el bloqueo, se pueden ingresar direcciones desde las que se desea permitir la conexión al SlimServer.<br><br>Este campo acepta un lista de direcciones IP específicas, wildcards al estilo *, y rangos de direcciones IP, en una lista separada por comas. Por ejemplo: <BR><BR><B>10.1.2.2</B> sólo permitirá conectarse a 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección de la forma 10.1.2.X. <BR><BR><B>10.1.2.2-50</B> permitirá conexiones desde direcciones IP pertenecientes al rango 10.1.2.2 - 10.1.2.50. <BR><BR>Finalmente, entradas múltiples pueden combinarse con comas, de esta forma: <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR> La dirección IP especial 127.0.0.1 permite al navegador conectarse al SlimServer que está corriendo en su misma computadora. 
@@ -4650,6 +4958,7 @@ SETUP_FILTERRULE_DESC
 
 #miscellaneous setup strings
 SETUP_NEW_VALUE
+	CZ	Nová hodnota pro
 	DE	Neuer Wert für
 	DK	Ny værdi for:
 	EN	New value for
@@ -4676,6 +4985,7 @@ SETUP_REJECTED
 	SE	Ej godkänd
 
 SETUP_BAD_VALUE
+	CZ	Chybná hodnota: %s
 	DE	Falscher Wert angegeben: %s
 	DK	Ugyldig værdig angivet: %s
 	EN	Invalid value specified: %s
@@ -4689,6 +4999,7 @@ SETUP_BAD_VALUE
 	SE	Felaktigt värde angett: %s
 
 SETUP_CURRENT
+	CZ	Aktuální
 	DE	Aktuell
 	DK	Aktiv
 	EN	Current
@@ -4702,6 +5013,7 @@ SETUP_CURRENT
 	SE	Valt
 
 SETUP_FORMATS
+	CZ	Formáty
 	DE	Formate
 	DK	Formater
 	EN	Formats
@@ -4715,6 +5027,7 @@ SETUP_FORMATS
 	SE	Format
 
 SETUP_NUMBER
+	CZ	Číslo
 	DE	Nummer
 	DK	Nummer
 	EN	Number
@@ -4728,6 +5041,7 @@ SETUP_NUMBER
 	SE	Nummer
 
 SETUP_NO_AUTHORIZE
+	CZ	Žádná ohrana heslem
 	DE	Kein Passwortschutz
 	DK	Beskyt ikke med kodeord
 	EN	No password protection
@@ -4740,6 +5054,7 @@ SETUP_NO_AUTHORIZE
 	SE	Inget lösenordsskydd
 
 SETUP_AUTHORIZE
+	CZ	Ochrana heslem
 	DE	Passwortschutz
 	DK	Beskyt med kodeord
 	EN	Password protection
@@ -4752,6 +5067,7 @@ SETUP_AUTHORIZE
 	SE	Lösenordsskydd
 
 SETUP_AUTHORIZE_DESC
+	CZ	Můžete ochránit přístup na webové rozhraní SlimServeru heslem. Vyberte 'Ochrana heslem' z výběru níže, zadejte uživatelské jméno a heslo a klikněte na 'Změnit'. Od tohotö okamžiku, kdykoliv se budete chtít připojit na toto rozhraní, budete vyžádáni zadání uživatelského jména a hesla.
 	DE	Sie können das SlimServer Web-Interface mit einem Passwort schützen. Wählen Sie "Passwortschutz" und geben Sie einen Benutzernamen und ein Passwort ein. Klicken Sie dann auf "Ändern". Von nun an müssen Sie beim Aufruf des SlimServer Web-Interface den Benutzername und das Passwort eingeben.
 	EN	You can choose to password protect SlimServer's web interface. Choose "Password protection" below and enter a username and password, then click Change. From that point on when you use SlimServer's web interface, you'll need to enter this username and password in your web browser.
 	ES	Se puede escoger el proteger con una contraseña la interfaz web de SlimServer. Elegir "Protección por Contraseña" debajo, e ingresar nombre de usuario y contraseña. Desde ese momento, cuando se utilice SlimServer, se deberá ingresar ese nombre de usuario y contraseña en su navegador de Web.
@@ -4763,6 +5079,7 @@ SETUP_AUTHORIZE_DESC
 	SE	Du kan välja att skydda SlimServer webgränssnittet med ett lösenord. Välj "Lösenordsskydd" nedan och ange användarnamn samt lösenord, klicka sedan på "Ändra". Efter detta måste alltid användarnamn och lösenord anges för att kunna använda webgränssnittet.
 
 SETUP_USERNAME
+	CZ	Přihlašovací jméno
 	DE	Benutzername
 	DK	Brugernavn
 	EN	Username
@@ -4775,6 +5092,7 @@ SETUP_USERNAME
 	SE	Användarnamn
 
 SETUP_PASSWORD
+	CZ	Heslo
 	DE	Passwort
 	DK	Kodeord
 	EN	Password
@@ -4787,6 +5105,7 @@ SETUP_PASSWORD
 	SE	Lösenord
 
 SETUP_DONT_CACHE
+	CZ	Necachovat
 	DE	Nicht Zwischenspeichern
 	DK	Cache ikke
 	EN	Don't Cache
@@ -4811,6 +5130,7 @@ SETUP_CACHE
 	SE	Spara
 
 SETUP_NO_ANIMATIONS
+	CZ	Žádné animace
 	DE	Keine Animationen
 	DK	Ingen animationer
 	EN	No animations
@@ -4823,6 +5143,7 @@ SETUP_NO_ANIMATIONS
 	SE	Inga animationer
 
 SETUP_BRIEF_MESSAGES
+	CZ	Pouze brief zprávy
 	DE	Nur kurze Meldungen
 	DK	Kun korte beskeder
 	EN	Brief messages only
@@ -4847,6 +5168,7 @@ SETUP_SCREEN_WIPES
 	SE	Skärmåkningar och meddelanden
 
 SETUP_FULL_ANIMATION
+	CZ	Plná animace
 	DE	Volle Animation
 	DK	Fuld animation
 	EN	Full animation
@@ -4859,6 +5181,7 @@ SETUP_FULL_ANIMATION
 	SE	alla animeringar
 
 SETUP_DONT_SAVE_TAG_INFO
+	CZ	Neukládat infornace z mp3 tagů
 	DE	Keine Speicherung der ID3-Tag Information
 	DK	Gem ikke MP3-tag informationer
 	EN	Don't Save MP3 Tag Info
@@ -4871,6 +5194,7 @@ SETUP_DONT_SAVE_TAG_INFO
 	SE	Spara inte ID3-information
 
 SETUP_SAVE_TAG_INFO
+	CZ	Uložit informace z MP3 tagu
 	DE	Speichern der ID3-Tag Information
 	DK	Gem MP3-tag informationer
 	EN	Save MP3 Tag Info
@@ -4883,6 +5207,7 @@ SETUP_SAVE_TAG_INFO
 	SE	Spara ID3-information
 
 SETUP_MDNSNAME
+	CZ	Randezvous název
 	DE	Rendezvous Name
 	DK	Rendezvous-navn
 	EN	Rendezvous Name
@@ -4895,6 +5220,7 @@ SETUP_MDNSNAME
 	SE	Rendezvous-namn
 
 SETUP_MDNSNAME_OK
+	CZ	Rendezvous jméno serveru je:
 	DE	Der Rendezvous Name dieses Servers ist:
 	DK	Rendezvous-navnet for denne server er:
 	EN	The Rendezvous name for this server is:
@@ -4919,6 +5245,7 @@ SETUP_MDNSNAME_DESC
 	SE	Du kan ange ett Rendezvous-namn för denna server
 
 SETUP_MDNSNAME_CHOOSE
+	CZ	Randezvous název:
 	DE	Rendezvous Name:
 	DK	Rendezvous-navn:
 	EN	Rendezvous name:
@@ -4931,6 +5258,7 @@ SETUP_MDNSNAME_CHOOSE
 	SE	Rendezvous-namn:
 
 SETUP_REMOTESTREAMTIMEOUT
+	CZ	Doba pro spojení s internetovými radii
 	DE	Internet Radio Timeout
 	EN	Radio Station Timeout
 	ES	Tiempo de Espera para Estación de Radio:
@@ -4940,6 +5268,7 @@ SETUP_REMOTESTREAMTIMEOUT
 	SE	Timeout för internet-radio
 
 SETUP_REMOTESTREAMTIMEOUT_OK
+	CZ	Doba pro spojení s internetovými radii
 	DE	Internet Radio Timeout:
 	EN	Radio station timeout:
 	ES	Tiempo de Espera para Estación de Radio:
@@ -4949,6 +5278,7 @@ SETUP_REMOTESTREAMTIMEOUT_OK
 	SE	Timeout för internet-radio:
 
 SETUP_REMOTESTREAMTIMEOUT_DESC
+	CZ	Můžete zde nastavit dobu, po kterou se SlimServer bude pokoušet připojit k internetovému radiu, nebo jinému zdroji než to vzdá. Zadejte dobu v sekundách v následujícím poli.
 	DE	Sie können die Dauer definieren, während der SlimServer versuchen wird, Internet Radio Stationen oder andere Quelle zu erreichen. Geben Sie die Wartezeit in Sekunden an.
 	EN	You can set the length of time that SlimServer will try to connect to an internet radio station or other source before giving up. Enter the amount of time, in seconds, below.
 	ES	Se puede establecer el tiempo de espera durante el cual el SlimServer intentará conectarse a la estación de radio por Internet u otra fuente , antes de darse por vencido. Ingrese la duración de ese intervalo, en segundos, debajo.
@@ -4957,6 +5287,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	SE	Du kan ange antal sekunder som Slimserver ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
+	CZ	Doba pro spojení v sekundách:
 	DE	Internet Radio Timeout (Sekunden):
 	EN	Radio Station Timeout (seconds):
 	ES	Tiempo de Espera para Estación de Radio (segundos):
@@ -4966,6 +5297,7 @@ SETUP_REMOTESTREAMTIMEOUT_CHOOSE
 	SE	Timeout för internet-radio (sekunder):
 
 MP3DIR
+	CZ	Hudební archiv
 	DE	Ihr Musikverzeichnis
 	DK	Din musiksamling
 	EN	Your Music Folder
@@ -4979,6 +5311,7 @@ MP3DIR
 	SE	Din musikmapp
 
 LANGUAGE
+	CZ	Jazyk
 	DE	Sprache
 	DK	Sprog
 	EN	Language
@@ -4992,6 +5325,7 @@ LANGUAGE
 	SE	Språk
 
 SETUP_URL_WILL_BE
+	CZ	Adresa pro přístup k SlimServeru je nyní:
 	DE	Die Zugriffs URL zum SlimServer lautet wie folgt:
 	DK	URL-adessen, der giver adgang til SlimServer, vil se således ud:
 	EN	The URL to access SlimServer is now:
@@ -5006,6 +5340,7 @@ SETUP_URL_WILL_BE
 	SE	URL för att komma åt SlimServer är:
 
 SETUP_GROUPDISCS
+	CZ	Vícedisková alba
 	DE	Alben gruppieren
 	EN	Group Discs
 	ES	Discos múltiples
@@ -5015,6 +5350,7 @@ SETUP_GROUPDISCS
 	SE	Album med flera diskar
 
 SETUP_GROUPDISCS_DESC
+	CZ	Můžete specifikovat, zda budou alba obsahující více disků zařazena jako samostatná (s jedním názvem) nebo jako vícedisková, každé s jedinečným názvem pro každý disk. Např. "Název alba (Disk 2 z 3)". Pokud změníte toto nastavení SlimeServer provede automaticky aktualizaci informací z Vašeho hudebního archivu.
 	DE	Sie können angeben, ob Sie mehrere Platten eines Albums als ein Album anzeigen wollen (unter dem gleichen Namen) oder als getrennte Alben (z.B. "Album Titel (Disk 1 von 2)". Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede considerar si los discos múltiples (dobles, triples, etc) serán tratados como un único disco (con un nombre único), o como múltiples discos, cada uno con un nombre distinto, por ejemplo "Título de Disco (Disco 2 de 3)". Si se cambia esta opción, se iniciará automaticamente una recopilación de información de su colección musical.
@@ -5024,6 +5360,7 @@ SETUP_GROUPDISCS_DESC
 	SE	Du kan ange om flera diskar ska behandlas som ett eller flera separata album. Ändrar du detta värde scannas din musikmapp på nytt
 
 SETUP_GROUPDISCS_0
+	CZ	Chápat sady s více disky jako vícenásobné alba
 	DE	Mehrfach-Alben nicht gruppieren
 	EN	Treat multi-disc sets as multiple albums
 	ES	Considerar discos múltiples como discos múltiples
@@ -5058,6 +5395,7 @@ PLAYER
 	SE	Spelare
 
 CURRENT_PLAYER
+	CZ	Aktuální přehrávač:
 	DE	Aktueller Player:
 	DK	Valgt afspiller:
 	EN	Current player:
@@ -5071,6 +5409,7 @@ CURRENT_PLAYER
 	SE	Aktuell spelare:
 
 NOW_PLAYING_ON
+	CZ	Nyní hraje na serveru v
 	DE	Aktuell spielt von
 	DK	Afspiller nu på player
 	EN	Now playing on the player at
@@ -5085,6 +5424,7 @@ NOW_PLAYING_ON
 	SE	Spelas nu på Slim Player
 
 SKIP
+	CZ	Přeskočit
 	DE	Überspringen
 	DK	Næste
 	EN	Skip
@@ -5099,6 +5439,7 @@ SKIP
 	SE	Nästa
 
 FFWD
+	CZ	Rychle dopředu
 	DE	Vorwärtsspulen
 	DK	Spol frem
 	EN	Fast Forward
@@ -5111,6 +5452,7 @@ FFWD
 	SE	Snabbspola framåt
 
 REW
+	CZ	Přetočit zpět
 	DE	Zurückspulen
 	DK	Spol tilbage
 	EN	Rewind
@@ -5123,6 +5465,7 @@ REW
 	SE	Snabbspola bakåt
 
 PLAY
+	CZ	Hrát
 	DE	Abspielen
 	DK	Afspil
 	EN	Play
@@ -5137,6 +5480,7 @@ PLAY
 	SE	Spela
 
 PLAY_THIS_SONG
+	CZ	Hrát tuto skladbu
 	DE	Diesen Titel spielen
 	DK	Afspil denne sang
 	EN	Play this song
@@ -5149,6 +5493,7 @@ PLAY_THIS_SONG
 	SE	Spela denna låt
 
 REMOVE_THIS_SONG_FROM_PLAYLIST
+	CZ	Odtranit skladbu z playlistu
 	DE	Titel aus der Playlist entfernen
 	DK	Fjern denne sang fra playlisten
 	EN	Remove this song from playlist
@@ -5160,6 +5505,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 	SE	Ta bort denna låt från låtlistan
 
 ADD_THIS_SONG_TO_PLAYLIST
+	CZ	Přidat píseň do playlistu
 	DE	Füge diesen Titel zur Playlist hinzu
 	DK	Tilføj denne sang til playlisten
 	EN	Add this song to the playlist
@@ -5172,6 +5518,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	SE	Lägg till denna låt i låtlistan
 
 PAUSE
+	CZ	Pauza
 	DE	Pause
 	DK	Pause
 	EN	Pause
@@ -5200,6 +5547,7 @@ STOP
 	SE	Stopp
 
 STOPPED
+	CZ	Zastaveno
 	DE	Gestoppt
 	DK	Stop
 	EN	Stopped
@@ -5214,6 +5562,7 @@ STOPPED
 	SE	Stoppad
 
 REPEAT
+	CZ	Opakovat
 	DE	Wiederholen
 	DK	Gentag
 	EN	Repeat
@@ -5228,6 +5577,7 @@ REPEAT
 	SE	Repetera
 
 ONE
+	CZ	jeden
 	DE	Eins
 	DK	denne
 	EN	one
@@ -5241,6 +5591,7 @@ ONE
 	SE	Låt
 
 MCONE
+	CZ	Jeden
 	DE	Eins
 	DK	Denne
 	EN	One
@@ -5254,6 +5605,7 @@ MCONE
 	SE	Låt
 
 ALL
+	CZ	Vše
 	DE	Alle
 	DK	alle
 	EN	all
@@ -5267,6 +5619,7 @@ ALL
 	SE	Alla
 
 MCALL
+	CZ	Vše
 	DE	Alle
 	DK	Alle
 	EN	All
@@ -5280,6 +5633,7 @@ MCALL
 	SE	Alla
 
 OFF
+	CZ	Vypnuto
 	DE	Aus
 	DK	fra
 	EN	off
@@ -5293,6 +5647,7 @@ OFF
 	SE	av
 
 ON
+	CZ	zapnuto
 	DE	An
 	DK	til
 	EN	on
@@ -5306,6 +5661,7 @@ ON
 	SE	på
 
 MCON
+	CZ	Zapnuto
 	DE	An
 	DK	Til
 	EN	On
@@ -5319,6 +5675,7 @@ MCON
 	SE	På
 
 MCOFF
+	CZ	Vypnuto
 	DE	Aus
 	DK	Fra
 	EN	Off
@@ -5332,6 +5689,7 @@ MCOFF
 	SE	Av
 
 MOVEUP
+	CZ	Přesunout nahoru
 	DE	Eins rauf
 	DK	Flyt op
 	EN	Move Up
@@ -5344,6 +5702,7 @@ MOVEUP
 	SE	Flytta upp
 
 MOVEDOWN
+	CZ	Přesunout dolů
 	DE	Eins runter
 	DK	Flyt ned
 	EN	Move Down
@@ -5356,6 +5715,7 @@ MOVEDOWN
 	SE	Flytta ned
 
 ADD
+	CZ	Přidat
 	DE	Hinzufügen
 	DK	Tilføj
 	EN	Add
@@ -5368,6 +5728,7 @@ ADD
 	SE	Lägg till
 
 SHUFFLE
+	CZ	Náhodně
 	DE	Zufall
 	DK	Vilkårlig rækkefølge
 	EN	Shuffle
@@ -5382,6 +5743,7 @@ SHUFFLE
 	SE	Blanda
 
 SHUFFLE_ON_SONGS
+	CZ	Zamíchat skladby
 	DE	Zufällige Titelreihenfolge
 	DK	Vilkårlig sang-rækkefølge
 	EN	Shuffle by Song
@@ -5394,6 +5756,7 @@ SHUFFLE_ON_SONGS
 	SE	Blanda låtar
 
 SHUFFLE_ON_ALBUMS
+	CZ	Zamíchat album
 	DE	Zufällige Albumreihenfolge
 	DK	Vilkårlig album-rækkefølge
 	EN	Shuffle by Album
@@ -5406,6 +5769,7 @@ SHUFFLE_ON_ALBUMS
 	SE	Blanda album
 
 SHUFFLE_ON
+	CZ	Zamíchat playlist
 	DE	Zufälliges Abspielen der Playlist
 	DK	Vilkårlig playliste
 	EN	Shuffle Playlist
@@ -5420,6 +5784,7 @@ SHUFFLE_ON
 	SE	Blanda låtlista
 
 SHUFFLE_OFF
+	CZ	Zrušit náhodné přehrávání playlistu
 	DE	Kein zufälliges Abspielen der Playlist
 	DK	Ikke-vilkårlig playliste
 	EN	Don't Shuffle Playlist
@@ -5434,6 +5799,7 @@ SHUFFLE_OFF
 	SE	Blanda inte låtlista
 
 ENABLED
+	CZ	Aktivní
 	DE	Aktiviert
 	EN	Enabled
 	ES	Habilitado
@@ -5443,6 +5809,7 @@ ENABLED
 	SE	Aktiverad
 
 DISABLED
+	CZ	Neaktivní
 	DE	Deaktiviert
 	EN	Disabled
 	ES	Deshabilitado
@@ -5452,6 +5819,7 @@ DISABLED
 	SE	Avaktiverad
 
 CLEAR_PLAYLIST
+	CZ	Vyčistit playlist
 	DE	Playlist Löschen
 	DK	Nulstil playlisten
 	EN	Clear playlist
@@ -5466,6 +5834,7 @@ CLEAR_PLAYLIST
 	SE	Rensa låtlista
 
 VOLUME
+	CZ	Hlasitost
 	DE	Lautstärke
 	DK	Volume
 	EN	Volume
@@ -5480,6 +5849,7 @@ VOLUME
 	SE	Volym
 
 VOLUME_SOFTER
+	CZ	Měkčí
 	DE	Leiser
 	DK	Lavere
 	EN	Softer
@@ -5508,6 +5878,7 @@ VOLUME_LOUDER
 	SE	Högre
 
 TREBLE
+	CZ	Středy
 	DE	Höhen
 	DK	Diskant
 	EN	Treble
@@ -5520,6 +5891,7 @@ TREBLE
 	SE	Diskant
 
 BASS
+	CZ	Basy
 	DE	Bass
 	DK	Bas
 	EN	Bass
@@ -5532,6 +5904,7 @@ BASS
 	SE	Bas
 
 PITCH
+	CZ	Odstup
 	DE	Pitch
 	EN	Pitch
 	ES	Modulación
@@ -5541,6 +5914,7 @@ PITCH
 	SE	Pitch
 
 TEXTSIZE
+	CZ	Velikost textu
 	DE	Textgröße
 	DK	Tekststørrelse
 	EN	Text Size
@@ -5554,6 +5928,7 @@ TEXTSIZE
 	SE	Textstorlek
 
 OFFDISPLAYSIZE
+	CZ	Velikost textu pro StandBy mód
 	DE	Textgrösse im Standby Modus
 	EN	Standby Text Size
 	ES	Tamaño de texto para modo Standby
@@ -5564,6 +5939,7 @@ OFFDISPLAYSIZE
 	SE	Textstorlek i standby-läge
 
 LARGE
+	CZ	Veliký
 	DE	Gross
 	DK	Stor
 	EN	Large
@@ -5577,6 +5953,7 @@ LARGE
 	SE	Stor
 
 SMALL
+	CZ	Malý
 	DE	Klein
 	DK	Lille
 	EN	Small
@@ -5590,6 +5967,7 @@ SMALL
 	SE	Liten
 
 MEDIUM
+	CZ	Střední
 	DE	Mittel
 	EN	Medium
 	ES	Medio
@@ -5597,6 +5975,7 @@ MEDIUM
 	JP	中
 
 HUGE
+	CZ	Rozsáhlý
 	DE	Sehr Gross
 	EN	Huge
 	ES	Muy grande
@@ -5604,16 +5983,19 @@ HUGE
 	JP	特大
 
 NONE
+	CZ	Žádný
 	DE	Keine
 	EN	None
 	ES	Ninguno
 
 HIGH
+	CZ	Vysoký
 	DE	Hoch
 	EN	High
 	ES	Alto
 
 TITLEFORMAT
+	CZ	Formát názvu skladby
 	DE	Titel Format
 	DK	Format for sangtitler
 	EN	Song Title Format
@@ -5634,6 +6016,7 @@ TITLEFORMAT_DBL
 	SE	Titelformat
 
 CURRENT_PLAYLIST
+	CZ	Aktuální playlist
 	DE	Die aktuelle Playlist
 	DK	Aktiv playliste
 	EN	The current playlist
@@ -5648,6 +6031,7 @@ CURRENT_PLAYLIST
 	SE	Aktuell låtlista
 
 DOWNLOAD
+	CZ	Stáhnout
 	DE	Herunterladen
 	DK	Hent
 	EN	Download
@@ -5662,6 +6046,7 @@ DOWNLOAD
 	SE	Ladda ned
 
 CLEAR
+	CZ	Vyčistit
 	DE	Löschen
 	DK	Nulstil
 	EN	Clear
@@ -5675,6 +6060,7 @@ CLEAR
 	SE	Rensa
 
 SAVE
+	CZ	Uložit
 	DE	Speichern
 	DK	Gem
 	EN	Save
@@ -5688,6 +6074,7 @@ SAVE
 	SE	Spara
 
 RENAME
+	CZ	Přejmenovat
 	DE	Umbenennen
 	DK	Omdøb
 	EN	Rename
@@ -5700,6 +6087,7 @@ RENAME
 	SE	Byt namn
 
 SAVED_PLAYLISTS
+	CZ	Procházet playlisty
 	DE	Playlisten nachschlagen
 	DK	Gemte playlister
 	EN	Browse Playlists
@@ -5719,6 +6107,7 @@ SAVED_PLAYLISTS_DBL
 	SE	Låtlistor
 
 PLAYLISTDIR
+	CZ	Adresář uložených playlistů
 	DE	Verzeichnis für Playlisten
 	DK	Mappe med playlister
 	EN	Saved Playlists Folder
@@ -5732,6 +6121,7 @@ PLAYLISTDIR
 	SE	Mapp för sparade låtlistor
 
 PLAYLISTDIR_IS_NOW
+	CZ	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
 	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Playlisten gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Playlists speichern wollen)
 	DK	Du kan angive stien til en mappe hvor dine gemte playlister er placeret. Lad feltet være tomt hvis du ikke ønsker at anvende gemte playlister.
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
@@ -5745,6 +6135,7 @@ PLAYLISTDIR_IS_NOW
 	SE	Du kan ange sökvägen till mappen där dina sparade låtlistor lagras. (Du kan lämna detta fält tomt om du inte vill spara låtlistor)
 
 THIS_PLAYLIST_AS
+	CZ	tento playlist jako:
 	DE	dieser Playlist zu:
 	DK	denne playliste som:
 	EN	this playlist as:
@@ -5757,6 +6148,7 @@ THIS_PLAYLIST_AS
 	SE	denna låtlista som:
 
 SAVE_THIS_PLAYLIST_AS
+	CZ	Uložit playlist jako:
 	DE	Diese Playlist speichern als:
 	DK	Gem denne playliste som:
 	EN	Save this playlist as:
@@ -5770,6 +6162,7 @@ SAVE_THIS_PLAYLIST_AS
 	SE	Spara låtlistan som:
 
 UNTITLED
+	CZ	Nepojmenovaný
 	DE	Ohne Titel
 	DK	Unavngivet
 	EN	Untitled
@@ -5783,6 +6176,7 @@ UNTITLED
 	SE	Namnlös
 
 DELETE_THIS_PLAYLIST
+	CZ	Vymazat playlist
 	DE	Diese Playlist löschen
 	DK	Slet denne playliste
 	EN	Delete this playlist
@@ -5796,6 +6190,7 @@ DELETE_THIS_PLAYLIST
 	SE	Radera låtlistan
 
 THIS_ENTIRE_PLAYLIST
+	CZ	Tenhle celý playlist
 	DE	Diese vollständige Playlist
 	DK	Hele denne playliste
 	EN	This entire playlist
@@ -5809,6 +6204,7 @@ THIS_ENTIRE_PLAYLIST
 	SE	Hela låtlistan
 
 REMOVE_FROM_PLAYLIST
+	CZ	Odstranit z playlistu
 	DE	Aus Playlist entfernen
 	DK	Fjern denne playlist
 	EN	Remove from playlist
@@ -5820,6 +6216,7 @@ REMOVE_FROM_PLAYLIST
 	SE	Ta bort från låtlistan
 
 ADD_TO_PLAYLIST
+	CZ	Přidat do playlistu
 	DE	Zur Liste hinzufügen
 	DK	Føj til playlisten
 	EN	Add to playlist
@@ -5834,6 +6231,7 @@ ADD_TO_PLAYLIST
 	SE	Lägg till i låtlistan
 
 CONFIRM_OVERWRITE
+	CZ	Opravdu přepsat?
 	DE	Überschreiben bestätigen
 	EN	Confirm Overwrite
 	ES	Confirmar Sobre-escritura
@@ -5842,6 +6240,7 @@ CONFIRM_OVERWRITE
 	SE	bekräfta överskrivning
 
 TRACK
+	CZ	Skladba
 	DE	Lied
 	DK	Track
 	EN	Track
@@ -5856,6 +6255,7 @@ TRACK
 	SE	Spår
 
 SONGTITLE
+	CZ	Název skladby
 	DE	Liedertitel
 	DK	Sangtitel
 	EN	Song Title
@@ -5869,6 +6269,7 @@ SONGTITLE
 	SE	Låt
 
 TITLE
+	CZ	Skladba
 	DE	Titel
 	DK	Titel
 	EN	Title
@@ -5882,6 +6283,7 @@ TITLE
 	SE	Titel
 
 ARTIST
+	CZ	Interpret
 	DE	Interpret
 	DK	Kunstner
 	EN	Artist
@@ -5895,6 +6297,7 @@ ARTIST
 	SE	Artist
 
 COMPOSER
+	CZ	Skladatel
 	DE	Komponist
 	DK	Komponist
 	EN	Composer
@@ -5907,6 +6310,7 @@ COMPOSER
 	SE	Kompositör
 
 CONDUCTOR
+	CZ	Skladatel
 	DE	Dirigent
 	EN	Conductor
 	ES	Conductor
@@ -5916,6 +6320,7 @@ CONDUCTOR
 	SE	Dirigent
 
 BAND
+	CZ	Skupina
 	DE	Band/Orchester
 	DK	Band/Orkester
 	EN	Band/Orchestra
@@ -5941,6 +6346,7 @@ ALBUM
 	SE	Album
 
 DISC
+	CZ	Disk
 	DE	Disk
 	DK	Disc
 	EN	Disc
@@ -5953,6 +6359,7 @@ DISC
 	SE	Skiva
 
 LENGTH
+	CZ	Délka
 	DE	Dauer
 	DK	Varighed
 	EN	Duration
@@ -5966,6 +6373,7 @@ LENGTH
 	SE	Längd
 
 TYPE
+	CZ	Formát souboru
 	DE	Datenformat
 	DK	Filformat
 	EN	File Format
@@ -5982,6 +6390,7 @@ APE
 	ES	Monkey's Audio
 
 MP3
+	CZ	mp3
 	EN	MP3
 	ES	MP3
 
@@ -6010,6 +6419,7 @@ M3U
 	SE	M3U-låtlista
 
 PLS
+	CZ	PLS playlist
 	DE	PLS Wiedergabeliste
 	EN	PLS Playlist
 	ES	Lista PLS
@@ -6039,6 +6449,7 @@ AIF
 	EN	AIFF
 
 UNK
+	CZ	Neznámý
 	DE	Unbekannt
 	DK	Ukendt
 	EN	Unknown
@@ -6065,6 +6476,7 @@ OGG
 	EN	Ogg Vorbis
 
 MODIFIED
+	CZ	Modifikováno
 	DE	Geändert
 	EN	Modified
 	ES	Modificado
@@ -6072,6 +6484,7 @@ MODIFIED
 	JP	変更された
 
 MODTIME
+	CZ	Změněno dne
 	DE	Datum geändert
 	DK	Dato ændret
 	EN	Date Modified
@@ -6084,6 +6497,7 @@ MODTIME
 	SE	Modifierat datum
 
 COVERART
+	CZ	Obal
 	DE	Plattencover
 	DK	Cover-billede
 	EN	Artwork
@@ -6096,6 +6510,7 @@ COVERART
 	SE	Albumomslag
 
 FILELENGTH
+	CZ	Velikost souboru
 	DE	Dateigrösse
 	DK	Filstørrelse
 	EN	File Length
@@ -6109,6 +6524,7 @@ FILELENGTH
 	SE	Filstorlek
 
 NO_ARTIST
+	CZ	Žádný interpret
 	DE	Kein Artist
 	DK	Ingen kunstner
 	EN	No Artist
@@ -6121,6 +6537,7 @@ NO_ARTIST
 	SE	Ingen artist
 
 NO_ALBUM
+	CZ	Žádné album
 	DE	Kein Album
 	DK	Intet album
 	EN	No Album
@@ -6133,6 +6550,7 @@ NO_ALBUM
 	SE	Inget album
 
 NO_GENRE
+	CZ	Žádný žánr
 	DE	Keine Stilrichtung
 	DK	Ingen genre
 	EN	No Genre
@@ -6145,6 +6563,7 @@ NO_GENRE
 	SE	Ingen genre
 
 NO_TITLE
+	CZ	Žádná skladba
 	DE	Kein Titel
 	DK	Ingen titel
 	EN	No Title
@@ -6157,6 +6576,7 @@ NO_TITLE
 	SE	Ingen titel
 
 THOUSANDS_SEP
+	CZ	.
 	DE	'
 	DK	.
 	EN	,
@@ -6193,6 +6613,7 @@ BITRATE
 	SE	Bithastighet
 
 BPM
+	CZ	Beatů za minutu
 	DE	Beats pro Minute
 	EN	Beats Per Minute
 	ES	Golpes Po Minuto
@@ -6200,6 +6621,7 @@ BPM
 	JP	ビート数/分
 
 DRM
+	CZ	Soubor je uzamčen Digital Rights Management
 	DE	Die Datei ist durch einen Kopierschutz (Digital Rights Management, DRM) geschützt
 	EN	This file is locked by Digital Rights Management
 	ES	Este archivo está protegido por DRM ( Digital Rights Management - Manejo de Derechos Digitales)
@@ -6207,6 +6629,7 @@ DRM
 	JP	このファイルはDigital Rights Managementによりロックされています
 
 YEAR
+	CZ	Rok
 	DE	Jahr
 	DK	År
 	EN	Year
@@ -6220,6 +6643,7 @@ YEAR
 	SE	År
 
 GENRE
+	CZ	Styl
 	DE	Stilrichtung
 	DK	Genre
 	EN	Genre
@@ -6233,6 +6657,7 @@ GENRE
 	SE	Genre
 
 COMMENT
+	CZ	Poznámka
 	DE	Anmerkung
 	DK	Kommentar
 	EN	Comment
@@ -6246,6 +6671,7 @@ COMMENT
 	SE	Kommentar
 
 TAGVERSION
+	CZ	Verze ID tagu
 	DE	ID3-Tag Version
 	DK	ID3-version
 	EN	ID3 Tag Version
@@ -6258,6 +6684,7 @@ TAGVERSION
 	SE	ID3-version
 
 LOCATION
+	CZ	Umístění
 	DE	Ort
 	DK	Sti
 	EN	Location
@@ -6282,6 +6709,7 @@ KBPS
 	SE	kbps
 
 NO_LIMIT
+	CZ	Bez limitu
 	DE	Keine Einschränkung
 	EN	No Limit
 	ES	Sin Límite
@@ -6290,6 +6718,7 @@ NO_LIMIT
 	SE	Ingen begränsning
 
 GENRES
+	CZ	Styly
 	DE	Stilrichtungen
 	DK	Genrer
 	EN	Genres
@@ -6303,6 +6732,7 @@ GENRES
 	SE	Genrer
 
 ARTISTS
+	CZ	Interpretů
 	DE	Interpreten
 	DK	Kunstnere
 	EN	Artists
@@ -6316,6 +6746,7 @@ ARTISTS
 	SE	Artister
 
 LCARTISTS
+	CZ	interpretů
 	DE	Interpreten
 	DK	kunstnere
 	EN	artists
@@ -6329,6 +6760,7 @@ LCARTISTS
 	SE	artister
 
 ALBUMS
+	CZ	alb,
 	DE	Alben
 	DK	Albums
 	EN	Albums
@@ -6342,6 +6774,7 @@ ALBUMS
 	SE	Album
 
 LCALBUMS
+	CZ	alba
 	DE	Alben
 	DK	albums
 	EN	albums
@@ -6355,6 +6788,7 @@ LCALBUMS
 	SE	album
 
 ALL_SONGS
+	CZ	Všechny skladby
 	DE	Alle Titel
 	DK	Alle sange
 	EN	All Songs
@@ -6367,6 +6801,7 @@ ALL_SONGS
 	SE	Alla låtar
 
 ALL_ARTISTS
+	CZ	Všichni iinterpreti
 	DE	Alle Interpreten
 	EN	All Artists
 	ES	Todos los Artistas
@@ -6376,6 +6811,7 @@ ALL_ARTISTS
 	SE	Alla artister
 
 ALL_ALBUMS
+	CZ	Všechny alba
 	DE	Alle Alben
 	DK	Alle albums
 	EN	All Albums
@@ -6388,6 +6824,7 @@ ALL_ALBUMS
 	SE	Alla album
 
 ALL_SUBFOLDERS
+	CZ	Včetně podadresářů
 	DE	Alle Unterverzeichnisse
 	EN	All Subfolders
 	ES	Todas las Subcarpetas
@@ -6397,6 +6834,7 @@ ALL_SUBFOLDERS
 	SE	Alla undermappar
 
 OF
+	CZ	z
 	DE	von
 	DK	af
 	EN	of
@@ -6410,6 +6848,7 @@ OF
 	SE	av
 
 TO
+	CZ	až
 	DE	bis
 	DK	til
 	EN	to
@@ -6423,6 +6862,7 @@ TO
 	SE	till
 
 WITH
+	CZ	obsahujících
 	DE	mit
 	DK	med
 	EN	with
@@ -6435,6 +6875,7 @@ WITH
 	SE	med
 
 PAGES
+	CZ	Stránek
 	DE	Seiten
 	DK	Sider
 	EN	Pages
@@ -6448,10 +6889,12 @@ PAGES
 	SE	Sidor
 
 ITEMS
+	CZ	Položky
 	DE	Einträge
 	EN	Items
 
 SONGS
+	CZ	Skladeb
 	DE	Titel
 	DK	Sange
 	EN	Songs
@@ -6465,6 +6908,7 @@ SONGS
 	SE	Låtar
 
 SONG
+	CZ	Skladba
 	DE	Titel
 	DK	Sange
 	EN	Song
@@ -6478,6 +6922,7 @@ SONG
 	SE	Låt
 
 LCSONGS
+	CZ	skladby
 	DE	Titel
 	DK	sange
 	EN	songs
@@ -6491,6 +6936,7 @@ LCSONGS
 	SE	Låtar
 
 BROWSE
+	CZ	Procházet
 	DE	Nachschlagen
 	DK	Gennemse
 	EN	Browse
@@ -6503,6 +6949,7 @@ BROWSE
 	SE	Bläddra
 
 BROWSE_MUSIC
+	CZ	Procházet archiv
 	DE	Musik nachschlagen
 	DK	Gennemse musik
 	EN	Browse Music
@@ -6516,6 +6963,7 @@ BROWSE_MUSIC
 	SE	Bläddra Musik
 
 BROWSE_BY_GENRE
+	CZ	Procházet podle žánrů
 	DE	Stilrichtung nachschlagen
 	DK	Gennemse genrer
 	EN	Browse Genres
@@ -6532,6 +6980,7 @@ BROWSE_BY_GENRE_DBL
 	FR	Parcours genre
 
 BROWSE_BY_ARTIST
+	CZ	Procházet podle interpretů
 	DE	Interpret nachschlagen
 	DK	Gennemse kunstnere
 	EN	Browse Artists
@@ -6548,6 +6997,7 @@ BROWSE_BY_ARTIST_DBL
 	FR	Parcours artistes
 
 BROWSE_BY_ALBUM
+	CZ	Procházet podle alb
 	DE	Album nachschlagen
 	DK	Gennemse albums
 	EN	Browse Albums
@@ -6564,6 +7014,7 @@ BROWSE_BY_ALBUM_DBL
 	FR	Parcours albums
 
 BROWSE_BY_ARTWORK
+	CZ	Procházet podle obalů
 	DE	Plattencover nachschlagen
 	EN	Browse Artwork
 	ES	Examinar por Arte de Tapa
@@ -6576,11 +7027,13 @@ BROWSE_BY_ARTWORK_DBL
 	FR	Parcours pochettes
 
 BROWSE_NEW_MUSIC
+	CZ	Procházet novinky
 	DE	Neue Musikstücke
 	EN	New Music
 	ES	Música nueva
 
 BROWSE_BY_SONG
+	CZ	Procházet podle skladeb
 	DE	Titel nachschlagen
 	DK	Gennemse sange
 	EN	Browse Songs
@@ -6597,11 +7050,13 @@ BROWSE_BY_SONG_DBL
 	FR	Parcours morceaux
 
 BROWSE_BY_YEAR
+	CZ	Procházet podle roku vydání
 	DE	Jahrgänge nachschlagen
 	EN	Browse Years
 	ES	Examinar por Año
 
 BROWSE_MUSIC_FOLDER
+	CZ	Procházet podle adresářů
 	DE	Musikverzeichnis durchsuchen
 	DK	Gennemse hele musiksamlingen
 	EN	Browse Music Folder
@@ -6615,6 +7070,7 @@ BROWSE_MUSIC_FOLDER
 	SE	Bläddra musikmapp
 
 SYNCHRONIZE
+	CZ	Synchronizovat
 	DE	Synchronisieren
 	DK	Synkronisér
 	EN	Synchronize
@@ -6628,6 +7084,7 @@ SYNCHRONIZE
 	SE	Synkronisera
 
 NOT_SYNCHRONIZED
+	CZ	Nesynchronizováno
 	DE	Nicht synchronisiert
 	EN	Not Synchronized
 	ES	No Sincronizado
@@ -6635,6 +7092,7 @@ NOT_SYNCHRONIZED
 	SE	Inte synkroniserad
 
 SYNCHRONIZED_WITH
+	CZ	Synchronizováno s
 	DE	Synchronisiert mit
 	DK	Synkroniseret med
 	EN	Synced with
@@ -6658,6 +7116,7 @@ SLIMTRIS
 	SE	SlimTris
 
 PLUGINS
+	CZ	Pluginy
 	DE	Plugins
 	DK	Moduler
 	EN	Plugins
@@ -6670,6 +7129,7 @@ PLUGINS
 	SE	Tillägg
 
 NEXT
+	CZ	Další
 	DE	Nächste
 	DK	Næste
 	EN	Next
@@ -6683,6 +7143,7 @@ NEXT
 	SE	Nästa
 
 PREVIOUS
+	CZ	Předchozí
 	DE	Vorherige
 	DK	Forrige
 	EN	Previous
@@ -6696,6 +7157,7 @@ PREVIOUS
 	SE	Föregående
 
 PREV
+	CZ	Předchozí
 	DE	Vorherige
 	DK	Forrige
 	EN	Previous
@@ -6709,6 +7171,7 @@ PREV
 	SE	Föregående
 
 FIRST
+	CZ	První
 	DE	Erste
 	DK	Første
 	EN	First
@@ -6722,6 +7185,7 @@ FIRST
 	SE	Första
 
 LAST
+	CZ	Minulý
 	DE	Letzte
 	DK	Sidste
 	EN	Last
@@ -6735,6 +7199,7 @@ LAST
 	SE	Sista
 
 MOSTPLAYED
+	CZ	Nejčastěji hrané skladby
 	DE	Am häufigsten gespielte Lieder
 	DK	Mest populære sange
 	EN	Most Played Songs
@@ -6748,6 +7213,7 @@ MOSTPLAYED
 	SE	Mest spelade låtar
 
 SONG_INFO
+	CZ	Informace o skladbě
 	DE	Titelinformation
 	DK	Information
 	EN	Song Info
@@ -6761,6 +7227,7 @@ SONG_INFO
 	SE	Låtinfo
 
 NOTE
+	CZ	Poznámka:
 	DE	Bemerkung:
 	DK	Note:
 	EN	Note:
@@ -6774,6 +7241,7 @@ NOTE
 	SE	Observera:
 
 RENAME_WARNING
+	CZ	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
 	DE	Der gewählte Name wird bereits verwendet. Bitte verwenden Sie einen anderen Namen für die Playlist oder kreuzen Sie "Überschreiben bestätigen" an.
 	DK	Det valgte navn er optaget. Vælg venligst et andet navn for din playliste.
 	EN	The name you chose is already taken. Please choose another name for your playlist, or check 'confirm overwrite' to replace your existing playlist.
@@ -6786,6 +7254,7 @@ RENAME_WARNING
 	SE	Namnet du valde används redan. Välj ett annat namn för din låtlista.
 
 SCAN_WARNING
+	CZ	SlimServer stále prohledává hudební archiv, takže se některé položky nyní nemusí zobrazit.
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
 	DK	SlimServer gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
 	EN	SlimServer is still scanning your music library, so some items may not appear in this area yet.
@@ -6804,6 +7273,7 @@ HOME_SCAN_WARNING
 	ES	SlimServer está todavía recopilando la colección musical, por favor sea paciente ya que esto puede llevar un cierto tiempo.
 
 SCAN_CLICK
+	CZ	Klikněte pro přímé procházení hudebního archivu
 	DE	Klicken Sie, um ihre Musikverzeichnis direkt zu durchsuchen,
 	DK	For at gennemse hele din musiksamling, klik
 	EN	To browse your music folder directly, click
@@ -6817,6 +7287,7 @@ SCAN_CLICK
 	SE	För att bläddra i din musikmapp direkt, klicka
 
 HERE
+	CZ	zde
 	DE	hier
 	DK	her
 	EN	here
@@ -6830,6 +7301,7 @@ HERE
 	SE	här
 
 FOR
+	CZ	pro
 	DE	für
 	DK	for
 	EN	for
@@ -6843,6 +7315,7 @@ FOR
 	SE	för
 
 PLAYER_SETTINGS
+	CZ	Nastavení přehrávače
 	DE	Player Einstellungen
 	DK	Afspiller-indstillinger
 	EN	Player Settings
@@ -6856,6 +7329,7 @@ PLAYER_SETTINGS
 	SE	Spelarinställningar
 
 ALARM_SETTINGS
+	CZ	Budík nastavení
 	DE	Wecker
 	EN	Alarm
 	ES	Alarma
@@ -6863,12 +7337,14 @@ ALARM_SETTINGS
 	JP	アラーム
 
 MENU_SETTINGS
+	CZ	Menu
 	DE	Menüs
 	EN	Menus
 	ES	Menus
 	JP	分
 
 DISPLAY_SETTINGS
+	CZ	Displej
 	DE	Anzeige
 	EN	Display
 	ES	Pantalla
@@ -6876,18 +7352,21 @@ DISPLAY_SETTINGS
 	JP	ディスプレー
 
 AUDIO_SETTINGS
+	CZ	Audio
 	EN	Audio
 	ES	Audio
 	JP	オーディオ
 	SE	Ljudinställningar
 
 REMOTE_SETTINGS
+	CZ	Vzdálený
 	DE	Fernsteuerung
 	EN	Remote
 	ES	Control Remoto
 	JP	リモコン
 
 PLAYERIR_SETTINGS
+	CZ	Nastavení IR
 	DE	IR Einstellungen
 	DK	IR-indstillinger
 	EN	IR Settings
@@ -6900,6 +7379,7 @@ PLAYERIR_SETTINGS
 	SE	IR-inställningar
 
 SERVER_SETTINGS
+	CZ	Nastavení serveru
 	DE	Server Einstellungen
 	DK	Server-indstillinger
 	EN	Server Settings
@@ -6913,6 +7393,7 @@ SERVER_SETTINGS
 	SE	Serverinställningar
 
 SLIMSERVER_SETTINGS
+	CZ	Nastavení SlimServeru
 	DE	SlimServer Einstellungen
 	DK	SlimServer indstillinger
 	EN	SlimServer Settings
@@ -6926,6 +7407,7 @@ SLIMSERVER_SETTINGS
 	SE	Inställningar för SlimServer
 
 ADDITIONAL_SERVER_SETTINGS
+	CZ	Pokročilá nastavení serveru
 	DE	Erweiterte Server Einstellungen
 	EN	Additional Server Settings
 	ES	Configuración avanzada del servidor
@@ -6938,6 +7420,7 @@ ADDITIONAL_SERVER_SETTINGS
 	SE	Extra inställningar
 
 INTERFACE_SETTINGS
+	CZ	Vzhled
 	DE	Interface
 	DK	Interface
 	EN	Interface
@@ -6950,6 +7433,7 @@ INTERFACE_SETTINGS
 	SE	Gränssnitt
 
 BEHAVIOR_SETTINGS
+	CZ	Chování
 	DE	Verhalten
 	DK	Funktion
 	EN	Behavior
@@ -6962,6 +7446,7 @@ BEHAVIOR_SETTINGS
 	SE	Beteende
 
 FORMATS_SETTINGS
+	CZ	Typy souborů
 	DE	Dateiarten
 	DK	Filtyper
 	EN	File Types
@@ -6974,6 +7459,7 @@ FORMATS_SETTINGS
 	SE	Filtyper
 
 SECURITY_SETTINGS
+	CZ	Zabezpečení
 	DE	Sicherheit
 	DK	Sikkerhed
 	EN	Security
@@ -6986,6 +7472,7 @@ SECURITY_SETTINGS
 	SE	Säkerhet
 
 PERFORMANCE_SETTINGS
+	CZ	Výkon
 	DE	Leistung
 	DK	Ydelse
 	EN	Performance
@@ -6998,6 +7485,7 @@ PERFORMANCE_SETTINGS
 	SE	Prestanda
 
 FORMATTING_SETTINGS
+	CZ	Formáty
 	DE	Formatierung
 	DK	Formatering
 	EN	Formatting
@@ -7010,6 +7498,7 @@ FORMATTING_SETTINGS
 	SE	Format
 
 NETWORK_SETTINGS
+	CZ	Síťová nastavení
 	DE	Netzwerk
 	DK	Netværk
 	EN	Network
@@ -7033,6 +7522,7 @@ SETUP_GROUP_DEBUG_DESC
 	SE	SlimServer har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
 
 DEBUGGING_SETTINGS
+	CZ	Krokování
 	DE	Fehlerbeseitigung
 	DK	Fejlsøgning
 	EN	Debugging
@@ -7045,6 +7535,7 @@ DEBUGGING_SETTINGS
 	SE	Felsökning
 
 CHANGE
+	CZ	Změnit
 	DE	Ändern
 	DK	Ret
 	EN	Change
@@ -7058,6 +7549,7 @@ CHANGE
 	SE	Ändra
 
 PLAYER_IP_ADDRESS
+	CZ	IP adresa tohoto přehrávače je:
 	DE	Die IP-Adresse für diesen Player ist:
 	DK	IP-adressen for denne afspiller er:
 	EN	The IP address for this player is:
@@ -7071,6 +7563,7 @@ PLAYER_IP_ADDRESS
 	SE	Spelarens IP-adress är:
 
 PLAYER_MAC_ADDRESS
+	CZ	MAC adresa pro tento přehrávač je:
 	DE	Die MAC-Adresse für diesen Player ist:
 	DK	MAC-adressen for denne afspiller er:
 	EN	The ethernet MAC address for this player is:
@@ -7084,6 +7577,7 @@ PLAYER_MAC_ADDRESS
 	SE	Spelarens MAC-adress är:
 
 CHOOSE_NAME_DESCRIPTION
+	CZ	Můžete dát přehrávači jméno pod kterým se bude zde zobrazovat.
 	DE	Sie können dem Player einen Namen geben.
 	DK	Du kan give denne afspillet et navn som vil blive brugt til at identificere denne afspiller på disse web-sider.
 	EN	You can give this player a name that will be used to identify the player.
@@ -7097,6 +7591,7 @@ CHOOSE_NAME_DESCRIPTION
 	SE	Du kan ge denna spelare ett namn som kommer att användas för att identifiera den i webgränssnittet.
 
 CHOOSE_A_NAME
+	CZ	Jméno přehrávače:
 	DE	Wählen Sie einen Namen für diesen Player:
 	DK	Afspiller-navn:
 	EN	Player name:
@@ -7110,11 +7605,12 @@ CHOOSE_A_NAME
 	SE	Namn:
 
 BRIGHTNESS_ON
+	CZ	Jas pro 'zapnuto':
 	DE	Helligkeit im eingeschalteten Zustand:
 	DK	Lysstyrke når tændt:
 	EN	Brightness when on:
-	ES	Nivel de Luminosidad cuando está encendidod:
 	ES	Luminosidad mientras encendido:
+	ES	Nivel de Luminosidad cuando está encendidod:
 	FI	Näytön kirkkaus soittimen ollessa päällä:
 	FR	Luminosité lorsqu'allumé :
 	JP	パワーオン時の明るさ :
@@ -7124,6 +7620,7 @@ BRIGHTNESS_ON
 	SE	Ljusstyrka i påslaget läge:
 
 BRIGHTNESS_OFF
+	CZ	Jas pro 'standby':
 	DE	Helligkeit im ausgeschalteten Zustand:
 	DK	Lysstyrke når slukket:
 	EN	Brightness in standby:
@@ -7137,6 +7634,7 @@ BRIGHTNESS_OFF
 	SE	Ljusstyrka i avslaget läge:
 
 BRIGHTNESS_DARK
+	CZ	Tmavý
 	DE	Dunkel
 	DK	Slukket
 	EN	Dark
@@ -7150,6 +7648,7 @@ BRIGHTNESS_DARK
 	SE	Mörk
 
 BRIGHTNESS_BRIGHTEST
+	CZ	Jas
 	DE	Am hellsten
 	DK	Kraftigst
 	EN	Brightest
@@ -7163,6 +7662,7 @@ BRIGHTNESS_BRIGHTEST
 	SE	Starkast
 
 CHOOSE_PLAYING_DISPLAY_MODE
+	CZ	Přehrávač může zobrazovat informace o právě přehráváné skladbě. Vyberte informace, které chcete zobrazovat.
 	DE	Der Player kann die Spielzeit des aktuellen Titels darstellen. Wählen Sie, wie Sie die Zeit anzeigen möchten.
 	DK	Afspilleren kan vise statusinformation omkring afspilningen når den spiller. Vælg hvilken information du ønsker vist.
 	EN	The player can display information on the progress of a song as it's playing. Choose the information you wish to be displayed.
@@ -7176,16 +7676,19 @@ CHOOSE_PLAYING_DISPLAY_MODE
 	SE	Spelaren kan visa information om aktuell låt. Välj vilken information som skall visas.
 
 VISUALIZER_SPECTRUM_ANALYZER_SMALL
+	CZ	Malé spektrum
 	DE	Kleines Spectrum
 	EN	Small Spectrum
 	ES	Espectro pequeño
 
 VISUALIZER_VUMETER_SMALL
+	CZ	Malý VU
 	DE	Kleiner VU
 	EN	Small VU
 	ES	VU pequeño
 
 VISUALIZER_SPECTRUM_ANALYZER
+	CZ	Frekvenční spektrum
 	EN	Spectrum
 	ES	Espectro
 
@@ -7194,6 +7697,7 @@ VISUALIZER_VUMETER
 	ES	VU metro
 
 BLANK
+	CZ	Nic
 	DE	Nichts
 	DK	Intet
 	EN	Nothing
@@ -7207,6 +7711,7 @@ BLANK
 	SE	Inget
 
 ELAPSED
+	CZ	Uplynulý čas
 	DE	Vergangene Zeit
 	DK	Afspillet tid
 	EN	Elapsed Time
@@ -7220,6 +7725,7 @@ ELAPSED
 	SE	Förfluten tid
 
 PROGRESS_BAR
+	CZ	Stavová lišta
 	DE	Verlaufsanzeige
 	DK	Tids-bjælke
 	EN	Progress Bar
@@ -7233,6 +7739,7 @@ PROGRESS_BAR
 	SE	Tidsstapel
 
 REMAINING
+	CZ	Zbývající čas
 	DE	Verbleibende Zeit
 	DK	Tilbageværende tid
 	EN	Remaining Time
@@ -7246,6 +7753,7 @@ REMAINING
 	SE	Återstående tid
 
 AND
+	CZ	a
 	DE	und
 	DK	og
 	EN	and
@@ -7259,6 +7767,7 @@ AND
 	SE	och
 
 FORGET_PLAYER
+	CZ	Neregistrovat tento přehrávač
 	DE	Player verwerfen
 	DK	Glem spiller
 	EN	Forget Player
@@ -7272,6 +7781,7 @@ FORGET_PLAYER
 	SE	Glöm spelare
 
 FORGET_PLAYER_DESC
+	CZ	Jestliže nechcete, aby byl aktuální přehrávač nadále registrován v SlimServeru, můžete ho odregistrovat.
 	DE	Wenn Sie den Player nicht weiter verwenden möchten oder der Player doppelt vorkommt, können Sie ihn aus der Serverliste löschen.
 	DK	Hvis du ikke længere anvender denne afspiller eller afspilleren optræder to gange i listen over afspillere kan du vælge, at serveren skal glemme denne afspiller.
 	EN	If you no longer are using this player or this player appears twice in your list of players, you can choose to have the server forget about this player.
@@ -7285,6 +7795,7 @@ FORGET_PLAYER_DESC
 	SE	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
 
 FORGET_PLAYER_LINK
+	CZ	Neregistrovat tento přehrávač
 	DE	Diesen Player verwerfen
 	DK	Glem denne afspiller
 	EN	Forget this player
@@ -7298,6 +7809,7 @@ FORGET_PLAYER_LINK
 	SE	Glöm denna spelare
 
 MP3DIR_IS_NOW
+	CZ	Adresář, kde jsou umístěny hudební soubory:
 	DE	Das Verzeichnis, in dem sich ihre Musikdateien auf der Festplatte befinden:
 	DK	Mappen hvor dine MP3-filer er gemt på din harddisk.
 	EN	The directory where your music files are stored on your hard disk:
@@ -7311,6 +7823,7 @@ MP3DIR_IS_NOW
 	SE	Den mapp på din hårddisk där dina MP3-filer är lagrade:
 
 PORT_NUMBER
+	CZ	Zde můžete změnit port serveru, který je používán pro přístup k webowému rozhraní. Defaultně je nastaveno 9000.
 	DE	Sie können die Port-Nummer ändern, die für den Server-Zugriff mit Hilfe eines Web-Browsers verwendet wird (Standard ist 9000).
 	DK	Du kan ændre hvilket port-nummer der anvendes til at tilgå SlimServer via en web-browser. (Standard er 9000).
 	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
@@ -7324,6 +7837,7 @@ PORT_NUMBER
 	SE	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
 
 SCREENSAVER_TIMEOUT
+	CZ	Přehrávač  ukazuje automaticky aktuálně přehrávanou skladbu po zadtavení dálkovým ovladačem. Můžete změnit prodlevu po které to udělá. Nastavíte li prodlevu na nulu, nebude automaticky ukazovat aktuální skladbu.
 	DE	Der Player wird automatisch das aktuelle Lied anzeigen, nachdem Sie die Fernbedienung nicht mehr verwenden. Sie können die Wartezeit einstellen oder eine Null verwenden, um nie das aktuelle Lied anzuzeigen.
 	DK	SlimServer vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
 	EN	The player will automatically show the currently playing song after you stop using the remote for some amount of time. You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
@@ -7337,6 +7851,7 @@ SCREENSAVER_TIMEOUT
 	SE	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen. Nedan kan du ändra längden på denna fördröjning. Sätt fördröjningen till 0 (noll) för att aldrig automatiskt hoppa till "Spelas nu".
 
 DISPLAYTEXT_TIMEOUT
+	CZ	Nastavení časové prodlevy, po které přehrávač skočí při zadávání textu na další písmeno.
 	DE	Wenn Sie Text für eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit zwischen zwei Tastendrucken.
 	DK	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
@@ -7350,6 +7865,7 @@ DISPLAYTEXT_TIMEOUT
 	SE	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa tecken efter en liten fördröjning. Här kan du ändra denna fördröjning.
 
 SECONDS
+	CZ	sekund
 	DE	Sekunden
 	DK	sekunder
 	EN	seconds
@@ -7363,6 +7879,7 @@ SECONDS
 	SE	sekunder
 
 MINUTES
+	CZ	minut
 	DE	Minuten
 	DK	minutter
 	EN	minutes
@@ -7376,6 +7893,7 @@ MINUTES
 	SE	minuter
 
 CURRENT_WEB_SKIN
+	CZ	Aktuální skin:
 	DE	Aktueller Web-Skin:
 	DK	Aktivt web-layout:
 	EN	Current web skin:
@@ -7389,6 +7907,7 @@ CURRENT_WEB_SKIN
 	SE	Aktuellt webutseende (skin):
 
 DISPLAY_PLUGINS
+	CZ	Zobrazit plugin menu na SlimPlayeru:
 	DE	Anzeigen des Plugins Menü auf dem Slim Player:
 	DK	Viser Modul-menuen på SlimServer:
 	EN	Display the Plugins menu on the Slim player:
@@ -7401,6 +7920,7 @@ DISPLAY_PLUGINS
 	SE	Visa tilläggs-menyn på Slim-spelaren:
 
 SHOW_PLUGINS
+	CZ	Zobrazit pluginy
 	DE	Plugins anzeigen
 	DK	Vis moduler
 	EN	Show Plugins
@@ -7413,6 +7933,7 @@ SHOW_PLUGINS
 	SE	Visa tillägg
 
 NO_PLUGINS
+	CZ	Žádný dostupný plugin
 	DE	Keine Plugins vorhanden.
 	DK	Ingen moduler til rådighed.
 	EN	No Plugins available.
@@ -7477,6 +7998,7 @@ SOFTSQUEEZE_MUSIC_PLAYER
 	SE	SoftSqueeze musikspelare
 
 BY
+	CZ	od
 	DE	von
 	DK	af
 	EN	by
@@ -7490,6 +8012,7 @@ BY
 	SE	av
 
 FROM
+	CZ	z
 	DE	auf
 	DK	fra
 	EN	from
@@ -7503,6 +8026,7 @@ FROM
 	SE	från
 
 DELETE
+	CZ	Odstranit
 	DE	Löschen
 	DK	Fjern
 	EN	Remove
@@ -7516,6 +8040,7 @@ DELETE
 	SE	Ta bort
 
 NO_PLAYER_FOUND
+	CZ	Váš přehrávač nebyl nalezen.
 	DE	Kein Player gefunden.
 	DK	Din afspiller kunne ikke findes.
 	EN	Your player was not found.
@@ -7529,6 +8054,7 @@ NO_PLAYER_FOUND
 	SE	Din spelare kunde inte hittas.
 
 NO_PLAYER_DETAILS
+	CZ	<p><b>Pakliže používáte Squeezebox:</b></p><li> Ujistěte se, že je Váš přehrávač připojen a že máte správně nastavená síťová nastavení. Klikněte na tlačítko 'Obnovit' jestliže je přehrávač připojen.</li>  <br>  <p><b>Pokud nepoužíváte Squeezebox:</p></b>   <li>Můžete poslouchat obsah hudebního archivu použitím SoftSqueeze - softwarové verze Squeezeboxu.</li>  <li>Můžet také použít softwarový MP3 přehrávač (jako je WinAmp, MusicJukebox, Windows Media Player, nebo iTunes)  a poslouchat Váš hudební archiv otevřením URL: http://localhost:9000/stream.mp3 v přehrávači.</li>
 	DE	<b>Sie besitzen eine Squeezebox:</b><ul><li>Überprüfen Sie, ob der Player korrekt eingesteckt ist und die Netzwerkeinstellungen stimmen. Drücken Sie auf "Aktualisierung" im Menü ihres Browser, sobald der Player angeschlossen ist.</ul><p><b>Sie besitzen keine Squeezebox:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Verwenden Sie eine Software zur Wiedergabe von MP3-Streams (z.B. WinAmp oder iTunes), um über die folgende URL auf den SlimServer zugreifen zu können: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
 	EN	<b>If you own a Squeezebox:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -7541,6 +8067,7 @@ NO_PLAYER_DETAILS
 	SE	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webläsare för att försöka koppla upp mot din spelare igen.
 
 PLAYER_NEEDS_UPGRADE
+	CZ	Je k dispozici nová verze Squeezeboxu
 	DE	Squeezebox Software Update notwendig
 	EN	Squeezebox Software Update Required
 	ES	Se requiere actualización del software del Squeezebox
@@ -7550,6 +8077,7 @@ PLAYER_NEEDS_UPGRADE
 	SE	Mjukvara ('firmware') i din spelare behöver uppdateras
 
 PLAYER_NEEDS_UPGRADE_DETAILS
+	CZ	Squeezebos software je třeba updatovat na nejnovější verzi. Stiskněte a držte tlačítko Jas na dálkovém ovladači, dokud se display Squeezeboxu nezačne indokovat začátek updatu. Update bude trvat několik málo sekund.    If your Squeezebox is stuck on a screen that indicates that it's ready for an upgrade and is displaying its IP address, click here.
 	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte halten Sie den BRIGHTNESS Knopf auf der Fernsteuerung gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
 	ES	El software en tu Squeezebox necesita actualizarse a la última versión. Por favor, presionar y mantener presionado el botón BRIGHTNESS (Luminosidad) en el control remoto hasta que en la pantalla del Squeezebox se indique que la actualización comenzó. La actualización puede tomar algunos segundos.
@@ -7559,6 +8087,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 	SE	Mjukvara i din spelare behöver uppdateras till senaste version. Tryck och håll ned Brightness-knappen på Slim-fjärrkontrollen tills uppdatering inleds automatiskt. Uppdateringen tar endast några sekunder.
 
 PLAYER_NEEDS_UPGRADE_1
+	CZ	Squeezebox Software update
 	DE	Squeezebox Software Update
 	EN	Squeezebox Software Update
 	ES	Actualización de Software del Squeezebox
@@ -7568,6 +8097,7 @@ PLAYER_NEEDS_UPGRADE_1
 	SE	Mjukvaruppgradering av spelaren
 
 PLAYER_NEEDS_UPGRADE_2
+	CZ	Stiskněte a držte tlačítko Jas pro zahájení.
 	DE	Halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
 	EN	Press and hold BRIGHTNESS key to begin.
 	ES	Presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) para comenzar.
@@ -7577,6 +8107,7 @@ PLAYER_NEEDS_UPGRADE_2
 	SE	Tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll för att initiera uppgradering
 
 PLAYER_UPGRADE_INSTRUCTIONS
+	CZ	Pokud není IP adresa přehrávače zobrazena stiskněte a držte tlačítko 'Jas' dokud se neobjeví. Pak zadejte zobrazenou IP adresu zde:
 	DE	Falls die IP Adresse ihres Players nicht angezeigt wird, drücken Sie den Knopf BRIGHTNESS und lassen ihn gedrückt, bis diese erscheint. Geben Sie dann die angezeigte IP Adresse hier ein:
 	EN	If the IP address of your player is not displayed on its screen, press and hold the BRIGHTNESS button until it is.  Then enter the IP address displayed on the screen here:
 	ES	Si la dirección IP del reproductor no se muestra en su pantalla, presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) hasta que se muestre. Luego, ingrese aquí la dirección IP que se muestra en pantalla:
@@ -7586,6 +8117,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	SE	Om din spelare inte visar IP-adress, tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll tills IP-adress visas. Mata in denna IP-adress här:
 
 UPGRADE_COMPLETE_DETAILS
+	CZ	Update je kompletní.
 	DE	Update abgeschlossen.
 	EN	Your update is complete.
 	ES	La actualización ha finalizado.
@@ -7595,6 +8127,7 @@ UPGRADE_COMPLETE_DETAILS
 	SE	Uppdatering av spelaren avslutad
 
 UPGRADE_COMPLETE
+	CZ	Update firmwaru
 	DE	Firmware Update
 	EN	Firmware Update
 	ES	Actualización de Firmware
@@ -7612,6 +8145,7 @@ CHECKVERSION_ERROR
 	EN	There was an error while checking for updates to SlimServer:
 
 NEED_PATH
+	CZ	Specifikujte cestu k adresáři, obsahujícímu hudební soubory.
 	DE	Sie müssen einen Pfad zum Verzeichnis mit ihren Musikdateien angeben.
 	DK	Du skal angive stien til mappen med dine MP3-filer.
 	EN	You need to specify a path to your directory containing your music files.
@@ -7625,6 +8159,7 @@ NEED_PATH
 	SE	Du måste ange en sökväg till den mapp som innehåller dina MP3-filer.
 
 NEED_PLAYLIST_PATH
+	CZ	Specifikujte cestu k adresáři pro ukládání playlistů.
 	DE	Sie müssen das Verzeichnis ihrer abgespeicherten Playlisten angeben.
 	DK	Du skal angive stien til mappen med dine gemte playlister.
 	EN	You need to specify a path to a directory for your saved playlist files.
@@ -7648,6 +8183,7 @@ CSRF_ERROR_MEDIUM
 	ES	<p>Debido a que el nivel de protección CSRF se ha establecido como 'MEDIO', se puede utuliuza rel mismo valor &quot;;cauth=&quot; para cualquier URL; esto significa que se debe ser muy cuidadoso sobre con quien compartir las URLs.</p>
 
 CLICK_HERE
+	CZ	Klikněte zde
 	DE	Hier klicken
 	DK	Klik her
 	EN	Click here
@@ -7674,6 +8210,7 @@ TO_GO_TO_SERVER_SETTINGS
 	SE	för att komma till serverinställningarna och göra det direkt.
 
 MUTED
+	CZ	Stišeno
 	DE	Stumm
 	DK	Stille
 	EN	Muted
@@ -7687,6 +8224,7 @@ MUTED
 	SE	Tyst
 
 MUTE
+	CZ	Ztišit
 	DE	Stumm
 	EN	Mute
 	ES	Silenciar
@@ -7696,6 +8234,7 @@ MUTE
 	SE	Mute - ljud avstängt
 
 LCMUTED
+	CZ	ztišeno
 	DE	Stumm geschaltet
 	DK	stille
 	EN	muted
@@ -7709,6 +8248,7 @@ LCMUTED
 	SE	tyst
 
 ADVANCEDSEARCH
+	CZ	Pokročilé vyhledávání
 	DE	Erweiterte Suche
 	EN	Advanced Search
 	ES	Búsqueda Avanzada
@@ -7718,6 +8258,7 @@ ADVANCEDSEARCH
 	PT	Busca Avançada
 
 SEARCH
+	CZ	Hledat v archivu
 	DE	Suchen
 	DK	Søg efter musik
 	EN	Search Music
@@ -7731,6 +8272,7 @@ SEARCH
 	SE	Sök musik
 
 SEARCHFOR
+	CZ	Hledat
 	DE	Suchen nach
 	DK	Søg efter
 	EN	Search For
@@ -7744,6 +8286,7 @@ SEARCHFOR
 	SE	Sök efter
 
 SEARCHFOR_ARTIST
+	CZ	Hledat interpreta
 	DE	Suchen nach Interpret
 	DK	Søg efter Kunstner
 	EN	Search For Artist
@@ -7757,6 +8300,7 @@ SEARCHFOR_ARTIST
 	SE	Sök efter artist
 
 SEARCHFOR_ARTISTS
+	CZ	Vyhledat interprety
 	DE	Suchen nach Interpreten
 	DK	Søg efter Kunstnere
 	EN	Search For Artists
@@ -7774,6 +8318,7 @@ SEARCHFOR_ARTISTS_DBL
 	FR	Cherche artistes
 
 SEARCHFOR_ALBUM
+	CZ	Hledat alba
 	DE	Suchen nach Album
 	DK	Søg efter Album
 	EN	Search For Album
@@ -7787,6 +8332,7 @@ SEARCHFOR_ALBUM
 	SE	Sök efter album
 
 SEARCHFOR_ALBUMS
+	CZ	Hledat album
 	DE	Suchen nach Alben
 	DK	Søg efter Albums
 	EN	Search For Albums
@@ -7804,6 +8350,7 @@ SEARCHFOR_ALBUMS_DBL
 	FR	Cherche albums
 
 SEARCHFOR_SONGS
+	CZ	Vyhledat skladby
 	DE	Suchen nach Titel
 	DK	Søg efter Sange
 	EN	Search For Songs
@@ -7820,6 +8367,7 @@ SEARCHFOR_SONGS_DBL
 	FR	Cherche morceaux
 
 SEARCHFOR_SONGTITLE
+	CZ	Vyhledávat skladby
 	DE	Suchen nach Liedertitel
 	DK	Søg efter Sangtitel
 	EN	Search For Song Title
@@ -7833,6 +8381,7 @@ SEARCHFOR_SONGTITLE
 	SE	Sök efter låt
 
 SEARCH_FOR_ARTISTS
+	CZ	Vyhledat interprety
 	DE	Nach Interpreten suchen
 	DK	Søg efter kunstnere
 	EN	Search For Artists
@@ -7846,6 +8395,7 @@ SEARCH_FOR_ARTISTS
 	SE	Sök artist
 
 SEARCH_FOR_ALBUMS
+	CZ	Vyhledávat alba
 	DE	Nach Alben suchen
 	DK	Søg efter albums
 	EN	Search For Albums
@@ -7859,6 +8409,7 @@ SEARCH_FOR_ALBUMS
 	SE	Sök album
 
 SEARCH_FOR_SONGS
+	CZ	Hledat skladby
 	DE	Nach Titel suchen
 	DK	Søg efter sange
 	EN	Search For Songs
@@ -7872,6 +8423,7 @@ SEARCH_FOR_SONGS
 	SE	Sök låt
 
 SEARCHING
+	CZ	Hledám...
 	DE	Suchen...
 	DK	Søger...
 	EN	Searching...
@@ -7885,6 +8437,7 @@ SEARCHING
 	SE	Söker...
 
 FOUND
+	CZ	nalezeno
 	DE	gefunden
 	DK	fundet
 	EN	found
@@ -7898,6 +8451,7 @@ FOUND
 	SE	hittad
 
 ARTISTMATCHING
+	CZ	Interpreti, kterří obsahují
 	DE	Passender Interpret
 	DK	Matchende kunstnere
 	EN	Artist matching
@@ -7911,6 +8465,7 @@ ARTISTMATCHING
 	SE	Artister som matchar
 
 ARTISTSMATCHING
+	CZ	Interpet obsahuje
 	DE	Passende Interpreten
 	DK	Matchende kunstnere
 	EN	Artists matching
@@ -7924,6 +8479,7 @@ ARTISTSMATCHING
 	SE	Artister som matchar
 
 ALBUMMATCHING
+	CZ	Alb která obsahují
 	DE	Passendes Album
 	DK	Matchende albums
 	EN	Album matching
@@ -7937,6 +8493,7 @@ ALBUMMATCHING
 	SE	Album som matchar
 
 ALBUMSMATCHING
+	CZ	Alba, která obsahují
 	DE	Passende Alben
 	DK	Matchende albums
 	EN	Albums matching
@@ -7950,6 +8507,7 @@ ALBUMSMATCHING
 	SE	Album som matchar
 
 TRACKMATCHING
+	CZ	Názvů skladeb, které obsahují
 	DE	Passender Titel
 	DK	Matchende sangtitler
 	EN	Song title matching
@@ -7963,6 +8521,7 @@ TRACKMATCHING
 	SE	Låtar som matchar
 
 TRACKSMATCHING
+	CZ	Názvů skladeb, které obsahují
 	DE	Passende Titel
 	DK	Matchende sangtitler
 	EN	Song titles matching
@@ -7981,6 +8540,7 @@ MORE_MATCHES
 	ES	Más coincidencias...
 
 SYNC_WITH
+	CZ	Zmáčkněte tlačítko DOPRAVA pro synchornizaci s:
 	DE	RIGHT drücken zum synchronisieren mit:
 	DK	Tryk HØJRE for at synkronisere med:
 	EN	Press RIGHT to sync with:
@@ -7994,6 +8554,7 @@ SYNC_WITH
 	SE	Tryck HÖGER igen för att synkronisera med:
 
 UNSYNC_WITH
+	CZ	Stiskněte 'DOPRAVA' pro zrušení synchronizace
 	DE	RIGHT drücken zum Aufheben der Synchronisation:
 	DK	Tryk HØJRE igen for at afslutte synkronisering med:
 	EN	Press RIGHT to unsync with:
@@ -8007,6 +8568,7 @@ UNSYNC_WITH
 	SE	Tryck HÖGER igen för att avbryta synkronisering med:
 
 MOODLOGIC_SELECT_MOOD
+	CZ	Vyber Mood pro Tvůj Mix
 	DE	Wählen Sie eine Stimmung für ihren Mix
 	DK	Vælg en stemning for dit mix
 	EN	Select a Mood for your Mix
@@ -8019,6 +8581,7 @@ MOODLOGIC_SELECT_MOOD
 	SE	Välj stämning (MoodLogic) för din mix
 
 MOODLOGIC_SELECT_MOOD_SHORT
+	CZ	Vyber Mood
 	DE	Wählen Sie eine Stimmung
 	DK	Vælg en stemning
 	EN	Select a Mood
@@ -8050,6 +8613,7 @@ MOODLOGIC_INSTANT_MIX
 	ES	Mezcla instantánea de MoodLogic
 
 MOODLOGIC_MOOD_0
+	CZ	Překvapení
 	DE	Überraschung
 	DK	Overraskelse
 	EN	Surprise
@@ -8070,6 +8634,7 @@ MOODLOGIC_MOOD_1
 	NO	Tempo
 
 MOODLOGIC_MOOD_2
+	CZ	Snadný
 	DE	Easy
 	DK	Easy
 	EN	Easy
@@ -8081,6 +8646,7 @@ MOODLOGIC_MOOD_2
 	PT	Fácil
 
 MOODLOGIC_MOOD_3
+	CZ	Mléčný
 	DE	Sanft
 	EN	Mild
 	ES	Dulce
@@ -8089,6 +8655,7 @@ MOODLOGIC_MOOD_3
 	NO	Mild
 
 MOODLOGIC_MOOD_4
+	CZ	Modrý
 	DE	Trist
 	DK	Trist
 	EN	Blue
@@ -8111,6 +8678,7 @@ MOODLOGIC_MOOD_5
 	PT	Saída
 
 MOODLOGIC_MOOD_6
+	CZ	Divoký
 	DE	Wild
 	EN	Wild
 	ES	Salvaje
@@ -8119,6 +8687,7 @@ MOODLOGIC_MOOD_6
 	NO	Vill
 
 HELP
+	CZ	Nápověda
 	DE	Hilfe (Englisch)
 	DK	Hjælp
 	EN	Help
@@ -8132,6 +8701,7 @@ HELP
 	SE	Hjälp
 
 HELP_REMOTE
+	CZ	Nápověda pro dálkové ovládání
 	DE	Fernbedienungsreferenz
 	DK	Fjernbetjeningen
 	EN	Remote Control Reference
@@ -8145,6 +8715,7 @@ HELP_REMOTE
 	SE	Hjälp med fjärrkontrollen
 
 TECHNICAL_INFORMATION
+	CZ	Technické informace
 	DE	Technische Informationen
 	DK	Teknisk information (Engelsk)
 	EN	Technical Information
@@ -8158,6 +8729,7 @@ TECHNICAL_INFORMATION
 	SE	Teknisk information
 
 GETTING_STARTED
+	CZ	Začínáme
 	DE	Einleitung
 	DK	Kom i gang (Engelsk)
 	EN	Getting Started
@@ -8171,6 +8743,7 @@ GETTING_STARTED
 	SE	Komma igång
 
 FAQ
+	CZ	Často kladené dotazy
 	DE	Häufig gestellte Fragen (FAQ)
 	DK	Ofte stillede spørgsmål (FAQ) (Engelsk)
 	EN	Frequently Asked Questions
@@ -8183,6 +8756,7 @@ FAQ
 	SE	FAQ / Ofta förekommande frågor
 
 HELP_RADIO
+	CZ	Internetová radia
 	DE	Internet Radio
 	DK	Internetradio-
 	EN	Internet Radio
@@ -8195,6 +8769,7 @@ HELP_RADIO
 	SE	Internetradio
 
 REMOTE_STREAMING
+	CZ	Vzdálený streaming
 	DE	Streaming
 	DK	Fjern-streaming
 	EN	Remote Streaming
@@ -8206,6 +8781,7 @@ REMOTE_STREAMING
 	SE	Fjärrströmning
 
 PLAYER_SETUP
+	CZ	Nastavení přehrávače
 	DE	Player Konfiguration
 	DK	Afspiller-indstillinger (Engelsk)
 	EN	Player Setup
@@ -8219,6 +8795,7 @@ PLAYER_SETUP
 	SE	Installation av spelare
 
 USING_REMOTE
+	CZ	Požívání dálkového ovládání Slim Devices Remote
 	DE	Die Slim Devices Fernbedienung verwenden
 	DK	Anvendelse af Slim Devices-fjernbetjeningen (Engelsk)
 	EN	Using the Slim Devices Remote
@@ -8232,6 +8809,7 @@ USING_REMOTE
 	SE	Att använda Slim-fjärrkontrollen
 
 STATISTICS
+	CZ	Statistiky
 	DE	Statistik
 	DK	Statistik
 	EN	Statistics
@@ -8244,6 +8822,7 @@ STATISTICS
 	SE	Statistik
 
 EDIT_PLAYLIST
+	CZ	Editovat playlist
 	DE	Playliste bearbeiten
 	EN	Edit Playlist
 	ES	Editar Lista
@@ -8253,6 +8832,7 @@ EDIT_PLAYLIST
 	SE	Redigera låtlista
 
 DONE_EDITING
+	CZ	Editace dokončena
 	DE	Bearbeitung abgeschlossen
 	EN	Done Editing
 	ES	Edición finalizada
@@ -8262,6 +8842,7 @@ DONE_EDITING
 	SE	redigering klar
 
 UP
+	CZ	Nahoru
 	DE	Rauf
 	EN	Up
 	ES	Arriba
@@ -8271,6 +8852,7 @@ UP
 	SE	Upp
 
 DOWN
+	CZ	Dolů
 	DE	Runter
 	EN	Down
 	ES	Abajo
@@ -8280,6 +8862,7 @@ DOWN
 	SE	Ned
 
 EDIT
+	CZ	Editovat
 	DE	Editieren
 	EN	Edit
 	ES	Editar
@@ -8292,6 +8875,7 @@ URL
 	EN	URL
 
 SAVE_PLAYLIST
+	CZ	Uložit playlist
 	DE	Playlist speichern
 	EN	Save Playlist
 	ES	Guardar Lista
@@ -8301,6 +8885,7 @@ SAVE_PLAYLIST
 	SE	Lagra låtlista
 
 PLAYLIST_SAVE
+	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
 	DE	Zum Speichern der Playlist RIGHT drücken:
 	EN	Press RIGHT again to save playlist as:
 	ES	Presionar DERECHA para guardar la lista como:
@@ -8310,6 +8895,7 @@ PLAYLIST_SAVE
 	SE	Klicka Högerpil igen för att lagra låtlistan som:
 
 PLAYLIST_AS
+	CZ	Uložit aktuální playlist jako:
 	DE	Playliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
 	ES	Guardar la lista actual como:
@@ -8319,6 +8905,7 @@ PLAYLIST_AS
 	SE	Lagra aktuell låtlista som:
 
 PLAYLIST_SAVING
+	CZ	Uložit aktuální playlist jako:
 	DE	Speichere Playlist als:
 	EN	Saving current playlist as:
 	ES	Guardando la lista actual como:
@@ -8328,6 +8915,7 @@ PLAYLIST_SAVING
 	SE	Lagrar aktuell låtlista som:
 
 INFORMATION
+	CZ	Informace
 	DE	Informationen
 	EN	Information
 	ES	Información
@@ -8337,6 +8925,7 @@ INFORMATION
 	SE	Information
 
 INFORMATION_MENU_PLAYER
+	CZ	Informace o přehrávači
 	DE	Player Informationen
 	EN	Player Information
 	ES	Información del reproductor
@@ -8346,6 +8935,7 @@ INFORMATION_MENU_PLAYER
 	SE	Spelar-information
 
 INFORMATION_MENU_SERVER
+	CZ	Informace serveru
 	DE	Server Informationen
 	EN	Server Information
 	ES	Información del servidor
@@ -8355,6 +8945,7 @@ INFORMATION_MENU_SERVER
 	SE	Server-information
 
 INFORMATION_MENU_LIBRARY
+	CZ	Statistiky archivu
 	DE	Musikbibliotheks Statistiken
 	EN	Library statistics
 	ES	Estadísticas de la colección
@@ -8364,6 +8955,7 @@ INFORMATION_MENU_LIBRARY
 	SE	Statistik om musikmapp
 
 INFORMATION_MENU_MODULE
+	CZ	Plugin moduly
 	DE	Plugin Module
 	EN	Plugin Modules
 	ES	Módulos plugin
@@ -8373,6 +8965,7 @@ INFORMATION_MENU_MODULE
 	SE	Tillägg
 
 INFORMATION_PLAYER_NAME
+	CZ	Název přehrávače
 	DE	Player Name
 	EN	Player Name
 	ES	Nombre del reproductor
@@ -8382,6 +8975,7 @@ INFORMATION_PLAYER_NAME
 	SE	Spelarens namn
 
 INFORMATION_PLAYER_MODEL
+	CZ	Typ přehrávače
 	DE	Player Modell
 	EN	Player Model
 	ES	Modelo del reproductor
@@ -8391,6 +8985,7 @@ INFORMATION_PLAYER_MODEL
 	SE	Modell, spelare
 
 INFORMATION_FIRMWARE
+	CZ	Verze firmvaru přehrávače
 	DE	Player Firmware-Version
 	EN	Player Firmware Version
 	ES	Versión de Firmware del Reproductor
@@ -8400,6 +8995,7 @@ INFORMATION_FIRMWARE
 	SE	Mjukvaruversion ('firmware'), spelare
 
 INFORMATION_PLAYER_IP
+	CZ	IP adresa přehrávače
 	DE	Player IP Adresse
 	EN	Player IP Address
 	ES	Dirección IP del Reproductor
@@ -8409,6 +9005,7 @@ INFORMATION_PLAYER_IP
 	SE	Spelarens IP-adress
 
 INFORMATION_PLAYER_PORT
+	CZ	Číslo UDP portu přehrávače
 	DE	Player UDP Portnummer
 	EN	Player UDP Port Number
 	ES	Número de puerto UDP del Reproductor
@@ -8418,6 +9015,7 @@ INFORMATION_PLAYER_PORT
 	SE	Spelarens UDP-port
 
 INFORMATION_PLAYER_MAC
+	CZ	MAC adresa přehrávače
 	DE	Player MAC Adresse
 	EN	Player MAC Address
 	ES	Dirección MAC del reproductor
@@ -8427,6 +9025,7 @@ INFORMATION_PLAYER_MAC
 	SE	Spelarens MAC-adress
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
+	CZ	Sila Wi-Fi signálu
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
 	ES	Potencia de señal inalámbrica
@@ -8436,6 +9035,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	SE	Trådlös signalstyrka
 
 INFORMATION_CLIENTS
+	CZ	Celkem přehrávačů rozpoznáno
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
 	ES	Número de Reproductores reconocidos
@@ -8445,6 +9045,7 @@ INFORMATION_CLIENTS
 	SE	Totalt antal anslutna spelare
 
 INFORMATION_SERVER_IP
+	CZ	IP adresa serveru
 	DE	Server IP Adresse
 	EN	Server IP Address
 	ES	Dirección IP del Servidor
@@ -8454,6 +9055,7 @@ INFORMATION_SERVER_IP
 	SE	Serverns IP-adress
 
 INFORMATION_SERVER_PORT
+	CZ	Číslo UDP portu serveru
 	DE	Server UDP Portnummer
 	EN	Server UDP Port Number
 	ES	Número de puerto UDP del Servidor
@@ -8463,6 +9065,7 @@ INFORMATION_SERVER_PORT
 	SE	Serverns UDP-port
 
 INFORMATION_SERVER_HTTP
+	CZ	Číslo portu HTTP serveru
 	DE	Server HTTP Portnummer
 	EN	Server HTTP Port Number
 	ES	Número de puerto HTTP del Servidor
@@ -8472,6 +9075,7 @@ INFORMATION_SERVER_HTTP
 	SE	Serverns HTTP-port
 
 INFORMATION_ALBUMS
+	CZ	Celkem alb
 	DE	Anzahl Alben
 	EN	Total Albums
 	ES	Total de Discos
@@ -8481,6 +9085,7 @@ INFORMATION_ALBUMS
 	SE	Totalt antal album
 
 INFORMATION_ARTISTS
+	CZ	Celkem interpretů
 	DE	Anzahl Interpreten
 	EN	Total Artists
 	ES	Total de Artistas
@@ -8490,6 +9095,7 @@ INFORMATION_ARTISTS
 	SE	Totalt antal artister
 
 INFORMATION_GENRES
+	CZ	Všechny styly
 	DE	Anzahl Stilrichtungen
 	EN	Total Genres
 	ES	Total de Géneros
@@ -8499,6 +9105,7 @@ INFORMATION_GENRES
 	SE	Totalt antal genrer
 
 INFORMATION_TRACKS
+	CZ	Celkem skladeb
 	DE	Anzahl Titel
 	EN	Total Tracks
 	ES	Total de Temas
@@ -8508,6 +9115,7 @@ INFORMATION_TRACKS
 	SE	Totalt antal låtar
 
 INFORMATION_TIME
+	CZ	Celkový hrací čas
 	DE	Gesamte Spieldauer
 	EN	Total Playing Time
 	ES	Duración Total
@@ -8517,6 +9125,7 @@ INFORMATION_TIME
 	SE	Total låttid
 
 INFORMATION_VERSION
+	CZ	verze
 	DE	Version
 	EN	Version
 	ES	Versión
@@ -8526,6 +9135,7 @@ INFORMATION_VERSION
 	SE	Version
 
 INFORMATION_INSTALLED
+	CZ	Instalováno
 	DE	Installiert
 	EN	Installed
 	ES	Instalado
@@ -8535,6 +9145,7 @@ INFORMATION_INSTALLED
 	SE	Installerad
 
 INFORMATION_DISABLED
+	CZ	NEPŘÍSTUPNÉ
 	DE	DEAKTIVIERT
 	EN	DISABLED
 	ES	DESHABILITADO
@@ -8544,6 +9155,7 @@ INFORMATION_DISABLED
 	SE	Avaktiverad
 
 INFORMATION_NO_VERSION
+	CZ	Číslo verze nenalezeno
 	DE	Keine Versionsnummer
 	EN	No version number
 	ES	Sin número de versión
@@ -8561,6 +9173,7 @@ INFORMATION_DATE_FORMAT
 	NO	${shortdateFormat} kl ${timeFormat}
 
 BEFORE
+	CZ	před
 	DE	vor
 	EN	before
 	ES	antes
@@ -8569,6 +9182,7 @@ BEFORE
 	JP	前に
 
 AFTER
+	CZ	po
 	DE	nach
 	EN	after
 	ES	después
@@ -8577,6 +9191,7 @@ AFTER
 	JP	後
 
 IS
+	CZ	je
 	DE	ist
 	EN	is
 	ES	de
@@ -8585,6 +9200,7 @@ IS
 	JP	ある
 
 EQUALS
+	CZ	rovno
 	DE	gleich
 	EN	equals
 	ES	igual a
@@ -8593,6 +9209,7 @@ EQUALS
 	JP	同輩
 
 LESSTHAN
+	CZ	méně než
 	DE	kleiner als
 	EN	less than
 	ES	menos que
@@ -8601,6 +9218,7 @@ LESSTHAN
 	JP	より少しより
 
 GREATERTHAN
+	CZ	větší než
 	DE	grösser als
 	EN	greater than
 	ES	mayores que
@@ -8609,6 +9227,7 @@ GREATERTHAN
 	JP	大きいより
 
 NOT
+	CZ	nerovná se
 	DE	nicht
 	EN	not
 	ES	no
@@ -8619,6 +9238,7 @@ NOT
 
 # The space before the French : is there on purpose.
 COLON
+	CZ	:
 	DE	:
 	EN	: 
 	ES	:
@@ -8628,12 +9248,14 @@ COLON
 	SE	: 
 
 SETUP_GROUP_RADIO_DESC
+	CZ	SlimServer obsahuje podporu pro několik poskytovatelů internetových rádií. Můžete konfigurovat chování pro každého z nich. zadáním svého uživatelského jména a hesla na této stránce. K uložení změn klikněte na 'Změnit'.
 	DE	SlimServer unterstützt Internet Radio durch verschiedene Radiostationen. Sie können auf dieser Seite diese Unterstützung für einige Anbieter konfigurieren, inklusive der Angabe von Benutzername und Passwort für Premium-Zugänge.
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
 	ES	Slimserver incluye soporte para Radios por  Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
 	JP	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
 
 SETUP_SCROLLPIXELS
+	CZ	Počet scrolovaných pixelů
 	DE	Scroll Pixel
 	EN	Scroll Pixels
 	ES	Desplazamiento de pixels
@@ -8644,21 +9266,25 @@ SETUP_SCROLLPIXELS_DESC
 	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
 
 ANY_GENRE
+	CZ	Jakýkoliv žánr
 	DE	Beliebige Stilrichtung
 	EN	Any Genre
 	ES	Cualquier género
 
 ANY_VALUE
+	CZ	Jakákoliv hodnota
 	DE	Beliebiger Wert
 	EN	Any Value
 	ES	Cualquier valor
 
 ANY_TYPE
+	CZ	Jakýkoliv formát souborů
 	DE	Beliebiges Format
 	EN	Any File Format
 	ES	Cualquier formato de archivo
 
 WMA_NO_CONVERT_CMD
+	CZ	Chyba kovertování WMA, zkontrolujte formát souboru
 	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen
 	EN	WMA convert error - check file types
 	ES	Error de conversión WMA - verificar tipo de archivos
