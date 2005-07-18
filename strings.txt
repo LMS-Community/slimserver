@@ -1834,7 +1834,6 @@ SETUP_PLAYINGDISPLAYMODE
 	FR	Affichage en mode Lecture
 	JP	現在再生中の曲の情報
 	SE	Information i läge "Nu spelas"
-Informace (hraje se)
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
@@ -2497,10 +2496,6 @@ SETUP_IRSETLIST_OK
 	NO	Fjernkontroller:
 	PT	Controlos Remotos
 	SE	Fjärrkontroller:
-(INTERPRET - ALBUM) CISLO - SKLADBA
-/INTERPRET/ALBUM/CISLO - SKLADBA
-/INTERPRET/ALBUM/CISLO SKLADBA
-TRACKNUM. TITLE
 
 SETUP_IRSETLIST_CHANGE
 	CZ	Nastavení pro %s bylo změněno.
@@ -2748,8 +2743,6 @@ SETUP_RESCAN_BUTTON
 	NO	Scan musikkfolderen på nytt
 	PT	Ler Directoria
 	SE	Scanna musikmappen på nytt
-Aktualizovat informace z hudebního archivu
-Způsob prohledávání
 
 SETUP_RESCAN_DESC
 	CZ	Pokud přidáte, odstraníte, nebo změníte soubory ve svém hudebním archivu, můžete nastavit aby SlimServer provedl kontrolu souborů tak, aby uchoval hudební databázi stále aktuální.
@@ -3753,7 +3746,6 @@ SETUP_SAVEHISTORY_0
 	NO	Ikke lagre historikk
 	PT	Não gravar historial
 	SE	Spara INTE historia
-Obnovování stránky
 
 SETUP_CHECKVERSION
 	CZ	Automatická aktualizace
@@ -4267,7 +4259,6 @@ SETUP_PLAYTRACKALBUM_0
 	NO	Spill bare valgte sang
 	PT	Tocar apenas a música selecionada
 	SE	Spela endast vald sång
-Číslo. Interpret - Skladba
 
 SETUP_PLAYTRACKALBUM_DESC
 	CZ	Pokud vyberete jednu skladbu a stisknete PLAY na dálkovém ovladači, můžete zvolit zda se má hrát pouze tato skladba, nebo celé album obsahující tuto skladbu, nebo celý adresář, začíníjící touto skladbou.
