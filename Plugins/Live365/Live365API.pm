@@ -30,6 +30,15 @@ use IO::Socket;
 
 my $live365_base = "http://www.live365.com";
 
+# Make the login-specific information global between all instances of
+# API objects.  That way we only login/logout once even if we have
+# multiple clients attached.
+my %loginInformation = (
+		sessionid	=> undef,
+		vip			=> 0,
+		loggedin	=> 0
+		);
+
 sub new {
 	my $class = shift;  
 	my $self  = {
@@ -183,13 +192,13 @@ sub logout {
 	my $client = shift;
 	my $callback = shift;
 
-	if( !$self->{sessionid} ) {
+	if( !$loginInformation{sessionid} ) {
 		&$callback($client, 0);
 	}
 
 	my %args = (
 		action		=> 'logout',
-		sessionid	=> $self->{sessionid},
+		sessionid	=> $loginInformation{sessionid},
 		org			=> 'live365'
 	);
 
@@ -225,11 +234,11 @@ sub authLoadSub {
 	}
 
 	if ($login) {
-		$self->{sessionid} = $resp->{Session_ID};
-		$self->{vip} = $resp->{Member_Status} eq 'PREFERRED';
+		$loginInformation{sessionid} = $resp->{Session_ID};
+		$loginInformation{vip} = $resp->{Member_Status} eq 'PREFERRED';
 	}
 	else {
-		$self->{sessionid} = undef;
+		$loginInformation{sessionid} = undef;
 	}
 
 	&$callback($client, $resp->{Code});
@@ -248,32 +257,33 @@ sub authErrorSub {
 sub getSessionID {
 	my $self = shift;
 
-	return $self->{sessionid};
+	return $loginInformation{sessionid};
 }
+
 sub isLoggedIn {
 	my $self = shift;
 
-	return defined( $self->{loggedin} ) && $self->{loggedin} == 1;
+	return defined( $loginInformation{loggedin} ) && $loginInformation{loggedin} == 1;
 }
 
 sub setLoggedIn {
 	my $self = shift;
 	my $val  = shift;
 
-	return $self->{loggedin} = $val;
+	return $loginInformation{loggedin} = $val;
 }
 
 
 sub setSessionID {
 	my $self = shift;
 
-	$self->{sessionid} = shift;
+	$loginInformation{sessionid} = shift;
 }
 
 sub getMemberStatus {
 	my $self = shift;
 
-	return $self->{vip};
+	return $loginInformation{vip};
 }
 
 
@@ -376,7 +386,7 @@ sub loadMemberPresets {
 
 	my %args = (
 		action		=> "get",
-		sessionid	=> $self->{sessionid},
+		sessionid	=> $loginInformation{sessionid},
 		device_id	=> "UNKNOWN",
 		app_id		=> "live365:BROWSER",
 		first		=> 1,
@@ -422,6 +432,14 @@ sub presetsLoadSub {
 	
 	if( defined $self->{Directory}->{LIVE365_STATION} ) {
 		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
+	} elsif ($xmlPresets =~ /Failed - invalid login session/) {
+
+		# Very lazy way to search the XML for an error message
+		# indicating that our session timed out
+		$loginInformation{loggedin} = 0;
+		$::d_plugins && Slim::Utils::Misc::msg("Login session timed out");
+		&$errorSub($client);
+		return;
 	} else {
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
@@ -643,8 +661,8 @@ sub getCurrentChannelURL {
 
 	my $url = $self->{Stations}->[$self->{stationPointer}]->{STATION_ADDRESS};
 	$url =~ s/^http:/live365:/;
-	if( $self->{sessionid} ) {
-		$url .= '?sessionid=' . $self->{sessionid};
+	if( $loginInformation{sessionid} ) {
+		$url .= '?sessionid=' . $loginInformation{sessionid};
 	}
 
 	return $url;

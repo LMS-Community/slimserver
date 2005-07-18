@@ -350,7 +350,12 @@ sub errorBrowseStation {
 	my $fullparams = fetchAsyncRequest('xxx','station');
 	my $params = $fullparams->{'params'};
 	
-	$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+        if ($API->isLoggedIn()) {
+                $params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+        } else {
+                $params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
+        }
+
 	my $body = handleIndex($client,$params);
 		
 	createAsyncWebPage($client,$body,$fullparams);

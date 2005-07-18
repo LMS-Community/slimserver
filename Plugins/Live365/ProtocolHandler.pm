@@ -132,7 +132,7 @@ sub playlistLoaded {
 	if (defined($playlist)) {
 		$::d_plugins && msg( "Got playlist response: $playlist\n" );
 
-		eval '$nowPlaying = XMLin( $playlist, ForceContent => 1 )';
+		eval '$nowPlaying = XMLin( $playlist, ForceContent => 1, ForceArray => [ "PlaylistEntry" ] )';
 		$@ && $::d_plugins && msg( "Live365 playlist didn't parse: '$@'\n" );
 	}
 
