@@ -729,29 +729,32 @@ sub readASX {
 		# found in many ASX files on the web.
 		$asxstr =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
 
+		# Convert all tags to upper case as ASX allows mixed case tags, XML does not!
+		$asxstr =~ s{(<[^\s>]+)}{\U$1\E}mg;
+
 		eval {
 			# We need to send a ProtocolEncoding option to XML::Parser,
 			# but XML::Simple carps at it. Unfortunately, we don't 
 			# have a choice - we can't change the XML, as the
 			# XML::Simple warning suggests.
 			no warnings;
-			$asx_playlist = XMLin($asxstr, ForceArray => ['entry', 'Entry', 'ENTRY', 'ref', 'Ref', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
+			$asx_playlist = XMLin($asxstr, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 		
 		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
-		
-		my $entries = $asx_playlist->{entry} || $asx_playlist->{Entry} || $asx_playlist->{ENTRY};
+
+		my $entries = $asx_playlist->{ENTRY};
 
 		if (defined($entries)) {
 
 			for my $entry (@$entries) {
 				
-				my $title = $entry->{title} || $entry->{Title} || $entry->{TITLE};
+				my $title = $entry->{TITLE};
 
 				$::d_parse && Slim::Utils::Misc::msg("Found an entry title: $title\n");
 
 				my $path;
-				my $refs = $entry->{ref} || $entry->{Ref} || $entry->{REF};
+				my $refs = $entry->{REF};
 
 				if (defined($refs)) {
 
