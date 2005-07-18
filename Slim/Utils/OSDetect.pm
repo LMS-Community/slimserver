@@ -47,6 +47,8 @@ sub init {
 		} else {
 
 			$detectedOS = 'unix';
+
+			initDetailsForUnix();
 		}
 
 		$::d_os && Slim::Utils::Misc::msg("I think it's \"$detectedOS\".\n");
@@ -118,6 +120,14 @@ sub initDetailsForLinux {
 		$osDetails{'osName'} = 'Linux';
 	}
 
+	$osDetails{'uid'}    = getpwuid($>);
+	$osDetails{'osArch'} = $Config{'myarchname'};
+}
+
+sub initDetailsForUnix {
+
+	$osDetails{'os'}     = 'Unix';
+	$osDetails{'osName'} = $Config{'osname'} || 'Unix';
 	$osDetails{'uid'}    = getpwuid($>);
 	$osDetails{'osArch'} = $Config{'myarchname'};
 }
