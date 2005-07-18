@@ -851,6 +851,14 @@ sub readDirectory {
 		if ($validRE && -f _) {
 			next unless $item =~ $validRE;
 		}
+		elsif ($validRE && -l _ && defined(my $target = readlink($fullpath))) {
+			# fix relative/absolute path
+			$target = ($target =~ /^\// ? $target : catdir($dirname, $target));
+
+			if (-f $target) {
+				next unless $target =~ $validRE;
+			}
+		}
 
 		push @diritems, $item;
 	}
