@@ -1100,7 +1100,8 @@ sub _hasChanged {
 	# Tell the DB to sync - if we're deleting something.
 	$Slim::DataStores::DBI::DataModel::dirtyCount++;
 
-	return $self->{'zombieList'}->{$url} = 1;
+	# We can't find the file - but don't put it on the zombie list.
+	return 0;
 }
 
 sub _includeInTrackCount {
