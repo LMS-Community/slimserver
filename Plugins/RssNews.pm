@@ -116,6 +116,7 @@ PLUGIN_RSSNEWS_NO_DESCRIPTION
 	ES	Descripción no disponible
 
 PLUGIN_RSSNEWS_NO_TITLE
+	CZ	Název není dostupný
 	DE	Kein Titel verfübar
 	EN	Title not available
 	ES	Título no disponible
@@ -139,11 +140,13 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	ES	Elegir Salvapantallas Actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
+	CZ	Aktuální spořič
 	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
 	ES	Salvapantallas actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
+	CZ	Použít RSS News jako aktuální spořič
 	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 	ES	Utilizar Noticias RSS como el Salvapantallas actual
@@ -208,6 +211,7 @@ PLUGIN_RSSNEWS_RESETTING
 	ES	Reestableciendo el feed  de RSS por defecto
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
+	CZ	Resetovat
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Reestablecer
@@ -223,6 +227,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	ES	El número máximo de elementos mostrados, para cada feed, mientras el salvapantallas está activo. Un valor más alto implica que el salvapantal>las mostrará más elementos antes de pasar al próximo feed.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
+	CZ	Položek na kanál
 	DE	Einträge pro Feed
 	EN	Items per channel
 	ES	Elementos por canal

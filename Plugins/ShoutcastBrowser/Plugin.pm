@@ -1418,6 +1418,7 @@ sub strings {
 	ES	Radio por Internet SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_GENRES
+	CZ	SHOUTcast Internet Radio
 	DE	SHOUTcast Musikstile
 	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
@@ -1443,6 +1444,7 @@ PLUGIN_SHOUTCASTBROWSER_REFRESH
 	ES	Refrescar
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
+	CZ	CHYBA: web SHOUTcast je nedostupný
 	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
@@ -1478,6 +1480,7 @@ PLUGIN_SHOUTCASTBROWSER_RECENT
 	ES	Recientemente escuchado
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
+	CZ	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular
@@ -1576,6 +1579,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	ES	Máximo número a recordar de streams escuchados recientemente.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
+	CZ	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular
@@ -1586,6 +1590,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	ES	Número de streams a incluir en la categoría de streams más populares, medida por el total de oyentes en todas las tasas de bits.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CUSTOM_GENRES
+	CZ	Uživatelsky definované styly
 	DE	Eigene Musikstil-Definitionen
 	EN	Custom Genre Definitions
 	ES	Definiciones Personalizadas de Géneros

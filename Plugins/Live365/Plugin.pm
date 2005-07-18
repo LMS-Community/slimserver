@@ -970,11 +970,13 @@ sub strings {
 	ES	Radio por Internet Live365
 
 PLUGIN_LIVE365_LOGOUT
+	CZ	Odhlásit
 	DE	Abmelden
 	EN	Log out
 	ES	Desconectarse
 
 PLUGIN_LIVE365_LOGIN
+	CZ	Přihlásit
 	DE	Anmelden
 	EN	Log in
 	ES	Conectarse
@@ -1000,6 +1002,7 @@ PLUGIN_LIVE365_LOGIN_ERROR_NAME
 	ES	Problema con el nombre de miembro
 
 PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	CZ	Problém s přihlášením
 	DE	Problem beim Anmelden
 	EN	Login problem
 	ES	Problema de conexión
@@ -1025,11 +1028,13 @@ PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 	ES	Error del sitio web de Live365, intentar nuevamente
 
 PLUGIN_LIVE365_LOADING_GENRES
+	CZ	Stahuji žánry z Live365...
 	DE	Genre-Liste wird von Live365 geladen...
 	EN	Loading genre list from Live365...
 	ES	Cargando la lista de géneros de Live365...
 
 PLUGIN_LIVE365_LOADING_GENRES_ERROR
+	CZ	Chyba při stahování stylů. Zkuste to prosím později.
 	DE	Fehler beim Laden der Genre-Liste. Bitte neu versuchen.
 	EN	Error loading genres, try again
 	ES	Error al cargar géneros, intente nuevamente...
@@ -1040,11 +1045,13 @@ PLUGIN_LIVE365_PRESETS
 	ES	Mis presets
 
 PLUGIN_LIVE365_BROWSEGENRES
+	CZ	Procházeet žánry
 	DE	Musikstile durchsuchen
 	EN	Browse genres
 	ES	Examinar géneros
 
 PLUGIN_LIVE365_BROWSEALL
+	CZ	Procházet všechny stanice (mnoho)
 	DE	Alle Stationen durchsuchen (viele)
 	EN	Browse all stations (many)
 	ES	Recorrer todas las estaciones (muchas)
@@ -1055,6 +1062,7 @@ PLUGIN_LIVE365_BROWSEPICKS
 	ES	Revisar las elegidas por el editor
 
 PLUGIN_LIVE365_BROWSEPROS
+	CZ	Procházet profesionální stanice
 	DE	Professionelle Stationen durchsuchen
 	EN	Browse professional stations
 	ES	Recorrer estaciones profesionales
@@ -1070,6 +1078,7 @@ PLUGIN_LIVE365_SEARCHPROMPT
 	ES	Buscar en Live365:
 
 PLUGIN_LIVE365_LOADING_DIRECTORY
+	CZ	Nahrávám...
 	DE	Lade...
 	EN	Loading...
 	ES	Cargando...
@@ -1085,16 +1094,19 @@ PLUGIN_LIVE365_LOADING_INFORMATION
 	ES	Cargando información de canales...
 
 PLUGIN_LIVE365_DESCRIPTION
+	CZ	Popis stanice
 	DE	Sender Beschreibung
 	EN	Station Description
 	ES	Descripción de estación
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
+	CZ	Aktivních posluchačů
 	DE	Aktive Zuhörer
 	EN	Active listeners
 	ES	Oyentes activos
 
 PLUGIN_LIVE365_STATION_LISTENERS_MAX
+	CZ	Maximum posluchačů
 	DE	Maximale Anzahl Zuhörer
 	EN	Maximum listeners
 	ES	Cantidad máxima de oyentes
@@ -1105,6 +1117,7 @@ PLUGIN_LIVE365_LISTENER_ACCESS
 	ES	Acceso para oyentes
 
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
+	CZ	Kvalita vysílání stanice
 	DE	Sender Qualität
 	EN	Station quality
 	ES	Calidad de la estación
@@ -1163,6 +1176,7 @@ SETUP_GROUP_PLUGIN_LIVE365
 	ES	Radio por Internet Live365
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
+	CZ	Prohledávat, procházet a ladit stanice Live365
 	DE	Suche und höre Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 	ES	Buscar, recorrer y sintonizar estaciones Live365
@@ -1203,6 +1217,7 @@ SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC
 	ES	Definir la secuencia de ordenamiento para estaciones
 
 SETUP_PLUGIN_LIVE365_SORT_TITLE
+	CZ	Název stanice
 	DE	Sender Sortierung
 	EN	Station title
 	ES	Título de la estación
@@ -1233,6 +1248,7 @@ SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
 	ES	Mostrar resultados detallados cuando se busca en Live365 a través de la interface web. Se incluye información de  artista, canción y disco cuando se busca por alguno de ellos. Esto puede generar resultados más largos y dificiles de recorrer.
 
 PLUGIN_LIVE365_GENRES
+	CZ	Styly Live365
 	DE	Live365 Musikstile
 	EN	Live365 genres
 	ES	Géneros de Live365

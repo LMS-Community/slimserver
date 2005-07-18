@@ -307,6 +307,7 @@ PLUGIN_PICKS_LOADING_PICKS
 	ES	Cargando las Preferidas de Slim Devices...
 
 PLUGIN_PICKS_STATION
+	CZ	Stanice
 	DE	Sender
 	EN	Station
 	ES	Estación

@@ -1620,6 +1620,7 @@ DECODER
 #
 # Player settings
 SETUP_PLAYERNAME
+	CZ	Název přehrávače
 	DE	Player Name
 	DK	Navn på player-afspiller
 	EN	Player Name
@@ -5373,6 +5374,7 @@ SETUP_GROUPDISCS_1
 # Web interface
 #
 PLAYER
+	CZ	Přehrávač
 	DE	Player
 	DK	Afspiller
 	EN	Player

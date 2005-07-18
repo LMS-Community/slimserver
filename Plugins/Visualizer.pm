@@ -87,11 +87,13 @@ PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	ES	Presionar -> para activar este salvapantallas
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
+	CZ	Spořič je nastaven
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
+	CZ	Výchozí spořič
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
