@@ -149,7 +149,7 @@ If you are connecting directly to a computer you will need a crossover cable, ot
 <div class="faq">
 <h5><a id="about-os"></a>Which operating systems are supported?</h5>
 <p>Squeezebox2 and SlimServer is officially supported under Windows NT/2000/XP, Linux, and Mac OS X. It is also known to work on a wide variety of other operating systems, so it's safe to say that just about any modern OS will be compatible. Squeezebox2 has been tested on all of the following platforms:</p>
-<p>BeOS, FreeBSD, Linux (X86, PPC, and MIPS), Mac OS X, NetBSD (X86), OpenBSD, Solaris (X86, Sparc), Windows 95, 98, NT, 2000, Me, XP</p>
+<p>BeOS, FreeBSD, Linux (X86, PPC, and MIPS), Mac OS X, NetBSD (X86), OpenBSD, Solaris (X86, Sparc), Windows NT, 2000, XP</p>
 </div>
 
 <div class="faq">
@@ -818,6 +818,7 @@ an I do?</a>
 	<li><a href="#troubleshooting-anothercopy">On Windows XP, Slim Server hangs on startup, and sometimes the debug window says there is another copy running, how do I fix this?</a>
 	<li><a href="#troubleshooting-lowsamplerate">I have some audio files or radio stations that do not play when using the digital outputs on my Squeezebox2, but do with the analog.  Why?</a>
 	<li><a href="#troubleshooting-permissions">On Linux/UNIX, my player flashes rapidly through song titles but does not play them.</a>
+	<li><a href="#troubleshooting-tzwin">On Windows using ActiveState Perl, the time on my players is displayed wrong during daylight savings.  Why?</a>
 </ul>
 <h4>Troubleshooting</h4>
 
@@ -923,7 +924,7 @@ Uncompressed audio at 16-bit resolution with 44.1kHz sampling rate, stereo, ends
 as opposed to the compressed AAC bitrate which is typically around 128 kilobits per second.</p> 
 
 <p>When operating wirelessly on both ends of the network (i.e. wireless from computer -> base station, and base station -> Squeezebox2), 
- that data rate doubles.   So you're trying to seend more than 3 megabits per second over 802.11b.</p>
+ that data rate doubles.   So you're trying to send more than 3 megabits per second over 802.11b.</p>
 
 <p>In theory, this should not be a problem, but it can be in the real world. 
 802.11b has an absolute maximum data rate of 11 megabits per second.  
@@ -1267,6 +1268,11 @@ want to connect both.  That way, when an audio signal that is not compatible wit
 </p>
 </div>
 
+
+<div class="faq">
+<h5><a id="troubleshooting-tzwin"></a>On Windows using ActiveState Perl, the time on my players is displayed wrong during daylight savings.  Why?</h5>
+<p>If the environment variable &quot;TZ&quot; is set to anything but a null value, Perl may report the time incorrectly.  Unsetting that environment variable in the script you're using to run SlimServer
+should help.</p></div>
 
 <h4><a href="#more">More Information</a></h4>
 <ul>
