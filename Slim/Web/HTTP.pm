@@ -856,7 +856,7 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent("html/mypage.ico", $params); 
 		}
 
-	} elsif ($path =~ /slimserver\.css/) {
+	} elsif ($path =~ /\.css/) {
 
 		($mtime, $inode, $size) = getFileInfoForStaticContent($path, $params);
 
