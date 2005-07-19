@@ -46,7 +46,7 @@ sub new {
 
 	my $api = new Plugins::Live365::Live365API();
 
-	if( my( $station, $handle ) = $url =~ m{^live365://(www.live365.com/play/([^/?]+).+)$} ) {
+	if( my( $station, $handle ) = $url =~ m{live365://(www.live365.com/play/([^/?]+).+)$} ) {
 		$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
 
 		my $realURL = $url;
