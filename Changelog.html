@@ -1,3 +1,83 @@
+<h2><a name="v6.1.0" id="v6.1.0"></a>Version 6.1.0 - 2005-07-21</h2>
+<ul>
+	<li>Squeezebox2 Firmware (Revision 15):<p>
+		<ul>
+			<li>Fixed problems with certain FLAC files (those with a sum of bits per sample,
+qlp_coeff_precision and lpc order over 32 took a different codepath).
+			<li>Reset error codes when a connection is successfully established to a server, so we don't see the "Problem: Can't connnect" message prematurely when switching between SlimServer and SqueezeNetwork.
+			<li>Change needed to support seamless reconnection to the SqueezeNetwork. Set the reconnect bit of the HELO message if we're playing an infinitely looping short track.
+		</ul>
+	<br>
+
+	<li>Usability:<p>
+		<ul>
+			<li>Dramatically increase performance for the common case of 'Browse Albums' with years.
+			<li>Add a link on the WebUI for PodCast playlists imported from iTunes.
+		</ul>
+	<br>
+
+	<li>Internet Radio:<p>
+		<ul>
+			<li>Live365 fixes from chrisp810:
+			<ul>
+				<li>Proper error reporting when your Live365 login times out or has been superceded by a login elsewhere.
+				<li>No more crash when listening to a station with only one song in the playlist.
+				<li>Better login handling to avoid logging in multiple times if more than one player is browsing/playing Live365 stations at once.
+			</ul>
+
+		</ul>
+	<br>
+
+	<li>Internationalization:<p>
+		<ul>
+			<li>Complete Czech translation from Roman Smetak.
+			<li>Updated German translations from Michael Herger
+			<li>Updated Spanish translations from Néstor
+		</ul>
+	<br>
+
+	<li>Skins:<p>
+		<ul>
+			<li>ExBrowse2, Fishbone & Touch Updates.
+		</ul>
+	<br>
+
+	<li>Bugs Fixed:<p>
+		<ul>
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1360">#1360</a> - cue sheets show up funny when browsing music folder
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1475">#1475</a> - disabled itunes tracks require wipe cache to re-enable
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1508">#1508</a> - flac files made by dbpoweramp don't play properly (massive distortion)
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1592">#1592</a> - Fast forward / rewind remain active after changing tracks
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1613">#1613</a> - particular FLAC file causes SB2 display to get corrupted and sometimes overwrite nvram
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1620">#1620</a> - &quot;Problem: Can't connect&quot; with error 4 screen comes up immediately sometimes
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1675">#1675</a> - when screensaver is set to analog VU meter, sometimes display just ends up blank
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1692">#1692</a> - Restarting SN shouldn't stop player, lose station title.
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1704">#1704</a> - &quot;Greatest Hits&quot; Albums confused
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1718">#1718</a> - Whitenoise output when syncing players
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1735">#1735</a> - Scanning (corrupt) playlists adds albums, removes years
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1741">#1741</a> - Slimserver crashes loading podcast for Make blog
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1752">#1752</a> - XML request crashes SlimServer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1769">#1769</a> - integration of iTunes' podcasts into SlimServer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1794">#1794</a> - edit single playlist item on Web interface
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1797">#1797</a> - Wrong Sorting Order in &quot;Browse Songs&quot;
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1800">#1800</a> - Touch skin could use some work
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1810">#1810</a> - Symlinks to artcover is displayed in BMF
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1811">#1811</a> - Playback of ShoutCast Radio Stations works only on the second press of PLAY
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1812">#1812</a> - Wrong Behavior when Jumping through the Song List with the Remote
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1813">#1813</a> - Wrong linking of &quot;all songs&quot; at the bottom of the hierachy during browsing
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1815">#1815</a> - Missing/wrong German translation
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1816">#1816</a> - Articles to ignore when sorting artist names
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1817">#1817</a> - Screensaver oddity
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1818">#1818</a> - add sanity check version check
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1820">#1820</a> - 24/48 audio files (WAV or FLAC) not playing on SB2
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1822">#1822</a> - Trying to use SHOUTCast now crashes SlimServer
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1825">#1825</a> - file urls get munged when playing other songs in folder using browse music folder and remote control
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1836">#1836</a> - Undefined values in $osDetect cause warnings on NetBSD
+			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1840">#1840</a> - When browsing by year, no need to display year in listing
+		</ul>
+	<br>
+</ul>
+
 <h2><a name="v6.1b2" id="v6.1b2"></a>Version 6.1b2 - 2005-07-09</h2>
 <ul>
 	<li>Squeezebox2 Firmware (Revision 14):<p>
