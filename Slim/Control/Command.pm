@@ -112,6 +112,7 @@ sub execute {
 
 #DATABASE    
 # N    rescan          <?>    	
+# N    rescan          playlists
 # N    wipecache
 # N    info            total                       genres                        ?
 # N    info            total                       artists                       ?
@@ -256,7 +257,7 @@ sub execute {
 
 			if (defined $p1 && $p1 eq 'playlists') {
 
-				Slim::Music::Info::clearPlaylists();
+				Slim::Music::Info::clearPlaylists('internal');
 				Slim::Music::Import::startScan('PLAYLIST');
 
 			} else {
