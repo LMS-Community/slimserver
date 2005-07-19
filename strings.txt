@@ -2759,6 +2759,9 @@ SETUP_WIPECACHE
 	ES	Limpiar la información previa de la colección antes de volver a recopilar
 	FR	Initialiser la bibliothèque avant de répertorier
 
+SETUP_PLAYLISTRESCAN
+	EN	Rescan playlists only.
+
 RESCANNING
 	CZ	Server právě aktualizuje informace z hudebního archivu.
 	DE	Der Server durchsucht nun ihre Musiksammlung.

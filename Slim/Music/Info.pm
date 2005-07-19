@@ -281,7 +281,29 @@ sub playlistForClient {
 }
 
 sub clearPlaylists {
-	return $currentDB->clearExternalPlaylists(shift) if defined($currentDB);
+	my $type = shift;
+
+	if (!defined $currentDB) {
+		return;
+	}
+
+	# Didn't specify a type? Clear everything
+	if (!defined $type) {
+
+		$currentDB->clearExternalPlaylists;
+		$currentDB->clearInternalPlaylists;
+
+		return;
+	}
+
+	if ($type eq 'internal') {
+
+		$currentDB->clearInternalPlaylists;
+
+	} else {
+
+		$currentDB->clearExternalPlaylists($type);
+	}
 }
 
 sub playlists {

@@ -249,13 +249,23 @@ sub execute {
 	} elsif ($p0 eq "rescan") {
 	
 		if (defined $p1 && $p1 eq '?') {
-			$p1 = Slim::Utils::Misc::stillScanning()?1:0;
-		}
-		elsif (!Slim::Utils::Misc::stillScanning()) {
-			Slim::Music::Import::cleanupDatabase(1);
-			Slim::Music::Info::clearPlaylists();
-			Slim::Music::Import::resetImporters();
-			Slim::Music::Import::startScan();
+
+			$p1 = Slim::Utils::Misc::stillScanning() ? 1 : 0;
+
+		} elsif (!Slim::Utils::Misc::stillScanning()) {
+
+			if (defined $p1 && $p1 eq 'playlists') {
+
+				Slim::Music::Info::clearPlaylists();
+				Slim::Music::Import::startScan('PLAYLIST');
+
+			} else {
+
+				Slim::Music::Import::cleanupDatabase(1);
+				Slim::Music::Info::clearPlaylists();
+				Slim::Music::Import::resetImporters();
+				Slim::Music::Import::startScan();
+			}
 		}
 
 		$client = undef;

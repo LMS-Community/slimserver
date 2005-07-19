@@ -1212,7 +1212,7 @@ sub initSetupConfig {
 						'PrefOrder' => ['audiodir','playlistdir',undef]
 						},
 				'Rescan' => {
-					'PrefOrder' => ['wipedb','rescan']
+					'PrefOrder' => [qw(playlistrescan wipedb rescan)]
 					,'PrefsInTable' => 0
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -1253,7 +1253,18 @@ sub initSetupConfig {
 							,'onChange' => sub {
 								my ($client,$changeref) = @_;
 
-								Slim::Control::Command::execute($client, [$changeref->{'wipedb'}{'new'} ? "wipecache" : "rescan"], undef, undef);
+								my $rescanType = ['rescan'];
+
+								if ($changeref->{'wipedb'}{'new'}) {
+
+									$rescanType = ['wipecache'];
+
+								} elsif ($changeref->{'playlistrescan'}{'new'}) {
+
+									$rescanType = [qw(rescan playlists)];
+								}
+
+								Slim::Control::Command::execute($client, $rescanType, undef, undef);
 							}
 							,'inputTemplate' => 'setup_input_submit.html'
 							,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
@@ -1270,7 +1281,16 @@ sub initSetupConfig {
 							,'changeIntro' => ''
 							,'changeMsg' => ''
 						}
-		
+
+				,'playlistrescan' => {
+							'validate' => \&validateAcceptAll
+							,'inputTemplate' => 'setup_input_chk.html'
+							,'PrefChoose' => string('SETUP_PLAYLISTRESCAN')
+							,'currentValue' => sub { return 0; }
+							,'dontSet' => 1
+							,'changeIntro' => ''
+							,'changeMsg' => ''
+						}
 			}
 		} #end of setup{'server'} hash
 	,'PLUGINS' => {

@@ -799,6 +799,16 @@ sub clearExternalPlaylists {
 	$self->forceCommit();
 }
 
+sub clearInternalPlaylists {
+	my $self = shift;
+
+	for my $track ($self->getInternalPlaylists) {
+		$track->delete;
+	}
+
+	$self->forceCommit();
+}
+
 sub getExternalPlaylists {
 	my $self = shift;
 
