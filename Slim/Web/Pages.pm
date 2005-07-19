@@ -272,8 +272,11 @@ sub init {
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
-					$form->{'showYear'} = $showYear;
-					$form->{'year'} = $item->year;
+					# Don't show years when browsing years..
+					if (!$findCriteria->{'year'}) {
+						$form->{'showYear'} = $showYear;
+						$form->{'year'} = $item->year;
+					}
 				}
 
 				# Show the artist in the album view
