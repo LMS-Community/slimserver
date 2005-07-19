@@ -258,7 +258,7 @@ sub addMenus {
 	
 	my $menu = eval { &{"Plugins::${plugin}::addMenu"}() };
 	
-	if (!$@ && defined $menu && !exists $disabledPlugins->{$plugin}) {
+	if (!$@ && defined $menu && $menu && !exists $disabledPlugins->{$plugin}) {
 
 		$::d_plugins && msg("Adding $plugin to menu: $menu\n");
 		Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, \%params);
@@ -398,7 +398,7 @@ sub addSetupGroups {
 			my $menu = 'PLUGINS';
 			if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
 				$menu = eval { &{"Plugins::${plugin}::addMenu"}() };
-				$menu = 'PLUGINS' if ($@);
+				$menu = 'PLUGINS' if (not $menu || $@);
 			}
 	
 			if (defined $isClient && $isClient) {
