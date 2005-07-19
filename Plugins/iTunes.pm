@@ -214,7 +214,24 @@ sub setPodcasts {
 	my $podcast = $ds->find('playlist', {
 		'url' => [ qw(itunesplaylist:podcasts*) ],
 	},);
-	Slim::Web::Pages::addLinks("browse",{'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id()}) if @$podcast[0];
+
+	if (@$podcast[0]) {
+		Slim::Web::Pages::addLinks("browse",{'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id()."&noEdit=1"});
+
+		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
+			'useMode'  => 'browsedb',
+			'hierarchy' => 'playlist,playlistTrack',
+			'level' => 1,
+			'findCriteria' => {'playlist' => @$podcast[0]->id()},
+		});
+
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
+			'useMode'  => 'browsedb',
+			'hierarchy' => 'playlist,playlistTrack',
+			'level' => 1,
+			'findCriteria' => {'playlist' => @$podcast[0]->id()},
+		});
+	}
 }
 
 # This will be called when wipeDB is run - we always want to rescan at that point.
