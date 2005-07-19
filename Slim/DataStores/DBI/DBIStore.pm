@@ -136,6 +136,11 @@ sub objectForUrl {
 	my $readTag = shift;
 	my $lightweight = shift;
 
+	# Confirm that the URL itself isn't an object (see bug 1811)
+	if (ref($url) && ref($url) =~ /Track/) {
+		return $url;
+	}
+
 	if (!defined($url)) {
 		Slim::Utils::Misc::msg("Null track request!\n"); 
 		Slim::Utils::Misc::bt();
