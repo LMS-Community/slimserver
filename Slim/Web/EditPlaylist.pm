@@ -77,6 +77,12 @@ sub editplaylist {
 			for my $item (@items) {
 
 				if ($item eq $obj) {
+					# The assignment below ensures that the object
+					# in the list is the one that we're going to 
+					# change. It may be different of a different class
+					# (Track vs LightWeightTrack) than the one just
+					# returned from updateOrCreate.
+					$obj = $item;
 					$found = 1;
 					last;
 				}
@@ -85,6 +91,9 @@ sub editplaylist {
 			if ($found == 0) {
 				push @items, $obj;
 			}
+
+			$obj->title($title);
+			$obj->update();
 
 			$changed = 1;
 		}
@@ -118,12 +127,21 @@ sub editplaylist {
 		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
 
 		$obj->setTracks(\@items);
+		if ($obj->url =~ /^playlist:/) {
+			my $fileurl = $obj->url;
+			$fileurl =~ s/^playlist:/file:/;
+			Slim::Formats::Parse::writeList(\@items, undef, $fileurl);
+		}
 	}
 
 	# This is our display - dispatch to browsedb ?
 	$params->{'listTemplate'} = 'edit_playlist_list.html';
 	$params->{'items'}        = \@items;
 	$params->{'playlist'}     = $obj;
+	if ($items[$itemPos]) {
+		$params->{'form_title'}   = $items[$itemPos]->title;
+		$params->{'form_url'}   = $items[$itemPos]->url;
+	}
 
 	return Slim::Web::HTTP::filltemplatefile("edit_playlist.html", $params);
 }
