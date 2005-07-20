@@ -33,23 +33,22 @@
 </td>
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 
-[% IF descend %]
-	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+[% IF itemobj.isRemoteURL %]
+	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
 
 [% ELSE %]
-	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+
 [% END %]
 
 </td>
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 
-[% IF descend %]
-
-	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
+[% IF itemobj.isRemoteURL %]
+	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 
 [% ELSE %]
-
-	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
+	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 
 [% END %]
 

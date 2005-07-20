@@ -40,12 +40,20 @@
 
 <td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
 
-	<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+		[% IF itemobj.isRemoteURL %]
+		<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% itempath %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+		[% ELSE %]
+		<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+		[% END %]
 
 </td>
 <td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
 
-	<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
+		[% IF itemobj.isRemoteURL %]
+		<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% itempath %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif"  width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
+		[% ELSE %]
+		<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
+		[% END %]
 
 </td>
 

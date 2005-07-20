@@ -26,12 +26,20 @@
 			[% END %]
 		</td>
 		<td width="13">
+		[% IF itemobj.isRemoteURL %]
+			<a href="status.html?p0=playlist&p1=play&p2=[% itempath %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+		[% ELSE %]
 			<a href="status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
+		[% END %]
 		</td>
 		<td>&nbsp;</td>
 		
 		<td width="13">
+		[% IF itemobj.isRemoteURL %]
+			<a href="status.html?p0=playlist&p1=add&p2=[% itempath %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+		[% ELSE %]
 			<a href="status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
+		[% END %]
 		</td>
 		[% FOREACH mixer = mixerlinks.values.sort %]
 			[% PROCESS $mixer %]
