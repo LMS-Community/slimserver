@@ -1395,7 +1395,9 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','artfolder','thumbSize','includeNoArt']
+					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb',
+					#'artfolder',
+					'thumbSize','includeNoArt']
 				}
 			}
 		,'Prefs' => {

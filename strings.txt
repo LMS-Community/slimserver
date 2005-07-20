@@ -3242,17 +3242,7 @@ SETUP_COVERART
 	SE	Albumomslag
 
 SETUP_COVERART_DESC
-	CZ	Obrázky s náhledy obalů alb, pokud jsou dostupné, jsou zobrazovány na stránce s informacemi o albu, nebo obsažené skladbě. Tyto náhledy jsou uloženy v ID3 tagu pro každou skladbu, nebo je nastaven soubor ve stejném adresáři, jako jsou soubory skladeb. Soubory obrázku se mohou jmenovat "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", nebo "thumb.jpg". Zde můžete určita další dodatečné názvy souborů, které budou brány jako obrázky náhledů alb. Můžete specifikovat rozdílné názvy pro náhledy a pro zobrazení v plné velikosti. Prefix pro tuto volbu je %, za ním následuje volba stejná jako jsou volby pro formát názvu skladby (např. %ARTIST - ALBUM  will look for Artist - Album.jpg to fit the artist and album information found.
-	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden. Verwenden Sie % als Prefix um dieselben Elemente wie für Titelinformationen zu verwenden. So wird z.B. %ARTIST - %ALBUM nach einer Datei "Artist - Album.jpg" passend zum aktuellen Musikstück suchen.
-	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
-	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
-	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un disco o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de discos. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de discos o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - DISCO, buscará el par Artista - Disco.jpg que coincida con la información de artista y disco encontrada.
-	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
-	JP	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
-	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.
-	NO	Platecover kan vises sammen med informasjon om sanger. Disse bildene kan lagres i ID3-tag, eller lagres som en separat fil i samme folder som låta. Bildefiler med navn "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" brukes som standard. Du kan angi andre mulige navn på disse album-filene, og også angi egne navn på filer med thumbnail bilder. Bruk Prefix % og samme elementer som er tilgjengelige for Tittelformat. (f.eks: %ARTIST - ALBUM.jpg søker etter filer med funnet verdier for artist og album.)
-	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
-	SE	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
+	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail (below) or full size images (here).
 
 SETUP_COVERART_OK
 	CZ	Jméno souboru obalů nastaveno na
@@ -3281,10 +3271,7 @@ SETUP_COVERTHUMB
 	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
-	CZ	Pro procházení podle náhledů obalů, server použije stejné nastavení názvů souboru jako výše a hodnoty obsažené v ID3 tazích. Nicméně pokud sii přejete použít odlišné názvy, nebo vlastní soubory, zadejte jejich jména zde.
-	DE	Für das Nachschlagen von Plattencovers wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
-	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
-	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
+	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to specify your own filename, enter that here.
 
 SETUP_COVERTHUMB_OK
 	CZ	Název souboru náhledu alba nastaven na
@@ -4239,17 +4226,16 @@ SETUP_PLAYTRACKALBUM
 	SE	Spela alla låtar i albumet
 
 SETUP_PLAYTRACKALBUM_1
-	CZ	Hrát ostatní skladby alba nebo adresáře
-	DE	Auch andere Titel aus dem Album oder dem Verzeichnis spielen
-	DK	Afspil andre sange i album eller mappe
-	EN	Play other songs in album or directory
-	ES	Tocar otras canciones en disco o carpeta
-	FR	Jouer les autres morceaux de l'album ou du dossier
-	JP	同じアルバム、またはフォルダーのその他の曲を再生する
-	NL	Speel de andere liedjes uit het album of uit de folder
-	NO	Spill andre låter i album eller folder
-	PT	Tocar outras músicas do álbum ou da mesma directoria
-	SE	Spela alla låtar i albumet eller mappen
+	CZ	Hrát ostatní skladby alba
+	DE	Auch andere Titel aus dem Album
+	DK	Afspil andre sange i album
+	EN	Play other songs in album
+	ES	Tocar otras canciones en disco
+	FR	Jouer les autres morceaux de l'album
+	NL	Speel de andere liedjes uit het album
+	NO	Spill andre låter i album
+	PT	Tocar outras músicas do álbum
+	SE	Spela alla låtar i albumet
 
 SETUP_PLAYTRACKALBUM_0
 	CZ	Hrát pouze vybranou skladbu
@@ -4265,17 +4251,7 @@ SETUP_PLAYTRACKALBUM_0
 	SE	Spela endast vald sång
 
 SETUP_PLAYTRACKALBUM_DESC
-	CZ	Pokud vyberete jednu skladbu a stisknete PLAY na dálkovém ovladači, můžete zvolit zda se má hrát pouze tato skladba, nebo celé album obsahující tuto skladbu, nebo celý adresář, začíníjící touto skladbou.
-	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
-	DK	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
-	EN	When you select a single song and press PLAY on the remote, you can choose to play just that song or all the songs in that album or directory, starting with that song.
-	ES	Cuando se elige una sola canción y se presiona PLAY en el control remoto, se puede optar por escuchar solo esa canción o todas las canciones en ese disco o carpeta, comenzando por esa canción.
-	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, la platine peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
-	JP	1曲だけ選択して再生した場合、その曲だけを再生するのか、同じアルバムまたはフォルダーのその他の曲も再生するのか、を選択できます。
-	NL	Als U een liedje selecteert en op de PLAY toets van de afstandsbediening drukt kan U alleen dit liedje laten spelen of alle liedjes uit het album of de folder afspelen, te beginnen met het geselecteerde liedje.
-	NO	Når du velger en låt og trykker på PLAY, kan du velge å spille bare den sangen eller alle sangen i det albumet eller folderen, med valgt sang som den første.
-	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
-	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
+	EN	When you select a single song and press PLAY on the remote, while browsing albums, you can choose to play just that song or all the songs in that album, starting with that song.
 
 SETUP_IGNOREDARTICLES
 	CZ	Položky, které budou ignorovány při třídění podle jména interpretů.

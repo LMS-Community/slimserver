@@ -79,25 +79,27 @@ sub init {
 				1
 			);
 
-			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum')) {
+#			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum')) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 
-			} else {
-
-				$command .= 'tracks';
-				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-
-				Slim::Player::Playlist::shuffle($client, 0);
-
-				$client->execute(['playlist', 'clear']);
-				$client->execute(['playlist', $command, $currentItem]);
-				$client->execute(['playlist', 'jump', $listIndex]);
-
-				if ($wasShuffled) {
-					$client->execute(['playlist', 'shuffle', 1]);
-				}
-			}
+#			### TODO: re-enable playtrackalbum pref for folders if/when possible.
+#			### but only when it actually works without non-urls getting in the mix
+# 			} else {
+# 
+# 				$command .= 'tracks';
+# 				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+# 
+# 				Slim::Player::Playlist::shuffle($client, 0);
+# 
+# 				$client->execute(['playlist', 'clear']);
+# 				$client->execute(['playlist', $command, $currentItem]);
+# 				$client->execute(['playlist', 'jump', $listIndex]);
+# 
+# 				if ($wasShuffled) {
+# 					$client->execute(['playlist', 'shuffle', 1]);
+# 				}
+# 			}
 		},
 	);
 }
