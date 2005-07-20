@@ -2760,6 +2760,7 @@ SETUP_WIPECACHE
 	FR	Initialiser la bibliothèque avant de répertorier
 
 SETUP_PLAYLISTRESCAN
+	DE	Nur nach neuen Playlists suchen.
 	EN	Rescan playlists only.
 
 RESCANNING
@@ -3242,8 +3243,9 @@ SETUP_COVERART
 	SE	Albumomslag
 
 SETUP_COVERART_DESC
+	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine (weiter unten) und grosse Bilder (hier) verwenden.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail (below) or full size images (here).
-
+		
 SETUP_COVERART_OK
 	CZ	Jméno souboru obalů nastaveno na
 	DE	Dateiname des Plattencovers:
@@ -3271,6 +3273,7 @@ SETUP_COVERTHUMB
 	SE	Albumomslags-miniatyrer
 
 SETUP_COVERTHUMB_DESC
+	DE	Für das Nachschlagen von Plattencovers wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie einen anderen Namen verwenden wollen, definieren Sie diesen hier.
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to specify your own filename, enter that here.
 
 SETUP_COVERTHUMB_OK
@@ -4214,7 +4217,7 @@ SETUP_RESHUFFLEONREPEAT_1
 
 SETUP_PLAYTRACKALBUM
 	CZ	Hrát ostatní skladby z alba
-	DE	Abspielen weiterer Titel des Albums
+	DE	Weitere Titel des Albums abspielen
 	DK	Afspil andre sange i album
 	EN	Play other songs in album
 	ES	Tocar otras canciones del disco
@@ -4251,6 +4254,7 @@ SETUP_PLAYTRACKALBUM_0
 	SE	Spela endast vald sång
 
 SETUP_PLAYTRACKALBUM_DESC
+	DE	Wenn Sie beim Durchsuchen von Alben einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus dem gewählten Album.
 	EN	When you select a single song and press PLAY on the remote, while browsing albums, you can choose to play just that song or all the songs in that album, starting with that song.
 
 SETUP_IGNOREDARTICLES
