@@ -812,11 +812,19 @@ sub clearInternalPlaylists {
 sub getExternalPlaylists {
 	my $self = shift;
 
+	my @playlists = ();
+
+	# Don't search for playlists if the plugin isn't enabled.
+	for my $importer (qw(itunes moodlogic musicmagic)) {
+
+		if (Slim::Utils::Prefs::get($importer)) {
+
+			push @playlists, sprintf('%splaylist:*', $importer);
+		}
+	}
+
 	# Use find()'s caching mechanism.
-	return $self->find('playlist', {
-		'url' => [ qw(itunesplaylist:* moodlogicplaylist:* musicmagicplaylist:*) ],
-	},
-	'title');
+	return $self->find('playlist', { 'url' => \@playlists }, 'title');
 }
 
 sub getInternalPlaylists {
