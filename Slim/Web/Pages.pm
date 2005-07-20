@@ -1210,13 +1210,14 @@ sub livesearch {
 	$params->{'liveSearch'}  = 1;
 
 	# short circuit
-	unless ($query) {
+	if (!defined($query) ||
+		($params->{'manualSearch'} && !$query)) {
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
 
 	# Don't auto-search for 2 chars, but allow manual search. IE: U2
 	if (!$params->{'manualSearch'} && length($query) <= 2) {
-		return;
+		return \'';
 	}
 
 	my $data = Slim::Music::LiveSearch->query($query);
