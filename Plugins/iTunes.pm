@@ -655,9 +655,9 @@ sub handleTrack {
 
 	# We don't need to do all the track processing if we just want to map
 	# the ID to url, and then proceed to the playlist parsing.
-	#if (Slim::Music::Import::scanPlaylistsOnly()) {
-	#	return 1;
-	#}
+	if (Slim::Music::Import::scanPlaylistsOnly()) {
+		return 1;
+	}
 
 	if ($filetype) {
 

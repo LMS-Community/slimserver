@@ -1,6 +1,6 @@
 package Plugins::MusicMagic::Plugin;
 
-# $Id: MusicMagic.pm 1757 2005-01-18 21:22:50Z dsully $
+# $Id$
 
 use strict;
 
@@ -290,8 +290,13 @@ sub startScan {
 		
 	$::d_musicmagic && msg("MusicMagic: start export\n");
 	stopScan();
-	
-	$export = 'start';
+
+	if (Slim::Music::Import::scanPlaylistsOnly()) {
+		$export = 'playlists';
+	} else {
+		$export = 'start';
+	}
+
 	$scan = 0;
 	
 	Slim::Utils::Scheduler::add_task(\&exportFunction);

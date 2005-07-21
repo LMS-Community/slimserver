@@ -19,6 +19,8 @@ our %Importers = ();
 our %artwork   = ();
 our $dbCleanup = 0;
 
+our $playlistOnlyScan = 0;
+
 # Force a rescan of all the importers (TODO: Make importers pluggable)
 sub startScan {
 	my $import = shift;
@@ -52,6 +54,16 @@ sub cleanupDatabase {
 	}
 
 	return $dbCleanup;
+}
+
+sub scanPlaylistsOnly {
+	my $value = shift;
+
+	if (defined $value) {
+		$playlistOnlyScan = $value;
+	}
+
+	return $playlistOnlyScan;
 }
 
 sub deleteImporter {
@@ -134,6 +146,9 @@ sub endImporter {
 
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
+
+		# Set this back to 0.
+		scanPlaylistsOnly(0);
 
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();

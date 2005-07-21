@@ -257,16 +257,16 @@ sub execute {
 
 			if (defined $p1 && $p1 eq 'playlists') {
 
-				Slim::Music::Info::clearPlaylists('internal');
-				Slim::Music::Import::startScan('PLAYLIST');
+				Slim::Music::Import::scanPlaylistsOnly(1);
 
 			} else {
 
 				Slim::Music::Import::cleanupDatabase(1);
-				Slim::Music::Info::clearPlaylists();
-				Slim::Music::Import::resetImporters();
-				Slim::Music::Import::startScan();
 			}
+
+			Slim::Music::Info::clearPlaylists();
+			Slim::Music::Import::resetImporters();
+			Slim::Music::Import::startScan();
 		}
 
 		$client = undef;
