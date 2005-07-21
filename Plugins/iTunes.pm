@@ -43,6 +43,7 @@ use Date::Parse qw(str2time);
 use Fcntl ':flock'; # import LOCK_* constants
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
+use XML::Parser;
 
 if ($] > 5.007) {
 	require Encode;
@@ -63,14 +64,15 @@ my $iBase = '';
 my $inPlaylists;
 my $inTracks;
 our %tracks;
-my $applicationVersion;
-my $majorVersion;
-my $minorVersion;
 
-my $ituneslibrary;
-my $ituneslibraryfile;
-my $ituneslibrarypath;
-	
+my $iTunesLibraryFile;
+my $iTunesLibraryPath;
+my $iTunesParser;
+my $iTunesParserNB;
+my $offset = 0;
+
+my ($inKey, $inDict, $inValue, %item, $currentKey, $nextIsMusicFolder, $nextIsPlaylistName, $inPlaylistArray);
+
 my $initialized = 0;
 
 # mac file types
@@ -137,11 +139,11 @@ sub canUseiTunesLibrary {
 
 	my $oldMusicPath = Slim::Utils::Prefs::get('itunes_library_music_path');
 
-	$ituneslibraryfile = defined $ituneslibraryfile ? $ituneslibraryfile : findMusicLibraryFile();
-	$ituneslibrarypath = defined $ituneslibrarypath ? $ituneslibrarypath : findMusicLibrary();
+	$iTunesLibraryFile = defined $iTunesLibraryFile ? $iTunesLibraryFile : findMusicLibraryFile();
+	$iTunesLibraryPath = defined $iTunesLibraryPath ? $iTunesLibraryPath : findMusicLibrary();
 
 	# The user may have moved their music folder location. We need to nuke the db.
-	if ($ituneslibrarypath && $oldMusicPath && $oldMusicPath ne $ituneslibrarypath) {
+	if ($iTunesLibraryPath && $oldMusicPath && $oldMusicPath ne $iTunesLibraryPath) {
 
 		$::d_itunes && Slim::Utils::Misc::msg("iTunes: Music Folder has changed from previous - wiping db\n");
 
@@ -150,7 +152,7 @@ sub canUseiTunesLibrary {
 		$lastITunesMusicLibraryDate = -1;
 	}
 
-	return defined $ituneslibraryfile && defined $ituneslibrarypath;
+	return defined $iTunesLibraryFile && defined $iTunesLibraryPath;
 }
 
 sub getDisplayName {
@@ -168,32 +170,17 @@ sub getFunctions {
 sub initPlugin {
 	return 1 if $initialized;
 
-	Slim::Web::Setup::addChildren('server','itunes',3);
-	Slim::Web::Setup::addCategory('itunes',&setupCategory);
+	addGroups();
 
 	return unless canUseiTunesLibrary();
-
-	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Can use iTunes Music Folder - adding importer.\n");
-
-	# Auto-turn on iTunes importer if we can use it.
-	# But check to see if they've explictly turned it off.
-	my $useiTunes = Slim::Utils::Prefs::get('itunes');
-
-	if (!defined $useiTunes) {
-
-		Slim::Utils::Prefs::set('itunes', 1);
-	}
 
 	Slim::Music::Import::addImporter('ITUNES', {
 		'scan'  => \&startScan, 
 		'reset' => \&resetState,
 	});
 
-	Slim::Music::Import::useImporter('ITUNES', Slim::Utils::Prefs::get('itunes'));
+	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-
-	my ($groupRef,$prefRef) = setupUse();
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,3,$prefRef);
 
 	$initialized = 1;
 
@@ -205,18 +192,23 @@ sub initPlugin {
 	checker($initialized);
 
 	setPodcasts();
-	
+
 	return 1;
 }
 
 sub setPodcasts {
+
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	my $podcast = $ds->find('playlist', {
 		'url' => [ qw(itunesplaylist:podcasts*) ],
 	},);
 
 	if (@$podcast[0]) {
-		Slim::Web::Pages::addLinks("browse",{'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id()."&noEdit=1"});
+
+		Slim::Web::Pages::addLinks("browse", {
+			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id."&noEdit=1"
+		});
 
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
 			'useMode'  => 'browsedb',
@@ -242,7 +234,7 @@ sub resetState {
 	$lastITunesMusicLibraryDate = -1;
 
 	# set to -1 to force all the tracks to be updated.
-	Slim::Utils::Prefs::set('iTunesXMLModificationDate', $lastITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 }
 
 sub disablePlugin {
@@ -265,6 +257,15 @@ sub disablePlugin {
 	# set importer to not use
 	Slim::Utils::Prefs::set('itunes', 0);
 	Slim::Music::Import::useImporter('ITUNES',0);
+}
+
+sub addGroups {
+	Slim::Web::Setup::addChildren('server','itunes',3);
+	Slim::Web::Setup::addCategory('itunes',&setupCategory);
+
+	my ($groupRef,$prefRef) = &setupUse();
+
+	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
 }
 
 sub findLibraryFromPlist {
@@ -397,45 +398,18 @@ sub findMusicLibraryFile {
 
 sub findMusicLibrary {
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
-	my $path       = undef;
-	my $file       = $ituneslibraryfile || findMusicLibraryFile();
+	my $path = undef;
+	my $file = $iTunesLibraryFile || findMusicLibraryFile();
 
 	if (defined($file) && $autolocate) {
+		$::d_itunes && msg("iTunes: attempting to locate iTunes library relative to $file.\n");
 
-		$::d_itunes && msg("iTunes: attempting to locate iTunes library from $file.\n");
-
-		# This is kind of lame - and needs to be refactored. If the
-		# user moves the location of the iTunes Music Folder, we need
-		# to grab that out of the XML file.
-		open (ITUNESLIBRARY, $file) || do {
-			$::d_itunes && msg("iTunes: Couldn't open XML file: [$file]\n");
-			return;
-		};
-
-		my $len = read ITUNESLIBRARY, $ituneslibrary, -s $file;
-
-		close ITUNESLIBRARY;
-
-		$ituneslibrary =~ s/></>\n</g;
-
-		while (my $curLine = getLine()) {
-
-			next unless $curLine eq "<key>Music Folder</key>";
-		
-			$path = Slim::Utils::Misc::pathFromFileURL(strip_automounter(getValue()));
-		
-			$::d_itunes && msg("iTunes: found the music folder: $path\n");
-
-			last;
-		}
-
-		# Reset this for later use.
-		$ituneslibrary = undef;
+		my $itunesdir = dirname($file);
+		$path = catdir($itunesdir, 'iTunes Music');
 
 		if ($path && -d $path) {
-
-			$::d_itunes && msg("iTunes: set iTunes library to $file: $path\n");
-			Slim::Utils::Prefs::set('itunes_library_music_path', $path);
+			$::d_itunes && msg("iTunes: set iTunes library relative to $file: $path\n");
+			Slim::Utils::Prefs::set('itunes_library_music_path',$path);
 			return $path;
 		}
 	}
@@ -457,11 +431,11 @@ sub findMusicLibrary {
 }
 
 sub isMusicLibraryFileChanged {
-	my $file = $ituneslibraryfile || findMusicLibraryFile();
+	my $file = $iTunesLibraryFile || findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
 
 	# Set this so others can use it without going through Prefs in a tight loop.
-	$lastITunesMusicLibraryDate = Slim::Utils::Prefs::get('iTunesXMLModificationDate');
+	$lastITunesMusicLibraryDate = Slim::Utils::Prefs::get('lastITunesMusicLibraryDate');
 	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -472,14 +446,6 @@ sub isMusicLibraryFileChanged {
 		my $itunesscaninterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
 		$::d_itunes && msgf("iTunes: music library has changed: %s\n", scalar localtime($lastITunesMusicLibraryDate));
-		
-		unless ($itunesscaninterval) {
-			
-			# only scan if itunesscaninterval is non-zero.
-			$::d_itunes && msg("iTunes: Scan Interval set to 0, rescanning disabled\n");
-
-			return 0;
-		}
 
 		return 1 if (!$lastMusicLibraryFinishTime);
 		
@@ -518,7 +484,7 @@ sub startScan {
 		return;
 	}
 		
-	my $file = $ituneslibraryfile || findMusicLibraryFile();
+	my $file = $iTunesLibraryFile || findMusicLibraryFile();
 
 	$::d_itunes && msg("iTunes: startScan on file: $file\n");
 
@@ -534,11 +500,25 @@ sub startScan {
 
 	# start the checker
 	checker();
-	
+
+	$iTunesParser = XML::Parser->new(
+		'ErrorContext'     => 2,
+		'ProtocolEncoding' => 'UTF-8',
+		'NoExpand'         => 1,
+		'NoLWP'            => 1,
+		'Handlers'         => {
+
+			'Start' => \&handleStartElement, 
+			'Char'  => \&handleCharElement,
+			'End'   => \&handleEndElement,
+		},
+	);
+
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
 } 
 
 sub stopScan {
+
 	if (stillScanning()) {
 
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
@@ -553,18 +533,22 @@ sub stillScanning {
 sub doneScanning {
 	$::d_itunes && msg("iTunes: done Scanning: unlocking and closing\n");
 
-	$locked = 0;
+	if (defined $iTunesParserNB) {
 
+		# This spews, but it's harmless.
+		eval { $iTunesParserNB->parse_done };
+		$iTunesParserNB = undef;
+		$iTunesParser = undef;
+	}
+
+	$locked = 0;
 	$opened = 0;
 	
-	$ituneslibrary = undef;
-	
 	$lastMusicLibraryFinishTime = time();
-
 	$isScanning = 0;
 
 	# Set the last change time for the next go-round.
-	my $file  = $ituneslibraryfile || findMusicLibraryFile();
+	my $file  = $iTunesLibraryFile || findMusicLibraryFile();
 	my $mtime = (stat($file))[9];
 
 	$lastITunesMusicLibraryDate = $mtime;
@@ -575,329 +559,438 @@ sub doneScanning {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('iTunesXMLModificationDate', $lastITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 	
 	Slim::Music::Import::endImporter('ITUNES');
 }
 
-###########################################################################################
-	# This incredibly ugly parser is highly dependent on the iTunes 3.0 file format.
-	# A wise man with more time would use a true XML parser and integrate the appropriate
-	# libraries into the distribution to work cross platform, until then...
-
-    # Abandon all hope ye who enter here...
-###########################################################################################
 sub scanFunction {
-	my $file = $ituneslibraryfile || findMusicLibraryFile();
+	my $file = $iTunesLibraryFile || findMusicLibraryFile();;
 	
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
 
-		if (!open(ITUNESLIBRARY, "<$file")) {
+		open(ITUNESLIBRARY, $file) || do {
 			$::d_itunes && warn "Couldn't open iTunes Library: $file";
-			return 0;	
-		}
+			return 0;
+		};
 
 		$opened = 1;
 
 		resetScanState();
+
+		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat $file)[9]);
 	}
 	
 	if ($opened && !$locked) {
+
 		$locked = 1;
 		$locked = flock(ITUNESLIBRARY, LOCK_SH | LOCK_NB) unless ($^O eq 'MSWin32'); 
 
 		if ($locked) {
+
 			$::d_itunes && msg("iTunes: Got file lock on iTunes Library\n");
+
 			$locked = 1;
 
-			my $len = read ITUNESLIBRARY, $ituneslibrary, -s $file;
-
-			die "couldn't read itunes library!" if (!defined($len));
-			flock(ITUNESLIBRARY, LOCK_UN) unless ($^O eq 'MSWin32');
-			close ITUNESLIBRARY;
-
-			$ituneslibrary =~ s/></>\n</g;
+			if (defined $iTunesParser) {
+				$iTunesParserNB = $iTunesParser->parse_start();
+			}
 
 		} else {
+
 			$::d_itunes && warn "Waiting on lock for iTunes Library";
 			return 1;
 		}
 	}
-	
-	my $curLine = getLine();
 
-	if (!defined($curLine)) {
+	# parse a little more from the stream.
+	if (defined $iTunesParserNB) {
 
+		local $/ = '</dict>';
+		my $line;
+
+		for (my $i = 0; $i < 250; $i++) {
+			$line .= <ITUNESLIBRARY>;
+		}
+
+		$line =~ s/&#(\d*);/Slim::Web::HTTP::escape(chr($1))/ge;
+
+		$iTunesParserNB->parse_more($line);
+
+		return 1;
+	}
+
+	return 0;
+}
+
+sub handleTrack {
+	my $curTrack = shift;
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my %cacheEntry = ();
+
+	my $id       = $curTrack->{'Track ID'};
+	my $location = $curTrack->{'Location'};
+	my $filetype = $curTrack->{'File Type'};
+	my $type     = undef;
+
+	# We got nothin
+	if (scalar keys %{$curTrack} == 0) {
+		return 1;
+	}
+
+	if (defined $location) {
+		$location = Slim::Utils::Misc::utf8off($location);
+	}
+
+	if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
+		$location = "http://$location"; # fix missing prefix in old invalid entries
+	}
+
+	my $url = normalize_location($location);
+
+	# Use this for playlist verification.
+	$tracks{$id} = $url;
+
+	# We don't need to do all the track processing if we just want to map
+	# the ID to url, and then proceed to the playlist parsing.
+	#if (Slim::Music::Import::scanPlaylistsOnly()) {
+	#	return 1;
+	#}
+
+	if ($filetype) {
+
+		if (exists $Slim::Music::Info::types{$filetype}) {
+			$type = $Slim::Music::Info::types{$filetype};
+		} else {
+			$type = $filetypes{$filetype};
+		}
+	}
+
+	if (Slim::Music::Info::isFileURL($url)) {
+
+		my $file  = Slim::Utils::Misc::pathFromFileURL($url);
+
+		if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
+
+			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
+		}
+
+		# dsully - Sun Mar 20 22:50:41 PST 2005
+		# iTunes has a last 'Date Modified' field, but
+		# it isn't updated even if you edit the track
+		# properties directly in iTunes (dumb) - the
+		# actual mtime of the file is updated however.
+
+		my $mtime = (stat($file))[9];
+		my $ctime = str2time($curTrack->{'Date Added'});
+		
+		# If the file hasn't changed since the last
+		# time we checked, then don't bother going to
+		# the database. A file could be new to iTunes
+		# though, but it's mtime can be anything.
+		#
+		# A value of -1 for lastITunesMusicLibraryDate
+		# means the user has pressed 'wipe db'.
+		if ($lastITunesMusicLibraryDate &&
+		    $lastITunesMusicLibraryDate != -1 &&
+		    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
+		    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
+
+			$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
+
+			return 1;
+		}
+
+		# Reuse the stat from above.
+		if (!$file || !-r _) { 
+			$::d_itunes && msg("iTunes: file not found: $file\n");
+
+			# Tell the database to cleanup.
+			$ds->markEntryAsInvalid($url);
+
+			return 1;
+		}
+	}
+
+	# skip track if Disabled in iTunes
+	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+
+		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+
+		$ds->markEntryAsInvalid($url);
+
+		return 1;
+	}
+
+	$::d_itunes && msg("iTunes: got a track named " . $curTrack->{'Name'} . " location: $location\n");
+
+	if ($url && !defined($type)) {
+		$type = Slim::Music::Info::typeFromPath($url);
+	}
+
+	if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
+
+		$cacheEntry{'CT'}       = $type;
+		$cacheEntry{'TITLE'}    = $curTrack->{'Name'};
+		$cacheEntry{'ARTIST'}   = $curTrack->{'Artist'};
+		$cacheEntry{'COMPOSER'} = $curTrack->{'Composer'};
+		$cacheEntry{'TRACKNUM'} = $curTrack->{'Track Number'};
+
+		my $discNum   = $curTrack->{'Disc Number'};
+		my $discCount = $curTrack->{'Disc Count'};
+
+		$cacheEntry{'DISC'}  = $discNum   if defined $discNum;
+		$cacheEntry{'DISCC'} = $discCount if defined $discCount;
+		$cacheEntry{'ALBUM'} = $curTrack->{'Album'};			
+
+		$cacheEntry{'GENRE'} = $curTrack->{'Genre'};
+		$cacheEntry{'FS'}    = $curTrack->{'Size'};
+
+		if ($curTrack->{'Total Time'}) {
+			$cacheEntry{'SECS'} = $curTrack->{'Total Time'} / 1000;
+		}
+
+		$cacheEntry{'BITRATE'} = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
+		$cacheEntry{'YEAR'}    = $curTrack->{'Year'};
+		$cacheEntry{'COMMENT'} = $curTrack->{'Comments'};
+
+		# cacheEntry{'???'} = $curTrack->{'Track Count'};
+		# cacheEntry{'???'} = $curTrack->{'Sample Rate'};
+
+		$cacheEntry{'VALID'} = '1';
+
+		my $track = $ds->updateOrCreate({
+
+			'url'        => $url,
+			'attributes' => \%cacheEntry,
+			'readTags'   => 0,
+
+		}) || do {
+
+			$::d_itunes && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
+
+			return 1;
+		};
+
+		my $albumObj = $track->album;
+
+		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
+
+			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb) {
+
+				Slim::Music::Import::artwork($albumObj, $track);
+			}
+		}
+
+	} else {
+
+		$::d_itunes && msg("iTunes: unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL') . "\n");
+
+	} 
+}
+
+sub handlePlaylist {
+	my $cacheEntry = shift;
+
+	my $name = $cacheEntry->{'TITLE'};
+	my $url  = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
+
+	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
+
+	# add this playlist to our playlist library
+	#	'LIST',	 # list items (array)
+	#	'AGE',   # list age
+
+	$cacheEntry->{'TITLE'} = Slim::Utils::Prefs::get('iTunesplaylistprefix') . $name . Slim::Utils::Prefs::get('iTunesplaylistsuffix');
+	$cacheEntry->{'CT'}    = 'itu';
+	$cacheEntry->{'TAG'}   = 1;
+	$cacheEntry->{'VALID'} = '1';
+
+	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
+
+	$::d_itunes && msg("iTunes: playlists now has " . scalar @{$cacheEntry->{'LIST'}} . " items...\n");
+}
+
+sub handleStartElement {
+	my ($p, $element) = @_;
+
+	# Don't care about the outer <dict> right after <plist>
+	if ($inTracks && $element eq 'dict' ) {
+		$inDict = 1;
+	}
+
+	if ($element eq 'key') {
+		$inKey = 1;
+	}
+
+	# If we're inside the playlist element, and the array is starting,
+	# clear out the previous array (defensive), and mark ourselves as inside.
+	if ($inPlaylists && defined $item{'TITLE'} && $element eq 'array') {
+
+		@{$item{'LIST'}} = ();
+		$inPlaylistArray = 1;
+	}
+
+	# Store this value somewhere.
+	if ($element eq 'string' || $element eq 'integer') {
+		$inValue = 1;
+	}
+} 
+
+sub handleCharElement { 
+	my ($p, $value) = @_;
+
+	# Just need the one value here.
+	if ($nextIsMusicFolder && $inValue) {
+
+		$nextIsMusicFolder = 0;
+
+		#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
+		$iBase = strip_automounter($value);
+		
+		$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
+
+		return;
+	}
+
+	# Playlists have their own array structure.
+	if ($nextIsPlaylistName && $inValue) {
+
+		$item{'TITLE'} = $value;
+		$nextIsPlaylistName = 0;
+
+		return;
+	}
+
+	if ($inKey) {
+		$currentKey = $value;
+		return;
+	}
+
+	if ($inTracks && $inValue) {
+
+		if ($] > 5.007) {
+			$item{$currentKey} = $value;
+		} else {
+			$item{$currentKey} = Slim::Utils::Misc::utf8toLatin1($value);
+		}
+
+		return;
+	}
+
+	if ($inPlaylistArray && $inValue) {
+
+		if (defined($tracks{$value})) {
+
+			$::d_itunes_verbose && msg("  pushing $value on to list: " . $tracks{$value} . "\n");
+
+			push @{$item{'LIST'}}, $tracks{$value};
+
+		} else {
+
+			$::d_itunes_verbose && msg("  NOT pusing $value on to list, it's missing\n");
+		}
+	}
+}
+
+sub handleEndElement {
+	my ($p, $element) = @_;
+
+	# Start our state machine controller - tell the next char handler what to do next.
+	if ($element eq 'key') {
+
+		$inKey = 0;
+
+		# This is the only top level value we care about.
+		if ($currentKey eq 'Music Folder') {
+			$nextIsMusicFolder = 1;
+		}
+
+		if ($currentKey eq 'Tracks') {
+
+			$::d_itunes && msg("iTunes: starting track parsing\n");
+
+			$inTracks = 1;
+		}
+
+		if ($inTracks && $currentKey eq 'Playlists') {
+
+			Slim::Music::Info::clearPlaylists('itunesplaylist:');
+
+			$::d_itunes && msg("iTunes: starting playlist parsing, cleared old playlists\n");
+
+			$inTracks = 0;
+			$inPlaylists = 1;
+		}
+
+		# 
+		if ($inPlaylists && $currentKey eq 'Name') {
+			$nextIsPlaylistName = 1;
+		}
+
+		return;
+	}
+
+	# 
+	if ($element eq 'string' || $element eq 'integer') {
+		$inValue = 0;
+	}
+
+	# Done reading this entry - add it to the database.
+	if ($inTracks && $element eq 'dict') {
+
+		$inDict = 0;
+
+		handleTrack(\%item);
+
+		%item = ();
+	}
+
+	# Playlist is done.
+	if ($inPlaylists && $inPlaylistArray && $element eq 'array') {
+
+		$inPlaylistArray = 0;
+
+		# Don't bother with 'Library' - it's not a real playlist
+		if (defined $item{'TITLE'} && $item{'TITLE'} ne 'Library') {
+
+			$::d_itunes && msg("got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
+
+			handlePlaylist(\%item);
+		}
+
+		%item = ();
+	}
+
+	# Finish up
+	if ($element eq 'plist') {
 		$::d_itunes && msg("iTunes:  Finished scanning iTunes XML\n");
 
 		doneScanning();
 
 		return 0;
 	}
+}
+
+sub resetScanState {
+
+	$::d_itunes && Slim::Utils::Misc::msg("Resetting scan state.\n");
 	
-	if ($inTracks) {
+	$inPlaylists = 0;
+	$inTracks = 0;
 
-		if ($curLine eq '</dict>') {
-			$inTracks = 0;
-		} elsif ($curLine =~ /<key>([^<]*)<\/key>/) {
-
-			my $id = $1;
-			my %curTrack = getDict();
-			my %cacheEntry = ();
-			my $ds = Slim::Music::Info::getCurrentDataStore();
-
-			# add this track to the library
-			if ($id ne $curTrack{'Track ID'}) {
-				warn "Danger, the Track ID (" . $curTrack{'Track ID'} . ") and the key ($id) don't match.\n";
-			}
-			
-			my $kind = $curTrack{'Kind'};
-			my $location = $curTrack{'Location'};
-			my $filetype = $curTrack{'File Type'};
-			my $type = undef;
-
-			if ($filetype) {
-
-				if (exists $Slim::Music::Info::types{$filetype}) {
-					$type = $Slim::Music::Info::types{$filetype};
-				} else {
-					$type = $filetypes{$filetype};
-				}
-			}
-			
-			if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
-				$location = "http://$location"; # fix missing prefix in old invalid entries
-			}
-
-			my $url = normalize_location($location);
-
-			# Use this for playlist verification.
-			$tracks{$id} = $url;
-
-			# skip track if Disabled in iTunes
-			if ($curTrack{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
-
-				$::d_itunes && msg("iTunes: deleting disabled track $url\n");
-
-				$ds->markEntryAsInvalid($url);
-
-				return 1;
-			}
-
-			if (Slim::Music::Info::isFileURL($url)) {
-
-				# pathFromFileURL needs to convert from the
-				# UTF-8 which iTunes stores it's data in to
-				# the current locale - which on Windows is
-				# cp1252 for most Western speakers.
-				my $file  = Slim::Utils::Misc::pathFromFileURL($url);
-
-				if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
-					eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
-				}
-
-				# dsully - Sun Mar 20 22:50:41 PST 2005
-				# iTunes has a last 'Date Modified' field, but
-				# it isn't updated even if you edit the track
-				# properties directly in iTunes (dumb) - the
-				# actual mtime of the file is updated however.
-
-				my $mtime = (stat($file))[9];
-				my $ctime = str2time($curTrack{'Date Added'});
-				
-				# If the file hasn't changed since the last
-				# time we checked, then don't bother going to
-				# the database. A file could be new to iTunes
-				# though, but it's mtime can be anything.
-				#
-				# A value of -1 for lastITunesMusicLibraryDate
-				# means the user has pressed 'wipe db'.
-				if ($lastITunesMusicLibraryDate &&
-				    $lastITunesMusicLibraryDate != -1 &&
-				    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
-				    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
-
-					$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
-
-					return 1;
-				}
-
-				# Reuse the stat from above.
-				if (!$file || !-r _) { 
-					$::d_itunes && msg("iTunes: file not found: $file\n");
-
-					# Tell the database to cleanup.
-					$ds->markEntryAsInvalid($url);
-
-					return 1;
-				}
-			}
-
-			$::d_itunes && msg("iTunes: got a track named " . $curTrack{'Name'} . " location: $location\n");
-
-			if ($url && !defined($type)) {
-				$type = Slim::Music::Info::typeFromPath($url);
-			}
-
-			if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
-
-				$cacheEntry{'CT'} = $type;
-				$cacheEntry{'TITLE'} = $curTrack{'Name'};
-				$cacheEntry{'ARTIST'} = $curTrack{'Artist'};
-				$cacheEntry{'COMPOSER'} = $curTrack{'Composer'};
-				$cacheEntry{'TRACKNUM'} = $curTrack{'Track Number'};
-
-				my $discNum = $curTrack{'Disc Number'};
-				my $discCount = $curTrack{'Disc Count'};
-
-				$cacheEntry{'DISC'} = $discNum if defined $discNum;
-				$cacheEntry{'DISCC'} = $discCount if defined $discCount;
-				$cacheEntry{'ALBUM'} = $curTrack{'Album'};			
-
-				# Slim::Music::Info::addDiscNumberToAlbumTitle(\%cacheEntry);
-				
-				$cacheEntry{'GENRE'} = $curTrack{'Genre'};
-				$cacheEntry{'FS'} = $curTrack{'Size'};
-
-				if ($curTrack{'Total Time'}) { $cacheEntry{'SECS'} = $curTrack{'Total Time'} / 1000; };
-
-				$cacheEntry{'BITRATE'} = $curTrack{'Bit Rate'} * 1000 if ($curTrack{'Bit Rate'});
-				$cacheEntry{'YEAR'} = $curTrack{'Year'};
-				$cacheEntry{'COMMENT'} = $curTrack{'Comments'};
-
-				# cacheEntry{'???'} = $curTrack{'Track Count'};
-				# cacheEntry{'???'} = $curTrack{'Sample Rate'};
-
-				$cacheEntry{'VALID'} = '1';
-
-				my $track = $ds->updateOrCreate({
-
-					'url'        => $url,
-					'attributes' => \%cacheEntry,
-					'readTags'   => 1,
-
-				}) || do {
-
-					$::d_itunes && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
-
-					return 0;
-				};
-
-				my $albumObj = $track->album();
-
-				if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
-
-					if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
-
-						Slim::Music::Import::artwork($albumObj, $track);
-					}
-				}
-
-				%curTrack = ();
-				%cacheEntry = ();
-
-			} else {
-
-				$::d_itunes && Slim::Utils::Misc::msg(
-					"iTunes: unknown file type %s " . ($url || ''), $curTrack{'Kind'}
-				);
-			} 
-
-		}
-
-	} elsif ($inPlaylists) {
-		
-		if ($curLine eq '</array>') {
-
-			$inPlaylists = 0;
-
-			%tracks = ();
-		
-		} else {
-		
-			my %curPlaylist = getDict();
-			my %cacheEntry = ();
-			my $name = $curPlaylist{'Name'};
-			my $url = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
-			$url = Slim::Utils::Misc::fixPath($url);
-
-			$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
-
-			if ($name eq 'Library') {
-				
-				$::d_itunes && msg("iTunes: Skipping default 'Library' playlist.\n");
-				return 1;
-			}
-		
-			# add this playlist to our playlist library
-			#	'LIST',	 # list items (array)
-			#	'AGE',   # list age
-		
-			$cacheEntry{'TITLE'} = Slim::Utils::Prefs::get('iTunesplaylistprefix') . $name . Slim::Utils::Prefs::get('iTunesplaylistsuffix');
-			$cacheEntry{'LIST'} = $curPlaylist{'Playlist Items'};
-			$cacheEntry{'CT'} = 'itu';
-			$cacheEntry{'TAG'} = 1;
-			$cacheEntry{'VALID'} = '1';
-		
-			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-
-			%curPlaylist = ();
-			%cacheEntry  = ();
+	$inKey = 0;
+	$inDict = 0;
+	$inValue = 0;
+	%item = ();
+	$currentKey = undef;
+	$nextIsMusicFolder = 0;
+	$nextIsPlaylistName = 0;
+	$inPlaylistArray = 0;
 	
-			# This is inaccurate.	
-			#$::d_itunes && msg("iTunes: playlists now has " . scalar Slim::Music::Info::playlists() . " items...\n");
-		}
-
-	} else {
-		if ($curLine eq "<key>Major Version</key>") {
-		
-			$majorVersion = getValue();
-		
-			$::d_itunes && msg("iTunes Major Version: $majorVersion\n");
-		
-		} elsif ($curLine eq "<key>Minor Version</key>") {
-		
-			$minorVersion = getValue();
-		
-			$::d_itunes && msg("iTunes Minor Version: $minorVersion\n");
-		
-		} elsif ($curLine eq "<key>Application Version</key>") {
-		
-			$applicationVersion = getValue();
-		
-			$::d_itunes && msg("iTunes application version: $applicationVersion\n");
-		
-		} elsif ($curLine eq "<key>Music Folder</key>") {
-		
-			$iBase = getValue();
-			#$iBase = Slim::Utils::Misc::pathFromFileURL($iBase);
-			$iBase = strip_automounter($iBase);
-		
-			$::d_itunes && msg("iTunes: found the music folder: $iBase\n");
-		
-		} elsif ($curLine eq "<key>Tracks</key>") {
-		
-			$inTracks = 1;
-
-			$inPlaylists = 0;
-		
-			$::d_itunes && msg("iTunes: starting track parsing\n");
-		
-		} elsif ($curLine eq "<key>Playlists</key>") {
-		
-			$inPlaylists = 1;
-
-			$inTracks = 0;
-			
-			Slim::Music::Info::clearPlaylists('itunesplaylist:');
-			
-			$::d_itunes && msg("iTunes: starting playlist parsing, cleared old playlists\n");
-		
-		}
-	}
-
-	return 1;
+	%tracks = ();
 }
 
 sub normalize_location {
@@ -910,190 +1003,34 @@ sub normalize_location {
 	if (Slim::Utils::OSDetect::OS() eq 'unix') {
 		
 		# find the new base location.  make sure it ends with a slash.
-		my $path = $ituneslibrarypath || findMusicLibrary();
+		my $path = $iTunesLibraryPath || findMusicLibrary();
 		my $base = Slim::Utils::Misc::fileURLFromPath($path);
 
 		$url = $stripped;		
-		$url =~ s,$iBase,$base,isg;
-		$url =~ s,(\w)\/\/(\w),$1\/$2,isg;
+		$url =~ s/$iBase/$base/isg;
+		$url =~ s/(\w)\/\/(\w)/$1\/$2/isg;
 
 	} else {
+
 		$url = Slim::Utils::Misc::fixPath($stripped);
 	}
 
-	$url =~ s,file:\/\/localhost\/,file:\/\/\/,;
+	$url =~ s/file:\/\/localhost\//file:\/\/\//;
 	
 	$::d_itunes_verbose && msg("iTunes: normalized $location to $url\n");
 
 	return $url;
 }
 
-sub getValue {
-	my $curLine = getLine();
-	my $data = '';
-	
-	if ($curLine =~ /^<(?=[ids])(?:integer|date|string)>([^<]*)<\/(?=[ids])(?:integer|date|string)>$/) {
-		$data = $1;
-
-	} elsif ($curLine eq '<true/>') {
-	
-		$data = 1;
-	
-	} elsif ($curLine eq '<data>') {
-	
-		$curLine = getLine();
-	
-		while (defined($curLine) && ($curLine ne '</data>')) {
-			$data .= $curLine;
-			$curLine = getLine();
-		}
-	
-	} elsif ($curLine =~ /<string>([^<]*)/) {
-			$data = $1;
-			$curLine = getLine();
-	
-			while (defined($curLine) && ($curLine !~ /<\/string>/)) {
-				$data .= $curLine;
-				$curLine = getLine();
-			}
-	
-			if ($curLine =~ /([^<]*)<\/string>/) {
-				$data .= $1;
-			}
-	
-	}
-
-	$data =~ s/&#(\d*);/chr($1)/ge;
-
-	return $data;
-}
-
-sub getPlaylistTrackArray {
-	my @playlist = ();
-	my $curLine = getLine();
-	
-	if ($curLine ne '<array>') {
-		warn "Unexpected $curLine in playlist track array while looking for <array>";
-		return;
-	}
-		
-	while (($curLine = getLine()) && ($curLine ne '</array>')) {
-
-		if ($curLine ne '<dict>') {
-			warn "Unexpected $curLine in playlist track array while looking for <dict>";
-			return;
-		}
-		
-		$curLine = getLine();
-		
-		if ($curLine ne '<key>Track ID</key>') {
-			warn "Unexpected $curLine in playlist track array while looking for track id";
-			return \@playlist;
-		}
-		
-		my $value = getValue();
-		
-		if (defined($tracks{$value})) {
-			push @playlist, $tracks{$value};
-			$::d_itunes_verbose && msg("  pushing $value on to list: " . $tracks{$value} . "\n");
-		
-		} else {
-			$::d_itunes_verbose && msg("  NOT pusing $value on to list, it's missing\n");
-		}
-
-		$curLine = getLine();
-		
-		if ($curLine ne '</dict>') {
-			warn "Unexpected $curLine in playlist track array while looking for </dict>";
-			return \@playlist;
-		}
-	}	
-	
-	$::d_itunes && msg("got a playlist array of " . scalar(@playlist) . " items\n");
-	
-	return \@playlist;
-}
-
-sub getLine {
-	my $curLine;
-	
-	$ituneslibrary =~ /([^\n]*)\n/g;	
-	
-	$curLine = $1;
-	
-	if (!defined($curLine)) {
-		return undef;
-	}
-	
-	$curLine =~ s/^\s+//;
-	$curLine =~ s/\s$//;
-	
-	$::d_itunes_verbose && msg("Got line: $curLine\n");
-	return $curLine;
-}
-
-sub getDict {
-	my $curLine;
-	my $nextLine;
-	my %dict;
-	
-	while ($curLine = getLine()) {
-		my $key = undef;
-		my $value = undef;
-		
-		if ($curLine =~ /<key>([^<]*)<\/key>/) {
-			$key = $1;
-			
-			if ($key eq "Playlist Items") {
-				$value = getPlaylistTrackArray();
-			} else {
-				$value = getValue();
-			}			
-			
-			if (defined($key) && defined($value)) { 
-				$dict{$key} = $value;
-				$::d_itunes_verbose && msg("got dictionary entry: $key = $value\n");
-			} else {
-				warn "iTunes: Couldn't get key and value in dictionary, got $key and $value";
-			}
-		
-		} elsif ($curLine eq '<dict>') {
-			$::d_itunes_verbose && msg("found beginning of dictionary\n");
-		
-		} elsif ($curLine eq '</dict>') {
-			$::d_itunes_verbose && msg("found end of dictionary\n");
-			last;
-		
-		} else {
-			warn "iTunes: Confused looking for key in dictionary";
-		}
-	}
-	return %dict;
-}
-
-sub resetScanState {
-	
-	$inPlaylists = 0;
-	
-	$inTracks = 0;
-	
-	$applicationVersion = undef;
-	
-	$majorVersion = undef;
-	
-	$minorVersion = undef;
-	
-	%tracks = ();
-}
 
 sub strip_automounter {
 	my $path = shift;
 	
 	if ($path && ($path =~ /automount/)) {
 	
-		#Strip out automounter 'private' paths.
-		#OSX wants us to use file://Network/ or timeouts occur
-		#There may be more combinations
+		# Strip out automounter 'private' paths.
+		# OSX wants us to use file://Network/ or timeouts occur
+		# There may be more combinations
 		$path =~ s/private\/var\/automount\///;
 		$path =~ s/private\/automount\///;
 		$path =~ s/automount\/static\///;
@@ -1109,178 +1046,157 @@ sub setupUse {
 	my $client = shift;
 
 	my %setupGroup = (
-		'PrefOrder' => ['itunes']
-		,'PrefsInTable' => 1
-		,'Suppress_PrefHead' => 1
-		,'Suppress_PrefDesc' => 1
-		,'Suppress_PrefLine' => 1
-		,'Suppress_PrefSub' => 1
-		,'GroupHead' => string('SETUP_ITUNES')
-		,'GroupDesc' => string('SETUP_ITUNES_DESC')
-		,'GroupLine' => 1
-				,'GroupSub' => 1
+		'PrefOrder' => ['itunes'],
+		'PrefsInTable' => 1,
+		'Suppress_PrefHead' => 1,
+		'Suppress_PrefDesc' => 1,
+		'Suppress_PrefLine' => 1,
+		'Suppress_PrefSub' => 1,
+		'GroupHead' => string('SETUP_ITUNES'),
+		'GroupDesc' => string('SETUP_ITUNES_DESC'),
+		'GroupLine' => 1,
+		'GroupSub' => 1,
 	);
-	my %setupPrefs = (
-		'itunes'	=> {
-			'validate' => \&Slim::Web::Setup::validateTrueFalse
-			,'changeIntro' => ""
-			,'options' => {
-				'1' => string('USE_ITUNES'),
-				'0' => string('DONT_USE_ITUNES')
-			}
-			,'onChange' => 	sub {
-				my ($client,$changeref,$paramref,$pageref) = @_;
 
-				foreach my $client (Slim::Player::Client::clients()) {
-					Slim::Buttons::Home::updateMenu($client);
+	my %setupPrefs = (
+
+		'itunes' => {
+
+			'validate' => \&Slim::Web::Setup::validateTrueFalse,
+			'changeIntro' => "",
+			'options' => {
+				'1' => string('USE_ITUNES'),
+				'0' => string('DONT_USE_ITUNES'),
+			},
+
+			'onChange' => sub {
+				my ($client, $changeref, $paramref, $pageref) = @_;
+
+				foreach my $tempClient (Slim::Player::Client::clients()) {
+					Slim::Buttons::Home::updateMenu($tempClient);
 				}
+
 				Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
 				Slim::Music::Import::startScan('ITUNES');
-			}
-			,'optionSort' => 'KR'
-			,'inputTemplate' => 'setup_input_radio.html'
+			},
+
+			'optionSort' => 'KR',
+			'inputTemplate' => 'setup_input_radio.html',
 		}
 	);
-	return (\%setupGroup,\%setupPrefs);
+
+	return (\%setupGroup, \%setupPrefs);
 }
 
-#sub setupGroup {
-#	my $client = shift;
-#	
-#	my %setupGroup = (
-#		'PrefOrder' => ['debug']
-#		,'PrefsInTable' => 1
-#		,'Suppress_PrefHead' => 1
-#		,'Suppress_PrefDesc' => 1
-#		,'Suppress_PrefLine' => 1
-#		,'Suppress_PrefSub' => 1
-#		,'GroupHead' => string('SETUP_ITUNES')
-#		,'GroupDesc' => string('SETUP_ITUNES_DESC')
-#		,'GroupLine' => 1
-#				,'GroupSub' => 1
-#	);
-#	
-#	my %setupPrefs = (
-#		'debug'	=> {
-#			'validate' => \&Slim::Web::Setup::validateTrueFalse
-#			,'changeIntro' => "iTunes Debug"
-#			,'options' => {
-#					'1' => string('ON')
-#					,'0' => string('OFF')
-#				}
-#			,'onChange' => 	sub {
-#					my ($client,$changeref,$paramref,$pageref) = @_;
-#
-#					if ($changeref->{'debug'}{'new'}) {
-#						$::d_import .= ($::d_itunes) ? "" : "itunes";
-#					} else {
-#						$::d_import =~ s/itunes//ig;
-#					}
-#					print $::d_import;
-#				}
-#			,'optionSort' => 'KR'
-#			,'inputTemplate' => 'setup_input_radio.html'
-#		}
-#	);
-#	
-#	return (\%setupGroup,\%setupPrefs);
-#}
-
 sub checkDefaults {
+
 	if (!Slim::Utils::Prefs::isDefined('itunesscaninterval')) {
-		Slim::Utils::Prefs::set('itunesscaninterval',60)
+		Slim::Utils::Prefs::set('itunesscaninterval',60);
 	}
-	
+
 	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistprefix')) {
 		Slim::Utils::Prefs::set('iTunesplaylistprefix','iTunes: ');
 	}
-	
-	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistsuffix')) {
-		Slim::Utils::Prefs::set('iTunesplaylistsuffix','');
-	}
-	
+
 	if (!Slim::Utils::Prefs::isDefined('ignoredisableditunestracks')) {
 		Slim::Utils::Prefs::set('ignoredisableditunestracks',0);
 	}
-	
+
 	if (!Slim::Utils::Prefs::isDefined('itunes_library_music_path')) {
 		Slim::Utils::Prefs::set('itunes_library_music_path',Slim::Utils::Prefs::defaultAudioDir());
 	}
-	
+
 	if (!Slim::Utils::Prefs::isDefined('itunes_library_autolocate')) {
 		Slim::Utils::Prefs::set('itunes_library_autolocate',1);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('iTunesXMLModificationDate')) {
-		Slim::Utils::Prefs::set('iTunesXMLModificationDate',0);
+	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
+		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
 	}
 }
 
 sub setupCategory {
-	my %setupCategory =(
-		'title' => string('SETUP_ITUNES')
-		,'parent' => 'server'
-		,'GroupOrder' => ['Default','iTunesPlaylistFormat']
-		,'Groups' => {
+
+	my %setupCategory = (
+
+		'title' => string('SETUP_ITUNES'),
+
+		'parent' => 'server',
+
+		'GroupOrder' => [qw(Default iTunesPlaylistFormat)],
+
+		'Groups' => {
+
 			'Default' => {
-					'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks','itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
-				}
-			,'iTunesPlaylistFormat' => {
-					'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
+				'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks',
+					'itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
+			},
+
+			'iTunesPlaylistFormat' => {
+				'PrefOrder' => ['iTunesplaylistprefix','iTunesplaylistsuffix'],
+				'PrefsInTable' => 1,
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefDesc' => 1,
+				'Suppress_PrefLine' => 1,
+				'Suppress_PrefSub' => 1,
+				'GroupHead' => string('SETUP_ITUNESPLAYLISTFORMAT'),
+				'GroupDesc' => string('SETUP_ITUNESPLAYLISTFORMAT_DESC'),
+				'GroupLine' => 1,
+				'GroupSub' => 1,
 			}
-		,'Prefs' => {
+		},
+
+		'Prefs' => {
+
 			'itunesscaninterval' => {
-					'validate' => \&Slim::Web::Setup::validateNumber
-					,'validateArgs' => [0,undef,1000]
-				}
-			,'iTunesplaylistprefix' => {
-					'validate' => \&Slim::Web::Setup::validateAcceptAll
-					,'PrefSize' => 'large'
-				}
-			,'iTunesplaylistsuffix' => {
-					'validate' => \&Slim::Web::Setup::validateAcceptAll
-					,'PrefSize' => 'large'
-				}
-			,'ignoredisableditunestracks' => {
-					'validate' => \&Slim::Web::Setup::validateTrueFalse
-					,'options' => {
-							'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1')
-							,'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0')
-						}
-				}
-			,'itunes_library_xml_path' => {
-					'validate' => \&Slim::Web::Setup::validateIsFile
-					,'changeIntro' => string('SETUP_OK_USING')
-					,'rejectMsg' => string('SETUP_BAD_FILE')
-					,'PrefSize' => 'large'
-				}
-			,'itunes_library_music_path' => {
-					'validate' => \&Slim::Web::Setup::validateIsDir
-					,'changeIntro' => string('SETUP_OK_USING')
-					,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
-					,'PrefSize' => 'large'
-				}
-			,'itunes_library_autolocate' => {
-					'validate' => \&Slim::Web::Setup::validateTrueFalse
-					,'options' => {
-							'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1')
-							,'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0')
-						}
-				}
+				'validate' => \&Slim::Web::Setup::validateNumber,
+				'validateArgs' => [0,undef,1000],
+			},
+
+			'iTunesplaylistprefix' => {
+				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'PrefSize' => 'large'
+			},
+
+			'iTunesplaylistsuffix' => {
+				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'PrefSize' => 'large'
+			},
+
+			'ignoredisableditunestracks' => {
+
+				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1'),
+					'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0'),
+				},
+			},
+
+			'itunes_library_xml_path' => {
+				'validate' => \&Slim::Web::Setup::validateIsFile,
+				'changeIntro' => string('SETUP_OK_USING'),
+				'rejectMsg' => string('SETUP_BAD_FILE'),
+				'PrefSize' => 'large',
+			},
+
+			'itunes_library_music_path' => {
+				'validate' => \&Slim::Web::Setup::validateIsDir,
+				'changeIntro' => string('SETUP_OK_USING'),
+				'rejectMsg' => string('SETUP_BAD_DIRECTORY'),
+				'PrefSize' => 'large',
+			},
+
+			'itunes_library_autolocate' => {
+				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1'),
+					'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0'),
+				},
+			},
 		}
 	);
 
-	return (\%setupCategory);
+	return \%setupCategory;
 }
 
 sub strings {
@@ -1290,4 +1206,3 @@ sub strings {
 1;
 
 __END__
-
