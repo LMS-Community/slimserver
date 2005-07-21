@@ -823,8 +823,13 @@ sub getExternalPlaylists {
 		}
 	}
 
-	# Use find()'s caching mechanism.
-	return $self->find('playlist', { 'url' => \@playlists }, 'title');
+	if (scalar @playlists) {
+
+		# Use find()'s caching mechanism.
+		return $self->find('playlist', { 'url' => \@playlists }, 'title');
+	}
+
+	return ();
 }
 
 sub getInternalPlaylists {
