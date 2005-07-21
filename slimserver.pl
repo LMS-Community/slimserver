@@ -379,9 +379,9 @@ sub init {
 	$SIG{CHLD} = 'IGNORE';
 	$SIG{PIPE} = 'IGNORE';
 	$SIG{TERM} = \&sigterm;
+	$SIG{INT}  = \&sigint;
 
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
-		$SIG{INT} = \&sigint;
 		$SIG{HUP} = \&initSettings;
 	}		
 
@@ -1142,6 +1142,7 @@ sub cleanup {
 		$ds->forceCommit;
 	}
 
+	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;
 	Slim::Buttons::Plugins::shutdownPlugins();
 
