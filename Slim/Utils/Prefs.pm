@@ -12,6 +12,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Path;
 use FindBin qw($Bin);
 use Digest::MD5;
+use YAML qw(DumpFile LoadFile);
 
 use Slim::Utils::Misc;
 
@@ -421,11 +422,21 @@ sub onChange {
 sub checkServerPrefs {
 	for my $key (keys %DEFAULT) {
 		if (!defined($prefs{$key})) {
-			if (ref($DEFAULT{$key} eq 'ARRAY')) {
+			if (ref($DEFAULT{$key}) eq 'ARRAY') {
 				my @temp = @{$DEFAULT{$key}};
 				$prefs{$key} = \@temp;
+			} elsif (ref($DEFAULT{$key}) eq 'HASH') {
+				my %temp = %{$DEFAULT{$key}};
+				$prefs{$key} = \%temp;
 			} else {
 				$prefs{$key} = $DEFAULT{$key};
+			}
+		} elsif (ref($DEFAULT{$key}) eq 'HASH') {
+			# check defaults for individual hash prefs
+			for my $subkey (keys %{$DEFAULT{$key}}) {
+				if (!defined $prefs{$key}{$subkey}) {
+					$prefs{$key}{$subkey} = $DEFAULT{$key}{$subkey};
+				}
 			}
 		}
 	}
@@ -436,6 +447,9 @@ sub checkServerPrefs {
 			Slim::Utils::Prefs::set("upgrade-$version-script", 0);
 		}
 	}
+
+	# write it out
+	writePrefs();
 }
 
 # This makes sure all the client preferences defined in the submitted hash are in the pref file.
@@ -448,11 +462,22 @@ sub initClientPrefs {
 			if (ref($defaultPrefs->{$key}) eq 'ARRAY') {
 				my @temp = @{$defaultPrefs->{$key}};
 				$prefs{$clientkey} = \@temp;
+			} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
+				my %temp = %{$defaultPrefs->{$key}};
+				$prefs{$clientkey} = \%temp;
 			} else {
 				$prefs{$clientkey} = $defaultPrefs->{$key};
 			}
+		} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
+			# check defaults for individual hash prefs
+			for my $subkey (keys %{$defaultPrefs->{$key}}) {
+				if (!defined $prefs{$clientkey}{$subkey}) {
+					$prefs{$clientkey}{$subkey} = $defaultPrefs->{$key}{$subkey};
+				}
+			}
 		}
 	}
+	scheduleWrite() unless $writePending;
 }
 
 sub push {
@@ -495,7 +520,7 @@ sub clientGetArrayMax {
 # getArray($arrayPref)
 sub getArray {
 	my $arrayPref = shift;
-	if (defined($prefs{($arrayPref)})) {
+	if (defined($prefs{($arrayPref)}) && ref($prefs{$arrayPref}) eq 'ARRAY') {
 		return @{$prefs{($arrayPref)}};
 	} else {
 		return ();
@@ -509,16 +534,58 @@ sub clientGetArray {
 	assert($client);
 	return getArray($client->id() . "-" . $arrayPref);
 }
+
 # get($pref)
 sub get { 
 	return $prefs{$_[0]} 
-};
-
-# getInd($pref,$index)
-sub getInd {
-	return $prefs{(shift)}[(shift)];
 }
 
+# getInd($pref,$index)
+# for indexed (array or hash) prefs
+sub getInd {
+	my ($pref,$index) = @_;
+	if (defined $prefs{$pref}) {
+		if (ref $prefs{$pref} eq 'ARRAY') {
+			return $prefs{$pref}[$index];
+		} elsif (ref $prefs{$pref} eq 'HASH') {
+			return $prefs{$pref}{$index};
+		}
+	}
+	return undef;
+}
+
+# getKeys($pref)
+# gets the keys of a hash pref
+sub getKeys {
+	return keys %{$prefs{(shift)}};
+}
+
+# getHash($pref)
+sub getHash {
+	my $hashPref = shift;
+	if (defined($prefs{($hashPref)}) && ref($prefs{$hashPref}) eq 'HASH') {
+		return %{$prefs{($hashPref)}};
+	} else {
+		return ();
+	}
+}
+
+# clientGetKeys($client, $hashPref)
+sub clientGetKeys {
+	my $client = shift;
+	my $hashPref = shift;
+	assert($client);
+	return getKeys($client->id() . "-" . $hashPref);
+}
+	
+# clientGetHash($client, $hashPref)
+sub clientGetHash {
+	my $client = shift;
+	my $hashPref = shift;
+	assert($client);
+	return getHash($client->id() . "-" . $hashPref);
+}
+	
 # Ugh - this should be a method on $client.
 #
 # clientGet($client, $pref [,$ind])
@@ -542,7 +609,13 @@ sub getDefault {
 	my $key = shift;
 	my $ind = shift;
 	if (defined($ind)) {
-		return $DEFAULT{$key}[$ind];
+		if (defined $DEFAULT{$key}) {
+			if (ref $DEFAULT{$key} eq 'ARRAY') {
+				return $DEFAULT{$key}[$ind];
+			} elsif (ref $DEFAULT{$key} eq 'HASH') {
+				return $DEFAULT{$key}{$ind};
+			}
+		}
 	}
 	return $DEFAULT{$key};
 }
@@ -554,11 +627,21 @@ sub set {
 
 	if (defined $ind) {
 
-		if (defined($prefs{$key}[$ind]) && defined($value) && $value eq $prefs{$key}[$ind]) {
-				return;
-		}
+		if (defined $prefs{$key}) {
+			if (ref $prefs{$key} eq 'ARRAY') {
+				if (defined($prefs{$key}[$ind]) && defined($value) && $value eq $prefs{$key}[$ind]) {
+						return;
+				}
 
-		$prefs{$key}[$ind] = $value;
+				$prefs{$key}[$ind] = $value;
+			} elsif (ref $prefs{$key} eq 'HASH') {
+				if (defined($prefs{$key}{$ind}) && defined($value) && $value eq $prefs{$key}{$ind}) {
+						return;
+				}
+
+				$prefs{$key}{$ind} = $value;
+			}
+		}
 
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
 
@@ -649,7 +732,11 @@ sub delete {
 		return;
 	}
 	if (defined($ind)) {
-		splice(@{$prefs{$key}},$ind,1);
+		if (ref($prefs{$key}) eq 'ARRAY') {
+			splice(@{$prefs{$key}},$ind,1);
+		} elsif (ref($prefs{$key}) eq 'HASH') {
+			CORE::delete $prefs{$key}{$ind};
+		}
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
 		#trying to delete a member of an array pref directly
 		#re-call function the correct way
@@ -675,7 +762,13 @@ sub isDefined {
 	my $key = shift;
 	my $ind = shift;
 	if (defined($ind)) {
-		return defined $prefs{$key}[$ind];
+		if (defined $prefs{$key}) {
+			if (ref $prefs{$key} eq 'ARRAY') {
+				return defined $prefs{$key}[$ind];
+			} elsif (ref $prefs{$key} eq 'HASH') {
+				return defined $prefs{$key}{$ind};
+			}
+		}
 	}
 	return defined $prefs{$key};
 }
@@ -700,6 +793,10 @@ sub scheduleWrite {
 	}
 }	
 
+sub writePending {
+	return $writePending;
+}
+
 sub writePrefs {
 
 	return unless $canWrite;
@@ -707,34 +804,10 @@ sub writePrefs {
 	$writePending = 0;
 	
 	my $writeFile = prefsFile();
-		
+
 	$::d_prefs && msg("Writing out prefs in $writeFile\n");
 	
-	open(NUPREFS, ">$writeFile") or do {
-		msg("Couldn't write preferences file out $writeFile\n");
-		return;
-	};
-
-	for my $k (sort keys (%prefs)) {
-
-		next unless defined $prefs{$k};
-
-		if (ref($prefs{$k}) eq 'ARRAY') {
-
-			print NUPREFS ($k . '# = ' . getArrayMax($k) . "\n");
-
-			my $i;
-
-			for my $val (@{$prefs{$k}}) {
-				print NUPREFS ($k . $i++ . " = " . $val . "\n");
-			}
-
-		} else {
-			print NUPREFS ($k . " = " . $prefs{$k} . "\n");
-		}
-	}
-
-	close NUPREFS;
+	DumpFile($writeFile, \%prefs);
 }
 
 sub preferencesPath {
@@ -820,35 +893,53 @@ sub load {
 	
 	# if we found some file to read, then let's read it!
 	if (-r $readFile) {
-		$::d_prefs && msg("reading in prefs file $readFile\n");
 		open(NUPREFS, $readFile);
-		while (<NUPREFS>) {
-			chomp; 			# no newline
-			s/^\s+//;		# no leading white
-			next unless length;	#anything left?
-			my ($var, $value) = split(/\s=\s/, $_, 2);
-			if ($var =~ /(.+?)(\d+|#)$/) {
-				#part of array
-				unless ($2 eq '#') {
-					$prefs{$1}[$2] = $value;
-				}
-			} else {
-				$prefs{$var} = $value;
-			}
+		my $firstline = <NUPREFS>;
+		close(NUPREFS);
+		if ($firstline =~ /^---/) {
+			# it's a YAML formatted file
+			$::d_prefs && msg("Loading YAML style prefs file $readFile\n");
+			my $prefref = LoadFile($readFile);
+			%prefs = %$prefref;
+		} else {
+			# it's the old style prefs file
+			$::d_prefs && msg("Loading old style prefs file $readFile\n");
+			loadOldPrefs($readFile);
 		}
-		close(NUPREFS);	
 	}
 	
 	# see if we can write out the real prefs file
 	$canWrite = (-e prefsFile() && -w prefsFile()) || (-w preferencesPath());
 	
-	# write it out no matter what.
-	writePrefs();
-	
 	if (!$canWrite && !$nosetup) {
 		msg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
 	}
 }
+
+sub loadOldPrefs {
+	my $readFile = shift;
+	open(NUPREFS, $readFile);
+	while (<NUPREFS>) {
+		chomp; 			# no newline
+		s/^\s+//;		# no leading white
+		next unless length;	#anything left?
+		my ($var, $value) = split(/\s=\s/, $_, 2);
+		if ($var =~ /^(.+?)\%(.+)$/) {
+			#part of hash
+			$prefs{$1}{$2} = $value;
+		} elsif ($var =~ /(.+?)(\d+|#)$/) {
+			#part of array
+			if ($2 eq '#') {
+				$prefs{$1} = [] if $value == -1;
+			} else {
+				$prefs{$1}[$2] = $value;
+			}
+		} else {
+			$prefs{$var} = $value;
+		}
+	}
+	close(NUPREFS);	
+}	
 
 1;
 

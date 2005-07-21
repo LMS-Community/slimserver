@@ -589,7 +589,7 @@ sub _emit_str {
 sub is_valid_plain {
     return 0 unless length $_[0];
     # refer: parse_inline_simple()
-    return 0 if $_[0] =~ /^[\s\{\[\~\`\'\"\!\@\#\%\&\*\^]/;
+    return 0 if $_[0] =~ /^[\s\{\[\~\`\'\"\!\@\#\%\&\*\^\|]/;
     return 0 if $_[0] =~ /[\{\[\]\},]/;
     return 0 if $_[0] =~ /[:\-\?]\s/;
     return 0 if $_[0] =~ /\s#/;
