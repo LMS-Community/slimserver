@@ -1795,7 +1795,7 @@ sub validTypeExtensions {
 
 	my $regex = join('|', @extensions);
 
-	$validTypeRegex = qr/\.(?:$regex)$/;
+	$validTypeRegex = qr/\.(?:$regex)$/i;
 
 	return $validTypeRegex;
 }
