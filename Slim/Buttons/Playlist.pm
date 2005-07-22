@@ -242,10 +242,11 @@ sub showingNowPlaying {
 	# special case of playlist mode, to indicate when server needs to
 	# display the now playing details.  This includes playlist mode and
 	# now playing (jump back on wake) screensaver.
-	my $nowshowing = (
-		(Slim::Buttons::Common::mode($client) eq 'screensaver') || 
-		(Slim::Buttons::Common::mode($client) eq 'playlist') && 
-			((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client))
+	my $nowshowing = ( defined Slim::Buttons::Common::mode($client) && (
+			(Slim::Buttons::Common::mode($client) eq 'screensaver') || 
+			((Slim::Buttons::Common::mode($client) eq 'playlist') && 
+				((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)))
+		)
 	);
 	
 	my $wasshowing = $client->param('showingnowplaying');
