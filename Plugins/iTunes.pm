@@ -521,6 +521,8 @@ sub stopScan {
 
 	if (stillScanning()) {
 
+		$::d_itunes && msg("iTunes: Was stillScanning - stopping old scan.\n");
+
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
 		doneScanning();
 	}
@@ -537,9 +539,10 @@ sub doneScanning {
 
 		# This spews, but it's harmless.
 		eval { $iTunesParserNB->parse_done };
-		$iTunesParserNB = undef;
-		$iTunesParser = undef;
 	}
+
+	$iTunesParserNB = undef;
+	$iTunesParser   = undef;
 
 	$locked = 0;
 	$opened = 0;
@@ -560,7 +563,10 @@ sub doneScanning {
 	}
 
 	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
-	
+
+	# Take the scanner off the scheduler.
+	Slim::Utils::Scheduler::remove_task(\&scanFunction);
+
 	Slim::Music::Import::endImporter('ITUNES');
 }
 
@@ -569,6 +575,8 @@ sub scanFunction {
 	
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
+
+		$::d_itunes && msg("iTunes: opening iTunes Library XML file.\n");
 
 		open(ITUNESLIBRARY, $file) || do {
 			$::d_itunes && warn "Couldn't open iTunes Library: $file";
@@ -584,6 +592,8 @@ sub scanFunction {
 	
 	if ($opened && !$locked) {
 
+		$::d_itunes && msg("iTunes: Attempting to get lock on iTunes Library XML file.\n");
+
 		$locked = 1;
 		$locked = flock(ITUNESLIBRARY, LOCK_SH | LOCK_NB) unless ($^O eq 'MSWin32'); 
 
@@ -594,7 +604,14 @@ sub scanFunction {
 			$locked = 1;
 
 			if (defined $iTunesParser) {
+
+				$::d_itunes && msg("iTunes: Created a new Non-blocking XML parser.\n");
+
 				$iTunesParserNB = $iTunesParser->parse_start();
+
+			} else {
+
+				$::d_itunes && msg("iTunes: No iTunesParser was defined!\n");
 			}
 
 		} else {
@@ -606,6 +623,8 @@ sub scanFunction {
 
 	# parse a little more from the stream.
 	if (defined $iTunesParserNB) {
+
+		$::d_itunes && msg("iTunes: Parsing next bit of XML..\n");
 
 		local $/ = '</dict>';
 		my $line;
@@ -620,6 +639,8 @@ sub scanFunction {
 
 		return 1;
 	}
+
+	$::d_itunes && msg("iTunes: No iTunesParserNB defined!\n");
 
 	return 0;
 }
@@ -956,7 +977,7 @@ sub handleEndElement {
 		# Don't bother with 'Library' - it's not a real playlist
 		if (defined $item{'TITLE'} && $item{'TITLE'} ne 'Library') {
 
-			$::d_itunes && msg("got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
+			$::d_itunes && msg("iTunes: got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
 
 			handlePlaylist(\%item);
 		}
@@ -966,7 +987,7 @@ sub handleEndElement {
 
 	# Finish up
 	if ($element eq 'plist') {
-		$::d_itunes && msg("iTunes:  Finished scanning iTunes XML\n");
+		$::d_itunes && msg("iTunes: Finished scanning iTunes XML\n");
 
 		doneScanning();
 
@@ -976,8 +997,8 @@ sub handleEndElement {
 
 sub resetScanState {
 
-	$::d_itunes && Slim::Utils::Misc::msg("Resetting scan state.\n");
-	
+	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Resetting scan state.\n");
+
 	$inPlaylists = 0;
 	$inTracks = 0;
 
