@@ -38,3 +38,8 @@ our %otherColumns;
 	$class->columns(Others => keys %otherColumns);
 	$class->columns(Stringify => qw/url/);
 }
+
+sub bitrate {
+	my  $self = shift;
+	return $self->SUPER::bitrate(@_);
+}
