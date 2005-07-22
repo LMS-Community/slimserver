@@ -388,6 +388,43 @@ sub convertPath {
 	return $mmsPath
 }
 
+sub grabFilters {
+	
+	my @filters;
+	my %filterHash;
+	
+	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
+	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
+
+	$::d_musicmagic && msg("MusicMagic: get filters list\n");
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/filters",
+		'create' => 0,
+	});
+
+	if ($http) {
+		@filters = split(/\n/, $http->content());
+		$http->close();
+		if ($::d_musicmagic) {
+			msg("MusicMagic: found filters:\n");
+			use Data::Dumper;
+			print Dumper(\@filters);
+		}
+	}
+	
+	push @filters,"(none)";
+	foreach my $filter ( @filters ) {
+		if ($filter eq "(none)") {
+			$filterHash{0} = $filter;
+			next
+		}
+		$filterHash{$filter} = $filter;
+	}
+	
+	return %filterHash;
+}
+
 sub exportFunction {
 	my $playlist;
 
@@ -771,7 +808,7 @@ sub mixerFunction {
 		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix(Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
+			$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
 		}
 
 	# if we've picked an artist 
@@ -780,7 +817,7 @@ sub mixerFunction {
 		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($currentItem->name(), 'artist');
+			$mix = getMix($client,$currentItem->name(), 'artist');
 		}
 
 	# if we've picked an album 
@@ -804,7 +841,7 @@ sub mixerFunction {
 				Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}) : 
 				"$artists\@\@$album";
 				
-			$mix = getMix($key, 'album');
+			$mix = getMix($client,$key, 'album');
 		}
 
 	} else {
@@ -812,7 +849,7 @@ sub mixerFunction {
 		if ($currentItem && $currentItem->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($currentItem->name(), 'genre');
+			$mix = getMix($client,$currentItem->name(), 'genre');
 		}
 	}
 
@@ -880,6 +917,7 @@ sub mixExitHandler {
 }
 
 sub getMix {
+	my $client = shift;
 	my $id = shift;
 	my $for = shift;
 
@@ -890,11 +928,17 @@ sub getMix {
 	my @type = qw(tracks min mbytes);
 	 
 	my %args = (
-		size		=> Slim::Utils::Prefs::get('MMMSize'),       # Set the size of the list (default 12)
-		sizetype	=> $type[Slim::Utils::Prefs::get('MMMMixType')], # (tracks|min|mb) Set the units for size (default tracks)
-		style		=> Slim::Utils::Prefs::get('MMMStyle'),       # Set the style slider (default 20)
-		variety		=> Slim::Utils::Prefs::get('MMMVariety'),        # Set the variety slider (default 0)
+		size		=> Slim::Utils::Prefs::clientGet($client,'MMMSize') || Slim::Utils::Prefs::get('MMMSize'),       # Set the size of the list (default 12)
+		sizetype	=> $type[Slim::Utils::Prefs::clientGet($client,'MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')], # (tracks|min|mb) Set the units for size (default tracks)
+		style		=> Slim::Utils::Prefs::clientGet($client,'MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),       # Set the style slider (default 20)
+		variety		=> Slim::Utils::Prefs::clientGet($client,'MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),        # Set the variety slider (default 0)
 	);
+
+	my $filter = Slim::Utils::Prefs::get('MMMFilter');
+	if ($filter ne '0') {
+		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
+		$args{filter} = $filter;
+	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
 
@@ -907,7 +951,7 @@ sub getMix {
 	} elsif ($for eq "genre") {
 		$mixArgs = "genre=$id";
 	} else {
-		$::d_musicmagic && msg("MusicMagic no valid type specified for mix");
+		$::d_musicmagic && msg("MusicMagic: no valid type specified for mix\n");
 		return undef;
 	}
 
@@ -986,7 +1030,7 @@ sub musicmagic_mix {
 			if ($obj->musicmagic_mixable) {
 
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix(Slim::Utils::Misc::pathFromFileURL($obj->url), 'song');
+				$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($obj->url), 'song');
 			}
 
 			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
@@ -999,7 +1043,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($obj->name(), 'artist');
+			$mix = getMix($client,$obj->name(), 'artist');
 		}
 
 	} elsif (defined $album && $album ne "") {
@@ -1018,7 +1062,7 @@ sub musicmagic_mix {
 					Slim::Utils::Misc::pathFromFileURL($trackObj->url) : 
 					join('@@', $artistObj->name, $obj->title);
 					
-				$mix = getMix($key, 'album');
+				$mix = getMix($client,$key, 'album');
 			}
 		}
 		
@@ -1029,7 +1073,7 @@ sub musicmagic_mix {
 		if ($obj && $obj->musicmagic_mixable()) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($obj->name, 'genre');
+			$mix = getMix($client,$obj->name, 'genre');
 		}
 	
 	} else {
@@ -1135,7 +1179,7 @@ sub setupGroup {
 };
 
 sub setupCategory {
-
+	
 	my %setupCategory = (
 
 		'title' => Slim::Utils::Strings::string('SETUP_MUSICMAGIC'),
@@ -1144,7 +1188,7 @@ sub setupCategory {
 		'Groups' => {
 
 			'Default' => {
-				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety musicmagicscaninterval MMSport)]
+				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter musicmagicscaninterval MMSport)]
 				
 				# disable remote host access, its confusing and only works in specific cases
 				# leave it here for hackers who really want to try it
@@ -1182,6 +1226,12 @@ sub setupCategory {
 				'validateArgs' => [0,undef,1000],
 			},
 
+			,'MMMFilter' => {
+				'validate' => \&Slim::Web::Setup::validateInHash
+				,'validateArgs' => [\&grabFilters]
+				,'options' => {grabFilters()}
+			},
+			
 			'MMMSize' => {
 				'validate' => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]

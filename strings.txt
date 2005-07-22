@@ -2285,6 +2285,12 @@ SETUP_MMMSIZE_DESC
 	EN	Choose Mix Size
 	ES	Elegir tamaño de Mezcla
 
+SETUP_MMMFILTER
+	EN	 MusicMagic Mix Filter
+
+SETUP_MMMFILTER_DESC
+	EN	You can create named sets of filter conditions in MusicMagic and choose from the list here to apply those filters to MusicMagic Mixes in SlimServer.
+
 SETUP_MMSHOST
 	EN	MusicMagic HTTP Host
 	ES	Host HTTP de MusicMagic
