@@ -1,11 +1,4 @@
-<html>
-	<head>
-		<title>[% pagetitle %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
-	<body bgcolor="#FFFFFF">
-	    <p>
-
+[% PROCESS pageheader.html %]
 		<h3>[% "PLUGIN_PICKS_MODULE_NAME" | string %]</h3><p>
 		
 		<p>/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_PICKS_MODULE_NAME" | string %][% IF stationname %]</a> 
