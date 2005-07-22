@@ -22,9 +22,12 @@
 <html>
 	<head>
 		<title>[% pagetitle %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
+		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
 	[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
 		<ul>
 			[% FOREACH key = additionalLinks.plugins.keys %]
@@ -40,6 +43,9 @@
 			<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
 		</li>
 		[% END %]
+		<li>
+			<a href="[% webroot %]html/docs/readme.html">Fishbone Skin style changes</a>
+		</li>
 	[% END %]
 	</ul>
 [% END %]

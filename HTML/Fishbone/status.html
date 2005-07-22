@@ -2,7 +2,10 @@
 	<head>
 		<meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
 		<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-		<link rel="stylesheet" href="slimserver.css">
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
+		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 		<script type="text/javascript" src="[% webroot %]html/scripts.js" ></script>
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
@@ -10,7 +13,8 @@
 			<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 				<tr>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-						<td width="35%"><img border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17"></td>
+						<td width="34%"><img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
+						<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17"></td>
 						<td colspan="3">&nbsp;[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]</td>
 					</table>
 				</tr><tr>
@@ -68,17 +72,17 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<td><center>
 				<table border="0" cellspacing="0" cellpadding="0"><tr valign="bottom">
-					<td><a href="status.html?p0=play&player=[% player | uri %]"><img src="[% webroot %]html/images/play[% IF modeplay %][% IF rate == 'norm' %]_s[% END %][% END %].gif" border=0 width=42 height=43></a></td>
-					<td><a href="status.html?p0=stop&player=[% player | uri %]"><img src="[% webroot %]html/images/stop[% IF modestop %]_s[% END %].gif" border=0 width=23 height=32></a></td>
+					<td><a href="status.html?p0=play&player=[% player | uri %]"><img id="gray" src="[% webroot %]html/images/play[% IF modeplay %][% IF rate == 'norm' %]_s[% END %][% END %].gif" border=0 width=42 height=43><img id="tan" src="[% webroot %]html/images/play[% IF modeplay %][% IF rate == 'norm' %]_s[% END %][% END %]_tan.gif" border=0 width=42 height=43></a></td>
+					<td><a href="status.html?p0=stop&player=[% player | uri %]"><img id="gray" src="[% webroot %]html/images/stop[% IF modestop %]_s[% END %].gif" border=0 width=23 height=32><img id="tan" src="[% webroot %]html/images/stop[% IF modestop %]_s[% END %]_tan.gif" border=0 width=23 height=32></a></td>
 					<td><table border="0" cellspacing="0" cellpadding="0">
 						<tr>[% IF isplayer %]
-						<td><a href="status.html?p0=rate&p1=-2&player=[% player | uri %]&start=[% start %]"><img src="[% webroot %]html/images/rew_m[% IF rate == 'rew' %]_s[% END %].gif" border="0" width="30" height="10"></td>
-						<td><a href="status.html?p0=rate&p1=8&player=[% player | uri %]&start=[% start %]"><img src="[% webroot %]html/images/ffwd_m[% IF rate == 'ffwd' %]_s[% END %].gif" border="0" width="30" height="10"></a></td>
+							<td><a href="status.html?p0=rate&p1=-2&player=[% player | uri %]&start=[% start %]"><img id="gray" src="[% webroot %]html/images/rew_m[% IF rate == 'rew' %]_s[% END %].gif" border="0" width="30" height="10"><img id="tan" src="[% webroot %]html/images/rew_m[% IF rate == 'rew' %]_s[% END %]_tan.gif" border="0" width="30" height="10"></td>
+							<td><a href="status.html?p0=rate&p1=8&player=[% player | uri %]&start=[% start %]"><img id="gray" src="[% webroot %]html/images/ffwd_m[% IF rate == 'ffwd' %]_s[% END %].gif" border="0" width="30" height="10"><img id="tan" src="[% webroot %]html/images/ffwd_m[% IF rate == 'ffwd' %]_s[% END %]_tan.gif" border="0" width="30" height="10"></a></td>
 						</tr><tr>[% END %]
-						<td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img src="[% webroot %]html/images/back.gif" border=0 width=30 height=19></a></td>
-						<td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img src="[% webroot %]html/images/forward.gif" border=0 width=30 height=19></a></td>
-						<td><a href="status.html?p0=pause&player=[% player | uri %]"><img src="[% webroot %]html/images/pause[% IF modepause %]_s[% END %].gif" border=0 width=30 height=19></a></td>
-						[% IF isplayer %]<td><a href="status_header.html?p0=button&p1=muting&player=[% player | uri %]&start=[% start %]"><img src="[% webroot %]html/images/mute[% IF volume < '0' %]_s[% END %].gif" border=0 width=30 height=19></a>[% END %]
+							<td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]"><img id="gray" src="[% webroot %]html/images/back.gif" border=0 width=30 height=19><img id="tan" src="[% webroot %]html/images/back_tan.gif" border=0 width=30 height=19></a></td>
+							<td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]"><img id="gray" src="[% webroot %]html/images/forward.gif" border=0 width=30 height=19><img id="tan" src="[% webroot %]html/images/forward_tan.gif" border=0 width=30 height=19></a></td>
+							<td><a href="status.html?p0=pause&player=[% player | uri %]"><img id="gray" src="[% webroot %]html/images/pause[% IF modepause %]_s[% END %].gif" border=0 width=30 height=19><img id="tan" src="[% webroot %]html/images/pause[% IF modepause %]_s[% END %]_tan.gif" border=0 width=30 height=19></a></td>
+							[% IF isplayer %]<td><a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=[% start %]"><img id="gray" src="[% webroot %]html/images/mute[% IF volume < '0' %]_s[% END %].gif" border=0 width=30 height=19><img id="tan" src="[% webroot %]html/images/mute[% IF volume < '0' %]_s[% END %]_tan.gif" border=0 width=30 height=19></a>[% END %]
 						</tr></td>
 					</table>
 				</tr></table>

@@ -152,15 +152,6 @@ A.linkbtn:hover {
 	display:none;
 }
 
-#grayrefresh
-{
-	display: none;
-}
-
-#tanrefresh
-{
-	display: none;
-}
 .darkbutton
 {
 	color:#bbb ! important;
@@ -225,7 +216,7 @@ TD.listing A, TD.listing2 A
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	padding: 5 3 5 3;
+	padding:5 3 5 3;
 	background:#61676c;
 	color:white;
 }

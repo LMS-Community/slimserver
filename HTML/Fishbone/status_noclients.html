@@ -2,7 +2,10 @@
 <head>
 	<title>[% playermodel _ "_MUSIC_PLAYER" | string %]</title>
 	<meta http-equiv="refresh" content="10; url=status_header.html">
-	<link rel="stylesheet" href="slimserver.css">
+	<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
+	<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
+	<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
+	<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 <script>
 <!-- HIDE
 function checkLoad ()
@@ -23,8 +26,8 @@ function checkLoad ()
 	<div class="masthead">
 		<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 			<tr>
-				<td valign="bottom" width="45%"><img border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
-			</tr>
+				<td width="45%"><img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
+				<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17"></td>			</tr>
 		</table>
 	</div>
 	<div class="nowplaying">

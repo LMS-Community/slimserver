@@ -1,8 +1,8 @@
 BODY {
-    font-size : 9px;
-    background : Black;
+    font-size : 12px;
+    background : #fcf2d4;
     font-family: Verdana, Arial, Helvetica, sans-serif;
-    color : White;
+    color : #663300;
     BORDER-RIGHT: 0px; 
     BORDER-TOP: 0px; 
     BORDER-LEFT: 0px; 
@@ -10,7 +10,7 @@ BODY {
 }
 
 H3 {
-	font-size : 14pt;
+	font-size : 12pt;
 	font-weight : bold;	
 	text-align : left;
 	margin:0in; 
@@ -20,7 +20,7 @@ H3 {
 
 TD, P, DIV, A {
    font-family: Verdana, Arial, Helvetica, sans-serif;
-   font-size : 9px;
+   font-size : 12px;
 	margin:0in; 
 	margin-bottom:1pt;
 	line-height: 150%;
@@ -31,17 +31,17 @@ A {
 }
 
 .small {
-	font-size : 6pt;
+	font-size : 5pt;
 }
 
 HR {
     border : 0;
-    border-bottom:2px solid #bbb;
+    border-bottom:2px solid #cc9900;
 }
 
 TH {
-    background : #CFCFCF;
-    font-size : 10pt;
+    background : #ffcc66;
+    font-size : 12pt;
     text-align : center;
     font-weight : bold;	
 }
@@ -51,11 +51,11 @@ TH {
 }
 
 .even {
-    background : #666666;
+    background : #ffcc66;
 }
 
 A:link, A:visited {
-    color : Yellow;
+    color : #cc0000;
 }
 
 A:hover, A:selected {
@@ -63,23 +63,23 @@ A:hover, A:selected {
 }
 
 .linkbtn {
-   font-size : 8pt;
+   font-size : 9pt;
    font-family: Verdana, Arial, Helvetica, sans-serif;
    font-weight: bold;
    color: #EE3823;
-   background-color : Black;
+   background-color : #e0c290;
    border-width : thin;
    border-style : outset;
-   padding : 0em 0.3em 0em 0.5em;
+   padding : 0em 0.3em 0em 0.3em;
 }
 
 A.linkbtn:visited {
-   color: Yellow;
+   color: Black;
    text-decoration : none; 
 }
 
 A.linkbtn:link {
-   color: Yellow;
+   color: Black;
    text-decoration : none; 
 }
 
@@ -94,62 +94,62 @@ A.linkbtn:hover {
 }
 
 .stdclick {
-   font : 9px Arial; 
-   color: Yellow;
-   background-color : rgb(25,25,25);  
+   font : 12px Arial; 
+   color: Black;
+   font-weight: bold;
+   background-color : #d1b586;  
 }
 
 .stdedit {
-   font-family: Verdana, Arial, Helvetica, sans-serif; 
+   font-family: Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
    padding : 1px;
-   font-size:9px;
-   background:#ddd;
+   font-size:12px;
+   background:#f3f3f3;
    color:#444;
    border-width : 1px; 
    border-style : inset; 
-   border-color : black; 
-   height : 18px; 
+   border-color : Black; 
+   height : 20px; 
 }
 
 .masthead
 {
 	margin:0px;
-	padding:5px;
-	background:#333;
+	padding:3px;
+	background:#f8eabf;
 	color:white;
-	border-bottom:2px solid white;
+	border-bottom:2px solid #ffcc66;
 }
 
 .nowplaying
 {
 	margin:0px;
 	padding:5px;
-	background:#61676c;
+	background:#c2a05b;
 	color:white;
 }
 
 .label
 {
-	color:white ! important;
-	border-bottom:1px solid #777;
-	margin:3 0 3 0;
+	color: white ! important;
+	border-bottom:1px solid #330000;
+	margin:2 0 2 0;
+	font-size:10px ! important;
 }
 
 .label2
 {
-	color:black;
-	margin:3 0 3 0;
+	color:#330000;
+	margin:2 0 2 0;
+	font-size:10px ! important;
 }
 
 .button
 {
-	color:#EE3823 ! important;
-	margin:3 0 3 0;
-}
-
-#tan {
-	display:none;
+	color:red! important;
+	margin:2 0 2 0;
+	font-size:10px ! important;
 }
 
 #grayrefresh
@@ -157,21 +157,28 @@ A.linkbtn:hover {
 	display: none;
 }
 
-#tanrefresh
+#gray
 {
 	display: none;
 }
+
+#standardrefresh
+{
+	display: none;
+}
+
 .darkbutton
 {
-	color:#bbb ! important;
-	margin:3 0 3 0;
+	color:#f8eabf ! important;
+	margin:2 0 2 0;
+	font-size:10px ! important;
 }
 
 .songtitle
 {
 	margin:0px;
-	color:white;
-	font-size:14px;
+	color:#EE3823;
+	font-size:12px;
 	font-weight:bold;
 	line-height: 100%;
 }	
@@ -188,11 +195,11 @@ A.linkbtn:hover {
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background:black;
-	color:#999;
+	color:#996600 ;
 	margin-top:1px;
 	margin-bottom:1px;
-	border-top:solid 1px #333;
+	border-top:solid 2px #996633;
+	border-bottom:solid 2px cc9966;
 }
 
 img {
@@ -201,41 +208,45 @@ img {
 
 TD.listing A, TD.listing2 A
 {
-	color : white ! important;
+	color : #663300 ! important;
+	font-family: Arial, Helvetica, sans-serif;
+
 }
 
 .listing2
 {
-	background:#333;
-	border-top:solid 1px #EE3823;
-	border-bottom:solid 1px #EE3823;
+	background:#ffe580;
+	border-top:solid 2px #EE3823;
+	border-bottom:solid 2px #EE3823;
 }
 
 .listinghead
 {
 	background:#333;
-	font-size: 10px;
+	font-size: 11px;
 	border-bottom:solid 1px #333;
 	font-weight:bold;
 	color:#999;
 }
 
+/* top of left frame*/
 .menu1
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	padding: 5 3 5 3;
-	background:#61676c;
+	font-size: 12px;
+	padding:5 3 5 3;
+	background:#f8eabf;
 	color:white;
 }
 
+/* top of right frame*/
 .menu2
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	padding:5px;
-	background:#999;
+	font-size: 12px;
+	padding:4px;
+	background:#d1b586;
 	color:white;
 }
