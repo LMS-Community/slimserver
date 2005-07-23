@@ -244,7 +244,7 @@ sub isMusicLibraryFileChanged {
 
 		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
 		
-		$::d_musicmagic && msg("	Details: \n\t\tCacheid - $fileMTime\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
+		$::d_musicmagic && msg("	MusicMagic Details: \n\t\tCacheid - $fileMTime\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
 		
 		unless ($musicmagicscaninterval) {
 			
@@ -356,7 +356,7 @@ sub convertPath {
 
 			# convert any windozes paths to unix style
 			$remoteRoot =~ tr/\\/\//;
-			$::d_musicmagic &&  msg("$remoteRoot :: $nativeRoot \n");
+			$::d_musicmagic &&  msg("MusicMagic: $remoteRoot :: $nativeRoot \n");
 
 			# convert windozes paths to unix style
 			$mmsPath =~ tr/\\/\//;
@@ -374,7 +374,7 @@ sub convertPath {
 			# convert windows native to unix first
 			# cuz matching dont work unless we do
 			$nativeRoot =~ tr/\\/\//;
-			$::d_musicmagic &&  msg("$remoteRoot :: $nativeRoot \n");
+			$::d_musicmagic &&  msg("MusicMagic: $remoteRoot :: $nativeRoot \n");
 
 			# convert unix root to windows root
 			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
@@ -540,7 +540,7 @@ sub exportFunction {
 
 			}) || do {
 
-				$::d_musicmagic && Slim::Utils::Misc::msg("Couldn't create track for $fileurl!\n");
+				$::d_musicmagic && Slim::Utils::Misc::msg("MusicMagic: Couldn't create track for $fileurl!\n");
 				next;
 			};
 
@@ -745,7 +745,7 @@ sub exportFunction {
 
 	doneScanning();
 
-	$::d_musicmagic && msg("exportFunction: finished export ($count records)\n");
+	$::d_musicmagic && msg("MusicMagic: finished export ($count records)\n");
 
 	$export = 'done';
 	
@@ -968,7 +968,7 @@ sub getMix {
 		#$argString = Slim::Web::HTTP::escape($argString);
 	}
 	
-	$::d_musicmagic && msg("Musicmagic request: http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
+	$::d_musicmagic && msg("Musicmagic: request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString",
@@ -1078,7 +1078,7 @@ sub musicmagic_mix {
 	
 	} else {
 
-		$::d_musicmagic && msg('no/unknown type specified for mix');
+		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix');
 		return 1;
 	}
 

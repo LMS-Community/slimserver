@@ -579,7 +579,7 @@ sub scanFunction {
 		$::d_itunes && msg("iTunes: opening iTunes Library XML file.\n");
 
 		open(ITUNESLIBRARY, $file) || do {
-			$::d_itunes && warn "Couldn't open iTunes Library: $file";
+			$::d_itunes && warn "iTunes: Couldn't open iTunes Library: $file";
 			return 0;
 		};
 
@@ -616,7 +616,7 @@ sub scanFunction {
 
 		} else {
 
-			$::d_itunes && warn "Waiting on lock for iTunes Library";
+			$::d_itunes && warn "iTunes: Waiting on lock for iTunes Library";
 			return 1;
 		}
 	}
@@ -790,7 +790,7 @@ sub handleTrack {
 
 		}) || do {
 
-			$::d_itunes && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
+			$::d_itunes && Slim::Utils::Misc::msg("iTunes: Couldn't create track for: $url\n");
 
 			return 1;
 		};
@@ -905,13 +905,13 @@ sub handleCharElement {
 
 		if (defined($tracks{$value})) {
 
-			$::d_itunes_verbose && msg("  pushing $value on to list: " . $tracks{$value} . "\n");
+			$::d_itunes_verbose && msg("iTunes: pushing $value on to list: " . $tracks{$value} . "\n");
 
 			push @{$item{'LIST'}}, $tracks{$value};
 
 		} else {
 
-			$::d_itunes_verbose && msg("  NOT pusing $value on to list, it's missing\n");
+			$::d_itunes_verbose && msg("iTunes: NOT pusing $value on to list, it's missing\n");
 		}
 	}
 }

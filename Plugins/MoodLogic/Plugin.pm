@@ -320,7 +320,7 @@ sub exportFunction {
 			$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
 			if (Win32::OLE->LastError) {
 				$isauto = 0;
-				$::d_moodlogic && Slim::Utils::Misc::msg("No AutoPlaylists Found\n");
+				$::d_moodlogic && Slim::Utils::Misc::msg("MoodLogic: No AutoPlaylists Found\n");
 			};
 		}
 		
@@ -402,7 +402,7 @@ sub exportFunction {
 
 		}) || do {
 
-			$::d_moodlogic && Slim::Utils::Misc::msg("Couldn't create track for: $url\n");
+			$::d_moodlogic && Slim::Utils::Misc::msg("MoodLogic: Couldn't create track for: $url\n");
 
 			return 0;
 		};
@@ -798,7 +798,7 @@ sub mood_wheel {
 
 	} else {
 
-		$::d_moodlogic && msg('no/unknown type specified for mood wheel');
+		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for mood wheel');
 		return undef;
 	}
 
@@ -877,7 +877,7 @@ sub instant_mix {
 
 	} else {
 
-		$::d_moodlogic && msg('no/unknown type specified for instant mix');
+		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for instant mix');
 		return undef;
 	}
 
