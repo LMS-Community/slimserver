@@ -1474,7 +1474,7 @@ sub sendStreamingResponse {
 
 			my $song = Slim::Player::Playlist::song($client);
 
-			my $title = $song ? Slim::Music::Info::standardTitle($client, $song) : string('WELCOME_TO_SLIMSERVER');
+			my $title = $song ? Slim::Music::Info::getCurrentTitle($client, $song) : string('WELCOME_TO_SLIMSERVER');
 			$title =~ tr/'/ /;
 
 			my $metastring = "StreamTitle='" . $title . "';";
