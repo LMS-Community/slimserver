@@ -1157,7 +1157,7 @@ sub guessTags {
 		# ([^\/+) for all other tags
 		
 		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
-		$pat =~ s/($elems)/\(\[^\\\/\]\+\)/g;
+		$pat =~ s/($elemRegex)/\(\[^\\\/\]\+\)/g;
 		$::d_info && Slim::Utils::Misc::msg("Using format \"$guess\" = /$pat/...\n" );
 		$pat = qr/$pat/;
 
