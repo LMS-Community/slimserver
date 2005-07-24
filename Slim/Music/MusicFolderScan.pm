@@ -79,64 +79,6 @@ sub stillScanning {
 	return $stillScanning;
 }
 
-sub findAndScanDirectoryTree {
-	my $levels = shift;
-
-	# Find the db entry that corresponds to the requested directory.
-	# If we don't have one - that means we're starting out from the root audiodir.
-	my $topLevelObj;
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if (scalar @$levels) {
-
-		$topLevelObj = $ds->objectForId('track', $levels->[-1]);
-
-	} else {
-
-		my $url      = Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Prefs::get('audiodir'));
-
-		$topLevelObj = $ds->objectForUrl($url, 1, 1, 1) || return;
-
-		push @$levels, $topLevelObj->id;
-	}
-
-	if (!defined $topLevelObj) {
-
-		msg("Error: Couldn't find a topLevelObj for findAndScanDirectoryTree()\n");
-
-		if (scalar @$levels) {
-			msgf("Passed in value was: [%s]\n", $levels->[-1]);
-		} else {
-			msg("Starting from audiodir! Is it not set?\n");
-		}
-
-		return ();
-	}
-
-	# Check for changes - these can be adds or deletes.
-	# Do a realtime scan - don't send anything to the scheduler.
-	my $path    = $topLevelObj->path;
-	my $fsMTime = (stat($path))[9] || 0;
-	my $dbMTime = $topLevelObj->timestamp || 0;
-
-	if ($fsMTime != $dbMTime) {
-
-		if ($::d_scan) {
-			msg("mtime db: $dbMTime : " . localtime($dbMTime) . "\n");
-			msg("mtime fs: $fsMTime : " . localtime($fsMTime) . "\n");
-		}
-
-		# Do a quick directory scan.
-		Slim::Utils::Scan::addToList([], $path, 0, undef, sub {});
-	}
-
-	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ Slim::Music::Info::sortFilename( Slim::Utils::Misc::readDirectory( $topLevelObj->path ) ) ];
-	my $count = scalar @$items;
-
-	return ($topLevelObj, $items, $count);
-}
-
 1;
 
 __END__

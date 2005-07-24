@@ -571,7 +571,12 @@ sub init {
 
 				my $obj = $ds->objectForId('playlist', $findCriteria->{'playlist'}) || return [];
 
-				return [ $obj->tracks() ];
+				# If the playlist has changed - re-import it.
+				if ($obj->url =~ m|^(?:file|playlist)://|) {
+					Slim::Utils::Misc::findAndScanDirectoryTree(undef, $obj);
+				}
+
+				return [ $obj->tracks ];
 			}
 
 			return [];
@@ -1932,7 +1937,7 @@ sub browsetree {
 	my $itemnumber = 0;
 
 	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Music::MusicFolderScan::findAndScanDirectoryTree(\@levels);
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
 
 	# Page title
 	$params->{'browseby'} = 'MUSIC';

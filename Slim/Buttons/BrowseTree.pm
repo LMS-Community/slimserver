@@ -228,7 +228,7 @@ sub setMode {
 	my @levels      = split(/\//, $hierarchy);
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 
-	my ($topLevelObj, $items, $count) = Slim::Music::MusicFolderScan::findAndScanDirectoryTree(\@levels);
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
 
 	# Next get the first line of the mode
 	my @headers = ();
