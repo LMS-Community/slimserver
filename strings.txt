@@ -8987,14 +8987,12 @@ INFORMATION_PLAYER_IP
 	SE	Spelarens IP-adress
 
 INFORMATION_PLAYER_PORT
-	CZ	Číslo UDP portu přehrávače
-	DE	Player UDP Portnummer
-	EN	Player UDP Port Number
-	ES	Número de puerto UDP del Reproductor
-	FR	Port UDP platine
-	JP	プレーヤーUDPポート番号
-	NO	Spillerens UDP port
-	SE	Spelarens UDP-port
+	DE	Player Portnummer
+	EN	Player Port Number
+	ES	Número de puerto del Reproductor
+	FR	Port platine
+	NO	Spillerens port
+	SE	Spelarens port
 
 INFORMATION_PLAYER_MAC
 	CZ	MAC adresa přehrávače
@@ -9037,14 +9035,13 @@ INFORMATION_SERVER_IP
 	SE	Serverns IP-adress
 
 INFORMATION_SERVER_PORT
-	CZ	Číslo UDP portu serveru
-	DE	Server UDP Portnummer
-	EN	Server UDP Port Number
-	ES	Número de puerto UDP del Servidor
-	FR	Port UDP serveur
-	JP	サーバーUDPポート番号
-	NO	Serveren UDP port
-	SE	Serverns UDP-port
+	CZ	Číslo portu serveru
+	DE	Server Portnummer
+	EN	Server Port Number
+	ES	Número de puerto del Servidor
+	FR	Port serveur
+	NO	Serveren port
+	SE	Serverns port
 
 INFORMATION_SERVER_HTTP
 	CZ	Číslo portu HTTP serveru
