@@ -102,6 +102,7 @@ sub _updateMetaData {
 sub readM3U {
 	my $m3u    = shift;
 	my $m3udir = shift;
+	my $url    = shift;
 
 	my @items  = ();
 	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
@@ -148,6 +149,12 @@ sub readM3U {
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir, $donttranslate);
 
+		if ($entry eq $url) {
+
+			$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+			next;
+		}
+
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
 		push @items, _updateMetaData($entry, $title);
@@ -161,7 +168,9 @@ sub readM3U {
 }
 
 sub readPLS {
-	my $pls = shift;
+	my $pls    = shift;
+	my $plsdir = shift;
+	my $url    = shift;
 
 	my @urls   = ();
 	my @titles = ();
@@ -202,6 +211,11 @@ sub readPLS {
 		next unless defined $urls[$i];
 
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
+
+		if ($entry eq $url) {
+			Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+			next;
+		}
 
 		push @items, _updateMetaData($entry, $titles[$i]);
 	}
@@ -602,6 +616,7 @@ sub writeM3U {
 sub readWPL {
 	my $wplfile = shift;
 	my $wpldir  = shift;
+	my $url     = shift;
 
 	my @items  = ();
 
@@ -630,6 +645,12 @@ sub readWPL {
 			$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
+
+			if ($entry eq $url) {
+
+				$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+				next;
+			}
 
 			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
@@ -713,6 +734,7 @@ sub writeWPL {
 sub readASX {
 	my $asxfile = shift;
 	my $asxdir  = shift;
+	my $url     = shift;
 
 	my @items  = ();
 
@@ -783,6 +805,12 @@ sub readASX {
 				
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
+
+					if ($path eq $url) {
+
+						$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+						next;
+					}
 
 					push @items, _updateMetaData($path, $title);
 				}
