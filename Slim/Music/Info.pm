@@ -1165,7 +1165,7 @@ sub guessTags {
 		my @matches;
 		if (@matches = $file =~ $pat) {
 			$::d_info && Slim::Utils::Misc::msg("Format string $guess matched $file\n" );
-			my @tags = $guess =~ /($elems)/g;
+			my @tags = $guess =~ /($elemRegex)/g;
 			my $i = 0;
 			foreach my $match (@matches) {
 				$::d_info && Slim::Utils::Misc::msg("$tags[$i] => $match\n");
