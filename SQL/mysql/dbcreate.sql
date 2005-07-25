@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (8, 0, 0);
+INSERT INTO metainformation VALUES (9, 0, 0);
 
 --
 -- Table: tracks
