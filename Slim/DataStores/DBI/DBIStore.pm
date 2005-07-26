@@ -9,6 +9,8 @@ package Slim::DataStores::DBI::DBIStore;
 
 use strict;
 
+use base qw(Slim::DataStores::Base);
+
 use DBI;
 use File::Basename qw(dirname);
 use MP3::Info;

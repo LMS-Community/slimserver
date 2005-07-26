@@ -14,6 +14,8 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
+
+use Slim::DataStores::Base;
 use Slim::Display::Display;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
@@ -1838,7 +1840,7 @@ sub parseSearchTerms {
 
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my %find   = ();
-	my @fields = Slim::Web::Pages::queryFields();
+	my @fields = Slim::DataStores::Base->queryFields();
 	my ($sort, $limit, $offset);
 
 	for my $term (split '&', $terms) {

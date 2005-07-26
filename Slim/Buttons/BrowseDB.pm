@@ -126,7 +126,7 @@ sub init {
 			my @levels = split(",", $hierarchy);
 
 			my $ds = Slim::Music::Info::getCurrentDataStore();
-			my $fieldInfo = Slim::Web::Pages::fieldInfo();
+			my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 
 			# Create the search term list that we will send along with
 			# our command.
@@ -300,7 +300,7 @@ sub browsedbExitCallback {
 		}
 		# If we're dealing with a container or an ALL list
 		elsif ($descend || $all) {
-			my $fieldInfo = Slim::Web::Pages::fieldInfo();
+			my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 
 			my $findCriteria = { %{$client->param('findCriteria')} };
 			my $field = $levels[$level];
@@ -357,7 +357,7 @@ sub browsedbItemName {
 
 	my @levels = split(",", $hierarchy);
 	
-	my $fieldInfo = Slim::Web::Pages::fieldInfo();
+	my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
 	
 	if ($levels[$level] eq 'track') {
@@ -459,7 +459,7 @@ sub setMode {
 	my $descend = ($level >= $maxLevel) ? undef : 'true';
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $fieldInfo = Slim::Web::Pages::fieldInfo();
+	my $fieldInfo = Slim::DataStores::Base::fieldInfo();
 
 	# First get the names of the specified parameters. These
 	# could be necessary for titles.
