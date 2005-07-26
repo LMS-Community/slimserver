@@ -639,6 +639,19 @@ sub fixPath {
 		$fixed = catfile($audiodir, $file);
 	}
 
+	# I hate Windows.
+	# A playlist or the like can have a completely different case than
+	# what we get from the filesystem. Fix that all up so we don't create
+	# duplicate entries in the database.
+	if (Slim::Utils::OSDetect::OS() eq "win" && !Slim::Music::Info::isFileURL($fixed)) {
+
+		my ($volume, @rest) = splitpath($fixed);
+
+		$volume =~ s/^([a-z]:)/\u$1/s;
+
+		$fixed = $volume . fixPathCase(catfile(@rest));
+	}
+
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
 	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
 

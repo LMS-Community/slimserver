@@ -670,33 +670,34 @@ sub handleTrack {
 	}
 
 	my $url = normalize_location($location);
+	my $file;
+
+	if (Slim::Music::Info::isFileURL($url)) {
+
+		$file  = Slim::Utils::Misc::pathFromFileURL($url);
+
+		if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
+
+			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
+
+			# If the user is using both iTunes & a music folder,
+			# iTunes stores the url as encoded utf8 - but we want
+			# it in the locale of the machine, so we won't get
+			# duplicates.
+			$url = Slim::Utils::Misc::fileURLFromPath($file);
+		}
+	}
 
 	# Use this for playlist verification.
 	$tracks{$id} = $url;
 
 	# We don't need to do all the track processing if we just want to map
 	# the ID to url, and then proceed to the playlist parsing.
-	if (Slim::Music::Import::scanPlaylistsOnly()) {
-		return 1;
-	}
-
-	if ($filetype) {
-
-		if (exists $Slim::Music::Info::types{$filetype}) {
-			$type = $Slim::Music::Info::types{$filetype};
-		} else {
-			$type = $filetypes{$filetype};
-		}
-	}
+	#if (Slim::Music::Import::scanPlaylistsOnly()) {
+	#	return 1;
+	#}
 
 	if (Slim::Music::Info::isFileURL($url)) {
-
-		my $file  = Slim::Utils::Misc::pathFromFileURL($url);
-
-		if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
-
-			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
-		}
 
 		# dsully - Sun Mar 20 22:50:41 PST 2005
 		# iTunes has a last 'Date Modified' field, but
@@ -745,7 +746,16 @@ sub handleTrack {
 		return 1;
 	}
 
-	$::d_itunes && msg("iTunes: got a track named " . $curTrack->{'Name'} . " location: $location\n");
+	$::d_itunes && msg("iTunes: got a track named " . $curTrack->{'Name'} . " location: $url\n");
+
+	if ($filetype) {
+
+		if (exists $Slim::Music::Info::types{$filetype}) {
+			$type = $Slim::Music::Info::types{$filetype};
+		} else {
+			$type = $filetypes{$filetype};
+		}
+	}
 
 	if ($url && !defined($type)) {
 		$type = Slim::Music::Info::typeFromPath($url);
@@ -786,7 +796,7 @@ sub handleTrack {
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
-			'readTags'   => 0,
+			'readTags'   => 1,
 
 		}) || do {
 

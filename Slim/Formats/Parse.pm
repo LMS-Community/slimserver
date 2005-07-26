@@ -108,21 +108,20 @@ sub readM3U {
 	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
 	my $title;
 
-	if ($] > 5.007) {
+	if ($] > 5.007 && $enc =~ /utf-?8/i) {
 		binmode($m3u, ":encoding($enc)");
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u encoding: $enc\n");
 
 	while (my $entry = <$m3u>) {
 
-		my $donttranslate = 0;
 		# Turn the UTF-8 back into a sequences of octets -
 		# fileURLFromPath will turn it back into UTF-8
 		if ($] > 5.007 && $enc =~ /utf-?8/i) {
+
 			if (Encode::is_utf8($entry, 1)) {
 				$entry = Encode::encode_utf8($entry);
-				$donttranslate = 1;
 			}
 		}
 
@@ -147,7 +146,7 @@ sub readM3U {
 
 		$entry =~ s|$LF||g;
 		
-		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir, $donttranslate);
+		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 
 		if ($entry eq $url) {
 
@@ -175,12 +174,10 @@ sub readPLS {
 	my @urls   = ();
 	my @titles = ();
 	my @items  = ();
+	my $enc    = Slim::Utils::Misc::encodingFromFile($pls);
 	
 	# parse the PLS file format
-	if ($] > 5.007) {
-
-		my $enc = Slim::Utils::Misc::encodingFromFile($pls);
-
+	if ($] > 5.007 && $enc =~ /utf-?8/i) {
 		binmode($pls, ":encoding($enc)");
 	}
 
