@@ -259,14 +259,18 @@ sub render {
 		(!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}) || (!$scroll && $cache->{scrolling}) ||
 		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
 		$cache->{line1} = $parts->{line1};
-		$cache->{line1text} = $parts->{line1};
-		$cache->{line1finish} = Slim::Display::Display::lineLength($cache->{line1text});
-		$cache->{changed} = 1;
+		if (!$double) {
+			$cache->{line1text} = $parts->{line1};
+			$cache->{line1finish} = Slim::Display::Display::lineLength($cache->{line1text});
+			$cache->{changed} = 1;
+		}
 	} elsif (!defined($parts->{line1}) && defined($cache->{line1})) {
 		$cache->{line1} = undef;
-		$cache->{line1text} = '';
-		$cache->{line1finish} = 0;
-		$cache->{changed} = 1;
+		if (!$double) {
+			$cache->{line1text} = '';
+			$cache->{line1finish} = 0;
+			$cache->{changed} = 1;
+		}
 	}
 
 	# line 2 - render if changed
