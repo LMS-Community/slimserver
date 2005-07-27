@@ -258,17 +258,13 @@
 				[% "THIS_ENTIRE_PLAYLIST" | string %]
 			</td>
 			<td class="listing" width="11" align="center">&nbsp;</td>
-			<td  class="listing" width="3" align="center">&nbsp;</td>
 			<td class="listing" width="11" align="center">
 				<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
 			</td>
-			<td class="listing" width="3" align="center">&nbsp;</td>
 			<td class="listing" width="11" align="center">
 				<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
 			</td>
-			<td class="listing" width="3" align="center">&nbsp;</td>
 			<td class="listing" width="11" align="center">&nbsp;</td>
-			<td  class="listing" width="3" align="center">&nbsp;</td>
 		</tr>
 		[% browse_list %]
 	</table>

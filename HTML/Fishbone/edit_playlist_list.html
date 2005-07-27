@@ -9,15 +9,12 @@
 			title='[% "MOVEUP" | string %]' onMouseOver="self.status='[% "MOVEUP" | string %]';return true">
 		</a>
 	</td>
-	<td class="listing" width="3" align="center">&nbsp;</td>
-	
 	<td class="listing" width="11" align="center">
 	<a href="edit_playlist.html?player=[% player | uri %]&down=1&id=[% playlist.id %]&item=[% loop.count %]">
 		<img src="[% webroot %]html/images/move.down.gif" border="0" width="11" height="9" align="center" alt='[% "MOVEDOWN" | string %]'
 			title='[% "MOVEDOWN" | string %]' onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true">
 		</a>
 	</td>
-	<td class="listing" width="3" align="center">&nbsp;</td>
 	
 [% IF item.isRemoteURL %]
  	<td class="listing" width="11" align="center">
@@ -26,7 +23,6 @@
 			title='[% "EDIT" | string %]' onMouseOver="self.status='[% "EDIT" | string %]';return true">
 		</a>
 	</td>
-	<td class="listing" width="3" align="center">&nbsp;</td>
 [% END %]
 
 	<td class="listing" width="11" align="center">
