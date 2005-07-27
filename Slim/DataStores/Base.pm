@@ -37,7 +37,7 @@ should override all of these methods.
 		albumsWithArtwork totalTime updateTrack newTrack updateOrCreate
 		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
-		wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
+		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
 		getExternalPlaylists getInternalPlaylists getPlaylistForClient readTags
 		setAlbumArtwork updateCoverArt commonAlbumTitlesChanged
 	));

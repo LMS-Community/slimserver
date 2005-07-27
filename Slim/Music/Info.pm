@@ -245,17 +245,17 @@ sub loadTypesConfig {
 	}
 }
 
-sub clearCache {
-	my $item = shift;
+sub resetClientsToHomeMenu {
 
-	if ($item) {
-		$currentDB->delete($item);
-	} else {
-		$currentDB->markAllEntriesStale();
-		$::d_info && Slim::Utils::Misc::msg("clearing validity for rescan\n");
+	# Force all clients back to the home menu - otherwise if they are in a
+	# menu that has objects that might change out from under
+	# them, we're hosed, and serve a ::Deleted object.
+	for my $client (Slim::Player::Client->clients) {
+
+		$client->showBriefly($client->string('RESCANNING'), '');
+
+		Slim::Buttons::Common::setMode($client, 'home');
 	}
-
-	saveDBCache();
 }
 
 sub saveDBCache {
@@ -263,10 +263,12 @@ sub saveDBCache {
 }
 
 sub wipeDBCache {
+	resetClientsToHomeMenu();
 	$currentDB->wipeAllData();
 }
 
 sub clearStaleCacheEntries {
+	resetClientsToHomeMenu();
 	$currentDB->clearStaleEntries();
 }
 
@@ -293,6 +295,9 @@ sub clearPlaylists {
 	if (!defined $currentDB) {
 		return;
 	}
+
+	resetClientsToHomeMenu();
+	$currentDB->wipeCaches;
 
 	# Didn't specify a type? Clear everything
 	if (!defined $type) {

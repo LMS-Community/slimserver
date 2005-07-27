@@ -209,18 +209,23 @@ sub findUpgrade {
 sub wipeDB {
 	my $class = shift;
 
-	$dirtyCount      = 0;
-	$cleanupIds = undef;
-
-	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
-		my $package = 'Slim::DataStores::DBI::' . $c;
-		$package->clear_object_index();
-	}
+	$class->clearObjectCaches;
 	$class->executeSQLFile("dbdrop.sql");
 
 	$dbh->commit();
 	$dbh->disconnect();
 	$dbh = undef;
+}
+
+sub clearObjectCaches {
+	my $class = shift;
+
+	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
+
+		my $package = 'Slim::DataStores::DBI::' . $c;
+
+		$package->clear_object_index;
+	}
 }
 
 sub getMetaInformation {

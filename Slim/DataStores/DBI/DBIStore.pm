@@ -720,6 +720,30 @@ sub cleanupStaleTableEntries {
 	return 0;
 }
 
+sub wipeCaches {
+	my $self = shift;
+
+	$self->forceCommit();
+
+	%contentTypeCache = ();
+	%validityCache    = ();
+	%lastFind         = ();
+
+	$self->{'artworkCache'} = {};
+	$self->{'coverCache'}   = {};
+	$self->{'thumbCache'}   = {};	
+	$self->{'lastTrackURL'} = '';
+	$self->{'lastTrack'}    = {};
+	$self->{'zombieList'}   = {};
+
+	Slim::DataStores::DBI::ContributorTrack->clearCache();
+	Slim::DataStores::DBI::GenreTrack->clearCache();
+	Slim::DataStores::DBI::DataModel->clearObjectCaches();
+
+	#$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
+	Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
+}
+
 # Wipe all data in the database
 sub wipeAllData {
 	my $self = shift;
@@ -731,22 +755,11 @@ sub wipeAllData {
 	$_unknownGenre  = undef;
 	$_unknownAlbum  = undef;
 
-	# nuke any caches we may have.
-	%contentTypeCache = ();
-	%validityCache    = ();
-	%lastFind         = ();
-
 	$self->{'totalTime'}    = 0;
 	$self->{'trackCount'}   = 0;
-	$self->{'artworkCache'} = {};
-	$self->{'coverCache'}   = {};
-	$self->{'thumbCache'}   = {};	
-	$self->{'lastTrackURL'} = '';
-	$self->{'lastTrack'}    = {};
-	$self->{'zombieList'}   = {};
 
-	Slim::DataStores::DBI::ContributorTrack->clearCache();
-	Slim::DataStores::DBI::GenreTrack->clearCache();
+	$self->wipeCaches;
+
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
 	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
