@@ -60,7 +60,10 @@ use constant HALFYEAR	 => 60 * 60 * 24 * 180;
 
 use constant METADATAINTERVAL => 32768;
 use constant MAXCHUNKSIZE     => 32768;
-use constant RETRY_TIME	      => 0.05;
+
+use constant RETRY_TIME       => 0.05; # normal retry time
+use constant RETRY_TIME_FAST  => 0.02; # faster retry for streaming pcm on platforms with small pipe buffer
+use constant PIPE_BUF_THRES   => 4096; # threshold for switching between retry times
 
 use constant MAXKEEPALIVES    => 30;
 use constant KEEPALIVETIMEOUT => 10;
@@ -73,6 +76,8 @@ my $connected = 0;
 
 our %outbuf = (); # a hash for each writeable socket containing a queue of output segments
                  #   each segment is a hash of a ref to data, an offset and a length
+
+our %lastSegLen = (); # length of last segment
 
 our %sendMetaData   = ();
 our %metaDataBytes  = ();
@@ -1439,7 +1444,7 @@ sub sendStreamingResponse {
 			}
 			
 			# otherwise, queue up the next chunk of sound
-			if ($chunkRef && length($chunkRef)) {
+			if ($chunkRef && length($$chunkRef)) {
 
 				$::d_http && msg("(audio: " . length($$chunkRef) . " bytes)\n" );
 				my %segment = ( 
@@ -1448,13 +1453,23 @@ sub sendStreamingResponse {
 					'length' => length($$chunkRef)
 				);
 
+				$lastSegLen{$httpClient} = length($$chunkRef);
+
 				unshift @{$outbuf{$httpClient}},\%segment;
 
 			} else {
 				# let's try again after RETRY_TIME
-				$::d_http && msg("Nothing to stream, let's wait for " . RETRY_TIME . " seconds...\n");
+				my $retry = RETRY_TIME;
+
+				if (defined $lastSegLen{$httpClient} && ($lastSegLen{$httpClient} <= PIPE_BUF_THRES) &&
+					$client->streamformat() ne 'mp3') {
+					# high bit rate on platform with potentially constrained pipe buffer - switch to fast retry
+					$retry = RETRY_TIME_FAST;
+				}
+
+				$::d_http && msg("Nothing to stream, let's wait for " . $retry . " seconds...\n");
 				Slim::Networking::Select::addWrite($httpClient, 0);
-				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + RETRY_TIME, \&tryStreamingLater,($httpClient));
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
 			}
 		}
 
@@ -1873,6 +1888,7 @@ sub closeHTTPSocket {
 	delete($peeraddr{$httpClient});
 	delete($keepAlives{$httpClient});
 	delete($peerclient{$httpClient});
+	delete($lastSegLen{$httpClient}) if (defined $lastSegLen{$httpClient});
 
 	# Fix for bug 1289. A close on its own wasn't always actually
 	# sending a FIN or RST packet until significantly later for
