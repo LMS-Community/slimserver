@@ -409,8 +409,11 @@ sub encodingFromFileHandle {
 
 	# Save the old position (if any)
 	# And find the file size.
-	my $pos  = sysseek($fh, 0, SEEK_CUR);
-	my $size = sysseek($fh, 0, SEEK_END);
+	#
+	# These must be seek() and not sysseek(), as File::BOM uses seek(),
+	# and they'll get confused otherwise.
+	my $pos  = seek($fh, 0, SEEK_CUR);
+	my $size = seek($fh, 0, SEEK_END);
 
 	# Don't do any translation.
 	binmode($fh, ":raw");
@@ -433,13 +436,13 @@ sub encodingFromFileHandle {
 	return $enc if $enc;
 
 	# Seek to the beginning of the file.
-	sysseek($fh, 0, SEEK_SET);
+	seek($fh, 0, SEEK_SET);
 
 	#
-	sysread($fh, my $string, $size);
+	read($fh, my $string, $size);
 
 	# Seek back to where we started.
-	sysseek($fh, $pos, SEEK_SET);
+	seek($fh, $pos, SEEK_SET);
 
 	return encodingFromString($string);
 }
