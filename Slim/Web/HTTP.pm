@@ -348,7 +348,7 @@ sub processHTTP {
 		#msg("Request Headers: [\n" . $request->as_string() . "]\n");
 	}
 
-	if ($request->method() eq 'GET' || $request->method() eq 'HEAD') {
+	if ($request->method() eq 'GET' || $request->method() eq 'HEAD' || $request->method() eq 'POST') {
 
 		$sendMetaData{$httpClient} = 0;
 		
@@ -382,6 +382,8 @@ sub processHTTP {
 		my $path  = $uri->path();
 		my $query = $uri->query();
 		$params->{url_query} = $query;
+
+		$params->{content} = $request->content();
 
 		# XXX - unfortunately slimserver uses a query form
 		# that can have a key without a value, yet it's
