@@ -333,9 +333,7 @@ sub init {
 		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
 	}
 	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
-		# TODO: l10n
-		# really, this is deprecated.  Define a header for your mode.
-		Slim::Buttons::Common::param($client,'header','Select item:');
+		Slim::Buttons::Common::param($client,'header',$client->string('SELECT_ITEM'));
 	}
 	my $listRef = Slim::Buttons::Common::param($client,'listRef');
 

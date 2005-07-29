@@ -228,7 +228,7 @@ sub init {
 		$client->param('parentMode',$client->modeStack->[$i]);
 	}
 	if (!defined($client->param('header'))) {
-		$client->param('header','Select item:');
+		$client->param('header',$client->string('SELECT_ITEM'));
 	}
 	my $listRef = $client->param('listRef');
 	my $externRef = $client->param('externRef');
