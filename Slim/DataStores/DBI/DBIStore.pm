@@ -859,7 +859,7 @@ sub getPlaylistForClient {
 	my $client = shift;
 
 	return (Slim::DataStores::DBI::Track->search({
-		'url' => sprintf('playlist://%s', $client->id())
+		'url' => sprintf('clientplaylist://%s', $client->id())
 	}))[0];
 }
 

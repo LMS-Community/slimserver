@@ -608,14 +608,14 @@ sub modifyPlaylistCallback {
 				# to the list of tracks that make up this playlist.
 				my $playlistObj = $ds->updateOrCreate({
 
-					'url'        => sprintf('playlist://%s', $eachclient->id()),
+					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
 					'attributes' => {
 						'TITLE' => sprintf('%s - %s', 
 							Slim::Utils::Misc::utf8encode($eachclient->string('NOW_PLAYING')),
 							Slim::Utils::Misc::utf8encode($eachclient->name ||  $eachclient->ip),
 						),
 
-						'CT'    => 'ssp',
+						'CT'    => 'cpl',
 					},
 				});
 
