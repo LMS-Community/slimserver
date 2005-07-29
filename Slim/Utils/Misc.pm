@@ -260,6 +260,11 @@ sub fileURLFromPath {
 sub utf8decode {
 	my $string = shift;
 
+	# Bail early if it's just ascii
+	if (looks_like_ascii($string)) {
+		return $string;
+	}
+
 	my $orig = $string;
 
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
@@ -281,6 +286,11 @@ sub utf8decode {
 
 sub utf8encode {
 	my $string = shift;
+
+	# Bail early if it's just ascii
+	if (looks_like_ascii($string)) {
+		return $string;
+	}
 
 	my $orig = $string;
 
@@ -327,16 +337,19 @@ sub utf8on {
 }
 
 sub looks_like_ascii {
+	use bytes;
 
 	return 1 if $_[0] !~ /([^\x00-\x7F])/;
 }
 
 sub looks_like_latin1 {
+	use bytes;
 
 	return 1 if $_[0] !~ /([^\x00-\xFF])/;
 }
 
 sub looks_like_utf8 {
+	use bytes;
 
 	return 1 if $_[0] =~ /($utf8_re_bits)/o;
 }
