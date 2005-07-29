@@ -413,9 +413,9 @@ sub grabFilters {
 		}
 	}
 	
-	push @filters,"(none)";
+	push @filters,"(" . Slim::Utils::Strings::string('NONE') . ")";
 	foreach my $filter ( @filters ) {
-		if ($filter eq "(none)") {
+		if ($filter eq "(" . Slim::Utils::Strings::string('NONE') . ")") {
 			$filterHash{0} = $filter;
 			next
 		}

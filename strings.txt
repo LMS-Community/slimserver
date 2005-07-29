@@ -2289,6 +2289,7 @@ SETUP_MMMFILTER
 	EN	 MusicMagic Mix Filter
 
 SETUP_MMMFILTER_DESC
+	DE	In MusicMagic können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicMagic Mixes im SlimServer angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicMagic and choose from the list here to apply those filters to MusicMagic Mixes in SlimServer.
 
 SETUP_MMSHOST
@@ -6874,6 +6875,10 @@ ITEMS
 	CZ	Položky
 	DE	Einträge
 	EN	Items
+
+SELECT_ITEM
+	DE	Bitte wählen:
+	EN	Select item:
 
 SONGS
 	CZ	Skladeb
