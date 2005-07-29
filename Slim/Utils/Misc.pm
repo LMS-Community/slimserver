@@ -412,7 +412,7 @@ sub encodingFromFileHandle {
 	#
 	# These must be seek() and not sysseek(), as File::BOM uses seek(),
 	# and they'll get confused otherwise.
-	my $pos  = seek($fh, 0, SEEK_CUR);
+	my $pos  = tell($fh);
 	my $size = seek($fh, 0, SEEK_END);
 
 	# Don't do any translation.

@@ -112,7 +112,7 @@ sub readM3U {
 		binmode($m3u, ":encoding($enc)");
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $m3u encoding: $enc\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $url encoding: $enc\n");
 
 	while (my $entry = <$m3u>) {
 
@@ -181,7 +181,7 @@ sub readPLS {
 		binmode($pls, ":encoding($enc)");
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $pls \n");
+	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $url \n");
 	
 	while (<$pls>) {
 		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $_");
@@ -317,7 +317,7 @@ sub parseCUE {
 	my $lastpos = $tracks->{$currtrack}->{'END'};
 
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
-	if (!$lastpos) {
+	if (!$lastpos && $filename) {
 
 		$::d_parse && Slim::Utils::Misc::msg("Reading tags to get ending time of $filename\n");
 
@@ -407,8 +407,9 @@ sub parseCUE {
 sub readCUE {
 	my $cuefile = shift;
 	my $cuedir  = shift;
+	my $url     = shift;
 
-	$::d_parse && Slim::Utils::Misc::msg("Parsing cue: $cuefile \n");
+	$::d_parse && Slim::Utils::Misc::msg("Parsing cue: $url \n");
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
@@ -440,6 +441,11 @@ sub readCUE {
 	# Grab a random track to pull a filename from.
 	# for now we only support one FILE statement in the cuesheet
 	my ($sometrack) = (keys %$tracks);
+
+	# Some cuesheets may have a busted FILE entry
+	unless ($tracks->{$sometrack}->{'FILENAME'}) {
+		return @items;
+	}
 
 	# We may or may not have run updateOrCreate on the base filename
 	# during parseCUE, depending on the cuesheet contents.
@@ -624,7 +630,7 @@ sub readWPL {
 		$wpl_playlist = XMLin($wplfile);
 	};
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing WPL: $wplfile\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsing WPL: $wplfile url: [$url]\n");
 
 	if (exists($wpl_playlist->{body}->{seq}->{media})) {
 		
@@ -760,7 +766,7 @@ sub readASX {
 			$asx_playlist = XMLin($asxstr, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 		
-		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile\n");
+		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile url: [$url]\n");
 
 		my $entries = $asx_playlist->{ENTRY};
 
