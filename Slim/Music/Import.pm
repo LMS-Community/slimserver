@@ -31,6 +31,10 @@ sub startScan {
 	# Check Import scanners
 	foreach my $importer (keys %Importers) {
 
+		if (Slim::Music::Import::scanPlaylistsOnly() && $importer ne 'PLAYLIST') {
+			next;
+		}
+
 		if (exists $Importers{$importer}->{'scan'} && $Importers{$importer}->{'use'}) {
 
 			if (!defined $import || (defined $import && ($importer eq $import))) {
