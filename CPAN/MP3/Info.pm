@@ -505,7 +505,25 @@ sub get_mp3tag {
 			if ($UNICODE) {
 				for my $key (keys %info) {
 					next unless $info{$key};
-					$info{$key} = Encode::encode_utf8($info{$key});
+
+					# Try and guess the encoding.
+					my $icode;
+
+					while (length($info{$key})) {
+
+						$icode = Encode::Guess::guess_encoding($info{$key});
+
+						last if ref($icode);
+
+						# Remove garbage and retry
+						# (string is truncated in the
+						# middle of a multibyte char?)
+						$info{$key}=~s/.$//;
+					}
+
+					$icode = 'iso-8859-1' unless ref($icode);
+
+					$info{$key} = Encode::decode($icode, $info{$key});
 				}
 			}
 		} elsif ($ver == 1) {
