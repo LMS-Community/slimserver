@@ -794,11 +794,11 @@ sub checkDefaults {
 		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_how_many_streams', 300);
 	}
 	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_criterion')) {
+	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_genre_criterion', 0)) {
 		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_genre_criterion', 'default', 0);
 	}
 	
-	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_criterion')) {
+	if (!Slim::Utils::Prefs::isDefined('plugin_shoutcastbrowser_stream_criterion'), 0) {
 		Slim::Utils::Prefs::set('plugin_shoutcastbrowser_stream_criterion', 'default', 0);
 	}
 	
