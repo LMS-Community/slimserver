@@ -854,6 +854,34 @@ sub getInternalPlaylists {
 	return $self->find('playlist', { 'url' => 'playlist:*' }, 'title');
 }
 
+# Get all the playlists in one shot with optional name search parameter.
+# Used by the CLI but could potentially apply to all uses of [getInt, getExt]...
+
+sub getPlaylists {
+	my $self = shift;
+	my $search = shift;
+
+	my @playlists = ('playlist:*');
+	my $find = {};
+	
+	# Don't search for playlists if the plugin isn't enabled.
+	for my $importer (qw(itunes moodlogic musicmagic)) {
+
+		if (Slim::Utils::Prefs::get($importer)) {
+
+			push @playlists, sprintf('%splaylist:*', $importer);
+		}
+	}
+
+	# Add search criteria for playlists
+	$find->{'url'} = \@playlists;
+		
+	# Add title search if any
+	$find->{'track.titlesort'} = $search if (defined $search && $search ne '*');
+	
+	return $self->find('playlist', $find, 'title');
+}
+
 sub getPlaylistForClient {
 	my $self   = shift;
 	my $client = shift;

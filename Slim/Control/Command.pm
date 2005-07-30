@@ -364,7 +364,7 @@ sub execute {
  		my %params = parseParams($parrayref, \@returnArray);
 
 		if (defined $searchMap{$label} && specified($params{'search'})) {
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($params{'search'});
 		}
 		
 		if (defined $params{'genre_id'}){
@@ -415,7 +415,7 @@ sub execute {
  		my %params = parseParams($parrayref, \@returnArray);
 
 		if (defined $searchMap{$label} && specified($params{'search'})) {
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit(Slim::Utils::Text::ignoreCaseArticles($params{'search'}));
+			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($params{'search'});
 		}
 
 		if (defined $params{'genre_id'}){
@@ -426,6 +426,9 @@ sub execute {
 		}
 		if (defined $params{'album_id'}){
 			$find->{'album'} = $params{'album_id'};
+		}
+		if (defined $params{'playlist_id'}){
+			$find->{'playlist'} = $params{'playlist_id'};
 		}
  		
  		$sort = $params{'sort'} if defined($params{'sort'});
@@ -467,16 +470,49 @@ sub execute {
 
  		my %params   = parseParams($parrayref, \@returnArray);
  	
- 		my $tags     = $params{'tags'}   || 'gald';
 		my $search   = $params{'search'} || '*';
-		my $playlist = $params{'id'};
+
+		# Normalize any search parameters
+		if ($search ne '*') {
+			$search = Slim::Web::Pages::searchStringSplit($search);
+		}
+
+		if (Slim::Utils::Misc::stillScanning()) {
+			push @returnArray, "rescan:1";
+		}
+
+		my $iterator = $ds->getPlaylists($search);
+		
+		if (defined $iterator) {
+
+			my $numitems = scalar @$iterator;
+			
+			push @returnArray, "count:" . $numitems;
+			
+			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
+
+			if ($valid) {
+	 			for my $eachitem (@$iterator[$start..$end]) {
+					push @returnArray, "id:"  . $eachitem->id;
+					push @returnArray, "playlist:" . Slim::Music::Info::standardTitle(undef, $eachitem);
+				}
+			}
+
+		} 
+ 	} elsif ($p0 eq "playlisttracks") {
+
+ 		$pushParams = 0;
+
+ 		my %params   = parseParams($parrayref, \@returnArray);
+ 	
+ 		my $tags     = $params{'tags'}   || 'gald';
+		my $playlist = $params{'playlist_id'};
 		my $iterator;
 
 		if (Slim::Utils::Misc::stillScanning()) {
 			push @returnArray, "rescan:1";
 		}
 
-		# Pull a specific playlist if requested.
 		if ($playlist) {
 
 			my $obj = $ds->objectForId('track', $playlist);
@@ -485,19 +521,11 @@ sub execute {
 				$iterator = $obj->tracks;
 			}
 
-		} else {
-
-			# Should this get internal and external playlists?
-			$iterator = $ds->getInternalPlaylists;
 		}
 
 		if (defined $iterator) {
 		
-#			use Data::Dumper;
-#			print Dumper($iterator);
-
-#			my $numitems = $iterator->count;
-			my $numitems = scalar @$iterator;
+			my $numitems = $iterator->count;
 			
 			push @returnArray, "count:" . $numitems;
 			
@@ -506,30 +534,11 @@ sub execute {
 
 			if ($valid) {
 
-				# Normalize any search parameters
-				if ($search ne '*') {
-					$search = Slim::Utils::Text::ignoreCaseArticles($search);
-				}
-
-#				for my $eachitem ($iterator->slice($start, $end)) {
-	 			for my $eachitem (@$iterator[$start..$end]) {
-
-					# Search and didn't match? Skip it.
-					if ($search ne '*' && $eachitem->titlesort !~ /$search/) {
-						next;
-					}
+				for my $eachitem ($iterator->slice($start, $end)) {
 					
-					push @returnArray, "index:$cur";
+					push @returnArray, "playlist index:$cur";
 
-					if (Slim::Music::Info::isList($eachitem)) {
-
-						push @returnArray, "title:" . Slim::Music::Info::standardTitle(undef, $eachitem);
-						push @returnArray, "id:"  . $eachitem->id;
-
-					} elsif (Slim::Music::Info::isSong($eachitem)) {
-
-						push @returnArray, pushSong($eachitem, $tags);
-					}
+					push @returnArray, pushSong($eachitem, $tags);
 
 					$cur++;
 				}

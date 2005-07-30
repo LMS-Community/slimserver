@@ -19,22 +19,16 @@
   <em>telnet localhost 9090</em> and when it connects, you can start typing commands. Beware that the server
   expects parameters to be encoded using percent-style escaping (see below); &quot; and \ are not supported as in shell-like environments. </p>
   
-<h4>Changes starting from SlimServer 6.1</h4>
-<p>The following changes or new commands are available starting SlimServer 6.1:</p>
+<h4>Changes starting from SlimServer 6.2</h4>
+<p>The following changes or new commands are available starting with SlimServer 
+   6.2:</p>
 <ul>
-<li>New &quot;<a href="#login">login</a>&quot; command to connect to the CLI when
-	security is enabled in SlimServer preferences. See <a href="#Notes">Notes</a>.</li>
-<li>New &quot;<a href="#version">version</a>&quot; query returning the SlimServer version. Can be used to
-	determine, for example, the availability of the commands described here.</li>
-<li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to add a query mode returning if a scan is
-	in progress.</li>
-<li>Slightly changed the &quot;<a href="#status">status</a>&quot; query to only
-	repeat playlist information in the &quot;current&quot; mode and to be
-	smarter about repeating when shuffling is on.</li>
-<li>Removed field &quot;coverThumb&quot; in all queries returning song
-	information to align data with SlimServer behaviour.</li>
-<li>Corrected anomaly introduced in SlimServer 6.0 where query &quot;<a href="#title">title</a>&quot;
-	was returning formatted title (i.e. shown by the player) instead of just the title.</li>
+<li>Changed &quot;<a href="#playlists">playlists</a>&quot; command to mimic 
+    &quot;artists&quot;, &quot;albums&quot;, etc, and return IDs for playlists.
+    The new &quot;<a href="#playlisttracks">playlisttracks</a>&quot; command
+    accepts a playlist_id and returns the playlist tracks.</li>
+<li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
+    rescanning only the playlists.</li>
 </ul>
 
 <h4>General command format</h4>
@@ -69,7 +63,8 @@
 	<p><code>&lt;command&gt;</code> is the command name, currently one of &quot;<a href="#players">players</a>&quot;, 
 	&quot;<a href="#genres">genres</a>&quot;, &quot;<a href="#artists">artists</a>&quot;,
 	&quot;<a href="#albums">albums</a>&quot;, &quot;<a href="#titles">titles</a>&quot;, 
-	&quot;<a href="#playlists">playlists</a>&quot;, &quot;<a href="#songinfo">songinfo</a>&quot; or &quot;<a href="#status">status</a>&quot;.</p>
+	&quot;<a href="#playlists">playlists</a>&quot;, &quot;<a href="#playlisttracks">playlisttracks</a>&quot;, 
+	&quot;<a href="#songinfo">songinfo</a>&quot; or &quot;<a href="#status">status</a>&quot;.</p>
 	<p><code>&lt;start&gt;</code> and <code>&lt;itemsPerResponse&gt;</code> are <em>positional</em> parameters that control the 
 	response chunking. <code>&lt;start&gt;</code> is a zero-based index of the first item to return, and 
 	<code>&lt;itemsPerResponse&gt;</code> is the number of items to return, if possible.</p>
@@ -525,18 +520,19 @@ preferences values.</p>
 <hr>
 <h4 id="DB">Database commands</h4>
 
-<p id="rescan"><strong><code>rescan &lt;|?&gt;</code></strong></p>
-<p>The &quot;rescan&quot; command allows the caller to have the SlimServer 
-  rescan its music library, reloading the music file information. Issued
-  with a &quot;?&quot;, &quot;rescan&quot; returns if the SlimServer is 
-  currently scanning. Scanning occurs when SlimServer starts and following
-  &quot;rescan&quot; and &quot;wipecache&quot; commands.</p>
-<p>Examples:</p>
+<p id="rescan"><strong><code>rescan &lt;|playlists|?&gt;</code></strong></p>
+<p>The &quot;rescan&quot; command causes SlimServer to rescan the entire music 
+   library, reloading the music file information. If &quot;playlists&quot; is 
+   indicated (&quot;rescan playlists&quot;), only the playlist directory is
+   rescanned. Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
+   SlimServer is currently scanning. Scanning occurs when SlimServer starts and 
+   following &quot;rescan&quot; and &quot;wipecache&quot; commands.</p>
+<p>Examples:</p> 
 <blockquote> 
-  <p>Request: &quot;rescan&lt;LF&gt;&quot;<br>
-    Response: &quot;rescan&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;rescan ?&lt;LF&gt;&quot;<br>
-    Response: &quot;rescan 1&lt;LF&gt;&quot;</p>
+	<p>Request: &quot;rescan&lt;LF&gt;&quot;<br> 
+	  Response: &quot;rescan&lt;LF&gt;&quot;</p> 
+	<p>Request: &quot;rescan ?&lt;LF&gt;&quot;<br>
+	  Response: &quot;rescan 1&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p><strong><code>wipecache</code></strong></p>
@@ -743,7 +739,7 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;album</td>
-		<td>Album name. Item delimiter.</td>
+		<td>Album name. </td>
 	</tr>
 </table>
 <p>Example:</p>
@@ -755,6 +751,108 @@ preferences values.</p>
   <p> Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;<br>
   	 Response: &quot;albums 0 5 artist_id:19 count:1 id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
 </blockquote>
+
+<br><p id="playlists"><strong><code>playlists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;playlists&quot; command returns all playlists known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>search</td>
+		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of results returned by the query.</td>
+	</tr>
+	<tr>
+		<td><em>For each playlist:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>id</b></td>
+		<td>Playlist ID. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist</td>
+		<td>Playlist name</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p> Request: &quot;playlists 0 2&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlists 0 2 count:5 id:37 name:Funky%20Beats
+  	 id:57 name:SUPER&lt;LF&gt;&quot;</p>
+  <p> Request: &quot;playlists 0 2 search:SUPER&lt;LF&gt;&quot;<br>
+  	 Response: &quot;playlists 0 2 search:SUPER count:1 id:57 name:SUPER&lt;LF&gt;&quot;</p>
+</blockquote>
+
+<br><p id="playlisttracks"><strong><code>playlisttracks &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
+<p>The &quot;playlisttracks&quot; command returns the tracks of a given 
+   playlist.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>playlist_id</td>
+		<td>Playlist ID as returned by the &quot;playlists&quot; query. This is 
+		    a mandatory parameter.</td>
+	</tr>
+	<tr>
+		<td>tags</td>
+		<td>Determines which tags are returned. Each returned tag is identified
+		    by a letter (see command &quot;<a href="#songinfo">songinfo</a>&quot;
+		    for a list of possible fields and their identifying letter). The 
+		    default tags value for this command is &quot;gald&quot;.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>rescan</td>
+		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		Not returned if no scan is in progress.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of tracks in the playlist.</td>
+	</tr>
+	<tr>
+		<td><em>For each track:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>playlist index</b></td>
+		<td>Index (first item is 0) of the track in the playlist. The first 
+		returned instance of this field is equal to start.  Item seperator.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<em>Tags</em></td>
+		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
+	</tr>
+</table>
 
 <br><p id="songinfo"><strong><code>songinfo &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
 <p>The &quot;songinfo&quot; command returns all the information on a song known by the SlimServer.</p>
@@ -1004,89 +1102,6 @@ preferences values.</p>
   	 Response: &quot;titles 0 12 album:Anastacia tags:p count:12 id:4 title:Heavy%20On%20My%20Heart url:...
   	 id:1 title:I%20Do url:... id:2 title:Left%20Outside%20Alone url:...&lt;LF&gt;&quot;</p>
 </blockquote>
-
-<br><p id="playlists"><strong><code>playlists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;playlists&quot; command returns all playlists known by the SlimServer.</p>
-<p>Accepted tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>id</td>
-		<td>Id of a playlist, as returned below (dig down).</td>
-	</tr>
-	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive and performed on the item name (song title or playlist name).</td>
-	</tr>
-	<tr>
-		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is &quot;gald&quot;.</td>
-	</tr>
-</table>
-<p>Returned tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
-		Not returned if no scan is in progress.</td>
-	</tr>
-	<tr>
-		<td>count</td>
-		<td>Number of results returned by the query.</td>
-	</tr>
-	<tr>
-		<td><em>For each item:</em></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<b>index</b></td>
-		<td>Item index, zero-based. Item delimiter.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<em>If item is a playlist:</em></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;title</td>
-		<td>Name of the playlist</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;id</td>
-		<td>Id of playlist to dig down</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;<em>If item is song:</em></td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;&nbsp;&nbsp;<em>Tags</em></td>
-		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
-	</tr>
-</table>
-<p>Example:</p>
-<blockquote> 
-  <p> Request: &quot;playlists 0 2&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlists 0 2 count:2 index:0 title:Funky%20Beats
-  	 id:57 index:1 title:SUPER id:213&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;playlists 0 2 id:213&lt;LF&gt;&quot;<br>
-  	 Response: &quot;playlists 0 2 id:213 count:3 id:1 
-  	 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard 
-  	 album:Anastacia duration:257.488975 disc:1 track:2 year:2004 
-  	 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%20Outside%20Alone.mp3 
-  	 id:2 title:Bounce%20[Original%20Version] genre:Pop artist:Sarah%20Connor 
-  	 album:Bounce%20[Single] duration:252.630204081633 disc:1 track:3 
-  	 year:2003 url:file:///Users/dean/slimp3/Music/Sarah%20Connor/Bounce%20[Single]/Bounce%20[Original%20Version].mp3&lt;LF&gt;&quot;</p>
-</blockquote>
-
-
-
 
 
 <hr>
