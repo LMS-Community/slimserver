@@ -1095,7 +1095,7 @@ sub musicmagic_mix {
 	for my $item (@$mix) {
 
 		my %list_form = %$params;
-		my $fieldInfo = Slim::Web::Pages::fieldInfo();
+		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
