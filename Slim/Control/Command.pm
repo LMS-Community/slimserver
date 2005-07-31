@@ -471,6 +471,7 @@ sub execute {
  		my %params   = parseParams($parrayref, \@returnArray);
  	
 		my $search   = $params{'search'} || '*';
+		my $tags      = $params{'tags'} || '';
 
 		# Normalize any search parameters
 		if ($search ne '*') {
@@ -495,6 +496,7 @@ sub execute {
 	 			for my $eachitem (@$iterator[$start..$end]) {
 					push @returnArray, "id:"  . $eachitem->id;
 					push @returnArray, "playlist:" . Slim::Music::Info::standardTitle(undef, $eachitem);
+					push @returnArray, "url:" . $eachitem->url if ($tags =~ /u/);
 				}
 			}
 
@@ -841,22 +843,37 @@ sub execute {
 				Slim::Player::Source::playmode($client, "stop") if $load;
 				Slim::Player::Playlist::clear($client) if $load;
 				
-				if (defined $params{'genre_id'}){
-					$find->{'genre'} = $params{'genre_id'};
+				if (defined $params{'playlist_id'}){
+					# Special case...
+
+					my $obj = $ds->objectForId('track', $params{'playlist_id'});
+
+					if ($obj) {
+
+						# We want to add the playlist name to the client object.
+						$client->currentPlaylist($obj) if $load;
+
+						@songs = $obj->tracks;
+					}
 				}
-				if (defined $params{'artist_id'}){
-					$find->{'artist'} = $params{'artist_id'};
-				}
-				if (defined $params{'album_id'}){
-					$find->{'album'} = $params{'album_id'};
-				}
-				if (defined $params{'track_id'}){
-					$find->{'id'} = $params{'track_id'};
-				}
-					
-				my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
-				if ($load || $add || $insert || $delete){
-					@songs = map { $_->url } @{ $ds->find('lightweighttrack', $find, $sort) } ;
+				else {
+					if (defined $params{'genre_id'}){
+						$find->{'genre'} = $params{'genre_id'};
+					}
+					if (defined $params{'artist_id'}){
+						$find->{'artist'} = $params{'artist_id'};
+					}
+					if (defined $params{'album_id'}){
+						$find->{'album'} = $params{'album_id'};
+					}
+					if (defined $params{'track_id'}){
+						$find->{'id'} = $params{'track_id'};
+					}
+						
+					my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+					if ($load || $add || $insert || $delete){
+						@songs = @{ $ds->find('lightweighttrack', $find, $sort) } ;
+					}
 				}
 				
 				$size  = scalar(@songs);
@@ -872,7 +889,7 @@ sub execute {
 	
 				$client->currentPlaylistModified(1) if ($add || $insert || $delete);
 				$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
-				$client->currentPlaylist(undef) if $load;
+				#$client->currentPlaylist(undef) if $load;
 			}			
 
 	 		push @returnArray, "count:$size";
