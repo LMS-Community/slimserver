@@ -208,6 +208,12 @@ sub pathFromWinShortcut {
 	return $path;
 }
 
+sub fileURLFromWinShortcut {
+	my $shortcut = shift;
+
+	return fixPath(pathFromWinShortcut($shortcut));
+}
+
 sub pathFromFileURL {
 	my $url = shift;
 	my $file;

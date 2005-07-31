@@ -503,7 +503,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 			} else {
 
-				$playlistpath = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
+				$playlistpath = Slim::Utils::Misc::fileURLFromWinShortcut($playlisturl);
 
 				Slim::Music::Info::cacheDirectory($playlisturl, [$playlistpath]);
 			}

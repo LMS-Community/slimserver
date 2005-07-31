@@ -1414,7 +1414,7 @@ sub browsetree {
 		# Do the cheap compare for osName first - so non-windows users
 		# won't take the penalty for the lookup.
 		if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
-			$url = Slim::Utils::Misc::pathFromWinShortcut($url);
+			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
 		my $item = $ds->objectForUrl($url, 1) || next;

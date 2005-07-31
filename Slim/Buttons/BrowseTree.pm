@@ -179,7 +179,7 @@ sub browseTreeItemName {
 
 		if (Slim::Music::Info::isWinShortcut($url)) {
 
-			$url = Slim::Utils::Misc::pathFromWinShortcut($url);
+			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
 		my $items = $client->param('listRef');
