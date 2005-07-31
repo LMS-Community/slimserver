@@ -571,7 +571,7 @@ if (0) {
 
 sub fixPathCase {
 	my $path = shift;
-	
+
 	if ($^O =~ /Win32/) {
 		$path = Win32::GetLongPathName($path);
 	}
@@ -661,11 +661,7 @@ sub fixPath {
 	# duplicate entries in the database.
 	if (Slim::Utils::OSDetect::OS() eq "win" && !Slim::Music::Info::isFileURL($fixed)) {
 
-		my ($volume, @rest) = splitpath($fixed);
-
-		$volume =~ s/^([a-z]:)/\u$1/s;
-
-		$fixed = $volume . fixPathCase(catfile(@rest));
+		$fixed = fixPathCase($fixed);
 	}
 
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
