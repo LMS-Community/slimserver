@@ -346,18 +346,21 @@ sub looks_like_ascii {
 	use bytes;
 
 	return 1 if $_[0] !~ /([^\x00-\x7F])/;
+	return 0;
 }
 
 sub looks_like_latin1 {
 	use bytes;
 
 	return 1 if $_[0] !~ /([^\x00-\xFF])/;
+	return 0;
 }
 
 sub looks_like_utf8 {
 	use bytes;
 
 	return 1 if $_[0] =~ /($utf8_re_bits)/o;
+	return 0;
 }
 
 sub latin1toUTF8 {
@@ -542,33 +545,6 @@ sub crackURL {
 	$::d_files && $password && msg("   password: [$password]\n");
 	
 	return ($host, $port, $path, $user, $password);
-}
-
-# test code for crackURL
-if (0) {
-	$::d_files = 1;
-	crackURL('http://10.0.1.201');
-	crackURL('http://tank');
-	crackURL('http://10.0.1.201/');
-	crackURL('http://tank/');
-	crackURL('http://10.0.1.201/foo.html');
-	crackURL('http://tank/foo.html');
-	crackURL('http://10.0.1.201:9090/foo.html');
-	crackURL('http://tank:9090/foo.html');
-	crackURL('http://dean:pass@10.0.1.201/foo.html');
-	crackURL('http://dean:pass@tank/foo.html');
-	crackURL('http://dean:pass@10.0.1.201:9090/foo.html');
-	crackURL('http://dean:pass@tank:9090/foo.html');
-	crackURL('http://dean@10.0.1.201/foo.html');
-	crackURL('http://dean@tank/foo.html');
-	crackURL('http://dean@10.0.1.201:9090/foo.html');
-	crackURL('http://dean@tank:9090/foo.html');
-	crackURL('http://dean:@10.0.1.201/foo.html');
-	crackURL('http://dean:@tank/foo.html');
-	crackURL('http://dean:@10.0.1.201:9090/foo.html');
-	crackURL('http://dean:@tank:9090/foo.html');
-	$::d_files = 0;
-	exit(0);
 }
 
 # fixPathCase makes sure that we are using the actual casing of paths in
