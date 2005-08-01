@@ -784,6 +784,7 @@ sub move {
 
 sub delete {
 	my $self = shift;
+
 	return $self->_search_delete(@_) if not ref $self;
 	$self->remove_from_object_index;
 	$self->call_trigger('before_delete');

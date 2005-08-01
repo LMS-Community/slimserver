@@ -137,6 +137,7 @@ my %fontSymbols = (
 	'progress3' => "\x09",
 	'cursor'	=> "\x0a",
 	'mixable' => "\x0b",
+	'bell'	=> "\x10",
 	'hardspace' => "\x20"
 );
 

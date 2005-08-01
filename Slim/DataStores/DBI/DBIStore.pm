@@ -740,8 +740,7 @@ sub wipeCaches {
 	Slim::DataStores::DBI::GenreTrack->clearCache();
 	Slim::DataStores::DBI::DataModel->clearObjectCaches();
 
-	#$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
-	Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
+	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
 }
 
 # Wipe all data in the database

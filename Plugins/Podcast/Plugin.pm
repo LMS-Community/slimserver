@@ -28,6 +28,10 @@ our @default_feeds = (
 our @feeds = ();
 our %feed_names; # cache of feed names
 
+sub enabled {
+	return ($::VERSION ge '6.1') && initPlugin();
+}
+
 sub initPlugin {
 	$::d_plugins && msg("Podcast Plugin initializing.\n");
 

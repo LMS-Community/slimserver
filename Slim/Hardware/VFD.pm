@@ -469,6 +469,16 @@ Slim::Hardware::VFD::setCustomChar('mixable', (
 					0b00000000,
 					0b00011111,
 					0b00000000   ));
+
+Slim::Hardware::VFD::setCustomChar('bell', (
+					0b00000100,
+					0b00001010,
+					0b00001010,
+					0b00011011,
+					0b00010001,
+					0b00011111,
+					0b00000100,
+					0b00000000   ));
 					
 # replaces ~ in format string
 # setup the special characters

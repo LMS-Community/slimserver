@@ -252,7 +252,7 @@ sub resetClientsToHomeMenu {
 	# them, we're hosed, and serve a ::Deleted object.
 	for my $client (Slim::Player::Client->clients) {
 
-		$client->showBriefly($client->string('RESCANNING'), '');
+		$client->showBriefly($client->string('RESCANNING_SHORT'), '');
 
 		Slim::Buttons::Common::setMode($client, 'home');
 	}

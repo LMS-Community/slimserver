@@ -47,6 +47,8 @@ sub parseList {
 	my $base = shift;
 	
 	my $type = Slim::Music::Info::contentType($list);
+	$::d_parse && Slim::Utils::Misc::msg("parseList (type: $type): $list\n");
+
 	my $parser;
 	my @items = ();
 
@@ -308,7 +310,7 @@ sub parseCUE {
 		}
 	}
 
-	if (!$currtrack || $currtrack < 1) {
+	if (!$currtrack || $currtrack < 1 || !$filename) {
 		$::d_parse && Slim::Utils::Misc::msg("parseCUE unable to extract tracks from cuesheet\n");
 		return {};
 	}
@@ -329,8 +331,9 @@ sub parseCUE {
 
 		$lastpos = $track->secs();
 
-		$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
 	}
+
+	$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
 
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 

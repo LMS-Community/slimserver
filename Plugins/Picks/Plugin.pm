@@ -34,6 +34,11 @@ my %mapping = (
 	'add.single' => 'add',
 );
 
+sub enabled {
+	return ($::VERSION ge '6.1');
+}
+
+
 ###############
 # Main mode
 #

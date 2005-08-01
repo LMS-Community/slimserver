@@ -160,7 +160,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION !~ /^5/) && initPlugin();
+	return ($::VERSION ge '6.1') && initPlugin();
 }
 
 sub getFunctions {

@@ -40,6 +40,10 @@ our %stations = (
 
 our @station_names = sort keys %stations;
 
+sub enabled {
+	return ($::VERSION ge '6.1') && initPlugin();
+}
+
 sub initPlugin {
 	Slim::Player::Source::registerProtocolHandler("radioio", "Plugins::RadioIO::ProtocolHandler");
 }

@@ -206,6 +206,10 @@ sub addFavorite {
 	$client->execute(['favorite', 'add', $url, $title]);
 }
 
+sub enabled {
+	return ($::VERSION ge '6.1') && initPlugin();
+}
+
 sub initPlugin {
 	$::d_favorites && msg("Favorites Plugin: initPlugin\n");
 	Slim::Buttons::Common::addMode('PLUGIN.Favorites', 

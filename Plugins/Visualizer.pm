@@ -56,6 +56,10 @@ sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_VISUALIZER';
 }
 
+sub enabled {
+	return ($::VERSION ge '6.1');
+}
+
 sub strings { return '
 PLUGIN_SCREENSAVER_VISUALIZER
 	DE	Visualizer Bildschirmschoner
@@ -286,7 +290,7 @@ sub _showsongtransition {
 
 sub _pushon {
 	my $client = shift;
-
+	
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
@@ -306,7 +310,7 @@ sub _pushon {
 
 sub _pushoff {
 	my $client = shift;
-
+	
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 

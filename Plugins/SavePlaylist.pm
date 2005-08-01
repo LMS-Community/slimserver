@@ -48,6 +48,10 @@ sub getDisplayName {
 	return 'SAVE_PLAYLIST';
 }
 
+sub enabled {
+	return ($::VERSION ge '6.1');
+}
+
 # the routines
 sub setMode {
 	my $client = shift;

@@ -25,6 +25,10 @@ sub getDisplayName {
 	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
 }
 
+sub enabled {
+	return ($::VERSION ge '6.1') && initPlugin();
+}
+
 sub initPlugin {
 
 	%functions = (

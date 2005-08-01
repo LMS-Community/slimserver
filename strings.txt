@@ -2784,6 +2784,9 @@ RESCANNING
 	PT	O servidor está a analisar o arquivo de músicas.
 	SE	Servern läser nu om din musikbibliotek.
 
+RESCANNING_SHORT
+	EN	Rescanning Music Library...
+
 USING_ITUNES
 	CZ	Server importuje iTunes informace.
 	DE	Der Server wird die Informationen aus iTunes importieren.

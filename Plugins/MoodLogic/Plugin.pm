@@ -75,7 +75,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION !~/^5/) && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
+	return ($::VERSION ge '6.1') && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
 }
 
 sub disablePlugin {

@@ -276,6 +276,11 @@ sub nextTopic {
 	return $display_current;
 }
 
+sub enabled {
+	return ($::VERSION ge '6.1') && initPlugin();
+}
+
+
 # initialize the list of channels (feeds) to display
 sub initPlugin {
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");

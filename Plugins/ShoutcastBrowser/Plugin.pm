@@ -160,6 +160,11 @@ sub initPlugin {
 		}
 		delete $genre_aka{$genre};
 	}
+	return 1;
+}
+
+sub enabled {
+       return ($::VERSION ge '6.1') && initPlugin();
 }
 
 sub getDisplayName {
