@@ -553,12 +553,20 @@ sub crackURL {
 
 sub fixPathCase {
 	my $path = shift;
+	my $orig = $path;
 
 	if ($^O =~ /Win32/) {
 		$path = Win32::GetLongPathName($path);
 	}
 
-	return '' unless $path;
+	# Use the original path if we didn't get anything back from
+	# GetLongPathName - this can happen if a cuesheet references a
+	# non-existant .wav file, which is often the case.
+	#
+	# At that point, we'd return a bogus value, and start crawling at the
+	# top of the directory tree, which isn't what we want.
+	$path = $orig unless $path;
+
 	return canonpath($path);
 }
 		
