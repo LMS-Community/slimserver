@@ -641,6 +641,12 @@ sub set {
 
 				$prefs{$key}{$ind} = $value;
 			}
+		} elsif ( $ind =~ /\D/ ) {
+			# Setting hash pref where no keys currently exist
+			$prefs{$key}{$ind} = $value;
+		} else {
+			# Setting array pref where no indexes currently exist
+			$prefs{$key}[$ind] = $value;
 		}
 
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
