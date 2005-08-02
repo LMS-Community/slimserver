@@ -65,7 +65,6 @@ my $inPlaylists;
 my $inTracks;
 our %tracks;
 
-my $iTunesLibraryFile;
 my $iTunesLibraryPath;
 my $iTunesParser;
 my $iTunesParserNB;
@@ -139,7 +138,6 @@ sub canUseiTunesLibrary {
 
 	my $oldMusicPath = Slim::Utils::Prefs::get('itunes_library_music_path');
 
-	$iTunesLibraryFile = defined $iTunesLibraryFile ? $iTunesLibraryFile : findMusicLibraryFile();
 	$iTunesLibraryPath = defined $iTunesLibraryPath ? $iTunesLibraryPath : findMusicLibrary();
 
 	# The user may have moved their music folder location. We need to nuke the db.
@@ -152,7 +150,7 @@ sub canUseiTunesLibrary {
 		$lastITunesMusicLibraryDate = -1;
 	}
 
-	return defined $iTunesLibraryFile && defined $iTunesLibraryPath;
+	return defined findMusicLibraryFile() && defined $iTunesLibraryPath;
 }
 
 sub getDisplayName {
@@ -364,7 +362,7 @@ sub findMusicLibraryFile {
 			$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
 			return $path;
 		}
-	
+
 		for my $dir (@searchdirs) {
 			$path = catfile(($dir), 'iTunes Music Library.xml');
 
@@ -399,7 +397,8 @@ sub findMusicLibraryFile {
 sub findMusicLibrary {
 	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
 	my $path = undef;
-	my $file = $iTunesLibraryFile || findMusicLibraryFile();
+
+	my $file = findMusicLibraryFile();
 
 	if (defined($file) && $autolocate) {
 		$::d_itunes && msg("iTunes: attempting to locate iTunes library relative to $file.\n");
@@ -431,7 +430,8 @@ sub findMusicLibrary {
 }
 
 sub isMusicLibraryFileChanged {
-	my $file = $iTunesLibraryFile || findMusicLibraryFile();
+
+	my $file      = findMusicLibraryFile();
 	my $fileMTime = (stat $file)[9];
 
 	# Set this so others can use it without going through Prefs in a tight loop.
@@ -492,7 +492,7 @@ sub startScan {
 		return;
 	}
 		
-	my $file = $iTunesLibraryFile || findMusicLibraryFile();
+	my $file = findMusicLibraryFile();
 
 	$::d_itunes && msg("iTunes: startScan on file: $file\n");
 
@@ -554,12 +554,13 @@ sub doneScanning {
 
 	$locked = 0;
 	$opened = 0;
-	
+
+	$iTunesLibraryPath = undef;
 	$lastMusicLibraryFinishTime = time();
 	$isScanning = 0;
 
 	# Set the last change time for the next go-round.
-	my $file  = $iTunesLibraryFile || findMusicLibraryFile();
+	my $file  = findMusicLibraryFile();
 	my $mtime = (stat($file))[9];
 
 	$lastITunesMusicLibraryDate = $mtime;
@@ -579,7 +580,7 @@ sub doneScanning {
 }
 
 sub scanFunction {
-	my $file = $iTunesLibraryFile || findMusicLibraryFile();;
+	my $file = findMusicLibraryFile();
 	
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
@@ -1017,6 +1018,7 @@ sub resetScanState {
 
 	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Resetting scan state.\n");
 
+	$iTunesLibraryPath = undef;
 	$inPlaylists = 0;
 	$inTracks = 0;
 
@@ -1060,7 +1062,6 @@ sub normalize_location {
 
 	return $url;
 }
-
 
 sub strip_automounter {
 	my $path = shift;
