@@ -503,22 +503,31 @@ sub get_mp3tag {
 				$info{TAGVERSION} = 'ID3v1';
 			}
 			if ($UNICODE) {
+
 				for my $key (keys %info) {
 					next unless $info{$key};
 
 					# Try and guess the encoding.
-					my $icode;
+					my $value = $info{$key};
+					my $icode = Encode::Guess->guess($value);
 
-					while (length($info{$key})) {
+					unless (ref($icode)) {
 
-						$icode = Encode::Guess::guess_encoding($info{$key});
+						# Often Latin1 bytes are
+						# stuffed into a 1.1 tag.
+						Encode::Guess->add_suspects('iso-8859-1');
 
-						last if ref($icode);
+						while (length($value)) {
 
-						# Remove garbage and retry
-						# (string is truncated in the
-						# middle of a multibyte char?)
-						$info{$key}=~s/.$//;
+							$icode = Encode::Guess->guess($value);
+
+							last if ref($icode);
+
+							# Remove garbage and retry
+							# (string is truncated in the
+							# middle of a multibyte char?)
+							$value =~ s/(.)$//;
+						}
 					}
 
 					$icode = 'iso-8859-1' unless ref($icode);
