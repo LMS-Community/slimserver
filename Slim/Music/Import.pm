@@ -31,7 +31,9 @@ sub startScan {
 	# Check Import scanners
 	foreach my $importer (keys %Importers) {
 
-		if (Slim::Music::Import::scanPlaylistsOnly() && $importer ne 'PLAYLIST') {
+		# These importers all implement 'playlist only' scanning.
+		# See bug: 1892
+		if (Slim::Music::Import::scanPlaylistsOnly() && $importer !~ /(?:PLAYLIST|MUSICMAGIC|ITUNES|MOODLOGIC)/go) {
 			next;
 		}
 
