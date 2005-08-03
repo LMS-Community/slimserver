@@ -141,7 +141,7 @@ sub albumid {
 sub artist {
 	my $self = shift;
 
-	return ($self->contributorsOfType('artist'))[0];
+	return ($self->contributorsOfType('artist'))[0] || ($self->contributorsOfType('trackArtist'))[0];
 }
 
 sub artistsort {

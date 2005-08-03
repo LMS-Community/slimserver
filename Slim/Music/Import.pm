@@ -153,8 +153,16 @@ sub endImporter {
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+
 		# Set this back to 0.
 		scanPlaylistsOnly(0);
+
+		# Auto-identify VA/Compilation albums
+		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+			Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
+		}
 
 		$::d_info && msg("Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
@@ -164,8 +172,6 @@ sub endImporter {
 
 			# Don't re-enter
 			cleanupDatabase(0);
-
-			my $ds = Slim::Music::Info::getCurrentDataStore();
 
 			$ds->cleanupStaleEntries();
 		}

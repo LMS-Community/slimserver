@@ -171,11 +171,12 @@ sub addLibraryStats {
 		$params->{'warn'} = 1;
 		return;
 	}
+
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $find  = {};
 
 	$find->{'genre'}       = $genre  if _refCheck($genre);
-	$find->{'contributor'} = $artist if _refCheck($artist);
+	$find->{'contributor'} = $artist if _refCheck($artist) && !_refCheck($album);
 	$find->{'album'}       = $album  if _refCheck($album);
 
 	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');

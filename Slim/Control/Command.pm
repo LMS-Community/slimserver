@@ -376,10 +376,13 @@ sub execute {
 		if (defined $params{'album_id'}){
 			$find->{'album'} = $params{'album_id'};
 		}
+
 		if ($p0 eq 'artists') {
+
 			# The user may not want to include all the composers/conductors
 			unless (Slim::Utils::Prefs::get('composerInArtists')) {
-				$find->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+
+				$find->{'contributor.role'} = $ds->artistOnlyRoles;
 			}
 		}
 		

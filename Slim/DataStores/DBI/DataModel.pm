@@ -72,7 +72,11 @@ sub executeSQLFile {
 
 			$::d_sql && Slim::Utils::Misc::msg("Executing SQL statement: [$statement]\n");
 
-			$dbh->do($statement) or Slim::Utils::Misc::msg("Couldn't execute SQL statement: [$statement]\n");
+			eval { $dbh->do($statement) };
+
+			if ($@) {
+				Slim::Utils::Misc::msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
+			}
 
 			$statement   = '';
 			$inStatement = 0;

@@ -1571,6 +1571,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout', 'composerInArtists', 'noGenreFilter',
+							'variousArtistAutoIdentification', 'variousArtistsString',
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
 							,'commonAlbumTitles' ,'checkVersion']
@@ -1600,6 +1601,20 @@ sub initSetupConfig {
 						'validate' => \&validateAcceptAll
 						,'PrefSize' => 'large'
 					}
+
+			,'variousArtistAutoIdentification' => {
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1'),
+					'0' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0'),
+				},
+			},
+
+			'variousArtistsString' => {
+				'validate' => \&validateAcceptAll,
+				'PrefSize' => 'large',
+			}
+
 			,'playtrackalbum' => {
 						'validate' => \&validateTrueFalse
 						,'options' => {

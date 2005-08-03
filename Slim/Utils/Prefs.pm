@@ -128,6 +128,7 @@ sub init {
 		'dbpassword'		=> '',
 		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
 		'noGenreFilter'		=> 0,
+		'variousArtistAutoIdentification' => 1,
 		'upgrade-6.0b3-script'	=> 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 	);

@@ -43,7 +43,7 @@ sub query {
 
 		if (!Slim::Utils::Prefs::get('composerInArtists')) {
 
-			$find->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+			$find->{'contributor.role'} = $ds->artistOnlyRoles;
 		}
 
 		push @data, [ $type, [$ds->find($queries{$type}->[0], $find, undef, $limit, 0)] ];

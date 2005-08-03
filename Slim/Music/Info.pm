@@ -184,6 +184,9 @@ sub init {
 	
 	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
 	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
+
+	# iTunes writes out it's own tag denoting a compilation
+	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
 }
 
 sub getCurrentDataStore {

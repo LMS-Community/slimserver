@@ -22,14 +22,14 @@
 	[% IF includeAlbum && album %]
 
 		[% "FROM" | string %]
-		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% album | html %]</font></a></i>
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% album.title | html %]</font></a></i>
 
 	[% END %]
 
 	[% IF includeArtist && artist %]
 
 		[% "BY" | string %]
-		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% artist | html %]</font></a></i>
+		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser"><font class="itemtext">[% artist.name | html %]</font></a></i>
 
 	[% END %]
 

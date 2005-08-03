@@ -8,10 +8,12 @@ use strict;
 use base 'Slim::DataStores::DBI::DataModel';
 
 our %contributorToRoleMap = (
-	'ARTIST'    => 1,
-	'COMPOSER'  => 2,
-	'CONDUCTOR' => 3,
-	'BAND'      => 4,
+	'ARTIST'      => 1,
+	'COMPOSER'    => 2,
+	'CONDUCTOR'   => 3,
+	'BAND'        => 4,
+	'ALBUMARTIST' => 5,
+	'TRACKARTIST' => 6,
 );
 
 {
@@ -31,6 +33,8 @@ our %contributorToRoleMap = (
 	$class->add_constructor('composersFor'    => "track = ? AND role = $contributorToRoleMap{'COMPOSER'}");
 	$class->add_constructor('conductorsFor'   => "track = ? AND role = $contributorToRoleMap{'CONDUCTOR'}");
 	$class->add_constructor('bandsFor'        => "track = ? AND role = $contributorToRoleMap{'BAND'}");
+	$class->add_constructor('albumArtistsFor' => "track = ? AND role = $contributorToRoleMap{'ALBUMARTIST'}");
+	$class->add_constructor('trackArtistsFor' => "track = ? AND role = $contributorToRoleMap{'TRACKARTIST'}");
 }
 
 tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
@@ -53,12 +57,14 @@ sub add {
 	# Handle the case where $genre is already an object:
 	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
-		Slim::DataStores::DBI::ContributorTrack->find_or_create({
+		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->find_or_create({
 			track => $track,
 			contributor => $artist,
-			role => $role,
 			namesort => Slim::Utils::Text::ignoreCaseArticles($artist),
 		});
+
+		$contributorTrack->role($role);
+		$contributorTrack->update;
 
 		return wantarray ? ($artist) : $artist;
 	}
@@ -107,12 +113,14 @@ sub add {
 
 		push @contributors, $artistObj;
 
-		Slim::DataStores::DBI::ContributorTrack->find_or_create({
+		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->find_or_create({
 			track => $track,
 			contributor => $artistObj,
-			role => $role,
 			namesort => $sort,
 		});
+
+		$contributorTrack->role($role);
+		$contributorTrack->update;
 	}
 
 	return wantarray ? @contributors : $contributors[0];

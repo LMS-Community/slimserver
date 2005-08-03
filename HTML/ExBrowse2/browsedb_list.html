@@ -25,14 +25,13 @@
     [% text | html %]
    </a>
    [% IF includeAlbum && album ; "FROM" | string %]
-    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id %]&quot;)">
-     [% album | html %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album.id %]&quot;)">
+     [% album.title | html %]
     </a>
    [% END %]
    [% IF includeArtist && artist ; "BY" | string %]
-    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% 
-     itemobj.contributorsOfType('artist').first.id %]&quot;)">
-     [% artist | html %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% artist.id %]&quot;)">
+     [% artist.name | html %]
     </a>
    [% END %]
   [% END %]

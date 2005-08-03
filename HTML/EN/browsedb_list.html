@@ -20,12 +20,12 @@
 	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF year %] ([% year %])[% END %]</a>
 
 	[% IF includeAlbum && album %][% "FROM" | string %]
-        	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
+        	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
 	[% END %]
 
 	[% IF includeArtist && artist %][% "BY" | string %]
 
-        	<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% itemobj.contributorsOfType('artist').first.id %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></i>
+        	<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
 	[% END %]
 
 [% END %]

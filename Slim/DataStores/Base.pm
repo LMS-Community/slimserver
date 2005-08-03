@@ -39,7 +39,7 @@ should override all of these methods.
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
 		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
 		getExternalPlaylists getInternalPlaylists getPlaylistForClient readTags
-		setAlbumArtwork updateCoverArt commonAlbumTitlesChanged
+		setAlbumArtwork updateCoverArt commonAlbumTitlesChanged mergeVariousArtistsAlbums
 	));
 }
 
@@ -124,28 +124,20 @@ sub init {
 
 				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
-				$form->{'text'} = Slim::Music::Info::standardTitle(undef, $item);
+				$form->{'text'}  = Slim::Music::Info::standardTitle(undef, $item);
 
-				if (my ($contributor) = $item->contributors) {
-
-					($form->{'artist'}, $form->{'artistid'}) = $contributor->get(qw(name id));
-				}
-
-				if (my $album = $item->album) {
-
-					($form->{'album'}, $form->{'albumid'}) = $album->get(qw(title id));
-				}
+				$form->{'artist'} = $item->artist;
+				$form->{'album'}  = $item->album;
 
 				my ($id, $url) = $item->get(qw(id url));
 
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
 				$form->{'item'}	               = $id;
-				$form->{'itempath'}	           = $url;
+				$form->{'itempath'}	       = $url;
 				$form->{'itemobj'}             = $item;
 				$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
 				$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
-
 
 				my $Imports = Slim::Music::Import::importers();
 
@@ -300,14 +292,11 @@ sub init {
 				}
 
 				# Show the artist in the album view
-				# This will be simpler once ALBUM ARTIST is implemented.
 				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					my ($track) = $item->tracks;
-					my $artist  = $track->artist;
+					if (my $contributor = $item->contributor) {
 
-					if ($artist) {
-						$form->{'artist'} = $artist;
+						$form->{'artist'} = $contributor;
 						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 					}
 				}
@@ -374,22 +363,16 @@ sub init {
 
 				$form->{'coverThumb'} = $item->artwork_path || 0;
 
-				my ($track) = $item->tracks;
-
 				# add the year to artwork browsing if requested.
 				if (Slim::Utils::Prefs::get('showYear')) {
 
-					$form->{'year'} = $track->year if $track;
+					$form->{'year'} = $item->year;
 				}
 
 				# Show the artist in the album view
-				if (Slim::Utils::Prefs::get('showArtist') && $track) {
+				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					my $artist = $track->artist;
-
-					if ($artist) {
-						$form->{'artist'} = $artist;
-					}
+					$form->{'artist'} = $item->contributor;
 				}
 
 				$form->{'item'}    = $itemname;
@@ -439,8 +422,7 @@ sub init {
 				# The user may not want to include all the composers / conductors
 				unless (Slim::Utils::Prefs::get('composerInArtists')) {
 
-					# XXX - this should be abstracted.
-					$findCriteria->{'contributor.role'} = $Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'};
+					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
 				}
 
 				return $ds->find('artist', $findCriteria, 'artist');

@@ -15,7 +15,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->has_many('contributorTracks' => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor']);
 }
 
-our @fields = qw(contributor artist composer conductor band);
+our @fields = qw(contributor artist composer conductor band trackArtist albumArtist);
 
 sub contributorFields {
 	return \@fields;

@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (9, 0, 0);
+INSERT INTO metainformation VALUES (10, 0, 0);
 
 --
 -- Table: tracks
@@ -26,6 +26,7 @@ CREATE TABLE tracks (
   url text NOT NULL,
   title varchar(255),
   titlesort varchar(255),
+  titlesearch varchar(255),
   album  int(10) unsigned,
   tracknum  int(10) unsigned,
   ct varchar(255),
@@ -61,7 +62,9 @@ CREATE TABLE tracks (
   multialbumsortkey  text,
   INDEX trackTitleIndex (title),
   INDEX trackAlbumIndex (album),
+  INDEX ctSortIndex (ct),
   INDEX trackSortIndex (titlesort),
+  INDEX trackSearchIndex (titlesearch),
   INDEX trackRatingIndex (rating),
   INDEX trackPlayCountIndex (playCount),
   INDEX trackSortKeyIndex (multialbumsortkey(255)),
@@ -102,7 +105,9 @@ CREATE TABLE albums (
   id int(10) unsigned NOT NULL auto_increment,
   title varchar(255),
   titlesort varchar(255),
-  contributors varchar(255),
+  titlesearch varchar(255),
+  contributor varchar(255),
+  compilation int(10) unsigned,
   year  int(10) unsigned,
   artwork_path varchar(255),
   disc  int(10) unsigned,
@@ -110,6 +115,8 @@ CREATE TABLE albums (
   musicmagic_mixable int(10) unsigned,
   INDEX albumsTitleIndex (title),
   INDEX albumsSortIndex (titlesort),
+  INDEX albumsSearchIndex (titlesearch),
+  INDEX compilationSortIndex (compilation),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
@@ -122,11 +129,13 @@ CREATE TABLE contributors (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255),
   namesort varchar(255),
+  namesearch varchar(255),
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable int(10) unsigned,
   musicmagic_mixable int(10) unsigned,
   INDEX contributorsNameIndex (name),
   INDEX contributorsSortIndex (namesort),
+  INDEX contributorsSearchIndex (namesearch),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
@@ -138,16 +147,13 @@ CREATE TABLE contributor_track (
   role  int(10) unsigned,
   contributor  int(10) unsigned,
   track  int(10) unsigned,
-  album  int(10) unsigned,
   namesort varchar(255),
   INDEX contributor_trackContribIndex (contributor),
   INDEX contributor_trackTrackIndex (track),
-  INDEX contributor_trackAlbumIndex (album),
   INDEX contributor_trackSortIndex (namesort),
   PRIMARY KEY (id),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
 
 --
@@ -157,11 +163,13 @@ CREATE TABLE genres (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255),
   namesort varchar(255),
+  namesearch varchar(255),
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable int(10) unsigned,
   musicmagic_mixable int(10) unsigned,
   INDEX genreNameIndex (name),
   INDEX genreSortIndex (namesort),
+  INDEX genreSearchIndex (namesearch),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 

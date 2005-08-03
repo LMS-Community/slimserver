@@ -10,9 +10,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('albums');
 
-	$class->columns(Essential => qw/id title titlesort contributors year artwork_path disc discc musicmagic_mixable/);
+	$class->columns(Essential => qw/id title titlesort contributor compilation year artwork_path disc discc musicmagic_mixable/);
 
 	$class->columns(Stringify => qw/title/);
+
+	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 
 	# This has the same sort order as %DataModel::sortFieldMap{'album'}
 	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL ORDER BY titlesort, disc');

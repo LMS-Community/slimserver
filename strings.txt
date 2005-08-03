@@ -9353,3 +9353,23 @@ SETUP_SCROLLMODE_NOSCROLL
 	EN	Do not scroll
 	ES	No desplazar
 
+SETUP_VARIOUSARTISTAUTOIDENTIFICATION
+	EN	Automatically identify "Various Artist" albums.
+
+SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
+	EN	SlimServer can attempt to automatically identify "Various Artist" albums - those that have more than one primary artist. These albums will be listed under "Various Artists" in the Browse Artist modes.
+
+SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
+	EN	Automatically identify "Various Artist" albums.
+
+SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
+	EN	Don't automatically identify "Various Artist" albums.
+
+SETUP_VARIOUSARTISTSSTRING
+	EN	Customized "Various Artist" identifier.
+
+SETUP_VARIOUSARTISTSSTRING_DESC
+	EN	You can customize the name of your "Various Artist" albums that SlimServer identifies. Common examples are "Various", "V.A.", "VA", etc.
+
+VARIOUSARTISTS
+	EN	Various Artists
