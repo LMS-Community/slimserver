@@ -48,6 +48,12 @@ sub init {
 			'level' => 0,
 		},
 
+		'BROWSE_BY_YEAR'  => {
+			'useMode'  => 'browsedb',
+			'hierarchy' => 'year,album,track',
+			'level' => 0,
+		},
+
 		'BROWSE_BY_SONG'   => {
 			'useMode'  => 'browsedb',
 			'hierarchy' => 'track',
@@ -290,17 +296,16 @@ sub browsedbExitCallback {
 		my $descend   = $client->param('descend');
 
 		my $currentItem = $items->[$listIndex];
-
-		my $all = !ref($currentItem);
-
+		my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 		my @levels = split(",", $hierarchy);
+
+		my $all = 1 if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $currentItem);
 
 		if (!defined($currentItem)) {
 			$client->bumpRight();
 		}
 		# If we're dealing with a container or an ALL list
 		elsif ($descend || $all) {
-			my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 
 			my $findCriteria = { %{$client->param('findCriteria')} };
 			my $field = $levels[$level];
@@ -348,10 +353,6 @@ sub browsedbItemName {
 	my $client = shift;
 	my $item = shift;
 
-	if (defined($item) && !ref($item)) {
-		return $client->string($item);
-	}
-
 	my $hierarchy = $client->param('hierarchy');
 	my $level     = $client->param('level');
 
@@ -359,7 +360,11 @@ sub browsedbItemName {
 	
 	my $fieldInfo = Slim::DataStores::Base->fieldInfo();
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
-	
+
+	if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $item) {
+		return $client->string($item);
+	}
+
 	if ($levels[$level] eq 'track') {
 
 		return Slim::Music::Info::standardTitle($client, $item);
