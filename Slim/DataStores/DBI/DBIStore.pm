@@ -764,11 +764,17 @@ sub mergeVariousArtistsAlbums {
 	my %artists = ();
 
 	for my $track ($obj->tracks) {
-		$artists{ $track->artist->id }++;
+
+		my $artist = $track->artist;
+
+		if ($artist && ref($artist) && $artist->can('id')) {
+
+			$artists{ $artist->id }++;
+		}
 	}
 
 	# Not a VA album.
-	return 1if scalar keys %artists == 1;
+	return 1 if scalar keys %artists == 1;
 
 	$obj->compilation(1);
 	$obj->contributor($vaObj);
