@@ -62,6 +62,14 @@ our $staleCounter = 0;
 # For the VA album merging & scheduler globals.
 my ($variousAlbumIds, $vaObj);
 
+# Abstract to the caller
+my %typeToClass = (
+	'artist' => 'Slim::DataStores::DBI::Contributor',
+	'album'  => 'Slim::DataStores::DBI::Album',
+	'track'  => 'Slim::DataStores::DBI::Track',
+	'genre'  => 'Slim::DataStores::DBI::Genre',
+);
+
 #
 # Readable DataStore interface methods:
 #
@@ -101,6 +109,13 @@ sub new {
 	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 
 	return $self;
+}
+
+sub classForType {
+	my $self = shift;
+	my $type = shift;
+
+	return $typeToClass{$type};
 }
 
 sub contentType {
@@ -270,7 +285,7 @@ sub find {
 			$items = [ grep $self->_checkValidity($_), @$items ];
 		}
 	}
-	
+
 	return $items if $count;
 	return wantarray() ? @$items : $items;
 }
@@ -313,8 +328,7 @@ sub count {
 		}
 	}
 
-	# XXX Brute force implementation. For now, retrieve from the database.
-	# Last option to find() is $count - don't instansiate objects
+	# Last option to find() is $count
 	return $self->find($field, \%findCriteria, undef, undef, undef, 1);
 }
 

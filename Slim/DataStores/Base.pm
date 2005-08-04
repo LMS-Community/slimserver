@@ -33,7 +33,7 @@ should override all of these methods.
 	$^W = 0;
 
 	$class->virtual_methods(qw(
-		new contentType objectForUrl objectForId find count
+		new classForType contentType objectForUrl objectForId find count
 		albumsWithArtwork totalTime updateTrack newTrack updateOrCreate
 		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
