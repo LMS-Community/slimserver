@@ -24,7 +24,7 @@ function goadvancedsearch() {
 }
 
 function gosearch() {
-	browseurl('livesearch.html?');
+	browseurl('search.html?');
 	resetLinks(document.getElementById('library'));
 }
 

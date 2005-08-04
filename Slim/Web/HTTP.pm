@@ -125,14 +125,13 @@ sub init {
 		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
 		qr/^home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
 		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
-		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::search,
+		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::basicSearch,
 		qr/^advanced_search\.(?:htm|xml)/ => \&Slim::Web::Pages::advancedSearch,
 		qr/^songinfo\.(?:htm|xml)/	=> \&Slim::Web::Pages::songInfo,
 		qr/^status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
 		qr/^status\.(?:htm|xml)/	=> \&Slim::Web::Pages::status,
 		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
-		qr/^livesearch\.(?:htm|xml)/    => \&Slim::Web::Pages::livesearch,
 	);
 
 	# pull in the memory usage module if requested.

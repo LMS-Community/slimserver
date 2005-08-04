@@ -17,46 +17,57 @@ use Slim::Web::Pages;
 
 use constant MAXRESULTS => 10;
 
-my @types = qw(artist album track);
+my @allTypes = qw(artist album track);
 
 our %queries = (
 	'artist' => [qw(contributor contributor.namesort)],
 	'album'  => [qw(album album.titlesort)],
-	'track'   => [qw(track track.titlesort)],
+	'track'  => [qw(track track.titlesort)],
 );
 
 sub query {
-	my $class = shift;
-	my $query = shift;
-	my $limit = shift;
+	my ($class, $query, $types, $limit, $offset) = @_;
 
 	my @data  = ();
 	my $ds    = Slim::Music::Info->getCurrentDataStore();
 
 	my $search = Slim::Web::Pages::searchStringSplit($query);
 
-	for my $type (@types) {
+	# Default to a valid list of types
+	if (!ref($types) || !defined $types->[0]) {
+
+		$types = \@allTypes;
+	}
+
+	for my $type (@$types) {
 
 		my $find = {
 			$queries{$type}->[1] => $search,
 		};
 
-		if (!Slim::Utils::Prefs::get('composerInArtists')) {
+		# Don't do an unneeded join for albums & tracks.
+		if ($type eq 'artist' && !Slim::Utils::Prefs::get('composerInArtists')) {
 
 			$find->{'contributor.role'} = $ds->artistOnlyRoles;
 		}
 
-		push @data, [ $type, [$ds->find($queries{$type}->[0], $find, undef, $limit, 0)] ];
+		my $count   = $ds->count($queries{$type}->[0], $find);
+		my $results = [];
+
+		if ($count) {
+			$results = [ $ds->find($queries{$type}->[0], $find, undef, $limit, $offset) ];
+		}
+
+		push @data, [ $type, $count, $results ];
 	}
 
 	return \@data;
 }
 
 sub queryWithLimit {
-	my $class = shift;
-	my $query = shift;
+	my ($class, $query, $types, $limit, $offset) = @_;
 
-	return $class->query($query, MAXRESULTS);
+	return $class->query($query, $types, ($limit || MAXRESULTS), ($offset || 0));
 }
 
 sub outputAsXHTML { 
@@ -72,17 +83,21 @@ sub outputAsXHTML {
 
 	for my $result (@$results) {
 
-		my $type    = $result->[0];
-		my $data    = $result->[1];
-		my $count   = 0;
-		my @results = ();
+		my $type   = $result->[0];
+		my $total  = $result->[1];
+		my $data   = $result->[2];
+		my $count  = 0;
+		my @output = ();
+
+		next unless ref($data);
 
 		for my $item (@{$data}) {
 
 			if ($count <= MAXRESULTS) {
+
 				my $rowType = $count % 2 ? 'even' : 'odd';
 
-				push @results, renderItem(
+				push @output, renderItem(
 					$rowType,
 					$type,
 					$item,
@@ -93,14 +108,14 @@ sub outputAsXHTML {
 			$count++;
 		}
 
-		push @xml, sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": $count<br/><br/></td></tr>", 
+		push @xml, sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": $total<br/><br/></td></tr>", 
 			Slim::Utils::Strings::string(uc($type . 'SMATCHING'))
 		);
 
-		push @xml, @results if $count;
+		push @xml, @output if $count;
 
-		if ($count && $count > MAXRESULTS) {
-			push @xml, sprintf("<tr><td class=\"even\"> <p> <a href=\"search.html?liveSearch=0&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></td></tr>\n",
+		if ($total && $total > MAXRESULTS) {
+			push @xml, sprintf("<tr><td class=\"even\"> <p> <a href=\"search.html?manualSearch=1&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></td></tr>\n",
 				$query, $type, $player, Slim::Utils::Strings::string('MORE_MATCHES')
 			);
 		}
@@ -197,17 +212,18 @@ sub outputAsXML {
 
 	for my $result (@$results) {
 
-		my $type    = $result->[0];
-		my $data    = $result->[1];
-		my $count   = 0;
-		my @results = ();
+		my $type   = $result->[0];
+		my $total  = $result->[1];
+		my $data   = $result->[2];
+		my $count  = 0;
+		my @output = ();
 
 		for my $item (@{$data}) {
 
 			my $rowType = $count % 2 ? 'even' : 'odd';
 			if ($count <= MAXRESULTS) {
 
-				push @results, sprintf('<livesearchitem id="%s">%s</livesearchitem>',
+				push @output, sprintf('<livesearchitem id="%s">%s</livesearchitem>',
 					$item->id(),
 					($item->can('title') ? $item->title() : $item->name()),
 				);
@@ -216,16 +232,15 @@ sub outputAsXML {
 			$count++;
 		}
 
-
-		push @xml, sprintf("<searchresults type=\"%s\" hierarchy=\"%s\" mstring=\"%s &quot;$query&quot;: $count\">", 
+		push @xml, sprintf("<searchresults type=\"%s\" hierarchy=\"%s\" mstring=\"%s &quot;$query&quot;: $total\">", 
 			$type,
 			$Slim::Web::Pages::hierarchy{$type} || '',
 			Slim::Utils::Strings::string(uc($type . 'SMATCHING'))
 		);
 
-		push @xml, @results if $count;
+		push @xml, @output if $count;
 
-		if ($count && $count > MAXRESULTS) {
+		if ($total && $total > MAXRESULTS) {
 			push @xml, "<morematches query=\"$query\"/>";
 		}
 

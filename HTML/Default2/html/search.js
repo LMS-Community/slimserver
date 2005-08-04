@@ -43,7 +43,7 @@ function searchsend() {
 	try {
 		searchtext = document.getElementById('searchquery').value;
 		if (searchtext.length > 2) {
-			postback("livesearch.xml?xmlmode=1&query=" + searchtext, searchhandler);
+			postback("search.xml?xmlmode=1&query=" + searchtext, searchhandler);
 		} else {
 			searchInProgress = 0;
 			document.getElementById("activesearch").style.display = "none";

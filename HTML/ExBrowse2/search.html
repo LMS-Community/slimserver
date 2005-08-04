@@ -3,11 +3,11 @@
 <div id="pwd">
  [% IF searchlist_pagebar %]
  <span class="pagebar">[% searchlist_pagebar %]</span>
- [% END %]<a onclick="parent.browseurl('livesearch.html?');">[% "SEARCH" | string %]</a> /
+ [% END %]<a onclick="parent.browseurl('search.html?');">[% "SEARCH" | string %]</a> /
 </div>
 
 <p>
- <form id="searchForm" name="searchForm" method="get" action="livesearch.html">
+ <form id="searchForm" name="searchForm" method="get" action="search.html">
  [% IF liveSearch %]
   <input type="text" id="searchquery" name="query" size="40" autocomplete="off" onkeydown="searchkey()" />
  [% ELSE %]

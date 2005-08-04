@@ -2,11 +2,11 @@
 
 <p id="pagetitle">
  <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a> /
- <a onclick="parent.browseurl('livesearch.html?');">[% "SEARCH" | string %]</a>
+ <a onclick="parent.browseurl('search.html?');">[% "SEARCH" | string %]</a>
 </p>
 
 <p>
- <form id="searchForm" name="searchForm" method="get" action="livesearch.html">
+ <form id="searchForm" name="searchForm" method="get" action="search.html">
  [% IF liveSearch %]
   <input type="text" id="searchquery" name="query" size="40" autocomplete="off" onkeydown="searchkey()" />
  [% ELSE %]

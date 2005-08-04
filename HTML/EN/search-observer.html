@@ -2,7 +2,7 @@
 
 	new Form.Element.Observer('query', 1, function(element, value) {
 
-		new Ajax.Updater('search-results', 'livesearch.xml', {
+		new Ajax.Updater('search-results', 'search.xml', {
 
 			parameters:'query=' + value + '&player=' + document.forms.searchForm.player.value,
 			evalScripts:true, asynchronous:true, method:'get'

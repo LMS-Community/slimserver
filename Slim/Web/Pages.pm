@@ -37,7 +37,7 @@ sub init {
 	addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
 	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
-	addLinks("search", {'SEARCH' => "livesearch.html"});
+	addLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
 	addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
 	addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
@@ -632,7 +632,7 @@ sub memory_usage {
 	}
 }
 
-sub livesearch {
+sub basicSearch {
 	my ($client, $params) = @_;
 
 	my $player = $params->{'player'};
@@ -641,11 +641,9 @@ sub livesearch {
 	# set some defaults for the template
 	$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
-	$params->{'liveSearch'}  = 1;
 
 	# short circuit
-	if (!defined($query) ||
-		($params->{'manualSearch'} && !$query)) {
+	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
 
@@ -654,29 +652,33 @@ sub livesearch {
 		return \'';
 	}
 
-	my $data = Slim::Music::LiveSearch->query($query);
+	# Don't kill the database - use limit & offsets
+	my $data = Slim::Music::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], undef, $params->{'start'});
 
 	# The user has hit enter, or has a browser that can't handle the javascript.
 	if ($params->{'manualSearch'}) {
 
 		# Tell the template not to do a livesearch request anymore.
 		$params->{'liveSearch'} = 0;
+
 		my @results = ();
 		my $descend = 1;
-		
+		my @qstring = ('manualSearch=1');
+
 		for my $item (@$data) {
 
-			$params->{'type'} = $item->[0];
-			$params->{'path'} = 'search.html';
+			$params->{'type'}       = $item->[0];
+			$params->{'numresults'} = $item->[1];
+			$params->{'path'}       = 'search.html';
 
 			if ($params->{'type'} eq 'track') {
 
-				push @results, $item->[1];
+				push @results, $item->[2];
 
 				$descend = undef;
 			}
 
-			_fillInSearchResults($params, $item->[1], $descend, []);
+			_fillInSearchResults($params, $item->[2], $descend, \@qstring);
 		}
 
 		$client->param('searchResults', @results) if defined $client;
@@ -801,68 +803,12 @@ sub advancedSearch {
 
 	# Do the actual search
 	my $results = $ds->find('track', \%query, 'title');
-	$client->param('searchResults',$results) if defined $client;
+
+	$client->param('searchResults', $results) if defined $client;
 
 	_fillInSearchResults($params, $results, undef, \@qstring, $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
-}
-
-sub search {
-	my ($client, $params) = @_;
-
-	my $player = $params->{'player'};
-	my $query  = $params->{'query'};
-	my $type   = $params->{'type'} || 'track';
-	my $results;
-	my $descend = 'true';
-
-	# template defaults
-	$params->{'browse_list'} = " ";
-	$params->{'numresults'}  = -1;
-	$params->{'liveSearch'}  = 0;
-
-	# short circuit
-	unless ($query) {
-		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
-	}
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	my $searchStrings = searchStringSplit($query, $params->{'searchSubString'});
-
-	# Be backwards compatible.
-	if ($type eq 'song') {
-		$type = $params->{'type'} = 'track';
-	}
-
-	# Search for each type of data we have
-	if ($type eq 'artist') {
-
-		$results = $ds->find('contributor', { "contributor.namesort" => $searchStrings }, 'contributor');
-
-	} elsif ($type eq 'album') {
-
-		$results = $ds->find('album', { "album.titlesort" => $searchStrings }, 'album');
-
-	} elsif ($type eq 'track') {
-
-		my $sortBy = 'title';
-		my %find   = ();
-
-		for my $string (@{$searchStrings}) {
-			push @{$find{'track.titlesort'}}, [ $string ];
-		}
-
-		$results = $ds->find('track', \%find, $sortBy);
-
-		$descend = undef;
-	}
-
-	$client->param('searchResults',$results) if defined $client;
-	_fillInSearchResults($params, $results, $descend, [], $ds);
-
-	return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 }
 
 sub _fillInSearchResults {
@@ -871,6 +817,7 @@ sub _fillInSearchResults {
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
 	my $type   = $params->{'type'}   || 'track';
+
 	$params->{'type'} = $type;
 	
 	my $otherParams = 'player=' . Slim::Web::HTTP::escape($player) . 
@@ -879,12 +826,10 @@ sub _fillInSearchResults {
 			  join('&', @$qstring);
 
 	# set some defaults for the template
-	#$params->{'browse_list'} = " ";
-	$params->{'numresults'}  = -1;
-	$params->{'liveSearch'}  = 0;
+	$params->{'browse_list'} = " ";
 
 	# Make sure that we have something to show.
-	if (defined $results && ref($results) eq 'ARRAY') {
+	if (!defined $params->{'numresults'} && defined $results && ref($results) eq 'ARRAY') {
 
 		$params->{'numresults'} = scalar @$results;
 	}
@@ -930,7 +875,9 @@ sub _fillInSearchResults {
 		my $itemnumber = 0;
 		my $lastAnchor = '';
 
-		for my $item (@$results[$start..$end]) {
+		for my $item (@$results) {
+
+			next unless defined $item && ref($item);
 
 			# Contributor/Artist uses name, Album & Track uses title.
 			my $title     = $item->can('title')     ? $item->title()     : $item->name();
@@ -944,7 +891,12 @@ sub _fillInSearchResults {
 				
 				# If we can't get an object for this url, skip it, as the
 				# user's database is likely out of date. Bug 863
-				my $itemObj  = $ds->objectForUrl($item) || next;
+				my $itemObj = $item;
+
+				if (!ref($itemObj)) {
+
+					$itemObj = $ds->objectForUrl($item) || next;
+				}
 				
 				my $itemname = &{$fieldInfo->{$type}->{'resultToName'}}($itemObj);
 

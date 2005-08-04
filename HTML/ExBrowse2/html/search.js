@@ -81,7 +81,7 @@ function searchkey() {
 }
 
 function searchinit() {
-	searchreq = JXTK.Backend().createBackend(webroot + 'livesearch.xml?xmlmode=1&query=');
+	searchreq = JXTK.Backend().createBackend(webroot + 'search.xml?xmlmode=1&query=');
 	searchreq.addHandler(searchhandler);
 
 	var xslreq = JXTK.Backend().createBackend(webroot + 'html/search.xsl');
