@@ -638,7 +638,7 @@ sub scanFunction {
 		local $/ = '</dict>';
 		my $line;
 
-		for (my $i = 0; $i < 250; $i++) {
+		for (my $i = 0; $i < 25; $i++) {
 			$line .= <ITUNESLIBRARY>;
 		}
 
