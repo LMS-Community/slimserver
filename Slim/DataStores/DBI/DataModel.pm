@@ -23,6 +23,7 @@ use FindBin qw($Bin);
 use Slim::Utils::Misc;
 
 our $dbh;
+our $driver;
 our $dirtyCount = 0;
 our $cleanupIds;
 
@@ -37,7 +38,7 @@ sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
 
-	my $driver = Slim::Utils::Prefs::get('dbsource');
+	$driver = Slim::Utils::Prefs::get('dbsource');
 	$driver =~ s/dbi:(.*?):(.*)$/$1/;
 
 	my $sqlFile = catdir($Bin, "SQL", $driver, $file);
@@ -173,8 +174,9 @@ sub findUpgrade {
 	my $class       = shift;
 	my $currVersion = shift;
 
-	my $driver = Slim::Utils::Prefs::get('dbsource');
+	$driver = Slim::Utils::Prefs::get('dbsource');
 	$driver =~ s/dbi:(.*?):(.*)$/$1/;
+
 	my $sqlVerFilePath = catdir($Bin, "SQL", $driver, "sql.version");
 
 	my $versionFile;
@@ -615,8 +617,7 @@ sub find {
 	my $abstract;
 
 	if (defined $limit && defined $offset) {
-		# XXX - fix this to use a dynamic dialect.
-		$abstract  = SQL::Abstract::Limit->new('limit_dialect' => 'LimitOffset');
+		$abstract  = SQL::Abstract::Limit->new('limit_dialect' => $dbh);
 	} else {
 		$abstract  = SQL::Abstract->new();
 	}
@@ -634,6 +635,13 @@ sub find {
 	}
 
 	$sql .= $where;
+
+	# SQLite doesn't implement SELECT COUNT(DISTINCT ...
+	# http://www.sqlite.org/omitted.html
+	#
+	if ($count && $driver eq 'SQLite') {
+		$sql = sprintf('SELECT COUNT(*) FROM (%s)', $sql);
+	}
 
 	if ($::d_sql) {
 		Slim::Utils::Misc::bt();
@@ -660,7 +668,7 @@ sub find {
 
 	# Don't instansiate any objects if we're just counting.
 	if ($count) {
-		$count = scalar @{$sth->fetchall_arrayref()};
+		$count = ($sth->fetchrow_array)[0];
 
 		$sth->finish();
 
