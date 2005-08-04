@@ -8,6 +8,7 @@ package Slim::Display::Graphics;
 use strict;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
+use Tie::Cache::LRU;
 
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -20,9 +21,73 @@ our %fontextents;
 my $char0 = chr(0);
 my $ord0a = ord("\x0a");
 
+# TrueType support by using GD
+my $canUseGD = eval {
+	require GD;
+	return 1;
+};
+
+my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF);
+
+# Keep a cache of up to 256 characters at a time.
+tie my %TTFCache, 'Tie::Cache::LRU', 256;
+
+my %font2TTF = (
+
+	'standard.1' => {
+		'GDFontSize' => 8,
+		'GDBaseline' => 8,
+	},
+
+	'standard.2' => {
+		'GDFontSize' => 14,
+		'GDBaseline' => 27,
+	},
+
+	'light.1' => {
+		'GDFontSize' => 9,
+		'GDBaseline' => 10,
+	},
+
+	'light.2' => {
+		'GDFontSize' => 11,
+		'GDBaseline' => 28,
+	},
+
+	'full.2' => {
+		'GDFontSize' => 18,
+		'GDBaseline' => 24,
+	},
+);
+
 sub init {
 	%fonts = ();
 	loadFonts();
+
+	# Initialize an image for working (1 character=32x32) and some variables...
+	# Try a few different fonts..
+	for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
+
+		$TTFFontFile = catdir($Bin, 'Graphics', $fontFile);
+
+		if ($canUseGD && -e $TTFFontFile) {
+
+			$useTTF = 1;
+			last;
+		}
+	}
+
+	if ($useTTF) {
+
+		$useTTFCache = 1;
+		%TTFCache    = ();
+
+		# This should be configurable.
+		$gd = GD::Image->new(32, 32);
+
+		$GDWhite = $gd->colorAllocate(255,255,255);
+		$GDBlack = $gd->colorAllocate(0,0,0);
+	}
 }
 
 sub gfonthash {
@@ -92,30 +157,93 @@ sub string {
 		$unpackTemplate = 'U*';
 	}
 
+	# Font size & Offsets -- Optimized for the free Japanese TrueType font
+	# 'sazanami-gothic' from 'waka'.
+	#
+	# They seem to work pretty well for CODE2000 & Cyberbit as well. - dsully
+	my ($GDFontSize, $GDBaseline);
+	my $useTTFNow = 0;
+
+	if ($useTTF && defined $font2TTF{$fontname}) {
+
+		$useTTFNow  = 1;
+		$GDFontSize = $font2TTF{$fontname}->{'GDFontSize'};
+		$GDBaseline = $font2TTF{$fontname}->{'GDBaseline'};
+	}
+
 	for my $ord (unpack($unpackTemplate, $string)) {
 
 		# 29 == \x1d, 28 == \x1c, 10 == \x0a
 		if ($ord == 29) { 
+
 			$interspace = ''; 
+
 		} elsif ($ord == 28) {
+
 			$interspace = $font->[0]; 
+
 		} elsif ($ord == 10) {
+
 			$cursorpos = length($bits);
+
 		} else {
 
-			# We don't handle anything outside ISO-8859-1 right now.
-			if ($ord > 255) {
-				$ord = 63; # 63 == '?'
+			if ($ord > 255 && $useTTFNow) {
+
+				my $bits_tmp = $useTTFCache ? $TTFCache{$fontname}{$ord} : '';
+
+				unless ($bits_tmp) {
+
+					$bits_tmp = '';
+
+					# Create our canvas.
+					$gd->filledRectangle(0, 0, 31, 31, $GDWhite);
+
+					# Using a negative color index will
+					# disable anti-aliasing, as described
+					# in the libgd manual page at
+					# http://www.boutell.com/gd/manual2.0.9.html#gdImageStringFT.
+					#
+					my @GDBounds = $gd->stringFT(-1*$GDBlack, $TTFFontFile, $GDFontSize, 0, 0, $GDBaseline, "&#${ord};");
+
+					# Construct the bitmap
+					for (my $x = 0; $x <= $GDBounds[2]; $x++) {
+
+						for (my $y = 0; $y < 32; $y++) {
+
+							$bits_tmp .= $gd->getPixel($x,$y) == $GDBlack ? 1 : 0
+						}
+					}
+
+					$bits_tmp = pack("B*", $bits_tmp);
+
+					$TTFCache{$fontname}{$ord} = $bits_tmp if $useTTFCache;
+				}
+
+				if (defined($cursorpos) && !$cursorend) { 
+					$cursorend = length($bits_tmp) / length($font->[$ord0a]);
+				}
+
+				$bits .= $bits_tmp;
+
+			} else {
+
+				# We don't handle anything outside ISO-8859-1
+				# right now in our non-TTF bitmaps.
+				if ($ord > 255) {
+					$ord = 63; # 63 == '?'
+				}
+
+				if (defined($cursorpos) && !$cursorend) { 
+					$cursorend = length($font->[$ord])/ length($font->[$ord0a]); 
+				}
+
+				$bits .= $font->[$ord] . $interspace;
 			}
 
-			if (defined($cursorpos) && !$cursorend) { 
-				$cursorend = length($font->[$ord])/ length($font->[$ord0a]); 
-			}
-
-			$bits .= $font->[$ord] . $interspace;
 		}
 	}
-	
+
 	if (defined($cursorpos)) {
 		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}

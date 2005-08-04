@@ -674,6 +674,7 @@ sub infoFormat_old {
 
 	return $str;
 }
+
 sub initParsedFormats {
 	%parsedFormats = ();
 	my @trackAttrs; # for relating track attributes to album/artist attributes
@@ -1045,6 +1046,7 @@ sub plainTitle {
 	} else {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
+			$file = Slim::Utils::Misc::utf8decode_locale($file);
 		}
 
 		if ($file) {
@@ -1578,7 +1580,7 @@ sub fileName {
 		$j = (splitdir($j))[-1];
 	}
 
-	return $j;
+	return Slim::Utils::Misc::utf8decode_locale($j);
 }
 
 sub sortFilename {

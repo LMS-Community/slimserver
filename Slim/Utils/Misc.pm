@@ -99,7 +99,26 @@ our $utf8_re_bits;
 
 		$lc =~ s/utf-8/utf8/gi;
 
+		# CJK Locales
+		$lc =~ s/eucjp/euc-jp/i;
+		$lc =~ s/ujis/euc-jp/i;
+		$lc =~ s/sjis/shiftjis/i;
+		$lc =~ s/euckr/euc-kr/i;
+		$lc =~ s/big5/big5-eten/i;
+		$lc =~ s/gb2312/euc-cn/i;
+
 		$locale = $lc;
+	}
+
+	# Setup suspects for Encode::Guess based on the locale - we might also
+	# want to use our own Language pref?
+	if ($locale =~ /^(euc-jp|cp932)$/) {
+
+		Encode::Guess::add_suspects(qw(euc-jp cp932 7bit-jis));
+
+	} elsif ($locale =~ /^(euc-cn|cp936)$/) {
+
+		Encode::Guess::add_suspects(qw(euc-cn cp936 big5-eten));
 	}
 
 	# Create a regex for looks_like_utf8()
@@ -264,7 +283,12 @@ sub fileURLFromPath {
 # Unicode / Encoding functions.
 
 sub utf8decode {
+	return utf8decode_guess(@_);
+}
+
+sub utf8decode_guess {
 	my $string = shift;
+	my $prefer_encoding;
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string)) {
@@ -275,16 +299,37 @@ sub utf8decode {
 
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::decode('utf8', $string, Encode::FB_QUIET());
+		eval {
+			my $icode = Encode::Guess::guess_encoding($string);
 
-	} elsif ($string && $] > 5.007) {
+			if (ref $icode) {
 
-		Encode::_utf8_on($string);
+				$string = Encode::decode($icode, $string, Encode::FB_QUIET);
+
+			} else {
+
+				if ($icode =! /^no /i) {
+
+					while ($prefer_encoding = shift) {
+
+						$string = Encode::decode($prefer_encoding, $string, Encode::FB_QUIET);
+
+						last if $icode =~ /$prefer_encoding/;
+					}
+				}
+			}
+		}
 	}
 
-	if ($string && $] > 5.007 && !looks_like_utf8($string)) {
+	return $string;
+}
 
-		$string = $orig;
+sub utf8decode_locale {
+	my $string = shift;
+
+	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
+
+		$string = Encode::decode($Slim::Utils::Misc::locale, $string, Encode::FB_QUIET);
 	}
 
 	return $string;
@@ -957,14 +1002,14 @@ sub longDateF {
 	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('longdateFormat'), $time);
 	$date =~ s/\|0*//;
-	return $date;
+	return utf8decode_locale($date);
 }
 
 sub shortDateF {
 	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('shortdateFormat'),  $time);
 	$date =~ s/\|0*//;
-	return $date;
+	return utf8decode_locale($date);
 }
 
 sub timeF {
@@ -972,7 +1017,7 @@ sub timeF {
 	my $time = localeStrftime(Slim::Utils::Prefs::get('timeFormat'),  $ltime);
 	# remove leading zero if another digit follows
 	$time =~ s/\|0?(\d+)/$1/;
-	return $time;
+	return utf8decode_locale($time);
 }
 
 sub localeStrftime {
@@ -1004,7 +1049,7 @@ sub localeStrftime {
 	# $time = utf8toLatin1($time);
 	
 	setlocale(LC_TIME, "");
-	return $time;
+	return utf8decode_locale($time);
 }
 
 sub fracSecToMinSec {

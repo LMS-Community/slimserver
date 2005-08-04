@@ -1837,6 +1837,11 @@ sub initSetupConfig {
 								,q(%A |%d. %B %Y)	=> "WWWW DD. MMMM YYYY"
 								,q(%a |%d %b %Y)		=> "WWW DD MMM YYYY"
 								,q(%a |%d. %b %Y)	=> "WWW DD. MMM YYYY"
+								# Japanese styles
+								,q(%Y/%m/%d\(%a\))	=> "YYYY/MM/DD(WWW)"
+								,q(%Y-%m-%d\(%a\))	=> "YYYY-MM-DD(WWW)"
+								,q(%Y/%m/%d %A)	=> "YYYY/MM/DD WWWW"
+								,q(%Y-%m-%d %A)	=> "YYYY-MM-DD WWWW"
 								}
 					}
 			,"shortdateFormat" => {
@@ -1859,6 +1864,8 @@ sub initSetupConfig {
 								,q(%d.%m.%Y)	=> "DD.MM.YYYY"
 								,q(%d.%m.%y)	=> "DD.MM.YY"
 								,q(%Y-%m-%d)	=> "YYYY-MM-DD (ISO)"
+								# Japanese style
+								,q(%Y/%m/%d)	=> "YYYY/MM/DD"
 								}
 					}
 			,"timeFormat" => {

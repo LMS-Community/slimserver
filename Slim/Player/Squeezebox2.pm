@@ -1,6 +1,6 @@
 package Slim::Player::Squeezebox2;
 
-# $Id: Squeezebox2.pm,v 1.10 2005/01/19 01:02:23 vidur Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -812,6 +812,21 @@ sub canLoop {
 	}
 
 	return 0;
+}
+
+# SB2 can display Unicode fonts via a TTF
+sub string {
+        my $client = shift;
+        my $string = shift;
+
+	return Slim::Utils::Strings::string($string, Slim::Utils::Strings::getLanguage());
+}
+
+sub doubleString {
+        my $client = shift;
+        my $string = shift;
+
+	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
 }
 
 1;
