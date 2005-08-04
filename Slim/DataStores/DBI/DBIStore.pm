@@ -1498,16 +1498,35 @@ sub _postCheckAttributes {
 	# optimization that only requires the tracks table.
 	$albumObj ||= $track->album();
 
-	my $albumName = defined($albumObj) ? $albumObj->titlesort : '';
-	my $primary_contributor = defined($contributors->[0]) ? $contributors->[0]->namesort : 
-		(defined($albumObj) ? $albumObj->contributor->namesort : '');
+	my ($albumName, $primaryContributor) = ('', '');
+
+	if (defined $albumObj) {
+		$albumName = $albumObj->titlesort;
+	}
+
+	# Find a contributor associated with this track.
+	my $contributor = shift @$contributors;
+
+	if (defined $contributor && ref($contributor) && $contributor->can('namesort')) {
+
+		$primaryContributor = $contributor->namesort;
+
+	} elsif (defined $albumObj && ref($albumObj) && $albumObj->can('contributor')) {
+
+		$contributor = $albumObj->contributor;
+
+		if (defined $contributor && ref($contributor) && $contributor->can('namesort')) {
+
+			$primaryContributor = $contributor->namesort;
+		}
+	}
 
 	# Save 2 get calls
 	my ($titlesort, $tracknum) = $track->get(qw(titlesort tracknum));
 
 	my @keys = ();
 
-	push @keys, $primary_contributor || '';
+	push @keys, $primaryContributor || '';
 	push @keys, $albumName || '';
 	push @keys, $disc if defined($disc);
 	push @keys, sprintf("%03d", $tracknum) if defined $tracknum;
