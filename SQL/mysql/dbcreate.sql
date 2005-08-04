@@ -153,7 +153,7 @@ CREATE TABLE contributor_track (
   INDEX contributor_trackSortIndex (namesort),
   PRIMARY KEY (id),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
 
 --
