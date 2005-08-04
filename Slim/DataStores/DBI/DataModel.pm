@@ -639,8 +639,14 @@ sub find {
 	# SQLite doesn't implement SELECT COUNT(DISTINCT ...
 	# http://www.sqlite.org/omitted.html
 	#
+	# Oh, for a real database..
 	if ($count && $driver eq 'SQLite') {
+
 		$sql = sprintf('SELECT COUNT(*) FROM (%s)', $sql);
+
+	} elsif ($count && $driver eq 'mysql') {
+
+		$sql =~ s/^SELECT DISTINCT (\w+\.id) AS.*? FROM /SELECT COUNT\(DISTINCT $1\) FROM /;
 	}
 
 	if ($::d_sql) {
