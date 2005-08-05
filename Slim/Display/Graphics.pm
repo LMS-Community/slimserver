@@ -27,6 +27,8 @@ my $canUseGD = eval {
 	return 1;
 };
 
+my $gdError = $@;
+
 my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF);
 
 # Keep a cache of up to 256 characters at a time.
@@ -64,6 +66,12 @@ sub init {
 	%fonts = ();
 	loadFonts();
 
+	$::d_graphics && msgf("Trying to load GD Library for TTF support: %s\n", $canUseGD ? 'ok' : 'not ok!');
+
+	unless ($canUseGD) {
+		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
+	}
+
 	# Initialize an image for working (1 character=32x32) and some variables...
 	# Try a few different fonts..
 	for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
@@ -78,6 +86,8 @@ sub init {
 	}
 
 	if ($useTTF) {
+
+		$::d_graphics && msgf("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]\n");
 
 		$useTTFCache = 1;
 		%TTFCache    = ();
