@@ -296,7 +296,7 @@ sub setMode {
 
 	if ($method eq 'pop') {
 		Slim::Utils::Timers::killTimers($client, \&updateSignalStrength);
-		Slim::Buttons::Common::popModeRight($client);
+		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 
