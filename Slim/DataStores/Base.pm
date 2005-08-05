@@ -78,6 +78,7 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				if (defined $findCriteria->{'playlist'}) {
 
@@ -110,6 +111,7 @@ sub init {
 					'field'  => 'track',
 					'find'   => $findCriteria,
 					'sortBy' => exists $findCriteria->{'album'} ? 'tracknum' : 'title',
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -117,11 +119,13 @@ sub init {
 				my $ds = shift;
 				my $terms = shift;
 				my $type = shift || 'track';
+				my $idOnly = shift;
 
 				return $ds->find({
 					'field'  => $type,
 					'find'   => { "track.titlesort" => $terms },
-					'sortBy' => 'title'
+					'sortBy' => 'title',
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -202,11 +206,13 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				return $ds->find({
 					'field'  => 'genre',
 					'find'   => $findCriteria,
-					'sortBy' => 'genre'
+					'sortBy' => 'genre',
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -264,6 +270,7 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'artist'}) {
 
@@ -276,7 +283,8 @@ sub init {
 				return $ds->find({
 					'field'  => 'album',
 					'find'   => $findCriteria,
-					'sortBy' => 'album'
+					'sortBy' => 'album',
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -284,11 +292,13 @@ sub init {
 				my $ds = shift;
 				my $terms = shift;
 				my $type = shift || 'album';
+				my $idOnly = shift;
 
 				return $ds->find({
 					'field'  => $type,
 					'find'   => { "album.titlesort" => $terms },
 					'sortBy' => $type,
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -367,6 +377,7 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				if (Slim::Utils::Prefs::get('includeNoArt')) {
 
@@ -374,6 +385,7 @@ sub init {
 						'field'  => 'album',
 						'find'   => $findCriteria,
 						'sortBy' => 'album',
+						'idOnly' => $idOnly,
 					});
 				}
 				
@@ -443,6 +455,7 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
 				unless (Slim::Utils::Prefs::get('composerInArtists')) {
@@ -454,6 +467,7 @@ sub init {
 					'field'  => 'artist',
 					'find'   => $findCriteria,
 					'sortBy' => 'artist',
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -461,11 +475,13 @@ sub init {
 				my $ds = shift;
 				my $terms = shift;
 				my $type = shift || 'contributor';
+				my $idOnly = shift;
 
 				return $ds->find({
 					'field'  => $type,
 					'find'   => { "contributor.namesort" => $terms },
 					'sortBy' => $type,
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -505,11 +521,13 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
+				my $idOnly = shift;
 
 				return $ds->find({
 					'field'  => $level,
 					'find'   => $findCriteria,
 					'sortBy' => $level,
+					'idOnly' => $idOnly,
 				});
 			},
 
@@ -533,6 +551,7 @@ sub init {
 			my $ds = shift;
 			my $level = shift;
 			my $findCriteria = shift;
+			my $idOnly = shift;
 
 			return $ds->find({
 				'field'  => 'album',
@@ -540,6 +559,7 @@ sub init {
 				'sortBy' => 'age',
 				'limit'  => Slim::Utils::Prefs::get('browseagelimit'),
 				'offset' => 0,
+				'idOnly' => $idOnly,
 			});
 		},
 

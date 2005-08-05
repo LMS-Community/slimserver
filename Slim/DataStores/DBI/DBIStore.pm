@@ -15,6 +15,7 @@ use DBI;
 use File::Basename qw(dirname);
 use MP3::Info;
 use Tie::Cache::LRU::Expires;
+use Storable;
 
 use Slim::DataStores::DBI::DataModel;
 
@@ -205,7 +206,7 @@ sub objectForId {
 
 		return Slim::DataStores::DBI::Album->retrieve($id);
 
-	} elsif ($field eq 'contributor') {
+	} elsif ($field eq 'contributor' || $field eq 'artist') {
 
 		return Slim::DataStores::DBI::Contributor->retrieve($id);
 	}
@@ -242,32 +243,7 @@ sub find {
 	#
 	# Can't easily use $limit/offset for the page bars, because they
 	# require knowing the entire result set.
-	my @values = ();
-
-	for my $value (values %{$args->{'find'}}) {
-
-		if (ref $value eq 'ARRAY') {
-
-			push @values, join(':', map { (ref $_ eq 'ARRAY' ? @{$_} : $_) } @{$value});
-
-		} elsif (ref $value eq 'HASH') {
-
-			push @values, join(':', map { $_, (ref $value->{$_} eq 'ARRAY' ? @{$value->{$_}} : $value->{$_}) } keys %$value);
-
-		} else {
-			push @values, $value;
-		}
-	}
-
-	my $findKey = join(':', 
-		$args->{'field'},
-		(keys %{$args->{'find'}}),
-		(join(':', @values)),
-		($args->{'sortBy'} || ''),
-		($args->{'limit'}  || ''),
-		($args->{'offset'} || ''),
-		($args->{'count'}  || ''),
-	);
+	my $findKey = Storable::freeze($args);
 
 	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");
 
@@ -290,7 +266,8 @@ sub find {
 
 	my $items = $lastFind{$findKey};
 
-	if (!$args->{'count'} && defined($items) && ($args->{'field'} eq 'track' || $args->{'field'} eq 'lightweighttrack')) {
+	if (!$args->{'count'} && !$args->{'idOnly'} && defined($items) && 
+		($args->{'field'} eq 'track' || $args->{'field'} eq 'lightweighttrack')) {
 
 		$items = [ grep $self->_includeInTrackCount($_), @$items ];
 
@@ -658,7 +635,7 @@ sub cleanupStaleTrackEntries {
 
 		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
 
-		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds();
+		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
 	}
 
 	# Only cleanup every 20th time through the scheduler.
@@ -667,7 +644,7 @@ sub cleanupStaleTrackEntries {
 
 	# fetch one at a time to keep memory usage in check.
 	my $item  = shift(@{$cleanupIds});
-	my $track = Slim::DataStores::DBI::Track->retrieve($item->[0]) if defined $item;
+	my $track = Slim::DataStores::DBI::Track->retrieve($item) if defined $item;
 
 	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
 
@@ -777,7 +754,7 @@ sub mergeVariousArtistsAlbums {
 
 	# fetch one at a time to keep memory usage in check.
 	my $item = shift(@{$variousAlbumIds});
-	my $obj  = Slim::DataStores::DBI::Album->retrieve($item->[0]) if defined $item;
+	my $obj  = Slim::DataStores::DBI::Album->retrieve($item) if defined $item;
 
 	if (!defined $obj && !defined $item && scalar @{$variousAlbumIds} == 0) {
 

@@ -352,6 +352,7 @@ sub browsedbExitCallback {
 sub browsedbItemName {
 	my $client = shift;
 	my $item = shift;
+	my $index = shift;
 
 	my $hierarchy = $client->param('hierarchy');
 	my $level     = $client->param('level');
@@ -363,6 +364,21 @@ sub browsedbItemName {
 
 	if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $item) {
 		return $client->string($item);
+	}
+
+	# Inflate IDs to objects on the fly.
+	if (!ref($item)) {
+
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+
+		my $items = $client->param('listRef');
+
+		# Pull the nameTransform if needed - for New Music, etc
+		my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
+
+		$item = $items->[$index] = $ds->objectForId($field, $item) || return $item;
+
+		${$client->param('valueRef')} = $item;
 	}
 
 	if ($levels[$level] eq 'track') {
@@ -382,17 +398,8 @@ sub browsedbItemName {
 		
 		if (my $showArtist = Slim::Utils::Prefs::get('showArtist')) {
 			
-			my $artist;
-			my ($track) = $item->tracks;
+			my $artist = $item->contributor;
 			
-			if ($track) {
-				$artist  = $track->artist;
-			} else {
-				msg("Item has no tracks\n");
-				use Data::Dumper;
-				print Dumper($item);
-			}
-
 			if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
 				$name .= ' ' . Slim::Utils::Strings::string('BY') . " $artist";
 			}
@@ -494,14 +501,16 @@ sub setMode {
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
 
 	# Next to the actual query to get the items to display
+	#
+	# Ask for only IDs - so we can inflate on the fly.
 	my $items;
 	if (defined($search)) {
 		my $info = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
 
-		$items = &{$info->{'search'}}($ds, $search, $levels[$level]);
+		$items = &{$info->{'search'}}($ds, $search, $levels[$level], 1);
 	}
 	else {
-		$items = &{$levelInfo->{'find'}}($ds, $levels[$level], $findCriteria);
+		$items = &{$levelInfo->{'find'}}($ds, $levels[$level], $findCriteria, 1);
 	}
 
 	# Next get the first line of the mode
@@ -569,6 +578,7 @@ sub setMode {
 		noWrap => (scalar(@$items) <= 1),
 		callback => \&browsedbExitCallback,
 		externRef => \&browsedbItemName,
+		externRefArgs  => 'CVI',
 		overlayRef => \&browsedbOverlay,
 		onChange => sub {
 			$_[0]->lastID3Selection($selectionKey,$_[1]);

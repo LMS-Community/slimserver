@@ -468,6 +468,7 @@ sub find {
 	my $limit  = $args->{'limit'};
 	my $offset = $args->{'offset'};
 	my $count  = $args->{'count'};
+	my $idOnly = $args->{'idOnly'};
 	my $c;
 
 	# Build up a SQL query
@@ -650,6 +651,11 @@ sub find {
 		$sql =~ s/^SELECT DISTINCT (\w+\.id) AS.*? FROM /SELECT COUNT\(DISTINCT $1\) FROM /;
 	}
 
+	# Raw - we only want the IDs
+	if ($idOnly) {
+		$sql =~ s/^SELECT DISTINCT (\w+\.id) AS.*? FROM /SELECT DISTINCT $1 FROM /;
+	}
+
 	if ($::d_sql) {
 		#Slim::Utils::Misc::bt();
 		Slim::Utils::Misc::msg("Running SQL query: [$sql]\n");
@@ -683,7 +689,7 @@ sub find {
 	}
 
 	# Always remember to finish() the statement handle, otherwise DBI will complain.
-	if ($c = $fieldHasClass{$field}) {
+	if (!$idOnly && ($c = $fieldHasClass{$field})) {
 
 		my $objects = [ $c->sth_to_objects($sth) ];
 
@@ -692,6 +698,7 @@ sub find {
 		return $objects;
 	}
 
+	# Handle idOnly requests and any table that doesn't have a matching class.
 	my $ref = $sth->fetchall_arrayref();
 
 	my $objects = [ grep((defined($_) && $_ ne ''), (map $_->[0], @$ref)) ];
@@ -796,7 +803,7 @@ sub removeStaleDBEntries {
 
 	# fetch one at a time to keep memory usage in check.
 	my $item = shift(@{$cleanupIds});
-	my $obj  = $class->retrieve($item->[0]) if defined $item;
+	my $obj  = $class->retrieve($item) if defined $item;
 
 	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
 
@@ -828,7 +835,8 @@ sub retrieveAllOnlyIds {
 	my $ids = $sth->fetchall();
 	   $sth->finish();
 
-	return $ids;
+	# Turn this into a nicer array.
+	return [ map { $_->[0] } @{$ids} ];
 }
 
 # overload update() to maintain $dirtyCount

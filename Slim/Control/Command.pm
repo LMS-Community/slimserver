@@ -393,7 +393,9 @@ sub execute {
 		my $results = $ds->find({
 			'field'  => $label,
 			'find'   => $find,
-			'sortBy' => $label
+			'sortBy' => $label,
+			'limit'  => $p2,
+			'offset' => $p1,
 		});
 
 		my $count   = scalar @$results;
@@ -438,7 +440,7 @@ sub execute {
 		if (defined $params{'playlist_id'}){
 			$find->{'playlist'} = $params{'playlist_id'};
 		}
- 		
+
  		$sort = $params{'sort'} if defined($params{'sort'});
  		$tags = $params{'tags'} if defined($params{'tags'});
  		
@@ -454,6 +456,8 @@ sub execute {
 			'field'  => $label,
 			'find'   => $find,
 			'sortBy' => $sort,
+			'limit'  => $p2,
+			'offset' => $p1,
 		});
 		
 		my $count   = scalar @$results;
