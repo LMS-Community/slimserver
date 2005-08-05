@@ -93,8 +93,11 @@ our %functions = (
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 		}
 		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SELECT_PLAYLIST')) {
+
+			# Make a copy of the playlists, to make sure they
+			# aren't removed by the LRU cache. This may fix bug: 1853
 			my %params = (
-				'listRef' => Slim::Music::Info::playlists()
+				'listRef' => [ @{Slim::Music::Info::playlists()} ]
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'
