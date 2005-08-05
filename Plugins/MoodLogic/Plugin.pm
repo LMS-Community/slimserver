@@ -496,7 +496,7 @@ sub exportFunction {
 	$auto->Close if $isauto;
 	$conn->Close;
 
-	$::d_moodlogic && msg("MoodLogic: finished export (".$isScanning - 1." records)\n");
+	$::d_moodlogic && msgf("MoodLogic: finished export (%d records)\n", $isScanning - 1);
 	
 	doneScanning();
 
