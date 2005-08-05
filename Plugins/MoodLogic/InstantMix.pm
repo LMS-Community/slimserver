@@ -112,7 +112,7 @@ sub setMode {
 sub lines {
 	my $client = shift;
 
-	my $line1 = $client->string('INSTANT_MIX');
+	my $line1 = $client->string('MOODLOGIC_INSTANT_MIX');
 	
 	$line1 .= sprintf(" (%d ".$client->string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
 

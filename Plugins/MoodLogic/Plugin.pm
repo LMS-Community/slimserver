@@ -337,7 +337,7 @@ sub exportFunction {
 			$genre_hash{$genre_id} = [$genre_name, $genre_mixable];
 		}
 		$isScanning = 1;
-		$::d_moodlogic && msg("MoodLogic: Begin song scan\n");
+		$::d_moodlogic && msg("MoodLogic: Begin song scan for ".$browser->FLT_Song_Count()." tracks. \n");
 		
 		return 1;
 	}
@@ -391,7 +391,7 @@ sub exportFunction {
 			}
 		}
 
-		$::d_moodlogic && msg("MoodLogic: Creating entry for: $url\n");
+		$::d_moodlogic && msg("MoodLogic: Creating entry for track $isScanning: $url\n");
 
 		# that's all for the track
 		my $track = $ds->updateOrCreate({
@@ -404,7 +404,7 @@ sub exportFunction {
 
 			$::d_moodlogic && Slim::Utils::Misc::msg("MoodLogic: Couldn't create track for: $url\n");
 
-			return 0;
+			return 1;
 		};
 
 		# Now add to the contributors and genres
@@ -495,10 +495,10 @@ sub exportFunction {
 	$playlist->Close;
 	$auto->Close if $isauto;
 	$conn->Close;
+
+	$::d_moodlogic && msg("MoodLogic: finished export (".$isScanning - 1." records)\n");
 	
 	doneScanning();
-
-	$::d_moodlogic && msg("MoodLogic: finished export ($isScanning records)\n");
 
 	return 0;
 }
@@ -843,6 +843,7 @@ sub instant_mix {
 
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $track = $ds->objectForId('track',$song);
 
 	#$params->{'pwd_list'} = Slim::Web::Pages::generate_pwd_list($genre, $artist, $album, $player);
 
@@ -851,14 +852,12 @@ sub instant_mix {
 	}
 
 	if (defined $song && $song ne "") {
-		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $song);
+		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $track);
 	} elsif (defined $mood && $mood ne "") {
 		$params->{'src_mix'} = $mood;
 	}
 
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/instant_mix_pwdlist.html", $params)};
-
-	my $track = $ds->objectForUrl($song);
 
 	if (defined $song && $song ne "") {
 
