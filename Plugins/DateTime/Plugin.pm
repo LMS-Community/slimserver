@@ -222,6 +222,7 @@ sub screensaverDateTimelines {
 			'center1' => Slim::Utils::Misc::longDateF(),
 			'center2' => Slim::Utils::Misc::timeF(),
 			'overlay1' => $alarmOn ? $client->symbols(Slim::Display::Display::symbol('bell')) : undef,
+			'displayoverlays' => 1,
 		};
 	} else {
 		my $fonts = $client->fonts();

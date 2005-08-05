@@ -785,32 +785,19 @@ my $kernL = qr/(?:$toplinechar|$rightvbar|$Ztop|_|$Zbottom|$doublelinechar)$/o;
 my $kernR = qr/^(?:$toplinechar|$leftvbar|$Zbottom|_|$backslash|$slash)/o;
 
 #
-# double the height and width of line 2 of the display
+# double the height and width of a string to display in doubled mode
 #
 sub doubleSize {
 	my $client = shift;
-	my $lines = shift;
-	my ($newline1, $newline2) = ("", "");
-	my $line1;
-	my $line2;
-	
-	$line1 = $lines->{line1};
-	$line2 = $lines->{line2};
-	
-	if ((!defined($line2) || $line2 eq "") && defined($line1)) { $line2 = $line1; };
+	my $undoubled = shift;
 
-	my $center2 = $lines->{center2};
-	
-	if (defined($center2) && $center2 ne '') {
-		$line2 = $center2;
-	}
-	return ('','') if (!defined($line2) || $line2 eq '');
+	my ($newline1, $newline2) = ("", "");
+	my $line2 = $undoubled;
 	
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
 	
-	$::d_ui && msg("undoubled line1: $line1\n");
-	$::d_ui && msg("undoubled line2: $line2\n");
+	$::d_ui && msg("doubling: $line2\n");
 
 	$line2 =~ tr/\x{00E6}\x{00F8}\x{00F0}/\x{00C6}\x{00D8}\x{00D0}/;
 	$line2 =~ tr/\x{00C5}\x{00E5}/AA/;
@@ -852,19 +839,14 @@ sub doubleSize {
 		$lastchar = $char;
 	}
 	
-	if ($center2) {
-		my $len = Slim::Display::Display::lineLength($newline1);
-		if ($len < 39) {
-			$newline1 = ' ' x ((40 - $len)/2) . $newline1;
-			$newline2 = ' ' x ((40 - $len)/2) . $newline2;
-		}
-	}
-	
-	$newline1 = $newline1 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
-	$newline2 = $newline2 . (' ' x (40 - Slim::Display::Display::lineLength($newline1)));
-
 	return ($newline1, $newline2);
-
 }
 
 1;
+
+__END__
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:

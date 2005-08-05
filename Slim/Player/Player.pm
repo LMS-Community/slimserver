@@ -187,9 +187,8 @@ sub render {
 	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
 
 	my $parts;
-	my $line1double;
-	my $line2double;
-	
+	my $double;
+
 	if ((ref($lines) eq 'HASH')) {
 		$parts = $lines;
 	} else {
@@ -207,29 +206,17 @@ sub render {
 		$cache->{restartticker} = 1;
 	}
 
-	my $double = ($client->linesPerScreen() == 1) ? 1 : 0;
+	if (defined($parts->{double})) {
+		$double = $parts->{double};
+	} else {
+		$double = ($client->linesPerScreen() == 1) ? 1 : 0;
+	}
 	if ($double != $cache->{double}) {
 		$cache->{double} = $double;
 		$cache->{changed} = 1;
 		$cache->{restartticker} = 1;
 	}
 
-	if ($double && !defined($parts->{double})) {
-		if (!$parts->{line2} || $parts->{line2} eq '') {
-			if ($scroll != 2) {
-				# normal mode - double line1
-				$parts->{line2} = $parts->{line1};
-				($line1double, $line2double) = Slim::Hardware::VFD::doubleSize($client,$parts);
-			} else {
-				# ticker mode - don't double line1
-				$line1double = '';
-				$line2double = '';
-			}
-		} else {
-			($line1double, $line2double) = Slim::Hardware::VFD::doubleSize($client,$parts);
-		}
-	}
-	
 	if ($cache->{changed}) {
 		# force full rerender
 		$cache->{scrolling} = 0;
@@ -252,6 +239,12 @@ sub render {
    		$cache->{center2} = undef;
 		$cache->{centre2text} = undef;
 		$cache->{ticker} = 0;
+	}
+
+	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
+	# copy the first to the second.  Don't do for ticker mode.
+	if ($double && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
+		$parts->{line2} = $parts->{line1};
 	}
 
 	# line 1 - render if changed
@@ -287,8 +280,7 @@ sub render {
 			}
 			$cache->{line2finish} = Slim::Display::Display::lineLength($cache->{line2text});
 		} else {
-			$cache->{line1text} = $line1double;
-			$cache->{line2text} = $line2double;
+			($cache->{line1text}, $cache->{line2text}) = Slim::Hardware::VFD::doubleSize($client,$parts->{line2});
 			$cache->{line1finish} = Slim::Display::Display::lineLength($cache->{line1text});
 			$cache->{line2finish} = Slim::Display::Display::lineLength($cache->{line2text});
 		}
@@ -299,7 +291,10 @@ sub render {
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{line2}) && (defined($cache->{line2})) || $cache->{restartticker}) {
 		$cache->{line2} = undef;
-		$cache->{line1text} = '' if $double;
+		if ($double) {
+			$cache->{line1text} = '';
+			$cache->{line1finish} = 0;
+		}
 		$cache->{line2text} = '';
 		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
@@ -312,7 +307,7 @@ sub render {
 	# overlay 1 - render if changed
 	if (defined($parts->{overlay1}) && (!defined($cache->{overlay1}) || ($parts->{overlay1} ne $cache->{overlay1}))) {
 		$cache->{overlay1} = $parts->{overlay1};
-		if (!$double) {
+		if (!$double || defined($parts->{displayoverlays})) {
 			$cache->{overlay1text} = $parts->{overlay1};
 		} else {
 			$cache->{overlay1text} = '';
@@ -332,7 +327,7 @@ sub render {
 	# overlay 2 - render if changed
 	if (defined($parts->{overlay2}) && (!defined($cache->{overlay2}) || ($parts->{overlay2} ne $cache->{overlay2}))) {
 		$cache->{overlay2} = $parts->{overlay2};
-		if (!$double) {
+		if (!$double || defined($parts->{displayoverlays})) {
 			$cache->{overlay2text} = $parts->{overlay2};
 		} else {
 			$cache->{overlay2text} = '';
@@ -359,16 +354,14 @@ sub render {
 			} else {
 				$cache->{center1text} = Slim::Display::Display::subString($cache->{center1} . ' ', 0 ,40);
 			}
-		} else {
-			$cache->{center1text} = undef;
-			$cache->{line1text} = $line1double;
-			$cache->{line2text} = $line2double;
 		}
 		$cache->{changed} = 1;		
 	} elsif (!defined($parts->{center1}) && defined($cache->{center1})) {
-		$cache->{center1} = undef;
-		$cache->{center1text} = undef;
-		$cache->{changed} = 1;
+		if (!$double) {
+			$cache->{center1} = undef;
+			$cache->{center1text} = undef;
+			$cache->{changed} = 1;
+		}
 	}
 
 	# center 2 - render if changed
@@ -382,13 +375,20 @@ sub render {
 				$cache->{center2text} = Slim::Display::Display::subString($cache->{center2} . ' ', 0 ,40);
 			}
 		} else {
-			$cache->{center2text} = undef;
-			$cache->{line1text} = $line1double;
-			$cache->{line2text} = $line2double;
+			my ($center1, $center2) = Slim::Hardware::VFD::doubleSize($client,$parts->{center2});
+			my $len = Slim::Display::Display::lineLength($center1);
+			if ($len < 39) {
+				$cache->{center1text} = ' ' x ((40 - $len)/2) . $center1 . ' ' x (40 - $len - int((40 - $len)/2));
+				$cache->{center2text} = ' ' x ((40 - $len)/2) . $center2 . ' ' x (40 - $len - int((40 - $len)/2));
+			} else {
+				$cache->{center1text} = Slim::Display::Display::subString($center1 . ' ', 0 ,40);
+				$cache->{center2text} = Slim::Display::Display::subString($center2 . ' ', 0 ,40);
+			}
 		}
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{center2}) && defined($cache->{center2})) {
 		$cache->{center2} = undef;
+		$cache->{center1text} = undef if $double;
 		$cache->{center2text} = undef;
 		$cache->{changed} = 1;
 	}
@@ -399,7 +399,8 @@ sub render {
 
 	# 1st line
 	if (defined($cache->{center1text})) { 
-		$line1 = $cache->{center1text};
+		$line1 = Slim::Display::Display::subString($cache->{center1text}, 0, $cache->{overlay1start}). 
+				$cache->{overlay1text};
 
 	} else {
 
@@ -414,7 +415,8 @@ sub render {
 
 	# Add 2nd line
 	if (defined($cache->{center2text})) { 
-		$line2 = $cache->{center2text};
+		$line2 = Slim::Display::Display::subString($cache->{center2text}, 0, $cache->{overlay2start}). 
+				$cache->{overlay2text};
 
 	} else {
 
@@ -999,15 +1001,7 @@ sub parseLines {
 	my $client = shift;
 	my $lines = shift;
 	my %parts;
-	my $line1 = '';
-	my $line2 = '';
-	my $line3;
-	my $line4;
-	my $overlay1 = '';
-	my $overlay2 = '';
-	my $center1 = '';
-	my $center2 = '';
-	my $bits = '';
+	my ($line1, $line2, $line3, $line4, $overlay1, $overlay2, $center1, $center2, $bits);
 	
 	if (ref($lines) eq 'HASH') { 
 		return $lines;
