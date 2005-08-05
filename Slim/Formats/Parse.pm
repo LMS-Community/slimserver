@@ -107,33 +107,26 @@ sub readM3U {
 	my $url    = shift;
 
 	my @items  = ();
-	my $enc    = Slim::Utils::Misc::encodingFromFile($m3u);
 	my $title;
 
-	if ($] > 5.007 && $enc =~ /utf-?8/i) {
-		binmode($m3u, ":encoding($enc)");
-	}
-
-	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $url encoding: $enc\n");
+	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $url\n");
 
 	while (my $entry = <$m3u>) {
 
-		# Turn the UTF-8 back into a sequences of octets -
-		# fileURLFromPath will turn it back into UTF-8
-		if ($] > 5.007 && $enc =~ /utf-?8/i) {
-
-			if (Encode::is_utf8($entry, 1)) {
-				$entry = Encode::encode_utf8($entry);
-			}
-		}
-
 		chomp($entry);
+
 		# strip carriage return from dos playlists
 		$entry =~ s/\cM//g;  
 
 		# strip whitespace from beginning and end
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
+
+		# Guess the encoding of each line in the file. Bug 1876
+		# includes a playlist that has latin1 titles, and utf8 paths.
+		my $enc = Slim::Utils::Misc::encodingFromString($entry);
+
+		$entry = Slim::Utils::Misc::utf8decode_guess($entry, $enc);
 
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
@@ -158,7 +151,7 @@ sub readM3U {
 
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-		push @items, _updateMetaData($entry, $title);
+		#push @items, _updateMetaData($entry, $title);
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
@@ -176,30 +169,30 @@ sub readPLS {
 	my @urls   = ();
 	my @titles = ();
 	my @items  = ();
-	my $enc    = Slim::Utils::Misc::encodingFromFile($pls);
 	
-	# parse the PLS file format
-	if ($] > 5.007 && $enc =~ /utf-?8/i) {
-		binmode($pls, ":encoding($enc)");
-	}
-
 	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $url \n");
 	
-	while (<$pls>) {
-		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $_");
+	while (my $line = <$pls>) {
+		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $line");
 
 		# strip carriage return from dos playlists
-		s/\cM//g;  
+		$line =~ s/\cM//g;
 
 		# strip whitespace from end
-		s/\s*$//; 
+		$line =~ s/\s*$//;
+
+		# Guess the encoding of each line in the file. Bug 1876
+		# includes a playlist that has latin1 titles, and utf8 paths.
+		my $enc = Slim::Utils::Misc::encodingFromString($line);
+
+		$line = Slim::Utils::Misc::utf8decode_guess($line, $enc);
 		
-		if (m|File(\d+)=(.*)|i) {
+		if ($line =~ m|File(\d+)=(.*)|i) {
 			$urls[$1] = $2;
 			next;
 		}
 		
-		if (m|Title(\d+)=(.*)|i) {
+		if ($line =~ m|Title(\d+)=(.*)|i) {
 			$titles[$1] = $2;
 			next;
 		}	
@@ -419,19 +412,15 @@ sub readCUE {
 	my @lines = ();
 	my @items = ();
 
-	# The cuesheet will/may be encoded.
-	if ($] > 5.007) {
-
-		my $enc = Slim::Utils::Misc::encodingFromFile($cuefile);
-
-		binmode($cuefile, ":encoding($enc)");
-	}
-
 	while (my $line = <$cuefile>) {
+
 		chomp($line);
 		$line =~ s/\cM//g;  
 		next if ($line =~ /^\s*$/);
-		push @lines, $line;
+
+		my $enc = Slim::Utils::Misc::encodingFromString($line);
+
+		push @lines, Slim::Utils::Misc::utf8decode_guess($line, $enc);
 	}
 
 	close $cuefile;
