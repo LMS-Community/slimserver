@@ -106,7 +106,11 @@ sub init {
 					}
 				}
 
-				return $ds->find('track', $findCriteria, exists $findCriteria->{'album'} ? 'tracknum' : 'title');
+				return $ds->find({
+					'field'  => 'track',
+					'find'   => $findCriteria,
+					'sortBy' => exists $findCriteria->{'album'} ? 'tracknum' : 'title',
+				});
 			},
 
 			'search' => sub {
@@ -114,7 +118,11 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'track';
 
-				return $ds->find($type, { "track.titlesort" => $terms }, 'title');
+				return $ds->find({
+					'field'  => $type,
+					'find'   => { "track.titlesort" => $terms },
+					'sortBy' => 'title'
+				});
 			},
 
 			'listItem' => sub {
@@ -195,7 +203,11 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 
-				return $ds->find('genre', $findCriteria, 'genre');
+				return $ds->find({
+					'field'  => 'genre',
+					'find'   => $findCriteria,
+					'sortBy' => 'genre'
+				});
 			},
 
 			'listItem' => sub {
@@ -261,7 +273,11 @@ sub init {
 					delete $findCriteria->{'genre'};
 				}
 
-				return $ds->find('album', $findCriteria, 'album');
+				return $ds->find({
+					'field'  => 'album',
+					'find'   => $findCriteria,
+					'sortBy' => 'album'
+				});
 			},
 
 			'search' => sub {
@@ -269,7 +285,11 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'album';
 
-				return $ds->find($type, { "album.titlesort" => $terms }, $type);
+				return $ds->find({
+					'field'  => $type,
+					'find'   => { "album.titlesort" => $terms },
+					'sortBy' => $type,
+				});
 			},
 
 			'listItem' => sub {
@@ -349,7 +369,12 @@ sub init {
 				my $findCriteria = shift;
 
 				if (Slim::Utils::Prefs::get('includeNoArt')) {
-					return $ds->find('album', $findCriteria, 'album');
+
+					return $ds->find({
+						'field'  => 'album',
+						'find'   => $findCriteria,
+						'sortBy' => 'album',
+					});
 				}
 				
 				return $ds->albumsWithArtwork
@@ -425,7 +450,11 @@ sub init {
 					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
 				}
 
-				return $ds->find('artist', $findCriteria, 'artist');
+				return $ds->find({
+					'field'  => 'artist',
+					'find'   => $findCriteria,
+					'sortBy' => 'artist',
+				});
 			},
 
 			'search' => sub {
@@ -433,7 +462,11 @@ sub init {
 				my $terms = shift;
 				my $type = shift || 'contributor';
 
-				return $ds->find($type, { "contributor.namesort" => $terms }, $type);
+				return $ds->find({
+					'field'  => $type,
+					'find'   => { "contributor.namesort" => $terms },
+					'sortBy' => $type,
+				});
 			},
 
 			'listItem' => sub {
@@ -472,7 +505,12 @@ sub init {
 				my $ds = shift;
 				my $level = shift;
 				my $findCriteria = shift;
-				return $ds->find($level, $findCriteria, $level);
+
+				return $ds->find({
+					'field'  => $level,
+					'find'   => $findCriteria,
+					'sortBy' => $level,
+				});
 			},
 
 			'listItem' => sub { },
@@ -496,7 +534,13 @@ sub init {
 			my $level = shift;
 			my $findCriteria = shift;
 
-			return $ds->find('album', $findCriteria, 'age', Slim::Utils::Prefs::get('browseagelimit'), 0);
+			return $ds->find({
+				'field'  => 'album',
+				'find'   => $findCriteria,
+				'sortBy' => 'age',
+				'limit'  => Slim::Utils::Prefs::get('browseagelimit'),
+				'offset' => 0,
+			});
 		},
 
 		'nameTransform' => 'album',

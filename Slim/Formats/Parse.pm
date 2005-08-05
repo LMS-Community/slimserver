@@ -464,7 +464,11 @@ sub readCUE {
 	# Remove entries from other sources. This cuesheet takes precedence.
 	my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
 
-	my @oldtracks = $ds->find('url', $find);
+	my @oldtracks = $ds->find({
+		'field' => 'url',
+		'find'  => $find,
+	});
+
 	for my $oldtrack (@oldtracks) {
 		$::d_parse && Slim::Utils::Misc::msg("Deleting previous entry for $oldtrack\n");
 		$ds->delete($oldtrack);

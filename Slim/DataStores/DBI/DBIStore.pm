@@ -212,13 +212,30 @@ sub objectForId {
 }
 
 sub find {
-	my $self   = shift;
-	my $field  = shift;
-	my $findCriteria = shift;
-	my $sortBy = shift;
-	my $limit  = shift;
-	my $offset = shift;
-	my $count  = shift;
+	my $self = shift;
+
+	my $args = {};
+
+	# Backwards compatibility with the previous calling method.
+	if (scalar @_ > 1) {
+
+		for my $key (qw(field find sortBy limit offset count)) {
+
+			my $value = shift @_;
+
+			$args->{$key} = $value if defined $value;
+		}
+
+	} else {
+
+		$args = shift;
+	}
+
+	# If we're undefined for some reason - ie: We want all the results,
+	# make sure that the ref type is correct.
+	if (!defined $args->{'find'}) {
+		$args->{'find'} = {};
+	}
 
 	# Try and keep the last result set in memory - so if the user is
 	# paging through, we don't keep hitting the database.
@@ -227,7 +244,7 @@ sub find {
 	# require knowing the entire result set.
 	my @values = ();
 
-	for my $value (values %$findCriteria) {
+	for my $value (values %{$args->{'find'}}) {
 
 		if (ref $value eq 'ARRAY') {
 
@@ -243,13 +260,13 @@ sub find {
 	}
 
 	my $findKey = join(':', 
-		$field,
-		(keys %$findCriteria),
+		$args->{'field'},
+		(keys %{$args->{'find'}}),
 		(join(':', @values)),
-		($sortBy || ''),
-		($limit  || ''),
-		($offset || ''),
-		($count  || ''),
+		($args->{'sortBy'} || ''),
+		($args->{'limit'}  || ''),
+		($args->{'offset'} || ''),
+		($args->{'count'}  || ''),
 	);
 
 	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");
@@ -257,15 +274,13 @@ sub find {
 	if (!defined $lastFind{$findKey}) {
 
 		# refcnt-- if we can, to prevent leaks.
-		if ($Class::DBI::Weaken_Is_Available && !$count) {
+		if ($Class::DBI::Weaken_Is_Available && !$args->{'count'}) {
 
-			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find(
-				$field, $findCriteria, $sortBy, $limit, $offset, $count
-			));
+			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($args));
 
 		} else {
 
-			$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($field, $findCriteria, $sortBy, $limit, $offset, $count);
+			$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($args);
 		}
 
 	} else {
@@ -275,18 +290,17 @@ sub find {
 
 	my $items = $lastFind{$findKey};
 
-	if (!$count && defined($items) && 
-		($field eq 'track' || $field eq 'lightweighttrack')) {
+	if (!$args->{'count'} && defined($items) && ($args->{'field'} eq 'track' || $args->{'field'} eq 'lightweighttrack')) {
 
 		$items = [ grep $self->_includeInTrackCount($_), @$items ];
 
 		# Does the track still exist?
-		if ($field ne 'lightweighttrack') {
+		if ($args->{'field'} ne 'lightweighttrack') {
 			$items = [ grep $self->_checkValidity($_), @$items ];
 		}
 	}
 
-	return $items if $count;
+	return $items if $args->{'count'};
 	return wantarray() ? @$items : $items;
 }
 
@@ -328,8 +342,11 @@ sub count {
 		}
 	}
 
-	# Last option to find() is $count
-	return $self->find($field, \%findCriteria, undef, undef, undef, 1);
+	return $self->find({
+		'field' => $field,
+		'find'  => \%findCriteria,
+		'count' => 1,
+	});
 }
 
 sub albumsWithArtwork {
@@ -926,7 +943,11 @@ sub getExternalPlaylists {
 	if (scalar @playlists) {
 
 		# Use find()'s caching mechanism.
-		return $self->find('playlist', { 'ct' => \@playlists }, 'title');
+		return $self->find({
+			'field'  => 'playlist',
+			'find'   => { 'ct' => \@playlists },
+			'sortBy' => 'title',
+		});
 	}
 
 	return ();
@@ -936,7 +957,11 @@ sub getInternalPlaylists {
 	my $self = shift;
 
 	# Use find()'s caching mechanism.
-	return $self->find('playlist', { 'ct' => $Slim::Music::Info::suffixes{'playlist:'} }, 'title');
+	return $self->find({
+		'field'  => 'playlist',
+		'find'   => { 'ct' => $Slim::Music::Info::suffixes{'playlist:'} },
+		'sortBy' => 'title',
+	});
 }
 
 # Get all the playlists in one shot with optional name search parameter.
@@ -964,7 +989,11 @@ sub getPlaylists {
 	# Add title search if any
 	$find->{'track.titlesort'} = $search if (defined $search && $search ne '*');
 	
-	return $self->find('playlist', $find, 'title');
+	return $self->find({
+		'field'  => 'playlist',
+		'find'   => $find,
+		'sortBy' => 'title',
+	});
 }
 
 sub getPlaylistForClient {

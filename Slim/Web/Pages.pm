@@ -793,7 +793,10 @@ sub advancedSearch {
 	$params->{'fileTypes'} = \%types;
 
 	# load up the genres we know about.
-	$params->{'genres'}    = $ds->find('genre', {}, 'genre');
+	$params->{'genres'}    = $ds->find({
+		'field'  => 'genre',
+		'sortBy' => 'genre',
+	});
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -802,7 +805,11 @@ sub advancedSearch {
 	}
 
 	# Do the actual search
-	my $results = $ds->find('track', \%query, 'title');
+	my $results = $ds->find({
+		'field'  => 'track',
+		'find'   =>  \%query,
+		'sortBy' => 'title',
+	});
 
 	$client->param('searchResults', $results) if defined $client;
 
@@ -1455,10 +1462,12 @@ sub browseid3 {
 
 			# Search for each real name - normalize the query,
 			# then turn it into the ID suitable for browsedb()
-			my $cat = $params->{$category} = (@{$ds->find(
-				$category,
-				{ $queryMap{$category} => $params->{$category} }
-			)})[0];
+			my $cat = $params->{$category} = (@{$ds->find({
+
+				'field' => $category,
+				'find'  => { $queryMap{$category} => $params->{$category} },
+
+			})})[0];
 
 			return browsedb($client, $params) unless $cat;
 

@@ -198,9 +198,10 @@ sub setPodcasts {
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	my $podcast = $ds->find('playlist', {
-		'url' => [ qw(itunesplaylist:podcasts*) ],
-	},);
+	my $podcast = $ds->find({
+		'field' => 'playlist',
+		'find'  => { 'url' => [ qw(itunesplaylist:podcasts*) ] },
+	});
 
 	if (@$podcast[0]) {
 

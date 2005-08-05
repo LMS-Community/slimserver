@@ -55,7 +55,13 @@ sub query {
 		my $results = [];
 
 		if ($count) {
-			$results = [ $ds->find($queries{$type}->[0], $find, undef, $limit, $offset) ];
+
+			$results = $ds->find({
+				'field'  => $queries{$type}->[0],
+				'find'   => $find,
+				'limit'  => $limit,
+				'offset' => $offset,
+			});
 		}
 
 		push @data, [ $type, $count, $results ];

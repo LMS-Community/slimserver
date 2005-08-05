@@ -598,7 +598,10 @@ sub exportFunction {
 	
 		for (my $i = 0; $i < $count; $i++) {
 
-			my ($obj) = $ds->find('genre', { 'genre.name' => $lines[$i] });
+			my ($obj) = $ds->find({
+				'field' => 'genre',
+				'find'  => { 'genre.name' => $lines[$i] },
+			});
 
 			if ($obj) {
 				$obj->musicmagic_mixable(1);
@@ -626,7 +629,10 @@ sub exportFunction {
 
 		for (my $i = 0; $i < $count; $i++) {
 
-			my ($obj) = $ds->find('contributor', { 'contributor.name' => $lines[$i] });
+			my ($obj) = $ds->find({
+				'field' => 'contributor',
+				'find'  => { 'contributor.name' => $lines[$i] },
+			});
 
 			if ($obj) {
 				$obj->musicmagic_mixable(1);

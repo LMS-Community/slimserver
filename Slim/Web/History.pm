@@ -24,7 +24,13 @@ sub hitlist {
 	# Limit is hardcoded for now.. This should make use of
 	# Class::DBI::Pager or similar. Requires reworking of template
 	# generation.
-	my $tracks = $ds->find('track', { 'playCount' => { '>' => 0 } }, 'playCount', 50, 0);
+	my $tracks = $ds->find({
+		'field'  => 'track',
+		'find'   => { 'playCount' => { '>' => 0 } },
+		'sortBy' => 'playCount',
+		'limit'  => 50,
+		'offset' => 0,
+	});
 
 	for my $track (reverse @$tracks) {
 

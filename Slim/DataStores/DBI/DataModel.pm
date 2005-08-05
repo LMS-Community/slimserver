@@ -460,13 +460,14 @@ our %fieldToNodeMap = (
 );
 
 sub find {
-	my $class = shift;
-	my $field = shift;
-	my $findCriteria = shift;
-	my $sortby = shift;
-	my $limit = shift;
-	my $offset = shift;
-	my $count = shift;
+	my ($class, $args) = @_;
+	
+	my $field  = $args->{'field'};
+	my $find   = $args->{'find'};
+	my $sortby = $args->{'sortBy'};
+	my $limit  = $args->{'limit'};
+	my $offset = $args->{'offset'};
+	my $count  = $args->{'count'};
 	my $c;
 
 	# Build up a SQL query
@@ -506,7 +507,7 @@ sub find {
 
 	my $endNode = $fieldToNodeMap{$field} || 'default';
 
-	while (my ($key, $val) = each %$findCriteria) {
+	while (my ($key, $val) = each %$find) {
 
 		if (defined($searchFieldMap{$key})) {
 
@@ -650,7 +651,7 @@ sub find {
 	}
 
 	if ($::d_sql) {
-		Slim::Utils::Misc::bt();
+		#Slim::Utils::Misc::bt();
 		Slim::Utils::Misc::msg("Running SQL query: [$sql]\n");
 		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
 	}

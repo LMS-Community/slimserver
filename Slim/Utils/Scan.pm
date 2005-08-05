@@ -602,7 +602,10 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# first, let's see if we can grab this from the existing cache
 			my $find = {'url', $playlistpath . "#*" };
 
-			my @cachedtracks = $ds->find('url', $find);
+			my @cachedtracks = $ds->find({
+				'field' => 'url',
+				'find'  => $find,
+			});
 
 			$::d_scan && msg("*** found " . @cachedtracks . " cached entries for $playlisturl ***\n");
 

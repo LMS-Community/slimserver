@@ -390,7 +390,12 @@ sub execute {
  			push @returnArray, "rescan:1";
  		}
 
-		my $results = $ds->find($label, $find, $label);
+		my $results = $ds->find({
+			'field'  => $label,
+			'find'   => $find,
+			'sortBy' => $label
+		});
+
 		my $count   = scalar @$results;
 
  		push @returnArray, "count:$count";
@@ -445,7 +450,11 @@ sub execute {
  			push @returnArray, "rescan:1";
  		}
 
-		my $results = $ds->find($label, $find, $sort);
+		my $results = $ds->find({
+			'field'  => $label,
+			'find'   => $find,
+			'sortBy' => $sort,
+		});
 		
 		my $count   = scalar @$results;
 
@@ -874,8 +883,14 @@ sub execute {
 					}
 						
 					my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+
 					if ($load || $add || $insert || $delete){
-						@songs = @{ $ds->find('lightweighttrack', $find, $sort) } ;
+
+						@songs = @{ $ds->find({
+							'field'   => 'lightweighttrack',
+							'find'    => $find,
+							'sortyBy' => $sort,
+						}) };
 					}
 				}
 				
@@ -926,7 +941,11 @@ sub execute {
 					$find->{'track.title'} = singletonRef($p5);
 				}
 
-				$results = $ds->find('lightweighttrack', $find, $sort);
+				$results = $ds->find({
+					'field'  => 'lightweighttrack',
+					'find'   => $find,
+					'sortBy' => $sort,
+				});
 			}
 
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
@@ -1905,7 +1924,13 @@ sub parseSearchTerms {
 
 	} else {
 
-		return @{ $ds->find('lightweighttrack', \%find, $sort, $limit, $offset) };
+		return @{ $ds->find({
+			'field'  => 'lightweighttrack',
+			'find'   => \%find,
+			'sortBy' => $sort,
+			'limit'  => $limit,
+			'offset' => $offset,
+		}) };
 	}
 }
 
