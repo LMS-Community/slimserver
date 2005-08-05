@@ -892,7 +892,7 @@ sub instant_mix {
 		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
 
 		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
-
+		$list_form{'attributes'} = '&track=' . Slim::Web::HTTP::escape($trackObj->id());
 		$itemnumber++;
 
 		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
