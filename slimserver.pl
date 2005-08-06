@@ -743,6 +743,7 @@ to the console via stderr:
     --d_http_async   => AsyncHTTP activity
     --d_http_verbose => Even more HTTP activity 
     --d_info         => MP3/ID3 track information
+    --d_import       => Information on external data import
     --d_ir           => Infrared activity
     --d_irtm         => Infrared activity diagnostics
     --d_itunes       => iTunes synchronization information
@@ -827,6 +828,7 @@ sub initOptions {
 		'd_http_verbose'	=> \$d_http_verbose,
 		'd_import=s'		=> \$d_import,
 		'd_info'			=> \$d_info,
+		'd_import'			=> \$d_import,
 		'd_ir'				=> \$d_ir,
 		'd_irtm'			=> \$d_irtm,
 		'd_itunes'			=> \$d_itunes,

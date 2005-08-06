@@ -44,7 +44,7 @@ sub startScan {
 				$importsRunning{$importer} = Time::HiRes::time();
 
 				# rescan each enabled Import, or scan the newly enabled Import
-				$::d_info && msgf("Starting %s scan\n", string($importer));
+				$::d_import && msgf("Import: Starting %s scan\n", string($importer));
 
 				&{$Importers{$importer}->{'scan'}};
 			}
@@ -85,7 +85,7 @@ sub addImporter {
 
 	$Importers{$import} = $params;
 
-	$::d_info && msgf("Adding %s Scan\n", string($import));
+	$::d_import && msgf("Import: Adding %s Scan\n", string($import));
 }
 
 sub countImporters {
@@ -142,7 +142,7 @@ sub endImporter {
 	my $import = shift;
 
 	if (exists $importsRunning{$import}) { 
-		$::d_info && msgf("Completing %s Scan in %s seconds.\n", string($import), (Time::HiRes::time() - $importsRunning{$import}));
+		$::d_import && msgf("Import: Completing %s Scan in %s seconds.\n", string($import), (Time::HiRes::time() - $importsRunning{$import}));
 		delete $importsRunning{$import};
 	}
 
@@ -164,7 +164,7 @@ sub endImporter {
 			Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
 		}
 
-		$::d_info && msg("Finished background scanning.\n");
+		$::d_import && msg("Import: Finished background scanning.\n");
 		Slim::Music::Info::saveDBCache();
 
 		# Only do this on rescan.
@@ -181,7 +181,7 @@ sub endImporter {
 sub stillScanning {
 	my $imports = scalar keys %importsRunning;
 
-	$::d_info && msg("Scanning with $imports import plugins\n");
+	$::d_import && msg("Import: Scanning with $imports import plugins\n");
 
 	return $imports;
 }
