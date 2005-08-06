@@ -44,15 +44,17 @@ sub add_task {
 }
 
 sub remove_task {
-	my @task = @_;
-	my $taskref = \@task;
+	my ($taskref,@taskargs) = @_;
+	
 	my $i = 0;
 	while ($i < scalar (@background_tasks)) {
-		if (@{$taskref} eq @{$background_tasks[$i]}) {
+		my ($subref,@subargs) = @{$background_tasks[$i]};
+
+		if ($taskref eq $subref) {
+			$::d_scheduler && msg("Removing taskptr $i: $taskref\n");
 			splice @background_tasks, $i, 1; 
-		} else {
-			$i++;
 		}
+		$i++;
 	}
 	# loop around when we get to the end of the list
 	if ($curtask >= (@background_tasks)) {
