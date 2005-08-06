@@ -826,7 +826,6 @@ sub initOptions {
 		'd_http'			=> \$d_http,
 		'd_http_async'		=> \$d_http_async,
 		'd_http_verbose'	=> \$d_http_verbose,
-		'd_import=s'		=> \$d_import,
 		'd_info'			=> \$d_info,
 		'd_import'			=> \$d_import,
 		'd_ir'				=> \$d_ir,
