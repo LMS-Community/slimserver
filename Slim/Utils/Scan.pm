@@ -717,6 +717,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			) {
 
 				$playlisturl =~ s/^file:/playlist:/;
+				$ct = 'ssp';
 			}
 
 			Slim::Music::Info::updateCacheEntry($playlisturl, {
