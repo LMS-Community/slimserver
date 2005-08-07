@@ -11,6 +11,8 @@ use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
 
+use Plugins::MusicMagic::Settings;
+
 my $isScanning = 0;
 my $initialized = 0;
 my $last_error = 0;
@@ -132,7 +134,9 @@ sub initPlugin {
 		my $content = $http->content();
 		$::d_musicmagic && msg("MusicMagic: $content\n");
 		$http->close();
-
+		
+		Plugins::MusicMagic::Settings::init();
+		
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
@@ -659,7 +663,6 @@ sub exportFunction {
 			$http->close();
 		}
 
-		#print "Checking $count playlist(s)\n";
 		for (my $i = 0; $i < $count; $i++) {
 
 			my %cacheEntry = ();
@@ -691,6 +694,7 @@ sub exportFunction {
 				for (my $j = 0; $j < $count2; $j++) {
 					push @list, Slim::Utils::Misc::fileURLFromPath(convertPath($songs[$j]));
 				}
+				!$::d_musicmagic && msg("MusicMagic: got playlist $name with " .scalar @list." items.\n");
 
 				$cacheEntry{'LIST'} = \@list;
 				$cacheEntry{'CT'} = 'mmp';
@@ -749,9 +753,9 @@ sub exportFunction {
 		}
 	}
 
-	doneScanning();
+	$::d_musicmagic && msgf("MusicMagic: finished export (%d records)\n",$scan - 1);
 
-	$::d_musicmagic && msg("MusicMagic: finished export ($count records)\n");
+	doneScanning();
 
 	$export = 'done';
 	
@@ -788,6 +792,7 @@ sub specialPushLeft {
 
 sub mixerFunction {
 	my $client = shift;
+	my $nosettings = shift;
 	
 	# look for parentParams (needed when multiple mixers have been used)
 	my $paramref = defined $client->param('parentParams') ? $client->param('parentParams') : $client->modeParameterStack(-1);
@@ -808,76 +813,78 @@ sub mixerFunction {
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $mix;
 	
-	# if we've chosen a particular song
-	if (!$descend || $levels[$level] eq 'song') {
-
-		if ($currentItem && $currentItem->musicmagic_mixable()) {
-
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
-		}
-
-	# if we've picked an artist 
-	} elsif ($levels[$level] eq 'artist') {
-
-		if ($currentItem && $currentItem->musicmagic_mixable()) {
-
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client,$currentItem->name(), 'artist');
-		}
-
-	# if we've picked an album 
-	} elsif ($levels[$level] eq 'album') {
-
-		# If $artist is selected (as in picked Album by Artist) then we
-		# need to include artist in the find.  If artist is not chosen (as in any Album of 
-		# a given title) then we cannot include the contributor key, and want any track 
-		# from the album to key the mixer.
-#		my ($obj) = $currentItem eq "*" ? 
-#			$ds->find('track', {'album' => $currentItem,}) : 
-#			$ds->find('album', {'album' => $currentItem,'contributor' => $currentItem,});
-
-		my $album = $currentItem->title();
-		my ($artists) = $currentItem->contributors();
-
-		if ($currentItem && $currentItem->musicmagic_mixable()) {
-
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			my $key = $currentItem eq "*" ? 
-				Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}) : 
-				"$artists\@\@$album";
-				
-			$mix = getMix($client,$key, 'album');
-		}
-
+	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
+	if (Slim::Utils::Prefs::get('MMMPlayerSettings') && !$nosettings) {
+		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings',{'parentParams' => $paramref});
 	} else {
-
-		if ($currentItem && $currentItem->musicmagic_mixable()) {
-
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client,$currentItem->name(), 'genre');
+		# if we've chosen a particular song
+		if (!$descend || $levels[$level] eq 'song') {
+	
+			if ($currentItem && $currentItem->musicmagic_mixable()) {
+	
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
+			}
+	
+		# if we've picked an artist 
+		} elsif ($levels[$level] eq 'artist') {
+	
+			if ($currentItem && $currentItem->musicmagic_mixable()) {
+	
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				$mix = getMix($client,$currentItem->name(), 'artist');
+			}
+	
+		# if we've picked an album 
+		} elsif ($levels[$level] eq 'album') {
+	
+			# If $artist is selected (as in picked Album by Artist) then we
+			# need to include artist in the find.  If artist is not chosen (as in any Album of 
+			# a given title) then we cannot include the contributor key, and want any track 
+			# from the album to key the mixer.
+	
+			my $album = $currentItem->title();
+			my ($artists) = $currentItem->contributors();
+	
+			if ($currentItem && $currentItem->musicmagic_mixable()) {
+	
+				# For the moment, skip straight to Mix mode.
+				my $key = $currentItem eq "*" ? 
+					Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}) : 
+					"$artists\@\@$album";
+					
+				$mix = getMix($client,$key, 'album');
+			}
+	
+		} else {
+	
+			if ($currentItem && $currentItem->musicmagic_mixable()) {
+	
+				# For the moment, skip straight to Mix mode.
+				$mix = getMix($client,$currentItem->name(), 'genre');
+			}
 		}
-	}
-
-	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
-		my %params = (
-			'listRef' => $mix,
-			'externRef' => \&Slim::Music::Info::standardTitle,
-			'header' => 'MUSICMAGIC_MIX',
-			'headerAddCount' => 1,
-			'stringHeader' => 1,
-			'callback' => \&mixExitHandler,
-			'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-			'overlayRefArgs' => '',
-			'parentMode' => 'musicmagic_mix',
-		);
-		
-		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-		specialPushLeft($client, 0, @oldlines);
-
-	} else {
-		# don't do anything if nothing is mixable
-		$client->bumpRight();
+	
+		if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
+			my %params = (
+				'listRef' => $mix,
+				'externRef' => \&Slim::Music::Info::standardTitle,
+				'header' => 'MUSICMAGIC_MIX',
+				'headerAddCount' => 1,
+				'stringHeader' => 1,
+				'callback' => \&mixExitHandler,
+				'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+				'overlayRefArgs' => '',
+				'parentMode' => 'musicmagic_mix',
+			);
+			
+			Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+			specialPushLeft($client, 0, @oldlines);
+	
+		} else {
+			# don't do anything if nothing is mixable
+			$client->bumpRight();
+		}
 	}
 }
 
@@ -1179,6 +1186,7 @@ sub setupGroup {
 			'validate' => \&Slim::Web::Setup::validateInt,
 			'validateArgs' => [1025,65535,undef,1],
 		},
+
 	);
 
 	return (\%setupGroup,\%setupPrefs);
@@ -1194,7 +1202,7 @@ sub setupCategory {
 		'Groups' => {
 
 			'Default' => {
-				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter musicmagicscaninterval MMSport)]
+				'PrefOrder' => [qw(MMMPlayerSettings MMMSize MMMMixType MMMStyle MMMVariety MMMFilter musicmagicscaninterval MMSport)]
 				
 				# disable remote host access, its confusing and only works in specific cases
 				# leave it here for hackers who really want to try it
@@ -1216,6 +1224,13 @@ sub setupCategory {
 		},
 
 		'Prefs' => {
+			'MMMPlayerSettings' => {
+				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				,'options' => {
+						'1' => Slim::Utils::Strings::string('YES')
+						,'0' => Slim::Utils::Strings::string('NO')
+					}
+			},
 
 			'MusicMagicplaylistprefix' => {
 				'validate' => \&Slim::Web::Setup::validateAcceptAll,
