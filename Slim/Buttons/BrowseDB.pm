@@ -599,16 +599,21 @@ sub setMode {
 	# sort at simple track level as well.
 	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $findCriteria->{'album'} && !$search)) {
 		$params{'isSorted'} = 'L';
+
 		$params{'lookupRef'} = sub {
 			my $index = shift;
 			my $item = $items->[$index];
-			
-			if (defined($item) && !ref($item)) {
-				return $client->string($item);
-			}
-			
+
 			my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
-			
+
+			# Pull the nameTransform if needed - for New Music, etc
+			if (defined($item) && !ref($item)) {
+
+				my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
+
+				$item = $items->[$index] = $ds->objectForId($field, $item) || return $client->string($item);
+			}
+
 			return &{$levelInfo->{'resultToSortedName'}}($item);
 		};
 	}
