@@ -956,12 +956,12 @@ sub getPlaylists {
 
 		if (Slim::Utils::Prefs::get($importer)) {
 
-			push @playlists, sprintf('%splaylist:*', $importer);
+			push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
 		}
 	}
 
 	# Add search criteria for playlists
-	$find->{'url'} = \@playlists;
+	$find->{'ct'} = \@playlists;
 		
 	# Add title search if any
 	$find->{'track.titlesort'} = $search if (defined $search && $search ne '*');
