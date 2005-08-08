@@ -151,7 +151,7 @@ sub readM3U {
 
 		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
 
-		#push @items, _updateMetaData($entry, $title);
+		push @items, _updateMetaData($entry, $title);
 	}
 
 	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
