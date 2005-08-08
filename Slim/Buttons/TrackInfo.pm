@@ -31,17 +31,27 @@ sub init {
 				return;
 			}
 
-			my $line1 = '';
+			my ($string, $line1);
 
 			if (Slim::Player::Playlist::shuffle($client)) {
-				$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+				$string = 'PLAYING_RANDOMLY_FROM';
 			} else {
-				$line1 = $client->string('NOW_PLAYING_FROM')
+				$string = 'NOW_PLAYING_FROM';
 			}
 			
 			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
 
-			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
+			if ($client->linesPerScreen() == 1) {
+				$line2 = $client->doubleString($string);
+			} else {
+				$line1 = $client->string($string);
+			}
+			
+			$client->showBriefly( {
+				'line1' => $line1,
+				'line2' => $line2,
+				'overlay2' => $client->symbols('notesymbol'),
+			});
 
 			$client->execute(['playlist', 'loadalbum', @search]);
 			$client->execute(['playlist', 'jump', 0]);
@@ -58,10 +68,23 @@ sub init {
 				return;
 			}
 
-			my $line1  = $client->string('ADDING_TO_PLAYLIST');
+			my ($line1, $string);
+
+			$string = 'ADDING_TO_PLAYLIST';
+
 			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
 
-			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')), undef,1);
+			if ($client->linesPerScreen() == 1) {
+				$line2 = $client->doubleString($string);
+			} else {
+				$line1 = $client->string($string);
+			}
+
+			$client->showBriefly( {
+				'line1' => $line1,
+				'line2' => $line2,
+				'overlay2' => $client->symbols('notesymbol'),
+			});
 
 			$client->execute(["playlist", "addalbum", @search]);
 		},
