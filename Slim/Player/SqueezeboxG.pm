@@ -515,6 +515,8 @@ sub symbols {
 	my $client = shift;
 	my $line = shift;
 	
+	return $fontSymbols{$line} if exists $fontSymbols{$line};
+
 	if (defined($line)) {
 		$line =~ s/\x1f([^\x1f]+)\x1f/$fontSymbols{$1} || "\x1F" . $1 . "\x1F"/eg;
 		$line =~ s/\x1etight\x1e/\x1d/g;

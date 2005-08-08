@@ -73,6 +73,22 @@ our $defaultPrefs = {
 my $scroll_pad_scroll = 6; # chars of padding between scrolling text
 my $scroll_pad_ticker = 8; # chars of padding in ticker mode
 
+my %Symbols = (
+	'notesymbol' => "\x1Fnotesymbol\x1F",
+	'rightarrow' => "\x1Frightarrow\x1F",
+	'progressEnd'=> "\x1FprogressEnd\x1F",
+	'progress1e' => "\x1Fprogress1e\x1F",
+	'progress2e' => "\x1Fprogress2e\x1F",
+	'progress3e' => "\x1Fprogress3e\x1F",
+	'progress1'  => "\x1Fprogress1\x1F",
+	'progress2'  => "\x1Fprogress2\x1F",
+	'progress3'  => "\x1Fprogress3\x1F",
+	'cursor'	 => "\x1Fcursor\x1F",
+	'mixable'    => "\x1Fmixable\x1F",
+	'bell'	     => "\x1Fbell\x1F",
+	'hardspace'  => "\x1Fhardspace\x1F"
+);
+
 our %upgradeScripts = (
 
 	# Allow the "upgrading" of old menu items to new ones.
@@ -991,6 +1007,9 @@ sub isPlayer {
 sub symbols {
 	my $client = shift;
 	my $line = shift;
+
+	return $Symbols{$line} if exists $Symbols{$line};
+
 	return $line;
 }
 	
