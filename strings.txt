@@ -544,6 +544,9 @@ ADDING_TO_PLAYLIST
 	PT	Adicionar ao fim da playlist
 	SE	Lägger till i låtlista:
 
+ADDING_TO_PLAYLIST_DBL
+	EN	Adding
+
 INSERT_TO_PLAYLIST
 	CZ	Přidat do seznamu:
 	DE	Hinzufügen und als nächstes spielen:
@@ -556,6 +559,9 @@ INSERT_TO_PLAYLIST
 	NO	Legger til som neste:
 	PT	Adicionar e tocar a seguir
 	SE	Lägger till som nästa låt:
+
+INSERT_TO_PLAYLIST_DBL
+	EN	Adding
 
 STOPPING
 	CZ	Zastavuji...
@@ -586,6 +592,9 @@ PLAYING_RANDOMLY_FROM
 	NO	Spiller i vilkårlig rekkefølge fra:
 	PT	A tocar aleatoriamente de
 	SE	Spelar blandat från:
+
+PLAYING_RANDOMLY_FROM_DBL
+	EN	Play shuffled
 
 CLEARING_PLAYLIST
 	CZ	Vyčistit playlist...
@@ -660,6 +669,9 @@ NOW_PLAYING_FROM
 	NO	Spiller fra:
 	PT	A tocar de
 	SE	Nu spelas:
+
+NOW_PLAYING_FROM_DBL
+	EN	Playing
 
 REPEAT_OFF
 	CZ	Opakování vypnuto

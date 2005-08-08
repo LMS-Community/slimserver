@@ -45,18 +45,18 @@ sub init {
 			my $currentItem = $items->[$listIndex] || return;
 			my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
 
-			my ($command, $line1, $line2);
+			my ($command, $line1, $line2, $string);
 
 			# Based on the button pressed, we determine what to display
 			# and which command to send to modify the playlis
 			if ($addorinsert == 1) {
 
-				$line1 = $client->string('ADDING_TO_PLAYLIST');
+				$string = 'ADDING_TO_PLAYLIST';
 				$command = "add";	
 
 			} elsif ($addorinsert == 2) {
 
-				$line1 = $client->string('INSERT_TO_PLAYLIST');
+				$string = 'INSERT_TO_PLAYLIST';
 				$command = "insert";
 
 			} else {
@@ -64,20 +64,28 @@ sub init {
 				$command = "play";
 
 				if (Slim::Player::Playlist::shuffle($client)) {
-					$line1 = $client->string('PLAYING_RANDOMLY_FROM');
+					$string = 'PLAYING_RANDOMLY_FROM';
 				} else {
-					$line1 = $client->string('NOW_PLAYING_FROM');
+					$string = 'NOW_PLAYING_FROM';
 				}
 			}
 	
-			# Get the name of the items we're currently displaying
-			$line2 = browseTreeItemName($client, $currentItem);
+			if ($client->linesPerScreen() == 1) {
 
-			$client->showBriefly(
-				$client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')),
-				undef,
-				1
-			);
+				$line2 = $client->doubleString($string);
+
+			} else {
+
+				$line1 = $client->string($string);
+				$line2 = browseTreeItemName($client, $currentItem);
+
+			}
+
+			$client->showBriefly( {
+				'line1' => $line1,
+				'line2' => $line2,
+				'overlay2' => $client->symbols('notesymbol'),
+			});
 
 #			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum')) {
 
