@@ -11,7 +11,10 @@ use base 'Slim::DataStores::DBI::DataModel';
 	my $class = __PACKAGE__;
 
 	$class->table('dirlist_track');
-	$class->columns(Essential => qw/id position dirlist item/);
+
+	$class->columns(Primary => qw/id/);
+
+	$class->columns(Essential => qw/position dirlist item/);
 
 	$class->has_a(dirlist => 'Slim::DataStores::DBI::Track');
 	$class->has_a(item => 'Slim::DataStores::DBI::LightWeightTrack');

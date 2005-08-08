@@ -11,7 +11,10 @@ use base 'Slim::DataStores::DBI::DataModel';
 	my $class = __PACKAGE__;
 
 	$class->table('playlist_track');
-	$class->columns(Essential => qw/id position playlist track/);
+
+	$class->columns(Primary => qw/id/);
+
+	$class->columns(Essential => qw/position playlist track/);
 
 	$class->has_a(playlist => 'Slim::DataStores::DBI::Track');
 	$class->has_a(track => 'Slim::DataStores::DBI::LightWeightTrack');

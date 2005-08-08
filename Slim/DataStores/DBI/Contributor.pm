@@ -9,7 +9,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 	my $class = __PACKAGE__;
 
 	$class->table('contributors');
-	$class->columns(Essential => qw/id name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
+
+	$class->columns(Primary => qw/id/);
+
+	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
+
 	$class->columns(Stringify => qw/name/);
 
 	$class->has_many('contributorTracks' => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor']);

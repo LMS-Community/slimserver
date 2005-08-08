@@ -20,7 +20,10 @@ our %contributorToRoleMap = (
 	my $class = __PACKAGE__;
 
 	$class->table('contributor_track');
-	$class->columns(Essential => qw/id role contributor track namesort/);
+
+	$class->columns(Primary => qw/id/);
+
+	$class->columns(Essential => qw/role contributor track namesort/);
 
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');
