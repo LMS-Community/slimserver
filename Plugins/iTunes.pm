@@ -524,7 +524,7 @@ sub startScan {
 	);
 
 	Slim::Utils::Scheduler::add_task(\&scanFunction);
-} 
+}
 
 sub stopScan {
 
@@ -701,12 +701,6 @@ sub handleTrack {
 	# Use this for playlist verification.
 	$tracks{$id} = $url;
 
-	# We don't need to do all the track processing if we just want to map
-	# the ID to url, and then proceed to the playlist parsing.
-	#if (Slim::Music::Import::scanPlaylistsOnly()) {
-	#	return 1;
-	#}
-
 	if (Slim::Music::Info::isFileURL($url)) {
 
 		# dsully - Sun Mar 20 22:50:41 PST 2005
@@ -742,6 +736,8 @@ sub handleTrack {
 			# Tell the database to cleanup.
 			$ds->markEntryAsInvalid($url);
 
+			delete $tracks{$id};
+
 			return 1;
 		}
 	}
@@ -753,6 +749,15 @@ sub handleTrack {
 
 		$ds->markEntryAsInvalid($url);
 
+		# Don't show these tracks in the playlists either.
+		delete $tracks{$id};
+
+		return 1;
+	}
+
+	# We don't need to do all the track processing if we just want to map
+	# the ID to url, and then proceed to the playlist parsing.
+	if (Slim::Music::Import::scanPlaylistsOnly()) {
 		return 1;
 	}
 
@@ -772,6 +777,13 @@ sub handleTrack {
 	}
 
 	if ($url && (Slim::Music::Info::isSong($url, $type) || Slim::Music::Info::isHTTPURL($url))) {
+
+		for my $key (keys %{$curTrack}) {
+
+			next if $key eq 'Location';
+
+			$curTrack->{$key} = Slim::Web::HTTP::unescape($curTrack->{$key});
+		}
 
 		$cacheEntry{'CT'}       = $type;
 		$cacheEntry{'TITLE'}    = $curTrack->{'Name'};
@@ -858,7 +870,7 @@ sub handleStartElement {
 	my ($p, $element) = @_;
 
 	# Don't care about the outer <dict> right after <plist>
-	if ($inTracks && $element eq 'dict' ) {
+	if ($inTracks && $element eq 'dict') {
 		$inDict = 1;
 	}
 
@@ -872,6 +884,13 @@ sub handleStartElement {
 
 		@{$item{'LIST'}} = ();
 		$inPlaylistArray = 1;
+	}
+
+	# Disabled tracks are marked as such:
+	# <key>Disabled</key><true/>
+	if ($element eq 'true') {
+
+		$item{$currentKey} = 1;
 	}
 
 	# Store this value somewhere.
@@ -931,7 +950,7 @@ sub handleCharElement {
 
 		} else {
 
-			$::d_itunes_verbose && msg("iTunes: NOT pusing $value on to list, it's missing\n");
+			$::d_itunes_verbose && msg("iTunes: NOT pushing $value on to list, it's missing (or disabled).\n");
 		}
 	}
 }
