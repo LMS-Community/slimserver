@@ -284,6 +284,13 @@ sub scheduleWriteOfPlaylist {
 		sub {
 			Slim::Utils::Scheduler::add_task(sub {
 
+				# This can happen if the user removes the
+				# playlist - because this is a closure, we get
+				# a bogus object back)
+				unless ($playlistObj->can('tracks')) {
+					return 0;
+				}
+
 				Slim::Formats::Parse::writeM3U( 
 					[ $playlistObj->tracks ],
 					undef,
