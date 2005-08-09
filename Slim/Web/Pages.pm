@@ -1236,11 +1236,17 @@ sub browsedb {
 
 			my %list_form = %$params;
 
+			my $attrName  = $levelInfo->{'nameTransform'} || $levels[$level];
+
+			# We might not be inflated yet..
+			if (!ref($item) && $item =~ /^\d+$/) {
+
+				$item = $ds->objectForId($attrName, $item);
+			}
+
 			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
 			my $itemname = &{$levelInfo->{'resultToName'}}($item);
 			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
-
-			my $attrName = $levelInfo->{'nameTransform'} || $levels[$level];
 
 			$list_form{'hierarchy'}	    = $hierarchy;
 			$list_form{'level'}	    = $level + 1;

@@ -502,84 +502,62 @@ sub _attribute_exists {
 	exists $self->{$attribute};
 }
 
-sub _init {
-	my ($class, $data) = @_;
-	# give index/caching mechanism being used by this class the
-	# responsibility to get the object so it can, for example,
-	# use a) no index, b) standard weakref based index (the default),
-	# c) non-weakref based "cache" (including LRU or age limited) etc.
-	return $class->_live_object_fetch($data || {}, 1);
-}
-
-sub _fresh_init {
-	my ($class, $data) = @_;
-	my $obj = bless {}, $class;
-        $obj->_attribute_store(%$data);
-	return $obj;
-}
-
 #----------------------------------------------------------------------
 # Live Object Index (using weak refs if available)
 #----------------------------------------------------------------------
-my %Live_Objects;
-my $_live_object_store_count = 0;
+our %Live_Objects;
+my $Init_Count = 0;
 
-sub _live_object_index {
-	my ($self) = @_;
-	my $class  = ref($self) || $self;
-	return \%Live_Objects if $class eq "Class::DBI";
-	return $Live_Objects{$class};
+sub _class_for_ref {
+	my $self  = shift;
+
+	return ref($self) || $self;
+}
+
+sub _init {
+	my $class = shift->_class_for_ref;
+	my $data  = shift || {};
+	my $key   = $class->_live_object_key($data);
+
+	my $obj   = $Live_Objects{$class}{$key};
+
+	if (defined $obj && ref($obj) ne 'Class::DBI::Object::Has::Been::Deleted') {
+		return $obj;
+	}
+
+	return $class->_fresh_init($key => $data);
+}
+
+sub _fresh_init {
+	my ($class, $key, $data) = @_;
+	my $obj = bless {}, $class;
+        $obj->_attribute_store(%$data);
+
+	# don't store it unless all keys are present
+	if ($key && $Weaken_Is_Available) {
+
+		$class = $obj->_class_for_ref;
+
+		weaken($Live_Objects{$class}{$key} = $obj);
+
+		# time to clean up your room?
+		$class->purge_dead_from_object_index
+			if ++$Init_Count % $class->purge_object_index_every == 0;
+	}
+
+	return $obj;
 }
 
 sub _live_object_key {
 	my ($me, $data) = @_;
-	# Return key to use for this object in the live object index.
-	# Key string must uniquely and permenantly identify the object.
-	# Return empty string if object doesn't have full indentity yet.
-	# Subclass can use "sub _live_object_key { '' }" to disable.
-	my $class   = ref($me) || $me;
+	my $class   = $me->_class_for_ref;
 	my @primary = $class->primary_columns;
-
-	my $caller = (caller(1))[3];
 
 	# no key unless all PK columns are defined
 	return "" unless @primary == grep defined $data->{$_}, @primary;
 
 	# create single unique key for this object
 	return join "\030", $class, map $_ . "\032" . $data->{$_}, sort @primary;
-}
-
-sub _live_object_store {
-	my ($self, $key) = @_;
-	return unless $key && $Weaken_Is_Available;
-	my $class = ref $self;
-	weaken($Live_Objects{$class}{$key} = $self);
-	# time to clean up your room?
-	$class->purge_dead_from_object_index
-		if ++$_live_object_store_count % $class->purge_object_index_every == 0;
-}
-
-sub _live_object_fetch {
-	my ($class, $data, $vivify) = @_;
-	my $key = $class->_live_object_key($data);
-	my $obj = $Live_Objects{$class}{$key};
-
-	# Mon Apr 11 18:09:58 PDT 2005 - This should fix bug 1311
-	# Somehow the object is getting deleted between the time it's fetched.
-	if ((ref($obj) && ref($obj) ne 'Class::DBI::Object::Has::Been::Deleted') or !$vivify) {
-		return $obj;
-	}
-
-	if ((ref($obj) && ref($obj) eq 'Class::DBI::Object::Has::Been::Deleted')) {
-		use Data::Dumper;
-		print "Class $class tried to fetch an object that has been deleted with data:\n";
-		print Dumper($data);
-		Slim::Utils::Misc::bt();
-	}
-
-	$obj = $class->_fresh_init($data);
-	$obj->_live_object_store($key);
-	return $obj;
 }
 
 sub purge_dead_from_object_index {
@@ -590,16 +568,35 @@ sub purge_dead_from_object_index {
 }
 
 sub remove_from_object_index {
-	my $self            = shift;
-	my $class   = ref $self or return;
-	my $obj_key = $class->_live_object_key($self->{_DATA});
-	delete $Live_Objects{$class}{$obj_key};
+	my $self    = shift;
+	my $class   = ref($self) ? $self->_class_for_ref : return;
+	my $obj_key = $class->_live_object_key($self->_as_hash);
+
+	if (exists $Live_Objects{$class}{$obj_key}) {
+
+		delete $Live_Objects{$class}{$obj_key};
+	}
 }
 
 sub clear_object_index {
-	my $lo = shift->_live_object_index(@_) or return;
-	%$lo = ();
+	my $class = shift->_class_for_ref;
+
+	if ($class eq 'Class::DBI') {
+		%Live_Objects = ();
+	} else {
+		$Live_Objects{$class} = ();
+	}
 }
+
+sub _as_hash {
+	my $self    = shift;
+	my @columns = $self->all_columns;
+	my %data;
+	@data{@columns} = $self->get(@columns);
+	return \%data;
+}
+
+#----------------------------------------------------------------------
 
 sub _prepopulate_id {
 	my $self            = shift;

@@ -850,6 +850,20 @@ sub update {
 	}
 }
 
+# Override a CDBI method that we've added for this purpose.
+# We don't want to have two different copies of effectively the same object
+# floating around.
+sub _class_for_ref {
+        my $self  = shift;
+        my $class = ref($self) || $self;
+
+        if ($class eq 'Slim::DataStores::DBI::LightWeightTrack') {
+                $class = 'Slim::DataStores::DBI::Track';
+        }
+
+        return $class;
+}
+
 1;
 
 __END__
