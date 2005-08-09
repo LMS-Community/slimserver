@@ -947,7 +947,7 @@ sub getMix {
 		variety		=> Slim::Utils::Prefs::clientGet($client,'MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),        # Set the variety slider (default 0)
 	);
 
-	my $filter = Slim::Utils::Prefs::get('MMMFilter');
+	my $filter = Slim::Utils::Prefs::clientGet($client,'MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
 	if ($filter ne '0') {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
 		$args{filter} = $filter;
