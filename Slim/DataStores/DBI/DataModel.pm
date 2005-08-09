@@ -796,7 +796,7 @@ sub removeStaleDBEntries {
 
 	unless ($cleanupIds) {
 
-		$::d_info && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
+		$::d_import && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = $class->retrieveAllOnlyIds();
 	}
@@ -807,7 +807,7 @@ sub removeStaleDBEntries {
 
 	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
 
-		$::d_info && Slim::Utils::Misc::msg("Finished stale cleanup for class $class / $foreign\n");
+		$::d_import && Slim::Utils::Misc::msg("Finished stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = undef;
 
@@ -816,7 +816,7 @@ sub removeStaleDBEntries {
 
 	if ($obj && $obj->$foreign()->count() == 0) {
 
-		$::d_info && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
+		$::d_import && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
 
 		$obj->delete();
 

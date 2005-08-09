@@ -602,6 +602,8 @@ sub cleanupStaleEntries {
 
 	# Setup a little state machine so that the db cleanup can be
 	# scheduled appropriately - ie: one record per run.
+	$::d_import && Slim::Utils::Misc::msg("Adding task for cleanupStaleTrackEntries()..\n");
+
 	Slim::Utils::Scheduler::add_task(\&cleanupStaleTrackEntries, $self);
 }
 
@@ -633,7 +635,7 @@ sub cleanupStaleTrackEntries {
 		# After that, walk the Album, Contributor & Genre tables, to see if
 		# each item has valid tracks still. If it doesn't, remove the object.
 
-		$::d_info && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
+		$::d_import && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
 
 		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
 	}
@@ -648,7 +650,7 @@ sub cleanupStaleTrackEntries {
 
 	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
 
-		$::d_info && Slim::Utils::Misc::msg(
+		$::d_import && Slim::Utils::Misc::msg(
 			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 		);
 
@@ -682,7 +684,7 @@ sub cleanupStaleTrackEntries {
 	# Don't use _hasChanged - because that does more than we want.
 	if (!-r $filepath) {
 
-		$::d_info && Slim::Utils::Misc::msg("Track: $filepath no longer exists. Removing.\n");
+		$::d_import && Slim::Utils::Misc::msg("Track: $filepath no longer exists. Removing.\n");
 
 		$self->delete($track, 0);
 	}
@@ -726,7 +728,7 @@ sub cleanupStaleTableEntries {
 	# We're done.
 	$self->{'dbh'}->commit();
 
-	$::d_info && Slim::Utils::Misc::msg("Finished with cleanupStaleTableEntries()\n");
+	$::d_import && Slim::Utils::Misc::msg("Finished with cleanupStaleTableEntries()\n");
 
 	%lastFind = ();
 
@@ -758,7 +760,7 @@ sub mergeVariousArtistsAlbums {
 
 	if (!defined $obj && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
-		$::d_info && Slim::Utils::Misc::msg("Finished with mergeVariousArtistsAlbums()\n");
+		$::d_import && Slim::Utils::Misc::msg("Finished with mergeVariousArtistsAlbums()\n");
 
 		$vaObj = undef;
 
@@ -783,6 +785,8 @@ sub mergeVariousArtistsAlbums {
 
 	# Not a VA album.
 	return 1 if scalar keys %artists == 1;
+
+	$::d_import && Slim::Utils::Misc::msgf("Marking album: [%s] as Various Artists.\n", $obj->title);
 
 	$obj->compilation(1);
 	$obj->contributor($vaObj);
@@ -820,7 +824,7 @@ sub wipeCaches {
 	Slim::DataStores::DBI::GenreTrack->clearCache();
 	Slim::DataStores::DBI::DataModel->clearObjectCaches();
 
-	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
+	$::d_import && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
 }
 
 # Wipe all data in the database
@@ -841,7 +845,7 @@ sub wipeAllData {
 
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
-	$::d_info && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
+	$::d_import && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
 
 	$self->{'dbh'} = Slim::DataStores::DBI::DataModel->db_Main();
 }

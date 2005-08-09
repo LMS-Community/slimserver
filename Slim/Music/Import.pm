@@ -150,6 +150,8 @@ sub endImporter {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {
 
+			$::d_import && msg("Adding task for artScan().\n");
+
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
@@ -161,10 +163,13 @@ sub endImporter {
 		# Auto-identify VA/Compilation albums
 		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
+			$::d_import && msg("Adding task for mergeVariousArtistsAlbums().\n");
+
 			Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
 		}
 
 		$::d_import && msg("Import: Finished background scanning.\n");
+
 		Slim::Music::Info::saveDBCache();
 
 		# Only do this on rescan.
