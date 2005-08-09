@@ -784,7 +784,11 @@ sub mergeVariousArtistsAlbums {
 	}
 
 	# Not a VA album.
-	return 1 if scalar keys %artists == 1;
+	my $count = scalar keys %artists;
+
+	if ($count == 0 || $count == 1) {
+		return 1;
+	}
 
 	$::d_import && Slim::Utils::Misc::msgf("Marking album: [%s] as Various Artists.\n", $obj->title);
 
