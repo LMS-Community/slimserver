@@ -9,6 +9,7 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use Slim::Control::Command;
+use Slim::Formats::Parse;
 use Slim::Player::Source;
 use Slim::Player::Sync;
 use Slim::Utils::Misc;
@@ -571,6 +572,40 @@ sub clearExecuteCommandCallback {
 	warn "Slim::Player::Playlist::clearExecuteCommandCallback() will be removed in SlimServer v6.2 - please update your plugins.\n";
 
 	Slim::Control::Command::clearExecuteCallback(@_);
+}
+
+sub scheduleWriteOfPlaylist {
+	my ($client, $playlistObj) = @_;
+
+	# This should proably be more configurable / have writeM3U or a
+	# wrapper know about the scheduler, so we can write out a file at a
+	# time.
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 30,
+
+		sub {
+			Slim::Utils::Scheduler::add_task(sub {
+
+				# This can happen if the user removes the
+				# playlist - because this is a closure, we get
+				# a bogus object back)
+				unless ($playlistObj->can('tracks')) {
+					return 0;
+				}
+
+				Slim::Formats::Parse::writeM3U( 
+					[ $playlistObj->tracks ],
+					undef,
+					catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u'),
+					1,
+					Slim::Player::Source::playingSongIndex($client),
+				);
+
+				return 0;
+			});
+		},
+	);
 }
 
 sub modifyPlaylistCallback {

@@ -1181,6 +1181,8 @@ sub execute {
 				$playlistObj->setTracks($annotatedList);
 				$playlistObj->update();
 
+				Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
+
 			} elsif ($p1 eq "deletealbum") {
 
 				Slim::Player::Playlist::removeMultipleTracks($client, $results);

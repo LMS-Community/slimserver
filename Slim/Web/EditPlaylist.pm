@@ -10,6 +10,7 @@ use strict;
 use File::Spec::Functions;
 use Slim::Formats::Parse;
 use Slim::Music::Info;
+use Slim::Player::Playlist;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
@@ -160,8 +161,6 @@ sub saveCurrentPlaylist {
 		if (my $playlistObj = $ds->objectForUrl("playlist://$title")) {
 
 			$params->{'playlist'} = $playlistObj->id;
-
-			scheduleWriteOfPlaylist($client, $playlistObj);
 		}
 
 		# setup browsedb params to view the current playlist
@@ -221,7 +220,7 @@ sub renamePlaylist {
 				'commit'     => 1,
 			});
 
-			scheduleWriteOfPlaylist($client, $playlistObj);
+			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 		}
 
 		$params->{'level'}     = 1;
@@ -267,42 +266,6 @@ sub removePlaylistFromDisk {
 
 		unlink catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u');
 	}
-}
-
-# This should probably move elsewhere - I don't know where though.
-# Slim::Player::Playlist, maybe? It's not really player specific.
-sub scheduleWriteOfPlaylist {
-	my ($client, $playlistObj) = @_;
-
-	# This should proably be more configurable / have writeM3U or a
-	# wrapper know about the scheduler, so we can write out a file at a
-	# time.
-	Slim::Utils::Timers::setTimer(
-		$client,
-		Time::HiRes::time() + 30,
-
-		sub {
-			Slim::Utils::Scheduler::add_task(sub {
-
-				# This can happen if the user removes the
-				# playlist - because this is a closure, we get
-				# a bogus object back)
-				unless ($playlistObj->can('tracks')) {
-					return 0;
-				}
-
-				Slim::Formats::Parse::writeM3U( 
-					[ $playlistObj->tracks ],
-					undef,
-					catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u'),
-					1,
-					Slim::Player::Source::playingSongIndex($client),
-				);
-
-				return 0;
-			});
-		},
-	);
 }
 
 1;
