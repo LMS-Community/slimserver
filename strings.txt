@@ -545,11 +545,12 @@ ADDING_TO_PLAYLIST
 	SE	Lägger till i låtlista:
 
 ADDING_TO_PLAYLIST_DBL
+	DE	Füge hinzu
 	EN	Adding
 
 INSERT_TO_PLAYLIST
 	CZ	Přidat do seznamu:
-	DE	Hinzufügen und als nächstes spielen:
+	DE	Einfügen und als nächstes spielen:
 	DK	Tilføjer til afspilning næste gang:
 	EN	Adding to play next:
 	ES	Añadiendo como próxima canción:
@@ -561,6 +562,7 @@ INSERT_TO_PLAYLIST
 	SE	Lägger till som nästa låt:
 
 INSERT_TO_PLAYLIST_DBL
+	DE	Füge ein
 	EN	Adding
 
 STOPPING
@@ -594,6 +596,7 @@ PLAYING_RANDOMLY_FROM
 	SE	Spelar blandat från:
 
 PLAYING_RANDOMLY_FROM_DBL
+	DE	Spiele zufällig
 	EN	Play shuffled
 
 CLEARING_PLAYLIST
@@ -671,6 +674,7 @@ NOW_PLAYING_FROM
 	SE	Nu spelas:
 
 NOW_PLAYING_FROM_DBL
+	DE	Starte Wiedergabe
 	EN	Playing
 
 REPEAT_OFF
@@ -9389,22 +9393,27 @@ SETUP_SCROLLMODE_NOSCROLL
 	ES	No desplazar
 
 SETUP_VARIOUSARTISTS
+	DE	Kompilationen
 	EN	Compilations
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
-	DE	Alben mit diversen Interpreten automatisch erkennen.
+	DE	Kompilationen
 	EN	Compilation Albums
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
+	DE	Sie können Kompilationen (Alben mit diversen Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Songs beim jeweiligen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
+	DE	Kompilationen gruppiert auflisten
 	EN	Group compilation albums together
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
+	DE	Songs aus Kompilationen den Interpreten zuordnen
 	EN	List compilation albums under each artist
 
 SETUP_VARIOUSARTISTSSTRING_DESC
+	DE	Wenn Kompilationen gruppiert aufgeführt werden, so sind sie per Voreinstellung unter "Diverse Interpreten" zu finden. Dieser Text kann hier geändert werden.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
 
 VARIOUSARTISTS
