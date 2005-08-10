@@ -14,6 +14,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Buttons::RemoteTrackInfo;
+use Slim::Utils::Misc;
 
 our %home = ();
 our %defaultParams = ();
