@@ -1567,16 +1567,27 @@ sub initSetupConfig {
 	,'behavior' => {
 		'title' => string('BEHAVIOR_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default']
+		,'GroupOrder' => ['Default', 'VariousArtists']
 		,'Groups' => {
+	
 			'Default' => {
-					'PrefOrder' => ['displaytexttimeout', 'composerInArtists', 'noGenreFilter',
-							'variousArtistAutoIdentification', 'variousArtistsString',
+					'PrefOrder' => ['displaytexttimeout', 'checkVersion', 'composerInArtists', 'noGenreFilter',
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'commonAlbumTitles' ,'checkVersion']
-				}
+							,'commonAlbumTitles']
+				},
+			'VariousArtists' => {
+				'PrefOrder' => [
+							'variousArtistAutoIdentification', 'variousArtistsString',
+							]
+					,'GroupHead' => string('SETUP_VARIOUSARTISTS')
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupSub' => 1
+					,'GroupLine' => 1
+					,'Suppress_PrefLine' => 1
 			}
+		}
 		,'Prefs' => {
 			'filesort' => {
 						'validate' => \&validateTrueFalse

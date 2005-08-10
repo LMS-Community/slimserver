@@ -4264,7 +4264,7 @@ SETUP_PLAYTRACKALBUM
 	CZ	Hrát ostatní skladby z alba
 	DE	Weitere Titel des Albums abspielen
 	DK	Afspil andre sange i album
-	EN	Play other songs in album
+	EN	Play Other Songs In Album
 	ES	Tocar otras canciones del disco
 	FR	Jouer les autres morceaux de l'album
 	JP	同じアルバムのその他の曲を再生する
@@ -4306,7 +4306,7 @@ SETUP_IGNOREDARTICLES
 	CZ	Položky, které budou ignorovány při třídění podle jména interpretů.
 	DE	Artikel, die bei der Sortierung nicht berücksichtigt werden sollen
 	DK	Artikler der skal ignoreres ved sortering af kunstnernavne
-	EN	Articles to ignore when sorting artist, album and  names
+	EN	Articles To Ignore When Sorting
 	ES	Artículos a ignorar cuando se ordenan nombres de artistas
 	FR	Articles à ignorer lors du tri
 	JP	アーチスト名を並べ替える場合に無視する単語
@@ -5077,7 +5077,7 @@ SETUP_AUTHORIZE
 	CZ	Ochrana heslem
 	DE	Passwortschutz
 	DK	Beskyt med kodeord
-	EN	Password protection
+	EN	Password Protection
 	ES	Protección por Contraseña
 	FR	Mot de passe
 	JP	パスワード保護
@@ -9388,29 +9388,24 @@ SETUP_SCROLLMODE_NOSCROLL
 	EN	Do not scroll
 	ES	No desplazar
 
+SETUP_VARIOUSARTISTS
+	EN	Compilations
+
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	DE	Alben mit diversen Interpreten automatisch erkennen.
-	EN	Automatically identify "Various Artist" albums.
+	EN	Compilation Albums
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	DE	SlimServer kann versuchen, Alben mit mehreren unterschiedlichen Interpreten automatisch zu erkennen. Dies sind Alben, die mehrere Haupt-Interpreten haben. Sie werden dann unter "Diverse Interpreten" bei "Interpret nachschlagen" aufgeführt.
-	EN	SlimServer can attempt to automatically identify "Various Artist" albums - those that have more than one primary artist. These albums will be listed under "Various Artists" in the Browse Artist modes.
+	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
-	DE	Alben "Diverser Interpreten" automatisch erkennen.
-	EN	Automatically identify "Various Artist" albums.
+	EN	Group compilation albums together
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
-	DE	Alben "Diverser Interpreten" nicht automatisch erkennen.
-	EN	Don't automatically identify "Various Artist" albums.
-
-SETUP_VARIOUSARTISTSSTRING
-	DE	Personalisierter Text für "Diverse Interpreten"
-	EN	Customized "Various Artist" identifier.
+	EN	List compilation albums under each artist
 
 SETUP_VARIOUSARTISTSSTRING_DESC
-	DE	Sie können den Text, der für "Diverse Interpreten" verwendet werden soll, selber definieren. Beispiele wären "Diverse", "Allerlei" etc.
-	EN	You can customize the name of your "Various Artist" albums that SlimServer identifies. Common examples are "Various", "V.A.", "VA", etc.
+	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
 
 VARIOUSARTISTS
 	DE	Diverse Interpreten
