@@ -8,6 +8,11 @@ package Slim::Utils::Misc;
 # version 2.
 
 use strict;
+use base qw(Exporter);
+
+our @EXPORT    = qw(assert bt msg msgf watchDog);
+our @EXPORT_OK = qw(assert bt msg msgf watchDog);
+
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
@@ -19,18 +24,16 @@ use Symbol qw(qualify_to_ref);
 use URI;
 use URI::file;
 
-use Slim::Music::Info;
-use Slim::Utils::OSDetect;
-use Slim::Utils::Strings qw(string);
-
 if ($] > 5.007) {
 	require Encode;
 	require File::BOM;
 }
 
-use base qw(Exporter);
+# These must be 'required', as they use functions from the Misc module!
+require Slim::Music::Info;
+require Slim::Utils::OSDetect;
+require Slim::Utils::Strings;
 
-our @EXPORT = qw(assert bt msg msgf watchDog);
 our $log    = "";
 our $watch  = 0;
 
@@ -304,7 +307,7 @@ sub utf8decode_guess {
 
 			if (ref $icode) {
 
-				$string = Encode::decode($icode, $string, Encode::FB_QUIET);
+				$string = Encode::decode($icode, $string, Encode::FB_QUIET());
 
 			} else {
 
@@ -312,7 +315,7 @@ sub utf8decode_guess {
 
 					while ($prefer_encoding = shift) {
 
-						$string = Encode::decode($prefer_encoding, $string, Encode::FB_QUIET);
+						$string = Encode::decode($prefer_encoding, $string, Encode::FB_QUIET());
 
 						last if $icode =~ /$prefer_encoding/;
 					}
@@ -329,7 +332,7 @@ sub utf8decode_locale {
 
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::decode($Slim::Utils::Misc::locale, $string, Encode::FB_QUIET);
+		$string = Encode::decode($Slim::Utils::Misc::locale, $string, Encode::FB_QUIET());
 	}
 
 	return $string;
@@ -1098,8 +1101,8 @@ sub settingsDiagString {
 	# We masquerade as iTunes for radio stations that really want it.
 	my $diagString = sprintf("%s%s %s - %s - %s - %s - %s",
 
-		string('SERVER_VERSION'),
-		string('COLON'),
+		Slim::Utils::Strings::string('SERVER_VERSION'),
+		Slim::Utils::Strings::string('COLON'),
 		$::VERSION,
 		$::REVISION,
 		$osDetails->{'osName'},
