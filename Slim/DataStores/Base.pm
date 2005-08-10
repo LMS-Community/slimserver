@@ -272,6 +272,12 @@ sub init {
 				my $findCriteria = shift;
 				my $idOnly = shift;
 
+				# The user may not want to include all the composers / conductors
+				unless (Slim::Utils::Prefs::get('composerInArtists')) {
+
+					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+				}
+
 				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'artist'}) {
 
 					# Don't filter by genre - it's unneccesary and
@@ -378,6 +384,12 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 				my $idOnly = shift;
+
+				# The user may not want to include all the composers / conductors
+				unless (Slim::Utils::Prefs::get('composerInArtists')) {
+
+					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+				}
 
 				if (Slim::Utils::Prefs::get('includeNoArt')) {
 
