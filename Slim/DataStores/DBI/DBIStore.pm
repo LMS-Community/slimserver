@@ -1003,9 +1003,6 @@ sub readTags {
 		return {};
 	}
 
-	# get the type without updating the cache
-	my $type = Slim::Music::Info::typeFromPath($file);
-
 	$::d_info && msg("reading tags for: $file\n");
 
 	if (Slim::Music::Info::isFileURL($file)) {
@@ -1014,6 +1011,9 @@ sub readTags {
 	} else {
 		$filepath = $file;
 	}
+
+	# get the type without updating the cache
+	my $type = Slim::Music::Info::typeFromPath($filepath);
 
 	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
 
