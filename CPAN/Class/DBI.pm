@@ -515,11 +515,11 @@ sub _class_for_ref {
 }
 
 sub _init {
-	my $class = shift->_class_for_ref;
+	my $class = shift;
 	my $data  = shift || {};
 	my $key   = $class->_live_object_key($data);
 
-	my $obj   = $Live_Objects{$class}{$key};
+	my $obj   = $Live_Objects{$class->_class_for_ref}{$key};
 
 	if (defined $obj && ref($obj) ne 'Class::DBI::Object::Has::Been::Deleted') {
 		return $obj;
@@ -531,7 +531,7 @@ sub _init {
 sub _fresh_init {
 	my ($class, $key, $data) = @_;
 	my $obj = bless {}, $class;
-        $obj->_attribute_store(%$data);
+	$obj->_attribute_store($data);
 
 	# don't store it unless all keys are present
 	if ($key && $Weaken_Is_Available) {
