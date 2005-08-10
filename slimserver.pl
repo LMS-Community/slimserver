@@ -391,6 +391,8 @@ sub init {
 		$SIG{QUIT} = \&sigquit;
 	}
 
+	$SIG{__WARN__} = sub { msg($_[0]) };
+	
 	# Uncomment to enable crash debugging.
 	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
 
@@ -649,6 +651,7 @@ sub idle {
 
 	Slim::Control::CLI::idle();
 	if ($::d_perf) { $to = watchDog($to, "cli::idle"); }
+
 	return $::stop;
 }
 
