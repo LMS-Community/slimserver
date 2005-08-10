@@ -10,16 +10,12 @@
 	<td valign="center" class="[% class %]">
 
 		[% IF currentsong %]
-			<a name="currentsong"></a>
-			<span class="exboldlisting">
-			[% title | html %]
-
+		<a name="currentsong"></a>
+		<span class="exboldlisting">
 		[% ELSE %]
-
-			<span class="exlisting">
-			<a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a>
+		<span class="exlisting">
 		[% END %]
-
+			<a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a>
 		</span>
 
 		<span class="exboldnowplaying"></span>
