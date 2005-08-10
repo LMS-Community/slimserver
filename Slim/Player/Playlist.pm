@@ -551,29 +551,6 @@ sub reshuffle {
 	refreshPlaylist($client);
 }
 
-# DEPRICATED
-# for backwards compatibility with plugins and the like, this stuff was moved to Slim::Control::Command
-sub executecommand {
-
-	warn "Slim::Player::Playlist::executecommand() will be removed in SlimServer v6.2 - please update your plugins.\n";
-
-	Slim::Control::Command::execute(@_);
-}
-
-sub setExecuteCommandCallback {
-
-	warn "Slim::Player::Playlist::setExecuteCommandCallback() will be removed in SlimServer v6.2 - please update your plugins.\n";
-
-	Slim::Control::Command::setExecuteCallback(@_);
-}
-
-sub clearExecuteCommandCallback {
-
-	warn "Slim::Player::Playlist::clearExecuteCommandCallback() will be removed in SlimServer v6.2 - please update your plugins.\n";
-
-	Slim::Control::Command::clearExecuteCallback(@_);
-}
-
 sub scheduleWriteOfPlaylist {
 	my ($client, $playlistObj) = @_;
 
