@@ -387,7 +387,7 @@ sub exportFunction {
 		if ($] > 5.007) {
 
 			for my $key (qw(ALBUM ARTIST GENRE TITLE)) {
-				$cacheEntry{$key} = Slim::Utils::Misc::utf8encode($cacheEntry{$key}) if defined $cacheEntry{$key};
+				$cacheEntry{$key} = Slim::Utils::Unicode::utf8encode($cacheEntry{$key}) if defined $cacheEntry{$key};
 			}
 		}
 

@@ -167,7 +167,7 @@ sub vfdUpdate {
 			Encode::_utf8_on($curline);
 		}
 
-		$curline = Slim::Utils::Misc::utf8toLatin1($curline);
+		$curline = Slim::Utils::Unicode::utf8toLatin1($curline);
 
 		while (1) {
 			# if we're done with the line, break;

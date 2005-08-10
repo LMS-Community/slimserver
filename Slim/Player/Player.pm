@@ -288,9 +288,9 @@ sub render {
 		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
 		$cache->{line2} = $parts->{line2};
 		if (!$double) {
-			if (Slim::Utils::Misc::encodingFromString($parts->{line2}) eq 'raw') {
+			if (Slim::Utils::Unicode::encodingFromString($parts->{line2}) eq 'raw') {
 				# SliMP3 / Pre-G can't handle wide characters outside the latin1 range - turn off the utf8 flag.
-				$cache->{line2text} = Slim::Utils::Misc::utf8off($parts->{line2});
+				$cache->{line2text} = Slim::Utils::Unicode::utf8off($parts->{line2});
 			} else {
 				$cache->{line2text} = $parts->{line2};
 			}

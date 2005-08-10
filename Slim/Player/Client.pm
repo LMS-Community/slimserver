@@ -1182,7 +1182,7 @@ sub string {
 	# We're in the list - ok.
 	if ($validClientLanguages{$language}) {
 
-		return Slim::Utils::Misc::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
+		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
 	}
 
 	# Otherwise return using the failsafe.
@@ -1198,7 +1198,7 @@ sub doubleString {
 	# We're in the list - ok.
 	if ($validClientLanguages{$language}) {
 
-		return Slim::Utils::Misc::utf8toLatin1(Slim::Utils::Strings::doubleString($string, $language));
+		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::doubleString($string, $language));
 	}
 
 	# Otherwise return using the failsafe.

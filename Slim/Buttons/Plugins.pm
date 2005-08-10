@@ -180,8 +180,8 @@ sub canPlugin {
 			$strings = pack "U0C*", unpack "C*", $strings;
 		} else {
 			# for the 5.6 laggers.
-			if ($Slim::Utils::Misc::locale =~ /^iso-8859/) {
-				$strings = Slim::Utils::Misc::utf8toLatin1($strings);
+			if ($Slim::Utils::Unicode::locale =~ /^iso-8859/) {
+				$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
 			}
 		}
 

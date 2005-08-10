@@ -546,7 +546,7 @@ sub infoFormat_old {
 	if ($str && $] > 5.007) {
 
 		eval {
-			Encode::from_to($str, $Slim::Utils::Misc::locale, 'utf8');
+			Encode::from_to($str, $Slim::Utils::Unicode::locale, 'utf8');
 			Encode::_utf8_on($str);
 		};
 
@@ -995,7 +995,7 @@ sub infoFormat {
 	if ($str && $] > 5.007) {
 
 		eval {
-			Encode::from_to($str, $Slim::Utils::Misc::locale, 'utf8');
+			Encode::from_to($str, $Slim::Utils::Unicode::locale, 'utf8');
 			Encode::_utf8_on($str);
 		};
 
@@ -1046,7 +1046,7 @@ sub plainTitle {
 	} else {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
-			$file = Slim::Utils::Misc::utf8decode_locale($file);
+			$file = Slim::Utils::Unicode::utf8decode_locale($file);
 		}
 
 		if ($file) {
@@ -1580,7 +1580,7 @@ sub fileName {
 		$j = (splitdir($j))[-1];
 	}
 
-	return Slim::Utils::Misc::utf8decode_locale($j);
+	return Slim::Utils::Unicode::utf8decode_locale($j);
 }
 
 sub sortFilename {

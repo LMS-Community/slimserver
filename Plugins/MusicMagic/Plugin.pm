@@ -514,7 +514,7 @@ sub exportFunction {
 
 				# Both Linux & Windows need conversion to the current charset.
 				if (Slim::Utils::OSDetect::OS() ne 'mac') {
-					$songInfo{'file'} = Encode::encode($Slim::Utils::Misc::locale, $songInfo{'file'}, Encode::FB_QUIET());
+					$songInfo{'file'} = Encode::encode($Slim::Utils::Unicode::locale, $songInfo{'file'}, Encode::FB_QUIET());
 				}
 
 				# tag information in the windows version of
@@ -971,7 +971,7 @@ sub getMix {
 	# Work around for bug #881 The windows version of MMM doesn't send back proper UTF-8
 	if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
 
-		$mixArgs = Encode::encode($Slim::Utils::Misc::locale, $mixArgs, Encode::FB_QUIET());
+		$mixArgs = Encode::encode($Slim::Utils::Unicode::locale, $mixArgs, Encode::FB_QUIET());
 		$mixArgs = URI::Escape::uri_escape($mixArgs);
 
 	} else {

@@ -675,7 +675,7 @@ sub handleTrack {
 	}
 
 	if (defined $location) {
-		$location = Slim::Utils::Misc::utf8off($location);
+		$location = Slim::Utils::Unicode::utf8off($location);
 	}
 
 	if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
@@ -689,9 +689,9 @@ sub handleTrack {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
 
-		if ($] > 5.007 && $file && $Slim::Utils::Misc::locale ne 'utf8') {
+		if ($] > 5.007 && $file && $Slim::Utils::Unicode::locale ne 'utf8') {
 
-			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Misc::locale) };
+			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Unicode::locale) };
 
 			# If the user is using both iTunes & a music folder,
 			# iTunes stores the url as encoded utf8 - but we want
@@ -937,7 +937,7 @@ sub handleCharElement {
 		if ($] > 5.007) {
 			$item{$currentKey} = $value;
 		} else {
-			$item{$currentKey} = Slim::Utils::Misc::utf8toLatin1($value);
+			$item{$currentKey} = Slim::Utils::Unicode::utf8toLatin1($value);
 		}
 
 		return;

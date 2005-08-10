@@ -992,7 +992,7 @@ sub generateHTTPResponse {
 		if ($] > 5.007) {
 			$contentType .= '; charset=utf-8';
 		} else {
-			$contentType .= "; charset=$Slim::Utils::Misc::locale";
+			$contentType .= "; charset=$Slim::Utils::Unicode::locale";
 		}
 	}
 
@@ -1614,10 +1614,10 @@ sub newSkinTemplate {
 			'nbsp' => \&nonBreaking,
 			'uri' => \&URI::Escape::uri_escape_utf8,
 			'unuri' => \&URI::Escape::uri_unescape,
-			'utf8decode' => \&Slim::Utils::Misc::utf8decode,
-			'utf8encode' => \&Slim::Utils::Misc::utf8encode,
-			'utf8on' => \&Slim::Utils::Misc::utf8on,
-			'utf8off' => \&Slim::Utils::Misc::utf8off,
+			'utf8decode' => \&Slim::Utils::Unicode::utf8decode,
+			'utf8encode' => \&Slim::Utils::Unicode::utf8encode,
+			'utf8on' => \&Slim::Utils::Unicode::utf8on,
+			'utf8off' => \&Slim::Utils::Unicode::utf8off,
 		},
 
 		EVAL_PERL => 1,
@@ -1672,7 +1672,7 @@ sub _generateContentFromFile {
 
 		} else {
 
-			$params->{'LOCALE'} = $Slim::Utils::Misc::locale || 'iso-8859-1';
+			$params->{'LOCALE'} = $Slim::Utils::Unicode::locale || 'iso-8859-1';
 		}
 
 		unless ($template->process($path,$params,\$output)) {

@@ -128,9 +128,9 @@ sub readM3U {
 
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
-		my $enc = Slim::Utils::Misc::encodingFromString($entry);
+		my $enc = Slim::Utils::Unicode::encodingFromString($entry);
 
-		$entry = Slim::Utils::Misc::utf8decode_guess($entry, $enc);
+		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 
 		if (!$foundBOM) {
 
@@ -194,9 +194,9 @@ sub readPLS {
 
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
-		my $enc = Slim::Utils::Misc::encodingFromString($line);
+		my $enc = Slim::Utils::Unicode::encodingFromString($line);
 
-		$line = Slim::Utils::Misc::utf8decode_guess($line, $enc);
+		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
 
 		if (!$foundBOM) {
 
@@ -259,9 +259,9 @@ sub parseCUE {
 
 	for my $line (@$lines) {
 
-		my $enc = Slim::Utils::Misc::encodingFromString($line);
+		my $enc = Slim::Utils::Unicode::encodingFromString($line);
 
-		$line = Slim::Utils::Misc::utf8decode_guess($line, $enc);
+		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
 
 		# strip whitespace from end
 		$line =~ s/\s*$//;
@@ -602,7 +602,7 @@ sub writeM3U {
 				next;
 			};
 			
-			my $title = Slim::Utils::Misc::utf8decode( $track->title );
+			my $title = Slim::Utils::Unicode::utf8decode( $track->title );
 
 			if ($title) {
 				print $output "#EXTINF:-1,$title\n";
@@ -612,7 +612,7 @@ sub writeM3U {
 		# XXX - we still have a problem where there can be decomposed
 		# unicode characters. I don't know how this happens - it's
 		# coming from the filesystem.
-		my $path = Slim::Utils::Misc::utf8decode( _pathForItem($item, 1) );
+		my $path = Slim::Utils::Unicode::utf8decode( _pathForItem($item, 1) );
 
 		print $output "$path\n";
 	}

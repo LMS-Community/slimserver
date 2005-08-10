@@ -623,8 +623,8 @@ sub modifyPlaylistCallback {
 					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
 					'attributes' => {
 						'TITLE' => sprintf('%s - %s', 
-							Slim::Utils::Misc::utf8encode($eachclient->string('NOW_PLAYING')),
-							Slim::Utils::Misc::utf8encode($eachclient->name ||  $eachclient->ip),
+							Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),
+							Slim::Utils::Unicode::utf8encode($eachclient->name ||  $eachclient->ip),
 						),
 
 						'CT'    => 'cpl',

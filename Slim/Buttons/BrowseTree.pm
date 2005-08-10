@@ -197,7 +197,7 @@ sub browseTreeItemName {
 		${$client->param('valueRef')} = $item;
 	}
 
-	return Slim::Utils::Misc::utf8on( Slim::Music::Info::fileName($item) );
+	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item) );
 }
 
 # Method invoked by INPUT.List to map an item in the list

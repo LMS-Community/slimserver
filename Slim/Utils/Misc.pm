@@ -16,23 +16,18 @@ our @EXPORT_OK = qw(assert bt msg msgf watchDog);
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
-use Fcntl qw(:seek);
-use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
+use POSIX qw(strftime setlocale LC_TIME);
 use Sys::Hostname;
 use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use URI;
 use URI::file;
 
-if ($] > 5.007) {
-	require Encode;
-	require File::BOM;
-}
-
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Strings;
+require Slim::Utils::Unicode;
 
 our $log    = "";
 our $watch  = 0;
@@ -54,79 +49,6 @@ BEGIN {
 
 # Cache our user agent string.
 my $userAgentString;
-
-# Find out what code page we're in, so we can properly translate file/directory encodings.
-our $locale = '';
-our $utf8_re_bits;
-
-{
-        if ($^O =~ /Win32/) {
-
-		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();
-		my $lcid   = Win32::OLE::NLS::MAKELCID($langid);
-		my $linfo  = Win32::OLE::NLS::GetLocaleInfo($lcid, Win32::OLE::NLS::LOCALE_IDEFAULTANSICODEPAGE());
-
-		$locale = "cp$linfo";
-
-	} elsif ($^O =~ /darwin/) {
-
-		# I believe this is correct from reading:
-		# http://developer.apple.com/documentation/MacOSX/Conceptual/SystemOverview/FileSystem/chapter_8_section_6.html
-		$locale = 'utf8';
-
-	} else {
-
-		my $lc = POSIX::setlocale(LC_CTYPE) || 'C';
-
-		# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
-		# Otherwise, normalize the codeset part of the locale.
-		if ($lc eq 'C' || $lc eq 'POSIX') {
-			$lc = 'iso-8859-1';
-		} else {
-			$lc = lc((split(/\./, $lc))[1]);
-		}
-
-		# Locale can end up with nothing, if it's invalid, such as "en_US"
-		if (!defined $lc || $lc =~ /^\s*$/) {
-			$lc = 'iso-8859-1';
-		}
-
-		# Sometimes underscores can be aliases - Solaris
-		$lc =~ s/_/-/g;
-
-		# ISO encodings with 4 or more digits use a hyphen after "ISO"
-		$lc =~ s/^iso(\d{4})/iso-$1/;
-
-		# Special case ISO 2022 and 8859 to be nice
-		$lc =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
-
-		$lc =~ s/utf-8/utf8/gi;
-
-		# CJK Locales
-		$lc =~ s/eucjp/euc-jp/i;
-		$lc =~ s/ujis/euc-jp/i;
-		$lc =~ s/sjis/shiftjis/i;
-		$lc =~ s/euckr/euc-kr/i;
-		$lc =~ s/big5/big5-eten/i;
-		$lc =~ s/gb2312/euc-cn/i;
-
-		$locale = $lc;
-	}
-
-	# Setup suspects for Encode::Guess based on the locale - we might also
-	# want to use our own Language pref?
-	if ($locale =~ /^(euc-jp|cp932)$/) {
-
-		Encode::Guess::add_suspects(qw(euc-jp cp932 7bit-jis));
-
-	} elsif ($locale =~ /^(euc-cn|cp936)$/) {
-
-		Encode::Guess::add_suspects(qw(euc-cn cp936 big5-eten));
-	}
-
-	# Create a regex for looks_like_utf8()
-	$utf8_re_bits = join "|", map { latin1toUTF8(chr($_)) } (127..255);
-}
 
 sub blocking {   
 	my $sock = shift;
@@ -281,271 +203,6 @@ sub fileURLFromPath {
 	my $uri  = URI::file->new($path);
 	$uri->host('');
 	return $uri->as_string;
-}
-
-# Unicode / Encoding functions.
-
-sub utf8decode {
-	return utf8decode_guess(@_);
-}
-
-sub utf8decode_guess {
-	my $string = shift;
-	my $prefer_encoding;
-
-	# Bail early if it's just ascii
-	if (looks_like_ascii($string)) {
-		return $string;
-	}
-
-	my $orig = $string;
-
-	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
-
-		eval {
-			my $icode = Encode::Guess::guess_encoding($string);
-
-			if (ref $icode) {
-
-				$string = Encode::decode($icode, $string, Encode::FB_QUIET());
-
-			} else {
-
-				if ($icode =! /^no /i) {
-
-					while ($prefer_encoding = shift) {
-
-						$string = Encode::decode($prefer_encoding, $string, Encode::FB_QUIET());
-
-						last if $icode =~ /$prefer_encoding/;
-					}
-				}
-			}
-		}
-	}
-
-	return $string;
-}
-
-sub utf8decode_locale {
-	my $string = shift;
-
-	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
-
-		$string = Encode::decode($Slim::Utils::Misc::locale, $string, Encode::FB_QUIET());
-	}
-
-	return $string;
-}
-
-sub utf8encode {
-	my $string = shift;
-
-	# Bail early if it's just ascii
-	if (looks_like_ascii($string)) {
-		return $string;
-	}
-
-	my $orig = $string;
-
-	# Don't try to encode a string which isn't utf8
-	# 
-	# If the incoming string already is utf8, turn off the utf8 flag.
-	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
-
-		$string = Encode::encode('utf8', $string, Encode::FB_QUIET());
-
-	} elsif ($string && $] > 5.007) {
-
-		Encode::_utf8_off($string);
-	}
-
-	# Check for doubly encoded strings - and revert back to our original
-	# string if that's the case.
-	if ($string && $] > 5.007 && !looks_like_utf8($string)) {
-
-		$string = $orig;
-	}
-
-	return $string;
-}
-
-sub utf8off {
-	my $string = shift;
-
-	if ($string && $] > 5.007) {
-		Encode::_utf8_off($string);
-	}
-
-	return $string;
-}
-
-sub utf8on {
-	my $string = shift;
-
-	if ($string && $] > 5.007 && looks_like_utf8($string)) {
-		Encode::_utf8_on($string);
-	}
-
-	return $string;
-}
-
-sub looks_like_ascii {
-	use bytes;
-
-	return 1 if $_[0] !~ /([^\x00-\x7F])/;
-	return 0;
-}
-
-sub looks_like_latin1 {
-	use bytes;
-
-	return 1 if $_[0] !~ /([^\x00-\xFF])/;
-	return 0;
-}
-
-sub looks_like_utf8 {
-	use bytes;
-
-	return 1 if $_[0] =~ /($utf8_re_bits)/o;
-	return 0;
-}
-
-sub latin1toUTF8 {
-	my $data = shift;
-
-	if ($] > 5.007) {
-
-		$data = eval { Encode::encode('utf8', $data, Encode::FB_QUIET()) } || $data;
-
-	} else {
-
-		$data =~ s/([\x80-\xFF])/chr(0xC0|ord($1)>>6).chr(0x80|ord($1)&0x3F)/eg;
-	}
-
-	return $data;
-}
-
-sub utf8toLatin1 {
-	my $data = shift;
-
-	if ($] > 5.007) {
-
-		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
-
-	} else {
-
-		$data =~ s/([\xC0-\xDF])([\x80-\xBF])/chr(ord($1)<<6&0xC0|ord($2)&0x3F)/eg; 
-		$data =~ s/[\xE2][\x80][\x99]/'/g;
-	}
-
-	return $data;
-}
-
-sub encodingFromString {
-
-	my $encoding = 'raw';
-
-	# Don't copy a potentially large string - just read it from the stack.
-	if (looks_like_ascii($_[0])) {
-
-		$encoding = 'ascii';
-
-	} elsif (looks_like_utf8($_[0])) {
-	
-		$encoding = 'utf8';
-
-	} elsif (looks_like_latin1($_[0])) {
-	
-		$encoding = 'iso-8859-1';
-	}
-
-	return $encoding;
-}
-
-sub encodingFromFileHandle {
-	my $fh = shift;
-
-	# If we didn't get a filehandle, not much we can do.
-	if (!ref($fh) || !$fh->can('seek')) {
-
-		msg("Warning: Not a filehandle in encodingFromFileHandle()\n");
-		bt();
-
-		return;
-	}
-
-	local $/ = undef;
-
-	# Save the old position (if any)
-	# And find the file size.
-	#
-	# These must be seek() and not sysseek(), as File::BOM uses seek(),
-	# and they'll get confused otherwise.
-	my $pos  = tell($fh);
-	my $size = seek($fh, 0, SEEK_END);
-
-	# Don't do any translation.
-	binmode($fh, ":raw");
-
-	# Try to find a BOM on the file - otherwise check the string
-	#
-	# Although get_encoding_from_filehandle tries to determine if
-	# the handle is seekable or not - the Protocol handlers don't
-	# implement a seek() method, and even if they did, File::BOM
-	# internally would try to read(), which doesn't mix with
-	# sysread(). So skip those m3u files entirely.
-	my $enc = '';
-
-	# Explitly check for IO::String - as it does have a seek() method!
-	if ($] > 5.007 && ref($fh) && ref($fh) ne 'IO::String' && $fh->can('seek')) {
-		$enc = File::BOM::get_encoding_from_filehandle($fh);
-	}
-
-	# File::BOM got something - let's get out of here.
-	return $enc if $enc;
-
-	# Seek to the beginning of the file.
-	seek($fh, 0, SEEK_SET);
-
-	#
-	read($fh, my $string, $size);
-
-	# Seek back to where we started.
-	seek($fh, $pos, SEEK_SET);
-
-	return encodingFromString($string);
-}
-
-# Handle either a filename or filehandle
-sub encodingFromFile {
-	my $file = shift;
-
-	my $encoding = $locale;
-
-	if (ref($file) && $file->can('seek')) {
-
-		$encoding = encodingFromFileHandle($file);
-
-	} elsif (-r $file) {
-
-		my $fh = new FileHandle;
-		$fh->open($file) or do {
-			msg("Couldn't open file: [$file] : $!\n");
-			return $encoding;
-		};
-
-		$encoding = encodingFromFileHandle($fh);
-
-		$fh->close();
-
-	} else {
-
-		msg("Warning: Not a filename or filehandle encodingFromFile( $file )\n");
-		bt();
-	}
-
-	return $encoding;
 }
 
 ########
@@ -1005,14 +662,14 @@ sub longDateF {
 	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('longdateFormat'), $time);
 	$date =~ s/\|0*//;
-	return utf8decode_locale($date);
+	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
 sub shortDateF {
 	my $time = shift || time();
 	my $date = localeStrftime(Slim::Utils::Prefs::get('shortdateFormat'),  $time);
 	$date =~ s/\|0*//;
-	return utf8decode_locale($date);
+	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
 sub timeF {
@@ -1020,7 +677,7 @@ sub timeF {
 	my $time = localeStrftime(Slim::Utils::Prefs::get('timeFormat'),  $ltime);
 	# remove leading zero if another digit follows
 	$time =~ s/\|0?(\d+)/$1/;
-	return utf8decode_locale($time);
+	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
 
 sub localeStrftime {
@@ -1052,7 +709,7 @@ sub localeStrftime {
 	# $time = utf8toLatin1($time);
 	
 	setlocale(LC_TIME, "");
-	return utf8decode_locale($time);
+	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
 
 sub fracSecToMinSec {
@@ -1088,7 +745,7 @@ sub userAgentString {
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),
 		Slim::Utils::Prefs::get('language'),
-		$locale,
+		$Slim::Utils::Unicode::locale,
 	);
 
 	return $userAgentString;
@@ -1107,7 +764,7 @@ sub settingsDiagString {
 		$::REVISION,
 		$osDetails->{'osName'},
 		Slim::Utils::Prefs::get('language'),
-		$Slim::Utils::Misc::locale,
+		$Slim::Utils::Unicode::locale,
 	);
 
 	return $diagString;

@@ -764,7 +764,7 @@ sub _decodeUTF8 {
 		if ($] > 5.007) {
 			$tags->{$tag} = eval { Encode::decode("utf8", $tags->{$tag}, Encode::FB_QUIET()) };
 		} else {
-			$tags->{$tag} = Slim::Utils::Misc::utf8toLatin1($tags->{$tag});
+			$tags->{$tag} = Slim::Utils::Unicode::utf8toLatin1($tags->{$tag});
 		}
 	}
 }

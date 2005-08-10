@@ -1392,7 +1392,7 @@ sub browsetree {
 
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
-		$list_form{'text'}	    = Slim::Utils::Misc::utf8decode_locale($relPath);
+		$list_form{'text'}	    = Slim::Utils::Unicode::utf8decode_locale($relPath);
 
 		$list_form{'hierarchy'}	    = join('/', @levels, $item->id);
 		$list_form{'descend'}	    = Slim::Music::Info::isList($item) ? 1 : 0;
