@@ -240,65 +240,60 @@ sub parseCUE {
 		return;
 	}
 
-	for (@$lines) {
+	for my $line (@$lines) {
 
-#		unless ($noUTF8) {
-#
-#			if ($] > 5.007) {
-#				$_ = eval { Encode::decode("utf8", $_, Encode::FB_QUIET()) };
-#			} else {
-#				$_ = Slim::Utils::Misc::utf8toLatin1($_);
-#			}
-#		}
+		my $enc = Slim::Utils::Misc::encodingFromString($line);
+
+		$line = Slim::Utils::Misc::utf8decode_guess($line, $enc);
 
 		# strip whitespace from end
-		s/\s*$//;
+		$line =~ s/\s*$//;
 
-		if (/^TITLE\s+\"(.*)\"/i) {
+		if ($line =~ /^TITLE\s+\"(.*)\"/i) {
 			$album = $1;
 
-		} elsif (/^PERFORMER\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
 			$artist = $1;
 
-		} elsif (/^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
 			$year = $1;
 
-		} elsif (/^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
 			$genre = $1;
 
-		} elsif (/^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
 
-		} elsif (/^FILE\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^FILE\s+\"(.*)\"/i) {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
 
-		} elsif (/^FILE\s+\"?(\S+)\"?/i) {
+		} elsif ($line =~ /^FILE\s+\"?(\S+)\"?/i) {
 			# Some cue sheets may not have quotes. Allow that, but
 			# the filenames can't have any spaces in them.
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
 
-		} elsif (/^\s+TRACK\s+(\d+)\s+AUDIO/i) {
+		} elsif ($line =~ /^\s+TRACK\s+(\d+)\s+AUDIO/i) {
 			$currtrack = int ($1);
 
-		} elsif (defined $currtrack and /^\s+PERFORMER\s+\"(.*)\"/i) {
+		} elsif (defined $currtrack and $line =~ /^\s+PERFORMER\s+\"(.*)\"/i) {
 			$tracks->{$currtrack}->{'ARTIST'} = $1;
 
 		} elsif (defined $currtrack and
-			 /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
+			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
+
 		   $tracks->{$currtrack}->{uc $1} = $2;
 
-		} elsif (defined $currtrack and
-			 /^\s+INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
+		} elsif (defined $currtrack and $line =~ /^\s+INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
+
 			$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
 
-		} elsif (defined $currtrack and
-			 /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
+		} elsif (defined $currtrack and $line =~ /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
+
 			$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
 
-		} elsif (defined $currtrack and
-			 /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
+		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
 		}
 	}
@@ -418,9 +413,7 @@ sub readCUE {
 		$line =~ s/\cM//g;  
 		next if ($line =~ /^\s*$/);
 
-		my $enc = Slim::Utils::Misc::encodingFromString($line);
-
-		push @lines, Slim::Utils::Misc::utf8decode_guess($line, $enc);
+		push @lines, $line;
 	}
 
 	close $cuefile;
