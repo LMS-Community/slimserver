@@ -24,7 +24,7 @@ sub OS {
 sub init {
 	if (!$detectedOS) {
 
-		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
+		$::d_os && msg("Auto-detecting OS: $^O\n");
 
 		if ($^O =~/darwin/i) {
 
@@ -51,11 +51,11 @@ sub init {
 			initDetailsForUnix();
 		}
 
-		$::d_os && Slim::Utils::Misc::msg("I think it's \"$detectedOS\".\n");
+		$::d_os && msg("I think it's \"$detectedOS\".\n");
 
 	} else {
 
-		$::d_os && Slim::Utils::Misc::msg("OS detection skipped, using \"$detectedOS\".\n");
+		$::d_os && msg("OS detection skipped, using \"$detectedOS\".\n");
 	}
 }
 

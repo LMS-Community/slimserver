@@ -191,7 +191,7 @@ sub jump {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 		
-		$::d_playlist && Slim::Utils::Misc::msg("Playlist: Jumping to song index: $pos\n");
+		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
 		
 		#kill the animation to allow the information to update unless doing showBriefly
 		$client->killAnimation() unless ($client->animateState() == 5);

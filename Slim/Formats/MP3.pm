@@ -1,6 +1,6 @@
 package Slim::Formats::MP3;
 
-# $Id: MP3.pm,v 1.13 2004/12/07 20:19:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@ sub getTag {
 	# Seems redundant.
 	return undef if (!$fh);
 
-	$::d_mp3 && Slim::Utils::Misc::msg("Getting tags for: $file\n");	
+	$::d_mp3 && msg("Getting tags for: $file\n");	
 	my $tags = MP3::Info::get_mp3tag($fh); 
 	my $info = MP3::Info::get_mp3info($fh);
 
@@ -95,13 +95,13 @@ sub seekNextFrame {
 	$startoffset = $filelen if ($startoffset > $filelen); 
 
 	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$::d_mp3 && Slim::Utils::Misc::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	$::d_mp3 && msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread $fh, $buf, $MAXDISTANCE, 0;
 
 	$len = length($buf);
 	if ($len<4) {
-		$::d_mp3 && Slim::Utils::Misc::msg("got less than 4 bytes\n");
+		$::d_mp3 && msg("got less than 4 bytes\n");
 		return (0,0) 
 	}
 
@@ -114,9 +114,9 @@ sub seekNextFrame {
 		$end=0;
 	}
 
-	$::d_mp3 && Slim::Utils::Misc::msg("scanning: len = $len, start = $start, end = $end\n");
+	$::d_mp3 && msg("scanning: len = $len, start = $start, end = $end\n");
 	for ($pos = $start; $pos!=$end; $pos+=$direction) {
-		#$::d_mp3 && Slim::Utils::Misc::msg("looking at $pos\n");
+		#$::d_mp3 && msg("looking at $pos\n");
 
 		$head = substr($buf, $pos, 4);
 		next if (ord($head) != 0xff);
@@ -142,22 +142,22 @@ sub seekNextFrame {
 		}
 		
 #		if ($::d_mp3) {
-#			Slim::Utils::Misc::msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
+#			msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
 #			
 #			foreach my $k (sort keys %$h) {
-#				Slim::Utils::Misc::msg(  $k . ":\t" . $h->{$k} . "\n");
+#				msg(  $k . ":\t" . $h->{$k} . "\n");
 #			}
-#			Slim::Utils::Misc::msg( "Calculated length including header: $calculatedlength\n");
+#			msg( "Calculated length including header: $calculatedlength\n");
 #		}
 				
 		my $frame_end =  $found_at_offset + $calculatedlength - 1;
-#		$::d_mp3 && Slim::Utils::Misc::msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
+#		$::d_mp3 && msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
 
 		return($found_at_offset, $frame_end);
 	}
 
 	if (!$foundsync) {
-		$::d_mp3 && Slim::Utils::Misc::msg("Couldn't find any frame header\n");
+		$::d_mp3 && msg("Couldn't find any frame header\n");
 		return(0,0);
 	}
 }

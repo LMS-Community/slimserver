@@ -1,6 +1,6 @@
 package Plugins::MoodLogic::Plugin;
 
-#$Id: MoodLogic.pm 1757 2005-01-18 21:22:50Z dsully $
+#$Id$
 use strict;
 
 use File::Spec::Functions qw(catfile);
@@ -320,7 +320,7 @@ sub exportFunction {
 			$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
 			if (Win32::OLE->LastError) {
 				$isauto = 0;
-				$::d_moodlogic && Slim::Utils::Misc::msg("MoodLogic: No AutoPlaylists Found\n");
+				$::d_moodlogic && msg("MoodLogic: No AutoPlaylists Found\n");
 			};
 		}
 		
@@ -402,7 +402,7 @@ sub exportFunction {
 
 		}) || do {
 
-			$::d_moodlogic && Slim::Utils::Misc::msg("MoodLogic: Couldn't create track for: $url\n");
+			$::d_moodlogic && msg("MoodLogic: Couldn't create track for: $url\n");
 
 			return 1;
 		};

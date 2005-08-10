@@ -1,6 +1,6 @@
 package Plugins::MoodLogic::InstantMix;
 
-#$Id: InstantMix.pm 1757 2005-01-18 21:22:50Z dsully $
+#$Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

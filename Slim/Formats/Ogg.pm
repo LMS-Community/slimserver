@@ -48,12 +48,12 @@ sub getTag {
 	};
 
 	if (!$ogg or $@) {
-		$::d_formats && Slim::Utils::Misc::msg("Can't open ogg handle for $file\n");
+		$::d_formats && msg("Can't open ogg handle for $file\n");
 		return $tags;
 	}
 
 	if (!$ogg->info('length')) {
-		$::d_formats && Slim::Utils::Misc::msg("Length for Ogg file: $file is 0 - skipping.\n");
+		$::d_formats && msg("Length for Ogg file: $file is 0 - skipping.\n");
 		return $tags;
 	}
 

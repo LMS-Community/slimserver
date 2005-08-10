@@ -196,7 +196,7 @@ sub addStrings {
 			}
 
 		} else {
-			Slim::Utils::Misc::msg("Parse error on line $ln: $line\n");
+			msg("Parse error on line $ln: $line\n");
 		}
 	}
 }
@@ -233,8 +233,8 @@ sub string {
 	}
 
 	unless ($dontWarn) {
-		Slim::Utils::Misc::bt();
-		Slim::Utils::Misc::msg(
+		bt();
+		msg(
 			"Undefined string: $stringname\nrequested language: $language\nfailsafe language: $failsafe_language\n"
 		);
 	}

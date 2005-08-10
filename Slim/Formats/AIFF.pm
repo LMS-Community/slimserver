@@ -19,7 +19,7 @@ sub getTag {
 	# Make sure the file exists.
 	return undef unless $filesize && -r $file;
 
-	$::d_formats && Slim::Utils::Misc::msg( "Reading AIFF information for $file\n");
+	$::d_formats && msg( "Reading AIFF information for $file\n");
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = MP3::Info::get_mp3tag($file);
@@ -28,7 +28,7 @@ sub getTag {
 	my $chunkheader;
 	
 	open $f, "<$file" || return undef;
-	$::d_formats && Slim::Utils::Misc::msg("opened file\n");
+	$::d_formats && msg("opened file\n");
 	return undef if read($f, $chunkheader, 12) < 12;
 
 	my ($tag, $size, $format) = unpack "a4Na4", $chunkheader;
@@ -37,12 +37,12 @@ sub getTag {
 	$tags->{'ENDIAN'} = 1; # unless told otherwise, AIFF/AIFC is big-endian
 	$tags->{'FS'} = $filesize;
 	
-	$::d_formats && Slim::Utils::Misc::msg("read first tag: $tag $size $format\n");
+	$::d_formats && msg("read first tag: $tag $size $format\n");
 	
 	return undef if ($tag ne 'FORM' || ($format ne 'AIFF' && $format ne 'AIFC'));
 	if ($::d_formats && $size != $filesize) {
 # itunes rips with bogus size info...
-		Slim::Utils::Misc::msg("  ignores invalid filesize in header = $size, actual file size = $filesize\n");
+		msg("  ignores invalid filesize in header = $size, actual file size = $filesize\n");
 	}
 
 	my %readchunks = ();
@@ -52,7 +52,7 @@ sub getTag {
 		return undef if read($f, $chunkheader, 8) < 8;
 		($tag, $size) = unpack "a4N", $chunkheader;
 		$readchunks{$tag} = 1;
-		$::d_formats && Slim::Utils::Misc::msg("read tag: $tag $size at file offset $chunkpos\n");
+		$::d_formats && msg("read tag: $tag $size at file offset $chunkpos\n");
 		# look for the sound chunk
 		if ($tag eq 'SSND') {
 			my $ssndheader;
@@ -60,7 +60,7 @@ sub getTag {
  			my ($dataoffset, $blocksize) = unpack "NN", $ssndheader;
   			#ignore the blocksize for now...
  			$tags->{'OFFSET'} = $chunkpos + 16 + $dataoffset;
-			$::d_formats && Slim::Utils::Misc::msg("  dataoffset=$dataoffset -> $tags->{'OFFSET'}\n");
+			$::d_formats && msg("  dataoffset=$dataoffset -> $tags->{'OFFSET'}\n");
  			
 		# look for the chunk describing the format
 		} elsif ($tag eq 'COMM') {
@@ -70,7 +70,7 @@ sub getTag {
  			return undef if read($f, $commheader, $expectedsize) != $expectedsize;
  			
  			my ($numChannels, $numSampleFrames, $sampleSize, $sampleRateExp, $sampleRateMantissa, $encoding) = unpack "nNnxCNxxxxa4", $commheader;
- 			$::d_formats && Slim::Utils::Misc::msg("  c=$numChannels, nsf=$numSampleFrames, ss=$sampleSize, sre=$sampleRateExp, srm=$sampleRateMantissa, enc=$encoding\n");
+ 			$::d_formats && msg("  c=$numChannels, nsf=$numSampleFrames, ss=$sampleSize, sre=$sampleRateExp, srm=$sampleRateMantissa, enc=$encoding\n");
  
  			$tags->{'CHANNELS'} = $numChannels;
  			$tags->{'SAMPLESIZE'} = $sampleSize;
@@ -106,7 +106,7 @@ sub getTag {
 	unless ($readchunks{'COMM'}) {
 # we don't know anything about sample rates, number of channels, sample size, etc...
 # could be 8-bit mono, 16-bit stereo, ...
-		$::d_formats && Slim::Utils::Misc::msg("AIFF: Missing COMM chunk\n");
+		$::d_formats && msg("AIFF: Missing COMM chunk\n");
 		return undef;
 	}
 	return $tags;

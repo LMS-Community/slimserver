@@ -18,7 +18,7 @@ sub openRemoteStream {
 
 	warn "Please update your plugin! Use Slim::Player::Source::openRemoteStream() instead.";
 
-	Slim::Utils::Misc::bt();
+	bt();
 
 	return Slim::Player::Source::openRemoteStream(@_);
 }

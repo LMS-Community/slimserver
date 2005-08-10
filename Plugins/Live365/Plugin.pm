@@ -607,7 +607,7 @@ sub channelModeError {
 	$live365->{$client}->clearBlockingStatus();
 
 	if ($live365->{$client}->isLoggedIn()) {
-		$::d_plugins && defined($source) && Slim::Utils::Misc::msg( "No stations for source: $source\n");
+		$::d_plugins && defined($source) && msg( "No stations for source: $source\n");
 		Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOSTATIONS' ), ' ' );
 	} else {
 		Slim::Display::Animation::showBriefly( $client, $client->string('PLUGIN_LIVE365_NOT_LOGGED_IN' ), ' ' );

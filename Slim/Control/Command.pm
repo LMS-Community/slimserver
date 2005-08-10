@@ -747,8 +747,8 @@ sub execute {
 
 			} else {
 
-				Slim::Utils::Misc::msg("Couldn't fetch object for URL: [$url] - skipping track\n");
-				Slim::Utils::Misc::bt();
+				msg("Couldn't fetch object for URL: [$url] - skipping track\n");
+				bt();
 			}
 
 		} elsif ($p0 eq "path") {

@@ -296,7 +296,7 @@ sub coverArt {
 		return undef;
 	}
 	
-	$::d_artwork && Slim::Utils::Misc::msgf("Retrieving artwork ($art) for: %s\n", $self->url());
+	$::d_artwork && msgf("Retrieving artwork ($art) for: %s\n", $self->url());
 	
 	my ($body, $contenttype, $mtime, $path);
 
@@ -308,7 +308,7 @@ sub coverArt {
 
 		if ($body) {
 
-			$::d_artwork && Slim::Utils::Misc::msg("Found cached $art file: $artwork\n");
+			$::d_artwork && msg("Found cached $art file: $artwork\n");
 
 			$contenttype = Slim::Music::Info::mimeType(Slim::Utils::Misc::fileURLFromPath($artwork));
 

@@ -105,7 +105,7 @@ sub asyncHTTPRequest {
 	my $url = $live365_base . $path . '?' . $stringArgs;
 	$http->get($url);
 
-	$::d_plugins && Slim::Utils::Misc::msg("Live365: Loading $url\n");
+	$::d_plugins && msg("Live365: Loading $url\n");
 
 	$self->{asyncHTTP} = $http;
 }
@@ -425,7 +425,7 @@ sub presetsLoadSub {
 
 	eval '$self->{Directory} = XMLin( $xmlPresets, forcearray => [ "LIVE365_STATION" ] )';
 	if ($@) {
-		$::d_plugins && Slim::Utils::Misc::msg("Error parsing presets: $@" );
+		$::d_plugins && msg("Error parsing presets: $@" );
 		&$errorSub($client);
 		return;
 	}
@@ -437,7 +437,7 @@ sub presetsLoadSub {
 		# Very lazy way to search the XML for an error message
 		# indicating that our session timed out
 		$loginInformation{loggedin} = 0;
-		$::d_plugins && Slim::Utils::Misc::msg("Login session timed out");
+		$::d_plugins && msg("Login session timed out");
 		&$errorSub($client);
 		return;
 	} else {
@@ -530,7 +530,7 @@ sub stationLoadSub {
 
 	eval '$self->{Directory} = XMLin( $xmlDirectory, forcearray => [ "LIVE365_STATION" ] )';
 	if ($@) {
-		$::d_plugins && Slim::Utils::Misc::msg("Error parsing station directory: $@" );	
+		$::d_plugins && msg("Error parsing station directory: $@" );	
 		&$errorSub($client);
 		return;
 	}
@@ -720,7 +720,7 @@ sub infoLoadSub {
 
 	eval '$self->{StationInfo} = XMLin( $xmlInfo )';
 	if ($@) {
-		$::d_plugins && Slim::Utils::Misc::msg("Error parsing station info: $@" );	
+		$::d_plugins && msg("Error parsing station info: $@" );	
 		&$errorSub($client);
 		return;
 	}

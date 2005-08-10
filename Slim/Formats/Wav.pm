@@ -1,6 +1,6 @@
 package Slim::Formats::Wav;
 
-# $Id: Wav.pm,v 1.12 2004/03/10 21:29:37 dean Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -30,7 +30,7 @@ sub getTag {
 
 	my $file = shift || "";
 
-	$::d_formats && Slim::Utils::Misc::msg( "Reading WAV information for $file\n");
+	$::d_formats && msg( "Reading WAV information for $file\n");
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = MP3::Info::get_mp3tag($file);
@@ -79,11 +79,11 @@ sub myErrorHandler {
 
 	if ( $parameters{'warning'} ) {
 		# This is a non-critical warning
-		$::d_formats && Slim::Utils::Misc::msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_formats && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
 	} else {
 		# Critical error!
 		$bail = 1;
-		$::d_formats && Slim::Utils::Misc::msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_formats && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
 	}
 }
 

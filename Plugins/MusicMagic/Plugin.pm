@@ -544,7 +544,7 @@ sub exportFunction {
 
 			}) || do {
 
-				$::d_musicmagic && Slim::Utils::Misc::msg("MusicMagic: Couldn't create track for $fileurl!\n");
+				$::d_musicmagic && msg("MusicMagic: Couldn't create track for $fileurl!\n");
 				next;
 			};
 

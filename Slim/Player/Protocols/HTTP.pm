@@ -35,7 +35,7 @@ sub new {
 	my $args  = shift;
 
 	unless ($args->{'url'}) {
-		Slim::Utils::Misc::msg("No url passed to Slim::Player::Protocols->new() !\n");
+		msg("No url passed to Slim::Player::Protocols->new() !\n");
 		return undef;
 	}
 
@@ -103,7 +103,7 @@ sub open {
 
 	my $in_addr = inet_aton($server) || do {
 
-		Slim::Utils::Misc::msg("Couldn't resolve IP address for: $server\n");
+		msg("Couldn't resolve IP address for: $server\n");
 		close $sock;
 		return undef;
 	};
@@ -511,8 +511,8 @@ sub DESTROY {
 
 		my $class = ref($self);
 
-		Slim::Utils::Misc::msgf("%s - in DESTROY\n", $class);
-		Slim::Utils::Misc::msgf("%s About to close socket to: [%s]\n", $class, ${*$self}{'url'});
+		msgf("%s - in DESTROY\n", $class);
+		msgf("%s About to close socket to: [%s]\n", $class, ${*$self}{'url'});
 	}
 
 	$self->close;

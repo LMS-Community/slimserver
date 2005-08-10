@@ -168,8 +168,8 @@ sub objectForUrl {
 	}
 
 	if (!defined($url)) {
-		Slim::Utils::Misc::msg("Null track request!\n"); 
-		Slim::Utils::Misc::bt();
+		msg("Null track request!\n"); 
+		bt();
 		return undef;
 	}
 
@@ -250,7 +250,7 @@ sub find {
 	# require knowing the entire result set.
 	my $findKey = Storable::freeze($args);
 
-	$::d_sql && Slim::Utils::Misc::msg("Generated findKey: [$findKey]\n");
+	$::d_sql && msg("Generated findKey: [$findKey]\n");
 
 	if (!defined $lastFind{$findKey}) {
 
@@ -266,7 +266,7 @@ sub find {
 
 	} else {
 
-		$::d_sql && Slim::Utils::Misc::msg("Used previous results for findKey: [$findKey]\n");
+		$::d_sql && msg("Used previous results for findKey: [$findKey]\n");
 	}
 
 	my $items = $lastFind{$findKey};
@@ -372,7 +372,7 @@ sub newTrack {
 
 	my $deferredAttributes;
 
-	$::d_info && Slim::Utils::Misc::msg("New track for $url\n");
+	$::d_info && msg("New track for $url\n");
 
 	# Default the tag reading behaviour if not explicitly set
 	if (!defined $args->{readTags}) {
@@ -382,7 +382,7 @@ sub newTrack {
 	# Read the tag, and start populating the database.
 	if ($args->{'readTags'}) {
 
-		$::d_info && Slim::Utils::Misc::msg("readTag was ". $args->{'readTags'}  ." for $url\n");
+		$::d_info && msg("readTag was ". $args->{'readTags'}  ." for $url\n");
 
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 	}
@@ -399,7 +399,7 @@ sub newTrack {
 
 		if (defined $val && exists $trackAttrs->{lc $key}) {
 
-			$::d_info && Slim::Utils::Misc::msg("Adding $url : $key to $val\n");
+			$::d_info && msg("Adding $url : $key to $val\n");
 
 			$columnValueHash->{lc $key} = $val;
 		}
@@ -413,8 +413,8 @@ sub newTrack {
 	my $track = eval { Slim::DataStores::DBI::Track->create($columnValueHash) };
 
 	if ($@) {
-		Slim::Utils::Misc::bt();
-		Slim::Utils::Misc::msg("Couldn't create track for $url : $@\n");
+		bt();
+		msg("Couldn't create track for $url : $@\n");
 
 		#require Data::Dumper;
 		#print Data::Dumper::Dumper($columnValueHash);
@@ -461,9 +461,9 @@ sub updateOrCreate {
 	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
 
 	if (!defined($url)) {
-		Slim::Utils::Misc::msg("No URL specified for updateOrCreate\n");
-		Slim::Utils::Misc::msg(%{$attributeHash});
-		Slim::Utils::Misc::bt();
+		msg("No URL specified for updateOrCreate\n");
+		msg(%{$attributeHash});
+		bt();
 		return;
 	}
 
@@ -479,7 +479,7 @@ sub updateOrCreate {
 
 	if (defined($track)) {
 
-		$::d_info && Slim::Utils::Misc::msg("Merging entry for $url\n");
+		$::d_info && msg("Merging entry for $url\n");
 
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
@@ -490,7 +490,7 @@ sub updateOrCreate {
 
 			if (defined $val && $val ne '' && exists $trackAttrs->{lc $key}) {
 
-				$::d_info && Slim::Utils::Misc::msg("Updating $url : $key to $val\n");
+				$::d_info && msg("Updating $url : $key to $val\n");
 
 				$set{$key} = $val;
 			}
@@ -565,7 +565,7 @@ sub delete {
 		$track->delete();
 		$self->dbh->commit if $commit;
 
-		$::d_info && Slim::Utils::Misc::msg("cleared $url from database\n");
+		$::d_info && msg("cleared $url from database\n");
 	}
 }
 
@@ -607,7 +607,7 @@ sub cleanupStaleEntries {
 
 	# Setup a little state machine so that the db cleanup can be
 	# scheduled appropriately - ie: one record per run.
-	$::d_import && Slim::Utils::Misc::msg("Adding task for cleanupStaleTrackEntries()..\n");
+	$::d_import && msg("Adding task for cleanupStaleTrackEntries()..\n");
 
 	Slim::Utils::Scheduler::add_task(\&cleanupStaleTrackEntries, $self);
 }
@@ -640,7 +640,7 @@ sub cleanupStaleTrackEntries {
 		# After that, walk the Album, Contributor & Genre tables, to see if
 		# each item has valid tracks still. If it doesn't, remove the object.
 
-		$::d_import && Slim::Utils::Misc::msg("Starting db garbage collection..\n");
+		$::d_import && msg("Starting db garbage collection..\n");
 
 		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
 	}
@@ -655,7 +655,7 @@ sub cleanupStaleTrackEntries {
 
 	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
 
-		$::d_import && Slim::Utils::Misc::msg(
+		$::d_import && msg(
 			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 		);
 
@@ -689,7 +689,7 @@ sub cleanupStaleTrackEntries {
 	# Don't use _hasChanged - because that does more than we want.
 	if (!-r $filepath) {
 
-		$::d_import && Slim::Utils::Misc::msg("Track: $filepath no longer exists. Removing.\n");
+		$::d_import && msg("Track: $filepath no longer exists. Removing.\n");
 
 		$self->delete($track, 0);
 	}
@@ -733,7 +733,7 @@ sub cleanupStaleTableEntries {
 	# We're done.
 	$self->dbh->commit;
 
-	$::d_import && Slim::Utils::Misc::msg("Finished with cleanupStaleTableEntries()\n");
+	$::d_import && msg("Finished with cleanupStaleTableEntries()\n");
 
 	%lastFind = ();
 
@@ -765,7 +765,7 @@ sub mergeVariousArtistsAlbums {
 
 	if (!defined $obj && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
-		$::d_import && Slim::Utils::Misc::msg("Finished with mergeVariousArtistsAlbums()\n");
+		$::d_import && msg("Finished with mergeVariousArtistsAlbums()\n");
 
 		$vaObj = undef;
 
@@ -795,7 +795,7 @@ sub mergeVariousArtistsAlbums {
 		return 1;
 	}
 
-	$::d_import && Slim::Utils::Misc::msgf("Marking album: [%s] as Various Artists.\n", $obj->title);
+	$::d_import && msgf("Marking album: [%s] as Various Artists.\n", $obj->title);
 
 	$obj->compilation(1);
 	$obj->contributor($vaObj);
@@ -833,7 +833,7 @@ sub wipeCaches {
 	Slim::DataStores::DBI::GenreTrack->clearCache();
 	Slim::DataStores::DBI::DataModel->clearObjectCaches();
 
-	$::d_import && Slim::Utils::Misc::msg("wipeAllData: Wiped all in-memory caches.\n");
+	$::d_import && msg("wipeAllData: Wiped all in-memory caches.\n");
 }
 
 # Wipe all data in the database
@@ -854,7 +854,7 @@ sub wipeAllData {
 
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
-	$::d_import && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
+	$::d_import && msg("wipeAllData: Wiped info database\n");
 }
 
 # Force a commit of the database
@@ -880,7 +880,7 @@ sub forceCommit {
 	$self->{'lastTrackURL'} = '';
 	$self->{'lastTrack'} = {};
 
-	$::d_info && Slim::Utils::Misc::msg("forceCommit: syncing to the database.\n");
+	$::d_info && msg("forceCommit: syncing to the database.\n");
 
 	$self->dbh->commit;
 
@@ -1006,7 +1006,7 @@ sub readTags {
 	# get the type without updating the cache
 	my $type = Slim::Music::Info::typeFromPath($file);
 
-	$::d_info && Slim::Utils::Misc::msg("reading tags for: $file\n");
+	$::d_info && msg("reading tags for: $file\n");
 
 	if (Slim::Music::Info::isFileURL($file)) {
 		$filepath = Slim::Utils::Misc::pathFromFileURL($file);
@@ -1030,11 +1030,11 @@ sub readTags {
 		}
 
 		if ($@) {
-			Slim::Utils::Misc::msg("The following error occurred: $@\n");
-			Slim::Utils::Misc::bt();
+			msg("The following error occurred: $@\n");
+			bt();
 		}
 
-		$::d_info && !defined($attributesHash) && Slim::Utils::Misc::msg("Info: no tags found for $filepath\n");
+		$::d_info && !defined($attributesHash) && msg("Info: no tags found for $filepath\n");
 
 		if (defined $attributesHash->{'TRACKNUM'}) {
 			$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
@@ -1048,7 +1048,7 @@ sub readTags {
 
 		if (!$attributesHash->{'TITLE'}) {
 
-			$::d_info && Slim::Utils::Misc::msg("Info: no title found, using plain title for $file\n");
+			$::d_info && msg("Info: no title found, using plain title for $file\n");
 			#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 			Slim::Music::Info::guessTags($file, $type, $attributesHash);
 		}
@@ -1066,7 +1066,7 @@ sub readTags {
 	# Last resort
 	if (!defined $attributesHash->{'TITLE'} || $attributesHash->{'TITLE'} =~ /^\s*$/) {
 
-		$::d_info && Slim::Utils::Misc::msg("Info: no title found, calculating title from url for $file\n");
+		$::d_info && msg("Info: no title found, calculating title from url for $file\n");
 
 		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
@@ -1104,7 +1104,7 @@ sub setAlbumArtwork {
 			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
 		}
 
-		$::d_artwork && Slim::Utils::Misc::msg("Updating $album artwork cache: $filepath\n");
+		$::d_artwork && msg("Updating $album artwork cache: $filepath\n");
 
 		$self->{'artworkCache'}->{$albumId} = 1;
 
@@ -1166,10 +1166,10 @@ sub _commitDBTimer {
 	my $items = $Slim::DataStores::DBI::DataModel::dirtyCount;
 
 	if ($items > 0) {
-		$::d_info && Slim::Utils::Misc::msg("DBI: Periodic commit - $items dirty items\n");
+		$::d_info && msg("DBI: Periodic commit - $items dirty items\n");
 		$self->forceCommit();
 	} else {
-		$::d_info && Slim::Utils::Misc::msg("DBI: Supressing periodic commit - no dirty items\n");
+		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
 	}
 
 	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + DB_SAVE_INTERVAL, \&_commitDBTimer);
@@ -1193,7 +1193,7 @@ sub _checkValidity {
 
 	if (Slim::Music::Info::isFileURL($url) && ($ttl < (time()))) {
 
-		$::d_info && Slim::Utils::Misc::msg("CacheItem: Checking status of $url (TTL: $ttl).\n");
+		$::d_info && msg("CacheItem: Checking status of $url (TTL: $ttl).\n");
 
 		if ($self->_hasChanged($track, $url, $id)) {
 
@@ -1211,8 +1211,8 @@ sub _checkValidity {
 	# I don't have the tracks to, so _checkValidity may be bogus.
 	if (defined $track && ref($track) && $track->isa('Class::DBI::Object::Has::Been::Deleted')) {
 
-		Slim::Utils::Misc::msg("Track: [$id] - [$track] was deleted out from under us!\n");
-		Slim::Utils::Misc::bt();
+		msg("Track: [$id] - [$track] was deleted out from under us!\n");
+		bt();
 
 		$track = undef;
 	}
@@ -1266,7 +1266,7 @@ sub _hasChanged {
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
 
-		$::d_info && Slim::Utils::Misc::msg("re-reading tags from $url as it has changed\n");
+		$::d_info && msg("re-reading tags from $url as it has changed\n");
 		my $attributeHash = $self->readTags($url);
 		$self->updateOrCreate({
 			 'url' => $track,
@@ -1276,7 +1276,7 @@ sub _hasChanged {
 		return 0;
 
 	} else {
-		$::d_info && Slim::Utils::Misc::msg("deleting $url from cache as it no longer exists\n");
+		$::d_info && msg("deleting $url from cache as it no longer exists\n");
 	}
 
 	# Tell the DB to sync - if we're deleting something.
@@ -1638,7 +1638,7 @@ sub _findCoverArt {
 	# Check for Cover Artwork, only if not already present.
 	if ($attributesHash->{'COVER'} || $attributesHash->{'THUMB'}) {
 
-		$::d_artwork && Slim::Utils::Misc::msg("already checked artwork for $file\n");
+		$::d_artwork && msg("already checked artwork for $file\n");
 
 		return;
 	}
@@ -1667,7 +1667,7 @@ sub _findCoverArt {
 
 		if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
 
-			$::d_artwork && Slim::Utils::Misc::msg("ID3 Artwork cache entry for $album: $filepath\n");
+			$::d_artwork && msg("ID3 Artwork cache entry for $album: $filepath\n");
 
 			return $filepath;
 		}
@@ -1689,7 +1689,7 @@ sub _findCoverArt {
 
 			if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
 
-				$::d_artwork && Slim::Utils::Misc::msg("Artwork cache entry for $album: $filepath\n");
+				$::d_artwork && msg("Artwork cache entry for $album: $filepath\n");
 
 				return $filepath;
 			}
@@ -1747,7 +1747,7 @@ sub updateCoverArt {
 			$self->{'thumbCache'}->{$fullpath} = $path;
  		}
 
- 		$::d_artwork && Slim::Utils::Misc::msg("$type caching $path for $fullpath\n");
+ 		$::d_artwork && msg("$type caching $path for $fullpath\n");
 
 		$self->updateOrCreate({
 			'url'        => $fullpath,

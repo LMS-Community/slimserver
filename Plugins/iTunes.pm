@@ -143,7 +143,7 @@ sub canUseiTunesLibrary {
 	# The user may have moved their music folder location. We need to nuke the db.
 	if ($iTunesLibraryPath && $oldMusicPath && $oldMusicPath ne $iTunesLibraryPath) {
 
-		$::d_itunes && Slim::Utils::Misc::msg("iTunes: Music Folder has changed from previous - wiping db\n");
+		$::d_itunes && msg("iTunes: Music Folder has changed from previous - wiping db\n");
 
 		Slim::Music::Info::wipeDBCache();
 
@@ -228,7 +228,7 @@ sub setPodcasts {
 # This will be called when wipeDB is run - we always want to rescan at that point.
 sub resetState {
 
-	$::d_itunes && Slim::Utils::Misc::msg("iTunes: wipedb called - resetting lastITunesMusicLibraryDate\n");
+	$::d_itunes && msg("iTunes: wipedb called - resetting lastITunesMusicLibraryDate\n");
 
 	$lastITunesMusicLibraryDate = -1;
 
@@ -825,7 +825,7 @@ sub handleTrack {
 
 		}) || do {
 
-			$::d_itunes && Slim::Utils::Misc::msg("iTunes: Couldn't create track for: $url\n");
+			$::d_itunes && msg("iTunes: Couldn't create track for: $url\n");
 
 			return 1;
 		};
@@ -1039,7 +1039,7 @@ sub handleEndElement {
 
 sub resetScanState {
 
-	$::d_itunes && Slim::Utils::Misc::msg("iTunes: Resetting scan state.\n");
+	$::d_itunes && msg("iTunes: Resetting scan state.\n");
 
 	$iTunesLibraryPath = undef;
 	$inPlaylists = 0;

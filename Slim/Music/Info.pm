@@ -195,7 +195,7 @@ sub getCurrentDataStore {
 
 sub loadTypesConfig {
 	my @typesFiles;
-	$::d_info && Slim::Utils::Misc::msg("loading types config file...\n");
+	$::d_info && msg("loading types config file...\n");
 	
 	push @typesFiles, catdir($Bin, 'types.conf');
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
@@ -329,7 +329,7 @@ sub cacheItem {
 	my $url = shift;
 	my $item = shift;
 
-	$::d_info_v && Slim::Utils::Misc::msg("CacheItem called for item $item in $url\n");
+	$::d_info_v && msg("CacheItem called for item $item in $url\n");
 
 	my $track = $currentDB->objectForUrl($url, 0) || return undef;
 
@@ -345,16 +345,16 @@ sub updateCacheEntry {
 	my $cacheEntryHash = shift;
 
 	if (!defined($url)) {
-		Slim::Utils::Misc::msg("No URL specified for updateCacheEntry\n");
-		Slim::Utils::Misc::msg(%{$cacheEntryHash});
-		Slim::Utils::Misc::bt();
+		msg("No URL specified for updateCacheEntry\n");
+		msg(%{$cacheEntryHash});
+		bt();
 		return;
 	}
 
 	if (!isURL($url)) { 
-		Slim::Utils::Misc::msg("Non-URL passed to updateCacheEntry::info ($url)\n");
-		Slim::Utils::Misc::bt();
-		$url=Slim::Utils::Misc::fileURLFromPath($url); 
+		msg("Non-URL passed to updateCacheEntry::info ($url)\n");
+		bt();
+		$url = Slim::Utils::Misc::fileURLFromPath($url); 
 	}
 
 	my $list;
@@ -382,7 +382,7 @@ sub setContentType {
 
 	if ($type =~ /(.*);(.*)/) {
 		# content type has ";" followed by encoding
-		$::d_info && Slim::Utils::Misc::msg("Info: truncating content type.  Was: $type, now: $1\n");
+		$::d_info && msg("Info: truncating content type.  Was: $type, now: $1\n");
 		# TODO: remember encoding as it could be useful later
 		$type = $1; # truncate at ";"
 	}
@@ -411,7 +411,7 @@ sub setContentType {
 		'readTags'   => 1,
 	});
 
-	$::d_info && Slim::Utils::Misc::msg("Content type for $url is cached as $type\n");
+	$::d_info && msg("Content type for $url is cached as $type\n");
 }
 
 sub title {
@@ -424,7 +424,7 @@ sub setTitle {
 	my $url = shift;
 	my $title = shift;
 
-	$::d_info && Slim::Utils::Misc::msg("Adding title $title for $url\n");
+	$::d_info && msg("Adding title $title for $url\n");
 
 	$currentDB->updateOrCreate({
 		'url'        => $url,
@@ -498,7 +498,7 @@ sub addToinfoHash {
 	my $str = shift;
 	
 	if ($str =~ /VOLUME|PATH|FILE|EXT/) {
-		if (isFileURL($file)) { $file=Slim::Utils::Misc::pathFromFileURL($file); }
+		if (isFileURL($file)) { $file = Slim::Utils::Misc::pathFromFileURL($file); }
 		my ($volume, $path, $filename) = splitpath($file);
 		$filename =~ s/\.([^\.]*?)$//;
 		my $ext = $1;
@@ -1039,7 +1039,7 @@ sub plainTitle {
 
 	my $title = "";
 
-	$::d_info && Slim::Utils::Misc::msg("Plain title for: " . $file . "\n");
+	$::d_info && msg("Plain title for: " . $file . "\n");
 
 	if (isRemoteURL($file)) {
 		$title = Slim::Web::HTTP::unescape($file);
@@ -1063,7 +1063,7 @@ sub plainTitle {
 		$title =~ s/_/ /g;
 	}
 	
-	$::d_info && Slim::Utils::Misc::msg(" is " . $title . "\n");
+	$::d_info && msg(" is " . $title . "\n");
 
 	return $title;
 }
@@ -1133,7 +1133,7 @@ sub guessTags {
 	my $taghash = shift;
 	
 	my $file = $filename;
-	$::d_info && Slim::Utils::Misc::msg("Guessing tags for: $file\n");
+	$::d_info && msg("Guessing tags for: $file\n");
 
 	# Rip off from plainTitle()
 	if (isRemoteURL($file)) {
@@ -1168,17 +1168,17 @@ sub guessTags {
 		
 		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
 		$pat =~ s/($elemRegex)/\(\[^\\\/\]\+\)/g;
-		$::d_info && Slim::Utils::Misc::msg("Using format \"$guess\" = /$pat/...\n" );
+		$::d_info && msg("Using format \"$guess\" = /$pat/...\n" );
 		$pat = qr/$pat/;
 
 		# Check if this format matches		
 		my @matches;
 		if (@matches = $file =~ $pat) {
-			$::d_info && Slim::Utils::Misc::msg("Format string $guess matched $file\n" );
+			$::d_info && msg("Format string $guess matched $file\n" );
 			my @tags = $guess =~ /($elemRegex)/g;
 			my $i = 0;
 			foreach my $match (@matches) {
-				$::d_info && Slim::Utils::Misc::msg("$tags[$i] => $match\n");
+				$::d_info && msg("$tags[$i] => $match\n");
 				$match =~ tr/_/ / if (defined $match);
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
 				$taghash->{$tags[$i++]} = $match;
@@ -1200,20 +1200,20 @@ sub infoHash {
 	my $file  = shift;
 
 	if (!defined($file) || $file eq "") { 
-		$::d_info && Slim::Utils::Misc::msg("trying to get infoHash on an empty file name\n");
-		$::d_info && Slim::Utils::Misc::bt();
+		$::d_info && msg("trying to get infoHash on an empty file name\n");
+		$::d_info && bt();
 		return; 
 	};
 
 	if (!defined($track)) { 
-		$::d_info && Slim::Utils::Misc::msg("trying to get infoHash on an empty track\n");
-		$::d_info && Slim::Utils::Misc::bt();
+		$::d_info && msg("trying to get infoHash on an empty track\n");
+		$::d_info && bt();
 		return; 
 	};
 	
 	if (!isURL($file)) { 
-		Slim::Utils::Misc::msg("Non-URL passed to InfoHash::info ($file)\n");
-		Slim::Utils::Misc::bt();
+		msg("Non-URL passed to InfoHash::info ($file)\n");
+		bt();
 		$file = Slim::Utils::Misc::fileURLFromPath($file); 
 	}
 	
@@ -1279,16 +1279,16 @@ sub info {
 	my $tagname = shift;
 
 	if (!defined $file || $file eq '' || !defined $tagname || $tagname eq '') { 
-		$::d_info && Slim::Utils::Misc::msg("trying to get info on an empty file name\n");
-		$::d_info && Slim::Utils::Misc::bt();
+		$::d_info && msg("trying to get info on an empty file name\n");
+		$::d_info && bt();
 		return; 
 	};
 	
-	$::d_info && Slim::Utils::Misc::msg("Request for $tagname on file $file\n");
+	$::d_info && msg("Request for $tagname on file $file\n");
 	
 	if (!isURL($file)) { 
-		$::d_info && Slim::Utils::Misc::msg("Non-URL passed to Info::info ($file)\n");
-		$::d_info && Slim::Utils::Misc::bt();
+		$::d_info && msg("Non-URL passed to Info::info ($file)\n");
+		$::d_info && bt();
 
 		$file = Slim::Utils::Misc::fileURLFromPath($file); 
 	}
@@ -1353,7 +1353,7 @@ sub cachedPlaylist {
 
 		} else {
 
-			$::d_info && Slim::Utils::Misc::msgf("Invalid track object for playlist [%s]!\n", $obj->url);
+			$::d_info && msgf("Invalid track object for playlist [%s]!\n", $obj->url);
 		}
 	}
 
@@ -1377,7 +1377,7 @@ sub cacheDirectory {
 
 	$currentDB->updateTrack($obj);
 	
-	$::d_info && Slim::Utils::Misc::msg("cached an " . (scalar @$list) . " item playlist for $url\n");
+	$::d_info && msg("cached an " . (scalar @$list) . " item playlist for $url\n");
 }
 
 sub sortByTrack {
@@ -1652,7 +1652,7 @@ sub getImageContent {
 		close TEMPLATE;
 	}
 
-	defined($$contentref) && length($$contentref) || $::d_artwork && Slim::Utils::Misc::msg("Image File empty or couldn't read: $path\n");
+	defined($$contentref) && length($$contentref) || $::d_artwork && msg("Image File empty or couldn't read: $path\n");
 	return $$contentref;
 }
 
@@ -1679,7 +1679,7 @@ sub readCoverArtTags {
 	my $body;	
 	my $contenttype;
 	
-	$::d_artwork && Slim::Utils::Misc::msg("Updating image for $fullpath\n");
+	$::d_artwork && msg("Updating image for $fullpath\n");
 	
 	if (isSong($fullpath) && isFile($fullpath)) {
 	
@@ -1695,7 +1695,7 @@ sub readCoverArtTags {
 	
 			$tags = MP3::Info::get_mp3tag($file, 2, 1);
 			if (defined $tags) {
-				$::d_artwork && Slim::Utils::Misc::msg("Looking for image in ID3 2.2 tag in file $file\n");
+				$::d_artwork && msg("Looking for image in ID3 2.2 tag in file $file\n");
 				# look for ID3 v2.2 picture
 				my $pic = $tags->{'PIC'};
 				if (defined($pic)) {
@@ -1709,7 +1709,7 @@ sub readCoverArtTags {
 					if ($len < (length($pic))) {		
 						my ($data) = unpack "x$len A*", $pic;
 						
-						$::d_artwork && Slim::Utils::Misc::msg( "PIC format: $format length: " . length($pic) . "\n");
+						$::d_artwork && msg( "PIC format: $format length: " . length($pic) . "\n");
 
 						if (length($pic)) {
 							if ($format eq 'PNG') {
@@ -1738,7 +1738,7 @@ sub readCoverArtTags {
 							
 							my ($data) = unpack"x$len A*", $pic;
 							
-							$::d_artwork && Slim::Utils::Misc::msg( "APIC format: $format length: " . length($data) . "\n");
+							$::d_artwork && msg( "APIC format: $format length: " . length($data) . "\n");
 	
 							if (length($data)) {
 								$contenttype = $format;
@@ -1751,22 +1751,22 @@ sub readCoverArtTags {
 
 		} elsif (isMOV($fullpath)) {
 
-			$::d_artwork && Slim::Utils::Misc::msg("Looking for image in Movie metadata in file $file\n");
+			$::d_artwork && msg("Looking for image in Movie metadata in file $file\n");
 
 			loadTagFormatForType('mov');
 
 			$body = Slim::Formats::Movie::getCoverArt($file);
 
-			$::d_artwork && $body && Slim::Utils::Misc::msg("found image in $file of length " . length($body) . " bytes \n");
+			$::d_artwork && $body && msg("found image in $file of length " . length($body) . " bytes \n");
 		}
 		
 		if ($body) {
 			# iTunes sometimes puts PNG images in and says they are jpeg
 			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
-				$::d_info && Slim::Utils::Misc::msg( "found PNG image\n");
+				$::d_info && msg( "found PNG image\n");
 				$contenttype = 'image/png';
 			} elsif ($body =~ /^\xff\xd8\xff\xe0..JFIF/) {
-				$::d_info && Slim::Utils::Misc::msg( "found JPEG image\n");
+				$::d_info && msg( "found JPEG image\n");
 				$contenttype = 'image/jpeg';
 			}
 			
@@ -1778,7 +1778,7 @@ sub readCoverArtTags {
 
  	} else {
 
- 		$::d_info && Slim::Utils::Misc::msg("readCoverArtTags: Not a song, skipping: $fullpath\n");
+ 		$::d_info && msg("readCoverArtTags: Not a song, skipping: $fullpath\n");
  	}
  	
 	return ($body, $contenttype, 1);
@@ -1800,7 +1800,7 @@ sub readCoverArtFiles {
 	my @components = splitdir($file);
 	pop @components;
 
-	$::d_artwork && Slim::Utils::Misc::msg("Looking for image files in ".catdir(@components)."\n");
+	$::d_artwork && msg("Looking for image files in ".catdir(@components)."\n");
 
 	my %nameslist = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
@@ -1829,7 +1829,7 @@ sub readCoverArtFiles {
 
 		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($fullpath), $1)."$suffix";
 
-		$::d_artwork && Slim::Utils::Misc::msgf(
+		$::d_artwork && msgf(
 			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
 		);
 
@@ -1847,7 +1847,7 @@ sub readCoverArtFiles {
 
 		if ($body) {
 
-			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $artpath\n\n");
+			$::d_artwork && msg("Found $image file: $artpath\n\n");
 
 			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
 
@@ -1863,7 +1863,7 @@ sub readCoverArtFiles {
 
 		if (exists $lastFile{$image}  && $lastFile{$image} ne '1') {
 
-			$::d_artwork && Slim::Utils::Misc::msg("Using existing $image: $lastFile{$image}\n");
+			$::d_artwork && msg("Using existing $image: $lastFile{$image}\n");
 
 			$body = getImageContent($lastFile{$image});
 
@@ -1875,7 +1875,7 @@ sub readCoverArtFiles {
 
 		} elsif (exists $lastFile{$image}) {
 
-			$::d_artwork && Slim::Utils::Misc::msg("No $image in $artworkDir\n");
+			$::d_artwork && msg("No $image in $artworkDir\n");
 
 			return undef;
 		}
@@ -1895,7 +1895,7 @@ sub readCoverArtFiles {
 		$body = getImageContent($file);
 
 		if ($body) {
-			$::d_artwork && Slim::Utils::Misc::msg("Found $image file: $file\n\n");
+			$::d_artwork && msg("Found $image file: $file\n\n");
 
 			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($file));
 
@@ -1939,7 +1939,7 @@ sub splitTag {
 
 				push @temp, $item if $item !~ /^\s*$/;
 
-				$::d_info && Slim::Utils::Misc::msg("Splitting $tag by $splitOn = @temp\n") unless scalar @temp <= 1;
+				$::d_info && msg("Splitting $tag by $splitOn = @temp\n") unless scalar @temp <= 1;
 			}
 
 			# store this for return only if there has been a successfil split
@@ -1975,7 +1975,7 @@ sub isFile {
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
-	$::d_info && Slim::Utils::Misc::msgf("isFile(%s) == %d\n", $fullpath, (1 * $stat));
+	$::d_info && msgf("isFile(%s) == %d\n", $fullpath, (1 * $stat));
 
 	$isFile{$url} = $stat;
 
@@ -2223,7 +2223,7 @@ sub typeFromPath {
 
 			if (isFileURL($fullpath)) {
 				$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-				$::d_info && Slim::Utils::Misc::msg("Converting $fullpath to $filepath\n");
+				$::d_info && msg("Converting $fullpath to $filepath\n");
 			} else {
 				$filepath = $fullpath;
 			}
@@ -2261,7 +2261,7 @@ sub typeFromPath {
 
 	$urlToTypeCache{$fullpath} = $type;
 
-	$::d_info && Slim::Utils::Misc::msg("$type file type for $fullpath\n");
+	$::d_info && msg("$type file type for $fullpath\n");
 
 	return $type;
 }
@@ -2272,14 +2272,14 @@ sub loadTagFormatForType {
 
 	return if $tagFunctions{$type}->{'loaded'};
 
-	$::d_info && Slim::Utils::Misc::msg("Trying to load $tagFunctions{$type}->{'module'}\n");
+	$::d_info && msg("Trying to load $tagFunctions{$type}->{'module'}\n");
 
 	eval "require $tagFunctions{$type}->{'module'}";
 
 	if ($@) {
 
-		Slim::Utils::Misc::msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
-		Slim::Utils::Misc::bt();
+		msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
+		bt();
 
 	} else {
 

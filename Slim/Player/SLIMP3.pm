@@ -57,13 +57,13 @@ sub new {
 	# Load these modules on the fly to save approx 700k of memory.
 	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::Stream)) {
 
-		$::d_protocol && Slim::Utils::Misc::msg("Loading module: $module\n");
+		$::d_protocol && msg("Loading module: $module\n");
 
 		eval "use $module";
 
 		if ($@) {
-			Slim::Utils::Misc::msg("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL\n");
-			Slim::Utils::Misc::bt();
+			msg("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL\n");
+			bt();
 			$@ = '';
 		}
 	}

@@ -278,7 +278,7 @@ sub loadStreamList {
 	# only start if it's not been launched by another client
 	if (not defined $httpError) {
 		$last_time = time();
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
+		$::d_plugins && msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
 		
 		$httpError = -1;
 		my $http = Slim::Networking::SimpleAsyncHTTP->new(\&gotViaHTTP, \&gotErrorViaHTTP, {client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
@@ -288,7 +288,7 @@ sub loadStreamList {
 		eval { require Compress::Zlib };
 		$url .= '&no_compress=1' if $@;
 		
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: async request\n");
+		$::d_plugins && msg("Shoutcast: async request\n");
 		$http->get($url);
 	}
 }
@@ -298,34 +298,34 @@ sub gotViaHTTP {
 	my $params = $http->params();
 	my $data;
 
-	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: get XML content\n");
+	$::d_plugins && msg("Shoutcast: get XML content\n");
 	$httpError = 1 if not ($data = $http->content());
 
-	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: parse XML \n");
+	$::d_plugins && msg("Shoutcast: parse XML \n");
 	$httpError = 2 if not ($data = extractStreamInfoXML($data));
 
 	if ((not defined $httpError) || ($httpError < 1)) {
 		%stream_data = ();
 		%genres_data = ();
 
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: custom genres\n");
+		$::d_plugins && msg("Shoutcast: custom genres\n");
 		setupCustomGenres();	
 
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: extract streams\n");
+		$::d_plugins && msg("Shoutcast: extract streams\n");
 		extractStreamInfo($params->{'client'}, $data);
 
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: remove singletons\n");
+		$::d_plugins && msg("Shoutcast: remove singletons\n");
 		removeSingletons($params->{'client'});
 
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: sort genres\n");
+		$::d_plugins && msg("Shoutcast: sort genres\n");
 		sortGenres($params->{'client'});
 		$httpError = 0;
 	}
 	undef $data;
 	
-	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: create page\n");
+	$::d_plugins && msg("Shoutcast: create page\n");
 	createAsyncWebPage($params);
-	$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: that's it\n");
+	$::d_plugins && msg("Shoutcast: that's it\n");
 	if (defined $params->{'client'}) {
 		Slim::Buttons::Block::unblock($params->{'client'});
 		$params->{'client'}->update();
@@ -368,7 +368,7 @@ sub extractStreamInfoXML {
 
 	if ($@ || !exists $data->{'playlist'} || 
 	    ref($data->{'playlist'}->{'entry'}) ne 'ARRAY') {
-		$::d_plugins && Slim::Utils::Misc::msg("Shoutcast: problem reading XML: $@\n");
+		$::d_plugins && msg("Shoutcast: problem reading XML: $@\n");
 		return 0;
 	}
 	else {

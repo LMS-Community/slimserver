@@ -856,7 +856,7 @@ sub debug {
 	my $self = shift;
 
 	if ($::d_client) {
-		Slim::Utils::Misc::msg(sprintf("%s : %s\n", $self->name(), @_));
+		msg(sprintf("%s : %s\n", $self->name(), @_));
 	}
 }
 

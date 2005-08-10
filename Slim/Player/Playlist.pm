@@ -447,7 +447,7 @@ sub reshuffle {
 
 			unless (ref($track)) {
 
-				$::d_playlist && Slim::Utils::Misc::msg("Track: $track isn't an object - fetching\n");
+				$::d_playlist && msg("Track: $track isn't an object - fetching\n");
 
 				# Try to fetch a LightWeightTrack object
 				$trackObj = $ds->objectForUrl($track, 0, 0, 1);
@@ -466,8 +466,8 @@ sub reshuffle {
 
 			} else {
 
-				Slim::Utils::Misc::msg("Couldn't find an object for url: $track\n");
-				Slim::Utils::Misc::bt();
+				msg("Couldn't find an object for url: $track\n");
+				bt();
 			}
 		}
 

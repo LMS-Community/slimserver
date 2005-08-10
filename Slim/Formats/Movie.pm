@@ -128,7 +128,7 @@ sub getCoverArt {
 
 	} else {
 
-		Slim::Utils::Misc::msg("Got invalid tag data back from file: [$file]\n");
+		msg("Got invalid tag data back from file: [$file]\n");
 	}
 	
 	return $coverart;

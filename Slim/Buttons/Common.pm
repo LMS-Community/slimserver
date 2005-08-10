@@ -992,7 +992,7 @@ sub firstIndexOf
 sub mode {
 	my $client = shift;
 
-	Slim::Utils::Misc::assert($client);
+	assert($client);
 
 	return $client->modeStack(-1);
 }

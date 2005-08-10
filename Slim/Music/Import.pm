@@ -223,7 +223,7 @@ sub artScan {
 	delete $artwork{$album};
 
 	if (!%artwork) { 
-		$::d_artwork && Slim::Utils::Misc::msg("Completed Artwork Scan\n");
+		$::d_artwork && msg("Completed Artwork Scan\n");
 		$ds->forceCommit();
 		return 0;
 	}

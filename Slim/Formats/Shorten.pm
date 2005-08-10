@@ -41,7 +41,7 @@ sub getTag {
 	}
 
 	$::d_source &&
-	  Slim::Utils::Misc::msg( "Reading WAV information from $file\n");
+	  msg( "Reading WAV information from $file\n");
 
 	# This hash will map the keys in the tag to their values.
 	# Don't use MP3::Info since we can't seek around the stream
@@ -80,11 +80,11 @@ sub myErrorHandler {
 	     ($parameters{'filename'} =~ /\|$/ and
 	      $parameters{'message'} =~ /^can\'t move to position/)) {
 		# This is a non-critical warning
-		$::d_source && Slim::Utils::Misc::msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_source && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
 	} else {
 		# Critical error!
 		$bail = 1;
-		$::d_source && Slim::Utils::Misc::msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+		$::d_source && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
 	}
 }
 

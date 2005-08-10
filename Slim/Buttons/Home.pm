@@ -139,7 +139,7 @@ sub addSubMenu {
 	my ($menu,$submenuname,$submenuref) = @_;
 
 	if (!exists $home{$menu} && defined $submenuref) {
-		$::d_plugins && Slim::Utils::Misc::msg("$menu does not exist. creating...\n");
+		$::d_plugins && msg("$menu does not exist. creating...\n");
 		addMenuOption($menu);
 	}
 
@@ -154,14 +154,14 @@ sub addSubMenu {
 	if (!defined $submenuref) {
 		
 		if (exists $home{$menu}{'submenus'}{$submenuname}) {
-			$::d_plugins && Slim::Utils::Misc::msg("Deleting $submenuname from menu: $menu\n");
+			$::d_plugins && msg("Deleting $submenuname from menu: $menu\n");
 			
 			delete $home{$menu}{'submenus'}{$submenuname};
 			
 			if (not keys %{$home{$menu}{'submenus'}}) {
 				delete $home{$menu}{'submenus'};
 				delete $home{$menu};
-				$::d_plugins && Slim::Utils::Misc::msg("Deleting empty $menu submenu\n");
+				$::d_plugins && msg("Deleting empty $menu submenu\n");
 				delSubMenu("PLUGINS",$menu);
 			}
 			
@@ -178,14 +178,14 @@ sub addSubMenu {
 sub delSubMenu {
 	my ($menu,$submenuname) = @_;
 	
-	#$::d_plugins && Slim::Utils::Misc::msg("deleting $submenuname from $menu\n");
+	#$::d_plugins && msg("deleting $submenuname from $menu\n");
 	
 	unless (exists $home{$menu}{'submenus'}) {
 		return;
 	}
 	unless (defined $submenuname) {
 		warn "No submenu information supplied!\n";
-		Slim::Utils::Misc::bt();
+		bt();
 		return;
 	}
 	if (exists $home{$menu}{'submenus'}{$submenuname}) {

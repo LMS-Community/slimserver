@@ -340,7 +340,7 @@ sub defaultPlaylistDir {
 		}
 
 		if (!-d $path) {
-			mkpath($path) or Slim::Utils::Misc::msg("Couldn't create playlist path: $path - $!\n");
+			mkpath($path) or msg("Couldn't create playlist path: $path - $!\n");
 		}
 	}
 
@@ -711,7 +711,7 @@ sub maxRate {
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
 	$rate = clientGet($client, 'transcodeBitrate') || $rate;
 
-	$::d_source && Slim::Utils::Misc::msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
+	$::d_source && msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
 	
 	return $rate if $soloRate;
 	

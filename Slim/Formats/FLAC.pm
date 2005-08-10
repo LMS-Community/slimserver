@@ -77,7 +77,7 @@ sub getTag {
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	if (!defined $ds) {
-		$::d_parse && Slim::Utils::Misc::msg("FLAC getTag has no datastore\n");
+		$::d_parse && msg("FLAC getTag has no datastore\n");
 		return $tags; # should we return a more severe error?
 	}
 
@@ -97,7 +97,7 @@ sub getTag {
 
 	# fallback if we can't parse metadata
 	if ($items < 1) {
-		$::d_parse && Slim::Utils::Misc::msg("Unable to find metadata for tracks referenced by cuesheet\n");
+		$::d_parse && msg("Unable to find metadata for tracks referenced by cuesheet\n");
 		return $tags;
 	}
 
@@ -132,11 +132,11 @@ sub getTag {
 		# the single track indicated.
 		if ($anchor && $track->{'URI'} eq $fileurl) {
 			$tags = $track;
-			$::d_parse && Slim::Utils::Misc::msg("    found tags for $file#$anchor\n");	
+			$::d_parse && msg("    found tags for $file#$anchor\n");	
 		}
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("    returning: $items items\n");	
+	$::d_parse && msg("    returning: $items items\n");	
 
 	return $tags;
 }
@@ -261,7 +261,7 @@ sub getSubFileTags {
 
 	# if we really wanted to, we could parse "standard" tags and apply to every track
 	# but that doesn't seem very useful.
-	$::d_parse && Slim::Utils::Misc::msg("No useable metadata found for this FLAC file.\n");
+	$::d_parse && msg("No useable metadata found for this FLAC file.\n");
 
 	return 0;
 }
@@ -371,7 +371,7 @@ sub getXMLTags {
 			$artistHash->{$artistid}->{'ARTISTSORT'} = $1;
 		}
 
-		$::d_parse && Slim::Utils::Misc::msg("$message\n");
+		$::d_parse && msg("$message\n");
 
 	}
 
@@ -384,19 +384,19 @@ sub getXMLTags {
 
 		my $tracknumber = 0;
 
-		$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $albumHash->{$album}->{'ALBUM'} . "\n");
+		$::d_parse && msg("    ALBUM: " . $albumHash->{$album}->{'ALBUM'} . "\n");
 
 		for my $track (@{$albumHash->{$album}->{'TRACKLIST'}}) {
 			my $tempTags = {};
 			$cuesheetTrack++;
 			$tracknumber++;
 
-			$::d_parse && Slim::Utils::Misc::msg("    processing track $cuesheetTrack -- $track\n");
+			$::d_parse && msg("    processing track $cuesheetTrack -- $track\n");
 
 			next unless exists $tracks->{$cuesheetTrack};
 
 			$tracks->{$cuesheetTrack}->{'TRACKNUM'} = $tracknumber;
-			$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: $tracknumber\n");
+			$::d_parse && msg("    TRACKNUM: $tracknumber\n");
 
 			%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$albumHash->{$album}});
 			
@@ -407,13 +407,13 @@ sub getXMLTags {
 				if ($trackSegment =~ m|<dc:title>(.+?)</dc:title>|s) {
 					$tracks->{$cuesheetTrack}->{'TITLE'} = $1;
 
-					$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
+					$::d_parse && msg("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
 				}
 
 				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) { #"
 					%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$artistHash->{$1}});
 
-					$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
+					$::d_parse && msg("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
 				}
 			}
 			
@@ -475,7 +475,7 @@ sub getNumberedVCs {
 	}
 
 	if ($titletags != $cuetracks) {
-		$::d_parse && Slim::Utils::Misc::msg("ERROR: This file has tags for "
+		$::d_parse && msg("ERROR: This file has tags for "
 			. $titletags . " tracks but the cuesheet has "
 			. $cuetracks . " tracks\n");
 		return 0;
@@ -495,14 +495,14 @@ sub getNumberedVCs {
 			my $tkey  = uc($1);
 			my $value = $2;
 
-			$::d_parse && Slim::Utils::Misc::msg("matched: $tkey = $value\n");
+			$::d_parse && msg("matched: $tkey = $value\n");
 			
 			# Match track number
 			my $group;
 			if ($tkey =~ /^(.+)\s*[\(\[\{\<](\d+)[\)\]\}\>]/) {
 				$tkey = $1;
 				$group = $2 + 0;
-				$::d_parse && Slim::Utils::Misc::msg("grouped as track $group\n");
+				$::d_parse && msg("grouped as track $group\n");
 			}			
 
 			if (defined $group) {
@@ -547,22 +547,22 @@ sub getCDDBTags {
 		$tags->{'ALBUM'} = $2;
 		delete $tags->{'DTITLE'};
 
-		$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tags->{'ARTIST'} . "\n");
-		$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $tags->{'ALBUM'} . "\n");
+		$::d_parse && msg("    ARTIST: " . $tags->{'ARTIST'} . "\n");
+		$::d_parse && msg("    ALBUM: " . $tags->{'ALBUM'} . "\n");
 	}
 
 	if (exists $tags->{'DGENRE'}) {
 		$tags->{'GENRE'} = $tags->{'DGENRE'};
 		delete $tags->{'DGENRE'};
 
-		$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $tags->{'GENRE'} . "\n");
+		$::d_parse && msg("    GENRE: " . $tags->{'GENRE'} . "\n");
 	}
 
 	if (exists $tags->{'DYEAR'}) {
 		$tags->{'YEAR'} = $tags->{'DYEAR'};
 		delete $tags->{'DYEAR'};
 
-		$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $tags->{'YEAR'} . "\n");
+		$::d_parse && msg("    YEAR: " . $tags->{'YEAR'} . "\n");
 	}
 
 	# grab the cuesheet and process the individual tracks
@@ -583,17 +583,17 @@ sub getCDDBTags {
 					$tracks->{$tracknum}->{'TITLE'} = $1;
 				}
 
-				$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $tracks->{$tracknum}->{'ARTIST'} . "\n");
+				$::d_parse && msg("    ARTIST: " . $tracks->{$tracknum}->{'ARTIST'} . "\n");
 				
 			} else {
 				$tracks->{$tracknum}->{'TITLE'} = $tags->{$key};
 			}
 
-			$::d_parse && Slim::Utils::Misc::msg("    TITLE: " . $tracks->{$tracknum}->{'TITLE'} . "\n");
+			$::d_parse && msg("    TITLE: " . $tracks->{$tracknum}->{'TITLE'} . "\n");
 
 			$tracks->{$tracknum}->{'TRACKNUM'} = $tracknum;
 
-			$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: " . $tracks->{$tracknum}->{'TRACKNUM'} . "\n");
+			$::d_parse && msg("    TRACKNUM: " . $tracks->{$tracknum}->{'TRACKNUM'} . "\n");
 
 			delete $tags->{$key};
 			$items++;
@@ -648,7 +648,7 @@ sub getCUEinVCs {
 	for my $key (keys %$tracks) {
 
 		if (!exists $metadata->{$key}) {
-			$::d_parse && Slim::Utils::Misc::msg("No metadata found for track "
+			$::d_parse && msg("No metadata found for track "
 												 . $tracks->{$key}->{'URI'} . "\n");
 			next;
 		}
@@ -737,7 +737,7 @@ sub getStackedVCs {
 			}
 
 			$tempTags->{$tkey} = $value;
-			$::d_parse && Slim::Utils::Misc::msg("    $tkey: $value\n");
+			$::d_parse && msg("    $tkey: $value\n");
 		}
 	}
 
@@ -901,13 +901,13 @@ sub seekNextFrame {
 	$startoffset = $filelen if ($startoffset > $filelen); 
 
 	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$::d_mp3 && Slim::Utils::Misc::msg("FLAC: reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	$::d_mp3 && msg("FLAC: reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread $fh, $buf, $MAXDISTANCE, 0;
 
 	$len = length($buf);
 	if ($len<16) {
-		$::d_mp3 && Slim::Utils::Misc::msg("FLAC: got less than 16 bytes\n");
+		$::d_mp3 && msg("FLAC: got less than 16 bytes\n");
 		return 0; 
 	}
 
@@ -919,7 +919,7 @@ sub seekNextFrame {
 		$end=0;
 	}
 
-	$::d_mp3 && Slim::Utils::Misc::msg("FLAC: scanning: len = $len, start = $start, end = $end\n");
+	$::d_mp3 && msg("FLAC: scanning: len = $len, start = $start, end = $end\n");
 	for ($pos = $start; $pos!=$end; $pos+=$direction) {
 
 		$head = substr($buf, $pos, 16);
@@ -929,12 +929,12 @@ sub seekNextFrame {
 		
 		$found_at_offset = $seekto + $pos;
 
-		$::d_mp3 && Slim::Utils::Misc::msg("FLAC: Found frame header at $found_at_offset\n");
+		$::d_mp3 && msg("FLAC: Found frame header at $found_at_offset\n");
 
 		return $found_at_offset;
 	}
 
-	$::d_mp3 && Slim::Utils::Misc::msg("FLAC: Couldn't find any frame header\n");
+	$::d_mp3 && msg("FLAC: Couldn't find any frame header\n");
 	return 0;
 }
 

@@ -43,7 +43,7 @@ sub setMode {
 	my $sync = Slim::Utils::Prefs::clientGet($client,'syncPower');
 
 	if (defined $sync && $sync == 0) {
-		$::d_sync && Slim::Utils::Misc::msg("Temporary Unsync ".$client->id()."\n");
+		$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
 		Slim::Player::Sync::unsync($client,1);
 	}
 	

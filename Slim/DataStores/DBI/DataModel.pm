@@ -43,10 +43,10 @@ sub executeSQLFile {
 
 	my $sqlFile = catdir($Bin, "SQL", $driver, $file);
 
-	$::d_info && Slim::Utils::Misc::msg("Executing SQL file $sqlFile\n");
+	$::d_info && msg("Executing SQL file $sqlFile\n");
 
 	open(my $fh, $sqlFile) or do {
-		$::d_info && Slim::Utils::Misc::msg("Couldn't open: $sqlFile : $!\n");
+		$::d_info && msg("Couldn't open: $sqlFile : $!\n");
 		return;
 	};
 
@@ -71,12 +71,12 @@ sub executeSQLFile {
 
 			$statement .= $line;
 
-			$::d_sql && Slim::Utils::Misc::msg("Executing SQL statement: [$statement]\n");
+			$::d_sql && msg("Executing SQL statement: [$statement]\n");
 
 			eval { $class->dbh->do($statement) };
 
 			if ($@) {
-				Slim::Utils::Misc::msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
+				msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
 			}
 
 			$statement   = '';
@@ -104,10 +104,10 @@ sub dbh {
 
 		$dbh->disconnect;
 
-		$::d_info&& Slim::Utils::Misc::msg("Database handle is undefined - disconnecting!\n");
+		$::d_info&& msg("Database handle is undefined - disconnecting!\n");
 	}
 
-	$::d_info && Slim::Utils::Misc::msg("Couldn't ping DB server - need to reconnect!\n");
+	$::d_info && msg("Couldn't ping DB server - need to reconnect!\n");
 
 	# Reconnect.
 	return $class->db_Main(1);
@@ -128,13 +128,13 @@ sub db_Main {
 	# Check and see if we need to create the path.
 	unless (-d dirname($dbname)) {
 		mkpath(dirname($dbname)) or do {
-			Slim::Utils::Misc::bt();
-			Slim::Utils::Misc::msg("Couldn't create directory for $dbname : $!\n");
+			bt();
+			msg("Couldn't create directory for $dbname : $!\n");
 			return;
 		};
 	}
 
-	$::d_info && Slim::Utils::Misc::msg("Metadata database saving into: $dbname\n");
+	$::d_info && msg("Metadata database saving into: $dbname\n");
 
 	my $source = sprintf(Slim::Utils::Prefs::get('dbsource'), $dbname);
 	my $username = Slim::Utils::Prefs::get('dbusername');
@@ -150,12 +150,12 @@ sub db_Main {
 
 	# Not much we can do if there's no DB.
 	unless ($dbh) {
-		Slim::Utils::Misc::msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
-		Slim::Utils::Misc::bt();
+		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
+		bt();
 		exit;
 	}
 
-	$::d_info && Slim::Utils::Misc::msg("Connected to database $source\n");
+	$::d_info && msg("Connected to database $source\n");
 
 	my $version;
 	my $nextversion;
@@ -171,12 +171,12 @@ sub db_Main {
 			if ($nextversion && ($nextversion ne 99999)) {
 
 				my $upgradeFile = catdir("Upgrades", $nextversion.".sql" );
-				$::d_info && Slim::Utils::Misc::msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
+				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
 				$class->executeSQLFile($upgradeFile);
 
 			} elsif ($nextversion && ($nextversion eq 99999)) {
 
-				$::d_info && Slim::Utils::Misc::msg("Database schema out of date and purge required. Purging db.\n");
+				$::d_info && msg("Database schema out of date and purge required. Purging db.\n");
 				$class->executeSQLFile("dbdrop.sql");
 				$version = undef;
 				$nextversion = 0;
@@ -186,7 +186,7 @@ sub db_Main {
 	} while ($nextversion);
 	
 	if (!defined($version)) {
-		$::d_info && Slim::Utils::Misc::msg("Creating new database.\n");
+		$::d_info && msg("Creating new database.\n");
 		$class->executeSQLFile("dbcreate.sql");
 	}
 
@@ -222,18 +222,18 @@ sub findUpgrade {
 	close($versionFile);
 	
 	if ((!defined $from) || ($from != $currVersion)) {
-		$::d_info && Slim::Utils::Misc::msg ("No upgrades found for database v. ". $currVersion."\n");
+		$::d_info && msg ("No upgrades found for database v. ". $currVersion."\n");
 		return 0;
 	}
 	
 	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
 	
 	if (!-f $file && ($to != 99999)) {
-		$::d_info && Slim::Utils::Misc::msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
+		$::d_info && msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
 		return 0;
 	}
 	
-	$::d_info && Slim::Utils::Misc::msg ("database v. ".$currVersion." requires upgrade to $to\n");
+	$::d_info && msg ("database v. ".$currVersion." requires upgrade to $to\n");
 	return $to;
 }
 
@@ -521,7 +521,7 @@ sub find {
 		$columns .= $searchFieldMap{$field};
 
 	} else {
-		$::d_info && Slim::Utils::Misc::msg("Request for unknown field in query\n");
+		$::d_info && msg("Request for unknown field in query\n");
 		return undef;
 	}
 
@@ -610,11 +610,11 @@ sub find {
 			# we need to join across to fulfill the query.
 			my $path = $queryPath{"$startNode:$endNode"};
 
-			$::d_sql && Slim::Utils::Misc::msg("Start and End node: [$startNode:$endNode]\n");
+			$::d_sql && msg("Start and End node: [$startNode:$endNode]\n");
 
 			addQueryPath($path, \%tables, \%joins);
 			if ($fieldQuery && exists($queryPath{"$startNode:$startNode"})) {
-				$::d_sql && Slim::Utils::Misc::msg("Field query. Need additional join. start and End node: [$startNode:$startNode]\n");
+				$::d_sql && msg("Field query. Need additional join. start and End node: [$startNode:$startNode]\n");
 				$path = $queryPath{"$startNode:$startNode"};
 				addQueryPath($path, \%tables, \%joins);
 			}
@@ -682,9 +682,9 @@ sub find {
 	}
 
 	if ($::d_sql) {
-		#Slim::Utils::Misc::bt();
-		Slim::Utils::Misc::msg("Running SQL query: [$sql]\n");
-		Slim::Utils::Misc::msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
+		#bt();
+		msg("Running SQL query: [$sql]\n");
+		msg(sprintf("Bind arguments: [%s]\n\n", join(', ', @bind))) if scalar @bind;
 	}
 
 	# XXX - wrap in eval?
@@ -696,8 +696,8 @@ sub find {
 	};
 
 	if ($@) {
-		Slim::Utils::Misc::msg("Whoops! prepare_cached() or execute() failed on sql: [$sql] - [$@]\n");
-		Slim::Utils::Misc::bt();
+		msg("Whoops! prepare_cached() or execute() failed on sql: [$sql] - [$@]\n");
+		bt();
 
 		# Try to return a graceful value.
 		return 0 if $count;
@@ -821,7 +821,7 @@ sub removeStaleDBEntries {
 
 	unless ($cleanupIds) {
 
-		$::d_import && Slim::Utils::Misc::msg("Starting stale cleanup for class $class / $foreign\n");
+		$::d_import && msg("Starting stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = $class->retrieveAllOnlyIds();
 	}
@@ -832,7 +832,7 @@ sub removeStaleDBEntries {
 
 	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
 
-		$::d_import && Slim::Utils::Misc::msg("Finished stale cleanup for class $class / $foreign\n");
+		$::d_import && msg("Finished stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = undef;
 
@@ -841,7 +841,7 @@ sub removeStaleDBEntries {
 
 	if ($obj && $obj->$foreign()->count() == 0) {
 
-		$::d_import && Slim::Utils::Misc::msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
+		$::d_import && msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
 
 		$obj->delete();
 

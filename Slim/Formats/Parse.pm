@@ -33,7 +33,7 @@ our %playlistInfo = (
 sub registerParser {
 	my ($type, $readfunc, $writefunc, $suffix) = @_;
 
-	$::d_parse && Slim::Utils::Misc::msg("Registering external parser for type $type\n");
+	$::d_parse && msg("Registering external parser for type $type\n");
 
 	$playlistInfo{$type} = [$readfunc, $writefunc, $suffix];
 }
@@ -50,7 +50,7 @@ sub parseList {
 		$type = Slim::Music::Info::typeFromSuffix($list);
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parseList (type: $type): $list\n");
+	$::d_parse && msg("parseList (type: $type): $list\n");
 
 	my $parser;
 	my @items = ();
@@ -113,7 +113,7 @@ sub readM3U {
 	my $title;
 	my $foundBOM = 0;
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $url\n");
+	$::d_parse && msg("parsing M3U: $url\n");
 
 	while (my $entry = <$m3u>) {
 
@@ -138,12 +138,12 @@ sub readM3U {
 			$foundBOM = 1;
 		}
 
-		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
+		$::d_parse && msg("  entry from file: $entry\n");
 
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
 			$title = $1;	
 
-			$::d_parse && Slim::Utils::Misc::msg("  found title: $title\n");
+			$::d_parse && msg("  found title: $title\n");
 		}
 
 		next if $entry =~ /^#/;
@@ -155,16 +155,16 @@ sub readM3U {
 
 		if ($entry eq $url) {
 
-			$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+			$::d_parse && msg("Found self-referencing playlist - skipping!\n");
 			next;
 		}
 
-		$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
+		$::d_parse && msg("    entry: $entry\n");
 
 		push @items, _updateMetaData($entry, $title);
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in m3u playlist\n");
+	$::d_parse && msg("parsed " . scalar(@items) . " items in m3u playlist\n");
 
 	close $m3u;
 
@@ -181,10 +181,10 @@ sub readPLS {
 	my @items  = ();
 	my $foundBOM = 0;
 	
-	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $url \n");
+	$::d_parse && msg("Parsing playlist: $url \n");
 	
 	while (my $line = <$pls>) {
-		$::d_parse && Slim::Utils::Misc::msg("Parsing line: $line");
+		$::d_parse && msg("Parsing line: $line");
 
 		# strip carriage return from dos playlists
 		$line =~ s/\cM//g;
@@ -222,7 +222,7 @@ sub readPLS {
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
 
 		if ($entry eq $url) {
-			Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+			msg("Found self-referencing playlist - skipping!\n");
 			next;
 		}
 
@@ -250,10 +250,10 @@ sub parseCUE {
 	my $currtrack;
 	my $tracks = {};
 
-	$::d_parse && Slim::Utils::Misc::msg("parseCUE: cuedir: [$cuedir]\n");
+	$::d_parse && msg("parseCUE: cuedir: [$cuedir]\n");
 
 	if (!@$lines) {
-		$::d_parse && Slim::Utils::Misc::msg("parseCUE skipping empty cuesheet.\n");
+		$::d_parse && msg("parseCUE skipping empty cuesheet.\n");
 		return;
 	}
 
@@ -316,7 +316,7 @@ sub parseCUE {
 	}
 
 	if (!$currtrack || $currtrack < 1 || !$filename) {
-		$::d_parse && Slim::Utils::Misc::msg("parseCUE unable to extract tracks from cuesheet\n");
+		$::d_parse && msg("parseCUE unable to extract tracks from cuesheet\n");
 		return {};
 	}
 
@@ -326,7 +326,7 @@ sub parseCUE {
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos && $filename) {
 
-		$::d_parse && Slim::Utils::Misc::msg("Reading tags to get ending time of $filename\n");
+		$::d_parse && msg("Reading tags to get ending time of $filename\n");
 
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->updateOrCreate({
@@ -338,7 +338,7 @@ sub parseCUE {
 
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("Couldn't get duration of $filename\n") unless $lastpos;
+	$::d_parse && msg("Couldn't get duration of $filename\n") unless $lastpos;
 
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
@@ -363,7 +363,7 @@ sub parseCUE {
 		# Don't use $track->{'URL'} or the db will break
 		$track->{'URI'} = "$filename#".$track->{'START'}."-".$track->{'END'};
 
-		$::d_parse && Slim::Utils::Misc::msg("    URL: " . $track->{'URI'} . "\n");
+		$::d_parse && msg("    URL: " . $track->{'URI'} . "\n");
 
 		# Ensure that we have a CT
 		if (!defined $track->{'CT'}) {
@@ -371,41 +371,41 @@ sub parseCUE {
 		}
 
 		$track->{'TRACKNUM'} = $key;
-		$::d_parse && Slim::Utils::Misc::msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
+		$::d_parse && msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
 
 		$track->{'FILENAME'} = $filename;
 
 		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR GENRE)) {
 
 			if (exists $track->{$attribute}) {
-				$::d_parse && Slim::Utils::Misc::msg("    $attribute: " . $track->{$attribute} . "\n");
+				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");
 			}
 		}
 
 		# Merge in file level attributes
 		if (!exists $track->{'ARTIST'} && defined $artist) {
 			$track->{'ARTIST'} = $artist;
-			$::d_parse && Slim::Utils::Misc::msg("    ARTIST: " . $track->{'ARTIST'} . "\n");
+			$::d_parse && msg("    ARTIST: " . $track->{'ARTIST'} . "\n");
 		}
 
 		if (!exists $track->{'ALBUM'} && defined $album) {
 			$track->{'ALBUM'} = $album;
-			$::d_parse && Slim::Utils::Misc::msg("    ALBUM: " . $track->{'ALBUM'} . "\n");
+			$::d_parse && msg("    ALBUM: " . $track->{'ALBUM'} . "\n");
 		}
 
 		if (!exists $track->{'YEAR'} && defined $year) {
 			$track->{'YEAR'} = $year;
-			$::d_parse && Slim::Utils::Misc::msg("    YEAR: " . $track->{'YEAR'} . "\n");
+			$::d_parse && msg("    YEAR: " . $track->{'YEAR'} . "\n");
 		}
 
 		if (!exists $track->{'GENRE'} && defined $genre) {
 			$track->{'GENRE'} = $genre;
-			$::d_parse && Slim::Utils::Misc::msg("    GENRE: " . $track->{'GENRE'} . "\n");
+			$::d_parse && msg("    GENRE: " . $track->{'GENRE'} . "\n");
 		}
 
 		if (!exists $track->{'COMMENT'} && defined $comment) {
 			$track->{'COMMENT'} = $comment;
-			$::d_parse && Slim::Utils::Misc::msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
+			$::d_parse && msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
 		}
 	}
 
@@ -417,7 +417,7 @@ sub readCUE {
 	my $cuedir  = shift;
 	my $url     = shift;
 
-	$::d_parse && Slim::Utils::Misc::msg("Parsing cue: $url \n");
+	$::d_parse && msg("Parsing cue: $url \n");
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
@@ -469,7 +469,7 @@ sub readCUE {
 	});
 
 	for my $oldtrack (@oldtracks) {
-		$::d_parse && Slim::Utils::Misc::msg("Deleting previous entry for $oldtrack\n");
+		$::d_parse && msg("Deleting previous entry for $oldtrack\n");
 		$ds->delete($oldtrack);
 	}
 
@@ -479,7 +479,7 @@ sub readCUE {
 		my $track = $tracks->{$key};
 
 		if (!defined $track->{'URI'}) {
-			$::d_parse && Slim::Utils::Misc::msg("Skipping track without url\n");
+			$::d_parse && msg("Skipping track without url\n");
 			next;
 		}
 
@@ -506,7 +506,7 @@ sub readCUE {
 
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("    returning: " . scalar(@items) . " items\n");	
+	$::d_parse && msg("    returning: " . scalar(@items) . " items\n");	
 
 	return @items;
 }
@@ -519,7 +519,7 @@ sub processAnchor {
 	# rewrite the size, offset and duration if it's just a fragment
 	# This is mostly (always?) for cue sheets.
 	unless (defined $start && $end && $attributesHash->{'SECS'}) {
-		$::d_parse && Slim::Utils::Misc::msg("parse: Couldn't process anchored file fragment for " . $attributesHash->{'URI'} . "\n");
+		$::d_parse && msg("parse: Couldn't process anchored file fragment for " . $attributesHash->{'URI'} . "\n");
 		return 0;
 	}
 
@@ -537,8 +537,8 @@ sub processAnchor {
 	$attributesHash->{'SECS'} = $duration;
 
 	if ($::d_parse) {
-		Slim::Utils::Misc::msg("parse: calculating duration for anchor: $duration\n");
-		Slim::Utils::Misc::msg("parse: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
+		msg("parse: calculating duration for anchor: $duration\n");
+		msg("parse: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
 	}		
 }
 
@@ -598,7 +598,7 @@ sub writeM3U {
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
 			my $track = $ds->objectForUrl($item) || do {
-				Slim::Utils::Misc::msg("Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+				msg("Couldn't retrieve objectForUrl: [$item] - skipping!\n");
 				next;
 			};
 			
@@ -636,7 +636,7 @@ sub readWPL {
 		$wpl_playlist = XMLin($wplfile);
 	};
 
-	$::d_parse && Slim::Utils::Misc::msg("parsing WPL: $wplfile url: [$url]\n");
+	$::d_parse && msg("parsing WPL: $wplfile url: [$url]\n");
 
 	if (exists($wpl_playlist->{body}->{seq}->{media})) {
 		
@@ -651,23 +651,23 @@ sub readWPL {
 
 			my $entry=$entry_info->{src};
 
-			$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
+			$::d_parse && msg("  entry from file: $entry\n");
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
 
 			if ($entry eq $url) {
 
-				$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+				$::d_parse && msg("Found self-referencing playlist - skipping!\n");
 				next;
 			}
 
-			$::d_parse && Slim::Utils::Misc::msg("    entry: $entry\n");
+			$::d_parse && msg("    entry: $entry\n");
 
 			push @items, _updateMetaData($entry, undef);
 		}
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in wpl playlist\n");
+	$::d_parse && msg("parsed " . scalar(@items) . " items in wpl playlist\n");
 
 	return @items;
 }
@@ -772,7 +772,7 @@ sub readASX {
 			$asx_playlist = XMLin($asxstr, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 		
-		$::d_parse && Slim::Utils::Misc::msg("parsing ASX: $asxfile url: [$url]\n");
+		$::d_parse && msg("parsing ASX: $asxfile url: [$url]\n");
 
 		my $entries = $asx_playlist->{ENTRY};
 
@@ -782,7 +782,7 @@ sub readASX {
 				
 				my $title = $entry->{TITLE};
 
-				$::d_parse && Slim::Utils::Misc::msg("Found an entry title: $title\n");
+				$::d_parse && msg("Found an entry title: $title\n");
 
 				my $path;
 				my $refs = $entry->{REF};
@@ -794,7 +794,7 @@ sub readASX {
 						my $href = $ref->{href} || $ref->{Href} || $ref->{HREF};
 						my $url = URI->new($href);
 
-						$::d_parse && Slim::Utils::Misc::msg("Checking if we can handle the url: $url\n");
+						$::d_parse && msg("Checking if we can handle the url: $url\n");
 						
 						my $scheme = $url->scheme();
 
@@ -805,7 +805,7 @@ sub readASX {
 
 						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
 
-							$::d_parse && Slim::Utils::Misc::msg("Found a handler for: $url\n");
+							$::d_parse && msg("Found a handler for: $url\n");
 							$path = $href;
 							last;
 						}
@@ -817,7 +817,7 @@ sub readASX {
 
 					if ($path eq $url) {
 
-						$::d_parse && Slim::Utils::Misc::msg("Found self-referencing playlist - skipping!\n");
+						$::d_parse && msg("Found self-referencing playlist - skipping!\n");
 						next;
 					}
 
@@ -849,7 +849,7 @@ sub readASX {
 		}
 	}
 
-	$::d_parse && Slim::Utils::Misc::msg("parsed " . scalar(@items) . " items in asx playlist\n");
+	$::d_parse && msg("parsed " . scalar(@items) . " items in asx playlist\n");
 
 	return @items;
 }
@@ -857,7 +857,7 @@ sub readASX {
 sub readPodcast {
 	my $in = shift;
 
-	#$::d_parse && Slim::Utils::Misc::msg("Parsing podcast...\n");
+	#$::d_parse && msg("Parsing podcast...\n");
 
 	my @urls = ();
 
@@ -927,7 +927,7 @@ sub _filehandleFromNameOrString {
 	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
-			Slim::Utils::Misc::msg("Could not open $filename for writing.\n");
+			msg("Could not open $filename for writing.\n");
 			return undef;
 		};
 
