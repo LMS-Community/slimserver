@@ -17,10 +17,7 @@ use URI::Escape;
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
-
-if ($] > 5.007) {
-	require Encode;
-}
+use Slim::Utils::Unicode;
 
 our %playlistInfo = ( 
 	'm3u' => [\&readM3U, \&writeM3U, '.m3u'],
@@ -114,6 +111,7 @@ sub readM3U {
 
 	my @items  = ();
 	my $title;
+	my $foundBOM = 0;
 
 	$::d_parse && Slim::Utils::Misc::msg("parsing M3U: $url\n");
 
@@ -134,6 +132,12 @@ sub readM3U {
 
 		$entry = Slim::Utils::Misc::utf8decode_guess($entry, $enc);
 
+		if (!$foundBOM) {
+
+			$entry = Slim::Utils::Unicode::stripUTF8BOM($entry);
+			$foundBOM = 1;
+		}
+
 		$::d_parse && Slim::Utils::Misc::msg("  entry from file: $entry\n");
 
 		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
@@ -141,7 +145,7 @@ sub readM3U {
 
 			$::d_parse && Slim::Utils::Misc::msg("  found title: $title\n");
 		}
-		
+
 		next if $entry =~ /^#/;
 		next if $entry eq "";
 
@@ -175,6 +179,7 @@ sub readPLS {
 	my @urls   = ();
 	my @titles = ();
 	my @items  = ();
+	my $foundBOM = 0;
 	
 	$::d_parse && Slim::Utils::Misc::msg("Parsing playlist: $url \n");
 	
@@ -192,12 +197,18 @@ sub readPLS {
 		my $enc = Slim::Utils::Misc::encodingFromString($line);
 
 		$line = Slim::Utils::Misc::utf8decode_guess($line, $enc);
-		
+
+		if (!$foundBOM) {
+
+			$line = Slim::Utils::Unicode::stripUTF8BOM($line);
+			$foundBOM = 1;
+		}
+
 		if ($line =~ m|File(\d+)=(.*)|i) {
 			$urls[$1] = $2;
 			next;
 		}
-		
+
 		if ($line =~ m|Title(\d+)=(.*)|i) {
 			$titles[$1] = $2;
 			next;

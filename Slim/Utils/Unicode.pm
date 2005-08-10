@@ -295,6 +295,16 @@ sub decomposeUnicode {
 	return $string;
 }
 
+sub stripUTF8BOM {
+	my $string = shift;
+
+	if ($] > 5.007) {
+		$string =~ s/^\x{feff}//o;
+	}
+
+	return $string;
+}
+
 1;
 
 __END__
