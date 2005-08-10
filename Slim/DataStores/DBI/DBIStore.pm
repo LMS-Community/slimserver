@@ -78,8 +78,6 @@ sub new {
 	my $class = shift;
 
 	my $self = {
-		# Handle to the DBI database we're going to use.
-		dbh => Slim::DataStores::DBI::DataModel->db_Main(),
 		# Values persisted in metainformation table
 		trackCount => 0,
 		totalTime => 0,
@@ -100,6 +98,7 @@ sub new {
 	bless $self, $class;
 
 	Slim::DataStores::DBI::Track->setLoader($self);
+	Slim::DataStores::DBI::DataModel->db_Main(1);
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	
@@ -110,6 +109,12 @@ sub new {
 	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 
 	return $self;
+}
+
+sub dbh {
+	my $self = shift;
+
+	return Slim::DataStores::DBI::DataModel->dbh;
 }
 
 sub classForType {
@@ -353,7 +358,7 @@ sub updateTrack {
 	$track->update();
 	$self->_updateTrackValidity($track);
 
-	$self->{'dbh'}->commit() if $commit;
+	$self->dbh->commit if $commit;
 }
 
 # Create a new track with the given attributes
@@ -436,7 +441,7 @@ sub newTrack {
 
 	$self->_updateTrackValidity($track);
 
-	$self->{'dbh'}->commit() if $args->{'commit'};
+	$self->dbh->commit if $args->{'commit'};
 
 	return $track;
 }
@@ -558,7 +563,7 @@ sub delete {
 		}
 
 		$track->delete();
-		$self->{'dbh'}->commit() if $commit;
+		$self->dbh->commit if $commit;
 
 		$::d_info && Slim::Utils::Misc::msg("cleared $url from database\n");
 	}
@@ -726,7 +731,7 @@ sub cleanupStaleTableEntries {
 	}
 
 	# We're done.
-	$self->{'dbh'}->commit();
+	$self->dbh->commit;
 
 	$::d_import && Slim::Utils::Misc::msg("Finished with cleanupStaleTableEntries()\n");
 
@@ -850,8 +855,6 @@ sub wipeAllData {
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
 	$::d_import && Slim::Utils::Misc::msg("wipeAllData: Wiped info database\n");
-
-	$self->{'dbh'} = Slim::DataStores::DBI::DataModel->db_Main();
 }
 
 # Force a commit of the database
@@ -879,7 +882,7 @@ sub forceCommit {
 
 	$::d_info && Slim::Utils::Misc::msg("forceCommit: syncing to the database.\n");
 
-	$self->{'dbh'}->commit();
+	$self->dbh->commit;
 
 	$Slim::DataStores::DBI::DataModel::dirtyCount = 0;
 

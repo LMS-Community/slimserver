@@ -73,7 +73,7 @@ sub executeSQLFile {
 
 			$::d_sql && Slim::Utils::Misc::msg("Executing SQL statement: [$statement]\n");
 
-			eval { $dbh->do($statement) };
+			eval { $class->dbh->do($statement) };
 
 			if ($@) {
 				Slim::Utils::Misc::msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
@@ -87,14 +87,39 @@ sub executeSQLFile {
 		$statement .= $line if $inStatement;
 	}
 
-	$dbh->commit();
+	$class->dbh->commit;
+
 	close $fh;
 }
 
-sub db_Main {
-	my $class  = shift;
+sub dbh {
+	my $class = shift;
 
-	return $dbh if defined $dbh;
+	# Keep MySQL alive here.
+	if (defined $dbh && $dbh->ping) {
+
+		return $dbh;
+
+	} elsif (defined $dbh) {
+
+		$dbh->disconnect;
+
+		$::d_info&& Slim::Utils::Misc::msg("Database handle is undefined - disconnecting!\n");
+	}
+
+	$::d_info && Slim::Utils::Misc::msg("Couldn't ping DB server - need to reconnect!\n");
+
+	# Reconnect.
+	return $class->db_Main(1);
+}
+
+sub db_Main {
+	my $class = shift;
+	my $check = shift;
+
+	if (!$check && $class->dbh) {
+		return $class->dbh;
+	}
 
 	my $dbname = Slim::Utils::OSDetect::OS() eq 'unix' ? '.slimserversql.db' : 'slimserversql.db';
 
@@ -218,8 +243,8 @@ sub wipeDB {
 	$class->clearObjectCaches;
 	$class->executeSQLFile("dbdrop.sql");
 
-	$dbh->commit();
-	$dbh->disconnect();
+	$class->dbh->commit;
+	$class->dbh->disconnect;
 	$dbh = undef;
 }
 
@@ -237,13 +262,13 @@ sub clearObjectCaches {
 sub getMetaInformation {
 	my $class = shift;
 
-	$dbh->selectrow_array("SELECT track_count, total_time FROM metainformation");
+	$class->dbh->selectrow_array("SELECT track_count, total_time FROM metainformation");
 }
 
 sub setMetaInformation {
 	my ($class, $track_count, $total_time) = @_;
 
-	$dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
+	$class->dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
 }
 
 sub getWhereValues {
@@ -619,7 +644,7 @@ sub find {
 	my $abstract;
 
 	if (defined $limit && defined $offset) {
-		$abstract  = SQL::Abstract::Limit->new('limit_dialect' => $dbh);
+		$abstract  = SQL::Abstract::Limit->new('limit_dialect' => $class->dbh);
 	} else {
 		$abstract  = SQL::Abstract->new();
 	}
@@ -666,7 +691,7 @@ sub find {
 	my $sth;
 
 	eval {
-		$sth = $dbh->prepare_cached($sql);
+		$sth = $class->dbh->prepare_cached($sql);
 	   	$sth->execute(@bind);
 	};
 
