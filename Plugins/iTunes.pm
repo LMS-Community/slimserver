@@ -560,6 +560,9 @@ sub doneScanning {
 	$lastMusicLibraryFinishTime = time();
 	$isScanning = 0;
 
+	# Don't leak filehandles.
+	close(ITUNESLIBRARY);
+
 	# Set the last change time for the next go-round.
 	my $file  = findMusicLibraryFile();
 	my $mtime = (stat($file))[9];
