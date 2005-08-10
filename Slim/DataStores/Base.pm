@@ -628,7 +628,7 @@ sub init {
 				my $obj = $ds->objectForId('playlist', $findCriteria->{'playlist'}) || return [];
 
 				# If the playlist has changed - re-import it.
-				if ($obj->url =~ m!^(?:file|playlist)://!) {
+				if ($obj->url =~ m!^file://!) {
 					Slim::Utils::Misc::findAndScanDirectoryTree(undef, $obj);
 				}
 

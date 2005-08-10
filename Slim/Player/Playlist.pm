@@ -559,7 +559,7 @@ sub scheduleWriteOfPlaylist {
 	# time.
 	Slim::Utils::Timers::setTimer(
 		$client,
-		Time::HiRes::time() + 30,
+		Time::HiRes::time() + 5,
 
 		sub {
 			Slim::Utils::Scheduler::add_task(sub {
@@ -574,7 +574,7 @@ sub scheduleWriteOfPlaylist {
 				Slim::Formats::Parse::writeM3U( 
 					[ $playlistObj->tracks ],
 					undef,
-					catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u'),
+					$playlistObj->path,
 					1,
 					Slim::Player::Source::playingSongIndex($client),
 				);

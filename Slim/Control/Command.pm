@@ -1158,7 +1158,9 @@ sub execute {
 				my $title = $p2;
 
 				my $playlistObj = $ds->updateOrCreate({
-					'url'        => "playlist://$title",
+					'url'        => Slim::Utils::Misc::fileURLFromPath(
+						catfile(Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
+					),
 					'attributes' => {
 						'TITLE' => $title,
 						'CT'    => 'ssp',
@@ -1182,6 +1184,9 @@ sub execute {
 				$playlistObj->update();
 
 				Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
+
+				# Pass this back to the caller.
+				$p0 = $playlistObj;
 
 			} elsif ($p1 eq "deletealbum") {
 

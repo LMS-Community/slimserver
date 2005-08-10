@@ -128,10 +128,10 @@ sub editplaylist {
 		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
 
 		$obj->setTracks(\@items);
-		if ($obj->url =~ /^playlist:/) {
-			my $fileurl = $obj->url;
-			$fileurl =~ s/^playlist:/file:/;
-			Slim::Formats::Parse::writeList(\@items, undef, $fileurl);
+
+		if ($obj->ct eq 'ssp') {
+
+			Slim::Formats::Parse::writeList(\@items, undef, $obj->url);
 		}
 	}
 
@@ -156,19 +156,23 @@ sub saveCurrentPlaylist {
 
 		my $title = $client->string('UNTITLED');
 
-		$client->execute(['playlist', 'save', $title]);
+		my ($playlistObj) = $client->execute(['playlist', 'save', $title]);
 
-		if (my $playlistObj = $ds->objectForUrl("playlist://$title")) {
+		if ($playlistObj) {
 
 			$params->{'playlist'} = $playlistObj->id;
 		}
 
 		# setup browsedb params to view the current playlist
-		$params->{'hierarchy'} = 'playlist,playlistTrack';
-		$params->{'level'}     = 1;
-
+		$params->{'level'} = 1;
 		$params->{'untitledString'} = $title;
+
+	} else {
+
+		$params->{'level'} = 0;
 	}
+
+	$params->{'hierarchy'} = 'playlist,playlistTrack';
 
 	return Slim::Web::Pages::browsedb($client, $params);
 }
@@ -191,7 +195,9 @@ sub renamePlaylist {
 		# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
 		$newName     =~ tr|.:\x00-\x1f\/\\| |s;
 
-		my $newUrl   = "playlist://$newName";
+		my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
+			catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
+		);
 
 		my $existing = $ds->objectForUrl($newUrl);
 

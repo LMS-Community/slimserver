@@ -715,8 +715,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				$playlisturl !~ /ShoutcastBrowser_Recently_Played/ &&
 				!Slim::Music::Info::isCUE($playlisturl)
 			) {
-
-				$playlisturl =~ s/^file:/playlist:/;
 				$ct = 'ssp';
 			}
 

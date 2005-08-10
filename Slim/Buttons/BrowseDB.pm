@@ -1,6 +1,6 @@
 package Slim::Buttons::BrowseDB;
 
-# $Id: BrowseDB.pm 2765 2005-03-27 22:01:07Z vidur $
+# $Id$
 
 # SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

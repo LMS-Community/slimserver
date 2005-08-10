@@ -47,6 +47,12 @@ sub parseList {
 	my $base = shift;
 	
 	my $type = Slim::Music::Info::contentType($list);
+
+	# We want the real type from a internal playlist.
+	if ($type eq 'ssp') {
+		$type = Slim::Music::Info::typeFromSuffix($list);
+	}
+
 	$::d_parse && Slim::Utils::Misc::msg("parseList (type: $type): $list\n");
 
 	my $parser;
@@ -893,10 +899,9 @@ sub readPodcast {
 
 sub _pathForItem {
 	my $item = shift;
-	my $dontencode = shift;
 
 	if (Slim::Music::Info::isFileURL($item) && !Slim::Music::Info::isFragment($item)) {
-		return Slim::Utils::Misc::pathFromFileURL($item, $dontencode);
+		return Slim::Utils::Misc::pathFromFileURL($item);
 	}
 
 	return $item;
