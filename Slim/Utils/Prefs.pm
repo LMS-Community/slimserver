@@ -15,6 +15,7 @@ use Digest::MD5;
 use YAML qw(DumpFile LoadFile);
 
 use Slim::Utils::Misc;
+use Slim::Utils::Unicode;
 
 our %prefs = ();
 my $prefsPath;
@@ -538,7 +539,7 @@ sub clientGetArray {
 
 # get($pref)
 sub get { 
-	return $prefs{$_[0]} 
+	return $prefs{$_[0]};
 }
 
 # getInd($pref,$index)
@@ -625,6 +626,10 @@ sub set {
 	my $key   = shift || return;
 	my $value = shift;
 	my $ind   = shift;
+
+	# We always want to write out just bytes to the pref file, so turn off
+	# the UTF8 flag.
+	$value = Slim::Utils::Unicode::utf8off($value);
 
 	if (defined $ind) {
 
@@ -813,8 +818,19 @@ sub writePrefs {
 	my $writeFile = prefsFile();
 
 	$::d_prefs && msg("Writing out prefs in $writeFile\n");
-	
-	DumpFile($writeFile, \%prefs);
+
+	open(OUT, ">$writeFile") or do {
+		msg("Severe Warning! Couldn't write out Prefs file: [$writeFile]: $!\n");
+		return;
+	};
+
+	if ($] > 5.007) {
+		binmode(\*OUT, ":raw");
+	}
+
+	print OUT YAML::Dump(\%prefs);
+
+	close(OUT);
 }
 
 sub preferencesPath {
