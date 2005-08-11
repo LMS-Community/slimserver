@@ -1380,6 +1380,16 @@ sub _postCheckAttributes {
 	} elsif ($create && $isLocal && $genre) {
 
 		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
+
+	} elsif (!$create && $isLocal && $genre && $genre ne $track->genre) {
+
+		# Bug 1143: The user has updated the genre tag, and is
+		# rescanning We need to remove the previous associations.
+		for my $genreObj ($track->genres) {
+			$genreObj->delete;
+		}
+
+		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
