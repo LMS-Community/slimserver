@@ -49,7 +49,7 @@ my %display_cache = ();
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 our %currentTitleCallbacks = ();
 
-my ($currentDB, $localDB, $ncElemstring, $ncElems, $elemstring, $elems, $validTypeRegex);
+my ($currentDB, $localDB, $elemstring, $validTypeRegex);
 
 my (@elements, $elemRegex, %parsedFormats);
 
@@ -127,24 +127,6 @@ our %tagFunctions = (
 		'getTag' => \&Slim::Formats::APE::getTag,
 	},
 );
-
-sub init_old {
-
-	# non-cached elements
-	$ncElemstring = "VOLUME|PATH|FILE|EXT|DURATION|LONGDATE|SHORTDATE|CURRTIME|FROM|BY";
-	$ncElems = qr/$ncElemstring/;
-
-	$elemstring = (join '|', map { uc $_ } 
-		keys %{Slim::DataStores::DBI::Track->attributes()},
-		$ncElemstring,
-		"ARTIST|COMPOSER|CONDUCTOR|BAND|ALBUM|GENRE|ALBUMSORT|ARTISTSORT|DISC|DISCC|COMMENT"
-	);
-
-	#. "|VOLUME|PATH|FILE|EXT" #file data (not in infoCache)
-	#. "|DURATION" # SECS expressed as mm:ss (not in infoCache)
-	#. "|LONGDATE|SHORTDATE|CURRTIME" #current date/time (not in infoCache)
-	$elems = qr/$elemstring/;
-}
 
 sub init {
 
@@ -521,158 +503,6 @@ sub addToinfoHash {
 	
 	$infoHashref->{'FROM'} = string('FROM');
 	$infoHashref->{'BY'} = string('BY'); 
-}
-
-# formats information about a file using a provided format string
-sub infoFormat_old {
-	no warnings; # this is to allow using null values with string concatenation, it only effects this procedure
-	my $fileOrObj = shift; # item whose information will be formatted
-	my $str = shift; # format string to use
-	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
-	my $pos = 0; # keeps track of position within the format string
-
-	my $track = ref $fileOrObj ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
-	my $file  = ref $fileOrObj ? $track->url : $fileOrObj;
-
-	return '' unless defined $file && $track;
-	
-	my $infoRef = infoHash($track, $file) || return '';
-
-	my %infoHash = %{$infoRef}; # hash of data elements not cached in the main repository
-
-	# use a safe format string if none specified
-	# Users can input strings in any locale - we need to convert that to
-	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
-	if ($str && $] > 5.007) {
-
-		eval {
-			Encode::from_to($str, $Slim::Utils::Unicode::locale, 'utf8');
-			Encode::_utf8_on($str);
-		};
-
-	} elsif (!defined $str) {
-
-		$str = 'TITLE';
-	}
-
-	if ($str =~ $ncElems) {
-		addToinfoHash(\%infoHash,$file,$str);
-	}
-
-	# So formats with high-bit chars will work.
-	use bytes;
-
-	#here is a breakdown of the following regex:
-	#\G -> start at the current pos() for the string
-	#(.*?)? -> match 0 or 1 instances of any string 0 or more characters in length (non-greedy),capture as $1
-	#(?:=>(.*?)=>)? -> 0 or 1 instances of any string in a =>=> frame, capture as $2 (excluding =>=>)
-	#(?:=>(.*?)=>)? -> same, captured as $3
-	#($elems) -> match one of the precompiled list of allowed data elements, capture as $4
-	#(?:<=(.*?)<=)? -> 0 or 1 instances of any string in a <=<= frame, capture as $5 (excluding <=<=)
-	#(.*?)? -> 0 or 1 instances of any string, capture as $6
-	#(?:<#(.*?)#>)? -> 0 or 1 instances of any string in a <##> frame, capture as $7 (excluding <##>)
-	#($elems|(?:=>.*?=>)) -> either another data element or a =>=> frame in front of another data element, as $8 (includes =>=>)
-	while ($str =~ s{\G(.*?)?(?:=>(.*?)=>)?(?:=>(.*?)=>)?($elems)(?:<=(.*?)<=)?(.*?)?(?:<#(.*?)#>)?($elems|(?:=>.*?=>))}
-				{
-					my $out = ''; # replacement string for this substitution
-					#look up the value corresponding to the first data element
-					my $value = elemLookup($4,\%infoHash);
-					#if another data element comes next replace <##> frames with =>=> frames
-					#otherwise leave off the frames
-					my $frame = defined($8) ? "=>" : "";
-					if (defined($value)) { #the data element had a value, so include all the separators
-						#pos() is set to the first character of the match by the s/// function
-						#so adjust it to be where we want the next s/// to start
-						#$pos is used to hold the value of pos() that we want, because pos()
-						#gets reset to 0 since we aren't using /g.  We aren't using /g because we need
-						#do do some backtracking and that is not allowed all in one go.
-						#we want the next replace to start at the beginning of either
-						#the next data element or the =>=> frame preceding it
-						$pos = pos($str) + length($1) + length($2) + length($3) + length($value);
-						if (!(defined($5) || defined($7))) {
-							#neither a <=<= or a <##> frame is present so treat a bare
-							#separator like one framed with <##>
-							$out = $1 . $2 . $3 . $value . $frame . $6 . $frame . $8;
-						} else {
-							#either <=<= or <##> was present, so always write out a bare separator
-							#if no <##> was present, don't add a =>=> frame
-							$out = $1 . $2 . $3 . $value . $5 . $6 . (defined($7) ? ($frame . $7 . $frame) : "") . $8;
-							#we want the next replace to start at the beginning of either
-							#the next data element or the =>=> frame preceding it
-							$pos += length($5) + length($6);
-						}
-					} else { #the data element did not have a value, so collapse the string
-						#initialize $pos
-						$pos = pos($str);
-						if (defined($2) || defined($3)) {
-							#a =>=> frame exists so always write a preceding bare separator
-							#which should only happen in the first iteration if ever
-							$out = $1;
-							$pos += length($1);
-							if (defined($6)) {
-								#the bare separator is always used if a <=<= or a <##> frame was present
-								#otherwise since there was a =>=> frame preceding the missing element convert
-								#a bare separator to a =>=>
-								$out .= (defined($5) || defined($7)) ? $6 : $frame . $6 . $frame;
-								$pos += (defined($5) || defined($7)) ? length($6) : 0;
-							}
-							if (defined($7)) {
-								#since there was a =>=> frame preceding the missing element convert
-								#the <##> separator to a =>=>
-								$out .= $frame . $7 . $frame;
-							}
-						} else {
-							#treat a non-zero length bare separator as a data element for the purpose of determining
-							#whether to convert a bare separator or a <##> to a =>=>
-							$out = "";
-							if (defined($6)) {
-								$out .= (defined($5) || defined($7)) ? $6 : (length($1) ? ($frame . $6 . $frame) : "");
-								$pos += (defined($5) || defined($7)) ? length($6) : 0;
-							}
-							if (defined($7)) {
-								$out .= (length($1) || length($6)) ? ($frame . $7 . $frame) : "";
-							}
-						}
-						$out .= $8;
-					}
-					$out;
-				}e) {
-		# since we aren't using s///g we need to reset the string position after each pass
-		pos($str) = $pos;
-	}
-
-	# reset the string position which the failed match set to 0
-	pos($str) = $pos;
-
-	# same regex as above, but the last element is the end of the string
-	$str =~ s{\G(.*?)?(?:=>(.*?)=>)?(?:=>(.*?)=>)?($elems)(?:<=(.*?)<=)?(.*?)?(?:<#(.*?)#>)?$}
-				{
-					my $out = '';
-					my $value = elemLookup($4, \%infoHash);
-					if (defined($value)) {
-						#fill with all the separators
-						#no need to do the <##> conversion since this is the end of the string
-						$out = $1 . $2 . $3 . $value . $5 . $6 . $7;
-
-					} else {
-						# value not defined
-						# only use the bare separators if there were framed ones as well
-						$out  = (defined($2) || defined($3)) ? $1 : "";
-						$out .= (defined($5) || defined($7)) ? $6 : "";
-					}
-					$out;
-				}e;
-
-	if ($str eq "" && defined($safestr)) {
-
-		# if there isn't anything left of the format string after the replacements, use the safe string, if supplied
-		return infoFormat($track,$safestr);
-
-	} else {
-		$str =~ s/%([0-9a-fA-F][0-9a-fA-F])%/chr(hex($1))/eg;
-	}
-
-	return $str;
 }
 
 sub initParsedFormats {
