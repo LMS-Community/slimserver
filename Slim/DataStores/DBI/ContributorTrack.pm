@@ -40,14 +40,6 @@ our %contributorToRoleMap = (
 	$class->add_constructor('trackArtistsFor' => "track = ? AND role = $contributorToRoleMap{'TRACKARTIST'}");
 }
 
-tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
-
-sub clearCache {
-	my $class = shift;
-
-	%_cache = ();
-}
-
 sub add {
 	my $class      = shift;
 	my $artist     = shift;
@@ -57,7 +49,7 @@ sub add {
 
 	my @contributors = ();
 
-	# Handle the case where $genre is already an object:
+	# Handle the case where $artist is already an object:
 	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
 		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->find_or_create({
@@ -78,41 +70,18 @@ sub add {
 	
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 
-		my $name = $artistList[$i];
-		my $sort = Slim::Utils::Text::ignoreCaseArticles($sortedList[$i]);
+		# The search columnn is the canonical text that we match against in a search.
+		my $name   = $artistList[$i];
+		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
+		my $sort   = Slim::Utils::Text::ignoreCaseArticles($sortedList[$i]);
 
-		my $artistObj;
+		my $artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
+			namesearch => $search,
+		});
 
-		if (defined $_cache{$name}) {
-
-			$artistObj = $_cache{$name};
-
-			# If we had an explicitly specified sort tag, modify
-			# the existing object.
-			if ($artist ne $artistSort) {
-				$artistObj->namesort($sort);
-				$artistObj->update();
-			}
-
-		} else {
-
-			$artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
-				namesort => $sort,
-			});
-
-			$artistObj->name($name);
-			$artistObj->update();
-
-			# Try to prevent leaks and circular references.
-			if ($Class::DBI::Weaken_Is_Available) {
-
-				Scalar::Util::weaken($_cache{$name} = $artistObj);
-
-			} else {
-
-				$_cache{$name} = $artistObj;
-			}
-		}
+		$artistObj->name($name);
+		$artistObj->namesort($sort);
+		$artistObj->update;
 
 		push @contributors, $artistObj;
 

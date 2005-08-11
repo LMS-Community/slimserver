@@ -123,7 +123,7 @@ sub init {
 
 				return $ds->find({
 					'field'  => $type,
-					'find'   => { "track.titlesort" => $terms },
+					'find'   => { "track.titlesearch`" => $terms },
 					'sortBy' => 'title',
 					'idOnly' => $idOnly,
 				});
@@ -302,7 +302,7 @@ sub init {
 
 				return $ds->find({
 					'field'  => $type,
-					'find'   => { "album.titlesort" => $terms },
+					'find'   => { "album.titlesearch" => $terms },
 					'sortBy' => $type,
 					'idOnly' => $idOnly,
 				});
@@ -491,7 +491,7 @@ sub init {
 
 				return $ds->find({
 					'field'  => $type,
-					'find'   => { "contributor.namesort" => $terms },
+					'find'   => { "contributor.namesearch" => $terms },
 					'sortBy' => $type,
 					'idOnly' => $idOnly,
 				});

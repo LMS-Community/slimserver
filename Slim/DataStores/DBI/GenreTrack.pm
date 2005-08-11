@@ -22,14 +22,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->add_constructor('genresFor' => 'track = ?');
 }
 
-tie our %_cache, 'Tie::Cache::LRU::Expires', EXPIRES => 1200, ENTRIES => 25;
-
-sub clearCache {
-	my $class = shift;
-
-	%_cache = ();
-}
-
 sub add {
 	my $class = shift;
 	my $genre = shift;
@@ -50,44 +42,27 @@ sub add {
 
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
-		# Try and fetch the genre from the cache. Otherwise, search
-		# for it based on the normalized namesort. If that doesn't
-		# work, create it, and upper case the first letter.
-		unless ($_cache{$genreSub}) {
+		my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
 
-			my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
-			my $genreObj;
+		my ($genreObj) = Slim::DataStores::DBI::Genre->search({ 
+			namesort => $namesort,
+		});
 
-			($genreObj) = Slim::DataStores::DBI::Genre->search({ 
-				namesort => $namesort
+		if (!defined $genreObj) {
+
+			$genreObj = Slim::DataStores::DBI::Genre->create({ 
+				namesort => $namesort,
 			});
 
-			unless ($_cache{$genreSub}) {
-
-				# Do find_or_create - as the cache might have expired.
-				$genreObj = Slim::DataStores::DBI::Genre->find_or_create({ 
-					namesort => $namesort,
-				});
-
-				$genreObj->name(ucfirst($genreSub)),
-				$genreObj->update();
-			}
-
-			if ($Class::DBI::Weaken_Is_Available) {
-
-				Scalar::Util::weaken($_cache{$genreSub} = $genreObj);
-
-			} else {
-
-				$_cache{$genreSub} = $genreObj;
-			}
+			$genreObj->name(ucfirst($genreSub)),
+			$genreObj->update;
 		}
 
-		push @genres, $_cache{$genreSub};
+		push @genres, $genreObj;
 		
 		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,
-			genre => $_cache{$genreSub},
+			genre => $genreObj,
 		});
 	}
 

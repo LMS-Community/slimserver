@@ -20,9 +20,9 @@ use constant MAXRESULTS => 10;
 my @allTypes = qw(artist album track);
 
 our %queries = (
-	'artist' => [qw(contributor contributor.namesort)],
-	'album'  => [qw(album album.titlesort)],
-	'track'  => [qw(track track.titlesort)],
+	'artist' => [qw(contributor contributor.namesearch)],
+	'album'  => [qw(album album.titlesearch)],
+	'track'  => [qw(track track.titlesearch)],
 );
 
 sub query {

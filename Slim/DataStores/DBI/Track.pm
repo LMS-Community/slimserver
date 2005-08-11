@@ -52,6 +52,7 @@ our %otherColumns = (
 	'musicmagic_mixable' => 'musicmagic_mixable',
 	'playCount' => 'playCount',
 	'lastPlayed' => 'lastPlayed',
+	'titlesearch' => 'titlesearch',
 );
 
 our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );

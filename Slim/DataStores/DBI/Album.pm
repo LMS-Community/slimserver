@@ -14,6 +14,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->columns(Essential => qw/title titlesort contributor compilation year artwork_path disc discc musicmagic_mixable/);
 
+	$class->columns(Others    => qw/titlesearch/);
+
 	$class->columns(Stringify => qw/title/);
 
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');

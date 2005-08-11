@@ -14,6 +14,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
 
+	$class->columns(Others => qw/namesearch/);
+
 	$class->columns(Stringify => qw/name/);
 
 	$class->has_many('genreTracks' => ['Slim::DataStores::DBI::GenreTrack' => 'genre']);

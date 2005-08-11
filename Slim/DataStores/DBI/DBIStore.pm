@@ -834,8 +834,6 @@ sub wipeCaches {
 	$self->{'lastTrack'}    = {};
 	$self->{'zombieList'}   = {};
 
-	Slim::DataStores::DBI::ContributorTrack->clearCache();
-	Slim::DataStores::DBI::GenreTrack->clearCache();
 	Slim::DataStores::DBI::DataModel->clearObjectCaches();
 
 	$::d_import && msg("wipeAllData: Wiped all in-memory caches.\n");
@@ -1392,8 +1390,9 @@ sub _postCheckAttributes {
 	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
 
 		$_unknownArtist = Slim::DataStores::DBI::Contributor->find_or_create({
-			'name'     => string('NO_ARTIST'),
-			'namesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
+			'name'       => string('NO_ARTIST'),
+			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
+			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
 		});
 
 		Slim::DataStores::DBI::ContributorTrack->add(
@@ -1428,8 +1427,9 @@ sub _postCheckAttributes {
 	if ($create && $isLocal && !$album && !$_unknownAlbum) {
 
 		$_unknownAlbum = Slim::DataStores::DBI::Album->find_or_create({
-			'title'     => string('NO_ALBUM'),
-			'titlesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
+			'title'       => string('NO_ALBUM'),
+			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
+			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 		});
 
 		$track->album($_unknownAlbum);
@@ -1513,6 +1513,9 @@ sub _postCheckAttributes {
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort($sortable_title) if $sortable_title;
+
+		# And our searchable version.
+		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
 
 		$albumObj->compilation(1) if $attributes->{'COMPILATION'};
 
