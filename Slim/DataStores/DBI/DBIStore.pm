@@ -772,6 +772,11 @@ sub mergeVariousArtistsAlbums {
 		return 0;
 	}
 
+	if (!defined $obj) {
+		$::d_import && msg("mergeVariousArtistsAlbums: Couldn't fetch album for item: [$item]\n");
+		return 0;
+	}
+
 	# Don't need to process something we've already marked as a
 	# compilation.
 	return 1 if $obj->compilation;
