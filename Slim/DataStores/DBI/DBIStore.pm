@@ -1496,13 +1496,9 @@ sub _postCheckAttributes {
 		# Associate cover art with this album, and keep it cached.
 		unless ($self->{'artworkCache'}->{$albumObj->id}) {
 
-			my $artworkPath = $self->_findCoverArt($trackUrl, $albumObj, $attributes);
+			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
 
-			if ($artworkPath) {
-
-				$self->{'artworkCache'}->{$albumObj->id} = 1;
-
-				$albumObj->artwork_path($trackId);
+				Slim::Music::Import::artwork($albumObj, $track);
 			}
 		}
 
@@ -1630,71 +1626,6 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \@contributors;
-}
-
-sub _findCoverArt {
-	my ($self, $file, $album, $attributesHash) = @_;
-
-	# Check for Cover Artwork, only if not already present.
-	if ($attributesHash->{'COVER'} || $attributesHash->{'THUMB'}) {
-
-		$::d_artwork && msg("already checked artwork for $file\n");
-
-		return;
-	}
-
-	# Don't bother if the user doesn't care.
-	return unless Slim::Utils::Prefs::get('lookForArtwork');
-
-	my $filepath = $file;
-
-	if (Slim::Music::Info::isFileURL($file)) {
-		$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-	}
-
-	# Look for Cover Art and cache location
-	my ($body, $contentType, $path);
-
-	if (defined $attributesHash->{'PIC'} || defined $attributesHash->{'APIC'}) {
-
-		($body, $contentType, $path) = Slim::Music::Info::readCoverArtTags($file, $attributesHash);
-	}
-
-	if (defined $body) {
-
-		$attributesHash->{'COVER'} = 1;
-		$attributesHash->{'THUMB'} = 1;
-
-		if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
-
-			$::d_artwork && msg("ID3 Artwork cache entry for $album: $filepath\n");
-
-			return $filepath;
-		}
-	
-	} else {
-
-		($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'cover');
-
-		if (defined $body) {
-			$attributesHash->{'COVER'} = $path;
-		}
-
-		# look for Thumbnail Art and cache location
-		($body, $contentType, $path) = Slim::Music::Info::readCoverArtFiles($file, 'thumb');
-
-		if (defined $body) {
-
-			$attributesHash->{'THUMB'} = $path;
-
-			if ($album && !exists $self->{'artworkCache'}->{$album->id}) {
-
-				$::d_artwork && msg("Artwork cache entry for $album: $filepath\n");
-
-				return $filepath;
-			}
-		}
-	}
 }
 
 sub _updateTrackValidity {
