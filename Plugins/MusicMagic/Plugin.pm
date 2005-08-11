@@ -510,22 +510,16 @@ sub exportFunction {
 
 			$::d_musicmagic && msg("MusicMagic: Exporting song $scan: $songInfo{'file'}\n");
 
-			if ($] > 5.007) {
+			# Both Linux & Windows need conversion to the current charset.
+			if (Slim::Utils::OSDetect::OS() ne 'mac') {
+				$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+			}
 
-				# Both Linux & Windows need conversion to the current charset.
-				if (Slim::Utils::OSDetect::OS() ne 'mac') {
-					$songInfo{'file'} = Encode::encode($Slim::Utils::Unicode::locale, $songInfo{'file'}, Encode::FB_QUIET());
-				}
+			for my $key (qw(album artist genre name)) {
 
-				# tag information in the windows version of
-				# MMM isn't returned as utf8 - we need to encode.
-				if (Slim::Utils::OSDetect::OS() eq 'win') {
+				my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
 
-					for my $key (qw(album artist genre name)) {
-
-						$songInfo{$key} = Encode::encode('utf8', $songInfo{$key}, Encode::FB_QUIET());
-					}
-				}
+				$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
 			}
 
 			# Assign these after they may have been verified as UTF-8
@@ -690,11 +684,13 @@ sub exportFunction {
 					Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
 				);
 				
-				my @list;
+				my @list = ();
+
 				for (my $j = 0; $j < $count2; $j++) {
 					push @list, Slim::Utils::Misc::fileURLFromPath(convertPath($songs[$j]));
 				}
-				!$::d_musicmagic && msg("MusicMagic: got playlist $name with " .scalar @list." items.\n");
+
+				$::d_musicmagic && msg("MusicMagic: got playlist $name with " .scalar @list." items.\n");
 
 				$cacheEntry{'LIST'} = \@list;
 				$cacheEntry{'CT'} = 'mmp';
@@ -971,7 +967,7 @@ sub getMix {
 	# Work around for bug #881 The windows version of MMM doesn't send back proper UTF-8
 	if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
 
-		$mixArgs = Encode::encode($Slim::Utils::Unicode::locale, $mixArgs, Encode::FB_QUIET());
+		$mixArgs = Slim::Utils::Unicode::utf8encode_locale($mixArgs);
 		$mixArgs = URI::Escape::uri_escape($mixArgs);
 
 	} else {

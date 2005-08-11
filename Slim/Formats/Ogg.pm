@@ -17,6 +17,7 @@ package Slim::Formats::Ogg;
 
 use strict;
 use Slim::Utils::Misc;
+use Slim::Utils::Unicode;
 
 use Ogg::Vorbis::Header::PurePerl;
 
@@ -25,11 +26,6 @@ my %tagMapping = (
 	'DISCNUMBER'    => 'DISC',
 	'URL'           => 'URLTAG',
 );
-
-# To turn perl's internal form into a utf-8 string.
-if ($] > 5.007) {
-	require Encode;
-}
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
@@ -61,7 +57,7 @@ sub getTag {
 	foreach my $key ($ogg->comment_tags()) {
 
 		if ($] > 5.007) {
-			$tags->{uc($key)} = eval { Encode::decode("utf8", ($ogg->comment($key))[0], Encode::FB_QUIET()) };
+			$tags->{uc($key)} = Slim::Utils::Unicode::utf8decode(($ogg->comment($key))[0]);
 		} else {
 			$tags->{uc($key)} = Slim::Utils::Unicode::utf8toLatin1(($ogg->comment($key))[0]);
 		}
@@ -74,7 +70,6 @@ sub getTag {
 			$tags->{$new} = $tags->{$old};
 			delete $tags->{$old};
 		}
-
 	}
 
 	# Special handling for DATE tags

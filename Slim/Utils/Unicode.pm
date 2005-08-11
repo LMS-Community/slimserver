@@ -388,7 +388,8 @@ sub utf8decode_locale {
 }
 
 sub utf8encode {
-	my $string = shift;
+	my $string   = shift;
+	my $encoding = shift || 'utf8';
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string)) {
@@ -402,7 +403,7 @@ sub utf8encode {
 	# If the incoming string already is utf8, turn off the utf8 flag.
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::encode('utf8', $string, Encode::FB_QUIET());
+		$string = Encode::encode($encoding, $string, Encode::FB_QUIET());
 
 	} elsif ($string && $] > 5.007) {
 
@@ -417,6 +418,11 @@ sub utf8encode {
 	}
 
 	return $string;
+}
+
+sub utf8encode_locale {
+
+	return utf8encode($_[0], $locale);
 }
 
 sub utf8off {

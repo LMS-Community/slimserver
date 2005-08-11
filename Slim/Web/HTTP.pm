@@ -38,6 +38,7 @@ use Slim::Web::Pages;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Unicode;
 
 # constants
 BEGIN {
@@ -47,10 +48,6 @@ BEGIN {
 	} else {
 		require Errno;
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-
-	if ($] > 5.007) {
-		require Encode;
 	}
 }
 
@@ -401,9 +398,9 @@ sub processHTTP {
 					# representation of the unescaped
 					# UTF-8 string into a "real" UTF-8
 					# string with the appropriate magic set.
-					if ($value ne '*' && $value ne '' && $] > 5.007) {
+					if ($value ne '*' && $value ne '') {
 
-						$value = eval { Encode::decode_utf8($value) } || $value;
+						$value = Slim::Utils::Unicode::utf8decode($value);
 					}
 
 					$params->{$name} = $value;
@@ -1857,10 +1854,12 @@ sub buildStatusHeaders {
 	# simple quoted printable encoding
 	while (my ($key, $value) = each %headers) {
 		if (defined($value) && length($value)) {
-			if ( $] > 5.007) {
-				$value = Encode::encode("iso-8859-1", $value);
+
+			if ($] > 5.007) {
+				$value = Slim::Utils::Unicode::utf8encode($value, 'iso-8859-1');
 				$value = encode_qp($value, "\n");	
 			}
+
 			$response->header($key => $value);
 		}
 	}

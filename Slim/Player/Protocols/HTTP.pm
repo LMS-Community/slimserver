@@ -29,6 +29,7 @@ BEGIN {
 use Slim::Display::Display;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Utils::Unicode;
 
 sub new {
 	my $class = shift;
@@ -188,11 +189,7 @@ sub request {
 
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 
-			my $title = $1;
-
-			if ($title && $] > 5.007) {
-				$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
-			}
+			my $title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
 			Slim::Music::Info::setCurrentTitle($infoUrl, $title) if $create;
 
@@ -444,12 +441,9 @@ sub parseMetadata {
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
 		my $oldTitle = Slim::Music::Info::getCurrentTitle(undef, $url) || '';
-		my $title    = $1;
 
-		if ($title && $] > 5.007) {
-			$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
-		}
-			
+		my $title    = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+
 		# capitalize titles that are all lowercase
 		if (lc($title) eq $title) {
 			$title =~ s/ (

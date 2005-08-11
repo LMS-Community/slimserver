@@ -14,15 +14,16 @@ package Slim::Player::Squeezebox2;
 #
 
 use strict;
+use base qw(Slim::Player::SqueezeboxG);
+
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use IO::Socket;
+use MIME::Base64;
+
 use Slim::Player::Player;
 use Slim::Utils::Misc;
-use MIME::Base64;
-use Data::Dumper;
-
-our @ISA = ("Slim::Player::SqueezeboxG");
+use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
 	'activeFont'		=> [qw(light standard full)],
@@ -635,16 +636,23 @@ sub canDirectStreamDisabled {
 sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
-	$::d_directstream && msg("processing headers for direct streaming\n");
-	$::d_directstream && msg(Dumper($headers));
-	$::d_directstream && bt();
-	my $url = $client->directURL();
-	
-	return unless $url;
-	
+
+	if ($::d_directstream) {
+
+		require Data::Dumper;
+
+		msg("processing headers for direct streaming\n");
+		msg(Data::Dumper::Dumper($headers));
+		bt();
+	}
+
+	my $url = $client->directURL || return;
+
 	$headers =~ s/\r/\n/g;
 	$headers =~ s/\n\n/\n/g;
+
 	my @headers = split "\n", $headers;
+
 	chomp(@headers);
 	
 	my $response = shift @headers;
@@ -676,11 +684,7 @@ sub directHeaders {
 		
 				if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
 		
-					$title = $1;
-		
-					if ($title && $] > 5.007) {
-						$title = Encode::decode('iso-8859-1', $title, Encode::FB_QUIET());
-					}	
+					$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 				}
 	
 				if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {

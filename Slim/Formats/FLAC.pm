@@ -16,12 +16,15 @@ package Slim::Formats::FLAC;
 ###############################################################################
 
 use strict;
-use File::Basename;
+
 use Audio::FLAC::Header;
-use MP3::Info ();
-use Slim::Utils::Misc;
-use Slim::Formats::Parse;
+use File::Basename;
 use IO::Seekable qw(SEEK_SET);
+use MP3::Info ();
+
+use Slim::Formats::Parse;
+use Slim::Utils::Misc;
+use Slim::Utils::Unicode;
 
 my %tagMapping = (
 	'TRACKNUMBER'	=> 'TRACKNUM',
@@ -34,11 +37,6 @@ my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUM
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
-
-# Turn perl's internal string representation into UTF-8
-if ($] > 5.007) {
-	require Encode;
-}
 
 # Choose between returning a standard tag
 # or parsing through an embedded cuesheet
@@ -762,7 +760,7 @@ sub _decodeUTF8 {
 		next unless exists $tags->{$tag};
 
 		if ($] > 5.007) {
-			$tags->{$tag} = eval { Encode::decode("utf8", $tags->{$tag}, Encode::FB_QUIET()) };
+			$tags->{$tag} = Slim::Utils::Unicode::utf8decode($tags->{$tag});
 		} else {
 			$tags->{$tag} = Slim::Utils::Unicode::utf8toLatin1($tags->{$tag});
 		}

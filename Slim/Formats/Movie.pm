@@ -16,7 +16,11 @@ package Slim::Formats::Movie;
 ###############################################################################
 
 use strict;
+
 use QuickTime::Movie;
+
+use Slim::Utils::Misc;
+use Slim::Utils::Unicode;
 
 my @genre = (
    "N/A", "Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk",
@@ -90,7 +94,7 @@ sub getTag {
 
 			if (exists $tags->{$old}) {
 
-				$tags->{$new} = $tags->{$old};
+				$tags->{$new} = Slim::Utils::Unicode::utf8decode_guess($tags->{$old});
 				delete $tags->{$old};
 			}
 		}
