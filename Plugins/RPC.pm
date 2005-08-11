@@ -6,11 +6,13 @@ use JSON;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scan;
+use Slim::Utils::Strings qw(string);
 
 my %rpcFunctions = (
 	'system.listMethods'	=>	\&listMethods,
 	'slim.doCommand'	=>	\&doCommand,
 	'slim.getPlaylist'	=>	\&getPlaylist,
+	'slim.getStrings'	=>	\&getStrings
 );
 
 sub listMethods {
@@ -24,7 +26,7 @@ sub doCommand {
 
 	my $commandargs = $reqParams->[1];
 
-	return RPC::XML::fault->new(2, 'invalid arguments') unless ($commandargs && ref($commandargs) == 'ARRAY');
+	return RPC::XML::fault->new(2, 'invalid arguments') unless ($commandargs && ref($commandargs) eq 'ARRAY');
 
 	my $playername = scalar ($reqParams->[0]);
 	$client = Slim::Player::Client::getClient($playername);
@@ -39,7 +41,7 @@ sub getPlaylist {
 	my $client, $p0, $p1;
 	my @returnArray;
 
-	return RPC::XML::fault->new(3, 'insufficient parameters') unless (ref($reqParams) == 'ARRAY' && @$reqParams >= 3); 
+	return RPC::XML::fault->new(3, 'insufficient parameters') unless (ref($reqParams) eq 'ARRAY' && @$reqParams >= 3); 
 
 	my $playername = scalar ($reqParams->[0]);
 
@@ -53,6 +55,9 @@ sub getPlaylist {
 	$p2 = scalar($reqParams->[2]);
 
 	my $songCount = Slim::Player::Playlist::count($client);
+
+	return \@returnArray if ($songCount == 0);
+
 	my ($valid, $start, $end) = Slim::Control::Command::normalize($p1, $p2, $songCount);
 
 	if ($valid) {
@@ -63,10 +68,23 @@ sub getPlaylist {
  
 			# this forces the track info to be pulled out of the db
 			$track->title();
+			$track->contributors()->first()->name();
+
 			push @returnArray, $track;
 		}
 	} else {
 		return RPC::XML::fault->new(2, 'invalid arguments');
+	}
+
+	return \@returnArray;
+}
+
+sub getStrings {
+	my $reqParams = shift;
+	my @returnArray;
+
+	for (my $i = 0; $i < @$reqParams; $i++) {
+		push @returnArray, string($reqParams->[$i]);
 	}
 
 	return \@returnArray;
