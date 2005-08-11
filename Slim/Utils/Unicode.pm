@@ -10,11 +10,6 @@ use strict;
 # characters that somehow become decomposed. Sometimes we'll see a URI
 # encoding such as: o%CC%88 - which is an o with diaeresis. The correct
 # (composed) version of this should be %C3%B6
-#
-# This code isn't in use anywhere - but James Craig was seeing it in his
-# iTunesControl Plugin. I've added it to the tree with the intent of moving
-# all of the utf8/latin1/encoding functions from Slim::Utils::Misc here at a
-# later date.
 
 use Fcntl qw(:seek);
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
