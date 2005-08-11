@@ -768,6 +768,7 @@ sub mergeVariousArtistsAlbums {
 		$::d_import && msg("Finished with mergeVariousArtistsAlbums()\n");
 
 		$vaObj = undef;
+		$variousAlbumIds = ();
 
 		return 0;
 	}
