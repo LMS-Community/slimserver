@@ -198,7 +198,7 @@
 				[% "LOCATION" | string; "COLON" | string %]&nbsp;
 			</td>
 			<td>
-				[% track.path | unuri | utf8on | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
+				[% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
 			</td>
 		</tr>
 	</table>

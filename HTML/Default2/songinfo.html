@@ -115,7 +115,7 @@
  [% IF track.path %] 
  <tr>
   <td class="fc"> [% "LOCATION" | string %][% "COLON" | string %] </td>
-  <td> [% track.path | unuri | utf8on | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
+  <td> [% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a> </td>
  </tr>
  [% END %]
 
