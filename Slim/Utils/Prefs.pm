@@ -48,7 +48,7 @@ sub init {
 	%DEFAULT = (
 		"httpport"		=> 9000,
 		"cliport"		=> 9090,
-		"music"			=> defaultAudioDir(),
+		"audiodir"		=> defaultAudioDir(),
 		"playlistdir"		=> defaultPlaylistDir(),
 		"cachedir"		=> defaultCacheDir(),
 		"securitySecret"	=> makeSecuritySecret(),
