@@ -46,13 +46,18 @@ sub add {
 	my $role       = shift;
 	my $track      = shift;
 	my $artistSort = shift || $artist;
+	my $create     = shift || 0;
 
 	my @contributors = ();
+
+	# Dynamically determine the constructor if the caller wants to force
+	# object creation.
+	my $createMethod = $create ? 'create' : 'find_or_create';
 
 	# Handle the case where $artist is already an object:
 	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
-		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->find_or_create({
+		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->$createMethod({
 			track => $track,
 			contributor => $artist,
 			namesort => Slim::Utils::Text::ignoreCaseArticles($artist),
@@ -85,7 +90,7 @@ sub add {
 
 		push @contributors, $artistObj;
 
-		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->find_or_create({
+		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->$createMethod({
 			track => $track,
 			contributor => $artistObj,
 			namesort => $sort,

@@ -1632,6 +1632,18 @@ sub _mergeAndCreateContributors {
 	for my $tag (qw(ALBUMARTIST ARTIST BAND COMPOSER CONDUCTOR TRACKARTIST)) {
 
 		my $contributor = $attributes->{$tag} || next;
+		my $forceCreate = 0;
+
+		# Bug 1955 - Previously 'last one in' would win for a
+		# contributorTrack - ie: contributor & role combo, if a track
+		# had an ARTIST & COMPOSER that were the same value.
+		#
+		# If we come across that case, force the creation of a second
+		# contributorTrack entry.
+		if ((grep { /^$contributor$/ } values %{$attributes}) && $tag !~ /ARTIST$/) {
+
+			$forceCreate = 1;
+		}
 
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
@@ -1641,6 +1653,7 @@ sub _mergeAndCreateContributors {
 			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
 			$track,
 			$tag eq 'ARTIST' ? $attributes->{'ARTISTSORT'} : undef,
+			$forceCreate,
 		);
 	}
 
