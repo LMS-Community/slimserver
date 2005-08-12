@@ -969,7 +969,14 @@ sub daemonize {
 
 	open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
 
-	$0 = "slimserver";
+	# Bug: 1625 - There appears to be a bad interaction with the iTunes
+	# Update plugin / Mac::Applescript::Glue , and setting the process
+	# name after we fork. So don't do it on Mac. The System Preferences
+	# start/stop still works.
+
+	if (Slim::Utils::OSDetect::OS() ne 'mac') {
+		$0 = "slimserver";
+	}
 
 	if (!setsid) { die "Can't start a new session: $!"; }
 	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
