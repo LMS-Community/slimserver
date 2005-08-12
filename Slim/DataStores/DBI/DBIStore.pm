@@ -1329,6 +1329,9 @@ sub _preCheckAttributes {
 		$attributes->{'TITLESORT'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLESORT'});
 	}
 
+	# Create a canonical title to search against.
+	$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
+
 	# Normalize ARTISTSORT in ContributorTrack->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.

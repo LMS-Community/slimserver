@@ -27,10 +27,10 @@ our %executeCallbacks = ();
 
 our %searchMap = (
 
-	'artist' => 'contributor.namesort',
-	'genre'  => 'genre.namesort',
-	'album'  => 'album.titlesort',
-	'track'  => 'track.titlesort',
+	'artist' => 'contributor.namesearch',
+	'genre'  => 'genre.namesearch',
+	'album'  => 'album.titlesearch',
+	'track'  => 'track.titlesearch',
 );
 
 #############################################################################

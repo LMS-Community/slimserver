@@ -55,6 +55,7 @@ sub add {
 			});
 
 			$genreObj->name(ucfirst($genreSub)),
+			$genreObj->namesearch($namesort);
 			$genreObj->update;
 		}
 
