@@ -1238,8 +1238,8 @@ sub browsedb {
 
 			my $attrName  = $levelInfo->{'nameTransform'} || $levels[$level];
 
-			# We might not be inflated yet..
-			if (!ref($item) && $item =~ /^\d+$/) {
+			# We might not be inflated yet...(but skip for years)
+			if (!ref($item) && $item =~ /^\d+$/ && $levels[$level] ne 'year') {
 
 				$item = $ds->objectForId($attrName, $item);
 			}
