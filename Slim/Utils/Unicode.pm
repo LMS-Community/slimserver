@@ -4,12 +4,19 @@ package Slim::Utils::Unicode;
 
 use strict;
 
-# Useful parts lifted from Simon's defunct Unicode::Decompose
+# This module is a wrapper around Encode:: functions, and comprises character
+# set guessing, encoding, decoding and translation. 
 #
-# This module currently implements a recompose() function to handle Unicode
-# characters that somehow become decomposed. Sometimes we'll see a URI
+# Most of these functions are non-ops on perl < 5.8.x
+#
+# The recompose & decompose parts have been modified from Simon's defunct
+# Unicode::Decompose mdoule.
+#
+# Unicode characters that somehow become decomposed. Sometimes we'll see a URI
 # encoding such as: o%CC%88 - which is an o with diaeresis. The correct
 # (composed) version of this should be %C3%B6
+#
+# Proper documentation forthcoming.
 
 use Fcntl qw(:seek);
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
