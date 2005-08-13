@@ -939,10 +939,17 @@ sub getMix {
 	my @type = qw(tracks min mbytes);
 	 
 	my %args = (
-		size		=> Slim::Utils::Prefs::clientGet($client,'MMMSize') || Slim::Utils::Prefs::get('MMMSize'),       # Set the size of the list (default 12)
-		sizetype	=> $type[Slim::Utils::Prefs::clientGet($client,'MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')], # (tracks|min|mb) Set the units for size (default tracks)
-		style		=> Slim::Utils::Prefs::clientGet($client,'MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),       # Set the style slider (default 20)
-		variety		=> Slim::Utils::Prefs::clientGet($client,'MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),        # Set the variety slider (default 0)
+		# Set the size of the list (default 12)
+		size	 => Slim::Utils::Prefs::clientGet($client,'MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+
+		# (tracks|min|mb) Set the units for size (default tracks)
+		sizetype => $type[Slim::Utils::Prefs::clientGet($client,'MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+
+		# Set the style slider (default 20)
+		style	 => Slim::Utils::Prefs::clientGet($client,'MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+
+		# Set the variety slider (default 0)
+		variety	 => Slim::Utils::Prefs::clientGet($client,'MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
 	);
 
 	my $filter = Slim::Utils::Prefs::clientGet($client,'MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
@@ -966,17 +973,15 @@ sub getMix {
 		return undef;
 	}
 
-	# Work around for bug #881 The windows version of MMM doesn't send back proper UTF-8
-	if (Slim::Utils::OSDetect::OS() eq 'win' && $initialized =~ /1\.1\.4$/) {
+	# url encode the request, but not the argstring
+	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
+	# We might need to do the same on Linux, but I can't get UTF-8 files
+	# to show up properly in MMM right now.
+	if (Slim::Utils::OSDetect::OS() eq 'win' || Slim::Utils::OSDetect::OS() eq 'mac') {
 
-		$mixArgs = Slim::Utils::Unicode::utf8encode_locale($mixArgs);
 		$mixArgs = URI::Escape::uri_escape($mixArgs);
-
 	} else {
-
-		# url encode the request, but not the argstring
-		$mixArgs   = Slim::Web::HTTP::escape($mixArgs);
-		#$argString = Slim::Web::HTTP::escape($argString);
+		$mixArgs = Slim::Web::HTTP::escape($mixArgs);
 	}
 	
 	$::d_musicmagic && msg("Musicmagic: request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
@@ -1041,7 +1046,7 @@ sub musicmagic_mix {
 			if ($obj->musicmagic_mixable) {
 
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($obj->url), 'song');
+				$mix = getMix($client, $obj->path, 'song');
 			}
 
 			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
@@ -1069,10 +1074,8 @@ sub musicmagic_mix {
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			if ($artistObj) {
 
-				my $key = !defined $artistObj ?
-					Slim::Utils::Misc::pathFromFileURL($trackObj->url) : 
-					join('@@', $artistObj->name, $obj->title);
-					
+				my $key = !defined $artistObj ?  $trackObj->path : join('@@', $artistObj->name, $obj->title);
+
 				$mix = getMix($client,$key, 'album');
 			}
 		}
