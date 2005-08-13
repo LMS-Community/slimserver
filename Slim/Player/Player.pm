@@ -253,7 +253,7 @@ sub render {
 		$cache->{center1} = undef;
 		$cache->{center1text} = undef;
    		$cache->{center2} = undef;
-		$cache->{centre2text} = undef;
+		$cache->{center2text} = undef;
 		$cache->{ticker} = 0;
 	}
 
