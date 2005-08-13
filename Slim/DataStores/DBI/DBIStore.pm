@@ -813,6 +813,7 @@ sub mergeVariousArtistsAlbums {
 		$self->_mergeAndCreateContributors($track, {
 			'COMPILATION' => 1,
 			'ARTIST'      => $track->artist,
+			1
 		});
 	}
 
@@ -1598,7 +1599,7 @@ sub _postCheckAttributes {
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $track, $attributes) = @_;
+	my ($self, $track, $attributes, $postProcess) = @_;
 
 	my @contributors = ();
 
@@ -1632,7 +1633,9 @@ sub _mergeAndCreateContributors {
 	# XXXX - This order matters! Album artist should always be first,
 	# since we grab the 0th element from the contributors array below when
 	# creating the Album.
-	for my $tag (qw(ALBUMARTIST ARTIST BAND COMPOSER CONDUCTOR TRACKARTIST)) {
+	my @tags = qw(ALBUMARTIST ARTIST TRACKARTIST BAND COMPOSER CONDUCTOR);
+
+	for my $tag (@tags) {
 
 		my $contributor = $attributes->{$tag} || next;
 		my $forceCreate = 0;
@@ -1643,9 +1646,23 @@ sub _mergeAndCreateContributors {
 		#
 		# If we come across that case, force the creation of a second
 		# contributorTrack entry.
-		if ((grep { /^$contributor$/ } values %{$attributes}) && $tag !~ /ARTIST$/) {
+		#
+		# Only do this the first time around - not when we're merging VA albums.
+		if (!$postProcess) {
 
-			$forceCreate = 1;
+			my $contributorRE = qr/^$contributor$/o;
+
+			for my $matchTag (@tags) {
+
+				# Don't match ourselves, or any artist tags.
+				next if $tag eq $matchTag;
+				last if $tag =~ /ARTIST$/o;
+
+				if ($attributes->{$matchTag} =~ $contributorRE) {
+
+					$forceCreate = 1;
+				}
+			}
 		}
 
 		# Is ARTISTSORT/TSOP always right for non-artist
