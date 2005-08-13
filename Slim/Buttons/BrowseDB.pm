@@ -569,7 +569,7 @@ sub setMode {
 	else {
 		$selectionKey = $hierarchy . ':' . $level . ':';
 		while (my ($k, $v) = each %$findCriteria) {
-			$selectionKey .= $k . '=' . $v;
+			$selectionKey .= $k . '=' . (ref($v) eq 'ARRAY' ? @{$v}: $v);
 		}
 		$listIndex = $client->lastID3Selection($selectionKey) || 0;
 		$::d_files && msg("last position from selection key $selectionKey is $listIndex\n");
