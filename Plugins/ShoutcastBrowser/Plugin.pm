@@ -27,6 +27,7 @@ use IO::Socket qw(:crlf);
 use File::Spec::Functions qw(catdir catfile);
 use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
+use Slim::Utils::Misc qw( msg );
 use HTML::Entities qw(decode_entities);
 use XML::Simple;
 
