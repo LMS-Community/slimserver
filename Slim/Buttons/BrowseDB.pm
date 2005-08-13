@@ -157,7 +157,9 @@ sub init {
 			}
 
 			# And all the search terms for the current mode
-			push @terms, map { $_ . '=' . $findCriteria->{$_} } (keys %$findCriteria);
+			push @terms, map { $_ . '=' . 
+				(ref $findCriteria->{$_} eq 'ARRAY' ? join '',@{$findCriteria->{$_}} : $findCriteria->{$_}) } 
+					(keys %$findCriteria);
 			my $termlist = join '&', @terms;
 
 			# If we're dealing with a group of tracks...
@@ -569,7 +571,7 @@ sub setMode {
 	else {
 		$selectionKey = $hierarchy . ':' . $level . ':';
 		while (my ($k, $v) = each %$findCriteria) {
-			$selectionKey .= $k . '=' . (ref($v) eq 'ARRAY' ? @{$v}: $v);
+			$selectionKey .= $k . '=' . (ref($v) eq 'ARRAY' ? join('', @{$v}): $v);
 		}
 		$listIndex = $client->lastID3Selection($selectionKey) || 0;
 		$::d_files && msg("last position from selection key $selectionKey is $listIndex\n");
