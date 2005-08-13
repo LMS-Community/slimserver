@@ -607,7 +607,7 @@ sub cleanupStaleEntries {
 
 	# Setup a little state machine so that the db cleanup can be
 	# scheduled appropriately - ie: one record per run.
-	$::d_import && msg("Adding task for cleanupStaleTrackEntries()..\n");
+	$::d_import && msg("Import: Adding task for cleanupStaleTrackEntries()..\n");
 
 	Slim::Utils::Scheduler::add_task(\&cleanupStaleTrackEntries, $self);
 }
@@ -640,7 +640,7 @@ sub cleanupStaleTrackEntries {
 		# After that, walk the Album, Contributor & Genre tables, to see if
 		# each item has valid tracks still. If it doesn't, remove the object.
 
-		$::d_import && msg("Starting db garbage collection..\n");
+		$::d_import && msg("Import: Starting db garbage collection..\n");
 
 		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
 	}
@@ -656,7 +656,7 @@ sub cleanupStaleTrackEntries {
 	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
 
 		$::d_import && msg(
-			"Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
+			"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 		);
 
 		$cleanupIds = undef;
@@ -689,7 +689,7 @@ sub cleanupStaleTrackEntries {
 	# Don't use _hasChanged - because that does more than we want.
 	if (!-r $filepath) {
 
-		$::d_import && msg("Track: $filepath no longer exists. Removing.\n");
+		$::d_import && msg("Import: Track $filepath no longer exists. Removing.\n");
 
 		$self->delete($track, 0);
 	}
@@ -733,7 +733,7 @@ sub cleanupStaleTableEntries {
 	# We're done.
 	$self->dbh->commit;
 
-	$::d_import && msg("Finished with cleanupStaleTableEntries()\n");
+	$::d_import && msg("Import: Finished with cleanupStaleTableEntries()\n");
 
 	%lastFind = ();
 
@@ -765,7 +765,7 @@ sub mergeVariousArtistsAlbums {
 
 	if (!defined $obj && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
-		$::d_import && msg("Finished with mergeVariousArtistsAlbums()\n");
+		$::d_import && msg("Import: Finished with mergeVariousArtistsAlbums()\n");
 
 		$vaObj = undef;
 		$variousAlbumIds = ();
@@ -774,7 +774,7 @@ sub mergeVariousArtistsAlbums {
 	}
 
 	if (!defined $obj) {
-		$::d_import && msg("mergeVariousArtistsAlbums: Couldn't fetch album for item: [$item]\n");
+		$::d_import && msg("Import: mergeVariousArtistsAlbums: Couldn't fetch album for item: [$item]\n");
 		return 0;
 	}
 
@@ -801,7 +801,7 @@ sub mergeVariousArtistsAlbums {
 		return 1;
 	}
 
-	$::d_import && msgf("Marking album: [%s] as Various Artists.\n", $obj->title);
+	$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $obj->title);
 
 	$obj->compilation(1);
 	$obj->contributor($vaObj);
@@ -837,7 +837,7 @@ sub wipeCaches {
 
 	Slim::DataStores::DBI::DataModel->clearObjectCaches();
 
-	$::d_import && msg("wipeAllData: Wiped all in-memory caches.\n");
+	$::d_import && msg("Import: Wiped all in-memory caches.\n");
 }
 
 # Wipe all data in the database
@@ -858,7 +858,7 @@ sub wipeAllData {
 
 	Slim::DataStores::DBI::DataModel->wipeDB();
 
-	$::d_import && msg("wipeAllData: Wiped info database\n");
+	$::d_import && msg("Import: Wiped info database\n");
 }
 
 # Force a commit of the database

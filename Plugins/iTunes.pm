@@ -533,7 +533,13 @@ sub stopScan {
 		$::d_itunes && msg("iTunes: Was stillScanning - stopping old scan.\n");
 
 		Slim::Utils::Scheduler::remove_task(\&scanFunction);
-		doneScanning();
+		$isScanning = 0;
+		$locked = 0;
+		$opened = 0;
+		
+		close(ITUNESLIBRARY);
+		$iTunesParser   = undef;
+		resetScanState();
 	}
 }
 

@@ -261,8 +261,10 @@ sub startScan {
 sub stopScan {
 	
 	if (stillScanning()) {
+		$::d_moodlogic && msg("MoodLogic: Scan already in progress. Restarting\n");
 		Slim::Utils::Scheduler::remove_task(\&exportFunction);
-		doneScanning();
+		$isScanning = 0;
+		%genre_hash = ();
 	}
 }
 

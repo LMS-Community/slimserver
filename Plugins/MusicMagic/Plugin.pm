@@ -308,8 +308,10 @@ sub startScan {
 
 sub stopScan {
 	if (stillScanning()) {
+		
+		$::d_musicmagic && msg("MusicMagic: Scan already in progress. Restarting\n");
 		Slim::Utils::Scheduler::remove_task(\&exportFunction);
-		doneScanning();
+		$isScanning = 0;
 	}
 }
 

@@ -832,7 +832,7 @@ sub removeStaleDBEntries {
 
 	unless ($cleanupIds) {
 
-		$::d_import && msg("Starting stale cleanup for class $class / $foreign\n");
+		$::d_import && msg("Import: Starting stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = $class->retrieveAllOnlyIds();
 	}
@@ -843,7 +843,7 @@ sub removeStaleDBEntries {
 
 	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
 
-		$::d_import && msg("Finished stale cleanup for class $class / $foreign\n");
+		$::d_import && msg("Import: Finished stale cleanup for class $class / $foreign\n");
 
 		$cleanupIds = undef;
 
@@ -852,7 +852,7 @@ sub removeStaleDBEntries {
 
 	if ($obj && $obj->$foreign()->count() == 0) {
 
-		$::d_import && msg("DB garbage collection - removing $class: $obj - no more tracks!\n");
+		$::d_import && msg("Import: DB garbage collection - removing $class: $obj - no more tracks!\n");
 
 		$obj->delete();
 

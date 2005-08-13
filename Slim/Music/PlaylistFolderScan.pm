@@ -42,9 +42,11 @@ sub startScan {
 	}
 
 	if ($stillScanning) {
-		$::d_info && msg("Scan already in progress. Aborting\n");
+		$::d_info && msg("Scan already in progress. Restarting\n");
+		$stillScanning = 0;
 		Slim::Utils::Scan::stopAddToList(\@dummylist);
-	}
+		@dummylist = ();
+	} 
 
 	$stillScanning = 1;
 
@@ -53,6 +55,9 @@ sub startScan {
 }
 
 sub doneScanning {
+	#If scan aborted, $stillScanning will already be false.
+	return unless $stillScanning;
+
 	$::d_info && msg("finished background scan of playlist folder.\n");
 
 	$stillScanning = 0;

@@ -186,7 +186,11 @@ sub endImporter {
 sub stillScanning {
 	my $imports = scalar keys %importsRunning;
 
-	$::d_import && msg("Import: Scanning with $imports import plugins\n");
+	if ($::d_import) {
+		msg("Import: Scanning with $imports import plugins\n");
+		use Data::Dumper;
+		print Dumper(\%importsRunning) if $imports;
+	}
 
 	return $imports;
 }
