@@ -344,7 +344,7 @@ sub status {
 	} else {
 		# Special case, we need the playlist info even if we don't want
 		# the playlist itself
-		if ($client && $client->currentPlaylist()) {
+		if ($client && $client->currentPlaylist() && !Slim::Music::Info::isRemoteURL($client->currentPlaylist())) {
 			$params->{'current_playlist'} = $client->currentPlaylist();
 			$params->{'current_playlist_modified'} = $client->currentPlaylistModified();
 			$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client, $client->currentPlaylist());
@@ -398,7 +398,7 @@ sub playlist {
 		$params->{'start'} = (int(Slim::Player::Source::playingSongIndex($client)/$count)*$count);
 	}
 
-	if ($client->currentPlaylist()) {
+	if ($client->currentPlaylist() && !Slim::Music::Info::isRemoteURL($client->currentPlaylist())) {
 		$params->{'current_playlist'} = $client->currentPlaylist();
 		$params->{'current_playlist_modified'} = $client->currentPlaylistModified();
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
