@@ -4109,9 +4109,9 @@ SETUP_NOGENREFILTER_0
 	ES	Mostrar solo canciones o discos que correspondan al género seleccionado, para un artista.
 
 SETUP_NOGENREFILTER_DESC
-	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören. Das Aktivieren dieser Option reduziert die Anzeigegeschwindigkeit. Sie kann jedoch bei Interpreten mit mehreren Musikstilen sinnvoll sein.
-	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre. There is a performance penalty for turning this on, however, your results may be better for "Multi-Genre Artists".
-	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido. Existe una penalidad en la parformance por habilitar esto, sin embargo los resultados pueden ser mejores para artistas "multi-género".
+	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
+	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre.
+	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido.
 
 SETUP_COMPOSERINARTISTS
 	CZ	Zobrazování autora

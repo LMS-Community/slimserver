@@ -408,7 +408,7 @@ our %tableSort = (
 	'contributors' => 0.7,
 	'contributor_track' => 0.9,
 	'genres' => 0.1,
-	'genre_track' => 1.0,
+	'genre_track' => 0.75,
 	'tracks' => 0.8,
 );
 
