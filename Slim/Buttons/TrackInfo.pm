@@ -39,7 +39,7 @@ sub init {
 				$string = 'NOW_PLAYING_FROM';
 			}
 			
-			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
+			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
 
 			if ($client->linesPerScreen() == 1) {
 				$line2 = $client->doubleString($string);
@@ -53,7 +53,7 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			$client->execute(['playlist', 'loadalbum', @search]);
+			$client->execute(['playlist', 'loadtracks', $termlist]);
 			$client->execute(['playlist', 'jump', 0]);
 		},
 		
@@ -72,7 +72,7 @@ sub init {
 
 			$string = 'ADDING_TO_PLAYLIST';
 
-			my ($line2, @search) = _trackDataForCurrentItem($client, $curItem);
+			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
 
 			if ($client->linesPerScreen() == 1) {
 				$line2 = $client->doubleString($string);
@@ -86,7 +86,7 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			$client->execute(["playlist", "addalbum", @search]);
+			$client->execute(["playlist", "addalbum", $termlist]);
 		},
 		
 		'up' => sub  {
@@ -203,7 +203,7 @@ sub _trackDataForCurrentItem {
 
 	# genre is used by everything		
 	my $genre   = $track->genre();
-
+		
 	my @search  = ();
 	my $line2;
 	
@@ -211,24 +211,27 @@ sub _trackDataForCurrentItem {
 
 		$line2 = $genre;
 
-		push @search, $genre, '*', '*';
+		push @search, "genre=".$genre->id();
 
-	} elsif ($item =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
+	# TODO make this work for other contributors
+	#} elsif ($item =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
+	} elsif ($item eq 'ARTIST') {
 
 		my $lcItem = lc($item);
 
-		$line2 = $track->$lcItem();
+		$line2 = $track->artist();
 
-		push @search, $genre, $line2, '*';
+		push @search, "artist=".$track->artist()->id();
 
 	} elsif ($item eq 'ALBUM') {
 
 		$line2 = $track->album()->title();
 
-		push @search, $genre, $track->artist(), $line2;
+		push @search, "album=".$track->album()->id();
 	}
 
-	return ($line2, @search);
+	my $termlist = join '&',@search;
+	return ($line2, $termlist);
 }
 
 sub getFunctions {
