@@ -1650,7 +1650,7 @@ sub _mergeAndCreateContributors {
 		# Only do this the first time around - not when we're merging VA albums.
 		if (!$postProcess) {
 
-			my $contributorRE = qr/^$contributor$/o;
+			my $contributorRE = qr/^$contributor$/;
 
 			for my $matchTag (@tags) {
 
