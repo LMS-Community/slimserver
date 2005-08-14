@@ -129,7 +129,7 @@ sub editplaylist {
 
 		$obj->setTracks(\@items);
 
-		if ($obj->ct eq 'ssp') {
+		if ($obj->content_type eq 'ssp') {
 
 			Slim::Formats::Parse::writeList(\@items, undef, $obj->url);
 		}
