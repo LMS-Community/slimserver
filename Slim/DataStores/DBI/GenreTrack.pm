@@ -50,6 +50,9 @@ sub add {
 
 		if (!defined $genreObj) {
 
+			# So that ucfirst() works properly.
+			use locale;
+
 			$genreObj = Slim::DataStores::DBI::Genre->create({ 
 				namesort => $namesort,
 			});

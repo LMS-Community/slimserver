@@ -81,6 +81,8 @@ sub clearCaseArticleCache {
 }
 
 sub sortIgnoringCase {
+	use locale;
+
 	# set up an array without case for sorting
 	my @nocase = map { ignoreCaseArticles($_) } @_;
 
@@ -89,6 +91,8 @@ sub sortIgnoringCase {
 }
 
 sub sortuniq {
+	use locale;
+
 	my %seen = ();
 	my @uniq = ();
 
@@ -103,6 +107,8 @@ sub sortuniq {
 
 # similar to above but ignore preceeding articles when sorting
 sub sortuniq_ignore_articles {
+	use locale; 
+
 	my %seen = ();
 	my @uniq = ();
 	my $articles =  Slim::Utils::Prefs::get("ignoredarticles");
