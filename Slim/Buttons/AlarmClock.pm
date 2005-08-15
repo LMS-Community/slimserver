@@ -96,8 +96,12 @@ our %functions = (
 
 			# Make a copy of the playlists, to make sure they
 			# aren't removed by the LRU cache. This may fix bug: 1853
+			
+			my $ds   = Slim::Music::Info::getCurrentDataStore();
+			
 			my %params = (
-				'listRef' => [ @{Slim::Music::Info::playlists()} ]
+#				'listRef' => [ @{Slim::Music::Info::playlists()} ]
+				'listRef' => [ ds->getPlaylists() ]
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'

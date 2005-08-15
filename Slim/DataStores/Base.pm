@@ -32,15 +32,26 @@ should override all of these methods.
 	# Exporter spews some warnings..
 	$^W = 0;
 
+#	$class->virtual_methods(qw(
+#		new classForType contentType objectForUrl objectForId find count
+#		albumsWithArtwork totalTime updateTrack newTrack updateOrCreate
+#		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
+#		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
+#		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
+#		getExternalPlaylists getInternalPlaylists getPlaylistForClient readTags
+#		setAlbumArtwork updateCoverArt commonAlbumTitlesChanged mergeVariousArtistsAlbums
+#	));
+
 	$class->virtual_methods(qw(
 		new classForType contentType objectForUrl objectForId find count
 		albumsWithArtwork totalTime updateTrack newTrack updateOrCreate
 		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
 		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
-		getExternalPlaylists getInternalPlaylists getPlaylistForClient readTags
+		getPlaylists getPlaylistForClient readTags
 		setAlbumArtwork updateCoverArt commonAlbumTitlesChanged mergeVariousArtistsAlbums
 	));
+
 }
 
 sub init {
@@ -626,7 +637,7 @@ sub init {
 		'find' => sub {
 			my ($ds, $level, $findCriteria) = @_;
 
-			return [ $ds->getInternalPlaylists, $ds->getExternalPlaylists ];
+			return [ $ds->getPlaylists() ];
 		},
 
 		'ignoreArticles' => 0,

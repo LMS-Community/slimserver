@@ -303,9 +303,13 @@ sub clearPlaylists {
 	}
 }
 
-sub playlists {
-	return [$currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists];
-}
+# Fred: playlists callers (Alarm & Setup) now use $ds->getPlaylists()
+
+#sub playlists {
+#	return [$currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists];
+#	return [$currentDB->getPlaylists()];
+#}
+
 
 sub cacheItem {
 	my $url = shift;

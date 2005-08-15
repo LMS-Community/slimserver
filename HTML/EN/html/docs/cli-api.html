@@ -1233,9 +1233,13 @@ preferences values.</p>
 <hr>
 <h4 id="PL">Playlist commands</h4>
 
-<p><strong><code>&lt;playerid&gt; mode &lt;play|pause|stop|off|?&gt;</code></strong></p>
-<p>The &quot;mode&quot; command allows to set the player playlist mode directly, or to query the player state. &quot;mode play&quot; is equivalent to &quot;play&quot;,
-&quot;mode stop&quot; to &quot;stop&quot;, &quot;mode pause&quot; to &quot;pause 1&quot;, and &quot;mode off&quot; to &quot;power 0&quot;</p>
+<p><strong><code>&lt;playerid&gt; mode
+	&lt;play|pause|stop|?&gt;</code></strong></p>
+<p>The &quot;mode&quot; command allows to set the player playlist mode
+	directly, or to query the player state. &quot;mode play&quot; is
+	equivalent to &quot;play&quot;, &quot;mode stop&quot; to
+	&quot;stop&quot; and &quot;mode pause&quot; to &quot;pause 1&quot;. If the
+	player is off, &quot;mode ?&quot returned value is undefined.</p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;<br>
     Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;</p>

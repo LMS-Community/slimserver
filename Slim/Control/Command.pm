@@ -486,11 +486,11 @@ sub execute {
 
  		my %params   = parseParams($parrayref, \@returnArray);
  	
-		my $search   = $params{'search'} || '*';
+		my $search   = $params{'search'};
 		my $tags      = $params{'tags'} || '';
 
 		# Normalize any search parameters
-		if ($search ne '*') {
+		if (defined $search) {
 			$search = Slim::Web::Pages::searchStringSplit($search);
 		}
 
@@ -498,7 +498,8 @@ sub execute {
 			push @returnArray, "rescan:1";
 		}
 
-		my $iterator = $ds->getPlaylists($search);
+		my $iterator = $ds->getPlaylists('all', $search);
+#		my $iterator = $ds->getInternalPlaylists();
 		
 		if (defined $iterator) {
 

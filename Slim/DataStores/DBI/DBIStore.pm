@@ -901,7 +901,8 @@ sub clearExternalPlaylists {
 
 	# We can specify a url prefix to only delete certain types of external
 	# playlists - ie: only iTunes, or only MusicMagic.
-	for my $track ($self->getExternalPlaylists) {
+#	for my $track ($self->getExternalPlaylists) {
+	for my $track ($self->getPlaylists('external')) {
 
 		$track->delete() if (defined $url ? $track->url() =~ /^$url/ : 1);
 	}
@@ -912,67 +913,83 @@ sub clearExternalPlaylists {
 sub clearInternalPlaylists {
 	my $self = shift;
 
-	for my $track ($self->getInternalPlaylists) {
+#	for my $track ($self->getInternalPlaylists) {
+	for my $track ($self->getPlaylists('internal')) {
 		$track->delete;
 	}
 
 	$self->forceCommit();
 }
 
-sub getExternalPlaylists {
-	my $self = shift;
 
-	my @playlists = ();
+# Use getPlaylists instead of routines below.
 
-	# Don't search for playlists if the plugin isn't enabled.
-	for my $importer (qw(itunes moodlogic musicmagic)) {
 
-		if (Slim::Utils::Prefs::get($importer)) {
+#sub getExternalPlaylists {
+#	my $self = shift;
+#
+#	my @playlists = ();
+#
+#	# Don't search for playlists if the plugin isn't enabled.
+#	for my $importer (qw(itunes moodlogic musicmagic)) {
+#
+#		if (Slim::Utils::Prefs::get($importer)) {
+#
+#			push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
+#		}
+#	}
+#
+#	if (scalar @playlists) {
+#
+#		# Use find()'s caching mechanism.
+#		return $self->find({
+#			'field'  => 'playlist',
+#			'find'   => { 'ct' => \@playlists },
+#			'sortBy' => 'title',
+#		});
+#	}
+#
+#	return ();
+#}
 
-			push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
-		}
-	}
 
-	if (scalar @playlists) {
+#sub getInternalPlaylists {
+#	my $self = shift;
+#
+#	# Use find()'s caching mechanism.
+#	return $self->find({
+#		'field'  => 'playlist',
+#		'find'   => { 'ct' => $Slim::Music::Info::suffixes{'playlist:'} },
+#		'sortBy' => 'title',
+#	});
+#}
 
-		# Use find()'s caching mechanism.
-		return $self->find({
-			'field'  => 'playlist',
-			'find'   => { 'ct' => \@playlists },
-			'sortBy' => 'title',
-		});
-	}
-
-	return ();
-}
-
-sub getInternalPlaylists {
-	my $self = shift;
-
-	# Use find()'s caching mechanism.
-	return $self->find({
-		'field'  => 'playlist',
-		'find'   => { 'ct' => $Slim::Music::Info::suffixes{'playlist:'} },
-		'sortBy' => 'title',
-	});
-}
-
-# Get all the playlists in one shot with optional name search parameter.
-# Used by the CLI but could potentially apply to all uses of [getInt, getExt]...
+# Get the playlists
+# param $type is 'all' for all playlists, 'internal' for internal playlists
+# 'external' for external playlists. Default is 'all'.
+# param $search is a search term on the playlist title.
 
 sub getPlaylists {
 	my $self = shift;
+	my $type = shift || 'all';
 	my $search = shift;
 
-	my @playlists = ('playlist:*');
+	my @playlists = ();
+	
+	if ($type eq 'all' || $type eq 'internal') {
+		push @playlists, $Slim::Music::Info::suffixes{'playlist:'};
+	}
+	
 	my $find = {};
 	
 	# Don't search for playlists if the plugin isn't enabled.
-	for my $importer (qw(itunes moodlogic musicmagic)) {
-
-		if (Slim::Utils::Prefs::get($importer)) {
-
-			push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
+	if ($type eq 'all' || $type eq 'external') {
+		for my $importer (qw(itunes moodlogic musicmagic)) {
+	
+			if (Slim::Utils::Prefs::get($importer)) {
+	
+				push @playlists, $Slim::Music::Info::suffixes{sprintf('%splaylist:', $importer)};
+			}
 		}
 	}
 
@@ -980,7 +997,7 @@ sub getPlaylists {
 	$find->{'ct'} = \@playlists;
 		
 	# Add title search if any
-	$find->{'track.titlesort'} = $search if (defined $search && $search ne '*');
+	$find->{'track.titlesearch'} = $search if (defined $search);
 	
 	return $self->find({
 		'field'  => 'playlist',
