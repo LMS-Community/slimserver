@@ -42,6 +42,9 @@
 	playlist_id parameter.</li>
 <li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
     rescanning only the playlists.</li>
+<li>Due to internal changes to SlimServer, the 
+	&quot;<a href="#mode">mode</a>&quot; command or query does no longer support 
+    parameter &quot;off&quot;.</li>
 </ul>
 <hr>
 
@@ -1233,7 +1236,7 @@ preferences values.</p>
 <hr>
 <h4 id="PL">Playlist commands</h4>
 
-<p><strong><code>&lt;playerid&gt; mode
+<p id="mode"><strong><code>&lt;playerid&gt; mode
 	&lt;play|pause|stop|?&gt;</code></strong></p>
 <p>The &quot;mode&quot; command allows to set the player playlist mode
 	directly, or to query the player state. &quot;mode play&quot; is
