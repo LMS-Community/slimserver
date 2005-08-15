@@ -557,7 +557,7 @@ sub playlist {
 		$itemCount++;
 
 		# don't neglect the streams for over 0.25 seconds
-		if ($needIdleStreams && $itemCount > 1 && $itemCount % $itemsPerPass && (Time::HiRes::time() - $starttime) > 0.25) {
+		if ($needIdleStreams && $itemCount > 1 && !($itemCount % $itemsPerPass) && (Time::HiRes::time() - $starttime) > 0.25) {
 
 			main::idleStreams();
 		}
