@@ -250,7 +250,7 @@ sub find {
 	# require knowing the entire result set.
 	my $findKey = Storable::freeze($args);
 
-	$::d_sql && msg("Generated findKey: [$findKey]\n");
+	#$::d_sql && msg("Generated findKey: [$findKey]\n");
 
 	if (!defined $lastFind{$findKey}) {
 
@@ -1066,6 +1066,9 @@ sub readTags {
 				$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
 			}
 		}
+
+		# Mark it as audio in the database.
+		$attributesHash->{'AUDIO'} = 1;
 	}
 
 	# Last resort
@@ -1332,6 +1335,9 @@ sub _preCheckAttributes {
 
 	# Create a canonical title to search against.
 	$attributes->{'TITLESEARCH'} = Slim::Utils::Text::ignoreCaseArticles($attributes->{'TITLE'});
+
+	# Remote index.
+	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
 	# Normalize ARTISTSORT in ContributorTrack->add() the tag may need to be split. See bug #295
 	#

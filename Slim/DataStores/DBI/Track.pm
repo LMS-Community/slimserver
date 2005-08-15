@@ -25,6 +25,8 @@ our %essentialColumns = (
 	'tag' => 'tag',
 	'disc' => 'disc',
 	'thumb' => 'thumb',
+	'remote' => 'remote',
+	'audio' => 'audio',
 	'multialbumsortkey' => 'multialbumsortkey',
 );
 

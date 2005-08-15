@@ -107,6 +107,14 @@ sub init {
 					}
 				}
 
+				# Because we store directories, etc in the
+				# tracks table - only pull out items that are
+				# 'audio' this is needed because we're using
+				# idOnly - so ->find doesn't call
+				# ->_includeInTrackCount. That should be able
+				# to go away shortly as well.
+				$findCriteria->{'audio'} = 1;
+
 				return $ds->find({
 					'field'  => 'track',
 					'find'   => $findCriteria,
@@ -123,7 +131,10 @@ sub init {
 
 				return $ds->find({
 					'field'  => $type,
-					'find'   => { "track.titlesearch`" => $terms },
+					'find'   => {
+						'track.titlesearch' => $terms,
+						'audio'             => 1,
+					},
 					'sortBy' => 'title',
 					'idOnly' => $idOnly,
 				});

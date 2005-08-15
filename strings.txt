@@ -6421,6 +6421,9 @@ TYPE
 	PT	Formato do Ficheiro
 	SE	Filformat
 
+DIR
+	EN	Directory
+
 APE
 	EN	Monkey's Audio
 	ES	Monkey's Audio

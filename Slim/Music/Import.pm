@@ -142,7 +142,7 @@ sub endImporter {
 	my $import = shift;
 
 	if (exists $importsRunning{$import}) { 
-		$::d_import && msgf("Import: Completing %s Scan in %s seconds.\n", string($import), (Time::HiRes::time() - $importsRunning{$import}));
+		$::d_import && msgf("Import: Completed %s Scan in %s seconds.\n", string($import), int(Time::HiRes::time() - $importsRunning{$import}));
 		delete $importsRunning{$import};
 	}
 

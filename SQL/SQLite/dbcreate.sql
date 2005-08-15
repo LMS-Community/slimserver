@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (10, 0, 0);
+INSERT INTO metainformation VALUES (11, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -49,6 +49,8 @@ CREATE TABLE tracks (
   moodlogic_id integer,    -- moodlogic fields - will eventually be created by the plugin
   playCount integer,       -- number of times the track has been played - placeholder
   lastPlayed integer,      -- timestamp of the last play - placeholder
+  audio integer,           -- boolean for audio
+  remote integer,          -- boolean for remote
   moodlogic_mixable integer,
   musicmagic_mixable integer,
   multialbumsortkey varchar -- used for sorting tracks in multi album lists
@@ -69,6 +71,10 @@ CREATE INDEX trackSearchIndex ON tracks (titlesearch);
 CREATE INDEX trackRatingIndex ON tracks (rating);
 
 CREATE INDEX trackPlayCountIndex ON tracks (playCount);
+
+CREATE INDEX trackAudioIndex ON tracks (audio);
+
+CREATE INDEX trackRemoteIndex ON tracks (remote);
 
 CREATE INDEX trackSortKeyIndex ON tracks (multialbumsortkey);
 
@@ -133,6 +139,8 @@ CREATE TABLE contributor_track (
 );
 
 CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
+
+CREATE INDEX contributor_trackRoleIndex ON contributor_track (role);
 
 CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
 

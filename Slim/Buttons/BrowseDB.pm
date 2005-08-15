@@ -385,7 +385,7 @@ sub browsedbItemName {
 		# Pull the nameTransform if needed - for New Music, etc
 		my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
 
-		$item = $items->[$index] = $ds->objectForId($field, $item) || return $item;
+		$item = $items->[$index] = $ds->objectForId($field, $item) || return $client->string($item);
 
 		${$client->param('valueRef')} = $item;
 	}
