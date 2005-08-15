@@ -1011,7 +1011,7 @@ sub guessTags {
 				$::d_info && msg("$tags[$i] => $match\n");
 				$match =~ tr/_/ / if (defined $match);
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
-				$taghash->{$tags[$i++]} = $match;
+				$taghash->{$tags[$i++]} = Slim::Utils::Unicode::utf8decode_locale($match);
 			}
 			return;
 		}
