@@ -94,6 +94,10 @@ our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $de
 	} elsif ($locale =~ /^(euc-cn|cp936)$/) {
 
 		Encode::Guess::add_suspects(qw(euc-cn cp936 big5-eten));
+
+	} elsif ($locale ne 'utf8') {
+
+		Encode::Guess::add_suspects($locale);
 	}
 
 	# Create a regex for looks_like_utf8()
