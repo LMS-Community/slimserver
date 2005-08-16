@@ -87,17 +87,9 @@ our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $de
 
 	# Setup suspects for Encode::Guess based on the locale - we might also
 	# want to use our own Language pref?
-	if ($locale =~ /^(euc-jp|cp932)$/) {
+	if ($locale ne 'utf8') {
 
-		Encode::Guess::add_suspects(qw(euc-jp cp932 7bit-jis));
-
-	} elsif ($locale =~ /^(euc-cn|cp936)$/) {
-
-		Encode::Guess::add_suspects(qw(euc-cn cp936 big5-eten));
-
-	} elsif ($locale ne 'utf8') {
-
-		Encode::Guess::add_suspects($locale);
+		Encode::Guess->add_suspects($locale);
 	}
 
 	# Create a regex for looks_like_utf8()
