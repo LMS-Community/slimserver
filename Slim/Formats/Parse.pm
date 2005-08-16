@@ -335,7 +335,6 @@ sub parseCUE {
 		});
 
 		$lastpos = $track->secs();
-
 	}
 
 	$::d_parse && msg("Couldn't get duration of $filename\n") unless $lastpos;
@@ -407,6 +406,9 @@ sub parseCUE {
 			$track->{'COMMENT'} = $comment;
 			$::d_parse && msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
 		}
+
+		# Everything in a cue sheet should be marked as audio.
+		$track->{'AUDIO'} = 1;
 	}
 
 	return $tracks;
