@@ -504,6 +504,11 @@ sub get_mp3tag {
 			}
 			if ($UNICODE) {
 
+				# Save off the old suspects list, since we add
+				# iso-8859-1 below, but don't want that there
+				# for possible ID3 v2.x parsing below.
+				my $oldSuspects = $Encode::Encoding{'Guess'}->{'Suspects'};
+
 				for my $key (keys %info) {
 					next unless $info{$key};
 
@@ -534,6 +539,8 @@ sub get_mp3tag {
 
 					$info{$key} = Encode::decode($icode, $info{$key});
 				}
+
+				Encode::Guess->set_suspects(keys %{$oldSuspects});
 			}
 		} elsif ($ver == 1) {
 			_close($file, $fh);
