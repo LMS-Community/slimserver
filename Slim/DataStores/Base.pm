@@ -446,6 +446,17 @@ sub init {
 					$form->{'artist'} = $item->contributor;
 				}
 
+				my $Imports = Slim::Music::Import::importers();
+
+				for my $mixer (keys %{$Imports}) {
+				
+					if (defined $Imports->{$mixer}->{'mixerlink'}) {
+						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,1);
+					}
+				}
+
+				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+
 				$form->{'item'}    = $itemname;
 				$form->{'artwork'} = 1;
 				$form->{'size'}    = Slim::Utils::Prefs::get('thumbSize');
