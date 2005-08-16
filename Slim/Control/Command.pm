@@ -499,8 +499,7 @@ sub execute {
 		}
 
 		my $iterator = $ds->getPlaylists('all', $search);
-#		my $iterator = $ds->getInternalPlaylists();
-		
+
 		if (defined $iterator) {
 
 			my $numitems = scalar @$iterator;

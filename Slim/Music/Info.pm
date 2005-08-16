@@ -303,14 +303,6 @@ sub clearPlaylists {
 	}
 }
 
-# Fred: playlists callers (Alarm & Setup) now use $ds->getPlaylists()
-
-#sub playlists {
-#	return [$currentDB->getInternalPlaylists, $currentDB->getExternalPlaylists];
-#	return [$currentDB->getPlaylists()];
-#}
-
-
 sub cacheItem {
 	my $url = shift;
 	my $item = shift;
@@ -967,18 +959,23 @@ sub guessTags {
 	my $taghash = shift;
 	
 	my $file = $filename;
+
 	$::d_info && msg("Guessing tags for: $file\n");
 
 	# Rip off from plainTitle()
 	if (isRemoteURL($file)) {
+
 		$file = Slim::Web::HTTP::unescape($file);
+
 	} else {
+
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
 		}
+
 		# directories don't get the suffixes
 		if ($file && !($type && $type eq 'dir')) {
-				$file =~ s/\.[^.]+$//;
+			$file =~ s/\.[^.]+$//;
 		}
 	}
 
@@ -999,24 +996,34 @@ sub guessTags {
 		# Replace the TAG string in the candidate format string
 		# with regex (\d+) for TRACKNUM, DISC, and DISCC and
 		# ([^\/+) for all other tags
-		
 		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
 		$pat =~ s/($elemRegex)/\(\[^\\\/\]\+\)/g;
+
 		$::d_info && msg("Using format \"$guess\" = /$pat/...\n" );
+
 		$pat = qr/$pat/;
 
 		# Check if this format matches		
-		my @matches;
+		my @matches = ();
+
 		if (@matches = $file =~ $pat) {
+
 			$::d_info && msg("Format string $guess matched $file\n" );
+
 			my @tags = $guess =~ /($elemRegex)/g;
+
 			my $i = 0;
+
 			foreach my $match (@matches) {
+
 				$::d_info && msg("$tags[$i] => $match\n");
+
 				$match =~ tr/_/ / if (defined $match);
+
 				$match = int($match) if $tags[$i] =~ /TRACKNUM|DISC{1,2}/;
 				$taghash->{$tags[$i++]} = Slim::Utils::Unicode::utf8decode_locale($match);
 			}
+
 			return;
 		}
 	}
@@ -1024,7 +1031,6 @@ sub guessTags {
 	# Nothing found; revert to plain title
 	$taghash->{'TITLE'} = plainTitle($filename, $type);	
 }
-
 
 #
 # Return a structure containing the ID3 tag attributes of the given MP3 file.
