@@ -86,7 +86,7 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			$client->execute(["playlist", "addalbum", $termlist]);
+			$client->execute(["playlist", "addtracks", $termlist]);
 		},
 		
 		'up' => sub  {
