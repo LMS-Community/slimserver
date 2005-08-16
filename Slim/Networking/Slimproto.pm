@@ -345,11 +345,19 @@ sub process_slimproto_frame {
 		if ($client->needsUpgrade()) {
 			$client->brightness($client->maxBrightness());
 			
-			Slim::Buttons::Block::block($client, string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2'),0);
+			$client->block( {
+				'line1' => string('PLAYER_NEEDS_UPGRADE_1'), 
+				'line2' => string('PLAYER_NEEDS_UPGRADE_2'),
+				'fonts' => { 
+					'graphic-320x32' => 'standard',
+					'graphic-280x16' => 'small',
+					'text'           => 2,
+				}
+			});
 		} else {
 			# workaround to handle multiple firmware versions causing blocking modes to stack
 			while (Slim::Buttons::Common::mode($client) eq 'block') {
-				Slim::Buttons::Block::unblock($client);
+				$client->unblock();
 			}
 			# make sure volume is set, without changing temp setting
 		 	$client->volume($client->volume(),
@@ -503,7 +511,7 @@ sub process_slimproto_frame {
 	} elsif ($op eq 'UREQ') {
 		# THIS IS ONLY FOR SDK5.X-BASED FIRMWARE OR LATER
 		$::d_slimproto && msg("Client requests firmware update");
-		Slim::Buttons::Block::unblock($client);
+		$client->unblock();
 		$client->upgradeFirmware();		
 
 	} elsif ($op eq 'ANIC') {
@@ -521,7 +529,7 @@ sub process_slimproto_frame {
 			$::d_slimproto && msg("Going out for upgrade...\n");
 			# give the player a chance to get into upgrade mode
 			sleep(2);
-			Slim::Buttons::Block::unblock($client);
+			$client->unblock();
 			$client->upgradeFirmware();
 		}
 		

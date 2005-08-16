@@ -35,20 +35,20 @@ sub setMode {
 sub block {
 	my $client = shift;
 	my $line1 = shift;
-	my $line2 = shift;
-	my $size = shift;
-	
-	# since we'll be doing an in-place replacement of the overlay, 
-	# we need to parse out the text, in case it's already been
-	# stringified or parsed.
-	$client->blocklines($client->parseLines([$line1,$line2]));
 
+	my $parts;
+	if (ref($line1) eq 'HASH') {
+		$parts = $line1;
+	} else {
+		my $line2 = shift;
+		$parts = $client->parseLines([$line1,$line2]);
+	}
+
+	$client->blocklines($parts);
 	Slim::Buttons::Common::pushMode($client,'block');
-	$client->param('oldsize',$client->textSize());
-	$client->textSize($size) if (defined $size && $size >= 0 && $size < $client->maxTextSize());
-	
-	if (defined $line1) {
-		$client->showBriefly($line1, $line2);
+
+	if (defined $parts) {
+		$client->showBriefly($parts);
 	}
 
 	# set the first timer to go after .5 sec. We only want to show the status
@@ -69,7 +69,6 @@ sub unblock {
 	Slim::Utils::Timers::killTimers($client, \&updateBlockedStatus);
 	Slim::Buttons::ScreenSaver::wakeup($client);
 	if (Slim::Buttons::Common::mode($client) eq 'block') {
-		$client->textSize($client->param('oldsize')) if defined $client->param('oldsize');
 		Slim::Buttons::Common::popMode($client);
 	}
 }
@@ -79,19 +78,15 @@ sub lines {
 	
 	my $pos = int(Time::HiRes::time() / $ticklength) % (@tickchars);
 
-	my $parsed = $client->blocklines();
+	my $parts = $client->blocklines();
 	
-	#XXX - This is a non-ideal solution, which needs something more generic
-	undef $parsed->{overlay1bits};
-	undef $parsed->{overlay2bits};
-	
-	if ($client->linesPerScreen == 1) {
-		$parsed->{overlay2} = $tickchars[$pos];
+	if (!defined($parts->{fonts}) && $client->linesPerScreen == 1) {
+		$parts->{overlay2} = $tickchars[$pos];
 	} else {
-		$parsed->{overlay1} = $tickchars[$pos];
+		$parts->{overlay1} = $tickchars[$pos];
 	}
 	
-	return($parsed);
+	return($parts);
 }
 
 1;

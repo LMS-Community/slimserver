@@ -215,25 +215,16 @@ sub setScreensaverDateTimeMode() {
 sub screensaverDateTimelines {
 	my $client = shift;
 	my $alarmOn = Slim::Utils::Prefs::clientGet($client, "alarm");
-	my $parts;
 
-	if (!$client->isa( "Slim::Player::Squeezebox2" )) {
-		$parts = {
-			'center1' => Slim::Utils::Misc::longDateF(),
-			'center2' => Slim::Utils::Misc::timeF(),
-			'overlay1' => $alarmOn ? $client->symbols(Slim::Display::Display::symbol('bell')) : undef,
-			'displayoverlays' => 1,
-		};
-	} else {
-		my $fonts = $client->fonts();
-		$parts = {
-			'center1' => $fonts->[0] ? Slim::Utils::Misc::longDateF() : undef,
-			'center2' => Slim::Utils::Misc::timeF(),
-			'overlay1' => $alarmOn ? $client->symbols(Slim::Display::Display::symbol('bell')) : undef,
-			'fonts' => $fonts->[0] ? undef : [ 'standard.1', 'full.2' ],
-		};
-	}
-	return $parts;
+	return {
+		'center1' => Slim::Utils::Misc::longDateF(),
+		'center2' => Slim::Utils::Misc::timeF(),
+		'overlay1'=> ($alarmOn ? $client->symbols('bell') : undef),
+		'fonts'   => { 'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
+					   'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
+					   'text' =>            { 'displayoverlays' => 1 },
+				   },
+	};
 }
 
 1;

@@ -228,10 +228,18 @@ sub executeCommand {
 }
 	
 sub _fontExists {
-	my $fontname = (@{$_[0]->fonts})[1];
-	   $fontname =~ s/(\.2)?//go;
+	my $client = shift;
+	
+	my $fontname;
 
-	return Slim::Utils::Strings::stringExists($fontname) ? $_[0]->string($fontname) : $fontname;
+	if ($client->isa( "Slim::Player::SqueezeboxG" )) {
+		$fontname = ${$client->fonts()->{line2}};
+		$fontname =~ s/(\.2)?//go;
+	} else {
+		$fontname = $client->textSize() ? 'large' : 'small';
+	}
+
+	return Slim::Utils::Strings::stringExists($fontname) ? $client->string($fontname) : $fontname;
 }
 
 sub settingsExitHandler {

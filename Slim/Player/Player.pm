@@ -21,8 +21,6 @@ use Slim::Buttons::SqueezeNetwork;
 
 use base qw(Slim::Player::Client);
 
-our @fonttable = ( ['small', 'small'], [ undef, 'large']);
-
 our $defaultPrefs = {
 		'autobrightness'		=> 1
 		,'bass'					=> 50
@@ -166,7 +164,7 @@ sub init {
 	# init renderCache for client
 	my $cache = {
 		'screensize'   => 0,        # screensize for last render [0 forces init of cache on first render]
-		'fonts'        => 0,        # graphics mode only - font used
+		'fonts'        => {},       # graphics mode only - font used
 		'double'       => 0,        # text mode only - double text
 	};
 	$client->renderCache($cache);
@@ -204,6 +202,7 @@ sub render {
 
 	my $parts;
 	my $double;
+	my $displayoverlays;
 
 	if ((ref($lines) eq 'HASH')) {
 		$parts = $lines;
@@ -224,9 +223,22 @@ sub render {
 
 	if (defined($parts->{double})) {
 		$double = $parts->{double};
-	} else {
-		$double = ($client->linesPerScreen() == 1) ? 1 : 0;
 	}
+	if (defined($parts->{fonts}) && defined($parts->{fonts}->{text})) {
+		my $text = $parts->{fonts}->{text};
+		if (ref($text) eq 'HASH') {
+			if (defined($text->{lines})) {
+				if     ($text->{lines} == 1) { $double = 1; }
+				elsif ($text->{lines} == 2) { $double = 0; }
+			}
+			$displayoverlays = $text->{displayoverlays} if exists $text->{displayoverlays};
+		} else {
+			if    ($text == 1) { $double = 1; } 
+			elsif ($text == 2) { $double = 0; }
+		}
+	} 
+	if (!defined($double)) { $double = $client->textSize() ? 1 : 0; }
+
 	if ($double != $cache->{double}) {
 		$cache->{double} = $double;
 		$cache->{changed} = 1;
@@ -323,7 +335,7 @@ sub render {
 	# overlay 1 - render if changed
 	if (defined($parts->{overlay1}) && (!defined($cache->{overlay1}) || ($parts->{overlay1} ne $cache->{overlay1}))) {
 		$cache->{overlay1} = $parts->{overlay1};
-		if (!$double || defined($parts->{displayoverlays})) {
+		if (!$double || $displayoverlays) {
 			$cache->{overlay1text} = $parts->{overlay1};
 		} else {
 			$cache->{overlay1text} = '';
@@ -343,7 +355,7 @@ sub render {
 	# overlay 2 - render if changed
 	if (defined($parts->{overlay2}) && (!defined($cache->{overlay2}) || ($parts->{overlay2} ne $cache->{overlay2}))) {
 		$cache->{overlay2} = $parts->{overlay2};
-		if (!$double || defined($parts->{displayoverlays})) {
+		if (!$double || $displayoverlays) {
 			$cache->{overlay2text} = $parts->{overlay2};
 		} else {
 			$cache->{overlay2text} = '';
@@ -535,6 +547,7 @@ sub update {
 
 	if (defined($parts->{scrollmode})) {
 		$scrollMode = 1 if ($parts->{scrollmode} eq 'scrollonce');
+		$scrollMode = 2 if ($parts->{scrollmode} eq 'noscroll');
 		$scrollMode = 3 if ($parts->{scrollmode} eq 'ticker');
 	} elsif (!defined($scrollMode)) {
 		$scrollMode = $client->paramOrPref('scrollMode');
@@ -598,21 +611,21 @@ sub prevline2 {
 sub showBriefly {
 	my $client = shift;
 	my $line1 = shift;
-	my $line2 = shift;
-	my $duration = shift;
-	my $firstLineIfDoubled = shift;
-	my $blockUpdate = shift;
 
 	# return if update blocked
 	return if ($client->updateMode() == 2);
 
 	my $parsed;
-
 	if (ref($line1) eq 'HASH') {
 		$parsed = $line1;
 	} else {
+		my $line2 = shift;
 		$parsed = $client->parseLines([$line1,$line2]);
 	}
+
+	my $duration = shift;
+	my $firstLineIfDoubled = shift;
+	my $blockUpdate = shift;
 
 	if ($firstLineIfDoubled && ($client->linesPerScreen() == 1)) {
 		$parsed->{line2} = $parsed->{line1};
@@ -627,6 +640,14 @@ sub showBriefly {
 	$client->updateMode( $blockUpdate ? 2 : 1 );
 	$client->animateState(5);
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
+}
+
+sub block {
+	Slim::Buttons::Block::block(@_);
+}
+
+sub unblock {
+	Slim::Buttons::Block::unblock(@_);
 }
 
 sub pushUp {
@@ -1089,6 +1110,8 @@ sub power {
 	
 	return $currOn unless defined $on;
 
+	$client->renderCache()->{defaultfont} = undef;
+
 	if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
 
 		Slim::Utils::Prefs::clientSet($client, 'power', $on);
@@ -1129,17 +1152,7 @@ sub minTreble {	return 0; }
 sub maxBass {	return 100; }
 sub minBass {	return 0; }
 
-sub fonts {
-	my $client = shift;
-	my $size = shift;
-
-	unless (defined $size) {
-		$size = $client->textSize();
-	}
-
-	return $fonttable[$size];
-}
-
+sub fonts { return undef; }
 
 # fade the volume up or down
 # $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 

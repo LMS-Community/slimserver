@@ -295,7 +295,7 @@ sub _pushon {
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
 	my $screen = {
-			'fonts' => ['standard.1','high.2'],
+			'fonts' => { 'graphic-320x32' => 'high' },
 			'line1' => '',
 			'line2' => $client->string('NOW_PLAYING') . ': ' .
 						Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client)),

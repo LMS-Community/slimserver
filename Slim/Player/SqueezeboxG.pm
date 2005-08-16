@@ -112,6 +112,7 @@ sub textSize {
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	
 	if (defined($newsize)) {
+		$client->renderCache()->{defaultfont} = undef;
 		return	Slim::Utils::Prefs::clientSet($client, $prefname."_curr", $newsize);
 	} else {
 		return	Slim::Utils::Prefs::clientGet($client, $prefname."_curr");
@@ -120,9 +121,8 @@ sub textSize {
 
 sub linesPerScreen {
 	my $client = shift;
-	return (defined($client) &&
-			defined($client->fonts()) &&
-			defined($client->fonts()->[0])    ? 2 : 1);
+	my $fonts = $client->fonts();
+	return (defined($fonts) && (defined(${$fonts->{line1}}) || defined(${$fonts->{center1}}))) ? 2 : 1;
 }
 
 my %fontSymbols = (
@@ -148,7 +148,9 @@ sub render {
 	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
 
 	my $parts;
-	
+	my $fonts;
+	my $default = 0;
+
 	if ((ref($lines) eq 'HASH')) {
 		$parts = $lines;
 	} else {
@@ -162,52 +164,110 @@ sub render {
 
 	my $screensize = $client->screenBytes();
 	if ($screensize != $cache->{screensize}) {
+		# reset cache - screensize changed
 		$cache->{screensize} = $screensize;
-		$cache->{changed} = 1;
-		$cache->{restartticker} = 1;
-	}
-
-	my $fonts = defined($parts->{fonts}) ? $parts->{fonts} : $client->fonts();
-	if ($fonts != $cache->{fonts}) {
-		$cache->{fonts} = $fonts;
-		$cache->{line2height} = Slim::Display::Graphics::extent($fonts->[1]);
-		$cache->{changed} = 1;
-		$cache->{restartticker} = 1;
-	}
-
-	if ($cache->{changed}) {
-		# force full rerender with new font or new screensize
-		$cache->{scrolling} = 0;
-		$cache->{line1} = undef;
-		$cache->{line1bits} = '';
-		$cache->{line1finish} = 0;
-		$cache->{line2} = undef;
-		$cache->{line2bits} = '';
-		$cache->{line2finish} = 0;
+		$cache->{fonts} = {
+			'line1' => \undef, 'overlay1' => \undef, 'center1' => \undef,
+			'line2' => \undef, 'overlay2' => \undef, 'center2' => \undef,
+		};
+		$cache->{line1} = undef; $cache->{line1bits} = ''; $cache->{line1finish} = 0;
+		$cache->{line2} = undef; $cache->{line2bits} = ''; $cache->{line2finish} = 0;
 		$cache->{scrollbitsref} = undef;
-		$cache->{overlay1} = undef;
-		$cache->{overlay1bits} = '';
-		$cache->{overlay1start} = $screensize;
-		$cache->{overlay2} = undef;
-		$cache->{overlay2bits} = '';
-		$cache->{overlay2start} = $screensize;
-		$cache->{center1} = undef;
-		$cache->{center1bits} = '';
-   		$cache->{center2} = undef;
-		$cache->{center2bits} = '';
-		$cache->{ticker} = 0;
+		$cache->{overlay1} = undef; $cache->{overlay1bits} = ''; $cache->{overlay1start} = $screensize;
+		$cache->{overlay2} = undef; $cache->{overlay2bits} = ''; $cache->{overlay2start} = $screensize;
+		$cache->{center1} = undef; $cache->{center1bits} = '';
+   		$cache->{center2} = undef; $cache->{center2bits} = '';
+		$cache->{scrolling} = 0; $cache->{ticker} = 0; $cache->{restartticker} = 1;
+		$cache->{changed} = 1;
+	}
+
+	if (defined($parts->{fonts})) {
+		if ($parts->{fonts} == $cache->{fonts}) {
+			# shortcut for re-rendering render cache
+			$fonts = $parts->{fonts};
+
+		} elsif (ref($parts->{fonts}) eq 'HASH') {
+			# lines returns a font hash
+			my $model = $client->vfdmodel();
+			my $partsfonts = $parts->{fonts}->{"$model"};
+
+			my $fontref = Slim::Display::Graphics::gfonthash();
+
+			if ((ref($partsfonts) ne 'HASH') && exists($fontref->{$partsfonts})) {
+				$fonts = $fontref->{$partsfonts};
+
+			} else {
+				my $def = $cache->{defaultfont} ||= $client->fonts();
+				$fonts = {
+					'line1'   => exists($partsfonts->{line1}) ? $partsfonts->{line1} : $def->{line1},
+					'line2'   => exists($partsfonts->{line2}) ? $partsfonts->{line2} : $def->{line2},
+					'overlay1'=> exists($partsfonts->{overlay1}) ? $partsfonts->{overlay1} : $def->{overlay1},
+					'overlay2'=> exists($partsfonts->{overlay2}) ? $partsfonts->{overlay2} : $def->{overlay2},
+					'center1' => exists($partsfonts->{center1}) ? $partsfonts->{center1} : $def->{center1},
+					'center2' => exists($partsfonts->{center2}) ? $partsfonts->{center2} : $def->{center2},
+				};
+			}
+
+		} elsif (ref($parts->{fonts}) eq 'ARRAY') {
+			# lines returns an array for fonts - for backwards compatibility
+			$fonts = {
+				'line1'   => \$parts->{fonts}->[0],
+				'line2'   => \$parts->{fonts}->[1],
+				'overlay1'=> \$parts->{fonts}->[0],
+				'overlay2'=> \$parts->{fonts}->[1],
+				'center1' => \$parts->{fonts}->[0],
+				'center2' => \$parts->{fonts}->[1],
+			};
+		} else {
+			$fonts = $cache->{defaultfont} ||= $client->fonts();
+			$default = 1;
+		}
+	} else {
+		$fonts = $cache->{defaultfont} ||= $client->fonts();
+		$default = 1;
+	}
+
+	my $cfonts = $cache->{fonts};
+	if ($fonts != $cfonts) {
+		# fonts for this render possibly different from last, check if a component has changed & reset cache
+		if ($fonts->{line1} != $cfonts->{line1}) {
+			$cfonts->{line1} = $fonts->{line1};
+			$cache->{line1} = undef; $cache->{line1bits} = ''; $cache->{line1finish} = 0;
+		}
+		if ($fonts->{line2} != $cfonts->{line2}) {
+			$cfonts->{line2} = $fonts->{line2};
+			$cache->{line2} = undef; $cache->{line2bits} = ''; $cache->{line2finish} = 0;
+			$cache->{scrollbitsref} = undef;
+			$cache->{scrolling} = 0; $cache->{ticker} = 0; $cache->{restartticker} = 1;
+			$cache->{line2height} = Slim::Display::Graphics::extent(${$fonts->{line2}});
+		}
+		if ($fonts->{overlay1} != $cfonts->{overlay1}) {
+			$cfonts->{overlay1} = $fonts->{overlay1};
+			$cache->{overlay1} = undef; $cache->{overlay1bits} = ''; $cache->{overlay1start} = $screensize;
+		}
+		if ($fonts->{overlay2} != $cfonts->{overlay2}) {
+			$cfonts->{overlay2} = $fonts->{overlay2};
+			$cache->{overlay2} = undef; $cache->{overlay2bits} = ''; $cache->{overlay2start} = $screensize;
+		}
+		if ($fonts->{center1} != $cfonts->{center1}) {
+			$cfonts->{center1} = $fonts->{center1}; $cache->{center1} = undef; $cache->{center1bits} = '';
+		}
+		if ($fonts->{center2} != $cfonts->{center2}) {
+			$cfonts->{center2} = $fonts->{center2}; $cache->{center2} = undef; $cache->{center2bits} = '';
+		}
+		$cfonts = $fonts if $default;
 	}
 
 	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
 	# copy the first to the second.  Don't do for ticker mode.
-	if (!defined($fonts->[0]) && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
+	if (!defined(${$fonts->{line1}}) && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
 		$parts->{line2} = $parts->{line1};
 	}
 	
 	# line 1 - render if changed
 	if (defined($parts->{line1}) && (!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}))) {
 		$cache->{line1} = $parts->{line1};
-		$cache->{line1bits} = Slim::Display::Graphics::string($fonts->[0], $parts->{line1});
+		$cache->{line1bits} = Slim::Display::Graphics::string(${$fonts->{line1}}, $parts->{line1});
 		$cache->{line1finish} = length($cache->{line1bits});
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{line1}) && defined($cache->{line1})) {
@@ -222,7 +282,7 @@ sub render {
 		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
 		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
 		$cache->{line2} = $parts->{line2};
-		$cache->{line2bits} = Slim::Display::Graphics::string($fonts->[1], $parts->{line2});
+		$cache->{line2bits} = Slim::Display::Graphics::string(${$fonts->{line2}}, $parts->{line2});
 		$cache->{scrollbitsref} = undef;
 		$cache->{scrolling} = 0;
 		$cache->{ticker} = 0 if ($scroll != 2);
@@ -241,7 +301,7 @@ sub render {
 	# overlay 1 - render if changed
 	if (defined($parts->{overlay1}) && (!defined($cache->{overlay1}) || ($parts->{overlay1} ne $cache->{overlay1}))) {
 		$cache->{overlay1} = $parts->{overlay1};
-		$cache->{overlay1bits} = Slim::Display::Graphics::string($fonts->[0], "\x00" . $parts->{overlay1});
+		$cache->{overlay1bits} = Slim::Display::Graphics::string(${$fonts->{overlay1}}, "\x00" . $parts->{overlay1});
 		if (length($cache->{overlay1bits}) > $screensize ) {
 			$cache->{overlay1bits} = substr($cache->{overlay1bits}, 0, $screensize);
 		}
@@ -257,7 +317,7 @@ sub render {
 	# overlay 2 - render if changed
 	if (defined($parts->{overlay2}) && (!defined($cache->{overlay2}) || ($parts->{overlay2} ne $cache->{overlay2}))) {
 		$cache->{overlay2} = $parts->{overlay2};
-		$cache->{overlay2bits} = Slim::Display::Graphics::string($fonts->[1], "\x00" . $parts->{overlay2});
+		$cache->{overlay2bits} = Slim::Display::Graphics::string(${$fonts->{overlay2}}, "\x00" . $parts->{overlay2});
 		if (length($cache->{overlay2bits}) > $screensize ) {
 			$cache->{overlay2bits} = substr($cache->{overlay2bits}, 0, $screensize);
 		}
@@ -273,7 +333,7 @@ sub render {
 	# center 1 - render if changed
 	if (defined($parts->{center1}) && (!defined($cache->{center1}) || ($parts->{center1} ne $cache->{center1}))) {
 		$cache->{center1} = $parts->{center1};
-		my $center1 = Slim::Display::Graphics::string($fonts->[0], $parts->{center1});
+		my $center1 = Slim::Display::Graphics::string(${$fonts->{center1}}, $parts->{center1});
 		$center1 = chr(0) x ( int( ($screensize-length($center1)) / ($client->bytesPerColumn()*2) )
 					      * $client->bytesPerColumn() ) . $center1;
 		$cache->{center1bits} = substr($center1, 0, $screensize);
@@ -287,7 +347,7 @@ sub render {
 	# center 2 - render if changed
 	if (defined($parts->{center2}) && (!defined($cache->{center2}) || ($parts->{center2} ne $cache->{center2}))) {
 		$cache->{center2} = $parts->{center2};
-		my $center2 = Slim::Display::Graphics::string($fonts->[1], $parts->{center2});
+		my $center2 = Slim::Display::Graphics::string(${$fonts->{center2}}, $parts->{center2});
 		$center2 = chr(0) x ( int( ($screensize-length($center2)) / ($client->bytesPerColumn()*2) )
 					      * $client->bytesPerColumn() ) . $center2;
 		$cache->{center2bits} = substr($center2, 0, $screensize);
@@ -382,24 +442,24 @@ sub updateScreen {
 sub fonts {
 	my $client = shift;
 	my $size = shift;
-	my $current;
-	
-	my $font;
-	
-	if (defined $client->param('font')) {
-		$font = $client->param('font');
-	} else {
-		unless (defined $size) {$size = $client->textSize();}
-		
-		# grab base for prefname depending on mode
-		my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-		$font	= Slim::Utils::Prefs::clientGet($client, $prefname, $size);
+
+	unless (defined $size) {
+
+		# return default font if cached by render
+		my $cache = $client->renderCache()->{defaultfont};
+		return $cache if defined ($cache);
+
+		$size = $client->textSize();
 	}
+		
+	# grab base for prefname depending on mode
+	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
+	my $font = Slim::Utils::Prefs::clientGet($client, $prefname, $size);
 	
 	my $fontref = Slim::Display::Graphics::gfonthash();
-	
+
 	if (!$font) { return undef; };
-	
+
 	return $fontref->{$font};
 }
 
@@ -507,7 +567,7 @@ sub measureText {
 	
 	my $fonts = $client->fonts();
 
-	my $len = Slim::Display::Graphics::measureText($fonts->[$line-1], $client->symbols($text));
+	my $len = Slim::Display::Graphics::measureText(${$fonts->{"line$line"}}, $client->symbols($text));
 	return $len;
 }
 

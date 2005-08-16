@@ -109,7 +109,7 @@ sub fontnames {
 	my %fontnames;
 	my $i=0;
 	foreach my $gfont (keys %fonthash) {
-		my $fontname = $fonthash{$gfont}->[1];
+		my $fontname = ${$fonthash{$gfont}->{line2}};
 		$fontname =~ s/(\.2)?//g;
 		$fontnames{$fontname} = $fontname;
 	}
@@ -307,16 +307,27 @@ sub loadFonts {
 
 		$::d_graphics && msg( "Now parsing: $font\n");
 		if ($font =~ m/(.*?).(\d)/i) {
-			$fonthash{$1}->[$2-1] = $font;
+			$fonthash{$1}->{"line$2"} = \$font;
+			$fonthash{$1}->{"overlay$2"} = \$font;
+			$fonthash{$1}->{"center$2"} = \$font;
 		}
 		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
 		
 		$fontheight{$font} = $height - 1;
-		$fonts{$font} = parseFont($fontgrid);;
+		$fonts{$font} = parseFont($fontgrid);
 
 		$::d_graphics && msg( "$font had height $height - 1\n");
 	}
-	return;
+
+	# set to \undef if undefined (e.g. font is double height and only one line defined)
+	foreach my $name (keys %fonthash) {
+		$fonthash{$name}->{line1} = \undef if !exists($fonthash{$name}->{line1});
+		$fonthash{$name}->{line2} = \undef if !exists($fonthash{$name}->{line2});
+		$fonthash{$name}->{overlay1} = \undef if !exists($fonthash{$name}->{overlay1});
+		$fonthash{$name}->{overlay1} = \undef if !exists($fonthash{$name}->{overlay1});
+		$fonthash{$name}->{center1} = \undef if !exists($fonthash{$name}->{center1});
+		$fonthash{$name}->{center2} = \undef if !exists($fonthash{$name}->{center2});
+	}
 }
 
 # parse the array of pixels ino a font table
