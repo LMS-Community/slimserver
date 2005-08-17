@@ -103,6 +103,19 @@ sub add {
 	return wantarray ? @contributors : $contributors[0];
 }
 
+sub totalContributorRoles {
+	my $class = shift;
+
+	return scalar keys %contributorToRoleMap;
+}
+
+sub typeToRole {
+	my $class = shift;
+	my $type  = shift;
+
+	return $contributorToRoleMap{$type};
+}
+
 1;
 
 __END__

@@ -380,10 +380,7 @@ sub execute {
 		if ($p0 eq 'artists') {
 
 			# The user may not want to include all the composers/conductors
-			unless (Slim::Utils::Prefs::get('composerInArtists')) {
-
-				$find->{'contributor.role'} = $ds->artistOnlyRoles;
-			}
+			$find->{'contributor.role'} = $ds->artistOnlyRoles;
 		}
 		
  		if (Slim::Utils::Misc::stillScanning()) {

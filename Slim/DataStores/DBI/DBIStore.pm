@@ -298,7 +298,7 @@ sub count {
 	#
 	# But don't restrict if we have an album (this may be wrong) - 
 	# for VA albums, we want the correct count.
-	if ($field eq 'contributor' && !$findCriteria{'album'} && !Slim::Utils::Prefs::get('composerInArtists')) {
+	if ($field eq 'contributor' && !$findCriteria{'album'}) {
 
 		$findCriteria{'contributor.role'} = $self->artistOnlyRoles;
 	}
@@ -1093,13 +1093,33 @@ sub setAlbumArtwork {
 	}
 }
 
+# The user may want to constrain their browse view by either or both of
+# 'composer' and 'track artists'.
 sub artistOnlyRoles {
-	my $self = shift;
+	my $self  = shift;
 
-	return [
-		$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
-		$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ALBUMARTIST'}
-	];
+	my %roles = (
+		'ARTIST'      => 1,
+		'ALBUMARTIST' => 1,
+	);
+
+	if (Slim::Utils::Prefs::get('composerInArtists')) {
+
+		map { $roles{$_} = 1 } qw(COMPOSER CONDUCTOR BAND);
+	}
+
+	if (Slim::Utils::Prefs::get('variousArtistsInArtists')) {
+
+		$roles{'TRACKARTIST'} = 1;
+	}
+
+	# If we're using all roles, don't bother with the constraint.
+	if (scalar keys %roles != Slim::DataStores::DBI::ContributorTrack->totalContributorRoles) {
+
+		return [ sort map { Slim::DataStores::DBI::ContributorTrack->typeToRole($_) } keys %roles ];
+	}
+
+	return undef;
 }
 
 #
@@ -1639,6 +1659,7 @@ sub _mergeAndCreateContributors {
 				if ($attributes->{$matchTag} =~ $contributorRE) {
 
 					$forceCreate = 1;
+					last;
 				}
 			}
 		}

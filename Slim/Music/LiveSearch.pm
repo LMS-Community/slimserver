@@ -46,7 +46,7 @@ sub query {
 		};
 
 		# Don't do an unneeded join for albums & tracks.
-		if ($type eq 'artist' && !Slim::Utils::Prefs::get('composerInArtists')) {
+		if ($type eq 'artist') {
 
 			$find->{'contributor.role'} = $ds->artistOnlyRoles;
 		}

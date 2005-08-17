@@ -285,10 +285,7 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				unless (Slim::Utils::Prefs::get('composerInArtists')) {
-
-					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
-				}
+				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
 
 				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'artist'}) {
 
@@ -398,10 +395,7 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				unless (Slim::Utils::Prefs::get('composerInArtists')) {
-
-					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
-				}
+				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
 
 				if (Slim::Utils::Prefs::get('includeNoArt')) {
 
@@ -493,10 +487,7 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				unless (Slim::Utils::Prefs::get('composerInArtists')) {
-
-					$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
-				}
+				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
 
 				return $ds->find({
 					'field'  => 'artist',
