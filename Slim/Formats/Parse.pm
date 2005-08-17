@@ -153,7 +153,7 @@ sub readM3U {
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 
-		if (Slim::Music::Info::isURL($entry) || playlistEntryIsValid($entry, $url)) {
+		if (playlistEntryIsValid($entry, $url)) {
 
 			$::d_parse && msg("    entry: $entry\n");
 
@@ -218,7 +218,7 @@ sub readPLS {
 
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
 
-		if (Slim::Music::Info::isURL($entry) || playlistEntryIsValid($entry, $url)) {
+		if (playlistEntryIsValid($entry, $url)) {
 
 			push @items, _updateMetaData($entry, $titles[$i]);
 		}
@@ -652,7 +652,7 @@ sub readWPL {
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
 
-			if (Slim::Music::Info::isURL($entry) || playlistEntryIsValid($entry, $url)) {
+			if (playlistEntryIsValid($entry, $url)) {
 
 				$::d_parse && msg("    entry: $entry\n");
 
@@ -809,7 +809,7 @@ sub readASX {
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 
-					if (Slim::Music::Info::isURL($entry) || playlistEntryIsValid($entry, $url)) {
+					if (playlistEntryIsValid($entry, $url)) {
 
 						push @items, _updateMetaData($path, $title);
 					}
@@ -944,6 +944,11 @@ sub playlistEntryIsValid {
 	my ($entry, $url) = @_;
 
 	my $caller = (caller(1))[3];
+
+	if (Slim::Music::Info::isURL($entry)) {
+
+		return 1;
+	}
 
 	# Be verbose to the user - this will let them fix their files / playlists.
 	if ($entry eq $url) {
