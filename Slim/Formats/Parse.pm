@@ -153,15 +153,12 @@ sub readM3U {
 		
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 
-		if ($entry eq $url) {
+		if (playlistEntryIsValid($entry, $url)) {
 
-			$::d_parse && msg("Found self-referencing playlist - skipping!\n");
-			next;
+			$::d_parse && msg("    entry: $entry\n");
+
+			push @items, _updateMetaData($entry, $title);
 		}
-
-		$::d_parse && msg("    entry: $entry\n");
-
-		push @items, _updateMetaData($entry, $title);
 	}
 
 	$::d_parse && msg("parsed " . scalar(@items) . " items in m3u playlist\n");
@@ -221,12 +218,10 @@ sub readPLS {
 
 		my $entry = Slim::Utils::Misc::fixPath($urls[$i]);
 
-		if ($entry eq $url) {
-			msg("Found self-referencing playlist - skipping!\n");
-			next;
-		}
+		if (playlistEntryIsValid($entry, $url)) {
 
-		push @items, _updateMetaData($entry, $titles[$i]);
+			push @items, _updateMetaData($entry, $titles[$i]);
+		}
 	}
 
 	close $pls if (ref($pls) ne 'IO::String');
@@ -657,15 +652,12 @@ sub readWPL {
 		
 			$entry = Slim::Utils::Misc::fixPath($entry, $wpldir);
 
-			if ($entry eq $url) {
+			if (playlistEntryIsValid($entry, $url)) {
 
-				$::d_parse && msg("Found self-referencing playlist - skipping!\n");
-				next;
+				$::d_parse && msg("    entry: $entry\n");
+
+				push @items, _updateMetaData($entry, undef);
 			}
-
-			$::d_parse && msg("    entry: $entry\n");
-
-			push @items, _updateMetaData($entry, undef);
 		}
 	}
 
@@ -817,13 +809,10 @@ sub readASX {
 				if (defined($path)) {
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 
-					if ($path eq $url) {
+					if (playlistEntryIsValid($path, $url)) {
 
-						$::d_parse && msg("Found self-referencing playlist - skipping!\n");
-						next;
+						push @items, _updateMetaData($path, $title);
 					}
-
-					push @items, _updateMetaData($path, $title);
 				}
 			}
 		}
@@ -949,6 +938,27 @@ sub _filehandleFromNameOrString {
 	}
 
 	return $output;
+}
+
+sub playlistEntryIsValid {
+	my ($entry, $url) = @_;
+
+	my $caller = (caller(1))[3];
+
+	# Be verbose to the user - this will let them fix their files / playlists.
+	if ($entry eq $url) {
+
+		msg("$caller:\nWARNING:\n\tFound self-referencing playlist in:\n\t$entry == $url\n\t - skipping!\n\n");
+		return 0;
+	}
+
+	if (!Slim::Music::Info::isFile($entry)) {
+
+		msg("$caller:\nWARNING:\n\t$entry found in playlist:\n\t$url doesn't exist on disk - skipping!\n\n");
+		return 0;
+	}
+
+	return 1;
 }
 
 1;
