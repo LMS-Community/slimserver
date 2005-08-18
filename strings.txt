@@ -6266,6 +6266,7 @@ CONFIRM_OVERWRITE
 	SE	bekräfta överskrivning
 
 CONFIRM_DELETE
+	DE	Wirklich löschen?
 	EN	Confirm Delete
 
 TRACK
@@ -6415,6 +6416,7 @@ TYPE
 	SE	Filformat
 
 DIR
+	DE	Verzeichnis
 	EN	Directory
 
 APE
@@ -7290,6 +7292,7 @@ RENAME_WARNING
 	SE	Namnet du valde används redan. Välj ett annat namn för din låtlista.
 
 DELETE_WARNING
+	DE	Soll die Playlist wirklich gelöscht werden? 
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
 
 SCAN_WARNING
@@ -9439,10 +9442,13 @@ ALBUMARTIST
 	EN	Album Artist
 
 SETUP_VARIOUSARTISTSINARTISTS_DESC
+	DE	Sie können Interpreten, die auf Kompilationen einzelne Songs haben, von der Interpreten-Liste ausschliessen.
 	EN	You can choose to hide artists that are "track artists" on compilation albums from your browse views.
 
 SETUP_VARIOUSARTISTSINARTISTS_1
+	DE	Interpreten von Kompilationen auflisten.
 	EN	Include compilation artists in artist list.
 
 SETUP_VARIOUSARTISTSINARTISTS_0
+	DE	Interpreten von Kompilationen nicht auflisten.
 	EN	Don't include compilation artists in artist list.
