@@ -161,6 +161,7 @@ sub render {
 	$cache->{changed} = 0;
 	$cache->{newscroll} = 0;
 	$cache->{restartticker} = 0;
+	$cache->{scrollmode} = $parts->{scrollmode};
 
 	my $screensize = $client->screenBytes();
 	if ($screensize != $cache->{screensize}) {
@@ -573,8 +574,8 @@ sub measureText {
 
 sub symbols {
 	my $client = shift;
-	my $line = shift;
-	
+	my $line = shift || return undef;
+
 	return $fontSymbols{$line} if exists $fontSymbols{$line};
 
 	if (defined($line)) {

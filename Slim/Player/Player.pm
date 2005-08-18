@@ -214,6 +214,7 @@ sub render {
 	$cache->{changed} = 0;
 	$cache->{newscroll} = 0;
 	$cache->{restartticker} = 0;
+	$cache->{scrollmode} = $parts->{scrollmode};
 
 	if ($cache->{screensize} != 40) {
 	    $cache->{screensize} = 40;
@@ -607,6 +608,31 @@ sub prevline2 {
 	my $cache = $client->renderCache();
 	return $cache->{line2};
 }
+
+sub curDisplay {
+	my $client = shift;
+	my $cache = $client->renderCache();
+	return {
+		'line1'    => $cache->{line1},
+		'line2'    => $cache->{line2},
+		'overlay1' => $cache->{overlay1},
+		'overlay2' => $cache->{overlay2},
+		'center1'  => $cache->{center1},
+		'center2'  => $cache->{center2},
+	};
+}
+
+sub curLines {
+	my $client = shift;
+
+	my $linefunc = $client->lines();
+
+	if (defined $linefunc) {
+		return $client->renderOverlay(&$linefunc($client));
+	} else {
+		return undef;
+	}
+} 
 
 sub showBriefly {
 	my $client = shift;
@@ -1027,7 +1053,7 @@ sub isPlayer {
 
 sub symbols {
 	my $client = shift;
-	my $line = shift;
+	my $line = shift || return undef;
 
 	return $Symbols{$line} if exists $Symbols{$line};
 
