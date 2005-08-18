@@ -13,11 +13,11 @@ SQL::Abstract::Limit - portable LIMIT emulation
 
 =cut
 
-our $VERSION = '0.032';
+our $VERSION = '0.033';
 
 =head1 VERSION
 
-0.032
+0.033
 
 =cut
 
@@ -163,15 +163,19 @@ sub select {
     my $where  = shift; #  if ref( $_[0] ) eq 'HASH';
 
     my ( $order, $rows, $offset, $syntax ) = $self->_get_args( @_ );
-
+    
     $fields ||= '*';    # in case someone supplies '' or undef
 
+    # with no LIMIT parameters, defer to SQL::Abstract [ don't know why the first way fails ]
+    # return $self->SUPER::select( $table, $fields, $where, $order ) unless $rows;
+    return SQL::Abstract->new->select( $table, $fields, $where, $order ) unless $rows;
+    
+    # with LIMIT parameters, get the basic SQL without the ORDER BY clause
     my ( $sql, @bind ) = $self->SUPER::select( $table, $fields, $where );
 
     my $syntax_name = $self->_find_syntax( $syntax );
 
-    $sql = $self->_emulate_limit( $syntax_name, $sql, $order, $rows, $offset )
-        if $rows;
+    $sql = $self->_emulate_limit( $syntax_name, $sql, $order, $rows, $offset );
 
     return wantarray ? ( $sql, @bind ) : $sql;
 }
@@ -210,7 +214,7 @@ sub where {
 
     my ( $order, $rows, $offset, $syntax ) = $self->_get_args( @_ );
 
-    my ( $sql, @bind ) = $self->SUPER::where( $where );
+    my ( $sql, @bind ) = $self->SUPER::where( $where, $order );
 
     if ( $rows )
     {
