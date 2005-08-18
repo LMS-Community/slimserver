@@ -32,10 +32,6 @@
 <tr>
 	<td  class="listing">&nbsp;
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
-
-		[% IF coverThumb %]
-			[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser">[% END %]<img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a>
-		[% END %]
 		
 		[% IF descend %][% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 

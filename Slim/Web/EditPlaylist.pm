@@ -242,7 +242,16 @@ sub deletePlaylist {
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $playlistObj = $ds->objectForId('track', $params->{'id'});
 
-	if ($playlistObj) {
+	$params->{'level'}     = 0;
+	
+	# Warn the user if the playlist already exists.
+	if ($playlistObj && !$params->{'confirm'}) {
+
+		$params->{'DELETE_WARNING'} = 1;
+		$params->{'level'}     = 1;
+		$params->{'playlist'}  = $playlistObj->id;
+
+	} elsif ($playlistObj) {
 
 		removePlaylistFromDisk($playlistObj);
 
@@ -254,7 +263,6 @@ sub deletePlaylist {
 
 	# Send the user off to the top level browse playlists
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
-	$params->{'level'}     = 0;
 
 	return Slim::Web::Pages::browsedb($client, $params);
 }

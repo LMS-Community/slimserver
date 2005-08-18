@@ -6122,6 +6122,10 @@ RENAME
 	PT	Mudar Nome
 	SE	Byt namn
 
+NAME
+	EN	Name:
+	FR	Nom :
+
 SAVED_PLAYLISTS
 	CZ	Procházet playlisty
 	DE	Playlisten nachschlagen
@@ -6211,20 +6215,6 @@ UNTITLED
 	PT	Sem Título
 	SE	Namnlös
 
-DELETE_THIS_PLAYLIST
-	CZ	Vymazat playlist
-	DE	Diese Playlist löschen
-	DK	Slet denne playliste
-	EN	Delete this playlist
-	ES	Borrar esta lista
-	FI	Poista soittolista
-	FR	Supprimer cette liste de lecture
-	JP	このプレイリストを削除する
-	NL	Verwijder deze playlist
-	NO	Slett denne spillelisten
-	PT	Remover esta Playlist
-	SE	Radera låtlistan
-
 THIS_ENTIRE_PLAYLIST
 	CZ	Tenhle celý playlist
 	DE	Diese vollständige Playlist
@@ -6274,6 +6264,9 @@ CONFIRM_OVERWRITE
 	FR	Confirmer remplacement
 	JP	上書き確認
 	SE	bekräfta överskrivning
+
+CONFIRM_DELETE
+	EN	Confirm Delete
 
 TRACK
 	CZ	Skladba
@@ -7296,6 +7289,9 @@ RENAME_WARNING
 	PT	O nome escolhido já existe. Escolha outro nome para a playlist.
 	SE	Namnet du valde används redan. Välj ett annat namn för din låtlista.
 
+DELETE_WARNING
+	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
+
 SCAN_WARNING
 	CZ	SlimServer stále prohledává hudební archiv, takže se některé položky nyní nemusí zobrazit.
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
@@ -8072,7 +8068,7 @@ DELETE
 	CZ	Odstranit
 	DE	Löschen
 	DK	Fjern
-	EN	Remove
+	EN	Delete
 	ES	Eliminar
 	FI	Poista
 	FR	Supprimer

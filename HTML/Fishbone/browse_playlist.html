@@ -11,6 +11,7 @@
 		[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 		</div>[% END %]
 		[% IF RENAME_WARNING %]<div class="nowplaying"><p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
+		[% IF DELETE_WARNING %]<div class="nowplaying"><p><b>[% "NOTE" | string %]</b> [% "DELETE_WARNING" | string %]</div>[% END %]
 
 		[% IF playlist.title && playlist.title == untitledString %]
 			[% SET saveButtonName = "SAVE" %]
@@ -20,22 +21,31 @@
 
 		[% UNLESS noEdit %]
 		<div class="nowplaying">
-			<table border="0" cellspacing="0" cellpadding="0" width="100%">
-				<tr><form method="get" action="edit_playlist.html"><td width="325">[% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %]
-						<input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" class="stdedit" size="30">
-						<input type="submit" value="[% saveButtonName | string %]" class="stdclick">
-						<input type="hidden" value="[% player %]" name="player">
-						<input type="hidden" name="renamePlaylist" value="1">
-						<input type="hidden" name="id" value="[% playlist.id %]">
-						[% IF RENAME_WARNING %]</td><td valign="absmiddle" width="25"><input align="absmiddle" type="checkbox" name="overwrite" class="stdedit"></td><td>[% "CONFIRM_OVERWRITE" | string %][% END %]
-						<input type="hidden" name="dir" value="[% dir %]"></td></form></tr>
-				</table>
+			<form method="get" action="edit_playlist.html"><table><tr>
+				<td>[% "NAME" | string %] <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="30"></td>
+				<td><input class="stdclick" name="submit" type=submit value="[% saveButtonName | string %]" onclick='this.form.renamePlaylist.value=1'></td>
+				<td><input class="stdclick" type="submit" value="[% "EDIT" | string %]" onclick='this.form.editPlaylist.value=1'></td>
+			[% IF playlist.title && playlist.title != untitledString %]
+				<td><input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'></td>
+			[% END %]
+				</tr><tr>
+				<td>
+					<input type="hidden" name="id" value="[% playlist.id %]">
+					<input type="hidden" name="renamePlaylist" value="0">
+					<input type="hidden" name="editPlaylist" value="0">
+					<input type="hidden" name="deletePlaylist" value="0">
+				</td>
 				
-			<table border="0" cellspacing="0" cellpadding="0" class="nowplaying">
-				<tr><td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1">[% "DELETE_THIS_PLAYLIST" | string %]</a></td>
-				<td>&nbsp;&nbsp;<img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%" border="0">&nbsp;&nbsp;</td>
-				<td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&editPlaylist=1">[% "EDIT_PLAYLIST" | string %]</a></td></tr>
-			</table>
+				[% IF RENAME_WARNING %]<td colspan="2">
+					<input align="absmiddle" type="checkbox" name="overwrite">[% "CONFIRM_OVERWRITE" | string %]</td>
+				[% END %]
+				[% IF DELETE_WARNING %]<td></td><td></td><td>
+					<input align="absmiddle" type="checkbox" name="confirm">[% "CONFIRM_DELETE" | string %]</td>
+				[% END %]
+				</tr></table>
+				<input type="hidden" name="dir" value="[% dir %]">
+				<input type="hidden" value="[% player %]" name="player">
+			</form>
 		</div>
 		[% END %]
 
