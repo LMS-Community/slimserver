@@ -326,6 +326,8 @@ sub init {
 				my $findCriteria = shift;
 
 				$form->{'text'} = $item->title;
+				$form->{'coverThumb'} = $item->artwork_path || 0;
+				$form->{'size'}    = Slim::Utils::Prefs::get('thumbSize');
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
