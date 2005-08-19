@@ -3092,9 +3092,16 @@ sub addGroup {
 		if (!defined $position || $position > scalar(@{$setup{$category}{$categoryKey}})) {
 			$position = scalar(@{$setup{$category}{$categoryKey}});
 		}
-		$::d_prefs && msg("Adding $groupname to $position position in $categoryKey\n");
+		$::d_prefs && msg("Adding $groupname to position $position in $categoryKey\n");
 		splice(@{$setup{$category}{$categoryKey}},$position,0,$groupname);
 	}
+	
+	if ($category eq 'PLUGINS') {
+		my $first = shift @{$setup{$category}{$categoryKey}};
+		my $pluginlistref = getCategoryPlugins(undef, $category);
+		@{$setup{$category}{$categoryKey}} = ($first,sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (@{$setup{$category}{$categoryKey}}));
+	}
+	
 	if (defined $prefsref) {
 		my ($pref,$prefref);
 		while (($pref,$prefref) = each %{$prefsref}) {
