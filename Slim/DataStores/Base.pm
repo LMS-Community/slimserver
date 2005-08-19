@@ -451,7 +451,7 @@ sub init {
 			'nameTransform' => 'album',
 			'descendTransform' => 'album,track',
 			'ignoreArticles' => 1,
-			'alphaPageBar' => sub { return 0; },
+			'alphaPageBar' => sub { return 1; },
 			'suppressAll' => 1
 		},
 
