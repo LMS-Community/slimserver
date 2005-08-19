@@ -252,7 +252,7 @@ sub find {
 
 	#$::d_sql && msg("Generated findKey: [$findKey]\n");
 
-	if (!defined $lastFind{$findKey}) {
+	if (!defined $lastFind{$findKey} || (defined $args->{'cache'} && $args->{'cache'} == 0)) {
 
 		# refcnt-- if we can, to prevent leaks.
 		if ($Class::DBI::Weaken_Is_Available && !$args->{'count'}) {
@@ -318,7 +318,7 @@ sub count {
 
 			return Slim::DataStores::DBI::Album->count_all();
 
-		} elsif ($field eq 'contributor') {
+		} elsif ($field eq 'contributor' || $field eq 'artist') {
 
 			return Slim::DataStores::DBI::Contributor->count_all();
 		}
