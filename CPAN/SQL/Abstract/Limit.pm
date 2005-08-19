@@ -214,7 +214,10 @@ sub where {
 
     my ( $order, $rows, $offset, $syntax ) = $self->_get_args( @_ );
 
-    my ( $sql, @bind ) = $self->SUPER::where( $where, $order );
+    # with no LIMIT parameters, defer to SQL::Abstract [ don't know why the first way fails ]
+    return SQL::Abstract->new->where( $where, $order ) unless $rows;
+
+    my ( $sql, @bind ) = $self->SUPER::where( $where );
 
     if ( $rows )
     {
