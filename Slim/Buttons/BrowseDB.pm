@@ -376,7 +376,7 @@ sub browsedbItemName {
 	}
 
 	# Inflate IDs to objects on the fly.
-	if (!ref($item)) {
+	if (!ref($item) && $levels[$level] ne 'year') {
 
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
