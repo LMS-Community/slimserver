@@ -3,9 +3,9 @@
 	<title>[% IF pagetitle %][% pagetitle %]
 	[% ELSE %][% "WELCOME_TO_SLIMSERVER" | string %][% END %]</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-	<style type="text/css"> <!--
-		[% INSERT slimserver.css %]
-	--> </style>
+
+	<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
+
 	[% IF warn %]
 		<script language="JavaScript">
 		<!-- Start Hiding the Script
