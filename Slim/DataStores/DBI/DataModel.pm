@@ -403,6 +403,12 @@ our %sortFieldMap = (
 	'age' => ['tracks.age desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
 );
 
+our %sortRandomMap = (
+
+	'SQLite' => 'RANDOM()',
+	'mysql'  => 'RAND()',
+);
+
 # This is a weight table which allows us to do some basic table reordering,
 # resulting in a more optimized query. EXPLAIN should tell you more.
 our %tableSort = (
@@ -502,9 +508,7 @@ sub find {
 	
 	my $field  = $args->{'field'};
 	my $find   = $args->{'find'};
-	my $sortby = $args->{'sortBy'};
-	my $limit  = $args->{'limit'};
-	my $offset = $args->{'offset'};
+	my $sortBy = $args->{'sortBy'};
 	my $count  = $args->{'count'};
 	my $idOnly = $args->{'idOnly'};
 	my $c;
@@ -637,32 +641,41 @@ sub find {
 	# Now deal with the ORDER BY component
 	my $sortFields = [];
 
-	if (defined($sortby) && $sortFieldMap{$sortby}) {
-		$sortFields = $sortFieldMap{$sortby};
+	if (defined $sortBy) {
+
+		if ($sortBy eq 'random') {
+
+			$sortFields = [ $sortRandomMap{$driver} ];
+
+		} elsif ($sortFieldMap{$sortBy}) {
+
+			$sortFields = $sortFieldMap{$sortBy};
+		}
 	}
 
 	for my $sfield (@$sortFields) {
-		my ($table) = ($sfield =~ /^(\w+)\./);
-		$tables{$table} = $tableSort{$table};
 
-		# See if we need to do a join to allow the sortfield
-		if ($table ne $fieldTable) {
-			my $join = $joinGraph{$table}{$fieldTable};
-			if (defined($join)) {
-				$joins{$join} = 1;
+		my ($table) = ($sfield =~ /^(\w+)\./);
+
+		if (defined $table) {
+
+			$tables{$table} = $tableSort{$table};
+
+			# See if we need to do a join to allow the sortfield
+			if ($table ne $fieldTable) {
+
+				my $join = $joinGraph{$table}{$fieldTable};
+
+				if (defined($join)) {
+					$joins{$join} = 1;
+				}
 			}
 		}
 	}
 
-	my $abstract;
+	my $abstract = SQL::Abstract::Limit->new('limit_dialect' => $class->dbh);
 
-	if (defined $limit && defined $offset) {
-		$abstract  = SQL::Abstract::Limit->new('limit_dialect' => $class->dbh);
-	} else {
-		$abstract  = SQL::Abstract->new();
-	}
-
-	my ($where, @bind) = $abstract->where(\%whereHash, $sortFields, $limit, $offset);
+	my ($where, @bind) = $abstract->where(\%whereHash, $sortFields, $args->{'limit'}, $args->{'offset'});
 
 	my $sql = "SELECT $columns ";
 	   $sql .= "FROM " . join(", ", sort { $tables{$b} <=> $tables{$a} } keys %tables) . " ";
