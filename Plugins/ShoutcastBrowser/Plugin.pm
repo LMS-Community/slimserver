@@ -136,21 +136,28 @@ my $last_time = 0;
 sub initPlugin {
 	checkDefaults();
 
-	@genre_keywords = map { s/_/ /g; $_; } @genre_keywords;
+	if (defined @genre_keywords) {
+		foreach my $genre (keys %genre_aka) {
+			foreach (split /\|/, $genre_aka{$genre}) {
+				$genre_aka{$_} = $genre;
+			}
+			delete $genre_aka{$genre};
+		}
+
+		# store the keywords in the %genre_aka hash for faster access
+		foreach (@genre_keywords) {
+			s/_/ /g; 
+			$genre_aka{$_} = $_;
+		}
+		undef @genre_keywords;
+	}
 	@legit_genres = map { s/_/ /g; $_; } @legit_genres;
 	
-	foreach my $genre (keys %genre_aka) {
-		foreach (split /\|/, $genre_aka{$genre}) {
-			$genre_aka{$_} = $genre;
-		}
-		delete $genre_aka{$genre};
-	}
-
 	return 1;	
 }
 
 sub enabled {	
-	return (($::VERSION ge '6.1') && initPlugin());
+	return ($::VERSION ge '6.1');
 }
 
 sub getDisplayName {
@@ -348,6 +355,8 @@ sub loadStreamList {
 	
 	# only start if it's not been launched by another client
 	if (not defined $httpError) {
+		# reset the modes
+		undef %modes;
 		$last_time = time();
 		$::d_plugins && msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
 		
@@ -447,8 +456,8 @@ sub extractStreamInfoXML {
 sub extractStreamInfo {
 	my $client = shift;
 	my $data = shift;
-	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
 
+	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
 	my $min_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
 	my $max_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
 	my $allName = $client->string('PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS');
@@ -479,9 +488,6 @@ sub extractStreamInfo {
 				if (my $new_genre = $genre_aka{$old_genre}) {
 					$new_genre{"\u$new_genre"}++;
 				}
-				elsif (grep /^$old_genre$/, @genre_keywords) {
-					$new_genre{"\u$old_genre"}++;
-				}
 			}
 
 			if (not (@keywords = keys %new_genre)) {
@@ -508,7 +514,7 @@ sub removeSingletons {
 	if (($criterions[0] =~ /default/i) and Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre')) {
 		foreach my $g (keys %stream_data) {
 			my @n = keys %{ $stream_data{$g} };
-			
+
 			if (not (grep(/$g/i, @legit_genres) or ($#n > 0))) {
 				unless (exists $stream_data{$miscName}{$n[0]}) {
 					$stream_data{$miscName}{$n[0]} = $stream_data{$g}{$n[0]};
