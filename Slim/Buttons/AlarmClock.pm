@@ -101,7 +101,7 @@ our %functions = (
 			
 			my %params = (
 #				'listRef' => [ @{Slim::Music::Info::playlists()} ]
-				'listRef' => [ ds->getPlaylists() ]
+				'listRef' => [ $ds->getPlaylists() ]
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'
