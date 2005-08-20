@@ -9441,6 +9441,9 @@ ALBUMARTIST
 	DE	Album-Interpret
 	EN	Album Artist
 
+UNSYNC
+	EN	Unsync
+
 SETUP_VARIOUSARTISTSINARTISTS_DESC
 	DE	Sie können Interpreten, die auf Kompilationen einzelne Songs haben, von der Interpreten-Liste ausschliessen.
 	EN	You can choose to hide artists that are "track artists" on compilation albums from your browse views.
