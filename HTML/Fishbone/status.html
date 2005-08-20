@@ -12,16 +12,17 @@
 		<div class="masthead">
 			<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 				<tr>
-					<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
+					<table border="1" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
 						<td width="34%"><img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
 						<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17"></td>
-						<td colspan="3">&nbsp;[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]</td>
+						<td>&nbsp;[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]</td>
+						<td width="24%">[% IF sync %]<a href="status.html?p0=sync&p1=-&player=[% player | uri %]">[% "UNSYNC" | string %]</a>[% END %]</td>
 					</table>
 				</tr><tr>
-					<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
+					<table border="1" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
 						<td><nobr><span class="songtitle">[% IF player_name %][% player_name %][% END %]</span></nobr></td>
-						<td valign="bottom" width="30%"><nobr><a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "PLAYER_SETTINGS" | string %]</a></nobr></td>
-						<td valign="bottom"><nobr><a href="hitlist.html?player=[% player | uri %]" target="playlist">[% "STATISTICS" | string %]</a></nobr></td>
+						<td valign="bottom"><nobr><a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "PLAYER_SETTINGS" | string %]</a></nobr></td>
+						<td valign="bottom" width="24%"><nobr><a href="hitlist.html?player=[% player | uri %]" target="playlist">[% "STATISTICS" | string %]</a></nobr></td>
 					</table>
 				</tr>
 			</table>

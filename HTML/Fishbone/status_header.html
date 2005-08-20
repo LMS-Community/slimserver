@@ -18,12 +18,14 @@
 		<table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
 		<tr>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%"  bordercolor="#111111">
-		<td width="28%"><img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
-		<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17"></td>
+				<td width="28%"><img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
+				<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17"></td>
 				[% IF player_chooser_list %]
 				<form method="get" action="index.html" target="_top"><td width="24%"><center>
 					<select name="player" onchange="setCookie('SlimServer-player',this.form.player.value);this.form.submit(); " class="stdedit">[% player_chooser_list %]</select>
-				</center></td></form><td>&nbsp;</td><td>&nbsp;</td>
+				</center></td></form>
+				<td>&nbsp;</td>
+				<td width="24%">[% IF sync %]<center><a href="status_header.html?p0=sync&p1=-&player=[% player | uri %]">[% "UNSYNC" | string %]</a></center>[% END %]</td>
 				[% END %]
 			</table>
 		<tr>
