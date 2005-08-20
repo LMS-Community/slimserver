@@ -65,6 +65,7 @@ my $inPlaylists;
 my $inTracks;
 our %tracks;
 
+my $iTunesLibraryFile;
 my $iTunesLibraryPath;
 my $iTunesParser;
 my $iTunesParserNB;
@@ -77,19 +78,19 @@ my $initialized = 0;
 # mac file types
 our %filetypes = (
 	1095321158 => 'aif', # AIFF
-	1295270176 => 'mov', # M4A 
-	1295270432 => 'mov', # M4B 
-#	1295274016 => 'mov', # M4P 
-	1297101600 => 'mp3', # MP3 	
-	1297101601 => 'mp3', # MP3! 
+	1295270176 => 'mov', # M4A
+	1295270432 => 'mov', # M4B
+#	1295274016 => 'mov', # M4P
+	1297101600 => 'mp3', # MP3
+	1297101601 => 'mp3', # MP3!
 	1297106247 => 'mp3', # MPEG
-	1297106738 => 'mp3', # MPG2 
-	1297106739 => 'mp3', # MPG3 
+	1297106738 => 'mp3', # MPG2
+	1297106739 => 'mp3', # MPG3
 	1299148630 => 'mov', # MooV
-	1299198752 => 'mp3', # Mp3 
+	1299198752 => 'mp3', # Mp3
 	1463899717 => 'wav', # WAVE
-	1836069665 => 'mp3', # mp3! 
-	1836082995 => 'mp3', # mpg3 
+	1836069665 => 'mp3', # mp3!
+	1836082995 => 'mp3', # mpg3
 	1836082996 => 'mov', # mpg4
 );
 
@@ -104,16 +105,16 @@ our %filetypes = (
 # All the extra code wasn't really gaining us anything.
 sub useiTunesLibrary {
 	my $newValue = shift;
-	
+
 	if (defined($newValue)) {
 		Slim::Utils::Prefs::set('itunes', $newValue);
 	}
-	
+
 	my $use = Slim::Utils::Prefs::get('itunes');
 	
 	my $can = canUseiTunesLibrary();
-	
-	if (!defined($use) && $can) { 
+
+	if (!defined($use) && $can) {
 
 		Slim::Utils::Prefs::set('itunes', 1);
 
@@ -121,19 +122,19 @@ sub useiTunesLibrary {
 
 		Slim::Utils::Prefs::set('itunes', 0);
 	}
-	
+
 	$use = Slim::Utils::Prefs::get('itunes');
 	Slim::Music::Import::useImporter('ITUNES',$use && $can);
-	
+
 	$::d_itunes && msg("iTunes: using itunes library: $use\n");
-	
+
 	return $use && $can;
 }
 
 sub canUseiTunesLibrary {
-	
+
 	return 1 if $initialized;
-	
+
 	checkDefaults();
 
 	my $oldMusicPath = Slim::Utils::Prefs::get('itunes_library_music_path');
@@ -158,7 +159,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION ge '6.1') && initPlugin();
+	return ($::VERSION ge '6.1');
 }
 
 sub getFunctions {
@@ -173,7 +174,7 @@ sub initPlugin {
 	return unless canUseiTunesLibrary();
 
 	Slim::Music::Import::addImporter('ITUNES', {
-		'scan'  => \&startScan, 
+		'scan'  => \&startScan,
 		'reset' => \&resetState,
 	});
 
@@ -270,7 +271,7 @@ sub addGroups {
 sub findLibraryFromPlist {
 	my $path = undef;
 	my $base = shift @_;
-	
+
 	my $plist = catfile(($base, 'Library', 'Preferences'), 'com.apple.iApps.plist');
 
 	open (PLIST, $plist) || return $path;
@@ -287,7 +288,7 @@ sub findLibraryFromPlist {
 
 	return $path;
 }
-	
+
 sub findLibraryFromRegistry {
 
 	my $path = undef;
@@ -333,7 +334,7 @@ sub findMusicLibraryFile {
 
 	if ($autolocate) {
 		$::d_itunes && msg("iTunes: attempting to locate iTunes Music Library.xml\n");
-	
+
 		# This defines the list of directories we will search for
 		# the 'iTunes Music Library.xml' file.
 		my @searchdirs = (
@@ -341,7 +342,7 @@ sub findMusicLibraryFile {
 			catdir($base, 'Documents', 'iTunes'),
 			$base,
 		);
-		
+
 		if (defined $audiodir) {
 			push @searchdirs, (
 				catdir($audiodir, 'My Music', 'iTunes'),
@@ -389,9 +390,9 @@ sub findMusicLibraryFile {
 			return $path;
 		}
 	}		
-	
+
 	$::d_itunes && msg("iTunes: unable to find iTunes Music Library.xml.\n");
-	
+
 	return undef;
 }
 
@@ -457,7 +458,7 @@ sub isMusicLibraryFileChanged {
 		}
 
 		return 1 if (!$lastMusicLibraryFinishTime);
-		
+
 		if (time() - $lastMusicLibraryFinishTime > $itunesscaninterval) {
 
 			return 1;
@@ -467,7 +468,7 @@ sub isMusicLibraryFileChanged {
 			$::d_itunes && msg("iTunes: waiting for $itunesscaninterval seconds to pass before rescanning\n");
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -475,7 +476,7 @@ sub checker {
 	my $firstTime = shift || 0;
 
 	return unless (Slim::Utils::Prefs::get('itunes'));
-	
+
 	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
@@ -517,7 +518,7 @@ sub startScan {
 		'NoLWP'            => 1,
 		'Handlers'         => {
 
-			'Start' => \&handleStartElement, 
+			'Start' => \&handleStartElement,
 			'Char'  => \&handleCharElement,
 			'End'   => \&handleEndElement,
 		},
@@ -538,9 +539,11 @@ sub stopScan {
 		$opened = 0;
 		
 		close(ITUNESLIBRARY);
-		$iTunesParser   = undef;
+		$iTunesParser = undef;
 		resetScanState();
 	}
+
+	$iTunesLibraryFile = undef;
 }
 
 sub stillScanning {
@@ -563,6 +566,7 @@ sub doneScanning {
 	$opened = 0;
 
 	$iTunesLibraryPath = undef;
+	$iTunesLibraryFile = undef;
 	$lastMusicLibraryFinishTime = time();
 	$isScanning = 0;
 
@@ -590,15 +594,15 @@ sub doneScanning {
 }
 
 sub scanFunction {
-	my $file = findMusicLibraryFile();
-	
+	$iTunesLibraryFile ||= findMusicLibraryFile();
+
 	# this assumes that iTunes uses file locking when writing the xml file out.
 	if (!$opened) {
 
 		$::d_itunes && msg("iTunes: opening iTunes Library XML file.\n");
 
-		open(ITUNESLIBRARY, $file) || do {
-			$::d_itunes && warn "iTunes: Couldn't open iTunes Library: $file";
+		open(ITUNESLIBRARY, $iTunesLibraryFile) || do {
+			$::d_itunes && warn "iTunes: Couldn't open iTunes Library: $iTunesLibraryFile";
 			return 0;
 		};
 
@@ -606,9 +610,9 @@ sub scanFunction {
 
 		resetScanState();
 
-		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat($file))[9]);
+		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat($iTunesLibraryFile))[9]);
 	}
-	
+
 	if ($opened && !$locked) {
 
 		$::d_itunes && msg("iTunes: Attempting to get lock on iTunes Library XML file.\n");
@@ -720,7 +724,7 @@ sub handleTrack {
 
 		my $mtime = (stat($file))[9];
 		my $ctime = str2time($curTrack->{'Date Added'});
-		
+
 		# If the file hasn't changed since the last
 		# time we checked, then don't bother going to
 		# the database. A file could be new to iTunes
@@ -805,7 +809,7 @@ sub handleTrack {
 
 		$cacheEntry{'DISC'}  = $discNum   if defined $discNum;
 		$cacheEntry{'DISCC'} = $discCount if defined $discCount;
-		$cacheEntry{'ALBUM'} = $curTrack->{'Album'};			
+		$cacheEntry{'ALBUM'} = $curTrack->{'Album'};
 
 		$cacheEntry{'GENRE'} = $curTrack->{'Genre'};
 		$cacheEntry{'FS'}    = $curTrack->{'Size'};
@@ -850,7 +854,7 @@ sub handleTrack {
 
 		$::d_itunes && msg("iTunes: unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL') . "\n");
 
-	} 
+	}
 }
 
 sub handlePlaylist {
@@ -862,8 +866,8 @@ sub handlePlaylist {
 	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
 
 	# add this playlist to our playlist library
-	#	'LIST',	 # list items (array)
-	#	'AGE',   # list age
+	# 'LIST',  # list items (array)
+	# 'AGE',   # list age
 
 	$cacheEntry->{'TITLE'} = Slim::Utils::Prefs::get('iTunesplaylistprefix') . $name . Slim::Utils::Prefs::get('iTunesplaylistsuffix');
 	$cacheEntry->{'CT'}    = 'itu';
@@ -906,9 +910,9 @@ sub handleStartElement {
 	if ($element eq 'string' || $element eq 'integer') {
 		$inValue = 1;
 	}
-} 
+}
 
-sub handleCharElement { 
+sub handleCharElement {
 	my ($p, $value) = @_;
 
 	# Just need the one value here.
@@ -994,7 +998,6 @@ sub handleEndElement {
 			$inPlaylists = 1;
 		}
 
-		# 
 		if ($inPlaylists && $currentKey eq 'Name') {
 			$nextIsPlaylistName = 1;
 		}
@@ -1002,7 +1005,6 @@ sub handleEndElement {
 		return;
 	}
 
-	# 
 	if ($element eq 'string' || $element eq 'integer') {
 		$inValue = 0;
 	}
@@ -1066,17 +1068,17 @@ sub resetScanState {
 sub normalize_location {
 	my $location = shift;
 	my $url;
-	
+
 	my $stripped = strip_automounter($location);
 
 	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
 	if (Slim::Utils::OSDetect::OS() eq 'unix') {
-		
+
 		# find the new base location.  make sure it ends with a slash.
 		my $path = $iTunesLibraryPath || findMusicLibrary();
 		my $base = Slim::Utils::Misc::fileURLFromPath($path);
 
-		$url = $stripped;		
+		$url = $stripped;
 		$url =~ s/$iBase/$base/isg;
 		$url =~ s/(\w)\/\/(\w)/$1\/$2/isg;
 
@@ -1086,7 +1088,7 @@ sub normalize_location {
 	}
 
 	$url =~ s/file:\/\/localhost\//file:\/\/\//;
-	
+
 	$::d_itunes_verbose && msg("iTunes: normalized $location to $url\n");
 
 	return $url;
@@ -1094,9 +1096,9 @@ sub normalize_location {
 
 sub strip_automounter {
 	my $path = shift;
-	
+
 	if ($path && ($path =~ /automount/)) {
-	
+
 		# Strip out automounter 'private' paths.
 		# OSX wants us to use file://Network/ or timeouts occur
 		# There may be more combinations
@@ -1104,7 +1106,7 @@ sub strip_automounter {
 		$path =~ s/private\/automount\///;
 		$path =~ s/automount\/static\///;
 	}
-	
+
 	#remove trailing slash
 	$path && $path =~ s/\/$//;
 
