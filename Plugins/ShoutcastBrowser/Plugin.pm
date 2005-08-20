@@ -568,24 +568,6 @@ sub cleanStreamInfo {
 	return $arg;
 }
 
-#sub reloadXML {
-#	my $client = shift;
-#	
-#	# only allow reload every 1 minute
-#	if (time() < $last_time + 60) {
-#		$status{$client}{status} = -2;
-#		$client->update();
-#		sleep 1;
-#		$status{$client}{status} = 1;
-#		$client->update();
-#	} else {
-#		$status{$client}{status} = 0;
-#		$client->update();
-#		$httpError = undef;
-#		setMode($client);
-#	}
-#}
-
 sub lines { return; };
 
 my %functions = (
@@ -757,7 +739,6 @@ sub checkDefaults {
 }
 
 
-##### Sub-mode for streams #####
 sub stream_sort {
 	my $client = shift;
 	my $r = 0;
@@ -1101,12 +1082,6 @@ sub strings {
 	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
 
-PLUGIN_SHOUTCASTBROWSER_GENRES
-	CZ	SHOUTcast Internet Radio
-	DE	SHOUTcast Musikstile
-	EN	SHOUTcast Internet Radio
-	ES	Radio por Internet SHOUTcast
-
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	DE	Verbinde mit SHOUTcast...
 	EN	Connecting to SHOUTcast...
@@ -1182,24 +1157,10 @@ PLUGIN_SHOUTCASTBROWSER_MISC
 	EN	Misc. genres
 	ES	Géneros misceláneos
 
-PLUGIN_SHOUTCASTBROWSER_TOO_SOON
-	DE	Versuche es in ein paar Minuten wieder...
-	EN	Try again in a few minute
-	ES	Volver a intentar en unos minutos
-
-PLUGIN_SHOUTCASTBROWSER_SORTING
-	DE	Sortiere Streams...
-	EN	Sorting streams ...
-	ES	Ordenando streams...
-
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	DE	Spielte zuletzt
 	EN	Was playing
 	ES	Se estaba escuchando
-
-PLUGIN_SHOUTCASTBROWSER_STREAM_NAME
-	EN	Name
-	ES	Nombre
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
@@ -1297,9 +1258,9 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE
 	ES	Número de Streams (reverso)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
-	DE	Standard (alphabetisch)
-	EN	Default (alphabetical)
-	ES	Por Defecto ( alfabético)
+	DE	Alphabetisch (Standard)
+	EN	Alphabetical (Default)
+	ES	Alfabético (Por Defecto)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
 	DE	Anzahl Hörer

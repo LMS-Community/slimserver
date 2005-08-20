@@ -9442,6 +9442,7 @@ ALBUMARTIST
 	EN	Album Artist
 
 UNSYNC
+	DE	Synchronisation aufheben
 	EN	Unsync
 
 SETUP_VARIOUSARTISTSINARTISTS_DESC

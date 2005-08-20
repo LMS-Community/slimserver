@@ -24,7 +24,7 @@
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
 			[% IF streaminfo %]
 				<tr>
-					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_STREAM_NAME' | string %][% "COLON" | string %]</td>
+					<td width="30%">[% 'TITLE' | string %][% "COLON" | string %]</td>
 					<td width="70%"><a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% streaminfo.2 | uri %]&action=play&player=[% player | uri %]">[% stream %]</a></td>
 				</tr>
 				<tr>
