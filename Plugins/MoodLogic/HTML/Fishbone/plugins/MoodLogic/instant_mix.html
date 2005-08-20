@@ -1,23 +1,27 @@
 <html>
 	<head>
 		<title>[% pagetitle %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
+		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
+		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 	[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 	</div>[% END %]
 	<center><p>[% IF song_count %]Browsing <b>[% album_count %]</b> [% "WITH" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 	<h3>[% "MOODLOGIC_INSTANT_MIX" | string %]</h3><p>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 	<tr><td>[% pwd_list %]</td></tr></table>
+	<p><hr><p>
 	[% IF browselist_pagebar %]<p>[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
 	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 	<table cellspacing="0" border="0" cellpadding="0" width="100%">
 			<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td>
-				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"><img src="[% webroot %]html/images/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"><img src="[% webroot %]html/images/add.gif" border=0 align="center" hspace="1"></a></nobr></td>
 				<td class="listing" width="3" align="center">&nbsp;</td></tr>
 		[% instant_mix_list %]
 	</table>

@@ -126,7 +126,7 @@ sub initPlugin {
 		$initialized = 0;
 		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
 		
-		my ($groupRef,$prefRef) = &setupGroup();
+		my ($groupRef,$prefRef) = &setupPort();
 		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
 
 	} else {
@@ -200,12 +200,13 @@ sub playMix {
 }
 
 sub addGroups {
+	my $category = &setupCategory;
 
-	Slim::Web::Setup::addCategory('musicmagic',&setupCategory);
-
+	Slim::Web::Setup::addCategory('musicmagic',$category);
+	
 	my ($groupRef,$prefRef) = &setupUse();
-
 	Slim::Web::Setup::addGroup('server', 'musicmagic', $groupRef, undef, $prefRef);
+
 	Slim::Web::Setup::addChildren('server', 'musicmagic');
 }
 
@@ -1131,6 +1132,19 @@ sub musicmagic_mix {
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);
 }
 
+
+sub playerGroup {
+	my %group = (
+		'Groups' => {
+			'Default' => {
+				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter)]
+			},
+		},
+	);
+	
+	return \%group;
+}
+
 sub setupUse {
 	my $client = shift;
 
@@ -1173,8 +1187,18 @@ sub setupUse {
 	return (\%setupGroup,\%setupPrefs);
 }
 
-
 sub setupGroup {
+	my $category = &setupCategory;
+
+	$category->{'parent'} = 'player';
+	$category->{'GroupOrder'} = ['Default'];
+	$category->{'Groups'} = %{&playerGroup}->{'Groups'};
+	
+	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
+}
+
+
+sub setupPort {
 
 	my $client = shift;
 
@@ -1182,13 +1206,8 @@ sub setupGroup {
 			'PrefOrder' => [qw(MMSport)]
 		);
 
-	my %setupPrefs = (
-		'MMSport' => {
-			'validate' => \&Slim::Web::Setup::validateInt,
-			'validateArgs' => [1025,65535,undef,1],
-		},
-
-	);
+	my %setupPrefs;
+	$setupPrefs{'MMSport'} = %{&setupCategory}->{'Prefs'}->{'MMSport'};
 
 	return (\%setupGroup,\%setupPrefs);
 };
