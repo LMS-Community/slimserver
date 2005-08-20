@@ -61,6 +61,14 @@
 			[% END %]
 			
 			[% IF genres %]
+				[% FOREACH genre = genericGenres %]
+					<tr>
+						<td class="listing"><a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]">[% genre.value %]</a></td>
+						<td align="right" class="listing"><a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/next.gif" width="9" height="11" alt="[% "NEXT" | string %]"></a>
+					</tr>
+					[% odd = (not odd) %]
+				[% END %]
+
 				[% genreID = 0 %]
 				[% FOREACH genre = genres %]
 					<tr>

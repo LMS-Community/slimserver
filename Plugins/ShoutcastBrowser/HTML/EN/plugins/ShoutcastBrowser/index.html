@@ -50,6 +50,15 @@
 
 			[% odd = 1 %]
 			[% IF genres %]
+				[% FOREACH genre = genericGenres %]
+					<tr>
+						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]">[% genre.value %]</a>
+						</td>
+					</tr>
+					[% odd = (not odd) %]
+				[% END %]
+
 				[% genreID = 0 %]
 				[% FOREACH genre = genres %]
 					<tr>
