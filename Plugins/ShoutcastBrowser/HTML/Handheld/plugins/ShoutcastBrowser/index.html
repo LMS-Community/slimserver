@@ -56,7 +56,7 @@
 				[% FOREACH genre = genericGenres %]
 					<tr>
 						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]">[% genre.value %]</a>
+							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]">[% genre.value.token | string %]</a>
 						</td>
 						<td align="right" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
 							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]"></a>
