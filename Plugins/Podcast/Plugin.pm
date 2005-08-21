@@ -29,7 +29,7 @@ our @feeds = ();
 our %feed_names; # cache of feed names
 
 sub enabled {
-	return ($::VERSION ge '6.1') && initPlugin();
+	return ($::VERSION ge '6.1');
 }
 
 sub initPlugin {

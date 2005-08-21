@@ -41,7 +41,7 @@ our %stations = (
 our @station_names = sort keys %stations;
 
 sub enabled {
-	return ($::VERSION ge '6.1') && initPlugin();
+	return ($::VERSION ge '6.1');
 }
 
 sub initPlugin {
