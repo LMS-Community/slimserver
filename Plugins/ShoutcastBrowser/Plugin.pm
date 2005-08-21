@@ -270,7 +270,11 @@ sub setMode {
 		Slim::Buttons::Common::popModeRight($client);
 	}
 	elsif ($httpError) {
-		Slim::Buttons::Common::popModeRight($client);
+		my %params = (
+			header => '{PLUGIN_SHOUTCASTBROWSER_MODULE_NAME}',
+			listRef => [ "{PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR}" ],
+		);
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 	}
 	else {
 		$status{$client}{status} = 1;
@@ -1118,7 +1122,7 @@ PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	CZ	CHYBA: web SHOUTcast je nedostupný
-	DE	Fehler: SHOUTcast Web-Seite nicht verfügbar
+	DE	Fehler: SHOUTcast ist nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
 
