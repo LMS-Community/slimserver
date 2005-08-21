@@ -17,7 +17,7 @@
 package Plugins::ShoutcastBrowser::Plugin;
 
 use strict;
-use IO::Socket qw(:crlf);
+#use IO::Socket qw(:crlf);
 use File::Spec::Functions qw(catdir catfile);
 use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
@@ -172,7 +172,8 @@ sub getModes {
 	if (not defined %modes or ($status{'language'} ne Slim::Utils::Strings::getLanguage())) {
 		%modes = (
 			'PLUGIN_SHOUTCASTBROWSER_RECENT' => {
-					'values' => readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ],
+#					'values' => readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ],
+					'valuesFunc' => sub { return readRecentStreamList($client); },
 					'callback' => \&browseStreamsExitHandler,
 					'valueRef' => \$status{$client}{'stream'},
 				},
@@ -300,10 +301,15 @@ sub setMode {
 						$status{$client}{'genre'} = $item;
 					}
 
+					my $values;
+					if (not (defined $modes{$item}->{'valuesFunc'} && ($values = &{$modes{$item}->{'valuesFunc'}}))) {
+						$values = $modes{$item}->{'values'};
+					}
+
 					my %params = (
 						header => $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST') . ' - ' . $client->string((defined($modes{$item}->{'header'}) ? $modes{$item}->{'header'} : $item)),
 						headerAddCount => (defined($modes{$item}->{'headerAddCount'}) ? $modes{$item}->{'headerAddCount'} : 1),
-						listRef => $modes{$item}->{'values'},
+						listRef => $values || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ],
 						isSorted => $modes{$item}->{'isSorted'},
 						callback => $modes{$item}->{'callback'},
 						valueRef => $modes{$item}->{'valueRef'}
