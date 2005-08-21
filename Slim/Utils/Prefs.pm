@@ -674,8 +674,11 @@ sub set {
 	onChange($key, $value, $ind);
 
 	# must mark $ind as defined or indexed prefs cause an error in this msg
-	$::d_prefs && msg("Setting prefs $key".defined($ind)." equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
-
+	if (defined $ind) {
+		$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $prefs{$key}[$ind]) ? $prefs{$key}[$ind] : "undefined") . "\n");
+	} else {
+		$::d_prefs && msg("Setting prefs $key equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
+	}
 	scheduleWrite() unless $writePending;
 }
 
