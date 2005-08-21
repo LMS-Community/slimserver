@@ -110,6 +110,15 @@ sub initPlugin {
 	
 	checkDefaults();
 
+	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		$::d_musicmagic && msg("MusicMagic: don't initialize, it's disabled\n");
+		$initialized = 0;
+		
+		my ($groupRef,$prefRef) = &setupPort();
+		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
+		return 0;		
+	}
+
 	$MMSport = Slim::Utils::Prefs::get('MMSport');
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
 
@@ -396,9 +405,13 @@ sub convertPath {
 }
 
 sub grabFilters {
-	
 	my @filters;
 	my %filterHash;
+	
+	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		$::d_musicmagic && msg("MusicMagic: don't get filters list, it's disabled\n");
+		return %filterHash;
+	}
 	
 	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
