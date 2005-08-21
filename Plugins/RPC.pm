@@ -65,10 +65,15 @@ sub getPlaylist {
 
 		for ($idx = $start; $idx <= $end; $idx++) {
 			my $track = Slim::Player::Playlist::song($client, $idx);
- 
-			# this forces the track info to be pulled out of the db
+
+			# place the contributors all in an array for easy access
+			my @contribs = $track->contributors();
+			$track->{contributors} = \@contribs;
+			$_->name() foreach @contribs;
+
+			# make sure to read the track and album data from the db as well
+			$track->album()->title();
 			$track->title();
-			$track->contributors()->first()->name();
 
 			push @returnArray, $track;
 		}
