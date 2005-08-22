@@ -10,6 +10,7 @@ package Slim::Buttons::Power;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
+use Slim::Utils::Misc;
 
 our %functions = ();
 
