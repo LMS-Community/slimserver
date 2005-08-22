@@ -916,6 +916,7 @@ ALARM_NOW_PLAYING
 	SE	Väckarklockan spelar nu
 
 ALARM_WEEKDAYS
+	DE	Wecker je Wochentag
 	EN	Weekday Alarms
 
 ALARM_DAY1

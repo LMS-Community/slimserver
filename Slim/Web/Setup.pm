@@ -3277,10 +3277,17 @@ sub processPluginsList {
 	for my $plugin (@sorted) {
 		if (defined $paramref->{"pluginlist$i"}) {
 			if ($paramref->{"pluginlist$i"} && UNIVERSAL::can("Plugins::$plugin","initPlugin")) {
-				&{"Plugins::" . $plugin . "::initPlugin"};
+				if ((not $Slim::Buttons::Plugins::plugins{$plugin}{name}) && (not $Slim::Buttons::Plugins::brokenplugins{$plugin})) {
+					eval { &{"Plugins::${plugin}::initPlugin"}() };
+					if ($@) {
+						$::d_plugins && msg("Initialization of Plugins::${plugin} failed: $@\n");
+						$Slim::Buttons::Plugins::brokenplugins{$plugin} = 1;
+					}
+				}
 			}
 			elsif ((not $paramref->{"pluginlist$i"}) && UNIVERSAL::can("Plugins::$plugin","disablePlugin")) {
-				&{"Plugins::" . $plugin . "::disablePlugin"};
+				eval { {"Plugins::" . $plugin . "::disablePlugin"} };
+				delete $plugins{$plugin};
 			}
 		}
 

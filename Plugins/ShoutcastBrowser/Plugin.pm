@@ -17,7 +17,6 @@
 package Plugins::ShoutcastBrowser::Plugin;
 
 use strict;
-#use IO::Socket qw(:crlf);
 use File::Spec::Functions qw(catdir catfile);
 use Slim::Control::Command;
 use Slim::Utils::Strings qw (string);
@@ -102,10 +101,10 @@ my (%genre_aka, @genre_keywords, @legit_genres);
 	'video_game' => 'videogame|gaming'
 );
 
-## These are useful, descriptive genres, which should not be removed
-## from the list, even when they only have one stream and we are
-## lumping singletons together.  So we eliminate the more obscure and
-## regional genres from this list.
+# These are useful, descriptive genres, which should not be removed
+# from the list, even when they only have one stream and we are
+# lumping singletons together.  So we eliminate the more obscure and
+# regional genres from this list.
 
 @legit_genres = qw(
 	rock pop trance dance techno various house alternative 80s metal
@@ -172,7 +171,6 @@ sub getModes {
 	if (not defined %modes or ($status{'language'} ne Slim::Utils::Strings::getLanguage())) {
 		%modes = (
 			'PLUGIN_SHOUTCASTBROWSER_RECENT' => {
-#					'values' => readRecentStreamList($client) || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ],
 					'valuesFunc' => sub { return readRecentStreamList($client); },
 					'callback' => \&browseStreamsExitHandler,
 					'valueRef' => \$status{$client}{'stream'},
@@ -479,19 +477,14 @@ sub extractStreamInfo {
 		next if ($min_bitrate and $bitrate < $min_bitrate);
 		next if ($max_bitrate and $bitrate > $max_bitrate);
 
-		my $url         = $entry->{'Playstring'};
-		my $name		= cleanStreamInfo($entry->{'Name'});
-		my $genre       = cleanStreamInfo($entry->{'Genre'});
-		my $now_playing = cleanStreamInfo($entry->{'Nowplaying'});
-		my $listeners   = $entry->{'Listeners'};
-
-		my @keywords = ();
-		my $original = $genre;
-
+		my $name = cleanStreamInfo($entry->{'Name'});
+		my $genre = my $original = cleanStreamInfo($entry->{'Genre'});
 		$genre = "\L$genre";
 		$genre =~ s/\s+/ /g;
 		$genre =~ s/^ //;
 		$genre =~ s/ $//;
+
+		my @keywords = ();
 
 		if ($munge_genres) {
 			my %new_genre;
@@ -512,8 +505,12 @@ sub extractStreamInfo {
 		foreach (@keywords) {
 			push @{$genreStreams{$_}}, $name;
 		}
-		
-		$streamList{$name}{$bitrate} = [$url, $listeners, $bitrate, $now_playing, $original];
+
+		$streamList{$name}{$bitrate} = [$entry->{'Playstring'}, 
+										$entry->{'Listeners'},
+										$bitrate,
+										cleanStreamInfo($entry->{'Nowplaying'}), 
+										$original];
 	}
 }
 

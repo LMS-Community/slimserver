@@ -46,18 +46,8 @@ my %brokenplugins = ();
 
 sub init {
 	no strict 'refs';
-
 	initPlugins() unless $plugins_read;
 	addSetupGroups() unless $addGroups;
-
-	for my $plugin (enabledPlugins()) {
-		# We use initPlugin() instead of the more succinct
-		# init() because it's less likely to cause backward
-		# compatibility problems.
-		if (exists &{"Plugins::${plugin}::initPlugin"}) {
-			&{"Plugins::${plugin}::initPlugin"}();
-		}
-	}
 }
 
 sub enabledPlugins {
@@ -137,7 +127,7 @@ sub initPlugins {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 
 	for my $plugin (keys %{installedPlugins()}) {
-		if (addPlugin($plugin)) {
+		if (addPlugin($plugin, \%disabledplugins)) {
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
 			addDefaultMaps($plugin, \%disabledplugins);
@@ -210,12 +200,23 @@ sub canPlugin {
 
 sub addPlugin {
 	my $plugin = shift;
+	my $disabledPlugins = shift;
 	no strict 'refs';
 
 	my $fullname = "Plugins::$plugin";
 
 	my $displayName = canPlugin($plugin);
 	return 0 if (not $displayName);
+
+	# only run initPlugin() once
+	if ((not $plugins{$plugin}{name}) && (not $disabledPlugins->{$plugin}) && UNIVERSAL::can("Plugins::${plugin}", "initPlugin")) {
+		eval { &{"Plugins::${plugin}::initPlugin"}() };
+		if ($@) {
+			$::d_plugins && msg("Initialization of $fullname failed: $@\n");
+			$brokenplugins{$plugin} = 1;
+			return 0;
+		}
+	}
 
 	$plugins{$plugin} = {
 		module => $fullname,
