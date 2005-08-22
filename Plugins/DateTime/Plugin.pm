@@ -214,7 +214,8 @@ sub setScreensaverDateTimeMode() {
 
 sub screensaverDateTimelines {
 	my $client = shift;
-	my $alarmOn = Slim::Utils::Prefs::clientGet($client, "alarm");
+	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+	my $alarmOn = Slim::Utils::Prefs::clientGet($client, "alarm", 0) || Slim::Utils::Prefs::clientGet($client, "alarm", $wday);
 
 	return {
 		'center1' => Slim::Utils::Misc::longDateF(),
