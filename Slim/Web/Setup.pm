@@ -800,8 +800,8 @@ sub initSetupConfig {
 				return if (!defined($client));
 				playerChildren($client, $pageref);
 				my $playlistRef = playlists();
-				$pageref->{'Prefs'}{'alarmplaylist'}{'options'} = $playlistRef;
-				$pageref->{'Prefs'}{'alarmplaylist'}{'validateArgs'} = [$playlistRef];
+				$pageref->{'Prefs'}{'alarmplaylist0'}{'options'} = $playlistRef;
+				$pageref->{'Prefs'}{'alarmplaylist0'}{'validateArgs'} = [$playlistRef];
 				if (!$paramref->{'playername'}) {
 					$paramref->{'playername'} = $client->name();
 				}
@@ -809,7 +809,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['AlarmClock']
 		,'Groups' => {
 			'AlarmClock' => {
-				'PrefOrder' => ['alarm','alarmtime','alarmvolume','alarmplaylist']
+				'PrefOrder' => ['alarm0','alarmtime0','alarmvolume0','alarmplaylist0']
 				,'PrefsInTable' => 1
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
@@ -822,16 +822,16 @@ sub initSetupConfig {
 			}
 		}
 		,'Prefs' => {
-			'alarmtime' => {
+			'alarmtime0' => {
 				'validate' => \&validateTime
-				,'validateArgs' => [0,undef]
+				,'validateArgs' => [0,undef],
 				,'PrefChoose' => string('ALARM_SET').string('COLON')
 				,'changeIntro' => string('ALARM_SET')
 				,'rejectIntro' => string('ALARM_SET')
 				,'currentValue' => sub {
 						my $client = shift;
 						return if (!defined($client));
-						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+						my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime",0);
 						my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 						my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
 						return $timestring;
@@ -839,7 +839,7 @@ sub initSetupConfig {
 				,'onChange' => sub {
 						my ($client,$changeref,$paramref,$pageref) = @_;
 						return if (!defined($client));
-						my $time = $changeref->{'alarmtime'}{'new'};
+						my $time = $changeref->{'alarmtime0'}{'new'};
 						my $newtime = 0;
 						$time =~ s{
 							^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
@@ -850,28 +850,42 @@ sub initSetupConfig {
 								$newtime = ($1 * 60 * 60) + ($2 * 60);
 							}
 						}iegsx;
-						Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime);
+						Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime,0);
 					}
 			},
-			'alarmvolume'	=> {
+			'alarmvolume0'	=> {
 				'validate' => \&validateNumber
 				,'PrefChoose' => string('SETUP_ALARMVOLUME').string('COLON')
 				,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
+				,'currentValue' => sub {
+						my $client = shift;
+						return if (!defined($client));
+						return Slim::Utils::Prefs::clientGet($client, "alarmvolume",0);
+					}
 			},
-			'alarmplaylist' => {
+			'alarmplaylist0' => {
 				'validate' => \&validateInHash
 				,'PrefChoose' => string('ALARM_SELECT_PLAYLIST').string('COLON')
 				,'validateArgs' => [] #[\&playlists]
-
 				,'options' => {} #{playlists()}
+				,'currentValue' => sub {
+						my $client = shift;
+						return if (!defined($client));
+						return Slim::Utils::Prefs::clientGet($client, "alarmplaylist",0);
+					}
 			},
-			'alarm' => {
+			'alarm0' => {
 				'validate' => \&validateTrueFalse
 				,'PrefHead' => ' '
 				,'PrefChoose' => string('SETUP_ALARM').string('COLON')
 				,'options' => {
 						'1' => string('ON')
 						,'0' => string('OFF')
+					}
+				,'currentValue' => sub {
+						my $client = shift;
+						return if (!defined($client));
+						return Slim::Utils::Prefs::clientGet($client, "alarm",0);
 					}
 			},
 		},
