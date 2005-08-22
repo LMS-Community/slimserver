@@ -19,6 +19,7 @@ my $interval = 1; # check every x seconds
 our @browseMenuChoices;
 our %menuSelection;
 our %searchCursor;
+our $weekday;
 
 # some initialization code, adding modes for this module
 sub init {
@@ -32,6 +33,8 @@ sub setMode {
 
 	my $client = shift;
 
+	$weekday = ${$client->param('day')} || 0;
+	
 	@browseMenuChoices = (
 		$client->string('ALARM_SET'),
 		$client->string('ALARM_SELECT_PLAYLIST'),
@@ -39,36 +42,40 @@ sub setMode {
 		$client->string('ALARM_OFF'),
 	);
 
-	unless (defined $menuSelection{$client}) {
-		$menuSelection{$client} = 0;
+	unless ($weekday) {
+		push @browseMenuChoices, $client->string('ALARM_WEEKDAYS');
+	}
+
+	unless (defined $menuSelection{$weekday}{$client}) {
+		$menuSelection{$weekday}{$client} = 0;
 	}
 
 	$client->lines(\&lines);
 
 	# get previous alarm time or set a default
-	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime");
+	my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime", $weekday);
 
 	unless (defined $time) {
-		Slim::Utils::Prefs::clientSet($client, "alarmtime", 9 * 60 * 60 );
+		Slim::Utils::Prefs::clientSet($client, "alarmtime", 9 * 60 * 60, $weekday);
 	}
 }
 
 our %functions = (
 	'up' => sub  {
 		my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
+		my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$weekday}{$client});
 
-		if ($newposition != $menuSelection{$client}) {
-			$menuSelection{$client} = $newposition;
+		if ($newposition != $menuSelection{$weekday}{$client}) {
+			$menuSelection{$weekday}{$client} = $newposition;
 			$client->pushUp();
 		}
 	},
 	'down' => sub  {
 	   my $client = shift;
-		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $menuSelection{$client});
+		my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $menuSelection{$weekday}{$client});
 
-		if ($newposition != $menuSelection{$client}) {
-			$menuSelection{$client} = $newposition;
+		if ($newposition != $menuSelection{$weekday}{$client}) {
+			$menuSelection{$weekday}{$client} = $newposition;
 			$client->pushDown();
 		}
 	},
@@ -81,18 +88,18 @@ our %functions = (
 		my $client = shift;
 		my @oldlines = Slim::Display::Display::curLines($client);
 
-		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SET')) {
+		if ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_SET')) {
 			my %params = (
 				'header' => $client->string('ALARM_SET')
-				,'valueRef' => Slim::Utils::Prefs::clientGet($client,"alarmtime")
+				,'valueRef' => Slim::Utils::Prefs::clientGet($client,"alarmtime", $weekday)
 				,'cursorPos' => 1
 				,'callback' => \&exitSetHandler
-				,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"alarmtime",Slim::Buttons::Common::param($_[0],'valueRef')); }
+				,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],"alarmtime",Slim::Buttons::Common::param($_[0],'valueRef'), $weekday); }
 				,'onChangeArgs' => 'C'
 			);
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 		}
-		if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SELECT_PLAYLIST')) {
+		if ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_SELECT_PLAYLIST')) {
 
 			# Make a copy of the playlists, to make sure they
 			# aren't removed by the LRU cache. This may fix bug: 1853
@@ -100,39 +107,78 @@ our %functions = (
 			my $ds   = Slim::Music::Info::getCurrentDataStore();
 			
 			my %params = (
-#				'listRef' => [ @{Slim::Music::Info::playlists()} ]
 				'listRef' => [ $ds->getPlaylists() ]
 				,'externRef' => sub {Slim::Music::Info::standardTitle($_[0],$_[1]);}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_SELECT_PLAYLIST'
 				,'headerAddCount' => 1
 				,'stringHeader' => 1
-				,'onChange' => sub { 	Slim::Utils::Prefs::clientSet($_[0], "alarmplaylist", $_[1]); }
+				,'onChange' => sub { 	Slim::Utils::Prefs::clientSet($_[0], "alarmplaylist", $_[1], $weekday); }
 				,'onChangeArgs' => 'CV'
-				,'valueRef' => \&Slim::Utils::Prefs::clientGet($client,"alarmplaylist")
+				,'valueRef' => \&Slim::Utils::Prefs::clientGet($client,"alarmplaylist", $weekday)
 			);
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_OFF')) {
-			Slim::Utils::Prefs::clientSet($client, "alarm", 1);
-			$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_ON');
+		elsif ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_OFF')) {
+			Slim::Utils::Prefs::clientSet($client, "alarm", 1, $weekday);
+			$browseMenuChoices[$menuSelection{$weekday}{$client}] = $client->string('ALARM_ON');
 			$client->showBriefly($client->string('ALARM_TURNING_ON'),'');
 			setTimer($client);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_ON')) {
-			Slim::Utils::Prefs::clientSet($client, "alarm", 0);
-			$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_OFF');
+		elsif ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_ON')) {
+			Slim::Utils::Prefs::clientSet($client, "alarm", 0, $weekday);
+			$browseMenuChoices[$menuSelection{$weekday}{$client}] = $client->string('ALARM_OFF');
 			$client->showBriefly($client->string('ALARM_TURNING_OFF'),'');
 			setTimer($client);
 		}
-		elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_SET_VOLUME')) {
+		elsif ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_SET_VOLUME')) {
 			Slim::Buttons::Common::pushModeLeft($client, 'alarmvolume');
 		}
+		elsif ($browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_WEEKDAYS')) {
+			# Make a copy of the playlists, to make sure they
+			# aren't removed by the LRU cache. This may fix bug: 1853
+			
+			my $ds   = Slim::Music::Info::getCurrentDataStore();
+			my $day;
+			
+			my %params = (
+				'listRef' => [1..7]
+				,'externRef' => sub {$_[0]->string(ALARM_DAY.$_[1]);}
+				,'externRefArgs' => 'CV'
+				,'header' => 'ALARM_WEEKDAYS'
+				,'headerAddCount' => 1
+				,'stringHeader' => 1
+				,'valueRef' => \$day
+				,'callback' => \&weekdayExitHandler
+			);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
+		} 
 	},
 	'play' => sub {
 		my $client = shift;
 	},
 );
+
+sub weekdayExitHandler {
+	my ($client, $exittype) = @_;
+
+	$exittype = uc($exittype);
+
+	if ($exittype eq 'LEFT') {
+
+		Slim::Buttons::Common::popModeRight($client);
+
+	} elsif ($exittype eq 'RIGHT') {
+
+		my %params = (
+			'day' => $client->param('valueRef'),
+		);
+		Slim::Buttons::Common::pushModeLeft($client,'alarm',\%params);
+
+	} else {
+		return;
+	}
+}
 
 sub exitSetHandler {
 	my ($client, $exittype) = @_;
@@ -141,7 +187,7 @@ sub exitSetHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
 
-		Slim::Utils::Prefs::clientSet($client,"alarmtime",$client->param('valueRef'));
+		Slim::Utils::Prefs::clientSet($client,"alarmtime",$client->param('valueRef'), $weekday);
 		Slim::Buttons::Common::popModeRight($client);
 
 	} elsif ($exittype eq 'RIGHT') {
@@ -173,24 +219,49 @@ sub checkAlarms
 	}
 
 	foreach my $client (Slim::Player::Client::clients()) {
-		if (Slim::Utils::Prefs::clientGet($client, "alarm")) {
-			my $alarmtime =  Slim::Utils::Prefs::clientGet($client, "alarmtime");
+		if (Slim::Utils::Prefs::clientGet($client, "alarm", 0)) {
+			my $alarmtime =  Slim::Utils::Prefs::clientGet($client, "alarmtime", 0);
 			if ($alarmtime) {
 			   if ($time == $alarmtime +60 ) {$interval=1;}; #alarm is done, so reset to find the beginning of a minute
 				if ($time == $alarmtime) {
 					$client->execute(['stop']);
-					my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
+					my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume", 0);
 					if (defined ($volume)) {
 						$client->execute(["mixer", "volume", $volume]);
 					}
 
 					# fade volume over time
-					$client->fade_volume(Slim::Utils::Prefs::clientGet($client, "alarmfadeseconds"));
+					$client->fade_volume(Slim::Utils::Prefs::clientGet($client, "alarmfadeseconds", 0));
 
-					if (defined Slim::Utils::Prefs::clientGet($client, "alarmplaylist")) {
+					if (defined Slim::Utils::Prefs::clientGet($client, "alarmplaylist", 0)) {
 						$client->execute(["power", 1]);
 						Slim::Buttons::Block::block($client,alarmLines($client));
-						$client->execute(["playlist", "load", Slim::Utils::Prefs::clientGet($client, "alarmplaylist")], \&playDone, [$client]);
+						$client->execute(["playlist", "load", Slim::Utils::Prefs::clientGet($client, "alarmplaylist", 0)], \&playDone, [$client]);
+					} else {
+						$client->execute(['play']);
+						Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
+					}
+				}
+			}
+		}
+		if (Slim::Utils::Prefs::clientGet($client, "alarm", $wday)) {
+			my $alarmtime =  Slim::Utils::Prefs::clientGet($client, "alarmtime", $wday);
+			if ($alarmtime) {
+			   if ($time == $alarmtime +60 ) {$interval=1;}; #alarm is done, so reset to find the beginning of a minute
+				if ($time == $alarmtime) {
+					$client->execute(['stop']);
+					my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume", $wday);
+					if (defined ($volume)) {
+						$client->execute(["mixer", "volume", $volume]);
+					}
+
+					# fade volume over time
+					$client->fade_volume(Slim::Utils::Prefs::clientGet($client, "alarmfadeseconds", $wday));
+
+					if (defined Slim::Utils::Prefs::clientGet($client, "alarmplaylist", $wday)) {
+						$client->execute(["power", 1]);
+						Slim::Buttons::Block::block($client,alarmLines($client));
+						$client->execute(["playlist", "load", Slim::Utils::Prefs::clientGet($client, "alarmplaylist", $wday)], \&playDone, [$client]);
 					} else {
 						$client->execute(['play']);
 						Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
@@ -212,7 +283,7 @@ sub playDone {
 sub alarmLines {
 	my $client = shift;
 	my $line1 = $client->string('ALARM_NOW_PLAYING');
-	my $line2 = Slim::Utils::Prefs::clientGet($client, "alarmplaylist") ? Slim::Music::Info::standardTitle($client,Slim::Utils::Prefs::clientGet($client, "alarmplaylist")) : "";
+	my $line2 = Slim::Utils::Prefs::clientGet($client, "alarmplaylist", $weekday) ? Slim::Music::Info::standardTitle($client,Slim::Utils::Prefs::clientGet($client, "alarmplaylist", $weekday)) : "";
 	return ($line1, $line2);
 }
 
@@ -228,14 +299,16 @@ sub lines {
 	my ($line1, $line2, $overlay);
 
 	$overlay = overlay($client);
-	$line1 = $client->string('ALARM');
+	$line1 = $weekday ? 
+		$client->string('ALARM_WEEKDAYS')." - ".$client->string('ALARM_DAY'.$weekday) : 
+		$client->string('ALARM');
 
-	if (Slim::Utils::Prefs::clientGet($client, "alarm") && $browseMenuChoices[$menuSelection{$client}] eq $client->string('ALARM_OFF')) {
-		$browseMenuChoices[$menuSelection{$client}] = $client->string('ALARM_ON');
+	if (Slim::Utils::Prefs::clientGet($client, "alarm", $weekday) && $browseMenuChoices[$menuSelection{$weekday}{$client}] eq $client->string('ALARM_OFF')) {
+		$browseMenuChoices[$menuSelection{$weekday}{$client}] = $client->string('ALARM_ON');
 	}
 	$line2 = "";
 
-	$line2 = $browseMenuChoices[$menuSelection{$client}];
+	$line2 = $browseMenuChoices[$menuSelection{$weekday}{$client}];
 	return ($line1, $line2, undef, $overlay);
 }
 
@@ -257,7 +330,7 @@ our %alarmVolumeSettingsFunctions = (
 	'left' => sub { Slim::Buttons::Common::popModeRight(shift); },
 	'up' => sub {
 		my $client = shift;
-		my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
+		my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume", $weekday);
 		my $inc = 1;
 		my $rate = 50; #Hz maximum
 		my $accel = 15; #Hz/s
@@ -271,13 +344,13 @@ our %alarmVolumeSettingsFunctions = (
 		if (!defined($volume)) { $volume = $client->volume(); }
 		$volume += $inc;
 		if ($volume > $client->maxVolume()) { $volume = $client->maxVolume(); };
-		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
+		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume, $weekday);
 		$client->update();
 	},
 
 	'down' => sub {
 		my $client = shift;
-		my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
+		my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume", $weekday);
 		my $inc = 1;
 		my $rate = 50; #Hz maximum
 		my $accel = 15; #Hz/s
@@ -291,7 +364,7 @@ our %alarmVolumeSettingsFunctions = (
 		if (!defined($volume)) { $volume = $client->volume(); }
 		$volume -= $inc;
 		if ($volume < 0) { $volume = 0; };
-		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume);
+		Slim::Utils::Prefs::clientSet($client, "alarmvolume", $volume, $weekday);
 		$client->update();
 	},
 
@@ -312,7 +385,7 @@ sub setAlarmVolumeMode {
 
 sub alarmVolumeLines {
 	my $client = shift;
-	my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume");
+	my $volume = Slim::Utils::Prefs::clientGet($client, "alarmvolume", $weekday);
 
 	if (!defined($volume)) { $volume = $client->volume(); }
 

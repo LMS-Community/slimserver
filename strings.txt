@@ -915,6 +915,44 @@ ALARM_NOW_PLAYING
 	PT	A Tocar o Alarme
 	SE	Väckarklockan spelar nu
 
+ALARM_WEEKDAYS
+	EN	Weekday Alarms
+
+ALARM_DAY1
+	DE	Montag
+	EN	Monday
+	FR	Lundi
+
+ALARM_DAY2
+	DE	Dienstag
+	EN	Tuesday
+	FR	Mardi
+
+ALARM_DAY3
+	DE	Mittwoch
+	EN	Wednesday
+	FR	Mercredi
+
+ALARM_DAY4
+	DE	Donnerstag
+	EN	Thursday
+	FR	Jeudi
+
+ALARM_DAY5
+	DE	Freitag
+	EN	Friday
+	FR	Vendredi
+
+ALARM_DAY6
+	DE	Samstag
+	EN	Saturday
+	FR	Samedi
+
+ALARM_DAY7
+	DE	Sonntag
+	EN	Sunday
+	FR	Dimanche
+
 SLIMP3
 	EN	SLIMP3
 
