@@ -644,6 +644,7 @@ sub execute {
 
 			if (defined($p1)) {
 				if ($p1 && Slim::Player::Source::playmode($client) eq "play") {
+					$client->rate(1);
 					Slim::Player::Source::playmode($client, "pause");
 				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "pause") {
 					Slim::Player::Source::playmode($client, "resume");
@@ -654,6 +655,7 @@ sub execute {
 				if (Slim::Player::Source::playmode($client) eq "pause") {
 					Slim::Player::Source::playmode($client, "resume");
 				} elsif (Slim::Player::Source::playmode($client) eq "play") {
+					$client->rate(1);
 					Slim::Player::Source::playmode($client, "pause");
 				} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 					Slim::Player::Source::playmode($client, "play");

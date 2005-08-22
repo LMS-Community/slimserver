@@ -466,7 +466,7 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $power= undef;
-		$client->execute(["stop"]);
+		
 		if ($button eq 'power_on') {
 			$client->execute(["power",1]);
 		} elsif ($button eq 'power_off') {
