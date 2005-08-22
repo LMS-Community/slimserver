@@ -143,17 +143,20 @@ our %upgradeScripts = (
 		my $client = shift;
 		#kill all alarm settings
 		my $alarm = Slim::Utils::Prefs::clientGet($client,'alarm');
-		my $alarmTime = Slim::Utils::Prefs::clientGet($client,'alarmtime');
-		my $alarmplaylist = Slim::Utils::Prefs::clientGet($client,'alarmplaylist');
-		my $alarmvolume = Slim::Utils::Prefs::clientGet($client,'alarmvolume');
-		Slim::Utils::Prefs::clientDelete($client,'alarm');
-		Slim::Utils::Prefs::clientDelete($client,'alarmtime');
-		Slim::Utils::Prefs::clientDelete($client,'alarmplaylist');
-		Slim::Utils::Prefs::clientDelete($client,'alarmvolume');
-		Slim::Utils::Prefs::clientSet($client,'alarm',$alarm,0);
-		Slim::Utils::Prefs::clientSet($client,'alarmtime',$alarmTime,0);
-		Slim::Utils::Prefs::clientSet($client,'alarmplaylist',$alarmplaylist,0);
-		Slim::Utils::Prefs::clientSet($client,'alarmvolume',$alarmvolume,0);
+		
+		if (ref $alarm ne 'ARRAY') {
+			my $alarmTime = Slim::Utils::Prefs::clientGet($client,'alarmtime');
+			my $alarmplaylist = Slim::Utils::Prefs::clientGet($client,'alarmplaylist');
+			my $alarmvolume = Slim::Utils::Prefs::clientGet($client,'alarmvolume');
+			Slim::Utils::Prefs::clientDelete($client,'alarm');
+			Slim::Utils::Prefs::clientDelete($client,'alarmtime');
+			Slim::Utils::Prefs::clientDelete($client,'alarmplaylist');
+			Slim::Utils::Prefs::clientDelete($client,'alarmvolume');
+			Slim::Utils::Prefs::clientSet($client,'alarm',$alarm,0);
+			Slim::Utils::Prefs::clientSet($client,'alarmtime',$alarmTime,0);
+			Slim::Utils::Prefs::clientSet($client,'alarmplaylist',$alarmplaylist,0);
+			Slim::Utils::Prefs::clientSet($client,'alarmvolume',$alarmvolume,0);
+		}
 	}
 );
 
