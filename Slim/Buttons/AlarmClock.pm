@@ -139,11 +139,15 @@ our %functions = (
 			# aren't removed by the LRU cache. This may fix bug: 1853
 			
 			my $ds   = Slim::Music::Info::getCurrentDataStore();
-			my $day;
+			my $day = 0;
 			
 			my %params = (
 				'listRef' => [1..7]
-				,'externRef' => sub {$_[0]->string(ALARM_DAY.$_[1]);}
+				,'externRef' => sub { 
+					return $_[0]->string(ALARM_DAY.$_[1]).(Slim::Utils::Prefs::clientGet($_[0],'alarm',$_[1]) ? 
+					"(".&Slim::Buttons::Input::Time::timeString($client,Slim::Buttons::Input::Time::timeDigits($client,Slim::Utils::Prefs::clientGet($_[0],'alarmtime',$day))).")": 
+					"(".$_[0]->string('OFF').")");
+				}
 				,'externRefArgs' => 'CV'
 				,'header' => 'ALARM_WEEKDAYS'
 				,'headerAddCount' => 1
