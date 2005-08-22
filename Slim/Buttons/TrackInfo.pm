@@ -135,7 +135,8 @@ sub init {
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'track',
 					'level'      => 0,
-					'findCriteria' => { 'album' => $album->id() },
+					'findCriteria' => { 'album' => $album->id(),'track' => $track->id() },
+					
 				});
 
 			} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
@@ -147,7 +148,7 @@ sub init {
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'album,track',
 					'level'      => 0,
-					'findCriteria' => { 'artist' => $contributor->id() },
+					'findCriteria' => { 'artist' => $contributor->id(),'track' => $track->id() },
 				});
 
 			} elsif ($curitem eq 'GENRE') {
@@ -156,7 +157,7 @@ sub init {
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'artist,album,track',
 					'level'      => 0,
-					'findCriteria' => { 'genre' => $genre->id() },
+					'findCriteria' => { 'genre' => $genre->id(),'track' => $track->id() },
 				});
 
 			} elsif ($curitem eq 'FAVORITE') {
