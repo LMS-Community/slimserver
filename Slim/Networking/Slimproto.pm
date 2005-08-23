@@ -349,7 +349,7 @@ sub process_slimproto_frame {
 				'line1' => string('PLAYER_NEEDS_UPGRADE_1'), 
 				'line2' => string('PLAYER_NEEDS_UPGRADE_2'),
 				'fonts' => { 
-					'graphic-320x32' => 'standard',
+					'graphic-320x32' => 'light',
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				}
