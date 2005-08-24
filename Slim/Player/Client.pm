@@ -525,36 +525,6 @@ lastLetterTime() - type: int
 
 =back
 
-=head1 games
-
-=over
-
-=item
-
-otype() - type: array
-
-	game obstacles
-
-=item
-
-opos() - type: array
-
-	game obstacles
-
-=item
-
-cpos() - type: int
-
-	game player position
-
-=item
-
-gplay() - type: int
-
-	is the game playing?
-
-=back
-
 =head1 synchronization mode
 
 =over
@@ -630,11 +600,18 @@ sub new {
 
 	$client->[0] = undef; # id 	
 
+	# $client->[1] = undef; # unused
+	# $client->[2] = undef; # unused
+	# $client->[3] = undef; # unused
+
 	# client variables id and version info
 	$client->[4] = undef; # revision		int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
 	$client->[5] = undef; # macaddress		string     client's MAC (V2.0 firmware)
 	$client->[6] = undef; # paddr			sockaddr_in client's ip and port
 	
+	# $client->[7] = undef; # unused
+	# $client->[8] = undef; # unused
+
 	# client hardware information
 	$client->[9] = undef; # udpsock
 	$client->[10] = undef; # tcpsock
@@ -663,7 +640,7 @@ sub new {
 	$client->[33] = 0; # bufferThreshold
 	$client->[34] = 0; # visualizer
 	$client->[35] = 0; # outputBufferFullness
-
+	# $client->[36] = undef; # unused
 	$client->[37] = 0; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
 	$client->[39] = undef; # currentSleepTime
@@ -679,7 +656,7 @@ sub new {
 	$client->[50] = undef; # startirhold
 	$client->[51] = undef; # irtimediff
 	$client->[52] = undef; # irrepeattime
-	$client->[53] = undef; # unused
+	# $client->[53] = undef; # unused
 	$client->[54] = undef; # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
@@ -702,10 +679,10 @@ sub new {
 	$client->[73] = undef; # lastLetterIndex
 	$client->[74] = undef; # lastLetterDigit
 	$client->[75] = undef; # lastLetterTime
-	$client->[76] = []; # otype
-	$client->[77] = []; # opos
-	$client->[78] = undef; # cpos
-	$client->[79] = undef; # gplay
+	# $client->[76] = undef; # unused
+	# $client->[77] = undef; # unused
+	# $client->[78] = undef; # unused
+	# $client->[79] = undef; # unused
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
 	$client->[82] = undef; # browseMenuSelection
@@ -1591,26 +1568,6 @@ sub lastLetterDigit {
 sub lastLetterTime {
 	my $r = shift;
 	@_ ? ($r->[75] = shift) : $r->[75];
-}
-sub otype {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[76];
-	@_ ? ($r->[76]->[$i] = shift) : $r->[76]->[$i];
-}
-sub opos {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[77];
-	@_ ? ($r->[77]->[$i] = shift) : $r->[77]->[$i];
-}
-sub cpos {
-	my $r = shift;
-	@_ ? ($r->[78] = shift) : $r->[78];
-}
-sub gplay {
-	my $r = shift;
-	@_ ? ($r->[79] = shift) : $r->[79];
 }
 sub syncSelection {
 	my $r = shift;
