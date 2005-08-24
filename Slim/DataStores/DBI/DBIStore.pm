@@ -948,6 +948,8 @@ sub getPlaylists {
 		}
 	}
 
+	return () unless (scalar @playlists);
+
 	# Add search criteria for playlists
 	$find->{'ct'} = \@playlists;
 		
