@@ -17,7 +17,12 @@
 	[% END %]
 
 [% ELSE %]
-	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]"><font class="itemtext">:[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
+
+	[% IF item %]
+		<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]"><font class="itemtext">:[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
+	[% ELSE %]
+		[% text | html %]
+	[% END %]
 
 	[% IF includeAlbum && album %]
 

@@ -30,7 +30,12 @@
 		[% END %]
 
           [%- ELSE %]
-            <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
+		[% IF item %]
+            		<span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
+		[% ELSE %]
+			[% text | html %]
+		[% END %]
+
            [%- IF includeAlbum %]
             [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist.id | uri %]&amp;album=[% album.id | uri %]&amp;player=[% player | uri %]" target="browser">[% album.title | html %]</a></span>
            [%- END %]

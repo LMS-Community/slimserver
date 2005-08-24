@@ -42,7 +42,13 @@
 			<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]">[% artist.name | html %]</a></i>
 		[% END %]
 
-		[% ELSE %]<b><a href="[% webroot %]songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a></b>
+		[% ELSE %]
+
+			[% IF item %]
+				<b><a href="[% webroot %]songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a></b>
+			[% ELSE %]
+				[% text | html %]
+			[% END %]
 
 			[% IF includeArtist && artist && artist != noArtist %][% "BY" | string %] 
 			<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>[% END %]

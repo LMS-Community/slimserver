@@ -21,9 +21,15 @@
     </a>
    [% END %]
   [% ELSE %]
+
+   [% IF item %]
    <a onclick="parent.browseurl(&quot;songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&quot;)">
     [% text | html %]
    </a>
+   [% ELSE %]
+    [% text | html %]
+   [% END %]
+
    [% IF includeAlbum && album ; "FROM" | string %]
     <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album.id %]&quot;)">
      [% album.title | html %]
