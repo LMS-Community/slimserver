@@ -575,6 +575,9 @@ sub parse_stsd
 #       Old Quicktime field. No longer used.
 #	$tags->{VBR}     = (unpack ("n", substr ($data, 36, 2)) == -2) ? 1 : 0;
 	$tags->{FREQUENCY} = unpack ("N", substr ($data, 40, 4)) / 65536000;
+
+    } elsif ($data_format eq "mp4s") {
+	$tags->{DRM} = 1;
     }
 
     return 0;
@@ -651,7 +654,7 @@ sub parse_data
 	}
 	$tags->{$id} = ($utf8 ? $data : encode("latin1", $data));
     }
-    elsif ($type==21)	# Byte data
+    elsif ($type==21 || $type==13)	# Byte data
     {
 	# Convert to an integer if of an appropriate size
 	if ($size==1)
