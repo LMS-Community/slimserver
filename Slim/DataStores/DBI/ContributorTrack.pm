@@ -55,7 +55,7 @@ sub add {
 	my $createMethod = $create ? 'create' : 'find_or_create';
 
 	# Handle the case where $artist is already an object:
-	if (ref $artist && $artist->isa('Slim::DataStores::DBI::Contributor')) {
+	if (ref $artist && ref($artist) ne 'ARRAY' && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
 		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->$createMethod({
 			track => $track,
