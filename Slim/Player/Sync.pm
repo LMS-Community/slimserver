@@ -197,19 +197,26 @@ sub saveSyncPrefs {
 sub restoreSync {
 	my $client = shift;
 	my $masterID = (Slim::Utils::Prefs::clientGet($client,'syncgroupid'));
-	if ($masterID && $client->power()) {
+
+	if ($masterID && ($client->power() || Slim::Utils::Prefs::clientGet($client,'syncPower'))) {
 		my @players = Slim::Player::Client::clients();
+
 		foreach my $other (@players) {
+
 			next if ($other eq $client);
-			next if (!$other->power());
+			next if (!$other->power() && !Slim::Utils::Prefs::clientGet($other,'syncPower'));
+
 			my $othermasterID = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+
 			if ($othermasterID && ($othermasterID eq $masterID)) {
 				$client->syncgroupid($masterID);
 				$other->syncgroupid($masterID);
 				sync($client, $other);
 				last;
 			}
+
 		}
+
 	}
 }
 
