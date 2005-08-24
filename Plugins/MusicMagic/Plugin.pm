@@ -31,6 +31,13 @@ our %mixMap  = (
 
 our %mixFunctions = ();
 
+our %validMixTypes = (
+	'song'   => 1,
+	'album'  => 1,
+	'artist' => 1,
+	'genre'  => 1,
+);
+
 sub strings {
 	return '';
 }
@@ -967,22 +974,27 @@ sub getMix {
 	);
 
 	my $filter = Slim::Utils::Prefs::clientGet($client,'MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
-	if ($filter ne '0') {
+
+	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
-		$args{filter} = $filter;
+
+		$args{'filter'} = $filter;
 	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
 
-	if ($for eq "song") {
-		$mixArgs = "song=$id";
-	} elsif ($for eq "album") {
-		$mixArgs = "album=$id";
-	} elsif ($for eq "artist") {
-		$mixArgs = "artist=$id";
-	} elsif ($for eq "genre") {
-		$mixArgs = "genre=$id";
+	if ($validMixTypes{$for}) {
+
+		# Not sure if this is correct yet.
+		if ($for ne 'song') {
+
+			$id = Slim::Utils::Unicode::utf8encode_locale($id);
+		}
+
+		$mixArgs = "$for=$id";
+
 	} else {
+
 		$::d_musicmagic && msg("MusicMagic: no valid type specified for mix\n");
 		return undef;
 	}
