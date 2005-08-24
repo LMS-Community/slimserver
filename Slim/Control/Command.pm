@@ -306,7 +306,7 @@ sub execute {
 
 			if (!defined($p2)) {
 
-				$$debugsymbol = ! $$debugsymbol;
+				$$debugsymbol = ($$debugsymbol ? 0 : 1);
 
 			} elsif ($p2 eq "?")  {
 
@@ -765,13 +765,15 @@ sub execute {
 		} elsif ($p0 eq "power") {
 
 			if (!defined $p1) {
+				
+				my $newPower = $client->power() ? 0 : 1;
 
 				if (Slim::Player::Sync::isSynced($client)) {
 
-					syncFunction($client, !$client->power(), "power", undef);
+					syncFunction($client, $newPower, "power", undef);
 				}
 
-				$client->power(!$client->power());
+				$client->power($newPower);
 
 				# send xpl message when power toggles
 				if (Slim::Utils::Prefs::get('xplsupport')) {
