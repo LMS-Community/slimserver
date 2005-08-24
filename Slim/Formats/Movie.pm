@@ -41,7 +41,10 @@ sub getTag {
 	$tags->{'OFFSET'}  = 0;
 
 	# Unroll the disc info.
-	($tags->{'DISC'}, $tags->{'DISCC'}) = @{$tags->{'DISK'}};
+	if ($tags->{'DISK'} && ref($tags->{'DISK'}) eq 'ARRAY') {
+
+		($tags->{'DISC'}, $tags->{'DISCC'}) = @{$tags->{'DISK'}};
+	}
 
 	$tagCache = [ $file, $tags ];
 
