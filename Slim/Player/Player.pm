@@ -708,8 +708,8 @@ sub pushDown {
 
 sub pushLeft {
 	my $client = shift;
-	my $start = shift;
-	my $end = shift;
+	my $start = shift || $client->renderCache();
+	my $end = shift || $client->curLines();
 
 	my $renderstart = $client->render($start);
 	my ($line1start, $line2start) = ($renderstart->{line1ref}, $renderstart->{line2ref});
@@ -725,8 +725,8 @@ sub pushLeft {
 
 sub pushRight {
 	my $client = shift;
-	my $start = shift;
-	my $end = shift;
+	my $start = shift || $client->renderCache();
+	my $end = shift || $client->curLines();
 
 	my $renderstart = $client->render($start);
 	my ($line1start, $line2start) = ($renderstart->{line1ref}, $renderstart->{line2ref});
@@ -742,18 +742,18 @@ sub pushRight {
 
 sub bumpRight {
 	my $client = shift;
-	my $render = $client->render(Slim::Display::Display::curLines($client));
-	my $line1 = ${$render->{line1ref}} . Slim::Display::Display::symbol('hardspace');
-	my $line2 = ${$render->{line2ref}} . Slim::Display::Display::symbol('hardspace');
+	my $render = $client->render($client->renderCache());
+	my $line1 = ${$render->{line1ref}} . $client->symbols('hardspace');
+	my $line2 = ${$render->{line2ref}} . $client->symbols('hardspace');
 	$client->killAnimation();
 	$client->pushUpdate([\$line1, \$line2, 2, -1, 0, 0.125]);	
 }
 
 sub bumpLeft {
 	my $client = shift;
-	my $render = $client->render(Slim::Display::Display::curLines($client));
-	my $line1 = Slim::Display::Display::symbol('hardspace') . ${$render->{line1ref}};
-	my $line2 = Slim::Display::Display::symbol('hardspace') . ${$render->{line2ref}};
+	my $render = $client->render($client->renderCache());
+	my $line1 = $client->symbols('hardspace') . ${$render->{line1ref}};
+	my $line2 = $client->symbols('hardspace') . ${$render->{line2ref}};
 	$client->killAnimation();
 	$client->pushUpdate([\$line1, \$line2, -1, 1, 1, 0.125]);	
 }
@@ -781,7 +781,7 @@ sub pushUpdate {
 
 sub bumpDown {
 	my $client = shift;
-	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $render = $client->render($client->renderCache());
 	my $line1 = ${$render->{line2ref}};
 	my $line2 = ' ' x 40;
 	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);		
@@ -792,7 +792,7 @@ sub bumpDown {
 
 sub bumpUp {
 	my $client = shift;
-	my $render = $client->render(Slim::Display::Display::curLines($client));
+	my $render = $client->render($client->renderCache());
 	my $line1 = ' ' x 40;
 	my $line2 = ${$render->{line1ref}};
 	$client->showBriefly($line1, $line2, 0.125);

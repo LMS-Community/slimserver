@@ -370,14 +370,14 @@ sub visualizer {
 
 sub pushUp {
 	my $client = shift;
-	my $end = shift;
+	my $end = shift || $client->curLines();
 
 	$client->pushUpDown($end, 'u');
 }
 
 sub pushDown {
 	my $client = shift;
-	my $end = shift;
+	my $end = shift || $client->curLines();
 
 	$client->pushUpDown($end, 'd');
 }
@@ -386,11 +386,6 @@ sub pushUpDown {
 	my $client = shift;
 	my $end = shift;
 	my $dir = shift;
-	
-	if (!defined($end)) {
-		my @end = Slim::Display::Display::curLines($client);
-		$end = \@end;
-	}
 	
 	$client->killAnimation();
 	$client->animateState(1);
@@ -406,7 +401,7 @@ sub pushUpDown {
 sub pushLeft {
 	my $client = shift;
 	my $start = shift;
-	my $end = shift;
+	my $end = shift || $client->curLines();
 
 	$client->killAnimation();
 	$client->animateState(1);
@@ -418,7 +413,7 @@ sub pushLeft {
 sub pushRight {
 	my $client = shift;
 	my $start = shift;
-	my $end = shift;
+	my $end = shift || $client->curLines();
 
 	$client->killAnimation();	
 	$client->animateState(1);
@@ -429,7 +424,7 @@ sub pushRight {
 # bump left against the edge
 sub bumpLeft {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	
 	$client->killAnimation();	
 	$client->animateState(1);
@@ -440,7 +435,7 @@ sub bumpLeft {
 # bump right against the edge
 sub bumpRight {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	
 	$client->killAnimation();	
 	$client->animateState(1);
@@ -450,7 +445,7 @@ sub bumpRight {
 
 sub bumpDown {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	
 	$client->killAnimation();
 	$client->animateState(1);
@@ -460,7 +455,7 @@ sub bumpDown {
 
 sub bumpUp {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 
 	$client->killAnimation();	
 	$client->animateState(1);

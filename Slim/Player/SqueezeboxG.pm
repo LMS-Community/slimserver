@@ -614,8 +614,8 @@ sub scrollHeader {
 # push the old screen off the left side
 sub pushLeft {
 	my $client = shift;
-	my $start = shift;
-	my $end = shift;
+	my $start = shift || $client->renderCache();
+	my $end = shift || $client->curLines();
 
 	my $startbits = $client->render($start)->{bitsref};
 	my $endbits = $client->render($end)->{bitsref};
@@ -629,8 +629,8 @@ sub pushLeft {
 # push the old lines (start1,2) off the right side
 sub pushRight {
 	my $client = shift;
-	my $start = shift;
-	my $end = shift;
+	my $start = shift || $client->renderCache();
+	my $end = shift || $client->curLines();
 
 	my $startbits = $client->render($start)->{bitsref};
 	my $endbits = $client->render($end)->{bitsref};
@@ -643,7 +643,7 @@ sub pushRight {
 
 sub bumpRight {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	$startbits = $$startbits .  (chr(0) x 16);
 	$client->killAnimation();
 	$client->pushUpdate([\$startbits, 16, -8, 0, 0.125]);	
@@ -651,7 +651,7 @@ sub bumpRight {
 
 sub bumpLeft {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	$startbits =  (chr(0) x 16) . $$startbits;
 	$client->killAnimation();
 	$client->pushUpdate([\$startbits, 0, 8, 16, 0.125]);	
@@ -682,7 +682,7 @@ sub pushUpdate {
 sub bumpUp {
 	my $client = shift;
 
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	$startbits = substr((chr(0) . $$startbits) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 0, $client->screenBytes());
 
 	$client->killAnimation();
@@ -696,7 +696,7 @@ sub bumpUp {
 
 sub bumpDown {
 	my $client = shift;
-	my $startbits = $client->render(Slim::Display::Display::curLines($client))->{bitsref};
+	my $startbits = $client->render($client->renderCache())->{bitsref};
 	$startbits = substr(($$startbits . chr(0)) & ((chr(0) . chr(255)) x ($client->screenBytes() / 2)), 1, $client->screenBytes());
 	
 	$client->killAnimation();

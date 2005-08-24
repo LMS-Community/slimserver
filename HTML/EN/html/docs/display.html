@@ -439,12 +439,46 @@ $client->curDisplay() returns what is currently being displayed.</p>
 <hr>
 <h4>Menu Transitions</h4>
 
-<p>The client methods used for menu transitions also take display hashes
-to define the start and end screens.</p>
+<p>The scrolling menu transitions which make up the slim user
+interface are controlled by push and bump animation commands. Push
+animations are used for transition to new menu screens.  Bump
+animations are used to bump the screen against the edge, normally when
+the end of a menu structure is reached.</p>
 
-<p>e.g. $client->pushLeft($starthash, $endhash);</p>
-<p></p>
-<p>more to come...</p>
+<h5>$client->pushLeft($start, $end), $client->pushRight($start, $end)</h5>
+
+<p>Pushes the old screen off the left/right side of the display and replaces it
+with a new screen.</p>
+
+<ul>
+	<li>$start - undef or display hash for old screen
+	<li>$end - undef or display has for new screen
+</ul>
+<p>SB2 does not use $start as it uses the existing displayed screen
+for $start.  As of 6.2, $start may be set to undef for other players.
+In this case the server uses the last displayed screen for $start.</p>
+
+<p>As of 6.2 $end may also be set to undef.  In this case, the server
+will call the current lines function to define $end.  It is therefore
+acceptable to use e.g. $client->pushLeft() to carry out a menu transition.</p>
+
+<h5>$client->pushUp($end), $client->pushDown($end)</h5>
+<ul>
+	<li>$end - undef or display hash for new screen [SB2 only]
+</ul>
+
+<p>On SB2 this scrolls the bottom line (or all text if in one line
+mode) to move to the next menu or list item.  On all other player it
+simply calls $client->update() to display a new screen with the new
+display.  As $end can only be set for SB2 it is not normally used.
+The new screen to display is therefore defined by the current lines
+function.  Normally called as e.g. $client->pushUp().</p>
+
+<h5>$client->bumpLeft(), $client->bumpRight()</h5>
+<h5>$client->bumpUp(), $client->bumpDown()</h5>
+
+<p>Used to bump the current screen against the edge of the display to
+indicate that no additional menu items are available.</p>
 <p>
 
 [% PROCESS helpfooter.html %]
