@@ -72,13 +72,13 @@ sub add {
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
-	
+
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 
 		# The search columnn is the canonical text that we match against in a search.
 		my $name   = $artistList[$i];
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
-		my $sort   = Slim::Utils::Text::ignoreCaseArticles($sortedList[$i]);
+		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 
 		my $artistObj = Slim::DataStores::DBI::Contributor->find_or_create({ 
 			namesearch => $search,
