@@ -615,7 +615,7 @@ sub stream {
 			if (Slim::Utils::Prefs::get('authorize')) {
 				$client->password(generate_random_string(10));
 				
-				my $password = encode_base64('squeezebox:' . $client->password);
+				my $password = encode_base64('squeezeboxXXX:' . $client->password);
 				
 				$request_string .= "Authorization: Basic $password\n";
 			}
