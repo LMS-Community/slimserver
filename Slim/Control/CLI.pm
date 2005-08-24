@@ -202,7 +202,7 @@ sub client_socket_read {
 
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)	
 	while ($client_socket_inbuff{$client_socket}) {
-		if ($client_socket_inbuff{$client_socket} =~ m/(.*)[$CR|$LF]?[$CR|$LF](.*)/) {
+		if ($client_socket_inbuff{$client_socket} =~ m/([^\r\n]*)[$CR|$LF|$CR$LF]+(.*)/s) {
 
 			# Keep the leftovers for the next run...
 			$client_socket_inbuff{$client_socket} = $2;
