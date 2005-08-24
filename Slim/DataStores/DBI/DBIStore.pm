@@ -1615,7 +1615,7 @@ sub _mergeAndCreateContributors {
 	# 
 	# Should this string come from a Pref? Some people might want "VA", or
 	# "Various" or "Various Artists"
-	if (!defined $attributes->{'ALBUMARTIST'} && defined $attributes->{'COMPILATION'}) {
+	if (!defined $attributes->{'ALBUMARTIST'} && $attributes->{'COMPILATION'}) {
 
 		$attributes->{'ALBUMARTIST'} = Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS');
 	}
