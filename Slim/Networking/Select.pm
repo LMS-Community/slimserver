@@ -44,7 +44,7 @@ sub addRead {
 
 		delete $readSockets{"$r"};
 		delete $readCallbacks{"$r"};
-		$::d_select && msg("removing select write $r\n");
+		$::d_select && msg("removing select read $r\n");
 
 	} else {
 
