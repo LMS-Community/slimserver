@@ -172,8 +172,8 @@ sub doTagMapping {
 	while (my ($old,$new) = each %tagMapping) {
 
 		if (exists $tags->{$old}) {
-			$tags->{$new} = $tags->{$old};
-			delete $tags->{$old};
+
+			$tags->{$new} = delete $tags->{$old};
 		}
 	}
 
@@ -182,7 +182,6 @@ sub doTagMapping {
 	if (defined $tags->{'DATE'} && !defined $tags->{'YEAR'}) {
 		($tags->{'YEAR'} = $tags->{'DATE'}) =~ s/.*(\d\d\d\d).*/$1/;
 	}
-
 }
 
 sub addInfoTags {
@@ -759,10 +758,32 @@ sub _decodeUTF8 {
 
 		next unless exists $tags->{$tag};
 
-		if ($] > 5.007) {
-			$tags->{$tag} = Slim::Utils::Unicode::utf8decode($tags->{$tag});
-		} else {
-			$tags->{$tag} = Slim::Utils::Unicode::utf8toLatin1($tags->{$tag});
+		my $count  = 1;
+		my $values = [ $tags->{$tag} ];
+
+		if (ref($tags->{$tag}) eq 'ARRAY') {
+
+			# Make a copy.
+			$values = [ @{$tags->{$tag}} ];
+			$count  = scalar @$values;
+		}
+
+		for my $value (@$values) {
+
+			if ($] > 5.007) {
+				$value = Slim::Utils::Unicode::utf8decode($value);
+			} else {
+				$value = Slim::Utils::Unicode::utf8toLatin1($value);
+			}
+
+			if ($count == 1) {
+
+				$tags->{$tag} = $value;
+
+			} else {
+
+				push @{$tags->{$tag}}, $value;
+			}
 		}
 	}
 }

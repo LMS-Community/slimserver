@@ -51,7 +51,9 @@ sub info {
 sub comment_tags {
 	my $self = shift;
 
-	return @{$self->{'COMMENT_KEYS'}};
+	my %keys = ();
+
+	return grep( !$keys{$_}++, @{$self->{'COMMENT_KEYS'}});
 }
 
 sub comment {

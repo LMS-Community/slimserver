@@ -1756,6 +1756,12 @@ sub readCoverArtFiles {
 sub splitTag {
 	my $tag = shift;
 
+	# Handle Vorbis comments where the tag can be an array.
+	if (ref($tag) eq 'ARRAY') {
+
+		return @$tag;
+	}
+
 	# Splitting this is probably not what the user wants.
 	# part of bug #774
 	if ($tag =~ /^\s*R\s*\&\s*B\s*$/oi) {

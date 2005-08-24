@@ -514,8 +514,22 @@ sub _parseVorbisComments {
 			my $tkey = $1;
 			$tkey =~ tr/a-z/A-Z/;
 
-			# Stick it in the tag hash
-			$tags->{$tkey} = $2;
+			# Stick it in the tag hash - and handle multiple tags
+			# of the same name.
+			if (exists $tags->{$tkey} && ref($tags->{$tkey}) ne 'ARRAY') {
+
+				my $oldValue = $tags->{$tkey};
+
+				$tags->{$tkey} = [ $oldValue, $2 ];
+
+			} elsif (ref($tags->{$tkey}) eq 'ARRAY') {
+
+				push @{$tags->{$tkey}}, $2;
+
+			} else {
+
+				$tags->{$tkey} = $2;
+			}
 		}
 	}
 

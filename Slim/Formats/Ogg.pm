@@ -54,12 +54,28 @@ sub getTag {
 	}
 
 	# Tags can be stacked, in an array.
-	foreach my $key ($ogg->comment_tags()) {
+	foreach my $key ($ogg->comment_tags) {
 
-		if ($] > 5.007) {
-			$tags->{uc($key)} = Slim::Utils::Unicode::utf8decode(($ogg->comment($key))[0]);
-		} else {
-			$tags->{uc($key)} = Slim::Utils::Unicode::utf8toLatin1(($ogg->comment($key))[0]);
+		my $ucKey  = uc($key);
+		my @values = $ogg->comment($key);
+		my $count  = scalar @values;
+
+		for my $value (@values) {
+
+			if ($] > 5.007) {
+				$value = Slim::Utils::Unicode::utf8decode($value);
+			} else {
+				$value = Slim::Utils::Unicode::utf8toLatin1($value);
+			}
+
+			if ($count == 1) {
+
+				$tags->{$ucKey} = $value;
+
+			} else {
+
+				push @{$tags->{$ucKey}}, $value;
+			}
 		}
 	}
 
@@ -67,8 +83,8 @@ sub getTag {
 	while (my ($old,$new) = each %tagMapping) {
 
 		if (exists $tags->{$old}) {
-			$tags->{$new} = $tags->{$old};
-			delete $tags->{$old};
+
+			$tags->{$new} = delete $tags->{$old};
 		}
 	}
 
