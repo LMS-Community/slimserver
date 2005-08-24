@@ -945,7 +945,7 @@ sub playlistEntryIsValid {
 
 	my $caller = (caller(1))[3];
 
-	if (Slim::Music::Info::isURL($entry)) {
+	if (Slim::Music::Info::isRemoteURL($entry)) {
 
 		return 1;
 	}
