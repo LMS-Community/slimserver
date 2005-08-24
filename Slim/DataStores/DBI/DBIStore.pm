@@ -786,11 +786,12 @@ sub mergeVariousArtistsAlbums {
 
 	for my $track ($obj->tracks) {
 
-		my $artist = $track->artist;
+		for my $artist ($track->contributorsOfType('artist')) {
 
-		if ($artist && ref($artist) && $artist->can('id')) {
+			if ($artist && ref($artist) && $artist->can('id')) {
 
-			$artists{ $artist->id }++;
+				$artists{ $artist->id }++;
+			}
 		}
 	}
 
@@ -812,7 +813,7 @@ sub mergeVariousArtistsAlbums {
 
 		$self->_mergeAndCreateContributors($track, {
 			'COMPILATION' => 1,
-			'ARTIST'      => $track->artist,
+			'ARTIST'      => [ $track->contributorsOfType('artist') ],
 			1
 		});
 	}
