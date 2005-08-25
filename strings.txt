@@ -800,7 +800,7 @@ ALARM_SET
 
 ALARM_ON
 	CZ	Budík zapnut
-	DE	An (Drücken Sie RIGHT um auszuschalten)
+	DE	An (Drücken Sie RECHTS um auszuschalten)
 	DK	Til (Tryk HØJRE for at slå fra)
 	EN	On (Press RIGHT to turn off)
 	ES	Encendido (Presionar DERECHA para apagar)
@@ -813,7 +813,7 @@ ALARM_ON
 
 ALARM_OFF
 	CZ	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
-	DE	Aus (Drücken Sie RIGHT um anzuschalten)
+	DE	Aus (Drücken Sie RECHTS um anzuschalten)
 	DK	Fra (Tryk HØJRE for at slå til)
 	EN	Off (Press RIGHT to turn on)
 	ES	Apagado (Presionar DERECHA para encender)
@@ -2403,6 +2403,7 @@ SETUP_MMMSETTINGS
 	EN	MusicMagic Mix Settings
 
 MUSICMAGIC_MIXRIGHT
+	DE	(Zum Mixen RECHTS drücken)
 	EN	(Press RIGHT to Mix)
 
 MOODLOGIC_MIXING
@@ -8625,7 +8626,7 @@ MORE_MATCHES
 
 SYNC_WITH
 	CZ	Zmáčkněte tlačítko DOPRAVA pro synchornizaci s:
-	DE	RIGHT drücken zum synchronisieren mit:
+	DE	RECHTS drücken zum synchronisieren mit:
 	DK	Tryk HØJRE for at synkronisere med:
 	EN	Press RIGHT to sync with:
 	ES	Presionar DERECHA para sincronizar con:
@@ -8639,7 +8640,7 @@ SYNC_WITH
 
 UNSYNC_WITH
 	CZ	Stiskněte 'DOPRAVA' pro zrušení synchronizace
-	DE	RIGHT drücken zum Aufheben der Synchronisation:
+	DE	RECHTS drücken zum Aufheben der Synchronisation:
 	DK	Tryk HØJRE igen for at afslutte synkronisering med:
 	EN	Press RIGHT to unsync with:
 	ES	Presionar DERECHA para desincronizar con:
@@ -8970,7 +8971,7 @@ SAVE_PLAYLIST
 
 PLAYLIST_SAVE
 	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
-	DE	Zum Speichern der Playlist RIGHT drücken:
+	DE	Zum Speichern der Playlist RECHTS drücken:
 	EN	Press RIGHT again to save playlist as:
 	ES	Presionar DERECHA para guardar la lista como:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :

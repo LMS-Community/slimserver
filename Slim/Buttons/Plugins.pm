@@ -208,27 +208,38 @@ sub addPlugin {
 	my $displayName = canPlugin($plugin);
 	return 0 if (not $displayName);
 
-	# only run initPlugin() once
-	if ((not $plugins{$plugin}{name}) && (not $disabledPlugins->{$plugin}) && UNIVERSAL::can("Plugins::${plugin}", "initPlugin")) {
-		eval { &{"Plugins::${plugin}::initPlugin"}() };
-		if ($@) {
-			$::d_plugins && msg("Initialization of $fullname failed: $@\n");
-			$brokenplugins{$plugin} = 1;
-			return 0;
-		}
-	}
-
 	$plugins{$plugin} = {
 		module => $fullname,
 		name   => $displayName,
 		mode   => "PLUGIN.$plugin",
+		initialized => $plugins{$plugin}{initialized}
 	};
+
+	# only run initPlugin() once
+	if ((not $plugins{$plugin}{initialized}) && (not $disabledPlugins->{$plugin}) && UNIVERSAL::can("Plugins::${plugin}", "initPlugin")) {
+		eval { &{"Plugins::${plugin}::initPlugin"}() };
+		if ($@) {
+			$::d_plugins && msg("Initialization of $fullname failed: $@\n");
+			$brokenplugins{$plugin} = 1;
+			delete $plugins{$plugin};
+			return 0;
+		}
+		$plugins{$plugin}{initialized} = 1;
+	}
 
 	if (UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions")) {
 		Slim::Buttons::Common::addMode("PLUGIN.$plugin", &{"Plugins::${plugin}::getFunctions"}, \&{"Plugins::${plugin}::setMode"});
 	}
 
 	return 1;
+}
+
+sub disablePlugin {
+	my $plugin = shift;
+	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
+		eval { {"Plugins::" . $plugin . "::disablePlugin"} };
+	}
+	delete $plugins{$plugin};
 }
 
 sub addMenus {
@@ -380,7 +391,7 @@ sub addSetupGroups {
 		}
 
 		if (exists $disabledplugins{$plugin} && UNIVERSAL::can("Plugins::${plugin}", 'disablePlugin')) {
-			&{"Plugins::" . $plugin . "::disablePlugin"};
+			disablePlugin($plugin);
 		}
 	
 		if ($noSetupGroup) {

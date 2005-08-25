@@ -86,7 +86,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	ES	VUmetro digital
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
-	DE	RIGHT drücken zum Aktivieren des Bildschirmschoners
+	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver 
 	ES	Presionar -> para activar este salvapantallas
 
