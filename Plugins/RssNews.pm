@@ -632,6 +632,16 @@ sub tickerUpdate {
     Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + (($next > 1) ? $next : 1), \&tickerUpdate);
 }
 
+sub tickerUpdateCheck {
+	# check to see if ticker is empty and schedule immediate ticker update if so
+	my $client = shift;
+	my ($complete, $queue) = $client->scrollTickerTimeLeft();
+
+	if ($queue == 0 && Slim::Utils::Timers::killTimers($client, \&tickerUpdate)) {
+		tickerUpdate($client);
+	}
+}
+
 sub blankLines {
 	# lines when called by server - e.g. on screensaver start or change of font size
 	# add undef line2 item to ticker, schedule tickerUpdate to add to ticker if necessary
@@ -643,9 +653,9 @@ sub blankLines {
 		'scrollmode' => 'ticker'
 	};
 
-    if (Slim::Utils::Timers::killTimers($client, \&tickerUpdate)) {
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.1, \&tickerUpdate);
-	}
+	# check after the update calling this function is complete to see if ticker is empty
+	# (to refill ticker on font size change as this clears current ticker)
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.1, \&tickerUpdateCheck);
 
 	return $parts;
 }
@@ -779,6 +789,7 @@ sub leaveScreenSaverRssNews {
     # kill tickerUpdate
     my $client = shift;
     Slim::Utils::Timers::killTimers($client, \&tickerUpdate);
+    Slim::Utils::Timers::killTimers($client, \&tickerUpdateCheck);
     $client->param('PLUGIN.RssNews.screensaver_mode', 0);
 }
 
