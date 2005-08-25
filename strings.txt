@@ -2402,6 +2402,9 @@ SETUP_MMMSETTINGS
 	DE	MusicMagic Mix Einstellungen
 	EN	MusicMagic Mix Settings
 
+MUSICMAGIC_MIXRIGHT
+	EN	(Press RIGHT to Mix)
+
 MOODLOGIC_MIXING
 	EN	MoodLogic Mixing
 	ES	Mezcla MoodLogic

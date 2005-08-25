@@ -63,6 +63,8 @@ sub init {
 			'onChange' => \&setPref,
 			'pref' => "MMMSize",
 			'initialValue' => "MMMSize",
+			'overlayRef' => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRefArgs' => 'C',
 		},
 
 		'MMMsettings/MMMMixType' => {
@@ -78,6 +80,8 @@ sub init {
 			'onChange' => \&setPref,
 			'pref' => "MMMMixType",
 			'initialValue' => "MMMStyle",
+			'overlayRef' => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRefArgs' => 'C',
 		},
 
 		'MMMsettings/MMMStyle' => {
@@ -90,6 +94,8 @@ sub init {
 			'onChange' => \&setPref,
 			'pref' => "MMMStyle",
 			'initialValue' => "MMMStyle",
+			'overlayRef' => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRefArgs' => 'C',
 		},
 
 		'MMMsettings/MMMVariety' => {
@@ -103,6 +109,8 @@ sub init {
 			'onChange' => \&setPref,
 			'pref' => "MMMVariety",
 			'initialValue' => "MMMVariety",
+			'overlayRef' => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRefArgs' => 'C',
 		},
 
 		'MMMsettings/MMMFilter' => {
@@ -114,6 +122,8 @@ sub init {
 			'onChange' => \&setPref,
 			'pref' => "MMMFilter",
 			'initialValue' => "MMMFilter",
+			'overlayRef' => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
+			'overlayRefArgs' => 'C',
 		},
 
 	);
