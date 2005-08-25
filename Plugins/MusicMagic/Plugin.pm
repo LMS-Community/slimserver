@@ -843,26 +843,28 @@ sub mixerFunction {
 	my @levels    = split(",", $hierarchy);
 	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $mix       = [];
+	my $mixSeed   = '';
 
 	my $currentItem = $items->[$listIndex];
 
 	# if we've chosen a particular song
-	if (!$descend || $levels[$level] eq 'song' || $levels[$level] eq 'album') {
+	if (!$descend || $levels[$level] eq 'song') {
 
-		if ($currentItem && $currentItem->musicmagic_mixable) {
+		$mixSeed = $currentItem->path;
 
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client, $currentItem->path, $levels[$level]);
-		}
+	} elsif ($levels[$level] eq 'album') {
 
-	# if we've picked an artist 
+		$mixSeed = $currentItem->tracks->next->path;
+
 	} elsif ($levels[$level] eq 'artist' || $levels[$level] eq 'genre') {
 
-		if ($currentItem && $currentItem->musicmagic_mixable) {
+		$mixSeed = $currentItem->name;
+	}
 
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-			$mix = getMix($client, $currentItem->name, $levels[$level]);
-		}
+	if ($currentItem && $currentItem->musicmagic_mixable) {
+
+		# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+		$mix = getMix($client, $mixSeed, $levels[$level]);
 	}
 
 	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
