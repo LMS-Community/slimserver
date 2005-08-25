@@ -889,6 +889,14 @@ sub isAllowedHost {
 
 	foreach my $item (@rules)
 	{
+
+		# hack to allow hostnames in allowedHosts list
+		if (index ($item, "*") == -1) {
+
+			my $packed = gethostbyname($item) or return 0;
+			$item = inet_ntoa($packed);
+		}
+
 		if ($item eq $host)
 		{
 		#If the host matches a specific IP, return valid
