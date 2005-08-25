@@ -816,8 +816,6 @@ sub writePending {
 sub writePrefs {
 
 	return unless $canWrite;
-
-	$writePending = 0;
 	
 	my $writeFile = prefsFile();
 
@@ -835,6 +833,7 @@ sub writePrefs {
 	print OUT YAML::Dump(\%prefs);
 
 	close(OUT);
+	$writePending = 0;
 }
 
 sub preferencesPath {
