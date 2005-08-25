@@ -9499,3 +9499,12 @@ SETUP_VARIOUSARTISTSINARTISTS_1
 SETUP_VARIOUSARTISTSINARTISTS_0
 	DE	Interpreten von Kompilationen nicht auflisten.
 	EN	Don't include compilation artists in artist list.
+
+SETUP_USEBANDASALBUMARTIST_DESC
+	EN	You can use the TPE2 / BAND ID3v2 tag as "ALBUMARTIST" for MP3 files that don't have an explict "ALBUMARTIST" tag.
+
+SETUP_USEBANDASALBUMARTIST_1
+	EN	Use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"
+
+SETUP_USEBANDASALBUMARTIST_0
+	EN	Don't use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"
