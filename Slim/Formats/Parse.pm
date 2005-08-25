@@ -256,7 +256,8 @@ sub parseCUE {
 
 		my $enc = Slim::Utils::Unicode::encodingFromString($line);
 
-		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
+		# Prefer UTF8 for CUE sheets.
+		$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8', $enc);
 
 		# strip whitespace from end
 		$line =~ s/\s*$//;
