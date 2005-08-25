@@ -771,7 +771,7 @@ sub _decodeUTF8 {
 		for my $value (@$values) {
 
 			if ($] > 5.007) {
-				$value = Slim::Utils::Unicode::utf8decode($value);
+				$value = Slim::Utils::Unicode::utf8decode($value, 'utf8');
 			} else {
 				$value = Slim::Utils::Unicode::utf8toLatin1($value);
 			}
