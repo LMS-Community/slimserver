@@ -655,6 +655,7 @@ sub blankLines {
 
 	# check after the update calling this function is complete to see if ticker is empty
 	# (to refill ticker on font size change as this clears current ticker)
+	Slim::Utils::Timers::killTimers($client, \&tickerUpdateCheck);	
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.1, \&tickerUpdateCheck);
 
 	return $parts;
