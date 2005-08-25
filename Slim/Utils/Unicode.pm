@@ -31,7 +31,7 @@ use Slim::Utils::Misc;
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE);
 
-{
+INIT {
         if ($^O =~ /Win32/) {
 
 		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();
