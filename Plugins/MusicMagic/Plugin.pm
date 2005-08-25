@@ -821,100 +821,72 @@ sub specialPushLeft {
 }
 
 sub mixerFunction {
-	my $client = shift;
-	my $nosettings = shift;
-	
+	my ($client, $noSettings) = @_;
+
 	# look for parentParams (needed when multiple mixers have been used)
 	my $paramref = defined $client->param('parentParams') ? $client->param('parentParams') : $client->modeParameterStack(-1);
-	my $listIndex = $paramref->{'listIndex'};
-	
-	my $items = $paramref->{'listRef'};
-	my $hierarchy = $paramref->{'hierarchy'};
-	my $level	   = $paramref->{'level'} || 0;
-	my $descend   = $paramref->{'descend'};
-	
-	my $currentItem = $items->[$listIndex];
-	my $all = !ref($currentItem);
-	
-	my @levels = split(",", $hierarchy);
-	
-	my @oldlines    = Slim::Display::Display::curLines($client);
-
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my $mix;
 	
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
-	if (Slim::Utils::Prefs::get('MMMPlayerSettings') && !$nosettings) {
-		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings',{'parentParams' => $paramref});
+	if (Slim::Utils::Prefs::get('MMMPlayerSettings') && !$noSettings) {
+
+		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings', { 'parentParams' => $paramref });
+		return;
+
+	}
+
+	my $listIndex = $paramref->{'listIndex'};
+	my $items     = $paramref->{'listRef'};
+	my $hierarchy = $paramref->{'hierarchy'};
+	my $level     = $paramref->{'level'} || 0;
+	my $descend   = $paramref->{'descend'};
+
+	my @levels    = split(",", $hierarchy);
+	my $ds        = Slim::Music::Info::getCurrentDataStore();
+	my $mix       = [];
+
+	my $currentItem = $items->[$listIndex];
+
+	# if we've chosen a particular song
+	if (!$descend || $levels[$level] eq 'song' || $levels[$level] eq 'album') {
+
+		if ($currentItem && $currentItem->musicmagic_mixable) {
+
+			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+			$mix = getMix($client, $currentItem->path, $levels[$level]);
+		}
+
+	# if we've picked an artist 
+	} elsif ($levels[$level] eq 'artist' || $levels[$level] eq 'genre') {
+
+		if ($currentItem && $currentItem->musicmagic_mixable) {
+
+			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+			$mix = getMix($client, $currentItem->name, $levels[$level]);
+		}
+	}
+
+	if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
+
+		my %params = (
+			'listRef'        => $mix,
+			'externRef'      => \&Slim::Music::Info::standardTitle,
+			'header'         => 'MUSICMAGIC_MIX',
+			'headerAddCount' => 1,
+			'stringHeader'   => 1,
+			'callback'       => \&mixExitHandler,
+			'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+			'overlayRefArgs' => '',
+			'parentMode'     => 'musicmagic_mix',
+		);
+		
+		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+
+		specialPushLeft($client, 0, Slim::Display::Display::curLines($client));
+
 	} else {
-		# if we've chosen a particular song
-		if (!$descend || $levels[$level] eq 'song') {
-	
-			if ($currentItem && $currentItem->musicmagic_mixable) {
-	
-				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix($client,Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}), 'song');
-			}
-	
-		# if we've picked an artist 
-		} elsif ($levels[$level] eq 'artist') {
-	
-			if ($currentItem && $currentItem->musicmagic_mixable) {
-	
-				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix($client,$currentItem->name, 'artist');
-			}
-	
-		# if we've picked an album 
-		} elsif ($levels[$level] eq 'album') {
-	
-			# If $artist is selected (as in picked Album by Artist) then we
-			# need to include artist in the find.  If artist is not chosen (as in any Album of 
-			# a given title) then we cannot include the contributor key, and want any track 
-			# from the album to key the mixer.
-	
-			my $album = $currentItem->title;
-			my ($artists) = $currentItem->contributors;
-	
-			if ($currentItem && $currentItem->musicmagic_mixable) {
-	
-				# For the moment, skip straight to Mix mode.
-				my $key = $currentItem eq "*" ? 
-					Slim::Utils::Misc::pathFromFileURL($currentItem->{'url'}) : 
-					"$artists\@\@$album";
-					
-				$mix = getMix($client,$key, 'album');
-			}
-	
-		} else {
-	
-			if ($currentItem && $currentItem->musicmagic_mixable) {
-	
-				# For the moment, skip straight to Mix mode.
-				$mix = getMix($client,$currentItem->name, 'genre');
-			}
-		}
-	
-		if (defined $mix && ref($mix) eq 'ARRAY' && scalar @$mix) {
-			my %params = (
-				'listRef' => $mix,
-				'externRef' => \&Slim::Music::Info::standardTitle,
-				'header' => 'MUSICMAGIC_MIX',
-				'headerAddCount' => 1,
-				'stringHeader' => 1,
-				'callback' => \&mixExitHandler,
-				'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-				'overlayRefArgs' => '',
-				'parentMode' => 'musicmagic_mix',
-			);
-			
-			Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-			specialPushLeft($client, 0, @oldlines);
-	
-		} else {
-			# don't do anything if nothing is mixable
-			$client->bumpRight;
-		}
+
+		# don't do anything if nothing is mixable
+		$client->bumpRight;
 	}
 }
 
