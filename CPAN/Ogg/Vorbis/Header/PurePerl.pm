@@ -4,6 +4,9 @@ use 5.005;
 use strict;
 use warnings;
 
+# First four bytes of stream are always OggS
+use constant OGGHEADERFLAG => 'OggS';
+
 # Heavily modified by dsully - Slim Devices.
 our $VERSION = '0.1';
 
@@ -81,6 +84,26 @@ sub _init {
 	$data->{'startInfoHeader'} = _checkHeader($data) || return undef;
 }
 
+sub _skipID3Header {
+	my $fh = shift;
+
+	my $byteCount = 0;
+
+	while (read($fh, my $buffer, 4)) {
+
+		if ($buffer eq OGGHEADERFLAG) {
+
+			seek($fh, $byteCount, 0);
+			last;
+		}
+
+		$byteCount++;
+		seek($fh, $byteCount, 0);
+	}
+
+	return tell($fh);
+}
+
 sub _checkHeader {
 	my $data = shift;
 
@@ -91,12 +114,12 @@ sub _checkHeader {
 	# stores how far into the file we've read, so later reads into the file can
 	# skip right past all of the header stuff
 
-	my $byteCount = 0; 
+	my $byteCount = _skipID3Header($fh);
 
 	# check that the first four bytes are 'OggS'
 	read($fh, $buffer, 27);
 
-	if (substr($buffer, 0, 4) ne 'OggS') {
+	if (substr($buffer, 0, 4) ne OGGHEADERFLAG) {
 		warn "This is not an Ogg bitstream (no OggS header).";
 		return undef;
 	}
@@ -215,7 +238,7 @@ sub _loadComments {
 	read($fh, my $buffer, 8192);
 
 	# check that the first four bytes are 'OggS'
-	if (substr($buffer, 0, 4, '') ne 'OggS') {
+	if (substr($buffer, 0, 4, '') ne OGGHEADERFLAG) {
 		warn "No comment header?";
 		return undef;
 	}
@@ -330,7 +353,7 @@ sub _calculateTrackLength {
 
 		last if length($buf) < 4;
 
-		if (substr($buf, $i, 4) eq 'OggS') {
+		if (substr($buf, $i, 4) eq OGGHEADERFLAG) {
 			substr($buf, 0, ($i+4), '');
 			$foundHeader = 1;
 			last;
