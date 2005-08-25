@@ -131,6 +131,7 @@ sub init {
 		'noGenreFilter'		=> 0,
 		'variousArtistAutoIdentification' => 1,
 		'variousArtistsInArtists' => 0,
+		'useBandAsAlbumArtist'  => 1,
 		'upgrade-6.0b3-script'	=> 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 	);

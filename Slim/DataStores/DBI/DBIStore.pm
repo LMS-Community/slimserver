@@ -1607,9 +1607,9 @@ sub _mergeAndCreateContributors {
 
 	my @contributors = ();
 
-	# XXXX - 'Treat BAND/TPE2 as ALBUMARTIST'. See Bug 1463
-	# If people complain, we can make an option for this.
-	if (!defined $attributes->{'ALBUMARTIST'} && defined $attributes->{'BAND'}) {
+	# 'Treat BAND/TPE2 as ALBUMARTIST'. See Bug 1463
+	if (Slim::Utils::Prefs::get('useBandAsAlbumArtist') && 
+		!defined $attributes->{'ALBUMARTIST'} && defined $attributes->{'BAND'}) {
 
 		$attributes->{'ALBUMARTIST'} = $attributes->{'BAND'};
 
@@ -1618,9 +1618,6 @@ sub _mergeAndCreateContributors {
 
 	# If we have a compilation tag, either from iTunes, or a Vorbis tag -
 	# but no specified ALBUMARTIST - create a localized one.
-	# 
-	# Should this string come from a Pref? Some people might want "VA", or
-	# "Various" or "Various Artists"
 	if (!defined $attributes->{'ALBUMARTIST'} && $attributes->{'COMPILATION'}) {
 
 		$attributes->{'ALBUMARTIST'} = Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS');

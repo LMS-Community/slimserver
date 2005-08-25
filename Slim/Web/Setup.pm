@@ -1590,7 +1590,7 @@ sub initSetupConfig {
 							,'commonAlbumTitles']
 				},
 			'VariousArtists' => {
-				'PrefOrder' => [qw(variousArtistAutoIdentification variousArtistsInArtists variousArtistsString)]
+				'PrefOrder' => [qw(variousArtistAutoIdentification variousArtistsInArtists useBandAsAlbumArtist variousArtistsString)]
 					,'GroupHead' => string('SETUP_VARIOUSARTISTS')
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefSub' => 1
@@ -1637,6 +1637,14 @@ sub initSetupConfig {
 				'options' => {
 					'1' => string('SETUP_VARIOUSARTISTSINARTISTS_1'),
 					'0' => string('SETUP_VARIOUSARTISTSINARTISTS_0'),
+				},
+			},
+
+			,'useBandAsAlbumArtist' => {
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_USEBANDASALBUMARTIST_1'),
+					'0' => string('SETUP_USEBANDASALBUMARTIST_0'),
 				},
 			},
 
