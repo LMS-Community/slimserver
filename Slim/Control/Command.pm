@@ -920,6 +920,7 @@ sub execute {
 		} elsif ($p0 eq "playlist") {
 
 			my $results;
+			my $jumpToIndex = 0;
 
 			# Query for the passed params
 			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
@@ -956,7 +957,6 @@ sub execute {
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
 			if ($p1 =~ /^(play|load|append|add|resume|insert|insertlist)$/) {
 			
-				my $jumptoindex = undef;
 				my $path = $p2;
 
 				if ($path) {
@@ -1009,26 +1009,11 @@ sub execute {
 					
 					if ($p1 =~ /^(play|load)$/) { 
 
-						$jumptoindex = 0;
+						$jumpToIndex = 0;
 
 					} elsif ($p1 eq "resume" && Slim::Music::Info::isM3U($path)) {
 
-						# do nothing to the index if we can't open the list
-						my $playlist = FileHandle->new($path, "r");
-
-						if ($playlist) {
-
-							# retrieve comment with track number in it
-							$jumptoindex = $playlist->getline;
-
-							if ($jumptoindex =~ /^#CURTRACK (\d+)$/) {
-								$jumptoindex = $1;
-							} else {
-								$jumptoindex = 0;
-							}
-
-							close $playlist;
-						}
+						$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U($path);
 					}
 					
 					if ($p1 =~ /^(insert|insertlist)$/) {
@@ -1059,7 +1044,7 @@ sub execute {
 							undef,
 							\&load_done,
 							$client,
-							$jumptoindex,
+							$jumpToIndex,
 							$callbackf,
 							$callbackargs,
 						);
@@ -1113,9 +1098,23 @@ sub execute {
 				} else {
 					push(@{Slim::Player::Playlist::playList($client)}, parseSearchTerms($client, $p2));
 				}
-					
-				Slim::Player::Playlist::reshuffle($client,1);
-				Slim::Player::Source::jumpto($client, 0);
+
+				Slim::Player::Playlist::reshuffle($client, 1);
+
+				# The user may have stopped in the middle of a
+				# saved playlist - resume if we can. Bug 1582
+				my $playlistObj = $client->currentPlaylist;
+
+				if ($playlistObj && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
+
+					$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
+
+					# And set a callback so that we can
+					# update CURTRACK when the song changes.
+					setExecuteCallback(\&Slim::Player::Playlist::newSongPlaylistCallback);
+				}
+
+				Slim::Player::Source::jumpto($client, $jumpToIndex);
 
 				$client->currentPlaylistModified(0);
 				$client->currentPlaylistChangeTime(time());

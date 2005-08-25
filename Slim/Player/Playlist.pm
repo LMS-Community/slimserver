@@ -585,6 +585,19 @@ sub scheduleWriteOfPlaylist {
 	);
 }
 
+sub newSongPlaylistCallback {
+	my $client = shift;
+	my $params = shift;
+
+	return unless $params->[0] eq 'newsong';
+	return unless $client->currentPlaylist;
+
+	Slim::Formats::Parse::writeCurTrackForM3U(
+		$client->currentPlaylist->path,
+		Slim::Player::Source::playingSongIndex($client)
+	);
+}
+
 sub modifyPlaylistCallback {
 	my $client = shift;
 	my $paramsRef = shift;

@@ -147,6 +147,7 @@ sub readM3U {
 		}
 
 		next if $entry =~ /^#/;
+		next if $entry =~ /#CURTRACK/;
 		next if $entry eq "";
 
 		$entry =~ s|$LF||g;
@@ -166,6 +167,51 @@ sub readM3U {
 	close $m3u;
 
 	return @items;
+}
+
+sub readCurTrackForM3U {
+	my $path = shift;
+
+	# do nothing to the index if we can't open the list
+	open(FH, $path) || return 0;
+		
+	# retrieve comment with track number in it
+	my $line = <FH>;
+
+	close(FH);
+ 
+	if ($line =~ /#CURTRACK (\d+)$/) {
+		return $1;
+	}
+
+	return 0;
+}
+
+sub writeCurTrackForM3U {
+	my $path  = shift;
+	my $track = shift || 0;
+
+	# do nothing to the index if we can't open the list
+	open(IN, $path) || return 0;
+	open(OUT, ">$path.tmp") || return 0;
+		
+	while (my $line = <IN>) {
+
+		if ($line =~ /#CURTRACK (\d+)$/) {
+
+			$line =~ s/(#CURTRACK) (\d+)$/$1 $track/;
+		}
+
+		print OUT $line;
+	}
+
+	close(IN);
+	close(OUT);
+
+	if (-w $path) {
+
+		rename("$path.tmp", $path);
+	}
 }
 
 sub readPLS {
