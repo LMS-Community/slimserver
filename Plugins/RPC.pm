@@ -72,7 +72,7 @@ sub getPlaylist {
 			$_->name() foreach @contribs;
 
 			# make sure to read the track and album data from the db as well
-			$track->album()->title();
+			$track->album()->title() if $track->album();
 			$track->title();
 
 			push @returnArray, $track;

@@ -1147,6 +1147,7 @@ sub musicmagic_mix {
 			'attributes' => "&listRef=musicmagic_mix",
 			'odd'        => ($itemnumber + 1) % 2,
 			'webroot'    => $params->{'webroot'},
+			'skinOverride' => $params->{'skinOverride'},
 		})};
 
 		$itemnumber++;

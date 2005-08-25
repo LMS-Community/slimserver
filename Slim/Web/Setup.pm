@@ -2540,6 +2540,9 @@ sub buildHTTP {
 	# set up pagetitle
 	$paramref->{'pagetitle'} = $pageref->{'title'};
 
+	# let the skin know if this is a client-specific page
+	$paramref->{'isClient'} = $pageref->{'isClient'};
+
 	# set up link tree
 	$page = $paramref->{'page'};
 
