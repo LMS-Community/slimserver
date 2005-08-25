@@ -37,7 +37,12 @@ sub getTag {
 		}
 	}
 
-	$tags->{'BITRATE'} = int($tags->{'SIZE'} * 8 / $tags->{'SECS'});
+	# Don't divide by 0.
+	if ($tags->{'SECS'}) {
+
+		$tags->{'BITRATE'} = int($tags->{'SIZE'} * 8 / $tags->{'SECS'});
+	}
+
 	$tags->{'OFFSET'}  = 0;
 
 	# Unroll the disc info.
