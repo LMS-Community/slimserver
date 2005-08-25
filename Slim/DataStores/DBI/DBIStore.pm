@@ -811,9 +811,12 @@ sub mergeVariousArtistsAlbums {
 	# Now update the contributor_tracks table.
 	for my $track ($obj->tracks) {
 
+		my @artists = $track->contributorsOfType('artist');
+
 		$self->_mergeAndCreateContributors($track, {
 			'COMPILATION' => 1,
-			'ARTIST'      => [ $track->contributorsOfType('artist') ],
+			'ARTIST'      => [ map { $_->name } @artists ],
+			'ARTISTSORT'  => [ map { $_->namesort } @artists ],
 			1
 		});
 	}
