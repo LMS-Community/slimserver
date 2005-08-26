@@ -1,3 +1,10 @@
+#
+# Copyright (c) 2004, 2005, Jonathan Harris <jhar@cpan.org>
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the the same terms as Perl itself.
+#
+
 package MP4::Info;
 
 use overload;
@@ -20,14 +27,14 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.03';
+$VERSION = '1.04';
 
 my $debug = 0;
 
 
 =head1 NAME
 
-MP4::Info - Fetch info from MPEG-4 files (.mp4, .m4a, .m4p)
+MP4::Info - Fetch info from MPEG-4 files (.mp4, .m4a, .m4p, .3gp)
 
 =head1 SYNOPSIS
 
@@ -75,12 +82,12 @@ sub new
     # Supported tags
     my %tag_names =
 	(
-	 ALB => 1, APID => 1, ART => 1, CMT => 1, CPIL => 1, CPRT => 1, DAY => 1, DISK => 1, GNRE => 1, GRP => 1, NAM => 1, RTNG => 1, TMPO => 1, TOO => 1, TRKN => 1, WRT => 1,
+	 ALB => 1, APID => 1, ART => 1, CMT => 1, COVR => 1, CPIL => 1, CPRT => 1, DAY => 1, DISK => 1, GNRE => 1, GRP => 1, NAM => 1, RTNG => 1, TMPO => 1, TOO => 1, TRKN => 1, WRT => 1,
 	 TITLE => 1, ARTIST => 1, ALBUM => 1, YEAR => 1, COMMENT => 1, GENRE => 1, TRACKNUM => 1,
 	 VERSION => 1, LAYER => 1,
 	 BITRATE => 1, FREQUENCY => 1, SIZE => 1,
 	 SECS => 1, MM => 1, SS => 1, MS => 1, TIME => 1,
-	 COPYRIGHT => 1,
+	 COPYRIGHT => 1, ENCRYPTED => 1,
 	);
 
     my $tags = get_mp4tag ($file) or return undef;
@@ -119,8 +126,8 @@ sub DESTROY
 
 =item use_mp4_utf8([STATUS])
 
-Tells MP4::Info whether to return TAG info in UTF-8 or Latin-1. 1 is UTF-8,
-0 is Latin-1. Default is Latin-1.
+Tells MP4::Info whether to assume that ambiguously encoded TAG info is UTF-8
+or Latin-1. 1 is UTF-8, 0 is Latin-1. Default is UTF-8.
 
 Function returns new status (1/0). If no argument is supplied, or an
 unaccepted argument is supplied, function merely returns existing status.
@@ -130,7 +137,7 @@ with the C<:utf8> or C<:all> export tag.
 
 =cut
 
-my $utf8 = 0;
+my $utf8 = 1;
 
 sub use_mp4_utf8
 {
@@ -149,6 +156,7 @@ The following keys may be defined:
 	APID	Apple Store ID
 	ART	Artist
 	CMT	Comment
+	COVR	Album art (typically jpeg data)
 	CPIL	Compilation (boolean)
 	CPRT	Copyright statement
 	DAY	Year
@@ -160,14 +168,14 @@ The following keys may be defined:
 	TMPO	Tempo (integer)
 	TOO	Encoder
 	TRKN	Track number & total (2 integers)
-	WRT	Composer
+	WRT	Author or composer
+
+For compatibility with L<MP3::Info|MP3::Info>, the MP3 ID3v1-style keys
+TITLE, ARTIST, ALBUM, YEAR, COMMENT, GENRE and TRACKNUM are defined as
+synonyms for NAM, ART, ALB, DAY, CMT, GNRE and TRKN[0].
 
 Any and all of these keys may be undefined if the corresponding information
 is missing from the MPEG-4 file.
-
-For compatibility with L<MP3::Info|MP3::Info>, the MP3 ID3v1-style tags
-TITLE, ARTIST, ALBUM, YEAR, COMMENT, GENRE and TRACKNUM are created as
-synonyms for NAM, ART, ALB, DAY, CMT, GNRE and TRKN[0].
 
 Strings returned will be converted to Latin-1, unless UTF-8 is specified
 using C<use_mp4_utf8>.
@@ -203,6 +211,7 @@ The following keys may be defined:
 	TIME		time in MM:SS, rounded to nearest second
 
 	COPYRIGHT	boolean for audio is copyrighted
+	ENCRYPTED	boolean for audio data is encrypted
 
 Any and all of these keys may be undefined if the corresponding information
 is missing from the MPEG-4 file.
@@ -230,29 +239,37 @@ sub get_mp4info
 my %data_atoms =
     (
      AART => 1,	# Album artist - returned in ART field no ART found
-     AKID => 1,	# ???
      ALB  => 1,
-     APID => 1,
-     ATID => 1,	# ???
      ART  => 1,
      CMT  => 1,
-     CNID => 1,	# ???
-     COVR => 1,
+     COVR => 1, # Cover art
      CPIL => 1,
      CPRT => 1,
      DAY  => 1,
      DISK => 1,
-     GEID => 1,	# ??? Something to do with Apple Store?
      GEN  => 1,	# Custom genre - returned in GNRE field no GNRE found
      GNRE => 1,	# Standard ID3/WinAmp genre
      GRP  => 1,
      NAM  => 1,
-     PLID => 1,	# ???
      RTNG => 1,
      TMPO => 1,
      TOO  => 1,
      TRKN => 1,
      WRT  => 1,
+     # Apple store
+     APID => 1,
+     AKID => 1,	# ???
+     ATID => 1,	# ???
+     CNID => 1,	# ???
+     GEID => 1,	# Some kind of watermarking ???
+     PLID => 1,	# ???
+     # 3GPP
+     TITL => 1,	# title       - returned in NAM field no NAM found
+     DSCP => 1, # description - returned in CMT field no CMT found
+     #CPRT=> 1,
+     PERF => 1, # performer   - returned in ART field no ART found
+     AUTH => 1,	# author      - returned in WRT field no WRT found
+     #GNRE=> 1,
     );
 
 # More interesting atoms, but with non-standard data layouts
@@ -280,35 +297,35 @@ my %container_atoms =
 # Standard ID3 plus non-standard WinAmp genres
 my @mp4_genres =
     (
-     "N/A", "Blues", "Classic Rock", "Country", "Dance", "Disco",
-     "Funk", "Grunge", "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies",
-     "Other", "Pop", "R&B", "Rap", "Reggae", "Rock", "Techno",
-     "Industrial", "Alternative", "Ska", "Death Metal", "Pranks",
-     "Soundtrack", "Euro-Techno", "Ambient", "Trip-Hop", "Vocal",
-     "Jazz+Funk", "Fusion", "Trance", "Classical", "Instrumental",
-     "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise",
-     "AlternRock", "Bass", "Soul", "Punk", "Space", "Meditative",
-     "Instrumental Pop", "Instrumental Rock", "Ethnic", "Gothic",
-     "Darkwave", "Techno-Industrial", "Electronic", "Pop-Folk",
-     "Eurodance", "Dream", "Southern Rock", "Comedy", "Cult", "Gangsta",
-     "Top 40", "Christian Rap", "Pop/Funk", "Jungle", "Native American",
-     "Cabaret", "New Wave", "Psychadelic", "Rave", "Showtunes",
-     "Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz", "Polka",
-     "Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk",
-     "Folk/Rock", "National Folk", "Swing", "Fast-Fusion", "Bebob",
-     "Latin", "Revival", "Celtic", "Bluegrass", "Avantgarde",
-     "Gothic Rock", "Progressive Rock", "Psychedelic Rock",
-     "Symphonic Rock", "Slow Rock", "Big Band", "Chorus",
-     "Easy Listening", "Acoustic", "Humour", "Speech", "Chanson",
-     "Opera", "Chamber Music", "Sonata", "Symphony", "Booty Bass",
-     "Primus", "Porn Groove", "Satire", "Slow Jam", "Club", "Tango",
-     "Samba", "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul",
-     "Freestyle", "Duet", "Punk Rock", "Drum Solo", "A capella",
-     "Euro-House", "Dance Hall", "Goa", "Drum & Bass", "Club House",
-     "Hardcore", "Terror", "Indie", "BritPop", "NegerPunk",
-     "Polsk Punk", "Beat", "Christian Gangsta", "Heavy Metal",
-     "Black Metal", "Crossover", "Contemporary C", "Christian Rock",
-     "Merengue", "Salsa", "Thrash Metal", "Anime", "JPop", "SynthPop"
+     'N/A', 'Blues', 'Classic Rock', 'Country', 'Dance', 'Disco',
+     'Funk', 'Grunge', 'Hip-Hop', 'Jazz', 'Metal', 'New Age', 'Oldies',
+     'Other', 'Pop', 'R&B', 'Rap', 'Reggae', 'Rock', 'Techno',
+     'Industrial', 'Alternative', 'Ska', 'Death Metal', 'Pranks',
+     'Soundtrack', 'Euro-Techno', 'Ambient', 'Trip-Hop', 'Vocal',
+     'Jazz+Funk', 'Fusion', 'Trance', 'Classical', 'Instrumental',
+     'Acid', 'House', 'Game', 'Sound Clip', 'Gospel', 'Noise',
+     'AlternRock', 'Bass', 'Soul', 'Punk', 'Space', 'Meditative',
+     'Instrumental Pop', 'Instrumental Rock', 'Ethnic', 'Gothic',
+     'Darkwave', 'Techno-Industrial', 'Electronic', 'Pop-Folk',
+     'Eurodance', 'Dream', 'Southern Rock', 'Comedy', 'Cult', 'Gangsta',
+     'Top 40', 'Christian Rap', 'Pop/Funk', 'Jungle', 'Native American',
+     'Cabaret', 'New Wave', 'Psychadelic', 'Rave', 'Showtunes',
+     'Trailer', 'Lo-Fi', 'Tribal', 'Acid Punk', 'Acid Jazz', 'Polka',
+     'Retro', 'Musical', 'Rock & Roll', 'Hard Rock', 'Folk',
+     'Folk/Rock', 'National Folk', 'Swing', 'Fast-Fusion', 'Bebob',
+     'Latin', 'Revival', 'Celtic', 'Bluegrass', 'Avantgarde',
+     'Gothic Rock', 'Progressive Rock', 'Psychedelic Rock',
+     'Symphonic Rock', 'Slow Rock', 'Big Band', 'Chorus',
+     'Easy Listening', 'Acoustic', 'Humour', 'Speech', 'Chanson',
+     'Opera', 'Chamber Music', 'Sonata', 'Symphony', 'Booty Bass',
+     'Primus', 'Porn Groove', 'Satire', 'Slow Jam', 'Club', 'Tango',
+     'Samba', 'Folklore', 'Ballad', 'Power Ballad', 'Rhythmic Soul',
+     'Freestyle', 'Duet', 'Punk Rock', 'Drum Solo', 'A capella',
+     'Euro-House', 'Dance Hall', 'Goa', 'Drum & Bass', 'Club House',
+     'Hardcore', 'Terror', 'Indie', 'BritPop', 'NegerPunk',
+     'Polsk Punk', 'Beat', 'Christian Gangsta', 'Heavy Metal',
+     'Black Metal', 'Crossover', 'Contemporary C', 'Christian Rock',
+     'Merengue', 'Salsa', 'Thrash Metal', 'Anime', 'JPop', 'SynthPop'
     );
 
 
@@ -319,7 +336,7 @@ sub parse_file
 
     if (not (defined $file && $file ne ''))
     {
-	$@ = "No file specified";
+	$@ = 'No file specified';
 	return -1;
     }
 
@@ -340,10 +357,10 @@ sub parse_file
     binmode $fh;
 
     # Sanity check that this looks vaguely like an MP4 file
-    if ((read ($fh, $header, 8) != 8) || (lc substr ($header, 4) ne "ftyp"))
+    if ((read ($fh, $header, 8) != 8) || (lc substr ($header, 4) ne 'ftyp'))
     {
 	close ($fh);
-	$@ = "Not an MPEG-4 file";
+	$@ = 'Not an MPEG-4 file';
 	return -1;
     }
     seek $fh, 0, 0;
@@ -367,14 +384,7 @@ sub parse_file
     $tags->{BITRATE}  = int (0.5 + $tags->{SIZE} / (($tags->{MM}*60+$tags->{SS}+$tags->{MS}/1000)*128))
 	if (defined($tags->{SIZE}) && defined($tags->{MS}));	# A bit bogus
     $tags->{COPYRIGHT}= 1                if defined ($tags->{CPRT});
-
-    if ($debug)
-    {
-	foreach my $tag (sort keys %$tags)
-	{
-	    print "$tag\t", $tags->{$tag}, "\n";
-	}
-    }
+    $tags->{ENCRYPTED}= 0                unless defined ($tags->{ENCRYPTED});
 
     return 0;
 }
@@ -397,7 +407,7 @@ sub parse_container
     }
     if (tell $fh != $end)
     {
-	$@ = "Parse error";
+	$@ = 'Parse error';
 	return -1;
     }
     return 0;
@@ -412,21 +422,21 @@ sub parse_atom
     my ($header, $size, $id, $err);
     if (read ($fh, $header, 8) != 8)
     {
-	$@ = "Premature eof";
+	$@ = 'Premature eof';
 	return -1;
     }
 
-    ($size,$id) = unpack "Na4", $header;
+    ($size,$id) = unpack 'Na4', $header;
     if ($size == 1)
     {
 	# extended size
 	my ($hi, $lo);
 	if (read ($fh, $header, 8) != 8)
 	{
-	    $@ = "Premature eof";
+	    $@ = 'Premature eof';
 	    return -1;
 	}
-	($hi,$lo) = unpack "NN", $header;
+	($hi,$lo) = unpack 'NN', $header;
 	$size=$hi*(2**32) + $lo - 16;
     }
     else
@@ -437,13 +447,13 @@ sub parse_atom
     {
 	# Special zero-sized atom means we're done
 	($size==0) && ($level==1) && return 0;
-	$@ = "Parse error";
+	$@ = 'Parse error';
 	return -1;
     }
     $id =~ s/[^\w\-]//;
     $id = uc $id;
 
-    printf "%s%s: %d bytes\n", " " x (2*$level), $id, $size if $debug;
+    printf "%s%s: %d bytes\n", ' 'x(2*$level), $id, $size if $debug;
 
     if (defined($data_atoms{$id}))
     {
@@ -502,25 +512,25 @@ sub parse_mvhd
 
     if ($size < 32)
     {
-	$@ = "Parse error";
+	$@ = 'Parse error';
 	return -1;
     }
     if (read ($fh, $data, $size) != $size)
     {
-	$@ = "Premature eof";
+	$@ = 'Premature eof';
 	return -1;
     }
 
-    $version = unpack("C", $data) & 255;
+    $version = unpack('C', $data) & 255;
     if ($version==0)
     {
-	($scale,$duration) = unpack "NN", substr ($data, 12, 8);
+	($scale,$duration) = unpack 'NN', substr ($data, 12, 8);
     }
     elsif ($version==1)
     {
 	my ($hi,$lo);
 	print "Long version\n" if $debug;
-	($scale,$hi,$lo) = unpack "NNN", substr ($data, 20, 12);
+	($scale,$hi,$lo) = unpack 'NNN', substr ($data, 20, 12);
 	$duration=$hi*(2**32) + $lo;
     }
     else
@@ -528,7 +538,7 @@ sub parse_mvhd
 	return 0;
     }
 
-    print "Dur/Scl=$duration/$scale\n" if $debug;
+    printf "  %sDur/Scl=$duration/$scale\n", ' 'x(2*$level) if $debug;
     $secs=$duration/$scale;
     $tags->{SECS} = int (0.5+$secs);
     $tags->{MM}   = int ($secs/60);
@@ -551,33 +561,41 @@ sub parse_stsd
 
     if ($size < 44)
     {
-	$@ = "Parse error";
+	$@ = 'Parse error';
 	return -1;
     }
     if (read ($fh, $data, $size) != $size)
     {
-	$@ = "Premature eof";
+	$@ = 'Premature eof';
 	return -1;
     }
 
     # Assumes first entry in table contains the data
+    printf "  %sSample=%s\n", ' 'x(2*$level), substr ($data, 12, 4) if $debug;
     $data_format = lc substr ($data, 12, 4);
 
     # Is this an audio track? (Ought to look for presence of an SMHD uncle
     # atom instead to allow for other audio data formats).
-    if (($data_format eq "mp4a") ||
-	($data_format eq "drms") ||
-	($data_format eq "samr"))
+    if (($data_format eq 'mp4a') ||	# AAC, aacPlus
+	($data_format eq 'drms') ||	# Apple encryped AAC
+	($data_format eq 'samr') ||	# Narrow-band AMR
+	($data_format eq 'sawb') ||	# AMR wide-band
+	($data_format eq 'sawp') ||	# AMR wide-band +
+	($data_format eq 'enca'))	# Generic encryped audio
     {
 #	$version = unpack "n", substr ($data, 24, 2);
 #       s8.16 is inconsistent. In practice, channels always appears == 2.
 #	$tags->{STEREO}  = (unpack ("n", substr ($data, 32, 2))  >  1) ? 1 : 0;
 #       Old Quicktime field. No longer used.
 #	$tags->{VBR}     = (unpack ("n", substr ($data, 36, 2)) == -2) ? 1 : 0;
-	$tags->{FREQUENCY} = unpack ("N", substr ($data, 40, 4)) / 65536000;
+	$tags->{FREQUENCY} = unpack ('N', substr ($data, 40, 4)) / 65536000;
+	printf "  %sFreq=%s\n", ' 'x(2*$level), $tags->{FREQUENCY} if $debug;
+    }
 
-    } elsif ($data_format eq "mp4s") {
-	$tags->{DRM} = 1;
+    if (($data_format eq 'drms') ||
+	(substr($data_format, 0, 3) eq 'enc'))
+    {
+	$tags->{ENCRYPTED}=1
     }
 
     return 0;
@@ -590,27 +608,71 @@ sub parse_stsd
 sub parse_data
 {
     my ($fh, $level, $size, $id, $tags) = @_;
-    my ($data, $atom, $type, @ints);
+    my ($data, $atom, $type);
 
     if (read ($fh, $data, $size) != $size)
     {
-	$@ = "Premature eof";
+	$@ = 'Premature eof';
 	return -1;
     }
-    ($size > 16) || return 0;
 
-    # Assumes first atom is the data atom we're after
-    ($size,$atom,$type) = unpack "Na4N", $data;
-    (lc $atom eq "data") || return 0;
-    ($size > 16) || return 0;
-    $size -= 16;
-    $type &= 255;
-    $data = substr ($data, 16, $size);
+    # 3GPP - different format when child of 'udta'
+    if (($id eq 'TITL') ||
+	($id eq 'DSCP') ||
+	($id eq 'CPRT') ||
+	($id eq 'PERF') ||
+	($id eq 'AUTH') ||
+	($id eq 'GNRE'))
+    {
+	my ($ver) = unpack 'N', $data;
+	if ($ver == 0)
+	{
+	    ($size > 7) || return 0;
+	    $size -= 7;
+	    $type = 1;
+	    $data = substr ($data, 6, $size);
+
+	    if ($id eq 'TITL')
+	    {
+		return 0 if defined ($tags->{NAM});
+		$id = 'NAM';
+	    }
+	    elsif ($id eq 'DSCP')
+	    {
+		return 0 if defined ($tags->{CMT});
+		$id = 'CMT';
+	    }
+	    elsif ($id eq 'PERF')
+	    {
+		return 0 if defined ($tags->{ART});
+		$id = 'ART';
+	    }
+	    elsif ($id eq 'AUTH')
+	    {
+		return 0 if defined ($tags->{WRT});
+		$id = 'WRT';
+	    }
+	}
+    }
+
+    if (!defined($type))
+    {
+	($size > 16) || return 0;
+
+	# Assumes first atom is the data atom we're after
+	($size,$atom,$type) = unpack 'Na4N', $data;
+	(lc $atom eq 'data') || return 0;
+	($size > 16) || return 0;
+	$size -= 16;
+	$type &= 255;
+	$data = substr ($data, 16, $size);
+    }
+    printf "  %sType=$type, Size=$size\n", ' 'x(2*$level) if $debug;
 
     if ($type==0)	# 16bit int data
     {
-	@ints = unpack "n" x ($size / 2), $data;
-	if ($id eq "GNRE")
+	my @ints = unpack 'n' x ($size / 2), $data;
+	if ($id eq 'GNRE')
 	{
 	    $tags->{$id} = $mp4_genres[$ints[0]];
 	}
@@ -633,46 +695,46 @@ sub parse_data
 	my $decoder = Encode::Guess->guess ($data);
 	$data = (ref ($decoder)) ?
 	    $decoder->decode($data) :	# found one of utf8, utf16, latin1
-	    decode("utf8", $data);	# can't tell; assume utf8
+	    decode($utf8 ? 'utf8' : 'latin1', $data);	# ambiguous so force
 
-	if ($id eq "GEN")
+	if ($id eq 'GEN')
 	{
 	    return 0 if defined ($tags->{GNRE});
-	    $id="GNRE";
+	    $id='GNRE';
 	}
-	elsif ($id eq "AART")
+	elsif ($id eq 'AART')
 	{
 	    return 0 if defined ($tags->{ART});
-	    $id = "ART";
+	    $id = 'ART';
 	}
-	elsif ($id eq "DAY")
+	elsif ($id eq 'DAY')
 	{
 	    $data = substr ($data, 0, 4);
 	    # Real 10.0 supplies DAY=0 instead of deleting the atom if the
 	    # year is not known. What's wrong with these people?
 	    return 0 if $data==0;
 	}
-	$tags->{$id} = ($utf8 ? $data : encode("latin1", $data));
+	$tags->{$id} = $data;
     }
-    elsif ($type==21 || $type==13)	# Byte data
+    elsif ($type==21)	# Integer data
     {
 	# Convert to an integer if of an appropriate size
 	if ($size==1)
 	{
-	    $tags->{$id} = unpack "C", $data;
+	    $tags->{$id} = unpack 'C', $data;
 	}
 	elsif ($size==2)
 	{
-	    $tags->{$id} = unpack "n", $data;
+	    $tags->{$id} = unpack 'n', $data;
 	}
 	elsif ($size==4)
 	{
-	    $tags->{$id} = unpack "N", $data;
+	    $tags->{$id} = unpack 'N', $data;
 	}
 	elsif ($size==8)
 	{
 	    my ($hi,$lo);
-	    ($hi,$lo) = unpack "NN", $data;
+	    ($hi,$lo) = unpack 'NN', $data;
 	    $tags->{$id} = $hi*(2**32) + $lo;
 	}
 	else
@@ -680,6 +742,10 @@ sub parse_data
 	    # Non-standard size - just return the raw data
 	    $tags->{$id} = $data;
 	}
+    }
+    elsif ($type==13)	# Byte data
+    {
+	$tags->{$id} = $data;
     }
 
     # Silently ignore other data types
@@ -715,6 +781,8 @@ Jonathan Harris E<lt>jhar@cpan.orgE<gt>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt> for writing L<MP3::Info|MP3::Info>
 
+Dan Sully for the cover art patch.
+
 =head1 SEE ALSO
 
 =over 4
@@ -731,6 +799,10 @@ L<http://www.iso.ch/iso/en/ittf/PubliclyAvailableStandards/c038539_ISO_IEC_14496
 
 L<http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=38538>
 (Not worth buying - the interesting stuff is in Part 12).
+
+=item 3GPP TS 26.244 - 3GPP file format (3GP)
+
+L<http://www.3gpp.org/ftp/Specs/html-info/26244.htm>
 
 =item QuickTime File Format
 
