@@ -3287,7 +3287,7 @@ sub processPluginsList {
 	no strict 'refs';
 	for my $plugin (@sorted) {
 		if (defined $paramref->{"pluginlist$i"} && not $paramref->{"pluginlist$i"}) {
-			Slim::Buttons::Plugins::disablePlugin($plugin);
+			Slim::Buttons::Plugins::shutdownPlugin($plugin);
 		}
 
 		if (!exists $paramref->{"pluginlist$i"}) {

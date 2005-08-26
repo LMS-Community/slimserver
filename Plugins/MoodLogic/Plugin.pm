@@ -78,7 +78,7 @@ sub enabled {
 	return ($::VERSION ge '6.1') && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
 }
 
-sub disablePlugin {
+sub shutdownPlugin {
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
 	

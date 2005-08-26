@@ -237,7 +237,7 @@ sub resetState {
 	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 }
 
-sub disablePlugin {
+sub shutdownPlugin {
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
 

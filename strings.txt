@@ -3893,15 +3893,19 @@ SETUP_CHECKVERSION_0
 	SE	Kontrollera INTE automatiskt
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
-	EN	 Unchecked Songs in iTunes
+	DE	Deaktivierte Songs in iTunes
+	EN	Unchecked Songs in iTunes
 	
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
+	DE	Standardmässig werden Songs, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
+	DE	Alle Songs aufführen
 	EN	Include all songs
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
+	DE	Deaktivierte Songs nicht aufführen
 	EN	Don't include unchecked songs
 
 SETUP_HISTORYLENGTH
@@ -9192,14 +9196,16 @@ INFORMATION_VERSION
 	SE	Version
 
 INFORMATION_DIAGSTRING
+	DE	Kennung
 	EN	Version Info
 
 INFORMATION_HOSTNAME
+	DE	Rechnername
 	EN	Hostname
 
 INFORMATION_HOSTIP
+	DE	Server IP Adresse
 	EN	Host IP Address
-
 
 INFORMATION_INSTALLED
 	CZ	Instalováno
@@ -9486,10 +9492,13 @@ SETUP_VARIOUSARTISTSINARTISTS_0
 	EN	Don't include compilation artists in artist list.
 
 SETUP_USEBANDASALBUMARTIST_DESC
+	DE	Sie können die TPE2/BAND ID3v2 Tags als "ALBUMARTIST" für MP3 Dateien verwenden, falls diese kein "ALBUMARTIST" Tag enthalten.
 	EN	You can use the TPE2 / BAND ID3v2 tag as "ALBUMARTIST" for MP3 files that don't have an explict "ALBUMARTIST" tag.
 
 SETUP_USEBANDASALBUMARTIST_1
+	DE	TPE2/BAND ID3v2 Tags als "ALBUMARTIST" verwenden
 	EN	Use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"
 
 SETUP_USEBANDASALBUMARTIST_0
+	DE	TPE2/BAND ID3v2 Tags nicht als "ALBUMARTIST" verwenden
 	EN	Don't use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"

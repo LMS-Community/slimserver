@@ -234,14 +234,6 @@ sub addPlugin {
 	return 1;
 }
 
-sub disablePlugin {
-	my $plugin = shift;
-	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
-		eval { {"Plugins::" . $plugin . "::disablePlugin"} };
-	}
-	delete $plugins{$plugin};
-}
-
 sub addMenus {
 	my $plugin = shift;
 	my $disabledPlugins = shift;
@@ -390,8 +382,8 @@ sub addSetupGroups {
 			$noSetupGroup = $@;
 		}
 
-		if (exists $disabledplugins{$plugin} && UNIVERSAL::can("Plugins::${plugin}", 'disablePlugin')) {
-			disablePlugin($plugin);
+		if (exists $disabledplugins{$plugin}) {
+			shutdownPlugin($plugin);
 		}
 	
 		if ($noSetupGroup) {
@@ -434,13 +426,23 @@ sub addSetupGroups {
 sub shutdownPlugins {
 	no strict 'refs';
 	for my $plugin (enabledPlugins()) {
-		# We use shutdownPlugin() instead of the more succinct
-		# shutdown() because it's less likely to cause backward
-		# compatibility problems.
-		if (exists &{"Plugins::${plugin}::shutdownPlugin"}) {
-			&{"Plugins::${plugin}::shutdownPlugin"}();
-		}
+		shutdownPlugin($plugin);
 	}
+}
+
+sub shutdownPlugin {
+	my $plugin = shift;
+	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
+		msg("disablePlugin() is depreciated! Please use shutdownPlugin() instead. ($plugin)\n");
+		eval { {"Plugins::" . $plugin . "::disablePlugin"} };
+	}
+	# We use shutdownPlugin() instead of the more succinct
+	# shutdown() because it's less likely to cause backward
+	# compatibility problems.
+	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
+		eval { {"Plugins::" . $plugin . "::shutdownPlugin"} };
+	}
+	delete $plugins{$plugin};
 }
 
 sub unusedPluginOptions {

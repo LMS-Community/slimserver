@@ -86,7 +86,7 @@ sub enabled {
 	return ($::VERSION ge '6.1') && initPlugin();
 }
 
-sub disablePlugin {
+sub shutdownPlugin {
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
 	
