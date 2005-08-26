@@ -3893,41 +3893,16 @@ SETUP_CHECKVERSION_0
 	SE	Kontrollera INTE automatiskt
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
-	CZ	Ignorovat skladby zakázané iTunes
-	DE	In iTunes deaktiverte Musikstücke ignorieren
-	EN	Ignore Songs Disabled in iTunes
-	ES	Ignorar Canciones deshabilitadas en iTunes
-	FR	Ignorer les morceaux désactivés dans iTunes
-	JP	iTunesで再生しないように設定された曲を無視する
-	NO	Ignorer sanger som er deaktivert i iTunes
-	SE	Ignorera låtar som är de-aktiverade i iTunes
-
+	EN	 Unchecked Songs in iTunes
+	
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	DE	Wenn SlimServer ihre iTunes Musiksammlung verwendet, so kann er die in iTunes deaktivierten Musikstücke ignorieren. Falls Sie dennoch auf alle Lieder (auch die deaktivierten) zugreifen wollen, können Sie dies hier konfigurieren.
-	EN	If SlimServer is using your iTunes Music Library, it can ignore the songs that you have unchecked in iTunes.  If you want to access all the songs in your iTunes Library even if they are unchecked, you can change that setting here.
-	ES	Si SlimServer está utilizando su iTunes Music Library, puede ignorar las canciones que han sido desmarcadas en iTuner. Si se quiere acceder a todas las canciones en iTunes Library incluso si han sido desmarcadas, se puede cambiar la opción aquí.
-	FR	Si le SlimServer utilise votre bibliothèque iTunes, il peut ignorer les morceaux que vous avez dé-sélectionnés depuis iTunes. Si vous voulez accéder à ces morceaux, vous pouvez le spécifier ici.
-	JP	SlimServerがiTunesライブラリーを利用している場合、iTunesにおいて再生しないように設定された曲（チェックされていない）を無視することができます。もし、全ての曲を有効にしたいのであれば、ここでそのように設定してください。
-	NO	Hvis SlimServer bruker ditt iTunes Musikkbibliotek, kan den ignorere sanger som har blitt bortvalgt i iTunes. Hvis du ønsker tilgang til sangene i iTunes biblioteket selv om de er bortvalgt, kan du velge det her.
-	SE	När Slimserver använder sig av iTunes-information, kan SlimServer välja att ignorera filer som avmarkerats. Med denna inställning kan du välja om SlimServer trots allt ska använda dessa filer
+	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
-	DE	Deaktivierte Musikstücke ignorieren
-	EN	Ignore songs unchecked in iTunes
-	ES	Ignorar canciones no marcadas en iTunes 
-	FR	Ignorer les morceaux désactivés dans iTunes
-	JP	iTunesで再生しないように設定された曲を無視する
-	NO	Ignorer sanger bortvalgt i iTunes
-	SE	Ignorera låtar som är omarkerade i iTunes
+	EN	Include all songs
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
-	DE	Deaktivierte Musikstücke anzeigen
-	EN	Don't ignore songs unchecked in iTunes
-	ES	No ignorar canciones no marcadas en iTunes 
-	FR	Ne pas ignorer les morceaux désactivés dans iTunes
-	JP	iTunesで再生しないように設定された曲を有効にする
-	NO	Ikke ignorer sanger bortvalgt i iTunes
-	SE	Ignorera inte låtar som är omarkerade i iTunes
+	EN	Don't include unchecked songs
 
 SETUP_HISTORYLENGTH
 	DE	Länge des Verlaufs
