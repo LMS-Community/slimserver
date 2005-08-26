@@ -48,6 +48,8 @@ use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.10 $,10);
 
 use File::Spec::Functions qw(catdir);
+use Sys::Hostname;
+use Socket;
 
 our $modules = ();
 our %enabled = ();
@@ -159,16 +161,19 @@ sub init {
 			'header' => 'INFORMATION_MENU_SERVER',
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
-			'listRef' => [qw(VERSION SERVER_PORT SERVER_HTTP CLIENTS)],
+			'listRef' => [qw(VERSION DIAGSTRING SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS)],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
 			'formatRef' => [undef, undef, undef, \&Slim::Utils::Misc::delimitThousands],
 
 			'valueFunctRef' => [
 				sub { $::VERSION },
+				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
 				sub { Slim::Utils::Prefs::get('httpport') },
-				\&Slim::Player::Client::clientCount
+				\&hostname,
+				sub { inet_ntoa(inet_aton(hostname))},
+				\&Slim::Player::Client::clientCount,
 			],
 
 			'menuName' => 'server'
