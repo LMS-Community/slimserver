@@ -956,7 +956,7 @@ sub hostaddr {
 }
 
 sub hostName {
-	return hostname;
+	return hostname();
 }
 
 sub hostToAddr {
