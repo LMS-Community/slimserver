@@ -48,7 +48,6 @@ use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.10 $,10);
 
 use File::Spec::Functions qw(catdir);
-use Sys::Hostname;
 use Socket;
 
 our $modules = ();
@@ -171,8 +170,8 @@ sub init {
 				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
 				sub { Slim::Utils::Prefs::get('httpport') },
-				\&hostname,
-				sub { inet_ntoa(inet_aton(hostname))},
+				\&Slim::Utils::Misc::hostName,
+				sub { Slim::Utils::Misc::hostToAddr(Slim::Utils::Misc::hostName()) },
 				\&Slim::Player::Client::clientCount,
 			],
 

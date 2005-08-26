@@ -955,6 +955,10 @@ sub hostaddr {
 	return @hostaddr;
 }
 
+sub hostName {
+	return hostname;
+}
+
 sub hostToAddr {
 	my $host  = shift;
 	my @addrs = (gethostbyname($host))[4];
