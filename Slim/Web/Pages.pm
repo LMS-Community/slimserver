@@ -321,7 +321,7 @@ sub status {
 		# for current song, display the playback bitrate instead.
 		my $undermax = Slim::Player::Source::underMax($client,$song);
 		if (defined $undermax && !$undermax) {
-			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).Slim::Utils::Strings::string('KBPS').' CBR';
+			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).Slim::Utils::Strings::string('KBPS').' ABR';
 		}
 		if (Slim::Utils::Prefs::get("playlistdir")) {
 			$params->{'cansave'} = 1;

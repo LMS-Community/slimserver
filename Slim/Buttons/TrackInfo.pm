@@ -343,7 +343,7 @@ sub preloadLines {
 
 		my $undermax = Slim::Player::Source::underMax($client, $url);
 
-		my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." CBR";
+		my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." ABR";
 
 		push (@{$client->trackInfoLines}, 
 			$client->string('BITRATE').": $bitrate " .
