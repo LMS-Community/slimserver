@@ -59,7 +59,6 @@ sub initPlugin {
 
 		'right' => sub  {
 			my $client = shift;
-			my @oldlines = Slim::Display::Display::curLines($client);
 
 			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_SET')) {
 				
@@ -75,14 +74,18 @@ sub initPlugin {
 
 				Slim::Utils::Prefs::set("rescan-scheduled", 1);
 				$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_ON');
-				$client->showBriefly($client->string('PLUGIN_RESCAN_TIMER_TURNING_ON'),'');
+				$client->showBriefly( {
+				    'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_ON'),
+				});
 				setTimer($client);
 
 			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_ON')) {
 
 				Slim::Utils::Prefs::set("rescan-scheduled", 0);
 				$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_OFF');
-				$client->showBriefly($client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),'');
+				$client->showBriefly( {
+				    'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),
+				});
 				setTimer($client);
 			}
 		},
@@ -93,9 +96,12 @@ sub initPlugin {
 			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_PRESS_PLAY')) {
 
 				my @pargs=('rescan');
-				my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
 				$client->execute(\@pargs, undef, undef);
-				$client->showBriefly( $line1, $line2);
+
+				$client->showBriefly( {
+				    'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+				    'line2' => $client->string('PLUGIN_RESCAN_RESCANNING'),
+				});
 
 			} else {
 
@@ -135,17 +141,17 @@ sub lines {
 
 	my $timeFormat = Slim::Utils::Prefs::get("timeFormat");
 
-	my $line1 = $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY');
-
 	if (Slim::Utils::Prefs::get("rescan-scheduled") && 
 		$browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_OFF')) {
 
 		$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_ON');
 	}
 
-	my $line2 = $browseMenuChoices[$menuSelection{$client}] || '';
-
-	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
+	return {
+	    'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+	    'line2' => $browseMenuChoices[$menuSelection{$client}] || '',
+	    'overlay2' => $client->symbols('rightarrow'),
+	};
 }
 
 sub settingsExitHandler {
