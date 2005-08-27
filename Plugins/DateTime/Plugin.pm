@@ -97,12 +97,16 @@ our %functions = (
 		my $client = shift;
 		if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','SCREENSAVER.datetime');
-			my ($line1, $line2) = ($client->string('PLUGIN_SCREENSAVER_DATETIME'), $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'));
-			$client->showBriefly($line1, $line2);
+			$client->showBriefly( {
+				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
+				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'),
+			});
 		} else {
 			Slim::Utils::Prefs::clientSet($client,'screensaver','screensaver');
-			my ($line1, $line2) = ($client->string('PLUGIN_SCREENSAVER_DATETIME'), $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'));
-			$client->showBriefly($line1, $line2);
+			$client->showBriefly( {
+				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
+				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'),
+			});
 		}
 	},
 	'stop' => sub {
@@ -113,14 +117,16 @@ our %functions = (
 
 sub lines {
 	my $client = shift;
-	my ($line1, $line2);
-	$line1 = $client->string('PLUGIN_SCREENSAVER_DATETIME');
+	my $line2;
 	if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
 		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLE');
 	} else {
 		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLE');
 	};
-	return ($line1, $line2);
+	return {
+		'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
+		'line2' => $line2,
+	};
 }
 
 sub getFunctions {

@@ -101,17 +101,24 @@ sub lines {
 	} else {
 		$line1 = $client->string('PLAYLIST_SAVE');
 		$line2 = $context{$client};
-		$arrow = Slim::Display::Display::symbol('rightarrow');
+		$arrow = $client->symbols('rightarrow');
 	}
 	
-	return ($line1, $line2, undef, $arrow);
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2, 
+		'overlay2' => $arrow,
+	};
 }
 
 sub savePlaylist {
 	my $client = shift;
 	my $playlistfile = shift;
 	$client->execute(['playlist', 'save', $playlistfile]);
-	$client->showBriefly($client->string('PLAYLIST_SAVING'),$playlistfile);
+	$client->showBriefly( {
+		'line1' => $client->string('PLAYLIST_SAVING'),
+		'line2' => $playlistfile,
+	});
 }
 
 sub getFunctions {
@@ -121,11 +128,9 @@ sub getFunctions {
 sub savePluginCallback {
 	my ($client,$type) = @_;
 	if ($type eq 'nextChar') {
-		my @oldlines = Slim::Display::Display::curLines($client);
-
 		$context{$client} =~ s/$rightarrow//;
 		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft(\@oldlines, [lines($client)]);
+		$client->pushLeft();
 	} elsif ($type eq 'backspace') {
 		Slim::Buttons::Common::popModeRight($client);
 		Slim::Buttons::Common::popModeRight($client);

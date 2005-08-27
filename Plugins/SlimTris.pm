@@ -58,17 +58,14 @@ my $score = 0;
 # button functions for top-level home directory
 sub defaultHandler {
 		my $client = shift;
-		my $oldlines;
 		if ($gamemode eq 'attract') {
-			$oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'play';
 			resetGame();
-			$client->pushLeft($oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft();
 			return 1;
 		} elsif ($gamemode eq 'gameover') {
-			$oldlines = Slim::Display::Display::curLines($client);
 			$gamemode = 'attract';
-			$client->pushLeft($oldlines, Slim::Display::Display::curLines($client));
+			$client->pushLeft();
 			return 1;
 		}
 		return 0;

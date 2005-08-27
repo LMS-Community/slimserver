@@ -30,9 +30,6 @@ $VERSION = substr(q$Revision: 1.1 $,10);
 
 my %context = ();
 
-my $rightarrow = Slim::Display::Display::symbol('rightarrow');
-
-
 my %mapping = (
 	'play' => 'dead',
 	'play.hold' => 'play',
@@ -46,7 +43,10 @@ my %mainModeFunctions = (
 	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
 	   my $urls = Slim::Buttons::Common::param($client, 'urls');
 
-	   $client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1), Slim::Music::Info::standardTitle($client, $urls->[$listIndex]));
+	   $client->showBriefly( {
+	       'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1),
+	       'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
+	   });
 	   
 	   $client->execute([ 'playlist', 'clear' ] );
 	   $client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
@@ -58,7 +58,10 @@ my %mainModeFunctions = (
 	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
 	   my $urls = Slim::Buttons::Common::param($client, 'urls');
 
-	   $client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1), Slim::Music::Info::standardTitle($client, $urls->[$listIndex]));  
+	   $client->showBriefly( {
+	       'line1' => sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1),
+	       'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
+	   });  
 	   
 	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
    },
@@ -187,10 +190,15 @@ sub playFavorite {
 	my @urls = $favs->urls();
 
 	if (!$urls[$index]) {
-		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit));
+		$client->showBriefly( {
+		    'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
+		});
 	} else {
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
-		$client->showBriefly(sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), $titles[$index]);
+		$client->showBriefly( {
+		    'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
+		    'line2' => $titles[$index],
+		});
 		$client->execute(['playlist', 'clear']);
 		$client->execute(['playlist', 'add', $urls[$index]]);
 		$client->execute(['play']);

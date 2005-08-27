@@ -165,7 +165,11 @@ sub configLines {
 
 	$line2 = $client->string($screensaver_info{$item}->{name});
 
-	return ($line1, $line2, undef, $select);
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2, 
+		'overlay2' => $select,
+	};
 }
 
 sub getFunctions {
@@ -215,8 +219,10 @@ sub screensaverLines {
 	if( $client->isa( "Slim::Player::Squeezebox2")) {
 	}
 	else {
-		return( $client->string('PLUGIN_SCREENSAVER_VISUALIZER'),
-				$client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2'));
+		return {
+			'line1' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER'),
+			'line2' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2'),
+		};
 	}
 }
 
@@ -295,11 +301,11 @@ sub _pushon {
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
 	my $screen = {
-			'fonts' => { 'graphic-320x32' => 'high' },
-			'line1' => '',
-			'line2' => $client->string('NOW_PLAYING') . ': ' .
-						Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client)),
-		};
+		'fonts' => { 'graphic-320x32' => 'high' },
+		'line1' => '',
+		'line2' => $client->string('NOW_PLAYING') . ': ' .
+					Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client)),
+	};
 	
 	$client->pushLeft(undef, $screen);
 	# do it again at the next period
@@ -315,9 +321,9 @@ sub _pushoff {
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
 	my $screen = {
-			'line1' => '',
-			'line2' => '' 
-		};
+		'line1' => '',
+		'line2' => '' 
+	};
 	$client->pushRight(undef,$screen);
 	# do it again at the next period
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $textofftime,
