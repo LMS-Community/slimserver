@@ -236,7 +236,6 @@ sub getModes {
 				},
 				'PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM' => {
 					'valuesFunc' => sub {
-							my $client = shift;
 							my $streamList = [sort { &stream_sort } keys %streamList];
 							$status{$client}{'stream'} = $$streamList[int(rand(scalar @{$streamList}))];
 							playOrAddStream($client, 'play');
@@ -315,7 +314,7 @@ sub setMode {
 					}
 
 					my $values;
-					if (not (defined $modes{$item}->{'valuesFunc'} && ($values = &{$modes{$item}->{'valuesFunc'}}($client)))) {
+					if (not (defined $modes{$item}->{'valuesFunc'} && ($values = &{$modes{$item}->{'valuesFunc'}}))) {
 						$values = $modes{$item}->{'values'};
 					}
 
