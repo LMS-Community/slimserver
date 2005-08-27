@@ -234,6 +234,20 @@ sub getModes {
 							}
 						}
 				},
+				'PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM' => {
+					'valuesFunc' => sub {
+							my $client = shift;
+							my $streamList = [sort { &stream_sort } keys %streamList];
+							$status{$client}{'stream'} = $$streamList[int(rand(scalar @{$streamList}))];
+							playOrAddStream($client, 'play');
+							return $streamList;							
+						},
+					'header' => 'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS',
+					'valueRef' => \$status{$client}{'stream'},
+					'isSorted' => ((Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion'))[0] =~ m/(^name|default)/i ? 'I' : ''),
+					'callback' => \&browseStreamsExitHandler
+					
+				}
 		);
 
 		# keep track of the current language so we can update if the language changes
@@ -283,6 +297,7 @@ sub setMode {
 										'PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR', 
 										'BROWSE_BY_GENRE', 
 										'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS',
+										'PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM',
 										'PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST');
 
 		my %params = (
@@ -300,7 +315,7 @@ sub setMode {
 					}
 
 					my $values;
-					if (not (defined $modes{$item}->{'valuesFunc'} && ($values = &{$modes{$item}->{'valuesFunc'}}))) {
+					if (not (defined $modes{$item}->{'valuesFunc'} && ($values = &{$modes{$item}->{'valuesFunc'}}($client)))) {
 						$values = $modes{$item}->{'values'};
 					}
 
@@ -405,7 +420,7 @@ sub gotViaHTTP {
 		removeSingletons($params->{'client'});
 
 		$::d_plugins && msg("Shoutcast: sort genres\n");
-		sortGenres($params->{'client'});
+		sortGenres();
 		$httpError = 0;
 	}
 	undef $data;
@@ -470,7 +485,7 @@ sub extractStreamInfo {
 	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
 	my $min_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
 	my $max_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
-	my $miscName = $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
+	my $miscName = (defined($client) ? $client->string('PLUGIN_SHOUTCASTBROWSER_MISC') : string('PLUGIN_SHOUTCASTBROWSER_MISC'));
 
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
 		my $bitrate	 = $entry->{'Bitrate'};
@@ -517,7 +532,7 @@ sub extractStreamInfo {
 sub removeSingletons {
 	my $client = shift;
 	my @criterions = Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion');
-	my $miscName = $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
+	my $miscName = (defined($client) ? $client->string('PLUGIN_SHOUTCASTBROWSER_MISC') : string('PLUGIN_SHOUTCASTBROWSER_MISC'));
 	
 	if (($criterions[0] =~ /default/i) and Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre')) {
 		foreach my $g (keys %genreStreams) {
@@ -534,8 +549,6 @@ sub removeSingletons {
 }
 
 sub sortGenres {
-	my $client = shift;
-	my $miscName = $client->string('PLUGIN_SHOUTCASTBROWSER_MISC');
 	my @criterions = Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion');
 	
 	my $genre_sort = sub {
@@ -1165,6 +1178,10 @@ PLUGIN_SHOUTCASTBROWSER_MISC
 	DE	Diverse Stile
 	EN	Misc. genres
 	ES	Géneros misceláneos
+
+PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM
+	DE	Zufälligen Stream spielen
+	EN	Play random stream
 
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	DE	Spielte zuletzt
