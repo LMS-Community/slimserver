@@ -48,7 +48,7 @@ using the Perl language.</p>
 <p>If you wish for your plugin to have a player display interface, then you will need to set up what is called a Mode.  The remote buttons are context sensitive, meaning that they can serve different roles when the SlimServer is in different modes.  The setMode()
 subroutine defines this mode.  Within this subroutine, there must be a definition for $client->lines, which is the text to be displayed on the
 Slim client while in this plugin mode.  Typically, this is labeled just as above, though it can be any name you wish. The lines subroutine, or other name
-if you have chosen one, returns two strings. One for each line of the display.  They can be updated at any time from any point in the plugin module by using the
+if you have chosen one, returns a hash defining the display to be shown on the player.  This can be updated at any time from any point in the plugin module by using the
 line:</p>
 <blockquote>
 			<pre>
@@ -98,9 +98,11 @@ sub getNewModeFunctions &#123;
      'play' => sub &#123;
         my $client = shift;
         my @pargs=('rescan');
-        my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
         Slim::Control::Command::execute($client, \@pargs, undef, undef);
-        $client->showBriefly(, $line1, $line2);
+        $client->showBriefly( {
+	    $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+	    $client->string('PLUGIN_RESCAN_RESCANNING'),
+        &#125);
      &#125;
   );
 </pre></blockquote>
@@ -110,7 +112,7 @@ sets up local variables, starts a rescan of the entire library, then shows two l
 rescan has been started.  The line "my $client = shift;" is very important here to keep track of the player status, and to pass on in server
 function calls such as: </p>
 <blockquote>
-			<pre>$client->showBriefly(, $line1, $line2);</pre></blockquote>
+			<pre>$client->showBriefly();</pre></blockquote>
 		<p>Examples of remote control functions include: 'up','down','play,'add' (REC button),'left','right','numberScroll' and 'stop' The full button to function map is found in the Default.map file, which is in the IR directory under the SlimServer directory.</p>
 
 <hr>
@@ -131,7 +133,8 @@ menus for any player via the player settings.
 
 <hr>
 <h4>Lines</h4>
-<p>The lines subroutine returns the text that the Slim Client will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own set of lines, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is two strings for main display and optionally a pair of strings which may need to be overlayed on top of the first pair, right justified. The lines are sent to the display at any time using the command:</p>
+<p>The lines subroutine returns the text that the Slim Client will display while using your plugin. The setMode() function creates the reference for the lines subroutine, and your lines subroutine name must match that. Each mode may have its own lines subroutine, and each is named after the reference created in each setMode. The input for this function is the current client information, and the return is a hash defining the display. This is defined in detail in <a href="display.html">Display API</a>.
+<p>The lines are sent to the display at any time using the command:</p>
 <blockquote>
 			<pre>
 $client->update();
@@ -141,11 +144,11 @@ $client->update();
 <p><em>Example 4</em></p>
 <pre>sub lines &#123;
    my $client = shift;
-   my ($line1, $line2);
-   $line1 = $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY');
-   $line2 = $client->string('PLUGIN_RESCAN_PRESS_PLAY');
-   return ($line1, $line2);
-&#125;;
+   return &#123
+       'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+       'line2' => $client->string('PLUGIN_RESCAN_PRESS_PLAY'),
+   &#125;
+&#125
 </pre></blockquote>
 <hr>
 	<h4>Settings</h4>
@@ -435,18 +438,20 @@ my %functions = (
 	'play' =&gt; sub {
 		my $client = shift;
 		my @pargs=('rescan');
-		my ($line1, $line2) = ($client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'), $client->string('PLUGIN_RESCAN_RESCANNING'));
 		Slim::Control::Command::execute($client, \@pargs, undef, undef);
-		$client->showBriefly(, $line1, $line2);
+		$client->showBriefly( {
+			'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+			'line2' => $client->string('PLUGIN_RESCAN_RESCANNING'),
+		});
 	}
 );
 
 sub lines {
 	my $client = shift;
-	my ($line1, $line2);
-	$line1 = $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY');
-	$line2 = $client->string('PLUGIN_RESCAN_PRESS_PLAY');
-	return ($line1, $line2);
+	return {
+		'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+		'line2' => $client->string('PLUGIN_RESCAN_PRESS_PLAY'),
+	};
 }
 	
 ################################################
