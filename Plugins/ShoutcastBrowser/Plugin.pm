@@ -223,7 +223,7 @@ sub getModes {
 							if (($method eq 'right') && (time() > $last_time + 60)) {
 								$httpError = undef;
 								Slim::Buttons::Common::popModeRight($client);
-								Slim::Buttons::Block::block($client, $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING'));
+								$client->block({'line1' => $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING')});
 								loadStreamList($client);
 							}
 							elsif ($method eq 'right') {
@@ -267,13 +267,12 @@ sub setMode {
 		$status{'getStreams'} = 0;
 	}
 
-	$client->lines(\&lines);
 	$status{$client}{status} = 0;
 
 	check4Update();
 
 	if (not defined $httpError) {
-		Slim::Buttons::Block::block($client, $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING'));
+		$client->block({'line1' => $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING')});
 		loadStreamList($client);
 		$status{'getStreams'} = 1;
 	}
@@ -428,7 +427,7 @@ sub gotViaHTTP {
 	createAsyncWebPage($params);
 	$::d_plugins && msg("Shoutcast: that's it\n");
 	if (defined $params->{'client'}) {
-		Slim::Buttons::Block::unblock($params->{'client'});
+		$params->{'client'}->unblock();
 		$params->{'client'}->update();
 	}
 }
@@ -440,7 +439,7 @@ sub gotErrorViaHTTP {
 	$httpError = 99;
 	createAsyncWebPage($params);
 	if (defined $params->{'client'}) {
-		Slim::Buttons::Block::unblock($params->{'client'});
+		$params->{'client'}->unblock();
 		$params->{'client'}->update();
 	}
 }
@@ -592,8 +591,6 @@ sub cleanStreamInfo {
 	$arg =~ s/\s+/ /g;
 	return $arg;
 }
-
-sub lines { return; };
 
 my %functions = (
 	'play' => sub {
@@ -838,7 +835,10 @@ sub playOrAddStream {
 		$status{$client}{'bitrate'} = $1;
 	}
 
-	$client->showBriefly($client->string((lc($method) eq 'play' ? 'CONNECTING_FOR' : 'ADDING_TO_PLAYLIST')), $status{$client}{'stream'});
+	$client->showBriefly({
+		'line1' => $client->string((lc($method) eq 'play' ? 'CONNECTING_FOR' : 'ADDING_TO_PLAYLIST')),
+		'line2' => $status{$client}{'stream'}
+	});
 
 	if ($status{$client}{'genre'} eq 'PLUGIN_SHOUTCASTBROWSER_RECENT') {
 		playRecentStream($client, $status{$client}{recent_data}{$status{$client}{'stream'}}, $status{$client}{'stream'}, $method);
