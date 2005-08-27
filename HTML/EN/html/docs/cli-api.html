@@ -18,7 +18,8 @@
 <p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
 	hexadecimal 0x0A). The server accepts LF or CR (or any combination
 	thereof) as end of line, but always terminates replies with LF. For
-	strings, SlimServer uses the UTF-8 charset.</p>
+	strings, SlimServer uses the UTF-8 charset. Some extended queries allow
+	to return data in a different charset.</p>
 
 <p>To use the command line interface interactively, use the telnet
 	command from your system's command prompt: <em>telnet localhost
@@ -40,13 +41,28 @@
 	playlist tracks. Finally, command &quot;<a
 	href="#playlistcontrol">playlistcontrol</a>&quot; now accepts a
 	playlist_id parameter.</li>
+<li>Added optional &quot;charset&quot; parameter to all extended queries, 
+	allowing them to return data in something different than utf8. See the 
+	<a href="#Notes">charset notes</a> and the definitions of 
+	&quot;<a href="#players">players</a>&quot;, 
+	&quot;<a href="#genres">genres</a>&quot;, 
+	&quot;<a href="#artists">artists</a>&quot;, 
+	&quot;<a href="#albums">albums</a>&quot;, 
+	&quot;<a href="#titles">titles</a>&quot;, 
+	&quot;<a href="#playlists">playlists</a>&quot;, 
+	&quot;<a href="#playlisttracks">playlisttracks</a>&quot;, 
+	&quot;<a href="#songinfo">songinfo</a>&quot; and 
+	&quot;<a href="#status">status</a>&quot;.</li>
 <li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
     rescanning only the playlists.</li>
 <li>Due to internal changes to SlimServer, the 
 	&quot;<a href="#mode">mode</a>&quot; command or query does no longer support 
     parameter &quot;off&quot;.</li>
+<li>&quot;<a href="#listen">listen</a>&quot; now supports a query mode:
+	&quot;listen ?&quot;.</li>
 </ul>
 <hr>
+
 
 <h4>General command format</h4>
 
@@ -230,10 +246,12 @@
 		documentation for more details on artwork management in
 		SlimServer. Use the following URLs:
 		<blockquote> 
-		  	<strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;
-		  		track_id&gt;/cover.jpg</code></strong><br> 
-			<strong><code>http://&lt;server&gt;:&lt;port&gt;/music/&lt;
-			 	track_id&gt;/thumb.jpg</code></strong>
+		  	<strong><code>
+		  	http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/cover.jpg
+		  	</code></strong><br> 
+			<strong><code>
+			http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/thumb.jpg
+			</code></strong>
 		</blockquote>
 		where: <br> 
 		<blockquote>
@@ -247,12 +265,12 @@
 		<p>In addition, there is a shortcut URL to return the artwork of
 			the currently playing song for a player:
 		<blockquote> 
-			<strong><code>http://&lt;server&gt;:&lt;port&gt;/music/
-				current/cover.jpg?player=&lt;playerid&gt;</code></strong
-				><br>
-			<strong><code>http://&lt;server&gt;:&lt;port&gt;/music/
-				current/thumb.jpg?player=&lt;playerid&gt;</code></strong
-				></p>
+			<strong><code>
+http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&gt;
+			</code></strong><br>
+			<strong><code>
+http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&gt;
+			</code></strong></p>
 		</blockquote>
 		where: <br> 
 		<blockquote>
@@ -281,6 +299,15 @@
 		  	id:00:04:20:02:00:c8 ...(same as above)&quot;</p>
 		</blockquote>
 	</li>
+	
+	<li>Extended queries accepting the &quot;charset&quot; parameter normally
+		return data in utf8, Perl's lenient version of UTF-8. The value of this
+		parameter is sent as is to Perl's Encode plumbing. As a consequence,
+		any encoding known to Perl is valid, for example &quot;iso-8859-1&quot;
+		(the web standard), &quot;cp437&quot; (MS-DOS), etc. More exotic
+		choices like &quot;UTF-16&quot; or &quot;shiftjis&quot; are possible.
+		Note that the server will likely crash if the encoding is unknown.
+	</li>
 </ul>
 
 
@@ -288,20 +315,28 @@
 <h4>Supported Commands</h4>
 <p>The supported commands are listed below, grouped by their scope:</p>
 <ul>
-  <li><strong><a href="#GC">General</a></strong>: commands for general management of the server</li>
-  <li><strong><a href="#PC">Players</a></strong>: commands to manage and get information on players</li>
-  <li><strong><a href="#DB">Database</a></strong>: commands to manage and browse the music database</li>
-  <li><strong><a href="#PL">Playlist</a></strong>: commands to get information on and manage the playlist for each player</li>
+  <li><strong><a href="#GC">General</a></strong>: commands for general
+  	management of the server</li>
+  <li><strong><a href="#PC">Players</a></strong>: commands to manage and
+  	get information on players</li>
+  <li><strong><a href="#DB">Database</a></strong>: commands to manage
+  	and browse the music database</li>
+  <li><strong><a href="#PL">Playlist</a></strong>: commands to get
+  	information on and manage the playlist for each player</li>
 </ul>
 
 <hr>
 <h4 id="GC">General commands</h4>
 
-<p id="login"><strong><code>login &lt;user&gt; &lt;password&gt;</code></strong></p>
-<p>The &quot;login&quot; command allows the caller to authenticate itself on the server, as
-  defined in the Security pane of the SlimServer preferences. Like any other command, the user
-  and password must be escaped. If successful, the server replaces the password with 6 star characters.
-  If unsuccessful, the server disconnects. If security is off this command is always successful.</p>
+<p id="login"><strong><code>login &lt;user&gt;
+	&lt;password&gt;</code></strong></p>
+<p>The &quot;login&quot; command allows the caller to authenticate
+	itself on the server, as defined in the Security pane of the
+	SlimServer preferences. Like any other command, the user and
+	password must be escaped. If successful, the server replaces the
+	password with 6 star characters. If unsuccessful, the server
+	disconnects. If security is off this command is always
+	successful.</p>
 <p>Examples:</p>
 <blockquote> 
   <p>Request: &quot;login user correctpassword&lt;LF&gt;&quot;<br>
@@ -311,10 +346,11 @@
   </p>
 </blockquote>
 
-<p><strong><code>debug &lt;debugflag&gt; &lt;0|1|?|&gt;</code></strong></p>
-<p>The &quot;debug&quot; command allows the caller to query, clear, set or toggle 
-  the SlimServer's internal debug flags. Use 0 to clear, 1 to set, ? to query 
-  and no parameter to toggle the debug flag value.</p>
+<br><p><strong><code>debug &lt;debugflag&gt; &lt;0|1|?|&gt;</code></strong></p>
+<p>The &quot;debug&quot; command allows the caller to query, clear, set
+	or toggle the SlimServer's internal debug flags. Use 0 to clear, 1
+	to set, ? to query and no parameter to toggle the debug flag
+	value.</p>
 <p>Examples:</p>
 <blockquote> 
   <p>Request: &quot;debug d_files ?&lt;LF&gt;&quot;<br>
@@ -328,10 +364,13 @@
   </p>
 </blockquote>
 
-<br><p><strong><code>listen &lt;0|1|&gt;</code></strong></p>
-<p>The &quot;listen&quot; command tells the server to send command events to the command-line client for all activity in the SlimServer, not just
-the activity triggered by the command line.  This is useful for monitoring user activity from the remote control or web interface. Use 0 to clear, 
-1 to set, and no parameter to toggle the listen state of the command-line connection.</p>
+<br><p id="listen"><strong><code>listen &lt;0|1|?&gt;</code></strong></p>
+<p>The &quot;listen&quot; command tells the server to send command
+	events to the command-line client for all activity in the
+	SlimServer, not just the activity triggered by the command line. 
+	This is useful for monitoring user activity from the remote control
+	or web interface. Use 0 to clear, 1 to set, ? to query, and no parameter to
+	toggle the listen state of the command-line connection.</p>
 <p>Examples: </p>
 <blockquote> 
   <p>Request: &quot;listen 1&lt;LF&gt;&quot;<br>Response: <br>listen 1&lt;LF&gt;
@@ -577,8 +616,23 @@ preferences values.</p>
   <p>Request: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;<br>Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="players"><strong><code>players &lt;start&gt; &lt;itemsPerResponse&gt;</code></strong></p>
-<p>The &quot;players&quot; command returns information about all players known by the SlimServer.</p>
+<br><p id="players"><strong>
+	<code>players &lt;start&gt; &lt;itemsPerResponse&gt;</code>
+</strong></p>
+<p>The &quot;players&quot; command returns information about all players
+	known by the SlimServer.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
+</table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
 	<tr>
@@ -703,15 +757,23 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>search</td>
-		<td>Search string. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
+		<td>Search string. The search is case insensitive and obeys the
+			&quot;Search Within Words&quot; server parameter.</td>
 	</tr>
 	<tr>
 		<td>artist_id</td>
-		<td>Limit results to those genres proposed by the artist identified by artist_id.</td>
+		<td>Limit results to those genres proposed by the artist
+			identified by artist_id.</td>
 	</tr>
 	<tr>
 		<td>album_id</td>
-		<td>Limit results to those genres available on the album identified by album_id.</td>
+		<td>Limit results to those genres available on the album
+			identified by album_id.</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -770,6 +832,11 @@ preferences values.</p>
 		<td>album_id</td>
 		<td>Album ID, to restrict the results to those artists with songs of that album.</td>
 	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -827,6 +894,11 @@ preferences values.</p>
 		<td>artist_id</td>
 		<td>Artist ID, to restrict the results to those albums with songs of that artist.</td>
 	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -881,6 +953,11 @@ preferences values.</p>
 	<tr>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is empty.</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -952,6 +1029,11 @@ preferences values.</p>
 		    for a list of possible fields and their identifying letter). The 
 		    default tags value for this command is &quot;gald&quot;.</td>
 	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
 </table>
 <p>Returned tagged parameters:</p>
 <table border="0" spacing="50">
@@ -1002,6 +1084,11 @@ preferences values.</p>
 	<tr>
 		<td>tags</td>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is all info except the url, depending on the given parameter.</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
@@ -1594,6 +1681,11 @@ of &lt;itemsPerResponse&gt;.</p>
 		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
 		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
 		    letter). The default tags value for this command is &quot;gald&quot;.</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>

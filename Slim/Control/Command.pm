@@ -80,19 +80,9 @@ sub execute {
     
 # GENERAL
 # N    debug           <debugflag>                 <0|1|?|>
-# N    listen          <0|1|?|>
 # N    pref            <prefname>                  <prefvalue|?>
-# N    exit
-# N    version			?
-# N    login           <user>                      <pwd>
 
 # PLAYERS
-# N    player          count                       ?
-# N    player          <id|address>                <playerindex|playerid>        ? (address form deprecated)
-# N    player          ip                          <playerindex|playerid>        ?
-# N    player          model                       <playerindex|playerid>        ?
-# N    player          name                        <playerindex|playerid>        ?
-# N    player          displaytype                 <playerindex|playerid>        ?
 # Y    sleep           <0..n|?>
 # Y    sync            <playerindex|playerid|-|?>
 # Y    power           <0|1|?|>
@@ -116,10 +106,6 @@ sub execute {
 # N    rescan          <?>    	
 # N    rescan          playlists
 # N    wipecache
-# N    info            total                       genres                        ?
-# N    info            total                       artists                       ?
-# N    info            total                       albums                        ?
-# N    info            total                       songs                         ?
 
 #PLAYLISTS
 # Y    mode            <play|pause|stop|?>    
@@ -175,70 +161,6 @@ sub execute {
 
 		# ignore empty commands
 
-	} elsif ($p0 eq "version") {
-
-		$p1 = $::VERSION;
-
-		$client = undef;
-
-	} elsif ($p0 eq "login") {
-
-		# login is handled in CLI.pm, this is just to return the stars if
-		# the command is issued when unnecessary.
-
-		if (defined $p2) {
-			$p2 = "******"
-		}
-
-		$client = undef;
-
-	} elsif ($p0 eq "player") {
-
-		if (!defined($p1)) {
-
-			# do nothing
-		
-		} elsif ($p1 eq "count") {
-
-			$p2 = Slim::Player::Client::clientCount();
-
-		} elsif ($p1 =~ /^(?:name|address|ip|id|model|displaytype)$/) {
-		
-			my $p2client;
-			
-			# were we passed an ID?
-			if (defined $p2 && Slim::Player::Client::getClient($p2)) {
-
-				$p2client = Slim::Player::Client::getClient($p2);
-
-			} else {
-			
-				# otherwise, try for an index
-				my @clients = Slim::Player::Client::clients();
-
-				if (defined $p2 && defined $clients[$p2]) {
-					$p2client = $clients[$p2];
-				}
-			}
-			
-			if (defined $p2client) {
-
-				if ($p1 eq "name") {
-					$p3 = $p2client->name();
-				} elsif ($p1 eq "address" || $p1 eq "id") {
-					$p3 = $p2client->id();
-				} elsif ($p1 eq "ip") {
-					$p3 = $p2client->ipport();
-				} elsif ($p1 eq "model") {
-					$p3 = $p2client->model();
-				} elsif ($p1 eq "displaytype") {
-					$p3 = $p2client->vfdmodel();
-				}
-			}
-		}
-
-		$client = undef;
-
 	} elsif ($p0 eq "pref") {
 
 		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
@@ -283,20 +205,6 @@ sub execute {
 		
 		$client = undef;
 
-	} elsif ($p0 eq "info") {
-
-		if (defined $p1 && $p1 eq "total" && $p2 =~ /^(genre|artist|album|song)s$/) {
-
-			my $field = $1;
-
-			$field = 'track'       if $field eq 'song';
-			$field = 'contributor' if $field eq 'artist';
-
-			$p3 = $ds->count($field);
-		}
-
-		$client = undef;
-
 	} elsif ($p0 eq "debug") {
 
 		if ($p1 =~ /^d_/) {
@@ -321,305 +229,7 @@ sub execute {
 
  		$client = undef;
  		
- 	} elsif ($p0 eq "players") {
- 
- 		$pushParams = 0;
- 	
- 		push @returnArray, $p0;
- 		push @returnArray, $p1 if defined $p1;
- 		push @returnArray, $p2 if defined $p2;
  		
- 		my $count = Slim::Player::Client::clientCount();
-
- 		push @returnArray, "count:" . $count;
- 		
- 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
- 	
- 		if ($valid) {
- 			my $idx = $start;
- 			my @players = Slim::Player::Client::clients();
- 	
- 			if (scalar(@players) > 0) {
-
- 				for my $eachclient (@players[$start..$end]) {
- 					push @returnArray, "playerindex:" . $idx;
- 					push @returnArray, "playerid:" . $eachclient->id();
- 					push @returnArray, "ip:" . $eachclient->ipport();
- 					push @returnArray, "name:" . $eachclient->name();
- 					push @returnArray, "model:" . $eachclient->model(); #squeezebox, softsqueeze, slimp3
- 					push @returnArray, "displaytype:" . $eachclient->vfdmodel(); 
- 					push @returnArray, "connected:" . ($eachclient->connected() || 0);
- 					$idx++;
- 				}	
- 			}
- 		}
-
- 		$client = undef;
- 		
- 	} elsif ($p0 =~ /^(artist|album|genre)s$/) {
-
- 		$pushParams = 0;
-
-		my $label = $1;
- 		my %params = parseParams($parrayref, \@returnArray);
-
-		if (defined $searchMap{$label} && specified($params{'search'})) {
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($params{'search'});
-		}
-		
-		if (defined $params{'genre_id'}){
-			$find->{'genre'} = $params{'genre_id'};
-		}
-		if (defined $params{'artist_id'}){
-			$find->{'artist'} = $params{'artist_id'};
-		}
-		if (defined $params{'album_id'}){
-			$find->{'album'} = $params{'album_id'};
-		}
-
-		if ($p0 eq 'artists') {
-
-			# The user may not want to include all the composers/conductors
-			$find->{'contributor.role'} = $ds->artistOnlyRoles;
-		}
-		
- 		if (Slim::Utils::Misc::stillScanning()) {
- 			push @returnArray, "rescan:1";
- 		}
-
-		my $results = $ds->find({
-			'field'  => $label,
-			'find'   => $find,
-			'sortBy' => $label,
-			'limit'  => $p2,
-			'offset' => $p1,
-		});
-
-		my $count   = scalar @$results;
-
- 		push @returnArray, "count:$count";
- 
- 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
- 
- 		if ($valid) {
-
- 			for my $eachitem (@$results[$start..$end]) {
- 				push @returnArray, 'id:'. $eachitem->id;
- 				push @returnArray, $label . ':' . $eachitem;
- 			}
- 		}
-
- 		$client = undef;
- 		
- 	} elsif ($p0 =~ /^(title|song|tracks)s$/) {
-
- 		$pushParams = 0;
- 	
-		my $label = 'track';
- 		my $sort  = 'title';
- 		my $tags  = 'gald';
- 		
- 		my %params = parseParams($parrayref, \@returnArray);
-
-		if (defined $searchMap{$label} && specified($params{'search'})) {
-			$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($params{'search'});
-		}
-
-		if (defined $params{'genre_id'}){
-			$find->{'genre'} = $params{'genre_id'};
-		}
-		if (defined $params{'artist_id'}){
-			$find->{'artist'} = $params{'artist_id'};
-		}
-		if (defined $params{'album_id'}){
-			$find->{'album'} = $params{'album_id'};
-		}
-		if (defined $params{'playlist_id'}){
-			$find->{'playlist'} = $params{'playlist_id'};
-		}
-
- 		$sort = $params{'sort'} if defined($params{'sort'});
- 		$tags = $params{'tags'} if defined($params{'tags'});
- 		
- 		if ($sort eq "tracknum" && !($tags =~ /t/)) {
- 			$tags = $tags . "t";
- 		}
- 		
- 		if (Slim::Utils::Misc::stillScanning()) {
- 			push @returnArray, "rescan:1";
- 		}
-
-		my $results = $ds->find({
-			'field'  => $label,
-			'find'   => $find,
-			'sortBy' => $sort,
-			'limit'  => $p2,
-			'offset' => $p1,
-		});
-		
-		my $count   = scalar @$results;
-
- 		push @returnArray, "count:$count";
-
- 		my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $count);
-
- 		my $cur = $start;
- 
- 		if ($valid) {
- 		
- 			for my $item (@$results[$start..$end]) {
-
- 				push @returnArray, pushSong($item, $tags);
-
- 				::idleStreams();
- 			}
- 		}
-
- 		$client = undef;
- 		
- 	} elsif ($p0 eq "playlists") {
-
- 		$pushParams = 0;
-
- 		my %params   = parseParams($parrayref, \@returnArray);
- 	
-		my $search   = $params{'search'};
-		my $tags      = $params{'tags'} || '';
-
-		# Normalize any search parameters
-		if (defined $search) {
-			$search = Slim::Web::Pages::searchStringSplit($search);
-		}
-
-		if (Slim::Utils::Misc::stillScanning()) {
-			push @returnArray, "rescan:1";
-		}
-
-		my $iterator = $ds->getPlaylists('all', $search);
-
-		if (defined $iterator) {
-
-			my $numitems = scalar @$iterator;
-			
-			push @returnArray, "count:" . $numitems;
-			
-			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
-
-			if ($valid) {
-	 			for my $eachitem (@$iterator[$start..$end]) {
-					push @returnArray, "id:"  . $eachitem->id;
-					push @returnArray, "playlist:" . Slim::Music::Info::standardTitle(undef, $eachitem);
-					push @returnArray, "url:" . $eachitem->url if ($tags =~ /u/);
-				}
-			}
-
-		} 
- 	} elsif ($p0 eq "playlisttracks") {
-
- 		$pushParams = 0;
-
- 		my %params   = parseParams($parrayref, \@returnArray);
- 	
- 		my $tags     = $params{'tags'}   || 'gald';
-		my $playlist = $params{'playlist_id'};
-		my $iterator;
-
-		if (Slim::Utils::Misc::stillScanning()) {
-			push @returnArray, "rescan:1";
-		}
-
-		if ($playlist) {
-
-			my $obj = $ds->objectForId('track', $playlist);
-
-			if ($obj) {
-				$iterator = $obj->tracks;
-			}
-
-		}
-
-		if (defined $iterator) {
-		
-			my $numitems = $iterator->count;
-			
-			push @returnArray, "count:" . $numitems;
-			
-			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), $numitems);
-			my $cur = $start;
-
-			if ($valid) {
-
-				for my $eachitem ($iterator->slice($start, $end)) {
-					
-					push @returnArray, "playlist index:$cur";
-
-					push @returnArray, pushSong($eachitem, $tags);
-
-					$cur++;
-				}
-			}
-
-		} else {
-
-			push @returnArray, "count:0";
-		}
-
- 		$client = undef;
- 
- 	} elsif ($p0 eq "songinfo") {
-
- 		$pushParams = 0;
- 	
- 		my $path;
- 		my $id;
- 		my $tags   = "abcdefghijklmnopqrstvwyz"; # all letter EXCEPT u AND x
- 		my $ds     = Slim::Music::Info::getCurrentDataStore();
- 		my %params = parseParams($parrayref, \@returnArray);
- 		my $track;
- 		
- 		$path = $params{'url'} if defined($params{'url'});
- 		$id = $params{'track_id'} if defined($params{'track_id'});
- 		$tags = $params{'tags'} if defined($params{'tags'});
- 		
- 		if (defined $id){
- 			if ($tags !~ /u/) {
- 				$tags .= 'u';
- 			}
- 			$track = $ds->objectForId('track', $id);
- 		} else {
- 			if (defined $path && Slim::Music::Info::isSong($path)){
- 				if ($tags !~ /x/) {
- 					$tags .= 'x';
- 				}
- 				$track = $ds->objectForUrl($path)
- 			}
- 		}
- 		 				
- 		if (Slim::Utils::Misc::stillScanning()) {
- 			push @returnArray, "rescan:1";
- 		}
- 		
- 		if (defined $track) {
- 
- 			my @items = pushSong($track, $tags);
- 			
- 			push @returnArray, "count:" . scalar(@items);
- 	
- 			my ($valid, $start, $end) = normalize(scalar($p1), scalar($p2), scalar(@items));
- 	
- 			if ($valid) {
- 				for my $eachitem (@items[$start..$end]) {
- 					push @returnArray, $eachitem;
- 				}
- 			}
-
- 		} else {
-
- 			push @returnArray, "count:0";
- 		}
-
- 		$client = undef;
-
 ################################################################################
 # The following commands require a valid client to be specified
 ################################################################################
@@ -1670,14 +1280,6 @@ sub execute {
  				}
  			}
 
-		} elsif ($p0 eq "listen") {
-
-			$client = undef;
-
-		} elsif ($p0 eq "exit") {
-
-			$client = undef;
-
  		} else {
 
  			#treat anything we don't know as a query so that we don't bcast it!
@@ -1871,9 +1473,6 @@ sub sleepStartFade {
 	if ($client->isPlayer()) {
 		$client->fade_volume(-60, undef, [$client]);
 	}
-
-#	$client->sleepTime(0);
-#	$client->currentSleepTime(0);
 }
 
 sub sleepPowerOff {
