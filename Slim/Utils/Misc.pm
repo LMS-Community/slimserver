@@ -318,6 +318,14 @@ sub fixPath {
 		$base = pathFromFileURL($base);
 	} 
 
+	# People sometimes use playlists generated on Windows elsewhere.
+	# See Bug 236
+	if (Slim::Utils::OSDetect::OS() ne 'win') {
+
+		$file =~ s/^[C-Z]://i;
+		$file =~ s/\\/\//g;
+	}
+
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
 	my $audiodir = Slim::Utils::Prefs::get("audiodir");
@@ -359,9 +367,13 @@ sub fixPath {
 				$fixed = fixPath(stripRel(catfile($base, $file)));
 			}
 		}
+
 	} elsif (file_name_is_absolute($file)) {
+
 		$fixed = $file;
+
 	} else {
+
 		$file =~ s/\Q$audiodir\E//;
 		$fixed = catfile($audiodir, $file);
 	}
