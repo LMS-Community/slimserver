@@ -14,8 +14,8 @@ use Slim::Utils::Misc;
 my %tagMapping = (
 	'WRT'       => 'COMPOSER',
 	'CPIL'      => 'COMPILATION',
-	'COVR'      => 'PIC'
-	'ENCRYPTED' => 'DRM'
+	'COVR'      => 'PIC',
+	'ENCRYPTED' => 'DRM',
 );
 
 if ($] > 5.007) {
