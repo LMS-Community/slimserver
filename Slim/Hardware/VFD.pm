@@ -73,7 +73,6 @@ my %symbolmap = (
 	}
 );
 
-
 # depricated, use the Slim::Display functions
 sub symbol {
 	return Slim::Display::Display::symbol(@_);
@@ -106,6 +105,19 @@ sub setCustomChar {
 }
 
 my %customChars;
+
+# Map of alternatives if custom character space exhaused
+my %gracefulmap = (
+    'slash'      => '/',
+	'backslash'  => '\\',
+	'islash'     => '\\',
+	'ibackslash' => '/',
+	'Ztop'       => chr(0x1f),
+	'Zbottom'    => '/',
+	'leftvbar'   => '|',
+	'rightvbar'  => '|',
+);
+
 
 sub vfdUpdate {
 	my $client = shift;
@@ -231,7 +243,14 @@ sub vfdUpdate {
 			$usedCustom++;
 			$nextChr = chr(ord($nextChr)+1);
 		} else { # No space left; use a space
-			$line =~ s/$encodedCustom/ /g;
+		    $::d_ui && msg( "no space left:" . $custom . "\n") ;
+		    if ($gracefulmap{$custom}) {
+				$::d_ui && msg( "graceful: " . $custom . " -> " . $gracefulmap{$custom} . "\n" );
+				$line =~ s/$encodedCustom/$gracefulmap{$custom}/g;
+		    } else {
+				$::d_ui && msg("ungraceful\n");
+				$line =~ s/$encodedCustom/ /g;
+		    }
 			delete $newCustom{$custom};
 		}
 	}
@@ -494,14 +513,14 @@ Slim::Hardware::VFD::setCustomChar( 'toplinechar',
 
 # replaces = in format string
 Slim::Hardware::VFD::setCustomChar( 'doublelinechar', 
-					(	0b01111111, 
+					(	0b00011111, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
 						0b00000000, 
-						0b01111111, 
-						0b00000000	 ));
+						0b00000000, 
+						0b00011111	 ));
 
 # replaces ? in format string.  Used in Z, ?, 7
 Slim::Hardware::VFD::setCustomChar( 'Ztop', 		
@@ -527,25 +546,45 @@ Slim::Hardware::VFD::setCustomChar( 'Zbottom',
                   
 # replaces / in format string.
 Slim::Hardware::VFD::setCustomChar( 'slash', 	
-			 (     		0b00000001,
-						0b00000001,
-						0b00000010,
+				(     	0b00000011,
 						0b00000100,
 						0b00001000,
+						0b00001000,
+						0b00010000,
 						0b00010000,
 						0b00010000,
 						0b00000000   ));
                   
 Slim::Hardware::VFD::setCustomChar( 'backslash', 	
-				( 		0b00010000,
-						0b00010000,
-						0b00001000,
+				( 		0b00011000,
 						0b00000100,
+						0b00000010,
 						0b00000010,
 						0b00000001,
 						0b00000001,
+						0b00000001,
 						0b00000000   ));
-                  
+
+Slim::Hardware::VFD::setCustomChar( 'islash', 	
+				(     	0b00010000,
+						0b00010000,
+						0b00010000,
+						0b00001000,
+						0b00001000,
+						0b00000100,
+						0b00000011,
+						0b00000000   ));
+                   
+Slim::Hardware::VFD::setCustomChar( 'ibackslash', 	
+				( 		0b00000001,
+						0b00000001,
+						0b00000001,
+						0b00000010,
+						0b00000010,
+						0b00000100,
+						0b00011000,
+						0b00000000   ));
+
 Slim::Hardware::VFD::setCustomChar( 'filledcircle',		
 					 ( 	0b00000001,
 						0b00001111,
@@ -601,6 +640,8 @@ my $leftvbar = Slim::Display::Display::symbol('leftvbar');
 my $rightvbar = Slim::Display::Display::symbol('rightvbar');
 my $slash = Slim::Display::Display::symbol('slash');
 my $backslash = Slim::Display::Display::symbol('backslash');
+my $islash = Slim::Hardware::VFD::symbol('islash');
+my $ibackslash = Slim::Hardware::VFD::symbol('ibackslash');
 my $toplinechar = Slim::Display::Display::symbol('toplinechar');
 my $doublelinechar = Slim::Display::Display::symbol('doublelinechar');
 my $Zbottom = Slim::Display::Display::symbol('Zbottom');
@@ -616,10 +657,10 @@ my $centerchar = Slim::Display::Display::symbol('center');
 my %doublechars = (
 	
 	"(" => [ $slash,
-			 $backslash ],
+			 $islash ],
 	
-	")" => [ $hardspace . $backslash,
-			 $hardspace . $slash ],
+	")" => [ $backslash,
+			 $ibackslash ],
 	
 	"[" => [ $rightvbar . $toplinechar,
 			 $rightvbar . '_' ],
@@ -628,9 +669,9 @@ my %doublechars = (
 			 '_' . $leftvbar],
 	
 	"<" => [ '/',
-			 $backslash ],
+			 '\\' ],
 	
-	">" => [ $backslash,
+	">" => [ '\\',
 			 '/' ],
 	
 	"{" => [ '(',
@@ -695,43 +736,44 @@ my %doublechars = (
 	$hardspace => [ $hardspace, $hardspace],
 	
 	$centerchar => [$centerchar,$centerchar]
-	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
-	,'1' => [$hardspace . $slash . $leftvbar , $hardspace . $hardspace . $leftvbar]
-	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $Zbottom . '_']
+	,'0' => [$slash . $backslash, $islash . $ibackslash]
+	,'1' => [$hardspace . '\'' . $leftvbar , $hardspace . '_' . 'L']
+	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $slash . '_']
 	,'3' => [$hardspace . $doublelinechar . ')' , ' _)']
 	,'4' => [$rightvbar . '_' . $leftvbar , $hardspace . $hardspace . $leftvbar]
 	,'5' => [$rightvbar . $doublelinechar . $toplinechar , ' _)']
-	,'6' => [$hardspace . $Zbottom . $hardspace , '(_)']
-	,'7' => [$hardspace . $toplinechar . $Ztop , $hardspace . $slash . $hardspace]
+	,'6' => [$hardspace . '/' . $hardspace , '(' . $doublelinechar . ')']
+    ,'7' => [$toplinechar . $toplinechar . '/' , $hardspace . $slash . $hardspace]
 	,'8' => ['(' . $doublelinechar . ')' , '(_)']
 	,'9' => ['(' . $doublelinechar . ')' , $hardspace . $slash . $hardspace]
 	,'A' => [$hardspace . $slash . $backslash . $hardspace , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
 	,'B' => [$rightvbar . $doublelinechar . ')' , $rightvbar . '_)']
-	,'C' => [$slash . $toplinechar , $backslash . '_']
-	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $slash]
+	,'C' => [$slash . $toplinechar , $islash . '_']
+	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $ibackslash]
 	,'E' => [$rightvbar . $doublelinechar , $rightvbar . '_']
 	,'F' => [$rightvbar . $doublelinechar , $rightvbar . $hardspace]
-	,'G' => [$slash . $toplinechar . $hardspace , $backslash . $doublelinechar . $leftvbar]
+	,'G' => [$slash . $doublelinechar . $hardspace , $islash . '_' . $leftvbar]
 	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
 	,'I' => [$hardspace . $leftvbar , $hardspace . $leftvbar]
-	,'J' => [$hardspace . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
-	,'K' => [$rightvbar . $slash , $rightvbar . $backslash]
+	,'J' => [$hardspace . $rightvbar, $islash . $ibackslash]
+	,'K' => [$rightvbar . $ibackslash , $rightvbar . $backslash]
 	,'L' => [$rightvbar . $hardspace , $rightvbar . '_']
-	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
-	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . $hardspace . $leftvbar]
-	,'O' => [$slash . $toplinechar . $backslash , $backslash . '_' . $slash]
+	,'M' => [$rightvbar . $islash . $ibackslash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
+	,'N' => [$rightvbar . '\\' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'O' => [$slash . $backslash , $islash . $ibackslash]
 	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . $hardspace . $hardspace]
-	,'Q' => [$slash . $toplinechar . $backslash , $backslash . '_X']
+	,'Q' => [$slash . $backslash , $islash . 'X']
 	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . $hardspace . $backslash]
 	,'S' => ['(' . $toplinechar , '_)']
-	,'T' => [$toplinechar . '|' . $toplinechar , ' | ']
-	,'U' => [$rightvbar . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'T' => [$toplinechar . 'T' . $toplinechar , ' | ']
+	,'U' => [$leftvbar . $rightvbar , $islash . $ibackslash]
 	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
-	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $backslash . $slash . $backslash . $slash]
-	,'X' => [$backslash . $slash , $slash . $backslash]
-	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
-	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
-	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
+	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $islash . $ibackslash . $islash . $ibackslash]
+	,'X' => [$islash . $ibackslash , $slash . $backslash]
+	,'Y' => [$islash . $ibackslash, $rightvbar . $leftvbar]
+	,'Z' => [$toplinechar . '/' , '/' . '_']
+	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , 
+             $rightvbar . $toplinechar . $toplinechar . 'L']
 	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
 	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
 );
