@@ -640,6 +640,13 @@ sub addFormat {
 	} else {
 		$::d_info && msg("Format $format already exists.\n");
 	}
+	
+	if ($format !~ /\D/) {
+		# format is a single word, so make it an element
+		push @elements, $format;
+		$elemstring = join "|", @elements;
+		$elemRegex = qr/$elemstring/;
+	}
 }
 
 my %endbrackets = (
