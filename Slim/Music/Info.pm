@@ -455,52 +455,6 @@ sub getCurrentTitle {
 	return $currentTitles{$url} || standardTitle($client, $url);
 }
 
-sub elemLookup {
-	my $element     = shift;
-	my $infoHashref = shift;
-
-	# don't return disc number if known to be single disc set
-	if ($element eq "DISC") {
-		my $discCount = $infoHashref->{"DISCC"};
-		return undef if defined $discCount and $discCount == 1;
-	}
-	return undef if defined $infoHashref->{$element} and Slim::Utils::Strings::stringExists("NO_".$element) and $infoHashref->{$element} eq string("NO_".$element);
-
-	return $infoHashref->{$element};
-}
-
-# used by infoFormat to add items not in infoCache to hash of info
-sub addToinfoHash {
-	my $infoHashref = shift;
-	my $file = shift;
-	my $str = shift;
-	
-	if ($str =~ /VOLUME|PATH|FILE|EXT/) {
-		if (isFileURL($file)) { $file = Slim::Utils::Misc::pathFromFileURL($file); }
-		my ($volume, $path, $filename) = splitpath($file);
-		$filename =~ s/\.([^\.]*?)$//;
-		my $ext = $1;
-		$infoHashref->{'VOLUME'} = $volume;
-		$infoHashref->{'PATH'} = $path;
-		$infoHashref->{'FILE'} = $filename;
-		$infoHashref->{'EXT'} = $ext;
-	}
-	
-	if ($str =~ /LONGDATE|SHORTDATE|CURRTIME/) {
-		$infoHashref->{'LONGDATE'} = Slim::Utils::Misc::longDateF();
-		$infoHashref->{'SHORTDATE'} = Slim::Utils::Misc::shortDateF();
-		$infoHashref->{'CURRTIME'} = Slim::Utils::Misc::timeF();
-	}
-	
-	if ($str =~ /DURATION/ && defined($infoHashref->{'SECS'})) {
-		$infoHashref->{'DURATION'} = int($infoHashref->{'SECS'}/60) . ":" 
-			. ((($infoHashref->{'SECS'}%60) < 10) ? ("0" . $infoHashref->{'SECS'}%60) : $infoHashref->{'SECS'}%60)
-	}
-	
-	$infoHashref->{'FROM'} = string('FROM');
-	$infoHashref->{'BY'} = string('BY'); 
-}
-
 sub initParsedFormats {
 	%parsedFormats = ();
 	my @trackAttrs; # for relating track attributes to album/artist attributes
@@ -673,6 +627,19 @@ sub initParsedFormats {
 			return (defined $output ? $output : '');
 		};
 
+}
+
+sub addFormat {
+	my $format = shift;
+	my $formatSubRef = shift;
+	
+	# only add format if it is not already defined
+	if (!defined $parsedFormats{$format}) {
+		$parsedFormats{$format} = $formatSubRef;
+		$::d_info && msg("Format $format added.\n");
+	} else {
+		$::d_info && msg("Format $format already exists.\n");
+	}
 }
 
 my %endbrackets = (
