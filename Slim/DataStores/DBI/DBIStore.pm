@@ -425,8 +425,11 @@ sub newTrack {
 	# update genres, etc - that we need the track ID for.
 	$self->_postCheckAttributes($track, $deferredAttributes, 1);
 
-	$self->{'lastTrackURL'} = $url;
-	$self->{'lastTrack'}->{dirname($url)} = $track;
+	if ($track->audio) {
+
+		$self->{'lastTrackURL'} = $url;
+		$self->{'lastTrack'}->{dirname($url)} = $track;
+	}
 
 	if ($self->_includeInTrackCount($track)) { 
 
@@ -1158,8 +1161,8 @@ sub _retrieveTrack {
 		# live_object_index and not hit the db.
 		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
 	}
-	
-	if (defined($track) && !$lightweight) {
+
+	if (defined($track) && $track->audio && !$lightweight) {
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{$dirname} = $track;
 	}
@@ -1470,7 +1473,7 @@ sub _postCheckAttributes {
 		# already exists. Because we keep contributors now, but an
 		# album can have many contributors, check the last path and
 		# album name, to see if we're actually the same.
-		if (!$disc && $self->{'lastTrack'}->{$basename} && 
+		if (!$discc && $self->{'lastTrack'}->{$basename} && 
 			$self->{'lastTrack'}->{$basename}->album() && 
 			$self->{'lastTrack'}->{$basename}->album() eq $album
 			) {
@@ -1497,16 +1500,17 @@ sub _postCheckAttributes {
 			# Check if the album name is one of the "common album names"
 			# we've identified in prefs. If so, we require a match on
 			# both album name and primary artist name.
-			if ((grep $album =~ m/^$_$/i, @$common_albums) && $contributors->[0]) {
+			my $commonAlbumTitlesToggle = Slim::Utils::Prefs::get('commonAlbumTitlesToggle');
 
-				$search->{'contributor'} = $contributors->[0]->namesort;
+			if (($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) || !$commonAlbumTitlesToggle) {
 
-				($albumObj) = Slim::DataStores::DBI::Album->search($search);
+				if ($contributors->[0] && ref($contributors->[0])) {
 
-			} else {
-
-				($albumObj) = Slim::DataStores::DBI::Album->search($search);
+					$search->{'contributor'} = $contributors->[0];
+				}
 			}
+
+			($albumObj) = Slim::DataStores::DBI::Album->search($search);
 
 			# Didn't match anything? It's a new album - create it.
 			unless ($albumObj) {

@@ -128,6 +128,7 @@ sub init {
 		'dbusername'		=> '',
 		'dbpassword'		=> '',
 		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
+		'commonAlbumTitlesToggle' => 0,
 		'noGenreFilter'		=> 0,
 		'variousArtistAutoIdentification' => 1,
 		'variousArtistsInArtists' => 0,

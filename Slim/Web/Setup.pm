@@ -1580,15 +1580,25 @@ sub initSetupConfig {
 	,'behavior' => {
 		'title' => string('BEHAVIOR_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default', 'VariousArtists']
+		,'GroupOrder' => [qw(Default CommonAlbumTitles VariousArtists)]
 		,'Groups' => {
 	
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout', 'checkVersion', 'composerInArtists', 'noGenreFilter',
 							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
-							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',
-							,'commonAlbumTitles']
+							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',],
 				},
+
+			'CommonAlbumTitles' => {
+				'PrefOrder' => [qw(commonAlbumTitlesToggle commonAlbumTitles)]
+					,'GroupHead' => string('SETUP_COMMONALBUMTITLES')
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefSub' => 1
+					,'GroupSub' => 1
+					,'GroupLine' => 1
+					,'Suppress_PrefLine' => 1
+			},
+
 			'VariousArtists' => {
 				'PrefOrder' => [qw(variousArtistAutoIdentification variousArtistsInArtists useBandAsAlbumArtist variousArtistsString)]
 					,'GroupHead' => string('SETUP_VARIOUSARTISTS')
@@ -1597,7 +1607,7 @@ sub initSetupConfig {
 					,'GroupSub' => 1
 					,'GroupLine' => 1
 					,'Suppress_PrefLine' => 1
-			}
+			},
 		}
 		,'Prefs' => {
 			'filesort' => {
@@ -1723,23 +1733,33 @@ sub initSetupConfig {
 								,'0' => string ('SETUP_GROUPDISCS_0')
 							}
 					 }
+
+			,'commonAlbumTitlesToggle' => {
+				'validate' => \&validateAcceptAll,
+				'inputTemplate' => 'setup_input_chk.html',
+				'PrefChoose' => string('SETUP_COMMONALBUMTITLES_TOGGLE'),
+			}
+
 			,'commonAlbumTitles'	=> {
-						'isArray' => 1
-						,'arrayAddExtra' => 1
-						,'arrayDeleteNull' => 1
-						,'arrayDeleteValue' => ''
-						,'arrayBasicValue' => 0
-						,'PrefSize' => 'large'
-						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
-										return;
-									}
-									processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
-									$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
-								}
+					'isArray' => 1,
+					'arrayAddExtra' => 1,
+					'arrayDeleteNull' => 1,
+					'arrayDeleteValue' => '',
+					'arrayBasicValue' => 0,
+					'PrefSize' => 'large',
+					'inputTemplate' => 'setup_input_array_txt.html',
+					'onChange' => sub {
+
+						my ($client,$changeref,$paramref,$pageref) = @_;
+
+						if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
+							return;
+						}
+
+						processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
+						$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
 					}
+				}
 			}
 		} #end of setup{'behavior'} hash
 	,'formatting' => {

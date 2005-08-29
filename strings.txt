@@ -4240,6 +4240,9 @@ SETUP_COMMONALBUMTITLES
 	EN	Common Album Titles
 	ES	Títulos Comunes de Discos
 
+SETUP_COMMONALBUMTITLES_TOGGLE
+	EN	Specifiy a list of Common Album Titles
+
 SETUP_COMMONALBUMTITLES_DESC
 	CZ	Standardně SlimServer seskupuje skladby ze stejného alba do jedné skupiny, přestože jsou skladby umístěné v různých adresářích. Pro velice často používané názvy alb, jako například "Greatest Hits", je ještě vyždadováno, aby se pro skladby jednoho alba shodovalo jmého interpreta. Seznam níže reprezentuje skupinu utakovýchto názvů, kde bude tato dodatečné kontrola uplatňována.
 	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
