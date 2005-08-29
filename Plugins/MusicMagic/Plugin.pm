@@ -32,10 +32,10 @@ our %mixMap  = (
 our %mixFunctions = ();
 
 our %validMixTypes = (
-	'song'   => 1,
-	'album'  => 1,
-	'artist' => 1,
-	'genre'  => 1,
+	'track'   => 'song',
+	'album'  => 'album',
+	'artist' => 'artist',
+	'genre'  => 'genre',
 );
 
 sub strings {
@@ -848,7 +848,7 @@ sub mixerFunction {
 	my $currentItem = $items->[$listIndex];
 
 	# if we've chosen a particular song
-	if (!$descend || $levels[$level] eq 'song') {
+	if (!$descend || $levels[$level] eq 'track') {
 
 		$mixSeed = $currentItem->path;
 
@@ -974,14 +974,14 @@ sub getMix {
 	}
 
 	# Not sure if this is correct yet.
-	if ($for ne 'song' && $for ne 'album') {
+	if ($validMixTypes{$for} ne 'song' && $validMixTypes{$for} ne 'album') {
 
 		$id = Slim::Utils::Unicode::utf8encode_locale($id);
 	}
 
-	$::d_musicmagic && msg("MusicMagic: Creating mix for: $for using: $id as seed.\n");
+	$::d_musicmagic && msg("MusicMagic: Creating mix for: $validMixTypes{$for} using: $id as seed.\n");
 
-	my $mixArgs = "$for=$id";
+	my $mixArgs = "$validMixTypes{$for}=$id";
 
 	# url encode the request, but not the argstring
 	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
