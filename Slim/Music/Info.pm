@@ -16,8 +16,6 @@ use FindBin qw($Bin);
 use MP3::Info;
 use Tie::Cache::LRU;
 
-use Slim::DataStores::DBI::DBIStore;
-
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -136,6 +134,10 @@ sub init {
 
 	# precompute the valid extensions
 	validTypeExtensions();
+
+	# Allow external programs to use Slim::Utils::Misc, without needing
+	# the entire DBI stack.
+	require Slim::DataStores::DBI::DBIStore;
 
 	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
 	
