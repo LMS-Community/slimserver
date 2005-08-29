@@ -715,7 +715,7 @@ sub execute {
 				# saved playlist - resume if we can. Bug 1582
 				my $playlistObj = $client->currentPlaylist;
 
-				if ($playlistObj && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
+				if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
 
 					$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
 
