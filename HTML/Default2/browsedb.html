@@ -1,7 +1,7 @@
 [% PROCESS pageheader.html pageicon=browseby %]
 
 <p id="pagetitle">
- <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a>
+ <a onclick="parent.browseurl('[% webroot %]home.html?')">[% "HOME" | string %]</a>
  [% pwd_list %]
  [% IF song_count %]
  <span id="songcount">
