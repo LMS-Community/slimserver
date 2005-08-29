@@ -116,7 +116,11 @@ sub lines {
 	$line1 .= sprintf(" (%d %s %s)", selection($client, 'mood_wheel_index') + 1, $client->string('OUT_OF'), scalar @browseMoodChoices);
 	$line2 = $browseMoodChoices[selection($client, 'mood_wheel_index')];
 
-	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2, 
+		'overlay2' => $client->symbols('rightarrow'),
+	};
 }
 
 #	get the current selection parameter from the parameter stack

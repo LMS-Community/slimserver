@@ -547,23 +547,21 @@ sub mixerFunction {
 	
 	my @levels = split(",", $hierarchy);
 	
-	my @oldlines    = Slim::Display::Display::curLines($client);
-
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $mix;
 
 	# if we've chosen a particular song
 	if ($levels[$level] eq 'track' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft();
 	# if we've picked an artist 
 	} elsif ($levels[$level] eq 'artist' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft();
 	# if we've picked a genre 
 	} elsif ($levels[$level] eq 'genre' && $currentItem && $currentItem->moodlogic_mixable()) {
 			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft();
 	# don't do anything if nothing is mixable
 	} else {
 			$client->bumpRight();

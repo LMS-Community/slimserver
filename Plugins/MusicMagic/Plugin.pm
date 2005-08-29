@@ -210,7 +210,11 @@ sub playMix {
 
 	my $line2 = $client->param('stringHeader') ? $client->string($client->param('header')) : $client->param('header');
 	
-	$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
+	$client->showBriefly( {
+		'line1'   => $line1,
+		'line2'   => $line2,
+		'overlay2'=> $client->symbols('notesymbol'),
+	});
 
 	$client->execute(["playlist", $playAddInsert, "listref", $client->param('listRef')]);
 }
@@ -795,7 +799,6 @@ sub exportFunction {
 sub specialPushLeft {
 	my $client   = shift;
 	my $step     = shift;
-	my @oldlines = @_;
 
 	my $now  = Time::HiRes::time();
 	my $when = $now + 0.5;
@@ -805,17 +808,17 @@ sub specialPushLeft {
 	if ($step == 0) {
 
 		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(\@oldlines, [$mixer]);
+		$client->pushLeft(undef, { 'line1' => $mixer });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 
 	} elsif ($step == 3) {
 
 		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft([$mixer."...", ""], [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft( { 'line1' => $mixer."..." }, undef);
 
 	} else {
 
-		$client->update( [$client->renderOverlay($mixer.("." x $step))], undef);
+		$client->update( { 'line1' => $mixer.("." x $step) });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }
@@ -883,7 +886,7 @@ sub mixerFunction {
 		
 		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 
-		specialPushLeft($client, 0, Slim::Display::Display::curLines($client));
+		specialPushLeft($client, 0);
 
 	} else {
 
@@ -924,12 +927,11 @@ sub mixExitHandler {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my @oldlines = Slim::Display::Display::curLines($client);
 		my $valueref = $client->param('valueRef');
 
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $$valueref });
 
-		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft();
 	}
 }
 

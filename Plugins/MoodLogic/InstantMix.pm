@@ -58,9 +58,8 @@ sub init {
 		'right' => sub  {
 			my $client = shift;
 
-			my @oldlines = Slim::Display::Display::curLines($client);
 			Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $instantMix[selection($client, 'instant_mix_index')]});
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft();
 		},
 		'play' => sub  {
 			my $client = shift;
@@ -78,7 +77,11 @@ sub init {
 			}
 			$line2 = $client->string('MOODLOGIC_INSTANT_MIX');
 			
-			$client->showBriefly($client->renderOverlay($line1, $line2, undef, Slim::Display::Display::symbol('notesymbol')));
+			$client->showBriefly( {
+				'line1'    => $line1,
+				'line2'    => $line2,
+				'overlay2' => $client->symbols('notesymbol'),
+			});
 			
 			$client->execute(["playlist", $append ? "append" : "play", $instantMix[0]]);
 			
@@ -118,7 +121,11 @@ sub lines {
 
 	my $line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 
-	return ($line1, $line2, undef, Slim::Display::Display::symbol('rightarrow'));
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2,
+		'overlay2' => $client->symbols('rightarrow'),
+	};
 }
 
 #	get the current selection parameter from the parameter stack

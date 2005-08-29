@@ -38,7 +38,7 @@ sub init {
 			$variety += $inc;
 			if ($variety > 100) { $variety = 100; };
 			Slim::Utils::Prefs::set('varietyCombo', $variety);
-			$client->pushUp();
+			$client->update();
 		},
 
 		'down' => sub  {
@@ -57,7 +57,7 @@ sub init {
 			$variety -= $inc;
 			if ($variety < 0) { $variety = 0; };
 			Slim::Utils::Prefs::set('varietyCombo', $variety);
-			$client->pushDown();
+			$client->update();
 		},
 		
 		'left' => sub  {
@@ -89,9 +89,8 @@ sub init {
 			}
 
 			if (scalar @$instantMix) {
-				my @oldlines = Slim::Display::Display::curLines($client);
 				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => $instantMix });
-				specialPushLeft($client, 0, @oldlines);
+				specialPushLeft($client, 0);
 			} else {
 				$client->bumpRight()
 			}
@@ -101,10 +100,9 @@ sub init {
 			my $client = shift;
 			my $currentItem;
 			if (defined $client->param( 'song')) {
-				my @oldlines = Slim::Display::Display::curLines($client);
 				$currentItem = $client->param( 'song');
 				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => $client->param( 'song')});
-				specialPushLeft($client, 0, @oldlines);
+				specialPushLeft($client, 0);
 			} else {
 				$client->bumpRight()
 			}
@@ -120,7 +118,6 @@ sub setMode {
 	my $client = shift;
 	
 	$client->lines(\&lines);
-	$client->update();
 }
 
 #
@@ -135,17 +132,20 @@ sub lines {
 	$line1 = $client->linesPerScreen() == 2 ? $client->string('SETUP_VARIETYCOMBO') : $client->string('SETUP_VARIETYCOMBO_DBL');
 	$line1 .= " (".$variety.")";
 
-	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth(), $level / 40);
+	$line2 = $client->symbols($client->progressBar($client->displayWidth(), $level / 40));
 
 	if ($client->linesPerScreen() == 1) { $line2 = $line1; }
 
-	return ($line1, $line2, Slim::Display::Display::symbol('rightarrow'),undef);
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2,
+		'overlay1' => $client->string('MUSICMAGIC_MIXRIGHT'),
+	};
 }
 
 sub specialPushLeft {
 	my $client   = shift;
 	my $step     = shift;
-	my @oldlines = @_;
 
 	my $now  = Time::HiRes::time();
 	my $when = $now + 0.5;
@@ -156,17 +156,17 @@ sub specialPushLeft {
 	if ($step == 0) {
 
 		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(\@oldlines, [$mixer]);
+		$client->pushLeft(undef, { 'line1' => $mixer });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 
 	} elsif ($step == 3) {
 
 		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft([$mixer."...", ""], [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft({ 'line1' => $mixer."..." }, undef);
 
 	} else {
 
-		$client->update( [$client->renderOverlay($mixer.("." x $step))], undef);
+		$client->update( { 'line1' => $mixer.("." x $step) } );
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }
