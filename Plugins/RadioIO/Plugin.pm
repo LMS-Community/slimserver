@@ -122,11 +122,11 @@ our %functions = (
 		my $url = getRadioIOURL($index);
 
 		if (defined($url)) {
-			$client->showBriefly(
-				$client->renderOverlay($client->string('CONNECTING_FOR'), $station_names[$index], undef, Slim::Display::Display::symbol('notesymbol')),
-				undef,
-				1
-			);
+			$client->showBriefly({
+				'line1' => $client->string('CONNECTING_FOR'), 
+				'line2' => $station_names[$index], 
+				'overlay1' => $client->symbols('notesymbol')
+			});
 
 			$client->execute(['playlist', 'clear']);
 			$client->execute(['playlist', 'add', $url]);
@@ -140,11 +140,11 @@ our %functions = (
 		my $url = getRadioIOURL($index);
 
 		if (defined($url)) {
-			$client->showBriefly(
-				$client->renderOverlay($client->string('ADDING_TO_PLAYLIST'), $station_names[$index], undef, Slim::Display::Display::symbol('notesymbol')),
-				undef,
-				1
-			);
+			$client->showBriefly({
+				'line1' => $client->string('ADDING_TO_PLAYLIST'), 
+				'line2' => $station_names[$index], 
+				'overlay1' => $client->symbols('notesymbol'),
+			});
 
 			$client->execute(['playlist', 'add', $url]);
 		}
@@ -153,18 +153,14 @@ our %functions = (
 
 sub lines {
 	my $client = shift;
-	my @lines;
 	my $name = $station_names[$current{$client}];
 
-	$lines[0] = $client->string('PLUGIN_RADIOIO_MODULE_TITLE').
-	    ' (' .
-		($current{$client} + 1) .  ' ' .
-		  $client->string('OF') .  ' ' .
-			  (scalar(@station_names)) .  ') ' ;
-	$lines[1] = $name;
-	$lines[3] = Slim::Display::Display::symbol('notesymbol');
-
-	return @lines;
+	return {
+		'line1' => $client->string('PLUGIN_RADIOIO_MODULE_TITLE') . ' (' .
+				($current{$client} + 1) . ' ' . $client->string('OF') .  ' ' . (scalar(@station_names)) .  ') ',
+		'line2' => $name,
+		'overlay2' => $client->symbols('notesymbol')
+	};
 }
 
 sub setMode {
@@ -228,14 +224,11 @@ sub strings
 {
 	return "
 PLUGIN_RADIOIO_MODULE_NAME
-	DE	radioio.com - no boundaries.
 	EN	radioio.com - no boundaries.
 	ES	radioio.com - sin límites.
 
 PLUGIN_RADIOIO_MODULE_TITLE
-	DE	radioio.com
 	EN	radioio.com
-	ES	radioio.com
 ";}
 
 1;
