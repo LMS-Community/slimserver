@@ -22,6 +22,7 @@
 package Plugins::Live365::Live365API;
 
 use strict;
+use Slim::Utils::Misc qw( msg );
 use vars qw( $VERSION );
 $VERSION = 1.20;
 
