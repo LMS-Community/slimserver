@@ -1752,6 +1752,11 @@ sub update_firmware {
 	return Slim::Web::HTTP::filltemplatefile("update_firmware.html", $params);
 }
 
+sub tuneIn {
+	my ($client, $params) = @_;
+	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
+}
+
 1;
 
 __END__

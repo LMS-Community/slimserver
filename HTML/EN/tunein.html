@@ -1,0 +1,22 @@
+[% pagetitle = 'RADIO_TUNEIN' | string %]
+[% PROCESS pageheader.html %]
+<h3>[% 'RADIO_TUNEIN_NOW' | string %]</h3>
+
+[% IF p2 %]
+	<p><b>
+	[% 'RADIO_TUNED_IN' | string %] [% p2 %]
+	</p></b>
+[% END %]
+
+<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
+
+<form name="tune" method="get" action="[% webroot %]tunein.html">
+	<input type="hidden" name="p0" value="playlist">
+	<input type="hidden" name="p1" value="play">
+	<input type="hidden" name="player" value="[% player %]">
+	[% 'RADIO_TUNEIN_RADIOURL' | string %]
+	<input type="text" class="stdedit" name="p2" size="50">
+	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" onclick='document.forms.tune.submit(); for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
+</form>
+
+[% PROCESS pagefooter.html %]

@@ -128,6 +128,7 @@ sub init {
 		qr/^status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
 		qr/^status\.(?:htm|xml)/	=> \&Slim::Web::Pages::status,
 		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
+		qr/^tunein\.(?:htm|xml)/	=> \&Slim::Web::Pages::tuneIn,
 		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
 	);
 

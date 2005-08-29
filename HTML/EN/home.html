@@ -32,14 +32,15 @@
 [% END %]
     </ul>
 
-[% IF additionalLinks.radio %]    <h4>[% "RADIO" | string %]</h4>
+    <h4>[% "RADIO" | string %]</h4>
     <ul>
     [% FOREACH key = additionalLinks.radio.keys %]
     <li> <a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a>
     </li>
     [% END %]
+    <li> <a href="tunein.html?player=[% player | uri %]">[% "RADIO_TUNEIN" | string %]</a>
+    </li>
     </ul>
-[% END %]
 
 [% IF not nosetup %]    <h4>[% "SETTINGS" | string %]</h4>
 	<ul>

@@ -1,0 +1,64 @@
+[% pagetitle = 'RADIO_TUNEIN' | string %]
+[% pageicon = 'RADIO' %]
+[% PROCESS pageheader.html %]
+<tr height="44">
+	<td width="4" height="44"><img src="[% webroot %]html/images/spacer.gif" width="8" height="39" alt=""></td>
+	<td valign="top" class="medgrey" height="44">
+		<table cellspacing="0" width="100%">
+			<tr height="5">
+				<td width="8" height="5"><img src="[% webroot %]html/images/spacer.gif" width="8" height="5" alt=""></td>
+				<td height="5"><img src="[% webroot %]html/images/spacer.gif" width="305" height="5" alt=""></td>
+				<td width="4" height="5"><img src="[% webroot %]html/images/spacer.gif" width="4" height="5" alt=""></td>
+			</tr>
+			<tr>
+				<td width="8"><img src="[% webroot %]html/images/spacer.gif" width="8" height="8" alt=""></td>
+				<td valign="top" class="exlisting">
+					<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
+					/ [% 'RADIO_TUNEIN' | string %]
+				</td>
+				<td width="4"></td>
+			</tr>
+			<tr height="5">
+				<td width="8" height="5"><img src="[% webroot %]html/images/spacer.gif" width="8" height="5" alt=""></td>
+				<td height="5"><img src="[% webroot %]html/images/spacer.gif" width="305" height="5" alt=""></td>
+				<td width="4" height="5"></td>
+			</tr>
+		</table>
+	</td>
+	<td width="4" height="44"><img src="[% webroot %]html/images/spacer.gif" width="4" height="19" alt=""></td>
+</tr>
+<tr><td colspan="3" height="4" ><img src="[% webroot %]html/images/spacer.gif" height="4" alt=""></td></tr>
+<tr height="100%">
+	<td width="4" height="100%"></td>
+	<td valign="top" height="100%">
+		<table cellspacing="0" width="100%">
+			<tr height="5">
+				<td width="8" height="5"><img src="[% webroot %]html/images/spacer.gif" width="8" height="5" alt=""></td>
+				<td>
+		<!-- start plugins output -->
+[% IF p2 %]
+	<p><b>
+	[% 'RADIO_TUNED_IN' | string %] [% p2 %]
+	</p></b>
+[% END %]
+
+<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
+
+<form name="tune" method="get" action="[% webroot %]tunein.html">
+	<input type="hidden" name="p0" value="playlist">
+	<input type="hidden" name="p1" value="play">
+	<input type="hidden" name="player" value="[% player %]">
+	[% 'RADIO_TUNEIN_RADIOURL' | string %]
+	<input type="text" class="stdedit" name="p2" size="50">
+	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" onclick='document.forms.tune.submit(); for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
+</form>
+		<!-- end plugins output -->
+				</td>
+				<td width="4" height="5"><img src="[% webroot %]html/images/spacer.gif" width="4" height="5" alt=""></td>
+			</tr>
+		</table>
+	</td>
+	<td width="4" height="100%"></td>
+</tr>
+
+[% PROCESS pagefooter.html %]

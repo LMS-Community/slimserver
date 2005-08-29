@@ -115,7 +115,6 @@
 							<td width="4"></td>
 						</tr>
 					</table>
-[% IF additionalLinks.radio %]
 					<table cellspacing="0" width="100%">
 						<tr height="5">
 							<td class="lightgrey" width="8" height="5"><img src="html/images/spacer.gif" width="8" height="5" alt=""></td>
@@ -144,6 +143,7 @@
 	[% FOREACH key = additionalLinks.radio.keys %]
 									<tr><td height="15" valign="center">&bull; <a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a></td></tr>
 	[% END %]
+									<tr><td height="15" valign="center">&bull; <a href="tunein.html?player=[% player | uri %]">[% "RADIO_TUNEIN" | string %]</a></td></tr>
 								</table>
 							</td>
 							<td width="4"></td>
@@ -154,7 +154,6 @@
 							<td width="4"></td>
 						</tr>
 					</table> 
-[% END %]
 					[% IF not nosetup %]    <table cellspacing="0" width="100%">
 						<tr height="5">
 							<td class="lightgrey" width="8" height="5"><img src="html/images/spacer.gif" width="8" height="5" alt=""></td>
