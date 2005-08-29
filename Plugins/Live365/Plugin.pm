@@ -113,11 +113,11 @@ sub playOrAddCurrentStation {
 	}
 
 	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
-	$client->showBriefly(
-		$client->renderOverlay($line1, $title, undef, Slim::Display::Display::symbol('notesymbol')),
-		undef,
-		1
-	);
+	$client->showBriefly({
+		'line1' => $line1,
+		'line2' => $title,
+		'overlay2' => $client->symbols('notesymbol'),
+	});
 
 	Slim::Music::Info::setContentType($stationURL, 'mp3');
 	Slim::Music::Info::setTitle($stationURL, $title);
@@ -213,7 +213,7 @@ our %mainModeFunctions = (
 		SWITCH: {
 			$mainModeItems[$mainModeIdx][1] eq 'PLUGIN_LIVE365_PRESETS' && do {
 				if( !$live365->{$client}->getSessionID() ) {
-					Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' ));
+					$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' )});
 				} else {
 					$success = 1;
 				}
@@ -265,23 +265,17 @@ our %mainModeFunctions = (
 
 sub mainModeLines {
 	my $client = shift;
-	my @lines;
 
 	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = $client->string( $APImessage );
-		return @lines;
+		return { 'line1' => $client->string( $APImessage ) };
 	}
 
-	$lines[0] = $client->string( 'PLUGIN_LIVE365_MODULE_NAME' ) . 
-		' (' . ($mainModeIdx+1) .
-		' ' .  $client->string('OF') . 
-		' ' . (scalar(@mainModeItems)) . 
-		')';
-	$lines[1] = $client->string( $mainModeItems[$mainModeIdx][1] );
-
-	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
-
-	return @lines;
+	return {
+		'line1' => $client->string( 'PLUGIN_LIVE365_MODULE_NAME' ) . 
+			' (' . ($mainModeIdx+1) . ' ' .  $client->string('OF') . ' ' . (scalar(@mainModeItems)) . ')',
+		'line2' => $client->string( $mainModeItems[$mainModeIdx][1] ),
+		'overlay2' => $client->symbols('rightarrow')
+	};
 }
 
 sub getFunctions {
@@ -329,7 +323,7 @@ our $setLoginMode = sub {
 		} else {
 			$::d_plugins && msg( "Live365.login: no credentials set\n" );
 			unless ($silent) {
-				Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NO_CREDENTIALS' ) );
+				$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NO_CREDENTIALS' )});
 			}
 			Slim::Buttons::Common::popMode( $client );
 		}
@@ -347,14 +341,14 @@ sub loginDone {
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
 		unless ($silent) {
-			Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' ) );
+			$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' )});
 		}
 		$live365->{$client}->setLoggedIn( 1 );
 		$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
 	} else {
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
-		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $loginStatus ] ) );
+		$client->showBriefly({'line1' => $client->string( $statusText[ $loginStatus ] )});
 		$live365->{$client}->setLoggedIn( 0 );
 		$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
 	}
@@ -367,10 +361,10 @@ sub logoutDone {
 	my $logoutStatus = shift;
 
 	if( $logoutStatus == 0 ) {
-		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
+		$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
 		  $::d_plugins && msg( "Live365 logged out.\n" );
 	} else {
-		Slim::Display::Animation::showBriefly( $client, $client->string( $statusText[ $logoutStatus ] ) );
+		$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
 		$::d_plugins && msg( "Live365 logout error: $statusText[ $logoutStatus ]\n" );
 	}
 
@@ -421,7 +415,7 @@ sub genreModeError {
 
 	$live365->{$client}->clearBlockingStatus();
 
-	Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' ), ' ' );
+	$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' )});
 	Slim::Buttons::Common::popModeRight( $client );
 }
 
@@ -498,25 +492,19 @@ our %genreModeFunctions = (
 
 sub GenreModeLines {
 	my $client = shift;
-	my @lines = ();
 
 	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = $client->string( $APImessage );
-		return @lines;
+		return { 'line1' => $client->string( $APImessage ) };
 	}
 
 	my $genrePointer = $live365->{$client}->getGenrePointer();
 
-	$lines[0] = sprintf( "%s (%d %s %d)",
-		$client->string( 'PLUGIN_LIVE365_GENRES' ),
-		$genrePointer + 1,
-		$client->string( 'OF' ),
-		scalar @genreList
-	);
-	$lines[1] = $genreList[ $genrePointer ][0];
-	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
-
-	return @lines;
+	return {
+		'line1' => sprintf( "%s (%d %s %d)", $client->string( 'PLUGIN_LIVE365_GENRES' ),
+			$genrePointer + 1, $client->string( 'OF' ),	scalar @genreList),
+		'line2' => $genreList[ $genrePointer ][0],
+		'overlay2' => $client->symbols('rightarrow')
+	}
 }
 
 Slim::Buttons::Common::addMode( 'genreMode', \%genreModeFunctions, $setGenreMode, $noGenreMode );
@@ -608,11 +596,10 @@ sub channelModeError {
 
 	if ($live365->{$client}->isLoggedIn()) {
 		$::d_plugins && defined($source) && msg( "No stations for source: $source\n");
-		Slim::Display::Animation::showBriefly( $client, $client->string( 'PLUGIN_LIVE365_NOSTATIONS' ), ' ' );
+		$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOSTATIONS' )});
 	} else {
-		Slim::Display::Animation::showBriefly( $client, $client->string('PLUGIN_LIVE365_NOT_LOGGED_IN' ), ' ' );
+		$client->showBriefly({'line1' => $client->string('PLUGIN_LIVE365_NOT_LOGGED_IN' )});
 	}
-
 
 	Slim::Buttons::Common::popModeRight( $client );
 }
@@ -737,28 +724,19 @@ sub channelAdditionalError {
 
 sub channelModeLines {
 	my $client = shift;
-	my @lines = ();
 
 	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = $client->string( $APImessage );
-		return @lines;
-	}
-
-	if( $live365->{$client}->getStationListLength() > 0 ) {
-		$lines[0] = sprintf( "%s (%d %s %d)",
-			$client->string( 'PLUGIN_LIVE365_STATIONS' ),
-			$live365->{$client}->getStationListPointer() + 1,
-			$client->string( 'OF' ),
-			$live365->{$client}->getStationListLength()
-		);
-
-		$lines[1] = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
-		$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
+		return { 'line1' => $client->string( $APImessage ) };
+	} elsif( $live365->{$client}->getStationListLength() > 0 ) {
+		return { 
+			'line1' => sprintf( "%s (%d %s %d)", $client->string( 'PLUGIN_LIVE365_STATIONS' ),
+				$live365->{$client}->getStationListPointer() + 1, $client->string( 'OF' ), $live365->{$client}->getStationListLength()),
+			'line2' => $live365->{$client}->getCurrentStation()->{STATION_TITLE},
+			'overlay2' => $client->symbols('rightarrow')
+		}
 	} else {
-		$lines[0] = $client->string( 'PLUGIN_LIVE365_NOSTATIONS' );
+		return { 'line1' => $client->string( 'PLUGIN_LIVE365_NOSTATIONS' ) };
 	}
-
-	return @lines;
 }
 
 Slim::Buttons::Common::addMode( 'Live365Channels', \%channelModeFunctions, $setChannelMode, $noChannelMode );
@@ -914,7 +892,7 @@ sub doSearch {
 	my $client = shift;
 	my $exitType = shift;
 
-	my $arrow = Slim::Display::Display::symbol('rightarrow');
+	my $arrow = $client->symbols('rightarrow');
 	$searchString{$client} =~ s/$arrow//;
 
 	ExitEventType: {
@@ -951,19 +929,16 @@ sub doSearch {
 
 sub searchModeLines {
 	my $client = shift;
-	my @lines;
 
 	if( my $APImessage = $live365->{$client}->status() ) {
-		$lines[0] = $client->string( $APImessage );
-		return @lines;
+		return { 'line1' => $client->string( $APImessage ) };
 	}
 
-	$lines[0] = $client->string( 'PLUGIN_LIVE365_SEARCH' );
-	$lines[1] = $client->string( $searchModeItems[$searchModeIdx][0] );
-
-	$lines[3] = Slim::Hardware::VFD::symbol('rightarrow');
-
-	return @lines;
+	return {
+		'line1' => $client->string( 'PLUGIN_LIVE365_SEARCH' ),
+		'line2' => $client->string( $searchModeItems[$searchModeIdx][0] ),
+		'overlay2' => $client->symbols('rightarrow')
+	}
 }
 
 Slim::Buttons::Common::addMode( 'searchMode', \%searchModeFunctions, $setSearchMode, $noSearchMode );
