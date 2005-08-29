@@ -21,15 +21,6 @@
 [% END %]
  	</ul>
 
-[% IF additionalLinks.radio %]    <h4>[% "RADIO" | string %]</h4>
-    <ul>
-    [% FOREACH key = additionalLinks.radio.keys %]
-    <li> <a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a>
-    </li>
-    [% END %]
-    </ul>
-[% END %]
-
     <h4>[% "SEARCH" | string %]</h4>
     <ul>
 [% IF additionalLinks.search %]
@@ -40,6 +31,16 @@
     [% END %]
 [% END %]
     </ul>
+
+[% IF additionalLinks.radio %]    <h4>[% "RADIO" | string %]</h4>
+    <ul>
+    [% FOREACH key = additionalLinks.radio.keys %]
+    <li> <a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a>
+    </li>
+    [% END %]
+    </ul>
+[% END %]
+
 [% IF not nosetup %]    <h4>[% "SETTINGS" | string %]</h4>
 	<ul>
 	[% IF not noserver %]
