@@ -433,7 +433,7 @@ sub shutdownPlugins {
 sub shutdownPlugin {
 	my $plugin = shift;
 	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
-		msg("disablePlugin() is depreciated! Please use shutdownPlugin() instead. ($plugin)\n");
+		msg("disablePlugin() is deprecated! Please use shutdownPlugin() instead. ($plugin)\n");
 		eval { {"Plugins::" . $plugin . "::disablePlugin"} };
 	}
 	# We use shutdownPlugin() instead of the more succinct
