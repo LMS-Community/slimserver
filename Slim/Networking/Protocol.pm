@@ -91,25 +91,20 @@ sub init {
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 	
 	# say hello to the old slimp3 clients that we might remember...
-	my $clients = Slim::Utils::Prefs::get("clients");
-
-	$::d_protocol && msg("Going to say hello to everybody we remember: $clients\n");
-	
-	if (defined($clients)) {
-
-		foreach my $addr (split( /,/, $clients)) {
+	for my $clientid (Slim::Utils::Prefs::getKeys("clients")) {
 
 			# make sure any new preferences get set to default values
-			assert($addr);
+			assert($clientid);
 
 			# skip client addrs that aren't dotted-4 with a port
-			next unless ($addr=~/\d+\.\d+\.\d+\.\d+:\d+/);
+			next unless ($clientid =~ /\d+\.\d+\.\d+\.\d+:\d+/);
 
-			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($addr));
+			$::d_protocol && msg("Saying hello to $clientid\n");
+
+			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($clientid));
 			
 			# throttle the broadcasts
 			select(undef,undef,undef,0.05);
-		}
 	}
 }
 
