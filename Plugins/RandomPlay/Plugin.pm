@@ -329,7 +329,10 @@ sub handleWebIndex {
 		if (ref($items) && ref($items) eq 'ARRAY') {
 
 			# Store the list so that the client has access to it.
-			$client->param($listRefName, $items);
+			if ($client) {
+
+				$client->param($listRefName, $items);
+			}
 
 			# Create an 'ALL' link that points to a client listRef
 			# Soon..
