@@ -1601,7 +1601,7 @@ sub _postCheckAttributes {
 
 		$comments = [ $attributes->{'COMMENT'} ];
 
-	} else {
+	} elsif (ref($attributes->{'COMMENT'}) eq 'ARRAY') {
 
 		$comments = $attributes->{'COMMENT'};
 	}
