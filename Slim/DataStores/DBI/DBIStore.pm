@@ -1594,11 +1594,23 @@ sub _postCheckAttributes {
 	$track->update();
 
 	# Add comments if we have them:
-	if ($attributes->{'COMMENT'}) {
+	# We can take an array too - from vorbis comments, so be sure to handle that.
+	my $comments = [];
+
+	if ($attributes->{'COMMENT'} && !ref($attributes->{'COMMENT'})) {
+
+		$comments = [ $attributes->{'COMMENT'} ];
+
+	} else {
+
+		$comments = $attributes->{'COMMENT'};
+	}
+
+	for my $comment (@$comments) {
 
 		Slim::DataStores::DBI::Comment->find_or_create({
 			'track' => $trackId,
-			'value' => $attributes->{'COMMENT'},
+			'value' => $comment,
 		});
 	}
 
