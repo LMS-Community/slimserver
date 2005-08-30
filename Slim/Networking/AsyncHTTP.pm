@@ -31,9 +31,11 @@ sub new {
 	my %args  = @_;
 	
 	my $server = $args{'Host'};
-	my $proxy   = Slim::Utils::Prefs::get('webproxy');
+	my $proxy  = Slim::Utils::Prefs::get('webproxy');
+
 	# Don't proxy for localhost requests.
 	if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
+
 		my $host = $args{'Host'};
 		my $port = $args{'PeerPort'};
 		
@@ -41,15 +43,22 @@ sub new {
 
 		# create instance using proxy server and port
 		my ($pserver, $pport) = split /:/, $proxy;
+
 		$args{'Host'} = $pserver;
 		$args{'PeerPort'} = $pport || 80;
+
 		my $self = $class->SUPER::new(%args);
+
 		# now remember the original host and port, we'll need them to format the request
 		${*self}{'httpasync_host'} = $host;
 		${*self}{'httpasync_port'} = $port;
+
 		return $self;
+
 	} else {
+
 		$::d_http_async && msg("AsyncHTTP: Connecting to $server\n");
+
 		return $class->SUPER::new(%args);
 	}
 }
@@ -57,13 +66,14 @@ sub new {
 # override to handle proxy
 # TODO: make username, password easy to provide. For now, caller can explicitly include Authorization header
 sub format_request {
-    my $self = shift;
-    my $method = shift;
-    my $path = shift;
+	my $self = shift;
+	my $method = shift;
+	my $path = shift;
 
-	my %headers;
+	my %headers = ();
 
 	my $proxy   = Slim::Utils::Prefs::get('webproxy');
+
 	# Don't proxy for localhost requests.
 	if ($proxy && ${*self}{'httpasync_host'}) {
 		$path = "http://".${*self}{'httpasync_host'}.":".${*self}{'httpasync_port'} . $path;
@@ -79,14 +89,15 @@ sub format_request {
 
 	# when calling SUPER::format_request, include @_ after %headers, so caller may override defaults
 	# @_ may contain additional headers and content
-	return $self->SUPER::format_request($method=>$path, %headers, @_);
+	return $self->SUPER::format_request($method => $path, %headers, @_);
 }
 
 # don't use write_request.  Use write_request_async instead.
 sub write_request {
+	my $self = shift;
+
 	assert(0, "Called ". __PACKAGE__ ."::write_request.  You should call write_request_async instead!\n");
 
-	my $self = shift;
 	$self->SUPER::write_request(@_);
 }
 
@@ -108,9 +119,10 @@ sub write_request_async {
 
 # don't use.  Use _async version instead.
 sub read_response_headers {
+	my $self = shift;
+
 	assert(0, "Called ". __PACKAGE__ ."::read_response_headers.  You should call read_response_headers_async instead!\n");
 
-	my $self = shift;
 	$self->SUPER::read_response_headers(@_);
 }
 
@@ -119,8 +131,10 @@ sub read_response_headers_async {
 	my $callback = shift;
 	my $args = shift;
 
-	my $state = {callback => $callback,
-				 args => $args};
+	my $state = {
+		callback => $callback,
+		args     => $args
+	};
 
 	${*self}{'httpasync_state'} = $state;
 
@@ -128,20 +142,22 @@ sub read_response_headers_async {
 		$self,
 		\&errorCallback
 	);
+
 	Slim::Networking::Select::addRead(
 		$self,
 		\&readHeaderCallback
 	);
-
 }
 
 # don't use.  Use _async version instead.
 sub read_entity_body {
+	my $self = shift;
+
 	assert(0, "Called ". __PACKAGE__ ."::read_entity_body.  You should call read_entity_body_async instead!\n");
 
-	my $self = shift;
 	$self->SUPER::read_entity_body(@_);
 }
+
 sub read_entity_body_async {
 	my $self = shift;
 	my $callback = shift;
@@ -161,6 +177,7 @@ sub read_entity_body_async {
 		$self,
 		\&errorCallback
 	);
+
 	Slim::Networking::Select::addRead(
 		$self,
 		\&readBodyCallback
@@ -210,8 +227,8 @@ sub readBodyCallback {
 
 	my $state = ${*self}{'httpasync_state'};
 	my $buf;
-	my $result = $self->SUPER::read_entity_body($buf,
-												$state->{bufsize});
+	my $result = $self->SUPER::read_entity_body($buf, $state->{bufsize});
+
 	$state->{body} .= $buf;
 
 	if ($result == 0) {
@@ -227,10 +244,9 @@ sub readBodyCallback {
 		if ($state->{callback}) {
 			$state->{callback}($state->{args}, undef, $state->{body});
 		}
-
 	}
-	# else we will be called again when the next buffer has been read
 
+	# else we will be called again when the next buffer has been read
 }
 
 sub errorCallback {
@@ -254,11 +270,11 @@ sub close {
 	my $self = shift;
 
 	$self->SUPER::close();
+
 	# remove self from select loop
 	Slim::Networking::Select::addError($self);
 	Slim::Networking::Select::addRead($self);
 	Slim::Networking::Select::addWrite($self);
-	
 }
 
 1;
@@ -302,7 +318,11 @@ $s->read_response_headers_async(\&testHeaderCallback, $s);
 
 =head1 DESCRIPTION
 
-This class is based upon C<Net::HTTP> and C<Net::HTTP::NB>.  It is for use within the SlimServer only, as it is integrated within the SlimServer select loop.  It allows plugins to make HTTP requests in a non-blocking fashion, thus not interfering with the responsiveness of the SlimServer while waiting for the request to complete.
+This class is based upon C<Net::HTTP> and C<Net::HTTP::NB>.  It is for use
+within the SlimServer only, as it is integrated within the SlimServer select
+loop.  It allows plugins to make HTTP requests in a non-blocking fashion, thus
+not interfering with the responsiveness of the SlimServer while waiting for
+the request to complete.
 
 This class is an instance of Socket, and it provides a relatively
 low level API.  If all you need is to request a page from a web
