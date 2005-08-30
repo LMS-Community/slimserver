@@ -1,13 +1,13 @@
 package Net::HTTP::Methods;
 
-# $Id: Methods.pm,v 1.2 2004/08/10 23:08:31 dean Exp $
+# $Id: Methods.pm,v 1.17 2004/11/15 14:16:07 gisle Exp $
 
 require 5.005;  # 4-arg substr
 
 use strict;
 use vars qw($VERSION);
 
-$VERSION = "1.00";
+$VERSION = "1.02";
 
 my $CRLF = "\015\012";   # "\r\n" is not portable
 
@@ -49,7 +49,9 @@ sub http_configure {
 
     unless ($host =~ /:/) {
 	my $p = $self->peerport;
-	$host .= ":$p";
+	if ($p != $self->http_default_port) {
+		$host .= ":$p";
+	}
     }
     $self->host($host);
     $self->keep_alive($keep_alive);
@@ -119,6 +121,8 @@ sub format_request {
 	my($k, $v) = splice(@_, 0, 2);
 	my $lc_k = lc($k);
 	if ($lc_k eq "connection") {
+	    $v =~ s/^\s+//;
+	    $v =~ s/\s+$//;
 	    push(@connection, split(/\s*,\s*/, $v));
 	    next;
 	}
@@ -297,12 +301,7 @@ sub read_response_headers {
 
     my($status, $eol) = my_readline($self);
     unless (defined $status) {
-	die "EOF instead of response status line" unless $laxed;
-	# assume HTTP/0.9
-	${*$self}{'http_peer_http_version'} = "0.9";
-	${*$self}{'http_status'} = "200";
-	return 200 unless wantarray;
-	return (200, "EOF");
+	die "Server closed connection without sending any data back";
     }
 
     my($peer_ver, $code, $message) = split(/\s+/, $status, 3);
@@ -311,7 +310,7 @@ sub read_response_headers {
 	# assume HTTP/0.9
 	${*$self}{'http_peer_http_version'} = "0.9";
 	${*$self}{'http_status'} = "200";
-	substr(${*$self}{'http_buf'}, 0, 0) = $status . $eol;
+	substr(${*$self}{'http_buf'}, 0, 0) = $status . ($eol || "");
 	return 200 unless wantarray;
 	return (200, "Assumed OK");
     };
@@ -331,7 +330,10 @@ sub read_response_headers {
     for (my $i = 0; $i < @headers; $i += 2) {
 	my $h = lc($headers[$i]);
 	if ($h eq 'transfer-encoding') {
-	    push(@te, $headers[$i+1]);
+	    my $te = $headers[$i+1];
+	    $te =~ s/^\s+//;
+	    $te =~ s/\s+$//;
+	    push(@te, $te) if length($te);
 	}
 	elsif ($h eq 'content-length') {
 	    $content_length = $headers[$i+1];
