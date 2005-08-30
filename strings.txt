@@ -919,6 +919,9 @@ ALARM_WEEKDAYS
 	DE	Wecker je Wochentag
 	EN	Weekday Alarms
 
+ALARM_DAY0
+	EN	Every Day
+
 ALARM_DAY1
 	DE	Montag
 	EN	Monday
@@ -1465,14 +1468,7 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 
 SETUP_GROUP_ALARM_DESC
-	CZ	Nastavení času buzení. Každý přehrávač může mít nastavený svůj budík. Pokud je budík aktivován, spouští se v zadaném čase každých 24hodin.
-	DE	Einstellungen für den Wecker. Jeder Player kann einen eigenen Wecker haben. Nach Aktivierung wird der Wecker alle 24h wiederholt.
-	EN	Settings for alarm clock. Each player can have an alarm set.  If active, it will repeat every 24 hours.
-	ES	Configuración del reloj de Alarma. Cada reproductor puede tener una alarma configurada. Si está activada, se repetirá cada 24 horas.
-	FR	Réglages du mode réveil. Chaque platine peut activer son propre réveil ; en mode activé, celui-ci se déclenchera toutes les 24 heures.
-	JP	アラーム時計設定。それぞれのプレーヤーに別の設定をできます。設定されれば毎日動作します。
-	NO	Innstillinger for vekkerklokka. Hver spiller kan ha en vekkersklokke. Når aktivert går alarmen hvert døgn.
-	SE	Inställningar för väckarklockan. Varje spelare kan ha en separat väckarklocka. I aktiverat läge repeteras larmet varje dygn.
+	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week.
 
 SETUP_GROUP_IRSETS
 	CZ	Dálkové ovládání

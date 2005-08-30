@@ -869,8 +869,6 @@ sub initSetupConfig {
 								return Slim::Utils::Prefs::clientGet($client, "alarmplaylist",$i);
 							}
 					};
-				}
-				for my $i (1..7) {
 					$pageref->{'Groups'}{'AlarmDay'.$i} = {
 						'PrefOrder' => ['alarm'.$i,'alarmtime'.$i,'alarmvolume'.$i,'alarmplaylist'.$i]
 						,'PrefsInTable' => 1
@@ -887,19 +885,13 @@ sub initSetupConfig {
 					$paramref->{'playername'} = $client->name();
 				}
 			}
-		,'GroupOrder' => ['AlarmClock','AlarmDay1','AlarmDay2','AlarmDay3','AlarmDay4','AlarmDay5','AlarmDay6','AlarmDay7']
+		,'GroupOrder' => ['AlarmClock','AlarmDay0','AlarmDay1','AlarmDay2','AlarmDay3','AlarmDay4','AlarmDay5','AlarmDay6','AlarmDay7']
 		,'Groups' => {
 			'AlarmClock' => {
-				'PrefOrder' => ['alarm0','alarmtime0','alarmvolume0','alarmplaylist0']
-				,'PrefsInTable' => 1
-				,'Suppress_PrefHead' => 1
-				,'Suppress_PrefDesc' => 1
-				,'Suppress_PrefLine' => 1
-				,'Suppress_PrefSub' => 1
+				'PrefOrder' => undef
 				,'GroupHead' => string('SETUP_GROUP_ALARM')
 				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
 				,'GroupLine' => 1
-				,'GroupSub' => 1
 			}
 		}
 		,'Prefs' => {
