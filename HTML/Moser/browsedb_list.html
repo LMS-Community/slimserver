@@ -5,15 +5,15 @@
           <div class="controls">
             <ul class="songctl">
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;subcommand=loadtracks[% attributes | html -%]
+				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=loadtracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=play&amp;p2=[% itempath | uri -%]
               	[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;subcommand=inserttracks[% attributes | html -%]
+				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=inserttracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=insert&amp;p2=[% itempath | uri %]
 				[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
               <li><a href="status.html?
-				[%- IF descend %]command=playlist&amp;subcommand=addtracks[% attributes | html -%]
+				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=addtracks[% attributes | html -%]
 				[%- ELSE %]p0=playlist&amp;p1=append&amp;p2=[% itempath | uri -%]
 				[%- END %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
             </ul>
@@ -30,12 +30,7 @@
 		[% END %]
 
           [%- ELSE %]
-		[% IF item %]
-            		<span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
-		[% ELSE %]
-			[% text | html %]
-		[% END %]
-
+            <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
            [%- IF includeAlbum %]
             [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist.id | uri %]&amp;album=[% album.id | uri %]&amp;player=[% player | uri %]" target="browser">[% album.title | html %]</a></span>
            [%- END %]
