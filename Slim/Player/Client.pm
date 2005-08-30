@@ -32,6 +32,12 @@ The following object contains all the state that we keep about each player.
 
 =over
 
+=item
+
+_prefs() - type: hashref
+
+	A reference to the preferences for this client.
+
 =item 
 
 revision() - type: int
@@ -600,7 +606,7 @@ sub new {
 
 	$client->[0] = undef; # id 	
 
-	# $client->[1] = undef; # unused
+	$client->[1] = undef; # _prefs
 	# $client->[2] = undef; # unused
 	# $client->[3] = undef; # unused
 
@@ -723,6 +729,7 @@ sub new {
 	$client->irtimediff(0);
 
 	$client->id($id);
+	$client->_prefs(Slim::Utils::Prefs::getClientPrefs($client->id()));
 	$client->prevwptr(-1);
 	$client->pwd('');  # start browsing at the root MP3 directory
 
@@ -1230,7 +1237,7 @@ sub paramOrPref {
 		return $mode->{$name};
 	}
 
-	return Slim::Utils::Prefs::clientGet($client, $name);
+	return $client->prefGet($name);
 }
 	
 sub getPref {
@@ -1239,6 +1246,160 @@ sub getPref {
 
 sub setPref {
 	Slim::Utils::Prefs::clientSet(@_);
+}
+
+# method for getting/setting prefs
+# for non-indexed prefs the first parameter should be the pref name
+# for indexed prefs the first parameter should be a two element array reference
+# with the pref name first and the index second
+sub pref {
+	my $client = shift;
+	my $pref = shift;
+	my $value = shift;
+
+	my $ind = undef;
+	
+	return undef unless defined $pref;
+	
+	if (ref($pref) eq "ARRAY") {
+		($pref,$ind) = @$pref;
+	}
+	
+	if (defined $value) {
+		return $client->prefSet($pref,$value,$ind);
+	} else {
+		return $client->prefGet($pref,$ind);
+	}
+}
+
+sub prefGet {
+	my $client = shift;
+	my $pref = shift;
+	my $ind = shift;
+	
+	if (defined $ind) {
+		$client->prefGetInd($pref,$ind);
+	} else {
+		return $client->_prefs()->{$pref};
+	}
+}
+
+sub prefGetInd {
+	my $client = shift;
+	my $pref = shift;
+	my $index = shift;
+
+	my $prefs = $client->_prefs();
+
+	if (defined $prefs->{$pref}) {
+		if (ref $prefs->{$pref} eq 'ARRAY') {
+			return $prefs->{$pref}[$index];
+		} elsif (ref $prefs->{$pref} eq 'HASH') {
+			return $prefs->{$pref}{$index};
+		}
+	}
+	return undef;
+}
+
+sub prefGetArray {
+	my $client = shift;
+	my $arrayPref = shift;
+	
+	my $prefs = $client->_prefs();
+
+	if (defined($prefs->{$arrayPref}) && ref($prefs->{$arrayPref}) eq 'ARRAY') {
+		return @{$prefs->{$arrayPref}};
+	} else {
+		return ();
+	}
+}
+
+sub prefGetArrayMax{
+	my $client = shift;
+	my $arrayPref = shift;
+	
+	my $prefs = $client->_prefs();
+	
+	if (defined($prefs->{$arrayPref}) && ref($prefs->{$arrayPref}) eq 'ARRAY') {
+		my @prefArray = @{$prefs->{$arrayPref}};
+		my $max = $#prefArray;
+		return $max;
+	} else {
+		return undef;
+	}
+}
+
+sub prefGetHash {
+	my $client = shift;
+	my $hashPref = shift;
+	
+	my $prefs = $client->_prefs();
+
+	if (defined($prefs->{$hashPref}) && ref($prefs->{$hashPref}) eq 'HASH') {
+		return %{$prefs->{$hashPref}};
+	} else {
+		return ();
+	}
+}
+
+sub prefGetKeys {
+	my $client = shift;
+	my $hashPref = shift;
+	
+	my $prefs = $client->_prefs();
+
+	if (defined($prefs->{$hashPref}) && ref($prefs->{$hashPref}) eq 'HASH') {
+		return keys %{$prefs->{$hashPref}};
+	} else {
+		return ();
+	}
+}
+
+sub prefIsDefined {
+	my $client = shift;
+	my $key = shift;
+	my $ind = shift;
+	
+	my $prefs = $client->_prefs();
+	
+	if (defined($ind)) {
+		if (defined $prefs->{$key}) {
+			if (ref $prefs->{$key} eq 'ARRAY') {
+				return defined $prefs->{$key}[$ind];
+			} elsif (ref $prefs->{$key} eq 'HASH') {
+				return defined $prefs->{$key}{$ind};
+			}
+		}
+	}
+	return defined $prefs->{$key};
+}
+
+# using wrappers for methods which involve changing the preference
+# so that we don't have to worry about writing out the preferences
+
+sub prefSet {
+	my $client = shift;
+	my $pref = shift;
+	my $value = shift;
+	my $ind = shift;
+	
+	return Slim::Utils::Prefs::set($pref,$value,$ind,$client,$client->_prefs());
+}
+
+sub prefPush {
+	my $client = shift;
+	my $pref = shift;
+	my $value = shift;
+	
+	Slim::Utils::Prefs::push($pref,$value,$client->_prefs());
+}
+
+sub prefDelete {
+	my $client = shift;
+	my $pref = shift;
+	my $ind = shift;
+	
+	Slim::Utils::Prefs::delete($pref,$ind,$client->_prefs());
 }
 
 sub masterOrSelf {
@@ -1264,6 +1425,12 @@ sub contentTypeSupported {
 sub id {
 	my $r = shift;
 	@_ ? ($r->[0] = shift) : $r->[0];
+}
+# the _prefs method should not be used to access individual prefs
+# use the pref* methods for working with client prefs
+sub _prefs {
+	my $r = shift;
+	@_ ? ($r->[1] = shift) : $r->[1];
 }
 sub revision {
 	my $r = shift;

@@ -36,6 +36,20 @@ sub init {
 		'6.0b3' => sub {
 			Slim::Utils::Prefs::set('filesort', 1);
 		},
+		# moves client preferences to a hash under the 'clients' key
+		'6.2b1' => sub {
+			for my $key (keys %prefs) {
+				if ($key =~ /^((?:[[:xdigit:]]{2}:){5}[[:xdigit:]]{2})-(.+)/) {
+					# matched hexidecimal client id (mac address)
+					$prefs{'clients'}{$1}{$2} = $prefs{$key};
+					CORE::delete($prefs{$key});
+				} elsif ($key =~ /^((?:\d{1,3}\.){3}\d{1,3}(?::\d+)?)-(.+)/) {
+					# matched ip address (optional port) client id (HTTP client)
+					$prefs{'clients'}{$1}{$2} = $prefs{$key};
+					CORE::delete($prefs{$key});
+				}
+			}
+		}
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -134,6 +148,7 @@ sub init {
 		'variousArtistsInArtists' => 0,
 		'useBandAsAlbumArtist'  => 1,
 		'upgrade-6.0b3-script'	=> 1,
+		'upgrade-6.2b1-script'	=> 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 	);
 
@@ -461,23 +476,24 @@ sub checkServerPrefs {
 sub initClientPrefs {
 	my $client = shift;
 	my $defaultPrefs = shift;
+	
+	my $prefs = getClientPrefs($client->id());
 	for my $key (keys %{$defaultPrefs}) {
-		my $clientkey = $client->id() . '-' . $key;
-		if (!defined($prefs{$clientkey})) {
+		if (!defined($prefs->{$key})) {
 			if (ref($defaultPrefs->{$key}) eq 'ARRAY') {
 				my @temp = @{$defaultPrefs->{$key}};
-				$prefs{$clientkey} = \@temp;
+				$prefs->{$key} = \@temp;
 			} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
 				my %temp = %{$defaultPrefs->{$key}};
-				$prefs{$clientkey} = \%temp;
+				$prefs->{$key} = \%temp;
 			} else {
-				$prefs{$clientkey} = $defaultPrefs->{$key};
+				$prefs->{$key} = $defaultPrefs->{$key};
 			}
 		} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
 			# check defaults for individual hash prefs
 			for my $subkey (keys %{$defaultPrefs->{$key}}) {
-				if (!defined $prefs{$clientkey}{$subkey}) {
-					$prefs{$clientkey}{$subkey} = $defaultPrefs->{$key}{$subkey};
+				if (!defined $prefs->{$key}{$subkey}) {
+					$prefs->{$key}{$subkey} = $defaultPrefs->{$key}{$subkey};
 				}
 			}
 		}
@@ -488,8 +504,17 @@ sub initClientPrefs {
 sub push {
 	my $arrayPref = shift;
 	my $value = shift;
-	if (ref($prefs{$arrayPref}) eq 'ARRAY' || !defined($prefs{$arrayPref})) {
-		CORE::push @{$prefs{$arrayPref}}, $value;
+
+	# allow clients to specify the preference hash to modify
+	my $prefs = shift || \%prefs;
+
+	if (!defined($prefs->{$arrayPref})) {
+		# auto-vivify
+		$prefs->{$arrayPref} = [];
+	}
+
+	if (ref($prefs->{$arrayPref}) eq 'ARRAY') {
+		CORE::push @{$prefs->{$arrayPref}}, $value;
 	} else {
 		bt();
 		warn "Attempted to push a value onto a scalar pref";
@@ -501,7 +526,7 @@ sub clientPush {
 	my $client = shift;
 	my $arrayPref = shift;
 	my $value = shift;
-	Slim::Utils::Prefs::push(($client->id() . '-' . $arrayPref),$value);
+	$client->prefPush($arrayPref,$value);
 }
 
 # getArrayMax($arrayPref)
@@ -519,7 +544,8 @@ sub getArrayMax{
 sub clientGetArrayMax {
 	my $client = shift;
 	my $arrayPref = shift;
-	return getArrayMax($client->id() . "-" . $arrayPref);
+	assert($client);
+	return $client->prefGetArrayMax($arrayPref);
 }
 
 # getArray($arrayPref)
@@ -537,7 +563,20 @@ sub clientGetArray {
 	my $client = shift;
 	my $arrayPref = shift;
 	assert($client);
-	return getArray($client->id() . "-" . $arrayPref);
+	return $client->prefGetArray($arrayPref);
+}
+
+# getClientPrefs($clientid)
+# returns a reference to the hash of client preferences for the client with the id provided
+# creates an empty hash if none currently exists.
+sub getClientPrefs {
+	my $clientid = shift;
+	
+	if (!defined $prefs{'clients'}{$clientid} ||  ref($prefs{'clients'}{$clientid}) ne "HASH") {
+		$prefs{'clients'}{$clientid} = {};
+	}
+	
+	return $prefs{'clients'}{$clientid};
 }
 
 # get($pref)
@@ -562,7 +601,12 @@ sub getInd {
 # getKeys($pref)
 # gets the keys of a hash pref
 sub getKeys {
-	return keys %{$prefs{(shift)}};
+	my $hashPref = shift;
+	if (defined($prefs{$hashPref}) && ref($prefs{$hashPref}) eq 'HASH') {
+		return keys %{$prefs{$hashPref}};
+	} else {
+		return ();
+	}
 }
 
 # getHash($pref)
@@ -580,7 +624,7 @@ sub clientGetKeys {
 	my $client = shift;
 	my $hashPref = shift;
 	assert($client);
-	return getKeys($client->id() . "-" . $hashPref);
+	return $client->prefGetKeys($hashPref);
 }
 	
 # clientGetHash($client, $hashPref)
@@ -588,11 +632,9 @@ sub clientGetHash {
 	my $client = shift;
 	my $hashPref = shift;
 	assert($client);
-	return getHash($client->id() . "-" . $hashPref);
+	return $client->prefGetHash($hashPref);
 }
 	
-# Ugh - this should be a method on $client.
-#
 # clientGet($client, $pref [,$ind])
 sub clientGet {
 	my $client = shift;
@@ -603,11 +645,8 @@ sub clientGet {
 		bt();
 		return undef;
 	}
-	if (defined($ind)) {
-		return getInd($client->id() . "-" . $key,$ind);
-	} else {
-		return get($client->id() . "-" . $key);
-	}
+
+	return $client->prefGet($key,$ind);
 }
 
 sub getDefault {
@@ -630,58 +669,69 @@ sub set {
 	my $value = shift;
 	my $ind   = shift;
 
+	# allow clients to specify the preference hash to modify
+	my $client = shift;
+	my $prefs = shift || \%prefs;
+	
+	my $oldvalue;
+
 	# We always want to write out just bytes to the pref file, so turn off
 	# the UTF8 flag.
 	$value = Slim::Utils::Unicode::utf8off($value);
 
 	if (defined $ind) {
 
-		if (defined $prefs{$key}) {
-			if (ref $prefs{$key} eq 'ARRAY') {
-				if (defined($prefs{$key}[$ind]) && defined($value) && $value eq $prefs{$key}[$ind]) {
-						return;
+		if (defined $prefs->{$key}) {
+			if (ref $prefs->{$key} eq 'ARRAY') {
+				if (defined($prefs->{$key}[$ind]) && defined($value) && $value eq $prefs->{$key}[$ind]) {
+						return $value;
 				}
 
-				$prefs{$key}[$ind] = $value;
-			} elsif (ref $prefs{$key} eq 'HASH') {
-				if (defined($prefs{$key}{$ind}) && defined($value) && $value eq $prefs{$key}{$ind}) {
-						return;
+				$oldvalue = $prefs->{$key}[$ind];
+				$prefs->{$key}[$ind] = $value;
+			} elsif (ref $prefs->{$key} eq 'HASH') {
+				if (defined($prefs->{$key}{$ind}) && defined($value) && $value eq $prefs->{$key}{$ind}) {
+						return $value;
 				}
 
-				$prefs{$key}{$ind} = $value;
+				$oldvalue = $prefs->{$key}{$ind};
+				$prefs->{$key}{$ind} = $value;
 			}
 		} elsif ( $ind =~ /\D/ ) {
 			# Setting hash pref where no keys currently exist
-			$prefs{$key}{$ind} = $value;
+			$prefs->{$key}{$ind} = $value;
 		} else {
 			# Setting array pref where no indexes currently exist
-			$prefs{$key}[$ind] = $value;
+			$prefs->{$key}[$ind] = $value;
 		}
 
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
 
 		# trying to set a member of an array pref directly
 		# re-call function the correct way
-		return set($1,$value,$2);
+		return set($1,$value,$2,$client,$prefs);
 
 	} else {
 
-		if (defined($prefs{$key}) && defined($value) && $value eq $prefs{$key}) {
-				return;
+		if (defined($prefs->{$key}) && defined($value) && $value eq $prefs->{$key}) {
+				return $value;
 		}
 
-		$prefs{$key} = $value;
+		$oldvalue = $prefs->{$key};
+		$prefs->{$key} = $value;
 	}
 
-	onChange($key, $value, $ind);
+	onChange($key, $value, $ind, $client);
 
 	# must mark $ind as defined or indexed prefs cause an error in this msg
 	if (defined $ind) {
-		$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $prefs{$key}[$ind]) ? $prefs{$key}[$ind] : "undefined") . "\n");
+			$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $value) ? $value : "undefined") . "\n");
 	} else {
-		$::d_prefs && msg("Setting prefs $key equal to " . ((defined $prefs{$key}) ? $prefs{$key} : "undefined") . "\n");
+		$::d_prefs && msg("Setting prefs $key equal to " . ((defined $value) ? $value : "undefined") . "\n");
 	}
+
 	scheduleWrite() unless $writePending;
+	return $oldvalue;
 }
 
 sub clientSet {
@@ -690,8 +740,7 @@ sub clientSet {
 	my $value = shift;
 	my $ind = shift;
 
-	set($client->id() . "-" . $key, $value,$ind);
-	onChange($key, $value, $ind, $client);
+	$client->pref([$key,$ind], $value);
 }
 
 sub maxRate {
@@ -699,7 +748,7 @@ sub maxRate {
 	my $soloRate = shift;
 
 	# The default for a new client will be undef.
-	my $rate     = clientGet($client, 'maxBitrate');
+	my $rate     = $client->prefGet('maxBitrate');
 
 	if (!defined $rate) {
 
@@ -720,7 +769,7 @@ sub maxRate {
 	}
 
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
-	$rate = clientGet($client, 'transcodeBitrate') || $rate;
+	$rate = $client->prefGet('transcodeBitrate') || $rate;
 
 	$::d_source && msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
 	
@@ -731,7 +780,7 @@ sub maxRate {
 	
 	for my $everyclient (@playergroup) {
 
-		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+		next if $everyclient->prefGet('silent');
 
 		my $otherRate = maxRate($everyclient, 1);
 		
@@ -746,24 +795,28 @@ sub maxRate {
 sub delete {
 	my $key = shift;
 	my $ind = shift;
-	if (!defined $prefs{$key}) {
+
+	# allow clients to specify the preference hash to modify
+	my $prefs = shift || \%prefs;
+	
+	if (!defined $prefs->{$key}) {
 		return;
 	}
 	if (defined($ind)) {
-		if (ref($prefs{$key}) eq 'ARRAY') {
-			splice(@{$prefs{$key}},$ind,1);
-		} elsif (ref($prefs{$key}) eq 'HASH') {
-			CORE::delete $prefs{$key}{$ind};
+		if (ref($prefs->{$key}) eq 'ARRAY') {
+			splice(@{$prefs->{$key}},$ind,1);
+		} elsif (ref($prefs->{$key}) eq 'HASH') {
+			CORE::delete $prefs->{$key}{$ind};
 		}
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
 		#trying to delete a member of an array pref directly
 		#re-call function the correct way
-		Slim::Utils::Prefs::delete($1,$2);
-	} elsif (ref($prefs{$key}) eq 'ARRAY') {
+		Slim::Utils::Prefs::delete($1,$2,$prefs);
+	} elsif (ref($prefs->{$key}) eq 'ARRAY') {
 		#clear an array pref
-		$prefs{$key} = [];
+		$prefs->{$key} = [];
 	} else {
-		CORE::delete $prefs{$key};
+		CORE::delete $prefs->{$key};
 	}
 	scheduleWrite() unless $writePending;
 }
@@ -773,7 +826,7 @@ sub clientDelete {
 	my $key = shift;
 	my $ind = shift;
 	
-	Slim::Utils::Prefs::delete($client->id() . "-" . $key,$ind);
+	$client->prefDelete($key,$ind);
 }
 
 sub isDefined {
@@ -796,7 +849,7 @@ sub clientIsDefined {
 	my $key = shift;
 	my $ind = shift;
 	
-	return isDefined($client->id() . "-" . $key,$ind);
+	return $client->prefIsDefined($key,$ind);
 }
 
 sub scheduleWrite {
