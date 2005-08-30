@@ -107,7 +107,7 @@ sub reconnect {
 	my $now = Time::HiRes::time();
 	$client->epochirtime($now);
 
-	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
 	# update display and force visualizer to correct mode if SB2
 	$client->update();	
@@ -322,8 +322,8 @@ sub upgradeFirmware_SDK5 {
 
 	my $frame;
 
-	Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
-	Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
+	$client->prefSet( "powerOnBrightness", 4);
+	$client->prefSet( "powerOffBrightness", 1);
 	
 	my $oldsize = $client->textSize();
 	$client->textSize(0);
@@ -388,8 +388,8 @@ sub upgradeFirmware_SDK4 {
 	my $ip;
 	if (ref $client ) {
 		$ip = $client->ip;
-		Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", 4);
-		Slim::Utils::Prefs::clientSet($client, "powerOffBrightness", 1);
+		$client->prefSet( "powerOnBrightness", 4);
+		$client->prefSet( "powerOffBrightness", 1);
 	} else {
 		$ip = $client;
 	}
@@ -540,10 +540,10 @@ sub stream {
 
 		my $bufferThreshold;
 		if ($paused) {
-			$bufferThreshold = Slim::Utils::Prefs::clientGet($client, 'syncBufferThreshold');
+			$bufferThreshold = $client->prefGet('syncBufferThreshold');
 		}
 		else {
-			$bufferThreshold = Slim::Utils::Prefs::clientGet($client, 'bufferThreshold');
+			$bufferThreshold = $client->prefGet('bufferThreshold');
 		}
 		
 		my $formatbyte;
@@ -643,8 +643,8 @@ sub stream {
 			$pcmendian,
 			$bufferThreshold,
 			0,		# s/pdif auto
-			Slim::Utils::Prefs::clientGet($client, 'transitionDuration') || 0,
-			Slim::Utils::Prefs::clientGet($client, 'transitionType') || 0,
+			$client->prefGet('transitionDuration') || 0,
+			$client->prefGet('transitionType') || 0,
 			$flags,		# flags	     
 			0,		# vis port - call IANA!!!  :)
 			0,		# use slim server's IP
@@ -766,7 +766,7 @@ sub volume {
 		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
 		# fixed/variable s/pdif, etc.
 	
-		if (Slim::Utils::Prefs::clientGet($client, 'digitalVolumeControl')) {
+		if ($client->prefGet('digitalVolumeControl')) {
 			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
 			# this does achieve good analog output voltage (important for headphone power) but is not optimal
 			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 

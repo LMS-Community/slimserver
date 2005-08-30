@@ -21,10 +21,9 @@ sub new {
 
 	my $client = $class->SUPER::new(@_);
 
-	# This should be a method on $client!
-	Slim::Utils::Prefs::clientSet($client, 'autobrightness', 0);
+	$client->prefSet('autobrightness', 0);
 
-        return $client;
+	return $client;
 }
 
 sub model {

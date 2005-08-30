@@ -1241,11 +1241,11 @@ sub paramOrPref {
 }
 	
 sub getPref {
-	Slim::Utils::Prefs::clientGet(@_);
+	prefGet(@_);
 }
 
 sub setPref {
-	Slim::Utils::Prefs::clientSet(@_);
+	prefSet(@_);
 }
 
 # method for getting/setting prefs

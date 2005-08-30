@@ -152,7 +152,7 @@ sub playingModeOptions {
 		'11' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
 	);
 
-	if (Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {	
+	if ($client->prefGet('showbufferfullness')) {	
 		$options{'12'} = $client->string('SETUP_SHOWBUFFERFULLNESS');
 	}
 	
@@ -184,7 +184,7 @@ sub nowPlayingModes {
 	my $client = shift;
 	my $count = scalar(@modes);
 	
-	if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+	if (!$client->prefGet('showbufferfullness')) {
 		$count--;
 	}
 	
@@ -204,7 +204,7 @@ sub displayWidth {
 	# if we're showing the always-on visualizer & the current buttonmode 
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? Slim::Utils::Prefs::clientGet($client, "playingDisplayMode") : 0;
+	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? $client->prefGet("playingDisplayMode") : 0;
 	return $modes[$mode || 0]{width};
 }
 
@@ -262,7 +262,7 @@ sub volume {
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
 	if (defined($newvolume)) {
 		my $level = $volume_map[int($volume)];
-		my $data = pack('NNC', $level, $level, Slim::Utils::Prefs::clientGet($client, "digitalVolumeControl"));
+		my $data = pack('NNC', $level, $level, $client->prefGet("digitalVolumeControl"));
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
@@ -337,7 +337,7 @@ sub visualizer {
 	my $paramsref = $client->modeParam('visu');
 	
 	if (!$paramsref) {
-		my $visu = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+		my $visu = $client->prefGet("playingDisplayMode");
 
 		$visu = 0 if (!$client->showVisualizer());
 		
@@ -525,7 +525,7 @@ sub nowPlayingModeLines {
 	my $overlay;
 	my $fractioncomplete   = 0;
 	
-	my $mode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+	my $mode = $client->prefGet("playingDisplayMode");
 	my $songtime = '';
 	
 	Slim::Buttons::Common::param(

@@ -145,11 +145,11 @@ sub sync {
 	$buddy = masterOrSelf($buddy);
 
 	# if the buddy is silent, switch them, so we don't have any silent masters.
-	if (Slim::Utils::Prefs::clientGet($buddy,'silent')) {
+	if ($buddy->prefGet('silent')) {
 		($client, $buddy) = ($buddy, $client);
 	}
 	
-	msg($buddy->id . " is silent and we're trying to make it a master!\n") if (Slim::Utils::Prefs::clientGet($buddy,'silent'));
+	msg($buddy->id . " is silent and we're trying to make it a master!\n") if ($buddy->prefGet('silent'));
 	
 	$client->master($buddy);
 	
@@ -180,15 +180,15 @@ sub saveSyncPrefs {
 		my $masterID = $client->master->syncgroupid;
 		# Save Status to Prefs file
 		$::d_sync && msg("Saving $clientID as a slave to $masterID\n");
-		Slim::Utils::Prefs::clientSet($client,'syncgroupid',$masterID);
-		Slim::Utils::Prefs::clientSet($client->master,'syncgroupid',$masterID);
+		$client->prefSet('syncgroupid',$masterID);
+		$client->master->prefSet('syncgroupid',$masterID);
 		
 	}
 	if ($temp) {
 		$::d_sync && msg("Idling Sync for $clientID\n");
 	} else {
 		$client->syncgroupid(undef);
-		Slim::Utils::Prefs::clientDelete($client,'syncgroupid');
+		$client->prefDelete('syncgroupid');
 		$::d_sync && msg("Clearing Sync master for $clientID\n");
 	}
 }
@@ -196,9 +196,9 @@ sub saveSyncPrefs {
 # Restore Sync Operation
 sub restoreSync {
 	my $client = shift;
-	my $masterID = (Slim::Utils::Prefs::clientGet($client,'syncgroupid'));
+	my $masterID = ($client->prefGet('syncgroupid'));
 
-	if ($masterID && ($client->power() || Slim::Utils::Prefs::clientGet($client,'syncPower'))) {
+	if ($masterID && ($client->power() || $client->prefGet('syncPower'))) {
 		my @players = Slim::Player::Client::clients();
 
 		foreach my $other (@players) {
@@ -294,7 +294,7 @@ sub checkSync {
 	
 #	$::d_sync && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
 
-	if (!isSynced($client) || Slim::Utils::Prefs::clientGet($client,'silent')) {
+	if (!isSynced($client) || $client->prefGet('silent')) {
 		return;
 	}
 	
@@ -310,7 +310,7 @@ sub checkSync {
 		my $usage = $client->usage();
 		$::d_sync && msg($client->id()." checking buffer fullness: $fullness\n");
 
-		if 	((defined($fullness) && $fullness > Slim::Utils::Prefs::clientGet($client, 'syncBufferThreshold')) ||
+		if 	((defined($fullness) && $fullness > $client->prefGet('syncBufferThreshold')) ||
 			 (defined($usage) && $usage > 0.90)) {
 			$client->readytosync(1);
 		

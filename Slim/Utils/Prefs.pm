@@ -39,6 +39,12 @@ sub init {
 		# moves client preferences to a hash under the 'clients' key
 		'6.2b1' => sub {
 			for my $key (keys %prefs) {
+				# clear out any old 'clients' pref
+				if (!defined $prefs{'clients'} || ref($prefs{'clients'}) ne "HASH") {
+					$prefs{'clients'} = {};
+				}
+
+				# move old client preferences to new hash
 				if ($key =~ /^((?:[[:xdigit:]]{2}:){5}[[:xdigit:]]{2})-(.+)/) {
 					# matched hexidecimal client id (mac address)
 					$prefs{'clients'}{$1}{$2} = $prefs{$key};

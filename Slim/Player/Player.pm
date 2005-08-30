@@ -96,10 +96,10 @@ our %upgradeScripts = (
 		my $client = shift;
 		my $index  = 0;
 
-		foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+		foreach my $menuItem ($client->prefGetArray('menuItem')) {
 
 			if ($menuItem eq 'ShoutcastBrowser') {
-				Slim::Utils::Prefs::clientSet($client, 'menuItem', 'RADIO', $index);
+				$client->prefSet('menuItem', 'RADIO', $index);
 				last;
 			}
 
@@ -113,7 +113,7 @@ our %upgradeScripts = (
 		my $addedBrowse = 0;
 		my @newitems = ();
 
-		foreach my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+		foreach my $menuItem ($client->prefGetArray('menuItem')) {
 
 			if ($menuItem =~ 'BROWSE_') {
 
@@ -128,7 +128,7 @@ our %upgradeScripts = (
 			}
 		}
 
-		Slim::Utils::Prefs::clientSet($client, 'menuItem', \@newitems);
+		$client->prefSet('menuItem', \@newitems);
 	},
 
 	'6.1b1' => sub {
@@ -136,26 +136,26 @@ our %upgradeScripts = (
 
 		if (Slim::Buttons::SqueezeNetwork::clientIsCapable($client)) {
 			# append a menu item to connect to squeezenetwork to the home menu
-			Slim::Utils::Prefs::clientPush($client, 'menuItem', 'SQUEEZENETWORK_CONNECT');
+			$client->prefPush('menuItem', 'SQUEEZENETWORK_CONNECT');
 		}
 	},
 	'6.2' => sub {
 		my $client = shift;
 		#kill all alarm settings
-		my $alarm = Slim::Utils::Prefs::clientGet($client,'alarm');
+		my $alarm = $client->prefGet('alarm');
 		
 		if (ref $alarm ne 'ARRAY') {
-			my $alarmTime = Slim::Utils::Prefs::clientGet($client,'alarmtime');
-			my $alarmplaylist = Slim::Utils::Prefs::clientGet($client,'alarmplaylist');
-			my $alarmvolume = Slim::Utils::Prefs::clientGet($client,'alarmvolume');
-			Slim::Utils::Prefs::clientDelete($client,'alarm');
-			Slim::Utils::Prefs::clientDelete($client,'alarmtime');
-			Slim::Utils::Prefs::clientDelete($client,'alarmplaylist');
-			Slim::Utils::Prefs::clientDelete($client,'alarmvolume');
-			Slim::Utils::Prefs::clientSet($client,'alarm',$alarm,0);
-			Slim::Utils::Prefs::clientSet($client,'alarmtime',$alarmTime,0);
-			Slim::Utils::Prefs::clientSet($client,'alarmplaylist',$alarmplaylist,0);
-			Slim::Utils::Prefs::clientSet($client,'alarmvolume',$alarmvolume,0);
+			my $alarmTime = $client->prefGet('alarmtime');
+			my $alarmplaylist = $client->prefGet('alarmplaylist');
+			my $alarmvolume = $client->prefGet('alarmvolume');
+			$client->prefDelete('alarm');
+			$client->prefDelete('alarmtime');
+			$client->prefDelete('alarmplaylist');
+			$client->prefDelete('alarmvolume');
+			$client->prefSet('alarm',$alarm,0);
+			$client->prefSet('alarmtime',$alarmTime,0);
+			$client->prefSet('alarmplaylist',$alarmplaylist,0);
+			$client->prefSet('alarmvolume',$alarmvolume,0);
 		}
 	}
 );
@@ -192,21 +192,21 @@ sub init {
 	$client->SUPER::init();
 	
 	for my $version (sort keys %upgradeScripts) {
-		if (Slim::Utils::Prefs::clientGet($client, "upgrade-$version-script")) {
+		if ($client->prefGet("upgrade-$version-script")) {
 			&{$upgradeScripts{$version}}($client);
-			Slim::Utils::Prefs::clientSet($client, "upgrade-$version-script", 0);
+			$client->prefSet( "upgrade-$version-script", 0);
 		}
 	}
 
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
-	$client->power(Slim::Utils::Prefs::clientGet($client,'power'));
+	$client->power($client->prefGet('power'));
 	$client->startup();
 
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
-	$client->brightness(Slim::Utils::Prefs::clientGet($client,$client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 }
 
 # usage							float		buffer fullness as a percentage
@@ -1152,7 +1152,7 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	my $currOn = Slim::Utils::Prefs::clientGet($client,'power') || 0;
+	my $currOn = $client->prefGet('power') || 0;
 	
 	return $currOn unless defined $on;
 
@@ -1160,7 +1160,7 @@ sub power {
 
 	if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
 
-		Slim::Utils::Prefs::clientSet($client, 'power', $on);
+		$client->prefSet( 'power', $on);
 
 		unless ($on) {
 			Slim::Buttons::Common::setMode($client, 'off');
@@ -1177,12 +1177,12 @@ sub power {
 		$client->showBriefly($welcome, $welcome2, undef, undef, 1);
 
 		# restore the saved brightness, unless its completely dark...
-		my $powerOnBrightness = Slim::Utils::Prefs::clientGet($client, "powerOnBrightness");
+		my $powerOnBrightness = $client->prefGet("powerOnBrightness");
 
 		if ($powerOnBrightness < 1) { 
 			$powerOnBrightness = 1;
 		}
-		Slim::Utils::Prefs::clientSet($client, "powerOnBrightness", $powerOnBrightness);
+		$client->prefSet( "powerOnBrightness", $powerOnBrightness);
 
 		# check if there is a sync group to restore
 		Slim::Player::Sync::restoreSync($client);
@@ -1214,8 +1214,8 @@ sub fade_volume {
 	
 	Slim::Utils::Timers::killTimers($client, \&fade_volume);
 	
-	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
-	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
+	my $vol = $client->prefGet("volume");
+	my $mute = $client->prefGet("mute");
 	
 	if (($fade == 0) ||
 		($vol < 0 && $fade < 0)) {
@@ -1261,8 +1261,8 @@ sub mute {
 		return 1;
 	}
 
-	my $vol = Slim::Utils::Prefs::clientGet($client, "volume");
-	my $mute = Slim::Utils::Prefs::clientGet($client, "mute");
+	my $vol = $client->prefGet("volume");
+	my $mute = $client->prefGet("mute");
 	
 	if (($vol < 0) && ($mute)) {
 		# mute volume
@@ -1275,7 +1275,7 @@ sub mute {
 		$client->volume($vol);
 	}
 
-	Slim::Utils::Prefs::clientSet($client, "volume", $vol);
+	$client->prefSet( "volume", $vol);
 	Slim::Display::Display::volumeDisplay($client);
 }
 
@@ -1315,9 +1315,9 @@ sub textSize {
 	my $prefname = ($client->power()) ? "doublesize" : "offDisplaySize";
 	
 	if (defined($newsize)) {
-		return	Slim::Utils::Prefs::clientSet($client, $prefname, $newsize);
+		return	$client->prefSet( $prefname, $newsize);
 	} else {
-		return	Slim::Utils::Prefs::clientGet($client, $prefname);
+		return	$client->prefGet($prefname);
 	}
 }
 
@@ -1414,7 +1414,7 @@ sub playingModeOptions {
 		,'5' => $client->string('REMAINING') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
 	);
 	
-	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if Slim::Utils::Prefs::clientGet($client,'showbufferfullness');
+	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if $client->prefGet('showbufferfullness');
 	
 	return \%options;
 }
@@ -1429,7 +1429,7 @@ sub nowPlayingModeLines {
 	my ($client, $parts) = @_;
 	my $overlay;
 	my $fractioncomplete   = 0;
-	my $playingDisplayMode = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+	my $playingDisplayMode = $client->prefGet("playingDisplayMode");
 
 	$client->param(
 		'animateTop',
@@ -1452,7 +1452,7 @@ sub nowPlayingModeLines {
 	my $songtime = " " . Slim::Player::Source::textSongTime($client, $playingDisplayMode);
 
 	if ( $playingDisplayMode == 6) {
-		if (!Slim::Utils::Prefs::clientGet($client,'showbufferfullness')) {
+		if (!$client->prefGet('showbufferfullness')) {
 			$playingDisplayMode = 1; #sanity check.  revert to showing nothign is showbufferfullnes has been turned off.
 		} else {
 			# show both the usage bar and numerical usage

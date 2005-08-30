@@ -39,8 +39,13 @@ sub new {
 
 	Slim::Music::Info::setContentType($url, $format);
 
-	my $maxRate = defined($client) ? Slim::Utils::Prefs::maxRate($client) : 0;
-	my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+	my $maxRate = 0;
+	my $quality = 1;
+
+	if (defined($client)) {
+		$maxRate = Slim::Utils::Prefs::maxRate($client);
+		$quality = $client->prefGet('lameQuality');
+	}
 
 	$command = Slim::Player::Source::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
 

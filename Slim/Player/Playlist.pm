@@ -84,10 +84,10 @@ sub shuffle {
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	if (defined($shuffle)) {
-		Slim::Utils::Prefs::clientSet($client, "shuffle", $shuffle);
+		$client->prefSet("shuffle", $shuffle);
 	}
 	
-	return Slim::Utils::Prefs::clientGet($client, "shuffle");
+	return $client->prefGet("shuffle");
 }
 
 sub repeat {
@@ -97,10 +97,10 @@ sub repeat {
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	if (defined($repeat)) {
-		Slim::Utils::Prefs::clientSet($client, "repeat", $repeat);
+		$client->prefSet("repeat", $repeat);
 	}
 	
-	return Slim::Utils::Prefs::clientGet($client, "repeat");
+	return $client->prefGet("repeat");
 }
 
 # NOTE:
@@ -474,7 +474,7 @@ sub reshuffle {
 		# Not quite sure what this is doing - not changing the current song?
 		if ($realsong == -1 && !$dontpreservecurrsong) {
 
-			my $index = Slim::Utils::Prefs::clientGet($client,'currentSong');
+			my $index = $client->prefGet('currentSong');
 
 			if (defined $index && defined $listRef->[$index]) {
 				$realsong = $listRef->[$index];

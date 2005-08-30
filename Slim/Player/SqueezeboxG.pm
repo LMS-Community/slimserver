@@ -101,7 +101,7 @@ sub maxTextSize {
 	my $client = shift;
 
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-	Slim::Utils::Prefs::clientGetArrayMax($client,$prefname);
+	$client->prefGetArrayMax($prefname);
 }
 
 sub textSize {
@@ -113,9 +113,9 @@ sub textSize {
 	
 	if (defined($newsize)) {
 		$client->renderCache()->{defaultfont} = undef;
-		return	Slim::Utils::Prefs::clientSet($client, $prefname."_curr", $newsize);
+		return	$client->prefSet($prefname."_curr", $newsize);
 	} else {
-		return	Slim::Utils::Prefs::clientGet($client, $prefname."_curr");
+		return	$client->prefGet($prefname."_curr");
 	}
 }
 
@@ -455,7 +455,7 @@ sub fonts {
 		
 	# grab base for prefname depending on mode
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-	my $font = Slim::Utils::Prefs::clientGet($client, $prefname, $size);
+	my $font = $client->prefGet($prefname, $size);
 	
 	my $fontref = Slim::Display::Graphics::gfonthash();
 

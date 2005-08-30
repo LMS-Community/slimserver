@@ -414,7 +414,7 @@ sub playmode {
 
 		$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
 
-		next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+		next if $everyclient->prefGet('silent');
 
 		# when you resume, you go back to play mode
 		if (($newmode eq "resume") ||($newmode eq "resumenow")) {
@@ -454,7 +454,7 @@ sub playmode {
 		} elsif ($newmode eq "play") {
 
 			$everyclient->readytosync(0);
-			if (Slim::Utils::Prefs::clientGet($everyclient,'syncVolume')) {
+			if ($everyclient->prefGet('syncVolume')) {
 				$everyclient->volume($client->volume(),1);
 				$everyclient->fade_volume($FADEVOLUME) unless $client->volume();
 			}
@@ -485,7 +485,7 @@ sub playmode {
 
 		} elsif ($newmode eq "resumenow") {
 
-			if (Slim::Utils::Prefs::clientGet($everyclient,'syncVolume')) {
+			if ($everyclient->prefGet('syncVolume')) {
 				$everyclient->volume($client->volume(),1);
 			}
 			else {
@@ -716,7 +716,7 @@ sub gototime {
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: stopping playback\n");
-		next if (Slim::Utils::Prefs::clientGet($everybuddy,'silent'));
+		next if ($everybuddy->prefGet('silent'));
 		$everybuddy->stop();
 		@{$everybuddy->chunks} = ();
 	}
@@ -732,7 +732,7 @@ sub gototime {
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 
-		next if (Slim::Utils::Prefs::clientGet($everybuddy,'silent'));
+		next if ($everybuddy->prefGet('silent'));
 
 		$::d_source && msg("gototime: restarting playback\n");
 
@@ -1232,7 +1232,7 @@ sub openSong {
 					}
 					else {
 						my $maxRate = Slim::Utils::Prefs::maxRate($client);
-						my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+						my $quality = $client->prefGet('lameQuality');
 						
 						$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
 						$::d_source && msg("tokenized command $command\n");
@@ -1268,7 +1268,7 @@ sub openSong {
 						}
 						else {
 							my $maxRate = Slim::Utils::Prefs::maxRate($client);
-							my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+							my $quality = $client->prefGet('lameQuality');
 							
 							$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
 							$::d_source && msg("tokenized command $command\n");
@@ -1433,7 +1433,7 @@ sub openSong {
 						
 		} else {
 
-			my $quality = Slim::Utils::Prefs::clientGet($client,'lameQuality');
+			my $quality = $client->prefGet('lameQuality');
 			$command = tokenizeConvertCommand($command, $type, $filepath, $fullpath, $samplerate, $maxRate,undef,$quality);
 
 			$client->audioFilehandle( FileHandle->new() );
@@ -1639,7 +1639,7 @@ sub getConvertCommand {
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
 			
-			next if Slim::Utils::Prefs::clientGet($everyclient,'silent');
+			next if $everyclient->prefGet('silent');
 			
 			$audibleplayers++;
 			
@@ -1782,7 +1782,7 @@ sub readNextChunk {
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...
 		foreach my $buddy (Slim::Player::Sync::syncedWith($client), $client) {
-			my $asilence = Slim::Utils::Prefs::clientGet($buddy,'mp3SilencePrelude');
+			my $asilence = $buddy->prefGet('mp3SilencePrelude');
 			$silence = $asilence if ($asilence && ($asilence > $silence));
 		}
 
@@ -1973,7 +1973,7 @@ sub pauseSynced {
 	my $client = shift;
 
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-		next if (Slim::Utils::Prefs::clientGet($everyclient,'silent'));
+		next if ($everyclient->prefGet('silent'));
 		$everyclient->pause();
 	}
 }
