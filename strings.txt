@@ -8755,7 +8755,7 @@ MOODLOGIC_MOOD_6
 
 RADIO_TUNEIN
 	DE	Manuelle Radio Einwahl
-	EN	Radio Tune In
+	EN	Tune In
 
 RADIO_TUNEIN_NOW
 	DE	Manuelle Radio Einwahl
@@ -8763,7 +8763,7 @@ RADIO_TUNEIN_NOW
 
 RADIO_TUNEIN_DESC
 	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Playlist, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
-	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
+	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. <p>You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
