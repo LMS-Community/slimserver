@@ -140,13 +140,13 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	ES	Elegir Salvapantallas Actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
-	CZ	Aktuální spoři�?
+	CZ	Aktuální spořič
 	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
 	ES	Salvapantallas actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
-	CZ	Použít RSS News jako aktuální spoři�?
+	CZ	Použít RSS News jako aktuální spořič
 	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 	ES	Utilizar Noticias RSS como el Salvapantallas actual

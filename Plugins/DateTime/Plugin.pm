@@ -25,7 +25,7 @@ sub getDisplayName {
 
 sub strings { return '
 PLUGIN_SCREENSAVER_DATETIME
-	CZ	Datumový spoři�?
+	CZ	Datumový spořič
 	DE	Datum/Zeit Bildschirmschoner
 	EN	Date and Time
 	ES	Salvapantallas de Fecha y Hora
@@ -38,7 +38,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLE
 	FR	Appuyer sur PLAY pour activer
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLE
-	CZ	Stiskněte PLAY pro zakázání spoři�?e
+	CZ	Stiskněte PLAY pro zakázání spořiče
 	DE	PLAY drücken zum Deaktivieren dieses Bildschirmschoners 
 	EN	Press PLAY to disable this screensaver
 	ES	Presionar PLAY para desactivar este salvapantallas
@@ -51,7 +51,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLING
 	FR	Activation �cran de veille Date/Heure
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLING
-	CZ	Nastavit výchozí spoři�?
+	CZ	Nastavit výchozí spořič
 	DE	Standard-Bildschirmschoner aktivieren
 	EN	Resetting to default screensaver
 	ES	Restableciendo el salvapantallas por defecto

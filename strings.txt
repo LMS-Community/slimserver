@@ -920,6 +920,7 @@ ALARM_WEEKDAYS
 	EN	Weekday Alarms
 
 ALARM_DAY0
+	DE	Täglich
 	EN	Every Day
 
 ALARM_DAY1
@@ -1468,6 +1469,7 @@ SETUP_GROUP_ALARM
 	SE	Väckarklocka
 
 SETUP_GROUP_ALARM_DESC
+	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week.
 
 SETUP_GROUP_IRSETS
@@ -4232,11 +4234,12 @@ SETUP_PERSISTPLAYLISTS_0
 
 SETUP_COMMONALBUMTITLES
 	CZ	Časté tituly alb
-	DE	Geläufige Albentitel
+	DE	Geläufige Albumtitel
 	EN	Common Album Titles
 	ES	Títulos Comunes de Discos
 
 SETUP_COMMONALBUMTITLES_TOGGLE
+	DE	Eine Liste von geläufigen Albumtiteln definieren
 	EN	Specifiy a list of Common Album Titles
 
 SETUP_COMMONALBUMTITLES_DESC
