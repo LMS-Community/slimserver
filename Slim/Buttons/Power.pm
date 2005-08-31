@@ -41,7 +41,7 @@ sub setMode {
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
 
-	my $sync = Slim::Utils::Prefs::clientGet($client,'syncPower');
+	my $sync = $client->prefGet('syncPower');
 
 	if (defined $sync && $sync == 0) {
 		$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
@@ -61,7 +61,7 @@ sub setMode {
 	
 	# switch to power off mode
 	# use our last saved brightness
-	$client->brightness(Slim::Utils::Prefs::clientGet($client, "powerOffBrightness"));
+	$client->brightness($client->prefGet("powerOffBrightness"));
 	$client->update();	
 }
 

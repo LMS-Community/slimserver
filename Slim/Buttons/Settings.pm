@@ -214,7 +214,7 @@ sub setPref {
 	
 	my $pref = $client->param('pref');
 	
-	Slim::Utils::Prefs::clientSet($client,$pref,$value);
+	$client->prefSet($pref,$value);
 }
 
 sub executeCommand {
@@ -257,16 +257,16 @@ sub settingsExitHandler {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = Slim::Utils::Prefs::clientGet($client,$nextParams{'initialValue'});
+					$value = $client->prefGet($nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
 			}
 			if ($nextmenu eq 'settings/TITLEFORMAT') {
-				my @titleFormat = Slim::Utils::Prefs::clientGetArray($client,'titleFormat');
+				my @titleFormat = $client->prefGetArray('titleFormat');
 				$nextParams{'listRef'} = \@titleFormat;
 				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
 				$nextParams{'externRef'} = \@externTF;
-				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'titleFormatCurr');	
+				$nextParams{'listIndex'} = $client->prefGet('titleFormatCurr');	
 			}
 			if ($nextmenu eq 'settings/SETUP_SCREENSAVER' || $nextmenu eq 'settings/SETUP_OFFSAVER' || $nextmenu eq 'settings/SETUP_IDLESAVER') {
 				my %hash = %{&Slim::Buttons::Common::hash_of_savers};

@@ -947,19 +947,19 @@ sub getMix {
 	 
 	my %args = (
 		# Set the size of the list (default 12)
-		size	 => Slim::Utils::Prefs::clientGet($client,'MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+		size	 => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
 
 		# (tracks|min|mb) Set the units for size (default tracks)
-		sizetype => $type[Slim::Utils::Prefs::clientGet($client,'MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+		sizetype => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
 
 		# Set the style slider (default 20)
-		style	 => Slim::Utils::Prefs::clientGet($client,'MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+		style	 => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
 
 		# Set the variety slider (default 0)
-		variety	 => Slim::Utils::Prefs::clientGet($client,'MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+		variety	 => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
 	);
 
-	my $filter = Slim::Utils::Prefs::clientGet($client,'MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
+	my $filter = $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
 
 	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");

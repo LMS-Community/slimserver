@@ -28,7 +28,7 @@ sub init {
 			my $client = shift;
 			my $button = shift;
 			my $buttonarg = shift;
-			my $pdm = Slim::Utils::Prefs::clientGet($client, "playingDisplayMode");
+			my $pdm = $client->prefGet("playingDisplayMode");
 			unless (defined $pdm) { $pdm = 1; };
 			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
 			if ($button eq 'playdisp_toggle') {
@@ -51,7 +51,7 @@ sub init {
 				}
 			}
 			$client->param('animateTop',$pdm);
-			Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $pdm);
+			$client->prefSet("playingDisplayMode", $pdm);
 			$client->update();
 		},
 		'up' => sub  {

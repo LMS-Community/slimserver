@@ -142,7 +142,7 @@ sub mixerDisplay {
 	
 	return unless $feature =~ /(?:volume|pitch|bass|treble)/;
 
-	my $featureValue = Slim::Utils::Prefs::clientGet($client,$feature);
+	my $featureValue = $client->prefGet($feature);
 	return unless defined $featureValue;
 
 	my $featureHeader;

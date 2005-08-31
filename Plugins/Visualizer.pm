@@ -91,13 +91,13 @@ PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	ES	Presionar -> para activar este salvapantallas
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
-	CZ	Spořič je nastaven
+	CZ	Spoři�? je nastaven
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
-	CZ	Výchozí spořič
+	CZ	Výchozí spoři�?
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
@@ -144,7 +144,7 @@ our %configFunctions = (
 
 		my $screensaver = $client_context{$client}->{list}->[$client_context{$client}->{position}];
 		$client_context{$client}->{screensaver} = $screensaver;
-		Slim::Utils::Prefs::clientSet($client,'screensaver',$screensaver);
+		$client->prefSet('screensaver',$screensaver);
 		$client->update();
 	}
 );
@@ -179,7 +179,7 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 
-	my $cursaver = Slim::Utils::Prefs::clientGet($client,'screensaver');
+	my $cursaver = $client->prefGet('screensaver');
 	$client_context{$client}->{screensaver} = $cursaver;
 	if (grep $_ eq $cursaver, @visualizer_screensavers) {
 		$client_context{$client}->{list} = [ @visualizer_screensavers, 'screensaver' ];

@@ -302,7 +302,7 @@ sub lookup {
 	
 		my %enabled = %irCodes;
 		
-		for (Slim::Utils::Prefs::clientGetArray($client,'disabledirsets')) {delete $enabled{$_}};
+		for ($client->prefGetArray('disabledirsets')) {delete $enabled{$_}};
 		
 		for my $irset (keys %enabled) {
 			if (defined $irCodes{$irset}{$code}) {
@@ -331,7 +331,7 @@ sub lookupFunction {
 
 	$mode = Slim::Buttons::Common::mode($client) unless defined($mode);
 
-	my $map = Slim::Utils::Prefs::clientGet($client,'irmap');
+	my $map = $client->prefGet('irmap');
 
 	assert($client);
 	assert($map);

@@ -25,7 +25,7 @@ sub getDisplayName {
 
 sub strings { return '
 PLUGIN_SCREENSAVER_DATETIME
-	CZ	Datumový spořič
+	CZ	Datumový spoři�?
 	DE	Datum/Zeit Bildschirmschoner
 	EN	Date and Time
 	ES	Salvapantallas de Fecha y Hora
@@ -38,7 +38,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLE
 	FR	Appuyer sur PLAY pour activer
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLE
-	CZ	Stiskněte PLAY pro zakázání spořiče
+	CZ	Stiskněte PLAY pro zakázání spoři�?e
 	DE	PLAY drücken zum Deaktivieren dieses Bildschirmschoners 
 	EN	Press PLAY to disable this screensaver
 	ES	Presionar PLAY para desactivar este salvapantallas
@@ -51,7 +51,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLING
 	FR	Activation �cran de veille Date/Heure
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLING
-	CZ	Nastavit výchozí spořič
+	CZ	Nastavit výchozí spoři�?
 	DE	Standard-Bildschirmschoner aktivieren
 	EN	Resetting to default screensaver
 	ES	Restableciendo el salvapantallas por defecto
@@ -95,14 +95,14 @@ our %functions = (
 	},
 	'play' => sub  {
 		my $client = shift;
-		if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
-			Slim::Utils::Prefs::clientSet($client,'screensaver','SCREENSAVER.datetime');
+		if ($client->prefGet('screensaver') ne 'SCREENSAVER.datetime') {
+			$client->prefSet('screensaver','SCREENSAVER.datetime');
 			$client->showBriefly( {
 				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
 				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'),
 			});
 		} else {
-			Slim::Utils::Prefs::clientSet($client,'screensaver','screensaver');
+			$client->prefSet('screensaver','screensaver');
 			$client->showBriefly( {
 				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
 				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'),
@@ -118,7 +118,7 @@ our %functions = (
 sub lines {
 	my $client = shift;
 	my $line2;
-	if (Slim::Utils::Prefs::clientGet($client,'screensaver') ne 'SCREENSAVER.datetime') {
+	if ($client->prefGet('screensaver') ne 'SCREENSAVER.datetime') {
 		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLE');
 	} else {
 		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLE');
@@ -138,7 +138,7 @@ sub handleIndex {
 	my $body;
 
 	$params->{'enable'} =
-		(Slim::Utils::Prefs::clientGet($client,'screensaver') eq 'SCREENSAVER.datetime') ? 0 : 1;
+		($client->prefGet('screensaver') eq 'SCREENSAVER.datetime') ? 0 : 1;
 
 	return Slim::Web::HTTP::filltemplatefile(
 			'plugins/DateTime/index.html',
@@ -221,7 +221,7 @@ sub setScreensaverDateTimeMode() {
 sub screensaverDateTimelines {
 	my $client = shift;
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-	my $alarmOn = Slim::Utils::Prefs::clientGet($client, "alarm", 0) || Slim::Utils::Prefs::clientGet($client, "alarm", $wday);
+	my $alarmOn = $client->prefGet("alarm", 0) || $client->prefGet("alarm", $wday);
 
 	return {
 		'center1' => Slim::Utils::Misc::longDateF(),

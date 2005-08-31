@@ -892,9 +892,9 @@ sub standardTitle {
 
 		$format = Slim::Utils::Prefs::getInd("titleFormat",
 			# at the array index of the client titleformat array
-			Slim::Utils::Prefs::clientGet($client, "titleFormat",
+			$client->prefGet("titleFormat",
 				# which is currently selected
-				Slim::Utils::Prefs::clientGet($client,'titleFormatCurr')
+				$client->prefGet('titleFormatCurr')
 			)
 		);
 

@@ -135,7 +135,7 @@ sub setPref {
 	
 	my $pref = $client->param('pref');
 	
-	Slim::Utils::Prefs::clientSet($client,$pref,$value);
+	$client->prefSet($pref,$value);
 }
 
 sub executeCommand {
@@ -168,7 +168,7 @@ sub settingsExitHandler {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = Slim::Utils::Prefs::clientGet($client,$nextParams{'initialValue'});
+					$value = $client->prefGet($nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
 			}
@@ -177,7 +177,7 @@ sub settingsExitHandler {
 				
 				$nextParams{'listRef'} = [keys %filters];
 				$nextParams{'externRef'} = {Plugins::MusicMagic::Plugin::grabFilters()};
-				$nextParams{'listIndex'} = Slim::Utils::Prefs::clientGet($client,'MMMFilter');
+				$nextParams{'listIndex'} = $client->prefGet('MMMFilter');
 				
 			}
 			

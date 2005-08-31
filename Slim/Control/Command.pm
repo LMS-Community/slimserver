@@ -239,10 +239,10 @@ sub execute {
 		if ($p0 eq "playerpref") {
 
 			if (defined($p2) && $p2 ne '?' && !$::nosetup) {
-				Slim::Utils::Prefs::clientSet($client, $p1, $p2);
+				$client->prefSet($p1, $p2);
 			}
 
-			$p2 = Slim::Utils::Prefs::clientGet($client, $p1);
+			$p2 = $client->prefGet($p1);
 
 		} elsif ($p0 eq "play") {
 
@@ -1015,12 +1015,12 @@ sub execute {
 				if ($vol < 0) {
 					# need to un-mute volume
 					$::d_command && msg("Unmuting, volume is $vol.\n");
-					Slim::Utils::Prefs::clientSet($client, "mute", 0);
+					$client->prefSet("mute", 0);
 					$fade = 0.3125;
 				} else {
 					# need to mute volume
 					$::d_command && msg("Muting, volume is $vol.\n");
-					Slim::Utils::Prefs::clientSet($client, "mute", 1);
+					$client->prefSet("mute", 1);
 					$fade = -0.3125;
 				}
  
@@ -1327,12 +1327,12 @@ sub syncFunction {
 
 		for my $eachclient (@buddies) {
 
-			if (Slim::Utils::Prefs::clientGet($eachclient,'syncVolume')) {
+			if ($eachclient->prefGet('syncVolume')) {
 
 				if ($setting eq "mute") {
 					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
 				} else {
-					Slim::Utils::Prefs::clientSet($eachclient, $setting, $newval);
+					$eachclient->prefSet($setting, $newval);
 					&$controlRef($eachclient, $newval) if ($controlRef);
 				}
 
@@ -1341,7 +1341,7 @@ sub syncFunction {
 				}
 			}
 
-			if (Slim::Utils::Prefs::clientGet($client,'syncPower')) {
+			if ($client->prefGet('syncPower')) {
 
 				if ($setting eq "power") {
 					$eachclient->power($newval);

@@ -332,8 +332,8 @@ our %functions = (
 		
 		if ($client->power()) {
 			$brightmode = 'powerOnBrightness';
-			if ($mode eq Slim::Utils::Prefs::clientGet($client,'screensaver') ||
-					$mode eq Slim::Utils::Prefs::clientGet($client,'idlesaver')) {
+			if ($mode eq $client->prefGet('screensaver') ||
+					$mode eq $client->prefGet('idlesaver')) {
 				$brightmode = 'idleBrightness';
 			}
 		} else {
@@ -352,7 +352,7 @@ our %functions = (
 			if ($newBrightness < 0) { $newBrightness = 0;}
 		}
 
-		Slim::Utils::Prefs::clientSet($client, $brightmode, $newBrightness);
+		$client->prefSet($brightmode, $newBrightness);
 	},
 	'playdisp' => sub  {
 		my $client = shift;
@@ -374,7 +374,7 @@ our %functions = (
 			}
 		} else {
 			if ($buttonarg =~ /^[0-5]$/) {
-				Slim::Utils::Prefs::clientSet($client, "playingDisplayMode", $buttonarg);
+				$client->prefSet("playingDisplayMode", $buttonarg);
 			}
 		}
 	},
@@ -497,8 +497,8 @@ our %functions = (
 	'titleFormat' => sub  {
 		# rotate the titleFormat
 		my $client = shift;
-		Slim::Utils::Prefs::clientSet($client, "titleFormatCurr"
-				, (Slim::Utils::Prefs::clientGet($client, "titleFormatCurr") + 1) % (Slim::Utils::Prefs::clientGetArrayMax($client, "titleFormat") + 1));
+		$client->prefSet("titleFormatCurr"
+				, ($client->prefGet("titleFormatCurr") + 1) % ($client->prefGetArrayMax("titleFormat") + 1));
 		$client->update();
 	},
  	'datetime' => sub  {
@@ -549,7 +549,7 @@ our %functions = (
 		my $mapref = Slim::Hardware::IR::mapfiles();
 		my %maps = reverse %$mapref;
 		return if !exists($maps{$functarg});
-		Slim::Utils::Prefs::clientSet($client,'irmap',$maps{$functarg});
+		$client->prefSet('irmap',$maps{$functarg});
 		$client->showBriefly($client->string('SETUP_IRMAP') . ':', $functarg);
 	}
 
@@ -806,7 +806,7 @@ sub mixer {
 		return;
 	}
 	
-	my $currVal = Slim::Utils::Prefs::clientGet($client,$feature);
+	my $currVal = $client->prefGet($feature);
 	if ($setting  eq 'up') {
 		$cmd = "+$inc";
 		if ($currVal < ($midpoint - 1.5) && ($currVal + $inc) >= ($midpoint - 1.5)) {
@@ -982,7 +982,7 @@ sub paramOrPref {
 #		return $mode->{$name};
 #	}
 #
-#	return Slim::Utils::Prefs::clientGet($client, $name);
+#	return $client->prefGet($name);
 }
 
 # pushMode takes the following parameters:

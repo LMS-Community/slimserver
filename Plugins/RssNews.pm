@@ -140,13 +140,13 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	ES	Elegir Salvapantallas Actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
-	CZ	Aktuální spořič
+	CZ	Aktuální spoři�?
 	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
 	ES	Salvapantallas actual
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
-	CZ	Použít RSS News jako aktuální spořič
+	CZ	Použít RSS News jako aktuální spoři�?
 	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 	ES	Utilizar Noticias RSS como el Salvapantallas actual
@@ -822,9 +822,9 @@ our %menuParams = (
 						  ,'stringExternRef' => 1
 						  ,'header' => 'PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE'
 						  ,'stringHeader' => 1
-						  ,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],'screensaver',$_[1]?'SCREENSAVER.rssnews':'screensaver'); }
+						  ,'onChange' => sub { $_[0]->prefSet('screensaver',$_[1]?'SCREENSAVER.rssnews':'screensaver'); }
 					  ,'onChangeArgs' => 'CV'
-						  ,'initialValue' => sub { (Slim::Utils::Prefs::clientGet($_[0],'screensaver') eq 'SCREENSAVER.rssnews' ? 1 : 0); }
+						  ,'initialValue' => sub { ($_[0]->prefGet('screensaver') eq 'SCREENSAVER.rssnews' ? 1 : 0); }
 				  }
 				  );
 
@@ -843,7 +843,7 @@ sub screensaverSettingsCallback {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = Slim::Utils::Prefs::clientGet($client,$nextParams{'initialValue'});
+					$value = $client->prefGet($nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
 			}

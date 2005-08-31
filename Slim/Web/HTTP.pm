@@ -630,12 +630,12 @@ sub processURL {
 				last if ($i <= $params->{'bitrate'}); 	 
 			}
 
-			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',$temprate); 	 
+			$client->prefSet('transcodeBitrate',$temprate); 	 
 			$::d_http && msg("Setting transcode bitrate to $temprate\n"); 	 
 
 		} else {
 
-			Slim::Utils::Prefs::clientSet($client,'transcodeBitrate',undef);
+			$client->prefSet('transcodeBitrate',undef);
 		}
 	}
 

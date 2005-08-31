@@ -295,7 +295,7 @@ sub status {
 
 			$params->{'sleeptime'} = $client->currentSleepTime();
 			$params->{'isplayer'}  = 1;
-			$params->{'volume'}    = int(Slim::Utils::Prefs::clientGet($client, "volume") + 0.5);
+			$params->{'volume'}    = int($client->prefGet("volume") + 0.5);
 			$params->{'bass'}      = int($client->bass() + 0.5);
 			$params->{'treble'}    = int($client->treble() + 0.5);
 			$params->{'pitch'}     = int($client->pitch() + 0.5);
@@ -304,7 +304,7 @@ sub status {
 			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);
 		}
 		
-		$params->{'fixedVolume'} = !Slim::Utils::Prefs::clientGet($client, 'digitalVolumeControl');
+		$params->{'fixedVolume'} = !$client->prefGet('digitalVolumeControl');
 		$params->{'player'} = $client->id();
 	}
 	

@@ -384,7 +384,7 @@ sub homeExitHandler {
 					if (ref($nextParams->{'initialValue'}) eq 'CODE') {
 						$value = $nextParams->{'initialValue'}->($client);
 					} else {
-						$value = Slim::Utils::Prefs::clientGet($client,$nextParams->{'initialValue'});
+						$value = $client->prefGet($nextParams->{'initialValue'});
 					}
 					$params{'valueRef'} = \$value;
 				}
@@ -532,7 +532,7 @@ sub updateMenu {
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
 	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
 	
-	for my $menuItem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+	for my $menuItem ($client->prefGetArray('menuItem')) {
 
 		next if (exists $disabledplugins{$menuItem});
 		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
