@@ -578,8 +578,9 @@ settingsSelection() - type: int
 our $defaultPrefs = {
 		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
 		,'alarmvolume'			=> [50,50,50,50,50,50,50,50]
-		,'alarmfadeseconds'     => 0 # fade in alarm, 0 means disabled
+		,'alarmfadeseconds'		=> 0 # fade in alarm, 0 means disabled
 		,'alarm'				=> [0,0,0,0,0,0,0,0]
+		,'alarmtime'			=> [0,0,0,0,0,0,0,0]
 		,'lameQuality'			=> 9
 		,'playername'			=> undef
 		,'repeat'				=> 2
