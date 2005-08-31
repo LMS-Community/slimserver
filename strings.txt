@@ -2819,7 +2819,7 @@ SETUP_RESCAN
 
 SETUP_RESCAN_BUTTON
 	CZ	Aktualizovat
-	DE	Musiksammlung aktualisieren
+	DE	Durchsuchen
 	DK	Genindlæs
 	EN	Rescan
 	ES	Recopilar nuevamente
@@ -2839,12 +2839,15 @@ SETUP_RESCAN_DESC
 	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu.
 
 SETUP_WIPEDB
+	DE	Datenbank löschen und alles neu durchsuchen
 	EN	Clear library and rescan everything.
 
 SETUP_STANDARDRESCAN
+	DE	Nach neuen und veränderten Musikstücken suchen
 	EN	Look for new and changed music
 
 SETUP_PLAYLISTRESCAN
+	DE	Nur nach Playlists suchen
 	EN	Only rescan playlists.
 
 RESCANNING

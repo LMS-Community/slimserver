@@ -382,10 +382,6 @@ sub addSetupGroups {
 			$noSetupGroup = $@;
 		}
 
-		if (exists $disabledplugins{$plugin}) {
-			shutdownPlugin($plugin);
-		}
-	
 		if ($noSetupGroup) {
 			$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $noSetupGroup);
 			next;
@@ -419,6 +415,9 @@ sub addSetupGroups {
 			}
 		}
 		
+		if (exists $disabledplugins{$plugin}) {
+			shutdownPlugin($plugin);
+		}
 	}
 	$addGroups = 1 unless Slim::Utils::Prefs::get('plugins-onthefly');
 }
