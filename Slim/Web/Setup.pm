@@ -800,6 +800,7 @@ sub initSetupConfig {
 				return if (!defined($client));
 				playerChildren($client, $pageref);
 				my $playlistRef = playlists();
+				$playlistRef->{''} = undef;
 				for my $i (0..7) {
 					$pageref->{'Prefs'}{'alarmplaylist'.$i}{'options'} = $playlistRef;
 					$pageref->{'Prefs'}{'alarmplaylist'.$i}{'validateArgs'} = [$playlistRef];
@@ -2172,7 +2173,7 @@ sub fillAlarmOptions {
 				}
 			}iegsx;
 
-			Slim::Utils::Prefs::clientSet($client,'alarmtime',$newtime,$index);
+			$client->prefSet('alarmtime',$newtime,$index);
 		}
 	};
 
@@ -2184,7 +2185,7 @@ sub fillAlarmOptions {
 			,'currentValue' => sub {
 				my $client = shift;
 				return if (!defined($client));
-				return Slim::Utils::Prefs::clientGet($client, "alarmvolume",$i);
+				return $client->prefGet( "alarmvolume",$i);
 			}
 		};
 
@@ -2198,7 +2199,7 @@ sub fillAlarmOptions {
 				my $client = shift;
 				return if (!defined($client));
 				
-				my $time = Slim::Utils::Prefs::clientGet($client, "alarmtime",$i);
+				my $time = $client->prefGet( "alarmtime",$i);
 				
 				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Common::timeDigits($client,$time);
 				my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
@@ -2217,7 +2218,7 @@ sub fillAlarmOptions {
 			,'currentValue' => sub {
 					my $client = shift;
 					return if (!defined($client));
-					return Slim::Utils::Prefs::clientGet($client, "alarm",$i);
+					return $client->prefGet( "alarm",$i);
 				}
 		};
 		$setup{'alarm'}{'Prefs'}{'alarmplaylist'.$i} = {
@@ -2228,7 +2229,7 @@ sub fillAlarmOptions {
 			,'currentValue' => sub {
 					my $client = shift;
 					return if (!defined($client));
-					return Slim::Utils::Prefs::clientGet($client, "alarmplaylist",$i);
+					return $client->prefGet( "alarmplaylist",$i);
 				}
 		};
 		$setup{'alarm'}{'Groups'}{'AlarmDay'.$i} = {
@@ -2503,7 +2504,7 @@ sub buildHTTP {
 
 					$prefparams{'PrefArrayCurrName'} = $pageref->{'Prefs'}{$pref}{'arrayCurrentPref'};
 
-					$arrayCurrent = ($client) ? Slim::Utils::Prefs::clientGet($client,$pageref->{'Prefs'}{$pref}{'arrayCurrentPref'})
+					$arrayCurrent = ($client) ? $client->prefGet($pageref->{'Prefs'}{$pref}{'arrayCurrentPref'})
 								: Slim::Utils::Prefs::get($pageref->{'Prefs'}{$pref}{'arrayCurrentPref'});
 				}
 
@@ -2535,12 +2536,12 @@ sub buildHTTP {
 
 					if (!exists($pageref->{'Prefs'}{$pref}{'isArray'})) {
 
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref2) : 
+						$paramref->{$pref2} = ($client) ? $client->prefGet($pref2) : 
 							Slim::Utils::Prefs::get($pref2);
 
 					} else {
 
-						$paramref->{$pref2} = ($client) ? Slim::Utils::Prefs::clientGet($client,$pref,$i) : 
+						$paramref->{$pref2} = ($client) ? $client->prefGet($pref,$i) : 
 							Slim::Utils::Prefs::getInd($pref,$i);
 					}
 				}
@@ -2651,12 +2652,12 @@ sub processArrayChange {
 	if ($pageref->{'Prefs'}{$array}{'arrayDeleteNull'}) {
 		my $acval;
 		if (defined($pageref->{'Prefs'}{$array}{'arrayCurrentPref'})) {
-			$acval = ($client) ? Slim::Utils::Prefs::clientGet($client,$pageref->{'Prefs'}{$array}{'arrayCurrentPref'})
+			$acval = ($client) ? $client->prefGet($pageref->{'Prefs'}{$array}{'arrayCurrentPref'})
 						: Slim::Utils::Prefs::get($pageref->{'Prefs'}{$array}{'arrayCurrentPref'});
 		}
 		my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
 		for (my $i = $arrayMax;$i >= 0;$i--) {
-			my $aval = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
+			my $aval = ($client) ? $client->prefGet($array,$i) : Slim::Utils::Prefs::getInd($array,$i);
 			if (!defined $aval || $aval eq '' || $aval eq $adval) {
 				if ($client) {
 					Slim::Utils::Prefs::clientDelete($client,$array,$i);
@@ -2670,7 +2671,7 @@ sub processArrayChange {
 		}
 		if (defined($pageref->{'Prefs'}{$array}{'arrayCurrentPref'})) {
 			if ($client) {
-				Slim::Utils::Prefs::clientSet($client,$pageref->{'Prefs'}{$array}{'arrayCurrentPref'},$acval);
+				$client->prefSet($pageref->{'Prefs'}{$array}{'arrayCurrentPref'},$acval);
 			} else {
 				Slim::Utils::Prefs::set($pageref->{'Prefs'}{$array}{'arrayCurrentPref'},$acval);
 			}
@@ -2679,13 +2680,13 @@ sub processArrayChange {
 		if ($arrayMax < 0 && defined($pageref->{'Prefs'}{$array}{'arrayBasicValue'})) {
 			#all the array entries were deleted, so set one up
 			if ($client) {
-				Slim::Utils::Prefs::clientSet($client,$array,$pageref->{'Prefs'}{$array}{'arrayBasicValue'},0);
+				$client->prefSet($array,$pageref->{'Prefs'}{$array}{'arrayBasicValue'},0);
 			} else {
 				Slim::Utils::Prefs::set($array,$pageref->{'Prefs'}{$array}{'arrayBasicValue'},0);
 			}
 			if (defined($pageref->{'Prefs'}{$array}{'arrayCurrentPref'})) {
 				if ($client) {
-					Slim::Utils::Prefs::clientSet($client,$pageref->{'Prefs'}{$array}{'arrayCurrentPref'},0);
+					$client->prefSet($pageref->{'Prefs'}{$array}{'arrayCurrentPref'},0);
 				} else {
 					Slim::Utils::Prefs::set($pageref->{'Prefs'}{$array}{'arrayCurrentPref'},0);
 				}
@@ -2694,7 +2695,7 @@ sub processArrayChange {
 		}
 		#update the params hash, since the array entries may have shifted around some
 		for (my $i = 0;$i <= $arrayMax;$i++) {
-			$paramref->{$array . $i} = ($client) ? Slim::Utils::Prefs::clientGet($client,$array,$i) : Slim::Utils::Prefs::getInd($array,$i);
+			$paramref->{$array . $i} = ($client) ? $client->prefGet($array,$i) : Slim::Utils::Prefs::getInd($array,$i);
 		}
 		#further update params hash to clear shifted values
 		my $i = $arrayMax + 1;
@@ -2797,14 +2798,14 @@ sub setup_evaluation {
 					if (exists($settingsref->{$key}{'currentValue'})) {
 						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key,$i);
 					} else {
-						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key,$i) : Slim::Utils::Prefs::getInd($key,$i);
+						$currVal = ($client) ? $client->prefGet($key,$i) : Slim::Utils::Prefs::getInd($key,$i);
 					}
 				} else {
 					$key2 = $key;
 					if (exists($settingsref->{$key}{'currentValue'})) {
 						$currVal = &{$settingsref->{$key}{'currentValue'}}($client,$key);
 					} else {
-						$currVal = ($client) ? Slim::Utils::Prefs::clientGet($client,$key) : Slim::Utils::Prefs::get($key);
+						$currVal = ($client) ? $client->prefGet($key) : Slim::Utils::Prefs::get($key);
 					}
 				}
 				if (defined($paramref->{$key2})) {
@@ -2825,7 +2826,7 @@ sub setup_evaluation {
 							if ($client) {
 								$changes{$key2}{'old'} = $currVal;
 								if (!exists $settingsref->{$key}{'dontSet'}) {
-									Slim::Utils::Prefs::clientSet($client,$key2,$pvalue);
+									$client->prefSet($key2,$pvalue);
 								}
 							} else {
 								$changes{$key2}{'old'} = $currVal;

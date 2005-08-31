@@ -581,6 +581,7 @@ our $defaultPrefs = {
 		,'alarmfadeseconds'		=> 0 # fade in alarm, 0 means disabled
 		,'alarm'				=> [0,0,0,0,0,0,0,0]
 		,'alarmtime'			=> [0,0,0,0,0,0,0,0]
+		,'alarmplaylist'		=> ['','','','','','','','']
 		,'lameQuality'			=> 9
 		,'playername'			=> undef
 		,'repeat'				=> 2

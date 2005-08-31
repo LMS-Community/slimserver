@@ -142,20 +142,20 @@ our %upgradeScripts = (
 	'6.2' => sub {
 		my $client = shift;
 		#kill all alarm settings
-		my $alarm = $client->prefGet('alarm');
+		my $alarm = $client->prefGet('alarm') || 0;
 		
 		if (ref $alarm ne 'ARRAY') {
-			my $alarmTime = $client->prefGet('alarmtime');
-			my $alarmplaylist = $client->prefGet('alarmplaylist');
-			my $alarmvolume = $client->prefGet('alarmvolume');
+			my $alarmTime = $client->prefGet('alarmtime') || 0;
+			my $alarmplaylist = $client->prefGet('alarmplaylist') || '';
+			my $alarmvolume = $client->prefGet('alarmvolume') || 50;
 			$client->prefDelete('alarm');
 			$client->prefDelete('alarmtime');
 			$client->prefDelete('alarmplaylist');
 			$client->prefDelete('alarmvolume');
-			$client->prefSet('alarm',$alarm,0);
-			$client->prefSet('alarmtime',$alarmTime,0);
-			$client->prefSet('alarmplaylist',$alarmplaylist,0);
-			$client->prefSet('alarmvolume',$alarmvolume,0);
+			$client->prefSet('alarm',[$alarm,0,0,0,0,0,0,0]);
+			$client->prefSet('alarmtime',[$alarmTime,0,0,0,0,0,0,0]);
+			$client->prefSet('alarmplaylist',[$alarmplaylist,'','','','','','','']);
+			$client->prefSet('alarmvolume',[$alarmvolume,50,50,50,50,50,50,50]);
 		}
 	}
 );
