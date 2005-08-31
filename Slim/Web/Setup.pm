@@ -279,8 +279,8 @@ sub initSetupConfig {
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
 							$pageref->{'GroupOrder'}[6] = 'ScrollPixels';
 
-							my $activeFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'activeFont') + 1;
-							my $idleFontMax = Slim::Utils::Prefs::clientGetArrayMax($client,'idleFont') + 1;
+							my $activeFontMax = $client->prefGetArrayMax('activeFont') + 1;
+							my $idleFontMax = $client->prefGetArrayMax('idleFont') + 1;
 							$pageref->{'Prefs'}{'activeFont_curr'}{'validateArgs'} = [0,$activeFontMax,1,1];
 							$pageref->{'Prefs'}{'idleFont_curr'}{'validateArgs'} = [0,$idleFontMax,1,1];
 		
@@ -583,7 +583,7 @@ sub initSetupConfig {
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
-					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem');
+					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = $client->prefGetArrayMax('menuItem');
 					my $i = 0;
 					foreach my $nonItem (Slim::Buttons::Home::unusedMenuOptions($client)) {
 						$paramref->{'nonMenuItem' . $i++} = $nonItem;
@@ -604,7 +604,7 @@ sub initSetupConfig {
 					my $i = 0;
 					return if (!defined($client));
 					#refresh paramref for menuItem array
-					foreach my $menuitem (Slim::Utils::Prefs::clientGetArray($client,'menuItem')) {
+					foreach my $menuitem ($client->prefGetArray('menuItem')) {
 						$paramref->{'menuItem' . $i++} = $menuitem;
 					}
 					$pageref->{'Prefs'}{'menuItemAction'}{'arrayMax'} = $i - 1;
@@ -699,25 +699,25 @@ sub initSetupConfig {
 										return;
 									}
 									my $i;
-									for ($i = Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem'); $i >= 0; $i--) {
+									for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
 										if (exists $changeref->{'menuItemAction' . $i}) {
 											my $newval = $changeref->{'menuItemAction' . $i}{'new'};
-											my $tempItem = Slim::Utils::Prefs::clientGet($client,'menuItem',$i);
+											my $tempItem = $client->prefGet('menuItem',$i);
 											if (defined $newval) {
 												if ($newval eq 'Remove') {
-													Slim::Utils::Prefs::clientDelete($client,'menuItem',$i);
+													$client->prefDelete('menuItem',$i);
 												} elsif ($newval eq 'Up' && $i > 0) {
-													Slim::Utils::Prefs::clientSet($client,'menuItem',Slim::Utils::Prefs::clientGet($client,'menuItem',$i - 1),$i);
-													Slim::Utils::Prefs::clientSet($client,'menuItem',$tempItem,$i - 1);
-												} elsif ($newval eq 'Down' && $i < Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem')) {
-													Slim::Utils::Prefs::clientSet($client,'menuItem',Slim::Utils::Prefs::clientGet($client,'menuItem',$i + 1),$i);
-													Slim::Utils::Prefs::clientSet($client,'menuItem',$tempItem,$i + 1);
+													$client->prefSet('menuItem',$client->prefGet('menuItem',$i - 1),$i);
+													$client->prefSet('menuItem',$tempItem,$i - 1);
+												} elsif ($newval eq 'Down' && $i < $client->prefGetArrayMax('menuItem')) {
+													$client->prefSet('menuItem',$client->prefGet('menuItem',$i + 1),$i);
+													$client->prefSet('menuItem',$tempItem,$i + 1);
 												}
 											}
 										}
 									}
-									if (Slim::Utils::Prefs::clientGetArrayMax($client,'menuItem') < 0) {
-										Slim::Utils::Prefs::clientSet($client,'menuItem',$pageref->{'Prefs'}{'menuItem'}{'arrayBasicValue'},0);
+									if ($client->prefGetArrayMax('menuItem') < 0) {
+										$client->prefSet('menuItem',$pageref->{'Prefs'}{'menuItem'}{'arrayBasicValue'},0);
 									}
 									Slim::Buttons::Home::updateMenu($client);
 									$changeref->{'menuItemAction'}{'Processed'} = 1;
@@ -748,7 +748,7 @@ sub initSetupConfig {
 									for ($i = $pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'}; $i >= 0; $i--) {
 										if (exists $changeref->{'nonMenuItemAction' . $i}) {
 											if ($changeref->{'nonMenuItemAction' . $i}{'new'} eq 'Add') {
-												Slim::Utils::Prefs::clientPush($client,'menuItem',$paramref->{'nonMenuItem' . $i});
+												$client->prefPush('menuItem',$paramref->{'nonMenuItem' . $i});
 											}
 										}
 									}
@@ -781,7 +781,7 @@ sub initSetupConfig {
 									for ($i = $pageref->{'Prefs'}{'pluginItemAction'}{'arrayMax'}; $i >= 0; $i--) {
 										if (exists $changeref->{'pluginItemAction' . $i}) {
 											if ($changeref->{'pluginItemAction' . $i}{'new'} eq 'Add') {
-												Slim::Utils::Prefs::clientPush($client,'menuItem',$paramref->{'pluginItem' . $i});
+												$client->prefPush('menuItem',$paramref->{'pluginItem' . $i});
 											}
 										}
 									}
@@ -1000,7 +1000,7 @@ sub initSetupConfig {
 											#temporarily unsync off players if on/off set to separate
 											Slim::Player::Sync::unsync($client,1);
 										} 
-										Slim::Utils::Prefs::clientSet($eachclient,'syncPower',$value);
+										$eachclient->prefSet('syncPower',$value);
 									}
 								}
 							}
@@ -1052,7 +1052,7 @@ sub initSetupConfig {
 					$pageref->{'GroupOrder'}[1] = undef;
 				}
 				my $i = 0;
-				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
+				my %irsets = map {$_ => 1} $client->prefGetArray('disabledirsets');
 				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles()})) {
 					if (exists $paramref->{"irsetlist$i"} && $paramref->{"irsetlist$i"} == (exists $irsets{$irset} ? 0 : 1)) {
 						delete $paramref->{"irsetlist$i"};
@@ -1068,14 +1068,14 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				return if (!defined($client));
 				my $i = 0;
-				my %irsets = map {$_ => 1} Slim::Utils::Prefs::clientGetArray($client,'disabledirsets');
-				Slim::Utils::Prefs::clientDelete($client,'disabledirsets');
+				my %irsets = map {$_ => 1} $client->prefGetArray('disabledirsets');
+				$client->prefDelete('disabledirsets');
 				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles()})) {
 					if (!exists $paramref->{"irsetlist$i"}) {
 						$paramref->{"irsetlist$i"} = exists $irsets{$irset} ? 0 : 1;
 					}
 					unless ($paramref->{"irsetlist$i"}) {
-						Slim::Utils::Prefs::clientPush($client,'disabledirsets',$irset);
+						$client->prefPush('disabledirsets',$irset);
 					}
 					Slim::Hardware::IR::loadIRFile($irset);
 					$i++;
@@ -2497,7 +2497,7 @@ sub buildHTTP {
 				if (defined($pageref->{'Prefs'}{$pref}{'arrayMax'})) {
 					$arrayMax = $pageref->{'Prefs'}{$pref}{'arrayMax'};
 				} else {
-					$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$pref) : 
+					$arrayMax = ($client) ? $client->prefGetArrayMax($pref) : 
 						Slim::Utils::Prefs::getArrayMax($pref);
 				}
 
@@ -2649,7 +2649,7 @@ sub processChanges {
 
 sub processArrayChange {
 	my ($client,$array,$paramref,$pageref) = @_;
-	my $arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$array) : Slim::Utils::Prefs::getArrayMax($array);
+	my $arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
 	if ($pageref->{'Prefs'}{$array}{'arrayDeleteNull'}) {
 		my $acval;
 		if (defined($pageref->{'Prefs'}{$array}{'arrayCurrentPref'})) {
@@ -2661,7 +2661,7 @@ sub processArrayChange {
 			my $aval = ($client) ? $client->prefGet($array,$i) : Slim::Utils::Prefs::getInd($array,$i);
 			if (!defined $aval || $aval eq '' || $aval eq $adval) {
 				if ($client) {
-					Slim::Utils::Prefs::clientDelete($client,$array,$i);
+					$client->prefDelete($array,$i);
 				} else {
 					Slim::Utils::Prefs::delete($array,$i);
 				}
@@ -2677,7 +2677,7 @@ sub processArrayChange {
 				Slim::Utils::Prefs::set($pageref->{'Prefs'}{$array}{'arrayCurrentPref'},$acval);
 			}
 		}
-		$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$array) : Slim::Utils::Prefs::getArrayMax($array);
+		$arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
 		if ($arrayMax < 0 && defined($pageref->{'Prefs'}{$array}{'arrayBasicValue'})) {
 			#all the array entries were deleted, so set one up
 			if ($client) {
@@ -2712,7 +2712,7 @@ sub removeExtraArrayEntries {
 	if (!defined($pageref->{'Prefs'}{$array}{'arrayAddExtra'})) {
 		return;
 	}
-	my $arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$array) : Slim::Utils::Prefs::getArrayMax($array);
+	my $arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
 	my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
 	for (my $i = $arrayMax + $pageref->{'Prefs'}{$array}{'arrayAddExtra'};$i > $arrayMax;$i--) {
 		if (exists $paramref->{$array . $i} && (!defined($paramref->{$array . $i}) || $paramref->{$array . $i} eq '' || $paramref->{$array . $i} eq $adval)) {
@@ -2778,7 +2778,7 @@ sub setup_evaluation {
 			if (defined($settingsref->{$key}{'arrayMax'})) {
 				$arrayMax = $settingsref->{$key}{'arrayMax'};
 			} else {
-				$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$key) : Slim::Utils::Prefs::getArrayMax($key);
+				$arrayMax = ($client) ? $client->prefGetArrayMax($key) : Slim::Utils::Prefs::getArrayMax($key);
 			}
 			if (defined($arrayMax) && exists($settingsref->{$key}{'arrayAddExtra'})) {
 				my $adval = defined($settingsref->{$key}{'arrayDeleteValue'}) ? $settingsref->{$key}{'arrayDeleteValue'} : '';
@@ -2948,7 +2948,7 @@ sub options_HTTP {
 	foreach my $key (keys %$settingsref) {
 		my $arrayMax = 0;
 		if (exists($settingsref->{$key}{'isArray'})) {
-			$arrayMax = ($client) ? Slim::Utils::Prefs::clientGetArrayMax($client,$key) : Slim::Utils::Prefs::getArrayMax($key);
+			$arrayMax = ($client) ? $client->prefGetArrayMax($key) : Slim::Utils::Prefs::getArrayMax($key);
 			if (!defined $arrayMax) { $arrayMax = 0; }
 			if (exists($settingsref->{$key}{'arrayAddExtra'})) {
 				$arrayMax += $settingsref->{$key}{'arrayAddExtra'};
