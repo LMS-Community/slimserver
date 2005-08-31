@@ -2833,21 +2833,19 @@ SETUP_RESCAN_BUTTON
 
 SETUP_RESCAN_DESC
 	CZ	Pokud přidáte, odstraníte, nebo změníte soubory ve svém hudebním archivu, můžete nastavit aby SlimServer provedl kontrolu souborů tak, aby uchoval hudební databázi stále aktuální.
-	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht. Kreuzen Sie die Checkbox an, damit SlimServer die bestehende Datenbank vor dem Durchsuchen löscht und diese von Grund auf neu aufbaut.
-	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.  Click the checkbox and then click Rescan to make SlimServer forget about your entire library and rescan from scratch.
-	ES	Presionar en Recopilar para que SlimServer recorrar la colección musical y añada nueva música o actualice canciones que hayan cambiado. Marque el checkbox y luego presion Recopilar para que Slimserver elimine completamente la historia previa y recopile nuevamente desde cero.
-	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu. Si vous cochez la case, SlimServer va remettre à zéro la bibliothèque existante.
+	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
+	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.
+	ES	Presionar en Recopilar para que SlimServer recorrar la colección musical y añada nueva música o actualice canciones que hayan cambiado.
+	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu.
 
-SETUP_WIPECACHE
-	CZ	Vyčistit cache
-	DE	Datenbank vor dem Durchsuchen löschen
-	EN	Clear library before rescan
-	ES	Limpiar la información previa de la colección antes de volver a recopilar
-	FR	Initialiser la bibliothèque avant de répertorier
+SETUP_WIPEDB
+	EN	Clear library and rescan everything.
+
+SETUP_STANDARDRESCAN
+	EN	Look for new and changed music
 
 SETUP_PLAYLISTRESCAN
-	DE	Nur nach neuen Playlists suchen.
-	EN	Rescan playlists only.
+	EN	Only rescan playlists.
 
 RESCANNING
 	CZ	Server právě aktualizuje informace z hudebního archivu.

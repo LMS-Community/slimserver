@@ -1137,108 +1137,109 @@ sub initSetupConfig {
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
 	,'server' => {
-		'children' => ['server','interface','behavior',
-		'formats',
-		'formatting','security','performance','network','debug']
-		,'title' => string('SERVER_SETTINGS')
-		,'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS')
-		,'preEval' => sub {
-				my ($client,$paramref,$pageref) = @_;
 
-				$paramref->{'versionInfo'} = Slim::Utils::Misc::settingsDiagString();
-				$paramref->{'newVersion'}  = $::newVersion;
-			}
-		,'GroupOrder' => ['language', 'Default','Rescan']
-		#,'template' => 'setup_server.html'
-		,'Groups' => {
-				'language' => {
-						'PrefOrder' => ['language']
-						},
-				'Default' => {
-						'PrefOrder' => ['audiodir','playlistdir',undef]
-						},
-				'Rescan' => {
-					'PrefOrder' => [qw(playlistrescan wipedb rescan)]
-					,'PrefsInTable' => 0
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_RESCAN')
-					,'GroupDesc' => string('SETUP_RESCAN_DESC')
-					,'GroupLine' => 1
-				}
-			}
-		,'Prefs' => {
-				'language'	=> {
-							'validate' => \&validateInHash
-							,'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages]
-							,'options' => undef #filled by initSetup using Slim::Utils::Strings::hash_of_languages()
-							,'onChange' => sub {
-								Slim::Utils::Strings::init();
-								Slim::Buttons::Plugins::initPlugins();
-								Slim::Web::Setup::initSetup();
-							}
-						}
-				,'audiodir'	=> {
-							'validate' => \&validateIsAudioDir
-							,'validateArgs' => [1]
-							,'changeIntro' => string('SETUP_OK_USING')
-							,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
-							,'PrefSize' => 'large'
-						}
-				,'playlistdir'	=> {
-							'validate' => \&validateIsDir
-							,'validateArgs' => [1]
-							,'changeIntro' => string('SETUP_PLAYLISTDIR_OK')
-							,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
-							,'PrefSize' => 'large'
-						}
-				,'rescan' => {
-							'validate' => \&validateAcceptAll
-							,'onChange' => sub {
-								my ($client,$changeref) = @_;
+		'children' => [qw(server interface behavior formats formatting security performance network debug)],
+		'title'    => string('SERVER_SETTINGS'),
+		'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS'),
 
-								my $rescanType = ['rescan'];
+		'preEval'  => sub {
+			my ($client, $paramref, $pageref) = @_;
 
-								if ($changeref->{'wipedb'}{'new'}) {
+			$paramref->{'versionInfo'} = Slim::Utils::Misc::settingsDiagString() . "\n<p>";
+			$paramref->{'newVersion'}  = $::newVersion;
+		},
 
-									$rescanType = ['wipecache'];
+		'GroupOrder' => [qw(language Default Rescan)],
 
-								} elsif ($changeref->{'playlistrescan'}{'new'}) {
+		'Groups' => {
 
-									$rescanType = [qw(rescan playlists)];
-								}
+			'language' => {
+				'PrefOrder' => ['language'],
+			},
 
-								Slim::Control::Command::execute($client, $rescanType, undef, undef);
-							}
-							,'inputTemplate' => 'setup_input_submit.html'
-							,'ChangeButton' => string('SETUP_RESCAN_BUTTON')
-							,'changeIntro' => string('RESCANNING')
-							,'dontSet' => 1
-							,'changeMsg' => ''
-						}
-				,'wipedb' => {
-							'validate' => \&validateAcceptAll
-							,'inputTemplate' => 'setup_input_chk.html'
-							,'PrefChoose' => string('SETUP_WIPECACHE')
-							,'currentValue' => sub { return 0; }
-							,'dontSet' => 1
-							,'changeIntro' => ''
-							,'changeMsg' => ''
-						}
+			'Default' => {
+				'PrefOrder' => ['audiodir', 'playlistdir', undef],
+			},
 
-				,'playlistrescan' => {
-							'validate' => \&validateAcceptAll
-							,'inputTemplate' => 'setup_input_chk.html'
-							,'PrefChoose' => string('SETUP_PLAYLISTRESCAN')
-							,'currentValue' => sub { return 0; }
-							,'dontSet' => 1
-							,'changeIntro' => ''
-							,'changeMsg' => ''
-						}
-			}
-		} #end of setup{'server'} hash
+			'Rescan' => {
+				'PrefOrder' => [qw(rescan)],
+				'PrefsInTable' => 0,
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefDesc' => 1,
+				'Suppress_PrefLine' => 1,
+				'GroupHead' => string('SETUP_RESCAN'),
+				'GroupDesc' => string('SETUP_RESCAN_DESC'),
+				'GroupLine' => 1,
+			},
+		},
+
+		'Prefs' => {
+
+			'language' => {
+
+				'validate'     => \&validateInHash,
+				'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages],
+				'options'      => undef,  # filled by initSetup using Slim::Utils::Strings::hash_of_languages()
+				'onChange'     => sub {
+					Slim::Utils::Strings::init();
+					Slim::Buttons::Plugins::initPlugins();
+					Slim::Web::Setup::initSetup();
+				},
+			},
+
+			'audiodir' => {
+				'validate'     => \&validateIsAudioDir,
+				'validateArgs' => [1],
+				'changeIntro'  => string('SETUP_OK_USING'),
+				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
+				'PrefSize'     => 'large',
+			},
+
+			'playlistdir' => {
+				'validate'     => \&validateIsDir,
+				'validateArgs' => [1],
+				'changeIntro'  => string('SETUP_PLAYLISTDIR_OK'),
+				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
+				'PrefSize'     => 'large',
+			},
+
+			'rescan' => {
+
+				'validate' => \&validateAcceptAll,
+
+				'onChange' => sub {
+					my ($client, $changeref) = @_;
+
+					my $rescanType = ['rescan'];
+
+					if ($changeref->{'rescan'}{'new'} eq 'wipedb') {
+
+						$rescanType = ['wipecache'];
+
+					} elsif ($changeref->{'rescan'}{'new'} eq 'playlist') {
+
+						$rescanType = [qw(rescan playlists)];
+					}
+
+					Slim::Control::Command::execute($client, $rescanType);
+				},
+
+				'optionSort' => 'V',
+				'options' => {
+					'rescan'   => string('SETUP_STANDARDRESCAN'),
+					'wipedb'   => string('SETUP_WIPEDB'),
+					'playlist' => string('SETUP_PLAYLISTRESCAN'),
+				},
+
+				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
+				'changeIntro'   => string('RESCANNING'),
+				'dontSet'       => 1,
+				'changeMsg'     => '',
+			},
+		},
+
+	} #end of setup{'server'} hash
+
 	,'PLUGINS' => {
 		'title' => string('PLUGINS')
 		,'parent' => 'server'
