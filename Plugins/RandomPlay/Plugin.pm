@@ -171,7 +171,7 @@ sub lines {
 }
 
 sub getFunctions {
-	return ();
+	return {};
 }
 
 sub webPages {
