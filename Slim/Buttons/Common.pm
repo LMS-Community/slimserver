@@ -780,56 +780,6 @@ sub scroll_getInitialScrollParams {
 	return $result;
 }
 
-# scroll with acceleration based on list length and stop at the end if we're accelerating...
-sub scroll_original {
-	my $client = shift;
-	my $direction = shift;
-	my $listlength = shift;
-	my $currentlistposition = shift;
-	my $newposition;
-	my $holdtime = Slim::Hardware::IR::holdTime($client);
-
-	if (!$listlength) {
-		return 0;
-	}
-	
-	my $i = 1;
-	my $rate; # Hz
-	my $accel; #Hz/s
-	$i *= $direction;
-
-	if ($holdtime > 0) {
-		if ($listlength < 21 || $holdtime < 1) {
-			$rate = 3; # constant rate for short lists
-			$accel = 0;
-		} elsif ($holdtime < 2.5) {
-			$rate = 5;
-		} else { 
-			$accel = 0.06 * $listlength; 
-			# should span in 5 seconds with constant acceleration after initial slowness
-		}
-		$i *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-	}
-
-	if (($currentlistposition + $i) >= $listlength) {
-		if ($holdtime > 0) {
-			$newposition = $listlength - 1;
-		} else {
-			$newposition = 0;
-		}
-	} elsif (($currentlistposition + $i) < 0) {
-		if ($holdtime > 0) {
-			$newposition = 0;
-		} else {
-			$newposition = $listlength - 1;
-		}
-	} else {
-		$newposition = $currentlistposition + $i;
-	}
-
-	return $newposition;
-}
-
 # DEPRECATED: Use INPUT.Time mode instead
 sub scrollTime {
 	Slim::Buttons::Input::Time::scrollTime(@_);
