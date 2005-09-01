@@ -98,8 +98,7 @@ sub reconnect {
 		}
 	}
 
-	$client->animateState(0);
-	$client->updateMode(0);
+	$client->killAnimation();
 
 	# reinitialize the irtime to the current time so that
 	# (re)connecting counts as activity (and we don't
@@ -110,6 +109,7 @@ sub reconnect {
 	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
 	# update display and force visualizer to correct mode if SB2
+	$client->update({}); # clear render cache
 	$client->update();	
 	$client->visualizer(1) if ($client->isa('Slim::Player::Squeezebox2'));
 }
