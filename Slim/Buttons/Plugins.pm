@@ -449,7 +449,7 @@ sub shutdownPlugin {
 	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
 		eval { &{"Plugins::${plugin}::shutdownPlugin"}() };
 	}
-	delete $plugins{$plugin};
+	$plugins{$plugin}{'initialized'} = 0 if (defined $plugins{$plugin});
 }
 
 sub unusedPluginOptions {
