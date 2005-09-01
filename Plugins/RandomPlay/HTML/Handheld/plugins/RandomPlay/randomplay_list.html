@@ -1,0 +1,51 @@
+[% pagetitle = 'PLUGIN_RANDOM' | string %]
+
+[% BLOCK playImage %]
+	<img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+[% END %]
+
+[% BLOCK playLink %]
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]">[% PROCESS playImage %]</a>
+[% END %]
+
+[% PROCESS pageheader.html %]
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+		<tr>
+			<td>/
+				<a href="">[% "PLUGIN_RANDOM" | string %]</a> 
+			</td>
+		</tr>
+	</table>
+
+	<p></p>
+
+	[% IF warn %]
+		<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+		[% IF audiodir %]
+			[% "SCAN_CLICK" | string %] <a href="[% webroot %]browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.
+		[% END %] 
+	[% END %]
+	
+	<p><b>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</b></p>
+
+	<table border="0" cellspacing="0" cellpadding="4" width="100%">
+		<tr>
+			<td width="100%" class="odd" bgcolor="#d0d0d0">[% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
+			<td class="odd" bgcolor="#d0d0d0" align="right" >[% PROCESS playLink type="track" %]</td>
+		</tr>
+
+		<tr>
+			<td width="100%" class="even" bgcolor="#ffffff">[% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
+			<td class="even" bgcolor="#ffffff" align="right" >[% PROCESS playLink type="artist" %]</td>
+		</tr>
+
+		<tr>
+			<td width="100%" class="odd" bgcolor="#d0d0d0">[% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
+			<td class="odd" bgcolor="#d0d0d0" align="right" >[% PROCESS playLink type="album" %]</td>
+		</tr>
+	</table>
+
+	<p></p>
+[% PROCESS pagefooter.html %]
+
+	
