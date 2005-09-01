@@ -1,0 +1,46 @@
+<html>
+	<head>
+		<title>[% "PLUGIN_RANDOM" | string %]</title>
+		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	</head>
+	<body bgcolor="#FFFFFF">
+
+		<p>
+		<h3>[% "PLUGIN_RANDOM" | string %]</h3><p>
+
+		<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="">[% "PLUGIN_RANDOM" | string %]</a>
+
+		<p><hr><p>
+
+		<table cellspacing="0" border="0" cellpadding="4" width="100%">
+
+			<tr>
+				<td>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<td> [% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=track">[% "PLAY" | string %]</a></td>
+			</tr>
+
+			<tr>
+				<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=artist">[% "PLAY" | string %]</a></td>
+			</tr>
+
+			<tr>
+				<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=album">[% "PLAY" | string %]</a></td>
+			</tr>
+
+
+		</table>
+
+	</body>
+</html>

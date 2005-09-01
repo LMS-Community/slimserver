@@ -15,27 +15,29 @@ package Plugins::RandomPlay::Plugin;
 
 use strict;
 
-use Slim::Buttons::Common;
+use FindBin qw($Bin);
+use File::Spec::Functions qw(catfile);
+
 use Slim::Buttons::Home;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my %safeCommands = ();
-my $listRefName  = 'randomPlayListRef';
+my @menuChoices  = ();
+my %functions    = ();
+my %safecommands = ();
+my %type         = ();
+my %count        = ();
+my $menuAction;
+my $menuAction   = 0;
+my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
 }
 
 sub playRandom {
-	my ($client, $addOnly) = @_;
-
-	unless ($client) {
-
-		msg("RandomPlay: I need a client to generate a random mix!\n");
-		return ;
-	}
-
+	my ($client, $type, $addOnly) = @_;
+	
 	# disable this during the course of this function, since we don't want
 	# to retrigger on commands we send from here.
 	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
@@ -45,13 +47,31 @@ sub playRandom {
 		Slim::Control::Command::execute($client, [qw(power 1)]);
 	}
 
+	#
+	$type ||= 'track';
+	$type   = lc($type);
+	
+	$type{$client} = $type;
+
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
+	my $find  = {};
+	my $limit = 1;
+
+	$::d_plugins && msg("Starting random selection for type: [$type]\n");
+
+	if ($type eq 'track') {
+
+		$find->{'audio'} = 1;
+
+		$limit = Slim::Utils::Prefs::get('plugin_random_number_of_tracks') || 10;
+	}
+
 	my $items = $ds->find({
 
-		'field'  => 'track',
-		'find'   => { 'audio' => 1 },
+		'field'  => $type,
+		'find'   => $find,
 		'sortBy' => 'random',
-		'limit'  => (Slim::Utils::Prefs::get('plugin_random_number_of_tracks') || 10),
+		'limit'  => $limit,
 		'cache'  => 0,
 	});
 
@@ -60,37 +80,38 @@ sub playRandom {
 
 	if ($item && ref($item)) {
 
-		$::d_plugins && msgf("RandomPlay: %s: (id: %d) %s\n", ($addOnly ? 'Adding' : 'Playing'), $item->id, $item->title);
+		my $string = $item;
+
+		if ($type eq 'artist') {
+			$string = $item->name;
+		} else {
+			$string = $item->title;
+		}
+
+		$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n", ($addOnly ? 'Adding' : 'Playing'), $type, $string, $item->id);
 
 		Slim::Player::Playlist::shuffle($client, 0);
 		
 		unless ($addOnly) {
 
-			$client->showBriefly($client->string('PLUGIN_RANDOM_PLAYING'));
+			$client->showBriefly(string('NOW_PLAYING'), string(sprintf('PLUGIN_RANDOM_%s', uc($type))));
 		}
 
-		# Add the items to a client param so we can check on them later.
-		$client->param($listRefName, $items);
-
 		# Add the item / track to the playlist
-		$client->execute(['playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('track=%d', $item->id)]);
+		$client->execute(['playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s=%d', $type, $item->id)]);
 
-		$client->execute(['playlist', 'addtracks', 'listRef', $listRefName]);
+		$client->execute(['playlist', 'addtracks', 'listRef', $items]) unless $addOnly;
 
-		checkContinuousPlay($client);
-	}
-}
-
-sub checkContinuousPlay {
-	my $client = shift;
-
-	if (my $cycle = Slim::Utils::Prefs::get('plugin_random_continuous_play')) {
+		# Set the Now Playing title.
+		$client->currentPlaylist($client->string('PLUGIN_RANDOM'));
 
 		$::d_plugins && msg("RandomPlay: starting callback for continuous random play.\n");
 
 		Slim::Control::Command::setExecuteCallback(\&commandCallback);
 
-		$::d_plugins && msgf("RandomPlay: Playing %s mode with %d items\n", ($cycle ? 'continuous ' : ''), Slim::Player::Playlist::count($client));
+		$count{$client} = Slim::Player::Playlist::count($client);
+
+		$::d_plugins && msgf("RandomPlay: Playing continuous $type mode with $count{$client} items\n");
 	}
 }
 
@@ -100,51 +121,89 @@ sub setMode {
 	
 	$client->lines(\&lines);
 
+	if (!defined $menuAction) {
+		$menuAction = 0;
+	}
+
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 
-	playRandom($client);
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header          => 'PLUGIN_RANDOM_PRESS_PLAY',
+		stringHeader    => 1,
+		listRef         => \@menuChoices,
+		externRef       => [qw(PLUGIN_RANDOM_TRACK PLUGIN_RANDOM_ALBUM PLUGIN_RANDOM_ARTIST)],
+		stringExternRef => 1,
+		valueRef        => \$type{$client},
+		onPlay          => \&playRandom,
+	);
 
-	# Change to Now Playing
-	Slim::Buttons::Common::pushModeLeft($client, 'playlist');
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 }
 
 sub commandCallback {
 	my ($client, $paramsRef) = @_;
-
+	
 	my $slimCommand = $paramsRef->[0];
-
+	
 	# we dont care about generic ir blasts
 	return if $slimCommand eq 'ir';
+	
+	$::d_plugins && msg("RandomPlay: recieved command $slimCommand\n");
+	
+	# let warnings from undef type show for now, until it's more stable.
+	if (1 || defined $type{$client}) {
 
-	if (!defined $client) {
+		$::d_plugins && msg("RandomPlay: while in mode: $type{$client}\n");
+	}
+
+	if (!defined $client || !defined $type{$client}) {
 
 		$::d_plugins && msg("RandomPlay: No client!\n");
 		bt();
 		return;
 	}
 
-	$::d_plugins && msgf("RandomPlay: recieved command $slimCommand from %s\n", $client->name);
+	$::d_plugins && msgf("\tfrom from %s\n", $client->name);
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 
 	if ($slimCommand eq 'newsong' && $songIndex) {
 
-		return unless Slim::Utils::Prefs::get('plugin_random_continuous_play');
-
 		Slim::Control::Command::clearExecuteCallback(\&commandCallback);
 
 		$::d_plugins && msg("RandomPlay: new song detected, stripping off completed track\n");
 
-		$client->execute(['playlist', 'delete', ($songIndex - 1)]);
+		Slim::Control::Command::execute($client, ['playlist', 'delete', $songIndex - 1]);
+			
+		if ($type{$client} eq 'track') {
 
-		playRandom($client, 1);
+			playRandom($client, $type{$client}, 1);
+
+		} elsif (defined $type{$client}) {
+
+			$count{$client}--;
+
+			unless ($count{$client} > 1) {
+
+				playRandom($client, $type{$client}, 1);
+
+			} else {
+
+				Slim::Control::Command::setExecuteCallback(\&commandCallback);
+
+				$::d_plugins && msg("RandomPlay: $count{$client} items remaining\n");
+			}
+		}
 	}
 
 	if (($slimCommand eq 'stop' || $slimCommand eq 'power')
-		 && $paramsRef->[1] == 0 || (($slimCommand eq 'playlist') && !exists $safeCommands{ $paramsRef->[1]} )) {
+		 && $paramsRef->[1] == 0 || (($slimCommand eq 'playlist') && !exists $safecommands{ $paramsRef->[1]} )) {
+
+		$type{$client} = undef;
 
 		$::d_plugins && msgf("RandomPlay: cyclic mode ended due to playlist: %s command\n", join(' ', @$paramsRef));
 
@@ -154,9 +213,54 @@ sub commandCallback {
 
 sub initPlugin {
 
-	%safeCommands = (
+	%functions = (
+
+		'left' => sub {
+			my $client = shift;
+
+			Slim::Buttons::Common::popModeRight($client);
+		},
+
+		'right' => sub {
+			my $client = shift;
+
+			$client->bumpRight($client);
+		},
+
+		'play' => sub {
+			my $client = shift;
+
+			if ($menuAction == 0) {
+				playRandom($client, ${$client->param('valueRef')});
+			} else {
+				Slim::Buttons::Common::popModeRight($client);
+			}
+		},
+
+		'tracks' => sub {
+			my $client = shift;
+
+			playRandom($client, 'track');
+		},
+
+		'albums' => sub {
+			my $client = shift;
+
+			playRandom($client, 'album');
+		},
+
+		'artists' => sub {
+			my $client = shift;
+
+			playRandom($client, 'artist');
+		},
+	);
+
+	%safecommands = (
 		'jump' => 1,
 	);
+
+	@menuChoices = qw(track album artist);
 }
 
 sub shutdownPlugin {
@@ -164,37 +268,32 @@ sub shutdownPlugin {
 }
 
 sub lines {
+	my $client = shift;
+
+	my $line1 = sprintf('%s %s', $client->string('PLUGIN_RANDOM'), $client->string('PLUGIN_RANDOM_PRESS_PLAY'));
+
+	my $line2 = $client->string(sprintf('PLUGIN_RANDOM_%s', $menuChoices[$menuAction]));
+
+	return ($line1, $line2);
 
 	return {
-		'line1' => string('PLUGIN_RANDOM'),
+		'line1' => $line1,
+		'line2' => $line2,
 	};
 }
 
 sub getFunctions {
-	return {};
+	return \%functions;
 }
 
 sub webPages {
 
-	# Just create a playlist and let it go..
 	my %pages = (
-		"randomplay_mix\.(?:htm|xml)" => sub {
-			my ($client, $params, $prepared, $httpClient, $response) = @_;
-
-			playRandom($client);
-
-			# Don't do anything
-			$response->code(304);
-
-			# And send back a scalar reference, which is what the
-			# HTTP code wants.
-			my $body = "";
-
-			return \$body;
-		},
+		"randomplay_list\.(?:htm|xml)" => \&handleWebList,
+		"randomplay_mix\.(?:htm|xml)"  => \&handleWebMix,
 	);
 
-	my $value = 'plugins/RandomPlay/randomplay_mix.html';
+	my $value = $htmlTemplate;
 
 	if (grep { /^Random$/ } Slim::Utils::Prefs::getArray('disabledplugins')) {
 
@@ -206,13 +305,29 @@ sub webPages {
 	return \%pages;
 }
 
+sub handleWebList {
+	my ($client, $params) = @_;
+
+	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
+}
+
+sub handleWebMix {
+	my ($client, $params) = @_;
+
+	if ($params->{'type'}) {
+		playRandom($client, $params->{'type'});
+	}
+
+	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
+}
+
 sub setupGroup {
 
 	my %setupGroup = (
 
-		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_continuous_play)],
+		PrefOrder => [qw(plugin_random_number_of_tracks)],
 		GroupHead => string('PLUGIN_RANDOM'),
-		GroupDesc => string('PLUGIN_RANDOM_DESC'),
+		GroupDesc => string('SETUP_PLUGIN_RANDOM_DESC'),
 		GroupLine => 1,
 		GroupSub  => 1,
 		Suppress_PrefSub  => 1,
@@ -225,17 +340,6 @@ sub setupGroup {
 
 			'validate'     => \&Slim::Web::Setup::validateInt,
 			'validateArgs' => [1, undef, 1],
-		},
-
-		'plugin_random_continuous_play' => {
-
-			'validate' => \&Slim::Web::Setup::validateTrueFalse  ,
-
-			'options'  => {
-
-				'1' => string('SETUP_PLUGIN_RANDOM_CONTINUOUS_PLAY'),
-				'0' => string('SETUP_PLUGIN_RANDOM_SINGLE_PLAY'),
-			}
 		},
 	);
 
@@ -250,42 +354,42 @@ sub checkDefaults {
 
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10)
 	}
-
-	if (!Slim::Utils::Prefs::isDefined('plugin_random_continuous_play')) {
-
-		Slim::Utils::Prefs::set('plugin_random_continuous_play', 1)
-	}
 }
 
 sub strings {
 	return <<EOF;
 PLUGIN_RANDOM
 	EN	Random Mix
-	DE	Zufallswiedergabe
 
-PLUGIN_RANDOM_DESC
-	EN	Play random tracks from your library. 
-	DE	Wiedergabe von zufälligen Liedern aus der Musikdatenbank.
+PLUGIN_RANDOM_TRACK
+	EN	Random Songs
+
+PLUGIN_RANDOM_ALBUM
+	EN	Random Album
+
+PLUGIN_RANDOM_ARTIST
+	EN	Random Artist
 
 PLUGIN_RANDOM_PRESS_PLAY
-	EN	Press PLAY to start random playlist
-	DE	Drücke PLAY zum Starten der Zufallswiedergabe
+	EN	Random Mix (Press PLAY to start)
 
-PLUGIN_RANDOM_PLAYING
-	EN	Playing random tracks...
-	DE	Zufallswiedergabe...
+PLUGIN_RANDOM_CHOOSE_DESC
+	EN	Choose a random mix below:
+
+PLUGIN_RANDOM_SONG_DESC
+	EN	Random songs from your whole library.
+
+PLUGIN_RANDOM_ARTIST_DESC
+	EN	Random artists from your whole library.
+
+PLUGIN_RANDOM_ALBUM_DESC
+	EN	Random album from your whole library.
+
+SETUP_PLUGIN_RANDOM_DESC
+	EN	The Random Mix plugin let's SlimServer create a random mix of songs from your entire library. When creating a random mix of songs, you can specify how many tracks should stay on your Now Playing playlist.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
-	EN	Choose number of tracks
-	DE	Wähle Anzahl der Lieder
-
-SETUP_PLUGIN_RANDOM_CONTINUOUS_PLAY
-	EN	Add new random track after each song
-	DE	Nach jedem Lied ein neues Zufallslied hinzufügen
-	
-SETUP_PLUGIN_RANDOM_SINGLE_PLAY
-	EN	Keep original random tracks
-	DE	Ursprüngliche Zufallslieder behalten
+	EN	Number of songs in a random mix.
 EOF
 
 }
