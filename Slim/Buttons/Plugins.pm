@@ -144,6 +144,11 @@ sub canPlugin {
 	
 	# don't verify a second time
 	return 0 if ($brokenplugins{$plugin});
+
+	if ($plugins{$plugin} && defined($plugins{$plugin}{'name'})) {
+		# plugin is already initialized
+		return $plugins{$plugin}{'name'};
+	}
 	
 	no strict 'refs';
 
@@ -371,7 +376,7 @@ sub addSetupGroups {
 	no strict 'refs';
 	
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
-	
+
 	return if $addGroups;
 
 	for my $plugin (keys %{installedPlugins()}) {
@@ -423,7 +428,7 @@ sub addSetupGroups {
 }
 
 sub shutdownPlugins {
-	no strict 'refs';
+	$::d_plugins && msg("Shutting down plugins...\n");
 	for my $plugin (enabledPlugins()) {
 		shutdownPlugin($plugin);
 	}
@@ -431,15 +436,18 @@ sub shutdownPlugins {
 
 sub shutdownPlugin {
 	my $plugin = shift;
+	no strict 'refs';
+
 	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
-		msg("disablePlugin() is deprecated! Please use shutdownPlugin() instead. ($plugin)\n");
-		eval { {"Plugins::" . $plugin . "::disablePlugin"} };
+		msg("disablePlugin() is deprecated! Please use shutdownPlugin() instead. (Plugins::$plugin)\n");
+		eval { &{"Plugins::${plugin}::disablePlugin"}() };
 	}
+
 	# We use shutdownPlugin() instead of the more succinct
 	# shutdown() because it's less likely to cause backward
 	# compatibility problems.
 	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
-		eval { {"Plugins::" . $plugin . "::shutdownPlugin"} };
+		eval { &{"Plugins::${plugin}::shutdownPlugin"}() };
 	}
 	delete $plugins{$plugin};
 }
