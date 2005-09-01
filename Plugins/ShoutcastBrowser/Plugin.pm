@@ -174,17 +174,20 @@ sub getModes {
 					'valuesFunc' => sub { return readRecentStreamList($client); },
 					'callback' => \&browseStreamsExitHandler,
 					'valueRef' => \$status{$client}{'stream'},
+					'overlay' => 'notesymbol',
 				},
 			'PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR' => {
 					'values' => \@mostPopularStreams,
 					'callback' => \&browseStreamsExitHandler,
 					'valueRef' => \$status{$client}{'stream'},
+					'overlay' => 'notesymbol',
 				},
 			'BROWSE_BY_GENRE' => {
 					'values' => \@genresList,
 					'header' => 'GENRE',
 					'dontSetGenre' => 1,
 					'valueRef' => \$status{$client}{'genre'},
+					'overlay' => 'rightarrow',
 					'isSorted' => ((Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_genre_criterion'))[0] =~ m/^(name|default)/i ? 'I' : ''),
 					'callback' => sub {
 							my $client = shift;
@@ -199,6 +202,7 @@ sub getModes {
 									headerAddCount => 1,
 									listRef => [sort { &stream_sort } @{$genreStreams{$item}}],
 									valueRef => \$status{$client}{'stream'},
+									overlayRef => sub {return (undef, $client->symbols('notesymbol'));},
 									isSorted => ((Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion'))[0] =~ m/(^name|default)/i ? 'I' : ''),
 									callback => \&browseStreamsExitHandler
 								);
@@ -209,12 +213,14 @@ sub getModes {
 			'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS' => {
 					'values' => [sort { &stream_sort } keys %streamList],
 					'valueRef' => \$status{$client}{'stream'},
+					'overlay' => 'notesymbol',
 					'isSorted' => ((Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion'))[0] =~ m/(^name|default)/i ? 'I' : ''),
 					'callback' => \&browseStreamsExitHandler
 				},
 			'PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST' => {
 					'values' => [ $client->string('PLUGIN_SHOUTCASTBROWSER_REFRESH_NOW') ],
 					'header' => 'PLUGIN_SHOUTCASTBROWSER_REFRESH',
+					'overlay' => 'rightarrow',
 					'headerAddCount' => 0,
 					'callback' => sub {
 							my $client = shift;
@@ -243,6 +249,7 @@ sub getModes {
 						},
 					'header' => 'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS',
 					'valueRef' => \$status{$client}{'stream'},
+					'overlay' => 'notesymbol',
 					'isSorted' => ((Slim::Utils::Prefs::getArray('plugin_shoutcastbrowser_stream_criterion'))[0] =~ m/(^name|default)/i ? 'I' : ''),
 					'callback' => \&browseStreamsExitHandler
 					
@@ -321,6 +328,7 @@ sub setMode {
 						header => $client->string('PLUGIN_SHOUTCASTBROWSER_SHOUTCAST') . ' - ' . $client->string((defined($modes{$item}->{'header'}) ? $modes{$item}->{'header'} : $item)),
 						headerAddCount => (defined($modes{$item}->{'headerAddCount'}) ? $modes{$item}->{'headerAddCount'} : 1),
 						listRef => $values || [ $client->string('PLUGIN_SHOUTCASTBROWSER_NONE') ],
+						overlayRef => sub {return (undef, $client->symbols($modes{$item}->{'overlay'}));},
 						isSorted => $modes{$item}->{'isSorted'},
 						callback => $modes{$item}->{'callback'},
 						valueRef => $modes{$item}->{'valueRef'}
