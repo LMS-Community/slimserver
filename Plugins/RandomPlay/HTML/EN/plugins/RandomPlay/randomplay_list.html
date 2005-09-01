@@ -26,17 +26,17 @@
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=track">[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=track&player=[% player | uri %]">[% "PLAY" | string %]</a></td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=artist">[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=artist&player=[% player | uri %]">[% "PLAY" | string %]</a></td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=album">[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=album&player=[% player | uri %]">[% "PLAY" | string %]</a></td>
 			</tr>
 
 
