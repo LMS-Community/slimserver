@@ -418,7 +418,7 @@ sub alarmLines {
 	if ($client->prefGet("alarmplaylist", $weekDay)) {
 
 		# XXX
-		Slim::Music::Info::standardTitle($client, $client->prefGet("alarmplaylist", $weekDay));
+		$line2 = Slim::Music::Info::standardTitle($client, $client->prefGet("alarmplaylist", $weekDay));
 	}
 
 	return ($line1, $line2);
