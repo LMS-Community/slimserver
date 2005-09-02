@@ -15,20 +15,14 @@ package Plugins::RandomPlay::Plugin;
 
 use strict;
 
-use FindBin qw($Bin);
-use File::Spec::Functions qw(catfile);
-
 use Slim::Buttons::Home;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my @menuChoices  = ();
 my %functions    = ();
 my %safecommands = ();
 my %type         = ();
 my %count        = ();
-my $menuAction;
-my $menuAction   = 0;
 my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
 
 sub getDisplayName {
@@ -47,7 +41,6 @@ sub playRandom {
 		Slim::Control::Command::execute($client, [qw(power 1)]);
 	}
 
-	#
 	$type ||= 'track';
 	$type   = lc($type);
 	
@@ -118,27 +111,21 @@ sub playRandom {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
-	
-	$client->lines(\&lines);
-
-	if (!defined $menuAction) {
-		$menuAction = 0;
-	}
 
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 
-	# use INPUT.Choice to display the list of feeds
+	# use INPUT.List to display the list of feeds
 	my %params = (
 		header          => 'PLUGIN_RANDOM_PRESS_PLAY',
 		stringHeader    => 1,
-		listRef         => \@menuChoices,
+		listRef         => [qw(track album artist)],
+		overlayRef 		=> sub { return (undef, shift->symbols('notesymbol')) },
 		externRef       => [qw(PLUGIN_RANDOM_TRACK PLUGIN_RANDOM_ALBUM PLUGIN_RANDOM_ARTIST)],
 		stringExternRef => 1,
 		valueRef        => \$type{$client},
-		onPlay          => \&playRandom,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
@@ -212,29 +199,10 @@ sub commandCallback {
 }
 
 sub initPlugin {
-
 	%functions = (
-
-		'left' => sub {
-			my $client = shift;
-
-			Slim::Buttons::Common::popModeRight($client);
-		},
-
-		'right' => sub {
-			my $client = shift;
-
-			$client->bumpRight($client);
-		},
-
 		'play' => sub {
 			my $client = shift;
-
-			if ($menuAction == 0) {
-				playRandom($client, ${$client->param('valueRef')});
-			} else {
-				Slim::Buttons::Common::popModeRight($client);
-			}
+			playRandom($client, ${$client->param('valueRef')});
 		},
 
 		'tracks' => sub {
@@ -259,27 +227,10 @@ sub initPlugin {
 	%safecommands = (
 		'jump' => 1,
 	);
-
-	@menuChoices = qw(track album artist);
 }
 
 sub shutdownPlugin {
 	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-}
-
-sub lines {
-	my $client = shift;
-
-	my $line1 = sprintf('%s %s', $client->string('PLUGIN_RANDOM'), $client->string('PLUGIN_RANDOM_PRESS_PLAY'));
-
-	my $line2 = $client->string(sprintf('PLUGIN_RANDOM_%s', $menuChoices[$menuAction]));
-
-	return ($line1, $line2);
-
-	return {
-		'line1' => $line1,
-		'line2' => $line2,
-	};
 }
 
 sub getFunctions {
@@ -375,7 +326,7 @@ PLUGIN_RANDOM_ARTIST
 	EN	Random Artist
 
 PLUGIN_RANDOM_PRESS_PLAY
-	DE	Zufälliger Mix (starten mit PLAY)
+	DE	Zufälliger Mix
 	EN	Random Mix (Press PLAY to start)
 
 PLUGIN_RANDOM_CHOOSE_DESC

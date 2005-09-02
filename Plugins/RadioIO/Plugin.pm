@@ -84,47 +84,14 @@ sub getRadioIOURL {
 }
 
 our %functions = (
-	'up' => sub {
-		my $client = shift;
-		my $newpos = Slim::Buttons::Common::scroll($client, -1, scalar(@station_names), $current{$client} || 0);
-		if ($newpos != $current{$client}) {
-			$current{$client} = $newpos;
-			$client->pushUp();
-		}
-	},
-	'down' => sub {
-		my $client = shift;
-		my $newpos = Slim::Buttons::Common::scroll($client, 1, scalar(@station_names), $current{$client} || 0);
-		if ($newpos != $current{$client}) {
-			$current{$client} = $newpos;
-			$client->pushDown();
-		}
-	},
-	'left' => sub {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub {
-		my $client = shift;
-		# use remotetrackinfo mode to display details
-		my $url = getRadioIOURL($current{$client} || 0);
-		my $title = $station_names[$current{$client}];
-		my %params = (
-			url => $url,
-			title => $title,
-		);
-		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
-	},
 	'play' => sub {
 		my $client = shift;
-		my $index = $current{$client} || 0;
-
-		my $url = getRadioIOURL($index);
+		my $url = getRadioIOURL($client->param('listIndex'));
 
 		if (defined($url)) {
 			$client->showBriefly({
 				'line1' => $client->string('CONNECTING_FOR'), 
-				'line2' => $station_names[$index], 
+				'line2' => ${$client->param('valueRef')}, 
 				'overlay1' => $client->symbols('notesymbol')
 			});
 
@@ -135,14 +102,12 @@ our %functions = (
 	},
 	'add' => sub {
 		my $client = shift;
-		my $index = $current{$client} || 0;
-		
-		my $url = getRadioIOURL($index);
+		my $url = getRadioIOURL($client->param('listIndex'));
 
 		if (defined($url)) {
 			$client->showBriefly({
 				'line1' => $client->string('ADDING_TO_PLAYLIST'), 
-				'line2' => $station_names[$index], 
+				'line2' => ${$client->param('valueRef')}, 
 				'overlay1' => $client->symbols('notesymbol'),
 			});
 
@@ -151,22 +116,43 @@ our %functions = (
 	},
 );
 
-sub lines {
-	my $client = shift;
-	my $name = $station_names[$current{$client}];
-
-	return {
-		'line1' => $client->string('PLUGIN_RADIOIO_MODULE_TITLE') . ' (' .
-				($current{$client} + 1) . ' ' . $client->string('OF') .  ' ' . (scalar(@station_names)) .  ') ',
-		'line2' => $name,
-		'overlay2' => $client->symbols('notesymbol')
-	};
-}
-
 sub setMode {
 	my $client = shift;
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
 	$current{$client} ||= 0;
-	$client->lines(\&lines);
+
+	my %params = (
+		header => $client->string('PLUGIN_RADIOIO_MODULE_TITLE'),
+		listRef => \@station_names,
+		headerAddCount => 1,
+		overlayRef => sub {return (undef, $client->symbols('notesymbol'));},
+#		isSorted => 'I',
+		valueRef => \$current{$client},
+		callback => sub {
+			my $client = shift;
+			my $method = shift;
+
+			if ($method eq 'right') {
+				# use remotetrackinfo mode to display details
+				my %params = (
+					url => getRadioIOURL($client->param('listIndex')),
+					title => ${$client->param('valueRef')}, 
+				);
+				Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+			}
+			elsif ($method eq 'left') {
+				Slim::Buttons::Common::popModeRight($client);
+			}
+		},
+	);
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 }
 
 sub getFunctions {
