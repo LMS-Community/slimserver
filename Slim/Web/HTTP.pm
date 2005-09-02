@@ -1606,8 +1606,6 @@ sub newSkinTemplate {
 		INCLUDE_PATH => \@include_path,
 		COMPILE_DIR => Slim::Utils::Prefs::get('cachedir'),
 		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
-		POST_CHOMP  => 1,
-		TRIM        => 1,
 
 		FILTERS => {
 			'string' => \&Slim::Utils::Strings::string,
