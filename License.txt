@@ -52,6 +52,12 @@ reasonable purpose.
      modified source files can be found at
      http://www.slimdevices.com/opensource/fixed_math.tar.gz.
 
+- The following applies to Squeezebox2 distribution:
+This product is protected by certain intellectual property rights of
+Microsoft Corporation. Use or distribution of such technology outside
+of this product is prohibited without a license from Microsoft or
+authorized Microsoft subsidiary.
+
 #------------------------------------------------------------------
 
 

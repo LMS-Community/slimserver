@@ -235,7 +235,7 @@ sub upgradeFont {
 sub formats {
 	my $client = shift;
 	
-	return ('flc','aif','wav','mp3');
+	return ('wma','flc','aif','wav','mp3');
 }
 
 # we only have 129 levels to work with now, and within 100 range, that's pretty tight.

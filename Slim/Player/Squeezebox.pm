@@ -573,6 +573,12 @@ sub stream {
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
+		} elsif ($format eq 'wma') {
+			$formatbyte = 'w';
+			$pcmsamplesize = '?';
+			$pcmsamplerate = '?';
+			$pcmendian = '?';
+			$pcmchannels = '?';
 		} else { # assume MP3
 			$formatbyte = 'm';
 			$pcmsamplesize = '?';
