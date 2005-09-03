@@ -1058,7 +1058,7 @@ sub musicmagic_mix {
 			if ($obj->musicmagic_mixable) {
 
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
-				$mix = getMix($client, $obj->path, 'song');
+				$mix = getMix($client, $obj->path, 'track');
 			}
 
 			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
