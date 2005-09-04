@@ -1141,6 +1141,8 @@ sub bumpDown {}
 sub scrollBottom {}
 sub parseLines {}
 sub playingModeOptions {}
+sub block{}
+sub unblock{}
 
 sub pause {
 	my $client = shift;
