@@ -1124,6 +1124,7 @@ sub musicmagic_mix {
 			'odd'        => ($itemnumber + 1) % 2,
 			'webroot'    => $params->{'webroot'},
 			'skinOverride' => $params->{'skinOverride'},
+			'player' => $params->{'player'},
 		})};
 
 		$itemnumber++;
