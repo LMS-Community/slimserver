@@ -401,7 +401,7 @@ sub stripRel {
 	my $file = shift;
 	
 	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
-		$file =~ s#\w+[\/\\]\.\.[\///]##isg;
+		$file =~ s#\[^\/\\]+[\/\\]\.\.[\/\\]##sg;
 	}
 	
 	$::d_paths && msg("stripRel result: $file\n");
