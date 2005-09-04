@@ -18,13 +18,12 @@ use Time::HiRes;
 
 my $interval = 1; # check every x seconds
 
-my (@browseMenuChoices, %functions, %menuSelection, %searchCursor, $weekDay, %alarmVolumeSettingsFunctions);
+my (@browseMenuChoices, %functions, %menuSelection, %searchCursor, $weekDay);
 
 # some initialization code, adding modes for this module
 sub init {
 
 	Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
-	Slim::Buttons::Common::addMode('alarmvolume', getAlarmVolumeFunctions(), \&Slim::Buttons::AlarmClock::setAlarmVolumeMode);
 	setTimer();
 
 	%functions = (
@@ -133,7 +132,24 @@ sub init {
 
 			} elsif ($menuChoice eq $client->string('ALARM_SET_VOLUME')) {
 
-				Slim::Buttons::Common::pushModeLeft($client, 'alarmvolume');
+				my %params = (
+					'header' => sub {
+							($_[0]->linesPerScreen == 1) ? 
+								$_[0]->string('ALARM_SET_VOLUME_SHORT') : 
+								$_[0]->string('ALARM_SET_VOLUME');
+							},
+					,'stringHeader' => 1,
+					,'headerValue'  => \&Slim::Buttons::AlarmClock::volumeValue,
+					,'onChange'     => sub {
+							my $client = shift;
+							my $item   = shift;
+
+							$client->prefSet("alarmvolume", $item, $weekDay);
+					},
+					'valueRef'      => \$client->prefGet("alarmvolume", $weekDay),
+				);
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Bar',\%params);
 
 			} elsif ($menuChoice eq $client->string('ALARM_WEEKDAYS')) {
 
@@ -185,80 +201,6 @@ sub init {
 		'play' => sub {
 			my $client = shift;
 		},
-	);
-
-	#################################################################################
-	# Alarm Volume Mode
-
-	%alarmVolumeSettingsFunctions = (
-		'left' => sub {
-			my $client = shift;
-
-			Slim::Buttons::Common::popModeRight($client);
-		},
-
-		'up' => sub {
-			my $client = shift;
-
-			my $volume = $client->prefGet("alarmvolume", $weekDay);
-			my $inc    = 1;
-			my $rate   = 50; #Hz maximum
-			my $accel  = 15; #Hz/s
-
-			if (Slim::Hardware::IR::holdTime($client) > 0) {
-				$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-			} else {
-				$inc = 2.5;
-			}
-
-			if (!defined $volume) {
-				$volume = $client->volume;
-			}
-
-			$volume += $inc;
-
-			if ($volume > $client->maxVolume) {
-
-				$volume = $client->maxVolume;
-			}
-
-			$client->prefSet("alarmvolume", $volume, $weekDay);
-
-			$client->update;
-		},
-
-		'down' => sub {
-			my $client = shift;
-
-			my $volume = $client->prefGet("alarmvolume", $weekDay);
-			my $inc    = 1;
-			my $rate   = 50; #Hz maximum
-			my $accel  = 15; #Hz/s
-
-			if (Slim::Hardware::IR::holdTime($client) > 0) {
-				$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
-			} else {
-				$inc = 2.5;
-			}
-
-			if (!defined $volume) {
-				$volume = $client->volume;
-			}
-
-			$volume -= $inc;
-
-			if ($volume < 0) {
-				$volume = 0;
-			}
-
-			$client->prefSet("alarmvolume", $volume, $weekDay);
-
-			$client->update;
-		},
-
-		'right' => sub { shift->bumpRight },
-		'add'   => sub { shift->bumpRight },
-		'play'  => sub { shift->bumpRight },
 	);
 }
 
@@ -464,47 +406,9 @@ sub getFunctions {
 	return \%functions;
 }
 
-sub getAlarmVolumeFunctions {
-	return \%alarmVolumeSettingsFunctions;
-}
-
-sub setAlarmVolumeMode {
-	my $client = shift;
-
-	$client->lines(\&alarmVolumeLines);
-}
-
-sub alarmVolumeLines {
-	my $client = shift;
-
-	my $volume = $client->prefGet("alarmvolume", $weekDay);
-
-	if (!defined $volume) {
-		$volume = $client->volume;
-	}
-
-	my $level = int($volume / $client->maxVolume * 40);
-
-	my $line1 = ($client->linesPerScreen == 1) ? $client->string('ALARM_SET_VOLUME_SHORT') : $client->string('ALARM_SET_VOLUME');
-	my $line2;
-
-	if ($level < 0) {
-		$line1 .= sprintf(" (%s)", $client->string('MUTED'));
-		$level = 0;
-	} else {
-		$line1 .= sprintf(" (%s)", $level);
-	}
-
-	$line2 = $client->symbols($client->progressBar($client->displayWidth, $level / 40));
-
-	if ($client->linesPerScreen == 1) {
-		$line2 = $line1;
-	}
-
-	return {
-		'line1' => $line1,
-		'line2' => $line2,
-	};
+sub volumeValue {
+	my ($client,$arg) = @_;
+	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 1;
