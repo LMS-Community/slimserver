@@ -495,7 +495,7 @@ sub alarmVolumeLines {
 		$line1 .= sprintf(" (%s)", $level);
 	}
 
-	$line2 = Slim::Display::Display::progressBar($client, $client->displayWidth, $level / 40);
+	$line2 = $client->symbols($client->progressBar($client->displayWidth, $level / 40));
 
 	if ($client->linesPerScreen == 1) {
 		$line2 = $line1;
