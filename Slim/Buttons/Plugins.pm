@@ -278,6 +278,7 @@ sub addMenus {
 		}
 	
 	} else {
+		$menu ||= 'PLUGINS';
 		$::d_plugins && msg("Removing $plugin from menu: $menu\n");
 		Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, undef);
 	}
