@@ -593,7 +593,7 @@ sub newSongPlaylistCallback {
 	return unless $client->currentPlaylist;
 
 	Slim::Formats::Parse::writeCurTrackForM3U(
-		$client->currentPlaylist->path,
+		ref($client->currentPlaylist) ? $client->currentPlaylist->path : $client->currentPlaylist,
 		Slim::Player::Source::playingSongIndex($client)
 	);
 }
