@@ -592,8 +592,11 @@ sub newSongPlaylistCallback {
 	return unless $params->[0] eq 'newsong';
 	return unless $client->currentPlaylist;
 
+	my $playlist = ref($client->currentPlaylist) ? $client->currentPlaylist->path : $client->currentPlaylist;
+	return if Slim::Music::Info::isRemoteURL($playlist);
+
 	Slim::Formats::Parse::writeCurTrackForM3U(
-		ref($client->currentPlaylist) ? $client->currentPlaylist->path : $client->currentPlaylist,
+		$playlist,
 		Slim::Player::Source::playingSongIndex($client)
 	);
 }
