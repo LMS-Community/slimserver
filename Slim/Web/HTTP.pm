@@ -1193,7 +1193,7 @@ sub addHTTPResponse {
 	use bytes;
 
 	# Take the refcnt down, so we don't leak.
-	if ($Class::DBI::Weaken_Is_Available) {
+	if ($Class::DBI::Weaken_Is_Available && !Scalar::Util::readonly($body)) {
 
 		Scalar::Util::weaken($body);
 	}
