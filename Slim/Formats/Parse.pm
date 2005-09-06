@@ -854,9 +854,10 @@ sub readASX {
 				}
 				
 				if (defined($path)) {
+
 					$path = Slim::Utils::Misc::fixPath($path, $asxdir);
 
-					if (playlistEntryIsValid($entry, $url)) {
+					if (playlistEntryIsValid($path, $url)) {
 
 						push @items, _updateMetaData($path, $title);
 					}
@@ -868,22 +869,33 @@ sub readASX {
 	# Next is version 2.0 ASX
 	elsif ($asxstr =~ /[Reference]/) {
 		while ($asxstr =~ /^Ref(\d+)=(.*)$/gm) {
-			my $url = URI->new($2);
+
+			my $entry = URI->new($2);
+
 			# XXX We've found that ASX 2.0 refers to http: URLs, when it
 			# really means mms: URLs. Wouldn't it be nice if there were
 			# a real spec?
-			if ($url->scheme() eq 'http') {
-				$url->scheme('mms');
+			if ($entry->scheme eq 'http') {
+				$entry->scheme('mms');
 			}
 
-			push @items, $url->as_string;
+			if (playlistEntryIsValid($entry->as_string, $url)) {
+
+				push @items, _updateMetaData($entry->as_string);
+			}
 		}
 	}
 
 	# And finally version 1.0 ASX
 	else {
 		while ($asxstr =~ /^(.*)$/gm) {
-			push @items, $1;
+
+			my $entry = $1;
+
+			if (playlistEntryIsValid($entry, $url)) {
+
+				push @items, _updateMetaData($entry);
+			}
 		}
 	}
 
