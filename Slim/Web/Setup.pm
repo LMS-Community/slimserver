@@ -801,6 +801,10 @@ sub initSetupConfig {
 				playerChildren($client, $pageref);
 				my $playlistRef = playlists();
 				$playlistRef->{''} = undef;
+				my $specialPlaylists = Slim::Buttons::AlarmClock::getSpecialPlaylists;
+				for my $key (keys %{$specialPlaylists}) {
+					$playlistRef->{$key} = $key;
+				}
 				for my $i (0..7) {
 					$pageref->{'Prefs'}{'alarmplaylist'.$i}{'options'} = $playlistRef;
 					$pageref->{'Prefs'}{'alarmplaylist'.$i}{'validateArgs'} = [$playlistRef];

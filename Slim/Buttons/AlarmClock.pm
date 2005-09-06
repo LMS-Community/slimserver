@@ -427,6 +427,10 @@ sub getFunctions {
 	return \%functions;
 }
 
+sub getSpecialPlaylists {
+	return \%specialPlaylists;
+}
+
 sub volumeValue {
 	my ($client,$arg) = @_;
 	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
