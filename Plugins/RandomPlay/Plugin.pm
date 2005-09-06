@@ -317,15 +317,15 @@ PLUGIN_RANDOM
 	EN	Random Mix
 
 PLUGIN_RANDOM_TRACK
-	DE	Zufällige Songs
+	DE	Zufälliger Song Mix
 	EN	Random Songs Mix
 
 PLUGIN_RANDOM_ALBUM
-	DE	Zufälliges Album
+	DE	Zufälliger Album Mix
 	EN	Random Album Mix
 
 PLUGIN_RANDOM_ARTIST
-	DE	Zufälliger Artist
+	DE	Zufälliger Artisten Mix
 	EN	Random Artist Mix
 
 PLUGIN_RANDOM_PRESS_PLAY
