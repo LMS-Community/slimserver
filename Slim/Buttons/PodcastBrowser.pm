@@ -512,7 +512,7 @@ sub playItem {
 	#print Dumper($item);
 
 	if ($item->{'enclosure'} && 
-		($item->{'enclosure'}->{'type'} =~ /audio/)) {
+		($item->{'enclosure'}->{'type'} =~ /audio/ || Slim::Music::Info::typeFromSuffix($item->{'enclosure'}->{'url'} ne 'unk')) ) {
 		Slim::Control::Command::execute( $client,
 										 [ 'playlist', $action,
 										   $item->{'enclosure'}->{'url'},
