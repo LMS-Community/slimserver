@@ -1,0 +1,42 @@
+[% PROCESS pageheader.html %]
+<h3>[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</h3>
+
+<p>/<a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a></p>
+<hr>
+
+<!-- start plugins output -->
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	[% IF titles %]
+		[% FOREACH fav = titles %]
+			<tr>
+				<td class="listing">&nbsp;
+					[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
+				</td>
+				<td class="listing" width="11" align="center">
+					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]">
+					<img src="[% webroot %]html/images/move.up.gif" border="0" width="11" height="9" align="center"
+						alt='[% "MOVEUP" | string %]' title='[% "MOVEUP" | string %]'>
+					</a></td>
+				<td class="listing" width="11" align="center">
+					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]">
+					<img src="[% webroot %]html/images/move.down.gif" border="0" width="11" height="9" align="center"
+						alt='[% "MOVEDOWN" | string %]' title='[% "MOVEDOWN" | string %]'>
+					</a></td>
+				<td class="listing" width="11" align="center">
+					<a href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]">
+					<img src="[% webroot %]html/images/remove.gif" border="0" width="9" height="9" align="center"
+						alt='[% "DELETE" | string %]' title='[% "DELETE" | string %]'>
+					</a></td>
+				<td class="listing" width="11" align="center">
+					<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]" target="status">
+					<img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9" 
+						alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]'></a>
+				</td>
+			</tr>
+		[% END %]
+	[% END %]
+</table>
+<!-- end plugins output -->
+</body>
+</html>
+

@@ -47,6 +47,14 @@ sub clientAdd {
 	if (defined($fav)) {
 		return $fav->{'num'};
 	}
+	
+	# find any vacated spots
+	my $fav = findByClientAndURL($class, $client, '');
+	if (defined($fav)) {
+		Slim::Utils::Prefs::set('favorite_urls', $url, $fav->{'num'}-1);
+		Slim::Utils::Prefs::set('favorite_titles', $title, $fav->{'num'}-1);
+		return $fav->{'num'}-1;
+	}
 
 	# append to list
 	Slim::Utils::Prefs::push('favorite_urls', $url);
@@ -76,11 +84,11 @@ sub _indexByUrl {
 		return undef;
 	}
 }
+
 sub findByClientAndURL {
 	my $class = shift;
 	my $client = shift;
 	my $url = shift;
-	assert($url);
 
 	my $i = _indexByUrl($url);
 	if (defined($i)) {
@@ -93,6 +101,29 @@ sub findByClientAndURL {
 	}
 }
 
+sub moveItem {
+	my $client = shift;
+	my $from = shift;
+	my $to = shift;
+
+	if (defined $to && $to =~ /^[\+-]/) {
+		$to = $from + $to;
+	}
+
+	my @titles = Slim::Utils::Prefs::getArray('favorite_titles');
+	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
+
+	if (defined $from && defined $to && 
+		$from < scalar @titles && 
+		$to < scalar @titles && $from >= 0 && $to >= 0) {
+
+		Slim::Utils::Prefs::set('favorite_titles',$titles[$from],$to);
+		Slim::Utils::Prefs::set('favorite_urls',$urls[$from],$to);
+		Slim::Utils::Prefs::set('favorite_titles',$titles[$to],$from);
+		Slim::Utils::Prefs::set('favorite_urls',$urls[$to],$from);
+	}
+}
+
 sub deleteByClientAndURL {
 	my $class = shift;
 	my $client = shift;
@@ -100,8 +131,20 @@ sub deleteByClientAndURL {
 
 	my $i = _indexByUrl($url);
 	if (defined($i)) {
-		Slim::Utils::Prefs::delete('favorite_titles', $i);
-		Slim::Utils::Prefs::delete('favorite_urls', $i);
+		Slim::Utils::Prefs::set('favorite_titles','', $i);
+		Slim::Utils::Prefs::set('favorite_urls','', $i);
+	}
+
+}
+
+sub deleteByClientAndId {
+	my $class = shift;
+	my $client = shift;
+	my $i = shift;
+
+	if (defined($i)) {
+		Slim::Utils::Prefs::set('favorite_titles','', $i);
+		Slim::Utils::Prefs::set('favorite_urls','', $i);
 	}
 
 }

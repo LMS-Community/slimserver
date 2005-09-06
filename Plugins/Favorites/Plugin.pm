@@ -76,6 +76,50 @@ sub addMenu {
 	return "PLUGINS";
 }
 
+# Web pages
+
+sub webPages {
+	my %pages = ("favorites_list\.htm" => \&handleWebIndex);
+
+	if (grep {$_ eq 'Favorites::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages::addLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => undef });
+	} else {
+		Slim::Web::Pages::addLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => "plugins/Favorites/favorites_list.html" });
+	}
+
+	return (\%pages);
+}
+
+sub handleWebIndex {
+	my ($client, $params) = @_;
+	
+	my $now = Time::HiRes::time();
+
+	if (defined $params->{'p0'}) {
+		if ($params->{'p0'} eq 'move') {
+			Slim::Utils::Favorites::moveItem($client, $params->{'p1'}, $params->{'p2'});
+		} elsif ($params->{'p0'} eq 'delete') {
+			Slim::Utils::Favorites->deleteByClientAndId($client, $params->{'p1'});
+		}
+	}
+
+		$params->{'favList'} = {};
+		
+		my $favs = Slim::Utils::Favorites->new($client);
+		my @titles = $favs->titles();
+		my @urls = $favs->urls();
+		my $i = 0;
+		
+		$params->{'titles'}= \@titles;
+		$params->{'urls'}= \@urls;
+		foreach (@titles) {
+			$params->{'faves'}{$_} = $urls[$i];
+			$i++;
+		}
+
+	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favorites_list.html', $params);
+}
+
 sub listFavorites {
 	my $client = shift;
 
@@ -94,6 +138,7 @@ sub listFavorites {
 		listRef => \@titles,
 		callback => \&mainModeCallback,
 		valueRef => \$context{$client}->{mainModeIndex},
+		externRef => sub {return $_[1] || $_[0]->string('EMPTY')},
 		headerAddCount => scalar (@urls) ? 1 : 0,
 		urls => \@urls,
 		overlayRef => sub {
@@ -109,12 +154,6 @@ sub listFavorites {
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
 
-
-
-
-
-
-
 # the routines
 sub setMode {
 	my $client = shift;
@@ -129,7 +168,6 @@ sub setMode {
 
 	listFavorites($client);
 }
-
 
 sub mainModeCallback {
 	my ($client,$exittype) = @_;
@@ -169,8 +207,6 @@ sub defaultMap {
 sub getFunctions {
 	return \%mainModeFunctions;
 }
-
-
 
 ####################################################################
 # Adds a mapping for 'playFavorite' function in all modes
@@ -228,7 +264,6 @@ sub initPlugin {
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 	Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
-
 }
 
 
