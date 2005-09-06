@@ -96,7 +96,10 @@ sub playRandom {
 		$client->execute(['playlist', 'addtracks', 'listRef', $items]) unless $addOnly;
 
 		# Set the Now Playing title.
-		$client->currentPlaylist($client->string('PLUGIN_RANDOM'));
+		$client->currentPlaylist($client->string('PLUGIN_RANDOM_'.uc($type)));
+		
+		# Never show random as modified, since its a living playlist
+		$client->currentPlaylistModified(0);
 
 		$::d_plugins && msg("RandomPlay: starting callback for continuous random play.\n");
 
@@ -315,15 +318,15 @@ PLUGIN_RANDOM
 
 PLUGIN_RANDOM_TRACK
 	DE	Zufällige Songs
-	EN	Random Songs
+	EN	Random Songs Mix
 
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliges Album
-	EN	Random Album
+	EN	Random Album Mix
 
 PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Artist
-	EN	Random Artist
+	EN	Random Artist Mix
 
 PLUGIN_RANDOM_PRESS_PLAY
 	DE	Zufälliger Mix
