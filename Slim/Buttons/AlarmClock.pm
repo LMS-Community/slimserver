@@ -18,13 +18,25 @@ use Time::HiRes;
 
 my $interval = 1; # check every x seconds
 
-my (@browseMenuChoices, %functions, %menuSelection, %searchCursor, $weekDay);
+my (@browseMenuChoices, %functions, %menuSelection, %searchCursor, $weekDay,%specialPlaylists);
 
 # some initialization code, adding modes for this module
 sub init {
 
 	Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
 	setTimer();
+
+
+
+	if ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
+		&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'))) {
+			%specialPlaylists = (
+				'PLUGIN_RANDOM_TRACK'	=> 'track',
+				'PLUGIN_RANDOM_ALBUM'	=> 'album',
+				'PLUGIN_RANDOM_ARTIST'	=> 'artist',
+		);
+	}
+	$specialPlaylists{'CURRENT_PLAYLIST'} = 0;
 
 	%functions = (
 
@@ -91,8 +103,10 @@ sub init {
 				my $ds   = Slim::Music::Info::getCurrentDataStore();
 				
 				my %params = (
-					'listRef'        => [ $ds->getPlaylists() ],
-					'externRef'      => sub { Slim::Music::Info::standardTitle(@_) },
+					'listRef'        => [ $ds->getPlaylists(), keys %specialPlaylists],
+					'externRef'      => sub { exists $specialPlaylists{$_[1]} 
+									? $_[0]->string($_[1]) 
+									: Slim::Music::Info::standardTitle(@_) },
 					'externRefArgs'  => 'CV',
 					'header'         => 'ALARM_SELECT_PLAYLIST',
 					'headerAddCount' => 1,
@@ -327,6 +341,12 @@ sub checkAlarms {
 
 					$client->execute(["playlist", "load", $client->prefGet("alarmplaylist", $day)], \&playDone, [$client]);
 
+				# check random playlist choice, but only if RandomPlay plugin is enabled at this time.
+				} elsif ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
+							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
+					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
+				
+				#fallback to current playlist if all else fails.
 				} else {
 
 					$client->execute(['play']);
