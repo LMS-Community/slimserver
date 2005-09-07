@@ -1,11 +1,15 @@
 [% pagetitle = 'PLUGIN_RANDOM' | string %]
+[% IF type;
+	SET refresh = 0.0000001;
+	SET refreshurl = webroot _ 'status.html?player=' _ player;
+   END %]
 
 [% BLOCK playImage %]
 	<img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
 [% END %]
 
 [% BLOCK playLink %]
-	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]" [% INCLUDE reloadStatusFrame.html %]'>
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]">
 	[% PROCESS playImage %]</a>
 [% END %]
 
