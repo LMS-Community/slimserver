@@ -317,7 +317,7 @@ PLUGIN_RANDOM
 	EN	Random Mix
 
 PLUGIN_RANDOM_TRACK
-	DE	Zufälliger Song Mix
+	DE	Zufälliger Lieder Mix
 	EN	Random Songs Mix
 
 PLUGIN_RANDOM_ALBUM
@@ -325,7 +325,7 @@ PLUGIN_RANDOM_ALBUM
 	EN	Random Album Mix
 
 PLUGIN_RANDOM_ARTIST
-	DE	Zufälliger Artisten Mix
+	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
 
 PLUGIN_RANDOM_PRESS_PLAY
@@ -337,11 +337,11 @@ PLUGIN_RANDOM_CHOOSE_DESC
 	EN	Choose a random mix below:
 
 PLUGIN_RANDOM_SONG_DESC
-	DE	Zufälliger Song aus Ihrer Sammlung
+	DE	Zufällige Lieder aus Ihrer Sammlung
 	EN	Random songs from your whole library.
 
 PLUGIN_RANDOM_ARTIST_DESC
-	DE	Zufälliger Artist aus Ihrer Sammlung
+	DE	Zufälliger Interpret aus Ihrer Sammlung
 	EN	Random artists from your whole library.
 
 PLUGIN_RANDOM_ALBUM_DESC
@@ -349,11 +349,11 @@ PLUGIN_RANDOM_ALBUM_DESC
 	EN	Random album from your whole library.
 
 SETUP_PLUGIN_RANDOM_DESC
-	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Songs jeweils zufällig der Playlist hinzugefügt werden sollen.
+	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Lieder jeweils zufällig der Playlist hinzugefügt werden sollen.
 	EN	The Random Mix plugin let's SlimServer create a random mix of songs from your entire library. When creating a random mix of songs, you can specify how many tracks should stay on your Now Playing playlist.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
-	DE	Anzahl Songs für Zufallsmix
+	DE	Anzahl Lieder für Zufallsmix
 	EN	Number of songs in a random mix.
 EOF
 

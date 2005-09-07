@@ -2185,7 +2185,7 @@ SETUP_TRANSITIONTYPE
 	ES	Transición
 
 SETUP_TRANSITIONTYPE_DESC
-	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Songs, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
+	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Lieder, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
 	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
 	ES	Squeezebox2 puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
 
@@ -2197,7 +2197,7 @@ SETUP_TRANSITIONDURATION
 
 SETUP_TRANSITIONDURATION_DESC
 	CZ	Zadejte hodntou pro mezeru mezi skladbami v sekundách. Macimální hodnota je 10 sekund.
-	DE	Definieren Sie die Dauer der Überblendung zwischen Songs (in Sekunden).
+	DE	Definieren Sie die Dauer der Überblendung zwischen Liedern (in Sekunden).
 	EN	Enter the amount of time to take to crossfade between songs, in seconds.  The maximum is 10 seconds.
 	ES	Ingresar la cantidad de tiempo que se utilizará para la transición entre canciones, en segundos.
 
@@ -2323,7 +2323,7 @@ SETUP_MMMMIXTYPE
 	ES	Tipo de mezcla de MusicMagic
 
 SETUP_MMMMIXTYPE_DESC
-	DE	Die Grösse des gewünschten MusicMagic Mixes kann über drei Grössen definiert werden: Anzahl Tracks, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
+	DE	Die Grösse des gewünschten MusicMagic Mixes kann über drei Grössen definiert werden: Anzahl Lieder, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
 	EN	Your MusicMagic Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
 	ES	La tamaño de la mezcla de MusicMagic puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
 
@@ -2370,7 +2370,7 @@ SETUP_MMMSTYLE
 	ES	Estilo de mezcla de MusicMagic
 
 SETUP_MMMSTYLE_DESC
-	DE	Wie ähnlich muss der Stil des Artisten sein (0=nicht berücksichtigen (Vorgabe), 200=sehr ähnlich)
+	DE	Wie ähnlich muss der Stil des Interpreten sein (0=nicht berücksichtigen (Vorgabe), 200=sehr ähnlich)
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
 	ES	Qué tan parecido al estilo del artista ( 0 = ignorar (por defecto), 200 = estricto )
 
@@ -2516,13 +2516,13 @@ SETUP_SHOWYEAR_DESC
 	JP	アルバムまたはアートワークで検索する時に、アルバム年を表示することができます。アルバムタイトルの横に表示されます。
 
 SETUP_SHOWARTIST
-	DE	Artist beim Durchsuchen der Alben anzeigen
+	DE	Interpreten beim Durchsuchen der Alben anzeigen
 	EN	Show Artist with Albums
 	ES	Mostrar Artista junto con Albums
 	FR	Affichage de l'artiste avec l'album
 
 SETUP_SHOWARTIST_DESC
-	DE	Sie können den Artisten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
+	DE	Sie können den Interpreten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album' artist will be shown next to the album title.
 	ES	Se puede elegir el mostrar el artista cuando se examina por Discos. Cuando se habilita, el artista del disco se mostrará junto al título del disco.
 	FR	Vous pouvez afficher l'artiste d'un album en mode Parcourir les albums. Si ce réglage est activé, l'artiste sera affichée à la suite du titre de l'album.
@@ -3007,7 +3007,7 @@ SETUP_MUSICMAGIC_DESC
 
 MMMMIXTYPE_TRACKS
 	CZ	Číslo skladby
-	DE	Anzahl Tracks
+	DE	Anzahl Lieder
 	EN	Number of Tracks
 	ES	Número de Pistas
 
@@ -3892,19 +3892,19 @@ SETUP_CHECKVERSION_0
 	SE	Kontrollera INTE automatiskt
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
-	DE	Deaktivierte Songs in iTunes
+	DE	Deaktivierte Lieder in iTunes
 	EN	Unchecked Songs in iTunes
 	
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	DE	Standardmässig werden Songs, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
+	DE	Standardmässig werden Lieder, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
-	DE	Alle Songs aufführen
+	DE	Alle Lieder aufführen
 	EN	Include all songs
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
-	DE	Deaktivierte Songs nicht aufführen
+	DE	Deaktivierte Lieder nicht aufführen
 	EN	Don't include unchecked songs
 
 SETUP_HISTORYLENGTH
@@ -4115,22 +4115,22 @@ SETUP_SEARCHSUBSTRING_DESC
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 
 SETUP_NOGENREFILTER
-	DE	Musikstil auf Album- und Trackebene ausfiltern
+	DE	Musikstil auf Album- und Liederebene ausfiltern
 	EN	Filter genres at the album & track level.
 	ES	Filtrar géneros a nivel de album y pista
 
 SETUP_NOGENREFILTER_1
-	DE	Zeige alle Tracks und Alben eines Interpreten
+	DE	Zeige alle Lieder und Alben eines Interpreten
 	EN	Show any tracks & albums for an artist
 	ES	Mostrar calquier canción y album de un artista
 
 SETUP_NOGENREFILTER_0
-	DE	Zeige nur zum gewählten Musikstil passende Alben und Tracks für den Interpreten
+	DE	Zeige nur zum gewählten Musikstil passende Alben und Lieder für den Interpreten
 	EN	Only show tracks or albums matching the selected genre for an artist
 	ES	Mostrar solo canciones o discos que correspondan al género seleccionado, para un artista.
 
 SETUP_NOGENREFILTER_DESC
-	DE	Beim Durchsuchen von Musikstilen können Alben und Tracks so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
+	DE	Beim Durchsuchen von Musikstilen können Alben und Lieder so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
 	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre.
 	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido.
 
@@ -4245,7 +4245,7 @@ SETUP_COMMONALBUMTITLES_TOGGLE
 
 SETUP_COMMONALBUMTITLES_DESC
 	CZ	Standardně SlimServer seskupuje skladby ze stejného alba do jedné skupiny, přestože jsou skladby umístěné v různých adresářích. Pro velice často používané názvy alb, jako například "Greatest Hits", je ještě vyždadováno, aby se pro skladby jednoho alba shodovalo jmého interpreta. Seznam níže reprezentuje skupinu utakovýchto názvů, kde bude tato dodatečné kontrola uplatňována.
-	DE	Meist gruppiert SlimServer Songs mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Artist mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
+	DE	Meist gruppiert SlimServer Lieder mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Interpret mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
 	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
 
@@ -6584,7 +6584,7 @@ FILELENGTH
 
 NO_ARTIST
 	CZ	Žádný interpret
-	DE	Kein Artist
+	DE	Kein Interpret
 	DK	Ingen kunstner
 	EN	No Artist
 	ES	Sin Artista
@@ -9474,7 +9474,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	EN	Compilation Albums
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	DE	Sie können Kompilationen (Alben mit diversen Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Songs beim jeweiligen Interpreten aufzulisten.
+	DE	Sie können Kompilationen (Alben mit diversen Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder beim jeweiligen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
@@ -9482,7 +9482,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	EN	Group compilation albums together
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
-	DE	Songs aus Kompilationen den Interpreten zuordnen
+	DE	Lieder aus Kompilationen den Interpreten zuordnen
 	EN	List compilation albums under each artist
 
 SETUP_VARIOUSARTISTSSTRING_DESC
@@ -9506,7 +9506,7 @@ UNSYNC
 	EN	Unsync
 
 SETUP_VARIOUSARTISTSINARTISTS_DESC
-	DE	Sie können Interpreten, die auf Kompilationen einzelne Songs haben, von der Interpreten-Liste ausschliessen.
+	DE	Sie können Interpreten, die auf Kompilationen einzelne Lieder haben, von der Interpreten-Liste ausschliessen.
 	EN	You can choose to hide artists that are "track artists" on compilation albums from your browse views.
 
 SETUP_VARIOUSARTISTSINARTISTS_1

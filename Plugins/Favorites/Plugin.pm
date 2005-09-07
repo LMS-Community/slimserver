@@ -284,6 +284,7 @@ PLUGIN_FAVORITES_NOT_DEFINED
 	ES	Favorita #%s no definida
 
 PLUGIN_FAVORITES_NONE_DEFINED
+	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
 
 PLUGIN_FAVORITES_PLAYING

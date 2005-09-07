@@ -1118,7 +1118,7 @@ PLUGIN_LIVE365_ERROR
 	ES	ERROR de Live365
 
 PLUGIN_LIVE365_SEARCH_TAC
-	DE	Nach Interpret/Song/Album suchen
+	DE	Nach Interpret/Lied/Album suchen
 	EN	Search Artists/Tracks/CDs
 	ES	Buscar Artistas/Canciones/CDs
 
@@ -1128,7 +1128,7 @@ PLUGIN_LIVE365_SEARCH_A
 	ES	Buscar Artistas
 
 PLUGIN_LIVE365_SEARCH_T
-	DE	Suche Song
+	DE	Suche Lieder
 	EN	Search Tracks
 	ES	Buscar Canciones
 
