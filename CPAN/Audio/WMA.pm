@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '0.7.1';
+$VERSION = '0.8';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -226,9 +226,9 @@ sub _parseWMAHeader {
 
 			my $audio = $self->_parseASFAudioMediaObject($stream);
 
-			for my $item (qw(bits_per_sample channels sample_rate)) {
+			while (my ($key, $value) = each %$audio) {
 
-				$self->{'INFO'}->{$item} = $audio->{$item};
+				$self->{'INFO'}->{$key} = $value;
 			}
 		}
 	}
@@ -471,13 +471,20 @@ sub _parseWavFormat {
 	my $self = shift;
 	my $data = shift;
 
-	my %wav  = ();
+	my $wFormatTag = unpack('v', substr($data,  0, 2));
 
-	#$wav{'codec'}          = RIFFwFormatTagLookup(unpack('v', substr($data,  0, 2));
-	$wav{'channels'}        = unpack('v', substr($data,  2, 2));
-	$wav{'sample_rate'}     = unpack('v', substr($data,  4, 4));
-	$wav{'bitrate'}         = unpack('v', substr($data,  8, 4)) * 8;
-	$wav{'bits_per_sample'} = unpack('v', substr($data, 14, 2));
+	my %wav  = (
+		'codec'           => _RIFFwFormatTagLookup($wFormatTag),
+		'channels'        => unpack('v', substr($data,  2, 2)),
+		'sample_rate'     => unpack('v', substr($data,  4, 4)),
+		'bitrate'         => unpack('v', substr($data,  8, 4)) * 8,
+		'bits_per_sample' => unpack('v', substr($data, 14, 2)),
+	);
+
+	if ($wFormatTag == 0x0001 || $wFormatTag == 0x0163) {
+
+		$wav{'lossless'} = 1;
+	}
 
 	return \%wav;
 }
@@ -659,6 +666,172 @@ sub _knownGUIDs {
 	);
 
 	return %guidMapping;
+}
+
+sub _RIFFwFormatTagLookup {
+	my $wFormatTag = shift;
+
+	my %formatTags = (
+		0x0000 => 'Microsoft Unknown Wave Format',
+		0x0001 => 'Pulse Code Modulation (PCM)',
+		0x0002 => 'Microsoft ADPCM',
+		0x0003 => 'IEEE Float',
+		0x0004 => 'Compaq Computer VSELP',
+		0x0005 => 'IBM CVSD',
+		0x0006 => 'Microsoft A-Law',
+		0x0007 => 'Microsoft mu-Law',
+		0x0008 => 'Microsoft DTS',
+		0x0010 => 'OKI ADPCM',
+		0x0011 => 'Intel DVI/IMA ADPCM',
+		0x0012 => 'Videologic MediaSpace ADPCM',
+		0x0013 => 'Sierra Semiconductor ADPCM',
+		0x0014 => 'Antex Electronics G.723 ADPCM',
+		0x0015 => 'DSP Solutions DigiSTD',
+		0x0016 => 'DSP Solutions DigiFIX',
+		0x0017 => 'Dialogic OKI ADPCM',
+		0x0018 => 'MediaVision ADPCM',
+		0x0019 => 'Hewlett-Packard CU',
+		0x0020 => 'Yamaha ADPCM',
+		0x0021 => 'Speech Compression Sonarc',
+		0x0022 => 'DSP Group TrueSpeech',
+		0x0023 => 'Echo Speech EchoSC1',
+		0x0024 => 'Audiofile AF36',
+		0x0025 => 'Audio Processing Technology APTX',
+		0x0026 => 'AudioFile AF10',
+		0x0027 => 'Prosody 1612',
+		0x0028 => 'LRC',
+		0x0030 => 'Dolby AC2',
+		0x0031 => 'Microsoft GSM 6.10',
+		0x0032 => 'MSNAudio',
+		0x0033 => 'Antex Electronics ADPCME',
+		0x0034 => 'Control Resources VQLPC',
+		0x0035 => 'DSP Solutions DigiREAL',
+		0x0036 => 'DSP Solutions DigiADPCM',
+		0x0037 => 'Control Resources CR10',
+		0x0038 => 'Natural MicroSystems VBXADPCM',
+		0x0039 => 'Crystal Semiconductor IMA ADPCM',
+		0x003A => 'EchoSC3',
+		0x003B => 'Rockwell ADPCM',
+		0x003C => 'Rockwell Digit LK',
+		0x003D => 'Xebec',
+		0x0040 => 'Antex Electronics G.721 ADPCM',
+		0x0041 => 'G.728 CELP',
+		0x0042 => 'MSG723',
+		0x0050 => 'MPEG Layer-2 or Layer-1',
+		0x0052 => 'RT24',
+		0x0053 => 'PAC',
+		0x0055 => 'MPEG Layer-3',
+		0x0059 => 'Lucent G.723',
+		0x0060 => 'Cirrus',
+		0x0061 => 'ESPCM',
+		0x0062 => 'Voxware',
+		0x0063 => 'Canopus Atrac',
+		0x0064 => 'G.726 ADPCM',
+		0x0065 => 'G.722 ADPCM',
+		0x0066 => 'DSAT',
+		0x0067 => 'DSAT Display',
+		0x0069 => 'Voxware Byte Aligned',
+		0x0070 => 'Voxware AC8',
+		0x0071 => 'Voxware AC10',
+		0x0072 => 'Voxware AC16',
+		0x0073 => 'Voxware AC20',
+		0x0074 => 'Voxware MetaVoice',
+		0x0075 => 'Voxware MetaSound',
+		0x0076 => 'Voxware RT29HW',
+		0x0077 => 'Voxware VR12',
+		0x0078 => 'Voxware VR18',
+		0x0079 => 'Voxware TQ40',
+		0x0080 => 'Softsound',
+		0x0081 => 'Voxware TQ60',
+		0x0082 => 'MSRT24',
+		0x0083 => 'G.729A',
+		0x0084 => 'MVI MV12',
+		0x0085 => 'DF G.726',
+		0x0086 => 'DF GSM610',
+		0x0088 => 'ISIAudio',
+		0x0089 => 'Onlive',
+		0x0091 => 'SBC24',
+		0x0092 => 'Dolby AC3 SPDIF',
+		0x0093 => 'MediaSonic G.723',
+		0x0094 => 'Aculab PLC    Prosody 8kbps',
+		0x0097 => 'ZyXEL ADPCM',
+		0x0098 => 'Philips LPCBB',
+		0x0099 => 'Packed',
+		0x00FF => 'AAC',
+		0x0100 => 'Rhetorex ADPCM',
+		0x0101 => 'IBM mu-law',
+		0x0102 => 'IBM A-law',
+		0x0103 => 'IBM AVC Adaptive Differential Pulse Code Modulation (ADPCM)',
+		0x0111 => 'Vivo G.723',
+		0x0112 => 'Vivo Siren',
+		0x0123 => 'Digital G.723',
+		0x0125 => 'Sanyo LD ADPCM',
+		0x0130 => 'Sipro Lab Telecom ACELP NET',
+		0x0131 => 'Sipro Lab Telecom ACELP 4800',
+		0x0132 => 'Sipro Lab Telecom ACELP 8V3',
+		0x0133 => 'Sipro Lab Telecom G.729',
+		0x0134 => 'Sipro Lab Telecom G.729A',
+		0x0135 => 'Sipro Lab Telecom Kelvin',
+		0x0140 => 'Windows Media Video V8',
+		0x0150 => 'Qualcomm PureVoice',
+		0x0151 => 'Qualcomm HalfRate',
+		0x0155 => 'Ring Zero Systems TUB GSM',
+		0x0160 => 'Microsoft Audio 1',
+		0x0161 => 'Windows Media Audio V7 / V8 / V9',
+		0x0162 => 'Windows Media Audio Professional V9',
+		0x0163 => 'Windows Media Audio Lossless V9',
+		0x0200 => 'Creative Labs ADPCM',
+		0x0202 => 'Creative Labs Fastspeech8',
+		0x0203 => 'Creative Labs Fastspeech10',
+		0x0210 => 'UHER Informatic GmbH ADPCM',
+		0x0220 => 'Quarterdeck',
+		0x0230 => 'I-link Worldwide VC',
+		0x0240 => 'Aureal RAW Sport',
+		0x0250 => 'Interactive Products HSX',
+		0x0251 => 'Interactive Products RPELP',
+		0x0260 => 'Consistent Software CS2',
+		0x0270 => 'Sony SCX',
+		0x0300 => 'Fujitsu FM Towns Snd',
+		0x0400 => 'BTV Digital',
+		0x0401 => 'Intel Music Coder',
+		0x0450 => 'QDesign Music',
+		0x0680 => 'VME VMPCM',
+		0x0681 => 'AT&T Labs TPC',
+		0x08AE => 'ClearJump LiteWave',
+		0x1000 => 'Olivetti GSM',
+		0x1001 => 'Olivetti ADPCM',
+		0x1002 => 'Olivetti CELP',
+		0x1003 => 'Olivetti SBC',
+		0x1004 => 'Olivetti OPR',
+		0x1100 => 'Lernout & Hauspie Codec (0x1100)',
+		0x1101 => 'Lernout & Hauspie CELP Codec (0x1101)',
+		0x1102 => 'Lernout & Hauspie SBC Codec (0x1102)',
+		0x1103 => 'Lernout & Hauspie SBC Codec (0x1103)',
+		0x1104 => 'Lernout & Hauspie SBC Codec (0x1104)',
+		0x1400 => 'Norris',
+		0x1401 => 'AT&T ISIAudio',
+		0x1500 => 'Soundspace Music Compression',
+		0x181C => 'VoxWare RT24 Speech',
+		0x1FC4 => 'NCT Soft ALF2CD (www.nctsoft.com)',
+		0x2000 => 'Dolby AC3',
+		0x2001 => 'Dolby DTS',
+		0x2002 => 'WAVE_FORMAT_14_4',
+		0x2003 => 'WAVE_FORMAT_28_8',
+		0x2004 => 'WAVE_FORMAT_COOK',
+		0x2005 => 'WAVE_FORMAT_DNET',
+		0x674F => 'Ogg Vorbis 1',
+		0x6750 => 'Ogg Vorbis 2',
+		0x6751 => 'Ogg Vorbis 3',
+		0x676F => 'Ogg Vorbis 1+',
+		0x6770 => 'Ogg Vorbis 2+',
+		0x6771 => 'Ogg Vorbis 3+',
+		0x7A21 => 'GSM-AMR (CBR, no SID)',
+		0x7A22 => 'GSM-AMR (VBR, including SID)',
+		0xFFFE => 'WAVE_FORMAT_EXTENSIBLE',
+		0xFFFF => 'WAVE_FORMAT_DEVELOPMENT',
+	);
+
+	return $formatTags{$wFormatTag};
 }
 
 sub _guidToByteString {
