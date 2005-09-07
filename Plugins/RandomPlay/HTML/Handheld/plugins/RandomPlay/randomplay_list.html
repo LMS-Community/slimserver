@@ -5,7 +5,8 @@
 [% END %]
 
 [% BLOCK playLink %]
-	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]">[% PROCESS playImage %]</a>
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]" onclick='for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
+	[% PROCESS playImage %]</a>
 [% END %]
 
 [% PROCESS pageheader.html %]
