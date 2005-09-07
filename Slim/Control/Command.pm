@@ -530,7 +530,9 @@ sub execute {
 		} elsif ($p0 eq "playlist") {
 
 			my $results;
-			my $jumpToIndex = 0;
+
+			# This should be undef - see bug 2085
+			my $jumpToIndex;
 
 			# Query for the passed params
 			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
