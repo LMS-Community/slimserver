@@ -30,6 +30,13 @@ sub model {
 	return 'softsqueeze';
 }
 
+# SoftSqueeze can't handle WMA
+sub formats {
+	my $client = shift;
+
+	return qw(flc aif wav mp3);
+}
+
 sub signalStrength {
 	return undef;
 }

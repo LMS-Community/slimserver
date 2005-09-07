@@ -1,6 +1,6 @@
 package Slim::Formats::WMA;
 
-# $Id: WMA.pm,v 1.9 2004/12/07 20:19:52 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -59,6 +59,7 @@ sub getTag {
 	$tags->{'DRM'}      = $wma->info('drm');
 
 	$tags->{'CHANNELS'} = $wma->info('channels');
+	$tags->{'LOSSLESS'} = $wma->info('lossless') ? 1 : 0;
 
 	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
 	

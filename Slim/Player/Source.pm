@@ -1163,7 +1163,7 @@ sub openSong {
 	
 	closeSong($client);
 	
-	my $song = streamingSong($client);
+	my $song     = streamingSong($client);
 	my $fullpath = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
 	my $track    = $ds->objectForUrl($fullpath);
@@ -1175,7 +1175,7 @@ sub openSong {
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
 		my $line1 = $client->string('CONNECTING_FOR');
-		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);			
+		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
 		$client->showBriefly($line1, $line2, undef,1);
 
 		if ($client->canDirectStream($fullpath)) {
@@ -1207,9 +1207,11 @@ sub openSong {
 						return undef;
 					}
 	
-					my ($command, $type, $format) = getConvertCommand($client, $fullpath);
+					my ($command, $type, $format) = getConvertCommand($client, $track);
+
 					$::d_source && msg("remoteURL command $command type $type format $format\n");
 					$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+
 					$client->streamformat($format);
 	
 					unless (defined($command)) {
@@ -1243,9 +1245,11 @@ sub openSong {
 							return undef;
 						}
 		
-						my ($command, $type, $format) = getConvertCommand($client, $fullpath);
+						my ($command, $type, $format) = getConvertCommand($client, $track);
+
 						$::d_source && msg("remoteURL command $command type $type format $format\n");
 						$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+
 						$client->streamformat($format);
 		
 						unless (defined($command)) {
@@ -1383,7 +1387,7 @@ sub openSong {
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
 		my $maxRate = Slim::Utils::Prefs::maxRate($client);
 
-		my ($command, $type, $format) = getConvertCommand($client, $fullpath);
+		my ($command, $type, $format) = getConvertCommand($client, $track);
 		
 		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
 		$::d_source && msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
@@ -1614,10 +1618,10 @@ sub underMax {
 }
 
 sub getConvertCommand {
-	my $client   = shift;
-	my $fullpath = shift;
+	my $client = shift;
+	my $track  = shift;
 	
-	my $type     = Slim::Music::Info::contentType($fullpath);
+	my $type     = Slim::Music::Info::contentType($track);
 	my $player;
 	my $clientid;
 	my $command  = undef;
@@ -1629,11 +1633,15 @@ sub getConvertCommand {
 	my $audibleplayers   = 0;
 
 	my $undermax;
+
 	if (defined($client)) {
+
+		my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
+
 		$player   = $client->model();
 		$clientid = $client->id();	
-		my @playergroup      = ($client, Slim::Player::Sync::syncedWith($client));
-		$undermax = underMax($client,$fullpath,$type);
+		$undermax = underMax($client, $track->url, $type);
+
 		$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
 	
 		# make sure we only test formats that are supported.
@@ -1691,15 +1699,22 @@ sub getConvertCommand {
 			# to a complete stream that we can send to SB2.
 			# Yucky, but a stopgap until we get FLAC seeking code into
 			# a Perl invokable form.
-			elsif (($type eq "flc") && ($fullpath =~ /#([^-]+)-([^-]+)$/)) {
+			elsif (($type eq "flc") && ($track->url =~ /#([^-]+)-([^-]+)$/)) {
 				$command = $commandTable{"flc-flc-transcode-*"};
 			}
+
 			$undermax = 1;
+
+			# We can't handle WMA Lossless or remote streams in firmware.
+			# So move to the next format type.
+			if ($type eq 'wma' && $checkformat eq 'wma' && ($track->lossless || $track->remote)) {
+
+				next;
+			}
 		}
 
 		# only finish if the rate isn't over the limit
-		last if ($command && 
-				 (!defined($client) || underMax($client,$fullpath,$format)));
+		last if ($command && (!defined($client) || underMax($client, $track->url, $format)));
 	}
 
 	if (!defined $command) {

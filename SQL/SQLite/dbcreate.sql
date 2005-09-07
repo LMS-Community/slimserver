@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (11, 0, 0);
+INSERT INTO metainformation VALUES (12, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -50,6 +50,7 @@ CREATE TABLE tracks (
   playCount integer,       -- number of times the track has been played - placeholder
   lastPlayed integer,      -- timestamp of the last play - placeholder
   audio integer,           -- boolean for audio
+  lossless integer,        -- boolean for lossless content
   remote integer,          -- boolean for remote
   moodlogic_mixable integer,
   musicmagic_mixable integer,
@@ -73,6 +74,8 @@ CREATE INDEX trackRatingIndex ON tracks (rating);
 CREATE INDEX trackPlayCountIndex ON tracks (playCount);
 
 CREATE INDEX trackAudioIndex ON tracks (audio);
+
+CREATE INDEX trackLosslessIndex ON tracks (lossless);
 
 CREATE INDEX trackRemoteIndex ON tracks (remote);
 

@@ -105,7 +105,7 @@ sub getTag {
 	# set a resonable "title" for the bare file
 	$tags->{'TITLE'} = $tags->{'ALBUM'};
 
-	my $fileurl = Slim::Utils::Misc::fileURLFromPath("$file") . "#$anchor";
+	my $fileurl = Slim::Utils::Misc::fileURLFromPath($file) . "#$anchor";
 
 	# Do the actual data store
 	for my $key (sort { $a <=> $b } keys %$tracks) {
@@ -201,6 +201,9 @@ sub addInfoTags {
 	my $flacInfo = $flac->info();
 	$tags->{'RATE'}     = $flacInfo->{'SAMPLERATE'};
 	$tags->{'CHANNELS'} = $flacInfo->{'NUMCHANNELS'};
+
+	# FLAC files are always lossless
+	$tags->{'LOSSLESS'} = 1;
 
 	# stolen from MP3::Info
 	$tags->{'MM'}	    = int $tags->{'SECS'} / 60;

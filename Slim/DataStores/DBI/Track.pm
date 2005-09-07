@@ -54,6 +54,7 @@ our %otherColumns = (
 	'musicmagic_mixable' => 'musicmagic_mixable',
 	'playCount' => 'playCount',
 	'lastPlayed' => 'lastPlayed',
+	'lossless' => 'lossless',
 	'titlesearch' => 'titlesearch',
 );
 
