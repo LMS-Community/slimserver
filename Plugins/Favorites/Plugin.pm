@@ -110,11 +110,15 @@ sub handleWebIndex {
 		my @urls = $favs->urls();
 		my $i = 0;
 		
-		$params->{'titles'}= \@titles;
-		$params->{'urls'}= \@urls;
-		foreach (@titles) {
-			$params->{'faves'}{$_} = $urls[$i];
-			$i++;
+		if (scalar @titles) {
+			$params->{'titles'}= \@titles;
+			$params->{'urls'}= \@urls;
+			foreach (@titles) {
+				$params->{'faves'}{$_} = $urls[$i];
+				$i++;
+			}
+		} else {
+			$params->{'warning'} = $client->string('PLUGIN_FAVORITES_NONE_DEFINED');
 		}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favorites_list.html', $params);
@@ -278,6 +282,9 @@ PLUGIN_FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht!
 	EN	Favorite #%s not defined.
 	ES	Favorita #%s no definida
+
+PLUGIN_FAVORITES_NONE_DEFINED
+	EN	No Favorites exist
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...

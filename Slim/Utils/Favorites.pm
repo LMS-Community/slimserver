@@ -53,7 +53,7 @@ sub clientAdd {
 	if (defined($fav)) {
 		Slim::Utils::Prefs::set('favorite_urls', $url, $fav->{'num'}-1);
 		Slim::Utils::Prefs::set('favorite_titles', $title, $fav->{'num'}-1);
-		return $fav->{'num'}-1;
+		return $fav->{'num'};
 	}
 
 	# append to list
