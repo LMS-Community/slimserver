@@ -3116,7 +3116,7 @@ SETUP_RESCAN_DESC
 
 SETUP_WIPEDB
 	DE	Datenbank löschen und alles neu durchsuchen
-	EN	Clear library and rescan everything.
+	EN	Clear library and rescan everything
 	ZH_CN	重新扫描前把现有的音乐库删除
 
 SETUP_STANDARDRESCAN
@@ -3125,7 +3125,7 @@ SETUP_STANDARDRESCAN
 
 SETUP_PLAYLISTRESCAN
 	DE	Nur nach Playlists suchen
-	EN	Only rescan playlists.
+	EN	Only rescan playlists
 	ZH_CN	只重新扫描播放表而已。
 
 RESCANNING

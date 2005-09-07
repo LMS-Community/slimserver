@@ -1216,11 +1216,11 @@ sub initSetupConfig {
 
 					my $rescanType = ['rescan'];
 
-					if ($changeref->{'rescan'}{'new'} eq 'wipedb') {
+					if ($changeref->{'rescan'}{'new'} eq '2wipedb') {
 
 						$rescanType = ['wipecache'];
 
-					} elsif ($changeref->{'rescan'}{'new'} eq 'playlist') {
+					} elsif ($changeref->{'rescan'}{'new'} eq '3playlist') {
 
 						$rescanType = [qw(rescan playlists)];
 					}
@@ -1228,11 +1228,11 @@ sub initSetupConfig {
 					Slim::Control::Command::execute($client, $rescanType);
 				},
 
-				'optionSort' => 'V',
+				'optionSort' => 'K',
 				'options' => {
-					'rescan'   => string('SETUP_STANDARDRESCAN'),
-					'wipedb'   => string('SETUP_WIPEDB'),
-					'playlist' => string('SETUP_PLAYLISTRESCAN'),
+					'1rescan'   => string('SETUP_STANDARDRESCAN'),
+					'2wipedb'   => string('SETUP_WIPEDB'),
+					'3playlist' => string('SETUP_PLAYLISTRESCAN'),
 				},
 
 				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
