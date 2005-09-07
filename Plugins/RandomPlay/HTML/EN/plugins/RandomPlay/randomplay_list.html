@@ -26,17 +26,17 @@
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=track&player=[% player | uri %]" onclick='for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=track&player=[% player | uri %]" [% INCLUDE reloadStatusFrame.html %]'>[% "PLAY" | string %]</a></td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=artist&player=[% player | uri %]" onclick='for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=artist&player=[% player | uri %]" [% INCLUDE reloadStatusFrame.html %]'>[% "PLAY" | string %]</a></td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
-				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=album&player=[% player | uri %]" onclick='for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>[% "PLAY" | string %]</a></td>
+				<td><a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=album&player=[% player | uri %]" [% INCLUDE reloadStatusFrame.html %]'>[% "PLAY" | string %]</a></td>
 			</tr>
 
 
