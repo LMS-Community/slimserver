@@ -1185,9 +1185,11 @@ sub initSetupConfig {
 				'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages],
 				'options'      => undef,  # filled by initSetup using Slim::Utils::Strings::hash_of_languages()
 				'onChange'     => sub {
+					Slim::Buttons::Plugins::clearGroups();
 					Slim::Utils::Strings::init();
-					Slim::Buttons::Plugins::initPlugins();
 					Slim::Web::Setup::initSetup();
+					Slim::Buttons::Plugins::initPlugins();
+					Slim::Music::Import::resetSetupGroups();
 				},
 			},
 

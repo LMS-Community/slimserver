@@ -371,6 +371,7 @@ sub clearGroups {
 	$::d_plugins && msg("Resetting plugins\n");
 	$addGroups = 0;
 	$plugins_read = 0;
+	%plugins = {};
 }
 
 sub addSetupGroups {

@@ -203,14 +203,6 @@ sub init {
 			},
 		},
 
-		'language' => sub {
-			my $newvalue = shift;
-
-			Slim::Buttons::Plugins::clearGroups();
-			Slim::Web::Setup::initSetup();
-			Slim::Music::Import::resetSetupGroups();
-		},
-
 		'checkVersion' => sub {
 			my $newValue = shift;
 			if ($newValue) {
