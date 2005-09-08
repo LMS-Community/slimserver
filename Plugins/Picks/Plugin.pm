@@ -155,7 +155,14 @@ sub setMode {
 		$context{$client}->{blocking} = 1;
 
 		$context{$client}->{stations} = [];
-		Slim::Utils::Scan::addToList($context{$client}->{stations}, $picksurl, 0, \&doneLoading, $client);
+
+		Slim::Utils::Scan::addToList({
+			'listRef'      => $context{$client}->{stations},
+			'url'          => $picksurl,
+			'recursive'    => 0,
+			'callback'     => \&doneLoading,
+			'callbackArgs' => [ $client ],
+		});
 	}
 }
 

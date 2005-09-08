@@ -60,7 +60,12 @@ sub startScan {
 
 	$::d_info && msg("Starting music folder scan\n");
 
-	Slim::Utils::Scan::addToList(\@dummylist, $audioDir, $recurse, \&doneScanning, 0);
+	Slim::Utils::Scan::addToList({
+		'listRef'      => \@dummylist,
+		'url'          => $audioDir,
+		'recursive'    => $recurse,
+		'callback'     => \&doneScanning,
+	});
 }
 
 sub startScanNoRecursive {

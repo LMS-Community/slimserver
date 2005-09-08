@@ -633,31 +633,39 @@ sub execute {
 						my $playListSize = Slim::Player::Playlist::count($client);
 						my @dirItems     = ();
 
-						Slim::Utils::Scan::addToList(\@dirItems, $path, 1);
-						Slim::Utils::Scan::addToList(
-							Slim::Player::Playlist::playList($client),
-							$path,
-							1,
-							\&insert_done,
-							$client,
-							$playListSize,
-							scalar(@dirItems),
-							$callbackf,
-							$callbackargs,
-						);
+						Slim::Utils::Scan::addToList({
+							'listRef'      => \@dirItems,
+							'url'          => $path,
+						});
+
+						Slim::Utils::Scan::addToList({
+							'listRef'      => Slim::Player::Playlist::playList($client),
+							'url'          => $path,
+							'recursive'    => 1,
+							'callback'     => \&insert_done,
+							'callbackArgs' => [
+								$client,
+								$playListSize,
+								scalar(@dirItems),
+								$callbackf,
+								$callbackargs,
+							],
+						});
 
 					} else {
 
-						Slim::Utils::Scan::addToList(
-							Slim::Player::Playlist::playList($client),
-							$path,
-							1,
-							\&load_done,
-							$client,
-							$jumpToIndex,
-							$callbackf,
-							$callbackargs,
-						);
+						Slim::Utils::Scan::addToList({
+							'listRef'      => Slim::Player::Playlist::playList($client),
+							'url'          => $path,
+							'recursive'    => 1,
+							'callback'     => \&load_done,
+							'callbackArgs' => [
+								$client,
+								$jumpToIndex,
+								$callbackf,
+								$callbackargs,
+							],
+						});
 					}
 					
 					$callcallback = 0;

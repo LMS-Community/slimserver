@@ -51,7 +51,13 @@ sub startScan {
 	$stillScanning = 1;
 
 	$::d_info && msg("Starting playlist folder scan\n");
-	Slim::Utils::Scan::addToList(\@dummylist, $playlistDir, 1, &doneScanning, 0);
+
+	Slim::Utils::Scan::addToList({
+		'listRef'      => \@dummylist,
+		'url'          => $playlistDir,
+		'recursive'    => 1,
+		'callback'     => \&doneScanning,
+	});
 }
 
 sub doneScanning {

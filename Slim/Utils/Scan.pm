@@ -86,13 +86,23 @@ my %addToList_jobs = ();    # each job is referenced by its listref.
 # addToList - Add directory contents to a list, in the background
 #
 sub addToList {
-	my($listref, 		# reference to the list which we're to append
-	   $playlisturl, 	# a file, directory, or URL to be scanned
-	   $recursive, 		# 1 = scan all subdirectories recursively
-	   $callbackf,		# Optional: function to call when finished
-	   @callbackargs	# Optional: callback args - number of items scanned will be appended.
-	) = @_;
-	
+	my $args = shift;
+
+	# reference to the list which we're to append
+	my $listref      = $args->{'listRef'} || [];
+
+	# a file, directory, or URL to be scanned
+	my $playlisturl  = $args->{'url'};
+
+	# 1 = scan all subdirectories recursively
+	my $recursive    = $args->{'recursive'};
+
+	# Optional: function to call when finished
+	my $callbackf    = $args->{'callback'};
+
+	# Optional: callback args - number of items scanned will be appended.
+	my $callbackArgs = $args->{'callbackArgs'} || [];
+
 	$::d_scan && msg("Scan::addToList: $playlisturl\n");
 
 	$recursive = 1 if (!defined($recursive));
@@ -103,19 +113,25 @@ sub addToList {
 	if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 		$playlisturl = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 	}
-	
+
 	# special case, if we try to add a song, then just add it
 	if (Slim::Music::Info::isSong($playlisturl)) {
+
 		push @$listref, $playlisturl;
-		$callbackf && (&$callbackf(@callbackargs, 1));
+		$callbackf && (&$callbackf(@{$callbackArgs}, 1));
+
 	} elsif (Slim::Music::Info::isPlaylist($playlisturl)) {
+
 		# regular playlists (m3u, pls, itu, cue) are parsed and loaded immediately and we never recurse and never sort
 		my $count = readList($playlisturl, $listref);
-		$callbackf && (&$callbackf(@callbackargs, $count));
+
+		$callbackf && (&$callbackf(@{$callbackArgs}, $count));
+
 	} else {	
 		# Initialize the base directory, with index == -1 to indicate 
 		# that we haven't read the dir yet
 		my $basedir = addToList_dirState->new();
+
 		$basedir->path($playlisturl);
 		$basedir->numcontents(0);
 		$basedir->index(-1);
@@ -127,7 +143,7 @@ sub addToList {
 		$addToList_jobs{$listref}->numstack(1);
 		$addToList_jobs{$listref}->numitems(0);
 		$addToList_jobs{$listref}->callbackf($callbackf);
-		$addToList_jobs{$listref}->callbackargs(\@callbackargs);
+		$addToList_jobs{$listref}->callbackargs($callbackArgs);
 		$addToList_jobs{$listref}->playlisturl($playlisturl);
 		
 		# if we have a callback function, then schedule it if appropriate
@@ -247,6 +263,8 @@ sub addToList_run {
 						$jobState->numitems($jobState->numitems+1);
 					}
 				}
+
+				$jobState->numstack($jobState->numstack - 1);
 
 				@list = (Slim::Music::Info::sortFilename(@list));
 

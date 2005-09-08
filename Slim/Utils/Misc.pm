@@ -464,8 +464,15 @@ sub virtualToAbsolute {
 		} 
 		
 		if (Slim::Music::Info::isPlaylist(fileURLFromPath($curdir))) {
+
 			@items = ();
-			Slim::Utils::Scan::addToList(\@items,$curdir, 0);
+
+			Slim::Utils::Scan::addToList({
+				'listRef'   => \@items,
+				'url'       => $curdir,
+				'recursive' => 0,
+			});
+
 			if (scalar(@items)) {
 				if (defined $items[$level]) {
 					$curdir = $items[$level];
@@ -674,7 +681,10 @@ sub findAndScanDirectoryTree {
 		$topLevelObj->timestamp($fsMTime);
 
 		# Do a quick directory scan.
-		Slim::Utils::Scan::addToList([], $path, 0, sub {});
+		Slim::Utils::Scan::addToList({
+			'url'       => $path,
+			'recursive' => 0,
+		});
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
