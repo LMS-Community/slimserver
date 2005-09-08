@@ -16,6 +16,7 @@
 					[% "FOR" | string %]<br>
 					&nbsp;<input type=text name="query" value="[% query %]" size="20">
 					<input type=submit value="Go" name="Go">
+					<input type=hidden value="1" name="manualSearch">
 					<input type=hidden value="[% player %]" name="player">
 					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
 				</form>
@@ -27,26 +28,29 @@
 	
 	[% IF numresults != '-1' %]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr><td>
-			[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
-			[% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
-			[% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %]
-			"[% query %]"[% "COLON" | string %] [% numresults %]
-		    [% IF searchlist_header %]
-			    ([% searchlist_header %])
-	    	[% END %]
-	    </td></tr>
 	    [% IF searchlist_pagebar %]
 	    <tr><td>
 		    [% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
 	    </td></tr>
 	    [% END %]
 	</table>
-	[% END %]
 	
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			<tr class="even" bgcolor="#d0d0d0">
+				<td width="100%">[% "ALL_SONGS" | string %]</td>
+				<td width="13">
+					<a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+				</td>
+				<td>&nbsp;</td>
+				
+				<td width="13">
+					<a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+				</td>
+			</tr>
 		[% browse_list %]
 	</table>
-	
+	[% END %]
+		
+	<p></p>
 	[% PROCESS pagefooter.html %]
 <!-- /Element search.html -->
