@@ -333,13 +333,13 @@ sub checkAlarms {
 				$client->fade_volume($client->prefGet("alarmfadeseconds", $day));
 
 				my $playlist = $client->prefGet("alarmplaylist", $day);
-				if (defined $playlist && -r $playlist) {
+				if (defined $playlist) {
 
 					$client->execute(["power", 1]);
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 
-					$client->execute(["playlist", "load", $client->prefGet("alarmplaylist", $day)], \&playDone, [$client]);
+					$client->execute(["playlist", "load", $playlist], \&playDone, [$client]);
 
 				# check random playlist choice, but only if RandomPlay plugin is enabled at this time.
 				} elsif ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
@@ -378,10 +378,10 @@ sub alarmLines {
 	# Be sure to pull the correct day, otherwise we'll send an array and standardTitle won't know what to do.
 	$weekDay = ${$client->param('day')} || 0;
 
-	if ($client->prefGet("alarmplaylist", $weekDay)) {
+	if (my $playlist = $client->prefGet("alarmplaylist", $weekDay)) {
 
 		# XXX
-		$line2 = Slim::Music::Info::standardTitle($client, $client->prefGet("alarmplaylist", $weekDay));
+		$line2 = Slim::Music::Info::standardTitle($client, $playlist);
 	}
 
 	return ($line1, $line2);
