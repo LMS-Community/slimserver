@@ -951,7 +951,7 @@ sub execute {
 
 				my $zapped   = string('ZAPPED_SONGS');
 				my $zapsong  = Slim::Player::Playlist::song($client,$p2);
-				my $zapindex = $p2 || Slim::Player::Source::playingSongIndex($client);;
+				my $zapindex = defined $p2 ? $p2 : Slim::Player::Source::playingSongIndex($client);
  
 				#  Remove from current playlist
 				if (Slim::Player::Playlist::count($client) > 0) {
