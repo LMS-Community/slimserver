@@ -1161,14 +1161,17 @@ sub openSong {
 	my $seekoffset = shift || 0;
 
 	my $directStream = 0;
+
 	resetSong($client);
 	
 	closeSong($client);
 	
 	my $song     = streamingSong($client);
-	my $fullpath = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
+	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $track    = $ds->objectForUrl($fullpath);
+	my $track    = ref($objOrUrl) ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+
+	my $fullpath = $track->url;
 
 	$::d_source && msg("openSong on: $fullpath\n");
 
@@ -1177,25 +1180,24 @@ sub openSong {
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
 		my $line1 = $client->string('CONNECTING_FOR');
-		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
-		$client->showBriefly($line1, $line2, undef,1);
+		my $line2 = Slim::Music::Info::standardTitle($client, $track);
+
+		$client->showBriefly($line1, $line2, undef, 1);
 
 		if ($client->canDirectStream($fullpath)) {
+
 			$directStream = 1;
-			$client->streamformat(Slim::Music::Info::contentType($fullpath));
+			$client->streamformat(Slim::Music::Info::contentType($track));
 		} 
+
 		if (!$directStream) {
+
 			$::d_source && msg("URL is remote : $fullpath\n");
+
 			# we don't get the content type until after the stream is opened
 			my $sock = openRemoteStream($fullpath, $client);
 	
 			if ($sock) {
-	
-				# Refetch the track if we didn't have an object for it the
-				# first time - opening the stream might have created one.
-				if (!defined($track)) {
-					$track    = $ds->objectForUrl($fullpath);
-				}
 	
 				# if it's an mp3 stream, then let's stream it.
 				if (Slim::Music::Info::isSong($track)) {
@@ -1212,7 +1214,7 @@ sub openSong {
 					my ($command, $type, $format) = getConvertCommand($client, $track);
 
 					$::d_source && msg("remoteURL command $command type $type format $format\n");
-					$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+					$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($track));
 
 					$client->streamformat($format);
 	
@@ -1250,7 +1252,7 @@ sub openSong {
 						my ($command, $type, $format) = getConvertCommand($client, $track);
 
 						$::d_source && msg("remoteURL command $command type $type format $format\n");
-						$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($fullpath));
+						$::d_source && msgf("remoteURL stream format : %s\n", Slim::Music::Info::contentType($track));
 
 						$client->streamformat($format);
 		
@@ -1301,12 +1303,12 @@ sub openSong {
 	
 					# parse out the list
 					my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
-					
+
 					# hack to preserve the title of a song redirected through a playlist
 					if (scalar(@items) == 1 && defined($track->title())) {
 						Slim::Music::Info::setTitle($items[0], $track->title());
 					}
-					
+
 					# close the socket
 					$sock->close();
 					$sock = undef;
@@ -1316,7 +1318,7 @@ sub openSong {
 	
 					# try to open the first item in the list, if there is one.
 					return openSong($client);
-	
+
 				} else {
 	
 					$::d_source && msg("don't know how to handle content for $fullpath\n");
@@ -1325,20 +1327,21 @@ sub openSong {
 					$client->audioFilehandle(undef);
 				}
 			} 
-			
+
 			if (!$sock) {
 	
 				$::d_source && msg("Remote stream failed to open, showing message.\n");
 				$client->audioFilehandle(undef);
 				
 				my $line1 = $client->string('PROBLEM_CONNECTING');
-				my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
+				my $line2 = Slim::Music::Info::standardTitle($client, $track);
 	
 				$client->showBriefly($line1, $line2, 5, 1);
 	
 				return undef;
 			}
 		}
+
 	} elsif (Slim::Music::Info::isSong($track)) {
 	
 		my $filepath;
@@ -1501,7 +1504,7 @@ sub openSong {
 		$::d_source && msg("Can't open [$fullpath] : $!\n");
 
 		my $line1 = $client->string('PROBLEM_OPENING');
-		my $line2 = Slim::Music::Info::standardTitle($client, $fullpath);
+		my $line2 = Slim::Music::Info::standardTitle($client, $track);
 
 		$client->showBriefly($line1, $line2, 5, 1);
 
