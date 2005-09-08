@@ -413,14 +413,8 @@ sub lines {
 	return {
 		'line1'   => $line1,
 		'line2'   => $browseMenuChoices[$menuSelection{$weekDay}{$client}] || '',
-		'overlay' => overlay($client),
+		'overlay2' => $client->symbols('rightarrow'),
 	};
-}
-
-sub overlay {
-	my $client = shift;
-
-	return Slim::Display::Display::symbol('rightarrow');
 }
 
 sub getFunctions {

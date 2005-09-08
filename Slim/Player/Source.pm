@@ -561,6 +561,8 @@ sub underrun {
 	} elsif (($client->playmode eq 'playout-stop')) {
 
 		playmode($client, 'stop');
+		streamingSongIndex($client, 0,1);	
+		Slim::Player::Playlist::refreshPlaylist($client);
 		$client->update();
 	}
 }
