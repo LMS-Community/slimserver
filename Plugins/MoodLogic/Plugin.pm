@@ -99,7 +99,7 @@ sub shutdownPlugin {
 	Slim::Web::Setup::delGroup('server','moodlogic',1);
 	
 	# set importer to not use
-	Slim::Utils::Prefs::set('moodlogic', 0);
+	#Slim::Utils::Prefs::set('moodlogic', 0);
 	Slim::Music::Import::useImporter('MOODLOGIC',0);
 }
 

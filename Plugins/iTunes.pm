@@ -255,7 +255,7 @@ sub shutdownPlugin {
 	Slim::Web::Setup::delGroup('server','itunes',1);
 
 	# set importer to not use
-	Slim::Utils::Prefs::set('itunes', 0);
+	#Slim::Utils::Prefs::set('itunes', 0);
 	Slim::Music::Import::useImporter('ITUNES',0);
 }
 
