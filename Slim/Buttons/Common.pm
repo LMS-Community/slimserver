@@ -24,6 +24,7 @@ our %leaveMode = ();
 our %modeFunctions = ();
 
 my $SCAN_RATE_MULTIPLIER = 2;
+my $SCAN_RATE_MAX_MULTIPLIER = 256;
 
 # hash of references to functions to call when we enter a mode
 # Note:  don't add to this list, rather use the addMode() function 
@@ -225,10 +226,12 @@ our %functions = (
 		} elsif ($functarg eq 'fwd') {
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			if ($rate < 0) { $rate = 1; }
+			return if abs($rate) == $SCAN_RATE_MAX_MULTIPLIER;
 			$client->execute(['rate', $rate * $SCAN_RATE_MULTIPLIER]);
 		} elsif ($functarg eq 'rew') {
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			if ($rate > 0) { $rate = 1; }
+			return if abs($rate) == $SCAN_RATE_MAX_MULTIPLIER;
 			$client->execute(['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
 		}
 		$client->update();
