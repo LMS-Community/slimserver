@@ -1710,9 +1710,8 @@ sub getConvertCommand {
 
 			$undermax = 1;
 
-			# We can't handle WMA Lossless or remote streams in firmware.
-			# So move to the next format type.
-			if ($type eq 'wma' && $checkformat eq 'wma' && ($track->lossless || $track->remote)) {
+			# We can't handle WMA Lossless in firmware. So move to the next format type.
+			if ($type eq 'wma' && $checkformat eq 'wma' && $track->lossless) {
 
 				next;
 			}
