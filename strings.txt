@@ -4849,34 +4849,6 @@ SETUP_FILESORT_DESC
 	SE	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
 	ZH_CN	当您浏览音乐文件夹时，您可以选择以文件名或由ID3标签信息如艺人名、乐谱帖、轨道数字等进行排序。
 
-SORTID3
-	CZ	Setřídit podle informací o skladbách
-	DE	Sortieren nach den ID3-Tags
-	DK	Sorter efter sangtitelinformation
-	EN	Sort by song information
-	ES	Ordenar por información de canción
-	FR	Trier à partir des repères ID3
-	JP	曲情報でソートする
-	NL	Sorteer op ID3 informatie
-	NO	Sorter etter ID3-informasjon
-	PT	Ordenar pela informação da música (ID3)
-	SE	Sortera efter ID3-information
-	ZH_CN	以ID3标签信息进行排序
-
-SORTBYFILENAME
-	CZ	Setřídit dle názvu souboru
-	DE	Sortieren nach dem Dateinamen
-	DK	Sorter efter filnavn
-	EN	Sort by file name
-	ES	Ordenar por nombre de archivo
-	FR	Trier par nom de fichier
-	JP	ファイル名でソートする
-	NL	Sorteer op bestandsnaam
-	NO	Sorter etter filnavn
-	PT	Ordenar por nome de ficheiro
-	SE	Sortera efter filnamn
-	ZH_CN	以文件名进行排序
-
 SETUP_BROWSEAGELIMIT
 	CZ	Počet zobrazovaných novinek
 	DE	Anzahl neuer Musikstücke

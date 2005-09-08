@@ -72,7 +72,6 @@ struct (addToList_dirState => [
 struct (addToList_jobState => [
 	stack          => '@', # each level in the hierarchy
 	recursive      => '$', # do we descend directories
-	sorted		   => '$', # 1 = return the entries in sorted order
 	numstack       => '$', # number of levels on the stack
 	numitems       => '$', # number of items currently in the list
 	numitems_start => '$', # number of items in the list before addToList
@@ -90,7 +89,6 @@ sub addToList {
 	my($listref, 		# reference to the list which we're to append
 	   $playlisturl, 	# a file, directory, or URL to be scanned
 	   $recursive, 		# 1 = scan all subdirectories recursively
-	   $sorted,			# 1 = return the entries in sorted order
 	   $callbackf,		# Optional: function to call when finished
 	   @callbackargs	# Optional: callback args - number of items scanned will be appended.
 	) = @_;
@@ -102,14 +100,6 @@ sub addToList {
 
 	$playlisturl = Slim::Utils::Misc::fixPath($playlisturl);
 
-	if (!defined($sorted)) {
-		if (Slim::Music::Info::isPlaylist($playlisturl)) { 
-			$sorted = 0;
-		} else {
-			$sorted = 1;
-		}
-	}
-	 	
 	if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 		$playlisturl = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 	}
@@ -118,9 +108,9 @@ sub addToList {
 	if (Slim::Music::Info::isSong($playlisturl)) {
 		push @$listref, $playlisturl;
 		$callbackf && (&$callbackf(@callbackargs, 1));
-	} elsif (Slim::Music::Info::isPlaylist($playlisturl) && !$sorted) {
+	} elsif (Slim::Music::Info::isPlaylist($playlisturl)) {
 		# regular playlists (m3u, pls, itu, cue) are parsed and loaded immediately and we never recurse and never sort
-		my $count = readList($playlisturl, $listref, 0);
+		my $count = readList($playlisturl, $listref);
 		$callbackf && (&$callbackf(@callbackargs, $count));
 	} else {	
 		# Initialize the base directory, with index == -1 to indicate 
@@ -133,7 +123,6 @@ sub addToList {
 		# Initialize the stack to one level, the basedir
 		$addToList_jobs{$listref} = addToList_jobState->new();
 		$addToList_jobs{$listref}->recursive($recursive);
-		$addToList_jobs{$listref}->sorted($sorted);
 		$addToList_jobs{$listref}->stack(0, $basedir);
 		$addToList_jobs{$listref}->numstack(1);
 		$addToList_jobs{$listref}->numitems(0);
@@ -206,7 +195,7 @@ sub addToList_run {
 
 			@$contentsref = ();
 
-			my $numcontents = readList($curdirState->path, $contentsref, $jobState->sorted);
+			my $numcontents = readList($curdirState->path, $contentsref);
 
 			$curdirState->index(0);
 			$curdirState->numcontents($numcontents);
@@ -259,21 +248,7 @@ sub addToList_run {
 					}
 				}
 
-				# If we're going to sort using
-				# metadata , we do so in the next
-				# iteration of the task, so don't pop.
-				# A filesort, though is cheap enough
-				# to do here.
-				if (!$jobState->sorted ||
-				    Slim::Utils::Prefs::get('filesort')) {
-
-					$jobState->numstack($jobState->numstack - 1);
-				}
-
-				if ($jobState->sorted &&
-				    Slim::Utils::Prefs::get('filesort')) {
-					@list = (Slim::Music::Info::sortFilename(@list));
-				}
+				@list = (Slim::Music::Info::sortFilename(@list));
 
 				$curdirState->index($numcontents);
 
@@ -315,47 +290,12 @@ sub addToList_run {
 
 		my $itemstoaddref = $curdirState->itemsToAdd;
 
-		if ($jobState->sorted)  {
+		$::d_scan && msg("Beginning scan sort...\n");
 
-			$::d_scan && msg("Beginning scan sort...\n");
+		push @$listref, (Slim::Music::Info::sortFilename(@{$itemstoaddref}));
 
-			if (Slim::Utils::Prefs::get('filesort')) {
+		$::d_scan && msg("...sort done.\n");
 
-				push @$listref, (Slim::Music::Info::sortFilename(@{$itemstoaddref}));
-
-			} else {
-
-				# if there are duplicate track numbers, then sort as multiple albums
-				my $duptracknum = 0;
-				my @seen = ();
-				for my $item (@{$itemstoaddref}) {
-
-					my $track = $ds->objectForUrl($item, 1) || next;
-					my $trnum = $track->tracknum();
-
-					if ($trnum) { 
-						if ($seen[$trnum]) {
-							$duptracknum = 1;
-							last;
-						}
-						$seen[$trnum]++;
-					}
-				}
-				
-				if ($duptracknum) {
-					push @$listref, (Slim::Music::Info::sortByTrack(@{$itemstoaddref}));
-				} else {
-					push @$listref, (Slim::Music::Info::sortByAlbum(@{$itemstoaddref}));
-				}
-			}
-
-			$::d_scan && msg("...sort done.\n");
-
-		} else {
-
-			push @$listref, @$itemstoaddref;		
-		}
-		
 		$jobState->numstack($jobState->numstack - 1);
 
 		if ($jobState->numstack) {
@@ -455,7 +395,7 @@ sub addToList_done {
 }
 
 sub readList {   # reads a directory or playlist and returns the contents as an array
-	my($playlisturl, $listref, $sorted) = @_;
+	my ($playlisturl, $listref) = @_;
 
 	$::d_scan && msg("Scan::readList gonna read $playlisturl\n");
 

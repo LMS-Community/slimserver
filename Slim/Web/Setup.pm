@@ -1524,7 +1524,7 @@ sub initSetupConfig {
 	
 			'Default' => {
 					'PrefOrder' => ['displaytexttimeout', 'checkVersion', 'composerInArtists', 'noGenreFilter',
-							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','filesort','browseagelimit'
+							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','browseagelimit'
 							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',],
 				},
 
@@ -1549,14 +1549,7 @@ sub initSetupConfig {
 			},
 		}
 		,'Prefs' => {
-			'filesort' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('SORTID3')
-								,'1' => string('SORTBYFILENAME')
-								}
-					}
-			,'displaytexttimeout' => {
+			'displaytexttimeout' => {
 						'validate' => \&validateNumber
 						,'validateArgs' => [0.1,undef,1]
 				}

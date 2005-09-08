@@ -20,6 +20,7 @@ use POSIX qw(strftime setlocale LC_TIME);
 use Sys::Hostname;
 use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
+use Time::HiRes;
 use URI;
 use URI::file;
 
@@ -463,7 +464,7 @@ sub virtualToAbsolute {
 		
 		if (Slim::Music::Info::isPlaylist(fileURLFromPath($curdir))) {
 			@items = ();
-			Slim::Utils::Scan::addToList(\@items,$curdir, 0, 0);
+			Slim::Utils::Scan::addToList(\@items,$curdir, 0);
 			if (scalar(@items)) {
 				if (defined $items[$level]) {
 					$curdir = $items[$level];
@@ -672,7 +673,7 @@ sub findAndScanDirectoryTree {
 		$topLevelObj->timestamp($fsMTime);
 
 		# Do a quick directory scan.
-		Slim::Utils::Scan::addToList([], $path, 0, undef, sub {});
+		Slim::Utils::Scan::addToList([], $path, 0, sub {});
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.

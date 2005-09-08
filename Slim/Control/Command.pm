@@ -633,12 +633,11 @@ sub execute {
 						my $playListSize = Slim::Player::Playlist::count($client);
 						my @dirItems     = ();
 
-						Slim::Utils::Scan::addToList(\@dirItems, $path, 1, undef);
+						Slim::Utils::Scan::addToList(\@dirItems, $path, 1);
 						Slim::Utils::Scan::addToList(
 							Slim::Player::Playlist::playList($client),
 							$path,
 							1,
-							undef,
 							\&insert_done,
 							$client,
 							$playListSize,
@@ -653,7 +652,6 @@ sub execute {
 							Slim::Player::Playlist::playList($client),
 							$path,
 							1,
-							undef,
 							\&load_done,
 							$client,
 							$jumpToIndex,

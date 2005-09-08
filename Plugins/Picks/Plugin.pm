@@ -155,7 +155,7 @@ sub setMode {
 		$context{$client}->{blocking} = 1;
 
 		$context{$client}->{stations} = [];
-		Slim::Utils::Scan::addToList($context{$client}->{stations}, $picksurl, 0, 0, \&doneLoading, $client);
+		Slim::Utils::Scan::addToList($context{$client}->{stations}, $picksurl, 0, \&doneLoading, $client);
 	}
 }
 
@@ -273,7 +273,7 @@ sub handleWebIndex {
 	# Only regrab every hour
 	unless (defined($stationList) && (($now - $lastStationLoadTime) < PLAYLIST_RELOAD_INTERVAL)) {
 		$stationList = [];
-		Slim::Utils::Scan::addToList($stationList, $picksurl, 0, 0);
+		Slim::Utils::Scan::addToList($stationList, $picksurl, 0);
 	}
 
 	if (defined $params->{'p0'}) {

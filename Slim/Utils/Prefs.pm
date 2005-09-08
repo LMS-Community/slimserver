@@ -32,10 +32,6 @@ sub init {
 	# These are scripts that are run once on old prefs file to bring them
 	# up-to-date with specific changes we want to push out to default prefs.
 	%upgradeScripts = (
-		# Default browse mode for music folders is sort by filename				   
-		'6.0b3' => sub {
-			Slim::Utils::Prefs::set('filesort', 1);
-		},
 		# moves client preferences to a hash under the 'clients' key
 		'6.2b1' => sub {
 			for my $key (keys %prefs) {
@@ -77,7 +73,6 @@ sub init {
 		"language"		=> "EN",
 		"refreshRate"		=> 30,
 		"displaytexttimeout"	=> 1.0,
-		"filesort"		=> 1,
 		'browseagelimit'	=> 100,
 		"playtrackalbum"	=> 1,
 		"ignoredarticles"	=> "The El La Los Las Le Les",
