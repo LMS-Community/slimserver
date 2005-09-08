@@ -551,6 +551,15 @@ sub stream {
 		my $pcmsamplerate;
 		my $pcmendian;
 		my $pcmchannels;
+
+		my $handler;
+		my $server_url = $client->canDirectStream($url);
+		if ($server_url) {
+			$handler = Slim::Player::Source::protocolHandlerForURL($server_url);
+			if ($handler && $handler->can("getFormatForURL")) {
+				$format = $handler->getFormatForURL($server_url);
+			}
+		}
 		
 		# default to mp3
 		$format ||= 'mp3';
@@ -575,7 +584,15 @@ sub stream {
 			$pcmchannels = '?';
 		} elsif ($format eq 'wma') {
 			$formatbyte = 'w';
-			$pcmsamplesize = '?';
+			# Commandeer the unused pcmsamplesize field
+			# to indicate whether the data coming in is
+			# going to have the mms/http chunking headers.
+			if ($server_url) {
+				$pcmsamplesize = '1';
+			}
+			else {
+				$pcmsamplesize = '0';
+			}
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
@@ -589,7 +606,6 @@ sub stream {
 		
 		my $request_string;
 		my ($server_port, $server_ip);
-		my $server_url = $client->canDirectStream($url);
 		if ($command eq 's' && $server_url) {
 			$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
 		
@@ -600,7 +616,7 @@ sub stream {
 				$server_ip = unpack('N',$addrs[0]);
 			}
 
-			$request_string = Slim::Player::Protocols::HTTP::requestString($server_url);  
+			$request_string = $handler->requestString($server_url);  
 			$autostart += 2;
 			if (!$server_port || !$server_ip) {
 				$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");

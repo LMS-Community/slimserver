@@ -3,7 +3,7 @@
 # from        to
 # from1..from2 to
 
-1..19  19
+1..20  20
 
 # future versions may be downgraded to this one
-*			 19
+*			 20

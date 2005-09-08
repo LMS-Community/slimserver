@@ -612,20 +612,16 @@ sub songElapsedSeconds {
 	return $client->SUPER::songElapsedSeconds(@_);
 }
 
-sub canDirectStreamDisabled {
+sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
 
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
-	if ($handler && $handler->can('convertToHTTP')) {
-	    $url = $handler->convertToHTTP($url);
+	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
+	if ($protocol =~ /mms/i) {
+	    return $url;
 	}
-	
-	my $type = Slim::Music::Info::contentType($url);
-	my $cando = (Slim::Music::Info::isHTTPURL($url) && ($client->contentTypeSupported($type) || $type eq 'unk' || Slim::Music::Info::isList($url)) );
-	
-	$::d_directstream && msg("Direct stream type: $type can: $cando: for $url\n");
-	return $cando ? $url : undef;
+
+	return undef;
 }
 	
 sub directHeaders {
@@ -642,6 +638,7 @@ sub directHeaders {
 	}
 
 	my $url = $client->directURL || return;
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
 
 	$headers =~ s/\r/\n/g;
 	$headers =~ s/\n\n/\n/g;
@@ -702,7 +699,14 @@ sub directHeaders {
 					$length = $1;
 				}
 			}
-		
+	
+			if ($handler && $handler->can("translateContentType")) {
+				$contentType = $handler->translateContentType($contentType);
+			}
+			else {
+				$contentType = Slim::Music::Info::mimeToType($contentType);
+			}
+
 			# update bitrate, content-type title for this URL...
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
@@ -714,7 +718,7 @@ sub directHeaders {
 				$client->stop();
 				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
 
-			} elsif ($client->contentTypeSupported(Slim::Music::Info::mimeToType($contentType))) {
+			} elsif ($client->contentTypeSupported($contentType)) {
 				$::d_directstream && msg("Beginning direct stream!\n");
 				my $loop = 0;
 				if ($length) {
@@ -726,7 +730,7 @@ sub directHeaders {
 				    
 				    $loop = Slim::Player::Source::shouldLoop($client);
 				}
-				$client->streamformat(Slim::Music::Info::mimeToType($contentType));
+				$client->streamformat($contentType);
 				$client->sendFrame('cont', \(pack('NC',$metaint, $loop)));		
 			} elsif (Slim::Music::Info::isList($url)) {
 				$::d_directstream && msg("Direct stream is list, get body to explode\n");

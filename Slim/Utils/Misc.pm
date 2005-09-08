@@ -250,7 +250,8 @@ sub stripAnchorFromURL {
 sub crackURL {
 	my ($string) = @_;
 
-	$string =~ m|http://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
+	my $urlstring = join('|',keys %Slim::Player::Source::protocolHandlers);
+	$string =~ m|[$urlstring]://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my $user = $1;
 	my $password = $2;

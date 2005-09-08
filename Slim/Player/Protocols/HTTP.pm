@@ -146,7 +146,7 @@ sub request {
 
 	my $class = ref $self;
 
-	my $request = requestString($url, $post);
+	my $request = $self->requestString($url, $post);
 	
 	$::d_remotestream && msg("Request: $request");
 
@@ -525,6 +525,7 @@ sub close {
 }
 
 sub requestString {
+	my $classOrSelf = shift;
 	my $url = shift;
 	my $post = shift;
 
