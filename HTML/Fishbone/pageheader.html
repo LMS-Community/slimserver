@@ -53,6 +53,9 @@
 				break
 				[% END %]
 			[% END %]
+			case "RADIO_TUNEIN":
+				url = "tunein.html"
+				suffix = "?page=RADIO_TUNEIN"
 			}
 			setCookie("SlimServer-Browserpage",url + suffix);
 			parent.browser.location = url + suffix + '&player=[% player | uri %]';
@@ -69,7 +72,7 @@
 	<div class="menu1" width="100%">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
 				<td width="33%" height="13" align="center">
-					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "HOME" | string %]</nobr>
+					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "BROWSE_MUSIC" | string %]</nobr>
 				</td>
 				<td>
 					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
@@ -85,7 +88,7 @@
 				<td colspan="2" width="0"></td>
 				[% END %]
 				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a>
+					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HOME" | string %]</a>
 				</td>
 			</table>
 		</div>
@@ -104,6 +107,7 @@
 							<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 						[% END %]
 					[% END %]
+							<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
 				</SELECT><nobr></center></td>
 					<input type=hidden value="[% page %]" name="page">
 			</FORM>
