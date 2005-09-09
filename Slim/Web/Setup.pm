@@ -311,6 +311,15 @@ sub initSetupConfig {
 						$pageref->{'Prefs'}{'powerOnBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
 						$pageref->{'Prefs'}{'powerOffBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
 						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
+						$pageref->{'Prefs'}{'powerOnBrightness'}{'onChange'} = sub {
+							my ($client, $changeref) = @_;
+							if ($client->power()) { $client->brightness($changeref->{'powerOnBrightness'}{'new'}); }
+						};
+						$pageref->{'Prefs'}{'powerOffBrightness'}{'onChange'} = sub {
+							my ($client, $changeref) = @_;
+							if (!$client->power()) { $client->brightness($changeref->{'powerOffBrightness'}{'new'}); }
+						};
+						# Leave Slim::Buttons::Screensaver::screenSaver to change idle brightness
 					} else {
 						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,4,1,1];
 						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,4,1,1];

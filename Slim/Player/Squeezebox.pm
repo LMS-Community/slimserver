@@ -324,6 +324,7 @@ sub upgradeFirmware_SDK5 {
 
 	$client->prefSet( "powerOnBrightness", 4);
 	$client->prefSet( "powerOffBrightness", 1);
+	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	
 	my $oldsize = $client->textSize();
 	$client->textSize(0);
@@ -390,6 +391,7 @@ sub upgradeFirmware_SDK4 {
 		$ip = $client->ip;
 		$client->prefSet( "powerOnBrightness", 4);
 		$client->prefSet( "powerOffBrightness", 1);
+		$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	} else {
 		$ip = $client;
 	}

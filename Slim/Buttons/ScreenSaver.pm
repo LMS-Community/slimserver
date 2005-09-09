@@ -164,6 +164,7 @@ sub wakeup {
 		$client->brightness() == 0 &&
 		$client->power()) { 
 			$client->prefSet('powerOnBrightness', 1);
+			$client->brightness(1);
 	}
 } 
 

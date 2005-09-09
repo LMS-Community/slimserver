@@ -356,6 +356,7 @@ our %functions = (
 		}
 
 		$client->prefSet($brightmode, $newBrightness);
+		$client->brightness($newBrightness);
 	},
 	'playdisp' => sub  {
 		my $client = shift;

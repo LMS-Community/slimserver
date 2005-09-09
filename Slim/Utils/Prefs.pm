@@ -164,27 +164,6 @@ sub init {
 
 		'CLIENTPREFS' => {
 
-			'powerOnBrightness' => sub {
-				my ($client,$newvalue) = @_;
-				if ($client->power()) {
-					$client->brightness($newvalue);
-				}
-			},
-
-			'powerOffBrightness' => sub {
-				my ($client,$newvalue) = @_;
-				if (!$client->power()) {
-					$client->brightness($newvalue);
-				}
-			},
-
-			'idleBrightness' => sub {
-				my ($client,$newvalue) = @_;
-				if ($client->power()) {
-					$client->brightness($newvalue);
-				}
-			},
-
 			'irmap' => sub {
 				my ($client,$newvalue) = @_;
 

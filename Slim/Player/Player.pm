@@ -1168,22 +1168,28 @@ sub power {
 			return;
 		}
 
-		$client->updateMode(2);
+		$client->update( {} );
+		$client->updateMode(2); # block updates to hide mode change
+
 		Slim::Buttons::Common::setMode($client, 'home');
-		$client->updateMode(0);
+
+		$client->updateMode(0); # unblock updates
 		
-		my $welcome  = ($client->linesPerScreen() == 1) ? '' : Slim::Display::Display::center($client->string('WELCOME_TO_' . $client->model));
-		my $welcome2 = ($client->linesPerScreen() == 1) ? Slim::Display::Display::center($client->string($client->model)) : Slim::Display::Display::center($client->string('FREE_YOUR_MUSIC'));
-
-		$client->showBriefly($welcome, $welcome2, undef, undef, 1);
-
 		# restore the saved brightness, unless its completely dark...
 		my $powerOnBrightness = $client->prefGet("powerOnBrightness");
 
 		if ($powerOnBrightness < 1) { 
 			$powerOnBrightness = 1;
+			$client->prefSet("powerOnBrightness", $powerOnBrightness);
 		}
-		$client->prefSet( "powerOnBrightness", $powerOnBrightness);
+		$client->brightness($powerOnBrightness);
+
+		my $oneline = ($client->linesPerScreen() == 1);
+		
+		$client->showBriefly( {
+			'center1' => $oneline ? undef : $client->string('WELCOME_TO_' . $client->model),
+			'center2' => $oneline ? $client->string($client->model) : $client->string('FREE_YOUR_MUSIC'),
+		}, undef, undef, 1);
 
 		# check if there is a sync group to restore
 		Slim::Player::Sync::restoreSync($client);
