@@ -1626,6 +1626,8 @@ sub getConvertCommand {
 	my $client = shift;
 	my $track  = shift;
 	
+	return unless $track;
+	
 	my $type     = Slim::Music::Info::contentType($track);
 	my $player;
 	my $clientid;
