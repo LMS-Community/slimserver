@@ -186,10 +186,16 @@ sub endImporter {
 sub stillScanning {
 	my $imports = scalar keys %importsRunning;
 
-	if ($::d_import) {
+	if ($::d_import && $imports) {
+
 		msg("Import: Scanning with $imports import plugins\n");
-		use Data::Dumper;
-		print Dumper(\%importsRunning) if $imports;
+
+		while (my ($importer, $started) = each %importsRunning) {
+
+			msgf("\t%s scan started at: %s\n", string($importer), (localtime($started) . ''));
+		}
+
+		msg("\n");
 	}
 
 	return $imports;
