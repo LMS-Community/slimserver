@@ -567,6 +567,9 @@ sub get_mp3tag {
 				if (exists $v2->{$id}) {
 					if ($id =~ /^TCON?$/ && $v2->{$id} =~ /^.?\((\d+)\)/) {
 						$info{$hash->{$id}} = $mp3_genres[$1];
+					} elsif ($id =~ /^UFID?$/) {
+						my @ufid_list = split(/\0/, $v2->{$id});
+						$info{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
 					} else {
 						my $data1 = $v2->{$id};
 
@@ -581,7 +584,8 @@ sub get_mp3tag {
 							if ($id =~ /^COMM?$/) {
 								my($newdata) = grep /^(....\000)/, @{$data1};
 								$data1 = $newdata || $data1->[0];
-							} else {
+							} elsif (!($id =~ /^TXXX?$/)) {
+								# We can get multiple User Defined Text frames in a mp3 file
 								$data1 = $data1->[0];
 							}
 						}
@@ -592,7 +596,9 @@ sub get_mp3tag {
 							$data =~ s/^(.)//; # strip first char (text encoding)
 							my $encoding = $1;
 							my $desc;
-							if ($id =~ /^COM[M ]?$/) {
+
+							# Comments & Unsyncronized Lyrics have the same format.
+							if ($id =~ /^(COM[M ]?|USLT)$/) {
 								$data =~ s/^(?:...)//;		# strip language
 								$data =~ s/^(.*?)\000+//;	# strip up to first NULL(s),
 												# for sub-comment
@@ -653,7 +659,12 @@ sub get_mp3tag {
 									$info{$hash->{$id}} = [ $info{$hash->{$id}}, $data ];
 								}
 							} else {
-								$info{$hash->{$id}} = $data;
+								if ($id eq 'TXXX') {
+									my ($key, $val) = split(/\0/, $data);
+									$info{$key} = $val;
+								} else {
+									$info{$hash->{$id}} = $data;
+								}
 							}
 						}
 					}
@@ -1454,6 +1465,9 @@ BEGIN {
 		'TCON' => 'GENRE',
 		'TPOS' => 'SET',
 		'APIC' => 'PIC',
+		# v2.3 tags - needed for MusicBrainz
+		'UFID' => 'Unique file identifier',
+		'TXXX' => 'User defined text information frame',
 	);
 
 	%v2_tag_names = (
