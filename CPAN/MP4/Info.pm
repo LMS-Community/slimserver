@@ -743,7 +743,7 @@ sub parse_data
 	    $tags->{$id} = $data;
 	}
     }
-    elsif ($type==13)	# Byte data
+    elsif ($type==13 || $type==14)	# Byte data
     {
 	$tags->{$id} = $data;
     }
