@@ -25,6 +25,7 @@ our $defaultPrefs = {
 		'autobrightness'		=> 1
 		,'bass'					=> 50
 		,'digitalVolumeControl'	=> 1
+		,'preampVolumeControl'	=> 0
 		,'disabledirsets'		=> []
 		,'doublesize'			=> 0
 		,'idleBrightness'		=> 1

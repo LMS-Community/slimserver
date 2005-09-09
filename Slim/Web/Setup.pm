@@ -908,7 +908,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['synchronize','syncVolume','syncPower']
 				}
 			,'Digital' => {
-					'PrefOrder' => ['digitalVolumeControl','mp3SilencePrelude']
+					'PrefOrder' => ['digitalVolumeControl','preampVolumeControl','mp3SilencePrelude']
 				}
 			,'Transition' => {
 					'PrefOrder' => ['transitionType', 'transitionDuration']
@@ -1019,6 +1019,10 @@ sub initSetupConfig {
 								my $client = shift;
 								$client->volume($client->volume());
 							}
+						}
+			,'preampVolumeControl' => {
+							'validate' => \&validateNumber
+							,'validateArgs' => [0, undef, 63]
 						}
 			,'mp3SilencePrelude' => {
 							'validate' => \&validateNumber  

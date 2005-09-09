@@ -2267,6 +2267,12 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	SE	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
 	ZH_CN	您可以选择将数码式音频输出固定在最高水平或由音量按钮控制。无论如何，模拟式输出量都是由音量按钮调节。
 
+SETUP_PREAMPVOLUMECONTROL
+	EN	Preamp Volume Control
+
+SETUP_PREAMPVOLUMECONTROL_DESC
+	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox2. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
+
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
 	EN	Bitrate Limiting

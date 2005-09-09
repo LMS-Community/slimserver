@@ -260,9 +260,11 @@ sub volume {
 	my $newvolume = shift;
 
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
+	my $preamp = 255 - int(2 * $client->prefGet("preampVolumeControl"));
+
 	if (defined($newvolume)) {
 		my $level = $volume_map[int($volume)];
-		my $data = pack('NNC', $level, $level, $client->prefGet("digitalVolumeControl"));
+		my $data = pack('NNCC', $level, $level, $client->prefGet("digitalVolumeControl"), $preamp);
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
