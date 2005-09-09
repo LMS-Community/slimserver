@@ -194,7 +194,7 @@ sub init {
 						
 						} else {
 
-							$dowString .= sprintf("(%s)", $client->string('OFF'));
+							$dowString .= sprintf(" (%s)", $client->string('MCOFF'));
 						}
 
 						return $dowString;
@@ -401,7 +401,7 @@ sub lines {
 
 	if ($weekDay) {
 
-		$line1 = sprintf('%s - %', $client->string('ALARM_WEEKDAYS'), $client->string('ALARM_DAY'.$weekDay));
+		$line1 = sprintf('%s - %s', $client->string('ALARM_WEEKDAYS'), $client->string('ALARM_DAY'.$weekDay));
 	}
 
 	if ($client->prefGet("alarm", $weekDay) && 
