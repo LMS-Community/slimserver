@@ -1363,6 +1363,11 @@ sub initSetupConfig {
 						,'options' => undef #filled by initSetup using skins()
 						,'changeIntro' => string('SETUP_SKIN_OK')
 						,'changeAddlText' => string('HIT_RELOAD')
+						,'onChange' => sub {
+							for my $client (Slim::Player::Client::clients()) {
+								$client->currentPlaylistChangeTime(time());
+							}
+						}
 					}
 			,'itemsPerPage'	=> {
 						'validate' => \&validateInt
