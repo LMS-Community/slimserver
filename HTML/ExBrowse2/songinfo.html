@@ -68,6 +68,11 @@
   <td class="listing"> [% "COMMENT" | string %][% "COLON" | string %] </td>
   <td class="listing"> [% comment %] </td>
  </tr>
+[% END %] [% IF track.lyrics %] 
+ <tr>
+  <td class="listing"> [% "LYRICS" | string %][% "COLON" | string %] </td>
+  <td class="listing"> [% track.lyrics | html %] </td>
+ </tr>
  [% END %] [% IF filelength %] 
  <tr>
   <td class="listing"> [% "FILELENGTH" | string %][% "COLON" | string %] </td>

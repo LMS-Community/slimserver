@@ -87,13 +87,22 @@
 			[% track.year %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.comment %] 
+	[% END %] [% IF comment %] 
 	<tr>
 		<td>
 			[% "COMMENT" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.comment %] 
+			[% comment %] 
+		</td>
+	</tr>
+	[% END %] [% IF track.lyrics %] 
+	<tr>
+		<td>
+			[% "LYRICS" | string %][% "COLON" | string %]
+		</td>
+		<td>
+			[% track.lyrics %] 
 		</td>
 	</tr>
 	[% END %] [% IF filelength %] 

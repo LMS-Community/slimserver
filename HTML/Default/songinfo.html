@@ -122,6 +122,13 @@
       </tr>
       [% END %]
 
+     [% IF track.lyrics %] 
+      <tr> 
+        <td class="nowrap"> [% "LYRICS" | string; "COLON" | string %]</td>
+        <td>[% track.lyrics | html %]</td>
+      </tr>
+     [% END %]
+
      [% IF filelength %] 
       <tr> 
         <td class="nowrap"> [% "FILELENGTH" | string; "COLON" | string %]</td>

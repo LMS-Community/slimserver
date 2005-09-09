@@ -56,6 +56,7 @@ our %otherColumns = (
 	'lastPlayed' => 'lastPlayed',
 	'lossless' => 'lossless',
 	'titlesearch' => 'titlesearch',
+	'lyrics' => 'lyrics',
 );
 
 our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );

@@ -134,6 +134,15 @@
                         <font size="+1">[% comment %]
                 </td>
         </tr>
+	[% END %] [% IF track.lyrics %]
+        <tr>
+                <td><font size="+1">
+                        [% "LYRICS" | string %]:
+                </td>
+                <td>
+                        <font size="+1">[% track.lyrics %]
+                </td>
+        </tr>
         [% END %] [% IF filelength %]
         <tr>
                 <td><font size="+1">

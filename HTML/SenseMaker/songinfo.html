@@ -100,6 +100,11 @@ leftMargin=0 topMargin=0 marginheight="0" marginwidth="0">
               <td class=listing> [% "COMMENT" | string %][% "COLON" | string %]</td>
               <td class=listing> [% comment %] </td>
             </tr>
+	   [% END %] [% IF track.lyrics %] 
+            <tr> 
+              <td class=listing> [% "LYRICS" | string %][% "COLON" | string %]</td>
+              <td class=listing> [% track.lyrics %] </td>
+            </tr>
             [% END %] [% IF filelength %] 
             <tr> 
               <td class=listing> [% "FILELENGTH" | string %][% "COLON" | string %]</td>

@@ -59,6 +59,7 @@ CREATE TABLE tracks (
   audio tinyint(1) unsigned,
   remote tinyint(1) unsigned,
   lossless tinyint(1) unsigned,
+  lyrics  text,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable  tinyint(1) unsigned,
   musicmagic_mixable  tinyint(1) unsigned,

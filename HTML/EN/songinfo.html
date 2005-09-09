@@ -98,6 +98,15 @@
 			[% comment %] 
 		</td>
 	</tr>
+	[% END %] [% IF track.lyrics %] 
+	<tr>
+		<td>
+			[% "LYRICS" | string; "COLON" | string %]
+		</td>
+		<td>
+			[% track.lyrics | html %] 
+		</td>
+	</tr>
 	[% END %] [% IF filelength %] 
 	<tr>
 		<td>

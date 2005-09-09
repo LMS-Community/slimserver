@@ -52,6 +52,7 @@ CREATE TABLE tracks (
   audio integer,           -- boolean for audio
   lossless integer,        -- boolean for lossless content
   remote integer,          -- boolean for remote
+  lyrics text,             -- lyrics for this track
   moodlogic_mixable integer,
   musicmagic_mixable integer,
   multialbumsortkey varchar -- used for sorting tracks in multi album lists

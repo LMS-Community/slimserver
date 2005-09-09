@@ -33,6 +33,8 @@
 
 	[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
 
+	[% IF itemobj.lyrics %]<lyrics>[% itemobj.lyrics %]</lyrics>[% END %]
+
 	[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
 
 	[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
