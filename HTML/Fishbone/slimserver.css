@@ -185,6 +185,11 @@ A.linkbtn:hover {
 	line-height: 100%;
 }
 
+.list
+{
+	padding: 0 8 0 8;
+}
+
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;

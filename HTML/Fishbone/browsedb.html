@@ -1,5 +1,5 @@
 [% pagetitle = pagetitle %] [% pageicon = 'MUSIC' %] [% setup = '0' %] [% browse = '1' %][% PROCESS pageheader.html %]
-
+<div class="list">
 	<p>
 
 	<h3>[% browseby | string %]</h3><p>
@@ -21,5 +21,6 @@
 			</td></tr><tr><td>
 			[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 		</td></tr></table>
+  </div>
   </body>
 </html>

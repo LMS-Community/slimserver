@@ -9,7 +9,7 @@ function to_currentsong() {
 
 function openRemote(player,playername)
 {
-	window.open('status.html?player='+player+'&refresh=1', playername, 'width=480,height=230');
+	window.open('status.html?player='+player+'&refresh=1', playername, 'width=480,height=250');
 }
 
 function setCookie(name, value)
@@ -52,7 +52,7 @@ function Click(mp,end,at)
 	var s = '';
 	if (!mp) s = '_s';
 	if (document.all||document.getElementById)
-	document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="5"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="5"></td></table>');
+	document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="3"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="3"></td></table>');
 	ProgressUpdate(mp,end,at)
 }
 

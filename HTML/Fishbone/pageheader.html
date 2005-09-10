@@ -70,7 +70,7 @@
 	[% END %]>
 	[% IF home %]
 	<div class="masthead" width="100%">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="20">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="17">
 			<td height="17" align="left">
 				<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
 			</td>
@@ -82,7 +82,7 @@
 				<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
 				 / 
 			[% END %]
-				<a href="hitlist.html?player=[% player | uri %]" target="playlist" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
+				<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
 				 / 
 				<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
 			</td>

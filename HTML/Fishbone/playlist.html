@@ -9,6 +9,7 @@
 		<script type="text/javascript" src="[% webroot %]html/scripts.js" ></script>
 	</head>
 	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong()">
+	<div class="list">
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
 		<table cellspacing="0" border="0" cellpadding="0" width="100%">
@@ -16,5 +17,6 @@
 		</table>
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
+	</div>
 	</body>
 </html>

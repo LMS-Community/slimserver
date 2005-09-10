@@ -7,22 +7,11 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
 		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
   </head>
-  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onLoad="javascript:top.document.getElementById('player_frame').rows = '0%, 100%';parent.frames[2].location='about:blank';">
+  <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 	<div class="masthead">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="17" bordercolor="#111111">
-		<tr>
-			<td height="17" align="left">
-				<img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
-				<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
-				<span class="songtitle" valign="top"> [% "STATISTICS" | string %]</span>
-			</td>
-			<td align="right">
-				<a href="javascript:parent.playlist.location='playlist.html?player=[% player | uri %]';parent.frames[2].location='status_header.html?noreload=1&player=[% player | uri %]'">[% "PLAYLIST" | string %]</a>
-			</td>
-		</tr>
-		</table>
+	<h3> [% "STATISTICS" | string %] </h3>
 	</div>
-	<div class="menu1">
+	<div class="masthead">
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
 	<tr>
 		<td align="center">
@@ -41,9 +30,11 @@
 		</td>
 	</table>
 	</div>
+	<div class="list">
 	<h4>Most requested songs</h4>
 	<table cellspacing="0" border="0" cellpadding="0" width="100%">
 		[% browse_list %]
 	</table>
+	</div>
   </body>
 </html>

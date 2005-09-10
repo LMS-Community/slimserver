@@ -7,7 +7,7 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
 		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
 		[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 		</div>[% END %]
 		[% IF RENAME_WARNING %]<div class="nowplaying"><p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
@@ -48,7 +48,8 @@
 			</form>
 		</div>
 		[% END %]
-
+		
+		<div class="list">
 		<center><p>[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td>[% pwd_list %]</td></tr>
@@ -63,5 +64,6 @@
 			[% browse_list %]
 		</table>
 		[% browselist_pagebar %]
+	</div>
 	</body>
 </html>
