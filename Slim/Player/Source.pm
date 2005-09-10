@@ -749,7 +749,7 @@ sub gototime {
 
 # jumpto - set the current song to a given offset
 sub jumpto {
-	my ($client, $offset) = @_;
+	my ($client, $offset, $noplay) = @_;
 
 	my ($songcount) = Slim::Player::Playlist::count($client);
 
@@ -788,7 +788,7 @@ sub jumpto {
 	$client->currentPlaylistChangeTime(time());
 	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 	
-	playmode($client,"play");
+	playmode($client,"play") unless $noplay;
 }
 
 

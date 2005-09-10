@@ -68,6 +68,7 @@ our $defaultPrefs = {
 		,'volume'				=> 50
 		,'syncBufferThreshold'		=> 128
 		,'bufferThreshold'		=> 255
+		,'powerOnResume'        => 'PauseOff-NoneOn'
 	};
 
 my $scroll_pad_scroll = 6; # chars of padding between scrolling text
@@ -1156,17 +1157,47 @@ sub power {
 	my $currOn = $client->prefGet('power') || 0;
 	
 	return $currOn unless defined $on;
+	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
 	$client->renderCache()->{defaultfont} = undef;
 
-	if (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on)) {
+	$client->prefSet( 'power', $on);
 
-		$client->prefSet( 'power', $on);
+	my $resume = Slim::Player::Sync::syncGroupPref($client, 'powerOnResume') || $client->prefGet('powerOnResume');
+	$resume =~ /(.*)Off-(.*)On/;
+	my ($resumeOff, $resumeOn) = ($1,$2);
 
-		unless ($on) {
-			Slim::Buttons::Common::setMode($client, 'off');
-			return;
+	unless ($on) {
+		# turning player off - move to off mode and unsync/pause/stop player
+  
+		$client->brightness($client->prefGet("powerOffBrightness"));
+		Slim::Buttons::Common::setMode($client, 'off');
+			  
+	    my $sync = $client->prefGet('syncPower');
+		if (defined $sync && $sync == 0) {
+			$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
+			Slim::Player::Sync::unsync($client,1);
+  		}
+  
+		if (Slim::Player::Source::playmode($client) eq 'play') {
+
+			if (Slim::Player::Playlist::song($client) && 
+				Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
+				# always stop if currently playing remote stream
+				$client->execute(["stop"]);
+			
+			} elsif ($resumeOff eq 'Pause') {
+				# Pause client mid track
+				$client->execute(["pause", 1]);
+  		
+			} else {
+				# Stop client
+				$client->execute(["stop"]);
+			}
 		}
+
+	} else {
+		# turning player on - reset mode & brightness, display welcome and sync/start playing
 
 		$client->update( {} );
 		$client->updateMode(2); # block updates to hide mode change
@@ -1193,6 +1224,20 @@ sub power {
 
 		# check if there is a sync group to restore
 		Slim::Player::Sync::restoreSync($client);
+
+		if (Slim::Player::Source::playmode($client) ne 'play') {
+			
+			if ($resumeOn =~ /Reset/) {
+				# reset playlist to start
+				$client->execute(["playlist","jump", 0, 1]);
+			}
+
+			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client) &&
+				!Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
+				# play if current playlist item is not a remote url
+				$client->execute(["play"]);
+			}
+		}		
 	}
 }
 

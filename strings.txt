@@ -10395,3 +10395,27 @@ SETUP_USEBANDASALBUMARTIST_0
 
 LYRICS
 	EN	Lyrics
+
+SETUP_POWERONRESUME
+	EN	Power On Resume
+
+SETUP_POWERONRESUME_DESC
+	EN	You can choose how your player should resume the current playlist when you press the POWER button to turn the player off and then again to turn it on again later.  This setting applies to this player and other players while they are synchonized to this player.
+
+SETUP_POWERONRESUME_PAUSEOFF_NONEON
+	EN	Pause at power off / Remain paused at power on
+
+SETUP_POWERONRESUME_PAUSEOFF_PLAYON
+	EN	Pause at power off / Resume at power on
+
+SETUP_POWERONRESUME_STOPOFF_PLAYON
+	EN	Stop at power off / Restart song at power on
+
+SETUP_POWERONRESUME_STOPOFF_NONEON
+	EN	Stop at power off / Remain stopped at power on
+
+SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
+	EN	Stop at power off / Restart playlist at power on
+
+SETUP_POWERONRESUME_STOPOFF_RESETON
+	EN	Stop at power off / Reset playlist at power on

@@ -70,6 +70,8 @@ sub unsync {
 	if (!isSynced($client)) {
 		return;
 	}
+
+	my $lastInGroup;
 	
 	# if we're the master...
 	if (isMaster($client)) {
@@ -93,6 +95,8 @@ sub unsync {
 			# copy over the slave list to the new master
 			@{$newmaster->slaves} = @{$client->slaves};
 			
+		} else {
+			$lastInGroup = $newmaster;
 		}
 						
 		# forget about our slaves
@@ -116,16 +120,21 @@ sub unsync {
 		# and copy the playlist to the now freed slave
 		my $master = $client->master;
 		Slim::Player::Playlist::copyPlaylist($client, $master);
+
+		$lastInGroup = $master if !scalar(@{$master->slaves});
 	
 		$client->master(undef);
 	}
 	# when we unsync, we stop, but save settings first if we're doing at temporary unsync.
+
 	if ($temp) {
-		saveSyncPrefs($client,defined $temp);
+		saveSyncPrefs($client);
 		$client->execute(["stop"]);
 	} else {
 		$client->execute(["stop"]);
-		saveSyncPrefs($client,defined $temp);
+		# delete sync prefs for both this client and remaining client if it is last in group
+		deleteSyncPrefs($client);
+		deleteSyncPrefs($lastInGroup, 1) if $lastInGroup;
 	}
 }
 
@@ -161,7 +170,7 @@ sub sync {
 	}
 	
 	# Save Status to Prefs file
-	saveSyncPrefs($client,$buddy);
+	saveSyncPrefs($client);
 	
 	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
 }
@@ -169,8 +178,8 @@ sub sync {
 sub saveSyncPrefs {
 	
 	my $client = shift;
-	my $temp = shift;
 	my $clientID = $client->id();
+
 	if (isSynced($client)) {
 	
 		if (!defined($client->master->syncgroupid)) {
@@ -184,13 +193,23 @@ sub saveSyncPrefs {
 		$client->master->prefSet('syncgroupid',$masterID);
 		
 	}
-	if ($temp) {
-		$::d_sync && msg("Idling Sync for $clientID\n");
-	} else {
-		$client->syncgroupid(undef);
-		$client->prefDelete('syncgroupid');
-		$::d_sync && msg("Clearing Sync master for $clientID\n");
+}
+
+sub deleteSyncPrefs {
+	my $client = shift;
+	my $last   = shift;
+
+	my $clientID = $client->id();
+	my $syncgroupid = $client->syncgroupid;
+
+	if ($last) {
+		$::d_sync && msg("Deleting Sync group prefs for group: $syncgroupid\n");
+		Slim::Utils::Prefs::delete("$syncgroupid-Sync");
 	}
+
+	$::d_sync && msg("Clearing Sync master for $clientID\n");
+	$client->syncgroupid(undef);
+	$client->prefDelete('syncgroupid');
 }
 
 # Restore Sync Operation
@@ -402,6 +421,31 @@ sub isSynced {
 	my $client = shift;
 	return (scalar(@{$client->slaves}) || $client->master);
 }
+
+sub syncGroupPref {
+	my $client = shift;
+	my $pref = shift;
+	my $val = shift;
+
+	my $syncgroupid = $client->prefGet('syncgroupid');
+
+	if ($syncgroupid) {
+		unless ($val) {
+			my $ret = Slim::Utils::Prefs::getInd("$syncgroupid-Sync",$pref);
+			if (!defined($ret)) {
+				$ret = masterOrSelf($client)->prefGet($pref);
+				Slim::Utils::Prefs::set("$syncgroupid-Sync",$ret,$pref);
+			}
+			return $ret;
+		} else {
+			Slim::Utils::Prefs::set("$syncgroupid-Sync",$val,$pref);
+		}
+
+	} else {
+		return undef;
+	}
+}
+				
 
 1;
 __END__

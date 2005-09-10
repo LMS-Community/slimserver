@@ -41,28 +41,10 @@ sub setMode {
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
 
-	my $sync = $client->prefGet('syncPower');
-
-	if (defined $sync && $sync == 0) {
-		$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
-		Slim::Player::Sync::unsync($client,1);
-	}
-	
-	if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Playlist::song($client)) {
-		if (Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
-			$client->execute(["stop"]);
-		} else {
-			$client->execute(["pause", 1]);
-		}
-	}
-	
 	# this is a date-time screen, so it should get updated every second
 	$client->param('modeUpdateInterval', 1);
-	
-	# switch to power off mode
-	# use our last saved brightness
-	$client->brightness($client->prefGet("powerOffBrightness"));
-	$client->update();	
+
+	$client->update();
 }
 
 sub lines {

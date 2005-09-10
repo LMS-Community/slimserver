@@ -840,6 +840,7 @@ sub initSetupConfig {
 		,'parent' => 'player'
 		,'isClient' => 1
 		,'preEval' => sub {
+
 					my ($client,$paramref,$pageref) = @_;
 					return if (!defined($client));
 					playerChildren($client, $pageref);
@@ -853,27 +854,27 @@ sub initSetupConfig {
 					}
 					
 					if ($client->maxTransitionDuration()) {
-						$pageref->{'GroupOrder'}[1] = 'Transition';
+						$pageref->{'GroupOrder'}[2] = 'Transition';
 						$pageref->{'Prefs'}{'transitionDuration'}{'validateArgs'} = [0, $client->maxTransitionDuration(),1,1];
-					} else {
-						$pageref->{'GroupOrder'}[1] = undef;
-					}
-					
-					if ($client && $client->hasDigitalOut()) {
-						$pageref->{'GroupOrder'}[2] = 'Digital';
 					} else {
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
 					
-					if (Slim::Utils::Misc::findbin('lame')) {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
-						$pageref->{'GroupOrder'}[3] = 'Quality';
+					if ($client && $client->hasDigitalOut()) {
+						$pageref->{'GroupOrder'}[3] = 'Digital';
 					} else {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
 						$pageref->{'GroupOrder'}[3] = undef;
 					}
 					
-					$pageref->{'GroupOrder'}[4] ='Format';
+					if (Slim::Utils::Misc::findbin('lame')) {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
+						$pageref->{'GroupOrder'}[4] = 'Quality';
+					} else {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
+						$pageref->{'GroupOrder'}[4] = undef;
+					}
+					
+					$pageref->{'GroupOrder'}[5] ='Format';
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
@@ -899,9 +900,12 @@ sub initSetupConfig {
 					}
 					$client->update();
 				}
-		,'GroupOrder' => ['Format',undef,undef,'Digital']
+		,'GroupOrder' => [undef,'PowerOn',undef,undef,undef,undef]
 		,'Groups' => {
-			'Format' => {
+			'PowerOn' => {
+					'PrefOrder' => ['powerOnResume']
+				}
+			,'Format' => {
 					'PrefOrder' => ['lame','maxBitrate']
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefLine' => 1
@@ -924,7 +928,33 @@ sub initSetupConfig {
 				}
 		}
 		,'Prefs' => {
-			'maxBitrate' => {
+			'powerOnResume' => {
+					'options' => {
+							'PauseOff-NoneOn' => string('SETUP_POWERONRESUME_PAUSEOFF_NONEON')
+							,'PauseOff-PlayOn' => string('SETUP_POWERONRESUME_PAUSEOFF_PLAYON')
+							,'StopOff-PlayOn' => string('SETUP_POWERONRESUME_STOPOFF_PLAYON')
+							,'StopOff-NoneOn' => string('SETUP_POWERONRESUME_STOPOFF_NONEON')
+							,'StopOff-ResetPlayOn' => string('SETUP_POWERONRESUME_STOPOFF_RESETPLAYON')
+							,'StopOff-ResetOn' => string('SETUP_POWERONRESUME_STOPOFF_RESETON')
+						}
+					,'currentValue' => sub {
+							my ($client,$key,$ind) = @_;
+							return if (!defined($client));
+							return Slim::Player::Sync::syncGroupPref($client,'powerOnResume') ||
+								   $client->prefGet('powerOnResume');
+					}
+					,'onChange' => sub {
+							my ($client,$changeref,$paramref,$pageref) = @_;
+							return if (!defined($client));
+
+							my $newresume = $changeref->{'powerOnResume'}{'new'};
+							if (Slim::Player::Sync::syncGroupPref($client,'powerOnResume')) {
+								Slim::Player::Sync::syncGroupPref($client,'powerOnResume',$newresume);
+							}
+						}
+					}
+							
+			,'maxBitrate' => {
 							'validate' => \&validateInList
 							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
 							,'optionSort' => 'NK'

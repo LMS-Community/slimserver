@@ -921,7 +921,7 @@ sub execute {
 				if ($p2 eq "?") {
 					$p2 = Slim::Player::Source::playingSongIndex($client);
 				} else {
-					Slim::Player::Source::jumpto($client, $p2);
+					Slim::Player::Source::jumpto($client, $p2, $p3);
 				}
 
 			} elsif ($p1 eq "name") {
