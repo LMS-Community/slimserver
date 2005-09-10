@@ -75,7 +75,7 @@ sub new {
 	return $self;
 }
 
-sub convertToHTTP {
+sub canDirectStreamDisabled {
 	my $self = shift;
 	my $url = shift;
 

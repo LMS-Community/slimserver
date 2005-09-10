@@ -618,11 +618,11 @@ sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
 
-	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
-	if ($protocol =~ /mms/i) {
-	    return $url;
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	if ($handler && $handler->can("canDirectStream")) {
+		return $handler->canDirectStream($url);
 	}
-
+	
 	return undef;
 }
 	
@@ -640,7 +640,15 @@ sub directHeaders {
 	}
 
 	my $url = $client->directURL || return;
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	
+	# We involve the protocol handler in the header parsing process.
+	# The current iteration of the firmware only knows about HTTP 
+	# headers. Specifically, it returns headers after finding a 
+	# CRLF pair in the stream. In the future, we could tell the firmware
+	# to return a specific number of bytes or look for a specific 
+	# byte sequence and make this less HTTP specific. For now, we only
+	# support this type of direct streaming for HTTP-esque protocols.
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);	
 
 	$headers =~ s/\r/\n/g;
 	$headers =~ s/\n\n/\n/g;
@@ -671,41 +679,45 @@ sub directHeaders {
 			my $title;
 			my $contentType = "audio/mpeg";  # assume it's audio.  Some servers don't send a content type.
 			my $bitrate;
+			my $body;
 			$::d_directstream && msg("processing " . scalar(@headers) . " headers\n");
-			foreach my $header (@headers) {
-				
-				$::d_directstream && msg("header: " . $header . "\n");
-		
-				if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
-		
-					$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
-				}
-	
-				if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
-					$bitrate = $1 * 1000;
-				}
-				
-				if ($header =~ /^icy-metaint:\s*(.+)/) {
-					$metaint = $1;
-				}
-				
-				if ($header =~ /^Location:\s*(.*)/i) {
-					$redir = $1;
-				}
-		
-				if ($header =~ /^Content-Type:\s*(.*)/i) {
-					$contentType = $1;
-				}
-				
-				if ($header =~ /^Content-Length:\s*(.*)/i) {
-					$length = $1;
-				}
-			}
-	
-			if ($handler && $handler->can("translateContentType")) {
-				$contentType = $handler->translateContentType($contentType);
+
+			if ($handler && $handler->can("parseDirectHeaders")) {
+				# Could use a hash ref for header parameters
+				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);
 			}
 			else {
+				# This code could move to the HTTP protocol handler
+				foreach my $header (@headers) {
+				
+					$::d_directstream && msg("header: " . $header . "\n");
+		
+					if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
+						
+						$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+					}
+					
+					if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
+						$bitrate = $1 * 1000;
+					}
+				
+					if ($header =~ /^icy-metaint:\s*(.+)/) {
+						$metaint = $1;
+					}
+				
+					if ($header =~ /^Location:\s*(.*)/i) {
+						$redir = $1;
+					}
+					
+					if ($header =~ /^Content-Type:\s*(.*)/i) {
+						$contentType = $1;
+					}
+					
+					if ($header =~ /^Content-Length:\s*(.*)/i) {
+						$length = $1;
+					}
+				}
+	
 				$contentType = Slim::Music::Info::mimeToType($contentType);
 			}
 
@@ -720,6 +732,11 @@ sub directHeaders {
 				$client->stop();
 				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
 
+			} elsif ($body || Slim::Music::Info::isList($url)) {
+				$::d_directstream && msg("Direct stream is list, get body to explode\n");
+				$client->directBody('');
+				# we've got a playlist in all likelyhood, have the player send it to us
+				$client->sendFrame('body', \(pack('N', $length)));
 			} elsif ($client->contentTypeSupported($contentType)) {
 				$::d_directstream && msg("Beginning direct stream!\n");
 				my $loop = 0;
@@ -734,11 +751,6 @@ sub directHeaders {
 				}
 				$client->streamformat($contentType);
 				$client->sendFrame('cont', \(pack('NC',$metaint, $loop)));		
-			} elsif (Slim::Music::Info::isList($url)) {
-				$::d_directstream && msg("Direct stream is list, get body to explode\n");
-				$client->directBody('');
-				# we've got a playlist in all likelyhood, have the player send it to us
-				$client->sendFrame('body', \(pack('N', $length)));
 			} else {
 				$::d_directstream && msg("Direct stream failed\n");
 				$client->failedDirectStream();
@@ -750,25 +762,42 @@ sub directHeaders {
 sub directBodyFrame {
 	my $client = shift;
 	my $body = shift;
+
+	my $url = $client->directURL();
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	my $done = 0;
+
 	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");
 	if (length($body)) {
 		$::d_directstream && msg("saving away that body message until we get an empty body\n");
-		$client->directBody($client->directBody() . $body);
+		if ($handler && $handler->can('handleBodyFrame')) {
+			$done = $handler->handleBodyFrame($client, $body);
+			if ($done) {
+				$client->stop();
+			}
+		}
+		else {
+			$client->directBody($client->directBody() . $body);
+		}
 	} else {
-		if (length($client->directBody())) {
-			$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
+		$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
+		$done = 1;
+	}
 
-			my $url = $client->directURL();
-			my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	if ($done) {
+		if (length($client->directBody())) {
 
 			my @items;
 			# done getting body of playlist, let's parse it!
-			if ($handler && $handler->can('parseList')) {
-				@items = $handler->parseList($client->directURL(), $client->directBody());
+			# If the protocol handler knows how to parse it, give
+			# it a chance, else we parse based on the type we know
+			# already.
+			if ($handler && $handler->can('parseDirectBody')) {
+				@items = $handler->parseDirectBody($url, $client->directBody());
 			}
 			else {
 				my $io = IO::String->new($client->directBody());
-				@items = Slim::Formats::Parse::parseList($client->directURL(), $io);
+				@items = Slim::Formats::Parse::parseList($url, $io);
 			}
 	
 			if (@items && scalar(@items)) { 

@@ -256,7 +256,7 @@ sub new {
 	});
 }
 
-sub convertToHTTP {
+sub canDirectStreamDisabled {
 	my $self = shift;
 	my $url = shift;
 
@@ -270,7 +270,7 @@ sub convertToHTTP {
 	return undef;
 }
 
-sub parseList {
+sub parseDirectBody {
 	my $self = shift;
 	my $url = shift;
 	my $body = shift;

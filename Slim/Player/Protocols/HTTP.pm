@@ -524,6 +524,14 @@ sub close {
 	$self->SUPER::close;
 }
 
+# HTTP direct streaming disabled for SlimServer
+sub canDirectStreamDisabled {
+	my $classOrSelf = shift;
+	my $url = shift;
+
+	return $url;
+}
+
 sub requestString {
 	my $classOrSelf = shift;
 	my $url = shift;

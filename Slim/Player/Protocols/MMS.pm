@@ -11,6 +11,7 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
+use Audio::WMA;
 
 use Slim::Player::Pipeline;
 
@@ -18,6 +19,17 @@ use base qw(Slim::Player::Pipeline);
 
 use Slim::Display::Display;
 use Slim::Utils::Misc;
+
+# The following are class variables, since they hold state used during
+# the direct streaming process. Currently protocol handlers can serve
+# a dual role. An instance of a protocol handler (a socket suclass)
+# can be used for server side streaming. Class methods are used to
+# help with client side direct streaming. In the future, we may want
+# to split the two into different classes - the socket version and the
+# protocol parsing version. For now we live with the ugliness of both
+# roles in the same package.
+our %stream_nums;
+our %parser_state;
 
 sub new {
 	my $class = shift;
@@ -69,6 +81,17 @@ sub randomGUID {
 	$guid .= '}';
 }
 
+sub canDirectStream {
+	my $classOrSelf = shift;
+	my $url = shift;
+
+	return $url;
+}
+
+# Most WM streaming stations also stream via HTTP. The requestString class
+# method is invoked by the direct streaming code to obtain a request string
+# to send to a WM streaming server. We construct a HTTP request string and
+# cross our fingers. 
 sub requestString {
 	my $classOrSelf = shift;
 	my $url = shift;
@@ -82,19 +105,35 @@ sub requestString {
 
 	my $host = $port == 80 ? $server : "$server:$port";
 
-	# make the request
-	return join($CRLF, (
+	my @headers = (
 		"GET $path HTTP/1.0",
 		"Accept: */*",
 		"User-Agent: NSPlayer/4.1.0.3856",
 		"Host: $host",
-		"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
-		"Pragma: xPlayStrm=1",
 		"Pragma: xClientGUID=" . randomGUID(),
-		"Pragma: stream-switch-count=1",
-		"Pragma: stream-switch-entry=ffff:1:0",
-		$CRLF
-	));
+	);
+
+	# HTTP interaction with WM radio servers actually involves two separate
+	# connections. The first is a request for the ASF header. We use it
+	# to determine which stream number to request. Once we have the stream
+	# number we can request the stream itself.
+	if (defined($stream_nums{$url})) {
+		push @headers, (
+			"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
+			"Pragma: xPlayStrm=1",
+			"Pragma: stream-switch-count=1",
+			"Pragma: stream-switch-entry=ffff:" . $stream_nums{$url} . ":0",
+		);
+	}
+	else {
+		push @headers, (
+			 "Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0", 
+			 "Connection: Close",
+		);
+	}
+
+	# make the request
+	return join($CRLF, @headers, $CRLF);
 }
 
 sub getFormatForURL {
@@ -104,19 +143,133 @@ sub getFormatForURL {
 	return 'wma';
 }
 
-sub translateContentType {
-	my $classOrSelf = shift;
-	my $contentType = shift;
+sub parseDirectHeaders {
+	my $self = shift;
+	my $client = shift;
+	my $url = shift;
+	my @headers = @_;
 
-	# application/octet-stream means we're getting audio data
-	if (($contentType eq "application/octet-stream") ||
-		($contentType eq "application/x-mms-framed")) {
-		return 'wma';
+	my ($contentType, $mimeType, $length, $body);
+
+	foreach my $header (@headers) {
+
+		$::d_directstream && msg("header: " . $header . "\n");
+
+		if ($header =~ /^Content-Type:\s*(.*)/i) {
+			$mimeType = $1;
+		}
+
+		if ($header =~ /^Content-Length:\s*(.*)/i) {
+			$length = $1;
+		}
 	}
 
-	# Assume (and this may not be correct) that anything else
-	# is an asx redirector.
-	return 'asx';
+	if (($mimeType eq "application/octet-stream") ||
+		($mimeType eq "application/x-mms-framed") ||
+		($mimeType eq "application/vnd.ms.wms-hdr.asfv1")) {
+
+		$::d_directstream && msg("it looks like a WMA file");
+
+		$contentType = 'wma';
+	}
+	else {
+		# Assume (and this may not be correct) that anything else
+		# is an asx redirector.
+
+		$::d_directstream && msg("it looks like an ASX redirector");
+
+		$contentType = 'asx';
+	}
+
+	# If we don't yet have the stream number for this URL, ask
+	# for the header first.
+	unless (defined($stream_nums{$url})) {
+		$body = 1;
+		
+		# If the length of the ASF header isn't specified, then
+		# ask for say 30K...most headers will be signficantly smaller.
+		if (!$length) {
+			$length = 30 * 1024;
+		}
+
+		$parser_state{$client}{"chunk_remaining"} = 0;
+		$parser_state{$client}{"header_length"} = 0;
+		$parser_state{$client}{"bytes_received"} = 0;
+	}
+
+	return (undef, undef, 0, '', $contentType, $length, $body);
+}
+
+sub handleBodyFrame {
+	my $classOrSelf = shift;
+	my $client = shift;
+	my $frame = shift;
+	my $remaining = length($frame);
+	my $position = 0;
+
+	while ($remaining) {
+		if ($parser_state{$client}{"chunk_remaining"} == 0) {
+			my $chunkType = unpack('v', substr($frame, $position, 2));
+			if ($chunkType != 0x4824) {
+				return 1;
+			}
+			my $chunkLength = unpack('v', substr($frame, $position+2, 2));
+			$position += 12;
+			$parser_state{$client}{"chunk_remaining"} = $chunkLength - 8;
+		}
+		
+		my $size = $parser_state{$client}{"chunk_remaining"};
+		if ($size >= $remaining) {
+			$size = $remaining;
+		}
+		$client->directBody($client->directBody() . substr($frame, $position, $size));
+		$position += $size;
+		$remaining -= $size;
+		$parser_state{$client}{"chunk_remaining"} -= $size;
+		$parser_state{$client}{"bytes_received"} += $size;
+	}
+
+	if (!$parser_state{$client}{"header_length"} &&
+		$parser_state{$client}{"bytes_received"} > 24) {
+		$parser_state{$client}{"header_length"} = unpack('V', substr($client->directBody(), 16, 8) );
+	}
+
+	if ($parser_state{$client}{"bytes_received"} >= $parser_state{$client}{"header_length"}) {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub parseDirectBody {
+	my $classOrSelf = shift;
+	my $url = shift;
+	my $body = shift;
+
+	my $io = IO::String->new($body);
+	$::d_directstream && msg("MMS protocol handler received response body\n");
+	
+	# If it's a WMA header, then parse to get the stream number.
+	# We return the URL again, but this time we will connect to
+	# play back.
+	if (Slim::Music::Info::contentType($url) eq 'wma') {
+		
+		my $wma  = Audio::WMA->new($io) || return ();
+		
+		my $stream = $wma->stream(0) || return ();
+		return unless defined($stream->{'flags_raw'});
+
+		$stream_nums{$url} = $stream->{'flags_raw'} & 0x007F;
+
+		$::d_directstream && msg("Parsed body as WMA header.\n");
+		
+		return ($url);
+	}
+	# Otherwise assume that it's an asx redirector and parse
+	# appropriately.
+	else {
+		return Slim::Formats::Parse::parseList($url, $io);
+	}
 }
 
 1;

@@ -26,28 +26,37 @@ sub new {
 
 	my $self  = {};
 
-	open(FILE, $file) or do {
-		warn "[$file] does not exist or cannot be read: $!";
-		return undef;
-	};
-
-	binmode FILE;
-
 	bless $self, $class;
 
-	$self->{'filename'}   = $file;
-	$self->{'fileHandle'} = \*FILE;
+	if (ref $file) {
+		binmode $file;
+		$self->{'fileHandle'} = $file;
+	}
+	else {
+		open(FILE, $file) or do {
+			warn "[$file] does not exist or cannot be read: $!";
+			return undef;
+		};
+
+		binmode FILE;
+
+		$self->{'filename'}   = $file;
+		$self->{'fileHandle'} = \*FILE;
+		$self->{'size'}	      = -s $file;
+	}
+
 	$self->{'offset'}     = 0;
-	$self->{'size'}	      = -s $file;
 
 	$self->_parseWMAHeader();
 
 	delete $self->{'headerData'};
 
-	close  $self->{'fileHandle'};
-	delete $self->{'fileHandle'};
+	unless (ref $file) {
+		close  $self->{'fileHandle'};
+		delete $self->{'fileHandle'};
 
-	close  FILE;
+		close  FILE;
+	}
 
 	return $self;
 }
@@ -81,6 +90,15 @@ sub tags {
 
 	return $self->{'TAGS'} unless $key;
 	return $self->{'TAGS'}{uc $key};
+}
+
+sub stream {
+	my $self = shift;
+	my $index = shift;
+
+	return undef unless $self->{'STREAM'};
+	return $self->{'STREAM'} unless defined($index);
+	return $self->{'STREAM'}->[$index];
 }
 
 sub _readAndIncrementOffset {
@@ -150,7 +168,7 @@ sub _parseWMAHeader {
 	}
 
 	# some sanity checks
-	return -1 if ($objectSize > $self->{'size'});
+	return -1 if ($self->{'size'} && $objectSize > $self->{'size'});
 	return -1 if ($objectSize < 30);
 
 	read($fh, $self->{'headerData'}, ($objectSize - 30));
@@ -165,7 +183,7 @@ sub _parseWMAHeader {
 
 		# some sanity checks
 		return -1 if (!defined($nextObjectGUIDName));
-		return -1 if (!defined $nextObjectSize || $nextObjectSize > $self->{'size'});
+		return -1 if (!defined $nextObjectSize || ($self->{'size'} && $nextObjectSize > $self->{'size'}));
 
 		if ($DEBUG) {
 			print "nextObjectGUID: [" . $nextObjectGUIDText . "]\n";

@@ -557,9 +557,9 @@ sub stream {
 		my $handler;
 		my $server_url = $client->canDirectStream($url);
 		if ($server_url) {
-			$handler = Slim::Player::Source::protocolHandlerForURL($server_url);
-			if ($handler && $handler->can("getFormatForURL")) {
-				$format = $handler->getFormatForURL($server_url);
+			$handler = Slim::Player::Source::protocolHandlerForURL($server_url);			
+			if ($handler->can("getFormatForURL")) {
+				$format = $handler->getFormatForURL($server_url, $format);
 			}
 		}
 		
