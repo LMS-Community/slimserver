@@ -196,11 +196,11 @@ sub init {
 			if (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir")) {
 
 				Slim::Music::Import::useImporter('FOLDER', 1);
+				Slim::Music::Import::startScan('FOLDER');
 			} else {
 				Slim::Music::Import::useImporter('FOLDER', 0);
 			}
 
-			Slim::Music::Import::startScan('FOLDER');
 		},
 
 		'lookForArtwork' => sub {
