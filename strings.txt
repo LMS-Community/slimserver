@@ -10394,28 +10394,37 @@ SETUP_USEBANDASALBUMARTIST_0
 	ZH_CN	不要利用TPE2/BAND ID3v2标签来定义“ALBUMARTIST”
 
 LYRICS
+	DE	Liedertexte
 	EN	Lyrics
 
 SETUP_POWERONRESUME
+	DE	Startverhalten
 	EN	Power On Resume
 
 SETUP_POWERONRESUME_DESC
+	DE	Sie können bestimmen, wie SlimServer Playlists behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
 	EN	You can choose how your player should resume the current playlist when you press the POWER button to turn the player off and then again to turn it on again later.  This setting applies to this player and other players while they are synchonized to this player.
 
 SETUP_POWERONRESUME_PAUSEOFF_NONEON
+	DE	Beim Ausschalten pausieren / Beim Einschalten nicht fortsetzen
 	EN	Pause at power off / Remain paused at power on
 
 SETUP_POWERONRESUME_PAUSEOFF_PLAYON
+	DE	Beim Ausschalten pausieren / Beim Einschalten fortsetzen
 	EN	Pause at power off / Resume at power on
 
 SETUP_POWERONRESUME_STOPOFF_PLAYON
+	DE	Beim Ausschalten anhalten / Lied beim Einschalten neu starten
 	EN	Stop at power off / Restart song at power on
 
 SETUP_POWERONRESUME_STOPOFF_NONEON
+	DE	Beim Ausschalten anhalten / Lied beim Einschalten nicht neu starten
 	EN	Stop at power off / Remain stopped at power on
 
 SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
+	DE	Beim Ausschalten anhalten / Playliste beim Einschalten neu starten
 	EN	Stop at power off / Restart playlist at power on
 
 SETUP_POWERONRESUME_STOPOFF_RESETON
+	DE	Beim Ausschalten anhalten / Playliste beim Einschalten nicht neu starten
 	EN	Stop at power off / Reset playlist at power on
