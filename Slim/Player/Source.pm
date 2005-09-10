@@ -1647,7 +1647,7 @@ sub getConvertCommand {
 
 		$player   = $client->model();
 		$clientid = $client->id();	
-		$undermax = underMax($client, $track->url, $type);
+		$undermax = underMax($client, ref($track) ? $track->url : $track, $type);
 
 		$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
 	
@@ -1720,7 +1720,7 @@ sub getConvertCommand {
 		}
 
 		# only finish if the rate isn't over the limit
-		last if ($command && (!defined($client) || underMax($client, $track->url, $format)));
+		last if ($command && (!defined($client) || underMax($client, ref($track) ? $track->url : $track, $format)));
 	}
 
 	if (!defined $command) {
