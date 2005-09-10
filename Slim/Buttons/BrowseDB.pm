@@ -313,6 +313,24 @@ sub browsedbExitCallback {
 		if (!defined($currentItem)) {
 			$client->bumpRight();
 		}
+		
+		elsif ($currentItem eq 'FAVORITE') {
+			my $num = $client->param('favorite');
+			my $ds = Slim::Music::Info::getCurrentDataStore();
+			my $url = $ds->objectForId('track', $client->param('findCriteria')->{'playlist'});
+			if ($num < 0) {
+				my $num = Slim::Utils::Favorites->clientAdd($client, $url, $url->title());
+				
+				$client->showBriefly($client->string('FAVORITES_ADDING'),
+									 $url->title());
+				$client->param('favorite', $num);
+			} else {
+				Slim::Utils::Favorites->deleteByClientAndURL($client, $url);
+				$client->showBriefly($client->string('FAVORITES_DELETING'),
+									 $url->title());
+				$client->param('favorite', -1);
+			}
+		}
 		# If we're dealing with a container or an ALL list
 		elsif ($descend || $all) {
 
@@ -374,7 +392,17 @@ sub browsedbItemName {
 	if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $item) {
 		return $client->string($item);
 	}
-
+	
+	# special case favorites line, which must be determined dynamically
+	if ($item eq 'FAVORITE') {
+		if ((my $num = $client->param('favorite')) < 0) {
+			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
+		} else {
+			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+		}
+		return $item
+	}
+	
 	# Inflate IDs to objects on the fly.
 	if (!ref($item) && $levels[$level] ne 'year') {
 
@@ -562,6 +590,18 @@ sub setMode {
 		}
 	}
 
+	if ($levels[$level-1] eq 'playlist') {
+		my $url   = $ds->objectForId('track', $findCriteria->{'playlist'});
+		
+		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $url);
+		if ($fav) {
+			$client->param('favorite', $fav->{'num'});
+		} else {
+			$client->param('favorite', -1);
+		}
+		push @$items, 'FAVORITE';
+	}
+
 	# Finally get the last selection position within the list	
 	my $listIndex;
 	my $selectionKey;
@@ -602,6 +642,8 @@ sub setMode {
 		selectionKey => $selectionKey,
 		findCriteria => $findCriteria,
 	);
+
+	$params{'favorite'} = $client->param('favorite');
 
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
