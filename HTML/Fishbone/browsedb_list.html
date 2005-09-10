@@ -30,7 +30,7 @@
 [% END -%]
 
 <tr>
-	<td  class="listing">&nbsp;
+	<td  class="listing">
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		
 		[% IF artwork %]
@@ -41,12 +41,12 @@
 		
 		[% IF descend %][% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
-		<!-- Include the artist for the album view -->
-		[% IF includeArtist && artist %]
-		 
-			[% "BY" | string %]
-			<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]">[% artist.name | html %]</a></i>
-		[% END %]
+			<!-- Include the artist for the album view -->
+			[% IF includeArtist && artist %]
+			 
+				[% "BY" | string %]
+				<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]">[% artist.name | html %]</a></i>
+			[% END %]
 
 		[% ELSE %]
 

@@ -47,7 +47,7 @@
 				[% IF mode != 'off' %]
 					<A href="status_header.html?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
 				 / [% END %]
-				[% IF not nosetup  %]<a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "SETTINGS" | string %]</a>
+				[% IF not nosetup  %]<a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="status">[% "SETTINGS" | string %]</a>
 				 / [% END %]
 				<a href="javascript:openRemote('[% player | uri %]','[% player_name %]')">Undock</a>
 			</nobr></td>

@@ -1,4 +1,5 @@
 [% PROCESS pageheader.html %]
+<div class = "list">
 <h3>[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</h3>
 
 <p>/<a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a></p>
@@ -9,7 +10,7 @@
 	[% IF titles %]
 		[% FOREACH fav = titles %]
 			<tr>
-				<td class="listing">&nbsp;
+				<td class="listing">
 					[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
 				</td>
 				<td class="listing" width="11" align="center">
@@ -36,6 +37,7 @@
 		[% END %]
 	[% END %]
 </table>
+</div>
 <!-- end plugins output -->
 </body>
 </html>
