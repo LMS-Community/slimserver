@@ -9,7 +9,7 @@ function to_currentsong() {
 
 function openRemote(player,playername)
 {
-	window.open('status.html?player='+player+'&refresh=1', playername, 'width=500,height=270');
+	window.open('status.html?player='+player+'&refresh=1', playername, 'width=480,height=230');
 }
 
 function setCookie(name, value)

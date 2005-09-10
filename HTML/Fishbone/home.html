@@ -27,16 +27,8 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
 		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
-	[% IF additionalLinks.plugins %]    <h4>[% "PLUGINS" | string %]</h4>
-		<ul>
-			[% FOREACH key = additionalLinks.plugins.keys %]
-			<li> <a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a>
-			</li>
-			[% END %]
-		</ul>
-	[% END %]
-	<h4>[% "HELP" | string %]</h4>	<ul>
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+	<h3>[% "HELP" | string %]</h3>	<ul>
 	[% IF additionalLinks.help %]
 		[% FOREACH link = additionalLinks.help %]
 		<li>

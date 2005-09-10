@@ -115,7 +115,7 @@ A.linkbtn:hover {
 .masthead
 {
 	margin:0px;
-	padding:5px;
+	padding: 5 8 5 8;
 	background:#333;
 	color:white;
 	border-bottom:2px solid white;
@@ -124,7 +124,7 @@ A.linkbtn:hover {
 .nowplaying
 {
 	margin:0px;
-	padding:5px;
+	padding:2 5 2 5;
 	background:#61676c;
 	color:white;
 }
@@ -218,7 +218,7 @@ TD.listing A, TD.listing2 A
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	padding:5 3 5 3;
+	padding:3 8 3 8;
 	background:#61676c;
 	color:white;
 }

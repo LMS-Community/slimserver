@@ -1,3 +1,23 @@
+[% BLOCK addBrowseLinks %]
+			[% IF links %]
+				[% FOREACH link = links %]
+					<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+				[% END %]
+			[% END %]
+[% END %]
+
+
+[% BLOCK addCaseLinks %]
+		[% IF links %]
+			[% FOREACH link = links %]
+			case "[% link.key %]":
+				url = "[% link.value %]"
+				suffix = "&page=[% link.key %]"
+			break
+			[% END %]
+		[% END %]
+[% END %]
+
 <html>
 	<head>
 		<title>[% pagetitle %]</title>
@@ -18,14 +38,7 @@
 					url = "search.html?"
 					suffix = "searchchoice=SEARCH&manualsearch=1"
 				break
-			[% IF additionalLinks.search %]
-				[% FOREACH link = additionalLinks.search %]
-				case "[% link.key %]":
-					url = "[% link.value %]"
-					suffix = "searchchoice=[% link.key %]"
-				break
-				[% END %]
-			[% END %]
+				[% PROCESS addCaseLinks links=additionalLinks.search %]
 			}
 			if (submit) {suffix = suffix + "&manualSearch=1&query=" + value}
 			parent.browser.location=url + suffix + '&player=[% player %]';
@@ -37,22 +50,9 @@
 			var url;
 			switch(option)
 			{
-			[% IF additionalLinks.browse %]
-				[% FOREACH link = additionalLinks.browse %]
-				case "[% link.key %]":
-					url = "[% link.value %]"
-					suffix = "&page=[% link.key %]"
-				break
-				[% END %]
-			[% END %]
-			[% IF additionalLinks.radio %]
-				[% FOREACH link = additionalLinks.radio %]
-				case "[% link.key %]":
-					url = "[% link.value %]"
-					suffix = "&page=[% link.key %]"
-				break
-				[% END %]
-			[% END %]
+				[% PROCESS addCaseLinks links=additionalLinks.browse %]
+				[% PROCESS addCaseLinks links=additionalLinks.radio %]
+				[% PROCESS addCaseLinks links=additionalLinks.plugins %]
 			case "RADIO_TUNEIN":
 				url = "tunein.html"
 				suffix = "?page=RADIO_TUNEIN"
@@ -69,64 +69,50 @@
 		onload="parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';"
 	[% END %]>
 	[% IF home %]
+	<div class="masthead" width="100%">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="20">
+			<td height="17" align="left">
+				<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
+			</td>
+			<td height="17" align="right">
+			<nobr>
+			<a onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "HOME" | string %]</a>
+			 / 
+			[% IF not nosetup && not noserver %]
+				<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
+				 / 
+			[% END %]
+				<a href="hitlist.html?player=[% player | uri %]" target="playlist" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
+				 / 
+				<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
+			</td>
+		</table>
+	</div>
 	<div class="menu1" width="100%">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="13">
-				<td width="33%" height="13" align="center">
-					<nobr><a class="menu1" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "BROWSE_MUSIC" | string %]</nobr>
-				</td>
-				<td>
-					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
-				</td>
-				[% IF not nosetup && not noserver %]
-				<td width="33%" height="13" align="center">
-					<nobr><a class="menu1" href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a></nobr>
-				</td>
-				<td>
-					<img src="[% webroot %]html/pixel.grey.gif" width="1" height="100%" border="0">
-				</td>
-				[% ELSE %]
-				<td colspan="2" width="0"></td>
-				[% END %]
-				<td width="33%" height="13" align="center">
-					<a class="menu1" href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HOME" | string %]</a>
-				</td>
-			</table>
-		</div>
-		<div class="menu2" width="100%" [% IF setup || help %]style='position:absolute;top:-100;'[% END %]>
-			<table border="0" cellpadding="0" cellspacing="0" width="100%">
-				<td>
-				<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><center><nobr>
-					<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
-					[% IF additionalLinks.browse %]
-						[% FOREACH link = additionalLinks.browse %]
-						<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
-						[% END %]
-					[% END %]
-					[% IF additionalLinks.radio %]
-						[% FOREACH link = additionalLinks.radio %]
-							<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
-						[% END %]
-					[% END %]
-							<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
-				</SELECT><nobr></center></td>
-					<input type=hidden value="[% page %]" name="page">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
+			<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
+				<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+					[% PROCESS addBrowseLinks links=additionalLinks.radio %]
+					<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+					[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
+				</SELECT>
+				<input type=hidden value="[% page %]" name="page">
+				</nobr></td>
 			</FORM>
-				<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value,search.value,1);"><td><nobr>
-					<SELECT NAME="search" class="stdedit" onChange="doSearch(query.value,search.value)">
-						<OPTION SELECTED value="MANSEARCH" label="[% SEARCHFOR_SONGS %]">[% "SEARCHFOR_SONGS" | string %]</OPTION>
-					[% IF additionalLinks.search %]
-						[% FOREACH link = additionalLinks.search.keys %]
-						<OPTION value="[% link %]" label="[% link | string %]">[% link | string %]</OPTION>
-						[% END %]
-					[% END %]
-					</SELECT> [% "FOR" | string %]
-					<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
-					<input type=hidden value="[% player %]" name="player">
-					<input type=hidden value="[% page %]" name="page">
-					[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-					[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]</p><nobr></td>
-				</FORM></td>
-			</table>
-		</div>
-		[% END %]
-		[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
+			<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value,search.value,1);"><td align="right"><nobr>
+				<SELECT NAME="search" class="stdedit" onChange="doSearch(query.value,search.value)">
+					<OPTION SELECTED value="MANSEARCH" label="[% SEARCHFOR_SONGS %]">[% "SEARCHFOR_SONGS" | string %]</OPTION>
+					[% PROCESS addBrowseLinks links=additionalLinks.search %]
+				</SELECT> [% "FOR" | string %]
+				<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
+				<input type=hidden value="[% player %]" name="player">
+				<input type=hidden value="[% page %]" name="page">
+				[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
+				[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]
+				<nobr></td>
+			</FORM>
+		</table>
+	</div>
+	[% END %]
+	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
