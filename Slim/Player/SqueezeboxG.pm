@@ -387,7 +387,7 @@ sub render {
 
 				my $len = $padBytes + $cache->{line2finish};
 				if ($pixels > 1) {
-					$padBytes += $bytesPerScroll - int($bytesPerScroll * ($len/$bytesPerScroll - int($len/$bytesPerScroll)) + 0.1);
+					$padBytes += $bytesPerScroll - ($len % $bytesPerScroll);
 				}
 				$scrollbits .= chr(0) x $padBytes . substr($cache->{line2bits}, 0, $screensize);
 				$cache->{endscroll} = $cache->{line2finish} + $padBytes;
