@@ -1,9 +1,10 @@
 [% pagetitle = pagetitle %] [% pageicon = 'MUSIC' %] [% setup = '1' %] [% PROCESS pageheader.html %]
-		<div class="menu2" style="min-height:20">
+		<div class="menu2" style="min-height:20;padding: 5 8 5 8;">
 			[% IF children %][% children %][% END %]
 			[% IF siblings %][% siblings %][% END %]
 		</div>
 		[% IF warning %]<div class="nowplaying"><b>[% warning %]</b>[% END %]</div>
+		<div class="list">
 		<form method="get" action="setup.html">
 			<input type=hidden value="[% player %]" name="player">
 			<input type=hidden value="[% playerid %]" name="playerid">
@@ -22,5 +23,6 @@
 		[% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]
 		[% IF macaddress %]<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>[% END %]
 		[% IF signalstrength %]<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>[% END %] 
+		</div>
 	</body>
 </html>
