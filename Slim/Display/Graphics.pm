@@ -324,7 +324,7 @@ sub loadFonts {
 		$fonthash{$name}->{line1} = \undef if !exists($fonthash{$name}->{line1});
 		$fonthash{$name}->{line2} = \undef if !exists($fonthash{$name}->{line2});
 		$fonthash{$name}->{overlay1} = \undef if !exists($fonthash{$name}->{overlay1});
-		$fonthash{$name}->{overlay1} = \undef if !exists($fonthash{$name}->{overlay1});
+		$fonthash{$name}->{overlay2} = \undef if !exists($fonthash{$name}->{overlay2});
 		$fonthash{$name}->{center1} = \undef if !exists($fonthash{$name}->{center1});
 		$fonthash{$name}->{center2} = \undef if !exists($fonthash{$name}->{center2});
 	}
