@@ -392,6 +392,17 @@ our %functions = (
 			$client->update();
 		}
 	},	
+	'favorites' => sub  {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		my $playdisp = undef;
+		if (mode($client) ne 'PLUGIN.Favorites') {
+			Slim::Buttons::Common::setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'PLUGIN.Favorites');
+			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites');
+		}
+	},	
 	'repeat' => sub  {
 		# pressing recall toggles the repeat.
 		my $client = shift;

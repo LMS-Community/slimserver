@@ -97,6 +97,7 @@ repeat_all				= repeat_2
 
 # search button
 search					= search
+favorites				= favorites
 
 # menu shortcuts
 menu_playlist			= menu_playlist
