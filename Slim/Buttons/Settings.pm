@@ -15,12 +15,16 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SETUP_SCREENSAVER SETUP_IDLESAVER SETUP_OFFSAVER);
+our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SCREENSAVERS);
 
 our @settingsChoices = ();
 our %current = ();
 our %menuParams = ();
 our %functions = ();
+
+sub arrowFunc {
+	return (undef,Slim::Display::Display::symbol('rightarrow'));
+};
 
 sub init {
 	Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
@@ -47,7 +51,7 @@ sub init {
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
 			'callback' => \&settingsExitHandler,
-			'overlayRef' => sub { return (undef,Slim::Display::Display::symbol('rightarrow')) },
+			'overlayRef' => \&arrowFunc,
 			'overlayRefArgs' => '',
 		},
 
@@ -169,11 +173,40 @@ sub init {
 			#add more params here after the rest is working
 		#}
 
-		'settings/SETUP_SCREENSAVER' => {
+		'settings/SETUP_TRANSITIONTYPE' => {
 			'useMode' => 'INPUT.List',
 			'listRef' => undef,
 			'externRef' => undef,
 			'stringExternRef' => 1,
+			'onChange' => \&setPref,
+			'headerAddCount' => 1,
+			'pref' => "transitionType",
+			'header' => 'SETUP_TRANSITIONTYPE',
+			'stringHeader' => 1,
+			'initialValue' => 'transitionType',
+		},
+		
+		
+		# Screensavers submenus
+		
+		'settings/SCREENSAVERS' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => ['SETUP_SCREENSAVER', 'SETUP_OFFSAVER', 'SETUP_IDLESAVER'],
+			'callback' => \&screensaversExitHandler,
+			'stringExternRef' => 1,
+			'header' => 'SCREENSAVERS',
+			'stringHeader' => 1,
+			'headerAddCount' => 1,
+			'overlayRef' => \&arrowFunc,
+			'overlayRefArgs' => '',
+		},
+
+		'settings/SCREENSAVERS/SETUP_SCREENSAVER' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => undef,
+			'externRef' => undef,
+			'stringExternRef' => 1,
+			'headerAddCount' => 1,
 			'onChange' => \&setPref,
 			'pref' => "screensaver",
 			'header' => 'SETUP_SCREENSAVER',
@@ -181,24 +214,26 @@ sub init {
 			'initialValue' => 'screensaver',
 		},
 		
-		'settings/SETUP_OFFSAVER' => {
+		'settings/SCREENSAVERS/SETUP_OFFSAVER' => {
 			'useMode' => 'INPUT.List',
 			'listRef' => undef,
 			'externRef' => undef,
 			'stringExternRef' => 1,
 			'onChange' => \&setPref,
+			'headerAddCount' => 1,
 			'pref' => "offsaver",
 			'header' => 'SETUP_OFFSAVER',
 			'stringHeader' => 1,
 			'initialValue' => 'offsaver',
 		},
 
-		'settings/SETUP_IDLESAVER' => {
+		'settings/SCREENSAVERS/SETUP_IDLESAVER' => {
 			'useMode' => 'INPUT.List',
 			'listRef' => undef,
 			'externRef' => undef,
 			'stringExternRef' => 1,
 			'onChange' => \&setPref,
+			'headerAddCount' => 1,
 			'pref' => "idlesaver",
 			'header' => 'SETUP_IDLESAVER',
 			'stringHeader' => 1,
@@ -247,38 +282,79 @@ sub settingsExitHandler {
 	$exittype = uc($exittype);
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
+		
 	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = 'settings/'.$current{$client};
+		my $nextmenu = 'settings/' . $client->param('listRef')->[$client->param('listIndex')];
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
+			
 			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
+					
 				} else {
 					$value = $client->prefGet($nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
-			}
+				
+			} 
+			
 			if ($nextmenu eq 'settings/TITLEFORMAT') {
 				my @titleFormat = $client->prefGetArray('titleFormat');
 				$nextParams{'listRef'} = \@titleFormat;
 				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
 				$nextParams{'externRef'} = \@externTF;
 				$nextParams{'listIndex'} = $client->prefGet('titleFormatCurr');	
-			}
-			if ($nextmenu eq 'settings/SETUP_SCREENSAVER' || $nextmenu eq 'settings/SETUP_OFFSAVER' || $nextmenu eq 'settings/SETUP_IDLESAVER') {
-				my %hash = %{&Slim::Buttons::Common::hash_of_savers};
-				my @modes = keys %hash;
-				my @names = values %hash;
-				$nextParams{'listRef'} = \@modes;
-				$nextParams{'externRef'} = \@names;
-			}
-			if ($nextmenu eq 'settings/TEXTSIZE') {
+				
+			} elsif ($nextmenu eq 'settings/TEXTSIZE') {
 				my @text = (0..$client->maxTextSize);
 				$nextParams{'listRef'} = \@text;
+				
+			} elsif ($nextmenu eq 'settings/SETUP_TRANSITIONTYPE') {
+				$nextParams{'listRef'} = [ 
+							 'TRANSITION_NONE',
+				             'TRANSITION_CROSSFADE',
+				             'TRANSITION_FADE_IN',
+				             'TRANSITION_FADE_OUT',
+				             'TRANSITION_FADE_IN_OUT',
+				           ];
 			}
+			
+			Slim::Buttons::Common::pushModeLeft(
+				$client
+				,$nextParams{'useMode'}
+				,\%nextParams
+			);
+		} else {
+			$client->bumpRight();
+		}
+	} else {
+		return;
+	}
+}
+
+sub screensaversExitHandler {
+	my ($client,$exittype) = @_;
+	$exittype = uc($exittype);
+	if ($exittype eq 'LEFT') {
+		Slim::Buttons::Common::popModeRight($client);
+		
+	} elsif ($exittype eq 'RIGHT') {
+		my $nextmenu = 'settings/' . $current{$client} . '/' . $client->param('listRef')->[$client->param('listIndex')];
+		if (exists($menuParams{$nextmenu})) {
+			my %nextParams = %{$menuParams{$nextmenu}};
+			
+			my $value = $client->prefGet($nextParams{'initialValue'});
+			$nextParams{'valueRef'} = \$value;
+			
+			my %hash = %{&Slim::Buttons::Common::hash_of_savers};
+			my @modes = keys %hash;
+			my @names = values %hash;
+			$nextParams{'listRef'} = \@modes;
+			$nextParams{'externRef'} = \@names;
+
 			Slim::Buttons::Common::pushModeLeft(
 				$client
 				,$nextParams{'useMode'}
@@ -324,6 +400,10 @@ sub setMode {
 	
 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
 		push @settingsChoices, 'SYNCHRONIZE';
+	}
+	
+	if ($client->isa( "Slim::Player::Squeezebox2" )) {
+		push @settingsChoices, 'SETUP_TRANSITIONTYPE';
 	}
 	
 	$params{'listRef'} = \@settingsChoices;

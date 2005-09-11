@@ -4331,7 +4331,7 @@ SETUP_SCREENSAVER
 	CZ	Spořič (hraje se)
 	DE	Bildschirmschoner (Wiedergabe)
 	DK	Pauseskærm
-	EN	Screensaver (Playing)
+	EN	Screensaver when playing
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
 	FR	Ecran de veille
@@ -4345,7 +4345,7 @@ SETUP_SCREENSAVER
 SETUP_OFFSAVER
 	CZ	Spořič (vypnut)
 	DE	Bildschirmschoner (Aus)
-	EN	Screensaver (Off)
+	EN	Screensaver when off
 	ES	Salvapantalla (Apagado)
 	SE	Skärmsläckare i avslaget läge
 	ZH_CN	屏幕保护程序（关机时）
@@ -4353,7 +4353,7 @@ SETUP_OFFSAVER
 SETUP_IDLESAVER
 	CZ	Spořič (zastaven)
 	DE	Bildschirmschoner (gestoppt)
-	EN	Screensaver (Stopped)
+	EN	Screensaver when stopped
 	ES	Salvapantalla (Parado)
 	SE	Skärmsläckare i stoppat läge
 	ZH_CN	屏幕保护程序（停止播放时）
