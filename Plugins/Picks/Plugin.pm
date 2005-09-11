@@ -280,7 +280,11 @@ sub handleWebIndex {
 	# Only regrab every hour
 	unless (defined($stationList) && (($now - $lastStationLoadTime) < PLAYLIST_RELOAD_INTERVAL)) {
 		$stationList = [];
-		Slim::Utils::Scan::addToList($stationList, $picksurl, 0);
+		Slim::Utils::Scan::addToList({
+			'listRef'   => $stationList,
+			'url'       => $picksurl,
+			'recurse'   => 0
+		});
 	}
 
 	if (defined $params->{'p0'}) {
