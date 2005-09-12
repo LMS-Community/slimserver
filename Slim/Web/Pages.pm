@@ -530,7 +530,7 @@ sub playlist {
 
 		if ($listBuild{'item'} == $listBuild{'currsongind'}) {
 			$list_form{'currentsong'} = "current";
-			$list_form{'title'}    = Slim::Music::Info::getCurrentTitle(undef, $track);
+			$list_form{'title'}    = Slim::Music::Info::isRemoteURL($track) ? Slim::Music::Info::standardTitle(undef, $track) : Slim::Music::Info::getCurrentTitle(undef, $track);
 		} else {
 			$list_form{'currentsong'} = undef;
 			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
