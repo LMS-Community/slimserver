@@ -600,7 +600,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		# Bug 1701 - Don't add playlist files when we've pressed
 		# 'Play' in BMF, if the user has cue sheets, etc under that
 		# directory. We want to if we're scanning though.
-		} elsif (Slim::Music::Import::stillScanning() || Slim::Utils::Misc::inPlaylistFolder($playlisturl)) {
+		#
+		# Bug 2048 - Don't add playlist files from the audiodir,
+		# unless they are cue sheets.
+		} elsif ((Slim::Music::Import::stillScanning() && Slim::Music::Info::isCUE($playlisturl)) || 
+			Slim::Utils::Misc::inPlaylistFolder($playlisturl)) {
 
 			# it's a playlist file
 			$playlist_filehandle = FileHandle->new();
