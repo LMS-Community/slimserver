@@ -68,7 +68,7 @@ our %mainModeFunctions = (
 	   $client->showBriefly( {
 		   'line1'    => $client->string('ADDING_TO_PLAYLIST'), 
 		   'line2'    => Slim::Music::Info::standardTitle($client, $stations->[$listIndex]), 
-		   'overlay2' => $client->('notesymbol'),
+		   'overlay2' => $client->symbols('notesymbol'),
 	   });
 	   
 	   $client->execute([ 'playlist', 'add', $stations->[$listIndex]] );
