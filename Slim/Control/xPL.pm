@@ -16,8 +16,8 @@ package Slim::Control::xPL;
 use strict;
 use IO::Socket;
 use Slim::Utils::Prefs;
+use Slim::Music::Info;
 use Sys::Hostname;
-use Slim::DataStores::DBI::DBIStore;
 
 my $xpl_source = "slimdev-slimserv";
 my $localip;
@@ -262,7 +262,7 @@ sub sendXplHBeatMsg {
 
 	if ($playmode eq 'play') {
 		$playmode = "playing";
-		my $currentDB = Slim::DataStores::DBI::DBIStore->new();
+		my $currentDB = Slim::Music::Info::getCurrentDataStore();
 		my $url = Slim::Player::Playlist::song($client);
 		my $track = ref $url ? $url : $currentDB->objectForUrl($url, 1, 1);
 		if (defined($track->album())) {
