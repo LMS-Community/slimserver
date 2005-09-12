@@ -215,6 +215,7 @@ sub handleBodyFrame {
 			}
 			my $chunkLength = unpack('v', substr($frame, $position+2, 2));
 			$position += 12;
+			$remaining -= 12;
 			$parser_state{$client}{"chunk_remaining"} = $chunkLength - 8;
 		}
 		
@@ -234,7 +235,8 @@ sub handleBodyFrame {
 		$parser_state{$client}{"header_length"} = unpack('V', substr($client->directBody(), 16, 8) );
 	}
 
-	if ($parser_state{$client}{"bytes_received"} >= $parser_state{$client}{"header_length"}) {
+	if ($parser_state{$client}{"header_length"} &&
+		$parser_state{$client}{"bytes_received"} >= $parser_state{$client}{"header_length"}) {
 		return 1;
 	}
 
