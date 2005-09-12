@@ -47,7 +47,7 @@ my %display_cache = ();
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 our %currentTitleCallbacks = ();
 
-my ($currentDB, $localDB, $elemstring, $validTypeRegex);
+my ($currentDB, $elemstring, $validTypeRegex);
 
 my (@elements, $elemRegex, %parsedFormats);
 
@@ -128,6 +128,12 @@ our %tagFunctions = (
 
 sub init {
 
+	# Allow external programs to use Slim::Utils::Misc, without needing
+	# the entire DBI stack.
+	require Slim::DataStores::DBI::DBIStore;
+
+	$currentDB = Slim::DataStores::DBI::DBIStore->new();
+
 	initParsedFormats();
 
 	loadTypesConfig();
@@ -135,12 +141,6 @@ sub init {
 	# precompute the valid extensions
 	validTypeExtensions();
 
-	# Allow external programs to use Slim::Utils::Misc, without needing
-	# the entire DBI stack.
-	require Slim::DataStores::DBI::DBIStore;
-
-	$currentDB = $localDB = Slim::DataStores::DBI::DBIStore->new();
-	
 	# use all the genres we know about...
 	MP3::Info::use_winamp_genres();
 	
@@ -462,9 +462,15 @@ sub getCurrentTitle {
 
 sub initParsedFormats {
 	%parsedFormats = ();
-	my @trackAttrs; # for relating track attributes to album/artist attributes
+
+	# for relating track attributes to album/artist attributes
+	my @trackAttrs = ();
+
+	# Pull the class for the track attributes
+	my $trackClass = $currentDB->classForType('track');
+
 	# Subs for all regular track attributes
-	for my $attr (keys %{Slim::DataStores::DBI::Track->attributes}) {
+	for my $attr (keys %{$trackClass->attributes}) {
 		$parsedFormats{uc $attr} = 
 			sub {
 				my $output = $_[0]->get($attr);
