@@ -1616,7 +1616,7 @@ sub isFile {
 	return 0 if (isURL($fullpath));
 	
 	# check against types.conf
-	return 0 unless $suffixes{ (split /\./, $fullpath)[-1] };
+	return 0 unless $suffixes{ lc((split /\./, $fullpath)[-1]) };
 
 	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
 
