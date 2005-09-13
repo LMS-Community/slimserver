@@ -195,7 +195,7 @@ A.linkbtn:hover {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background:black;
 	color:#999;
-	padding-left: 1px;
+	#padding-left: 1px;
 	margin-top:1px;
 	margin-bottom:1px;
 	border-top:solid 1px #333;

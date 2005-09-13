@@ -2,11 +2,7 @@
 	<head>
 		<title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %]</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
-		<script type="text/javascript" src="[% webroot %]html/scripts.js" ></script>
+[% PROCESS standardheader.html %]
 	</head>
 	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong()">
 	<div class="list">

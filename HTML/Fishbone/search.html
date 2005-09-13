@@ -3,14 +3,9 @@
 [% IF liveSearch %][% bodyscript = 'onload="document.searchForm.query.focus();"' %][% END %]
 <html>
 	<head>
-		<title>[% pagetitle %]</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
-		<script type="text/javascript" src="/html/prototype.js"></script>
-	<script type="text/javascript"> liveSearchInit(); </script>
+		[% PROCESS standardheader.html %]
+		<script type="text/javascript"> liveSearchInit(); </script>
+	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
 	
 [% IF numresults != '-1' %]

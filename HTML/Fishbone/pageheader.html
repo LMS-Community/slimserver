@@ -20,12 +20,7 @@
 
 <html>
 	<head>
-		<title>[% pagetitle %]</title>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
-		<script type="text/javascript" src="[% webroot %]html/scripts.js" ></script>
+		[% PROCESS standardheader.html %]
 		<script language="JavaScript">
 		<!--Hide
 		
@@ -92,9 +87,12 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
 			<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
 				<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+					<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+					<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.radio %]
 					<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+					<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 				</SELECT>
 				<input type=hidden value="[% page %]" name="page">
@@ -116,3 +114,4 @@
 	</div>
 	[% END %]
 	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
+	

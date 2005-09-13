@@ -1,0 +1,21 @@
+	<td class="listing" width="9" align="center">
+		[% IF itemobj.isRemoteURL %]
+			<nobr>
+				<a href="[% webroot %]status_header.html?p0=playlist&p1=[% urlcmd %]&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">
+					<img src="[% webroot %]html/images/[% img %]" height="11" 
+						alt='[% cmdstring | string %]' 
+						title='[% cmdstring | string %]' 
+						onMouseOver="self.status='[% cmdstring | string %]';return true">
+				</a>
+			</nobr>
+		[% ELSE %]
+			<nobr>
+				<a href="[% webroot %]status_header.html?command=playlist&subcommand=[% cmd %][% attributes | html %]&player=[% player | uri %]" target="status">
+					<img src="[% webroot %]html/images/[% img %]" height="11" 
+						alt='[% cmdstring | string %]' 
+						title='[% cmdstring | string %]' 
+						onMouseOver="self.status='[% cmdstring | string %]';return true">
+				</a>
+			</nobr>
+		[% END %]
+	</td>

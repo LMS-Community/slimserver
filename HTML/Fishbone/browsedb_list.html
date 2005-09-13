@@ -1,36 +1,15 @@
 [% BLOCK browselinks %]
-	<td class="listing" width="11" align="center">
-		[% IF itemobj.isRemoteURL %]<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>[% END %]
-		[% IF not itemobj.isRemoteURL %]<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=inserttracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/queue.gif" border=0 align="center" width="6" height="9" alt='Queue' title='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %] [% "NEXT" | string %]';return true"></a></nobr>[% END %]
-	</td>
-	<td class="listing" width="11" align="center">
-		[% IF itemobj.isRemoteURL %]
-		<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% itempath %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="8" height="8" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
-		[% ELSE %]
-		<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=loadtracks[% attributes | html %]&player=[% player | uri %]"  target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9"  alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
-		[% END %]
-	</td>
-	<td class="listing" width="11" align="center">
-		[% IF itemobj.isRemoteURL %]
-		<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% itempath %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
-		[% ELSE %]
-		<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=addtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
-		[% END %]
-	</td>
-	<td class="listing" width="11" align="center">
-		[% IF itemobj.isRemoteURL %]
-		<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=deleteitem&p2=[% itempath %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/subtract.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
-		[% ELSE %]
-		<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=deletetracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/subtract.gif" border=0 align="center" width="8" height="8" alt='Delete' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a></nobr>
-		[% END %]
-	</td>
+	[% PROCESS browselinks.html urlcmd='insert' cmd='inserttracks' cmdstring='NEXT' img='queue.gif' %]
+	[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='play.this.gif' %]
+	[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
+	[% PROCESS browselinks.html urlcmd='deleteitem' cmd='deletetracks' cmdstring='REMOVE_FROM_PLAYLIST' img='subtract.gif' %]
 	[% FOREACH mixer = mixerlinks.values.sort %]
 		[% PROCESS $mixer %]
 	[% END %]
-[% END -%]
+[% END %]
 
 <tr>
-	<td  class="listing">
+	<td class="listing">
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		
 		[% IF artwork %]
@@ -62,5 +41,5 @@
 			<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>[% END %]
 		[% END %]
 	</td>
-[% INCLUDE browselinks %]
+	[% PROCESS browselinks %]
 </tr>
