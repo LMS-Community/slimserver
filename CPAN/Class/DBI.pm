@@ -20,7 +20,9 @@ use Carp ();
 use List::Util;
 use UNIVERSAL::moniker;
 
-use vars qw($Weaken_Is_Available);
+our $Use_Object_Index = 1;
+our %Live_Objects;
+our $Weaken_Is_Available;
 
 BEGIN {
 	$Weaken_Is_Available = eval {
@@ -503,10 +505,47 @@ sub _attribute_exists {
 }
 
 #----------------------------------------------------------------------
+# Object creation
+#----------------------------------------------------------------------
+
+sub _init {
+	my ($class, $data) = @_;
+
+	# give index/caching mechanism being used by this class the
+	# responsibility to get the object so it can, for example,
+	# use a) no index, b) standard weakref based index (the default),
+	# c) non-weakref based "cache" (including LRU or age limited) etc.
+	my ($obj, $key);
+
+	if ($Use_Object_Index) {
+		$key = $class->_live_object_key($data || {});
+		$obj = $class->live_object_fetch($key);
+	}
+
+	if (!defined $obj) {
+
+		$obj = $class->_fresh_init($data);
+
+		if ($Use_Object_Index) {
+			$class->live_object_store($obj, $key);
+		}
+	}
+
+	return $obj;
+}
+
+sub _fresh_init {
+	my ($class, $data) = @_;
+	my $obj = bless {}, $class;
+	$obj->_attribute_store(%$data);
+
+	return $obj;
+}
+
+#----------------------------------------------------------------------
 # Live Object Index (using weak refs if available)
 #----------------------------------------------------------------------
-our %Live_Objects;
-my $Init_Count = 0;
+my $_live_object_store_count = 0;
 
 sub _class_for_ref {
 	my $self  = shift;
@@ -514,42 +553,46 @@ sub _class_for_ref {
 	return ref($self) || $self;
 }
 
-sub _init {
-	my $class = shift;
-	my $data  = shift || {};
-	my $key   = $class->_live_object_key($data);
-
-	my $obj   = $Live_Objects{$class->_class_for_ref}{$key};
-
-	if (defined $obj && ref($obj) ne 'Class::DBI::Object::Has::Been::Deleted') {
-		return $obj;
+sub use_object_index {
+	my ($class, $value) = @_;
+	if ($class ne __PACKAGE__) {
+		$class->_croak('use_object_index is a global setting and can only' .
+			' be called on Class::DBI directly.');
 	}
 
-	return $class->_fresh_init($key => $data);
+	if (defined $value) {
+			$Use_Object_Index = $value;
+	}
+
+	return $Use_Object_Index;
 }
 
-sub _fresh_init {
-	my ($class, $key, $data) = @_;
-	my $obj = bless {}, $class;
-	$obj->_attribute_store($data);
+sub live_object_fetch {
+	my ($class, $key) = @_;
+	return ($Live_Objects{$class->_class_for_ref}{$key});
+}
 
-	# don't store it unless all keys are present
-	if ($key && $Weaken_Is_Available) {
+sub live_object_store {
+	my ($class, $obj, $key) = @_;
+	return unless $key and $Weaken_Is_Available;
+	weaken($Live_Objects{$class->_class_for_ref}{$key} = $obj);
+	# time to clean up your room?
+	$class->purge_dead_from_object_index
+		if ++$_live_object_store_count % $class->purge_object_index_every == 0;
+}
 
-		$class = $obj->_class_for_ref;
-
-		weaken($Live_Objects{$class}{$key} = $obj);
-
-		# time to clean up your room?
-		$class->purge_dead_from_object_index
-			if ++$Init_Count % $class->purge_object_index_every == 0;
-	}
-
-	return $obj;
+sub _live_object_index {
+	my ($self) = @_;
+	my $class  = ref($self) || $self;
+	return \%Live_Objects if $class eq "Class::DBI";
+	return $Live_Objects{$class->_class_for_ref};
 }
 
 sub _live_object_key {
 	my ($me, $data) = @_;
+	# Return key to use for this object in the live object index.
+	# Key string must uniquely and permenantly identify the object.
+	# Return empty string if object doesn't have full indentity yet.
 	my $class   = $me->_class_for_ref;
 	my @primary = $class->primary_columns;
 
@@ -572,20 +615,14 @@ sub remove_from_object_index {
 	my $class   = ref($self) ? $self->_class_for_ref : return;
 	my $obj_key = $class->_live_object_key($self->_as_hash);
 
-	if (exists $Live_Objects{$class}{$obj_key}) {
-
-		delete $Live_Objects{$class}{$obj_key};
-	}
+	delete $Live_Objects{$class}{$obj_key};
 }
 
 sub clear_object_index {
 	my $class = shift->_class_for_ref;
 
-	if ($class eq 'Class::DBI') {
-		%Live_Objects = ();
-	} else {
-		$Live_Objects{$class} = ();
-	}
+	my $lo = $class->_live_object_index(@_) or return;
+	%$lo = ();
 }
 
 sub _as_hash {
@@ -639,6 +676,12 @@ sub _create {
 	@primary_columns{@primary_columns} = ();
 	my @discard_columns = grep !exists $primary_columns{$_}, keys %$real;
 	$self->call_trigger('create', discard_columns => \@discard_columns);   # XXX
+
+	 # now that we have a complete primary key, add this to the object index
+	if ($Use_Object_Index) {
+		my $key = $class->_live_object_key($self->_as_hash);
+		$class->live_object_store($self, $key);
+	}
 
 	# Empty everything back out again!
 	$self->_attribute_delete(@discard_columns);
