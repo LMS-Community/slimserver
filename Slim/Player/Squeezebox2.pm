@@ -832,9 +832,9 @@ sub failedDirectStream {
 	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url\n");
 	$client->directURL(undef);
 	$client->directBody(undef);
-	
-	$client->stop();
-	# todo notify upper layers that this is a bad station.
+
+	Slim::Player::Source::errorOpening($client, $client->string("PROBLEM_CONNECTING"));
+	Slim::Player::Source::underrun($client);
 }
 
 sub canLoop {

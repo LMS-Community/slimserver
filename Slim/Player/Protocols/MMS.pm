@@ -232,7 +232,8 @@ sub handleBodyFrame {
 
 	if (!$parser_state{$client}{"header_length"} &&
 		$parser_state{$client}{"bytes_received"} > 24) {
-		$parser_state{$client}{"header_length"} = unpack('V', substr($client->directBody(), 16, 8) );
+		# The extra 50 bytes is the header of the data atom
+		$parser_state{$client}{"header_length"} = unpack('V', substr($client->directBody(), 16, 8) ) + 50;
 	}
 
 	if ($parser_state{$client}{"header_length"} &&
@@ -264,7 +265,7 @@ sub parseDirectBody {
 		$stream_nums{$url} = $stream->{'flags_raw'} & 0x007F;
 
 		$::d_directstream && msg("Parsed body as WMA header.\n");
-		
+
 		return ($url);
 	}
 	# Otherwise assume that it's an asx redirector and parse
