@@ -815,7 +815,7 @@ sub readASX {
 		
 		$::d_parse && msg("parsing ASX: $asxfile url: [$url]\n");
 
-		my $entries = $asx_playlist->{ENTRY};
+		my $entries = $asx_playlist->{ENTRY} || $asx_playlist->{REPEAT}->{ENTRY};
 
 		if (defined($entries)) {
 
@@ -833,6 +833,14 @@ sub readASX {
 					for my $ref (@$refs) {
 
 						my $href = $ref->{href} || $ref->{Href} || $ref->{HREF};
+						
+						# We've found URLs in ASX files that should be
+						# escaped to be legal - specifically, they contain
+						# spaces. For now, deal with this specific case.
+						# If this seems to happen in other ways, maybe we
+						# should URL escape before continuing.
+						$href =~ s/ /%20/;
+
 						my $url = URI->new($href);
 
 						$::d_parse && msg("Checking if we can handle the url: $url\n");
