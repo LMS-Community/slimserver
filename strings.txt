@@ -10355,7 +10355,7 @@ VARIOUSARTISTS
 
 TRACKARTIST
 	DE	Lied-Interpret
-	EN	Track Artist
+	EN	Artist
 	ZH_CN	轨道艺人
 
 ALBUMARTIST
@@ -10369,20 +10369,14 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
-	DE	Sie können die "TPE2" /"BAND" ID3v2 Tagas aus MP3 Dateien als "ALBUMARTIST" Information verwenden, falls kein explizites "ALBUMARTIST" Tag gesetzt ist.
-	EN	You can use the TPE2 / BAND ID3v2 tag as "ALBUMARTIST" for MP3 files that don't have an explict "ALBUMARTIST" tag.
-	ZH_CN	那些没有明确“ALBUMARTIST”标签的MP3文件，您可以利用TPE2/BAND ID3v2标签来定义“ALBUMARTIST”。
+	EN	Albums that contain songs that are tagged with a band may be listed under that artist only or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 
 SETUP_USEBANDASALBUMARTIST_1
-	DE	TPE2 / BAND ID3v2 Tags als ALBUMARTIST verwenden
-	EN	Use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"
-	ZH_CN	利用TPE2/BAND ID3v2标签来定义“ALBUMARTIST”
+	EN	List albums by band
 
 SETUP_USEBANDASALBUMARTIST_0
-	DE	Keine TPE2 / BAND ID3v2 Tags als ALBUMARTIST verwenden
-	EN	Don't use TPE2 / BAND ID3v2 tag as "ALBUMARTIST"
-	ZH_CN	不要利用TPE2/BAND ID3v2标签来定义“ALBUMARTIST”
-
+	EN	List albums by all artists for that album
+	
 LYRICS
 	DE	Liedertexte
 	EN	Lyrics
