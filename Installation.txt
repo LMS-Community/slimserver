@@ -1,196 +1,89 @@
                                 Welcome to SlimServer 
    
-This document describes the steps for installing the SlimServer on Unix-like 
-platforms.
+This document describes the steps for installing the SlimServer on Unix-like platforms.
 
-Version 5.6 or higher of Perl is required.
+Version 5.6.1 or higher of Perl is required.
 
+Version 5.8.3 or higher of Perl is STRONGLY RECOMMENDED!
 
+Additional information can be found on the Wiki at: http://wiki.slimdevices.com/
 
 --------------------------------------------------------------------------------
 
-Linux Notes:
+Linux Notes (RPM Install):
 
-The Linux RPMs install the software under /usr/local/slimserver
-There is one critical config file, /etc/slimserver.config
-There is also a /etc/sysconfig/slimserver that handles
-startup from /etc/rc/d/init.d
+	The Linux RPMs install the software under /usr/local/slimserver
+	There is one critical config file, /etc/slimserver.config
+	There is also a /etc/sysconfig/slimserver that handles
+	startup from /etc/rc/d/init.d
 
-The standard installation creates a non-priviledged user names "slimserver"
-that is used to own files and directories, and is used as the
-login account for the slimserver daemon.
+	The standard installation creates a non-priviledged user names "slimserver"
+	that is used to own files and directories, and is used as the
+	login account for the slimserver daemon.
 
-The standard RPM puts the appropriate entries in /etc/rc.d/init.d
-so that automated startup works as you expect.
+	The standard RPM puts the appropriate entries in /etc/rc.d/init.d
+	so that automated startup works as you expect.
 
-In the 5.1.* releases, there is a log file written to /tmp/slimserver.log
-This  can be changed by editing the  /etc/sysconfig/slimserver
+	In the 6.* releases, there is a log file written to /tmp/slimserver.log
+	This can be changed by editing the /etc/sysconfig/slimserver
 
+	If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
+	the server with this command:
 
-If you've installed the RPM on a RedHat or Mandrake Linux system, you can start 
-the server with this command:
+		/etc/rc.d/init.d/slimserver start
 
-	/etc/rc.d/init.d/slimserver start
+	and stop it with this:
 
-and stop it with this:
+		/etc/rc.d/init.d/slimserver stop
 
-	/etc/rc.d/init.d/slimserver stop
+	and check that the daemon is running with
 
-and check that the daemon is running with
-
-	/etc/rc.d/init.d/slimserver status
-	
-Note: The default installation of Perl on Red Hat 9.0 doesn't include Time::HiRes
- as it should. There's a binary perl-Time-HiRes-1.38-3.i386.rpm RPM on disk 2 of 
- the RedHat install that works fine and is what you need to get the SLIMP3 server 
- running under RH9. Slim Devices also hosts a copy of the appropriate file. 
- As root, use this command to install it from the net:
-
-rpm -i http://www.slimdevices.com/downloads/misc/perl-Time-HiRes-1.38-3.i386.rpm
-
-As part of the debugging support, if there is no /etc/slimserver.conf file, or
-if it is not readable when the slimserver starts, it will look for ~.slimserver.conf
-that is, the normally hidden file .slimserver.conf in the home directory of 
-the current user.
-
-If the server dies without any visible error messages, check the log file.
-For more verbose messages, start the program with the options of --d_source --d_stdio
-
-To refresh the configuration parameters, you can simply delete the /etc/slimserver.conf
-file (or rename it to something else). This will cause the slimserver to
-search for the ~.slimserver.conf, and failing that, to recreate it with default values.
-
-
+		/etc/rc.d/init.d/slimserver status
+		
 --------------------------------------------------------------------------------
 
 FreeBSD Notes:
 
-In a normal installation of FreeBSD the version of Perl is 5.00 and not 
-sufficient for use with the SlimServer software, which requires 5.6 or greater.
+	In a normal installation of FreeBSD the version of Perl is 5.00 and not 
+	sufficient for use with the SlimServer software, which requires 5.6 or greater.
 
-To upgrade Perl to 5.8:
+	To upgrade Perl to 5.8:
 
-First become the superuser, then issue the following commands
+	First become the superuser, then issue the following commands
 
-# cd /usr/ports/lang/perl5.8
-# make install clean
-# rehash
-# use.perl port
+	# cd /usr/ports/lang/perl5.8
+	# make install clean
+	# rehash
+	# use.perl port
 
-The Linux standard installation creates a user, slimserver, that owns
-all the appropriate files and is the login account for the 
-slimserver daemon. There is no requirement that the slimserver daemon
-execute with extensive priviledges. As always, executing the perl programs
-as "root" is not good security practice.
+	The Linux standard installation creates a user, slimserver, that owns
+	all the appropriate files and is the login account for the 
+	slimserver daemon. There is no requirement that the slimserver daemon
+	execute with extensive priviledges. As always, executing the perl programs
+	as "root" is not good security practice.
 
 --------------------------------------------------------------------------------
 
-If you aren't installing the RPM, you can start the server from a command line 
-with the following command:
+Tarball Notes:
 
-   ./slimserver.pl --daemon
-   
-This will start up the server and run itself in the background.
+	If you aren't installing the RPM, you can start the server from a command line 
+	with the following command:
 
-Visit the URL that's printed out with your web browser to configure your 
-SlimServer and see the complete documentation.
- 
---------------------------------------------------------------------------------
+	   ./slimserver.pl --daemon
+	   
+	This will start up the server and run itself in the background.
 
-Usage: ./slimserver.pl [--audiodir <dir>] [--diag] [--daemon] [--stdio] [--logfile <logfilepath>]
-          [--user <username>]
-          [--group <groupname>]
-          [--httpport <portnumber> [--httpaddr <listenip>]]
-          [--cliport <portnumber> [--cliaddr <listenip>]]
-          [--priority <priority>]
-          [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
-          [--d_various]
+	Visit the URL that's printed out with your web browser to configure your 
+	SlimServer and see the complete documentation.
 
-    --help           => Show this usage information.
-    --audiodir       => The path to a directory of your MP3 files.
-    --cachedir       => Directory for SlimServer to save cached music and web data
-    --diag                       => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
-    --logfile        => Specify a file for error logging.
-    --daemon         => Run the server in the background.
-                        This may only work on Unix-like systems.
-    --stdio          => Use standard in and out as a command line interface 
-                        to the server
-    --user           => Specify the user that server should run as.
-                        Only usable if server is started as root.
-                        This may only work on Unix-like systems.
-    --group          => Specify the group that server should run as.
-                        Only usable if server is started as root.
-                        This may only work on Unix-like systems.
-    --httpport       => Activate the web interface on the specified port.
-                        Set to 0 in order disable the web server.
-    --httpaddr       => Activate the web interface on the specified IP address.
-    --cliport        => Activate the command line interface TCP/IP interface
-                        on the specified port. Set to 0 in order disable the 
-                        command line interface server.
-    --cliaddr        => Activate the command line interface TCP/IP 
-                        interface on the specified IP address.
-    --playlistdir    => The path to a directory of your playlist files.
-    --prefsfile      => Specify the path of the the preferences file
-    --pidfile        => Specify where a process ID file should be stored
-    --quiet          => Minimize the amount of text output
-    --playeraddr     => Specify the _server's_ IP address to use to connect 
-                        to Slim players
-    --priority       => set process priority from -20 (high) to 20 (low)
-                        no effect on non-Unix platforms
-    --streamaddr     => Specify the _server's_ IP address to use to connect
-                        to streaming audio sources
-    --nosetup        => Disable setup via http.
-    --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
+	As part of the debugging support, if there is no /etc/slimserver.conf file, or
+	if it is not readable when the slimserver starts, it will look for ~.slimserver.conf
+	that is, the normally hidden file .slimserver.conf in the home directory of 
+	the current user.
 
-The following are debugging flags which will print various information 
-to the console via stderr:
+	If the server dies without any visible error messages, check the log file.
+	For more verbose messages, start the program with the options of --d_server
 
-    --d_artwork      => Display information on artwork display
-    --d_cli          => Display debugging information for the 
-                        command line interface interface
-    --d_command      => Display internal command execution
-    --d_control      => Low level player control information
-    --d_display      => Show what (should be) on the player's display 
-    --d_factorytest  => Information used during factory testing
-    --d_files        => Files, paths, opening and closing
-    --d_filehandle   => Information about the custom FileHandle object
-    --d_firmware     => Information during Squeezebox firmware updates 
-    --d_formats      => Information about importing data from various file formats
-    --d_graphics     => Information bitmap graphic display 
-    --d_http         => HTTP activity
-    --d_http_verbose => Even more HTTP activity 
-    --d_info         => MP3/ID3 track information
-    --d_ir           => Infrared activity
-    --d_itunes       => iTunes synchronization information
-    --d_itunes_verbose => verbose iTunes Synchronization information
-    --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
-    --d_moodlogic    => MoodLogic synchronization information
-    --d_mp3              => MP3 frame detection
-    --d_os           => Operating system detection information
-    --d_paths        => File path processing information
-    --d_perf         => Performance information
-    --d_parse        => Playlist parsing information
-    --d_playlist     => High level playlist and control information
-    --d_plugins      => Show information about plugins
-    --d_protocol     => Client protocol information
-    --d_prefs        => Preferences file information
-    --d_remotestream => Information about remote HTTP streams and playlists
-    --d_scan         => Information about scanning directories and filelists
-    --d_select       => Information about the select process
-    --d_server       => Basic server functionality
-    --d_scheduler    => Internal scheduler information
-    --d_slimproto    => Slimproto debugging information
-    --d_slimproto_v  => Slimproto verbose debugging information
-    --d_source       => Information about source audio files and conversion
-    --d_source_v     => Verbose information about source audio files
-    --d_stdio        => Standard I/O command debugging
-    --d_stream       => Information about player streaming protocol 
-    --d_stream_v     => Verbose information about player streaming protocol 
-    --d_sync         => Information about multi player synchronization
-    --d_sync_v       => Verbose information about multi player synchronization
-    --d_time         => Internal timer information
-    --d_ui           => Player user interface information
-    --d_usage        => Display buffer usage codes on the player's display
-    
-Commands may be sent to the server through standard in and will be echoed via
-standard out.  See complete documentation for details on the command syntax.
+	To refresh the configuration parameters, you can simply delete the /etc/slimserver.conf
+	file (or rename it to something else). This will cause the slimserver to
+	search for the ~.slimserver.conf, and failing that, to recreate it with default values.
