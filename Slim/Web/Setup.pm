@@ -1209,11 +1209,11 @@ sub initSetupConfig {
 			},
 
 			'Rescan' => {
-				'PrefOrder' => [qw(rescan)],
-				'PrefsInTable' => 0,
+				'PrefOrder' => [qw(rescantype rescan)],
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefDesc' => 1,
 				'Suppress_PrefLine' => 1,
+				'Suppress_PrefSub' => 1,
 				'GroupHead' => string('SETUP_RESCAN'),
 				'GroupDesc' => string('SETUP_RESCAN_DESC'),
 				'GroupLine' => 1,
@@ -1261,30 +1261,35 @@ sub initSetupConfig {
 
 					my $rescanType = ['rescan'];
 
-					if ($changeref->{'rescan'}{'new'} eq '2wipedb') {
+					if ($changeref->{'rescantype'}{'new'} eq '2wipedb') {
 
 						$rescanType = ['wipecache'];
 
-					} elsif ($changeref->{'rescan'}{'new'} eq '3playlist') {
+					} elsif ($changeref->{'rescantype'}{'new'} eq '3playlist') {
 
 						$rescanType = [qw(rescan playlists)];
 					}
 
 					Slim::Control::Command::execute($client, $rescanType);
 				},
-
+				'inputTemplate' => 'setup_input_submit.html',
+				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
+				'changeIntro'   => string('RESCANNING'),
+				'dontSet'       => 1,
+				'changeMsg'     => '',
+			},
+			'rescantype' => {
+				'validate' => \&validateAcceptAll,
 				'optionSort' => 'K',
 				'options' => {
 					'1rescan'   => string('SETUP_STANDARDRESCAN'),
 					'2wipedb'   => string('SETUP_WIPEDB'),
 					'3playlist' => string('SETUP_PLAYLISTRESCAN'),
 				},
-
-				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
-				'changeIntro'   => string('RESCANNING'),
 				'dontSet'       => 1,
 				'changeMsg'     => '',
-			},
+				'changeIntro'     => '',
+			}
 		},
 
 	} #end of setup{'server'} hash
