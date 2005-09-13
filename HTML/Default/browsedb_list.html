@@ -9,12 +9,7 @@
 	[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 	<!-- Include the artist for the album view -->
-	[% IF includeArtist && artist %]
-
-		[% "BY" | string %]
-		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
-
-	[% END %]
+	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
 [% ELSE %]
 
@@ -33,12 +28,7 @@
 
 	[% END %]
 
-	[% IF includeArtist && artist %]
-
-		[% "BY" | string %]
-		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a></i>
-
-	[% END %]
+	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
 [% END %]
 

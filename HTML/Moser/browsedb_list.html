@@ -22,21 +22,16 @@
           [%- IF descend %]
             [% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% END %][% text | html %]</a>
 		<!-- Include the artist for the album view -->
-		[% IF includeArtist && artist %]
-		 
-			[% "BY" | string %]
-			<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]">[% artist.name | html %]</a></i>
-
-		[% END %]
+		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
           [%- ELSE %]
             <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
            [%- IF includeAlbum %]
-            [% "FROM" | string %] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist.id | uri %]&amp;album=[% album.id | uri %]&amp;player=[% player | uri %]" target="browser">[% album.title | html %]</a></span>
+            [% "FROM" | string %] <span class="album">
+		 <i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">>[% album.title | html %]</a></i>
+		</span>
            [%- END %]
-           [%- IF includeArtist %]
-            [% "BY" | string %] <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist.name | html %]</a></span>
-           [%- END %]
+           <span class="artist">[%- IF includeArtist && artist; PROCESS artistsAsHTML.html; END -%]</span>
            [%- IF year %]
             (<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% year %]&amp;player=[% player | uri %]">[% year %]</a>)
            [%- END %]

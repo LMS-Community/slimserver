@@ -139,49 +139,52 @@ sub get {
 sub albumid {
 	my $self = shift;
 
-	my ($albumid) = $self->_attrs('album');
-	return $albumid;
+	return ($self->_attrs('album'));
 }
 
 sub artist {
 	my $self = shift;
 
-	return ($self->contributorsOfType('artist'))[0] || ($self->contributorsOfType('trackArtist'))[0];
-}
-
-sub artistsort {
-	my $self = shift;
-
-	my $obj  = ($self->contributorsOfType('artist'))[0];
-
-	return $obj->namesort() if $obj && ref($obj);
-	return undef;
+	return ($self->artists)[0];
 }
 
 sub artists {
 	my $self = shift;
 
-	# Create an iterator for artists - as that's what contributors from
-	# has_many returns as well. So it can be used in the templates.
-	return Class::DBI::Iterator->new('Slim::DataStores::DBI::Contributor', [ $self->contributorsOfType('artist') ]);
+	return $self->contributorsOfType('ARTIST');
+}
+
+sub artistsWithAttributes {
+	my $self = shift;
+
+	my @artists = ();
+
+	for my $artist ($self->artists) {
+
+		push @artists, {
+			'artist' => $artist,
+		};
+	}
+
+	return \@artists;
 }
 
 sub composer {
 	my $self = shift;
 
-	return $self->contributorsOfType('composer');
+	return $self->contributorsOfType('COMPOSER');
 }
 
 sub conductor {
 	my $self = shift;
 
-	return $self->contributorsOfType('conductor');
+	return $self->contributorsOfType('CONDUCTOR');
 }
 
 sub band {
 	my $self = shift;
 
-	return $self->contributorsOfType('band');
+	return $self->contributorsOfType('BAND');
 }
 
 sub genre {
@@ -443,19 +446,21 @@ sub contributorsOfType {
 	my $self = shift;
 	my $type = shift;
 
-	my $contributorKeys = Slim::DataStores::DBI::Contributor->contributorFields();
+	# Not a valid role!
+	unless (Slim::DataStores::DBI::Contributor->typeToRole($type)) {
 
-	return () unless grep { $type eq $_ } @$contributorKeys;
+		return ();
+	}
 
-	$type .= 'sFor';
-
-	return map { $_->contributor } Slim::DataStores::DBI::ContributorTrack->$type($self->id);
+	return map { $_->contributor } Slim::DataStores::DBI::ContributorTrack->contributorsForTrackAndRole(
+		$self->id, Slim::DataStores::DBI::Contributor->typeToRole($type),
+	);
 }
 
 sub contributorRoles {
 	my $self = shift;
 
-	return grep { ! /contributor/ } @{ Slim::DataStores::DBI::Contributor->contributorFields() };
+	return Slim::DataStores::DBI::Contributor->contributorRoles;
 }
 
 1;

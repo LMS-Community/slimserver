@@ -1074,6 +1074,9 @@ sub browsedb {
 			# Populate the find criteria with all query parameters in the URL
 			$findCriteria{$key} = $params->{$key};
 
+			# Skip this for the top level
+			next if $key eq 'album.compilation';
+
 			# Pre-populate the attrs list with all query parameters that 
 			# are not part of the hierarchy. This allows a URL to put
 			# query constraints on a hierarchy using a field that isn't
@@ -1095,6 +1098,15 @@ sub browsedb {
 	);
 
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+
+	# We want to include Compilations in the pwd, so we need the artist,
+	# but not in the actual search.
+	if ($findCriteria{'artist'} && $findCriteria{'album.compilation'}) {
+
+		delete $findCriteria{'artist'};
+
+		push @attrs, 'album.compilation=1';
+	}
 
 	for (my $i = 0; $i < $level ; $i++) {
 
@@ -1223,10 +1235,29 @@ sub browsedb {
 			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
 			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
-				
+
 			$itemnumber++;
-				
+
 			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+		}
+
+		# Dynamic VA/Compilation listing
+		if (scalar(@$items) && $levels[$level] eq 'artist') {
+
+			my %list_form  = %$params;
+			my $vaObj      = $ds->variousArtistsObject;
+			my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
+
+			$list_form{'text'}        = $vaObj->name;
+			$list_form{'descend'}     = $descend;
+			$list_form{'hiearchy'}    = $hierarchy;
+			$list_form{'level'}	  = $level + 1;
+			$list_form{'odd'}	  = ($itemnumber + 1) % 2;
+			$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
+
+			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+
+			$itemnumber++;
 		}
 
 		# Don't bother with idle streams if we only have SB2 clients

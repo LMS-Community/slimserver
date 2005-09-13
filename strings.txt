@@ -10313,6 +10313,11 @@ SETUP_SCROLLMODE_NOSCROLL
 	ES	No desplazar
 	ZH_CN	不要卷动
 
+COMPILATION
+	DE	Kompilationen
+	EN	Compilation
+	ZH_CN	合辑
+
 SETUP_VARIOUSARTISTS
 	DE	Kompilationen
 	EN	Compilations
@@ -10362,21 +10367,6 @@ UNSYNC
 	DE	Synchronisation aufheben
 	EN	Unsync
 	ZH_CN	非同步
-
-SETUP_VARIOUSARTISTSINARTISTS_DESC
-	DE	Sie können Interpreten, die auf Kompilationen einzelne Lieder haben, von der Interpreten-Liste ausschliessen.
-	EN	You can choose to hide artists that are "track artists" on compilation albums from your browse views.
-	ZH_CN	您可以选择把合籍中个别轨道的艺人隐藏起来，它们将不会在您浏览时出现。
-
-SETUP_VARIOUSARTISTSINARTISTS_1
-	DE	Interpreten von Kompilationen auflisten.
-	EN	Include compilation artists in artist list.
-	ZH_CN	将合籍中的艺人包括在艺人表中。
-
-SETUP_VARIOUSARTISTSINARTISTS_0
-	DE	Interpreten von Kompilationen nicht auflisten.
-	EN	Don't include compilation artists in artist list.
-	ZH_CN	不将合籍中的艺人包括在艺人表中。
 
 SETUP_USEBANDASALBUMARTIST_DESC
 	DE	Sie können die "TPE2" /"BAND" ID3v2 Tagas aus MP3 Dateien als "ALBUMARTIST" Information verwenden, falls kein explizites "ALBUMARTIST" Tag gesetzt ist.

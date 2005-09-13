@@ -143,6 +143,15 @@
 			[% track.tagversion | html %] 
 		</td>
 	</tr>
+	[% END %] [% IF track.album.compilation %] 
+	<tr>
+		<td>
+			[% "COMPILATION" | string; "COLON" | string %]
+		</td>
+		<td>
+			[% "YES" | string %]
+		</td>
+	</tr>
 	[% END %] [% IF track.content_type %] 
 	<tr>
 		<td>

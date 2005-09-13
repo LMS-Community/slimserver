@@ -161,12 +161,9 @@ sub endImporter {
 		scanPlaylistsOnly(0);
 
 		# Auto-identify VA/Compilation albums
-		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+		$::d_import && msg("Adding task for mergeVariousArtistsAlbums().\n");
 
-			$::d_import && msg("Adding task for mergeVariousArtistsAlbums().\n");
-
-			Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
-		}
+		Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
 
 		$::d_import && msg("Import: Finished background scanning.\n");
 

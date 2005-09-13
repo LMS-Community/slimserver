@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (13, 0, 0);
+INSERT INTO metainformation VALUES (14, 0, 0);
 
 --
 -- Table: tracks
@@ -161,6 +161,22 @@ CREATE TABLE contributor_track (
   INDEX contributor_trackSortIndex (namesort),
   PRIMARY KEY (id),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
+) TYPE=InnoDB;
+
+--
+-- Table: contributor_album
+--
+CREATE TABLE contributor_album (
+  id int(10) unsigned NOT NULL auto_increment,
+  role  int(10) unsigned,
+  contributor  int(10) unsigned,
+  album  int(10) unsigned,
+  INDEX contributor_trackContribIndex (contributor),
+  INDEX contributor_trackAlbumIndex (album),
+  INDEX contributor_trackRoleIndex (role),
+  PRIMARY KEY (id),
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
 

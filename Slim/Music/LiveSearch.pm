@@ -46,9 +46,12 @@ sub query {
 		};
 
 		# Don't do an unneeded join for albums & tracks.
+		# Also we want to search across all artists - so don't limit
+		# based on the compilation bit.
 		if ($type eq 'artist') {
 
-			$find->{'contributor.role'} = $ds->artistOnlyRoles;
+			$find->{'contributor.role'}  = $ds->artistOnlyRoles;
+			$find->{'album.compilation'} = undef;
 		}
 
 		my $count   = $ds->count($queries{$type}->[0], $find);

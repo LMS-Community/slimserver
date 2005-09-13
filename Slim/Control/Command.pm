@@ -21,7 +21,6 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
-use Slim::Control::xPL;
 
 our %executeCallbacks = ();
 

@@ -127,7 +127,6 @@ our %tagFunctions = (
 );
 
 sub init {
-
 	# Allow external programs to use Slim::Utils::Misc, without needing
 	# the entire DBI stack.
 	require Slim::DataStores::DBI::DBIStore;
@@ -400,7 +399,11 @@ sub setContentType {
 sub title {
 	my $url = shift;
 
-	return info($url, 'title');
+	my $track = $currentDB->objectForUrl($url, 1, 1) || return '';
+
+	if (ref($track)) {
+		return $track->title;
+	}
 }
 
 sub setTitle {
@@ -471,11 +474,12 @@ sub initParsedFormats {
 
 	# Subs for all regular track attributes
 	for my $attr (keys %{$trackClass->attributes}) {
-		$parsedFormats{uc $attr} = 
-			sub {
-				my $output = $_[0]->get($attr);
-				return (defined $output ? $output : '');
-			};
+
+		$parsedFormats{uc $attr} = sub {
+
+			my $output = $_[0]->get($attr);
+			return (defined $output ? $output : '');
+		};
 	}
 
 	# Override album
@@ -507,14 +511,21 @@ sub initParsedFormats {
 	# add artist related
 	$parsedFormats{'ARTIST'} = 
 		sub {
-			my $output = '';
-			my $artist = $_[0]->artist();
-			if ($artist) {
-				$output = $artist->get('name');
-				$output = '' if $output eq string('NO_ARTIST');
+			my @output  = ();
+			my @artists = $_[0]->artists;
+
+			for my $artist (@artists) {
+
+				my $name = $artist->get('name');
+
+				next if $name eq string('NO_ARTIST');
+
+				push @output, $name;
 			}
-			return (defined $output ? $output : '');
+
+			return (scalar @output ? join(' & ', @output) : '');
 		};
+
 	$parsedFormats{'ARTISTSORT'} = 
 		sub {
 			my $output = '';
@@ -886,7 +897,7 @@ sub standardTitle {
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	my $track     = ref $pathOrObj ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1, 1);
-	my $fullpath  = ref $pathOrObj ? $track->url : $pathOrObj;
+	my $fullpath  = ref $track ? $track->url : $pathOrObj;
 	my $format;
 
 	if (isPlaylistURL($fullpath) || isList($track)) {
@@ -1015,135 +1026,6 @@ sub guessTags {
 	
 	# Nothing found; revert to plain title
 	$taghash->{'TITLE'} = plainTitle($filename, $type);	
-}
-
-#
-# Return a structure containing the ID3 tag attributes of the given MP3 file.
-#
-sub infoHash {
-	my $track = shift;
-	my $file  = shift;
-
-	if (!defined($file) || $file eq "") { 
-		$::d_info && msg("trying to get infoHash on an empty file name\n");
-		$::d_info && bt();
-		return; 
-	};
-
-	if (!defined($track)) { 
-		$::d_info && msg("trying to get infoHash on an empty track\n");
-		$::d_info && bt();
-		return; 
-	};
-	
-	if (!isURL($file)) { 
-		msg("Non-URL passed to InfoHash::info ($file)\n");
-		bt();
-		$file = Slim::Utils::Misc::fileURLFromPath($file); 
-	}
-	
-	my $cacheEntryHash = {};
-
-	# Make as few get requests as possible.
-	my $album  = $track->album();
-	my $artist = $track->artist();
-	my $genre  = $track->genre();
-
-	# 
-	if ($album) {
-		$cacheEntryHash->{'ALBUM'} = $album->title();
-
-		my @values = $album->get(qw(titlesort disc discc));
-
-		for my $attr (qw(ALBUMSORT DISC DISCC)) {
-
-			my $value = shift @values;
-
-			if (defined $value) {
-				$cacheEntryHash->{$attr} = $value;
-			}
-		}
-	}
-
-	my @attributes = grep { !/^album$/ } keys %{Slim::DataStores::DBI::Track->attributes};
-	my @values     = $track->get(@attributes);
-
-	for my $attr (@attributes) {
-		$cacheEntryHash->{uc $attr} = shift @values;
-	}
-
-	if ($artist) {
-		($cacheEntryHash->{"ARTIST"}, $cacheEntryHash->{"ARTISTSORT"}) = $artist->get(qw(name namesort));
-	}
-
-	for my $contributorType (qw(COMPOSER CONDUCTOR BAND)) {
-
-		# $contributor must be in array context, otherwise
-		# we'll get an iterator.
-		my $method        = lc($contributorType);
-		my ($contributor) = $track->$method();
-
-		if ($contributor) {
-			$cacheEntryHash->{$contributorType} = $contributor->name();
-		}
-	}
-
-	if ($genre) {
-		$cacheEntryHash->{"GENRE"}   = $genre->name();
-	}
-
-	if (my $comment = $track->comment()) {
-		$cacheEntryHash->{"COMMENT"} = $comment;
-	}
-
-	return $cacheEntryHash;
-}
-
-sub info {
-	my $file    = shift;
-	my $tagname = shift;
-
-	if (!defined $file || $file eq '' || !defined $tagname || $tagname eq '') { 
-		$::d_info && msg("trying to get info on an empty file name\n");
-		$::d_info && bt();
-		return; 
-	};
-	
-	$::d_info && msg("Request for $tagname on file $file\n");
-	
-	if (!isURL($file)) { 
-		$::d_info && msg("Non-URL passed to Info::info ($file)\n");
-		$::d_info && bt();
-
-		$file = Slim::Utils::Misc::fileURLFromPath($file); 
-	}
-	
-	my $track = $currentDB->objectForUrl($file, 0) || return;
-
-	if ($tagname =~ /^(?:ALBUM|ALBUMSORT|DISC|DISCC)$/o) {
-
-		my $album = $track->album() || return;
-
-		return $album->title()     if $tagname eq 'ALBUM';
-		return $album->titlesort() if $tagname eq 'ALBUMSORT';
-		return $album->disc()      if $tagname eq 'DISC';
-		return $album->discc()     if $tagname eq 'DISCC';
-	}
-
-	#FIXME
-	if ($tagname =~ /^(?:COMPOSER|BAND|CONDUCTOR)$/o) {
-		return undef;
-	}
-	
-	# Fall through
-	my $lcTag = lc($tagname);
-
-	# These need to go through their overridden methods.
-	if ($tagname =~ /^(?:GENRE|ARTIST|ARTISTSORT|COMMENT)$/o) {
-		return $track->$lcTag();
-	}
-
-	return $track->get($lcTag);
 }
 
 sub cleanTrackNumber {
@@ -1930,6 +1812,11 @@ sub loadTagFormatForType {
 
 		$tagFunctions{$type}->{'loaded'} = 1;
 	}
+}
+
+sub variousArtistString {
+
+	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
 }
 
 1;

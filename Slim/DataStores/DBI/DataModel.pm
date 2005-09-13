@@ -205,12 +205,12 @@ sub findUpgrade {
 	my $sqlVerFilePath = catdir($Bin, "SQL", $driver, "sql.version");
 
 	my $versionFile;
-	
+
 	open($versionFile, $sqlVerFilePath) or do {
 		warn("can't open $sqlVerFilePath\n");
 		return 0;
 	};
-	
+
 	my ($line, $from, $to);
 
 	while ($line = <$versionFile>) {
@@ -218,21 +218,21 @@ sub findUpgrade {
 		($from, $to) = ($1, $2);
 		$from == $currVersion && last;
 	}
-	
+
 	close($versionFile);
-	
+
 	if ((!defined $from) || ($from != $currVersion)) {
 		$::d_info && msg ("No upgrades found for database v. ". $currVersion."\n");
 		return 0;
 	}
-	
+
 	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
-	
+
 	if (!-f $file && ($to != 99999)) {
 		$::d_info && msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
 		return 0;
 	}
-	
+
 	$::d_info && msg ("database v. ".$currVersion." requires upgrade to $to\n");
 	return $to;
 }
@@ -251,7 +251,8 @@ sub wipeDB {
 sub clearObjectCaches {
 	my $class = shift;
 
-	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
+	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorAlbum 
+		ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
 
 		my $package = 'Slim::DataStores::DBI::' . $c;
 
@@ -351,6 +352,7 @@ our %searchFieldMap = (
 	'album.title' => 'albums.title',
 	'album.titlesort' => 'albums.titlesort',
 	'album.titlesearch' => 'albums.titlesearch',
+	'album.compilation' => 'albums.compilation',
 	'genre' => 'genre_track.genre', 
 	'genre.name' => 'genres.name', 
 	'genre.namesort' => 'genres.namesort', 
@@ -415,6 +417,7 @@ our %tableSort = (
 	'albums' => 0.6,
 	'contributors' => 0.7,
 	'contributor_track' => 0.9,
+	'contributor_album' => 0.85,
 	'genres' => 0.1,
 	'genre_track' => 0.75,
 	'tracks' => 0.8,
@@ -439,6 +442,11 @@ our %joinGraph = (
 
 	'contributors' => {
 		'contributor_track' => 'contributors.id = contributor_track.contributor',
+	},
+
+	'contributor_album' => {
+		'contributors' => 'contributors.id = contributor_album.contributor',
+		'albums' => 'contributor_album.album = albums.id',
 	},
 
 	'contributor_track' => {
@@ -483,11 +491,10 @@ our %queryPath = (
 	'contributor:default' => ['contributors', 'contributor_track', 'tracks'],
 	'album:album' => ['albums', 'tracks'],
 	'album:genre' => ['albums', 'tracks', 'genre_track', 'genres'],
-	'album:contributor' => ['albums', 'tracks', 'contributor_track', 'contributors'],
+	'album:contributor' => ['tracks', 'contributor_track', 'contributors'],
 	'album:default' => ['albums', 'tracks'],
 	'default:album' => ['tracks', 'albums'],
 	'default:genre' => ['tracks', 'genre_track', 'genres'],
-	'album:contributor' => ['tracks', 'contributor_track', 'contributors'],
 	'comment:default' => ['comments', 'tracks'],
 	'default:default' => ['tracks'],
 );

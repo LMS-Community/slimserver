@@ -51,9 +51,17 @@
 			<tr> 
 			<td class="nowrap"> [% role | upper | string; "COLON" | string %]</td>
 			<td>
+				[% contributorsHTML = [] %]
+
 				[% FOREACH contributor = contributors.sort %]
-					<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="browser">[% contributor.name | html %]</a>
+
+					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=artist,album,track&level=1&artist=$contributor.id&amp;player=$player\" target=\"browser\">$contributor.name</a>" %]
+
+					[% contributorsHTML.push(contributorHTMLFrag) %]
+
 				[% END %]
+
+				[% contributorsHTML.join(', ') %]
 			</td>
 			</tr>
 		[% END %]
@@ -92,6 +100,13 @@
         <td class="nowrap"> [% "TRACK" | string; "COLON" | string %]</td>
         <td> [% track.tracknum | html %] </td>
       </tr>
+     [% END %]
+
+     [% IF track.album.compilation %] 
+	<tr>
+		<td class="nowrap">[% "COMPILATION" | string; "COLON" | string %]</td>
+		<td>[% "YES" | string %]</td>
+	</tr>
      [% END %]
 
      [% IF track.content_type %] 

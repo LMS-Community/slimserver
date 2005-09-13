@@ -41,7 +41,7 @@ sub init {
 			
 			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
 
-			if ($client->linesPerScreen() == 1) {
+			if ($client->linesPerScreen == 1) {
 				$line2 = $client->doubleString($string);
 			} else {
 				$line1 = $client->string($string);
@@ -74,7 +74,7 @@ sub init {
 
 			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
 
-			if ($client->linesPerScreen() == 1) {
+			if ($client->linesPerScreen == 1) {
 				$line2 = $client->doubleString($string);
 			} else {
 				$line1 = $client->string($string);
@@ -95,7 +95,7 @@ sub init {
 			my $newpos = Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client));
 			if ($newpos != 	currentLine($client)) {
 				currentLine($client, $newpos);
-				$client->pushUp();
+				$client->pushUp;
 			}
 		},
 
@@ -104,7 +104,7 @@ sub init {
 			my $newpos = Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client));
 			if ($newpos != 	currentLine($client)) {
 				currentLine($client, $newpos);
-				$client->pushDown();
+				$client->pushDown;
 			}
 		},
 
@@ -130,12 +130,12 @@ sub init {
 
 			if ($curitem eq 'ALBUM') {
 
-				my $album = $track->album();
+				my $album = $track->album;
 
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'track',
 					'level'      => 0,
-					'findCriteria' => { 'album' => $album->id(),'track' => $track->id() },
+					'findCriteria' => { 'album' => $album->id,'track' => $track->id },
 					
 				});
 
@@ -148,36 +148,36 @@ sub init {
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'album,track',
 					'level'      => 0,
-					'findCriteria' => { 'artist' => $contributor->id(),'track' => $track->id() },
+					'findCriteria' => { 'artist' => $contributor->id,'track' => $track->id },
 				});
 
 			} elsif ($curitem eq 'GENRE') {
 
-				my $genre = $track->genre();
+				my $genre = $track->genre;
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'artist,album,track',
 					'level'      => 0,
-					'findCriteria' => { 'genre' => $genre->id(),'track' => $track->id() },
+					'findCriteria' => { 'genre' => $genre->id,'track' => $track->id },
 				});
 
 			} elsif ($curitem eq 'FAVORITE') {
 				my $num = $client->param('favorite');
 				if ($num < 0) {
-					my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title());
+					my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
 					$client->showBriefly($client->string('FAVORITES_ADDING'),
-										 $track->title());
+										 $track->title);
 					$client->param('favorite', $num);
 				} else {
 					Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
 					$client->showBriefly($client->string('FAVORITES_DELETING'),
-										 $track->title());
+										 $track->title);
 					$client->param('favorite', -1);
 				}
 				$push = 0;
 			} else {
 
 				$push = 0;
-				$client->bumpRight();
+				$client->bumpRight;
 			}
 
 			if ($push) {
@@ -189,7 +189,7 @@ sub init {
 			my ($client, $button, $digit) = @_;
 
 			currentLine($client, Slim::Buttons::Common::numberScroll($client, $digit, $client->trackInfoLines, 0));
-			$client->update();
+			$client->update;
 		}
 	);
 }
@@ -203,7 +203,7 @@ sub _trackDataForCurrentItem {
 	my $track   = $ds->objectForUrl(track($client));
 
 	# genre is used by everything		
-	my $genre   = $track->genre();
+	my $genre   = $track->genre;
 		
 	my @search  = ();
 	my $line2;
@@ -212,7 +212,7 @@ sub _trackDataForCurrentItem {
 
 		$line2 = $genre;
 
-		push @search, "genre=".$genre->id();
+		push @search, "genre=".$genre->id;
 
 	# TODO make this work for other contributors
 	#} elsif ($item =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
@@ -220,15 +220,15 @@ sub _trackDataForCurrentItem {
 
 		my $lcItem = lc($item);
 
-		$line2 = $track->artist();
+		$line2 = $track->artist;
 
-		push @search, "artist=".$track->artist()->id();
+		push @search, "artist=".$track->artist->id;
 
 	} elsif ($item eq 'ALBUM') {
 
-		$line2 = $track->album()->title();
+		$line2 = $track->album->title;
 
-		push @search, "album=".$track->album()->id();
+		push @search, "album=".$track->album->id;
 	}
 
 	my $termlist = join '&',@search;
@@ -279,47 +279,37 @@ sub preloadLines {
 		return;
 	}
 
-	if (my $title = $track->title()) {
+	if (my $title = $track->title) {
 		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my ($artist) = $track->artist()) {
-		push (@{$client->trackInfoLines}, $client->string('ARTIST') . ": $artist");
-		push (@{$client->trackInfoContent}, 'ARTIST');
+	# Loop through the contributor types and append
+	for my $role (sort $track->contributorRoles) {
+
+		for my $contributor ($track->contributorsOfType($role)) {
+
+			push (@{$client->trackInfoLines}, sprintf('%s: %s', $client->string(uc($role)), $contributor->name));
+			push (@{$client->trackInfoContent}, uc($role));
+		}
 	}
 
-	if (my ($band) = $track->band()) {
-		push (@{$client->trackInfoLines}, $client->string('BAND') . ": $band");
-		push (@{$client->trackInfoContent}, 'BAND');
-	}
-
-	if (my ($composer) = $track->composer()) {
-		push (@{$client->trackInfoLines}, $client->string('COMPOSER') . ": $composer");
-		push (@{$client->trackInfoContent}, 'COMPOSER');
-	}
-
-	if (my ($conductor) = $track->conductor()) {
-		push (@{$client->trackInfoLines}, $client->string('CONDUCTOR') . ": $conductor");
-		push (@{$client->trackInfoContent}, 'CONDUCTOR');
-	}
-
-	if (my $album = $track->album()) {
+	if (my $album = $track->album) {
 		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
 
-	if (my $tracknum = $track->tracknum()) {
+	if (my $tracknum = $track->tracknum) {
 		push (@{$client->trackInfoLines}, $client->string('TRACK') . ": $tracknum");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $year = $track->year()) {
+	if (my $year = $track->year) {
 		push (@{$client->trackInfoLines}, $client->string('YEAR') . ": $year");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $genre = $track->genre()) {
+	if (my $genre = $track->genre) {
 		push (@{$client->trackInfoLines}, $client->string('GENRE') . ": $genre");
 		push (@{$client->trackInfoContent}, 'GENRE');
 	}
@@ -329,17 +319,17 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $comment = $track->comment()) {
+	if (my $comment = $track->comment) {
 		push (@{$client->trackInfoLines}, $client->string('COMMENT') . ": $comment");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $duration = $track->duration()) {
+	if (my $duration = $track->duration) {
 		push (@{$client->trackInfoLines}, $client->string('LENGTH') . ": $duration");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $bitrate = $track->bitrate()) {
+	if (my $bitrate = $track->bitrate) {
 
 		my $undermax = Slim::Player::Source::underMax($client, $url);
 
@@ -353,12 +343,12 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $len = $track->filesize()) {
+	if (my $len = $track->filesize) {
 		push (@{$client->trackInfoLines}, $client->string('FILELENGTH') . ": " . Slim::Utils::Misc::delimitThousands($len));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $age = $track->modificationTime()) {
+	if (my $age = $track->modificationTime) {
 		push (@{$client->trackInfoLines}, $client->string('MODTIME').": $age");
 		push (@{$client->trackInfoContent}, undef);
 	}
@@ -368,12 +358,12 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $tag = $track->tagversion()) {
+	if (my $tag = $track->tagversion) {
 		push (@{$client->trackInfoLines}, $client->string('TAGVERSION') . ": $tag");
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if ($track->drm()) {
+	if ($track->drm) {
 		push (@{$client->trackInfoLines}, $client->string('DRM'));
 		push (@{$client->trackInfoContent}, undef);
 	}

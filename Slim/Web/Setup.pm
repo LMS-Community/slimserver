@@ -1570,56 +1570,72 @@ sub initSetupConfig {
 
 
 	,'behavior' => {
-		'title' => string('BEHAVIOR_SETTINGS')
-		,'parent' => 'server'
-		,'GroupOrder' => [qw(Default CommonAlbumTitles VariousArtists)]
-		,'Groups' => {
+		'title' => string('BEHAVIOR_SETTINGS'),
+		'parent' => 'server',
+		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default CommonAlbumTitles)],
+		'Groups' => {
 	
 			'Default' => {
-					'PrefOrder' => ['displaytexttimeout', 'checkVersion', 'composerInArtists', 'noGenreFilter',
-							,'playtrackalbum','searchSubString', 'ignoredarticles','splitList','browseagelimit'
-							,'groupdiscs','persistPlaylists','reshuffleOnRepeat','saveShuffled',],
-				},
+
+				'PrefOrder' => [qw(displaytexttimeout checkVersion noGenreFilter
+						playtrackalbum searchSubString ignoredarticles splitList browseagelimit
+						groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled)],
+			},
+
+			'DisplayInArtists' => {
+				'PrefOrder' => [qw(composerInArtists conductorInArtists bandInArtists)],
+				'GroupHead' => string('SETUP_COMPOSERINARTISTS'),
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefSub' => 1,
+				'GroupSub' => 1,
+				'GroupLine' => 1,
+				'Suppress_PrefLine' => 1,
+			},
 
 			'CommonAlbumTitles' => {
-				'PrefOrder' => [qw(commonAlbumTitlesToggle commonAlbumTitles)]
-					,'GroupHead' => string('SETUP_COMMONALBUMTITLES')
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupSub' => 1
-					,'GroupLine' => 1
-					,'Suppress_PrefLine' => 1
+				'PrefOrder' => [qw(commonAlbumTitlesToggle commonAlbumTitles)],
+				'GroupHead' => string('SETUP_COMMONALBUMTITLES'),
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefSub' => 1,
+				'GroupSub' => 1,
+				'GroupLine' => 1,
+				'Suppress_PrefLine' => 1,
 			},
 
 			'VariousArtists' => {
-				'PrefOrder' => [qw(variousArtistAutoIdentification variousArtistsInArtists useBandAsAlbumArtist variousArtistsString)]
-					,'GroupHead' => string('SETUP_VARIOUSARTISTS')
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupSub' => 1
-					,'GroupLine' => 1
-					,'Suppress_PrefLine' => 1
+				'PrefOrder' => [qw(variousArtistAutoIdentification useBandAsAlbumArtist variousArtistsString)],
+				'GroupHead' => string('SETUP_VARIOUSARTISTS'),
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefSub' => 1,
+				'GroupSub' => 1,
+				'GroupLine' => 1,
+				'Suppress_PrefLine' => 1,
 			},
-		}
-		,'Prefs' => {
-			'displaytexttimeout' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0.1,undef,1]
-				}
-			,'browseagelimit' => {
-						'validate' => \&validateNumber
-						,'validateArgs' => [0,undef,1,undef]
-				}
-			,'ignoredarticles' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
-			,'splitList' => {
-						'validate' => \&validateAcceptAll
-						,'PrefSize' => 'large'
-					}
+		},
 
-			,'variousArtistAutoIdentification' => {
+		'Prefs' => {
+
+			'displaytexttimeout' => {
+				'validate'     => \&validateNumber,
+				'validateArgs' => [0.1,undef,1],
+			},
+
+			'browseagelimit' => {
+				'validate'     	=> \&validateNumber,
+				'validateArgs' => [0,undef,1,undef],
+			},
+
+			'ignoredarticles' => {
+				'validate' => \&validateAcceptAll,
+				'PrefSize' => 'large',
+			},
+
+			'splitList' => {
+				'validate' => \&validateAcceptAll,
+				'PrefSize' => 'large',
+			},
+
+			'variousArtistAutoIdentification' => {
 				'validate' => \&validateTrueFalse,
 				'options' => {
 					'1' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1'),
@@ -1627,15 +1643,7 @@ sub initSetupConfig {
 				},
 			},
 
-			,'variousArtistsInArtists' => {
-				'validate' => \&validateTrueFalse,
-				'options' => {
-					'1' => string('SETUP_VARIOUSARTISTSINARTISTS_1'),
-					'0' => string('SETUP_VARIOUSARTISTSINARTISTS_0'),
-				},
-			},
-
-			,'useBandAsAlbumArtist' => {
+			'useBandAsAlbumArtist' => {
 				'validate' => \&validateTrueFalse,
 				'options' => {
 					'1' => string('SETUP_USEBANDASALBUMARTIST_1'),
@@ -1646,107 +1654,128 @@ sub initSetupConfig {
 			'variousArtistsString' => {
 				'validate' => \&validateAcceptAll,
 				'PrefSize' => 'large',
-			}
+			},
 
-			,'playtrackalbum' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_PLAYTRACKALBUM_1')
-								,'0' => string('SETUP_PLAYTRACKALBUM_0')
-								}
-					}
-			,'composerInArtists' => { 	 
-						'validate' => \&validateTrueFalse 	 
-						,'options' => { 	 
-							'1' => string('SETUP_COMPOSERINARTISTS_1') 	 
-							,'0' => string('SETUP_COMPOSERINARTISTS_0') 	 
-						} 	 
-					}
+			'playtrackalbum' => {
+				'validate' => \&validateTrueFalse,
+				'options'  => {
+					'1' => string('SETUP_PLAYTRACKALBUM_1'),
+					'0' => string('SETUP_PLAYTRACKALBUM_0'),
+				},
+			},
 
-			,'noGenreFilter' => { 	 
-						'validate' => \&validateTrueFalse 	 
-						,'options' => { 	 
-							'1' => string('SETUP_NOGENREFILTER_1')
-							,'0' => string('SETUP_NOGENREFILTER_0')
-						} 	 
-					}
+			'composerInArtists' => { 	 
 
-			,'searchSubString' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_SEARCHSUBSTRING_1')
-								,'0' => string('SETUP_SEARCHSUBSTRING_0')
-								}
-					}
-			,'persistPlaylists' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_PERSISTPLAYLISTS_1')
-								,'0' => string('SETUP_PERSISTPLAYLISTS_0')
-							}
-					}
-			,'reshuffleOnRepeat' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_RESHUFFLEONREPEAT_1')
-								,'0' => string('SETUP_RESHUFFLEONREPEAT_0')
-							}
-					}
-			,'saveShuffled' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_SAVESHUFFLED_1')
-								,'0' => string('SETUP_SAVESHUFFLED_0')
-							}
-					}
-			,'checkVersion' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'1' => string('SETUP_CHECKVERSION_1')
-								,'0' => string('SETUP_CHECKVERSION_0')
-							}
-					}
-			,'groupdiscs' => {
-						'validate' => \&validateTrueFalse
-						,'onChange' => sub {
-							my $client = shift;
-
-							Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
-						}
-						,'options' => {
-								'1' => string ('SETUP_GROUPDISCS_1')
-								,'0' => string ('SETUP_GROUPDISCS_0')
-							}
-					 }
-
-			,'commonAlbumTitlesToggle' => {
-				'validate' => \&validateAcceptAll,
 				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose' => string('SETUP_COMMONALBUMTITLES_TOGGLE'),
-			}
+				'PrefChoose'    => string('COMPOSER'),
+				'validate'      => \&validateTrueFalse,
+			},
 
-			,'commonAlbumTitles'	=> {
-					'isArray' => 1,
-					'arrayAddExtra' => 1,
-					'arrayDeleteNull' => 1,
-					'arrayDeleteValue' => '',
-					'arrayBasicValue' => 0,
-					'PrefSize' => 'large',
-					'inputTemplate' => 'setup_input_array_txt.html',
-					'onChange' => sub {
+			'conductorInArtists' => { 	 
 
-						my ($client,$changeref,$paramref,$pageref) = @_;
+				'inputTemplate' => 'setup_input_chk.html',
+				'PrefChoose'    => string('CONDUCTOR'),
+				'validate'      => \&validateTrueFalse,
+			},
 
-						if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
-							return;
-						}
+			'bandInArtists' => { 	 
 
-						processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
-						$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
+				'inputTemplate' => 'setup_input_chk.html',
+				'PrefChoose'    => string('BAND'),
+				'validate'      => \&validateTrueFalse,
+			},
+
+			'noGenreFilter' => { 	 
+				'validate' => \&validateTrueFalse,
+				'options'  => { 	 
+					'1' => string('SETUP_NOGENREFILTER_1'),
+					'0' => string('SETUP_NOGENREFILTER_0'),
+				},
+			},
+
+			'searchSubString' => {
+				'validate' => \&validateTrueFalse,
+				'options'  => {
+					'1' => string('SETUP_SEARCHSUBSTRING_1'),
+					'0' => string('SETUP_SEARCHSUBSTRING_0'),
+				},
+			},
+
+			'persistPlaylists' => {
+				'validate' => \&validateTrueFalse,
+				'options'  => {
+					'1' => string('SETUP_PERSISTPLAYLISTS_1'),
+					'0' => string('SETUP_PERSISTPLAYLISTS_0'),
+				},
+			},
+
+			'reshuffleOnRepeat' => {
+				'validate' => \&validateTrueFalse,
+				'options'  => {
+					'1' => string('SETUP_RESHUFFLEONREPEAT_1'),
+					'0' => string('SETUP_RESHUFFLEONREPEAT_0'),
+				},
+			},
+
+			'saveShuffled' => {
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_SAVESHUFFLED_1'),
+					'0' => string('SETUP_SAVESHUFFLED_0'),
+				},
+			},
+
+			'checkVersion' => {
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_CHECKVERSION_1'),
+					'0' => string('SETUP_CHECKVERSION_0'),
+				},
+			},
+
+			'groupdiscs' => {
+				'validate' => \&validateTrueFalse,
+				'onChange' => sub {
+					my $client = shift;
+
+					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+				},
+
+				'options' => {
+					'1' => string ('SETUP_GROUPDISCS_1'),
+					'0' => string ('SETUP_GROUPDISCS_0'),
+				},
+			 },
+
+			'commonAlbumTitlesToggle' => {
+				'validate'      => \&validateAcceptAll,
+				'inputTemplate' => 'setup_input_chk.html',
+				'PrefChoose'    => string('SETUP_COMMONALBUMTITLES_TOGGLE'),
+			},
+
+			'commonAlbumTitles'	=> {
+				'isArray'          => 1,
+				'arrayAddExtra'    => 1,
+				'arrayDeleteNull'  => 1,
+				'arrayDeleteValue' => '',
+				'arrayBasicValue'  => 0,
+				'PrefSize'         => 'large',
+				'inputTemplate'    => 'setup_input_array_txt.html',
+				'onChange'         => sub {
+
+					my ($client,$changeref,$paramref,$pageref) = @_;
+
+					if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
+						return;
 					}
+
+					processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
+					$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
 				}
 			}
-		} #end of setup{'behavior'} hash
+		}
+	} #end of setup{'behavior'} hash
+
 	,'formatting' => {
 		'title' => string('FORMATTING_SETTINGS')
 		,'parent' => 'server'

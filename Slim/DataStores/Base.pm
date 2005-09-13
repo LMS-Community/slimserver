@@ -347,7 +347,7 @@ sub init {
 						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 					}
 				}
-				
+
 				my $Imports = Slim::Music::Import::importers();
 
 				for my $mixer (keys %{$Imports}) {
@@ -408,8 +408,8 @@ sub init {
 						'idOnly' => $idOnly,
 					});
 				}
-				
-				return $ds->albumsWithArtwork
+
+				return $ds->albumsWithArtwork;
 			},
 
 			'listItem' => sub {
@@ -490,6 +490,11 @@ sub init {
 
 				# The user may not want to include all the composers / conductors
 				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+
+				if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+					$findCriteria->{'album.compilation'} = 0;
+				}
 
 				return $ds->find({
 					'field'  => 'artist',
@@ -686,6 +691,9 @@ sub init {
 		'suppressAll' => 1,
 		'nameTransform' => 'track',
 	};
+
+	# Allow these items to be used as parameters.
+	$fieldInfo{'album.compilation'} = {};
 
 	$init = 1;
 }

@@ -16,7 +16,6 @@ use IO::Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
 use Fcntl qw(SEEK_CUR);
 use bytes;
-use Slim::Control::xPL;
 
 BEGIN {
 	if ($^O =~ /Win32/) {

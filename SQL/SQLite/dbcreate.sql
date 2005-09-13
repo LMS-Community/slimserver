@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (13, 0, 0);
+INSERT INTO metainformation VALUES (14, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -149,6 +149,19 @@ CREATE INDEX contributor_trackRoleIndex ON contributor_track (role);
 CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
 
 CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
+
+CREATE TABLE contributor_album (
+  id integer UNIQUE PRIMARY KEY NOT NULL,
+  role integer,           -- role - enumerated type
+  contributor integer,    -- contributor object
+  album integer          -- album object
+);
+
+CREATE INDEX contributor_albumContribIndex ON contributor_album (contributor);
+
+CREATE INDEX contributor_albumRoleIndex ON contributor_album (role);
+
+CREATE INDEX contributor_albumAlbumIndex ON contributor_album (album);
 
 CREATE TABLE genres (
   id integer UNIQUE PRIMARY KEY NOT NULL,

@@ -305,8 +305,9 @@ sub browsedbExitCallback {
 		my $descend   = $client->param('descend');
 
 		my $currentItem = $items->[$listIndex];
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo();
-		my @levels = split(",", $hierarchy);
+		my $fieldInfo   = Slim::DataStores::Base->fieldInfo();
+		my $ds          = Slim::Music::Info::getCurrentDataStore();
+		my @levels      = split(",", $hierarchy);
 
 		my $all = 1 if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $currentItem);
 
@@ -315,9 +316,10 @@ sub browsedbExitCallback {
 		}
 		
 		elsif ($currentItem eq 'FAVORITE') {
+
 			my $num = $client->param('favorite');
-			my $ds = Slim::Music::Info::getCurrentDataStore();
 			my $url = $ds->objectForId('track', $client->param('findCriteria')->{'playlist'});
+
 			if ($num < 0) {
 				my $num = Slim::Utils::Favorites->clientAdd($client, $url, $url->title());
 				
@@ -341,11 +343,18 @@ sub browsedbExitCallback {
 			if (my $transform = $info->{'nameTransform'}) {
 				$field = $transform;
 			}
-				
-			# Include the current item in the find criteria for the
-			# next level down.
+
+			# Include the current item in the find criteria for the next level down.
 			if (!$all) {
-				$findCriteria->{$field} = &{$info->{'resultToId'}}($currentItem);
+
+				if ($field eq 'artist' && $currentItem eq $ds->variousArtistsObject) {
+
+					$findCriteria->{'album.compilation'} = 1;
+
+				} else {
+
+					$findCriteria->{$field} = &{$info->{'resultToId'}}($currentItem);
+				}
 			}
 
 			my %params = (
@@ -408,6 +417,12 @@ sub browsedbItemName {
 
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
+		# Short circuit for the VA/Compilation string
+		if ($levels[$level] eq 'artist' && $item eq $ds->variousArtistsObject) {
+
+			return $item;
+		}
+
 		my $items = $client->param('listRef');
 
 		# Pull the nameTransform if needed - for New Music, etc
@@ -424,25 +439,34 @@ sub browsedbItemName {
 
 	} elsif (($levels[$level] eq 'album') && $level == 0) {
 
-		my $name = &{$levelInfo->{'resultToName'}}($item);
-		
-		if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
+		my @name = &{$levelInfo->{'resultToName'}}($item);
+
+		if (Slim::Utils::Prefs::get('showYear')) {
 
 			my $year = $item->year;
 
-			$name .= " ($year)" if $year;
+			push @name, " ($year)" if $year;
 		}
-		
-		if (my $showArtist = Slim::Utils::Prefs::get('showArtist')) {
-			
-			my $artist = $item->contributor;
-			
-			if (defined $artist && $artist ne $client->string('NO_ARTIST')) {
-				$name .= ' ' . Slim::Utils::Strings::string('BY') . " $artist";
+
+		if (Slim::Utils::Prefs::get('showArtist')) {
+
+			my @artists  = ();
+			my $noArtist = $client->string('NO_ARTIST');
+
+			for my $artist ($item->artists) {
+
+				next if $artist->name eq $noArtist;
+
+				push @artists, $artist->name;
+			}
+
+			if (scalar @artists) {
+
+				push @name, sprintf(' %s %s', $client->string('BY'), join(', ', @artists));
 			}
 		}
 
-		return $name;
+		return join('', @name);
 
 	} else {
 
@@ -588,6 +612,11 @@ sub setMode {
 		elsif ($level == 0) {
 			push @$items, $levelInfo->{'allTitle'};
 		}
+	}
+
+	# Dynamically create a VA/Compilation item under artists, like iTunes does.
+	if ($levels[$level] eq 'artist') {
+		unshift @$items, $ds->variousArtistsObject;
 	}
 
 	if ($levels[$level-1] eq 'playlist') {

@@ -6,11 +6,7 @@
    [% IF hierarchy %]<a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[%hierarchy%]&amp;level=[%level;attributes|html%]&quot;)">[% END %]
     [% text | html %]
    </a>
-   [% IF level == 1 && includeArtist && artist ; "BY" | string %]
-    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[%artist.id%]&quot;)">
-     [% artist.name | html %]
-    </a>
-   [% END %]
+   [% IF level == 1 && includeArtist && artist; PROCESS artistsAsHTML.html; END %]
   [% ELSE %]
 
    [% IF item %]
@@ -25,11 +21,7 @@
     <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[%album.id%]&quot;)">
      [% album.title | html %]
     </a>
-   [% END ; IF includeArtist && artist ; "BY" | string %]
-    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[% artist.id %]&quot;)">
-     [% artist.name | html %]
-    </a>
-   [% END %]
+   [% END ; IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
   [% END %]
  </td>
  <td class="browselistbuttons">

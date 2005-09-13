@@ -21,10 +21,10 @@ use Slim::DataStores::DBI::DataModel;
 
 use Slim::DataStores::DBI::Album;
 use Slim::DataStores::DBI::Contributor;
-use Slim::DataStores::DBI::ContributorTrack;
+use Slim::DataStores::DBI::ContributorAlbum;
 use Slim::DataStores::DBI::Genre;
-use Slim::DataStores::DBI::GenreTrack;
 use Slim::DataStores::DBI::LightWeightTrack;
+use Slim::DataStores::DBI::Track;
 
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -266,7 +266,7 @@ sub find {
 
 	} else {
 
-		$::d_sql && msg("Used previous results for findKey: [$findKey]\n");
+		$::d_sql && msg("Used previous results for findKey\n");
 	}
 
 	my $items = $lastFind{$findKey};
@@ -294,6 +294,10 @@ sub count {
 	# make a copy, because we might modify it below.
 	my %findCriteria = %$find;
 
+	if ($field eq 'artist') {
+		$field = 'contributor';
+	}
+
 	# The user may not want to include all the composers / conductors
 	#
 	# But don't restrict if we have an album (this may be wrong) - 
@@ -301,6 +305,11 @@ sub count {
 	if ($field eq 'contributor' && !$findCriteria{'album'}) {
 
 		$findCriteria{'contributor.role'} = $self->artistOnlyRoles;
+
+		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !exists $findCriteria{'album.compilation'}) {
+
+			$findCriteria{'album.compilation'} = 0;
+		}
 	}
 
 	# Optimize the all case
@@ -312,15 +321,15 @@ sub count {
 
 		} elsif ($field eq 'genre') {
 
-			return Slim::DataStores::DBI::Genre->count_all();
+			return Slim::DataStores::DBI::Genre->count_all;
 
 		} elsif ($field eq 'album') {
 
-			return Slim::DataStores::DBI::Album->count_all();
+			return Slim::DataStores::DBI::Album->count_all;
 
-		} elsif ($field eq 'contributor' || $field eq 'artist') {
+		} elsif ($field eq 'contributor') {
 
-			return Slim::DataStores::DBI::Contributor->count_all();
+			return Slim::DataStores::DBI::Contributor->count_all;
 		}
 	}
 
@@ -334,7 +343,7 @@ sub count {
 sub albumsWithArtwork {
 	my $self = shift;
 	
-	return [ Slim::DataStores::DBI::Album->hasArtwork() ];
+	return [ Slim::DataStores::DBI::Album->hasArtwork ];
 }
 
 sub totalTime {
@@ -744,6 +753,30 @@ sub cleanupStaleTableEntries {
 	return 0;
 }
 
+sub variousArtistsObject {
+	my $self = shift;
+
+	my $vaString = Slim::Music::Info::variousArtistString();
+
+	# Fetch a VA object and/or update it's name if the user has changed it.
+	unless ($vaObj) {
+
+		$vaObj  = Slim::DataStores::DBI::Contributor->find_or_create({
+			'name' => $vaString,
+		});
+	}
+
+	if ($vaObj && $vaObj->name ne $vaString) {
+
+		$vaObj->name($vaString);
+		$vaObj->namesort( Slim::Utils::Text::ignoreCaseArticles($vaString) );
+		$vaObj->namesearch( Slim::Utils::Text::ignoreCaseArticles($vaString) );
+		$vaObj->update;
+	}
+
+	return $vaObj;
+}
+
 # This is a post-process on the albums and contributor_tracks tables, in order
 # to identify albums which are compilations / various artist albums - by
 # virtue of having more than one artist.
@@ -755,13 +788,6 @@ sub mergeVariousArtistsAlbums {
 		$variousAlbumIds = Slim::DataStores::DBI::Album->retrieveAllOnlyIds;
 	}
 
-	unless ($vaObj) {
-
-		$vaObj  = Slim::DataStores::DBI::Contributor->search({
-			'name' => Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS')
-		})->next;
-	}
-
 	# fetch one at a time to keep memory usage in check.
 	my $item = shift(@{$variousAlbumIds});
 	my $obj  = Slim::DataStores::DBI::Album->retrieve($item) if defined $item;
@@ -770,7 +796,6 @@ sub mergeVariousArtistsAlbums {
 
 		$::d_import && msg("Import: Finished with mergeVariousArtistsAlbums()\n");
 
-		$vaObj = undef;
 		$variousAlbumIds = ();
 
 		return 0;
@@ -781,47 +806,64 @@ sub mergeVariousArtistsAlbums {
 		return 0;
 	}
 
-	# Don't need to process something we've already marked as a
-	# compilation.
+	# This is a catch all - but don't mark it as VA.
+	return 1 if $obj->title eq string('NO_ALBUM');
+
+	# Don't need to process something we've already marked as a compilation.
 	return 1 if $obj->compilation;
 
-	my %artists = ();
+	my @currentArtists  = ();
+	my @previousArtists = ();
+	my $isCompilation   = 0;
 
+	# Build up a list of tracks and artists to see if this is a VA album.
+	# If the previous track has different artists, assume this album is VA.
 	for my $track ($obj->tracks) {
 
-		for my $artist ($track->contributorsOfType('artist')) {
+		# Bug 2066: If the user has an explict Album Artist set -
+		# don't try to mark it as a compilation.
+		for my $artist ($track->contributorsOfType('ALBUMARTIST')) {
 
 			if ($artist && ref($artist) && $artist->can('id')) {
 
-				$artists{ $artist->id }++;
+				$isCompilation = 0;
+				last;
 			}
 		}
+
+		for my $artist ($track->contributorsOfType('ARTIST')) {
+
+			if ($artist && ref($artist) && $artist->can('id')) {
+
+				push @currentArtists, $artist->id;
+			}
+		}
+
+		if (scalar @previousArtists && scalar @currentArtists) {
+
+			for (my $i = 0; $i < scalar @currentArtists; $i++) {
+
+				next unless defined $currentArtists[$i];
+				next unless defined $previousArtists[$i];
+
+				if ($currentArtists[$i] != $previousArtists[$i]) {
+
+					$isCompilation = 1;
+					last;
+				}
+			}
+		}
+
+		@previousArtists = @currentArtists;
+		@currentArtists  = ();
 	}
 
-	# Not a VA album.
-	my $count = scalar keys %artists;
+	if ($isCompilation) {
 
-	if ($count == 0 || $count == 1) {
-		return 1;
-	}
+		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $obj->title);
 
-	$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $obj->title);
-
-	$obj->compilation(1);
-	$obj->contributor($vaObj);
-	$obj->update;
-
-	# Now update the contributor_tracks table.
-	for my $track ($obj->tracks) {
-
-		my @artists = $track->contributorsOfType('artist');
-
-		$self->_mergeAndCreateContributors($track, {
-			'COMPILATION' => 1,
-			'ARTIST'      => [ map { $_->name } @artists ],
-			'ARTISTSORT'  => [ map { $_->namesort } @artists ],
-			1
-		});
+		$obj->compilation(1);
+		$obj->update;
 	}
 
 	return 1;
@@ -830,11 +872,17 @@ sub mergeVariousArtistsAlbums {
 sub wipeCaches {
 	my $self = shift;
 
-	$self->forceCommit();
+	$self->forceCommit;
 
 	%contentTypeCache = ();
 	%validityCache    = ();
 	%lastFind         = ();
+
+	# clear the references to these singletons
+	$_unknownArtist = undef;
+	$_unknownGenre  = undef;
+	$_unknownAlbum  = undef;
+	$vaObj          = undef;
 
 	$self->{'artworkCache'} = {};
 	$self->{'coverCache'}   = {};
@@ -843,7 +891,7 @@ sub wipeCaches {
 	$self->{'lastTrack'}    = {};
 	$self->{'zombieList'}   = {};
 
-	Slim::DataStores::DBI::DataModel->clearObjectCaches();
+	Slim::DataStores::DBI::DataModel->clearObjectCaches;
 
 	$::d_import && msg("Import: Wiped all in-memory caches.\n");
 }
@@ -852,19 +900,14 @@ sub wipeCaches {
 sub wipeAllData {
 	my $self = shift;
 
-	$self->forceCommit();
-
-	# clear the references to these singletons
-	$_unknownArtist = undef;
-	$_unknownGenre  = undef;
-	$_unknownAlbum  = undef;
+	$self->forceCommit;
 
 	$self->{'totalTime'}    = 0;
 	$self->{'trackCount'}   = 0;
 
 	$self->wipeCaches;
 
-	Slim::DataStores::DBI::DataModel->wipeDB();
+	Slim::DataStores::DBI::DataModel->wipeDB;
 
 	$::d_import && msg("Import: Wiped info database\n");
 }
@@ -1112,20 +1155,21 @@ sub artistOnlyRoles {
 		'ALBUMARTIST' => 1,
 	);
 
-	if (Slim::Utils::Prefs::get('composerInArtists')) {
+	# Loop through each pref to see if the user wants to show that contributor role.
+	for my $role (qw(COMPOSER CONDUCTOR BAND)) {
 
-		map { $roles{$_} = 1 } qw(COMPOSER CONDUCTOR BAND);
-	}
+		my $pref = sprintf('%sInArtists', lc($role));
 
-	if (Slim::Utils::Prefs::get('variousArtistsInArtists')) {
+		if (Slim::Utils::Prefs::get($pref)) {
 
-		$roles{'TRACKARTIST'} = 1;
+			$roles{$role} = 1;
+		}
 	}
 
 	# If we're using all roles, don't bother with the constraint.
-	if (scalar keys %roles != Slim::DataStores::DBI::ContributorTrack->totalContributorRoles) {
+	if (scalar keys %roles != Slim::DataStores::DBI::Contributor->totalContributorRoles) {
 
-		return [ sort map { Slim::DataStores::DBI::ContributorTrack->typeToRole($_) } keys %roles ];
+		return [ sort map { Slim::DataStores::DBI::Contributor->typeToRole($_) } keys %roles ];
 	}
 
 	return undef;
@@ -1340,7 +1384,7 @@ sub _preCheckAttributes {
 	# Remote index.
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
-	# Normalize ARTISTSORT in ContributorTrack->add() the tag may need to be split. See bug #295
+	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
 	for my $tag (qw(
@@ -1383,15 +1427,15 @@ sub _postCheckAttributes {
 			'namesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
 		});
 
-		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
+		Slim::DataStores::DBI::Genre->add($_unknownGenre, $track);
 
 	} elsif ($create && $isLocal && !$genre) {
 
-		Slim::DataStores::DBI::GenreTrack->add($_unknownGenre, $track);
+		Slim::DataStores::DBI::Genre->add($_unknownGenre, $track);
 
 	} elsif ($create && $isLocal && $genre) {
 
-		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
+		Slim::DataStores::DBI::Genre->add($genre, $track);
 
 	} elsif (!$create && $isLocal && $genre && $genre ne $track->genre) {
 
@@ -1401,12 +1445,12 @@ sub _postCheckAttributes {
 			$genreObj->delete;
 		}
 
-		Slim::DataStores::DBI::GenreTrack->add($genre, $track);
+		Slim::DataStores::DBI::Genre->add($genre, $track);
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
 	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes);
-	my $foundContributor = scalar @$contributors;
+	my $foundContributor = scalar keys %{$contributors};
 
 	# Create a singleton for "No Artist"
 	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
@@ -1417,26 +1461,29 @@ sub _postCheckAttributes {
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
 		});
 
-		Slim::DataStores::DBI::ContributorTrack->add(
+		Slim::DataStores::DBI::Contributor->add(
 			$_unknownArtist,
-			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
+			Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
 			$track
 		);
 
-		push @$contributors, $_unknownArtist;
+		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
 
 	} elsif ($create && $isLocal && !$foundContributor) {
 
 		# Otherwise - reuse the singleton object, since this is the
 		# second time through.
-		Slim::DataStores::DBI::ContributorTrack->add(
+		Slim::DataStores::DBI::Contributor->add(
 			$_unknownArtist,
-			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{'ARTIST'},
+			Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
 			$track
 		);
 
-		push @$contributors, $_unknownArtist;
+		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
 	}
+
+	# The "primary" contributor
+	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
 
 	# Now handle Album creation
 	my $album = $attributes->{'ALBUM'};
@@ -1504,10 +1551,7 @@ sub _postCheckAttributes {
 
 			if (($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) || !$commonAlbumTitlesToggle) {
 
-				if ($contributors->[0] && ref($contributors->[0])) {
-
-					$search->{'contributor'} = $contributors->[0];
-				}
+				$search->{'contributor'} = $contributor;
 			}
 
 			($albumObj) = Slim::DataStores::DBI::Album->search($search);
@@ -1530,9 +1574,8 @@ sub _postCheckAttributes {
 			}
 		}
 
-		if ($contributors->[0] && ref($contributors->[0])) {
-			$albumObj->contributor($contributors->[0]);
-		}
+		# Add an album artist if it exists.
+		$albumObj->contributor($contributor) if ref($contributor);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort($sortable_title) if $sortable_title;
@@ -1540,14 +1583,27 @@ sub _postCheckAttributes {
 		# And our searchable version.
 		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
 
-		$albumObj->compilation(1) if $attributes->{'COMPILATION'};
+		$albumObj->compilation( $attributes->{'COMPILATION'} ? 1 : 0 );
 
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;
 		$albumObj->year($track->year) if $track->year;
-		$albumObj->update();
+		$albumObj->update;
 
 		$track->album($albumObj);
+
+		# Now create a contributors <-> album mapping
+		while (my ($role, $contributors) = each %{$contributors}) {
+
+			for my $contributor (@{$contributors}) {
+
+				Slim::DataStores::DBI::ContributorAlbum->find_or_create({
+					album       => $albumObj,
+					contributor => $contributor,
+					role        => Slim::DataStores::DBI::Contributor->typeToRole($role),
+				});
+			}
+		}
 	}
 
 	# Compute a compound sort key we'll use for queries that involve
@@ -1563,8 +1619,6 @@ sub _postCheckAttributes {
 	}
 
 	# Find a contributor associated with this track.
-	my $contributor = shift @$contributors;
-
 	if (defined $contributor && ref($contributor) && $contributor->can('namesort')) {
 
 		$primaryContributor = $contributor->namesort;
@@ -1615,42 +1669,18 @@ sub _postCheckAttributes {
 	}
 
 	# refcount--
-	@$contributors = ();
+	%{$contributors} = ();
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $track, $attributes, $postProcess) = @_;
+	my ($self, $track, $attributes) = @_;
 
-	my @contributors = ();
-
-	# 'Treat BAND/TPE2 as ALBUMARTIST'. See Bug 1463
-	if (Slim::Utils::Prefs::get('useBandAsAlbumArtist') && 
-		!defined $attributes->{'ALBUMARTIST'} && defined $attributes->{'BAND'}) {
-
-		$attributes->{'ALBUMARTIST'} = $attributes->{'BAND'};
-
-		delete $attributes->{'BAND'};
-	}
-
-	# If we have a compilation tag, either from iTunes, or a Vorbis tag -
-	# but no specified ALBUMARTIST - create a localized one.
-	if (!defined $attributes->{'ALBUMARTIST'} && $attributes->{'COMPILATION'}) {
-
-		$attributes->{'ALBUMARTIST'} = Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS');
-	}
-
-	# If we have an Album Artist and an Artist, the Artist is moved to be the Track Artist
-	if (defined $attributes->{'ALBUMARTIST'} && defined $attributes->{'ARTIST'} && !defined $attributes->{'TRACKARTIST'}) {
-
-		$attributes->{'TRACKARTIST'} = $attributes->{'ARTIST'};
-
-		delete $attributes->{'ARTIST'};
-	}
+	my %contributors = ();
 
 	# XXXX - This order matters! Album artist should always be first,
 	# since we grab the 0th element from the contributors array below when
 	# creating the Album.
-	my @tags = qw(ALBUMARTIST ARTIST TRACKARTIST BAND COMPOSER CONDUCTOR);
+	my @tags = qw(ALBUMARTIST ARTIST BAND COMPOSER CONDUCTOR);
 
 	for my $tag (@tags) {
 
@@ -1665,37 +1695,34 @@ sub _mergeAndCreateContributors {
 		# contributorTrack entry.
 		#
 		# Only do this the first time around - not when we're merging VA albums.
-		if (!$postProcess) {
+		my $contributorRE = qr/^\Q$contributor\E$/;
 
-			my $contributorRE = qr/^\Q$contributor\E$/;
+		for my $matchTag (@tags) {
 
-			for my $matchTag (@tags) {
+			# Don't match ourselves, or any artist tags.
+			next if $tag eq $matchTag;
+			last if $tag =~ /ARTIST$/o;
 
-				# Don't match ourselves, or any artist tags.
-				next if $tag eq $matchTag;
-				last if $tag =~ /ARTIST$/o;
+			if ($attributes->{$matchTag} =~ $contributorRE) {
 
-				if ($attributes->{$matchTag} =~ $contributorRE) {
-
-					$forceCreate = 1;
-					last;
-				}
+				$forceCreate = 1;
+				last;
 			}
 		}
 
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
 		# "BANDSORT" or similar at any rate.
-		push @contributors, Slim::DataStores::DBI::ContributorTrack->add(
+		push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add(
 			$contributor, 
-			$Slim::DataStores::DBI::ContributorTrack::contributorToRoleMap{$tag},
+			Slim::DataStores::DBI::Contributor->typeToRole($tag),
 			$track,
-			$tag eq 'ARTIST' ? $attributes->{'ARTISTSORT'} : undef,
+			$attributes->{$tag.'SORT'},
 			$forceCreate,
 		);
 	}
 
-	return \@contributors;
+	return \%contributors;
 }
 
 sub _updateTrackValidity {
