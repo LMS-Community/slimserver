@@ -11,6 +11,7 @@ use Slim::Utils::Strings qw(string);
 my %rpcFunctions = (
 	'system.listMethods'	=>	\&listMethods,
 	'slim.doCommand'	=>	\&doCommand,
+	'slim.getPlayers'	=> 	\&getPlayers,
 	'slim.getPlaylist'	=>	\&getPlaylist,
 	'slim.getStrings'	=>	\&getStrings
 );
@@ -90,6 +91,23 @@ sub getStrings {
 
 	for (my $i = 0; $i < @$reqParams; $i++) {
 		push @returnArray, string($reqParams->[$i]);
+	}
+
+	return \@returnArray;
+}
+
+sub getPlayers {
+	my @players = Slim::Player::Client::clients();
+	my @returnArray;
+
+	for my $player (@players) {
+		push @returnArray, {
+			"id" => $player->id(),
+			"ipport" => $player->ipport(),
+			"model" => $player->model(),
+			"name" => $player->name(),
+			"connected" => $player->connected() ? true : false
+		}
 	}
 
 	return \@returnArray;
