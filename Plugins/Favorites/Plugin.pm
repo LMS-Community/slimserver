@@ -103,23 +103,27 @@ sub handleWebIndex {
 		}
 	}
 
-		$params->{'favList'} = {};
-		
-		my $favs = Slim::Utils::Favorites->new($client);
-		my @titles = $favs->titles();
-		my @urls = $favs->urls();
-		my $i = 0;
-		
-		if (scalar @titles) {
-			$params->{'titles'}= \@titles;
-			$params->{'urls'}= \@urls;
-			foreach (@titles) {
-				$params->{'faves'}{$_} = $urls[$i];
-				$i++;
-			}
-		} else {
-			$params->{'warning'} = $client->string('PLUGIN_FAVORITES_NONE_DEFINED');
+	$params->{'favList'} = {};
+
+	my $favs = Slim::Utils::Favorites->new($client);
+	my @titles = $favs->titles();
+	my @urls = $favs->urls();
+	my $i = 0;
+
+	if (scalar @titles) {
+		$params->{'titles'}= \@titles;
+		$params->{'urls'}= \@urls;
+		foreach (@titles) {
+			$params->{'faves'}{$_} = $urls[$i];
+			$i++;
 		}
+	} else {
+		if ($client) {
+			$params->{'warning'} = $client->string('PLUGIN_FAVORITES_NONE_DEFINED');
+		} else {
+			$params->{'warning'} = string('PLUGIN_FAVORITES_NONE_DEFINED');
+		}
+	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favorites_list.html', $params);
 }
