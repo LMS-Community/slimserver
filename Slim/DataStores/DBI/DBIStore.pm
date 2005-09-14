@@ -1422,7 +1422,7 @@ sub _postCheckAttributes {
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
 
-	if ($create && $isLocal && !$genre && !$_unknownGenre) {
+	if ($create && $isLocal && !$genre && (!defined $_unknownGenre || ref($_unknownGenre) ne 'Slim::DataStores::DBI::Genre')) {
 
 		$_unknownGenre = Slim::DataStores::DBI::Genre->find_or_create({
 			'name'     => string('NO_GENRE'),

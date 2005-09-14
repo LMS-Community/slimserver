@@ -522,7 +522,7 @@ sub _init {
 		$obj = $class->live_object_fetch($key);
 	}
 
-	if (!defined $obj) {
+	if (!defined $obj || (defined $obj && ref($obj) eq 'Class::DBI::Object::Has::Been::Deleted')) {
 
 		$obj = $class->_fresh_init($data);
 
