@@ -812,53 +812,24 @@ sub mergeVariousArtistsAlbums {
 	# Don't need to process something we've already marked as a compilation.
 	return 1 if $obj->compilation;
 
-	my @currentArtists  = ();
-	my @previousArtists = ();
-	my $isCompilation   = 0;
+	my %trackArtists    = ();
 
-	# Build up a list of tracks and artists to see if this is a VA album.
-	# If the previous track has different artists, assume this album is VA.
 	for my $track ($obj->tracks) {
 
 		# Bug 2066: If the user has an explict Album Artist set -
 		# don't try to mark it as a compilation.
 		for my $artist ($track->contributorsOfType('ALBUMARTIST')) {
 
-			if ($artist && ref($artist) && $artist->can('id')) {
-
-				$isCompilation = 0;
-				last;
-			}
+			return 1;
 		}
 
-		for my $artist ($track->contributorsOfType('ARTIST')) {
+		# Create a composite of the artists for the track to compare below.
+		my $artistComposite = join(':', sort map { $_->id } $track->contributorsOfType('ARTIST'));
 
-			if ($artist && ref($artist) && $artist->can('id')) {
-
-				push @currentArtists, $artist->id;
-			}
-		}
-
-		if (scalar @previousArtists && scalar @currentArtists) {
-
-			for (my $i = 0; $i < scalar @currentArtists; $i++) {
-
-				next unless defined $currentArtists[$i];
-				next unless defined $previousArtists[$i];
-
-				if ($currentArtists[$i] != $previousArtists[$i]) {
-
-					$isCompilation = 1;
-					last;
-				}
-			}
-		}
-
-		@previousArtists = @currentArtists;
-		@currentArtists  = ();
+		$trackArtists{$artistComposite} = 1;
 	}
 
-	if ($isCompilation) {
+	if (scalar values %trackArtists > 1) {
 
 		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $obj->title);
 
