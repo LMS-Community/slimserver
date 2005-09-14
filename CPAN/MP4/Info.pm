@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.04';
+$VERSION = '1.05';
 
 my $debug = 0;
 
@@ -270,6 +270,9 @@ my %data_atoms =
      PERF => 1, # performer   - returned in ART field no ART found
      AUTH => 1,	# author      - returned in WRT field no WRT found
      #GNRE=> 1,
+     MEAN => 1,
+     NAME => 1,
+     DATA => 1,
     );
 
 # More interesting atoms, but with non-standard data layouts
@@ -291,6 +294,8 @@ my %container_atoms =
      STBL => 1,
      TRAK => 1,
      UDTA => 1,
+     # This atom contains iTunes related information along with data from 'aacgain'
+     '----' => 1,
     );
 
 
@@ -385,6 +390,23 @@ sub parse_file
 	if (defined($tags->{SIZE}) && defined($tags->{MS}));	# A bit bogus
     $tags->{COPYRIGHT}= 1                if defined ($tags->{CPRT});
     $tags->{ENCRYPTED}= 0                unless defined ($tags->{ENCRYPTED});
+
+    # Post process '---' container
+    if ($tags->{MEAN} && ref($tags->{MEAN}) eq 'ARRAY') {
+
+	for (my $i = 0; $i < scalar @{$tags->{MEAN}}; $i++) {
+
+		push @{$tags->{META}}, {
+			MEAN => $tags->{MEAN}->[$i],
+			NAME => $tags->{NAME}->[$i],
+			DATA => $tags->{DATA}->[$i],
+		};
+	}
+
+	delete $tags->{MEAN};
+	delete $tags->{NAME};
+	delete $tags->{DATA};
+    }
 
     return 0;
 }
@@ -655,6 +677,22 @@ sub parse_data
 	}
     }
 
+    # Parse out the tuple that contains aacgain data, etc.
+    if (($id eq 'MEAN') ||
+	($id eq 'NAME') ||
+	($id eq 'DATA')) {
+
+	# The first 4 or 8 bytes are nulls.
+	if ($id eq 'DATA') {
+		$data = substr ($data, 8);
+	} else {
+		$data = substr ($data, 4);
+	}
+
+	push @{$tags->{$id}}, $data;
+	return 0;
+    }
+
     if (!defined($type))
     {
 	($size > 16) || return 0;
@@ -743,7 +781,7 @@ sub parse_data
 	    $tags->{$id} = $data;
 	}
     }
-    elsif ($type==13 || $type==14)	# Byte data
+    elsif ($type==13 || $type==14)	# Raw. Appears that 13=jpeg, 14=other
     {
 	$tags->{$id} = $data;
     }
@@ -781,7 +819,7 @@ Jonathan Harris E<lt>jhar@cpan.orgE<gt>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt> for writing L<MP3::Info|MP3::Info>
 
-Dan Sully for the cover art patch.
+Dan Sully for cover art patches.
 
 =head1 SEE ALSO
 
