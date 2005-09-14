@@ -1,7 +1,6 @@
 <html>
 <head>
-	<title>[% "WELCOME_TO_" _ playermodel | string %]</title>
-	<link REL="shortcut icon" HREF="[% webroot %]favicon.ico" TYPE="image/x-icon">
+	[% PROCESS standardheader.html %]
 </head>
 	<frameset cols="50%,50%">
 		<frame src="home.html?player=[% player | uri %]" name="browser">

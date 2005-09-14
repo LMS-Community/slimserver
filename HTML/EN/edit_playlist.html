@@ -1,7 +1,8 @@
 <html>
   <head>
-    <title>[% "EDIT_PLAYLIST" | string %] - [% dir %]</title>
-    <link rel="stylesheet" href="slimserver.css">
+    [% pagetitle = "EDIT_PLAYLIST" | string %]
+    [% pagetitle = pagetitle _ ' ' _ dir %]
+    [% PROCESS standardheader.html %]
   </head>
   <body bgcolor="#FFFFFF">
     <p></p>
