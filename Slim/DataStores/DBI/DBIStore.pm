@@ -1493,12 +1493,10 @@ sub _postCheckAttributes {
 		# already exists. Because we keep contributors now, but an
 		# album can have many contributors, check the last path and
 		# album name, to see if we're actually the same.
-		if (!$discc && $self->{'lastTrack'}->{$basename} && 
-			$self->{'lastTrack'}->{$basename}->album() && 
-			$self->{'lastTrack'}->{$basename}->album() eq $album
-			) {
+		if (($self->{'lastTrack'}->{$basename} && $self->{'lastTrack'}->{$basename}->album->get('title') eq $album)
+			&& (!$discc || ($discc eq $self->{'lastTrack'}->{$basename}->album->discc))) {
 
-			$albumObj = $self->{'lastTrack'}->{$basename}->album();
+			$albumObj = $self->{'lastTrack'}->{$basename}->album;
 
 		} else {
 
