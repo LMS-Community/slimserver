@@ -161,6 +161,10 @@ sub init {
 	$MP3::Info::v2_to_v1_names{'PIC'} = 'PIC';
 	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
 
+	# Set info
+	$MP3::Info::v2_to_v1_names{'TPA'} = 'SET';
+	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SEt';	
+
 	# get conductors
 	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
 	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
