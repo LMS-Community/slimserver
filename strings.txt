@@ -10353,11 +10353,6 @@ VARIOUSARTISTS
 	EN	Various Artists
 	ZH_CN	多位艺人
 
-TRACKARTIST
-	DE	Lied-Interpret
-	EN	Artist
-	ZH_CN	轨道艺人
-
 ALBUMARTIST
 	DE	Album-Interpret
 	EN	Album Artist
