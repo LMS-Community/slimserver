@@ -1,10 +1,6 @@
 <html>
 <head>
-	<title>[% IF pagetitle %][% pagetitle %]
-	[% ELSE %][% "WELCOME_TO_SLIMSERVER" | string %][% END %]</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-
-	<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
+	[% PROCESS standardheader.html %]
 
 	[% IF warn %]
 		<script language="JavaScript">
@@ -21,9 +17,7 @@
 		// Stop Hiding script --->
 		</script>
 	[% END %]
-	
-	<link rel="shortcut icon" href="[% webroot %]favicon.ico" type="image/x-icon">
-	<link rel="icon" href="[% webroot %]favicon.ico" type="image/x-icon">
+
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
 	<table cellspacing="0" width="100%">

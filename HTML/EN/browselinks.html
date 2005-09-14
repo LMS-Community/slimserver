@@ -1,8 +1,8 @@
 <td class="[% class %]" width="[% width %]">
 		[% IF itemobj.isRemoteURL || !cmd -%]
-			<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=[% urlcmd %]&p2=[% itempath | uri %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %]" target="status">
+			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?p0=playlist&p1=[% urlcmd %]&p2=[% itempath | uri %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %]" target="status">
 		[% ELSE -%]
-			<nobr><a href="[% webroot %]status_header.html?command=playlist&subcommand=[% cmd %][% attributes | html %]&player=[% player | uri %]" target="status">
+			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?command=playlist&subcommand=[% cmd %][% attributes | html %]&player=[% player | uri %]" target="status">
 		[% END -%]
-		[% IF img -%]<img src="[% webroot %]html/images/[% img %]" height="[% height %]" alt='[% cmdstring | string %]' title='[% cmdstring | string %]' onMouseOver="self.status='[% cmdstring | string %]';return true">[% END -%][% linktext -%]</a></nobr>
+		[% IF img -%]<img src="[% webroot %]html/images/[% img %]" height="[% height %]" alt='[% cmdstring | string %]' title='[% cmdstring | string %]' onMouseOver="self.status='[% cmdstring | string %]';return true">[% ELSE %][% cmdstring | string -%][% END -%]</a></nobr>
 </td>

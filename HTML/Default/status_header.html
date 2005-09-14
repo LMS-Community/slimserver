@@ -1,9 +1,11 @@
 <html>
 <head>
-	<title>[% "SQUEEZEBOX_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name | html %][% END %]</title> 
-	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-	<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
-	<script language="JavaScript">
+
+	[% pagetitle = "SQUEEZEBOX_MUSIC_PLAYER" | string %]
+	[% IF player_name; name = player_name | html; END -%]
+	[% pagetitle = pagetitle _ ' ' _ name %]
+	[% PROCESS standardheader.html %]
+ 	<script language="JavaScript">
 	<!-- Start Hiding the Script
 
 function doLoad() {

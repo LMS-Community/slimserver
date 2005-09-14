@@ -19,7 +19,7 @@
 	[% END %]
 
 	[% IF includeAlbum && album %][% "FROM" | string %]
-        	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
 	[% END %]
 
 	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
@@ -27,28 +27,11 @@
 [% END %]
 
 </td>
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 
-[% IF itemobj.isRemoteURL %]
-	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' %]
 
-[% ELSE %]
-	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=loadtracks[% attributes %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
-
-[% END %]
-
-</td>
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-
-[% IF itemobj.isRemoteURL %]
-	<nobr><a href="[% webroot %]status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
-
-[% ELSE %]
-	<nobr><a href="[% webroot %]status.html?command=playlist&subcommand=addtracks[% attributes %]&player=[% player | uri %]" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
-
-[% END %]
-
-</td>
+[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' -%]
+[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' -%]
 
 [% FOREACH mixer = mixerlinks.values.sort %]
 	[% PROCESS $mixer %]
