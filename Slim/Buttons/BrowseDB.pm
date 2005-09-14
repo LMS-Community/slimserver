@@ -615,7 +615,7 @@ sub setMode {
 	}
 
 	# Dynamically create a VA/Compilation item under artists, like iTunes does.
-	if ($levels[$level] eq 'artist') {
+	if ($levels[$level] eq 'artist' && !$search) {
 		unshift @$items, $ds->variousArtistsObject;
 	}
 
