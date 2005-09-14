@@ -879,10 +879,7 @@ sub wipeCaches {
 	%lastFind         = ();
 
 	# clear the references to these singletons
-	$_unknownArtist = undef;
-	$_unknownGenre  = undef;
-	$_unknownAlbum  = undef;
-	$vaObj          = undef;
+	$vaObj            = undef;
 
 	$self->{'artworkCache'} = {};
 	$self->{'coverCache'}   = {};
@@ -901,6 +898,11 @@ sub wipeAllData {
 	my $self = shift;
 
 	$self->forceCommit;
+
+	# clear the references to these singletons
+	$_unknownArtist = undef;
+	$_unknownGenre  = undef;
+	$_unknownAlbum  = undef;
 
 	$self->{'totalTime'}    = 0;
 	$self->{'trackCount'}   = 0;
