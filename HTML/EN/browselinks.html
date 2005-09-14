@@ -1,6 +1,6 @@
 <td class="[% class %]" width="[% width %]">
 		[% IF itemobj.isRemoteURL || !cmd -%]
-			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?p0=playlist&p1=[% urlcmd %]&p2=[% itempath | uri %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %]" target="status">
+			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?p0=playlist&p1=[% urlcmd %]&p2=[% itemobj.url | uri %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %]" target="status">
 		[% ELSE -%]
 			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?command=playlist&subcommand=[% cmd %][% attributes | html %]&player=[% player | uri %]" target="status">
 		[% END -%]

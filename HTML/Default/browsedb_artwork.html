@@ -9,13 +9,11 @@
 			[% IF mixable_not_descend %] <nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a></nobr> [% END %]
 		</td>
 	
-		<td align="right" class="even">
-			<nobr><a href="status_header.html?command=playlist&subcommand=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]"></a></nobr>
-		</td>
-	
-		<td  align="right" class="even">
-			<nobr><a href="status_header.html?command=playlist&subcommand=addtracks[% attributes | html %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a></nobr>
-		</td>
+		[% SET class = 'even' width='13' height='13' header='1' %]
+
+		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
+		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
+
 	</table></td></tr>
 </table></div>
 

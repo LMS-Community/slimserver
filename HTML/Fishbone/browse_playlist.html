@@ -52,8 +52,8 @@
 		[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-				[% PROCESS browselinks.html header='1' urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='play.this.gif' %]
-				[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" align="center" hspace="1"></a></nobr></td>
+				<td class="listing" width="11" align="center"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" align="center" hspace="1"></a></nobr></td>
 		</table>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% browse_list %]
