@@ -1,6 +1,6 @@
 <html>
 	<head>
-		[% PROCESS standardheader.html %]
+		[% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
 	<p>&nbsp;</p>
@@ -35,11 +35,14 @@
 				[% role | upper | string; "COLON" | string %]
 			</td>
 			<td>
-
-			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" target="browser">[% contributor.name | html %]</a>
-			[% END %]
-
+				[% contributorsHTML = [] %]
+				
+				[% FOREACH contributor = contributors.sort %]
+					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=artist,album,track&level=1&artist=$contributor.id&amp;player=$player\" target=\"browser\">$contributor.name</a>" %]
+					[% contributorsHTML.push(contributorHTMLFrag) %]
+				[% END %]
+				
+				[% contributorsHTML.join(', ') %]
 			</td>
 		</tr>
 		[% END %]
@@ -90,6 +93,21 @@
 				[% track.tracknum %]
 			</td>
 		</tr>
+	[% END %]
+	[% IF track.album.compilation %]
+
+		<tr>
+
+			<td>
+				[% "COMPILATION" | string; "COLON" | string %]
+			</td>
+
+			<td>
+				[% "YES" | string %]
+			</td>
+
+		</tr>
+
 	[% END %]
 	[% IF track.content_type %] 
 		<tr>

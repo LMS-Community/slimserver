@@ -3,10 +3,11 @@
 [% IF liveSearch %][% bodyscript = 'onload="document.searchForm.query.focus();"' %][% END %]
 <html>
 	<head>
-		[% PROCESS standardheader.html %]
+		[% PROCESS customheader.html %]
+		<script type="text/javascript" src="/html/prototype.js"></script>
 		<script type="text/javascript"> liveSearchInit(); </script>
 	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '57, *';">
+	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% bodyscript %]">
 	
 [% IF numresults != '-1' %]
 	[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'track' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]<p>
@@ -32,10 +33,10 @@
 		</td>
 		<td class="listing" width="11" align="center">&nbsp;</td>
 		<td class="listing" width="11" align="center">
-			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
+			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="[% webroot %]html/images/play.this.gif" align="center" height="11" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
 		</td>
 		<td class="listing" width="11" align="center">
-			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
+			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="[% webroot %]html/images/add.gif" align="center" height="11" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
 		</td>
 		<td class="listing" width="11" align="center">&nbsp;</td>
 	</tr>

@@ -3,7 +3,7 @@
 [% bodyscript = 'onload="document.searchForm.query.focus();"' %]
 <html>
 	<head>
-		[% PROCESS standardheader.html %]
+		[% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF setup || help %]onload="top.document.getElementById('home').rows = ' 0 , *';"[% END %]>
 

@@ -64,11 +64,13 @@ function readCookie(name) {
 
 window.onload = function(e) {
   var cookie = readCookie("Fishbone-Style");
+  cookie = "Standard" if cookie == "Fishbone_Standard";
   var title = cookie ? cookie : getPreferredStyleSheet();
   setActiveStyleSheet(title);
 }
 
 
 var cookie = readCookie("Fishbone-Style");
+cookie = "Standard" if cookie == "Fishbone_Standard";
 var title = cookie ? cookie : getPreferredStyleSheet();
 setCurrentStyleSheet(title);

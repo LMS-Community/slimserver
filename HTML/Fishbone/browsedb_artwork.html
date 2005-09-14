@@ -10,7 +10,7 @@
 	<td><center>
 		<table height="18" cellpadding="0" cellspacing="0" border="0">
 			<tr>
-				[% PROCESS browselinks.html urlcmd='insert' cmd='inserttracks' cmdstring='INSERT_TO_PLAYLIST' img='queue.gif' %]
+				[% PROCESS browselinks.html header='1' urlcmd='insert' cmd='inserttracks' cmdstring='INSERT_TO_PLAYLIST' img='queue.gif' %]
 				[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='play.this.gif' %]
 				[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 				[% PROCESS browselinks.html urlcmd='deleteitem' cmd='deletetracks' cmdstring='REMOVE_FROM_PLAYLIST' img='subtract.gif' %]

@@ -54,7 +54,7 @@
 <html>
 <head>
 	<meta http-equiv="refresh" content="[% refresh %]; url=[% statuslink %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
-	[% PROCESS standardheader.html %]
+	[% PROCESS customheader.html %]
 	[% IF playercount == '0' %]<script language="JavaScript">
 		<!--Hide
 		location="status.html";
@@ -72,7 +72,7 @@
 				<span class="songtitle">[% IF player_name %][% player_name %][% END %]</span>
 				[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
 			</td>-->
-
+[% refresh %]
 		</table>
 	</div>
 	<div class="menu1">
