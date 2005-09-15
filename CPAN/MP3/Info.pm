@@ -482,10 +482,49 @@ sub get_mp3tag {
 	binmode $fh;
 
 	if ($ver < 2) {
-		seek $fh, -128, 2;
-		while(defined(my $line = <$fh>)) { $tag .= $line }
+		my $pre_tag;
 
-		if ($tag && $tag =~ /^TAG/) {
+		seek $fh, -256, 2;
+		read($fh, $pre_tag, 128);
+		read($fh, $tag, 128);
+
+		my $foundAPE = 0;
+
+		if (substr($pre_tag, 96, 8) eq 'APETAGEX') {
+			$foundAPE = $pre_tag;
+		}
+
+		if (substr($tag, 96, 8) eq 'APETAGEX') {
+			$foundAPE = $tag;
+		}
+
+		if ($foundAPE) {
+
+			my $apeHeader      = substr($foundAPE, 104);
+			my $tagVersion     = _grab_int_32(\$apeHeader);
+			my $tagTotalSize   = _grab_int_32(\$apeHeader);
+			my $tagTotalItems  = _grab_int_32(\$apeHeader);
+			my $tagGlobalFlags = _grab_int_32(\$apeHeader);
+
+			seek $fh, -$tagTotalSize, 2;
+			read($fh, my $apeTag, $tagTotalSize);
+
+			for (my $c = 0; $c < $tagTotalItems; $c++) {
+			
+				# Loop through the tag items
+				my $tagLen   = _grab_int_32(\$apeTag);
+				my $tagFlags = _grab_int_32(\$apeTag);
+
+				$apeTag =~ s/^(.*?)\0//;
+
+				my $tagItemKey = uc($1 || 'Unknown');
+
+				# Stuff in hash
+				$info{$tagItemKey} = substr($apeTag, 0, $tagLen, '');
+			}
+		}
+
+		if (defined($tag) && $tag =~ /^TAG/) {
 			$v1 = 1;
 			if (substr($tag, -3, 2) =~ /\000[^\000]/) {
 				(undef, @info{@v1_tag_names}) =
