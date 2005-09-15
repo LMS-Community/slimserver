@@ -238,9 +238,24 @@ sub formats {
 	return qw(wma flc aif wav mp3);
 }
 
-# we only have 129 levels to work with now, and within 100 range, that's pretty tight.
+# The original Squeezebox2 firmware supported a fairly narrow volume range
+# below unity gain - 129 levels on a linear scale represented by a 1.7
+# fixed point number (no sign, 1 integer, 7 fractional bits).
+# From FW 22 onwards, volume is sent as a 16.16 value (no sign, 16 integer,
+# 16 fractional bits), significantly increasing our fractional range.
+# Rather than test for the firmware level, we send both values in the 
+# volume message.
+
+# We thought about sending a dB scale volume to the client, but decided 
+# against it. Sending a fixed point multiplier allows us to change 
+# the mapping of UI volume settings to gain as we want, without being
+# constrained by any scale other than that of the fixed point range allowed
+# by the client.
+
+# Old style volume:
+# we only have 129 levels to work with now, and within 100 range,
+# that's pretty tight.
 # this table is optimized for 40 steps (like we have in the current player UI.
-# TODO: Increase dynamic range of multiplier in client.
 my @volume_map = ( 
 0, 1, 1, 1, 2, 2, 2, 3,  3,  4, 
 5, 5, 6, 6, 7, 8, 9, 9, 10, 11, 
@@ -254,6 +269,14 @@ my @volume_map = (
 112, 113, 115, 117, 119, 121, 123, 125, 127, 128
  );
 
+sub dBToFixed {
+	my $db = shift;
+
+	# Map a floating point dB value to a 16.16 fixed point value to
+	# send as a new style volume to SB2 (FW 22+).
+	my $floatmult = 10 ** ($db/20);
+	return int(($floatmult * (1 << 16)) + 0.5);
+}
 
 sub volume {
 	my $client = shift;
@@ -263,8 +286,21 @@ sub volume {
 	my $preamp = 255 - int(2 * $client->prefGet("preampVolumeControl"));
 
 	if (defined($newvolume)) {
-		my $level = $volume_map[int($volume)];
-		my $data = pack('NNCC', $level, $level, $client->prefGet("digitalVolumeControl"), $preamp);
+		# Old style volume:
+		my $oldGain = $volume_map[int($volume)];
+		
+		my $newGain;
+		if ($volume == 0) {
+			$newGain = 0;
+		}
+		else {
+			# With new style volume, let's try -49.5dB as the lowest
+			# value.
+			my $db = (int($volume) - 100)/2;	
+			$newGain = dBToFixed($db);
+		}
+
+		my $data = pack('NNCCNN', $oldGain, $oldGain, $client->prefGet("digitalVolumeControl"), $preamp, $newGain, $newGain);
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
@@ -846,6 +882,12 @@ sub canLoop {
 	}
 
 	return 0;
+}
+
+sub canDoReplayGain {
+	my $client = shift;
+
+	return 1;
 }
 
 # SB2 can display Unicode fonts via a TTF

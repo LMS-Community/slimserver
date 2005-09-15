@@ -1011,6 +1011,7 @@ sub minBass {	return 50; }
 
 sub canDirectStream { return 0; }
 sub canLoop { return 0; }
+sub canDoReplayGain { return 0; }
 
 # mixerConstant returns the requested aspect of a given mixer feature
 # Supported features: volume, pitch, bass, treble
