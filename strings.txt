@@ -10329,7 +10329,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	DE	Sie können Kompilationen (Alben mit diversen Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder beim jeweiligen Interpreten aufzulisten.
+	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder bei den einzelnen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
 
@@ -10364,12 +10364,15 @@ UNSYNC
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
+	DE	Alben, die Lieder enthalten, die mit einem Band Tag (TPE2) versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Das Band Tag TPE2 kann in einigen Programmen auch unter der Bezeichnung "Album Artist" auftauchen.
 	EN	Albums that contain songs that are tagged with a band may be listed under that artist only or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 
 SETUP_USEBANDASALBUMARTIST_1
+	DE	Alben bei der Band aufführen
 	EN	List albums by band
 
 SETUP_USEBANDASALBUMARTIST_0
+	DE	Alben bei allen Interpreten des Albums aufführen
 	EN	List albums by all artists for that album
 	
 LYRICS
