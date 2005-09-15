@@ -143,8 +143,9 @@ sub play {
 	my $url = shift;
 	my $reconnect = shift;
 	my $loop = shift;
+	my $replay_gain = shift;
 
-	$client->stream('s', $paused, $format, $url, $reconnect, $loop);
+	$client->stream('s', $paused, $format, $url, $reconnect, $loop, $replay_gain);
 
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
@@ -518,15 +519,15 @@ sub opened {
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
 #	u8_t flags;		// [1]	0x80 - loop infinitely, 0x40 - stream
 #                               //      without restarting decoder
-#	u16_t visualizer_port;	// [2]	visualizer's port - leave port 0 for no vis
-#	u32_t visualizer_ip;	// [4]	visualizer's ip - leave server 0 to use slim server's ip
+#	u16_t reserved;	// [2]	reserved
+#	u32_t replay_gain;	// [4]	replay gain in 16.16 fixed point, 0 means none
 #	u16_t server_port;	// [2]	server's port
 #	u32_t server_ip;	// [4]	server's IP
 #				// ____
 #				// [24]
 #
 sub stream {
-	my ($client, $command, $paused, $format, $url, $reconnect, $loop) = @_;
+	my ($client, $command, $paused, $format, $url, $reconnect, $loop, $replay_gain) = @_;
 
 	if ($client->opened()) {
 		$::d_slimproto && msg("*************stream called: $command paused: $paused format: $format url: $url\n");
@@ -670,8 +671,8 @@ sub stream {
 			$client->prefGet('transitionDuration') || 0,
 			$client->prefGet('transitionType') || 0,
 			$flags,		# flags	     
-			0,		# vis port - call IANA!!!  :)
-			0,		# use slim server's IP
+			0,		# reserved
+			$client->canDoReplayGain($replay_gain),		# use slim server's IP
 			$server_port,
 			$server_ip
 		);

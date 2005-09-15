@@ -883,6 +883,13 @@ sub initSetupConfig {
 						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
 					}
+
+					if ($client->canDoReplayGain(0)) {
+						$pageref->{'GroupOrder'}[6] = 'ReplayGain';
+					} else {
+						$pageref->{'GroupOrder'}[6] = undef;
+					}
+
 		}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -925,6 +932,9 @@ sub initSetupConfig {
 				}
 			,'Transition' => {
 					'PrefOrder' => ['transitionType', 'transitionDuration']
+				}
+			,'ReplayGain' => {
+					'PrefOrder' => ['replayGainMode']
 				}
 		}
 		,'Prefs' => {
@@ -1081,6 +1091,14 @@ sub initSetupConfig {
 						}
 			,'transitionDuration' => {
 							'validate' => \&validateInt  
+						}
+			,'replayGainMode' => {
+							'optionSort' => 'K',
+							'options' => {
+									'0' => string('REPLAYGAIN_DISABLED'),
+									'1' => string('REPLAYGAIN_TRACK_GAIN'),
+									'2' => string('REPLAYGAIN_ALBUM_GAIN'),
+								},
 						}
 		}
 	}

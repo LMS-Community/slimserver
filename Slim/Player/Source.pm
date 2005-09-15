@@ -465,7 +465,7 @@ sub playmode {
 			
 			my $currentSong = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 			
-			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $currentSong, (defined($seekoffset) && $seekoffset > 0), shouldLoop($master));
+			$everyclient->play(Slim::Player::Sync::isSynced($everyclient), $master->streamformat(), $currentSong, (defined($seekoffset) && $seekoffset > 0), shouldLoop($master), replayGain($master));
 
 		} elsif ($newmode eq "pause") {
 
@@ -911,6 +911,29 @@ sub dropStreamingConnection {
 	}
 	foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
 		push @{$buddy->chunks}, \'';
+	}
+}
+
+sub replayGain {
+	my $client = shift;
+	my $rgmode = $client->prefGet('replayGainMode');
+	
+	return undef if !$rgmode;
+
+	my $url = Slim::Player::Playlist::song($client, 
+										   streamingSongIndex($client)) || return 0;
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $track = $ds->objectForUrl($url) || return 0;
+
+	if ($rgmode == 1) {
+		return $track->replay_gain();
+	}
+	
+	my $album = $track->album();
+
+	if (defined($album) && ($rgmode == 2)) {
+		return $album->replay_gain();
 	}
 }
 

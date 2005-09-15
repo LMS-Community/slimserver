@@ -33,6 +33,7 @@ our $defaultPrefs = {
 	'idleBrightness'	=> 2,
 	'transitionType'		=> 0,
 	'transitionDuration'		=> 0,
+	'replayGainMode'		=> '2',
 	'playingDisplayMode'		=> 6,
 };
 
@@ -886,8 +887,13 @@ sub canLoop {
 
 sub canDoReplayGain {
 	my $client = shift;
+	my $replay_gain = shift;
 
-	return 1;
+	if (defined($replay_gain)) {
+		return dBToFixed($replay_gain);
+	}
+
+	return 0;
 }
 
 # SB2 can display Unicode fonts via a TTF

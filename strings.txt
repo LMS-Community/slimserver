@@ -2379,6 +2379,21 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	SE	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
 	ZH_CN	当播放MP3音像时，一些音像接收器和数字模拟转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音像。缺省值为0。0.25秒的值对许多接收器都已相当足够。
 
+SETUP_REPLAYGAINMODE
+	EN	Replay Gain
+
+SETUP_REPLAYGAINMODE_DESC
+	EN	Some audio tracks contain Replay Gain information - relative volume adjustments that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can be told to use this information if it exists. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved.
+
+REPLAYGAIN_DISABLED
+	EN	Disable Replay Gain
+
+REPLAYGAIN_TRACK_GAIN
+	EN	Use track gain (if present)
+
+REPLAYGAIN_ALBUM_GAIN
+	EN	Use album gain (if present)
+
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
 	EN	Crossfade
