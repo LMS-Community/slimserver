@@ -164,7 +164,8 @@ sub artistsWithAttributes {
 	for my $artist ($self->artists) {
 
 		push @artists, {
-			'artist' => $artist,
+			'artist'     => $artist,
+			'attributes' => join('=', 'artist', $artist->id),
 		};
 	}
 
