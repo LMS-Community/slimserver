@@ -175,6 +175,11 @@ sub init {
 	$MP3::Info::v2_to_v1_names{'ULT'} = 'LYRICS';
 	$MP3::Info::v2_to_v1_names{'USLT'} = 'LYRICS';
 
+	# Pull the Relative Volume Adjustment tags
+	$MP3::Info::v2_to_v1_names{'RVA'}  = 'RVAD';
+	$MP3::Info::v2_to_v1_names{'RVAD'} = 'RVAD';
+	$MP3::Info::v2_to_v1_names{'RVA2'} = 'RVA2';
+
 	# iTunes writes out it's own tag denoting a compilation
 	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
 }

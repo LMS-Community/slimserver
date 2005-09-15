@@ -1357,12 +1357,24 @@ sub _preCheckAttributes {
 	# Remote index.
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
+	# Munge the replaygain values a little
+	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+
+		my $shortTag = $gainTag;
+		   $shortTag =~ s/^REPLAYGAIN_TRACK_(\w+)$/REPLAY_$1/;
+
+		$attributes->{$shortTag} = delete $attributes->{$gainTag};
+		$attributes->{$shortTag} =~ s/\s*dB//gi;
+	}
+			
 	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
 	for my $tag (qw(
 		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
-		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION)) {
+		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION
+		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
+	)) {
 
 		next unless defined $attributes->{$tag};
 
@@ -1555,6 +1567,20 @@ sub _postCheckAttributes {
 		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
 
 		$albumObj->compilation( $attributes->{'COMPILATION'} ? 1 : 0 );
+
+		# Handle album gain tags.
+		for my $gainTag (qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
+
+			my $shortTag = lc($gainTag);
+			   $shortTag =~ s/^replaygain_album_(\w+)$/replay_$1/;
+
+			if ($attributes->{$gainTag}) {
+
+				$attributes->{$gainTag} =~ s/\s*dB//gi;
+
+				$albumObj->set($shortTag, $attributes->{$gainTag});
+			}
+		}
 
 		$albumObj->disc($disc) if $disc;
 		$albumObj->discc($discc) if $discc;

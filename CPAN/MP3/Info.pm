@@ -617,14 +617,14 @@ sub get_mp3tag {
 
 							my $channel = $rva2_channel_types{ ord(substr($rvad, 0, 1, '')) };
 
-							$info{$hash->{$id}}->{$channel}->{'REPLAY_TRACK_GAIN'} = 
+							$info{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_GAIN'} = 
 								sprintf('%f', _grab_int_16(\$rvad) / 512);
 
 							my $peakBytes = ord(substr($rvad, 0, 1, ''));
 
 							if (int($peakBytes / 8)) {
 
-								$info{$hash->{$id}}->{$channel}->{'REPLAY_TRACK_PEAK'} = 
+								$info{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_PEAK'} = 
 									sprintf('%f', _grab_int_16(\$rvad) / 512);
 							}
 
@@ -634,7 +634,7 @@ sub get_mp3tag {
 							my $flags = ord(substr($rvad, 0, 1, ''));
 							my $desc  = ord(substr($rvad, 0, 1, ''));
 
-							for my $type (qw(REPLAY_TRACK_GAIN REPLAY_TRACK_PEAK)) {
+							for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
 								for my $channel (qw(RIGHT LEFT)) {
 

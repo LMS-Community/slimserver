@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (14, 0, 0);
+INSERT INTO metainformation VALUES (15, 0, 0);
 
 --
 -- Table: tracks
@@ -63,6 +63,8 @@ CREATE TABLE tracks (
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable  tinyint(1) unsigned,
   musicmagic_mixable  tinyint(1) unsigned,
+  replay_gain float,
+  replay_peak float,
   multialbumsortkey  text,
   INDEX trackTitleIndex (title),
   INDEX trackAlbumIndex (album),
@@ -119,6 +121,8 @@ CREATE TABLE albums (
   artwork_path varchar(255),
   disc  tinyint(1) unsigned,
   discc  tinyint(1) unsigned,
+  replay_gain float,
+  replay_peak float,
   musicmagic_mixable tinyint(1) unsigned,
   INDEX albumsTitleIndex (title),
   INDEX albumsSortIndex (titlesort),

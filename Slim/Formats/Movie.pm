@@ -52,6 +52,20 @@ sub getTag {
 		($tags->{'DISC'}, $tags->{'DISCC'}) = @{$tags->{'DISK'}};
 	}
 
+	# Check for aacgain info stuffed in the '----' atom.
+	if ($tags->{'META'} && ref($tags->{'META'}) eq 'ARRAY') {
+
+		for my $meta (@{$tags->{'META'}}) {
+
+			if ($meta->{'NAME'} =~ /replaygain/i) {
+
+				$tags->{ uc($meta->{'NAME'}) } = $meta->{'DATA'};
+			}
+		}
+	}
+
+	delete $tags->{'META'};
+
 	$tagCache = [ $file, $tags ];
 
 	return $tags;

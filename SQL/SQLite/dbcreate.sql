@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (14, 0, 0);
+INSERT INTO metainformation VALUES (15, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -55,6 +55,8 @@ CREATE TABLE tracks (
   lyrics text,             -- lyrics for this track
   moodlogic_mixable integer,
   musicmagic_mixable integer,
+  replay_gain float,       -- per track gain
+  replay_peak float,       -- per track peak
   multialbumsortkey varchar -- used for sorting tracks in multi album lists
 );
 
@@ -107,6 +109,8 @@ CREATE TABLE albums (
   artwork_path varchar,    -- path to cover art
   disc integer,            -- album number in set
   discc integer,           -- number of albums in set
+  replay_gain float,       -- per album gain
+  replay_peak float,       -- per album peak
   musicmagic_mixable integer
 );
 

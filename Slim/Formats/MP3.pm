@@ -60,6 +60,36 @@ sub getTag {
 	# bitrate is in bits per second, not kbits per second.
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
+	# Pull out Relative Volume Adjustment information
+	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
+
+		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+
+			$info->{$type} = $info->{'RVAD'}->{'RIGHT'}->{$type};
+		}
+
+		delete $info->{'RVAD'};
+
+	} elsif ($info->{'RVA2'}) {
+
+		if ($info->{'RVA2'}->{'MASTER'}) {
+
+			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'MASTER'}}) {
+
+				$info->{$type} = $gain;
+			}
+
+		} elsif ($info->{'RVA2'}->{'FRONT_RIGHT'} && $info->{'RVA2'}->{'FRONT_LEFT'}) {
+
+			while (my ($type, $gain) = each %{$info->{'RVA2'}->{'FRONT_RIGHT'}}) {
+
+				$info->{$type} = $gain;
+			}		
+		}
+
+		delete $info->{'RVA2'};
+	}
+
 	close $fh;
 
 	return $info;

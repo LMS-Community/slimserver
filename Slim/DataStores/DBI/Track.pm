@@ -57,6 +57,8 @@ our %otherColumns = (
 	'lossless' => 'lossless',
 	'titlesearch' => 'titlesearch',
 	'lyrics' => 'lyrics',
+	'replay_gain' => 'replay_gain',
+	'replay_peak' => 'replay_peak',
 );
 
 our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
