@@ -243,6 +243,12 @@ sub find {
 		$args->{'find'} = {};
 	}
 
+	# Only pull out items that are audio for a track search.
+	if ($args->{'field'} && $args->{'field'} =~ /track$/) {
+
+		$args->{'find'}->{'audio'} = 1;
+	}
+
 	# Try and keep the last result set in memory - so if the user is
 	# paging through, we don't keep hitting the database.
 	#
@@ -271,10 +277,7 @@ sub find {
 
 	my $items = $lastFind{$findKey};
 
-	if (!$args->{'count'} && !$args->{'idOnly'} && defined($items) && 
-		($args->{'field'} eq 'track' || $args->{'field'} eq 'lightweighttrack')) {
-
-		$items = [ grep $self->_includeInTrackCount($_), @$items ];
+	if (!$args->{'count'} && !$args->{'idOnly'} && defined($items) && $args->{'field'} =~ /track$/) {
 
 		# Does the track still exist?
 		if ($args->{'field'} ne 'lightweighttrack') {
@@ -438,9 +441,6 @@ sub newTrack {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{dirname($url)} = $track;
-	}
-
-	if ($self->_includeInTrackCount($track)) { 
 
 		my $time = $columnValueHash->{'secs'};
 
@@ -552,7 +552,7 @@ sub delete {
 
 		delete $validityCache{$url};
 
-		if ($self->_includeInTrackCount($track)) {
+		if ($track->audio) {
 
 			$self->{'trackCount'}--;
 
@@ -1309,17 +1309,6 @@ sub _hasChanged {
 	$Slim::DataStores::DBI::DataModel::dirtyCount++;
 
 	# We can't find the file - but don't put it on the zombie list.
-	return 0;
-}
-
-sub _includeInTrackCount {
-	my $self  = shift;
-	my $track = shift;
-	my $url   = $track->get('url');
-
-	return 0 if Slim::Music::Info::isRemoteURL($url);
-	return 1 if Slim::Music::Info::isSong($track, $track->get('ct'));
-
 	return 0;
 }
 
