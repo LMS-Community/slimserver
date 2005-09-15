@@ -1,12 +1,10 @@
 BODY {
-    font-size : 12px;
-    background : #222222;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    color : #e8e8e8;
-    BORDER-RIGHT: 0px; 
-    BORDER-TOP: 0px; 
-    BORDER-LEFT: 0px; 
-    BORDER-BOTTOM: 0px
+	font-size : 12px;
+	background : #222222;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color : #e8e8e8;
+	BORDER: 0px;
+	margin: 0px;
 }
 
 H3 {
@@ -14,16 +12,23 @@ H3 {
 	font-weight : bold;	
 	text-align : left;
 	margin:0in; 
-	margin-bottom:0pt;	
 }
 
-
-TD, P, DIV, A {
-   font-family: Verdana, Arial, Helvetica, sans-serif;
-   font-size : 12px;
+TD, P, A {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size : 9px;
 	margin:0in; 
 	margin-bottom:1pt;
 	line-height: 150%;
+}
+
+DIV {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size : 9px;
+	margin:0in; 
+	margin-bottom:1pt;
+	line-height: 150%;
+	_height: 0%;
 }
 
 A {
@@ -195,6 +200,10 @@ A.linkbtn:hover {
 .list
 {
 	padding: 0 8 0 8;
+	margin:0px;
+	margin-top: 8px;
+	_width: 100%;
+	_height: 100%;
 }
 
 .listing, .listing2, .even, .odd
