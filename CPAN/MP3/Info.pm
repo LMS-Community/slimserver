@@ -9,7 +9,7 @@ use vars qw(
 	@mp3_genres %mp3_genres @winamp_genres %winamp_genres $try_harder
 	@t_bitrate @t_sampling_freq @frequency_tbl %v1_tag_fields
 	@v1_tag_names %v2_tag_names %v2_to_v1_names $AUTOLOAD
-	@mp3_info_fields
+	@mp3_info_fields %rva2_channel_types
 );
 
 @ISA = 'Exporter';
@@ -562,133 +562,176 @@ sub get_mp3tag {
 			my $hash = $raw_v2 == 2 ? { map { ($_, $_) } keys %v2_tag_names } : \%v2_to_v1_names;
 			for my $id (keys %$hash) {
 				if (exists $v2->{$id}) {
-					my $data1 = $v2->{$id};
 
-					# this is tricky ... if this is an arrayref,
-					# we want to only return one, so we pick the
-					# first one.  but if it is a comment, we pick
-					# the first one where the first charcter after
-					# the language is NULL and not an additional
-					# sub-comment, because that is most likely to be
-					# the user-supplied comment
-					if (ref $data1 && !$raw_v2) {
-						if ($id =~ /^COMM?$/) {
-							my($newdata) = grep /^(....\000)/, @{$data1};
-							$data1 = $newdata || $data1->[0];
-						} elsif (!($id =~ /^TXXX?$/)) {
-							# We can get multiple User Defined Text frames in a mp3 file
-							$data1 = $data1->[0];
+					if ($id =~ /^UFID?$/) {
+
+						my @ufid_list = split(/\0/, $v2->{$id});
+						$info{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
+
+					} elsif ($id =~ /^X?RVA[D2]?$/) {
+
+						# Expand these binary fields. See the ID3 spec for Relative Volume Adjustment.
+						if ($id eq 'RVA2') {
+
+							# ID is a text string
+							($info{$hash->{$id}}->{'ID'}, my $rvad) = split /\0/, $v2->{$id};
+
+							my $channel = $rva2_channel_types{ ord(substr($rvad, 0, 1, '')) };
+
+							$info{$hash->{$id}}->{$channel}->{'REPLAY_TRACK_GAIN'} = 
+								sprintf('%f', _grab_int_16(\$rvad) / 512);
+
+							my $peakBytes = ord(substr($rvad, 0, 1, ''));
+
+							if (int($peakBytes / 8)) {
+
+								$info{$hash->{$id}}->{$channel}->{'REPLAY_TRACK_PEAK'} = 
+									sprintf('%f', _grab_int_16(\$rvad) / 512);
+							}
+
+						} elsif ($id eq 'RVAD' || $id eq 'RVA' || $id eq 'XRVA') {
+
+							my $rvad  = $v2->{$id};
+							my $flags = ord(substr($rvad, 0, 1, ''));
+							my $desc  = ord(substr($rvad, 0, 1, ''));
+
+							for my $type (qw(REPLAY_TRACK_GAIN REPLAY_TRACK_PEAK)) {
+
+								for my $channel (qw(RIGHT LEFT)) {
+
+									my $val = _grab_uint_16(\$rvad);
+		
+									$info{$hash->{$id}}->{$channel}->{$type} = $flags & 0x01 ? $val : -$val;
+								}
+							}
 						}
-					}
 
-					$data1 = [ $data1 ] if ! ref $data1;
+					} else {
+						my $data1 = $v2->{$id};
 
-					for my $data (@$data1) {
-						# TODO : this should only be done for certain frames;
-						# using RAW still gives you access, but we should be smarter
-						# about how individual frame types are handled.  it's not
-						# like the list is infinitely long.
-						$data =~ s/^(.)//; # strip first char (text encoding)
-						my $encoding = $1;
-						my $desc;
-
-						# Comments & Unsyncronized Lyrics have the same format.
-						if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
-
-							$data =~ s/^(?:...)//;		# strip language
+						# this is tricky ... if this is an arrayref,
+						# we want to only return one, so we pick the
+						# first one.  but if it is a comment, we pick
+						# the first one where the first charcter after
+						# the language is NULL and not an additional
+						# sub-comment, because that is most likely to be
+						# the user-supplied comment
+						if (ref $data1 && !$raw_v2) {
+							if ($id =~ /^COMM?$/) {
+								my($newdata) = grep /^(....\000)/, @{$data1};
+								$data1 = $newdata || $data1->[0];
+							} elsif (!($id =~ /^TXXX?$/)) {
+								# We can get multiple User Defined Text frames in a mp3 file
+								$data1 = $data1->[0];
+							}
 						}
 
-						if ($UNICODE) {
-							if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
-								# text fields can be null-separated lists;
-								# UTF-16 therefore needs special care
-								#
-								# foobar2000 encodes tags in UTF-16LE
-								# (which is apparently illegal)
-								# Encode dies on a bad BOM, so it is
-								# probably wise to wrap it in an eval
-								# anyway
-								$data = eval { Encode::decode('utf16', $data) } || Encode::decode('utf16le', $data);
-								# this split we do doesn't work, because obviously
-								# two NULLs can appear where we don't want ...
-								#$data = join "\000", map {
-								#	eval { Encode::decode('utf16', $_) } || Encode::decode('utf16le', $_)
-								#} split /\000\000/, $data;
+						$data1 = [ $data1 ] if ! ref $data1;
 
-							} elsif ($encoding eq "\003") { # UTF-8
-								# make sure string is UTF8, and set flag appropriately
-								$data = Encode::decode('utf8', $data);
-							} elsif ($encoding eq "\000") {
-								# Try and guess the encoding, otherwise just use latin1
-								my $dec = Encode::Guess->guess($data);
-								if (ref $dec) {
-									$data = $dec->decode($data);
-								} else {
-									# Best try
-									$data = Encode::decode('iso-8859-1', $data);
+						for my $data (@$data1) {
+							# TODO : this should only be done for certain frames;
+							# using RAW still gives you access, but we should be smarter
+							# about how individual frame types are handled.  it's not
+							# like the list is infinitely long.
+							$data =~ s/^(.)//; # strip first char (text encoding)
+							my $encoding = $1;
+							my $desc;
+
+							# Comments & Unsyncronized Lyrics have the same format.
+							if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+
+								$data =~ s/^(?:...)//;		# strip language
+							}
+
+							if ($UNICODE) {
+								if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
+									# text fields can be null-separated lists;
+									# UTF-16 therefore needs special care
+									#
+									# foobar2000 encodes tags in UTF-16LE
+									# (which is apparently illegal)
+									# Encode dies on a bad BOM, so it is
+									# probably wise to wrap it in an eval
+									# anyway
+									$data = eval { Encode::decode('utf16', $data) } || Encode::decode('utf16le', $data);
+									# this split we do doesn't work, because obviously
+									# two NULLs can appear where we don't want ...
+									#$data = join "\000", map {
+									#	eval { Encode::decode('utf16', $_) } || Encode::decode('utf16le', $_)
+									#} split /\000\000/, $data;
+
+								} elsif ($encoding eq "\003") { # UTF-8
+									# make sure string is UTF8, and set flag appropriately
+									$data = Encode::decode('utf8', $data);
+								} elsif ($encoding eq "\000") {
+									# Try and guess the encoding, otherwise just use latin1
+									my $dec = Encode::Guess->guess($data);
+									if (ref $dec) {
+										$data = $dec->decode($data);
+									} else {
+										# Best try
+										$data = Encode::decode('iso-8859-1', $data);
+									}
+								}
+
+								# do we care about trailing NULL?
+								# $data =~ s/\000$//;
+
+							} else {
+								# If the string starts with an
+								# UTF-16 little endian BOM, use a hack to
+								# convert to ASCII per best-effort
+								my $pat;
+								if ($data =~ s/^\xFF\xFE//) {
+									$pat = 'v';
+								} elsif ($data =~ s/^\xFE\xFF//) {
+									$pat = 'n';
+								}
+								if ($pat) {
+									$data = pack 'C*', map {
+										(chr =~ /[[:ascii:]]/ && chr =~ /[[:print:]]/)
+											? $_
+											: ord('?')
+									} unpack "$pat*", $data;
 								}
 							}
 
-							# do we care about trailing NULL?
-							# $data =~ s/\000$//;
-
-						} else {
-							# If the string starts with an
-							# UTF-16 little endian BOM, use a hack to
-							# convert to ASCII per best-effort
-							my $pat;
-							if ($data =~ s/^\xFF\xFE//) {
-								$pat = 'v';
-							} elsif ($data =~ s/^\xFE\xFF//) {
-								$pat = 'n';
-							}
-							if ($pat) {
-								$data = pack 'C*', map {
-									(chr =~ /[[:ascii:]]/ && chr =~ /[[:print:]]/)
-										? $_
-										: ord('?')
-								} unpack "$pat*", $data;
-							}
-						}
-
-						# We do this after decoding so we could be certain we're dealing
-						# with 8-bit text.
-						if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
-							$data =~ s/^(.*?)\000//;	# strip up to first NULL(s),
-											# for sub-comments (TODO:
-											# handle all comment data)
-							$desc = $1;
-						} elsif ($id =~ /^TCON?$/) {
-							if ($data =~ /^ \(? (\d+) (?:\)|\000)? (.+)?/sx) {
-								my($index, $name) = ($1, $2);
-								if ($name && $name ne "\000") {
-									$data = $name;
-								} else {
-									$data = $mp3_genres[$index];
+							# We do this after decoding so we could be certain we're dealing
+							# with 8-bit text.
+							if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+								$data =~ s/^(.*?)\000//;	# strip up to first NULL(s),
+												# for sub-comments (TODO:
+												# handle all comment data)
+								$desc = $1;
+							} elsif ($id =~ /^TCON?$/) {
+								if ($data =~ /^ \(? (\d+) (?:\)|\000)? (.+)?/sx) {
+									my($index, $name) = ($1, $2);
+									if ($name && $name ne "\000") {
+										$data = $name;
+									} else {
+										$data = $mp3_genres[$index];
+									}
 								}
 							}
-						} elsif ($id =~ /^UFID?$/) {
-							my @ufid_list = split(/\0/, $v2->{$id});
-							$info{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
-						}
 
-						if ($raw_v2 == 2 && $desc) {
-							$data = { $desc => $data };
-						}
-
-						if ($raw_v2 == 2 && exists $info{$hash->{$id}}) {
-							if (ref $info{$hash->{$id}} eq 'ARRAY') {
-								push @{$info{$hash->{$id}}}, $data;
-							} else {
-								$info{$hash->{$id}} = [ $info{$hash->{$id}}, $data ];
+							if ($raw_v2 == 2 && $desc) {
+								$data = { $desc => $data };
 							}
-						} else {
-							# User defined frame
-							if ($id eq 'TXXX') {
-								my ($key, $val) = split(/\0/, $data);
-								$info{$key} = $val;
+
+							if ($raw_v2 == 2 && exists $info{$hash->{$id}}) {
+								if (ref $info{$hash->{$id}} eq 'ARRAY') {
+									push @{$info{$hash->{$id}}}, $data;
+								} else {
+									$info{$hash->{$id}} = [ $info{$hash->{$id}}, $data ];
+								}
 							} else {
-								$info{$hash->{$id}} = $data;
+								# User defined frame
+								if ($id eq 'TXXX') {
+									my ($key, $val) = split(/\0/, $data);
+									$info{$key} = $val;
+								} else {
+									$info{$hash->{$id}} = $data;
+								}
 							}
 						}
 					}
@@ -1207,6 +1250,27 @@ sub _unpack_head {
 	unpack('l', pack('L', unpack('N', $_[0])));
 }
 
+sub _grab_int_16 {
+        my $data  = shift;
+        my $value = unpack('s',substr($$data,0,2));
+        $$data    = substr($$data,2);
+        return $value;
+}
+
+sub _grab_uint_16 {
+        my $data  = shift;
+        my $value = unpack('S',substr($$data,0,2));
+        $$data    = substr($$data,2);
+        return $value;
+}
+
+sub _grab_int_32 {
+        my $data  = shift;
+        my $value = unpack('V',substr($$data,0,4));
+        $$data    = substr($$data,4);
+        return $value;
+}
+
 sub _close {
 	my($file, $fh) = @_;
 	unless (ref $file) { # filehandle not passed
@@ -1410,6 +1474,18 @@ BEGIN {
 		FRAMES
 		FRAME_LENGTH
 		VBR_SCALE
+	);
+
+	%rva2_channel_types = (
+		0x00 => 'OTHER',
+		0x01 => 'MASTER',
+		0x02 => 'FRONT_RIGHT',
+		0x03 => 'FRONT_LEFT',
+		0x04 => 'BACK_RIGHT',
+		0x05 => 'BACK_LEFT',
+		0x06 => 'FRONT_CENTER',
+		0x07 => 'BACK_CENTER',
+		0x08 => 'SUBWOOFER',
 	);
 
 	%v1_tag_fields =
