@@ -1696,9 +1696,8 @@ sub _mergeAndCreateContributors {
 
 		for my $matchTag (@tags) {
 
-			# Don't match ourselves, or any artist tags.
+			# Don't match ourselves
 			next if $tag eq $matchTag;
-			last if $tag =~ /ARTIST$/o;
 
 			if ($attributes->{$matchTag} =~ $contributorRE) {
 
