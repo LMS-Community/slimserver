@@ -1,8 +1,6 @@
 <html>
 <head>
-	<title>[% IF pagetitle %][% 'SLIMSERVER' | string %] - [% pagetitle %]
-	[% ELSE %][% "WELCOME_TO_SLIMSERVER" | string %][% END %]</title>
-	<link rel="stylesheet" href="[% webroot %]slimserver.css">
+	[% PROCESS standardheader.html %]
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]">[% END %]
 </head>
 <body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"">
