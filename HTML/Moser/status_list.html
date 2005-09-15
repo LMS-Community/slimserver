@@ -11,8 +11,6 @@
       [%- IF album %]
           [% "FROM" | string -%] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% player | uri %]" target="browser">[% album | html %]</a></span>
       [%- END %]
-      [%- IF artist %]
-          [% "BY" | string -%] <span class="artist"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
-      [%- END %]
+      [% IF includeArtist; PROCESS artistsAsHTML.html; END %]
         </div>
       </li>

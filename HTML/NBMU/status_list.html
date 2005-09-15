@@ -14,8 +14,6 @@
 [% IF album; "FROM" | string; END %]
 <em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></em>
 
-[% IF artist; "BY" | string; END %] 
-<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
-
+[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 </td>
 </tr>

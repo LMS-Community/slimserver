@@ -485,7 +485,6 @@ sub playlist {
 
 	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
-	$listBuild{'includeArtist'} = ($webFormat !~ /ARTIST/);
 	$listBuild{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
 	$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
 	$listBuild{'item'}          = $listBuild{'start'};
@@ -542,15 +541,8 @@ sub playlist {
 		$list_form{'item'}     = $track->id();
 		$list_form{'itemobj'}  = $track;
 
-		if ($listBuild{'includeArtist'}) {
-
-			if ($composerIn) {
-				$list_form{'artists'} = $track->contributors();
-			} else {
-				$list_form{'artists'} = $track->artists();
-			}
-		}
-
+		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
+	
 		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
 
 		$listBuild{'item'}++;

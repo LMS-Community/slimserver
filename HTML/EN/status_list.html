@@ -10,19 +10,8 @@
 			[% "FROM" | string %]
 			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
 		[% END %]
-			[% IF artists.count == 1 %]
-			[% artist = artists.next %]
-			[% IF artist && artist != noArtist %]
-				[% "BY" | string %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
-			[% END %]
-		[% ELSE %]
-			[% IF artists %][% "BY" | string %][% END %]
-			[% WHILE (artist = artists.next) %]
-				[% NEXT IF artist.name == noArtist %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% artist.id %]&player=[% player | uri %]" target="browser">[% artist.name | html %]</a>
-			[% END %]
-		[% END %]</td>
+		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
+		</td>
    <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>
    </td>

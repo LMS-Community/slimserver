@@ -7,11 +7,13 @@
  		[% IF currentsong %]</b>[% END %]
 
 <span class="small">
-		[% IF album %][% "FROM" | string %][% END %]
-<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i>
-[% IF artist %][% "BY" | string %] [% END %]
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a></span>
-   </td>
+		[% IF album && album != noAlbum %]
+
+			[% "FROM" | string %]
+			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
+		[% END %]
+		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
+</td>
    <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       (<a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>)
    </td>
