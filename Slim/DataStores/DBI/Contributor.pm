@@ -22,7 +22,7 @@ our %contributorToRoleMap = (
 
 	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
 
-	$class->columns(Others => qw/namesearch/);
+	$class->columns(Others => qw/namesearch musicbrainz_id/);
 
 	$class->columns(Stringify => qw/name/);
 
@@ -51,6 +51,7 @@ sub typeToRole {
 sub add {
 	my $class      = shift;
 	my $artist     = shift;
+	my $brainzID   = shift;
 	my $role       = shift;
 	my $track      = shift;
 	my $artistSort = shift || $artist;
@@ -94,6 +95,7 @@ sub add {
 
 		$artistObj->name($name);
 		$artistObj->namesort($sort);
+		$artistObj->musicbrainz_id($brainzID);
 		$artistObj->update;
 
 		push @contributors, $artistObj;

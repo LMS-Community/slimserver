@@ -13,6 +13,16 @@ use MP3::Info;
 
 use Slim::Utils::Misc;
 
+my %tagMapping = (
+	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
+	'MusicBrainz Album Artist Id'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
+	'MusicBrainz Album Id'		=> 'MUSICBRAINZ_ALBUM_ID',
+	'MusicBrainz Album Status'	=> 'MUSICBRAINZ_ALBUM_STATUS',
+	'MusicBrainz Album Type'	=> 'MUSICBRAINZ_ALBUM_TYPE',
+	'MusicBrainz Artist Id'		=> 'MUSICBRAINZ_ARTIST_ID',
+	'MusicBrainz TRM Id'		=> 'MUSICBRAINZ_TRM_ID',
+);
+
 # Don't try and convert anything to latin1
 if ($] > 5.007) {
 
@@ -31,6 +41,8 @@ sub getTag {
 	$::d_mp3 && msg("Getting tags for: $file\n");	
 	my $tags = MP3::Info::get_mp3tag($fh); 
 	my $info = MP3::Info::get_mp3info($fh);
+
+	doTagMapping($tags);
 
 	# we'll always have $info, as it's machine generated.
 	if ($tags && $info) {
@@ -95,6 +107,17 @@ sub getTag {
 	return $info;
 }
 
+
+sub doTagMapping {
+	my $tags = shift;
+
+	# map the existing tag names to the expected tag names
+	while (my ($old,$new) = each %tagMapping) {
+		if (exists $tags->{$old}) {
+			$tags->{$new} = delete $tags->{$old};
+		}
+	}
+}
 
 my $MINFRAMELEN = 96;    # 144 * 32000 kbps / 48000 kHz + 0 padding
 my $MAXDISTANCE = 8192;  # (144 * 320000 kbps / 32000 kHz + 1 padding + fudge factor) for garbage data * 2 frames

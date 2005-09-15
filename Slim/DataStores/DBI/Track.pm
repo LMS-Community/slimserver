@@ -52,6 +52,7 @@ our %otherColumns = (
 	'moodlogic_id' => 'moodlogic_id',
 	'moodlogic_mixable' => 'moodlogic_mixable',
 	'musicmagic_mixable' => 'musicmagic_mixable',
+	'musicbrainz_id' => 'musicbrainz_id',
 	'playCount' => 'playCount',
 	'lastPlayed' => 'lastPlayed',
 	'lossless' => 'lossless',

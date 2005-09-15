@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (15, 0, 0);
+INSERT INTO metainformation VALUES (16, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -54,6 +54,7 @@ CREATE TABLE tracks (
   remote integer,          -- boolean for remote
   lyrics text,             -- lyrics for this track
   moodlogic_mixable integer,
+  musicbrainz_id varchar,  -- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable integer,
   replay_gain float,       -- per track gain
   replay_peak float,       -- per track peak
@@ -111,6 +112,7 @@ CREATE TABLE albums (
   discc integer,           -- number of albums in set
   replay_gain float,       -- per album gain
   replay_peak float,       -- per album peak
+  musicbrainz_id varchar,  -- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable integer
 );
 
@@ -129,6 +131,7 @@ CREATE TABLE contributors (
   namesearch varchar,     -- version of name used for search matching 
   moodlogic_id integer,   -- these will eventually be dynamically created by the plugin
   moodlogic_mixable integer,
+  musicbrainz_id varchar,  -- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable integer
 );
 

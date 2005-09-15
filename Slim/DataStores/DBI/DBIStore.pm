@@ -1374,6 +1374,8 @@ sub _preCheckAttributes {
 		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
 		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION
 		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
+		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID
+		MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
 	)) {
 
 		next unless defined $attributes->{$tag};
@@ -1568,6 +1570,8 @@ sub _postCheckAttributes {
 
 		$albumObj->compilation( $attributes->{'COMPILATION'} ? 1 : 0 );
 
+		$albumObj->musicbrainz_id($attributes->{'MUSICBRAINZ_ALBUM_ID'});
+
 		# Handle album gain tags.
 		for my $gainTag (qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
 
@@ -1711,6 +1715,7 @@ sub _mergeAndCreateContributors {
 		# "BANDSORT" or similar at any rate.
 		push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add(
 			$contributor, 
+			$attributes->{"MUSICBRAINZ_${tag}_ID"},
 			Slim::DataStores::DBI::Contributor->typeToRole($tag),
 			$track,
 			$attributes->{$tag.'SORT'},
