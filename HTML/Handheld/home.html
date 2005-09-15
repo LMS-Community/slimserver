@@ -1,46 +1,31 @@
 <!-- Page home.html -->
+	[% BLOCK menu %]
+		<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% menutitle | string %]</h4></td></tr></table>
+		<ul>
+		[% IF menulist %]
+		    [% FOREACH link = menulist %]
+	    		<li><a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+	    	[% END %]
+		[% END %]
+		[% IF additionalmenu %]
+	   		<li><a href="[% additionalmenu.link %]?player=[% player | uri %]">[% additionalmenu.text | string %]</a></li>
+			[% additionalmenu={} %]
+		[% END %]
+		</ul>
+	[% END %]
+
 	[% pagetitle = "HOME" | string %]
 	[% PROCESS pageheader.html %]
 
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "BROWSE_MUSIC" | string %]</h4></td></tr></table>
-	<ul>
-	[% IF additionalLinks.browse %]
-    	[% FOREACH link = additionalLinks.browse %]
-    		<li><a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
-    	[% END %]
-	[% END %]
-	</ul>
-
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "SEARCH" | string %]</h4></td></tr></table>
-	<ul>
-	[% IF additionalLinks.search %]
-	    [% FOREACH key = additionalLinks.search.keys %]
-	    	<li><a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a></li>
-	    [% END %]
-	[% END %]
-	</ul>
-	
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "RADIO" | string %]</h4></td></tr></table>
-	<ul>
-		[% FOREACH key = additionalLinks.radio.keys %]
-			<li><a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a></li>
-	    [% END %]
-		<li><a href="tunein.html?player=[% player | uri %]">[% "RADIO_TUNEIN" | string %]</a></li>
-	</ul>
+	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
+	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search %]
+	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio additionalmenu.link = 'tunein.html' additionalmenu.text = 'RADIO_TUNEIN'%]
 	
 	[% IF additionalLinks.plugins %]
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "PLUGINS" | string %]</h4></td></tr></table>
-	<ul>
-		[% FOREACH key = additionalLinks.plugins.keys %]
-			<li><a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a></li>
-	    [% END %]
-	</ul>
+		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins %]
 	[% END %]
 	
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "HELP" | string %]</h4></td></tr></table>
-	<ul>
-	    <li><a href="[% webroot %]html/help.html?player=[% player | uri %]">[% "HELP" | string %]</a></li>
-	</ul>
+	[% PROCESS menu menutitle='HELP' menulist={} additionalmenu.link = 'html/help.html' additionalmenu.text = 'HELP'%]
 	
 	[% PROCESS songcount.html %]	
 	[% PROCESS pagefooter.html %]

@@ -1,7 +1,11 @@
-body, table, input, p, li, a, td {
+body, table, input, p, li, a, td, h4 {
 	font-size: 10px;
 	font-family: sans-serif;
 	color: #444;
+}
+
+h4 {
+	font-weight: bold;
 }
 
 pre, code, h3 {
@@ -16,7 +20,7 @@ td {
 	color: #666;
 }
 
-table, td, tr, form {
+table, td, tr, form, h4 {
 	padding: 0px;
 	margin: 0px;
 }

@@ -11,7 +11,7 @@
 						[% IF mixable_not_descend %] <a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a>[% END %]
 					</td>
 
-					[% SET class = 'even' width='13' height='13' header='1' -%]
+					[% SET class='even' width='13' height='13' -%]
 					[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 					[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
 

@@ -1,6 +1,11 @@
 <!-- Element advanced_search.html -->
 	[% pagetitle = "SEARCH" | string %]
 	[% PROCESS pageheader.html %]
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+		<tr>
+			<td>/ <a href="[% webroot %]advanced_search.html?player=[% player | uri %]">[% "ADVANCEDSEARCH" | string %]</a></td>
+		</tr>
+	</table>
 
 	[% MACRO logicalSelectionBlock BLOCK %]	
 		<select name="[% name %]">
