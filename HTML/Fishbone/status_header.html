@@ -43,12 +43,7 @@
 [% END %]
 
 [% BLOCK statectrl %]
-	<a class="[% IF not condition %]dark[% END %]button" href="[% statuslink %]?p0=playlist&p1=[% command %]&p2=[% arg %]&player=[% player | uri %]&start=[% start %]">
-		<b>
-			[% cmdstring | string | upper%]
-		</b>
-		&nbsp;
-	</a>
+	<a class="[% IF not condition %]dark[% END %]button" href="[% statuslink %]?p0=[% item || 'playlist' %]&p1=[% command %]&p2=[% arg %]&player=[% player | uri %]&start=[% start %]"><b>[% cmdstring | string | upper%]</b></a>
 [% END %]
 
 [% BLOCK playctl %]
@@ -141,7 +136,7 @@
 
 	<div class="menu2">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<td><center>
+		<td>
 			<table border="0" cellspacing="0" cellpadding="0"><tr valign="bottom">
 					[% PROCESS playctl command='p0=play' img='play' width='42' height='43' condition=modeplay && rate == 'norm' -%]
 					[% PROCESS playctl command='p0=stop' img='stop' width='23' height='32' condition=modestop -%]
@@ -159,44 +154,44 @@
 					</tr>
 				</table></td>
 			</tr></table>
-		</center></td>
+		</td>
 		[% IF isplayer and not fixedVolume %]
 		<td><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
 		<td align="center" class="label2">
 			<table border="0" cellspacing="0" cellpadding="0">
-				<td align="right" valign="bottom" class="label2"><nobr><B>[% "VOLUME" | string | upper%][% "COLON" | string %]</B></td>
+				<td align="right" valign="bottom" class="label2"><B>[% "VOLUME" | string | upper%][% "COLON" | string %]</B></td>
 				<td>
 					<table border="0" width="100%" cellspacing="0" cellpadding="0"><tr><nobr>
 						[% PROCESS volumecontrol %]
 					</nobr></tr></table>
 				</td>
-				<td width="3%" >&nbsp;</td>
+				<td width="2%" >&nbsp;</td>
 				[% PROCESS mixcontrol  type="bass" label='B' -%]
 				[% PROCESS mixcontrol  type="treble" label='T' -%]
 			</table>
 		[% END %]
 	</table></div>
 	<div class="nowplaying">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="11">
-		<td [% IF isplayer %]width="33%"[% END %] class="label2" align="center"><nobr>
-			<b>[% "REPEAT" | string | upper%][% "COLON" | string %]&nbsp;</b>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" height="11">
+		<td [% IF isplayer %]width="10%"[% END %] class="label2" align="left"><nobr>
+			<b>[% "REPEAT" | string | upper%][% "COLON" | string %]</b>
 			[% PROCESS statectrl condition=repeatone command='repeat' arg='1' cmdstring="ONE" %]
 			[% PROCESS statectrl condition=repeatall command='repeat' arg='2' cmdstring="ALL" %]
 			[% PROCESS statectrl condition=repeatoff command='repeat' arg='0' cmdstring="OFF" %]
 			</nobr></td>
-		<td [% IF not isplayer %]width="1"[% END %]><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
-		<td [% IF isplayer %]width="40%"[% END %] height="13" class="label2" align="center"><nobr>
-			<b>[% "SHUFFLE" | string | upper%][% "COLON" | string %]&nbsp;</b>
+		<td align="center"><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
+		<td [% IF isplayer %]width="10%"[% END %] height="13" class="label2" align="center"><nobr>
+			<b>[% "SHUFFLE" | string | upper%][% "COLON" | string %]</b>
 			[% PROCESS statectrl condition=shuffleoff command='shuffle' arg='0' cmdstring="OFF" %]
 			[% PROCESS statectrl condition=shuffleon command='shuffle' arg='1' cmdstring="SONG" %]
 			[% PROCESS statectrl condition=shufflealbum command='shuffle' arg='2' cmdstring="ALBUM" %]
 		</nobr></td>
 		[% IF isplayer %]
-			<td><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
-			<td height="13" class="label2" align="center"><nobr>
-				<b>[% "POWER" | string | upper%][% "COLON" | string %]&nbsp;</b>
-				<a class="[% IF mode == 'off' %]dark[% END %]button" href="[% statuslink %]?player=[% player | uri %]&p0=power&p1=1"><b>[% "ON" | string | upper%]</b>&nbsp;</a>
-				<a class="[% IF mode != 'off' %]dark[% END %]button" href="[% statuslink %]?player=[% player | uri %]&p0=power&p1=0"><b>[% "OFF" | string | upper%]</b></a>
+			<td align="center"><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
+			<td height="13" width="10%" class="label2" align="right"><nobr>
+				<b>[% "POWER" | string | upper%][% "COLON" | string %]</b>
+				[% PROCESS statectrl condition=mode != 'off' item='power' command='1' arg='' cmdstring="ON" %]
+				[% PROCESS statectrl condition=mode == 'off' command='0' arg='' cmdstring="OFF" %]
 			</nobr></td>
 		[% END %]
 	</table></div>
