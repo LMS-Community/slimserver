@@ -33,7 +33,7 @@
 [% END %]
 
  </td>
-[% SET class = odd ? 'odd':'even'; width='13' height='13' header='1' %]
+[% SET class = odd ? 'odd':'even'; width='13' height='13' header='1' target='status' %]
 
 [% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 [% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]

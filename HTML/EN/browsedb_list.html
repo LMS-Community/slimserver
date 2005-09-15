@@ -28,7 +28,7 @@
 
 </td>
 
-[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' %]
+[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' %]
 
 [% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' -%]
 [% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' -%]
