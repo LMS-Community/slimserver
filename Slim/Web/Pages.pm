@@ -663,7 +663,7 @@ sub basicSearch {
 			$params->{'numresults'} = $item->[1];
 			$params->{'path'}       = 'search.html';
 
-			if ($params->{'type'} eq 'track') {
+			if ($params->{'type'} eq 'track' && $params->{'numresults'}) {
 
 				push @results, $item->[2];
 
@@ -673,7 +673,10 @@ sub basicSearch {
 			_fillInSearchResults($params, $item->[2], $descend, \@qstring);
 		}
 
-		$client->param('searchResults', @results) if defined $client;
+		if (defined $client && scalar @results) {
+
+			$client->param('searchResults', @results);
+		}
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
@@ -824,9 +827,6 @@ sub _fillInSearchResults {
 			  '&query=' . Slim::Web::HTTP::escape($query) . '&' .
 			  join('&', @$qstring);
 
-	# set some defaults for the template
-	$params->{'browse_list'} = " ";
-
 	# Make sure that we have something to show.
 	if (!defined $params->{'numresults'} && defined $results && ref($results) eq 'ARRAY') {
 
@@ -845,7 +845,7 @@ sub _fillInSearchResults {
 
 		my ($start, $end);
 
-		if (defined $params->{'nopagebar'}){
+		if (defined $params->{'nopagebar'}) {
 
 			($start, $end) = simpleHeader(
 				$params->{'numresults'},
