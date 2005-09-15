@@ -465,7 +465,9 @@ sub get_mp3tag {
 		return undef;
 	}
 
-	if (not -s $file) {
+	my $filesize = -s $file;
+
+	if (!$filesize) {
 		$@ = "File is empty";
 		return undef;
 	}
@@ -488,41 +490,7 @@ sub get_mp3tag {
 		read($fh, $pre_tag, 128);
 		read($fh, $tag, 128);
 
-		my $foundAPE = 0;
-
-		if (substr($pre_tag, 96, 8) eq 'APETAGEX') {
-			$foundAPE = $pre_tag;
-		}
-
-		if (substr($tag, 96, 8) eq 'APETAGEX') {
-			$foundAPE = $tag;
-		}
-
-		if ($foundAPE) {
-
-			my $apeHeader      = substr($foundAPE, 104);
-			my $tagVersion     = _grab_int_32(\$apeHeader);
-			my $tagTotalSize   = _grab_int_32(\$apeHeader);
-			my $tagTotalItems  = _grab_int_32(\$apeHeader);
-			my $tagGlobalFlags = _grab_int_32(\$apeHeader);
-
-			seek $fh, -$tagTotalSize, 2;
-			read($fh, my $apeTag, $tagTotalSize);
-
-			for (my $c = 0; $c < $tagTotalItems; $c++) {
-			
-				# Loop through the tag items
-				my $tagLen   = _grab_int_32(\$apeTag);
-				my $tagFlags = _grab_int_32(\$apeTag);
-
-				$apeTag =~ s/^(.*?)\0//;
-
-				my $tagItemKey = uc($1 || 'Unknown');
-
-				# Stuff in hash
-				$info{$tagItemKey} = substr($apeTag, 0, $tagLen, '');
-			}
-		}
+		_parse_ape_tag($fh, $filesize, $tag, $pre_tag, \%info);
 
 		if (defined($tag) && $tag =~ /^TAG/) {
 			$v1 = 1;
@@ -1308,6 +1276,104 @@ sub _grab_int_32 {
         my $value = unpack('V',substr($$data,0,4));
         $$data    = substr($$data,4);
         return $value;
+}
+
+sub _parse_ape_tag {
+	my ($fh, $filesize, $tag, $pre_tag, $info) = @_;
+
+	my $ape_tag_id = 'APETAGEX';
+
+	# Try and bail early if there's no ape tag.
+	if (substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
+
+		return;
+	}
+
+	my $id3v1_tag_size      = 128;
+	my $ape_tag_header_size = 32;
+	my $lyrics3_tag_size    = 10;
+	my $tag_offset_start    = 0;
+	my $tag_offset_end      = 0;
+
+	seek($fh, (0 - $id3v1_tag_size - $ape_tag_header_size - $lyrics3_tag_size), 2);
+
+	read($fh, my $ape_footer_id3v1, $id3v1_tag_size + $ape_tag_header_size + $lyrics3_tag_size);
+
+	if (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $id3v1_tag_size - $ape_tag_header_size), 8) eq $ape_tag_id) {
+
+		$tag_offset_end = $filesize - $id3v1_tag_size;
+
+	} elsif (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $ape_tag_header_size), 8) eq $ape_tag_id) {
+
+		$tag_offset_end = $filesize;
+	}
+
+	seek($fh, $tag_offset_end - $ape_tag_header_size, 0);
+
+	read($fh, my $ape_footer_data, 32);
+
+	my $ape_footer = _parse_ape_header_or_footer($ape_footer_data);
+
+	if (keys %{$ape_footer}) {
+
+		my $ape_tag_data = '';
+
+		if ($ape_footer->{'flags'}->{'header'}) {
+
+			seek($fh, ($tag_offset_end - $ape_footer->{'tag_size'} - $ape_tag_header_size), 0);
+
+			$tag_offset_start = tell($fh);
+
+			read($fh, $ape_tag_data, $ape_footer->{'tag_size'} + $ape_tag_header_size);
+
+		} else {
+
+			$tag_offset_start = $tag_offset_end - $ape_footer->{'tag_size'};
+
+			seek($fh, $tag_offset_start, 0);
+
+			read($fh, $ape_tag_data, $ape_footer->{'tag_size'});
+		}
+
+		my $ape_header_data = substr($ape_tag_data, 0, $ape_tag_header_size, '');
+		my $ape_header      = _parse_ape_header_or_footer($ape_header_data);
+
+		for (my $c = 0; $c < $ape_header->{'tag_items'}; $c++) {
+		
+			# Loop through the tag items
+			my $tag_len   = _grab_int_32(\$ape_tag_data);
+			my $tag_flags = _grab_int_32(\$ape_tag_data);
+
+			$ape_tag_data =~ s/^(.*?)\0//;
+
+			my $tag_item_key = uc($1 || 'UNKNOWN');
+
+			$info->{$tag_item_key} = substr($ape_tag_data, 0, $tag_len, '');
+		}
+	}
+}
+
+sub _parse_ape_header_or_footer {
+	my $bytes = shift;
+	my %data = ();
+
+	if (substr($bytes, 0, 8, '') eq 'APETAGEX') {
+
+		$data{'version'}      = _grab_int_32(\$bytes);
+		$data{'tag_size'}     = _grab_int_32(\$bytes);
+		$data{'tag_items'}    = _grab_int_32(\$bytes);
+		$data{'global_flags'} = _grab_int_32(\$bytes);
+
+		# trim the reseved bytes
+		_grab_int_32(\$bytes);
+		_grab_int_32(\$bytes);
+
+		$data{'flags'}->{'header'}    = ($data{'global_flags'} & 0x80000000) ? 1 : 0;
+		$data{'flags'}->{'footer'}    = ($data{'global_flags'} & 0x40000000) ? 1 : 0;
+		$data{'flags'}->{'is_header'} = ($data{'global_flags'} & 0x20000000) ? 1 : 0;
+	}
+
+	return \%data;
 }
 
 sub _close {
