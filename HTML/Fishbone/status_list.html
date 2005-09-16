@@ -1,25 +1,17 @@
-[% BLOCK link %]
-	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="status_header.html?p0=playlist&p1=[% p1 %]&p2=[% num %]&p3=[% p3 %]&player=[% player | uri %]&start=[% start %]" target="status">
-		<img src="[% webroot %]html/images/[% img %]" height="11" align="center"
-			alt='[% cmdstring | string %]' 
-			title='[% cmdstring | string %]' 
-			onMouseOver="self.status='[% cmdstring | string %]';return true">
-		</a>
-	</td>
+[% BLOCK playlistlinks %]
+	[% PROCESS link page='status_header.html' p0='p0=playlist' p1='move' p2=num p3='%2D1' img='move.up.gif' text='MOVEUP' target='status'%]
+	[% PROCESS link p3='%2B1' 		img='move.down.gif' text='MOVEDOWN' %]
+	[% PROCESS link p3=nextsongind 	img='queue.gif'  	text='NEXT' %]
+	[% PROCESS link p1='delete' 	img='remove.gif'  	text='REMOVE_FROM_PLAYLIST' %]
+	[% PROCESS link page='songinfo.html' p0='item=' _ itemobj.id img='info.gif' text='SONG_INFO' target='browser' %]
 [% END %]
-
-[% BLOCK browselinks %]
-	[% PROCESS link p1='move' p3='%2D1' img='move.up.gif' cmdstring='MOVEUP' %]
-	[% PROCESS link p1='move' p3='%2B1' img='move.down.gif' cmdstring='MOVEDOWN' %]
-	[% PROCESS link p1='move' p3=nextsongind img='queue.gif' cmdstring='NEXT' %]
-	[% PROCESS link p1='delete' img='remove.gif' cmdstring='REMOVE_FROM_PLAYLIST' %]
-	<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="songinfo.html?item=[% item %]&player=[% player | uri %]" target="browser">
-			<img src="[% webroot %]html/images/info.gif" height="11" align="center"
-				alt='[% "SONG_INFO" | string %]'
-				title='[% "SONG_INFO" | string %]'
-				onMouseOver="self.status='[% "SONG_INFO" | string %]';return true">
+[%- BLOCK link %]
+		<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
+		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% player | uri %]&start=[% start %]" target="[% target %]">
+		<img src="[% webroot %]html/images/[% img %]" height="11" align="center"
+			alt='[% text | string %]' 
+			title='[% text | string %]' 
+			onMouseOver="self.status='[% text | string %]';return true">
 		</a>
 	</td>
 [% END -%]
@@ -28,8 +20,8 @@
 	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
 		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
 		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
-	<nobr>[% IF includeArtist; PROCESS artistsAsHTML.html; END %]</nobr>
+	<nobr>[%- IF includeArtist; PROCESS artistsAsHTML.html; END %]</nobr>
 	<nobr>[% IF album && album != noAlbum %] [% "FROM" | string %] <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a></i>[% END %]
 	</nobr></td>
-	[% INCLUDE browselinks %]
+	[% INCLUDE playlistlinks %]
 </tr>
