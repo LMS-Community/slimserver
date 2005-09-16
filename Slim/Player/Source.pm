@@ -914,27 +914,95 @@ sub dropStreamingConnection {
 	}
 }
 
+# Based on code from James Sutula's Dynamic Transition Updater plugin,
+# this method determines whether tracks at a given offset from each
+# other in the playlist are similarly adjacent within the same album.
+sub trackAlbumMatch {
+	my $client = shift;
+	my $offset = shift;
+
+	my $current_index = Slim::Player::Source::streamingSongIndex($client);
+	my $compare_index = Slim::Player::Source::streamingSongIndex($client) + $offset;
+	my $count = Slim::Player::Playlist::count($client);
+	my $repeat = Slim::Player::Playlist::repeat($client);
+
+	# only one song in the playlist, so we match
+	if ($count == 1 || $repeat == 1) {
+		return 1;
+	}
+
+	# Check the case where the track to compare against is
+	# at the other end of the playlist.
+	if ($compare_index < 0) {
+		# No repeat means we don't match around the edges
+		return 0 unless $repeat;
+		
+		return trackAlbumMatch($client, $count - 1);
+	}
+	elsif ($compare_index >= $count) {
+		# No repeat means we don't match around the edges
+		return 0 unless $repeat;
+
+		return trackAlbumMatch($client, -$current_index);
+	}
+
+	# Get the track objects
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $current_url = Slim::Player::Playlist::song($client, 
+												   $current_index);
+	my $current_track = $ds->objectForUrl($current_url);
+	
+	my $compare_url = Slim::Player::Playlist::song($client, $compare_index);
+	my $compare_track = $ds->objectForUrl($compare_url);
+
+	return 0 unless (defined($current_track) && defined($compare_track) &&
+					 defined($current_track->album()) &&
+					 defined($compare_track->album()));
+	
+	# Check for album and tracknum matches as expected
+	if (defined($compare_track->album()) &&
+		($compare_track->album() == $current_track->album()) && 
+		(($current_track->tracknum() + $offset) == $compare_track->tracknum())) {
+		return 1;
+	}
+
+	return 0;
+}
+
 sub replayGain {
 	my $client = shift;
 	my $rgmode = $client->prefGet('replayGainMode');
 	
+	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
 
+	my $curr_index = streamingSongIndex($client);
 	my $url = Slim::Player::Playlist::song($client, 
-										   streamingSongIndex($client)) || return 0;
+										   $curr_index) || return 0;
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my $track = $ds->objectForUrl($url) || return 0;
 
+	# Mode 1 is use track gain
 	if ($rgmode == 1) {
 		return $track->replay_gain();
 	}
 	
 	my $album = $track->album();
 
+	# Mode 2 is use album gain
 	if (defined($album) && ($rgmode == 2)) {
 		return $album->replay_gain();
 	}
+
+	# Mode 3 is determine dynamically whether to use album or track
+    if (defined($album) && 
+		$album->replay_gain() &&
+		(trackAlbumMatch($client, -1) || trackAlbumMatch($client, 1))) {
+		return $album->replay_gain();
+	}
+
+	return $track->replay_gain();
 }
 
 # Should we use the inifinite looping option that some players

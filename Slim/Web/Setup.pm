@@ -1098,6 +1098,7 @@ sub initSetupConfig {
 									'0' => string('REPLAYGAIN_DISABLED'),
 									'1' => string('REPLAYGAIN_TRACK_GAIN'),
 									'2' => string('REPLAYGAIN_ALBUM_GAIN'),
+									'3' => string('REPLAYGAIN_SMART_GAIN'),
 								},
 						}
 		}

@@ -33,7 +33,7 @@ our $defaultPrefs = {
 	'idleBrightness'	=> 2,
 	'transitionType'		=> 0,
 	'transitionDuration'		=> 0,
-	'replayGainMode'		=> '2',
+	'replayGainMode'		=> '3',
 	'playingDisplayMode'		=> 6,
 };
 
