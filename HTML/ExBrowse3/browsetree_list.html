@@ -1,0 +1,22 @@
+[% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<tr>
+ <td class="browselistbuttons">
+  <img height="8" onclick="parent.doBrowseTreeCommand('add', '[% itemobj.url | html %]')" src="html/images/add.gif"
+  alt="[%ADD%]" title="[%ADD%]" width="8"/><img onclick="parent.doBrowseTreeCommand('load', '[% itemobj.url | html %]')"
+  src="html/images/play.this.gif" width="5" height="9" alt="[%PLAY%]" title="[%PLAY%]"/>
+ </td>
+ <td class="browselisting">
+  [% IF anchor %]
+   <a name="[% anchor | uri %]"></a>
+  [% END %]
+
+  [% IF descend %]
+   [% IF hierarchy %]<a onclick="parent.browseurl(&quot;browsetree.html?hierarchy=[% hierarchy %]&amp;level=[% level ; attributes | html %]&quot;)">[% END %]
+    [% text | html %]
+   </a>
+  [% ELSE %]
+   <a onclick="parent.browseurl(&quot;songinfo.html?item=[% itemobj.id %]&quot;)">
+    [% text | html %]
+   </a>
+  [% END %]
+ </td>
+</tr>

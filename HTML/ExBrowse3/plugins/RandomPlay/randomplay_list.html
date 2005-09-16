@@ -1,0 +1,31 @@
+[% PLAY = "PLAY" | string ; BLOCK playButton %]
+ <img onclick="parent.browseurl('plugins/RandomPlay/randomplay_mix.html?type=[% type %]');parent.getStatus()"
+  src="[%webroot%]html/images/play.this.gif" width="5" height="9" alt="[%PLAY%]" title="[%PLAY%]"/>
+
+[% END ; PROCESS header.html pwd="yes" clink="0" %]
+
+<div id="pwd">
+ <a onclick="browseurl('plugins/RandomPlay/randomplay_list.html?')">[% "PLUGIN_RANDOM" | string %]</a> /
+</div>
+
+<table style="margin-left: 5px">
+ <tr>
+  <td></td>
+  <td>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</td>
+ </tr>
+ <tr>
+  <td class="browselistbuttons"> [% PROCESS playButton type="track" %] </td>
+  <td class="browselisting"> [% "PLUGIN_RANDOM_SONG_DESC" | string %] </td>
+ </tr>
+ <tr>
+  <td class="browselistbuttons"> [% PROCESS playButton type="artist" %] </td>
+  <td class="browselisting"> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %] </td>
+ </tr>
+ <tr>
+  <td class="browselistbuttons"> [% PROCESS playButton type="album" %] </td>
+  <td class="browselisting"> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %] </td>
+ </tr>
+</table>
+
+</body>
+</html>

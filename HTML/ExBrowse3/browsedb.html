@@ -1,0 +1,23 @@
+[% PROCESS header.html pwd="yes" clink="0" %]
+
+<div id="pwd">
+ [% IF browselist_pagebar %]
+ <span class="pagebar">[% browselist_pagebar %]</span>
+ [% END ; pwd_list %]
+</div>
+
+[% IF warn %]
+ <p>
+  <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+  [% IF audiodir %]
+   [% "SCAN_CLICK" | string %] <a onclick="browseurl('browsetree.html')">[% "HERE" | string %]</a>.
+  [% END %]
+ </p>
+[% END %] 
+
+<table>
+[% browse_list %]
+</table>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+[% ADD = "ADD" | string ;
+   PLAY = "PLAY" | string ;
+   PROCESS header.html pwd="yes" clink="0" scripts="plugins/Favorites/html/fav.js"
+%]
+
+<div id="pwd">
+ <a onclick="browseurl('plugins/Favorites/favorites_list.html?')">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> /
+</div>
+
+[%- IF warning -%]
+<p>
+ [%- warning -%]
+</p>
+[%- END -%]
+
+<ul id="playlist"></ul>
+
+<script type="text/javascript">
+initFavList([
+[% FOREACH fav = titles -%]
+	{ name : "[% fav | html %]", url : "[% faves.$fav | html %]" },
+[% END -%]
+	false
+]);
+</script>
+
+</body>
+</html>
