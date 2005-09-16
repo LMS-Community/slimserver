@@ -342,7 +342,7 @@ GAMES
 	ZH_CN	游戏
 
 PLAYLIST
-	DE	Playlist
+	DE	Wiedergabeliste
 	DK	Playliste
 	EN	Playlist
 	ES	Lista de temas
@@ -531,7 +531,7 @@ ABOUT
 
 REMOVING_FROM_PLAYLIST
 	CZ	Odstranit z playlistu:
-	DE	Aus der Playliste löschen:
+	DE	Aus der Wiedergabeliste löschen:
 	DK	Fjerner fra playlisten:
 	EN	Removing from playlist:
 	ES	Eliminando de la lista:
@@ -546,7 +546,7 @@ REMOVING_FROM_PLAYLIST
 	ZH_CN	正在从播放表中删除：
 
 ZAPPING_FROM_PLAYLIST
-	DE	Zur "Zapped Songs" Playliste verschieben:
+	DE	Zur "Zapped Songs" Liste verschieben:
 	DK	Flytter til playlisten Zappede sange
 	EN	Moving to Zapped Songs playlist:
 	ES	Moviendo a la lista de canciones Zapped:
@@ -573,7 +573,7 @@ ZAPPED_SONGS
 
 ADDING_TO_PLAYLIST
 	CZ	Přidat na konec playlistu
-	DE	Am Ende der Playliste hinzufügen:
+	DE	Am Ende der Wiedergabeliste hinzufügen:
 	DK	Tilføjer til slutning af playlisten:
 	EN	Adding to end of playlist:
 	ES	Añadiendo al final de la lista:
@@ -650,7 +650,7 @@ PLAYING_RANDOMLY_FROM_DBL
 
 CLEARING_PLAYLIST
 	CZ	Vyčistit playlist...
-	DE	Playliste leeren...
+	DE	Wiedergabeliste leeren...
 	DK	Tømmer playlisten...
 	EN	Clearing playlist...
 	ES	Vaciando lista de temas...
@@ -665,7 +665,7 @@ CLEARING_PLAYLIST
 
 VIEWING_PLAYLIST
 	CZ	Nyní hraje...
-	DE	Playlist anschauen...
+	DE	Wiedergabeliste anschauen...
 	DK	Viser playlisten...
 	EN	Now Playing...
 	ES	Mirando la lista de temas...
@@ -681,7 +681,7 @@ VIEWING_PLAYLIST
 
 PLAYLIST_EMPTY
 	CZ	Playlist je prázdný
-	DE	Playlist ist leer
+	DE	Wiedergabeliste ist leer
 	DK	Playlisten er tom
 	EN	Playlist Empty
 	ES	Lista de temas vacía
@@ -767,7 +767,7 @@ REPEAT_ONE
 
 REPEAT_ALL
 	CZ	Opakovat playlist
-	DE	Playlist wiederholen
+	DE	Wiedergabeliste wiederholen
 	DK	Gentag playlisten
 	EN	Repeat playlist
 	ES	Repetir la lista entera
@@ -893,7 +893,7 @@ ALARM_OFF
 
 ALARM_SELECT_PLAYLIST
 	CZ	Vyber playlist pro budík
-	DE	Wählen Sie eine Playliste für den Wecker
+	DE	Wählen Sie eine Wiedergabeliste für den Wecker
 	DK	Vælg playliste for alarmen
 	EN	Select Playlist for Alarm
 	ES	Elegir Lista para Alarma
@@ -1211,7 +1211,7 @@ PROBLEM_OPENING
 
 NO_PLAYLIST_DIR
 	CZ	Chyba: Není uložen žádný playlist.
-	DE	Problem: kein Playlist Ordner
+	DE	Problem: kein Wiedergabelisten Ordner
 	EN	Problem: No Saved Playlist folder.
 	ES	Problem: No existe una carpeta de Listas Guardadas
 	FR	Dossier Listes de lecture enregistrées introuvable.
@@ -2029,7 +2029,7 @@ SETUP_ALARMVOLUME
 
 SETUP_ALARMPLAYLIST
 	CZ	Playlist budíku
-	DE	Playlist für den Wecker
+	DE	Wiedergabeliste für den Wecker
 	DK	Playliste for alarmen
 	EN	Playlist for Alarm
 	ES	Lista de temas para Alarma
@@ -2384,7 +2384,7 @@ SETUP_REPLAYGAINMODE
 	EN	Replay Gain
 
 SETUP_REPLAYGAINMODE_DESC
-	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums.
+	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
 	EN	Some audio tracks contain Replay Gain information - relative volume adjustments that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can be told to use this information if it exists. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 
 REPLAYGAIN_DISABLED
@@ -2400,6 +2400,7 @@ REPLAYGAIN_ALBUM_GAIN
 	EN	Use Album Gain (if present)
 
 REPLAYGAIN_SMART_GAIN
+	DE	"Intelligente" Normalisierung verwenden
 	EN	"Smart" gain selection
 
 SETUP_TRANSITIONTYPE
@@ -2498,7 +2499,7 @@ SETUP_TITLEFORMAT_DESC
 
 SETUP_ITUNESPLAYLISTFORMAT
 	CZ	Formát playlistu iTunes
-	DE	iTunes Playlisten Format
+	DE	iTunes Wiedergabelisten Format
 	EN	iTunes Playlist Format
 	ES	Formato de Lista de iTunes
 	FR	Format des listes de lecture iTunes
@@ -2508,7 +2509,7 @@ SETUP_ITUNESPLAYLISTFORMAT
 	ZH_CN	iTunes播放表
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
-	DE	Diese Option definiert das Format der von iTunes importierten Playlists.
+	DE	Diese Option definiert das Format der von iTunes importierten Wiedergabelisten.
 	EN	This option determines the format used when importing iTunes playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de iTunes.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
@@ -2522,7 +2523,7 @@ ITUNES_PODCASTS
 	ZH_CN	iTunes Podcasts
 
 SETUP_MOODLOGICPLAYLISTFORMAT
-	DE	MoodLogic Playlist Format
+	DE	MoodLogic Wiedergabelisten Format
 	EN	MoodLogic Playlist Format
 	ES	Formato de Lista de MoodLogic
 	FR	Format des listes de lecture MoodLogic
@@ -2532,7 +2533,7 @@ SETUP_MOODLOGICPLAYLISTFORMAT
 	ZH_CN	MoodLogic播放表格式
 
 SETUP_MOODLOGICPLAYLISTFORMAT_DESC
-	DE	Diese Option definiert das Format, in welcher MoodLogic Playlists importiert werden.
+	DE	Diese Option definiert das Format, in welcher MoodLogic Wiedergabelisten importiert werden.
 	EN	This option determines the format used when importing MoodLogic playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de MoodLogic.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
@@ -2542,7 +2543,7 @@ SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	ZH_CN	这个选项决定了引进MoodLogic播放表所使用的格式。
 
 SETUP_MUSICMAGICPLAYLISTFORMAT
-	DE	MusicMagic Playlist Format
+	DE	MusicMagic Wiedergabelisten Format
 	EN	MusicMagic Playlist Format
 	ES	Formato de Lista de MusicMagic
 	FR	Format des listes de lecture MusicMagic
@@ -2551,7 +2552,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT
 	ZH_CN	MusicMagic播放表格式
 
 SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
-	DE	Diese Option definiert das Format, in welcher MusicMagic Playlists importiert werden.
+	DE	Diese Option definiert das Format, in welcher MusicMagic Wiedergabelisten importiert werden.
 	EN	This option determines the format used when importing MusicMagic playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de MusicMagic.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicMagic.
@@ -3008,7 +3009,7 @@ SETUP_AUDIODIR_OK
 
 SETUP_PLAYLISTDIR
 	CZ	Složka s playlisty
-	DE	Playlisten-Ordner:
+	DE	Wiedergabelisten Ordner:
 	DK	Gemte playlister
 	EN	Playlists Folder
 	ES	Carpeta de listas guardadas
@@ -3086,7 +3087,7 @@ SETUP_OK_USING
 
 SETUP_PLAYLISTDIR_OK
 	CZ	Server bude nyní používat tento adresář pro ukládání playlistů:
-	DE	Der Server wird nun Playlisten in diesem Verzeichnis abspeichern:
+	DE	Der Server wird nun Wiedergabelisten in diesem Verzeichnis abspeichern:
 	DK	Serveren vil nu bruge følgende mappe til gemte playlister:
 	EN	The server will now use this directory for saving playlists:
 	ES	El servidor usará esta carpeta para guardar listas:
@@ -3101,7 +3102,7 @@ SETUP_PLAYLISTDIR_OK
 
 SETUP_PLAYLISTDIR_DESC
 	CZ	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
-	DE	Sie können hier das Verzeichnis angeben, in welchem Sie ihre Playlisten auf der Festplatte abgespeichert haben. (Sie können dieses Feld leer lassen, wenn Sie keine Playlisten speichern wollen.)
+	DE	Sie können hier das Verzeichnis angeben, in welchem Sie ihre Wiedergabelisten auf der Festplatte abgespeichert haben. (Sie können dieses Feld leer lassen, wenn Sie keine Wiedergabelisten speichern wollen.)
 	DK	Du kan indtaste stien til mappen hvor dine gemte playlister er placeret på din harddisk. (Lad feltet være tomt, hvis du ikke ønsker at benytte gemte playlister).
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas (déjelo en blanco si no quiere poder guardar listas)
@@ -3155,7 +3156,7 @@ SETUP_STANDARDRESCAN
 	EN	Look for new and changed music
 
 SETUP_PLAYLISTRESCAN
-	DE	Nur nach Playlists suchen
+	DE	Nur nach Wiedergabelisten suchen
 	EN	Only rescan playlists
 	ZH_CN	只重新扫描播放表而已。
 
@@ -3245,7 +3246,7 @@ SETUP_ITUNES_OK
 	ZH_CN	伺服器将引进iTunes信息。
 
 SETUP_ITUNES_DESC
-	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Playlists verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
+	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Wiedergabeliste verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
 	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar l aopción debajo si se quiere importar la información de colección musical de iTunes.
 	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
@@ -3372,7 +3373,7 @@ SETUP_INSTANTMIXMAX
 
 SETUP_INSTANTMIXMAX_DESC
 	CZ	Tato volba určuje maximální počet skladeb, které můžete přidat do playlistu jako Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
-	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Playlist erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
+	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Wiedergabeliste erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
 	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
 	ES	Este es el número máximo de canciones que se quiere en listas creadas como Mezclas Instantáneas. Las Mezclas Instantáneas pueden tener menos canciones, dependiendo del valor de Variedad.
 	FR	Spécifiez le nombre maximum de morceaux que vous souhaitez voir apparaitre dans un Mix instantané. Les Mixes instantanés peuvent comporter un nombre inférieur de morceaux en fonction du réglage Variété.
@@ -4155,7 +4156,7 @@ SETUP_TRANSCODE-MOV_0
 
 SETUP_SAVESHUFFLED
 	CZ	Ukládání náhodně hraných playlistů
-	DE	Zufalls-Playliste speichern
+	DE	Zufalls-Wiedergabelisten speichern
 	EN	Save Shuffled Playlist
 	ES	Guardar Lista Desordenada
 	FR	Sauvegarde des listes de lecture aléatoires
@@ -4166,7 +4167,7 @@ SETUP_SAVESHUFFLED
 
 SETUP_SAVESHUFFLED_DESC
 	CZ	Pokud zvolíte 'uložit playlist' a ten je přehráván náhodně, můžete zvolit, zda se má playlist uložit ve Vámi zadaném pořadí, nebo v náhodném.
-	DE	Wenn Sie eine Playlist speichern, die in zufälliger Reihenfolge wiedergegeben wird, können Sie diese in der Reihenfolge abspeichern, in welcher die Musikstücke hinzugefügt wurden, oder die zufällige Reihenfolge beibehalten.
+	DE	Wenn Sie eine Wiedergabeliste speichern, die in zufälliger Reihenfolge wiedergegeben wird, können Sie diese in der Reihenfolge abspeichern, in welcher die Musikstücke hinzugefügt wurden, oder die zufällige Reihenfolge beibehalten.
 	EN	When you choose to save a playlist, and it's been shuffled, you can choose to save it in the original order the songs were added or in the shuffled order.
 	ES	Cuando se elige guardar una lista, y esta ha sido desordenada, se puede elegir guardarla en su orden original, o en el orden en que quedaron despues de "desordenarlas al azar"
 	FR	Lorsque vous sauvegardez une liste de lecture aléatoire, vous pouvez soit la sauvegarder dans l'ordre original d'ajout des morceaux, soit préserver l'ordre aléatoire.
@@ -4177,7 +4178,7 @@ SETUP_SAVESHUFFLED_DESC
 
 SETUP_SAVESHUFFLED_1
 	CZ	Uložit playlist v zamíchaném pořadí
-	DE	Playlist in zufälliger Reihenfolge speichern
+	DE	Wiedergabeliste in zufälliger Reihenfolge speichern
 	EN	Save playlists in shuffled order
 	ES	Guardar listas en forma desordenada
 	FR	Sauvegarder les listes de lecture dans l'ordre aléatoire
@@ -4188,7 +4189,7 @@ SETUP_SAVESHUFFLED_1
 
 SETUP_SAVESHUFFLED_0
 	CZ	Uložit playlist v zadaném pořadí
-	DE	Playliste so abspeichern, wie die Musikstücke hinzugefügt wurden.
+	DE	Wiedergabelisten so abspeichern, wie die Musikstücke hinzugefügt wurden.
 	EN	Save playlists in order songs were added
 	ES	Guardar las canciones en el orden en que fueron añadidas
 	FR	Sauvegarder les listes de lecture dans l'ordre d'origine
@@ -4629,7 +4630,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	ZH_CN	在浏览及搜寻艺人时，有关作曲家及乐队的歌曲信息可以包括一同显示。
 
 SETUP_PERSISTPLAYLISTS
-	DE	Merken der letzten Playlist
+	DE	Merken der letzten Wiedergabeliste
 	DK	Bevar afspilleres sidste playlister
 	EN	Maintain Client Playlists
 	ES	Mantener Listas de Clientes
@@ -4643,7 +4644,7 @@ SETUP_PERSISTPLAYLISTS
 
 SETUP_PERSISTPLAYLISTS_DESC
 	CZ	Server si může pamatovat poslední playlist, který byl hrán před vypnutím.
-	DE	Der Server kann sich die letzte Playlist merken, die beim Starten des Servers abgespielt wurde.
+	DE	Der Server kann sich die letzte Wiedergabeliste merken, die beim Starten des Servers abgespielt wurde.
 	DK	Serveren kan bevare den sidste playliste for afpillere selvom serveren genstartes.
 	EN	The server can remember the last playlist of songs that were Now Playing when the server starts.
 	ES	El reproductor puede recordar la última lista de canciones que se estaba escuchando cuando el servidor se inicia.
@@ -4657,7 +4658,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 
 SETUP_PERSISTPLAYLISTS_1
 	CZ	Pamatovat playlist
-	DE	Playliste beibehalten
+	DE	Wiedergabeliste beibehalten
 	DK	Bevar sidste playliste
 	EN	Remember playlist
 	ES	Recordar lista
@@ -4671,7 +4672,7 @@ SETUP_PERSISTPLAYLISTS_1
 
 SETUP_PERSISTPLAYLISTS_0
 	CZ	Nepamatovat playlist
-	DE	Playliste nicht beibehalten
+	DE	Wiedergabeliste nicht beibehalten
 	DK	Bevar ikke sidste playliste
 	EN	Do not remember playlist
 	ES	No recordar lista
@@ -4717,7 +4718,7 @@ SETUP_RESHUFFLEONREPEAT
 
 SETUP_RESHUFFLEONREPEAT_DESC
 	CZ	Pokud si budete přát, server může promíchat pořadí playlistu před jeho každým přehráním.
-	DE	Der Server kann nach dem kompletten Durchspielen einer Zufalls-Playlist diese erneut mischen.
+	DE	Der Server kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
 	DK	Serveren kan lave en ny vilkårlig rækkefølge af playlisten når playlisten starter forfra ved gentagelse.
 	EN	The server can reshuffle shuffled playlists after each complete pass through the list, if desired.
 	ES	El servidor puede desordenar al azar las listas después de cada pasada completa por la lista, si se desea.
@@ -5395,7 +5396,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	ZH_CN	CSRF保护程度
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
-	DE	Um Sie gegen "Cross Site Request Forgery" (CSRF) Sicherheitsprobleme zu schützen, prüft SlimServer HTTP Request spezielle, falls diese Änderungen an ihrem System, Playlists oder Player-Einstellungen vornehmen wollen. Sie können das Niveau der Überprüfung für ihren Server definieren. Vorgabe ist "Mittel". Mehr Informationen (Englisch) sind in der <a href="html/docs/http.html#csrf">Hilfe</a> verfügbar.
+	DE	Um Sie gegen "Cross Site Request Forgery" (CSRF) Sicherheitsprobleme zu schützen, prüft SlimServer HTTP Request spezielle, falls diese Änderungen an ihrem System, Wiedergabelisten oder Player-Einstellungen vornehmen wollen. Sie können das Niveau der Überprüfung für ihren Server definieren. Vorgabe ist "Mittel". Mehr Informationen (Englisch) sind in der <a href="html/docs/http.html#csrf">Hilfe</a> verfügbar.
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="html/docs/http.html#csrf">See Help Section</a> for more details.
 	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，SlimServer会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="html/docs/http.html#csrf">帮助部分</a>。
@@ -6092,7 +6093,7 @@ PLAY_THIS_SONG
 
 REMOVE_THIS_SONG_FROM_PLAYLIST
 	CZ	Odtranit skladbu z playlistu
-	DE	Titel aus der Playlist entfernen
+	DE	Titel aus der Wiedergabeliste entfernen
 	DK	Fjern denne sang fra playlisten
 	EN	Remove this song from playlist
 	ES	Remover esta canción de la lista
@@ -6105,7 +6106,7 @@ REMOVE_THIS_SONG_FROM_PLAYLIST
 
 ADD_THIS_SONG_TO_PLAYLIST
 	CZ	Přidat píseň do playlistu
-	DE	Füge diesen Titel zur Playlist hinzu
+	DE	Füge diesen Titel zur Wiedergabeliste hinzu
 	DK	Tilføj denne sang til playlisten
 	EN	Add this song to the playlist
 	ES	Añadir esta canción a la lista
@@ -6388,7 +6389,7 @@ SHUFFLE_ON_ALBUMS
 
 SHUFFLE_ON
 	CZ	Zamíchat playlist
-	DE	Zufälliges Abspielen der Playlist
+	DE	Zufälliges Abspielen der Wiedergabeliste
 	DK	Vilkårlig playliste
 	EN	Shuffle Playlist
 	ES	Al Azar activado
@@ -6404,7 +6405,7 @@ SHUFFLE_ON
 
 SHUFFLE_OFF
 	CZ	Zrušit náhodné přehrávání playlistu
-	DE	Kein zufälliges Abspielen der Playlist
+	DE	Kein zufälliges Abspielen der Wiedergabeliste
 	DK	Ikke-vilkårlig playliste
 	EN	Don't Shuffle Playlist
 	ES	Al Azar desactivado
@@ -6442,7 +6443,7 @@ DISABLED
 
 CLEAR_PLAYLIST
 	CZ	Vyčistit playlist
-	DE	Playlist Löschen
+	DE	Wiedergabeliste Löschen
 	DK	Nulstil playlisten
 	EN	Clear playlist
 	ES	Vaciar lista 
@@ -6655,7 +6656,7 @@ TITLEFORMAT_DBL
 
 CURRENT_PLAYLIST
 	CZ	Aktuální playlist
-	DE	Die aktuelle Playlist
+	DE	Die aktuelle Wiedergabeliste
 	DK	Aktiv playliste
 	EN	The current playlist
 	ES	Lista actual
@@ -6736,7 +6737,7 @@ NAME
 
 SAVED_PLAYLISTS
 	CZ	Procházet playlisty
-	DE	Playlisten nachschlagen
+	DE	Wiedergabelisten nachschlagen
 	DK	Gemte playlister
 	EN	Browse Playlists
 	ES	Elegir de  Listas Guardadas
@@ -6750,7 +6751,7 @@ SAVED_PLAYLISTS
 	ZH_CN	浏览播放表
 
 SAVED_PLAYLISTS_DBL
-	DE	Playlisten
+	DE	Wiedergabeliste
 	FR	Listes de lecture
 	JP	保存されたプレイリスト
 	SE	Låtlistor
@@ -6758,7 +6759,7 @@ SAVED_PLAYLISTS_DBL
 
 PLAYLISTDIR
 	CZ	Adresář uložených playlistů
-	DE	Verzeichnis für Playlisten
+	DE	Verzeichnis für Wiedergabelisten
 	DK	Mappe med playlister
 	EN	Saved Playlists Folder
 	ES	Carpeta de Listas Guardadas
@@ -6773,7 +6774,7 @@ PLAYLISTDIR
 
 PLAYLISTDIR_IS_NOW
 	CZ	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
-	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Playlisten gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Playlists speichern wollen)
+	DE	Sie können den Pfad zu dem Verzeichnis angeben, in welchem Sie ihre Wiedergabelisten gespeichert haben. (Sie können das Feld leer lassen, wenn Sie keine Wiedergabelisten speichern wollen)
 	DK	Du kan angive stien til en mappe hvor dine gemte playlister er placeret. Lad feltet være tomt hvis du ikke ønsker at anvende gemte playlister.
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas en su disco duro (déjelo en blanco si no quiere poder guardar listas).
@@ -6788,7 +6789,7 @@ PLAYLISTDIR_IS_NOW
 
 THIS_PLAYLIST_AS
 	CZ	tento playlist jako:
-	DE	dieser Playlist zu:
+	DE	diese Wiedergabeliste als:
 	DK	denne playliste som:
 	EN	this playlist as:
 	ES	esta lista como:
@@ -6802,7 +6803,7 @@ THIS_PLAYLIST_AS
 
 SAVE_THIS_PLAYLIST_AS
 	CZ	Uložit playlist jako:
-	DE	Diese Playlist speichern als:
+	DE	Diese Wiedergabeliste speichern als:
 	DK	Gem denne playliste som:
 	EN	Save this playlist as:
 	ES	Guardar esta lista como:
@@ -6832,7 +6833,7 @@ UNTITLED
 
 THIS_ENTIRE_PLAYLIST
 	CZ	Tenhle celý playlist
-	DE	Diese vollständige Playlist
+	DE	Diese vollständige Wiedergabeliste
 	DK	Hele denne playliste
 	EN	This entire playlist
 	ES	Esta lista completa
@@ -6847,7 +6848,7 @@ THIS_ENTIRE_PLAYLIST
 
 REMOVE_FROM_PLAYLIST
 	CZ	Odstranit z playlistu
-	DE	Aus Playlist entfernen
+	DE	Aus Wiedergabeliste entfernen
 	DK	Fjern denne playlist
 	EN	Remove from playlist
 	ES	Eliminar de la lista
@@ -7978,7 +7979,7 @@ NOTE
 
 RENAME_WARNING
 	CZ	Název playlistu je již použit. Vyberte prosím jiný, nebo klikněte na 'potvrzuji přepsání' pro změnu obsahu tohoto playlistu.
-	DE	Der gewählte Name wird bereits verwendet. Bitte verwenden Sie einen anderen Namen für die Playlist oder kreuzen Sie "Überschreiben bestätigen" an.
+	DE	Der gewählte Name wird bereits verwendet. Bitte verwenden Sie einen anderen Namen für die Wiedergabeliste oder kreuzen Sie "Überschreiben bestätigen" an.
 	DK	Det valgte navn er optaget. Vælg venligst et andet navn for din playliste.
 	EN	The name you chose is already taken. Please choose another name for your playlist, or check 'confirm overwrite' to replace your existing playlist.
 	ES	El nombre elegido ya se encuentra en uso. Por favor utilice otro nombre para su lista, o indicar que se "confirma sobre-esctirura" para reemplazar la lista existente.
@@ -7991,7 +7992,7 @@ RENAME_WARNING
 	ZH_CN	您选择的名字已被使用。请选择其它的播放表名字，或选择《确定重写》替换您现有的播放表。
 
 DELETE_WARNING
-	DE	Soll die Playlist wirklich gelöscht werden? 
+	DE	Soll die Wiedergabeliste wirklich gelöscht werden? 
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
 	ZH_CN	您确定要删除吗？请选择《确定删除》来删除您的播放表。
 
@@ -8979,7 +8980,7 @@ NEED_PATH
 
 NEED_PLAYLIST_PATH
 	CZ	Specifikujte cestu k adresáři pro ukládání playlistů.
-	DE	Sie müssen das Verzeichnis ihrer abgespeicherten Playlisten angeben.
+	DE	Sie müssen das Verzeichnis mit den abgespeicherten Wiedergabelisten angeben.
 	DK	Du skal angive stien til mappen med dine gemte playlister.
 	EN	You need to specify a path to a directory for your saved playlist files.
 	ES	Es necesario especificar el camino a la carpeta que contiene los archivos de listas guardadas.
@@ -9557,7 +9558,7 @@ RADIO_TUNEIN_NOW
 	EN	Tune In Now
 
 RADIO_TUNEIN_DESC
-	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Playlist, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
+	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Wiedergabeliste, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
 
 RADIO_TUNEIN_RADIOURL
@@ -9718,7 +9719,7 @@ STATISTICS
 
 EDIT_PLAYLIST
 	CZ	Editovat playlist
-	DE	Playliste bearbeiten
+	DE	Wiedergabeliste bearbeiten
 	EN	Edit Playlist
 	ES	Editar Lista
 	FR	Modifier la liste de lecture
@@ -9777,7 +9778,7 @@ URL
 
 SAVE_PLAYLIST
 	CZ	Uložit playlist
-	DE	Playlist speichern
+	DE	Wiedergabeliste speichern
 	EN	Save Playlist
 	ES	Guardar Lista
 	FR	Enregistrer la liste de lecture
@@ -9788,7 +9789,7 @@ SAVE_PLAYLIST
 
 PLAYLIST_SAVE
 	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
-	DE	Zum Speichern der Playlist RECHTS drücken:
+	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:
 	EN	Press RIGHT again to save playlist as:
 	ES	Presionar DERECHA para guardar la lista como:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
@@ -9799,7 +9800,7 @@ PLAYLIST_SAVE
 
 PLAYLIST_AS
 	CZ	Uložit aktuální playlist jako:
-	DE	Playliste unter folgendem Namen speichern:
+	DE	Wiedergabeliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
 	ES	Guardar la lista actual como:
 	FR	Enregistrer la liste de lecture sous :
@@ -9810,7 +9811,7 @@ PLAYLIST_AS
 
 PLAYLIST_SAVING
 	CZ	Uložit aktuální playlist jako:
-	DE	Speichere Playlist als:
+	DE	Speichere Wiedergabeliste als:
 	EN	Saving current playlist as:
 	ES	Guardando la lista actual como:
 	FR	Enregistre la liste de lecture sous :
@@ -10337,37 +10338,37 @@ SETUP_SCROLLMODE_NOSCROLL
 	ZH_CN	不要卷动
 
 COMPILATION
-	DE	Kompilationen
+	DE	Sampler
 	EN	Compilation
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTS
-	DE	Kompilationen
+	DE	Sampler
 	EN	Compilations
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
-	DE	Kompilationen
+	DE	Sampler Alben
 	EN	Compilation Albums
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder bei den einzelnen Interpreten aufzulisten.
+	DE	Sie können Sampler (Alben mit mehreren Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder bei den einzelnen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
-	DE	Kompilationen gruppiert auflisten
+	DE	Sampler gruppiert auflisten
 	EN	Group compilation albums together
 	ZH_CN	把合辑组合在一起
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
-	DE	Lieder aus Kompilationen den Interpreten zuordnen
+	DE	Lieder aus Samplern den Interpreten zuordnen
 	EN	List compilation albums under each artist
 	ZH_CN	把合辑发表在个别艺人中
 
 SETUP_VARIOUSARTISTSSTRING_DESC
-	DE	Wenn Kompilationen gruppiert aufgeführt werden, so sind sie per Voreinstellung unter "Diverse Interpreten" zu finden. Dieser Text kann hier geändert werden.
+	DE	Wenn Sampler gruppiert aufgeführt werden, so sind sie per Voreinstellung unter "Diverse Interpreten" zu finden. Dieser Text kann hier geändert werden.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
 
@@ -10407,7 +10408,7 @@ SETUP_POWERONRESUME
 	EN	Power On Resume
 
 SETUP_POWERONRESUME_DESC
-	DE	Sie können bestimmen, wie SlimServer Playlists behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
+	DE	Sie können bestimmen, wie SlimServer Wiedergabelisten behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
 	EN	You can choose how your player should resume the current playlist when you press the POWER button to turn the player off and then again to turn it on again later.  This setting applies to this player and other players while they are synchonized to this player.
 
 SETUP_POWERONRESUME_PAUSEOFF_NONEON
@@ -10427,9 +10428,9 @@ SETUP_POWERONRESUME_STOPOFF_NONEON
 	EN	Stop at power off / Remain stopped at power on
 
 SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
-	DE	Beim Ausschalten anhalten / Playliste beim Einschalten neu starten
+	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten neu starten
 	EN	Stop at power off / Restart playlist at power on
 
 SETUP_POWERONRESUME_STOPOFF_RESETON
-	DE	Beim Ausschalten anhalten / Playliste beim Einschalten nicht neu starten
+	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten nicht neu starten
 	EN	Stop at power off / Reset playlist at power on
