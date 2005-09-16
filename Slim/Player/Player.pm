@@ -1170,6 +1170,7 @@ sub power {
 	unless ($on) {
 		# turning player off - move to off mode and unsync/pause/stop player
   
+		$client->killAnimation();
 		$client->brightness($client->prefGet("powerOffBrightness"));
 		Slim::Buttons::Common::setMode($client, 'off');
 			  

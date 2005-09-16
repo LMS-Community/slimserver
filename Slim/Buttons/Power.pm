@@ -41,15 +41,15 @@ sub setMode {
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
 
-	# this is a date-time screen, so it should get updated every second
-	$client->param('modeUpdateInterval', 1);
-
 	$client->update();
+
+	# kick ScreenSaver::ScreenSaver to switch to off screensaver
+	Slim::Utils::Timers::killTimers($client, \&Slim::Buttons::ScreenSaver::screenSaver);
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Buttons::ScreenSaver::screenSaver);
 }
 
 sub lines {
-	my $client = shift;
-	return Slim::Buttons::Common::dateTime($client);
+	return {};
 }
 
 1;
