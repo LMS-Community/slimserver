@@ -150,48 +150,12 @@ if (document.all||document.getElementById)
 <table bgcolor="#FFFFFF" border="0" cellspacing="0" cellpadding="3">
 <tr><td valign="bottom" height="70" width="100"><img src="html/images/vol_symbol.gif"></td>
 
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=5&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '5' %]_active[% END %].gif" border="0" width="50" height="6"></td>
-       
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '10' %]_active[% END %].gif" border="0" width="50" height="12"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=15&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '15' %]_active[% END %].gif" border="0" width="50" height="18"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '20' %]_active[% END %].gif" border="0" width="50" height="24"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '30' %]_active[% END %].gif" border="0" width="50" height="30"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '40' %]_active[% END %].gif" border="0" width="50" height="36"></td>       
-
-
-
-[% IF volume > '39' %]
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '50' %]_active[% END %].gif" border="0" width="50" height="42"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '60' %]_active[% END %].gif" border="0" width="50" height="48"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '80' %]_active[% END %].gif" border="0" width="50" height="54"></td>
-
-
-<td onclick="location.href='status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == '100' %]_active[% END %].gif" border="0" width="50" height="60"></td>
-
+[% IF volume < 39 ;vol=['5','10','15','20','30',40]; ELSE ;vol=['5','10','15','20','30','40','50','60','80','100']; END %]
+[% FOREACH level IN vol %]
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% level %]&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == level %]_active[% END %].gif" border="0" width="50" height="[% loop.count*6 %]"></td>
 [% END %]
+
 </tr>
 </table>
 </p>
@@ -199,140 +163,38 @@ if (document.all||document.getElementById)
 
 
 <br>
+[% FOREACH tone = ['bass','treble'] %]
 <table width="100%" border="0" cellspacing="0" cellpadding="4">
-<tr><td width="100"><img src="html/images/bass_symbol.gif"></td>
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '10' %]_active[% END %].gif" border="0" width="25" height="3"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '20' %]_active[% END %].gif" border="0" width="25" height="6"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '30' %]_active[% END %].gif" border="0" width="25" height="9"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '40' %]_active[% END %].gif" border="0" width="25" height="12"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '50' %]_active[% END %].gif" border="0" width="25" height="15"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '60' %]_active[% END %].gif" border="0" width="25" height="18"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=70&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '70' %]_active[% END %].gif" border="0" width="25" height="21"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '80' %]_active[% END %].gif" border="0" width="25" height="24"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=90&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '90' %]_active[% END %].gif" border="0" width="25" height="27"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=bass&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF bass == '100' %]_active[% END %].gif" border="0" width="25" height="30"></td>
+<tr><td width="100"><img src="html/images/[% tone %]_symbol.gif"></td>
+[% FOREACH level=['10','20','30','40','50','60','70','80','90','100'] %]
+<td width="25" onclick="location.href='status.html?p0=mixer&p1=[% tone %]&p2=[% level %]&player=[% player | uri %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF $tone == level %]_active[% END %].gif" border="0" width="25" height="[% loop.count*3 %]"></td>
+[% END %]
 <td></td>
 </tr></table>
-
-
-
-<table width="100%" border="0" cellspacing="0" cellpadding="4">
-
-
-<tr><td width="100"><img src="html/images/treble_symbol.gif"></td>
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=10&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '10' %]_active[% END %].gif" border="0" width="25" height="3"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=20&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '20' %]_active[% END %].gif" border="0" width="25" height="6"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=30&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '30' %]_active[% END %].gif" border="0" width="25" height="9"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=40&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '40' %]_active[% END %].gif" border="0" width="25" height="12"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=50&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '50' %]_active[% END %].gif" border="0" width="25" height="15"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=60&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '60' %]_active[% END %].gif" border="0" width="25" height="18"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=70&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '70' %]_active[% END %].gif" border="0" width="25" height="21"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=80&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '80' %]_active[% END %].gif" border="0" width="25" height="24"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=90&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '90' %]_active[% END %].gif" border="0" width="25" height="27"></td>
-
-
-<td width="25" onclick="location.href='status.html?p0=mixer&p1=treble&p2=100&player=[% player | uri %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF treble == '100' %]_active[% END %].gif" border="0" width="25" height="30"></td>
-
-<td></td>
-
-</tr></table>
+[% END %]
 
 <table width="100%" border="0"><tr><td height="25"></td></tr></table>
-
-
-
 
 <table width="100%" border="0" cellspacing="0" cellpadding="7" align="left">
 <tr><td width="100"><img src="html/images/repeat_symbol.gif"></td>
 
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]'">
-<img src="html/images/song_symbol[% IF repeatone %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
-
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]'">
-<img src="html/images/playlist_symbol[% IF repeatall %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
-<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]'">
-<img src="html/images/off_symbol[% IF repeatoff %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
+[% FOREACH type= ['off_symbol','song_symbol','playlist_symbol'] %]
+<td width="60" align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% player | uri %]&start=[% start %]'">
+<img src="html/images/[% type %][% IF repeat==loop.index %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
+[% END %]
 
 <td width="60"></td>
 <td width="60"></td>
 <td></td>
 
-
 </tr><tr>
 
-
 <td><img src="html/images/shuffle_symbol.gif"></td>
-
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]'">
-<img src="html/images/song_symbol[% IF shuffleon %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
-
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]'">
-<img src="html/images/album_symbol[% IF shufflealbum %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
-
-<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]'">
-<img src="html/images/off_symbol[% IF shuffleoff %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
-
+[% FOREACH type = ['off_symbol','song_symbol','album_symbol'] %]
+<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% player | uri %]'">
+<img src="html/images/[% type %][% IF shuffle==loop.index %]_active[% END %].gif" border="0" width="40" height="40"></a></td>
+[% END %]
 <td></td><td></td><td></td></tr>
 
 <!-- Sleep

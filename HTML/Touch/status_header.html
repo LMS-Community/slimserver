@@ -55,17 +55,17 @@
 <tr>
     <td><font size="-1"><b>[% "REPEAT" | string %]</b></font></td>
     <td>
-    <a href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b>[% END %]<font size="-1">[% "MCONE" | string %]</font>[% IF repeatone %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b>[% END %]<font size="-1">[% "MCALL" | string %]</font>[% IF repeatall %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b>[% END %]<font size="-1">[% "MCOFF" | string %]</font>[% IF repeatoff %]</b>[% END %]</a>
+	[% FOREACH type = ['MCOFF','MCONE','MCALL'] %]
+		<a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% IF repeat==loop.index %]<b>[% END %]<font size="-1">[% type | string %]</font>[% IF repeat==loop.index %]</b>[% END %]</a>[% IF !loop.last %]&nbsp;[% END %]
+	[% END %]
     </td>
 </tr>
 <tr>
     <td><font size="-1"><b>[% "SHUFFLE" | string %]</b></font></td>
     <td>
-    <a href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b>[% END %]<font size="-1">[% "SONG" | string %]</font>[% IF shuffleon %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=shuffle&p2=2&player=[% player | uri %]">[% IF shufflealbum %]<b>[% END %]<font size="-1">[% "ALBUM" | string %]</font>[% IF shufflealbum %]</b>[% END %]</a>&nbsp;
-    <a href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b>[% END %]<font size="-1">[% "MCOFF" | string %]</font>[% IF shuffleoff %]</b>[% END %]</a>
+	[% FOREACH type = ['MCOFF','SONG','ALBUM'] %]
+		<a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% IF shuffle==loop.index %]<b>[% END %]<font size="-1">[% type | string %]</font>[% IF shuffle==loop.index %]</b>[% END %]</a>[% IF !loop.last %]&nbsp;[% END %]
+	[% END %]
     </td>
 </tr>
 <tr>
