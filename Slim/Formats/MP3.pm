@@ -73,7 +73,8 @@ sub getTag {
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
 	# Pull out Relative Volume Adjustment information
-	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
+	# Disable for now - we need to convert to dB first.
+	if (0 && $info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
 
 		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
