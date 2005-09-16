@@ -297,7 +297,7 @@ PLUGIN_FAVORITES_PLAYING
 	ES	Se está escuchando favorita #%s
 
 PLUGIN_FAVORITES_ADDING
-	DE	Füge Favorit Nr. %s zur Playlist hinzu...
+	DE	Füge Favorit Nr. %s zur Wiedergabeliste hinzu...
 	EN	Adding favorite #%s
 	ES	Añadiendo favorita #%s
 ";}
