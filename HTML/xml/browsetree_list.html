@@ -1,0 +1,18 @@
+<browse_entry>
+	[% IF descend %]
+		<dir>
+			<dir_name><![CDATA[[% text | html %]]]></dir_name>
+			<dir_browse_url>
+				[% IF itemobj.isPlaylist %]
+					<![CDATA[xml/browsedb.xml?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %][% noEdit %]&player=[% player | uri %]]]>
+				[% ELSE %]
+					<![CDATA[xml/browsetree.xml?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]]]>
+				[% END %]
+			</dir_browse_url>
+		</dir>
+	[% ELSE %]
+		[% PROCESS _xml_song.html %]
+	[% END %]
+	<replace_url><![CDATA[xml/status.xml?p0=playlist&p1=play&p2=[% itemobj.url | uri %]&player=[% player | uri %]]]></replace_url>
+	<append_url><![CDATA[xml/status.xml?p0=playlist&p1=append&p2=[% itemobj.url | uri %]&player=[% player | uri %]]]></append_url>
+</browse_entry>
