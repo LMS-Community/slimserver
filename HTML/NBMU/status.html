@@ -57,26 +57,18 @@
 [% "PLAY" | string %][% IF modeplay %]</font></b>[% END %]</a> <a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b><font color="#FF0000">[% END %][% "PAUSE" | string %][% IF modepause %]</font></b>[% END %]</a> 
 
       <a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b><font color="#FF0000">[% END %][% "STOP" | string %][% IF modestop %]</font></b>[% END %]</a> 
-[% "REPEAT" | string %][% "COLON" | string %]
-[%- FOREACH type = ['off','one','all'] -%]
-<a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% IF repeat==loop.index %]<b><font color="#FF0000">[% END %][%- type|string|lower -%][% IF repeat==loop.index %]</font></b>[% END -%]</a>[%- IF !loop.last %]/[% END -%]
-[% END -%] 
-[% "SHUFFLE" | string %][% "COLON" | string %]
-[% FOREACH type = ['off','songs','albums'] -%]
-<a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% IF shuffle==loop.index %]<b><font color="#FF0000">[% END %][%- type | string | lower -%][% IF shuffle==loop.index %]</font></b>[% END %]</a>[% IF !loop.last %]/[% END -%]
-[% END -%]
+&nbsp;[% PROCESS statecontrol.html state='repeat' modes=['off','one','all'] activeon='<b><font color="#FF0000">' activeoff='</b></font>' activelink='1' %]
+ 
+&nbsp;[% PROCESS statecontrol.html state='shuffle' modes=['off','songs','albums'] activeon='<b><font color="#FF0000">' activeoff='</b></font>' activelink='1' %]
       <br>
 
       [% IF coverThumb %]
 	<a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100"></a>
 	[% END %]
-
       <br>
-      [% "VOLUME" | string %][% "COLON" | string %]<a href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a>
-[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
-	<a href="status.html?p0=mixer&p1=volume&p2=[% vol %]&player=[% player | uri %]&start=[% start %]">[% IF volume == vol %]<b><font color="#FF0000">[% END %][% loop.count %][% IF volume == vol %]</font></b>[% END %]</a>
-[%- END %]  
-<a href="status.html?p0=mixer&p1=volume&p2=%2b10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a> [% playlist %] </td>
+[% PROCESS volumecontrol.html activeon='<b><font color="#FF0000">' activeoff='</b></font>' %]
+
+[% playlist %] </td>
 </tr>
 </table>
 <p>&nbsp;</p>

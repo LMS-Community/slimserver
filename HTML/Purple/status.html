@@ -27,29 +27,13 @@
     <a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a>
     <a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a>
 
-    [% "REPEAT" | string %][% "COLON" | string %]<a
-             	href="status.html?p0=playlist&p1=repeat&p2=1&player=[% player | uri %]&start=[% start %]">[% IF repeatone %]<b>[% END %][% "ONE" | string %][% IF repeatone %]</b>[% END %]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=2&player=[% player | uri %]&start=[% start %]">[% IF repeatall %]<b>[% END %][% "ALL" | string %][% IF repeatall %]</b>[% END %]</a>/<a 
-                href="status.html?p0=playlist&p1=repeat&p2=0&player=[% player | uri %]&start=[% start %]">[% IF repeatoff %]<b>[% END %][% "OFF" | string %][% IF repeatoff %]</b>[% END %]</a>
+<br>[% PROCESS statecontrol.html state='repeat' modes=['off','one','all'] %]
+<br>[% PROCESS statecontrol.html state='shuffle' modes=['off','songs','albums'] %]
 
-    [% "SHUFFLE" | string %][% "COLON" | string %]<a
-    		href="status.html?p0=playlist&p1=shuffle&p2=1&player=[% player | uri %]">[% IF shuffleon %]<b>[% END %][% "ON" | string %][% IF shuffleon %]</b>[% END %]</a>/<a
-                href="status.html?p0=playlist&p1=shuffle&p2=0&player=[% player | uri %]">[% IF shuffleoff %]<b>[% END %][% "OFF" | string %][% IF shuffleoff %]</b>[% END %]</a>
-<br><br>[% "VOLUME" | string %][% "COLON" | string %]<a
-	  href="status.html?p0=mixer&p1=volume&p2=-10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=0&player=[% player | uri %]&start=[% start %]">[% IF volume == '0' %]<b>[% END %]1[% IF volume == '0' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=10&player=[% player | uri %]&start=[% start %]">[% IF volume == '10' %]<b>[% END %]2[% IF volume == '10' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=20&player=[% player | uri %]&start=[% start %]">[% IF volume == '20' %]<b>[% END %]3[% IF volume == '20' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=30&player=[% player | uri %]&start=[% start %]">[% IF volume == '30' %]<b>[% END %]4[% IF volume == '30' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=40&player=[% player | uri %]&start=[% start %]">[% IF volume == '40' %]<b>[% END %]5[% IF volume == '40' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=50&player=[% player | uri %]&start=[% start %]">[% IF volume == '50' %]<b>[% END %]6[% IF volume == '50' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=60&player=[% player | uri %]&start=[% start %]">[% IF volume == '60' %]<b>[% END %]7[% IF volume == '60' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=70&player=[% player | uri %]&start=[% start %]">[% IF volume == '70' %]<b>[% END %]8[% IF volume == '70' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=80&player=[% player | uri %]&start=[% start %]">[% IF volume == '80' %]<b>[% END %]9[% IF volume == '80' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=90&player=[% player | uri %]&start=[% start %]">[% IF volume == '90' %]<b>[% END %]10[% IF volume == '90' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=100&player=[% player | uri %]&start=[% start %]">[% IF volume == '100' %]<b>[% END %]11[% IF volume == '100' %]</b>[% END %]</a>
-       <a href="status.html?p0=mixer&p1=volume&p2=%2b10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a>
-      [% IF not playlist %][% "EMPTY" | string %][% END %][% playlist %]
+<br><br>
+[% PROCESS volumecontrol.html %]
+
+[% IF not playlist %][% "EMPTY" | string %][% END %][% playlist %]
   </body>
 </html>
 
