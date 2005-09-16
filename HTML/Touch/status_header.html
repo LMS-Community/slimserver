@@ -49,8 +49,8 @@
 <tr>
     <td><font size="-1"><b>[% "MUTE" | string %]</b></font></td>
     <td>
-    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1"><font size="-1">[% IF volume < '1' %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;
-    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0"><font size="-1">[% IF volume > '0' %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
+    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1"><font size="-1">[% IF mute %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;
+    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0"><font size="-1">[% IF NOT mute %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
 </tr>
 <tr>
     <td><font size="-1"><b>[% "REPEAT" | string %]</b></font></td>

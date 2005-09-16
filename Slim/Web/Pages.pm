@@ -297,6 +297,7 @@ sub status {
 
 			$params->{'sleeptime'} = $client->currentSleepTime();
 			$params->{'isplayer'}  = 1;
+			$params->{'mute'}      = $client->prefGet('mute');
 			$params->{'volume'}    = int($client->prefGet("volume") + 0.5);
 			$params->{'bass'}      = int($client->bass() + 0.5);
 			$params->{'treble'}    = int($client->treble() + 0.5);

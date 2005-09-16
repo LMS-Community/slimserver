@@ -151,7 +151,7 @@
 							[% PROCESS playctl command='p0=playlist&p1=jump&p2=%2b1' img='forward' condition='0' -%]
 							[% PROCESS playctl command='p0=pause' img='pause' condition=modepause -%]
 						[% IF isplayer %]
-							[% PROCESS playctl command='p0=button&p1=muting' img='mute' condition=volume < '0' -%]
+							[% PROCESS playctl command='p0=button&p1=muting' img='mute' condition=mute -%]
 						[% END -%]
 					</tr>
 				</table></td>

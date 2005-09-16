@@ -78,12 +78,9 @@
 		[% IF playlistname %]
 			<tr>
 				<td class="odd">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-
-				<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr></td>
-
-				<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr></td>
+				<td class="odd"><nobr><a href="status.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr></td>
+				<td class="odd"><nobr><a href="status.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr></td>
 			</tr>
-
 		[% END %]
 
 		[% browse_list %]
