@@ -52,8 +52,10 @@
 				url = "tunein.html"
 				suffix = "?page=RADIO_TUNEIN"
 			}
-			setCookie("SlimServer-Browserpage",url + suffix);
-			parent.browser.location = url + suffix + '&player=[% player | uri %]';
+			if (option) {
+				setCookie("SlimServer-Browserpage",url + suffix);
+				parent.browser.location = url + suffix + '&player=[% player | uri %]';
+			}
 		}
 		
 		-->

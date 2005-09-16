@@ -4,6 +4,7 @@
 	[% PROCESS customheader.html %]
 <script>
 <!-- HIDE
+[% IF undock %]self.close();[% END %]
 function checkLoad ()
 {
 	if (top.document.getElementById('player_frame'))
