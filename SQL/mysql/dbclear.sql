@@ -14,6 +14,8 @@ DELETE FROM contributors;
 
 DELETE FROM contributor_track;
 
+DELETE FROM contributor_album;
+
 DELETE FROM genres;
 
 DELETE FROM genre_track;

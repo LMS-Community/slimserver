@@ -12,6 +12,8 @@ DROP TABLE contributors;
 
 DROP TABLE contributor_track;
 
+DROP TABLE contributor_album;
+
 DROP TABLE genres;
 
 DROP TABLE genre_track;
