@@ -234,6 +234,7 @@ sub render {
 		if ($fonts->{line1} != $cfonts->{line1}) {
 			$cfonts->{line1} = $fonts->{line1};
 			$cache->{line1} = undef; $cache->{line1bits} = ''; $cache->{line1finish} = 0;
+			$cache->{changed} = 1;
 		}
 		if ($fonts->{line2} != $cfonts->{line2}) {
 			$cfonts->{line2} = $fonts->{line2};
@@ -241,20 +242,25 @@ sub render {
 			$cache->{scrollbitsref} = undef;
 			$cache->{scrolling} = 0; $cache->{ticker} = 0; $cache->{restartticker} = 1;
 			$cache->{line2height} = Slim::Display::Graphics::extent(${$fonts->{line2}});
+			$cache->{changed} = 1;
 		}
 		if ($fonts->{overlay1} != $cfonts->{overlay1}) {
 			$cfonts->{overlay1} = $fonts->{overlay1};
 			$cache->{overlay1} = undef; $cache->{overlay1bits} = ''; $cache->{overlay1start} = $screensize;
+			$cache->{changed} = 1;
 		}
 		if ($fonts->{overlay2} != $cfonts->{overlay2}) {
 			$cfonts->{overlay2} = $fonts->{overlay2};
 			$cache->{overlay2} = undef; $cache->{overlay2bits} = ''; $cache->{overlay2start} = $screensize;
+			$cache->{changed} = 1;
 		}
 		if ($fonts->{center1} != $cfonts->{center1}) {
 			$cfonts->{center1} = $fonts->{center1}; $cache->{center1} = undef; $cache->{center1bits} = '';
+			$cache->{changed} = 1;
 		}
 		if ($fonts->{center2} != $cfonts->{center2}) {
 			$cfonts->{center2} = $fonts->{center2}; $cache->{center2} = undef; $cache->{center2bits} = '';
+			$cache->{changed} = 1;
 		}
 		$cfonts = $fonts if $default;
 	}
