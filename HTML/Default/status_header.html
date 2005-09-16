@@ -71,7 +71,7 @@ function switchPlayer(player_List){
 					[% IF loop.first %][% IF volume != '0' %]<a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player=[% player | uri %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_1[% IF volume == '0' %]_sel[% END %].gif" alt="1" width="13" height="13">[% IF volume != '0' %]</a>[% END %]
 					[% ELSE %]
 						[%- IF  (volume < loop.prev +1 || volume > vol) %]<a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% END %]
-						<img src="html/images/nav_[% loop.count %][%- IF  (!loop.first && volume > loop.prev && volume <= vol) %]_sel[% END %].gif" alt="[% loop.count +1 %]" width="13" height="13">
+						<img src="html/images/nav_[% loop.count %][%- IF  (!loop.first && volume > loop.prev && volume <= vol) %]_sel[% END %].gif" alt="[% loop.count %]" width="13" height="13">
 						[%- IF  (volume < loop.prev +1 || volume > vol) %]</a>[% END %]
 					[% END %]
 				[%- END %]
