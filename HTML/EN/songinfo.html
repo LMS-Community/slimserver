@@ -167,7 +167,7 @@
 			[% "LOCATION" | string; "COLON" | string %]
 		</td>
 		<td>
-			[% track.path | unuri | utf8decode | html %]<a href="[% download %]">([% "DOWNLOAD" | string %])</a>
+			[% track.path | unuri | utf8decode | html %]<a href="[% download %]"> ([% "DOWNLOAD" | string %])</a>
 		</td>
 	</tr>
 	[% END %]
@@ -180,8 +180,25 @@
 			[% track.modificationTime | html %]
 		</td>
 	</tr>
-	[% END %]
-	[% IF track.drm %]
+	[% END %] [% IF track.replay_gain %] 
+	<tr>
+		<td>
+			[% "REPLAYGAIN" | string; "COLON" | string %]
+		</td>
+		<td>
+			[% track.replay_gain | format('%2.2f') | html %] dB
+		</td>
+	</tr>
+	[% END %] [% IF track.album.replay_gain %] 
+	<tr>
+		<td>
+			[% "ALBUMREPLAYGAIN" | string; "COLON" | string %]
+		</td>
+		<td>
+			[% album.track.replay_gain | format('%2.2f') | html %] dB
+		</td>
+	</tr>
+	[% END %] [% IF track.drm %]
 	<tr>
 		<td>
 			[% "NOTE" | string %]

@@ -125,6 +125,16 @@
                         <font size="+1">[% track.year %]
                 </td>
         </tr>
+		[% END %] [% IF track.replay_gain %] 
+		<tr> 
+			<td><font size="+1">[% "REPLAYGAIN" | string; "COLON" | string %]</td>
+			<td><font size="+1">[% track.replay_gain | format('%2.2f') | html %] dB</td>
+		</tr>
+		[% END %] [% IF track.album.replay_gain %] 
+		<tr> 
+			<td><font size="+1">[% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
+			<td><font size="+1">[% track.album.replay_gain | format('%2.2f') | html %] dB</td>
+		</tr>
         [% END %] [% IF comment %]
         <tr>
                 <td><font size="+1">

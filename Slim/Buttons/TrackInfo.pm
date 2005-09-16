@@ -293,8 +293,10 @@ sub preloadLines {
 			push (@{$client->trackInfoContent}, uc($role));
 		}
 	}
-
-	if (my $album = $track->album) {
+	
+	my $album = $track->album;
+	
+	if ($album) {
 		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
@@ -327,6 +329,18 @@ sub preloadLines {
 	if (my $duration = $track->duration) {
 		push (@{$client->trackInfoLines}, $client->string('LENGTH') . ": $duration");
 		push (@{$client->trackInfoContent}, undef);
+	}
+
+	if (my $replaygain = $track->replay_gain) {
+		push (@{$client->trackInfoLines}, $client->string('REPLAYGAIN') . ": " . sprintf("%2.2f",$replaygain) . " dB");
+		push (@{$client->trackInfoContent}, undef);
+	}
+	
+	if ($album) {
+		if (my $albumreplaygain = $album->replay_gain) {
+			push (@{$client->trackInfoLines}, $client->string('ALBUMREPLAYGAIN') . ": " . sprintf("%2.2f",$albumreplaygain) . " dB");
+			push (@{$client->trackInfoContent}, undef);
+		}
 	}
 
 	if (my $bitrate = $track->bitrate) {

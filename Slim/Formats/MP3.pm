@@ -73,13 +73,20 @@ sub getTag {
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
 	# Pull out Relative Volume Adjustment information
-	# Disable for now - we need to convert to dB first.
-	if (0 && $info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
+	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
 
-		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+		$info->{'REPLAYGAIN_TRACK_PEAK'} = $info->{'RVAD'}->{'RIGHT'}->{'REPLAYGAIN_TRACK_PEAK'};
 
-			$info->{$type} = $info->{'RVAD'}->{'RIGHT'}->{$type};
+		my $gain = $info->{'RVAD'}->{'RIGHT'}->{'REPLAYGAIN_TRACK_GAIN'};
+
+		# itunes uses a range of -65535 to 65535 to be -100% (silent) to 100% (+6dB)
+		if ($gain == -65535) {
+			$gain = -96.0;
+		} else {
+			$gain = 20.0 * log(($gain+65535)/65535)/log(10);
 		}
+
+		$info->{'REPLAYGAIN_TRACK_GAIN'} = $gain;
 
 		delete $info->{'RVAD'};
 

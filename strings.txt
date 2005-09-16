@@ -2381,15 +2381,15 @@ SETUP_MP3SILENCEPRELUDE_DESC
 
 SETUP_REPLAYGAINMODE
 	DE	Lautstärken-Normalisierung (Replay Gain)
-	EN	Replay Gain
+	EN	Volume Adjustment/Replay Gain
 
 SETUP_REPLAYGAINMODE_DESC
 	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
-	EN	Some audio tracks contain Replay Gain information - relative volume adjustments that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can be told to use this information if it exists. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
+	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can be told to use this information if it exists. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 
 REPLAYGAIN_DISABLED
 	DE	Normalisierung ausschalten
-	EN	Disable Replay Gain
+	EN	Disable Volume Adjustment
 
 REPLAYGAIN_TRACK_GAIN
 	DE	Lieder Normalisierung verwenden (wenn möglich)
@@ -2403,6 +2403,12 @@ REPLAYGAIN_SMART_GAIN
 	DE	"Intelligente" Normalisierung verwenden
 	EN	"Smart" gain selection
 
+REPLAYGAIN
+	EN	Volume Adjustment
+
+ALBUMREPLAYGAIN
+	EN	Album Volume Adjustment
+	
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
 	EN	Crossfade

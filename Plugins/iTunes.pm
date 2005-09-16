@@ -821,6 +821,20 @@ sub handleTrack {
 		$cacheEntry{'BITRATE'} = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
 		$cacheEntry{'YEAR'}    = $curTrack->{'Year'};
 		$cacheEntry{'COMMENT'} = $curTrack->{'Comments'};
+		
+		my $gain = $curTrack->{'Volume Adjustment'};
+		
+		# looking for a defined or non-zero volume adjustment
+		if ($gain) {
+			# itunes uses a range of -255 to 255 to be -100% (silent) to 100% (+6dB)
+			if ($gain == -255) {
+				$gain = -96.0;
+			} else {
+				$gain = 20.0 * log(($gain+255)/255)/log(10);
+			}
+			print "gotta gain: $gain\n";
+			$cacheEntry{'REPLAYGAIN_TRACK_GAIN'} = $gain;
+		}
 
 		# cacheEntry{'???'} = $curTrack->{'Track Count'};
 		# cacheEntry{'???'} = $curTrack->{'Sample Rate'};

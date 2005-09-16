@@ -123,6 +123,20 @@
       </tr>
      [% END %]
 
+     [% IF track.replay_gain %] 
+      <tr> 
+        <td class="nowrap"> [% "REPLAYGAIN" | string; "COLON" | string %]</td>
+        <td> [% track.replay_gain | format('%2.2f') | html %] dB</td>
+      </tr>
+     [% END %]
+
+     [% IF track.album.replay_gain %] 
+      <tr> 
+        <td class="nowrap"> [% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
+        <td> [% track.album.replay_gain | format('%2.2f') | html %] dB</td>
+      </tr>
+     [% END %]
+
      [% IF track.year %] 
       <tr> 
         <td class="nowrap"> [% "YEAR" | string; "COLON" | string %]</td>
