@@ -55,11 +55,12 @@
 
 <html>
 <head>
-	<meta http-equiv="refresh" content="[% refresh %]; url=[% statuslink %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1">
+	<meta http-equiv="refresh" content="[% refresh %]; url=[% statuslink %]?player=[% player | uri %]&amp;start=[% start %]&amp;undock=[% undock %]">
 	[% PROCESS customheader.html %]
 	[% IF playercount == '0' %]<script language="JavaScript">
 		<!--Hide
-		location="status.html";
+		[% IF undock %]self.close();[% ELSE %]
+		location="status.html";[% END %]
 		-->
 	</script>[% END %]
 </head>
@@ -107,6 +108,7 @@
 		window.onload=Click([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
 	-->
 	</script>
+	<div id="header">
 	<div class="nowplaying">
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		<tr>
@@ -136,7 +138,7 @@
 
 	<div class="menu2">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<td>
+		<td align="center">
 			<table border="0" cellspacing="0" cellpadding="0"><tr valign="bottom">
 					[% PROCESS playctl command='p0=play' img='play' width='42' height='43' condition=modeplay && rate == 'norm' -%]
 					[% PROCESS playctl command='p0=stop' img='stop' width='23' height='32' condition=modestop -%]
@@ -173,22 +175,22 @@
 	</table></div>
 	<div class="nowplaying">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" height="11">
-		<td [% IF isplayer %]width="10%"[% END %] class="label2" align="left"><nobr>
+		<td [% IF isplayer %]width="30%"[% END %] class="label2" align="center"><nobr>
 			<b>[% "REPEAT" | string | upper%][% "COLON" | string %]</b>
-			[% PROCESS statectrl condition=repeatone command='repeat' arg='1' cmdstring="ONE" %]
-			[% PROCESS statectrl condition=repeatall command='repeat' arg='2' cmdstring="ALL" %]
-			[% PROCESS statectrl condition=repeatoff command='repeat' arg='0' cmdstring="OFF" %]
+			[% FOREACH type = ['off','one','all'] %]
+				[% PROCESS statectrl condition=repeat == loop.index command='repeat' arg=loop.index cmdstring=type %]
+			[% END %]
 			</nobr></td>
 		<td align="center"><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
-		<td [% IF isplayer %]width="10%"[% END %] height="13" class="label2" align="center"><nobr>
+		<td [% IF isplayer %]width="30%"[% END %] height="13" class="label2" align="center"><nobr>
 			<b>[% "SHUFFLE" | string | upper%][% "COLON" | string %]</b>
-			[% PROCESS statectrl condition=shuffleoff command='shuffle' arg='0' cmdstring="OFF" %]
-			[% PROCESS statectrl condition=shuffleon command='shuffle' arg='1' cmdstring="SONG" %]
-			[% PROCESS statectrl condition=shufflealbum command='shuffle' arg='2' cmdstring="ALBUM" %]
+			[% FOREACH type = ['off','song','album'] %]
+				[% PROCESS statectrl condition=shuffle == loop.index command='shuffle' arg=loop.index cmdstring=type %]
+			[% END %]
 		</nobr></td>
 		[% IF isplayer %]
 			<td align="center"><img src="[% webroot %]html/images/pixel.grey.gif" width="1" height="100%"></td>
-			<td height="13" width="10%" class="label2" align="right"><nobr>
+			<td height="13" width="30%" class="label2" align="center"><nobr>
 				<b>[% "POWER" | string | upper%][% "COLON" | string %]</b>
 				[% PROCESS statectrl condition=mode != 'off' item='power' command='1' arg='' cmdstring="ON" %]
 				[% PROCESS statectrl condition=mode == 'off' command='0' arg='' cmdstring="OFF" %]
@@ -204,6 +206,6 @@
 	<a href="status.m3u?player=[% player | uri %]" target="playlist">[% "DOWNLOAD" | string %]</a> |
 	<a href="[% statuslink %]?p0=playlist&p1=clear&player=[% player | uri %]" target="status">[% "CLEAR" | string %]</a>
 	</p></center>
-	
+	</div>
 </body>
 </html>

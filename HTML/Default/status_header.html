@@ -86,16 +86,12 @@ function switchPlayer(player_List){
 	<tr height="19">
   		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
 			<td class="dmedgrey" nowrap height="19"><img src="html/images/nav_repeat.gif" height="13" alt="">
-			[% img = ['off','one','all'] %]
-			[% FOREACH type = ['repeatoff','repeatone','repeatall'] %]
-				[% index = loop.index %]
-				[% IF not $type %]<a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% img.$index %][% IF $type %]_sel[% END %].gif" alt="" height="13">[% IF not $type %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
+			[% FOREACH type = ['off','one','all'] %]
+				[% IF repeat!=loop.index %]<a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% type %][% IF repeat==loop.index %]_sel[% END %].gif" alt="" height="13">[% IF repeat!=loop.index %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
 			[% END %]
 			<td class="dmedgrey" nowrap colspan="2"><img src="html/images/nav_shuffle.gif" alt="" height="13">
-			[% img = ['off','songs','albums'] %]
-			[% FOREACH type = ['shuffleoff','shuffleon','shufflealbum'] %]
-				[% index = loop.index %]
-				[% IF not $type %]<a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% img.$index %][% IF $type %]_sel[% END %].gif" alt="" height="13">[% IF not $type %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
+			[% FOREACH type = ['off','songs','albums'] %]
+				[% IF shuffle!=loop.index %]<a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% type %][% IF shuffle==loop.index %]_sel[% END %].gif" alt="" height="13">[% IF shuffle!=loop.index %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
 			[% END %]
 		<td width="8" height="19"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
 	</tr>

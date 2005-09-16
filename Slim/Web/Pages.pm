@@ -231,6 +231,7 @@ sub status {
 			$params->{'player_name'} = $client->name();
 		}
 
+		$params->{'shuffle'} = Slim::Player::Playlist::shuffle($client);
 		if (Slim::Player::Playlist::shuffle($client) == 1) {
 			$params->{'shuffleon'} = "on";
 		} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
@@ -248,6 +249,7 @@ sub status {
 		}
 
 		#
+		$params->{'repeat'} = Slim::Player::Playlist::repeat($client);
 		if (!Slim::Player::Playlist::repeat($client)) {
 			$params->{'repeatoff'} = "off";
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
