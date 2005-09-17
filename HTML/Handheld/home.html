@@ -7,9 +7,8 @@
 	    		<li><a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
 	    	[% END %]
 		[% END %]
-		[% IF additionalmenu %]
+		[% IF additionalmenu.text %]
 	   		<li><a href="[% additionalmenu.link %]?player=[% player | uri %]">[% additionalmenu.text | string %]</a></li>
-			[% additionalmenu={} %]
 		[% END %]
 		</ul>
 	[% END %]
@@ -19,10 +18,10 @@
 
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
 	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search %]
-	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio additionalmenu.link = 'tunein.html' additionalmenu.text = 'RADIO_TUNEIN'%]
+	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio additionalmenu.link='tunein.html' additionalmenu.text='RADIO_TUNEIN' %]
 	
 	[% IF additionalLinks.plugins %]
-		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins %]
+		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins additionalmenu={} %]
 	[% END %]
 	
 	[% PROCESS menu menutitle='HELP' menulist={} additionalmenu.link = 'html/help.html' additionalmenu.text = 'HELP'%]

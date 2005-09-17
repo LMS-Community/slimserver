@@ -1,4 +1,4 @@
-body, table, input, p, li, a, td, h4 {
+body, table, input, p, li, a, td, h4, select {
 	font-size: 10px;
 	font-family: sans-serif;
 	color: #444;

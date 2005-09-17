@@ -7166,7 +7166,7 @@ MODIFIED
 
 MODTIME
 	CZ	Změněno dne
-	DE	Datum geändert
+	DE	Änderungsdatum
 	DK	Dato ændret
 	EN	Date Modified
 	ES	Fecha de Modificación
@@ -9096,7 +9096,7 @@ ADVANCEDSEARCH
 
 SEARCH
 	CZ	Hledat v archivu
-	DE	Suchen
+	DE	Suche
 	DK	Søg efter musik
 	EN	Search Music
 	ES	Buscar

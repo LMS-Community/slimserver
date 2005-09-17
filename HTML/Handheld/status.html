@@ -84,45 +84,28 @@
 	</table>
 	
 	<table width="100%">
-		[% IF isplayer %]
-			<tr>
-				<td>[% "VOLUME" | string %][% "COLON" | string %]</td>
-				<td><a href="status.html?p0=mixer&p1=volume&p2=%2D10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_SOFTER" | string %]</a>&nbsp;
-					[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
-						[% IF loop.first %][% IF volume != '0' %]<a href="status.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player=[% player | uri %]&amp;start=[% start %]">[% END %]1[% IF volume != '0' %]</a>[% END %]
-						[% ELSE %]
-							[%- IF  (volume < loop.prev +1 || volume > vol) %]<a href="status.html?p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% ELSE %]<b>[% END %]
-								[% loop.count %]
-							[%- IF  (volume < loop.prev +1 || volume > vol) %]</a>[% ELSE %]</b>[% END %]
-						[% END %]
-					[%- END %]&nbsp;
-					<a href="status.html?p0=mixer&p1=volume&p2=%2B10&player=[% player | uri %]&start=[% start %]">[% "VOLUME_LOUDER" | string %]</a>
-				</td>
-			</tr>
-			<tr>
-	    		<td>[% "MUTE" | string %][% "COLON" | string %]</td>
-	    		<td>[% IF mute %]<b>[% ELSE %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1">[% END %][% "MCON" | string %][% IF mute %]</b>[% ELSE %]</a>[% END %]&nbsp;[% IF mute %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0">[% ELSE %]<b>[% END %][% "MCOFF" | string %][% IF mute %]</a>[% ELSE %]</b>[% END %]</td>
-			</tr>
-		[% END %]
-
 		<tr>
-		    <td>[% "REPEAT" | string %][% "COLON" | string %]</td>
-	    	<td>
-				[% FOREACH type = [ 'MCOFF', 'MCONE', 'MCALL' ] %]
-					[% IF repeat!=loop.index %]<a href="status.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% ELSE %]<b>[% END %][% type | string %][% IF repeat!=loop.index %]</a>[% ELSE %]</b>[% END %]&nbsp;
-				[% END %]
-	    	</td>
-		</tr>
-		
-		<tr>
-			<td>[% "SHUFFLE" | string %][% "COLON" | string %]</td>
+			<td>[% "VOLUME" | string %][% "COLON" | string %]</td>
 			<td>
-				[% FOREACH type = [ 'MCOFF', 'SONGS', 'ALBUMS' ] %]
-					[% IF shuffle!=loop.index %]<a href="status.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% ELSE %]<b>[% END %][% type | string %][% IF shuffle!=loop.index %]</a>[% ELSE %]</b>[% END %]&nbsp;
-				[% END %]
+				[% PROCESS volumecontrol.html notext='1' discreteonly='1' %]
 			</td>
 		</tr>
-	
+		<tr>
+    		<td>[% "MUTE" | string %][% "COLON" | string %]</td>
+    		<td>[% IF mute %]<b>[% ELSE %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1">[% END %][% "MCON" | string %][% IF mute %]</b>[% ELSE %]</a>[% END %]&nbsp;[% IF mute %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0">[% ELSE %]<b>[% END %][% "MCOFF" | string %][% IF mute %]</a>[% ELSE %]</b>[% END %]</td>
+		</tr>
+
+		[% SET notext='1' nolower='1' separator='&nbsp;' %]
+		<tr>
+		    <td>[% "REPEAT" | string %][% "COLON" | string %]</td>
+	    	<td>[% PROCESS statecontrol.html state='repeat' modes=[ 'MCOFF', 'MCONE', 'MCALL' ] %]</td>
+		</tr>
+
+		<tr>
+			<td>[% "SHUFFLE" | string %][% "COLON" | string %]</td>
+			<td>[% PROCESS statecontrol.html state='shuffle' modes=[ 'MCOFF', 'SONGS', 'ALBUMS' ] %]</td>
+		</tr>
+
 		<tr>
 			<td>[% "POWER" | string %][% "COLON" | string %]</td>
 			<td>

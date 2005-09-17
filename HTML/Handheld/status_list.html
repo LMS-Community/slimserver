@@ -3,7 +3,7 @@
 		<td>&nbsp;</td>
 		<td width="13" align="center">
 			<a href="[% page %].html?p0=playlist&p1=[% action %]&p2=[% num %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %][% IF start %]&start=[% start %][% END %]">
-			<img src="html/images/[% image %].gif" width="13" height="13" border="0" align="center" alt="[% alttext | string %]"></a>
+			<img src="html/images/[% image %].gif" width="13" height="13" border="0" align="center" [% IF alt %]alt="[% alt | string %]" title="[% alt | string %]"[% END %]></a>
 		</td>
 	[% END %]
 	
