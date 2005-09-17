@@ -422,6 +422,9 @@ sub setMode {
 		push @settingsChoices, 'REPLAYGAIN';
 	}
 	
+	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
+	
+	
 	$params{'listRef'} = \@settingsChoices;
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
