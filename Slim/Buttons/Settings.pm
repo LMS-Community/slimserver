@@ -111,6 +111,18 @@ sub init {
 			'initialValue' => sub { return $_[0]->treble() },
 		},
 
+		'settings/REPLAYGAIN' => {
+			'useMode' => 'INPUT.List',
+			'listRef' => [0,1,2,3],
+			'externRef' => [qw(REPLAYGAIN_DISABLED REPLAYGAIN_TRACK_GAIN REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_SMART_GAIN)],
+			'stringExternRef' => 1,
+			'header' => 'REPLAYGAIN',
+			'stringHeader' => 1,
+			'onChange' =>  \&setPref,
+			'pref' => "replayGainMode",
+			'initialValue' => sub { return $_[0]->prefGet('replayGainMode') },
+		},
+
 		'settings/REPEAT' => {
 			'useMode' => 'INPUT.List',
 			'listRef' => [0,1,2],
@@ -404,6 +416,10 @@ sub setMode {
 	
 	if ($client->isa( "Slim::Player::Squeezebox2" )) {
 		push @settingsChoices, 'SETUP_TRANSITIONTYPE';
+	}
+
+	if ($client->canDoReplayGain(0)) {
+		push @settingsChoices, 'REPLAYGAIN';
 	}
 	
 	$params{'listRef'} = \@settingsChoices;
