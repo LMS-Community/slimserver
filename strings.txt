@@ -2404,9 +2404,11 @@ REPLAYGAIN_SMART_GAIN
 	EN	"Smart" gain selection
 
 REPLAYGAIN
+	DE	Lautstärken-Normalisierung
 	EN	Volume Adjustment
 
 ALBUMREPLAYGAIN
+	DE	Album Lautstärken-Normalisierung
 	EN	Album Volume Adjustment
 	
 SETUP_TRANSITIONTYPE
