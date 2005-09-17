@@ -1,8 +1,8 @@
 <!-- Element songcount.html -->
 	[% IF song_count %]
 	    <table width="100%" bgcolor="#666666">
-	    	<tr><td>
-	    		<font color="#ffffff"><small>[% "LIBRARY_CONTAINS" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></small></font>
+	    	<tr><td align="center">
+	    		<font color="#ffffff"><small>[% album_count %] | [% song_count %] | [% artist_count %]</small></font>
 			</td></tr>
 		</table>
 	[% END %]
