@@ -22,21 +22,18 @@
 	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 	[% IF searchlist_header %]<p>[% searchlist_header %][% "COLON" | string %]</p>[% END %]
 
-	[% IF numresults != '-1' && numresults != '0' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">
+	[% IF numresults != '-1' && numresults != '0' %]<div class='list'><table cellpadding="0" cellspacing="0" border="0" width="100%">
 	<tr>
 		<td class="listing">&nbsp;
 			[% "THIS_ENTIRE_PLAYLIST" | string %]
 		</td>
 		<td class="listing" width="11" align="center">&nbsp;</td>
-		<td class="listing" width="11" align="center">
-			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="[% webroot %]html/images/play.this.gif" align="center" height="11" alt='Play' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a></nobr>
-		</td>
-		<td class="listing" width="11" align="center">
-			<nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="[% webroot %]html/images/add.gif" align="center" height="11" alt='Add' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
-		</td>
+		[% class='listing' width='9' align='center' height='11' target='status' %]
+		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' attributes='&listref=searchResults' cmdstring='PLAY' img='play.this.gif' %]
+		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' attributes='&listref=searchResults' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 		<td class="listing" width="11" align="center">&nbsp;</td>
 	</tr>
-	</table>
+	</table></div>
 	[% END %]
 	<div id="search-results"></div>
 
@@ -44,7 +41,7 @@
 			[% searchError %]
 		[% END %]
 		
-   <div class="list">
+<div class="list">
    <table border="0" cellspacing="0" cellpadding="0" width="100%">
        [% browse_list %]
     </table>

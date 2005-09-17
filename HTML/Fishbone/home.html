@@ -6,7 +6,8 @@
 		[% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
-	<h3>[% "HELP" | string %]</h3>	<ul>
+	<h3>[% "HELP" | string %]</h3>	
+	<ul>
 	[% IF additionalLinks.help %]
 		[% FOREACH link = additionalLinks.help %]
 		<li>

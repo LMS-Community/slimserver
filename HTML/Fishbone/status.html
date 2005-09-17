@@ -1,4 +1,4 @@
-[% statuslink = 'status_header.html' %]
+[% statuslink = 'status.html' %]
 
 [%- BLOCK mixcontrol -%]
 	<td width="20" align="right" class="label2"><nobr><b>[% label %][% "COLON" | string %]</b>
@@ -61,16 +61,31 @@
 		<!--Hide
 		[% IF undock %]self.close();[% ELSE %]
 		location="status.html";[% END %]
+
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF NOT noreload %]onload="javascript:checkReload();[% END %]">
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:playlistResize(this.document.getElementById('playlist'));" onresize="javascript:playlistResize(this.document.getElementById('playlist'));">
+	<div ID="status" height="100%">
+	<div ID="header">
 	<div class="masthead">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="15" bordercolor="#111111">
 			<td height="17" align="left">
 				<img id="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
 				<img id="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
 			</td>
+			<td align="right">
+				[% IF sync %]
+					<a href="[% statuslink %]?p0=sync&p1=-&player=[% player | uri %]">[% "UNSYNC" | string %]</a>
+					 / 
+				[% END %]
+				[% IF mode != 'off' %]
+					<A href="[% statuslink %]?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
+				 / [% END %]
+				[% IF not nosetup  %]<a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "SETTINGS" | string %]</a>
+				[% END %][% IF not undock %] / 
+				<a href="javascript:openRemote('[% player | uri %]','[% player_name %]')">Undock</a>[% END %]
+			</nobr></td>
 		</table>
 	</div>
 	<div class="menu1">
@@ -85,18 +100,6 @@
 					[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
 				</td>
 			[% END %]
-			<td align="right">
-				[% IF sync %]
-					<a href="[% statuslink %]?p0=sync&p1=-&player=[% player | uri %]">[% "UNSYNC" | string %]</a>
-					 / 
-				[% END %]
-				[% IF mode != 'off' %]
-					<A href="[% statuslink %]?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
-				 / [% END %]
-				[% IF not nosetup  %]<a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "SETTINGS" | string %]</a>
-				[% END %][% IF not undock %] / 
-				<a href="javascript:openRemote('[% player | uri %]','[% player_name %]')">Undock</a>[% END %]
-			</nobr></td>
 		</table>
 	</div>
 
@@ -113,7 +116,7 @@
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		<tr>
 			[% IF coverThumb %]<td valign="top">
-				<script language="JavaScript">top.document.getElementById('player_frame').rows = '270, *';</script><a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" height="100">
+				<a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" height="100">
 			</td>[% END %]
 			<td><img src="[% webroot %]html/images/spacer.gif" width="5"></td>
 			<td valign="top" width="100%"><nobr>
@@ -123,7 +126,7 @@
 				[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="[% statuslink %]?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
 				<p><a class="songtitle" href="songinfo.html?item=[% track.id %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a>
 				[% IF track.duration %]&nbsp;([% track.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
-				[% IF not coverThumb %]<script language="JavaScript">top.document.getElementById('player_frame').rows = '235, *';</script>
+				[% IF not coverThumb %]
 				<table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%" align="lef"><nobr>[% END %]
 					<p class="label">[% IF track.artist && track.artist != noArtist %][% "ARTIST" | string %]&nbsp;<a class="label" href="[% statuslink %]?p0=playlist&p1=deletealbum&p2=&p3=[% track.artist | uri %]&player=[% player | uri %]&astart=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
 					<p class="artistname"><a class="artistname" href="browsedb.html?hierarchy=album,track&level=0&artist=[% track.artist.id %]&amp;player=[% player | uri %]" target="browser">[% track.artist | html %]</a></p>[% END %]
@@ -207,5 +210,11 @@
 	<a href="[% statuslink %]?p0=playlist&p1=clear&player=[% player | uri %]" target="status">[% "CLEAR" | string %]</a>
 	</p></center>
 	</div>
+	</div>
+	[% UNLESS undock %]<div ID="playlist" style="height:auto;overflow:auto">
+	[% playlist %]
+	</div>[% END %]
+	</div>
+	<script language="JavaScript">playlistResize(this.document.getElementById('playlist'));</script>
 </body>
 </html>

@@ -11,7 +11,7 @@
 	[% IF browselist_header %][% browselist_header %][% END %]
 	[% IF browselist_pagebar %][% browselist_pagebar %]<br>[% END %]
 			[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverArt %]<center>
-				<p><a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg"></a></p>
+				<p><a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg" onLoad="resize(this,300)"></a></p>
 		[% END %][% END %]<p>
 		<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
 			[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">[% END %]

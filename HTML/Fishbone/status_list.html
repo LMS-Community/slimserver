@@ -1,5 +1,5 @@
 [% BLOCK playlistlinks %]
-	[% PROCESS link page='status_header.html' p0='p0=playlist' p1='move' p2=num p3='%2D1' img='move.up.gif' text='MOVEUP' target='status'%]
+	[% PROCESS link page='status.html' p0='p0=playlist' p1='move' p2=num p3='%2D1' img='move.up.gif' text='MOVEUP' target='status'%]
 	[% PROCESS link p3='%2B1' 		img='move.down.gif' text='MOVEDOWN' %]
 	[% PROCESS link p3=nextsongind 	img='queue.gif'  	text='NEXT' %]
 	[% PROCESS link p1='delete' 	img='remove.gif'  	text='REMOVE_FROM_PLAYLIST' %]
@@ -18,8 +18,8 @@
 
 <tr>
 	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
-		<a style="font-size: 10px;color:white" href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
-		<b><a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
+		<a style="font-size: 10px;color:white" href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
+		<b><a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
 	<nobr>[%- IF includeArtist; PROCESS artistsAsHTML.html; END %]</nobr>
 	<nobr>[% IF album && album != noAlbum %] [% "FROM" | string %] <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a></i>[% END %]
 	</nobr></td>

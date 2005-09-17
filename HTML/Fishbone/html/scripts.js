@@ -7,9 +7,36 @@ function to_currentsong() {
 	}
 }
 
+function resize(src,width)
+{
+	if (!width) {
+		width = 200;
+	}
+	if (src.width > width)
+	{
+		src.width = width;
+	}
+}
+
+function playlistResize(playlist) {
+	var status = this.document.getElementById('status');
+	var header = this.document.getElementById('header');
+	
+	// special case for IE (argh)
+	if (document.all) //if IE 4+
+	{
+		height = document.body.clientHeight;
+	}
+	else if (document.getElementById) //else if NS6+
+	{
+		height = window.innerHeight;
+	}
+	playlist.style.height = height-header.clientHeight;
+}
+
 function openRemote(player,playername)
 {
-	window.open('status_header.html?player='+player+'&undock=1', playername, 'width=480,height=270');
+	window.open('status.html?player='+player+'&undock=1', playername, 'width=480,height=270');
 }
 
 function setCookie(name, value)

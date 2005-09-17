@@ -1,16 +1,10 @@
 <tr height="15">
-  <td  class="listing" width="11" align="center">
-      <a href="status_header.html?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/queue.gif" align="center" height="11" onMouseOver="self.status='Queue This List';return true"></a>
-  </td>
-  <td  class="listing" width="11" align="center">
-      <a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" align="center" height="11" onMouseOver="self.status='Play This Item';return true"></a>
-  </td>
-  <td class="listing" width="11" align="center">
-      <a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" align="center" height="11" onMouseOver="self.status='Add This Item';return true"></a>
-  </td>
+	[% PROCESS browselinks.html header='1' width='9' height='11' target='status' urlcmd='insert' cmdstring='NEXT' img='queue.gif' %]
+	[% PROCESS browselinks.html urlcmd='play' cmdstring='PLAY' img='play.this.gif' %]
+	[% PROCESS browselinks.html urlcmd='add' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
   <td class="listing" height="15">
        	<b>
-  			<a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target='status'>[% title %]</a></b>
+  			<a href="status.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target='status'>[% title %]</a></b>
 			<!--[% IF album %][% "FROM" | string %][% END %]
 			<i><a href="browsedb.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album %]</a></i>
 			-->[% IF artist %][% "BY" | string %] [% END %]
@@ -21,5 +15,5 @@
   </td>
   <td class="listing" align="right" height="15">
     <img src="[% webroot %]html/images/bar_small_first.gif" border="0" width="11" height="15">[% song_bar %]
-  </td><td>&nbsp;</td>
+  </td>
 </tr>
