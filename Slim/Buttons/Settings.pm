@@ -187,8 +187,8 @@ sub init {
 
 		'settings/SETUP_TRANSITIONTYPE' => {
 			'useMode' => 'INPUT.List',
-			'listRef' => undef,
-			'externRef' => undef,
+			'listRef' => [0,1,2,3,4],
+			'externRef' => ['TRANSITION_NONE', 'TRANSITION_CROSSFADE', 'TRANSITION_FADE_IN', 'TRANSITION_FADE_OUT', 'TRANSITION_FADE_IN_OUT'],
 			'stringExternRef' => 1,
 			'onChange' => \&setPref,
 			'headerAddCount' => 1,
@@ -323,15 +323,6 @@ sub settingsExitHandler {
 			} elsif ($nextmenu eq 'settings/TEXTSIZE') {
 				my @text = (0..$client->maxTextSize);
 				$nextParams{'listRef'} = \@text;
-				
-			} elsif ($nextmenu eq 'settings/SETUP_TRANSITIONTYPE') {
-				$nextParams{'listRef'} = [ 
-							 'TRANSITION_NONE',
-				             'TRANSITION_CROSSFADE',
-				             'TRANSITION_FADE_IN',
-				             'TRANSITION_FADE_OUT',
-				             'TRANSITION_FADE_IN_OUT',
-				           ];
 			}
 			
 			Slim::Buttons::Common::pushModeLeft(
