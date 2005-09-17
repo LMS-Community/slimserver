@@ -1,7 +1,7 @@
 <!-- Element hitlist_list.html -->
 	<tr height="15" [% IF not odd %]bgcolor="#d0d0d0"[% END %]>
-		<td width="100%"><small><a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title %]</a></small></td>
-		<td><small>([% song_count %])</small></td>
+		<td width="100%"><a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title %]</a></td>
+		<td>([% song_count %])</td>
 		<td ><nobr><img src="html/images/bar_small_first.gif" border="0" width="4" height="13">[% song_bar %]</nobr></td>
 	</tr>
 <!-- /Element hitlist_list.html -->

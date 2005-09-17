@@ -50,13 +50,13 @@
 		[% END %]
 
 		[% WRAPPER field title='GENRE' %]
-			<small><select name="search.genre">
+			<select name="search.genre">
 				<option value="">[% "ANY_GENRE" | string %]</option>
 				[% FOREACH genre = genres %]
 					[% NEXT IF NOT genre.name OR genre.id == 1 %]
 					<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name %]</option>
 				[% END %]
-			</select></small>
+			</select>
 		[% END %]
 
 		[% WRAPPER field title='LENGTH' %]
@@ -82,21 +82,21 @@
 
 		[% WRAPPER field title='BITRATE' %]
 			[% logicalSelectionBlock(name='search.bitrate.op') %]
-			<small><select name="search.bitrate">
+			<select name="search.bitrate">
 				<option value="">[% "ANY_VALUE" | string %]</option>
 				[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
 					<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
 				[% END %]
-			</select></small> [% "KBPS" | string %]
+			</select> [% "KBPS" | string %]
 		[% END %]
 
 		[% WRAPPER field title='TYPE' %]
-			<small><select name="search.ct">
+			<select name="search.ct">
 				<option value="">[% "ANY_TYPE" | string %]</option>
 				[% FOREACH type = fileTypes.keys %]
 					<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
 				[% END %]
-			</select></small>
+			</select>
 		[% END %]
 
 		[% WRAPPER field title='FILELENGTH' %]

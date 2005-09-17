@@ -1,7 +1,7 @@
 <!-- Element pagefooter.html -->
 	<table width="100%" bgcolor="#c5c5c5">
 	    <tr>
-	    	<td align="center"><small>
+	    	<td align="center">
 	    		[% UNLESS nosetup %]
 	    			[% "SETTINGS" | string %]
 	    			[% UNLESS noserver %]
@@ -10,11 +10,10 @@
 	    			<a href="[% webroot %]setup.html?player=[% player | uri %]&playerid=[% player | uri %]&page=player">[% "PLAYER" | string %]</a> -- 
 	    		[% END %]<a href="[% webroot %]hitlist.html?player=[% player | uri %]">[% "STATISTICS" | string %]</a> -- 
 	    		<a href="[% webroot %]html/about.html?player=[% player | uri %]">[% "ABOUT_SHORT" | string %]</a>
-	    	</small>
 	    	</td>
 	    </tr>
 	</table>
-	</font>
+	</small></font>
 </body>
 </html>
 <!-- /Element pagefooter.html -->
