@@ -1,3 +1,11 @@
+[% BLOCK favelink %]
+				<td class="listing" width="11" align="center">
+					<a href="[% link %].html?p0=[% p0 || move %]&p1=[% p1 || loop.index %]&p2=[% p2 %]&player=[% player | uri %]">
+					<img src="[% webroot %]html/images/[% img %]" border="0" width="11" height="11" align="center"
+						alt='[% text | string %]' title='[% text | string %]'>
+					</a></td>
+[% END %]
+
 [% PROCESS pageheader.html %]
 <div class = "list">
 <h3>[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</h3>
@@ -13,26 +21,10 @@
 				<td class="listing">
 					[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
 				</td>
-				<td class="listing" width="11" align="center">
-					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/move.up.gif" border="0" width="11" height="11" align="center"
-						alt='[% "MOVEUP" | string %]' title='[% "MOVEUP" | string %]'>
-					</a></td>
-				<td class="listing" width="11" align="center">
-					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/move.down.gif" border="0" width="11" height="11" align="center"
-						alt='[% "MOVEDOWN" | string %]' title='[% "MOVEDOWN" | string %]'>
-					</a></td>
-				<td class="listing" width="11" align="center">
-					<a href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/remove.gif" border="0" width="11" height="11" align="center"
-						alt='[% "DELETE" | string %]' title='[% "DELETE" | string %]'>
-					</a></td>
-				<td class="listing" width="11" align="center">
-					<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]" target="status">
-					<img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="9" height="11" 
-						alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]'></a>
-				</td>
+				[% PROCESS favelink link='favorites_list' p0='move' p1=loop.index p2='%2D1' img='move.up.gif' text='MOVEUP' %]
+				[% PROCESS favelink link='favorites_list' p2='%2B1' p1=loop.index img='move.down.gif' text='MOVEDOWN' %]
+				[% PROCESS favelink link='favorites_list' p0='delete' p1=loop.index p2='' img='remove.gif' text='DELETE' %]
+				[% PROCESS favelink link='status_header' p0='playlist' p1='play' p2=faves.$fav img='play.this.gif' text='PLAY' %]
 			</tr>
 		[% END %]
 	[% END %]
