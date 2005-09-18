@@ -146,11 +146,12 @@ sub endImporter {
 		delete $importsRunning{$import};
 	}
 
-	if (scalar keys %importsRunning == 0) {
+	if (scalar keys %importsRunning == 0 && $import ne 'artwork') {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {
 
 			$::d_import && msg("Adding task for artScan().\n");
+			$importsRunning{'artwork'} = Time::HiRes::time();
 
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
@@ -231,6 +232,7 @@ sub artScan {
 
 	if (!%artwork) { 
 		$::d_artwork && msg("Completed Artwork Scan\n");
+		endImporter('artwork');
 		$ds->forceCommit();
 		return 0;
 	}
