@@ -1078,6 +1078,7 @@ sub symbols {
 	my $line = shift || return undef;
 
 	return $Symbols{$line} if exists $Symbols{$line};
+	return "\x1F$line\x1F" if Slim::Hardware::VFD::isCustomChar($line);
 
 	return $line;
 }

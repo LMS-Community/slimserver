@@ -104,6 +104,12 @@ sub setCustomChar {
 	$vfdcustomchars{$charname} = \@rows;
 }
 
+sub isCustomChar {
+	my $charname = shift || return;
+
+	return exists($vfdcustomchars{$charname});
+}
+
 my %customChars;
 
 # Map of alternatives if custom character space exhaused
