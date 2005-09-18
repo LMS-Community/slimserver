@@ -16,7 +16,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 our %setup = ();
-
+our @newPlayerChildren;
 # Setup uses strings extensively, for many values it defaults to a certain combination of the
 # preference name with other characters.  For this reason it is important to follow the naming
 # convention when adding strings for preferences into strings.txt.
@@ -2381,12 +2381,17 @@ sub playerChildren {
 	return if (!$client);
 	if ($client->isPlayer()) {
 		$pageref->{'children'} = ['player','homemenu','display','alarm','audio','remote'];
+		push @{$pageref->{'children'}},@newPlayerChildren;
 		if (scalar(keys %{Slim::Buttons::Plugins::playerPlugins()})) {
 			push @{$pageref->{'children'}}, 'player_plugins';
 		}
 	} else {
 		$pageref->{'children'} = ['player','alarm','audio'];
 	}
+}
+
+sub addPlayerChild {
+	push @newPlayerChildren,shift;
 }
 
 sub menuItemName {
