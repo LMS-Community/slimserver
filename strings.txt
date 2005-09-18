@@ -893,7 +893,7 @@ ALARM_OFF
 
 ALARM_SELECT_PLAYLIST
 	CZ	Vyber playlist pro budík
-	DE	Wählen Sie eine Wiedergabeliste für den Wecker
+	DE	Wecker Wiedergabeliste
 	DK	Vælg playliste for alarmen
 	EN	Alarm Playlist
 	ES	Elegir Lista para Alarma
@@ -907,7 +907,7 @@ ALARM_SELECT_PLAYLIST
 
 ALARM_SET_VOLUME
 	CZ	Nastavit hlasitost buzení
-	DE	Stellen Sie die Lautstärke für den Wecker
+	DE	Wecker Lautstärke
 	DK	Indstil volume for alarmen
 	EN	Alarm Volume
 	ES	Establecer volumen de alarma
@@ -2015,7 +2015,7 @@ SETUP_ALARM
 
 SETUP_ALARMVOLUME
 	CZ	Nastavení hlasitosti buzení (0-100)
-	DE	Lautstärke für den Wecker einstellen (0-100)
+	DE	Wecker Lautstärke (0-100)
 	DK	Indstil volume for alarmen (0-100)
 	EN	Alarm Volume (0-100)
 	ES	Establecer Volumen de Alarma (0-100)

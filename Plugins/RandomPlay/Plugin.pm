@@ -369,12 +369,15 @@ SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	EN	Number of songs in a random mix.
 
 SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS_DESC
+	DE	Lieder, die zufällig abgespielt wurden, können nach der Wiedergabe aus der Liste entfernt oder darin belassen werden.
 	EN	Songs that are played using Random Mix can be removed after they are played or remain on the playlist.
 
 SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS
+	DE	Entferne Lieder
 	EN	Remove Played Songs
 
 SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS
+	DE	Lieder in Liste lassen
 	EN	Don't Remove Played Songs
 
 
