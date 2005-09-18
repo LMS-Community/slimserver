@@ -163,7 +163,7 @@ sub init {
 
 	# Set info
 	$MP3::Info::v2_to_v1_names{'TPA'} = 'SET';
-	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SEt';	
+	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SET';	
 
 	# get conductors
 	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
