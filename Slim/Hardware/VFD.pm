@@ -105,7 +105,7 @@ sub setCustomChar {
 }
 
 sub isCustomChar {
-	my $charname = shift || return;
+	my $charname = shift;
 
 	return exists($vfdcustomchars{$charname});
 }
