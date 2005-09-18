@@ -167,8 +167,10 @@ sub commandCallback {
 
 		$::d_plugins && msg("RandomPlay: new song detected, stripping off completed track\n");
 
-		Slim::Control::Command::execute($client, ['playlist', 'delete', $songIndex - 1]);
-			
+		if (Slim::Utils::Prefs::get('plugin_remove_old_tracks')) {
+			Slim::Control::Command::execute($client, ['playlist', 'delete', $songIndex - 1]);
+		}
+		
 		if ($type{$client} eq 'track') {
 
 			playRandom($client, $type{$client}, 1);
@@ -279,7 +281,7 @@ sub setupGroup {
 
 	my %setupGroup = (
 
-		PrefOrder => [qw(plugin_random_number_of_tracks)],
+		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_remove_old_tracks)],
 		GroupHead => string('PLUGIN_RANDOM'),
 		GroupDesc => string('SETUP_PLUGIN_RANDOM_DESC'),
 		GroupLine => 1,
@@ -295,6 +297,14 @@ sub setupGroup {
 			'validate'     => \&Slim::Web::Setup::validateInt,
 			'validateArgs' => [1, undef, 1],
 		},
+		
+		'plugin_random_remove_old_tracks' => {
+			'validate' => \&validateTrueFalse,
+			'options' => {
+				'1' => string('SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS'),
+			   '0' => string('SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS')
+			}
+		}
 	);
 
 	checkDefaults();
@@ -305,8 +315,10 @@ sub setupGroup {
 sub checkDefaults {
 
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_tracks')) {
-
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10)
+	}
+	if (!Slim::Utils::Prefs::isDefined('plugin_random_remove_old_tracks')) {
+		Slim::Utils::Prefs::set('plugin_random_remove_old_tracks', 0)
 	}
 }
 
@@ -350,11 +362,23 @@ PLUGIN_RANDOM_ALBUM_DESC
 
 SETUP_PLUGIN_RANDOM_DESC
 	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Lieder jeweils zufällig der Wiedergabeliste hinzugefügt werden sollen.
-	EN	The Random Mix plugin let's SlimServer create a random mix of songs from your entire library. When creating a random mix of songs, you can specify how many tracks should stay on your Now Playing playlist.
+	EN	Random Mix let's SlimServer create a random selections of songs from your entire library. When creating a random mix of songs, you can specify how many songs SlimServer should add to be played in the future.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	DE	Anzahl Lieder für Zufallsmix
 	EN	Number of songs in a random mix.
+
+SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS_DESC
+	EN	Songs that are played using Random Mix can be removed after they are played or remain on the playlist.
+
+SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS
+	EN	Remove Played Songs
+
+SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS
+	EN	Don't Remove Played Songs
+
+
+
 EOF
 
 }
