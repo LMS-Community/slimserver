@@ -77,7 +77,7 @@ sub init {
 				my %params = (
 					'header'    => $client->string('ALARM_SET'),
 					'valueRef'  => $client->prefGet("alarmtime", $weekDay),
-					'cursorPos' => 1,
+					'cursorPos' => 0,
 					'callback'  => \&exitSetHandler,
 					'onChange'  => sub {
 						my $client = shift;
@@ -182,18 +182,18 @@ sub init {
 
 						if ($client->prefGet('alarm', $dayOfWeek)) {
 
-							$dowString .= sprintf("(%s)",
+							$dowString .= sprintf(" (%s)",
 								Slim::Buttons::Input::Time::timeString(
 									$client,
 									Slim::Buttons::Input::Time::timeDigits(
 										$client,
 										$client->prefGet('alarmtime', $day)
-									)
+									),
+									-1  # hide the cursor
 								) 
 							);
 						
 						} else {
-
 							$dowString .= sprintf(" (%s)", $client->string('MCOFF'));
 						}
 

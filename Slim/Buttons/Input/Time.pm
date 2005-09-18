@@ -61,30 +61,74 @@ our %functions = (
 	#use numbers to enter characters
 	,'numberLetter' => sub {
 			my ($client,$button,$digit) = @_;
+			
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+	
 			# if it's a different number, then skip ahead
 			if (Slim::Buttons::Common::testSkipNextNumberLetter($client, $digit)) {
 				nextChar($client);
 			}
+			
 			my $valueRef = $client->param('valueRef');
 			my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 
-			my $h = $h0 * 10 + $h1;
-			if ($p && $h == 12) { $h = 0 };
-	
-			my $c = $client->param('cursorPos');
-			if ($c == 0 && $digit < ($p ? 2:3)) { $h0 = $digit; nextChar($client); };
-			if ($c == 1 && (($h0 * 10 + $digit) < 24)) { $h1 = $digit; nextChar($client); };
-			if ($c == 2) { $m0 = $digit; nextChar($client); };
-			if ($c == 3) { $m1 = $digit };
-	
 			$p = (defined $p && $p eq 'PM') ? 1 : 0;
-			if ($c == 4 && (Slim::Utils::Prefs::get('timeFormat') =~ /%p/)) { $p = $digit % 2; }
-	
+			
+			my $c = $client->param('cursorPos');
+
+			my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+
+			my $max = 9;
+			if ($c == 0) {
+				$max = ($ampm ? 1 : 2);
+				$h0 = $digit unless ($digit > $max);
+				if ($ampm) {
+					if ($h0 == 1 && $h1 > 2) {
+						$h1 = 2;
+					}
+				} else {
+					if ($h0 == 2 && $h1 > 3) {
+						$h1 = 3;
+					}
+				}
+			} elsif ($c == 1) {
+				if ($ampm) {
+					if ($h0 == 1) {
+						$max = 2;
+					}
+				} else {
+					if ($h0 == 2) {
+						$max = 3;
+					}
+				}
+				$h1 = $digit unless ($digit > $max);
+			} elsif ($c == 2) {
+				$m0 = $digit unless ($digit > 5);
+			} elsif ($c == 3) {
+				$m1 = $digit unless ($digit > 9);
+			} elsif ($c == 4) {
+				$p = $digit unless ($digit > 1);
+			}
+			
+			if ($h0 == 0 && $h1 == 0 && $ampm) {
+				$h1 = 1;
+			}
+			
+			if ($ampm && $h0 && $h1 == 2) {
+				if ($p) {
+					$p = 0;
+				} else {
+					$h0 = 0; 
+					$h1 = 0;
+				}
+			}
+			
 			my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+	
 			$client->param('valueRef',$time);
 			
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
+			
 			#update the display
 			my $onChange = $client->param('onChange');
 			if (ref($onChange) eq 'CODE') {
@@ -164,7 +208,7 @@ sub init {
 		$client->param('noScroll',1)
 	}
 	if (!defined($client->param('cursorPos'))) {
-		$client->param('cursorPos',1)
+		$client->param('cursorPos',0)
 	}
 	if (!defined($client->param('onChangeArgs'))) {
 		$client->param('onChangeArgs','CV');
@@ -199,10 +243,10 @@ sub timeDigits {
 }
 
 sub timeString {
-	my ($client, $h0, $h1, $m0, $m1, $p) = @_;
+	my ($client, $h0, $h1, $m0, $m1, $p, $c) = @_;
 		
 	my $cs = Slim::Display::Display::symbol('cursorpos');
-	my $c = $client->param('cursorPos') || 0;
+	$c = $c || $client->param('cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
 
@@ -272,31 +316,52 @@ sub scrollTime {
 	$valueRef = $client->param('valueRef') unless defined $valueRef;
 	
 	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
-	my $h = $h0 * 10 + $h1;
-	
-	if ($c == 0) {$c++;};
-	if ($p && $h == 12) { $h = 0 };
+
+	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
 	
 	$p = ($p && $p eq 'PM') ? 1 : 0;
 
-	if ($c == 4 && (Slim::Utils::Prefs::get('timeFormat') =~ /%p/)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); }
-	if ($c == 3) { 
-		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
-		$c = ($m1 == 0 && $dir == 1)||($m1 == 9 && $dir == -1) ? $c -1 : $c;
-	}
-	if ($c == 2) { 
+	if ($c == 0) {
+		$h0 = Slim::Buttons::Common::scroll($client, $dir, $ampm ? 2 : 3, $h0);
+		
+		if ($ampm) {
+			if ($h0 == 0 && $h1 == 0) {
+				$h1 = 1;
+			}	
+			
+			if ($h0 && $h1 > 2) {
+				$h1 = 0;
+			}
+		} else {
+			if ($h0 == 2 && $h1 > 3) {
+				$h1 = 0;
+			}
+		}
+	} elsif ($c == 1) {
+		my $max = $ampm ? ($h0 ? 3 : 10) : ($h0 == 2 ? 4 : 10);
+		$h1 = Slim::Buttons::Common::scroll($client, $dir, $max, $h1);
+		if ($ampm && $h1 == 0 && $h0 == 0) {
+			$h1 = $dir > 0 ? 1 : ($max - 1);
+		}
+	} elsif ($c == 2) { 
 		$m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
-		$c = ($m0 == 0 && $dir == 1)||($m0 == 5 && $dir == -1) ? $c -1 : $c;
+	} elsif ($c == 3) { 
+		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
+	} elsif ($c == 4) { 
+		$p = Slim::Buttons::Common::scroll($client, +1, 2, $p);
 	}
-	if ($c == 1) {
-		$h = Slim::Buttons::Common::scroll($client, $dir, ($p == 1) ? 12 : 24, $h);
-		#change AM and PM if we scroll past midnight or noon boundary
-		if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-		if (($h == 0 && $dir == 1)||($h == 11 && $dir == -1)) { $p = Slim::Buttons::Common::scroll($client, +1, 2, $p); };
-		};
-	};
 
-	my $time = $h * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+	if ($ampm && $h0 && $h1 == 2) {
+		if ($p) {
+			$p = 0;
+		} else {
+			$h0 = 0; 
+			$h1 = 0;
+		}
+	}
+	
+	my $time = $h0 * 10 * 60 * 60 + $h1 * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+	
 	$client->param('valueRef',$time);
 	
 	return $time;

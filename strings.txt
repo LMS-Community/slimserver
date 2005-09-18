@@ -895,7 +895,7 @@ ALARM_SELECT_PLAYLIST
 	CZ	Vyber playlist pro budík
 	DE	Wählen Sie eine Wiedergabeliste für den Wecker
 	DK	Vælg playliste for alarmen
-	EN	Select Playlist for Alarm
+	EN	Alarm Playlist
 	ES	Elegir Lista para Alarma
 	FR	Sélection de la liste de lecture pour le réveil
 	JP	アラーム曲をセットして下さい
@@ -909,7 +909,7 @@ ALARM_SET_VOLUME
 	CZ	Nastavit hlasitost buzení
 	DE	Stellen Sie die Lautstärke für den Wecker
 	DK	Indstil volume for alarmen
-	EN	Set Alarm Volume
+	EN	Alarm Volume
 	ES	Establecer volumen de alarma
 	FR	Réglage du volume de réveil
 	JP	アラーム ボリュームをセットして下さい
@@ -2017,7 +2017,7 @@ SETUP_ALARMVOLUME
 	CZ	Nastavení hlasitosti buzení (0-100)
 	DE	Lautstärke für den Wecker einstellen (0-100)
 	DK	Indstil volume for alarmen (0-100)
-	EN	Set Alarm Volume (0-100)
+	EN	Alarm Volume (0-100)
 	ES	Establecer Volumen de Alarma (0-100)
 	FR	Réglage du volume de réveil (0-100)
 	JP	アラームのボリュームをセットして下さい (0-100)
@@ -2385,7 +2385,7 @@ SETUP_REPLAYGAINMODE
 
 SETUP_REPLAYGAINMODE_DESC
 	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
-	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can be told to use this information if it exists. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
+	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 
 REPLAYGAIN_DISABLED
 	DE	Normalisierung ausschalten
@@ -2393,15 +2393,15 @@ REPLAYGAIN_DISABLED
 
 REPLAYGAIN_TRACK_GAIN
 	DE	Lieder Normalisierung verwenden (wenn möglich)
-	EN	Use Track Gain (if present)
+	EN	Use Track Gain (If Present)
 
 REPLAYGAIN_ALBUM_GAIN
 	DE	Album Normalisierung verwenden (wenn möglich)
-	EN	Use Album Gain (if present)
+	EN	Use Album Gain (If Present)
 
 REPLAYGAIN_SMART_GAIN
 	DE	"Intelligente" Normalisierung verwenden
-	EN	"Smart" gain selection
+	EN	"Smart" Gain Selection
 
 REPLAYGAIN
 	DE	Lautstärken-Normalisierung
