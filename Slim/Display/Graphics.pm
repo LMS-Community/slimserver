@@ -13,10 +13,12 @@ use Tie::Cache::LRU;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 
-our %fonts;
-our %fonthash;
-our %fontheight;
-our %fontextents;
+use Storable;
+
+our $fonts;
+our $fonthash;
+our $fontheight;
+our $fontextents;
 
 my $char0 = chr(0);
 my $ord0a = ord("\x0a");
@@ -63,7 +65,6 @@ my %font2TTF = (
 );
 
 sub init {
-	%fonts = ();
 	loadFonts();
 
 	$::d_graphics && msgf("Trying to load GD Library for TTF support: %s\n", $canUseGD ? 'ok' : 'not ok!');
@@ -101,15 +102,15 @@ sub init {
 }
 
 sub gfonthash {
-	return \%fonthash;
+	return $fonthash;
 }
 
 sub fontnames {
 	my $client = shift;
 	my %fontnames;
 	my $i=0;
-	foreach my $gfont (keys %fonthash) {
-		my $fontname = ${$fonthash{$gfont}->{line2}};
+	foreach my $gfont (keys %{$fonthash}) {
+		my $fontname = ${$fonthash->{$gfont}->{line2}};
 		$fontname =~ s/(\.2)?//g;
 		$fontnames{$fontname} = $fontname;
 	}
@@ -118,7 +119,7 @@ sub fontnames {
 
 sub fontheight {
 	my $fontname = shift;
-	return $fontheight{$fontname};
+	return $fontheight->{$fontname};
 }
 
 # extent returns the number of rows high a font is rendered (useful for vertical scrolling)
@@ -126,22 +127,22 @@ sub fontheight {
 # negative values are for top-row fonts
 sub extent {
 	my $fontname = shift;
+	return $fontextents->{$fontname} || 0;
+}
 
-	my $extent = $fontextents{$fontname};
-	
-	return $extent if defined($extent);
-	
+sub loadExtent {
+	my $fontname = shift;
+
 	my $extentbytes = string($fontname, chr(0x1f));	
 	
 	# count the number of set bits in the extent bytes (up to 32)
-	$extent = unpack( '%32b*', $extentbytes ); 
+	my $extent = unpack( '%32b*', $extentbytes ); 
 	
 	if ($fontname =~ /\.1/) { $extent = -$extent; }
 	
-	$fontextents{$fontname} = $extent;
+	$fonts->{fontextents}->{$fontname} = $extent;
 	
 	$::d_graphics && msg(" extent of: $fontname is $extent\n");
-	return $extent;
 }
 
 sub string {
@@ -150,7 +151,7 @@ sub string {
 
 	my $bits = '';
 
-	my $font = $fonts{$fontname} || do {
+	my $font = $fonts->{$fontname} || do {
 		msg(" Invalid font $fontname\n");
 		bt();
 		return '';
@@ -265,8 +266,8 @@ sub measureText {
 	my $fontname = shift;
 	my $string = shift;
 	my $bits = string($fontname, $string);
-	return 0 if (!$fontname || !$fontheight{$fontname});
-	my $len = length($bits)/($fontheight{$fontname}/8);
+	return 0 if (!$fontname || !$fontheight->{$fontname});
+	my $len = length($bits)/($fontheight->{$fontname}/8);
 	
 	return $len;
 }
@@ -283,51 +284,103 @@ sub graphicsDirs {
 	return @dirs;
 }
 
-#returns a reference to a hash of filenames/external names
+sub fontCacheFile {
+	return catdir( Slim::Utils::Prefs::get('cachedir'), 
+		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts.bin');
+}
+
+#returns a reference to a hash of filenames/external names and newest modification time
 sub fontfiles {
 	my %fontfilelist = ();
+	my $newest = 0;
 	foreach my $fontfiledir (graphicsDirs()) {
 		if (opendir(DIR, $fontfiledir)) {
 			foreach my $fontfile ( sort(readdir(DIR)) ) {
 				if ($fontfile =~ /(.+)\.font.bmp$/) {
 					$::d_graphics && msg(" fontfile entry: $fontfile\n");
 					$fontfilelist{$1} = catdir($fontfiledir, $fontfile);
+					my $moddate = (stat($fontfilelist{$1}))[9]; 
+					$newest = $moddate if $moddate > $newest;
 				}
 			}
 			closedir(DIR);
 		}
 	}
-	return %fontfilelist;
+	return ($newest, %fontfilelist);
 }
 
 sub loadFonts {
-	my %fontfiles = fontfiles();
+	my $forceParse = shift;
+
+	my ($newest, %fontfiles) = fontfiles();
+	my $fontCache = fontCacheFile();
 	
+	# use stored fontCache if newer than all font files
+	if (!$forceParse && -r $fontCache && ($newest < (stat($fontCache))[9])) { 
+		$::d_graphics && msg( "Retrieving font data from font cache: $fontCache\n");
+		$fonts = retrieve($fontCache);
+
+		# check cache for consitency
+		my $cacheOK = 1;
+
+		if (defined($fonts->{fonthash}) && defined($fonts->{fontheight}) && defined($fonts->{fontextents})) {
+			$fonthash = $fonts->{fonthash};
+			$fontheight = $fonts->{fontheight};
+			$fontextents = $fonts->{fontextents};
+		} else {
+			$cacheOK =0;
+		}
+
+		# check for font files being removed
+		foreach my $font (keys %{$fontheight}) {
+			$cacheOK = 0 if !exists($fontfiles{$font});
+		}
+
+		# check for new fonts being added (with old modification date)
+		foreach my $font (keys %fontfiles) {
+			$cacheOK = 0 if !exists($fontheight->{$font});
+		}
+
+		return if $cacheOK;
+
+		$::d_graphics && msg( " font cache contains old data - reparsing fonts\n");
+	}
+
+	# otherwise clear data and parse all font files
+	$fonts = {};
+
 	foreach my $font (keys %fontfiles) {
 
 		$::d_graphics && msg( "Now parsing: $font\n");
 		if ($font =~ m/(.*?).(\d)/i) {
-			$fonthash{$1}->{"line$2"} = \$font;
-			$fonthash{$1}->{"overlay$2"} = \$font;
-			$fonthash{$1}->{"center$2"} = \$font;
+			$fonts->{fonthash}->{$1}->{"line$2"} = \$font;
+			$fonts->{fonthash}->{$1}->{"overlay$2"} = \$font;
+			$fonts->{fonthash}->{$1}->{"center$2"} = \$font;
 		}
 		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
-		
-		$fontheight{$font} = $height - 1;
-		$fonts{$font} = parseFont($fontgrid);
 
-		$::d_graphics && msg( "$font had height $height - 1\n");
+		$::d_graphics && msg( " height of: $font is ".($height - 1)."\n");		
+		$fonts->{fontheight}->{$font} = $height - 1;
+		$fonts->{$font} = parseFont($fontgrid);
+		$fonts->{fontextent}->{$font} = loadExtent($font);
 	}
 
 	# set to \undef if undefined (e.g. font is double height and only one line defined)
-	foreach my $name (keys %fonthash) {
-		$fonthash{$name}->{line1} = \undef if !exists($fonthash{$name}->{line1});
-		$fonthash{$name}->{line2} = \undef if !exists($fonthash{$name}->{line2});
-		$fonthash{$name}->{overlay1} = \undef if !exists($fonthash{$name}->{overlay1});
-		$fonthash{$name}->{overlay2} = \undef if !exists($fonthash{$name}->{overlay2});
-		$fonthash{$name}->{center1} = \undef if !exists($fonthash{$name}->{center1});
-		$fonthash{$name}->{center2} = \undef if !exists($fonthash{$name}->{center2});
+	foreach my $name (keys %{$fonts->{fonthash}}) {
+		$fonts->{fonthash}->{$name}->{line1} = \undef if !exists($fonts->{fonthash}->{$name}->{line1});
+		$fonts->{fonthash}->{$name}->{line2} = \undef if !exists($fonts->{fonthash}->{$name}->{line2});
+		$fonts->{fonthash}->{$name}->{overlay1} = \undef if !exists($fonts->{fonthash}->{$name}->{overlay1});
+		$fonts->{fonthash}->{$name}->{overlay2} = \undef if !exists($fonts->{fonthash}->{$name}->{overlay2});
+		$fonts->{fonthash}->{$name}->{center1} = \undef if !exists($fonts->{fonthash}->{$name}->{center1});
+		$fonts->{fonthash}->{$name}->{center2} = \undef if !exists($fonts->{fonthash}->{$name}->{center2});
 	}
+
+	$fonthash = $fonts->{fonthash};
+	$fontheight = $fonts->{fontheight};
+	$fontextents = $fonts->{fontextents};
+
+	$::d_graphics && msg( "Writing font cache: $fontCache\n");
+	store($fonts, $fontCache);
 }
 
 # parse the array of pixels ino a font table
