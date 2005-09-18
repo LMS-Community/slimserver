@@ -326,6 +326,7 @@ function initStatusControls() {
 	JXTK2.Key.registerKey(61, incVolume);  // = (firefox)
 	JXTK2.Key.registerKey(187, incVolume); // = (others)
 	JXTK2.Key.registerKey(109, decVolume); // - (firefox)
+	JXTK2.Key.registerKey(45, decVolume);  // - (opera)
 	JXTK2.Key.registerKey(189, decVolume); // - (others)
 	JXTK2.Key.registerKey(82, rotateRepeat);  // r
 	JXTK2.Key.registerKey(83, rotateShuffle); // s

@@ -129,6 +129,8 @@ JXTK2.JSONRPC.Proxy = function(url) {
 	this.call = function (methodName, methodParams, onResp) {
 		//alert("calling " + methodName + "(" + methodParams.join(", ") + ") via " + proxyurl);
 
+		if (typeof methodParams != 'object') methodParams = [];
+
 		if (onResp == true) {
 			// "Fork" into background
 			setTimeout(function() { self.call(methodName, methodParams); }, 0);

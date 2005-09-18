@@ -182,15 +182,21 @@ sub handleReqJSON {
 
 	my $obj = jsonToObj($params->{content});
 
+	$::d_plugins && msg("JSON request: " . $params->{content} . "\n");
+
 	my $reqname = $obj->{method};
 	my $respobj;
 
 	if ($rpcFunctions{$reqname}) {
-		my $freturn = &{$rpcFunctions{$reqname}}($obj->{params});
-		if (UNIVERSAL::isa($freturn, "RPC::XML::fault")) {
-			$respobj = { 'error' => $freturn->string, 'id' => $obj->{id} };
+		if (ref($obj->{params}) ne 'ARRAY') {
+			$respobj = { 'error' => 'invalid request', 'id' => $obj->{id} };
 		} else {
-			$respobj = { 'result' => $freturn, 'id' => $obj->{id} };
+			my $freturn = &{$rpcFunctions{$reqname}}($obj->{params});
+			if (UNIVERSAL::isa($freturn, "RPC::XML::fault")) {
+				$respobj = { 'error' => $freturn->string, 'id' => $obj->{id} };
+			} else {
+				$respobj = { 'result' => $freturn, 'id' => $obj->{id} };
+			}
 		}
 	} else {
 		$respobj = { 'error' => 'no such method', 'id' => $obj->{id} };
