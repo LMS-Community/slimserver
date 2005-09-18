@@ -917,8 +917,7 @@ sub isAllowedHost {
 	{
 
 		# hack to allow hostnames in allowedHosts list
-		if (index ($item, "*") == -1) {
-
+		if ((index($item, "*") == -1) && ($item !~ /\d{1,3}\.\d{1,3}\.\d{1,3}-\d{1,3}/)) {
 			my $packed = gethostbyname($item) or return 0;
 			$item = inet_ntoa($packed);
 		}
