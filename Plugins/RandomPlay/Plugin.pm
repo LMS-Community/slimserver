@@ -299,7 +299,7 @@ sub setupGroup {
 		},
 		
 		'plugin_random_remove_old_tracks' => {
-			'validate' => \&validateTrueFalse,
+			'validate' => \&Slim::Web::Setup::validateTrueFalse,
 			'options' => {
 				'1' => string('SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS'),
 			   '0' => string('SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS')
