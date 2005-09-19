@@ -1,4 +1,0 @@
-[% IF usePrefix ; SWITCH separator; CASE 'tree' %] / [% CASE [ 'tab' 'list' ] %] | [% END ; END ; IF currpage
-%]<strong>[% FILTER nbsp %][% linktitle %][% END %]</strong>[% ELSE
-%]<a class="fakelink" onclick="parent.browseurl('[% linkpage ; paramlist ; fragment %]')">[% FILTER nbsp ; linktitle ; END %]</a>[%
-END ; IF useSuffix ; SWITCH separator; CASE [ 'tree' 'tab' 'list' ] %] [% END ; END %]

@@ -1,4 +1,0 @@
-- Artist count in home gets cut off at 800x600
-- Power on/off
-- Cover art rendering in Safari
-- Artist links in playlist
