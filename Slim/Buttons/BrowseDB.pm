@@ -617,7 +617,8 @@ sub setMode {
 	}
 
 	# Dynamically create a VA/Compilation item under artists, like iTunes does.
-	if ($levels[$level] eq 'artist' && !$search) {
+	if ($levels[$level] eq 'artist' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
 		unshift @$items, $ds->variousArtistsObject;
 	}
 

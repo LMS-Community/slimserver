@@ -1237,7 +1237,7 @@ sub browsedb {
 		}
 
 		# Dynamic VA/Compilation listing
-		if (scalar(@$items) && $levels[$level] eq 'artist') {
+		if (scalar(@$items) && $levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 			my %list_form  = %$params;
 			my $vaObj      = $ds->variousArtistsObject;
