@@ -317,13 +317,15 @@ sub loadFonts {
 	
 	# use stored fontCache if newer than all font files
 	if (!$forceParse && -r $fontCache && ($newest < (stat($fontCache))[9])) { 
-		$::d_graphics && msg( "Retrieving font data from font cache: $fontCache\n");
-		$fonts = retrieve($fontCache);
-
 		# check cache for consitency
 		my $cacheOK = 1;
 
-		if (defined($fonts->{fonthash}) && defined($fonts->{fontheight}) && defined($fonts->{fontextents})) {
+		$::d_graphics && msg( "Retrieving font data from font cache: $fontCache\n");
+		eval { $fonts = retrieve($fontCache); };
+		
+		$::d_graphics && $@ && msg(" Tried loading fonts: $@\n");
+
+		if (defined $fonts && defined($fonts->{fonthash}) && defined($fonts->{fontheight}) && defined($fonts->{fontextents})) {
 			$fonthash = $fonts->{fonthash};
 			$fontheight = $fonts->{fontheight};
 			$fontextents = $fonts->{fontextents};
