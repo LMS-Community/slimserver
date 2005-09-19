@@ -297,7 +297,7 @@ sub volume {
 		else {
 			# With new style volume, let's try -49.5dB as the lowest
 			# value.
-			my $db = (int($volume) - 100)/2;	
+			my $db = ($volume - 100)/2;	
 			$newGain = dBToFixed($db);
 		}
 
