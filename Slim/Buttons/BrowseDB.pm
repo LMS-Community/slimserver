@@ -337,6 +337,7 @@ sub browsedbExitCallback {
 		elsif ($descend || $all) {
 
 			my $findCriteria = { %{$client->param('findCriteria')} };
+			my $selectionCriteria = $client->param('selectionCriteria');
 			my $field = $levels[$level];
 			my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
 				
@@ -361,6 +362,7 @@ sub browsedbExitCallback {
 				hierarchy => $hierarchy,
 				level => $level + 1,
 				findCriteria => $findCriteria,
+				selectionCriteria => $selectionCriteria,
 			);
 
 			# Only include the search terms (i.e. those associated with
@@ -634,8 +636,24 @@ sub setMode {
 	# Finally get the last selection position within the list	
 	my $listIndex;
 	my $selectionKey;
+	my $selectionCriteria;
 	if (defined($search)) {
 		$listIndex = 0;
+	
+	# Entering from trackinfo, so we need to set the selected item
+	} elsif (defined $client->param('selectionCriteria')) {
+	
+		# grab selection info
+		$selectionCriteria = $client->param('selectionCriteria');
+		my $selection = $selectionCriteria->{$levels[$level]};
+		my $i = 0;
+		for my $item (@{$items}) {
+			last if $selection == $item;
+			$i++;
+		}
+		
+		# set index to matching item from this level
+		$listIndex = $i;
 	}
 	else {
 		$selectionKey = $hierarchy . ':' . $level . ':';
@@ -670,6 +688,7 @@ sub setMode {
 		search => $search,
 		selectionKey => $selectionKey,
 		findCriteria => $findCriteria,
+		selectionCriteria => $selectionCriteria,
 	);
 
 	$params{'favorite'} = $client->param('favorite');
