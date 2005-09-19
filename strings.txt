@@ -2796,7 +2796,7 @@ SETUP_SHOWYEAR
 
 SETUP_SHOWYEAR_DESC
 	CZ	Můžete vybrat, zda se mají při procházení podle alb nebo obalů zobrazovat spolu s názvy alb i roky vydání. Pokud tuto volbu aktivujete bude rok zobrazen za názvem alba.
-	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie nach Album oder Plattencover nachschlagen. Das Jahr wird neben dem Albumtitel angezeigt.
+	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie Alben nachschlagen oder Plattenhülle durchsuchen. Das Jahr wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
 	ES	Se puede elegir mostrar el año de edición de un disco cuando se recorre por Disco o Arte de Tapa. Cuando está habilitado, el año del disco se mostrará junto al título del disco.
 	FR	Vous pouvez afficher l'année de sortie d'un album en mode Parcourir les albums ou Parcourir les pochettes. Si ce réglage est activé, l'année sera affichée à la suite du titre de l'album.
@@ -3032,7 +3032,7 @@ SETUP_PLAYLISTDIR
 
 SETUP_ARTFOLDER
 	CZ	Složka obalů
-	DE	Ordner für Plattencover
+	DE	Ordner für Plattenhüllen
 	EN	Artwork Folder
 	ES	Carpeta de Arte de Tapa
 	FR	Dossier des pochettes
@@ -3043,7 +3043,7 @@ SETUP_ARTFOLDER
 
 SETUP_ARTFOLDER_DESC
 	CZ	Můžete zvolit způsob ukládání obrázků obalů alb do zvláštního adresáře. Tuto volbu aktivujete použitím názvů souborů výše. Zadejte lokaci, kam se mají obrázky obalů ukládat. I přes použití této volby bude server stále hledat obrázky alb v adresáři s hudebními soubory, pokud nenajde příslušný obrázek v zadaném adresáři obalů.
-	DE	Sie können einen Ordner definieren, in welchem alle Plattencovers abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattencovers schauen, falls in diesem Ordner nichts passendes gefunden wird.
+	DE	Sie können einen Ordner definieren, in welchem alle Plattenhüllen abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattenhüllen schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	ES	Se puede elegir almacenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
 	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Entrez l'emplacement des fichiers de pochettes ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le SlimServer la cherchera à l'emplacement du fichier de musique.
@@ -3695,7 +3695,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 
 SETUP_COVERART
 	CZ	Nastavení názvů souborů pro obaly alb
-	DE	Plattencover
+	DE	Plattenhüllen
 	DK	Cover-billeder
 	EN	Artwork
 	ES	Arte de tapa
@@ -3723,7 +3723,7 @@ SETUP_COVERART_DESC
 		
 SETUP_COVERART_OK
 	CZ	Jméno souboru obalů nastaveno na
-	DE	Dateiname des Plattencovers:
+	DE	Dateiname der Plattenhüllen:
 	DK	Filnavne for cover-billeder gemt som:
 	EN	Artwork image file name set to
 	ES	El nombre de archivo para el Arte de Tapa es	
@@ -3737,7 +3737,7 @@ SETUP_COVERART_OK
 
 SETUP_COVERTHUMB
 	CZ	Náhledy obalů
-	DE	Dateiname des Plattencovers (klein)
+	DE	Dateiname der Plattenhüllen (klein)
 	DK	Små cover-billeder
 	EN	Artwork Thumbnail
 	ES	Imagen de Muestra de Arte de Tapa
@@ -3751,14 +3751,14 @@ SETUP_COVERTHUMB
 
 SETUP_COVERTHUMB_DESC
 	CZ	Pro procházení podle náhledů obalů, server použije stejné nastavení názvů souboru jako výše a hodnoty obsažené v ID3 tazích. Nicméně pokud sii přejete použít odlišné názvy, nebo vlastní soubory, zadejte jejich jména zde.
-	DE	Für das Nachschlagen von Plattencovers wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
+	DE	Für das Nachschlagen von Plattenhüllen wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 	ZH_CN	在浏览图像指图方面，伺服器将根据上述的缺省图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
 
 SETUP_COVERTHUMB_OK
 	CZ	Název souboru náhledu alba nastaven na
-	DE	Dateiname des Plattencovers (klein):
+	DE	Dateiname der Plattenhüllen (klein):
 	DK	Filnavne for cover-billeder gemt som:
 	EN	Artwork thumbnail image file name set to
 	ES	El nombre de archivo para la imagen de muestra del Arte de Tapa es	
@@ -3783,7 +3783,7 @@ SETUP_THUMBSIZE
 
 SETUP_THUMBSIZE_DESC
 	CZ	Zvolte velikost v pixelech (25-250) pro výchozí náhled obrázku obalu alba při procházení podle obalů. Defaultně je nastaveno 100.
-	DE	Wählen Sie die Grösse der Plattencover Vorschaubilder in Pixeln (25-250). Voreinstellung ist 100.
+	DE	Wählen Sie die Grösse der Plattenhüllen-Vorschaubilder in Pixeln (25-250). Voreinstellung ist 100.
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	ES	Elegir el tamaño en pixels (25-250) para el tamaño por defecto de la imagen de muestra cuando se examina por arte de tapa. Por defecto es 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
@@ -3794,7 +3794,7 @@ SETUP_THUMBSIZE_DESC
 
 SETUP_INCLUDENOART_0
 	CZ	Nezobrazovat alba bez obalu
-	DE	Keine Platzhalter für nicht vorhandene Plattencovers verwenden.
+	DE	Keine Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Delete placeholders from the list
 	ES	Borrar los discos sin Arte de Tapa
 	FR	Ne pas afficher les albums sans pochette
@@ -3805,7 +3805,7 @@ SETUP_INCLUDENOART_0
 
 SETUP_INCLUDENOART_1
 	CZ	Vložit všechna alba, použít prázdná místa
-	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattencovers verwenden.
+	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Include all albums, using placeholders
 	ES	Incluir todos los discos, utilizando aquellos sin Arte de Tapa
 	FR	Afficher tous les albums, avec image vide le cas échéant
@@ -3816,7 +3816,7 @@ SETUP_INCLUDENOART_1
 
 SETUP_INCLUDENOART
 	CZ	Procházet podle obalů
-	DE	Plattencover nachschlagen
+	DE	Plattenhüllen nachschlagen
 	EN	Browse By Artwork
 	ES	Examinar por Arte de Tapa
 	FR	Parcourir les pochettes
@@ -3827,7 +3827,7 @@ SETUP_INCLUDENOART
 
 SETUP_INCLUDENOART_DESC
 	CZ	Vyberte, zda-li si přejete při procházení podle obalů zobrazovat všechna alba a na místa alb s chybějícím obrázkem vložit prázdné místo, nebo tyto alba nezobrazovat.
-	DE	Legen Sie fest, ob Albums ohne Plattencover beim Nachschlagen nach Plattencover angezeigt werden sollen. Fehlt das Plattencover, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
+	DE	Legen Sie fest, ob Alben ohne Plattenhülle beim Durchsuchen der Plattenhüllen angezeigt werden sollen. Fehlt die Plattenhülle, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	ES	Elegir si se debe incluir o no los discos qeu actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
@@ -4934,7 +4934,7 @@ SETUP_ANIMATIONLEVEL_DESC
 
 SETUP_LOOKFORARTWORK
 	CZ	Hledat obal
-	DE	Plattencovers nachschlagen
+	DE	Plattenhüllen nachschlagen
 	EN	Look For Artwork
 	ES	Buscar Arte de Tapa
 	FR	Répertorier les pochettes
@@ -4944,7 +4944,7 @@ SETUP_LOOKFORARTWORK
 	ZH_CN	寻找图象
 
 SETUP_LOOKFORARTWORK_DESC
-	DE	Wenn der SlimServer die Musiksammlung durchsucht, dann kann er auch gleich nach Plattencovers suchen. Sie können angeben, ob sie das wollen, oder ob die Umschlaghüllen ignoriert werden sollen (beschleunigt das Einlesen).
+	DE	Wenn der SlimServer die Musiksammlung durchsucht, dann kann er auch gleich nach Plattenhüllen suchen. Sie können angeben, ob sie das wollen, oder ob die Umschlaghüllen ignoriert werden sollen (beschleunigt das Einlesen).
 	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
 	ES	Cuando SlimServer recopila la información de la colección musical puede buscar el Arte de Tapa automáticamente. Se puede optar por no hacerlo, lo que puede acelerar el procesos de recopilación pero a la vez puede hacer que el Arte de Tapa no figure en la interfaz web.
 	FR	Lorsque le SlimServer répertorie votre dossier de musique, il recherche automatiquement les pochettes d'album. Vous pouvez choisir de ne pas rechercher les pochettes pour accélérer ce processus, mais certaines pochettes présentes risquent de ne pas apparaître dans l'interface web.
@@ -4954,7 +4954,7 @@ SETUP_LOOKFORARTWORK_DESC
 	ZH_CN	当SlimServer扫描您的音乐库时它可以自动的寻找乐谱帖图象。您可以选择不寻找乐谱帖图象以加速扫瞄过程。但如此一来，乐谱帖图象将不会出现在网界面。
 
 SETUP_NO_ARTWORK
-	DE	Plattencovers ignorieren
+	DE	Plattenhüllen ignorieren
 	EN	Do not Look For Artwork
 	ES	No buscar Arte de Tapa
 	FR	Ne pas répertorier les pochettes
@@ -7180,7 +7180,7 @@ MODTIME
 
 COVERART
 	CZ	Obal
-	DE	Plattencover
+	DE	Plattenhülle
 	DK	Cover-billede
 	EN	Artwork
 	ES	Arte de Tapa
@@ -7742,7 +7742,7 @@ BROWSE_BY_ALBUM_DBL
 
 BROWSE_BY_ARTWORK
 	CZ	Procházet podle obalů
-	DE	Plattencover nachschlagen
+	DE	Plattenhülle nachschlagen
 	EN	Browse Artwork
 	ES	Examinar por Arte de Tapa
 	FR	Parcourir les pochettes
@@ -10444,4 +10444,5 @@ SETUP_POWERONRESUME_STOPOFF_RESETON
 	EN	Stop at power off / Reset playlist at power on
 
 ARTWORK
+	DE	Plattenhüllen
 	EN	Artwork
