@@ -10442,3 +10442,6 @@ SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 SETUP_POWERONRESUME_STOPOFF_RESETON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten nicht neu starten
 	EN	Stop at power off / Reset playlist at power on
+
+ARTWORK
+	EN	Artwork
