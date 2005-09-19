@@ -568,6 +568,7 @@ sub start {
 	$loopsecond = int($lastlooptime);
 	
 	checkVersion();
+	keepSlimServerInMemory();
 	
 	$::d_server && msg("SlimServer done start...\n");
 }
@@ -1070,7 +1071,11 @@ sub checkVersion {
 	if ($lastTime) {
 		my $delta = Time::HiRes::time() - $lastTime;
 		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
-			$::d_time && msg("checking version in " . ($lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2 - Time::HiRes::time()) . " seconds.\n");
+
+			$::d_time && msgf("checking version in %s seconds\n",
+				($lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2 - Time::HiRes::time())
+			);
+
 			Slim::Utils::Timers::setTimer(0, $lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2, \&checkVersion);
 			return;
 		}
@@ -1079,8 +1084,7 @@ sub checkVersion {
 	$::d_time && msg("checking version now.\n");
 	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB,
-													  \&checkVersionError);
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError);
 	$http->get($url); # will call checkVersionCB when complete
 
 	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
@@ -1108,7 +1112,32 @@ sub checkVersionError {
 	msg(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error . "\n");
 }
 
+# See Bug 1934 - Some VM's (*cough*Windows*cough*) don't deal well with
+# swapping. So try and keep our memory image in RAM and not swap out.
+sub keepSlimServerInMemory {
 
+	$::d_server && msg("Requesting web page to keep SlimServer unswapped.\n");
+
+	my $url  = '';
+
+	if (Slim::Utils::Prefs::get('authorize')) {
+
+		$url = sprintf("http://%s:%s\@localhost:9000/browsedb.html?hierarchy=age,track&level=0",
+			Slim::Utils::Prefs::get('username'), Slim::Utils::Prefs::get('password')
+		);
+
+	} else {
+
+		$url = "http://localhost:9000/browsedb.html?hierarchy=age,track&level=0";
+	}
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(sub {}, sub {});
+
+	$http->get($url);
+
+	# Check every half hour
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + 1800, \&keepSlimServerInMemory);
+}
 
 #------------------------------------------
 #
