@@ -325,12 +325,12 @@ sub loadFonts {
 		
 		$::d_graphics && $@ && msg(" Tried loading fonts: $@\n");
 
-		if (defined $fonts && defined($fonts->{fonthash}) && defined($fonts->{fontheight}) && defined($fonts->{fontextents})) {
+		if (!$@ && defined $fonts && defined($fonts->{fonthash}) && defined($fonts->{fontheight}) && defined($fonts->{fontextents})) {
 			$fonthash = $fonts->{fonthash};
 			$fontheight = $fonts->{fontheight};
 			$fontextents = $fonts->{fontextents};
 		} else {
-			$cacheOK =0;
+			$cacheOK = 0;
 		}
 
 		# check for font files being removed
