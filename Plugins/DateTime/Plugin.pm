@@ -223,6 +223,9 @@ sub screensaverDateTimelines {
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 	my $alarmOn = $client->prefGet("alarm", 0) || $client->prefGet("alarm", $wday);
 
+	my $nextUpdate = $client->periodicUpdateTime();
+	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
+
 	return {
 		'center1' => Slim::Utils::Misc::longDateF(),
 		'center2' => Slim::Utils::Misc::timeF(),
