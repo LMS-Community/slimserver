@@ -6,23 +6,26 @@
 # version 2.
 
 package Plugins::Podcast::Plugin;
-use strict;
 
-use Slim::Utils::Misc;
+use strict;
 use constant FEEDS_VERSION => 1;
 
+use HTML::Entities;
 use XML::Simple;
+
+use Slim::Utils::Misc;
 
 # default can be overridden by prefs.  See initPlugin()
 # TODO: come up with a better list of defaults.
 our @default_feeds = (
-	{name => 'PodcastAlley Top 50',
-	 value => 'http://podcastalley.com/PodcastAlleyTop50.opml'},
-	{name => 'PodcastAlley 10 Newest',
-	 value => 'http://podcastalley.com/PodcastAlley10Newest.opml'},
-	# here's a nice list of radio programs.  Unfortunately the list is a little stale.  For instance all Air America links seem wrong.  Not sure yet whether it should be included in our defaults.
-#	{name => 'Public Radio Feeds (Todd Maffin)',
-#	 value => 'http://todmaffin.com/radio.opml'},
+	{
+		name => 'PodcastAlley Top 50',
+		value => 'http://podcastalley.com/PodcastAlleyTop50.opml'
+	},
+	{
+		name => 'PodcastAlley 10 Newest',
+		value => 'http://podcastalley.com/PodcastAlley10Newest.opml'
+	},
 );
 
 our @feeds = ();
@@ -35,9 +38,7 @@ sub enabled {
 sub initPlugin {
 	$::d_plugins && msg("Podcast Plugin initializing.\n");
 
-	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(),
-								   \&setMode);
-
+	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
 
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
 	my @feedNamePrefs = Slim::Utils::Prefs::getArray("plugin_podcast_names");
@@ -45,6 +46,7 @@ sub initPlugin {
 	my $version = Slim::Utils::Prefs::get("plugin_podcast_feeds_version");
 
 	@feeds = ();
+
 	# No prefs set or we've had a version change and they weren't modified, 
 	# so we'll use the defaults
 	if (scalar(@feedURLPrefs) == 0 ||
@@ -56,35 +58,45 @@ sub initPlugin {
 		# use prefs
 		my $i = 0;
 		while ($i < scalar(@feedNamePrefs)) {
-			push @feeds, {name => $feedNamePrefs[$i],
-						  value => $feedURLPrefs[$i]};
+
+			push @feeds, {
+				name => $feedNamePrefs[$i],
+				value => $feedURLPrefs[$i]
+			};
 			$i++;
 		}
 	}
 
-    if ($::d_plugins) {
-        msg("Podcast Feed Info:\n");
-        foreach (@feeds) {
-            msg($_->{'name'} . ", " . $_->{'value'} . "\n");
-        }
-        msg("\n");
-    }
+	if ($::d_plugins) {
+		msg("Podcast Feed Info:\n");
+
+		foreach (@feeds) {
+			msg($_->{'name'} . ", " . $_->{'value'} . "\n");
+		}
+
+		msg("\n");
+	}
+
 	# feed_names should reflect current names
 	%feed_names = ();
-	map {$feed_names{$_->{'value'}} = $_->{'name'}} @feeds;
+
+	map { $feed_names{$_->{'value'} } = $_->{'name'}} @feeds;
 }
 
 sub revertToDefaults {
 	@feeds = @default_feeds;
-	my @urls = map { $_->{'value'}} @feeds;
+
+	my @urls  = map { $_->{'value'}} @feeds;
 	my @names = map { $_->{'name'}} @feeds;
+
 	Slim::Utils::Prefs::set('plugin_podcast_feeds', \@urls);
 	Slim::Utils::Prefs::set('plugin_podcast_names', \@names);
 	Slim::Utils::Prefs::set('plugin_podcast_feeds_version', FEEDS_VERSION);
 
 	# feed_names should reflect current names
 	%feed_names = ();
-	map {$feed_names{$_->{'value'}} = $_->{'name'}} @feeds;
+
+	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
 }
 
 sub getDisplayName {
@@ -130,9 +142,12 @@ sub setMode {
 			# url is also a playlist
 			$client->execute(['playlist', 'add', $item->{'value'}, $item->{'name'}]);
 		},
-		overlayRef => [undef,
-					   Slim::Display::Display::symbol('notesymbol') .
-					   Slim::Display::Display::symbol('rightarrow') ],
+
+		overlayRef => [
+			undef,
+			Slim::Display::Display::symbol('notesymbol') .
+			Slim::Display::Display::symbol('rightarrow') 
+		],
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -154,8 +169,7 @@ sub webPage {
 	my $params = shift;
 
 	# TODO: set content type to XML
-	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page",
-											 $params);
+	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page", $params);
 }
 
 # for configuring via web interface
@@ -175,29 +189,30 @@ sub setupGroup {
 
 	my %Prefs = (
 		plugin_podcast_reset => {
-			'validate' => \&Slim::Web::Setup::validateAcceptAll
-			,'onChange' => sub {
+			'validate' => \&Slim::Web::Setup::validateAcceptAll,
+			'onChange' => sub {
 				Slim::Utils::Prefs::set("plugin_podcast_feeds_modified", undef);
 				Slim::Utils::Prefs::set("plugin_podcast_feeds_version", undef);
 				revertToDefaults();
-			}
-			,'inputTemplate' => 'setup_input_submit.html'
-			,'changeIntro' => Slim::Utils::Strings::string('PODCAST_RESETTING')
-			,'ChangeButton' => Slim::Utils::Strings::string('PODCAST_RESET_BUTTON')
-			,'dontSet' => 1
-			,'changeMsg' => ''
+			},
+			'inputTemplate' => 'setup_input_submit.html',
+			'changeIntro' => Slim::Utils::Strings::string('PODCAST_RESETTING'),
+			'ChangeButton' => Slim::Utils::Strings::string('PODCAST_RESET_BUTTON'),
+			'dontSet' => 1,
+			'changeMsg' => '',
 		},
+
 		plugin_podcast_feeds => {
-			'isArray' => 1
-			,'arrayAddExtra' => 1
-			,'arrayDeleteNull' => 1
-			,'arrayDeleteValue' => ''
-			,'arrayBasicValue' => 0
-			,'PrefSize' => 'large'
-			,'inputTemplate' => 'setup_input_array_txt.html'
-			,'PrefInTable' => 1
-			,'showTextExtValue' => 1
-			,'externalValue' => sub {
+			'isArray' => 1,
+			'arrayAddExtra' => 1,
+			'arrayDeleteNull' => 1,
+			'arrayDeleteValue' => '',
+			'arrayBasicValue' => 0,
+			'PrefSize' => 'large',
+			'inputTemplate' => 'setup_input_array_txt.html',
+			'PrefInTable' => 1,
+			'showTextExtValue' => 1,
+			'externalValue' => sub {
 				my ($client, $value, $key) = @_;
 
 				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feeds))) {
@@ -205,8 +220,8 @@ sub setupGroup {
 				}
 
 				return '';
-			}
-			,'onChange' => sub {
+			},
+			'onChange' => sub {
 				my ($client,$changeref,$paramref,$pageref) = @_;
 				if (exists($changeref->{'plugin_podcast_feeds'}{'Processed'})) {
 					return;
@@ -215,12 +230,12 @@ sub setupGroup {
 				updateFeedNames();
 
 				$changeref->{'plugin_podcast_feeds'}{'Processed'} = 1;
-			}
-			,'changeMsg' => Slim::Utils::Strings::string('PODCAST_FEEDS_CHANGE')
+			},
+			'changeMsg' => Slim::Utils::Strings::string('PODCAST_FEEDS_CHANGE'),
 		},
 	);
 
-	return( \%Group, \%Prefs );
+	return (\%Group, \%Prefs);
 }
 
 
@@ -229,9 +244,12 @@ sub updateFeedNames {
 	my @feedNamePrefs;
 
 	# verbose debug
-	use Data::Dumper;
-	msg("Podcast: updateFeedNames urls:\n");
-	print Dumper(\@feedURLPrefs);
+	if ($::d_plugins) {
+
+		require Data::Dumper;
+		msg("Podcast: updateFeedNames urls:\n");
+		print Dumper(\@feedURLPrefs);
+	}
 
 	# case 1: we're reverting to default
 	if (scalar(@feedURLPrefs) == 0) {
@@ -241,14 +259,20 @@ sub updateFeedNames {
 
 		my $i = 0;
 		while ($i < scalar(@feedURLPrefs)) {
+
 			my $url = $feedURLPrefs[$i];
 			my $name = $feed_names{$url};
+
 			if ($name && $name !~ /^http\:/) {
+
 				# no change
 				$feedNamePrefs[$i] = $name;
+
 			} elsif ($url =~ /^http\:/) {
+
 				# does a synchronous get
 				my $xml = getFeedXml($url);
+
 				if ($xml && exists $xml->{channel}->{title}) {
 					# here for podcasts and RSS
 					$feedNamePrefs[$i] = Slim::Buttons::PodcastBrowser::unescapeAndTrim($xml->{channel}->{title});
@@ -259,10 +283,12 @@ sub updateFeedNames {
 					# use url as title since we have nothing else
 					$feedNamePrefs[$i] = $url;
 				}
+
 			} else {
 				# use url as title since we have nothing else
 				$feedNamePrefs[$i] = $url;
 			}
+
 			$i++;
 		}
 
@@ -278,15 +304,21 @@ sub updateFeedNames {
 		# runtime list must reflect changes
 		@feeds = ();
 		$i = 0;
+
 		while ($i < scalar(@feedNamePrefs)) {
-			push @feeds, {name => $feedNamePrefs[$i],
-						  value => $feedURLPrefs[$i]};
+
+			push @feeds, {
+				name => $feedNamePrefs[$i],
+				value => $feedURLPrefs[$i]
+			};
+
 			$i++;
 		}
 
 		# feed_names should reflect current names
 		%feed_names = ();
-		map {$feed_names{$_->{'value'}} = $_->{'name'}} @feeds;
+
+		map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
 	}
 
 }
@@ -296,34 +328,39 @@ sub updateFeedNames {
 # only used to support the web interface
 # when browsing, feeds are downloaded asynchronously, see PodcastBrowser.pm
 sub getFeedXml {
-    my $feed_url = shift;
-    
-    my $http = Slim::Player::Protocols::HTTP->new({
-	'url'    => $feed_url,
-	'create' => 0,
-    });
-    
-    if (defined $http) {
+	my $feed_url = shift;
 
-	my $content = $http->content();
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => $feed_url,
+		'create' => 0,
+	});
 
-	$http->close();
+	if (defined $http) {
 
-	return 0 unless defined $content;
+		my $content = $http->content;
 
-	# forcearray to treat items as array,
-	# keyattr => [] prevents id attrs from overriding
-        my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+		$http->close;
 
-        if ($@) {
+		return 0 unless defined $content;
+
+		# Deal with Windows encoding stupidity.
+		$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
+
+		HTML::Entities::encode_entities($content, "\x80-\xff");
+
+		# forcearray to treat items as array,
+		# keyattr => [] prevents id attrs from overriding
+		my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+
+		if ($@) {
 			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
 			return 0;
-        }
+		}
 
-        return $xml;
-    }
+		return $xml;
+	}
 
-    return 0;
+	return 0;
 }
 
 
@@ -409,6 +446,5 @@ SETUP_PLUGIN_PODCAST_RESET
 	ES	Reinicializar Podcasts por defecto
 
 !};
-
 
 1;
