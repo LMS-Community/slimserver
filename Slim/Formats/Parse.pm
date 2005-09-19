@@ -342,7 +342,7 @@ sub parseCUE {
 		} elsif (defined $currtrack and
 			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
 
-		   $tracks->{$currtrack}->{uc $1} = $2;
+			$tracks->{$currtrack}->{uc $1} = $2;
 
 		} elsif (defined $currtrack and $line =~ /^\s+INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
 
@@ -354,6 +354,12 @@ sub parseCUE {
 
 		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
+
+		} elsif (defined $currtrack and defined $filename) {
+			# Each track in a cue sheet can have a different
+			# filename. See Bug 2126 &
+			# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
+			$tracks->{$currtrack}->{'FILENAME'} = $filename;
 		}
 	}
 
@@ -397,24 +403,32 @@ sub parseCUE {
 	for my $key (sort {$a <=> $b} keys %$tracks) {
 
 		my $track = $tracks->{$key};
+
+		# Each track can have it's own FILE
+		if (!defined $track->{'FILENAME'}) {
+
+			$track->{'FILENAME'} = $filename;
+		}
+
+		my $file = $track->{'FILENAME'};
 	
-		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $filename ) { next; }
-#		if (!defined $track->{'START'} || !defined $filename ) { next; }
+		if (!defined $track->{'START'} || !defined $track->{'END'} || !defined $file ) {
+
+			next;
+		}
 
 		# Don't use $track->{'URL'} or the db will break
-		$track->{'URI'} = "$filename#".$track->{'START'}."-".$track->{'END'};
+		$track->{'URI'} = "$file#".$track->{'START'}."-".$track->{'END'};
 
 		$::d_parse && msg("    URL: " . $track->{'URI'} . "\n");
 
 		# Ensure that we have a CT
 		if (!defined $track->{'CT'}) {
-			$track->{'CT'} = Slim::Music::Info::typeFromPath($filename, 'mp3');
+			$track->{'CT'} = Slim::Music::Info::typeFromPath($file, 'mp3');
 		}
 
 		$track->{'TRACKNUM'} = $key;
 		$::d_parse && msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
-
-		$track->{'FILENAME'} = $filename;
 
 		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR GENRE)) {
 
@@ -484,47 +498,46 @@ sub readCUE {
 
 	return @items unless defined $tracks && keys %$tracks > 0;
 
-	# Grab a random track to pull a filename from.
-	# for now we only support one FILE statement in the cuesheet
-	my ($sometrack) = (keys %$tracks);
-
-	# Some cuesheets may have a busted FILE entry
-	unless ($tracks->{$sometrack}->{'FILENAME'}) {
-		return @items;
-	}
-
-	# We may or may not have run updateOrCreate on the base filename
-	# during parseCUE, depending on the cuesheet contents.
-	# Run it here just to be sure.
-	# Set the content type on the base file to hide it from listings.
-	# Grab data from the base file to pass on to our individual tracks.
-	my $basetrack = $ds->updateOrCreate({
-		'url'        => $tracks->{$sometrack}->{'FILENAME'},
-		'attributes' => { 'CT' => 'cur' },
-		'readTags'   => 1,
-	});
-
-	# Remove entries from other sources. This cuesheet takes precedence.
-	my $find = {'url', $tracks->{$sometrack}->{'FILENAME'} . "#*" };
-
-	my @oldtracks = $ds->find({
-		'field' => 'url',
-		'find'  => $find,
-	});
-
-	for my $oldtrack (@oldtracks) {
-		$::d_parse && msg("Deleting previous entry for $oldtrack\n");
-		$ds->delete($oldtrack);
-	}
+	#
+	my $basetrack = undef;
 
 	# Process through the individual tracks
 	for my $key (sort { $a <=> $b } keys %$tracks) {
 
 		my $track = $tracks->{$key};
 
-		if (!defined $track->{'URI'}) {
-			$::d_parse && msg("Skipping track without url\n");
+		if (!defined $track->{'URI'} || !defined $track->{'FILENAME'}) {
+			$::d_parse && msg("Skipping track without url or filename\n");
 			next;
+		}
+
+		# We may or may not have run updateOrCreate on the base filename
+		# during parseCUE, depending on the cuesheet contents.
+		# Run it here just to be sure.
+		# Set the content type on the base file to hide it from listings.
+		# Grab data from the base file to pass on to our individual tracks.
+		if (!defined $basetrack || $basetrack->url ne $track->{'FILENAME'}) {
+
+			$::d_parse && msg("Creating new track for: $track->{'FILENAME'}\n");
+
+			$basetrack = $ds->updateOrCreate({
+				'url'        => $track->{'FILENAME'},
+				'attributes' => { 'CT' => 'cur' },
+				'readTags'   => 1,
+			});
+
+			# Remove entries from other sources. This cuesheet takes precedence.
+			my $find = {'url', $track->{'FILENAME'} . "#*" };
+
+			my @oldtracks = $ds->find({
+				'field' => 'url',
+				'find'  => $find,
+			});
+
+			for my $oldtrack (@oldtracks) {
+				$::d_parse && msg("Deleting previous entry for $oldtrack\n");
+				$ds->delete($oldtrack);
+			}
 		}
 
 		push @items, $track->{'URI'}; #url;
@@ -547,7 +560,6 @@ sub readCUE {
 			'attributes' => $track,
 			'readTags'   => 0,  # no need to read tags, since we did it for the base file
 		});
-
 	}
 
 	$::d_parse && msg("    returning: " . scalar(@items) . " items\n");	
