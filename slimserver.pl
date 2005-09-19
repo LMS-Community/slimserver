@@ -1119,16 +1119,17 @@ sub keepSlimServerInMemory {
 	$::d_server && msg("Requesting web page to keep SlimServer unswapped.\n");
 
 	my $url  = '';
+	my $port = Slim::Utils::Prefs::get('httpport');
 
 	if (Slim::Utils::Prefs::get('authorize')) {
 
-		$url = sprintf("http://%s:%s\@localhost:9000/browsedb.html?hierarchy=age,track&level=0",
+		$url = sprintf("http://%s:%s\@localhost:$port/browsedb.html?hierarchy=age,track&level=0",
 			Slim::Utils::Prefs::get('username'), Slim::Utils::Prefs::get('password')
 		);
 
 	} else {
 
-		$url = "http://localhost:9000/browsedb.html?hierarchy=age,track&level=0";
+		$url = "http://localhost:$port/browsedb.html?hierarchy=age,track&level=0";
 	}
 
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(sub {}, sub {});
