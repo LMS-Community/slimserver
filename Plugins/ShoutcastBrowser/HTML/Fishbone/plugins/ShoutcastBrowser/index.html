@@ -1,14 +1,12 @@
 <html>
 	<head>
 		<title>[% pagetitle %]</title>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray">
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
+		[% PROCESS customheader.html %]
 		[% IF redirect %]<meta http-equiv="refresh" content="[% redirect.delay %]; URL=[% redirect.url %]">[% END %] 
 	</head>
 	<body bgcolor="#FFFFFF">
-	    <p>
+	<div class='list'>
+	<p>
 
 		<h3>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</h3><p>
 		
@@ -113,7 +111,7 @@
 			[% END %]
 		</table>
 		<!-- end plugins output -->
-		
+	</div>	
 	</body>
 </html>
 
