@@ -1,46 +1,37 @@
-
-	[% IF itemobj.title %]<title>[% itemobj.title | html %]</title>[% END %]
-
-	[% genres = itemobj.genres %]
-	[% IF genres %]
-		[% FOREACH genre = genres %]
-			<genre>[% genre.name | html %]</genre> 
-			<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist,album,track&level=0&genre=[% genre.id %]]]></genre_browse_url>
-		[% END %]
-	[% END %] 
-
-	[% FOREACH role = itemobj.contributorRoles.sort %]
-
-		[% contributors = itemobj.contributorsOfType(role) %]
-		[% IF contributors %]
-
-			[% FOREACH contributor = contributors %]
-				<[% role %]>[% contributor.name | html %]</[% role %]>
-				<[% role %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=album,track&level=0&artist=[% contributor.id %]]]></[% role %]_browse_url>
-			[% END %]
-
-		[% END %]
-
+<song_id>[% itemobj.id %]</song_id>
+<title>[% itemobj.title | html %]</title>
+[% genres = itemobj.genres %]
+[% IF genres %]
+	[% FOREACH genre = genres %]
+		<genre>[% genre.name | html %]</genre>
+		<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=genre%2Cartist%2Calbum%2Ctrack&level=1&genre=[% genre.id %]]]></genre_browse_url>
 	[% END %]
-
-	[% IF itemobj.album %] 
-		<album>[% itemobj.album.title | html %]</album>
-		<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=track&level=0&album=[% itemobj.album.id %]]]></album_browse_url>
+[% END %]
+[% FOREACH role = itemobj.contributorRoles.sort %]
+	[% contributors = itemobj.contributorsOfType(role) %]
+	[% IF contributors %]
+		[% FOREACH contributor = contributors %]
+			<[% role %]>[% contributor.name | html %]</[% role %]>
+			<[% role %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&artist=[% contributor.id %]]]></[% role %]_browse_url>
+		[% END %]
 	[% END %]
-
-	[% IF itemobj.tracknum %]<track>[% itemobj.tracknum | html %]</track>[% END %]
-	[% IF itemobj.content_type %]<type>[% itemobj.content_type | string | html %]</type>[% END %]
-	[% IF itemobj.duration %]<duration>[% itemobj.duration | html %]</duration>[% END %]
-	[% IF itemobj.year %]<year>[% itemobj.year | html %]</year>[% END %]
-	[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
-	[% IF itemobj.lyrics %]<lyrics>[% itemobj.lyrics | html %]</lyrics>[% END %]
-	[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
-	[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
-	[% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
-	[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
-	[% IF itemobj.replay_gain %]<replay_gain>[% itemobj.replay_gain | html %]</replay_gain>[% END %]
-	[% IF itemobj.album.replay_gain %]<album_replay_gain>[% itemobj.album_replay_gain | html %]</album_replay_gain>[% END %]
- 	<song_url><![CDATA[[% track.path %]]]></song_url>
-	<download_url><![CDATA[[% download %]]]></download_url>
-  	[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[music/[% itempath | uri %]/cover.jpg]]></coverart>[% END %]
- 	[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]
+[% END %]
+[% IF itemobj.album %]
+	<album>[% itemobj.album.title | html %]</album>
+	<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=album%2Ctrack&level=1&album=[% itemobj.album.id %]]]></album_browse_url>
+[% END %]
+[% IF itemobj.tracknum %]<track>[% itemobj.tracknum | html %]</track>[% END %]
+[% IF itemobj.content_type %]<type>[% itemobj.content_type | string | html %]</type>[% END %]
+[% IF itemobj.duration %]<duration>[% itemobj.duration | html %]</duration>[% END %]
+[% IF itemobj.year %]<year>[% itemobj.year | html %]</year>[% END %]
+[% IF comment %]<comment>[% comment | html %]</comment>[% END %]
+[% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
+[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
+[% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
+[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
+<song_url><![CDATA[[% itemobj.url %]]]></song_url>
+<download_url><![CDATA[[% download %]]]></download_url>
+<info_url><![CDATA[xml/songinfo.xml?item=[% itemobj.id %]]]></info_url>
+<path><![CDATA[[% itemobj.path | unuri | utf8on %]]]></path>
+[% IF itemobj.coverArt('cover', 1) %]<coverart><![CDATA[music/[% itemobj.id %]/cover.jpg]]></coverart>[% END %]
+[% IF mixable %]<mixable>[% mixable | html %]</mixable>[% END %]

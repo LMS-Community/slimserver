@@ -1,1 +1,9 @@
-[% IF playlist_items %]<m3u_url><![CDATA[xml/status.m3u?dummy=&]]></m3u_url><clear_url><![CDATA[xml/status.xml?p0=playlist&p1=clear]]></clear_url>[% END %][% playlist_header %][% playlist_items %]
+<playlist>
+	[% IF cansave %]<save_url><![CDATA[xml/status.xml?p0=playlist&p1=save&p2=___NAME___&player=[% player | uri %]]]></save_url>[% END %]
+	[% IF playlist_items %]
+		<m3u_url><![CDATA[xml/status.m3u?player=[% player | uri %]]]></m3u_url>
+		<clear_url><![CDATA[xml/status.xml?p0=playlist&p1=clear&player=[% player | uri %]]]></clear_url>
+	[% END %]
+	[% playlist_header %]
+	[% playlist_items %]
+</playlist>

@@ -1,8 +1,7 @@
 <status_entry>
 	<offset>[% num | html %]</offset>
 	[% IF currentsong %]<playing_now/>[% END %]
-	<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2=[% num %]]]></remove_url>
-		
+	<remove_url><![CDATA[xml/status.xml?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]]]></remove_url>
 	<song>
 	[% PROCESS _xml_song.html %]
 	</song>
