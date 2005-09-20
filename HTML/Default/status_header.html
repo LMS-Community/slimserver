@@ -21,9 +21,18 @@ function refresh() {
 	window.location.replace("status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
 }
 
-function switchPlayer(player_List){
-   var player = player_List.options[player_List.selectedIndex].value;
-   parent.location.href = "[% webroot %]index.html?player=" + player;
+function switchPlayer(player_List) {
+
+	var newPlayer = player_List.options[player_List.selectedIndex].value;
+
+	for (var i = 0; i < top.frames.length; i++) {
+
+		var myString = new String(top.frames[i].location);
+		var rString  = newPlayer;
+		var rExp     = /(\w\w(:|%3A)){5}(\w\w)/gi;
+
+		top.frames[i].location = myString.replace(rExp, rString);
+	}
 }
 
 // Stop Hiding script --->
