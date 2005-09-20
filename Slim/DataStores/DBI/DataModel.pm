@@ -125,15 +125,6 @@ sub db_Main {
 
 	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
 
-	# Check and see if we need to create the path.
-	unless (-d dirname($dbname)) {
-		mkpath(dirname($dbname)) or do {
-			bt();
-			msg("Couldn't create directory for $dbname : $!\n");
-			return;
-		};
-	}
-
 	$::d_info && msg("Metadata database saving into: $dbname\n");
 
 	my $source = sprintf(Slim::Utils::Prefs::get('dbsource'), $dbname);

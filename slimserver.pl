@@ -911,7 +911,6 @@ sub initSettings {
 		Slim::Utils::Prefs::set("cachedir", $cachedir);
 	}
 	
-
 	if (defined($httpport)) {
 		Slim::Utils::Prefs::set("httpport", $httpport);
 	}
@@ -943,6 +942,8 @@ sub initSettings {
 		$cachedir = Slim::Utils::Misc::fixPathCase($cachedir);
 		Slim::Utils::Prefs::set("cachedir",$cachedir);
 	}
+
+	Slim::Utils::Prefs::makeCacheDir();	
 }
 
 sub daemonize {

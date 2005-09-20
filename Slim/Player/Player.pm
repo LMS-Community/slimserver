@@ -33,6 +33,7 @@ our $defaultPrefs = {
 		,'menuItem'				=> [qw( NOW_PLAYING
 										BROWSE_MUSIC
 										SEARCH
+										RandomPlay::Plugin
 										SAVED_PLAYLISTS
 										RADIO
 										SETTINGS

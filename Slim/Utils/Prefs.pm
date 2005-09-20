@@ -368,11 +368,19 @@ sub defaultCacheDir {
 		$CacheDir = undef;
 	}
 
-	if (defined $CacheDir && !-d $CacheDir) {
-		mkpath($CacheDir);
-	}
-
 	return $CacheDir;
+}
+
+sub makeCacheDir {
+	my $cacheDir = get("cachedir") || defaultCacheDir();
+	
+	if (defined $cacheDir && !-d $cacheDir) {
+		mkpath($cacheDir) or do {
+			bt();
+			msg("Couldn't create cache dir for $cacheDir : $!\n");
+			return;
+		};
+	}
 }
 
 # Some routines to add and remove preference change handlers

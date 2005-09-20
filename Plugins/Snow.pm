@@ -21,6 +21,7 @@ use Slim::Control::Command;
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);
+use Data::Dumper;
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 2.0 $,10);
@@ -96,11 +97,20 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	ES	Tormenta
 	FR	Tempête
 
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	EN	Whiteout
+
 PLUGIN_SCREENSAVER_SNOW_STYLE
-	DE	Schneetyp
-	EN	Style of snow
-	ES	Estilo de nieve
-	FR	Type neige
+	DE	Schneetyp on
+	EN	Style of snow when on
+	ES	Estilo de nieve on
+	FR	Type neige on
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
+	DE	Schneetyp off
+	EN	Style of snow when off
+	ES	Estilo de nieve off
+	FR	Type neige off
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	DE	Schnee Bildschirmschoner: Schneetyp
@@ -187,7 +197,7 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 ##################################################
 
 # button functions for browse directory
-my @snowSettingsChoices = ('PLUGIN_SCREENSAVER_SNOW_ACTIVATE','PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE');
+my @snowSettingsChoices = ('PLUGIN_SCREENSAVER_SNOW_ACTIVATE','PLUGIN_SCREENSAVER_SNOW_QUANTITY', 'PLUGIN_SCREENSAVER_SNOW_STYLE','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF');
 
 our %current;
 our %menuParams = (
@@ -214,8 +224,8 @@ our %menuParams = (
 	}
 	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_QUANTITY') => {
 		'useMode' => 'INPUT.List'
-		,'listRef' => [0,1,2]
-		,'externRef' => ['PLUGIN_SCREENSAVER_SNOW_QUANTITY_0', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_1', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_2']
+		,'listRef' => [0,1,2,3]
+		,'externRef' => ['PLUGIN_SCREENSAVER_SNOW_QUANTITY_0', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_1', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_2','PLUGIN_SCREENSAVER_SNOW_QUANTITY_3']
 		,'stringExternRef' => 1
 		,'header' => 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE'
 		,'stringHeader' => 1
@@ -233,6 +243,17 @@ our %menuParams = (
 		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],'snowStyle',$_[1]); }
 		,'onChangeArgs' => 'CV'
 		,'initialValue' => sub { Slim::Utils::Prefs::clientGet($_[0],'snowStyle'); }
+	}
+	,catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF') => {
+		'useMode' => 'INPUT.List'
+		,'listRef' => [1,2,3,4,5,6]
+		,'externRef' => [ 'PLUGIN_SCREENSAVER_SNOW_STYLE_1','PLUGIN_SCREENSAVER_SNOW_STYLE_2','PLUGIN_SCREENSAVER_SNOW_STYLE_3','PLUGIN_SCREENSAVER_SNOW_STYLE_4','PLUGIN_SCREENSAVER_SNOW_STYLE_5','PLUGIN_SCREENSAVER_SNOW_STYLE_6']
+		,'stringExternRef' => 1
+		,'header' => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE'
+		,'stringHeader' => 1
+		,'onChange' => sub { Slim::Utils::Prefs::clientSet($_[0],'snowStyleOff',$_[1]); }
+		,'onChangeArgs' => 'CV'
+		,'initialValue' => sub { Slim::Utils::Prefs::clientGet($_[0],'snowStyleOff'); }
 	}
 );
 
@@ -304,7 +325,6 @@ sub setMode {
 	$params{'valueRef'} = \$current{$client};
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 	$client->param('modeUpdateInterval', 0.25);
-	#$client->update();
 }
 
 ###################################################################
@@ -334,6 +354,7 @@ our %screensaverSnowFunctions = (
 			Slim::Hardware::IR::resendButton($client);
 		}
 	}
+	# disable this so you can change the size of text
 	#,'textsize' => sub { 
 	#	my $client = shift;
 	#	$wasDoubleSize{$client} = !$wasDoubleSize{$client}; 
@@ -356,9 +377,14 @@ sub setScreensaverSnowMode() {
 	
 	#$wasDoubleSize{$client} = $client->textSize;
 	#$client->textSize(0);
-	
-	# save time on later lookups - we know these can't change while we're active
-	$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 6;
+
+	#check power status
+	if ($client->power()) {
+		# save time on later lookups - we know these can't change while we're active
+		$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyle') || 6;
+	} else {
+		$snowStyle{$client} = Slim::Utils::Prefs::clientGet($client,'snowStyleOff') || 6;
+	}
 	$snowQuantity{$client} = Slim::Utils::Prefs::clientGet($client,'snowQuantity') || 1;
 }
 
@@ -501,16 +527,15 @@ sub insertChar {
 }
 
 # SBG is 280x16, so we create a 7x16 blank
-our $blankFlakeG = 
-		 "\x00\x00".
+our %flakeMapG = (
+	0 =>	 "\x00\x00".
 		 "\x00\x00".
 		 "\x00\x00".
 		 "\x00\x00".
 	     "\x00\x00".
 	     "\x00\x00".
-	     "\x00\x00";
+	     "\x00\x00",
 
-our %flakeMapGU = (
 	1 => "\x20\x00"
 	    ."\x70\x00"
 	    ."\x20\x00"
@@ -576,10 +601,8 @@ our %flakeMapGU = (
 	    ."\x20\x00"
 	    ."\x70\x00"
 	    ."\x20\x00",
-);
 	     
-our %flakeMapGL = (
-	1 => "\x00\x20"
+	65 => "\x00\x20"
 	    ."\x00\x70"
 	    ."\x00\x20"
 	    ."\x00\x00"
@@ -587,7 +610,7 @@ our %flakeMapGL = (
 	    ."\x00\x00"
 	    ."\x00\x00",
 	    
-	2 => "\x00\x08"
+	66 => "\x00\x08"
 		."\x00\x1c"
 	    ."\x00\x08"
 	    ."\x00\x00"
@@ -595,7 +618,7 @@ our %flakeMapGL = (
 	    ."\x00\x00"
 	    ."\x00\x00",
 	    
-	4 => "\x00\x02"
+	68 => "\x00\x02"
 	    ."\x00\x07"
 	    ."\x00\x02"
 	    ."\x00\x00"
@@ -603,42 +626,42 @@ our %flakeMapGL = (
 	    ."\x00\x00"
 	    ."\x00\x00",
 	    
-	8 => "\x00\x00"
+	72 => "\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x20"
 	    ."\x00\x70"
 	    ."\x00\x20",
 	    
-	16 =>"\x00\x00"
+	80 =>"\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x08"
 	    ."\x00\x1c"
 	    ."\x00\x08",
 	    
-	32 =>"\x00\x00"
+	98 =>"\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x02"
 	    ."\x00\x07"
 	    ."\x00\x02",
 	    
-	5 => "\x00\x00"
+	69 => "\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x00"
 	    ."\x00\x22"
 	    ."\x00\x77"
 	    ."\x00\x22",
 	    
-	34=> "\x00\x02"
+	98=> "\x00\x02"
 	    ."\x00\x07"
 	    ."\x00\x02"
 	    ."\x00\x08"
 	    ."\x00\x1c"
 	    ."\x00\x08",
 	    
-	33=> "\x00\x02"
+	97=> "\x00\x02"
 	    ."\x00\x07"
 	    ."\x00\x02"
 	    ."\x00\x20"
@@ -646,77 +669,107 @@ our %flakeMapGL = (
 	    ."\x00\x20",
 );	     
 	     
-#SB2 is 320x32 so we create an 8x32 blank
-#composed of 2 of the following
+#SB2 is 320x32 so we create an 4x32 blank
 
 our $blank2 = "\x00\x00\x00\x00".
 		 "\x00\x00\x00\x00".
 	     "\x00\x00\x00\x00".
 	     "\x00\x00\x00\x00";
-our $flake2_1 ="\x04\x00\x00\x00"
+
+our $flake2s_1 ="\x04\x00\x00\x00"
 	    ."\x0e\x00\x00\x00"
 	    ."\x04\x00\x00\x00"
 	    ."\x00\x00\x00\x00" ; 
-our $flake2_2 = "\x00\x40\x00\x00"
+our $flake2s_2 = "\x00\x40\x00\x00"
 	."\x00\xe0\x00\x00"
 	    ."\x00\x40\x00\x00"
 	    ."\x00\x00\x00\x00"; 
-our $flake2_3= "\x00\x04\x00\x00"
+our $flake2s_3= "\x00\x04\x00\x00"
 	    ."\x00\x0e\x00\x00"
 	    ."\x00\x04\x00\x00"
 	    ."\x00\x00\x00\x00"; 
-our $flake2_4=  "\x00\x00\x04\x00"
+our $flake2s_4=  "\x00\x00\x04\x00"
 	    ."\x00\x00\x0e\x00"
 	    ."\x00\x00\x04\x00"
 	    ."\x00\x00\x00\x00"; 
-our $flake2_5=  "\x00\x00\x00\x40"
+our $flake2s_5=  "\x00\x00\x00\x40"
 	    ."\x00\x00\x00\xe0"
 	    ."\x00\x00\x00\x40"
 	    ."\x00\x00\x00\x00"; 
-our $flake2_6= "\x00\x00\x00\x04"
+our $flake2s_6= "\x00\x00\x00\x04"
 	    ."\x00\x00\x00\x0e"
 	    ."\x00\x00\x00\x04"
 	    ."\x00\x00\x00\x00"; 
 
-	     #to do: big flake top
-	     #"\xa8\x40"
-	     #"\x70\xe0"
-	     #"\xa8\x40"
-	     # big flake middle
-	     #"\x05\x40"
-	     #"\x03\x80"
-	     #"\x04\x40"
-	     # big flake bottom
-	     #"\x00\x15"
-	     #"\x00\xoe"
-	     #"\x00\x15"
-	     
-	     
-our %flakeMap2U = (
-	0 => $blank2 . $blank2,
-	1 => $blank2 . $flake2_1,
-	2 => $blank2 . $flake2_2,
-	4 => $blank2 . $flake2_3,
-	8 => $flake2_1 . $blank2,
-	16 =>$flake2_2 . $blank2,
-	32 =>$flake2_3 . $blank2,
-	5  =>$blank2 . ($flake2_1 | $flake2_3),
-	34 =>$flake2_2 . $flake2_3,
-	33 =>$flake2_1 . $flake2_3,
-);	     
+our $flake2m_1=
+	     "\xa8\x00\x00\x00".
+	     "\x70\x00\x00\x00".
+	     "\xa8\x00\x00\x00".
+	     "\x00\x00\x00\x00";
+our $flake2m_2=
+	     "\x05\x40\x00\x00".
+	     "\x03\x80\x00\x00".
+	     "\x04\x40\x00\x00".
+	     "\x00\x00\x00\x00";
+our $flake2m_3=
+	     "\x00\x15\x00\x00".
+	     "\x00\x0e\x00\x00".
+	     "\x00\x15\x00\x00".
+	     "\x00\x00\x00\x00";
+our $flake2m_4=
+	     "\x00\x00\xa8\x00".
+	     "\x00\x00\x70\x00".
+	     "\x00\x00\xa8\x00".
+	     "\x00\x00\x00\x00";
+our $flake2m_5 =
+	     "\x00\x00\x05\x40".
+	     "\x00\x00\x03\x80".
+	     "\x00\x00\x04\x40".
+	     "\x00\x00\x00\x00";
+our $flake2m_6 =
+	     "\x00\x00\x00\x15".
+	     "\x00\x00\x00\x0e".
+	     "\x00\x00\x00\x15" .
+	     "\x00\x00\x00\x00";
 
-our %flakeMap2L = (
-	0 => $blank2 . $blank2,
-	1 => $blank2 . $flake2_4,
-	2 => $blank2 . $flake2_5,
-	4 => $blank2 . $flake2_6,
-	8 => $flake2_4 . $blank2,
-	16=> $flake2_5 . $blank2,
-	32=> $flake2_6 . $blank2,
-	5  =>$blank2 . ($flake2_4 | $flake2_6),
-	34 =>$flake2_5 . $flake2_6,
-	33 =>$flake2_4 . $flake2_6,
-);
+our @flakeMap2 = (
+	{
+	0 => $blank2,
+	1 => $flake2m_1,
+	2 => $flake2m_2,   
+	3 =>($flake2m_2 | $flake2m_1),
+	4 => $flake2m_3,
+	5 =>($flake2m_3 | $flake2m_1),
+	6 =>($flake2m_3 | $flake2m_2),
+	7 =>($flake2m_3 | $flake2m_2 | $flake2m_1),
+	65=> $flake2m_4,
+	66=> $flake2m_5,
+	67=>($flake2m_5 | $flake2m_4),
+	68=> $flake2m_6,
+	69=>($flake2m_6 | $flake2m_4),
+	70=>($flake2m_6 | $flake2m_5),
+	71=>($flake2m_6 | $flake2m_5 | $flake2m_4),
+	},
+	#small flakes
+	{
+	0 => $blank2,
+	1 => $flake2s_1,
+	2 => $flake2s_2,   
+	3 =>($flake2s_2 | $flake2s_1),
+	4 => $flake2s_3,
+	5 =>($flake2s_3 | $flake2s_1),
+	6 =>($flake2s_3 | $flake2s_2),
+	7 =>($flake2s_3 | $flake2s_2 | $flake2s_1),
+	65=> $flake2s_4,
+	66=> $flake2s_5,
+	67=>($flake2s_5 | $flake2s_4),
+	68=> $flake2s_6,
+	69=>($flake2s_6 | $flake2s_4),
+	70=>($flake2s_6 | $flake2s_5),
+	71=>($flake2s_6 | $flake2s_5 | $flake2s_4),
+	},
+	#medium flakes
+);	     
 
 our %flakeMap = (0 => ' ',
 		1  => Slim::Display::Display::symbol('snow00'),
@@ -751,8 +804,8 @@ our %letters = (
 	       R => [3, [0,2], [], [0,4], [0,2], [], [0,4] ],
 	       S => [3, [2,4], [1], [2], [4], [], [1,3] ],
 	       T => [3, [0,2,4], [], [2], [2], [], [2] ],
-	       U => [3, [0,4], [], [0,4], [0,4], [], [1,3] ],
 	       V => [4, [0,6], [], [1,5], [2,4], [], [3] ],
+	       V => [5, [0,6], [], [1,5], [2,4], [], [3] ],
 	       W => [3, [0,4], [], [0,2,4], [0,2,4], [], [1,3] ],
 	       X => [3, [0,4], [], [1,3], [2,4], [], [0,5] ],
 	       Y => [3, [0,4], [], [1,3], [2], [], [2] ],
@@ -809,15 +862,67 @@ sub paintFlake {
 sub renderFlakes {
 	my $client = $_[0];
 
-	if( $client and $client->isa( "Slim::Player::Squeezebox2") or $client->isa( "Slim::Player::SqueezeboxG" )) {
-		return renderGraphicFlakes(@_);
-	} else {
-		return renderCharFlakes(@_);
+	if( $client ) {
+		if ($client->isa( "Slim::Player::Squeezebox2")) {
+			return renderGraphicFlakes2(@_);
+		} elsif  ($client->isa( "Slim::Player::SqueezeboxG" )) {
+			return renderGraphicFlakes(@_);
+		} else {
+			return renderCharFlakes(@_);
+		}
 	}
 }
 
-sub renderGraphicFlakes {
+sub renderGraphicFlakes2 {
 	my $client = shift;
+    my $torender = shift;
+    my $lines = shift;
+    
+    my $onlyInSpaces = 0; #too tricky for for graphic displays! 
+
+    #place the flakes in $torender
+    my %flakeSize;
+	foreach my $flake (@{$flakes{$client}}) {
+		paintFlake(@{$flake}[0], @{$flake}[1], $torender, 1, $onlyInSpaces, $lines);
+		$flakeSize{int(@{$flake}[0]/3).substr('0'.@{$flake}[1],-2)} = @{$flake}[2] if  (@{$flake}[2] != 0);
+	}
+
+    $lines->{bits} = '';
+	my $blank = $flakeMap2[0]{0}; 
+	foreach my $col (0..39) {
+		my $flakeSize;
+		my $char;
+		my $top = $torender->[0][$col];
+		my $bottom = $torender->[1][$col];
+		$top = 0 if ($top == -1);
+		$bottom = 0 if ($bottom == -1);
+
+		my $leftcol=substr('0'.($col*2),-2);
+		my $rightcol=substr('0'.($col*2)+1,-2);
+		#print "$leftcol:".$flakeSize{"1$leftcol"}.":".($top & 7);
+		#print ",$rightcol:".$flakeSize{"1$rightcol"}.":".($top>>3)."\n";
+
+		#left column
+		$char = $blank;
+	        $flakeSize = $flakeSize{"0$leftcol"} || 0;
+		$char |= $flakeMap2[$flakeSize]{$top & 7};
+	        $flakeSize = $flakeSize{"1$leftcol"} || 0;
+	        $char |= $flakeMap2[$flakeSize]{64|($bottom & 7)};
+		$lines->{bits} .= $char;
+		#right column
+		$char = $blank;
+	        $flakeSize = $flakeSize{"0$rightcol"} || 0;
+	       	$char |= $flakeMap2[$flakeSize]{$top>>3};
+	        $flakeSize = $flakeSize{"1$rightcol"} || 0;
+	        $char |= $flakeMap2[$flakeSize]{64|($bottom>>3)};
+		$lines->{bits} .= $char;
+	}
+
+    return $lines;
+}
+
+sub renderGraphicFlakes {
+    my $client = shift;
     my $torender = shift;
     my $lines = shift;
     
@@ -829,18 +934,9 @@ sub renderGraphicFlakes {
 	}
 	
     $lines->{bits} = '';
-    my ($localFlakeMapU,$localFlakeMapL);
-	if( $client && $client->isa( "Slim::Player::Squeezebox2" )) {
-		$localFlakeMapU = \%flakeMap2U;
-		$localFlakeMapL = \%flakeMap2L;
-	} else {
-		$localFlakeMapU = \%flakeMapGU;
-		$localFlakeMapL = \%flakeMapGL;
-	}
-	my $blank = $localFlakeMapU->{0}; 
-
+	my $blank = $flakeMapG{0}; 
 	foreach my $col (0..39) {
-		$lines->{bits} .= ($blank | $localFlakeMapU->{$torender->[0][$col]} | $localFlakeMapL->{$torender->[1][$col]});
+		$lines->{bits} .= ($blank | $flakeMapG{$torender->[0][$col]} | $flakeMapG{64|$torender->[1][$col]});
 	}
 
     return $lines;
@@ -957,9 +1053,9 @@ sub letItSnow {
 	# cull flakes which have left the screen
 	@{$flakes{$client}} = grep { $_->[0] < 6 && $_->[1] >= 0 && $_->[1] < 80} @{$flakes{$client}};
 		
-	foreach my $i (0..5) {
-		if(rand(100) < (5,10,30)[$snowQuantity{$client}]) {
-			push @{$flakes{$client}}, [0, int rand(80)];
+	for (0..5) {
+		if(rand(100) < (5,10,30,50)[$snowQuantity{$client}]) {
+			push @{$flakes{$client}}, [0, int rand(80), int rand(2)];
 		}
 	}
 

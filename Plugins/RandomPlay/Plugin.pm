@@ -362,11 +362,11 @@ PLUGIN_RANDOM_ALBUM_DESC
 
 SETUP_PLUGIN_RANDOM_DESC
 	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Lieder jeweils zufällig der Wiedergabeliste hinzugefügt werden sollen.
-	EN	Random Mix let's SlimServer create a random selections of songs from your entire library. When creating a random mix of songs, you can specify how many songs SlimServer should add to be played in the future.
+	EN	Random Mix lets SlimServer create a random selections of songs from your entire library. When creating a random mix of songs, you can specify how many upcoming songs SlimServer should display.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	DE	Anzahl Lieder für Zufallsmix
-	EN	Number of songs in a random mix.
+	EN	Number of upcoming songs in a random mix
 
 SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS_DESC
 	DE	Lieder, die zufällig abgespielt wurden, können nach der Wiedergabe aus der Liste entfernt oder darin belassen werden.
