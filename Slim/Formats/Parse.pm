@@ -144,6 +144,10 @@ sub readM3U {
 			$title = $1;	
 
 			$::d_parse && msg("  found title: $title\n");
+
+		} else {
+
+			$title = undef;
 		}
 
 		next if $entry =~ /^#/;
