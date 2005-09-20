@@ -9,11 +9,24 @@ function to_currentsong() {
 
 function resize(src,width)
 {
+
 	if (!width) {
-		width = 200;
+		// special case for IE (argh)
+		if (document.all) //if IE 4+
+		{
+			width = document.body.clientWidth*0.95;
+		}
+		else if (document.getElementById) //else if NS6+
+		{
+			width = window.innerWidth*0.95;
+		}
 	}
-	if (src.width > width)
+
+	if (src.width > width )
 	{
+		fullsize = document.getElementById("fullsize");
+
+		fullsize.style.display = 'block';
 		src.width = width;
 	}
 }
