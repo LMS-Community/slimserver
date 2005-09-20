@@ -43,12 +43,12 @@ function doBrowseCommand(cmd, args) {
 		}
 	}
 
-	ss.call("slim.doCommand", [ curPlayer, cmds ]);
+	ss.queueCall("slim.doCommand", [ curPlayer, cmds ]);
 	getStatus();
 }
 
 function doBrowseTreeCommand(cmd, args) {
-	ss.call("slim.doCommand", [ curPlayer, [ 'playlist', cmd, args ] ]);
+	ss.queueCall("slim.doCommand", [ curPlayer, [ 'playlist', cmd, args ] ]);
 	getStatus();
 }
 

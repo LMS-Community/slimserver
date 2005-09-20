@@ -61,7 +61,7 @@ JXTK2.JSON = {
 
 		switch (typeof obj) {
 		case 'object':
-			if (typeof obj['__(JSONArray)__'] == "boolean") {
+			if (JXTK2.Misc.isArray(obj)) {
 				for (var i = 0; i < obj.length; i++)
 					outbuf.push(JXTK2.JSON.serialize(obj[i]));
 				return '[' + outbuf.join(',') + ']';
@@ -120,10 +120,20 @@ JXTK2.JSONRPC = {
 
 JXTK2.JSONRPC.Proxy = function(url) {
 
+	// Constructor Code
+
+	var self = this;
+	var proxyurl = url;
+	var queue = [];
+
 	// Public Functions
 
 	this.toString = function () {
 		return "[object JXTK2.JSONRPC.Proxy " + proxyurl + " ]";
+	};
+
+	this.queueCall = function (methodName, methodParams) {
+		queue.push({ method : methodName, params : methodParams});
 	};
 
 	this.call = function (methodName, methodParams, onResp) {
@@ -137,7 +147,9 @@ JXTK2.JSONRPC.Proxy = function(url) {
 			return;
 		}
 
-		var json = JXTK2.JSON.serialize({ method : methodName, params : methodParams });
+		this.queueCall(methodName, methodParams);
+		var json = JXTK2.JSON.serialize(queue.length > 1 ? queue : queue[0]);
+		queue = [];
 
 		var xmlreq;
 
@@ -184,6 +196,11 @@ JXTK2.JSONRPC.Proxy = function(url) {
 		var respobj;
 		eval('respobj=' + xmlreq.responseText);
 
+		// For now, only the return value from the last call in the queue is available
+		if (JXTK2.Misc.isArray(respobj)) {
+			respobj = respobj[respobj.length - 1];
+		}
+
 		if (respobj.error) {
 			alert("RPC Fault: \"" + respobj.error + "\"");
 		}
@@ -194,11 +211,6 @@ JXTK2.JSONRPC.Proxy = function(url) {
 			return respobj;
 		}
 	}
-
-	// Constructor Code
-
-	var self = this;
-	var proxyurl = url;
 }
 
 JXTK2.Key = {
@@ -238,6 +250,10 @@ JXTK2.Misc = {
 		if (e.which) e.key = e.which;
 
 		return e;
+	},
+
+	isArray : function(obj) {
+		return (typeof obj == 'object' && typeof obj['__(JSONArray)__'] == 'boolean');
 	}
 };
 

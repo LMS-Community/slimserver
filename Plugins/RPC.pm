@@ -180,33 +180,47 @@ sub handleReqJSON {
 		return Slim::Web::HTTP::filltemplatefile('html/errors/400.html');
 	}
 
-	my $obj = jsonToObj($params->{content});
-
 	$::d_plugins && msg("JSON request: " . $params->{content} . "\n");
 
-	my $reqname = $obj->{method};
-	my $respobj;
+	my @resparr;
 
-	if ($rpcFunctions{$reqname}) {
-		if (ref($obj->{params}) ne 'ARRAY') {
-			$respobj = { 'error' => 'invalid request', 'id' => $obj->{id} };
-		} else {
-			my $freturn = &{$rpcFunctions{$reqname}}($obj->{params});
-			if (UNIVERSAL::isa($freturn, "RPC::XML::fault")) {
-				$respobj = { 'error' => $freturn->string, 'id' => $obj->{id} };
+	my $objlist = jsonToObj($params->{content});
+	$objlist = [ $objlist ] if ref($objlist) eq 'HASH';
+
+	if (ref($objlist) ne 'ARRAY') {
+		push @resparr, { 'error' => 'malformed request' };
+	} else {
+		foreach my $obj (@$objlist) {
+
+			my $reqname = $obj->{method};
+			if ($rpcFunctions{$reqname}) {
+				if (ref($obj->{params}) ne 'ARRAY') {
+					push @resparr, { 'error' => 'invalid request', 'id' => $obj->{id} };
+				} else {
+					my $freturn = &{$rpcFunctions{$reqname}}($obj->{params});
+					if (UNIVERSAL::isa($freturn, "RPC::XML::fault")) {
+						push @resparr, { 'error' => $freturn->string, 'id' => $obj->{id} };
+					} else {
+						push @resparr, { 'result' => $freturn, 'id' => $obj->{id} };
+					}
+				}
 			} else {
-				$respobj = { 'result' => $freturn, 'id' => $obj->{id} };
+				push @resparr, { 'error' => 'no such method', 'id' => $obj->{id} };
 			}
 		}
-	} else {
-		$respobj = { 'error' => 'no such method', 'id' => $obj->{id} };
 	}
 
-	if (!$respobj) {
-		$respobj = { 'error' => 'unknown error', 'id' => $obj->{id} };
+	my $respobj;
+
+	if (@resparr == 1) {
+		$respobj = $resparr[0];
+	} else {
+		$respobj = \@resparr;
 	}
 
 	my $rpcresponse = objToJson($respobj);
+
+	$::d_plugins && msg("JSON response ready\n");
 
 	return \$rpcresponse;
 }
