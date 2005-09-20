@@ -5,6 +5,8 @@ use Carp;
 
 use DBI::Const::GetInfoType ();
 
+use SQL::Abstract 1.20;
+
 use base 'SQL::Abstract';
 
 =head1 NAME
@@ -13,53 +15,47 @@ SQL::Abstract::Limit - portable LIMIT emulation
 
 =cut
 
-our $VERSION = '0.033';
-
-=head1 VERSION
-
-0.033
-
-=cut
+our $VERSION = '0.101';
 
 # additions / error reports welcome !
 our %SyntaxMap = (  mssql    => 'Top',
-                access   => 'Top',
-                sybase   => 'GenericSubQ',
-                oracle   => 'RowNum',
-                db2      => 'FetchFirst',
-                ingres   => '',
-                adabasd  => '',
-                informix => 'First',
-
-                # asany    => '',
-
-                # more recent MySQL versions support LimitOffset as well
-                mysql    => 'LimitXY',
-                mysqlpp  => 'LimitXY',
-                maxdb    => 'LimitXY', # MySQL
-
-                pg       => 'LimitOffset',
-                pgpp     => 'LimitOffset',
-
-                sqlite   => 'LimitOffset',
-                sqlite2  => 'LimitOffset',
-
-                interbase => 'RowsTo',
-
-                unify     => '',
-                primebase => '',
-                mimer     => '',
-
-                # anything that uses SQL::Statement can use LimitXY, I think
-                sprite   => 'LimitXY',
-                wtsprite => 'LimitXY',
-                anydata  => 'LimitXY',
-                csv      => 'LimitXY',
-                ram      => 'LimitXY',
-                dbm      => 'LimitXY',
-                excel    => 'LimitXY',
-                google   => 'LimitXY',
-                );
+                    access   => 'Top',
+                    sybase   => 'GenericSubQ',
+                    oracle   => 'RowNum',
+                    db2      => 'FetchFirst',
+                    ingres   => '',
+                    adabasd  => '',
+                    informix => 'First',
+    
+                    # asany    => '',
+    
+                    # more recent MySQL versions support LimitOffset as well
+                    mysql    => 'LimitXY',
+                    mysqlpp  => 'LimitXY',
+                    maxdb    => 'LimitXY', # MySQL
+    
+                    pg       => 'LimitOffset',
+                    pgpp     => 'LimitOffset',
+    
+                    sqlite   => 'LimitOffset',
+                    sqlite2  => 'LimitOffset',
+    
+                    interbase => 'RowsTo',
+    
+                    unify     => '',
+                    primebase => '',
+                    mimer     => '',
+    
+                    # anything that uses SQL::Statement can use LimitXY, I think
+                    sprite   => 'LimitXY',
+                    wtsprite => 'LimitXY',
+                    anydata  => 'LimitXY',
+                    csv      => 'LimitXY',
+                    ram      => 'LimitXY',
+                    dbm      => 'LimitXY',
+                    excel    => 'LimitXY',
+                    google   => 'LimitXY',
+                    );
 
 
 =head1 SYNOPSIS
@@ -107,7 +103,7 @@ clause. Default setting is C<GenericSubQ>. You can still pass other syntax
 settings in method calls, this just sets the default. Possible values are:
 
     LimitOffset     PostgreSQL, SQLite
-    LimitXY         MySQL
+    LimitXY         MySQL, MaxDB, anything that uses SQL::Statement
     LimitYX         SQLite (optional)
     RowsTo          InterBase/FireBird
 
@@ -158,7 +154,7 @@ or an arrayref, or C<undef>.
 
 sub select {
     my $self   = shift;
-    my $table  = SQL::Abstract::_table(shift);
+    my $table  = $self->_table(shift);
     my $fields = shift;
     my $where  = shift; #  if ref( $_[0] ) eq 'HASH';
 
@@ -208,25 +204,30 @@ Returns a regular C<WHERE> clause if no limits are set.
 
 =cut
 
-sub where {
+sub where 
+{
     my $self   = shift;
     my $where  = shift; # if ref( $_[0] ) eq 'HASH';
 
     my ( $order, $rows, $offset, $syntax ) = $self->_get_args( @_ );
 
-    # with no LIMIT parameters, defer to SQL::Abstract [ don't know why the first way fails ]
-    return SQL::Abstract->new->where( $where, $order ) unless $rows;
-
-    my ( $sql, @bind ) = $self->SUPER::where( $where );
+    my ( $sql, @bind );
 
     if ( $rows )
     {
+        ( $sql, @bind ) = $self->SUPER::where( $where );
+        
         my $syntax_name = $self->_find_syntax( $syntax );
 
         croak( "can't build a stand-alone WHERE clause for $syntax_name" )
             unless $syntax_name =~ /(?:LimitOffset|LimitXY|LimitYX|RowsTo)/i;
 
         $sql = $self->_emulate_limit( $syntax_name, $sql, $order, $rows, $offset );
+    }
+    else
+    {
+        #
+        ( $sql, @bind ) = $self->SUPER::where( $where, $order );
     }
 
     return wantarray ? ( $sql, @bind ) : $sql;
