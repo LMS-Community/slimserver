@@ -735,7 +735,7 @@ sub get_mp3tag {
 								# User defined frame
 								if ($id eq 'TXXX') {
 									my ($key, $val) = split(/\0/, $data);
-									$info{$key} = $val;
+									$info{uc($key)} = $val;
 								} else {
 									$info{$hash->{$id}} = $data;
 								}
