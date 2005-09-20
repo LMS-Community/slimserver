@@ -51,7 +51,15 @@ sub init {
 					CORE::delete($prefs{$key});
 				}
 			}
-		}
+		},
+
+		'6.2b1-2005-09-19' => sub {
+
+			# ExBrowse2 went away.
+			if ($prefs{'skin'} eq 'ExBrowse2') {
+				$prefs{'skin'} = 'ExBrowse3';
+			}
+		},
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -147,8 +155,8 @@ sub init {
 		'noGenreFilter'		=> 0,
 		'variousArtistAutoIdentification' => 0,
 		'useBandAsAlbumArtist'  => 0,
-		'upgrade-6.0b3-script'	=> 1,
 		'upgrade-6.2b1-script'	=> 1,
+		'upgrade-6.2b1-2005-09-19-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 	);
 
@@ -433,6 +441,7 @@ sub checkServerPrefs {
 	}
 
 	for my $version (sort keys %upgradeScripts) {
+
 		if (Slim::Utils::Prefs::get("upgrade-$version-script")) {
 			&{$upgradeScripts{$version}}();
 			Slim::Utils::Prefs::set("upgrade-$version-script", 0);
