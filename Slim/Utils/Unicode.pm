@@ -640,11 +640,20 @@ sub decomposeUnicode {
 	return $string;
 }
 
-sub stripUTF8BOM {
+sub stripBOM {
 	my $string = shift;
 
 	if ($] > 5.007) {
-		$string =~ s/^\x{feff}//o;
+
+		use bytes;
+
+		$string =~ s/^(?:
+			\xef\xbb\xbf     |
+			\xfe\xff         |
+			\xff\xfe         |
+			\x00\x00\xfe\xff |
+			\xff\xfe\x00\x00
+		)//x;
 	}
 
 	return $string;

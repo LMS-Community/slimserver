@@ -95,7 +95,7 @@ sub _updateMetaData {
 	# Update title MetaData only if its not a local file with Title information already cached.
 	if (defined($title) && $title ne '' && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
 		$attributes->{'TITLE'} = $title;
-	}	
+	}
 
 	return $ds->updateOrCreate({
 		'url' => $entry,
@@ -126,17 +126,17 @@ sub readM3U {
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
 
+		if (!$foundBOM) {
+
+			$entry = Slim::Utils::Unicode::stripBOM($entry);
+			$foundBOM = 1;
+		}
+
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
 		my $enc = Slim::Utils::Unicode::encodingFromString($entry);
 
 		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
-
-		if (!$foundBOM) {
-
-			$entry = Slim::Utils::Unicode::stripUTF8BOM($entry);
-			$foundBOM = 1;
-		}
 
 		$::d_parse && msg("  entry from file: $entry\n");
 
@@ -227,6 +227,9 @@ sub readPLS {
 	$::d_parse && msg("Parsing playlist: $url \n");
 	
 	while (my $line = <$pls>) {
+
+		chomp($line);
+
 		$::d_parse && msg("Parsing line: $line");
 
 		# strip carriage return from dos playlists
@@ -235,17 +238,17 @@ sub readPLS {
 		# strip whitespace from end
 		$line =~ s/\s*$//;
 
+		if (!$foundBOM) {
+
+			$line = Slim::Utils::Unicode::stripBOM($line);
+			$foundBOM = 1;
+		}
+
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
 		my $enc = Slim::Utils::Unicode::encodingFromString($line);
 
 		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
-
-		if (!$foundBOM) {
-
-			$line = Slim::Utils::Unicode::stripUTF8BOM($line);
-			$foundBOM = 1;
-		}
 
 		if ($line =~ m|File(\d+)=(.*)|i) {
 			$urls[$1] = $2;
