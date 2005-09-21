@@ -34,8 +34,6 @@ sub Startup {
 	# $SIG{BREAK} = sub {} if RunningAsService();
 	main::init();
 	
-	main::start();
-	
 	# here's where your startup code will go
 	while (ContinueRun() && !main::idle()) { }
 
@@ -352,6 +350,8 @@ use vars qw(
 );
 
 sub init {
+
+# initialize the process and daemonize, etc...
 	srand();
 
 	autoflush STDERR;
@@ -369,6 +369,11 @@ sub init {
 	} else {
 
 		$REVISION = 'trunk';
+
+	}
+
+	if ($diag) { 
+		eval "use diagnostics";
 	}
 
 	$::d_server && msg("SlimServer OSDetect init...\n");
@@ -396,58 +401,6 @@ sub init {
 	# Uncomment to enable crash debugging.
 	#$SIG{__DIE__} = \&Slim::Utils::Misc::bt;
 
-	# we have some special directories under OSX.
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Plugins";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/html";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/IR";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/bin";
-		
-		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
-		unshift @INC, "/Library/SlimDevices/";
-	}
-
-	$::d_server && msg("SlimServer settings init...\n");
-	initSettings();
-
-	$::d_server && msg("SlimServer strings init...\n");
-	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
-
-	$::d_server && msg("SlimServer Setup init...\n");
-	Slim::Web::Setup::initSetup();
-
-	unless ($scanOnly) {
-
-		$::d_server && msg("SlimServer setting language...\n");
-		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
-
-		$::d_server && msg("SlimServer IR init...\n");
-		Slim::Hardware::IR::init();
-		
-		$::d_server && msg("SlimServer Buttons init...\n");
-		Slim::Buttons::Common::init();
-
-		$::d_server && msg("SlimServer Graphics init...\n");
-		Slim::Display::Graphics::init();
-	}
-
-	if ($priority) {
-		$::d_server && msg("SlimServer - changing process priority to $priority\n");
-		eval { setpriority (0, 0, $priority); };
-		msg("setpriority failed error: $@\n") if $@;
-	}
-}
-
-sub start {
-	my $logfilename;
-
-	$::d_server && msg("SlimServer starting up...\n");
-
-	if ($diag) { 
-		eval "use diagnostics";
-	}
-
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
 
@@ -460,7 +413,7 @@ sub start {
 
 		if (defined $logfile) {
 
-			$logfilename = $logfile;
+			my $logfilename = $logfile;
 
 			if (substr($logfile, 0, 1) ne "|") {
 				$logfilename = ">>" . $logfile;
@@ -482,6 +435,35 @@ sub start {
 	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
 	changeEffectiveUserAndGroup();
 
+	if ($priority) {
+		$::d_server && msg("SlimServer - changing process priority to $priority\n");
+		eval { setpriority (0, 0, $priority); };
+		msg("setpriority failed error: $@\n") if $@;
+	}
+
+# do platform specific environment setup
+	# we have some special directories under OSX.
+	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Plugins";
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices/html";
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices/IR";
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices/bin";
+		
+		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
+		unshift @INC, "/Library/SlimDevices/";
+	}
+
+# initialize slimserver subsystems
+	$::d_server && msg("SlimServer settings init...\n");
+	initSettings();
+
+	$::d_server && msg("SlimServer strings init...\n");
+	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
+
+	$::d_server && msg("SlimServer Setup init...\n");
+	Slim::Web::Setup::initSetup();
+
 	# If we're only scanning, just do that. 
 	if ($scanOnly) {
 		msg("Will only scan music library, then exit!\n");
@@ -497,13 +479,24 @@ sub start {
 
 		# Run the scanner - but don't kill the CPU.
 		while (Slim::Music::Import::stillScanning()) {
-
 			Slim::Utils::Timers::checkTimers();
 			Slim::Utils::Scheduler::run_tasks();
 		}
 
 		exit;
 	}
+	
+	$::d_server && msg("SlimServer setting language...\n");
+	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+
+	$::d_server && msg("SlimServer IR init...\n");
+	Slim::Hardware::IR::init();
+	
+	$::d_server && msg("SlimServer Buttons init...\n");
+	Slim::Buttons::Common::init();
+
+	$::d_server && msg("SlimServer Graphics init...\n");
+	Slim::Display::Graphics::init();
 
 	if ($stdio) {
 		$::d_server && msg("SlimServer Stdio init...\n");
@@ -556,6 +549,7 @@ sub start {
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Buttons::Plugins::init();
 
+	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
 	
 	$::d_server && msg("SlimServer persist playlists...\n");
@@ -568,16 +562,18 @@ sub start {
 	$loopsecond = int($lastlooptime);
 	
 	checkVersion();
+
 	keepSlimServerInMemory();
 	
-	$::d_server && msg("SlimServer done start...\n");
+	$::d_server && msg("SlimServer done init...\n");
 }
 
 sub main {
+	# command line options
 	initOptions();
 
+	# all other initialization
 	init();
-	start();
 	
 	while (!idle()) {}
 	
@@ -585,7 +581,6 @@ sub main {
 }
 
 sub idle {
-
 	my $select_time;
 	my $now = Time::HiRes::time();
 	my $to;
