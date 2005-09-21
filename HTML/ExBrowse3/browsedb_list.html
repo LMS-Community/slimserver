@@ -1,8 +1,8 @@
 [% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<tr>
  <td class="browselistbuttons">
-  <img height="8" onclick="parent.doBrowseCommand('add', '[% IF descend; attributes|html;
+  <img height="8" onclick="parent.doBrowseCommand('add', '[% IF attributes; attributes|html;
   ELSE; 'track='; item; END %]')" src="[%webroot%]html/images/add.gif" alt="[%ADD%]" title="[%ADD%]"
-  width="8"/><img onclick="parent.doBrowseCommand('load', '[% IF descend; attributes|html;
+  width="8"/><img onclick="parent.doBrowseCommand('load', '[% IF attributes; attributes|html;
   ELSE; 'track='; item; END %]')" src="[%webroot%]html/images/play.this.gif" width="5" height="9"
   alt="[%PLAY%]" title="[%PLAY%]"/>
   [% FOREACH mixer = mixerlinks.values.sort; PROCESS $mixer; END %]

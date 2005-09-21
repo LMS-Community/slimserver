@@ -65,7 +65,7 @@ sub getPlaylist {
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
 		for ($idx = $start; $idx <= $end; $idx++) {
-			my $track = Slim::Player::Playlist::song($client, $idx);
+			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client, $idx));
 
 			# place the contributors all in an array for easy access
 			my @contribs = $track->contributors();

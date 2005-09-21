@@ -23,12 +23,8 @@ var curRep, curShuf;
 function doBrowseCommand(cmd, args) {
 	var cmds;
 
-	if (typeof cmd == "array") {
+	if (JXTK2.Misc.isArray(cmd)) { 
 		cmds = cmd;
-	} else if (typeof cmd == "object") {
-		// I don't know why this happens...
-		cmds = new Array();
-		for (var i = 0; i < cmd.length; i++) cmds.push(cmd[i]);
 	} else if (cmd == "addtracks" || cmd == "loadtracks") {
 		cmds = [ 'playlist', cmd, args ];
 	} else {
@@ -37,9 +33,14 @@ function doBrowseCommand(cmd, args) {
 		var carr = args.split('&');
 		if (carr[0] == '') carr.shift();
 
-		for (var i = 0; i < carr.length; i++) {
-			var cp = carr[i].split('=');
-			cmds.push(cp[0] + '_id:' + cp[1]);
+		if (carr[0] && carr[0].substr(0,7) == 'listRef') {
+			// Special case for listrefs
+			cmds = [ 'playlist', cmd + 'tracks', 'listref=' + carr[0].split('=')[1] ];
+		} else {
+			for (var i = 0; i < carr.length; i++) {
+				var cp = carr[i].split('=');
+				cmds.push(cp[0] + '_id:' + cp[1]);
+			}
 		}
 	}
 
