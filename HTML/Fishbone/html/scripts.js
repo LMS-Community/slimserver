@@ -54,16 +54,6 @@ function playlistResize(playlist) {
 	if (playlist) {
 		var header = playlist.getElementById('header');
 		
-		// special case for IE (argh)
-		//if (document.all) //if IE 4+
-		//{
-		//	height = top.document.body.clientHeight-9;
-		//}
-		//else if (document.getElementById) //else if NS6+
-		//{
-		//	height = window.innerHeight;
-		//}
-		//newheight = height-header.clientHeight;
 		top.document.getElementById('player_frame').rows = header.clientHeight+', *';
 	}
 }
