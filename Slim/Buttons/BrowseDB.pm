@@ -619,7 +619,15 @@ sub setMode {
 	# Dynamically create a VA/Compilation item under artists, like iTunes does.
 	if ($levels[$level] eq 'artist' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-		unshift @$items, $ds->variousArtistsObject;
+		# Only show VA if there exists valid data below this level.
+		my %find = %{$findCriteria};
+
+		$find{'album.compilation'} = 1;
+
+		if ($ds->count('album', \%find)) {
+
+			unshift @$items, $ds->variousArtistsObject;
+		}
 	}
 
 	if ($levels[$level-1] eq 'playlist') {

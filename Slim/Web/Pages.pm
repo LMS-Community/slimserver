@@ -1237,22 +1237,29 @@ sub browsedb {
 		}
 
 		# Dynamic VA/Compilation listing
-		if (scalar(@$items) && $levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+		if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 			my %list_form  = %$params;
 			my $vaObj      = $ds->variousArtistsObject;
 			my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
 
-			$list_form{'text'}        = $vaObj->name;
-			$list_form{'descend'}     = $descend;
-			$list_form{'hiearchy'}    = $hierarchy;
-			$list_form{'level'}	  = $level + 1;
-			$list_form{'odd'}	  = ($itemnumber + 1) % 2;
-			$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
+			# Only show VA item if there's valid listings below
+			# the current level.
+			my %find = map { split /=/ } @attrs, 'album.compilation=1';
 
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+			if ($ds->count('album', \%find)) {
 
-			$itemnumber++;
+				$list_form{'text'}        = $vaObj->name;
+				$list_form{'descend'}     = $descend;
+				$list_form{'hiearchy'}    = $hierarchy;
+				$list_form{'level'}	  = $level + 1;
+				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
+				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
+
+				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+
+				$itemnumber++;
+			}
 		}
 
 		# Don't bother with idle streams if we only have SB2 clients
