@@ -62,6 +62,11 @@ my %font2TTF = (
 		'GDFontSize' => 18,
 		'GDBaseline' => 24,
 	},
+
+	'high.2' => {
+		'GDFontSize' => 7,
+		'GDBaseline' => 7,
+	},
 );
 
 sub init {
