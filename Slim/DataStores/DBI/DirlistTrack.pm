@@ -19,8 +19,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->has_a(dirlist => 'Slim::DataStores::DBI::Track');
 	$class->has_a(item => 'Slim::DataStores::DBI::LightWeightTrack');
 
-	$class->add_constructor('tracksOf' => 'dirlist = ? ORDER BY position');
-
 	$class->set_sql('deleteDirItems' => 'DELETE FROM __TABLE__ WHERE dirlist = ?');
 }
 
