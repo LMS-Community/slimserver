@@ -141,6 +141,14 @@ my %fontSymbols = (
 	'hardspace' => "\x20"
 );
 
+sub setCustomChar {
+	# NB not to be called as a client method, used by plugins to register new names in hash above
+	my $symbol = shift;
+	my $char = shift;
+	
+	$fontSymbols{$symbol} = $char unless exists $fontSymbols{$symbol};
+}
+
 sub render {
 	use bytes;
 	my $client = shift;

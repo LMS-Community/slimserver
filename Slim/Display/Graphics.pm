@@ -421,6 +421,10 @@ sub parseFont {
 		}
 		$fonttable->[$charIndex] = pack("B*", join('',@column));
 		#print $charIndex . " " . chr($charIndex) . " " . scalar(@column) . " ". length($fonttable->[$charIndex]) . " i: $i width: $width\n";
+		if ($charIndex == 0 && unpack( '%32b*', $fonttable->[$charIndex]) > 0) {
+			# pixels in interspace character indicate no interspace
+			$fonttable->[$charIndex] = '';
+		}
 	}
 	#print "done fonttable\n";
 	return $fonttable;

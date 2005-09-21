@@ -479,6 +479,104 @@ function.  Normally called as e.g. $client->pushUp().</p>
 
 <p>Used to bump the current screen against the edge of the display to
 indicate that no additional menu items are available.</p>
-<p>
 
+<hr>
+<h4>Custom Characters</h4>
+
+Custom characters may be defined for both character and graphic
+display players. These enable lines functions to display customised
+symbols as icons and to build up complex displays for e.g. games like SlimTris.
+
+<h5>Character Displays</h5>
+
+The character display hardware uses a fixed font definition for all
+normal characters (See <a
+href="http://www.slimdevices.com/downloads/datasheets/vfd-chars.gif"
+target="displaychars">here</a>).
+<p>It also supports definition of up to 8 custom characters per
+display.  These may be defined by plugins and used anywhere on the
+display.
+
+<p>Slimserver allows you to define as many custom characters using:
+Slim::Hardware::VFD::setCustomChar().  
+<p>Each display screen can then use
+up to 8 custom characters.  If more custom characters exist on a
+screen they will be replaced with a blank character.  [NB slimserver
+also uses custom characters for the predefined symbols which also
+count towards this limit.]
+
+<p>Each custom character is 5 pixels wide and 7 pixels high plus an
+underline which is either on or off [equivalent of a single wide
+pixel].
+
+<p>For example to define a custom character to be called 'slimtristop':
+
+<pre>Slim::Hardware::VFD::setCustomChar( 'slimtristop', ( 
+		0b00000000, 
+		0b00000000, 
+		0b00000000, 
+		0b00000000, 
+		0b00011110, 
+		0b00011111, 
+		0b00011111,
+
+		0b00000000
+		));
+</pre>	
+Note: The 3 most signifcant bits of each line are not used.
+
+<p>Custom characters do not work in 1 line mode on character displays.
+
+<h5>Graphics Displays</h5>
+
+Graphic displays may display custom characters through the use of
+custom font files.
+
+<p>Custom font files define a bitmap to use for each character in the
+custom font.  The format of font files is described <a
+href="fonts.html">here</a>.
+
+<p>The function Slim::Player::SqueezeboxG::setCustomChar() is used to
+register a name to associate with specific characters.  This may be
+used to give names for each character in a custom font.
+
+<p>For example:
+<pre>
+Slim::Player::SqueezeboxG::setCustomChar( 'slimtristop', "\x02" );
+</pre>
+Registers the 'slimtristop' for character "\x02".
+<p>Note that name to character mappings are independant of font, but only make sense when
+used with the appropriate font - see below.
+
+<h5>Displaying Custom Characters</h5>
+
+Custom characters may be included in a display by using the character
+name with $client->symbols().  
+
+For example:
+<pre>
+$parts = {
+    'line1' => $client->symbols('slimtristop').$client->symbols('slimtristop'),
+    'fonts' => {
+    'graphic-320x32' => { 'line1' => \ 'trisSB2.1' },
+    'graphic-280x16' => { 'line1' => \ 'trisSBG.1' },
+      },
+};
+</pre>
+Will display 2 'slimtristop' custom characters on line1 of the
+display.  
+<p>For character displays it assumes this character has
+been defined using Slim::Hardware::VFD::setCustomChar().
+<p>For graphic displays it assumes the name to character mapping has
+been defined using Slim::Player::SqueezeboxG::setCustomChar() and that
+the font file defined in the display hash contains this character.  An
+appropriate font file should be defined for each type of graphic display.
+
+<p>Note at present, Graphic displays can only mix text and custom
+characters in a display component (e.g. line1) if the font file
+defines both the custom characters and all text characters.  This is
+because each display component must use a single font.
+
+<p>Character displays may mix standard and custom characters in 2 line mode. 
+<p>
 [% PROCESS helpfooter.html %]
