@@ -759,7 +759,7 @@ sub variousArtistsObject {
 	my $vaString = Slim::Music::Info::variousArtistString();
 
 	# Fetch a VA object and/or update it's name if the user has changed it.
-	unless ($vaObj) {
+	if (!defined $vaObj || ref($vaObj) eq 'Class::DBI::Object::Has::Been::Deleted') {
 
 		$vaObj  = Slim::DataStores::DBI::Contributor->find_or_create({
 			'name' => $vaString,
