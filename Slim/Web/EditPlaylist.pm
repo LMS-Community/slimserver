@@ -42,10 +42,10 @@ sub editplaylist {
 		return deletePlaylist($client, $params);
 	}
 
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
 
-	my $obj     = $ds->objectForId('track', $params->{'id'}) || return [];
-	my @items   = $obj->tracks;
+	my $playlist = $ds->objectForId('playlist', $params->{'id'}) || return [];
+	my @items    = $playlist->tracks;
 
 	# 0 base
 	my $itemPos = ($params->{'item'} || 1) - 1;
@@ -69,7 +69,7 @@ sub editplaylist {
 
 		if ($title && $url) {
 
-			my $obj = $ds->updateOrCreate({
+			my $playlistTrack = $ds->updateOrCreate({
 				'url'      => $url,
 				'readTags' => 1,
 				'commit'   => 1,
@@ -77,24 +77,26 @@ sub editplaylist {
 
 			for my $item (@items) {
 
-				if ($item eq $obj) {
+				if ($item eq $playlistTrack) {
 					# The assignment below ensures that the object
 					# in the list is the one that we're going to 
 					# change. It may be different of a different class
 					# (Track vs LightWeightTrack) than the one just
 					# returned from updateOrCreate.
-					$obj = $item;
+					$playlistTrack = $item;
 					$found = 1;
 					last;
 				}
 			}
 
 			if ($found == 0) {
-				push @items, $obj;
+				push @items, $playlistTrack;
 			}
 
-			$obj->title($title);
-			$obj->update();
+			$playlistTrack->title($title);
+			$playlistTrack->titlesort(Slim::Utils::Text::ignoreCaseArticles($title));
+			$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCaseArticles($title));
+			$playlistTrack->update;
 
 			$changed = 1;
 		}
@@ -127,20 +129,32 @@ sub editplaylist {
 	if ($changed) {
 		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
 
-		$obj->setTracks(\@items);
+		$playlist->setTracks(\@items);
+		$playlist->update;
 
-		if ($obj->content_type eq 'ssp') {
+		if ($playlist->content_type eq 'ssp') {
 
-			Slim::Formats::Parse::writeList(\@items, undef, $obj->url);
+			$::d_playlist && msg("Writing out playlist to disk..\n");
+
+			Slim::Formats::Parse::writeList(\@items, undef, $playlist->url);
 		}
+
+		$ds->forceCommit;
+		$ds->wipeCaches;
+
+		# If we've changed the files - make sure that we clear the
+		# format display cache - otherwise we'll show bogus data.
+		Slim::Music::Info::clearFormatDisplayCache();
 	}
 
 	# This is our display - dispatch to browsedb ?
 	$params->{'listTemplate'} = 'edit_playlist_list.html';
 	$params->{'items'}        = \@items;
-	$params->{'playlist'}     = $obj;
-	if ($items[$itemPos]) {
-		$params->{'form_title'}   = $items[$itemPos]->title;
+	$params->{'playlist'}     = $playlist;
+
+	if ($items[$itemPos] && ref($items[$itemPos])) {
+
+		$params->{'form_title'} = $items[$itemPos]->title;
 		$params->{'form_url'}   = $items[$itemPos]->url;
 	}
 

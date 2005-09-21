@@ -40,11 +40,11 @@ my $artworkDir   = '';
 # do we ignore articles?
 our $articles = undef;
 
-#
-my %lastFile      = ();
-my %display_cache = ();
-
+# Make sure that these can't grow forever.
+tie our %lastFile, 'Tie::Cache::LRU', 64;
+tie our %displayCache, 'Tie::Cache::LRU', 64;
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
+
 our %currentTitleCallbacks = ();
 
 my ($currentDB, $elemstring, $validTypeRegex);
@@ -268,6 +268,11 @@ sub wipeDBCache {
 sub clearStaleCacheEntries {
 	resetClientsToHomeMenu();
 	$currentDB->clearStaleEntries();
+}
+
+sub clearFormatDisplayCache {
+
+	%displayCache = ();
 }
 
 # Mark an item as having been rescanned
@@ -936,14 +941,14 @@ sub standardTitle {
 	# Client may not be defined, but we still want to use the cache.
 	$client ||= 'NOCLIENT';
 
-	my $ref = $display_cache{$client} ||= {
+	my $ref = $displayCache{$client} ||= {
 		'fullpath' => '',
 		'format'   => '',
 	};
 
 	if ($fullpath ne $ref->{'fullpath'} || $format ne $ref->{'format'}) {
 
-		$ref = $display_cache{$client} = {
+		$ref = $displayCache{$client} = {
 			'fullpath' => $fullpath,
 			'format'   => $format,
 			'display'  => infoFormat($track, $format, 'TITLE'),
