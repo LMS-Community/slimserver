@@ -5,14 +5,19 @@
 [% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong()">
-	<div class="list">
+	[% IF not playlist_items %]<a name="currentsong"></a></p>[% "EMPTY" | string %]
+	[% ELSE %]
+	
+	<div ID="playlist" class="playlist">
+		
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
 		<table cellspacing="0" border="0" cellpadding="0" width="100%">
-		[% IF not playlist_items %]<a name="currentsong"></a></p>[% "EMPTY" | string %][% END %][% playlist_items %]
+			[% playlist_items %]
 		</table>
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
 	</div>
+	[% END %]
 	</body>
 </html>

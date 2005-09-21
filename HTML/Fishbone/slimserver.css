@@ -8,10 +8,11 @@ BODY {
 }
 
 H3 {
-	font-size : 14pt;
+	font-size : 12pt;
 	font-weight : bold;	
 	text-align : left;
-	margin:0in;
+	margin:2 0 2 0;
+	padding: 2 0 2 0;
 }
 
 
@@ -197,6 +198,16 @@ A.linkbtn:hover {
 	margin-top: 8px;
 	_width: 100%;
 	_height: 100%;
+}
+
+.playlist
+{
+	padding: 0 8 0 8;
+	margin:0px;
+	margin-top: 8px;
+	height: auto;
+	_width: 100%;
+	overflow: auto;
 }
 
 .listing, .listing2, .even, .odd

@@ -61,10 +61,7 @@
 		-->
 		</script>
 	</head>
-	<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" 
-	[% IF not query  && home %] 
-		onload="parent.browser.location = getHomeCookie('SlimServer-Browserpage')+'&player=[% player | uri %]';"
-	[% END %]>
+	<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
 	[% IF home %]
 	<div class="masthead" width="100%">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="17">
