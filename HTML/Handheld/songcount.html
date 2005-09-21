@@ -1,6 +1,6 @@
 <!-- Element songcount.html -->
 	[% IF song_count || warn %]
-	    <table width="100%" bgcolor="#666666">
+	    <table width="100%" bgcolor="[% menuC %]">
 	    	<tr><td align="center">
 	    		<font color="#ffffff">[% IF warn %]<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %][% ELSE %][% album_count %] | [% song_count %] | [% artist_count %][% END %]</font>
 			</td></tr>

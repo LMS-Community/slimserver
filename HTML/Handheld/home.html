@@ -1,6 +1,6 @@
 <!-- Page home.html -->
 	[% BLOCK menu %]
-		<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% menutitle | string %]</h4></td></tr></table>
+		[% PROCESS subtitle title=menutitle %]
 		<ul>
 		[% IF menulist %]
 		    [% FOREACH link = menulist %]

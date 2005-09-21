@@ -1,11 +1,7 @@
-<!-- Element advanced_search.html -->
-	[% pagetitle = "SEARCH" | string %]
+	[% pagetitle = "ADVANCEDSEARCH" | string %]
 	[% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>/ <a href="[% webroot %]advanced_search.html?player=[% player | uri %]">[% "ADVANCEDSEARCH" | string %]</a></td>
-		</tr>
-	</table>
+
+	[% WRAPPER submenu url='advanced_search.html' linktitle=pagetitle %][% END %]
 
 	[% MACRO logicalSelectionBlock BLOCK %]	
 		<select name="[% name %]">
@@ -118,10 +114,9 @@
 	[% END %]
 
 	<p></p>
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		[% browse_list %]
 	</table>
 	<p></p>
 
 	[% PROCESS pagefooter.html %]
-<!-- Element advanced_search.html -->

@@ -1,8 +1,6 @@
-[% oddC = '#ffffff' %]
-[% evenC = '#d0d0d0' %]
-[% IF odd; SET class = "odd"; ELSE; SET class = "even"; END %]
-<tr [% IF odd %]bgcolor="[% oddC %]"[% ELSE %]bgcolor="[% evenC %]"[% END %]>
-	<td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+[%- PROCESS styles.html -%]
+<tr bgcolor="[% oddOrEvenC %]">
+	<td width="100%">
 		[% IF descend %]
 			[% IF itemobj.isPlaylist %]
 				<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %][% noEdit %]&player=[% player | uri %]">[% text | html %]</a>

@@ -2,7 +2,7 @@
 	[% pagetitle = "STATISTICS" | string %]
 	[% PROCESS pageheader.html %]
 
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "STATISTICS" | string %]</h4></td></tr></table>
+	[% WRAPPER submenu url='hitlist.html' linktitle=pagetitle %][%- END -%]
 
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
 		<tr align="center">
@@ -15,7 +15,7 @@
 		</tr>
 	</table>
 
-	<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "MOSTPLAYED" | string %]</h4></td></tr></table>
+	[% PROCESS subtitle title='MOSTPLAYED' %]
 
 	<table cellspacing="0" border="0" cellpadding="0" width="100%">
 		[% browse_list %]

@@ -1,7 +1,5 @@
-<!-- Element browsedb_list.html -->
-[% oddC = '#ffffff' %]
-[% evenC = '#d0d0d0' %]
-	<tr [% IF odd %]bgcolor="[% oddC %]"[% ELSE %]bgcolor="[% evenC %]"[% END %]>
+	[%- PROCESS styles.html -%]
+	<tr bgcolor="[% oddOrEvenC %]">
 		<td width="100%">
 			[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 			[% IF descend %]
@@ -26,7 +24,7 @@
 			[% END %]
 		</td>
 
-		[% SET class = odd ? 'odd':'even'; width='13' height='13' -%]
+		[% SET width='13' height='13' -%]
 		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 		<td>&nbsp;</td>
 		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
@@ -35,5 +33,3 @@
 			[% PROCESS $mixer %]
 		[% END %]
 	</tr>
-<!-- /Element browsedb_list.html -->
-	

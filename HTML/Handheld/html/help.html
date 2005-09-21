@@ -1,13 +1,7 @@
-<!-- Page help.html -->
 	[% pagetitle = "HELP" | string %]
 	[% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>
-				/ <a href="[% webroot %]html/help.html?player=[% player | uri %]">[% "HELP" | string %]</a>
-			</td>
-		</tr>
-	</table>
+
+	[% WRAPPER submenu url='html/help.html' linktitle=pagetitle %][%- END -%]
 
 	<ul>
 		<li><a href="[% webroot %]html/docs/quickstart.html?player=[% player | uri %]">[% "GETTING_STARTED" | string %]</a></li>
@@ -20,4 +14,3 @@
 	</ul>
 	
 	[% PROCESS pagefooter.html %]
-<!-- /Page help.html -->

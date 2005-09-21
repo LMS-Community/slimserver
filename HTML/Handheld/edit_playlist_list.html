@@ -1,22 +1,17 @@
-[% IF loop.count % 2; bgColor = "#d0d0d0"; ELSE; bgColor = "#ffffff"; END %]
+[%- PROCESS styles.html -%]
+[%- BLOCK subtitle -%]
+	[% IF cmd %]
+		<td><a href="edit_playlist.html?player=[% player | uri %]&[% cmd %]=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_[% cmd %].gif" width="13" height="13"></a></td>
+		<td>&nbsp;</td>
+	[%- END -%]
+[%- END -%]
+<tr bgcolor="[% IF loop.count % 2; evenC; ELSE; oddC; END %]">
+	<td width="100%">[% item.title | html %]</td>
 
-<tr bgcolor=[% bgColor %]>
-  <td width="100%">[% item.title | html %]</td>
+	[% cmd = item.isRemoteURL ? edit : '' %]
+	[% PROCESS subtitle %]
 
-  <td><a href="edit_playlist.html?player=[% player | uri %]&up=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_up.gif" width="13" height="13"></a></td>
-  <td>&nbsp;</td>
-
-  <td><a class="down" href="edit_playlist.html?player=[% player | uri %]&down=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_down.gif" width="13" height="13"></a></td>
-  <td>&nbsp;</td>
-
-  <td>
-[% IF item.isRemoteURL %]
-    <a class="delete" href="edit_playlist.html?player=[% player | uri %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_edit.gif" width="13" height="13"></a>
-[% END %]
-  </td>
-<td>&nbsp;</td>
-  <td>
-    <a class="delete" href="edit_playlist.html?player=[% player | uri %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_delete.gif" width="13" height="13"></a>
-  </td>
-
+	[% PROCESS subtitle cmd='up' %]
+	[% PROCESS subtitle cmd='down' %]
+	[% PROCESS subtitle cmd='delete' %]
 </tr>

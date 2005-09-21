@@ -1,15 +1,11 @@
-<!-- Element browse_playlist.html -->
 	[% pagetitle = "SAVED_PLAYLISTS" | string %]
 	[% PROCESS pageheader.html %]
 
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>/ <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0">[% "SAVED_PLAYLISTS" | string %]</a> [% pwd_list %]</td>
-		</tr>
+	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
 	    <tr><td>
 		    [% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
 	    </td></tr>
-	</table>
+	[%- END -%]
 
 	[% IF warn %]
 		<p><b>[% "NOTE" | string %]</b>
@@ -74,12 +70,14 @@
 	[% browselist_pagebar %] 
 
 	<table cellspacing="0" cellpadding="4">
-
 		[% IF playlistname %]
 			<tr>
-				<td class="odd">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-				<td class="odd"><nobr><a href="status.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]"><img src="html/images/b_play.gif" width=13 height=13 alt=""></a></nobr></td>
-				<td class="odd"><nobr><a href="status.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]"><img src="html/images/b_add.gif" width=13 height=13 alt=""></a></nobr></td>
+				<td>[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
+				
+				[% SET width='13' height='13' arguments="&playlist=$playlist.id" -%]
+				[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
+				<td>&nbsp;</td>
+				[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
 			</tr>
 		[% END %]
 
@@ -91,4 +89,3 @@
 	
 	[% PROCESS songcount.html %]	
 	[% PROCESS pagefooter.html %]
-<!-- Element browse_playlist.html -->

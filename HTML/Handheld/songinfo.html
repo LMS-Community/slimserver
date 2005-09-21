@@ -1,21 +1,12 @@
-<!-- Element songinfo.html -->
 	[% pagetitle = "SONG_INFO" | string %]
 	[%- PROCESS pageheader.html -%]
 
-	<table border="0" cellspacing="1" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td width="100%">
-				/ [% "SONG_INFO" | string %] / [% track.title %]
-			</td>
-			<td>
-				<a href="status.html?command=playlist&subcommand=loadtracks&track=[% track.id %]&player=[% player | uri %]"><img src="html/images/b_play.gif" border=0 align="center" width="13" height="13"></a>
-			</td>
+	[% WRAPPER submenu linktitle="$pagetitle / $track.title" %]
+			[% SET width='13' height='13' attributes="&track=$track.id" -%]
+			[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 			<td>&nbsp;</td>
-			<td>
-				<a href="status.html?command=playlist&subcommand=addtracks&track=[% track.id %]&player=[% player | uri %]"><img src="html/images/b_add.gif" border=0 align="center" width="13" height="13"></a>
-			</td>
-		</tr>
-	</table>
+			[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
+	[%- END -%]
 	
 	[% IF track.coverArt('thumb', 1) %]
 	    <p><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% track.id %]/thumb.jpg" border="0"></a></p>
@@ -40,7 +31,7 @@
 			</tr>
 			[% END %]
 		[% END %]
-	
+
 		[% IF track.album %]
 		<tr>
 			<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
@@ -60,7 +51,7 @@
 			</td>
 		</tr>
 		[% END %]
-		
+
 		[% IF track.album.disc %] 
 		<tr> 
 			<td>[% "DISC" | string; "COLON" | string %]</td>
@@ -175,4 +166,3 @@
 	</table>
 	
 	[% PROCESS pagefooter.html %]
-<!-- /Element songinfo.html -->

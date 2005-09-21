@@ -1,19 +1,9 @@
-<!-- Element setup.html -->
 	[% pagetitle = "SETTINGS" | string %]
 	[% PROCESS pageheader.html %]
 
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#d0d0d0">
-		<tr><td>
-			[% IF children %][% children %][% END %]
-			[% IF siblings %][% siblings %][% END %]
-	    </td></tr>
-	</table>
+	[% WRAPPER submenu linktitle="$children $siblings" %][%- END -%]
 
-	[% IF warning %]
-	<table width="100%" bgcolor="#cfcfcf">
-		<tr><td><b>[% warning %]</b></td></tr>
-	</table>
-	[% END %]
+	<p><b>[% warning ? warning : '' %]</b></p>
 
 	<form method="get" action="setup.html">
 		<input type=hidden value="[% player %]" name="player">
@@ -23,17 +13,16 @@
 	</form>
 
 	[% IF page == 'player' %]
-		<table bgcolor="#c5c5c5" width=100%><tr><td><h4>[% "FORGET_PLAYER" | string %]</h4></td></tr></table>
+		<table bgcolor="[% subtitleC %]" width=100%><tr><td><h4>[% "FORGET_PLAYER" | string %]</h4></td></tr></table>
 		<p>[% "FORGET_PLAYER_DESC" | string %]</p>
 		<p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
 		<hr>
 	[% END %]
 
 	[% IF versionInfo %]
-	<table width="100%" bgcolor="#666666">
+	<table width="100%" bgcolor="[% menuC %]">
 		<tr><td align="center"><font color="#ffffff">[% versionInfo %]</font></td></tr>
 	</table>
 	[% END %]
 
 	[% PROCESS pagefooter.html %]
-<!-- Element setup.html -->

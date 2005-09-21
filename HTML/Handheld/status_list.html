@@ -1,4 +1,4 @@
-<!-- Element status_list.html -->
+	[%- PROCESS styles.html -%]
 	[% BLOCK playlistlink %]
 		<td>&nbsp;</td>
 		<td width="13" align="center">
@@ -7,7 +7,7 @@
 		</td>
 	[% END %]
 	
-	<tr [% IF not odd %]bgcolor="#dfdfdf"[% END %]>
+	<tr bgcolor="[% oddOrEvenC %]">
 		<td width="100%"><a name=[% num %]>
 			<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">[% num + 1 %].</a>&nbsp;
 			<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title %]</a>
@@ -18,4 +18,3 @@
 		[% PROCESS playlistlink action='move' image='b_down' alt='MOVEDOWN' p3='%2B1' %]
 		[% PROCESS playlistlink action='delete' image='b_delete' alt='DELETE' p3='' %]
 	</tr>
-<!-- /Element status_list.html -->

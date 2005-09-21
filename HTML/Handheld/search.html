@@ -1,11 +1,9 @@
 <!-- Element search.html -->
 	[% pagetitle = "SEARCH" | string %]
 	[% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>/ <a href="[% webroot %]search.html?player=[% player | uri %]">[% "SEARCH" | string %]</a></td>
-		</tr>
-	</table>
+
+	[% WRAPPER submenu url='search.html' linktitle=pagetitle %][%- END -%]
+
 	[% IF not query %]
 		<p>&nbsp;</p>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -32,7 +30,7 @@
 	[% END %]
 	
 	[% IF numresults != '-1' %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
 	    [% IF searchlist_pagebar %]
 	    <tr><td>
 		    [% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
@@ -41,7 +39,8 @@
 	</table>
 	
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<tr class="even" bgcolor="#d0d0d0">
+			<tr><td colspan="4">&nbsp;</td></tr>
+			<tr bgcolor="[% evenC %]">
 				<td width="100%">[% "ALL_SONGS" | string %]</td>
 				<td width="13">
 					<a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>

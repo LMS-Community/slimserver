@@ -6,12 +6,12 @@
 	[% PROCESS pageheader.html %]
 	
 	<table width=100% border="0" cellspacing="0" cellpadding="0">
-		<tr[% IF sync %] bgcolor="#c5c5c5"[% END %]>
+		<tr bgcolor="[% subtitleC %]">
 			<td colspan="2">
 				[% IF player_chooser_list %]
 					<form method="get" action="[% webroot %]status.html">
 						<select name="player">[% player_chooser_list %]</select>
-						<input class="stdclick" type="submit" value="[% "CHANGE" | string %]">
+						<input type="submit" value="[% "CHANGE" | string %]">
 					</form>
 				[% ELSE %]
 					[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
@@ -73,7 +73,7 @@
 	</table>
 	
 	<p></p>
-	<table width=100% bgcolor="#c5c5c5">
+	<table width=100% bgcolor="[% subtitleC %]">
 	   <tr align="center">
 	        <td><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
 	        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>

@@ -1,20 +1,20 @@
-[% pagetitle = 'RADIO_TUNEIN' | string %]
-[% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr><td>/ [% "RADIO_TUNEIN_NOW" | string %]</td></tr>
-	</table>
+	[% pagetitle = 'RADIO_TUNEIN' | string %]
+	[% PROCESS pageheader.html %]
+	
+	[% linktitle = "RADIO_TUNEIN_NOW" | string %]
+	[% WRAPPER submenu url='tunein.html' %][% END %]
 
-	<p></p>
-<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
+	<p>&nbsp;</p>
+	<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
 
-<form name="tune" method="get" action="[% webroot %]status.html">
-	<input type="hidden" name="p0" value="playlist">
-	<input type="hidden" name="p1" value="play">
-	<input type="hidden" name="player" value="[% player %]">
-	[% 'RADIO_TUNEIN_RADIOURL' | string %]
-	<input type="text" class="stdedit" name="p2" size="50">
-	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" onclick='document.forms.tune.submit(); for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
-</form>
+	<form name="tune" method="get" action="[% webroot %]status.html">
+		<input type="hidden" name="p0" value="playlist">
+		<input type="hidden" name="p1" value="play">
+		<input type="hidden" name="player" value="[% player %]">
+		[% 'RADIO_TUNEIN_RADIOURL' | string %]
+		<input type="text" name="p2" size="50">
+		<input type="submit" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" onclick='document.forms.tune.submit(); for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
+	</form>
 
-	<p></p>
-[% PROCESS pagefooter.html %]
+	<p>&nbsp;</p>
+	[% PROCESS pagefooter.html %]

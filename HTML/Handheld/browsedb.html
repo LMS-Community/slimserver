@@ -1,15 +1,11 @@
-<!-- Page browsedb.html -->
 	[% pagetitle = "BROWSE_MUSIC" | string %]
 	[% PROCESS pageheader.html %]
-	
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>[% pwd_list %]</td>
-		</tr>
+
+	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
 		<tr><td>
 			[% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
 		</td></tr>
-	</table>
+	[%- END -%]
 	
 	[% IF warn %]
 		<p><b>[% "NOTE" | string %]</b>
@@ -30,4 +26,3 @@
 
 	[% PROCESS songcount.html %]	
 	[% PROCESS pagefooter.html %]
-<!-- /Page browsedb.html -->
