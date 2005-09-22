@@ -53,6 +53,7 @@
 	</td>
 [% END -%]
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 	<meta http-equiv="refresh" content="[% refresh %]; url=[% statuslink %]?player=[% player | uri %]&amp;start=[% start %]&amp;undock=[% undock %]">
@@ -114,10 +115,10 @@
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr>
 				[% IF coverThumb %]<td valign="top">
-					<a href="browsedb.html?level=0&hierarchy=track&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" height="100">
+					<a href="browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" height="100">
 				</td>[% END %]
 				<td><img src="[% webroot %]html/images/spacer.gif" width="5"></td>
-				<td valign="top" width="100%"><nobr>
+				<td valign="top" width="100%">
 					<p class="label">[% IF modeplay %][% "PLAYING" | string %][% END %]
 					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
@@ -125,15 +126,15 @@
 					<p><a class="songtitle" href="songinfo.html?item=[% track.id %]&amp;player=[% player | uri %]" target="browser">[% songtitle %]</a>
 					[% IF track.duration %]&nbsp;([% track.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
 					[% IF not coverThumb %]
-					<table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%" align="lef"><nobr>[% END %]
+					<table border="0" cellpadding="0" cellspacing="0" width="100%"><td width="50%" align="left"><nobr>[% END %]
 						<p class="label">[% IF track.artist && track.artist != noArtist %][% "ARTIST" | string %]&nbsp;<a class="label" href="[% statuslink %]?p0=playlist&p1=deletealbum&p2=&p3=[% track.artist | uri %]&player=[% player | uri %]&astart=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
 						<p class="artistname"><a class="artistname" href="browsedb.html?hierarchy=album,track&level=0&artist=[% track.artist.id %]&amp;player=[% player | uri %]" target="browser">[% track.artist | html %]</a></p>[% END %]
 						[% IF not coverThumb %]</nobr></td><td><nobr>[% END %]
 						<p class="label">[% IF track.album.title && track.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;<a class="label" href="[% statuslink %]?p0=playlist&p1=deletealbum&p2=&p3=&p4=[% track.album.title | uri %]&player=[% player | uri %]&start=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
-						<p><a class="artistname" href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title | html %]</a>[% END %]
+						<p><a class="artistname" href="browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title | html %]</a>[% END %]
 						[% IF track.year %]&nbsp;([% track.year %])[% END %]</p>[% IF not coverthumb %]</td>
 					</table>[% END %]
-				</nobr></td>
+				</td>
 			</tr>
 		</table></div>
 	
@@ -199,14 +200,16 @@
 			[% END %]
 		</table></div>
 		
-		<nobr><center>[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
-		[% IF current_playlist %][% current_playlist_name %]
-		([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</center></nobr>
-	
-		<center>[% IF cansave %]&nbsp;<a target="browser" href="edit_playlist.html?player=[% player | uri %]&saveCurrentPlaylist=1">[% "SAVE" | string %]</a> | [% END %]
-		<a href="status.m3u?player=[% player | uri %]" target="playlist">[% "DOWNLOAD" | string %]</a> |
-		<a href="[% statuslink %]?p0=playlist&p1=clear&player=[% player | uri %]" target="status">[% "CLEAR" | string %]</a>
-		</p></center>
+		<table width="100%"><tr><td align="left">
+			[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
+			[% IF current_playlist %][% current_playlist_name %]
+			([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+		</td><td align="right">
+			[% IF cansave %]&nbsp;<a target="browser" href="edit_playlist.html?player=[% player | uri %]&saveCurrentPlaylist=1">[% "SAVE" | string %]</a> | [% END %]
+			<a href="status.m3u?player=[% player | uri %]" target="playlist">[% "DOWNLOAD" | string %]</a> |
+			<a href="[% statuslink %]?p0=playlist&p1=clear&player=[% player | uri %]" target="status">[% "CLEAR" | string %]</a>
+		</td>
+		</tr></table>
 	</div>
 	<script language="JavaScript">playlistResize(this.document);</script>
 </body>
