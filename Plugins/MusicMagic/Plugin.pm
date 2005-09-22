@@ -419,6 +419,8 @@ sub grabFilters {
 	my @filters;
 	my %filterHash;
 	
+	return unless $initialized;
+	
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
 		$::d_musicmagic && msg("MusicMagic: don't get filters list, it's disabled\n");
 		return %filterHash;
