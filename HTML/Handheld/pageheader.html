@@ -1,7 +1,7 @@
 <html>
 <head>
 	[% PROCESS standardheader.html %]
-	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]">[% END %]
+	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]">[% END %]
 </head>
 [%- PROCESS styles.html -%]
 

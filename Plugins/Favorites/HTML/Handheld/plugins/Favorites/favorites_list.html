@@ -1,36 +1,31 @@
 [% pagetitle = "PLUGIN_FAVORITES_MODULE_NAME" | string %]
 [% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</td>
-		</tr>
-	</table>
+[% WRAPPER submenu url='plugins/Favorites/favorites_list.html' linktitle=pagetitle %][% END %]
+
+	[% BLOCK playlistlink %]
+		<td>&nbsp;</td>
+		<td width="13" align="center">
+			<a href="[% path %][% page %].html?p0=[% action %]&p1=[% p1 %][% IF p2 %]&p2=[% p2 %][% END %]&player=[% player | uri %][% IF start %]&start=[% start %][% END %]">
+			<img src="[% webroot %]html/images/[% image %].gif" width="13" height="13" border="0" align="center" [% IF alt %]alt="[% alt | string %]" title="[% alt | string %]"[% END %]></a>
+		</td>
+	[% END %]
 	<p></p>
 	[% warning %]
 	<table cellspacing="0" width="100%">
 		[% odd = 1 %]
 		[% FOREACH fav = titles %]
-			<tr>
-				<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+			<tr bgcolor="[% odd ? oddC : evenC %]">
+				<td width="100%">
 					[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
 				</td>
 				
-				<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/b_up.gif" width=13 height=13 alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
-				</td>
-				<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/b_down.gif" width=13 height=13 alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
-				</td>
-				<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<a href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]">
-					<img src="[% webroot %]html/images/b_delete.gif" width=13 height=13 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
-				</td>
-				<td align="right" width="13" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					<a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]" target="status">
-					<img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
-				</td>
+				[% path = '${webroot}plugins/Favorites/' %]
+				[% PROCESS playlistlink page='favorites_list' p1=loop.index action='move' image='b_up' alt='MOVEUP' p2='%2D1' %]
+				[% PROCESS playlistlink action='move' image='b_down' alt='MOVEDOWN' p2='%2B1' %]
+				[% PROCESS playlistlink action='delete' image='b_delete' alt='DELETE' p2='' %]
+				[% path = webroot %]
+				[% p2 = faves.$fav | uri %]
+				[% PROCESS playlistlink page='status' p1='play' action='playlist' image='b_play' alt='PLAY' %]
 			</tr>
 			[% odd = (not odd) %]
 		[% END %]

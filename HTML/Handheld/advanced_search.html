@@ -29,7 +29,7 @@
 			</tr>
 	[% END %]
 
-	[% IF numresults == '-1' %]
+	[% IF numresults == '-1' || numresults == '0' %]
 		<form action="advanced_search.html" method="GET" name="searchForm">
 		<input type="hidden" value="[% player %]" name="player">
 		<table border="0" cellpadding="3" cellspacing="1" width="100%">
@@ -115,7 +115,11 @@
 
 	<p></p>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
-		[% browse_list %]
+		[% IF numresults == '0' %]
+			<td align="left">[% "EMPTY" | string%]</td>
+		[% ELSE %]
+			[% browse_list %]
+		[% END %]
 	</table>
 	<p></p>
 

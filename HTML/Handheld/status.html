@@ -1,6 +1,5 @@
 	[% IF refresh;
-		uriplayer = player FILTER uri;
-		refreshurl = "url=status.html?player=$uriplayer&amp;start=$start&amp;refresh=1";
+		refreshurl = "url=status.html?start=$start&refresh=1";
 	   END %]
 	[% pagetitle = "NOW_PLAYING" | string %]
 	[% PROCESS pageheader.html %]

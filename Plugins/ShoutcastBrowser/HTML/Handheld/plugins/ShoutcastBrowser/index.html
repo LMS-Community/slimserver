@@ -1,54 +1,60 @@
-[% pagetitle = "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]
-[% PROCESS pageheader.html %]
-	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#c5c5c5">
-		<tr>
-			<td>/ 
-			[% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / 
-			[% ELSE %]
-				(<a href="index.html?player=[% player | uri %]&action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
-			[% END %]
-			[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
-			[% IF streaminfo %][% stream %][% END %]
-			</td>
-		</tr>
-	</table>
+	[% pagetitle = "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]
+	[% IF action == 'play';
+		SET refresh = 0.1;
+		SET refreshurl = "${webroot}status.html?";
+	   END %]
+
+	[% PROCESS pageheader.html %]
+	[% linktitle = BLOCK %]
+		[% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / 
+		[% ELSE %]
+			(<a href="index.html?player=[% player | uri %]&action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
+		[% END %]
+		[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
+		[% IF streaminfo %][% stream %][% END %]
+	[% END %]
+	[% WRAPPER submenu %][% END %]
 
 	<p></p>
-		[% IF msg %]<p>[% msg %]</p>[% END %]
+	[% IF msg %]<p>[% msg %]</p>[% END %]
 
-		[% IF redirect %]
-			<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
-			<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
-		[% END %]
+	[% IF redirect %]
+		<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
+		<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>
+	[% END %]
 
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
 			[% IF streaminfo %]
+				[% BLOCK streaminfo %][% IF content %]
 				<tr>
-					<td width="30%">[% 'TITLE' | string %][% "COLON" | string %]</td>
-					<td width="70%"><a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% streaminfo.2 | uri %]&action=play&player=[% player | uri %]">[% stream %]</a></td>
+					<td>[% title | string %][% "COLON" | string %]</td>
+					<td>[% content %]</td>
 				</tr>
-				<tr>
-					<td width="30%">[% 'BITRATE' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.2 %][% 'PLUGIN_SHOUTCASTBROWSER_KBPS' | string %]</td>
-				</tr>
-				<tr>
-					<td width="30%">[% 'SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.1 %]</td>
-				</tr>
-				<tr>
-					<td width="30%">[% 'GENRE' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.4 %]</td>
-				</tr>
-				[% IF streaminfo.3 %]
-				<tr>
-					<td width="30%">[% 'PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING' | string %][% "COLON" | string %]</td>
-					<td width="70%">[% streaminfo.3 %]</td>
-				</tr>
+				[% END %][% END %]
+				
+				[% WRAPPER streaminfo title='TITLE' %]
+					<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% streaminfo.2 | uri %]&action=play&player=[% player | uri %]">[% stream %]</a>
 				[% END %]
-				<tr>
-					<td width="30%">[% 'URL' | string %][% "COLON" | string %]</td>
-					<td width="70%"><a href="[% streaminfo.0 %]" target="_blank">[% streaminfo.0 %]</a></td>
-				</tr>
+
+				[% WRAPPER streaminfo title='BITRATE' %]
+					[% streaminfo.2 %][% 'PLUGIN_SHOUTCASTBROWSER_KBPS' | string %]
+				[% END %]
+
+				[% WRAPPER streaminfo title='SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS' %]
+					[% streaminfo.1 %]
+				[% END %]
+
+				[% WRAPPER streaminfo title='GENRE' %]
+					[% streaminfo.4 %]
+				[% END %]
+
+				[% WRAPPER streaminfo title='PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING' %]
+					[% streaminfo.3 %]
+				[% END %]
+
+				[% WRAPPER streaminfo title='URL' %]
+					<a href="[% streaminfo.0 %]" target="_blank">[% streaminfo.0 %]</a>
+				[% END %]
 			[% END %]
 
 			[% odd = 1 %]
