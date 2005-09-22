@@ -29,7 +29,7 @@ sub add {
 	my @genres = ();
 
 	# Handle the case where $genre is already an object:
-	if (ref $genre && $genre->isa('Slim::DataStores::DBI::Genre')) {
+	if (ref $genre && ref($artist) ne 'ARRAY' && $genre->isa('Slim::DataStores::DBI::Genre')) {
 
 		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,
