@@ -34,24 +34,30 @@ sub hitlist {
 
 	for my $track (reverse @$tracks) {
 
-		my $playCount = $track->playCount();
+		my $playCount = $track->playCount;
 
 		if ($maxPlayed == 0) {
 			$maxPlayed = $playCount;
 		}
 
 		my %form  = %$params;
+		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
-		$form{'title'} 	      = Slim::Music::Info::standardTitle(undef, $track);
-		$form{'artist'}       = $track->artist();
-		$form{'album'} 	      = $track->album();
-		$form{'itempath'}     = $track->url();
-		$form{'itemobj'}      = $track;
-		$form{'odd'}	      = ($itemNumber + 1) % 2;
-		$form{'song_bar'}     = hitlist_bar($params, $playCount, $maxPlayed);
-		$form{'player'}	      = $params->{'player'};
-		$form{'skinOverride'} = $params->{'skinOverride'};
-		$form{'song_count'}   = $playCount;
+
+		$form{'title'} 	          = Slim::Music::Info::standardTitle(undef, $track);
+		$form{'noArtist'}         = Slim::Utils::Strings::string('NO_ARTIST');
+		$form{'noAlbum'}          = Slim::Utils::Strings::string('NO_ALBUM');
+		$form{'includeArtist'}    = ($webFormat !~ /ARTIST/);
+		$form{'artist'}           = $track->artist;
+		$form{'includeAlbum'}     = ($webFormat !~ /ALBUM/) ;
+		$form{'album'}            = $form{'includeAlbum'}  ? $track->album : undef;
+		$form{'itempath'}         = $track->url;
+		$form{'itemobj'}          = $track;
+		$form{'odd'}	          = ($itemNumber + 1) % 2;
+		$form{'song_bar'}         = hitlist_bar($params, $playCount, $maxPlayed);
+		$form{'player'}	          = $params->{'player'};
+		$form{'skinOverride'}     = $params->{'skinOverride'};
+		$form{'song_count'}       = $playCount;
 
 		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%form)};
 
