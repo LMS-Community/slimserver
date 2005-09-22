@@ -19,6 +19,7 @@ a {
 table, td, tr, form, h4 {
 	padding: 0px;
 	margin: 0px;
+	vertical-align: top;
 }
 
 ul {

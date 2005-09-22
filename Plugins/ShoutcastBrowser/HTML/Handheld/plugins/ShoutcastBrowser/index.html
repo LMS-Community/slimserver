@@ -60,11 +60,11 @@
 			[% odd = 1 %]
 			[% IF genres %]
 				[% FOREACH genre = genericGenres %]
-					<tr>
-						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+					<tr bgcolor="[% NOT odd ? oddC : evenC %]">
+						<td width="100%">
 							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]">[% genre.value.token | string %]</a>
 						</td>
-						<td align="right" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<td>
 							<a href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]"></a>
 						</td>
 					</tr>
@@ -73,11 +73,11 @@
 
 				[% genreID = 0 %]
 				[% FOREACH genre = genres %]
-					<tr>
-						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+					<tr bgcolor="[% NOT odd ? oddC : evenC %]">
+						<td width="100%">
 							<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]">[% genre %]</a>
 						</td>
-						<td align="right" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<td>
 							<a href="index.html?genreID=[% genreID | uri %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]"></a>
 						</td>
 					</tr>
@@ -90,14 +90,14 @@
 				[% streamID = 0 %]
 				[% FOREACH stream = mystreams %]
 					[% FOREACH bitrate = streams.$stream %]
-						<tr>
-							<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+						<tr bgcolor="[% NOT odd ? oddC : evenC %]">
+							<td width="100%">
 								[% IF bitrate.key %]<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=info&player=[% player | uri %]">[% END %][% stream %][% IF bitrate.key %]</a> ([% bitrate.key %][% "PLUGIN_SHOUTCASTBROWSER_KBPS" | string %])[% END %]
 							</td>
-							<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<td>
 								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=play&player=[% player | uri %]"><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
 							</td>
-							<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+							<td>
 								<a href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=add&player=[% player | uri %]"><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
 							</td>
 						</tr>
