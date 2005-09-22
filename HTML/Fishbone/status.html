@@ -66,7 +66,7 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkReload();playlistResize(this.document);" onresize="javascript:playlistResize(this.document);">
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkSetup();[% IF not undock %]checkReload();playlistResize(this.document);[% END %]" onresize="javascript:playlistResize(this.document);">
 	<div ID="header">
 		<div class="masthead">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" height="15" bordercolor="#111111">
@@ -211,6 +211,6 @@
 		</td>
 		</tr></table>
 	</div>
-	<script language="JavaScript">playlistResize(this.document);</script>
+	[% IF not undock %]<script language="JavaScript">playlistResize(this.document);</script>[% END %]
 </body>
 </html>

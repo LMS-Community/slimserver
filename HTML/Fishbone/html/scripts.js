@@ -1,6 +1,4 @@
 var p = 1;
-
-
 function to_currentsong(num) {
 	if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
 		window.location.hash = 'currentsong';
@@ -21,7 +19,6 @@ function switchPlayer(player_List){
 
 function resize(src,width)
 {
-
 	if (!width) {
 		// special case for IE (argh)
 		if (document.all) //if IE 4+
@@ -38,16 +35,22 @@ function resize(src,width)
 	{
 		fullsize = document.getElementById("fullsize");
 		if (fullsize) {
-
 			fullsize.style.display = 'block';
 		}
 		src.width = width;
 	}
 }
 
+function checkSetup(doc)
+{
+	if (!top.document.getElementById('home')) {
+		//document.getElementById('setup').display = 'none';
+	}
+}
+
 function checkReload()
 {
-			if (parent.playlist.location != '') parent.playlist.location.reload(true);
+	if (parent.playlist.location != '') parent.playlist.location.reload(true);
 }
 
 function playlistResize(playlist) {
@@ -157,110 +160,18 @@ function getHomeCookie(Name)
 }
 
 var selectedLink;
-
 function selectLink(lnk) {
 
 	if (selectedLink) selectedLink.style.fontWeight='normal';
 
 	if (lnk) {
 		lnk.style.fontWeight='bold';
-
 		selectedLink=lnk;
 	}
 }
 
 var homeLink;
-
 function setLink(lnk,plyr) {
-
 	lnk.href = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
-
 	homeLink=lnk;
 }
-
-function replaceSubstring(inputString, fromString, toString) {
-
-	// Goes through the inputString and replaces every occurrence of fromString with toString
-
-	var temp = inputString;
-
-alert(temp);
-	if (fromString == "") {
-
-		return inputString;
-
-	}
-
-	if (toString.indexOf(fromString) == -1) { // If the string being replaced is not a part of the replacement string (normal situation)
-
-		while (temp.indexOf(fromString) != -1) {
-
-			var toTheLeft = temp.substring(0, temp.indexOf(fromString));
-
-			var toTheRight = temp.substring(temp.indexOf(fromString)+fromString.length, temp.length);
-
-			temp = toTheLeft + toString + toTheRight;
-
-	}
-
-	} else { // String being replaced is part of replacement string (like "+" being replaced with "++") - prevent an infinite loop
-
-		var midStrings = new Array("~", "`", "_", "^", "#");
-
-		var midStringLen = 1;
-
-		var midString = "";
-
-		// Find a string that doesn't exist in the inputString to be used
-
-		// as an "inbetween" string
-
-	while (midString == "") {
-
-		for (var i=0; i < midStrings.length; i++) {
-
-			var tempMidString = "";
-
-			for (var j=0; j < midStringLen; j++) { tempMidString += midStrings[i]; }
-
-				if (fromString.indexOf(tempMidString) == -1) {
-
-					midString = tempMidString;
-
-					i = midStrings.length + 1;
-
-				}
-
-			}
-
-		} // Keep on going until we build an "inbetween" string that doesn't exist
-
-		// Now go through and do two replaces - first, replace the "fromString" with the "inbetween" string
-
-		while (temp.indexOf(fromString) != -1) {
-
-			var toTheLeft = temp.substring(0, temp.indexOf(fromString));
-
-			var toTheRight = temp.substring(temp.indexOf(fromString)+fromString.length, temp.length);
-
-			temp = toTheLeft + midString + toTheRight;
-
-		}
-
-		// Next, replace the "inbetween" string with the "toString"
-
-		while (temp.indexOf(midString) != -1) {
-
-			var toTheLeft = temp.substring(0, temp.indexOf(midString));
-
-			var toTheRight = temp.substring(temp.indexOf(midString)+midString.length, temp.length);
-
-			temp = toTheLeft + toString + toTheRight;
-
-		}
-
-	} // Ends the check to see if the string being replaced is part of the replacement string or not
-
-	return temp; // Send the updated string back to the user
-
-} // Ends the "replaceSubstring" function

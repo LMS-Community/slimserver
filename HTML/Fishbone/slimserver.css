@@ -17,11 +17,13 @@ H3 {
 
 H4
 {
+	font-size : 12pt;
+	font-weight : bold;
 	padding: 0 8 0 8;
 }
 
 H5 {
-	font-size : 10pt;
+	font-size : 12pt;
 	font-weight : bold;	
 	text-align : left;
 	margin:2 0 2 0;
@@ -44,6 +46,7 @@ DIV {
 	line-height: 150%;
 	_height: 0%;
 }
+
 A {
 	text-decoration: none;
 }
