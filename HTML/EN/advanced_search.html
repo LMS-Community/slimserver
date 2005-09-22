@@ -198,7 +198,9 @@
 			      <nobr><a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 			</td>
 		</tr>
-		[% END %]
+	[% ELSIF numresults == '0' %]
+		<td align="left">[% "EMPTY" | string%]</td>
+	[% END %]
 		[% browse_list %]
 	</table>
 

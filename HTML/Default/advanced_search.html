@@ -214,6 +214,8 @@
 			      <nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
 			</td>
 		</tr>
+		[% ELSIF numresults == '0' %]
+			<td align="left">[% "EMPTY" | string%]</td>
 		[% END %]
 		[% browse_list %]
 	</table>
