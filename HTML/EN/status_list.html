@@ -10,7 +10,7 @@
 			[% "FROM" | string %]
 			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
 		[% END %]
-		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
+		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 		</td>
    <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>

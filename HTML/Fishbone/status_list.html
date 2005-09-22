@@ -8,7 +8,7 @@
 [%- BLOCK link %]
 		<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
 		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% player | uri %]&start=[% start %]" target="[% target %]">
-		<img src="[% webroot %]html/images/[% img %]" height="11" align="center"
+		<img src="[% webroot %]html/images/[% img %]" height="11" align="middle"
 			alt='[% text | string %]' 
 			title='[% text | string %]' 
 			onMouseOver="self.status='[% text | string %]';return true">
@@ -17,10 +17,10 @@
 [% END -%]
 
 <tr>
-	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name=[% num %]>[% END %]
+	<td [% IF currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not currentsong %]class="listing"><a name="[% num %]"></a>[% END %]
 		<a style="font-size: 10px;color:white" href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
 		<b><a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
-	<nobr>[%- IF includeArtist; PROCESS artistsAsHTML.html; END %]</nobr>
+	<nobr>[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]</nobr>
 	<nobr>[% IF album && album != noAlbum %] [% "FROM" | string %] <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a></i>[% END %]
 	</nobr></td>
 	[% INCLUDE playlistlinks %]

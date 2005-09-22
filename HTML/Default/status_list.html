@@ -27,7 +27,7 @@
 			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>
 		[% END %]
 
-		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
+		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
 		</span>
 	</td>

@@ -539,13 +539,14 @@ sub playlist {
 		}
 
 		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
-		$list_form{'album'}       = $listBuild{'includeAlbum'}  ? $track->album() : undef;
+		$list_form{'album'}       = $listBuild{'includeAlbum'}  ? $track->album : undef;
 
 		$list_form{'item'}     = $track->id();
 		$list_form{'itemobj'}  = $track;
 
 		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-	
+		$list_form{'artist'} = $track->artist;
+
 		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
 
 		$listBuild{'item'}++;
@@ -702,7 +703,6 @@ sub advancedSearch {
 
 	# template defaults
 	$params->{'browse_list'} = " ";
-	$params->{'numresults'}  = -1;
 	$params->{'liveSearch'}  = 0;
 
 	# Prep the date format
@@ -798,7 +798,7 @@ sub advancedSearch {
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
-
+		$params->{'numresults'}  = -1;
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
