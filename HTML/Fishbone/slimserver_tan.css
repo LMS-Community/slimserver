@@ -103,7 +103,9 @@ A.linkbtn:hover {
    font : 12px Arial; 
    color: Black;
    font-weight: bold;
-   background-color : #d1b586;  
+   background-color : #d1b586;
+   margin-bottom: 2px;
+   margin-top: 2px;
 }
 
 .stdedit {
@@ -112,6 +114,8 @@ A.linkbtn:hover {
    padding : 1px;
    font-size:12px;
    background:#f3f3f3;
+   margin-bottom: 2px;
+   margin-top: 2px;
    color:#444;
    border-width : 1px; 
    border-style : inset; 

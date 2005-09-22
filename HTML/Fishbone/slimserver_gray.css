@@ -103,7 +103,9 @@ A.linkbtn:hover {
    font : 12px Arial; 
    color: Black;
    font-weight: bold;
-   background-color : rgb(200,200,200);  
+   background-color : rgb(200,200,200);
+   margin-bottom: 2px;
+   margin-top: 2px;
 }
 
 .stdedit {
@@ -112,6 +114,8 @@ A.linkbtn:hover {
    padding : 1px;
    font-size:12px;
    background:#f3f3f3;
+   margin-bottom: 2px;
+   margin-top: 2px;
    color:#444;
    border-width : 1px; 
    border-style : inset; 
@@ -204,7 +208,7 @@ A.linkbtn:hover {
 	margin:0px;
 	margin-top: 8px;
 	_width: 100%;
-	_height: 100%;
+	_height: 98%;
 }
 
 .playlist

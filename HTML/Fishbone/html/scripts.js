@@ -1,7 +1,7 @@
 var p = 1;
 
 
-function to_currentsong() {
+function to_currentsong(num) {
 	if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
 		window.location.hash = 'currentsong';
 	}
@@ -162,9 +162,11 @@ function selectLink(lnk) {
 
 	if (selectedLink) selectedLink.style.fontWeight='normal';
 
-	lnk.style.fontWeight='bold';
+	if (lnk) {
+		lnk.style.fontWeight='bold';
 
-	selectedLink=lnk;
+		selectedLink=lnk;
+	}
 }
 
 var homeLink;

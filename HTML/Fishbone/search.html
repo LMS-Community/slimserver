@@ -8,9 +8,9 @@
 		<script type="text/javascript"> liveSearchInit(); </script>
 	</head>
 	<body bgcolor="#FFFFFF" [% bodyscript %]">
-	
+	<div class="list">	
 	[% IF liveSearch %]
-	<h1>Live Search</H1>
+	<h3>Live Search</H3>
 	<center><form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<input type="text" id="query" name="query" size="40" autocomplete="off" />
 		<input name="submit" type=submit class="stdclick" value="[% "SEARCHFOR_SONGS" | string %]"><p>
@@ -41,7 +41,7 @@
 			[% searchError %]
 		[% END %]
 		
-<div class="list">
+
    <table border="0" cellspacing="0" cellpadding="0" width="100%">
        [% browse_list %]
     </table>

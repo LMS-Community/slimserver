@@ -15,6 +15,18 @@ H3 {
 	padding: 2 0 2 0;
 }
 
+H4
+{
+	padding: 0 8 0 8;
+}
+
+H5 {
+	font-size : 10pt;
+	font-weight : bold;	
+	text-align : left;
+	margin:2 0 2 0;
+	padding: 2 0 2 0;
+}
 
 TD, P, A {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -102,13 +114,17 @@ A.linkbtn:hover {
 .stdclick {
    font : 9px Arial; 
    color: Yellow;
-   background-color : rgb(25,25,25);  
+   background-color : rgb(25,25,25);
+   margin-bottom: 2px;
+   margin-top: 2px;
 }
 
 .stdedit {
    font-family: Verdana, Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
    padding : 1px;
+   margin-bottom: 2px;
+   margin-top: 2px;
    font-size:9px;
    background:#ddd;
    color:#444;
@@ -125,6 +141,13 @@ A.linkbtn:hover {
 	background:#333;
 	color:white;
 	border-bottom:2px solid white;
+}
+
+.faq
+{
+	padding: 0 8 0 8;
+	margin:0px;
+	margin-top: 8px;
 }
 
 .nowplaying
@@ -197,7 +220,7 @@ A.linkbtn:hover {
 	margin:0px;
 	margin-top: 8px;
 	_width: 100%;
-	_height: 100%;
+	_height: 98%;
 }
 
 .playlist
@@ -205,8 +228,6 @@ A.linkbtn:hover {
 	padding: 0 8 0 8;
 	margin:0px;
 	margin-top: 8px;
-	height: auto;
-	_width: 100%;
 	overflow: auto;
 }
 
