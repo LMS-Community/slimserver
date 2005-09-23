@@ -246,9 +246,9 @@ sub updateFeedNames {
 	# verbose debug
 	if ($::d_plugins) {
 
-		use Data::Dumper;
+		require Data::Dumper;
 		msg("Podcast: updateFeedNames urls:\n");
-		print Dumper(\@feedURLPrefs);
+		msg(Data::Dumper::Dumper(\@feedURLPrefs));
 	}
 
 	# case 1: we're reverting to default
