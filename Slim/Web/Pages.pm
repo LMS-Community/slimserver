@@ -540,6 +540,7 @@ sub playlist {
 
 		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
 		$list_form{'album'}       = $listBuild{'includeAlbum'}  ? $track->album : undef;
+		$list_form{'includeAlbum'}       = $listBuild{'includeAlbum'};
 
 		$list_form{'item'}     = $track->id();
 		$list_form{'itemobj'}  = $track;

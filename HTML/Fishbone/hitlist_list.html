@@ -3,10 +3,7 @@
 	[% PROCESS browselinks.html urlcmd='play' cmdstring='PLAY' img='play.this.gif' %]
 	[% PROCESS browselinks.html urlcmd='add' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
   <td class="listing" height="15">
-       	<b>
-			<a href="songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% title %]</a></b>
-			[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
-			[% IF album && album != noAlbum %] [% "FROM" | string %] <i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a></i>[% END %]
+[% INCLUDE tracklink.html %]
    </td>
   <td class="listing" align="right" height="15">
     ([% song_count %])

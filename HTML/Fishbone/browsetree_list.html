@@ -1,12 +1,12 @@
 [% BLOCK browselinks %]
-	[% PROCESS browselinks.html header='1' width='9' height='11' target='status' urlcmd='insert' cmdstring='NEXT' img='queue.gif' %]
+	[% PROCESS browselinks.html width='9' height='11' target='status' urlcmd='insert' cmdstring='NEXT' img='queue.gif' %]
 	[% PROCESS browselinks.html urlcmd='play' cmdstring='PLAY' img='play.this.gif' %]
 	[% PROCESS browselinks.html urlcmd='add' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 	[% PROCESS browselinks.html urlcmd='deleteitem' cmdstring='REMOVE_FROM_PLAYLIST' img='subtract.gif' %]
 [% END -%]
 
 <tr>
-	<td  class="listing">&nbsp;
+	<td  class="listing">
 		[% IF descend %]
 		
 			[% IF itemobj.isPlaylist %]

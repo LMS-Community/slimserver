@@ -27,6 +27,7 @@
 		
 		function doSearch(value,option,submit)
 		{
+			selectLink()
 			var url;
 			switch(option)
 			{
@@ -87,7 +88,7 @@
 	<div class="menu1" width="100%">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
 			<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
-				<SELECT NAME="browse" class="stdedit" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+				<SELECT NAME="browse" class="stdedit" style="width:17em" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
 					<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
@@ -100,7 +101,7 @@
 				</nobr></td>
 			</FORM>
 			<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value,search.value,1);"><td align="right"><nobr>
-				<SELECT NAME="search" class="stdedit" onChange="doSearch(query.value,search.value)">
+				<SELECT NAME="search" class="stdedit" style="width:12em" onChange="doSearch(query.value,search.value)">
 					<OPTION SELECTED value="MANSEARCH" label="[% SEARCHFOR_SONGS %]">[% "SEARCHFOR_SONGS" | string %]</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.search %]
 				</SELECT> [% "FOR" | string %]
@@ -115,4 +116,3 @@
 	</div>
 	[% END %]
 	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-	

@@ -15,9 +15,24 @@ H3 {
 	padding: 4 0 2 0;
 }
 
+H4
+{
+	font-size : 12pt;
+	font-weight : bold;
+	padding: 0 8 0 8;
+}
+
+H5 {
+	font-size : 12pt;
+	font-weight : bold;	
+	text-align : left;
+	margin:2 0 2 0;
+	padding: 2 0 2 0;
+}
+
 TD, P, A {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size : 9px;
+	font-size : 12px;
 	margin:0in; 
 	margin-bottom:1pt;
 	line-height: 150%;
@@ -132,6 +147,13 @@ A.linkbtn:hover {
 	border-bottom:2px solid #ffcc66;
 }
 
+.faq
+{
+	padding: 0 8 0 8;
+	margin:0px;
+	margin-top: 8px;
+}
+
 .nowplaying
 {
 	margin:0px;
@@ -208,7 +230,7 @@ A.linkbtn:hover {
 	margin:0px;
 	margin-top: 8px;
 	_width: 100%;
-	_height: 100%;
+	_height: 98%;
 }
 
 .playlist
@@ -216,8 +238,6 @@ A.linkbtn:hover {
 	padding: 0 8 0 8;
 	margin:0px;
 	margin-top: 8px;
-	width: auto;
-	height: auto;
 	overflow: auto;
 }
 
