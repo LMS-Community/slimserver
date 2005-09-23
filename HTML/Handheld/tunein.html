@@ -1,8 +1,7 @@
 	[% pagetitle = 'RADIO_TUNEIN' | string %]
 	[% PROCESS pageheader.html %]
-	
-	[% linktitle = "RADIO_TUNEIN_NOW" | string %]
-	[% WRAPPER submenu url='tunein.html' %][% END %]
+
+	[% WRAPPER submenu url='tunein.html' linktitle=pagetitle %][% END %]
 
 	<p>&nbsp;</p>
 	<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
@@ -12,8 +11,8 @@
 		<input type="hidden" name="p1" value="play">
 		<input type="hidden" name="player" value="[% player %]">
 		[% 'RADIO_TUNEIN_RADIOURL' | string %]
-		<input type="text" name="p2" size="50">
-		<input type="submit" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" onclick='document.forms.tune.submit(); for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);'>
+		<input type="text" name="p2" size="40">
+		<input type="submit" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]">
 	</form>
 
 	<p>&nbsp;</p>
