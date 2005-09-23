@@ -1,13 +1,10 @@
 <html>
 	<head>
-		<title>[% "MUSICMAGIC_MIX" | string %]</title>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
+		[% pagetitle = "MUSICMAGIC_MIX" | string %]
+		[% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#FFFFFF">
-	
+	<div class="list">
 		<p>
 	
 		<h3>[% "MUSICMAGIC_MIX" | string %]</h3><p>
@@ -22,6 +19,6 @@
 		</table>
 		[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 		<p><hr><p>
-
+	</div>
 	</body>
 </html>

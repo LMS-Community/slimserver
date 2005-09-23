@@ -1,14 +1,11 @@
 <html>
 	<head>
-		<title>[% pagetitle %]</title>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_gray.css" title="Fishbone_Gray" disabled id>
-		<link rel="alternate stylesheet" type="text/css" href="[% webroot %]slimserver_tan.css" title="Fishbone_Tan" disabled id>
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" title="Fishbone_Standard">
-		<script type="text/javascript" src="[% webroot %]html/styleswitcher.js"></script>
+		[% PROCESS customheader.html %]
 	</head>
 	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="top.document.getElementById('home').rows = '87, *';">
 	[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]
 	</div>[% END %]
+	<div class="list">
 	<center><p>[% IF song_count %]Browsing <b>[% album_count %]</b> [% "WITH" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 	<h3>[% "MOODLOGIC_SELECT_MOOD" | string %]</h3><p>
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
@@ -20,5 +17,6 @@
 	[% mood_list %]
 	</table>
 	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+	</div>
 	</body>
 </html>

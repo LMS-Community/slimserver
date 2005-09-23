@@ -4,11 +4,9 @@
 	<a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]">[% mood %]</a>
 </nobr></td>
   <td  class="listing" width="11" align="center">
-      <nobr><a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" width="5" height="9" "self.status='Play This Item';return true"></a></nobr>
+      <nobr><a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"><img src="[% webroot %]html/images/play.this.gif" height="11" "self.status='[% "PLAY" | string %]';return true"></a></nobr>
   </td>
-  <td  class="listing" width="3" align="center">&nbsp;</td>
   <td  class="listing" width="11" align="center">
-      <nobr><a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"><img src="[% webroot %]html/images/add.gif" border=0 align="center" width="8" height="8" "self.status='Add This Item';return true"></a></nobr>
+      <nobr><a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"><img src="[% webroot %]html/images/add.gif" height="11" "self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a></nobr>
   </td>
-  <td  class="listing" width="3" align="center">&nbsp;</td>
 </tr>
