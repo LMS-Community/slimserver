@@ -1044,8 +1044,10 @@ sub readTags {
 		
 		# Turn the tag SET into DISC and DISCC if it looks like # or #/#
 		if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
-			$attributesHash->{'DISC'} = $1;
-			$attributesHash->{'DISCC'} = $2 if defined $2;
+
+			# Strip leading 0s so that numeric compare at the db level works.
+			$attributesHash->{'DISC'}  = int($1);
+			$attributesHash->{'DISCC'} = int($2) if defined $2;
 		}
 
 		if (!$attributesHash->{'TITLE'}) {
