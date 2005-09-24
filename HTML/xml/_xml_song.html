@@ -3,6 +3,7 @@
 [% genres = itemobj.genres %]
 [% IF genres %]
 	[% FOREACH genre = genres %]
+		<genre_id>[% genre.id | html %]</genre_id>
 		<genre>[% genre.name | html %]</genre>
 		<genre_browse_url><![CDATA[xml/browsedb.xml?hierarchy=genre%2Cartist%2Calbum%2Ctrack&level=1&genre=[% genre.id %]]]></genre_browse_url>
 	[% END %]
@@ -11,12 +12,14 @@
 	[% contributors = itemobj.contributorsOfType(role) %]
 	[% IF contributors %]
 		[% FOREACH contributor = contributors %]
+			<[% role %]_id>[% contributor.id | html %]</[% role %]_id>
 			<[% role %]>[% contributor.name | html %]</[% role %]>
 			<[% role %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&artist=[% contributor.id %]]]></[% role %]_browse_url>
 		[% END %]
 	[% END %]
 [% END %]
 [% IF itemobj.album %]
+	<album_id>[% itemobj.album.id | html %]</album_id>
 	<album>[% itemobj.album.title | html %]</album>
 	<album_browse_url><![CDATA[xml/browsedb.xml?hierarchy=album%2Ctrack&level=1&album=[% itemobj.album.id %]]]></album_browse_url>
 [% END %]

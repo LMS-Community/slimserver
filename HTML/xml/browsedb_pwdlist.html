@@ -1,8 +1,8 @@
 <locator>
 	<locator_name>[% pwditem | html %]</locator_name>
-	<locator_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]]]></locator_url>
+	<locator_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></locator_url>
 	[% IF levelName %]
 		<[% levelName %]>[% item | html %]</[% levelName %]>
-		<[% levelName %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]]]></[% levelName %]_browse_url>
+		<[% levelName %]_browse_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></[% levelName %]_browse_url>
 	[% END %]
 </locator>
