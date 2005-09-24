@@ -1604,7 +1604,7 @@ sub newSkinTemplate {
 	$skinTemplates{$skin} = Template->new({
 
 		INCLUDE_PATH => \@include_path,
-		COMPILE_DIR => Slim::Utils::Prefs::get('cachedir'),
+		COMPILE_DIR => templateCacheDir(),
 		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
 
 		FILTERS => {
@@ -1622,6 +1622,11 @@ sub newSkinTemplate {
 	});
 
 	return $skinTemplates{$skin};
+}
+
+sub templateCacheDir {
+
+	return catdir( Slim::Utils::Prefs::get('cachedir'), 'templates' );
 }
 
 sub initSkinTemplateCache {

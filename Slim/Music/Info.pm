@@ -10,6 +10,7 @@ package Slim::Music::Info;
 use strict;
 
 use Fcntl;
+use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
@@ -261,8 +262,14 @@ sub saveDBCache {
 }
 
 sub wipeDBCache {
+
 	resetClientsToHomeMenu();
+	clearFormatDisplayCache();
+
 	$currentDB->wipeAllData();
+
+	# Remove any HTML templates we have around.
+	rmtree( Slim::Web::HTTP::templateCacheDir() );
 }
 
 sub clearStaleCacheEntries {
@@ -272,7 +279,9 @@ sub clearStaleCacheEntries {
 
 sub clearFormatDisplayCache {
 
-	%displayCache = ();
+	%displayCache  = ();
+	%lastFile      = ();
+	%currentTitles = ();
 }
 
 # Mark an item as having been rescanned
