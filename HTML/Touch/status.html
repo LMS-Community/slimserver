@@ -46,20 +46,20 @@
 <tr><td height="10"></td></tr>
 <tr><td height="50"></td><td><p align="left"><font class="actiontext">[% "TITLE" | string %]:&nbsp;&nbsp;</p></td>
 
-[% IF songtitle %]<td width="500"><a href="songinfo.html?item=[% track.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% songtitle %]</a></td>[% END %]
+[% IF songtitle %]<td width="500"><a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% songtitle %]</a></td>[% END %]
 
 <tr><td></td><td height="55"><p align="left"><font class="actiontext">[% "ARTIST" | string %]:&nbsp;&nbsp;</p></td>
    
-[% IF track.artist.id %]<td><a href="browsedb.html?hierarchy=album,track&level=0&artist=[% track.artist.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.artist %]</a></td>
+[% IF itemobj.artist.id %]<td><a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% itemobj.artist %]</a></td>
 [% END %]
 </tr><tr>
           
 <td height="55"></td><td><p align="left"><font class="actiontext">[% "ALBUM" | string %]:&nbsp;&nbsp;</p></td>
-<td>[% IF track.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.album %]</a></td></tr>
+<td>[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% itemobj.album %]</a></td></tr>
 [% END %]
 
 <tr><td height="55"></td><td><p align="left"><font class="actiontext">[% "GENRE" | string %]:&nbsp;&nbsp;</p></td>
-[% IF track.genre.id %]<td><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% track.genre.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% track.genre %]</a></td>
+[% IF itemobj.genre.id %]<td><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% player | uri %]" style="text-decoration:none"><font class="itemtext">[% itemobj.genre %]</a></td>
 [% END %]
 
 </tr>

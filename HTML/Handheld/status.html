@@ -35,12 +35,12 @@
 		[% IF songtitle %]
 			<tr>
 				<td>[% "TITLE" | string %][% "COLON" | string %]</td>
-				<td><a href="songinfo.html?item=[% track.id %]&player=[% player | uri %]">[% songtitle %]</a></td>
+				<td><a href="songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% songtitle %]</a></td>
 			</tr>
 		[% END %]
 	   		
-		[% FOREACH role = track.contributorRoles.sort %]
-			[% contributors = track.contributorsOfType(role) %]
+		[% FOREACH role = itemobj.contributorRoles.sort %]
+			[% contributors = itemobj.contributorsOfType(role) %]
 			[% IF contributors %]
 				<tr>
 					<td>[% role | upper | string %][% "COLON" | string %]</td>
@@ -53,20 +53,20 @@
 			[% END %]
 		[% END %]
 	
-		[% IF track.album  %]
+		[% IF itemobj.album  %]
 			<tr>
 				<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 				<td>
-					<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]">[% track.album %]</a>
-					[% IF track.year %] ([% track.year %])[% END %]
+					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]">[% itemobj.album %]</a>
+					[% IF itemobj.year %] ([% itemobj.year %])[% END %]
 				</td>
 			</tr>
 		[% END %]
 
-		[% IF track.coverArt('thumb', 1) %]
+		[% IF itemobj.coverArt('thumb', 1) %]
 			<tr>
 				<td></td>
-				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><img src="/music/[% track.id %]/thumb.jpg" border="0"></a></td>
+				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]"><img src="/music/[% itemobj.id %]/thumb.jpg" border="0"></a></td>
 			</tr>
 		[% END %]
 	</table>

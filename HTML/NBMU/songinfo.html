@@ -17,12 +17,12 @@
 			</nobr>
 		</td>
 		<td>
-			[% track.title %] 
+			[% itemobj.title %] 
 		</td>
 	</tr>
-	[% FOREACH role = track.contributorRoles.sort %]
+	[% FOREACH role = itemobj.contributorRoles.sort %]
 
-		[% contributors = track.contributorsOfType(role) %]
+		[% contributors = itemobj.contributorsOfType(role) %]
 		[% IF contributors %]
 
 			<tr>
@@ -38,17 +38,17 @@
 		[% END %]
 
 	[% END %]
-	[% IF track.album %] 
+	[% IF itemobj.album %] 
 	<tr>
 		<td>
 			[% "ALBUM" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% track.album.id %]&amp;player=[% player | uri %]" target="browser">[% track.album.title %]</a> 
+			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&amp;player=[% player | uri %]" target="browser">[% itemobj.album.title %]</a> 
 		</td>
 	</tr>
 	[% END %]
-	[% genres = track.genres %]
+	[% genres = itemobj.genres %]
 	[% IF genres %]
 	<tr>
 		<td>
@@ -60,42 +60,42 @@
 		[% END %]
 		</td>
 	</tr>
-	[% END %] [% IF track.tracknum %] 
+	[% END %] [% IF itemobj.tracknum %] 
 	<tr>
 		<td>
 			[% "TRACK" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.tracknum %] 
+			[% itemobj.tracknum %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.duration %] 
+	[% END %] [% IF itemobj.duration %] 
 	<tr>
 		<td>
 			[% "LENGTH" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.duration %] 
+			[% itemobj.duration %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.year %] 
+	[% END %] [% IF itemobj.year %] 
 	<tr>
 		<td>
 			[% "YEAR" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.year %] 
+			[% itemobj.year %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.replay_gain %] 
+	[% END %] [% IF itemobj.replay_gain %] 
 	  <tr> 
 		<td> [% "REPLAYGAIN" | string; "COLON" | string %]</td>
-		<td> [% track.replay_gain | format('%2.2f') | html %] dB</td>
+		<td> [% itemobj.replay_gain | format('%2.2f') | html %] dB</td>
 	  </tr>
-	 [% END %] [% IF track.album.replay_gain %] 
+	 [% END %] [% IF itemobj.album.replay_gain %] 
 	  <tr> 
 		<td> [% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
-		<td> [% track.album.replay_gain | format('%2.2f') | html %] dB</td>
+		<td> [% itemobj.album.replay_gain | format('%2.2f') | html %] dB</td>
 	  </tr>
 	[% END %] [% IF comment %] 
 	<tr>
@@ -106,13 +106,13 @@
 			[% comment %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.lyrics %] 
+	[% END %] [% IF itemobj.lyrics %] 
 	<tr>
 		<td>
 			[% "LYRICS" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.lyrics %] 
+			[% itemobj.lyrics %] 
 		</td>
 	</tr>
 	[% END %] [% IF filelength %] 
@@ -124,31 +124,31 @@
 			[% filelength %] [% "BYTES" | string %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.bitrate %] 
+	[% END %] [% IF itemobj.bitrate %] 
 	<tr>
 		<td>
 			[% "BITRATE" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.bitrate %] 
+			[% itemobj.bitrate %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.tagversion %] 
+	[% END %] [% IF itemobj.tagversion %] 
 	<tr>
 		<td>
 			[% "TAGVERSION" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% track.tagversion %] 
+			[% itemobj.tagversion %] 
 		</td>
 	</tr>
-	[% END %] [% IF track.url %] 
+	[% END %] [% IF itemobj.url %] 
 	<tr>
 		<td>
 			URL[% "COLON" | string %]
 		</td>
 		<td>
-			[% track.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
+			[% itemobj.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>
 		</td>
 	</tr>
 	[% END %] 

@@ -526,6 +526,10 @@ sub playlist {
 		}
 
 		my %list_form = %$params;
+		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
+		my $levelInfo = $fieldInfo->{'track'};
+
+		&{$levelInfo->{'listItem'}}($ds, \%list_form, $track);
 
 		$list_form{'num'} = $listBuild{'item'};
 		$list_form{'odd'} = ($listBuild{'item'} + $listBuild{'offset'}) % 2;
@@ -539,14 +543,6 @@ sub playlist {
 		}
 
 		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
-		$list_form{'album'}       = $listBuild{'includeAlbum'}  ? $track->album : undef;
-		$list_form{'includeAlbum'}       = $listBuild{'includeAlbum'};
-
-		$list_form{'item'}     = $track->id();
-		$list_form{'itemobj'}  = $track;
-
-		$list_form{'includeArtist'} = ($webFormat !~ /ARTIST/);
-		$list_form{'artist'} = $track->artist;
 
 		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
 
@@ -957,7 +953,6 @@ sub _addSongInfo {
 	if ($track) {
 
 		# let the template access the object directly.
-		$params->{'track'}      = $track;
 		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());

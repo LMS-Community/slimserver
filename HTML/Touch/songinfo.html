@@ -8,7 +8,7 @@
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 <tr><td width="40" align="left"><img src="html/images/leftcorner.gif"></td>
-<td><p align="center"><font class="pagebartext">[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% track.title %]</b></p></td>
+<td><p align="center"><font class="pagebartext">[% "SONG_INFO" | string %] [% "FOR" | string %] <b>[% itemobj.title %]</b></p></td>
 <td width="40" align="right"><img src="html/images/rightcorner.gif"></td>
 </tr>
 </table>
@@ -17,8 +17,8 @@
 
 
 
-[% IF track.coverArt('cover', 1) %]
-<a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]"><p align="center"><img src="/music/[% track.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+[% IF itemobj.coverArt('cover', 1) %]
+<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]"><p align="center"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
 [% END %]
 
 <br><br>
@@ -53,13 +53,13 @@
                         </nobr>
                 </td>
                 <td>
-                        <font size="+2">[% track.title %]
+                        <font size="+2">[% itemobj.title %]
                 </td>
         </tr>
 
-	[% FOREACH role = track.contributorRoles.sort %]
+	[% FOREACH role = itemobj.contributorRoles.sort %]
 
-		[% contributors = track.contributorsOfType(role) %]
+		[% contributors = itemobj.contributorsOfType(role) %]
 		[% IF contributors %]
 		<tr>
 			<td><font size="+1">
@@ -75,18 +75,18 @@
 		</tr>
 		[% END %]
 
-        [% END %] [% IF track.album %]
+        [% END %] [% IF itemobj.album %]
         <tr>
                 <td><font size="+1">
                         [% "ALBUM" | string %]:
                 </td>
                 <td>
-			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% track.album.id %]&player=[% player | uri %]" style="text-decoration:none">[% track.album.title %]</a>
+			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" style="text-decoration:none">[% itemobj.album.title %]</a>
                 </td>
         </tr>
         [% END %] 
         
-        [% genres = track.genres %]
+        [% genres = itemobj.genres %]
         [% IF genres %]
         <tr>
                 <td><font size="+1">
@@ -98,42 +98,42 @@
                 [% END %]
                 </td>
         </tr><tr><td height="30"></td><td>
-        [% END %] [% IF track.tracknum %]
+        [% END %] [% IF itemobj.tracknum %]
         <tr>
                 <td><font size="+1">
                         [% "TRACK" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.tracknum %]
+                        <font size="+1">[% itemobj.tracknum %]
                 </td>
         </tr>
-        [% END %] [% IF track.duration %]
+        [% END %] [% IF itemobj.duration %]
         <tr>
                 <td><font size="+1">
                         [% "LENGTH" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.duration %]
+                        <font size="+1">[% itemobj.duration %]
                 </td>
         </tr>
-        [% END %] [% IF track.year %]
+        [% END %] [% IF itemobj.year %]
         <tr>
                 <td><font size="+1">
                         [% "YEAR" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.year %]
+                        <font size="+1">[% itemobj.year %]
                 </td>
         </tr>
-		[% END %] [% IF track.replay_gain %] 
+		[% END %] [% IF itemobj.replay_gain %] 
 		<tr> 
 			<td><font size="+1">[% "REPLAYGAIN" | string; "COLON" | string %]</td>
-			<td><font size="+1">[% track.replay_gain | format('%2.2f') | html %] dB</td>
+			<td><font size="+1">[% itemobj.replay_gain | format('%2.2f') | html %] dB</td>
 		</tr>
-		[% END %] [% IF track.album.replay_gain %] 
+		[% END %] [% IF itemobj.album.replay_gain %] 
 		<tr> 
 			<td><font size="+1">[% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
-			<td><font size="+1">[% track.album.replay_gain | format('%2.2f') | html %] dB</td>
+			<td><font size="+1">[% itemobj.album.replay_gain | format('%2.2f') | html %] dB</td>
 		</tr>
         [% END %] [% IF comment %]
         <tr>
@@ -144,13 +144,13 @@
                         <font size="+1">[% comment %]
                 </td>
         </tr>
-	[% END %] [% IF track.lyrics %]
+	[% END %] [% IF itemobj.lyrics %]
         <tr>
                 <td><font size="+1">
                         [% "LYRICS" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.lyrics %]
+                        <font size="+1">[% itemobj.lyrics %]
                 </td>
         </tr>
         [% END %] [% IF filelength %]
@@ -162,22 +162,22 @@
                         <font size="+1">[% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [% END %] [% IF track.bitrate %]
+        [% END %] [% IF itemobj.bitrate %]
         <tr>
                 <td><font size="+1">
                         [% "BITRATE" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.bitrate %]
+                        <font size="+1">[% itemobj.bitrate %]
                 </td>
         </tr>
-        [% END %] [% IF track.tagversion %]
+        [% END %] [% IF itemobj.tagversion %]
         <tr>
                 <td><font size="+1">
                         [% "TAGVERSION" | string %]:
                 </td>
                 <td>
-                        <font size="+1">[% track.tagversion %]
+                        <font size="+1">[% itemobj.tagversion %]
                 </td>
         </tr>
         [% END %]
