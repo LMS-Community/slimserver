@@ -24,7 +24,7 @@ use vars qw(
 	all	=> [@EXPORT, @EXPORT_OK]
 );
 
-# $Id: Info.pm,v 1.19 2005/03/11 04:41:29 pudge Exp $
+# $Id$
 ($REVISION) = ' $Revision: 1.19 $ ' =~ /\$Revision:\s+([^\s]+)/;
 $VERSION = '1.13';
 
@@ -1099,8 +1099,10 @@ sub _is_mp3 {
 		($h->{bytes} & 0xFFFF0000) == 0xFFFE0000
 			||
 		($h->{ID} == 1 && $h->{layer} == 3 && $h->{protection_bit} == 1)
-			||
-		($h->{mode_extension} != 0 && $h->{mode} != 1)
+		# mode extension should only be applicable when mode = 1
+		# however, failing just becuase mode extension is used when unneeded is a bit strict
+		#	||
+		#($h->{mode_extension} != 0 && $h->{mode} != 1)
 	);
 }
 
