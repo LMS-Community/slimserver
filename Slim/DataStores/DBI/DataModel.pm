@@ -392,7 +392,7 @@ our %sortFieldMap = (
 	'tracknum' => ['tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
-	'playCount' => ['tracks.playCount'],
+	'playCount' => ['tracks.playCount desc'],
 	'age' => ['tracks.age desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
 );
 

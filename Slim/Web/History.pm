@@ -32,7 +32,7 @@ sub hitlist {
 		'offset' => 0,
 	});
 
-	for my $track (reverse @$tracks) {
+	for my $track (@$tracks) {
 		
 
 		my $playCount = $track->playCount;
