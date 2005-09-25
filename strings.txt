@@ -4780,17 +4780,17 @@ SETUP_PLAYTRACKALBUM
 	ZH_CN	播放其他在同一张乐谱帖的歌曲
 
 SETUP_PLAYTRACKALBUM_1
-	CZ	Hrát ostatní skladby alba
-	DE	Auch andere Titel aus dem Album
-	DK	Afspil andre sange i album
-	EN	Play other songs in album
-	ES	Tocar otras canciones en disco
-	FR	Jouer les autres morceaux de l'album
-	NL	Speel de andere liedjes uit het album
-	NO	Spill andre låter i album
-	PT	Tocar outras músicas do álbum
-	SE	Spela alla låtar i albumet
-	ZH_CN	播放其他在同一张乐谱帖的歌曲
+	CZ	Hrát ostatní skladby alba nebo adresáře
+	DE	Auch andere Titel aus dem Album oder dem Verzeichnis spielen
+	DK	Afspil andre sange i album eller mappe
+	EN	Play other songs in album or directory
+	ES	Tocar otras canciones en disco o carpeta
+	FR	Jouer les autres morceaux de l'album ou du dossier
+	JP	同じアルバム、またはフォルダーのその他の曲を再生する
+	NL	Speel de andere liedjes uit het album of uit de folder
+	NO	Spill andre låter i album eller folder
+	PT	Tocar outras músicas do álbum ou da mesma directoria
+	SE	Spela alla låtar i albumet eller mappen
 
 SETUP_PLAYTRACKALBUM_0
 	CZ	Hrát pouze vybranou skladbu
@@ -4807,8 +4807,17 @@ SETUP_PLAYTRACKALBUM_0
 	ZH_CN	只播放指定歌曲
 
 SETUP_PLAYTRACKALBUM_DESC
-	DE	Wenn Sie beim Durchsuchen von Alben einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus dem gewählten Album.
-	EN	When you select a single song and press PLAY on the remote, while browsing albums, you can choose to play just that song or all the songs in that album, starting with that song.
+	CZ	Pokud vyberete jednu skladbu a stisknete PLAY na dálkovém ovladači, můžete zvolit zda se má hrát pouze tato skladba, nebo celé album obsahující tuto skladbu, nebo celý adresář, začíníjící touto skladbou.
+	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
+	DK	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
+	EN	When you select a single song and press PLAY on the remote, while browsing albums or folders, you can choose to play just that song or all the songs in that album or directory, starting with that song.
+	ES	Cuando se elige una sola canción y se presiona PLAY en el control remoto, se puede optar por escuchar solo esa canción o todas las canciones en ese disco o carpeta, comenzando por esa canción.
+	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, la platine peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
+	JP	1曲だけ選択して再生した場合、その曲だけを再生するのか、同じアルバムまたはフォルダーのその他の曲も再生するのか、を選択できます。
+	NL	Als U een liedje selecteert en op de PLAY toets van de afstandsbediening drukt kan U alleen dit liedje laten spelen of alle liedjes uit het album of de folder afspelen, te beginnen met het geselecteerde liedje.
+	NO	Når du velger en låt og trykker på PLAY, kan du velge å spille bare den sangen eller alle sangen i det albumet eller folderen, med valgt sang som den første.
+	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
+	SE	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
 	ZH_CN	当您浏览乐谱帖时通过遥控器选择一首歌曲并按“播放”键时，您可以选择只播放指定的那一首歌曲或播放在同一张乐谱帖内随其后的所有歌曲。
 
 SETUP_IGNOREDARTICLES

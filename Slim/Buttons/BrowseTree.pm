@@ -87,27 +87,34 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-#			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum')) {
+			if ($descend || (!Slim::Utils::Prefs::get('playtrackalbum') && !$addorinsert)) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 
-#			### TODO: re-enable playtrackalbum pref for folders if/when possible.
-#			### but only when it actually works without non-urls getting in the mix
-# 			} else {
-# 
-# 				$command .= 'tracks';
-# 				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
-# 
-# 				Slim::Player::Playlist::shuffle($client, 0);
-# 
-# 				$client->execute(['playlist', 'clear']);
-# 				$client->execute(['playlist', $command, $currentItem]);
-# 				$client->execute(['playlist', 'jump', $listIndex]);
-# 
-# 				if ($wasShuffled) {
-# 					$client->execute(['playlist', 'shuffle', 1]);
-# 				}
-# 			}
+			## playing other songs in folder, ONLY on play command from remote.
+			## non-objects are quickly converted to urls so that the playlist render
+			## can do lazy object conversion later.
+			} else {
+
+				$command = 'playtracks';
+				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+
+				Slim::Player::Playlist::shuffle($client, 0);
+
+				$client->execute(['playlist', 'clear']);
+
+				for my $i (0 .. scalar @{$items}-1) {
+					next if ref $items->[$i];
+					$items->[$i] = Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath')) || next;
+				}
+
+				$client->execute(['playlist', $command,'listref', $items]);
+				$client->execute(['playlist', 'jump', $listIndex]);
+
+				if ($wasShuffled) {
+					$client->execute(['playlist', 'shuffle', 1]);
+				}
+			}
 		},
 	);
 }
