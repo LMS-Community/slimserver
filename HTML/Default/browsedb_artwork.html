@@ -4,16 +4,14 @@
 		[% IF not coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
 	</td></tr>
 	<tr><td><table cellspacing="0" border="0" align="left">
-		<td class="even">
-			[% IF mixable_descend %]<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]</a></nobr> [% END %]
-			[% IF mixable_not_descend %] <nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a></nobr> [% END %]
-		</td>
 	
 		[% SET class = 'even' width='13' height='13' header='1' target='status' %]
 
 		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
-
+		[% FOREACH mixer = mixerlinks.values.sort %]
+			[% PROCESS $mixer %]
+		[% END %]
 	</table></td></tr>
 </table></div>
 
