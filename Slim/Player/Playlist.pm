@@ -54,11 +54,16 @@ sub song {
 		$index = Slim::Player::Source::playingSongIndex($client);
 	}
 
+	my $objOrUrl;
+	my $ds = Slim::Music::Info::getCurrentDataStore();
 	if (defined ${shuffleList($client)}[$index]) {
-		return ${playList($client)}[${shuffleList($client)}[$index]];
+		$objOrUrl = ${playList($client)}[${shuffleList($client)}[$index]];
 	} else {
-		return ${playList($client)}[$index];
+		$objOrUrl = ${playList($client)}[$index];
 	}
+	
+	return ref($objOrUrl) ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+
 }
 
 sub shuffleList {
