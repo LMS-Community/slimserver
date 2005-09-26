@@ -1,3 +1,6 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
+
 <tr>
 
 [% IF odd; SET class = "odd"; ELSE; SET class = "even"; END %]
@@ -8,15 +11,15 @@
 
 	[% IF itemobj.isPlaylist %]
 
-		<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %][% noEdit %]&player=[% player | uri %]">[% text | html %]</a>
+		<a [% browsePlaylistHRef %]>[% text | html %]</a>
 	[% ELSE %]
 
-		[% IF hierarchy %]<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %]</a>
+		[% IF hierarchy %]<a [% browseTreeHRef %]>[% END %][% text | html %]</a>
 	[% END %]
 
 [% ELSE %]
 
-	<a href="[% webroot %]songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% text | html %]</a>
+	<a [% songinfoHRef %]>[% text | html %]</a>
 
 [% END %]
 

@@ -1,4 +1,4 @@
-[% "BY" | string %]
+[% UNLESS noby %][% "BY" | string -%][% END %]
 
 [% contributorsHTML = [] %]
 

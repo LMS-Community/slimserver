@@ -5,6 +5,7 @@
 	[% PROCESS link p1='delete' 	img='remove.gif'  	text='REMOVE_FROM_PLAYLIST' %]
 	[% PROCESS link page='songinfo.html' p0='item=' _ itemobj.id img='info.gif' text='SONG_INFO' target='browser' %]
 [% END %]
+
 [%- BLOCK link %]
 		<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
 		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% player | uri %]&start=[% start %]" target="[% target %]">

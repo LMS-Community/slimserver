@@ -7,11 +7,11 @@
 
 	[% IF song_count %]<br>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %][% END %]
 	<hr>
-	[% IF warn %]<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?level=0&player=[% player | uri %]">[% "HERE" | string %]</a>.[% END %]<p><hr><p>[% END %]
+	[% IF warn %][% PROCESS scanwarning %]<p><hr><p>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
 	[% IF browselist_pagebar %][% browselist_pagebar %]<br>[% END %]
 			[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverArt %]<center>
-				<p><a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg" onLoad="resize(this)"></a></p>
+				<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 		[% END %][% END %]<p>
 		<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
 			[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">[% END %]

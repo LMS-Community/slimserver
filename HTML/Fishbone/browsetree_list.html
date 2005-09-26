@@ -1,3 +1,6 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
+
 [% BLOCK browselinks %]
 	[% PROCESS browselinks.html width='9' height='11' target='status' urlcmd='insert' cmdstring='NEXT' img='queue.gif' %]
 	[% PROCESS browselinks.html urlcmd='play' cmdstring='PLAY' img='play.this.gif' %]
@@ -11,16 +14,16 @@
 		
 			[% IF itemobj.isPlaylist %]
 
-				<a href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% itemobj.id %][% noEdit %]&player=[% player | uri %]">[% text | html %]</a>
+				<a [% browsePlaylistHRef %]>[% text | html %]</a>
 
 			[% ELSE %]
 
-				[% IF hierarchy %]<a href="[% webroot %]browsetree.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %]</a>
+				[% IF hierarchy %]<a [% browseTreeHRef %]>[% END %][% text | html %]</a>
 			[% END %]
 		
 		[% ELSE %]
 		
-			<a href="[% webroot %]songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% text | html %]</a>
+			<a [% songinfoHRef %]>[% text | html %]</a>
 		
 		[% END %]
 	</td>

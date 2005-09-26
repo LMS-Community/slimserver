@@ -1,3 +1,5 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
 <tr>
 
 <td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
@@ -6,7 +8,7 @@
 
 [% IF descend %]
 
-	[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+	[% IF hierarchy %]<a [% browseDbHRef %]>[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 	<!-- Include the artist for the album view -->
 	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
@@ -14,17 +16,17 @@
 [% ELSE %]
 
 	[% IF item %]
-		<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+		<a [% songinfoHRef %]>[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 	[% ELSE %]
 	
 		[% text | html %]
 
 	[% END %]
 
-	[% IF includeAlbum && album %]
+	[% IF includeAlbum && album && album != noAlbum %]
 
 		[% "FROM" | string %]
-		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
+		<i><a [% albumHRef %] target="browser">[% album.title | html %]</a></i>
 
 	[% END %]
 

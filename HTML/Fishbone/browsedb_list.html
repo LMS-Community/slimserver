@@ -1,3 +1,6 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
+
 [% BLOCK browselinks %]
 	[% class='listing' width='9' align='center' height='11' target='status' %]
 	[% PROCESS browselinks.html urlcmd='insert' cmd='inserttracks' cmdstring='NEXT' img='queue.gif' %]
@@ -15,11 +18,11 @@
 		
 		[% IF artwork %]
 
-			<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="30" width="30" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a>
+			<a [% browseDbHRef %]>[% PROCESS thumnailImg height=30 alt="$item | html; IF $artist; "BY" | string; $artist; END; IF$ year; ($year); END;" title="$item | html; IF $artist; "BY" | string; $artist; END; IF $year; ($year); END;"%]</a>
 
 		[% END %]
 		
-		[% IF descend %][% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+		[% IF descend %][% IF hierarchy %]<a [% browseDbHRef %]>[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 			<!-- Include the artist for the album view -->
 			[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]

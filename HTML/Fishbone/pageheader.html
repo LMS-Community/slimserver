@@ -1,3 +1,6 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
+
 [% BLOCK addBrowseLinks %]
 			[% IF links %]
 				[% FOREACH link = links %]
@@ -51,6 +54,7 @@
 				[% PROCESS addCaseLinks links=additionalLinks.browse %]
 				[% PROCESS addCaseLinks links=additionalLinks.radio %]
 				[% PROCESS addCaseLinks links=additionalLinks.plugins %]
+				[% PROCESS addCaseLinks links=additionalLinks.settings %]
 			case "RADIO_TUNEIN":
 				url = "tunein.html"
 				suffix = "?page=RADIO_TUNEIN"
@@ -94,8 +98,14 @@
 					<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.radio %]
 					<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+					[% IF additionalLinks.plugins %]
 					<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
+					[% END %]
+					[% IF additionalLinks.settings %]
+					<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
+					[% PROCESS addBrowseLinks links=additionalLinks.settings %]
+					[% END %]
 				</SELECT>
 				<input type=hidden value="[% page %]" name="page">
 				</nobr></td>

@@ -1,7 +1,5 @@
 <html>
 	<head>
-		<title>[% IF pagetitle %][% pagetitle %]
-		[% ELSE %][% "WELCOME_TO_SLIMSERVER" | string %][% END %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
+		[% PROCESS standardheader.html %]
 	</head>
 	<body>

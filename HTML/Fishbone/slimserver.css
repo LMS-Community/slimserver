@@ -33,9 +33,18 @@ H5 {
 TD, P, A {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size : 9px;
-	margin:0in; 
+	margin:0px;
+	padding: 0px;
 	margin-bottom:1pt;
 	line-height: 150%;
+}
+
+TABLE,TBODY {
+	border-collapse: collapse;
+	border-style: hidden;
+	border-spacing: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 
 DIV {
@@ -45,6 +54,17 @@ DIV {
 	margin-bottom:1pt;
 	line-height: 150%;
 	_height: 0%;
+}
+
+DIV.coverart {
+	overflow: hidden;
+	float:left;
+	margin:0px;
+	height: auto;
+}
+
+DIV.covertext {
+	overflow: hidden;
 }
 
 A {
@@ -81,6 +101,14 @@ A:link, A:visited {
 
 A:hover, A:selected {
     color : #EE3823;
+}
+
+DIV.nowplaying A
+{
+	font-size:11px;
+	padding: 0 0 0 0  ! important;
+	margin: 0 0 0 0 ! important;
+	line-height: 100% ! important;
 }
 
 .linkbtn {
@@ -203,7 +231,7 @@ A.linkbtn:hover {
 {
 	margin:0px;
 	color:white;
-	font-size:14px;
+	font-size:14px ! important;
 	font-weight:bold;
 	line-height: 100%;
 }	

@@ -1,13 +1,13 @@
-[% IF num || num == 0%]
+[% IF num || num == 0 %]
 		<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
 		<b><a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
 [% ELSIF item %]
-	<b><a href="[% webroot %]songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a></b>
+	<b><a [% songinfoHRef %]>[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a></b>
 [% ELSE %]
 	[% text | html %]
 [% END %]
 
 [% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
-[% IF includeAlbum && album %][% "FROM" | string %]
-	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% itemobj.album.title | html %]</a></i>[% END %]
+[% IF includeAlbum && album && album != noAlbum %][% "FROM" | string %]
+	<i><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></i>[% END %]

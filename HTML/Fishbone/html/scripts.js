@@ -53,9 +53,9 @@ function checkReload()
 	if (parent.playlist.location != '') parent.playlist.location.reload(true);
 }
 
-function playlistResize(playlist) {
-	if (playlist) {
-		var header = playlist.getElementById('header');
+function playlistResize(page) {
+	if (page) {
+		var header = page.getElementById('header');
 		
 		top.document.getElementById('player_frame').rows = header.clientHeight+', *';
 	}
