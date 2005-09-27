@@ -688,7 +688,7 @@ sub init {
 
 		'ignoreArticles' => 0,
 		'alphaPageBar' => sub { return 0; },
-		'suppressAll' => 1,
+		'suppressAll' => 0,
 		'nameTransform' => 'track',
 	};
 
