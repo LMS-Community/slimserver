@@ -1789,9 +1789,23 @@ sub trickSegmentRemaining {
 }
 
 sub currentPlaylist {
-	my $r = Slim::Player::Sync::masterOrSelf(shift);
-	@_ ? ($r->[91] = shift) : $r->[91];
+	my $r    = Slim::Player::Sync::masterOrSelf(shift);
+
+	if (@_) {
+		$r->[91] = shift;
+		return;
+	}
+
+	my $playlist = $r->[91];
+
+	# Force the caller to do the right thing.
+	if (ref($playlist) && ref($playlist) ne 'Class::DBI::Object::Has::Been::Deleted') {
+		return $playlist;
+	}
+
+	return;
 }
+
 sub currentPlaylistModified {
 	my $r = shift;
 	@_ ? ($r->[92] = shift) : $r->[92];

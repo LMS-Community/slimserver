@@ -597,7 +597,23 @@ sub newSongPlaylistCallback {
 	return unless $params->[0] eq 'newsong';
 	return unless $client->currentPlaylist;
 
-	my $playlist = ref($client->currentPlaylist) ? $client->currentPlaylist->path : $client->currentPlaylist;
+	my $playlist = '';
+
+	if ($client->currentPlaylist && ref($client->currentPlaylist)) {
+
+		if (ref($client->currentPlaylist) eq 'Class::DBI::Object::Has::Been::Deleted') {
+
+			msg("Warning: \$client->currentPlaylist has been deleted out from under us!");
+			return;
+		}
+
+		$playlist = $client->currentPlaylist->path;
+
+	} else {
+
+		$playlist = $client->currentPlaylist;
+	}
+
 	return if Slim::Music::Info::isRemoteURL($playlist);
 
 	Slim::Formats::Parse::writeCurTrackForM3U(
