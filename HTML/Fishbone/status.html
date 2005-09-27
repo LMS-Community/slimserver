@@ -212,12 +212,10 @@
 			[% IF current_playlist %][% current_playlist_name %]
 			([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 		</td><td align="right">
-			[% IF cansave %][% PROCESS savePlaylistHRef img=0 %]</a> | [% END %]
-			[% PROCESS downloadPlaylistHRef img=0 %] |
-			[% PROCESS clearPlaylistHRef %]
+			[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] | [% END %]
+			[% PROCESS downloadPlaylistLink %] |
+			[% PROCESS clearPlaylistLink %]
 		</td>
 		</tr></table>
-	</div>
 	[% IF not undock %]<script language="JavaScript">playlistResize(this.document);</script>[% END %]
-</body>
-</html>
+[% PROCESS pagefooter.html %]

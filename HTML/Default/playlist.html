@@ -24,7 +24,7 @@
 	<tr height="23">
 		<td colspan=2></td>
 		<td class="exlisting" valign=middle height="23" colspan=4 nowrap><table cellspacing="0" width="100%">
-			<tr><td><img alt="The current playlist:" src="html/images/nav_currentplaylist.gif" alt=""  height="13">[% IF cansave %][% PROCESS savePlaylistHRef img='<img src="html/images/nav_save.gif" alt="Save" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% END %][% PROCESS downloadPlaylistHRef img='<img src="html/images/nav_download.gif" alt="Download" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% PROCESS clearPlaylistHRef img='<img src="html/images/nav_clear.gif" alt="Clear" height="13">' %]</td>
+			<tr><td><img alt="The current playlist:" src="html/images/nav_currentplaylist.gif" alt=""  height="13">[% IF cansave %][% PROCESS savePlaylistLink img='<img src="html/images/nav_save.gif" alt="Save" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% END %][% PROCESS downloadPlaylistLink img='<img src="html/images/nav_download.gif" alt="Download" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% PROCESS clearPlaylistLink img='<img src="html/images/nav_clear.gif" alt="Clear" height="13">' %]</td>
 				<td align=right valign=middle>[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</td>
 			</tr>
 			</table>

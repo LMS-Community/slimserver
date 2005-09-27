@@ -6,24 +6,29 @@ coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
 browseTreeHRef = "href=\"" _ $webroot _ "browsetree.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\"";
 browsePlaylistHRef = "href=\"" _ $webroot _ "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=$itemobj.id$noEdit&player=$player\"";
 
-BLOCK homeLink;
-	"<a href=\"";webroot;"home.html?player=$player\">"; "HOME" | string; "</a>";
+BLOCK homeLink; homeString = "HOME" | string;
+	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
 END;
 
-BLOCK savePlaylistHRef; saveString = "SAVE" | string; 
-	"<a href=\"edit_playlist.html?player=$player&saveCurrentPlaylist=1\" target=\"browser\" >";img or saveString;"</a>"; 
+BLOCK savePlaylistLink; saveString = "SAVE" | string; 
+	"<a href=\"edit_playlist.html?player=$player&saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
 END;
 
-BLOCK downloadPlaylistHRef; downloadString = "DOWNLOAD" | string;
-	"<a href=\"status.m3u?player=$player\" target=\"playlist\">";img or downloadString;"</a>"; 
+BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
+	"<a href=\"status.m3u?player=$player\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>"; 
 END;
 
-BLOCK clearPlaylistHRef; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"status\">";img or clearString;"</a>"; 
+BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
+	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";target or 'status';"\">";img or clearString;"</a>"; 
 END;
 
-BLOCK thumbnailImg;"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;" alt\">"; END;
-BLOCK coverImg;"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">"; END ;
+BLOCK thumbnailImg;
+	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;" alt\">"; 
+END;
+
+BLOCK coverImg;
+	"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">"; 
+END ;
 
 BLOCK scanwarning;
 	"<b>"; "NOTE" | string;"</b> "; "SCAN_WARNING" | string; IF audiodir; "SCAN_CLICK" | string; "<a href=\"browsetree.html?level=0&player=$player\">"; "HERE" | string; "</a>."; END;

@@ -1,11 +1,7 @@
 [% IF page != 'help' %][% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% END %][% PROCESS pageheader.html %]
 
 [% IF page == 'help' %]
-<html>
-	<head>
-		[% PROCESS customheader.html %]
-	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+
 	<h3>[% "HELP" | string %]</h3>	
 	<ul>
 	[% IF additionalLinks.help %]
@@ -20,5 +16,4 @@
 	[% END %]
 	</ul>
 [% END %]
-  </body>
-</html>
+[% PROCESS pagefooter.html %]
