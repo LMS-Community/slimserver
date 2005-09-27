@@ -282,7 +282,7 @@ A.linkbtn:hover {
 	margin-top:1px;
 	margin-bottom:1px;
 	border-top:solid 2px #333;
-	border-bottom:solid 2px black;
+	#border-bottom:solid 1px black;
 }
 
 img {
