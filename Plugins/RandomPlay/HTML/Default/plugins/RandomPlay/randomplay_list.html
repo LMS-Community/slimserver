@@ -11,6 +11,15 @@
 	[% PROCESS playImage %]</a>
 [% END %]
 
+[% BLOCK addLink %]
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=1" [% INCLUDE reloadStatusFrame.html %]>
+	[% PROCESS addImage %]</a>
+[% END %]
+
+[% BLOCK addImage %]
+	<img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD" | string %]" title="[% "ADD" | string %]">
+[% END %]
+
 <tr height="44">
 
 	<td width="4" height="44"> <img src="[% webroot %]html/images/spacer.gif" width=8 height=39 alt=""></td>
@@ -74,16 +83,19 @@
 			<tr>
 				<td class="even">[% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
 				<td class="even" width="13">[% PROCESS playLink type="track" %]</td>
+				<td class="even" width="13">[% PROCESS addLink type="track" %]</td>
 			</tr>
 
 			<tr>
 				<td class="odd">[% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
 				<td class="odd" width="13">[% PROCESS playLink type="artist" %]</td>
+				<td class="odd" width="13">[% PROCESS addLink type="artist" %]</td>
 			</tr>
 
 			<tr>
 				<td class="even">[% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
 				<td class="even" width="13">[% PROCESS playLink type="album" %]</td>
+				<td class="even" width="13">[% PROCESS addLink type="album" %]</td>
 			</tr>
 
 		</table>

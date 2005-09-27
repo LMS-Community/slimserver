@@ -4,12 +4,17 @@
 	SET refreshurl = "${webroot}status.html?";
    END %]
 
-[% BLOCK playLink %]
+[% BLOCK playLinks %]
 	<tr bgcolor="[% bgC %]">
 		<td width="100%">[% title | string %]</td>
 		<td width="13">
 			<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]">
 				<img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+			</a>
+		</td>
+		<td width="13">
+			<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?player=[% player | uri %]&type=[% type %]&addOnly=1">
+				<img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD" | string %]" title="[% "ADD" | string %]">
 			</a>
 		</td>
 	</tr>
@@ -30,9 +35,9 @@
 	<p><b>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</b></p>
 
 	<table border="0" cellspacing="0" cellpadding="4" width="100%">
-		[% PROCESS playLink bgC=evenC title='PLUGIN_RANDOM_SONG_DESC' type='track' %]
-		[% PROCESS playLink bgC=oddC title='PLUGIN_RANDOM_ARTIST_DESC' type='artist' %]
-		[% PROCESS playLink bgC=evenC title='PLUGIN_RANDOM_ALBUM_DESC' type='album' %]
+		[% PROCESS playLinks bgC=evenC title='PLUGIN_RANDOM_SONG_DESC' type='track' %]	
+		[% PROCESS playLinks bgC=oddC title='PLUGIN_RANDOM_ARTIST_DESC' type='artist' %]
+		[% PROCESS playLinks bgC=evenC title='PLUGIN_RANDOM_ALBUM_DESC' type='album' %]
 	</table>
 
 	<p></p>

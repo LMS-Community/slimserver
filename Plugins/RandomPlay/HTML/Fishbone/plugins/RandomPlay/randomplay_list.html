@@ -10,6 +10,16 @@
 	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]" [% INCLUDE reloadStatusFrame.html %]>
 	[% PROCESS playImage %]</a>
 [% END %]
+
+[% BLOCK addImage %]
+	<img src="[% webroot %]html/images/add.gif" width="11" height="11" alt="[% "ADD" | string %]" title="[% "ADD" | string %]">
+[% END %]
+
+[% BLOCK addLink %]
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=1" [% INCLUDE reloadStatusFrame.html %]>
+	[% PROCESS addImage %]</a>
+[% END %]
+
 <div class="list">
 <p>
 <h3>[% "PLUGIN_RANDOM" | string %]</h3><p>
@@ -36,16 +46,19 @@
 	<tr>
 		<td class="listing">[% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
 		<td class="listing" width="11">[% PROCESS playLink type="track" %]</td>
+		<td class="listing" width="11">[% PROCESS addLink type="track" %]</td>
 	</tr>
 
 	<tr>
 		<td class="listing">[% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
 		<td class="listing" width="11">[% PROCESS playLink type="artist" %]</td>
+		<td class="listing" width="11">[% PROCESS addLink type="artist" %]</td>
 	</tr>
 
 	<tr>
 		<td class="listing">[% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
 		<td class="listing" width="11">[% PROCESS playLink type="album" %]</td>
+		<td class="listing" width="11">[% PROCESS addLink type="album" %]</td>
 	</tr>
 
 	</table>

@@ -3,6 +3,11 @@
 	[% "PLAY" | string %]</a>
 [% END %]
 
+[% BLOCK addLink %]
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=1" [% INCLUDE reloadStatusFrame.html %]>
+	[% "ADD" | string %]</a>
+[% END %]
+
 <html>
 	<head>
 		<title>[% "PLUGIN_RANDOM" | string %]</title>
@@ -32,16 +37,19 @@
 			<tr>
 				<td> [% "PLUGIN_RANDOM_SONG_DESC" | string %]</td>
 				<td>[% PROCESS playLink type="track" %]</td>
+				<td>[% PROCESS addLink type="track" %]</td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
 				<td>[% PROCESS playLink type="artist" %]</td>
+				<td>[% PROCESS addLink type="artist" %]</td>
 			</tr>
 
 			<tr>
 				<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
 				<td>[% PROCESS playLink type="album" %]</td>
+				<td>[% PROCESS addLink type="album" %]</td>
 			</tr>
 
 
