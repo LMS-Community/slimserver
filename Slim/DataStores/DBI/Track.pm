@@ -85,8 +85,7 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->has_many(comments => ['Slim::DataStores::DBI::Comment' => 'value'] => 'track');
 	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
 
-	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => {
-		'foreign_key' => 'playlist',
+	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist' => {
 		'order_by'    => 'position',
 	});
 
@@ -403,7 +402,7 @@ sub setTracks {
 
 			Slim::DataStores::DBI::PlaylistTrack->create({
 				playlist => $self,
-				track    => $track->id,
+				track    => $track,
 				position => $i++
 			});
 		}

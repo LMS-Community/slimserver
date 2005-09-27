@@ -17,7 +17,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->columns(Essential => qw/position playlist track/);
 
 	$class->has_a(playlist => 'Slim::DataStores::DBI::Track');
-	$class->has_a(track => 'Slim::DataStores::DBI::LightWeightTrack');
+	$class->has_a(track => 'Slim::DataStores::DBI::Track');
 
 	$class->set_sql('deletePlaylist' => 'DELETE FROM __TABLE__ WHERE playlist = ?');
 }
