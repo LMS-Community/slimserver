@@ -1522,14 +1522,25 @@ sub _postCheckAttributes {
 				$search->{'disc'} = $disc;
 			}
 
-			# Check if the album name is one of the "common album names"
-			# we've identified in prefs. If so, we require a match on
-			# both album name and primary artist name.
-			my $commonAlbumTitlesToggle = Slim::Utils::Prefs::get('commonAlbumTitlesToggle');
+			# If we have a compilation bit set - use that instead
+			# of trying to match on the artist. Having the
+			# compilation bit means that this is 99% of the time a
+			# Various Artist album, so a contributor match would fail.
+			if (defined $attributes->{'COMPILATION'}) {
 
-			if (($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) || !$commonAlbumTitlesToggle) {
+				$search->{'compilation'} = $attributes->{'COMPILATION'};
 
-				$search->{'contributor'} = $contributor;
+			} else {
+
+				# Check if the album name is one of the "common album names"
+				# we've identified in prefs. If so, we require a match on
+				# both album name and primary artist name.
+				my $commonAlbumTitlesToggle = Slim::Utils::Prefs::get('commonAlbumTitlesToggle');
+
+				if (($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) || !$commonAlbumTitlesToggle) {
+
+					$search->{'contributor'} = $contributor;
+				}
 			}
 
 			($albumObj) = Slim::DataStores::DBI::Album->search($search);
