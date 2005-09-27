@@ -363,7 +363,7 @@ sub utf8decode_guess {
 
 			} else {
 
-				if ($icode =! /^no /i) {
+				if ($icode !~ /^no /i) {
 
 					while ($prefer_encoding = shift) {
 
