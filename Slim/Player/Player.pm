@@ -1272,6 +1272,11 @@ sub fade_volume {
 	my $vol = $client->prefGet("volume");
 	my $mute = $client->prefGet("mute");
 	
+	if ($vol < 0) {
+		# correct volume if mute volume is stored
+		$vol = -$vol;
+	}
+	
 	if (($fade == 0) ||
 		($vol < 0 && $fade < 0)) {
 		# the volume is muted or fade is instantaneous, don't fade.

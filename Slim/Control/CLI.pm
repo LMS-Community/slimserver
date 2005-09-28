@@ -49,6 +49,8 @@ my $d_cli_vv = 0;			# very verbose debug, function calls...
 my $cli_socket;				# server socket
 my $cli_socket_port = 0;	# CLI port on which socket is opened
 
+my $cli_busy = 0;			# 1 if CLI is processing command
+
 our %connections;			# hash indexed by client_sock value
 							# each element is a hash with following keys
 							# .. id: 		"IP:PORT" for debug
@@ -245,6 +247,16 @@ sub client_socket_read {
 	}
 
 	$connections{$client_socket}{'inbuff'} .= $indata;
+	
+	# only parse when we're not busy
+	client_socket_buf_parse($client_socket) unless $cli_busy;
+}
+
+# parse buffer data
+sub client_socket_buf_parse {
+	my $client_socket = shift;
+
+	$d_cli_vv && msg("CLI: client_socket_buf_parse()\n");
 
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)	
 	while ($connections{$client_socket}{'inbuff'}) {
@@ -273,7 +285,11 @@ sub client_socket_read {
 			$connections{$client_socket}{'inbuff'} = $2;
 
 			# Process the command
+			# Indicate busy so that any incoming data is buffered and not parsed
+			# during command processing
+			$cli_busy = 1;
 			my $exit = cli_process($client_socket, $1);
+			$cli_busy = 0;
 			
 			if ($exit) {
 				client_socket_write($client_socket);
@@ -461,6 +477,9 @@ sub cli_command_parse {
 	@{$connections{$client_socket}{'response'}} = ();
 
 
+	$d_cli_v && msg("CLI: Handling command: $command\n");
+
+
 	# Split the command string
 	# Space in parameters are to be encoded as %20
 	my @elements  = split(" ", $command);
@@ -606,7 +625,7 @@ sub cli_response_write {
 	}
 	
 	my $output = join " ",  @{$connections{$client_socket}{'response'}};
-	$::d_cli && msg("CLI: response: " . $output . "\n");
+	$::d_cli && msg("CLI: Response: " . $output . "\n");
 	
 	client_socket_buffer($client_socket, $output . $LF);
 }
@@ -1232,7 +1251,7 @@ sub cli_cmd_playlisttracks {
 	if ($playlist) {
 
 		my $obj = $ds->objectForId('track', $playlist);
-
+				
 		if ($obj) {
 			$iterator = $obj->tracks;
 		}
@@ -1254,11 +1273,6 @@ sub cli_cmd_playlisttracks {
 
 			for my $eachitem ($iterator->slice($start, $end)) {
 				cli_response_push($client_socket, "playlist index:$cur");
-
-				if (!defined $eachitem) {
-					use Data::Dumper;
-					print Dumper($iterator);
-				}
 
 				cli_pushSong($client_socket, $eachitem, $tags);
 
