@@ -15,12 +15,12 @@ use Slim::Utils::Misc;
 
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
-	'MusicBrainz Album Artist Id'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
-	'MusicBrainz Album Id'		=> 'MUSICBRAINZ_ALBUM_ID',
-	'MusicBrainz Album Status'	=> 'MUSICBRAINZ_ALBUM_STATUS',
-	'MusicBrainz Album Type'	=> 'MUSICBRAINZ_ALBUM_TYPE',
-	'MusicBrainz Artist Id'		=> 'MUSICBRAINZ_ARTIST_ID',
-	'MusicBrainz TRM Id'		=> 'MUSICBRAINZ_TRM_ID',
+	'MUSICBRAINZ ALBUM ARTIST ID'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
+	'MUSICBRAINZ ALBUM ID'		=> 'MUSICBRAINZ_ALBUM_ID',
+	'MUSICBRAINZ ALBUM STATUS'	=> 'MUSICBRAINZ_ALBUM_STATUS',
+	'MUSICBRAINZ ALBUM TYPE'	=> 'MUSICBRAINZ_ALBUM_TYPE',
+	'MUSICBRAINZ ARTIST ID'		=> 'MUSICBRAINZ_ARTIST_ID',
+	'MUSICBRAINZ TRM ID'		=> 'MUSICBRAINZ_TRM_ID',
 );
 
 # Don't try and convert anything to latin1
