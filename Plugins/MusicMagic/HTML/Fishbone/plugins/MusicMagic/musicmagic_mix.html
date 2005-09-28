@@ -1,12 +1,5 @@
-<html>
-	<head>
-		[% pagetitle = "MUSICMAGIC_MIX" | string %]
-		[% PROCESS customheader.html %]
-	</head>
-	<body bgcolor="#FFFFFF">
-	<div class="list">
-		<p>
-	
+[% PROCESS pageheader.html %]
+	[% IF warn %][% PROCESS scanwarning %]<p><hr><p>[% END %]
 		<h3>[% "MUSICMAGIC_MIX" | string %]</h3><p>
 	
 		[% pwd_list %]
@@ -19,6 +12,4 @@
 		</table>
 		[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 		<p><hr><p>
-	</div>
-	</body>
-</html>
+[% pagefooter.html %]
