@@ -502,20 +502,33 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
   <p>Request: &quot;04:20:00:12:23:45 connected ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 connected 1&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="volume"><strong><code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer volume&quot; command returns or sets the current volume setting for the player. The scale is
-   0 to 100, in real numbers (i.e. 34.5 is valid). Note that players display a 0 to 40 scale, that is, the 0..100 volume 
-   divided by 2,5. Likewise, using the &quot;<a href="#button">button</a>&quot; command with &quot;volume_up&quot; or &quot;volume_down&quot;
-   parameters increases or decreases the volume by 2,5.</p>
+<br>
+	<p id="volume">
+		<strong>
+	<code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code>
+		</strong>
+	</p>
+<p>The &quot;mixer volume&quot; command returns or sets the current volume 
+	setting for the player. The scale is 0 to 100, in real numbers (i.e. 34.5 
+	is valid). If the player is muted, the volume is returned as a negative
+	value. Note that players display a 0 to 40 scale, that is, the 0..100 volume 
+   	divided by 2,5. Likewise, using the &quot;<a href="#button">button</a>&quot;
+   	command with &quot;volume_up&quot; or &quot;volume_down&quot;
+   	parameters increases or decreases the volume by 2,5.</p>
 <p> Example: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;<br>
+  	 Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;<br>
+     Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; mixer muting</code></strong></p>
-<p>The &quot;mixer muting&quot; command mutes or unmutes the player.</p>
+<p>The &quot;mixer muting&quot; command mutes or unmutes the player. The 
+	&quot;<a href="#volume">mixer volume</a>&quot; command returns a negative
+	value if the player is muted.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>
