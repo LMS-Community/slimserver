@@ -1,0 +1,27 @@
+[% INCLUDE styles.html %]
+
+[% BLOCK playlink %]
+<td align="right" width="13" bgcolor="[% oddOrEvenC %]">
+	<a [% content %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_play.gif" border=0 width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK addlink %]
+<td align="right" width="13" bgcolor="[% oddOrEvenC %]">
+	<a [% content %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_add.gif" border=0 width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK queuelink %]
+[% END %]
+
+[% BLOCK removelink %]
+[% END %]
+
+[% BLOCK listitem %]
+	<td align="left" bgcolor="[% odd ? oddC : evenC %]">
+		<a [% content %] >[% title %]</a>
+	</td>
+[% END %]
+
+[% BLOCK homelink; END %]

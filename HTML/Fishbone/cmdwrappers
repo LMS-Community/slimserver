@@ -1,0 +1,31 @@
+[% BLOCK playlink %]
+<td class="listing" width="11" align="center">
+	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" height="11"  alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK addlink %]
+<td class="listing" width="11" align="center">
+	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" height="11" alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK queuelink %]
+<td class="listing" width="11" align="center">
+	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/queue.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK removelink %]
+<td class="listing" width="11" align="center">
+	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/subtract.gif" border=0 align="center" height="11" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK listitem %]
+	<td class="listing" align="left">
+		<a [% content %] >[% title %]</a>
+	</td>
+[% END %]
+
+[% BLOCK homelink %][% END %]
