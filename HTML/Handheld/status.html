@@ -5,19 +5,6 @@
 	[% PROCESS pageheader.html %]
 	
 	<table width=100% border="0" cellspacing="0" cellpadding="0">
-		<tr bgcolor="[% subtitleC %]">
-			<td colspan="2">
-				[% IF player_chooser_list %]
-					<form method="get" action="[% webroot %]status.html">
-						<select name="player">[% player_chooser_list %]</select>
-						<input type="submit" value="[% "CHANGE" | string %]">
-					</form>
-				[% ELSE %]
-					[% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END %]
-				[% END %]
-			</td>
-		</tr>
-
 		<tr>
 			<td colspan="2">
 				[% IF currentsong %]

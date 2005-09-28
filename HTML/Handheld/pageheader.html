@@ -2,6 +2,17 @@
 <head>
 	[% PROCESS standardheader.html %]
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]">[% END %]
+ 	<script language="JavaScript">
+	<!-- Start Hiding the Script
+	function switchPlayer(player_List) {
+		var newPlayer = player_List.options[player_List.selectedIndex].value;
+		var myString = new String(this.location);
+		var rExp     = /(\w\w(:|%3A)){5}(\w\w)/gi;
+		this.location = myString.replace(rExp, newPlayer);
+	}
+
+	// Stop Hiding script --->
+	</script> 
 </head>
 [%- PROCESS styles.html -%]
 
@@ -25,6 +36,16 @@
 	<table width="100%" bgcolor="#333333">
 		<tr>
 			<td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td>
+			<td align="right">
+				[% IF player_chooser_list %]
+					<form method="get" action="[% webroot %]status.html">
+						<select name="player" onchange="switchPlayer(this);">
+							[% player_chooser_list %]
+						</select>
+						<input type="submit" value="&gt;" style="width: 18px;">
+					</form>
+				[% END %]
+			</td>
 		</tr>
 	</table>
 

@@ -19,9 +19,10 @@
 [% END %]
 
 [% BLOCK listitem %]
-	<td align="left" bgcolor="[% odd ? oddC : evenC %]">
+	<td align="left" bgcolor="[% oddOrEvenC %]">
 		<a [% content %] >[% title %]</a>
 	</td>
 [% END %]
 
-[% BLOCK homelink; END %]
+[% BLOCK homelink %]
+[% END %]
