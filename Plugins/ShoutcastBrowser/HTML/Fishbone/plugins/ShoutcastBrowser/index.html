@@ -11,7 +11,6 @@
 		[% IF redirect %]<meta http-equiv="refresh" content="[% redirect.delay %]; URL=[% redirect.url %]">[% END %] 
 	</head>
 	<body bgcolor="#FFFFFF">
-	<div class='list'>
 	<p>
 
 		<h3>[% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</h3><p>
@@ -106,7 +105,5 @@
 			[% END %]
 		</table>
 		<!-- end plugins output -->
-	</div>	
-	</body>
-</html>
+[% pagefooter.html %]
 
