@@ -34,6 +34,60 @@ sub getDisplayName {
 	return 'PLUGIN_RANDOM';
 }
 
+# Find tracks matching parameters and add them to the playlist
+sub findAndAdd {
+	my ($client, $ds, $type, $find, $limit, $addOnly) = @_;
+
+	$::d_plugins && msg("RandomPlay: Starting random selection of $limit items for type: $type\n");
+	
+	my $items = $ds->find({
+		'field'  => $type,
+		'find'   => $find,
+		'sortBy' => 'random',
+		'limit'  => $limit,
+		'cache'  => 0,
+	});
+
+	$::d_plugins && msgf("RandomPlay: Find returned %i items\n", scalar @$items);
+			
+	# Pull the first track off to add / play it if needed.
+	my $item = shift @{$items};
+
+	if ($item && ref($item)) {
+		my $string = $type eq 'artist' ? $item->name : $item->title;
+		$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n",
+							 $addOnly ? 'Adding' : 'Playing',
+							 $type, $string, $item->id);
+
+		# Replace the current playlist with the first item / track or add it to end
+		$client->execute(['playlist', $addOnly ? 'addtracks' : 'loadtracks',
+		                  sprintf('%s=%d', $type, $item->id)]);
+		
+		# Add the remaining items to the end
+		if ($type eq 'track') {
+			if (! defined $limit || $limit > 1) {
+				$::d_plugins && msgf("Adding %i tracks to end of playlist\n", scalar @$items);
+				$client->execute(['playlist', 'addtracks', 'listRef', $items]);
+			}
+		}
+	}	
+}
+
+sub getRandomYear {
+	my $ds = shift;
+	
+	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
+   	my $items = $ds->find({
+		'field'  => 'year',
+		'sortBy' => 'random',
+		'limit'  => 1,
+		'cache'  => 0,
+	});
+	
+	$::d_plugins && msgf("RandomPlay: Selected year %s\n", @$items[0]);
+	return @$items[0];	
+}
+
 # Add random tracks to playlist if necessary
 sub playRandom {
 	# If addOnly, then track(s) are appended to end.  Otherwise, a new playlist is created.
@@ -46,15 +100,9 @@ sub playRandom {
 	$type ||= 'track';
 	$type   = lc($type);
 	
-	if ($type ne 'disable' && $type ne $type{$client}) {
-		$::d_plugins && msg("RandomPlay: doing showBriefly\n");
-		$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-							 string(sprintf('PLUGIN_RANDOM_%s', uc($type))));
-	}
-
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
-    $::d_plugins && msg("RandomPlay: $songsRemaining songs remaining, songIndex = $songIndex\n");
+	$::d_plugins && msg("RandomPlay: $songsRemaining songs remaining, songIndex = $songIndex\n");
 
 	# Work out how many items need adding
 	my $numItems = 0;
@@ -70,9 +118,8 @@ sub playRandom {
 		}
 
 	} elsif ($type ne 'disable' && ($type ne $type{$client} || $songsRemaining <= 0)) {
-		# Old artist/album is finished or new random mix started.  Add a new one
-		# Find two artists/albums just in case the first one only results in one track
-		$numItems = 2;
+		# Old artist/album/year is finished or new random mix started.  Add a new one
+		$numItems = 1;
 	}
 
 	if ($numItems) {
@@ -80,63 +127,46 @@ sub playRandom {
 			Slim::Control::Command::execute($client, [qw(stop)]);
 			Slim::Control::Command::execute($client, [qw(power 1)]);
 		}
+		Slim::Player::Playlist::shuffle($client, 0);
 		
+		if ($type ne 'disable' && $type ne $type{$client}) {
+			$::d_plugins && msg("RandomPlay: doing showBriefly\n");
+			$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
+								 string(sprintf('PLUGIN_RANDOM_%s', uc($type))));
+		}
+
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		my $find  = {};
-	
-		$::d_plugins && msg("RandomPlay: Starting random selection of $numItems items for type: [$type]\n");
-	
-		if ($type eq 'track') {
+		if ($type eq 'track' || $type eq 'year') {
 			# Find only tracks, not albums etc
 			$find->{'audio'} = 1;
 		}
-	
-		my $items = $ds->find({
-			'field'  => $type,
-			'find'   => $find,
-			'sortBy' => 'random',
-			'limit'  => $numItems,
-			'cache'  => 0,
-		});
-		
-		# Pull the first track off to add / play it if needed.
-		my $item = shift @{$items};
-	
-		if ($item && ref($item)) {
-			my $string = $type eq 'artist' ? $item->name : $item->title;
-			$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n",
-								 $addOnly ? 'Adding' : 'Playing',
-								 $type, $string, $item->id);
-	
-			Slim::Player::Playlist::shuffle($client, 0);
-	
-			# Replace the current playlist with the first item / track or add it to end
-			$client->execute(['playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s=%d', $type, $item->id)]);
-			
-			# Add the remaining items to the end
-			if ($type eq 'track') {
-				if ($numItems > 1) {
-					$::d_plugins && msg("Adding %i tracks to end of playlist", scalar @$items);
-					$client->execute(['playlist', 'addtracks', 'listRef', $items]);
+		# If not track mode, add tracks then go round again to check whether the playlist only
+		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
+		# add another artist/album/year or the plugin would never add more when the first finished. 
+		for (my $i = 0; $i < 2; $i++) {
+			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1)) {
+				if($type eq 'year') {
+					$find->{'year'} = getRandomYear($ds);
 				}
-			} elsif (Slim::Player::Playlist::count($client) == 1) {
-				# First artist/album only had one track so add another one.  Otherwise, plugin
-				# would never add any more tracks
-				$item = shift @$items;
-				if ($item && ref($item)) {
-					$string = $type eq 'artist' ? $item->name : $item->title;
-					$::d_plugins && msgf("RandomPlay: Adding %s: %s, %d\n", $type, $string, $item->id);
 				
-					$client->execute(['playlist', 'addtracks', sprintf('%s=%d', $type, $item->id)]);
-				}
+				# Get the tracks.  year is a special case as we do a find for all tracks that match
+				# the previously selected year
+				findAndAdd($client, $ds,
+				           $type eq 'year' ? 'track' : $type,
+				           $find,
+				           $type eq 'year' ? undef : $numItems,
+				           # 2nd time round just add tracks to end
+						   $i == 0 ? $addOnly : 1);
 			}
-	
-			# Set the Now Playing title.
-			$client->currentPlaylist($client->string('PLUGIN_RANDOM_'.uc($type)));
-	
-			# Never show random as modified, since its a living playlist
-			$client->currentPlaylistModified(0);	
 		}
+
+		# Set the Now Playing title.
+		$client->currentPlaylist($client->string('PLUGIN_RANDOM_'.uc($type)));
+
+		# Never show random as modified, since its a living playlist
+		$client->currentPlaylistModified(0);		
+
 	} elsif ($type eq 'disable') {
 		# Disable random play
 				
@@ -156,7 +186,7 @@ sub playRandom {
 		# Do this last to prevent menu items changing too soon
 		$type{$client} = $type;
 		# Make sure that changes in menu items are displayed
-		$client->update();
+		#$client->update();
 	}
 }
 
@@ -168,7 +198,8 @@ sub getDisplayText {
 		%displayText = (
 			track  => 'PLUGIN_RANDOM_TRACK',
 			album  => 'PLUGIN_RANDOM_ALBUM',
-			artist => 'PLUGIN_RANDOM_ARTIST'
+			artist => 'PLUGIN_RANDOM_ARTIST',
+			year   => 'PLUGIN_RANDOM_YEAR'
 		)
 	}	
 	
@@ -192,8 +223,7 @@ sub setMode {
 	my %params = (
 		header          => 'PLUGIN_RANDOM_PRESS_PLAY',
 		stringHeader    => 1,
-		listRef         => [qw(track album artist)],
-		overlayRef      => sub { return (undef, shift->symbols('notesymbol')) },
+		listRef         => [qw(track album artist year)],
 		externRef       => \&getDisplayText,
 		stringExternRef => 1,
 		valueRef        => \$userType{$client},
@@ -423,6 +453,12 @@ PLUGIN_RANDOM_ARTIST
 PLUGIN_RANDOM_ARTIST_STOP
 	EN	Stop Random Artist Mix
 
+PLUGIN_RANDOM_YEAR
+	EN	Random Year Mix
+
+PLUGIN_RANDOM_YEAR_STOP
+	EN	Stop Random Year Mix
+
 PLUGIN_RANDOM_PRESS_PLAY
 	DE	Zufälliger Mix
 	EN	Random Mix (Press PLAY or ADD to select)
@@ -442,6 +478,9 @@ PLUGIN_RANDOM_ARTIST_DESC
 PLUGIN_RANDOM_ALBUM_DESC
 	DE	Zufälliges Album aus Ihrer Sammlung
 	EN	Random albums from your whole library.
+
+PLUGIN_RANDOM_YEAR_DESC
+	EN	Random years from your whole library.
 
 SETUP_PLUGIN_RANDOM_DESC
 	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Lieder jeweils zufällig der Wiedergabeliste hinzugefügt werden sollen.

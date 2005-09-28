@@ -20,7 +20,6 @@
 	[% PROCESS addImage %]</a>
 [% END %]
 
-<div class="list">
 <p>
 <h3>[% "PLUGIN_RANDOM" | string %]</h3><p>
 
@@ -61,7 +60,12 @@
 		<td class="listing" width="11">[% PROCESS addLink type="album" %]</td>
 	</tr>
 
+	<tr>
+		<td class="listing">[% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
+		<td class="listing" width="11">[% PROCESS playLink type="year" %]</td>
+		<td class="listing" width="11">[% PROCESS addLink type="year" %]</td>
+	</tr>
+
 	</table>
 
 [% PROCESS pagefooter.html %]
-</div>
