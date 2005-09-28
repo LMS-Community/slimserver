@@ -199,29 +199,30 @@ sub setPodcasts {
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	my $podcast = $ds->find({
-		'field' => 'playlist',
-		'find'  => { 'url' => [ qw(itunesplaylist:podcasts*) ] },
+	my @podcasts  = $ds->find({
+		'field' => 'genre',
+		'find' => { 'genre.name' => 'Podcast' },
 	});
 
-	if (@$podcast[0]) {
-
+	if ($podcasts[0]) {
+		my $id = $podcasts[0]->id;
+		
 		Slim::Web::Pages::addLinks("browse", {
-			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=".@$podcast[0]->id."&noEdit=1"
+			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,artist,album,track&level=1&&genre=".$id
 		});
 
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
 			'useMode'  => 'browsedb',
-			'hierarchy' => 'playlist,playlistTrack',
-			'level' => 1,
-			'findCriteria' => {'playlist' => @$podcast[0]->id()},
+			'hierarchy' => 'genre,artist,album,track',
+			'level' => 2,
+			'findCriteria' => {'genre' => $id},
 		});
 
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
 			'useMode'  => 'browsedb',
-			'hierarchy' => 'playlist,playlistTrack',
-			'level' => 1,
-			'findCriteria' => {'playlist' => @$podcast[0]->id()},
+			'hierarchy' => 'genre,artist,album,track',
+			'level' => 2,
+			'findCriteria' => {'genre' => $id},
 		});
 	}
 }
