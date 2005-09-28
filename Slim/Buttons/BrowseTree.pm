@@ -103,12 +103,22 @@ sub init {
 
 				$client->execute(['playlist', 'clear']);
 
+				my @playlist;
 				for my $i (0 .. scalar @{$items}-1) {
-					next if ref $items->[$i];
-					$items->[$i] = Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath')) || next;
+
+					if (!ref $items->[$i]) {
+						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath'));
+					}
+
+					if (Slim::Music::Info::isDir($items->[$i])) {
+						$listIndex-- unless $i > $listIndex;
+						next;
+					}
+
+					push (@playlist, $items->[$i]);
 				}
 
-				$client->execute(['playlist', $command,'listref', $items]);
+				$client->execute(['playlist', $command,'listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
 				if ($wasShuffled) {
