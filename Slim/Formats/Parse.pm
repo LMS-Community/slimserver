@@ -144,10 +144,6 @@ sub readM3U {
 			$title = $1;	
 
 			$::d_parse && msg("  found title: $title\n");
-
-		} else {
-
-			$title = undef;
 		}
 
 		next if $entry =~ /^#/;
@@ -163,6 +159,9 @@ sub readM3U {
 			$::d_parse && msg("    entry: $entry\n");
 
 			push @items, _updateMetaData($entry, $title);
+
+			# reset the title
+			$title = undef;
 		}
 	}
 
