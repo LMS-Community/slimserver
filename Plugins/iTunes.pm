@@ -833,7 +833,6 @@ sub handleTrack {
 			} else {
 				$gain = 20.0 * log(($gain+255)/255)/log(10);
 			}
-			print "gotta gain: $gain\n";
 			$cacheEntry{'REPLAYGAIN_TRACK_GAIN'} = $gain;
 		}
 
