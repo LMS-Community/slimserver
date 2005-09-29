@@ -265,12 +265,13 @@ sub commandCallback {
 			}
 		}
 		
-		if ($songIndex && Slim::Utils::Prefs::get('plugin_random_remove_old_tracks')) {
+		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+		if ($songIndex && $songsToKeep ne '') {
 			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
 
 			Slim::Control::Command::clearExecuteCallback(\&commandCallback);
 			# Delete tracks before this one on the playlist
-			for (my $i = 0; $i < $songIndex; $i++) {
+			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
 				Slim::Control::Command::execute($client, ['playlist', 'delete', 0]);
 			}
 			Slim::Control::Command::setExecuteCallback(\&commandCallback);
@@ -382,7 +383,7 @@ sub setupGroup {
 
 	my %setupGroup = (
 
-		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_remove_old_tracks)],
+		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_number_of_old_tracks)],
 		GroupHead => string('PLUGIN_RANDOM'),
 		GroupDesc => string('SETUP_PLUGIN_RANDOM_DESC'),
 		GroupLine => 1,
@@ -399,12 +400,17 @@ sub setupGroup {
 			'validateArgs' => [1, undef, 1],
 		},
 
-		'plugin_random_remove_old_tracks' => {
-			'validate' => \&Slim::Web::Setup::validateTrueFalse,
-			'options' => {
-				'1' => string('SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS'),
-				'0' => string('SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS')
-			}
+		'plugin_random_number_of_old_tracks' => {
+		
+			'validate' => sub {
+			                my $val = shift;
+			                # Treat any non-integer value as keep all old tracks
+			                if ($val !~ /^\d+$/) {
+								return '';
+							} else {
+								return $val;
+							}
+			              }
 		}
 	);
 
@@ -418,8 +424,10 @@ sub checkDefaults {
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_tracks')) {
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10)
 	}
-	if (!Slim::Utils::Prefs::isDefined('plugin_random_remove_old_tracks')) {
-		Slim::Utils::Prefs::set('plugin_random_remove_old_tracks', 0)
+	
+	# Default to keeping all tracks
+	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_old_tracks')) {
+		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', '')
 	}
 }
 
@@ -467,7 +475,7 @@ PLUGIN_RANDOM_CHOOSE_DESC
 	DE	Wählen Sie eine Zufallsmix-Methode:
 	EN	Choose a random mix below:
 
-PLUGIN_RANDOM_SONG_DESC
+PLUGIN_RANDOM_TRACK_DESC
 	DE	Zufällige Lieder aus Ihrer Sammlung
 	EN	Random songs from your whole library.
 
@@ -483,26 +491,20 @@ PLUGIN_RANDOM_YEAR_DESC
 	EN	Random years from your whole library.
 
 SETUP_PLUGIN_RANDOM_DESC
-	DE	Sie können zufällig Musik aus Ihrer Sammlung zusammenstellen lassen. Geben Sie hier an, wieviele Lieder jeweils zufällig der Wiedergabeliste hinzugefügt werden sollen.
-	EN	Random Mix lets SlimServer create a random selections of songs from your entire library. When creating a random mix of songs, you can specify how many upcoming songs SlimServer should display.
+	EN	The Random Mix plugin allows you to listen to random selections from your music library.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	DE	Anzahl Lieder für Zufallsmix
 	EN	Number of upcoming songs in a random mix
 
-SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS_DESC
-	DE	Lieder, die zufällig abgespielt wurden, können nach der Wiedergabe aus der Liste entfernt oder darin belassen werden.
-	EN	Songs that are played using Random Mix can be removed after they are played or remain on the playlist.
+SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS_DESC
+	EN	One of the mixes provided by Random Mix is the Random Songs Mix.  This creates a random selection of songs from your music library.  You can specify how many upcoming songs should be displayed in this mode.
 
-SETUP_PLUGIN_RANDOM_REMOVE_OLD_TRACKS
-	DE	Entferne Lieder
-	EN	Remove Played Songs
+SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS
+	EN	Number of old songs in a random mix
 
-SETUP_PLUGIN_RANDOM_DONT_REMOVE_OLD_TRACKS
-	DE	Lieder in Liste lassen
-	EN	Don't Remove Played Songs
-
-
+SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS_DESC
+	EN	Songs that are played using Random Mix can be removed from the playlist after they are played.  You can specify how many songs should be kept, or leave this blank to keep all played songs.
 
 EOF
 
