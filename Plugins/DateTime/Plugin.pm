@@ -48,7 +48,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLING
 	DE	Datum/Zeit Bildschirmschoner aktivieren
 	EN	Enabling DateTime as current screensaver
 	ES	Activando Hora y Fecha como salvapantallas actual
-	FR	Activation �cran de veille Date/Heure
+	FR	Activation écran de veille Date/Heure
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLING
 	CZ	Nastavit výchozí spořič
@@ -131,49 +131,6 @@ sub lines {
 
 sub getFunctions {
 	return \%functions;
-}
-
-sub handleIndex {
-	my ($client, $params) = @_;
-	my $body;
-
-	$params->{'enable'} =
-		($client->prefGet('screensaver') eq 'SCREENSAVER.datetime') ? 0 : 1;
-
-	return Slim::Web::HTTP::filltemplatefile(
-			'plugins/DateTime/index.html',
-			$params,
-		);
-}
-
-sub handleEnable {
-	my ($client, $params) = @_;
-	my $body;
-
-	if ($params->{'enable'}) {
-		Slim::Utils::Prefs::clientSet(
-			$client,
-			'screensaver',
-			'SCREENSAVER.datetime');
-	} else {
-		Slim::Utils::Prefs::clientSet(
-			$client,
-			'screensaver',
-			'screensaver');
-	}
-	return Slim::Web::HTTP::filltemplatefile(
-			'plugins/DateTime/enable.html',
-			$params,
-		);
-}
-
-sub webPages_disabled {
-	my %pages = (
-		"index\.(?:htm|xml)" => \&handleIndex,
-		"enable\.(?:htm|xml)" => \&handleEnable,
-	);
-
-	return (\%pages, "index.html");
 }
 
 ###################################################################
