@@ -201,7 +201,7 @@ sub setPodcasts {
 
 	my @podcasts  = $ds->find({
 		'field' => 'genre',
-		'find' => { 'genre.name' => 'Podcast' },
+		'find' => { 'genre.name' => 'Podcasts' },
 	});
 
 	if ($podcasts[0]) {
@@ -890,6 +890,19 @@ sub handlePlaylist {
 	$cacheEntry->{'VALID'} = '1';
 
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
+
+	# Check for podcasts and add to custom Genre
+	if ($name =~ /podcasts/i) {			
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		
+		foreach my $url (@{$cacheEntry->{'LIST'}}) {
+			# update with Podcast genre
+			my $track = $ds->updateOrCreate({
+				'url'        => $url,
+				'attributes' => {'GENRE' => 'Podcasts'},
+			});
+		}
+	}
 
 	$::d_itunes && msg("iTunes: playlists now has " . scalar @{$cacheEntry->{'LIST'}} . " items...\n");
 }
