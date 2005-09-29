@@ -470,7 +470,7 @@ PLUGIN_RANDOM_YEAR
 	EN	Random Year Mix
 
 PLUGIN_RANDOM_YEAR_STOP
-	DE Zufälligen Jahr Mix anhalten
+	DE	Zufälligen Jahr Mix anhalten
 	EN	Stop Random Year Mix
 
 PLUGIN_RANDOM_PRESS_PLAY
