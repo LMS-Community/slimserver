@@ -434,10 +434,11 @@ sub checkDefaults {
 sub strings {
 	return <<EOF;
 PLUGIN_RANDOM
-	DE	Zufälliger Mix
+	DE	Zufalls Mix
 	EN	Random Mix
 
 PLUGIN_RANDOM_DISABLED
+	DE	Zufalls Mix angehalten
 	EN	Random Mix Stopped
 
 PLUGIN_RANDOM_TRACK
@@ -445,6 +446,7 @@ PLUGIN_RANDOM_TRACK
 	EN	Random Songs Mix
 
 PLUGIN_RANDOM_TRACK_STOP
+	DE	Zufälligen Lieder Mix anhalten
 	EN	Stop Random Songs Mix
 
 PLUGIN_RANDOM_ALBUM
@@ -452,6 +454,7 @@ PLUGIN_RANDOM_ALBUM
 	EN	Random Album Mix
 
 PLUGIN_RANDOM_ALBUM_STOP
+	DE	Zufälligen Album Mix anhalten
 	EN	Stop Random Album Mix
 
 PLUGIN_RANDOM_ARTIST
@@ -459,12 +462,15 @@ PLUGIN_RANDOM_ARTIST
 	EN	Random Artist Mix
 
 PLUGIN_RANDOM_ARTIST_STOP
+	DE	Zufälligen Interpreten Mix anhalten
 	EN	Stop Random Artist Mix
 
 PLUGIN_RANDOM_YEAR
+	DE	Zufälliger Jahr Mix
 	EN	Random Year Mix
 
 PLUGIN_RANDOM_YEAR_STOP
+	DE Zufälligen Jahr Mix anhalten
 	EN	Stop Random Year Mix
 
 PLUGIN_RANDOM_PRESS_PLAY
@@ -480,17 +486,19 @@ PLUGIN_RANDOM_TRACK_DESC
 	EN	Random songs from your whole library.
 
 PLUGIN_RANDOM_ARTIST_DESC
-	DE	Zufälliger Interpret aus Ihrer Sammlung
+	DE	Einen zufälligen Interpreten aus Ihrer Sammlung
 	EN	Random artists from your whole library.
 
 PLUGIN_RANDOM_ALBUM_DESC
-	DE	Zufälliges Album aus Ihrer Sammlung
+	DE	Ein zufälliges Album aus Ihrer Sammlung
 	EN	Random albums from your whole library.
 
 PLUGIN_RANDOM_YEAR_DESC
+	DE	Lieder eines zufälligen Jahres aus Ihrer Sammlung
 	EN	Random years from your whole library.
 
 SETUP_PLUGIN_RANDOM_DESC
+	DE	Das Zufalls Mix Plugin erlaubt es, eine zufällige Auswahl von Liedern aus Ihrer Sammlung wiederzugeben.
 	EN	The Random Mix plugin allows you to listen to random selections from your music library.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
@@ -498,12 +506,15 @@ SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	EN	Number of upcoming songs in a random mix
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS_DESC
+	DE	Eine der möglichen zufälligen Mix-Arten ist der Lieder Mix. Dies erstellt eine Liste zufällig ausgewählter Musikstücke. Sie können bestimmen, wieviele Lieder im Voraus in der Wiedergabeliste angezeigt werden sollen.
 	EN	One of the mixes provided by Random Mix is the Random Songs Mix.  This creates a random selection of songs from your music library.  You can specify how many upcoming songs should be displayed in this mode.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS
+	DE	Anzahl gespielter Lieder
 	EN	Number of old songs in a random mix
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS_DESC
+	DE	Lieder, die über einen Zufalls mix wiedergegeben wurden, können nach dem Abspielen aus der Wiedergabeliste entfernt werden. Sie können festlegen, wieviele der abgespielten Stücke in der Liste behalten werden sollen. Oder lassen Sie das Feld leer, falls die Liste nicht gelöscht werden soll. 
 	EN	Songs that are played using Random Mix can be removed from the playlist after they are played.  You can specify how many songs should be kept, or leave this blank to keep all played songs.
 
 EOF
