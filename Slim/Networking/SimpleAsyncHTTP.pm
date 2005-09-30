@@ -133,7 +133,10 @@ sub headerCB {
 	#print Dumper(%h);
 
 	# handle http redirect
-	if (my $location = $h{'Location'}) {
+	my $location = $h{'Location'} || $h{'location'};
+
+	if (defined $location) {
+
 		$::d_http_async && msg("SimpleAsyncHTTP: redirecting to $location.  Original URL ". $self->{url} . "\n");
 		$self->get($location);
 		$http->close();
