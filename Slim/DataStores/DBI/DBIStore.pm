@@ -1209,12 +1209,6 @@ sub _checkValidity {
 
 	my ($id, $url) = $track->get(qw(id url));
 
-	# Don't bother checking the validity over and over for a cue sheet
-	# referenced URL. Just get the base name.
-	# XXX - this doesn't really do what I want. It should definitely check
-	# the first time around.
-	# $url = Slim::Utils::Misc::stripAnchorFromURL($url);
-
 	return undef if $self->{'zombieList'}->{$url};
 
 	my $ttl = $validityCache{$url} || 0;
@@ -1258,7 +1252,7 @@ sub _hasChanged {
 	#    return 1 if the file has (cached entry is deleted by us)
 	# As this is an internal cache function we don't sanity check our arguments...	
 
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
+	my $filepath = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::stripAnchorFromURL($url) );
 
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
@@ -1304,7 +1298,7 @@ sub _hasChanged {
 		return 0;
 
 	} else {
-		$::d_info && msg("deleting $url from cache as it no longer exists\n");
+		$::d_info && msg("deleting $filepath from cache as it no longer exists\n");
 	}
 
 	# Tell the DB to sync - if we're deleting something.
