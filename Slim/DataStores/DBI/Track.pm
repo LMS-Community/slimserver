@@ -306,8 +306,12 @@ sub coverArt {
 
 		return undef;
 	}
+
+	# Don't pass along anchors - they mess up the content-type.
+	# See Bug: 2219
+	my $url = Slim::Utils::Misc::stripAnchorFromURL($self->url);
 	
-	$::d_artwork && msgf("Retrieving artwork ($art) for: %s\n", $self->url());
+	$::d_artwork && msg("Retrieving artwork ($art) for: $url\n");
 	
 	my ($body, $contenttype, $mtime, $path);
 
@@ -327,7 +331,7 @@ sub coverArt {
 
 		} else {
 
-			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
+			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($url, $art);
 
 			if (defined $path) {
 
@@ -338,7 +342,7 @@ sub coverArt {
 
 	} else {
 
-		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
+		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($url, $art);
 
 		if (defined $path) {
 
