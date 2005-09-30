@@ -2,9 +2,9 @@
 	<entry_type>coverart</entry_type>
 	<entry_name>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</entry_name>
 	<entry_id>[% itemobj.id %]</entry_id>
-	<browse_url><![CDATA[xml/browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></browse_url>
-	<replace_url><![CDATA[xml/status.xml?command=playlist&subcommand=loadtracks[% attributes %]]]></replace_url>
-	<append_url><![CDATA[xml/status.xml?command=playlist&subcommand=addtracks[% attributes %]]]></append_url>
-	<coverart><![CDATA[music/[% coverThumb %]/cover.jpg]]></coverart>
+	<browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></browse_url>
+	<replace_url><![CDATA[[% webroot %]status.xml?command=playlist&subcommand=loadtracks[% attributes %]]]></replace_url>
+	<append_url><![CDATA[[% webroot %]status.xml?command=playlist&subcommand=addtracks[% attributes %]]]></append_url>
+	<coverart><![CDATA[/music/[% coverThumb %]/cover.jpg]]></coverart>
 	<coverart_thumb><![CDATA[/music/[% coverThumb %]/thumb.jpg]]></coverart_thumb>
 </browse_entry>

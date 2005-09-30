@@ -1,0 +1,7 @@
+[% IF cansave %]<save_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=save&p2=___NAME___&player=[% player | uri %]]]></save_url>[% END %]
+[% IF playlist_items %]
+	<m3u_url><![CDATA[[% webroot %]status.m3u?player=[% player | uri %]]]></m3u_url>
+	<clear_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=clear&player=[% player | uri %]]]></clear_url>
+[% END %]
+[% playlist_header %]
+[% playlist_items %]

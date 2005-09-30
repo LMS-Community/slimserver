@@ -172,12 +172,12 @@ replaced by the desired level.
 				seconds_total, 
 				song_id, 
 				title, 
-				(genre, genre_browse_url)?,
-				(artist, artist_browse_url)?,
-				(band, band_browse_url)?,
-				(composer, composer_browse_url)?,
-				(conductor, conductor_browse_url)?,
-				(album, album_browse_url)?,
+				(genre_id, genre, genre_browse_url)?,
+				(artist_id, artist, artist_browse_url)?,
+				(band_id, band, band_browse_url)?,
+				(composer_id, composer, composer_browse_url)?,
+				(conductor_id, conductor, conductor_browse_url)?,
+				(album_id, album, album_browse_url)?,
 				track?, 
 				type?, 
 				duration?, 
@@ -249,6 +249,7 @@ When present in browse lists (see elements below), it may happen that
 
 <!ELEMENT status_entry 	(	offset, 
 				playing_now?, 
+				play_url, 
 				remove_url, 
 				song
 			)>
@@ -284,12 +285,12 @@ element)
 <!ELEMENT hitlist_entry (	count?, 
 				song_id, 
 				title, 
-				(genre, genre_browse_url)?,
-				(artist, artist_browse_url)?,
-				(band, band_browse_url)?,
-				(composer, composer_browse_url)?,
-				(conductor, conductor_browse_url)?,
-				(album, album_browse_url)?,
+				(genre_id, genre, genre_browse_url)?,
+				(artist_id, artist, artist_browse_url)?,
+				(band_id, band, band_browse_url)?,
+				(composer_id, composer, composer_browse_url)?,
+				(conductor_id, conductor, conductor_browse_url)?,
+				(album_id, album, album_browse_url)?,
 				track?, 
 				type?, 
 				duration?, 
@@ -463,7 +464,7 @@ one of genre/artist/album info.
 <!ELEMENT tagversion 		(#PCDATA)>
 <!ELEMENT modtime 		(#PCDATA)>
 <!ELEMENT song_url 		(#PCDATA)>
-<!ELEMENT downloadurl 		(#PCDATA)>
+<!ELEMENT download_url 		(#PCDATA)>
 <!ELEMENT mixable 		(#PCDATA)>
 
 <!-- .................................................................. -->
@@ -540,4 +541,5 @@ May be returned by any request if server settings or parameters are incorrect.
 <!ATTLIST songinfo xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
 <!ATTLIST browse xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
 <!ATTLIST hitlist xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
+<!ATTLIST playlist xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
 <!ATTLIST badpath xmlns CDATA #FIXED "http://www.slimdevices.com/slimserver/xml">
