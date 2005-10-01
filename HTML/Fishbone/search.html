@@ -1,11 +1,9 @@
 [% pagetitle = "SEARCH" | string %]
-[% pageicon = 'Search' %]
 [% IF liveSearch %][% bodyscript = 'onload="document.searchForm.query.focus();"' %][% END %]
 <html>
 	<head>
 		[% PROCESS customheader.html %]
 		<script type="text/javascript" src="/html/prototype.js"></script>
-		<script type="text/javascript"> liveSearchInit(); </script>
 	</head>
 	<body bgcolor="#FFFFFF" [% bodyscript %]">
 	<div class="list">	
@@ -13,7 +11,7 @@
 	<h3>Live Search</H3>
 	<center><form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<input type="text" id="query" name="query" size="40" autocomplete="off" />
-		<input name="submit" type=submit class="stdclick" value="[% "SEARCHFOR_SONGS" | string %]"><p>
+		<input name="submit" type=submit class="stdclick" value="[% "SEARCHFOR" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form></center>

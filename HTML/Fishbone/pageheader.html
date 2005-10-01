@@ -16,6 +16,8 @@
 			case "[% link.key %]":
 				url = "[% link.value %]"
 				suffix = "&page=[% link.key %]"
+				string = "[% link.key | string %]"
+				cookie = [% cookie %]
 			break
 			[% END %]
 		[% END %]
@@ -27,46 +29,41 @@
 		[% PROCESS customheader.html %]
 		<script language="JavaScript">
 		<!--Hide
-		
-		function doSearch(value,option,submit)
+		var text;
+		function doSearch(value)
 		{
 			selectLink()
-			var url;
-			switch(option)
-			{
-				case "MANSEARCH":
-					url = "search.html?"
-					suffix = "searchchoice=SEARCH&manualsearch=1"
-				break
-				[% PROCESS addCaseLinks links=additionalLinks.search %]
-			}
-			if (submit) {suffix = suffix + "&manualSearch=1&query=" + value}
-			parent.browser.location=url + suffix + '&player=[% player %]';
-			document.searcher.search.options[0].selected = true;
+			parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=[% player %]';
 		}
 		
 		function chooseBrowser(value,option)
 		{
 			selectLink()
 			var url;
+			var cookie = 0;
 			switch(option)
 			{
-				[% PROCESS addCaseLinks links=additionalLinks.browse %]
-				[% PROCESS addCaseLinks links=additionalLinks.radio %]
-				[% PROCESS addCaseLinks links=additionalLinks.plugins %]
-				[% PROCESS addCaseLinks links=additionalLinks.settings %]
+				[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
+				[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
+				[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
+				[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
+				[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
 			case "RADIO_TUNEIN":
 				url = "tunein.html"
 				suffix = "?page=RADIO_TUNEIN"
 			}
 			if (option) {
-				setCookie("SlimServer-Browserpage",url + suffix);
+				if (cookie) {
+					setCookie("SlimServer-Browserpage",url + suffix);
+					document.getElementById('homelink').innerHTML = string;
+				}
 				parent.browser.location = url + suffix + '&player=[% player | uri %]';
 			}
 		}
 		
 		-->
 		</script>
+		[% headScripts %]
 	</head>
 	<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
 	[% IF home %]
@@ -77,7 +74,7 @@
 			</td>
 			<td height="17" align="right">
 			<nobr>
-			<a onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "HOME" | string %]</a>
+			<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% "HOME" | string %]</a>
 			 / 
 			[% IF not nosetup && not noserver %]
 				<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
@@ -95,6 +92,8 @@
 				<SELECT NAME="browse" class="stdedit" style="width:17em" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+					<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
+					[% PROCESS addBrowseLinks links=additionalLinks.search %]
 					<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.radio %]
 					<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
@@ -110,11 +109,8 @@
 				<input type=hidden value="[% page %]" name="page">
 				</nobr></td>
 			</FORM>
-			<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value,search.value,1);"><td align="right"><nobr>
-				<SELECT NAME="search" class="stdedit" style="width:12em" onChange="doSearch(query.value,search.value)">
-					<OPTION SELECTED value="MANSEARCH" label="[% SEARCHFOR_SONGS %]">[% "SEARCHFOR_SONGS" | string %]</OPTION>
-					[% PROCESS addBrowseLinks links=additionalLinks.search %]
-				</SELECT> [% "FOR" | string %]
+			<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value);"><td align="right"><nobr>
+				[% "SEARCH" | string %]
 				<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 				<input type=hidden value="[% player %]" name="player">
 				<input type=hidden value="[% page %]" name="page">
