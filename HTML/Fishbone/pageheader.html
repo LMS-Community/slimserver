@@ -16,8 +16,8 @@
 			case "[% link.key %]":
 				url = "[% link.value %]"
 				suffix = "&page=[% link.key %]"
-				string = "[% link.key | string %]"
-				cookie = [% cookie %]
+				[% IF cookie %]homestring = "[% link.key | string %]"
+				cookie = [% cookie %][% END %]
 			break
 			[% END %]
 		[% END %]
@@ -29,7 +29,7 @@
 		[% PROCESS customheader.html %]
 		<script language="JavaScript">
 		<!--Hide
-		var text;
+		var homestring;
 		function doSearch(value)
 		{
 			selectLink()
@@ -64,9 +64,16 @@
 			if (option) {
 				if (cookie) {
 					setCookie("SlimServer-Browserpage",url + suffix);
-					document.getElementById('homelink').innerHTML = string;
 				}
 				parent.browser.location = url + suffix + '&player=[% player | uri %]';
+			}
+		}
+		
+		function homelink() {
+			if (homestring) {
+				document.getElementById('homelink').innerHTML = homestring;
+			} else {
+				document.getElementById('homelink').innerHTML = '[% page | string %]';
 			}
 		}
 		
@@ -83,7 +90,7 @@
 			</td>
 			<td height="17" align="right">
 			<nobr>
-			<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% page | string %]</a>
+			<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 			 / 
 			<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
 			 / 
