@@ -51,7 +51,16 @@
 			case "RADIO_TUNEIN":
 				url = "tunein.html"
 				suffix = "?page=RADIO_TUNEIN"
+			break
+			case "SERVER_SETTINGS":
+				url = "[% webroot %]setup.html?page=server"
+				suffix = "&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]"
+			break
+			case "PLAYER_SETTINGS":
+				url = "[% webroot %]setup.html?page=player"
+				suffix = "&player=[% player | uri %]&playerid=[% player | uri %]"
 			}
+
 			if (option) {
 				if (cookie) {
 					setCookie("SlimServer-Browserpage",url + suffix);
@@ -76,20 +85,16 @@
 			<nobr>
 			<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]')">[% page | string %]</a>
 			 / 
-			[% IF not nosetup && not noserver %]
-				<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
-				 / 
-			[% END %]
-				<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
-				 / 
-				<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
+			<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
+			 / 
+			<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
 			</td>
 		</table>
 	</div>
 	<div class="menu1" width="100%">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
 			<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
-				<SELECT NAME="browse" class="stdedit" style="width:17em" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+				<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 					<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
 					<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
@@ -103,6 +108,10 @@
 					[% END %]
 					[% IF additionalLinks.settings %]
 					<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
+					[% IF not nosetup  %]
+						<OPTION [% IF page == 'server' %]selected[% END %] value="[% "SERVER_SETTINGS" %]" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>
+						<OPTION [% IF page == 'player' %]selected[% END %] value="[% "PLAYER_SETTINGS" %]" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
+					[% END %]
 					[% PROCESS addBrowseLinks links=additionalLinks.settings %]
 					[% END %]
 				</SELECT>
