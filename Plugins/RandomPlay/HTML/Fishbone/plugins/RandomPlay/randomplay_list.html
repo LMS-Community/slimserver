@@ -1,6 +1,6 @@
 [% pagetitle = 'PLUGIN_RANDOM' %] [% pageicon = 'PLUGIN_RANDOM' %]
 
-[% PROCESS pageheader.html %] 
+[% PROCESS pageheader.html %]
 
 [% BLOCK playImage %]
 	<img src="[% webroot %]html/images/play.this.gif" width="9" height="11" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
@@ -29,43 +29,48 @@
 <br>
 
 [% IF warn %]
-	<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
+	<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %]
 	[% IF audiodir %]
 		[% "SCAN_CLICK" | string %] <a href="[% webroot %]browse.html?player=[% player | uri %]">[% "HERE" | string %]</a>.
-	[% END %] 
+	[% END %]
 [% END %]
 
-<table border="0"cellspacing="0" cellpadding="0" width="100%">
+[% IF player == '' %]
+	<p>[% "NO_PLAYER_FOUND" | string %]</p>
+[% END %]
+[% IF player != '' %]
+	<table border="0"cellspacing="0" cellpadding="0" width="100%">
 
-	<tr>
-		<td class="listing"><b>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</b></td>
-		<td class="listing"></td>
-	</tr>
+		<tr>
+			<td class="listing"><b>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</b></td>
+			<td class="listing"></td>
+		</tr>
 
-	<tr>
-		<td class="listing">[% "PLUGIN_RANDOM_TRACK_DESC" | string %]</td>
-		<td class="listing" width="11">[% PROCESS playLink type="track" %]</td>
-		<td class="listing" width="11">[% PROCESS addLink type="track" %]</td>
-	</tr>
+		<tr>
+			<td class="listing">[% "PLUGIN_RANDOM_TRACK_DESC" | string %]</td>
+			<td class="listing" width="11">[% PROCESS playLink type="track" %]</td>
+			<td class="listing" width="11">[% PROCESS addLink type="track" %]</td>
+		</tr>
 
-	<tr>
-		<td class="listing">[% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
-		<td class="listing" width="11">[% PROCESS playLink type="artist" %]</td>
-		<td class="listing" width="11">[% PROCESS addLink type="artist" %]</td>
-	</tr>
+		<tr>
+			<td class="listing">[% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
+			<td class="listing" width="11">[% PROCESS playLink type="artist" %]</td>
+			<td class="listing" width="11">[% PROCESS addLink type="artist" %]</td>
+		</tr>
 
-	<tr>
-		<td class="listing">[% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
-		<td class="listing" width="11">[% PROCESS playLink type="album" %]</td>
-		<td class="listing" width="11">[% PROCESS addLink type="album" %]</td>
-	</tr>
+		<tr>
+			<td class="listing">[% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
+			<td class="listing" width="11">[% PROCESS playLink type="album" %]</td>
+			<td class="listing" width="11">[% PROCESS addLink type="album" %]</td>
+		</tr>
 
-	<tr>
-		<td class="listing">[% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
-		<td class="listing" width="11">[% PROCESS playLink type="year" %]</td>
-		<td class="listing" width="11">[% PROCESS addLink type="year" %]</td>
-	</tr>
+		<tr>
+			<td class="listing">[% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
+			<td class="listing" width="11">[% PROCESS playLink type="year" %]</td>
+			<td class="listing" width="11">[% PROCESS addLink type="year" %]</td>
+		</tr>
 
-	</table>
+		</table>
+[% END %]
 
 [% PROCESS pagefooter.html %]

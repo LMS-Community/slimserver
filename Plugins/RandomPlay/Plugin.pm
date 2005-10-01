@@ -73,6 +73,39 @@ sub findAndAdd {
 	}	
 }
 
+# Returns a list of genres that should be used for random mixes
+sub getGenres {
+	my ($client, $ds) = @_;
+
+	# Should use genre.name in following find, but a bug in find() doesn't allow this	
+   	my $items = $ds->find({
+		'field'  => 'genre',
+		'cache'  => 0,
+	});
+	
+	# Extract each genre name into a hash
+	my %genres = ();
+	foreach my $item (@$items) {
+		$genres{$item->name} = 1;
+	}
+
+	# Init client pref - can't do with others in checkDefaults as need $client
+	if (! $client->prefIsDefined('plugin_random_exclude_genres')) {
+		$client->prefSet('plugin_random_exclude_genres', []);
+	}
+	my @exclude = $client->prefGetArray('plugin_random_exclude_genres');
+
+	# Remove excluded genres from genre list
+	foreach my $genre (@exclude) {
+		if ($genres{$genre}) {
+			$::d_plugins && msg("RandomPlay: excluding $genre from mixes\n");
+			delete $genres{$genre};
+		}
+	}
+	
+	return keys %genres;
+}
+
 sub getRandomYear {
 	my $ds = shift;
 	
@@ -136,7 +169,10 @@ sub playRandom {
 		}
 
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
-		my $find  = {};
+		
+		# Initialize find to only include user's selected genres
+		my $find = {'genre.name' => [getGenres($client, $ds)]};
+		
 		if ($type eq 'track' || $type eq 'year') {
 			# Find only tracks, not albums etc
 			$find->{'audio'} = 1;
@@ -371,16 +407,15 @@ sub handleWebList {
 
 sub handleWebMix {
 	my ($client, $params) = @_;
-
-	if ($params->{'type'}) {
-		playRandom($client, $params->{'type'}, $params->{'addOnly'});
+	if (defined $client) {
+		if ($params->{'type'}) {
+			playRandom($client, $params->{'type'}, $params->{'addOnly'});
+		}
 	}
-
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
 
 sub setupGroup {
-
 	my %setupGroup = (
 
 		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_number_of_old_tracks)],
@@ -403,32 +438,31 @@ sub setupGroup {
 		'plugin_random_number_of_old_tracks' => {
 		
 			'validate' => sub {
-			                my $val = shift;
-			                # Treat any non-integer value as keep all old tracks
-			                if ($val !~ /^\d+$/) {
+							my $val = shift;
+							# Treat any non-integer value as keep all old tracks
+							if ($val !~ /^\d+$/) {
 								return '';
 							} else {
 								return $val;
 							}
-			              }
+						}
 		}
 	);
-
+	
 	checkDefaults();
 
 	return (\%setupGroup,\%setupPrefs);
 }
 
 sub checkDefaults {
-
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_tracks')) {
-		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10)
+		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
 	}
 	
 	# Default to keeping all tracks
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_old_tracks')) {
-		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', '')
-	}
+		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', '');
+	}	
 }
 
 sub strings {

@@ -21,44 +21,49 @@
 		<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="">[% "PLUGIN_RANDOM" | string %]</a>
 
 		<p><hr><p>
-
-		<table cellspacing="0" border="0" cellpadding="4" width="100%">
-
-			<tr>
-				<td>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</td>
-				<td></td>
-			</tr>
-
-			<tr>
-				<td></td>
-				<td></td>
-			</tr>
-
-			<tr>
-				<td> [% "PLUGIN_RANDOM_TRACK_DESC" | string %]</td>
-				<td>[% PROCESS playLink type="track" %]</td>
-				<td>[% PROCESS addLink type="track" %]</td>
-			</tr>
-
-			<tr>
-				<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
-				<td>[% PROCESS playLink type="artist" %]</td>
-				<td>[% PROCESS addLink type="artist" %]</td>
-			</tr>
-
-			<tr>
-				<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
-				<td>[% PROCESS playLink type="album" %]</td>
-				<td>[% PROCESS addLink type="album" %]</td>
-			</tr>
-
-			<tr>
-				<td> [% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
-				<td>[% PROCESS playLink type="year" %]</td>
-				<td>[% PROCESS addLink type="year" %]</td>
-			</tr>
-
-		</table>
+		
+		[% IF player == '' %]
+			<p>[% "NO_PLAYER_FOUND" | string %]</p>
+		[% END %]
+		[% IF player != '' %]
+			<table cellspacing="0" border="0" cellpadding="4" width="100%">
+	
+				<tr>
+					<td>[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</td>
+					<td></td>
+				</tr>
+	
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+	
+				<tr>
+					<td> [% "PLUGIN_RANDOM_TRACK_DESC" | string %]</td>
+					<td>[% PROCESS playLink type="track" %]</td>
+					<td>[% PROCESS addLink type="track" %]</td>
+				</tr>
+	
+				<tr>
+					<td> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
+					<td>[% PROCESS playLink type="artist" %]</td>
+					<td>[% PROCESS addLink type="artist" %]</td>
+				</tr>
+	
+				<tr>
+					<td> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
+					<td>[% PROCESS playLink type="album" %]</td>
+					<td>[% PROCESS addLink type="album" %]</td>
+				</tr>
+	
+				<tr>
+					<td> [% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
+					<td>[% PROCESS playLink type="year" %]</td>
+					<td>[% PROCESS addLink type="year" %]</td>
+				</tr>
+	
+			</table>
+		[% END %]
 
 	</body>
 </html>
