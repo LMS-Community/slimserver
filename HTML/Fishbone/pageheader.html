@@ -106,12 +106,12 @@
 					<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 					[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 					[% END %]
-					[% IF additionalLinks.settings %]
 					<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
 					[% IF not nosetup  %]
 						<OPTION [% IF page == 'server' %]selected[% END %] value="[% "SERVER_SETTINGS" %]" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>
 						<OPTION [% IF page == 'player' %]selected[% END %] value="[% "PLAYER_SETTINGS" %]" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
 					[% END %]
+					[% IF additionalLinks.settings %]
 					[% PROCESS addBrowseLinks links=additionalLinks.settings %]
 					[% END %]
 				</SELECT>
