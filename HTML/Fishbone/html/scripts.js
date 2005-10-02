@@ -50,7 +50,7 @@ function checkSetup(doc)
 
 function checkReload()
 {
-	if (parent.playlist.location != '') parent.playlist.location.reload(true);
+	if (parent.playlist.location != '') parent.playlist.location.reload(false);
 }
 
 function playlistResize(page) {

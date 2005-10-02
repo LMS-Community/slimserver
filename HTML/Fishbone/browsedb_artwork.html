@@ -5,7 +5,7 @@
 <table cellpadding="5" align="left">
 <tr>
 	<td>
-		[% IF coverThumb %]<div class="covertext" style="height:[% size +2%]px;"><table><tr><td width="[% size %]"><a [% browseDbHRef %]>[% PROCESS thumbnailImg height="$size width=$size" alt="$item | html; IF $artist; "BY" | string; $artist; END; IF$ year; ($year); END;" title="$item | html; IF $artist; "BY" | string; $artist; END; IF $year; ($year); END;"%]</a></td></table></div>[% END %]
+		[% IF coverThumb %]<div class="covertext" style="height:[% size +2%]px;"><table><tr><td width="[% size %]"><a [% browseDbHRef %]>[% PROCESS thumbnailImg height="$size\" width=\"$size\"" %]</a></td></table></div>[% END %]
 		[% IF not coverThumb %]<div class="covertext" style="height:[% size +2%]px;"><table><tr><td width="[% size %]"><a [% browseDbHRef %]><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="[% webroot %]html/images/spacer.gif" height="[% size %]" width="0"></a></td></table></div>[% END %]
 	</td>
 </tr>

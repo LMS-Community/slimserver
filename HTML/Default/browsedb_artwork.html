@@ -3,12 +3,12 @@
 
 <div align="left" width="100%" style="float:left"><table class="even" cellpadding="5" cellspacing="0" border="0" align="left">
 	<tr><td width="[% size %]">
-		[% IF coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% browseDbHRef %] target="browser"><center>[% PROCESS thumbnailImg height="$size width=$size" alt="$item | html; IF $artist; "BY" | string; $artist; END; IF$ year; ($year); END;" title="$item | html; IF $artist; "BY" | string; $artist; END; IF $year; ($year); END;"%]</a></td></table>[% END %]
+		[% IF coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% browseDbHRef %] target="browser">[% PROCESS thumbnailImg height="$size\" width=\"$size\"" %]</a></td></table>[% END %]
 		[% IF not coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% browseDbHRef %] target="browser"><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
 	</td></tr>
 	<tr><td><table cellspacing="0" border="0" align="left">
 	
-		[% SET class = 'even' width='13' height='13' header='1' target='status' %]
+		[% SET class = 'even' odd = 0 width='13' height='13' header='1' target='status' %]
 
 		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
 		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]

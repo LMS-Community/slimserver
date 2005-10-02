@@ -19,11 +19,11 @@ BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
 END;
 
 BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";$target or 'status';"\" >";img or saveString;"</a>"; 
+	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
 END;
 
 BLOCK thumbnailImg;
-	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;" alt\">"; 
+	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\" title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\">"; 
 END;
 
 BLOCK coverImg;
