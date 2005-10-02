@@ -2,140 +2,140 @@
 [% PROCESS hreftemplate %]
 
 [% BLOCK addBrowseLinks %]
-			[% IF links %]
-				[% FOREACH link = links %]
-					<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
-				[% END %]
-			[% END %]
+	[% IF links %]
+		[% FOREACH link = links %]
+			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+		[% END %]
+	[% END %]
 [% END %]
 
 
 [% BLOCK addCaseLinks %]
-		[% IF links %]
-			[% FOREACH link = links %]
-			case "[% link.key %]":
-				url = "[% link.value %]"
-				suffix = "&page=[% link.key %]"
-				[% IF cookie %]homestring = "[% link.key | string %]"
-				cookie = [% cookie %][% END %]
-			break
-			[% END %]
+	[% IF links %]
+		[% FOREACH link = links %]
+		case "[% link.key %]":
+			url = "[% link.value %]"
+			suffix = "&page=[% link.key %]"
+			[% IF cookie %]homestring = "[% link.key | string %]"
+			cookie = [% cookie %][% END %]
+		break
 		[% END %]
+	[% END %]
 [% END %]
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-	<head>
-		[% PROCESS customheader.html %]
-		<script language="JavaScript">
-		<!--Hide
-		var homestring;
-		function doSearch(value)
+<head>
+	[% PROCESS customheader.html %]
+	<script language="JavaScript">
+	<!--Hide
+	var homestring;
+	function doSearch(value)
+	{
+		selectLink()
+		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=[% player %]';
+	}
+	
+	function chooseBrowser(value,option)
+	{
+		selectLink()
+		var url;
+		var cookie = 0;
+		switch(option)
 		{
-			selectLink()
-			parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=[% player %]';
+			[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
+			[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
+			[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
+			[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
+			[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
+		case "RADIO_TUNEIN":
+			url = "tunein.html"
+			suffix = "?page=RADIO_TUNEIN"
+		break
+		case "SERVER_SETTINGS":
+			url = "[% webroot %]setup.html?page=server"
+			suffix = "&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]"
+		break
+		case "PLAYER_SETTINGS":
+			url = "[% webroot %]setup.html?page=player"
+			suffix = "&player=[% player | uri %]&playerid=[% player | uri %]"
 		}
-		
-		function chooseBrowser(value,option)
-		{
-			selectLink()
-			var url;
-			var cookie = 0;
-			switch(option)
-			{
-				[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
-				[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
-				[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
-				[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
-				[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
-			case "RADIO_TUNEIN":
-				url = "tunein.html"
-				suffix = "?page=RADIO_TUNEIN"
-			break
-			case "SERVER_SETTINGS":
-				url = "[% webroot %]setup.html?page=server"
-				suffix = "&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]"
-			break
-			case "PLAYER_SETTINGS":
-				url = "[% webroot %]setup.html?page=player"
-				suffix = "&player=[% player | uri %]&playerid=[% player | uri %]"
-			}
 
-			if (option) {
-				if (cookie) {
-					setCookie("SlimServer-Browserpage",url + suffix);
-				}
-				parent.browser.location = url + suffix + '&player=[% player | uri %]';
+		if (option) {
+			if (cookie) {
+				setCookie("SlimServer-Browserpage",url + suffix);
 			}
+			parent.browser.location = url + suffix + '&player=[% player | uri %]';
 		}
-		
-		function homelink() {
-			if (homestring) {
-				document.getElementById('homelink').innerHTML = homestring;
-			} else {
-				document.getElementById('homelink').innerHTML = '[% page | string %]';
-			}
-		}
-		
-		-->
-		</script>
-		[% headScripts %]
-	</head>
-	<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
-	[% IF home %]
-	<div class="masthead" width="100%">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="17">
-			<td height="17" align="left">
-				<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
-			</td>
-			<td height="17" align="right">
-			<nobr>
-			<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
-			 / 
-			<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
-			 / 
-			<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
-			</td>
-		</table>
-	</div>
-	<div class="menu1" width="100%">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
-			<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
-				<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
-					<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
-					[% PROCESS addBrowseLinks links=additionalLinks.browse %]
-					<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
-					[% PROCESS addBrowseLinks links=additionalLinks.search %]
-					<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
-					[% PROCESS addBrowseLinks links=additionalLinks.radio %]
-					<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
-					[% IF additionalLinks.plugins %]
-					<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
-					[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
-					[% END %]
-					<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
-					[% IF not nosetup  %]
-						<OPTION [% IF page == 'server' %]selected[% END %] value="[% "SERVER_SETTINGS" %]" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>
-						<OPTION [% IF page == 'player' %]selected[% END %] value="[% "PLAYER_SETTINGS" %]" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
-					[% END %]
-					[% IF additionalLinks.settings %]
-					[% PROCESS addBrowseLinks links=additionalLinks.settings %]
-					[% END %]
-				</SELECT>
-				<input type=hidden value="[% page %]" name="page">
-				</nobr></td>
-			</FORM>
-			<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value);"><td align="right"><nobr>
-				[% "SEARCH" | string %]
-				<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
-				<input type=hidden value="[% player %]" name="player">
-				<input type=hidden value="[% page %]" name="page">
-				[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-				[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]
-				<nobr></td>
-			</FORM>
-		</table>
-	</div>
-	[% END %]
-	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-	[% UNLESS nodiv %]<div class="list">[% END %]
+	}
+	
+	function homelink() {
+		if (homestring) {
+			document.getElementById('homelink').innerHTML = homestring;
+		} [% IF page %] else {
+			document.getElementById('homelink').innerHTML = '[% page | string %]';
+		}[% END %]
+	}
+	
+	-->
+	</script>
+	[% headScripts %]
+</head>
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
+[% IF home %]
+<div class="masthead" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="17">
+		<td height="17" align="left">
+			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
+		</td>
+		<td height="17" align="right">
+		<nobr>
+		<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+		 / 
+		<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
+		 / 
+		<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
+		</td>
+	</table>
+</div>
+<div class="menu1" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" height="20">
+		<FORM name="browser" method="Get" action="[% webroot %]home.html" target="header"><td><nobr>
+			<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+				<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
+				[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+				<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
+				[% PROCESS addBrowseLinks links=additionalLinks.search %]
+				<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
+				[% PROCESS addBrowseLinks links=additionalLinks.radio %]
+				<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+				[% IF additionalLinks.plugins %]
+				<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
+				[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
+				[% END %]
+				<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
+				[% IF not nosetup  %]
+					<OPTION [% IF page == 'server' %]selected[% END %] value="[% "SERVER_SETTINGS" %]" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>
+					<OPTION [% IF page == 'player' %]selected[% END %] value="[% "PLAYER_SETTINGS" %]" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
+				[% END %]
+				[% IF additionalLinks.settings %]
+				[% PROCESS addBrowseLinks links=additionalLinks.settings %]
+				[% END %]
+			</SELECT>
+			<input type=hidden value="[% page %]" name="page">
+			</nobr></td>
+		</FORM>
+		<FORM name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value);"><td align="right"><nobr>
+			[% "SEARCH" | string %]
+			<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
+			<input type=hidden value="[% player %]" name="player">
+			<input type=hidden value="[% page %]" name="page">
+			[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
+			[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]
+			<nobr></td>
+		</FORM>
+	</table>
+</div>
+[% END %]
+[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
+[% UNLESS nodiv %]<div class="list">[% END %]
