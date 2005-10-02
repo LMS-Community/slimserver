@@ -290,6 +290,7 @@ PLUGIN_FAVORITES_NOT_DEFINED
 PLUGIN_FAVORITES_NONE_DEFINED
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
+	ES	No existen Favoritas
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...

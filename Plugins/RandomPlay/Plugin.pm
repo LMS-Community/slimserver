@@ -560,6 +560,7 @@ sub strings {
 PLUGIN_RANDOM
 	DE	Zufalls Mix
 	EN	Random Mix
+	ES	Mezcla al azar
 
 PLUGIN_RANDOM_DISABLED
 	DE	Zufalls Mix angehalten
@@ -576,6 +577,7 @@ PLUGIN_RANDOM_TRACK_STOP
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
+	ES	Mezcla al azar por Álbum
 
 PLUGIN_RANDOM_ALBUM_STOP
 	DE	Zufälligen Album Mix anhalten

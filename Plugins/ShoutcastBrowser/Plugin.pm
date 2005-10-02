@@ -1138,6 +1138,7 @@ PLUGIN_SHOUTCASTBROWSER_REFRESH_NOW
 PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 	DE	Liste der Streams aktualisieren
 	EN	Refresh stream list
+	ES	Refrescar la lista de streams
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	CZ	CHYBA: web SHOUTcast je nedostupný

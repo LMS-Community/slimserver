@@ -590,6 +590,7 @@ ADDING_TO_PLAYLIST
 ADDING_TO_PLAYLIST_DBL
 	DE	Füge hinzu
 	EN	Adding
+	ES	Añadiendo
 	ZH_CN	列入中
 
 INSERT_TO_PLAYLIST
@@ -609,6 +610,7 @@ INSERT_TO_PLAYLIST
 INSERT_TO_PLAYLIST_DBL
 	DE	Füge ein
 	EN	Adding
+	ES	Añadiendo
 	ZH_CN	列入中
 
 STOPPING
@@ -646,6 +648,7 @@ PLAYING_RANDOMLY_FROM
 PLAYING_RANDOMLY_FROM_DBL
 	DE	Spiele zufällig
 	EN	Play shuffled
+	ES	Reproducir al azar
 	ZH_CN	随机抽样播放
 
 CLEARING_PLAYLIST
@@ -730,8 +733,8 @@ NOW_PLAYING_FROM
 NOW_PLAYING_FROM_DBL
 	DE	Starte Wiedergabe
 	EN	Playing
+	ES	Se está escuchando
 	ZH_CN	播放中
-
 
 REPEAT_OFF
 	CZ	Opakování vypnuto
@@ -992,51 +995,60 @@ ALARM_NOW_PLAYING
 ALARM_WEEKDAYS
 	DE	Wecker je Wochentag
 	EN	Weekday Alarms
+	ES	Alarmas en días de semana
 	ZH_CN	周日闹钟
 
 ALARM_DAY0
 	DE	Täglich
 	EN	Every Day
+	ES	Todos los días
 
 ALARM_DAY1
 	DE	Montag
 	EN	Monday
+	ES	Lunes
 	FR	Lundi
 	ZH_CN	星期一
 
 ALARM_DAY2
 	DE	Dienstag
 	EN	Tuesday
+	ES	Martes
 	FR	Mardi
 	ZH_CN	星期二
 
 ALARM_DAY3
 	DE	Mittwoch
 	EN	Wednesday
+	ES	Miercoles
 	FR	Mercredi
 	ZH_CN	星期三
 
 ALARM_DAY4
 	DE	Donnerstag
 	EN	Thursday
+	ES	Jueves
 	FR	Jeudi
 	ZH_CN	星期四
 
 ALARM_DAY5
 	DE	Freitag
 	EN	Friday
+	ES	Viernes
 	FR	Vendredi
 	ZH_CN	星期五
 
 ALARM_DAY6
 	DE	Samstag
 	EN	Saturday
+	ES	Sábado
 	FR	Samedi
 	ZH_CN	星期六
 
 ALARM_DAY7
 	DE	Sonntag
 	EN	Sunday
+	ES	Domingo
 	FR	Dimanche
 	ZH_CN	星期日
 
@@ -1345,7 +1357,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	DE	Die verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
 	DK	Dette er sangtitel-formaterne, der er tilgængelige både ovenfor og i afspiller-indstillingerne. Tøm indholdet i en teksboks for at fjerne formatet. For at tilføje et format indtastes tekst i den tomme tekstboks nederst. Tilgængelige elementer er: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
-	ES	Estos son los formatos disponibles para elegir arriba y tambien en la configuración del reproductor. Para borrar un formato, vacíe la casilla. Para introducir un formato nuevo, póngalo en la casilla vacía. Los elementos disponibles son: CT (tipo de contenido), TITLE (nombre de la canción), GENRE (género), TRACKNUM (índice de la canción en su disco), FS (tamaño del archivo), ARTIST (artista), ALBUM (disco), COMMENT (comentarios), YEAR (año), SECS (duración de la canción en segundos), DURATION (duración de la canción en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH (camino al archivo), FILE (nombre del archivo), EXT (extensión del archivo), LONGDATE (la fecha en formato largo), SHORTDATE (la fecha en formato corto), CURRTIME (la hora actual). Los elementos pueden ser separados por lo que quiera, incluso nada. Los separadores se usarán solamente si los valores son definidos.<br>La selección actual es la que se usará en la interfaz web.
+	ES	Estos son los formatos disponibles para elegir arriba y tambien en la configuración del reproductor. Para borrar un formato, vacíe la casilla. Para introducir un formato nuevo, póngalo en la casilla vacía. Los elementos disponibles son: CT (tipo de contenido), TITLE (nombre de la canción), GENRE (género), TRACKNUM (índice de la canción en su álbum), FS (tamaño del archivo), ARTIST (artista), ALBUM (álbum), COMMENT (comentarios), YEAR (año), SECS (duración de la canción en segundos), DURATION (duración de la canción en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH (camino al archivo), FILE (nombre del archivo), EXT (extensión del archivo), LONGDATE (la fecha en formato largo), SHORTDATE (la fecha en formato corto), CURRTIME (la hora actual). Los elementos pueden ser separados por lo que quiera, incluso nada. Los separadores se usarán solamente si los valores son definidos.<br>La selección actual es la que se usará en la interfaz web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
 	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacer la zone de saisie. Pour ajouter un format, utiliser une zone de saisie vide. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée total en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date courante en format long), SHORTDATE (date courante en format court), CURRTIME (heure courante). Ces codes peuvent être entrecoupés de textes séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<bt>La sélection courante est le format qui sera utilisé dans les documents Web.
 	JP	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
@@ -1598,6 +1610,7 @@ SETUP_GROUP_ALARM
 SETUP_GROUP_ALARM_DESC
 	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week.
+	ES	Este reproductor puede tener hasta 8 alarmas: una alarma que suena todos los días, y una alarma individual para cada día de la semana.
 
 SETUP_GROUP_IRSETS
 	CZ	Dálkové ovládání
@@ -2270,10 +2283,12 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 SETUP_PREAMPVOLUMECONTROL
 	DE	Vorverstärker
 	EN	Preamp Volume Control
+	ES	Control de Volumen del Preamplificador
 
 SETUP_PREAMPVOLUMECONTROL_DESC
 	DE	Dieser Lautstärkeregler beeinflusst nur die analogen Ausgänge der Squeezebox2. Geben Sie die Dämpfung in Dezibel ein. Der Bereich geht von 0.0 bis 63.0 in 0.5 Dezibel Schritten. Voreinstellung ist 0 (volle Lautstärke). ACHTUNG: falls Ihr Verstärker stark genug ist, um Schaden an Lautstärkern, Vorverstärkern etc. anzurichten, so sollte diese Einstellung als Sicherheitsvorkehrung unbedingt benutzt werden!
 	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox2. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
+	ES	Este es un control de volumen secundario que aplica solo a Squeezebox2. Introducir el valor de la atenuación en decibeles. El rango es de 0.0 a 63.0, en incrementos de 0.5 db. El valor por defecto es 0 (volumen máximo). ADVERTENCIA: si el amplificador es lo suficientemente poderoso para inutilizar los parlantes, un preamplificador receptor, o un atenuador de línea debería utilizarse como una medida de seguridad!
 
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
@@ -2382,35 +2397,43 @@ SETUP_MP3SILENCEPRELUDE_DESC
 SETUP_REPLAYGAINMODE
 	DE	Lautstärken-Normalisierung (Replay Gain)
 	EN	Volume Adjustment/Replay Gain
+	ES	Ajuste de Volumen/Replay Gain
 
 SETUP_REPLAYGAINMODE_DESC
 	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
+	ES	Algunas pistas de audio contienen ajustes de volumen, o "Replay Gain", información que puede ser utilizada durante la reproducción para lograr que todos los álbumes y canciones tengan el mismo nivel de volumen. Squeezebox2 puede usar esta inforamción, si está presente. "Track Gain" puede utilizarse para lograr que todas las canciones suenen a igual nivel. "Album Gain" puede utilizarse para lograr que todos los álbumes suenen a igual nivel, pero respetando la diferencia de niveles dentro de canciones un mismo álbum. La selección "Inteligente" de ganancia (Gain) utiliza "Album Gain" si las canciones presentes en una lista pertenecen al mismo álbum o "Track Gain" si la lista contiene canciones de diferentes álbumes.
 
 REPLAYGAIN_DISABLED
 	DE	Normalisierung ausschalten
 	EN	Disable Volume Adjustment
+	ES	Deshabilitar Ajuste de Volumen
 
 REPLAYGAIN_TRACK_GAIN
 	DE	Lieder Normalisierung verwenden (wenn möglich)
 	EN	Use Track Gain (If Present)
+	ES	Utilizar Ganancia por Pista (Si Está Presente)
 
 REPLAYGAIN_ALBUM_GAIN
 	DE	Album Normalisierung verwenden (wenn möglich)
 	EN	Use Album Gain (If Present)
+	ES	Utilizar Ganancia por Álbum (Si Está Presente)
 
 REPLAYGAIN_SMART_GAIN
 	DE	"Intelligente" Normalisierung verwenden
 	EN	"Smart" Gain Selection
+	ES	Selección "Inteligente" de Ganancia
 
 REPLAYGAIN
 	DE	Lautstärken-Normalisierung
 	EN	Volume Adjustment
+	ES	Ajuste de Volumen
 
 ALBUMREPLAYGAIN
 	DE	Album Lautstärken-Normalisierung
 	EN	Album Volume Adjustment
-	
+	ES	Ajuste de Volumen del Álbum
+
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
 	EN	Crossfade
@@ -2528,6 +2551,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 
 ITUNES_PODCASTS
 	EN	iTunes Podcasts
+	ES	Podcasts de iTunes
 	ZH_CN	iTunes Podcasts
 
 SETUP_MOODLOGICPLAYLISTFORMAT
@@ -2595,11 +2619,13 @@ SETUP_MMMSIZE_DESC
 
 SETUP_MMMFILTER
 	EN	MusicMagic Mix Filter
+	ES	Filtro de Mezcla de MusicMagic
 	ZH_CN	MusicMagic混音过滤器
 
 SETUP_MMMFILTER_DESC
 	DE	In MusicMagic können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicMagic Mixes im SlimServer angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicMagic and choose from the list here to apply those filters to MusicMagic Mixes in SlimServer.
+	ES	Se puede dar un nombre a conjuntos de condiciones de filtro creadas en MusicMagic y elegir de esta lista para aplicar esos filtros a las Mezclas de MusicMagic en SlimServer.
 	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
 
 SETUP_MMSHOST
@@ -2658,21 +2684,25 @@ MUSICMAGIC_MIXING
 SETUP_MMMPLAYERSETTINGS
 	DE	MusicMagic Einstellungen für alle Mixe
 	EN	Musicmagic Player Settings for Each Mix
+	ES	Configuración de Reproductor MusicMagic para Cada Mezcla
 	ZH_CN	MusicMagic播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
 	DE	Sie können jedem Player ermöglichen, vor dem Generieren eines Mixes die MusicMagic Mix Einstellungen zu bearbeiten. Die Player spezifischen Einstellungen haben gebenüber den Server weiten Einstellungen Vorrang und bleiben aktiv, bis sie vom Player her wieder verändert werden. Falls Sie lieber ohne Umwege einen Mix basierend auf den Server-Einstellungen erstellen wollen, dann deaktivieren Sie diese Option.
 	EN	You may choose to give each player access to the musicmagic mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
+	ES	Se puede elegir el dar a cada reproductor acceso a la configuración de mezcla de MusicMagic antes de generar una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración en el servidor y se conservará hasta que sea modificada nuevamente desde el reproductor. Si se quiere saltar directamente a la creación de una mezcla, usando únicamente la configuración existente del reproductor/servidor, entonces elegir no.
 	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicMagic混音设置的特权。任何播放机上的特定设置将藐视伺服器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
 	DE	MusicMagic Mix Einstellungen
 	EN	MusicMagic Mix Settings
+	ES	Configuración de Mezcla de MusicMagic
 	ZH_CN	MusicMagic混音设置
 
 MUSICMAGIC_MIXRIGHT
 	DE	(Zum Mixen RECHTS drücken)
 	EN	(Press RIGHT to Mix)
+	ES	(Presionar DERECHA para Mezclar)
 	ZH_CN	（按右方向键开始混音）
 
 MOODLOGIC_MIXING
@@ -2694,6 +2724,7 @@ ITUNES
 YES
 	DE	Ja
 	EN	Yes
+	ES	Si
 	FR	Oui
 	ZH_CN	是
 
@@ -2789,7 +2820,7 @@ SETUP_SHOWYEAR
 	CZ	Zobrazovat rok s albem
 	DE	Jahr beim Durchsuchen der Alben anzeigen
 	EN	Show Year with Albums
-	ES	Mostrar Año con Discos
+	ES	Mostrar Año con Álbumes
 	FR	Affichage de l'année avec l'album
 	JP	アルバム年を表示する
 	ZH_CN	年份与乐谱帖一同显示
@@ -2798,7 +2829,7 @@ SETUP_SHOWYEAR_DESC
 	CZ	Můžete vybrat, zda se mají při procházení podle alb nebo obalů zobrazovat spolu s názvy alb i roky vydání. Pokud tuto volbu aktivujete bude rok zobrazen za názvem alba.
 	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie Alben nachschlagen oder Plattenhülle durchsuchen. Das Jahr wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
-	ES	Se puede elegir mostrar el año de edición de un disco cuando se recorre por Disco o Arte de Tapa. Cuando está habilitado, el año del disco se mostrará junto al título del disco.
+	ES	Se puede elegir mostrar el año de edición de un álbum cuando se recorre por Álbum o Arte de Tapa. Cuando está habilitado, el año del álbum se mostrará junto al título del álbum.
 	FR	Vous pouvez afficher l'année de sortie d'un album en mode Parcourir les albums ou Parcourir les pochettes. Si ce réglage est activé, l'année sera affichée à la suite du titre de l'album.
 	JP	アルバムまたはアートワークで検索する時に、アルバム年を表示することができます。アルバムタイトルの横に表示されます。
 	ZH_CN	您可以选择通过浏览乐谱帖或浏览乐谱帖图象时是否一同显示乐谱帖的年份。当您选择一同显示时，年份信息将显示在乐谱帖标题旁边。
@@ -2806,14 +2837,14 @@ SETUP_SHOWYEAR_DESC
 SETUP_SHOWARTIST
 	DE	Interpreten beim Durchsuchen der Alben anzeigen
 	EN	Show Artist with Albums
-	ES	Mostrar Artista junto con Albums
+	ES	Mostrar Artista junto con Álbumes
 	FR	Affichage de l'artiste avec l'album
 	ZH_CN	艺人与乐谱帖一同显示
 
 SETUP_SHOWARTIST_DESC
 	DE	Sie können den Interpreten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album' artist will be shown next to the album title.
-	ES	Se puede elegir el mostrar el artista cuando se examina por Discos. Cuando se habilita, el artista del disco se mostrará junto al título del disco.
+	ES	Se puede elegir el mostrar el artista cuando se examina por Álbumes. Cuando se habilita, el artista del álbum se mostrará junto al título del álbum.
 	FR	Vous pouvez afficher l'artiste d'un album en mode Parcourir les albums. Si ce réglage est activé, l'artiste sera affichée à la suite du titre de l'album.
 	ZH_CN	您可以选择通过浏览乐谱帖时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在乐谱帖标题旁边。
 
@@ -3150,22 +3181,25 @@ SETUP_RESCAN_DESC
 	CZ	Pokud přidáte, odstraníte, nebo změníte soubory ve svém hudebním archivu, můžete nastavit aby SlimServer provedl kontrolu souborů tak, aby uchoval hudební databázi stále aktuální.
 	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.
-	ES	Presionar en Recopilar para que SlimServer recorrar la colección musical y añada nueva música o actualice canciones que hayan cambiado.
+	ES	Presionar en Recopilar para que SlimServer recorra la colección musical y añada nueva música o actualice canciones que hayan cambiado.
 	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu.
 	ZH_CN	点击《重新扫描》将使SlimServer扫瞄音乐库，把新增或已更新的音乐记录在音乐库内。在点击《重新扫描》前点击复选框将使SlimServer把现有的音乐库删除然后重头扫描重建。
 
 SETUP_WIPEDB
 	DE	Datenbank löschen und alles neu durchsuchen
 	EN	Clear library and rescan everything
+	ES	Limpiar la información previa de la colección y volver a recopilar todo
 	ZH_CN	重新扫描前把现有的音乐库删除
 
 SETUP_STANDARDRESCAN
 	DE	Nach neuen und veränderten Musikstücken suchen
 	EN	Look for new and changed music
+	ES	Buscar música nueva y modificada
 
 SETUP_PLAYLISTRESCAN
 	DE	Nur nach Wiedergabelisten suchen
 	EN	Only rescan playlists
+	ES	Solo volver a recopilar listas
 	ZH_CN	只重新扫描播放表而已。
 
 RESCANNING
@@ -3186,6 +3220,7 @@ RESCANNING
 RESCANNING_SHORT
 	DE	Durchsuche Musiksammlung...
 	EN	Rescanning Music Library...
+	ES	Recopilando la colección musical...
 	ZH_CN	重新扫描音乐库中...
 
 USING_ITUNES
@@ -3256,7 +3291,7 @@ SETUP_ITUNES_OK
 SETUP_ITUNES_DESC
 	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Wiedergabeliste verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
 	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
-	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar l aopción debajo si se quiere importar la información de colección musical de iTunes.
+	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar la opción debajo si se quiere importar la información de la colección musical de iTunes.
 	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
 	JP	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	SE	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
@@ -3712,7 +3747,7 @@ SETUP_COVERART_DESC
 	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden. Verwenden Sie % als Prefix um dieselben Elemente wie für Titelinformationen zu verwenden. So wird z.B. %ARTIST - %ALBUM nach einer Datei "Artist - Album.jpg" passend zum aktuellen Musikstück suchen.
 	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
-	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un disco o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de discos. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de discos o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - DISCO, buscará el par Artista - Disco.jpg que coincida con la información de artista y disco encontrada.
+	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un álbum o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de álbumes. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de álbumes o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - ALBUM, buscará el par Artista - Album.jpg que coincida con la información de artista y álbum encontrada.
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	JP	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
 	NL	Indien er een afbeelding beschikbaar is van de hoezen wordt deze getoond als U een album bekijkt of informatie over een liedje opvraagt. Deze beelden worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. Standaard worden de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg" gebruikt. Bijkomende bestandsnamen kunnen gedefinieerd worden. Voor de verkleinde beelden (thumbmails) en de volledige afbeeldingen kunnen afzonderlijke namen opgegeven worden.
@@ -3720,7 +3755,7 @@ SETUP_COVERART_DESC
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	SE	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
 	ZH_CN	若乐谱帖的图象存在，观看乐谱帖或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
-		
+
 SETUP_COVERART_OK
 	CZ	Jméno souboru obalů nastaveno na
 	DE	Dateiname der Plattenhüllen:
@@ -3796,7 +3831,7 @@ SETUP_INCLUDENOART_0
 	CZ	Nezobrazovat alba bez obalu
 	DE	Keine Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Delete placeholders from the list
-	ES	Borrar los discos sin Arte de Tapa
+	ES	Borrar los álbumes sin Arte de Tapa
 	FR	Ne pas afficher les albums sans pochette
 	JP	プレースホルダーをリストから削除する
 	NO	Ikke vis tomme bilderammer i listen
@@ -3807,7 +3842,7 @@ SETUP_INCLUDENOART_1
 	CZ	Vložit všechna alba, použít prázdná místa
 	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Include all albums, using placeholders
-	ES	Incluir todos los discos, utilizando aquellos sin Arte de Tapa
+	ES	Incluir todos los álbumes, utilizando aquellos sin Arte de Tapa
 	FR	Afficher tous les albums, avec image vide le cas échéant
 	JP	プレースホルダーを使って、全てのアルバムを含める
 	NO	Vis alle album i listen, bruk rammer når thumbnail mangler
@@ -3829,7 +3864,7 @@ SETUP_INCLUDENOART_DESC
 	CZ	Vyberte, zda-li si přejete při procházení podle obalů zobrazovat všechna alba a na místa alb s chybějícím obrázkem vložit prázdné místo, nebo tyto alba nezobrazovat.
 	DE	Legen Sie fest, ob Alben ohne Plattenhülle beim Durchsuchen der Plattenhüllen angezeigt werden sollen. Fehlt die Plattenhülle, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
-	ES	Elegir si se debe incluir o no los discos qeu actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
+	ES	Elegir si se debe incluir o no los álbumes que actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
 	JP	アートワークでブラウズする場合に、アートワークがないアルバムを含めるか選択してください。アートワークがなければ、ブランクを表示するか、ブラウズに含めないか指定できます。
 	NO	Velg om album som ikke har noe grafikk tilknyttet skal vises i listen eller ikke. Et tomt bilde (standard størrelse) og albumnavn kan vises, eller ekskluderes helt.
@@ -4316,21 +4351,25 @@ SETUP_CHECKVERSION_0
 SETUP_IGNOREDISABLEDITUNESTRACKS
 	DE	Deaktivierte Lieder in iTunes
 	EN	Unchecked Songs in iTunes
+	ES	Canciones No Marcadas en iTunes
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
-	
+
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	DE	Standardmässig werden Lieder, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
+	ES	Por defecto, cuando se remueve la marca al lado de una canción en iTunes, esa canción no aparecerá cuando se examine la música con SlimServer. Se puede cambiar ese comportamiento debajo.
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SlimServer的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	DE	Alle Lieder aufführen
 	EN	Include all songs
+	ES	Incluir todas las canciones
 	ZH_CN	包括所有歌曲在内
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	DE	Deaktivierte Lieder nicht aufführen
 	EN	Don't include unchecked songs
+	ES	No incluir las canciones no marcadas
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
 SETUP_HISTORYLENGTH
@@ -4524,7 +4563,7 @@ SETUP_THROTTLESCAN_DESC
 	DE	Wenn der Server damit beginnt, in ihrem Musikverzeichnis in den ID-Tags der Musik-Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und PCs mit einem FAT oder FAT32 Datensystem zu einer inakzeptablen Verlangsamung ihres Computers kommen. Sie können mit folgender Einstellung diesen Prozess verlangsamen und ihrem Rechner mehr Ressourcen überlassen.
 	DK	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
 	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
-	ES	Cuando se enciende el servidor, hace una revisión total de su carpeta de música para determinar todos los artistas, discos y canciones. En algunos sistemas lentos y PCs con Windows que utilizan filesystems FAT y FAT32 esto puede reducir la peroformance de la computadora. Se puede cambiar esta opción para hacer mas lenta la revisión y utilizar menos recursos de la computadora.
+	ES	Cuando se enciende el servidor, hace una revisión total de su carpeta de música para determinar todos los artistas, álbumes y canciones. En algunos sistemas lentos y PCs con Windows que utilizan filesystems FAT y FAT32 esto puede reducir la performance de la computadora. Se puede cambiar esta opción para hacer mas lenta la revisión y utilizar menos recursos de la computadora.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
 	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
 	JP	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
@@ -4552,6 +4591,7 @@ SETUP_SEARCHSUBSTRING_1
 	CZ	Hledat kdekoliv
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
+	ES	Buscar Dentro de Palabras
 	ZH_CN	在词内搜寻
 
 SETUP_SEARCHSUBSTRING_DESC
@@ -4576,13 +4616,13 @@ SETUP_NOGENREFILTER_1
 SETUP_NOGENREFILTER_0
 	DE	Zeige nur zum gewählten Musikstil passende Alben und Lieder für den Interpreten
 	EN	Only show tracks or albums matching the selected genre for an artist
-	ES	Mostrar solo canciones o discos que correspondan al género seleccionado, para un artista.
+	ES	Mostrar solo canciones o álbumes que correspondan al género seleccionado, para un artista.
 	ZH_CN	只显示和某个艺人的音乐风格匹配的轨道和乐谱帖
 
 SETUP_NOGENREFILTER_DESC
 	DE	Beim Durchsuchen von Musikstilen können Alben und Lieder so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
 	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre.
-	ES	Cuando se examina por género, se puede filtrar para mostrar solo los discos y canciones que coinciden con el género elegido.
+	ES	Cuando se examina por género, se puede filtrar para mostrar solo los dálbumes y canciones que coinciden con el género elegido. Existe una penalidad en la parformance por habilitar esto, sin embargo los resultados pueden ser mejores para artistas "multi-género".
 	ZH_CN	您可以在当浏览音乐风格时过滤并只显示和音乐风格匹配的乐谱帖和轨道。
 
 SETUP_COMPOSERINARTISTS
@@ -4696,18 +4736,19 @@ SETUP_COMMONALBUMTITLES
 	CZ	Časté tituly alb
 	DE	Geläufige Albumtitel
 	EN	Common Album Titles
-	ES	Títulos Comunes de Discos
+	ES	Títulos Comunes de Álbumes
 	ZH_CN	共同的乐谱帖标题
 
 SETUP_COMMONALBUMTITLES_TOGGLE
 	DE	Eine Liste von geläufigen Albumtiteln definieren
 	EN	Specifiy a list of Common Album Titles
+	ES	Especificar una lista de Nombres Comunes de Álbumes
 
 SETUP_COMMONALBUMTITLES_DESC
 	CZ	Standardně SlimServer seskupuje skladby ze stejného alba do jedné skupiny, přestože jsou skladby umístěné v různých adresářích. Pro velice často používané názvy alb, jako například "Greatest Hits", je ještě vyždadováno, aby se pro skladby jednoho alba shodovalo jmého interpreta. Seznam níže reprezentuje skupinu utakovýchto názvů, kde bude tato dodatečné kontrola uplatňována.
 	DE	Meist gruppiert SlimServer Lieder mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Interpret mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
 	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
-	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo disco, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de discos, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo disco. La lista debajo representa los títulos de discos para los cuales SlimServer requerirá que coincida el artista para agrupar el disco.
+	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo álbum, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de álbumes, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo álbum. La lista debajo representa los títulos de álbumes para los cuales SlimServer requerirá que coincida el artista para agrupar el álbum.
 	ZH_CN	在一般情况下，SlimServer会将属于共同乐谱帖但保存在不同文件夹里的的歌曲集合在一起。对于一些较常见的乐谱帖标题，譬如＂最佳精选＂，它会进一步针对艺人名字进行匹配来提高准确性。以下为SlimServer决定对乐谱帖标题进行进一步艺人名匹配的标题名。
 
 SETUP_RESHUFFLEONREPEAT
@@ -4770,7 +4811,7 @@ SETUP_PLAYTRACKALBUM
 	DE	Weitere Titel des Albums abspielen
 	DK	Afspil andre sange i album
 	EN	Play Other Songs In Album
-	ES	Tocar otras canciones del disco
+	ES	Tocar otras canciones del álbum
 	FR	Jouer les autres morceaux de l'album
 	JP	同じアルバムのその他の曲を再生する
 	NL	Speel de andere liedjes van het album
@@ -4784,7 +4825,7 @@ SETUP_PLAYTRACKALBUM_1
 	DE	Auch andere Titel aus dem Album oder dem Verzeichnis spielen
 	DK	Afspil andre sange i album eller mappe
 	EN	Play other songs in album or directory
-	ES	Tocar otras canciones en disco o carpeta
+	ES	Tocar otras canciones en álbum o carpeta
 	FR	Jouer les autres morceaux de l'album ou du dossier
 	JP	同じアルバム、またはフォルダーのその他の曲を再生する
 	NL	Speel de andere liedjes uit het album of uit de folder
@@ -4811,7 +4852,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	DE	Wenn Sie einen Titel auswählen und PLAY auf der Fernbedienung drücken, so können Sie hier festlegen, ob Sie nur dieses eine Lied hören wollen, oder alle Titel aus diesem Album oder Verzeichnis.
 	DK	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
 	EN	When you select a single song and press PLAY on the remote, while browsing albums or folders, you can choose to play just that song or all the songs in that album or directory, starting with that song.
-	ES	Cuando se elige una sola canción y se presiona PLAY en el control remoto, se puede optar por escuchar solo esa canción o todas las canciones en ese disco o carpeta, comenzando por esa canción.
+	ES	Cuando se elige una sola canción y se presiona PLAY en el control remoto, se puede optar por escuchar solo esa canción o todas las canciones en ese álbum o carpeta, comenzando por esa canción.
 	FR	Lorsque vous choisissez un morceau et que vous appuyez sur la touche PLAY de la télécommande, la platine peut jouer uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
 	JP	1曲だけ選択して再生した場合、その曲だけを再生するのか、同じアルバムまたはフォルダーのその他の曲も再生するのか、を選択できます。
 	NL	Als U een liedje selecteert en op de PLAY toets van de afstandsbediening drukt kan U alleen dit liedje laten spelen of alle liedjes uit het album of de folder afspelen, te beginnen met het geselecteerde liedje.
@@ -4839,7 +4880,7 @@ SETUP_IGNOREDARTICLES_DESC
 	DE	Eine Liste von Artikeln ("the" "die" "les" etc..), die beim Sortieren am Anfang von Interpreten, Albumnamen oder Liedern unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen.
 	DK	En liste af artikler ("the", "den", "det", etc.) der skal ignoreres fra begyndelsen af kunstner- eller albumnavne ved sortering. Adskil artiklerne med mellemrum eller tøm listen for at slå denne funktionalitet fra.
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.
-	ES	Una lista de artículos ("the", "les", "los", etc.) a ignorar al comienzo del nombre de artistas o discos cuando se ordena. Separar múltiples artículos con espacios o dejar la lista en blanco , para deshabilitar este comportamiento.
+	ES	Una lista de artículos ("the", "les", "los", etc.) a ignorar al comienzo del nombre de artistas o álbumes cuando se ordena. Separar múltiples artículos con espacios o dejar la lista en blanco , para deshabilitar este comportamiento.
 	FR	Une liste d'articles ("the", "les", "los", etc.) à ignorer au début des noms d'artistes, chansons ou albums lors du tri alphabetique. Séparer les articles par des espaces. Laisser la zone de saisie vide pour désactiver ce comportement.
 	JP	"the" , "les" , "los" ,等、アーチスト名やアルバム名の最初にくる単語で、無視したいもののリストです。単語をスペースで区切って下さい。ブランクにすると、その機能は働きません。
 	NL	Een lijst van voorzetsels ("de" "the" "les" "los" etc..) die moeten worden genegeerd bij het sorteren op Artiest.
@@ -4847,7 +4888,6 @@ SETUP_IGNOREDARTICLES_DESC
 	PT	A lista de artigos ("o", "os", "as", etc). a ignorar no iníco do nome do artista ou do álbum, ao ordenar. Separe multiplos artigos por espaços ou deixe a lista vazia para desactivar esta funcionalidade.
 	SE	En lista med artiklar ("the" "les" "los"...) innan artistnamn som skall ignoreras vid sortering. Separera flera artiklar med mellanslag eller lämna detta fält tomt för att avaktivera.
 	ZH_CN	当进行排序时应忽略以如下词汇开头的艺人名、曲名、或乐谱帖标题如“the”、“les”、“los”等。在多个词汇之间请使用空格区分。留空则表示撤销此功能。 
-
 
 SETUP_SPLITLIST
 	DE	Mehrere Einträge in Tags
@@ -4862,7 +4902,7 @@ SETUP_SPLITLIST
 SETUP_SPLITLIST_DESC
 	DE	SlimServer kann mehrere Interpreten, Albumtitel und Musikstile in den Tags ihrer Musikstücke erkennen. Falls SlimServer in den Tags eines der folgenden Trennzeichen oder Trennwörter erkennt, so kann es individuelle Einträge für die einzelnen Werte in die Listen aufnehmen. Wenn Sie z.B. den Strichpunkt als Trennzeichen definieren, so wird ein Lied mit dem Interpreten Tag "J. S. Bach;Michael Tilson Thomas" sowohl unter "J. S. Bach" als auch "Michael Tilson Thomas" aufgelistet .
 	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".
-	ES	SlimServer puede extraer múltiples artistas, títulos de discos y géneros de los tags que estan dentro de los archivos de música. Si SlimServer encuentra cualquiera de los carácteres de abajo en los tags, creará listados individuales para cada item. For ejemplo, si se pone un punto y coma en la lista debajo, una canción con un tag de Artista igual a "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas tanto para "J. S. Bach" como para "Michael Tilson Thomas".
+	ES	SlimServer puede extraer múltiples artistas, títulos de álbumes y géneros de los tags que están dentro de los archivos de música. Si SlimServer encuentra cualquiera de los carácteres de abajo en los tags, creará listados individuales para cada item. For ejemplo, si se pone un punto y coma en la lista debajo, una canción con un tag de Artista igual a "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas tanto para "J. S. Bach" como para "Michael Tilson Thomas".
 	FR	Le SlimServer peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SlimServer détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque élément présent - par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas".
 	JP	SlimServerは、複数のアーチスト、アルバム、ジャンルを検索することができます。SlimServerが、音楽ファイルのタグに以下のどれかを見つけたときには、それぞれのアイテムに関してリストを作ります。例えば、セミコロン（:）で区切ってアーチストタグを"J. S. Bach;Michael Tilson Thomas"のように入れた場合には、"J. S. Bach" と "Michael Tilson Thomas"の両方のアーチストを探します。
 	NO	SlimServer kan lese ut multiple artister, album titler og genre fra taggene i musikkfilene dine. Dersom SlimServer finner noen av tegnene nedenfor i taggene, vil den lage individuelle oppføringer for hvert av elementene. F.eks, hvis du putter et semikolon i listen nedenfor, vil en samg med artist taggen "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" og "Michael Tilson Thomas".
@@ -4889,7 +4929,7 @@ SETUP_FILESORT_DESC
 	DE	Wenn Sie ihr Musikverzeichnis durchsuchen, dann können Sie wählen, ob Sie die Lieder nach den Dateinamen oder den ID3-Tags (Interpret, Album, Liednummer) sortiert haben möchten.
 	DK	Når du gennemser din musiksamling kan du vælge at dine sangtitler skal sorteres efter filnavn eller efter ID3-tag-informationen (Kunstner, Album, Track-nummer).
 	EN	When you are browsing the Music Folder, you can choose to have the songs sorted by file name or by ID3 tag information (Artist, Album, Track Number).
-	ES	Cuando se recorre la Carpeta de Música, se puede elegir entre ordenar las canciones por nombre de archivo, o por información en los tags ID3 (Artista, Disco, Número de Pista)
+	ES	Cuando se recorre la Carpeta de Música, se puede elegir entre ordenar las canciones por nombre de archivo, o por información en los tags ID3 (Artista, Álbum, Número de Pista)
 	FR	Lorsque vous parcourez votre dossier de musique, vous pouvez choisir un tri par nom de fichier ou à partir des repères ID3 (artiste, album, numéro de piste).
 	JP	音楽フォルダーをブラウズしている時には、ファイル名で検索するか、ID3タグ情報（アーチスト、アルバム、トラック番号）で検索するか、選択することができます。
 	NL	Als U de Muziek Folder doorloopt, kunt U nummers laten sorteren op bestandsnaam of op ID3 tag informatie (Artiest, Album, Tracknummer).
@@ -5957,7 +5997,7 @@ SETUP_GROUPDISCS_DESC
 	CZ	Můžete specifikovat, zda budou alba obsahující více disků zařazena jako samostatná (s jedním názvem) nebo jako vícedisková, každé s jedinečným názvem pro každý disk. Např. "Název alba (Disk 2 z 3)". Pokud změníte toto nastavení SlimeServer provede automaticky aktualizaci informací z Vašeho hudebního archivu.
 	DE	Sie können angeben, ob Sie mehrere Platten eines Albums als ein Album anzeigen wollen (unter dem gleichen Namen) oder als getrennte Alben (z.B. "Album Titel (Disk 1 von 2)". Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
-	ES	Se puede considerar si los discos múltiples (dobles, triples, etc) serán tratados como un único disco (con un nombre único), o como múltiples discos, cada uno con un nombre distinto, por ejemplo "Título de Disco (Disco 2 de 3)". Si se cambia esta opción, se iniciará automaticamente una recopilación de información de su colección musical.
+	ES	Se puede considerar si los discos múltiples (dobles, triples, etc) serán tratados como un único álbum (con un nombre único), o como múltiples álbumes, cada uno con un nombre distinto por disco, por ejemplo "Título de Álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará automaticamente una recopilación de información de su colección musical.
 	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
 	JP	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
 	NO	Du kan angi om flere plater skal behandles som ett eller flere separate album. Endrer du denne verdien, scannes musikkfolderen på nytt.
@@ -5968,7 +6008,7 @@ SETUP_GROUPDISCS_0
 	CZ	Chápat sady s více disky jako vícenásobné alba
 	DE	Mehrfach-Alben nicht gruppieren
 	EN	Treat multi-disc sets as multiple albums
-	ES	Considerar discos múltiples como discos múltiples
+	ES	Considerar discos múltiples como álbumes múltiples
 	FR	Disques multiples en tant qu'albums multiples
 	JP	複数枚セットのアルバムを複数のアルバムとみなす
 	NO	Behandle multiple plater som multiple album
@@ -5978,7 +6018,7 @@ SETUP_GROUPDISCS_0
 SETUP_GROUPDISCS_1
 	DE	Mehrfach-Alben zu einem Album gruppieren
 	EN	Treat multi-disc sets as a single album
-	ES	Considerar albumes múltiples como un solo disco
+	ES	Considerar discos múltiples como un solo álbum
 	FR	Disques multiples en tant qu'album unique
 	JP	複数枚セットのアルバムを１つのアルバムとみなす
 	NO	Behandle multiple plater som deler av samme album
@@ -6395,7 +6435,7 @@ SHUFFLE_ON_ALBUMS
 	DE	Zufällige Albumreihenfolge
 	DK	Vilkårlig album-rækkefølge
 	EN	Shuffle by Album
-	ES	Al Azar por Disco
+	ES	Al Azar por Álbum
 	FR	Mélanger par album
 	JP	アルバムをランダムにする
 	NL	Willekeurige volgorde volgens album
@@ -6749,6 +6789,7 @@ RENAME
 
 NAME
 	EN	Name:
+	ES	Nombre:
 	FR	Nom :
 	ZH_CN	名：
 
@@ -6905,6 +6946,7 @@ CONFIRM_OVERWRITE
 CONFIRM_DELETE
 	DE	Wirklich löschen?
 	EN	Confirm Delete
+	ES	Confirma Eliminar
 	ZH_CN	确定删除
 
 TRACK
@@ -7011,7 +7053,7 @@ ALBUM
 	DE	Album
 	DK	Album
 	EN	Album
-	ES	Disco
+	ES	Álbum
 	FI	Levyn nimi
 	FR	Album
 	JP	アルバム
@@ -7067,6 +7109,7 @@ TYPE
 DIR
 	DE	Verzeichnis
 	EN	Directory
+	ES	Directorio
 	ZH_CN	目录
 
 APE
@@ -7235,7 +7278,7 @@ NO_ALBUM
 	DE	Kein Album
 	DK	Intet album
 	EN	No Album
-	ES	Sin Disco
+	ES	Sin Álbum
 	FR	Pas d'album
 	JP	アルバムなし
 	NL	Geen Album
@@ -7476,7 +7519,7 @@ ALBUMS
 	DE	Alben
 	DK	Albums
 	EN	Albums
-	ES	Discos
+	ES	Álbumes
 	FI	Levyjen nimet
 	FR	Albums
 	JP	アルバム
@@ -7491,7 +7534,7 @@ LCALBUMS
 	DE	Alben
 	DK	albums
 	EN	albums
-	ES	discos
+	ES	álbumes
 	FI	levyjen nimet
 	FR	albums
 	JP	アルバム
@@ -7531,7 +7574,7 @@ ALL_ALBUMS
 	DE	Alle Alben
 	DK	Alle albums
 	EN	All Albums
-	ES	Todos los Discos
+	ES	Todos los Álbumes
 	FR	Tous les albums
 	JP	全てのアルバム
 	NL	Alle Albums
@@ -7619,6 +7662,7 @@ ITEMS
 SELECT_ITEM
 	DE	Bitte wählen:
 	EN	Select item:
+	ES	Elegir item:
 	ZH_CN	选择项目：
 
 SONGS
@@ -7736,7 +7780,7 @@ BROWSE_BY_ALBUM
 	DE	Album nachschlagen
 	DK	Gennemse albums
 	EN	Browse Albums
-	ES	Examinar por Disco
+	ES	Examinar por Álbum
 	FI	Selaa levyittäin
 	FR	Parcourir les albums
 	JP	アルバムをブラウズする
@@ -8011,6 +8055,7 @@ RENAME_WARNING
 DELETE_WARNING
 	DE	Soll die Wiedergabeliste wirklich gelöscht werden? 
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
+	ES	Está seguro que quiere eliminar? Marque "Confirma eliminar" para eliminar la lista.
 	ZH_CN	您确定要删除吗？请选择《确定删除》来删除您的播放表。
 
 SCAN_WARNING
@@ -8973,11 +9018,13 @@ UPGRADE_COMPLETE
 CHECKVERSION_PROBLEM
 	DE	Beim Suchen nach einem SlimServer Update trat ein Problem auf. (Fehlercode %s)
 	EN	There was a problem while checking for updates to SlimServer. (Error code %s)
+	ES	Hubo un error al buscar actualizaciones para SlimServer. (Código de error %s)
 	ZH_CN	当与SlimServer查证韧件更新时出现错误。（Error code %s）
 
 CHECKVERSION_ERROR
 	DE	Beim Suchen nach einem SlimServer Update trat ein Fehler auf:
 	EN	There was an error while checking for updates to SlimServer:
+	ES	Hubo un error al buscar actualizaciones para SlimServer:
 	ZH_CN	与SlimServer查证韧间更新时出现错误：
 
 NEED_PATH
@@ -9172,7 +9219,7 @@ SEARCHFOR_ALBUM
 	DE	Suchen nach Album
 	DK	Søg efter Album
 	EN	Search For Album
-	ES	Buscar Disco
+	ES	Buscar Álbum
 	FI	Hae Levyn nimi
 	FR	Rechercher des albums
 	JP	アルバムを検索する
@@ -9187,7 +9234,7 @@ SEARCHFOR_ALBUMS
 	DE	Suchen nach Alben
 	DK	Søg efter Albums
 	EN	Search For Albums
-	ES	Buscar Discos
+	ES	Buscar Álbumes
 	FI	Hae Levyjen nimet
 	FR	Rechercher des albums
 	JP	アルバムを検索する
@@ -9198,7 +9245,7 @@ SEARCHFOR_ALBUMS
 	ZH_CN	搜查乐谱帖
 
 SEARCHFOR_ALBUMS_DBL
-	ES	Buscar discos
+	ES	Buscar álbumes
 	FR	Cherche albums
 
 SEARCHFOR_SONGS
@@ -9254,7 +9301,7 @@ SEARCH_FOR_ALBUMS
 	DE	Nach Alben suchen
 	DK	Søg efter albums
 	EN	Search For Albums
-	ES	Buscar por discos
+	ES	Buscar por álbumes
 	FI	Hae levyjä
 	FR	Rechercher des albums
 	JP	アルバムを検索する
@@ -9344,7 +9391,7 @@ ALBUMMATCHING
 	DE	Passendes Album
 	DK	Matchende albums
 	EN	Album matching
-	ES	Disco encontrado
+	ES	Álbum encontrado
 	FI	Levyt, jotka vastaavat hakua
 	FR	Album trouvé
 	JP	アルバム照合
@@ -9359,7 +9406,7 @@ ALBUMSMATCHING
 	DE	Passende Alben
 	DK	Matchende albums
 	EN	Albums matching
-	ES	Discos encontrados
+	ES	Álbumes encontrados
 	FI	Levyt, jotka vastaavat hakua
 	FR	Albums trouvés
 	JP	アルバム照合
@@ -9569,14 +9616,17 @@ MOODLOGIC_MOOD_6
 RADIO_TUNEIN
 	DE	Manuelle Radio Einwahl
 	EN	Radio Tune In
+	ES	Sintonizar Radio
 
 RADIO_TUNEIN_NOW
 	DE	Manuelle Radio Einwahl
 	EN	Tune In Now
+	ES	Sintonizar Ahora
 
 RADIO_TUNEIN_DESC
 	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Wiedergabeliste, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
+	ES	Si ya conoce la URL de la emisora que se quiere escuchar, ingrésela debajo y presione en el botón "Sintonizar". Se puede ingresar la URL tanto del stream de la radio (ej. http://62.49.59.50:8000) o el archivo de lista que apunta a ese stream (ej. http://www.hitzradio.com/hitzradio.pls).
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
@@ -9584,10 +9634,12 @@ RADIO_TUNEIN_RADIOURL
 RADIO_TUNEIN_CHOOSE
 	DE	Station wählen
 	EN	Tune In
+	ES	Sintonizar
 
 RADIO_TUNED_IN
 	DE	Die folgende Station wurde angewählt:
 	EN	Tuned into station:
+	ES	Estación sintonizada:
 
 HELP
 	CZ	Nápověda
@@ -10014,7 +10066,7 @@ INFORMATION_ALBUMS
 	CZ	Celkem alb
 	DE	Anzahl Alben
 	EN	Total Albums
-	ES	Total de Discos
+	ES	Total de Álbumes
 	FR	Albums
 	JP	アルバム数
 	NO	Totalt antall album
@@ -10078,14 +10130,17 @@ INFORMATION_VERSION
 
 INFORMATION_DIAGSTRING
 	EN	Version Info
+	ES	Info de Versión
 	ZH_CN	版本信息
 
 INFORMATION_HOSTNAME
 	EN	Hostname
+	ES	Nombre de Host
 	ZH_CN	主机名字
 
 INFORMATION_HOSTIP
 	EN	Host IP Address
+	ES	Dirección IP de Host
 	ZH_CN	主机IP地址
 
 INFORMATION_INSTALLED
@@ -10275,7 +10330,7 @@ FAVORITES_FAVORITE_NUM
 FAVORITES_RIGHT_TO_DELETE
 	DE	 (RECHTS zum löschen)
 	EN	 (RIGHT to delete)
-	ES	 (RIGHT para eliminar)
+	ES	(RIGHT para eliminar)
 	ZH_CN	 （删除按右方向键）
 
 FAVORITES_NOT_A_FAVORITE
@@ -10357,46 +10412,55 @@ SETUP_SCROLLMODE_NOSCROLL
 COMPILATION
 	DE	Sampler
 	EN	Compilation
+	ES	Compilación
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTS
 	DE	Sampler
 	EN	Compilations
+	ES	Compilaciones
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	DE	Sampler Alben
 	EN	Compilation Albums
+	ES	Álbumes Compilados
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	DE	Sie können Sampler (Alben mit mehreren Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder bei den einzelnen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
+	ES	Se puede elegir entre ubicar los álbumes  de compilaciones bajo "Varios Artistas" o ubicarles debajo de cada artista en la compilación.
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	DE	Sampler gruppiert auflisten
 	EN	Group compilation albums together
+	ES	Agrupar juntos los álbumes de compilaciones
 	ZH_CN	把合辑组合在一起
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	DE	Lieder aus Samplern den Interpreten zuordnen
 	EN	List compilation albums under each artist
+	ES	Listar álbumes de compilaciones debajo de cada artista
 	ZH_CN	把合辑发表在个别艺人中
 
 SETUP_VARIOUSARTISTSSTRING_DESC
 	DE	Wenn Sampler gruppiert aufgeführt werden, so sind sie per Voreinstellung unter "Diverse Interpreten" zu finden. Dieser Text kann hier geändert werden.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
+	ES	Cuando los álbumes compilados se agrupan juntos, aparecen bajo "Varios Artistas" por defecto. Se puede cambiar ese nombre debajo.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
 
 VARIOUSARTISTS
 	DE	Diverse Interpreten
 	EN	Various Artists
+	ES	Varios Artistas
 	ZH_CN	多位艺人
 
 ALBUMARTIST
 	DE	Album-Interpret
 	EN	Album Artist
+	ES	Artista del Álbum
 	ZH_CN	乐谱帖艺人
 
 UNSYNC
@@ -10407,51 +10471,65 @@ UNSYNC
 SETUP_USEBANDASALBUMARTIST_DESC
 	DE	Alben, die Lieder enthalten, die mit einem Band Tag (TPE2) versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Das Band Tag TPE2 kann in einigen Programmen auch unter der Bezeichnung "Album Artist" auftauchen.
 	EN	Albums that contain songs that are tagged with a band may be listed under that artist only or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
+	ES	Los álbumes que contienen canciones que estan marcadas ("tagged") con una banda pueden ser listados solo bajo el nombre de ese artista o junto a todos los artistas de ese álbum. El tag "band" es conocido también como TPE2 y puede aparecer como "album artist" en algún software.
 
 SETUP_USEBANDASALBUMARTIST_1
 	DE	Alben bei der Band aufführen
 	EN	List albums by band
+	ES	Listar álbumes por banda
 
 SETUP_USEBANDASALBUMARTIST_0
 	DE	Alben bei allen Interpreten des Albums aufführen
 	EN	List albums by all artists for that album
-	
+	ES	Listar álbumes con todos los artistas de ese álbum
+
 LYRICS
 	DE	Liedertexte
 	EN	Lyrics
+	ES	Letras
 
 SETUP_POWERONRESUME
 	DE	Startverhalten
 	EN	Power On Resume
+	ES	Power al reanudar
 
 SETUP_POWERONRESUME_DESC
 	DE	Sie können bestimmen, wie SlimServer Wiedergabelisten behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
 	EN	You can choose how your player should resume the current playlist when you press the POWER button to turn the player off and then again to turn it on again later.  This setting applies to this player and other players while they are synchonized to this player.
+	ES	Se puede elegir como debe comportarse el reproductor al retomar la lista de canciones actual cuando se presiona el boton de POWER para apagar el reproductor y se lo vuelve a presionar para encenderlo más tarde. Esta configuración se aplica a este reproductor y a otros reproductores que estén sincronizados con este.
 
 SETUP_POWERONRESUME_PAUSEOFF_NONEON
 	DE	Beim Ausschalten pausieren / Beim Einschalten nicht fortsetzen
 	EN	Pause at power off / Remain paused at power on
+	ES	Pausa al apagar / Seguir en Pausa al encender
 
 SETUP_POWERONRESUME_PAUSEOFF_PLAYON
 	DE	Beim Ausschalten pausieren / Beim Einschalten fortsetzen
 	EN	Pause at power off / Resume at power on
+	ES	Pausa al apagar / Volver a reproducir al encender
 
 SETUP_POWERONRESUME_STOPOFF_PLAYON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten neu starten
 	EN	Stop at power off / Restart song at power on
+	ES	Detener al apagar / Recomenzar la canción al encender
 
 SETUP_POWERONRESUME_STOPOFF_NONEON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten nicht neu starten
 	EN	Stop at power off / Remain stopped at power on
+	ES	Detener al apagar / Seguir detenido al encender
 
 SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten neu starten
 	EN	Stop at power off / Restart playlist at power on
+	ES	Detener al apagar / Reiniciar lista al encender
 
 SETUP_POWERONRESUME_STOPOFF_RESETON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten nicht neu starten
 	EN	Stop at power off / Reset playlist at power on
+	ES	Detener al apagar / Reset lista al encender
 
 ARTWORK
 	DE	Plattenhüllen
 	EN	Artwork
+	ES	Arte de tapa
+
