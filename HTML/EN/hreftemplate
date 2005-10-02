@@ -19,7 +19,7 @@ BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
 END;
 
 BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";target or 'status';"\">";img or clearString;"</a>"; 
+	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";$target or 'status';"\" >";img or saveString;"</a>"; 
 END;
 
 BLOCK thumbnailImg;
