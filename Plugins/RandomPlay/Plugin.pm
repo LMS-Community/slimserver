@@ -5,7 +5,7 @@ package Plugins::RandomPlay::Plugin;
 # Originally written by Kevin Deane-Freeman (slim-mail (A_t) deane-freeman.com).
 #
 # New world order by Dan Sully - <dan | at | slimdevices.com>
-# Further hacks by Max Spicer
+# Fairly substantial rewrite by Max Spicer
 
 # This code is derived from code with the following copyright message:
 #
@@ -20,15 +20,15 @@ use Slim::Buttons::Home;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my %functions    = ();
 my %stopcommands = ();
 # Random play type for each client
 my %type         = ();
 # Display text for each mix type
 my %displayText  = ();
-# Type selected using INPUT.List
-my %userType     = ();
+# Genres for each client (don't access this directly - use getGenres())
+my %genres       = ();
 my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
+my $ds = Slim::Music::Info::getCurrentDataStore();
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
@@ -36,7 +36,7 @@ sub getDisplayName {
 
 # Find tracks matching parameters and add them to the playlist
 sub findAndAdd {
-	my ($client, $ds, $type, $find, $limit, $addOnly) = @_;
+	my ($client, $type, $find, $limit, $addOnly) = @_;
 
 	$::d_plugins && msg("RandomPlay: Starting random selection of $limit items for type: $type\n");
 	
@@ -73,9 +73,9 @@ sub findAndAdd {
 	}	
 }
 
-# Returns a list of genres that should be used for random mixes
+# Returns a hash whose keys are the genres in the db
 sub getGenres {
-	my ($client, $ds) = @_;
+	my ($client) = @_;
 
 	# Should use genre.name in following find, but a bug in find() doesn't allow this	
    	my $items = $ds->find({
@@ -84,34 +84,62 @@ sub getGenres {
 	});
 	
 	# Extract each genre name into a hash
-	my %genres = ();
+	my %clientGenres = ();
 	foreach my $item (@$items) {
-		$genres{$item->name} = 1;
+		$clientGenres{$item->name} = 1;
 	}
 
 	# Init client pref - can't do with others in checkDefaults as need $client
 	if (! $client->prefIsDefined('plugin_random_exclude_genres')) {
+		$::d_plugins && msg("RandomPlay: Initing exclude pref\n");
 		$client->prefSet('plugin_random_exclude_genres', []);
 	}
 	my @exclude = $client->prefGetArray('plugin_random_exclude_genres');
 
-	# Remove excluded genres from genre list
-	foreach my $genre (@exclude) {
-		if ($genres{$genre}) {
-			$::d_plugins && msg("RandomPlay: excluding $genre from mixes\n");
-			delete $genres{$genre};
-		}
+	# Set excluded genres to 0 in genres hash
+	@clientGenres{@exclude} = (0) x @exclude;
+	$genres{$client} = {%clientGenres};
+
+	return %{$genres{$client}};
+}
+
+# Returns an array of the non-excluded genres in the db
+sub getFilteredGenres {
+	my ($client, $returnExcluded) = @_;
+	my %clientGenres;
+
+	# If $returnExcluded, just return the current state of excluded genres
+	if (! $returnExcluded) {
+		%clientGenres = getGenres($client);
+	} else {
+		%clientGenres = %{$genres{$client}};
 	}
 	
-	return keys %genres;
+	my @filteredGenres = ();
+	my @excludedGenres = ();
+
+	for my $genre (keys %clientGenres) {
+		if ($clientGenres{$genre}) {
+			push (@filteredGenres, $genre) unless $returnExcluded;
+		} else {
+			push (@excludedGenres, $genre) unless ! $returnExcluded;
+		}
+	}
+
+	if ($returnExcluded) {
+		return @excludedGenres;
+	} else {
+		return @filteredGenres;
+	}
 }
 
 sub getRandomYear {
-	my $ds = shift;
+	my $filteredGenresRef = shift;
 	
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
    	my $items = $ds->find({
 		'field'  => 'year',
+		'genre.name' => $filteredGenresRef,
 		'sortBy' => 'random',
 		'limit'  => 1,
 		'cache'  => 0,
@@ -167,11 +195,11 @@ sub playRandom {
 			$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
 								 string(sprintf('PLUGIN_RANDOM_%s', uc($type))));
 		}
-
-		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		
-		# Initialize find to only include user's selected genres
-		my $find = {'genre.name' => [getGenres($client, $ds)]};
+		# Initialize find to only include user's selected genres.  If they've deselected
+		# all genres, this clause will be ignored by find, so all genres will be used.
+		my @filteredGenres = getFilteredGenres($client);
+		my $find = {'genre.name' => \@filteredGenres};
 		
 		if ($type eq 'track' || $type eq 'year') {
 			# Find only tracks, not albums etc
@@ -182,13 +210,15 @@ sub playRandom {
 		# add another artist/album/year or the plugin would never add more when the first finished. 
 		for (my $i = 0; $i < 2; $i++) {
 			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1)) {
+				# Genre filters don't apply in year mode as I don't know how to restrict the
+				# random year to a genre.
 				if($type eq 'year') {
-					$find->{'year'} = getRandomYear($ds);
+					$find->{'year'} = getRandomYear(\@filteredGenres);
 				}
 				
 				# Get the tracks.  year is a special case as we do a find for all tracks that match
 				# the previously selected year
-				findAndAdd($client, $ds,
+				findAndAdd($client,
 				           $type eq 'year' ? 'track' : $type,
 				           $find,
 				           $type eq 'year' ? undef : $numItems,
@@ -226,24 +256,76 @@ sub playRandom {
 	}
 }
 
-# Returns the display text for the INPUT.List item for a mix type
+# Returns the display text for the currently selected item in the menu
 sub getDisplayText {
-	my ($client, $listItem) = @_;
+	my ($client, $item) = @_;
 	
 	if (! %displayText) {
 		%displayText = (
 			track  => 'PLUGIN_RANDOM_TRACK',
 			album  => 'PLUGIN_RANDOM_ALBUM',
 			artist => 'PLUGIN_RANDOM_ARTIST',
-			year   => 'PLUGIN_RANDOM_YEAR'
+			year   => 'PLUGIN_RANDOM_YEAR',
+			genreFilter => 'PLUGIN_RANDOM_GENRE_FILTER'
 		)
 	}	
 	
-	if ($listItem eq $type{$client}) {
-		return $displayText{$listItem} . '_STOP';
+	if ($item eq $type{$client}) {
+		return string($displayText{$item} . '_STOP');
 	} else {
-		return $displayText{$listItem};
+		return string($displayText{$item});
 	}
+}
+
+# Returns the overlay to be display next to items in the menu
+sub getOverlay {
+	my ($client, $item) = @_;
+
+	# Put the right arrow by genre filter and notesymbol by any mix that isn't playing
+	if ($item eq 'genreFilter') {
+		return [undef, Slim::Display::Display::symbol('rightarrow')];
+	} elsif ($item ne $type{$client}) {
+		return [undef, Slim::Display::Display::symbol('notesymbol')];
+	} else {
+		return [undef, undef];
+	}
+}
+
+# Returns the overlay for the select genres mode i.e. the checkbox state
+sub getGenreOverlay {
+	my ($client, $item) = @_;
+	
+	if($genres{$client}{$item}) {
+		return [undef, "[X]"];
+	} else {
+		return [undef, "[ ]"];
+	}
+}
+
+# Toggle the exclude state of a genre in the select genres mode
+sub toggleGenreState {
+	my ($client, $item) = @_;
+	
+	# Toggle the selected state of the current item
+	$genres{$client}{$item} = ! $genres{$client}{$item};
+	
+	$client->prefSet('plugin_random_exclude_genres', [getFilteredGenres($client, 1)]);
+	
+	$client->update();
+}
+
+# Do what's necessary when play or add button is pressed
+sub handlePlayOrAdd {
+	my ($client, $item, $add) = @_;
+	$::d_plugins && msgf("RandomPlay: %s %s\n", $add ? 'Add' : 'Play', $item);
+	
+	return if $item eq 'genreFilter';
+	
+	# If mode is already enabled, disable it
+	if ($item eq $type{$client}) {
+		$item = 'disable';
+	}
+	playRandom($client, $item, $add);
 }
 
 sub setMode {
@@ -255,17 +337,40 @@ sub setMode {
 		return;
 	}
 
-	# use INPUT.List to display the list of feeds
+	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header          => 'PLUGIN_RANDOM_PRESS_PLAY',
-		stringHeader    => 1,
-		listRef         => [qw(track album artist year)],
-		externRef       => \&getDisplayText,
-		stringExternRef => 1,
-		valueRef        => \$userType{$client},
+		header     => '{PLUGIN_RANDOM} {count}',
+		listRef    => [qw(track album artist year genreFilter)],
+		name       => \&getDisplayText,
+		overlayRef => \&getOverlay,
+		modeName   => 'RandomPlay',
+		onPlay     => sub {
+			my ($client, $item) = @_;
+			handlePlayOrAdd($client, $item, 0);		
+		},
+		onAdd      => sub {
+			my ($client, $item) = @_;
+			handlePlayOrAdd($client, $item, 1);
+		},
+		onRight    => sub {
+			my ($client, $item) = @_;
+			if ($item eq 'genreFilter') {
+				my %genreList = getGenres($client);
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
+					header     => '{PLUGIN_RANDOM_GENRE_FILTER} {count}',
+					listRef    => [sort keys %genreList],
+					modeName   => 'RandomPlayGenreFilter',
+					overlayRef => \&getGenreOverlay,
+					onRight    => \&toggleGenreState,
+				});
+			} else {
+				$client->bumpRight();
+			}
+		},
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
 sub commandCallback {
@@ -280,8 +385,10 @@ sub commandCallback {
 
 	if (!defined $client || !defined $type{$client}) {
 
-		$::d_plugins && msg("RandomPlay: No client!\n");
-		bt();
+		if ($::d_plugins) {
+			msg("RandomPlay: No client!\n");
+			bt();
+		}
 		return;
 	}
 	
@@ -322,48 +429,6 @@ sub commandCallback {
 }
 
 sub initPlugin {
-	%functions = (
-		'play' => sub {
-			my $client = shift;
-			my $newType = ${$client->param('valueRef')};
-			
-			# If mode is already enabled, disable it
-			if ($newType eq $type{$client}) {
-				$newType = 'disable';
-			}
-			playRandom($client, $newType, 0);
-		},
-		
-		'add' => sub {
-			my $client = shift;
-			my $newType = ${$client->param('valueRef')};
-			
-			# If mode is already enabled, disable it
-			if ($newType eq $type{$client}) {
-				$newType = 'disable';
-			}
-			playRandom($client, $newType, 1);
-		},
-
-		'tracks' => sub {
-			my $client = shift;
-
-			playRandom($client, 'track');
-		},
-
-		'albums' => sub {
-			my $client = shift;
-
-			playRandom($client, 'album');
-		},
-
-		'artists' => sub {
-			my $client = shift;
-
-			playRandom($client, 'artist');
-		},
-	);
-
 	# playlist commands that will stop random play
 	%stopcommands = (
 		'clear' => 1,
@@ -377,7 +442,32 @@ sub shutdownPlugin {
 }
 
 sub getFunctions {
-	return \%functions;
+	# Functions to allow mapping of mixes to keypresses
+	return {
+		'tracks' => sub {
+			my $client = shift;
+	
+			playRandom($client, 'track');
+		},
+	
+		'albums' => sub {
+			my $client = shift;
+	
+			playRandom($client, 'album');
+		},
+	
+		'artists' => sub {
+			my $client = shift;
+	
+			playRandom($client, 'artist');
+		},
+		
+		'year' => sub {
+			my $client = shift;
+	
+			playRandom($client, 'year');
+		},
+	}
 }
 
 sub webPages {
@@ -438,14 +528,14 @@ sub setupGroup {
 		'plugin_random_number_of_old_tracks' => {
 		
 			'validate' => sub {
-							my $val = shift;
-							# Treat any non-integer value as keep all old tracks
-							if ($val !~ /^\d+$/) {
+			                my $val = shift;
+			                # Treat any non-integer value as keep all old tracks
+			                if ($val !~ /^\d+$/) {
 								return '';
 							} else {
 								return $val;
 							}
-						}
+			              }
 		}
 	);
 	
@@ -461,7 +551,7 @@ sub checkDefaults {
 	
 	# Default to keeping all tracks
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_old_tracks')) {
-		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', '');
+		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
 	}	
 }
 
@@ -507,10 +597,9 @@ PLUGIN_RANDOM_YEAR_STOP
 	DE	Zufälligen Jahr Mix anhalten
 	EN	Stop Random Year Mix
 
-PLUGIN_RANDOM_PRESS_PLAY
-	DE	Zufälliger Mix
-	EN	Random Mix (Press PLAY or ADD to select)
-
+PLUGIN_RANDOM_GENRE_FILTER
+	EN	Select Genres To Include
+	
 PLUGIN_RANDOM_CHOOSE_DESC
 	DE	Wählen Sie eine Zufallsmix-Methode:
 	EN	Choose a random mix below:
