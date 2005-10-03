@@ -30,10 +30,13 @@ function resize(src,width)
 			width = window.innerWidth*0.95;
 		}
 	}
-
-	if (src.width > width )
+	
+	// only for NS6+ and other working browsers.
+	if (src.width > width)
 	{
-		fullsize = document.getElementById("fullsize");
+		if (document.all) {} else {
+			fullsize = document.getElementById("fullsize");
+		}
 		if (fullsize) {
 			fullsize.style.display = 'block';
 		}
