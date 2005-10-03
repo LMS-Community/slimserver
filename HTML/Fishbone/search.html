@@ -1,12 +1,13 @@
 [% pagetitle = "SEARCH" | string %]
-[% IF liveSearch %][% bodyscript = 'onload="document.searchForm.query.focus();"' %][% END %]
-<html>
-	<head>
-		[% PROCESS customheader.html %]
+[% bodyscript = 'onload="document.searchForm.query.focus();"' %]
+[% headScripts = BLOCK %]
 		<script type="text/javascript" src="/html/prototype.js"></script>
-	</head>
-	<body bgcolor="#FFFFFF" [% bodyscript %]">
-	<div class="list">	
+[% END %]
+[% pageHeaderMenu = BLOCK %]
+	&nbsp;/ <a href="search.html?player=[% player | uri %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+[% END %]
+[% PROCESS pageheader.html %]
+
 	[% IF liveSearch %]
 	<h3>Live Search</H3>
 	<center><form id="searchForm" name="searchForm" method="GET" action="search.html">
@@ -20,7 +21,8 @@
 	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 	[% IF searchlist_header %]<p>[% searchlist_header %][% "COLON" | string %]</p>[% END %]
 
-	[% IF numresults != '-1' && numresults != '0' %]<div class='list'><table cellpadding="0" cellspacing="0" border="0" width="100%">
+	[% IF numresults != '-1' && numresults != '0' %]
+	<table cellpadding="0" cellspacing="0" border="0" width="100%">
 	<tr>
 		<td class="listing">&nbsp;
 			[% "THIS_ENTIRE_PLAYLIST" | string %]
@@ -31,21 +33,18 @@
 		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' attributes='&listref=searchResults' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 		<td class="listing" width="11" align="center">&nbsp;</td>
 	</tr>
-	</table></div>
+	</table>
 	[% END %]
 	<div id="search-results"></div>
-
-		[% IF searchError %]
-			[% searchError %]
-		[% END %]
-		
-
-   <table border="0" cellspacing="0" cellpadding="0" width="100%">
-       [% browse_list %]
-    </table>
-    [% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
-</div>
-[% IF liveSearch; INCLUDE "search-observer.html"; END %]
-
-  </body>
+	[% IF searchError %]
+		[% searchError %]
+	[% END %]
+	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+		[% browse_list %]
+	</table>
+    
+	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
+	[% IF liveSearch; INCLUDE "search-observer.html"; END %]
+	</div>
+</body>
 </html>
