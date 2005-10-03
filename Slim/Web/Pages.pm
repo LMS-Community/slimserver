@@ -887,6 +887,10 @@ sub _fillInSearchResults {
 			my $sorted    = $item->can('titlesort') ? $item->titlesort() : $item->namesort();
 			my %list_form = %$params;
 
+			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
+			$list_form{'descend'}      = $descend;
+			$list_form{'odd'}          = ($itemnumber + 1) % 2;
+
 			if ($type eq 'track') {
 				
 				# if $ds is undefined here, make sure we have it now.
@@ -906,17 +910,16 @@ sub _fillInSearchResults {
 				&{$fieldInfo->{$type}->{'listItem'}}($ds, \%list_form, $itemObj, $itemname, 0);
 
 			} else {
-
+				if ($type eq 'artist') {
+					$list_form{'hierarchy'}	   = 'artist,album,track';
+					$list_form{'level'}        = 1;
+				} elsif ($type eq 'album') {
+					$list_form{'hierarchy'}	   = 'album,track';
+					$list_form{'level'}        = 1;				
+				}
+				
 				$list_form{'text'} = $title;
 			}
-
-			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
-			$list_form{'hierarchy'}	   = $hierarchy{$type};
-			$list_form{'level'}        = 0;
-			$list_form{'descend'}      = $descend;
-			$list_form{'player'}       = $player;
-			$list_form{'odd'}          = ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
 
 			$itemnumber++;
 

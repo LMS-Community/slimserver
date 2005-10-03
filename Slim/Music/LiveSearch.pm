@@ -139,7 +139,6 @@ sub outputAsXHTML {
 sub renderItem {
 	my ($rowType, $type, $item, $player) = @_;
 
-	my $hierarchy = $Slim::Web::Pages::hierarchy{$type} || '';
 	my $id = $item->id(),
 	my @xml = ();
 	
@@ -159,7 +158,7 @@ sub renderItem {
 		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist()) {
 
 			$artist = sprintf(
-				' %s <a href="browsedb.html?hierarchy=album,track&level=0&artist=%d">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=%d">%s</a>',
 				string('BY'), $item->artist->id(), $item->artist()
 			);
 		}
@@ -167,7 +166,7 @@ sub renderItem {
 		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album()) {
 
 			$album = sprintf(
-				' %s <a href="browsedb.html?hierarchy=track&level=0&album=%d">%s</a>',
+				' %s <a href="album,track&level=1&album=%d">%s</a>',
 				string('FROM'), $item->album->id(), $item->album()
 			);
 		}
@@ -182,8 +181,14 @@ sub renderItem {
 	}
 	
 	# We need to handle the different urls that are needed for different result types
-	my $url = ($type eq 'track') ? "songinfo.html?item=$id"
-		: "browsedb.html?hierarchy=$hierarchy\&amp;level=0\&amp;$type=$id";
+	my $url;
+	if ($type eq 'track') {
+	   $url = "songinfo.html?item=$id";
+	} elsif ($type eq 'album') {
+	   $url = "browsedb.html?hierarchy=album,track\&amp;level=1\&amp;album=$id";
+	} elsif ($type eq 'artist') {
+	   $url = "browsedb.html?hierarchy=artist,album,track\&amp;level=1\&amp;artist=$id";
+	}
 	
 	push @xml,"<tr>
 		<td width=\"100%\" class=\"$rowType\">
