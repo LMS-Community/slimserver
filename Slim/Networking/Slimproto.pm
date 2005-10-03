@@ -479,6 +479,10 @@ sub process_slimproto_frame {
 		if (defined($status{$client}->{'output_buffer_fullness'})) {
 			$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
 		}
+
+		$::perfmon && $client->bufferFullnessLog()->log($client->usage()*100);
+		$::perfmon && ($status{$client}->{'signal_strength'} <= 100) &&
+		    $client->signalStrengthLog()->log($status{$client}->{'signal_strength'});
 		
 		$::d_factorytest && msg("FACTORYTEST\tevent=stat\tmac=".$client->id."\tsignalstrength=$status{$client}->{'signal_strength'}\n");
 

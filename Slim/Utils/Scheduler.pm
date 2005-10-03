@@ -32,6 +32,8 @@ my $curtask = 0;            # the next task to run
 our @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
 my $lastpass = 0;
 
+our $schedulerPerf = Slim::Utils::PerfMon->new('Scheduler Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+
 #
 # add a task
 #
@@ -111,6 +113,8 @@ sub run_tasks {
 					
 		$::d_perf && msg("Ran tasks..\n");
 	}
+
+	$::perfmon && $schedulerPerf->log(Time::HiRes::time() - $now);
 		
 	return scalar(@background_tasks);
 }

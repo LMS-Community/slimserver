@@ -709,6 +709,8 @@ sub sendFrame {
 
 	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
 
+	$::perfmon && $client->slimprotoQLenLog()->log(Slim::Networking::Select::writeNoBlockQLen($client->tcpsock));
+
 	Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 }
 

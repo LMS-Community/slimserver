@@ -687,9 +687,9 @@ sub new {
 	$client->[73] = undef; # lastLetterIndex
 	$client->[74] = undef; # lastLetterDigit
 	$client->[75] = undef; # lastLetterTime
-	# $client->[76] = undef; # unused
-	# $client->[77] = undef; # unused
-	# $client->[78] = undef; # unused
+	$client->[76] = Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]);
+	$client->[77] = Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]);
+	$client->[78] = Slim::Utils::PerfMon->new("Slimproto QLen ($id)", [1, 2, 5, 10, 20]);
 	# $client->[79] = undef; # unused
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
@@ -1740,6 +1740,18 @@ sub lastLetterDigit {
 sub lastLetterTime {
 	my $r = shift;
 	@_ ? ($r->[75] = shift) : $r->[75];
+}
+sub signalStrengthLog {
+	my $r = shift;
+	@_ ? ($r->[76]->log(shift)) : $r->[76];
+}
+sub bufferFullnessLog {
+	my $r = shift;
+	@_ ? ($r->[77]->log(shift)) : $r->[77];
+}
+sub slimprotoQLenLog {
+	my $r = shift;
+	@_ ? ($r->[78]->log(shift)) : $r->[78];
 }
 sub syncSelection {
 	my $r = shift;

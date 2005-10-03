@@ -35,6 +35,9 @@ my $nextHigh;
   
 my $checkingNormalTimers = 0; # Semaphore to avoid normal timer callbacks executing inside each other
 my $checkingHighTimers = 0;   # Semaphore for high priority timers
+
+our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+our $timerLength = Slim::Utils::PerfMon->new('Timer Length', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
   
 #
 # Call any pending timers which have now elapsed.
@@ -95,11 +98,13 @@ sub checkTimers {
 		my $args = $timer->{'args'};
 	
 		$::d_time && msg("firing timer " . ($now - $timer->{'when'}) . " late.\n");
+		$::perfmon && $timerLate->log($now - $timer->{'when'});
 	
 		no strict 'refs';
 		&$subptr($client, @{$args});
 
 		$::d_perf && ((Time::HiRes::time() - $now) > 0.5) && msg("timer $subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
+		$::perfmon && $timerLength->log(Time::HiRes::time() - $now);
 
 	}
 

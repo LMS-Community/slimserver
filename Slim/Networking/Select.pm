@@ -36,6 +36,9 @@ our $readSelects  = IO::Select->new();
 our $writeSelects = IO::Select->new();
 our $errorSelects  = IO::Select->new();
 
+our $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $endSelectTime;
+
 sub addRead {
 	my $r = shift;
 	my $callback = shift;
@@ -100,8 +103,12 @@ sub addError {
 
 sub select {
 	my $select_time = shift;
+
+	$::perfmon && $endSelectTime && $selectPerf->log(Time::HiRes::time() - $endSelectTime);
 	
 	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,$errorSelects,$select_time);
+
+	$::perfmon && ($endSelectTime = Time::HiRes::time());
 
 	$::d_select && msg("select returns ($select_time): reads: " . 
 		(defined($r) && scalar(@$r)) . " of " . $readSelects->count .
