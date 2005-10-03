@@ -219,9 +219,10 @@ sub artScan {
 	my @albums = keys %artwork;
 	my $album  = $albums[0];
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	if (defined $album) {
 
-		my $ds     = Slim::Music::Info::getCurrentDataStore();
 		my $track  = $ds->objectForId('track', $artwork{$album}); 
 
 		# Make sure we have an object for the url, and it has a thumbnail.
