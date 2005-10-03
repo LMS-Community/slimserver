@@ -219,7 +219,7 @@ sub artScan {
 	my @albums = keys %artwork;
 	my $album  = $albums[0];
 
-	if ($album) {
+	if (defined $album) {
 
 		my $ds     = Slim::Music::Info::getCurrentDataStore();
 		my $track  = $ds->objectForId('track', $artwork{$album}); 
