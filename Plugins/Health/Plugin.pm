@@ -1,6 +1,6 @@
 # Plugin for Slimserver to monitor Server and Network Health
 
-$Id$
+# $Id$
 
 # This code is derived from code with the following copyright message:
 #
