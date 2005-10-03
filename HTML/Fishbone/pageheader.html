@@ -90,7 +90,7 @@
 		</td>
 		<td height="17" align="right">
 		<nobr>
-		<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+		<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 		<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
 		 / 

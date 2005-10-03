@@ -205,7 +205,7 @@
 				</nobr></td>
 			[% END %]
 		</table></div>
-		
+		<div class="list">
 		<table width="100%"><tr><td align="left">
 			[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]
 			[% IF current_playlist %][% current_playlist_name %]
@@ -215,6 +215,6 @@
 			[% PROCESS downloadPlaylistLink %] |
 			[% PROCESS clearPlaylistLink %]
 		</td>
-		</tr></table>
+		</tr></table></div>
 	[% IF not undock %]<script language="JavaScript">playlistResize(this.document);</script>[% END %]
 [% PROCESS pagefooter.html %]
