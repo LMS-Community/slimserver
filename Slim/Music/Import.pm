@@ -217,23 +217,30 @@ sub artwork {
 
 sub artScan {
 	my @albums = keys %artwork;
-	my $album  = $albums[0] || return 0;
+	my $album  = $albums[0];
 
-	my $ds     = Slim::Music::Info::getCurrentDataStore();
-	my $track  = $ds->objectForId('track', $artwork{$album}); 
+	if ($album) {
 
-	# Make sure we have an object for the url, and it has a thumbnail.
-	if ($track && $track->coverArt('thumb')) {
-		
-		$ds->setAlbumArtwork($track);
+		my $ds     = Slim::Music::Info::getCurrentDataStore();
+		my $track  = $ds->objectForId('track', $artwork{$album}); 
+
+		# Make sure we have an object for the url, and it has a thumbnail.
+		if ($track && $track->coverArt('thumb')) {
+			
+			$ds->setAlbumArtwork($track);
+		}
+
+		delete $artwork{$album};
 	}
 
-	delete $artwork{$album};
-
 	if (!%artwork) { 
+
 		$::d_artwork && msg("Completed Artwork Scan\n");
+
 		endImporter('artwork');
+
 		$ds->forceCommit();
+
 		return 0;
 	}
 
