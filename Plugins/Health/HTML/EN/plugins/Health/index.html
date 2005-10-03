@@ -1,0 +1,105 @@
+[% pagetitle = "PLUGIN_HEALTH" | string %]
+[% pageicon = 'settings' %]
+[% PROCESS pageheader.html %]
+
+<script language="JavaScript">
+
+function doLoad() {
+	setTimeout( "refresh()", [% refresh %] * 1000);
+}
+
+function refresh() {
+	window.location.replace("[% webroot %]plugins/Health/index.html?player=[% player | uri %]");
+}
+
+</script> 
+
+<body onload="doLoad()">
+
+<td></td><td>
+
+    <h3>[% "PLUGIN_HEALTH" | string %]</h3><p>
+
+    [% IF perfoff %]
+        <p>[% "PLUGIN_HEALTH_PERFOFF_DESC" | string %]
+	<p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=on">[% "PLUGIN_HEALTH_PERF_ENABLE" | string %]</a>
+    [% END %]
+
+    [% IF perfon %]
+        <p>[% "PLUGIN_HEALTH_PERFON_DESC" | string %]
+	<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a>
+        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=clear">[% "PLUGIN_HEALTH_PERF_CLEAR" | string %]</a>
+        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH_PERF_UPDATE" | string %]</a>
+
+        <p>
+        <hr>
+        [% IF playername %]<h4>[% playername %]</h4>
+            <p>[% "PLUGIN_HEALTH_SUMMARY_DESC" | string %]
+	[% END %]
+        [% IF summary %]<h5>[% "PLUGIN_HEALTH_SUMMARY" | string %]</h5> 
+            <pre>[% summary %]</pre>
+            <p>
+        [% END %]
+        [% IF summary_error %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
+            [% summary_error %]
+        [% ELSE %]
+	    [% IF playername %][% "PLUGIN_HEALTH_NORMAL" | string %]<p>[% END %]
+        [% END %]
+
+        <hr>
+        [% IF playername %]
+	    <h4>[% "PLUGIN_HEALTH_PLAYERDETAIL" | string %] : [% playername %]</h4>
+	    <p>[% "PLUGIN_HEALTH_PLAYERDETAIL_DESC" | string %]
+	    <p>
+	    [% IF signal %]
+                <h5>[% "PLUGIN_HEALTH_SIGNAL" | string %]</h5>
+	        [% "PLUGIN_HEALTH_SIGNAL_DESC" | string %]
+	        <pre>[% signal %]</pre>
+	    [% END %]
+
+	    [% IF buffer %]
+	        <h5>[% "PLUGIN_HEALTH_BUFFER" | string %]</h5>
+	        [% "PLUGIN_HEALTH_BUFFER_DESC" | string %]
+	        <pre>[% buffer %]</pre>
+	    [% END %]
+
+	    [% IF control %]
+	        <h5>[% "PLUGIN_HEALTH_CONTROL" | string %]</h5>
+	        [% "PLUGIN_HEALTH_CONTROL_DESC" | string %]
+	        <pre>[% control %]</pre>
+	    [% END %]
+
+            <hr>
+	[% END %]
+
+	<h4>[% "PLUGIN_HEALTH_SERVER_PERF" | string %]</h4>
+	[% "PLUGIN_HEALTH_SERVER_PERF_DESC" | string %]
+
+	[% IF response %]
+	   <h5>[% "PLUGIN_HEALTH_RESPONSE" | string %]</h5>
+	   [% "PLUGIN_HEALTH_RESPONSE_DESC" | string %]
+	   <pre>[% response %]</pre> 
+	[% END %]
+
+	[% IF timerlate %]
+	    <h5>[% "PLUGIN_HEALTH_TIMER_LATE" | string %]</h5>
+	    [% "PLUGIN_HEALTH_TIMER_LATE_DESC" | string %]
+	    <pre>[% timerlate %]</pre>
+	[% END %]
+
+	[% IF timerlength %]
+	    <h5>[% "PLUGIN_HEALTH_TIMER_LENGTH" | string %]</h5>
+	    [% "PLUGIN_HEALTH_TIMER_LENGTH_DESC" | string %]
+	    <pre>[% timerlength %]</pre>
+	[% END %]
+
+	[% IF scheduler %]
+	    <h5>[% "PLUGIN_HEALTH_SCHEDULER" | string %]</h5>
+	    [% "PLUGIN_HEALTH_SCHEDULER_DESC" | string %]
+	    <pre>[% scheduler %]</pre>
+	[% END %]
+
+	<p>
+    [% END %]
+</td>
+[% PROCESS pagefooter.html %]
