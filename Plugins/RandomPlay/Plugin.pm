@@ -137,15 +137,19 @@ sub getRandomYear {
 	my $filteredGenresRef = shift;
 	
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
+
    	my $items = $ds->find({
 		'field'  => 'year',
-		'genre.name' => $filteredGenresRef,
+		'find'   => {
+			'genre.name' => $filteredGenresRef,
+		},
 		'sortBy' => 'random',
 		'limit'  => 1,
 		'cache'  => 0,
 	});
 	
 	$::d_plugins && msgf("RandomPlay: Selected year %s\n", @$items[0]);
+
 	return @$items[0];	
 }
 
