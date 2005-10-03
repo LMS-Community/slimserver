@@ -199,6 +199,7 @@ if (!$@) {
 }
 
 use Slim::Utils::Misc;
+use Slim::Utils::PerfMon;
 use Slim::Display::Animation;
 use Slim::Display::Display;
 use Slim::Hardware::VFD;
@@ -347,6 +348,7 @@ use vars qw(
 	$noScan
 	$stdio
 	$stop
+	$perfmon
 );
 
 sub init {
@@ -719,6 +721,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --noscan         => Don't scan the music library.
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
+    --perfmon        => Enable internal server performance monitoring
 
 The following are debugging flags which will print various information 
 to the console via stderr:
@@ -863,6 +866,7 @@ sub initOptions {
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
 		'd_filehandle'		=> \$d_filehandle,
+		'perfmon'		=> \$perfmon,
 	)) {
 		showUsage();
 		exit(1);
