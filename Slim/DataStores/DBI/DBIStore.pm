@@ -1322,11 +1322,6 @@ sub _preCheckAttributes {
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
 	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
 
-	# Only pass this along if we're creating > 1 albums
-	unless (Slim::Utils::Prefs::get('groupdiscs')) {
-		$deferredAttributes->{'DISC'} = $attributes->{'DISC'};
-	}
-
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
 	}
@@ -1357,7 +1352,7 @@ sub _preCheckAttributes {
 	# Push these back until we have a Track object.
 	for my $tag (qw(
 		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
-		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION
+		PIC APIC ALBUM ALBUMSORT DISC DISCC ALBUMARTIST COMPILATION
 		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID
 		MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
