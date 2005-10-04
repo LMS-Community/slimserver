@@ -34,7 +34,7 @@
 	function doSearch(value)
 	{
 		selectLink()
-		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=[% player %]';
+		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=' + getPlayer('SlimServer-player');
 	}
 	
 	function chooseBrowser(value,option)
