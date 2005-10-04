@@ -15,7 +15,8 @@
 		[% FOREACH link = links %]
 		case "[% link.key %]":
 			url = "[% link.value %]"
-			suffix = "&page=[% link.key %]"
+			page = "[% link.key %]"
+			suffix = "page=" + page
 			[% IF cookie %]homestring = "[% link.key | string %]"
 			cookie = [% cookie %][% END %]
 		break
@@ -50,32 +51,36 @@
 			[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
 		case "RADIO_TUNEIN":
 			url = "tunein.html"
-			suffix = "?page=RADIO_TUNEIN"
+			page = "RADIO_TUNEIN"
+			suffix = "?page=" + page
 		break
 		case "SERVER_SETTINGS":
 			url = "[% webroot %]setup.html?page=server"
-			suffix = "&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]"
+			page = "server"
+			suffix = "[% IF nofolder %]&nofolder=1[% END %]"
 		break
 		case "PLAYER_SETTINGS":
 			url = "[% webroot %]setup.html?page=player"
-			suffix = "&player=[% player | uri %]&playerid=[% player | uri %]"
+			page="player"
+			suffix = "&playerid=[% player | uri %]"
 		}
 
 		if (option) {
 			if (cookie) {
 				setCookie("SlimServer-Browserpage",url + suffix);
+				parent.header.location =  "home.html?page=" + page + '&player=' + getPlayer('SlimServer-player');
 			}
-			parent.browser.location = url + suffix + '&player=[% player | uri %]';
+			parent.browser.location = url + suffix + '&player=' + getPlayer('SlimServer-player');
 		}
 	}
 	
-	function homelink() {
+	[% IF home %]function homelink() {
 		if (homestring) {
 			document.getElementById('homelink').innerHTML = homestring;
 		} [% IF page %] else {
 			document.getElementById('homelink').innerHTML = '[% page | string %]';
 		}[% END %]
-	}
+	}[% END %]
 	
 	-->
 	</script>
@@ -90,7 +95,7 @@
 		</td>
 		<td height="17" align="right">
 		<nobr>
-		<a id="homelink" onload="style.fontWeight='bold'" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="setLink(this,'[% player | uri %]');homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 		<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
 		 / 

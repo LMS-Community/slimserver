@@ -45,6 +45,4 @@
     
 	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 	[% IF liveSearch; INCLUDE "search-observer.html"; END %]
-	</div>
-</body>
-</html>
+[% PROCESS pagefooter.html %]
