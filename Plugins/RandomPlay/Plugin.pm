@@ -70,7 +70,10 @@ sub findAndAdd {
 				$client->execute(['playlist', 'addtracks', 'listRef', $items]);
 			}
 		}
-	}	
+		return $string;
+	} else {
+		return undef;
+	}
 }
 
 # Returns a hash whose keys are the genres in the db
@@ -194,12 +197,6 @@ sub playRandom {
 		}
 		Slim::Player::Playlist::shuffle($client, 0);
 		
-		if ($type ne 'disable' && $type ne $type{$client}) {
-			$::d_plugins && msg("RandomPlay: doing showBriefly\n");
-			$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-								 string(sprintf('PLUGIN_RANDOM_%s', uc($type))));
-		}
-		
 		# Initialize find to only include user's selected genres.  If they've deselected
 		# all genres, this clause will be ignored by find, so all genres will be used.
 		my @filteredGenres = getFilteredGenres($client);
@@ -209,6 +206,14 @@ sub playRandom {
 			# Find only tracks, not albums etc
 			$find->{'audio'} = 1;
 		}
+		
+		# String to show with showBriefly
+		my $string = '';
+		if ($type ne 'track') {
+			$string = $client->string('PLUGIN_RANDOM_' . $type . '_ITEM') . ': ';
+		}
+		my $showTime = 4;		
+		
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
 		# add another artist/album/year or the plugin would never add more when the first finished. 
@@ -216,24 +221,45 @@ sub playRandom {
 			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1)) {
 				# Genre filters don't apply in year mode as I don't know how to restrict the
 				# random year to a genre.
+				my $year;
 				if($type eq 'year') {
-					$find->{'year'} = getRandomYear(\@filteredGenres);
+					$year = getRandomYear(\@filteredGenres);
+					$find->{'year'} = $year;
 				}
 				
+				if ($i == 1) {
+					$string .= ' // ';
+					$showTime *= 2;
+				}
 				# Get the tracks.  year is a special case as we do a find for all tracks that match
 				# the previously selected year
-				findAndAdd($client,
-				           $type eq 'year' ? 'track' : $type,
-				           $find,
-				           $type eq 'year' ? undef : $numItems,
-				           # 2nd time round just add tracks to end
-						   $i == 0 ? $addOnly : 1);
+				my $findString = findAndAdd($client,
+				                            $type eq 'year' ? 'track' : $type,
+				                            $find,
+				                            $type eq 'year' ? undef : $numItems,
+								            # 2nd time round just add tracks to end
+										    $i == 0 ? $addOnly : 1);
+				if ($type eq 'year') {
+					$string .= $year;
+				} else {
+					$string .= $findString;
+				}
 			}
 		}
 
-		# Set the Now Playing title.
-		$client->currentPlaylist($client->string('PLUGIN_RANDOM_'.uc($type)));
+		# Do a show briefly the first time things are added, or every time a new album/artist/year
+		# is added
+		if ($type ne $type{$client} || $type ne 'track') {
+			if ($type eq 'track') {
+				$string = $client->string("PLUGIN_RANDOM_TRACK");
+			}
+			$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
+								 $string, $showTime);
+		}
 
+		# Set the Now Playing title.
+		$client->currentPlaylist($client->string('PLUGIN_RANDOM_' . uc($type)));
+		
 		# Never show random as modified, since its a living playlist
 		$client->currentPlaylistModified(0);		
 
@@ -275,7 +301,7 @@ sub getDisplayText {
 	}	
 	
 	if ($item eq $type{$client}) {
-		return string($displayText{$item} . '_STOP');
+		return string($displayText{$item} . '_PLAYING');
 	} else {
 		return string($displayText{$item});
 	}
@@ -300,9 +326,9 @@ sub getGenreOverlay {
 	my ($client, $item) = @_;
 	
 	if($genres{$client}{$item}) {
-		return [undef, "[X]"];
+		return [undef, '[X]'];
 	} else {
-		return [undef, "[ ]"];
+		return [undef, '[ ]'];
 	}
 }
 
@@ -323,13 +349,10 @@ sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
 	$::d_plugins && msgf("RandomPlay: %s %s\n", $add ? 'Add' : 'Play', $item);
 	
-	return if $item eq 'genreFilter';
-	
-	# If mode is already enabled, disable it
-	if ($item eq $type{$client}) {
-		$item = 'disable';
+	# Don't play/add for genre filter or a mix that's already enabled
+	if ($item ne 'genreFilter' && $item ne $type{$client}) {	
+		playRandom($client, $item, $add);
 	}
-	playRandom($client, $item, $add);
 }
 
 sub setMode {
@@ -374,7 +397,7 @@ sub setMode {
 		},
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
 sub commandCallback {
@@ -549,7 +572,8 @@ sub setupGroup {
 }
 
 sub checkDefaults {
-	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_tracks')) {
+	my $prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+	if (! defined $prefVal || $prefVal eq '') {
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
 	}
 	
@@ -571,37 +595,41 @@ PLUGIN_RANDOM_DISABLED
 	EN	Random Mix Stopped
 
 PLUGIN_RANDOM_TRACK
-	DE	Zufälliger Lieder Mix
-	EN	Random Songs Mix
+	EN	Random Song Mix
 
-PLUGIN_RANDOM_TRACK_STOP
-	DE	Zufälligen Lieder Mix anhalten
-	EN	Stop Random Songs Mix
+PLUGIN_RANDOM_TRACK_PLAYING
+	EN	Playing Random Songs
 
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
 	ES	Mezcla al azar por Álbum
 
-PLUGIN_RANDOM_ALBUM_STOP
-	DE	Zufälligen Album Mix anhalten
-	EN	Stop Random Album Mix
+PLUGIN_RANDOM_ALBUM_ITEM
+	EN	Random Album
+
+PLUGIN_RANDOM_ALBUM_PLAYING
+	EN	Playing Random Albums
 
 PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
 
-PLUGIN_RANDOM_ARTIST_STOP
-	DE	Zufälligen Interpreten Mix anhalten
-	EN	Stop Random Artist Mix
+PLUGIN_RANDOM_ARTIST_ITEM
+	EN	Random Artist
+
+PLUGIN_RANDOM_ARTIST_PLAYING
+	EN	Playing Random Artists
 
 PLUGIN_RANDOM_YEAR
 	DE	Zufälliger Jahr Mix
 	EN	Random Year Mix
 
-PLUGIN_RANDOM_YEAR_STOP
-	DE	Zufälligen Jahr Mix anhalten
-	EN	Stop Random Year Mix
+PLUGIN_RANDOM_YEAR_ITEM
+	EN	Random Year
+
+PLUGIN_RANDOM_YEAR_PLAYING
+	EN	Playing Random Years
 
 PLUGIN_RANDOM_GENRE_FILTER
 	EN	Select Genres To Include
