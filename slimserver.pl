@@ -562,7 +562,7 @@ sub main {
 	init();
 	
 	if ($scanOnly) {
-		while (!scanOnlyIdle()) {};
+		while (scanOnlyIdle()) {};
 		# no need to do explicit cleanup
 		exit;
 	} else {
