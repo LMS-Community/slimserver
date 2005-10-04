@@ -97,6 +97,8 @@ sub summary {
 			}			
 			$summary .= sprintf "%-22s : %s\n", string('PLUGIN_HEALTH_BUFFER'), $buffer;
 		}
+	} elsif (defined($client) && $client->isa("Slim::Player::SLIMP3")) {
+		$error .= string("PLUGIN_HEALTH_SLIMP3_DESC");
 	} else {
 		$error .= string("PLUGIN_HEALTH_NO_PLAYER_DESC");
 	}
@@ -324,6 +326,9 @@ PLUGIN_HEALTH_NORMAL
 
 PLUGIN_HEALTH_NO_PLAYER_DESC
 	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.<p>
+
+PLUGIN_HEALTH_SLIMP3_DESC
+	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.<p>
 
 '
 }
