@@ -128,7 +128,7 @@ sub setMode {
 				url => $item->{'value'},
 				title => $item->{'name'},
 			);
-			Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
+			Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
 		},
 		onPlay => sub {
 			my $client = shift;
@@ -150,7 +150,7 @@ sub setMode {
 		],
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
 # this will undoubtably change.

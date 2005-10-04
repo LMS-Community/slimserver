@@ -57,7 +57,7 @@ sub setMode {
 			header => "{PODCAST_ERROR} {count}",
 			listRef => \@lines,
 		);
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+		Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 	} else {
 
 		getFeedAsync($client, $url);
@@ -105,10 +105,8 @@ sub gotFeed {
 	} elsif ($feed->{'type'} eq 'opml') {
 		gotOPML($client, $url, $feed);
 	} else {
-		msg("Podcast Browser: Unknown feed type for $url\n");
+		$client->update();
 	}
-
-	$client->update();
 }
 
 sub gotRSS {
@@ -203,7 +201,7 @@ sub gotRSS {
 		},
 
 	);
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
 # use INPUT.Choice to display an OPML list of links. OPML support added
@@ -231,7 +229,7 @@ sub gotOPML {
 					url => $item->{'url'},
 					title => $item->{'name'},
 				);
-				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
+				Slim::Buttons::Common::pushMode($client, 'podcastbrowser',
 													\%params);
 			} elsif ($item->{'items'}) {
 				#recurse into OPML item
@@ -243,7 +241,7 @@ sub gotOPML {
 		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
 	);
 
-	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
 #recusively browse OPML outline
@@ -268,7 +266,7 @@ sub browseOPML {
 					url => $item->{'value'},
 					title => $item->{'name'},
 				);
-				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser',
+				Slim::Buttons::Common::pushMode($client, 'podcastbrowser',
 													\%params);
 			} elsif ($item->{'items'}) {
 				#recurse into OPML item
@@ -415,7 +413,7 @@ sub displayItemDescription {
 			},
 		);
 
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+		Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 	}
 }
 

@@ -343,6 +343,9 @@ sub process_slimproto_frame {
 		$sock2client{$s}=$client;
 		
 		if ($client->needsUpgrade()) {
+			# ask for an update if the player will do it automatically
+			$client->sendFrame('ureq');
+			
 			$client->brightness($client->maxBrightness());
 			
 			$client->block( {

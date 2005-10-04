@@ -466,79 +466,60 @@ sub init {
 	$::d_server && msg("SlimServer Setup init...\n");
 	Slim::Web::Setup::initSetup();
 
-	# If we're only scanning, just do that. 
-	if ($scanOnly) {
-		msg("Will only scan music library, then exit!\n");
-
-		Slim::Music::Info::init();
-
-		Slim::Music::MusicFolderScan::init();
-		Slim::Music::PlaylistFolderScan::init();
-
-		Slim::Buttons::Plugins::init();
-
-		checkDataSource();
-
-		# Run the scanner - but don't kill the CPU.
-		while (Slim::Music::Import::stillScanning()) {
-			Slim::Utils::Timers::checkTimers();
-			Slim::Utils::Scheduler::run_tasks();
+# initialize all player UI subsystems (if it's not just a scan process)
+	if (!$scanOnly) {
+		$::d_server && msg("SlimServer setting language...\n");
+		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+	
+		$::d_server && msg("SlimServer IR init...\n");
+		Slim::Hardware::IR::init();
+		
+		$::d_server && msg("SlimServer Buttons init...\n");
+		Slim::Buttons::Common::init();
+	
+		$::d_server && msg("SlimServer Graphics init...\n");
+		Slim::Display::Graphics::init();
+	
+		if ($stdio) {
+			$::d_server && msg("SlimServer Stdio init...\n");
+			Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 		}
-
-		exit;
+	
+		$::d_server && msg("Old SLIMP3 Protocol init...\n");
+		Slim::Networking::Protocol::init();
+	
+		$::d_server && msg("Slimproto Init...\n");
+		Slim::Networking::Slimproto::init();
+	
+		$::d_server && msg("mDNS init...\n");
+		Slim::Networking::mDNS->init;
+	
+		$::d_server && msg("SlimServer HTTP init...\n");
+		Slim::Web::HTTP::init();
+	
+		$::d_server && msg("SlimServer CLI init...\n");
+		Slim::Control::CLI::init();
+	
+		if (Slim::Utils::Prefs::get('xplsupport')) {
+			$::d_server && msg("SlimServer xPL init...\n");
+	
+			eval "use Slim::Control::xPL";
+	
+			if ($@) {
+				msg("Problem initializing xPL support: [$@]\n");
+				msg("Trying to continue..\n");
+			} else {
+				Slim::Control::xPL::init();
+			}
+		}
+	
+		$::d_server && msg("mDNS startAdvertising...\n");
+		Slim::Networking::mDNS->startAdvertising;
+	
+		$::d_server && msg("Source conversion init..\n");
+		Slim::Player::Source::init();
 	}
 	
-	$::d_server && msg("SlimServer setting language...\n");
-	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
-
-	$::d_server && msg("SlimServer IR init...\n");
-	Slim::Hardware::IR::init();
-	
-	$::d_server && msg("SlimServer Buttons init...\n");
-	Slim::Buttons::Common::init();
-
-	$::d_server && msg("SlimServer Graphics init...\n");
-	Slim::Display::Graphics::init();
-
-	if ($stdio) {
-		$::d_server && msg("SlimServer Stdio init...\n");
-		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
-	}
-
-	if (Slim::Utils::Prefs::get('xplsupport')) {
-		$::d_server && msg("SlimServer xPL init...\n");
-
-		eval "use Slim::Control::xPL";
-
-		if ($@) {
-			msg("Problem initializing xPL support: [$@]\n");
-			msg("Trying to continue..\n");
-		} else {
-			Slim::Control::xPL::init();
-		}
-	}
-
-	$::d_server && msg("Old SLIMP3 Protocol init...\n");
-	Slim::Networking::Protocol::init();
-
-	$::d_server && msg("Slimproto Init...\n");
-	Slim::Networking::Slimproto::init();
-
-	$::d_server && msg("mDNS init...\n");
-	Slim::Networking::mDNS->init;
-
-	$::d_server && msg("SlimServer HTTP init...\n");
-	Slim::Web::HTTP::init();
-
-	$::d_server && msg("SlimServer CLI init...\n");
-	Slim::Control::CLI::init();
-
-	$::d_server && msg("mDNS startAdvertising...\n");
-	Slim::Networking::mDNS->startAdvertising;
-
-	$::d_server && msg("Source conversion init..\n");
-	Slim::Player::Source::init();
-
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
 
@@ -554,19 +535,32 @@ sub init {
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
 	
-	$::d_server && msg("SlimServer persist playlists...\n");
-	if (Slim::Utils::Prefs::get('persistPlaylists')) {
-		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+# If we're only scanning, just do that. 
+	if ($scanOnly) {
+		msg("Will only scan music library, then exit!\n");
+		# Run the scanner - but don't kill the CPU.
+		while () {
+		}
+
+		exit;
+	}
+
+# regular server has a couple more initial operations.
+	if (!$scanOnly) {
+		$::d_server && msg("SlimServer persist playlists...\n");
+		if (Slim::Utils::Prefs::get('persistPlaylists')) {
+			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+		}
+
+		checkVersion();
+		keepSlimServerInMemory();
 	}
 	
+# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
 	$loopcount = 0;
 	$loopsecond = int($lastlooptime);
-	
-	checkVersion();
-
-	keepSlimServerInMemory();
-	
+			
 	$::d_server && msg("SlimServer done init...\n");
 }
 
@@ -577,9 +571,22 @@ sub main {
 	# all other initialization
 	init();
 	
-	while (!idle()) {}
+	if ($scanOnly) {
+		while (!scanOnlyIdle()) {};
+		# no need to do explicit cleanup
+		exit;
+	} else {
+		while (!idle()) {}
+	}
 	
 	stopServer();
+}
+
+sub scanOnlyIdle {
+	Slim::Utils::Timers::checkTimers();
+	Slim::Utils::Scheduler::run_tasks();
+
+	return Slim::Music::Import::stillScanning();
 }
 
 sub idle {
