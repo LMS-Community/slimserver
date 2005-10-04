@@ -23,7 +23,7 @@ function to_currentsong() {
 }
 
 function refresh() {
-	window.location.replace("[% statusroot %].html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
+	window.location.replace("[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
 }
 [% END %]
 
