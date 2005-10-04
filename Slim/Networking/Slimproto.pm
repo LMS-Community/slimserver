@@ -483,7 +483,7 @@ sub process_slimproto_frame {
 			$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
 		}
 
-		$::perfmon && $client->bufferFullnessLog()->log($client->usage()*100);
+		$::perfmon && ($client->playmode() eq 'play') && $client->bufferFullnessLog()->log($client->usage()*100);
 		$::perfmon && ($status{$client}->{'signal_strength'} <= 100) &&
 		    $client->signalStrengthLog()->log($status{$client}->{'signal_strength'});
 		
