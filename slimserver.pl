@@ -534,16 +534,6 @@ sub init {
 
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
-	
-# If we're only scanning, just do that. 
-	if ($scanOnly) {
-		msg("Will only scan music library, then exit!\n");
-		# Run the scanner - but don't kill the CPU.
-		while () {
-		}
-
-		exit;
-	}
 
 # regular server has a couple more initial operations.
 	if (!$scanOnly) {
