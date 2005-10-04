@@ -1,5 +1,5 @@
 [% pagetitle = "PLUGIN_HEALTH" | string %]
-[% pageicon = 'settings' %]
+[% pageicon = 'help' %]
 [% PROCESS pageheader.html %]
 
 <script language="JavaScript">
@@ -17,6 +17,8 @@ function refresh() {
 <body onload="doLoad()">
 
 <td></td><td>
+
+<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH" | string %]</a></p>
 
     <h3>[% "PLUGIN_HEALTH" | string %]</h3><p>
 
