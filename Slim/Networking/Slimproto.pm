@@ -463,8 +463,8 @@ sub process_slimproto_frame {
 		
 		$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 		
-		if ($client->revision() < 20 && $client->revision() > 0 &&
-		    $client->model() ne 'squeezebox2') {
+		if ($client->model() ne 'squeezebox2' && $client->model() ne 'softsqueeze' && 
+		    $client->revision() < 20 && $client->revision() > 0) {
 			$client->bufferSize(262144);
 			$status{$client}->{'rptr'} = $fullnessA;
 			$status{$client}->{'wptr'} = $fullnessB;
