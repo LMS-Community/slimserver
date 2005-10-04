@@ -61,7 +61,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;undock=[% undock %]">
+	[% IF undock %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;undock=[% undock %]">[% END %]
 	[% PROCESS customheader.html %]
 	[% IF playercount == '0' %]<script language="JavaScript">
 		<!--Hide
@@ -71,7 +71,7 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkSetup();[% IF not undock %]checkReload();playlistResize(this.document);[% END %]" onresize="javascript:playlistResize(this.document);">
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkSetup();[% IF not undock %]doLoad();playlistResize(this.document);[% END %]" onresize="javascript:playlistResize(this.document);">
 	<div ID="header">
 		<div class="masthead">
 			<table  width="100%" height="15" bordercolor="#111111">

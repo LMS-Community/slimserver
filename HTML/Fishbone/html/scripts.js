@@ -1,10 +1,4 @@
 var p = 1;
-function to_currentsong(num) {
-	if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
-		window.location.hash = 'currentsong';
-	}
-}
-
 function switchPlayer(player_List){
 	var newPlayer = player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
@@ -25,51 +19,11 @@ function newHref(doc,plyr) {
 	}
 }
 
-function resize(src,width)
-{
-	if (!width) {
-		// special case for IE (argh)
-		if (document.all) //if IE 4+
-		{
-			width = document.body.clientWidth*0.95;
-		}
-		else if (document.getElementById) //else if NS6+
-		{
-			width = window.innerWidth*0.95;
-		}
-	}
-	
-	// only for NS6+ and other working browsers.
-	if (src.width > width)
-	{
-		if (document.all) {} else {
-			fullsize = document.getElementById("fullsize");
-		}
-		if (fullsize) {
-			fullsize.style.display = 'block';
-		}
-		src.width = width;
-	}
-}
-
 function checkSetup(doc)
 {
 	if (!top.document.getElementById('home')) {
 		//document.getElementById('setup').display = 'none';
 	}
-}
-
-function checkReload()
-{
-	if (parent.playlist.location != '') parent.playlist.location.reload(false);
-
-		// Putting a time-dependant string in the URL seems to be the only way to make Safari
-		// refresh properly. Stitching it together as below is needed to put the salt before
-		// the hash (#currentsong).
-		var plloc = top.frames.playlist.location;
-		var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-			+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
-		plloc.replace(newloc);
 }
 
 function playlistResize(page) {

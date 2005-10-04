@@ -1,44 +1,6 @@
 <html>
 <head>
 	[% PROCESS standardheader.html %]
-
-	<script language="JavaScript">
-	<!-- Start Hiding the Script
-
-	function resize(src,width)
-	{
-		if (!width) {
-			// special case for IE (argh)
-			if (document.all) //if IE 4+
-			{
-				width = document.body.clientWidth*0.95;
-			}
-			else if (document.getElementById) //else if NS6+
-			{
-				width = window.innerWidth*0.95;
-			}
-		}
-	
-		if (src.width > width )
-		{
-			src.width = width;
-		}
-	}
-	[% IF warn %]
-
-		
-		function doLoad() {
-			setTimeout( "refresh()", 300*1000);
-		}
-	
-		function refresh() {
-			window.location.replace("home.html?player=[% player | uri %]");
-		}
-	[% END %]	
-		// Stop Hiding script --->
-		</script>
-
-
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
 	<table cellspacing="0" width="100%">

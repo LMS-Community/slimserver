@@ -4,48 +4,11 @@
 <html>
 <head>
 
-	[% pagetitle = "SQUEEZEBOX_MUSIC_PLAYER" | string %]
-	[% IF player_name; name = player_name | html; END -%]
-	[% pagetitle = pagetitle _ ' ' _ name %]
-	[% PROCESS standardheader.html %]
- 	<script language="JavaScript">
-	<!-- Start Hiding the Script
-
-function doLoad() {
-
-	setTimeout( "refresh()", [% refresh %]*1000);
-
-	if (parent.playlist.location != '') {
-		// Putting a time-dependant string in the URL seems to be the only way to make Safari
-		// refresh properly. Stitching it together as below is needed to put the salt before
-		// the hash (#currentsong).
-		var plloc = top.frames.playlist.location;
-		var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-			+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
-		plloc.replace(newloc);
-	}
-}
-
-function refresh() {
-	window.location.replace("status_header.html?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
-}
-
-function switchPlayer(player_List) {
-
-	var newPlayer = player_List.options[player_List.selectedIndex].value;
-
-	for (var i = 0; i < top.frames.length; i++) {
-
-		var myString = new String(top.frames[i].location);
-		var rString  = newPlayer;
-		var rExp     = /(\w\w(:|%3A)){5}(\w\w)/gi;
-
-		top.frames[i].location = myString.replace(rExp, rString);
-	}
-}
-
-// Stop Hiding script --->
-	</script> 
+[% pagetitle = "SQUEEZEBOX_MUSIC_PLAYER" | string %]
+[% IF player_name; name = player_name | html; END -%]
+[% pagetitle = pagetitle _ ' ' _ name %]
+[% PROCESS standardheader.html %]
+ 
 </head>
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="doLoad();">
 	<table width="100%" cellspacing="0">
