@@ -1,9 +1,4 @@
-<html>
-  <head>
-    [% PROCESS customheader.html %]
-  </head>
-  <body bgcolor="#FFFFFF">
-    <p></p>
+[% PROCESS pageheader.html %]
     <h3>[% "EDIT_PLAYLIST" | string %]</h3>
     [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
     <p></p>
@@ -42,6 +37,5 @@
             [% END %]
       </table>
     </p>
-  </body>
-</html>
+[% pagefooter.html %]
 
