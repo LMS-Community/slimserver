@@ -40,8 +40,6 @@ TD, P, A {
 }
 
 TABLE,TBODY {
-	border-collapse: collapse;
-	border-style: hidden;
 	border-spacing: 0px;
 	padding: 0px;
 	margin: 0px;
@@ -87,14 +85,6 @@ TH {
     font-weight : bold;	
 }
 
-.odd {
-    background : #444444;
-}
-
-.even {
-    background : #ffcc66;
-}
-
 A:link, A:visited {
     color : #cc0000;
 }
@@ -106,6 +96,9 @@ A:hover, A:selected {
 DIV.nowplaying A
 {
 	font-size:11px;
+	padding: 0 0 0 0  ! important;
+	margin: 0 0 0 0 ! important;
+	line-height: 100% ! important;
 }
 
 .linkbtn {
@@ -148,6 +141,16 @@ A.linkbtn:hover {
    margin-top: 2px;
 }
 
+DIV.menu2 .stdclick {
+   font : 9px Arial; 
+   color: Yellow;
+   margin: 2 3 2 3;
+}
+
+DIV.menu2 .stdedit {
+   margin: 2 3 2 3;
+}
+
 .stdedit {
    font-family: Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
@@ -168,7 +171,7 @@ A.linkbtn:hover {
 	margin:0px;
 	padding: 5 8 5 8;
 	background:#f8eabf;
-	color:white;
+	color : #663300;
 	border-bottom:2px solid #ffcc66;
 }
 
@@ -281,7 +284,7 @@ img {
 	border-style: none;
 }
 
-TD.listing A, TD.listing2 A
+TD.listing A, TD.listing2 A, TD.odd A, TD.even A
 {
 	color : #663300 ! important;
 	font-family: Arial, Helvetica, sans-serif;
@@ -324,4 +327,8 @@ TD.listing A, TD.listing2 A
 	padding:5 2 5 2;
 	background:#d1b586;
 	color:white;
+}
+
+DIV.menu2 TABLE {
+	border-collapse: collapse;
 }

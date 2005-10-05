@@ -85,14 +85,6 @@ TH {
     font-weight : bold;	
 }
 
-.odd {
-    background : #444444;
-}
-
-.even {
-    background : #666666;
-}
-
 A:link, A:visited {
     color : Yellow;
 }
@@ -283,7 +275,7 @@ img {
 	border-style: none;
 }
 
-TD.listing A, TD.listing2 A
+TD.listing A, TD.listing2 A, TD.odd A, TD.even A
 {
 	color : white ! important;
 }

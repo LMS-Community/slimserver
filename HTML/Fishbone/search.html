@@ -42,7 +42,7 @@
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		[% browse_list %]
 	</table>
-    
+	
 	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 	[% IF liveSearch; INCLUDE "search-observer.html"; END %]
 [% PROCESS pagefooter.html %]
