@@ -333,7 +333,15 @@ sub checkAlarms {
 				$client->fade_volume($client->prefGet("alarmfadeseconds", $day));
 
 				my $playlist = $client->prefGet("alarmplaylist", $day);
-				if (defined $playlist) {
+				
+				if ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
+							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
+					
+					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
+					
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
+				
+				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {
 
 					$client->execute(["power", 1]);
 
@@ -342,10 +350,7 @@ sub checkAlarms {
 					$client->execute(["playlist", "load", $playlist], \&playDone, [$client]);
 
 				# check random playlist choice, but only if RandomPlay plugin is enabled at this time.
-				} elsif ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
-							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
-					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
-				
+
 				#fallback to current playlist if all else fails.
 				} else {
 
@@ -378,7 +383,12 @@ sub alarmLines {
 	# Be sure to pull the correct day, otherwise we'll send an array and standardTitle won't know what to do.
 	$weekDay = ${$client->param('day')} || 0;
 
-	if (my $playlist = $client->prefGet("alarmplaylist", $weekDay)) {
+	my $playlist = $client->prefGet("alarmplaylist", $weekDay);
+	
+	if (exists $specialPlaylists{$playlist}) {
+		$line2 = $client->string($playlist);
+		
+	} else {
 
 		# XXX
 		$line2 = Slim::Music::Info::standardTitle($client, $playlist);
