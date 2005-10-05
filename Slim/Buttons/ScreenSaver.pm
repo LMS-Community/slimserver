@@ -138,7 +138,7 @@ sub wakeup {
 	my $client = shift;
 	my $button = shift;
 	
-	return if ($button && $button =~ "brightness");
+	return if ($button && ($button =~ "brightness" || $button eq "dead"));
 	
 	Slim::Hardware::IR::setLastIRTime($client, Time::HiRes::time());
 

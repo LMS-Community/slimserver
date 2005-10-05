@@ -335,9 +335,17 @@ our %functions = (
 		
 		if ($client->power()) {
 			$brightmode = 'powerOnBrightness';
+			
 			if ($mode eq $client->prefGet('screensaver') ||
-					$mode eq $client->prefGet('idlesaver')) {
+					$mode eq $client->prefGet('idlesaver') || 
+						($client->prefGet('autobrightness') &&
+							Slim::Hardware::IR::lastIRTime($client) &&
+							Slim::Hardware::IR::lastIRTime($client) < Time::HiRes::time() - $client->prefGet("screensavertimeout")
+						)
+					) {
+						
 				$brightmode = 'idleBrightness';
+			
 			}
 		} else {
 			$brightmode = 'powerOffBrightness';

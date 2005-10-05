@@ -641,7 +641,7 @@ sub executeButton {
 	
 	$::d_ir && msg("trying to execute button: $irCode\n");
 
-	if ($irCode ne "0" || !defined $time) {
+	if ($irCode !~ "brightness" && $irCode ne "dead" && ($irCode ne "0" || !defined $time)) {
 		setLastIRTime($client, Time::HiRes::time());
 	}
 
