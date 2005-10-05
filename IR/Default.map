@@ -18,18 +18,13 @@
 0.hold					= playFavorite_0
 1.hold					= playFavorite_1
 2.hold					= playFavorite_2
-7.hold = modefunction_PLUGIN.Random->tracks
-
-8.hold = modefunction_PLUGIN.Random->albums
-
-9.hold = modefunction_PLUGIN.Random->artists
 3.hold					= playFavorite_3
 4.hold					= playFavorite_4
 5.hold					= playFavorite_5
 6.hold					= playFavorite_6
-#7.hold					= playFavorite_7
-#8.hold					= playFavorite_8
-#9.hold					= playFavorite_9
+7.hold					= playFavorite_7
+8.hold					= playFavorite_8
+9.hold					= playFavorite_9
 arrow_down				= down
 arrow_down.repeat		= down_repeat
 arrow_left				= left
@@ -103,6 +98,7 @@ repeat_all				= repeat_2
 
 # search button
 search					= search
+favorites				= favorites
 
 # menu shortcuts
 menu_playlist			= menu_playlist
