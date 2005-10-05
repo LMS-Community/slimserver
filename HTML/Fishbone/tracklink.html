@@ -10,4 +10,4 @@
 [% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
 [% IF includeAlbum && album && album != noAlbum %][% "FROM" | string %]
-	<i><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></i>[% END %]
+<i><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></i>[% END %]

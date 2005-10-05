@@ -41,7 +41,6 @@ TD, P, A {
 
 TABLE,TBODY {
 	border-collapse: collapse;
-	border-style: hidden;
 	border-spacing: 0px;
 	padding: 0px;
 	margin: 0px;
@@ -148,6 +147,16 @@ A.linkbtn:hover {
    background-color : rgb(25,25,25);
    margin-bottom: 2px;
    margin-top: 2px;
+}
+
+DIV.menu2 .stdclick {
+   font : 9px Arial; 
+   color: Yellow;
+   margin: 2 3 2 3;
+}
+
+DIV.menu2 .stdedit {
+   margin: 2 3 2 3;
 }
 
 .stdedit {
@@ -280,6 +289,10 @@ TD.listing A, TD.listing2 A
 	color : white ! important;
 }
 
+TABLE.listing {
+	border-collapse: separate ! important;
+}
+
 .listing2
 {
 	background:#333;
@@ -311,7 +324,7 @@ TD.listing A, TD.listing2 A
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	padding:4 2 4 2;
+	padding:4 8 4 8;
 	background:#999;
 	color:white;
 }

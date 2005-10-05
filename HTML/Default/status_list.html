@@ -21,7 +21,7 @@
 		<span class="exboldnowplaying"></span>
 
 		<span class="exlisting">
-		[% IF album && album != noAlbum %]
+		[% IF includeAlbum && album && album != noAlbum %]
 
 			[% "FROM" | string %]
 			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>

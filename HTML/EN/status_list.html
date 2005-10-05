@@ -5,7 +5,7 @@
   			 [% IF not currentsong %]<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]">[% END %][% title | html %][% IF not currentsong %]</a>[% END %]
  		[% IF currentsong %]</b>[% END %]
  		
-		[% IF album && album != noAlbum %]
+		[% IF includeAlbum && album && album != noAlbum %]
 
 			[% "FROM" | string %]
 			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a>

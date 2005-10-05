@@ -61,7 +61,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	[% IF undock %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;undock=[% undock %]">[% END %]
+	[% IF undock %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% player | uri %]&start=[% start %]&undock=[% undock %]">[% END %]
 	[% PROCESS customheader.html %]
 	[% IF playercount == '0' %]<script language="JavaScript">
 		<!--Hide
@@ -93,7 +93,7 @@
 			</table>
 		</div>
 		<div class="menu1">
-			<table  width="100%" height="20" bordercolor="#111111">
+			<table  width="100%" height="24" bordercolor="#111111">
 				[% IF player_chooser_list  && NOT undock%]
 					<form><td align="left">
 						<select name="player" onchange="switchPlayer(this);" class="stdedit">[% player_chooser_list %]</select>
@@ -115,6 +115,7 @@
 			window.onload=Click([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
 		-->
 		</script>
+
 		<div class="nowplaying">
 		<table  width="100%">
 			<tr>

@@ -1,7 +1,7 @@
 <tr>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]width="50%">
-      [% title %]
-      [% IF album && album != noAlbum %] [% "FROM" | string %] <a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a>[% END %]
+      <a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title %]</a>
+      [% IF includeAlbum && album && album != noAlbum %] [% "FROM" | string %] <a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]" target="browser">[% album.title %]</a>[% END %]
       [% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
   </td>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] align="right" width="10%">  
