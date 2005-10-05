@@ -595,9 +595,11 @@ PLUGIN_RANDOM_DISABLED
 	EN	Random Mix Stopped
 
 PLUGIN_RANDOM_TRACK
+	DE	Zufälliger Lieder Mix
 	EN	Random Song Mix
 
 PLUGIN_RANDOM_TRACK_PLAYING
+	DE	Spiele zufällige Liederauswahl
 	EN	Playing Random Songs
 
 PLUGIN_RANDOM_ALBUM
@@ -606,9 +608,11 @@ PLUGIN_RANDOM_ALBUM
 	ES	Mezcla al azar por Álbum
 
 PLUGIN_RANDOM_ALBUM_ITEM
+	DE	Zufälliges album
 	EN	Random Album
 
 PLUGIN_RANDOM_ALBUM_PLAYING
+	DE	Spiele zufällige Albenauswahl
 	EN	Playing Random Albums
 
 PLUGIN_RANDOM_ARTIST
@@ -616,9 +620,11 @@ PLUGIN_RANDOM_ARTIST
 	EN	Random Artist Mix
 
 PLUGIN_RANDOM_ARTIST_ITEM
+	DE	Zufälliger Interpret
 	EN	Random Artist
 
 PLUGIN_RANDOM_ARTIST_PLAYING
+	DE	Spiele zufälligen Interpreten
 	EN	Playing Random Artists
 
 PLUGIN_RANDOM_YEAR
@@ -626,12 +632,15 @@ PLUGIN_RANDOM_YEAR
 	EN	Random Year Mix
 
 PLUGIN_RANDOM_YEAR_ITEM
+	DE	Zufälliger Jahrgang
 	EN	Random Year
 
 PLUGIN_RANDOM_YEAR_PLAYING
+	DE	Spiele zufälligen Jahrgang
 	EN	Playing Random Years
 
 PLUGIN_RANDOM_GENRE_FILTER
+	DE	Wähle zu berücksichtigende Stile
 	EN	Select Genres To Include
 	
 PLUGIN_RANDOM_CHOOSE_DESC

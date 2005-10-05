@@ -1,4 +1,4 @@
-﻿#
+#
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
@@ -10129,6 +10129,7 @@ INFORMATION_VERSION
 	ZH_CN	版本
 
 INFORMATION_DIAGSTRING
+	DE	Versions Information
 	EN	Version Info
 	ES	Info de Versión
 	ZH_CN	版本信息
@@ -10139,6 +10140,7 @@ INFORMATION_HOSTNAME
 	ZH_CN	主机名字
 
 INFORMATION_HOSTIP
+	EN	Host IP Addresse
 	EN	Host IP Address
 	ES	Dirección IP de Host
 	ZH_CN	主机IP地址
