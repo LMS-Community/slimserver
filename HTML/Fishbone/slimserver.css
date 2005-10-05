@@ -40,7 +40,6 @@ TD, P, A {
 }
 
 TABLE,TBODY {
-	border-collapse: collapse;
 	border-spacing: 0px;
 	padding: 0px;
 	margin: 0px;
@@ -289,10 +288,6 @@ TD.listing A, TD.listing2 A
 	color : white ! important;
 }
 
-TABLE.listing {
-	border-collapse: separate ! important;
-}
-
 .listing2
 {
 	background:#333;
@@ -327,4 +322,8 @@ TABLE.listing {
 	padding:4 8 4 8;
 	background:#999;
 	color:white;
+}
+
+DIV.menu2 TABLE {
+	border-collapse: collapse;
 }
