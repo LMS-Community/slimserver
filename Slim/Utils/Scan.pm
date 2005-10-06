@@ -56,6 +56,7 @@ use IO::String;
 use Class::Struct;
 use Time::HiRes;
 
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Formats::Parse;
 
@@ -585,8 +586,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			if ($numitems && scalar @$listref) {
 
 				# Create a playlist container
-				my $title = Slim::Web::HTTP::unescape(basename($playlisturl));
-				$title =~ s/\.\w{3}$//;
+				my $title = Slim::Music::Info::plainTitle($playlisturl);
+				$title =~ s/\.\w{3,4}$//;
 
 				my $ct    = Slim::Music::Info::contentType($playlisturl);
 
