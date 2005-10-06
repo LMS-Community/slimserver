@@ -518,18 +518,41 @@ sub initParsedFormats {
 		};
 
 	# add album related
-	@trackAttrs = qw(ALBUMSORT DISC DISCC);
-	for my $attr (qw(namesort  disc discc)) {
-		$parsedFormats{shift @trackAttrs} = 
-			sub {
-				my $output = '';
-				my $album = $_[0]->album();
-				if ($album) {
-					$output = $album->get($attr);
+	$parsedFormats{'ALBUMSORT'} = 
+		sub {
+			my $output = '';
+			my $album = $_[0]->album();
+			if ($album) {
+				$output = $album->get('namesort');
+			}
+			return (defined $output ? $output : '');
+		};
+
+	$parsedFormats{'DISCC'} = 
+		sub {
+			my $output = '';
+			my $album = $_[0]->album();
+			if ($album) {
+				my $discc = $album->get('discc');
+				# suppress disc counts of 1 or less
+				$output = $discc && $discc > 1 ? $discc : '';
+			}
+			return (defined $output ? $output : '');
+		};
+
+	$parsedFormats{'DISC'} = 
+		sub {
+			my $output = '';
+			my $album = $_[0]->album();
+			if ($album) {
+				my ($disc, $discc) = $album->get(qw(disc discc));
+				# suppress disc when only one disc in set
+				if ($disc && (($disc > 1) || ($disc == 1 && $discc && $discc > 1))) {
+						$output = $disc;
 				}
-				return (defined $output ? $output : '');
-			};
-	}
+			}
+			return (defined $output ? $output : '');
+		};
 
 	# add artist related
 	$parsedFormats{'ARTIST'} = 
