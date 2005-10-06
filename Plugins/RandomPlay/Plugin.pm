@@ -536,7 +536,7 @@ sub handleWebMix {
 			playRandom($client, $params->{'type'}, $params->{'addOnly'});
 		}
 	}
-	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
+	handleWebList($client, $params);
 }
 
 # Handles settings changes from plugin's web page
