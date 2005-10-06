@@ -25,60 +25,47 @@ use Slim::Networking::AsyncHTTP;
 use Slim::Utils::Misc;
 
 sub new {
-	my $class = shift;
+	my $class    = shift;
 	my $callback = shift;
-	my $errorcb = shift;
-	my $params = shift || {};
+	my $errorcb  = shift;
+	my $params   = shift || {};
 
-	my $self = {cb => $callback,
-				ecb => $errorcb,
-				params => $params};
-	return bless $self;
+	my $self = {
+		'cb'     => $callback,
+		'ecb'    => $errorcb,
+		'params' => $params,
+	};
+
+	return bless $self, $class;
 }
 
 sub params {
-	my $self = shift;
-	my $key = shift;
-	my $value = shift;
+	my ($self, $key, $value) = @_;
 
 	if (!defined($key)) {
-		return $self->{params};
+
+		return $self->{'params'};
+
 	} elsif ($value) {
-		$self->{params}->{$key} = $value;
+
+		$self->{'params'}->{$key} = $value;
+
 	} else {
-		return $self->{params}->{$key};
+
+		return $self->{'params'}->{$key};
 	}
 }
 
-# performs the http GET
 sub get {
 	my $self = shift;
-	my $url = shift;
 
-	$self->{url} = $url;
+	$self->_createHTTPRequest('GET', @_);
+}
 
-	$::d_http_async && msg("SimpleAsyncHTTP: getting $url\n");
-	
-	# start asynchronous get
-	# we'll be called back when its done.
-	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
-	# even though we've set non-blocking.  This call could block on a system call to inet_ntoa.  That is, DNS lookups still block.
-	my $http = Slim::Networking::AsyncHTTP->new(Host => $server,
-												PeerPort => $port);
+sub post {
+	my $self = shift;
 
-	# error if we failed to connect
-	if (!$http) {
-		$self->{error} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
-		&{$self->{ecb}}($self);
-		return;
-	}
-	# TODO: handle basic auth if username, password provided
-	$http->write_request_async(GET => $path, @_);
-	
-	$http->read_response_headers_async(\&headerCB,
-									   {ez=>$self,
-										socket=>$http});
-	$self->{socket} = $http;
+	$self->_createHTTPRequest('POST', @_);
 }
 
 # Parameters are passed to Net::HTTP::NB::formatRequest, meaning you
@@ -86,124 +73,145 @@ sub get {
 # Examples:
 # $http->post("www.somewhere.net", 'conent goes here');
 # $http->post("www.somewhere.net", 'Content-Type' => 'application/x-foo', 'Other-Header' => 'Other Value', 'conent goes here');
-sub post {
+sub _createHTTPRequest {
 	my $self = shift;
-	my $url = shift;
+	my $type = shift;
+	my $url  = shift;
 
-	$self->{url} = $url;
+	$self->{'url'} = $url;
 
-	$::d_http_async && msg("SimpleAsyncHTTP: posting to  $url\n");
-
-	# start asynchronous post
+	$::d_http_async && msg("SimpleAsyncHTTP: ${type}ing $url\n");
+	
+	# start asynchronous get
 	# we'll be called back when its done.
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
-	# even though we've set non-blocking.  This call could block on a system call to inet_ntoa.  That is, DNS lookups still block.
-	my $http = Slim::Networking::AsyncHTTP->new(Host => $server,
-												PeerPort => $port);
+
+	# even though we've set non-blocking.  This call could block on a
+	# system call to inet_ntoa.  That is, DNS lookups still block.
+	my $http = Slim::Networking::AsyncHTTP->new(
+		Host     => $server,
+		PeerPort => $port
+	);
 
 	# error if we failed to connect
 	if (!$http) {
-		$self->{error} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
-		&{$self->{ecb}}($self);
+		$self->{'error'} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
+		&{$self->{'ecb'}}($self);
 		return;
 	}
-	# TODO: handle basic auth if username, password provided
-	$http->write_request_async(POST => $path, @_);
 
-	$http->read_response_headers_async(\&headerCB,
-									   {ez=>$self,
-										socket=>$http});
-	$self->{socket} = $http;
+	# TODO: handle basic auth if username, password provided
+	$http->write_request_async($type => $path, @_);
+	
+	$http->read_response_headers_async(\&headerCB, {
+		'simple' => $self,
+		'socket' => $http,
+	});
+
+	$self->{'socket'} = $http;
 }
 
-
-
 sub headerCB {
-	my $state = shift;
-	my $error = shift;
-	my ($code, $mess, %h) = @_;
+	my ($state, $error, $code, $mess, %h) = @_;
 	
-	my $self = $state->{ez};
-	my $http = $state->{socket};
+	my $self = $state->{'simple'};
+	my $http = $state->{'socket'};
 
-	$::d_http_async && msg("SimpleAsyncHTTP: status for ". $self->{url} . " is " . ($mess || $code) . "\n");
+	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
 
 	# verbose debug
 	#use Data::Dumper;
-	#print Dumper(%h);
+	#print Dumper(\%h);
 
 	# handle http redirect
 	my $location = $h{'Location'} || $h{'location'};
 
 	if (defined $location) {
 
-		$::d_http_async && msg("SimpleAsyncHTTP: redirecting to $location.  Original URL ". $self->{url} . "\n");
+		$::d_http_async && msg("SimpleAsyncHTTP: redirecting to $location.  Original URL ". $self->{'url'} . "\n");
+
 		$self->get($location);
+
 		$http->close();
+
 		return;
 	}
 
 	if ($error) {
-		&{$self->{ecb}}($self);
+
+		&{$self->{'ecb'}}($self);
+
 	} else {
-		$self->{code} = $code;
-		$self->{mess} = $mess;
-		$self->{headers} = \%h;
+
+		$self->{'code'}    = $code;
+		$self->{'mess'}    = $mess;
+		$self->{'headers'} = \%h;
 
 		# headers read OK, get the body
-		$http->read_entity_body_async(\&bodyCB,
-									  {ez=>$self,
-									   socket=>$http});
+		$http->read_entity_body_async(\&bodyCB, {
+			'simple' => $self,
+			'socket' => $http
+		});
 	}
 }
 
 sub bodyCB {
-	my $state = shift;
-	my $error = shift;
-	my $content = shift; # response body
+	my ($state, $error, $content) = @_;
 
-	my $self = $state->{ez};
-	my $http = $state->{socket};
+	my $self = $state->{'simple'};
+	my $http = $state->{'socket'};
 
 	if ($error) {
-		&{$self->{ecb}}($self);
+
+		&{$self->{'ecb'}}($self);
+
 	} else {
-		$self->{content} = $content;
-		&{$self->{cb}}($self);
+
+		$self->{'content'} = $content;
+
+		&{$self->{'cb'}}($self);
 	}	
 }
 
 sub content {
 	my $self = shift;
-	return $self->{content};
+
+	return $self->{'content'};
 }
+
 sub headers {
 	my $self = shift;
-	return $self->{headers};
+
+	return $self->{'headers'};
 }
 
 sub url {
 	my $self = shift;
-	return $self->{url};
+
+	return $self->{'url'};
 }
 
 sub error {
 	my $self = shift;
-	return $self->{error};
+
+	return $self->{'error'};
 }
 
 sub close {
 	my $self = shift;
-	if ($self->{socket}) {
-		$self->{socket}->close();
+
+	if ($self->{'socket'}) {
+
+		$self->{'socket'}->close;
 	}
 }
 
 sub DESTROY {
 	my $self = shift;
 
-	$::d_http_async && msg("SimpleAsyncHTTP(".$self->url.") destroy called.\n");
-	$self->close();
+	$::d_http_async && msgf("SimpleAsyncHTTP(%s) destroy called.\n", $self->url);
+
+	$self->close;
 }
 
 1;
@@ -227,17 +235,17 @@ sub exampleErrorCallback {
 sub exampleCallback {
     my $http = shift;
 
-    my $content = $ezhttp->content();
+    my $content = $http->content();
 
-	my $data = $ezhttp->params('mydata');
+    my $data = $http->params('mydata');
 
     print("Got the content and my data.\n");
 }
 
 
-my $http = Slim::Networking::SimpleAsyncHTTP->new(\&exampleCallback,
-                                                \&exampleErrorCallback,
-                                                {mydata => undef});
+my $http = Slim::Networking::SimpleAsyncHTTP->new(\&exampleCallback, \&exampleErrorCallback, {
+		'mydata' => 'foo'
+	   });
 
 # sometime after this call, our exampleCallback will be called with the result
 $http->get("http://www.slimdevices.com");

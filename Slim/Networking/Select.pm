@@ -9,7 +9,9 @@ package Slim::Networking::Select;
 
 use strict;
 use IO::Select;
+
 use Slim::Utils::Misc;
+use Slim::Utils::PerfMon;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -21,125 +23,101 @@ BEGIN {
 	}
 }
 
-our %readSockets;
-our %readCallbacks;
+our $callbacks  = {};
+our %writeQueue = ();
 
-our %writeSockets;
-our %writeCallbacks;
+our $selects = {
+	'read'  => IO::Select->new,
+	'write' => IO::Select->new,
+	'error' => IO::Select->new,
+};
 
-our %errorSockets;
-our %errorCallbacks;
-
-our %writeQueue;
-
-our $readSelects  = IO::Select->new();
-our $writeSelects = IO::Select->new();
-our $errorSelects  = IO::Select->new();
-
-our $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
-our $endSelectTime;
+my $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+my $endSelectTime;
 
 sub addRead {
-	my $r = shift;
-	my $callback = shift;
 
-	if (!$callback) {
-
-		delete $readSockets{"$r"};
-		delete $readCallbacks{"$r"};
-		$::d_select && msg("removing select read $r\n");
-
-	} else {
-
-		$readSockets{"$r"} = $r;
-		$readCallbacks{"$r"} = $callback;
-		$::d_select && msg("adding select read $r $callback\n");
-	}
-
-	$readSelects = IO::Select->new(map {$readSockets{$_}} (keys %readSockets));
+	_updateSelect('read', @_);
 }
 
 sub addWrite {
-	my $w = shift;
-	my $callback = shift;
-	
-	$::d_select && msg("before: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
 
-	if (!$callback) {
-		delete $writeSockets{"$w"};
-		delete $writeCallbacks{"$w"};	
-		$::d_select && msg("removing select write $w\n");
-	} else {
-		$writeSockets{"$w"} = $w;
-		$writeCallbacks{"$w"} = $callback;
-		$::d_select && msg("adding select write $w $callback\n");
-	}
-
-	$writeSelects = IO::Select->new(map {$writeSockets{$_}} (keys %writeSockets));
-
-	$::d_select && msg("now: " . scalar(keys %writeSockets) . "/" . $writeSelects->count . "\n");
+	_updateSelect('write', @_);
 }
 
 sub addError {
-      my $e = shift;
-      my $callback = shift;
 
-      if (!$callback) {
-
-              delete $errorSockets{"$e"};
-              delete $errorCallbacks{"$e"};
-              $::d_select && msg("removing select error $e\n");
-
-      } else {
-
-              $errorSockets{"$e"} = $e;
-              $errorCallbacks{"$e"} = $callback;
-              $::d_select && msg("adding select error $e $callback\n");
-      }
-
-      $errorSelects = IO::Select->new(map {$errorSockets{$_}} (keys %errorSockets));
+	_updateSelect('error', @_);
 }
 
+sub _updateSelect {
+	my ($type, $sock, $callback) = @_;
+
+	my $fileno = fileno($sock);
+
+	if ($callback) {
+
+		$callbacks->{$type}->{$fileno} = $callback;
+
+		if (!$selects->{$type}->exists($sock)) {
+
+			$selects->{$type}->add($sock);
+
+			$::d_select && msg("adding select $type $fileno $callback\n");
+		}
+
+	} else {
+
+		delete $callbacks->{$type}->{$fileno};
+
+		if ($selects->{$type}->exists($sock)) {
+
+			$selects->{$type}->remove($sock);
+
+			$::d_select && msg("removing select $type $fileno\n");
+		}
+	}
+}
 
 sub select {
 	my $select_time = shift;
 
 	$::perfmon && $endSelectTime && $selectPerf->log(Time::HiRes::time() - $endSelectTime);
 	
-	my ($r, $w, $e) = IO::Select->select($readSelects,$writeSelects,$errorSelects,$select_time);
+	my ($r, $w, $e) = IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
 
-	$::d_select && msg("select returns ($select_time): reads: " . 
-		(defined($r) && scalar(@$r)) . " of " . $readSelects->count .
-		" writes: " . (defined($w) && scalar(@$w)) . " of " . $writeSelects->count .
-		" errors: " . (defined($e) && scalar(@$e)) . " of " . $errorSelects->count . "\n");
-	
-	my $count = 0;
+	my $count   = 0;
 
-	foreach my $sock (@$r) {
-		my $readsub = $readCallbacks{"$sock"};
-		$readsub->($sock) if $readsub;
-		$count++;
+	my %handles = (
+		'read'  => $r,
+		'write' => $w,
+		'error' => $e,
+	);
 
-		# Conditionally readUDP if there are SLIMP3's connected.
-		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
-	}
-	
-	foreach my $sock (@$w) {
-		my $writesub = $writeCallbacks{"$sock"};
-		$writesub->($sock) if $writesub;
-		$count++;
+	$::d_select && msgf("select returns (%s):\n", $select_time);
 
-		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
-	}
+	while (my ($type, $handle) = each %handles) {
 
-	foreach my $sock (@$e) {
-		my $errorsub = $errorCallbacks{"$sock"};
-		$errorsub->($sock) if $errorsub;
-		$count++;
+		$::d_select && msgf("\t%ss: %d of %d\n",
+			$type, (defined($handle) && scalar(@$handle)), $selects->{$type}->count
+		);
 
-		Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
+		foreach my $sock (@$handle) {
+
+			my $callback = $callbacks->{$type}->{fileno($sock)};
+
+			if (defined $callback && ref($callback) eq 'CODE') {
+
+				$callback->($sock);
+			}
+
+			$count++;
+
+			# Conditionally readUDP if there are SLIMP3's connected.
+			Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
+		}
 	}
 
 	return $count;
@@ -152,14 +130,16 @@ sub writeNoBlock {
 	return unless ($socket && $socket->opened());
 	
 	if (defined $chunkRef) {	
-		push @{$writeQueue{"$socket"}}, {
+		use bytes;
+
+		push @{$writeQueue{$socket}}, {
 			'data'   => $chunkRef,
 			'offset' => 0,
 			'length' => length($$chunkRef)
 		};
 	}
 	
-	my $segment = shift(@{$writeQueue{"$socket"}});
+	my $segment = shift(@{$writeQueue{$socket}});
 	
 	if (!defined $segment) {
 		addWrite($socket);
@@ -176,18 +156,22 @@ sub writeNoBlock {
 	}
 
 	if (!defined($sentbytes)) {
-		# Treat $httpClient with suspicion
+
 		$::d_select && msg("writeNoBlock: Send to socket had error, aborting.\n");
-		delete($writeQueue{"$socket"});
+		delete($writeQueue{$socket});
 		return;
 	}
 
 	# sent incomplete message
 	if ($sentbytes < $segment->{'length'}) {
+
 		$::d_select && msg("writeNoBlock: incomplete message, sent only: $sentbytes\n");
+
 		$segment->{'length'} -= $sentbytes;
 		$segment->{'offset'} += $sentbytes;
-		unshift @{$writeQueue{"$socket"}}, $segment;
+
+		unshift @{$writeQueue{$socket}}, $segment;
+
 		addWrite($socket, \&writeNoBlock);
 	} 
 }
@@ -195,9 +179,9 @@ sub writeNoBlock {
 sub writeNoBlockQLen {
 	my $socket = shift;
 
-	if (defined $socket && defined $writeQueue{"$socket"} && ref($writeQueue{"$socket"}) eq 'ARRAY') {
+	if (defined $socket && defined $writeQueue{$socket} && ref($writeQueue{$socket}) eq 'ARRAY') {
 
-		return scalar @{$writeQueue{"$socket"}};
+		return scalar @{$writeQueue{$socket}};
 	}
 
 	return -1;

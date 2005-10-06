@@ -22,8 +22,9 @@ use strict;
 use base qw(Net::HTTP::NB);
 use Socket qw(:DEFAULT :crlf);
 
-use IO::Select;
+use Slim::Networking::Select;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 # we override new in case we are using a proxy
 sub new {
@@ -70,22 +71,22 @@ sub format_request {
 	my $method = shift;
 	my $path = shift;
 
-	my %headers = ();
-
-	my $proxy   = Slim::Utils::Prefs::get('webproxy');
+	# more headers copied from Slim::Player::Protocol::HTTP
+	my %headers = (
+		'User-Agent'    => Slim::Utils::Misc::userAgentString(),
+		'Accept'        => "*/*",
+		'Cache-Control' => "no-cache",
+		'Connection'    => "close",
+		'Icy-Metadata'  => "1",
+	);
 
 	# Don't proxy for localhost requests.
-	if ($proxy && ${*$self}{'httpasync_host'}) {
+	if (Slim::Utils::Prefs::get('webproxy') && ${*$self}{'httpasync_host'}) {
+
 		$path = "http://".${*$self}{'httpasync_host'}.":".${*$self}{'httpasync_port'} . $path;
+
 		$headers{'Host'} = ${*$self}{'httpasync_host'};
 	}
-
-	# more headers copied from Slim::Player::Protocol::HTTP
-	$headers{'User-Agent'} = Slim::Utils::Misc::userAgentString();
-	$headers{'Accept'} = "*/*";
-	$headers{'Cache-Control'} = "no-cache";
-	$headers{'Connection'} = "close";
-	$headers{'Icy-Metadata'} = "1";
 
 	# when calling SUPER::format_request, include @_ after %headers, so caller may override defaults
 	# @_ may contain additional headers and content
@@ -111,10 +112,7 @@ sub write_request_async {
 
 	# write request in non-blocking fashion
 	# this method will return immediately
-	Slim::Networking::Select::writeNoBlock(
-		$self,
-		\$request
-	);
+	Slim::Networking::Select::writeNoBlock($self, \$request);
 }
 
 # don't use.  Use _async version instead.
@@ -132,21 +130,14 @@ sub read_response_headers_async {
 	my $args = shift;
 
 	my $state = {
-		callback => $callback,
-		args     => $args
+		'callback' => $callback,
+		'args'     => $args
 	};
 
 	${*$self}{'httpasync_state'} = $state;
 
-	Slim::Networking::Select::addError(
-		$self,
-		\&errorCallback
-	);
-
-	Slim::Networking::Select::addRead(
-		$self,
-		\&readHeaderCallback
-	);
+	Slim::Networking::Select::addError($self, \&errorCallback);
+	Slim::Networking::Select::addRead($self, \&readHeaderCallback);
 }
 
 # don't use.  Use _async version instead.
@@ -165,24 +156,16 @@ sub read_entity_body_async {
 	my $bufsize = shift || 1024;
 
 	my $state = {
-		callback => $callback,
-		args => $args,
-		bufsize => $bufsize,
-		body => '',
+		'callback' => $callback,
+		'args'     => $args,
+		'bufsize'  => $bufsize,
+		'body'     => '',
 	};
 
 	${*$self}{'httpasync_state'} = $state;
 
-	Slim::Networking::Select::addError(
-		$self,
-		\&errorCallback
-	);
-
-	Slim::Networking::Select::addRead(
-		$self,
-		\&readBodyCallback
-	);
-
+	Slim::Networking::Select::addError($self, \&errorCallback);
+	Slim::Networking::Select::addRead($self, \&readBodyCallback);
 }
 
 # readCallback is called by select loop when our socket has data
@@ -191,14 +174,9 @@ sub readHeaderCallback {
 
 	my $state = ${*$self}{'httpasync_state'};
 
-	my($code, $mess, %h);
-
-	# Wrap call to base in an eval to prevent dieing. An error
-	# should result in an error callback invocation for the next
-	# layer up.
-	eval {
-		($code, $mess, %h) = $self->SUPER::read_response_headers;
-	};
+	# Wrap call to base in an eval to prevent dying. An error should
+	# result in an error callback invocation for the next layer up.
+	my ($code, $mess, %h) = eval { $self->SUPER::read_response_headers };
 
 	if ($@) {
 		$self->errorCallback();
@@ -210,11 +188,12 @@ sub readHeaderCallback {
 		Slim::Networking::Select::addError($self);
 		Slim::Networking::Select::addRead($self);
 
-		$::d_http_async && msg("AsyncHTTP: Headers read.  status=$mess\n");
+		$::d_http_async && msg("AsyncHTTP: Headers read. code: $code status: $mess\n");
 
 		# all headers complete.  Call callback
-		if ($state->{callback}) {
-			$state->{callback}($state->{args}, undef, $code, $mess, %h);
+		if (defined $state->{'callback'} && ref($state->{'callback'}) eq 'CODE') {
+
+			$state->{'callback'}($state->{'args'}, undef, $code, $mess, %h);
 		}
 	}
 
@@ -226,10 +205,9 @@ sub readBodyCallback {
 	my $self = shift;
 
 	my $state = ${*$self}{'httpasync_state'};
-	my $buf;
-	my $result = $self->SUPER::read_entity_body($buf, $state->{bufsize});
+	my $result = $self->SUPER::read_entity_body(my $buf, $state->{'bufsize'});
 
-	$state->{body} .= $buf;
+	$state->{'body'} .= $buf;
 
 	if ($result == 0) {
 		# if here, we've reached the end of the body
@@ -238,11 +216,11 @@ sub readBodyCallback {
 		Slim::Networking::Select::addError($self);
 		Slim::Networking::Select::addRead($self);
 
-		$::d_http_async && msg("AsyncHTTP: Body read\n");
+		$::d_http_async && msgf("AsyncHTTP: Body read for fileno: %d\n", fileno($self));
 
-		# callback
-		if ($state->{callback}) {
-			$state->{callback}($state->{args}, undef, $state->{body});
+		if (defined $state->{'callback'} && ref($state->{'callback'}) eq 'CODE') {
+
+			$state->{'callback'}($state->{'args'}, undef, $state->{'body'});
 		}
 	}
 
@@ -258,23 +236,23 @@ sub errorCallback {
 	Slim::Networking::Select::addError($self);
 	Slim::Networking::Select::addRead($self);
 
-	$::d_http_async && msg("AsyncHTTP: Error!!\n\n");
+	$::d_http_async && msgf("AsyncHTTP: Error!! for fileno: %d\n", fileno($self));
 
-	# callback
-	if ($state->{callback}) {
-		$state->{callback}($state->{args}, 1);
+	if (defined $state->{'callback'} && ref($state->{'callback'}) eq 'CODE') {
+
+		$state->{'callback'}($state->{'args'}, 1);
 	}	
 }
 
 sub close {
 	my $self = shift;
 
-	$self->SUPER::close();
-
 	# remove self from select loop
 	Slim::Networking::Select::addError($self);
 	Slim::Networking::Select::addRead($self);
 	Slim::Networking::Select::addWrite($self);
+
+	$self->SUPER::close();
 }
 
 1;
