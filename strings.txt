@@ -10140,7 +10140,7 @@ INFORMATION_HOSTNAME
 	ZH_CN	主机名字
 
 INFORMATION_HOSTIP
-	EN	Host IP Addresse
+	DE	Host IP Addresse
 	EN	Host IP Address
 	ES	Dirección IP de Host
 	ZH_CN	主机IP地址
