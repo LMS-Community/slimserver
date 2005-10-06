@@ -1321,6 +1321,8 @@ sub _preCheckAttributes {
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
 	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
+	$deferredAttributes->{'DISC'}    = $attributes->{'DISC'};
+	
 
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
@@ -1352,7 +1354,7 @@ sub _preCheckAttributes {
 	# Push these back until we have a Track object.
 	for my $tag (qw(
 		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
-		PIC APIC ALBUM ALBUMSORT DISC DISCC ALBUMARTIST COMPILATION
+		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION
 		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID
 		MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
@@ -1490,7 +1492,7 @@ sub _postCheckAttributes {
 		if (($self->{'lastTrack'}->{$basename} && $self->{'lastTrack'}->{$basename}->album &&
 			ref($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
 			$self->{'lastTrack'}->{$basename}->album->get('title') eq $album)
-			&& (!$discc || ($discc eq $self->{'lastTrack'}->{$basename}->album->discc))) {
+			&& (!$disc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))) {
 
 			$albumObj = $self->{'lastTrack'}->{$basename}->album;
 
