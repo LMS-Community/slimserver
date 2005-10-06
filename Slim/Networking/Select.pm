@@ -32,7 +32,7 @@ our $selects = {
 	'error' => IO::Select->new,
 };
 
-my $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 my $endSelectTime;
 
 sub addRead {

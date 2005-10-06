@@ -2,7 +2,7 @@
 [% pageicon = 'help' %]
 [% PROCESS pageheader.html %]
 
-<script language="JavaScript">
+[% IF refresh %]<script language="JavaScript">
 
 function doLoad() {
 	setTimeout( "refresh()", [% refresh %] * 1000);
@@ -12,9 +12,9 @@ function refresh() {
 	window.location.replace("[% webroot %]plugins/Health/index.html?player=[% player | uri %]");
 }
 
-</script> 
+</script>[% END %]
 
-<body onload="doLoad()">
+<body [% IF refresh %]onload="doLoad()"[% END %]>
 
 <td></td><td>
 
