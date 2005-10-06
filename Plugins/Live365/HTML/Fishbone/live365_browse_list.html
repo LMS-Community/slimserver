@@ -1,0 +1,32 @@
+<tr>
+
+<td width="100%" class="listing">
+
+      [% IF genremode %]<a href="browse.html?type=genres&id=[% genreid | uri %]&name=[% genrename | uri %]&player=[% player | uri %]">[% genrename | html %]</a>
+      [% ELSIF stationmode %][% stationname %] - [% connection %]k -
+         [% IF access == "PRIVATE" %]
+            (PRIVATE)
+         [% ELSE %]
+            ([% listeners %]/[% maxlisteners %])
+         [% END %]
+      [% END %]
+
+ </td>
+
+<td align="right" width="13" class="listing">
+      [% IF stationmode %]<nobr><a href="action.html?action=play&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" height=11 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>[% END %]
+</td>
+
+<td align="right" width="13" class="listing">
+      [% IF stationmode %]<nobr><a href="action.html?action=add&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]"  target="status"><img src="[% webroot %]html/images/add.gif" height=11 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>[% END %]
+</td>
+
+</tr>
+
+[% IF extrainfo %]
+<tr>
+  <td width="100%" class="listing">
+      [% extrainfo %]
+  </td>
+</tr>
+[% END %]
