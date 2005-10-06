@@ -638,6 +638,7 @@ sub basicSearch {
 	# set some defaults for the template
 	$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
+	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
@@ -650,7 +651,7 @@ sub basicSearch {
 	}
 
 	# Don't kill the database - use limit & offsets
-	my $data = Slim::Music::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], undef, $params->{'start'});
+	my $data = Slim::Music::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
 
 	# The user has hit enter, or has a browser that can't handle the javascript.
 	if ($params->{'manualSearch'}) {
@@ -1631,11 +1632,18 @@ sub pageBar {
 	my $count = shift || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my $start = (defined($$startref) && $$startref ne '') ? $$startref : (int($currentitem/$count)*$count);
-	if ($start >= $itemcount) { $start = $itemcount - $count; }
+
+	if ($start >= $itemcount) {
+		$start = $itemcount - $count;
+	}
+
 	$$startref = $start;
 
 	my $end = $start+$count-1;
-	if ($end >= $itemcount) { $end = $itemcount - 1;}
+
+	if ($end >= $itemcount) {
+		$end = $itemcount - 1;
+	}
 
 	# Don't bother with a pagebar on a non-pagable item.
 	if ($itemcount < $count) {
@@ -1643,7 +1651,13 @@ sub pageBar {
 	}
 
 	if ($itemcount > $count) {
-		$$headerref = ${Slim::Web::HTTP::filltemplatefile("pagebarheader.html", { "start" => ($start+1), "end" => ($end+1), "itemcount" => $itemcount, 'skinOverride' => $skinOverride})};
+
+		$$headerref = ${Slim::Web::HTTP::filltemplatefile("pagebarheader.html", {
+			"start"        => ($start+1),
+			"end"          => ($end+1),
+			"itemcount"    => $itemcount,
+			'skinOverride' => $skinOverride
+		})};
 
 		my %pagebar = ();
 
