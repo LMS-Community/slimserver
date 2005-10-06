@@ -222,7 +222,7 @@ sub _parseWMAHeader {
 
 			if ($nextObjectGUIDName eq 'ASF_Stream_Properties_Object') {
 
-				$self->_parseASFStreamPropertiesObject();
+				$self->_parseASFStreamPropertiesObject(0);
 				next;
 			}
 
@@ -400,8 +400,8 @@ sub _parseASFExtendedContentDescriptionObject {
 
 sub _parseASFStreamPropertiesObject {
 	my $self = shift;
+	my $inline = shift;
 
-	my %ext  = ();
 	my %stream  = ();
 	my $streamNumber;
 
@@ -430,23 +430,23 @@ sub _parseASFStreamPropertiesObject {
 	# stream number isn't known until halfway through decoding the structure, hence it
 	# it is decoded to a temporary variable and then stuck in the appropriate index later
 
-	$stream{'stream_type'}	      = $self->_readAndIncrementOffset(16);
+	$stream{'stream_type'}	      = $inline ? $self->_readAndIncrementInlineOffset(16) : $self->_readAndIncrementOffset(16);
 	$stream{'stream_type_guid'}   = _byteStringToGUID($stream{'stream_type'});
-	$stream{'error_correct_type'} = $self->_readAndIncrementOffset(16);
+	$stream{'error_correct_type'} = $inline ? $self->_readAndIncrementInlineOffset(16) : $self->_readAndIncrementOffset(16);
 	$stream{'error_correct_guid'} = _byteStringToGUID($stream{'error_correct_type'});
 
-	$stream{'time_offset'}        = unpack('v', $self->_readAndIncrementOffset(8));
-	$stream{'type_data_length'}   = unpack('v', $self->_readAndIncrementOffset(4));
-	$stream{'error_data_length'}  = unpack('v', $self->_readAndIncrementOffset(4));
-	$stream{'flags_raw'}          = unpack('v', $self->_readAndIncrementOffset(2));
+	$stream{'time_offset'}        = unpack('v', $inline ? $self->_readAndIncrementInlineOffset(8) : $self->_readAndIncrementOffset(8));
+	$stream{'type_data_length'}   = unpack('v', $inline ? $self->_readAndIncrementInlineOffset(4) : $self->_readAndIncrementOffset(4));
+	$stream{'error_data_length'}  = unpack('v', $inline ? $self->_readAndIncrementInlineOffset(4) : $self->_readAndIncrementOffset(4));
+	$stream{'flags_raw'}          = unpack('v', $inline ? $self->_readAndIncrementInlineOffset(2) : $self->_readAndIncrementOffset(2));
 	$streamNumber                 = $stream{'flags_raw'} & 0x007F;
 	$stream{'flags'}{'encrypted'} = ($stream{'flags_raw'} & 0x8000);
 
 	# Skip the DWORD
-	$self->_readAndIncrementOffset(4);
+	$inline ? $self->_readAndIncrementInlineOffset(4) : $self->_readAndIncrementOffset(4);
 
-	$stream{'type_specific_data'} = $self->_readAndIncrementOffset($stream{'type_data_length'});
-	$stream{'error_correct_data'} = $self->_readAndIncrementOffset($stream{'error_data_length'});
+	$stream{'type_specific_data'} = $inline ? $self->_readAndIncrementInlineOffset($stream{'type_data_length'}) : $self->_readAndIncrementOffset($stream{'type_data_length'});
+	$stream{'error_correct_data'} = $inline ? $self->_readAndIncrementInlineOffset($stream{'error_data_length'}) : $self->_readAndIncrementOffset($stream{'error_data_length'});
 
 	push @{$self->{'STREAM'}}, \%stream;
 }
@@ -505,6 +505,49 @@ sub _parseWavFormat {
 	}
 
 	return \%wav;
+}
+
+sub _parseASFExtendedStreamPropertiesObject {
+	my $self = shift;
+	my $size = shift;
+
+	my %ext = ();
+	my $offset = 0;
+
+	# Skip the extended stream data.
+	# In the future we may want to parse this.
+	$self->_readAndIncrementInlineOffset(60);
+	$offset += 60;
+
+	my $steam_name_count = unpack('v', $self->_readAndIncrementInlineOffset(2));
+	my $payload_extension_count = unpack('v', $self->_readAndIncrementInlineOffset(2));
+	$offset += 4;
+
+	for (my $s = 0; $s < $steam_name_count; $s++) {
+		my $language = unpack('v', $self->_readAndIncrementInlineOffset(2));
+		my $length = unpack('v', $self->_readAndIncrementInlineOffset(2));
+		
+		$self->_readAndIncrementInlineOffset($length);
+		$offset += $length + 4;
+	}
+
+	for (my $p = 0; $p < $payload_extension_count; $p++) {
+		$self->_readAndIncrementInlineOffset(18);
+		my $length = unpack('V', $self->_readAndIncrementInlineOffset(4));
+		
+		$self->_readAndIncrementInlineOffset($length);
+		$offset += $length + 22;
+	}
+
+	if ($offset < $size) {
+		my $nextObjectGUID = _byteStringToGUID($self->_readAndIncrementInlineOffset(16)) || last;
+		my $nextObjectName = $reversedGUIDs{$nextObjectGUID} || 'ASF_Unknown_Object';
+		my $nextObjectSize = unpack('v', $self->_readAndIncrementInlineOffset(8));
+
+		if (defined $nextObjectName && $nextObjectName eq 'ASF_Stream_Properties_Object') {
+			$self->_parseASFStreamPropertiesObject(1);
+		}
+	}
 }
 
 sub _parseASFHeaderExtensionObject {
@@ -600,6 +643,9 @@ sub _parseASFHeaderExtensionObject {
 					print "\n";
 				}
 			}
+		}
+		elsif (defined $nextObjectName && $nextObjectName eq 'ASF_Extended_Stream_Properties_Object') {
+			$self->_parseASFExtendedStreamPropertiesObject($nextObjectSize - 16 - 8);
 		}
 
 		$self->{'inlineOffset'} += ($nextObjectSize - 16 - 8);
