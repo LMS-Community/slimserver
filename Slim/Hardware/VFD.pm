@@ -742,7 +742,7 @@ my %doublechars = (
 	$hardspace => [ $hardspace, $hardspace],
 	
 	$centerchar => [$centerchar,$centerchar]
-	,'0' => [$slash . $backslash, $islash . $ibackslash]
+	,'0' => [$hardspace . $slash . $backslash, $hardspace . $islash . $ibackslash]
 	,'1' => [$hardspace . '\'' . $leftvbar , $hardspace . '_' . 'L']
 	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $slash . '_']
 	,'3' => [$hardspace . $doublelinechar . ')' , ' _)']
