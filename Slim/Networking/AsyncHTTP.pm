@@ -50,8 +50,8 @@ sub new {
 		my $self = $class->SUPER::new(%args);
 
 		# now remember the original host and port, we'll need them to format the request
-		${*self}{'httpasync_host'} = $host;
-		${*self}{'httpasync_port'} = $port;
+		${*$self}{'httpasync_host'} = $host;
+		${*$self}{'httpasync_port'} = $port;
 
 		return $self;
 
@@ -75,9 +75,9 @@ sub format_request {
 	my $proxy   = Slim::Utils::Prefs::get('webproxy');
 
 	# Don't proxy for localhost requests.
-	if ($proxy && ${*self}{'httpasync_host'}) {
-		$path = "http://".${*self}{'httpasync_host'}.":".${*self}{'httpasync_port'} . $path;
-		$headers{'Host'} = ${*self}{'httpasync_host'};
+	if ($proxy && ${*$self}{'httpasync_host'}) {
+		$path = "http://".${*$self}{'httpasync_host'}.":".${*$self}{'httpasync_port'} . $path;
+		$headers{'Host'} = ${*$self}{'httpasync_host'};
 	}
 
 	# more headers copied from Slim::Player::Protocol::HTTP
@@ -136,7 +136,7 @@ sub read_response_headers_async {
 		args     => $args
 	};
 
-	${*self}{'httpasync_state'} = $state;
+	${*$self}{'httpasync_state'} = $state;
 
 	Slim::Networking::Select::addError(
 		$self,
@@ -171,7 +171,7 @@ sub read_entity_body_async {
 		body => '',
 	};
 
-	${*self}{'httpasync_state'} = $state;
+	${*$self}{'httpasync_state'} = $state;
 
 	Slim::Networking::Select::addError(
 		$self,
@@ -189,7 +189,7 @@ sub read_entity_body_async {
 sub readHeaderCallback {
 	my $self = shift;
 
-	my $state = ${*self}{'httpasync_state'};
+	my $state = ${*$self}{'httpasync_state'};
 
 	my($code, $mess, %h);
 
@@ -225,7 +225,7 @@ sub readHeaderCallback {
 sub readBodyCallback {
 	my $self = shift;
 
-	my $state = ${*self}{'httpasync_state'};
+	my $state = ${*$self}{'httpasync_state'};
 	my $buf;
 	my $result = $self->SUPER::read_entity_body($buf, $state->{bufsize});
 
@@ -252,7 +252,7 @@ sub readBodyCallback {
 sub errorCallback {
 	my $self = shift;
 
-	my $state = ${*self}{'httpasync_state'};
+	my $state = ${*$self}{'httpasync_state'};
 
 	# remove self from select loop
 	Slim::Networking::Select::addError($self);
