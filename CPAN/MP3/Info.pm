@@ -566,6 +566,23 @@ sub get_mp3tag {
 			%info = %$v2;
 			$info{TAGVERSION} = $v2h->{version};
 		} else {
+
+			# J.River Media Center sticks RG tags in comments.
+			# Ugh. Make them look like TXXX tags, which is really what they are.
+			if (ref($v2->{'COMM'}) eq 'ARRAY' && grep { /Media Jukebox/ } @{$v2->{'COMM'}}) {
+
+				for my $comment (@{$v2->{'COMM'}}) {
+
+					if ($comment =~ /Media Jukebox/) {
+
+						# we only want one null to lead.
+						$comment =~ s/^\000+//g;
+
+						push @{$v2->{'TXXX'}}, "\000$comment";
+					}
+				}
+			}
+
 			my $hash = $raw_v2 == 2 ? { map { ($_, $_) } keys %v2_tag_names } : \%v2_to_v1_names;
 			for my $id (keys %$hash) {
 				if (exists $v2->{$id}) {
@@ -627,7 +644,7 @@ sub get_mp3tag {
 							if ($id =~ /^COMM?$/) {
 								my($newdata) = grep /^(....\000)/, @{$data1};
 								$data1 = $newdata || $data1->[0];
-							} elsif (!($id =~ /^TXXX?$/)) {
+							} elsif ($id !~ /^(?:TXXX?|PRIV)$/) {
 								# We can get multiple User Defined Text frames in a mp3 file
 								$data1 = $data1->[0];
 							}
@@ -732,10 +749,18 @@ sub get_mp3tag {
 									$info{$hash->{$id}} = [ $info{$hash->{$id}}, $data ];
 								}
 							} else {
+
 								# User defined frame
 								if ($id eq 'TXXX') {
+
 									my ($key, $val) = split(/\0/, $data);
 									$info{uc($key)} = $val;
+
+								} elsif ($id eq 'PRIV') {
+
+									my ($key, $val) = split(/\0/, $data);
+									$info{uc($key)} = unpack('v', $val);
+
 								} else {
 									$info{$hash->{$id}} = $data;
 								}

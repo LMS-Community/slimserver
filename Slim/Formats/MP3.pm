@@ -21,6 +21,10 @@ my %tagMapping = (
 	'MUSICBRAINZ ALBUM TYPE'	=> 'MUSICBRAINZ_ALBUM_TYPE',
 	'MUSICBRAINZ ARTIST ID'		=> 'MUSICBRAINZ_ARTIST_ID',
 	'MUSICBRAINZ TRM ID'		=> 'MUSICBRAINZ_TRM_ID',
+
+	# J.River Media Center uses messed up tags. See Bug 2250
+	'MEDIA JUKEBOX: REPLAY GAIN'    => 'REPLAYGAIN_TRACK_GAIN',
+	'MEDIA JUKEBOX: PEAK LEVEL'     => 'REPLAYGAIN_TRACK_PEAK',
 );
 
 # Don't try and convert anything to latin1
@@ -75,18 +79,10 @@ sub getTag {
 	# Pull out Relative Volume Adjustment information
 	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
 
-		$info->{'REPLAYGAIN_TRACK_PEAK'} = $info->{'RVAD'}->{'RIGHT'}->{'REPLAYGAIN_TRACK_PEAK'};
+		for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
-		my $gain = $info->{'RVAD'}->{'RIGHT'}->{'REPLAYGAIN_TRACK_GAIN'};
-
-		# itunes uses a range of -65535 to 65535 to be -100% (silent) to 100% (+6dB)
-		if ($gain == -65535) {
-			$gain = -96.0;
-		} else {
-			$gain = 20.0 * log(($gain+65535)/65535)/log(10);
+			$info->{$type} = $info->{'RVAD'}->{'RIGHT'}->{$type};
 		}
-
-		$info->{'REPLAYGAIN_TRACK_GAIN'} = $gain;
 
 		delete $info->{'RVAD'};
 
