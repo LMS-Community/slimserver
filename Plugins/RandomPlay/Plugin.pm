@@ -631,7 +631,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	EN	Playing Random Years
 
 PLUGIN_RANDOM_GENRE_FILTER
-	DE	Wähle zu berücksichtigende Stile
+	DE	Zu berücksichtigende Stile wählen
 	EN	Select Genres To Include
 	
 PLUGIN_RANDOM_CHOOSE_DESC
@@ -659,9 +659,11 @@ SETUP_PLUGIN_RANDOM_DESC
 	EN	The Random Mix plugin allows you to listen to random selections from your music library.
 
 SETUP_MIX_SETTINGS
+	DE	Mix Einstellungen
 	EN	Mix Settings
 
 SETUP_SELECT_GENRES_DESC
+	DE	Sie können Stilrichtungen definieren, die bei zufälligen Zusammenstellungen berücksichtigt werden sollen. Stile, die nicht markiert sind, werden vom Mix ausgeschlossen. 
 	EN	You can select the song genres that you wish to be included in random mixes.  Any genres left unticked will be excluded from mixes.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
