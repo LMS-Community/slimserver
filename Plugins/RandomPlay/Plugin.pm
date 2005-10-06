@@ -92,12 +92,7 @@ sub getGenres {
 		$clientGenres{$item->name} = 1;
 	}
 
-	# Init client pref - can't do with others in checkDefaults as need $client
-	if (! $client->prefIsDefined('plugin_random_exclude_genres')) {
-		$::d_plugins && msg("RandomPlay: Initing exclude pref\n");
-		$client->prefSet('plugin_random_exclude_genres', []);
-	}
-	my @exclude = $client->prefGetArray('plugin_random_exclude_genres');
+	my @exclude = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
 
 	# Set excluded genres to 0 in genres hash
 	@clientGenres{@exclude} = (0) x @exclude;
@@ -212,7 +207,7 @@ sub playRandom {
 		if ($type ne 'track') {
 			$string = $client->string('PLUGIN_RANDOM_' . $type . '_ITEM') . ': ';
 		}
-		my $showTime = 4;		
+		my $showTime = 5;		
 		
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
@@ -258,7 +253,7 @@ sub playRandom {
 		}
 
 		# Set the Now Playing title.
-		$client->currentPlaylist($client->string('PLUGIN_RANDOM_' . uc($type)));
+		#$client->currentPlaylist($string);
 		
 		# Never show random as modified, since its a living playlist
 		$client->currentPlaylistModified(0);		
@@ -339,7 +334,7 @@ sub toggleGenreState {
 	# Toggle the selected state of the current item
 	$genres{$client}{$item} = ! $genres{$client}{$item};
 	
-	$client->prefSet('plugin_random_exclude_genres', [getFilteredGenres($client, 1)]);
+	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [getFilteredGenres($client, 1)]);
 	
 	$client->update();
 }
@@ -458,9 +453,13 @@ sub commandCallback {
 sub initPlugin {
 	# playlist commands that will stop random play
 	%stopcommands = (
-		'clear' => 1,
+		'clear'		 => 1,
 		'loadtracks' => 1, # multiple play
 		'playtracks' => 1, # single play
+		'load'		 => 1, # old style url load (no play)
+		'play'		 => 1, # old style url play
+		'loadalbum'	 => 1, # old style multi-item load
+		'playalbum'	 => 1, # old style multi-item play
 	);
 }
 
@@ -500,8 +499,9 @@ sub getFunctions {
 sub webPages {
 
 	my %pages = (
-		"randomplay_list\.(?:htm|xml)" => \&handleWebList,
-		"randomplay_mix\.(?:htm|xml)"  => \&handleWebMix,
+		"randomplay_list\.(?:htm|xml)"     => \&handleWebList,
+		"randomplay_mix\.(?:htm|xml)"      => \&handleWebMix,
+		"randomplay_settings\.(?:htm|xml)" => \&handleWebSettings,
 	);
 
 	my $value = $htmlTemplate;
@@ -516,12 +516,19 @@ sub webPages {
 	return \%pages;
 }
 
+# Draws the plugin's web page
 sub handleWebList {
 	my ($client, $params) = @_;
+
+	# Pass on the current pref values
+	$params->{'pluginRandomGenreList'} = {getGenres($client)};
+	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
 
+# Handles play requests from plugin's web page
 sub handleWebMix {
 	my ($client, $params) = @_;
 	if (defined $client) {
@@ -532,43 +539,23 @@ sub handleWebMix {
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
 
-sub setupGroup {
-	my %setupGroup = (
-
-		PrefOrder => [qw(plugin_random_number_of_tracks plugin_random_number_of_old_tracks)],
-		GroupHead => string('PLUGIN_RANDOM'),
-		GroupDesc => string('SETUP_PLUGIN_RANDOM_DESC'),
-		GroupLine => 1,
-		GroupSub  => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1,
-	);
-
-	my %setupPrefs = (
-
-		'plugin_random_number_of_tracks' => {
-
-			'validate'     => \&Slim::Web::Setup::validateInt,
-			'validateArgs' => [1, undef, 1],
-		},
-
-		'plugin_random_number_of_old_tracks' => {
-		
-			'validate' => sub {
-			                my $val = shift;
-			                # Treat any non-integer value as keep all old tracks
-			                if ($val !~ /^\d+$/) {
-								return '';
-							} else {
-								return $val;
-							}
-			              }
-		}
-	);
+# Handles settings changes from plugin's web page
+sub handleWebSettings {
+	my ($client, $params) = @_;
+	my %genres = getGenres($client);
 	
-	checkDefaults();
+	# %$params will contain a key called genre_<genre name> for each ticked checkbox on the page
+	foreach my $genre (keys(%$params)) {
+		if ($genre =~ s/^genre_//) {
+			delete($genres{$genre});
+		}
+	}
 
-	return (\%setupGroup,\%setupPrefs);
+	Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});		
+	Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
+	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys(%genres)]);	
+
+	handleWebList($client, $params);
 }
 
 sub checkDefaults {
@@ -581,6 +568,10 @@ sub checkDefaults {
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_old_tracks')) {
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
 	}	
+
+	if (!Slim::Utils::Prefs::isDefined('plugin_random_exclude_genres')) {
+		Slim::Utils::Prefs::set('plugin_random_exclude_genres', []);
+	}
 }
 
 sub strings {
@@ -666,6 +657,12 @@ PLUGIN_RANDOM_YEAR_DESC
 SETUP_PLUGIN_RANDOM_DESC
 	DE	Das Zufalls Mix Plugin erlaubt es, eine zufällige Auswahl von Liedern aus Ihrer Sammlung wiederzugeben.
 	EN	The Random Mix plugin allows you to listen to random selections from your music library.
+
+SETUP_MIX_SETTINGS
+	EN	Mix Settings
+
+SETUP_SELECT_GENRES_DESC
+	EN	You can select the song genres that you wish to be included in random mixes.  Any genres left unticked will be excluded from mixes.
 
 SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
 	DE	Anzahl Lieder für Zufallsmix

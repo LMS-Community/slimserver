@@ -35,6 +35,7 @@
 	[% END %]
 [% END %]
 
+<form action="[% webroot %]plugins/RandomPlay/randomplay_settings.html">
 [% IF player == '' %]
 	<p>[% "NO_PLAYER_FOUND" | string %]</p>
 [% END %]
@@ -69,8 +70,92 @@
 			<td class="listing" width="11">[% PROCESS playLink type="year" %]</td>
 			<td class="listing" width="11">[% PROCESS addLink type="year" %]</td>
 		</tr>
-
-		</table>
+</table>
 [% END %]
+<table>
+				<tr>
+					<td></td>
+				</tr>
 
+				<tr>
+					<hr><h3>[% "SETUP_MIX_SETTINGS" | string %]:</h3>
+				</tr>
+
+				<tr>
+					<td class="even"></td>
+				</tr>
+
+				<tr>
+					<h3>[% "PLUGIN_RANDOM_GENRE_FILTER" | string %]</h3>
+				</tr>
+
+				<tr>
+					[% "SETUP_SELECT_GENRES_DESC" | string %]
+				</tr>
+				<tr>
+					<td class="even">
+						<table border="0">
+							[% PERL %]
+								require POSIX;
+
+								my $genreList = $stash->{'pluginRandomGenreList'};
+								my @keys = sort(keys(%$genreList));
+								my $inc = POSIX::ceil(@keys / 2);
+								my ($genre, $checkedString);
+								for (my $i = 0; $i < $inc; $i++) {
+									$genre = $keys[$i];
+									$checkedString = $genreList->{$genre} ? 'checked' : '';
+									print "<tr><td><label for='${genre}CheckBox'>$genre</label></td>\n";
+									print "<td><input type='checkbox' name='genre_$genre' id='${genre}CheckBox' value='1' $checkedString></td>\n";
+									if ($i + $inc < @keys) {
+										$genre = $keys[$i + $inc];
+										$checkedString = $genreList->{$genre} ? 'checked' : '';
+										print '<td>' . '&nbsp;' x 10 . "</td>\n";
+										print "<td><label for='${genre}CheckBox'>$genre</label></td>\n";
+										print "<td><input type='checkbox' name='genre_$genre' id='${genre}CheckBox' value='1' $checkedString></td>\n";
+									}
+									print '</tr>';
+								}
+							[% END %]
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="even"><input type="submit" value="[% "CHANGE" | string %]"></td>
+				</tr>
+
+				<tr>
+					<td class="even">
+						<label>
+							<b>[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS" | string %]:</b>
+							<input class="stdedit" type="text" size="3" name="numTracks" value="[% pluginRandomNumTracks %]">
+						</label>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="even">[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS_DESC" | string %]</td>
+
+				<tr>
+					<td class="even"></td>
+				</tr>
+
+				<tr>
+					<td class="even">
+						<label>
+							<b>[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS" | string %]:</b>
+							<input class="stdedit" type="text" size="3" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
+						</label>
+					</td>
+				</tr>
+
+				<tr>
+					<td class="even">[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS_DESC" | string %]</td>
+				</tr>
+
+				<tr>
+					<td class="even"><input type="submit" value="[% "CHANGE" | string %]"></td>
+				</tr>
+			</table>
+		</form>
 [% PROCESS pagefooter.html %]
