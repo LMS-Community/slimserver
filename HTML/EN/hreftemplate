@@ -1,10 +1,10 @@
 [% 
-albumHRef = "href=\"" _ $webroot _ "browsedb.html?hierarchy=album,track&level=1&album=$itemobj.album.id&player=$player\"";
-songinfoHRef = "href=\"" _ $webroot _ "songinfo.html?item=$itemobj.id&player=$player\"";
-browseDbHRef = "href=\"browsedb.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\" target=\"browser\"";
+albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&level=1&album=$itemobj.album.id&player=$player\"";
+songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&player=$player\"";
+browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
-browseTreeHRef = "href=\"" _ $webroot _ "browsetree.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\"";
-browsePlaylistHRef = "href=\"" _ $webroot _ "browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=$itemobj.id$noEdit&player=$player\"";
+browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\"";
+browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=$itemobj.id$noEdit&player=$player\"";
 
 BLOCK homeLink; homeString = "HOME" | string;
 	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
