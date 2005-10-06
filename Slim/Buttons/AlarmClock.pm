@@ -339,15 +339,26 @@ sub checkAlarms {
 					
 					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
 				
 				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {
 
 					$client->execute(["power", 1]);
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
+					
+					my $ds = Slim::Music::Info::getCurrentDataStore();
+					my $playlistObj = $ds->objectForUrl($playlist);
 
-					$client->execute(["playlist", "load", $playlist], \&playDone, [$client]);
+					if (ref $playlistObj) {
+					
+						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id()], \&playDone, [$client]);
+						setTimer();
+						return;
+					
+					} else {
+						# no object, so try to play the current playlist
+						$client->execute(['play']);
+					}
 
 				# check random playlist choice, but only if RandomPlay plugin is enabled at this time.
 
@@ -356,8 +367,9 @@ sub checkAlarms {
 
 					$client->execute(['play']);
 
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
 				}
+				
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
 			}
 		}
 	}
