@@ -170,7 +170,9 @@ sub bodyCB {
 		$self->{'content'} = $content;
 
 		&{$self->{'cb'}}($self);
-	}	
+	}
+
+	$self->close;
 }
 
 sub content {
@@ -200,7 +202,7 @@ sub error {
 sub close {
 	my $self = shift;
 
-	if ($self->{'socket'}) {
+	if (defined $self->{'socket'} && fileno($self->{'socket'})) {
 
 		$self->{'socket'}->close;
 	}
