@@ -539,9 +539,7 @@ sub get_mp3tag {
 						}
 					}
  	 
-					$icode = 'iso-8859-1' unless ref($icode);
- 	 
-					$info{$key} = Encode::decode($icode, $info{$key});
+					$info{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info{$key});
 				}
 
 				Encode::Guess->set_suspects(keys %{$oldSuspects});
