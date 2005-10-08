@@ -365,6 +365,11 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
+	if ($track->samplerate) {
+		push (@{$client->trackInfoLines}, $client->string('SAMPLERATE') . ": " . $track->prettySampleRate);
+		push (@{$client->trackInfoContent}, undef);
+	}
+
 	if (my $len = $track->filesize) {
 		push (@{$client->trackInfoLines}, $client->string('FILELENGTH') . ": " . Slim::Utils::Misc::delimitThousands($len));
 		push (@{$client->trackInfoContent}, undef);
