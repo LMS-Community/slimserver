@@ -171,6 +171,11 @@
                         <font size="+1">[% itemobj.bitrate %]
                 </td>
         </tr>
+        [% END %][% IF itemobj.samplerate %] 
+        <tr> 
+                <td> <font size="+1">[% "SAMPLERATE" | string; "COLON" | string %]</td>
+                <td> <font size="+1">[% itemobj.prettySampleRate | html %] </td>
+        </tr>
         [% END %] [% IF itemobj.tagversion %]
         <tr>
                 <td><font size="+1">

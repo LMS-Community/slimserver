@@ -193,6 +193,12 @@
 			</td>
 		</tr>
 	[% END %]
+	[% IF itemobj.samplerate %] 
+		<tr> 
+			<td> [% "SAMPLERATE" | string; "COLON" | string %]</td>
+			<td> [% itemobj.prettySampleRate | html %] </td>
+		</tr>
+	[% END %]
 	[% IF itemobj.bpm %]
 		<tr>
 			<td>
