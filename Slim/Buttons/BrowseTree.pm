@@ -87,7 +87,7 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			if ($descend || (!Slim::Utils::Prefs::get('playtrackalbum') && !$addorinsert)) {
+			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum') || $addorinsert) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 
@@ -96,7 +96,6 @@ sub init {
 			## can do lazy object conversion later.
 			} else {
 
-				$command = 'playtracks';
 				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
 
 				Slim::Player::Playlist::shuffle($client, 0);
@@ -118,7 +117,7 @@ sub init {
 					push (@playlist, $items->[$i]);
 				}
 
-				$client->execute(['playlist', $command,'listref', \@playlist]);
+				$client->execute(['playlist', 'addtracks','listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
 				if ($wasShuffled) {
