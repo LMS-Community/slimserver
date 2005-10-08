@@ -76,6 +76,9 @@ sub getTag {
 	# bitrate is in bits per second, not kbits per second.
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
+	# same with sample rate
+	$info->{'RATE'} = $info->{'FREQUENCY'} * 1000 if ($info->{'FREQUENCY'});
+
 	# Pull out Relative Volume Adjustment information
 	if ($info->{'RVAD'} && $info->{'RVAD'}->{'RIGHT'}) {
 

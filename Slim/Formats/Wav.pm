@@ -53,6 +53,7 @@ sub getTag {
 		$tags->{'OFFSET'} = $read->offset();
 		$tags->{'SIZE'}   = $read->length();
 		$tags->{'SECS'}   = $read->length_seconds();
+		$tags->{'RATE'}   = $details->{'sample_rate'};
 		$tags->{'BITRATE'} = $details->{'bytes_sec'} * 8;
 		$tags->{'CHANNELS'} = $details->{'channels'};
 		$tags->{'SAMPLESIZE'} = $details->{'bits_sample'};

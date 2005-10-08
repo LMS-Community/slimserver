@@ -38,13 +38,11 @@ sub getTag {
 		}
 	}
 
-	# Don't divide by 0.
-	if ($tags->{'SECS'}) {
+	$tags->{'OFFSET'} = 0;
 
-		$tags->{'BITRATE'} = int($tags->{'SIZE'} * 8 / $tags->{'SECS'});
-	}
-
-	$tags->{'OFFSET'}  = 0;
+	# bitrate is in bits per second, not kbits per second.
+	$tags->{'BITRATE'} = $tags->{'BITRATE'}   * 1000 if $tags->{'BITRATE'};
+	$tags->{'RATE'}    = $tags->{'FREQUENCY'} * 1000 if $tags->{'FREQUENCY'};
 
 	# Unroll the disc info.
 	if ($tags->{'DISK'} && ref($tags->{'DISK'}) eq 'ARRAY') {

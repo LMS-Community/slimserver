@@ -172,6 +172,13 @@
       </tr>
      [% END %]
 
+     [% IF itemobj.samplerate %] 
+      <tr> 
+        <td class="nowrap"> [% "SAMPLERATE" | string; "COLON" | string %]</td>
+        <td> [% itemobj.prettySampleRate | html %] </td>
+      </tr>
+     [% END %]
+
      [% IF itemobj.bpm %]
       <tr>
         <td class="nowrap"> [% "BPM" | string; "COLON" | string %] </td>
