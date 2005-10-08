@@ -109,7 +109,7 @@ sub reconnect {
 	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
 	# update display and force visualizer to correct mode if SB2
-	$client->update({}); # clear render cache
+	$client->renderCache()->{screensize} = 0; # force reinit of render cache
 	$client->update();	
 	$client->visualizer(1) if ($client->isa('Slim::Player::Squeezebox2'));
 }
