@@ -235,7 +235,7 @@ PLUGIN_HEALTH_BUFFER_DESC
 	EN	This graph shows the fill of the player\'s buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
 
 PLUGIN_HEALTH_CONTROL
-	DE	Kontroll-Verbindung
+	DE	Kontrollverbindung
 	EN	Control Connection
 
 PLUGIN_HEALTH_CONTROL_DESC
@@ -259,7 +259,7 @@ PLUGIN_HEALTH_TIMER_LATE
 	EN	Timer Accuracy
 
 PLUGIN_HEALTH_TIMER_LATE_DESC
-	DE	SlimServer benutzt einen Timer, um Ereignisse wie z.B. Updates der Programmoberfläche zu steuern. Diese Graphik zeigt die Genauigkeit, mit welcher Timer-gesteuerte Abläufe im Vergleich zum vorgesehenen zeitlichen Ablauf ausgeführt werden. Die Masseinheit ist Sekunden.<p>Aufgaben werden auf einen bestimmten Zeitpunkt festgelegt. Da stets nur ein Timer ablaufen kann und der Server auch andere Aktivitäten ausführt, kommt es stehts zu einer minimalen Verzögerung. Kommt es allerdings zu einer markanten Verzögerung, so kann es zu wahrnehmbaren Störungen der Benutzeroberfläche kommen. 
+	DE	SlimServer benutzt einen Timer, um Ereignisse wie z.B. Updates der Programmoberfläche zu steuern. Diese Graphik zeigt die Genauigkeit, mit welcher Timer-gesteuerte Abläufe im Vergleich zum vorgesehenen zeitlichen Ablauf ausgeführt werden. Die Masseinheit ist Sekunden.<p>Aufgaben werden auf einen bestimmten Zeitpunkt festgelegt. Da stets nur ein Timer ablaufen kann und der Server auch andere Aktivitäten ausführt, kommt es stets zu einer minimalen Verzögerung. Kommt es allerdings zu einer markanten Verzögerung, so kann es zu wahrnehmbaren Störungen der Benutzeroberfläche kommen. 
 	EN	Slimserver uses a timer mechanism to trigger events such as updating the user interface.  This graph shows how accurately each timer task is run relative to the time it was intended to be run.  It is measured in seconds.<p>Timer tasks are scheduled by the server to run at some point in the future.  As only one timer task can run at once and the server may also be performing other activity, timer tasks always run slightly after the time they are scheduled for.  However if timer tasks run significantly after they are scheduled this can become noticable through delay in the user interface.
 
 PLUGIN_HEALTH_TIMER_LENGTH
@@ -275,7 +275,7 @@ PLUGIN_HEALTH_RESPONSE
 	EN	Server Response Time
 
 PLUGIN_HEALTH_RESPONSE_DESC
-	DE	Diese Graphike zeigt die Zeitdauer, die zwischen zwei beliebigen Anfragen von beliebigen Playern vergeht. Die Masseinheit ist Sekunden. Geringere Werte sind besser. Antwortzeiten über einer Sekunde können zu Problemen bei der Audio-Wiedergabe führen.<p>Gründe für solche Verzögerungen können andere ausgeführte Programme oder komplexe Verarbeitungen im SlimServer sein.
+	DE	Diese Graphik zeigt die Zeitdauer, die zwischen zwei Anfragen von beliebigen Playern vergeht. Die Masseinheit ist Sekunden. Geringere Werte sind besser. Antwortzeiten über einer Sekunde können zu Problemen bei der Audio-Wiedergabe führen.<p>Gründe für solche Verzögerungen können andere ausgeführte Programme oder komplexe Verarbeitungen im SlimServer sein.
 	EN	This graph shows the length of time between slimserver responding to requests from any player.  It is measured in seconds. Lower numbers are better.  If you notice response times of over 1 second this could lead to problems with audio performance.<p>The cause of long response times could be either other programs running on the server or slimserver processing a complex task.
 
 PLUGIN_HEALTH_SCHEDULER
