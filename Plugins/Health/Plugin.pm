@@ -120,7 +120,12 @@ sub summary {
 sub webPages {
 	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
 
-	Slim::Web::Pages::addLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
+	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages::addLinks("help", { 'PLUGIN_HEALTH' => undef });
+	} else {
+		Slim::Web::Pages::addLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
+	}
+
 	return (\%pages);
 }
 
