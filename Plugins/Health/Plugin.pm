@@ -118,7 +118,7 @@ sub summary {
 		push @warn, string("PLUGIN_HEALTH_NORMAL");
 	}
 
-	return ($summary, @warn);
+	return ($summary, \@warn);
 }
 
 sub webPages {
@@ -171,7 +171,7 @@ sub handleIndex {
 	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
 	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerPerf->sprint();
 
-	($params->{'summary'}, @{$params->{'warn'}}) = summary($client);
+	($params->{'summary'}, $params->{'warn'}) = summary($client);
 
 	$params->{'refresh'} = $refresh;
 
