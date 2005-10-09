@@ -42,10 +42,10 @@ function refresh() {
             <pre>[% summary %]</pre>
             <p>
         [% END %]
-        [% IF summary_error %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
-            [% summary_error %]
-        [% ELSE %]
-	    [% IF playername %][% "PLUGIN_HEALTH_NORMAL" | string %]<p>[% END %]
+        [% IF warn %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
+            [% FOREACH warn_message = warn %]
+	        <p>[% warn_message %]</p>
+            [% END %]
         [% END %]
 
         <hr>

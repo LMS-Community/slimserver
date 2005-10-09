@@ -36,7 +36,7 @@ sub clearAllCounters {
 sub summary {
 	my $client = shift;
 	
-	my ($summary, $error);
+	my ($summary, @warn);
 
 	if (defined($client) && $client->isa("Slim::Player::Squeezebox")) {
 
@@ -47,31 +47,31 @@ sub summary {
 				$control = string("PLUGIN_HEALTH_OK");
 			} else {
 				$control = string("PLUGIN_HEALTH_CONGEST");
-				$error .= string("PLUGIN_HEALTH_CONTROLCONGEST_DESC");
+				push @warn, string("PLUGIN_HEALTH_CONTROLCONGEST_DESC");
 			}
 		} else {
 			$control = string("PLUGIN_HEALTH_FAIL");
-			$error .= string("PLUGIN_HEALTH_CONTROLFAIL_DESC");
+			push @warn, string("PLUGIN_HEALTH_CONTROLFAIL_DESC");
 		}
 
 		if ($client->streamingsocket() && $client->streamingsocket()->opened()) {
 			$stream = string("PLUGIN_HEALTH_OK");
 		} else {
 			$stream = string("PLUGIN_HEALTH_INACTIVE");
-			$error .= string("PLUGIN_HEALTH_STREAMINACTIVE_DESC");
+			push @warn, string("PLUGIN_HEALTH_STREAMINACTIVE_DESC");
 		}
 
 		if ($client->signalStrengthLog()->percentBelow(50) < 1) {
 			$signal = string("PLUGIN_HEALTH_OK");
 		} elsif ($client->signalStrengthLog()->percentBelow(50) < 5) {
 			$signal = string("PLUGIN_HEALTH_SIGNAL_INTERMIT");
-			$error .= string("PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC");
+			push @warn, string("PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC");
 		} elsif ($client->signalStrengthLog()->percentBelow(50) < 20) {
 			$signal = string("PLUGIN_HEALTH_SIGNAL_POOR");
-			$error .= string("PLUGIN_HEALTH_SIGNAL_POOR_DESC");
+			push @warn, string("PLUGIN_HEALTH_SIGNAL_POOR_DESC");
 		} else {
 			$signal = string("PLUGIN_HEALTH_SIGNAL_BAD");
-			$error .= string("PLUGIN_HEALTH_SIGNAL_BAD_DESC");
+			push @warn, string("PLUGIN_HEALTH_SIGNAL_BAD_DESC");
 		}
 
 		$summary .= sprintf "%-22s : %s\n", string('PLUGIN_HEALTH_CONTROL'), $control;
@@ -85,37 +85,41 @@ sub summary {
 					$buffer = string("PLUGIN_HEALTH_OK");
 				} else {
 					$buffer = string("PLUGIN_HEALTH_BUFFER_LOW");
-					$error .= string("PLUGIN_HEALTH_BUFFER_LOW_DESC2");
+					push @warn, string("PLUGIN_HEALTH_BUFFER_LOW_DESC2");
 				}
 			} else {
 				if ($client->bufferFullnessLog()->percentBelow(50) < 5) {
 					$buffer = string("PLUGIN_HEALTH_OK");
 				} else {
 					$buffer = string("PLUGIN_HEALTH_BUFFER_LOW");
-					$error .= string("PLUGIN_HEALTH_BUFFER_LOW_DESC1");
+					push @warn, string("PLUGIN_HEALTH_BUFFER_LOW_DESC1");
 				}
 			}			
 			$summary .= sprintf "%-22s : %s\n", string('PLUGIN_HEALTH_BUFFER'), $buffer;
 		}
 	} elsif (defined($client) && $client->isa("Slim::Player::SLIMP3")) {
-		$error .= string("PLUGIN_HEALTH_SLIMP3_DESC");
+		push @warn, string("PLUGIN_HEALTH_SLIMP3_DESC");
 	} else {
-		$error .= string("PLUGIN_HEALTH_NO_PLAYER_DESC");
+		push @warn, string("PLUGIN_HEALTH_NO_PLAYER_DESC");
 	}
 
-	if ($Slim::Networking::Select::selectPerf->above(1) < 5) {
+	if ($Slim::Networking::Select::selectPerf->percentAbove(1) < 0.01 || 
+		$Slim::Networking::Select::selectPerf->above(1) < 3 ) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_OK");
 	} elsif ($Slim::Networking::Select::selectPerf->percentAbove(1) < 0.5) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_RESPONSE_INTERMIT");
-		$error .= string("PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC");
+		push @warn, string("PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC");
 	} else {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_RESPONSE_POOR");
-		$error .= string("PLUGIN_HEALTH_RESPONSE_POOR_DESC");
+		push @warn, string("PLUGIN_HEALTH_RESPONSE_POOR_DESC");
 	}
 
-	return ($summary, $error);
+	if (defined($client) && scalar(@warn) == 0) {
+		push @warn, string("PLUGIN_HEALTH_NORMAL");
+	}
+
+	return ($summary, @warn);
 }
-	
 
 sub webPages {
 	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
@@ -138,6 +142,7 @@ sub handleIndex {
 		if ($params->{'perf'} eq 'on') {
 			$::perfmon = 1;
 			clearAllCounters();
+			$refresh = 2;
 		} elsif ($params->{'perf'} eq 'off') {
 			$::perfmon = 0;
 		}
@@ -166,7 +171,7 @@ sub handleIndex {
 	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
 	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerPerf->sprint();
 
-	($params->{'summary'}, $params->{'summary_error'}) = summary($client);
+	($params->{'summary'}, @{$params->{'warn'}}) = summary($client);
 
 	$params->{'refresh'} = $refresh;
 
@@ -311,60 +316,60 @@ PLUGIN_HEALTH_INACTIVE
 	EN	Inactive
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
-	DE	Derzeit ist keine aktive Verbindung für diesen Player vorhanden. Eine Verbindung wird aufgebaut, wenn Sie eine Datei vom Server wiedergeben, nicht aber, wenn Sie eine Internet Radio-Station af einer Squeezebox2 hören.<p>Falls Sie versuchen, eine lokale Datei auf diesem Player abzuspielen, so deutet dies auf ein Netzwerkproblem hin. Bitte überprüfen Sie die Netzwerkkonfiguration und/oder Firewall (TCP Port 900 darf nicht blockiert sein).
-	EN	There is currently no active connection for streaming to this player.  A connection is required whenever you play a file from the server (but not when you play remote radio streams on a Squeezebox2 player).<p>If you are attempting to play a local file on this player, then this indicates a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.<p>
+	DE	Derzeit ist keine aktive Verbindung für diesen Player vorhanden. Eine Verbindung wird aufgebaut, wenn Sie eine Datei vom Server wiedergeben, nicht aber, wenn Sie eine Internet Radio-Station af einer Squeezebox2 hören.<p>Falls Sie versuchen, eine lokale Datei auf diesem Player abzuspielen, so deutet dies auf ein Netzwerkproblem hin. Bitte überprüfen Sie die Netzwerkkonfiguration und/oder Firewall (TCP Port 9000 darf nicht blockiert sein).
+	EN	There is currently no active connection for streaming to this player.  A connection is required whenever you play a file from the server (but not when you play remote radio streams on a Squeezebox2 player).<p>If you are attempting to play a local file on this player, then this indicates a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
-	DE	Derzeit ist keine aktive Kontroll-Verbindung für diesen Player vorhanden. Bitte stellen Sie sicher, dass das Gerät eingeschaltet ist. Falls der Player keine Netzwerkverbindung aufbauen kann, überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.<p> 
-	EN	There is no currently active control connection to this player.  Please check the player is powered on.  If the player is unable to establish a connection, please check your network and and/or server firewall do not block connections to TCP & UDP port 3483.<p>
+	DE	Derzeit ist keine aktive Kontroll-Verbindung für diesen Player vorhanden. Bitte stellen Sie sicher, dass das Gerät eingeschaltet ist. Falls der Player keine Netzwerkverbindung aufbauen kann, überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.
+	EN	There is no currently active control connection to this player.  Please check the player is powered on.  If the player is unable to establish a connection, please check your network and and/or server firewall do not block connections to TCP & UDP port 3483.
 
 PLUGIN_HEALTH_CONTROLCONGEST_DESC
-	DE	Die Kontroll-Verbindung zu diesem Player hat Überlastungen erfahren. Dies ist üblicherweise ein Hinweis auf schlechte Netzwerkverbindung, oder dass das Gerät vor kurzem vom Netz genommen wurde.<p>
-	EN	The control connection to this player has experienced congestion.  This usually is an indication of poor network connectivity (or the player being recently being disconnected from the network).<p>
+	DE	Die Kontroll-Verbindung zu diesem Player hat Überlastungen erfahren. Dies ist üblicherweise ein Hinweis auf schlechte Netzwerkverbindung, oder dass das Gerät vor kurzem vom Netz genommen wurde.
+	EN	The control connection to this player has experienced congestion.  This usually is an indication of poor network connectivity (or the player being recently being disconnected from the network).
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT
 	DE	Gut, aber mit vereinzelten Ausfällen 
 	EN	Good, but Intermittent Drops
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC
-	DE	Die Signalstärke dieses Players ist im Grossen und Ganzen gut, hatte aber vereinzelte Ausfälle. Dies kann auf andere Wireless Netzwerke, kabellose Telephone oder Mikrowellen-Öfen zurückzuführen sein. Falls Sie vereinzelte Ton-Aussetzer wahrnehmen, so sollten Sie der Ursache des Problems nachgehen.<p>
-	EN	The signal strength received by this player is normally good, but occasionally drops.  This may be caused by other wireless networks, cordless phones or microwaves nearby.  If you hear occasional audio dropouts on this player, you should investigate what is causing drops in signal strength.<p>
+	DE	Die Signalstärke dieses Players ist im Grossen und Ganzen gut, hatte aber vereinzelte Ausfälle. Dies kann auf andere Wireless Netzwerke, kabellose Telephone oder Mikrowellen-Öfen zurückzuführen sein. Falls Sie vereinzelte Ton-Aussetzer wahrnehmen, so sollten Sie der Ursache des Problems nachgehen.
+	EN	The signal strength received by this player is normally good, but occasionally drops.  This may be caused by other wireless networks, cordless phones or microwaves nearby.  If you hear occasional audio dropouts on this player, you should investigate what is causing drops in signal strength.
 
 PLUGIN_HEALTH_SIGNAL_POOR
 	DE	Schwach
 	EN	Poor
 
 PLUGIN_HEALTH_SIGNAL_POOR_DESC
-	DE	Die Signalstärke dieses Players ist grösstenteils schwach. Bitte überprüfen Sie das Wireless Netzwerk.<p>
-	EN	The signal strength received by this player is poor for significant periods, please check your wireless network.<p>
+	DE	Die Signalstärke dieses Players ist grösstenteils schwach. Bitte überprüfen Sie das Wireless Netzwerk.
+	EN	The signal strength received by this player is poor for significant periods, please check your wireless network.
 
 PLUGIN_HEALTH_SIGNAL_BAD
 	DE	Schlecht
 	EN	Bad
 
 PLUGIN_HEALTH_SIGNAL_BAD_DESC
-	DE	Die Signalstärke dieses Players ist grösstenteils schlecht. Bitte überprüfen Sie das Wireless Netzwerk.<p>
-	EN	The signal strength received by this player is bad for significant periods, please check your wireless network.<p>
+	DE	Die Signalstärke dieses Players ist grösstenteils schlecht. Bitte überprüfen Sie das Wireless Netzwerk.
+	EN	The signal strength received by this player is bad for significant periods, please check your wireless network.
 
 PLUGIN_HEALTH_BUFFER_LOW
 	DE	Niedrig
 	EN	Low
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC1
-	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies kann zu Tonaussetzern führen, v.a. falls Sie WAV oder AIFF verwenden. Falls Sie solche Aussetzer wahrnehmen, überprüfen Sie bitte die Signalstärke und Server Antwortzeiten.<p>
-	EN	The playback buffer for this player is occasionally falling lower than ideal.  This may result in audio dropouts especually if you are streaming as WAV/AIFF.  If you are hearing these, please check your network signal strength and server response times.<p>
+	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies kann zu Tonaussetzern führen, v.a. falls Sie WAV oder AIFF verwenden. Falls Sie solche Aussetzer wahrnehmen, überprüfen Sie bitte die Signalstärke und Server Antwortzeiten.
+	EN	The playback buffer for this player is occasionally falling lower than ideal.  This may result in audio dropouts especually if you are streaming as WAV/AIFF.  If you are hearing these, please check your network signal strength and server response times.
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC2
-	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies ist eine Squeezebox2, es ist daher normal, dass der Puffer am Ende eines Liedes geleert wird. Diese Warnung wird ev. angezeigt, falls Sie viele kurze Lieder wiedergeben. Falls Sie Tonaussetzer feststellen, überprüfen Sie bitte die Signalstärke.<p>
-	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check our network signal strength.<p>
+	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies ist eine Squeezebox2, es ist daher normal, dass der Puffer am Ende eines Liedes geleert wird. Diese Warnung wird ev. angezeigt, falls Sie viele kurze Lieder wiedergeben. Falls Sie Tonaussetzer feststellen, überprüfen Sie bitte die Signalstärke.
+	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check our network signal strength.
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT
 	DE	Teilweise schlechte Antwortzeiten
 	EN	Occasional Poor Response
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
-	DE	Die Antwortzeiten des Servers sind zeitweise länger als wünschenswert. Dies kann zu hörbaren Tonaussetzern führen, v.a. auf SliMP3 und Squeezebox1 Playern. Gründe hierfür können andere laufene Programme im Hintergrund oder komplexe Aufgaben im Slimserver sein.<p>
-	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.<p>
+	DE	Die Antwortzeiten des Servers sind zeitweise länger als wünschenswert. Dies kann zu hörbaren Tonaussetzern führen, v.a. auf SliMP3 und Squeezebox1 Playern. Gründe hierfür können andere laufene Programme im Hintergrund oder komplexe Aufgaben im Slimserver sein.
+	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.
 
 PLUGIN_HEALTH_RESPONSE_POOR
 	DE	Schlechte Antwortzeiten
@@ -375,16 +380,16 @@ PLUGIN_HEALTH_RESPONSE_POOR_DESC
 	EN	Your server response time is regularly falling below normal performance levels.  This may lead to audio dropouts, especially on Slimp3 and Squeezebox1 players.  Please check the performance of your server.  If this is OK, then check slimserver is not running intensive tasks (e.g. scanning music library) or a Plugin is not causing this.
 
 PLUGIN_HEALTH_NORMAL
-	DE	Dieser Player verhält sich normal.<p>
-	EN	This player is performing normally.<p>
+	DE	Dieser Player verhält sich normal.
+	EN	This player is performing normally.
 
 PLUGIN_HEALTH_NO_PLAYER_DESC
-	DE	SlimServer kann keinen Player finden. Falls einer angeschlossen ist, so kann dies durch eine blockierte Netzwerkverbindung ausgelöst werden. Überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.<p>
-	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.<p>
+	DE	SlimServer kann keinen Player finden. Falls einer angeschlossen ist, so kann dies durch eine blockierte Netzwerkverbindung ausgelöst werden. Überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.
+	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
 
 PLUGIN_HEALTH_SLIMP3_DESC
-	DE	Sie verwenden einen SliMP3 Player. Für diesen stehen nicht die vollen Messungen zur Verfügung.<p>
-	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.<p>
+	DE	Sie verwenden einen SliMP3 Player. Für diesen stehen nicht die vollen Messungen zur Verfügung.
+	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.
 
 '
 }
