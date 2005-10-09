@@ -271,7 +271,7 @@ sub prettySampleRate {
 	my $sampleRate = $self->samplerate;
 
 	if ($sampleRate) {
-		return sprintf('%.1f Khz', $sampleRate / 1000);
+		return sprintf('%.1f kHz', $sampleRate / 1000);
 	}
 }
 

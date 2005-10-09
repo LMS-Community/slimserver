@@ -7342,6 +7342,9 @@ BYTES
 	SE	Bytes
 	ZH_CN	字节
 
+SAMPLERATE
+	EN	Sample Rate
+
 BITRATE
 	DE	Bitrate
 	EN	Bitrate
