@@ -74,7 +74,7 @@
 <body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkSetup();[% IF not undock %]doLoad();playlistResize(this.document);[% END %]" onresize="javascript:playlistResize(this.document);">
 	<div ID="header">
 		<div class="masthead">
-			<table  width="100%" height="15" bordercolor="#111111">
+			<table  width="100%" height="15">
 				<td height="17" align="left">
 					<img id="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
 					<img id="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
@@ -93,7 +93,7 @@
 			</table>
 		</div>
 		<div class="menu1">
-			<table  width="100%" height="24" bordercolor="#111111">
+			<table  width="100%" height="24">
 				[% IF player_chooser_list  && NOT undock%]
 					<form><td align="left">
 						<select name="player" onchange="switchPlayer(this);" class="stdedit">[% player_chooser_list %]</select>
