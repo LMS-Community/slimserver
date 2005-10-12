@@ -1193,12 +1193,6 @@ sub addHTTPResponse {
 	# sendResponse() below.
 	use bytes;
 
-	# Take the refcnt down, so we don't leak.
-	if ($Class::DBI::Weaken_Is_Available && !Scalar::Util::readonly($body)) {
-
-		Scalar::Util::weaken($body);
-	}
-
 	# First add the headers
 	my $headers = _stringifyHeaders($response) . $CRLF;
 
