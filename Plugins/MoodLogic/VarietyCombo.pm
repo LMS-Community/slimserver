@@ -1,6 +1,6 @@
 package Plugins::MoodLogic::VarietyCombo;
 
-#$Id: VarietyCombo.pm 1866 2005-01-30 01:20:17Z kdf $
+#$Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

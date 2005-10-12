@@ -1,6 +1,6 @@
 package Plugins::Snow;
 
-# $Id: Snow.pm 2278 2005-09-16 08:44:14Z jcraig $
+# $Id$
 # by Phil Barrett, December 2003
 # screensaver conversion by Kevin Deane-Freeman Dec 2003
 # graphic SB code added by James Craig September 2005
@@ -24,7 +24,7 @@ use File::Spec::Functions qw(:ALL);
 use Data::Dumper;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 2.1 $,10);
+$VERSION = substr(q$Revision$,10);
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
