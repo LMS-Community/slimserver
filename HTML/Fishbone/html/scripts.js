@@ -4,9 +4,9 @@ function switchPlayer(player_List){
 	setCookie('SlimServer-player',newPlayer);
 	
 	parent.playlist.location="playlist.html?player=" + newPlayer;
+	parent.header.location.reload(false);
 	window.location="status.html?player=" + newPlayer;
 	
-	newHref(parent.header.document,newPlayer);
 	newHref(parent.browser.document,newPlayer);
 }
 

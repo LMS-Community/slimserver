@@ -62,7 +62,7 @@
 		case "PLAYER_SETTINGS":
 			url = "[% webroot %]setup.html?page=player"
 			page="player"
-			suffix = '&playerid=' + ( getPlayer('SlimServer-player') || '[% player %]')
+			suffix = '&playerid=[% player %]'
 		}
 
 		if (option) {
