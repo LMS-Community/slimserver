@@ -1541,6 +1541,12 @@ sub parseSearchTerms {
 
 	} else {
 
+		# Bug 2271 - allow VA albums.
+		if (exists $find{'album.compilation'}) {
+
+			delete $find{'artist'};
+		}
+
 		return @{ $ds->find({
 			'field'  => 'lightweighttrack',
 			'find'   => \%find,
