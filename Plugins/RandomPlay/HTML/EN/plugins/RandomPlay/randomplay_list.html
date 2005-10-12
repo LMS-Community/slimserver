@@ -20,14 +20,9 @@
 	[% END %]
 	</a>
 [% END %]
-
-<html>
-	<head>
-		<title>[% "PLUGIN_RANDOM" | string %]</title>
-		<link rel="stylesheet" href="[% webroot %]slimserver.css">
-	</head>
-	<body bgcolor="#FFFFFF">
-
+[% pagetitle = 'PLUGIN_RANDOM' | string; pageicon = 'PLUGIN_RANDOM' %]
+[% PROCESS pageheader.html %]
+<td><td>
 		<p>
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
 
@@ -215,5 +210,4 @@
 				</tr>
 			</table>
 		</form>
-	</body>
-</html>
+[% PROCESS pagefooter.html %]
