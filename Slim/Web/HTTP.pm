@@ -373,11 +373,12 @@ sub processHTTP {
 			closeHTTPSocket($httpClient);
 			return;
 		}
-
+		
 		# parse out URI:
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
-		my $query = $uri->query();
+		my $query = ($request->method() eq "POST") ? $request->content() : $uri->query();
+
 		$params->{url_query} = $query;
 
 		$params->{content} = $request->content();
