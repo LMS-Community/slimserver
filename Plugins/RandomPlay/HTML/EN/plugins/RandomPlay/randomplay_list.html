@@ -1,11 +1,24 @@
+<!-- Following two blocks generate links that submit the form if javascript is enabled.  This allows
+     user's to make setting changes then click on a new mix without having to press the submit
+		 button. -->
 [% BLOCK playLink %]
-	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]" [% INCLUDE reloadStatusFrame.html %]>
-	[% "PLAY" | string %]</a>
-[% END %]
-
-[% BLOCK addLink %]
-	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=1" [% INCLUDE reloadStatusFrame.html %]>
-	[% "ADD" | string %]</a>
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=[% addOnly %]"
+		 onclick='document.genreForm.type.value = "[% type %]";
+							document.genreForm.addOnly.value = [% addOnly %]
+							document.genreForm.submit();
+							for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
+							return false;'
+	   [% IF type == "disable" %]
+		   title="Stop new tracks being added to the current playlist"
+		 [% END %] >
+  [% IF type == "disable" %]
+  	[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying _ "_DISABLE" | string %]
+	[% ELSIF addOnly %]						
+		[% "ADD" | string %]
+	[% ELSE %]
+		[% "PLAY" | string %]
+	[% END %]
+	</a>
 [% END %]
 
 <html>
@@ -16,139 +29,189 @@
 	<body bgcolor="#FFFFFF">
 
 		<p>
-		<h3>[% "PLUGIN_RANDOM" | string %]</h3><p>
+		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
 
-		<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="">[% "PLUGIN_RANDOM" | string %]</a>
-
-		<p><hr><p>
+		<p>
+			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
+			/
+			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% player | uri %]">
+			  [% "PLUGIN_RANDOM" | string %]
+			</a>
+		</p>
 		
-	<form action="[% webroot %]plugins/RandomPlay/randomplay_settings.html">
+		<form action="[% webroot %]plugins/RandomPlay/randomplay_settings.html" name="genreForm">
+			<input type="hidden" name="type" value="">
+			<input type="hidden" name="addOnly" value="0">
+			<input type="hidden" name="player" value="[% player %]">
 
-		[% IF player == '' %]
-			<p>[% "NO_PLAYER_FOUND" | string %]</p>
-		[% END %]
-		[% IF player != '' %]
 			<table cellspacing="0" border="0" cellpadding="4" width="100%">
-	
+				[% IF player == '' %]
+					<tr>
+						<td>[% "NO_PLAYER_FOUND" | string %]</td>
+					</tr>
+				[% ELSE %]
+				
+					[% IF pluginRandomNowPlaying != '' %]
+						<tr>
+							<td>
+								<strong>[% "NOW_PLAYING" | string %]:</strong>
+								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
+							</td>
+							<td colspan="2">[% PROCESS playLink type="disable" addOnly="0" %]</td>
+						</tr>
+						
+						<tr>
+							<td>
+						</tr>
+					[% END %]
+					<tr>
+						<td width="85%">[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]</td>
+					</tr>
+		
+					<tr>
+						<td></td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="track" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="track" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="artist" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="artist" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="album" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="album" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
+					</tr>
+				[% END %]
+				
 				<tr>
-					<td class="even">[% "PLUGIN_RANDOM_CHOOSE_DESC" | string %]</td>
-					<td class="even"></td>
-				</tr>
-	
-				<tr>
-					<td></td>
-					<td></td>
-				</tr>
-	
-				<tr>
-					<td class="even"> [% "PLUGIN_RANDOM_TRACK_DESC" | string %]</td>
-					<td class="even">[% PROCESS playLink type="track" %]</td>
-					<td class="even">[% PROCESS addLink type="track" %]</td>
-				</tr>
-	
-				<tr>
-					<td class="even"> [% "PLUGIN_RANDOM_ARTIST_DESC" | string %]</td>
-					<td class="even">[% PROCESS playLink type="artist" %]</td>
-					<td class="even">[% PROCESS addLink type="artist" %]</td>
-				</tr>
-	
-				<tr>
-					<td class="even"> [% "PLUGIN_RANDOM_ALBUM_DESC" | string %]</td>
-					<td class="even">[% PROCESS playLink type="album" %]</td>
-					<td class="even">[% PROCESS addLink type="album" %]</td>
-				</tr>
-	
-				<tr>
-					<td class="even"> [% "PLUGIN_RANDOM_YEAR_DESC" | string %]</td>
-					<td class="even">[% PROCESS playLink type="year" %]</td>
-					<td class="even">[% PROCESS addLink type="year" %]</td>
-				</tr>
-	
-		[% END %]
-				<tr>
-					<td></td>
+					<td colspan="4"><hr></td>
 				</tr>
 
 				<tr>
-					<td class="even">
-						<hr><h3>[% "SETUP_MIX_SETTINGS" | string %]:</h3></td>
+					<td>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</td>
 				</tr>
 
 				<tr>
-					<td class="even"></td>
-				</tr>
-
-				<tr>
-					<td class="even"><h3>[% "PLUGIN_RANDOM_GENRE_FILTER" | string %]</h3></td>
-				</tr>
-
-				<tr>
-					<td class="even">[% "SETUP_SELECT_GENRES_DESC" | string %]</td>
-				</tr>
-
-				<tr>
-					<td class="even">
+					<td>
 						<table border="0">
 							[% PERL %]
 								require POSIX;
-
+								require HTML::Entities;
+								
 								my $genreList = $stash->{'pluginRandomGenreList'};
+
+								sub drawCheckbox {
+									my ($genre) = shift;
+									my $checkedString = $genreList->{$genre}{'enabled'} ? 'checked' : '';
+									my $idString = 'genre_' . $genreList->{$genre}{'id'};
+									print "<td><input type='checkbox' name='$idString' id='$idString' value='1' $checkedString onclick='changeNumSelected(this)'>\n";
+									print "<label for='$idString'>" . HTML::Entities::encode_entities($genre) . "</label></td>\n";									
+								}
+
 								my @keys = sort(keys(%$genreList));
 								my $inc = POSIX::ceil(@keys / 2);
-								my ($genre, $checkedString);
+								
 								for (my $i = 0; $i < $inc; $i++) {
-									$genre = $keys[$i];
-									$checkedString = $genreList->{$genre} ? 'checked' : '';
-									print "<tr><td><label for='${genre}CheckBox'>$genre</label></td>\n";
-									print "<td><input type='checkbox' name='genre_$genre' id='${genre}CheckBox' value='1' $checkedString></td>\n";
+									print '<tr>';
+									drawCheckbox($keys[$i]);
 									if ($i + $inc < @keys) {
-										$genre = $keys[$i + $inc];
-										$checkedString = $genreList->{$genre} ? 'checked' : '';
 										print '<td>' . '&nbsp;' x 10 . "</td>\n";
-										print "<td><label for='${genre}CheckBox'>$genre</label></td>\n";
-										print "<td><input type='checkbox' name='genre_$genre' id='${genre}CheckBox' value='1' $checkedString></td>\n";
+										drawCheckbox($keys[$i + $inc]);
 									}
 									print '</tr>';
 								}
 							[% END %]
 						</table>
+						<script type="text/javascript">
+						<!--
+							var f = document.genreForm;
+							var numSelected = 0;
+							var numCheckBoxes = 0;
+							var selectAllString = '[% "PLUGIN_RANDOM_SELECT_ALL" | string %]';
+							var selectNoneString = '[% "PLUGIN_RANDOM_SELECT_NONE" | string %]';
+							
+							// Work out how many checkboxes are initially selected
+							for (var i=0; i < f.elements.length; i++) {
+								if (f.elements[i].type == 'checkbox') {
+									numCheckBoxes++;
+									if (f.elements[i].checked) {
+										numSelected++;
+									}
+								}
+							}
+							
+							// Select none if all are selected, else select all
+							function selectAll() {
+								var newState = numSelected != numCheckBoxes;
+								
+								for (var i=0; i < f.elements.length; i++) {
+									if (f.elements[i].type == 'checkbox') {
+										f.elements[i].checked = newState;
+									}
+								}
+								if (newState) {
+									numSelected = numCheckBoxes;
+									f.selectAllButton.value = selectNoneString;
+								} else {
+									numSelected = 0;
+									f.selectAllButton.value = selectAllString;
+								}
+							}
+							
+							// Increase/decrease num selected every time a checkbox changes
+							function changeNumSelected(checkBox) {
+								if (checkBox.checked) {
+									numSelected++;
+								} else {
+									numSelected--;
+								}
+								
+								if (numSelected == numCheckBoxes) {
+								  f.selectAllButton.value = selectNoneString;
+								} else {
+									f.selectAllButton.value = selectAllString;
+								}
+							}
+							
+							// Write the button using js, so it won't appear if js isn't enabled/available
+							document.write('<input type="button" value="'
+							               + (numSelected == numCheckBoxes ? selectNoneString : selectAllString) 
+														 + '" id="selectAllButton" onclick="selectAll()">');
+						// -->
+						</script>
 					</td>
 				</tr>
-				<tr>
-					<td class="even"><input type="submit" value="[% "CHANGE" | string %]"></td>
-				</tr>
 
 				<tr>
-					<td class="even">
-						<label>
-							<b>[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS" | string %]:</b>
-							<input class="stdedit" type="text" size="3" name="numTracks" value="[% pluginRandomNumTracks %]">
-						</label>
+					<td>
+						[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
+						<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
+						[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
+						<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
+						[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
 					</td>
 				</tr>
 
 				<tr>
-					<td class="even">[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS_DESC" | string %]</td>
-
-				<tr>
-					<td class="even"></td>
+					<td><em>[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]</em></td>
 				</tr>
 
 				<tr>
-					<td class="even">
-						<label>
-							<b>[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS" | string %]:</b>
-							<input class="stdedit" type="text" size="3" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
-						</label>
-					</td>
-				</tr>
-
-				<tr>
-					<td class="even">[% "SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS_DESC" | string %]</td>
-				</tr>
-
-				<tr>
-					<td class="even"><input type="submit" value="[% "CHANGE" | string %]"></td>
+					<td><input type="submit" value="[% "CHANGE" | string %]"></td>
 				</tr>
 			</table>
 		</form>

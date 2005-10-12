@@ -27,6 +27,7 @@ my %type         = ();
 my %displayText  = ();
 # Genres for each client (don't access this directly - use getGenres())
 my %genres       = ();
+
 my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
 my $ds = Slim::Music::Info::getCurrentDataStore();
 
@@ -89,13 +90,24 @@ sub getGenres {
 	# Extract each genre name into a hash
 	my %clientGenres = ();
 	foreach my $item (@$items) {
-		$clientGenres{$item->name} = 1;
+		$clientGenres{$item->{'name'}} = {
+		                                 # Put the name here as well so the hash can be passed to
+		                                 # INPUT.Choice as part of listRef later on
+		                                 name    => $item->{'name'},
+		                                 id      => $item->{'id'},
+		                                 enabled => 1,
+									 };
 	}
 
 	my @exclude = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
 
 	# Set excluded genres to 0 in genres hash
-	@clientGenres{@exclude} = (0) x @exclude;
+	foreach my $item (@exclude) {
+		# excluded genres could include some that no longer exist
+		if ($clientGenres{$item}) {
+			$clientGenres{$item}{'enabled'} = 0;
+		}
+	}
 	$genres{$client} = {%clientGenres};
 
 	return %{$genres{$client}};
@@ -117,7 +129,7 @@ sub getFilteredGenres {
 	my @excludedGenres = ();
 
 	for my $genre (keys %clientGenres) {
-		if ($clientGenres{$genre}) {
+		if ($clientGenres{$genre}{'enabled'}) {
 			push (@filteredGenres, $genre) unless $returnExcluded;
 		} else {
 			push (@excludedGenres, $genre) unless ! $returnExcluded;
@@ -160,6 +172,8 @@ sub playRandom {
 	# to retrigger on commands we send from here.
 	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
 
+	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
+
 	$type ||= 'track';
 	$type   = lc($type);
 	
@@ -180,7 +194,7 @@ sub playRandom {
 			$::d_plugins && msgf("RandomPlay: $songsRemaining items remaining so not adding new track\n");
 		}
 
-	} elsif ($type ne 'disable' && ($type ne $type{$client} || $songsRemaining <= 0)) {
+	} elsif ($type ne 'disable' && ($type ne $type{$client} || ! $addOnly || $songsRemaining <= 0)) {
 		# Old artist/album/year is finished or new random mix started.  Add a new one
 		$numItems = 1;
 	}
@@ -207,7 +221,8 @@ sub playRandom {
 		if ($type ne 'track') {
 			$string = $client->string('PLUGIN_RANDOM_' . $type . '_ITEM') . ': ';
 		}
-		my $showTime = 5;		
+		# Strings for non-track modes could be long so need some time to scroll
+		my $showTime = $type eq 'track' ? 2 : 5;
 		
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
@@ -244,12 +259,15 @@ sub playRandom {
 
 		# Do a show briefly the first time things are added, or every time a new album/artist/year
 		# is added
-		if ($type ne $type{$client} || $type ne 'track') {
+		if (!$addOnly || $type ne $type{$client} || $type ne 'track') {
 			if ($type eq 'track') {
 				$string = $client->string("PLUGIN_RANDOM_TRACK");
 			}
-			$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-								 $string, $showTime);
+			# Don't do showBrieflys if visualiser screensavers are running as the display messes up
+			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
+				$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
+									 $string, $showTime);
+			}
 		}
 
 		# Set the Now Playing title.
@@ -257,16 +275,15 @@ sub playRandom {
 		
 		# Never show random as modified, since its a living playlist
 		$client->currentPlaylistModified(0);		
-
-	} elsif ($type eq 'disable') {
-		# Disable random play
-				
-		Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
-		$client->showBriefly(string('PLUGIN_RANDOM'), string('PLUGIN_RANDOM_DISABLED'));				
 	}
 	
 	if ($type eq 'disable') {
+		Slim::Control::Command::clearExecuteCallback(\&commandCallback);
+		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
+		# Don't do showBrieflys if visualiser screensavers are running as the display messes up
+		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
+			$client->showBriefly(string('PLUGIN_RANDOM'), string('PLUGIN_RANDOM_DISABLED'));
+		}
 		$type{$client} = undef;
 	} else {
 		$::d_plugins && msgf("RandomPlay: Playing continuous %s mode with %i items\n",
@@ -319,8 +336,24 @@ sub getOverlay {
 # Returns the overlay for the select genres mode i.e. the checkbox state
 sub getGenreOverlay {
 	my ($client, $item) = @_;
+	my $rv = 0;
+	my %genres = getGenres($client);	
 	
-	if($genres{$client}{$item}) {
+	if ($item->{'selectAll'}) {
+		# This item should be ticked if all the genres are selected
+		my $genresEnabled = 0;
+		foreach my $genre (keys %genres) {
+			if ($genres{$genre}{'enabled'}) {
+				$genresEnabled ++;
+			}
+		}
+		$rv = $genresEnabled == scalar keys %genres;
+		$item->{'enabled'} = $rv;
+	} else {
+		$rv = $genres{$item->{'name'}}{'enabled'};
+	}
+	
+	if($rv) {
 		return [undef, '[X]'];
 	} else {
 		return [undef, '[ ]'];
@@ -331,11 +364,17 @@ sub getGenreOverlay {
 sub toggleGenreState {
 	my ($client, $item) = @_;
 	
-	# Toggle the selected state of the current item
-	$genres{$client}{$item} = ! $genres{$client}{$item};
-	
+	if ($item->{'selectAll'}) {
+		$item->{'enabled'} = ! $item->{'enabled'};
+		# Enable/disable every genre
+		foreach my $genre (keys %{$genres{$client}}) {
+			$genres{$client}{$genre}{'enabled'} = $item->{'enabled'};
+		}
+	} else {
+		# Toggle the selected state of the current item
+		$genres{$client}{$item->{'name'}}{'enabled'} = ! $genres{$client}{$item->{'name'}}{'enabled'};		
+	}
 	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [getFilteredGenres($client, 1)]);
-	
 	$client->update();
 }
 
@@ -378,10 +417,21 @@ sub setMode {
 			my ($client, $item) = @_;
 			if ($item eq 'genreFilter') {
 				my %genreList = getGenres($client);
+
+				# Insert Select All option at top of genre list
+				my @listRef = ({
+							       name => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
+							       # Mark the fact that isn't really a genre
+								   selectAll => 1
+							   });
+				# Add the genres
+				foreach my $genre (sort keys %genreList) {
+					push @listRef, $genreList{$genre};
+				}
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
 					header     => '{PLUGIN_RANDOM_GENRE_FILTER} {count}',
-					listRef    => [sort keys %genreList],
+					listRef    => \@listRef,
 					modeName   => 'RandomPlayGenreFilter',
 					overlayRef => \&getGenreOverlay,
 					onRight    => \&toggleGenreState,
@@ -461,6 +511,8 @@ sub initPlugin {
 		'loadalbum'	 => 1, # old style multi-item load
 		'playalbum'	 => 1, # old style multi-item play
 	);
+	
+	checkDefaults();
 }
 
 sub shutdownPlugin {
@@ -520,21 +572,19 @@ sub webPages {
 sub handleWebList {
 	my ($client, $params) = @_;
 
-	# Pass on the current pref values
+	# Pass on the current pref values and now playing info
 	$params->{'pluginRandomGenreList'} = {getGenres($client)};
 	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
-
+	$params->{'pluginRandomNowPlaying'} = $type{$client};
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
 
 # Handles play requests from plugin's web page
 sub handleWebMix {
 	my ($client, $params) = @_;
-	if (defined $client) {
-		if ($params->{'type'}) {
-			playRandom($client, $params->{'type'}, $params->{'addOnly'});
-		}
+	if (defined $client && $params->{'type'}) {
+		playRandom($client, $params->{'type'}, $params->{'addOnly'});
 	}
 	handleWebList($client, $params);
 }
@@ -543,33 +593,52 @@ sub handleWebMix {
 sub handleWebSettings {
 	my ($client, $params) = @_;
 	my %genres = getGenres($client);
-	
-	# %$params will contain a key called genre_<genre name> for each ticked checkbox on the page
-	foreach my $genre (keys(%$params)) {
-		if ($genre =~ s/^genre_//) {
-			delete($genres{$genre});
-		}
+
+	# Build a lookup table to go from genre id to genre name	
+	my @lookup = ();
+	foreach my $genre (keys %genres) {
+		@lookup[$genres{$genre}{'id'}] = $genre;
 	}
 
-	Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});		
-	Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
+	# %$params will contain a key called genre_<genre id> for each ticked checkbox on the page
+	foreach my $genre (keys(%$params)) {
+		if ($genre =~ s/^genre_//) {
+			delete($genres{$lookup[$genre]});
+		}
+	}
 	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys(%genres)]);	
 
-	handleWebList($client, $params);
+	if ($params->{'numTracks'} =~ /^[0-9]+$/) {
+		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});
+	} else {
+		$::d_plugins && msg("RandomPlay: Invalid value for numTracks\n");
+	}
+	if ($params->{'numOldTracks'} eq '' || $params->{'numOldTracks'} =~ /^[0-9]+$/) {
+		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
+	} else {
+		$::d_plugins && msg("RandomPlay: Invalid value for numOldTracks\n");
+	}
+
+	# Pass on to check if the user requested a new mix as well
+	handleWebMix($client, $params);
 }
 
 sub checkDefaults {
 	my $prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
-	if (! defined $prefVal || $prefVal eq '') {
+	if (! defined $prefVal || $prefVal !~ /^[0-9]+$/) {
+		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_tracks to 10\n");
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
 	}
 	
-	# Default to keeping all tracks
-	if (!Slim::Utils::Prefs::isDefined('plugin_random_number_of_old_tracks')) {
+	$prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+	if (! defined $prefVal || $prefVal !~ /^$|^[0-9]+$/) {
+		# Default to keeping all tracks
+		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_old_tracks to ''\n");
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
-	}	
+	}
 
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_exclude_genres')) {
+		# Include all genres by default
 		Slim::Utils::Prefs::set('plugin_random_exclude_genres', []);
 	}
 }
@@ -593,6 +662,9 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	DE	Spiele zufällige Liederauswahl
 	EN	Playing Random Songs
 
+PLUGIN_RANDOM_TRACK_DISABLE
+	EN	Stop Adding Songs
+
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
@@ -606,6 +678,9 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	DE	Spiele zufällige Albenauswahl
 	EN	Playing Random Albums
 
+PLUGIN_RANDOM_ALBUM_DISABLE
+	EN	Stop Adding Albums
+
 PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
@@ -617,6 +692,9 @@ PLUGIN_RANDOM_ARTIST_ITEM
 PLUGIN_RANDOM_ARTIST_PLAYING
 	DE	Spiele zufälligen Interpreten
 	EN	Playing Random Artists
+
+PLUGIN_RANDOM_ARTIST_DISABLE
+	EN	Stop Adding Artists
 
 PLUGIN_RANDOM_YEAR
 	DE	Zufälliger Jahr Mix
@@ -630,57 +708,48 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	DE	Spiele zufälligen Jahrgang
 	EN	Playing Random Years
 
+PLUGIN_RANDOM_YEAR_DISABLE
+	EN	Stop Adding Years
+
 PLUGIN_RANDOM_GENRE_FILTER
 	DE	Zu berücksichtigende Stile wählen
 	EN	Select Genres To Include
-	
-PLUGIN_RANDOM_CHOOSE_DESC
-	DE	Wählen Sie eine Zufallsmix-Methode:
-	EN	Choose a random mix below:
 
-PLUGIN_RANDOM_TRACK_DESC
-	DE	Zufällige Lieder aus Ihrer Sammlung
-	EN	Random songs from your whole library.
+PLUGIN_RANDOM_SELECT_ALL
+	EN	Select All
 
-PLUGIN_RANDOM_ARTIST_DESC
-	DE	Einen zufälligen Interpreten aus Ihrer Sammlung
-	EN	Random artists from your whole library.
+PLUGIN_RANDOM_SELECT_NONE
+	EN	Select None
 
-PLUGIN_RANDOM_ALBUM_DESC
-	DE	Ein zufälliges Album aus Ihrer Sammlung
-	EN	Random albums from your whole library.
+PLUGIN_RANDOM_CHOOSE_BELOW
+	EN	Choose a random mix of music from your library:
 
-PLUGIN_RANDOM_YEAR_DESC
-	DE	Lieder eines zufälligen Jahres aus Ihrer Sammlung
-	EN	Random years from your whole library.
+PLUGIN_RANDOM_TRACK_WEB
+	EN	Random songs
 
-SETUP_PLUGIN_RANDOM_DESC
-	DE	Das Zufalls Mix Plugin erlaubt es, eine zufällige Auswahl von Liedern aus Ihrer Sammlung wiederzugeben.
-	EN	The Random Mix plugin allows you to listen to random selections from your music library.
+PLUGIN_RANDOM_ARTIST_WEB
+	EN	Random artists
 
-SETUP_MIX_SETTINGS
-	DE	Mix Einstellungen
-	EN	Mix Settings
+PLUGIN_RANDOM_ALBUM_WEB
+	EN	Random albums
 
-SETUP_SELECT_GENRES_DESC
-	DE	Sie können Stilrichtungen definieren, die bei zufälligen Zusammenstellungen berücksichtigt werden sollen. Stile, die nicht markiert sind, werden vom Mix ausgeschlossen. 
-	EN	You can select the song genres that you wish to be included in random mixes.  Any genres left unticked will be excluded from mixes.
+PLUGIN_RANDOM_YEAR_WEB
+	EN	Random years
 
-SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS
-	DE	Anzahl Lieder für Zufallsmix
-	EN	Number of upcoming songs in a random mix
+PLUGIN_RANDOM_GENRE_FILTER_WEB
+	EN	Genres to include in your mix:
 
-SETUP_PLUGIN_RANDOM_NUMBER_OF_TRACKS_DESC
-	DE	Eine der möglichen zufälligen Mix-Arten ist der Lieder Mix. Dies erstellt eine Liste zufällig ausgewählter Musikstücke. Sie können bestimmen, wieviele Lieder im Voraus in der Wiedergabeliste angezeigt werden sollen.
-	EN	One of the mixes provided by Random Mix is the Random Songs Mix.  This creates a random selection of songs from your music library.  You can specify how many upcoming songs should be displayed in this mode.
+PLUGIN_RANDOM_BEFORE_NUM_TRACKS
+	EN	Now Playing will show
 
-SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS
-	DE	Anzahl gespielter Lieder
-	EN	Number of old songs in a random mix
+PLUGIN_RANDOM_AFTER_NUM_TRACKS
+	EN	upcoming songs and
 
-SETUP_PLUGIN_RANDOM_NUMBER_OF_OLD_TRACKS_DESC
-	DE	Lieder, die über einen Zufalls mix wiedergegeben wurden, können nach dem Abspielen aus der Wiedergabeliste entfernt werden. Sie können festlegen, wieviele der abgespielten Stücke in der Liste behalten werden sollen. Oder lassen Sie das Feld leer, falls die Liste nicht gelöscht werden soll. 
-	EN	Songs that are played using Random Mix can be removed from the playlist after they are played.  You can specify how many songs should be kept, or leave this blank to keep all played songs.
+PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
+	EN	recently played songs.
+
+PLUGIN_RANDOM_GENERAL_HELP
+	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist.
 
 EOF
 
