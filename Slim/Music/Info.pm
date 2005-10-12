@@ -542,16 +542,24 @@ sub initParsedFormats {
 
 	$parsedFormats{'DISC'} = 
 		sub {
-			my $output = '';
-			my $album = $_[0]->album();
-			if ($album) {
-				my ($disc, $discc) = $album->get(qw(disc discc));
-				# suppress disc when only one disc in set
-				if ($disc && (($disc > 1) || ($disc == 1 && $discc && $discc > 1))) {
-						$output = $disc;
+			my $disc = $_[0]->disc;
+
+			if ($disc && $disc == 1) {
+
+				my $album = $_[0]->album;
+
+				if ($album) {
+
+					my $discc = $album->discc;
+
+					# suppress disc when only 1 disc in set
+					if (!$discc || $discc < 2) {
+						$disc = '';
+					}
 				}
 			}
-			return (defined $output ? $output : '');
+
+			return ($disc ? $disc : '');
 		};
 
 	# add artist related

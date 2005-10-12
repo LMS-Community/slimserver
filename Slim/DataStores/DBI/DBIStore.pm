@@ -1509,7 +1509,9 @@ sub _postCheckAttributes {
 			# Don't add this search criteria if there is only one
 			# disc in the set - iTunes does this for some bizzare
 			# reason.
-			if (($disc && $discc && $discc > 1) || ($disc && !$discc)) {
+			if (!Slim::Utils::Prefs::get('groupdiscs') && 
+				(($disc && $discc && $discc > 1) || ($disc && !$discc))) {
+
 				$search->{'disc'} = $disc;
 			}
 
