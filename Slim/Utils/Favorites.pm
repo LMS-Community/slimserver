@@ -40,6 +40,8 @@ sub clientAdd {
 		return undef;
 	}
 
+	if (ref($url) && defined($url->url)) { $url = $url->url; } 
+
 	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
 	# if its already a favorite, don't add it again
