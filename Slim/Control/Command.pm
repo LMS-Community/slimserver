@@ -938,14 +938,17 @@ sub execute {
 			} elsif ($p1 =~ /(?:duration|artist|album|title|genre)/) {
 
 				my $url = Slim::Player::Playlist::song($client, $p2);
-				my $obj = $ds->objectForUrl($url);
+				my $obj = $ds->objectForUrl($url, 1, 1);
 
-				# Just call the method on Track
-				if ($p1 eq 'duration') {
-					$p3 = $obj->secs();
-				}
-				else {
-					$p3 = $obj->$p1();
+				if ($obj) {
+
+					# Just call the method on Track
+					if ($p1 eq 'duration') {
+						$p3 = $obj->secs();
+					}
+					else {
+						$p3 = $obj->$p1();
+					}
 				}
 
 			} elsif ($p1 eq "path") {
