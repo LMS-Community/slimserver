@@ -13,6 +13,7 @@ use base qw(Slim::DataStores::Base);
 
 use DBI;
 use File::Basename qw(dirname);
+use List::Util qw(max);
 use MP3::Info;
 use Tie::Cache::LRU::Expires;
 use Storable;
@@ -1581,6 +1582,12 @@ sub _postCheckAttributes {
 
 				$albumObj->set($shortTag, $attributes->{$gainTag});
 			}
+		}
+
+		# Make sure we have a good value for DISCC if grouping
+		# or if one is supplied
+		if (Slim::Utils::Prefs::get('groupdiscs') || $discc) {
+			$discc = max $disc, $discc, $albumObj->discc();
 		}
 
 		$albumObj->disc($disc) if $disc;
