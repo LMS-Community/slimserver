@@ -358,7 +358,7 @@ sub browseStreamsExitHandler {
 			$status{$client}{'bitrate'} = $1;
 			showStreamInfo($client);
 		}
-		elsif ((not keys %{$streamList{$item}}) && ($item =~ /: (\d+) /i)) {
+		elsif ((not keys %{$streamList{$item}}) && ($item =~ /:\s+(\d+)\s+/i)) {
 			$status{$client}{'bitrate'} = $1;
 			showStreamInfo($client);
 		}
