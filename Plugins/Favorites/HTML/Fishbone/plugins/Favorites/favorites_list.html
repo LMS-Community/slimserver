@@ -20,7 +20,7 @@
 				<td class="listing">
 					[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
 				</td>
-				[% PROCESS favelink link='favorites_list' p0='move' p1=loop.index p2='%2D1' img='move.up.gif' text='MOVEUP' %]
+				[% PROCESS favelink link='favorites_list' p0='move' p1=loop.index p2='%2D1' img='move.up.gif' text='MOVEUP' target='' %]
 				[% PROCESS favelink     p2='%2B1' img='move.down.gif' text='MOVEDOWN' %]
 				[% PROCESS favelink     p0='delete'p2='' img='remove.gif' text='DELETE' %]
 				[% PROCESS favelink link= $webroot _ '/status_header' p0='playlist' p1='play' p2=faves.$fav img='play.this.gif' text='PLAY' target='status'%]
