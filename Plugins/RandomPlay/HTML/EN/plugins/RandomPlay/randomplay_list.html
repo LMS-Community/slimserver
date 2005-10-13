@@ -8,16 +8,14 @@
 							document.genreForm.submit();
 							for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
 							return false;'
-	   [% IF type == "disable" %]
-		   title="Stop new tracks being added to the current playlist"
-		 [% END %] >
-  [% IF type == "disable" %]
-  	[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying _ "_DISABLE" | string %]
-	[% ELSIF addOnly %]						
-		[% "ADD" | string %]
-	[% ELSE %]
-		[% "PLAY" | string %]
-	[% END %]
+	>
+	  [% IF type == "disable" %]
+	  	[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying _ "_DISABLE" | string %].
+		[% ELSIF addOnly %]						
+			[% "ADD" | string %]
+		[% ELSE %]
+			[% "PLAY" | string %]
+		[% END %]
 	</a>
 [% END %]
 [% pagetitle = 'PLUGIN_RANDOM' | string; pageicon = 'PLUGIN_RANDOM' %]
@@ -27,8 +25,7 @@
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
 
 		<p>
-			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
-			/
+			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>/
 			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% player | uri %]">
 			  [% "PLUGIN_RANDOM" | string %]
 			</a>
@@ -52,13 +49,26 @@
 								<strong>[% "NOW_PLAYING" | string %]:</strong>
 								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
 							</td>
-							<td colspan="2">[% PROCESS playLink type="disable" addOnly="0" %]</td>
 						</tr>
-						
+
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+	
 						<tr>
 							<td>
+								<em>
+									[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
+									[% PROCESS playLink type="disable" addOnly="0" %]			
+								</em>
+							</td>
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
 						</tr>
 					[% END %]
+					
 					<tr>
 						<td width="85%">[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]</td>
 					</tr>
@@ -90,10 +100,18 @@
 						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
 						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
 					</tr>
-				[% END %]
-				
+				[% END %]	
+
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+								
 				<tr>
 					<td colspan="4"><hr></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
 				</tr>
 
 				<tr>
@@ -190,6 +208,10 @@
 						</script>
 					</td>
 				</tr>
+				
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
 
 				<tr>
 					<td>
@@ -202,11 +224,11 @@
 				</tr>
 
 				<tr>
-					<td><em>[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]</em></td>
+					<td>&nbsp;</td>
 				</tr>
 
 				<tr>
-					<td><input type="submit" value="[% "CHANGE" | string %]"></td>
+					<td><input type="submit" value="[% "SAVE" | string %]"></td>
 				</tr>
 			</table>
 		</form>

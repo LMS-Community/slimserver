@@ -749,7 +749,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	EN	recently played songs.
 
 PLUGIN_RANDOM_GENERAL_HELP
-	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist.
+	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 
 EOF
 
