@@ -200,9 +200,11 @@ sub objectForId {
 
 		my $track = Slim::DataStores::DBI::Track->retrieve($id) || return;
 
+		return $self->_checkValidity($track);
+
 	} elsif ($field eq 'lightweighttrack') {
 
-		my $track = Slim::DataStores::DBI::LightWeightTrack->retrieve($id) || return;
+		return Slim::DataStores::DBI::LightWeightTrack->retrieve($id);
 
 	} elsif ($field eq 'genre') {
 
@@ -1234,7 +1236,7 @@ sub _checkValidity {
 	# I don't have the tracks to, so _checkValidity may be bogus.
 	if (defined $track && ref($track) && $track->isa('Class::DBI::Object::Has::Been::Deleted')) {
 
-		msg("Track: [$id] - [$track] was deleted out from under us!\n");
+		msg("Track: [$id] - [$url] was deleted out from under us!\n");
 		bt();
 
 		$track = undef;
@@ -1587,7 +1589,7 @@ sub _postCheckAttributes {
 		# Make sure we have a good value for DISCC if grouping
 		# or if one is supplied
 		if (Slim::Utils::Prefs::get('groupdiscs') || $discc) {
-			$discc = max $disc, $discc, $albumObj->discc();
+			$discc = max($disc, $discc, $albumObj->discc);
 		}
 
 		$albumObj->disc($disc) if $disc;
@@ -1698,19 +1700,26 @@ sub _mergeAndCreateContributors {
 		#
 		# If we come across that case, force the creation of a second
 		# contributorTrack entry.
-		#
-		# Only do this the first time around - not when we're merging VA albums.
-		my $contributorRE = qr/^\Q$contributor\E$/;
+		if (!ref $contributor) {
 
-		for my $matchTag (@tags) {
+			my ($contributorObj) = Slim::DataStores::DBI::Contributor->search({
+				'name' => $contributor,
+			});
 
-			# Don't match ourselves
-			next if $tag eq $matchTag;
+			if ($contributorObj) {
 
-			if ($attributes->{$matchTag} =~ $contributorRE) {
+				my ($contributorTrackObj) = Slim::DataStores::DBI::ContributorTrack->search({
+					'contributor' => $contributorObj,
+					'role'        => Slim::DataStores::DBI::Contributor->typeToRole($tag),
+					'track'       => $track,
+				});
+
+				# This combination already exists in the db - don't re(create) it.
+				if (defined $contributorTrackObj) {
+					next;
+				}
 
 				$forceCreate = 1;
-				last;
 			}
 		}
 
