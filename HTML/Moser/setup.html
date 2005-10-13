@@ -14,7 +14,7 @@
     [% IF warning %]<div id="warning">[% warning %]</div>[% END %]
     [% IF siblings %]<div id="setuptabs"><ul>[% siblings %]</ul></div>[% END %]
     [% IF children %]<div id="setuptabs"><ul>[% children %]</ul></div>[% END %]
-	<form method="get" action="setup.html">
+	<form method="post" action="setup.html">
 	<input type=hidden value="[% player %]" name="player">
 	<input type=hidden value="[% playerid %]" name="playerid">
 	<input type=hidden value="[% page %]" name="page">
