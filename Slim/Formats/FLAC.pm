@@ -776,6 +776,9 @@ sub _decodeUTF8 {
 			# Make a copy.
 			$values = [ @{$tags->{$tag}} ];
 			$count  = scalar @$values;
+
+			# Empty out the old value while we work on a copy.
+			@{$tags->{$tag}} = ();
 		}
 
 		for my $value (@$values) {
