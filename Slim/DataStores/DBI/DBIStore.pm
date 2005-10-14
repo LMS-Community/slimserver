@@ -1203,13 +1203,14 @@ sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
 
-	my ($id, $url) = $track->get(qw(id url));
+	my $url = $track->url;
 
 	return undef if $self->{'zombieList'}->{$url};
 
 	$::d_info && msg("Checking to see if $url has changed.\n");
 
-	if ($self->_hasChanged($track, $url, $id)) {
+	# Don't check for remote tracks, or things that aren't audio
+	if ($track->audio && !$track->remote && $self->_hasChanged($track, $url)) {
 
 		$::d_info && msg("Re-reading tags from $url as it has changed.\n");
 
@@ -1228,7 +1229,7 @@ sub _checkValidity {
 }
 
 sub _hasChanged {
-	my ($self, $track, $url, $id) = @_;
+	my ($self, $track, $url) = @_;
 
 	# We return 0 if the file hasn't changed
 	#    return 1 if the file has been changed.
