@@ -744,7 +744,7 @@ PLUGIN_RANDOM_ALBUM_WEB
 	EN	Random albums
 
 PLUGIN_RANDOM_YEAR_WEB
-	DE Zufällige Jahrgänge
+	DE	Zufällige Jahrgänge
 	EN	Random years
 
 PLUGIN_RANDOM_GENRE_FILTER_WEB
