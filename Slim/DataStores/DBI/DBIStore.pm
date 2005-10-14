@@ -1239,6 +1239,8 @@ sub _hasChanged {
 	# As this is an internal cache function we don't sanity check our arguments...	
 	my $filepath = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::stripAnchorFromURL($url) );
 
+	$::d_info && msg("_hasChanged: Checking for [$filepath] - size & timestamp.\n");
+
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
 	#return 0 if -d $filepath;
@@ -1277,7 +1279,7 @@ sub _hasChanged {
 
 	} else {
 
-		$::d_info && msg("deleting $filepath from cache as it no longer exists\n");
+		$::d_info && msg("_hasChanged: removing [$filepath] from the db as it no longer exists.\n");
 
 		$self->delete($track, 1);
 
