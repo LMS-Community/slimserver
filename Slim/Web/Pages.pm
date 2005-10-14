@@ -1117,6 +1117,13 @@ sub browsedb {
 			$attr = $transform;
 		}
 
+		# browsetree might pass this along - we want to keep it in the attrs
+		# for the breadcrumbs so cue sheets aren't edited. See bug: 1360
+		if (defined $params->{'noEdit'}) {
+
+			push @attrs, join('=', 'noEdit', $params->{'noEdit'});
+		}
+
 		if ($params->{$attr}) {
 
 			push @attrs, $attr . '=' . Slim::Web::HTTP::escape($params->{$attr});
