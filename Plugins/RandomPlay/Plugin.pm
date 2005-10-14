@@ -663,6 +663,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	EN	Playing Random Songs
 
 PLUGIN_RANDOM_TRACK_DISABLE
+	DE	Keine Lieder mehr hinzufügen
 	EN	Stop Adding Songs
 
 PLUGIN_RANDOM_ALBUM
@@ -679,6 +680,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	EN	Playing Random Albums
 
 PLUGIN_RANDOM_ALBUM_DISABLE
+	DE	Keine Alben mehr hinzufügen
 	EN	Stop Adding Albums
 
 PLUGIN_RANDOM_ARTIST
@@ -694,6 +696,7 @@ PLUGIN_RANDOM_ARTIST_PLAYING
 	EN	Playing Random Artists
 
 PLUGIN_RANDOM_ARTIST_DISABLE
+	DE	Keine Interpreten mehr hinzufügen
 	EN	Stop Adding Artists
 
 PLUGIN_RANDOM_YEAR
@@ -709,6 +712,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	EN	Playing Random Years
 
 PLUGIN_RANDOM_YEAR_DISABLE
+	DE	Keine Jahrgänge mehr hinzufügen
 	EN	Stop Adding Years
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -716,39 +720,51 @@ PLUGIN_RANDOM_GENRE_FILTER
 	EN	Select Genres To Include
 
 PLUGIN_RANDOM_SELECT_ALL
+	DE	Alle wählen
 	EN	Select All
 
 PLUGIN_RANDOM_SELECT_NONE
+	DE	Alle abwählen
 	EN	Select None
 
 PLUGIN_RANDOM_CHOOSE_BELOW
+	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung 
 	EN	Choose a random mix of music from your library:
 
 PLUGIN_RANDOM_TRACK_WEB
+	DE	Zufällige Lieder
 	EN	Random songs
 
 PLUGIN_RANDOM_ARTIST_WEB
+	DE	Zufällige Interpreten
 	EN	Random artists
 
 PLUGIN_RANDOM_ALBUM_WEB
+	DE	Zufällige Alben
 	EN	Random albums
 
 PLUGIN_RANDOM_YEAR_WEB
+	DE Zufällige Jahrgänge
 	EN	Random years
 
 PLUGIN_RANDOM_GENRE_FILTER_WEB
+	DE	Im Mix zu berücksichtigende Stile: 
 	EN	Genres to include in your mix:
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
+	DE	Die Wiedergabeliste wird
 	EN	Now Playing will show
 
 PLUGIN_RANDOM_AFTER_NUM_TRACKS
+	DE	noch abzuspielende und
 	EN	upcoming songs and
 
 PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
+	DE	wiedergegebene Lieder anzeigen.
 	EN	recently played songs.
 
 PLUGIN_RANDOM_GENERAL_HELP
+	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste.
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 
 EOF

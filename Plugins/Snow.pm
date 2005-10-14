@@ -98,16 +98,17 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	FR	Tempête
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	DE	Dichtes Schneegestöber
 	EN	Whiteout
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
-	DE	Schneetyp on
+	DE	Schneetyp ein
 	EN	Style of snow when on
 	ES	Estilo de nieve on
 	FR	Type neige on
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
-	DE	Schneetyp off
+	DE	Schneetyp aus
 	EN	Style of snow when off
 	ES	Estilo de nieve off
 	FR	Type neige off
