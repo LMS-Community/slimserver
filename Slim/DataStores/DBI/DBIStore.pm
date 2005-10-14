@@ -55,9 +55,6 @@ tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
 # Optimization to cache content type for track entries rather than look them up everytime.
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
 
-# Non-persistent hash to maintain the VALID and TTL values for track entries.
-tie our %validityCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
-
 # Don't spike the CPU on cleanup.
 our $staleCounter = 0;
 
@@ -284,7 +281,14 @@ sub find {
 
 		# Does the track still exist?
 		if ($args->{'field'} ne 'lightweighttrack') {
-			$items = [ grep $self->_checkValidity($_), @$items ];
+
+			for (my $i = 0; $i < scalar @$items; $i++) {
+
+				$items->[$i] = $self->_checkValidity($items->[$i]);
+			}
+
+			# Weed out any potential undefs
+			@$items = grep { defined($_) } @$items;
 		}
 	}
 
@@ -366,12 +370,9 @@ sub totalTime {
 # attribute setter methods may already have been invoked on the
 # object.
 sub updateTrack {
-	my $self   = shift;
-	my $track  = shift;
-	my $commit = shift;
+	my ($self, $track, $commit) = @_;
 
-	$track->update();
-	$self->_updateTrackValidity($track);
+	$track->update;
 
 	$self->dbh->commit if $commit;
 }
@@ -390,8 +391,8 @@ sub newTrack {
 	$::d_info && msg("New track for $url\n");
 
 	# Default the tag reading behaviour if not explicitly set
-	if (!defined $args->{readTags}) {
-		$args->{readTags} = "default";
+	if (!defined $args->{'readTags'}) {
+		$args->{'readTags'} = "default";
 	}
 
 	# Read the tag, and start populating the database.
@@ -453,8 +454,6 @@ sub newTrack {
 
 		$self->{'trackCount'}++;
 	}
-
-	$self->_updateTrackValidity($track);
 
 	$self->dbh->commit if $args->{'commit'};
 
@@ -553,8 +552,6 @@ sub delete {
 		# XXX - make sure that playlisttracks are deleted on cascade 
 		# otherwise call $track->setTracks() with an empty list
 
-		delete $validityCache{$url};
-
 		if ($track->audio) {
 
 			$self->{'trackCount'}--;
@@ -577,10 +574,19 @@ sub delete {
 			delete $self->{'lastTrack'}->{$dirname};
 		}
 
-		$track->delete();
+		$track->delete;
+
 		$self->dbh->commit if $commit;
 
+		$track = undef;
+
 		$::d_info && msg("cleared $url from database\n");
+
+		# Cleanup the far end of join tables that may now be unlinked.
+		$cleanupStage = 'contributors';
+		$staleCounter = 0;
+
+		Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
 	}
 }
 
@@ -588,7 +594,6 @@ sub delete {
 sub markAllEntriesStale {
 	my $self = shift;
 
-	%validityCache    = ();
 	%lastFind         = ();
 	%contentTypeCache = ();
 
@@ -600,7 +605,6 @@ sub markEntryAsValid {
 	my $self = shift;
 	my $url = shift;
 
-	$validityCache{$url} = time();
 	delete $self->{'zombieList'}->{$url};
 }
 
@@ -609,10 +613,6 @@ sub markEntryAsValid {
 sub markEntryAsInvalid {
 	my $self = shift;
 	my $url  = shift || return undef;
-
-	if (exists $validityCache{$url}) {
-		delete $validityCache{$url};
-	}
 
 	$self->{'zombieList'}->{$url} = 1;
 }
@@ -742,7 +742,10 @@ sub cleanupStaleTableEntries {
 
 	if ($cleanupStage eq 'genres') {
 
-		Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
+		if (Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks')) {
+
+			return 1;
+		}
 	}
 
 	# We're done.
@@ -849,7 +852,6 @@ sub wipeCaches {
 	$self->forceCommit;
 
 	%contentTypeCache = ();
-	%validityCache    = ();
 	%lastFind         = ();
 
 	# clear the references to these singletons
@@ -1185,6 +1187,7 @@ sub _retrieveTrack {
 	}
 
 	if (defined($track) && $track->audio && !$lightweight) {
+
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{$dirname} = $track;
 	}
@@ -1214,47 +1217,32 @@ sub _checkValidity {
 
 	return undef if $self->{'zombieList'}->{$url};
 
-	my $ttl = $validityCache{$url} || 0;
+	$::d_info && msg("Checking to see if $url has changed.\n");
 
-	if (Slim::Music::Info::isFileURL($url) && ($ttl < (time()))) {
+	if ($self->_hasChanged($track, $url, $id)) {
 
-		$::d_info && msg("CacheItem: Checking status of $url (TTL: $ttl).\n");
+		$::d_info && msg("Re-reading tags from $url as it has changed.\n");
 
-		if ($self->_hasChanged($track, $url, $id)) {
-
-			$track = undef;
-
-		} else {	
-
-			$validityCache{$url} = (time()+ DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
-		}
-	}
-
-	# If the track was deleted out from under us - say by the db garbage collection, don't return it.
-	# This is mostly defensive, I've seen it, but I'm not sure how to
-	# reproduce it. It's happened when testing with a customer's db, which
-	# I don't have the tracks to, so _checkValidity may be bogus.
-	if (defined $track && ref($track) && $track->isa('Class::DBI::Object::Has::Been::Deleted')) {
-
-		msg("Track: [$id] - [$url] was deleted out from under us!\n");
-		bt();
+		$self->delete($track, 1);
 
 		$track = undef;
+
+		$track = $self->newTrack({
+			'url'      => $url,
+			'readTags' => 1,
+			'commit'   => 1,
+		});
 	}
 
 	return $track;
 }
 
 sub _hasChanged {
-	my $self  = shift;
-	my $track = shift;
-	my $url   = shift || $track->get('url');
-	my $id    = shift || $track->get('id');
+	my ($self, $track, $url, $id) = @_;
 
 	# We return 0 if the file hasn't changed
-	#    return 1 if the file has (cached entry is deleted by us)
+	#    return 1 if the file has been changed.
 	# As this is an internal cache function we don't sanity check our arguments...	
-
 	my $filepath = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::stripAnchorFromURL($url) );
 
 	# Return if it's a directory - they expire themselves 
@@ -1291,24 +1279,18 @@ sub _hasChanged {
 		return 0 if  $fsdef && $fscheck && !$agedef;
 		return 0 if !$fsdef && $agedef  && $agecheck;
 
-		$::d_info && msg("re-reading tags from $url as it has changed\n");
-		my $attributeHash = $self->readTags($url);
-		$self->updateOrCreate({
-			 'url' => $track,
-			 'attributes' => $attributeHash
-		});
-		
-		return 0;
+		return 1;
 
 	} else {
+
 		$::d_info && msg("deleting $filepath from cache as it no longer exists\n");
+
+		$self->delete($track, 1);
+
+		$track = undef;
+
+		return 0;
 	}
-
-	# Tell the DB to sync - if we're deleting something.
-	$Slim::DataStores::DBI::DataModel::dirtyCount++;
-
-	# We can't find the file - but don't put it on the zombie list.
-	return 0;
 }
 
 sub _preCheckAttributes {
@@ -1737,22 +1719,6 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
-}
-
-sub _updateTrackValidity {
-	my $self  = shift;
-	my $track = shift;
-
-	my $url   = $track->get('url');
-
-	if (Slim::Music::Info::isFileURL($url)) {
-
-		$validityCache{$url} = (time() + DB_CACHE_LIFETIME + int(rand(DB_CACHE_LIFETIME)));
-
-	} else {
-
-		$validityCache{$url} = 0;
-	}
 }
 
 sub updateCoverArt {

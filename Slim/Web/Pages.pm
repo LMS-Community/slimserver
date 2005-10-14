@@ -1462,6 +1462,9 @@ sub browsetree {
 	if (Slim::Music::Import::stillScanning()) {
 		$params->{'warn'} = 1;
 	}
+
+	# we might have changed - flush to the db to be in sync.
+	$topLevelObj->update;
 	
 	return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
 }
