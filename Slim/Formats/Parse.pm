@@ -580,19 +580,30 @@ sub processAnchor {
 
 	# rewrite the size, offset and duration if it's just a fragment
 	# This is mostly (always?) for cue sheets.
-	unless (defined $start && $end && $attributesHash->{'SECS'}) {
+	if (!defined $start && !defined $end) {
 		$::d_parse && msg("parse: Couldn't process anchored file fragment for " . $attributesHash->{'URI'} . "\n");
 		return 0;
 	}
 
 	my $duration = $end - $start;
-	my $byterate = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-	my $header = $attributesHash->{'OFFSET'} || 0;
+
+	# Don't divide by 0
+	if (!defined $attributesHash->{'SECS'} && $duration) {
+
+		$attributesHash->{'SECS'} = $duration;
+
+	} elsif (!defined $attributesHash->{'SECS'}) {
+
+		$::d_parse && msg("parse: Couldn't process undef or 0 SECS fragment for " . $attributesHash->{'URI'} . "\n");
+	}
+
+	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+	my $header     = $attributesHash->{'OFFSET'} || 0;
 	my $startbytes = int($byterate * $start);
-	my $endbytes = int($byterate * $end);
+	my $endbytes   = int($byterate * $end);
 			
 	$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-	$endbytes -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+	$endbytes   -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
 			
 	$attributesHash->{'OFFSET'} = $header + $startbytes;
 	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
