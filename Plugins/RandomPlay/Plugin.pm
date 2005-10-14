@@ -663,7 +663,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	EN	Playing Random Songs
 
 PLUGIN_RANDOM_TRACK_DISABLE
-	DE	Keine Lieder mehr hinzufügen
+	DE	keine Lieder mehr hinzuzufügen
 	EN	Stop Adding Songs
 
 PLUGIN_RANDOM_ALBUM
@@ -680,7 +680,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 	EN	Playing Random Albums
 
 PLUGIN_RANDOM_ALBUM_DISABLE
-	DE	Keine Alben mehr hinzufügen
+	DE	keine Alben mehr hinzuzufügen
 	EN	Stop Adding Albums
 
 PLUGIN_RANDOM_ARTIST
@@ -696,7 +696,7 @@ PLUGIN_RANDOM_ARTIST_PLAYING
 	EN	Playing Random Artists
 
 PLUGIN_RANDOM_ARTIST_DISABLE
-	DE	Keine Interpreten mehr hinzufügen
+	DE	keine Interpreten mehr hinzuzufügen
 	EN	Stop Adding Artists
 
 PLUGIN_RANDOM_YEAR
@@ -712,7 +712,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 	EN	Playing Random Years
 
 PLUGIN_RANDOM_YEAR_DISABLE
-	DE	Keine Jahrgänge mehr hinzufügen
+	DE	keine Jahrgänge mehr hinzuzufügen
 	EN	Stop Adding Years
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -764,7 +764,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	EN	recently played songs.
 
 PLUGIN_RANDOM_GENERAL_HELP
-	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste.
+	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 
 EOF
