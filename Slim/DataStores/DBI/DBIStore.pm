@@ -35,10 +35,6 @@ use Slim::Utils::Text;
 # Save the persistant DB cache on an interval
 use constant DB_SAVE_INTERVAL => 30;
 
-# Entries in the database are assumed to be valid for approximately 5
-# minutes before we check date/time stamps again
-use constant DB_CACHE_LIFETIME => 5 * 60;
-
 # cached value of commonAlbumTitles pref
 our $common_albums;
 
@@ -1236,8 +1232,11 @@ sub _hasChanged {
 
 	# We return 0 if the file hasn't changed
 	#    return 1 if the file has been changed.
-	# As this is an internal cache function we don't sanity check our arguments...	
-	my $filepath = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::stripAnchorFromURL($url) );
+
+	# Don't check anchors - only the top level file.
+	return 0 if Slim::Utils::Misc::anchorFromURL($url);
+
+	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
 
 	$::d_info && msg("_hasChanged: Checking for [$filepath] - size & timestamp.\n");
 
