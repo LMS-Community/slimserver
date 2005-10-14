@@ -700,7 +700,7 @@ sub cleanupStaleTrackEntries {
 
 		$::d_import && msg("Import: Track $filepath no longer exists. Removing.\n");
 
-		$self->delete($track, 0);
+		$self->delete($track, 1);
 	}
 
 	$track = undef;
