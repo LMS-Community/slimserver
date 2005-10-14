@@ -595,6 +595,8 @@ sub processAnchor {
 	} elsif (!defined $attributesHash->{'SECS'}) {
 
 		$::d_parse && msg("parse: Couldn't process undef or 0 SECS fragment for " . $attributesHash->{'URI'} . "\n");
+
+		return 0;
 	}
 
 	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
