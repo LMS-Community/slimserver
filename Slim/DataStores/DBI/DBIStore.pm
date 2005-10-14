@@ -581,12 +581,6 @@ sub delete {
 		$track = undef;
 
 		$::d_info && msg("cleared $url from database\n");
-
-		# Cleanup the far end of join tables that may now be unlinked.
-		$cleanupStage = 'contributors';
-		$staleCounter = 0;
-
-		Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
 	}
 }
 
