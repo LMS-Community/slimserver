@@ -28,7 +28,7 @@
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
 
 		<p>
-			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>/
+			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> /
 			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% player | uri %]">
 			  [% "PLUGIN_RANDOM" | string %]
 			</a>
@@ -45,33 +45,7 @@
 						<td>[% "NO_PLAYER_FOUND" | string %]</td>
 					</tr>
 				[% ELSE %]
-				
-					[% IF pluginRandomNowPlaying != '' %]
-						<tr>
-							<td>
-								<strong>[% "NOW_PLAYING" | string %]:</strong>
-								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
-							</td>
-						</tr>
-
-						<tr>
-							<td>&nbsp;</td>
-						</tr>
-	
-						<tr>
-							<td>
-								<em>
-									[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
-									[% PROCESS playLink type="disable" addOnly="0" %]			
-								</em>
-							</td>
-						</tr>
-
-						<tr>
-							<td>&nbsp;</td>
-						</tr>
-					[% END %]
-					
+									
 					<tr>
 						<td width="85%">[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]</td>
 					</tr>
@@ -103,6 +77,31 @@
 						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
 						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
 					</tr>
+					[% IF pluginRandomNowPlaying != '' %]
+						<tr>
+							<td>
+								<strong>[% "NOW_PLAYING" | string %]:</strong>
+								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
+							</td>
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+	
+						<tr>
+							<td>
+								<em>
+									[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
+									[% PROCESS playLink type="disable" addOnly="0" %]			
+								</em>
+							</td>
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+					[% END %]
 				[% END %]	
 
 				<tr>

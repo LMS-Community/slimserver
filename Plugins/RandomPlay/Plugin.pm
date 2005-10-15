@@ -664,7 +664,7 @@ PLUGIN_RANDOM_TRACK_PLAYING
 
 PLUGIN_RANDOM_TRACK_DISABLE
 	DE	keine Lieder mehr hinzuzufügen
-	EN	Stop Adding Songs
+	EN	stop adding songs
 
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
@@ -681,7 +681,7 @@ PLUGIN_RANDOM_ALBUM_PLAYING
 
 PLUGIN_RANDOM_ALBUM_DISABLE
 	DE	keine Alben mehr hinzuzufügen
-	EN	Stop Adding Albums
+	EN	stop adding albums
 
 PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Interpreten Mix
@@ -697,7 +697,7 @@ PLUGIN_RANDOM_ARTIST_PLAYING
 
 PLUGIN_RANDOM_ARTIST_DISABLE
 	DE	keine Interpreten mehr hinzuzufügen
-	EN	Stop Adding Artists
+	EN	stop adding artists
 
 PLUGIN_RANDOM_YEAR
 	DE	Zufälliger Jahr Mix
@@ -713,7 +713,7 @@ PLUGIN_RANDOM_YEAR_PLAYING
 
 PLUGIN_RANDOM_YEAR_DISABLE
 	DE	keine Jahrgänge mehr hinzuzufügen
-	EN	Stop Adding Years
+	EN	stop adding years
 
 PLUGIN_RANDOM_GENRE_FILTER
 	DE	Zu berücksichtigende Stile wählen
