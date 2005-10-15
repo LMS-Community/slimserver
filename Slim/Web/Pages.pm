@@ -36,7 +36,7 @@ sub init {
 	addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,tracksByAgeAndAlbum&level=0"});
 	addLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
 	addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});

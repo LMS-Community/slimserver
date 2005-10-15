@@ -597,9 +597,43 @@ sub init {
 		},
 
 		'nameTransform' => 'album',
-		'descendTransform' => 'track',
+		'descendTransform' => 'tracksByAgeAndAlbum',
 		'ignoreArticles' => 1,
 		'alphaPageBar' => sub { return 0; },
+	};
+
+	$fieldInfo{'tracksByAgeAndAlbum'} = {
+		'title' => 'BROWSE_NEW_MUSIC',
+		'allTitle' => 'ALL_ALBUMS',
+
+		'idToName'           => $fieldInfo{'track'}->{'idToName'},
+		'resultToId'         => $fieldInfo{'track'}->{'resultToId'},
+		'resultToName'       => $fieldInfo{'track'}->{'resultToName'},
+		'resultToSortedName' => $fieldInfo{'track'}->{'resultToSortedName'},
+		'listItem'           => $fieldInfo{'track'}->{'listItem'},
+
+		'find' => sub {
+			my $ds = shift;
+			my $level = shift;
+			my $findCriteria = shift;
+			my $idOnly = shift;
+
+			# Call into age to get album IDs - poor man's sub-select
+			# Perhaps DBIx::Class's join capabilities can help in the future.
+			my $albums = &{$fieldInfo{'age'}->{'find'}}($ds, $level, { 'audio' => 1 }, 1);
+
+			return $ds->find({
+				'field'  => 'lightweighttrack',
+				'find'   => {
+					'album' => $albums,
+				},
+				'sortBy' => 'age',
+			});
+		},
+
+		'ignoreArticles' => 0,
+		'alphaPageBar' => sub { return 0; },
+		'suppressAll' => 1,
 	};
 
 	$fieldInfo{'year'} = {
