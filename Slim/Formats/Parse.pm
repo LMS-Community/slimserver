@@ -592,7 +592,7 @@ sub processAnchor {
 
 		$attributesHash->{'SECS'} = $duration;
 
-	} elsif (!defined $attributesHash->{'SECS'}) {
+	} elsif (!$attributesHash->{'SECS'}) {
 
 		$::d_parse && msg("parse: Couldn't process undef or 0 SECS fragment for " . $attributesHash->{'URI'} . "\n");
 
