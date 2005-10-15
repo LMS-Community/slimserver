@@ -313,7 +313,6 @@ sub clearPlaylists {
 	# Clear all the active clients's playlists
 	for my $client (Slim::Player::Client::clients()) {
 
-		$client->clearAllParams;
 		$client->execute([qw(playlist clear)]);
 	}
 
