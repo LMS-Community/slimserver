@@ -1223,6 +1223,19 @@ sub param {
 	}
 }
 
+# We store things like MusicMagic lists and other find results in the client
+# object - clear those out for rescans, so we don't have dangling references.
+sub clearAllParams {
+	my $client = shift;
+
+	# Ugh. Why is this accessing an array directly? We need to cleanup
+	# client encapsulation post 6.2 - perhaps using inside-out-objects
+	for my $param (@{$client->modeParameterStack}) {
+
+		$param = undef;
+	}
+}
+
 # this is a replacement for param that allows you to pass undef to clear a parameter
 sub modeParam {
 	my $client = shift;

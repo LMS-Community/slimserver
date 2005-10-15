@@ -197,6 +197,8 @@ sub execute {
 	} elsif ($p0 eq "wipecache") {
 
 		if (!Slim::Utils::Misc::stillScanning()) {
+
+			Slim::Music::Info::clearPlaylists();
 			Slim::Music::Info::wipeDBCache();
 			Slim::Music::Import::resetImporters();
 			Slim::Music::Import::startScan();
