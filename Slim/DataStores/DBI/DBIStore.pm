@@ -492,6 +492,12 @@ sub updateOrCreate {
 
 		$::d_info && msg("Merging entry for $url\n");
 
+		# Force a re-read if requested.
+		if ($readTags) {
+
+			$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
+		}
+
 		my $deferredAttributes;
 		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
 
@@ -1208,19 +1214,20 @@ sub _checkValidity {
 
 	return undef if $self->{'zombieList'}->{$url};
 
-	$::d_info && msg("Checking to see if $url has changed.\n");
+	$::d_info && msg("_checkValidity: Checking to see if $url has changed.\n");
 
 	# Don't check for remote tracks, or things that aren't audio
 	if ($track->audio && !$track->remote && $self->_hasChanged($track, $url)) {
 
-		$::d_info && msg("Re-reading tags from $url as it has changed.\n");
+		$::d_info && msg("_checkValidity: Re-reading tags from $url as it has changed.\n");
 
-		$self->delete($track, 1);
+		# Do a cascading delete for has_many relationships - this will
+		# clear out Contributors, Genres, etc.
+		$track->call_trigger('before_delete');
+		$track->update;
 
-		$track = undef;
-
-		$track = $self->newTrack({
-			'url'      => $url,
+		$track = $self->updateOrCreate({
+			'url'      => $track,
 			'readTags' => 1,
 			'commit'   => 1,
 		});
