@@ -53,6 +53,23 @@ sub maxTransitionDuration {
 	return 0;
 }
 
+sub canDirectStream {
+	my $client = shift;
+	my $url = shift;
+
+	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+
+	if ($handler && $handler->can("canDirectStream") && !$handler->isa("Slim::Player::Protocols::MMS")) {
+		return $handler->canDirectStream($url);
+	}
+	
+	return undef;
+}
+
+sub canDoReplayGain {
+	return 0;
+}
+
 1;
 
 __END__
