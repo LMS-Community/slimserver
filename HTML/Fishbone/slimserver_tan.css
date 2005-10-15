@@ -257,8 +257,6 @@ DIV.menu2 .stdedit {
 	padding: 0 8 0 8;
 	margin:0px;
 	margin-top: 8px;
-	_width: 100%;
-	_height: 98%;
 }
 
 .playlist
@@ -266,7 +264,6 @@ DIV.menu2 .stdedit {
 	padding: 0 8 0 8;
 	margin:0px;
 	margin-top: 8px;
-	overflow: auto;
 }
 
 .listing, .listing2, .even, .odd
