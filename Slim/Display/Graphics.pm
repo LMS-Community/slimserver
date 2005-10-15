@@ -74,37 +74,37 @@ sub init {
 
 	$::d_graphics && msgf("Trying to load GD Library for TTF support: %s\n", $canUseGD ? 'ok' : 'not ok!');
 
-	unless ($canUseGD) {
-		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
-	}
+	if ($canUseGD) {
+		FONTDIRS:
+		for my $fontFolder (graphicsDirs()) {
 
-	for my $fontFolder (graphicsDirs()) {
-		# Initialize an image for working (1 character=32x32) and some variables...
-		# Try a few different fonts..
-		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
-	
-			$TTFFontFile = catdir($fontFolder, $fontFile);
-	
-			if ($canUseGD && -e $TTFFontFile) {
-	
-				$useTTF = 1;
-				last;
+			# Initialize an image for working (1 character=32x32) and some variables...
+			# Try a few different fonts..
+			for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
+		
+				$TTFFontFile = catdir($fontFolder, $fontFile);
+
+				if ($canUseGD && -e $TTFFontFile) {
+					$useTTF = 1;
+					last FONTDIRS;
+				}
 			}
 		}
-	}
-
-	if ($useTTF) {
-
-		$::d_graphics && msgf("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]\n");
-
-		$useTTFCache = 1;
-		%TTFCache    = ();
-
-		# This should be configurable.
-		$gd = GD::Image->new(32, 32);
-
-		$GDWhite = $gd->colorAllocate(255,255,255);
-		$GDBlack = $gd->colorAllocate(0,0,0);
+	
+		if ($useTTF) {
+			$::d_graphics && msgf("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]\n");
+	
+			$useTTFCache = 1;
+			%TTFCache    = ();
+	
+			# This should be configurable.
+			$gd = GD::Image->new(32, 32);
+	
+			$GDWhite = $gd->colorAllocate(255,255,255);
+			$GDBlack = $gd->colorAllocate(0,0,0);
+		}	
+	} else { 
+		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
 	}
 }
 
