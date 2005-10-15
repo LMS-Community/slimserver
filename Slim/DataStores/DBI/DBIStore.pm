@@ -15,8 +15,9 @@ use DBI;
 use File::Basename qw(dirname);
 use List::Util qw(max);
 use MP3::Info;
-use Tie::Cache::LRU::Expires;
+use Scalar::Util qw(blessed);
 use Storable;
+use Tie::Cache::LRU::Expires;
 
 use Slim::DataStores::DBI::DataModel;
 
@@ -33,7 +34,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 
 # Save the persistant DB cache on an interval
-use constant DB_SAVE_INTERVAL => 30;
+my $DB_SAVE_INTERVAL = 30;
 
 # cached value of commonAlbumTitles pref
 our $common_albums;
@@ -138,7 +139,7 @@ sub contentType {
 
 	my $track = $self->objectForUrl($url);
 
-	if (defined($track)) {
+	if (blessed($track) && $track->isa('Slim::DataStores::DBI::DataModel')) {
 		$ct = $track->content_type();
 	} else {
 		$ct = Slim::Music::Info::typeFromPath($url);
@@ -1196,7 +1197,7 @@ sub _commitDBTimer {
 		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
 	}
 
-	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + DB_SAVE_INTERVAL, \&_commitDBTimer);
+	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_SAVE_INTERVAL, \&_commitDBTimer);
 }
 
 sub _checkValidity {
