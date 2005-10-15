@@ -9,6 +9,7 @@ package Slim::Utils::Timers;
 
 use strict;
 use Slim::Utils::Misc;
+use Slim::Utils::PerfMon;
 
 # Timers are stored in a list of hashes containing:
 # - the time after which the timer should fire, 
