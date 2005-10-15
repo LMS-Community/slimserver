@@ -10475,7 +10475,7 @@ UNSYNC
 
 SETUP_USEBANDASALBUMARTIST_DESC
 	DE	Alben, die Lieder enthalten, die mit einem Band Tag (TPE2) versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Das Band Tag TPE2 kann in einigen Programmen auch unter der Bezeichnung "Album Artist" auftauchen.
-	EN	Albums that contain songs that are tagged with a band may be listed under that artist only or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
+	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 	ES	Los álbumes que contienen canciones que estan marcadas ("tagged") con una banda pueden ser listados solo bajo el nombre de ese artista o junto a todos los artistas de ese álbum. El tag "band" es conocido también como TPE2 y puede aparecer como "album artist" en algún software.
 
 SETUP_USEBANDASALBUMARTIST_1

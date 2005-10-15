@@ -448,6 +448,7 @@ sub init {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Plugins";
+		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Graphics";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/html";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/IR";
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices/bin";

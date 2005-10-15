@@ -78,16 +78,18 @@ sub init {
 		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
 	}
 
-	# Initialize an image for working (1 character=32x32) and some variables...
-	# Try a few different fonts..
-	for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
-
-		$TTFFontFile = catdir($Bin, 'Graphics', $fontFile);
-
-		if ($canUseGD && -e $TTFFontFile) {
-
-			$useTTF = 1;
-			last;
+	for my $fontFolder (graphicsDirs()) {
+		# Initialize an image for working (1 character=32x32) and some variables...
+		# Try a few different fonts..
+		for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
+	
+			$TTFFontFile = catdir($fontFolder, $fontFile);
+	
+			if ($canUseGD && -e $TTFFontFile) {
+	
+				$useTTF = 1;
+				last;
+			}
 		}
 	}
 

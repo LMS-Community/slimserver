@@ -697,6 +697,7 @@ sub unescape {
 	$data =~ s/&gt;/>/sg;
 	$data =~ s/&quot;/\"/sg;
 	$data =~ s/&bull;/\*/sg;
+	$data =~ s/&pound;/£/sg;
 	$data =~ s/&mdash;/-/sg;
 	$data =~ s/&\#(\d+);/chr($1)/gse;
 
