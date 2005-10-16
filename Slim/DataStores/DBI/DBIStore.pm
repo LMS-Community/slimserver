@@ -493,7 +493,8 @@ sub updateOrCreate {
 		$::d_info && msg("Merging entry for $url\n");
 
 		# Force a re-read if requested.
-		if ($readTags) {
+		# But not for remote / non-audio files.
+		if ($readTags && $track->audio && !$track->remote) {
 
 			$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 		}
