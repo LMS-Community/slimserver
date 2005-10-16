@@ -1,7 +1,6 @@
-<!-- Following two blocks generate links that submit the form if javascript is enabled.  This allows
-     user's to make setting changes then click on a new mix without having to press the submit
-		 button. -->
-[% BLOCK playLink %]
+[%# Following two blocks generate links that submit the form if javascript is enabled.  This allows
+     users to make setting changes then click on a new mix without having to press the submit button. %]
+[%- BLOCK playLink %]
 	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=[% addOnly %]"
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
@@ -17,12 +16,12 @@
 			[% "PLAY" | string %]
 		[% END %]
 	</a>
-[% END %]
-[% pagetitle = 'PLUGIN_RANDOM' | string; pageicon = 'PLUGIN_RANDOM' %]
+[% END -%]
+[%- pagetitle = 'PLUGIN_RANDOM' | string; pageicon = 'PLUGIN_RANDOM' -%]
 [% PROCESS pageheader.html %]
 
 <tr>
-	<td></td
+	<td></td>
 	<td>
 		<p>
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
@@ -122,34 +121,20 @@
 
 				<tr>
 					<td>
-						<table border="0">
-							[% PERL %]
-								require POSIX;
-								require HTML::Entities;
-								
-								my $genreList = $stash->{'pluginRandomGenreList'};
-
-								sub drawCheckbox {
-									my ($genre) = shift;
-									my $checkedString = $genreList->{$genre}{'enabled'} ? 'checked' : '';
-									my $idString = 'genre_' . $genreList->{$genre}{'id'};
-									print "<td><input type='checkbox' name='$idString' id='$idString' value='1' $checkedString onclick='changeNumSelected(this)'>\n";
-									print "<label for='$idString'>" . HTML::Entities::encode_entities($genre) . "</label></td>\n";									
-								}
-
-								my @keys = sort(keys(%$genreList));
-								my $inc = POSIX::ceil(@keys / 2);
-								
-								for (my $i = 0; $i < $inc; $i++) {
-									print '<tr>';
-									drawCheckbox($keys[$i]);
-									if ($i + $inc < @keys) {
-										print '<td>' . '&nbsp;' x 10 . "</td>\n";
-										drawCheckbox($keys[$i + $inc]);
-									}
-									print '</tr>';
-								}
-							[% END %]
+						<table border="0">[% firstcol = pluginRandomGenreList.keys.sort; secondcol = [] %]
+						[%- WHILE secondcol.size + 1 < firstcol.size; secondcol.unshift(firstcol.pop); END; -%]
+						[%- FOREACH genre = firstcol %]
+							<tr>[% genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
+								<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
+								<label for="[% genreid %]">[% genre | html %]</label></td>
+							[%- IF loop.index < secondcol.size %]
+								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								[%- secondgenre = secondcol.${loop.index}; genreid = "genre_" _ pluginRandomGenreList.$secondgenre.id %]
+								<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$secondgenre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
+								<label for="[% genreid %]">[% secondgenre | html %]</label></td>
+							[%- END %]
+							</tr>
+						[%- END %]
 						</table>
 						<script type="text/javascript">
 						<!--
