@@ -665,6 +665,8 @@ sub handleIndex {
 sub handleLogin {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
+	storeAsyncRequest("xxx","login",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
+
 	my $errcode = doLoginLogout($client, $params, $callback, $httpClient, $response);
 	
 	# Errcode > 0 is a real error.  Show it on the next screen.
@@ -677,7 +679,6 @@ sub handleLogin {
 		return handleIndex($client,$params);
 	}
 
-	storeAsyncRequest("xxx","login",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
 	return undef;
 }
 
