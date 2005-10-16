@@ -728,7 +728,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	EN	Select None
 
 PLUGIN_RANDOM_CHOOSE_BELOW
-	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung 
+	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
 
 PLUGIN_RANDOM_TRACK_WEB
