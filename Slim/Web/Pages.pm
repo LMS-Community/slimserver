@@ -36,7 +36,7 @@ sub init {
 	addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
 	addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,tracksByAgeAndAlbum&level=0"});
+	addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
 	addLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
 	addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
@@ -1218,16 +1218,35 @@ sub browsedb {
 			my $nextLevelInfo;
 
 			if ($descend) {
-				my $nextLevel  = $levels[$level+1];
-				$nextLevelInfo = $fieldInfo->{$nextLevel} || $fieldInfo->{'default'};
+				$nextLevelInfo = $fieldInfo->{ $levels[$level+1] } || $fieldInfo->{'default'};
 			} else {
 				$nextLevelInfo = $fieldInfo->{'track'};
 			}
 
 			if ($level == 0) {
-				$list_form{'hierarchy'}	= $levelInfo->{'descendTransform'} ? $levelInfo->{'descendTransform'} : join(',', @levels[1..$#levels]);
-				$list_form{'level'}	= 0;
+
+				# Sometimes we want a special transform for
+				# the 'All' case - such as New Music.
+				#
+				# Otherwise we might have a regular descend
+				# transform, such as the artwork case.
+				if ($levelInfo->{'allTransform'}) {
+
+					 $list_form{'hierarchy'} = $levelInfo->{'allTransform'};
+
+				} elsif ($levelInfo->{'descendTransform'}) {
+
+					 $list_form{'hierarchy'} = $levelInfo->{'descendTransform'};
+
+				} else {
+
+					 $list_form{'hierarchy'} = join(',', @levels[1..$#levels]);
+				}
+
+				$list_form{'level'} = 0;
+
 			} else {
+
 				$list_form{'hierarchy'}	= $hierarchy;
 				$list_form{'level'}	= $descend ? $level+1 : $level;
 			}
@@ -1241,6 +1260,13 @@ sub browsedb {
 			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
 			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+
+			# For some queries - such as New Music - we want to
+			# get the list of tracks to play from the fieldInfo
+			if ($levels[$level] eq 'age' && $levelInfo->{'allTransform'}) {
+
+				$list_form{'attributes'} .= sprintf('&fieldInfo=%s', $levelInfo->{'allTransform'});
+			}
 
 			$itemnumber++;
 
@@ -1673,7 +1699,7 @@ sub pageBar {
 
 		my $numpages  = POSIX::ceil($itemcount/$count);
 		my $curpage   = int($start/$count);
-		my $pagesperbar = 10; #make this a preference
+		my $pagesperbar = 25; #make this a preference
 		my $pagebarstart = (($curpage - int($pagesperbar/2)) < 0 || $numpages <= $pagesperbar) ? 0 : ($curpage - int($pagesperbar/2));
 		my $pagebarend = ($pagebarstart + $pagesperbar) > $numpages ? $numpages : ($pagebarstart + $pagesperbar);
 

@@ -1516,7 +1516,15 @@ sub parseSearchTerms {
 	for my $term (split '&', $terms) {
 
 		if ($term =~ /(.*)=(.*)/ && grep $_ eq $1, @fields) {
-			$find{URI::Escape::uri_unescape($1)} = Slim::Utils::Text::ignoreCaseArticles( URI::Escape::uri_unescape($2) );
+
+			my $key   = URI::Escape::uri_unescape($1);
+			my $value = URI::Escape::uri_unescape($2);
+
+			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
+
+		} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
+
+			$find{$1} = $2;
 		}
 
 		# modifiers to the search
@@ -1528,9 +1536,17 @@ sub parseSearchTerms {
 	# default to a sort
 	$sort ||= exists $find{'album'} ? 'tracknum' : 'track';
 
-	# Treat playlists specially - they are containers.
-	if ($find{'playlist'}) {
+	# We can poke directly into the field info if requested - for more complicated queries.
+	if ($find{'fieldInfo'}) {
 
+		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
+		my $fieldKey  = $find{'fieldInfo'};
+
+		return &{$fieldInfo->{$fieldKey}->{'find'}}($ds, 0, { 'audio' => 1 }, 1);
+
+	} elsif ($find{'playlist'}) {
+
+		# Treat playlists specially - they are containers.
 		my $obj = $ds->objectForId('track', $find{'playlist'});
 
 		if ($obj) {

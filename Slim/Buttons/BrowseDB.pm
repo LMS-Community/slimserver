@@ -74,7 +74,7 @@ sub init {
 		}
 
 		Slim::Buttons::Home::addMenuOption($name, $browse{$name});
-	};
+	}
 
 	%functions = (
 		'play' => sub  {
@@ -124,7 +124,7 @@ sub init {
 
 			}
 
-			$client->showBriefly( {
+			$client->showBriefly({
 				'line1' => $line1,
 				'line2' => $line2,
 				'overlay2' => $client->symbols('notesymbol'),
@@ -164,18 +164,27 @@ sub init {
 
 			# If we're dealing with a group of tracks...
 			if ($descend || $all) {
+
 				my $search = $client->param('search');
 
 				# If we're dealing with the ALL option of a search,
 				# perform the search and play the track results
 				if ($all && $search) {
+
 					$info = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
+
 					my $items = &{$info->{'search'}}($ds, $search, 'track');
 
 					$client->execute(["playlist", $command, 'listref', $items]); 
-				}
-				# Otherwise rely on the execute to do the search for us
-				else {
+
+				} else {
+
+					if ($info->{'allTransform'}) {
+
+						$termlist .= sprintf('&fieldInfo=%s', $info->{'allTransform'});
+					}
+
+					# Otherwise rely on the execute to do the search for us
 					$client->execute(["playlist", $command, $termlist]);
 				}
 			}

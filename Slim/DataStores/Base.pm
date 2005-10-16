@@ -597,7 +597,8 @@ sub init {
 		},
 
 		'nameTransform' => 'album',
-		'descendTransform' => 'tracksByAgeAndAlbum',
+		'descendTransform' => 'track',
+		'allTransform' => 'tracksByAgeAndAlbum',
 		'ignoreArticles' => 1,
 		'alphaPageBar' => sub { return 0; },
 	};
@@ -633,7 +634,7 @@ sub init {
 
 		'ignoreArticles' => 0,
 		'alphaPageBar' => sub { return 0; },
-		'suppressAll' => 1,
+		'suppressAll' => 0,
 	};
 
 	$fieldInfo{'year'} = {
