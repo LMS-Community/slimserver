@@ -565,7 +565,7 @@ sub webPages {
 
 	Slim::Web::Pages::addLinks("browse", { 'PLUGIN_RANDOM' => $value });
 
-	return \%pages;
+	return (\%pages);
 }
 
 # Draws the plugin's web page
@@ -669,7 +669,7 @@ PLUGIN_RANDOM_TRACK_DISABLE
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
-	ES	Mezcla al azar por Álbum
+	ES	Mezcla al azar por �?lbum
 
 PLUGIN_RANDOM_ALBUM_ITEM
 	DE	Zufälliges album
