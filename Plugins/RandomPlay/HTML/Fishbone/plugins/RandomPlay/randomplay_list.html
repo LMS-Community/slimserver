@@ -1,0 +1,241 @@
+<!-- Following two blocks generate links that submit the form if javascript is enabled.  This allows
+     user's to make setting changes then click on a new mix without having to press the submit
+		 button. -->
+[% BLOCK playLink %]
+	<a href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player=[% player | uri %]&addOnly=[% addOnly %]"
+		 onclick='document.genreForm.type.value = "[% type %]";
+							document.genreForm.addOnly.value = [% addOnly %]
+							document.genreForm.submit();
+							for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
+							return false;'
+	>
+	  [% IF type == "disable" %]
+	  	[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying _ "_DISABLE" | string %].
+		[% ELSIF addOnly %]						
+					<img src="[% webroot %]html/images/add.gif" border="0" width="9" height="11" align="center"
+						alt='[% "ADD" | string %]' title='[% "ADD" | string %]'>
+		[% ELSE %]
+					<img src="[% webroot %]html/images/play.this.gif" border="0" width="9" height="11" align="center"
+						alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]'>
+		[% END %]
+	</a>
+[% END %]
+[% pagetitle = 'PLUGIN_RANDOM' | string; pageicon = 'PLUGIN_RANDOM' %]
+[% PROCESS pageheader.html %]
+
+<tr>
+	<td></td
+	<td>
+		<p>
+		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
+
+		<p>
+			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> /
+			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% player | uri %]">
+			  [% "PLUGIN_RANDOM" | string %]
+			</a>
+		</p>
+		
+		<form action="[% webroot %]plugins/RandomPlay/randomplay_settings.html" name="genreForm">
+			<input type="hidden" name="type" value="">
+			<input type="hidden" name="addOnly" value="0">
+			<input type="hidden" name="player" value="[% player %]">
+
+			<table cellspacing="0" border="0" cellpadding="4" width="100%">
+				[% IF player == '' %]
+					<tr>
+						<td>[% "NO_PLAYER_FOUND" | string %]</td>
+					</tr>
+				[% ELSE %]
+									
+					<tr>
+						<td>[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]</td>
+					</tr>
+		
+					<tr>
+						<td></td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="track" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="track" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="artist" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="artist" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="album" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="album" addOnly="1" %]</td>
+					</tr>
+		
+					<tr>
+						<td>[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
+						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
+					</tr>
+					[% IF pluginRandomNowPlaying != '' %]
+						<tr>
+							<td>
+								<strong>[% "NOW_PLAYING" | string %]:</strong>
+								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
+							</td>
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+	
+						<tr>
+							<td>
+								<em>
+									[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
+									[% PROCESS playLink type="disable" addOnly="0" %]			
+								</em>
+							</td>
+						</tr>
+
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
+					[% END %]
+				[% END %]	
+
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+								
+				<tr>
+					<td colspan="4"><hr></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+
+				<tr>
+					<td>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</td>
+				</tr>
+
+				<tr>
+					<td>
+						<table border="0">
+							[% PERL %]
+								require POSIX;
+								require HTML::Entities;
+								
+								my $genreList = $stash->{'pluginRandomGenreList'};
+
+								sub drawCheckbox {
+									my ($genre) = shift;
+									my $checkedString = $genreList->{$genre}{'enabled'} ? 'checked' : '';
+									my $idString = 'genre_' . $genreList->{$genre}{'id'};
+									print "<td><input type='checkbox' name='$idString' id='$idString' value='1' $checkedString onclick='changeNumSelected(this)'>\n";
+									print "<label for='$idString'>" . HTML::Entities::encode_entities($genre) . "</label></td>\n";									
+								}
+
+								my @keys = sort(keys(%$genreList));
+								my $inc = POSIX::ceil(@keys / 2);
+								
+								for (my $i = 0; $i < $inc; $i++) {
+									print '<tr>';
+									drawCheckbox($keys[$i]);
+									if ($i + $inc < @keys) {
+										print '<td>' . '&nbsp;' x 10 . "</td>\n";
+										drawCheckbox($keys[$i + $inc]);
+									}
+									print '</tr>';
+								}
+							[% END %]
+						</table>
+						<script type="text/javascript">
+						<!--
+							var f = document.genreForm;
+							var numSelected = 0;
+							var numCheckBoxes = 0;
+							var selectAllString = '[% "PLUGIN_RANDOM_SELECT_ALL" | string %]';
+							var selectNoneString = '[% "PLUGIN_RANDOM_SELECT_NONE" | string %]';
+							
+							// Work out how many checkboxes are initially selected
+							for (var i=0; i < f.elements.length; i++) {
+								if (f.elements[i].type == 'checkbox') {
+									numCheckBoxes++;
+									if (f.elements[i].checked) {
+										numSelected++;
+									}
+								}
+							}
+							
+							// Select none if all are selected, else select all
+							function selectAll() {
+								var newState = numSelected != numCheckBoxes;
+								
+								for (var i=0; i < f.elements.length; i++) {
+									if (f.elements[i].type == 'checkbox') {
+										f.elements[i].checked = newState;
+									}
+								}
+								if (newState) {
+									numSelected = numCheckBoxes;
+									f.selectAllButton.value = selectNoneString;
+								} else {
+									numSelected = 0;
+									f.selectAllButton.value = selectAllString;
+								}
+							}
+							
+							// Increase/decrease num selected every time a checkbox changes
+							function changeNumSelected(checkBox) {
+								if (checkBox.checked) {
+									numSelected++;
+								} else {
+									numSelected--;
+								}
+								
+								if (numSelected == numCheckBoxes) {
+								  f.selectAllButton.value = selectNoneString;
+								} else {
+									f.selectAllButton.value = selectAllString;
+								}
+							}
+							
+							// Write the button using js, so it won't appear if js isn't enabled/available
+							document.write('<input type="button" value="'
+							               + (numSelected == numCheckBoxes ? selectNoneString : selectAllString) 
+														 + '" id="selectAllButton" onclick="selectAll()">');
+						// -->
+						</script>
+					</td>
+				</tr>
+				
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+
+				<tr>
+					<td>
+						[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
+						<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
+						[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
+						<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
+						[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
+					</td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+
+				<tr>
+					<td><input type="submit" value="[% "SAVE" | string %]"></td>
+				</tr>
+			</table>
+		</form>
+	</td>
+</tr>
+[% PROCESS pagefooter.html %]
