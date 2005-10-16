@@ -294,7 +294,10 @@ sub checkAlarms {
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday) = localtime(time);
 
 	my $time = $hour * 60 * 60 + $min * 60;
-
+	
+	# bug 2300: prefs refers to sunday as day 7, so correct this here for localtime
+	$wday = 7 if !$wday;
+	
 	# once we've reached the beginning of a minute, only check every 60s
 	if ($sec == 0) {
 		$interval = 60;
