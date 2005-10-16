@@ -827,7 +827,11 @@ sub execute {
 
 					} elsif (Slim::Music::Info::isDir($p2)) {
 
-						Slim::Utils::Scan::addToList(\@{$contents}, $p2, 1);
+						Slim::Utils::Scan::addToList({
+							'listRef' => \@{$contents},
+							'url' => $p2,
+							'recursive'    => 1
+						});
 
 						Slim::Player::Playlist::removeMultipleTracks($client,\@{$contents});
 
