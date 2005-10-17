@@ -155,6 +155,12 @@ sub wakeup {
 	if ($curBrightnessPref != $client->brightness()) {
 		$client->brightness($curBrightnessPref);
 	}
+	
+	# Bug 2293: jump to now playing index if we were showing the current song before the screensaver kicked in
+	if (Slim::Buttons::Playlist::showingNowPlaying($client) || (Slim::Player::Playlist::count($client) < 1)) {
+		Slim::Buttons::Playlist::jump($client);
+	}
+
 	# wake up our display if it is off and the player isn't in standby and we're not adjusting the 
 	# brightness
 	if ($button && 
