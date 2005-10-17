@@ -138,17 +138,16 @@
 
 				<tr>
 					<td>
-						<table border="0">[% firstcol = pluginRandomGenreList.keys.sort; secondcol = [] %]
-						[%- WHILE secondcol.size + 1 < firstcol.size; secondcol.unshift(firstcol.pop); END; -%]
-						[%- FOREACH genre = firstcol %]
-							<tr>[% genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
+						<table border="0">[% USE table pluginRandomGenreList.keys.sort, cols=2, pad=0 %]
+						[%- FOREACH genrerow = table.rows %]
+							<tr>
+							[%- FOREACH genre = genrerow %]
+							[%- genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
+								[%- IF not loop.first %]
+								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								[%- END %]
 								<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
 								<label for="[% genreid %]">[% genre | html %]</label></td>
-							[%- IF loop.index < secondcol.size %]
-								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
-								[%- secondgenre = secondcol.${loop.index}; genreid = "genre_" _ pluginRandomGenreList.$secondgenre.id %]
-								<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$secondgenre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
-								<label for="[% genreid %]">[% secondgenre | html %]</label></td>
 							[%- END %]
 							</tr>
 						[%- END %]
