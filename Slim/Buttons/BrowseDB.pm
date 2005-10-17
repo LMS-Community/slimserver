@@ -26,7 +26,7 @@ sub init {
 
 		'BROWSE_NEW_MUSIC' => {
 			'useMode'  => 'browsedb',
-			'hierarchy' => 'age,tracksByAgeAndAlbum',
+			'hierarchy' => 'age,track',
 			'level' => 0,
 		},
 
