@@ -6,8 +6,13 @@ function switchPlayer(player_List){
 	parent.playlist.location="playlist.html?player=" + newPlayer;
 	parent.header.location.reload(false);
 	window.location="status.html?player=" + newPlayer;
-	
-	newHref(parent.browser.document,newPlayer);
+	if (parent.browser.location.href.indexOf('setup') == -1) {
+		newHref(parent.browser.document,newPlayer);
+	} else {
+		myString = new String(parent.browser.location.href);
+		var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
+		parent.browser.location=myString.replace(rExp, newPlayer);
+	}
 }
 
 function newHref(doc,plyr) {
