@@ -8,6 +8,7 @@ function switchPlayer(player_List){
 	window.location="status.html?player=" + newPlayer;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
+		newValue(parent.browser.document,newPlayer);
 	} else {
 		myString = new String(parent.browser.location.href);
 		var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
@@ -15,6 +16,19 @@ function switchPlayer(player_List){
 	}
 }
 
+// change form values to correct player
+function newValue(doc,plyr) {
+	for (var j=0;j < doc.forms.length; j++){
+		if (doc.forms[j].player) {
+			var myString = new String(doc.forms[j].player.value);
+			var rString = plyr;
+			var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
+			doc.forms[j].player.value = myString.replace(rExp, rString);
+		}
+	}
+}
+
+// change browse/plugin/radio hrefs to proper player
 function newHref(doc,plyr) {
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
