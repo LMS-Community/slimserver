@@ -45,6 +45,10 @@ my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUM
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
 
+# Escient sticks artwork in the application metadata block. The data is stored
+# as PIC1 + artwork. So the raw data is +4 from the beginning.
+my $ESCIENT_ARTWORK = 1163084622;
+
 # Choose between returning a standard tag
 # or parsing through an embedded cuesheet
 sub getTag {
@@ -144,6 +148,26 @@ sub getTag {
 	$::d_parse && msg("    returning: $items items\n");	
 
 	return $tags;
+}
+
+sub getCoverArt {
+	my $file = shift;
+
+	my $flac = Audio::FLAC::Header->new($file) || do {
+		warn "Couldn't open file: [$file] for reading: $!\n";
+		return;
+	};
+
+	my $artwork = '';
+
+	if ($artwork = $flac->application($ESCIENT_ARTWORK)) {
+
+		if (substr($artwork, 0, 4, '') eq 'PIC1') {
+			return $artwork;
+		}
+	}
+
+	return $artwork;
 }
 
 # Given a file, return a hash of name value pairs,

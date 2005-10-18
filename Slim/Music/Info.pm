@@ -1340,6 +1340,16 @@ sub readCoverArtTags {
 			$body = Slim::Formats::Movie::getCoverArt($file);
 
 			$::d_artwork && $body && msg("found image in $file of length " . length($body) . " bytes \n");
+
+		} elsif (isFLAC($fullpath)) {
+
+			$::d_artwork && msg("Looking for image in FLAC metadata blocks - in file $file\n");
+
+			loadTagFormatForType('flc');
+
+			$body = Slim::Formats::FLAC::getCoverArt($file);
+
+			$::d_artwork && $body && msg("found image in $file of length " . length($body) . " bytes \n");
 		}
 		
 		if ($body) {
@@ -1638,6 +1648,12 @@ sub isMOV {
 	my $pathOrObj = shift;
 
 	return isType($pathOrObj, 'mov');
+}
+
+sub isFLAC {
+	my $pathOrObj = shift;
+
+	return isType($pathOrObj, 'flc');
 }
 
 sub isAIFF {
