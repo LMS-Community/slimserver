@@ -295,6 +295,13 @@ sub init {
 					delete $findCriteria->{'genre'};
 				}
 
+				# Bug: 2192 - Don't filter out compilation
+				# albums at the artist level - we want to see all of them for an artist.
+				if ($findCriteria->{'artist'} && !$findCriteria->{'album.compilation'}) {
+
+					delete $findCriteria->{'album.compilation'};
+				}
+
 				return $ds->find({
 					'field'  => 'album',
 					'find'   => $findCriteria,
