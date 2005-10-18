@@ -104,6 +104,7 @@ sub init {
 		'coverArt'		=> '',
 		'thumbSize'		=> 100,
 		'itemsPerPass'		=> 5,
+		'keepUnswappedInterval'	=> 30,
 		'plugins-onthefly'	=> 0,
 		'longdateFormat'	=> q(%A, %B |%d, %Y),
 		'shortdateFormat'	=> q(%m/%d/%Y),

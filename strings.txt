@@ -5044,6 +5044,14 @@ SETUP_PREFSWRITEDELAY_DESC
 	ES	Esta configuración determina que tan seguido se graban en disco las preferencias. Poner en 0 para escribir cada cambio en el momento, o valores mayores para agrupar los cambios y grabarlos después del número indicado de segundos.
 	ZH_CN	这个设置决定了参数选择纪录到硬盘的频繁度。以0为值则表示将每一个更动即刻纪录到硬盘。较高的值则表示在该指定的秒数内累积多项更动以便到时一起纪录到硬盘上。
 
+SETUP_KEEPUNSWAPPEDINTERVAL
+	DE	Aufweckintervall
+	EN	Keep Unswapped interval
+
+SETUP_KEEPUNSWAPPEDINTERVAL_DESC
+	DE	Wenn der Server längere Zeit nicht benutzt wird wird es vom Betriebssystem ausgelagert. Diese Einstellung definiert, nach wievielen Minuten der Server seine Startseite lädt, damit es im Hauptspreicher bleibt. Auf 0 setzen damit dieses Verhalten abgeschaltet wird.
+	EN	If the server is unused for some time, the operating system puts it into swap space. This setting determines after how many minutes the server reloads its main page to keep the server process in main memory. Set to 0 to disable the reloading.
+
 SETUP_LONGDATEFORMAT
 	CZ	Formát datumu douhý
 	DE	Format des langen Datums

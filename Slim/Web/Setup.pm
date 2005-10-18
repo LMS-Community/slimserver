@@ -2064,7 +2064,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-				'PrefOrder' => ['lookForArtwork','itemsPerPass','prefsWriteDelay']
+				'PrefOrder' => ['lookForArtwork','itemsPerPass','prefsWriteDelay','keepUnswappedInterval']
 			}
 		}
 		,'Prefs' => {
@@ -2081,6 +2081,9 @@ sub initSetupConfig {
 			,'prefsWriteDelay' => {
 				'validate' => \&validateInt
 				,'validateArgs' => [0,undef,1]
+			}
+			,'keepUnswappedInterval' => {
+				'validate' => \&validateInt
 			}
 		}
 	} #end of setup{'performance'} hash

@@ -1114,7 +1114,17 @@ sub checkVersionError {
 # swapping. So try and keep our memory image in RAM and not swap out.
 sub keepSlimServerInMemory {
 
-	$::d_server && msg("Requesting web page to keep SlimServer unswapped.\n");
+	my $interval = Slim::Utils::Prefs::get('keepUnswappedInterval');
+	$interval = 30 if (!(defined($interval)));
+
+	$::d_server && msg("Requesting web page to keep SlimServer unswapped, re-request interval is $interval minutes.\n");
+
+	# Disabled if interval set to less than zero seconds
+	if ($interval <= 0)
+	{
+	    $::d_server && msg("Interval is less than or equal to zero, Keeping SlimServer unswapped is disabled.\n");
+	    return;
+	}
 
 	my $url  = '';
 	my $port = Slim::Utils::Prefs::get('httpport');
@@ -1134,8 +1144,9 @@ sub keepSlimServerInMemory {
 
 	$http->get($url);
 
-	# Check every half hour
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + 1800, \&keepSlimServerInMemory);
+	# Interval is configured in minutes...
+	$interval = $interval * 60;
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&keepSlimServerInMemory);
 }
 
 #------------------------------------------
