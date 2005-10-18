@@ -447,7 +447,7 @@ sub setDirItems {
 			# If tracks are being added via Browse Music Folder -
 			# which still deals with URLs - get the objects to add.
 			unless (ref($item)) {
-				$item = $ds->objectForUrl($item, 1, 0, 1) || next;
+				$item = $ds->objectForUrl($item, 1, 1, 1) || next;
 			}
 
 			Slim::DataStores::DBI::DirlistTrack->create({
