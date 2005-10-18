@@ -29,7 +29,7 @@
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
 
 		<p>
-			<a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> /
+			/
 			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% player | uri %]">
 			  [% "PLUGIN_RANDOM" | string %]
 			</a>
@@ -55,28 +55,28 @@
 						<td></td>
 					</tr>
 		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="track" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="track" addOnly="1" %]</td>
+					<tr class="listing">
+						<td class="listing">[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
+						<td class="listing">[% PROCESS playLink type="track" addOnly="0" %]</td>
+						<td class="listing">[% PROCESS playLink type="track" addOnly="1" %]</td>
 					</tr>
 		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="artist" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="artist" addOnly="1" %]</td>
+					<tr class="listing">
+						<td class="listing">[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
+						<td class="listing">[% PROCESS playLink type="artist" addOnly="0" %]</td>
+						<td class="listing">[% PROCESS playLink type="artist" addOnly="1" %]</td>
 					</tr>
 		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="album" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="album" addOnly="1" %]</td>
+					<tr class="listing">
+						<td class="listing">[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
+						<td class="listing">[% PROCESS playLink type="album" addOnly="0" %]</td>
+						<td class="listing">[% PROCESS playLink type="album" addOnly="1" %]</td>
 					</tr>
 		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
+					<tr class="listing">
+						<td class="listing">[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
+						<td class="listing">[% PROCESS playLink type="year" addOnly="0" %]</td>
+						<td class="listing">[% PROCESS playLink type="year" addOnly="1" %]</td>
 					</tr>
 					[% IF pluginRandomNowPlaying != '' %]
 						<tr>
