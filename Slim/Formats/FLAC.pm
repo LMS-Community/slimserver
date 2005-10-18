@@ -645,22 +645,32 @@ sub getCUEinVCs {
 	# so we can just fake it
 	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/");
 
-
 	# grab file info tags
 	# don't pass $metadata through addInfoTags() or it'll decodeUTF8 too many times
 	my $infoTags = {};
+
 	addInfoTags($flac, $infoTags);
 
 	# merge the existing track data and cuesheet metadata
 	for my $key (keys %$tracks) {
 
 		if (!exists $metadata->{$key}) {
-			$::d_parse && msg("No metadata found for track "
-												 . $tracks->{$key}->{'URI'} . "\n");
+			$::d_parse && msg("No metadata found for track " . $tracks->{$key}->{'URI'} . "\n");
 			next;
 		}
 
 		%{$tracks->{$key}} = (%{$infoTags}, %{$metadata->{$key}}, %{$tracks->{$key}});
+
+		# Add things like GENRE, etc to the tracks - if they weren't
+		# in the cue sheet. See bug 2304
+		while (my ($tag,$value) = each %{$tags}) {
+
+			if (!defined $tracks->{$key}->{$tag} && $tag !~ /^cuesheet$/i) {
+
+				$tracks->{$key}->{$tag} = $value;
+			}
+		}
+
 		doTagMapping($tracks->{$key});
 		$items++;
 	}
