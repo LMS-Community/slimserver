@@ -8819,6 +8819,20 @@ NO_PLUGINS
 	SE	Inga tillägg tillgängliga.
 	ZH_CN	没有插件程序可利用
 
+MUSIC_PLAYER
+	DE	Musik Player
+	DK	Afspiller
+	EN	Music Player
+	ES	Reproductor de Música
+	FI	Soitin
+	FR	Platine
+	JP	プレーヤー
+	NL	Muziek Speler
+	NO	Musik Player
+	PT	Leitor de Música
+	SE	Musikspelare
+	ZH_CN	播放机
+
 SLIMP3_MUSIC_PLAYER
 	DE	SLIMP3 Musik Player
 	DK	SLIMP3-afspiller
@@ -10546,3 +10560,5 @@ ARTWORK
 	EN	Artwork
 	ES	Arte de tapa
 
+OBJECT_RETRIEVAL_FAILURE
+	EN	SlimServer failed retrive the resource you were looking for.
