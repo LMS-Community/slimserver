@@ -1,0 +1,1204 @@
+<h2><a name="v5.4.0" id="v5.4.0"></a>Version 5.4.0 - 2004-11-9</h2>
+<ul>
+
+	<li>Radio Plugins:
+		<ul>
+			<li>New plugin: Slim Devices Picks.
+			<li>New plugin: Live365 Internet Radio is now part of the default installation (thanks to Jim Kneply).
+			<li>radioio plugin: fixed branding and wrong port for Acoustic station.
+			<li>Added an "Internet Radio" link in the
+	  "Help" section of the SlimServer home page. Besides
+	  information on radio options, it presents a simple web UI to
+	  play a radio stream if you know its URL, without having to
+	  create a playlist file.
+		</ul>
+	</li>
+
+	<li>RSS Reader Plugin: Dave Cohen contributed an RSS Reader plugin that
+		is now part of the release. It can be used to browse a
+		configurable set of RSS feeds. It can also be set as a
+		screensaver to present a ticker of articles. The list
+		of feeds can be changed by browsing to Slim Server
+		&gt; Plugins through the SlimServer web interface.
+	</li>
+
+	<li>Menu system changes:
+		<ul>
+			<li>Simplified home menu structure. The
+			top-level items are Now Playing, Browse Music,
+			Search Music, Playlists, Internet Radio,
+			Settings and Plugins.
+    			<li>Plugins are now placed in different menu
+    			categories - Games, Screensavers, Internet
+    			Radio, etc. The Internet Radio plugin category
+    			is now at the top-level.
+			<li>Remove Browse Songs from Browse Music
+	  submenu (it's too slow to be useful.)
+			<li>When in Browse Music, use a dynamically
+			generated menu.
+			<li>kdf reimplemented much of the home menu system to be more flexible using INPUT.List.
+			<li>Added a way to run an upgrade
+	  script on a per-client basis. Added a script that replaces
+	  Shoutcast in the home menu with Internet Radio.
+		</ul>
+	</li>
+
+	<li>Remote Streaming and Formats:
+		<ul>
+			<li>Based on a submission from Craig
+	  Eales, added the ability to do format conversion/transcoding of a
+	  remote stream. This enables Ogg radio streaming!
+			<li>Support for the mms: protocol (on Windows
+	  only for now) using wmadec's ability to deal with URLs.With
+	  ASX support already added, we should be able to play WMA
+	  radio streams...on Windows only for now, unfortunately.
+			<li>Added support for parsing WPL (submitted
+	  by Danny Rego) and ASX playlists. Also made playlist
+	  handling a little bit more contained so that adding support
+	  for a new type requires adding code to just Parse.pm.
+			<li>When streaming remote streams, start when
+	  the buffer is 75% full or after 5 seconds and at least 5%
+	  full. This allows rate limiting streams to start faster.
+			<li>Support for mono streams in wmadec
+			<li>Updated WMA code
+	  to handle sample_rate.
+			<li>Fixed proxy support for remote streams.
+			<li>bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=552">552</a>: DRM protected WMA files are now
+	  reported as such in songinfo and trackinfo playback of a DRM
+	  WMA will produce an error on the player display and server
+	  will skip to next song in the playlist.
+			<li>Bugs <a href="http://bugs.slimdevices.com/show_bug.cgi?id=388">#388</a>, <a href="http://bugs.slimdevices.com/show_bug.cgi?id=447">447</a>, <a href="http://bugs.slimdevices.com/show_bug.cgi?id=581">581</a> Add binaries for flac
+	  1.1.1, and update convert.conf to enable --skip and --until
+	  Also add oggdec binaries.
+			<li>Fixed problem where oggdec to lame
+	  transcoding was not correctly byte-swapping on some
+	  platforms (PowerPC specifically).
+		</ul>
+	</li>
+
+	<li>SoftSqueeze 1.10 (thanks to Richard Titmuss)
+		<ul>
+			<li>Music search contributed by Brian Hein (alpha status).
+			<li>Simpler configuration dialog.
+			<li>An error is reported if Softsqueeze is not correctly installed.
+			<li>Reset window positions if the window has been lost off the screen.
+			<li>Display a warning if Softsqueeze needs upgrading to work with the slimserver.
+			<li>Fixed configuration of non standard slimserver http port.
+			<li>Fixed window dragging for OS X, use Option key to drag windows.
+			<li>Fixed error reported by java web start on OS X.
+			<li>Fixed music restarting when connection to server is lost. 
+		</ul>
+	</li>
+
+	<li>Firmware 40:
+		<ul>
+			<li>Fix a problem with 32 character long SSIDs.
+			<li>When reconnecting, the player tells the
+	  server if it rebooted.  The server will now only restart
+	  streams if the player has rebooted.
+			<li>Updated squeezebox firmware to ignore
+	  unknown frame types, rather than getting confused.  When
+	  squeezebox connects, slimserver sends the latest version
+	  number of the server.
+		</ul>
+	</li>
+	<li>Add some nice text explaining to folks what they can do if the
+	  server doesn't find their player. (HTTP streaming, SoftSqueeze,
+	  fix their player)
+	<li>Improved scanning performance:
+		<ul>
+				<li>Optimized reading of ID3 tags in Perl.
+				<li>Moved scanning of ID3 tags within
+            files into the same step as getting metadata from
+            iTunes. This makes the scan take a bit longer,
+            but subsequent operations are much faster, since we don't
+            have to read tags from the files on-the-fly. This only
+            applies to the iTunes case.
+		</ul>
+	<li>Nicolas Guillemain updated the french translations. German updates from Pascal Berger...
+	<li>Various bug fixes:
+		<ul>
+			<li>Fixed problem where proxys were blocking
+	  access to settings pages.
+			<li>For Fishbone skin: fix bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=655">655</a>: IE reports
+	  problems loading javascript
+			<li>Fixed problem where we weren't detecting
+          iTunes file changes in some cases.
+			<li>Don't require a trailing slash when
+	  specifying skins.
+			<li>fix bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=368">368</a>, move image in songinfo of
+	  fishbone skin to bottom and now display unscaled.
+			<li>Fix for bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=366">366</a>. Directories that consist
+	  of just spaces do not cause the scan algorithm to fall into
+	  an infinite loop.
+			<li>Fix for bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=640">640</a> - We could get into
+          situations where going left from the home menu would crash
+          the server.
+			<li>fixed an infinite loop in INPUT.List for
+	  empty lists.
+			<li>fix a bug where volume bar is rendered
+	  incorrectly when activated from another INPUT.Bar mode
+			<li>fix a bug in fishbone skin that made all
+	  searches into search for artist
+			<li>Added postulated fix for WMA files that
+	  have broken headers with block lengths that are shorter than
+	  possible.
+			<li>Fixed a problem where the spinning cursor
+	  animation while blocked on long operations (like entering a
+	  LARGE directory) was broken.
+			<li>fix bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=626">626</a> - add persistence for search
+	  choice in Fishbone skin.  fix cookies and page loading so
+	  that forms are reset properly on submit
+			<li>Fix logic in how we trigger rescans...
+	  Rescanning should happen at the right time now.
+			<li>Fix pulldown menus in
+	  Fishbone skin for Safari.
+			<li>Move history load at startup to happen, so
+	  plugins that install protocol handlers do it sooner, before
+	  we start dealing with non-standard URLs.
+			<li>Fixed a problem where sometimes iTunes and
+	  Moodlogic background checking might not start automatically.
+	  At startup, now always start checking the libraries.
+	  Remember the last import time across server restarts.
+			<li>When adding a playlist to a current
+	      shuffled playlist, make sure we keep the curent song
+	      when playing or paused
+			<li>Fix bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=561">561</a> fix mute handling so that
+	      players no longer unpause to muted
+			<li>Fix a problem where the slimproto port
+	  was not bound to the specified interface when starting with
+	  command line options.
+			<li>Windows installer fixes: it doesn't need
+	  stuff from other platforms. When installing a nightly, make
+	  sure we update the slimserver.exe file, even if it doesn't
+	  have a new verison number.
+			<li>bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=592">592</a> and <a href="http://bugs.slimdevices.com/show_bug.cgi?id=450">450</a>: APEtags were being
+	  ignored in MPC files.  excessive sanity checks caused the
+	  tags not to be read convert keys to all caps for better
+	  matching with slimserver fix TRACK tag mapping in
+	  Formats::Musepack to get the correct track number.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=588">588</a>: M3U and PLS files that SlimServer
+	  writes should use file paths, not file: URLs.</li>
+			<li>bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=593">593</a>: fix a bug where fishbone undock
+	  link only opened first player now opens a window for the
+	  current player, each player can have its own undocked
+	  window</li>
+
+		</ul>
+	</li>
+</ul>
+
+<h2><a name="v5.3.1" id="v5.3.1"></a>Version 5.3.1 - 2004-09-24</h2>
+<ul>
+	<li>Fixed problem that stalled the installer on Windows 98/ME.</li>
+	<li>Fixed performance issue while browsing folders containing large numbers of subfolders.</li>
+	<li>Fixed missing title string on built-in Help web page.</li>
+	<li>Improved startup performance.</li>
+	<li>Don't check for new version more than once a day.  Previously we checked every time the server started.</li>
+	<li>Fixed missing strings used when changing obscure iTunes setting.</li>
+	<li>Fixed issue where  title display for filenames with "." in the middle would get trimmed.</li>
+	<li>Fixed an issue where WMA files would report the wrong bitrate to the user.</li>
+	<li>New server titleFormats are added as options without requiring a restart in settings.</li>
+	<li>Fixed an incompatibility in the new server with existing plugins, including the Lyrics plugin.</li>
+	<li>Fixed an issue in settings where web streaming clients should be able to modify their title format settings.</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=567">567</a>: Fixed a problem where the contents of iTunes or MoodLogic playlists may not show correctly.</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=207">207</a>: Fix problem where the same album was always first when shuffling by album.</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=563">563</a>: When starting playback from web interface and player is powered off, force power on.</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=582">582</a>: Fix a crash when scrollRate is set to zero on a Squeezebox G.  Zero now properly results in no scrolling</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=580">580</a>: Fix a bug where browsing through music folder to shortcuts would open root folder.</li>
+	<li>SoftSqueeze v1.5: Fixes problem where the monitor refresh rate may be to high in full screen mode.</li>
+	<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=588">588</a>: M3U and PLS files that SlimServer writes should use file paths, not file: URLs.
+	<li>Squeezebox Firmware v39
+		<ul>
+			<li>Fixed a problem where it may be impossible to enter an explicit SSID for a wireless network.
+			<li>Fixed a cosmetic bug displaying the wireless signal strength in the player setup screens.
+			<li>Fixed a cosmetic problem with some animations.
+			<li>Fixed a couple of cases where navigating wildly in setup could caused a reboot.
+			<li>Fixed default settings to be wireless (if a card is installed) and DHCP.
+		</ul>
+	</li>
+</ul>	
+	
+
+<h2><a name="v5.3.0" id="v5.3.0"></a>Version 5.3.0 - 2004-09-20</h2>
+<ul>
+
+	<li>Security
+		<ul>
+		<li>Added a referrer check for settings pages, to patch a theoretical security problem where a thirdparty web page could cause your browser to trigger changes to setup. This problem also extends to any changes via the web interface, but the setup is the most problematic.
+		<li>Added registry keys for Windows XP that allow SlimServer ports and protocols access through the XP firewall.</li>
+		</ul>
+	</li>
+
+	<li>SoftSqueeze
+		<ul>
+		<li>Updated to version 1.4</li>
+		<li>Updated Softsqueeze to work with modified slimproto</li>
+		<li>Fixes sample rate bug that caused bad mp3 playback
+		<li>Refactored UI code, and added a fullscreen mode with album art and playlist
+		<li>Make SoftSqueeze launch page easier to launch softsqueeze.</li>
+		<li>Fixed broken background images in Softsqueeze.</li>
+		</ul>
+	</li>
+
+	<li>Web User Interface
+		<ul>
+		<li>Making the home menu settings per-player.</li>
+		<li>Modified patch from KDF to enable choosing fonts from the settings page.  Also updates web setting for alarm. Reorganized player settings to be less intimidating.
+		<li>Adding Jacob Potter's ExBrowse skin to the standard release.
+			Included a patch that he needs to display some info in his skin.
+		<li>Show percentage after the signal strength in the web interface.</li>
+		<li>Suppress skins that start with 'x' from the setup pages, like xml and xul, as they aren't fit for human consumption, browserwise. Rename the Default skin to Default for human consumption.</li>
+		<li>Show year support for Fishbone, Default and EN skins.
+		<li>Fix blank playlist page when clients first connect</li>
+		<li>Fix naming on web interfaces.  Not SLIMP3 Home or Squeezebox Home anymore, just Home.
+		<li>Fix crash in getting player settings on HTTP clients.</li>
+		<li>Textsize settings fixed, selectable from the available fonts for each player.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=314">314</a>: Highlight the closest volume setting in the default skin.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=446">446</a>: Patch from KDF to fix sorting issue in cover art.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=466">466</a>: Support for ID3 BPM Tag (TBPM, TBP) includes support in EN, Fishbone, and Default skins.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=490">490</a>: Fix search field in handheld skin</li>
+		</ul>
+	</li>
+
+	<li>Internet Radio
+		<ul>
+		<li>Fix a problem with the path to radio stations imported from iTunes.
+		<li>Jim Knepley pointed out a problem where internet radio stations that had redirects and only gave title information on the redirected response lost that title information.</li>
+		</ul>
+	</li>
+	
+	<li>Player User Interface
+		<ul>
+		<li>Timing problem resolved with autodim and screensaver timing.
+		<li>Tweak the note symbol to be prettier
+		<li>add a space at the edge of the overlays.</li>
+		<li>FROM and BY weren't really being replaced in Title Format strings.  Now they will be.</li>
+		<li>Fix problem when doing pushes from screens without overlays.  (For example, the Search screen...</li>
+		<li>Don't use "turbo" brightness levels, which cause ghosting
+		<li>When squeezeboxen reconnect, restart the current track if we were playing before.</li>
+		<li>KDF found a problem with centered large font text on non-graphics players.  Fixed.
+		<li>Fix scrolling timing</li>
+		<li>Fix static ip menu</li>
+		<li>Fix warning and cosmetic bug when brightness is set to zero when powered off</li>
+		<li>Make it possible to adjust pitch, treble and bass with a remote. Fix a bug that was causing some warnings if you adjust treble/bass</li>
+		<li>Fix Shooter and SlimTris to work with SqueezeboxG.</li>
+		<li>Fix missing moodlogic icon on bitmapped displays.
+		<li>Found bug where sometimes on non-G players we'd see blank double-high lines where we should see the content.</li>
+		<li>If we're stopped and somebody sends a an unpause command, then let's start playing the current track.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=135">135</a>: Include YEAR when listing ALBUMS for ARTIST. There is a performance hit, so this is a server-formatting setting that is disabled by default
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=140">140</a>: Playlist starts at top of list when pressing down to access next song caused by the "now playing (jump back)" screensaver. fix this by staying in "now playing" when jump back is the enabled screensaver.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=477">477</a>: Now playing screensaver scrolling restarts.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=513">513</a>: trim playlist count when viewing the end of the list and tracks are deleted.  also partly fixes Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=505">505</a> by preventing 17 of 16 display.</li>
+		</ul>
+	</li>
+
+	<li>Audio
+		<ul>
+		<li>Fixed volume curve for squeezebox when in fixed-digital mode.  It's not exactly the same as when in variable volume mode, but it's much closer.
+		<li>Fixed pitch control to preserve pitch settings across songs and adjust during a song.
+		<li>Some users are decompressing mp3s to wav. lets check the bitrate limits again before we consider a conversion command valid.</li>
+		<li>M4B files are the same as M4A, so add that content type.</li>
+		</ul>
+	</li>
+
+	<li>File Formats
+		<ul>
+		<li>Escape $ ` and " in file names for playback.  This caused some files with these characters in the file names to not play.
+		<li>Fix a problem using itunes with linux when the music folder is mapped to a windows root.  fold multiple // in path after itunes normalisation.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=418">418</a>: #EXTINFO ignored - Persist the $title variable so that the EXTINFO can be linked to the next line (playlist item) tested and works with stream playlist.  This is linked with Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=198">198</a> and $title may still overrride the ID3.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=489">489</a>: Accepted patch from David Lutz that fixes a problem with FLAC files longer than an hour.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=492">492</a>: Accept patch from Michael the Fallen Angel for handling flac cuesheets.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=499">499</a>: flac cue sheets content type gineg overwritten
+		</ul>
+	</li>
+	
+	<li>Localization and Internationalization
+		<ul>
+			<li>Paulo Mannheimer updated the PT translation.</li>
+			<li>Nicolas Guillemain submitted some French translations.</li>
+			<li>French translation updated by Paul Williamson. 
+		</ul>
+	</li>
+
+	<li>Automation
+		<ul>
+		<li>Fix crasher when d_cli is turned on and you disconnect immediatly after sending commands via CLI.</li>
+		<li>Fix a bad URL in the XML skin. </li>
+		<li>Status.m3u HTTP response was broken.</li>
+		</ul>
+	</li>
+
+	<li>Documentation
+		<ul>
+		<li>Fix missing quote in faq, also sync up with web site.</li>
+		<li>Kevin updated the FAQ with some SP2 specific hints about the new XP firewall.
+		<li>Update docs for INPUT.time for stringHeader param</li>
+		<li>Update remote docs to include auxiliiary functions of ADD and PLAY, etc</li>
+		<li>Update docs to reflect use of Template Toolkit.  Still need to review parameters available to each template.</li>
+		<li>Docs for INPUT.Bar added to help section</li>
+		</ul>
+	</li>
+
+	<li>Developer Issues
+		<ul>
+		<li>Tweak brightness levels.  Add basic font documentation.</li>
+		<li>Update CPAN LWP package.
+		<li>Accepted patch for simplifying the squeezebox.version file format.</li>
+		<li>Adding a default package base for template toolkit plugins - "Plugins::TT" Place any Template Toolkit plugins in the &lt;slimserver&gt;/Plugins/TT directory.</li> Package Namespace is HTML::&lt;skinname&gt;::&lt;PackageName&gt;.</li>
+		<li>Also allow Template Toolkit plugins in the Skin Directories.
+		<li>Cleaned up internal handling of volume, treble, bass and pitch.  They are now client methods rather than a mix of client methods, client prefs and module functions.
+		<li>Add comment stating that filltemplate() is obsolete.</li>
+		<li>Add stringHeader param option for INPUT.Text</li>
+		<li>Remove a bogus assert() from Select.pm</li>
+		<li>Moved client default settings to the client objects for initialization, as some of them are client type specific, especially the font stuff.</li>
+		<li>Created the notion of protocol handlers in Source.pm. These are classes that can be registered to handle specific URL schemes for remote streams. Changed most of the isHTTPURL checks to isRemoteURL. In the long run, the different codepaths for local vs. remote shouldn't exist. There should be handler for file: URLs and more should be pushed into the handler. Moved http: and icy: protocols, including shoutcast metadata handling into a separate registered handler class. Wrote a RadioIO plugin that adds a handler.</li>
+		<li>Added --diag option which gives verbose diagnostic information (use diagnostics;) use sparingly, as it DRAMATICALLY slows down regular expression parsing.</li>
+		</ul>
+	</li>
+
+	<li>Player Firmware
+		<ul>
+		<li>Updated to version 38
+		<li>Fixed a number of potential crashes during setup
+		<li>fix lost contact with server message
+		<li>re-enable ethernet link/activity signals
+		<li>Fix crashes when changing tracks repeatedly.
+		<li>Fix stuck pixels in display
+		<li>accellerate internal graphics copying to make the visualizer run well at high frame rates
+		<li>added client-side support for visualizer a/v synchronization. Some work left to do in the vis application still.
+		<li>fixed possible data corruption in audio and graphics data
+		<li>Fixed problems with missed or duplicate button presses
+		<li>Notify the server more quickly when buffer is full. Synced players should start up faster.
+		<li>Vastly improves UI snappiness. Simplified player protocol to reduce chattiness.  Removed many redundant status messages.
+		<li>Add default firmware version support to server. This should allow folks easy downgrading after this.
+		<li>need to keep slimproto frames even length so they're aligned in memory on the client</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=495">495</a>: Move to small text size when forcing upgrade.</li>
+		</ul>
+	</li>
+
+	<li>Performance
+		<ul>
+		<li>Safety check to prevent a crash when a player unexpectedly disconnects.
+		</ul>
+	</li>
+	
+	<li>Misc.
+		<ul>
+		<li>Fix a warning when scanning playlists pointing to streamin stations.</li>
+		<li>Fix a warning when streaming MP3.</li>
+		<li>Fixed a warning when stopping the windows service.
+		<li>Don't crash if you try to access a player settings page for a nonexistant player.
+		<li>Fixed a bug where date strings might cause latin1 characters to appear incorrectly in other places.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=258">258</a>: scan time summary each import hash stores the start time as the value d_info debug lines will include total time for all scans, plues individulal time for each import scan</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=417">417</a>: Perl 5.6.0 uses a different syntax for ReuseAddr.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=444">444</a>: Accepted patch for default Cachedir in home directory for non-mac unix systems.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=464">464</a>: can't find itunes playlist with 'Find iTunes Library Automatically' registry check for "my music" was returning "" in one case, cannot replicate. try to check both "my music" and "personal" to try to lessen the effect of this problem</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=467">467</a>: clearing of "Artwork" format string not accepted via web interface now Accepts All input, even blank.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=468">468</a>: variable artwork setting interfered with flac cue sheets</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=474">474</a>: Multiple problems with INPUT.Text fixes display of right arrow in graphics module. makes use of variable display widths to control scrolling</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=476">476</a>: slimserver 5.3.0b1 text size control inverted	textSize got inverted for character module.
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=489">489</a>: fix typo from patching
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=508">508</a>: blank lines when popping back from an INPUT.List mode settings, snow and search push straight into INPUT.List, and need to pop through when exiting the input mode. PopModeRight shoudl be done in the exit handler, so only popMode is needed in setMode.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=514">514</a>: problems entering search text Search now uses INPUT.Text mode for common entry style
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=514">514</a>: Text input issues set lastLetterTime = 0 on pressing right, so that character toggle is reset to the start for each new char.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=514">514</a>: reset button timer to reset character cycle on backspace</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=530">530</a>: prevent a crash when there is an unexpected exit from INPUT.Text while the nextChar timer is still active</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=539">539</a>: kill existing animations when a new song is opened.</li>
+		<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=540">540</a>: rework animation in places where the new line parsing is needed.</li>
+		</ul>
+	<li>
+</ul>
+
+<h2><a name="v5.3.0b1" id="v5.3.0b1"></a>Version 5.3.0b1 - 2004-08-03</h2>
+<ul>
+	<li>Added support for Squeezebox with a 280x16 graphical display:
+		<ul>
+			<li>Proportional fonts
+			<li>Graphics additions to the client protocol
+			<li>Support for animation
+		</ul>
+	</li>
+	<li>Assorted enhancements and bug fixes:
+		<ul>
+			<li>Support for embedded cuesheets in Flac from Michael Turner.		
+			<li>Added XML parser (SAX::PurePerl) because it's useful for lots fo plugins.
+			<li>Significant improvements to Input modes for plugin developers.
+			<li>Improvements to the Handheld skin from Michael Herger.
+			<li>bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=440">440</a> - fix an error in Fishbone skin that would prevent rendering in OSX with IE 5.2
+			<li>Moodlogic: fix a bad cut/paste that would generate a playlist of 0 items, fix a crash when entering instant misx for a song fix a crash when entering mood wheel, Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=451">451</a>: add moodlogic artistMixCache and genreMixCache to the storable dB.
+			<li>Fix for Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=308">308</a>, where web interface pages weren't showing up after a skin change.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=428">428</a>: creating a scrollrate setting specific to Double Size text.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=453">453</a>: If you fail to upgrade in a timely manner, the web interface will nag you badly.
+			<li>Various fixes to the Fishbone skin from kdf.
+			<li>Plugins: added a scheduled rescan feature to the Rescan plugin using INPUT.Time
+			<li>CLI: Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=256">256</a> adding sync commands via CLI.
+			<li>Firmware: fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=398">398</a>: unblock client so that the update required message will not be there when the client reboots.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=457">457</a>: Link at top of help pages was broken.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=458">458</a> Plugins in home menu are now removed temporarily if they are disabled of fail on startup. Allow browsemenu to be added to the home menu.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=463">463</a>: Crash if there's a QuickTime movie or AAC file with zero duration in your library.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=461">461</a>: discrete scrollPause setting for double height text improve scrollPause for single height as well.
+			<li>Fix genre tag extraction from AAC files.
+			<li>Skip 0 length PADDING block - from David Brittain.
+		</ul>
+	</li>
+	<li>Squeezebox Firmware Version 31
+		<ul>
+			<li>Support for graphics display.
+			<li>Disable runtime debug, assertions, turbo 2-wire disable TCP reassembly (found a case where I could consistently cause dropouts streaming AIFF from osx - goes away when reassembly is off). 
+			<li>Increase the window in which we will accept garbage ir codes as a repeat of the previous code, from 125 to 150 ms. 
+			<li>Fixes spurious extra button press.
+		</ul>
+	</li>			
+</ul>
+
+<h2><a name="v5.2.1" id="v5.2.1"></a>Version 5.2.1 - 2004-07-03</h2>
+<ul>
+	<li>SlimServer Bug Fixes
+		<ul>
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=424">424</a>: Songinfo download link crashes server when no client found.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=423">423</a> where a bad function call would crash the server after selecting a mood.
+			<li>Fix a problem where a truncated MP3 file could cause the server to lock up and each a lot of CPU power.
+		</ul>
+	</li>
+	<li>Documentation
+		<ul>
+			<li>Updated FAQ in online documentation.
+		</ul>
+	</li>
+	<li>Squeezebox Firmware Version 29
+		<ul>
+			<li>Fixed a problem where Squeezebox would not unpause properly if paused for a long time on some systems.
+			<li>Fixed a problem on some players where Squeezebox would reboot if there was some spurious infrared activity.
+		</ul>
+	</li>
+</ul>
+<h2><a name="v5.2.0" id="v5.2.0"></a>Version 5.2.0 - 2004-06-25</h2>
+<ul>
+	<li>Streaming to MP3 Players
+		<ul>
+			<li>Added bitrate limiting - the ability to set a maximum bitrate to be streamed to a device. Based on the bitrate, we may transcode to a low(er) bitrate MP3 than the original source, if LAME is installed.
+			<li>Preference page in Server Settings to control and view maximum bitrate and conversion settings for music formats.
+			<li>Wired Squeezebox have no bandwidth limit, wireless ones default to 320kb.
+			<li>Did some work on fixing the problem of some receivers not syncing up properly at the beginning of tracks. The silence mp3 data that I had created had the wrong sample rate. Now when we scan through a file or try to jump to the middle, try to line up on MP3 frame boundries. This should keep the S/PDIF receivers from dropping out.
+		</ul>
+	</li>
+	<li>Files and formats
+		<ul>
+			<li>Improved performance with scanning the music folder.
+			<li>Richard Purdie added a TTL (Time to Live) field. This is used to see when the file was last checked for changes.
+			<li>Add data sources (Moodlogic, iTunes, MusicFolder) can be used at the same time.
+			<li>Fix several song count errors. All these changes should leave the song counters much more robust.
+			<li>Fixed a problem where tags scanned from AAC files ripped with iTunes didn't convert UTF8 encoded tag information into Latin1.
+			<li>Fixed bug where wmadec output needed to be byte swapped by lame.
+			<li>Fixed problem decoding Apple Lossless encoded files.
+		</ul>
+	</li>
+
+	<li>Firmware: A fairly big firmware upgrade (now v.27) that should make network performance (especially uncompressed streaming over wireless) a lot better.
+		<ul>
+			<li>TCP changes: - enable keep alive transmissions every 60 seconds when idle. This keeps the data stream open while playback is paused (zero rx window).
+			<li>Tweaking memory timing fixed the problem where some players would not take a firmware update if the wireless card was installed. May fix other bugs that seem to be player-specific, eg audio glitches, TCP timeouts.
+			<li>Fixed crash when attempting to locate the server again if it disappears.
+			<li>Changed "re-discovery" mechanism so it continues trying to contact the "last known" IP on port 3483 while also attempting discovery in case the server has moved.
+			<li>Changed timeout on control connection to 20s instead of 10s to prevent needless re-connections if the server blocks for a little while.
+			<li>Fixed possible channel swap in PCM mode.
+			<li>Fix incorrect buffer emptiness calculation that was causing it to play an extra little clip when the buffer plays our or underruns.
+			<li>Fix sporadic swapping of channels when unpausing in PCM mode. Caused by incorrect syncrhonization of the data stream with respect to the output frame clock.
+			<li>Fix click when going between PCM tracks, caused by sometimes sending all-ones instead of all zeroes.
+
+		</ul>
+	</li>
+	<li>Installation
+		<ul>
+			<li>On Windows, slimsvc.exe and slim.exe have been replaced with a asingle executable, slim.exe which can run as a windows service or "interactively".
+			<li>Several updates and improvements to Windows installation should make it a lot smoother when you're upgrading.
+			<li>Fix for windows installer that correctly uninstalls the old service even if we're installing into a new location.
+		</ul>
+	</li>
+	<li>Plugins
+		<ul>
+			<li>Several fixes to the SHOUTcast plugin, including some crashing bugs and improvements: you can now customize the Genres you see, it works correctly with mutiple clients. 
+			<li>Plugins can now expose their own web interface. Don't be surprised if you see new home page links when you install plugins.
+		</ul>
+	</li>
+	<li>Web Interface
+		<ul>
+			<li>Peter Speck's alphabet patch: Miscellaneous special character improvements.
+			<li>Kevin Pearsall noticed that web browsers were caching pages too agressively even after we change skins. Now when we first load an item into the html cache, we return a modification time of time() to force expiration of client caches after reload.
+			<li>Decide on whether or not to show the Music Folder on the Squeezebox Home screen based on whether we have one defined. 
+			<li>Show Saved Playlists directory if the user has a playlist directory defined or they are using itunes or moodlogic.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=313">313</a> - Wireless signal strength is now shown at the bottom of the player settings page along with MAC, IP, firmware.
+		</ul>
+	</li>
+	<li>3rd party software integration:
+		<ul>
+			<li>SoftSqueeze is now included in the release and better supported by SlimServer thanks to Richard Titmuss.	You can launch it via Java Webstart with the URL: <a href="http://localhost:9000/EN/html/softsqueeze/webstart.html">http://localhost:9000/EN/html/softsqueeze/webstart.html</a> or view it as an applet with this URL: <a href="http://localhost:9000/EN/html/softsqueeze/applet.html">http://localhost:9000/EN/html/softsqueeze/applet.html</a>.
+			<li>Richard Titmuss fixed a problem where SoftSqueeze wasn't being sync'ed properly with real hardware players.
+			<li>Moodlogic and and iTunes now have their own settings pages if they are installed.
+			<li>KDF made extensive improvements to MoodLogic integration, including exporting user and auto playlists, more control over remixing, support for multiple file types in playlists, rescan interval setting.
+			<li>Improved iTunes interaction: unchecked iTunes tracks are not ignored, better autolocation of the iTunes library, 
+			<li>Apple broke the importing of protected AAC files, so we disable that file type. :-(
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=299">299</a>, allowing rescan button to work even for moodlogic, itunes.
+			<li>Slimserver will no longer issue a message if audiodir is blank, so long as either moodlogic or itunes import are in use.
+			<li>John Bent sent a patch for xPL: The patch prevents xPL instances from appearing on the network with spaces in them.
+			<li>Change Zeroconf/Rendezvous names to be legal for HTTP and CLI interfaces, now: _slimhttp._tcp and _slimcli._tcp as well as the existing _http._tcp
+		</ul>
+	</li>
+	<li>Localized versions:
+		<ul>
+			<li>Michael Herger provided us with a German translation.
+			<li>Nicolas Guillemain updated the french translation.
+		</ul>
+	</li>
+	<li>Skins:
+		<ul>
+			<li>KDF made several changes and fixes to the Fishbone skin, including updates for web-enabled plugins.
+			<li>Michael Herger and others made several fixes to the Handheld skin.	
+			<li>There is a new experimental skin based on Macromedia Flash called Gordon. This is based on work from Ian Bigelow.
+		</ul>
+	<li>Lots o' bug fixes and improvements:
+		<ul>
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=393">393</a>: When pressing ADD after doing a search, there are some garbage characters displayed temporarily.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=396">396</a>: When powered off, pressing PLAY sometimes did not power on player.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=394">394</a>: Reset last-button-pressed state when using left arrow while editing text from the remote in search.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=384">384</a>: When entering text on the remote, pause only one second before moving right, don't insert right arrows randomly and reset the last button pressed value when auto advancing.
+			<li>Don't crash when trying to download a music file from the web interface when there's no player connected.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=328">328</a>, play from the web interface now does an unpause when paused.
+			<li>Fixed mov123 to correctly deal with error cases.
+			<li>Fixed HTTP 1.0 keepalive.
+			<li>Fixed some leaks in HTTP handling.
+			<li>Fix Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=343">343</a>: songs requiring transcoding fail if lame isn't installed.
+			<li>Fix for Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=341">341</a>. Got rid of ugly hack in SlimServer.exe for showing main window that was dependent on the number of frames in a skin.
+			<li>Fixed a problem where we weren't calculating the end of the MP3 file correctly.
+			<li>Fix a possible crash error in Source.pm if we tried to read a negative segment length. 
+			<li>Patch from Jason to fix CUE sheet parsing. 
+			<li>Patch from Peter Speck to fix problems of ignoring punctuation in names and sorting.
+			<li>Patch from Guy Albertelli to fix problems with regular expression characters in separator characters.
+			<li>Peter Speck submitted a patch to fix native aiff/wav playback if lame is not installed.
+			<li>fixed a couple of problems with browsing playlists and directories with diacritical characters in the name.
+			<li>Fixed a problem with page refreshes in Firefox.
+			<li>Michael Herger fixed some issues in the Handheld skin. 
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=316">316</a>. songinfo.html was crashing, wont any more.
+			<li>Richard Purdie made a change to handle all files as URL's - the code is a lot more consistent.
+			<li>Move the Mac OS X log to ~/Library/Logs where people can find it. 
+			<li>Fix a problem where OSX below 10.3 wouldn't start from the pref pane because we were stripping out the wrong arch directories. 
+			<li>Added patch from Lars Kellogg-Stedman to resolve the problem of Slimserver being unable to find songs on a Linux host.
+			<li>Fixed the problem where UNC paths to SMB shares weren't workign on windows.
+			<l>Lars Kellogg-Stedman discovered that we don't scroll doublesized lines correctly sometimes.
+		</ul>
+	</li>
+</ul>
+
+<h2><a name="v5.1.5" id="v5.1.5"></a>Version 5.1.5 - 2004-4-21</h2>
+<ul>
+	<li>Peter Heslin updated SHOUTcast browser to group together the same stations with multiple bitrates into a  single item.
+	<li>Fixed a pair of bugs where iTunes and Moodlogic might miss songs or show empty playlists.
+	<li>Fixed some problems with the persistant Music Library database.
+	<li>Fixed a problem where the alphabetical index in large lists might show punctuation characters where they should be ignored.
+</ul>
+
+<h2><a name="v5.1.4" id="v5.1.4"></a>Version 5.1.4 - 2004-4-19</h2>
+<ul>
+	<li>The SHOUTcast browser is now improved, with alphabetical sorting and more details about individual radio stations.
+	<li>Fixed a serious bug where song time progress was often incorrect.
+	<li>Fixed a serious bug where the Web interface might reload constantly.
+	<li>Vidur Apparao fixed a bug where settings for plugins might not display properly in the web interface.
+	<li>KDF fixed a bug in cover art processing.
+	<li>KDF fixed a bug where the current playlist might show incorrect artist/album information in the web interface.
+	<li>Clarified some text in the TCP/IP settings
+	<li>Richard Purdie reduced memory usage by combining some data structures in the song library database.
+	<li>KDF added a setting to allow plugins to be loaded after the server started.
+</ul>
+
+<h2><a name="v5.1.3" id="v5.1.3"></a>Version 5.1.3 - 2004-4-16</h2>
+<ul>
+	<li>Plugins
+		<ul>
+			<li>The SHOUTcast brower plugin, originally written by Peter Heslin is included in the standard release.</li>
+			<li>We added a few more modules from CPAN, including libwww, File::Temp and Compress:Zlib to our release, which should make it easier for folks to write plugins</li>
+			<li>Plugins can now be configured to reside at the Home menu level if desired.  Default to doing so with the SHOUTcast pluging for new users.
+		</ul>
+	</li>
+
+	<li>Localization & Internationalization
+		<ul>
+			<li>Added contributed patch by Peter Speck for some Danish characters.
+			<li>Peter Nou updated the Swedish translations.  Thanks, Peter!</li>
+			<li>Frederic Miserey updated the french localized images, fixed a bug in the remote documentation.
+			<li>More updates from Frederic Miserey on the default skin, including moving the power on/off button up a bit, placing the french remote help in the right folder and cleaning up the html in the Default skin.
+			<li>Frederic Miserey fixed some problems with the French localization of the installer.
+			<li>Another patch from Frederic for iTunes names' suffixes and prefixes.
+			<li>Frederic Miserey did some internationalization work to fix how colons are displayed, added some more localized images, and fixed some problems with iTunes XML file's paths.
+			<li>Adding contributed Dutch localization by Paul Roomberg
+			<li>Frederic Miserey submitted some localized images for the default skin.  Added a patch to try to open these first and if they aren't there, open the default one.
+		</ul>
+	</li>
+
+	<li>Player Interface
+		<ul>
+			<li>Accepted patch that reduce custom character flicker from Phil Barrett
+			<li>Fixed a problem where the bitrate displayed for some songs was not rounded properly.
+			<li>screensaver was not jumping to proper screensaver while playing.  Only ongoing animation, power off, and blocking should stop screensaver.
+			<li>screensaver was not jumping to proper screensaver while playing.  Only ongoing animation, power off, and blocking should stop screensaver.
+			<li>Fixed several problems with FFWD and REW trick modes.  Seems better about jumping to random locations, but occasionally still won't go back to 1x when we're towards the end of a song.  
+			<li>Fixed a problem where players wer resyncing after restart even if master was powered off.  Check the power state for masters as well, and only resync if they are on. For temporary unsync, save settings before issuing the stop command.
+			<li>Can now add by artist name again.
+			<li>Fix a problem with a deadlock that could cause buffer underruns or stalls with short songs to not get played if the server hits the end of the song while waiting to fill the buffer.			
+			<li>fix lists and sorting created by 'ALL_ALBUMS' and/or 'ALL_SONGS' while browsing using the remote.
+		</ul>
+	</li>
+	<li>iTunes Support
+		<ul>
+			<li>Added a server setting to allow folks to set the minimum wait time between iTunes library importing.  The default is (and was) 60.
+			<li>Peter Timofejew submitted a patch to not import songs marked as disabled in iTunes.
+			<li>Peter Timofejew submitted a patch to fix a problem with automount paths in iTunes XML files.
+		</ul>
+	</li>
+	
+	<li>File Formats
+		<ul>
+			<li>Contributed patch by Guy Albertelli to handle multiple artist and genre names in ID3 tags.
+			<li>Accept John Harding's patch to WMA.pm to fix parsing of Track numbers (and probably more).  Dan, please review.
+			<li>Updated patch for AIFF files and AIFC files from Caleb Epstein.  We now can extract metadata and play many more AIFF and AIFC files.
+			<li>Rob Funk submitted a patch that ignores punctuation for the purposes of sorting.
+			<li>Extract more ID3 tag information from QuickTime movies and AAC files, especially those ripped with iTunes.
+			<li>Fixed a problem for files that have [ and ] chars in filename
+			<li>Split multi-value ID3 tags by / as well as the ; and \0 we had before
+			<li>Add multiple tag support for Composer and Band			
+			<li>Frederic Miserey noticed that we weren't extracting the number of discs in a set from Movie/AAC metadata.  Fixed.
+			<li>Accepted Peter Speck's patch for fixing the bug in that failed to detect missing binaries used in transcoding. Also, Peter patched up some problems in the AIFF parser:
+				<ul>
+					<li>The sample rate is an 'extended', which is 10 bytes. Only first 6 bytes was read, so $encoding was always garbage.
+					<li>Chunks are always an even number of bytes, even if the chunkSize entry is odd (it is null-byte padded).  All my AIFF files have an even chunk size for all chunks except the last chunk, which is an ID3 entry lacking the null-padding. So it have not been a problem for me, just noticed it...
+					<li>Removed the redundant tell($f) statements and made the chunk-seeking logic a simple while() loop, which makes the diff big.
+					<li>I have renamed chunkoffset to dataoffset, as it is the offset of the sound data, and not the offset of the chunk.
+				</ul>
+			<li>Updated the convert.conf file so that when LAME is invoked to encode into MP3, we force to resample at a 44.1k sample rate.  Some non-standard sample rates were causing LAME to fail.
+			<li>Kevin Pearsall found that convert.conf file had some extraneous "1" options in the oggdec entries, which breaks under the latest oggdec.
+			<li>Reformatted types.conf to remove tabs to make it easier for folks to edit.
+			<li>Applied patch for FLAC cue files to play to the end.
+			<li>We now check to see if the appropriate binaries are available and skip any configurations that require specific binaries.  The syntax of the convert.conf file has been changed slightly, now binaries are expressed as [binaryname] instead of $binaryname$
+			<li>Older config files that use the $binaryname$ format should still work, but won't get run-time checks for the presence of the binaries.
+			<li>Squeezebox also "prefers" MP3 conversion when possible on wireless, uncompress when wired.  Use the File Formats page in Additional Server Settings to override this behavior.  All of this is to make life easier for new customers who are trying to get AAC and other non-MP3 formats working with the least amount of messing. Out of the box, the behavior is similar as it was, but if you install LAME, it will try to use it unless you disable that line in the configuration.
+			<li>Jason Holtzapple submitted a patch that makes cue sheets for FLAC work.  Requires the very latest FLAC to work. 
+			<li>Accepted patch from Henry Mason that uses MovieExport data procs in mov123.  This supports more file types under QuickTime.
+			<li>More sanity checking in the WAV package to handle some malformed WAV files.
+			<li>Fixed a problem where we sometimes weren't switching between PCM and MP3 modes between different file types.
+			<li>Track current directory and artwork during scan. Don't search if we already know the cover and thumb in that dir.
+			<li>Robert Moser noted that we don't need to uppercase everything twice.
+			<li>Victor Brilon submitted a patch for a more thorough list of artwork filenames
+		</ul>
+	</li>
+	
+
+	
+	<li>Web Interface
+		<ul>
+			<li>The built-in webserver is now HTTP 1.1 compliant, thanks to Dan Sully, so page reloads should be much quicker and overall performance improved
+			<li>Stefan Christiansson updated the Touch skin to include settings and an about page.
+			<li>Cover artwork images now search large-to-small for cover and small-to-large for thumb sizes.
+			<li>We've updated our HTML skins system to use the excellent Template Toolkit. Visit http://www.template-toolkit.org for documentation on Template Toolkit.  <li>Script for converting homebrew templates to Template Toolkit compatible ones.	
+			<li>There was a conflict between the parameter used to declare a page title and the parameter used to declare a song title. Changed the page title to "pagetitle" from just "title".
+			<li>KDF suggested a patch that fixes errant arrows in the search pages.
+			<li>Check to make sure Cache directory is writable or creatable.  If not, just cache in RAM.
+			<li>Override uri filter when creating new template objects rather than universally.
+			<li>Fixed a problem where all_subfolders link was accidentally included when browsing playlists too
+			<li>The ability to create variable artwork filenames is in there, but for full compatibility, there needs to be an option to store them all in a central location. This is now added.  Windows and Linux, by default use $bin/Artwork, while OSX will use $ENV{'HOME'}/Music/Artwork
+			<li>Make use of title tag on images in default skin, since we're working on it.		
+			<li>Eliminated mysterious extra &lt;html&gt;...&lt;/html&gt; from status.html
+			<li>Took out the dead playlist add/play links for Music Folder top level.
+			<li>Added a whitespace in songinfo to keep give the location url a bit of room.
+			<li>Status and Status Header don't need to show the mute button for non-players, since there is no volume control.
+			<li>Clean up some overlapping elements in Player Settings
+			<li>Group sync settings to help avoid overlapping again.
+			<li>Bring Titleformats back for http players, stream title will show standardTitle so its nice to be able to configure it.
+			<li>Fix a missing image in the upgrade page for the Default skin.
+			<li>Clarify the upgrade explanation in case of failure.
+			<li>Also, reordered the repeat buttons on the default skin to make more sense.  (Another from Fred)
+			<li>Dean suggested changes to the scrollrate and scrollpause descriptions.
+			<li>changed the setup values to allow zero scrollpause, since it should be working now. 
+			<li>duration and durationseconds got mixed together at some point.  This broke the progressbar in Touch and Fishbone. durationseconds is now the duration in seconds, while duration is the song duration in minutes and seconds.
+			<li>Added settings page for enabling/disabling convert.conf entries.  Useful if you want to force LAME transcoding if you have a slower network.
+			<li>Another patch from Frederic for power status in the Default skin.
+			<li>Fixed a problem where the song duration wasn't passed correctly to the XML skin.
+			<li>use proper countdown number for sleep time in status
+			<li>cleanup songinfo to fit comments in readable space
+			<li>tidy up alignment of status_header code
+			<li>add support for editing playlists in Fishbone, cleanup the code tabbing.
+			<li>Felix Mueller submitted some improvements to his playlist editor.  I modified it a bit to make it work for all saved M3U and PLS playlists.
+			<li>Throw a 404 if requested setup page doesn't exist, as in  setup.html?page=bogus
+			<li>Throw a 404 if a requested skin does not exist.
+			<li>Throw a 404 if no handler found in generateHTTPResponse.
+			<li>Add content_type of text/html to error responses, and close socket after sending them.
+			<li>constrain image sizes in main views.  default to using 100x100 and 200x200 images.
+			<li>songinfo artwork is now a link to the raw full size image.
+			<li>A surprising number of the HTML files had DOS line endings, which messes with cvs diff sometimes.  Reverted them to unix line endings.
+			<li>{'sleeptime'} and {'sleep'} can be more useful as different values. use {'sleeptime'} for the sleep setting, and {'sleep'} for the time remaining
+			<li>Disabled Animation setting because it just confuses folks, breaks stuff, and doesn't really improve things.
+			<li>Make guessTags a server formatting setting, user able to add more or re-order
+		</ul>
+	</li>
+	
+	<li>Streaming to MP3 Players
+		<ul>
+			<li>Trying to reduce latency in the HTTP streaming.  Clearing the buffer if the song stops or changes.
+		</ul>
+	</li>
+		
+	<li>Command Line & Debugging
+		<ul>
+			<li>d_itunes_verbose is a valid debug flag, so it should be accepted from the command line as well.
+			<li>Safety check on buffersize to prevent crashes from clients that misbehave.
+			<li>Fix an errant tab in the strings.txt file that was causing a warning.
+			<li>Add --d_http_verbose debugging flag.
+			<li>Fixed a harmless warning noticed by Kevin Pearsall.
+			<li>Added cli command displaynow to return the contents of the display including any animated and size activity.
+			<li>Fix alignment of usage message in slimserver.pl
+			<li>Move iTunes artwork scan debug msgs to d_artwork
+			<li>Fixed a warning I was seeing sometimes when using the web interface before a player was discovered.
+			<li>Add d_artwork debugging option
+		</ul>
+	</li>
+	
+	<li>Documentation
+		<ul>
+			<li>Updated FAQ from Kevin Pearsall.
+			<li>Updated FAQ to distinguish Wired from Wireless hardware.
+			<li>Updated FAQ with a bunch of new questions.
+			<li>Fixed another problem in the example in the CLI documentation.
+			<li>Minor tweaks to owner's guide.
+			<li>Added cover art information from Pat Farrell to docs.
+			
+		</ul>
+	</li>		
+
+	<li>Macintosh
+		<ul>
+			<li>Move tag database to ~/Library/Caches/SlimServer under Mac OSX
+		</ul
+	</li>
+	
+	<li>Windows
+		<ul>
+			<li>Added a couple of additional Windows registry keys in the installer to help find the Music library.
+			<li>Moodlogic: Thanks to Chris at Moodlogic, we now have a bit more information on what we can make available. Now added two settings to the moodlogic server settings:
+			<ul>
+				<li>instantMixMax - sets the maximum songs for a playlist.
+				<li>varietyCombo - from 0-100 where Lower number means a wider selection of songs and a higher number means a closer match to the song picked.
+			</ul>
+		
+			<li>Moodlogic: Some info that the server uses was not being provided by Moodlogic (ie Bitrate), so use readTags and let moodlogic alter info as it	requires.  readTags also handles artwork, so its no longer needed in Moodlogic.pm
+			<li>Adding artwork scanning for Moodlogic
+			<li>We now include flac.exe and oggdec.exe for windows in the release for yummy FLAC and Ogg playback.
+		</ul>
+	</li>
+
+	<li>Unix/Linux
+		<ul>
+			<li>Pat Farrell updated the unix Installation.txt file.
+		</ul>
+	</li>
+	
+	<li>Squeezebox Firmware - Experimental
+		<ul>
+			<li>Updated default Squeezebox Firmware to v.10 - no changes from version 8, except that it can be updated to versions 20 and above.
+			<li>Firmware v.21 is included for testing, but is not installed by default.  To enable, edit the file Firmware/squeezebox.version and remove the # signs on the last two lines.  The following changes are for version 21:
+			<li>This firmware update uses a new mechanism for downloading the firmware and storing it in flash memory. Due to the extent of these changes, this is a one-way upgrade.  - Current SlimServer version is required
+			<li>TCP has been enhanced to respond better under packet loss conditions. This should dramatically reduce dropouts when streaming uncompressed audio over wireless. Also, interactive performance is improved. In particular, this should eliminate any small delays in screen updates during an animation sequence (eg push animation, slimtris).	
+			<li>There is a new mechanism for transferring firmware upgrade images, which uses slimproto instead of a separate data connection. This provides for a few things, 1)  firmware updates may now be installed over NAT and through firewalls and 2) display updates and status messages can still be communicated during the update process, so we now show a nice progress bar during the download. 3) updates which are interrupted during download or during installation no longer require the failsafe update mode.  Instead, the squeezebox will boot normally using the previous image.
+			<li>"Raw" infrared codes are now transmitted to the server. This means that the server will now receive ANY 39KHz infrared signals that the squeezebox receives. This feature is not currently utilized by the server, but is available for potential applications such as keyboard interfaces (webtv keyboards, for example, should work), macros, and controlling the squeezebox in response to other events (eg receiver being turned on).
+			<li>Other internal changes: updated OS and drivers, new flash and sram organization, increased ethernet and TCP rx buffers, reduced CPU usage
+			<li>Fix buffer overrun condition when streaming from Windows XP machines using Intel ethernet cards that use TCP segmentation offloading
+			<li>JVC infrared codes now work correctly
+			<li>Fix problem where firmware updates over wireless could occasionally  fail.
+			<li>Fixed "Can't alloc netpages for dll" message during setup
+			<li>Fix problem where WLAN scan results would disappear if the user backs up  through the setup menu after selecting a wireless network.
+			<li>New firmware will report buffer size and fullness rather than read and write pointer.  Account for this in the server.
+			<li>Don't complain about the server being gone except when pressing up/down/left/right/power buttons. Before, we would nag about the server on  receiving any kind of NEC-compatible IR signal.
+			<li>Adding support for raw IR pass-through so that somebody can make an ssh client using a webtv keyboard.
+			<li>Upcoming firmware revisions will use a new update mechanism. We're going to jump to from rev 8 to 20 for the new SDK5-based firmware and that'll be how we tell the difference for the purpose of loading a firmware image.
+			<li>Instead of the server connecting to the squeezebox and uploading the image, the new mechanism will use slimproto. This means, among other things, that the control channel stays connected, and we can display a nice status screen during the update. Some changes to slimproto:
+			<li>Deprecated client->server opcode: BYE!. We might use this later for  something else. In the mean time, it is still of course supported for  older firmware revs.
+		</ul>
+	</li>
+				
+	<li>Lots of bugs listed in the <a href="http://bugs.slimdevices.com/">bug database</a> were fixed:
+		<ul>
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=197">197</a> - Add 'All Subfolders' link under browse music folder.  To make it simple, its still a link, but it does nothing.  It allows access to playlist commands to add/play/remove/insert the entire library.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=212">212</a> - Missing Documentation.  Adding title tags and filling out the alt tags will give the tooltips requested for the graphic buttons.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=233">233</a> - I accidentally swapped scrollpause and scrollrate EN text
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=208">208</a> - titleformat description was out of date.  Used updated string suggested by Kevin Pearsall
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=41">41</a> - add 'includeArtist' and 'includeAlbum' to browse_list so that search can show more detailed info for when simpler titleformats are used. This is a dupe of the status_list feature.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=219">219</a> - Phil Barrett suggested a patch  to make the # sign more attractive when in double size.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=227">227</a> - Some dirs can look too much like a URL. 
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=97">97</a> - player specific option for transcoding bitrate, validates mp3 bitrates only.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=27">27</a> - make the transcoding to HTTP streams able to be specified in the URL: http://slimserver:9000/stream.mp3?bitrate=128
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=33">33</a> - smart bandwidth limitation, transcode only when necessary
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=45">45</a> - scroll rate player preference
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=189">189</a> - Sync lost between players when powering off one of them sync is now restored when players are powered on.  permanent unsyc now from player settings only.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=37">37</a> - sync POWER commands.  There's a new player option to sync power settings.  Players will power off and on as a group.  changing this setting will affect all players in the group.  Turning this off, will unsync all players that are currently powered off, though they will resync as they are powered back on.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=185">185</a> - Set Last-Modified header, honor If-Modified-Since, etc.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=221">221</a> - Fixed a problem where HTTP clients had some inappropriate player settings in the web interface.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=46">46</a> - the location URL on the song info page should be a full URL This seemed to need to be case insensitive so that windows users who type in an audiodir in lower case, will still match with the songpath, which has uppercase drive letters
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=122">122</a> - allow the user to control the timeout when connecting to remote sites.
+			<li>Bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=213">213</a> - repeating playlist when synched checksync wasn't paying attention to the playmode, so when players were ready, it would skip head.  Now it checks for playmode-stop and will stop the playback.  playmode-play will allow the playback to continue for the next song, or the repeat loopback.
+		</ul>
+	</li>
+		
+	<li>Experimental
+		<ul>
+			<li>Added support for a "silent" setting that should allow slave players that don't actually have audio streamed to them.  This has not been thoroughly tested.
+			<li>Added a prototype pitch control.  It only works on Squeezebox now and only with MP3 files, and only after a song is restarted.  But it's a start.
+		</ul>	
+	</li>		
+						
+</ul>
+
+<h2><a name="v5.1.1" id="v5.1.1"></a>Version 5.1.1 - 2004-3-3</h2>
+<ul>
+	<li>Added built-in support for WMA audio on Windows.  (Note: DRM protected WMA files aren't supported...)
+	
+	<li>Fix a couple missing alarm strings and translations, with an additional DE string change suggested by Michael Herger.
+	
+	<li>Web setting for Alarm was parsing 12hr time format incorrectly.  Now fixed.
+
+	<li>Victor Brilon submitted a patch to not strip binaries going into the RPM.
+	
+	<li>Remove a number of annoying, but harmless warning messages.
+	
+	<li>Fixed bug in mov123 caused AAC audio on Windows to come out in little endian format, causing lots of noise.
+	
+	<li>There was a sanity check in AIFF file scanning to make sure that the top level chunk size header was 
+	smaller than the file size.  Unfortunately, iTunes for Windows creates AIFF files that are 
+	insane.
+	
+	<li>Bumping copyright to 2004
+	
+	<li>Fixed a bug that would cause AAC files to appear twice when using iTunes and cover art scanning.
+	
+	<li>Fixed a problem where items in playlists would appear as MP3 even if they weren't.
+	<li>Added a few FAQ entries from Kevin Pearsall
+	
+	<li>Fixed the layout on the song info page on the Default skin.
+	
+	<li>We're calling Cover Art just Artwork now.
+	
+	<li>Added Frederic Miserey's French localization for the Mac installer and prefpane.
+	
+	<li>Numerous bug fixes and improvements to the Fishbone skin by KDF.
+	
+	<li>SLIMP3 version 2.3 firmware with ethernet collision fix.
+	
+	<li>Added some sanity checks to handle some insane WMA files.
+	
+	<li>Modified a patch from KDF that speeds up iTunes scanning substantially.
+	
+	<li>Fixed a problem where we were calculating the elapsed time incorrectly when synced.
+	
+	<li>Added the iTunes naming convention to the tag guessing from path names list.
+	
+	<li>Updated the FAQ.
+	
+	<li>Michael the Fallen Angel found a bug in the NBMU skin and fixed it.
+	
+	<li>Fix a misleading warning in the screensaver.
+	
+	<li>Accepted a patch that makes iTunes XML importing work better under Linux.
+	
+	<li>Fix the format of the Expires header for images.  
+	
+	<li>Fixed a number of problems with internet radio streams.
+	
+	<li>Fixed a problem with the alphabetical list of first letters on web pages that contain tracks that have sort tags associated with them.
+	
+	<li>Michael Herger updated the German translations.
+	
+	<li>Skins have access to the full query parameters, as well as the the magnitude of the currently playing rate.
+	
+	<li>It turns out that iTunes, when ripping AIFF files tosses ID3 tags in there. Now we know how to look for them.
+	
+	<li>Performance improvements to scanning cover art when using iTunes.
+	
+	<li>Stefan Christiansson created the Touch skin, appropriate for large touch-screen displays.
+	
+	<li>Add the sleep info to the skins, including the XML skin.
+	
+	<li>Make sure we reset the pause time when appropriate.  Should fix one problem with bogus progress times on radio stations.
+	
+	<li>Make sure we block align offsets into URL fragments (used with CUE files) .
+	
+	<li>Michael, the fallen angel, patched the NBMU skin to do basic cover art.
+	
+	<li>Fixed some problems with MoodLogic that could cause the server to stop when turning on MoodLogic support.
+	
+	<li>Patch to fix the old Mac Remote app.
+	
+	<li>Add a couple of sanity checks to make sure we don't crash in some rare cases.
+	
+	<li>There were some situations where the SlimServer could make it hard to delete a music folder on Windows. Follow a few opendir() calls with corresponding closedir() calls.
+	
+	<li>Vidur Apparao needed an init and shutdown function for his upcoming plugin, so we'll add these. 
+	Vidur added another neat feature for plugins.  You can create a packaged plugin with lots of dependent
+	files by putting it in a folder in the plugins folder.  It simply loads the file Plugin.pm in that folder.
+	
+	
+	<li>Up the remote stream timeout.  Should make some streams more reliable.
+	
+	<li>Use hard spaces in double height characters to fix centering problems.
+	
+	<li>Nicolas Guillemain updated the french translation.
+	
+	<li>Fix crash if Radio Station.pls doesn't exist.
+	
+	<li>There's no reason (that I can think of) to not accept commands on a stream.mp3 URL.
+	For example:
+	http://locahost:9000/stream.mp3?p0=play
+	is very useful.
+	
+	<li>Patch from KDF to make sure we only worry about images that have coverart when doing the iTunes coverart scan.
+	
+	<li>Remove duplicate call to Command::execute for streaming connections.
+	
+	<li>Fix a problem transcoding AAC to MP3 on Windows machines.  Props to Kevin Pearsall for regressing...
+	
+	<li>Fix a couple missing alarm strings, with an additional German string change suggested by Michael Herger.
+	
+	<li>Web setting for Alarm was parsing 12hr time format incorrectly.  Now fixed.
+	
+	<li>Victor's patch to not strip binaries going into the RPM.
+	
+</ul>
+
+<h2><a name="v5.1" id="v5.1"></a>Version 5.1 - 2004-02-05</h2>
+<ul>
+	<li>Kevin Deane-Freeman added a great Browse By Artwork facility.</li>
+	
+	<li>Fixed a number of bugs with Internet Radio</li>
+	
+	<li>The types.conf and convert.conf files can now be customized by the user.</li>
+	
+	<li>Tuned the audio output levels a bit to optimize headphone performance.</li>
+	
+	<li>Caleb Epstein fixed a problem with cue file parsing.</li>
+	
+	<li>Fixed a problem where we'd often say Disk 1 of 1.  That's unnessary.</li>
+	
+	<li>Distinguish in the debugging output between when a squeezebox disconnects and
+	when an HTTP client disconnects.</li>
+	
+	<li>Make sure that the currentsongindex is reset to zero appropriately to fix a warning.</li>
+	
+	<li>After a forced upgrade in squeezebox, unblock the client to avoid a glitch.</li>
+	
+	<li>Victor submitted a fix for the RPM to make it complain less during installs.  Fixes an old bug.</li>
+	
+	<li>You can choose to have the volume control affect both the analog and digital outputs, or keep the digital outputs fixed.</li>
+	
+	<li>Richard Purdie contributed a patch that re-enables the caching of the Music Library information across restarts. </li>
+	
+	<li>Squeezebox Owners Guide had some minor improvements.</li>
+	
+	<li>Patch from Victor to fix warning with rpmnew in RedHat RPM.</li>
+	
+	<li>Fixed a couple of cosmetic bugs associated with the Now Playing screen when STOPPING or hitting the end of a playlist.</li>
+	
+	<li>Skip undefined track numbers when checking for duplicate ones.</li>
+	
+	<li>Upgraded Inno Setup installer tools to latest version.</li>
+	
+	<li>Various updates to the Plugins documentation.</li>
+	
+	<li>Numerous performance improvements when dealing with long playlists.</li>
+	
+	<li>Fix broken easter egg animation.</li>
+	
+	<li>Use templates instead of hard coded HTML for error pages.</li>
+	
+	<li>Sort players by name in the web interface.</li>
+	
+	<li>Fix the problem with Squeezebox not working with security turned on.  Generate a one-time pad everytime we tell the player to connect and use that 
+	as our password.</li>
+	
+	<li>Preference Pane tester hadn't been updated to reference the new name for the server. Corrected this, and some header comments.</li>
+	
+	<li>Synchronization is vastly improved.</li>
+	
+	<li>Caleb Epstein contributed a patch to fix up shorten support.</li>
+	
+	<li>Added support for the RIFF INFO tags in WAV files.  The only software 
+	that I know that supports this is Turtle Beach's AudioStation software.
+	Now we do too.  </li>
+	
+	<li>Andreas posted a CLI command to get the count of genres, artists, albums,etc</li>
+	
+	<li>[bug <a href="http://bugs.slimdevices.com/show_bug.cgi?id=9">#9</a>] player UI display gets corrupted if its displaying the last
+	plugin, and the web UI disables some plugins.  for this case, set the
+	curr_plugin to the last in teh list if the curr_plugin is found to be
+	higher than the list size.</li>
+	
+	<li>Fix swapped channels in PCM mode. oops.</li>
+	
+	<li>Olaf Lenzmann submitted a neat patch to guess artist, album, title and track number information from paths, in the absense of tags.</li>
+	
+	<li>Disabled processing M4P files, since we can't really support them. Yet.</li>
+	
+	<li>Send 404 Not Found responses when appropriate.</li>
+	
+	<li>Added Richard's great start at the slimproto documentation.</li>
+	
+	<li>Fix a warning when sorting tracks that don't have track numbers.</li>
+	
+	<li>Improved performance during animation.</li>
+	
+	<li>FLAC support is greatly improved.</li>
+	
+	<li>Added screensavers, including one that snows.</li>
+	
+	<li>Fixed a problem where firmware updates didn't work on Win98SE.</li>
+	
+	<li>I added a shell for parsing QuickTime movies.  Alas, I don't know what I"m looking for.  Docs coming from Apple, in theory.</li>
+	
+	<li>John Bent added a setting for enabling xPL</li>
+	
+	<li>Phil Barrett noticed that the solid block is a standard character in both modules
+	and so we should use it.  Requires remapping an unused character (0x1f) to that char.</li>
+	
+	<li>KDF added a player web setting for the built in server alarm clock</li>
+	
+	<li>Peter Speck found that we still shouldn't mix buffered and unbuffered IO.  Use sysseek instead of seek and tell.</li>
+	
+	<li>Caleb Epstein added an option to treat multi-disk sets as a single album.</li>
+	
+	<li>KDF fixed problems and made significant improvements to the Fishbone skin.</li>
+	
+	<li>Handle invalid/0 length Ogg files better.</li>
+	
+	<li>Frederic Miserey submitted a patch to use the system locale to localize the time/date.</li>
+	
+	<li>Added a default transcode to uncompressed (no LAME) for AAC files on Squeezebox.</li>
+	
+	<li>The FAQ has been expanded.</li>
+	
+	<li>Sort the players by name on the home page.</li>
+	
+	<li>Give queued incoming SLIMP3 UDP packets an opportunity to be handled.  They are top priority.</li>
+	
+	<li>Tweak some overly verbose debug messages.</li>
+	
+	<li>Tim Long pointed out some inconsistencies in the CLI documentation and API.</li>
+	
+	<li>Buffer fullness in the place of progress indicator is now available as an option under Performance.</li>
+	
+	<li>There were a number of curcumstances where songs would be cut out at the beginning or end.  Not anymore.</li>
+	
+	<li>Added the plugins directories to the path for finding modules. This way you can drop CPAN modules right into the plugins folder to use them.</li>
+	
+	<li>Add finer granularity to the msg time printed.</li>
+	
+	<li>Poll the SLIMP3 UDP socket when we check timers so that we don't timeout on packets that we've already received.
+	This should improve the probelm with SLIMP3 streaming packet loss when handling web requests.</li>
+	
+	<li>Added a fix to calculate time correctly when pausing streams or transcoding.</li>
+	
+	<li>Olaf Lenzmann contributed a patch to handle UTF16 ID3 tags, mapping them to Latin1. Unmappale
+	characters appear as ?</li>
+	
+	<li>Fix click between PCM streams.</li>
+	
+	<li>Fix dimming so if its set to automatic, that it dims even if playing.</li>
+	
+	<li>French localization improved by Frederic Misery and Nicolas Guillemain.</li>
+	
+	<li>Fixed a bug where we didn't think we stopped playing at the end of a playlist.</li>
+	
+	<li>Default Plugins menu item to be turned on.</li>
+	
+	<li>Fixed a problem where we might get misaligned on WAV and AIFF files.</li>
+	
+	<li>Fixed a problem where MP2 files and streams wouldn't play properly.</li>
+	
+	<li>Grab and display the bitrate header from shoutcast streams.</li>
+	
+	<li>Fixed a problem where MoodLogic was broken due to missing meta information.</li>
+	
+	<li>Cue files use base 75 for the finest resolution, not base 100.</li>
+	
+	<li>Support for reading from named pipes/fifos.</li>
+	
+	<li>Fixed a problem where we would get stuck when playing back files stored on a HTTP server.</li>
+</ul>
+
+<h2><a name="v5.0.1" id="v5.0.1"></a>Version 5.0.1 - 2003-11-28</h2>
+<ul>
+	<li>Fixed a couple of problems with the Windows installer where it wasn't possible to set the service to start automatically.</li>
+	<li>Fixed a couple of problems where some streaming radio stations wouldn't work.</li>
+	<li>Fixed a problem where the SlimServer web interface would be really really slow.</li>
+	<li>Added a "Go" button to the Handheld skin search page.</li>
+	<li>Suppress a warning on tracks that have a disk number but not a size of set tag.</li>
+	<li>Fix a bug where the current time isn't displayed properly for transcoded files.</li>
+	<li>KDF updated the Fishbone skin.</li>
+	<li>KDF fixed an undefined warning with Squeezebox when starting up.</li>
+	<li>Fixed a bug where we wouldn't go on to the next song sometimes.</li>
+	<li>Jason Holzapple fixed up FLAC support.</li>
+	<li>Updated the FAQ to be in sync with the web site.</li>
+	<li>Added slimserver.strings.txt support.  Add a file by this name to your server folder (or your Library/SlimDevices folder on Mac OS X) to override strings.</li>
+	<li>Fixed a confusing warning when doing Squeezebox firmware updates.</li>
+	<li>Fixed a typo where ID3v1 tags would include a genre called bebob.</li>
+	<li>Added back missing TIme::HiRes libraries for some Unix platforms.</li>
+	<li>Fixed a problem where some non-standard JPEG cover images in ID3 tags wouldn't show up.</li>
+	<li>Fixed a problem where the Music Library path might be reset to empty when iTunes was installed.</li>
+	<li>Nicolas Guillemain updated the French localization.</li>
+	<li>Michael Herger updated the German localization.</li>
+	<li>Robert Moser improved the Information plugin and added some neat new button mapping tricks.</li>
+	<li>Restored the installer to run the SlimServer Windows Service as the SYSTEM user, since that's the only account that has the appropriate permissions.</li>
+	<li>Updated the Squeezebox firmware to handle radio stations much better.</li>
+	<li>Building the Windows versions with the latest tools from ActiveState, which should fix the problem of the service stopping when the user logs out.</li>
+	<li>Fixed some problems where the server could get into a CPU hogging state.</li>
+	<li>The RedHat RPM now obsoletes SliMP3 appropriately.</li>
+	<li>Fix version number in windows installer.</li>
+	<li>All platforms should try harder when looking for valid MP3 data in MP3 files.</li>
+	<li>Fix a problem with FLAC cover art.</li>
+	<li>The server now tries harder to locate iTunes music library information on Windows.</li>
+	<li>Removed some harmless command line warnings.</li>
+</ul>
+
+<h2><a name="v5.0.0" id="v5.0.0"></a>Version 5.0.0 - 2003-11-18</h2>
+<ul>
+	<li>Renamed SLIMP3 Server to SlimServer to indicate that it works with more than one device! Namely, added support for Squeezebox, Slim Devices' latest creation</li>
+	<li>Added support for iTunes on Windows</li>
+	<li>New on-the-fly transcoding framework, use the convert.conf file to modify the behavior, can transcode arbitrarily depending on client type, client id and file type.</li>
+	<li>Restructured the source code into new directories.  There's a tool for updating plugins in the tools directory called "whack.pl" and another one for updating skins called "skinjob.pl"</li>
+	<li>Robert Moser sped up double-size rendering significantly</li>
+	<li>Kevin Walsh's Information Plugin is now part of settings and includes wireless signal strength for Squeezebox.</li>
+	<li>The Save Playlist plugin is now installed by default and can be accessed quickly by pressing and holding PLAY while viewing the current song in the current playlist.</li>
+	<li>Built-in firmware updater for Squeezebox.  Press and hold BRIGHTNESS to force a firmware update.</li>
+	<li>Substantial layout fixes in the Default skin</li>
+	<li>Fast-forward and rewind are more reliable</li>
+	<li>Built-in HTTP web server sped up significantly</li>
+	<li>Kevin Deane-Freeman added substantial fixes to the Fishbone Skin...</li>
+	<li>Some changes to the XML skin to improve XML-cleanliness.  Added some more player info tags.  Added status_header.xml if you just want the player status and not the whole playlist.</li>
+	<li>Added in contributed skin by Mark Erichsen for small displays called Handheld.</li>
+	<li>Added a preference for refresh rate in the web interface.  Will try to update sooner if the song is going to end.</li>
+	<li>Windows server is now built with the latest tools from the fine folks at ActiveState (ActivePerl 5.8.1 and PDK 5.3).  Should see some performance improvements.
+	<li>Using the new ActivePerl has the side effect of fixing a bad memory leak in the Web server under Windows.
+	<li>Added patch submitted by Jason Holzapple to allow priority setting from command line.
+	<li>Added basic support for AIFF, WAV and FLAC.
+	<li>Documentation updated, especially the FAQ.
+	<li>Windows installer now installs the service running under the user installing the software.  Makes it easier to access mounted volumes and iTunes libraries.
+	<li>Using a suggested tweak to the oggdec parameters to work around a bug in that program.
+	<li>Mac preferences are now saved in Home->Library->SlimDevices->slimserver.pref
+	<li>Windows preferences are now saved in C:\Program Files\SlimServer\server\slimserver.pref
+	<li>Unix preferences are now saved in ~/.slimserver.pref or /etc/slimserver.pref (if the latter exists)
+	<li>Fixed a problem using the wrong CLI port on windows.
+	<li>Fixed a crash if zapped playlist can't be opened for writing
+	<li>AAC transcoding works on Windows, not just Macs.
+	<li>Dave Nanian updated the Mac installer and preference pane to be ready for SlimServer.  It was a lot of work, mostly because Dean was breaking things.</li>
+	<li>Mac specific code is now built in XCode and is Panther friendly.
+	<li>SLIMP3 Firmware Updater is a separate Mac application now, rather than built in to the preference pane.
+	<li>Rod Nayfield submitted a patch to handle automounts in iTunes under Panther better.
+	<li>Added support for icy: URLs which are what NiceCast uses.
+	<li>Robert Moser made the button framework much more flexible, with wildcards, etc...
+	<li>Fixed a problem in settings in some languages where the iTunes choice was a bit scrambled
+	<li>Fixed the windows installer/uninstaller to uninstall SLIMP3 Server when installing SlimServer.  When uninstalling SlimServer (why would you ever do that?), it cleans up more better.
+</ul>

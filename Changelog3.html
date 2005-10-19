@@ -1,0 +1,847 @@
+		<h2><a name="v3.1b4" id="v3.1b4">Version 3.1b4</a></h2>
+		<ul>
+			<li>Mac OS X
+			<ul>
+				<li>The DMG image automatically opens up when mounted. Easier to find.
+			</ul>
+			<li>Windows
+			<ul>
+				<li>The SLIMP3 software is now distributed with a Windows-friendly installer thanks to help from Chris Eastwood.
+				<li>Fixed some bugs in the SLIMP3 Server application when it connects to a windows service. It now won't try to shut down the service when it quits.
+				<li>The Moodlogic support doesn't work with the server when it's run as a Windows service. Moodlogic disabled at service startup. This will be addressed, but in the mean time, use the SLIMP3 Server application to start the server.
+			</ul>
+			<li>Player Interface:
+			<ul>
+				<li>Press and hold the PAUSE button to put the player in stop mode.
+				<li>Show the file type on the song info area for a song.
+				<li>Fixed some problems with strange text displayed in double-height mode.
+				<li>Pressing LEFT while editing a search string shouldn't repeat unexpectedly.
+				<li>Fixed a problem that would cause flickering if the display brightness was previously set to zero.
+			</ul>
+			<li>Web Interface
+			<ul>
+				<li>Show the file type in the song info page.
+			</ul>
+			<li>File Formats
+			<ul>
+				<li>If LAME is installed, then you can transcode and stream uncompressed AIFF and WAV files now.
+				<li>There is a Server Settings-&gt;Behavior setting for enabling and disabling AIFF, WAV and Ogg Vorbis transcoding. You'll need to enable this to support transcoding. If disabled, AIFF, WAV and Ogg Vorbis files are ignored.
+			</ul>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>RPM installs pipe the error log to /tmp/slimp3.log to aid in debugging.
+			</ul>
+			<li>Player Firmware
+			<ul>
+				<li>The player only displays ping information for ICMP ping messages (and no other ICMP messages.) It also filters out ping messages that aren't sent to the player's specific IP address.
+				<li>Firmware is now version 2.1a2.
+			</ul>
+		</ul>
+		<h2><a name="v3.1b3" id="v3.1b3">Version 3.1b3</a></h2>
+		<ul>
+			<li>General
+			<ul>
+				<li>Fixed some issues related to virtual and absolute paths. This fixes some issues where some files wouldn't play correctly on Windows.
+			</ul>
+			<li>Mac OS X
+			<ul>
+				<li>Added a settings field for Rendezvous name. Requires restart of server.
+				<li>Fixed a cosmetic problem with the Slim Devices logo in the System Preferences pane.
+				<li>Daniel Klein submitted a fix to speed up iTunes import performance and to wait three minutes between rescans.
+			</ul>
+			<li>Internationalization and Localization
+			<ul>
+				<li>Improved Swedish localization from Andreas.
+				<li>Removed unused Russian translation, as it never did work. We'll resurrect this when we add Unicode support.
+				<li>French localization from Serge Froment and Fred Thomas.
+				<li>Searching and sorting ignore diacritics and case in text.
+				<li>Updated Swedish localization from Andreas and Johan.
+			</ul>
+			<li>Security
+			<ul>
+				<li>There is now a security section of the Additional Server Settings area. We now support IP address range blocking for HTTP and CLI connections, as well as HTTP basic authentication.
+			</ul>
+			<li>Windows
+			<ul>
+				<li>Moodlogic added support for their product. Download and install Moodlogic version 2.5 or later and start the SLIMP3 server software. Make sure that Moodlogic is chosen from the Server Settings page and you should be able to browse through your MoodLogic music library, create instant playlists and use the MoodLogic &quot;mood&quot; features. Neat!
+			</ul>
+			<li>Player Interface:
+			<ul>
+				<li>The current playlist is preserved across server restarts.
+				<li>Fixed a bug where if you pressed the Search button on the remote when in double height mode, it wouldn't update.<br>
+				<li>The text on the display didn't show the playlist length when paused, like it does when playing or stopped.
+				<li>Reworked the custom character code and the VFD output code. Now you can mix and match custom characters in a given string, setting up their bitmaps only once ever.
+				<li>Added support for a new VFD module that has slightly different brightness controls. We'll detect the type of display based on the MAC address.
+				<li>Cleaning up the discovery protocol and client creation. There were some cases where players would get stalled and the time would never increase above zero.
+				<li>Bump right animation now works in double-height mode.
+				<li>Now ignoring duplicate IR packets.
+			</ul>
+			<li>Web Interface
+			<ul>
+				<li>The SLIMP3 web interface has a new look, designed by Igor Gasowski, coded by Nick Balestra and Dean Blackketter. The old interface is still available as &quot;SLIMP3 Light&quot; from the Additional Server Settings area.
+				<li>Added basic support for serving an XML skin.
+				<li>Fixed a problem with the Olson skin where it wasn't showing the list of lettters correctly.
+				<li>Added synchronize to player setup.
+				<li>Skin authors now have all of the ID3 information that we retain on a per-song basis available from the status.html page.
+				<li>Added option to automatically reshuffle when restarting a repeating playlist.
+				<li>Skin authors now have [GT] and [LT] template directives to determine greater-than and less-than.
+				<li>Fixed a bug where secondary settings pages would have the wrong player sometimes.
+				<li>index.html and home.html both include the same param information so that we can build frameless skins.
+				<li>We now don't send &quot;expires: 0&quot; headers with images.
+				<li>Upped the maximum number of tcp connections and connections to scan each time through the main loop. Needed to support the new skin, which is substantially more complicated.
+				<li>Reload the right side of the screen when the preferences have changed.
+			</ul>
+			<li>Documentation and Online Help
+			<ul>
+				<li>Tweaked the upgrade instructions all around to warn not to attempt an upgrade over wireless.
+			</ul>
+			<li>File Formats
+			<ul>
+				<li>Fixed a bug where we weren't handling songs of zero length or zero duration properly.
+				<li>Added WAV transcoding patch submitted by Felix Mueller. Requires LAME to be installed and currently works only on a Unix or OS X system. You can use LAME 3.92 with OSX with this patch. LAME 3.93 is broken.
+			</ul>
+			<li>Automation
+			<ul>
+				<li>Added support for command-line command: &quot;listen 1&quot; which allows CLI clients to watch the SLIMP3 server events. This includes &quot;raw&quot; infrared codes in this feedback.
+				<li>Added support for XML files in the web interface and a future XML skin. You can add .xml files to the html directory and they will be processed using the template mechanism. If you want to create XML for use in the dynamically created pages, replace the .html files with XML equivalents (but retain the .html suffix in the files). Then refer to the files from the HTTP interface with .xml suffixes to ensure that they come back with the right content type.
+				<li>Added playerpref commandline/http command to set player preferences.
+			</ul>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Non-mac users can save their &quot;iTunes Music Library.xml&quot; file in their home directory on Unix machines or in the server directory on windows. Make sure the file paths are right, though.
+				<li>Patch to add command line option to set user and group if launching as root.
+				<li>You can now specify a logfile for error and debugging logging. Mac OS X has this go to /tmp/slimp3.log by default.
+			</ul>
+			<li>Player Firmware
+			<ul>
+				<li>The player firmware is now version 2.1a1 which fixes a bug in the (h) packet. Upgrade is not required.
+			</ul>
+			<li>Streaming
+			<ul>
+				<li>Now sending Icecast track meta-information with outgoing HTTP streams.
+			</ul>
+		</ul>
+		<h2><a name="v3.1b2" id="v3.1b2">Version 3.1b2, Released 2003-02-14</a></h2>
+		<ul>
+			<li>General
+			<ul>
+				<li>The Games menu has been replaced by the Plugins menu where we can install other extra features in the Plugins folder. Enable the Plugins menu from the &quot;Additional Server Settings&quot; Interface section and configure it from the Plugins section.
+				<li>Moved the datasheets to the Slim Devices website, saving the user 700k of storage space and download time.
+			</ul>
+			<li>Mac OS X:
+			<ul>
+				<li>Fixed a problem on Mac OS 10.1 where the preference pane wouldn't install or stop the server properly.
+				<li>Added a workaround for a problem with Safari where it would take two clicks to load a page or an error panel would be displayed.
+			</ul>
+			<li>Player Interface:
+			<ul>
+				<li>Don't restart the current song when appending a single song while browsing the file system.
+				<li>Added a center mark for Treble and Bass controls.
+				<li>Added a plugin localized string mechanism. Just add a strings() functionto your plugin. It should return localized strings in the same format as the strings.txt file
+				<li>Added Rescan plugin.
+			</ul>
+			<li>Web Interface
+			<ul>
+				<li>Add two new skins: Olson (courtesy Eric Olson) and NBMU (courtesy Nick Balestra)
+				<li>Fixed a number of skins that had customized status.html templates.
+				<li>Robert Moser signficantly updated his skin.
+				<li>Fixed auto-refresh on the status page.
+				<li>Added preference for when you press PLAY on a selected song if it plays just that song or all the songs in that context, starting with that song.
+				<li>Updated songinfo HTML page to include a link to server the song via http.
+				<li>Fixed a problem where navigating in some windows systems would cause an error.
+				<li>Updated plugin framework to enable/disable the UI, not the loading. This makes it possible to enable/disable without restarting.
+			</ul>
+			<li>Documentation and Online Help
+			<ul>
+				<li>Updated some of the docs for the new remote.
+				<li>Updated the faq to include DAB/Psion/DABBAR information.
+			</ul>
+			<li>File Formats
+			<ul>
+				<li>Fixed a warning generated with some malformed cue files.
+			</ul>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Mike Arnold gave me some RPM and Solaris fixes.
+				<li>Added Kevin's patch to include $Bin in the path, which is useful for running the server from a different cwd.
+			</ul>
+			<li>Player Firmware
+			<ul>
+				<li>The player firmware is now version 2.0 final.
+			</ul>
+		</ul>
+		<h2><a name="v3.1b1" id="v3.1b1">Version 3.1b1, Released 2003-02-05</a></h2>
+		<ul>
+			<li>General
+			<ul>
+				<li>SliMP3 is no longer spelled SliMP3. With our new identity, it will be SLIMP3.
+			</ul>
+			<li>Mac OS X:
+			<ul>
+				<li>The server is now installed as Preference Pane, thanks to Dave Nanian, instead of an Application and now has support for automatically starting up at boot or login time.
+				<li>Fixed a bug that didn't display the correct title for URLs and iTunes playlists on the top line when browsing saved playlists and the music library.
+				<li>New installations will default to having the CLI turned on. Useful for things like the OSX Remote.
+				<li>A German customer found that some of the content in the iTunes Music Library.xml file is localized. We were using the 'Kind' field to determine what kind of data it was. Not good. So now we look at the Mac file type long and the URL and hazard a guess.
+				<li>Added a new SLIMP3 Remote application for controlling the playback of the SLIMP3 from a Mac OS X desktop. Thanks to Dave Camp for this contribution.
+			</ul>
+			<li>Player Interface:
+			<ul>
+				<li>Added a screen dimming feature. If the player is on, but not playing and not animating, dim the screen until the next IR input. Even though we've never seen any burn-in, this should make some folks more comfortable.
+				<li>Optimize playing the Nth song in a playlist from the remote. It was really slow.
+				<li>Fixed a a bug where the server could crash when two players are synced and a new song starts.
+				<li>Add All Albums and All Songs browsing so you can see a list of all the albums associated with a given Genre or all of the songs listed for a given artist. Particularly useful for compilation albums.
+				<li>Default to having a second level Search menu. You can also disable this from the prefs and put the individual search menus back on the top level.
+				<li>When displaying the file length, put in commas/periods to make large numbers readable.
+				<li>Corrected separators in short date formats.
+				<li>When the user browses with the remote and chooses a song in the context of an album, we start playing the whole album starting at that song. To be consistent, we now also play all of the songs in a given directory if you browse in that directory, choose a song and press PLAY. (Note: we don't recurse in this situation, we only look at songs at the current level. If you want to recurse, choose the directory and press PLAY.)
+				<li>Added support for pressing PLAY or REC when in the search screens. It will now automatically play or add the search results to the playlist.
+				<li>Richard Purdie's cool fix for the streaming CPU hogging bug.
+				<li>Added basic support for fast forward and rewind by pressing and holding the FWD and REW keys.
+				<li>Included the submitted patch from Gregory Smith that ignores leading articles (The Le Les La Las Los...) for sorting only. You can change which articles to ignore in the advanced settings area.
+				<li>Added a volume area to settings. Now you can almost completely control the IR interface with six buttons: UP, DOWN, LEFT, RIGHT, PLAY, REC
+				<li>Added support for multiple IR code sets, including the codeset for our new remote.
+				<li>Added BASS and TREBLE controls to the Settings menu, based on a patch from Richard Purdie.
+				<li>When browsing an album or a directory via the remote and you press play on a song, it plays the whole album, starting at that point.
+				<li>Reworked the IR settings file. There's one file per remote IR code set, so we can handle multiple remotes by adding new .ir files. These files contain IR code to button mappings. New remotes that respond to new codes should have corresponding .ir files created for them.
+				<li>There's a new file, Default.map, in the IR directory that contains the button to function mappings. Intrepid users who want to remap the buttons on their remote can modify this file to their liking.
+			</ul>
+			<li>Web Interface
+			<ul>
+				<li>Add All Albums and All Songs browsing so you can see a list of all the albums associated with a given Genre or all of the songs listed for a given artist. Particularly useful for compilation albums.
+				<li>Added a facility to serve the raw music files via HTTP: Like this: http://myserver:9000/music/virtual/path/to/song.mp3 Only works with songs.
+				<li>Fixed many cases where you'd get the funny nested frame problem due to bugs in Opera and Safari.
+				<li>Added an HTML template directive: [INCLUDE html/path/here.html] will include the parsed contents of the file in html/path/here.html in the output. Subroutines!
+				<li>Hide directory entries that start with __ including our __current.m3u file
+				<li>Fixed a couple of it's that should have been its.
+				<li>When displaying the file length, put in commas/periods to make large numbers readable.
+				<li>Added support for mDNS/Zeroconf/Rendezvous advertising of the SLIMP3 services. Initially supports OS X and one flavor of Linux.
+				<li>Changing playlist request through stream.mp3 to match regular syntax. Now use: http://slimserver:9000/stream.mp3?p0=playlist&amp;=load&amp;=playlistpath.m3u&amp; The final &amp; is so that WinAmp doesn't choke on it and is ignored by us. Playlistpath can be an URL escaped full path, an iTunes playlist URL (URL escaped), or a naked playlist name from the Saved Playlist directory.
+				<li>Added x-p0 through x-p4 to the HTTP headers in responses to that you can query and get information using the executecommand() syntax, also used by the CLI.
+				<li>Added a &quot;Previous&quot; button on the status page.
+				<li>Sorting of artists albums and song titles ignores articles like &quot;The&quot; and &quot;La&quot;. You can change which articles to ignore in the advanced settings area.
+				<li>Added ability to move items in the playlist around in the Moser skin.
+				<li>Added new advanced settings page for setting debug variables
+				<li>When looking at song information from the web interface, return a valid URL for songs, even if they are file URLs.
+				<li>Return the values of p0 through p4 as headers in HTTP responses. Useful for using HTTP for interactive control. Also return the selected player name and id
+				<li>When you start to play music from the web interface, power up if it's powered off.
+				<li>You can download music files from the server using a path like: http://server/Music/path/to/song.mp3
+				<li>Added support for multiple skins simultaneously. http://server:9000/Moser/ will show the Moser skin automatically.
+			</ul>
+			<li>Documentation and Online Help
+			<ul>
+				<li>Updated FAQ and documentation
+				<li>Updated the HTTP documentation for new and previously undocumented commands.
+				<li>The technical documentation had references to a command called appendalbum, but it's really called addalbum.
+				<li>First pass at merging the FAQ on the website with the FAQ in the documentation. This will also appear on the web site. Needs a new index and more organization.
+				<li>Added a FAQ entry identifying the ports that are used so that folks can configure their firewalls more easily.
+				<li>Updated the FAQ with a bunch of, you guessed it, frequently asked questions.
+			</ul>
+			<li>File Formats
+			<ul>
+				<li>No longer recursing into playlists during scans. We may need a power-user option for this, but the new behavior will help more people than it hurts.
+				<li>Improved Ogg Vorbis transcoding support. You need to have the Ogg tools and LAME installed for this to work. Only tested on Unix.
+				<li>Adding support for the ID3 tags that describe the album number and number of albums in a multi-disc set, in the same manner that we do for iTunes importing.
+				<li>The IR code format was messed up in the previous release, it's fixed, but if you've created custom IR files, you'll have to update them.
+			</ul>
+			<li>Internationalization and Localization
+			<ul>
+				<li>Swedish and Danish localizations from Andreas Olsson and Morten Fischer-Madsen
+				<li>Andreas found some strings that weren't localizable.
+				<li>Improved Dutch Localization courtesy Carel Blast
+			</ul>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Fixed an occasional warning from the Animation module.
+				<li>Added FreeBSD notes to the Installation.txt docs.
+				<li>Patch from datavortex: changed account to a system account and shell to nologin. - don't add user with default name if the admin changed it.
+				<li>When running the server in daemon mode, rename the process &quot;slimp3d&quot;
+			</ul>
+			<li>Command-line interface:
+			<ul>
+				<li>Added and documented the &quot;exit&quot; command to the CLI. Closes the connection.
+				<li>Added new command line argument, --stdio, which enables CLI interface on standard in/out. Now you can safely put the server into the background from a shell.
+			</ul>
+			<li>Player Firmware
+			<ul>
+				<li>Added command line options to update_firmware to specify IP and MAC in interactive mode.
+				<li>Calling the latest firmware 2.0b2.
+				<li>SliMP3's MAC is now in bytes 12..17 of our UDP header
+				<li>Added support for multiple IR code sets, including the codeset for our new remote.
+				<li>Pressing and holding the POWER button for a long time (15 seconds) will reboot the player now, so you don't have to unplug the unit to reconfigure.
+				<li>Improved the user interface for network settings on the player. You can use the number buttons to enter digits in IP values, use UP/DOWN/LEFT/RIGHT consistently throught the interface, use FWD and REW to skip forward and back a screen at a time.
+			</ul>
+		</ul>
+		<h2><a name="v3.0" id="v3.0">Version 3.0 final, Released 2002-11-12</a></h2>
+		<ul>
+			<li>Mac OS X:
+			<ul>
+				<li>Fixed a problem where URLs in iTunes playlists were being ignored.
+				<li>Fixed a problem where we were showing internal &quot;iTunesPlaylist:&quot; URLs where we shouldn't.
+			</ul>
+			</li>
+			<li>Player Interface:
+			<ul>
+				<li>The sleep button wasn't working properly in double-height mode. The text was on the top line, so you wouldn't see it.
+				<li>When displaying a file name, correctly separate file and extension.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>Added a FAQ to the online documentation.
+				<li>Improved the Moser skin. Now the arrow links look like buttons. Note that the button appearance looks a ton better in Mozilla 1.1 and IE 5.5 than it does in IE 5.01.
+				<li>Added an additional server setting to allow sorting and browsing by file name instead of ID3 tag information. (This was added in b7, but the release notes weren't updated.)
+				<li>Fixed some problems in HTML with the documentation.
+				<li>Fixed some problems in HTML with the &quot;page bar&quot; listings.
+				<li>Fixed a capitalization issue with &quot;Player Settings&quot;
+				<li>Minor editing to some of the other help documents.
+				<li>Redid the Getting Started help document based on the new getting started flyer.
+				<li>Added a {webroot} parameter to the templates for easier absolute references. This is set to &quot;/SLIMP3&quot; if a request comes in with /SLIMP3 as the start of the path. This eliminates the need to use updirs &quot;..&quot; in the on-line documentation. It also corrects some invalid (to people using the /SLIMP3 prefix) absolute references which were pre-existing.
+				<li>Fixed all color references in CSS files.
+			</ul>
+			</li>
+			<li>File Formats
+			<ul>
+				<li>Fixed a problem where only &quot;http://&quot; URLs were working in PLS files.
+				<li>Fixed a problem where songs referenced in a playlist often didn't have all their metadata loaded. We now check and load it if it isn't there. If there's a title in the playlist, that overrides any other found.
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>Fixed a problem where redirected URLs for streams were losing their title.
+				<li>Fixed a problem where URLs redirected through PLS files were losing their title.
+				<li>Fixed a problem where if a shoutcast station sent an empty title, we'd throw away a perfectly good title.
+			</ul>
+			</li>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Updated the Unix installation.txt file.
+			</ul>
+			<li>Command-line interface:
+			<ul>
+				<li>Added --nosetup startup parameter. This disables setup from the web pages, as well as anything that uses Playlist::executecommand with a p0 of pref. When --nosetup is used on the command line, the settings pages are not linked from home, and if they are explicitly requested a 403 Forbidden is returned.
+			</ul>
+			</li>
+			<li>Player Firmware
+			<ul>
+				<li>Firmware 1.3 final version. This version is the same as 1.3b4, just updated the version number.</p>
+			</ul>
+			</li>
+		</ul>
+		<h2><a name="v3.0b8" id="v3.0b8">Version 3.0b8, Released 2002-10-28</a></h2>
+		<ul>
+			<li>Mac OS X:
+			<ul>
+				<li>Fixed importing of iTunes playlists.
+				<li>Improved the handling and display of multi-disc disc numbers.
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>The shuffling algorithm has been improved to be more random.
+				<li>MP2 files weren't being recognized correctly.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>Arrows added to the Moser skin.
+				<li>Added an additional server setting to allow sorting and browsing by file name instead of ID3 tag information. (This was added in b7, but the release notes weren't updated.)
+			</ul>
+			</li>
+			<li>File formats
+			<ul>
+				<li>Some valid &quot;file:&quot; URLs were being ignored, but no longer.
+				<li>Fixed a bug where M3U files with title information in them weren't appearing properly.
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>Fixed a problem where HTTP streaming from the SLIMP3 server would often disconnect unexpectedly or have other errors.
+			</ul>
+			</li>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Updated the Unix installation.txt file.
+			</ul>
+			</li>
+		</ul>
+		<ul>
+			<li>
+		</ul>
+		<h2><a name="v3.0b7">Version 3.0b7, Released 2002-10-23</a></h2>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>Fixed a problem with international characters in ID3 tags.
+				<li>We weren't handling file URLs with C: in them properly...
+			</ul>
+			</li>
+			<li>Mac OS X:
+			<ul>
+				<li>New users are given more reasonable defaults for their playlist and library folders.
+				<li>Fixed a problem with firmware updates on OS X 10.1.5.
+				<li>Fixed a problem where no playlists would show up if an iTunes user didn't have a playlist directory defined.
+				<li>If a song in an iTunes playlist doesn't have a &quot;location&quot; just ignore it. This previously would cause a crash.
+				<li>iTunes users need their imported international characters translated from Unicode to LATIN1.
+				<li>Added support for multi-disc sets in iTunes.
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Substantially improved directory loading times when browsing the music library by inlining some routines, removing some unnecessary checks, and special-case shortcutting sorting of non-music items (directories, playlists, shortcuts, etc...)
+				<li>Stop playing if we haven't heard back from a player in 30 seconds or more.
+				<li>Reset the screensaver timer when we come out of Block'ed mode.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>If a user doesn't have a playlist directory specified, don't let them try to save.
+				<li>When browsing the music library, don't try to show a sorted navigation bar in large directories, as the sorting can be quite confused.
+				<li>Added a user warning when renaming a playlist fails.
+				<li>Fixed a bug where deleting tracks from shuffled playlists wasn't cool.
+				<li>Improved sorting when browsing music library.
+				<li>Added an additional server setting to allow sorting and browsing by file name instead of ID3 tag information.
+			</ul>
+			</li>
+			<li>File formats
+			<ul>
+				<li>Trim white space from the beginnings and ends of entries in playlist files as appropriate.
+				<li>Fixed several problems handling CUE files.
+			</ul>
+			</li>
+			<li>Networking
+			<ul>
+				<li>Fixed two problems that caused pausing synchronized players to get out of sync.
+				<li>Unsync when we power off.
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>Fixed a bug in shoutcast streams that caused the title obtained from the metadata to be cleared out occasionally. It stays put until updated explicitly again.
+				<li>Fixed a bug where the scrolling animation was killed everytime new metadata came in even if it hasn't changed.
+				<li>Fixed problem where using the http streaming from the server could hog the CPU.
+			</ul>
+			</li>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Mike Arnold found a problem where upgrading the RPM could cause problems because we deleted the slimp3 user. We don't do this anymore.
+			</ul>
+			</li>
+			<li>Command Line Options &amp; Debugging Tools
+			<ul>
+				<li>Firmware updates run in interactive mode will wait for the user to press return at the end. Good for GUI invocation of CLI application.
+				<li>Only die if we are debugging, otherwise fail but don't crash.
+			</ul>
+			</li>
+			<li>HTTP and Command Line Interface Automation
+			<ul>
+				<li>Clarify the documentation and fix bugs with &quot;pause&quot; and &quot;mode pause&quot; commands in CLI.
+			</ul>
+			</li>
+			<li>Firmware
+			<ul>
+				<li>Updated to 1.3b3 firmware, which uses an appropriate source port for UDP packets from the player.
+			</ul>
+			</li>
+			<li>Miscellaneous
+			<ul>
+				<li>Even if the players are starved for data, run background tasks at least once a second.
+			</ul>
+			</li>
+		</ul>
+		<h2><a name="v3.0b6">Version 3.0b6, Released 2002-10-15</a></h2>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>The SLIMP3 Server executable couldn't kill the server process on Win98 because 98 puts the process name in all upper case. It can now.
+			</ul>
+			</li>
+			<li>Mac OS X:
+			<ul>
+				<li>Enable support for Composer field (as an additional artist) for iTunes users.
+				<li>When we are scanning the iTunes library, don't tell the user they can browse the music library, because they can't.
+				<li>Fixed a problem with the ID3 library where iTunes has some ID3 tags that have spaces in the tag name. We now allow a space.
+				<li>Fixed a problem in iTunes where multi-line comments would cause the parser to get confused.
+				<li>New users get a reasonable default for the path to their Music Library and their Playlist folder. (Namely: /Users/name/Music/ for both).
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Fixed a problem where pressing STOP didn't always stop the playback immediately.
+				<li>Some work on the garbage display bug. We now correctly force the display back into 8 bit mode with every display update. If the bug happens in a particular frame, it will be repaired in the next frame.
+				<li>When a new song starts, stop any scrolling and animation for all synced players so that the correct song information is displayed.
+				<li>Fixed a cosmetic bug that happend with double-sized characters when the first character was an S.
+				<li>Improved the display code to reduce the amount of processing, and number of bytes sent (especially when there's a cursor). There's still a bug somewhere (maybe in the VFD display itself) where the cursor flashes randomly on the screen occasionally.
+				<li>Fixed the Welcome To SLIMP3 screen to work again when the server or the player restarts.
+				<li>Fixed a problem where changing the brightness when in double-sized broke.
+				<li>Fixing the double-height right arrow, K and N characters.
+				<li>Fixed (I think) a problem where we were sometimes dropping stop and pause commands.
+				<li>Clean up the custom character code to handle all possible bitmaps, improve performance (a bit), and never send bogus data to the player.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>If the songs in a specified album have duplicate track numbers, then sort by artist first. This makes &quot;Greatest Hits&quot; work out better. If there are not duplicate track numbers, then sort by track number first, which makes compilation albums sort properly.
+				<li>If there are two albums with the same title, sort the songs by artist first.
+				<li>Removed Games setting in Advanced Server settings, as it isn't needed. Use the new Home menu editing facility.
+				<li>Don't show duplicate songs in albums.
+				<li>Fixed a broken link to the CLI documentation.
+				<li>Fix a typo that made searching for songs via the web interface crash the server.
+				<li>Fixed a missing space in the playlist template for songs.
+			</ul>
+			</li>
+			<li>File formats
+			<ul>
+				<li>Included the patch to support YEAR GENRE and COMMENT in CUE files.
+				<li>Clean up of caching of track data to make CUE files work a little better.
+				<li>CUE file entries weren't going into the genre cache. Now they are.
+				<li>There are a couple of situations where we mean to merge in new meta information not replace it altogether. So now we do that.
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>Fixed shoutcast metadata display.
+				<li>Fixed HTTP streaming (from the SLIMP3 server) to work reliably.
+			</ul>
+			</li>
+			<li>Linux/Solaris/Unix:
+			<ul>
+				<li>Included submitted solaris build information by Mike Arnold.
+				<li>Included submitted patch for relocatable RPM support by Mike Arnold.
+			</ul>
+			</li>
+			<li>Command Line Options &amp; Debugging Tools
+			<ul>
+				<li>Added better backtrace output.
+			</ul>
+			</li>
+			<li>HTTP and Command Line Interface Automation
+			<ul>
+				<li>Return a content type for status.txt of text/plain
+			</ul>
+			</li>
+			<li>Firmware
+			<ul>
+				<li>Updated firmware to version 1.3b2 to fix possible problems with corrupted display data
+				<li>Removed display init on sleep wakeup
+				<li>Removed LCD_CLEAR when displaying ICMP unreachable
+				<li>Changed LCD packet parsing to check for ==0x02 or ==0x03, instead of just checking the two last bits. Removed support for the wait command.
+			</ul>
+			</li>
+			<li>Miscellaneous
+			<ul>
+				<li>The ends of songs were being cut off when we had mulitple players synced. We should allow for quite a few chunks of silence to be pre-queued when resyncing at the end of song.
+				<li>Fixed the display of all LATIN1 characters. We don't have a full character set in the player, so we map as closely as possible.
+				<li>Disabling UTF8 support for now. It wasn't making things much better.
+				<li>Calculate the content type from the path name unless we've already got one. This fixes some problems with saving playlists.
+				<li>A variety of performance optimizations to reduce overall CPU usage.
+			</ul>
+		</ul>
+		<h2><a name="v3.0b5">Version 3.0b5, Released 2002-10-01</a></h2>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>Fixed a problem where Windows .lnk files wouldn't work properly.
+				<li>The Windows shell application now can quit and leave the server running. There's a new preference for this as well as a menu choice to set it. This choice is confirmed if you have confirm turned on.
+				<li>Use the &quot;Bagpuss&quot; look as the default on Windows.
+			</ul>
+			</li>
+			<li>Mac OS X:
+			<ul>
+				<li>The OS X application now shows the status of the server (on or off) by changing the icon on the dock and on the SLIMP3 Server main window.
+				<li>Fixed a problem where if a user was using the iTunes importing feature,they couldn't browse their saved playlists unless they turned off iTunes support and then turned it on again.
+				<li>The OS X application menus were cleaned up. There's now a menu choice and keyboard equivalent to start and stop the server.
+				<li>The OS X application automatically starts the server when it launches.
+				<li>iTunes users now get their iTunes playlists along with the other saved playlists. These are read-only, due to the one-way importing of the iTunes library information.
+				<li>Somehow the firmware updater menu got disabled in the OS X application. Re-enabled it.
+				<li>The OS X application displays the server status more reliably.
+				<li>iTunes gets unhappy (and starts ripping songs as &quot;Uknown&quot; if you keep its library file open when it tries to write to it. So we open it and read the whole darned thing in at once and then parse it from memory. Which is faster anyways.
+				<li>Warn the user that scanning is still happening for iTunes too.
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Bingo! Killed the garbage character bug that was plaguing 1.3b4 firmware. The problem wasn't in the firmware, rather the server was sending a control code t that was causing some problems on the client. Removed that code and as a bonus, cleaned up how we send brightness commands.
+				<li>Jeff Bain submitted some tweaks to the double-size characters and layout. Lookin' good!
+				<li>Fixing bugs in synchronization: Unsyncing the master was broken, unsyncing sometimes didn't stop the audio right away.
+				<li>Rework the 1.3 streaming code to stall out less often. We also stop scanning (and other background tasks) if the client's buffer runs below half full.
+				<li>Disable repeated buttons, including Volume when the player is &quot;off&quot;.
+				<li>Fixed a problem where pressing pause in quick succession would cause things to lock up badly.
+				<li>Saved Playlists should come right after Music Library from the remote.
+				<li>Fade out when we sleep...
+				<li>Disable the syncing of HTTP clients, as it doesn't really work.
+				<li>Add song information about which ID3 tags we are using.
+				<li>Improved animation behavior under load. We now skip frames when appropriate and check the timers before and after handling client streaming.
+				<li>Turn the timeout used by the streaming protocol for the 1.3 firmware way down so the queue doesn't stall for so long when we drop a packet.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>Fixed a problem added in 3.0b5 that would sometimes show a &quot;please set up your playlists&quot; screen when trying to save the current playlist.
+				<li>Updated the sorting used when browsing the music library so it sorts by artist, album, track number and title, in that order.
+				<li>We no longer throttle the scan, so we shouldn't tell the user that we do in the advanced server settings.
+				<li>Fixed a word in the text displayed when the server doesn't know about any player.
+				<li>You can now customize the Home menu int the &quot;Additional Server Settings&quot; area, courtesy RMoser.
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>On occasion, streaming radio connections were left open for a long time. Consolidated the closing of open files and streams to fix this.
+			</ul>
+			</li>
+			<li>Linux/Unix:
+			<ul>
+				<li>RPM: make sure the new slimp3 user doesn't have a home directory
+				<li>SLIMP3 lives in /usr/local not /usr/local/bin for the RPMs
+				<li>Try and load a system Time::HiRes before the local version.
+				<li>We keep around the server scripts when building a release for zipping and tarring.
+			</ul>
+			</li>
+			<li>Command Line Options &amp; Debugging Tools
+			<ul>
+				<li>Added --streamaddr and --playeraddr command line options to allow the caller to specify which interface to listen on for remote streaming and player UDP.
+				<li>Fixed a bug where we weren't keeping track of the last time we went through the idle loop properly.
+				<li>Added a bunch of additional debugging output to make monitoring of timing and performance easier.
+				<li>Include the d_stream debug flag for debugging the new streaming protocol.
+				<li>--d_sync Added a synch debugging flag.
+				<li>Added the ability to turn on/off debugging flags from the command line interface. This isn't useful from the remote interface but is very useful from stdio.
+				<li>Expose --d_stream_v for verbose stream debugging info. --d_usage shows a 0-9 digit in the rightmost part of the display on 1.3 and a 2 byte hex code on the left on 1.2. We also spit out a percentage to stderr on 1.3
+			</ul>
+			</li>
+			<li>HTTP and Command Line Interface Automation
+			<ul>
+				<li>Updated the CLI documentation to explain the &quot;rescan&quot; (old) and &quot;path&quot; (new) commands. Added the path command to the CLI.
+				<li>Fixed a bug that was causing us to ignore parameters after the pause command which we hardly ever used.
+				<li>If you put up some text on the screen with the HTTP or CLI interface for longer than a few seconds, the screen would blank and possibly get corrupted. Not anymore.
+			</ul>
+			</li>
+			<li>Miscellaneous
+			<ul>
+				<li>Firmware files now include version number.
+				<li>Updated the pronto CCF file.
+				<li>Fixed harmless warning about empty responses when we were sending empty reponses.
+				<li>Basic unicode support is enabled.
+				<li>Sometimes we were giving some warnings with bad ID3 tags when we tried to get the utf8 version of strings.
+				<li>We weren't caching unknown file types, so we would keep trying to figure it out over and over even though we tried once already. This could slow us down a lot.
+				<li>Richard Purdie submitted a patch to use a file called ~/.slimp3-strings.txt (on unix) or slimp3-strings.txt (on windows, in the same directory as your prefs file) to override some or all of the standard strings in the strings.txt file. Uses the same format.
+				<li>Spanish localization courtesy Sr. Andy Spiers.
+			</ul>
+			</li>
+		</ul>
+		<a name="v3.0b4">
+			<h2>Version 3.0b4, Released 2002-09-11</h2>
+		</a>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>A Windows Service is now available for use. See the Getting Started.txt file for details.
+				<li>Fixed a bug where the server was hogging lots of CPU time.
+				<li>Removed a harmless warning about mas3507d.
+				<li>No longer display the .lnk suffix for Windows shortcuts.
+				<li>The server process is now launched with high priority from the shell application.
+			</ul>
+			</li>
+			<li>Mac OS X:
+			<ul>
+				<li>Fixed a bug in the built-in firmware updater that could cause the application to hang if the user didn't type in an IP address.
+				<li>iTunes shows up defaulted on in the server settings the first time properly.
+				<li>Removed warnings about no valid mp3 directory in settings even if the user was using iTunes
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Returning to &quot;Now Playing&quot; from viewing song details often would return to the wrong song.
+			</ul>
+			</li>
+			<li>Web Interface
+			<ul>
+				<li>The playlist renaming button is now more clearly lableled as &quot;Rename&quot; or &quot;Save&quot;.
+				<li>If the user names their player, then show that name prominently.
+				<li>Fixed bug: 605484, where bad entries in playlists made playback of individual songs from that playlist often wrong.
+				<li>Cleaned up the layout of the song information page.
+				<li>Fixed major performance problems when streaming HTTP audio from the SLIMP3 server at: http://server:9000/stream.mp3
+			</ul>
+			</li>
+			<li>Internet Radio/Streaming
+			<ul>
+				<li>Added support for password protected (basic authentication) HTTP streams.
+			</ul>
+			</li>
+			<li>Linux/Unix:
+			<ul>
+				<li>Updated the RPM to be relocatable, and defaults back to installing the server in /usr/local/bin/slimp3
+				<li>Include the firmware updater with Linux/Unix releases.
+				<li>Set the execute bit for the slimp3.pl and update_firmware.pl executables.
+				<li>Fixed bad version information for several architectures, including i586-linux
+			</ul>
+			</li>
+			<li>Command Line Options &amp; Debugging Tools
+			<ul>
+				<li>Made the scanning debugging flag available from the command line.
+				<li>Use the existing file: URL parser in Scan.pm whenever possible.
+				<li>Made a warning about bad URLs a debugging string.
+				<li>Made the backtrace dumper go back even farther.
+				<li>Fixed the warnings that appeared when starting the server for the first time without a preferences file.
+				<li>The --volume option is obsolete and was removed from the usage information.
+			</ul>
+			</li>
+			<li>HTTP and Command Line Interface Automation
+			<ul>
+				<li>Fixed a bug where if you didn't give a value for a pref, it would complain.
+			</ul>
+			</li>
+			<li>Miscellaneous
+			<ul>
+				<li>Fixed a problem where bad ID3 tags could cause the server to use insane amounts of memory.
+				<li>Updated the CPAN MP3::Info module to the latest release.
+			</ul>
+			</li>
+		</ul>
+		<a name="v3.0b3">
+			<h2>Version 3.0b3, Released 2002-09-06</h2>
+		</a>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>Updated version information correctly.
+			</ul>
+			</li>
+			<li>Mac OS X:
+			<ul>
+				<li>Added a firmware upgrader to the SLIMP3 Server application. Choose &quot;Update firmware...&quot; from the &quot;File&quot; menu to update your player's firmware.
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Fixed a major problem where searching for individual songs and then trying to play them didn't work.
+			</ul>
+			</li>
+		</ul>
+		<a name="v3.0b2">
+			<h2>Version 3.0b2 Release 2002-09-04</h2>
+		</a>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>Fixed a problem where the SLIMP3 Server application wouldn't launch under NT.
+				<li>Windows 98 prefers 16 color icons, so we provide one now.
+			</ul>
+			<li>MacOS X:
+			<ul>
+				<li>10.2 Server compatibility bugs have been fixed in the OS X standalone application.
+				<li>The server now automatically detects when the iTunes library has changed and reloads it.
+			</ul>
+			</li>
+			<li>Linux:
+			<ul>
+				<li>Updated RPM to fix dependency issues.
+				<li>Updated RPM to make slimp3 user have appropriate home directory.
+				<li>Moved installed code to /opt instead of /usr/local/
+				<li>Also building a source RPM.
+				<li>Fixed a problem with the Time::HiRes module on i586 not having the right version number.
+			</ul>
+			</li>
+			<li>Command line:
+			<ul>
+				<li>Several additional debugging command line items were omitted from the --help information.
+				<li>The server.pl executable is now called slimp3.pl
+			</ul>
+			</li>
+			<li>Internet Streaming:
+			<ul>
+				<li>Funny characters like ' now work in the metadata that's included with icecast streams.
+				<li>Fixed a problem where HTTP streaming from the server was consuming too much CPU power.
+			</ul>
+			</li>
+			<li>Player interface:
+			<ul>
+				<li>Show some feedback on the display when we fail to open a stream or file.
+			</ul>
+			</li>
+			<li>Web Interface:
+			<ul>
+				<li>There is now an advanced server setting for adjusting the maximum UDP data payload size.
+			</ul>
+			</li>
+		</ul>
+		<a name="v3.0b1">
+			<h2>Version 3.0b1 Release 2002-08-29</h2>
+		</a>
+		<ul>
+			<li>Windows:
+			<ul>
+				<li>There is a standalone application for upgrading the SLIMP3 player firmware.
+				<li>Windows users now have a standalone application. They no longer need to install ActiveState Perl.
+			</ul>
+			<li>MacOS X:
+			<ul>
+				<li>10.2 compatability bugs have been fixed in the OS X standalone application.
+				<li>MacOS X: The SLIMP3 server software will automatically sync with the iTunes 3.0 music library.
+			</ul>
+			</li>
+			<li>Linux:
+			<ul>
+				<li>Added a RedHat RPM.
+			</ul>
+			</li>
+			<li>Bugs:
+			<ul>
+				<li>Fixed a problem where zero length MP3 files would crash the server.
+				<li>Fixed several bugs related to the use of URLs in playlists.
+				<li>Fixed several problems where the server would hog processor time.
+			</ul>
+			</li>
+			<li>Command line:
+			<ul>
+				<li>Debugging flags have been changed to be clearer. ./slimp3 --help for more information.
+				<li>Several important command line items were omitted from the --help information.
+				<li>Commands can be sent to the server from the command line after the server has started.
+			</ul>
+			</li>
+			<li>Internet Streaming:
+			<ul>
+				<li>Streaming Internet radio station playback is much more robust.
+				<li>The SLIMP3 server can now stream to HTTP-streaming capable programs. Use: http://server:9000/stream.mp3 as the URL. You can control the stream from the web interface. Note: The latency can be quite high, depending on the size of the buffers on th e receiving applcation.
+			</ul>
+			</li>
+			<li>Localization:
+			<ul>
+				<li>Added Finnish strings.
+			</ul>
+			</li>
+			<li>Other:
+			<ul>
+				<li>Multiple player synchronization is more robust now.
+				<li>Infrared codes are configured within the IR directory.
+				<li>Sparc Linux support added
+				<li>The server supports a command-line style interface, useful for home automation installations, including Crestron. See the online technical documentation for details.
+			</ul>
+			</li>
+			<li>Player Interface:
+			<ul>
+				<li>Moved the items in the &quot;Browse Music&quot; menu to the top &quot;Home&quot; level.
+				<li>The Music Library is now called the Music Folder.
+				<li>There is now &quot;Settings&quot; area available from the player interface.
+				<li>You can adjust the time or cancel sleep with the Sleep button on the remote.
+				<li>You can navigate right into the Artist, Album or Genre from within a song.
+			</ul>
+			</li>
+			<li>Web Interface:
+			<ul>
+				<li>There is a rescan button on the server settings page. Pressing this button will rescan your music library folder.
+				<li>Fixed a problem with relative URLs that confused Opera.
+				<li>The documentation is now available via the web interface.
+			</ul>
+			</li>
+			<li>Firmware V1.3a4 (new since V1.2):
+			<ul>
+				<li>The server now has robust support for the new player firmware (version 1.3).
+				<li>Fixed a bug which was causing problems with Linksys DHCP servers
+				<li>Fixed sporadic resets when the player loses contact with the server
+				<li>New streaming protocol - provides the server with greater control over buffering
+				<li>New kiosk mode lets the player start up instantaneously, skipping the splash screen and setup menus
+				<li>Added timeout on the setup screen. If nothing is pressed for 15 seconds, the player continues with startup.
+				<li>Player now ignores Slim Protocol packets coming from anyone except its designated server.
+				<li>Changed the text on the splash screen
+			</ul>
+			</li>
+		</ul>
