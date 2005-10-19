@@ -1211,6 +1211,8 @@ sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
 
+	return undef unless $track->can('url');
+
 	my $url = $track->url;
 
 	return undef if $self->{'zombieList'}->{$url};
