@@ -66,6 +66,7 @@ our $defaultPrefs = {
 		,'upgrade-5.4b2-script'		=> 1
 		,'upgrade-6.1b1-script'		=> 1
 		,'upgrade-6.2-script'		=> 1
+		,'upgrade-R4627-script'		=> 1
 		,'volume'				=> 50
 		,'syncBufferThreshold'		=> 128
 		,'bufferThreshold'		=> 255
@@ -160,7 +161,42 @@ our %upgradeScripts = (
 			$client->prefSet('alarmplaylist',[$alarmplaylist,'','','','','','','']);
 			$client->prefSet('alarmvolume',[$alarmvolume,50,50,50,50,50,50,50]);
 		}
-	}
+	},
+	'R4627' => sub {
+		my $client = shift;
+		# Add RandomMix to home and clear unused prefs
+		my $menuItem = $client->prefGet('menuItem') || 0;
+		
+		if (ref $menuItem eq 'ARRAY') {
+			my $insertPos = undef;
+			my $randomMixFound = 0;
+			for (my $i; $i < @$menuItem; $i++) {
+				if (@$menuItem[$i] eq 'RandomPlay::Plugin') {
+					$randomMixFound = 1;
+					last;
+				} elsif (@$menuItem[$i] eq 'SEARCH') {
+					$insertPos = $i + 1;
+				}
+			}
+
+			if (! $randomMixFound) {
+				if ($insertPos != undef) {
+					# Insert random mix after SEARCH
+					$menuItem = [(@$menuItem[0 .. $insertPos - 1],
+								  'RandomPlay::Plugin',
+								  @$menuItem[$insertPos .. scalar @$menuItem - 1]
+								)];
+				} else {
+					push (@$menuItem, 'RandomPlay::Plugin');
+				}
+				$client->prefSet('menuItem', $menuItem);
+			}
+
+			# Clear old prefs
+			$client->prefDelete('plugin_random_exclude_genres');
+			Slim::Utils::Prefs::delete('plugin_random_remove_old_tracks');
+		}
+	},
 );
 
 sub new {
@@ -193,7 +229,7 @@ sub init {
 	$client->renderCache($cache);
 
 	$client->SUPER::init();
-	
+
 	for my $version (sort keys %upgradeScripts) {
 		if ($client->prefGet("upgrade-$version-script")) {
 			&{$upgradeScripts{$version}}($client);
