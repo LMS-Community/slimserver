@@ -10561,4 +10561,5 @@ ARTWORK
 	ES	Arte de tapa
 
 OBJECT_RETRIEVAL_FAILURE
+	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
 	EN	SlimServer failed retrive the resource you were looking for.
