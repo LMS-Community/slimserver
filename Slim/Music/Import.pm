@@ -226,7 +226,7 @@ sub artScan {
 		my $track  = $ds->objectForId('track', $artwork{$album}); 
 
 		# Make sure we have an object for the url, and it has a thumbnail.
-		if ($track && $track->isa('Slim::DataStores::DBI::Track') && $track->coverArt('thumb')) {
+		if (defined $track && $track->can('coverArt') && $track->coverArt('thumb')) {
 			
 			$ds->setAlbumArtwork($track);
 		}
