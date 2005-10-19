@@ -1314,6 +1314,13 @@ sub browsedb {
 				$item = $ds->objectForId($attrName, $item);
 			}
 
+			# The track might have been deleted out from under us.
+			# XXX - should we have some sort of error message here?
+			if (!$item->can('id')) {
+
+				next;
+			}
+
 			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
 			my $itemname = &{$levelInfo->{'resultToName'}}($item);
 			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
@@ -1359,8 +1366,11 @@ sub browsedb {
 
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
 
-			if ($items->[$start]->coverArt()) {
-				$params->{'coverArt'} = $items->[$start]->id;
+			my $track = $items->[$start];
+
+			if ($track->can('coverArt') && $track->coverArt) {
+
+				$params->{'coverArt'} = $track->id;
 			}
 		}
 	}

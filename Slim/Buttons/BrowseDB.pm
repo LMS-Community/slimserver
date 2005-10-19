@@ -439,9 +439,20 @@ sub browsedbItemName {
 		# Pull the nameTransform if needed - for New Music, etc
 		my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
 
-		$item = $items->[$index] = $ds->objectForId($field, $item) || return $client->string($item);
+		$item = $ds->objectForId($field, $item);
 
-		${$client->param('valueRef')} = $item;
+		if (!defined $item) {
+
+			return $client->string($item);
+
+		} elsif ($item->can('id')) {
+
+			${$client->param('valueRef')} = $items->[$index] = $item;
+
+		} else {
+
+			return $client->string('OBJECT_RETRIEVAL_FAILURE');
+		}
 	}
 
 	if ($levels[$level] eq 'track') {
