@@ -12,7 +12,7 @@ function browseurl(loc, clink, isreplace) {
 	if (typeof loc == "object") {
 		curbrowse = loc;
 		if (clink == undefined) clink = "0";
-		top.frames.browseframe.location.href = webroot + "/html/blank.html?pwd=" + escape(loc.getAttribute('pwd')) + "&clink=" + clink;
+		top.frames.browseframe.location.href = webroot + "html/blank.html?pwd=" + escape(loc.getAttribute('pwd')) + "&clink=" + clink;
 	} else {
 		var newurl = webroot + loc + "&player=" + escape(curPlayer);
 
@@ -79,47 +79,50 @@ function goradio() {
 }
 
 function initHome() {
-	homecookie = new JXTK2.Cookie("ExBrowse2Mode");
 	playercookie = new JXTK2.Cookie("ExBrowse2Player");
-
-	homelinks = new Array(
-		new JXTK2.Button("homebrowse", gobrowse),
-		new JXTK2.Button("homessettings", function() {
-			browseurl("setup.html?page=server");
-		}),
-		new JXTK2.Button("homepsettings", function() {
-			browseurl("setup.html?page=player&playerid=" + escape(curPlayer));
-		}),
-		new JXTK2.Button("homehelp", gohelp)
-	);
-	
-	var radiobutton = new JXTK2.Button("homeradio", goradio);
-	if (radiobutton.getEl) {
-		homelinks.push(radiobutton);
-	}
-
-	for (var i = 0; i < homelinks.length; i++) {
-		homelinks[i].addClickHandler(function (button) {
-			for (var j = 0; j < homelinks.length; j++) {
-			homelinks[j].setState(button == homelinks[j]);
-			}
-		});
-	}
-
-	new JXTK2.Button("searchbasic", function() {
-		for (var j = 0; j < homelinks.length; j++) homelinks[j].setState(j == 0);
-		browseurl('search.html?liveSearch=1');
-	});
-
-	new JXTK2.Button("searchadv", function() {
-		for (var j = 0; j < homelinks.length; j++) homelinks[j].setState(j == 0);
-		browseurl('advanced_search.html?');
-	});
 
 	playerlistbox = new JXTK2.ListBox("playersel");
 	playerlistbox.addHandler(updatePlayer);
+
+	if (document.getElementById("homeblock")) {
+		homecookie = new JXTK2.Cookie("ExBrowse2Mode");
+
+		homelinks = new Array(
+			new JXTK2.Button("homebrowse", gobrowse),
+			new JXTK2.Button("homessettings", function() {
+				browseurl("setup.html?page=server");
+			}),
+			new JXTK2.Button("homepsettings", function() {
+				browseurl("setup.html?page=player&playerid=" + escape(curPlayer));
+			}),
+			new JXTK2.Button("homehelp", gohelp)
+		);
+	
+		var radiobutton = new JXTK2.Button("homeradio", goradio);
+		if (radiobutton.getEl) {
+			homelinks.push(radiobutton);
+		}
+
+		for (var i = 0; i < homelinks.length; i++) {
+			homelinks[i].addClickHandler(function (button) {
+				for (var j = 0; j < homelinks.length; j++) {
+				homelinks[j].setState(button == homelinks[j]);
+				}
+			});
+		}
+
+		new JXTK2.Button("searchbasic", function() {
+			for (var j = 0; j < homelinks.length; j++) homelinks[j].setState(j == 0);
+			browseurl('search.html?liveSearch=1');
+		});
+
+		new JXTK2.Button("searchadv", function() {
+			for (var j = 0; j < homelinks.length; j++) homelinks[j].setState(j == 0);
+			browseurl('advanced_search.html?');
+		});
+	}
 }
 
 function loadHome() {
-	gobrowseindex(homecookie.getValue(), 0, true);
+	if (homecookie) gobrowseindex(homecookie.getValue(), 0, true);
 }
