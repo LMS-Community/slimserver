@@ -284,6 +284,10 @@ sub deletePlaylist {
 sub removePlaylistFromDisk {
 	my $playlistObj = shift;
 
+	if (!$playlistObj->can('path')) {
+		return;
+	}
+
 	my $path = $playlistObj->path;
 
 	if (-e $path) {
