@@ -4,7 +4,6 @@ function switchPlayer(player_List){
 	setCookie('SlimServer-player',newPlayer);
 	
 	parent.playlist.location="playlist.html?player=" + newPlayer;
-	parent.header.location.reload(false);
 	window.location="status.html?player=" + newPlayer;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
@@ -14,6 +13,7 @@ function switchPlayer(player_List){
 		var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
 		parent.browser.location=myString.replace(rExp, newPlayer);
 	}
+	parent.header.location.reload(false);
 }
 
 // change form values to correct player

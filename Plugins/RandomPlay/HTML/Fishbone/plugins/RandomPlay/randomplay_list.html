@@ -54,40 +54,23 @@
 					<tr>
 						<td></td>
 					</tr>
-		
+					[% FOREACH type IN ['track','artist','album','year'] %]
 					<tr class="listing">
-						<td class="listing">[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
-						<td class="listing">[% PROCESS playLink type="track" addOnly="0" %]</td>
-						<td class="listing">[% PROCESS playLink type="track" addOnly="1" %]</td>
+						<td class="listing">[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]</td>
+						<td class="listing">[% PROCESS playLink type="$type" addOnly="0" %]</td>
+						<td class="listing">[% PROCESS playLink type="$type" addOnly="1" %]</td>
 					</tr>
-		
-					<tr class="listing">
-						<td class="listing">[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
-						<td class="listing">[% PROCESS playLink type="artist" addOnly="0" %]</td>
-						<td class="listing">[% PROCESS playLink type="artist" addOnly="1" %]</td>
-					</tr>
-		
-					<tr class="listing">
-						<td class="listing">[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
-						<td class="listing">[% PROCESS playLink type="album" addOnly="0" %]</td>
-						<td class="listing">[% PROCESS playLink type="album" addOnly="1" %]</td>
-					</tr>
-		
-					<tr class="listing">
-						<td class="listing">[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
-						<td class="listing">[% PROCESS playLink type="year" addOnly="0" %]</td>
-						<td class="listing">[% PROCESS playLink type="year" addOnly="1" %]</td>
-					</tr>
+					[% END %]
+					
 					[% IF pluginRandomNowPlaying != '' %]
+						<tr>
+							<td>&nbsp;</td>
+						</tr>
 						<tr>
 							<td>
 								<strong>[% "NOW_PLAYING" | string %]:</strong>
 								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
 							</td>
-						</tr>
-
-						<tr>
-							<td>&nbsp;</td>
 						</tr>
 	
 						<tr>
@@ -104,17 +87,9 @@
 						</tr>
 					[% END %]
 				[% END %]	
-
-				<tr>
-					<td>&nbsp;</td>
-				</tr>
-								
+				
 				<tr>
 					<td colspan="4"><hr></td>
-				</tr>
-
-				<tr>
-					<td>&nbsp;</td>
 				</tr>
 
 				<tr>

@@ -53,29 +53,14 @@
 						<td></td>
 					</tr>
 		
+					[% FOREACH type IN ['track','artist','album','year'] %]
 					<tr>
-						<td>[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="track" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="track" addOnly="1" %]</td>
+						<td>[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]</td>
+						<td>[% PROCESS playLink type="$type"s addOnly="0" %]</td>
+						<td>[% PROCESS playLink type="$type" addOnly="1" %]</td>
 					</tr>
-		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="artist" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="artist" addOnly="1" %]</td>
-					</tr>
-		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="album" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="album" addOnly="1" %]</td>
-					</tr>
-		
-					<tr>
-						<td>[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
-						<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
-						<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
-					</tr>
+					[% END %]
+					
 					[% IF pluginRandomNowPlaying != '' %]
 						<tr>
 							<td>
