@@ -121,7 +121,7 @@ sub init {
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 			}
 
-			if ($menuChoice eq $client->string('ALARM_SELECT_PLAYLIST')) {
+			if ($menuChoice eq 'ALARM_SELECT_PLAYLIST') {
 
 				# Make a copy of the playlists, to make sure they
 				# aren't removed by the LRU cache. This may fix bug: 1853
