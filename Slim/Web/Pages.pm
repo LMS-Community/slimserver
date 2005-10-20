@@ -1463,7 +1463,7 @@ sub browsetree {
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
-		my $item = $ds->objectForUrl($url, 1) || next;
+		my $item = $ds->objectForUrl($url, 1, 1, 1) || next;
 
 		# Bug: 1360 - Don't show files referenced in a cuesheet
 		next if ($item->content_type eq 'cur');

@@ -681,6 +681,7 @@ sub findAndScanDirectoryTree {
 
 		# Update the mtime in the db.
 		$topLevelObj->timestamp($fsMTime);
+		$topLevelObj->update;
 
 		# Do a quick directory scan.
 		Slim::Utils::Scan::addToList({

@@ -197,9 +197,9 @@ sub browseTreeItemName {
 		# Dynamically pull the object from the DB. This prevents us from
 		# having to do so at initial load time of possibly hundreds of items.
 
-		my $ds    = Slim::Music::Info::getCurrentDataStore();
+		my $ds  = Slim::Music::Info::getCurrentDataStore();
 
-		my $url   = Slim::Utils::Misc::fixPath($item, $client->param('topLevelPath')) || return;
+		my $url = Slim::Utils::Misc::fixPath($item, $client->param('topLevelPath')) || return;
 
 		if (Slim::Music::Info::isWinShortcut($url)) {
 
@@ -208,7 +208,7 @@ sub browseTreeItemName {
 
 		my $items = $client->param('listRef');
 
-		$item = $items->[$index] = $ds->objectForUrl($url, 1, 0, 1) || return $url;
+		$item = $items->[$index] = $ds->objectForUrl($url, 1, 1, 1) || return $url;
 
 		${$client->param('valueRef')} = $item;
 	}
