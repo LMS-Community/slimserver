@@ -78,29 +78,17 @@
 						<td class="even"></td>
 					</tr>
 		
+					[% odd = 1 %]
+					[% FOREACH type IN ['track','artist','album','year'] %]
+					[% SET class = odd ? 'odd':'even' %]
 					<tr>
-						<td class="odd">[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
-						<td class="odd" width="13">[% PROCESS playLink type="track" addOnly="0" %]</td>
-						<td class="odd" width="13">[% PROCESS playLink type="track" addOnly="1" %]</td>
+						<td class="[% class %]">[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
+						<td class="[% class %]">[% PROCESS playLink type="$type" addOnly="0" %]</td>
+						<td class="[% class %]">[% PROCESS playLink type="$type" addOnly="1" %]</td>
 					</tr>
-		
-					<tr>
-						<td class="even">[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
-						<td class="even" width="13">[% PROCESS playLink type="artist" addOnly="0" %]</td>
-						<td class="even" width="13">[% PROCESS playLink type="artist" addOnly="1" %]</td>
-					</tr>
-		
-					<tr>
-						<td class="odd">[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
-						<td class="odd" width="13">[% PROCESS playLink type="album" addOnly="0" %]</td>
-						<td class="odd" width="13">[% PROCESS playLink type="album" addOnly="1" %]</td>
-					</tr>
-		
-					<tr>
-						<td class="even">[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
-						<td class="even" width="13">[% PROCESS playLink type="year" addOnly="0" %]</td>
-						<td class="even" width="13">[% PROCESS playLink type="year" addOnly="1" %]</td>
-					</tr>
+					[% odd = (not odd) %]
+					[% END %]
+					
 					[% IF pluginRandomNowPlaying != '' %]
 						<tr>
 							<td>&nbsp;</td>

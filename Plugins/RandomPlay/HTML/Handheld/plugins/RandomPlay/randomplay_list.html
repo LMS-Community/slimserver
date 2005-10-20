@@ -35,32 +35,15 @@
 
 		<table cellspacing="0" border="0" cellpadding="4" width="100%">
 			[% odd = 0 %]
+			[% FOREACH type IN ['track','artist','album','year'] %]
+			[% SET class = odd ? 'class="odd" bgcolor="#d0d0d0"':'class="odd" bgcolor="#ffffff"' %]
 			<tr bgcolor="[% odd ? oddC : evenC %]">
-				<td>[% "PLUGIN_RANDOM_TRACK_WEB" | string %]</td>
-				<td>[% PROCESS playLink type="track" addOnly="0" %]</td>
-				<td>[% PROCESS playLink type="track" addOnly="1" %]</td>
+				<td [% class %]>[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
+				<td [% class %]>[% PROCESS playLink type="$type" addOnly="0" %]</td>
+				<td [% class %]>[% PROCESS playLink type="$type" addOnly="1" %]</td>
 			</tr>
-
 			[% odd = (not odd) %]
-			<tr bgcolor="[% odd ? oddC : evenC %]">
-				<td>[% "PLUGIN_RANDOM_ARTIST_WEB" | string %]</td>
-				<td>[% PROCESS playLink type="artist" addOnly="0" %]</td>
-				<td>[% PROCESS playLink type="artist" addOnly="1" %]</td>
-			</tr>
-
-			[% odd = (not odd) %]
-			<tr bgcolor="[% odd ? oddC : evenC %]">
-				<td>[% "PLUGIN_RANDOM_ALBUM_WEB" | string %]</td>
-				<td>[% PROCESS playLink type="album" addOnly="0" %]</td>
-				<td>[% PROCESS playLink type="album" addOnly="1" %]</td>
-			</tr>
-
-			[% odd = (not odd) %]
-			<tr bgcolor="[% odd ? oddC : evenC %]">
-				<td>[% "PLUGIN_RANDOM_YEAR_WEB" | string %]</td>
-				<td>[% PROCESS playLink type="year" addOnly="0" %]</td>
-				<td>[% PROCESS playLink type="year" addOnly="1" %]</td>
-			</tr>
+			[% END %]
 		</table>
 		[% IF pluginRandomNowPlaying != '' %]
 			<p>

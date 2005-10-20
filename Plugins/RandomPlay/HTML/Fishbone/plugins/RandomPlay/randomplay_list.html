@@ -56,7 +56,7 @@
 					</tr>
 					[% FOREACH type IN ['track','artist','album','year'] %]
 					<tr class="listing">
-						<td class="listing">[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]</td>
+						<td class="listing">[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
 						<td class="listing">[% PROCESS playLink type="$type" addOnly="0" %]</td>
 						<td class="listing">[% PROCESS playLink type="$type" addOnly="1" %]</td>
 					</tr>
