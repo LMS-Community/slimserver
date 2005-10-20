@@ -108,7 +108,7 @@ sub getTag {
 	$tags->{'BITRATE'}  = $ogg->info('bitrate_nominal');
 	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $ogg->info('channels');
-	$tags->{'RATE'}	    = $ogg->info('rate') / 1000;
+	$tags->{'RATE'}	    = $ogg->info('rate');
 
 	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
 
