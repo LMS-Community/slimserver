@@ -198,6 +198,12 @@ sub execute {
 
 		if (!Slim::Utils::Misc::stillScanning()) {
 
+			# Clear all the active clients's playlists
+			for my $client (Slim::Player::Client::clients()) {
+
+				$client->execute([qw(playlist clear)]);
+			}
+
 			Slim::Music::Info::clearPlaylists();
 			Slim::Music::Info::wipeDBCache();
 			Slim::Music::Import::resetImporters();

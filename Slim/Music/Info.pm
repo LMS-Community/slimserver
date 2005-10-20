@@ -310,12 +310,6 @@ sub clearPlaylists {
 
 	resetClientsToHomeMenu();
 
-	# Clear all the active clients's playlists
-	for my $client (Slim::Player::Client::clients()) {
-
-		$client->execute([qw(playlist clear)]);
-	}
-
 	$currentDB->wipeCaches;
 
 	# Didn't specify a type? Clear everything
