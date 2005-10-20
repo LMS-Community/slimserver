@@ -437,17 +437,17 @@ sub browsedbItemName {
 		my $items = $client->param('listRef');
 
 		# Pull the nameTransform if needed - for New Music, etc
-		my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
+		my $field  = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
 
-		$item = $ds->objectForId($field, $item);
+		my $newObj = $ds->objectForId($field, $item);
 
-		if (!defined $item) {
+		if (!defined $newObj) {
 
 			return $client->string($item);
 
-		} elsif ($item->can('id')) {
+		} elsif ($newObj->can('id')) {
 
-			${$client->param('valueRef')} = $items->[$index] = $item;
+			${$client->param('valueRef')} = $items->[$index] = $item = $newObj;
 
 		} else {
 
