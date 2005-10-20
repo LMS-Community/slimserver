@@ -179,7 +179,7 @@ sub init {
 
 				} else {
 
-					if ($info->{'allTransform'}) {
+					if ($all && $info->{'allTransform'}) {
 
 						$termlist .= sprintf('&fieldInfo=%s', $info->{'allTransform'});
 					}
