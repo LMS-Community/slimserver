@@ -1316,7 +1316,7 @@ sub browsedb {
 
 			# The track might have been deleted out from under us.
 			# XXX - should we have some sort of error message here?
-			if (!$item->can('id')) {
+			if (!defined $item || (ref($item) && !$item->can('id'))) {
 
 				next;
 			}
