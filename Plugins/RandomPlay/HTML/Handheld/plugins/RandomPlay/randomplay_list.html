@@ -36,11 +36,10 @@
 		<table cellspacing="0" border="0" cellpadding="4" width="100%">
 			[% odd = 0 %]
 			[% FOREACH type IN ['track','artist','album','year'] %]
-			[% SET class = odd ? 'class="odd" bgcolor="#d0d0d0"':'class="odd" bgcolor="#ffffff"' %]
 			<tr bgcolor="[% odd ? oddC : evenC %]">
-				<td [% class %]>[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
-				<td [% class %]>[% PROCESS playLink type="$type" addOnly="0" %]</td>
-				<td [% class %]>[% PROCESS playLink type="$type" addOnly="1" %]</td>
+				<td>[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
+				<td>[% PROCESS playLink type="$type" addOnly="0" %]</td>
+				<td>[% PROCESS playLink type="$type" addOnly="1" %]</td>
 			</tr>
 			[% odd = (not odd) %]
 			[% END %]
