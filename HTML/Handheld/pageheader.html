@@ -1,7 +1,7 @@
 <html>
 <head>
 	[% PROCESS standardheader.html %]
-	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]">[% END %]
+	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]&rand=[% USE Date; Date.format(Date.now, '%M%S'); %]">[% END %]
 </head>
 [%- PROCESS styles.html -%]
 
