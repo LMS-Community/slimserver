@@ -117,11 +117,15 @@ sub getTag {
 	$tags->{'TITLE'} = $tags->{'ALBUM'};
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($file) . "#$anchor";
+	my $fileage = (stat($file))[9];
 
 	# Do the actual data store
 	for my $key (sort { $a <=> $b } keys %$tracks) {
 
 		my $track = $tracks->{$key};
+
+		# Allow FLACs with embedded cue sheets to have a date.
+		$track->{'AGE'} = $fileage;
 
 		next unless exists $track->{'URI'};
 
