@@ -201,7 +201,6 @@ sub renamePlaylist {
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $playlistObj = $ds->objectForId('track', $params->{'id'});
 
-	# if they are renaming the playlist, let 'em.
 	if ($playlistObj && $params->{'newname'}) {
 
 		my $newName  = $params->{'newname'};
@@ -213,23 +212,26 @@ sub renamePlaylist {
 			catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
 		);
 
-		my $existing = $ds->objectForUrl($newUrl);
+		my $existingPlaylist = $ds->objectForUrl($newUrl);
 
 		# Warn the user if the playlist already exists.
-		if (defined $existing && !$params->{'overwrite'}) {
+		if (defined $existingPlaylist && !$params->{'overwrite'}) {
 
 			$params->{'RENAME_WARNING'} = 1;
 
-		} elsif (defined $existing && $params->{'overwrite'}) {
+		} elsif (defined $existingPlaylist && $params->{'overwrite'}) {
 
-			removePlaylistFromDisk($existing);
+			if ($existingPlaylist ne $playlistObj) {
 
-			$ds->delete($existing, 1);
-		}
+				removePlaylistFromDisk($existingPlaylist);
 
-		if (!$params->{'RENAME_WARNING'}) {
+				# Quickly remove a playlist from the database.
+				$existingPlaylist->setTracks([]);
 
-			removePlaylistFromDisk($playlistObj);
+				$ds->delete($existingPlaylist, 1);
+
+				$existingPlaylist = undef;
+			}
 
 			$ds->updateOrCreate({
 				'url'        => $playlistObj,
