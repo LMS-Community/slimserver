@@ -943,7 +943,13 @@ sub _addSongInfo {
 	my $id  = $params->{'item'};
 
 	# kinda pointless, but keeping with compatibility
-	return unless $url || $id;
+	if (!defined $url && !defined $id) {
+		return;
+	}
+
+	if (ref($url) && !$url->can('id')) {
+		return;
+	}
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my $track;
