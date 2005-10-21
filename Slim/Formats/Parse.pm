@@ -346,7 +346,7 @@ sub parseCUE {
 			$tracks->{$currtrack}->{'ARTIST'} = $1;
 
 		} elsif (defined $currtrack and
-			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND)\s+\"(.*)\"/i) {
+			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{uc $1} = $2;
 
@@ -369,7 +369,21 @@ sub parseCUE {
 		}
 	}
 
-	if (!$currtrack || $currtrack < 1 || !$filename) {
+	# Check to make sure that the files are actually on disk - so we don't
+	# create bogus database entries.
+	for my $key (sort {$b <=> $a} keys %$tracks) {
+
+		my $filepath = Slim::Utils::Misc::pathFromFileURL(($tracks->{$key}->{'FILENAME'} || $filename));
+
+		if (defined $filepath && $filepath !~ m{^/BOGUS/PATH/} && !-r $filepath) {
+
+			msg("parseCUE: Couldn't find referenced FILE: [$filepath] on disk! Skipping!\n");
+
+			delete $tracks->{$key};
+		}
+	}
+
+	if (scalar keys %$tracks == 0 || (!$currtrack || $currtrack < 1 || !$filename)) {
 		$::d_parse && msg("parseCUE unable to extract tracks from cuesheet\n");
 		return {};
 	}
