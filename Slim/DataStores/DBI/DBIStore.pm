@@ -1447,10 +1447,12 @@ sub _postCheckAttributes {
 	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
 
 	# Now handle Album creation
-	my $album = $attributes->{'ALBUM'};
-	my $disc  = $attributes->{'DISC'};
-	my $discc = $attributes->{'DISCC'};
-	my $albumObj;
+	my $album    = $attributes->{'ALBUM'};
+	my $disc     = $attributes->{'DISC'};
+	my $discc    = $attributes->{'DISCC'};
+
+	# we may have an album object already..
+	my $albumObj = $track->album if !$create;
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
@@ -1471,8 +1473,6 @@ sub _postCheckAttributes {
 		$albumObj = $_unknownAlbum;
 
 	} elsif ($create && $isLocal && $album) {
-
-		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
 		# Used for keeping track of the album name.
 		my $basename = dirname($trackUrl);
@@ -1547,12 +1547,17 @@ sub _postCheckAttributes {
 				Slim::Music::Import::artwork($albumObj, $track);
 			}
 		}
+	}
+
+	if (ref($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
+
+		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
 		# Add an album artist if it exists.
 		$albumObj->contributor($contributor) if ref($contributor);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
-		$albumObj->titlesort($sortable_title) if $sortable_title;
+		$albumObj->titlesort($sortable_title);
 
 		# And our searchable version.
 		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
@@ -1572,6 +1577,10 @@ sub _postCheckAttributes {
 				$attributes->{$gainTag} =~ s/\s*dB//gi;
 
 				$albumObj->set($shortTag, $attributes->{$gainTag});
+
+			} else {
+
+				$albumObj->set($shortTag, undef);
 			}
 		}
 
@@ -1581,14 +1590,28 @@ sub _postCheckAttributes {
 			$discc = max($disc, $discc, $albumObj->discc);
 		}
 
-		$albumObj->disc($disc) if $disc;
-		$albumObj->discc($discc) if $discc;
-		$albumObj->year($track->year) if $track->year;
+		$albumObj->disc($disc);
+		$albumObj->discc($discc);
+		$albumObj->year($track->year);
 		$albumObj->update;
 
 		$track->album($albumObj);
 
 		# Now create a contributors <-> album mapping
+		if (!$create) {
+
+			# Did the user change the album title?
+			if ($albumObj->title ne $album) {
+
+				$albumObj->set('title', $album);
+			}
+
+			# Remove all the previous mappings
+			Slim::DataStores::DBI::ContributorAlbum->search('album' => $albumObj)->delete_all;
+
+			$albumObj->update;
+		}
+
 		while (my ($role, $contributors) = each %{$contributors}) {
 
 			for my $contributor (@{$contributors}) {
