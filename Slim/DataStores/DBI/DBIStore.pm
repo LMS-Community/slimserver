@@ -1315,6 +1315,15 @@ sub _preCheckAttributes {
 	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
 	$deferredAttributes->{'DISC'}    = $attributes->{'DISC'};
 	
+	# We've seen people with multiple TITLE tags in the wild.. why I don't
+	# know. Merge them. Do the same for ALBUM, as you never know.
+	for my $tag (qw(TITLE ALBUM)) {
+
+		if ($attributes->{$tag} && ref($attributes->{$tag}) eq 'ARRAY') {
+
+			$attributes->{$tag} = join(' / ', @{$attributes->{$tag}});
+		}
+	}
 
 	if ($attributes->{'TITLE'} && !$attributes->{'TITLESORT'}) {
 		$attributes->{'TITLESORT'} = $attributes->{'TITLE'};
