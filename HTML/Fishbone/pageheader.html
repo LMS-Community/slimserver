@@ -54,15 +54,10 @@
 			page = "RADIO_TUNEIN"
 			suffix = "?page=" + page
 		break
-		case "SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=server"
-			page = "server"
-			suffix = "[% IF nofolder %]&nofolder=1[% END %]"
-		break
-		case "PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=player"
-			page="player"
-			suffix = '&playerid=[% player %]'
+		case "STATISTICS":
+			url= "hitlist.html"
+			page="STATISTICS"
+			suffix = "?player=[% player | uri %]"
 		}
 
 		if (option) {
@@ -97,8 +92,10 @@
 		<nobr>
 		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
-		<a href="hitlist.html?player=[% player | uri %]" target="browser" onclick="selectLink(this)">[% "STATISTICS" | string %]</a>
+	[% IF not nosetup && not noserver %]
+		<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
 		 / 
+	[% END %]
 		<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
 		</td>
 	</table>
@@ -118,12 +115,9 @@
 				<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 				[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 				[% END %]
-				<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
-				[% IF not nosetup  %]
-					<OPTION [% IF page == 'server' %]selected[% END %] value="[% "SERVER_SETTINGS" %]" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>
-					<OPTION [% IF page == 'player' %]selected[% END %] value="[% "PLAYER_SETTINGS" %]" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
-				[% END %]
+				<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
 				[% IF additionalLinks.settings %]
+				<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
 				[% PROCESS addBrowseLinks links=additionalLinks.settings %]
 				[% END %]
 			</SELECT>
