@@ -1,3 +1,5 @@
+[% statusroot = 'status.html' %]
+[% PROCESS hreftemplate %]
 [%# Page status.html %]
 [% pagetitle = BLOCK %]
 [%- playermodel | string %] : [% "PLAYING" | string -%]
@@ -29,12 +31,11 @@
 
 <td rowspan="6" colspan="5">	   
 
-[% IF coverart %]
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><p align="right"><img src="/music/[% itempath | uri %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a></p>
-[% END %]
-   
+[% IF coverThumb %]
+	<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="220" %]
+[% END %]   
 
-[% IF not coverart %]
+[% IF not coverThumb %]
 <p align="right"><img src="html/images/nocoverart.gif" height="220" STYLE="border: dashed #666666 15px"></p>
 [% END %]
 
