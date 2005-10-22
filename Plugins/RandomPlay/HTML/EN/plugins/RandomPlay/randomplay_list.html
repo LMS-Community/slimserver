@@ -55,7 +55,7 @@
 		
 					[% odd = 1 %]
 					[% FOREACH type IN ['track','artist','album','year'] %]
-					[% SET class = odd ? 'class="odd" bgcolor="#d0d0d0"':'class="odd" bgcolor="#ffffff"' %]
+					[% SET class = odd ? 'class="odd" bgcolor="#d0d0d0"':'class="even" bgcolor="#ffffff"' %]
 					<tr>
 						<td [% class %]>[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | upper | string %]</td>
 						<td [% class %]>[% PROCESS playLink type="$type" addOnly="0" %]</td>
