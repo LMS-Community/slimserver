@@ -64,7 +64,7 @@ sub reconnect {
 	$client->revision($revision);	
 	
 	# tell the client the server version
-	if ($revision == 0 || $revision > 39) {
+	if ($client->isa("Slim::Player::SoftSqueeze") || $revision > 39) {
 		$client->sendFrame('vers', \$::VERSION);
 	}
 
