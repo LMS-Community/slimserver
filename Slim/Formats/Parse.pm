@@ -286,7 +286,7 @@ sub readPLS {
 sub parseCUE {
 	my $lines  = shift;
 	my $cuedir = shift;
-	my $noUTF8 = shift || 0;
+	my $embedded = shift || 0;
 
 	my $artist;
 	my $album;
@@ -375,7 +375,7 @@ sub parseCUE {
 
 		my $filepath = Slim::Utils::Misc::pathFromFileURL(($tracks->{$key}->{'FILENAME'} || $filename));
 
-		if (defined $filepath && $filepath !~ m{^/BOGUS/PATH/} && !-r $filepath) {
+		if (!$embedded && defined $filepath && !-r $filepath) {
 
 			msg("parseCUE: Couldn't find referenced FILE: [$filepath] on disk! Skipping!\n");
 
@@ -513,8 +513,7 @@ sub readCUE {
 
 	close $cuefile;
 
-	# Don't redecode it when parsing the cuesheet.
-	my $tracks = (parseCUE([@lines], $cuedir, 1));
+	my $tracks = (parseCUE([@lines], $cuedir));
 
 	return @items unless defined $tracks && keys %$tracks > 0;
 

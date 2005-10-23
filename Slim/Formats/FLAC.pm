@@ -98,8 +98,9 @@ sub getTag {
 
 	$tags->{'FILENAME'} = $file;
 
-	# get the tracks from the cuesheet
-	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file));
+	# get the tracks from the cuesheet - tell parseCUE that we're dealing
+	# with an embedded cue sheet.
+	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file), 1);
 
 	# suck in metadata for all these tags
 	my $items = getSubFileTags($flac, $tracks);
@@ -670,8 +671,8 @@ sub getCUEinVCs {
 	));
 
 	# we don't have a proper dir to send parseCUE(), but we already have urls,
-	# so we can just fake it
-	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/");
+	# so we can just fake it. Tell parseCUE that we're an embedded cue sheet
+	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/", 1);
 
 	# grab file info tags
 	# don't pass $metadata through addInfoTags() or it'll decodeUTF8 too many times
