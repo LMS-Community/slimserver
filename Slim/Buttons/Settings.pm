@@ -117,6 +117,7 @@ sub init {
 			'externRef' => [qw(REPLAYGAIN_DISABLED REPLAYGAIN_TRACK_GAIN REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_SMART_GAIN)],
 			'stringExternRef' => 1,
 			'header' => 'REPLAYGAIN',
+			'headerAddCount' => 1,
 			'stringHeader' => 1,
 			'onChange' =>  \&setPref,
 			'pref' => "replayGainMode",
