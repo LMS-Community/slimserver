@@ -219,9 +219,9 @@ sub renamePlaylist {
 
 			$params->{'RENAME_WARNING'} = 1;
 
-		} elsif (defined $existingPlaylist && $params->{'overwrite'}) {
+		} elsif (!defined $existingPlaylist || $params->{'overwrite'}) {
 
-			if ($existingPlaylist ne $playlistObj) {
+			if ($existingPlaylist && $existingPlaylist ne $playlistObj) {
 
 				removePlaylistFromDisk($existingPlaylist);
 

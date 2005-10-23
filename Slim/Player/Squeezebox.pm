@@ -672,8 +672,8 @@ sub stream {
 			$client->prefGet('transitionType') || 0,
 			$flags,		# flags	     
 			0,		# reserved
-			$client->canDoReplayGain($replay_gain),		# use slim server's IP
-			$server_port,
+			$client->canDoReplayGain($replay_gain),		
+			$server_port,  # use slim server's IP
 			$server_ip
 		);
 	
