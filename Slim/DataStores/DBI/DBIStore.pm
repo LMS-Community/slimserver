@@ -1558,7 +1558,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if (ref($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
+	if ($album && ref($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
