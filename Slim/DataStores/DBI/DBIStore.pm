@@ -1070,7 +1070,10 @@ sub readTags {
 		}
 
 		# Mark it as audio in the database.
-		$attributesHash->{'AUDIO'} = 1;
+		if (!defined $attributesHash->{'AUDIO'}) {
+
+			$attributesHash->{'AUDIO'} = 1;
+		}
 	}
 
 	# Last resort

@@ -541,7 +541,10 @@ sub readCUE {
 
 			$basetrack = $ds->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
-				'attributes' => { 'CT' => 'cur' },
+				'attributes' => {
+					'CT'    => 'cur',
+					'AUDIO' => 0
+				},
 				'readTags'   => 1,
 			});
 

@@ -113,6 +113,7 @@ sub getTag {
 
 	# set fields appropriate for a playlist
 	$tags->{'CT'}    = "fec";
+	$tags->{'AUDIO'} = 0;
 
 	# set a resonable "title" for the bare file
 	$tags->{'TITLE'} = $tags->{'ALBUM'};
