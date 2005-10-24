@@ -5,7 +5,6 @@
 		onClick='document.genreForm.type.value = "[% type %]";
 		document.genreForm.addOnly.value = [% addOnly %]
 		document.genreForm.submit();
-		for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
 		return false;'>
 	[%- IF type == "disable" -%]
 		[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying _ "_DISABLE" | string %].
@@ -52,17 +51,17 @@
 
 			<p>
 				[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
-				[% PROCESS playLink type="disable" addOnly="0" %]			
+				[% PROCESS playLink type="disable" addOnly="0" %]
 			</p>
 
 		[% END %]
-	[% END %]	
+	[% END %]
 
 	<hr>
 
 	<p>[% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %]</p>
 
-	
+
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
 		<tr>
 			<td>
@@ -87,7 +86,7 @@
 					var numCheckBoxes = 0;
 					var selectAllString = '[% "PLUGIN_RANDOM_SELECT_ALL" | string %]';
 					var selectNoneString = '[% "PLUGIN_RANDOM_SELECT_NONE" | string %]';
-					
+
 					// Work out how many checkboxes are initially selected
 					for (var i=0; i < f.elements.length; i++) {
 						if (f.elements[i].type == 'checkbox') {
@@ -97,11 +96,11 @@
 							}
 						}
 					}
-					
+
 					// Select none if all are selected, else select all
 					function selectAll() {
 						var newState = numSelected != numCheckBoxes;
-						
+
 						for (var i=0; i < f.elements.length; i++) {
 							if (f.elements[i].type == 'checkbox') {
 								f.elements[i].checked = newState;
@@ -115,7 +114,7 @@
 							f.selectAllButton.value = selectAllString;
 						}
 					}
-					
+
 					// Increase/decrease num selected every time a checkbox changes
 					function changeNumSelected(checkBox) {
 						if (checkBox.checked) {
@@ -123,24 +122,24 @@
 						} else {
 							numSelected--;
 						}
-						
+
 						if (numSelected == numCheckBoxes) {
 						  f.selectAllButton.value = selectNoneString;
 						} else {
 							f.selectAllButton.value = selectAllString;
 						}
 					}
-					
+
 					// Write the button using js, so it won't appear if js isn't enabled/available
 					document.write('<input type="button" value="'
-					               + (numSelected == numCheckBoxes ? selectNoneString : selectAllString) 
+					               + (numSelected == numCheckBoxes ? selectNoneString : selectAllString)
 												 + '" id="selectAllButton" onclick="selectAll()">');
 				// -->
 				</script>
 			</td>
 		</tr>
 	</table>
-		
+
 	<p>[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
 		<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
 		[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]

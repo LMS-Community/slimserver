@@ -5,7 +5,6 @@
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
 							document.genreForm.submit();
-							for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
 							return false;'
 	>
 	  [% IF type == "disable" %]
@@ -22,6 +21,16 @@
 
 <tr height="44">
 	<td width="4" height="44">
+		[% IF pluginRandomNowPlaying != '' %]
+			[%# Reload status and playlist to reflect any new mixes %]
+			<script type="text/javascript">
+				for (var i=0; i < parent.frames.length; i++) {
+					if (parent.frames[i].name == "status") {
+						parent.frames[i].location.reload(true);
+					}
+				}			
+			</script>
+		[% END %]
 		<img src="[% webroot %]html/images/spacer.gif" width="8" height="39" alt="">
 	</td>
 	<td valign="top" class="medgrey" height="44">

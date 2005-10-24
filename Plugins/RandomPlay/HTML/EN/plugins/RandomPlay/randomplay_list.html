@@ -5,7 +5,6 @@
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
 							document.genreForm.submit();
-							for (var i=0; i < parent.frames.length; i++) if (parent.frames[i].name == "status") parent.frames[i].location.reload(true);
 							return false;'
 	>
 	  [% IF type == "disable" %]
@@ -21,7 +20,18 @@
 [% PROCESS pageheader.html %]
 
 <tr>
-	<td></td>
+	<td>
+		[% IF pluginRandomNowPlaying != '' %]
+			[%# Reload status and playlist to reflect any new mixes %]
+			<script type="text/javascript">
+				for (var i=0; i < parent.frames.length; i++) {
+					if (parent.frames[i].name == "status") {
+						parent.frames[i].location.reload(true);
+					}
+				}			
+			</script>
+		[% END %]
+	</td>
 	<td>
 		<p>
 		<h3>[% "PLUGIN_RANDOM" | string %]</h3>
