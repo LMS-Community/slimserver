@@ -119,7 +119,7 @@ function doSave() {
 }
 
 function doDownload() {
-	document.location.href = "/playlist.m3u?player=" + currentPlayer;
+	document.location.href = "/playlist.m3u?player=" + curPlayer;
 }
 
 function doClear() {

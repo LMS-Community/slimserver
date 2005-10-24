@@ -1,4 +1,4 @@
-[% PROCESS header.html scripts="yes" nokbd="yes" %]
+[% PROCESS header.html scripts="html/search.js" nokbd="yes" %]
 
 <div id="pwd">
  [% IF searchlist_pagebar %]
@@ -6,6 +6,7 @@
  [% END %]<a onclick="parent.browseurl('search.html?');">[% "SEARCH" | string %]</a> /
 </div>
 
+[% IF not liveDiv %]
 <p>
  <form id="searchForm" name="searchForm" method="get" action="search.html">
  [% IF liveSearch %]
@@ -23,6 +24,7 @@
   [% searchError %]
  [% END %]
 </p>
+[% END %]
 
 [% IF searchlist_header %]
 <p>[% searchlist_header %][% "COLON" | string %]</p>

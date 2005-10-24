@@ -1,45 +1,10 @@
 var ss = parent.ss;
+var sub;
 
 var searchInProgress = 0;
 var xslp, searchreq;
 
 var forcejs = 0;
-
-function loadxslhandler(req) {
-	if (XSLTProcessor) {
-		xslp = new XSLTProcessor();
-		xslp.importStylesheet(req.xml);
-	}
-}
-
-function doTransform(rxml) {
-	var resultsets = rxml.getElementsByTagName("searchresults");
-
-	var output = "";
-	for (i = 0; i < resultsets.length; i++) {
-		results = resultsets[i].getElementsByTagName("livesearchitem");
-
-		output += "<p>" + resultsets[i].getAttribute("mstring") + "</p><table>";
-		type = resultsets[i].getAttribute("type"); 
-		hierarchy = resultsets[i].getAttribute("hierarchy"); 
-
-		for (j = 0; j < results.length; j++) {
-			id = results[j].getAttribute("id");
-			output += '<tr><td class="browselistbuttons">';
-			output += '<img onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks';
-			output += '&amp;' + type + '=' + id + '&quot;)" src="html/images/add.gif" width="8" height="8"/>';
-			output += '<img src="html/images/play.this.gif" width="5" height="9" onclick="parent.updateStatus';
-			output += 'Combined(&quot;&amp;command=playlist&amp;';
-			output += 'subcommand=loadtracks&amp;' + type + '=' + id + '&quot;)"/> </td><td class="browselisting">';
-			output += '<a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=' + hierarchy + '&amp;';
-			output += 'level=0&amp;' + type + '=' + id + '&quot;)">' + results[j].firstChild.data + '</a>';
-			output += '</td></tr>';
-
-		}
-		output += "</table>";
-	}
-	return output;
-}
 
 function searchhandler(req) {
 	searchInProgress = 0;
@@ -61,11 +26,13 @@ function searchhandler(req) {
 
 function searchsend() {
 	try {
+		if (!sub) sub = new JXTK2.SubText.Replacer("activesearch");
+
 		searchtext = document.getElementById('searchquery').value;
 		if (searchtext.length > 2) {
-
-			
-
+			sub.update(webroot + "search.html?liveDiv=1&manualSearch=1&query=" + searchtext);
+			document.getElementById("activesearch").style.display = "block";
+			searchInProgress = 0;
 		} else {
 			searchInProgress = 0;
 			document.getElementById("activesearch").style.display = "none";

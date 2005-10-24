@@ -211,7 +211,39 @@ JXTK2.JSONRPC.Proxy = function(url) {
 			return respobj;
 		}
 	}
-}
+};
+
+JXTK2.SubText = {
+
+	Replacer : function(node, defaulturl) {
+
+		if (typeof node == "string") {
+			node = document.getElementById(node);
+		}
+
+		this.update = function(url) {
+			try {
+				if (window.ActiveXObject) {
+					xmlreq = new ActiveXObject("Microsoft.XMLHTTP");
+				} else {
+					xmlreq = new XMLHttpRequest();
+				}
+			} catch (err) {
+				alert('Error creating XMLHttpRequest');
+				return;
+			}
+
+			if (!url) url = defaulturl;
+
+			xmlreq.open("GET", url, false);
+			xmlreq.send('');
+
+			node.innerHTML = xmlreq.responseText;
+		};
+
+		return this;
+	}
+};
 
 JXTK2.Key = {
 	attach : function (po) {
