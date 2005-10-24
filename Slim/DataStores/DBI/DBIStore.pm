@@ -1604,7 +1604,11 @@ sub _postCheckAttributes {
 		$albumObj->year($track->year);
 		$albumObj->update;
 
-		$track->album($albumObj);
+		# Don't add an album to container tracks - See bug 2337
+		if (!Slim::Music::Info::isContainer($track)) {
+
+			$track->album($albumObj);
+		}
 
 		# Now create a contributors <-> album mapping
 		if (!$create) {
