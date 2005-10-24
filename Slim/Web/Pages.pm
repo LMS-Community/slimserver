@@ -148,13 +148,6 @@ sub addLinks {
 	}
 }
 
-# Check to make sure the ref is valid, and not a wildcard.
-sub _refCheck {
-	my $ref = shift;
-
-	return defined $ref && scalar @$ref && $ref->[0] && $ref->[0] ne '*' ? 1 : 0;
-}
-
 sub _lcPlural {
 	my ($count, $singular, $plural) = @_;
 
@@ -172,12 +165,25 @@ sub addLibraryStats {
 		return;
 	}
 
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
-	my $find  = {};
+	my $ds   = Slim::Music::Info::getCurrentDataStore();
+	my $find = {};
 
-	$find->{'genre'}       = $genre  if _refCheck($genre);
-	$find->{'contributor'} = $artist if _refCheck($artist) && !_refCheck($album);
-	$find->{'album'}       = $album  if _refCheck($album);
+	$find->{'genre'}       = $genre  if $genre;
+	$find->{'contributor'} = $artist if $artist && !$album;
+	$find->{'album'}       = $album  if $album;
+
+	# Bug 1913 - don't put counts for contributor & tracks when an artist
+	# is a composer on a different artist's tracks.
+	if ($artist && $artist eq $ds->variousArtistsObject->id) {
+
+		delete $find->{'contributor'};
+
+		$find->{'album.compilation'} = 1;
+
+	} else {
+
+		$find->{'contributor.role'} = $ds->artistOnlyRoles;
+	}
 
 	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
 	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
@@ -187,7 +193,7 @@ sub addLibraryStats {
 	# which can be expensive. Only generate it if we need to.
 	if ($params->{'path'} =~ /hitlist/) {
 
-		$params->{'genre_count'}  = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
+		$params->{'genre_count'} = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
 	}
 }
 
@@ -1064,7 +1070,7 @@ sub browsedb {
 	# Don't show stats when only showing playlists - extra queries that
 	# aren't needed.
 	if (!grep { /playlist/ } @levels) {
-		addLibraryStats($params, [$params->{'genre'}], [$params->{'artist'}], [$params->{'album'}], [$params->{'song'}]);
+		addLibraryStats($params, $params->{'genre'}, $params->{'artist'}, $params->{'album'});
 	}
 
 	# This pulls the appropriate anonymous function list out of the
