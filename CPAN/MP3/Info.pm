@@ -565,6 +565,13 @@ sub get_mp3tag {
 			$info{TAGVERSION} = $v2h->{version};
 		} else {
 
+			# Make sure any existing TXXX flags are an array.
+			# As we might need to append comments to it below.
+			if ($v2->{'TXXX'} && ref($v2->{'TXXX'}) ne 'ARRAY') {
+
+				$v2->{'TXXX'} = [ $v2->{'TXXX'} ];
+			}
+
 			# J.River Media Center sticks RG tags in comments.
 			# Ugh. Make them look like TXXX tags, which is really what they are.
 			if (ref($v2->{'COMM'}) eq 'ARRAY' && grep { /Media Jukebox/ } @{$v2->{'COMM'}}) {
