@@ -687,6 +687,9 @@ sub directHeaders {
 	# support this type of direct streaming for HTTP-esque protocols.
 	my $handler = Slim::Player::Source::protocolHandlerForURL($url);	
 
+	# Trim embedded nulls 
+	$headers =~ s/[\0]*$//;
+
 	$headers =~ s/\r/\n/g;
 	$headers =~ s/\n\n/\n/g;
 
@@ -807,6 +810,11 @@ sub directBodyFrame {
 	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");
 	if (length($body)) {
 		$::d_directstream && msg("saving away that body message until we get an empty body\n");
+
+		# Trim embedded nulls
+		$body =~ s/[\0]*$//;
+		$client->directBody($client->directBody() . $body);
+
 		if ($handler && $handler->can('handleBodyFrame')) {
 			$done = $handler->handleBodyFrame($client, $body);
 			if ($done) {
@@ -870,8 +878,16 @@ sub failedDirectStream {
 	$client->directURL(undef);
 	$client->directBody(undef);
 
-	Slim::Player::Source::errorOpening($client, $client->string("PROBLEM_CONNECTING"));
-	Slim::Player::Source::underrun($client);
+	Slim::Player::Source::errorOpening($client);
+
+	# Similar to an underrun, but only continue if we're not at the
+	# end of a playlist (irrespective of the repeat mode).
+	if ($client->playmode eq 'playout-play' &&
+		Slim::Player::Source::streamingSongIndex($client) != (Slim::Player::Playlist::count($client) - 1)) {
+		Slim::Player::Source::skipahead($client);
+	} else {
+		Slim::Player::Source::playmode($client, 'stop');
+	}
 }
 
 sub canLoop {
