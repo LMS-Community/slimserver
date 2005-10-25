@@ -66,11 +66,12 @@ sub unsync {
 	
 	$::d_sync && msg( $client->id() . ": unsyncing\n");
 	
-	# bail if we aren't synced already
-	if (!isSynced($client)) {
+	# bail if we don't have sync state
+	if (!defined($client->syncgroupid)) {
 		return;
 	}
 
+	my $syncgroupid = $client->syncgroupid;
 	my $lastInGroup;
 	
 	# if we're the master...
@@ -94,18 +95,20 @@ sub unsync {
 			
 			# copy over the slave list to the new master
 			@{$newmaster->slaves} = @{$client->slaves};
-			
+
 		} else {
+			@{$newmaster->slaves} = ();
 			$lastInGroup = $newmaster;
 		}
 						
-		# forget about our slaves
+		# forget about our slaves & master
 		@{$client->slaves} = ();
-
+		$client->master(undef);
 		# and copy the playlist to the new master
 		Slim::Player::Playlist::copyPlaylist($newmaster, $client);	
 		$newmaster->audioFilehandle($client->audioFilehandle);
 		$client->audioFilehandle(undef);	
+
 	} elsif (isSlave($client)) {
 		# if we're a slave, remove us from the master's list
 		my $i = 0;
@@ -124,7 +127,32 @@ sub unsync {
 		$lastInGroup = $master if !scalar(@{$master->slaves});
 	
 		$client->master(undef);
+
+	} else {
+		$lastInGroup = $client;
 	}
+
+	# check for any players in group which are off and hence not synced
+	my @players = Slim::Player::Client::clients();
+	my @inGroup;
+	
+	foreach my $other (@players) {
+		next if ($other->power || $other eq $client );
+		push @inGroup, $other if (Slim::Utils::Prefs::clientGet($other,'syncgroupid') == $syncgroupid);
+	}
+	if (scalar @inGroup == 1) {
+		if ($lastInGroup && $lastInGroup != $inGroup[0]) {
+			# not last in group as other off players exist
+			$lastInGroup = undef;
+		} else {
+			# off player is last in group
+			$lastInGroup = $inGroup[0];
+		}
+	} elsif (scalar @inGroup > 1) {
+		# multiple off players in group, remaining player is not last
+		$lastInGroup = undef;
+	}
+
 	# when we unsync, we stop, but save settings first if we're doing at temporary unsync.
 
 	if ($temp) {
@@ -133,7 +161,7 @@ sub unsync {
 	} else {
 		$client->execute(["stop"]);
 		# delete sync prefs for both this client and remaining client if it is last in group
-		deleteSyncPrefs($client);
+		deleteSyncPrefs($client) unless ($client == $lastInGroup);
 		deleteSyncPrefs($lastInGroup, 1) if $lastInGroup;
 	}
 }
@@ -187,6 +215,7 @@ sub saveSyncPrefs {
 		}
 		
 		my $masterID = $client->master->syncgroupid;
+		$client->syncgroupid($masterID);
 		# Save Status to Prefs file
 		$::d_sync && msg("Saving $clientID as a slave to $masterID\n");
 		$client->prefSet('syncgroupid',$masterID);
@@ -434,6 +463,7 @@ sub syncGroupPref {
 			my $ret = Slim::Utils::Prefs::getInd("$syncgroupid-Sync",$pref);
 			if (!defined($ret)) {
 				$ret = masterOrSelf($client)->prefGet($pref);
+				$::d_sync && msg("Creating Sync group pref for: $pref group: $syncgroupid\n");
 				Slim::Utils::Prefs::set("$syncgroupid-Sync",$ret,$pref);
 			}
 			return $ret;
