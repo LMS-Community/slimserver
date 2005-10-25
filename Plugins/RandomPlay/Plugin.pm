@@ -221,8 +221,6 @@ sub playRandom {
 		if ($type ne 'track') {
 			$string = $client->string('PLUGIN_RANDOM_' . $type . '_ITEM') . ': ';
 		}
-		# Strings for non-track modes could be long so need some time to scroll
-		my $showTime = $type eq 'track' ? 2 : 5;
 		
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
@@ -239,7 +237,6 @@ sub playRandom {
 				
 				if ($i == 1) {
 					$string .= ' // ';
-					$showTime *= 2;
 				}
 				# Get the tracks.  year is a special case as we do a find for all tracks that match
 				# the previously selected year
@@ -266,7 +263,7 @@ sub playRandom {
 			# Don't do showBrieflys if visualiser screensavers are running as the display messes up
 			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 				$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-									 $string, $showTime);
+									 $string, 2, undef, undef, 1);
 			}
 		}
 
