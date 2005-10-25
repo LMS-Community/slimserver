@@ -1540,7 +1540,14 @@ sub _postCheckAttributes {
 				}
 			}
 
-			($albumObj) = Slim::DataStores::DBI::Album->search($search);
+			($albumObj) = eval { Slim::DataStores::DBI::Album->search($search) };
+
+			if ($@) {
+				msg("_postCheckAttributes: There was an error searching for an album match!\n");
+				msg("_postCheckAttributes: Error message: [$@]\n");
+				require Data::Dumper;
+				print Data::Dumper::Dumper($search);
+			}
 
 			# Didn't match anything? It's a new album - create it.
 			unless ($albumObj) {
