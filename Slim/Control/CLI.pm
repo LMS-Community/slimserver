@@ -9,7 +9,6 @@ use strict;
 use IO::Socket;
 use Socket qw(:crlf);
 use URI::Escape;
-use Encode;
 #use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Misc;
@@ -17,9 +16,7 @@ use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::DataStores::Base;
 use Slim::Utils::Strings qw(string);
-#use Slim::Utils::OSDetect;
-#use Slim::Web::HTTP;
-
+use Slim::Utils::Unicode;
 
 # This module provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -620,7 +617,7 @@ sub cli_response_write {
 	$d_cli_vv && msg("CLI: cli_response_write()\n");
 		
 	foreach my $elem (@{$connections{$client_socket}{'response'}}) {
-		$elem = Encode::encode($encoding, $elem);
+		$elem = Slim::Utils::Unicode::utf8encode($elem, $encoding);
 		$elem = URI::Escape::uri_escape($elem);
 	}
 	
