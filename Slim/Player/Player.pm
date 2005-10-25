@@ -579,6 +579,7 @@ sub render {
 #   3 = server side push & bumpLeft/Right
 #   4 = server side bumpUp/Down
 #   5 = server side showBriefly
+#   6 = clear scrolling (used for scrollonce and end scrolling mode)
 #
 # scrollState:
 #   0 = no scrolling
@@ -589,7 +590,8 @@ sub render {
 sub update {
 	my $client = shift;
 	my $lines = shift;
-	my $scrollMode = shift; # 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = ticker scroll
+	my $scrollMode = shift; # 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = ticker scroll, 
+                            # 4 = scroll once and end (used for showBriefly mode which clears once scroll is completed)
 
 	# return if updates are blocked
 	return if ($client->updateMode() == 2);
@@ -609,6 +611,7 @@ sub update {
 		$scrollMode = 1 if ($parts->{scrollmode} eq 'scrollonce');
 		$scrollMode = 2 if ($parts->{scrollmode} eq 'noscroll');
 		$scrollMode = 3 if ($parts->{scrollmode} eq 'ticker');
+		$scrollMode = 4 if ($parts->{scrollmode} eq 'scrollonceend');
 	} elsif (!defined($scrollMode)) {
 		$scrollMode = $client->paramOrPref('scrollMode');
 	}
@@ -618,6 +621,7 @@ sub update {
 	elsif ($scrollMode == 1) { $scroll = 1; $scrollonce = 1; $ticker = 0; }
 	elsif ($scrollMode == 2) { $scroll = 0; $scrollonce = 0; $ticker = 0; }
 	elsif ($scrollMode == 3) { $scroll = 2; $scrollonce = 1; $ticker = 1; }
+	elsif ($scrollMode == 4) { $scroll = 1; $scrollonce = 2; $ticker = 0; }
 
 	my $render = $client->render($parts, $scroll);
 
@@ -708,23 +712,23 @@ sub showBriefly {
 		$parsed = $client->parseLines([$line1,$line2]);
 	}
 
-	my $duration = shift;
-	my $firstLineIfDoubled = shift;
-	my $blockUpdate = shift;
+	my $duration = shift || 1;      # duration - default to 1 second
+	my $firstLineIfDoubled = shift; # use 1st line in doubled mode
+	my $blockUpdate = shift;        # block other updates from cancelling
+	my $scrollToEnd = shift;        # scroll text once before cancelling if scrolling is necessary
 
 	if ($firstLineIfDoubled && ($client->linesPerScreen() == 1)) {
 		$parsed->{line2} = $parsed->{line1};
 	}
 
-	$client->update($parsed);
-	
-	if (!$duration) {
-		$duration = 1;
-	}
+	$client->update($parsed, $scrollToEnd ? 4 : undef);
 	
 	$client->updateMode( $blockUpdate ? 2 : 1 );
 	$client->animateState(5);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
+	
+	if (!$scrollToEnd || !$client->scrollData()) {
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
+	}
 }
 
 sub block {
@@ -844,7 +848,8 @@ sub bumpUp {
 sub scrollInit {
 	my $client = shift;
 	my $render = shift;
-	my $scrollonce = shift; # 0 = continue scrolling after pause, 1 = scroll to endscroll and then stop
+	my $scrollonce = shift; # 0 = continue scrolling after pause, 1 = scroll to endscroll and then stop, 
+	                        # 2 = scroll to endscroll and then end animation (causing new update)
 	my $ticker = shift;     # 0 = normal pause-scroll, 1 = ticker mode
 
 	my $refresh = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
@@ -856,7 +861,8 @@ sub scrollInit {
 	my $scroll = {
 		'endscroll'       => $render->{endscroll},
 		'offset'          => 0,
-		'scrollonce'      => $scrollonce,
+		'scrollonce'      => $scrollonce ? 1 : 0,
+		'scrollonceend'   => ($scrollonce == 2) ? 1 : 0,
 		'refreshInt'      => $refresh,
 		'pauseInt'        => $pause,
 		'pauseUntil'      => $start,
@@ -1054,9 +1060,15 @@ sub scrollUpdate {
 					# finished scrolling at next scrollUpdate
 					$scroll->{scrollonce} = 2;
 				} elsif ($scroll->{scrollonce} == 2) {
-					# transition to permanent scroll pause state, don't schedule a new update
+					# transition to permanent scroll pause state
 					$scroll->{offset} = 0;
 					$scroll->{paused} = 1;
+					if ($scroll->{scrollonceend}) {
+						# schedule endAnimaton to kill off scrolling and display new screen
+						$client->animateState(6);
+						my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
+						Slim::Utils::Timers::setTimer($client, $timenow + $end, \&endAnimation);
+					}
 					return;
 				}
 			} elsif ($scroll->{pauseInt} > 0) {
@@ -1078,7 +1090,7 @@ sub killAnimation {
 	my $animate = $client->animateState();
 	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
 	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
-	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5);	
+	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5 || $animate == 6);	
 	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
 	$client->animateState(0);
 	$client->updateMode(0);
@@ -1099,7 +1111,7 @@ sub endAnimation {
 		# call update using lines stored in render cache except for showBriefly and bump Up/Down
 		my $screen;
 		my $animate = $client->animateState();
-		$screen = $client->renderCache() unless ($animate == 4 || $animate == 5);
+		$screen = $client->renderCache() unless ($animate == 4 || $animate == 5 || $animate == 6);
 		$client->animateState(0);
 		$client->updateMode(0);
 		$client->update($screen);
