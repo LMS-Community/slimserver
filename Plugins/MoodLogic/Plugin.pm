@@ -447,7 +447,7 @@ sub exportFunction {
 	$::d_moodlogic && msg("MoodLogic: Song scan complete, checking playlists\n");
 
 
-	while (defined $playlist && !$playlist->EOF) {
+	if (defined $playlist && !$playlist->EOF) {
 
 		my $name = $playlist->Fields('name')->value;
 		my %cacheEntry = ();
@@ -465,12 +465,13 @@ sub exportFunction {
 		Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 
 		$playlist->MoveNext unless $playlist->EOF;
+		return 1;
 	}
 	
 	#TODO find a way to prevent a crash if no auto playlists exist.  they don't for old versions of moodlogic.
 	if ($isauto) {
 
-		while (defined $auto && !$auto->EOF) {
+		if (defined $auto && !$auto->EOF) {
 
 			my $name= $auto->Fields('name')->value;
 			
@@ -490,6 +491,7 @@ sub exportFunction {
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 
 			$auto->MoveNext unless $auto->EOF;
+			return 1;
 		}
 	}
 
@@ -805,24 +807,7 @@ sub mood_wheel {
 	#$params->{'pwd_list'} = Slim::Web::Pages::generate_pwd_list($genre, $artist, $album, $player,$params->{'webroot'});
 	
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_pwdlist.html", $params)};
-
-	for my $item (@$items) {
-
-		my %list_form = %$params;
-
-		$list_form{'mood'}     = $item;
-		$list_form{'genre'}    = $genre;
-		$list_form{'artist'}   = $artist;
-		$list_form{'album'}    = $album;
-		$list_form{'player'}   = $player;
-		$list_form{'itempath'} = $item; 
-		$list_form{'item'}     = $item; 
-		$list_form{'odd'}      = ($itemnumber + 1) % 2;
-
-		$itemnumber++;
-
-		$params->{'mood_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_list.html", \%list_form)};
-	}
+	$params->{'mood_list'} = $items;
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel.html", $params);
 }

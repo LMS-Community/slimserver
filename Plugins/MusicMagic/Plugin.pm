@@ -18,6 +18,8 @@ my $initialized = 0;
 my $last_error = 0;
 my $export = '';
 my $count = 0;
+my $playlistindex = 0;
+my @playlists;
 my $scan = 0;
 my $MMSHost;
 my $MMSport;
@@ -684,36 +686,22 @@ sub exportFunction {
 	
 	if ($export eq 'playlists') {
 
-		$http = Slim::Player::Protocols::HTTP->new({
-			'url'    => "http://$MMSHost:$MMSport/api/playlists",
-			'create' => 0,
-		});
-
-		$count = 0;
-
-		if ($http) {
-			@lines = split(/\n/, $http->content);
-			$count = scalar @lines;
-			$http->close;
-		}
-
-		for (my $i = 0; $i < $count; $i++) {
-
+		if (@playlists) {
+			my $i = $playlistindex -1;
 			my %cacheEntry = ();
 			my @songs = ();
 			
 			$http = Slim::Player::Protocols::HTTP->new({
-				'url'    => "http://$MMSHost:$MMSport/api/getPlaylist?index=$i",
+				'url'    => "http://$MMSHost:$MMSport/api/getPlaylist?index=$playlistindex",
 				'create' => 0,
 			});
 
 			if ($http) {
-
 				@songs = split(/\n/, $http->content);
 				my $count2 = scalar @songs;
 				$http->close;
 			
-				my $name = $lines[$i];
+				my $name = shift @playlists;
 				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
 				$url = Slim::Utils::Misc::fixPath($url);
 
@@ -738,18 +726,36 @@ sub exportFunction {
 				$cacheEntry{'VALID'} = '1';
 
 				Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+				$playlistindex ++;
+				
+				# are we done with playlists?
+				if (!@playlists) {
+					$export = 'duplicates';
+					$playlistindex = 0;
+				}
+			}
+		} else {
+			$http = Slim::Player::Protocols::HTTP->new({
+				'url'    => "http://$MMSHost:$MMSport/api/playlists",
+				'create' => 0,
+			});
+	
+	
+			if ($http) {
+				@playlists = split(/\n/, $http->content);
+				$playlistindex = 0;
+				$http->close;
+			} else {
+				$export = 'duplicates';
 			}
 		}
 		
-		# skipping to done here.  Duplicates currently crash the linux version of MusicMagic 1.1.3.
-		if ($initialized !~ m/1\.1\.3$/) {
-			$export = 'duplicates';
-			return 1;
-		}
+		return 1;
 	}
 	
-	if ($export eq 'duplicates') {
-
+	#check for dupes, but not with 1.1.3
+	if ($export eq 'duplicates' && $initialized !~ m/1\.1\.3$/) {
+		
 		my %cacheEntry = ();
 		my @songs = ();
 		$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
@@ -781,7 +787,7 @@ sub exportFunction {
 			}
 
 			$cacheEntry{'LIST'} = \@list;
-			$cacheEntry{'CT'} = 'mlp';
+			$cacheEntry{'CT'} = 'mmp';
 			$cacheEntry{'TAG'} = 1;
 			$cacheEntry{'VALID'} = '1';
 
@@ -966,7 +972,7 @@ sub getMix {
 	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
 
-		$args{'filter'} =  Slim::Web::HTTP::escape($filter);
+		$args{'filter'} = $filter;
 	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
@@ -1007,7 +1013,7 @@ sub getMix {
 
 	unless ($http) {
 		# NYI
-		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString\n");
+		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
 		return @mix;
 	}
 
