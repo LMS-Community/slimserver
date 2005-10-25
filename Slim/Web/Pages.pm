@@ -1103,7 +1103,7 @@ sub browsedb {
 			}
 		}
 	}
-
+	# This gets reused later, during the main item list build
 	my %list_form = (
 		'player'       => $player,
 		'pwditem'      => string($title),
@@ -1114,7 +1114,13 @@ sub browsedb {
 		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	);
 
-	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+	push @{$params->{'pwd_list'}}, {
+		'hreftype'     => 'browseDb',
+		'title'	       => string($title),
+		'hierarchy'    => $hierarchy,
+		'level'	       => 0,
+		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+	};
 
 	# We want to include Compilations in the pwd, so we need the artist,
 	# but not in the actual search.
@@ -1146,17 +1152,13 @@ sub browsedb {
 
 			push @attrs, $attr . '=' . Slim::Web::HTTP::escape($params->{$attr});
 
-			my %list_form = (
-				 'player'       => $player,
-				 'pwditem'      => $names{$attr},
-				 'skinOverride' => $params->{'skinOverride'},
-				 'title'	=> $title,
+			push @{$params->{'pwd_list'}}, {
+				 'hreftype' => 'browseDb',
+				 'title'      => $names{$attr},
 				 'hierarchy'	=> $hierarchy,
 				 'level'	=> $i+1,
 				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
-			 );
-
-			$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_pwdlist.html", \%list_form)};
+			};
 
 			# Send down the attributes down to the template
 			#
@@ -1425,14 +1427,12 @@ sub browsetree {
 
 		my $obj = $ds->objectForId('track', $levels[$i]);
 
-		my %list_form = (
-			'player'       => $player,
-			'skinOverride' => $params->{'skinOverride'},
+		push @{$params->{'pwd_list'}}, {
+			'hreftype'     => 'browseTree',
 			'title'        => $i == 0 ? string('MUSIC') : $obj->title,
 			'hierarchy'    => join('/', @levels[0..$i]),
-		);
+		};
 
-		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_pwdlist.html", \%list_form)};
 	}
 
 	my ($start, $end) = (0, $count);

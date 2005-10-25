@@ -137,6 +137,6 @@
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
 [% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
-[% pageHeaderMenu %]
+[% PROCESS crumblist %]
 [% pageHeaderInfo %]
 [% UNLESS noHR %]<hr>[% END %]

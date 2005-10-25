@@ -5,10 +5,10 @@
 [% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
 
 	[% contributor = contributorTuple.artist %]
-	[% attrs  = contributorTuple.attributes %]
+	[% attrs  = contributorTuple.attributes | html %]
 	[% target = notarget ? '' : 'target="browser"' %]
 
-	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=artist,album,track&$attrs&level=1&player=$player\" $target>$contributor.name</a>" %]
+	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=artist,album,track&amp;$attrs&amp;level=1&amp;player=$player\" $target>$contributor.name</a>" %]
 
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 

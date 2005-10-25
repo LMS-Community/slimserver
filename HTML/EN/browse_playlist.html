@@ -10,8 +10,7 @@
 
 	<h3>[% "SAVED_PLAYLISTS" | string %]</h3><p>
 
-	<a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
-		[% pwd_list %]
+	[% PROCESS crumblist %]
 	<p><hr>
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 

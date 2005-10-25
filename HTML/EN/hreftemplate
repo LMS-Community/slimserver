@@ -60,4 +60,16 @@ command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL || itemobj.content_type() == 'dir' || !attributes); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% player | uri %]"
 [%- END %]
 
+[% BLOCK browseDbItemHRef -%]
+href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% player | uri %]"
+[%- END %]
+
+[% BLOCK browseTreeItemHRef -%]
+href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% player | uri%]"
+[%- END %]
+
+[% BLOCK ItemHRef -%]
+[% item.href ? item.href : item %]
+[%- END %]
+
 [% END -%]

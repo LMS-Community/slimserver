@@ -69,4 +69,20 @@ END %]
 	[%- END %]
 [% END %]
 
+[% BLOCK crumblist -%]
+[%- IF not noHomeLink %][% PROCESS homelink %][% END -%]
+[%- FOREACH item = pwd_list.list -%]
+  [%- IF not noHomeLink or not loop.first %] / [% END -%]
+  [%- PROCESS crumblistitem -%]
+[%- END -%]
+[%- END %]
+
+[% BLOCK crumblistitem -%]
+[%- IF item.title -%]
+<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+[%- ELSE -%]
+[% item | replace('^\s*/','') %]
+[%- END -%]
+[%- END %]
+
 [% END -%]
