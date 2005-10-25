@@ -66,10 +66,6 @@ sub canDirectStream {
 	return undef;
 }
 
-sub canDoReplayGain {
-	return 0;
-}
-
 1;
 
 __END__
