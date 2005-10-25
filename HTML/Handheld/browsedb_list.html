@@ -1,35 +1,27 @@
-	[%- PROCESS styles.html -%]
-	<tr bgcolor="[% oddOrEvenC %]">
-		<td width="100%">
-			[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
-			[% IF descend %]
-				[% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+[%- PROCESS styles.html -%]
+<tr bgcolor="[% oddOrEvenC %]">
+	<td width="100%">
+		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+		[% IF descend %]
+			[% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
-				<!-- Include the artist for the album view -->
-				[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+			<!-- Include the artist for the album view -->
+			[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
+		[% ELSE %]
+
+			[% IF item %]
+				<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 			[% ELSE %]
-
-				[% IF item %]
-					<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% player | uri %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
-				[% ELSE %]
-					[% text | html %]
-				[% END %]
-
-				[% IF includeAlbum && album %][% "FROM" | string %]
-					<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]">[% album.title | html %]</a></i>
-				[% END %]
-
-				[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+				[% text | html %]
 			[% END %]
-		</td>
 
-		[% SET width='13' height='13' -%]
-		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
-		<td>&nbsp;</td>
-		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
+			[% IF includeAlbum && album %][% "FROM" | string %]
+				<i><a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]">[% album.title | html %]</a></i>
+			[% END %]
 
-		[% FOREACH mixer = mixerlinks.values.sort %]
-			[% PROCESS $mixer %]
+			[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 		[% END %]
-	</tr>
+	</td>
+	[% PROCESS browselistcontrols.html %]
+</tr>

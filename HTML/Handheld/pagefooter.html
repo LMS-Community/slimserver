@@ -1,4 +1,10 @@
-	[%- PROCESS styles.html -%]
+	[% IF pageHeaderInfo %]
+	    <table width="100%" bgcolor="[% menuC %]">
+	    	<tr><td align="center">
+	    		<font color="#ffffff">[% pageHeaderInfo %]</font>
+			</td></tr>
+		</table>
+	[% END %]
 	<table width="100%" bgcolor="[% subtitleC %]">
 	    <tr>
 	    	<td align="center">

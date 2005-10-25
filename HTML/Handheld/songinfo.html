@@ -3,9 +3,9 @@
 
 	[% WRAPPER submenu linktitle="$pagetitle / $itemobj.title" %]
 			[% SET width='13' height='13' attributes="&track=$itemobj.id" -%]
-			[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
+			[% PROCESS browselinks.html cmdType='play' cmdstring='PLAY' img='b_play.gif' -%]
 			<td>&nbsp;</td>
-			[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
+			[% PROCESS browselinks.html cmdType='add'  cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
 	[%- END -%]
 	
 	[% IF itemobj.coverArt('thumb', 1) %]

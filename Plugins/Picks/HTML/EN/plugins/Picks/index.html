@@ -1,58 +1,54 @@
-[% pagetitle = 'PLUGIN_PICKS_MODULE_NAME' | string %]
-[% PROCESS pageheader.html %]
-		<h3>[% "PLUGIN_PICKS_MODULE_NAME" | string %]</h3><p>
-		
-		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> 
-			/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_PICKS_MODULE_NAME" | string %][% IF stationname %]</a> 
+[%- pagetitle = 'PLUGIN_PICKS_MODULE_NAME' | string; noSpacer = 1 -%]
+[%- pageicon = 'RADIO' -%]
+[%- pageHeaderMenu = BLOCK %]
+		/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_PICKS_MODULE_NAME" | string %][% IF stationname %]</a> 
 			/ [% stationname %][% END %]
-		</p>
+[% END -%]
+[%- PROCESS pageheader.html -%]
 		
-		<hr/>
-		
-		<!-- start plugins output -->
-		<table border="0" cellspacing="0" cellpadding="4" width="100%">
-			[% IF stationList %]
-				[% odd = 1 %]
-				[% FOREACH station = stationList %]
-					<tr>
-						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					 		<a href="index.html?p0=[% station.value | uri %]&player=[% player | uri %]">[% station.key %]</a>
-						</td>
-					
-						<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
-						</td>
-					
-						<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="[% webroot %]status.html?p0=playlist&p1=add&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
-					  	</td>
-					</tr>
-					[% odd = (not odd) %]
-				[% END %]
+<!-- start plugins output -->
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	[% IF stationList %]
+		[% odd = 1 %]
+		[% FOREACH station = stationList %]
+			<tr>
+			[% WRAPPER listitem title=station.key %]
+				href="index.html?p0=[% station.value | uri %]&player=[% player | uri %]"
 			[% END %]
-					
-			[% IF stationname %]
-				<tr>
-					<td>[% 'TITLE' | string %][% 'COLON' | string %]&nbsp;</td>
-					<td><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% url | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% stationname %]</a></td>
-				</tr>
-				[% IF bitrate %]
-					<tr>
-						<td>[% 'BITRATE' | string %][% 'COLON' | string %]&nbsp;</td>
-						<td>[% bitrate %]</td>
-					</tr>
-				[% END %]
-				[% IF type %]
-					<tr>
-						<td>[% 'TYPE' | string %][% 'COLON' | string %]&nbsp;</td>
-						<td>[% type %]</td>
-					</tr>
-				[% END %]
-				<tr>
-					<td>[% 'URL' | string %][% 'COLON' | string %]&nbsp;</td>
-					<td><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% url | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% url %]</a></td>
-				</tr>
+								
+			[% WRAPPER insertlink %]
+				href="[% webroot %][% statusroot %]?p0=playlist&p1=insert&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]"
 			[% END %]
-		</table>
-		<!-- end plugins output -->
-[% PROCESS pageheader.html %]
+			[% WRAPPER playlink %]
+				href="[% webroot %][% statusroot %]?p0=playlist&p1=play&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]"
+			[% END %]
+			[% WRAPPER addlink %]
+				href="[% webroot %][% statusroot %]?p0=playlist&p1=add&p2=[% station.value | uri %]&p3=[% station.key | uri %]&player=[% player | uri %]"
+			[% END %]
+			</tr>
+			[% odd = (not odd) %]
+		[% END %]
+	[% END %]
+			
+	[% IF stationname %]
+		[% BLOCK streaminfo %][% IF content %]
+		<tr>
+			<td>[% title | string %][% "COLON" | string %]</td>
+			<td>[% content %]</td>
+		</tr>
+		[% END %][% END %]
+
+		[% WRAPPER streaminfo title='TITLE' %]
+			<a href="[% webroot %][% statusroot %]?p0=playlist&p1=play&p2=[% url | uri %]&p3=[% stationname | uri %]&player=[% player | uri %]">[% stationname %]</a>
+		[% END %]
+
+		[% WRAPPER streaminfo title='BITRATE' %][% bitrate %][% END %]
+		[% WRAPPER streaminfo title='TYPE' %][% type %][% END %]
+
+		[% WRAPPER streaminfo title='URL' %]
+			<a href="[% webroot %][% statusroot %]?p0=playlist&p1=play&p2=[% url | uri %]&p3=[% stationname | uri %]&player=[% player | uri %]">[% url %]</a>
+		[% END %]
+	[% END %]
+</table>
+<!-- end plugins output -->
+[% PROCESS pagefooter.html %]

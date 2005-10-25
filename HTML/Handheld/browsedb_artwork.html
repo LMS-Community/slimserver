@@ -10,11 +10,7 @@
 						[% IF mixable_descend %]<a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]</a>[% END %]
 						[% IF mixable_not_descend %] <a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a>[% END %]
 					</td>
-
-					[% SET width='13' height='13' -%]
-					[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' cmdstring='PLAY' img='b_play.gif' -%]
-					[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
-
+					[% PROCESS browselistcontrols.html %]
 				</table>
 			</td></tr>
 		</table>

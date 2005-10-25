@@ -1,28 +1,73 @@
+[%- FILTER null %]
+
 [% INCLUDE styles.html %]
+[% statusroot = 'status.html' %]
+[% BLOCK oddOrEvenC; odd ? oddC : evenC; END %]
 
 [% BLOCK playlink %]
-<td align="right" width="13" bgcolor="[% oddOrEvenC %]">
-	<a [% content %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_play.gif" border=0 width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+<td align="right" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+	<a [% content %]><img src="[% webroot %]html/images/b_play.gif" border=0 width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
 </td>
 [% END %]
 
 [% BLOCK addlink %]
-<td align="right" width="13" bgcolor="[% oddOrEvenC %]">
-	<a [% content %]&player=[% player | uri %]"><img src="[% webroot %]html/images/b_add.gif" border=0 width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+<td align="right" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+	<a [% content %]><img src="[% webroot %]html/images/b_add.gif" border=0 width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
 </td>
 [% END %]
 
-[% BLOCK queuelink %]
+[% BLOCK descendlink %]
+<td align="right" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+	<a [% content %]><img src="[% webroot %]html/images/b_next.gif" border=0 width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK insertlink %]
 [% END %]
 
 [% BLOCK removelink %]
 [% END %]
 
 [% BLOCK listitem %]
-	<td align="left" bgcolor="[% oddOrEvenC %]">
+	<td align="left" bgcolor="[% PROCESS oddOrEvenC %]">
 		<a [% content %] >[% title %]</a>
 	</td>
 [% END %]
 
 [% BLOCK homelink %]
 [% END %]
+
+[% BLOCK moveuplink %]
+<td align="right" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_up.gif" width=13 height=13 alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK movedownlink %]
+<td align="right" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_down.gif" width=13 height=13 alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK scanwarning -%]
+<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
+	[%- IF audiodir -%]
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+	[%- END %]
+[% END %]
+
+[%- BLOCK crumblist -%]
+ [%- FOREACH item = pwd_list.list -%]
+  [%- PROCESS crumblistitem -%]
+ [%- END -%]
+[%- END -%]
+
+[% BLOCK crumblistitem -%]
+[%- IF item.title -%]
+ / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+[%- ELSE -%]
+[% item %]
+[%- END -%]
+[%- END %]
+
+[% END -%]

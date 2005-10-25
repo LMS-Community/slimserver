@@ -1,15 +1,8 @@
-[%- players = myClientState.clients -%]
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-  <head>
-    <title>[% "HOME" | string %]</title>
-    <link rel="stylesheet" href="slimserver.css" />
-  </head>
-  <body>
-  <h3>[% "HOME" | string %]</h3>
-<hr />
- [%- IF additionalLinks.browse %]
+[%- USE Clients;
+    players = Clients.get("name") -%]
+[%- pagetitle = "HOME" | string -%]
+[%- WRAPPER leftside.html -%]
+[%- IF additionalLinks.browse %]
   <h4>[% "BROWSE_MUSIC" | string %]</h4>
   <ul>
     [%- FOREACH link = additionalLinks.browse %]
@@ -23,6 +16,17 @@
     [%- FOREACH key = additionalLinks.search.keys %]
     <li><a href="[% additionalLinks.search.$key | html %]player=[% player | uri %]">[% key | string %]</a></li>
     [%- END %]
+  </ul>
+ [%- END %]
+ [%- IF additionalLinks.radio %]
+  <h4>[% "RADIO" | string %]</h4>
+  <ul>
+    [% FOREACH key = additionalLinks.radio.keys %]
+    <li> <a href="[% additionalLinks.radio.$key %]player=[% player | uri %]">[% key | string %]</a>
+    </li>
+    [% END %]
+    <li> <a href="tunein.html?player=[% player | uri %]">[% "RADIO_TUNEIN" | string %]</a>
+    </li>
   </ul>
  [%- END %]
  [%- UNLESS nosetup %]
@@ -58,5 +62,4 @@
  [%- IF newVersion %]
   <p>[% newVersion %]</p>
  [%- END %]
-  </body>
-</html>
+[%- END -%]

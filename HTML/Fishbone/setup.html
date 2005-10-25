@@ -1,8 +1,10 @@
-[% setup = '1' %] [% nodiv = 1 %][% PROCESS pageheader.html %]
-		<div class="menu2" style="min-height:20;padding: 5 8 5 8;">
+[% setup = '1' %] [% pagetitle='' %][% noHR = '1' %][% nodiv = 1 %]
+		[% pageHeaderInfo = BLOCK %]<div class="menu2" style="min-height:20;padding: 5 8 5 8;">
 			[% IF children %][% children %][% END %]
 			[% IF siblings %][% siblings %][% END %]
-		</div>
+		</div>[% END %]
+		[% PROCESS pageheader.html %]
+		
 		[% IF warning %]<div class="nowplaying"><b>[% warning %]</b>[% END %]</div>
 		<div class="list">
 		<form method="post" action="setup.html">

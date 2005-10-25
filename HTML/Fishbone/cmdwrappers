@@ -1,24 +1,34 @@
+[%- FILTER null %]
+[% statusroot = 'status.html' %]
+[% noHomeLink = 1 %]
+
 [% BLOCK playlink %]
 <td class="listing" width="11" align="center">
-	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" height="11"  alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" height="11"  alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
 </td>
 [% END %]
 
 [% BLOCK addlink %]
 <td class="listing" width="11" align="center">
-	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/add.gif" border=0 align="center" height="11" alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/add.gif" border=0 align="center" height="11" alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
 </td>
 [% END %]
 
-[% BLOCK queuelink %]
+[% BLOCK descendlink %]
 <td class="listing" width="11" align="center">
-	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/queue.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
+	<p><a [% content %]><img src="[% webroot %]html/images/next.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK insertlink %]
+<td class="listing" width="11" align="center">
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/queue.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
 </td>
 [% END %]
 
 [% BLOCK removelink %]
 <td class="listing" width="11" align="center">
-	<p><a [% content %]&player=[% player | uri %]" target="status"><img src="[% webroot %]html/images/subtract.gif" border=0 align="center" height="11" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/remove.gif" border=0 align="center" height="11" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
 </td>
 [% END %]
 
@@ -29,3 +39,39 @@
 [% END %]
 
 [% BLOCK homelink %][% END %]
+
+[% BLOCK moveuplink %]
+<td class="listing" width="11" align="center">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.up.gif" height="11" align="middle" alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK movedownlink %]
+<td class="listing" width="11" align="center">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.down.gif" height="11" align="middle" alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
+</td>
+[% END %]
+
+[% BLOCK scanwarning -%]
+<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
+	[%- IF audiodir -%]
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+	[%- END %]
+[% END %]
+
+[% BLOCK crumblist -%]
+[%- FOREACH item = pwd_list.list -%]
+  [%- IF not loop.first %] / [% END -%]
+  [%- PROCESS crumblistitem -%]
+[%- END -%]
+[%- END %]
+
+[% BLOCK crumblistitem -%]
+ [%- IF item.title -%]
+<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+ [%- ELSE -%]
+[% item | replace('^\s*/','') %]
+ [%- END -%]
+[%- END %]
+
+[% END -%]

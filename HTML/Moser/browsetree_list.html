@@ -1,0 +1,17 @@
+        <li class="[% odd ? "odd" : "even" %]">
+        [%- IF anchor %]
+          <a name="[% anchor %]"></a>
+        [%- END %]
+[% PROCESS browselistcontrols.html | indent(10) %]
+          <div class="browseline">
+[%- IF descend %]
+	[%- IF itemobj.isPlaylist %]
+            <a [% browsePlaylistHRef %]>[% text | html %]</a>
+[%- ELSE %]
+            [% IF hierarchy %]<a [% browseTreeHRef %]>[% END %][% text | html %][% IF hierarchy %]</a>[% END %]
+	[%- END %]
+[%- ELSE %]
+            <a [% songinfoHRef %]>[% text | html %]</a>
+[%- END %]
+          </div>
+        </li>

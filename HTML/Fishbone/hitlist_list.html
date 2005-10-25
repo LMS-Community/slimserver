@@ -1,8 +1,7 @@
-[% PROCESS hreftemplate %]
-<tr>
-	[% PROCESS browselinks.html class='listing' width='9' height='11' target='status' urlcmd='insert' cmdstring='NEXT' img='queue.gif' %]
-	[% PROCESS browselinks.html urlcmd='play' cmdstring='PLAY' img='play.this.gif' %]
-	[% PROCESS browselinks.html urlcmd='add' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
+<tr>[% class='listing' width='9' height='11' target='status' %]
+	[% PROCESS browselinks.html cmdType='insert' cmdstring='NEXT' img='queue.gif' %]
+	[% PROCESS browselinks.html cmdType='play'   cmdstring='PLAY' img='play.this.gif' %]
+	[% PROCESS browselinks.html cmdType='add'    cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
   <td class="listing" height="15">
 [% INCLUDE tracklink.html %]
    </td>

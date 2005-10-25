@@ -1,3 +1,4 @@
+[% PROCESS cmdwrappers -%]
 <tr>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       [% IF genremode %]<a href="browse.html?type=genres&id=[% genreid | uri %]&name=[% genrename | uri %]&player=[% player | uri %]">[% genrename | html %]</a>
@@ -9,14 +10,12 @@
          [% END %]
       [% END %]
   </td>
-  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      [% IF stationmode %]  <nobr><a href="action.html?action=play&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
-      [% ELSE %] &nbsp; [% END %]
-  </td>
-  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      [% IF stationmode %]  <nobr><a href="action.html?action=add&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]"  target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
-      [% ELSE %] &nbsp; [% END %]
-  </td>
+ [% IF stationmode %][% WRAPPER playlink %]href="action.html?action=play&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]" target="status"[% END %]
+ [% ELSE %]
+ [% WRAPPER descendlink %]href="index.html?genreID=[% genre.key | uri %]&player=[% player | uri %]"[% END %]
+ [% END %]
+ [% IF stationmode %][% WRAPPER addlink %]href="action.html?action=add&mode=[% mode %]&current=[% current %]&id=[% stationid %]&player=[% player | uri %]"  target="status"[% END %]
+ [% END %]
 </tr>
 
 [% IF extrainfo %]

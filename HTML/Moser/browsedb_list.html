@@ -1,34 +1,19 @@
-        <li class="[% IF odd %]odd[% END %][% IF not odd %]even[% END %]">
+        <li class="[% odd ? "odd" : "even" %]">
         [%- IF anchor %]
           <a name="[% anchor %]"></a>
         [%- END %]
-          <div class="controls">
-            <ul class="songctl">
-              <li><a href="status.html?
-				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=loadtracks[% attributes | html -%]
-				[%- ELSE %]p0=playlist&amp;p1=play&amp;p2=[% itempath | uri -%]
-              	[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
-              <li><a href="status.html?
-				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=inserttracks[% attributes | html -%]
-				[%- ELSE %]p0=playlist&amp;p1=insert&amp;p2=[% itempath | uri %]
-				[%- END %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
-              <li><a href="status.html?
-				[%- IF NOT itemobj.isRemoteURL %]command=playlist&amp;subcommand=addtracks[% attributes | html -%]
-				[%- ELSE %]p0=playlist&amp;p1=append&amp;p2=[% itempath | uri -%]
-				[%- END %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
-            </ul>
-          </div>
+[% PROCESS browselistcontrols.html | indent(10) %]
           <div class="browseline">
-          [%- IF descend %]
-            [% IF hierarchy %]<a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% END %][% text | html %]</a>
-		<!-- Include the artist for the album view -->
-		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
-
+          [%- IF descend -%]
+            [%- IF hierarchy %]
+            <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% END %][% text | html %]</a>
+[%# Include the artist for the album view -%]
+            [% PROCESS artistsAsHTML.html IF itemobj && itemobj.isa('Slim::DataStores::DBI::Album') %]
           [%- ELSE %]
             <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
            [%- IF includeAlbum %]
             [% "FROM" | string %] <span class="album">
-		 <i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% player | uri %]" target="browser">>[% album.title | html %]</a></i>
+		 <i><a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album.id %]&amp;player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
 		</span>
            [%- END %]
            <span class="artist">[%- IF includeArtist && artist; PROCESS artistsAsHTML.html; END -%]</span>

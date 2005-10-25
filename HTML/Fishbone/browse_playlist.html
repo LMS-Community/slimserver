@@ -1,5 +1,3 @@
-[% statusroot = 'status.html' %]
-[% PROCESS hreftemplate %]
 <html>
 	<head>
 		[% PROCESS customheader.html %]
@@ -48,14 +46,14 @@
 		<div class="list">
 		[% IF song_count %]<center><p>[% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</p></center>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			<tr><td>[% pwd_list %]</td></tr>
+			<tr><td>[% PROCESS crumblist %]</td></tr>
 		</table>
 		[% IF browselist_pagebar %]<p>[% "PAGES" | string %]:[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
 				[% class='listing' width='9' align='center' height='11' target='status' %]
-				[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' attributes='&playlist=' _ playlist.id cmdstring='PLAY' img='play.this.gif' %]
-				[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' attributes='&playlist='_ playlist.id cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
+				[% PROCESS browselinks.html cmdType='play' attributes='&playlist=' _ playlist.id cmdstring='PLAY' img='play.this.gif' %]
+				[% PROCESS browselinks.html cmdType='add'  attributes='&playlist='_ playlist.id cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 			<td width="11"></td>
 		</table>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">

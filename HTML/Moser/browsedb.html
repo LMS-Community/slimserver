@@ -1,0 +1,37 @@
+[%- pagetitle = browseby | string -%]
+[%- WRAPPER leftside.html -%]
+  [%- IF browselist_header %]
+    <div id="browselist_header">[% browselist_header %]</div>
+  [%- END %]
+  [%- IF browselist_pagebar %]
+    <div id="topbrowselistpagebar" class="pagebar">
+      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
+      <div class="controls">
+        <ul class="alpha">
+[% browselist_pagebar -%]
+        </ul>
+      </div>
+    </div>
+   [%- END %]
+   [%- IF coverart %]
+    <div class="coverArt">
+      <a href="/music/[% coverArt %]/cover.jpg" target="cover">
+      <img src="/music/[% coverArt %]/cover.jpg" /></a>
+    </div>
+   [%- END %]
+    <div id="browselist">
+      <ul>
+[% browse_list -%]
+      </ul>
+    </div>
+[% IF browselist_pagebar -%]
+    <div id="bottombrowselistpagebar" class="pagebar">
+      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
+      <div class="controls">
+        <ul class="alpha">
+[% browselist_pagebar -%]
+        </ul>
+      </div>
+    </div>
+[% END -%]
+[%- END -%]

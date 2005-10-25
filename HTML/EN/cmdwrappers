@@ -1,27 +1,72 @@
+[%- FILTER null %]
+
+[%# set statusroot to either status.html or status_header.html, depending on which you use %]
+[% statusroot = 'status.html' %]
+
+[%# this is to wrap around an href which does a play command %]
 [% BLOCK playlink %]
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "PLAY" | string %]</a></nobr>
 </td>
 [% END %]
 
+[%# this is to wrap around an href which does an add command %]
 [% BLOCK addlink %]
 <td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "ADD_TO_PLAYLIST" | string %]</a></nobr>
 </td>
 [% END %]
 
-[% BLOCK queuelink %]
+[%# this is to wrap around an href which does an insert command %]
+[% BLOCK insertlink %]
 [% END %]
 
+[%# this is to wrap around an href which does ? %]
+[% BLOCK descendlink %]
+<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<nobr><a [% content %]>[% "NEXT" | string %]</a></nobr>
+</td>
+[% END %]
+
+[%# this is to wrap around an href which does a remove command %]
 [% BLOCK removelink %]
+<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "DELETE" | string %]</a>
+</td>
 [% END %]
 
+[%# this is to wrap around ? %]
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
 		<a [% content %] >[% title %]</a>
 	</td>
 [% END %]
 
-[% BLOCK homelink; homeString = "HOME" | string;
+[%# this is a link to the home page %]
+[% BLOCK homelink; homeString = "HOME" | string; 
 	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
 END %]
+
+[%# this is to wrap around a link which moves something up a list %]
+[% BLOCK moveuplink %]
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEUP" | string %]</a></nobr>
+</td>
+[% END %]
+
+[%# this is to wrap around a link which moves something up a list %]
+[% BLOCK movedownlink %]
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEDOWN" | string %]</a></nobr>
+</td>
+[% END %]
+
+[%# this is the warning shown while SlimServer is still scanning -%]
+[% BLOCK scanwarning %]
+<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
+	[%- IF audiodir -%]
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+	[%- END %]
+[% END %]
+
+[% END -%]

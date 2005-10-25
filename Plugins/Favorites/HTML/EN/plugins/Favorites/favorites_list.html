@@ -1,42 +1,40 @@
-[% pagetitle = 'PLUGIN_FAVORITES_MODULE_NAME' | string %]
-[% PROCESS pageheader.html %]
-		<h3>[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</h3><p>
-		
-		<p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> 
-			/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
-		</p>
-		
-		<hr/>
-		[% warning %]
-		<!-- start plugins output -->
-		<table border="0" cellspacing="0" cellpadding="4" width="100%">
-				[% odd = 1 %]
-				[% FOREACH fav = titles %]
-					<tr>
-						<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-					 		[% loop.count %]. <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% IF fav %][% fav %][% ELSE %][% "EMPTY" | string %][% END %]</a>
-						</td>
-					
-						<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]">[% "MOVEUP" | string %]</a></nobr>
-						</td>
-					
-						<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]">[% "MOVEDOWN" | string %]</a></nobr>
-						</td>
-					
-						<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]">[% "DELETE" | string %]</a></nobr>
-						</td>
-					
-						<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-							<nobr><a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr>
-						</td>
-					</tr>
-					[% odd = (not odd) %]
+[%- pageicon = 'BROWSE_PLAYLISTS' -%]
+[%- pagetitle = 'PLUGIN_FAVORITES_MODULE_NAME' | string -%]
+[%- pageHeaderMenu = BLOCK %]/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
+		</p></a>[% END -%]
+[%- PROCESS pageheader.html -%] 
+
+[% warning %]
+<!-- start plugins output -->
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+		[% odd = 1 %]
+		[% FOREACH fav = titles %]
+			<tr>
+				[% text = IF fav ; fav ; ELSE ;"EMPTY" | string ; END; %]
+				[% WRAPPER listitem title = loop.count _ '. ' _ text %]
+					 href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]"
 				[% END %]
-		</table>
-		<!-- end plugins output -->
-[% PROCESS pageheader.html %]
+			
+				[% WRAPPER moveuplink noTarget=1 %]
+					href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]"
+				[% END %]
+			
+				[% WRAPPER movedownlink noTarget=1 %]
+					href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]"
+				[% END %]
+			
+				[% WRAPPER removelink noTarget=1 %]
+					href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]"
+				[% END %]
+			
+				[% WRAPPER playlink %]
+					href="[% webroot %][% statusroot %]s?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]"
+				[% END %]
+			</tr>
+			[% odd = (not odd) %]
+		[% END %]
+</table>
+<!-- end plugins output -->
+[% PROCESS pagefooter.html %]
 
 

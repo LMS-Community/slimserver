@@ -14,8 +14,7 @@
 
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
-    <tr><td><a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=0"><font class="pagebartext">&nbsp;&nbsp;[% "SAVED_PLAYLISTS" | string %]</a>
-        [% pwd_list %]</td></tr>
+    <tr><td><font class="pagebartext">[% PROCESS crumblist noHomeLink = 1%]</font></td></tr>
 </table>
 
 [% IF browselist_pagebar %]<font class="pagebartext">[% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %]</p>[% END %]

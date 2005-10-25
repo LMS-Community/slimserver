@@ -1,18 +1,17 @@
 [% pagetitle = "SEARCH" | string %]
 [% bodyscript = 'onload="document.searchForm.query.focus();"' %]
 [% headScripts = BLOCK %]
-		<script type="text/javascript" src="/html/prototype.js"></script>
+	<script type="text/javascript" src="/html/prototype.js"></script>
 [% END %]
 [% pageHeaderMenu = BLOCK %]
 	&nbsp;/ <a href="search.html?player=[% player | uri %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html %]
-
+	
 	[% IF liveSearch %]
-	<h3>Live Search</H3>
 	<center><form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<input type="text" id="query" name="query" size="40" autocomplete="off" />
-		<input name="submit" type=submit class="stdclick" value="[% "SEARCHFOR" | string %]"><p>
+		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form></center>
@@ -20,7 +19,7 @@
 	<br>
 	[% IF searchlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>[% END %]
 	[% IF searchlist_header %]<p>[% searchlist_header %][% "COLON" | string %]</p>[% END %]
-
+	
 	[% IF numresults != '-1' && numresults != '0' %]
 	<table cellpadding="0" cellspacing="0" border="0" width="100%">
 	<tr>
@@ -29,8 +28,8 @@
 		</td>
 		<td class="listing" width="11" align="center">&nbsp;</td>
 		[% class='listing' width='9' align='center' height='11' target='status' %]
-		[% PROCESS browselinks.html urlcmd='play' cmd='loadtracks' attributes='&listref=searchResults' cmdstring='PLAY' img='play.this.gif' %]
-		[% PROCESS browselinks.html urlcmd='add' cmd='addtracks' attributes='&listref=searchResults' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
+		[% PROCESS browselinks.html cmdType='play' attributes='&listref=searchResults' cmdstring='PLAY' img='play.this.gif' %]
+		[% PROCESS browselinks.html cmdType='add'  attributes='&listref=searchResults' cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
 		<td class="listing" width="11" align="center">&nbsp;</td>
 	</tr>
 	</table>

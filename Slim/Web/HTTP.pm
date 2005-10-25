@@ -1601,7 +1601,7 @@ sub newSkinTemplate {
 		INCLUDE_PATH => \@include_path,
 		COMPILE_DIR => templateCacheDir(),
 		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
-
+		PRE_PROCESS => ['cmdwrappers', 'hreftemplate'],
 		FILTERS => {
 			'string' => \&Slim::Utils::Strings::string,
 			'nbsp' => \&nonBreaking,

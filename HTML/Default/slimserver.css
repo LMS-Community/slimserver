@@ -13,6 +13,38 @@ a {
 	text-decoration:none;
 }
 
+h4
+{
+	font-style: normal;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 9px;
+	font-stretch: ultra-condensed;
+	margin-top: 5px;
+	height: 13px;
+	text-transform: uppercase;
+	text-indent: 3px;
+	border-style: solid;
+	border-width: 5px;
+	border-color: #ececec;
+	color: #737373;
+	background: #ececec;
+	padding-bottom: 0px;
+	margin-bottom: 5px;
+}
+
+li {
+	margin-left: 8px;
+	padding-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 3px;
+}
+
+ul {
+	padding: 0px;
+	margin: 0px;
+}
+
 a:active {
 	color: #000;
 }

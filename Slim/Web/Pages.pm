@@ -367,6 +367,12 @@ sub status {
 	$params->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
 	$params->{'noAlbum'}       = Slim::Utils::Strings::string('NO_ALBUM');
 
+	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+	$params->{'includeAlbum'}  = ($webFormat !~ /ALBUM/) ;
+	$params->{'includeArtist'}  = ($webFormat !~ /ARTIST/) ;
+	$params->{'album'} = $params->{'itemobj'}->{'album'}->{'title'};
+	$params->{'artist'} = 1;
 	$params->{'nosetup'} = 1   if $::nosetup;
 
 	return Slim::Web::HTTP::filltemplatefile($params->{'omit_playlist'} ? "status_header.html" : "status.html" , $params);

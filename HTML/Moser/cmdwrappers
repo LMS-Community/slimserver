@@ -1,0 +1,90 @@
+[%- FILTER null %]
+[% statusroot = 'status.html' %]
+
+[% BLOCK cmdlink -%]
+<li><a [% content %] [% UNLESS noTarget %]target="status"[% END %] title="[% cmdtitle | string%]">[% cmdshown %]</a></li>
+[%- END %]
+
+[% BLOCK playlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "PLAY"
+		cmdshown = "<span>&gt;</span>" -%]
+[%- END %]
+
+[% BLOCK addlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdshown = "<span>+</span>" -%]
+[%- END %]
+
+[% BLOCK descendlink -%]
+<li><a [% content %] title="[% "NEXT" | string%]"><span>&gt;|</span></a></li>
+[%- END %]
+
+[% BLOCK insertlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdshown = "<span>&gt;|</span>" -%]
+[%- END %]
+
+[% BLOCK removelink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "DELETE"
+		cmdshown = "<span>x</span>" -%]
+[%- END %]
+
+[% BLOCK listitem -%]
+<li class="[% odd ? "odd" : "even" %]">
+  <a [% content %] >[% title %]</a>
+</li>
+[%- END %]
+
+[% BLOCK homelink; homeString = "HOME" | string; -%]
+<a href="[% webroot %]home.html?player=[% player | uri %]" [% IF target %]target="[% target %]"[% END %]>[% img or homeString %]</a>
+[%- END %]
+
+[% BLOCK moveuplink -%]
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEUP" | string %]</a></nobr>
+</td>
+[%- END %]
+
+[% BLOCK movedownlink -%]
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEDOWN" | string %]</a></nobr>
+</td>
+[%- END %]
+
+[% BLOCK scanwarning -%]
+<div id="warning>[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
+	[%- IF audiodir -%]
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+	[%- END %]
+</div>
+[%- END %]
+
+[% BLOCK countblock -%]
+<div id="counts">[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %]</div>
+[%- END %]
+
+[% BLOCK crumblist -%]
+  <div class="linktree">
+    <ul>
+      <li>[% PROCESS homelink %]</li>
+      [%- FOREACH item = pwd_list.list %]
+        [% PROCESS crumblistitem %]
+      [% END -%]
+    </ul>
+  </div>
+[%- END %]
+
+[% BLOCK crumblistitem -%]
+[%- IF item.title -%]
+<li> / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a></li>
+[%- ELSE -%]
+<li>[% item %]</li>
+[%- END -%]
+[%- END %]
+
+[%# This is the end, never put anything below this next END or the FILTER will not work %]
+[% END -%] 

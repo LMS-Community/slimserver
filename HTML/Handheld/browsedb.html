@@ -1,7 +1,7 @@
 	[% pagetitle = "BROWSE_MUSIC" | string %]
 	[% PROCESS pageheader.html %]
 
-	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
+	[% WRAPPER submenu %]
 		<tr><td>
 			[% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
 		</td></tr>
@@ -24,5 +24,4 @@
 		[% browse_list %]
 	</table>
 
-	[% PROCESS songcount.html %]	
 	[% PROCESS pagefooter.html %]

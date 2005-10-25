@@ -38,13 +38,6 @@ function newHref(doc,plyr) {
 	}
 }
 
-function checkSetup(doc)
-{
-	if (!top.document.getElementById('home')) {
-		//document.getElementById('setup').display = 'none';
-	}
-}
-
 function playlistResize(page) {
 	if (page) {
 		var header = page.getElementById('header');

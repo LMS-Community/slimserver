@@ -1,20 +1,8 @@
-<html>
-  <head>
-    <title>[% 'PLUGIN_LIVE365_MODULE_NAME' | string %]</title>
-    <link rel="stylesheet" href="[% webroot %]slimserver.css">
-  </head>
-  <body bgcolor="#FFFFFF">
-
-    <p>
-
-    <h3>[% 'PLUGIN_LIVE365_MODULE_NAME' | string %]</h3><p>
-
-    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>
-	[% pwd_list %]
-
-    <p><hr>
-
-	    <p><h3>[% listname %]</h3><p>
+[%- pagetitle = 'PLUGIN_LIVE365_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; PROCESS cmdwrappers -%]
+[%- pageHeaderMenu = BLOCK -%]
+	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>[% pwd_list %]
+[% END %]
+[% PROCESS pageheader.html %]
 
 	[% IF errmsg %]
 		<p align="center"><b>[% errmsg | string %]</b></p>
@@ -28,6 +16,4 @@
     </table>
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
-
-  </body>
-</html>
+[% pagefooter.html %]

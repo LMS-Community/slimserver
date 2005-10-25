@@ -6,12 +6,11 @@
 [%- PROCESS styles.html -%]
 
 [%- BLOCK submenu -%]
-	[% linktitle = linktitle.replace('^\s*/', '') %]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
 		<tr>
-			<td width="100%">/ [%- IF url -%]<a href="[%- webroot -%][% url %]?[%- arguments -%]&player=[% player | uri %]">[%- END -%][%- linktitle -%][%- IF url -%]</a>[%- END -%]</td>
-			[%- content -%]
+			<td width="100%">[% PROCESS crumblist %]</td>
 		</tr>
+			[%- content -%]
 	</table>
 [%- END -%]
 
@@ -52,3 +51,7 @@
 		</tr>
 		<tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 	</table>
+
+[%- IF pageHeaderMenu; SET pwd_list = pageHeaderMenu IF not pwd_list %]
+  [%- PROCESS crumblist IF pwd_list %]
+[%- END %]

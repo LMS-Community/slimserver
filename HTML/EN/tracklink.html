@@ -1,0 +1,13 @@
+[% IF num || num == 0 %]
+		[% UNLESS noHref %]<a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% END %]
+		[% title | html %][% UNLESS noHref %]</a>[% END %]
+[% ELSIF item %]
+	<a [% songinfoHRef %]>[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
+[% ELSE %]
+	[% text | html %]
+[% END %]
+
+[% IF includeArtist && itemobj.artist && itemobj.artist != noArtist; PROCESS artistsAsHTML.html; END %]
+
+[% IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum %][% "FROM" | string %]
+<i><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></i>[% END %]

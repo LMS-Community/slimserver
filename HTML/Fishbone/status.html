@@ -1,11 +1,9 @@
-[% statusroot = 'status.html' %]
-[% PROCESS hreftemplate %]
-
+[%- FILTER null %]
 [% BLOCK albumlink %]
 	<p><a [% content %] target="browser">[% itemobj.album.title | html %]</a>[% IF itemobj.year %]&nbsp;([% itemobj.year %])[% END %]</p>
 [% END %]
 
-[%- BLOCK tonecontrol -%]
+[% BLOCK tonecontrol -%]
 	<td width="20" align="right" class="label2"><nobr><b>[% label %][% "COLON" | string %]</b>
 		<img src="[% webroot %]html/images/spacer.gif" width="1" height="36"></a>
 	</nobr></td>
@@ -23,7 +21,7 @@
 			<tr><td><img src="[% webroot %]html/images/spacer.gif" width="6" height="1"></td></tr>
 		</table>
 	</nobr></td>
-[%- END -%]
+[%- END %]
 
 [% BLOCK volumecontrol %]
 	[% vols = {
@@ -56,8 +54,9 @@
 		<a href="[% statusroot %]?[% command %]&player=[% player | uri %]&start=[% start %]">
 		<img valign="bottom" id="gray" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="tan" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
 	</td>
-[% END -%]
+[% END %]
 
+[% END -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
@@ -71,7 +70,7 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:checkSetup();[% IF not undock %]doLoad();playlistResize(this.document);[% END %]" onresize="javascript:playlistResize(this.document);">
+<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" [% IF not undock %]onload="javascript:doLoad();playlistResize(this.document);"[% END %] onresize="javascript:playlistResize(this.document);">
 	<div ID="header">
 		<div class="masthead">
 			<table  width="100%" height="15">

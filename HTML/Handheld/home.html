@@ -26,6 +26,11 @@
 	
 	[% PROCESS menu menutitle='HELP' menulist={} additionalmenu.link = 'html/help.html' additionalmenu.text = 'HELP'%]
 	
-	[% PROCESS songcount.html %]	
+	[% IF warn && NOT pageHeaderInfo; pageHeaderInfo = BLOCK %]
+		<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]
+	[% END %]
+	[% ELSIF album_count && NOT pageHeaderInfo; pageHeaderInfo = BLOCK %]
+		[% album_count %] | [% song_count %] | [% artist_count %]
+	[% END; END %]
 	[% PROCESS pagefooter.html %]
 <!-- /Page home.html -->

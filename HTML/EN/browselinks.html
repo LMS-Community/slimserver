@@ -1,8 +1,4 @@
 <td [% IF class %]class="[% class %]"[% END %] [% IF width %]width="[% width %]"[% END %]>
-		[% IF itemobj.isRemoteURL || !cmd -%]
-			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?p0=playlist&p1=[% urlcmd %]&p2=[% itemobj.url | uri %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% player | uri %]" [% IF target %]target="[% target %]"[% END %]>
-		[% ELSE -%]
-			<nobr><a href="[% webroot %]status[% IF header %]_header[% END -%].html?command=playlist&subcommand=[% cmd %][% attributes | html %]&player=[% player | uri %]" [% IF target %]target="[% target %]"[% END %]>
-		[% END -%]
+	<nobr><a [% PROCESS cmdHRef %][% IF target %] target="[% target %]"[% END %]>
 		[% IF img -%]<img src="[% webroot %]html/images/[% img %]" [% IF height %]height="[% height %]"[% END %] alt='[% cmdstring | string %]' title='[% cmdstring | string %]' onMouseOver="self.status='[% cmdstring | string %]';return true">[% ELSE %][% cmdstring | string -%][% END -%]</a></nobr>
 </td>

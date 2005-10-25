@@ -255,7 +255,7 @@ div.controls {
    padding-left: 0px;
 }
 
-.linktree, .searchinput {
+.linktree, .searchinput, #counts {
    border-bottom: 2px solid rgb(71,104,149);
 }
 
@@ -360,7 +360,7 @@ body > div {
 }
 
 .browseline {
-  padding-left: 8em;
+  padding-left: 10em;
 }
 
 .hide {

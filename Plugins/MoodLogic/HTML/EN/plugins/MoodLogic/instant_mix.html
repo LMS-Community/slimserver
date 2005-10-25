@@ -1,28 +1,23 @@
-<html>
-  <head>
-    <title>[% "MOODLOGIC_INSTANT_MIX" | string %]</title>
-    <link rel="stylesheet" href="slimserver.css">
-  </head>
-  <body bgcolor="#FFFFFF">
+[%- pageicon = 'MusicMagic' -%]
+[%- pagetitle = "MOODLOGIC_INSTANT_MIX" | string -%]
+[%- pageHeaderMenu = BLOCK %][% pwd_list %][% END -%]
+[%- PROCESS pageheader.html -%] 
 
-    <p>
-
-    <h3>[% "MOODLOGIC_INSTANT_MIX" | string %]</h3><p>
-
-    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
-	[% pwd_list %]
-
-    <p><hr><p>
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
+	<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td><td></td>
+	[% WRAPPER playlink %]
+
+		href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
+
+	[% END %]
+	[% WRAPPER addlink %]
+		href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
+
+	[% END %]
+	</tr>
       [% instant_mix_list %]
     </table>
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-   <p><hr><p>
-   <p><a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>, 
-      <a href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
-   </p>
-
-  </body>
-</html>
+[% PROCESS pagefooter.html %]

@@ -1,6 +1,11 @@
 [% pagetitle = 'RADIO_TUNEIN' | string %]
+[% pageicon = 'RADIO' %]
+[% pageHeaderMenu = BLOCK %]
+	/ [% 'RADIO_TUNEIN' | string %]
+[% END %]
 [% PROCESS pageheader.html %]
-<h3>[% 'RADIO_TUNEIN_NOW' | string %]</h3>
+
+<br>
 
 [% IF p2 %]
 	<p><b>
@@ -15,8 +20,10 @@
 	<input type="hidden" name="p1" value="play">
 	<input type="hidden" name="player" value="[% player %]">
 	[% 'RADIO_TUNEIN_RADIOURL' | string %]
-	<input type="text" class="stdedit" name="p2" size="50">
+	<input type="text" class="stdedit" name="p2" size="40">
 	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" [% INCLUDE reloadStatusFrame.html %]>
 </form>
+
+<br>
 
 [% PROCESS pagefooter.html %]

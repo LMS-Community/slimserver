@@ -1,9 +1,8 @@
-[% statusroot = 'status_header.html' %]
-[% PROCESS hreftemplate %]
 <html>
 <head>
 	[% pagetitle = "BROWSE_MUSIC" | string %]
 	[% PROCESS standardheader.html %]
+	[% PROCESS html/common.js %]
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:to_currentsong()">

@@ -7,7 +7,7 @@
   </head>
   <body>
     <h3>[% "SAVED_PLAYLISTS" | string %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li>[% pwd_list %]</ul></div>
+   [% PROCESS crumblist %]
    [%- IF warn %]
     <div id="warning">
       <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %]

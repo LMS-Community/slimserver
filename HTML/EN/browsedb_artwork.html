@@ -1,23 +1,14 @@
 <div align="left" width="100%" style="float:left"><table class="even" cellpadding="5" cellspacing="0" border="0" align="left">
 	<tr><td width="[% size %]">
-		[% IF coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]" title="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
-		[% IF not coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]" target="browser"><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
+		[% IF coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% browseDbHRef %] target="browser">[% PROCESS thumbnailImg height="$size\" width=\"$size\"" %]</a></td></table>[% END %]
+		[% IF not coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% browseDbHRef %] target="browser"><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
 	</td></tr>
 	<tr><td><table cellspacing="0" border="0" align="left">
-		<td class="even">
-			[% IF mixable_descend %]<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]</a></nobr> [% END %]
-			[% IF mixable_not_descend %] <nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% "MOODLOGIC_MIX" | string %]</a></nobr> [% END %]
-		</td>
 	
-		<td align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?command=playlist&subcommand=loadtracks[% attributes | html %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
-			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr> [% END %]
-		</td>
-	
-		<td  align="right" class="even">
-			[% IF descend %]<nobr><a href="status_header.html?command=playlist&subcommand=addtracks[% attributes | html %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr> [% END %]	
-			[% IF not descend %]<nobr><a href="status_header.html?p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr> [% END %]
-		</td>
+		[% SET class = 'even' odd = 0 %]
+
+		[% PROCESS browselistcontrols.html %]
+
 	</table></td></tr>
 </table></div>
 

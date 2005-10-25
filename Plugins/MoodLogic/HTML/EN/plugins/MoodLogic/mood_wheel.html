@@ -1,25 +1,31 @@
-<html>
-  <head>
-    <title>[% "MOODLOGIC_SELECT_MOOD" | string %]</title>
-    <link rel="stylesheet" href="slimserver.css">
-  </head>
-  <body bgcolor="#FFFFFF">
+[%- pageicon = 'MoodLogic' -%]
+[%- pagetitle = "MOODLOGIC_SELECT_MOOD" | string -%]
+[%- pageHeaderMenu = BLOCK %][% pwd_list %][% END -%]
+[%- PROCESS pageheader.html -%] 
 
-    <p>
+[% IF browselist_header %][% browselist_header %][% END %]
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+<table cellspacing="0" border="0" cellpadding="4" width="100%">
+	[% odd = 1 %]
+	[% FOREACH mood = mood_list %]
+		<tr>
+			[% WRAPPER listitem title = mood %]
+				 href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]"
+			[% END %]
+			[% WRAPPER playlink %]
 
-    <h3>[% "MOODLOGIC_SELECT_MOOD" | string %]</h3><p>
+				href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
 
-    <a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a>
-	[% pwd_list %]
+			[% END %]
 
-    <p><hr><p>
-	[% IF browselist_header %][% browselist_header %][% END %]
-    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-    <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      [% mood_list %]
-    </table>
-   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+			[% WRAPPER addlink %]
 
+				href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
 
-  </body>
-</html>
+			[% END %]
+		</tr>
+		[% odd = (not odd) %]
+	[% END %]
+</table>
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+[% PROCESS pagefooter.html %]

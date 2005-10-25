@@ -1,5 +1,5 @@
-[% UNLESS noby %][% "BY" | string -%][% END %]
-
+[% UNLESS noby %][% "BY" | string %] [% END %]
+[%- FILTER null %]
 [% contributorsHTML = [] %]
 
 [% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
@@ -13,5 +13,5 @@
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 
 [% END %]
-
+[% END -%]
 [% contributorsHTML.join(', ') %]

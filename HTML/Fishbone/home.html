@@ -1,8 +1,7 @@
-[% IF page != 'help' %][% pagetitle = "MUSIC" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% END %][% PROCESS pageheader.html %]
+[% IF page != 'help' %][% pagetitle = "HELP" | string %] [% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% ELSE %][% pagetitle = "HELP" | string %][% END %][% PROCESS pageheader.html %]
 
 [% IF page == 'help' %]
 
-	<h3>[% "HELP" | string %]</h3>	
 	<ul>
 	[% IF additionalLinks.help %]
 		[% FOREACH link = additionalLinks.help %]

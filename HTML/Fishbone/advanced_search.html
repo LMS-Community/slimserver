@@ -1,15 +1,7 @@
-[% pagetitle = 'Search' %]
-[% pageicon = 'Search' %]
+[% pagetitle = "ADVANCEDSEARCH" | string %]
 [% bodyscript = 'onload="document.searchForm.query.focus();"' %]
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-	<head>
-		[% PROCESS customheader.html %]
-	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
-<div class = "list">
-<h3>[% "ADVANCEDSEARCH" | string %]</h3>
+[% pageHeaderMenu = BLOCK %]<p> / <a href="advanced_search.html?player=[% player | uri %]">[% "ADVANCEDSEARCH" | string %]</a></p>[% END %]
+[% PROCESS pageheader.html %]
 
 [% MACRO logicalSelectionBlock BLOCK %]
 
@@ -42,8 +34,8 @@
 [% END %]
 
 
-<p> / <a href="advanced_search.html?player=[% player | uri %]">[% "ADVANCEDSEARCH" | string %]</a></p>
-<hr>
+
+
 [% warning %]
 	<div align="center">
 		<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">

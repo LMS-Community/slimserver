@@ -1,0 +1,9 @@
+<h4>Available parameters</h4>
+<ul>
+[% PERL %]
+  foreach my $item (sort(keys(%$stash))) {
+    print "<li>$item</li>\n";
+  }
+[% END %]
+</ul>
+<hr />

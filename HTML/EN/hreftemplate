@@ -1,17 +1,18 @@
+[%- FILTER null %]
 [% 
-albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&level=1&album=$itemobj.album.id&player=$player\"";
-songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&player=$player\"";
-browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\" target=\"browser\"";
+albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album=$itemobj.album.id&amp;player=$player\"";
+songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$player\"";
+browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$player\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
-browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&level=$level$attributes&player=$player\"";
-browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=$itemobj.id$noEdit&player=$player\"";
+browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$player\"";
+browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$player\"";
 
 BLOCK homeLink; homeString = "HOME" | string;
 	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
 END;
 
 BLOCK savePlaylistLink; saveString = "SAVE" | string; 
-	"<a href=\"edit_playlist.html?player=$player&saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
+	"<a href=\"edit_playlist.html?player=$player&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
 END;
 
 BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
@@ -19,7 +20,7 @@ BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
 END;
 
 BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&p1=clear&player=$player\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
+	"<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$player\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
 END;
 
 BLOCK thumbnailImg;
@@ -30,7 +31,33 @@ BLOCK coverImg;
 	"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">"; 
 END ;
 
-BLOCK scanwarning;
-	"<b>"; "NOTE" | string;"</b> "; "SCAN_WARNING" | string; IF audiodir; "SCAN_CLICK" | string; "<a href=\"browsetree.html?level=0&player=$player\">"; "HERE" | string; "</a>."; END;
-END;
 -%]
+
+[%  'urlcmdFor' => {
+					'play'   => 'play',
+					'add'    => 'add',
+					'insert' => 'insert',
+					'remove' => 'deleteitem',
+					}
+					
+	'cmdFor'       => {
+					'play'   => 'loadtracks',
+					'add'    => 'addtracks',
+					'insert' => 'inserttracks',
+					'remove' => 'deletetracks',
+					} %]
+														
+[% BLOCK cmdRemoteURLQuery -%]
+p0=playlist&amp;p1=[% urlcmdFor.$cmdType %]&amp;p2=[% itemobj.url | uri %][% IF p3 %]&amp;p3=[% p3 %][% END %]
+[%- END %]
+
+[% BLOCK cmdLocalQuery -%]
+command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
+[%- END %]
+
+[%# use this to add/play/insert/remove tracks and remote URLs %]
+[% BLOCK cmdHRef -%]
+href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL || itemobj.content_type() == 'dir' || !attributes); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% player | uri %]"
+[%- END %]
+
+[% END -%]

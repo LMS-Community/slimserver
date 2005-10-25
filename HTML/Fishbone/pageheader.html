@@ -1,6 +1,4 @@
-[% statusroot = 'status.html' %]
-[% PROCESS hreftemplate %]
-
+[%- FILTER null %]
 [% BLOCK addBrowseLinks %]
 	[% IF links %]
 		[% FOREACH link = links %]
@@ -23,12 +21,12 @@
 		[% END %]
 	[% END %]
 [% END %]
-
+[% END -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
 	[% PROCESS customheader.html %]
-	<script language="JavaScript">
+	[% IF home %]<script language="JavaScript">
 	<!--Hide
 	var homestring;
 	function doSearch(value)
@@ -72,13 +70,13 @@
 	[% IF home %]function homelink() {
 		if (homestring) {
 			document.getElementById('homelink').innerHTML = homestring;
-		} [% IF page %] else {
+		} [% IF page %]else {
 			document.getElementById('homelink').innerHTML = '[% page | string %]';
 		}[% END %]
 	}[% END %]
 	
 	-->
-	</script>
+	</script>[% END %]
 	[% headScripts %]
 </head>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
@@ -138,3 +136,7 @@
 [% END %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
+[% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
+[% pageHeaderMenu %]
+[% pageHeaderInfo %]
+[% UNLESS noHR %]<hr>[% END %]
