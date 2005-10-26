@@ -339,6 +339,10 @@ sub cacheItem {
 
 	my $track = $currentDB->objectForUrl($url, 0) || return undef;
 
+	if (!ref $track || !$track->can('id')) {
+		return undef;
+	}
+
 	if ($item eq 'ALBUM') {
 		return $track->album()->title();
 	}
