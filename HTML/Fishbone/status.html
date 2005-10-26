@@ -156,7 +156,7 @@
 								[% PROCESS playctl command='p0=rate&p1=-2' width='30' height='19' img='rew'condition=rate == 'rew' -%]
 								[% PROCESS playctl command='p0=rate&p1=8' img='ffwd' condition=rate == 'ffwd' -%]
 						</tr><tr>[% END -%]
-								[% PROCESS playctl command='p0=playlist&p1=jump&p2=-1' img='back' condition='0' -%]
+								[% PROCESS playctl command='p0=playlist&p1=jump&p2=-1' width='30' height='19' img='back' condition='0' -%]
 								[% PROCESS playctl command='p0=playlist&p1=jump&p2=%2b1' img='forward' condition='0' -%]
 								[% PROCESS playctl command='p0=pause' img='pause' condition=modepause -%]
 							[% IF isplayer %]
