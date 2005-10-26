@@ -1656,7 +1656,7 @@ sub _postCheckAttributes {
 
 	my ($albumName, $primaryContributor) = ('', '');
 
-	if (defined $albumObj) {
+	if (blessed($albumObj)) {
 		$albumName = $albumObj->titlesort;
 	}
 
