@@ -168,7 +168,7 @@ sub parseDirectHeaders {
 		($mimeType eq "application/x-mms-framed") ||
 		($mimeType eq "application/vnd.ms.wms-hdr.asfv1")) {
 
-		$::d_directstream && msg("it looks like a WMA file");
+		$::d_directstream && msg("it looks like a WMA file\n");
 
 		$contentType = 'wma';
 	}
@@ -176,7 +176,7 @@ sub parseDirectHeaders {
 		# Assume (and this may not be correct) that anything else
 		# is an asx redirector.
 
-		$::d_directstream && msg("it looks like an ASX redirector");
+		$::d_directstream && msg("it looks like an ASX redirector\n");
 
 		$contentType = 'asx';
 	}
