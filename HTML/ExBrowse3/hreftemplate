@@ -1,0 +1,11 @@
+[% BLOCK browseDbItemHRef -%]
+onclick="browseurl('browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level ; item.attributes | html %]')"
+[%- END %]
+
+[% BLOCK browseTreeItemHRef -%]
+onclick="browseurl('browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% player | uri%]')"
+[%- END %]
+
+[% BLOCK ItemHRef -%]
+[% item.href ? item.href : item %]
+[%- END %]
