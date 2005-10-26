@@ -1,5 +1,4 @@
-	[%- PROCESS styles.html -%]
-	<tr height="15" bgcolor="[% oddOrEvenC %]">
+	<tr height="15" bgcolor="[% PROCESS oddOrEvenC %]">
 		<td width="100%">
 			<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% title %]</a>
 			[% IF album && album != noAlbum %] [% "FROM" | string %] <a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% player | uri %]">[% album.title %]</a>[% END %]

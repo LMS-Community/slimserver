@@ -2,6 +2,12 @@
 
 [% INCLUDE styles.html %]
 [% statusroot = 'status.html' %]
+[%-
+	oddC  = '#ffffff';
+	evenC = '#d0d0d0';
+	subtitleC = '#c5c5c5';
+	menuC = '#666666';
+-%]
 [% BLOCK oddOrEvenC; odd ? oddC : evenC; END %]
 
 [% BLOCK playlink %]

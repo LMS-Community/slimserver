@@ -1,4 +1,3 @@
-[%- PROCESS styles.html -%]
 [%- BLOCK subtitle -%]
 	[% IF cmd %]
 		<td><a href="edit_playlist.html?player=[% player | uri %]&[% cmd %]=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_[% cmd %].gif" width="13" height="13"></a></td>

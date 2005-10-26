@@ -4,7 +4,6 @@
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]&timestamp=[% USE Date; Date.format(Date.now, '%Y%m%d%M%S'); %]">[% END %]
 	[% PROCESS html/common.js %]
 </head>
-[%- PROCESS styles.html -%]
 
 [%- BLOCK submenu -%]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
