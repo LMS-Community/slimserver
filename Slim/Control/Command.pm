@@ -503,6 +503,9 @@ sub execute {
 					if (defined $params{'track_id'}){
 						$find->{'id'} = $params{'track_id'};
 					}
+					if (defined $params{'year_id'}){
+						$find->{'year'} = $params{'year_id'};
+					}
 						
 					my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
 
@@ -714,7 +717,6 @@ sub execute {
 				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "loadtracks" || $p1 eq "playtracks") {
-					
 				Slim::Player::Source::playmode($client, "stop");
 				Slim::Player::Playlist::clear($client);
 
