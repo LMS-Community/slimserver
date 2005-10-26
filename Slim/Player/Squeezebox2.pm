@@ -773,10 +773,13 @@ sub directHeaders {
 				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
+
 				$::d_directstream && msg("Direct stream is list, get body to explode\n");
 				$client->directBody('');
+
 				# we've got a playlist in all likelyhood, have the player send it to us
 				$client->sendFrame('body', \(pack('N', $length)));
+
 			} elsif ($client->contentTypeSupported($contentType)) {
 				$::d_directstream && msg("Beginning direct stream!\n");
 				my $loop = 0;
@@ -810,10 +813,6 @@ sub directBodyFrame {
 	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");
 	if (length($body)) {
 		$::d_directstream && msg("saving away that body message until we get an empty body\n");
-
-		# Trim embedded nulls
-		$body =~ s/[\0]*$//;
-		$client->directBody($client->directBody() . $body);
 
 		if ($handler && $handler->can('handleBodyFrame')) {
 			$done = $handler->handleBodyFrame($client, $body);
