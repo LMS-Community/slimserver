@@ -8,6 +8,5 @@
   [% IF pagetitle %]<h3>[% pagetitle %]</h3>[% END %]
 [%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list %]
   [%- PROCESS crumblist IF pwd_list %]
-  [%# PROCESS countblock IF song_count %]
-  [%# PROCESS scanwarning IF warn %]
-  [% PROCESS cmdwrappers %]
+  [% PROCESS countblock IF song_count %]
+  [% PROCESS scanwarning IF warn %]

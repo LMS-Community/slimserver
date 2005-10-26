@@ -10,7 +10,7 @@
     <p>
 
     <h3>[% pagetitle %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a></li>[% IF linktree %][% linktree %][% END %]</ul></div>
+    <div class="linktree"><ul><li><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a></li>[% IF linktree %][% linktree %][% END %]</ul></div>
     [% IF warning %]<div id="warning">[% warning %]</div>[% END %]
     [% IF siblings %]<div id="setuptabs"><ul>[% siblings %]</ul></div>[% END %]
     [% IF children %]<div id="setuptabs"><ul>[% children %]</ul></div>[% END %]
@@ -23,7 +23,7 @@
 [% IF page == 'player' %]
 		<h3>[% "FORGET_PLAYER" | string %]</h3>
 		<p>[% "FORGET_PLAYER_DESC" | string %]</p>
-		<p><a href="[% webroot %]home.html?player=[% player | uri %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
+		<p><a href="[% webroot %]home.html?player=[% playerURI %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
    <hr>
 [% END %]
     [% IF versionInfo %][% versionInfo %]<hr>[% END %]

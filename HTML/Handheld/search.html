@@ -1,6 +1,6 @@
 	[% pagetitle = "SEARCH" | string %]
 	[% pageHeaderMenu = BLOCK %]
-		/ <a href="[% webroot %]search.html?player=[% player | uri %]">[% pagetitle %]</a>
+		/ <a href="[% webroot %]search.html?player=[% playerURI %]">[% pagetitle %]</a>
 	[% END %]
 	[% PROCESS pageheader.html %]
 
@@ -43,12 +43,12 @@
 			<tr bgcolor="[% evenC %]">
 				<td width="100%">[% "ALL_SONGS" | string %]</td>
 				<td width="13">
-					<a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+					<a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
 				</td>
 				<td>&nbsp;</td>
 				
 				<td width="13">
-					<a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+					<a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
 				</td>
 			</tr>
 		[% browse_list %]

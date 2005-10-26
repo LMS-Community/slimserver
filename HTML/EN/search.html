@@ -8,7 +8,7 @@
     <p>
     <h3>[% 'SEARCH' | string %]</h3><p>
 							
-	<p><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% player | uri %]">[% "SEARCH" | string %]</a></p>
+	<p><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a></p>
 
 	<p>
 		[% IF searchlist_header %]
@@ -48,11 +48,11 @@
 			<tr>
 				<td width="100%" class="even">[% "ALL_SONGS" | string %]</td>
 				<td align="right" width="13" class="even">
-				    <nobr><a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a></nobr>
+				    <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a></nobr>
 				</td>
 				
 				<td align="right" width="13" class="even">
-				    <nobr><a href="[% webroot %]status.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
+				    <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
 				</td>
 			</tr>
 		[% END %]

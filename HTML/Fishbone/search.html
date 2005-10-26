@@ -4,7 +4,7 @@
 	<script type="text/javascript" src="/html/prototype.js"></script>
 [% END %]
 [% pageHeaderMenu = BLOCK %]
-	&nbsp;/ <a href="search.html?player=[% player | uri %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+	&nbsp;/ <a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html %]
 	

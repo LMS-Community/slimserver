@@ -55,7 +55,7 @@
 		case "STATISTICS":
 			url= "hitlist.html"
 			page="STATISTICS"
-			suffix = "?player=[% player | uri %]"
+			suffix = "?player=[% playerURI %]"
 		}
 
 		if (option) {
@@ -91,10 +91,10 @@
 		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 	[% IF not nosetup && not noserver %]
-		<a href="[% webroot %]setup.html?page=server&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
+		<a href="[% webroot %]setup.html?page=server&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "SERVER_SETTINGS" | string %]</a>
 		 / 
 	[% END %]
-		<a href="[% webroot %]home.html?page=help&player=[% player | uri %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
+		<a href="[% webroot %]home.html?page=help&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this)">[% "HELP" | string %]</a></nobr>
 		</td>
 	</table>
 </div>

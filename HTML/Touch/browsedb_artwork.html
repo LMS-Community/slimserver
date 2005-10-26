@@ -5,12 +5,12 @@
 
 [% IF coverThumb %]
 <center><table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
-<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">
+<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% playerURI %]">
 <center><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="[% size %]" width="[% size %]" alt="[% album | html %]" STYLE="border: dashed #DDDDDD 10px"/></a></tr></td></table>[% END %]
 
 [% IF not coverThumb %]
 <table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
-<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% player | uri %]">
+<a href="browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% playerURI %]">
 <center>[% album | html %]</center></a></td><td>
 <a href=""><img src="html/images/spacer.gif" border="0" height="80" width="0" alt="[% album | html %]"></a></td></table>[% END %]
 
@@ -18,42 +18,42 @@
 
 <table cellpadding="0" cellspacing="0" border="0" align="center"><td class="even">
 [% IF mixable_descend %]
-<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">
+<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
 <img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]"></a></nobr>[% END %]
 
 [% IF mixable_not_descend %]
-<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">
+<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
 <img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_MIX" | string %]"></a></nobr>[% END %]
 
 </td></tr><center><table cellspacing="0" cellpadding="0"><tr><td align="center">			
 
 [% IF descend %]
 
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=loadalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 
 [% IF not descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "PLAY" | string %]</a>[% END %]
 <font class="actiontext">|
 
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insertalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "NEXT" | string %]</a>
 
 </td></tr><tr><td align="center">
 
 
 [% IF descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "ADD" | string %]</a>[% END %]
 
 [% IF not descend %]
-<a href="[% webroot %][% path %]?[% queryparams %]p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]p0=playlist&p1=append&p2=[% itempath | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "ADD" | string %]</a>[% END %]
 
 
 |
 
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% player | uri %]"><font class="actiontext">[% "DELETE" | string %]</a>
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=deletealbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% playerURI %]"><font class="actiontext">[% "DELETE" | string %]</a>
 
 </td></table></td></tr></table></div>

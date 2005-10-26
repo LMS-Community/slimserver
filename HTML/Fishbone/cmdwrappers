@@ -55,7 +55,7 @@
 [% BLOCK scanwarning -%]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
-		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
 	[%- END %]
 [% END %]
 

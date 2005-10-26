@@ -1,18 +1,18 @@
 <tr class="[% IF odd; "odd"; END %][% IF not odd; "even"; END %]" cellpadding="0">
 
 <td class="nowrap" width="72px">
-<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% player | uri %]&start=[% start %]">&uarr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% player | uri %]&start=[% start %]">&darr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">&times;</a>
+<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% playerURI %]&start=[% start %]">&uarr;</a>
+<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% playerURI %]&start=[% start %]">&darr;</a>
+<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% playerURI %]&start=[% start %]">&times;</a>
 </td>
 
 <td>&nbsp;</td>
 <td>
 
-<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a>
+<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a>
 
 [% IF album; "FROM" | string; END %]
-<em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% player | uri %]" target="browser">[% album.title | html %]</a></em>
+<em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% playerURI %]" target="browser">[% album.title | html %]</a></em>
 
 [% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 </td>

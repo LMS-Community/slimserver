@@ -1,6 +1,6 @@
 	[% pagetitle = "EDIT_PLAYLIST" | string %]
 	[% pageHeaderMenu = BLOCK %]
-		/ [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
+		/ [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
 	[% END %]
 	[% PROCESS pageheader.html %] 
 
@@ -21,7 +21,7 @@
 			<input type=hidden name="player" value="[% player %]">
 		</form>
 	</p>
-	<p><a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% "DONE_EDITING" | string %]</a>
+	<p><a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% "DONE_EDITING" | string %]</a>
 	<p>
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
 			[% FOREACH item = items %]

@@ -32,7 +32,7 @@
 [% IF additionalLinks.browse %]
     [% FOREACH link = additionalLinks.browse %]
     <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
+ 		<a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -42,7 +42,7 @@
 [% IF additionalLinks.search %]
     [% FOREACH key = additionalLinks.search.keys %]
     <li>
- 		<a href="[% additionalLinks.search.$key %]player=[% player | uri %]">[% key | string %]</a>
+ 		<a href="[% additionalLinks.search.$key %]player=[% playerURI %]">[% key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -50,12 +50,12 @@
       <p>[% IF not nosetup %] </p>
       <h4><font color="#999999">[% "SETTINGS" | string %]</font></h4>
       <ul>
-        <li> <a href="setup.html?page=server&player=[% player | uri %]">[% "SERVER_SETTINGS" | string %]</a> 
+        <li> <a href="setup.html?page=server&player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a> 
           [% player_list %] </li>
 [% IF additionalLinks.settings %]
     [% FOREACH key = additionalLinks.settings.keys %]
     <li>
- 		<a href="[% additionalLinks.settings.$key %]player=[% player | uri %]">[% key | string %]</a>
+ 		<a href="[% additionalLinks.settings.$key %]player=[% playerURI %]">[% key | string %]</a>
  	</li>
     [% END %]
 [% END %]
@@ -64,7 +64,7 @@
     <ul>
     [% FOREACH key = additionalLinks.plugins.keys %]
     <li>
-    	<a href="[% additionalLinks.plugins.$key %]player=[% player | uri %]">[% key | string %]</a>
+    	<a href="[% additionalLinks.plugins.$key %]player=[% playerURI %]">[% key | string %]</a>
     </li>
     [% END %]
     </ul>
@@ -76,7 +76,7 @@
 [% IF additionalLinks.help %]
     [% FOREACH link = additionalLinks.help %]
     <li>
- 		<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
+ 		<a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a>
  	</li>
     [% END %]
 [% END %]

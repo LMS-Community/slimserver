@@ -5,11 +5,11 @@
 		<ul>
 		[% IF menulist %]
 		    [% FOREACH link = menulist %]
-	    		<li><a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a></li>
+	    		<li><a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a></li>
 	    	[% END %]
 		[% END %]
 		[% IF additionalmenu.text %]
-	   		<li><a href="[% additionalmenu.link %]?player=[% player | uri %]">[% additionalmenu.text | string %]</a></li>
+	   		<li><a href="[% additionalmenu.link %]?player=[% playerURI %]">[% additionalmenu.text | string %]</a></li>
 		[% END %]
 		</ul>
 	[% END %]

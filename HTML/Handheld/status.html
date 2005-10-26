@@ -12,7 +12,7 @@
 					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 					<b>[% currentsong %]</b> [% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;
-					(<a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% player | uri %]&amp;start=[% start %]">[% "DELETE" | string %]</a>)
+					(<a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]&amp;start=[% start %]">[% "DELETE" | string %]</a>)
 				[% ELSE %]
 					<p><br>[% 'PLAYLIST_EMPTY' | string %]</p>
 				[% END %]
@@ -22,7 +22,7 @@
 		[% IF songtitle %]
 			<tr>
 				<td>[% "TITLE" | string %][% "COLON" | string %]</td>
-				<td><a href="songinfo.html?item=[% itemobj.id %]&player=[% player | uri %]">[% songtitle %]</a></td>
+				<td><a href="songinfo.html?item=[% itemobj.id %]&player=[% playerURI %]">[% songtitle %]</a></td>
 			</tr>
 		[% END %]
 	   		
@@ -33,7 +33,7 @@
 					<td>[% role | upper | string %][% "COLON" | string %]</td>
 					<td>
 						[% FOREACH contributor = contributors.sort %]
-							<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% player | uri %]">[% contributor.name %]</a>
+							<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% playerURI %]">[% contributor.name %]</a>
 						[% END %]
 					</td>
 				</tr>
@@ -44,7 +44,7 @@
 			<tr>
 				<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 				<td>
-					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]">[% itemobj.album %]</a>
+					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% itemobj.album %]</a>
 					[% IF itemobj.year %] ([% itemobj.year %])[% END %]
 				</td>
 			</tr>
@@ -53,7 +53,7 @@
 		[% IF itemobj.coverArt('thumb', 1) %]
 			<tr>
 				<td></td>
-				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]"><img src="/music/[% itemobj.id %]/thumb.jpg" border="0"></a></td>
+				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]"><img src="/music/[% itemobj.id %]/thumb.jpg" border="0"></a></td>
 			</tr>
 		[% END %]
 	</table>
@@ -61,11 +61,11 @@
 	<p></p>
 	<table width=100% bgcolor="[% subtitleC %]">
 	   <tr align="center">
-	        <td><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
-	        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
-	        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a></td>
-	        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "NEXT" | string %]</a></td>
-	        <td><a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=play&player=[% playerURI %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=stop&player=[% playerURI %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
+	        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a></td>
+	        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]">[% "NEXT" | string %]</a></td>
+	        <td><a href="status.html?p0=pause&player=[% playerURI %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
 	   </tr>
 	</table>
 	
@@ -78,7 +78,7 @@
 		</tr>
 		<tr>
     		<td>[% "MUTE" | string %][% "COLON" | string %]</td>
-    		<td>[% IF mute %]<b>[% ELSE %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1">[% END %][% "MCON" | string %][% IF mute %]</b>[% ELSE %]</a>[% END %]&nbsp;[% IF mute %]<a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0">[% ELSE %]<b>[% END %][% "MCOFF" | string %][% IF mute %]</a>[% ELSE %]</b>[% END %]</td>
+    		<td>[% IF mute %]<b>[% ELSE %]<a href="status.html?p0=button&p1=muting&player=[% playerURI %]&start=1">[% END %][% "MCON" | string %][% IF mute %]</b>[% ELSE %]</a>[% END %]&nbsp;[% IF mute %]<a href="status.html?p0=button&p1=muting&player=[% playerURI %]&start=0">[% ELSE %]<b>[% END %][% "MCOFF" | string %][% IF mute %]</a>[% ELSE %]</b>[% END %]</td>
 		</tr>
 
 		[% SET notext='1' nolower='1' separator='&nbsp;' %]
@@ -95,8 +95,8 @@
 		<tr>
 			<td>[% "POWER" | string %][% "COLON" | string %]</td>
 			<td>
-				<a href="status.html?player=[% player | uri %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %][% "MCON" | string %][% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
-				<a href="status.html?player=[% player | uri %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %][% "MCOFF" | string %][% IF mode == 'off' %]</b>[% END %]</a>
+				<a href="status.html?player=[% playerURI %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %][% "MCON" | string %][% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
+				<a href="status.html?player=[% playerURI %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %][% "MCOFF" | string %][% IF mode == 'off' %]</b>[% END %]</a>
 			</td>
 		</tr>
 	</table>

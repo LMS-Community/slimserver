@@ -7,6 +7,6 @@
  		[% IF currentsong %]</b>[% END %]
 		</td>
    <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>
+      <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>
    </td>
 </tr>

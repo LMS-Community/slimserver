@@ -9,9 +9,9 @@
     <p></p>
     <h3>[% "EDIT_PLAYLIST" | string %]</h3>
     <p>([% dir %])</p>
-    <a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / 
-    <a href="edit_playlist.html?player=[% player | uri %]">[% "EDIT_PLAYLIST" | string %]</a> /
-    <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
+    <a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / 
+    <a href="edit_playlist.html?player=[% playerURI %]">[% "EDIT_PLAYLIST" | string %]</a> /
+    <a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
     <p></p>
     <hr>
     <p>

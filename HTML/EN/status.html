@@ -11,17 +11,17 @@
     [% IF modepause %][% "PAUSED_ON" | string %][% END %]
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]
-<b><a href="status.html?player=[% player | uri %]#currentsong">[% songtitle %]</a></b> [% IF album %]from[% END %] 
-<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">[% album | html %]</a></i> 
+<b><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></b> [% IF album %]from[% END %] 
+<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]" target="browser">[% album | html %]</a></i> 
 [% IF artist %][% "BY" | string %] [% END %]
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]" target="browser">[% artist | html %]</a>
-[% IF songcount %] (<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>)[% END %]
+<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]" target="browser">[% artist | html %]</a>
+[% IF songcount %] (<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>)[% END %]
 [% IF not songcount %] [% "NOTHING" | string %] [% END %]
-<hr><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a>
-<a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "SKIP" | string %]</a>
-    [% IF not modeplay %]<a href="status.html?p0=play&player=[% player | uri %]">[% END %][% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %][% IF not modeplay %]</a>[% END %]
-    <a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a>
-    [% IF not modestop %]<a href="status.html?p0=stop&player=[% player | uri %]">[% END %][% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %][% IF not modestop %]</a>[% END %]
+<hr><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a>
+<a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]">[% "SKIP" | string %]</a>
+    [% IF not modeplay %]<a href="status.html?p0=play&player=[% playerURI %]">[% END %][% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %][% IF not modeplay %]</a>[% END %]
+    <a href="status.html?p0=pause&player=[% playerURI %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a>
+    [% IF not modestop %]<a href="status.html?p0=stop&player=[% playerURI %]">[% END %][% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %][% IF not modestop %]</a>[% END %]
 
 <br>[% PROCESS statecontrol.html state='repeat' modes=['off','one','all'] %]
 <br>[% PROCESS statecontrol.html state='shuffle' modes=['off','songs','albums'] %]
@@ -29,8 +29,8 @@
 [% IF isplayer %]<br>
 
     [% "PLAYER" | string %][% "COLON" | string %]
-               [% IF mode == 'off' %]<a target="_top" href="index.html?player=[% player | uri %]&p0=power&p1=1">[% END %][% IF mode != 'off' %]<b>[% END %][% "ON" | string %][% IF mode != 'off' %]</b>[% END %][% IF mode == 'off' %]</a>[% END %]/[% IF mode != 'off' %]<a
-               target="_top" href="index.html?player=[% player | uri %]&p0=power&p1=0">[% END %][% IF mode == 'off' %]<b>[% END %][% "OFF" | string %][% IF mode == 'off' %]</b>[% END %][% IF mode != 'off' %]</a>[% END %]
+               [% IF mode == 'off' %]<a target="_top" href="index.html?player=[% playerURI %]&p0=power&p1=1">[% END %][% IF mode != 'off' %]<b>[% END %][% "ON" | string %][% IF mode != 'off' %]</b>[% END %][% IF mode == 'off' %]</a>[% END %]/[% IF mode != 'off' %]<a
+               target="_top" href="index.html?player=[% playerURI %]&p0=power&p1=0">[% END %][% IF mode == 'off' %]<b>[% END %][% "OFF" | string %][% IF mode == 'off' %]</b>[% END %][% IF mode != 'off' %]</a>[% END %]
 
 <br><br>
 [% PROCESS volumecontrol.html %]

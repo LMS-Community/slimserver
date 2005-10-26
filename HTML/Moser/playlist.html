@@ -4,10 +4,10 @@
     <div class="controls">
       <ul>
        [%- IF cansave %]
-        <li><a target="browser" href="edit_playlist.html?player=[% player | uri %]&saveCurrentPlaylist=1"><span>[% "SAVE" | string %]</span></a></li>
+        <li><a target="browser" href="edit_playlist.html?player=[% playerURI %]&saveCurrentPlaylist=1"><span>[% "SAVE" | string %]</span></a></li>
        [%- END %]
-        <li><a href="status.m3u?player=[% player | uri %]"><span>[% "DOWNLOAD" | string %]</span></a></li>
-        <li><a href="status.html?p0=playlist&amp;p1=clear&amp;player=[% player | uri %]"><span>[% "CLEAR" | string %]</span></a></li>
+        <li><a href="status.m3u?player=[% playerURI %]"><span>[% "DOWNLOAD" | string %]</span></a></li>
+        <li><a href="status.html?p0=playlist&amp;p1=clear&amp;player=[% playerURI %]"><span>[% "CLEAR" | string %]</span></a></li>
       </ul>
     </div>
   </div>

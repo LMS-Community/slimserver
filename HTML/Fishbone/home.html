@@ -6,7 +6,7 @@
 	[% IF additionalLinks.help %]
 		[% FOREACH link = additionalLinks.help %]
 		<li>
-			<a href="[% link.value %]player=[% player | uri %]">[% link.key | string %]</a>
+			<a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a>
 		</li>
 		[% END %]
 		<li>

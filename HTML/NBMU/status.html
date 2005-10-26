@@ -1,7 +1,7 @@
 <html>
   <head>
 
-    <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% player | uri %]&start=[% start %]&refresh=1">
+    <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% playerURI %]&start=[% start %]&refresh=1">
     <title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %] </title>
     <link rel="stylesheet" href="slimserver.css">
   </head>
@@ -40,30 +40,30 @@
 	[% IF modestop; "STOPPED_ON" | string; END %]
 	[% IF currentsong; currentsong; "&nbsp;"; "OUT_OF" | string; "&nbsp;"; songcount; END %][% "COLON" | string %] 
 
-	<b><a href="status.html?player=[% player | uri %]#currentsong">[% songtitle %]</a></b> 
+	<b><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></b> 
 
 	[% IF songcount %]
-		(<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]">[% "DELETE" | string %]</a>)
+		(<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>)
 	[% END %]
 
 	[% IF not songcount; "NOTHING" | string; END %] 
 
 	<hr>
-	<a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a> 
-	<a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "SKIP" | string %]</a> 
+	<a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a> 
+	<a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]">[% "SKIP" | string %]</a> 
 
-	<a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b><font color="#FF0000">[% END %]
+	<a href="status.html?p0=play&player=[% playerURI %]">[% IF modeplay %]<b><font color="#FF0000">[% END %]
 
-[% "PLAY" | string %][% IF modeplay %]</font></b>[% END %]</a> <a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b><font color="#FF0000">[% END %][% "PAUSE" | string %][% IF modepause %]</font></b>[% END %]</a> 
+[% "PLAY" | string %][% IF modeplay %]</font></b>[% END %]</a> <a href="status.html?p0=pause&player=[% playerURI %]">[% IF modepause %]<b><font color="#FF0000">[% END %][% "PAUSE" | string %][% IF modepause %]</font></b>[% END %]</a> 
 
-      <a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b><font color="#FF0000">[% END %][% "STOP" | string %][% IF modestop %]</font></b>[% END %]</a> 
+      <a href="status.html?p0=stop&player=[% playerURI %]">[% IF modestop %]<b><font color="#FF0000">[% END %][% "STOP" | string %][% IF modestop %]</font></b>[% END %]</a> 
 &nbsp;[% PROCESS statecontrol.html state='repeat' modes=['off','one','all'] activeon='<b><font color="#FF0000">' activeoff='</b></font>' activelink='1' %]
  
 &nbsp;[% PROCESS statecontrol.html state='shuffle' modes=['off','songs','albums'] activeon='<b><font color="#FF0000">' activeoff='</b></font>' activelink='1' %]
       <br>
 
       [% IF coverThumb %]
-	<a href="browsedb.html?level=0&hierarchy=track&album=[% itemobj.album.id | uri %]&player=[% player | uri %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100"></a>
+	<a href="browsedb.html?level=0&hierarchy=track&album=[% itemobj.album.id | uri %]&player=[% playerURI %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100"></a>
 	[% END %]
       <br>
 [% PROCESS volumecontrol.html activeon='<b><font color="#FF0000">' activeoff='</b></font>' %]

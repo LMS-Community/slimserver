@@ -78,9 +78,9 @@
         <li class="even">
           <div class="controls">
             <ul class="songctl">
-              <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
-              <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
-              <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&amp;player=[% player | uri %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
+              <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
+              <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
+              <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
             </ul>
           </div>
           <div class="browseline">[% "THIS_ENTIRE_PLAYLIST" | string %]</div>

@@ -1,7 +1,7 @@
 [% pagetitle = 'ADVANCEDSEARCH' %]
 [% pageicon = 'ADVANCEDSEARCH' %]
 [% pageHeaderMenu = BLOCK %]
-	&nbsp;/ <a href="advanced_search.html?player=[% player | uri %]">[% "ADVANCEDSEARCH" | string %]</a>
+	&nbsp;/ <a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html %]
 
@@ -182,11 +182,11 @@
 		<tr>
 			<td width="100%" class="even">[% "ALL_SONGS" | string %]</td>
 			<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
-			      <nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+			      <nobr><a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
 			</td>
 			
 			<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
-			      <nobr><a href="[% webroot %]status_header.html?player=[% player | uri %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
+			      <nobr><a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
 			</td>
 		</tr>
 		[% ELSIF numresults == '0' %]

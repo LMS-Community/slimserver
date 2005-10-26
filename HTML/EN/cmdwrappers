@@ -44,7 +44,7 @@
 
 [%# this is a link to the home page %]
 [% BLOCK homelink; homeString = "HOME" | string; 
-	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
+	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
 END %]
 
 [%# this is to wrap around a link which moves something up a list %]
@@ -65,7 +65,7 @@ END %]
 [% BLOCK scanwarning %]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
-		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
 	[%- END %]
 [% END %]
 

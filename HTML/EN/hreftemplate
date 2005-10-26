@@ -1,26 +1,27 @@
 [%- FILTER null %]
 [% 
-albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album=$itemobj.album.id&amp;player=$player\"";
-songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$player\"";
-browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$player\" target=\"browser\"";
+playerURI = player | uri;
+albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album=$itemobj.album.id&amp;player=$playerURI\"";
+songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$playerURI\"";
+browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
-browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$player\"";
-browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$player\"";
+browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\"";
+browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$playerURI\"";
 
 BLOCK homeLink; homeString = "HOME" | string;
-	"<a href=\"";webroot;"home.html?player=$player\" target=\"";$target or '';"\">"; img or homeString; "</a>";
+	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
 END;
 
 BLOCK savePlaylistLink; saveString = "SAVE" | string; 
-	"<a href=\"edit_playlist.html?player=$player&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
+	"<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
 END;
 
 BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
-	"<a href=\"status.m3u?player=$player\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>"; 
+	"<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>"; 
 END;
 
 BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$player\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
+	"<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
 END;
 
 BLOCK thumbnailImg;
@@ -65,15 +66,15 @@ command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 
 [%# use this to add/play/insert/remove tracks and remote URLs %]
 [% BLOCK cmdHRef -%]
-href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL || itemobj.content_type() == 'dir' || !attributes); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% player | uri %]"
+href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL || itemobj.content_type() == 'dir' || !attributes); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [% BLOCK browseDbItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% player | uri %]"
+href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% player | uri%]"
+href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [% BLOCK ItemHRef -%]

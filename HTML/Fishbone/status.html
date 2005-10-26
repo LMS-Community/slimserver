@@ -10,7 +10,7 @@
 	<td width="6" align="left" class="label2" valign="center"><nobr>
 		<table width="100%" >
 			[%- FOREACH level IN [100,84,72,60,50,36,24,12,0] -%]
-				<tr><td align="center"><a href="[% statusroot %]?p0=mixer&p1=[% type %]&p2=level&player=[% player | uri %]&start=[% start %]">
+				<tr><td align="center"><a href="[% statusroot %]?p0=mixer&p1=[% type %]&p2=level&player=[% playerURI %]&start=[% start %]">
 				<img src=
 				[%- IF level == 50 -%]
 					"[% webroot %]html/images/pixel.middle[%- IF $type < '50' -%]_s[%- END -%].gif" height="5"
@@ -33,12 +33,12 @@
 	%]
 	[% FOREACH level = vols.nsort %]
 		<td valign="bottom">
-			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% player | uri %]&start=[% start %]">
+			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% playerURI %]&start=[% start %]">
 				<img src="[% webroot %]html/images/spacer.gif" width="3" height="[% level %]" hspace="0" vspace="0">
 			</a>
 		</td>
 		<td valign="bottom">
-			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% player | uri %]&start=[% start %]">
+			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% playerURI %]&start=[% start %]">
 				<img src="[% webroot %]html/images/pixel.green[% IF volume < vols.$level %]_s[% END %].gif" width="4" height="[% level %]" hspace="0" vspace="0">
 			</a>
 		</td>
@@ -46,12 +46,12 @@
 [% END %]
 
 [% BLOCK statectrl %]
-	<a class="[% IF not condition %]dark[% END %]button" href="[% statusroot %]?p0=[% item || 'playlist' %]&p1=[% command %]&p2=[% arg %]&player=[% player | uri %]&start=[% start %]"><b>[% cmdstring | string | upper%]</b></a>
+	<a class="[% IF not condition %]dark[% END %]button" href="[% statusroot %]?p0=[% item || 'playlist' %]&p1=[% command %]&p2=[% arg %]&player=[% playerURI %]&start=[% start %]"><b>[% cmdstring | string | upper%]</b></a>
 [% END %]
 
 [% BLOCK playctl %]
 	<td>
-		<a href="[% statusroot %]?[% command %]&player=[% player | uri %]&start=[% start %]">
+		<a href="[% statusroot %]?[% command %]&player=[% playerURI %]&start=[% start %]">
 		<img valign="bottom" id="gray" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="tan" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
 	</td>
 [% END %]
@@ -60,7 +60,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	[% IF undock %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% player | uri %]&start=[% start %]&undock=[% undock %]">[% END %]
+	[% IF undock %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% playerURI %]&start=[% start %]&undock=[% undock %]">[% END %]
 	[% PROCESS customheader.html %]
 	[% IF playercount == '0' %]<script language="JavaScript">
 		<!--Hide
@@ -80,15 +80,15 @@
 				</td>
 				<td align="right">
 					[% IF sync %]
-						<a href="[% statusroot %]?p0=sync&p1=-&player=[% player | uri %]">[% "UNSYNC" | string %]</a>
+						<a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
 						 / 
 					[% END %]
 					[% IF mode != 'off' %]
-						<A href="[% statusroot %]?p0=button&p1=sleep&player=[% player | uri %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
+						<A href="[% statusroot %]?p0=button&p1=sleep&player=[% playerURI %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
 					[% END %][% IF mode != 'off' and not undock %] / [% END %]
-					[% IF not nosetup  %]<a href="setup.html?page=player&player=[% player | uri %]&playerid=[% player | uri %]" target="browser">[% "SETTINGS" | string %]</a>
+					[% IF not nosetup  %]<a href="setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 					[% END %][% IF not undock %] /
-					<a href="javascript:openRemote('[% player | uri %]','[% player_name %]')">Undock</a>[% END %]
+					<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>[% END %]
 				</td>
 			</table>
 		</div>
@@ -127,16 +127,16 @@
 					<p class="label">[% IF modeplay %][% "PLAYING" | string %][% END %]
 					[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 					[% IF modestop %][% "STOPPED_ON" | string %][% END %]
-					[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% player | uri %]&start=[% start %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
+					[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
 					<p><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
 					[% IF itemobj.duration %]&nbsp;([% itemobj.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
 					[% IF not coverThumb %]
 					<table  width="100%"><td width="50%" align="left"><nobr>[% END %]
-						<p class="label">[% IF itemobj.artist && itemobj.artist != noArtist %][% "ARTIST" | string %]&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=deletealbum&p2=&p3=[% itemobj.artist | uri %]&player=[% player | uri %]&astart=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
+						<p class="label">[% IF itemobj.artist && itemobj.artist != noArtist %][% "ARTIST" | string %]&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=deletealbum&p2=&p3=[% itemobj.artist | uri %]&player=[% playerURI %]&astart=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
 						[% PROCESS artistsAsHTML.html noby=1 %]
 						[% END %]
 						[% IF not coverThumb %]</nobr></td><td><nobr>[% END %]
-						<p class="label">[% IF itemobj.album.title && itemobj.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=deletealbum&p2=&p3=&p4=[% itemobj.album.title | uri %]&player=[% player | uri %]&start=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
+						<p class="label">[% IF itemobj.album.title && itemobj.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&p1=deletealbum&p2=&p3=&p4=[% itemobj.album.title | uri %]&player=[% playerURI %]&start=[% start %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a></p>
 						[% WRAPPER albumlink %][% albumHRef %][% END %]
 						[% END %]
 						[% IF not coverthumb %]</td>

@@ -22,35 +22,35 @@
 [% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
 </small>
 <p>
-   [% IF songtitle %]<a href="songinfo.html?item=[% item %]&player=[% player | uri %]">[% songtitle %]</a> [% END %]
-   [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% player | uri %]">[% artist %]</a>   [% END %]
-   [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]">[% album %]</a>[% END %]
+   [% IF songtitle %]<a href="songinfo.html?item=[% item %]&player=[% playerURI %]">[% songtitle %]</a> [% END %]
+   [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]">[% artist %]</a>   [% END %]
+   [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">[% album %]</a>[% END %]
    [% IF year %]&nbsp;([% year %])[% END %]
 </p>
 
 
 
 [% IF coverart %]
-<p><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></p>[% END %]
+<p><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></p>[% END %]
 
 
 
 
 <table width=100% bgcolor="#c5c5c5">
    <tr align="center">
-        <td><a href="status.html?p0=play&player=[% player | uri %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
-        <td><a href="status.html?p0=stop&player=[% player | uri %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
-        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% player | uri %]">[% "PREV" | string %]</a></td>
-        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% player | uri %]">[% "NEXT" | string %]</a></td>
-        <td><a href="status.html?p0=pause&player=[% player | uri %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
+        <td><a href="status.html?p0=play&player=[% playerURI %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a></td>
+        <td><a href="status.html?p0=stop&player=[% playerURI %]">[% IF modestop %]<b>[% END %][% "STOP" | string %][% IF modestop %]</b>[% END %]</a></td>
+        <td><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a></td>
+        <td><a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]">[% "NEXT" | string %]</a></td>
+        <td><a href="status.html?p0=pause&player=[% playerURI %]">[% IF modepause %]<b>[% END %][% "PAUSE" | string %][% IF modepause %]</b>[% END %]</a></td>
    </tr>
 </table>
 <table width=100%>
 <tr>
     <td><font size="-1"><b>[% "MUTE" | string %]</b></font></td>
     <td>
-    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=1"><font size="-1">[% IF mute %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;
-    <a href="status.html?p0=button&p1=muting&player=[% player | uri %]&start=0"><font size="-1">[% IF NOT mute %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
+    <a href="status.html?p0=button&p1=muting&player=[% playerURI %]&start=1"><font size="-1">[% IF mute %]<b>[% END %][% "MCON" | string %][% IF volume < '1' %]</b>[% END %]</font></a>&nbsp;
+    <a href="status.html?p0=button&p1=muting&player=[% playerURI %]&start=0"><font size="-1">[% IF NOT mute %]<b>[% END %][% "MCOFF" | string %][% IF volume > '0' %]</b>[% END %]</font></a></td>
 </tr>
 <tr>
     <td><font size="-1"><b>[% "REPEAT" | string %]</b></font></td>
@@ -71,8 +71,8 @@
 <tr>
     <td><font size="-1"><b>[% "POWER" | string %]</b></font></td>
     <td>
-    <a href="index.html?player=[% player | uri %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %]<font size="-1">[% "MCON" | string %]</font>[% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
-    <a href="index.html?player=[% player | uri %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %]<font size="-1">[% "MCOFF" | string %]</font>[% IF mode == 'off' %]</b>[% END %]</a>
+    <a href="index.html?player=[% playerURI %]&p0=power&p1=1">[% IF mode != 'off' %]<b>[% END %]<font size="-1">[% "MCON" | string %]</font>[% IF mode != 'off' %]</b>[% END %]</a>&nbsp;
+    <a href="index.html?player=[% playerURI %]&p0=power&p1=0">[% IF mode == 'off' %]<b>[% END %]<font size="-1">[% "MCOFF" | string %]</font>[% IF mode == 'off' %]</b>[% END %]</a>
     </td>
 </tr>
 </table>

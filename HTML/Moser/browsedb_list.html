@@ -6,19 +6,19 @@
           <div class="browseline">
           [%- IF descend -%]
             [%- IF hierarchy %]
-            <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% player | uri %]">[% END %][% text | html %]</a>
+            <a href="browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes | html %]&amp;player=[% playerURI %]">[% END %][% text | html %]</a>
 [%# Include the artist for the album view -%]
             [% PROCESS artistsAsHTML.html IF itemobj && itemobj.isa('Slim::DataStores::DBI::Album') %]
           [%- ELSE %]
-            <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% player | uri %]">[% text | html %]</a></span>
+            <span class="songtitle"><a href="songinfo.html?[% IF item %]item=[% item %][% ELSE %]itempath=[% itempath | uri %][% END %]&amp;player=[% playerURI %]">[% text | html %]</a></span>
            [%- IF includeAlbum %]
             [% "FROM" | string %] <span class="album">
-		 <i><a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album.id %]&amp;player=[% player | uri %]" target="browser">[% album.title | html %]</a></i>
+		 <i><a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% album.id %]&amp;player=[% playerURI %]" target="browser">[% album.title | html %]</a></i>
 		</span>
            [%- END %]
            <span class="artist">[%- IF includeArtist && artist; PROCESS artistsAsHTML.html; END -%]</span>
            [%- IF year %]
-            (<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% year %]&amp;player=[% player | uri %]">[% year %]</a>)
+            (<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% year %]&amp;player=[% playerURI %]">[% year %]</a>)
            [%- END %]
           [%- END %]
           </div>

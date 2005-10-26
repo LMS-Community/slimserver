@@ -40,7 +40,7 @@
 [%- END %]
 
 [% BLOCK homelink; homeString = "HOME" | string; -%]
-<a href="[% webroot %]home.html?player=[% player | uri %]" [% IF target %]target="[% target %]"[% END %]>[% img or homeString %]</a>
+<a href="[% webroot %]home.html?player=[% playerURI %]" [% IF target %]target="[% target %]"[% END %]>[% img or homeString %]</a>
 [%- END %]
 
 [% BLOCK moveuplink -%]
@@ -58,7 +58,7 @@
 [% BLOCK scanwarning -%]
 <div id="warning>[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
-		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=$player">[% "HERE" | string %]</a>.
+		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
 	[%- END %]
 </div>
 [%- END %]

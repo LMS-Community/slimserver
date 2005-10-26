@@ -1,5 +1,5 @@
 [% IF num || num == 0 %]
-		[% UNLESS noHref %]<a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% END %]
+		[% UNLESS noHref %]<a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" target="status">[% END %]
 		[% title | html %][% UNLESS noHref %]</a>[% END %]
 [% ELSIF item %]
 	<a [% songinfoHRef %] target="browser">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>

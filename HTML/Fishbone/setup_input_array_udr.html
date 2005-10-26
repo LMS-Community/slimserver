@@ -1,10 +1,10 @@
 [% IF PrefsInTable %]<tr><td>[% END %]
 &nbsp;[% PrefExtValue %]
 [% IF PrefsInTable %]</td><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">&uarr;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% playerURI %]&[% PrefNameRoot %]Action[% PrefIndex %]=Up">&uarr;</a>
 [% IF PrefsInTable %]</td><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">&darr;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% playerURI %]&[% PrefNameRoot %]Action[% PrefIndex %]=Down">&darr;</a>
 [% IF PrefsInTable %]</td><td>[% END %]
-<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% player | uri %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</a>
+<a class="linkbtn" href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% playerURI %]&[% PrefNameRoot %]Action[% PrefIndex %]=Remove">&times;</a>
 [% IF PrefsInTable %]</td></tr>[% END %]
 [% IF not PrefsInTable %]<br>[% END %]

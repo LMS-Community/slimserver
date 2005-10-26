@@ -11,11 +11,11 @@
 	    		[% UNLESS nosetup %]
 	    			[% "SETTINGS" | string %]
 	    			[% UNLESS noserver %]
-	    				<a href="[% webroot %]setup.html?player=[% player | uri %]&page=server">[% "SERVER" | string %]</a> /
+	    				<a href="[% webroot %]setup.html?player=[% playerURI %]&page=server">[% "SERVER" | string %]</a> /
 	    			[% END %]
-	    			<a href="[% webroot %]setup.html?player=[% player | uri %]&playerid=[% player | uri %]&page=player">[% "PLAYER" | string %]</a> -- 
-	    		[% END %]<a href="[% webroot %]hitlist.html?player=[% player | uri %]">[% "STATISTICS" | string %]</a> -- 
-	    		<a href="[% webroot %]html/about.html?player=[% player | uri %]">[% "ABOUT_SHORT" | string %]</a>
+	    			<a href="[% webroot %]setup.html?player=[% playerURI %]&playerid=[% playerURI %]&page=player">[% "PLAYER" | string %]</a> -- 
+	    		[% END %]<a href="[% webroot %]hitlist.html?player=[% playerURI %]">[% "STATISTICS" | string %]</a> -- 
+	    		<a href="[% webroot %]html/about.html?player=[% playerURI %]">[% "ABOUT_SHORT" | string %]</a>
 	    	</td>
 	    </tr>
 	</table>

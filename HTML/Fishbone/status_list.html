@@ -8,7 +8,7 @@
 
 [%- BLOCK link %]
 		<td [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% player | uri %]&start=[% start %]" target="[% target %]">
+		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% playerURI %]&start=[% start %]" target="[% target %]">
 		<img src="[% webroot %]html/images/[% img %]" height="11" align="middle"
 			alt='[% text | string %]' 
 			title='[% text | string %]' 

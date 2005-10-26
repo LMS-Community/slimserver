@@ -9,7 +9,7 @@
 [%- PROCESS pageheader.html -%]
 [%- PROCESS menu.html -%]
 
-[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %]<a href="browsetree.html?player=[% player | uri %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
+[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %]<a href="browsetree.html?player=[% playerURI %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]
 [% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</p>[% END %]
 
 
@@ -30,11 +30,11 @@
 
 <table border="0" cellspacing="0" cellpadding="0" width="100%" >
        [% IF playlistname %]<tr><td><font class="itemtext">&nbsp;[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
-       <td width="11" align="right" style="padding-right:15px;"><nobr><a href="status.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% player | uri %]">
+       <td width="11" align="right" style="padding-right:15px;"><nobr><a href="status.html?p0=playlist&p1=load&p2=[% dir | uri %]&player=[% playerURI %]">
        <font class="actiontext">[% "PLAY" | string %]</a>
 <font class="actiontext">|
 
-<a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% player | uri %]">
+<a href="status.html?p0=playlist&p1=add&p2=[% dir | uri %]&player=[% playerURI %]">
 <font class="actiontext">[% "ADD" | string %]</a></nobr>
 
 </td></tr>[% END %]
@@ -55,7 +55,7 @@
        <input type=hidden name="dir" value="[% dir %]"></td>
        </form></tr>
 [% END %]
-[% IF titled %]<tr><td><a href="edit_playlist.html?player=[% player | uri %]&id=[% playlist.id %]&deletePlaylist=1"><font class="actiontext">[% "DELETE_THIS_PLAYLIST" | string %]</a></td></tr>[% END %]
+[% IF titled %]<tr><td><a href="edit_playlist.html?player=[% playerURI %]&id=[% playlist.id %]&deletePlaylist=1"><font class="actiontext">[% "DELETE_THIS_PLAYLIST" | string %]</a></td></tr>[% END %]
 [% IF playlistname %]
 </table>
 [% END %]

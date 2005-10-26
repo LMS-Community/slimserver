@@ -18,7 +18,7 @@
 
 
 [% IF itemobj.coverArt('cover', 1) %]
-<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]"><p align="center"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]"><p align="center"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
 [% END %]
 
 <br><br>
@@ -29,11 +29,11 @@
 <tr><td width="40" align="left"><img src="html/images/lefttopcorner.gif"></td><td></td><td width="40" align="right"><img src="html/images/righttopcorner.gif"></td></tr>
 <tr><td></td><td align="center">
 
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" style="text-decoration:none">
-<font class="menutext">[% "PLAY" | string %]</a>&nbsp;&nbsp;&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% player | uri %]">
+<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" style="text-decoration:none">
+<font class="menutext">[% "PLAY" | string %]</a>&nbsp;&nbsp;&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% playerURI %]">
 
 <font class="menutext">[% "NEXT" | string %]</a>
-&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% player | uri %]" style="text-decoration:none">
+&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" style="text-decoration:none">
 
 <Font class="menutext">&nbsp;[% "ADD" | string %]</a>&nbsp;</small></td><td></td></tr>
 
@@ -68,7 +68,7 @@
 			<td>
 
 			[% FOREACH contributor = contributors.sort %]
-				<font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% player | uri %]" style="text-decoration:none">[% contributor.name | html %]</a>
+				<font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
 			[% END %]
 
 			</td>
@@ -81,7 +81,7 @@
                         [% "ALBUM" | string %]:
                 </td>
                 <td>
-			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% player | uri %]" style="text-decoration:none">[% itemobj.album.title %]</a>
+			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
                 </td>
         </tr>
         [% END %] 
@@ -94,7 +94,7 @@
                 </td>
                 <td>
                 [% FOREACH genre = genres %]
-                        <font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% player | uri %]"style="text-decoration:none">[% genre %]</a>
+                        <font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre %]</a>
                 [% END %]
                 </td>
         </tr><tr><td height="30"></td><td>

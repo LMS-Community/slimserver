@@ -1,6 +1,6 @@
 [% IF num || num == 0 %]
-		<b><a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
-		<a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% player | uri %]" target="status">[% title | html %]</a></b>
+		<b><a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" target="status">&nbsp;[% num + 1 %].&nbsp;</a>
+		<a href="[% webroot %]status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" target="status">[% title | html %]</a></b>
 [% ELSIF item %]
 	<a [% songinfoHRef %]>[% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 [% ELSE %]

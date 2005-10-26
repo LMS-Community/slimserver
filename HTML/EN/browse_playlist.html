@@ -63,9 +63,9 @@
 		<tr>
 			<td class="odd" bgcolor="#FFFFFF">[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
 
-			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status">[% "PLAY" | string %]</a></nobr></td>
+			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=loadtracks&playlist=[% playlist.id %]&player=[% playerURI %]" target="status">[% "PLAY" | string %]</a></nobr></td>
 
-			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% player | uri %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr></td>
+			<td class="odd"><nobr><a href="status_header.html?command=playlist&subcommand=addtracks&playlist=[% playlist.id %]&player=[% playerURI %]" target="status">[% "ADD_TO_PLAYLIST" | string %]</a></nobr></td>
 
 		</tr>
 	[% END %]
