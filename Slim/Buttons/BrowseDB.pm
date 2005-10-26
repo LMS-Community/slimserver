@@ -134,9 +134,9 @@ sub init {
 			my $level     = $client->param('level');
 			my $descend   = $client->param('descend');
 			my $findCriteria = $client->param('findCriteria');
-			my $all = !ref($currentItem);
 			
 			my @levels = split(",", $hierarchy);
+			my $all = (!ref($currentItem) && $levels[$level] ne 'year');
 
 			my $ds = Slim::Music::Info::getCurrentDataStore();
 			my $fieldInfo = Slim::DataStores::Base->fieldInfo();
