@@ -2,6 +2,7 @@
 <head>
 	[% PROCESS standardheader.html %]
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]&timestamp=[% USE Date; Date.format(Date.now, '%Y%m%d%M%S'); %]">[% END %]
+	[% PROCESS html/common.js %]
 </head>
 [%- PROCESS styles.html -%]
 
