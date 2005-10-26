@@ -1568,12 +1568,12 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if ($album && ref($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
+	if ($album && blessed($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
 		# Add an album artist if it exists.
-		$albumObj->contributor($contributor) if ref($contributor);
+		$albumObj->contributor($contributor) if blessed($contributor);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort($sortable_title);
@@ -1661,15 +1661,15 @@ sub _postCheckAttributes {
 	}
 
 	# Find a contributor associated with this track.
-	if (defined $contributor && ref($contributor) && $contributor->can('namesort')) {
+	if (blessed($contributor) && $contributor->can('namesort')) {
 
 		$primaryContributor = $contributor->namesort;
 
-	} elsif (defined $albumObj && ref($albumObj) && $albumObj->can('contributor')) {
+	} elsif (blessed($albumObj) && $albumObj->can('contributor')) {
 
 		$contributor = $albumObj->contributor;
 
-		if (defined $contributor && ref($contributor) && $contributor->can('namesort')) {
+		if (blessed($contributor) && $contributor->can('namesort')) {
 
 			$primaryContributor = $contributor->namesort;
 		}
