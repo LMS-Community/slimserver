@@ -1,6 +1,5 @@
-[% PROCESS cmdwrappers -%]
 <tr>
-  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+  <td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
       [% IF genremode %]<a href="browse.html?type=genres&id=[% genreid | uri %]&name=[% genrename | uri %]&player=[% player | uri %]">[% genrename | html %]</a>
       [% ELSIF stationmode %][% stationname %] - [% connection %]k -
          [% IF access == "PRIVATE" %]
