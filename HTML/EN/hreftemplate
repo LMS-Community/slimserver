@@ -24,7 +24,15 @@ BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
 END;
 
 BLOCK thumbnailImg;
-	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\" title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\">"; 
+	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\" 
+		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\">"; 
+END;
+
+BLOCK statusImg;
+	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+		alt=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; "($itemobj.year)"; END; "\" 
+		title=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; "($itemobj.year)"; END; "\">"; 
 END;
 
 BLOCK coverImg;
