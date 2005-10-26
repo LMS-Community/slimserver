@@ -1,8 +1,8 @@
-<!-- Page hitlist.html -->
 	[% pagetitle = "STATISTICS" | string %]
+	[% pageHeaderMenu = BLOCK %]
+		/ <a href="[% webroot %]hitlist.html?player=[% player | uri %]">[% pagetitle %]</a>
+	[% END %]
 	[% PROCESS pageheader.html %]
-
-	[% WRAPPER submenu url='hitlist.html' linktitle=pagetitle %][%- END -%]
 
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
 		<tr align="center">
@@ -22,4 +22,3 @@
 	</table>
 
 	[% PROCESS pagefooter.html %]
-<!-- /Page hitlist.html -->

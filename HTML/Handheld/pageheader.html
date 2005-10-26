@@ -1,16 +1,14 @@
 <html>
 <head>
 	[% PROCESS standardheader.html %]
+	[%# Add a unique parameter (timestamp) as PocketIE wouldn't refresh to the same URL... see http://bugs.slimdevices.com/show_bug.cgi?id=2084 for details %]
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% player | uri %]&timestamp=[% USE Date; Date.format(Date.now, '%Y%m%d%M%S'); %]">[% END %]
 	[% PROCESS html/common.js %]
 </head>
 
 [%- BLOCK submenu -%]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
-		<tr>
-			<td width="100%">[% PROCESS crumblist %]</td>
-		</tr>
-			[%- content -%]
+		<tr><td width="100%">[% PROCESS crumblist %]</td>[% content %]</tr>
 	</table>
 [%- END -%]
 
@@ -52,6 +50,4 @@
 		<tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 	</table>
 
-[%- IF pageHeaderMenu; SET pwd_list = pageHeaderMenu IF not pwd_list %]
-  [%- PROCESS crumblist IF pwd_list %]
-[%- END %]
+[%- IF pageHeaderMenu; SET pwd_list = pageHeaderMenu IF not pwd_list; PROCESS submenu; END %]

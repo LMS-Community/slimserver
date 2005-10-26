@@ -1,11 +1,8 @@
 	[% pagetitle = "SAVED_PLAYLISTS" | string %]
+	[% pageHeaderMenu = BLOCK %]
+	    [% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
+	[% END %]
 	[% PROCESS pageheader.html %]
-
-	[% WRAPPER submenu %]
-	    <tr><td>
-		    [% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
-	    </td></tr>
-	[%- END -%]
 
 	[% IF warn %]
 		<p><b>[% "NOTE" | string %]</b>

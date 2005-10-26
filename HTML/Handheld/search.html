@@ -1,8 +1,8 @@
-<!-- Element search.html -->
 	[% pagetitle = "SEARCH" | string %]
+	[% pageHeaderMenu = BLOCK %]
+		/ <a href="[% webroot %]search.html?player=[% player | uri %]">[% pagetitle %]</a>
+	[% END %]
 	[% PROCESS pageheader.html %]
-
-	[% WRAPPER submenu url='search.html' linktitle=pagetitle %][%- END -%]
 
 	[% IF not query %]
 		<p>&nbsp;</p>
@@ -57,4 +57,3 @@
 		
 	<p></p>
 	[% PROCESS pagefooter.html %]
-<!-- /Element search.html -->

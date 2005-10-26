@@ -1,6 +1,5 @@
 [%- FILTER null %]
 
-[% INCLUDE styles.html %]
 [% statusroot = 'status.html' %]
 [%-
 	oddC  = '#ffffff';

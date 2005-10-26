@@ -1,11 +1,8 @@
 	[% pagetitle = "EDIT_PLAYLIST" | string %]
-	[% PROCESS pageheader.html %] 
-
-	[% linktitle = BLOCK %]
-		[% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
+	[% pageHeaderMenu = BLOCK %]
+		/ [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% player | uri %]&hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]">[% playlist.title %]</a>
 	[% END %]
-	[% WRAPPER submenu %][%- END -%]
-
+	[% PROCESS pageheader.html %] 
 
 	<p>
 		<form method="get" action="edit_playlist.html">

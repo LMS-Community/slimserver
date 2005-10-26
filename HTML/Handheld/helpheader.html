@@ -1,7 +1,6 @@
-[% PROCESS pageheader.html %]
-
-[% linktitle = BLOCK %]
-	<a href="[% webroot %]html/help.html?player=[% player | uri %]">[% "HELP" | string %]</a>
+[% pageHeaderMenu = BLOCK %]
+	/ <a href="[% webroot %]html/help.html?player=[% player | uri %]">[% "HELP" | string %]</a>
 	[% IF pagetitle %]/ [% pagetitle %][% END %]
 [% END %]
-[% WRAPPER submenu %][%- END -%]
+[% PROCESS pageheader.html %]
+

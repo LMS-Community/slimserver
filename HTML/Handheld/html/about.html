@@ -1,8 +1,9 @@
 <!-- Page about.html -->
 	[% pagetitle = "ABOUT_SHORT" | string %]
+	[% pageHeaderMenu = BLOCK %]
+		/ <a href="[% webroot %]html/about.html?player=[% player | uri %]">[% pagetitle %]</a>
+	[% END %]
 	[% PROCESS pageheader.html %]
-	
-	[% WRAPPER submenu url='html/about.html' linktitle='Handheld skin (aka Slimple)' %][%- END -%]
 
 	<p>Simple SlimServer skin for PocketPC by Mark Erichsen, based on the Default skin. 
 	This skin does not use frames or any advanced HTML. Works well with Pocket Internet Explorer for PocketPC 2002 and Opera for Zaurus.</p>

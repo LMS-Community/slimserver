@@ -1,7 +1,8 @@
 	[% pagetitle = "HELP" | string %]
+	[% pageHeaderMenu = BLOCK %]
+		/ <a href="[% webroot %]html/help.html?player=[% player | uri %]">[% pagetitle %]</a>
+	[% END %]
 	[% PROCESS pageheader.html %]
-
-	[% WRAPPER submenu url='html/help.html' linktitle=pagetitle %][%- END -%]
 
 	<ul>
 		<li><a href="[% webroot %]html/docs/quickstart.html?player=[% player | uri %]">[% "GETTING_STARTED" | string %]</a></li>

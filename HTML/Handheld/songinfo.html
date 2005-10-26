@@ -1,7 +1,7 @@
 	[% pagetitle = "SONG_INFO" | string %]
 	[%- PROCESS pageheader.html -%]
 
-	[% WRAPPER submenu linktitle="$pagetitle / $itemobj.title" %]
+	[% WRAPPER submenu pwd_list="/ $pagetitle / $itemobj.title" %]
 			[% SET width='13' height='13' attributes="&track=$itemobj.id" -%]
 			[% PROCESS browselinks.html cmdType='play' cmdstring='PLAY' img='b_play.gif' -%]
 			<td>&nbsp;</td>

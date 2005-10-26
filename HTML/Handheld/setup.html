@@ -1,7 +1,8 @@
 	[% pagetitle = "SETTINGS" | string %]
+	[% pageHeaderMenu = BLOCK %]
+		/ [% children %] [% siblings %]
+	[% END %]
 	[% PROCESS pageheader.html %]
-
-	[% WRAPPER submenu linktitle="$children $siblings" %][%- END -%]
 
 	<p><b>[% warning ? warning : '' %]</b></p>
 
