@@ -443,7 +443,7 @@ sub lines {
 	
 	$line1 .= ' (' . ($index + 1) . ' ' . $client->string('OF') .' ' . $max . ')';
 	
-	if ($client->prefGet("alarm", $weekDay)) {
+	if ($client->prefGet("alarm", $weekDay) && $browseMenuChoices[$index] eq 'ALARM_OFF') {
 		$line2 = $client->string('ALARM_ON');
 	} else {
 		$line2 = $client->string($browseMenuChoices[$index]);
