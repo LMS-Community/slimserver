@@ -1,8 +1,8 @@
 BODY {
-    font-size : 12px;
-    background : #fcf2d4;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    color : #663300;
+	font-size : 12px;
+	background : #fcf2d4;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color : #663300;
 	BORDER: 0px;
 	margin: 0px;
 }
@@ -269,6 +269,7 @@ DIV.menu2 .stdedit {
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background: #fcf2d4;
 	color:#996600 ;
 	padding-left: 1px;
 	margin-top:1px;

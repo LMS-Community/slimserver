@@ -269,6 +269,7 @@ DIV.menu2 .stdedit {
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background: #222222;
 	color:#999;
 	padding-left: 1px;
 	margin-top:1px;
