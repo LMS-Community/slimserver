@@ -1,5 +1,5 @@
 [%- FILTER null %]
-[% statusroot = 'status.html' %]
+[% statusroot = 'status_header.html' %]
 [% noHomeLink = 1 %]
 
 [% BLOCK playlink %]

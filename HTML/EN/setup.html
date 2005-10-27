@@ -13,7 +13,7 @@
     [% IF warning %]<b>[% warning %]</b></p><hr>[% END %]
     [% IF siblings %][% siblings %]<hr>[% END %]
     [% IF children %][% children %]<hr>[% END %] 
- 	<form method="POST" action="setup.html">
+ 	<form method="post" action="setup.html?page=[% page %]&player=[% playerURI %]&playerid=[% playerid | uri %]">
 	<input type=hidden value="[% player %]" name="player">
 	<input type=hidden value="[% playerid %]" name="playerid">
 	<input type=hidden value="[% page %]" name="page">
