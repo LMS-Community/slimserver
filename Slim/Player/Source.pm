@@ -147,7 +147,13 @@ sub rate {
 	# restart playback if we've changed and we're not pausing or unpauseing
 	if ($oldrate != $newrate) {
 
-		$::d_source && msg("switching rate from $oldrate to $newrate\n") && bt();
+		if ($::d_source || $::d_source_v) {
+
+			msg("switching rate from $oldrate to $newrate\n");
+
+			bt() if $::d_source_v;
+		}
+
 		my $time = songTime($client);
 		
 		$client->rate($newrate);
@@ -361,7 +367,12 @@ sub playmode {
 	#
 	my $prevmode = $client->playmode();
 
-	$::d_source && bt() && msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
+	if ($::d_source || $::d_source_v) {
+
+		msg($client->id() . ": Switching to mode $newmode from $prevmode\n");
+
+		bt() if $::d_source_v;
+	}
 
 	# don't switch modes if it's the same 
 	if ($newmode eq $prevmode && !$seekoffset) {
