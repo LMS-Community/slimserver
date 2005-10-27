@@ -71,6 +71,7 @@ our $defaultPrefs = {
 		,'syncBufferThreshold'		=> 128
 		,'bufferThreshold'		=> 255
 		,'powerOnResume'        => 'PauseOff-NoneOn'
+		,'largeTextFont'        => 1
 	};
 
 my $scroll_pad_scroll = 6; # chars of padding between scrolling text

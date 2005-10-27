@@ -290,7 +290,7 @@ sub initSetupConfig {
 							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
 						} else {
 							$pageref->{'GroupOrder'}[1] = 'TextSize';
-							$pageref->{'GroupOrder'}[2] = undef;
+							$pageref->{'GroupOrder'}[2] = 'LargeFont';
 							$pageref->{'GroupOrder'}[6] = undef;
 						}
 
@@ -352,6 +352,16 @@ sub initSetupConfig {
 					,'Suppress_PrefLine' => 1
 					,'GroupHead' => string('SETUP_DOUBLESIZE')
 					,'GroupDesc' => string('SETUP_DOUBLESIZE_DESC')
+					,'GroupLine' => 1
+				}
+			,'LargeFont' => {
+					'PrefOrder' => ['largeTextFont']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'GroupHead' => string('SETUP_LARGETEXTFONT')
+					,'GroupDesc' => string('SETUP_LARGETEXTFONT_DESC')
 					,'GroupLine' => 1
 				}
 			,'activeFont' => {
@@ -478,6 +488,14 @@ sub initSetupConfig {
 								'1' => string('LARGE')
 							}
 							,'PrefChoose' => string('SETUP_OFFDISPLAYSIZE').string('COLON')
+						}
+			,'largeTextFont' => {
+							'validate' => \&validateInList
+							,'validateArgs' => [0,1]
+							,'options' => {
+								'0' => string('SETUP_LARGETEXTFONT_0'),
+								'1' => string('SETUP_LARGETEXTFONT_1')
+							}
 						}
 			,'activeFont'		=> {
 							'isArray' => 1

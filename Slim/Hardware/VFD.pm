@@ -519,6 +519,16 @@ Slim::Hardware::VFD::setCustomChar( 'toplinechar',
 
 # replaces = in format string
 Slim::Hardware::VFD::setCustomChar( 'doublelinechar', 
+					(	0b01111111, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b00000000, 
+						0b01111111, 
+						0b00000000	 ));
+
+Slim::Hardware::VFD::setCustomChar( 'doublelinecharM',  # alternate used by Modern Font
 					(	0b00011111, 
 						0b00000000, 
 						0b00000000, 
@@ -552,6 +562,16 @@ Slim::Hardware::VFD::setCustomChar( 'Zbottom',
                   
 # replaces / in format string.
 Slim::Hardware::VFD::setCustomChar( 'slash', 	
+			 (     		0b00000001,
+						0b00000001,
+						0b00000010,
+						0b00000100,
+						0b00001000,
+						0b00010000,
+						0b00010000,
+						0b00000000   ));
+
+Slim::Hardware::VFD::setCustomChar( 'slashM',  # alternate used by Modern Font
 				(     	0b00000011,
 						0b00000100,
 						0b00001000,
@@ -562,6 +582,16 @@ Slim::Hardware::VFD::setCustomChar( 'slash',
 						0b00000000   ));
                   
 Slim::Hardware::VFD::setCustomChar( 'backslash', 	
+				( 		0b00010000,
+						0b00010000,
+						0b00001000,
+						0b00000100,
+						0b00000010,
+						0b00000001,
+						0b00000001,
+						0b00000000   ));
+
+Slim::Hardware::VFD::setCustomChar( 'backslashM', # alternate used by Modern Font
 				( 		0b00011000,
 						0b00000100,
 						0b00000010,
@@ -646,10 +676,13 @@ my $leftvbar = Slim::Display::Display::symbol('leftvbar');
 my $rightvbar = Slim::Display::Display::symbol('rightvbar');
 my $slash = Slim::Display::Display::symbol('slash');
 my $backslash = Slim::Display::Display::symbol('backslash');
+my $slashM = Slim::Display::Display::symbol('slashM');
+my $backslashM = Slim::Display::Display::symbol('backslashM');
 my $islash = Slim::Hardware::VFD::symbol('islash');
 my $ibackslash = Slim::Hardware::VFD::symbol('ibackslash');
 my $toplinechar = Slim::Display::Display::symbol('toplinechar');
 my $doublelinechar = Slim::Display::Display::symbol('doublelinechar');
+my $doublelinecharM = Slim::Display::Display::symbol('doublelinecharM');
 my $Zbottom = Slim::Display::Display::symbol('Zbottom');
 my $Ztop = Slim::Display::Display::symbol('Ztop');
 my $notesymbol = Slim::Display::Display::symbol('notesymbol');
@@ -659,14 +692,14 @@ my $cursorpos = Slim::Display::Display::symbol('cursorpos');
 my $hardspace = Slim::Display::Display::symbol('hardspace');
 my $centerchar = Slim::Display::Display::symbol('center');
 
-# double sized characters
-my %doublechars = (
+# double sized characters - Classic Font
+my $doubleClassic = {
 	
 	"(" => [ $slash,
-			 $islash ],
+			 $backslash ],
 	
-	")" => [ $backslash,
-			 $ibackslash ],
+	")" => [ $hardspace . $backslash,
+			 $hardspace . $slash ],
 	
 	"[" => [ $rightvbar . $toplinechar,
 			 $rightvbar . '_' ],
@@ -675,9 +708,9 @@ my %doublechars = (
 			 '_' . $leftvbar],
 	
 	"<" => [ '/',
-			 '\\' ],
+			 $backslash ],
 	
-	">" => [ '\\',
+	">" => [ $backslash,
 			 '/' ],
 	
 	"{" => [ '(',
@@ -742,56 +775,181 @@ my %doublechars = (
 	$hardspace => [ $hardspace, $hardspace],
 	
 	$centerchar => [$centerchar,$centerchar]
-	,'0' => [$hardspace . $slash . $backslash, $hardspace . $islash . $ibackslash]
-	,'1' => [$hardspace . '\'' . $leftvbar , $hardspace . '_' . 'L']
-	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $slash . '_']
+	,'0' => [$slash . $toplinechar . $backslash, $backslash . '_' . $slash]
+	,'1' => [$hardspace . $slash . $leftvbar , $hardspace . $hardspace . $leftvbar]
+	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $Zbottom . '_']
 	,'3' => [$hardspace . $doublelinechar . ')' , ' _)']
 	,'4' => [$rightvbar . '_' . $leftvbar , $hardspace . $hardspace . $leftvbar]
 	,'5' => [$rightvbar . $doublelinechar . $toplinechar , ' _)']
-	,'6' => [$hardspace . '/' . $hardspace , '(' . $doublelinechar . ')']
-    ,'7' => [$toplinechar . $toplinechar . '/' , $hardspace . $slash . $hardspace]
+	,'6' => [$hardspace . $Zbottom . $hardspace , '(_)']
+	,'7' => [$hardspace . $toplinechar . $Ztop , $hardspace . $slash . $hardspace]
 	,'8' => ['(' . $doublelinechar . ')' , '(_)']
 	,'9' => ['(' . $doublelinechar . ')' , $hardspace . $slash . $hardspace]
 	,'A' => [$hardspace . $slash . $backslash . $hardspace , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
 	,'B' => [$rightvbar . $doublelinechar . ')' , $rightvbar . '_)']
-	,'C' => [$slash . $toplinechar , $islash . '_']
-	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $ibackslash]
+	,'C' => [$slash . $toplinechar , $backslash . '_']
+	,'D' => [$rightvbar . $toplinechar . $backslash , $rightvbar . '_' . $slash]
 	,'E' => [$rightvbar . $doublelinechar , $rightvbar . '_']
 	,'F' => [$rightvbar . $doublelinechar , $rightvbar . $hardspace]
-	,'G' => [$slash . $doublelinechar . $hardspace , $islash . '_' . $leftvbar]
+	,'G' => [$slash . $toplinechar . $hardspace , $backslash . $doublelinechar . $leftvbar]
+	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'I' => [$hardspace . $leftvbar , $hardspace . $leftvbar]
+	,'J' => [$hardspace . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'K' => [$rightvbar . $slash , $rightvbar . $backslash]
+	,'L' => [$rightvbar . $hardspace , $rightvbar . '_']
+	,'M' => [$rightvbar . $backslash . $slash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
+	,'N' => [$rightvbar . $backslash . $leftvbar , $rightvbar . $hardspace . $leftvbar]
+	,'O' => [$slash . $toplinechar . $backslash , $backslash . '_' . $slash]
+	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . $hardspace . $hardspace]
+	,'Q' => [$slash . $toplinechar . $backslash , $backslash . '_X']
+	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . $hardspace . $backslash]
+	,'S' => ['(' . $toplinechar , '_)']
+	,'T' => [$toplinechar . '|' . $toplinechar , ' | ']
+	,'U' => [$rightvbar . $hardspace . $leftvbar , $rightvbar . '_' . $leftvbar]
+	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
+	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $backslash . $slash . $backslash . $slash]
+	,'X' => [$backslash . $slash , $slash . $backslash]
+	,'Y' => [$backslash . $slash , $hardspace . $leftvbar]
+	,'Z' => [$toplinechar . $Ztop , $Zbottom . '_']
+	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , $rightvbar . $toplinechar . $toplinechar . 'L']
+	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
+	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
+};
+
+# double sized characters - Modern Font
+my $doubleModern = {
+	
+	"(" => [ $slashM,
+			 $islash ],
+	
+	")" => [ $backslashM,
+			 $ibackslash ],
+	
+	"[" => [ $rightvbar . $toplinechar,
+			 $rightvbar . '_' ],
+	
+	"]" => [ $toplinechar . $leftvbar,
+			 '_' . $leftvbar],
+	
+	"<" => [ '/',
+			 '\\' ],
+	
+	">" => [ '\\',
+			 '/' ],
+	
+	"{" => [ '(',
+			 '(' ],
+	
+	"}" => [ ')',
+			 ')' ],
+	
+	'"' => [ '\'\'',
+			 $hardspace . $hardspace],
+	"%" => [ 'o/', '/o'],
+	"&" => [ '_' . 'L', $backslashM . $leftvbar],
+	"^" => [ $slashM . $backslashM, $hardspace . $hardspace],
+	" " => [ $hardspace . $hardspace, $hardspace . $hardspace ],
+	"'" => [ '|', $hardspace ],
+	"!" => [ '|', '.' ],
+	":" => [ '.', '.' ],
+	"." => [ $hardspace, '.' ],
+	";" => [ '.', ',' ],
+	"," => [ $hardspace, '/' ],
+	"`" => [ $backslashM, $hardspace ],
+	
+	"_" => [ $hardspace . $hardspace, '_' . '_' ],
+	
+	"+" => [ '_' . 'L', $hardspace . $leftvbar],
+	
+	"*" => [ '**', '**'],
+	
+	'~' => [ $slashM . $toplinechar, $hardspace . $hardspace ],
+	
+	"@" => [ $slashM . 'd',
+			 $backslashM . '_' ],
+	
+	"#" => [ '_' . $Zbottom . $Zbottom, $Ztop . $Ztop . $toplinechar ],
+	
+	'$' => [ '$$', '$$' ],
+	
+	"|" => [ '|',
+			 '|' ],
+	
+	"-" => [ '_' . '_',
+			 $hardspace . $hardspace ],
+	
+	"/" => [ $hardspace . $slashM,
+			 $slashM . $hardspace ],
+	
+	"\\" => [ $backslashM . $hardspace,
+			  $hardspace . $backslashM ],
+	
+	"=" => ['--'
+		   ,'--'],
+	
+	'?' => [$toplinechar . $Ztop,
+		,' .'],
+
+	$cursorpos => ['',''],
+		
+	$notesymbol => [ $leftvbar . $backslash , $filledcircle . " "],
+
+	$rightarrow => [ ' _' . $backslashM , $hardspace . $toplinechar . '/'],
+
+	$hardspace => [ $hardspace, $hardspace],
+	
+	$centerchar => [$centerchar,$centerchar]
+	,'0' => [$hardspace . $slashM . $backslashM, $hardspace . $islash . $ibackslash]
+	,'1' => [$hardspace . '\'' . $leftvbar , $hardspace . '_' . 'L']
+	,'2' => [$hardspace . $toplinechar . ')' , $hardspace . $slashM . '_']
+	,'3' => [$hardspace . $doublelinecharM . ')' , ' _)']
+	,'4' => [$rightvbar . '_' . $leftvbar , $hardspace . $hardspace . $leftvbar]
+	,'5' => [$rightvbar . $doublelinecharM . $toplinechar , ' _)']
+	,'6' => [$hardspace . '/' . $hardspace , '(' . $doublelinecharM . ')']
+    ,'7' => [$toplinechar . $toplinechar . '/' , $hardspace . $slashM . $hardspace]
+	,'8' => ['(' . $doublelinecharM . ')' , '(_)']
+	,'9' => ['(' . $doublelinecharM . ')' , $hardspace . $slashM . $hardspace]
+	,'A' => [$hardspace . $slashM . $backslashM . $hardspace , $rightvbar . $toplinechar . $toplinechar . $leftvbar]
+	,'B' => [$rightvbar . $doublelinecharM . ')' , $rightvbar . '_)']
+	,'C' => [$slashM . $toplinechar , $islash . '_']
+	,'D' => [$rightvbar . $toplinechar . $backslashM , $rightvbar . '_' . $ibackslash]
+	,'E' => [$rightvbar . $doublelinecharM , $rightvbar . '_']
+	,'F' => [$rightvbar . $doublelinecharM , $rightvbar . $hardspace]
+	,'G' => [$slashM . $doublelinecharM . $hardspace , $islash . '_' . $leftvbar]
 	,'H' => [$rightvbar . '_' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
 	,'I' => [$hardspace . $leftvbar , $hardspace . $leftvbar]
 	,'J' => [$hardspace . $rightvbar, $islash . $ibackslash]
-	,'K' => [$rightvbar . $ibackslash , $rightvbar . $backslash]
+	,'K' => [$rightvbar . $ibackslash , $rightvbar . $backslashM]
 	,'L' => [$rightvbar . $hardspace , $rightvbar . '_']
 	,'M' => [$rightvbar . $islash . $ibackslash . $leftvbar , $rightvbar . $hardspace . $hardspace . $leftvbar]
 	,'N' => [$rightvbar . '\\' . $leftvbar , $rightvbar . $hardspace . $leftvbar]
-	,'O' => [$slash . $backslash , $islash . $ibackslash]
-	,'P' => [$rightvbar . $doublelinechar .')' , $rightvbar . $hardspace . $hardspace]
-	,'Q' => [$slash . $backslash , $islash . 'X']
-	,'R' => [$rightvbar . $doublelinechar . ')' , $rightvbar . $hardspace . $backslash]
+	,'O' => [$slashM . $backslashM , $islash . $ibackslash]
+	,'P' => [$rightvbar . $doublelinecharM .')' , $rightvbar . $hardspace . $hardspace]
+	,'Q' => [$slashM . $backslash , $islash . 'X']
+	,'R' => [$rightvbar . $doublelinecharM . ')' , $rightvbar . $hardspace . $backslashM]
 	,'S' => ['(' . $toplinechar , '_)']
 	,'T' => [$toplinechar . 'T' . $toplinechar , ' | ']
 	,'U' => [$leftvbar . $rightvbar , $islash . $ibackslash]
-	,'V' => [$leftvbar . $rightvbar , $backslash . $slash]
+	,'V' => [$leftvbar . $rightvbar , $backslashM . $slashM]
 	,'W' => [$leftvbar . $hardspace . $hardspace . $rightvbar , $islash . $ibackslash . $islash . $ibackslash]
-	,'X' => [$islash . $ibackslash , $slash . $backslash]
+	,'X' => [$islash . $ibackslash , $slashM . $backslashM]
 	,'Y' => [$islash . $ibackslash, $rightvbar . $leftvbar]
 	,'Z' => [$toplinechar . '/' , '/' . '_']
-	,'Æ' => [$hardspace . $slash . $backslash . $doublelinechar , 
+	,'Æ' => [$hardspace . $slashM . $backslashM . $doublelinecharM , 
              $rightvbar . $toplinechar . $toplinechar . 'L']
-	,'Ø' => [$slash . $toplinechar . 'X', $backslash . $Zbottom . $slash]
-	,'Ð' => [$rightvbar . $doublelinechar . $backslash , $rightvbar . '_'  . $slash]
-);
+	,'Ø' => [$slashM . $toplinechar . 'X', $backslashM . $Zbottom . $slashM]
+	,'Ð' => [$rightvbar . $doublelinecharM . $backslashM , $rightvbar . '_'  . $slashM]
+};
 
 sub addDoubleChar {
 	my ($char,$doublechar) = @_;
-	if (!exists $doublechars{$char} && ref($doublechar) eq 'ARRAY' 
+	if (!exists $doubleClassic->{$char} && ref($doublechar) eq 'ARRAY' 
 			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
-		$doublechars{$char} = $doublechar;
+		$doubleClassic->{$char} = $doublechar;
+		$doubleModern->{$char} = $doublechar;
 	} else {
 		if ($::d_display) {
-			msg("Could not add character $char, it already exists.\n") if exists $doublechars{$char};
+			msg("Could not add character $char, it already exists.\n") if exists $doubleClassic->{$char};
 			msg("Could not add character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
 			msg("Could not add character $char, lines of doublechar have unequal lengths.\n")
 				if Slim::Display::Display::lineLength($doublechar->[0]) != Slim::Display::Display::lineLength($doublechar->[1]);
@@ -803,7 +961,8 @@ sub updateDoubleChar {
 	my ($char,$doublechar) = @_;
 	if (ref($doublechar) eq 'ARRAY' 
 			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
-		$doublechars{$char} = $doublechar;
+		$doubleClassic->{$char} = $doublechar;
+		$doubleModern->{$char} = $doublechar;
 	} else {
 		if ($::d_display) {
 			msg("Could not update character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
@@ -841,6 +1000,8 @@ sub doubleSize {
 
 	my ($newline1, $newline2) = ("", "");
 	my $line2 = $undoubled;
+
+	my $doublechars = $client->pref('largeTextFont') ? $doubleModern : $doubleClassic;
 	
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
@@ -858,12 +1019,12 @@ sub doubleSize {
 	my $split = Slim::Display::Display::splitString($line2);
 	
 	foreach my $char (@$split) {
-		if (exists($doublechars{$char}) || exists($doublechars{Slim::Utils::Text::matchCase($char)})) {
+		if (exists($doublechars->{$char}) || exists($doublechars->{Slim::Utils::Text::matchCase($char)})) {
 			my ($char1,$char2);
-			if (!exists($doublechars{$char})) {
+			if (!exists($doublechars->{$char})) {
 				$char = Slim::Utils::Text::matchCase($char);
 			}
-			($char1,$char2)=  @{$doublechars{$char}};
+			($char1,$char2)=  @{$doublechars->{$char}};
 			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
 					if (($lastch1 =~ $kernL && $char1 =~ $kernR) ||
 						 ($lastch2 =~ $kernL && $char2 =~ $kernR)) {

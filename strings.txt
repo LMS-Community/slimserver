@@ -10563,3 +10563,15 @@ ARTWORK
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
 	EN	SlimServer failed retrive the resource you were looking for.
+
+SETUP_LARGETEXTFONT
+	EN	Large Text Font
+
+SETUP_LARGETEXTFONT_DESC
+	EN	Choose which font you would like to use when displaying large text.
+
+SETUP_LARGETEXTFONT_0
+	EN	Classic
+
+SETUP_LARGETEXTFONT_1
+	EN	Modern
