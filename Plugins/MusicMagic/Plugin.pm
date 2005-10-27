@@ -745,6 +745,7 @@ sub exportFunction {
 				@playlists = split(/\n/, $http->content);
 				$playlistindex = 0;
 				$http->close;
+				$export = 'duplicates' unless @playlists;
 			} else {
 				$export = 'duplicates';
 			}
