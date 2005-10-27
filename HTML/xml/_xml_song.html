@@ -12,9 +12,9 @@
 	[% contributors = itemobj.contributorsOfType(role) %]
 	[% IF contributors %]
 		[% FOREACH contributor = contributors %]
-			<[% role %]_id>[% contributor.id | html %]</[% role %]_id>
-			<[% role %]>[% contributor.name | html %]</[% role %]>
-			<[% role %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&artist=[% contributor.id %]]]></[% role %]_browse_url>
+			<[% role | lower %]_id>[% contributor.id | html %]</[% role | lower %]_id>
+			<[% role | lower %]>[% contributor.name | html %]</[% role | lower %]>
+			<[% role | lower %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&artist=[% contributor.id %]]]></[% role | lower %]_browse_url>
 		[% END %]
 	[% END %]
 [% END %]
