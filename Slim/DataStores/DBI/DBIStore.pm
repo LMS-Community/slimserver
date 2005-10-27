@@ -1588,7 +1588,15 @@ sub _postCheckAttributes {
 		# And our searchable version.
 		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
 
-		$albumObj->compilation( $attributes->{'COMPILATION'} ? 1 : 0 );
+		# Bug 2393 - Check for 'no' instead of just true or false
+		if ($attributes->{'COMPILATION'} && $attributes->{'COMPILATION'} !~ /no/i) {
+
+			$albumObj->compilation(1);
+
+		} else {
+
+			$albumObj->compilation(0);
+		}
 
 		$albumObj->musicbrainz_id($attributes->{'MUSICBRAINZ_ALBUM_ID'});
 
