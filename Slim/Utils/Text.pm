@@ -10,8 +10,6 @@ package Slim::Utils::Text;
 use strict;
 use Tie::Cache::LRU;
 
-use Slim::Utils::Unicode;
-
 tie our %caseArticlesMemoize, 'Tie::Cache::LRU', 128;
 
 sub ignorePunct {
@@ -23,9 +21,6 @@ sub ignorePunct {
 	$s =~ s/  +/ /go; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
 	$s =~ s/^ +//o; # zap leading/trailing spaces.
 	$s =~ s/ +$//o;
-
-	# See bug: 2311
-	$s = Slim::Utils::Unicode::stripBOM($s);
 
 	$s = $orig if $s eq '';
 
