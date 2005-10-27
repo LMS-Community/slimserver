@@ -10,19 +10,19 @@
 
  <browselinks>
  [% FOREACH link = additionalLinks.browse %] 
-  <browselink loc="[% link.value | uri %]">[% link.key | string %]</browselink>
+  <browselink loc="[% link.value | uri %]">[% link.key | string | html %]</browselink>
  [% END %]
  </browselinks>
 
  <searchlinks>
  [% FOREACH link = additionalLinks.search %]
-  <searchlink loc="[% link.value | uri %]">[% link.key | string %]</searchlink>
+  <searchlink loc="[% link.value | uri %]">[% link.key | string | html %]</searchlink>
  [% END %]
  </searchlinks>
 
  <helplinks>
  [% FOREACH link = additionalLinks.help %]
-  <searchlink loc="[% link.value | uri %]">[% link.key | string %]</searchlink>
+  <searchlink loc="[% link.value | uri %]">[% link.key | string | html %]</searchlink>
  [% END %]
  </helplinks>
  <strings from="[% "FROM" | string %]" by="[% "BY" | string %]"/>
