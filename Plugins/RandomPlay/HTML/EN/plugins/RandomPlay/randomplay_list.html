@@ -54,9 +54,9 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 				<script type="text/javascript">
 					for (var i=0; i < parent.frames.length; i++) {
 						if (parent.frames[i].name == "status") {
-							parent.frames[i].location.reload(true);
+							parent.frames[i].location.replace(parent.frames[i].location.pathname + "?player=[% player | uri %]&amp;refresh=1");			
 						}
-					}			
+					}
 				</script>
 				<tr>
 					<td>&nbsp;</td>
