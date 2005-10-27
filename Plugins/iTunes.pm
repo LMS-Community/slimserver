@@ -822,6 +822,7 @@ sub handleTrack {
 		$cacheEntry{'BITRATE'} = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
 		$cacheEntry{'YEAR'}    = $curTrack->{'Year'};
 		$cacheEntry{'COMMENT'} = $curTrack->{'Comments'};
+		$cacheEntry{'RATE'}    = $curTrack->{'Sample Rate'};
 		
 		my $gain = $curTrack->{'Volume Adjustment'};
 		
@@ -836,10 +837,7 @@ sub handleTrack {
 			$cacheEntry{'REPLAYGAIN_TRACK_GAIN'} = $gain;
 		}
 
-		# cacheEntry{'???'} = $curTrack->{'Track Count'};
-		# cacheEntry{'???'} = $curTrack->{'Sample Rate'};
-
-		$cacheEntry{'VALID'} = '1';
+		$cacheEntry{'VALID'} = 1;
 
 		my $track = $ds->updateOrCreate({
 
@@ -874,7 +872,7 @@ sub handleTrack {
 sub handlePlaylist {
 	my $cacheEntry = shift;
 
-	my $name = $cacheEntry->{'TITLE'};
+	my $name = Slim::Web::HTTP::unescape($cacheEntry->{'TITLE'});
 	my $url  = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
 
 	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
