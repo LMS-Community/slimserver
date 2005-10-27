@@ -85,7 +85,7 @@
 					[% END %]
 					[% IF mode != 'off' %]
 						<A href="[% statusroot %]?p0=button&p1=sleep&player=[% playerURI %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
-					[% END %][% IF mode != 'off' and not undock %] / [% END %]
+					[% END %][% IF mode != 'off' %] / [% END %]
 					[% IF not nosetup  %]<a href="setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 					[% END %][% IF not undock %] /
 					<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>[% END %]
@@ -212,8 +212,8 @@
 			[% IF current_playlist %][% current_playlist_name %]
 			([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 		</td><td align="right">
-			[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] | [% END %]
-			[% PROCESS downloadPlaylistLink %] |
+			[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] / [% END %]
+			[% PROCESS downloadPlaylistLink %] /
 			[% PROCESS clearPlaylistLink %]
 		</td>
 		</tr></table></div>
