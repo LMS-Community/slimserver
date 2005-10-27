@@ -32,6 +32,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
+use Slim::Utils::Unicode;
 
 # Save the persistant DB cache on an interval
 my $DB_SAVE_INTERVAL = 30;
@@ -1094,6 +1095,12 @@ sub readTags {
 
 	# note that we've read in the tags.
 	$attributesHash->{'TAG'} = 1;
+
+	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
+	while (my ($tag, $value) = each %{$attributesHash}) {
+
+		$attributesHash->{$tag} = Slim::Utils::Unicode::stripBOM($value);
+	}
 
 	return $attributesHash;
 }
