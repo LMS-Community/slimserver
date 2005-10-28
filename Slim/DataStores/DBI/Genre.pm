@@ -4,6 +4,7 @@ package Slim::DataStores::DBI::Genre;
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
+use Scalar::Util qw(blessed);
 
 {
 	my $class = __PACKAGE__;
@@ -29,7 +30,7 @@ sub add {
 	my @genres = ();
 
 	# Handle the case where $genre is already an object:
-	if (ref $genre && ref($genre) ne 'ARRAY' && $genre->isa('Slim::DataStores::DBI::Genre')) {
+	if (blessed($genre) && $genre->isa('Slim::DataStores::DBI::Genre')) {
 
 		Slim::DataStores::DBI::GenreTrack->find_or_create({
 			track => $track,

@@ -13,8 +13,8 @@ use Fcntl;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
-
 use MP3::Info;
+use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
 use Slim::Utils::Misc;
@@ -861,14 +861,17 @@ sub parseFormat {
 
 sub infoFormat {
 	my $fileOrObj = shift; # item whose information will be formatted
-	my $str = shift; # format string to use
-	my $safestr = shift; # format string to use in the event that after filling the first string, there is nothing left
-	my $output = '';
+	my $str       = shift; # format string to use
+	my $safestr   = shift; # format string to use in the event that after filling the first string, there is nothing left
+	my $output    = '';
 	my $format;
 
-	my $track = ref $fileOrObj ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
+	my $track = blessed($fileOrObj) && $fileOrObj->can('id') ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
 
-	return '' unless defined $track;
+	if (!blessed($track) || !$track->can('id')) {
+
+		return '';
+	}
 	
 	# use a safe format string if none specified
 	# Users can input strings in any locale - we need to convert that to
@@ -955,8 +958,9 @@ sub standardTitle {
 	my $pathOrObj = shift; # item whose information will be formatted
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
-	my $track     = ref $pathOrObj ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1, 1);
-	my $fullpath  = ref $track ? $track->url : $pathOrObj;
+	# XXX - exception should go here. comming soon.
+	my $track     = blessed($pathOrObj) ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1, 1);
+	my $fullpath  = blessed($track) && $track->can('url') ? $track->url : $track;
 	my $format;
 
 	if (isPlaylistURL($fullpath) || isList($track)) {
@@ -1605,11 +1609,31 @@ sub isURL {
 	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
 }
 
+sub _isContentTypeHelper {
+	my $pathOrObj = shift;
+	my $type      = shift;
+
+	if (!defined $type) {
+
+		# XXX - exception should go here. comming soon.
+		if (blessed($pathOrObj) && $pathOrObj->can('content_type')) {
+
+			$type = $pathOrObj->content_type;
+
+		} else {
+
+			$type = $currentDB->contentType($pathOrObj);
+		}
+	}
+
+	return $type;
+}
+
 sub isType {
 	my $pathOrObj = shift || return 0;
 	my $testtype  = shift;
 
-	my $type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj);
+	my $type      = _isContentTypeHelper($pathOrObj);
 
 	if ($type && ($type eq $testtype)) {
 		return 1;
@@ -1664,7 +1688,7 @@ sub isSong {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
+	$type = _isContentTypeHelper($pathOrObj, $type);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
@@ -1705,7 +1729,7 @@ sub isList {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
+	$type = _isContentTypeHelper($pathOrObj, $type);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} =~ /list/) {
 		return $type;
@@ -1716,7 +1740,7 @@ sub isPlaylist {
 	my $pathOrObj = shift;
 	my $type = shift;
 
-	$type = ref $pathOrObj ? $pathOrObj->content_type : $currentDB->contentType($pathOrObj) unless defined $type;
+	$type = _isContentTypeHelper($pathOrObj, $type);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'playlist') {
 		return $type;

@@ -4,7 +4,7 @@ package Slim::DataStores::DBI::Track;
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
-use Class::DBI::Iterator;
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 
@@ -410,7 +410,8 @@ sub setTracks {
 
 			# If tracks are being added via Browse Music Folder -
 			# which still deals with URLs - get the objects to add.
-			unless (ref($track)) {
+			if (!blessed($track) || !$track->can('url')) {
+
 				$track = $ds->objectForUrl($track, 1, 0, 1) || next;
 			}
 
@@ -428,8 +429,8 @@ sub setTracks {
 }
 
 sub setDirItems {
-	my $self  = shift;
-	my $items = shift;
+	my $self    = shift;
+	my $entires = shift;
 	
 	# One fell swoop to delete.
 	eval {
@@ -438,21 +439,22 @@ sub setDirItems {
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	if ($items && ref($items) eq 'ARRAY') {
+	if (defined $entries && ref($entries) eq 'ARRAY') {
 
 		my $i = 0;
 
-		for my $item (@$items) {
+		for my $dirEntry (@$entries) {
 
 			# If tracks are being added via Browse Music Folder -
 			# which still deals with URLs - get the objects to add.
-			unless (ref($item)) {
-				$item = $ds->objectForUrl($item, 1, 1, 1) || next;
+			if (!blessed($dirEntry) || !$dirEntry->can('id')) {
+
+				$dirEntry = $ds->objectForUrl($dirEntry, 1, 1, 1) || next;
 			}
 
 			Slim::DataStores::DBI::DirlistTrack->create({
 				dirlist  => $self,
-				item     => $item->id,
+				item     => $dirEntry->id,
 				position => $i++
 			});
 		}

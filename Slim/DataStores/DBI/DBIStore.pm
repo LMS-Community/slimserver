@@ -140,7 +140,8 @@ sub contentType {
 
 	my $track = $self->objectForUrl($url);
 
-	if (blessed($track) && $track->isa('Slim::DataStores::DBI::DataModel')) {
+	# XXX - exception should go here. Comming soon.
+	if (blessed($track) && $track->can('id')) {
 		$ct = $track->content_type();
 	} else {
 		$ct = Slim::Music::Info::typeFromPath($url);
@@ -159,7 +160,8 @@ sub objectForUrl {
 	my $lightweight = shift;
 
 	# Confirm that the URL itself isn't an object (see bug 1811)
-	if (ref($url) && ref($url) =~ /Track/) {
+	# XXX - exception should go here. Comming soon.
+	if (blessed($url) && blessed($url) =~ /Track/) {
 		return $url;
 	}
 
@@ -171,8 +173,16 @@ sub objectForUrl {
 
 	my $track = $self->_retrieveTrack($url, $lightweight);
 
-	if (defined $track && !$create && !$lightweight) {
+	if (blessed($track) && $track->can('url') && !$create && !$lightweight) {
 		$track = $self->_checkValidity($track);
+	}
+
+	# Handle the case where an object has been deleted out from under us.
+	# XXX - exception should go here. Comming soon.
+	if (blessed($track) && blessed($track) eq 'Class::DBI::Object::Has::Been::Deleted') {
+
+		$track  = undef;
+		$create = 1;
 	}
 
 	if (!defined $track && $create) {
@@ -381,8 +391,19 @@ sub newTrack {
 	my $args = shift;
 
 	#
-	my $url           = $args->{'url'} || return;
+	my $url           = $args->{'url'};
  	my $attributeHash = $args->{'attributes'} || {};
+
+	# Not sure how we can get here - but we can.
+	if (!defined $url || ref($url) ne 'SCALAR') {
+	
+		msg("newTrack: Bogus value for 'url'\n");
+		require Data::Dumper;
+		print Data::Dumper::Dumper($url);
+		bt();
+
+		return undef;
+	}
 
 	my $deferredAttributes;
 
@@ -469,27 +490,30 @@ sub updateOrCreate {
 	my $commit        = $args->{'commit'};
 	my $readTags      = $args->{'readTags'};
 
-	my $track = ref $urlOrObj ? $urlOrObj : undef;
-	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
+	# XXX - exception should go here. Comming soon.
+	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
+	my $url   = blessed($track) && $track->can('url') ? $track->url : $urlOrObj;
 
 	if (!defined($url)) {
+		require Data::Dumper;
+		print Data::Dumper::Dumper($attributeHash);
 		msg("No URL specified for updateOrCreate\n");
-		msg(%{$attributeHash});
 		bt();
-		return;
+		return undef;
 	}
 
 	# Always remove from the zombie list, since we're about to update or
 	# create this item.
 	delete $self->{'zombieList'}->{$url};
 
-	if (!defined($track)) {
+	if (!blessed($track)) {
 		$track = $self->_retrieveTrack($url);
 	}
 
 	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
 
-	if (defined($track)) {
+	# XXX - exception should go here. Comming soon.
+	if (blessed($track) && $track->can('url')) {
 
 		$::d_info && msg("Merging entry for $url\n");
 
@@ -548,14 +572,16 @@ sub delete {
 	my $urlOrObj = shift;
 	my $commit = shift;
 
-	my $track = ref $urlOrObj ? $urlOrObj : undef;
-	my $url   = ref $urlOrObj ? $track->url : $urlOrObj;
+	# XXX - exception should go here. Comming soon.
+	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
+	my $url   = blessed($track) && $track->can('url') ? $track->url : $urlOrObj;
 
 	if (!defined($track)) {
 		$track = $self->_retrieveTrack($url);		
 	}
 
-	if (defined($track)) {
+	# XXX - exception should go here. Comming soon.
+	if (blessed($track) && $track->can('url')) {
 
 		# XXX - make sure that playlisttracks are deleted on cascade 
 		# otherwise call $track->setTracks() with an empty list
@@ -578,7 +604,7 @@ sub delete {
 
 		my $dirname = dirname($url);
 
-		if (defined $self->{'lastTrack'}->{$dirname} && $self->{'lastTrack'}->{$dirname}->url() eq $url) {
+		if (defined $self->{'lastTrack'}->{$dirname} && $self->{'lastTrack'}->{$dirname}->url eq $url) {
 			delete $self->{'lastTrack'}->{$dirname};
 		}
 
@@ -670,7 +696,8 @@ sub cleanupStaleTrackEntries {
 	my $item  = shift(@{$cleanupIds});
 	my $track = Slim::DataStores::DBI::Track->retrieve($item) if defined $item;
 
-	if (!defined $track && !defined $item && scalar @{$cleanupIds} == 0) {
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($track) && !defined $item && scalar @{$cleanupIds} == 0) {
 
 		$::d_import && msg(
 			"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
@@ -690,7 +717,8 @@ sub cleanupStaleTrackEntries {
 	};
 
 	# Not sure how we get here, but we can. See bug 1756
-	if (!defined $track) {
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($track) || !$track->can('url')) {
 		return 1;
 	}
 
@@ -767,7 +795,8 @@ sub variousArtistsObject {
 	my $vaString = Slim::Music::Info::variousArtistString();
 
 	# Fetch a VA object and/or update it's name if the user has changed it.
-	if (!defined $vaObj || ref($vaObj) eq 'Class::DBI::Object::Has::Been::Deleted') {
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($vaObj) || !$vaObj->can('name')) {
 
 		$vaObj  = Slim::DataStores::DBI::Contributor->find_or_create({
 			'name' => $vaString,
@@ -797,10 +826,11 @@ sub mergeVariousArtistsAlbums {
 	}
 
 	# fetch one at a time to keep memory usage in check.
-	my $item = shift(@{$variousAlbumIds});
-	my $obj  = Slim::DataStores::DBI::Album->retrieve($item) if defined $item;
+	my $item     = shift(@{$variousAlbumIds});
+	my $albumObj = Slim::DataStores::DBI::Album->retrieve($item) if defined $item;
 
-	if (!defined $obj && !defined $item && scalar @{$variousAlbumIds} == 0) {
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($albumObj) && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
 		$::d_import && msg("Import: Finished with mergeVariousArtistsAlbums()\n");
 
@@ -809,20 +839,21 @@ sub mergeVariousArtistsAlbums {
 		return 0;
 	}
 
-	if (!defined $obj) {
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($albumObj) || !$albumObj->can('tracks')) {
 		$::d_import && msg("Import: mergeVariousArtistsAlbums: Couldn't fetch album for item: [$item]\n");
 		return 0;
 	}
 
 	# This is a catch all - but don't mark it as VA.
-	return 1 if $obj->title eq string('NO_ALBUM');
+	return 1 if $albumObj->title eq string('NO_ALBUM');
 
 	# Don't need to process something we've already marked as a compilation.
-	return 1 if $obj->compilation;
+	return 1 if $albumObj->compilation;
 
 	my %trackArtists    = ();
 
-	for my $track ($obj->tracks) {
+	for my $track ($albumObj->tracks) {
 
 		# Bug 2066: If the user has an explict Album Artist set -
 		# don't try to mark it as a compilation.
@@ -839,10 +870,10 @@ sub mergeVariousArtistsAlbums {
 
 	if (scalar values %trackArtists > 1) {
 
-		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $obj->title);
+		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
 
-		$obj->compilation(1);
-		$obj->update;
+		$albumObj->compilation(1);
+		$albumObj->update;
 	}
 
 	return 1;
@@ -933,6 +964,11 @@ sub clearExternalPlaylists {
 	# playlists - ie: only iTunes, or only MusicMagic.
 	for my $track ($self->getPlaylists('external')) {
 
+		# XXX - exception should go here. Comming soon.
+		if (!blessed($track) || !$track->can('url')) {
+			next;
+		}
+
 		$track->delete if (defined $url ? $track->url =~ /^$url/ : 1);
 	}
 
@@ -943,6 +979,12 @@ sub clearInternalPlaylists {
 	my $self = shift;
 
 	for my $track ($self->getPlaylists('internal')) {
+
+		# XXX - exception should go here. Comming soon.
+		if (!blessed($track) || !$track->can('delete')) {
+			next;
+		}
+
 		$track->delete;
 	}
 
@@ -1116,6 +1158,11 @@ sub setAlbumArtwork {
 		return undef
 	}
 
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($track) || !$track->can('album')) {
+		return undef;
+	}
+
 	my $album    = $track->album();
 	my $albumId  = $album->id() if $album;
 	my $filepath = $track->url();
@@ -1175,6 +1222,7 @@ sub _retrieveTrack {
 	my $url  = shift;
 	my $lightweight = shift;
 
+	return undef if ref($url) ne 'SCALAR';
 	return undef if $self->{'zombieList'}->{$url};
 
 	my $track;
@@ -1197,7 +1245,8 @@ sub _retrieveTrack {
 		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
 	}
 
-	if (defined($track) && $track->audio && !$lightweight) {
+	# XXX - exception should go here. Comming soon.
+	if (blessed($track) && $track->can('audio') && $track->audio && !$lightweight) {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{$dirname} = $track;
@@ -1224,6 +1273,8 @@ sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
 
+	# XXX - exception should go here. Comming soon.
+	return undef unless blessed($track);
 	return undef unless $track->can('url');
 
 	my $url = $track->url;
@@ -1248,6 +1299,9 @@ sub _checkValidity {
 			'commit'   => 1,
 		});
 	}
+
+	return undef unless blessed($track);
+	return undef unless $track->can('url');
 
 	return $track;
 }
@@ -1388,10 +1442,15 @@ sub _postCheckAttributes {
 	my $attributes = shift;
 	my $create = shift;
 
+	# XXX - exception should go here. Comming soon.
+	if (!blessed($track) || !$track->can('get')) {
+		return undef;
+	}
+
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
 	if (Slim::Music::Info::isDir($track) || Slim::Music::Info::isWinShortcut($track)) {
-		return;
+		return undef;
 	}
 
 	my ($trackId, $trackUrl) = $track->get(qw(id url));
@@ -1502,8 +1561,8 @@ sub _postCheckAttributes {
 		# Calculate once if we need/want to test for disc
 		# Check only if asked to treat discs as separate and
 		# if we have a disc, provided we're not in the iTunes situation (disc == discc == 1)
-		my $checkdisc = !Slim::Utils::Prefs::get('groupdiscs') && 
-						(($disc && $discc && $discc > 1) || ($disc && !$discc));
+		my $checkDisc = !Slim::Utils::Prefs::get('groupdiscs') && 
+					(($disc && $discc && $discc > 1) || ($disc && !$discc));
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an
@@ -1514,15 +1573,17 @@ sub _postCheckAttributes {
 		# Path, compilation, etc are ignored...
 
 		if (
-				$self->{'lastTrack'}->{$basename} && 
-				$self->{'lastTrack'}->{$basename}->album &&
-				ref($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
-				$self->{'lastTrack'}->{$basename}->album->get('title') eq $album &&
-				(!$checkdisc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))
+			$self->{'lastTrack'}->{$basename} && 
+			$self->{'lastTrack'}->{$basename}->album &&
+			blessed($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
+			$self->{'lastTrack'}->{$basename}->album->get('title') eq $album &&
+			(!$checkDisc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))
+
 			) {
 
 			$albumObj = $self->{'lastTrack'}->{$basename}->album;
-			$::d_info && msg("Same album \"$album\" than previous track\n");
+
+			$::d_info && msg("_postCheckAttributes: Same album '$album' than previous track\n");
 
 		} else {
 
@@ -1533,11 +1594,11 @@ sub _postCheckAttributes {
 			# Maybe we need a preference?
 			my $search = {
 				'title' => $album,
-#				'year'  => $track->year,
+				#'year'  => $track->year,
 			};
 
 			# Add disc to the search criteria if needed
-			if ($checkdisc) {
+			if ($checkDisc) {
 
 				$search->{'disc'} = $disc;
 			}
@@ -1565,7 +1626,7 @@ sub _postCheckAttributes {
 
 			($albumObj) = eval { Slim::DataStores::DBI::Album->search($search) };
 
-			$::d_info && msg("Searched for album \"$album\"\n") if $albumObj;
+			$::d_info && msg("_postCheckAttributes: Searched for album '$album'\n") if $albumObj;
 
 			if ($@) {
 				msg("_postCheckAttributes: There was an error searching for an album match!\n");
@@ -1581,7 +1642,7 @@ sub _postCheckAttributes {
 			# the other track is not in our current directory. If
 			# so, then we need to create a new album. If not, the
 			# album object is valid.
-			if ($albumObj && !$checkdisc && !$attributes->{'COMPILATION'}) {
+			if ($albumObj && !$checkDisc && !$attributes->{'COMPILATION'}) {
 
 				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
 				my $matchTrack = $tracks{ $track->tracknum };
@@ -1589,14 +1650,16 @@ sub _postCheckAttributes {
 				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
 
 					$albumObj = undef;
-					$::d_info && msg("Wrong album \"$album\" found\n");
+
+					$::d_info && msg("_postCheckAttributes: Wrong album '$album' found\n");
 				}
 			}
 
 			# Didn't match anything? It's a new album - create it.
 			if (!$albumObj) {
 				
-				$::d_info && msg("Creating album \"$album\"\n");
+				$::d_info && msg("_postCheckAttributes: Creating album '$album'\n");
+
 				$albumObj = Slim::DataStores::DBI::Album->create({ 
 					title => $album,
 				});
@@ -1613,7 +1676,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if ($album && blessed($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
+	if (defined($album) && blessed($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
@@ -1709,7 +1772,7 @@ sub _postCheckAttributes {
 
 	my ($albumName, $primaryContributor) = ('', '');
 
-	if (blessed($albumObj)) {
+	if (blessed($albumObj) && $albumObj->can('titlesort')) {
 		$albumName = $albumObj->titlesort;
 	}
 

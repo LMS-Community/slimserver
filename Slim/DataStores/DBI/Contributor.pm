@@ -4,6 +4,7 @@ package Slim::DataStores::DBI::Contributor;
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
+use Scalar::Util qw(blessed);
 
 our %contributorToRoleMap = (
 	'ARTIST'      => 1,
@@ -64,7 +65,7 @@ sub add {
 	my $createMethod = $create ? 'create' : 'find_or_create';
 
 	# Handle the case where $artist is already an object:
-	if (ref $artist && ref($artist) ne 'ARRAY' && $artist->isa('Slim::DataStores::DBI::Contributor')) {
+	if (blessed($artist) && $artist->isa('Slim::DataStores::DBI::Contributor')) {
 
 		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->$createMethod({
 			track => $track,
