@@ -10565,12 +10565,15 @@ OBJECT_RETRIEVAL_FAILURE
 	EN	SlimServer failed retrive the resource you were looking for.
 
 SETUP_LARGETEXTFONT
+	DE	Grosse Schrift
 	EN	Large Text Font
 
 SETUP_LARGETEXTFONT_DESC
+	DE	Wählen Sie, welche Schrift Sie bei doppelter Grösse anzeigen wollen
 	EN	Choose which font you would like to use when displaying large text.
 
 SETUP_LARGETEXTFONT_0
+	DE	Klassisch
 	EN	Classic
 
 SETUP_LARGETEXTFONT_1
