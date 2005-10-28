@@ -395,7 +395,7 @@ sub newTrack {
  	my $attributeHash = $args->{'attributes'} || {};
 
 	# Not sure how we can get here - but we can.
-	if (!defined $url || ref($url) ne 'SCALAR') {
+	if (!defined $url || ref($url)) {
 	
 		msg("newTrack: Bogus value for 'url'\n");
 		require Data::Dumper;
@@ -1222,7 +1222,7 @@ sub _retrieveTrack {
 	my $url  = shift;
 	my $lightweight = shift;
 
-	return undef if ref($url) ne 'SCALAR';
+	return undef if ref($url);
 	return undef if $self->{'zombieList'}->{$url};
 
 	my $track;

@@ -377,8 +377,10 @@ sub updateCacheEntry {
 		'attributes' => $cacheEntryHash,
 	});
 
-	if ($list) {
+	if ($list && ref($list) eq 'ARRAY' && blessed($song) && $song->can('setTracks')) {
+
 		my @tracks = map { $currentDB->objectForUrl($_, 1, 0); } @$list;
+
 		$song->setTracks(\@tracks);
 	}
 }
