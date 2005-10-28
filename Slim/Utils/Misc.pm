@@ -912,7 +912,8 @@ sub delimitThousands {
 # Check for allowed source IPs, called via CLI.pm and HTTP.pm
 sub isAllowedHost {
 	my $host = shift;
-	my @rules = split /\,/, Slim::Utils::Prefs::get('allowedHosts');
+	my $allowedHosts = shift || Slim::Utils::Prefs::get('allowedHosts');
+	my @rules = split /\,/, $allowedHosts;
 
 	foreach my $item (@rules)
 	{
