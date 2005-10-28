@@ -1511,6 +1511,7 @@ sub _postCheckAttributes {
 
 			my $search = {
 				'title' => $album,
+				'year'  => $track->year,
 			};
 
 			# Add disc to the search criteria, so we get
@@ -1541,7 +1542,7 @@ sub _postCheckAttributes {
 				# both album name and primary artist name.
 				my $commonAlbumTitlesToggle = Slim::Utils::Prefs::get('commonAlbumTitlesToggle');
 
-				if (($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) || !$commonAlbumTitlesToggle) {
+				if ($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) {
 
 					$search->{'contributor'} = $contributor;
 				}
@@ -1556,8 +1557,26 @@ sub _postCheckAttributes {
 				print Data::Dumper::Dumper($search);
 			}
 
+			# We've found an album above - and we're not looking
+			# for a multi-disc or compilation album, check to see
+			# if that album already has a track number that
+			# corresponds to our current working track and that
+			# the other track is not in our current directory. If
+			# so, then we need to create a new album. If not, the
+			# album object is valid.
+			if ($albumObj && !$disc && !$attributes->{'COMPILATION'}) {
+
+				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
+				my $matchTrack = $tracks{ $track->tracknum };
+
+				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
+
+					$albumObj = undef;
+				}
+			}
+
 			# Didn't match anything? It's a new album - create it.
-			unless ($albumObj) {
+			if (!$albumObj) {
 
 				$albumObj = Slim::DataStores::DBI::Album->create({ 
 					title => $album,
