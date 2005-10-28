@@ -38,9 +38,6 @@ our %slimTypes = ();
 # Global caches:
 my $artworkDir   = '';
 
-# do we ignore articles?
-our $articles = undef;
-
 # Make sure that these can't grow forever.
 tie our %lastFile, 'Tie::Cache::LRU', 64;
 tie our %displayCache, 'Tie::Cache::LRU', 64;

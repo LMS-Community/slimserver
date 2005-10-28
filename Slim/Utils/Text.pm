@@ -10,7 +10,10 @@ package Slim::Utils::Text;
 use strict;
 use Tie::Cache::LRU;
 
-tie our %caseArticlesMemoize, 'Tie::Cache::LRU', 128;
+tie my %caseArticlesMemoize, 'Tie::Cache::LRU', 128;
+
+# Article list to ignore.
+my $ignoredArticles = undef;
 
 sub ignorePunct {
 	my $s = shift || return undef;
@@ -52,15 +55,18 @@ sub matchCase {
 sub ignoreArticles {
 	my $item = shift || return;
 
-	if (!defined($Slim::Music::Info::articles)) {
+	if (!defined($ignoredArticles)) {
 
-		$Slim::Music::Info::articles =  Slim::Utils::Prefs::get("ignoredarticles");
+		$ignoredArticles = Slim::Utils::Prefs::get("ignoredarticles");
+
 		# allow a space seperated list in preferences (easier for humans to deal with)
-		$Slim::Music::Info::articles =~ s/\s+/|/g;
+		$ignoredArticles =~ s/\s+/|/g;
+
+		$ignoredArticles = qr/$ignoredArticles/;
 	}
 	
 	# set up array for sorting items without leading articles
-	$item =~ s/^($Slim::Music::Info::articles)\s+//i;
+	$item =~ s/^($ignoredArticles)\s+//i;
 
 	return $item;
 }
