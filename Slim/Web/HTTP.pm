@@ -9,6 +9,7 @@ package Slim::Web::HTTP;
 
 use strict;
 
+use Benchmark;
 use Digest::MD5;
 use FileHandle;
 use File::Basename qw(basename);
@@ -762,6 +763,8 @@ sub generateHTTPResponse {
 
 		# if we match one of the page functions as defined above,
 		# execute that, and hand it a callback to send the data.
+		my $startTime = Benchmark->new if $::perfmon;
+
 		$body = &{$pageFunctions{$path}}(
 			$client,
 			$params,
@@ -769,6 +772,17 @@ sub generateHTTPResponse {
 			$httpClient,
 			$response,
 		);
+
+		if ($::perfmon) {
+
+			my $endTime = Benchmark->new;
+
+			if (!$path) {
+				$path = '/';
+			}
+
+			msgf("Generating page for %s took: %s\n", $path, timestr(timediff($endTime, $startTime)));
+		}
 
 	} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
 
