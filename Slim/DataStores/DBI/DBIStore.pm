@@ -1475,7 +1475,7 @@ sub _postCheckAttributes {
 
 	# we may have an album object already..
 	my $albumObj = $track->album if !$create;
-
+	
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
 	if ($create && $isLocal && !$album && !$_unknownAlbum) {
@@ -1498,34 +1498,46 @@ sub _postCheckAttributes {
 
 		# Used for keeping track of the album name.
 		my $basename = dirname($trackUrl);
+		
+		# Calculate once if we need/want to test for disc
+		# Check only if asked to treat discs as separate and
+		# if we have a disc, provided we're not in the iTunes situation (disc == discc == 1)
+		my $checkdisc = !Slim::Utils::Prefs::get('groupdiscs') && 
+						(($disc && $discc && $discc > 1) || ($disc && !$discc));
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an
-		# album can have many contributors, check the last path and
+		# album can have many contributors, check the disc and
 		# album name, to see if we're actually the same.
-		if (($self->{'lastTrack'}->{$basename} && $self->{'lastTrack'}->{$basename}->album &&
-			ref($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
-			$self->{'lastTrack'}->{$basename}->album->get('title') eq $album)
-			&& (!$disc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))) {
+		
+		# For some reason here we do not apply the same criterias as below:
+		# Path, compilation, etc are ignored...
+
+		if (
+				$self->{'lastTrack'}->{$basename} && 
+				$self->{'lastTrack'}->{$basename}->album &&
+				ref($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
+				$self->{'lastTrack'}->{$basename}->album->get('title') eq $album &&
+				(!$checkdisc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))
+			) {
 
 			$albumObj = $self->{'lastTrack'}->{$basename}->album;
+			$::d_info && msg("Same album \"$album\" than previous track\n");
 
 		} else {
 
+			# Don't use year as a search criteria. Compilations in particular
+			# may have different dates for each track...
+			# If re-added here then it should be checked also above, otherwise
+			# the server behaviour changes depending on the track order!
+			# Maybe we need a preference?
 			my $search = {
 				'title' => $album,
-				'year'  => $track->year,
+#				'year'  => $track->year,
 			};
 
-			# Add disc to the search criteria, so we get
-			# the right object for multi-disc sets with
-			# the same album name.
-			# 
-			# Don't add this search criteria if there is only one
-			# disc in the set - iTunes does this for some bizzare
-			# reason.
-			if (!Slim::Utils::Prefs::get('groupdiscs') && 
-				(($disc && $discc && $discc > 1) || ($disc && !$discc))) {
+			# Add disc to the search criteria if needed
+			if ($checkdisc) {
 
 				$search->{'disc'} = $disc;
 			}
@@ -1553,6 +1565,8 @@ sub _postCheckAttributes {
 
 			($albumObj) = eval { Slim::DataStores::DBI::Album->search($search) };
 
+			$::d_info && msg("Searched for album \"$album\"\n") if $albumObj;
+
 			if ($@) {
 				msg("_postCheckAttributes: There was an error searching for an album match!\n");
 				msg("_postCheckAttributes: Error message: [$@]\n");
@@ -1567,7 +1581,7 @@ sub _postCheckAttributes {
 			# the other track is not in our current directory. If
 			# so, then we need to create a new album. If not, the
 			# album object is valid.
-			if ($albumObj && !$disc && !$attributes->{'COMPILATION'}) {
+			if ($albumObj && !$checkdisc && !$attributes->{'COMPILATION'}) {
 
 				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
 				my $matchTrack = $tracks{ $track->tracknum };
@@ -1575,12 +1589,14 @@ sub _postCheckAttributes {
 				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
 
 					$albumObj = undef;
+					$::d_info && msg("Wrong album \"$album\" found\n");
 				}
 			}
 
 			# Didn't match anything? It's a new album - create it.
 			if (!$albumObj) {
-
+				
+				$::d_info && msg("Creating album \"$album\"\n");
 				$albumObj = Slim::DataStores::DBI::Album->create({ 
 					title => $album,
 				});
