@@ -141,7 +141,7 @@ sub contentType {
 	my $track = $self->objectForUrl($url);
 
 	# XXX - exception should go here. Comming soon.
-	if (blessed($track) && $track->can('id')) {
+	if (blessed($track) && $track->can('content_type')) {
 		$ct = $track->content_type();
 	} else {
 		$ct = Slim::Music::Info::typeFromPath($url);
