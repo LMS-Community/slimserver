@@ -11,10 +11,7 @@
     [% IF modepause %][% "PAUSED_ON" | string %][% END %]
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]
-<b><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></b> [% IF album %]from[% END %] 
-<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]" target="browser">[% album | html %]</a></i> 
-[% IF artist %][% "BY" | string %] [% END %]
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]" target="browser">[% artist | html %]</a>
+[% PROCESS tracklink.html %]
 [% IF songcount %] (<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>)[% END %]
 [% IF not songcount %] [% "NOTHING" | string %] [% END %]
 <hr><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a>

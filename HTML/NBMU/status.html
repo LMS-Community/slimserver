@@ -41,7 +41,10 @@
 	[% IF currentsong; currentsong; "&nbsp;"; "OUT_OF" | string; "&nbsp;"; songcount; END %][% "COLON" | string %] 
 
 	<b><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></b> 
+[% IF album; "FROM" | string; END %]
+<em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a></em>
 
+[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 	[% IF songcount %]
 		(<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>)
 	[% END %]

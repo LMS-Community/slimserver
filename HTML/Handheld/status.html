@@ -26,25 +26,20 @@
 			</tr>
 		[% END %]
 	   		
-		[% FOREACH role = itemobj.contributorRoles.sort %]
-			[% contributors = itemobj.contributorsOfType(role) %]
-			[% IF contributors %]
-				<tr>
-					<td>[% role | upper | string %][% "COLON" | string %]</td>
-					<td>
-						[% FOREACH contributor = contributors.sort %]
-							<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% contributor.id %]&amp;player=[% playerURI %]">[% contributor.name %]</a>
-						[% END %]
-					</td>
-				</tr>
-			[% END %]
+		[% IF itemobj.artist && itemobj.artist != noArtist %]
+			<tr>
+				<td>[% "ARTIST" | string %][% "COLON" | string %]</td>
+				<td>
+					[% PROCESS artistsAsHTML.html noby=1 %]
+				</td>
+			</tr>
 		[% END %]
-	
+							
 		[% IF itemobj.album  %]
 			<tr>
 				<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 				<td>
-					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% itemobj.album %]</a>
+					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% itemobj.album.title %]</a>
 					[% IF itemobj.year %] ([% itemobj.year %])[% END %]
 				</td>
 			</tr>

@@ -7,10 +7,10 @@
  		[% IF currentsong %]</b>[% END %]
 
 <span class="small">
-		[% IF includeAlbum && album && album != noAlbum %]
+		[% IF includeAlbum && itemobj.album && itemobj.album != noAlbum %]
 
 			[% "FROM" | string %]
-			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]" target="browser">[% album.title | html %]</a>
+			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a>
 		[% END %]
 		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 </td>

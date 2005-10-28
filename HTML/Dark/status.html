@@ -13,10 +13,12 @@
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]<br>
 <b><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></b> [% IF album %]from[% END %] 
-<i><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]" target="browser">[% album | html %]</a></i> 
-[% IF artist %][% "BY" | string %] [% END %] 
-<a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]" target="browser">[% artist | html %]</a>
+		<i>[% IF includeAlbum && itemobj.album && itemobj.album != noAlbum %]
 
+			[% "FROM" | string %]
+			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a>
+		[% END %]</i>
+		[% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 [% IF not songcount %] [% "NOTHING" | string %] [% END %]
 
     <p><hr>

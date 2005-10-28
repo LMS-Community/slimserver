@@ -9,7 +9,7 @@
         <div class="songline">
           <span class="songtitle"><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% playerURI %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a></span>
       [%- IF album %]
-          [% "FROM" | string -%] <span class="album"><a href="browseid3.html?genre=*&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]" target="browser">[% album | html %]</a></span>
+          [% "FROM" | string -%] <span class="album"><a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a></span>
       [%- END %]
       [% IF includeArtist; PROCESS artistsAsHTML.html; END %]
         </div>

@@ -11,8 +11,8 @@
 
 <a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" [% IF currentsong %]id="currentsong"[% END %]>[% title | html %]</a>
 
-[% IF album; "FROM" | string; END %]
-<em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% album.id %]&player=[% playerURI %]" target="browser">[% album.title | html %]</a></em>
+[% IF itemobj.album; "FROM" | string; END %]
+<em><a href="browsedb.html?hierarchy=album,track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a></em>
 
 [% IF includeArtist; PROCESS artistsAsHTML.html; END %]
 </td>
