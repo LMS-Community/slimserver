@@ -56,12 +56,12 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 			
 			[% odd = 1 %]
 			[% FOREACH type IN ['track','artist','album','year'] %]
-						<tr>
-							[% text = 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]
-							[% WRAPPER listitem title = text %][% END %]
-							[% PROCESS randomLink type="track" addOnly="0" %]
-							[% PROCESS randomLink type="track" addOnly="1" %]
-						</tr>
+				<tr>
+					[% text = 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]
+					[% WRAPPER listitem title = text %][% END %]
+					[% PROCESS randomLink type="$type" addOnly="0" %]
+					[% PROCESS randomLink type="$type" addOnly="1" %]
+				</tr>
 			[% odd = (not odd) %]
 			[% END %]
 			[% IF pluginRandomNowPlaying != '' %]
