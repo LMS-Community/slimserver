@@ -8,6 +8,7 @@ package Slim::Utils::Prefs;
 
 use strict;
 
+use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Path;
 use FindBin qw($Bin);
@@ -881,6 +882,11 @@ sub writePrefs {
 }
 
 sub preferencesPath {
+	my $setPath = shift;
+
+	if (defined $setPath) { 
+		$prefsPath = $setPath;
+	}
 
 	if (defined($prefsPath)) {
 		return $prefsPath;
@@ -902,8 +908,11 @@ sub preferencesPath {
 sub prefsFile {
 	my $setFile = shift;
 	
+	# Bug: 2354 - if the user has passed in a prefs file - set the prefs
+	# path based off of that.
 	if (defined $setFile) { 
 		$prefsFile = $setFile;
+		preferencesPath(dirname($prefsFile));
 	}
 	
 	if (defined($prefsFile)) {
