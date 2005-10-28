@@ -430,7 +430,7 @@ sub setTracks {
 
 sub setDirItems {
 	my $self    = shift;
-	my $entires = shift;
+	my $entries = shift;
 	
 	# One fell swoop to delete.
 	eval {
