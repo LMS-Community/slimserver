@@ -228,10 +228,6 @@ sub model {
 	return 'squeezebox2';
 };
 
-sub upgradeFont {
-	return 'light';
-};
-
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
 	my $client = shift;

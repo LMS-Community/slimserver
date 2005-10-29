@@ -1202,10 +1202,6 @@ sub reportsTrackStart {
 	return 0;
 }
 
-sub upgradeFont {
-	return undef;
-}
-
 sub param {
 	my $client = shift;
 	my $name   = shift;

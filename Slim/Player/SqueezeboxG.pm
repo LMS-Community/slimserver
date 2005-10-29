@@ -93,10 +93,6 @@ sub maxBrightness {
 	return $#brightnessMap;
 }
 
-sub upgradeFont {
-	return 'small';
-}
-
 sub maxTextSize {
 	my $client = shift;
 
