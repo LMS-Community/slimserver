@@ -328,25 +328,6 @@ sub clearPlaylists {
 	}
 }
 
-sub cacheItem {
-	my $url = shift;
-	my $item = shift;
-
-	$::d_info_v && msg("CacheItem called for item $item in $url\n");
-
-	my $track = $currentDB->objectForUrl($url, 0) || return undef;
-
-	if (!ref $track || !$track->can('id')) {
-		return undef;
-	}
-
-	if ($item eq 'ALBUM') {
-		return $track->album()->title();
-	}
-
-	return $track->get(lc $item) || undef;
-}
-
 sub updateCacheEntry {
 	my $url = shift;
 	my $cacheEntryHash = shift;
@@ -368,7 +349,7 @@ sub updateCacheEntry {
 	if ($cacheEntryHash->{'LIST'}) {
 		$list = $cacheEntryHash->{'LIST'};
 	}
-	
+
 	my $song = $currentDB->updateOrCreate({
 		'url'        => $url,
 		'attributes' => $cacheEntryHash,

@@ -93,8 +93,14 @@ sub _updateMetaData {
 	my $attributes = {};
 
 	# Update title MetaData only if its not a local file with Title information already cached.
-	if (defined($title) && $title ne '' && !(Slim::Music::Info::cacheItem($entry, 'TITLE') && Slim::Music::Info::isFileURL($entry))) {
-		$attributes->{'TITLE'} = $title;
+	if ($title && Slim::Music::Info::isFileURL($entry)) {
+
+		my $track = $ds->objectForUrl($entry);
+
+		if (defined $track && !$track->title) {
+
+			$attributes->{'TITLE'} = $title;
+		}
 	}
 
 	return $ds->updateOrCreate({
