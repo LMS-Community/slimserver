@@ -773,7 +773,7 @@ sub generateHTTPResponse {
 			$response,
 		);
 
-		if ($::perfmon) {
+		if ($::perfmon && defined($startTime)) {
 
 			my $endTime = Benchmark->new;
 
