@@ -356,6 +356,7 @@ sub clear {
 	my $client = shift;
 
 	@{playList($client)} = ();
+	$client->currentPlaylist(undef);
 
 	reshuffle($client);
 }
