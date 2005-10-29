@@ -776,7 +776,11 @@ sub parseFormat {
 	# break up format string into separators and elements
 	# elements must be separated by non-word characters
 	@parsed = ($format =~ m/(.*?)\b($elemRegex)\b/gc);
-	push @parsed, substr($format,pos($format) || 0);
+	
+	# add anything remaining at the end
+	# perl 5.6 doesn't like retaining the pos() on m//gc in list context, 
+	# so use the length of the joined matches to determine where we left off
+	push @parsed, substr($format,length(join '', @parsed));
 
 	if (scalar(@parsed) < 2) {
 		# pure text, just return that text as the function
