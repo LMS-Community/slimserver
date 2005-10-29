@@ -33,6 +33,7 @@ my @browseMenuChoices = (
 sub weekDay {
 	my $client = shift;
 	my $day = $client->param('day');
+
 	if (defined $day) {
 		return ${$day};
 	} else {
@@ -116,6 +117,7 @@ sub init {
 					},
 
 					'onChangeArgs' => 'C',
+					'day'		   => \weekDay($client),
 				);
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
@@ -146,6 +148,7 @@ sub init {
 
 					'onChangeArgs'   => 'CV',
 					'valueRef'       => \$client->prefGet("alarmplaylist", weekDay($client)),
+					'day'		     => \weekDay($client),
 				);
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
@@ -181,6 +184,7 @@ sub init {
 							$client->prefSet("alarmvolume", $item, weekDay($client));
 					},
 					'valueRef'      => \$client->prefGet("alarmvolume", weekDay($client)),
+					'day'		    => \weekDay($client),
 				);
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Bar',\%params);
@@ -226,6 +230,7 @@ sub init {
 					'stringHeader'   => 1,
 					'valueRef'       => \$day,
 					'callback'       => \&weekdayExitHandler,
+					'day'		     => \weekDay($client),
 				};
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
