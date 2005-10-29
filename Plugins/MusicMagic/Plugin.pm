@@ -973,7 +973,7 @@ sub getMix {
 	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
 
-		$args{'filter'} = $filter;
+		$args{'filter'} = Slim::Web::HTTP::escape($filter);
 	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
@@ -1014,7 +1014,7 @@ sub getMix {
 
 	unless ($http) {
 		# NYI
-		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString");
+		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString\n");
 		return @mix;
 	}
 
