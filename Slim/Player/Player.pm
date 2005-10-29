@@ -258,8 +258,8 @@ sub usage {
 sub render {
 	my $client = shift;
 	my $lines = shift;
-	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
-
+	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 
+	                         # 2 = scrollonce with no wrapped text, 3 = ticker scroll
 	my $parts;
 	my $double;
 	my $displayoverlays;
@@ -332,14 +332,14 @@ sub render {
 
 	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
 	# copy the first to the second.  Don't do for ticker mode.
-	if ($double && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
+	if ($double && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 3) {
 		$parts->{line2} = $parts->{line1};
 	}
 
 	# line 1 - render if changed
 	if (defined($parts->{line1}) && 
 		(!defined($cache->{line1}) || ($parts->{line1} ne $cache->{line1}) || (!$scroll && $cache->{scrolling}) ||
-		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+		 ($scroll == 3) || (($scroll == 1 || $scroll == 2) && $cache->{ticker}) )) {
 		$cache->{line1} = $parts->{line1};
 		if (!$double) {
 			$cache->{line1text} = $parts->{line1};
@@ -358,7 +358,7 @@ sub render {
 	# line 2 - render if changed
 	if (defined($parts->{line2}) && 
 		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
-		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+		 ($scroll == 3) || (($scroll == 1 || $scroll == 2) && $cache->{ticker}) )) {
 		$cache->{line2} = $parts->{line2};
 		if (!$double) {
 			if (Slim::Utils::Unicode::encodingFromString($parts->{line2}) eq 'raw') {
@@ -376,7 +376,7 @@ sub render {
 		$cache->{scrollline1ref} = undef;
 		$cache->{scrollline2ref} = undef;
 		$cache->{scrolling} = 0;
-		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{ticker} = 0 if ($scroll != 3);
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{line2}) && (defined($cache->{line2})) || $cache->{restartticker}) {
 		$cache->{line2} = undef;
@@ -388,7 +388,7 @@ sub render {
 		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
 		$cache->{scrolling} = 0;
-		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{ticker} = 0 if ($scroll != 3);
 		$cache->{scrollline1ref} = undef;
 		$cache->{scrollline2ref} = undef;
 	}
@@ -509,7 +509,7 @@ sub render {
 
 	} else {
 
-		if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 2) ) {
+		if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 3) ) {
 			$line2 = $cache->{line2text} . ' ' x ($cache->{overlay2start} - $cache->{line2finish}) . 
 				$cache->{overlay2text};
 		} else {
@@ -525,7 +525,12 @@ sub render {
 					$scroll2text .= $pad . Slim::Display::Display::subString($cache->{line2text}, 0, 40);
 					$cache->{endscroll} = $cache->{line2finish} + $padlen;
 					$cache->{newscroll} = 1;
-					
+				
+				} elsif ($scroll == 2) {
+					# scrolling without wrapped text - scroll to end only
+					$cache->{endscroll} = $cache->{line2finish} - 40;
+					$cache->{newscroll} = 1;
+
 				} else {
 					# ticker mode
 					my $padlen = $scroll_pad_ticker;
@@ -621,8 +626,8 @@ sub update {
 	if    ($scrollMode == 0) { $scroll = 1; $scrollonce = 0; $ticker = 0; }
 	elsif ($scrollMode == 1) { $scroll = 1; $scrollonce = 1; $ticker = 0; }
 	elsif ($scrollMode == 2) { $scroll = 0; $scrollonce = 0; $ticker = 0; }
-	elsif ($scrollMode == 3) { $scroll = 2; $scrollonce = 1; $ticker = 1; }
-	elsif ($scrollMode == 4) { $scroll = 1; $scrollonce = 2; $ticker = 0; }
+	elsif ($scrollMode == 3) { $scroll = 3; $scrollonce = 1; $ticker = 1; }
+	elsif ($scrollMode == 4) { $scroll = 2; $scrollonce = 2; $ticker = 0; }
 
 	my $render = $client->render($parts, $scroll);
 
@@ -700,25 +705,33 @@ sub curLines {
 
 sub showBriefly {
 	my $client = shift;
-	my $line1 = shift;
 
 	# return if update blocked
 	return if ($client->updateMode() == 2);
 
-	my $parsed;
-	if (ref($line1) eq 'HASH') {
-		$parsed = $line1;
+	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd);
+
+	my $parts = shift;
+	if (ref($parts) eq 'HASH') {
+		$parsed = $parts;
 	} else {
-		my $line2 = shift;
-		$parsed = $client->parseLines([$line1,$line2]);
+		$parsed = $client->parseLines([$parts,shift]);
 	}
 
-	my $duration = shift || 1;      # duration - default to 1 second
-	my $firstLineIfDoubled = shift; # use 1st line in doubled mode
-	my $blockUpdate = shift;        # block other updates from cancelling
-	my $scrollToEnd = shift;        # scroll text once before cancelling if scrolling is necessary
+	my $args = shift;
+	if (ref($args) eq 'HASH') {
+		$duration    = $args->{'duration'} || 1; # duration - default to 1 second
+		$firstLine   = $args->{'firstline'};     # use 1st line in doubled mode
+		$blockUpdate = $args->{'block'};         # block other updates from cancelling
+		$scrollToEnd = $args->{'scroll'};        # scroll text once before cancelling if scrolling is necessary
+	} else {
+		$duration = $args || 1;
+		$firstLine   = shift;
+		$blockUpdate = shift;
+		$scrollToEnd = shift;
+	}
 
-	if ($firstLineIfDoubled && ($client->linesPerScreen() == 1)) {
+	if ($firstLine && ($client->linesPerScreen() == 1)) {
 		$parsed->{line2} = $parsed->{line1};
 	}
 

@@ -153,8 +153,8 @@ sub render {
 	use bytes;
 	my $client = shift;
 	my $lines = shift;
-	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 2 = ticker scroll
-
+	my $scroll = shift || 0; # 0 = no scroll, 1 = normal horiz scroll mode if line 2 too long, 
+	                         # 2 = scrollonce with no wrapped text, 3 = ticker scroll
 	my $parts;
 	my $fonts;
 	my $default = 0;
@@ -275,7 +275,7 @@ sub render {
 
 	# if we're only displaying the second line (i.e. single line mode) and the second line is blank,
 	# copy the first to the second.  Don't do for ticker mode.
-	if (!defined(${$fonts->{line1}}) && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 2) {
+	if (!defined(${$fonts->{line1}}) && (!$parts->{line2} || $parts->{line2} eq '') && $scroll != 3) {
 		$parts->{line2} = $parts->{line1};
 	}
 	
@@ -295,12 +295,12 @@ sub render {
 	# line 2 - render if changed
 	if (defined($parts->{line2}) && 
 		(!defined($cache->{line2}) || ($parts->{line2} ne $cache->{line2}) || (!$scroll && $cache->{scrolling}) ||
-		 ($scroll == 2) || ($scroll == 1 && $cache->{ticker}) )) {
+		 ($scroll == 3) || (($scroll == 1 || $scroll == 2) && $cache->{ticker}) )) {
 		$cache->{line2} = $parts->{line2};
 		$cache->{line2bits} = Slim::Display::Graphics::string(${$fonts->{line2}}, $parts->{line2});
 		$cache->{scrollbitsref} = undef;
 		$cache->{scrolling} = 0;
-		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{ticker} = 0 if ($scroll != 3);
 		$cache->{line2finish} = length($cache->{line2bits});
 		$cache->{changed} = 1;
 	} elsif (!defined($parts->{line2}) && defined($cache->{line2})) {
@@ -309,7 +309,7 @@ sub render {
 		$cache->{line2finish} = 0;
 		$cache->{changed} = 1;
 		$cache->{scrolling} = 0;
-		$cache->{ticker} = 0 if ($scroll != 2);
+		$cache->{ticker} = 0 if ($scroll != 3);
 		$cache->{scrollbitsref} = undef;
 	}
 
@@ -385,26 +385,31 @@ sub render {
 		$bits = substr($cache->{line1bits}, 0, $cache->{overlay1start}). $cache->{overlay1bits};
 	}
 	# Add 2nd line
-	if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 2) ) {
+	if ( ($cache->{line2finish} <= $cache->{overlay2start}) && ($scroll != 3) ) {
 		$bits |= $cache->{line2bits}. chr(0) x ($cache->{overlay2start} - $cache->{line2finish}) 
 			. $cache->{overlay2bits};
 	} else {
 		if ($scroll) {
 			my $bytesPerColumn = $client->bytesPerColumn;
 			my $scrollbits = $cache->{line2bits};
-			if ($scroll == 1) {
+			if ($scroll == 1 || $scroll == 2) {
 				# enable line 2 normal scrolling, remove line2bits from base display to scrollbits
 				# add padding to ensure end back at start of text for all scrollPixel settings
-				my $padBytes = $scroll_pad_scroll * $bytesPerColumn;
-				my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
-				my $bytesPerScroll = $pixels * $bytesPerColumn;
-
-				my $len = $padBytes + $cache->{line2finish};
-				if ($pixels > 1) {
-					$padBytes += $bytesPerScroll - ($len % $bytesPerScroll);
+				if ($scroll == 1) {
+					# normal wrapped text scrolling
+					my $padBytes = $scroll_pad_scroll * $bytesPerColumn;
+					my $pixels = $client->paramOrPref($client->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
+					my $bytesPerScroll = $pixels * $bytesPerColumn;
+					my $len = $padBytes + $cache->{line2finish};
+					if ($pixels > 1) {
+						$padBytes += $bytesPerScroll - ($len % $bytesPerScroll);
+					}
+					$scrollbits .= chr(0) x $padBytes . substr($cache->{line2bits}, 0, $screensize);
+					$cache->{endscroll} = $cache->{line2finish} + $padBytes;
+				} else {
+					# don't wrap text - scroll to end only
+					$cache->{endscroll} = $cache->{line2finish} - $screensize;
 				}
-				$scrollbits .= chr(0) x $padBytes . substr($cache->{line2bits}, 0, $screensize);
-				$cache->{endscroll} = $cache->{line2finish} + $padBytes;
 				$cache->{newscroll} = 1;
 			} else {
 				# ticker mode
