@@ -10,8 +10,7 @@ package Slim::Utils::Misc;
 use strict;
 use base qw(Exporter);
 
-our @EXPORT    = qw(assert bt msg msgf watchDog);
-our @EXPORT_OK = qw(assert bt msg msgf watchDog);
+our @EXPORT    = qw(assert bt msg msgf watchDog error);
 
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
@@ -881,14 +880,17 @@ sub watchDog {
 sub msg {
 	use bytes;
 
-	my $entry = strftime "%Y-%m-%d %H:%M:%S.", localtime;
-	my $now = int(Time::HiRes::time() * 10000);
-	$entry .= (substr $now, -4) . " ";
-	$entry .= shift;
+	my $now    = int(Time::HiRes::time() * 10000);
+
+	my $entry  = strftime "%Y-%m-%d %H:%M:%S.", localtime;
+	   $entry .= (substr $now, -4) . " ";
+	   $entry .= shift;
+
+	my $forceLog = shift || 0;
 
 	print STDERR $entry;
 	
-	if (Slim::Utils::Prefs::get('livelog')) {
+	if ($forceLog || Slim::Utils::Prefs::get('livelog')) {
 		 $Slim::Utils::Misc::log .= $entry;
 		 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
 	}
@@ -898,6 +900,13 @@ sub msgf {
 	my $format = shift;
 
 	msg(sprintf($format, @_));
+}
+
+sub error {
+	my $msg = shift;
+
+	# Force an error message & write to the log.
+	msg("ERROR: $msg\n", 1);
 }
 
 sub delimitThousands {

@@ -46,7 +46,8 @@ sub executeSQLFile {
 	$::d_info && msg("Executing SQL file $sqlFile\n");
 
 	open(my $fh, $sqlFile) or do {
-		$::d_info && msg("Couldn't open: $sqlFile : $!\n");
+
+		msg("Couldn't open: $sqlFile : $!\n");
 		return;
 	};
 

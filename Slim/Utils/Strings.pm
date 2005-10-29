@@ -100,7 +100,11 @@ sub load_strings_file {
 
 		local $/ = undef;
 
-		open(STRINGS, '<:utf8', $file) || die "couldn't open $file\n";
+		open(STRINGS, '<:utf8', $file) || do {
+			error("load_strings_file: couldn't open $file - FATAL!\n");
+			die;
+		};
+
 		$strings = <STRINGS>;
 		close STRINGS;
 
@@ -110,7 +114,11 @@ sub load_strings_file {
 		use utf8;
 		local $/ = undef;
 
-		open(STRINGS, $file) || die "couldn't open $file\n";
+		open(STRINGS, $file) || do {
+			error("load_strings_file: couldn't open $file - FATAL!\n");
+			die;
+		};
+
 		$strings = <STRINGS>;
 
 		if ($Slim::Utils::Unicode::locale =~ /^iso-8859/) {

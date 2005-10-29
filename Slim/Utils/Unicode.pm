@@ -587,9 +587,12 @@ sub encodingFromFile {
 
 	} elsif (-r $file) {
 
-		my $fh = new FileHandle;
+		my $fh = FileHandle->new;
+
 		$fh->open($file) or do {
-			msg("Couldn't open file: [$file] : $!\n");
+
+			error("Couldn't open file: [$file] : $!\n");
+
 			return $encoding;
 		};
 

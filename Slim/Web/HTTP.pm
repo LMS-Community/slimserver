@@ -1765,7 +1765,7 @@ sub _getFileContent {
 
 	} else {
 
-		$::d_http && msg("Couldn't open: $path\n");
+		error("_getFileContent: Couldn't open: $path\n");
 	}
 	
 	return (\$content, $mtime, $inode, $size);
