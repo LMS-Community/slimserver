@@ -168,6 +168,18 @@ sub init {
 											'artist' => $track->artist->id},
 				});
 
+			} elsif ($curitem eq 'YEAR') {
+
+				my $year = $track->year;
+				Slim::Buttons::Common::pushMode($client, 'browsedb', {
+					'hierarchy'  => 'album,track',
+					'level'      => 0,
+					'findCriteria' => { 'year' => $year,},
+					'selectionCriteria' => { 'track' => $track->id,
+											'album'  => $track->album->id,
+											'artist' => $track->artist->id},
+				});
+
 			} elsif ($curitem eq 'FAVORITE') {
 				my $num = $client->param('favorite');
 				if ($num < 0) {
@@ -237,6 +249,12 @@ sub _trackDataForCurrentItem {
 		$line2 = $track->album->title;
 
 		push @search, "album=".$track->album->id;
+
+	} elsif ($item eq 'YEAR') {
+
+		$line2 = $track->year;
+
+		push @search, "year=".$track->year;
 	}
 
 	my $termlist = join '&',@search;
@@ -316,7 +334,7 @@ sub preloadLines {
 
 	if (my $year = $track->year) {
 		push (@{$client->trackInfoLines}, $client->string('YEAR') . ": $year");
-		push (@{$client->trackInfoContent}, undef);
+		push (@{$client->trackInfoContent}, 'YEAR');
 	}
 
 	if (my $genre = $track->genre) {
