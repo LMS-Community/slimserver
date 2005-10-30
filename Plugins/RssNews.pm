@@ -327,9 +327,9 @@ sub updateFeedNames {
 	for my $feed (@feedURLPrefs) {
 		if ($feed) {
 			my $name = $feed_names{$feed};
-			if ($name && $name !~ /^http\:/) {
+			if ($name && $name !~ /^(?:http|file)\:/) {
 				push @names, $name;
-			} elsif ($feed =~ /^http\:/) {
+			} elsif ($feed =~ /^(?:http|file)\:/) {
 				my $xml = getFeedXml($feed);
 				if ($xml && exists $xml->{channel}->{title}) {
 					# trim required to remove leading newlines
@@ -430,6 +430,34 @@ sub getFeedXml {
 	} else {
 		$getFeedXml_semaphore = 1;
 	}
+
+    if ($feed_url =~ /^file/)
+    {
+		my $feed_file = $feed_url;
+		$feed_file =~ s/^file://;
+		$feed_file =~ s/^\/+/\//;
+		#accomodate windows drive letter suckiness
+		$feed_file =~ s/^\/([a-z]:)/$1/i;
+
+		open (DIN, $feed_file);
+        if ($@) {
+			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
+			$getFeedXml_semaphore = 0;
+			return 0;
+        }
+		my @content = <DIN>;
+		close DIN;
+		my $content = join ("\n", @content);
+
+        my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+		$getFeedXml_semaphore = 0;
+
+        if ($@) {
+			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
+			return 0;
+        }
+		return ($xml);	
+    }
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => $feed_url,
