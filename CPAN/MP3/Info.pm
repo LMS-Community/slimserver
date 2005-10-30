@@ -733,13 +733,41 @@ sub get_mp3tag {
 												# handle all comment data)
 								$desc = $1;
 							} elsif ($id =~ /^TCON?$/) {
-								if ($data =~ /^ \(? (\d+) (?:\)|\000)? (.+)?/sx) {
-									my($index, $name) = ($1, $2);
-									if ($name && $name ne "\000") {
-										$data = $name;
-									} else {
-										$data = $mp3_genres[$index];
+
+								my ($index, $name);
+
+								# Handle the ID3v2.x spec - 
+								#
+								# just an index number, possibly
+								# paren enclosed - referer to the v1 genres.
+								if ($data =~ /^ \(? (\d+) \)?\000?$/sx) {
+
+									$index = $1;
+
+								# Paren enclosed index with refinement.
+								# (4)Eurodisco
+								} elsif ($data =~ /^ \( (\d+) \)\000? ([^\(].+)$/x) {
+
+									($index, $name) = ($1, $2);
+
+								# List of indexes: (37)(38)
+								} elsif ($data =~ /^ \( (\d+) \)\000?/x) {
+
+									my @genres = ();
+
+									while ($data =~ s/^ \( (\d+) \)\000?//x) {
+
+										push @genres, $mp3_genres[$1];
 									}
+
+									$data = \@genres;
+								}
+
+								# Text based genres will fall through.
+								if ($name && $name ne "\000") {
+									$data = $name;
+								} elsif ($index) {
+									$data = $mp3_genres[$index];
 								}
 							}
 
