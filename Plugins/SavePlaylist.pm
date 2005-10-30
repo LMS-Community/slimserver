@@ -61,7 +61,9 @@ sub setMode {
 	} elsif ($push ne 'push') {
 		my $playlist = '';
 	} else {
-		$context{$client} = 'A';
+		$context{$client} = $client->currentPlaylist ? 
+				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
+					'A';
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
 			'callback' => \&Plugins::SavePlaylist::savePluginCallback,
 			'valueRef' => \$context{$client},
