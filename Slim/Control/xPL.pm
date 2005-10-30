@@ -15,9 +15,11 @@ package Slim::Control::xPL;
 #
 use strict;
 use IO::Socket;
+use Scalar::Util qw(blessed);
+use Sys::Hostname;
+
 use Slim::Utils::Prefs;
 use Slim::Music::Info;
-use Sys::Hostname;
 
 my $xpl_source = "slimdev-slimserv";
 my $localip;
@@ -40,14 +42,17 @@ sub init {
 	}
 
 	$xpl_ir = Slim::Utils::Prefs::get("xplir");
+
 	if (!defined($xpl_ir)) {
 		$xpl_ir = 'none'; 
 		Slim::Utils::Prefs::set("xplir",$xpl_ir);
 	}
+
 	$xpl_port = 50000;
 
 	# Try and bind to a free port
 	while (!$xpl_socket && $xpl_port < 50200) {
+
 		$xpl_socket = IO::Socket::INET->new(
 			Proto     => 'udp',
 			LocalPort => $xpl_port,
@@ -81,10 +86,10 @@ sub validInstance {
 # This routine accepts an xPL instance and determines if it matches one of our player names
 # If it does, it returns the ID of the player.
 sub checkInstances {
-	my @clients = Slim::Player::Client::clients();
 	my $clientName;
 	my $instance;
-	foreach my $client (@clients) {
+
+	foreach my $client (Slim::Player::Client->clients) {
 		$instance = lc validInstance($client->name);
 		if ($_[0] eq "$xpl_source\.$instance") {
 			return $client->id;
@@ -165,9 +170,10 @@ sub handleAudioMessage {
 	# If client is undefined, send to all clients
 	if (!defined($clientid)) {
 
-		my @clients = Slim::Player::Client::clients();
-		foreach my $client (@clients) {
+		foreach my $client (Slim::Player::Client->clients) {
+
 			$clientid = $client->id;
+
 			if (defined($clientid)) {
 				handleAudioMessage($msg,$clientid);
 			}
@@ -262,23 +268,39 @@ sub sendXplHBeatMsg {
 
 	if ($playmode eq 'play') {
 		$playmode = "playing";
-		my $currentDB = Slim::Music::Info::getCurrentDataStore();
+
+		my $ds  = Slim::Music::Info::getCurrentDataStore();
+
 		my $url = Slim::Player::Playlist::song($client);
-		my $track = ref $url ? $url : $currentDB->objectForUrl($url, 1, 1);
-		if (defined($track->album())) {
-			if (defined($track->album()->title())) {
-				$album = $track->album()->title();
+
+		my $track = blessed($url) && $url->can('id') ? $url : $ds->objectForUrl($url, 1, 1);
+
+		if (blessed($track) && $track->can('album')) {
+
+			my $albumObj = $track->album;
+
+			if (blessed($albumObj) && $albumObj->can('title')) {
+
+				$album = $albumObj->title;
 			}
 		}
-		if (defined($track->artist())) {
-			if (defined($track->artist()->name())) {
-				$artist = $track->artist()->name();
+
+		if (blessed($track) && $track->can('artist')) {
+
+			my $artistObj = $track->artist;
+
+			if (blessed($artistObj) && $artistObj->can('name')) {
+
+				$artist = $artistObj->name;
 			}
 		}
+
 		$trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+
 		# if the song name has the track number at the beginning, remove it
 		$trackname =~ s/^[0-9]*\.//g;
 		$trackname =~ s/^ //g;
+
 	} elsif ($playmode eq 'stop') {
 		$playmode = "stopped";
 	} elsif ($playmode eq 'pause') {
@@ -288,25 +310,21 @@ sub sendXplHBeatMsg {
 	if (defined($_[1])) {
 		$msg = "status=$playmode";
 		$msg = "$msg\nARTIST=$artist\nALBUM=$album\nTRACK=$trackname\nPOWER=$power";
-		sendxplmsg("xpl-stat",
-			"*","audio.basic",
-			$msg,
-			$clientName);
+
+		sendxplmsg("xpl-stat", "*","audio.basic", $msg, $clientName);
+
 	} else {
 		$msg = "interval=$xpl_interval\nport=$xpl_port\nremote-ip=$localip\nschema=audio.slimserv\nstatus=$playmode";
 		$msg = "$msg"; #\nsong=$song\nline1=$prevline1\nline2=$prevline2";
-		sendxplmsg("xpl-stat",
-			"*","hbeat.app",
-			$msg,
-			$clientName);
+
+		sendxplmsg("xpl-stat", "*","hbeat.app", $msg, $clientName);
 	}
 }
 
 # Sends an xPL heartbeat from all clients that are currently connected
 sub sendxplhbeat {
-	my @clients = Slim::Player::Client::clients();
 
-	foreach my $client (@clients) {
+	foreach my $client (Slim::Player::Client->clients) {
 		sendXplHBeatMsg($client);
 	}
 
@@ -320,10 +338,8 @@ sub sendXplStatusMsg {
 	my $playmode = $client->playmode;
         $msg = "status=$playmode";
         $msg = "$msg\nupdate=$status";
-        sendxplmsg("xpl-stat",
-                   "*","audio.slimserv",
-                   $msg,
-                   $clientName);
+
+        sendxplmsg("xpl-stat", "*","audio.slimserv", $msg, $clientName);
 }
 
 # Generic routine for sending an xPL message.
@@ -334,8 +350,8 @@ sub sendxplmsg {
 	my $portaddr = sockaddr_in(3865, $ipaddr);
 
 	my $sockUDP = IO::Socket::INET->new(
-		PeerPort => 3865,
-		Proto => 'udp'
+		'PeerPort' => 3865,
+		'Proto'    => 'udp',
 	);
 
 	$sockUDP->autoflush(1);
@@ -386,8 +402,8 @@ sub handleOsdMessage {
 	my $clientid = $_[1];
 	if (!defined($clientid)) {
 
-		my @clients = Slim::Player::Client::clients();
-		foreach my $client (@clients) {
+		foreach my $client (Slim::Player::Client->clients) {
+
 			$clientid = $client->id;
 			if (defined($clientid)) {
 				handleOsdMessage($_[0],$clientid);
@@ -434,6 +450,7 @@ sub handleOsdMessage {
 # Routine to process incoming remote.basic messages
 sub handleRemoteMessage {
 	my @keys = split ",", getparam($_[0],"keys");
+
 	foreach my $remotekey (@keys) {
 		xplExecuteCmd("button $remotekey",$_[1]);
 	}
@@ -442,6 +459,7 @@ sub handleRemoteMessage {
 # Returns the current xPL configuration of a client
 sub handleConfigCurrent {
 	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+
 	sendxplmsg("xpl-stat","*","config.current","newconf=$clientname\ninterval=$xpl_interval\ninfrared=$xpl_ir",$clientname);
 }
 
@@ -450,6 +468,7 @@ sub handleConfigCurrent {
 # configured.
 sub handleConfigList {
 	my $clientname = validInstance(Slim::Player::Client::getClient($_[1])->name);	
+
 	sendxplmsg("xpl-stat","*","config.list","reconf=newconf\noption=interval\noption=infrared",$clientname);
 }
 
