@@ -35,6 +35,8 @@ our $selects = {
 our $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 my $endSelectTime;
 
+my $selectInstance = 0;
+
 sub addRead {
 
 	_updateSelect('read', @_);
@@ -88,6 +90,10 @@ sub select {
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
 
+	$selectInstance = ($selectInstance + 1) % 1000;
+
+	my $thisInstance = $selectInstance;
+
 	my $count   = 0;
 
 	my %handles = (
@@ -117,6 +123,9 @@ sub select {
 
 			# Conditionally readUDP if there are SLIMP3's connected.
 			Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
+
+			# return if select has been run more recently than thisInstance (if run inside callback)
+			return $count if ($thisInstance != $selectInstance);
 		}
 	}
 
