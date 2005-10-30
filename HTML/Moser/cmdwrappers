@@ -35,7 +35,11 @@
 
 [% BLOCK listitem -%]
 <li class="[% odd ? "odd" : "even" %]">
-  <a [% content %] >[% title %]</a>
+	[% IF content == '' %]
+		[% title %]		
+	[% ELSE %]
+		<a [% content %] >[% title %]</a>
+	[% END %]
 </li>
 [%- END %]
 

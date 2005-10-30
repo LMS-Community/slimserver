@@ -31,7 +31,11 @@
 
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-		<a [% content %] >[% title %]</a>
+		[% IF content == '' %]
+			[% title %]		
+		[% ELSE %]
+			<a [% content %] >[% title %]</a>
+		[% END %]
 	</td>
 [% END %]
 

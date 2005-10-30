@@ -34,7 +34,11 @@
 
 [% BLOCK listitem %]
 	<td class="listing" align="left">
-		<a [% content %] >[% title %]</a>
+		[% IF content == '' %]
+			[% title %]		
+		[% ELSE %]
+			<a [% content %] >[% title %]</a>
+		[% END %]
 	</td>
 [% END %]
 
