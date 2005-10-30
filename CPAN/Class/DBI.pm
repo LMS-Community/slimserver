@@ -569,7 +569,10 @@ sub use_object_index {
 
 sub live_object_fetch {
 	my ($class, $key) = @_;
-	return ($Live_Objects{$class->_class_for_ref}{$key});
+
+	my $ret = $Live_Objects{$class->_class_for_ref}{$key};
+
+	return (UNIVERSAL::isa($ret, 'Class::DBI') ? undef : $ret);
 }
 
 sub live_object_store {
@@ -1176,7 +1179,7 @@ sub _do_search {
 	# and all the searched-for field values match. If any don't match,
 	# or don't exist in the cached object, then we fall through and db search.
 	if ($search_type eq "=" and my $obj_key = $class->_live_object_key(\%search_for)) {
-		my $obj = $Live_Objects{$class}{$obj_key};
+		my $obj = $class->live_object_fetch($obj_key);
 		# do we have a cached object that also matches the search criteria?
 		# for now we use the cached object only if the PK was the only search criteria
 		# (wouldn't be hard to add more through check of %search_for values)
