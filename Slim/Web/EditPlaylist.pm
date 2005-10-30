@@ -168,7 +168,9 @@ sub saveCurrentPlaylist {
 
 	if (defined $client && Slim::Player::Playlist::count($client)) {
 
-		my $title = $client->string('UNTITLED');
+		my $title = $client->currentPlaylist ? 
+				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
+					$client->string('UNTITLED');
 
 		my ($playlistObj) = $client->execute(['playlist', 'save', $title]);
 
