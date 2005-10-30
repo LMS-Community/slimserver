@@ -45,7 +45,7 @@ our $cleanupIds;
 our $cleanupStage;
 
 # Singleton objects for Unknowns
-our ($_unknownArtist, $_unknownGenre, $_unknownAlbum);
+our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
 
 # Keep the last 5 find results set in memory and expire them after 60 seconds
 tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
@@ -909,9 +909,9 @@ sub wipeAllData {
 	$self->forceCommit;
 
 	# clear the references to these singletons
-	$_unknownArtist = undef;
-	$_unknownGenre  = undef;
-	$_unknownAlbum  = undef;
+	$_unknownArtist = '';
+	$_unknownGenre  = '';
+	$_unknownAlbum  = '';
 
 	$self->{'totalTime'}    = 0;
 	$self->{'trackCount'}   = 0;
@@ -1548,7 +1548,7 @@ sub _postCheckAttributes {
 		$track->album($_unknownAlbum);
 		$albumObj = $_unknownAlbum;
 
-	} elsif ($create && $isLocal && !$album) {
+	} elsif ($create && $isLocal && !$album && blessed($_unknownAlbum)) {
 
 		$track->album($_unknownAlbum);
 		$albumObj = $_unknownAlbum;
@@ -1676,7 +1676,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if (defined($album) && blessed($albumObj) && $albumObj->isa('Slim::DataStores::DBI::Album')) {
+	if (defined($album) && blessed($albumObj) && $albumObj->can('title') && ($albumObj ne $_unknownAlbum)) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
