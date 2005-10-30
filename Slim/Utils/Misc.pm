@@ -881,14 +881,14 @@ sub watchDog {
 
 sub msg {
 	use bytes;
-
-	my $now    = int(Time::HiRes::time() * 10000);
-
-	my $entry  = strftime "%Y-%m-%d %H:%M:%S.", localtime;
-	   $entry .= (substr $now, -4) . " ";
-	   $entry .= shift;
-
+	my $entry = shift;
 	my $forceLog = shift || 0;
+
+	if ( $::LogTimestamp ) {
+		my $now = substr(int(Time::HiRes::time() * 10000),-4);
+		$entry = join( strftime( "%Y-%m-%d %H:%M:%S.", localtime ),
+			$now , ' ' , $entry );
+	}
 
 	print STDERR $entry;
 	
