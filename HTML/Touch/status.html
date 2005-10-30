@@ -79,6 +79,11 @@
 	var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% END %][% IF not durationseconds %][% refresh %][% END %];
 	var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
 	var p = 1;
+	setTimeout( "refresh()", [% refresh %]*1000);
+
+function refresh() {
+	window.location.replace("[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
+}
 
 // Update the progress dialog with the current state
 function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]	
