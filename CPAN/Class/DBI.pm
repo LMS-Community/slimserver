@@ -572,7 +572,7 @@ sub live_object_fetch {
 
 	my $ret = $Live_Objects{$class->_class_for_ref}{$key};
 
-	return (UNIVERSAL::isa($ret, 'Class::DBI') ? undef : $ret);
+	return (UNIVERSAL::isa($ret, 'Class::DBI') ? $ret : undef);
 }
 
 sub live_object_store {
