@@ -15,6 +15,7 @@ our @EXPORT    = qw(assert bt msg msgf watchDog error);
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
+use IO::Select;
 use POSIX qw(strftime setlocale LC_TIME);
 use Sys::Hostname;
 use Socket qw(inet_ntoa inet_aton);
@@ -34,6 +35,7 @@ our $watch  = 0;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
+		*EINTR       = sub () { 10004 };
 		*EWOULDBLOCK = sub () { 10035 };
 		*EINPROGRESS = sub () { 10036 };
 
@@ -43,7 +45,7 @@ BEGIN {
 
 	} else {
 		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
+		import Errno qw(EWOULDBLOCK EINPROGRESS EINTR);
 	}
 }
 
@@ -1038,7 +1040,7 @@ sub sysreadline(*;$) {
 	my $line = '';
 	my $result;
 
-SLEEP:
+	SLEEP:
 	until (at_eol($line)) {
 
 		unless ($infinitely_patient) {
@@ -1059,12 +1061,12 @@ SLEEP:
 			next SLEEP;
 		}
 
-INPUT_READY:
+		INPUT_READY:
 		while (() = $selector->can_read(0.0)) {
 
 			my $was_blocking = blocking($handle,0);
 
-CHAR:
+			CHAR:
 			while ($result = sysread($handle, my $char, 1)) {
 				$line .= $char;
 				last CHAR if $char eq "\n";
@@ -1072,13 +1074,23 @@ CHAR:
 
 			my $err = $!;
 
+			next CHAR if (!defined($result) and $err == EINTR);
+
 			blocking($handle, $was_blocking);
 
 			unless (at_eol($line)) {
 
-				if (!defined($result) && $err != EWOULDBLOCK) { 
-					return undef;					
+				if (!defined($result) && $err != EWOULDBLOCK) {
+					return undef;
 				}
+
+				if (defined($result) and $result == 0) {
+
+					# part of a line may have been read...
+					# but we got eof before end of line...
+					return undef;
+				}
+
 				next SLEEP;
 			} 
 
