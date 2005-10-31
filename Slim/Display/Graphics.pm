@@ -445,7 +445,7 @@ sub parseBMP {
 		local $/;
 
 		open(my $fh, $fontfile) or do {
-			error(" couldn't open fontfile $fontfile\n"); 
+			errorMsg(" couldn't open fontfile $fontfile\n"); 
 			return undef;
 		};
 

@@ -591,7 +591,7 @@ sub encodingFromFile {
 
 		$fh->open($file) or do {
 
-			error("Couldn't open file: [$file] : $!\n");
+			errorMsg("Couldn't open file: [$file] : $!\n");
 
 			return $encoding;
 		};

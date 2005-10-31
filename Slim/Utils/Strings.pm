@@ -101,7 +101,7 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, '<:utf8', $file) || do {
-			error("load_strings_file: couldn't open $file - FATAL!\n");
+			errorMsg("load_strings_file: couldn't open $file - FATAL!\n");
 			die;
 		};
 
@@ -115,7 +115,7 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, $file) || do {
-			error("load_strings_file: couldn't open $file - FATAL!\n");
+			errorMsg("load_strings_file: couldn't open $file - FATAL!\n");
 			die;
 		};
 

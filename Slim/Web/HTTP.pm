@@ -1765,7 +1765,7 @@ sub _getFileContent {
 
 	} else {
 
-		error("_getFileContent: Couldn't open: $path\n");
+		errorMsg("_getFileContent: Couldn't open: $path\n");
 	}
 	
 	return (\$content, $mtime, $inode, $size);

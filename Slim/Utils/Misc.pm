@@ -10,7 +10,7 @@ package Slim::Utils::Misc;
 use strict;
 use base qw(Exporter);
 
-our @EXPORT    = qw(assert bt msg msgf watchDog error);
+our @EXPORT    = qw(assert bt msg msgf watchDog errorMsg);
 
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
@@ -904,7 +904,7 @@ sub msgf {
 	msg(sprintf($format, @_));
 }
 
-sub error {
+sub errorMsg {
 	my $msg = shift;
 
 	# Force an error message & write to the log.

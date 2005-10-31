@@ -612,7 +612,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 			open($playlist_filehandle, $playlistpathpath) || do {
 
-				error("Couldn't open playlist file $playlistpath : $!\n");
+				errorMsg("Couldn't open playlist file $playlistpath : $!\n");
 
 				$playlist_filehandle = undef;
 				$numitems = undef;

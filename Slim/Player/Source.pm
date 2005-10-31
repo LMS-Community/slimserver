@@ -410,7 +410,7 @@ sub playmode {
 		# if we couldn't open the song, then stop...
 		my $opened = openSong($master, $seekoffset) || do {
 
-			error("Couldn't open song. Stopping.\n");
+			errorMsg("Couldn't open song. Stopping.\n");
 
 			$newmode = 'stop' unless gotoNext($client, 1);
 		};

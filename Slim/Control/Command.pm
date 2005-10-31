@@ -853,7 +853,7 @@ sub execute {
 
 							if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($p2))) {
 
-								error("Couldn't open playlist file $p2 : $!\n");
+								errorMsg("Couldn't open playlist file $p2 : $!\n");
 
 								$playlist_filehandle = undef;
 

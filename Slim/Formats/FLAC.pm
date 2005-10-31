@@ -56,7 +56,7 @@ sub getTag {
 	my $anchor = shift || "";
 
 	my $flac   = Audio::FLAC::Header->new($file) || do {
-		error("Couldn't open file: [$file] for reading: $!\n");
+		errorMsg("Couldn't open file: [$file] for reading: $!\n");
 		return {};
 	};
 
@@ -160,7 +160,7 @@ sub getCoverArt {
 	my $file = shift;
 
 	my $flac = Audio::FLAC::Header->new($file) || do {
-		error("Couldn't open file: [$file] for reading: $!\n");
+		errorMsg("Couldn't open file: [$file] for reading: $!\n");
 		return;
 	};
 
