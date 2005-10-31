@@ -1134,6 +1134,7 @@ PLUGIN_SHOUTCASTBROWSER_REFRESH
 PLUGIN_SHOUTCASTBROWSER_REFRESH_NOW
 	DE	RECHTS drücken zum Aktualisieren
 	EN	Press RIGHT to refresh the list
+	ES	Presionar DERECHA para refrescar la lista
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 	DE	Liste der Streams aktualisieren
@@ -1190,6 +1191,7 @@ PLUGIN_SHOUTCASTBROWSER_MISC
 PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM
 	DE	Zufälligen Stream spielen
 	EN	Play random stream
+	ES	Reproducir stream al azar
 
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	DE	Spielte zuletzt

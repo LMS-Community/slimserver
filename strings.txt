@@ -1063,6 +1063,7 @@ SQUEEZEBOX2
 
 SOFTSQUEEZE
 	EN	SoftSqueeze
+	ES	Softsqueeze
 
 WELCOME_TO_SLIMP3
 	CZ	Vítá Vás SLIMP3
@@ -2731,6 +2732,7 @@ YES
 NO
 	DE	Nein
 	EN	No
+	ES	No
 	FR	Non
 	ZH_CN	否
 
@@ -4563,7 +4565,7 @@ SETUP_THROTTLESCAN_DESC
 	DE	Wenn der Server damit beginnt, in ihrem Musikverzeichnis in den ID-Tags der Musik-Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und PCs mit einem FAT oder FAT32 Datensystem zu einer inakzeptablen Verlangsamung ihres Computers kommen. Sie können mit folgender Einstellung diesen Prozess verlangsamen und ihrem Rechner mehr Ressourcen überlassen.
 	DK	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
 	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
-	ES	Cuando se enciende el servidor, hace una revisión total de su carpeta de música para determinar todos los artistas, álbumes y canciones. En algunos sistemas lentos y PCs con Windows que utilizan filesystems FAT y FAT32 esto puede reducir la performance de la computadora. Se puede cambiar esta opción para hacer mas lenta la revisión y utilizar menos recursos de la computadora.
+	ES	Cuando se enciende el servidor, hace una revisión total de su carpeta de mósica para determinar todos los artistas, álbumes y canciones. En algunos sistemas lentos y PCs con Windows que utilizan filesystems FAT y FAT32 esto puede reducir la perfomance de la computadora. Se puede cambiar esta opción para hacer mas lenta la revisión y utilizar menos recursos de la computadora.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
 	FR	Lorsqu'il démarre, le serveur répertorie votre dossier de musique afin de mettre à jour sa base de données contenant l'information sur les albums, les artistes, etc. à partir des repères ID3 de vos fichiers de musique. Ceci peut taxer exagérément les ressources des ordinateurs plus lents. Vous pouvez réduire la vitesse de balayage afin d'éviter que le temps de réponse de l'ordinateur ne soit trop long.
 	JP	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
@@ -5045,12 +5047,14 @@ SETUP_PREFSWRITEDELAY_DESC
 	ZH_CN	这个设置决定了参数选择纪录到硬盘的频繁度。以0为值则表示将每一个更动即刻纪录到硬盘。较高的值则表示在该指定的秒数内累积多项更动以便到时一起纪录到硬盘上。
 
 SETUP_KEEPUNSWAPPEDINTERVAL
-	DE	Aufweckintervall
+	DE	Auslagerung verhindern
 	EN	Keep Unswapped interval
+	ES	Intervalo de Recarga (Keep Unswapped)
 
 SETUP_KEEPUNSWAPPEDINTERVAL_DESC
 	DE	Wenn der Server längere Zeit nicht benutzt wird wird es vom Betriebssystem ausgelagert. Diese Einstellung definiert, nach wievielen Minuten der Server seine Startseite lädt, damit es im Hauptspreicher bleibt. Auf 0 setzen damit dieses Verhalten abgeschaltet wird.
 	EN	If the server is unused for some time, the operating system puts it into swap space. This setting determines after how many minutes the server reloads its main page to keep the server process in main memory. Set to 0 to disable the reloading.
+	ES	Si el servidor no es utilizado por un lapso de tiempo, el sistema operativo lo coloca en espacio de swap. Esta configuración establece cada cuantos minutos el servidor recargará su página principal para mantener al proceso del servidor en la memoria principal. Utilizar 0 para deshabilitar la recarga.
 
 SETUP_LONGDATEFORMAT
 	CZ	Formát datumu douhý
@@ -7352,6 +7356,7 @@ BYTES
 
 SAMPLERATE
 	EN	Sample Rate
+	ES	Tasa de Muestreo
 
 BITRATE
 	DE	Bitrate
@@ -9655,6 +9660,7 @@ RADIO_TUNEIN_DESC
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
+	ES	URL de Radio:
 
 RADIO_TUNEIN_CHOOSE
 	DE	Station wählen
@@ -10386,10 +10392,12 @@ FAVORITES_DELETING
 
 SQUEEZENETWORK
 	EN	SqueezeNetwork
+	ES	SqueezeNetwork
 	ZH_CN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
 	EN	SqueezeNetwork
+	ES	SqueezeNetwork
 	ZH_CN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECTING
@@ -10493,6 +10501,7 @@ ALBUMARTIST
 UNSYNC
 	DE	Synchronisation aufheben
 	EN	Unsync
+	ES	Desincronizar
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
@@ -10563,18 +10572,23 @@ ARTWORK
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
 	EN	SlimServer failed retrive the resource you were looking for.
+	ES	SlimServer no pudo recuperar el recurso que estaba buscando.
 
 SETUP_LARGETEXTFONT
 	DE	Grosse Schrift
 	EN	Large Text Font
+	ES	Fuente de Texto Grande
 
 SETUP_LARGETEXTFONT_DESC
 	DE	Wählen Sie, welche Schrift Sie bei doppelter Grösse anzeigen wollen
 	EN	Choose which font you would like to use when displaying large text.
+	ES	Elegir que fuente utilizar cuando se muestra texto grande.
 
 SETUP_LARGETEXTFONT_0
 	DE	Klassisch
 	EN	Classic
+	ES	Clásico
 
 SETUP_LARGETEXTFONT_1
 	EN	Modern
+	ES	Moderno

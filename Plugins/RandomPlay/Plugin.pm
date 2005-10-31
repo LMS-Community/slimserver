@@ -650,31 +650,37 @@ PLUGIN_RANDOM
 PLUGIN_RANDOM_DISABLED
 	DE	Zufalls Mix angehalten
 	EN	Random Mix Stopped
+	ES	Mezcla al Azar Detenida
 
 PLUGIN_RANDOM_TRACK
 	DE	Zufälliger Lieder Mix
 	EN	Random Song Mix
+	ES	Mezcla por Canción al Azar
 
 PLUGIN_RANDOM_TRACK_PLAYING
 	DE	Spiele zufällige Liederauswahl
 	EN	Playing Random Songs
+	ES	Reproduciendo Canciones al Azar
 
 PLUGIN_RANDOM_TRACK_DISABLE
 	DE	keine Lieder mehr hinzuzufügen
 	EN	stop adding songs
+	ES	dejar de añadir canciones
 
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
-	ES	Mezcla al azar por �?lbum
+	ES	Mezcla al azar por �?lbum
 
 PLUGIN_RANDOM_ALBUM_ITEM
 	DE	Zufälliges album
 	EN	Random Album
+	ES	Álbum al Azar
 
 PLUGIN_RANDOM_ALBUM_PLAYING
 	DE	Spiele zufällige Albenauswahl
 	EN	Playing Random Albums
+	ES	Reproduciendo Álbumes al Azar
 
 PLUGIN_RANDOM_ALBUM_DISABLE
 	DE	keine Alben mehr hinzuzufügen
@@ -683,86 +689,107 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
+	ES	Mezcla por Artista al Azar
 
 PLUGIN_RANDOM_ARTIST_ITEM
 	DE	Zufälliger Interpret
 	EN	Random Artist
+	ES	Artista al Azar
 
 PLUGIN_RANDOM_ARTIST_PLAYING
 	DE	Spiele zufälligen Interpreten
 	EN	Playing Random Artists
+	ES	Reproduciendo Artistas al Azar
 
 PLUGIN_RANDOM_ARTIST_DISABLE
 	DE	keine Interpreten mehr hinzuzufügen
 	EN	stop adding artists
+	ES	dejar de añadir artistas
 
 PLUGIN_RANDOM_YEAR
 	DE	Zufälliger Jahr Mix
 	EN	Random Year Mix
+	ES	Mezcla por Año al Azar
 
 PLUGIN_RANDOM_YEAR_ITEM
 	DE	Zufälliger Jahrgang
 	EN	Random Year
+	ES	Año al Azar
 
 PLUGIN_RANDOM_YEAR_PLAYING
 	DE	Spiele zufälligen Jahrgang
 	EN	Playing Random Years
+	ES	Reproduciendo Años al Azar
 
 PLUGIN_RANDOM_YEAR_DISABLE
 	DE	keine Jahrgänge mehr hinzuzufügen
 	EN	stop adding years
+	ES	dejar de añadir años
 
 PLUGIN_RANDOM_GENRE_FILTER
 	DE	Zu berücksichtigende Stile wählen
 	EN	Select Genres To Include
+	ES	Elegir Géneros A Incluir
 
 PLUGIN_RANDOM_SELECT_ALL
 	DE	Alle wählen
 	EN	Select All
+	ES	Elegir Todo
 
 PLUGIN_RANDOM_SELECT_NONE
 	DE	Alle abwählen
 	EN	Select None
+	ES	No Elegir Ninguno
 
 PLUGIN_RANDOM_CHOOSE_BELOW
 	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
+	ES	Elegir una mezcla al azar de mósica de tu colección:
 
 PLUGIN_RANDOM_TRACK_WEB
 	DE	Zufällige Lieder
 	EN	Random songs
+	ES	Canciones al azar
 
 PLUGIN_RANDOM_ARTIST_WEB
 	DE	Zufällige Interpreten
 	EN	Random artists
+	ES	Artistas al azar
 
 PLUGIN_RANDOM_ALBUM_WEB
 	DE	Zufällige Alben
 	EN	Random albums
+	ES	Álbumes al azar
 
 PLUGIN_RANDOM_YEAR_WEB
 	DE	Zufällige Jahrgänge
 	EN	Random years
+	ES	Años al azar
 
 PLUGIN_RANDOM_GENRE_FILTER_WEB
 	DE	Im Mix zu berücksichtigende Stile: 
 	EN	Genres to include in your mix:
+	ES	Géneros a incluir en tu mezcla:
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Die Wiedergabeliste wird
 	EN	Now Playing will show
+	ES	Se Está Escuchando mostrará
 
 PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	DE	noch abzuspielende und
 	EN	upcoming songs and
+	ES	próximas canciones y
 
 PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	DE	wiedergegebene Lieder anzeigen.
 	EN	recently played songs.
+	ES	canciones escuchadas recientemente.
 
 PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
+	ES	Se puede añadir o eliminar canciones de la mezcla en cualquier momento. Para detener una mezcla al azar, limpiar la lista o presionar
 
 EOF
 
