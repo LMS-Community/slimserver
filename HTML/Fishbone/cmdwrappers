@@ -21,14 +21,20 @@
 [% END %]
 
 [% BLOCK insertlink %]
-<td class="listing" width="11" align="center">
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
 	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/queue.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
 </td>
 [% END %]
 
 [% BLOCK removelink %]
-<td class="listing" width="11" align="center">
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
 	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/remove.gif" border=0 align="center" height="11" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
+</td>
+[% END %]
+
+[% BLOCK infolink %]
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
+	<p><a [% content %] [% UNLESS noTarget %]target="browser"[% END %]><img src="[% webroot %]html/images/info.gif" border=0 align="center" height="11" alt='[% "SONG_INFO" | string %]' title='[% "SONG_INFO" | string %]' onMouseOver="self.status='[% "SONG_INFO" | string %]';return true"></a>
 </td>
 [% END %]
 
@@ -45,14 +51,14 @@
 [% BLOCK homelink %][% END %]
 
 [% BLOCK moveuplink %]
-<td class="listing" width="11" align="center">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.up.gif" height="11" align="middle" alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.up.gif" height="11" align="middle" alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]" onMouseOver="self.status='[% "MOVEUP" | string %]';return true"></a>
 </td>
 [% END %]
 
 [% BLOCK movedownlink %]
-<td class="listing" width="11" align="center">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.down.gif" height="11" align="middle" alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.down.gif" height="11" align="middle" alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]" onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true"></a>
 </td>
 [% END %]
 
@@ -77,5 +83,29 @@
 [% item | replace('^\s*/','') %]
  [%- END -%]
 [%- END %]
+
+[% BLOCK playlistlinks %]
+	[% WRAPPER moveuplink   %][% PROCESS cmdMoveHRef moveTo = MoveUp           %][% END %]
+	[% WRAPPER movedownlink %][% PROCESS cmdMoveHRef moveTo = MoveDown         %][% END %]
+	[% WRAPPER insertlink   %][% PROCESS cmdMoveHRef moveTo = item.nextsongind %][% END %]
+	[% WRAPPER removelink   %][% PROCESS cmdDeleteHRef                         %][% END %]
+	[% WRAPPER infolink     %][% PROCESS songinfoItemHRef                      %][% END %]
+[% END %]
+
+[% BLOCK trackinfo %]
+	[% IF item.num || item.num == 0 %]
+			<b><a [% PROCESS cmdJumpHRef num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
+			<a [% PROCESS cmdJumpHRef num = item.num %] target="status">[% item.title | html %]</a></b>
+	[% ELSIF item.item %]
+		<a [% songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
+	[% ELSE %]
+		[% item.text | html %]
+	[% END %]
+	
+	[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	
+	[% IF item.includeAlbum && item.album && item.album != noAlbum %][% "FROM" | string %]
+	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+[% END %]
 
 [% END -%]

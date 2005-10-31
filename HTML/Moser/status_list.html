@@ -1,16 +1,9 @@
-      <li class="[% IF item.odd %]odd[% ELSE %]even[% END %]">
-        <div class="controls">
-          <ul class="songctl">
-            <li><a href="status.html?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;player=[% playerURI %]&amp;start=[% start %]"><span>&uarr;</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;player=[% playerURI %]&amp;start=[% start %]"><span>&darr;</span></a></li>
-            <li><a href="status.html?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;player=[% playerURI %]&amp;start=[% start %]"><span>&times;</span></a></li>
-          </ul>
-        </div>
+      <li class="[% item.odd ? "odd" : "even" %]">
+[% PROCESS playlistlinks 
+	num = item.num
+	useStart = 1
+%]
         <div class="songline">
-          <span class="songtitle"><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;player=[% playerURI %]" [% IF item.currentsong %]id="currentsong"[% END %]>[% item.title | html %]</a></span>
-      [%- IF item.album %]
-          [% "FROM" | string -%] <span class="album"><a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% item.itemobj.album.title | html %]</a></span>
-      [%- END %]
-      [% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[% PROCESS trackinfo %]
         </div>
       </li>

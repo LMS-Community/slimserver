@@ -21,6 +21,10 @@
 [% BLOCK insertlink %]
 [% END %]
 
+[%# this is to wrap around an href which brings up the song info %]
+[% BLOCK infolink %]
+[% END %]
+
 [%# this is to wrap around an href which does ? %]
 [% BLOCK descendlink %]
 <td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
@@ -58,7 +62,7 @@ END %]
 </td>
 [% END %]
 
-[%# this is to wrap around a link which moves something up a list %]
+[%# this is to wrap around a link which moves something down a list %]
 [% BLOCK movedownlink %]
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
 	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEDOWN" | string %]</a></nobr>
@@ -73,6 +77,7 @@ END %]
 	[%- END %]
 [% END %]
 
+[%# this is the bread crumb trail to the current page %]
 [% BLOCK crumblist -%]
 [%- IF not noHomeLink %][% PROCESS homelink %][% END -%]
 [%- FOREACH item = pwd_list.list -%]
@@ -81,6 +86,7 @@ END %]
 [%- END -%]
 [%- END %]
 
+[%# this is an individual bread crumb %]
 [% BLOCK crumblistitem -%]
 [%- IF item.title -%]
 <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
@@ -89,4 +95,28 @@ END %]
 [%- END -%]
 [%- END %]
 
+[%# these are the links to be shown with items on the playlist %]
+[% BLOCK playlistlinks %]
+[% WRAPPER removelink %][% PROCESS cmdDeleteHRef %][% END %]
+[% END %]
+
+[%# this formats the track item %]
+[% BLOCK trackinfo %]
+       	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
+ 		
+		[% IF item.num || item.num == 0 %]
+				[% UNLESS item.noHref %]<a [% PROCESS cmdJumpHRef num = item.num %]>[% END %]
+				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
+		[% ELSIF item.item %]
+			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+		[% ELSE %]
+			[% item.text | html %]
+		[% END %]
+		
+		[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		
+		[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != noAlbum %][% "FROM" | string %]
+		<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+ 		[% IF item.currentsong %]</b>[% END %]
+[% END %]
 [% END -%]

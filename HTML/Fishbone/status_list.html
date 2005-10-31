@@ -1,43 +1,9 @@
-[%- FILTER null %]
-[% BLOCK playlistlinks %]
-	[% PROCESS link page='status.html' p0='p0=playlist' p1='move' p2=item.num p3='%2D1' img='move.up.gif' text='MOVEUP' target='status'%]
-	[% PROCESS link p3='%2B1' 		img='move.down.gif' text='MOVEDOWN' %]
-	[% PROCESS link p3=nextsongind 	img='queue.gif'  	text='NEXT' %]
-	[% PROCESS link p1='delete' 	img='remove.gif'  	text='REMOVE_FROM_PLAYLIST' %]
-	[% PROCESS link page='songinfo.html' p0='item=' _ item.itemobj.id img='info.gif' text='SONG_INFO' target='browser' %]
-[% END %]
-
-[%- BLOCK link %]
-		<td [% IF item.currentsong %]class="listing2"[% END %][% IF not item.currentsong %]class="listing"[% END %] width="11" align="center">
-		<a href="[% page %]?[% p0 %]&p1=[% p1 %]&p2=[% p2 %]&p3=[% p3 %]&player=[% playerURI %]&start=[% start %]" target="[% target %]">
-		<img src="[% webroot %]html/images/[% img %]" height="11" align="middle"
-			alt='[% item.text | html %]' 
-			title='[% item.text | html %]' 
-			onMouseOver="self.status='[% item.text | html %]';return true">
-		</a>
-	</td>
-[% END -%]
-
-[% BLOCK tracklink %]
-[% IF item.num || item.num == 0 %]
-		<b><a [% PROCESS cmdJumpHRef num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
-		<a [% PROCESS cmdJumpHRef num = item.num %] target="status">[% item.title | html %]</a></b>
-[% ELSIF item.item %]
-	<a [% songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
-[% ELSE %]
-	[% item.text | html %]
-[% END %]
-
-[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-
-[% IF item.includeAlbum && item.album && item.album != noAlbum %][% "FROM" | string %]
-<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
-[% END %]
-
-[% END -%]
 <tr>
-	<td [% IF item.currentsong %]class="listing2" ><a name="currentsong"></a>[% END %][% IF not item.currentsong %]class="listing"><a name="[% item.num %]"></a>[% END %]
-	[% PROCESS tracklink %]
+	<td [% IF item.currentsong %]class="listing2" ><a name="currentsong"></a>[% ELSE %]class="listing"><a name="[% item.num %]"></a>[% END %]
+	[% PROCESS trackinfo %]
 	</td>
-	[% PROCESS playlistlinks %]
+	[% PROCESS playlistlinks
+		isCurrent = item.currentsong
+		num = item.num
+		useStart = 1  %]
 </tr>

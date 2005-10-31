@@ -7,6 +7,8 @@ browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$l
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
 browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\"";
 browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$playerURI\"";
+MoveUp   = "%2D1"; # -1
+MoveDown = "%2B1"; # +1
 
 BLOCK homeLink; homeString = "HOME" | string;
 	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
@@ -69,34 +71,52 @@ command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir'); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# use this to make the item at num the current item %]
 [% BLOCK cmdJumpHRef -%]
-href="[% webroot %][% statusroot %]?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]"
+href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# use this to move the item at num to moveTo (use MoveUp and MoveDown to move a single position %]
+[% BLOCK cmdMoveHRef -%]
+href="[% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=[% moveTo %]&amp;player=[% playerURI %][% IF useStart and start %]&amp;start=[% start %][% END %]"
+[%- END %]
+
+[%# use this to delete the item at position num from the playlist %]
+[% BLOCK cmdDeleteHRef -%]
+href="[% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% playerURI %][% IF useStart and start %]&amp;start=[% start %][% END %]"
+[%- END %]
+
+[%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
 href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the songinfo for item %]
 [% BLOCK songinfoItemHRef -%]
 href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the cover art for item %]
 [% BLOCK coverArtItemHRef -%]
 href="/music/[% item.coverArt %]/cover.jpg"
 [%- END %]
 
+[%# this is the href to the playlist item %]
 [% BLOCK browsePlaylistItemHRef -%]
 href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the browsedb page for item %]
 [% BLOCK browseDbItemHRef -%]
 href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the browsetree page for item %]
 [% BLOCK browseTreeItemHRef -%]
 href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is a generic href for item, or the item itself if no href present %]
 [% BLOCK ItemHRef -%]
 [% item.href ? item.href : item %]
 [%- END %]

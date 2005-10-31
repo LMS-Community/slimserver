@@ -1,9 +1,9 @@
 <tr class="[% IF item.odd; "odd"; END %][% IF not item.odd; "even"; END %]" cellpadding="0">
 
-<td class="nowrap" width="72px">
-<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% item.num %]&p3=%2D1&player=[% playerURI %]&start=[% start %]">&uarr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=move&p2=[% item.num %]&p3=%2B1&player=[% playerURI %]&start=[% start %]">&darr;</a>
-<a class="linkbtn" href="status.html?p0=playlist&p1=delete&p2=[% item.num %]&player=[% playerURI %]&start=[% start %]">&times;</a>
+<td class="nowrap" width="72px">[% num = item.num; useStart = 1 %]
+<a class="linkbtn" [% PROCESS cmdMoveHRef moveTo = MoveUp %]>&uarr;</a>
+<a class="linkbtn" [% PROCESS cmdMoveHRef moveTo = MoveDown %]>&darr;</a>
+<a class="linkbtn" [% PROCESS cmdDeleteHRef %]>&times;</a>
 </td>
 
 <td>&nbsp;</td>

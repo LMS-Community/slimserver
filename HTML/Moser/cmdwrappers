@@ -30,7 +30,7 @@
 [% BLOCK removelink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
-		cmdshown = "<span>x</span>" -%]
+		cmdshown = "<span>&times;</span>" -%]
 [%- END %]
 
 [% BLOCK listitem -%]
@@ -48,15 +48,15 @@
 [%- END %]
 
 [% BLOCK moveuplink -%]
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEUP" | string %]</a></nobr>
-</td>
+	[%- PROCESS cmdlink
+		cmdtitle = "MOVEUP"
+		cmdshown = "<span>&uarr;</span>" -%]
 [%- END %]
 
 [% BLOCK movedownlink -%]
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEDOWN" | string %]</a></nobr>
-</td>
+	[%- PROCESS cmdlink
+		cmdtitle = "MOVEDOWN"
+		cmdshown = "<span>&darr;</span>" -%]
 [%- END %]
 
 [% BLOCK scanwarning -%]
@@ -89,6 +89,24 @@
 <li>[% item %]</li>
 [%- END -%]
 [%- END %]
+
+[% BLOCK playlistlinks %]
+        <div class="controls">
+          <ul class="songctl">
+            [% WRAPPER moveuplink   %][% PROCESS cmdMoveHRef moveTo = MoveUp   %][% END %]
+            [% WRAPPER movedownlink %][% PROCESS cmdMoveHRef moveTo = MoveDown %][% END %]
+            [% WRAPPER removelink   %][% PROCESS cmdDeleteHRef                 %][% END %]
+          </ul>
+        </div>
+[% END %]
+
+[% BLOCK trackinfo %]
+          <span class="songtitle"><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;player=[% playerURI %]" [% IF item.currentsong %]id="currentsong"[% END %]>[% item.title | html %]</a></span>
+      [%- IF item.album %]
+          [% "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
+      [%- END %]
+      [% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[% END %]
 
 [%# This is the end, never put anything below this next END or the FILTER will not work %]
 [% END -%] 

@@ -23,7 +23,7 @@
 [% END %]
 
 [% BLOCK removelink %]
-	<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+	<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
 		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_delete.gif" width=13 height=13 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 	</td>
 [% END %]
@@ -43,13 +43,13 @@
 END %]
 
 [% BLOCK moveuplink %]
-<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_up.gif" width=13 height=13 alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
 </td>
 [% END %]
 
 [% BLOCK movedownlink %]
-<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_down.gif" width=13 height=13 alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
 </td>
 [% END %]
@@ -76,5 +76,35 @@ END %]
 [% item | replace('^\s*/','') %]
 [%- END -%]
 [%- END %]
+
+[% BLOCK playlistlinks %]
+	[% WRAPPER movedownlink %][% PROCESS cmdMoveHRef moveTo = MoveDown %][% END %]
+	[% WRAPPER moveuplink   %][% PROCESS cmdMoveHRef moveTo = MoveUp   %][% END %]
+	[% WRAPPER removelink   %][% PROCESS cmdDeleteHRef                 %][% END %]
+[% END %]
+
+[% BLOCK trackinfo %]
+		[% IF item.currentsong %]
+		<a name="currentsong"></a>
+		<span class="exboldlisting">
+		[% ELSE %]
+		<span class="exlisting">
+		[% END %]
+			<a [% PROCESS cmdJumpHRef num = item.num %] target="status">[% item.title | html %]</a>
+		</span>
+
+		<span class="exboldnowplaying"></span>
+
+		<span class="exlisting">
+		[% IF item.includeAlbum && item.album && item.album != noAlbum %]
+
+			[% "FROM" | string %]
+			<a [% PROCESS albumItemHRef %] target="browser">[% item.album.title | html %]</a>
+		[% END %]
+
+		[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+
+		</span>
+[% END %]
 
 [% END -%]
