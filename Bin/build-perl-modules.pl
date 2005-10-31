@@ -80,7 +80,7 @@ sub main {
 
 	$perlBinary ||= '/usr/bin/perl';
 
-	unless (-x $perlBinary) {
+	unless (-f $perlBinary && -x $perlBinary) {
 		die "Couldn't find a perl binary. Exiting.\n";
 	}
 
