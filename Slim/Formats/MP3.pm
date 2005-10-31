@@ -25,6 +25,7 @@ my %tagMapping = (
 	# J.River Media Center uses messed up tags. See Bug 2250
 	'MEDIA JUKEBOX: REPLAY GAIN'    => 'REPLAYGAIN_TRACK_GAIN',
 	'MEDIA JUKEBOX: PEAK LEVEL'     => 'REPLAYGAIN_TRACK_PEAK',
+	'MEDIA JUKEBOX: ALBUM ARTIST'   => 'ALBUMARTIST',
 );
 
 # Don't try and convert anything to latin1
