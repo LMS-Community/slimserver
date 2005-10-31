@@ -886,7 +886,7 @@ sub msg {
 
 	if ( $::LogTimestamp ) {
 		my $now = substr(int(Time::HiRes::time() * 10000),-4);
-		$entry = join( strftime( "%Y-%m-%d %H:%M:%S.", localtime ),
+		$entry = join( "", strftime( "%Y-%m-%d %H:%M:%S.", localtime ),
 			$now , ' ' , $entry );
 	}
 
