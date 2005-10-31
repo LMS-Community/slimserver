@@ -30,6 +30,7 @@ my @browseMenuChoices = (
 	'ALARM_WEEKDAYS',
 );
 
+# get current weekday, 0 is every day 1-7 is Monday to Sunday respectively
 sub weekDay {
 	my $client = shift;
 	my $day = $client->param('day');
@@ -47,6 +48,7 @@ sub init {
 	Slim::Buttons::Common::addMode('alarm', getFunctions(), \&Slim::Buttons::AlarmClock::setMode);
 	setTimer();
 
+	# check if Random plugin is isntalled and not disabled.  create items for the special random playlists
 	if ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
 		&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'))) {
 			%specialPlaylists = (
@@ -55,6 +57,8 @@ sub init {
 				'PLUGIN_RANDOM_ARTIST'	=> 'artist',
 		);
 	}
+	
+	# add option for the current playlist
 	$specialPlaylists{'CURRENT_PLAYLIST'} = 0;
 
 	%functions = (
@@ -99,6 +103,7 @@ sub init {
 
 			my $menuChoice = $browseMenuChoices[$menuSelection{weekDay($client)}{$client}];
 
+			# choice is alarm time set.  create params and enter the time input mode.
 			if ($menuChoice eq 'ALARM_SET') {
 
 				my %params = (
@@ -123,6 +128,7 @@ sub init {
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 			}
 
+			# choice is playlist selection.  create params and enter the list input mode.
 			if ($menuChoice eq 'ALARM_SELECT_PLAYLIST') {
 
 				# Make a copy of the playlists, to make sure they
@@ -153,6 +159,7 @@ sub init {
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
 
+			# choice is alarm enable/disable.  simple toggle to activate ro deactivate the alarm.
 			} elsif ($menuChoice eq 'ALARM_OFF') {
 				my $newval;
 				if ($client->prefGet("alarm", weekDay($client))) {
@@ -167,6 +174,7 @@ sub init {
 
 				setTimer($client);
 
+			# choice is alarm volume setting.  create params and enter the bar input mode.
 			} elsif ($menuChoice eq 'ALARM_SET_VOLUME') {
 
 				my %params = (
@@ -189,6 +197,8 @@ sub init {
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Bar',\%params);
 
+			# choice is weekday alarms.  create params and enter the list input mode.
+			# creates a list of days, so that pressing right on a day re-enters alarm menu system with the specific day set.
 			} elsif ($menuChoice eq 'ALARM_WEEKDAYS') {
 
 				# Make a copy of the playlists, to make sure they
@@ -249,20 +259,25 @@ sub setMode {
 
 	my $weekDay = weekDay($client);
 	
+	# get a default menu position if none already exists. This will remember previous positions by client.
 	unless (defined $menuSelection{$weekDay}{$client}) {
 		$menuSelection{$weekDay}{$client} = 0;
 	}
 
+	# set the lines function for this mode.
 	$client->lines(\&lines);
 
 	# get previous alarm time or set a default
 	my $time = $client->prefGet("alarmtime", $weekDay);
 
+	# create a preset time if none is found.
 	unless (defined $time) {
 		$client->prefSet("alarmtime", 9 * 60 * 60, $weekDay);
 	}
 }
 
+# on exiting the weekday list, this handler will deal the exit left to the previous 
+# menu, or right into that days setting options list.
 sub weekdayExitHandler {
 	my ($client, $exittype) = @_;
 
@@ -282,6 +297,7 @@ sub weekdayExitHandler {
 	}
 }
 
+# handler for exiting teh time setting input mode.  stores the time as a pref.
 sub exitSetHandler {
 	my ($client, $exittype) = @_;
 
@@ -326,6 +342,7 @@ sub checkAlarms {
 
 		for my $day (0, $wday) {
 
+			# don't bother for inactive alarms.
 			next unless $client->prefGet("alarm", $day);
 
 			my $alarmtime = $client->prefGet("alarmtime", $day) || next;
@@ -351,12 +368,13 @@ sub checkAlarms {
 
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
+				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
 				if ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
 							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
 					
 					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
-				
+				# handle a chosen playlist that is not the current playlist.
 				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {
 
 					$client->execute(["power", 1]);
@@ -372,6 +390,7 @@ sub checkAlarms {
 						setTimer();
 						return;
 					
+					#if all else fails, just try to play the current playlist.
 					} else {
 						# no object, so try to play the current playlist
 						$client->execute(['play']);
@@ -386,6 +405,7 @@ sub checkAlarms {
 
 				}
 				
+				# slight delay for things to load up before showing the temporary alarm lines.
 				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);
 			}
 		}
@@ -394,6 +414,7 @@ sub checkAlarms {
 	setTimer();
 }
 
+# on a playlist load, call this after the playlist loading is complete to set the timer for the visible alert 2 seconds in the future.
 sub playDone {
 	my $client = shift;
 
@@ -403,6 +424,7 @@ sub playDone {
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 2, \&visibleAlarm, $client);	
 }
 
+# temporary lines shown after alarm triggers, just to let the user know why the music started.
 sub alarmLines {
 	my $client = shift;
 
@@ -411,12 +433,13 @@ sub alarmLines {
 
 	my $playlist = $client->prefGet("alarmplaylist", weekDay($client));
 	
+	# special playlists, just show the localised string for the option
 	if (exists $specialPlaylists{$playlist}) {
 		$line2 = $client->string($playlist);
 		
 	} else {
 
-		# XXX
+		# show the standard title for the loaded playlist item
 		$line2 = Slim::Music::Info::standardTitle($client, $playlist);
 	}
 
@@ -438,6 +461,7 @@ sub lines {
 	my $line2;
 	my $max;
 	
+	# create line 1, showing the chosen weekday if applicable
 	if ($weekDay) {
 		$line1 = sprintf('%s - %s', $client->string('ALARM_WEEKDAYS'), $client->string("ALARM_DAY$weekDay"));
 		$max = scalar(@browseMenuChoices) - 1;
@@ -448,6 +472,8 @@ sub lines {
 	
 	$line1 .= ' (' . ($index + 1) . ' ' . $client->string('OF') .' ' . $max . ')';
 	
+	# show alarm state when the right menu item is selected.  otherwise, 
+	# just show the string for the other menu items as selected.
 	if ($client->prefGet("alarm", $weekDay) && $browseMenuChoices[$index] eq 'ALARM_OFF') {
 		$line2 = $client->string('ALARM_ON');
 	} else {
