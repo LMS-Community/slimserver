@@ -10,6 +10,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Utils::Misc;
 use Slim::Utils::Favorites;
+use Scalar::Util qw(blessed);
 
 our %functions = ();
 
@@ -362,7 +363,7 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 	
-	if ($album) {
+	if (blessed($album) && $album->can('replay_gain')) {
 		if (my $albumreplaygain = $album->replay_gain) {
 			push (@{$client->trackInfoLines}, $client->string('ALBUMREPLAYGAIN') . ": " . sprintf("%2.2f",$albumreplaygain) . " dB");
 			push (@{$client->trackInfoContent}, undef);
