@@ -66,7 +66,27 @@ command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 
 [%# use this to add/play/insert/remove tracks and remote URLs %]
 [% BLOCK cmdHRef -%]
-href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL || itemobj.content_type() == 'dir' || !attributes); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% playerURI %]"
+href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir'); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% playerURI %]"
+[%- END %]
+
+[% BLOCK cmdJumpHRef -%]
+href="[% webroot %][% statusroot %]?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]"
+[%- END %]
+
+[% BLOCK albumItemHRef -%]
+href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
+[%- END %]
+
+[% BLOCK songinfoItemHRef -%]
+href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]"
+[%- END %]
+
+[% BLOCK coverArtItemHRef -%]
+href="/music/[% item.coverArt %]/cover.jpg"
+[%- END %]
+
+[% BLOCK browsePlaylistItemHRef -%]
+href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [% BLOCK browseDbItemHRef -%]

@@ -13,7 +13,7 @@
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>
 		<table cellspacing="0" border="0" cellpadding="0" width="100%">
-			[% playlist_items %]
+			[% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
 		</table>
 		<p>[% IF playlist_pagebar %][% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %][% END %]
 		[% IF playlist_header %]&nbsp;|&nbsp;[% playlist_header %][% END %]</p>

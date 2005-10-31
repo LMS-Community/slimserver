@@ -27,7 +27,7 @@
   <div id="playlist">
   [%- IF playlist_items %]
     <ul>
-[% playlist_items -%]
+[% FOREACH item = playlist_items; PROCESS status_list.html; END -%]
     </ul>
   [%- ELSE %]
     <p>[% "EMPTY" | string %]<p>

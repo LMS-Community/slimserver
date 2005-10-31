@@ -1,12 +1,24 @@
 
 <tr>
-   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-       	[% IF currentsong %][% noHref=1 %]<b><a name="currentsong"></a>[% END %]
+   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+       	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
  		
-		[% INCLUDE tracklink.html %]
- 		[% IF currentsong %]</b>[% END %]
+		[% IF item.num || item.num == 0 %]
+				[% UNLESS item.noHref %]<a [% PROCESS cmdJumpHRef num = item.num %]>[% END %]
+				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
+		[% ELSIF item.item %]
+			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+		[% ELSE %]
+			[% item.text | html %]
+		[% END %]
+		
+		[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		
+		[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != noAlbum %][% "FROM" | string %]
+		<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+ 		[% IF item.currentsong %]</b>[% END %]
 		</td>
-   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      <a href="status.html?p0=playlist&p1=delete&p2=[% num %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>
+   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+      <a href="status.html?p0=playlist&p1=delete&p2=[% item.num %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>
    </td>
 </tr>

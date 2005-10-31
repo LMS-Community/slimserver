@@ -1,5 +1,5 @@
 <tr>
-	[% IF odd; SET class = "odd"; ELSE; SET class = "even"; END %]
+	[% IF item.odd; SET class = "odd"; ELSE; SET class = "even"; END %]
 
 	<td width="4" height=21>
 		&nbsp;
@@ -9,39 +9,39 @@
 	</td>
 	<td valign="center" class="[% class %]">
 
-		[% IF currentsong %]
+		[% IF item.currentsong %]
 		<a name="currentsong"></a>
 		<span class="exboldlisting">
 		[% ELSE %]
 		<span class="exlisting">
 		[% END %]
-			<a href="status_header.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]" target="status">[% title | html %]</a>
+			<a href="status_header.html?p0=playlist&p1=jump&p2=[% item.num %]&player=[% playerURI %]" target="status">[% item.title | html %]</a>
 		</span>
 
 		<span class="exboldnowplaying"></span>
 
 		<span class="exlisting">
-		[% IF includeAlbum && album && album != noAlbum %]
+		[% IF item.includeAlbum && item.album && item.album != noAlbum %]
 
 			[% "FROM" | string %]
-			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]" target="browser">[% album.title | html %]</a>
+			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% item.album.id %]&player=[% playerURI %]" target="browser">[% item.album.title | html %]</a>
 		[% END %]
 
-		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+		[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 
 		</span>
 	</td>
 
 	<td valign="center" class="[% class %]" width="13">
-		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2B1&player=[% playerURI %]&start=[% start %]" target="status"><img src="html/images/b_down.gif" width="13" height="13" alt="[% "DOWN" | string %]" title="[% "DOWN" | string %]"></a>
+		<a href="status_header.html?p0=playlist&p1=move&p2=[% item.num %]&p3=%2B1&player=[% playerURI %]&start=[% start %]" target="status"><img src="html/images/b_down.gif" width="13" height="13" alt="[% "DOWN" | string %]" title="[% "DOWN" | string %]"></a>
 	</td>
 
 	<td valign="center" class="[% class %]" width="13">
-		<a href="status_header.html?p0=playlist&p1=move&p2=[% num %]&p3=%2D1&player=[% playerURI %]&start=[% start %]" target="status"><img src="html/images/b_up.gif" width="13" height="13" alt="[% "UP" | string %]" title="[% "UP" | string %]"></a>
+		<a href="status_header.html?p0=playlist&p1=move&p2=[% item.num %]&p3=%2D1&player=[% playerURI %]&start=[% start %]" target="status"><img src="html/images/b_up.gif" width="13" height="13" alt="[% "UP" | string %]" title="[% "UP" | string %]"></a>
 	</td>
 
 	<td valign="center" class="[% class %]" width="13">
-		<a href="status_header.html?p0=playlist&p1=delete&p2=[% num %]&player=[% playerURI %]&start=[% start %]"  target="status"><img src="html/images/b_delete.gif" width="13" height="13" alt="[% "REMOVE_FROM_PLAYLIST" | string %]" title="[% "REMOVE_FROM_PLAYLIST" | string %]"></a>
+		<a href="status_header.html?p0=playlist&p1=delete&p2=[% item.num %]&player=[% playerURI %]&start=[% start %]"  target="status"><img src="html/images/b_delete.gif" width="13" height="13" alt="[% "REMOVE_FROM_PLAYLIST" | string %]" title="[% "REMOVE_FROM_PLAYLIST" | string %]"></a>
 	</td>
 
 	<td width="8"></td>

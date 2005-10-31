@@ -8,7 +8,11 @@
 [% IF playlist_header; playlist_header; "COLON" | string; END %]
 
 <table cellspacing="0" border="0" cellpadding="4" width="100%">
-	[% IF not playlist_items; "EMPTY" | string; ELSE; playlist_items; END %]
+	[% IF playlist_items %]
+		[% FOREACH item = playlist_items %]
+			[% PROCESS status_list.html %]
+		[% END %]
+	[% ELSE; "EMPTY" | string; END %]
 </table>
 
 [% IF playlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</p>[% END %]

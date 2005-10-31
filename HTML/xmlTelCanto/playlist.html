@@ -1,2 +1,2 @@
 [% playlist_header %]
-[% playlist_items %]
+[% FOREACH item = playlist_items; PROCESS status_list.html; END; %]

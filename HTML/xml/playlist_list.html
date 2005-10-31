@@ -4,4 +4,4 @@
 	<clear_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=clear&player=[% playerURI %]]]></clear_url>
 [% END %]
 [% playlist_header %]
-[% playlist_items %]
+[% FOREACH item = playlist_items; PROCESS status_list.html; END %]

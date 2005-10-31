@@ -516,7 +516,7 @@ sub playlist {
 
 	my $ds           = Slim::Music::Info::getCurrentDataStore();
 
-	$params->{'playlist_items'} = '';
+	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
 	$params->{'noArtist'}       = Slim::Utils::Strings::string('NO_ARTIST');
 	$params->{'noAlbum'}        = Slim::Utils::Strings::string('NO_ALBUM');
@@ -541,7 +541,7 @@ sub playlist {
 			};
 		}
 
-		my %list_form = %$params;
+		my %list_form = ();
 		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
 		my $levelInfo = $fieldInfo->{'track'};
 
@@ -560,7 +560,7 @@ sub playlist {
 
 		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
 
-		$params->{'playlist_items'} .= ${Slim::Web::HTTP::filltemplatefile("status_list.html", \%list_form)};
+		push @{$params->{'playlist_items'}}, \%list_form;
 
 		$listBuild{'item'}++;
 		$itemCount++;

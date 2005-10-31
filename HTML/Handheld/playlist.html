@@ -16,7 +16,7 @@
 		<p>[% "EMPTY" | string %]</p>
 	[% ELSE %]
 		<table cellspacing="0" border="0" cellpadding="0" width="100%">
-			[% playlist_items %]
+			[% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
 		</table>
 	[% END %]
 

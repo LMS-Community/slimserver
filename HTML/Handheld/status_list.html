@@ -1,15 +1,15 @@
 	[% BLOCK playlistlink %]
 		<td>&nbsp;</td>
 		<td width="13" align="center">
-			<a href="[% page %].html?p0=playlist&p1=[% action %]&p2=[% num %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% playerURI %][% IF start %]&start=[% start %][% END %]">
+			<a href="[% page %].html?p0=playlist&p1=[% action %]&p2=[% item.num %][% IF p3 %]&p3=[% p3 %][% END %]&player=[% playerURI %][% IF start %]&start=[% start %][% END %]">
 			<img src="[% webroot %]html/images/[% image %].gif" width="13" height="13" border="0" align="center" [% IF alt %]alt="[% alt | string %]" title="[% alt | string %]"[% END %]></a>
 		</td>
 	[% END %]
 	
-	<tr bgcolor="[% PROCESS oddOrEvenC %]">
-		<td width="100%"><a name=[% num %]>
-			<a href="status.html?p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]">[% num + 1 %].</a>&nbsp;
-			<a href="songinfo.html?item=[% item %]&player=[% playerURI %]">[% title %]</a>
+	<tr bgcolor="[% PROCESS oddOrEvenC odd = item.odd%]">
+		<td width="100%"><a name=[% item.num %]>
+			<a href="status.html?p0=playlist&p1=jump&p2=[% item.num %]&player=[% playerURI %]">[% item.num + 1 %].</a>&nbsp;
+			<a href="songinfo.html?item=[% item.item %]&player=[% playerURI %]">[% item.title %]</a>
 		</td>
 
 		[% PROCESS playlistlink page='status' action='jump' image='b_play' alt='PLAY' %]

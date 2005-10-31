@@ -42,9 +42,12 @@
 	[% IF playercount == '0' %]
 		<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "NO_PLAYER_DETAILS" | string %]</p></td></tr>
 	[% ELSE %]
-		[% IF not playlist_items %]<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "EMPTY" | string %]<a name="currentsong"></a></p></td></tr>[% END %]
+		[% IF playlist_items %]
+			[% FOREACH item = playlist_items %]
+				[% PROCESS status_list.html %]
+			[% END %]
+		[% ELSE %]<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "EMPTY" | string %]<a name="currentsong"></a></p></td></tr>[% END %]
 	[% END %]
-	[% playlist_items %]
 	<tr>
 		<td width="4"></td>
 		<td width="8"></td>
