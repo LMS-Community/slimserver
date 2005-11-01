@@ -13,6 +13,7 @@ use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
+use Scalar::Util qw(blessed);
 use Time::HiRes;
 
 use Slim::DataStores::Base;
@@ -350,7 +351,7 @@ sub execute {
 			my $url    = Slim::Player::Playlist::song($client);
 			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
 
-			if ($track) {
+			if (blessed($track) && $track->can('secs')) {
 
 				if ($p0 eq 'duration') {
 				
@@ -482,7 +483,7 @@ sub execute {
 
 					my $obj = $ds->objectForId('track', $params{'playlist_id'});
 
-					if ($obj) {
+					if (blessed($obj) && $obj->can('tracks')) {
 
 						# We want to add the playlist name to the client object.
 						$client->currentPlaylist($obj) if $load;
@@ -955,7 +956,7 @@ sub execute {
 				my $url = Slim::Player::Playlist::song($client, $p2);
 				my $obj = $ds->objectForUrl($url, 1, 1);
 
-				if ($obj) {
+				if (blessed($obj) && $obj->can('secs')) {
 
 					# Just call the method on Track
 					if ($p1 eq 'duration') {
@@ -1196,7 +1197,13 @@ sub execute {
 
  				if (Slim::Player::Playlist::song($client)) { 
 					my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
- 					my $dur   = $track->secs() if $track;
+
+ 					my $dur   = 0;
+
+ 					if (blessed($track) && $track->can('secs')) {
+
+						$dur = $track->secs;
+					}
 
  					if ($dur) {
 						push @returnArray, "rate:".Slim::Player::Source::rate($client); #(>1 ffwd, <0 rew else norm)
@@ -1562,7 +1569,7 @@ sub parseSearchTerms {
 		# Treat playlists specially - they are containers.
 		my $obj = $ds->objectForId('track', $find{'playlist'});
 
-		if ($obj) {
+		if (blessed($obj) && $obj->can('tracks')) {
 
 			# Side effect - (this would never fly in Haskell! :)
 			# We want to add the playlist name to the client object.
@@ -1649,7 +1656,7 @@ sub pushSong {
 	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
 	
-	if (!defined $track) {
+	if (!blessed($track) || !$track->can('id')) {
 		msg("Slim::Control::Command::pushSong called on undefined track!\n");
 		return;
 	}

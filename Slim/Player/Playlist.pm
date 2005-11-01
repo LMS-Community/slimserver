@@ -8,6 +8,8 @@ package Slim::Player::Playlist;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
+
 use Slim::Control::Command;
 use Slim::Formats::Parse;
 use Slim::Player::Source;
@@ -45,7 +47,7 @@ sub shuffleType {
 sub song {
 	my $client = shift;
 	my $index = shift;
-	
+
 	if (count($client) == 0) {
 		return;
 	}
@@ -55,15 +57,19 @@ sub song {
 	}
 
 	my $objOrUrl;
+
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	if (defined ${shuffleList($client)}[$index]) {
+
 		$objOrUrl = ${playList($client)}[${shuffleList($client)}[$index]];
+
 	} else {
+
 		$objOrUrl = ${playList($client)}[$index];
 	}
-	
-	return ref($objOrUrl) ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
 
+	return blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
 }
 
 sub shuffleList {
@@ -115,16 +121,16 @@ sub repeat {
 #
 
 sub copyPlaylist {
-	my $toclient   = shift;
-	my $fromclient = shift;
+	my $toClient   = shift;
+	my $fromClient = shift;
 
-	@{$toclient->playlist}    = @{$fromclient->playlist};
-	@{$toclient->shufflelist} = @{$fromclient->shufflelist};
+	@{$toClient->playlist}    = @{$fromClient->playlist};
+	@{$toClient->shufflelist} = @{$fromClient->shufflelist};
 
-	Slim::Player::Source::streamingSongIndex($toclient, Slim::Player::Source::streamingSongIndex($fromclient), 1);
+	Slim::Player::Source::streamingSongIndex($toClient, Slim::Player::Source::streamingSongIndex($fromClient), 1);
 
-	Slim::Utils::Prefs::clientSet($toclient, "shuffle", Slim::Utils::Prefs::clientGet($fromclient, "shuffle"));
-	Slim::Utils::Prefs::clientSet($toclient, "repeat", Slim::Utils::Prefs::clientGet($fromclient, "repeat"));
+	$toClient->prefSet("shuffle", $fromClient->prefGet("shuffle"));
+	$toClient->prefSet("repeat", $fromClient->prefGet("repeat"));
 }
 
 sub removeTrack {
@@ -152,9 +158,11 @@ sub removeTrack {
 	} else {
 
 		my $queue = $client->currentsongqueue();
+
 		for my $song (@$queue) {
-			if ($tracknum < $song->{index}) {
-				$song->{index}--;
+
+			if ($tracknum < $song->{'index'}) {
+				$song->{'index'}--;
 			}
 		}
 	}
@@ -451,7 +459,7 @@ sub reshuffle {
 
 			my $trackObj = $track;
 
-			unless (ref($track)) {
+			if (!blessed($trackObj) || !$trackObj->can('albumid')) {
 
 				$::d_playlist && msg("Track: $track isn't an object - fetching\n");
 
@@ -462,7 +470,7 @@ sub reshuffle {
 			# Pull out the album id, and accumulate all of the
 			# tracks for that album into a hash. Also map that
 			# object to a poisition in the playlist.
-			if (defined $trackObj && ref $trackObj) {
+			if (blessed($trackObj) && $track->can('albumid')) {
 
 				my $albumid = $trackObj->albumid() || 0;
 
@@ -491,11 +499,11 @@ sub reshuffle {
 		my $currentAlbum = 0;
 
 		# This shouldn't happen - but just in case.
-		unless (ref $currentTrack) {
+		if (!blessed($currentTrack) || !$currentTrack->can('albumid')) {
 			$currentTrack = $ds->objectForUrl($currentTrack);
 		}
 
-		if (ref $currentTrack) {
+		if (blessed($currentTrack) && $currentTrack->can('albumid')) {
 			$currentAlbum = $currentTrack->albumid() || 0;
 		}
 

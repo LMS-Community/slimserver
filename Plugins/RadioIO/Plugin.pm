@@ -12,6 +12,9 @@
 #
 package Plugins::RadioIO::Plugin;
 
+use strict;
+use Scalar::Util qw(blessed);
+
 use Slim::Buttons::Common;
 use Slim::Control::Command;
 use Slim::Display::Display;
@@ -193,12 +196,17 @@ sub handleWebIndex {
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->objectForUrl($url, 1, 1);
 
-		$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $url);
-		$params->{'bitrate'} = $track->bitrate();
-		$params->{'type'} = Slim::Music::Info::contentType($url);
+		if (blessed($track) && $track->can('bitrate')) {
+
+			$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $url);
+			$params->{'bitrate'} = $track->bitrate();
+			$params->{'type'} = Slim::Music::Info::contentType($url);
+		}
+
 		undef $stream;
-	}
-	else {
+
+	} else {
+
 		$params->{'stationnames'} = \@station_names;
 	}
 
@@ -286,7 +294,9 @@ sub parseDirectBody {
 
 	my $currentDB = Slim::Music::Info::getCurrentDataStore();
 	my $track = $currentDB->objectForUrl($url);
-	if (defined($track)) {
+
+	if (blessed($track) && $track->can('title')) {
+
 		Slim::Music::Info::setTitle($stream, $track->title());
 	}
 

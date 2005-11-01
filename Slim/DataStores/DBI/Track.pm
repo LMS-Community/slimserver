@@ -412,14 +412,17 @@ sub setTracks {
 			# which still deals with URLs - get the objects to add.
 			if (!blessed($track) || !$track->can('url')) {
 
-				$track = $ds->objectForUrl($track, 1, 0, 1) || next;
+				$track = $ds->objectForUrl($track, 1, 0, 1);
 			}
 
-			Slim::DataStores::DBI::PlaylistTrack->create({
-				playlist => $self,
-				track    => $track,
-				position => $i++
-			});
+			if (blessed($track) && $track->can('id')) {
+
+				Slim::DataStores::DBI::PlaylistTrack->create({
+					playlist => $self,
+					track    => $track,
+					position => $i++
+				});
+			}
 		}
 	}
 
@@ -452,11 +455,14 @@ sub setDirItems {
 				$dirEntry = $ds->objectForUrl($dirEntry, 1, 1, 1) || next;
 			}
 
-			Slim::DataStores::DBI::DirlistTrack->create({
-				dirlist  => $self,
-				item     => $dirEntry->id,
-				position => $i++
-			});
+			if (blessed($dirEntry) && $dirEntry->can('id')) {
+
+				Slim::DataStores::DBI::DirlistTrack->create({
+					dirlist  => $self,
+					item     => $dirEntry->id,
+					position => $i++
+				});
+			}
 		}
 	}
 }

@@ -10,6 +10,8 @@ package Slim::DataStores::Base;
 use strict;
 use base qw(Class::Virtually::Abstract);
 
+use Scalar::Util qw(blessed);
+
 our %fieldInfo = ();
 
 my $init = 0;
@@ -55,9 +57,14 @@ sub init {
 			'idToName' => sub {
 				my $ds  = shift;
 				my $id  = shift;
-				my $obj = $ds->objectForId('track', $id) || return '';
+				my $obj = $ds->objectForId('track', $id);
 
-				return $obj->title;
+				if (blessed($obj) && $obj->can('title')) {
+
+					return $obj->title;
+				}
+
+				return '';
 			},
 
 			'resultToId' => sub {
@@ -83,9 +90,14 @@ sub init {
 
 				if (defined $findCriteria->{'playlist'}) {
 
-					my $obj = $ds->objectForId('track', $findCriteria->{'playlist'}) || return [];
+					my $obj = $ds->objectForId('track', $findCriteria->{'playlist'});
 
-					return [ $obj->tracks ];
+					if (blessed($obj) && $obj->can('tracks')) {
+
+						return [ $obj->tracks ];
+					}
+
+					return [];
 				}
 
 				if (Slim::Utils::Prefs::get('noGenreFilter')) {
@@ -194,9 +206,14 @@ sub init {
 			'idToName' => sub {
 				my $ds  = shift;
 				my $id  = shift;
-				my $obj = $ds->objectForId('genre', $id) || return '';
+				my $obj = $ds->objectForId('genre', $id);
 
-				return $obj->name;
+				if (blessed($obj) && $obj->can('name')) {
+
+					return $obj->name;
+				}
+
+				return '';
 			},
 
 			'resultToId' => sub {
@@ -258,9 +275,14 @@ sub init {
 			'idToName' => sub {
 				my $ds  = shift;
 				my $id  = shift;
-				my $obj = $ds->objectForId('album', $id) || return '';
+				my $obj = $ds->objectForId('album', $id);
 
-				return $obj->title;
+				if (blessed($obj) && $obj->can('title')) {
+
+					return $obj->title;
+				}
+
+				return '';
 			},
 
 			'resultToId' => sub {
@@ -285,7 +307,10 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+				if (my $roles = $ds->artistOnlyRoles) {
+
+					$findCriteria->{'contributor.role'} = $roles;
+				}
 
 				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'artist'}) {
 
@@ -377,9 +402,14 @@ sub init {
 			'idToName' => sub {
 				my $ds  = shift;
 				my $id  = shift;
-				my $obj = $ds->objectForId('album', $id) || return '';
+				my $obj = $ds->objectForId('album', $id);
 
-				return $obj->title;
+				if (blessed($obj) && $obj->can('title')) {
+
+					return $obj->title;
+				}
+
+				return '';
 			},
 
 			'resultToId' => sub {
@@ -404,7 +434,10 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+				if (my $roles = $ds->artistOnlyRoles) {
+
+					$findCriteria->{'contributor.role'} = $roles;
+				}
 
 				if (Slim::Utils::Prefs::get('includeNoArt')) {
 
@@ -469,9 +502,12 @@ sub init {
 			'idToName' => sub {
 				my $ds = shift;
 				my $id = shift;
-				my $obj = $ds->objectForId('contributor', $id) || return '';
+				my $obj = $ds->objectForId('contributor', $id);
 
-				return $obj->name;
+				if (blessed($obj) && $obj->can('name')) {
+
+					return $obj->name;
+				}
 			},
 
 			'resultToId' => sub {
@@ -496,7 +532,10 @@ sub init {
 				my $idOnly = shift;
 
 				# The user may not want to include all the composers / conductors
-				$findCriteria->{'contributor.role'} = $ds->artistOnlyRoles;
+				if (my $roles = $ds->artistOnlyRoles) {
+
+					$findCriteria->{'contributor.role'} = $roles;
+				}
 
 				if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
@@ -700,7 +739,12 @@ sub init {
 
 			if (defined $findCriteria->{'playlist'}) {
 
-				my $obj = $ds->objectForId('playlist', $findCriteria->{'playlist'}) || return [];
+				my $obj = $ds->objectForId('playlist', $findCriteria->{'playlist'});
+
+				if (!blessed($obj) || !$obj->can('tracks')) {
+
+					return [];
+				}
 
 				# If the playlist has changed - re-import it.
 				if ($obj->url =~ m!^file://!) {

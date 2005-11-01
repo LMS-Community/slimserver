@@ -8,6 +8,7 @@ package Slim::Control::CLI;
 use strict;
 use IO::Socket;
 use Socket qw(:crlf);
+use Scalar::Util qw(blessed);
 use URI::Escape;
 #use File::Spec::Functions qw(:ALL);
 
@@ -767,16 +768,18 @@ sub cli_songdata {
 	$d_cli_vv && msg("CLI: cli_songdata()\n");
 
 	my $ds        = Slim::Music::Info::getCurrentDataStore();
-	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	my $track     = blessed($pathOrObj) && $pathOrObj->can('id') ? $pathOrObj : $ds->objectForUrl($pathOrObj);
 	
-	if (!defined $track) {
-		msg("Slim::Control::CLI::cli_songdata called with invalid object or path: $pathOrObj!\n");
+	if (!blessed($track) || !$track->can('id')) {
+
+		errorMsg("Slim::Control::CLI::cli_songdata called with invalid object or path: $pathOrObj!\n");
 		
 		# For some reason, $pathOrObj may be an id... try that before giving up...
 		$track = $ds->objectForId('track', $pathOrObj);
 
-		if (!defined $track) {
-			msg("Slim::Control::CLI::cli_songdata cannot make track from: $pathOrObj!\n");
+		if (!blessed($track) || !$track->can('id')) {
+
+			errorMsg("Slim::Control::CLI::cli_songdata cannot make track from: $pathOrObj!\n");
 			return;
 		}
 	}
@@ -786,8 +789,8 @@ sub cli_songdata {
 		sprintf('title:%s', $track->title()),
 	);
 
-#			use Data::Dumper;
-#			print Dumper($track);
+	#use Data::Dumper;
+	#print Dumper($track);
 
 	for my $tag (split //, $tags) {
 
@@ -1086,7 +1089,10 @@ sub cli_cmd_artists_albums_genres {
 	if ($cmdRef->{'_command'} eq 'artists') {
 
 		# The user may not want to include all the composers/conductors
-		$find->{'contributor.role'} = $ds->artistOnlyRoles;
+		if (my $roles = $ds->artistOnlyRoles) {
+
+			$find->{'contributor.role'} = $roles;
+		}
 	}
 	
 	if (Slim::Utils::Misc::stillScanning()) {
@@ -1249,10 +1255,9 @@ sub cli_cmd_playlisttracks {
 
 		my $obj = $ds->objectForId('track', $playlist);
 				
-		if ($obj) {
+		if (blessed($obj) && $obj->can('tracks')) {
 			$iterator = $obj->tracks;
 		}
-
 	}
 
 	if (defined $iterator) {
@@ -1298,24 +1303,30 @@ sub cli_cmd_songinfo {
 	$tags = $cmdRef->{'tags'} if defined  $cmdRef->{'tags'};
 	
 	if (defined $id){
+
 		if ($tags !~ /u/) {
 			$tags .= 'u';
 		}
+
 		$track = $ds->objectForId('track', $id);
+
 	} else {
+
 		if (defined $path && Slim::Music::Info::isSong($path)){
+
 			if ($tags !~ /x/) {
 				$tags .= 'x';
 			}
+
 			$track = $ds->objectForUrl($path)
 		}
 	}
-					
+
 	if (Slim::Utils::Misc::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
-	
-	if (defined $track) {
+
+	if (blessed($track) && $track->can('id')) {
 
 		my @items = cli_songdata($track, $tags);
 		
@@ -1328,17 +1339,12 @@ sub cli_cmd_songinfo {
 				cli_response_push($client_socket, $eachitem);
 			}
 		}
-	}
-	
-	else {
+
+	} else {
+
 		cli_response_push($client_socket, "count:0");
 	}
 }
-
-
-
-
-
 
 1;
 

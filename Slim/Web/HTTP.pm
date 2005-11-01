@@ -22,6 +22,7 @@ use HTTP::Status;
 use MIME::Base64;
 use MIME::QuotedPrint;
 use HTML::Entities;
+use Scalar::Util qw(blessed);
 use Socket qw(:DEFAULT :crlf);
 use Sys::Hostname;
 use Template;
@@ -821,7 +822,7 @@ sub generateHTTPResponse {
 
 		$::d_http && msg("Cover Art asking for: $image\n");
 
-		if ($obj) {
+		if (blessed($obj) && $obj->can('coverArt')) {
 			($imageData, $contentType, $mtime) = $obj->coverArt($image);
 		}
 
@@ -840,7 +841,7 @@ sub generateHTTPResponse {
 		my $ds  = Slim::Music::Info::getCurrentDataStore();
 		my $obj = $ds->objectForId('track', $1);
 
-		if ($obj && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj)) {
+		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj)) {
 
 			$::d_http && msg("Opening $obj to stream...\n");
 
@@ -1836,7 +1837,9 @@ sub buildStatusHeaders {
 			$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
 			$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
 			$headers{"x-playerduration"} = Slim::Music::Info::total_time(Slim::Player::Playlist::song($client));
-			if ($track) {
+
+			if (blessed($track) && $track->can('artist')) {
+
 				my $i = $track->artist();
 				$i = $i->name() if ($i);
 				$headers{"x-playerartist"} = $i if $i;

@@ -407,11 +407,14 @@ sub setContentType {
 sub title {
 	my $url = shift;
 
-	my $track = $currentDB->objectForUrl($url, 1, 1) || return '';
+	my $track = $currentDB->objectForUrl($url, 1, 1);
 
-	if (ref($track)) {
+	if (blessed($track) && $track->can('title')) {
+
 		return $track->title;
 	}
+
+	return '';
 }
 
 sub setTitle {
@@ -850,7 +853,7 @@ sub infoFormat {
 	my $output    = '';
 	my $format;
 
-	my $track = blessed($fileOrObj) && $fileOrObj->can('id') ? $fileOrObj  : $currentDB->objectForUrl($fileOrObj, 1);
+	my $track = blessed($fileOrObj) && $fileOrObj->can('id') ? $fileOrObj : $currentDB->objectForUrl($fileOrObj, 1);
 
 	if (!blessed($track) || !$track->can('id')) {
 
@@ -1092,18 +1095,21 @@ sub cachedPlaylist {
 
 	# We might have gotten an object passed in for effeciency. Check for
 	# that, and if not, make sure we get a valid object from the db.
-	my $obj = ref $urlOrObj ? $urlOrObj : $currentDB->objectForUrl($urlOrObj, 0);
+	my $obj = blessed($urlOrObj) && $urlOrObj->can('tracks') ? $urlOrObj : $currentDB->objectForUrl($urlOrObj, 0);
 
-	return undef unless $obj;
+	if (!blessed($obj) || !$obj->can('tracks')) {
+
+		return [];
+	}
 
 	# We want any PlayListTracks this item may have
 	my @urls = ();
 
-	for my $track ($obj->tracks()) {
+	for my $track ($obj->tracks) {
 
-		if (defined $track && ref $track && $track->can('url')) {
+		if (lbessed($track) && $track->can('url')) {
 
-			push @urls, $track->url();
+			push @urls, $track->url;
 
 		} else {
 
@@ -1113,25 +1119,28 @@ sub cachedPlaylist {
 
 	# Otherwise, we're actually a directory.
 	if (!scalar @urls) {
-		@urls = $obj->diritems();
+		@urls = $obj->diritems;
 	}
 
 	return \@urls if scalar(@urls);
 
-	return undef;
+	return [];
 }
 
 sub cacheDirectory {
 	my ($url, $list, $age) = @_;
 
-	my $obj = $currentDB->objectForUrl($url, 1, 1) || return;
+	my $obj = $currentDB->objectForUrl($url, 1, 1);
 
-	$obj->setDirItems($list);
-	$obj->timestamp( ($age || time) );
+	if (blessed($obj) && $obj->can('setDirItems')) {
 
-	$currentDB->updateTrack($obj);
-	
-	$::d_info && msg("cached an " . (scalar @$list) . " item playlist for $url\n");
+		$obj->setDirItems($list);
+		$obj->timestamp( ($age || time) );
+
+		$currentDB->updateTrack($obj);
+		
+		$::d_info && msg("cached an " . (scalar @$list) . " item playlist for $url\n");
+	}
 }
 
 sub fileName {

@@ -7,6 +7,8 @@ package Slim::Music::Import;
 
 use strict;
 
+use Scalar::Util qw(blessed);
+
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -221,12 +223,12 @@ sub artScan {
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	if (defined $album) {
+	if (defined $album && $album =~ /^\d+$/) {
 
-		my $track  = $ds->objectForId('track', $artwork{$album}); 
+		my $track = $ds->objectForId('track', $artwork{$album}); 
 
 		# Make sure we have an object for the url, and it has a thumbnail.
-		if (defined $track && $track->can('coverArt') && $track->coverArt('thumb')) {
+		if (blessed($track) && $track->can('coverArt') && $track->coverArt('thumb')) {
 			
 			$ds->setAlbumArtwork($track);
 		}

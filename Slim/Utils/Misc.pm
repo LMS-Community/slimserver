@@ -10,7 +10,7 @@ package Slim::Utils::Misc;
 use strict;
 use base qw(Exporter);
 
-our @EXPORT    = qw(assert bt msg msgf watchDog errorMsg);
+our @EXPORT = qw(assert bt msg msgf watchDog errorMsg);
 
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
@@ -18,6 +18,7 @@ use FindBin qw($Bin);
 use IO::Select;
 use POSIX qw(strftime setlocale LC_TIME);
 use Sys::Hostname;
+use Scalar::Util qw(blessed);
 use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use Time::HiRes;
@@ -649,12 +650,15 @@ sub findAndScanDirectoryTree {
 
 	} else {
 
-		$topLevelObj = $ds->objectForUrl($urlOrObj, 1, 1, 1) || return;
+		$topLevelObj = $ds->objectForUrl($urlOrObj, 1, 1, 1);
 
-		push @$levels, $topLevelObj->id;
+		if (blessed($topLevelObj) && $topLevelObj->can('id')) {
+
+			push @$levels, $topLevelObj->id;
+		}
 	}
 
-	if (!defined $topLevelObj || !ref $topLevelObj) {
+	if (!blessed($topLevelObj) || !$topLevelObj->can('path')) {
 
 		msg("Error: Couldn't find a topLevelObj for findAndScanDirectoryTree()\n");
 

@@ -8,6 +8,8 @@ package Slim::Buttons::BrowseTree;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
+
 use Slim::Buttons::Block;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
@@ -259,16 +261,30 @@ sub setMode {
 
 	# top level, we show MUSIC FOLDER
 	if (scalar @levels == 1) {
-			push @headers, $client->string('MUSIC');
+
+		push @headers, $client->string('MUSIC');
+
 	} else {
+
 		my $obj;
 		# one level down we show the folder name, below that we show two levels
+
 		if (scalar @levels > 2) {
+
 			$obj = $ds->objectForId('track', $levels[-2]);
-			push @headers, $obj->title if $obj;
+
+			if (blessed($obj) && $obj->can('title')) {
+
+				push @headers, $obj->title;
+			}
 		}
+
 		$obj = $ds->objectForId('track', $levels[-1]);
-		push @headers, $obj->title if $obj;
+
+		if (blessed($obj) && $obj->can('title')) {
+
+			push @headers, $obj->title;
+		}
 	}
 	
 	# Finally get the last selection position within the list	

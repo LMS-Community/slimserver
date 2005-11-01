@@ -821,10 +821,15 @@ sub port {
 sub name {
 	my $client = shift;
 	my $name = shift;
+
 	if (defined $name) {
-		Slim::Utils::Prefs::clientSet($client,"playername", $name);
+
+		$client->prefSet("playername", $name);
+
+	} else {
+
+		$name = $client->prefGet("playername");
 	}
-	$name = Slim::Utils::Prefs::clientGet($client,"playername");
 	
 	if (!defined $name) {
 		$name = defaultName($client);
@@ -899,7 +904,7 @@ sub startup {
 	if (!Slim::Player::Sync::isSynced($client) && Slim::Utils::Prefs::get('persistPlaylists')) {	
 
 		my $playlist = Slim::Music::Info::playlistForClient($client);
-		my $currsong = Slim::Utils::Prefs::clientGet($client, 'currentSong');
+		my $currsong = $client->prefGet('currentSong');
 
 		if (defined $playlist) {
 
@@ -970,9 +975,9 @@ sub initial_add_done {
 		Slim::Player::Source::streamingSongIndex($client, $currsong, 1);
 	}
 
-	Slim::Utils::Prefs::clientSet($client, 'currentSong', $currsong);
+	$client->prefSet('currentSong', $currsong);
 
-	if (Slim::Utils::Prefs::get('autoPlay') || Slim::Utils::Prefs::clientGet($client,'autoPlay')) {
+	if ($client->prefGet('autoPlay') || Slim::Utils::Prefs::get('autoPlay')) {
 
 		$client->execute(['play']);
 	}

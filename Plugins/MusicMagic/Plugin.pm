@@ -5,6 +5,7 @@ package Plugins::MusicMagic::Plugin;
 use strict;
 
 use File::Spec::Functions qw(catfile);
+use Scalar::Util qw(blessed);
 
 use Slim::Player::Source;
 use Slim::Player::Protocols::HTTP;
@@ -1062,7 +1063,7 @@ sub musicmagic_mix {
 
 		my ($obj) = $ds->objectForId('track', $song);
 
-		if ($obj) {
+		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
 
 			if ($obj->musicmagic_mixable) {
 
@@ -1077,7 +1078,7 @@ sub musicmagic_mix {
 
 		my ($obj) = $ds->objectForId('contributor', $artist);
 
-		if ($obj && $obj->musicmagic_mixable) {
+		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'artist');
@@ -1087,7 +1088,7 @@ sub musicmagic_mix {
 
 		my ($obj) = $ds->objectForId('album', $album);
 		
-		if ($obj && $obj->musicmagic_mixable) {
+		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			my $trackObj = $obj->tracks->next;
 
@@ -1102,7 +1103,7 @@ sub musicmagic_mix {
 
 		my ($obj) = $ds->objectForId('genre', $genre);
 
-		if ($obj && $obj->musicmagic_mixable) {
+		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'genre');
@@ -1146,7 +1147,12 @@ sub musicmagic_mix {
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj  = $ds->objectForUrl($item) || next;
+		my $trackObj  = $ds->objectForUrl($item);
+
+		if (!blessed($trackObj) || !$trackObj->can('id')) {
+
+			next;
+		}
 		
 		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
 

@@ -8,12 +8,12 @@ package Slim::Player::Protocols::HTTP;
 # version 2.  
 
 use strict;
+use base qw(IO::Socket::INET);
 
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:DEFAULT :crlf);
-
-use base qw(IO::Socket::INET);
+use Scalar::Util qw(blessed);
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -152,7 +152,7 @@ sub request {
 
 	$self->syswrite($request);
 
-	my $timeout = $self->timeout();
+	my $timeout  = $self->timeout();
 	my $response = Slim::Utils::Misc::sysreadline($self, $timeout);
 
 	$::d_remotestream && msg("Response: $response");
@@ -247,6 +247,14 @@ sub request {
 
 		my $ds       = Slim::Music::Info::getCurrentDataStore();
 		my $oldTrack = $ds->objectForUrl($infoUrl);
+
+		if (!blessed($oldTrack) || !$oldTrack->can('title')) {
+
+			errorMsg("Slim::Player::Protocols::HTTP::request: Couldn't retrieve track object for: [$infoUrl]\n");
+
+			return $self;
+		}	
+
 		my $oldTitle = $oldTrack->title() if $create;
 		
 		$self = $class->open({

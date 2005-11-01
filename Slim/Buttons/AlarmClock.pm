@@ -16,6 +16,8 @@ use strict;
 use Slim::Player::Playlist;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
+
+use Scalar::Util qw(blessed);
 use Time::HiRes;
 
 my $interval = 1; # check every x seconds
@@ -384,9 +386,9 @@ sub checkAlarms {
 					my $ds = Slim::Music::Info::getCurrentDataStore();
 					my $playlistObj = $ds->objectForUrl($playlist);
 
-					if (ref $playlistObj) {
-					
-						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id()], \&playDone, [$client]);
+					if (blessed($playlistObj) && $playlistObj->can('id')) {
+
+						$client->execute(["playlist", "playtracks", "playlist=".$playlistObj->id], \&playDone, [$client]);
 						setTimer();
 						return;
 					

@@ -13,6 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
+use Scalar::Util qw(blessed);
 use Time::HiRes;
 use Fcntl qw(SEEK_CUR);
 use bytes;
@@ -959,21 +960,31 @@ sub trackAlbumMatch {
 
 	# Get the track objects
 	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $current_url = Slim::Player::Playlist::song($client, 
-												   $current_index);
-	my $current_track = $ds->objectForUrl($current_url);
-	
-	my $compare_url = Slim::Player::Playlist::song($client, $compare_index);
-	my $compare_track = $ds->objectForUrl($compare_url);
 
-	return 0 unless (defined($current_track) && defined($compare_track) &&
-					 defined($current_track->album()) &&
-					 defined($compare_track->album()));
+	my $current_url   = Slim::Player::Playlist::song($client, $current_index);
+	my $current_track = $ds->objectForUrl($current_url, 1, 1);
+	
+	my $compare_url   = Slim::Player::Playlist::song($client, $compare_index);
+	my $compare_track = $ds->objectForUrl($compare_url, 1, 1);
+
+	if (!blessed($current_track) || !blessed($compare_track)) {
+
+		errorMsg("Couldn't find object for track: [$current_track] or [$compare_track] !\n");
+
+		return 0;
+	}
+
+	if (!$current_track->can('album') || !$compare_track->can('album')) {
+
+		errorMsg("Couldn't a find valid object for track: [$current_track] or [$compare_track] !\n");
+
+		return 0;
+	}
 	
 	# Check for album and tracknum matches as expected
-	if (defined($compare_track->album()) &&
-		($compare_track->album() == $current_track->album()) && 
-		(($current_track->tracknum() + $offset) == $compare_track->tracknum())) {
+	if ($compare_track->album && ($compare_track->album == $current_track->album) && 
+		(($current_track->tracknum + $offset) == $compare_track->tracknum)) {
+
 		return 1;
 	}
 
@@ -987,29 +998,42 @@ sub replayGain {
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
 
-	my $curr_index = streamingSongIndex($client);
-	my $url = Slim::Player::Playlist::song($client, 
-										   $curr_index) || return 0;
+	my $ds  = Slim::Music::Info::getCurrentDataStore();
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $track = $ds->objectForUrl($url) || return 0;
+	my $url = Slim::Player::Playlist::song($client, streamingSongIndex($client));
+
+	if (!$url) {
+		errorMsg("Invalid URL for client song!: [$url]\n");
+		return 0;
+	}
+
+	my $track = $ds->objectForUrl($url, 1, 1);
+
+	if (!blessed($track) || !$track->can('replay_gain')) {
+
+		return 0;
+	}
 
 	# Mode 1 is use track gain
 	if ($rgmode == 1) {
 		return $track->replay_gain();
 	}
-	
+
 	my $album = $track->album();
 
+	if (!blessed($album) || !$album->can('replay_gain')) {
+
+		return 0;
+	}
+
 	# Mode 2 is use album gain
-	if (defined($album) && ($rgmode == 2)) {
+	if ($rgmode == 2) {
 		return $album->replay_gain();
 	}
 
 	# Mode 3 is determine dynamically whether to use album or track
-    if (defined($album) && 
-		$album->replay_gain() &&
-		(trackAlbumMatch($client, -1) || trackAlbumMatch($client, 1))) {
+	if ($album->replay_gain() && (trackAlbumMatch($client, -1) || trackAlbumMatch($client, 1))) {
+
 		return $album->replay_gain();
 	}
 
@@ -1036,14 +1060,22 @@ sub shouldLoop {
 					 (Slim::Player::Playlist::repeat($client) == 2 &&
 					Slim::Player::Playlist::count($client) == 1));
 
-	my $url = Slim::Player::Playlist::song($client, 
-										   streamingSongIndex($client));
-	return 0 unless defined($url);
+	my $url = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	if (!$url) {
+		errorMsg("shouldLoop: Invalid URL for client song!: [$url]\n");
+		return 0;
+	}
+
+	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $track = $ds->objectForUrl($url);
 
+	if (!blessed($track) || !$track->can('audio_size')) {
+		return 0;
+	}
+
 	my $audio_size = $track->audio_size();
+
 	# If we don't know the size of the track, don't bother
 	return 0 unless $audio_size;
 
@@ -1272,11 +1304,20 @@ sub openSong {
 	resetSong($client);
 	
 	closeSong($client);
-	
-	my $song     = streamingSong($client);
-	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
+
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
-	my $track    = ref($objOrUrl) ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+	my $song     = streamingSong($client);
+
+	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
+
+	my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+
+	if (!blessed($track) || !$track->can('url')) {
+
+		errorMsg("openSong: Error finding an object for [$objOrUrl]!\n");
+
+		return undef;
+	}
 
 	my $fullpath = $track->url;
 
@@ -1715,8 +1756,12 @@ sub underMax {
 
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
 		my $track = $ds->objectForUrl($fullpath);
+		my $rate  = 0;
 
-		my $rate = defined $track ? ($track->bitrate(1) || 0)/1000 : 0;
+		if (blessed($track) && $track->can('bitrate')) {
+
+			$rate = ($track->bitrate(1) || 0)/1000;
+		}
 
 		return ($maxRate >= $rate);
 	}
@@ -1949,7 +1994,14 @@ sub readNextChunk {
 					
 					my $now   = $client->songBytes() + $song->{offset};
 					my $ds    = Slim::Music::Info::getCurrentDataStore();
-					my $track = $ds->objectForUrl( Slim::Player::Playlist::song($client, streamingSongIndex($client)) );
+					my $url   = Slim::Player::Playlist::song($client, streamingSongIndex($client));
+					my $track = $ds->objectForUrl($url);
+
+					if (!blessed($track) || !$track->can('bitrate')) {
+
+						errorMsg("readNextChunk: Couldn't find object for: [$url]\n");
+						return undef;
+					}
 
 					my $byterate = $track->bitrate(1) / 8;
 				

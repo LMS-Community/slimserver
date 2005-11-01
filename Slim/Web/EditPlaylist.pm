@@ -8,6 +8,8 @@ package Slim::Web::EditPlaylist;
 use strict;
 
 use File::Spec::Functions;
+use Scalar::Util qw(blessed);
+
 use Slim::Formats::Parse;
 use Slim::Music::Info;
 use Slim::Player::Playlist;
@@ -44,8 +46,14 @@ sub editplaylist {
 
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
 
-	my $playlist = $ds->objectForId('playlist', $params->{'id'}) || return [];
-	my @items    = $playlist->tracks;
+	my $playlist = $ds->objectForId('playlist', $params->{'id'});
+
+	if (!blessed($playlist) || !$playlist->tracks) {
+
+		return [];
+	}
+
+	my @items   = $playlist->tracks;
 
 	# 0 base
 	my $itemPos = ($params->{'item'} || 1) - 1;
@@ -203,7 +211,7 @@ sub renamePlaylist {
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
 	my $playlistObj = $ds->objectForId('track', $params->{'id'});
 
-	if ($playlistObj && $params->{'newname'}) {
+	if (blessed($playlistObj) && $playlistObj->can('id') && $params->{'newname'}) {
 
 		my $newName  = $params->{'newname'};
 
@@ -217,13 +225,13 @@ sub renamePlaylist {
 		my $existingPlaylist = $ds->objectForUrl($newUrl);
 
 		# Warn the user if the playlist already exists.
-		if (defined $existingPlaylist && !$params->{'overwrite'}) {
+		if (blessed($existingPlaylist) && !$params->{'overwrite'}) {
 
 			$params->{'RENAME_WARNING'} = 1;
 
-		} elsif (!defined $existingPlaylist || $params->{'overwrite'}) {
+		} elsif (!blessed($existingPlaylist) || $params->{'overwrite'}) {
 
-			if ($existingPlaylist && $existingPlaylist ne $playlistObj) {
+			if (blessed($existingPlaylist) && $existingPlaylist ne $playlistObj) {
 
 				removePlaylistFromDisk($existingPlaylist);
 
@@ -263,13 +271,13 @@ sub deletePlaylist {
 	$params->{'level'}     = 0;
 	
 	# Warn the user if the playlist already exists.
-	if ($playlistObj && !$params->{'confirm'}) {
+	if (blessed($playlistObj) && !$params->{'confirm'}) {
 
 		$params->{'DELETE_WARNING'} = 1;
 		$params->{'level'}     = 1;
 		$params->{'playlist'}  = $playlistObj->id;
 
-	} elsif ($playlistObj) {
+	} elsif (blessed($playlistObj)) {
 
 		removePlaylistFromDisk($playlistObj);
 

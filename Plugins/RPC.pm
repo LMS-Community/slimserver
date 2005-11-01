@@ -1,7 +1,12 @@
 package Plugins::RPC;
 
-use RPC::XML::Parser;
+# $Id$
+
+use strict;
+use HTTP::Status;
 use JSON;
+use RPC::XML::Parser;
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -39,21 +44,20 @@ sub doCommand {
 
 sub getPlaylist {
 	my $reqParams = shift;
-	my $client, $p0, $p1;
 	my @returnArray;
 
 	return RPC::XML::fault->new(3, 'insufficient parameters') unless (ref($reqParams) eq 'ARRAY' && @$reqParams >= 3); 
 
 	my $playername = scalar ($reqParams->[0]);
 
-	$client = Slim::Player::Client::getClient($playername);
+	my $client = Slim::Player::Client::getClient($playername);
 
 	if (!$client) {
 		return RPC::XML::fault->new(3, 'invalid player') unless $client; 
 	}
 
-	$p1 = scalar($reqParams->[1]);
-	$p2 = scalar($reqParams->[2]);
+	my $p1 = scalar($reqParams->[1]);
+	my $p2 = scalar($reqParams->[2]);
 
 	my $songCount = Slim::Player::Playlist::count($client);
 
@@ -64,20 +68,27 @@ sub getPlaylist {
 	if ($valid) {
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
+		my $idx;
+
 		for ($idx = $start; $idx <= $end; $idx++) {
+
 			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client, $idx));
 
-			# place the contributors all in an array for easy access
-			my @contribs = $track->contributors();
-			$track->{contributors} = \@contribs;
-			$_->name() foreach @contribs;
+			if (blessed($track) && $track->can('contributors')) {
 
-			# make sure to read the track and album data from the db as well
-			$track->album()->title() if $track->album();
-			$track->title();
+				# place the contributors all in an array for easy access
+				my @contribs = $track->contributors();
+				$track->{contributors} = \@contribs;
+				$_->name() foreach @contribs;
 
-			push @returnArray, $track;
+				# make sure to read the track and album data from the db as well
+				$track->album()->title() if $track->album();
+				$track->title();
+
+				push @returnArray, $track;
+			}
 		}
+
 	} else {
 		return RPC::XML::fault->new(2, 'invalid arguments');
 	}
@@ -106,7 +117,7 @@ sub getPlayers {
 			"ipport" => $player->ipport(),
 			"model" => $player->model(),
 			"name" => $player->name(),
-			"connected" => $player->connected() ? true : false
+			"connected" => $player->connected() ? 'true' : 'false',
 		}
 	}
 
@@ -135,7 +146,7 @@ sub handleReqXML {
 	my $output;
 
 	if (!$params->{content}) {
-		$response->code(RC_BADREQUEST);
+		$response->code(RC_BAD_REQUEST);
 		$response->content_type('text/html');
 		$response->header('Connection' => 'close');
 
@@ -173,7 +184,7 @@ sub handleReqJSON {
 	my $output;
 
 	if (!$params->{content}) {
-		$response->code(RC_BADREQUEST);
+		$response->code(RC_BAD_REQUEST);
 		$response->content_type('text/html');
 		$response->header('Connection' => 'close');
 

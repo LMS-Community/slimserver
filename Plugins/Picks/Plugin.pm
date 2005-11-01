@@ -12,6 +12,10 @@
 #
 package Plugins::Picks::Plugin;
 
+use strict;
+
+use Scalar::Util qw(blessed);
+
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scan;
@@ -288,19 +292,27 @@ sub handleWebIndex {
 	}
 
 	if (defined $params->{'p0'}) {
+
 		# let's open the stream to get some more information
 		my $stream = Plugins::RadioIO::ProtocolHandler->new({ url => $params->{'p0'}});
 		my $ds = Slim::Music::Info::getCurrentDataStore();
+
 		my $track = $ds->objectForUrl($params->{'p0'}, 1, 1);
 
-		$params->{'stationname'} = Slim::Music::Info::standardTitle($client, $params->{'p0'});
-		$params->{'bitrate'} = $track->bitrate();
-		$params->{'type'} = Slim::Music::Info::contentType($params->{'p0'});
-		$params->{'url'} = $params->{'p0'};
+		if (blessed($track) && $track->can('bitrate')) {
+
+			$params->{'stationname'} = Slim::Music::Info::standardTitle($client, $params->{'p0'});
+			$params->{'bitrate'} = $track->bitrate();
+			$params->{'type'} = Slim::Music::Info::contentType($params->{'p0'});
+			$params->{'url'} = $params->{'p0'};
+		}
+
 		undef $stream;
-	}
-	else {
+
+	} else {
+
 		$params->{'stationList'} = {};
+
 		foreach (@$stationList) {
 			$params->{'stationList'}{Slim::Music::Info::standardTitle($client, $_)} = $_;
 		}

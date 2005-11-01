@@ -129,17 +129,32 @@ sub init {
 			my $ds      = Slim::Music::Info::getCurrentDataStore();
 			my $track   = $ds->objectForUrl(track($client));
 
+			if (!blessed($track) || !$track->can('album') || !$track->can('artist')) {
+
+				errorMsg("Unable to fetch valid track object for currently selected item!\n");
+				return 0;
+			}
+
+			my $album  = $track->album;
+			my $artist = $track->artist;
+
+			if (!blessed($album) || !blessed($artist) || !$album->can('id') || !$artist->can('id')) {
+
+				errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
+				return 0;
+			}
+
 			if ($curitem eq 'ALBUM') {
 
-				my $album = $track->album;
-
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'  => 'track',
-					'level'      => 0,
-					'findCriteria' => { 'album' => $album->id},
-					'selectionCriteria' => { 'track' => $track->id,
-											'album'  => $track->album->id,
-											'artist' => $track->artist->id},
+					'hierarchy'    => 'track',
+					'level'        => 0,
+					'findCriteria' => { 'album' => $album->id },
+					'selectionCriteria' => {
+						'track'  => $track->id,
+						'album'  => $album->id,
+						'artist' => $artist->id,
+					},
 				});
 
 			} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
@@ -149,12 +164,14 @@ sub init {
 				my ($contributor) = $track->$lcItem();
 
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'  => 'album,track',
-					'level'      => 0,
+					'hierarchy'    => 'album,track',
+					'level'        => 0,
 					'findCriteria' => { 'artist' => $contributor->id },
-					'selectionCriteria' => { 'track' => $track->id,
-											'album'  => $track->album->id,
-											'artist' => $track->artist->id},
+					'selectionCriteria' => {
+						'track'  => $track->id,
+						'album'  => $album->id,
+						'artist' => $artist->id,
+					},
 				});
 
 			} elsif ($curitem eq 'GENRE') {
@@ -164,37 +181,51 @@ sub init {
 					'hierarchy'  => 'artist,album,track',
 					'level'      => 0,
 					'findCriteria' => { 'genre' => $genre->id,},
-					'selectionCriteria' => { 'track' => $track->id,
-											'album'  => $track->album->id,
-											'artist' => $track->artist->id},
+					'selectionCriteria' => {
+						'track'  => $track->id,
+						'album'  => $album->id,
+						'artist' => $artist->id,
+					},
 				});
 
 			} elsif ($curitem eq 'YEAR') {
 
 				my $year = $track->year;
+
 				Slim::Buttons::Common::pushMode($client, 'browsedb', {
 					'hierarchy'  => 'album,track',
 					'level'      => 0,
 					'findCriteria' => { 'year' => $year,},
-					'selectionCriteria' => { 'track' => $track->id,
-											'album'  => $track->album->id,
-											'artist' => $track->artist->id},
+					'selectionCriteria' => {
+						'track'  => $track->id,
+						'album'  => $album->id,
+						'artist' => $artist->id,
+					},
 				});
 
 			} elsif ($curitem eq 'FAVORITE') {
+
 				my $num = $client->param('favorite');
+
 				if ($num < 0) {
+
 					my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
-					$client->showBriefly($client->string('FAVORITES_ADDING'),
-										 $track->title);
+
+					$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
+
 					$client->param('favorite', $num);
+
 				} else {
+
 					Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
-					$client->showBriefly($client->string('FAVORITES_DELETING'),
-										 $track->title);
+
+					$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
+
 					$client->param('favorite', -1);
 				}
+
 				$push = 0;
+
 			} else {
 
 				$push = 0;
@@ -222,6 +253,12 @@ sub _trackDataForCurrentItem {
 	# Pull directly from the datasource
 	my $ds      = Slim::Music::Info::getCurrentDataStore();
 	my $track   = $ds->objectForUrl(track($client));
+
+	if (!blessed($track) || !$track->can('genre')) {
+
+		errorMsg("_trackDataForCurrentItem: Unable to get objectForUrl!\n");
+		return 0;
+	}
 
 	# genre is used by everything		
 	my $genre   = $track->genre;
@@ -258,8 +295,7 @@ sub _trackDataForCurrentItem {
 		push @search, "year=".$track->year;
 	}
 
-	my $termlist = join '&',@search;
-	return ($line2, $termlist);
+	return ($line2, join('&', @search));
 }
 
 sub getFunctions {
@@ -299,7 +335,7 @@ sub preloadLines {
 	my $track = $ds->objectForUrl($url);
 
 	# Couldn't get a track or URL? How do people get in this state?
-	if (!$url || !$track) {
+	if (!$url || !blessed($track) || !$track->can('title')) {
 		push (@{$client->trackInfoLines}, "Error! url: [$url] is empty or a track could not be retrieved.\n");
 		push (@{$client->trackInfoContent}, undef);
 

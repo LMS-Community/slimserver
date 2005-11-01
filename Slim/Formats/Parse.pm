@@ -12,6 +12,7 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::Socket qw(:crlf);
 use IO::String;
+use Scalar::Util qw(blessed);
 use XML::Simple;
 use URI::Escape;
 
@@ -93,11 +94,11 @@ sub _updateMetaData {
 	my $attributes = {};
 
 	# Update title MetaData only if its not a local file with Title information already cached.
-	if ($title && Slim::Music::Info::isFileURL($entry)) {
+	if ($title && Slim::Music::Info::isRemoteURL($entry)) {
 
 		my $track = $ds->objectForUrl($entry);
 
-		if (defined $track && !$track->title) {
+		if ((blessed($track) && $track->can('title') && !$track->title) || !blessed($track)) {
 
 			$attributes->{'TITLE'} = $title;
 		}
@@ -239,7 +240,7 @@ sub readPLS {
 
 		chomp($line);
 
-		$::d_parse && msg("Parsing line: $line");
+		$::d_parse && msg("Parsing line: $line\n");
 
 		# strip carriage return from dos playlists
 		$line =~ s/\cM//g;
@@ -658,6 +659,13 @@ sub writePLS {
 
 		my $track = $ds->objectForUrl($item);
 
+		if (!blessed($track) || !$track->can('title')) {
+
+			errorMsg("writePLS: Couldn't fetch track object for: [$item]\n");
+
+			next;
+		}
+
 		printf($output "File%d=%s\n", $itemnum, _pathForItem($item));
 
 		my $title = $track->title();
@@ -694,8 +702,11 @@ sub writeM3U {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
-			my $track = $ds->objectForUrl($item) || do {
-				msg("Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+			my $track = $ds->objectForUrl($item);
+
+			if (!blessed($track) || !$track->can('title')) {
+
+				errorMsg("writeM3U: Couldn't retrieve objectForUrl: [$item] - skipping!\n");
 				next;
 			};
 			

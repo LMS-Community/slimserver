@@ -213,7 +213,8 @@ sub newTitle {
 #		
 sub lines {
 	my $client = shift;
-	my ($line1, $line2, $overlay2);
+
+	my ($line1, $line2);
 
 	if (showingNowPlaying($client) || (Slim::Player::Playlist::count($client) < 1)) {
 		return $client->currentSongLines();
@@ -230,15 +231,21 @@ sub lines {
 		Slim::Player::Playlist::count($client)
 	);
 
-	$line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, browseplaylistindex($client)));
-	$overlay2 = Slim::Display::Display::symbol('notesymbol');
+	$line2 = Slim::Music::Info::standardTitle(
+		$client,
+		Slim::Player::Playlist::song($client, browseplaylistindex($client))
+	);
 
-	return ($line1, $line2, undef, $overlay2);
+	return {
+		'line1'    => $line1,
+		'line2'    => $line2,
+		'overlay2' => $client->symbols('notesymbol'),
+	};
 }
 
 sub showingNowPlaying {
 	my $client = shift;
-	
+
 	# special case of playlist mode, to indicate when server needs to
 	# display the now playing details.  This includes playlist mode and
 	# now playing (jump back on wake) screensaver.
@@ -248,16 +255,16 @@ sub showingNowPlaying {
 				((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)))
 		)
 	);
-	
+
 	my $wasshowing = $client->param('showingnowplaying');
-	
+
 	return $client->param('showingnowplaying',$nowshowing || $wasshowing);
 }
 
 sub browseplaylistindex {
 	my $client = shift;
 	my $playlistindex = shift;
-	
+
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
 	return $client->param( 'browseplaylistindex', $playlistindex);
 }
