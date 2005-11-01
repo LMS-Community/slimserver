@@ -8,6 +8,8 @@ package Slim::Buttons::BrowseDB;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
+
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
@@ -326,19 +328,32 @@ sub browsedbExitCallback {
 		
 		elsif ($currentItem eq 'FAVORITE') {
 
-			my $num = $client->param('favorite');
-			my $url = $ds->objectForId('track', $client->param('findCriteria')->{'playlist'});
+			my $num   = $client->param('favorite');
+			my $track = $ds->objectForId('track', $client->param('findCriteria')->{'playlist'});
+
+			if (!blessed($track) || !$track->can('title')) {
+
+				errorMsg("Couldn't find a valid object for playlist!\n");
+
+				$client->showBriefly($client->string('PROBLEM_OPENING'));
+
+				return;
+			}
 
 			if ($num < 0) {
-				my $num = Slim::Utils::Favorites->clientAdd($client, $url, $url->title());
-				
-				$client->showBriefly($client->string('FAVORITES_ADDING'),
-									 $url->title());
+
+				my $num = Slim::Utils::Favorites->clientAdd($client, $track, $track->title);
+
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
+
 				$client->param('favorite', $num);
+
 			} else {
-				Slim::Utils::Favorites->deleteByClientAndURL($client, $url);
-				$client->showBriefly($client->string('FAVORITES_DELETING'),
-									 $url->title());
+
+				Slim::Utils::Favorites->deleteByClientAndURL($client, $track);
+
+				$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
+
 				$client->param('favorite', -1);
 			}
 		}
@@ -445,7 +460,7 @@ sub browsedbItemName {
 
 			return $client->string($item);
 
-		} elsif ($newObj->can('id')) {
+		} elsif (blessed($newObj) && $newObj->can('id')) {
 
 			${$client->param('valueRef')} = $items->[$index] = $item = $newObj;
 
@@ -651,15 +666,21 @@ sub setMode {
 	}
 
 	if ($levels[$level-1] eq 'playlist') {
-		my $url   = $ds->objectForId('track', $findCriteria->{'playlist'});
+
+		my $track = $ds->objectForId('track', $findCriteria->{'playlist'});
+
+		if (blessed($track) && $track->can('id')) {
 		
-		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $url);
-		if ($fav) {
-			$client->param('favorite', $fav->{'num'});
-		} else {
-			$client->param('favorite', -1);
+			my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track);
+
+			if ($fav) {
+				$client->param('favorite', $fav->{'num'});
+			} else {
+				$client->param('favorite', -1);
+			}
+
+			push @$items, 'FAVORITE';
 		}
-		push @$items, 'FAVORITE';
 	}
 
 	# Finally get the last selection position within the list	
