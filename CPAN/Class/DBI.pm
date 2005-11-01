@@ -1178,7 +1178,7 @@ sub _do_search {
 	# then we can bypass the db search if the object is already cached
 	# and all the searched-for field values match. If any don't match,
 	# or don't exist in the cached object, then we fall through and db search.
-	if ($search_type eq "=" and my $obj_key = $class->_live_object_key(\%search_for)) {
+	if ($Use_Object_Index && $search_type eq "=" and my $obj_key = $class->_live_object_key(\%search_for)) {
 		my $obj = $class->live_object_fetch($obj_key);
 		# do we have a cached object that also matches the search criteria?
 		# for now we use the cached object only if the PK was the only search criteria

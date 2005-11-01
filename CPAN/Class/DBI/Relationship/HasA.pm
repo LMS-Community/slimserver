@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use base 'Class::DBI::Relationship';
+use Scalar::Util qw(blessed);
 
 sub remap_arguments {
 	my $proto = shift;
@@ -37,6 +38,11 @@ sub _inflator {
 		defined(my $value = $self->_attrs($col)) or return;
 		my $meta = $self->meta_info(has_a => $col);
 		my ($a_class, %meths) = ($meta->foreign_class, %{ $meta->args });
+
+		# SlimServer Bug: 2368
+		# Somehow we're getting here with an empty hash reference.
+		# I've been unable to track it down. - dsully
+		return if ref($value) && !blessed($value);
 
 		return if ref $value and $value->isa($a_class);
 		my $inflator;

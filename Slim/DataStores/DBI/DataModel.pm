@@ -30,6 +30,9 @@ our $cleanupIds;
 {
 	my $class = __PACKAGE__;
 
+	# The Live Object Index causes far more trouble than it's worth.
+	Class::DBI->use_object_index(0);
+
 	# Create a low-memory & cpu usage call for DB cleanup
 	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
 }
