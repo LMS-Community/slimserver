@@ -871,6 +871,12 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[0] = undef;
 					}
 					
+					if ($client && $client->hasPreAmp()) {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[1] = 'preampVolumeControl';
+					} else {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[1] = undef;
+					}
+					
 					if ($client->maxTransitionDuration()) {
 						$pageref->{'GroupOrder'}[2] = 'Transition';
 						$pageref->{'Prefs'}{'transitionDuration'}{'validateArgs'} = [0, $client->maxTransitionDuration(),1,1];

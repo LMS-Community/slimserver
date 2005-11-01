@@ -999,6 +999,7 @@ sub signalStrength {
 }
 
 sub hasDigitalOut() { return 0; }
+sub hasPreAmp() { return 0; }
 
 sub maxBrightness() { return undef; }
 

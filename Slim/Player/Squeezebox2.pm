@@ -907,6 +907,11 @@ sub canDoReplayGain {
 	return 0;
 }
 
+
+sub hasPreAmp {
+	return 1;
+}
+
 # SB2 can display Unicode fonts via a TTF
 sub string {
         my $client = shift;
