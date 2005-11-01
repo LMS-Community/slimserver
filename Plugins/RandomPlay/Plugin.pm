@@ -314,7 +314,7 @@ sub getDisplayText {
 		
 	# if a mode is active, handle the temporarily added disable option
 	} elsif ($item eq 'disable' && $type{$client}) {
-		return ucfirst(string('PLUGIN_RANDOM_'.uc($type{$client}).'_DISABLE'));
+		return string('PLUGIN_RANDOM_PRESS_RIGHT')." ".string('PLUGIN_RANDOM_'.uc($type{$client}).'_DISABLE');
 	
 	} else {
 		return string($displayText{$item});
@@ -815,6 +815,9 @@ PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 	ES	Se puede añadir o eliminar canciones de la mezcla en cualquier momento. Para detener una mezcla al azar, limpiar la lista o presionar
+
+PLUGIN_RANDOM_PRESS_RIGHT
+	EN	Press RIGHT to
 
 EOF
 
