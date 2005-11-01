@@ -9887,6 +9887,9 @@ SAVE_PLAYLIST
 	SE	Lagra låtlista
 	ZH_CN	保存播放表
 
+PLAYLIST_OVERWRITE
+	EN	File Exists! Press RIGHT to overwrite:
+
 PLAYLIST_SAVE
 	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
 	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:

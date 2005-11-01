@@ -64,13 +64,16 @@ sub setMode {
 		$context{$client} = $client->currentPlaylist ? 
 				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
 					'A';
+					
+		my $cursorpos = length($context{$client}) || 0;
+
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
 			'callback' => \&Plugins::SavePlaylist::savePluginCallback,
 			'valueRef' => \$context{$client},
 			'charsRef' => \@LegalChars,
 			'numberLetterRef' => \@legalMixed,
 			'header' => $client->string('PLAYLIST_AS'),
-			'cursorPos' => 0,
+			'cursorPos' => $cursorpos,
 		});
 	}
 }
@@ -97,9 +100,18 @@ sub lines {
 
 	my ($line1, $line2, $arrow);
 	
+	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
+		catfile(Slim::Utils::Prefs::get('playlistdir'), $context{$client} . '.m3u')
+	);
+
 	if (!Slim::Utils::Prefs::get('playlistdir')) {
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');
+	} elsif ($ds->objectForUrl($newUrl)) {
+		$line1 = $client->string('PLAYLIST_OVERWRITE');
+		$line2 = $context{$client};
+		$arrow = $client->symbols('rightarrow');
 	} else {
 		$line1 = $client->string('PLAYLIST_SAVE');
 		$line2 = $context{$client};
