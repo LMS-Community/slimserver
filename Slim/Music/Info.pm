@@ -1107,7 +1107,7 @@ sub cachedPlaylist {
 
 	for my $track ($obj->tracks) {
 
-		if (lbessed($track) && $track->can('url')) {
+		if (blessed($track) && $track->can('url')) {
 
 			push @urls, $track->url;
 
