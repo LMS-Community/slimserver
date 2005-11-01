@@ -1099,7 +1099,7 @@ sub cachedPlaylist {
 
 	if (!blessed($obj) || !$obj->can('tracks')) {
 
-		return [];
+		return undef;
 	}
 
 	# We want any PlayListTracks this item may have
@@ -1124,7 +1124,7 @@ sub cachedPlaylist {
 
 	return \@urls if scalar(@urls);
 
-	return [];
+	return undef;
 }
 
 sub cacheDirectory {
