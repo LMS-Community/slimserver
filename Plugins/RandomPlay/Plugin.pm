@@ -307,10 +307,15 @@ sub getDisplayText {
 			year   => 'PLUGIN_RANDOM_YEAR',
 			genreFilter => 'PLUGIN_RANDOM_GENRE_FILTER'
 		)
-	}	
-	
+	}		
+	# if showing the current mode, show altered string
 	if ($item eq $type{$client}) {
 		return string($displayText{$item} . '_PLAYING');
+		
+	# if a mode is active, handle the temporarily added disable option
+	} elsif ($item eq 'disable' && $type{$client}) {
+		return ucfirst(string('PLUGIN_RANDOM_'.uc($type{$client}).'_DISABLE'));
+	
 	} else {
 		return string($displayText{$item});
 	}
@@ -380,6 +385,21 @@ sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
 	$::d_plugins && msgf("RandomPlay: %s %s\n", $add ? 'Add' : 'Play', $item);
 	
+	# reconstruct the list of options, adding and removing the 'disable' option where applicable
+	if ($item ne 'genreFilter') {
+		my $listRef = Slim::Buttons::Common::param($client,'listRef');
+		
+		if ($item eq 'disable') {
+			pop @$listRef;
+		
+		# only add disable option if starting a mode from idle state
+		} elsif (!$type{$client}) {
+			push @$listRef,'disable';
+		}
+		Slim::Buttons::Common::param($client,'listRef',$listRef);
+	}
+	
+
 	# Don't play/add for genre filter or a mix that's already enabled
 	if ($item ne 'genreFilter' && $item ne $type{$client}) {	
 		playRandom($client, $item, $add);
@@ -439,6 +459,11 @@ sub setMode {
 		},
 	);
 
+	# if we have an active mode, temporarily add the disable option to the list.
+	if ($type{$client}) {
+		push @{$params{listRef}},'disable';
+	}
+
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
@@ -469,7 +494,7 @@ sub commandCallback {
 	if ($slimCommand eq 'newsong'
 		|| $slimCommand eq 'playlist' && $paramsRef->[1] eq 'delete' && $paramsRef->[2] > $songIndex) {
 
-        if ($::d_plugins) {
+		if ($::d_plugins) {
 			if ($slimCommand eq 'newsong') {
 				msg("RandomPlay: new song detected ($songIndex)\n");
 			} else {
