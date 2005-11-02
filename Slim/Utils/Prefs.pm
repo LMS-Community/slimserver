@@ -946,52 +946,59 @@ sub load {
 	my $nosetup = shift;
 
 	my $readFile = prefsFile($setFile);
-	
+
 	# if we can't open up the new one, try the old ones
 	if (!-r $readFile) {
 		$readFile = '/etc/slimp3.pref';
 	}
-	
+
 	if (!-r $readFile) {
 		$readFile = catdir(preferencesPath(), 'SLIMP3.PRF');
 	}
-	
+
 	if (!-r $readFile) {
 		if (exists($ENV{'windir'})) {
 			$readFile = catdir($ENV{'windir'}, 'SLIMP3.PRF');
 		}
 	}
-		
+
 	if (!-r $readFile && preferencesPath()) {
 		$readFile = catdir(preferencesPath(), '.slimp3.pref');
 	}
-	
+
 	if (!-r $readFile && $ENV{'HOME'}) {
 		$readFile = catdir($ENV{'HOME'}, '.slimp3.pref');
 	}
-	
+
 	# if we found some file to read, then let's read it!
-	if (-r $readFile) {
-		open(NUPREFS, $readFile);
-		my $firstline = <NUPREFS>;
-		close(NUPREFS);
-		if ($firstline =~ /^---/) {
-			# it's a YAML formatted file
-			$::d_prefs && msg("Loading YAML style prefs file $readFile\n");
-			my $prefref = LoadFile($readFile);
-			%prefs = %$prefref;
-		} else {
-			# it's the old style prefs file
-			$::d_prefs && msg("Loading old style prefs file $readFile\n");
-			loadOldPrefs($readFile);
+	eval {
+
+		if (-r $readFile) {
+			open(NUPREFS, $readFile);
+			my $firstline = <NUPREFS>;
+			close(NUPREFS);
+			if ($firstline =~ /^---/) {
+				# it's a YAML formatted file
+				$::d_prefs && msg("Loading YAML style prefs file $readFile\n");
+				my $prefref = LoadFile($readFile);
+				%prefs = %$prefref;
+			} else {
+				# it's the old style prefs file
+				$::d_prefs && msg("Loading old style prefs file $readFile\n");
+				loadOldPrefs($readFile);
+			}
 		}
+	};
+
+	if ($@) {
+		die "There was an error reading your SlimServer configuration file - it might be corrupted!\n";
 	}
 	
 	# see if we can write out the real prefs file
 	$canWrite = (-e prefsFile() && -w prefsFile()) || (-w preferencesPath());
 	
 	if (!$canWrite && !$nosetup) {
-		msg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
+		errorMsg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
 	}
 }
 
