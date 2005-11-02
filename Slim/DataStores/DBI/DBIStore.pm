@@ -129,10 +129,10 @@ sub modifyDatabaseTempStorage {
 
 	if ($self->driver eq 'SQLite') {
 
-		eval { $self->dbh->do("PRAGMA temp_store $value") };
+		eval { $self->dbh->do("PRAGMA temp_store = $value") };
 
 		if ($@) {
-			errorMsg("Couldn't change the database temp_store value to: [$value]\n");
+			errorMsg("Couldn't change the database temp_store value to: [$value]: [$@]\n");
 		}
 	}
 }
@@ -143,10 +143,10 @@ sub modifyDatabaseCacheSize {
 
 	if ($self->driver eq 'SQLite') {
 
-		eval { $self->dbh->do("PRAGMA cache_size $value") };
+		eval { $self->dbh->do("PRAGMA cache_size = $value") };
 
 		if ($@) {
-			errorMsg("Couldn't change the database cache_size value to: [$value]\n");
+			errorMsg("Couldn't change the database cache_size value to: [$value]: [$@]\n");
 		}
 	}
 }
