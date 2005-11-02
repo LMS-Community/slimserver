@@ -9,40 +9,47 @@ browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;leve
 browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$playerURI\"";
 MoveUp   = "%2D1"; # -1
 MoveDown = "%2B1"; # +1
+%]
 
-BLOCK homeLink; homeString = "HOME" | string;
-	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
-END;
+[%# href for home page %]
+[% BLOCK homeLink; homeString = "HOME" | string -%]
+	[% "<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>" -%]
+[%- END %]
 
-BLOCK savePlaylistLink; saveString = "SAVE" | string; 
-	"<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>"; 
-END;
+[%# href for save playlist command %]
+[% BLOCK savePlaylistLink; saveString = "SAVE" | string -%] 
+	[% "<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>" -%]
+[%- END %]
 
-BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string;
-	"<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>"; 
-END;
+[%#href for downloading the current playlist %]
+[% BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string -%]
+	[% "<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>" -%]
+[%- END %]
 
-BLOCK clearPlaylistLink; clearString = "CLEAR" | string;
-	"<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>"; 
-END;
+[%# href for clear current playlist command %]
+[% BLOCK clearPlaylistLink; clearString = "CLEAR" | string -%]
+	[% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>" -%]
+[%- END %]
 
-BLOCK thumbnailImg;
-	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+[%# img tag for album thumbnail in browse artwork context %]
+[% BLOCK thumbnailImg -%]
+	[% "<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
 		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\" 
-		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\">"; 
-END;
+		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; "($year)"; END; "\">" -%] 
+[%- END %]
 
-BLOCK statusImg;
-	"<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+[%# img tag for album thumbnail in the now playing status context %]
+[% BLOCK statusImg -%]
+	[% "<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
 		alt=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; "($itemobj.year)"; END; "\" 
-		title=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; "($itemobj.year)"; END; "\">"; 
-END;
+		title=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; "($itemobj.year)"; END; "\">" -%]
+[%- END %]
 
-BLOCK coverImg;
-	"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">"; 
-END ;
+[%# img tag for cover art in browsedb context %]
+[% BLOCK coverImg -%]
+	"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">" -%]
+[%- END %]
 
--%]
 
 [%  'urlcmdFor' => {
 					'play'   => 'play',
@@ -58,10 +65,12 @@ END ;
 					'remove' => 'deletetracks',
 					} %]
 														
+[%# command query params for commands above on remote urls %]
 [% BLOCK cmdRemoteURLQuery -%]
 p0=playlist&amp;p1=[% urlcmdFor.$cmdType %]&amp;p2=[% itemobj.url | uri %][% IF p3 %]&amp;p3=[% p3 %][% END %]
 [%- END %]
 
+[%# command query params for commands above on local urls %]
 [% BLOCK cmdLocalQuery -%]
 command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 [%- END %]
