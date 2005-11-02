@@ -328,8 +328,10 @@ sub getOverlay {
 	# Put the right arrow by genre filter and notesymbol by any mix that isn't playing
 	if ($item eq 'genreFilter') {
 		return [undef, Slim::Display::Display::symbol('rightarrow')];
-	} elsif ($item ne $type{$client}) {
+	
+	} elsif ($item ne $type{$client} && $item ne 'disable') {
 		return [undef, Slim::Display::Display::symbol('notesymbol')];
+	
 	} else {
 		return [undef, undef];
 	}
@@ -453,6 +455,8 @@ sub setMode {
 					overlayRef => \&getGenreOverlay,
 					onRight    => \&toggleGenreState,
 				});
+			} elsif ($item eq 'disable') {
+				handlePlayOrAdd($client, $item, 0);
 			} else {
 				$client->bumpRight();
 			}
