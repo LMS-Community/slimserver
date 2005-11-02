@@ -288,10 +288,6 @@ sub markAsScanned {
 	$currentDB->markEntryAsValid($item);
 }
 
-sub total_time {
-	return $currentDB->totalTime();
-}
-
 sub playlistForClient {
 	my $client = shift;
 

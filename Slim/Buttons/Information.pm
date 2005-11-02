@@ -105,7 +105,10 @@ sub init {
 			],
 
 			'valueFunctRef' => [
-				\&Slim::Music::Info::total_time,
+				sub { 
+					my $ds = Slim::Music::Info::getCurrentDataStore();
+					return $ds->totalTime();
+				},
 				sub { 
 					my $ds = Slim::Music::Info::getCurrentDataStore();
 					return $ds->count('album');
