@@ -389,21 +389,20 @@ sub handlePlayOrAdd {
 	
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
-		my $listRef = Slim::Buttons::Common::param($client,'listRef');
+		my $listRef = Slim::Buttons::Common::param($client, 'listRef');
 		
 		if ($item eq 'disable') {
 			pop @$listRef;
 		
 		# only add disable option if starting a mode from idle state
 		} elsif (!$type{$client}) {
-			push @$listRef,'disable';
+			push @$listRef, 'disable';
 		}
-		Slim::Buttons::Common::param($client,'listRef',$listRef);
+		Slim::Buttons::Common::param($client, 'listRef', $listRef);
 	}
-	
 
 	# Don't play/add for genre filter or a mix that's already enabled
-	if ($item ne 'genreFilter' && $item ne $type{$client}) {	
+	if ($item ne 'genreFilter') {	
 		playRandom($client, $item, $add);
 	}
 }
