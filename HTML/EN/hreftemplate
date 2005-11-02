@@ -47,7 +47,7 @@ MoveDown = "%2B1"; # +1
 
 [%# img tag for cover art in browsedb context %]
 [% BLOCK coverImg -%]
-	"<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">" -%]
+[% "<img src=\"/music/$coverArt/cover.jpg\"";IF resize; ' onLoad="resize(this);"';END;">" -%]
 [%- END %]
 
 
