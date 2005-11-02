@@ -601,6 +601,12 @@ sub execute {
 							}
 						}
 					}
+
+					# Un-escape URI that have been escaped again.
+					if (Slim::Music::Info::isRemoteURL($path)) {
+
+						$path = Slim::Web::HTTP::unescape($path);
+					}
 					
 					if ($p1 =~ /^(play|load|resume)$/) {
 
