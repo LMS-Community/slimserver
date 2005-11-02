@@ -440,10 +440,6 @@ sub cli_process {
 			cli_cmd_titles($client_socket, $cmdRef);
 		}
 
-		elsif ($cmd eq 'version') {
-			cli_response_push($client_socket, $::VERSION);
-		}
-		
 		else {
 		
 			$::d_cli && msg("CLI: Forwarding [$cmd] to Command.pm\n");

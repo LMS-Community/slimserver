@@ -1836,7 +1836,6 @@ sub buildStatusHeaders {
 			$headers{"x-playertrack"}    = Slim::Player::Playlist::song($client); 
 			$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
 			$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
-			$headers{"x-playerduration"} = Slim::Music::Info::total_time(Slim::Player::Playlist::song($client));
 
 			if (blessed($track) && $track->can('artist')) {
 
@@ -1854,7 +1853,10 @@ sub buildStatusHeaders {
 				$i = $track->genre();
 				$i = $i->name() if ($i);
 				$headers{"x-playergenre"} = $i if $i;
-				
+
+				$i = $track->secs();				
+				$headers{"x-playerduration"} = $i if $i;
+
 				if ($track->coverArt()) {
 					$headers{"x-playercoverart"} = "/music/" . $track->id() . "/cover.jpg";
 				}

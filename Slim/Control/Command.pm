@@ -212,6 +212,9 @@ sub execute {
 		}
 		
 		$client = undef;
+		
+	} elsif ($p0 eq "version") {
+		$p1 = $::VERSION;
 
 	} elsif ($p0 eq "debug") {
 
