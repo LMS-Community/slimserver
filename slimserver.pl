@@ -1057,7 +1057,9 @@ sub checkDataSource {
 
 		if (!$::noScan && $ds->count('track') == 0) {
 
-			Slim::Music::Import::startScan();
+			# Let's go through Command rather than calling
+			# Slim::Music::Import::startScan() directly...
+			Slim::Control::Command::execute(undef, ["rescan"], undef, undef);
 		}
 	}
 }
