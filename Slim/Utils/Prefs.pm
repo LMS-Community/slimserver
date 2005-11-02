@@ -160,6 +160,8 @@ sub init {
 		'upgrade-6.2b1-script'	=> 1,
 		'upgrade-6.2b1-2005-09-19-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
+		'databaseTempStorage'   => 'MEMORY',
+		'databaseCacheSize'     => 10000,
 	);
 
 	# The following hash contains functions that are executed when the pref corresponding to

@@ -37,14 +37,23 @@ our $cleanupIds;
 	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
 }
 
+sub driver {
+	my $class = shift;
+
+	if (!defined $driver) {
+
+		$driver = Slim::Utils::Prefs::get('dbsource');
+		$driver =~ s/dbi:(.*?):(.*)$/$1/;
+	}
+
+	return $driver;
+}
+
 sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
 
-	$driver = Slim::Utils::Prefs::get('dbsource');
-	$driver =~ s/dbi:(.*?):(.*)$/$1/;
-
-	my $sqlFile = catdir($Bin, "SQL", $driver, $file);
+	my $sqlFile = catdir($Bin, "SQL", $class->driver, $file);
 
 	$::d_info && msg("Executing SQL file $sqlFile\n");
 
@@ -194,10 +203,7 @@ sub findUpgrade {
 	my $class       = shift;
 	my $currVersion = shift;
 
-	$driver = Slim::Utils::Prefs::get('dbsource');
-	$driver =~ s/dbi:(.*?):(.*)$/$1/;
-
-	my $sqlVerFilePath = catdir($Bin, "SQL", $driver, "sql.version");
+	my $sqlVerFilePath = catdir($Bin, "SQL", $class->driver, "sql.version");
 
 	my $versionFile;
 

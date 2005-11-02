@@ -113,6 +113,44 @@ sub dbh {
 	return Slim::DataStores::DBI::DataModel->dbh;
 }
 
+sub driver {
+	my $self = shift;
+
+	return Slim::DataStores::DBI::DataModel->driver;
+}
+
+# SQLite has some tuning parameters available via it's PRAGMA interface. See
+# http://www.sqlite.org/pragma.html for more details.
+#
+# These wrappers allow us to set the params.
+sub modifyDatabaseTempStorage {
+	my $self  = shift;
+	my $value = shift || Slim::Utils::Prefs::get('databaseTempStorage');
+
+	if ($self->driver eq 'SQLite') {
+
+		eval { $self->dbh->do("PRAGMA temp_store $value") };
+
+		if ($@) {
+			errorMsg("Couldn't change the database temp_store value to: [$value]\n");
+		}
+	}
+}
+
+sub modifyDatabaseCacheSize {
+	my $self  = shift;
+	my $value = shift || Slim::Utils::Prefs::get('databaseCacheSize');
+
+	if ($self->driver eq 'SQLite') {
+
+		eval { $self->dbh->do("PRAGMA cache_size $value") };
+
+		if ($@) {
+			errorMsg("Couldn't change the database cache_size value to: [$value]\n");
+		}
+	}
+}
+
 sub classForType {
 	my $self = shift;
 	my $type = shift;
@@ -322,7 +360,10 @@ sub count {
 	# for VA albums, we want the correct count.
 	if ($field eq 'contributor' && !$findCriteria{'album'}) {
 
-		$findCriteria{'contributor.role'} = $self->artistOnlyRoles;
+		if (my $roles = $self->artistOnlyRoles) {
+
+			$findCriteria{'contributor.role'} = $roles;
+		}
 
 		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !exists $findCriteria{'album.compilation'}) {
 

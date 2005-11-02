@@ -2083,33 +2083,83 @@ sub initSetupConfig {
 			}
 		} #end of setup{'security'} hash
 	,'performance' => {
-		'title' => string('PERFORMANCE_SETTINGS')
-		,'parent' => 'server'
-		,'GroupOrder' => ['Default']
-		,'Groups' => {
+		'title' => string('PERFORMANCE_SETTINGS'),
+		'parent' => 'server',
+		'GroupOrder' => ['Default'],
+
+		'Groups' => {
+
 			'Default' => {
-				'PrefOrder' => ['lookForArtwork','itemsPerPass','prefsWriteDelay','keepUnswappedInterval']
-			}
-		}
-		,'Prefs' => {
+				'PrefOrder' => [qw(
+					lookForArtwork
+					itemsPerPass
+					prefsWriteDelay
+					keepUnswappedInterval
+					databaseTempStorage
+					databaseCacheSize
+				)],
+			},
+		},
+
+		'Prefs' => {
 			'lookForArtwork' => {
-				'validate' => \&validateTrueFalse
-				,'options' => {
-					'0' => string('SETUP_NO_ARTWORK')
-					,'1' => string('SETUP_LOOKFORARTWORK')
-				}
-			}
-			,'itemsPerPass' => {
-				'validate' => \&validateInt
-			}
-			,'prefsWriteDelay' => {
-				'validate' => \&validateInt
-				,'validateArgs' => [0,undef,1]
-			}
-			,'keepUnswappedInterval' => {
-				'validate' => \&validateInt
-			}
-		}
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'0' => string('SETUP_NO_ARTWORK'),
+					'1' => string('SETUP_LOOKFORARTWORK'),
+				},
+			},
+
+			'itemsPerPass' => {
+				'validate' => \&validateInt,
+			},
+
+			'prefsWriteDelay' => {
+				'validate' => \&validateInt,
+				'validateArgs' => [0,undef,1],
+			},
+
+			'keepUnswappedInterval' => {
+				'validate' => \&validateInt,
+			},
+
+			'databaseCacheSize' => {
+				'PrefHead' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD'),
+				'PrefDesc' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_DESC'),
+
+				'validate' => \&validateInt,
+
+				'onChange' => sub {
+					my ($client, $changeref) = @_;
+
+					my $ds = Slim::Music::Info->getCurrentDataStore;
+
+					$ds->modifyDatabaseCacheSize($changeref->{'databaseCacheSize'}{'new'});
+				},
+			},
+
+			'databaseTempStorage' => {
+				'PrefHead' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD'),
+				'PrefDesc' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC'),
+
+				'options' => {
+					'MEMORY' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY'),
+					'FILE'   => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE'),
+				},
+
+				'onChange' => sub {
+					my ($client, $changeref) = @_;
+
+					my $ds  = Slim::Music::Info->getCurrentDataStore;
+					my $val = $changeref->{'databaseTempStorage'}{'new'};
+
+					if ($val eq 'MEMORY' || $val eq 'FILE') {
+
+						$ds->modifyDatabaseTempStorage($val);
+					}
+				},
+			},
+		},
 	} #end of setup{'performance'} hash
 	,'network' => {
 		'title' => string('NETWORK_SETTINGS')

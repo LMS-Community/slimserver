@@ -50,8 +50,12 @@ sub query {
 		# based on the compilation bit.
 		if ($type eq 'artist') {
 
-			$find->{'contributor.role'}  = $ds->artistOnlyRoles;
-			$find->{'album.compilation'} = undef;
+			if (my $roles = $ds->artistOnlyRoles) {
+
+				$find->{'contributor.role'} = $roles;
+			}
+
+			delete $find->{'album.compilation'};
 		}
 
 		my $count   = $ds->count($queries{$type}->[0], $find);

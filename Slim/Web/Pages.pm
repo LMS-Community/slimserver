@@ -12,6 +12,7 @@ use strict;
 use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
 use POSIX ();
+use Scalar::Util qw(blessed);
 
 use Slim::DataStores::Base;
 use Slim::Music::LiveSearch;
@@ -172,21 +173,7 @@ sub addLibraryStats {
 	$find->{'contributor'} = $artist if $artist && !$album;
 	$find->{'album'}       = $album  if $album;
 
-	# Bug 1913 - don't put counts for contributor & tracks when an artist
-	# is a composer on a different artist's tracks.
-	if ($artist && $artist eq $ds->variousArtistsObject->id) {
-
-		delete $find->{'contributor'};
-
-		$find->{'album.compilation'} = 1;
-
-	} else {
-
-		$find->{'contributor.role'} = $ds->artistOnlyRoles;
-	}
-
 	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
-	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 	$params->{'album_count'}  = _lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
 
 	# Right now hitlist.html is the only page that uses genre_count -
@@ -195,6 +182,17 @@ sub addLibraryStats {
 
 		$params->{'genre_count'} = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
 	}
+
+	# Bug 1913 - don't put counts for contributor & tracks when an artist
+	# is a composer on a different artist's tracks.
+	if ($artist && $artist eq $ds->variousArtistsObject->id) {
+
+		delete $find->{'contributor'};
+
+		$find->{'album.compilation'} = 1;
+	}
+
+	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 }
 
 # Send the status page (what we're currently playing, contents of the playlist)
@@ -531,7 +529,7 @@ sub playlist {
 		my $objOrUrl = Slim::Player::Playlist::song($client, $listBuild{'item'});
 		my $track    = $objOrUrl;
 
-		if (!ref $objOrUrl) {
+		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
 			$track = $ds->objectForUrl($objOrUrl) || do {
 				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
@@ -913,9 +911,14 @@ sub _fillInSearchResults {
 				# user's database is likely out of date. Bug 863
 				my $itemObj = $item;
 
-				if (!ref($itemObj)) {
+				if (!blessed($itemObj) || !$itemObj->can('id')) {
 
-					$itemObj = $ds->objectForUrl($item) || next;
+					$itemObj = $ds->objectForUrl($item);
+				}
+
+				if (!blessed($itemObj) || !$itemObj->can('id')) {
+
+					next;
 				}
 				
 				my $itemname = &{$fieldInfo->{$type}->{'resultToName'}}($itemObj);
@@ -976,7 +979,7 @@ sub _addSongInfo {
 		$url   = $track->url() if $track;
 	}
 
-	if ($track) {
+	if (blessed($track) && $track->can('filesize')) {
 
 		# let the template access the object directly.
 		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
@@ -1329,14 +1332,14 @@ sub browsedb {
 			my $attrName  = $levelInfo->{'nameTransform'} || $levels[$level];
 
 			# We might not be inflated yet...(but skip for years)
-			if (!ref($item) && $item =~ /^\d+$/ && $levels[$level] ne 'year') {
+			if (!blessed($item) && $item =~ /^\d+$/ && $levels[$level] ne 'year') {
 
 				$item = $ds->objectForId($attrName, $item);
 			}
 
 			# The track might have been deleted out from under us.
 			# XXX - should we have some sort of error message here?
-			if (!defined $item || (ref($item) && !$item->can('id'))) {
+			if (!defined $item || (blessed($item) && !$item->can('id'))) {
 
 				next;
 			}
@@ -1427,12 +1430,14 @@ sub browsetree {
 
 		my $obj = $ds->objectForId('track', $levels[$i]);
 
-		push @{$params->{'pwd_list'}}, {
-			'hreftype'     => 'browseTree',
-			'title'        => $i == 0 ? string('MUSIC') : $obj->title,
-			'hierarchy'    => join('/', @levels[0..$i]),
-		};
+		if (blessed($obj) && $obj->can('title')) {
 
+			push @{$params->{'pwd_list'}}, {
+				'hreftype'     => 'browseTree',
+				'title'        => $i == 0 ? string('MUSIC') : $obj->title,
+				'hierarchy'    => join('/', @levels[0..$i]),
+			};
+		}
 	}
 
 	my ($start, $end) = (0, $count);
@@ -1481,7 +1486,12 @@ sub browsetree {
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
-		my $item = $ds->objectForUrl($url, 1, 1, 1) || next;
+		my $item = $ds->objectForUrl($url, 1, 1, 1);
+
+		if (!blessed($item) || !$item->can('content_type')) {
+
+			next;
+		}
 
 		# Bug: 1360 - Don't show files referenced in a cuesheet
 		next if ($item->content_type eq 'cur');

@@ -10595,3 +10595,21 @@ SETUP_LARGETEXTFONT_0
 SETUP_LARGETEXTFONT_1
 	EN	Modern
 	ES	Moderno
+
+SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD
+	EN	Database Temporary File Tuning (SQLite)
+
+SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC
+	EN	Using the default backend of SQLite - one can tune the database parameters for better performance. If you have a large audio collection & lots of memory, use RAM as temporary storage, and increase the cache size. We have set resonable defaults for most systems.
+
+SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY
+	EN	Use RAM as temporary storage. (Faster)
+
+SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE
+	EN	Use disk as temporary storage. (Slower)
+
+SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD
+	EN	Database Cache Size Tuning (SQLite)
+
+SETUP_DATBASE_TUNE_CACHE_SIZE_DESC
+	EN	Set the database cache size. A larger number will use more memory.
