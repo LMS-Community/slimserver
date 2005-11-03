@@ -151,7 +151,7 @@ sub cli_socket_open {
 	
 		Slim::Networking::mDNS->addService('_slimcli._tcp', $cli_socket_port);
 	
-		Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::cli_executeCallback);
+		Slim::Control::Command::setExecuteCallback(\&Plugins::CLI::cli_executeCallback);
 		
 		$::d_cli && msg("CLI: Now accepting connections on port $listenerport\n");
 	}
@@ -197,7 +197,7 @@ sub cli_socket_close {
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();
 		$cli_socket_port = 0;
-		Slim::Control::Command::clearExecuteCallback(\&Slim::Control::CLI::cli_executeCallback);
+		Slim::Control::Command::clearExecuteCallback(\&Plugins::CLI::cli_executeCallback);
 	}
 }
 
