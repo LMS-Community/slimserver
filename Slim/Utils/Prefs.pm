@@ -72,7 +72,7 @@ sub init {
 	# %Slim::Player::Player::GPREFS
 	%DEFAULT = (
 		"httpport"		=> 9000,
-		"cliport"		=> 9090,
+#		"cliport"		=> 9090,
 		"audiodir"		=> defaultAudioDir(),
 		"playlistdir"		=> defaultPlaylistDir(),
 		"cachedir"		=> defaultCacheDir(),

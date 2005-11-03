@@ -3916,48 +3916,6 @@ SETUP_PLUGINS_OK
 	SE	Din Tilläggsmeny är nu:
 	ZH_CN	您现在的插件程序菜单：
 
-SETUP_CLIPORT
-	CZ	Číslo portu příkazové řádky
-	DE	Kommandozeilen-Schnittstellen Port-Nummer
-	DK	Port-nummer for Command Line Interface
-	EN	Command Line Interface Port Number
-	ES	Número de puerto para la interfaz de linea de comandos
-	FR	Numéro de port de l'interface en ligne de commande
-	JP	コマンドライン インターフェース ポートナンバー
-	NL	Poortnummer van de command line interface
-	NO	Portnummer for terminalgrensesnitt
-	PT	Porta TCP da Interface de Linha de Comando
-	SE	Portnummer för terminalgränssnitt
-	ZH_CN	命令行界面端口号
-
-SETUP_CLIPORT_DESC
-	CZ	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky (nastavením nuly tuto možnost zakážete).
-	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll. (Null schaltet die Kommandozeilen-Schnittstelle aus.)
-	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet. (Angiv port nummer 0 (nul) for at slå command line interfacet fra).
-	EN	You can change the port number that is used to by a command line interface to control the player. (Set this to zero to disable the command line interface.)
-	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos. Póngalo en cero para desactivar esta facilidad.
-	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine. La valeur zéro désactive cette fonctionnalité.
-	JP	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます（コマンドライン インターフェースを使用しない場合はゼロにして下さい）。
-	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen. Zet dit poortnummer op 0 (nul) als U de command line interface wilt uitschakelen.
-	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt. (Sett verien til 0 (null) for å deaktivere terminalgrensesnittet.)
-	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player. (Escolha o valor 0 para desabilitar a opção)
-	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt. (Sätt värdet till 0 (noll) för att avaktivera terminalgränssnittet.)
-	ZH_CN	您可以改变控制播放机的命令行界面所使用的端口号。（设此值为零将会撤消命令行界面功能）
-
-SETUP_CLIPORT_OK
-	CZ	Nyní bude používán následující port pro ovládaní příkazovým řádkem
-	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
-	DK	Anvender nu følgende port til Command Line Interfacet:
-	EN	Now using the following port for the command line interface:
-	ES	Utilizando puerto:
-	FR	L'interface en ligne de commande utilise maintenant le port :
-	JP	現在コマンドライン インターフェースには、以下のポートが使われています:
-	NL	De volgende poort wordt gebruikt voor de command line interface:
-	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
-	PT	A porta para acesso via linha de comando é
-	SE	Använder nu följande portnummer för terminalgränssnittet:
-	ZH_CN	当前正使用如下的命令行界面端口：
-
 SETUP_HTTPPORT
 	CZ	Číslo portu web serveru
 	DE	Verwendeter Web-Server Port

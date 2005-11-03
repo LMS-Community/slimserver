@@ -2167,7 +2167,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TCP_Params','xPL_Params']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['webproxy','httpport','cliport','mDNSname','remotestreamtimeout']
+					'PrefOrder' => ['webproxy','httpport','mDNSname','remotestreamtimeout']
 				}
 			,'TCP_Params' => {
 					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','udpChunkSize']
@@ -2205,9 +2205,6 @@ sub initSetupConfig {
 									my ($client,$changeref,$paramref,$pageref) = @_;
 									$paramref->{'HomeURL'} = Slim::Web::HTTP::HomeURL();
 								}
-					}
-			,'cliport'	=> {
-						'validate' => \&validatePort
 					}
 			,'webproxy'	=> {
 						'validate' => \&validateHostNameOrIPAndPort,

@@ -217,7 +217,6 @@ use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
-use Slim::Control::CLI;
 use Slim::Networking::Discovery;
 use Slim::Display::Display;
 use Slim::Display::Graphics;
@@ -499,9 +498,6 @@ sub init {
 		$::d_server && msg("SlimServer HTTP init...\n");
 		Slim::Web::HTTP::init();
 	
-		$::d_server && msg("SlimServer CLI init...\n");
-		Slim::Control::CLI::init();
-	
 		if (Slim::Utils::Prefs::get('xplsupport')) {
 			$::d_server && msg("SlimServer xPL init...\n");
 	
@@ -645,9 +641,6 @@ sub idle {
 	#   reopening sockets if the port has changed, 
 	Slim::Web::HTTP::idle();
 	if ($::d_perf) { $to = watchDog($to, "http::idle"); }
-
-	Slim::Control::CLI::idle();
-	if ($::d_perf) { $to = watchDog($to, "cli::idle"); }
 
 	return $::stop;
 }

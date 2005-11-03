@@ -1,4 +1,4 @@
-package Slim::Control::CLI;
+package Plugins::CLI;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -10,7 +10,6 @@ use IO::Socket;
 use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 use URI::Escape;
-#use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Misc;
 use Slim::Networking::mDNS;
@@ -19,7 +18,7 @@ use Slim::DataStores::Base;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
-# This module provides a command-line interface to the server via a TCP/IP port.
+# This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
 
 # Queries and commands handled by this module:
@@ -40,7 +39,7 @@ use Slim::Utils::Unicode;
 # Other CLI queries/commands are handled in Command.pm
 
 
-my $d_cli_v = 0;			# verbose debug, for developpement
+my $d_cli_v = 1;			# verbose debug, for developpement
 my $d_cli_vv = 0;			# very verbose debug, function calls...
 
 
@@ -59,46 +58,74 @@ our %connections;			# hash indexed by client_sock value
 							# .. auth:		1 if connection authenticated (login)
 							
 
+################################################################################
+# PLUGIN CODE
+################################################################################
 
+# plugin: initialize the command line interface server
+sub initPlugin {
 
-# initialize the command line interface server
-sub init {
-
-	$d_cli_vv && msg("CLI: init()\n");
+	$d_cli_vv && msg("CLI: initPlugin()\n");
 
 	# enable general debug if verbose debug is on
 	$::d_cli = $d_cli_v;
 	
-	# our idle routine takes care of opening the port
-	idle();
-}
-
-
-# on idle, check to see if our command line interface port has changed
-# and open/close accordingly.
-sub idle {
-
-	$d_cli_vv && msg("CLI: idle()\n");
-
-	# get the port we must use
-	my $newport = Slim::Utils::Prefs::get('cliport');
-
-	# if the port changed...
-	if ($cli_socket_port != $newport) {
-
-		# if we've already opened a socket, let's close it
-		# (this is false the first time through)
-		if ($cli_socket_port) {
-			cli_socket_close();
-		}
-
-		# if we've got an command line interface port specified, open it up!
-		if ($newport) {
-			cli_socket_open($newport);
-		}
+	# make sure we have a default value for our preference
+	if (!defined Slim::Utils::Prefs::get('cliport')) {
+		Slim::Utils::Prefs::set('cliport', 9090);
 	}
+	
+	# open our socket
+	cli_socket_change();
 }
 
+# plugin: name of our plugin
+sub getDisplayName {
+	return 'PLUGIN_CLI';
+}
+
+# plugin: manage the CLI preference
+sub setupGroup {
+	my $client = shift;
+	
+	my %setupGroup = (
+		PrefOrder => ['cliport'],
+	);
+	
+	my %setupPrefs = (
+		'cliport'	=> {
+			'validate' => \&Slim::Web::Setup::validatePort,
+			'onChange' => \&cli_socket_change,
+		}
+	);
+	
+	return (\%setupGroup, \%setupPrefs);
+}
+
+
+# plugin: shutdown the CLI
+sub shutdownPlugin {
+
+	$d_cli_vv && msg("CLI: shutdownPlugin()\n");
+
+	# close all connections
+	foreach my $client_socket (keys %connections) {
+
+		# retrieve the socket object
+		$client_socket = $connections{$client_socket}{'socket'};
+		
+		# close the connection
+		client_socket_close($client_socket);
+	}
+	
+	# close the socket
+	cli_socket_close();
+}
+
+
+################################################################################
+# SOCKETS
+################################################################################
 
 # start our listener
 sub cli_socket_open {
@@ -127,6 +154,31 @@ sub cli_socket_open {
 		Slim::Control::Command::setExecuteCallback(\&Slim::Control::CLI::cli_executeCallback);
 		
 		$::d_cli && msg("CLI: Now accepting connections on port $listenerport\n");
+	}
+}
+
+
+# open or change our socket
+sub cli_socket_change {
+
+	$d_cli_vv && msg("CLI: cli_socket_change()\n");
+
+	# get the port we must use
+	my $newport = Slim::Utils::Prefs::get('cliport');
+
+	# if the port changed...
+	if ($cli_socket_port != $newport) {
+
+		# if we've already opened a socket, let's close it
+		# (this is false the first time through)
+		if ($cli_socket_port) {
+			cli_socket_close();
+		}
+
+		# if we've got an command line interface port specified, open it up!
+		if ($newport) {
+			cli_socket_open($newport);
+		}
 	}
 }
 
@@ -360,6 +412,10 @@ sub client_socket_buffer {
 	Slim::Networking::Select::addWrite($client_socket, \&client_socket_write);
 }
 
+################################################################################
+# COMMAND PROECESSING
+################################################################################
+
 
 # process command 
 sub cli_process {
@@ -440,6 +496,10 @@ sub cli_process {
 			cli_cmd_titles($client_socket, $cmdRef);
 		}
 
+		elsif ($cmd eq 'version') {
+			cli_response_push($client_socket, $::VERSION);
+		}
+		
 		else {
 		
 			$::d_cli && msg("CLI: Forwarding [$cmd] to Command.pm\n");
@@ -1341,6 +1401,58 @@ sub cli_cmd_songinfo {
 		cli_response_push($client_socket, "count:0");
 	}
 }
+
+# plugin: return strings
+sub strings {
+	return "
+PLUGIN_CLI
+	EN	Command Line Interface (CLI)
+
+SETUP_CLIPORT
+	CZ	Číslo portu příkazové řádky
+	DE	Kommandozeilen-Schnittstellen Port-Nummer
+	DK	Port-nummer for Command Line Interface
+	EN	Command Line Interface Port Number
+	ES	Número de puerto para la interfaz de linea de comandos
+	FR	Numéro de port de l'interface en ligne de commande
+	JP	コマンドライン インターフェース ポートナンバー
+	NL	Poortnummer van de command line interface
+	NO	Portnummer for terminalgrensesnitt
+	PT	Porta TCP da Interface de Linha de Comando
+	SE	Portnummer för terminalgränssnitt
+	ZH_CN	命令行界面端口号
+
+SETUP_CLIPORT_DESC
+	CZ	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky.
+	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll.
+	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet.
+	EN	You can change the port number that is used to by a command line interface to control the player.
+	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.
+	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine.
+	JP	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
+	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen.
+	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.
+	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
+	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
+	ZH_CN	您可以改变控制播放机的命令行界面所使用的端口号。
+
+SETUP_CLIPORT_OK
+	CZ	Nyní bude používán následující port pro ovládaní příkazovým řádkem
+	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
+	DK	Anvender nu følgende port til Command Line Interfacet:
+	EN	Now using the following port for the command line interface:
+	ES	Utilizando puerto:
+	FR	L'interface en ligne de commande utilise maintenant le port :
+	JP	現在コマンドライン インターフェースには、以下のポートが使われています:
+	NL	De volgende poort wordt gebruikt voor de command line interface:
+	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
+	PT	A porta para acesso via linha de comando é
+	SE	Använder nu följande portnummer för terminalgränssnittet:
+	ZH_CN	当前正使用如下的命令行界面端口：
+
+";
+}
+
 
 1;
 
