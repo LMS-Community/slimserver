@@ -325,11 +325,11 @@ sub getDisplayText {
 sub getOverlay {
 	my ($client, $item) = @_;
 
-	# Put the right arrow by genre filter and notesymbol by any mix that isn't playing
+	# Put the right arrow by genre filter and notesymbol by mixes
 	if ($item eq 'genreFilter') {
 		return [undef, Slim::Display::Display::symbol('rightarrow')];
 	
-	} elsif ($item ne $type{$client} && $item ne 'disable') {
+	} elsif ($item ne 'disable') {
 		return [undef, Slim::Display::Display::symbol('notesymbol')];
 	
 	} else {
