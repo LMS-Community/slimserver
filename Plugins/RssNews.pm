@@ -43,7 +43,7 @@ if ($] < 5.008) {
 # defaults only if file not found...
 use constant FEEDS_VERSION => 1.0;
 our %default_feeds = (
-					 'BBC News World Edition' => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss091.xml',
+					 'BBC News World Edition' => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
 					 'CNET News.com' => 'http://news.com.com/2547-1_3-0-5.xml',
 					 'New York Times Home Page' => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
 					 'RollingStone.com Music News' => 'http://www.rollingstone.com/rssxml/music_news.xml',
