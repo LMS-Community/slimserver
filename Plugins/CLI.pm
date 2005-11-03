@@ -1407,6 +1407,7 @@ sub strings {
 	return "
 PLUGIN_CLI
 	EN	Command Line Interface (CLI)
+	ES	Interface de Línea de Comando (CLI)
 
 SETUP_CLIPORT
 	CZ	Číslo portu příkazové řádky

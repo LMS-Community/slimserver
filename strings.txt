@@ -9614,7 +9614,7 @@ RADIO_TUNEIN_NOW
 RADIO_TUNEIN_DESC
 	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Wiedergabeliste, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
-	ES	Si ya conoce la URL de la emisora que se quiere escuchar, ingrésela debajo y presione en el botón "Sintonizar". Se puede ingresar la URL tanto del stream de la radio (ej. http://62.49.59.50:8000) o el archivo de lista que apunta a ese stream (ej. http://www.hitzradio.com/hitzradio.pls).
+	ES	Si ya conoce la URL de la estación que se quiere escuchar, ingrésela debajo y presione en el botón "Sintonizar". Se puede ingresar la URL tanto del stream de la radio (ej. http://62.49.59.50:8000) o el archivo de lista que apunta a ese stream (ej. http://www.hitzradio.com/hitzradio.pls).
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
@@ -9846,7 +9846,9 @@ SAVE_PLAYLIST
 	ZH_CN	保存播放表
 
 PLAYLIST_OVERWRITE
+	DE	Datei existiert! RECHTS drücken zum Überschreiben:
 	EN	File Exists! Press RIGHT to overwrite:
+	ES	El Archivo ya Existe! Presione DERECHA para sobrescribir:
 
 PLAYLIST_SAVE
 	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
@@ -10555,19 +10557,31 @@ SETUP_LARGETEXTFONT_1
 	ES	Moderno
 
 SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD
+	DE	Optimierung des temporären Speichers (SQLite)
 	EN	Database Temporary File Tuning (SQLite)
+	ES	Afinamiento del Archivo Temporario de Base de Datos (SQLite)
 
 SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC
+	DE	Die Performance der standardmässig verwendeten Datenbank SQLite kann optimiert werden. Falls Sie eine grosse Musiksammlung besitzen und ihr Rechner über viel Arbeitsspeicher (RAM) verfügt, so kann die Leistung durch Vergrössern des Caches und die Verwendung von RAM als temporären Speicherort verbessert werden. Wir haben sinnvolle Voreinstellungen für die meisten Systeme definiert.
 	EN	Using the default backend of SQLite - one can tune the database parameters for better performance. If you have a large audio collection & lots of memory, use RAM as temporary storage, and increase the cache size. We have set resonable defaults for most systems.
+	ES	Utilizando la marco por defecto de SQLite - uno puede afinar los parámetros de la base de datos para una mejor perfomance. Si se tiene una colección muy grande de audio y mucha memoria, utilizar RAM como almacenamiento temporario, e incrementear el tamañoo del cache. Hemos definido valores por defecto razonables para la mayoría de los sistemas.
 
 SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY
+	DE	RAM als temporären Speicher verwenden (Schnell)
 	EN	Use RAM as temporary storage. (Faster)
+	ES	Utilizar RAM como almacenamiento temporario (Más rápido)
 
 SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE
+	DE	Harddisk als temporären Speicher verwenden (langsam)
 	EN	Use disk as temporary storage. (Slower)
+	ES	utilizar disco como almacenamiento temporario (Más lento)
 
 SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD
+	DE	Optimierung des Datenbanck Caches (SQLite)
 	EN	Database Cache Size Tuning (SQLite)
+	ES	Afinación del Tamaño de Cache de la Base de Datos (SQLite)
 
 SETUP_DATBASE_TUNE_CACHE_SIZE_DESC
+	DE	Wählen Sie die Grösse des Datenbank Caches. Grössere Werte benötigen mehr Arbeitsspeicher.
 	EN	Set the database cache size. A larger number will use more memory.
+	ES	Indicar el tamaño para cache de base de datos. Un número mayor utilizará más memoria.
