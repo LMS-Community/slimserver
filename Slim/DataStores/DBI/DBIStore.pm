@@ -1473,7 +1473,7 @@ sub _preCheckAttributes {
 
 		$deferredAttributes->{$tag} = delete $attributes->{$tag};
 	}
-	
+
 	return ($attributes, $deferredAttributes);
 }
 
@@ -1602,8 +1602,13 @@ sub _postCheckAttributes {
 		# Calculate once if we need/want to test for disc
 		# Check only if asked to treat discs as separate and
 		# if we have a disc, provided we're not in the iTunes situation (disc == discc == 1)
-		my $checkDisc = !Slim::Utils::Prefs::get('groupdiscs') && 
-					(($disc && $discc && $discc > 1) || ($disc && !$discc));
+		my $checkDisc = 0;
+
+		if (!Slim::Utils::Prefs::get('groupdiscs') && 
+			(($disc && $discc && $discc > 1) || ($disc && !$discc))) {
+
+			$checkDisc = 1;
+		}
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an
@@ -1683,7 +1688,7 @@ sub _postCheckAttributes {
 			# the other track is not in our current directory. If
 			# so, then we need to create a new album. If not, the
 			# album object is valid.
-			if ($albumObj && !$checkDisc && !$attributes->{'COMPILATION'}) {
+			if ($albumObj && $checkDisc && !$attributes->{'COMPILATION'}) {
 
 				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
 				my $matchTrack = $tracks{ $track->tracknum };
