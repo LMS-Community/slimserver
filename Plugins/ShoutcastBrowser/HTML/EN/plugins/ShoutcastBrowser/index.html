@@ -69,8 +69,8 @@
 							[% WRAPPER listitem %]
 								[% IF bitrate.key %]href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=info&player=[% player | uri %]"[% END %]
 							[% END %]
-							[% WRAPPER playlink %]href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=play&player=[% player | uri %]"[% END %]
-							[% WRAPPER addlink %]href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=add&player=[% player | uri %]"[% END %]
+							[% WRAPPER playlink noTarget = '1' %]href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=play&player=[% player | uri %]"[% END %]
+							[% WRAPPER addlink noTarget = '1' %]href="index.html?genreID=[% genreID | uri %]&streamID=[% streamID | uri %]&bitrate=[% bitrate.key | uri %]&action=add&player=[% player | uri %]"[% END %]
 						</tr>
 						[% odd = (not odd) %]
 					[% END %]
