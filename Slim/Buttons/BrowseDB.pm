@@ -372,7 +372,9 @@ sub browsedbExitCallback {
 			# Include the current item in the find criteria for the next level down.
 			if (!$all) {
 
-				if ($field eq 'artist' && $currentItem eq $ds->variousArtistsObject) {
+				if ($field eq 'artist' && 
+					$currentItem eq $ds->variousArtistsObject &&
+					Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 					$findCriteria->{'album.compilation'} = 1;
 

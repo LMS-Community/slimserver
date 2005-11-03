@@ -892,7 +892,8 @@ sub mergeVariousArtistsAlbums {
 	# Don't need to process something we've already marked as a compilation.
 	return 1 if $albumObj->compilation;
 
-	my %trackArtists    = ();
+	my %trackArtists      = ();
+	my $markAsCompilation = 0;
 
 	for my $track ($albumObj->tracks) {
 
@@ -909,7 +910,22 @@ sub mergeVariousArtistsAlbums {
 		$trackArtists{$artistComposite} = 1;
 	}
 
+	# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
 	if (scalar values %trackArtists > 1) {
+
+		$markAsCompilation = 1;
+
+	} else {
+
+		my ($artistId) = keys %trackArtists;
+
+		if ($artistId == $self->variousArtistsObject->id) {
+
+			$markAsCompilation = 1;
+		}
+	}
+
+	if ($markAsCompilation) {
 
 		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
 
