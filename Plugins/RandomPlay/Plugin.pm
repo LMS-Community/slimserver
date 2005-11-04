@@ -820,6 +820,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	ES	Se puede añadir o eliminar canciones de la mezcla en cualquier momento. Para detener una mezcla al azar, limpiar la lista o presionar
 
 PLUGIN_RANDOM_PRESS_RIGHT
+	DE	RECHTS drücken um
 	EN	Press RIGHT to
 
 EOF

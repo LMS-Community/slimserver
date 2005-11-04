@@ -9838,6 +9838,7 @@ SAVE_PLAYLIST
 	ZH_CN	保存播放表
 
 PLAYLIST_OVERWRITE
+	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
 	EN	Press RIGHT to replace existing playlist:
 	
 PLAYLIST_SAVE
