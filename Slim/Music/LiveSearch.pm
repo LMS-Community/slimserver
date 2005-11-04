@@ -55,7 +55,7 @@ sub query {
 				$find->{'contributor.role'} = $roles;
 			}
 
-			delete $find->{'album.compilation'};
+			$find->{'album.compilation'} = undef;
 		}
 
 		my $count   = $ds->count($queries{$type}->[0], $find);
