@@ -49,11 +49,13 @@ package Slim::Utils::Scan;
 #     <--- increment index <-------------------------------------
 
 use strict;
+use Class::Struct;
 use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use IO::String;
-use Class::Struct;
+use Path::Class;
+use Scalar::Util qw(blessed);
 use Time::HiRes;
 
 use Slim::Music::Info;
@@ -454,20 +456,17 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		# it's pointing to a local file...
 		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
 
-			my $cached = Slim::Music::Info::cachedPlaylist($playlisturl);
+			$playlistpath = Slim::Utils::Misc::fileURLFromWinShortcut($playlisturl) || return 0;
 
-			if (defined $cached && ref($cached) eq 'ARRAY') {
+			# Bug: 2485:
+			#
+			# Use Path::Class to determine if the $playlistpath
+			# points to a directory above $playlisturl - if so,
+			# that's a loop and we need to break it.
+			if (dir($playlistpath)->subsumes(dir($playlisturl))) {
 
-				$playlistpath = $cached->[0];
+				errorMsg("Found an infinite loop! Breaking out: $playlisturl -> $playlistpath\n");
 
-			} else {
-
-				$playlistpath = Slim::Utils::Misc::fileURLFromWinShortcut($playlisturl);
-
-				Slim::Music::Info::cacheDirectory($playlisturl, [$playlistpath]);
-			}
-
-			if ($playlistpath eq "") {
 				return 0;
 			}
 
