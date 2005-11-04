@@ -2168,8 +2168,6 @@ sub pauseSynced {
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 		next if ($everyclient->prefGet('silent'));
 		$everyclient->pause();
-		# restore the volume
-		$everyclient->volume($everyclient->prefGet("volume"));
 	}
 }
 

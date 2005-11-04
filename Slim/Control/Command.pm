@@ -1017,7 +1017,7 @@ sub execute {
 
 			if ($p1 eq "volume") {
 				my $newvol;
-				my $oldvol = $client->volume();
+				my $oldvol = $client->prefGet("volume"); 
 
 				if ($p2 eq "?") {
 
