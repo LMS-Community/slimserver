@@ -430,7 +430,20 @@ sub playmode {
 		# when you resume, you go back to play mode
 		if (($newmode eq "resume") ||($newmode eq "resumenow")) {
 
-			$everyclient->playmode("play");
+			$everyclient->resume();
+			
+			my $song = Slim::Player::Source::streamingSong($client);
+			my $songLengthInBytes = $song->{totalbytes};
+			my $pos		      = $client->songBytes() || 0; 
+			
+			$::d_source && msg("resume: (pos: " . $client->songBytes() . ", totalbytes: " . $song->{totalbytes} . ")\n");
+			
+			# if song pos matches totalbytes, previous playmode was playout-play
+			if ($songLengthInBytes - $pos == 0) {
+				$everyclient->playmode("playout-play");
+			} else {
+				$everyclient->playmode("play");
+			}
 			
 		} elsif ($newmode eq "pausenow") {
 
