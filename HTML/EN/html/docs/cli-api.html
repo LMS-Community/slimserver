@@ -6,9 +6,9 @@
 <h4>Introduction</h4>
 
 <p>The SlimServer provides a command-line interface to the Slim Devices
-	players via standard in and out and a TCP/IP port.  After starting
+	players via TCP/IP.  After starting
 	the server, commands and queries may be sent by connecting to a
-	specific TCP/IP port or directly from the command line.  The server
+	specific TCP/IP port.  The server
 	will reply echoing the request (for commands) or by returning the
 	requested data (for queries). By default, the SlimServer will listen
 	for connections on TCP/IP port 9090. This format is designed for
@@ -27,10 +27,21 @@
 	Beware that the server expects parameters to be encoded using
 	percent-style escaping (see below); &quot; and \ are not supported
 	as in shell-like environments. </p>
- 
- 
+
+<p>For debugging purposes, CLI formatted commands can be sent using
+	standard in and out. CLI queries are not supported. This support is only
+	available on Unix platforms (MacOS X included), and must be enabled by
+	launching the server with the &quot;--stdio&quot; command line option.</p>
+
  
 <hr>
+<h4>Changes starting from SlimServer 6.5</h4>
+<p>The following changes or new commands are available starting with
+	SlimServer 6.5:</p>
+<ul>
+<li>The Command Line Interface is now a plugin. It can be disabled if not
+	used.</li>
+</ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
 	SlimServer 6.2:</p>
