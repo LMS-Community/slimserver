@@ -1671,11 +1671,21 @@ sub initSetupConfig {
 			'ignoredarticles' => {
 				'validate' => \&validateAcceptAll,
 				'PrefSize' => 'large',
+				'onChange' => sub {
+					my $client = shift;
+
+					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+				},
 			},
 
 			'splitList' => {
 				'validate' => \&validateAcceptAll,
 				'PrefSize' => 'large',
+				'onChange' => sub {
+					my $client = shift;
+
+					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+				},
 			},
 
 			'variousArtistAutoIdentification' => {
