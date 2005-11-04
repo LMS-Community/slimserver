@@ -52,9 +52,8 @@ sub getTag {
 	$tags->{'SECS'}	    = $wma->info('playtime_seconds');
 	$tags->{'RATE'}	    = $wma->info('sample_rate');
 
-	# WMA bitrate is reported in kbps
+	# WMA bitrate is reported in bps
 	$tags->{'BITRATE'}  = $wma->info('bitrate');
-	$tags->{'BITRATE'}  = $tags->{'BITRATE'} * 1000 if $tags->{'BITRATE'};
 	
 	$tags->{'DRM'}      = $wma->info('drm');
 
