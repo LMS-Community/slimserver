@@ -5,6 +5,9 @@ package Slim::Buttons::TrackInfo;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+# Displays the extra track information screen that is got into by pressing right on an item 
+# in the now playing screen.
+
 use strict;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
@@ -118,6 +121,7 @@ sub init {
 			my $client = shift;
 
 			my $push     = 1;
+			# Look up if this is an artist, album, year etc
 			my $curitem  = $client->trackInfoContent->[currentLine($client)];
 			my @oldlines = Slim::Display::Display::curLines($client);
 
@@ -125,7 +129,8 @@ sub init {
 				$curitem = "";
 			}
 
-			# Pull directly from the datasource
+			# Get object for currently being browsed song from the datasource
+			# This probably isn't necessary as track($client) is already an object!
 			my $ds      = Slim::Music::Info::getCurrentDataStore();
 			my $track   = $ds->objectForUrl(track($client));
 
@@ -468,16 +473,19 @@ sub preloadLines {
 sub lines {
 	my $client = shift;
 
-	# Show the title of the song with a note symbol
+	# Show the title of the song
 	my $line1 = Slim::Music::Info::standardTitle($client, track($client));
 
 	# add position string
 	my $overlay1 = ' (' . (currentLine($client)+1)
 				. ' ' . $client->string('OF') .' ' . scalar(@{$client->trackInfoLines}) . ')';
-	
+	# add note symbol
 	$overlay1 .= Slim::Display::Display::symbol('notesymbol');
 	
+	# 2nd line's content is provided entirely by trackInfoLines, which returns an array of information lines
 	my $line2 = $client->trackInfoLines->[currentLine($client)];
+	
+	# add right arrow symbol if current line can point to more info e.g. artist, album, year etc
 	my $overlay2 = defined($client->trackInfoContent->[currentLine($client)]) ? Slim::Display::Display::symbol('rightarrow') : undef;
 
 	# special case favorites line, which must be determined dynamically
