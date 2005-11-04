@@ -6,6 +6,7 @@ package Slim::Web::History;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
@@ -33,7 +34,10 @@ sub hitlist {
 	});
 
 	for my $track (@$tracks) {
-		
+
+		if (!blessed($track) || !$track->can('playCount')) {
+			next;
+		}
 
 		my $playCount = $track->playCount;
 
