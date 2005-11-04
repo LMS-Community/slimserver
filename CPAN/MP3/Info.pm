@@ -736,6 +736,9 @@ sub get_mp3tag {
 
 								my ($index, $name);
 
+								# Turn multiple nulls into a single.
+								$data =~ s/\000+/\000/g;
+
 								# Handle the ID3v2.x spec - 
 								#
 								# just an index number, possibly
