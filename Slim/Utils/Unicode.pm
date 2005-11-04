@@ -20,6 +20,7 @@ use strict;
 
 use Fcntl qw(:seek);
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
+use Text::Unidecode;
 
 if ($] > 5.007) {
 	require Encode;
@@ -458,6 +459,13 @@ sub looks_like_ascii {
 sub looks_like_latin1 {
 	use bytes;
 
+	return 1 if $_[0] !~ /([^\x00-\x7F\xA0-\xFF])/;
+	return 0;
+}
+
+sub looks_like_cp1252 {
+	use bytes;
+
 	return 1 if $_[0] !~ /([^\x00-\xFF])/;
 	return 0;
 }
@@ -500,6 +508,12 @@ sub utf8toLatin1 {
 	return $data;
 }
 
+sub utf8toLatin1Transliterate {
+	my $data = shift;
+
+	return utf8toLatin1( Text::Unidecode::unidecode($data) );
+}
+
 sub encodingFromString {
 
 	my $encoding = 'raw';
@@ -516,6 +530,10 @@ sub encodingFromString {
 	} elsif (looks_like_latin1($_[0])) {
 	
 		$encoding = 'iso-8859-1';
+
+	} elsif (looks_like_cp1252($_[0])) {
+	
+		$encoding = 'cp1252';
 	}
 
 	return $encoding;

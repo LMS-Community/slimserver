@@ -8,6 +8,7 @@ package Slim::Display::Graphics;
 use strict;
 use File::Spec::Functions qw(catdir);
 use FindBin qw($Bin);
+use List::Util qw(max);
 use Tie::Cache::LRU;
 
 use Slim::Utils::Misc;
@@ -175,6 +176,8 @@ sub string {
 		$unpackTemplate = 'U*';
 	}
 
+	my @ords = unpack($unpackTemplate, $string);
+
 	# Font size & Offsets -- Optimized for the free Japanese TrueType font
 	# 'sazanami-gothic' from 'waka'.
 	#
@@ -189,7 +192,13 @@ sub string {
 		$GDBaseline = $font2TTF{$fontname}->{'GDBaseline'};
 	}
 
-	for my $ord (unpack($unpackTemplate, $string)) {
+	# Fall back to transliteration for people who don't have the font installed.
+	if (!$useTTFNow && max(@ords) > 255) {
+
+		@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
+	}
+
+	for my $ord (@ords) {
 
 		# 29 == \x1d, 28 == \x1c, 10 == \x0a
 		if ($ord == 29) { 
