@@ -178,18 +178,18 @@ SQUEEZEBOX_HOME
 	ZH_CN	Squeezebox主页
 
 SQUEEZEBOX2_HOME
-	DE	Squeezebox2 Hauptmenü
-	DK	Squeezebox2 Hovedmenu
-	EN	Squeezebox2 Home
-	ES	Inicio Squeezebox2
-	FI	Squeezebox2 Alkuun
-	FR	Menu Squeezebox2
-	JP	Squeezebox2 �ーム
-	NL	Squeezebox2 Hoofdmenu
-	NO	Squeezebox2 Hjem
-	PT	Início Squeezebox2
-	SE	Squeezebox2 huvudmeny
-	ZH_CN	Squeezebox2主页
+	DE	Squeezebox Hauptmenü
+	DK	Squeezebox Hovedmenu
+	EN	Squeezebox Home
+	ES	Inicio Squeezebox
+	FI	Squeezebox Alkuun
+	FR	Menu Squeezebox
+	JP	Squeezebox �ーム
+	NL	Squeezebox Hoofdmenu
+	NO	Squeezebox Hjem
+	PT	Início Squeezebox
+	SE	Squeezebox huvudmeny
+	ZH_CN	Squeezebox主页
 
 SOFTSQUEEZE_HOME
 	DE	SoftSqueeze Hauptmenü
@@ -1059,7 +1059,7 @@ SQUEEZEBOX
 	EN	Squeezebox
 
 SQUEEZEBOX2
-	EN	Squeezebox2
+	EN	Squeezebox2/v3
 
 SOFTSQUEEZE
 	EN	SoftSqueeze
@@ -1114,20 +1114,20 @@ WELCOME_TO_SQUEEZEBOX
 	ZH_CN	欢迎使用Squeezebox
 
 WELCOME_TO_SQUEEZEBOX2
-	CZ	Vítá Vás Squeezebox2
-	DE	Willkommen bei Squeezebox2
-	DK	Velkommen til Squeezebox2
-	EN	Welcome to Squeezebox2
-	ES	Bienvenido al Squeezebox2
-	FI	Squeezebox2 Tervetuloa!
-	FR	Bienvenue sur la Squeezebox2
-	IT	Benvenuto a Squeezebox2
-	JP	Squeezebox2へようこそ
-	NL	Welkom bij Squeezebox2
-	NO	Velkommen til Squeezebox2
-	PT	Bem-vindo ao Squeezebox2
-	SE	Välkommen till Squeezebox2
-	ZH_CN	欢迎使用Squeezebox2
+	CZ	Vítá Vás Squeezebox
+	DE	Willkommen bei Squeezebox
+	DK	Velkommen til Squeezebox
+	EN	Welcome to Squeezebox
+	ES	Bienvenido al Squeezebox
+	FI	Squeezebox Tervetuloa!
+	FR	Bienvenue sur la Squeezebox
+	IT	Benvenuto a Squeezebox
+	JP	Squeezeboxへようこそ
+	NL	Welkom bij Squeezebox
+	NO	Velkommen til Squeezebox
+	PT	Bem-vindo ao Squeezebox
+	SE	Välkommen till Squeezebox
+	ZH_CN	欢迎使用Squeezebox
 
 WELCOME_TO_SOFTSQUEEZE
 	CZ	Vítejte v SoftSqueeze
@@ -1171,14 +1171,14 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 
 UPDATING_FIRMWARE_SQUEEZEBOX2
 	DE	Firmware wird aktualisiert.
-	EN	Updating Squeezebox2 firmware.
-	ES	Actualizando firmware de Squeezebox2
-	FR	Mise à jour du micrologiciel Squeezebox2
+	EN	Updating Squeezebox firmware.
+	ES	Actualizando firmware de Squeezebox
+	FR	Mise à jour du micrologiciel Squeezebox
 	JP	ファームウェアをアップデートしています
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
 	SE	Uppdaterar spelarens mjukvara
-	ZH_CN	更新Squeezebox2韧件
+	ZH_CN	更新Squeezebox韧件
 
 CONNECTING_FOR
 	CZ	Připojuji ke hraní:
@@ -2287,9 +2287,9 @@ SETUP_PREAMPVOLUMECONTROL
 	ES	Control de Volumen del Preamplificador
 
 SETUP_PREAMPVOLUMECONTROL_DESC
-	DE	Dieser Lautstärkeregler beeinflusst nur die analogen Ausgänge der Squeezebox2. Geben Sie die Dämpfung in Dezibel ein. Der Bereich geht von 0.0 bis 63.0 in 0.5 Dezibel Schritten. Voreinstellung ist 0 (volle Lautstärke). ACHTUNG: falls Ihr Verstärker stark genug ist, um Schaden an Lautstärkern, Vorverstärkern etc. anzurichten, so sollte diese Einstellung als Sicherheitsvorkehrung unbedingt benutzt werden!
-	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox2. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
-	ES	Este es un control de volumen secundario que aplica solo a Squeezebox2. Introducir el valor de la atenuación en decibeles. El rango es de 0.0 a 63.0, en incrementos de 0.5 db. El valor por defecto es 0 (volumen máximo). ADVERTENCIA: si el amplificador es lo suficientemente poderoso para inutilizar los parlantes, un preamplificador receptor, o un atenuador de línea debería utilizarse como una medida de seguridad!
+	DE	Dieser Lautstärkeregler beeinflusst nur die analogen Ausgänge der Squeezebox. Geben Sie die Dämpfung in Dezibel ein. Der Bereich geht von 0.0 bis 63.0 in 0.5 Dezibel Schritten. Voreinstellung ist 0 (volle Lautstärke). ACHTUNG: falls Ihr Verstärker stark genug ist, um Schaden an Lautstärkern, Vorverstärkern etc. anzurichten, so sollte diese Einstellung als Sicherheitsvorkehrung unbedingt benutzt werden!
+	EN	This is a secondary volume control which applies only to the analog outputs on Squeezebox. Enter the amount of attenuation in decibels. Range is 0.0 to 63.0 in 0.5 db steps. The default is 0 (for full volume). WARNING: if your amplifier is powerful enough to blow your speakers, a receiver, preamp, or line attenuator should still be used as a safety measure!
+	ES	Este es un control de volumen secundario que aplica solo a Squeezebox. Introducir el valor de la atenuación en decibeles. El rango es de 0.0 a 63.0, en incrementos de 0.5 db. El valor por defecto es 0 (volumen máximo). ADVERTENCIA: si el amplificador es lo suficientemente poderoso para inutilizar los parlantes, un preamplificador receptor, o un atenuador de línea debería utilizarse como una medida de seguridad!
 
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
@@ -2401,9 +2401,9 @@ SETUP_REPLAYGAINMODE
 	ES	Ajuste de Volumen/Replay Gain
 
 SETUP_REPLAYGAINMODE_DESC
-	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox2 kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
-	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox2 can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
-	ES	Algunas pistas de audio contienen ajustes de volumen, o "Replay Gain", información que puede ser utilizada durante la reproducción para lograr que todos los álbumes y canciones tengan el mismo nivel de volumen. Squeezebox2 puede usar esta inforamción, si está presente. "Track Gain" puede utilizarse para lograr que todas las canciones suenen a igual nivel. "Album Gain" puede utilizarse para lograr que todos los álbumes suenen a igual nivel, pero respetando la diferencia de niveles dentro de canciones un mismo álbum. La selección "Inteligente" de ganancia (Gain) utiliza "Album Gain" si las canciones presentes en una lista pertenecen al mismo álbum o "Track Gain" si la lista contiene canciones de diferentes álbumes.
+	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
+	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
+	ES	Algunas pistas de audio contienen ajustes de volumen, o "Replay Gain", información que puede ser utilizada durante la reproducción para lograr que todos los álbumes y canciones tengan el mismo nivel de volumen. Squeezebox puede usar esta inforamción, si está presente. "Track Gain" puede utilizarse para lograr que todas las canciones suenen a igual nivel. "Album Gain" puede utilizarse para lograr que todos los álbumes suenen a igual nivel, pero respetando la diferencia de niveles dentro de canciones un mismo álbum. La selección "Inteligente" de ganancia (Gain) utiliza "Album Gain" si las canciones presentes en una lista pertenecen al mismo álbum o "Track Gain" si la lista contiene canciones de diferentes álbumes.
 
 REPLAYGAIN_DISABLED
 	DE	Normalisierung ausschalten
@@ -2442,10 +2442,10 @@ SETUP_TRANSITIONTYPE
 	ZH_CN	音像同时淡出淡入
 
 SETUP_TRANSITIONTYPE_DESC
-	DE	Die Squeezebox2 kann zwischen Liedern überblenden, entweder per Crossfading beider Lieder, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
-	EN	Squeezebox2 can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
-	ES	Squeezebox2 puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
-	ZH_CN	Squeezebox2能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音像同时淡出淡入模式。
+	DE	Die Squeezebox kann zwischen Liedern überblenden, entweder per Crossfading beider Lieder, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
+	EN	Squeezebox can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
+	ES	Squeezebox puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
+	ZH_CN	Squeezebox能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音像同时淡出淡入模式。
 
 SETUP_TRANSITIONDURATION
 	CZ	Délka trvání prolnutí
@@ -8817,18 +8817,18 @@ SQUEEZEBOX_MUSIC_PLAYER
 	ZH_CN	Squeezebox播放机
 
 SQUEEZEBOX2_MUSIC_PLAYER
-	DE	Squeezebox2 Musik Player
-	DK	Squeezebox2-afspiller
-	EN	Squeezebox2 Music Player
-	ES	Reproductor de Música Squeezebox2 
-	FI	Squeezebox2 soitin
-	FR	Platine Squeezebox2
-	JP	Squeezebox2プレーヤー
-	NL	Squeezebox2 Muziek Speler
-	NO	Squeezebox2 Musik Player
-	PT	Leitor de Música Squeezebox2
-	SE	Squeezebox2 musikspelare
-	ZH_CN	Squeezebox2播放机
+	DE	Squeezebox Musik Player
+	DK	Squeezebox-afspiller
+	EN	Squeezebox Music Player
+	ES	Reproductor de Música Squeezebox 
+	FI	Squeezebox soitin
+	FR	Platine Squeezebox
+	JP	Squeezeboxプレーヤー
+	NL	Squeezebox Muziek Speler
+	NO	Squeezebox Musik Player
+	PT	Leitor de Música Squeezebox
+	SE	Squeezebox musikspelare
+	ZH_CN	Squeezebox播放机
 
 SOFTSQUEEZE_MUSIC_PLAYER
 	DE	SoftSqueeze Musik Player
@@ -10363,7 +10363,7 @@ SQUEEZENETWORK_CONNECTING
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine Squeezebox2.
-	EN	Sorry, requires Squeezebox2.
+	EN	Sorry, requires a newer Squeezebox.
 	ES	Lo siento, requiere Squeezebox2
 	FR	Cette fonction nécessite Squeezebox2.
 	ZH_CN	抱歉，需要Squeezebox2。
