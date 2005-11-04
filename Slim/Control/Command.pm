@@ -23,6 +23,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
+use Slim::Control::Execute;
+
 our %executeCallbacks = ();
 
 our %searchMap = (
@@ -42,6 +44,95 @@ our %searchMap = (
 #   a list of callback function args
 #
 # returns an array containing the given parameters
+
+# all the commands represented by $p0. some of these have subcommands in
+# $p1, like 'sync' or (more so) 'playlist', but those are best handled by
+# their own subfunction logic in Execute.pm.
+my $exec = {
+			# client-less commands.
+			pref => { func => 'pref', needsClient => 0 },
+			rescan => { func => 'rescan', needsClient => 0 },
+			wipecache => { func => 'wipecache', needsClient => 0 },
+			debug => { func => 'default', needsClient => 0 },
+
+			# playing commands.
+			playerpref => { func => 'default', needsClient => 1 },
+			play => { func => 'default', needsClient => 1 },
+			pause => { func => 'default', needsClient => 1 },
+			rate => { func => 'default', needsClient => 1 },
+			stop => { func => 'default', needsClient => 1 },
+			mode => { func => 'default', needsClient => 1 },
+
+			# synonyms.
+			gototime => { func => 'gototime', needsClient => 1 },
+			time => { func => 'gototime', needsClient => 1 },
+
+			# info commands.
+			duration => { func => 'default', needsClient => 1 },
+			artist => { func => 'default', needsClient => 1 },
+			album => { func => 'default', needsClient => 1 },
+			title => { func => 'default', needsClient => 1 },
+			genre => { func => 'default', needsClient => 1 },
+
+			# player manipulation (or something).
+			path => { func => 'default', needsClient => 1 },
+			connected => { func => 'default', needsClient => 1 },
+			signalstrength => { func => 'default', needsClient => 1 },
+			power => { func => 'default', needsClient => 1 },
+			sync => { func => 'default', needsClient => 1 },
+			playlistcontrol => { func => 'default', needsClient => 1 },
+			playlist => { func => 'default', needsClient => 1 },
+			mixer => { func => 'default', needsClient => 1 },
+
+			displaynow => { func => 'default', needsClient => 1 },
+			linesperscreen => { func => 'default', needsClient => 1 },
+			display => { func => 'default', needsClient => 1 },
+			button => { func => 'default', needsClient => 1 },
+			ir => { func => 'default', needsClient => 1 },
+			status => { func => 'default', needsClient => 1 },
+		   };
+
+# bug 2494.
+sub execute_new {
+	my($client, $parrayref, $callbackf, $callbackargs) = @_;
+
+	unless ( ref( $parrayref ) eq 'ARRAY' ) {
+		errorMsg( "Empty array ref handed to execute_new()" );
+		return ();
+	}
+
+	my $cmdName = shift @$parrayref;
+	$::d_command && msg( "Executing command $cmdName from execute_new()\n" );
+
+	my $funcPtr = $exec->{$cmdName};
+
+	unless ( $funcPtr ) {
+		errorMsg( "Found no function for command '$cmdName'.\n" );
+		return ();
+	}
+
+	my $function = 'Slim::Control::Execute::' . $funcPtr->{func};
+	$::d_command && msg( "Calling function $function()\n" );
+
+	my $returnArray;
+	no strict 'refs';
+	eval { $returnArray = &{$function}( $client, $parrayref, $callbackf, $$callbackargs ) };
+	if ( $@ ) {
+		errorMsg( "function lookup error: $@\n" );
+	}
+	
+	unless (ref $returnArray eq 'ARRAY') {
+		errorMsg( "non-ARRAY returned from $cmdName\n" );
+		$returnArray = [];
+	}
+	
+	#undef $client unless $funcPtr->{needsClient}; #noop, but good to remember.
+	$::d_command && msg("Returning array (execute_new): $cmdName ["
+						. join( '] [', @$returnArray )
+						. "]\n" );
+	
+	return @$returnArray;
+}
 
 sub execute {
 	my($client, $parrayref, $callbackf, $callbackargs) = @_;
@@ -172,6 +263,8 @@ sub execute {
 		# ignore empty commands
 
 	} elsif ($p0 eq "pref") {
+		
+		#return execute_new( $client, $parrayref, $callbackf, $callbackargs );
 
 		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
 			Slim::Utils::Prefs::set($p1, $p2);
