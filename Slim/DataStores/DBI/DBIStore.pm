@@ -1904,50 +1904,18 @@ sub _mergeAndCreateContributors {
 
 	for my $tag (@tags) {
 
-		my $contributorString = $attributes->{$tag} || next;
-		my $forceCreate       = 0;
+		my $contributor = $attributes->{$tag} || next;
 
-		# Bug 1955 - Previously 'last one in' would win for a
-		# contributorTrack - ie: contributor & role combo, if a track
-		# had an ARTIST & COMPOSER that were the same value.
-		#
-		# If we come across that case, force the creation of a second
-		# contributorTrack entry.
-		for my $contributor (Slim::Music::Info::splitTag($contributorString)) {
-
-			my ($contributorObj) = Slim::DataStores::DBI::Contributor->search({
-
-				'namesearch' => Slim::Utils::Text::ignoreCaseArticles($contributor),
-			});
-
-			if ($contributorObj) {
-
-				my ($contributorTrackObj) = Slim::DataStores::DBI::ContributorTrack->search({
-					'contributor' => $contributorObj,
-					'role'        => Slim::DataStores::DBI::Contributor->typeToRole($tag),
-					'track'       => $track,
-				});
-
-				# This combination already exists in the db - don't re(create) it.
-				if (defined $contributorTrackObj) {
-					next;
-				}
-
-				$forceCreate = 1;
-			}
-
-			# Is ARTISTSORT/TSOP always right for non-artist
-			# contributors? I think so. ID3 doesn't have
-			# "BANDSORT" or similar at any rate.
-			push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add(
-				$contributor, 
-				$attributes->{"MUSICBRAINZ_${tag}_ID"},
-				Slim::DataStores::DBI::Contributor->typeToRole($tag),
-				$track,
-				$attributes->{$tag.'SORT'},
-				$forceCreate,
-			);
-		}
+		# Is ARTISTSORT/TSOP always right for non-artist
+		# contributors? I think so. ID3 doesn't have
+		# "BANDSORT" or similar at any rate.
+		push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add(
+			$contributor, 
+			$attributes->{"MUSICBRAINZ_${tag}_ID"},
+			Slim::DataStores::DBI::Contributor->typeToRole($tag),
+			$track,
+			$attributes->{$tag.'SORT'},
+		);
 	}
 
 	return \%contributors;
