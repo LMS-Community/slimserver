@@ -9838,10 +9838,8 @@ SAVE_PLAYLIST
 	ZH_CN	保存播放表
 
 PLAYLIST_OVERWRITE
-	DE	Datei existiert! RECHTS drücken zum Überschreiben:
-	EN	File Exists! Press RIGHT to overwrite:
-	ES	El Archivo ya Existe! Presione DERECHA para sobrescribir:
-
+	EN	Press RIGHT to replace existing playlist:
+	
 PLAYLIST_SAVE
 	CZ	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
 	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:

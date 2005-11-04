@@ -60,12 +60,15 @@ sub setMode {
 	if (!Slim::Utils::Prefs::get('playlistdir')) {
 	} elsif ($push ne 'push') {
 		my $playlist = '';
+	} elsif ($client->param('playlist') ne '') {
 	} else {
 		$context{$client} = $client->currentPlaylist ? 
-				Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
-					'A';
+								Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
+								'A';
 					
-		my $cursorpos = length($context{$client}) || 0;
+		my $cursorpos = $client->currentPlaylist ?
+							length($context{$client}) :
+							0;
 
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
 			'callback' => \&Plugins::SavePlaylist::savePluginCallback,
@@ -143,8 +146,9 @@ sub savePluginCallback {
 	my ($client,$type) = @_;
 	if ($type eq 'nextChar') {
 		$context{$client} =~ s/$rightarrow//;
-		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft();
+		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist',{
+				'playlist' => $context{$client},
+			});
 	} elsif ($type eq 'backspace') {
 		Slim::Buttons::Common::popModeRight($client);
 		Slim::Buttons::Common::popModeRight($client);
