@@ -1,4 +1,4 @@
-package Slim::Control::xPL;
+﻿package Plugins::xPL;
 # SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -10,7 +10,7 @@ package Slim::Control::xPL;
 # GNU General Public License for more details.
 #
 #
-# xPL Protocol Support Module for SlimServer
+# xPL Protocol Support Plugin for SlimServer
 # http://www.xplproject.org.uk/
 #
 use strict;
@@ -18,6 +18,7 @@ use IO::Socket;
 use Scalar::Util qw(blessed);
 use Sys::Hostname;
 
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Music::Info;
 
@@ -28,8 +29,16 @@ my $xpl_ir;
 my $xpl_socket;
 my $xpl_port;
 
-# Called from slimserver.pl if the xplsupport preference has been enabled.
-sub init {
+my $d_xpl = 0;
+
+
+################################################################################
+# PLUGIN CODE
+################################################################################
+
+# plugin: initialize xPL support
+sub initPlugin {
+
 	my $computername = Sys::Hostname::hostname();
 
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
@@ -68,7 +77,52 @@ sub init {
 	die "Could not create socket: $!\n" unless $xpl_socket;
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
+	
+	Slim::Control::Command::setExecuteCallback(\&Plugins::xPL::xplExecuteCallback);
 }
+
+# plugin: name of our plugin
+sub getDisplayName {
+	return 'PLUGIN_XPL';
+}
+
+# plugin: manage the CLI preference
+sub setupGroup {
+	my $client = shift;
+	
+	my %setupGroup = (
+		'PrefOrder' => ['xplinterval', 'xplir']
+		,'PrefsInTable' => 1
+		,'Suppress_PrefHead' => 1
+		,'Suppress_PrefDesc' => 1
+		,'Suppress_PrefLine' => 1
+		,'Suppress_PrefSub' => 1
+		,'GroupHead' => Slim::Utils::Strings::string('SETUP_GROUP_XPL')
+		,'GroupDesc' => Slim::Utils::Strings::string('SETUP_GROUP_XPL_DESC')
+		,'GroupLine' => 1
+		,'GroupSub' => 1
+	);
+	
+	my %setupPrefs = (
+		'xplinterval' => {
+					'validate' => \&Slim::Web::Setup::validateInt
+						,'validateArgs' => [5,30,1,1]
+				}
+		,'xplir' => {
+					'options' => {
+							'none' => Slim::Utils::Strings::string('SETUP_XPLIR_NONE')
+							,'buttons' => Slim::Utils::Strings::string('SETUP_XPLIR_BUTTONS')
+							,'raw' => Slim::Utils::Strings::string('SETUP_XPLIR_RAW')
+							,'both' => Slim::Utils::Strings::string('SETUP_XPLIR_BOTH')
+							}
+			}
+	);
+	
+	return (\%setupGroup, \%setupPrefs);
+
+	
+}
+
 
 # This routine ensures an xPL instance is valid
 # by removing any invalid characters and trimming to
@@ -357,6 +411,8 @@ sub sendxplmsg {
 	$sockUDP->autoflush(1);
 	$sockUDP->sockopt(SO_BROADCAST,1);
 	$sockUDP->send($msg,0,$portaddr);
+	
+	$d_xpl && msg("xPL: sending [$msg]\n\n");
 
 	close $sockUDP;
 }
@@ -499,27 +555,213 @@ sub handleConfigResponse {
 # This routine is called when a button is pressed on the remote control.
 # It sends out a remote.basic xPL message.
 # If xPL support is not enabled, the routine returns immediately.
-sub processircode {
-	return unless defined $xpl_port;
-
-	my $clientname = validInstance($_[0]->name);
-	my $power = ($_[0]->power()==0 ? 'off' : 'on');
-
-	if ($xpl_ir eq 'raw' || $xpl_ir eq 'both') {
-		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[2]\npower=$power",$clientname);
-	}
-
-	if (defined($_[1]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
-		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[1]\npower=$power",$clientname);
-	}
-}
+#sub processircode {
+#	$d_xpl && msg("xPL: processircode()\n");
+#	return unless defined $xpl_port;
+#
+#	my $clientname = validInstance($_[0]->name);
+#	my $power = ($_[0]->power()==0 ? 'off' : 'on');
+#
+#	if ($xpl_ir eq 'raw' || $xpl_ir eq 'both') {
+#		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[2]\npower=$power",$clientname);
+#	}
+#
+#	if (defined($_[1]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
+#		sendxplmsg("xpl-trig","*","remote.basic","zone=slimserver\ndevice=$clientname\nkeys=$_[1]\npower=$power",$clientname);
+#	}
+#}
 
 # This routine sends out a heartbeat when a new client is connected.
 # It returns immediately if xPL support is not enabled.
-sub newClient {
-	return unless defined $xpl_port;
+#sub newClient {
+#	return unless defined $xpl_port;
+#
+#	sendXplHBeatMsg($_[0]);        
+#}
 
-	sendXplHBeatMsg($_[0]);        
+
+# This routine is called by Slim::Command::execute() for each command 
+# it processes.
+
+sub xplExecuteCallback {
+	my $client = shift;
+	my $paramsRef = shift;
+
+	my $command    = $paramsRef->[0];
+	my $subCommand = $paramsRef->[1];
+
+	my $clientname = validInstance($client->name);
+	my $power = ($client->power()==0 ? 'off' : 'on');
+	
+	if ($command eq 'newclient') {
+		$d_xpl && msg("xPL: xplExecuteCallback for new client\n");
+		
+		sendXplHBeatMsg($client);
+	}
+	
+	elsif ($command eq 'power') {
+		$d_xpl && msg("xPL: xplExecuteCallback for power\n");
+		
+		sendXplHBeatMsg($client, 1);
+	}
+	
+	elsif ($command eq 'button' && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
+		$d_xpl && msg("xPL: xplExecuteCallback for button\n");
+		
+		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+	}
+	
+	elsif ($command eq 'ir' && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
+		$d_xpl && msg("xPL: xplExecuteCallback for IR\n");
+		
+		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+	}
+
+	elsif ($command eq 'newsong') {
+		$d_xpl && msg("xPL: xplExecuteCallback for newsong\n");
+		
+		sendXplHBeatMsg($client, 1);
+	}
+	
+	elsif ($command eq 'stop') {
+		$d_xpl && msg("xPL: xplExecuteCallback for stop\n");
+
+		sendXplHBeatMsg($client, 1);
+	}
+
 }
+
+# plugin: return strings
+sub strings {
+	return "
+PLUGIN_XPL
+	EN	xPL Interface
+	
+SETUP_GROUP_XPL
+	DE	xPL Einstellungen
+	EN	xPL Settings
+	ES	Configuración de xPL
+	FR	Paramètres xPL
+	JP	xPL セッティング
+	NO	xPL-innstillinger
+	SE	xPL-inställningar
+	ZH_CN	xPL设置
+
+SETUP_GROUP_XPL_DESC
+	DE	Diese Einstellungen steuern das Verhalten des xPL Protokolls
+	EN	These settings control the behavior of the xPL protocol
+	ES	Estos valores controlan el comportamiento del protocolo xPL
+	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	JP	これらのセッティングはxPLプロトコルを調節します
+	NO	Dette er innstillinger for xPL-protokollen
+	SE	Detta är inställningar för xPL-protokollet
+	ZH_CN	控制xPL协议的设置
+
+SETUP_XPLSUPPORT
+	DE	xPL Support
+	EN	xPL support
+	ES	soporte xPL
+	FR	Support du xPL
+	JP	xPL サポート
+	NO	xPL støtte
+	SE	xPL-stöd
+	ZH_CN	xPL支持
+
+SETUP_XPLSUPPORT_CHOOSE
+	DE	xPL Support:
+	EN	xPL support:
+	ES	soporte xPL:
+	FR	Support du xPL :
+	NO	xPL støtte:
+	SE	xPL-stöd:
+	ZH_CN	xPL支持：
+
+SETUP_XPLINTERVAL
+	CZ	Interval kontrolního taktu
+	DE	Heartbeat Intervall
+	EN	Heartbeat Interval
+	ES	Intervalo de latidos
+	FR	Intervale
+	JP	インターバル
+	NO	Intervall
+	SE	Hjärtrytm, intervall
+	ZH_CN	心跳间隔时间
+
+SETUP_XPLINTERVAL_CHOOSE
+	CZ	Interval kontrolního taktu:
+	DE	Heartbeat Intervall:
+	EN	Heartbeat Interval:
+	ES	Intervalo de latidos:
+	FR	Intervalle :
+	JP	インターバル:
+	NO	Intervall:
+	SE	Hjärtrytm, intervall:
+	ZH_CN	心跳间隔时间：
+
+SETUP_XPLIR
+	DE	Infrarot Verarbeitung
+	EN	Infra-red Processing
+	ES	Procesando Infra-rojo
+	FR	Traitement infrarouge
+	JP	赤外線プロセシング
+	NO	Infrarød håndtering
+	SE	Infraröd, hantering
+	ZH_CN	红外线处理
+
+SETUP_XPLIR_CHOOSE
+	DE	Infrarot Verarbeitung:
+	EN	Infra-red Processing:
+	ES	Procesamiento Infra-rojo
+	FR	Traitement infrarouge :
+	JP	赤外線プロセシング:
+	NO	Infrarød håndtering:
+	SE	Infraröd, hantering:
+	ZH_CN	红外线处理：
+
+SETUP_XPLIR_NONE
+	CZ	Není
+	DE	Keine
+	EN	None
+	ES	Ninguno
+	FR	Aucun
+	JP	なし
+	NO	Ingen
+	SE	Ingen
+	ZH_CN	无
+
+SETUP_XPLIR_BUTTONS
+	CZ	Tlačítka
+	DE	Tasten
+	EN	Buttons
+	ES	Botones
+	FR	Touches
+	JP	ボタン
+	NO	Knapper
+	SE	Knappar
+	ZH_CN	按钮
+
+SETUP_XPLIR_RAW
+	DE	Roh
+	EN	Raw
+	ES	Crudo
+	FR	Brut
+	JP	列
+	NO	Rå
+	SE	Rå
+	ZH_CN	生
+
+SETUP_XPLIR_BOTH
+	CZ	Oba
+	DE	Beide
+	EN	Both
+	ES	Ambos
+	FR	Les deux
+	JP	両方
+	NO	Begge
+	SE	Båda
+	ZH_CN	两者皆是
+";
+}
+
 
 1;

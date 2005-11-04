@@ -498,19 +498,6 @@ sub init {
 		$::d_server && msg("SlimServer HTTP init...\n");
 		Slim::Web::HTTP::init();
 	
-		if (Slim::Utils::Prefs::get('xplsupport')) {
-			$::d_server && msg("SlimServer xPL init...\n");
-	
-			eval "use Slim::Control::xPL";
-	
-			if ($@) {
-				msg("Problem initializing xPL support: [$@]\n");
-				msg("Trying to continue..\n");
-			} else {
-				Slim::Control::xPL::init();
-			}
-		}
-	
 		$::d_server && msg("mDNS startAdvertising...\n");
 		Slim::Networking::mDNS->startAdvertising;
 	

@@ -72,7 +72,6 @@ sub init {
 	# %Slim::Player::Player::GPREFS
 	%DEFAULT = (
 		"httpport"		=> 9000,
-#		"cliport"		=> 9090,
 		"audiodir"		=> defaultAudioDir(),
 		"playlistdir"		=> defaultPlaylistDir(),
 		"cachedir"		=> defaultCacheDir(),
@@ -145,9 +144,6 @@ sub init {
 		'groupdiscs' 		=> 0,
 		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
 		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
-		'xplir'			=> 'both',
-		'xplinterval'		=> 5,
-		'xplsupport'		=> 0,
 		'prefsWriteDelay'	=> 30,
 		'dbsource'		=> 'dbi:SQLite:dbname=%s',
 		'dbusername'		=> '',

@@ -2174,7 +2174,7 @@ sub initSetupConfig {
 	,'network' => {
 		'title' => string('NETWORK_SETTINGS')
 		,'parent' => 'server'
-		,'GroupOrder' => ['Default','TCP_Params','xPL_Params']
+		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['webproxy','httpport','mDNSname','remotestreamtimeout']
@@ -2188,18 +2188,6 @@ sub initSetupConfig {
 					,'Suppress_PrefSub' => 1
 					,'GroupHead' => string('SETUP_GROUP_TCP_PARAMS')
 					,'GroupDesc' => string('SETUP_GROUP_TCP_PARAMS_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			,'xPL_Params' => {
-					'PrefOrder' => ['xplsupport','xplinterval','xplir']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_XPL')
-					,'GroupDesc' => string('SETUP_GROUP_XPL_DESC')
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -2240,28 +2228,6 @@ sub initSetupConfig {
 						'validate' => \&validateInt
 						,'validateArgs' => [1,4096,1,1] #limit to 4096
 					}
-			,'xplsupport' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-							'0' => string('DISABLED')
-							,'1' => string('ENABLED')
-						}
-						,'onChange' => sub {
-							eval "use Slim::Control::xPL";
-						}
-				}
-			,'xplinterval' => {
-						'validate' => \&validateInt
-							,'validateArgs' => [5,30,1,1]
-					}
-			,'xplir' => {
-						'options' => {
-								'none' => string('SETUP_XPLIR_NONE')
-								,'buttons' => string('SETUP_XPLIR_BUTTONS')
-								,'raw' => string('SETUP_XPLIR_RAW')
-								,'both' => string('SETUP_XPLIR_BOTH')
-								}
-				}
 			}
 		} #end of setup{'network'} hash
 	,'debug' => {

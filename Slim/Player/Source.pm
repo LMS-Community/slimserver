@@ -359,7 +359,7 @@ sub playmode {
 	my ($client, $newmode, $seekoffset) = @_;
 
 	assert($client);
-
+	
 	# Short circuit.
 	return _returnPlayMode($client) unless defined $newmode;
 
@@ -545,10 +545,7 @@ sub playmode {
 		}
 
 		Slim::Player::Playlist::refreshPlaylist($everyclient);
-		# force xpl msg for new song
-		if (Slim::Utils::Prefs::get('xplsupport')) {
-			Slim::Control::xPL::sendXplHBeatMsg($client, 1);
-		}
+
 	}
 	
 	$::d_source && msg($client->id() . ": Current playmode: $newmode\n");
@@ -588,12 +585,16 @@ sub underrun {
 
 		skipahead($client);
 
-	} elsif (($client->playmode eq 'playout-stop')) {
+	} elsif ($client->playmode eq 'playout-stop') {
 
 		playmode($client, 'stop');
 		streamingSongIndex($client, 0,1);	
 		Slim::Player::Playlist::refreshPlaylist($client);
 		$client->update();
+		
+		# Not sure we can safely go through execute for the call to stop here
+		# use execute callback...
+		Slim::Control::Command::executeCallback($client, ['stop']);
 	}
 }
 
@@ -865,11 +866,6 @@ sub gotoNext {
 				# We're done streaming the song, so drop the streaming
 				# connection to the client.
 				dropStreamingConnection($client);
-
-				# send xpl to tell them we're done
-				if (Slim::Utils::Prefs::get('xplsupport')) {
-					Slim::Control::xPL::sendXplStatusMsg($client,"end of list");
-				}
 
 				$client->update();
 
@@ -1678,13 +1674,6 @@ sub openSong {
 		Slim::Control::Command::executeCallback($client, ["newsong"])
 	}
 	
-	# force xpl msg for new song
-	if (Slim::Utils::Prefs::get('xplsupport')) {
-		my $playmode = $client->playmode;
-		if ($playmode eq 'play') {
-			Slim::Control::xPL::sendXplHBeatMsg($client, 1);
-		}
-	}
 	
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 

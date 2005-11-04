@@ -491,12 +491,6 @@ sub processIR {
 		my $irCode  = lookup($client,$irCodeBytes);
 		$::d_ir && msg("irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
 		processCode($client, $irCode, $irTime);
-
-		# Notify the xPL module that an IR code has been received
-		if (Slim::Utils::Prefs::get('xplsupport')) {
-
-			Slim::Control::xPL::processircode($client,$irCode,$irCodeBytes);    
-		}
 	}
 }
 

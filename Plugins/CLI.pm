@@ -39,7 +39,7 @@ use Slim::Utils::Unicode;
 # Other CLI queries/commands are handled in Command.pm
 
 
-my $d_cli_v = 1;			# verbose debug, for developpement
+my $d_cli_v = 0;			# verbose debug, for developpement
 my $d_cli_vv = 0;			# very verbose debug, function calls...
 
 

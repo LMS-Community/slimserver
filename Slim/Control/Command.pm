@@ -154,6 +154,16 @@ sub execute {
 # Y    playlist        shuffle                     <0|1|2|?|>
 # Y    playlist        repeat                      <0|1|2|?|>
 
+#NOTIFICATION
+# The following 'terms' go through execute for its notification ability, but 
+# do not actually do anything
+# Y    favorite	       add         // Favorite plugin
+# Y    newclient                   // there is a new client
+# Y    newsong                     // song starts to play
+# Y    open                        // file is opened (for playing)
+# Y    playlist        sync
+
+
 	my $ds   = Slim::Music::Info::getCurrentDataStore();
 	my $find = {};
 
@@ -396,11 +406,6 @@ sub execute {
 
 				$client->power($newPower);
 
-				# send xpl message when power toggles
-				if (Slim::Utils::Prefs::get('xplsupport')) {
-					Slim::Control::xPL::sendXplHBeatMsg($client,1);
-                }
-
 			} elsif ($p1 eq "?") {
 
 				$p1 = $client->power();
@@ -413,11 +418,6 @@ sub execute {
 				}
 
 				$client->power($p1);
-
-				# send xpl message when power toggles
-				if (Slim::Utils::Prefs::get('xplsupport')) {
-					Slim::Control::xPL::sendXplHBeatMsg($client,1);
-				}
 				
 				if ($p1 eq "0") {
 					# Powering off cancels sleep...

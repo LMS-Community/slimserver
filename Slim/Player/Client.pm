@@ -765,10 +765,7 @@ sub new {
 
 	$client->paddr($paddr);
 
-	# Tell the xPL module that a new client has connected
-	if (Slim::Utils::Prefs::get('xplsupport')) {
-		Slim::Control::xPL::newClient($client);
-	}
+	Slim::Control::Command::executeCallback($client, ['newclient']);
 
 	return $client;
 }
