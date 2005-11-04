@@ -50,12 +50,15 @@ sub typeToRole {
 }
 
 sub add {
-	my $class      = shift;
-	my $artist     = shift;
-	my $brainzID   = shift;
-	my $role       = shift;
-	my $track      = shift;
-	my $artistSort = shift || $artist;
+	my $class = shift;
+	my $args  = shift;
+
+	# Pass args by name
+	my $artist     = $args->{'artist'} || return;
+	my $brainzID   = $args->{'brainzID'};
+	my $role       = $args->{'role'}   || return;
+	my $track      = $args->{'track'}  || return;
+	my $artistSort = $args->{'sortBy'} || $artist;
 
 	my @contributors = ();
 
@@ -72,10 +75,6 @@ sub add {
 	# Split both the regular and the normalized tags
 	my @artistList   = Slim::Music::Info::splitTag($artist);
 	my @sortedList   = Slim::Music::Info::splitTag($artistSort);
-
-	if ($role =~ /file/) {
-		Slim::Utils::Misc::bt();
-	}
 
 	for (my $i = 0; $i < scalar @artistList; $i++) {
 

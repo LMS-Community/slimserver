@@ -1560,11 +1560,11 @@ sub _postCheckAttributes {
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
 		});
 
-		Slim::DataStores::DBI::Contributor->add(
-			$_unknownArtist,
-			Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			$track
-		);
+		Slim::DataStores::DBI::Contributor->add({
+			'artist' => $_unknownArtist,
+			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
+			'track'  => $track,
+		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
 
@@ -1572,11 +1572,11 @@ sub _postCheckAttributes {
 
 		# Otherwise - reuse the singleton object, since this is the
 		# second time through.
-		Slim::DataStores::DBI::Contributor->add(
-			$_unknownArtist,
-			Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			$track
-		);
+		Slim::DataStores::DBI::Contributor->add({
+			'artist' => $_unknownArtist,
+			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
+			'track'  => $track,
+		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
 	}
@@ -1909,13 +1909,13 @@ sub _mergeAndCreateContributors {
 		# Is ARTISTSORT/TSOP always right for non-artist
 		# contributors? I think so. ID3 doesn't have
 		# "BANDSORT" or similar at any rate.
-		push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add(
-			$contributor, 
-			$attributes->{"MUSICBRAINZ_${tag}_ID"},
-			Slim::DataStores::DBI::Contributor->typeToRole($tag),
-			$track,
-			$attributes->{$tag.'SORT'},
-		);
+		push @{ $contributors{$tag} }, Slim::DataStores::DBI::Contributor->add({
+			'artist'   => $contributor, 
+			'brainzID' => $attributes->{"MUSICBRAINZ_${tag}_ID"},
+			'role'     => Slim::DataStores::DBI::Contributor->typeToRole($tag),
+			'track'    => $track,
+			'sortBy'   => $attributes->{$tag.'SORT'},
+		});
 	}
 
 	return \%contributors;
