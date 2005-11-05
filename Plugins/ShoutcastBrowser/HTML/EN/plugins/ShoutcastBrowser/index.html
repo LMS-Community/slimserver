@@ -7,7 +7,7 @@
 [% PROCESS pageheader.html %]
 		<br>
 		<table border="0" cellspacing="0" cellpadding="4" width="100%">
-			[% IF msg %]<tr><td>[% msg %]</td></tr>[% END %]
+			[% IF msg %]<tr><td><b>[% msg %]</b></td></tr>[% END %]
 			[% IF redirect %]
 				<p><br>[% 'PLUGIN_SHOUTCASTBROWSER_REDIRECT' | string %]</p>
 				<p>(<a href="[% redirect.url %]">[% 'PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT' | string %]</a>)</p>

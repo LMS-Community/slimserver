@@ -1029,7 +1029,7 @@ sub handleWebIndex {
 		return undef;
 	}
 	
-	if ($httpError == 0 && defined($client)) {
+	if ($httpError == 0) {
 		if (defined $params->{'genreID'}) {
 			my $myStreams;
 			if ($params->{'genreID'} < 0) {
@@ -1044,7 +1044,11 @@ sub handleWebIndex {
 			# play/add stream
 			if (defined $params->{'action'} && ($params->{'action'} =~ /(add|play|insert|delete)/i)) {
 				my $myStream = @{$myStreams}[$params->{'streamID'}];
-				if ($params->{'genre'} eq string('PLUGIN_SHOUTCASTBROWSER_RECENT')) {
+				
+				if (!defined $client) {
+					$params->{'msg'} = string('SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR');
+				}
+				elsif ($params->{'genre'} eq string('PLUGIN_SHOUTCASTBROWSER_RECENT')) {
 					playRecentStream($client, $status{$client}{recent_data}{$myStream}, $myStream, $params->{'action'});
 				}
 				else {
@@ -1092,11 +1096,6 @@ sub handleWebIndex {
 	elsif ($httpError == 2) {
 		# there was a problem parsing XML
 		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR') . " ($httpError)";
-		$httpError = undef;	
-	}
-	elsif (!defined($client)) {
-		# there are no clients found
-		$params->{'msg'} = string('SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR');
 		$httpError = undef;	
 	}
 	else {
