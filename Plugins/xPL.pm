@@ -590,6 +590,12 @@ sub xplExecuteCallback {
 	my $command    = $paramsRef->[0];
 	my $subCommand = $paramsRef->[1];
 
+	# callback is all client based below, so avoid a crash and shortcut all of it when no client supplied
+	unless (defined $client) {
+		$d_xpl && msg("xPL: xplExecuteCallback without a client: $command - $subCommand\n");
+		return;
+	}
+
 	my $clientname = validInstance($client->name);
 	my $power = ($client->power()==0 ? 'off' : 'on');
 	
