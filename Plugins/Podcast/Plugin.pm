@@ -153,24 +153,28 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
+## Bug 2451: Weg pages aren't actually used with this plugin, so if we 
+## comment this out, reported warnings should not show up.
 # this will undoubtably change.
 # these are for testing more than anything else.
-sub webPages {
-	my %pages = (
-		myPodcasts => sub {webPage('myPodcasts', @_)},
-		myPodcasts2 => sub {webPage('myPodcasts2', @_)},
-	);
-	return \%pages;
-}
+#sub webPages {
+#	my %pages = (
+#		myPodcasts => sub {webPage('myPodcasts', @_)},
+#		myPodcasts2 => sub {webPage('myPodcasts2', @_)},
+#	);
+#	use Data::Dumper;
+#	print Dumper(\%pages);
+#	return \%pages;
+#}
 
-sub webPage {
-	my $page = shift;
-	my $client = shift;
-	my $params = shift;
+#sub webPage {
+#	my $page = shift;
+#	my $client = shift;
+#	my $params = shift;
 
-	# TODO: set content type to XML
-	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page", $params);
-}
+#	# TODO: set content type to XML
+#	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page", $params);
+#}
 
 # for configuring via web interface
 sub setupGroup {
@@ -346,7 +350,10 @@ sub getFeedXml {
 		# Deal with Windows encoding stupidity.
 		$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
-		HTML::Entities::encode_entities($content, "\x80-\xff");
+		## Bug 2492
+		## not all entities are understood by XML::Simple, so skip this to allow
+		## parsing to complete
+		#HTML::Entities::encode_entities($content, "\x80-\xff");
 
 		# forcearray to treat items as array,
 		# keyattr => [] prevents id attrs from overriding

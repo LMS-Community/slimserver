@@ -559,11 +559,16 @@ sub gotViaHTTP {
 
 	# verbose debug
 	#$::d_plugins && msg("Podcast: content:\n " . $http->content() . "\n\n");
+	
+	my $content = $http->content();
+	
+	# deal with windows encoding stupidity (see Bug #1392)
+	$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($http->content(), 
+	my $xml = eval { XMLin($content, 
 						   forcearray => ["item", "outline"],
 						   keyattr => []) };
 
