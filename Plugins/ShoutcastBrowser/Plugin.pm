@@ -1157,6 +1157,7 @@ PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR
+	DE	Kein Player verfügbar.
 	EN	Sorry, valid player not found.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST

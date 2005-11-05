@@ -10238,10 +10238,10 @@ SQUEEZENETWORK_CONNECTING
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SB2_REQUIRED
-	DE	Diese Funktion benötigt eine Squeezebox2.
+	DE	Diese Funktion benötigt eine Squeezebox2 oder neuer.
 	EN	Sorry, requires a newer Squeezebox.
 	ES	Lo siento, requiere Squeezebox2
-	FR	Cette fonction nécessite Squeezebox2.
+	FR	Cette fonction nécessite Squeezebox2 ou plus récent.
 	ZH_CN	抱歉，需要Squeezebox2。
 
 SETUP_SCROLLMODE
