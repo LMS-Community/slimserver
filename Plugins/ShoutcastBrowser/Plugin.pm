@@ -1001,7 +1001,7 @@ sub webPages {
 
 sub handleWebIndex {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
-
+	
 	my %genericGenres = (
 		'-1' => {
 			token => 'PLUGIN_SHOUTCASTBROWSER_RECENT',
@@ -1028,8 +1028,8 @@ sub handleWebIndex {
 		loadStreamList($client, $params, $callback, $httpClient, $response);
 		return undef;
 	}
-
-	if ($httpError == 0) {
+	
+	if ($httpError == 0 && defined($client)) {
 		if (defined $params->{'genreID'}) {
 			my $myStreams;
 			if ($params->{'genreID'} < 0) {
@@ -1094,6 +1094,11 @@ sub handleWebIndex {
 		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR') . " ($httpError)";
 		$httpError = undef;	
 	}
+	elsif (!defined($client)) {
+		# there are no clients found
+		$params->{'msg'} = string('SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR');
+		$httpError = undef;	
+	}
 	else {
 		$params->{'msg'} = string('PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR') . " ($httpError)";
 		$httpError = undef;
@@ -1151,6 +1156,9 @@ PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	DE	Beim Auswerten der Stream-Informationen ist ein Fehler aufgetreten. Reduzieren Sie allenfalls die Anzahl Streams, falls Sie eine grosse Zahl anfordern wollten.
 	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
 	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
+
+SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR
+	EN	Sorry, valid player not found.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
