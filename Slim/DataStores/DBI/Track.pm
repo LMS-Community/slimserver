@@ -341,7 +341,7 @@ sub coverArt {
 
 		} else {
 
-			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($url, $art);
+			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
 
 			if (defined $path) {
 
@@ -352,7 +352,7 @@ sub coverArt {
 
 	} else {
 
-		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($url, $art);
+		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
 
 		if (defined $path) {
 

@@ -1936,7 +1936,7 @@ sub updateCoverArt {
 		return;
 	}
 			
-	my ($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($fullpath, $type);
+	my ($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $type);
 
  	if (defined($body)) {
 
