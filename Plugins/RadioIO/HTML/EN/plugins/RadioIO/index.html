@@ -1,5 +1,5 @@
 [%- pagetitle = 'PLUGIN_RADIOIO_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = (stationname ? 0 : 1); -%]
-[%- pageHeaderMenu = BLOCK -%]
+[%- pwd_list = BLOCK -%]
 	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</a> 
 	[% IF stationname %]/ [% stationname %][% END %]</p>
 [%- END -%]

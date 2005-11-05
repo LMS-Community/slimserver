@@ -1,6 +1,6 @@
 [%- pagetitle = 'PLUGIN_PICKS_MODULE_NAME' | string; noSpacer = 1 -%]
 [%- pageicon = 'RADIO' -%]
-[%- pageHeaderMenu = BLOCK %]
+[%- pwd_list = BLOCK -%]
 		/ [% IF stationname %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_PICKS_MODULE_NAME" | string %][% IF stationname %]</a> 
 			/ [% stationname %][% END %]
 [% END -%]

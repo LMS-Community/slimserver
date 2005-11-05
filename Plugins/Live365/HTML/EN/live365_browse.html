@@ -1,5 +1,5 @@
 [%- pagetitle = 'PLUGIN_LIVE365_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; PROCESS cmdwrappers -%]
-[%- pageHeaderMenu = BLOCK -%]
+[%- pwd_list = BLOCK -%]
 	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>[% pwd_list %]
 [% END %]
 [% PROCESS pageheader.html %]

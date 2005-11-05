@@ -1,6 +1,6 @@
 [%- pageicon = 'BROWSE_PLAYLISTS' -%]
 [%- pagetitle = 'PLUGIN_FAVORITES_MODULE_NAME' | string -%]
-[%- pageHeaderMenu = BLOCK %]/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
+[%- pwd_list = BLOCK -%]/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
 		</p></a>[% END -%]
 [%- PROCESS pageheader.html -%] 
 
