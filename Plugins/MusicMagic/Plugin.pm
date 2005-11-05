@@ -307,7 +307,7 @@ sub checker {
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# Call ourselves again after 60 seconds
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checker);
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 120), \&checker);
 }
 
 sub startScan {
