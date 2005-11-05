@@ -312,7 +312,7 @@ sub _parseASFFilePropertiesObject {
 	$info{'max_packet_size'}	= unpack('V', $self->_readAndIncrementOffset(4));
 	$info{'max_bitrate'}		= unpack('V', $self->_readAndIncrementOffset(4));
 
-	$info{'bitrate'}		= int($info{'max_bitrate'} / 1000);
+	$info{'bitrate'}		= $info{'max_bitrate'};
 
 	$self->{'INFO'}			= \%info;
 }
