@@ -1,8 +1,11 @@
 	[% pagetitle = "BROWSE_MUSIC" | string %]
-	[% pageHeaderMenu = BLOCK %]
-		[% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
-	[% END %]
 	[% PROCESS pageheader.html %]
+
+	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
+		<tr><td>
+			[% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
+		</td></tr>
+	[%- END -%]
 	
 	[% IF warn %]
 		<p><b>[% "NOTE" | string %]</b>
