@@ -208,6 +208,7 @@ sub init {
 					},
 				});
 
+			# Start a song search with the search text initialised to the current song's title
 			} elsif ($curitem eq 'TITLE') {
 
 				my %nextParams = 
