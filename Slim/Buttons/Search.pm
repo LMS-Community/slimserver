@@ -117,8 +117,9 @@ sub searchExitHandler {
 sub searchFor {
 	my $client = shift;
 	my $search = shift;
-	
-	$context{$client} = ('A');
+	my $value  = shift;
+ 
+	$context{$client} = (defined($value) && length($value)) ? ($value) : ('A');
 
 	my %nextParams = %{$menuParams{'SEARCH'}{'submenus'}{$search}};
 

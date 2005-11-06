@@ -208,6 +208,17 @@ sub init {
 					},
 				});
 
+			} elsif ($curitem eq 'TITLE') {
+
+				my %nextParams = 
+					Slim::Buttons::Search::searchFor($client,
+					                                 'SONGS',
+					                                 Slim::Utils::Text::matchCase($track->title));
+
+				# Make sure cursorPos is undefined, so the cursor will be at the end of the title.
+				$nextParams{'cursorPos'} = undef;
+				Slim::Buttons::Common::pushMode($client, $nextParams{'useMode'}, \%nextParams);
+
 			} elsif ($curitem eq 'FAVORITE') {
 
 				my $num = $client->param('favorite');
@@ -349,7 +360,7 @@ sub preloadLines {
 
 	if (my $title = $track->title) {
 		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
-		push (@{$client->trackInfoContent}, undef);
+		push (@{$client->trackInfoContent}, 'TITLE');
 	}
 
 	# Loop through the contributor types and append
