@@ -12,33 +12,38 @@ use Slim::Utils::Misc;
 =cut
 
 sub default {
-	my($client, $parrayref, $callbackf, $callbackargs) = @_;
-    confess "Called default handler: don't do that."
+	my ($client, $parrayref, $callbackf, $callbackargs) = @_;
+
+	errorMsg("Called default handler: don't do that.\n");
 }
 
 # this will be a lot nicer if we don't have to care about the return array.
 sub pref {
-	my($client, $parrayref, $callbackf, $callbackargs) = @_;
+	my ($client, $parrayref, $callbackf, $callbackargs) = @_;
 
-    # it would be nice not to have to preserve the array.
-    my ($prefName, $newValue) = @{$parrayref}[0,1];
+	# it would be nice not to have to preserve the array.
+	my ($prefName, $newValue) = @{$parrayref}[0,1];
 
-    if (defined($newValue) && $newValue ne '?' && !$::nosetup) {
-        Slim::Utils::Prefs::set($prefName, $newValue);
-    }
+	if (defined($newValue) && $newValue ne '?' && !$::nosetup) {
 
-    $newValue = Slim::Utils::Prefs::get($prefName);
-    $parrayref->[2] = $newValue;
-    $::d_command && msg( "prefs(): Successfully set '$prefName' to '$newValue'\n" );
-    return $parrayref;
+		Slim::Utils::Prefs::set($prefName, $newValue);
+	}
+
+	$newValue = Slim::Utils::Prefs::get($prefName);
+
+	$parrayref->[2] = $newValue;
+
+	$::d_command && msg( "prefs(): Successfully set '$prefName' to '$newValue'\n" );
+
+	return $parrayref;
 }
 
 sub rescan {
-    confess "Called unimplemented command 'rescan'."
+	errorMsg("Called unimplemented command 'rescan'.\n");
 }
 
 sub wipecache {
-    confess "Called unimplemented command 'wipecache'."
+	errorMsg("Called unimplemented command 'wipecache'.\n");
 }
 
 1;
