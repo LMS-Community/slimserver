@@ -1185,9 +1185,11 @@ sub setupUse {
 }
 
 sub checkDefaults {
+	my $iTunesScanInterval = 3600;
 
 	if (!Slim::Utils::Prefs::isDefined('itunesscaninterval')) {
-		Slim::Utils::Prefs::set('itunesscaninterval',60);
+
+		Slim::Utils::Prefs::set('itunesscaninterval', $iTunesScanInterval);
 	}
 
 	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistprefix')) {

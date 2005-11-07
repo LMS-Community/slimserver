@@ -61,6 +61,16 @@ sub init {
 				$prefs{'skin'} = 'ExBrowse3';
 			}
 		},
+
+		'6.2.1-2005-11-07' => sub {
+
+			# Bug 2410 - We need a better solution for iTunes
+			# rescanning, but in the meantime, don't scan every 60
+			# seconds. Let the Plugin reset the value.
+			if ($prefs{'itunesscaninterval'} == 60) {
+				delete $prefs{'itunesscaninterval'};
+			}
+		},
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -155,6 +165,7 @@ sub init {
 		'useBandAsAlbumArtist'  => 0,
 		'upgrade-6.2b1-script'	=> 1,
 		'upgrade-6.2b1-2005-09-19-script' => 1,
+		'upgrade-6.2.1-2005-11-07-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'databaseTempStorage'   => 'MEMORY',
 		'databaseCacheSize'     => 10000,
