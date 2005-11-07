@@ -1352,7 +1352,7 @@ sub openSong {
 			$::d_source && msg("URL is remote : $fullpath\n");
 
 			# we don't get the content type until after the stream is opened
-			my $sock = openRemoteStream($fullpath, $client);
+			my $sock = openRemoteStream($track, $client);
 	
 			if ($sock) {
 	
@@ -1801,7 +1801,7 @@ sub getConvertCommand {
 
 		$player   = $client->model();
 		$clientid = $client->id();	
-		$undermax = underMax($client, ref($track) ? $track->url : $track, $type);
+		$undermax = underMax($client, blessed($track) && $track->can('url') ? $track->url : $track, $type);
 
 		$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid, lame = $lame\n");
 	
@@ -2168,23 +2168,32 @@ sub registerProtocolHandler {
 }
 
 sub openRemoteStream {
-	my $url = shift;
+	my $track  = shift;
 	my $client = shift;
-	
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	# Make sure we're dealing with a track object.
+	if (!blessed($track) || !$track->can('url')) {
+
+		$track = $ds->objectForUrl($track, 1);
+	}
+
+	my $url        = $track->url;
+	my $protoClass = protocolHandlerForURL($url);
+
 	$::d_source && msg("Trying to open protocol stream for $url\n");
-	if ($url =~ /^(.*?):\/\//i) {
-		my $proto = $1;
 
-		$::d_source && msg("Looking for handler for protocol $proto\n");
-		if (my $protoClass = $Slim::Player::Source::protocolHandlers{lc $proto}) {
-			$::d_source && msg("Found handler for protocol $proto\n");
+	if ($protoClass) {
 
-			return $protoClass->new({
-				'url'    => $url,
-				'client' => $client,
-				'create' => 1,
-			});
-		}
+		$::d_source && msg("Found handler for $url - using $protoClass\n");
+
+		return $protoClass->new({
+			'track'  => $track,
+			'url'    => $url,
+			'client' => $client,
+			'create' => 1,
+		});
 	}
 
 	$::d_source && msg("Couldn't find protocol handler for $url\n");
@@ -2196,9 +2205,10 @@ sub protocolHandlerForURL {
 	my $url = shift;
 	
 	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
+
 	return undef if !$protocol;
 
-	return $Slim::Player::Source::protocolHandlers{lc $protocol};
+	return $protocolHandlers{lc $protocol};
 }
 
 1;

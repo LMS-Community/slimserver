@@ -139,6 +139,9 @@ sub request {
 	my $post    = $args->{'post'};
 	my $create  = $args->{'create'};
 
+	# Try and use a track object if we have one - otherwise fall back to the URL.
+	my $track = $args->{'track'} || $infoUrl;
+
 	# Most callers will want create on. Some want it off. So check for the explict 0 value.
 	unless (defined $create) {
 		$create = 1;
@@ -178,10 +181,10 @@ sub request {
 	}
 	
 	my $redir = '';
-	my $ct    = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
+	my $ct    = Slim::Music::Info::typeFromPath($track, 'mp3');
 
 	${*$self}{'contentType'} = $ct;
-	Slim::Music::Info::setContentType($infoUrl, $ct) if $create;
+	Slim::Music::Info::setContentType($track, $ct) if $create;
 
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
@@ -221,7 +224,7 @@ sub request {
 			
 			${*$self}{'contentType'} = $contentType;
 
-			Slim::Music::Info::setContentType($infoUrl, $contentType) if $create;
+			Slim::Music::Info::setContentType($track, $contentType) if $create;
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
