@@ -1821,7 +1821,7 @@ sub buildStatusHeaders {
 		
 		if ($client->isPlayer()) {
 	
-			$headers{"x-playervolume"} = int($client->volume() + 0.5);
+			$headers{"x-playervolume"} = int($client->prefGet("volume") + 0.5);
 			$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
 	
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
