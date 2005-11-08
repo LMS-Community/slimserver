@@ -1,6 +1,6 @@
 package IO::String;
 
-# Copyright 1998-2002 Gisle Aas.
+# Copyright 1998-2004 Gisle Aas.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the same terms as Perl itself.
@@ -8,7 +8,7 @@ package IO::String;
 require 5.005_03;
 use strict;
 use vars qw($VERSION $DEBUG $IO_CONSTANTS);
-$VERSION = "1.02";  # $Date: 2003/07/18 19:42:07 $
+$VERSION = "1.07";  # $Date$
 
 use Symbol ();
 
@@ -18,7 +18,7 @@ sub new
     my $self = bless Symbol::gensym(), ref($class) || $class;
     tie *$self, $self;
     $self->open(@_);
-    $self;
+    return $self;
 }
 
 sub open
@@ -30,13 +30,14 @@ sub open
 	my $bufref = ref($_[0]) ? $_[0] : \$_[0];
 	$$bufref = "" unless defined $$bufref;
 	*$self->{buf} = $bufref;
-    } else {
+    }
+    else {
 	my $buf = "";
 	*$self->{buf} = \$buf;
     }
     *$self->{pos} = 0;
     *$self->{lno} = 0;
-    $self;
+    return $self;
 }
 
 sub pad
@@ -45,7 +46,7 @@ sub pad
     my $old = *$self->{pad};
     *$self->{pad} = substr($_[0], 0, 1) if @_;
     return "\0" unless defined($old) && length($old);
-    $old;
+    return $old;
 }
 
 sub dump
@@ -54,6 +55,7 @@ sub dump
     my $self = shift;
     print Data::Dumper->Dump([$self], ['*self']);
     print Data::Dumper->Dump([*$self{HASH}], ['$self{HASH}']);
+    return;
 }
 
 sub TIEHANDLE
@@ -63,7 +65,7 @@ sub TIEHANDLE
     my $class = shift;
     my $self = bless Symbol::gensym(), $class;
     $self->open(@_);
-    $self;
+    return $self;
 }
 
 sub DESTROY
@@ -77,14 +79,28 @@ sub close
     delete *$self->{buf};
     delete *$self->{pos};
     delete *$self->{lno};
-    untie *$self;
-    $self;
+    if ($] >= 5.006 && $[ < 5.007) {
+	# perl-5.6.x segfaults on untie, so avoid it
+    }
+    else {
+	untie *$self;
+	undef *$self;
+    }
+    return 1;
 }
 
 sub opened
 {
     my $self = shift;
-    defined *$self->{buf};
+    return defined *$self->{buf};
+}
+
+sub binmode
+{
+    my $self = shift;
+    return 1 unless @_;
+    # XXX don't know much about layers yet :-(
+    return 0;
 }
 
 sub getc
@@ -98,13 +114,14 @@ sub getc
 sub ungetc
 {
     my $self = shift;
-    $self->setpos($self->getpos() - 1)
+    $self->setpos($self->getpos() - 1);
+    return 1;
 }
 
 sub eof
 {
     my $self = shift;
-    length(${*$self->{buf}}) <= *$self->{pos};
+    return length(${*$self->{buf}}) <= *$self->{pos};
 }
 
 sub print
@@ -113,16 +130,20 @@ sub print
     if (defined $\) {
 	if (defined $,) {
 	    $self->write(join($,, @_).$\);
-	} else {
+	}
+	else {
 	    $self->write(join("",@_).$\);
 	}
-    } else {
+    }
+    else {
 	if (defined $,) {
 	    $self->write(join($,, @_));
-	} else {
+	}
+	else {
 	    $self->write(join("",@_));
 	}
     }
+    return 1;
 }
 *printflush = \*print;
 
@@ -132,6 +153,7 @@ sub printf
     print "PRINTF(@_)\n" if $DEBUG;
     my $fmt = shift;
     $self->write(sprintf($fmt, @_));
+    return 1;
 }
 
 
@@ -144,7 +166,8 @@ sub _init_seek_constants
 	$SEEK_SET = &IO::Handle::SEEK_SET;
 	$SEEK_CUR = &IO::Handle::SEEK_CUR;
 	$SEEK_END = &IO::Handle::SEEK_END;
-    } else {
+    }
+    else {
 	$SEEK_SET = 0;
 	$SEEK_CUR = 1;
 	$SEEK_END = 2;
@@ -155,7 +178,7 @@ sub _init_seek_constants
 sub seek
 {
     my($self,$off,$whence) = @_;
-    my $buf = *$self->{buf} || return;
+    my $buf = *$self->{buf} || return 0;
     my $len = length($$buf);
     my $pos = *$self->{pos};
 
@@ -164,13 +187,13 @@ sub seek
     if    ($whence == $SEEK_SET) { $pos = $off }
     elsif ($whence == $SEEK_CUR) { $pos += $off }
     elsif ($whence == $SEEK_END) { $pos = $len + $off }
-    else { die "Bad whence ($whence)" }
+    else                         { die "Bad whence ($whence)" }
     print "SEEK(POS=$pos,OFF=$off,LEN=$len)\n" if $DEBUG;
 
     $pos = 0 if $pos < 0;
     $self->truncate($pos) if $pos > $len;  # extend file
-    *$self->{lno} = 0;
     *$self->{pos} = $pos;
+    return 1;
 }
 
 sub pos
@@ -182,10 +205,9 @@ sub pos
 	my $buf = *$self->{buf};
 	my $len = $buf ? length($$buf) : 0;
 	$pos = $len if $pos > $len;
-	*$self->{lno} = 0;
 	*$self->{pos} = $pos;
     }
-    $old;
+    return $old;
 }
 
 sub getpos { shift->pos; }
@@ -217,9 +239,14 @@ sub getline
 	while (defined($c = $self->getc)) {
 	    if ($c eq "\n") {
 		$eol++;
-	    } elsif ($eol > 1) {
+		next if $eol > 2;
+	    }
+	    elsif ($eol > 1) {
 		$self->ungetc($c);
 		last;
+	    }
+	    else {
+		$eol = 0;
 	    }
 	    $para .= $c;
 	}
@@ -259,7 +286,7 @@ sub input_line_number
     my $self = shift;
     my $old = *$self->{lno};
     *$self->{lno} = shift if @_;
-    $old;
+    return $old;
 }
 
 sub truncate
@@ -270,25 +297,28 @@ sub truncate
     if (length($$buf) >= $len) {
 	substr($$buf, $len) = '';
 	*$self->{pos} = $len if $len < *$self->{pos};
-    } else {
+    }
+    else {
 	$$buf .= ($self->pad x ($len - length($$buf)));
     }
-    $self;
+    return 1;
 }
 
 sub read
 {
     my $self = shift;
     my $buf = *$self->{buf};
-    return unless $buf;
+    return undef unless $buf;
 
     my $pos = *$self->{pos};
     my $rem = length($$buf) - $pos;
     my $len = $_[1];
     $len = $rem if $len > $rem;
+    return undef if $len < 0;
     if (@_ > 2) { # read offset
 	substr($_[0],$_[2]) = substr($$buf, $pos, $len);
-    } else {
+    }
+    else {
 	$_[0] = substr($$buf, $pos, $len);
     }
     *$self->{pos} += $len;
@@ -320,7 +350,7 @@ sub write
     }
     substr($$buf, $pos, $len) = substr($_[0], $off, $len);
     *$self->{pos} += $len;
-    $len;
+    return $len;
 }
 
 *sysread = \&read;
@@ -357,7 +387,7 @@ sub blocking {
     my $self = shift;
     my $old = *$self->{blocking} || 0;
     *$self->{blocking} = shift if @_;
-    $old;
+    return $old;
 }
 
 my $notmuch = sub { return };
@@ -384,14 +414,13 @@ my $notmuch = sub { return };
 *TELL   = \&getpos;
 *EOF    = \&eof;
 *CLOSE  = \&close;
-
-*BINMODE = $notmuch;
+*BINMODE = \&binmode;
 
 
 sub string_ref
 {
     my $self = shift;
-    *$self->{buf};
+    return *$self->{buf};
 }
 *sref = \&string_ref;
 
@@ -401,7 +430,7 @@ __END__
 
 =head1 NAME
 
-IO::String - Emulate IO::File interface for in-core strings
+IO::String - Emulate file interface for in-core strings
 
 =head1 SYNOPSIS
 
@@ -431,86 +460,96 @@ IO::String - Emulate IO::File interface for in-core strings
 
 =head1 DESCRIPTION
 
-The C<IO::String> module provide the C<IO::File> interface for in-core
+The C<IO::String> module provides the C<IO::File> interface for in-core
 strings.  An C<IO::String> object can be attached to a string, and
-will make it possible to use the normal file operations for reading or
-writing data, as well as seeking to various locations of the string.
-The main reason you might want to do this, is if you have some other
-library module that only provide an interface to file handles, and you
-want to keep all the stuff in memory.
+makes it possible to use the normal file operations for reading or
+writing data, as well as for seeking to various locations of the string.
+This is useful when you want to use a library module that only
+provides an interface to file handles on data that you have in a string
+variable.
 
-The C<IO::String> module provide an interface compatible with
+Note that perl-5.8 and better has built-in support for "in memory"
+files, which are set up by passing a reference instead of a filename
+to the open() call. The reason for using this module is that it
+makes the code backwards compatible with older versions of Perl.
+
+The C<IO::String> module provides an interface compatible with
 C<IO::File> as distributed with F<IO-1.20>, but the following methods
-are not available; new_from_fd, fdopen, format_write,
+are not available: new_from_fd, fdopen, format_write,
 format_page_number, format_lines_per_page, format_lines_left,
 format_name, format_top_name.
 
-The following methods are specific for the C<IO::String> class:
+The following methods are specific to the C<IO::String> class:
 
 =over 4
 
-=item $io = IO::String->new( [$string] )
+=item $io = IO::String->new
 
-The constructor returns a newly created C<IO::String> object.  It
-takes an optional argument which is the string to read from or write
+=item $io = IO::String->new( $string )
+
+The constructor returns a newly-created C<IO::String> object.  It
+takes an optional argument, which is the string to read from or write
 into.  If no $string argument is given, then an internal buffer
 (initially empty) is allocated.
 
-The C<IO::String> object returned will be tied to itself.  This means
-that you can use most perl IO builtins on it too; readline, <>, getc,
+The C<IO::String> object returned is tied to itself.  This means
+that you can use most Perl I/O built-ins on it too: readline, <>, getc,
 print, printf, syswrite, sysread, close.
 
-=item $io->open( [$string] )
+=item $io->open
 
-Attach an existing IO::String object to some other $string, or
-allocate a new internal buffer (if no argument is given).  The
-position is reset back to 0.
+=item $io->open( $string )
+
+Attaches an existing IO::String object to some other $string, or
+allocates a new internal buffer (if no argument is given).  The
+position is reset to 0.
 
 =item $io->string_ref
 
-This method will return a reference to the string that is attached to
+Returns a reference to the string that is attached to
 the C<IO::String> object.  Most useful when you let the C<IO::String>
 create an internal buffer to write into.
 
-=item $io->pad( [$char] )
+=item $io->pad
 
-The pad() method makes it possible to specify the padding to use if
+=item $io->pad( $char )
+
+Specifies the padding to use if
 the string is extended by either the seek() or truncate() methods.  It
 is a single character and defaults to "\0".
 
-=item $io->pos( [$newpos] )
+=item $io->pos
+
+=item $io->pos( $newpos )
 
 Yet another interface for reading and setting the current read/write
 position within the string (the normal getpos/setpos/tell/seek
-methods are also available).  The pos() method will always return the
-old position, and if you pass it an argument it will set the new
+methods are also available).  The pos() method always returns the
+old position, and if you pass it an argument it sets the new
 position.
 
 There is (deliberately) a difference between the setpos() and seek()
-methods in that seek() will extend the string (with the specified
-padding) if you go to a location past the end, while setpos() will
-just snap back to the end.  If truncate() is used to extend the string,
+methods in that seek() extends the string (with the specified
+padding) if you go to a location past the end, whereas setpos()
+just snaps back to the end.  If truncate() is used to extend the string,
 then it works as seek().
 
 =back
 
-One more difference compared to IO::Handle, is that the write() and
-syswrite() methods allow the length argument to be left out.
-
 =head1 BUGS
 
-The perl version < 5.6 the TIEHANDLE interface was still not complete.
-If you use such a perl seek(), tell(), eof(), fileno(), binmode() will
-not do anything on a C<IO::String> handle.  See L<perltie> for
+In Perl versions < 5.6, the TIEHANDLE interface was incomplete.
+If you use such a Perl, then seek(), tell(), eof(), fileno(), binmode() will
+not do anything on an C<IO::String> handle.  See L<perltie> for
 details.
 
 =head1 SEE ALSO
 
-L<IO::File>, L<IO::Stringy>
+L<IO::File>, L<IO::Stringy>, L<perlfunc/open>
 
 =head1 COPYRIGHT
 
-Copyright 1998-2002 Gisle Aas.
+Copyright 1998-2003 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
