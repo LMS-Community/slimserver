@@ -349,7 +349,7 @@ sub preloadLines {
 
 	if (my $title = $track->title) {
 		push (@{$client->trackInfoLines}, $client->string('TITLE') . ": $title");
-		push (@{$client->trackInfoContent}, 'TITLE');
+		push (@{$client->trackInfoContent}, undef);
 	}
 
 	# Loop through the contributor types and append
