@@ -158,36 +158,62 @@ sub classForType {
 	return $typeToClass{$type};
 }
 
+# Fetch the content type for a URL or Track Object.
+#
+# Try and be smart about the order of operations in order to avoid hitting the
+# database if we can get a simple file extension match.
 sub contentType {
-	my $self = shift;
-	my $url  = shift;
+	my ($self, $urlOrObj) = @_;
 
-	my $ct = 'unk';
+	my $defaultType = 'unk';
+	my $contentType = $defaultType;
 
-	# Can't get a content type on a undef url
-	unless (defined $url) {
+	# See if we were handed a track object already, or just a plain url.
+	my $track       = blessed($urlOrObj) && $urlOrObj->can('id') ? $urlOrObj : undef;
+	my $url         = blessed($track) && $track->can('url') ? $track->url : $urlOrObj;
 
-		return wantarray ? ($ct) : $ct;
+	# We can't get a content type on a undef url
+	if (!defined $url) {
+		return $defaultType;
 	}
 
-	$ct = $contentTypeCache{$url};
+	# Cache hit - return immediately.
+	if (defined $contentTypeCache{$url}) {
 
-	if (defined($ct)) {
-		return wantarray ? ($ct, $self->_retrieveTrack($url)) : $ct;
+		return $contentTypeCache{$url};
 	}
 
-	my $track = $self->objectForUrl($url);
-
-	# XXX - exception should go here. Comming soon.
+	# If we have an object - return from that.
 	if (blessed($track) && $track->can('content_type')) {
-		$ct = $track->content_type();
+
+		$contentType = $track->content_type;
+
 	} else {
-		$ct = Slim::Music::Info::typeFromPath($url);
+
+		# Otherwise, try and pull the type from the path name and avoid going to the database.
+		$contentType = Slim::Music::Info::typeFromPath($url);
 	}
 
-	$contentTypeCache{$url} = $ct;
+	# Nothing from the path, and we don't have a valid track object - fetch one.
+	if ((!defined $contentType || $contentType eq $defaultType) && !blessed($track)) {
 
-	return wantarray ? ($ct, $track) : $ct;
+		$track       = $self->objectForUrl($url);
+		$contentType = $track->content_type;
+	}
+
+	# Nothing from the object we already have in the db.
+	if ((!defined $contentType || $contentType eq $defaultType) && blessed($track)) {
+
+		$contentType = Slim::Music::Info::typeFromPath($url);
+	} 
+
+	# Only set the cache if we have a valid contentType
+	if (defined $contentType && $contentType ne $defaultType) {
+
+		$contentTypeCache{$url} = $contentType;
+	}
+
+	return $contentType;
 }
 
 sub objectForUrl {
