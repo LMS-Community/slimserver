@@ -259,7 +259,11 @@ sub artScan {
 
 		my $track = $ds->objectForId('track', $artwork{$album}); 
 
-		$ds->setAlbumArtwork($track);
+		# Make sure we have an object for the url, and it has a thumbnail.	 
+		if (blessed($track) && $track->can('coverArt') && $track->coverArt('thumb')) {
+
+			$ds->setAlbumArtwork($track);
+		}
 
 		delete $artwork{$album};
 	}
