@@ -50,7 +50,15 @@ sub setEventCallback {
 sub init {
 	my $listenerport = $SLIMPROTO_PORT;
 
-	$slimproto_socket = IO::Socket::INET ->new(
+	# Some combinations of Perl / OSes don't define this Macro. Yet it is
+	# near constant on all machines. Define if we don't have it.
+	eval { Socket::IPPROTO_TCP() };
+
+	if ($@) {
+		*Socket::IPPROTO_TCP = sub { return 6 };
+	}
+
+	$slimproto_socket = IO::Socket::INET->new(
 		Proto => 'tcp',
 		LocalAddr => $main::localClientNetAddr,
 		LocalPort => $listenerport,
