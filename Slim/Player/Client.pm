@@ -1164,6 +1164,8 @@ sub resume {
 
 sub flush {}
 
+sub power {}
+
 #
 sub string {
 	my $client = shift;

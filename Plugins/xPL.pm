@@ -597,7 +597,11 @@ sub xplExecuteCallback {
 	}
 
 	my $clientname = validInstance($client->name);
-	my $power = ($client->power()==0 ? 'off' : 'on');
+	my $power = 'off';
+	
+	if ($client->can('power')){
+		$power = ($client->power()==0 ? 'off' : 'on');
+	}
 	
 	if ($command eq 'newclient') {
 		$d_xpl && msg("xPL: xplExecuteCallback for new client\n");
