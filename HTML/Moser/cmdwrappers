@@ -86,27 +86,59 @@
 [%- IF item.title -%]
 <li> / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a></li>
 [%- ELSE -%]
-<li>[% item %]</li>
+<li> / [% item %]</li>
 [%- END -%]
 [%- END %]
 
-[% BLOCK playlistlinks %]
-        <div class="controls">
-          <ul class="songctl">
-            [% WRAPPER moveuplink   %][% PROCESS cmdMoveHRef moveTo = MoveUp   %][% END %]
-            [% WRAPPER movedownlink %][% PROCESS cmdMoveHRef moveTo = MoveDown %][% END %]
-            [% WRAPPER removelink   %][% PROCESS cmdDeleteHRef                 %][% END %]
-          </ul>
-        </div>
+[% BLOCK playlistcontrols %]
+<div class="controls">
+  <ul class="songctl">
+    [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %][% END %]
+    [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %][% END %]
+    [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'             %][% END %]
+  </ul>
+</div>
 [% END %]
 
-[% BLOCK trackinfo %]
-          <span class="songtitle"><a href="status.html?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;player=[% playerURI %]" [% IF item.currentsong %]id="currentsong"[% END %]>[% item.title | html %]</a></span>
-      [%- IF item.album %]
-          [% "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
-      [%- END %]
-      [% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-[% END %]
+[% BLOCK contentcontainer %]
+<div id="[% listid || 'browselist' %]">
+  <ul>
+    [%- content | indent(4) %]
+  </ul>
+</div>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<li class="[% odd ? "odd" : "even" %]">
+  [%- IF anchor %]
+  <a name="[% anchor %]"></a>
+  [%- END %]
+  [%- PROCESS $controls | indent(2) -%]
+  <div class="[% lineclass || 'browseline' %]">
+
+  [%- content | indent(4) %]
+  </div>
+</li>
+[%- END %]
+
+[% BLOCK browsecontrols -%]
+<div class="controls">
+  <ul class="songctl">
+    [% WRAPPER playlink   %][% PROCESS cmdHRef cmdType = "play"   %][% END %]
+    [% WRAPPER insertlink %][% PROCESS cmdHRef cmdType = "insert" %][% END %]
+    [% WRAPPER addlink    %][% PROCESS cmdHRef cmdType = "add"    %][% END %]
+    [% WRAPPER removelink %][% PROCESS cmdHRef cmdType = "remove" %][% END %]
+  </ul>
+</div>
+[%- END %]
+
+[% BLOCK trackinfo -%]
+<span class="songtitle"><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% IF item.currentsong %] id="currentsong"[% END %]>[% item.title | html %]</a></span>
+[% IF item.album %]
+  [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
+[%- END %]
+[% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[%- END %]
 
 [%# This is the end, never put anything below this next END or the FILTER will not work %]
 [% END -%] 

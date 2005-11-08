@@ -5,23 +5,23 @@
       <a [% PROCESS songinfoItemHRef %]>[% IF item.currentsong %]<font class="playingitemtext">[&nbsp;[% END %][% IF not item.currentsong %]&nbsp;&nbsp;&nbsp;[% END %]<font class="itemtext">[% item.title %][% IF item.currentsong %]<font class="playingitemtext">&nbsp;][% END %]</a>
    </td>
    <td align="right"><nobr>[% num = item.num; useStart = 1 %]
-           <a [% PROCESS cmdJumpHRef %]>
+           <a [% PROCESS cmdHRef cmdType = 'jump' %]>
            <font class="actiontext">[% "PLAY" | string %]
            </a>
 	   |
-           <a [% PROCESS cmdMoveHRef moveTo = item.nextsongind %]>
+           <a [% PROCESS cmdHRef cmdType = 'move' p3 = item.nextsongind %]>
 	   <font class="actiontext">[% "NEXT" | string %]
 	   </a>
 	   |
-           <a [% PROCESS cmdMoveHRef moveTo = MoveUp %]>
+           <a [% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp %]>
            <font class="actiontext">[% "UP" | string %]
            </a>
   
-           |<a [% PROCESS cmdMoveHRef moveTo = MoveDown %]>
+           |<a [% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %]>
            <font class="actiontext">[% "DOWN" | string %]
            </a>
    
-           |<a [% PROCESS cmdDeleteHRef %]>
+           |<a [% PROCESS cmdHRef cmdType = 'delete' %]>
            <font class="actiontext">[% "DELETE" | string %]
            </a></td></nobr>
 </tr>

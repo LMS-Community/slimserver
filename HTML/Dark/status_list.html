@@ -15,6 +15,6 @@
 		[% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 </td>
    <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      (<a [% PROCESS cmdDeleteHRef num=item.num useStart=1 %]>[% "DELETE" | string %]</a>)
+      (<a [% PROCESS cmdHRef cmdType = 'delete' num=item.num useStart=1 %]>[% "DELETE" | string %]</a>)
    </td>
 </tr>

@@ -51,19 +51,28 @@ MoveDown = "%2B1"; # +1
 [%- END %]
 
 
-[%  'urlcmdFor' => {
+[%  
+	'urlcmdFor' => {
 					'play'   => 'play',
 					'add'    => 'add',
 					'insert' => 'insert',
 					'remove' => 'deleteitem',
 					}
 					
-	'cmdFor'       => {
+	'cmdFor'    => {
 					'play'   => 'loadtracks',
 					'add'    => 'addtracks',
 					'insert' => 'inserttracks',
 					'remove' => 'deletetracks',
-					} %]
+					} 
+					
+	'numcmdFor' => {
+					'delete' => 'delete',
+					'move'   => 'move',
+					'jump'   => 'jump',
+					}
+
+					%]
 														
 [%# command query params for commands above on remote urls %]
 [% BLOCK cmdRemoteURLQuery -%]
@@ -75,24 +84,21 @@ p0=playlist&amp;p1=[% urlcmdFor.$cmdType %]&amp;p2=[% itemobj.url | uri %][% IF 
 command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 [%- END %]
 
+[%# command query params for commands acting on the current playlist using numeric references %]
+[% BLOCK cmdNumericQuery -%]
+p0=playlist&amp;p1=[% numcmdFor.$cmdType %]&amp;p2=[% num %][% IF p3 %]&amp;p3=[% p3 %][% END %][% IF useStart and start %]&amp;start=[% start %][% END %]
+[%- END %]
+
 [%# use this to add/play/insert/remove tracks and remote URLs %]
 [% BLOCK cmdHRef -%]
-href="[% webroot %][% statusroot %]?[% IF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir'); PROCESS cmdRemoteURLQuery; ELSE; PROCESS cmdLocalQuery; END; %]&amp;player=[% playerURI %]"
-[%- END %]
-
-[%# use this to make the item at num the current item %]
-[% BLOCK cmdJumpHRef -%]
-href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% num %]&amp;player=[% playerURI %]"
-[%- END %]
-
-[%# use this to move the item at num to moveTo (use MoveUp and MoveDown to move a single position %]
-[% BLOCK cmdMoveHRef -%]
-href="[% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% num %]&amp;p3=[% moveTo %]&amp;player=[% playerURI %][% IF useStart and start %]&amp;start=[% start %][% END %]"
-[%- END %]
-
-[%# use this to delete the item at position num from the playlist %]
-[% BLOCK cmdDeleteHRef -%]
-href="[% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% num %]&amp;player=[% playerURI %][% IF useStart and start %]&amp;start=[% start %][% END %]"
+href="[% webroot %][% statusroot %]?[% 
+	IF numcmdFor.$cmdType; # better way to determine this?
+		PROCESS cmdNumericQuery;
+	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		PROCESS cmdRemoteURLQuery;
+	ELSE;
+		PROCESS cmdLocalQuery;
+	END; %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the album of item %]

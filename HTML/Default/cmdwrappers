@@ -1,16 +1,22 @@
 [%- FILTER null %]
 [% statusroot = 'status_header.html' %]
 
-[% BLOCK playlink %]
+[% BLOCK cmdlink %]
 <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a></nobr>
+	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a></nobr>
 </td>
 [% END %]
 
+[% BLOCK playlink %]
+	[% PROCESS cmdlink
+		cmdtitle = "PLAY"
+		cmdimage = "b_play" %]
+[% END %]
+
 [% BLOCK addlink %]
-<td  [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
-	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a></nobr>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdimage = "b_add" %]
 [% END %]
 
 [% BLOCK descendlink %]
@@ -23,9 +29,9 @@
 [% END %]
 
 [% BLOCK removelink %]
-	<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
-		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_delete.gif" width=13 height=13 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
-	</td>
+	[% PROCESS cmdlink
+		cmdtitle = "DELETE"
+		cmdimage = "b_delete" %]
 [% END %]
 
 [% BLOCK listitem %]
@@ -43,15 +49,15 @@
 END %]
 
 [% BLOCK moveuplink %]
-<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_up.gif" width=13 height=13 alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "MOVEUP"
+		cmdimage = "b_up" %]
 [% END %]
 
 [% BLOCK movedownlink %]
-<td valign="center" align="right" width="13" class="[% odd ? "odd" : "even" %]">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/b_down.gif" width=13 height=13 alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "MOVEDOWN"
+		cmdimage = "b_down" %]
 [% END %]
 
 [% BLOCK scanwarning -%]
@@ -62,25 +68,34 @@ END %]
 [% END %]
 
 [% BLOCK crumblist -%]
-[%- IF NOT noHomeLink %][% PROCESS homelink %][% END -%]
-[%- FOREACH item = pwd_list.list -%]
-  [%- IF not noHomeLink or not loop.first %] / [% END -%]
-  [%- PROCESS crumblistitem -%]
-[%- END -%]
+	[%- IF NOT noHomeLink %][% PROCESS homelink %][% END -%]
+	[%- FOREACH item = pwd_list.list -%]
+		[%- IF not noHomeLink or not loop.first %] / [% END -%]
+		[%- PROCESS crumblistitem -%]
+	[%- END -%]
 [%- END %]
 
 [% BLOCK crumblistitem -%]
-[%- IF item.title -%]
+	[%- IF item.title -%]
 <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
-[%- ELSE -%]
-[% item | replace('^\s*/','') %]
-[%- END -%]
+	[%- ELSE -%]
+		[%- item | replace('^\s*/','') %]
+	[%- END -%]
 [%- END %]
 
-[% BLOCK playlistlinks %]
-	[% WRAPPER movedownlink %][% PROCESS cmdMoveHRef moveTo = MoveDown %][% END %]
-	[% WRAPPER moveuplink   %][% PROCESS cmdMoveHRef moveTo = MoveUp   %][% END %]
-	[% WRAPPER removelink   %][% PROCESS cmdDeleteHRef                 %][% END %]
+[% BLOCK playlistcontrols %]
+	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %][% END %]
+	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %][% END %]
+	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'             %][% END %]
+[% END %]
+
+[% BLOCK browsecontrols %]
+	[% SET class = odd ? 'odd':'even'; width='13' height='13' header='1' target='status' %]
+	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+	[% FOREACH mixer = mixerlinks.values.sort %]
+		[% PROCESS $mixer %]
+	[% END %]
 [% END %]
 
 [% BLOCK trackinfo %]
@@ -90,7 +105,7 @@ END %]
 		[% ELSE %]
 		<span class="exlisting">
 		[% END %]
-			<a [% PROCESS cmdJumpHRef num = item.num %] target="status">[% item.title | html %]</a>
+			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a>
 		</span>
 
 		<span class="exboldnowplaying"></span>

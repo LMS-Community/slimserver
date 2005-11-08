@@ -2,7 +2,7 @@
 	<td [% IF item.currentsong %]class="listing2" ><a name="currentsong"></a>[% ELSE %]class="listing"><a name="[% item.num %]"></a>[% END %]
 	[% PROCESS trackinfo %]
 	</td>
-	[% PROCESS playlistlinks
+	[% PROCESS playlistcontrols
 		isCurrent = item.currentsong
 		num = item.num
 		useStart = 1  %]

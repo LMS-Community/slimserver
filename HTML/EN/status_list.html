@@ -3,7 +3,7 @@
   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
     [% PROCESS trackinfo %]
   </td>
-	[% PROCESS playlistlinks
+	[% PROCESS playlistcontrols
 		odd = item.odd
 		num = item.num
 		useStart = 1 %]

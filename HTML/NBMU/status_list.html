@@ -1,15 +1,15 @@
 <tr class="[% IF item.odd; "odd"; END %][% IF not item.odd; "even"; END %]" cellpadding="0">
 
 <td class="nowrap" width="72px">[% num = item.num; useStart = 1 %]
-<a class="linkbtn" [% PROCESS cmdMoveHRef moveTo = MoveUp %]>&uarr;</a>
-<a class="linkbtn" [% PROCESS cmdMoveHRef moveTo = MoveDown %]>&darr;</a>
-<a class="linkbtn" [% PROCESS cmdDeleteHRef %]>&times;</a>
+<a class="linkbtn" [% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %]>&uarr;</a>
+<a class="linkbtn" [% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %]>&darr;</a>
+<a class="linkbtn" [% PROCESS cmdHRef cmdType = 'delete'             %]>&times;</a>
 </td>
 
 <td>&nbsp;</td>
 <td>
 
-<a [% PROCESS cmdJumpHRef num = item.num %] [% IF item.currentsong %]id="currentsong"[% END %]>[% item.title | html %]</a>
+<a [% PROCESS cmdHRef cmdType = 'jump' %] [% IF item.currentsong %]id="currentsong"[% END %]>[% item.title | html %]</a>
 
 [% IF item.itemobj.album; "FROM" | string; END %]
 <em><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></em>

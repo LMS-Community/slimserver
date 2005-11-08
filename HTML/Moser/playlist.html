@@ -24,15 +24,25 @@
  [%- IF playlist_header %]
   <div id="playlist_header">[% playlist_header %][% "COLON" | string %]</div>
  [%- END %]
-  <div id="playlist">
-  [%- IF playlist_items %]
-    <ul>
-[% FOREACH item = playlist_items; PROCESS status_list.html; END -%]
-    </ul>
-  [%- ELSE %]
-    <p>[% "EMPTY" | string %]<p>
+ [%- IF playlist_items %]
+  [%- FILTER indent(2) %]
+   [%- WRAPPER contentcontainer listid = 'playlist' %]
+    [%- FOREACH item = playlist_items %]
+
+     [%- WRAPPER contentitem
+	     lineclass = 'songline'
+	     num = item.num
+	     useStart = 1
+	     controls = 'playlistcontrols'
+	     odd = item.odd %]
+	  [%- PROCESS trackinfo -%]
+     [%- END %]
+    [%- END %]
+   [%- END %]
   [%- END %]
-  </div>
+ [%- ELSE %]
+    <div id="playlist"><p>[% "EMPTY" | string %]<p></div>
+ [%- END %]
  [%- IF playlist_pagebar %]
   <div id="bottomplaylistpagebar" class="pagebar">
     <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
