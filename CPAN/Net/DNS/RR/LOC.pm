@@ -1,8 +1,11 @@
 package Net::DNS::RR::LOC;
 #
-# $Id: LOC.pm,v 1.1 2004/02/16 17:30:01 daniel Exp $
+# $Id: LOC.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(
         @ISA $VERSION @poweroften $reference_alt
         $reference_latlon $conv_sec $conv_min $conv_deg
@@ -10,11 +13,8 @@ use vars qw(
         $default_horiz_pre $default_vert_pre
 );
 
-use Net::DNS;
-use Net::DNS::Packet;
-
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 # Powers of 10 from 0 to 9 (used to speed up calculations).
 @poweroften = (1, 10, 100, 1_000, 10_000, 100_000, 1_000_000,
@@ -61,13 +61,13 @@ sub new {
 			++$offset;
 	
 			my ($latitude) = unpack("\@$offset N", $$data);
-			$offset += &Net::DNS::INT32SZ;
+			$offset += Net::DNS::INT32SZ();
 	
 			my ($longitude) = unpack("\@$offset N", $$data);
-			$offset += &Net::DNS::INT32SZ;
+			$offset += Net::DNS::INT32SZ();
 	
 			my ($altitude) = unpack("\@$offset N", $$data);
-			$offset += &Net::DNS::INT32SZ;
+			$offset += Net::DNS::INT32SZ();
 	
 			$self->{"size"}      = $size;
 			$self->{"horiz_pre"} = $horiz_pre;
@@ -347,7 +347,7 @@ below the WGS 84 reference spheroid used by GPS.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

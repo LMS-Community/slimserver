@@ -1,14 +1,17 @@
 package Net::DNS::RR::NULL;
 #
-# $Id: NULL.pm,v 1.1 2004/02/16 17:30:01 daniel Exp $
+# $Id: NULL.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(@ISA $VERSION);
 
 use Net::DNS::Packet;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -48,7 +51,7 @@ Returns the record's data section as binary data.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

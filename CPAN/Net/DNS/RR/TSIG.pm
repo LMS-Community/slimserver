@@ -1,11 +1,13 @@
 package Net::DNS::RR::TSIG;
 #
-# $Id: TSIG.pm,v 1.1 2004/02/16 17:30:03 daniel Exp $
+# $Id: TSIG.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(@ISA $VERSION);
 
-use Net::DNS::Packet;
 use Digest::HMAC_MD5;
 use MIME::Base64;
 
@@ -13,7 +15,7 @@ use constant DEFAULT_ALGORITHM => "HMAC-MD5.SIG-ALG.REG.INT";
 use constant DEFAULT_FUDGE     => 300;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 # a signing function for the HMAC-MD5 algorithm. This can be overridden using
 # the sign_func element
@@ -37,16 +39,16 @@ sub new {
 
 		my ($time_high, $time_low) = unpack("\@$offset nN", $$data);
 		$self->{"time_signed"} = $time_low;	# bug
-		$offset += &Net::DNS::INT16SZ + &Net::DNS::INT32SZ;
+		$offset += Net::DNS::INT16SZ() + Net::DNS::INT32SZ();
 
 		@{$self}{qw(fudge mac_size)} = unpack("\@$offset nn", $$data);
-		$offset += &Net::DNS::INT16SZ + &Net::DNS::INT16SZ;
+		$offset += Net::DNS::INT16SZ() + Net::DNS::INT16SZ();
 
 		$self->{"mac"} = substr($$data, $offset, $self->{'mac_size'});
 		$offset += $self->{'mac_size'};
 
 		@{$self}{qw(original_id error other_len)} = unpack("\@$offset nnn", $$data);
-		$offset += &Net::DNS::INT16SZ * 3;
+		$offset += Net::DNS::INT16SZ() * 3;
 
 		my $odata = substr($$data, $offset, $self->{'other_len'});
 		my ($odata_high, $odata_low) = unpack("nN", $odata);
@@ -329,7 +331,7 @@ appropriate sign_func.
 
 Copyright (c) 2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

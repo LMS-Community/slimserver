@@ -1,14 +1,15 @@
 package Net::DNS::RR::Unknown;
 #
-# $Id: Unknown.pm,v 1.1 2004/02/16 17:30:04 daniel Exp $
+# $Id: Unknown.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(@ISA $VERSION);
 
-use Net::DNS;
-
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -16,25 +17,35 @@ sub new {
 	my $length = $self->{'rdlength'};
 	
 	if ($length > 0) {
-	    my $hex = unpack('H*', substr($$data, $offset,$length));
-	    $self->{'rdata'} = "\\# $length $hex";
+		$self->{'rdata'}    = substr($$data, $offset,$length);
+		$self->{'rdatastr'} = "\\# $length " . unpack('H*',  $self->{'rdata'});
 	}
-
+	
 	return bless $self, $class;
 }
 
 
 sub rdatastr {
 	my $self = shift;
-	return defined $self->{'rdata'} ? $self->{'rdata'} : '# NODATA';
-
+	
+	if (exists $self->{'rdatastr'}) {
+		return $self->{'rdatastr'};
+	} else {
+		if (exists $self->{"rdata"}){
+			my $data= $self->{'rdata'};
+			
+			return  "\\# ". length($data) . "  " . unpack('H*',  $data);
+		}
+	}
+	
+	return "#NO DATA";
 }
 
-sub rr_rdata {
-	my $self  = shift;
-	my $rdata = '';
-	return $rdata;
-}
+
+# sub rr_rdata is inherited from RR.pm. Note that $self->{'rdata'}
+# should always be defined
+
+
 
 1;
 __END__
@@ -57,7 +68,7 @@ Class for dealing with unknown RR types (RFC3597)
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 Portions Copyright (c) 2003  Olaf M. Kolkman, RIPE NCC.
 

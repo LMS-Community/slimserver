@@ -1,17 +1,18 @@
 package Net::DNS::RR::OPT;
 #
-# $Id: OPT.pm,v 1.1 2004/02/16 17:30:01 daniel Exp $
+# $Id: OPT.pm 393 2005-07-01 19:21:52Z olaf $
 #
 
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(@ISA $VERSION %extendedrcodesbyname %extendedrcodesbyval $EDNSVERSION);
 
-use Socket;
-use Net::DNS;
 use Carp;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 393 $)[1];
 
 $EDNSVERSION = 0;
 
@@ -63,6 +64,7 @@ sub new {
 
 
 
+
 sub new_from_string {
     my ($class, $self ) = @_;
     
@@ -87,7 +89,7 @@ sub new_from_hash {
 	$self->{"extendedrcode"} = 0 unless exists $self->{"extendedrcode"};
 	
 	$self->{"ednsflags"}   = 0 unless exists $self->{"ednsflags"};
-	$self->{"ednsversion"} =  $Net::DNS::RR::OPT::EDNSVERSION unless exists $self->{"ednsversion"};
+	$self->{"ednsversion"} = $EDNSVERSION unless exists $self->{"ednsversion"};
 	$self->{"ttl"}= unpack ("N", 
 		pack("C", $self->{"extendedrcode"}) .
 		pack("C", $self->{"ednsversion"})  .
@@ -102,6 +104,7 @@ sub new_from_hash {
 	return bless $self, $class;
 
 }
+
 
 
 
@@ -137,6 +140,44 @@ sub rr_rdata {
 	
 	return $rdata;
 }
+
+
+
+
+
+
+
+sub do{
+    my $self=shift;
+    return ( 0x8000 & $self->{"ednsflags"} );
+}
+
+
+
+sub set_do{
+    my $self=shift;
+    return $self->{"ednsflags"} = ( 0x8000 | $self->{"ednsflags"} );
+
+}
+
+
+
+sub clear_do{
+    my $self=shift;
+    return $self->{"ednsflags"} = ( ~0x8000 & $self->{"ednsflags"} );
+
+}
+
+
+
+sub size {
+    my $self=shift;
+    my $size=shift;
+    $self->{"class"}=$size if defined($size);
+    return $self->{"class"};
+}
+
+
 
 
 1;
@@ -185,6 +226,21 @@ see section 4.4 of RFC 2671
 If optioncode is left undefined then we do not expect any RDATA.
 
 The defaults are no rdata.   
+
+
+=head2 do, set_do, clear_do
+
+    $opt->set_do;
+
+Reads, sets and clears the do flag. (first bit in the ednssflags);
+
+
+=head2 size
+
+    $opt->size(1498);
+    print "Packet size:". $opt->size() ;
+ 
+Sets or gets the packet size.
 
 
 =head1 TODO

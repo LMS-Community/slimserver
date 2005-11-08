@@ -1,14 +1,18 @@
 package Net::DNS::Question;
 #
-# $Id: Question.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Question.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
+
 use vars qw($VERSION $AUTOLOAD);
 
 use Carp;
 use Net::DNS;
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 =head1 NAME
 
@@ -68,6 +72,9 @@ sub new {
 
 	bless \%self, $class;
 }
+
+
+
 
 #
 # Some people have reported that Net::DNS dies because AUTOLOAD picks up
@@ -181,7 +188,7 @@ sub data {
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

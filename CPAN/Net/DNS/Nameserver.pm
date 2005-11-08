@@ -1,20 +1,55 @@
 package Net::DNS::Nameserver;
 #
-# $Id: Nameserver.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Nameserver.pm 460 2005-07-15 19:18:22Z olaf $
 #
+
+
+BEGIN { 
+    eval { require bytes; }
+} 
+
 
 use Net::DNS;
 use IO::Socket;
+use IO::Socket::INET;
 use IO::Select;
 use Carp qw(cluck);
 
 use strict;
-use vars qw($VERSION);
+use vars qw($VERSION
+ 	    $has_inet6
+ 	    @DEFAULT_ADDR       
+ 	    $DEFAULT_PORT
+ 	    );
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 460 $)[1];
 
-use constant DEFAULT_ADDR => INADDR_ANY;
-use constant DEFAULT_PORT => 53;
+#@DEFAULT_ADDR is set in the BEGIN block 
+$DEFAULT_PORT=53;
+ 	    
+ 
+ 
+BEGIN {
+    my $force_inet4_only=0;
+    
+    if ($force_inet4_only){
+ 	$has_inet6=0;
+    }elsif ( eval {require Socket6;} &&
+ 	     # INET6 more recent than 2.01 will not work; sorry.
+ 	     eval {require IO::Socket::INET6; IO::Socket::INET6->VERSION("2.00");}) {
+ 	import Socket6;
+ 	$has_inet6=1;
+ 	no  strict 'subs';
+ 	@DEFAULT_ADDR= ( 0  );
+    }else{
+ 	$has_inet6=0;
+ 	@DEFAULT_ADDR= ( INADDR_ANY );
+    }
+}
+
+
+#------------------------------------------------------------------------------
+
 
 #------------------------------------------------------------------------------
 # Constructor.
@@ -23,63 +58,141 @@ use constant DEFAULT_PORT => 53;
 sub new {
 	my ($class, %self) = @_;
 
-	my $addr = $self{"LocalAddr"} || inet_ntoa(DEFAULT_ADDR);
-	my $port = $self{"LocalPort"} || DEFAULT_PORT;
 
 	if (!$self{"ReplyHandler"} || !ref($self{"ReplyHandler"})) {
 		cluck "No reply handler!";
 		return;
 	}
 
-	#--------------------------------------------------------------------------
-	# Create the TCP socket.
-	#--------------------------------------------------------------------------
 
-	print "creating TCP socket..." if $self{"Verbose"};
+ 	my $addr;
+ 	my $port;
+ 	
+ 	# make sure we have an array.
+ 	$self{"LocalAddr"}= \@DEFAULT_ADDR unless defined $self{"LocalAddr"};
+ 	$self{"LocalAddr"}= [ $self{"LocalAddr"} ] unless (ref($self{"LocalAddr"})eq "ARRAY");
+  
+ 	my @localaddresses = @{$self{"LocalAddr"}};
+ 	
+  
+  
+ 	my @sock_tcp;   # All the TCP sockets we will listen to.
+ 	my @sock_udp;   # All the UDP sockets we will listen to.
+  
+ 	foreach my $localaddress (@localaddresses){
+ 	    print "Dealing with $localaddress...\n" if $self{"Verbose"};
+  
+ 	    my $sock_tcp ;
+  
+ 	    if ($has_inet6){
+  
+ 		$addr = $localaddress;
+ 		$port = $self{"LocalPort"} || $DEFAULT_PORT;
+  
+  
+ 		#--------------------------------------------------------------------------
+ 		# Create the IPv4/IPv6 ONLY TCP socket.
+ 		#--------------------------------------------------------------------------
+ 		
+ 		print "creating TCP socket for $localaddress" if $self{"Verbose"};
+ 
+ 		$sock_tcp  = IO::Socket::INET6->new(
+ 						    LocalAddr => $addr,
+ 						    LocalPort => $port,
+ 						    Listen	  => 5,
+ 						    Proto	  => "tcp",
+ 						    Reuse	  => 1,
+ 						    );
+ 
+ 
+ 
+ 		if (! $sock_tcp) {
+ 		    cluck "couldn't create TCP socket: $!";
+ 		    return;
+ 		}
+ 		push @sock_tcp, $sock_tcp;
+ 		print "done.\n" if $self{"Verbose"};
+ 		
+ 		
+ 	    }else{
+ 		$addr = $localaddress || inet_ntoa($DEFAULT_ADDR[0]);
+ 		$port = $self{"LocalPort"} || $DEFAULT_PORT;
+ 
+ 		
+ 		#--------------------------------------------------------------------------
+ 		# Create the IPv4 ONLY TCP socket.
+ 		#--------------------------------------------------------------------------
+ 		
+ 		print "creating TCP socket for $localaddress" if $self{"Verbose"};
+ 
+ 
+ 		$sock_tcp  = IO::Socket::INET->new(
+ 						   LocalAddr => $addr,
+ 						   LocalPort => $port,
+ 						   Listen	  => 5,
+ 						   Proto	  => "tcp",
+ 						   Reuse	  => 1,
+ 						   );
+ 		
+ 		
+ 		if (! $sock_tcp) {
+ 		    cluck "couldn't create TCP socket: $!";
+ 		    return;
+ 		}
+ 		push @sock_tcp, $sock_tcp;
+ 		print "done.\n" if $self{"Verbose"};
+ 		
+  
+  
+ 	    }
+ 	    
+ 	    
+ 	    
+ 	    #--------------------------------------------------------------------------
+ 	    # Create the UDP Socket.
+ 	    #--------------------------------------------------------------------------
+ 	    
+ 	    print "creating UDP socket..." if $self{"Verbose"};
+ 	    
+ 	    my $sock_udp;
+ 	    if ($has_inet6){
+ 		$sock_udp = IO::Socket::INET6->new(
+ 						   LocalAddr => $addr,
+ 						   LocalPort => $port,
+ 						   Proto => "udp",
+ 						   );
+ 		
+ 	    }else{
+ 		$sock_udp = IO::Socket::INET->new(
+ 						  LocalAddr => $addr,
+ 						  LocalPort => $port,
+ 						  Proto => "udp",
+ 						  );
+ 	    }
+ 	    if (!$sock_udp) {
+ 		cluck "couldn't create UDP socket: $!";
+ 		return;
+ 	    }
+ 	    
 
-	my $sock_tcp = IO::Socket::INET->new(
-		LocalAddr => $addr,
-		LocalPort => $port,
-		Listen	  => 5,
-		Proto	  => "tcp",
-		Reuse	  => 1,
-	);
-
-	if (!$sock_tcp) {
-		cluck "couldn't create TCP socket: $!";
-		return;
-	}
-
-	print "done.\n" if $self{"Verbose"};
-
-	#--------------------------------------------------------------------------
-	# Create the UDP Socket.
-	#--------------------------------------------------------------------------
-
-	print "creating UDP socket..." if $self{"Verbose"};
-
-	my $sock_udp = IO::Socket::INET->new(
-		LocalAddr => $addr,
-		LocalPort => $port,
-		Proto => "udp",
-	);
-
-	if (!$sock_udp) {
-		cluck "couldn't create UDP socket: $!";
-		return;
-	}
-
-	print "done.\n" if $self{"Verbose"};
-
-
-	#--------------------------------------------------------------------------
-	# Create the Select object.
-	#--------------------------------------------------------------------------
-
-	$self{"select"} = IO::Select->new;
-	$self{"select"}->add($sock_tcp);
-	$self{"select"}->add($sock_udp);
-
+ 	    print "done.\n" if $self{"Verbose"};
+ 	    push @sock_udp, $sock_udp;
+ 	}
+ 	
+  	#--------------------------------------------------------------------------
+  	# Create the Select object.
+  	#--------------------------------------------------------------------------
+  
+  	$self{"select"} = IO::Select->new;
+ 
+ 	foreach my $sock_tcp  (@sock_tcp){
+ 	    $self{"select"}->add($sock_tcp);
+ 	}
+ 
+ 	foreach my $sock_udp  (@sock_udp){
+ 	    $self{"select"}->add($sock_udp);
+ 	}
+  
 	#--------------------------------------------------------------------------
 	# Return the object.
 	#--------------------------------------------------------------------------
@@ -118,7 +231,7 @@ sub make_reply {
 	my $qclass = $qr ? $qr->qclass : "ANY";
 	my $qtype  = $qr ? $qr->qtype  : "ANY";
 	
-	$reply = Net::DNS::Packet->new($qname, $qclass, $qtype);
+	$reply = Net::DNS::Packet->new($qname, $qtype, $qclass);
 	
 	if ($query->header->opcode eq "QUERY") {
 		if ($query->header->qdcount == 1) {
@@ -216,9 +329,13 @@ sub udp_connection {
 	my ($self, $sock) = @_;
 
 	my $buf = "";
-	my $peer_sockaddr         = $sock->recv($buf, &Net::DNS::PACKETSZ);
-	my ($peerport, $peeraddr) = sockaddr_in($peer_sockaddr);
-	my $peerhost              = inet_ntoa($peeraddr);
+
+ 	my ($peerhost,$peerport);
+ 
+ 	$sock->recv($buf, &Net::DNS::PACKETSZ);
+ 
+ 	print "UDP connection from ", $sock->peerhost, ":", $sock->peerport, "\n"
+ 	  if $self->{"Verbose"};
 
 	print "UDP connection from $peerhost:$peerport\n" if $self->{"Verbose"};
 
@@ -292,12 +409,32 @@ objects.  See L</EXAMPLE> for an example.
 	Verbose		 => 1
  );
 
+
+
+ my $ns = Net::DNS::Nameserver->new(
+	LocalAddr	 => ['::1' , '127.0.0.1' ],
+	LocalPort	 => "5353",
+	ReplyHandler => \&reply_handler,
+	Verbose		 => 1
+ );
+
 Creates a nameserver object.  Attributes are:
 
   LocalAddr		IP address on which to listen.	Defaults to INADDR_ANY.
-  LocalPort		Port on which to listen.  Defaults to 53.
-  ReplyHandler	Reference to reply-handling subroutine.	 Required.
-  Verbose		Print info about received queries.	Defaults to 0 (off).
+  LocalPort		Port on which to listen.  	Defaults to 53.
+  ReplyHandler		Reference to reply-handling 
+			subroutine			Required.
+  Verbose		Print info about received 
+			queries.			Defaults to 0 (off).
+
+
+The LocalAddr attribute may alternatively be specified as a list of IP
+addresses to liten to. 
+
+If IO::Socket::INET6 and Socket6 are available on the system you can
+also list IPv6 addresses and the default is '0' (listen on all interfaces on
+IPv6 and IPv4);
+
 
 The ReplyHandler subroutine is passed the query name, query class,
 query type and optionally an argument containing header bit settings
@@ -381,11 +518,21 @@ additional filtering on its basis may be applied.
 
 Net::DNS::Nameserver objects can handle only one query at a time.
 
+Limitations in perl 5.8.6 makes it impossible to guarantee that
+replies to UDP queries from Net::DNS::Nameserver are sent from the
+IP-address they were received on. This is a problem for machines with
+multiple IP-addresses and causes violation of RFC2181 section 4.
+
+
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2005 O.M, Kolkman, RIPE NCC.
+ 
+
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

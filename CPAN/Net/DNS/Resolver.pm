@@ -1,20 +1,20 @@
 package Net::DNS::Resolver;
 #
-# $Id: Resolver.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Resolver.pm 290 2005-05-20 11:42:59Z olaf $
 #
 
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 290 $)[1];
 
 BEGIN {
 	if ($^O eq 'MSWin32') {
 		require Net::DNS::Resolver::Win32;
 		@ISA = qw(Net::DNS::Resolver::Win32);
 	} elsif ($^O eq 'cygwin') {
-		 require Net::DNS::Resolver::Cygwin;
-		 @ISA = qw(Net::DNS::Resolver::Cygwin);
+		require Net::DNS::Resolver::Cygwin;
+		@ISA = qw(Net::DNS::Resolver::Cygwin);
 	} else {   
 		require Net::DNS::Resolver::UNIX;
 		@ISA = qw(Net::DNS::Resolver::UNIX);
@@ -74,7 +74,7 @@ recursion is desired, etc.
   	debug       => 1,
   );
 
-Returns a resolver object.  If given no argurments, C<new()> returns an
+Returns a resolver object.  If given no arguments, C<new()> returns an
 object configured to your system's defaults.  On UNIX systems the 
 defaults are read from the following files, in the order indicated:
 
@@ -174,58 +174,6 @@ An array reference of domains.
 For more information on any of these options, please consult the method
 of the same name.
 
-=head2 print
-
-    $res->print;
-
-Prints the resolver state on the standard output.
-
-=head2 string
-
-    print $res->string;
-
-Returns a string representation of the resolver state.
-
-=head2 searchlist
-
-    @searchlist = $res->searchlist;
-    $res->searchlist('example.com', 'a.example.com', 'b.example.com');
-
-Gets or sets the resolver search list.
-
-=head2 nameservers
-
-    @nameservers = $res->nameservers;
-    $res->nameservers('192.168.1.1', '192.168.2.2', '192.168.3.3');
-
-Gets or sets the nameservers to be queried.
-
-=head2 port
-
-    print 'sending queries to port ', $res->port, "\n";
-    $res->port(9732);
-
-Gets or sets the port to which we send queries.  This can be useful
-for testing a nameserver running on a non-standard port.  The
-default is port 53.
-
-=head2 srcport
-
-    print 'sending queries from port ', $res->srcport, "\n";
-    $res->srcport(5353);
-
-Gets or sets the port from which we send queries.  The default is 0,
-meaning any port.
-
-=head2 srcaddr
-
-    print 'sending queries from address ', $res->srcaddr, "\n";
-    $res->srcaddr('192.168.1.1');
-
-Gets or sets the source address from which we send queries.  Convenient
-for forcing queries out a specific interfaces on a multi-homed host.
-The default is 0.0.0.0, meaning any local address.
-
 =head2 search
 
     $packet = $res->search('mailhost');
@@ -259,8 +207,9 @@ The record type and class can be omitted; they default to A and
 IN.  If the name looks like an IP address (4 dot-separated numbers),
 then an appropriate PTR query will be performed.
 
-Returns a C<Net::DNS::Packet> object, or C<undef> if no answers
-were found.
+Returns a "Net::DNS::Packet" object, or "undef" if no answers were
+found.  If you need to examine the response packet whether it contains
+any answers or not, use the send() method instead.
 
 =head2 query
 
@@ -275,11 +224,12 @@ applied.  If the name doesn't contain any dots and B<defnames>
 is true then the default domain will be appended.
 
 The record type and class can be omitted; they default to A and
-IN.  If the name looks like an IP address (4 dot-separated numbers),
+IN.  If the name looks like an IP address (IPv4 or IPv6),
 then an appropriate PTR query will be performed.
 
-Returns a C<Net::DNS::Packet> object, or C<undef> if no answers
-were found.
+Returns a "Net::DNS::Packet" object, or "undef" if no answers were
+found.  If you need to examine the response packet whether it contains
+any answers or not, use the send() method instead.
 
 =head2 send
 
@@ -293,62 +243,13 @@ nor the default domain will be appended.
 
 The argument list can be either a C<Net::DNS::Packet> object or a list
 of strings.  The record type and class can be omitted; they default to
-A and IN.  If the name looks like an IP address (4 dot-separated numbers),
+A and IN.  If the name looks like an IP address (Ipv4 or IPv6),
 then an appropriate PTR query will be performed.
 
 Returns a C<Net::DNS::Packet> object whether there were any answers or not.
 Use C<< $packet->header->ancount >> or C<< $packet->answer >> to find out
 if there were any records in the answer section.  Returns C<undef> if there
 was an error.
-
-=head2 bgsend
-
-    $socket = $res->bgsend($packet_object);
-    $socket = $res->bgsend('mailhost.example.com');
-    $socket = $res->bgsend('example.com', 'MX');
-    $socket = $res->bgsend('user.passwd.example.com', 'TXT', 'HS');
-
-Performs a background DNS query for the given name, i.e., sends a
-query packet to the first nameserver listed in C<< $res->nameservers >>
-and returns immediately without waiting for a response.  The program
-can then perform other tasks while waiting for a response from the 
-nameserver.
-
-The argument list can be either a C<Net::DNS::Packet> object or a list
-of strings.  The record type and class can be omitted; they default to
-A and IN.  If the name looks like an IP address (4 dot-separated numbers),
-then an appropriate PTR query will be performed.
-
-Returns an C<IO::Socket::INET> object.  The program must determine when
-the socket is ready for reading and call C<< $res->bgread >> to get
-the response packet.  You can use C<< $res->bgisready >> or C<IO::Select>
-to find out if the socket is ready before reading it.
-
-=head2 bgread
-
-    $packet = $res->bgread($socket);
-    undef $socket;
-
-Reads the answer from a background query (see L</bgsend>).  The argument
-is an C<IO::Socket> object returned by C<bgsend>.
-
-Returns a C<Net::DNS::Packet> object or C<undef> on error.
-
-The programmer should close or destroy the socket object after reading it.
-
-=head2 bgisready
-
-    $socket = $res->bgsend('foo.example.com');
-    until ($res->bgisready($socket)) {
-	# do some other processing
-    }
-    $packet = $res->bgread($socket);
-    $socket = undef;
-
-Determines whether a socket is ready for reading.  The argument is
-an C<IO::Socket> object returned by C<< $res->bgsend >>.
-
-Returns true if the socket is ready, false if not.
 
 =head2 axfr
 
@@ -371,13 +272,13 @@ See also L</axfr_start> and L</axfr_next>.
 Here's an example that uses a timeout:
 
     $res->tcp_timeout(10);
-    @zone = $res->axfr('example.com');
+    my @zone = $res->axfr('example.com');
+
     if (@zone) {
-        foreach $rr (@zone) {
+        foreach my $rr (@zone) {
             $rr->print;
         }
-    }
-    else {
+    } else {
         print 'Zone transfer failed: ', $res->errorstring, "\n";
     }
 
@@ -391,15 +292,19 @@ Starts a zone transfer from the first nameserver listed in C<nameservers>.
 If the zone is omitted, it defaults to the first zone listed in the resolver's
 search list.  If the class is omitted, it defaults to IN.
 
-Returns the C<IO::Socket::INET> object that will be used for reading, or
-C<undef> on error.
+B<IMPORTANT>:
+
+This method currently returns the C<IO::Socket::INET> object that will
+be used for reading, or C<undef> on error.  DO NOT DEPEND ON C<axfr_next()>
+returning a socket object.  THIS WILL CHANGE in future releases.
 
 Use C<axfr_next> to read the zone records one at a time.
 
 =head2 axfr_next
 
     $res->axfr_start('example.com');
-    while ($rr = $res->axfr_next) {
+
+    while (my $rr = $res->axfr_next) {
 	    $rr->print;
     }
 
@@ -410,9 +315,119 @@ SOA record that terminates the zone transfer is not returned.
 
 See also L</axfr>.
 
+=head2 nameservers
+
+    @nameservers = $res->nameservers;
+    $res->nameservers('192.168.1.1', '192.168.2.2', '192.168.3.3');
+
+Gets or sets the nameservers to be queried.
+
+Also see the IPv6 transport notes below    
+
+=head2 print
+
+    $res->print;
+
+Prints the resolver state on the standard output.
+
+=head2 string
+
+    print $res->string;
+
+Returns a string representation of the resolver state.
+
+=head2 searchlist
+
+    @searchlist = $res->searchlist;
+    $res->searchlist('example.com', 'a.example.com', 'b.example.com');
+
+Gets or sets the resolver search list.
+
+=head2 port
+
+    print 'sending queries to port ', $res->port, "\n";
+    $res->port(9732);
+
+Gets or sets the port to which we send queries.  This can be useful
+for testing a nameserver running on a non-standard port.  The
+default is port 53.
+
+=head2 srcport
+
+    print 'sending queries from port ', $res->srcport, "\n";
+    $res->srcport(5353);
+
+Gets or sets the port from which we send queries.  The default is 0,
+meaning any port.
+
+=head2 srcaddr
+
+    print 'sending queries from address ', $res->srcaddr, "\n";
+    $res->srcaddr('192.168.1.1');
+
+Gets or sets the source address from which we send queries.  Convenient
+for forcing queries out a specific interfaces on a multi-homed host.
+The default is 0.0.0.0, meaning any local address.
+
+=head2 bgsend
+
+    $socket = $res->bgsend($packet_object) || die " $res->errorstring";
+
+    $socket = $res->bgsend('mailhost.example.com');
+    $socket = $res->bgsend('example.com', 'MX');
+    $socket = $res->bgsend('user.passwd.example.com', 'TXT', 'HS');
+
+
+
+Performs a background DNS query for the given name, i.e., sends a
+query packet to the first nameserver listed in C<< $res->nameservers >>
+and returns immediately without waiting for a response.  The program
+can then perform other tasks while waiting for a response from the 
+nameserver.
+
+The argument list can be either a C<Net::DNS::Packet> object or a list
+of strings.  The record type and class can be omitted; they default to
+A and IN.  If the name looks like an IP address (4 dot-separated numbers),
+then an appropriate PTR query will be performed.
+
+Returns an C<IO::Socket::INET> object or C<undef> on error in which
+case the reason for failure can be found through a call to the
+errorstring method.
+
+The program must determine when the socket is ready for reading and
+call C<< $res->bgread >> to get the response packet.  You can use C<<
+$res->bgisready >> or C<IO::Select> to find out if the socket is ready
+before reading it.
+
+=head2 bgread
+
+    $packet = $res->bgread($socket);
+    undef $socket;
+
+Reads the answer from a background query (see L</bgsend>).  The argument
+is an C<IO::Socket> object returned by C<bgsend>.
+
+Returns a C<Net::DNS::Packet> object or C<undef> on error.
+
+The programmer should close or destroy the socket object after reading it.
+
+=head2 bgisready
+
+    $socket = $res->bgsend('foo.example.com');
+    until ($res->bgisready($socket)) {
+        # do some other processing
+    }
+    $packet = $res->bgread($socket);
+    $socket = undef;
+
+Determines whether a socket is ready for reading.  The argument is
+an C<IO::Socket> object returned by C<< $res->bgsend >>.
+
+Returns true if the socket is ready, false if not.
+
 =head2 tsig
 
-    $tsig = $res->tsig;
+    my $tsig = $res->tsig;
 
     $res->tsig(Net::DNS::RR->new("$key_name TSIG $key"));
 
@@ -573,7 +588,21 @@ Enabled DNSSEC this will set the checking disabled flag in the query header
 and add EDNS0 data as in RFC2671 and RFC3225
 
 When set to true the answer and additional section of queries from
-secured zones will contain KEY, NXT and SIG records.
+secured zones will contain DNSKEY, NSEC and RRSIG records.
+
+Setting calling the dnssec method with a non-zero value will set the
+UDP packet size to the default value of 2048. If that is to small or
+to big for your environement you should call the udppacketsize()
+method immeditatly after.
+
+   $res->dnssec(1);    # turns on DNSSEC and sets udp packetsize to 2048
+   $res->udppacketsize(1028);   # lowers the UDP pakcet size
+
+The method will Croak::croak with the message "You called the
+Net::DNS::Resolver::dnssec() method but do not have Net::DNS::SEC
+installed at ..." if you call it without Net::DNS::SEC being in your
+@INC path.
+
 
 
 =head2 cdflag
@@ -592,10 +621,10 @@ to 1.
     $res->udppacketsize(2048);
 
 udppacketsize will set or get the packet size. If set to a value greater than 
-&Net::DNS::PACKETSZ an EDNS extention will be added indicating suppport for MTU path 
+Net::DNS::PACKETSZ() an EDNS extension will be added indicating suppport for MTU path 
 recovery.
 
-Default udppacketsize is &Net::DNS::PACKETSZ (512)
+Default udppacketsize is Net::DNS::PACKETSZ() (512)
 
 =head1 CUSTOMIZING
 
@@ -615,6 +644,32 @@ For example, if we wanted to cache lookups:
 	
 	return $cache{@args} ||= $self->SUPER::search(@args);
  } 
+
+
+=head1 IPv6 transport
+
+The Net::DNS::Resolver library will use IPv6 transport if the
+appropriate libraries (Socket6 and IO::Socket::INET6) are available
+and the address the server tries to connect to is an IPv6 address.
+
+The print() will method will report if IPv6 transport is available.
+
+You can use the force_v4() method with a non-zero argument
+to force IPv4 transport.
+
+The nameserver() method has IPv6 dependend behavior. If IPv6 is not
+available or IPv4 transport has been forced the nameserver() method
+will only return IPv4 addresses.
+
+For example
+
+    $res->nameservers('192.168.1.1', '192.168.2.2', '2001:610:240:0:53:0:0:3');
+    $res->force_v4(1);
+    print join (" ",$res->nameserver());	    
+
+Will print: 192.168.1.1 192.168.2.2
+
+
 
 
 =head1 ENVIRONMENT
@@ -678,7 +733,8 @@ No validation of server replies is performed.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
+Portions Copyright (c) 2005 Olaf M. Kolkman
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

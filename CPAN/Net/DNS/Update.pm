@@ -1,14 +1,17 @@
 package Net::DNS::Update;
 #
-# $Id: Update.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Update.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw($VERSION @ISA);
 
 use Net::DNS;
 
 @ISA     = qw(Net::DNS::Packet);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 =head1 NAME
 
@@ -75,41 +78,6 @@ sub new {
 	return $self;
 }
 
-
-=head2 safe_push
-
-    $update->safe_push(pre        => $rr);
-    $update->safe_push(update     => $rr);
-    $update->safe_push(additional => $rr);
-
-Adds unseen RRs to the specified section of the update. This is useful
-to insure that the udpates do not contain redundant RRs in any of the
-sections.
-
-=cut
-
-sub safe_push {
-	my ($self, $section, @rrs) = @_;
-	
-	foreach my $rr (@rrs) {
-		next if $self->{'seen'}->{$rr->string};
-		
-		$self->push($section, $rr);
-	}
-}
-
-
-# overload push to DTRT.  We don't need to worry about populating
-# seen inside of new() because you only can use safe_push with
-# an update object.
-
-sub push {
-	my ($self, $section, @rrs) = @_;
-	
-	$self->{'seen'}{$_->string}++ for @rrs;
-
-	return $self->SUPER::push($section, @rrs);
-}
 
 =head1 EXAMPLES
 
@@ -216,7 +184,7 @@ production nameservers.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

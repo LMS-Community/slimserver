@@ -1,15 +1,21 @@
 package Net::DNS::RR;
 #
-# $Id: RR.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: RR.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
-use vars qw($VERSION $AUTOLOAD);
 
+BEGIN { 
+    eval { require bytes; }
+} 
+
+use vars qw($VERSION $AUTOLOAD);
 use Carp;
 use Net::DNS;
 use Net::DNS::RR::Unknown;
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+
+
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 =head1 NAME
 
@@ -73,17 +79,21 @@ BEGIN {
 		TXT
 		X25
 		OPT
+		SSHFP
 	);
 
 	#  Only load DNSSEC if available
-	# 
 
-	eval { require Net::DNS::RR::SIG; };
-
+	eval { 	    
+	    local $SIG{'__DIE__'} = 'DEFAULT';
+	    require Net::DNS::RR::SIG; 
+	};
 	unless ($@) {
 		$RR{'SIG'} = 1;
-	
-		eval { require Net::DNS::RR::NXT; };
+		eval { 	    
+		    local $SIG{'__DIE__'} = 'DEFAULT';
+		    require Net::DNS::RR::NXT; 
+		};
 		
 		unless ($@) {
 		    $RR{'NXT'}	= 1;
@@ -91,7 +101,10 @@ BEGIN {
 		    die $@;
 		}
 		
-		eval { require Net::DNS::RR::KEY; };
+		eval { 
+		    local $SIG{'__DIE__'} = 'DEFAULT';
+		    require Net::DNS::RR::KEY; 
+		};
 		
 		unless ($@) {
 		    $RR{'KEY'} = 1;
@@ -99,7 +112,10 @@ BEGIN {
 		    die $@;
 		}
 
-	 	eval { require Net::DNS::RR::DS; };
+	 	eval { 
+		    local $SIG{'__DIE__'} = 'DEFAULT';
+		    require Net::DNS::RR::DS; 
+		};
 
 	 	unless ($@) {
 		    $RR{'DS'} = 1;
@@ -108,18 +124,28 @@ BEGIN {
 		    die $@;
 		}
 
-	 	eval { require Net::DNS::RR::RRSIG; };
+	 	eval { 
+		    local $SIG{'__DIE__'} = 'DEFAULT';
+		    require Net::DNS::RR::RRSIG; 
+		};
 
 	 	unless ($@) {
 		    $RR{'RRSIG'} = 1;
 		    # If RRSIG is available so should the other DNSSEC types
-		    eval { require Net::DNS::RR::NSEC; };
+		    eval {		    
+			local $SIG{'__DIE__'} = 'DEFAULT';
+			require Net::DNS::RR::NSEC; 
+		    };
 		    unless ($@) {
 		      $RR{'NSEC'} = 1;
 		    } else {
 		    die $@;
 		  }
-		    eval { require Net::DNS::RR::DNSKEY; };
+		    eval { 
+			local $SIG{'__DIE__'} = 'DEFAULT';
+			require Net::DNS::RR::DNSKEY; 
+		    };
+
 		    unless ($@) {
 		      $RR{'DNSKEY'} = 1;
 		    } else {
@@ -187,7 +213,7 @@ All names must be fully qualified.  The trailing dot (.) is optional.
  
  $rr = Net::DNS::RR->new(
 	 name => "foo.example.com",
-	 yype => "A",
+	 type => "A",
  );
 
 Returns an RR object of the appropriate type, or a C<Net::DNS::RR>
@@ -248,9 +274,11 @@ sub new_from_string {
 	my ($class, $rrstring, $update_type) = @_;
 
 	build_regex() unless $RR_REGEX;
-	
+
 	# strip out comments
-	$rrstring   =~ s/;.*//g;
+	# Test for non escaped ";" by means of the look-behind assertion
+	# (the backslash is escaped)
+	$rrstring   =~ s/(?<!\\);.*//g;
 	
 	($rrstring =~ m/$RR_REGEX/xso) || 
 		confess qq|qInternal Error: "$rrstring" did not match RR pat.\nPlease report this to the author!\n|;
@@ -265,6 +293,9 @@ sub new_from_string {
 
 	$rdata =~ s/\s+$// if $rdata;
 	$name  =~ s/\.$//  if $name;
+
+	
+
 
 
 	# RFC3597 tweaks
@@ -323,10 +354,8 @@ sub new_from_string {
 		'rdata'    => '',
 	};
 
-	
-	# $rdata!~/^\s*\\\#/ means that the rdata does not start with \# (rfc3597)
 
-	if ($RR{$rrtype} && $rdata !~ m/^\s*\\\#/ ) {
+	if ($RR{$rrtype} && $rdata !~ m/^\s*\\#/ ) {
 		my $subclass = $class->_get_subclass($rrtype);
 		
 		return $subclass->new_from_string($self, $rdata);
@@ -417,6 +446,9 @@ sub new_from_hash {
 			# documentation
 			return $subclass->new_from_hash($self);
 	    }
+	} elsif ($self->{'type'} =~ /TYPE\d+/) {
+		bless $self, 'Net::DNS::RR::Unknown';
+		return $self;
 	} else {
 	 	bless $self, $class;
 	 	return $self;
@@ -461,7 +493,7 @@ sub string {
 	 	 $self->{'ttl'},
 		 $self->{'class'},
 		 $self->{'type'},
-		 $self->rdatastr || '; no data',
+		 (defined $self->rdatastr and length $self->rdatastr) ? $self->rdatastr : '; no data',
    );
 }
 
@@ -581,6 +613,7 @@ sub data {
 		$data  = $packet->dn_comp($self->{'name'}, $offset);
 	}
 
+
 	my $qtype     = uc($self->{'type'});
 	my $qtype_val = ($qtype =~ m/^\d+$/) ? $qtype : Net::DNS::typesbyname($qtype);
 	$qtype_val    = 0 if !defined($qtype_val);
@@ -604,8 +637,9 @@ sub data {
 
 	my $rdata = $self->rdata($packet, $offset);
 
+
 	$data .= pack('n', length $rdata);
-	$data .= $rdata;
+	$data.=$rdata;
 
 	return $data;
 }
@@ -625,12 +659,13 @@ sub _canonicaldata {
 	my $self = shift;
 	my $data='';
 	{   
-		my @dname= split /\./,lc($self->{'name'});
-		for (my $i=0;$i<@dname;$i++){
-			$data .= pack ('C',length $dname[$i] );
-			$data .= $dname[$i] ;
-		}
-		$data .= pack ('C','0');
+	    my $name=$self->{'name'};
+	    my @dname=Net::DNS::name2labels($name);
+	    for (my $i=0;$i<@dname;$i++){
+		$data .= pack ('C',length $dname[$i] );
+		$data .= $dname[$i] ;
+	    }
+	    $data .= pack ('C','0');
 	}
 	$data .= pack('n', Net::DNS::typesbyname(uc($self->{'type'})));
 	$data .= pack('n', Net::DNS::classesbyname(uc($self->{'class'})));
@@ -650,7 +685,7 @@ sub _canonicaldata {
 # have domain names in them. Verification works only on RRs with
 # uncompressed domain names. (Canonical format as in sect 8 of
 # RFC2535) _canonicalRdata is overwritten in those RR objects that
-# have domain names in the RDATA and _name2label is used to convert a
+# have domain names in the RDATA and _name2wire is used to convert a
 # domain name to "wire format"
 
 sub _canonicalRdata {
@@ -661,19 +696,22 @@ sub _canonicalRdata {
 
 
 
-sub _name2wire   {   
-    my ($self,$name)=@_;
 
-    my $rdata = '';
-    my @dname = split(m/\./, lc $name);
-    
+
+sub _name2wire   {   
+    my ($self, $name) = @_;
+
+    my $rdata="";
+    my $compname = "";
+    my @dname = Net::DNS::name2labels($name);
+
+
     for (@dname) {
 		$rdata .= pack('C', length $_);
 		$rdata .= $_ ;
     }
     
     $rdata .= pack('C', '0');
-    
     return $rdata;
 }
 
@@ -693,14 +731,14 @@ sub AUTOLOAD {
 ***
 ***  $rr_string
 ***
-***  This object doesn't have a method "$name".  THIS IS A BUG
+***  This object doesn not have a method "$name".  THIS IS A BUG
 ***  IN THE CALLING SOFTWARE, which has incorrectly assumed that
 ***  the object would be of a particular type.  The calling
 ***  software should check the type of each RR object before
 ***  calling any of its methods.
 ***
 ***  Net::DNS has returned undef to the caller.
-***
+*** 
 
 AMEN
 		return;
@@ -773,7 +811,9 @@ RR objects.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2005 Olaf Kolkman 
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

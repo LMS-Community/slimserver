@@ -1,6 +1,6 @@
 package Net::DNS::Resolver::Cygwin;
 #
-# $Id: Cygwin.pm,v 1.1 2004/02/16 17:30:05 daniel Exp $
+# $Id: Cygwin.pm 291 2005-05-21 07:40:58Z olaf $
 #
 
 use strict;
@@ -9,7 +9,7 @@ use vars qw(@ISA $VERSION);
 use Net::DNS::Resolver::Base ();
 
 @ISA	 = qw(Net::DNS::Resolver::Base);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 291 $)[1];
 
 sub getregkey {
 	my $key	  = $_[0] . $_[1];
@@ -85,14 +85,18 @@ sub init {
 			my $regiface = $interfaces . $iface . '/';
 			if (opendir(LM, $regiface)) {
 				closedir(LM);
-				my $ns;
-				$ns = getregkey($regiface, "NameServer") ||
-					getregkey($regiface, "DhcpNameServer") || '';
-				$nameservers .= " $ns" if $ns;
-			}
-		}
-	}
 
+				my $ns;
+				my $ip;
+				$ip = getregkey($regiface, "IPAddress");
+				$ns = getregkey($regiface, "NameServer") ||
+				    getregkey($regiface, "DhcpNameServer") || ''				    unless !$ip || ($ip =~ /0\.0\.0\.0/);
+				
+				$nameservers .= " $ns" if $ns;
+			    }
+		    }
+	    }
+	
 	if (!$nameservers) {
 		$nameservers = $nt4nameservers;
 	}
@@ -104,20 +108,20 @@ sub init {
 	my $usedevolution = getregkey($root, 'UseDomainNameDevolution');
 	if ($searchlist) {
 		# fix devolution if configured, and simultaneously make sure no dups (but keep the order)
-		my $i = 0;
+		my @a;
 		my %h;
 		foreach my $entry (split(m/[\s,]+/, $searchlist)) {
-			$h{$entry} = $i++;
+			push(@a, $entry) unless $h{$entry};
+			$h{$entry} = 1;
 			if ($usedevolution) {
 				# as long there's more than two pieces, cut
 				while ($entry =~ m#\..+\.#) {
 					$entry =~ s#^[^\.]+\.(.+)$#$1#;
-					$h{$entry} = $i++;
+					push(@a, $entry) unless $h{$entry};
+					$h{$entry} = 1;
+					}
 				}
 			}
-		}
-		my @a;
-		$a[$h{$_}] = $_ foreach (keys %h);
 		$defaults->{'searchlist'} = \@a;
 	}
 
@@ -129,7 +133,7 @@ sub init {
 			push @a, $ns unless (!$ns || $h{$ns});
 			$h{$ns} = 1;
 		}
-		$defaults->{'nameservers'} = \@a;
+		$defaults->{'nameservers'} = [map { m/(.*)/ } @a];
 	}
 
 	$class->read_env;
@@ -164,7 +168,7 @@ for all your resolving needs.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

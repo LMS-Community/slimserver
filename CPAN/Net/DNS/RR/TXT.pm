@@ -1,27 +1,32 @@
 package Net::DNS::RR::TXT;
 #
-# $Id: TXT.pm,v 1.1 2004/02/16 17:30:03 daniel Exp $
+# $Id: TXT.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+BEGIN { 
+    eval { require bytes; }
+} 
 use vars qw(@ISA $VERSION);
 
-use Net::DNS::Packet;
 use Text::ParseWords;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
 	
 	my $rdlength = $self->{'rdlength'} or return bless $self, $class;
-	my $end = $offset + $rdlength;
-	while ( $offset < $end ) {
-		my $strlen = unpack("\@$offset C", $$data );
-		++$offset ;
+	my $end      = $offset + $rdlength;
+	
+	while ($offset < $end) {
+		my $strlen = unpack("\@$offset C", $$data);
+		++$offset;
+		
 		my $char_str = substr($$data, $offset, $strlen);
 		$offset += $strlen;
-		push( @{ $self->{'char_str_list'} }, $char_str );
+		
+		push(@{$self->{'char_str_list'}}, $char_str);
 	}
 
 	return bless $self, $class;
@@ -34,33 +39,37 @@ sub new_from_string {
         
     $self->_build_char_str_list($rdata_string);
 
-    return $self ;
+    return $self;
 }
 
 sub txtdata {
 	my $self = shift;
-	return join(' ',  $self->char_str_list()  );
+	return join(' ',  $self->char_str_list());
 }
 
 sub rdatastr {
 	my $self = shift;
-	return defined $self->txtdata()
-		? join(' ', map { my $str = $_;  
-				$str =~ s/"/\\"/g ;  
-				q("). $str. q(") 
-				}  @{ $self->{'char_str_list'} }  )
-		: '';
+		
+	if ($self->char_str_list) {
+		return join(' ', map { 
+			my $str = $_;  
+			$str =~ s/"/\\"/g;  
+			qq("$str");
+		} @{$self->{'char_str_list'}});
+	} 
+	
+	return '';
 }
 
 sub _build_char_str_list {
-	my ( $self, $rdata_string ) = @_;
+	my ($self, $rdata_string) = @_;
 	
 	my @words = shellwords($rdata_string);
 
 	$self->{'char_str_list'} = [];
 
 	if (@words) {
-		foreach my $string ( @words ) {
+		foreach my $string (@words) {
 		    $string =~ s/\\"/"/g;
 		    push(@{$self->{'char_str_list'}}, $string);
 		}
@@ -70,20 +79,18 @@ sub _build_char_str_list {
 sub char_str_list {
 	my $self = shift;
 	
-	# Unfortunately, RR->new_from_hash() breaks encapsulation 
-	# of data in child objects.
-	if ( not defined $self->{'char_str_list'} ) {
+	if (not $self->{'char_str_list'}) {
 		$self->_build_char_str_list( $self->{'txtdata'} );
 	}
 
-	return @{ $self->{'char_str_list'} };	# unquoted strings
+	return @{$self->{'char_str_list'}}; # unquoted strings
 }
 
 sub rr_rdata {
-	my $self = shift;
-	my $rdata = "";
+	my $self  = shift;
+	my $rdata = '';
 
-	foreach my $string ( $self->char_str_list() ) {
+	foreach my $string ($self->char_str_list) {
 	    $rdata .= pack("C", length $string );
 	    $rdata .= $string;
 	}
@@ -116,12 +123,12 @@ Returns the descriptive text as a single string, regardless of actual
 number of <character-string> elements.  Of questionable value.  Should 
 be deprecated.  
 
-Use C<TXT-E<gt>rdatastr()> or C<TXT-E<gt>char_str_list()> instead.
+Use C<< $txt->rdatastr() >> or C<< $txt->char_str_list() >> instead.
 
 =head2 char_str_list
 
-    print "Individual <character-string> list: \n\t", \
-		    join ( "\n\t", $rr->char_str_list() );
+ print "Individual <character-string> list: \n\t", 
+       join("\n\t", $rr->char_str_list());
 
 Returns a list of the individual <character-string> elements, 
 as unquoted strings.  Used by TXT->rdatastr and TXT->rr_rdata.
@@ -130,7 +137,7 @@ as unquoted strings.  Used by TXT->rdatastr and TXT->rr_rdata.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

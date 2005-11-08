@@ -1,20 +1,30 @@
 package Net::DNS::Packet;
 #
-# $Id: Packet.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Packet.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
+
+BEGIN { 
+    eval { require bytes; }
+}
+
 use vars qw(@ISA @EXPORT_OK $VERSION $AUTOLOAD);
+
+use Carp;
+use Net::DNS ;
+use Net::DNS::Question;
+use Net::DNS::RR;
+
+
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(dn_expand);
 
-use Carp;
-use Net::DNS;
-use Net::DNS::Question;
-use Net::DNS::RR;
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 388 $)[1];
+
+
 
 =head1 NAME
 
@@ -86,7 +96,7 @@ sub new {
 
 		$self{"header"}->print if $debug;
 
-		my $offset = &Net::DNS::HFIXEDSZ;
+		my $offset = Net::DNS::HFIXEDSZ();
 
 		#--------------------------------------------------------------
 		# Parse the question/zone section.
@@ -246,6 +256,7 @@ a nameserver.
 sub data {
 	my $self = shift;
 
+
 	#----------------------------------------------------------------------
 	# Flush the cache of already-compressed names.  This should fix the bug
 	# that caused this method to work only the first time it was called.
@@ -260,25 +271,54 @@ sub data {
 	# section of the packet. TODO: Packet is dropped silently if is tried to
 	# have it appended to one of the other section
 
-	my $data = $self->{"header"}->data;
+	# Collect the data first, and count the number of records along
+	# the way. ( see rt.cpan.org: Ticket #8608 )
+	my $qdcount = 0;
+	my $ancount = 0;
+	my $nscount = 0;
+	my $arcount = 0;
+	# Note that the only pieces we;ll fill in later have predefined
+        # length.
 
+	my $headerlength=length $self->{"header"}->data;
+
+        my $data = $self->{"header"}->data;
+	
 	foreach my $question (@{$self->{"question"}}) {
 		$data .= $question->data($self, length $data);
+		$qdcount++;
 	}
 
 	foreach my $rr (@{$self->{"answer"}}) {
 		$data .= $rr->data($self, length $data);
+		$ancount++;
 	}
+
 
 	foreach my $rr (@{$self->{"authority"}}) {
 		$data .= $rr->data($self, length $data);
+		$nscount++;
 	}
+
 
 	foreach my $rr (@{$self->{"additional"}}) {
 		$data .= $rr->data($self, length $data);
+		$arcount++;
 	}
 
-	return $data;
+
+	# Fix up the header so the counts are correct.  This overwrites
+	# the user's settings, but the user should know what they aredoing.
+	$self->{"header"}->qdcount( $qdcount );
+	$self->{"header"}->ancount( $ancount );
+	$self->{"header"}->nscount( $nscount );
+	$self->{"header"}->arcount( $arcount );
+	
+	# Replace the orginal header with corrected counts.
+
+	return $self->{"header"}->data . substr ($data,$headerlength);
+
+
 }
 
 =head2 header
@@ -330,7 +370,14 @@ must not preexist.
 
 =cut
 
-sub answer { return @{$_[0]->{'answer'}}; }
+sub answer { 
+    if (exists($_[0]->{'answer'})) {
+	return @{$_[0]->{'answer'}};
+    } else {
+	return ();
+    } 
+}
+  
 
 sub pre          { &answer }
 sub prerequisite { &answer }
@@ -347,7 +394,13 @@ specifies the RRs or RRsets to be added or delted.
 
 =cut
 
-sub authority { return @{$_[0]->{'authority'}}; }
+sub authority { 
+    if (exists($_[0]->{'authority'})) {
+	return @{$_[0]->{'authority'}};
+    } else {
+	return ();
+    } 
+}
 
 sub update    { &authority }
 
@@ -360,7 +413,13 @@ section of the packet.
 
 =cut
 
-sub additional { return @{$_[0]->{'additional'}}; }
+sub additional { 
+    if (exists($_[0]->{'additional'})) {
+	return @{$_[0]->{'additional'}};
+    } else {
+	return ();
+    } 
+}
 
 
 =head2 print
@@ -476,14 +535,15 @@ sub answersize {
 
 =head2 push
 
-    $packet->push("pre", $rr);
-    $packet->push("update", $rr);
-    $packet->push("additional", $rr);
+    $packet->push(pre        => $rr);
+    $packet->push(update     => $rr);
+    $packet->push(additional => $rr);
 
-    $packet->push("update", $rr1, $rr2, $rr3);
-    $packet->push("update", @rr);
+    $packet->push(update => $rr1, $rr2, $rr3);
+    $packet->push(update => @rr);
 
 Adds RRs to the specified section of the packet.
+
 
 =cut
 
@@ -530,13 +590,49 @@ sub push {
 	}
 }
 
+=head2 unique_push
 
+    $packet->unique_push(pre        => $rr);
+    $packet->unique_push(update     => $rr);
+    $packet->unique_push(additional => $rr);
+
+    $packet->unique_push(update => $rr1, $rr2, $rr3);
+    $packet->unique_push(update => @rr);
+
+Adds RRs to the specified section of the packet provided that 
+the RRs do not already exist in the packet.
+
+=cut
+
+sub unique_push {
+	my ($self, $section, @rrs) = @_;
+	
+	foreach my $rr (@rrs) {
+		next if $self->{'seen'}->{$rr->string}++;
+
+		$self->push($section, $rr);
+	}
+}
+
+=head2 safe_push
+
+A deprecated name for C<unique_push()>.
+
+=cut
+
+sub safe_push {
+	carp('safe_push() is deprecated, use unique_push() instead,');
+	
+	goto &unique_push;
+}
+	
 
 =head2 pop
 
     my $rr = $packet->pop("pre");
     my $rr = $packet->pop("update");
     my $rr = $packet->pop("additional");
+    my $rr = $packet->pop("question");
 
 Removes RRs from the specified section of the packet.
 
@@ -571,7 +667,13 @@ sub pop {
 		if ($adcount) {
 			$rr = pop @{$self->{"additional"}};
 			$self->{"header"}->adcount($adcount - 1);
-		}
+		    }
+	} elsif ($section eq "question") {
+	        my $qdcount = $self->{"header"}->qdcount;
+		if ($qdcount) {
+		    	$rr = pop @{$self->{"question"}};
+			$self->{"header"}->qdcount($qdcount - 1);
+		    }
 	} else {
 		Carp::cluck(qq(invalid section "$section"\n));
 	}
@@ -592,11 +694,10 @@ future use.
 
 sub dn_comp {
 	my ($self, $name, $offset) = @_;
-
-	$name = "" unless defined($name);
-
-	my $compname = "";
-	my @names = map { s/\\\././g; $_ } split(/(?=[^\\]|^)\./, $name);
+	$name="" unless defined($name);
+	my $compname="";
+	# The Exporter module does not seem to catch this baby...
+	my @names=Net::DNS::name2labels($name);
 
 	while (@names) {
 		my $dname = join(".", @names);
@@ -610,11 +711,13 @@ sub dn_comp {
 		$self->{"compnames"}->{$dname} = $offset;
 		my $first  = shift @names;
 		my $length = length $first;
+		croak "length of $first is larger than 63 octets" if $length>63;
 		$compname .= pack("C a*", $length, $first);
 		$offset   += $length + 1;
 	}
 
 	$compname .= pack("C", 0) unless @names;
+
 	return $compname;
 }
 
@@ -640,12 +743,19 @@ Returns B<(undef, undef)> if the domain name couldn't be expanded.
 
 # This is very hot code, so we try to keep things fast.  This makes for
 # odd style sometimes.
+
+sub dn_expand
 {
+    my ($packet, $offset) = @_;
+    my ($name, $roffset);
 	if ($Net::DNS::HAVE_XS) {
-		*dn_expand = \&dn_expand_XS;
+	    ($name, $roffset)=dn_expand_XS($packet, $offset);
 	} else {
-		*dn_expand = \&dn_expand_PP;
+	    ($name, $roffset)=dn_expand_PP($packet, $offset);
 	}
+    
+	return ($name, $roffset);
+
 }
 
 sub dn_expand_PP {
@@ -653,10 +763,10 @@ sub dn_expand_PP {
 	my $name = "";
 	my $len;
 	my $packetlen = length $$packet;
-	my $int16sz = &Net::DNS::INT16SZ;
+	my $int16sz = Net::DNS::INT16SZ();
 
 	# Debugging
-	#warn "USING PURE PERL dn_expand()\n";
+	# warn "USING PURE PERL dn_expand()\n";
 	#if ($seen->{$offset}) {
 	#	die "dn_expand: loop: offset=$offset (seen = ",
 	#	     join(",", keys %$seen), ")\n";
@@ -693,11 +803,14 @@ sub dn_expand_PP {
 				if $packetlen < ($offset + $len);
 
 			my $elem = substr($$packet, $offset, $len);
-			$elem =~ s/\./\\./g;
-			$name .= "$elem.";
+
+			$name .= Net::DNS::wire2presentation($elem).".";
+
 			$offset += $len;
 		}
 	}
+
+	
 
 	$name =~ s/\.$//;
 	return ($name, $offset);
@@ -842,10 +955,10 @@ sub parse_question {
 	return (undef, undef) unless defined $qname;
 
 	return (undef, undef)
-		if length($$data) < ($offset + 2 * &Net::DNS::INT16SZ);
+		if length($$data) < ($offset + 2 * Net::DNS::INT16SZ());
 
 	my ($qtype, $qclass) = unpack("\@$offset n2", $$data);
-	$offset += 2 * &Net::DNS::INT16SZ;
+	$offset += 2 * Net::DNS::INT16SZ();
 
 	$qtype  = Net::DNS::typesbyval($qtype);
 	$qclass = Net::DNS::classesbyval($qclass);
@@ -875,7 +988,7 @@ sub parse_rr {
 	return (undef, undef) unless defined $name;
 
 	return (undef, undef)
-		if length($$data) < ($offset + &Net::DNS::RRFIXEDSZ);
+		if length($$data) < ($offset + Net::DNS::RRFIXEDSZ());
 
 	my ($type, $class, $ttl, $rdlength) = unpack("\@$offset n2 N n", $$data);
 
@@ -888,7 +1001,7 @@ sub parse_rr {
 	} 
 	# else just keep at its numerical value
 
-	$offset += &Net::DNS::RRFIXEDSZ;
+	$offset += Net::DNS::RRFIXEDSZ();
 
 	return (undef, undef)
 		if length($$data) < ($offset + $rdlength);
@@ -907,23 +1020,20 @@ sub parse_rr {
 	return ($rrobj, $offset);
 }
 
-sub safe_push {
-	Carp::croak(<<END);
-Net::DNS::Packet::safe_push() has been removed.  The safe_push() method
-is only avalible from the Net::DNS::Update class.
-END
-}
+
 
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2002-2005 Olaf Kolkman
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.
 
-DNSSEC/EDNS0 functionality courtesy of Olaf M. Kolkman, RIPE NCC.  
+
 
 =head1 SEE ALSO
 

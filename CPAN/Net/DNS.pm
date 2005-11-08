@@ -1,53 +1,78 @@
 package Net::DNS;
 #
-# $Id: DNS.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: DNS.pm 468 2005-07-22 12:12:55Z olaf $
 #
 use strict;
+
+
+BEGIN { 
+    eval { require bytes; }
+}
+
+
+
 use vars qw(
-	$HAVE_XS
-	$VERSION
-	$DNSSEC
-	@ISA
-	@EXPORT
-	%typesbyname
-	%typesbyval
-	%qtypesbyname
-	%qtypesbyval
-	%metatypesbyname
-	%metatypesbyval
-	%classesbyname
-	%classesbyval
-	%opcodesbyname
-	%opcodesbyval
-	%rcodesbyname
-	%rcodesbyval
+    $HAVE_XS
+    $VERSION
+    $DNSSEC
+    $DN_EXPAND_ESCAPES
+    @ISA
+    @EXPORT
+    @EXPORT_OK
+    %typesbyname
+    %typesbyval
+    %qtypesbyname
+    %qtypesbyval
+    %metatypesbyname
+    %metatypesbyval
+    %classesbyname
+    %classesbyval
+    %opcodesbyname
+    %opcodesbyval
+    %rcodesbyname
+    %rcodesbyval
 );
 
 
 
 BEGIN {
-	require DynaLoader;
-	require Exporter;
-	
-	@ISA     = qw(Exporter DynaLoader);
-	$VERSION = '0.45';
-	$HAVE_XS = eval { __PACKAGE__->bootstrap(); 1 } ? 1 : 0;
+    require DynaLoader;
+    require Exporter;
+    @ISA     = qw(Exporter DynaLoader);
+
+    
+    $VERSION = '0.53';
+    $HAVE_XS = eval { 
+	local $SIG{'__DIE__'} = 'DEFAULT';
+	__PACKAGE__->bootstrap(); 1 
+	} ? 1 : 0;
+
 }
+
+
+
+BEGIN {
+
+    $DNSSEC = eval { 
+	    local $SIG{'__DIE__'} = 'DEFAULT';
+	    require Net::DNS::SEC; 
+	    1 
+	    } ? 1 : 0;
+
+
+}
+
 
 use Net::DNS::Resolver;
 use Net::DNS::Packet;
 use Net::DNS::Update;
 use Net::DNS::Header;
 use Net::DNS::Question;
-use Net::DNS::RR;
-
-BEGIN {
-	$DNSSEC = eval { require Net::DNS::RR::SIG; 1 } ? 1 : 0;
-}
- 
+use Net::DNS::RR;   # use only after $Net::DNS::DNSSEC has been evaluated
 
 
 @EXPORT = qw(mx yxrrset nxrrset yxdomain nxdomain rr_add rr_del);
+@EXPORT_OK= qw(name2labels wire2presentation );
 
 #
 # If you implement an RR record make sure you also add it to 
@@ -58,65 +83,65 @@ BEGIN {
 # functions, see below.
 
 %typesbyname = (
- 	'SIGZERO'   => 0,       # RFC2931 consider this a pseudo type
-	'A'			=> 1,		# RFC 1035, Section 3.4.1
-	'NS'		=> 2,		# RFC 1035, Section 3.3.11
-	'MD'		=> 3,		# RFC 1035, Section 3.3.4 (obsolete)
-	'MF'		=> 4,		# RFC 1035, Section 3.3.5 (obsolete)
-	'CNAME'		=> 5,		# RFC 1035, Section 3.3.1
-	'SOA'		=> 6,		# RFC 1035, Section 3.3.13
-	'MB'		=> 7,		# RFC 1035, Section 3.3.3
-	'MG'		=> 8,		# RFC 1035, Section 3.3.6
-	'MR'		=> 9,		# RFC 1035, Section 3.3.8
-	'NULL'		=> 10,		# RFC 1035, Section 3.3.10
-	'WKS'		=> 11,		# RFC 1035, Section 3.4.2 (deprecated)
-	'PTR'		=> 12,		# RFC 1035, Section 3.3.12
-	'HINFO'		=> 13,		# RFC 1035, Section 3.3.2
-	'MINFO' 	=> 14,		# RFC 1035, Section 3.3.7
-	'MX'		=> 15,		# RFC 1035, Section 3.3.9
-	'TXT'		=> 16,		# RFC 1035, Section 3.3.14
-	'RP'		=> 17,		# RFC 1183, Section 2.2
-	'AFSDB'		=> 18,		# RFC 1183, Section 1
-	'X25'		=> 19,		# RFC 1183, Section 3.1
-	'ISDN'		=> 20,		# RFC 1183, Section 3.2
-	'RT'		=> 21,		# RFC 1183, Section 3.3
-	'NSAP'		=> 22,		# RFC 1706, Section 5
-	'NSAP_PTR'	=> 23,		# RFC 1348 (obsolete)
-	# The following 2 RRs are impemented in Net::DNS::SEC
- 	'SIG'		=> 24,		# RFC 2535, Section 4.1
- 	'KEY'		=> 25,		# RFC 2535, Section 3.1
- 	'PX'		=> 26,		# RFC 2163,
-	'GPOS'		=> 27,		# RFC 1712 (obsolete)
-	'AAAA'		=> 28,		# RFC 1886, Section 2.1
-	'LOC'		=> 29,		# RFC 1876
-	# The following RR is impemented in Net::DNS::SEC
-	'NXT'		=> 30,		# RFC 2535, Section 5.2
-	'EID'		=> 31,		# draft-ietf-nimrod-dns-xx.txt
-	'NIMLOC'	=> 32,		# draft-ietf-nimrod-dns-xx.txt
-	'SRV'		=> 33,		# RFC 2052
-	'ATMA'		=> 34,		# ???
-	'NAPTR'		=> 35,		# RFC 2168
-	'KX'		=> 36,		# RFC 2230
- 	'CERT'		=> 37,		# RFC 2538
-	'DNAME'		=> 39,		# RFC 2672
-	'OPT'  		=> 41,		# RFC 2671
-	# The following 4 RRs are impemented in Net::DNS::SEC
-	# Aug 2003: These RRs will be published as RFCs shortly 
-	'DS'		=> 43,		# draft-ietf-dnsext-delegation-signer
-	'RRSIG'		=> 46,		# draft-ietf-dnsext-dnssec-2535typecode-change
-	'NSEC'		=> 47,		# draft-ietf-dnsext-dnssec-2535typecode-change
-	'DNSKEY'	=> 48,		# draft-ietf-dnsext-dnssec-2535typecode-change
-	'UINFO'		=> 100,		# non-standard
-	'UID'		=> 101,		# non-standard
-	'GID'		=> 102,		# non-standard
-	'UNSPEC'	=> 103,		# non-standard
-	'TKEY'		=> 249,		# RFC 2930
-	'TSIG'		=> 250,		# RFC 2931
-	'IXFR'		=> 251,		# RFC 1995
-	'AXFR'		=> 252,		# RFC 1035
-	'MAILB'		=> 253,		# RFC 1035 (MB, MG, MR)
-	'MAILA'		=> 254,		# RFC 1035 (obsolete - see MX)
-	'ANY'		=> 255,		# RFC 1035
+    'SIGZERO'   => 0,       # RFC2931 consider this a pseudo type
+    'A'         => 1,       # RFC 1035, Section 3.4.1
+    'NS'        => 2,       # RFC 1035, Section 3.3.11
+    'MD'        => 3,       # RFC 1035, Section 3.3.4 (obsolete)
+    'MF'        => 4,       # RFC 1035, Section 3.3.5 (obsolete)
+    'CNAME'     => 5,       # RFC 1035, Section 3.3.1
+    'SOA'       => 6,       # RFC 1035, Section 3.3.13
+    'MB'        => 7,       # RFC 1035, Section 3.3.3
+    'MG'        => 8,       # RFC 1035, Section 3.3.6
+    'MR'        => 9,       # RFC 1035, Section 3.3.8
+    'NULL'      => 10,      # RFC 1035, Section 3.3.10
+    'WKS'       => 11,      # RFC 1035, Section 3.4.2 (deprecated)
+    'PTR'       => 12,      # RFC 1035, Section 3.3.12
+    'HINFO'     => 13,      # RFC 1035, Section 3.3.2
+    'MINFO'     => 14,      # RFC 1035, Section 3.3.7
+    'MX'        => 15,      # RFC 1035, Section 3.3.9
+    'TXT'       => 16,      # RFC 1035, Section 3.3.14
+    'RP'        => 17,      # RFC 1183, Section 2.2
+    'AFSDB'     => 18,      # RFC 1183, Section 1
+    'X25'       => 19,      # RFC 1183, Section 3.1
+    'ISDN'      => 20,      # RFC 1183, Section 3.2
+    'RT'        => 21,      # RFC 1183, Section 3.3
+    'NSAP'      => 22,      # RFC 1706, Section 5
+    'NSAP_PTR'  => 23,      # RFC 1348 (obsolete)
+    # The following 2 RRs are impemented in Net::DNS::SEC
+    'SIG'       => 24,      # RFC 2535, Section 4.1
+    'KEY'       => 25,      # RFC 2535, Section 3.1
+    'PX'        => 26,      # RFC 2163,
+    'GPOS'      => 27,      # RFC 1712 (obsolete)
+    'AAAA'      => 28,      # RFC 1886, Section 2.1
+    'LOC'       => 29,      # RFC 1876
+    # The following RR is impemented in Net::DNS::SEC
+    'NXT'       => 30,      # RFC 2535, Section 5.2 obsoleted by RFC3755
+    'EID'       => 31,      # draft-ietf-nimrod-dns-xx.txt
+    'NIMLOC'    => 32,      # draft-ietf-nimrod-dns-xx.txt
+    'SRV'       => 33,      # RFC 2052
+    'ATMA'      => 34,      # ???
+    'NAPTR'     => 35,      # RFC 2168
+    'KX'        => 36,      # RFC 2230
+    'CERT'      => 37,      # RFC 2538
+    'DNAME'     => 39,      # RFC 2672
+    'OPT'       => 41,      # RFC 2671
+    # The following 4 RRs are impemented in Net::DNS::SEC
+    'DS'        => 43,      # RFC 4034
+    'SSHFP'     => 44,      # draft-ietf-secsh-dns (No RFC # yet at time of coding)
+    'RRSIG'     => 46,      # RFC 4034
+    'NSEC'      => 47,      # RFC 4034
+    'DNSKEY'    => 48,      # RFC 4034
+    'UINFO'     => 100,     # non-standard
+    'UID'       => 101,     # non-standard
+    'GID'       => 102,     # non-standard
+    'UNSPEC'    => 103,     # non-standard
+    'TKEY'      => 249,     # RFC 2930
+    'TSIG'      => 250,     # RFC 2931
+    'IXFR'      => 251,     # RFC 1995
+    'AXFR'      => 252,     # RFC 1035
+    'MAILB'     => 253,     # RFC 1035 (MB, MG, MR)
+    'MAILA'     => 254,     # RFC 1035 (obsolete - see MX)
+    'ANY'       => 255,     # RFC 1035
 );
 %typesbyval = reverse %typesbyname;
 
@@ -136,37 +161,36 @@ BEGIN {
 #
 
 sub typesbyname {
-	my $name = uc shift;
+    my $name = uc shift;
 
-	return $typesbyname{$name} if $typesbyname{$name};
-	
-	die "Net::DNS::typesbyval() argument is not TYPE### ($name)" unless 
-		$name =~ m/^\s*TYPE(\d+)\s*$/;  
-	
-	my $val = $1;
-	
-	die 'Net::DNS::typesbyval() argument larger than ' . 0xffff if $val > 0xffff;
-	
-	return $val;
+    return $typesbyname{$name} if $typesbyname{$name};
+
+    die "Net::DNS::typesbyname() argument ($name) is not TYPE###" unless 
+        $name =~ m/^\s*TYPE(\d+)\s*$/;  
+    
+    my $val = $1;
+    
+    die 'Net::DNS::typesbyname() argument larger than ' . 0xffff if $val > 0xffff;
+    
+    return $val;
 }
 
 
 
 sub typesbyval {
-	my $val = shift;
-	
-	die "Net::DNS::typesbyname() argument is not numeric ($val)" unless 
-		$val =~ m/^\s*\d+\s*$/;  
-	
-	$val =~ s/\s*//g; 
-	$val =~ s/^0*//; 
-	
-	return $typesbyval{$val} if $typesbyval{$val};
-	
-	die 'Net::DNS::typesbyname() argument larger than '. 0xffff if 
-		$val > 0xffff;
-	
-	return "TYPE$val";
+    my $val = shift;
+    
+    die "Net::DNS::typesbyval() argument ($val) is not numeric" unless 
+	$val =~ m/^\s*0*(\d+)\s*$/;
+    $val = $1;
+    
+    
+    return $typesbyval{$val} if $typesbyval{$val};
+    
+    die 'Net::DNS::typesbyval() argument larger than '. 0xffff if 
+        $val > 0xffff;
+    
+    return "TYPE$val";
 }
 
 
@@ -176,11 +200,11 @@ sub typesbyval {
 #
  
 %classesbyname = (
-	'IN'		=> 1,		# RFC 1035
-	'CH'		=> 3,		# RFC 1035
-	'HS'		=> 4,		# RFC 1035
-	'NONE'		=> 254,		# RFC 2136
-	'ANY'		=> 255,		# RFC 1035
+    'IN'        => 1,       # RFC 1035
+    'CH'        => 3,       # RFC 1035
+    'HS'        => 4,       # RFC 1035
+    'NONE'      => 254,     # RFC 2136
+    'ANY'       => 255,     # RFC 1035
 );
 %classesbyval = reverse %classesbyname;
 
@@ -193,35 +217,35 @@ sub typesbyval {
 # See typesbyval and typesbyname, these beasts have the same functionality
 
 sub classesbyname {
-	my $name = uc shift;
-	return $classesbyname{$name} if $classesbyname{$name};
-	
-	die "Net::DNS::classesbyval() argument is not CLASS### ($name)" unless 
-		$name =~ m/^\s*CLASS(\d+)\s*$/;
-	
-	my $val = $1;
-	
-	die 'Net::DNS::classesbyval() argument larger than '. 0xffff if $val > 0xffff;
-	
-	return $val;
+    my $name = uc shift;
+    return $classesbyname{$name} if $classesbyname{$name};
+    
+    die "Net::DNS::classesbyval() argument is not CLASS### ($name)" unless 
+        $name =~ m/^\s*CLASS(\d+)\s*$/;
+    
+    my $val = $1;
+    
+    die 'Net::DNS::classesbyval() argument larger than '. 0xffff if $val > 0xffff;
+    
+    return $val;
 }
 
 
 
 sub classesbyval {
-	my $val = shift;
-	
-	die "Net::DNS::classesbyname() argument is not numeric ($val)" unless 
-		$val=~/^\s*\d+\s*$/;
-	
-	$val =~ s/\s*//g;
-	$val =~ s/^0*//;
-	
-	return $classesbyval{$val} if $classesbyval{$val};
-	
-	die 'Net::DNS::classesbyname() argument larger than ' . 0xffff if $val > 0xffff;
-	
-	return "CLASS$val";
+    my $val = shift;
+    
+    die "Net::DNS::classesbyname() argument is not numeric ($val)" unless 
+        $val=~/^\s*\d+\s*$/;
+    
+    $val =~ s/\s*//g;
+    $val =~ s/^0*([0-9]+)/$1/;    #remove leading zeros 
+    
+    return $classesbyval{$val} if $classesbyval{$val};
+    
+    die 'Net::DNS::classesbyname() argument larger than ' . 0xffff if $val > 0xffff;
+    
+    return "CLASS$val";
 }
 
 
@@ -232,45 +256,45 @@ sub classesbyval {
 
 
 %qtypesbyname = (
-	'IXFR'   => 251,  # incremental transfer                [RFC1995]
-	'AXFR'   => 252,  # transfer of an entire zone          [RFC1035]
-	'MAILB'  => 253,  # mailbox-related RRs (MB, MG or MR)	 [RFC1035]
-	'MAILA'  => 254,  # mail agent RRs (Obsolete - see MX)	 [RFC1035]
-	'ANY'    => 255,  # all records		                 [RFC1035]
+    'IXFR'   => 251,  # incremental transfer                [RFC1995]
+    'AXFR'   => 252,  # transfer of an entire zone          [RFC1035]
+    'MAILB'  => 253,  # mailbox-related RRs (MB, MG or MR)   [RFC1035]
+    'MAILA'  => 254,  # mail agent RRs (Obsolete - see MX)   [RFC1035]
+    'ANY'    => 255,  # all records                      [RFC1035]
 );
 %qtypesbyval = reverse %qtypesbyname;
 
 
 %metatypesbyname = (
-	'TKEY'        => 249,    # Transaction Key   [RFC2930]
-	'TSIG'        => 250,    # Transaction Signature  [RFC2845]
-	'OPT'         => 41,     # RFC 2671
+    'TKEY'        => 249,    # Transaction Key   [RFC2930]
+    'TSIG'        => 250,    # Transaction Signature  [RFC2845]
+    'OPT'         => 41,     # RFC 2671
 );
 %metatypesbyval = reverse %metatypesbyname;
 
 
 %opcodesbyname = (
-	'QUERY'	       => 0,		# RFC 1035
-	'IQUERY'       => 1,		# RFC 1035
-	'STATUS'       => 2,		# RFC 1035
-	'NS_NOTIFY_OP' => 4,		# RFC 1996
-	'UPDATE'       => 5,		# RFC 2136
+    'QUERY'        => 0,        # RFC 1035
+    'IQUERY'       => 1,        # RFC 1035
+    'STATUS'       => 2,        # RFC 1035
+    'NS_NOTIFY_OP' => 4,        # RFC 1996
+    'UPDATE'       => 5,        # RFC 2136
 );
 %opcodesbyval = reverse %opcodesbyname;
 
 
 %rcodesbyname = (
-	'NOERROR'	=> 0,		# RFC 1035
-	'FORMERR'	=> 1,		# RFC 1035
-	'SERVFAIL'	=> 2,		# RFC 1035
-	'NXDOMAIN'	=> 3,		# RFC 1035
-	'NOTIMP'	=> 4,		# RFC 1035
-	'REFUSED'	=> 5,		# RFC 1035
-	'YXDOMAIN'	=> 6,		# RFC 2136
-	'YXRRSET'	=> 7,		# RFC 2136
-	'NXRRSET'	=> 8,		# RFC 2136
-	'NOTAUTH'	=> 9,		# RFC 2136
-	'NOTZONE'	=> 10,		# RFC 2136
+    'NOERROR'   => 0,       # RFC 1035
+    'FORMERR'   => 1,       # RFC 1035
+    'SERVFAIL'  => 2,       # RFC 1035
+    'NXDOMAIN'  => 3,       # RFC 1035
+    'NOTIMP'    => 4,       # RFC 1035
+    'REFUSED'   => 5,       # RFC 1035
+    'YXDOMAIN'  => 6,       # RFC 2136
+    'YXRRSET'   => 7,       # RFC 2136
+    'NXRRSET'   => 8,       # RFC 2136
+    'NOTAUTH'   => 9,       # RFC 2136
+    'NOTZONE'   => 10,      # RFC 2136
 );
 %rcodesbyval = reverse %rcodesbyname;
 
@@ -291,50 +315,175 @@ sub INT16SZ   () {   2; }
 #    my @mxes = mx('example.com', 'IN');
 #
 sub mx {
-	my $res = ref $_[0] ? shift : Net::DNS::Resolver->new;
+    my $res = ref $_[0] ? shift : Net::DNS::Resolver->new;
 
-	my ($name, $class) = @_;
-	$class ||= 'IN';
+    my ($name, $class) = @_;
+    $class ||= 'IN';
 
-	my $ans = $res->query($name, 'MX', $class) || return;
+    my $ans = $res->query($name, 'MX', $class) || return;
 
-	# This construct is best read backwords.
-	#
-	# First we take the answer secion of the packet.
-	# Then we take just the MX records from that list
-	# Then we sort the list by preference
-	# Then we return it.
-	# We do this into an array to force list context.
-	my @ret = sort { $a->preference <=> $b->preference } 
-	       	  grep { $_->type eq 'MX'} $ans->answer;
+    # This construct is best read backwords.
+    #
+    # First we take the answer secion of the packet.
+    # Then we take just the MX records from that list
+    # Then we sort the list by preference
+    # Then we return it.
+    # We do this into an array to force list context.
+    my @ret = sort { $a->preference <=> $b->preference } 
+              grep { $_->type eq 'MX'} $ans->answer;
 
 
-	return @ret;
+    return @ret;
 }
 
 sub yxrrset {
-	return Net::DNS::RR->new_from_string(shift, 'yxrrset');
+    return Net::DNS::RR->new_from_string(shift, 'yxrrset');
 }
 
 sub nxrrset {
-	return Net::DNS::RR->new_from_string(shift, 'nxrrset');
+    return Net::DNS::RR->new_from_string(shift, 'nxrrset');
 }
 
 sub yxdomain {
-	return Net::DNS::RR->new_from_string(shift, 'yxdomain');
+    return Net::DNS::RR->new_from_string(shift, 'yxdomain');
 }
 
 sub nxdomain {
-	return Net::DNS::RR->new_from_string(shift, 'nxdomain');
+    return Net::DNS::RR->new_from_string(shift, 'nxdomain');
 }
 
 sub rr_add {
-	return Net::DNS::RR->new_from_string(shift, 'rr_add');
+    return Net::DNS::RR->new_from_string(shift, 'rr_add');
 }
 
 sub rr_del {
-	return Net::DNS::RR->new_from_string(shift, 'rr_del');
+    return Net::DNS::RR->new_from_string(shift, 'rr_del');
 }
+
+
+
+# Utility function
+#
+# name2labels to translate names from presentation format into an
+# array of "wire-format" labels.
+
+
+# in: $dname a string with a domain name in presentation format (1035
+# sect 5.1)
+# out: an array of labels in wire format.
+
+
+sub name2labels {
+    my $dname=shift;
+    my @names;
+    my $j=0;
+    while ($dname){
+	($names[$j],$dname)=presentation2wire($dname);
+	$j++;
+    }
+
+    return @names;
+}
+
+
+
+
+sub wire2presentation {
+    my  $wire=shift;
+    my  $presentation="";
+    my $length=length($wire);
+    # There must be a nice regexp to do this.. but since I failed to
+    # find one I scan the name string until I find a '\', at that time
+    # I start looking forward and do the magic.
+
+    my $i=0;
+    
+    while ($i < $length ){
+	my $char=unpack("x".$i."C1",$wire);
+	if ( $char < 33 || $char > 126 ){
+	    $presentation.= sprintf ("\\%03u" ,$char);
+	}elsif ( $char == ord( "\"" )) {   
+	    $presentation.= "\\\"";    
+	}elsif ( $char == ord( "\$" )) {   
+	    $presentation.= "\\\$";    
+	}elsif ( $char == ord( "(" )) {   
+	    $presentation.= "\\(";    
+	}elsif ( $char == ord( ")" )) {   
+	    $presentation.= "\\)";    
+	}elsif ( $char == ord( ";" )) {   
+	    $presentation.= "\\;";    
+	}elsif ( $char == ord( "@" )) {   
+	    $presentation.= "\\@";    
+	}elsif ( $char == ord( "\\" )) {   
+	    $presentation.= "\\\\" ; 
+	}elsif ( $char==ord (".") ){
+	    $presentation.= "\\." ; 
+	}else{
+	    $presentation.=chr($char) 	;
+	}
+	$i++;
+    }
+
+    return $presentation;
+    
+}
+
+
+
+# ($wire,$leftover)=presentation2wire($leftover);
+
+# Will parse the input presentation format and return everything before
+# the first non-escaped "." in the first element of the return array and
+# all that has not been parsed yet in the 2nd argument.
+
+
+sub presentation2wire {
+    my  $presentation=shift;
+    my  $wire="";
+    my $length=length($presentation);
+    
+    my $i=0;
+    
+    while ($i < $length ){
+	my $char=unpack("x".$i."C1",$presentation);
+	if (  $char == ord ('.')){
+	    return ($wire,substr($presentation,$i+1));
+	}
+	if (  $char == ord ('\\')){
+	    #backslash found
+	    pos($presentation)=$i+1;
+	    if ($presentation=~/\G(\d\d\d)/){
+		$wire.=pack("C",$1);
+		$i+=3;
+	    }elsif($presentation=~/\Gx([0..9a..fA..F][0..9a..fA..F])/){
+		$wire.=pack("H*",$1);
+		$i+=3;
+	    }elsif($presentation=~/\G\./){
+		$wire.="\.";
+		$i+=1;
+	    }elsif($presentation=~/\G@/){
+		$wire.="@";
+		$i+=1;
+	    }elsif($presentation=~/\G\(/){
+		$wire.="(";
+		$i+=1;
+	    }elsif($presentation=~/\G\)/){
+		$wire.=")";
+		$i+=1;
+           }elsif($presentation=~/\G\\/){
+               $wire.="\\"; 
+               $i+=1;
+	    }
+	}else{
+	    $wire .=  pack("C",$char);  
+        }
+	$i++;
+    }
+    
+    return $wire;
+}
+
+
 
 1;
 __END__
@@ -550,6 +699,7 @@ section of a dynamic update packet.
 Returns a C<Net::DNS::RR> object or C<undef> if the object couldn't
 be created.
 
+
 =head1 EXAMPLES
 
 The following examples show how to use the C<Net::DNS> modules.
@@ -665,9 +815,9 @@ has arrived.
               $packet->print;
               $bgsock = undef;
           }
-	      # Check for the other sockets.
-	      $sel->remove($sock);
-	      $sock = undef;
+          # Check for the other sockets.
+          $sel->remove($sock);
+          $sock = undef;
       }
   } else {
       warn "timed out after $timeout seconds\n";
@@ -684,23 +834,34 @@ the source distribution.
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
-Portions Copyright (c) 2002-2003 Chris Reinhardt.
+Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2005 Olaf Kolkman (RIPE NCC)
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.
 
 =head1 AUTHOR INFORMATION
 
-Net::DNS is currently maintained by a group, led by:
-	Chris Reinhardt
-	ctriv@net-dns.org
+Net::DNS is currently maintained by:
+        Olaf Kolkman
+	olaf@net-dns.org
+
+Between 2002 and 2004 Net::DNS was maintained by:
+       Chris Reinhardt
+
 
 Net::DNS was created by:
 	Michael Fuhr
-	mike@fuhr.org
+	mike@fuhr.org 
+
+
 
 For more information see:
-	http://www.net-dns.org/
+    http://www.net-dns.org/
+
+Stay tuned and syncicate:
+    http://www.net-dns.org/blog/
 
 =head1 SEE ALSO
  

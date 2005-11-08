@@ -1,13 +1,13 @@
 package Net::DNS::Resolver::Recurse;
 #
-# $Id: Recurse.pm,v 1.1 2004/02/16 17:30:05 daniel Exp $
+# $Id: Recurse.pm 462 2005-07-15 20:55:32Z olaf $
 #
 use strict;
 use Net::DNS::Resolver;
 
 use vars qw($VERSION @ISA);
 
-$VERSION = (qw$Revision: 1.1 $)[1];
+$VERSION = (qw$LastChangedRevision: 462 $)[1];
 @ISA = qw(Net::DNS::Resolver);
 
 sub hints {
@@ -24,7 +24,10 @@ sub hints {
   # for who it thinks is authoritative for
   # the (root) zone as a sanity check.
   # Nice idea.
-  my $packet = $self->query(".", "NS", "IN");
+  
+  $self->recurse(1); 
+  my $packet=$self->query(".", "NS", "IN");
+
   my %hints = ();
   if ($packet) {
     if (my @ans = $packet->answer) {
@@ -39,21 +42,30 @@ sub hints {
         }
       }
       foreach my $rr ($packet->additional) {
-        print ";; ADDITIONAL: ",$rr->string,"\n" if $self->{'debug'};
-        if (my $server = lc $rr->name and
-            $rr->type eq "A") {
-          #print ";; ADDITIONAL HELP: $server -> [".$rr->rdatastr."]\n" if $self->{'debug'};
-          if ($hints{$server}) {
-            print ";; STORING IP: $server IN A ",$rr->rdatastr,"\n" if $self->{'debug'};
-            push @{ $hints{$server} }, $rr->rdatastr;
-          }
-        }
+	print ";; ADDITIONAL: ",$rr->string,"\n" if $self->{'debug'};
+	if (my $server = lc $rr->name){
+	  if ( $rr->type eq "A") {
+	    #print ";; ADDITIONAL HELP: $server -> [".$rr->rdatastr."]\n" if $self->{'debug'};
+	    if ($hints{$server}) {
+	      print ";; STORING IP: $server IN A ",$rr->rdatastr,"\n" if $self->{'debug'};
+	      push @{ $hints{$server} }, $rr->rdatastr;
+	    }
+	  }
+	  if ( $rr->type eq "AAAA") {
+	    #print ";; ADDITIONAL HELP: $server -> [".$rr->rdatastr."]\n" if $self->{'debug'};
+	    if ($hints{$server}) {
+	      print ";; STORING IP6: $server IN AAAA ",$rr->rdatastr,"\n" if $self->{'debug'};
+	      push @{ $hints{$server} }, $rr->rdatastr;
+	    }
+	  }
+	  
+	} 
       }
     }
     foreach my $server (keys %hints) {
       if (!@{ $hints{$server} }) {
-        # Wipe the servers without lookups
-        delete $hints{$server};
+	# Wipe the servers without lookups
+	delete $hints{$server};
       }
     }
     $self->{'hints'} = \%hints;
@@ -64,20 +76,32 @@ sub hints {
     if ($self->{'debug'}) {
       print ";; USING THE FOLLOWING HINT IPS:\n";
       foreach my $ips (values %{ $self->{'hints'} }) {
-        foreach my $server (@{ $ips }) {
-          print ";;  $server\n";
-        }
+	foreach my $server (@{ $ips }) {
+	  print ";;  $server\n";
+	}
       }
     }
   } else {
     warn "Server [".($self->nameservers)[0]."] did not give answers";
   }
-
+  
   # Disable recursion flag.
   $self->recurse(0);
-
+  
   return $self->nameservers( map { @{ $_ } } values %{ $self->{'hints'} } );
 }
+
+
+sub recursion_callback {
+	my ($self, $sub) = @_;
+	
+	if ($sub && UNIVERSAL::isa($sub, 'CODE')) {
+		$self->{'callback'} = $sub;
+	}
+	
+	return $self->{'callback'};
+}
+
 
 # $res->query_dorecursion( args );
 # Takes same args as Net::DNS::Resolver->query
@@ -88,10 +112,10 @@ sub query_dorecursion {
 
   # Make sure the hint servers are initialized.
   $self->hints unless $self->{'hints'};
-
+  $self->recurse(0);
   # Make sure the authority cache is clean.
-  # It is only used to store A records of
-  # authoritative name servers.
+  # It is only used to store A and AAAA records of
+  # the suposedly authoritative name servers.
   $self->{'authority_cache'} = {};
 
   # Obtain real question Net::DNS::Packet
@@ -112,6 +136,7 @@ sub _dorecursion {
   print ";; _dorecursion() depth=[$depth] known_zone=[$known_zone]\n" if $self->{'debug'};
   die "Recursion too deep, aborting..." if $depth > 255;
 
+  
   $known_zone =~ s/\.*$/./;
 
   # Get IPs from authorities
@@ -137,15 +162,28 @@ sub _dorecursion {
       if (!@{ $known_authorities->{$ns} }) {
         print ";; _dorecursion() Manual lookup for authority [$ns]\n" if $self->{'debug'};
         my $auth_packet =
-          $self->_dorecursion
-          ($self->make_query_packet($ns,"A"),  # packet
-           ".",               # known_zone
-           $self->{'hints'},  # known_authorities
-           $depth+1);         # depth
+	    $self->_dorecursion
+	    ($self->make_query_packet($ns,"AAAA"),  # packet
+	     ".",               # known_zone
+	     $self->{'hints'},  # known_authorities
+	     $depth+1);         # depth
+	my @ans;
+	@ans = $auth_packet->answer if $auth_packet;
+	
+	
+	$auth_packet =
+	    $self->_dorecursion
+	    ($self->make_query_packet($ns,"A"),  # packet
+	     ".",               # known_zone
+	     $self->{'hints'},  # known_authorities
+	     $depth+1);         # depth
+	
+	push (@ans,$auth_packet->answer ) if $auth_packet;
 
-        if ($auth_packet and my @ans = $auth_packet->answer) {
+        if ( @ans ) {
           print ";; _dorecursion() Answers found for [$ns]\n" if $self->{'debug'};
           foreach my $rr (@ans) {
+	    print ";; RR:".$rr->string."\n" if $self->{'debug'};
             if ($rr->type eq "CNAME") {
               # Follow CNAME
               if (my $server = lc $rr->name) {
@@ -159,7 +197,7 @@ sub _dorecursion {
                   next;
                 }
               }
-            } elsif ($rr->type eq "A") {
+            } elsif ($rr->type eq "A" ||$rr->type eq "AAAA" ) {
               if (my $server = lc $rr->name) {
                 $server =~ s/\.*$/./;
                 if ($known_authorities->{$server}) {
@@ -186,81 +224,92 @@ sub _dorecursion {
     print ";; _dorecursion() No authority information could be obtained.\n" if $self->{'debug'};
     return undef;
   }
-
+  
   # Cut the deck of IPs in a random place.
   print ";; _dorecursion() cutting deck of (".scalar(@ns).") authorities...\n" if $self->{'debug'};
   splice(@ns, 0, 0, splice(@ns, int(rand @ns)));
-
-  print ";; _dorecursion() First nameserver [$ns[0]]\n" if $self->{'debug'};
-  $self->nameservers(@ns);
-
-  if (my $packet = $self->send( $query_packet )) {
-    my $of = undef;
-    print ";; _dorecursion() Response received from [",$self->answerfrom,"]\n" if $self->{'debug'};
-    if (my $status = $packet->header->rcode) {
-      if ($status eq "NXDOMAIN") {
-        # I guess NXDOMAIN is the best we'll ever get
-        print ";; _dorecursion() returning NXDOMAIN\n" if $self->{'debug'};
-        return $packet;
-      } elsif (my @ans = $packet->answer) {
-        print ";; _dorecursion() Answers were found.\n" if $self->{'debug'};
-        return $packet;
-      } elsif (my @authority = $packet->authority) {
-        my %auth = ();
-        foreach my $rr (@authority) {
-          if ($rr->type =~ /^(NS|SOA)$/) {
-            my $server = lc ($1 eq "NS" ? $rr->nsdname : $rr->mname);
-            $server =~ s/\.*$/./;
-            $of = lc $rr->name;
-            $of =~ s/\.*$/./;
-            print ";; _dorecursion() Received authority [$of] [",$rr->type(),"] [$server]\n" if $self->{'debug'};
-            if (length $of <= length $known_zone) {
-              print ";; _dorecursion() Deadbeat name server did not provide new information.\n" if $self->{'debug'};
-            } elsif ($of =~ /$known_zone$/) {
-              print ";; _dorecursion() FOUND closer authority for [$of] at [$server].\n" if $self->{'debug'};
-              $auth{$server} ||= [];
-            } else {
-              print ";; _dorecursion() Confused name server [",$self->answerfrom,"] thinks [$of] is closer than [$known_zone]?\n" if $self->{'debug'};
-              last;
-            }
-          } else {
-            print ";; _dorecursion() Ignoring NON NS entry found in authority section: ",$rr->string,"\n" if $self->{'debug'};
-          }
-        }
-        foreach my $rr ($packet->additional) {
-          if ($rr->type eq "CNAME") {
-            # Store this CNAME into %auth too
-            if (my $server = lc $rr->name) {
-              $server =~ s/\.*$/./;
-              if ($auth{$server}) {
-                my $cname = lc $rr->rdatastr;
-                $cname =~ s/\.*$/./;
-                print ";; _dorecursion() FOUND CNAME authority: ",$rr->string,"\n" if $self->{'debug'};
-                $auth{$cname} ||= [];
-                $auth{$server} = $auth{$cname};
-                next;
-              }
-            }
-          } elsif ($rr->type eq "A") {
-            if (my $server = lc $rr->name) {
-              $server =~ s/\.*$/./;
-              if ($auth{$server}) {
-                print ";; _dorecursion() STORING: $server IN A ",$rr->rdatastr,"\n" if $self->{'debug'};
-                push @{ $auth{$server} }, $rr->rdatastr;
-                next;
-              }
-            }
-          }
-          print ";; _dorecursion() Ignoring useless: ",$rr->string,"\n" if $self->{'debug'};
-        }
-        if ($of =~ /$known_zone$/) {
-          return $self->_dorecursion( $query_packet, $of, \%auth, $depth+1 );
-        } else {
-          return $self->_dorecursion( $query_packet, $known_zone, $known_authorities, $depth+1 );
-        }
+  
+  
+ LEVEL:  foreach my $levelns (@ns){
+   print ";; _dorecursion() Trying nameserver [$levelns]\n" if $self->{'debug'};
+   $self->nameservers($levelns);
+   
+   if (my $packet = $self->send( $query_packet )) {
+     
+     if ($self->{'callback'}) {
+       $self->{'callback'}->($packet);
+     }
+     
+     my $of = undef;
+     print ";; _dorecursion() Response received from [",$self->answerfrom,"]\n" if $self->{'debug'};
+     if (my $status = $packet->header->rcode) {
+       if ($status eq "NXDOMAIN") {
+	 # I guess NXDOMAIN is the best we'll ever get
+	 print ";; _dorecursion() returning NXDOMAIN\n" if $self->{'debug'};
+	 return $packet;
+       } elsif (my @ans = $packet->answer) {
+	 print ";; _dorecursion() Answers were found.\n" if $self->{'debug'};
+	 return $packet;
+       } elsif (my @authority = $packet->authority) {
+	 my %auth = ();
+	 foreach my $rr (@authority) {
+	   if ($rr->type =~ /^(NS|SOA)$/) {
+	     my $server = lc ($1 eq "NS" ? $rr->nsdname : $rr->mname);
+	     $server =~ s/\.*$/./;
+	     $of = lc $rr->name;
+	     $of =~ s/\.*$/./;
+	     print ";; _dorecursion() Received authority [$of] [",$rr->type(),"] [$server]\n" if $self->{'debug'};
+	     if (length $of <= length $known_zone) {
+	       print ";; _dorecursion() Deadbeat name server did not provide new information.\n" if $self->{'debug'};
+	       next LEVEL;
+	     } elsif ($of =~ /$known_zone$/) {
+	       print ";; _dorecursion() FOUND closer authority for [$of] at [$server].\n" if $self->{'debug'};
+	       $auth{$server} ||= [];
+	     } else {
+	       print ";; _dorecursion() Confused name server [",$self->answerfrom,"] thinks [$of] is closer than [$known_zone]?\n" if $self->{'debug'};
+	       last;
+	     }
+	   } else {
+	     print ";; _dorecursion() Ignoring NON NS entry found in authority section: ",$rr->string,"\n" if $self->{'debug'};
+	   }
+	 }
+	 foreach my $rr ($packet->additional) {
+	   if ($rr->type eq "CNAME") {
+	     # Store this CNAME into %auth too
+	     if (my $server = lc $rr->name) {
+	       $server =~ s/\.*$/./;
+	       if ($auth{$server}) {
+		 my $cname = lc $rr->rdatastr;
+		 $cname =~ s/\.*$/./;
+		 print ";; _dorecursion() FOUND CNAME authority: ",$rr->string,"\n" if $self->{'debug'};
+		 $auth{$cname} ||= [];
+		 $auth{$server} = $auth{$cname};
+		 next;
+	       }
+	     }
+	   } elsif ($rr->type eq "A" || $rr->type eq "AAAA") {
+	     if (my $server = lc $rr->name) {
+	       $server =~ s/\.*$/./;
+	       if ($auth{$server}) {
+		 print ";; _dorecursion() STORING: $server IN A    ",$rr->rdatastr,"\n" if $self->{'debug'} &&  $rr->type eq "A";
+		 print ";; _dorecursion() STORING: $server IN AAAA ",$rr->rdatastr,"\n" if $self->{'debug'}&&  $rr->type eq "AAAA";
+		 push @{ $auth{$server} }, $rr->rdatastr;
+		 next;
+	       }
+	     }
+	   }
+	   print ";; _dorecursion() Ignoring useless: ",$rr->string,"\n" if $self->{'debug'};
+	 }
+	 if ($of =~ /$known_zone$/) {
+	   return $self->_dorecursion( $query_packet, $of, \%auth, $depth+1 );
+	 } else {
+	   return $self->_dorecursion( $query_packet, $known_zone, $known_authorities, $depth+1 );
+	 }
       }
-    }
-  }
+     }
+   }
+ }
+  
   return undef;
 }
 
@@ -280,34 +329,57 @@ Net::DNS::Resolver::Recurse - Perform recursive dns lookups
 
 =head1 DESCRIPTION
 
-This module is a super class of Net::DNS::Resolver.
-So the methods for Net::DNS::Resolver still work
-for this module as well.  There are just a couple
-methods added:
+This module is a sub class of Net::DNS::Resolver. So the methods for
+Net::DNS::Resolver still work for this module as well.  There are just a
+couple methods added:
 
 =head2 hints
 
-Initialize the hint servers.  Recursive queries
-need a starting name server to work off of.
-This method takes a list of IP addresses to
-use as the starting servers.  These name servers
-should be authoritative for the root (.) zone.
+Initialize the hint servers.  Recursive queries need a starting name
+server to work off of. This method takes a list of IP addresses to use
+as the starting servers.  These name servers should be authoritative for
+the root (.) zone.
 
-  $res->hints( @ips );
+  $res->hints(@ips);
 
-If no hints are passed, the default nameserver
-is asked for the hints.  Normally these IPs can
-be obtained from the following location:
+If no hints are passed, the default nameserver is asked for the hints. 
+Normally these IPs can be obtained from the following location:
 
   ftp://ftp.internic.net/domain/named.root
+  
+=head2 recursion_callback
+
+This method is takes a code reference, which is then invoked each time a
+packet is received during the recursive lookup.  For example to emulate
+dig's C<+trace> function:
+
+ $res->recursion_callback(sub {
+     my $packet = shift;
+		
+     $_->print for $packet->additional;
+		
+     printf(";; Received %d bytes from %s\n\n", 
+         $packet->answersize, 
+         $packet->answerfrom
+     );
+ });
 
 =head2 query_dorecursion
 
-This method is much like the normal query() method
-except it disables the recurse flag in the packet
-and explicitly performs the recursion.
+This method is much like the normal query() method except it disables
+the recurse flag in the packet and explicitly performs the recursion.
 
   $packet = $res->query_dorecursion( "www.netscape.com.", "A");
+
+
+=head1 IPv6 transport
+
+If the appropriate IPv6 libraries are installed the recursive resolver
+will randomly choose between IPv6 and IPv4 addresses of the
+nameservers it encounters during recursion.
+
+If you want to force IPv4 transport use the force_v4() method. Also see
+the IPv6 transport notes in the Net::DNS::Resolver documentation.
 
 =head1 AUTHOR
 
@@ -320,11 +392,12 @@ L<Net::DNS::Resolver>,
 =head1 COPYRIGHT
 
 Copyright (c) 2002, Rob Brown.  All rights reserved.
+Portions Copyright (c) 2005, Olaf M Kolkman.
 
 This module is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
 
-$Id: Recurse.pm,v 1.1 2004/02/16 17:30:05 daniel Exp $
+$Id: Recurse.pm 462 2005-07-15 20:55:32Z olaf $
 
 =cut
 
