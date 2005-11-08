@@ -208,18 +208,6 @@ sub init {
 					},
 				});
 
-			# Start a song search with the search text initialised to the current song's title
-			} elsif ($curitem eq 'TITLE') {
-
-				my %nextParams = 
-					Slim::Buttons::Search::searchFor($client,
-					                                 'SONGS',
-					                                 Slim::Utils::Text::matchCase($track->title));
-
-				# Make sure cursorPos is undefined, so the cursor will be at the end of the title.
-				$nextParams{'cursorPos'} = undef;
-				Slim::Buttons::Common::pushMode($client, $nextParams{'useMode'}, \%nextParams);
-
 			} elsif ($curitem eq 'FAVORITE') {
 
 				my $num = $client->param('favorite');
