@@ -140,45 +140,77 @@ sub useImporter {
 	}
 }
 
+# End the main importers, such as Music Dir, iTunes, etc - and call
+# post-processing steps in order if required.
 sub endImporter {
 	my $import = shift;
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
 	if (exists $importsRunning{$import}) { 
-		$::d_import && msgf("Import: Completed %s Scan in %s seconds.\n", string($import), int(Time::HiRes::time() - $importsRunning{$import}));
+
+		$::d_import && msgf("Import: Completed %s Scan in %s seconds.\n",
+			string($import), int(Time::HiRes::time() - $importsRunning{$import})
+		);
+
 		delete $importsRunning{$import};
 	}
 
-	if (scalar keys %importsRunning == 0 && $import ne 'artwork') {
+	# Only do an artwork scan if we're not doing any other post-processing.
+	if (scalar keys %importsRunning == 0 && 
+		$import ne 'artwork' && 
+		$import ne 'mergeVariousAlbums' &&
+		$import ne 'cleanupStaleEntries') {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork')) {
 
 			$::d_import && msg("Adding task for artScan().\n");
+
 			$importsRunning{'artwork'} = Time::HiRes::time();
 
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
 
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-
 		# Set this back to 0.
 		scanPlaylistsOnly(0);
+	}
+
+	# Auto-identify VA/Compilation albums
+	if (scalar keys %importsRunning == 0 && $import eq 'artwork') {
 
 		# Auto-identify VA/Compilation albums
 		$::d_import && msg("Adding task for mergeVariousArtistsAlbums().\n");
 
+		$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
+
 		Slim::Utils::Scheduler::add_task(sub { $ds->mergeVariousArtistsAlbums });
+	}
 
-		$::d_import && msg("Import: Finished background scanning.\n");
+	# Remove and dangling references.
+	if (scalar keys %importsRunning == 0 && $import eq 'mergeVariousAlbums') {
 
-		Slim::Music::Info::saveDBCache();
+		# Does a commit and clears out caches.
+		$ds->wipeCaches;
 
-		# Only do this on rescan.
 		if (cleanupDatabase()) {
 
 			# Don't re-enter
 			cleanupDatabase(0);
 
+			$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
+
 			$ds->cleanupStaleEntries();
+		}
+	}
+
+	if (scalar keys %importsRunning == 0) {
+
+		if (($import eq 'cleanupStaleEntries' && !cleanupDatabase()) || 
+		    ($import eq 'mergeVariousAlbums'  && !cleanupDatabase())) {
+
+			$ds->wipeCaches;
+
+			$::d_import && msg("Import: Finished background scanning.\n");
 		}
 	}
 }
@@ -227,22 +259,18 @@ sub artScan {
 
 		my $track = $ds->objectForId('track', $artwork{$album}); 
 
-		# Make sure we have an object for the url, and it has a thumbnail.
-		if (blessed($track) && $track->can('coverArt') && $track->coverArt('thumb')) {
-			
-			$ds->setAlbumArtwork($track);
-		}
+		$ds->setAlbumArtwork($track);
 
 		delete $artwork{$album};
 	}
 
-	if (!%artwork) { 
+	if (!scalar keys %artwork) { 
 
 		$::d_artwork && msg("Completed Artwork Scan\n");
 
 		endImporter('artwork');
 
-		$ds->forceCommit();
+		$ds->wipeCaches;
 
 		return 0;
 	}

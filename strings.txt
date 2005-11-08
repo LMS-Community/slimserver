@@ -10452,3 +10452,9 @@ SETUP_DATBASE_TUNE_CACHE_SIZE_DESC
 	DE	Wählen Sie die Grösse des Datenbank Caches. Grössere Werte benötigen mehr Arbeitsspeicher. Der Vorgabewert von 10000 Speicherseiten belegt ca. 15MB RAM.
 	EN	Set the database cache size. A larger number will use more memory. The default value of 10000 pages uses about 15MB RAM.
 	ES	Indicar el tamaño para cache de base de datos. Un número mayor utilizará más memoria.
+
+MERGEVARIOUSALBUMS
+	EN	mergeVariousArtists()
+
+CLEANUPSTALEENTRIES
+	EN	cleanupStaleEntries()

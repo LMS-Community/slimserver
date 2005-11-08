@@ -848,7 +848,7 @@ sub cleanupStaleTableEntries {
 	# We're done.
 	$self->dbh->commit;
 
-	$::d_import && msg("Import: Finished with cleanupStaleTableEntries()\n");
+	Slim::Music::Import::endImporter('cleanupStaleEntries');
 
 	%lastFind = ();
 
@@ -899,7 +899,7 @@ sub mergeVariousArtistsAlbums {
 	# XXX - exception should go here. Comming soon.
 	if (!blessed($albumObj) && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
-		$::d_import && msg("Import: Finished with mergeVariousArtistsAlbums()\n");
+		Slim::Music::Import::endImporter('mergeVariousAlbums');
 
 		$variousAlbumIds = ();
 
