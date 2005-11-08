@@ -1760,15 +1760,19 @@ sub textSongTime {
 	my $delta = 0;
 	my $sign  = '';
 
+	my $duration = Slim::Player::Source::playingSongDuration($client) || 0;
+
 	if (Slim::Player::Source::playmode($client) eq "stop") {
 		$delta = 0;
 	} else {	
 		$delta = Slim::Player::Source::songTime($client);
+		if ($duration && $delta > $duration) {
+			$delta = $duration;
+		}
 	}
 	
 	# 2 and 5 display remaining time, not elapsed
 	if ($remaining) {
-		my $duration = Slim::Player::Source::playingSongDuration($client) || 0;
 		if ($duration) {
 			$delta = $duration - $delta;	
 			$sign = '-';
