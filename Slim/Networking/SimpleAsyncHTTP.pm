@@ -114,8 +114,9 @@ sub _createHTTPRequest {
 sub headerCB {
 	my ($state, $error, $code, $mess, %h) = @_;
 	
-	my $self = $state->{'simple'};
-	my $http = $state->{'socket'};
+	# Don't leak the reference to ourselves.
+	my $self = delete $state->{'simple'};
+	my $http = delete $state->{'socket'};
 
 	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
 
@@ -158,8 +159,9 @@ sub headerCB {
 sub bodyCB {
 	my ($state, $error, $content) = @_;
 
-	my $self = $state->{'simple'};
-	my $http = $state->{'socket'};
+	# Don't leak the reference to ourselves.
+	my $self = delete $state->{'simple'};
+	my $http = delete $state->{'socket'};
 
 	if ($error) {
 
