@@ -12,6 +12,8 @@ use base qw(Class::Virtually::Abstract);
 
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Misc;
+
 our %fieldInfo = ();
 
 my $init = 0;
@@ -120,6 +122,18 @@ sub init {
 					}
 				}
 
+				# Check to see if our only criteria is an
+				# Album. If so, we can simply get the album's tracks.
+				if (scalar keys %$findCriteria == 1 && defined $findCriteria->{'album'}) {
+
+					my $albumObj = $ds->objectForId('album', $findCriteria->{'album'});
+
+					if (blessed($albumObj) && $albumObj->can('tracks')) {
+
+						return [ $albumObj->tracks ];
+					}
+				}
+
 				# Because we store directories, etc in the
 				# tracks table - only pull out items that are
 				# 'audio' this is needed because we're using
@@ -129,7 +143,7 @@ sub init {
 				$findCriteria->{'audio'} = 1;
 
 				return $ds->find({
-					'field'  => 'track',
+					'field'  => 'lightweighttrack',
 					'find'   => $findCriteria,
 					'sortBy' => exists $findCriteria->{'album'} ? 'tracknum' : 'title',
 					'idOnly' => $idOnly,
@@ -185,10 +199,6 @@ sub init {
 				}
 
 				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
-
-				if ($item->coverArt) {
-					$form->{'coverArt'} = $id;
-				}
 			},
 
 			'ignoreArticles' => 1,
