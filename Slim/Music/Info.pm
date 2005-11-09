@@ -14,6 +14,7 @@ use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use MP3::Info;
+use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
@@ -252,10 +253,6 @@ sub resetClientsToHomeMenu {
 
 		Slim::Buttons::Common::setMode($client, 'home');
 	}
-}
-
-sub saveDBCache {
-	$currentDB->forceCommit();
 }
 
 sub wipeDBCache {
@@ -1212,178 +1209,133 @@ sub addDiscNumberToAlbumTitle {
 	return $title;
 }
 
-sub getImageContent {
+sub imageContentType {
+	my $body = shift;
+
+	use bytes;
+
+	# iTunes sometimes puts PNG images in and says they are jpeg
+	if ($$body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
+
+		return 'image/png';
+
+	} elsif ($$body =~ /^\xff\xd8\xff\xe0..JFIF/) {
+
+		return 'image/jpeg';
+	}
+
+	return 'application/octet-stream';
+}
+
+sub getImageContentAndType {
 	my $path = shift;
 
 	use bytes;
-	my $contentref;
+	my $content;
 
 	if (open (TEMPLATE, $path)) { 
 		local $/ = undef;
 		binmode(TEMPLATE);
-		$$contentref = <TEMPLATE>;
+		$content = <TEMPLATE>;
 		close TEMPLATE;
 	}
 
-	defined($$contentref) && length($$contentref) || $::d_artwork && msg("Image File empty or couldn't read: $path\n");
-	return $$contentref;
+	if (defined($content) && length($content)) {
+
+		return ($content, imageContentType(\$content));
+	}
+
+	$::d_artwork && msg("getImageContent: Image File empty or couldn't read: $path : $!\n");
+
+	return undef;
 }
 
 sub readCoverArt {
-	my $fullpath = shift;
-	my $image    = shift || 'cover';
+	my $track = shift;  
+	my $image = shift || 'cover';
 
-	my ($body,$contenttype,$path) = readCoverArtTags($fullpath);
+	my $url  = Slim::Utils::Misc::stripAnchorFromURL($track->url);
+	my $file = $track->path;
 
+	# Try to read a cover image from the tags first.
+	my ($body, $contentType, $path) = readCoverArtTags($track, $file);
+
+	# Nothing there? Look on the file system.
 	if (!defined $body) {
-		($body,$contenttype,$path) = readCoverArtFiles($fullpath,$image);
+		($body, $contentType, $path) = readCoverArtFiles($track, $file, $image);
 	}
 
-	return ($body,$contenttype,$path);
+	return ($body, $contentType, $path);
 }
-	
+
 sub readCoverArtTags {
-	use bytes;
-	my $fullpath = shift;
-	my $tags = shift;
+	my $track = shift;
+	my $file  = shift;
 
-	return undef unless Slim::Utils::Prefs::get('lookForArtwork');
+	my ($body, $contentType);
+	
+	$::d_artwork && msg("readCoverArtTags: Looking for a covert art image in the tags of: [$file]\n");
 
-	my $body;	
-	my $contenttype;
-	
-	$::d_artwork && msg("Updating image for $fullpath\n");
-	
-	if (isSong($fullpath) && isFile($fullpath)) {
-	
-		my $file = Slim::Utils::Misc::virtualToAbsolute($fullpath);
-	
-		if (isFileURL($file)) {
-			$file = Slim::Utils::Misc::pathFromFileURL($file);
-		} else {
-			$file = $fullpath;
-		}
-			
-		if (isMP3($fullpath) || isWav($fullpath) || isAIFF($fullpath)) {
-	
-			$tags = MP3::Info::get_mp3tag($file, 2, 1);
-			if (defined $tags) {
-				$::d_artwork && msg("Looking for image in ID3 2.2 tag in file $file\n");
-				# look for ID3 v2.2 picture
-				my $pic = $tags->{'PIC'};
-				if (defined($pic)) {
-					if (ref($pic) eq 'ARRAY') {
-						$pic = (@$pic)[0];
-					}					
-					my ($encoding, $format, $picturetype, $description) = unpack 'Ca3CZ*', $pic;
-					my $len = length($description) + 1 + 5;
-					if ($encoding) { $len++; } # skip extra terminating null if unicode
-					
-					if ($len < (length($pic))) {		
-						my ($data) = unpack "x$len A*", $pic;
-						
-						$::d_artwork && msg( "PIC format: $format length: " . length($pic) . "\n");
+	if (blessed($track) && $track->can('audio') && $track->audio) {
 
-						if (length($pic)) {
-							if ($format eq 'PNG') {
-									$contenttype = 'image/png';
-									$body = $data;
-							} elsif ($format eq 'JPG') {
-									$contenttype = 'image/jpeg';
-									$body = $data;
-							}
-						}
-					}
-				} else {
-					# look for ID3 v2.3 picture
-					$pic = $tags->{'APIC'};
-					if (defined($pic)) {
-						# if there are more than one pictures, just grab the first one.
-						if (ref($pic) eq 'ARRAY') {
-							$pic = (@$pic)[0];
-						}					
-						my ($encoding, $format) = unpack 'C Z*', $pic;
-						my $len = length($format) + 2;
-						if ($len < length($pic)) {
-							my ($picturetype, $description) = unpack "x$len C Z*", $pic;
-							$len += 1 + length($description) + 1;
-							if ($encoding) { $len++; } # skip extra terminating null if unicode
-							
-							my ($data) = unpack"x$len A*", $pic;
-							
-							$::d_artwork && msg( "APIC format: $format length: " . length($data) . "\n");
-	
-							if (length($data)) {
-								$contenttype = $format;
-								$body = $data;
-							}
-						}
-					}
-				}
-			}
+		if (isMP3($track) || isWav($track) || isAIFF($track)) {
 
-		} elsif (isMOV($fullpath)) {
+			loadTagFormatForType('mp3');
 
-			$::d_artwork && msg("Looking for image in Movie metadata in file $file\n");
+			$body = Slim::Formats::MP3::getCoverArt($file);
+
+		} elsif (isMOV($track)) {
 
 			loadTagFormatForType('mov');
 
 			$body = Slim::Formats::Movie::getCoverArt($file);
 
-			$::d_artwork && $body && msg("found image in $file of length " . length($body) . " bytes \n");
-
-		} elsif (isFLAC($fullpath)) {
-
-			$::d_artwork && msg("Looking for image in FLAC metadata blocks - in file $file\n");
+		} elsif (isFLAC($track)) {
 
 			loadTagFormatForType('flc');
 
 			$body = Slim::Formats::FLAC::getCoverArt($file);
-
-			$::d_artwork && $body && msg("found image in $file of length " . length($body) . " bytes \n");
 		}
-		
+
 		if ($body) {
-			# iTunes sometimes puts PNG images in and says they are jpeg
-			if ($body =~ /^\x89PNG\x0d\x0a\x1a\x0a/) {
-				$::d_info && msg( "found PNG image\n");
-				$contenttype = 'image/png';
-			} elsif ($body =~ /^\xff\xd8\xff\xe0..JFIF/) {
-				$::d_info && msg( "found JPEG image\n");
-				$contenttype = 'image/jpeg';
-			}
-			
+
+			$::d_artwork && msg("found image in $file of length " . length($body) . " bytes \n");
+
+			$contentType = imageContentType(\$body);
+
+			$::d_info && msg( "found $contentType image\n");
+
 			# jpeg images must start with ff d8 ff e0 or they ain't jpeg, sometimes there is junk before.
-			if ($contenttype && $contenttype eq 'image/jpeg')	{
+			if ($contentType && $contentType eq 'image/jpeg') {
+
 				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
 			}
+
+			return ($body, $contentType, 1);
 		}
 
  	} else {
 
- 		$::d_info && msg("readCoverArtTags: Not a song, skipping: $fullpath\n");
- 	}
- 	
-	return ($body, $contenttype, 1);
+		$::d_info && msg("readCoverArtTags: Not file we can extract artwork from. Skipping: $file\n");
+	}
+
+	return undef;
 }
 
 sub readCoverArtFiles {
-	my $fullpath = shift;
-	my $image    = shift || 'cover';
+	my $track = shift;
+	my $path  = shift;
+	my $image = shift || 'cover';
 
-	my ($artwork, $contentType, $body);
 	my @filestotry = ();
 	my @names      = qw(cover thumb album albumartsmall folder);
 	my @ext        = qw(jpg gif);
+	my $artwork    = undef;
 
-	use bytes;
+	my $file       = file($path);
+	my $parentDir  = $file->dir;
 
-	my $file = isFileURL($fullpath) ? Slim::Utils::Misc::pathFromFileURL($fullpath) : $fullpath;
-
-	my @components = splitdir($file);
-	pop @components;
-
-	$::d_artwork && msg("Looking for image files in ".catdir(@components)."\n");
+	$::d_artwork && msg("Looking for image files in $parentDir\n");
 
 	my %nameslist = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
@@ -1392,49 +1344,46 @@ sub readCoverArtFiles {
 		# these seem to be in a particular order - not sure if that means anything.
 		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
 
-		if (Slim::Utils::Prefs::get('coverThumb')) {
-			$artwork = Slim::Utils::Prefs::get('coverThumb');
-		}
+		$artwork = Slim::Utils::Prefs::get('coverThumb');
 
 	} else {
 
 		# these seem to be in a particular order - not sure if that means anything.
 		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
 
-		if (Slim::Utils::Prefs::get('coverArt')) {
-			$artwork = Slim::Utils::Prefs::get('coverArt');
-		}
+		$artwork = Slim::Utils::Prefs::get('coverArt');
 	}
 
+	# If the user has specified a pattern to match the artwork on, we need
+	# to generate that pattern. This is nasty.
 	if (defined($artwork) && $artwork =~ /^%(.*?)(\..*?){0,1}$/) {
 
 		my $suffix = $2 ? $2 : ".jpg";
 
-		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($fullpath), $1)."$suffix";
+		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($file), $1)."$suffix";
 
 		$::d_artwork && msgf(
 			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
 		);
 
-		my $artpath = catdir(@components, $artwork);
+		my $artPath = $parentDir->file($artwork);
 
-		$body = getImageContent($artpath);
+		my ($body, $contentType) = getImageContentAndType($artPath);
 
-		my $artfolder = Slim::Utils::Prefs::get('artfolder');
+		my $artDir  = dir(Slim::Utils::Prefs::get('artfolder'));
 
-		if (!$body && defined $artfolder) {
+		if (!$body && defined $artDir) {
 
-			$artpath = catdir(Slim::Utils::Prefs::get('artfolder'),$artwork);
-			$body = getImageContent($artpath);
+			$artPath = $artDir->file($artwork);
+
+			($body, $contentType) = getImageContentAndType($artPath);
 		}
 
-		if ($body) {
+		if ($body && $contentType) {
 
-			$::d_artwork && msg("Found $image file: $artpath\n\n");
+			$::d_artwork && msg("Found $image file: $artPath\n");
 
-			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($artpath));
-
-			return ($body, $contentType, $artpath);
+			return ($body, $contentType, $artPath);
 		}
 
 	} elsif (defined $artwork) {
@@ -1442,19 +1391,15 @@ sub readCoverArtFiles {
 		unshift @filestotry, $artwork;
 	}
 
-	if (defined $artworkDir && $artworkDir eq catdir(@components)) {
+	if (defined $artworkDir && $artworkDir eq $parentDir) {
 
-		if (exists $lastFile{$image}  && $lastFile{$image} ne '1') {
+		if (exists $lastFile{$image} && $lastFile{$image} != 1) {
 
 			$::d_artwork && msg("Using existing $image: $lastFile{$image}\n");
 
-			$body = getImageContent($lastFile{$image});
+			my ($body, $contentType) = getImageContentAndType($lastFile{$image});
 
-			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($lastFile{$image}));
-
-			$artwork = $lastFile{$image};
-
-			return ($body, $contentType, $artwork);
+			return ($body, $contentType, $lastFile{$image});
 
 		} elsif (exists $lastFile{$image}) {
 
@@ -1465,35 +1410,31 @@ sub readCoverArtFiles {
 
 	} else {
 
-		$artworkDir = catdir(@components);
+		$artworkDir = $parentDir;
 		%lastFile = ();
 	}
 
-	foreach my $file (@filestotry) {
+	for my $file (@filestotry) {
 
-		$file = catdir(@components, $file);
+		$file = $parentDir->file($file);
 
 		next unless -r $file;
 
-		$body = getImageContent($file);
+		my ($body, $contentType) = getImageContentAndType($file);
 
-		if ($body) {
-			$::d_artwork && msg("Found $image file: $file\n\n");
+		if ($body && $contentType) {
 
-			$contentType = mimeType(Slim::Utils::Misc::fileURLFromPath($file));
+			$::d_artwork && msg("Found $image file: $file\n");
 
-			$artwork = $file;
-			$lastFile{$image} = $file;
-
-			last;
+			return ($body, $contentType, $file);
 
 		} else {
 
-			$lastFile{$image} = '1';
+			$lastFile{$image} = 1;
 		}
 	}
 
-	return ($body, $contentType, $artwork);
+	return undef;
 }
 
 sub splitTag {
@@ -1814,9 +1755,11 @@ sub typeFromSuffix {
 sub typeFromPath {
 	my $fullpath = shift;
 	my $defaultType = shift || 'unk';
-	my $type;
 
-	if (defined($fullpath) && $fullpath ne "" && $fullpath !~ /\x00/) {
+	# Remove the anchor if we're checking the suffix.
+	my ($type, $anchorlessPath);
+
+	if ($fullpath && $fullpath !~ /\x00/) {
 
 		# Return quickly if we have it in the cache.
 		if (defined $urlToTypeCache{$fullpath}) {
@@ -1829,47 +1772,54 @@ sub typeFromPath {
 
 			$type = $suffixes{$1};
 
-		} elsif (isRemoteURL($fullpath)) {
-
-			$type = typeFromSuffix($fullpath, $defaultType);
-
 		} else {
-			my $filepath;
 
-			if (isFileURL($fullpath)) {
-				$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-				$::d_info && msg("Converting $fullpath to $filepath\n");
-			} else {
-				$filepath = $fullpath;
-			}
+			$anchorlessPath = Slim::Utils::Misc::stripAnchorFromURL($fullpath);
 
-#			$filepath = Slim::Utils::Misc::fixPath($filepath);
-			if (defined($filepath) && $filepath ne "") {
+			$type = typeFromSuffix($anchorlessPath, $defaultType);
+		}
+	}
 
-				if (-f $filepath) {
+	# We didn't get a type from above - try a little harder.
+	if ((!defined($type) || $type eq 'unk') && $fullpath && $fullpath !~ /\x00/) {
 
-					if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::OS() eq 'win') {
-						require Win32::Shortcut;
-						if ((Win32::Shortcut->new($filepath)) ? 1 : 0) {
-							$type = 'lnk';
-						}
+		my $filepath;
 
-					} else {
-						$type = typeFromSuffix($filepath, $defaultType);
+		if (isFileURL($fullpath)) {
+			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+		} else {
+			$filepath = $fullpath;
+		}
+
+		if ($filepath) {
+
+			$anchorlessPath = Slim::Utils::Misc::stripAnchorFromURL($filepath);
+
+			if (-f $filepath) {
+
+				if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::OS() eq 'win') {
+					require Win32::Shortcut;
+					if ((Win32::Shortcut->new($filepath)) ? 1 : 0) {
+						$type = 'lnk';
 					}
 
-				} elsif (-d $filepath) {
-
-					$type = 'dir';
-
 				} else {
-					# file doesn't exist, go ahead and do typeFromSuffix
-					$type = typeFromSuffix($filepath, $defaultType);
+
+					$type = typeFromSuffix($anchorlessPath, $defaultType);
 				}
+
+			} elsif (-d $filepath) {
+
+				$type = 'dir';
+
+			} else {
+
+				# file doesn't exist, go ahead and do typeFromSuffix
+				$type = typeFromSuffix($anchorlessPath, $defaultType);
 			}
 		}
 	}
-	
+
 	if (!defined($type) || $type eq 'unk') {
 		$type = $defaultType;
 	}

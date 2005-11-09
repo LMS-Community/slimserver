@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time  int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (16, 0, 0);
+INSERT INTO metainformation VALUES (17, 0, 0);
 
 --
 -- Table: tracks
@@ -38,9 +38,7 @@ CREATE TABLE tracks (
   year  smallint(5) unsigned,
   secs  int(10) unsigned,
   cover varchar(255),
-  covertype varchar(255),
   thumb varchar(255),
-  thumbtype varchar(255),
   vbr_scale varchar(255),
   bitrate  int(10) unsigned,
   rate  int(10) unsigned,
@@ -119,7 +117,7 @@ CREATE TABLE albums (
   contributor varchar(255),
   compilation tinyint(1) unsigned,
   year  smallint(5) unsigned,
-  artwork_path varchar(255),
+  artwork int(10) unsigned, -- pointer to a track id that contains artwork
   disc  tinyint(1) unsigned,
   discc  tinyint(1) unsigned,
   replay_gain float,

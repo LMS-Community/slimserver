@@ -29,6 +29,9 @@ my %tagMapping = (
 	'MEDIA JUKEBOX: ALBUM ARTIST'   => 'ALBUMARTIST',
 );
 
+# Allow us to reuse tag data when fetching artwork if we can.
+my $tagCache = [];
+
 # Don't try and convert anything to latin1
 if ($] > 5.007) {
 
@@ -36,15 +39,10 @@ if ($] > 5.007) {
 }
 
 sub getTag {
-	my $file = shift || "";
+	my $file = shift || return undef;
 
-	# What is this for? Trailing null?
-	open my $fh, "< $file\0" or return undef;
-	
-	# Seems redundant.
-	return undef if (!$fh);
+	open(my $fh, $file) or return undef;
 
-	$::d_mp3 && msg("Getting tags for: $file\n");	
 	my $tags = MP3::Info::get_mp3tag($fh); 
 	my $info = MP3::Info::get_mp3info($fh);
 
@@ -111,11 +109,39 @@ sub getTag {
 		delete $info->{'RVA2'};
 	}
 
-	close $fh;
+	close($fh);
+
+	# Allow getCoverArt to reuse what we just fetched.
+	$tagCache = [ $file, $info ];
 
 	return $info;
 }
 
+sub getCoverArt {
+	my $file = shift || return undef;
+
+	# Try to save a re-read
+	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+
+		my $pic = $tagCache->[1]->{'PIC'}->{'DATA'};
+
+		# Don't leave anything around.
+		$tagCache = [];
+
+		return $pic;
+	}
+
+	my $tags = MP3::Info::get_mp3tag($file) || {};
+
+	if (defined $tags->{'PIC'} && defined $tags->{'PIC'}->{'DATA'}) {
+
+		$tagCache = [ $file, $tags ];
+
+		return $tags->{'PIC'}->{'DATA'};
+	}
+
+	return undef;
+}
 
 sub doTagMapping {
 	my $tags = shift;

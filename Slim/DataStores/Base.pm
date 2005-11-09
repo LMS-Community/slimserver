@@ -42,7 +42,7 @@ should override all of these methods.
 		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
 		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
-		getPlaylists getPlaylistForClient readTags setAlbumArtwork updateCoverArt 
+		getPlaylists getPlaylistForClient readTags setAlbumArtwork 
 		commonAlbumTitlesChanged mergeVariousArtistsAlbums
 	));
 
@@ -367,9 +367,9 @@ sub init {
 				my $descend = shift;
 				my $findCriteria = shift;
 
-				$form->{'text'} = $item->title;
-				$form->{'coverThumb'} = $item->artwork_path || 0;
-				$form->{'size'}    = Slim::Utils::Prefs::get('thumbSize');
+				$form->{'text'}       = $item->title;
+				$form->{'coverThumb'} = $item->artwork || 0;
+				$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
 
@@ -468,7 +468,7 @@ sub init {
 				my $item = shift;
 				my $itemname = shift;
 
-				$form->{'coverThumb'} = $item->artwork_path || 0;
+				$form->{'coverThumb'} = $item->artwork || 0;
 
 				# add the year to artwork browsing if requested.
 				if (Slim::Utils::Prefs::get('showYear')) {

@@ -80,9 +80,6 @@ sub new {
 		# Non-persistent cache to make sure we don't set album artwork
 		# too many times.
 		artworkCache => {},
-		# Non-persistent caches to store cover and thumb properties
-		coverCache => {},
-		thumbCache => {},
 		# Optimization to cache last track accessed rather than retrieve it again. 
 		lastTrackURL => '',
 		lastTrack => {},
@@ -974,8 +971,6 @@ sub wipeCaches {
 	$vaObj            = undef;
 
 	$self->{'artworkCache'} = {};
-	$self->{'coverCache'}   = {};
-	$self->{'thumbCache'}   = {};	
 	$self->{'lastTrackURL'} = '';
 	$self->{'lastTrack'}    = {};
 	$self->{'zombieList'}   = {};
@@ -1246,23 +1241,18 @@ sub setAlbumArtwork {
 		return undef;
 	}
 
-	my $album    = $track->album();
-	my $albumId  = $album->id() if $album;
-	my $filepath = $track->url();
+	my $album   = $track->album;
+	my $albumId = $album->id if blessed($album);
 
 	# only cache albums once each
-	if ($album && !exists $self->{'artworkCache'}->{$albumId}) {
+	if ($albumId && !exists $self->{'artworkCache'}->{$albumId}) {
 
-		if (Slim::Music::Info::isFileURL($filepath)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($filepath);
-		}
-
-		$::d_artwork && msg("Updating $album artwork cache: $filepath\n");
+		$::d_artwork && msg("Updating $album artwork cache: $track\n");
 
 		$self->{'artworkCache'}->{$albumId} = 1;
 
-		$album->artwork_path($track->id);
-		$album->update();
+		$album->artwork($track->id);
+		$album->update;
 	}
 }
 
@@ -1755,9 +1745,9 @@ sub _postCheckAttributes {
 		}
 
 		# Associate cover art with this album, and keep it cached.
-		unless ($self->{'artworkCache'}->{$albumObj->id}) {
+		if (!$self->{'artworkCache'}->{$albumObj->id}) {
 
-			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
+			if (!Slim::Music::Import::artwork($albumObj) && (!$track->thumb || !$track->cover)) {
 
 				Slim::Music::Import::artwork($albumObj, $track);
 			}
@@ -1945,57 +1935,6 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
-}
-
-sub updateCoverArt {
-	my $self     = shift;
-	my $fullpath = shift;
-	my $type     = shift || 'cover';
-
-	# Check if we've already attempted to get artwork this session
-	if (($type eq 'cover') && defined($self->{'coverCache'}->{$fullpath})) {
-
-		return;
-
-	} elsif (($type eq 'thumb') && defined($self->{'thumbCache'}->{$fullpath})) {
-
-		return;
-	}
-			
-	my ($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $type);
-
- 	if (defined($body)) {
-
-		my $info = {};
-
- 		if ($type eq 'cover') {
-
- 			$info->{'COVER'} = $path;
- 			$info->{'COVERTYPE'} = $contenttype;
-			$self->{'coverCache'}->{$fullpath} = $path;
-
- 		} elsif ($type eq 'thumb') {
-
- 			$info->{'THUMB'} = $path;
- 			$info->{'THUMBTYPE'} = $contenttype;
-			$self->{'thumbCache'}->{$fullpath} = $path;
- 		}
-
- 		$::d_artwork && msg("$type caching $path for $fullpath\n");
-
-		$self->updateOrCreate({
-			'url'        => $fullpath,
-			'attributes' => $info
-		});
-
- 	} else {
-
-		if ($type eq 'cover') {
-			$self->{'coverCache'}->{$fullpath} = 0;
- 		} elsif ($type eq 'thumb') {
-			$self->{'thumbCache'}->{$fullpath} = 0;
- 		}
- 	}
 }
 
 # This is a callback that is run when the user changes the common album titles

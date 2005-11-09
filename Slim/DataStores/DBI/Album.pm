@@ -14,7 +14,7 @@ use Slim::Utils::Misc;
 
 	$class->columns(Primary => qw/id/);
 
-	$class->columns(Essential => qw/title titlesort contributor compilation year artwork_path disc discc musicmagic_mixable/);
+	$class->columns(Essential => qw/title titlesort contributor compilation year artwork disc discc musicmagic_mixable/);
 
 	$class->columns(Others    => qw/titlesearch replay_gain replay_peak musicbrainz_id/);
 
@@ -23,7 +23,7 @@ use Slim::Utils::Misc;
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 
 	# This has the same sort order as %DataModel::sortFieldMap{'album'}
-	$class->add_constructor('hasArtwork' => 'artwork_path IS NOT NULL ORDER BY titlesort, disc');
+	$class->add_constructor('hasArtwork' => 'artwork IS NOT NULL ORDER BY titlesort, disc');
 
 	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'tracknum'});
 	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorAlbum' => 'contributor'] => 'album');

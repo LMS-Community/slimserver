@@ -635,6 +635,71 @@ sub get_mp3tag {
 							}
 						}
 
+					} elsif ($id =~ /^A?PIC$/) {
+
+						my $pic = $v2->{$id};
+
+						# if there is more than one picture, just grab the first one.
+						if (ref($pic) eq 'ARRAY') {
+							$pic = (@$pic)[0];
+						}
+
+						use bytes;
+
+						my $valid_pic  = 0;
+						my $pic_len    = 0;
+						my $pic_format = '';
+
+						# look for ID3 v2.2 picture
+						if ($pic && $id eq 'PIC') {
+
+							# look for ID3 v2.2 picture
+							my ($encoding, $format, $picture_type, $description) = unpack 'Ca3CZ*', $pic;
+							$pic_len = length($description) + 1 + 5;
+
+							# skip extra terminating null if unicode
+							if ($encoding) { $pic_len++; }
+
+							if ($pic_len < length($pic)) {
+								$valid_pic  = 1;
+								$pic_format = $format;
+							}
+
+						} elsif ($pic && $id eq 'APIC') {
+
+							# look for ID3 v2.3 picture
+							my ($encoding, $format) = unpack 'C Z*', $pic;
+
+							$pic_len = length($format) + 2;
+
+							if ($pic_len < length($pic)) {
+
+								my ($picture_type, $description) = unpack "x$pic_len C Z*", $pic;
+
+								$pic_len += 1 + length($description) + 1;
+
+								# skip extra terminating null if unicode
+								if ($encoding) { $pic_len++; }
+
+								$valid_pic  = 1;
+								$pic_format = $format;
+							}
+						}
+
+						# Proceed if we have a valid picture.
+						if ($valid_pic && $pic_format) {
+
+							my ($data) = unpack("x$pic_len A*", $pic);
+
+							if (length($data) && $pic_format) {
+
+								$info{$hash->{$id}} = {
+									'DATA'   => $data,
+									'FORMAT' => $pic_format,
+								}
+							}
+						}
+
 					} else {
 						my $data1 = $v2->{$id};
 

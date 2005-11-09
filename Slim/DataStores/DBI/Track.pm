@@ -36,8 +36,6 @@ our %otherColumns = (
 	'year' => 'year',
 	'secs' => 'secs',
 	'cover' => 'cover',
-	'covertype' => 'covertype',
-	'thumbtype' => 'thumbtype',
 	'vbr_scale' => 'vbr_scale',
 	'bitrate' => 'bitrate',
 	'rate' => 'samplerate',
@@ -110,32 +108,6 @@ sub accessor_name {
 	my ($class, $column) = @_;
 	
 	return $allColumns{$column};
-}
-
-sub get {
-	my ($self, @attrs) = @_;
-
-	my @items = $self->SUPER::get(@attrs);
-
-	for (my $i = 0; $i <= $#attrs; $i++) {
-
-		if (!defined $items[$i]) {
-
-			if ($attrs[$i] =~ /^(COVER|COVERTYPE)$/) {
-
-				$loader->updateCoverArt($self->SUPER::get('url'), 'cover');
-
-			} elsif ($attrs[$i] =~ /^(THUMB|THUMBTYPE)$/) {
-
-				# defer thumb information until needed
-				$loader->updateCoverArt($self->SUPER::get('url'), 'thumb');
-			}
-
-			$items[$i] = $self->SUPER::get($attrs[$i]);
-		}
-	}
-
-	return wantarray ? @items : $items[0];
 }
 
 sub albumid {
@@ -302,17 +274,13 @@ sub isContainer {
 
 # we cache whether we had success reading the cover art.
 sub coverArt {
-	my $self = shift;
-	my $art  = shift || 'cover';
-	my $list = shift || 0;
-
-	my $image;
+	my $self    = shift;
+	my $artType = shift || 'cover';
+	my $list    = shift || 0;
 
 	# return with nothing if this isn't a file. 
 	# We don't need to search on streams, for example.
-	if (!Slim::Utils::Prefs::get('lookForArtwork') || 
-	    !Slim::Music::Info::isSong($self) ||
-	     Slim::Music::Info::isRemoteURL($self)) {
+	if (!Slim::Utils::Prefs::get('lookForArtwork') || !$self->audio) {
 
 		return undef;
 	}
@@ -320,56 +288,50 @@ sub coverArt {
 	# Don't pass along anchors - they mess up the content-type.
 	# See Bug: 2219
 	my $url = Slim::Utils::Misc::stripAnchorFromURL($self->url);
-	
-	$::d_artwork && msg("Retrieving artwork ($art) for: $url\n");
-	
-	my ($body, $contenttype, $mtime, $path);
 
-	my $artwork = $art eq 'cover' ? $self->cover() : $self->thumb();
-	
-	if ($artwork && ($artwork ne '1')) {
+	$::d_artwork && msg("Retrieving artwork ($artType) for: $url\n");
 
-		$body = Slim::Music::Info::getImageContent($artwork);
+	my ($body, $contentType, $mtime, $path);
 
-		if ($body) {
+	# artType will be either 'cover' or 'thumb'
+	#
+	# A value of 1 indicate the cover art is embedded in the file's
+	# metdata tags.
+	# 
+	# Otherwise we'll have a path to a file on disk.
+	my $artwork = $self->get($artType);
 
-			$::d_artwork && msg("Found cached $art file: $artwork\n");
+	if ($artwork && $artwork != 1) {
 
-			$contenttype = Slim::Music::Info::mimeType(Slim::Utils::Misc::fileURLFromPath($artwork));
+		($body, $contentType) = Slim::Music::Info::getImageContentAndType($artwork);
+
+		if ($body && $contentType) {
+
+			$::d_artwork && msg("coverArt: Found cached $artType file: $artwork\n");
 
 			$path = $artwork;
-
-		} else {
-
-			($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
-
-			if (defined $path) {
-
-				$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
-				$self->update();
-			}
-		}
-
-	} else {
-
-		($body, $contenttype, $path) = Slim::Music::Info::readCoverArt($self->url, $art);
-
-		if (defined $path) {
-
-			$art eq 'cover' ? $self->cover($path) : $self->thumb($path);
-			$self->update();
 		}
 	}
 
+	# If we didn't already store an artwork value - look harder.
+	if (!$artwork || $artwork == 1 || !$body) {
+
+		($body, $contentType, $path) = Slim::Music::Info::readCoverArt($self, $artType);
+	}
+
 	# kick this back up to the webserver so we can set last-modified
-	if ($path && -r $path) {
-		$mtime = (stat(_))[9];
+	if (defined $path) {
+
+		$self->set($artType, $path);
+		$self->update;
+
+		$mtime = (stat($path))[9];
 	}
 
 	# This is a hack, as Template::Stash::XS calls us in list context,
 	# even though it should be in scalar context.
-	if (!$list && wantarray()) {
-		return ($body, $contenttype, $mtime);
+	if (!$list && wantarray) {
+		return ($body, $contentType, $mtime);
 	} else {
 		return $body;
 	}

@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (16, 0, 0);
+INSERT INTO metainformation VALUES (17, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -30,9 +30,7 @@ CREATE TABLE tracks (
   year integer,            -- year
   secs integer,            -- total seconds
   cover varchar,           -- cover art
-  covertype varchar,       -- cover art content type
   thumb varchar,           -- thumbnail cover art
-  thumbtype varchar,       -- thumbnail content type
   vbr_scale varchar,       -- vbr/cbr
   bitrate integer,         -- bitrate
   rate integer,            -- sample rate
@@ -107,7 +105,7 @@ CREATE TABLE albums (
   contributor varchar,     -- pointer to the album contributor
   compilation integer,     -- boolean for compilation album
   year integer,            -- year
-  artwork_path varchar,    -- path to cover art
+  artwork integer,         -- pointer to a track id that contains artwork.
   disc integer,            -- album number in set
   discc integer,           -- number of albums in set
   replay_gain float,       -- per album gain
