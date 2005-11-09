@@ -5,7 +5,7 @@ use Tie::Cache::LRU 0.21;
 
 use vars qw($VERSION);
 
-$VERSION="0.53";
+$VERSION="0.54";
 
 sub TIEHASH {
   my $class = shift;
@@ -139,6 +139,12 @@ Tie::Cache::LRU::Expires - Extends Tie::Cache::LRU with expiring
 	for(1100..1110) { print $cache{$_},"\n"; }
         sleep 4;
 	for(1100..1110) { print $cache{$_},"\n"; }	# now also expired.
+
+	# Clearing the cache
+
+	%cache=();
+
+
 
 =head1 DESCRIPTION
 

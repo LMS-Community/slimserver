@@ -1,7 +1,7 @@
 package Class::Accessor::Fast;
 use base 'Class::Accessor';
 use strict;
-$Class::Accessor::Fast::VERSION = '0.19';
+$Class::Accessor::Fast::VERSION = '0.22';
 
 =head1 NAME
 
@@ -12,21 +12,22 @@ Class::Accessor::Fast - Faster, but less expandable, accessors
   package Foo;
   use base qw(Class::Accessor::Fast);
 
-  # The rest as Class::Accessor except no set() or get().
+  # The rest is the same as Class::Accessor but without set() and get().
 
 =head1 DESCRIPTION
 
-This is a somewhat faster, but less expandable, version of
-Class::Accessor.  Class::Accessor's generated accessors require two
-method calls to accompish their task (one for the accessor, another
-for get() or set()).  Class::Accessor::Fast eliminates calling
-set()/get() and does the access itself, resulting in a somewhat faster
-accessor.
+This is a faster but less expandable version of Class::Accessor.
+Class::Accessor's generated accessors require two method calls to accompish
+their task (one for the accessor, another for get() or set()).
+Class::Accessor::Fast eliminates calling set()/get() and does the access itself,
+resulting in a somewhat faster accessor.
 
 The downside is that you can't easily alter the behavior of your
 accessors, nor can your subclasses.  Of course, should you need this
 later, you can always swap out Class::Accessor::Fast for
 Class::Accessor.
+
+Read the documentation for Class::Accessor for more info.
 
 =cut
 
@@ -34,8 +35,8 @@ sub make_accessor {
     my($class, $field) = @_;
 
     return sub {
+        return $_[0]->{$field} unless @_ > 1;
         my $self = shift;
-        return $self->{$field} unless @_;
         $self->{$field} = (@_ == 1 ? $_[0] : [@_]);
     };
 }
@@ -46,10 +47,9 @@ sub make_ro_accessor {
 
     return sub {
         return $_[0]->{$field} unless @_ > 1;
+        my $self = shift;
         my $caller = caller;
-        require Carp;
-        Carp::croak("'$caller' cannot alter the value of '$field' on ".
-                    "objects of class '$class'");
+        $self->_croak("'$caller' cannot alter the value of '$field' on objects of class '$class'");
     };
 }
 
@@ -62,9 +62,7 @@ sub make_wo_accessor {
 
         unless (@_) {
             my $caller = caller;
-            require Carp;
-            Carp::croak("'$caller' cannot access the value of '$field' on ".
-                        "objects of class '$class'");
+            $self->_croak("'$caller' cannot access the value of '$field' on objects of class '$class'");
         }
         else {
             return $self->{$field} = (@_ == 1 ? $_[0] : [@_]);
@@ -77,11 +75,15 @@ sub make_wo_accessor {
 
 L<Class::Accessor/EFFICIENCY> for an efficiency comparison.
 
-=head1 CURRENT AUTHOR
+=head1 AUTHORS
 
-Marty Pauley <marty+perl@kasei.com>
+Copyright 2005 Marty Pauley <marty+perl@kasei.com>
 
-=head1 ORIGINAL AUTHOR
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.  That means either (a) the GNU General Public
+License or (b) the Artistic License.
+
+=head2 ORIGINAL AUTHOR
 
 Michael G Schwern <schwern@pobox.com>
 

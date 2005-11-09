@@ -1,7 +1,7 @@
 package Class::Accessor;
 require 5.00502;
 use strict;
-$Class::Accessor::VERSION = '0.19';
+$Class::Accessor::VERSION = '0.22';
 
 =head1 NAME
 
@@ -9,67 +9,53 @@ $Class::Accessor::VERSION = '0.19';
 
 =head1 SYNOPSIS
 
-  package Foo;
-
+  package Employee;
   use base qw(Class::Accessor);
-  Foo->mk_accessors(qw(this that whatever));
+  Employee->mk_accessors(qw(name role salary));
 
   # Meanwhile, in a nearby piece of code!
   # Class::Accessor provides new().
-  my $foo = Foo->new;
+  my $mp = Foo->new({ name => "Marty", role => "JAPH" });
 
-  my $whatever = $foo->whatever;    # gets $foo->{whatever}
-  $foo->this('likmi');              # sets $foo->{this} = 'likmi'
+  my $job = $mp->role;  # gets $mp->{role}
+  $mp->salary(400000);  # sets $mp->{salary} = 400000 (I wish)
   
-  # Similar to @values = @{$foo}{qw(that whatever)}
-  @values = $foo->get(qw(that whatever));
+  # like my @info = @{$mp}{qw(name role)}
+  my @info = $mp->get(qw(name role));
   
-  # sets $foo->{that} = 'crazy thing'
-  $foo->set('that', 'crazy thing');
+  # $mp->{salary} = 400000
+  $mp->set('salary', 400000);
 
 
 =head1 DESCRIPTION
 
-This module automagically generates accessor/mutators for your class.
+This module automagically generates accessors/mutators for your class.
 
 Most of the time, writing accessors is an exercise in cutting and
 pasting.  You usually wind up with a series of methods like this:
 
-  # accessor for $obj->{foo}
-  sub foo {
-      my $self = shift;
+    sub name {
+        my $self = shift;
+        if(@_) {
+            $self->{name} = $_[0];
+        }
+        return $self->{name};
+    }
 
-      if(@_ == 1) {
-          $self->{foo} = shift;
-      }
-      elsif(@_ > 1) {
-          $self->{foo} = [@_];
-      }
-
-      return $self->{foo};
-  }
-
-
-  # accessor for $obj->{bar}
-  sub bar {
-      my $self = shift;
-
-      if(@_ == 1) {
-          $self->{bar} = shift;
-      }
-      elsif(@_ > 1) {
-          $self->{bar} = [@_];
-      }
-
-      return $self->{bar};
-  }
+    sub salary {
+        my $self = shift;
+        if(@_) {
+            $self->{salary} = $_[0];
+        }
+        return $self->{salary};
+    }
 
   # etc...
 
 One for each piece of data in your object.  While some will be unique,
 doing value checks and special storage tricks, most will simply be
 exercises in repetition.  Not only is it Bad Style to have a bunch of
-repetitious code, but its also simply not Lazy, which is the real
+repetitious code, but its also simply not lazy, which is the real
 tragedy.
 
 If you make your module a subclass of Class::Accessor and declare your
@@ -172,19 +158,13 @@ sub mk_accessors {
 
         foreach my $field (@fields) {
             if( $field eq 'DESTROY' ) {
-                require Carp;
-                &Carp::carp("Having a data accessor named DESTROY  in ".
-                             "'$class' is unwise.");
+                $self->carp("Having a data accessor named DESTROY  in '$class' is unwise.");
             }
 
             my $accessor = $self->$maker($field);
             my $alias = "_${field}_accessor";
-
-            *{$class."\:\:$field"}  = $accessor
-              unless defined &{$class."\:\:$field"};
-
-            *{$class."\:\:$alias"}  = $accessor
-              unless defined &{$class."\:\:$alias"};
+            *{"${class}::$field"}  = $accessor unless defined &{"${class}::$field"};
+            *{"${class}::$alias"}  = $accessor unless defined &{"${class}::$alias"};
         }
     }
 }
@@ -293,8 +273,7 @@ sub set {
         $self->{$key} = [@_];
     }
     else {
-        require Carp;
-        &Carp::confess("Wrong number of arguments received");
+        $self->_croak("Wrong number of arguments received");
     }
 }
 
@@ -319,8 +298,7 @@ sub get {
         return @{$self}{@_};
     }
     else {
-        require Carp;
-        &Carp::confess("Wrong number of arguments received.");
+        $self->_croak("Wrong number of arguments received");
     }
 }
 
@@ -369,11 +347,9 @@ sub make_ro_accessor {
     return sub {
         my $self = shift;
 
-        if(@_) {
+        if (@_) {
             my $caller = caller;
-            require Carp;
-            Carp::croak("'$caller' cannot alter the value of '$field' on ".
-                        "objects of class '$class'");
+            $self->_croak("'$caller' cannot alter the value of '$field' on objects of class '$class'");
         }
         else {
             return $self->get($field);
@@ -400,14 +376,34 @@ sub make_wo_accessor {
 
         unless (@_) {
             my $caller = caller;
-            require Carp;
-            Carp::croak("'$caller' cannot access the value of '$field' on ".
-                        "objects of class '$class'");
+            $self->_croak("'$caller' cannot access the value of '$field' on objects of class '$class'");
         }
         else {
             return $self->set($field, @_);
         }
     };
+}
+
+=head1 EXCEPTIONS
+
+If something goes wrong Class::Accessor will warn or die by calling Carp::carp
+or Carp::croak.  If you don't like this you can override _carp() and _croak() in
+your subclass and do whatever else you want.
+
+=cut
+
+use Carp ();
+
+sub _carp {
+    my ($self, $msg) = @_;
+    Carp::carp($msg || $self);
+    return;
+}
+
+sub _croak {
+    my ($self, $msg) = @_;
+    Carp::croak($msg || $self);
+    return;
 }
 
 =head1 EFFICIENCY
@@ -482,8 +478,8 @@ your class.
     use base qw(Altoids);
 
     my Mint::Snuff $pouch = Mint::Snuff->new;
-    $pouch->strong('Fuck you up strong!');
-    print $pouch->{strong};     # prints 'Fuck you up strong!'
+    $pouch->strong('Blow your head off!');
+    print $pouch->{strong};     # prints 'Blow your head off!'
 
 
 Here's a simple example of altering the behavior of your accessors.
@@ -582,15 +578,19 @@ Foo::email() would be written with:
 instead of the expected SUPER::email().
 
 
-=head1 CURRENT AUTHOR
+=head1 AUTHORS
 
-Marty Pauley <marty+perl@kasei.com>
+Copyright 2005 Marty Pauley <marty+perl@kasei.com>
 
-=head1 ORIGINAL AUTHOR
+This program is free software; you can redistribute it and/or modify it under
+the same terms as Perl itself.  That means either (a) the GNU General Public
+License or (b) the Artistic License.
+
+=head2 ORIGINAL AUTHOR
 
 Michael G Schwern <schwern@pobox.com>
 
-=head1 THANKS
+=head2 THANKS
 
 Liz, for performance tweaks.
 

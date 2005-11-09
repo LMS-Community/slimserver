@@ -4,10 +4,9 @@ require Class::Virtual;
 @ISA = qw(Class::Virtual);
 
 use strict;
-use Carp::Assert;
 
 use vars qw(%Registered $VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 {
     no strict 'refs';

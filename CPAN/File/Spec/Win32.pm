@@ -1,11 +1,11 @@
 package File::Spec::Win32;
 
 use strict;
-use Cwd;
+
 use vars qw(@ISA $VERSION);
 require File::Spec::Unix;
 
-$VERSION = '1.2';
+$VERSION = '1.6';
 
 @ISA = qw(File::Spec::Unix);
 
@@ -23,7 +23,7 @@ See File::Spec::Unix for a documentation of the methods provided
 there. This package overrides the implementation of these methods, not
 the semantics.
 
-=over
+=over 4
 
 =item devnull
 
@@ -35,6 +35,9 @@ sub devnull {
     return "nul";
 }
 
+sub rootdir () { '\\' }
+
+
 =item tmpdir
 
 Returns a string representation of the first existing directory
@@ -43,23 +46,29 @@ from the following list:
     $ENV{TMPDIR}
     $ENV{TEMP}
     $ENV{TMP}
+    SYS:/temp
+    C:\system\temp
+    C:/temp
     /tmp
     /
+
+The SYS:/temp is preferred in Novell NetWare and the C:\system\temp
+for Symbian (the File::Spec::Win32 is used also for those platforms).
+
+Since Perl 5.8.0, if running under taint mode, and if the environment
+variables are tainted, they are not used.
 
 =cut
 
 my $tmpdir;
 sub tmpdir {
     return $tmpdir if defined $tmpdir;
-    my $self = shift;
-    foreach (@ENV{qw(TMPDIR TEMP TMP)}, qw(/tmp /)) {
-	next unless defined && -d;
-	$tmpdir = $_;
-	last;
-    }
-    $tmpdir = '' unless defined $tmpdir;
-    $tmpdir = $self->canonpath($tmpdir);
-    return $tmpdir;
+    $tmpdir = $_[0]->_tmpdir( @ENV{qw(TMPDIR TEMP TMP)},
+			      'SYS:/temp',
+			      'C:\system\temp',
+			      'C:/temp',
+			      '/tmp',
+			      '/'  );
 }
 
 sub case_tolerant {
@@ -80,17 +89,29 @@ complete path ending with a filename
 
 sub catfile {
     my $self = shift;
-    my $file = pop @_;
+    my $file = $self->canonpath(pop @_);
     return $file unless @_;
     my $dir = $self->catdir(@_);
     $dir .= "\\" unless substr($dir,-1) eq "\\";
     return $dir.$file;
 }
 
+sub catdir {
+    my $self = shift;
+    my @args = @_;
+    foreach (@args) {
+	tr[/][\\];
+        # append a backslash to each argument unless it has one there
+        $_ .= "\\" unless m{\\$};
+    }
+    return $self->canonpath(join('', @args));
+}
+
 sub path {
-    my $path = $ENV{'PATH'} || $ENV{'Path'} || $ENV{'path'};
-    my @path = split(';',$path);
-    foreach (@path) { $_ = '.' if $_ eq '' }
+    my @path = split(';', $ENV{PATH});
+    s/"//g for @path;
+    @path = grep length, @path;
+    unshift(@path, ".");
     return @path;
 }
 
@@ -98,19 +119,33 @@ sub path {
 
 No physical check on the filesystem, but a logical cleanup of a
 path. On UNIX eliminated successive slashes and successive "/.".
+On Win32 makes 
+
+	dir1\dir2\dir3\..\..\dir4 -> \dir\dir4 and even
+	dir1\dir2\dir3\...\dir4   -> \dir\dir4
 
 =cut
 
 sub canonpath {
     my ($self,$path) = @_;
+    
     $path =~ s/^([a-z]:)/\u$1/s;
     $path =~ s|/|\\|g;
-    $path =~ s|([^\\])\\+|$1\\|g;                  # xx////xx  -> xx/xx
-    $path =~ s|(\\\.)+\\|\\|g;                     # xx/././xx -> xx/xx
-    $path =~ s|^(\.\\)+||s unless $path eq ".\\";  # ./xx      -> xx
+    $path =~ s|([^\\])\\+|$1\\|g;                  # xx\\\\xx  -> xx\xx
+    $path =~ s|(\\\.)+\\|\\|g;                     # xx\.\.\xx -> xx\xx
+    $path =~ s|^(\.\\)+||s unless $path eq ".\\";  # .\xx      -> xx
     $path =~ s|\\\Z(?!\n)||
-             unless $path =~ m#^([A-Z]:)?\\\Z(?!\n)#s;   # xx/       -> xx
-    return $path;
+	unless $path =~ m{^([A-Z]:)?\\\Z(?!\n)}s;  # xx\       -> xx
+    # xx1/xx2/xx3/../../xx -> xx1/xx
+    $path =~ s|\\\.\.\.\\|\\\.\.\\\.\.\\|g; # \...\ is 2 levels up
+    $path =~ s|^\.\.\.\\|\.\.\\\.\.\\|g;    # ...\ is 2 levels up
+    return $path if $path =~ m|^\.\.|;      # skip relative paths
+    return $path unless $path =~ /\.\./;    # too few .'s to cleanup
+    return $path if $path =~ /\.\.\.\./;    # too many .'s to cleanup
+    $path =~ s{^\\\.\.$}{\\};                      # \..    -> \
+    1 while $path =~ s{^\\\.\.}{};                 # \..\xx -> \xx
+
+    return $self->_collapse($path);
 }
 
 =item splitpath
@@ -118,10 +153,10 @@ sub canonpath {
     ($volume,$directories,$file) = File::Spec->splitpath( $path );
     ($volume,$directories,$file) = File::Spec->splitpath( $path, $no_file );
 
-Splits a path in to volume, directory, and filename portions. Assumes that 
+Splits a path into volume, directory, and filename portions. Assumes that 
 the last file is a path unless the path ends in '\\', '\\.', '\\..'
 or $no_file is true.  On Win32 this means that $no_file true makes this return 
-( $volume, $path, undef ).
+( $volume, $path, '' ).
 
 Separators accepted are \ and /.
 
@@ -149,7 +184,7 @@ sub splitpath {
                       (?:\\\\|//)[^\\/]+[\\/][^\\/]+
                   )?
                 )
-                ( (?:.*[\\\\/](?:\.\.?\Z(?!\n))?)? )
+                ( (?:.*[\\/](?:\.\.?\Z(?!\n))?)? )
                 (.*)
              }xs;
         $volume    = $1;
@@ -163,7 +198,7 @@ sub splitpath {
 
 =item splitdir
 
-The opposite of L</catdir()>.
+The opposite of L<catdir()|File::Spec/catdir()>.
 
     @dirs = File::Spec->splitdir( $directories );
 
@@ -218,8 +253,9 @@ sub catpath {
 
     # If it's UNC, make sure the glue separator is there, reusing
     # whatever separator is first in the $volume
-    $volume .= $1
-        if ( $volume =~ m@^([\\/])[\\/][^\\/]+[\\/][^\\/]+\Z(?!\n)@s &&
+    my $v;
+    $volume .= $v
+        if ( (($v) = $volume =~ m@^([\\/])[\\/][^\\/]+[\\/][^\\/]+\Z(?!\n)@s) &&
              $directory =~ m@^[^\\/]@s
            ) ;
 
@@ -244,31 +280,20 @@ sub catpath {
 
 sub abs2rel {
     my($self,$path,$base) = @_;
+    $base = $self->_cwd() unless defined $base and length $base;
 
-    # Clean up $path
-    if ( ! $self->file_name_is_absolute( $path ) ) {
-        $path = $self->rel2abs( $path ) ;
-    }
-    else {
-        $path = $self->canonpath( $path ) ;
-    }
+    for ($path, $base) { $_ = $self->canonpath($_) }
 
-    # Figure out the effective $base and clean it up.
-    if ( ! $self->file_name_is_absolute( $base ) ) {
-        $base = $self->rel2abs( $base ) ;
-    }
-    elsif ( !defined( $base ) || $base eq '' ) {
-        $base = cwd() ;
-    }
-    else {
-        $base = $self->canonpath( $base ) ;
-    }
+    my ($path_volume) = $self->splitpath($path, 1);
+    my ($base_volume) = $self->splitpath($base, 1);
 
-    # Split up paths
-    my ( $path_volume, $path_directories, $path_file ) =
-        $self->splitpath( $path, 1 ) ;
+    # Can't relativize across volumes
+    return $path unless $path_volume eq $base_volume;
 
-    my $base_directories = ($self->splitpath( $base, 1 ))[1] ;
+    for ($path, $base) { $_ = $self->rel2abs($_) }
+
+    my $path_directories = ($self->splitpath($path, 1))[1];
+    my $base_directories = ($self->splitpath($base, 1))[1];
 
     # Now, remove all leading components that are the same
     my @pathchunks = $self->splitdir( $path_directories );
@@ -282,33 +307,9 @@ sub abs2rel {
         shift @basechunks ;
     }
 
-    # No need to catdir, we know these are well formed.
-    $path_directories = CORE::join( '\\', @pathchunks );
-    $base_directories = CORE::join( '\\', @basechunks );
+    my $result_dirs = $self->catdir( ($self->updir) x @basechunks, @pathchunks );
 
-    # $base_directories now contains the directories the resulting relative
-    # path must ascend out of before it can descend to $path_directory.  So, 
-    # replace all names with $parentDir
-
-    #FA Need to replace between backslashes...
-    $base_directories =~ s|[^\\]+|..|g ;
-
-    # Glue the two together, using a separator if necessary, and preventing an
-    # empty result.
-
-    #FA Must check that new directories are not empty.
-    if ( $path_directories ne '' && $base_directories ne '' ) {
-        $path_directories = "$base_directories\\$path_directories" ;
-    } else {
-        $path_directories = "$base_directories$path_directories" ;
-    }
-
-    # It makes no sense to add a relative path to a UNC volume
-    $path_volume = '' unless $path_volume =~ m{^[A-Z]:}is ;
-
-    return $self->canonpath( 
-        $self->catpath($path_volume, $path_directories, $path_file ) 
-    ) ;
+    return $self->canonpath( $self->catpath('', $result_dirs, '') );
 }
 
 
@@ -318,7 +319,9 @@ sub rel2abs {
     if ( ! $self->file_name_is_absolute( $path ) ) {
 
         if ( !defined( $base ) || $base eq '' ) {
-            $base = cwd() ;
+	    require Cwd ;
+	    $base = Cwd::getdcwd( ($self->splitpath( $path ))[0] ) if defined &Cwd::getdcwd ;
+	    $base = $self->_cwd() unless defined $base ;
         }
         elsif ( ! $self->file_name_is_absolute( $base ) ) {
             $base = $self->rel2abs( $base ) ;
@@ -345,9 +348,21 @@ sub rel2abs {
 
 =back
 
+=head2 Note For File::Spec::Win32 Maintainers
+
+Novell NetWare inherits its File::Spec behaviour from File::Spec::Win32.
+
+=head1 COPYRIGHT
+
+Copyright (c) 2004 by the Perl 5 Porters.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
 =head1 SEE ALSO
 
-L<File::Spec>
+See L<File::Spec> and L<File::Spec::Unix>.  This package overrides the
+implementation of these methods, not the semantics.
 
 =cut
 

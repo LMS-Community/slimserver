@@ -7,16 +7,20 @@ use JSON::Converter;
 
 @JSON::EXPORT = qw(objToJson jsonToObj);
 
-use vars qw($AUTOCONVERT $VERSION
+use vars qw($AUTOCONVERT $VERSION $UnMapping $BareKey $QuotApos
             $ExecCoderef $SkipInvalid $Pretty $Indent $Delimiter);
 
-$VERSION     = 0.99;
+$VERSION     = '1.00';
 
 $AUTOCONVERT = 1;
-$ExecCoderef = 0;
 $SkipInvalid = 0;
-$Indent      = 2; # (pretty-print)
-$Delimiter   = 2; # (pretty-print)  0 => ':', 1 => ': ', 2 => ' : '
+$ExecCoderef = 0;
+$Pretty      = 0; # pretty-print mode switch
+$Indent      = 2; # (for pretty-print)
+$Delimiter   = 2; # (for pretty-print)  0 => ':', 1 => ': ', 2 => ' : '
+$UnMapping   = 0; # 
+$BareKey     = 0; # 
+$QuotApos    = 0; # 
 
 my $parser; # JSON => Perl
 my $conv;   # Perl => JSON
@@ -33,12 +37,16 @@ sub new {
 		conv   => undef,  # JSON::Converter [perl => json]
 		parser => undef,  # JSON::Parser    [json => perl]
 		# below fields are for JSON::Converter
-		autoconv    => 1,
-		skipinvalid => 0,
-		execcoderef => 0,
-		pretty      => 0, # pretty-print mode switch
-		indent      => 2, # for pretty-print
-		delimiter   => 2, # for pretty-print
+		autoconv    => $AUTOCONVERT,
+		skipinvalid => $SkipInvalid,
+		execcoderef => $ExecCoderef,
+		pretty      => $Pretty     ,
+		indent      => $Indent     ,
+		delimiter   => $Delimiter  ,
+		# below fields are for JSON::Parser
+		unmapping   => $UnMapping,
+		quotapos    => $BareKey  ,
+		barekey     => $QuotApos ,
 		# overwrite
 		%opt,
 	}, $class;
@@ -54,13 +62,15 @@ sub jsonToObj {
 	my $js   = shift;
 
 	if(!ref($self)){ # class method
+		my $opt = __PACKAGE__->_getParamsForParser($_[0]);
 		$js = $self;
 		$parser ||= new JSON::Parser;
-		$parser->jsonToObj($js);
+		$parser->jsonToObj($js, $opt);
 	}
 	else{ # instance method
+		my $opt = $self->_getParamsForParser($_[0]);
 		$self->{parser} ||= ($parser ||= JSON::Parser->new);
-		$self->{parser}->jsonToObj($js);
+		$self->{parser}->jsonToObj($js, $opt);
 	}
 }
 
@@ -70,13 +80,13 @@ sub objToJson {
 	my $obj  = shift;
 
 	if(ref($self) !~ /JSON/){ # class method
-		my $opt = __PACKAGE__->_getDefaultParms($obj);
+		my $opt = __PACKAGE__->_getParamsForConverter($obj);
 		$obj  = $self;
 		$conv ||= JSON::Converter->new();
 		$conv->objToJson($obj, $opt);
 	}
 	else{ # instance method
-		my $opt = $self->_getDefaultParms($_[0]);
+		my $opt = $self->_getParamsForConverter($_[0]);
 		$self->{conv}
 		 ||= JSON::Converter->new( %$opt );
 		$self->{conv}->objToJson($obj, $opt);
@@ -86,9 +96,32 @@ sub objToJson {
 
 #######################
 
-sub _getDefaultParms {
-	my $self = shift;
-	my $opt  = shift;
+
+sub _getParamsForParser {
+	my ($self, $opt) = @_;
+	my $params;
+
+	if(ref($self)){ # instance
+		my @names = qw(unmapping quotapos barekey);
+		my ($unmapping, $quotapos, $barekey) = @{$self}{ @names };
+		$params = {
+			unmapping => $unmapping, quotapos => $quotapos, barekey => $barekey,
+		};
+	}
+	else{ # class
+		$params = {
+			unmapping => $UnMapping, barekey => $BareKey, quotapos => $QuotApos,
+		};
+	}
+
+	if($opt and ref($opt) eq 'HASH'){ %$params = ( %$opt ); }
+
+	return $params;
+}
+
+
+sub _getParamsForConverter {
+	my ($self, $opt) = @_;
 	my $params;
 
 	if(ref($self)){ # instance
@@ -100,7 +133,9 @@ sub _getDefaultParms {
 		};
 	}
 	else{ # class
-		$params = {pretty => $Pretty, indent => $Indent, delimiter => $Delimiter};
+		$params = {
+			pretty => $Pretty, indent => $Indent, delimiter => $Delimiter,
+		};
 	}
 
 	if($opt and ref($opt) eq 'HASH'){ %$params = ( %$opt ); }
@@ -120,6 +155,8 @@ sub indent { $_[0]->{indent} = $_[1] if(defined $_[1]); $_[0]->{indent} }
 
 sub delimiter { $_[0]->{delimiter} = $_[1] if(defined $_[1]); $_[0]->{delimiter} }
 
+sub unmapping { $_[0]->{unmapping} = $_[1] if(defined $_[1]); $_[0]->{unmapping} }
+
 ##############################################################################
 # NON STRING DATA
 ##############################################################################
@@ -128,7 +165,7 @@ sub delimiter { $_[0]->{delimiter} = $_[1] if(defined $_[1]); $_[0]->{delimiter}
 
 sub Number {
 	my $num = shift;
-	if(!defined $num or $num !~ /^-?(0|[1-9][\d]*)(\.[\d]+)?$/){
+	if(!defined $num or $num !~ /^-?(?:0|[1-9][\d]*)(?:\.[\d]*)?$/){
 		return undef;
 	}
 	bless {value => $num}, 'JSON::NotString';
@@ -298,6 +335,10 @@ See L</PRETY PRINTING> for more info.
 This is an accessor to C<delimiter>.
 See L</PRETY PRINTING> for more info.
 
+=item unmapping()
+
+This is an accessor to C<unmapping>.
+See L</UNMAPPING OPTION> for more info.
 
 =back
 
@@ -312,18 +353,18 @@ See L</PRETY PRINTING> for more info.
  (JSON) {"param" : "string"}
  ( => Perl) {'param' => 'string'};
  
- (JSON) {"param" : null}
- ( => Perl) {'param' => bless( {'value' => undef}, 'JSON::NotString' )};
+ JSON {"param" : null}
+  => Perl {'param' => bless( {'value' => undef}, 'JSON::NotString' )};
+  or {'param' => undef}
  
  (JSON) {"param" : true}
  ( => Perl) {'param' => bless( {'value' => 'true'}, 'JSON::NotString' )};
+  or {'param' => 1}
  
  (JSON) {"param" : false}
  ( => Perl) {'param' => bless( {'value' => 'false'}, 'JSON::NotString' )};
+  or {'param' => 2}
  
- (JSON) {"param" : -1.23}
- ( => Perl) {'param' => bless( {'value' => '-1.23'}, 'JSON::NotString' )};
-
  (JSON) {"param" : 0xff}
  ( => Perl) {'param' => 255};
 
@@ -331,6 +372,10 @@ See L</PRETY PRINTING> for more info.
  ( => Perl) {'param' => 8};
 
 These JSON::NotString objects are overloaded so you don't care about.
+Since 1.00, L</UnMapping option> is added. When that option is set,
+{"param" : null} will be converted into {'param' => undef}, insted of 
+{'param' => bless( {'value' => undef}, 'JSON::NotString' )}.
+
 
 Perl's C<undef> is converted to 'null'.
 
@@ -381,6 +426,37 @@ You can explicitly sepcify:
 
 C<JSON::Number()> returns C<undef> when an argument invalid format.
 
+=head1 UNMAPPING OPTION
+
+By default, $JSON::UNMAPPING is false and JSON::Parser converts
+C<null>, C<true>, C<false> into C<JSON::NotString> objects.
+You can set true into $JSON::UNMAPPING to stop the mapping function.
+In that case, JSON::Parser will convert C<null>, C<true>, C<false>
+into C<undef>, 1, 0.
+
+=head1 BARE KEY OPTION
+
+You can set a true value into $JSON::BareKey for JSON::Parser to parse
+bare keys of objects.
+
+ local $JSON::BareKey = 1;
+ $obj = jsonToObj('{foo:"bar"}');
+
+=head1 SINGLE QUOTATION OPTION
+
+You can set a true value into $JSON::QuotApos for JSON::Parser to parse
+any keys and values quoted by single quotations.
+
+ local $JSON::QuotApos = 1;
+ $obj = jsonToObj(q|{"foo":'bar'}|);
+ $obj = jsonToObj(q|{'foo':'bar'}|);
+
+With $JSON::BareKey:
+
+ local $JSON::BareKey  = 1;
+ local $JSON::QuotApos = 1;
+ $obj = jsonToObj(q|{foo:'bar'}|);
+
 
 =head1 EXPORT
 
@@ -389,7 +465,12 @@ C<objToJson>, C<jsonToObj>.
 =head1 TODO
 
 C<JSONRPC::Transport::HTTP::Daemon> in L<JSON> 1.00
+(The code has be actually written in JSONRPC::Transport::HTTP.)
 
+Shall I support not only {"foo" : "bar"} but {foo : "bar"}
+or {'foo' : 'bar'} also?
+
+Which name is more desirable? JSONRPC or JSON::RPC.
 
 =head1 SEE ALSO
 
@@ -397,6 +478,8 @@ L<http://www.crockford.com/JSON/>, L<JSON::Parser>, L<JSON::Converter>
 
 
 =head1 ACKNOWLEDGEMENTS
+
+I owe most JSONRPC idea to L<XMLRPC::Lite> and L<SOAP::Lite>.
 
 SHIMADA pointed out many problems to me.
 
@@ -415,6 +498,20 @@ taught a terrible typo and gave some suggestions.
 David Wheeler E<lt>david[at]kineticode.comE<gt>
 suggested me supporting pretty-printing and
 gave a part of L<PRETY PRINTING>.
+
+Rusty Phillips E<lt>rphillips[at]edats.comE<gt>
+suggested me supporting the query object other than CGI.pm
+for JSONRPC::Transport::HTTP::CGI.
+
+Felipe Gasper E<lt>gasperfm[at]uc.eduE<gt>
+pointed to a problem of JSON::NotString with undef.
+And show me patches for 'bare key option' & 'single quotation option'.
+
+Yaman Saqqa E<lt>abulyomon[at]gmail.comE<gt>
+helped my decision to support the bare key option.
+
+Alden DoRosario E<lt>adorosario[at]chitika.comE<gt>
+tought JSON::Conveter::_stringfy (<= 0.992) is very slow.
 
 And Thanks very much to JSON by JSON.org (Douglas Crockford) and
 JSON-RPC by http://json-rpc.org/

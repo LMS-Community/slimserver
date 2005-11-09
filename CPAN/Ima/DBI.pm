@@ -1,6 +1,6 @@
 package Ima::DBI;
 
-$VERSION = '0.33';
+$VERSION = '0.34';
 
 use strict;
 use base 'Class::Data::Inheritable';
@@ -112,7 +112,7 @@ baggage with it.
 
 =item * Honors taint mode
 
-It always struck me as a design deficiency that tainted SQL statements
+It always struck me as a design deficiency that tainted SQL statements 
 could be passed to $sth->prepare().  For example:
 
     # $user is from an untrusted source and is tainted.
@@ -232,13 +232,9 @@ This means that Ima::DBI methods do not accept tainted data, and that all
 data fetched from the database will be tainted.  This may be different
 from the DBI behavior you're used to.  See L<DBI/Taint> for details.
 
-=head1 METHODS
+=head1 Class Methods
 
-=head2 Class methods
-
-=over 4
-
-=item B<set_db>
+=head2 set_db
 
     Foo->set_db($db_name, $data_source, $user, $password);
     Foo->set_db($db_name, $data_source, $user, $password, \%attr);
@@ -320,9 +316,7 @@ sub _mk_db_closure {
 	};
 }
 
-=pod
-
-=item B<set_sql>
+=head2 set_sql
 
     Foo->set_sql($sql_name, $statement, $db_name);
     Foo->set_sql($sql_name, $statement, $db_name, $cache);
@@ -344,13 +338,9 @@ is "sql_$sql_name"... so, as with set_db(), Foo->set_sql("bar", ...,
 "foo"); will create a method called "sql_bar()" which uses the database
 connection from "db_foo()". Again, spaces in $sql_name will be translated
 into underscores ('_').
+
 The actual statement handle creation is held off until sql_* is first
 called on this name.
-
-To make up for the limitations of bind parameters, $statement can contain
-sprintf() style formatting (ie. %s and such) to allow dynamically
-generated SQL statements (so to get a real percent sign, use '%%').
-See sql_* below for more details.
 
 =cut
 
@@ -394,14 +384,24 @@ sub _mk_sql_closure {
 	};
 }
 
+=head2 transform_sql
+
+To make up for the limitations of bind parameters, $statement can contain
+sprintf() style formatting (ie. %s and such) to allow dynamically
+generated SQL statements (so to get a real percent sign, use '%%').
+
+The translation of the SQL happens in transform_sql(), which can be
+overridden to do more complex transformations. See L<Class::DBI> for an
+example.
+
+=cut
+
 sub transform_sql {
 	my ($class, $sql, @args) = @_;
 	return sprintf $sql, @args;
 }
 
-=item B<db_names>
-
-=item B<db_handles>
+=head2 db_names / db_handles
 
   my @database_names   = Foo->db_names;
   my @database_handles = Foo->db_handles;
@@ -438,7 +438,7 @@ sub db_handles {
 	return map $self->$_(), map "db_$_", @db_names;
 }
 
-=item B<sql_names>
+=head2 sql_names
 
   my @statement_names   = Foo->sql_names;
 
@@ -452,13 +452,9 @@ arguments to pass in.
 
 sub sql_names { @{ $_[0]->__Statement_Names || [] } }
 
-=back
+=head1 Object Methods
 
-=head2 Object methods
-
-=over 4
-
-=item B<db_*>
+=head2 db_*
 
     $dbh = $obj->db_*;
 
@@ -469,7 +465,7 @@ The actual particular method name is derived from what you told set_db.
 db_* will handle all the issues of making sure you're already
 connected to the database.
 
-=item B<sql_*>
+=head2 sql_*
 
     $sth = $obj->sql_*;
     $sth = $obj->sql_*(@sql_pieces);
@@ -491,7 +487,7 @@ your statement, assuming you have sprintf() formatting tags in your
 statement.  For example:
 
     Foo->set_sql('GetTable', 'Select * From %s', 'Things');
-
+    
     # Assuming we have created an object... this will prepare the
     # statement 'Select * From Bar'
     $sth = $obj->sql_Search('Bar');
@@ -504,10 +500,10 @@ will be spared the worst.
 It is recommended you only use this in cases where bind parameters
 will not work.
 
-=item B<DBIwarn>
+=head2 DBIwarn
 
     $obj->DBIwarn($what, $doing);
-
+    
 Produces a useful error for exceptions with DBI.
 
 B<I'm not particularly happy with this interface>
@@ -536,18 +532,13 @@ sub DBIwarn {
 	return 1;
 }
 
-=back
-
-
-=head2 Modified database handle methods
+=head1 Modified database handle methods
 
 Ima::DBI makes some of the methods available to your object that are
 normally only available via the database handle.  In addition, it
 spices up the API a bit.
-
-=over 4
-
-=item B<commit>
+ 
+=head2 commit
 
     $rc = $obj->commit;
     $rc = $obj->commit(@db_names);
@@ -569,9 +560,7 @@ sub commit {
 	return grep(!$_, map $_->commit, $self->db_handles(@db_names)) ? 0 : 1;
 }
 
-=pod
-
-=item B<rollback>
+=head2 rollback
 
     $rc = $obj->rollback;
     $rc = $obj->rollback(@db_names);
@@ -589,10 +578,6 @@ sub rollback {
 	my ($self, @db_names) = @_;
 	return grep(!$_, map $_->rollback, $self->db_handles(@db_names)) ? 0 : 1;
 }
-
-=pod
-
-=back
 
 =head1 EXAMPLE
 
@@ -646,7 +631,7 @@ sub rollback {
     }
     else {
         $obj->rollback('Customers');
-        warn "DBI failure:  $@";
+        warn "DBI failure:  $@";    
     }
 
 
@@ -699,7 +684,7 @@ module.
 
 =head1 SEE ALSO
 
-L<DBI>.
+L<DBI>. 
 
 You may also choose to check out L<Class::DBI> which hides most of this
 from view.

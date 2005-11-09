@@ -3,8 +3,7 @@ package JSON::Converter;
 
 use Carp;
 
-$JSON::Converter::VERSION = 0.995;
-# Modified by Jacob Potter for SlimServer - don't die on blessed references
+$JSON::Converter::VERSION = 1.00;
 
 ##############################################################################
 
@@ -30,14 +29,12 @@ sub objToJson {
 
 sub toJson {
 	my ($self, $obj) = @_;
+
 	if(ref($obj) eq 'HASH'){
 		return $self->hashToJson($obj);
 	}
 	elsif(ref($obj) eq 'ARRAY'){
 		return $self->arrayToJson($obj);
-	}
-	elsif(UNIVERSAL::isa($obj, "UNIVERSAL")){
-		return $self->hashToJson($obj);
 	}
 	else{
 		return;
@@ -61,14 +58,11 @@ sub hashToJson {
 
 	for my $k (keys %$obj){
 		my $v = $obj->{$k};
-		if(ref($v) eq "HASH") {
+		if(ref($v) eq "HASH"){
 			$res{$k} = $self->hashToJson($v);
 		}
 		elsif(ref($v) eq "ARRAY"){
 			$res{$k} = $self->arrayToJson($v);
-		}
-		elsif(UNIVERSAL::isa($v, "UNIVERSAL") && !UNIVERSAL::isa($v, "JSON::NotString")){
-			$res{$k} = $self->objToJson($v);
 		}
 		else{
 			$res{$k} = $self->valueToJson($v);
@@ -112,9 +106,6 @@ sub arrayToJson {
 		elsif(ref($v) eq "ARRAY"){
 			push @res,$self->arrayToJson($v);
 		}
-		elsif(UNIVERSAL::isa($v, "UNIVERSAL") && !UNIVERSAL::isa($v, "JSON::NotString")){
-			push @res,$self->objToJson($v);
-		}
 		else{
 			push @res,$self->valueToJson($v);
 		}
@@ -140,7 +131,7 @@ sub valueToJson {
 	return 'null' if(!defined $value);
 
 	if($self->{autoconv} and !ref($value)){
-		return $value  if($value =~ /^-?(?:0|[1-9][\d]*)(?:\.[\d]+)?$/);
+		return $value  if($value =~ /^-?(?:0|[1-9][\d]*)(?:\.[\d]*)?$/);
 		return 'true'  if($value =~ /^true$/i);
 		return 'false' if($value =~ /^false$/i);
 	}
@@ -163,27 +154,22 @@ sub valueToJson {
 }
 
 
+%esc = (
+	"\n" => '\n',
+	"\r" => '\r',
+	"\t" => '\t',
+	"\f" => '\f',
+	"\b" => '\b',
+	"\"" => '\"',
+	"\\" => '\\\\',
+);
+
+
 sub _stringfy {
 	my $arg = shift;
-	my $l   = length $arg;
-	my $s   = '"';
-	my $i = 0;
-
-	while($i < $l){
-		my $c = substr($arg,$i++,1);
-		if($c ge ' '){
-			$c =~ s{(["\\])}{\\$1};
-			$s .= $c;
-		}
-		elsif($c =~ tr/\n\r\t\f\b/nrtfb/){
-			$s .= '\\' . $c;
-		}
-		else{
-			$s .= '\\u00' . unpack('H2',$c);
-		}
-	}
-
-	return $s . '"';
+	$arg =~ s/([\\"\n\r\t\f\b])/$esc{$1}/eg;
+	$arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
+	return '"' . $arg . '"';
 }
 
 

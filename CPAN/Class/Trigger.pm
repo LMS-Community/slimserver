@@ -2,7 +2,7 @@ package Class::Trigger;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = 0.08;
+$VERSION = "0.10";
 
 use Class::Data::Inheritable;
 use Carp ();
@@ -44,7 +44,7 @@ sub add_trigger {
 
 sub call_trigger {
     my $self = shift;
-    my $all_triggers = __fetch_triggers($self) || return; # any triggers?
+    return unless my $all_triggers = __fetch_triggers($self); # any triggers?
     my $when = shift;
     if (my $triggers = $all_triggers->{$when}) {
 	for my $trigger (@$triggers) {
@@ -60,9 +60,9 @@ sub call_trigger {
 }
 
 sub __validate_triggerpoint {
-    my $points = $_[0]->__triggerpoints || return;
+    return unless my $points = $_[0]->__triggerpoints;
     my ($self, $when) = @_;
-    Carp::croak("$when is not valid triggerpoint for ".(ref($self) || $self))
+    Carp::croak("$when is not valid triggerpoint for ".(ref($self) ? ref($self) : $self))
 	unless $points->{$when};
 }
 
@@ -172,10 +172,11 @@ copy of the triggers.
 
 =item call_trigger
 
-  $foo->call_trigger($triggerpoint);
+  $foo->call_trigger($triggerpoint, @args);
 
 Calls triggers for trigger point, which were added via C<add_trigger>
-method. Each triggers will be passed a copy of the object.
+method. Each triggers will be passed a copy of the object as the first argument.
+Remaining arguments passed to C<call_trigger> will be passed on to each trigger.
 Triggers are invoked in the same order they were defined.
 
 =back
@@ -264,8 +265,6 @@ in action.
 Original idea by Tony Bowden E<lt>tony@kasei.comE<gt> in Class::DBI.
 
 Code by Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>.
-
-Patches by Tim Buce E<lt>Tim.Bunce@pobox.comE<gt>.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

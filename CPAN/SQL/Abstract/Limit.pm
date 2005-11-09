@@ -1,7 +1,7 @@
 package SQL::Abstract::Limit;
 use strict;
 use warnings;
-use Carp;
+use Carp();
 
 use DBI::Const::GetInfoType ();
 
@@ -15,7 +15,7 @@ SQL::Abstract::Limit - portable LIMIT emulation
 
 =cut
 
-our $VERSION = '0.101';
+our $VERSION = '0.11';
 
 # additions / error reports welcome !
 our %SyntaxMap = (  mssql    => 'Top',
@@ -219,7 +219,7 @@ sub where
         
         my $syntax_name = $self->_find_syntax( $syntax );
 
-        croak( "can't build a stand-alone WHERE clause for $syntax_name" )
+        Carp::croak( "can't build a stand-alone WHERE clause for $syntax_name" )
             unless $syntax_name =~ /(?:LimitOffset|LimitXY|LimitYX|RowsTo)/i;
 
         $sql = $self->_emulate_limit( $syntax_name, $sql, $order, $rows, $offset );
@@ -270,8 +270,8 @@ sub _emulate_limit {
 
     $offset ||= 0;
 
-    croak( "rows must be a number (got $rows)" )     unless $rows   =~ /^\d+$/;
-    croak( "offset must be a number (got $offset)" ) unless $offset =~ /^\d+$/;
+    Carp::croak( "rows must be a number (got $rows)" )     unless $rows   =~ /^\d+$/;
+    Carp::croak( "offset must be a number (got $offset)" ) unless $offset =~ /^\d+$/;
 
     my $method = $self->can( 'emulate_limit' ) || "_$syntax";
 
@@ -280,39 +280,52 @@ sub _emulate_limit {
     return $sql;
 }
 
-sub _find_syntax {
-    my ( $self, $syntax ) = @_;
+sub _find_syntax 
+{
+    my ($self, $syntax) = @_;
+    
+    # $syntax is a dialect name, $dbh, or CDBI class or object
 
-    croak( 'no syntax' ) unless $syntax;
-
-    # if ( UNIVERSAL::isa( $syntax, 'DBI::db' ) ) should work too
-    if ( eval { $syntax->{Driver}->{Name} } )
-    {   # DBI database handle
-        my $db = $self->_find_database_from_dbh( $syntax );
-        return $self->_find_syntax_from_database( $db );
+    Carp::croak('no syntax') unless $syntax;
+    
+    my $db;
+    
+    # note: tests arranged so that the eval isn't run against a scalar $syntax
+    #           see rt #15000
+    if (ref $syntax)        # a $dbh or a CDBI object
+    {           
+        if ( UNIVERSAL::isa($syntax => 'Class::DBI') )
+        {   
+            $db = $self->_find_database_from_cdbi($syntax);
+        }
+        elsif ( eval { $syntax->{Driver}->{Name} } ) # or use isa DBI::db ?
+        {
+            $db = $self->_find_database_from_dbh($syntax);
+        }
     }
-
-    if ( UNIVERSAL::isa( $syntax, 'Class::DBI' ) )
-    {   # inherits from Ima::DBI
-        my ( $dbh ) = $syntax->db_handles;
-        croak( "no \$dbh in $syntax" ) unless $dbh;
-        my $db = $self->_find_database_from_dbh( $dbh );
-        return $self->_find_syntax_from_database( $db );
+    else                    # string - CDBI class, db name, or dialect name
+    {           
+        if (exists $SyntaxMap{lc $syntax})
+        {
+            # the name of a database
+            $db = $syntax;
+        }
+        elsif (UNIVERSAL::isa($syntax => 'Class::DBI'))
+        {
+            # a CDBI class
+            $db = $self->_find_database_from_cdbi($syntax);
+        }
+        else
+        {
+            # or it's already a syntax dialect
+            return $syntax;
+        }            
     }
-
-    unless ( ref $syntax )
-    {   # the name of a database
-        return $self->_find_syntax_from_database( $syntax )
-            if exists $SyntaxMap{ lc( $syntax ) };
-
-        # or a syntax dialect
-        return $syntax;
-    }
-
-    # it's a ref (maybe an object)
+    
+    return $self->_find_syntax_from_database($db) if $db;
 
     # if you get here, you might like to provide a patch to determine the
-    # syntax model for your object e.g. by getting at the $dbh stored in it
+    # syntax model for your object or ref e.g. by getting at the $dbh stored in it
     warn "can't determine syntax model for $syntax - using default";
 
     return $self->_default_limit_syntax;
@@ -322,7 +335,7 @@ sub _find_syntax {
 sub _find_database_from_dbh {
     my ( $self, $dbh ) = @_;
 
-    my $driver = ucfirst( $dbh->{Driver}->{Name} ) || croak( "no driver in $dbh" );
+    my $driver = ucfirst( $dbh->{Driver}->{Name} ) || Carp::croak( "no driver in $dbh" );
 
     if ( $driver eq 'Proxy' )
     {
@@ -362,6 +375,19 @@ CASE: {
     # $driver now holds a string identifying the database server - in the future,
     # it might return an object with extra information e.g. version
     return $driver;
+}
+
+# $cdbi can be a class or object
+sub _find_database_from_cdbi
+{
+    my ($self, $cdbi) = @_;
+    
+    # inherits from Ima::DBI
+    my ($dbh) = $cdbi->db_handles;
+    
+    Carp::croak "no \$dbh in $cdbi" unless $dbh;
+    
+    return $self->_find_database_from_dbh($dbh);
 }
 
 # currently expects a string (database moniker), but this may become an object
@@ -414,7 +440,7 @@ CASE: {
     @order = @$order,     last CASE if $ref eq 'ARRAY';
     @order = ( $order ),  last CASE unless $ref;
     @order = ( $$order ), last CASE if $ref eq 'SCALAR';
-    croak __PACKAGE__ . ": Unsupported data struct $ref for ORDER BY";
+    Carp::croak __PACKAGE__ . ": Unsupported data struct $ref for ORDER BY";
 }
 
     my ( $order_by_up, $order_by_down );
@@ -422,11 +448,11 @@ CASE: {
     foreach my $spec ( @order )
     {
         my @spec = split ' ', $spec;
-        croak( "bad column order spec: $spec" ) if @spec > 2;
+        Carp::croak( "bad column order spec: $spec" ) if @spec > 2;
         push( @spec, 'ASC' ) unless @spec == 2;
         my ( $col, $up ) = @spec; # or maybe down
         $up = uc( $up );
-        croak( "bad direction: $up" ) unless $up =~ /^(?:ASC|DESC)$/;
+        Carp::croak( "bad direction: $up" ) unless $up =~ /^(?:ASC|DESC)$/;
         $order_by_up .= ", $col $up";
         my $down = $up eq 'ASC' ? 'DESC' : 'ASC';
         $order_by_down .= ", $col $down";

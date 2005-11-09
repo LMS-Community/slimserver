@@ -8,7 +8,7 @@ package JSON::Parser;
 use vars qw($VERSION);
 use strict;
 
-$VERSION     = 0.932;
+$VERSION     = 1.00;
 
 my %escapes = ( #  by Jeremy Muhlich <jmuhlich [at] bitflood.org>
   b    => "\x8",
@@ -23,8 +23,7 @@ my %escapes = ( #  by Jeremy Muhlich <jmuhlich [at] bitflood.org>
 
 sub new {
 	my $class = shift;
-	my $self  = {};
-	bless $self,$class;
+	bless { @_ }, $class;
 }
 
 
@@ -37,6 +36,10 @@ sub new {
 	my $at;
 	my $ch;
 	my $len;
+	my $unmap; # unmmaping
+	my $bare;  # bareKey
+	my $apos;  # loosely quoting
+
 
 	sub parse {
 		my $self = shift;
@@ -44,6 +47,7 @@ sub new {
 		$at   = 0;
 		$ch   = '';
 		$len  = length $text;
+		$self->_init(@_);
 		value();
 	}
 
@@ -56,9 +60,10 @@ sub new {
 
 	sub value {
 		white();
+		return          if(!defined $ch);
 		return object() if($ch eq '{');
 		return array()  if($ch eq '[');
-		return string() if($ch eq '"');
+		return string() if($ch eq '"' or ($apos and $ch eq "'"));
 		return number() if($ch eq '-');
 		return $ch =~ /\d/ ? number() : word();
 	}
@@ -68,9 +73,11 @@ sub new {
 		my ($i,$s,$t,$u);
 		$s = '';
 
-		if($ch eq '"'){
+		if($ch eq '"' or ($apos and $ch eq "'")){
+			my $boundChar = $ch;
+
 			OUTER: while( defined(next_chr()) ){
-				if($ch eq '"'){
+				if($ch eq '"' or ($apos and $ch eq $boundChar)){
 					next_chr();
 					return $s;
 				}
@@ -156,7 +163,7 @@ sub new {
 				return $o;
 			}
 			while(defined $ch){
-				$k = string();
+				$k = ($bare and $ch ne '"' and $ch ne "'") ? bareKey() : string();
 				white();
 
 				if($ch ne ':'){
@@ -183,26 +190,35 @@ sub new {
 	}
 
 
+	sub bareKey { # doesn't strictly follow Standard ECMA-262 3rd Edition
+		my $key;
+		while($ch =~ /[^\x00-\x23\x25-\x2F\x3A-\x40\x5B-\x5E\x60\x7B-\x7F]/){
+			$key .= $ch;
+			next_chr();
+		}
+		return $key;
+	}
+
+
 	sub word {
 		my $word =  substr($text,$at-1,4);
 
 		if($word eq 'true'){
 			$at += 3;
 			next_chr;
-			return bless {value => 'true'}, 'JSON::NotString'
+			return $unmap ? 1 : bless {value => 'true'}, 'JSON::NotString'
 		}
 		elsif($word eq 'null'){
 			$at += 3;
 			next_chr;
-			#return bless {value => undef}, 'JSON::NotString'
-			return '';
+			return $unmap ? undef : bless {value => undef}, 'JSON::NotString';
 		}
 		elsif($word eq 'fals'){
 			$at += 3;
 			if(substr($text,$at,1) eq 'e'){
 				$at++;
 				next_chr;
-				return bless {value => 'false'}, 'JSON::NotString'
+				return $unmap ? 0 : bless {value => 'false'}, 'JSON::NotString'
 			}
 		}
 
@@ -289,7 +305,19 @@ sub new {
 		die "$error at $at in $text.";
 	}
 
+
+	sub _init {
+		my $opt  = $_[1] || {};
+		$unmap= $_[0]->{unmapping};
+		$unmap= $opt->{unmapping} if(exists $opt->{unmapping});
+		$bare = $_[0]->{barekey};
+		$bare = $opt->{barekey} if(exists $opt->{barekey});
+		$apos = $_[0]->{quotapos};
+		$apos = $opt->{quotapos} if(exists $opt->{quotapos});
+	}
+
 } # PARSE
+
 
 
 

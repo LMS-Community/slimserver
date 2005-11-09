@@ -1,9 +1,10 @@
 package DBIx::ContextualFetch;
 
-$VERSION = '1.01';
+$VERSION = '1.03';
 
 use strict;
 use warnings;
+no warnings 'uninitialized';
 
 use base 'DBI';
 

@@ -1,5 +1,5 @@
 #
-# $Id: QuotedPrint.pm,v 2.13 2003/05/13 18:22:09 gisle Exp $
+# $Id$
 
 package MIME::QuotedPrint;
 

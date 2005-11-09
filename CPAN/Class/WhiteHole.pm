@@ -1,4 +1,4 @@
-# $Id: WhiteHole.pm,v 1.1 2004/08/13 20:18:26 vidur Exp $
+# $Id: WhiteHole.pm,v 1.4 2001/02/07 11:42:37 schwern Exp $
 
 package Class::WhiteHole;
 
@@ -14,6 +14,7 @@ $ErrorMsg = qq{Can\'t locate object method "%s" via package "%s" }.
             qq{at %s line %d.\n};
 
 
+=pod
 
 =head1 NAME
 

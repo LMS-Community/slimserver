@@ -2,12 +2,11 @@ package Class::Virtual;
 
 use strict;
 use vars qw($VERSION @ISA);
-$VERSION = '0.04';
+$VERSION = '0.05';
 
-use Carp::Assert;
+use Carp::Assert qw(DEBUG);  # import only the tiny bit we need so it doesn't
+                             # get inherited.
 use Class::ISA;
-# Class::ISA doesn't export?!
-*self_and_super_path = \&Class::ISA::self_and_super_path;
 
 use Class::Data::Inheritable;
 @ISA = qw(Class::Data::Inheritable);
@@ -82,9 +81,10 @@ This is an accessor to the list of virtual_methods.  Virtual base
 classes will declare their list of virtual methods.  Subclasses will
 look at them.  Once the virtual methods are set they cannot be undone.
 
-XXX I'm tempted to make it possible for the subclass to override the
-XXX virtual methods, perhaps add to them.  Too hairy to think about for
-XXX 0.01.
+=for notes
+I'm tempted to make it possible for the subclass to override the
+virtual methods, perhaps add to them.  Too hairy to think about for
+0.01.
 
 =cut
 
@@ -159,7 +159,7 @@ sub missing_methods {
     my($class) = shift;
 
     my @vmeths = $class->virtual_methods;
-    my @super_classes = self_and_super_path($class);
+    my @super_classes = Class::ISA::self_and_super_path($class);
     my $vclass = $class->__virtual_base_class;
 
     # Remove everything in the hierarchy beyond, and including,
@@ -167,7 +167,7 @@ sub missing_methods {
     my $sclass;
     do {
         $sclass = pop @super_classes;
-        assert( defined $sclass ) if DEBUG;
+        Carp::Assert::assert( defined $sclass ) if DEBUG;
     } until $sclass eq $vclass;
 
     my @missing = ();
@@ -199,6 +199,16 @@ how to solve this.
 =head1 AUTHOR
 
 Michael G Schwern E<lt>schwern@pobox.comE<gt>
+
+
+=head1 LEGAL
+
+Copyright 2000, 2001, 2003, 2004 Michael G Schwern
+
+This program is free software; you can redistribute it and/or 
+modify it under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
 
 
 =head1 SEE ALSO

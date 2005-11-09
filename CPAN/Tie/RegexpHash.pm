@@ -11,7 +11,7 @@ use vars qw( $VERSION @ISA );
 # our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
 # our @EXPORT = qw();
 
-$VERSION = '0.12';
+$VERSION = '0.13';
 
 use Carp;
 
@@ -99,7 +99,7 @@ sub add
       {
 	if ($key ne $self->{KEYS}->[ $index ])
 	  {
-		carp "'`$key\' is not the same as '`",
+		carp "\'$key\' is not the same as \'",
 		  $self->{KEYS}->[$index], "\'";
 	  }
 	$self->{VALUES}->[ $index ] = $value;
@@ -315,15 +315,17 @@ values can be associated with anything that matches the key.
 Hashes can be operated on using the standard tied hash interface in Perl,
 or using an object-orineted interface described below.
 
-=head1 METHODS
+=head2 Methods
 
-=head2 new
+=over
+
+=item new
 
   my $obj = Tie::RegexpHash->new()
 
 Creates a new "RegexpHash" (Regular Expression Hash) object.
 
-=head2 add
+=item add
 
   $obj->add( $key, $value );
 
@@ -334,7 +336,7 @@ If I<$key> is already defined, the value will be changed. If C<$key> matches
 an existing key (but is not the same), a warning will be shown if warnings
 are enabled.
 
-=head2 match
+=item match
 
   $value = $obj->match( $quasikey );
 
@@ -344,13 +346,13 @@ there is no match.
 
 Regexps are matched in the order they are defined.
 
-=head2 match_exists
+=item match_exists
 
   if ($obj->match_exists( $quasikey )) ...
 
 Returns a true value if there exists a matching key.
 
-=head2 remove
+=item remove
 
   $value = $obj->remove( $quasikey );
 
@@ -359,31 +361,37 @@ an existing key (but is not the same), a warning will be shown.
 
 Returns the value associated with the key.
 
-=head2 clear
+=item clear
 
   $obj->clear();
 
 Removes all key/value pairs.
 
+=back
+
 =head1 AUTHOR
 
-Robert Rothenberg <rrwo@cpan.org>
+Robert Rothenberg <rrwo at cpan.org>
 
 =head2 Acknowledgements
 
-Simon Hanmer <sch@scubaplus.co.uk> & Bart Vetters <robartes@nirya.eb>
+Simon Hanmer <sch at scubaplus.co.uk> & Bart Vetters <robartes at nirya.eb>
 for pointing out a bug in the logic of the _find() routine in v0.10
+
+=head1 LICENSE
+
+Copyright (c) 2001-2002, 2005 Robert Rothenberg. All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
 L<Tie::Hash::Regex> is a module with a complimentary function. Rather than
-a hash with Regexps as keys that match a fetch, this module has standard
-keys but uses Regexps for fetches.
+a hash with Regexps as keys that match against fetches, it has standard keys that are matched by Regexps in fetches.
 
-=head1 LICENSE
+L<Regexp::Match::Any> matches many Regexps against a variable.
 
-Copyright (c) 2001-2002 Robert Rothenberg. All rights reserved.
-This program is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+L<Regexp::Match::List> is similar, but supports callbacks and various
+optimizations.
 
 =cut
