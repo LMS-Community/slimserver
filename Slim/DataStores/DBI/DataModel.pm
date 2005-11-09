@@ -7,6 +7,12 @@ package Slim::DataStores::DBI::DataModel;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+# This file is a subclass of Class::DBI, which allows an object <-> relational
+# mapping for the data in the database. ::Track, ::Album, etc all inherit from
+# it. 
+#
+# It also includes code to do complex joins given our schema.
+
 use strict;
 
 use base 'Class::DBI';
@@ -26,6 +32,10 @@ our $dbh;
 our $driver;
 our $dirtyCount = 0;
 our $cleanupIds;
+
+# Pref or not? pingInterval is in seconds.
+our $lastPingTime = 0;
+our $pingInterval = 1800;
 
 {
 	my $class = __PACKAGE__;
@@ -108,16 +118,17 @@ sub executeSQLFile {
 sub dbh {
 	my $class = shift;
 
+	# Do we need to ping the database?
+	# 
+	# Logic from Apache::DBI
+	my $nowTime   = time;
+	my $needPing  = ($nowTime - ($lastPingTime || 0)) >= $pingInterval ? 1 : 0;
+	$lastPingTime = $nowTime;
+
 	# Keep MySQL alive here.
-	if (defined $dbh && $dbh->ping) {
+	if (defined $dbh && (!$needPing || eval { $dbh->ping }) ) {
 
 		return $dbh;
-
-	} elsif (defined $dbh) {
-
-		$dbh->disconnect;
-
-		$::d_info&& msg("Database handle is undefined - disconnecting!\n");
 	}
 
 	$::d_info && msg("Couldn't ping DB server - need to reconnect!\n");
