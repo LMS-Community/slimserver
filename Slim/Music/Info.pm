@@ -906,7 +906,7 @@ sub plainTitle {
 	$::d_info && msg("Plain title for: " . $file . "\n");
 
 	if (isRemoteURL($file)) {
-		$title = Slim::Web::HTTP::unescape($file);
+		$title = Slim::Utils::Misc::unescape($file);
 	} else {
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
@@ -1004,7 +1004,7 @@ sub guessTags {
 	# Rip off from plainTitle()
 	if (isRemoteURL($file)) {
 
-		$file = Slim::Web::HTTP::unescape($file);
+		$file = Slim::Utils::Misc::unescape($file);
 
 	} else {
 
@@ -1145,7 +1145,7 @@ sub fileName {
 			$j = (splitdir($j))[-1];
 		}
 	} elsif (isRemoteURL($j)) {
-		$j = Slim::Web::HTTP::unescape($j);
+		$j = Slim::Utils::Misc::unescape($j);
 	} else {
 		$j = (splitdir($j))[-1];
 	}

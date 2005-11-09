@@ -2572,9 +2572,9 @@ sub buildLinkList {
 
 		$pagenum++;
 
-		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Web::HTTP::escape($paramref->{'player'})); 
+		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Utils::Misc::escape($paramref->{'player'})); 
 
-		if (defined $paramref->{'playerid'}) {$linkinfo{'paramlist'} .= '&playerid=' . (Slim::Web::HTTP::escape($paramref->{'playerid'}));}
+		if (defined $paramref->{'playerid'}) {$linkinfo{'paramlist'} .= '&playerid=' . (Slim::Utils::Misc::escape($paramref->{'playerid'}));}
 
 		$linkinfo{'linktitle'} = $setup{$page}{'title'};
 
@@ -2775,7 +2775,7 @@ sub buildHTTP {
 		$paramref->{'children'} = buildLinkList('list',$paramref,@pages);
 
 		my %linkinfo = ('linkpage' => 'setup.html'
-				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Web::HTTP::escape($paramref->{'player'}) . '&playerid=' . (defined $paramref->{'playerid'} ? Slim::Web::HTTP::escape($paramref->{'playerid'}) : "")
+				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Utils::Misc::escape($paramref->{'player'}) . '&playerid=' . (defined $paramref->{'playerid'} ? Slim::Utils::Misc::escape($paramref->{'playerid'}) : "")
 				,'skinOverride' => $$paramref{'skinOverride'}
 				);
 
@@ -2914,7 +2914,7 @@ sub skins {
 			} elsif ($dir eq Slim::Web::HTTP::baseSkin()) {
 				$skinlist{$dir} = string('BASE_SKIN');
 			} else {
-				$skinlist{$dir} = Slim::Web::HTTP::unescape($dir);
+				$skinlist{$dir} = Slim::Utils::Misc::unescape($dir);
 			}
 		}
 	}

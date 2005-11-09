@@ -167,19 +167,18 @@ sub init {
 	idle();
 }
 
-# other people call us externally.
-*escape   = \&URI::Escape::uri_escape_utf8;
+sub escape {
+	msg("Slim::Web::HTTP::escape has been deprecated in favor of 
+	     Slim::Utils::Misc::escape(). Please update your calls!\n");
 
-# don't use the external one because it doesn't know about the difference between a param and not...
-#*unescape = \&URI::Escape::unescape;
+	return Slim::Utils::Misc::escape(@_);
+}
+
 sub unescape {
-	my $in      = shift;
-	my $isParam = shift;
+	msg("Slim::Web::HTTP::unescape has been deprecated in favor of 
+	     Slim::Utils::Misc::unescape(). Please update your calls!\n");
 
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-
-	return $in;
+	return Slim::Utils::Misc::unescape(@_);
 }
 
 sub openport {
@@ -395,8 +394,8 @@ sub processHTTP {
 
 				if ($param =~ /([^=]+)=(.*)/) {
 
-					my $name  = unescape($1, 1);
-					my $value = unescape($2, 1);
+					my $name  = Slim::Utils::Misc::unescape($1, 1);
+					my $value = Slim::Utils::Misc::unescape($2, 1);
 
 					# We need to turn perl's internal
 					# representation of the unescaped
@@ -413,7 +412,7 @@ sub processHTTP {
 
 				} else {
 
-					my $name = unescape($param, 1);
+					my $name = Slim::Utils::Misc::unescape($param, 1);
 
 					$params->{$name} = 1;
 
@@ -475,7 +474,7 @@ sub processHTTP {
 			}
 
 			$path =~ s|^/+||;
-			$params->{"path"} = unescape($path);
+			$params->{"path"} = Slim::Utils::Misc::unescape($path);
 			$params->{"host"} = $request->header('Host');
 		}
 
@@ -854,7 +853,7 @@ sub generateHTTPResponse {
 				$response->content_type( $Slim::Music::Info::types{$obj->content_type()} );
 				$response->content_length($obj->filesize());
 				$response->header('Content-Disposition', 
-					sprintf('attachment; filename="%s"', unescape(basename($obj->url())))
+					sprintf('attachment; filename="%s"', Slim::utils::Misc::unescape(basename($obj->url())))
 				);
 
 				my $headers = _stringifyHeaders($response) . $CRLF;

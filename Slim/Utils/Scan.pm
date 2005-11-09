@@ -663,7 +663,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		if ($numitems && scalar @$listref) {
 
 			# Create a playlist container
-			my $title = Slim::Web::HTTP::unescape(basename($playlisturl));
+			my $title = Slim::Utils::Misc::unescape(basename($playlisturl));
 			   $title =~ s/\.\w{3}$//;
 
 			my $ct    = Slim::Music::Info::contentType($playlisturl);

@@ -703,7 +703,7 @@ sub exportFunction {
 				$http->close;
 			
 				my $name = shift @playlists;
-				my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
+				my $url = 'musicmagicplaylist:' . Slim::Utils::Misc::escape($name);
 				$url = Slim::Utils::Misc::fixPath($url);
 
 				# add this playlist to our playlist library
@@ -774,7 +774,7 @@ sub exportFunction {
 			$http->close;
 		
 			my $name = "Duplicates";
-			my $url = 'musicmagicplaylist:' . Slim::Web::HTTP::escape($name);
+			my $url = 'musicmagicplaylist:' . Slim::Utils::Misc::escape($name);
 
 			# add this list of duplicates to our playlist library
 			$cacheEntry{'TITLE'} = join('', 
@@ -974,7 +974,7 @@ sub getMix {
 	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
 
-		$args{'filter'} = Slim::Web::HTTP::escape($filter);
+		$args{'filter'} = Slim::Utils::Misc::escape($filter);
 	}
 
 	my $argString = join( '&', map { "$_=$args{$_}" } keys %args );
@@ -1003,7 +1003,7 @@ sub getMix {
 
 		$mixArgs = URI::Escape::uri_escape($mixArgs);
 	} else {
-		$mixArgs = Slim::Web::HTTP::escape($mixArgs);
+		$mixArgs = Slim::Utils::Misc::escape($mixArgs);
 	}
 	
 	$::d_musicmagic && msg("Musicmagic: request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
@@ -1158,7 +1158,7 @@ sub musicmagic_mix {
 
 		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
 
-		$list_form{'attributes'} = '&track=' . Slim::Web::HTTP::escape($trackObj->id);
+		$list_form{'attributes'} = '&track=' . Slim::Utils::Misc::escape($trackObj->id);
 
 		$list_form{'odd'}        = ($itemnumber + 1) % 2;
 

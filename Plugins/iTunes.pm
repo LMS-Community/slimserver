@@ -657,7 +657,7 @@ sub scanFunction {
 			$line .= <ITUNESLIBRARY>;
 		}
 
-		$line =~ s/&#(\d*);/Slim::Web::HTTP::escape(chr($1))/ge;
+		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
 
 		$iTunesParserNB->parse_more($line);
 
@@ -796,7 +796,7 @@ sub handleTrack {
 
 			next if $key eq 'Location';
 
-			$curTrack->{$key} = Slim::Web::HTTP::unescape($curTrack->{$key});
+			$curTrack->{$key} = Slim::Utils::Misc::unescape($curTrack->{$key});
 		}
 
 		$cacheEntry{'CT'}       = $type;
@@ -872,8 +872,8 @@ sub handleTrack {
 sub handlePlaylist {
 	my $cacheEntry = shift;
 
-	my $name = Slim::Web::HTTP::unescape($cacheEntry->{'TITLE'});
-	my $url  = 'itunesplaylist:' . Slim::Web::HTTP::escape($name);
+	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
+	my $url  = 'itunesplaylist:' . $cacheEntry->{'TITLE'};
 
 	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
 

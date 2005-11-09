@@ -70,7 +70,7 @@ sub executeCmd {
 	my @params  = split(" ", $command);
 
 	foreach my $param (@params) {
-		$param = Slim::Web::HTTP::unescape($param);
+		$param = Slim::Utils::Misc::unescape($param);
 	}
 
 	if (defined $params[0]) {
@@ -79,7 +79,7 @@ sub executeCmd {
 		my $prefix = "";
 		
 		if (defined($client)) {
-			$prefix = Slim::Web::HTTP::escape($params[0]) . " ";
+			$prefix = Slim::Utils::Misc::escape($params[0]) . " ";
 			shift @params;
 		}
 		
@@ -92,7 +92,7 @@ sub executeCmd {
 		my @outputParams = Slim::Control::Command::execute($client, \@params);
 		
 		foreach my $param (@outputParams) {
-			$param = Slim::Web::HTTP::escape($param);
+			$param = Slim::Utils::Misc::escape($param);
 		}
 
 		$output = $prefix . join(" ", @outputParams);

@@ -286,12 +286,12 @@ sub handleAudioMessage {
 
 		# AddFile
 		if ($xplcmd eq "addfile") {
-			$params = Slim::Web::HTTP::escape($params);
+			$params = Slim::Utils::Misc::escape($params);
 			xplExecuteCmd("playlist add $params",$clientid);
 		}
 		# PLAYFILE
 		elsif ($xplcmd eq "playfile") {
-			$params = Slim::Web::HTTP::escape($params);
+			$params = Slim::Utils::Misc::escape($params);
 			xplExecuteCmd("playlist play $params",$clientid);
 		}
 		# CLI commands
@@ -483,8 +483,8 @@ sub handleOsdMessage {
 		}	
 
 		# Escape text
-		my $esctext1 = Slim::Web::HTTP::escape($text1);
-		my $esctext2 = Slim::Web::HTTP::escape($text2);
+		my $esctext1 = Slim::Utils::Misc::escape($text1);
+		my $esctext2 = Slim::Utils::Misc::escape($text2);
 	
 		# If delay is unspecified, set to default of 5 seconds
 		if (!defined($osddelay)) {

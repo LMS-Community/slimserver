@@ -451,7 +451,7 @@ sub exportFunction {
 
 		my $name = $playlist->Fields('name')->value;
 		my %cacheEntry = ();
-		my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+		my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
 
 		$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
 
@@ -476,7 +476,7 @@ sub exportFunction {
 			my $name= $auto->Fields('name')->value;
 			
 			my %cacheEntry = ();
-			my $url = 'moodlogicplaylist:' . Slim::Web::HTTP::escape($name);
+			my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
 			$url = Slim::Utils::Misc::fixPath($url);
 
 			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");
@@ -877,7 +877,7 @@ sub instant_mix {
 		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
 
 		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
-		$list_form{'attributes'} = '&track=' . Slim::Web::HTTP::escape($trackObj->id());
+		$list_form{'attributes'} = '&track=' . Slim::Utils::Misc::escape($trackObj->id());
 		$itemnumber++;
 
 		$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};

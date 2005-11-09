@@ -23,6 +23,7 @@ use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use Time::HiRes;
 use URI;
+use URI::Escape;
 use URI::file;
 
 # These must be 'required', as they use functions from the Misc module!
@@ -225,6 +226,22 @@ sub fileURLFromPath {
 }
 
 ########
+
+# other people call us externally.
+*escape   = \&URI::Escape::uri_escape_utf8;
+
+# don't use the external one because it doesn't know about the difference
+# between a param and not...
+#*unescape = \&URI::Escape::unescape;
+sub unescape {
+	my $in      = shift;
+	my $isParam = shift;
+
+	$in =~ s/\+/ /g if $isParam;
+	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
+
+	return $in;
+}
 
 sub anchorFromURL {
 	my $url = shift;
@@ -431,7 +448,7 @@ sub virtualToAbsolute {
 	}
 
 	# Always unescape ourselves
-	$virtual = Slim::Web::HTTP::unescape($virtual);
+	$virtual = unescape($virtual);
 
 	$curdir = fileURLFromPath($curdir);	
 
@@ -491,7 +508,7 @@ sub virtualToAbsolute {
 		} else {
 			if (Slim::Music::Info::isURL($curdir)) {
 				#URLs always use / as separator
-				$curdir .= '/' . Slim::Web::HTTP::escape($level);
+				$curdir .= '/' . escape($level);
 			} else {
 				$curdir = catdir($curdir,$level);
 			}

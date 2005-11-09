@@ -486,7 +486,7 @@ sub playlist {
 			$songcount,
 			$params->{'path'},
 			Slim::Player::Source::playingSongIndex($client),
-			"player=" . Slim::Web::HTTP::escape($client->id()) . "&", 
+			"player=" . Slim::Utils::Misc::escape($client->id()) . "&", 
 			\$params->{'start'}, 
 			\$params->{'playlist_header'},
 			\$params->{'playlist_pagebar'},
@@ -770,7 +770,7 @@ sub advancedSearch {
 		}
 
 		# Append to the query string
-		push @qstring, join('=', $key, Slim::Web::HTTP::escape($params->{$key}));
+		push @qstring, join('=', $key, Slim::Utils::Misc::escape($params->{$key}));
 
 		# Normalize the string queries
 		# 
@@ -837,9 +837,9 @@ sub _fillInSearchResults {
 
 	$params->{'type'} = $type;
 	
-	my $otherParams = 'player=' . Slim::Web::HTTP::escape($player) . 
+	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 
 			  '&type=' . ($type ? $type : ''). 
-			  '&query=' . Slim::Web::HTTP::escape($query) . '&' .
+			  '&query=' . Slim::Utils::Misc::escape($query) . '&' .
 			  join('&', @$qstring);
 
 	# Make sure that we have something to show.
@@ -1102,7 +1102,7 @@ sub browsedb {
 			# query constraints on a hierarchy using a field that isn't
 			# necessarily part of the hierarchy.
 			if (!grep {$_ eq $key} @levels) {
-				push @attrs, $key . '=' . Slim::Web::HTTP::escape($params->{$key});
+				push @attrs, $key . '=' . Slim::Utils::Misc::escape($params->{$key});
 			}
 		}
 	}
@@ -1153,7 +1153,7 @@ sub browsedb {
 
 		if ($params->{$attr}) {
 
-			push @attrs, $attr . '=' . Slim::Web::HTTP::escape($params->{$attr});
+			push @attrs, $attr . '=' . Slim::Utils::Misc::escape($params->{$attr});
 
 			push @{$params->{'pwd_list'}}, {
 				 'hreftype' => 'browseDb',
@@ -1173,7 +1173,7 @@ sub browsedb {
 	}
 
 	my $otherparams = join('&',
-		'player=' . Slim::Web::HTTP::escape($player || ''),
+		'player=' . Slim::Utils::Misc::escape($player || ''),
 		"hierarchy=$hierarchy",
 		"level=$level",
 		@attrs,
@@ -1351,7 +1351,7 @@ sub browsedb {
 			$list_form{'hierarchy'}	    = $hierarchy;
 			$list_form{'level'}	    = $level + 1;
 			$list_form{'attributes'}    = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '') . '&' .
-				$attrName . '=' . Slim::Web::HTTP::escape($itemid);
+				$attrName . '=' . Slim::Utils::Misc::escape($itemid);
 
 			$list_form{'levelName'}	    = $attrName;
 			$list_form{'text'}	    = $itemname;
