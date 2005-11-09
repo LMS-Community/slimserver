@@ -148,6 +148,7 @@ BEGIN {
 	my @SlimINC = (
 		$Bin, 
 		catdir($Bin,'CPAN'), 
+		catdir($Bin,'lib'), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}), 

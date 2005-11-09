@@ -1,0 +1,14 @@
+$Id$
+
+------
+
+This directory contains library modules from CPAN which have been modified by Slim Devices.
+
+We've made every effort to send patches to the upstream authors, but either
+the changes are Slim Devices specific, or we simply haven't heard back from
+the author, reside in a separate directory than the pristine top level CPAN/ dir.
+
+If a patch has been accepted by the author, then the module should be moved
+back to the top level CPAN directory.
+
+In an ideal world, CPAN/ can be blown away, and the OSes packages can be used.
