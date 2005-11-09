@@ -1360,7 +1360,7 @@ sub readCoverArtFiles {
 
 		my $suffix = $2 ? $2 : ".jpg";
 
-		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($file), $1)."$suffix";
+		$artwork = infoFormat(Slim::Utils::Misc::fileURLFromPath($track->url), $1)."$suffix";
 
 		$::d_artwork && msgf(
 			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
