@@ -3,7 +3,9 @@ package JSON::Converter;
 
 use Carp;
 
-$JSON::Converter::VERSION = 1.00;
+$JSON::Converter::VERSION = 1.001;
+# Modified by Jacob Potter for SlimServer - don't die on blessed references,
+# such as DBI objects
 
 ##############################################################################
 
@@ -36,6 +38,9 @@ sub toJson {
 	elsif(ref($obj) eq 'ARRAY'){
 		return $self->arrayToJson($obj);
 	}
+	elsif(UNIVERSAL::isa($obj, "UNIVERSAL")){	 
+		return $self->hashToJson($obj);	 
+	}
 	else{
 		return;
 	}
@@ -63,6 +68,9 @@ sub hashToJson {
 		}
 		elsif(ref($v) eq "ARRAY"){
 			$res{$k} = $self->arrayToJson($v);
+		}
+		elsif(UNIVERSAL::isa($v, "UNIVERSAL") && !UNIVERSAL::isa($v, "JSON::NotString")){	 
+			$res{$k} = $self->objToJson($v);	 
 		}
 		else{
 			$res{$k} = $self->valueToJson($v);
@@ -105,6 +113,9 @@ sub arrayToJson {
 		}
 		elsif(ref($v) eq "ARRAY"){
 			push @res,$self->arrayToJson($v);
+		}
+		elsif(UNIVERSAL::isa($v, "UNIVERSAL") && !UNIVERSAL::isa($v, "JSON::NotString")){	 
+			push @res,$self->objToJson($v);	 
 		}
 		else{
 			push @res,$self->valueToJson($v);
