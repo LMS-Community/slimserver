@@ -1,9 +1,9 @@
 	<tr height="15" bgcolor="[% PROCESS oddOrEvenC %]">
-		<td width="100%">
+		<td>
 			<a href="songinfo.html?item=[% item %]&player=[% playerURI %]">[% title %]</a>
 			[% IF album && album != noAlbum %] [% "FROM" | string %] <a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&player=[% playerURI %]">[% album.title %]</a>[% END %]
 			[% IF includeArtist && artist; SET notarget='1'; PROCESS artistsAsHTML.html; END %]
 		</td>
-		<td>([% song_count %])</td>
-		<td ><nobr><img src="html/images/bar_small_first.gif" border="0" width="4" height="13">[% song_bar %]</nobr></td>
+		<td align="center">&nbsp;([% song_count %])&nbsp;</td>
+		<td width="45" align="right"><nobr><img src="html/images/bar_small_first.gif" border="0" width="4" height="13">[% song_bar %]</nobr></td>
 	</tr>
