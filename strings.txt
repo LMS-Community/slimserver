@@ -1,4 +1,4 @@
-﻿#
+#
 # This tab-delimited file contains all the text strings used in SlimServer
 # The format should be self explanatory. To submit a new language, or a better
 # translation of an existing string, please email your changes to
@@ -591,6 +591,7 @@ ADDING_TO_PLAYLIST_DBL
 	DE	Füge hinzu
 	EN	Adding
 	ES	Añadiendo
+	SE	Lägger till
 	ZH_CN	列入中
 
 INSERT_TO_PLAYLIST
@@ -996,18 +997,21 @@ ALARM_WEEKDAYS
 	DE	Wecker je Wochentag
 	EN	Weekday Alarms
 	ES	Alarmas en días de semana
+	SE	Larm Veckodagar
 	ZH_CN	周日闹钟
 
 ALARM_DAY0
 	DE	Täglich
 	EN	Every Day
 	ES	Todos los días
+	SE	Varje Dag
 
 ALARM_DAY1
 	DE	Montag
 	EN	Monday
 	ES	Lunes
 	FR	Lundi
+	SE	Måndag
 	ZH_CN	星期一
 
 ALARM_DAY2
@@ -1015,6 +1019,7 @@ ALARM_DAY2
 	EN	Tuesday
 	ES	Martes
 	FR	Mardi
+	SE	Tisdag
 	ZH_CN	星期二
 
 ALARM_DAY3
@@ -1022,6 +1027,7 @@ ALARM_DAY3
 	EN	Wednesday
 	ES	Miercoles
 	FR	Mercredi
+	SE	Onsdag
 	ZH_CN	星期三
 
 ALARM_DAY4
@@ -1029,6 +1035,7 @@ ALARM_DAY4
 	EN	Thursday
 	ES	Jueves
 	FR	Jeudi
+	SE	Torsdag
 	ZH_CN	星期四
 
 ALARM_DAY5
@@ -1036,6 +1043,7 @@ ALARM_DAY5
 	EN	Friday
 	ES	Viernes
 	FR	Vendredi
+	SE	Fredag
 	ZH_CN	星期五
 
 ALARM_DAY6
@@ -1043,6 +1051,7 @@ ALARM_DAY6
 	EN	Saturday
 	ES	Sábado
 	FR	Samedi
+	SE	Lördag
 	ZH_CN	星期六
 
 ALARM_DAY7
@@ -1050,6 +1059,7 @@ ALARM_DAY7
 	EN	Sunday
 	ES	Domingo
 	FR	Dimanche
+	SE	Söndag
 	ZH_CN	星期日
 
 SLIMP3
@@ -9004,6 +9014,7 @@ ADVANCEDSEARCH
 	IT	Ricerca Avanzata
 	JP	高度の調査
 	PT	Busca Avançada
+	SE	Avancerad Sökning
 	ZH_CN	高等搜查
 
 SEARCH
@@ -10066,6 +10077,7 @@ AFTER
 	FR	après
 	IT	dopo
 	JP	後
+	SE	efter
 	ZH_CN	之后
 
 IS
