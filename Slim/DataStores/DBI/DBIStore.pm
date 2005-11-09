@@ -194,8 +194,12 @@ sub contentType {
 	# Nothing from the path, and we don't have a valid track object - fetch one.
 	if ((!defined $contentType || $contentType eq $defaultType) && !blessed($track)) {
 
-		$track       = $self->objectForUrl($url);
-		$contentType = $track->content_type;
+		$track = $self->objectForUrl($url);
+
+		if (blessed($track) && $track->can('content_type')) {
+
+			$contentType = $track->content_type;
+		}
 	}
 
 	# Nothing from the object we already have in the db.
