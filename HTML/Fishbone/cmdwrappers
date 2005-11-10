@@ -85,13 +85,11 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
-	[% oldp3 = p3 %]
-	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp           %][% END %]
-	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown         %][% END %]
-	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' p3 = item.nextsongind %][% END %]
-	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                     %][% END %]
-	[% WRAPPER infolink     %][% PROCESS songinfoItemHRef                               %][% END %]
-	[% p3 = oldp3 %]
+	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           %][% END %]
+	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         %][% END %]
+	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind %][% END %]
+	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                         %][% END %]
+	[% WRAPPER infolink     %][% PROCESS songinfoItemHRef                                   %][% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]

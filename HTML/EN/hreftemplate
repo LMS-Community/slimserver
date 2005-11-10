@@ -72,6 +72,10 @@ MoveDown = "%2B1"; # +1
 					'jump'   => 'jump',
 					}
 
+	'p3For' => {
+					'move'   => 'moveTo',
+					}
+
 					%]
 														
 [%# command query params for commands above on remote urls %]
@@ -86,7 +90,9 @@ command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
 
 [%# command query params for commands acting on the current playlist using numeric references %]
 [% BLOCK cmdNumericQuery -%]
-p0=playlist&amp;p1=[% numcmdFor.$cmdType %]&amp;p2=[% num %][% IF p3 %]&amp;p3=[% p3 %][% END %][% IF useStart and start %]&amp;start=[% start %][% END %]
+p0=playlist&amp;p1=[% numcmdFor.$cmdType %]&amp;p2=[% num %]
+	[%- IF p3For.$cmdType and ${p3For.$cmdType} %]&amp;p3=[% ${p3For.$cmdType} %][% END %]
+	[%- IF useStart and start %]&amp;start=[% start %][% END %]
 [%- END %]
 
 [%# use this to add/play/insert/remove tracks and remote URLs %]

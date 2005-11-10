@@ -86,14 +86,14 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
-		[% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'               %][% END %]
+		[% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                   %][% END %]
 		<td>&nbsp;</td>
 		[%- statusroot = 'playlist.html' %]
-		[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %][% END %]
+		[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
 		<td>&nbsp;</td>
-		[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %][% END %]
+		[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
 		<td>&nbsp;</td>
-		[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'             %][% END %]
+		[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
 		[%- statusroot = 'status.html' %]
 [% END %]
 

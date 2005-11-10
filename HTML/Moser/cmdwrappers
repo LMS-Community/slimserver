@@ -92,11 +92,11 @@
 
 [% BLOCK playlistcontrols %]
 <div class="controls">
-  <ul class="songctl">[% oldp3 = p3 %]
-    [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %][% END %]
-    [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %][% END %]
-    [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'             %][% END %]
-  </ul>[% p3 = oldp3 %]
+  <ul class="songctl">
+    [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
+    [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
+    [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
+  </ul>
 </div>
 [% END %]
 
