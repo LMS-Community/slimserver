@@ -358,7 +358,7 @@ p.label {
 	margin-top: 1px;
 	width: 4px;
 	height: 8px;
-	margin: 1px;
+	border: 1px solid #61676c;
 	background: #808080;
 }
 

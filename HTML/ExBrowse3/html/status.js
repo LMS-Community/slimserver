@@ -321,6 +321,14 @@ function initStatusControls() {
 
 	progressbar = new JXTK2.ButtonBar("progressbar");
 	progressbar.populate("IMG", 50, "html/images/pixel.gif");
+	progressbar.addClickHandler(function (button) {
+		var pos = Math.floor(playlistObj[currentSong].secs * button.index / 50);
+		progressAt = pos;
+		curPlayMode = "play";
+		updateStatus();
+		ss.queueCall("slim.doCommand", [ curPlayer, [ "time", pos ] ], true);
+		ss.call("slim.doCommand", [ curPlayer, [ "mixer", "volume", volumebar.getValue() * 10 ] ], true);
+	});
 
 	progresstext = new JXTK2.Textbox("progresstext");
 
