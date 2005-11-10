@@ -84,9 +84,11 @@ END %]
 [%- END %]
 
 [% BLOCK playlistcontrols %]
+	[% oldp3 = p3 %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveDown %][% END %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' p3 = MoveUp   %][% END %]
 	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'             %][% END %]
+	[% p3 = oldp3 %]
 [% END %]
 
 [% BLOCK browsecontrols %]

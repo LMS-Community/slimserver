@@ -4,7 +4,7 @@
       <p align="right"><font class="numbertext">&nbsp;[% item.num + 1 %].&nbsp;</td><td>
       <a [% PROCESS songinfoItemHRef %]>[% IF item.currentsong %]<font class="playingitemtext">[&nbsp;[% END %][% IF not item.currentsong %]&nbsp;&nbsp;&nbsp;[% END %]<font class="itemtext">[% item.title %][% IF item.currentsong %]<font class="playingitemtext">&nbsp;][% END %]</a>
    </td>
-   <td align="right"><nobr>[% num = item.num; useStart = 1 %]
+   <td align="right"><nobr>[% num = item.num; useStart = 1 oldp3 = p3%]
            <a [% PROCESS cmdHRef cmdType = 'jump' %]>
            <font class="actiontext">[% "PLAY" | string %]
            </a>
@@ -24,5 +24,5 @@
            |<a [% PROCESS cmdHRef cmdType = 'delete' %]>
            <font class="actiontext">[% "DELETE" | string %]
            </a></td></nobr>
-</tr>
+</tr>[% p3 = oldp3 %]
 [%# /Element status_list.html %]
