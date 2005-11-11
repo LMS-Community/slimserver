@@ -99,7 +99,7 @@ our %dangerousCommands = (
 	# if the URL includes p0=rescan
 	\&Slim::Web::Setup::setup_HTTP => '.',
 	\&Slim::Web::EditPlaylist::editplaylist => '.',
-	\&Slim::Web::Pages::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
+	\&Slim::Web::Pages::Status::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
 );
 
 # initialize the http server
@@ -111,28 +111,6 @@ sub init {
 	}
 
 	push @templateDirs, catdir($Bin, 'HTML');
-
-	#
-	%pageFunctions = (
-		qr/^$/				=> \&Slim::Web::Pages::home,
-		qr/^index\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
-		qr/^browseid3\.(?:htm|xml)/	=> \&Slim::Web::Pages::browseid3,
-		qr/^browsedb\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsedb,
-		qr/^browsetree\.(?:htm|xml)/	=> \&Slim::Web::Pages::browsetree,
-		qr/^edit_playlist\.(?:htm|xml)/	=> \&Slim::Web::EditPlaylist::editplaylist,  # Needs to be before playlist
-		qr/^firmware\.(?:html|xml)/	=> \&Slim::Web::Pages::firmware,
-		qr/^hitlist\.(?:htm|xml)/	=> \&Slim::Web::History::hitlist,
-		qr/^home\.(?:htm|xml)/		=> \&Slim::Web::Pages::home,
-		qr/^playlist\.(?:htm|xml)/	=> \&Slim::Web::Pages::playlist,
-		qr/^search\.(?:htm|xml)/	=> \&Slim::Web::Pages::basicSearch,
-		qr/^advanced_search\.(?:htm|xml)/ => \&Slim::Web::Pages::advancedSearch,
-		qr/^songinfo\.(?:htm|xml)/	=> \&Slim::Web::Pages::songInfo,
-		qr/^status_header\.(?:htm|xml)/	=> \&Slim::Web::Pages::status_header,
-		qr/^status\.(?:htm|xml)/	=> \&Slim::Web::Pages::status,
-		qr/^setup\.(?:htm|xml)/		=> \&Slim::Web::Setup::setup_HTTP,
-		qr/^tunein\.(?:htm|xml)/	=> \&Slim::Web::Pages::tuneIn,
-		qr/^update_firmware\.(?:htm|xml)/ => \&Slim::Web::Pages::update_firmware,
-	);
 
 	# pull in the memory usage module if requested.
 	if ($::d_memory) {
@@ -170,6 +148,7 @@ sub init {
 sub escape {
 	msg("Slim::Web::HTTP::escape has been deprecated in favor of 
 	     Slim::Utils::Misc::escape(). Please update your calls!\n");
+	Slim::Utils::Misc::bt();
 
 	return Slim::Utils::Misc::escape(@_);
 }
@@ -177,7 +156,8 @@ sub escape {
 sub unescape {
 	msg("Slim::Web::HTTP::unescape has been deprecated in favor of 
 	     Slim::Utils::Misc::unescape(). Please update your calls!\n");
-
+	Slim::Utils::Misc::bt();
+	
 	return Slim::Utils::Misc::unescape(@_);
 }
 

@@ -128,6 +128,8 @@ END %]
 				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 		[% ELSIF item.item %]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+		[% ELSIF item.songtitle %]
+			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
 		[% ELSE %]
 			[% item.text | html %]
 		[% END %]

@@ -172,7 +172,6 @@ sub init {
 				my $form = shift;
 				my $item = shift;
 
-				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 
 				$form->{'text'}  = Slim::Music::Info::standardTitle(undef, $item);
 
@@ -181,11 +180,13 @@ sub init {
 
 				my ($id, $url) = $item->get(qw(id url));
 
+				$form->{'item'}            = $id;
+				$form->{'itempath'}        = $url;
+				$form->{'itemobj'}         = $item;
+
+				my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
 				$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
 				$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
-				$form->{'item'}	               = $id;
-				$form->{'itempath'}	       = $url;
-				$form->{'itemobj'}             = $item;
 				$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
 				$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
 
@@ -385,8 +386,10 @@ sub init {
 
 					if (my $contributor = $item->contributor) {
 
-						$form->{'artist'} = $contributor;
+						$form->{'artist'}        = $contributor;
 						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
+						$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+
 					}
 				}
 
@@ -479,7 +482,8 @@ sub init {
 				# Show the artist in the album view
 				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					$form->{'artist'} = $item->contributor;
+					$form->{'artist'}        = $item->contributor;
+					$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
 				}
 
 				my $Imports = Slim::Music::Import::importers();

@@ -1,0 +1,26 @@
+
+<tr>
+  <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+	[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
+	
+	[% IF item.artwork %]
+
+		<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumnailImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF $item.year; ($item.year); END;"%]</a>
+
+	[% END %]
+	
+	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
+
+		<!-- Include the artist for the album view -->
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+
+	[% ELSE %]
+		[% PROCESS trackinfo %]
+	[% END %]
+  </td>
+	[% PROCESS browsecontrols
+		odd = item.odd
+		num = item.num
+		useStart = 1 %]
+</tr>
+

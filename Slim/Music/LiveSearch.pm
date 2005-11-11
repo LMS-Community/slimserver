@@ -31,7 +31,7 @@ sub query {
 	my @data  = ();
 	my $ds    = Slim::Music::Info->getCurrentDataStore();
 
-	my $search = Slim::Web::Pages::searchStringSplit($query);
+	my $search = Slim::Web::Pages::Search::searchStringSplit($query);
 
 	# Default to a valid list of types
 	if (!ref($types) || !defined $types->[0]) {

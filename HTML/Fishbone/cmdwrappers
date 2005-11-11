@@ -108,7 +108,9 @@
 			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
 			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a></b>
 	[% ELSIF item.item %]
-		<a [% songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
+		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
+	[% ELSIF item.songtitle %]
+		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
 	[% ELSE %]
 		[% item.text | html %]
 	[% END %]

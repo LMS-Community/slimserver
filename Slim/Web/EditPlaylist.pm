@@ -198,7 +198,7 @@ sub saveCurrentPlaylist {
 
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 
-	return Slim::Web::Pages::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
 
 sub renamePlaylist {
@@ -259,7 +259,7 @@ sub renamePlaylist {
 		$params->{'playlist'}  = $playlistObj->id;
 	}
 
-	return Slim::Web::Pages::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
 
 sub deletePlaylist {
@@ -290,7 +290,7 @@ sub deletePlaylist {
 	# Send the user off to the top level browse playlists
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 
-	return Slim::Web::Pages::browsedb($client, $params);
+	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
 
 sub removePlaylistFromDisk {

@@ -17,6 +17,7 @@ use Slim::Networking::Select;
 use Slim::DataStores::Base;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
+use Slim::Web::Pages::Search;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -1130,7 +1131,7 @@ sub cli_cmd_artists_albums_genres {
 	chop($label);
 
 	if (defined $searchMap{$label} && specified($cmdRef->{'search'})) {
-		$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($cmdRef->{'search'});
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($cmdRef->{'search'});
 	}
 	if (defined $cmdRef->{'genre_id'}){
 		$find->{'genre'} = $cmdRef->{'genre_id'};
@@ -1192,7 +1193,7 @@ sub cli_cmd_titles {
 	my $tags  = 'gald';
 	
 	if (defined $searchMap{$label} && specified($cmdRef->{'search'})) {
-		$find->{ $searchMap{$label} } = Slim::Web::Pages::searchStringSplit($cmdRef->{'search'});
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($cmdRef->{'search'});
 	}
 	if (defined $cmdRef->{'genre_id'}){
 		$find->{'genre'} = $cmdRef->{'genre_id'};
@@ -1260,7 +1261,7 @@ sub cli_cmd_playlists {
 
 	# Normalize any search parameters
 	if (defined $search) {
-		$search = Slim::Web::Pages::searchStringSplit($search);
+		$search = Slim::Web::Pages::Search::searchStringSplit($search);
 	}
 
 	if (Slim::Utils::Misc::stillScanning()) {
