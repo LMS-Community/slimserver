@@ -82,9 +82,9 @@ sub webPages {
 	my %pages = ("favorites_list\.htm" => \&handleWebIndex);
 
 	if (grep {$_ eq 'Favorites::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages::addLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => undef });
+		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => undef });
 	} else {
-		Slim::Web::Pages::addLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => "plugins/Favorites/favorites_list.html" });
+		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => "plugins/Favorites/favorites_list.html" });
 	}
 
 	return (\%pages);

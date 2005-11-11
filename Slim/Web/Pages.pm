@@ -14,7 +14,6 @@ use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::DataStores::Base;
-use Slim::Music::LiveSearch;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -43,6 +42,18 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
 
+	# pull in the memory usage module if requested.
+	if ($::d_memory) {
+
+		eval "use Slim::Utils::MemoryUsage";
+
+		if ($@) {
+			print "Couldn't load Slim::Utils::MemoryUsage - error: [$@]\n";
+		} else {
+			Slim::Web::HTTP::addPageFunction(qr/^memoryusage\.html.*/,\&memory_usage);
+		}
+	}
+
 	Slim::Web::Pages::Home::init();
 	Slim::Web::Pages::BrowseDB::init();
 	Slim::Web::Pages::BrowseTree::init();
@@ -51,8 +62,17 @@ sub init {
 	Slim::Web::Pages::Playlist::init();
 }
 
+### DEPRECATED stub for third party plugins
+sub addLinks {
+	msg("Slim::Web::Pages::addLinks() has been deprecated in favor of 
+	     Slim::Web::Pages->addPageLinks. Please update your calls!\n");
+	Slim::Utils::Misc::bt();
+	
+	return Slim::Web::Pages->addPageLinks(@_);
+}
+
 sub _lcPlural {
-	my ($count, $singular, $plural) = @_;
+	my ($class, $count, $singular, $plural) = @_;
 
 	# only convert to lowercase if our language does not wand uppercase (default lc)
 	my $word = ($count == 1 ? string($singular) : string($plural));
@@ -60,8 +80,8 @@ sub _lcPlural {
 	return sprintf("%s %s", $count, $word);
 }
 
-sub addLinks {
-	my ($category, $links, $noquery) = @_;
+sub addPageLinks {
+	my ($class, $category, $links, $noquery) = @_;
 
 	return if (ref($links) ne 'HASH');
 
@@ -80,7 +100,7 @@ sub addLinks {
 }
 
 sub addLibraryStats {
-	my ($params, $genre, $artist, $album) = @_;
+	my ($class,$params, $genre, $artist, $album) = @_;
 	
 	if (Slim::Music::Import::stillScanning()) {
 		$params->{'warn'} = 1;
@@ -94,14 +114,14 @@ sub addLibraryStats {
 	$find->{'contributor'} = $artist if $artist && !$album;
 	$find->{'album'}       = $album  if $album;
 
-	$params->{'song_count'}   = _lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
-	$params->{'album_count'}  = _lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
+	$params->{'song_count'}   = $class->_lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
+	$params->{'album_count'}  = $class->_lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
 
 	# Right now hitlist.html is the only page that uses genre_count -
 	# which can be expensive. Only generate it if we need to.
 	if ($params->{'path'} =~ /hitlist/) {
 
-		$params->{'genre_count'} = _lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
+		$params->{'genre_count'} = $class->_lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
 	}
 
 	# Bug 1913 - don't put counts for contributor & tracks when an artist
@@ -113,11 +133,11 @@ sub addLibraryStats {
 		$find->{'album.compilation'} = 1;
 	}
 
-	$params->{'artist_count'} = _lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
+	$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 }
 
 sub addPlayerList {
-	my ($client, $params) = @_;
+	my ($class,$client, $params) = @_;
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	
@@ -137,32 +157,12 @@ sub addPlayerList {
 			}	
 		}
 
-		$params->{'player_chooser_list'} = options($client->id(), \%clientlist, $params->{'skinOverride'});
-	}
-}
-
-# Call into the memory usage class - this will return live data about memory
-# usage, opcodes, and more. Note that loading this takes up memory itself!
-sub memory_usage {
-	my ($client, $params) = @_;
-
-	my $item    = $params->{'item'};
-	my $type    = $params->{'type'};
-	my $command = $params->{'command'};
-
-	unless ($item && $command) {
-
-		return Slim::Utils::MemoryUsage->status_memory_usage();
-	}
-
-	if (defined $item && defined $command && Slim::Utils::MemoryUsage->can($command)) {
-
-		return Slim::Utils::MemoryUsage->$command($item, $type);
+		$params->{'player_chooser_list'} = $class->options($client->id(), \%clientlist, $params->{'skinOverride'});
 	}
 }
 
 sub addSongInfo {
-	my ($client, $params, $getCurrentTitle) = @_;
+	my ($class, $client, $params, $getCurrentTitle) = @_;
 
 	# 
 	my $url = $params->{'itempath'};
@@ -236,17 +236,9 @@ sub addSongInfo {
 	}
 }
 
-sub songInfo {
-	my ($client, $params) = @_;
-
-	addSongInfo($client, $params, 0);
-
-	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
-}
-
+# TODO: find where this is used?
 sub anchor {
-	my $item = shift;
-	my $suppressArticles = shift;
+	my ($class, $item, $suppressArticles) = @_;
 	
 	if ($suppressArticles) {
 		$item = Slim::Utils::Text::ignoreCaseArticles($item) || return '';
@@ -256,7 +248,7 @@ sub anchor {
 }
 
 sub options {
-	my ($selected, $option, $skinOverride) = @_;
+	my ($class, $selected, $option, $skinOverride) = @_;
 
 	# pass in the selected value and a hash of value => text pairs to get the option list filled
 	# with the correct option selected.
@@ -278,7 +270,7 @@ sub options {
 
 # Build a simple header 
 sub simpleHeader {
-	my ($itemCount, $startRef, $headerRef, $skinOverride, $count, $offset) = @_;
+	my ($class, $itemCount, $startRef, $headerRef, $skinOverride, $count, $offset) = @_;
 
 	$count ||= Slim::Utils::Prefs::get('itemsPerPage');
 
@@ -313,6 +305,7 @@ sub simpleHeader {
 
 # Build a bar of links to multiple pages of items
 sub pageBar {
+	my $class = shift;
 	my $itemcount = shift;
 	my $path = shift;
 	my $currentitem = shift;
@@ -395,6 +388,7 @@ sub pageBar {
 }
 
 sub alphaPageBar {
+	my $class = shift;
 	my $itemsref = shift;
 	my $path = shift;
 	my $otherparams = shift;
@@ -476,6 +470,36 @@ sub alphaPageBar {
 	}
 	
 	return ($start, $end);
+}
+
+## The following are smaller web page handlers, and are not class methods.
+##
+# Call into the memory usage class - this will return live data about memory
+# usage, opcodes, and more. Note that loading this takes up memory itself!
+sub memory_usage {
+	my ($client, $params) = @_;
+
+	my $item    = $params->{'item'};
+	my $type    = $params->{'type'};
+	my $command = $params->{'command'};
+
+	unless ($item && $command) {
+
+		return Slim::Utils::MemoryUsage->status_memory_usage();
+	}
+
+	if (defined $item && defined $command && Slim::Utils::MemoryUsage->can($command)) {
+
+		return Slim::Utils::MemoryUsage->$command($item, $type);
+	}
+}
+
+sub songInfo {
+	my ($client, $params) = @_;
+
+	Slim::Web::Pages->addSongInfo($client, $params, 0);
+
+	return Slim::Web::HTTP::filltemplatefile("songinfo.html", $params);
 }
 
 sub firmware {

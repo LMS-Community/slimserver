@@ -252,7 +252,7 @@ sub fillInSearchResults {
 
 		if (defined $params->{'nopagebar'}) {
 
-			($start, $end) = Slim::Web::Pages::simpleHeader(
+			($start, $end) = Slim::Web::Pages->simpleHeader(
 				$params->{'numresults'},
 				\$params->{'start'},
 				\$params->{'browselist_header'},
@@ -263,7 +263,7 @@ sub fillInSearchResults {
 
 		} else {
 
-			($start, $end) = Slim::Web::Pages::pageBar(
+			($start, $end) = Slim::Web::Pages->pageBar(
 				$params->{'numresults'},
 				$params->{'path'},
 				0,

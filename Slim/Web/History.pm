@@ -64,7 +64,7 @@ sub hitlist {
 		$itemNumber++;
 	}
 
-	Slim::Web::Pages::addLibraryStats($params);
+	Slim::Web::Pages->addLibraryStats($params);
 
 	return Slim::Web::HTTP::filltemplatefile("hitlist.html", $params);
 }

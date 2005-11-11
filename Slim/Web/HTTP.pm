@@ -112,18 +112,6 @@ sub init {
 
 	push @templateDirs, catdir($Bin, 'HTML');
 
-	# pull in the memory usage module if requested.
-	if ($::d_memory) {
-
-		eval "use Slim::Utils::MemoryUsage";
-
-		if ($@) {
-			print "Couldn't load Slim::Utils::MemoryUsage - error: [$@]\n";
-		} else {
-			$pageFunctions{qr/^memoryusage\.html.*/} = \&Slim::Web::Pages::memory_usage;
-		}
-	}
-
 	# Try and use the faster XS module if it's available.
 	eval { require Template::Stash::XS };
 

@@ -82,7 +82,7 @@ sub browsedb {
 	# Don't show stats when only showing playlists - extra queries that
 	# aren't needed.
 	if (!grep { /playlist/ } @levels) {
-		Slim::Web::Pages::addLibraryStats($params, $params->{'genre'}, $params->{'artist'}, $params->{'album'});
+		Slim::Web::Pages->addLibraryStats($params, $params->{'genre'}, $params->{'artist'}, $params->{'album'});
 	}
 
 	# This pulls the appropriate anonymous function list out of the
@@ -193,7 +193,7 @@ sub browsedb {
 
 		if (defined $params->{'nopagebar'}) {
 
-			($start, $end) = Slim::Web::Pages::simpleHeader(
+			($start, $end) = Slim::Web::Pages->simpleHeader(
 				scalar(@$items),
 				\$params->{'start'},
 				\$params->{'browselist_header'},
@@ -206,7 +206,7 @@ sub browsedb {
 
 			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
 
-			($start, $end) = Slim::Web::Pages::alphaPageBar(
+			($start, $end) = Slim::Web::Pages->alphaPageBar(
 				$alphaitems,
 				$params->{'path'},
 				$otherparams,
@@ -218,7 +218,7 @@ sub browsedb {
 
 		} else {
 
-			($start, $end) = Slim::Web::Pages::pageBar(
+			($start, $end) = Slim::Web::Pages->pageBar(
 				scalar(@$items),
 				$params->{'path'},
 				0,

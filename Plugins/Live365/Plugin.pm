@@ -1293,9 +1293,9 @@ sub webPages {
 	);
 
 	if (grep {$_ eq 'Live365::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => undef } );
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => undef } );
 	} else {
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => "plugins/Live365/index.html?autologin=1" } );
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => "plugins/Live365/index.html?autologin=1" } );
 	}
 	
 	return (\%pages, undef);

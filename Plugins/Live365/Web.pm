@@ -399,7 +399,7 @@ sub buildStationBrowseHTML {
 			# counting at zero otherwise.
 			$params->{'start'} = 1;
 
-			Slim::Web::Pages::simpleHeader(
+			Slim::Web::Pages->simpleHeader(
 				$totalcount,
 				\$params->{'start'},
 				\$params->{'browselist_header'},
@@ -410,7 +410,7 @@ sub buildStationBrowseHTML {
 	
 		} else {
 	
-			Slim::Web::Pages::pageBar(
+			Slim::Web::Pages->pageBar(
 				$totalcount,
 				$targetPage,
 				0,

@@ -65,7 +65,7 @@ sub browsetree {
 	# Create a numeric pagebar if we need to.
 	if ($count > $itemsPer) {
 
-		($start, $end) = Slim::Web::Pages::pageBar(
+		($start, $end) = Slim::Web::Pages->pageBar(
 			$count,
 			$params->{'path'},
 			0,

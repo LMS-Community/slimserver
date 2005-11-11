@@ -588,7 +588,7 @@ sub webPages {
 		$value = undef;
 	}
 
-	Slim::Web::Pages::addLinks("browse", { 'PLUGIN_RANDOM' => $value });
+	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOM' => $value });
 
 	return (\%pages);
 }

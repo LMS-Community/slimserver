@@ -100,9 +100,9 @@ sub home {
 	Slim::Buttons::Plugins::addSetupGroups();
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
-	Slim::Web::Pages::addPlayerList($client, $params);
+	Slim::Web::Pages->addPlayerList($client, $params);
 	
-	Slim::Web::Pages::addLibraryStats($params);
+	Slim::Web::Pages->addLibraryStats($params);
 
 	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 	
@@ -110,7 +110,7 @@ sub home {
 }
 
 sub addLinks {
-	Slim::Web::Pages::addLinks(@_);
+	Slim::Web::Pages->addPageLinks(@_);
 }
 
 1;

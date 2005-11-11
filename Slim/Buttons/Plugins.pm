@@ -339,7 +339,7 @@ sub addWebPages {
 
 		if ($@ || (exists $disabledPlugins->{$plugin})) {
 			$@ && $::d_plugins && msg("Can't get web page handlers for plugin $plugin : " . $@);
-			Slim::Web::Pages::addLinks("plugins", {$plugins{$plugin}->{'name'} => undef}) if $plugins{$plugin}->{'name'};
+			Slim::Web::Pages->addPageLinks("plugins", {$plugins{$plugin}->{'name'} => undef}) if $plugins{$plugin}->{'name'};
 
 		} elsif ($pagesref) {
 
@@ -361,7 +361,7 @@ sub addWebPages {
 			}
 
 			if ($index) {
-				Slim::Web::Pages::addLinks("plugins", {	$plugins{$plugin}->{'name'} => $urlbase . $index });
+				Slim::Web::Pages->addPageLinks("plugins", {	$plugins{$plugin}->{'name'} => $urlbase . $index });
 			}
 		}
 	}

@@ -33,7 +33,7 @@ sub status_header {
 sub status {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
-	Slim::Web::Pages::addPlayerList($client, $params);
+	Slim::Web::Pages->addPlayerList($client, $params);
 
 	$params->{'refresh'} = Slim::Utils::Prefs::get('refreshRate');
 	
@@ -146,7 +146,7 @@ sub status {
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
 
-		Slim::Web::Pages::addSongInfo($client, $params, 1);
+		Slim::Web::Pages->addSongInfo($client, $params, 1);
 
 		# for current song, display the playback bitrate instead.
 		my $undermax = Slim::Player::Source::underMax($client,Slim::Player::Playlist::song($client));

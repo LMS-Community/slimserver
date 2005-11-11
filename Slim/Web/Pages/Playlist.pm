@@ -108,7 +108,7 @@ sub playlist {
 	
 	if (defined $params->{'nopagebar'}) {
 
-		($start, $end) = Slim::Web::Pages::simpleHeader(
+		($start, $end) = Slim::Web::Pages->simpleHeader(
 			$songcount,
 			\$params->{'start'},
 			\$params->{'playlist_header'},
@@ -119,7 +119,7 @@ sub playlist {
 
 	} else {
 
-		($start, $end) = Slim::Web::Pages::pageBar(
+		($start, $end) = Slim::Web::Pages->pageBar(
 			$songcount,
 			$params->{'path'},
 			Slim::Player::Source::playingSongIndex($client),

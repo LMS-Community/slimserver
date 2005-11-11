@@ -583,9 +583,9 @@ sub mixerlink {
 	
 	if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
 		#set up a musicmagic link
-		Slim::Web::Pages::addLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+		Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
 	} else {
-		Slim::Web::Pages::addLinks("mixer", {'MOODLOGIC' => undef});
+		Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => undef});
 	}
 	
 	return $form;

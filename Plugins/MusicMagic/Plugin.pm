@@ -918,9 +918,9 @@ sub mixerlink {
 
 	if ($item->musicmagic_mixable && canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
 		#set up a musicmagic link
-		Slim::Web::Pages::addLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
+		Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
 	} else {
-		Slim::Web::Pages::addLinks("mixer", {'MUSICMAGIC' => undef});
+		Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => undef});
 	}
 
 	return $form;

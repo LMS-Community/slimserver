@@ -207,7 +207,7 @@ sub setPodcasts {
 	if ($podcasts[0]) {
 		my $id = $podcasts[0]->id;
 		
-		Slim::Web::Pages::addLinks("browse", {
+		Slim::Web::Pages->addPageLinks("browse", {
 			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,artist,album,track&level=2&&genre=".$id
 		});
 
