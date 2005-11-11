@@ -1856,7 +1856,7 @@ sub buildStatusHeaders {
 
 			if ($] > 5.007) {
 				$value = Slim::Utils::Unicode::utf8encode($value, 'iso-8859-1');
-				$value = encode_qp($value, "\n");	
+				$value = encode_qp($value);
 			}
 
 			$response->header($key => $value);
