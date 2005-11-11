@@ -11,7 +11,7 @@ function to_currentsong() {
 
 	setTimeout( "refresh()", [% refresh %]*1000);
 
-	if (parent.playlist.location != '') {
+	if (parent.playlist.location.host != '') {
 		// Putting a time-dependant string in the URL seems to be the only way to make Safari
 		// refresh properly. Stitching it together as below is needed to put the salt before
 		// the hash (#currentsong).
