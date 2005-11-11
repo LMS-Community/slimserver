@@ -1770,7 +1770,7 @@ sub textSongTime {
 			$delta = $duration;
 		}
 	}
-	
+
 	# 2 and 5 display remaining time, not elapsed
 	if ($remaining) {
 		if ($duration) {

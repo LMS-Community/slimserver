@@ -657,7 +657,7 @@ sub stream {
 		my $flags = 0;
 		$flags |= 0x40 if $reconnect;
 		$flags |= 0x80 if $loop;
-
+		$::d_slimproto && msg("flags: $flags\n");
 		my $frame = pack 'aaaaaaaCCCaCnNnN', (
 			$command,	# command
 			$autostart,
