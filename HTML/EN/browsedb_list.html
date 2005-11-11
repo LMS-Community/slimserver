@@ -11,7 +11,7 @@
 	[% IF descend %][% IF hierarchy %]<a [% browseDbHRef %]>[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 		<!-- Include the artist for the album view -->
-		[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+		[% IF includeArtist && artist && artist != noArtist; PROCESS artistsAsHTML.html; END %]
 
 	[% ELSE %]
 		[% PROCESS tracklink.html %]

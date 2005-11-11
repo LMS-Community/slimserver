@@ -111,13 +111,13 @@ END %]
 		<span class="exboldnowplaying"></span>
 
 		<span class="exlisting">
-		[% IF item.includeAlbum && item.album && item.album != noAlbum %]
+		[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 
 			[% "FROM" | string %]
 			<a [% PROCESS albumItemHRef %] target="browser">[% item.album.title | html %]</a>
 		[% END %]
 
-		[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 
 		</span>
 [% END %]

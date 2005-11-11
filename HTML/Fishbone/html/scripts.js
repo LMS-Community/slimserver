@@ -162,13 +162,16 @@ function getPage() {
 }
 
 var selectedLink;
-function selectLink(lnk) {
+function selectLink(lnk,reset) {
 
 	if (selectedLink) selectedLink.style.fontWeight='normal';
 
 	if (lnk) {
 		lnk.style.fontWeight='bold';
 		selectedLink=lnk;
+	}
+	if (reset) {
+		document.forms[0].browse.options[0].selected = "true";
 	}
 }
 

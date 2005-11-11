@@ -113,9 +113,9 @@
 		[% item.text | html %]
 	[% END %]
 	
-	[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	[% IF item.includeArtist && item.artist && item.artist != item.noAlbum; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
-	[% IF item.includeAlbum && item.album && item.album != noAlbum %][% "FROM" | string %]
+	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %][% "FROM" | string %]
 	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
 [% END %]
 

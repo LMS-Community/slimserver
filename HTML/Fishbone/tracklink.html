@@ -7,7 +7,7 @@
 	[% text | html %]
 [% END %]
 
-[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+[% IF includeArtist && artist && artist != noArtist; PROCESS artistsAsHTML.html; END %]
 
 [% IF includeAlbum && album && album != noAlbum %][% "FROM" | string %]
 <i><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></i>[% END %]
