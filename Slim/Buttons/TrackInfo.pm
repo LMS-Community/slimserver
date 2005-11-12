@@ -143,10 +143,19 @@ sub init {
 			my $album  = $track->album;
 			my $artist = $track->artist;
 
-			if (!blessed($album) || !blessed($artist) || !$album->can('id') || !$artist->can('id')) {
+			# Bug: 2528
+			#
+			# Only check to see if album & artist are valid
+			# objects if we're going to be performing a method
+			# call on them. Otherwise it's ok to not have them for
+			# Internet Radio streams which can be saved to favorites.
+			if ($curitem =~ /^(?:ALBUM|ARTIST|COMPOSER|CONDUCTOR|BAND|YEAR|GENRE)$/) {
 
-				errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
-				return 0;
+				if (!blessed($album) || !blessed($artist) || !$album->can('id') || !$artist->can('id')) {
+
+					errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
+					return 0;
+				}
 			}
 
 			if ($curitem eq 'ALBUM') {
@@ -361,9 +370,9 @@ sub preloadLines {
 			push (@{$client->trackInfoContent}, uc($role));
 		}
 	}
-	
+
 	my $album = $track->album;
-	
+
 	if ($album) {
 		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
 		push (@{$client->trackInfoContent}, 'ALBUM');
