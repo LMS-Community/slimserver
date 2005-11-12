@@ -16,11 +16,12 @@
 
 	[% ELSE %]
 		[% PROCESS trackinfo %]
-	[% END %]
+	[% END %][% item.artist %][% item.mixerlinks.keys %]
   </td>
 	[% PROCESS browsecontrols
+		itemobj = item.itemobj
+		attributes = item.attributes
 		odd = item.odd
-		num = item.num
-		useStart = 1 %]
+		mixerlinks = item.mixerlinks %]
 </tr>
 

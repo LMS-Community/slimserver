@@ -108,9 +108,20 @@
 [% END %]
 
 [% BLOCK trackinfo %]
-	<a name=[% item.num %]>
-	<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.num + 1 %].</a>&nbsp;
-	<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>
+	
+	[%# current playlist items %]
+	[% IF item.num || item.num == 0 %]
+		<a name=[% item.num %]>
+		<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.num + 1 %].</a>&nbsp;
+		<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>
+	[%# browse list items %]
+	[% ELSIF item.item %]
+		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %]</a>
+	[% ELSIF item.songtitle %]
+		<a [% PROCESS songinfoItemHRef %]>[% item.songtitle | html %]</a>
+	[% ELSE %]
+		[% item.text | html %]
+	[% END %]
 [% END %]
 
 [% END -%]
