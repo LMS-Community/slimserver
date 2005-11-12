@@ -57,7 +57,11 @@
 			<td width="11"></td>
 		</table>
 		<table border="0" cellspacing="0" cellpadding="0" width="100%">
-			[% browse_list %]
+			[% IF browse_items %]
+				[% FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+				[% END %]
+			[% ELSE; browse_list; END %]
 		</table>
 		[% browselist_pagebar %]
 	</div>

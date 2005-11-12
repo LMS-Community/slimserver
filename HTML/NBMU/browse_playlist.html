@@ -101,7 +101,11 @@
 
       [% END %]
 
-      [% browse_list %] 
+      [% IF browse_items %]
+        [% FOREACH item = browse_items %]
+          [% PROCESS browsedbitems_list.html %]
+        [% END %]
+      [% ELSE; browse_list; END %] 
       </table>
       <p>[% browselist_pagebar %]</p>
 </td>
