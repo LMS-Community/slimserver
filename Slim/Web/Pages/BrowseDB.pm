@@ -297,7 +297,7 @@ sub browsedb {
 			$itemnumber++;
 
 			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-			push @{$params->{'browse_items'}}, \%list_form;
+			#push @{$params->{'browse_items'}}, \%list_form;
 		}
 
 		# Dynamic VA/Compilation listing
@@ -321,7 +321,7 @@ sub browsedb {
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
 
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-				push @{$params->{'browse_items'}}, \%list_form;
+				#push @{$params->{'browse_items'}}, \%list_form;
 
 				$itemnumber++;
 			}
@@ -385,7 +385,7 @@ sub browsedb {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_artwork.html", \%list_form)};
 			} else {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-				push @{$params->{'browse_items'}}, \%list_form;
+				#push @{$params->{'browse_items'}}, \%list_form;
 			}
 
 			if ($needIdleStreams) {
