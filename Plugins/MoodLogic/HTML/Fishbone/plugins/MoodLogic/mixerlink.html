@@ -1,18 +1,18 @@
-<td  [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] align="center" width="11">
-	[% IF mixable_descend %] <nobr>
-		<a href="plugins/MoodLogic/mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">
+	<td  [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] align="center" width="11">
+	[% IF item.mixable_descend %] <nobr>
+		<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&artist=[% item.artist | uri %]&album=[% item.album | uri %]&player=[% player | uri %]" target="browser">
 			<img src="[% webroot %]html/images/mlmix.gif" height="11" 
-							alt='[% "MUSICMAGIC_MIX" | string %]' 
-							title='[% "MUSICMAGIC_MIX" | string %]' 
-							onMouseOver="self.status='[% "MUSICMAGIC_MIX" | string %]';return true">
+							alt='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+							title='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+							onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
 		</a>
 	</nobr> [% END %]
-	[% IF mixable_not_descend %] <nobr>
-		<a href="plugins/MoodLogic/instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]" target="browser">
+	[% IF item.mixable_not_descend %] <nobr>
+		<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&genre=[% item.genre | uri %]&artist=[% item.artist | uri %]&album=[% item.album | uri %]&player=[% player | uri %]" target="browser">
 			<img src="[% webroot %]html/images/mlmix.gif" height="11" 
-							alt='[% "MUSICMAGIC_MIX" | string %]' 
-							title='[% "MUSICMAGIC_MIX" | string %]' 
-							onMouseOver="self.status='[% "MUSICMAGIC_MIX" | string %]';return true">
+							alt='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+							title='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+							onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
 		</a>
 	</nobr> [% END %]
 </td>

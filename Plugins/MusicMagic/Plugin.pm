@@ -955,22 +955,40 @@ sub getMix {
 	my $req;
 	my $res;
 	my @type = qw(tracks min mbytes);
+	
+	my %args;
 	 
-	my %args = (
-		# Set the size of the list (default 12)
-		size	 => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+	if (defined $client) {
+		%args = (
+			# Set the size of the list (default 12)
+			size	 => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+	
+			# (tracks|min|mb) Set the units for size (default tracks)
+			sizetype => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+	
+			# Set the style slider (default 20)
+			style	 => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+	
+			# Set the variety slider (default 0)
+			variety	 => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+		);
+	} else {
+		%args = (
+			# Set the size of the list (default 12)
+			size	 => Slim::Utils::Prefs::get('MMMSize') || 12,
+	
+			# (tracks|min|mb) Set the units for size (default tracks)
+			sizetype => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
+	
+			# Set the style slider (default 20)
+			style	 => Slim::Utils::Prefs::get('MMMStyle') || 20,
+	
+			# Set the variety slider (default 0)
+			variety	 => Slim::Utils::Prefs::get('MMMVariety') || 0,
+		);
+	}
 
-		# (tracks|min|mb) Set the units for size (default tracks)
-		sizetype => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
-
-		# Set the style slider (default 20)
-		style	 => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
-
-		# Set the variety slider (default 0)
-		variety	 => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
-	);
-
-	my $filter = $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter');
+	my $filter = defined $client ? $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter') : Slim::Utils::Prefs::get('MMMFilter');
 
 	if ($filter) {
 		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
@@ -1128,7 +1146,8 @@ sub musicmagic_mix {
 
 	if (scalar @$mix) {
 
-		$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", {
+		#$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html"
+		push @{$params->{'browse_items'}}, {
 
 			'text'       => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
 			'attributes' => "&listRef=musicmagic_mix",
@@ -1136,7 +1155,7 @@ sub musicmagic_mix {
 			'webroot'    => $params->{'webroot'},
 			'skinOverride' => $params->{'skinOverride'},
 			'player' => $params->{'player'},
-		})};
+		};
 
 		$itemnumber++;
 	}
@@ -1165,7 +1184,8 @@ sub musicmagic_mix {
 
 		$itemnumber++;
 
-		$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+		#$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+		push @{$params->{'browse_items'}}, \%list_form;
 	}
 
 	if (defined $p0 && defined $client) {

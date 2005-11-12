@@ -5,7 +5,9 @@
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
     <table cellspacing="0" border="0" cellpadding="4" width="100%">
-      [% mix_list %]
+	[% FOREACH item = browse_items %]
+		[% PROCESS browsedbitems_list.html %]
+	[% END %]
     </table>
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 

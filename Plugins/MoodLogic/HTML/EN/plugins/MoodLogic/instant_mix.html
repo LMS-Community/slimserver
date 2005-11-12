@@ -16,7 +16,9 @@
 
 	[% END %]
 	</tr>
-      [% instant_mix_list %]
+      		[% FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+		[% END %]
     </table>
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 [% PROCESS pagefooter.html %]
