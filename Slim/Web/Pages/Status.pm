@@ -142,10 +142,13 @@ sub status {
 	}
 	
 	if ($songcount > 0) {
+		my $song = Slim::Player::Playlist::song($client);
+		
 		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
-
+		$params->{'itempath'}    = $song;
+		
 		Slim::Web::Pages->addSongInfo($client, $params, 1);
 
 		# for current song, display the playback bitrate instead.

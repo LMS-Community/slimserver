@@ -192,10 +192,8 @@ sub addSongInfo {
 
 	if (blessed($track) && $track->can('filesize')) {
 
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
-		my $levelInfo = $fieldInfo->{'track'};
-	
-		&{$levelInfo->{'listItem'}}($ds, $params, $track);
+		# let the template access the object directly.
+		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
 		$params->{'bitrate'}    = $track->bitrate();
