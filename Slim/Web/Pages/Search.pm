@@ -252,27 +252,27 @@ sub fillInSearchResults {
 
 		if (defined $params->{'nopagebar'}) {
 
-			($start, $end) = Slim::Web::Pages->simpleHeader(
-				$params->{'numresults'},
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-				0
+			($start, $end) = Slim::Web::Pages->simpleHeader({
+					'itemCount'    => $params->{'numresults'},
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'browselist_header'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'        => $params->{'itemsPerPage'},
+				}
 			);
 
 		} else {
 
-			($start, $end) = Slim::Web::Pages->pageBar(
-				$params->{'numresults'},
-				$params->{'path'},
-				0,
-				$otherParams,
-				\$params->{'start'},
-				\$params->{'searchlist_header'},
-				\$params->{'searchlist_pagebar'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
+			($start, $end) = Slim::Web::Pages->pageBar({
+					'itemCount'    => $params->{'numresults'},
+					'path'         => $params->{'path'},
+					'otherParams'  => $otherParams,
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'searchlist_header'},
+					'pageBarRef'   => \$params->{'searchlist_pagebar'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'      => $params->{'itemsPerPage'},
+				}
 			);
 		}
 		

@@ -65,16 +65,16 @@ sub browsetree {
 	# Create a numeric pagebar if we need to.
 	if ($count > $itemsPer) {
 
-		($start, $end) = Slim::Web::Pages->pageBar(
-			$count,
-			$params->{'path'},
-			0,
-			"hierarchy=$hierarchy&player=$player",
-			\$params->{'start'},
-			\$params->{'browselist_header'},
-			\$params->{'browselist_pagebar'},
-			$params->{'skinOverride'},
-			$params->{'itemsPerPage'},
+		($start, $end) = Slim::Web::Pages->pageBar({
+				'itemCount'    => $count,
+				'path'         => $params->{'path'},
+				'otherParams'  => "hierarchy=$hierarchy&player=$player",
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'browselist_header'},
+				'pageBarRef'   => \$params->{'browselist_pagebar'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'      => $params->{'itemsPerPage'},
+			}
 		);
 	}
 

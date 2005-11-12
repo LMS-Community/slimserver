@@ -54,7 +54,7 @@ sub init {
 		}
 	}
 
-	Slim::Web::Pages::Home::init();
+	Slim::Web::Pages::Home->init();
 	Slim::Web::Pages::BrowseDB::init();
 	Slim::Web::Pages::BrowseTree::init();
 	Slim::Web::Pages::Search::init();
@@ -268,9 +268,14 @@ sub options {
 
 # Build a simple header 
 sub simpleHeader {
-	my ($class, $itemCount, $startRef, $headerRef, $skinOverride, $count, $offset) = @_;
-
-	$count ||= Slim::Utils::Prefs::get('itemsPerPage');
+	my ($class, $args) = @_;
+	
+	my $itemCount    = $args->{'itemCount'};
+	my $startRef     = $args->{'startRef'};
+	my $headerRef    = $args->{'headerRef'};
+	my $skinOverride = $args->{'skinOverride'};
+	my $count		 = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $offset		 = $args->{'offset'} || 0;
 
 	my $start = (defined($$startRef) && $$startRef ne '') ? $$startRef : 0;
 
@@ -303,17 +308,17 @@ sub simpleHeader {
 
 # Build a bar of links to multiple pages of items
 sub pageBar {
-	my $class = shift;
-	my $itemcount = shift;
-	my $path = shift;
-	my $currentitem = shift;
-	my $otherparams = shift;
-	my $startref = shift; #will be modified
-	my $headerref = shift; #will be modified
-	my $pagebarref = shift; #will be modified
-	my $skinOverride = shift;
-
-	my $count = shift || Slim::Utils::Prefs::get('itemsPerPage');
+	my ($class, $args) = @_;
+	
+	my $itemcount    = $args->{'itemCount'};
+	my $path         = $args->{'path'};
+	my $currentitem  = $args->{'currentItem'} || 0;
+	my $otherparams  = $args->{'otherParams'};
+	my $startref     = $args->{'startRef'}; #will be modified
+	my $headerref    = $args->{'headerRef'}; #will be modified
+	my $pagebarref   = $args->{'pageBarRef'}; #will be modified
+	my $skinOverride = $args->{'skinOverride'};
+	my $count        = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my $start = (defined($$startref) && $$startref ne '') ? $$startref : (int($currentitem/$count)*$count);
 
@@ -386,14 +391,15 @@ sub pageBar {
 }
 
 sub alphaPageBar {
-	my $class = shift;
-	my $itemsref = shift;
-	my $path = shift;
-	my $otherparams = shift;
-	my $startref = shift; #will be modified
-	my $pagebarref = shift; #will be modified
-	my $skinOverride = shift;
-	my $maxcount = shift || Slim::Utils::Prefs::get('itemsPerPage');
+	my ($class, $args) = @_;
+	
+	my $itemsref     = $args->{'itemsRef'};
+	my $path         = $args->{'path'};
+	my $otherparams  = $args->{'otherParams'};
+	my $startref     = $args->{'startRef'}; #will be modified
+	my $pagebarref   = $args->{'pageBarRef'}; #will be modified
+	my $skinOverride = $args->{'skinOverride'};
+	my $maxcount     = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my $itemcount = scalar(@$itemsref);
 

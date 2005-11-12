@@ -399,28 +399,27 @@ sub buildStationBrowseHTML {
 			# counting at zero otherwise.
 			$params->{'start'} = 1;
 
-			Slim::Web::Pages->simpleHeader(
-				$totalcount,
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				$params->{'skinOverride'},
-				ROWS_TO_RETRIEVE,
-				0
+			Slim::Web::Pages->simpleHeader({
+					'itemCount'    => $totalcount,
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'browselist_header'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'        => ROWS_TO_RETRIEVE,
+				}
 			);
 	
 		} else {
 	
-			Slim::Web::Pages->pageBar(
-				$totalcount,
-				$targetPage,
-				0,
-				$targetParms,
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				\$params->{'browselist_pagebar'},
-				$params->{'skinOverride'},
-				ROWS_TO_RETRIEVE,
-			);
+			Slim::Web::Pages->pageBar({
+				'itemCount'    => $totalcount,
+				'path'         => $targetPage,
+				'otherParams'  => $targetParms,
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'browselist_header'},
+				'pageBarRef'   => \$params->{'browselist_pagebar'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'      => ROWS_TO_RETRIEVE,
+			});
 		}
 	
 		my %listform = %$params;

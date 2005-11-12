@@ -108,27 +108,28 @@ sub playlist {
 	
 	if (defined $params->{'nopagebar'}) {
 
-		($start, $end) = Slim::Web::Pages->simpleHeader(
-			$songcount,
-			\$params->{'start'},
-			\$params->{'playlist_header'},
-			$params->{'skinOverride'},
-			$params->{'itemsPerPage'},
-			0
+		($start, $end) = Slim::Web::Pages->simpleHeader({
+				'itemCount'    => $songcount,
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'playlist_header'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'        => $params->{'itemsPerPage'},
+			}
 		);
 
 	} else {
 
-		($start, $end) = Slim::Web::Pages->pageBar(
-			$songcount,
-			$params->{'path'},
-			Slim::Player::Source::playingSongIndex($client),
-			"player=" . Slim::Utils::Misc::escape($client->id()) . "&", 
-			\$params->{'start'}, 
-			\$params->{'playlist_header'},
-			\$params->{'playlist_pagebar'},
-			$params->{'skinOverride'},
-			$params->{'itemsPerPage'}
+		($start, $end) = Slim::Web::Pages->pageBar({
+				'itemCount'    => $songcount,
+				'currentItem'  => Slim::Player::Source::playingSongIndex($client),
+				'path'         => $params->{'path'},
+				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()) . "&",
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'browselist_header'},
+				'pageBarRef'   => \$params->{'browselist_pagebar'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'      => $params->{'itemsPerPage'},
+			}
 		);
 	}
 

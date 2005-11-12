@@ -830,8 +830,7 @@ sub instant_mix {
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my $track = $ds->objectForId('track',$song);
-
-	#$params->{'pwd_list'} = Slim::Web::Pages::generate_pwd_list($genre, $artist, $album, $player);
+	$params->{'browse_items'} = [];
 
 	if (defined $mood && $mood ne "") {
 		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_pwdlist.html", $params)};
@@ -868,7 +867,7 @@ sub instant_mix {
 
 	for my $item (@$items) {
 
-		my %list_form = %$params;
+		my %list_form = '';
 		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
 
 		# If we can't get an object for this url, skip it, as the
@@ -881,7 +880,6 @@ sub instant_mix {
 		$list_form{'attributes'} = '&track=' . Slim::Utils::Misc::escape($trackObj->id());
 		$itemnumber++;
 
-		#$params->{'instant_mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		push @{$params->{'browse_items'}}, \%list_form;
 		
 	}

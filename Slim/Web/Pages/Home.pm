@@ -11,28 +11,29 @@ use strict;
 
 use POSIX ();
 
-use Slim::Web::Pages;
+use base qw(Slim::Web::Pages);
 
 sub init {
+	my $class = shift;
 	
-	Slim::Web::HTTP::addPageFunction(qr/^$/,\&home);
-	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/,\&home);
-	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/,\&home);
+	Slim::Web::HTTP::addPageFunction(qr/^$/, sub {$class->home(@_)});
+	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
+	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
 
-	addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
-	addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
-	addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
-	addLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
-	addLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
-	addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	addLinks("help",{'FAQ' => "html/docs/faq.html"});
-	addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-	addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+	$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
+	$class->addPageLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
+	$class->addPageLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
+	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
+	$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
+	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
+	$class->addPageLinks("help",{'FAQ' => "html/docs/faq.html"});
+	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
+	$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 }
 
 sub home {
-	my ($client, $params) = @_;
-
+	my ($class, $client, $params) = @_;
+	
 	my %listform = %$params;
 
 	if (defined $params->{'forget'}) {
@@ -44,46 +45,46 @@ sub home {
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
-		addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
-		addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
-		addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
-		addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-		addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
-		addLinks("search", {'SEARCH' => "livesearch.html"});
-		addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+		$class->addPageLinks("search", {'SEARCH' => "livesearch.html"});
+		$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
-		addLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
-		addLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
-		addLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
-		addLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
-		addLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
-		addLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-		addLinks("help",{'FAQ' => "html/docs/faq.html"});
-		addLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
-		addLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+		$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
+		$class->addPageLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
+		$class->addPageLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
+		$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
+		$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
+		$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
+		$class->addPageLinks("help",{'FAQ' => "html/docs/faq.html"});
+		$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
+		$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	}
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
-		addLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
+		$class->addPageLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
 	} else {
-		addLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
+		$class->addPageLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
 		$params->{'noartwork'} = 1;
 	}
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
+		$class->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
-		addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
+		$class->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 		$params->{'nofolder'}=1;
 	}
 
 	# Always show Browse Playlists, as it's stored in the db now.
-	addLinks("browse",{'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
+	$class->addPageLinks("browse",{'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
 
 	# fill out the client setup choices
 	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {
@@ -100,17 +101,13 @@ sub home {
 	Slim::Buttons::Plugins::addSetupGroups();
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
-	Slim::Web::Pages->addPlayerList($client, $params);
+	$class->addPlayerList($client, $params);
 	
-	Slim::Web::Pages->addLibraryStats($params);
+	$class->addLibraryStats($params);
 
 	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
-}
-
-sub addLinks {
-	Slim::Web::Pages->addPageLinks(@_);
 }
 
 1;

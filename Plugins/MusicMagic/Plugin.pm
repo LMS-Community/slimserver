@@ -1077,6 +1077,7 @@ sub musicmagic_mix {
 
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+	$params->{'browse_items'} = [];
 
 	if ($song) {
 
@@ -1146,7 +1147,6 @@ sub musicmagic_mix {
 
 	if (scalar @$mix) {
 
-		#$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html"
 		push @{$params->{'browse_items'}}, {
 
 			'text'       => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
@@ -1184,7 +1184,6 @@ sub musicmagic_mix {
 
 		$itemnumber++;
 
-		#$params->{'mix_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 		push @{$params->{'browse_items'}}, \%list_form;
 	}
 

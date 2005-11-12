@@ -193,42 +193,44 @@ sub browsedb {
 		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
 
 		if (defined $params->{'nopagebar'}) {
-
-			($start, $end) = Slim::Web::Pages->simpleHeader(
-				scalar(@$items),
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
-				$ignoreArticles ? (scalar(@$items) > 1) : 0,
+	
+			($start, $end) = Slim::Web::Pages->simpleHeader({
+					'itemCount'    => scalar(@$items),
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'browselist_header'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'        => $params->{'itemsPerPage'},
+					'offset'       => $ignoreArticles ? (scalar(@$items) > 1) : 0,
+				}
 			);
 
 		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria)) {
 
 			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
 
-			($start, $end) = Slim::Web::Pages->alphaPageBar(
-				$alphaitems,
-				$params->{'path'},
-				$otherparams,
-				\$params->{'start'},
-				\$params->{'browselist_pagebar'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
+			($start, $end) = Slim::Web::Pages->alphaPageBar({
+					'itemsRef'    => $alphaitems,,
+					'path'         => $params->{'path'},
+					'otherParams'  => $otherparams,
+					'startRef'     => \$params->{'start'},
+					'pageBarRef'   => \$params->{'browselist_pagebar'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'      => $params->{'itemsPerPage'},
+				}
 			);
 
 		} else {
 
-			($start, $end) = Slim::Web::Pages->pageBar(
-				scalar(@$items),
-				$params->{'path'},
-				0,
-				$otherparams,
-				\$params->{'start'},
-				\$params->{'browselist_header'},
-				\$params->{'browselist_pagebar'},
-				$params->{'skinOverride'},
-				$params->{'itemsPerPage'},
+			($start, $end) = Slim::Web::Pages->pageBar({
+					'itemCount'    => scalar(@$items),
+					'path'         => $params->{'path'},
+					'otherParams'  => $otherparams,
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'browselist_header'},
+					'pageBarRef'   => \$params->{'browselist_pagebar'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'      => $params->{'itemsPerPage'},
+				}
 			);
 		}
 
