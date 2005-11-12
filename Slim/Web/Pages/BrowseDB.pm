@@ -27,11 +27,11 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^browsedb\.(?:htm|xml)/,\&browsedb);
 	Slim::Web::HTTP::addPageFunction(qr/^browseid3\.(?:htm|xml)/,\&browseid3);
 	
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+	Slim::Web::Pages->addPageLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+	Slim::Web::Pages->addPageLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+	Slim::Web::Pages->addPageLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
+	Slim::Web::Pages->addPageLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
+	Slim::Web::Pages->addPageLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
 }
 
 sub browsedb {
@@ -60,7 +60,8 @@ sub browsedb {
 	my %names = ();
 	my @attrs = ();
 	my %findCriteria = ();	
-
+	$params->{'browse_items'} = [];
+	
 	for my $field (@levels) {
 
 		my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
@@ -296,14 +297,14 @@ sub browsedb {
 
 			$itemnumber++;
 
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-			#push @{$params->{'browse_items'}}, \%list_form;
+			#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+			push @{$params->{'browse_items'}}, \%list_form;
 		}
 
 		# Dynamic VA/Compilation listing
 		if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-			my %list_form  = %$params;
+			my %list_form  = '';
 			my $vaObj      = $ds->variousArtistsObject;
 			my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
 
@@ -320,8 +321,8 @@ sub browsedb {
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
 
-				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-				#push @{$params->{'browse_items'}}, \%list_form;
+				#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+				push @{$params->{'browse_items'}}, \%list_form;
 
 				$itemnumber++;
 			}
@@ -332,7 +333,7 @@ sub browsedb {
 
 		for my $item ( @{$items}[$start..$end] ) {
 
-			my %list_form = %$params;
+			my %list_form = '';
 
 			my $attrName  = $levelInfo->{'nameTransform'} || $levels[$level];
 
@@ -384,8 +385,8 @@ sub browsedb {
 			if ($levels[$level] eq 'artwork') {
 				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_artwork.html", \%list_form)};
 			} else {
-				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-				#push @{$params->{'browse_items'}}, \%list_form;
+				#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+				push @{$params->{'browse_items'}}, \%list_form;
 			}
 
 			if ($needIdleStreams) {

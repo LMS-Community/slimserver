@@ -199,7 +199,7 @@ sub init {
 					}
 				}
 
-				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
@@ -272,7 +272,7 @@ sub init {
 					}
 				}
 
-				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 0,
@@ -402,7 +402,7 @@ sub init {
 					}
 				}
 
-				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
@@ -495,7 +495,7 @@ sub init {
 					}
 				}
 
-				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 
 				$form->{'item'}    = $itemname;
 				$form->{'artwork'} = 1;
@@ -594,8 +594,8 @@ sub init {
 						&{$Imports->{$mixer}->{'mixerlink'}}($item, $form, $descend);
 					}
 				}
-
-				$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
+				
+				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
