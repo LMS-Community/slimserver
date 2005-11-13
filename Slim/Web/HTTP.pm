@@ -32,9 +32,6 @@ use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
 use Slim::Music::Info;
-
-use Slim::Web::EditPlaylist;
-use Slim::Web::History;
 use Slim::Web::Pages;
 
 use Slim::Utils::Misc;

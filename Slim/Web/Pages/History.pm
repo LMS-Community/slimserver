@@ -1,4 +1,4 @@
-package Slim::Web::History;
+package Slim::Web::Pages::History;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,6 +11,10 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Web::Pages;
+
+sub init {
+	Slim::Web::HTTP::addPageFunction(qr/^hitlist\.(?:htm|xml)/,\&hitlist);
+}
 
 # Histlist fills variables for populating an html file. 
 sub hitlist {

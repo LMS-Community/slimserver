@@ -1,4 +1,4 @@
-package Slim::Web::EditPlaylist;
+package Slim::Web::Pages::EditPlaylist;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -22,6 +22,10 @@ use Slim::Web::HTTP;
 # "functionality" to SlimServer :)
 #
 # http://svn.slimdevices.com/trunk/server/Slim/Web/EditPlaylist.pm?rev=134&view=rev
+
+sub init {
+	Slim::Web::HTTP::addPageFunction(qr/^edit_playlist\.(?:htm|xml)/, \&editplaylist);
+}
 
 sub editplaylist {
 	my ($client, $params) = @_;

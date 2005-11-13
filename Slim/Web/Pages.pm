@@ -23,6 +23,9 @@ use Slim::Web::Pages::BrowseTree;
 use Slim::Web::Pages::Home;
 use Slim::Web::Pages::Status;
 use Slim::Web::Pages::Playlist;
+use Slim::Web::Pages::History;
+use Slim::Web::Pages::EditPlaylist;
+
 
 our %additionalLinks = ();
 
@@ -34,9 +37,7 @@ our %hierarchy = (
 
 sub init {
 
-	Slim::Web::HTTP::addPageFunction(qr/^edit_playlist\.(?:htm|xml)/, \&Slim::Web::EditPlaylist::editplaylist);
 	Slim::Web::HTTP::addPageFunction(qr/^firmware\.(?:html|xml)/,\&firmware);
-	Slim::Web::HTTP::addPageFunction(qr/^hitlist\.(?:htm|xml)/,\&Slim::Web::History::hitlist);
 	Slim::Web::HTTP::addPageFunction(qr/^songinfo\.(?:htm|xml)/,\&songInfo);
 	Slim::Web::HTTP::addPageFunction(qr/^setup\.(?:htm|xml)/,\&Slim::Web::Setup::setup_HTTP);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
@@ -60,6 +61,8 @@ sub init {
 	Slim::Web::Pages::Search::init();
 	Slim::Web::Pages::Status::init();
 	Slim::Web::Pages::Playlist::init();
+	Slim::Web::Pages::History::init();
+	Slim::Web::Pages::EditPlaylist::init();
 }
 
 ### DEPRECATED stub for third party plugins
