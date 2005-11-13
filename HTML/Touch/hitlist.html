@@ -36,7 +36,9 @@
 <tr><td height="10"></td></tr></table>
 
 <table cellspacing="0" border="0" cellpadding="0" width="100%">
-      [% browse_list %]
+[% FOREACH item = browse_items %]
+	[% PROCESS hitlist_list.html %]
+[% END %]
 </table>
 
 </font>

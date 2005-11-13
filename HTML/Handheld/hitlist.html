@@ -18,7 +18,9 @@
 	[% PROCESS subtitle title='MOSTPLAYED' %]
 
 	<table cellspacing="0" border="0" cellpadding="0" width="100%">
-		[% browse_list %]
+		[% FOREACH item = browse_items %]
+			[% PROCESS hitlist_list.html %]
+		[% END %]
 	</table>
 
 	[% PROCESS pagefooter.html %]

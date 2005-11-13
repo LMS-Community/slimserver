@@ -26,7 +26,9 @@
     <p><hr><p>
     <h4>[% "MOSTPLAYED" | string %][% "COLON" | string %]</h4>
     <table cellspacing="0" border="0" cellpadding="2" width="100%">
-      [% browse_list %]
+		[% FOREACH item = browse_items %]
+			[% PROCESS hitlist_list.html %]
+		[% END %]
     </table>
   </body>
 </html>

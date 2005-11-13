@@ -1,14 +1,15 @@
-<tr>[% class='listing' width='9' height='11' target='status' %]
-	[% PROCESS browselinks.html cmdType='insert' cmdstring='NEXT' img='queue.gif' %]
-	[% PROCESS browselinks.html cmdType='play'   cmdstring='PLAY' img='play.this.gif' %]
-	[% PROCESS browselinks.html cmdType='add'    cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
-  <td class="listing" height="15">
-[% INCLUDE tracklink.html %]
+<tr>
+	[% PROCESS browsecontrols
+		itemobj = item.itemobj
+		attributes = item.attributes
+		odd = item.odd
+		mixerlinks = item.mixerlinks %]  <td class="listing" height="15">
+	[% PROCESS trackinfo %]
    </td>
   <td class="listing" align="right" height="15">
-    ([% song_count %])
+    ([% item.song_count %])
   </td>
   <td class="listing" align="right" height="15">
-    <img src="[% webroot %]html/images/bar_small_first.gif" width="11" height="15">[% song_bar %]
+    <img src="[% webroot %]html/images/bar_small_first.gif" width="11" height="15">[% item.song_bar %]
   </td>
 </tr>

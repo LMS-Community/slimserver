@@ -38,7 +38,9 @@
 <font class="actiontext">[% "ADD" | string %]</a></nobr>
 
 </td></tr>[% END %]
-       [% browse_list %]
+[% FOREACH item = browse_items %]
+	[% PROCESS browsedbitems_list.html %]
+[% END %]
 </table>
 [% IF browselist_pagebar %]<font class="pagebartext">[% browselist_pagebar %][% END %]
 

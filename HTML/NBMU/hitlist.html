@@ -51,7 +51,10 @@
   </tr>
   <tr> 
     <td colspan="2" valign="top" bgcolor="#333333"><table cellspacing="0" border="0" cellpadding="4" width="100%">
-        [% browse_list %] </table></td>
+		[% FOREACH item = browse_items %]
+			[% PROCESS hitlist_list.html %]
+		[% END %] 
+     </table></td>
   </tr>
 </table>
 <p>&nbsp;</p>

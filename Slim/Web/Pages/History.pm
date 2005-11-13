@@ -49,7 +49,7 @@ sub hitlist {
 			$maxPlayed = $playCount;
 		}
 
-		my %form  = %$params;
+		my %form  = '';
 		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
 		my $levelInfo = $fieldInfo->{'track'};
 
@@ -63,7 +63,7 @@ sub hitlist {
 		$form{'skinOverride'}     = $params->{'skinOverride'};
 		$form{'song_count'}       = $playCount;
 
-		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("hitlist_list.html", \%form)};
+		push @{$params->{'browse_items'}}, \%form;
 
 		$itemNumber++;
 	}
