@@ -39,12 +39,13 @@
 		[% END %]
 	[% ELSE; browse_list; END %]
 </table>
-
+<div style="float:left">
 [% IF song_count %]
 <table width="100%" bgcolor="#666666"><tr><td>
     <font class="statusbartext">[% "BROWSING_MUSIC" | string %] <b>[% album_count %]</b> [% "WITH" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></font>
 </td></tr>
 </table>
+</div>
 [% END %]
 </font>
 

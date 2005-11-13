@@ -144,7 +144,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% 
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%]
-	[% "<img src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+	[% "<img $style src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
 		alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\" 
 		title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\">" -%] 
 [%- END %]
