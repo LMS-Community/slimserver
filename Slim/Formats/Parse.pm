@@ -65,7 +65,7 @@ sub writeList {
 	my $listref = shift;
 	my $playlistname = shift;
 	my $fulldir = shift;
-    
+		
 	my $type = Slim::Music::Info::typeFromSuffix($fulldir);
 	my $writer;
 
@@ -302,6 +302,10 @@ sub parseCUE {
 	my $comment;
 	my $filename;
 	my $currtrack;
+	my $replaygain_track_peak;
+	my $replaygain_track_gain;
+	my $replaygain_album_peak;
+	my $replaygain_album_gain;
 	my $tracks = {};
 
 	$::d_parse && msg("parseCUE: cuedir: [$cuedir]\n");
@@ -332,10 +336,16 @@ sub parseCUE {
 
 		} elsif ($line =~ /^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
 			$genre = $1;
-
+			
 		} elsif ($line =~ /^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
 			$comment = $1;
 
+		} elsif ($line =~ /^(?:REM\s+)?REPLAYGAIN_ALBUM_GAIN\s+(.*)dB/i) {
+			$replaygain_album_gain = $1;
+		
+		} elsif ($line =~ /^(?:REM\s+)?REPLAYGAIN_ALBUM_PEAK\s+(.*)/i) {
+			$replaygain_album_peak = $1;
+						
 		} elsif ($line =~ /^FILE\s+\"(.*)\"/i) {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
@@ -352,6 +362,12 @@ sub parseCUE {
 		} elsif (defined $currtrack and $line =~ /^\s+PERFORMER\s+\"(.*)\"/i) {
 			$tracks->{$currtrack}->{'ARTIST'} = $1;
 
+		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_GAIN\s+(.*)dB/i) {
+			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_GAIN'} = $1;
+
+		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_PEAK\s+(.*)/i) {
+			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_PEAK'} = $1;
+			
 		} elsif (defined $currtrack and
 			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
 
@@ -384,7 +400,7 @@ sub parseCUE {
 
 		if (!$embedded && defined $filepath && !-r $filepath) {
 
-			msg("parseCUE: Couldn't find referenced FILE: [$filepath] on disk! Skipping!\n");
+			errorMsg("parseCUE: Couldn't find referenced FILE: [$filepath] on disk! Skipping!\n");
 
 			delete $tracks->{$key};
 		}
@@ -412,7 +428,7 @@ sub parseCUE {
 		$lastpos = $track->secs();
 	}
 
-	$::d_parse && msg("Couldn't get duration of $filename\n") unless $lastpos;
+	errorMsg("parseCUE: Couldn't get duration of $filename\n") unless $lastpos;
 
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
@@ -457,7 +473,8 @@ sub parseCUE {
 		$track->{'TRACKNUM'} = $key;
 		$::d_parse && msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
 
-		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR GENRE)) {
+		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR 
+			GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
 
 			if (exists $track->{$attribute}) {
 				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");
@@ -489,7 +506,17 @@ sub parseCUE {
 			$track->{'COMMENT'} = $comment;
 			$::d_parse && msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
 		}
+		
+		if (!exists $track->{'REPLAYGAIN_ALBUM_GAIN'} && defined $replaygain_album_gain) {
+			$track->{'REPLAYGAIN_ALBUM_GAIN'} = $replaygain_album_gain;
+			$::d_parse && msg("    REPLAYGAIN_ALBUM_GAIN: " . $track->{'REPLAYGAIN_ALBUM_GAIN'} . "\n");
+		}
 
+		if (!exists $track->{'REPLAYGAIN_ALBUM_PEAK'} && defined $replaygain_album_peak) {
+			$track->{'REPLAYGAIN_ALBUM_PEAK'} = $replaygain_album_peak;
+			$::d_parse && msg("    REPLAYGAIN_ALBUM_PEAK: " . $track->{'REPLAYGAIN_ALBUM_PEAK'} . "\n");
+		}
+			
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
 	}
@@ -987,7 +1014,7 @@ sub readPodcast {
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
 	my $xml = eval { XMLin($in,
-						   forcearray => ["item"], keyattr => []) };
+							 forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
 		$::d_parse && msg("Parse: failed to parse podcast because:\n$@\n");
