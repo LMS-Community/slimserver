@@ -126,7 +126,9 @@ END %]
 		[% IF item.num || item.num == 0 %]
 				[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% END %]
 				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
-		[% ELSIF item.item %]
+		[%# browse list items %]
+		[%# no level info means its a music folder item %]
+		[% ELSIF item.item || !item.level%]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
 		[% ELSIF item.songtitle %]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>

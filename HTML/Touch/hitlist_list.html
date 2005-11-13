@@ -12,11 +12,14 @@
 
 <td>
 <nobr>
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=play&p2=[% item.itempath | uri %]&player=[% playerURI %]"><font class="actiontext">[% "PLAY" | string %]</a>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% item.attributes %]&player=[% playerURI %]">
+<font class="actiontext">[% "PLAY" | string %]</a>
 |&nbsp;
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% item.itempath | uri %]&player=[% playerURI %]"><font class="actiontext">[% "NEXT" | string %]</a>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% item.attributes | html %]&player=[% playerURI %]">
+<font class="actiontext">[% "NEXT" | string %]</a>
 |&nbsp;
-<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=add&p2=[% item.itempath | uri %]&player=[% playerURI %]"><font class="actiontext">[% "ADD" | string %]</a>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=addtracks[% item.attributes %]&player=[% playerURI %]">
+<font class="actiontext">[% "ADD" | string %]</a>
 &nbsp;
 </nobr>
 </td>

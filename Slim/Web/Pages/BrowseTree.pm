@@ -83,12 +83,13 @@ sub browsetree {
 	if ($count) {
 		my %list_form = %$params;
 
-		$list_form{'hierarchy'}	    = undef;
-		$list_form{'descend'}	    = 1;
-		$list_form{'text'}	    = string('ALL_SONGS');
-		$list_form{'itemobj'}	    = $topLevelObj;
+		$list_form{'hierarchy'}	  = undef;
+		$list_form{'descend'}	  = 1;
+		$list_form{'text'}		  = string('ALL_SONGS');
+		$list_form{'itemobj'}	  = $topLevelObj;
 
-		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+		push @{$params->{'browse_items'}}, \%list_form;
 	}
 
 	#
@@ -116,16 +117,16 @@ sub browsetree {
 		# Bug: 1360 - Don't show files referenced in a cuesheet
 		next if ($item->content_type eq 'cur');
 
-		my %list_form = %$params;
+		my %list_form = '';
 
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
 		$list_form{'text'}	    = Slim::Utils::Unicode::utf8decode_locale($relPath);
 
-		$list_form{'hierarchy'}	    = join('/', @levels, $item->id);
-		$list_form{'descend'}	    = Slim::Music::Info::isList($item) ? 1 : 0;
-		$list_form{'odd'}	    = ($itemnumber + 1) % 2;
-		$list_form{'itemobj'}	    = $item;
+		$list_form{'hierarchy'}	 = join('/', @levels, $item->id);
+		$list_form{'descend'}	 = Slim::Music::Info::isList($item) ? 1 : 0;
+		$list_form{'odd'}		 = ($itemnumber + 1) % 2;
+		$list_form{'itemobj'}	 = $item;
 
 		# Don't display the edit dialog for cue sheets.
 		if ($item->isCUE) {
@@ -134,7 +135,8 @@ sub browsetree {
 
 		$itemnumber++;
 
-		$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
+		push @{$params->{'browse_items'}}, \%list_form;
 
 		if (!$params->{'coverArt'} && $item->coverArt) {
 			$params->{'coverArt'} = $item->id;

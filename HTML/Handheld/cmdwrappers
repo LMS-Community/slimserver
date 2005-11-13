@@ -115,7 +115,8 @@
 		<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.num + 1 %].</a>&nbsp;
 		<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>
 	[%# browse list items %]
-	[% ELSIF item.item %]
+	[%# no level info means its a music folder item %]
+	[% ELSIF item.item || !item.level%]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %]</a>
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.songtitle | html %]</a>

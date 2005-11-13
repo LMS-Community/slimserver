@@ -62,6 +62,8 @@ sub hitlist {
 		$form{'player'}	          = $params->{'player'};
 		$form{'skinOverride'}     = $params->{'skinOverride'};
 		$form{'song_count'}       = $playCount;
+		$form{'attributes'}       = '&track='.$track->id;
+		$form{'itemobj'}          = $track;
 
 		push @{$params->{'browse_items'}}, \%form;
 
