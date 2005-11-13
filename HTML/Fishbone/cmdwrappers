@@ -2,34 +2,40 @@
 [% statusroot = 'status_header.html' %]
 [% noHomeLink = 1 %]
 
-[% BLOCK playlink %]
-<td class="listing" width="11" align="center">
-	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/play.this.gif" border=0 align="center" height="11"  alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true"></a>
+[% BLOCK cmdlink %]
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 align="center" height="11"  alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]' onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
 </td>
+[% END %]
+
+[% BLOCK playlink %]
+	[% PROCESS cmdlink
+		cmdtitle = "PLAY"
+		cmdimage = "play.this.gif" %]
 [% END %]
 
 [% BLOCK addlink %]
-<td class="listing" width="11" align="center">
-	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/add.gif" border=0 align="center" height="11" alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdimage = "add.gif" %]
 [% END %]
 
 [% BLOCK descendlink %]
-<td class="listing" width="11" align="center">
-	<p><a [% content %]><img src="[% webroot %]html/images/next.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdimage = "next.gif" %]
 [% END %]
 
 [% BLOCK insertlink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/queue.gif" border=0 align="center" height="11" alt='[% "NEXT" | string %]' title='[% "NEXT" | string %]' onMouseOver="self.status='[% "NEXT" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdimage = "queue.gif" %]
 [% END %]
 
 [% BLOCK removelink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/remove.gif" border=0 align="center" height="11" alt='[% "REMOVE_FROM_PLAYLIST" | string %]' title='[% "REMOVE_FROM_PLAYLIST" | string %]' onMouseOver="self.status='[% "REMOVE_FROM_PLAYLIST" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "REMOVE_FROM_PLAYLIST"
+		cmdimage = "remove.gif" %]
 [% END %]
 
 [% BLOCK infolink %]
@@ -51,15 +57,15 @@
 [% BLOCK homelink %][% END %]
 
 [% BLOCK moveuplink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.up.gif" height="11" align="middle" alt="[% "MOVEUP" | string %]" title="[% "MOVEUP" | string %]" onMouseOver="self.status='[% "MOVEUP" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "MOVEUP"
+		cmdimage = "move.up.gif" %]
 [% END %]
 
 [% BLOCK movedownlink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/move.down.gif" height="11" align="middle" alt="[% "MOVEDOWN" | string %]" title="[% "MOVEDOWN" | string %]" onMouseOver="self.status='[% "MOVEDOWN" | string %]';return true"></a>
-</td>
+	[% PROCESS cmdlink
+		cmdtitle = "MOVEDOWN"
+		cmdimage = "move.down.gif" %]
 [% END %]
 
 [% BLOCK scanwarning -%]
@@ -109,7 +115,7 @@
 			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a></b>
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]
-	[% ELSIF item.item || !item.level%]
+	[% ELSIF item.item || !item.defined('level') %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>

@@ -116,7 +116,7 @@
 		<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]
-	[% ELSIF item.item || !item.level%]
+	[% ELSIF item.item || !item.defined('level') %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %]</a>
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.songtitle | html %]</a>

@@ -128,7 +128,7 @@ END %]
 				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 		[%# browse list items %]
 		[%# no level info means its a music folder item %]
-		[% ELSIF item.item || !item.level%]
+		[% ELSIF item.item || !item.defined('level') %]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
 		[% ELSIF item.songtitle %]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
