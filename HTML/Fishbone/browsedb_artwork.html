@@ -1,16 +1,39 @@
-<div class="coverart" align="left" style="width:[% size + 10 %]px;">
+<div class="coverart" align="left" style="width:[% item.size + 10 %]px;">
 <table cellpadding="5" align="left">
 <tr>
 	<td>
-		[% IF coverThumb %]<div class="covertext" style="height:[% size +2%]px;"><table><tr><td width="[% size %]"><a [% browseDbHRef %]>[% PROCESS thumbnailImg height="$size\" width=\"$size\"" %]</a></td></table></div>[% END %]
-		[% IF not coverThumb %]<div class="covertext" style="height:[% size +2%]px;"><table><tr><td width="[% size %]"><a [% browseDbHRef %]><center>[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]</center></a></td><td><a href=""><img src="[% webroot %]html/images/spacer.gif" height="[% size %]" width="0"></a></td></table></div>[% END %]
+		[% IF item.coverThumb %]<div class="covertext" style="height:[% item.size +2%]px;">
+			<table>
+				<tr>
+					<td width="[% size %]">
+						<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a>
+					</td>
+				</tr>
+			</table>
+		</div>[% END %]
+		[% IF not item.coverThumb %]<div class="covertext" style="height:[% item.size +2%]px;">
+			<table>
+				<tr>
+					<td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>
+						<center>[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</center></a>
+					</td>
+					<td>
+						<a href=""><img src="[% webroot %]html/images/spacer.gif" height="[% item.size %]" width="0"></a>
+					</td>
+				</tr>
+			</table>
+		</div>[% END %]
 	</td>
 </tr>
 <tr>
 	<td><center>
 		<table height="18" cellpadding="0" cellspacing="0" border="0">
 			<tr>
-				[% PROCESS browselistcontrols.html %]
+				[% PROCESS browsecontrols
+					itemobj = item.itemobj
+					attributes = item.attributes
+					odd = item.odd
+					mixerlinks = item.mixerlinks %]
 			</tr>
 		</table></center>
 	</td>

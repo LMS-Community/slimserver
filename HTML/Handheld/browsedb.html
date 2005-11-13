@@ -23,9 +23,10 @@
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
 		[% IF browse_items %]
 			[% FOREACH item = browse_items %]
-				[% PROCESS browsedbitems_list.html %]
+				[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+				[% ELSE; PROCESS browsedbitems_list.html; END %]
 			[% END %]
-		[% ELSE %][% browse_list %][% END %]
+		[% ELSE; browse_list; END %]
 	</table>
 
 	[% PROCESS pagefooter.html %]

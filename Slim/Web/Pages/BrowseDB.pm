@@ -299,7 +299,6 @@ sub browsedb {
 
 			$itemnumber++;
 
-			#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 			push @{$params->{'browse_items'}}, \%list_form;
 		}
 
@@ -323,7 +322,6 @@ sub browsedb {
 				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
 
-				#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 				push @{$params->{'browse_items'}}, \%list_form;
 
 				$itemnumber++;
@@ -384,12 +382,7 @@ sub browsedb {
 
 			$itemnumber++;
 
-			if ($levels[$level] eq 'artwork') {
-				$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_artwork.html", \%list_form)};
-			} else {
-				#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-				push @{$params->{'browse_items'}}, \%list_form;
-			}
+			push @{$params->{'browse_items'}}, \%list_form;
 
 			if ($needIdleStreams) {
 				main::idleStreams();
