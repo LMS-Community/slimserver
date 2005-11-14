@@ -268,7 +268,7 @@ sub handleAudioMessage {
 	
 		# Handle SlimServ-specific commands
 		my $params;
-		$xplcmd = lc getparam($msg,"extended");
+		$xplcmd = getparam($msg, "extended");
 
 		if (!defined($xplcmd)) {
 			return;
@@ -283,6 +283,7 @@ sub handleAudioMessage {
 		else {
 			$params = '';
 		}
+		$xplcmd = lc $xplcmd;
 
 		# AddFile
 		if ($xplcmd eq "addfile") {
@@ -296,7 +297,17 @@ sub handleAudioMessage {
 		}
 		# CLI commands
 		else {
-			xplExecuteCmd("$xplcmd $params",$clientid);		
+			# we need to lower case all of the protocol
+			# words but leave the user content in its
+			# original case
+			if ($xplcmd eq "playlist") {
+				if (index($params, ' ') > 0) {
+					my $params_user = substr($params,index($params, ' ')+1, length($params)-index($params, ' ')-1);
+					my $params_protocol = lc substr($params, 0, index($params, ' '));
+					$params = $params_protocol . " " . $params_user;
+	 			}
+	 		}
+			xplExecuteCmd("$xplcmd $params", $clientid);		
 		}
 	}
 }
