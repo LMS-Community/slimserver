@@ -12,5 +12,8 @@
 	[% IF pwd_list %]<location>[% pwd_list %]</location>[% END %]
 	[% IF browselist_header %][% browselist_header %][% END %]
 	[% IF coverArt %]<coverart><![CDATA[music/[% coverArt %]/cover.jpg]]></coverart>[% END %]
-	[% browse_list %]
+	[% FOREACH item = browse_items %]
+		[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+		[% ELSE; PROCESS browsedbitems_list.html; END %]
+	[% END %]
 </browse>
