@@ -19,6 +19,8 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::Pages::Search;
 
+use Slim::Control::Request;
+
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
 
@@ -449,16 +451,16 @@ sub cli_process {
 	
 	else {
 		
-		if ($cmd eq 'albums') {
+		if ($cmd eq 'exit'){
+			$exit = 1;
+		}
+
+		elsif ($cmd eq 'albums') {
 			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
 		}
 		
 		elsif ($cmd eq 'artists') {
 			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
-		}
-
-		elsif ($cmd eq 'exit'){
-			$exit = 1;
 		}
 				
 		elsif ($cmd eq 'genres') {
@@ -497,10 +499,6 @@ sub cli_process {
 			cli_cmd_titles($client_socket, $cmdRef);
 		}
 
-		elsif ($cmd eq 'version') {
-			cli_response_push($client_socket, $::VERSION);
-		}
-		
 		else {
 		
 			$::d_cli && msg("CLI: Forwarding [$cmd] to Command.pm\n");

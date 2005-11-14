@@ -472,6 +472,9 @@ sub init {
 	if (!$scanOnly) {
 		$::d_server && msg("SlimServer setting language...\n");
 		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+		
+		$::d_server && msg("SlimServer Dispatch init...\n");
+		Slim::Control::Dispatch::init();
 	
 		$::d_server && msg("SlimServer IR init...\n");
 		Slim::Hardware::IR::init();
