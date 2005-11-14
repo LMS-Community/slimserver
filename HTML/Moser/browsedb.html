@@ -13,22 +13,31 @@
       </div>
     </div>
    [%- END %]
-   [%- IF coverart %]
+   [%- IF coverArt %]
     <div class="coverArt">
-      <a href="/music/[% coverArt %]/cover.jpg" target="cover">
-      <img src="/music/[% coverArt %]/cover.jpg" /></a>
+      <a [% coverArtHRef %] target="cover">[% PROCESS coverImg | replace('">', '" />')%]</a>
     </div>
    [%- END %]
-    <div id="browselist">
-      <ul>
-[% IF browse_items -%]
-   [%- FOREACH item = browse_items -%]
-      [%- IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
-      [% ELSE; PROCESS browsedbitems_list.html; END %]
+   [%- IF browseby == 'BROWSE_BY_ARTWORK' and level == 0; 
+         contentwrapper = 'galleryitem';
+       ELSE;
+         contentwrapper = 'contentitem';
+       END;
+         %]
+   [%- WRAPPER contentcontainer listid = 'browselist' %]
+    [%- FOREACH item = browse_items %]
+
+     [%- WRAPPER $contentwrapper
+	     lineclass = 'browseline'
+	     controls = 'browsecontrols'
+         itemobj = item.itemobj
+         attributes = item.attributes
+         mixerlinks = item.mixerlinks
+	     odd = item.odd %]
+	  [%- PROCESS iteminfo IF contentwrapper == 'contentitem' -%]
+     [%- END %]
+    [%- END %]
    [%- END %]
-[%- ELSE; browse_list; END %]
-      </ul>
-    </div>
 [% IF browselist_pagebar -%]
     <div id="bottombrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>

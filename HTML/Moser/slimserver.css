@@ -92,9 +92,8 @@ li.gallery {
   border: 1px solid rgb(0,51,204);
   background-color: rgb(214,231,255);
   text-align: center;
-  padding: 10px;
+  padding: 5px;
   float: left;
-  margin-right: 1em;
 }
 
 .gallery img {

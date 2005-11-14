@@ -44,7 +44,7 @@
 [%- END %]
 
 [% BLOCK homelink; homeString = "HOME" | string; -%]
-<a href="[% webroot %]home.html?player=[% playerURI %]" [% IF target %]target="[% target %]"[% END %]>[% img or homeString %]</a>
+<a href="[% webroot %]home.html?player=[% playerURI %]">[% homeString %]</a>
 [%- END %]
 
 [% BLOCK moveuplink -%]
@@ -113,11 +113,29 @@
   [%- IF anchor %]
   <a name="[% anchor %]"></a>
   [%- END %]
-  [%- PROCESS $controls | indent(2) -%]
+
+  [%- PROCESS $controls | indent(2) %]
   <div class="[% lineclass || 'browseline' %]">
 
   [%- content | indent(4) %]
   </div>
+</li>
+[%- END %]
+
+[% BLOCK galleryitem -%]
+<li class="gallery">
+  [%- IF anchor %]
+  <a name="[% anchor %]"></a>
+  [%- END %]
+  <div class="galleryitem">
+   [%- IF item.coverThumb %][% IF not item.artist; item.artist = item.itemobj.artistsWithAttributes.first.artist.name; END; %]
+    <a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a>
+   [%- ELSE %]
+    <a [% PROCESS browseDbItemHRef %] target="browser">[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</a>
+[% END %]
+  </div>
+
+  [%- PROCESS $controls | indent(2) %]
 </li>
 [%- END %]
 
@@ -138,6 +156,26 @@
   [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
 [%- END %]
 [% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[%- END %]
+
+[% BLOCK iteminfo -%]
+[%- IF item.descend -%]
+  [% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %]
+  [%- IF item.hierarchy %]</a>[% END %]
+  [%- IF item.showYear and item.year %]
+  (<a [% PROCESS yearItemHRef %]>[% item.year %]</a>)
+  [%- END %]
+  [%- IF item.itemobj && item.itemobj.isa('Slim::DataStores::DBI::Album') %]
+    [%-# Include the artist for the album view %]
+  [% PROCESS artistsAsHTML.html itemobj = item.itemobj %]
+  [%- END %]
+[%- ELSE %]
+  <span class="songtitle"><a [% PROCESS songinfoItemHRef %]>[% item.text | html %]</a></span>
+ [%- IF item.includeAlbum %]
+  [% "FROM" | string %] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.album.title | html %]</a></span>
+ [%- END %]
+  <span class="artist">[%- IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END -%]</span>
+[%- END %]
 [%- END %]
 
 [%# This is the end, never put anything below this next END or the FILTER will not work %]

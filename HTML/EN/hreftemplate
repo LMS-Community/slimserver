@@ -112,6 +112,11 @@ href="[% webroot %][% statusroot %]?[%
 href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the year of item %]
+[% BLOCK yearItemHRef -%]
+href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% item.year %]&amp;player=[% playerURI %]"
+[%- END %]
+
 [%# this is the href to the songinfo for item %]
 [% BLOCK songinfoItemHRef -%]
 href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]"
@@ -130,8 +135,8 @@ href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&am
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]
-	[% IF item.defined('level') %]href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
-	[% ELSE %]href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]"[% END %]
+	[%- IF item.defined('level') %]href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
+	[%- ELSE %]href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]"[% END %]
 [%- END %]
 
 [%# this is the href to the browsetree page for item %]
@@ -146,9 +151,9 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% 
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%]
-	[% "<img $style src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
-		alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\" 
-		title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\">" -%] 
+	[%- "<img $style src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\"" %]
+	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; "($item.year)"; END; "\">" -%] 
 [%- END %]
 
 [% END -%]

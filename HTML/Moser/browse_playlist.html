@@ -1,18 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
-  <head>
-    <title>[% "SAVED_PLAYLISTS" | string %]</title>
-    <link rel="stylesheet" href="slimserver.css" />
-  </head>
-  <body>
-    <h3>[% "SAVED_PLAYLISTS" | string %]</h3>
-   [% PROCESS crumblist %]
-   [%- IF warn %]
-    <div id="warning">
-      <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %]
-    </div>
-   [%- END %]
+[%- pagetitle = "SAVED_PLAYLISTS" | string -%]
+[%- WRAPPER leftside.html -%]
    [%- IF RENAME_WARNING %]
     <div class="warning">
       <b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]
@@ -72,27 +59,20 @@
       </div>
     </div>
    [%- END %]
-    <div id="browselist">
-      <ul>
-      [%- IF playlistname %]
-        <li class="even">
-          <div class="controls">
-            <ul class="songctl">
-              <li><a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]" target="status" title="[% "PLAY" | string %]"><span>&gt;</span></a></li>
-              <li><a href="status.html?p0=playlist&amp;p1=insert&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]" target="status" title="[% "PLAY" | string %] [% "NEXT" | string %]"><span>&gt;|</span></a></li>
-              <li><a href="status.html?p0=playlist&amp;p1=add&amp;p2=[% dir | uri %]&amp;player=[% playerURI %]"  target="status" title="[% "ADD_TO_PLAYLIST" | string %]"><span>+</span></a></li>
-            </ul>
-          </div>
-          <div class="browseline">[% "THIS_ENTIRE_PLAYLIST" | string %]</div>
-        </li>
-      [%- END %]
-      [% IF browse_items %]
-         [% FOREACH item = browse_items %]
-            [% PROCESS browsedbitems_list.html -%]
-         [% END %]
-      [%- ELSE %][% browse_list -%][% END %]
-      </ul>
-    </div>
+   [%- WRAPPER contentcontainer listid = 'browselist' %]
+    [%- FOREACH item = browse_items %]
+
+     [%- WRAPPER contentitem
+	     lineclass = 'browseline'
+	     controls = 'browsecontrols'
+         itemobj = item.itemobj
+         attributes = item.attributes
+         mixerlinks = item.mixerlinks
+	     odd = item.odd %]
+	  [%- PROCESS browsedbitems_list.html -%]
+     [%- END %]
+    [%- END %]
+   [%- END %]
    [%- IF browselist_pagebar %]
     <div id="bottombrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
@@ -103,5 +83,4 @@
       </div>
     </div>
    [%- END %]
-  </body>
-</html>
+[%- END %]
