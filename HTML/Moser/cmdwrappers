@@ -160,7 +160,7 @@
 
 [% BLOCK iteminfo -%]
 [%- IF item.descend -%]
-  [% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %]
+  [% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]
   [%- IF item.hierarchy %]</a>[% END %]
   [%- IF item.showYear and item.year %]
   (<a [% PROCESS yearItemHRef %]>[% item.year %]</a>)
