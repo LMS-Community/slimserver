@@ -84,11 +84,11 @@ sub browsetree {
 		my %list_form = %$params;
 
 		$list_form{'hierarchy'}	  = undef;
-		$list_form{'descend'}	  = 1;
-		$list_form{'text'}		  = string('ALL_SONGS');
-		$list_form{'itemobj'}	  = $topLevelObj;
+		$list_form{'descend'}     = 1;
+		$list_form{'text'}        = string('ALL_SONGS');
+		$list_form{'itemobj'}     = $topLevelObj;
+		$list_form{'hreftype'}    = 'browseTree';
 
-		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
 		push @{$params->{'browse_items'}}, \%list_form;
 	}
 
@@ -123,10 +123,11 @@ sub browsetree {
 		# coming directly from the filesystem.
 		$list_form{'text'}	    = Slim::Utils::Unicode::utf8decode_locale($relPath);
 
-		$list_form{'hierarchy'}	 = join('/', @levels, $item->id);
-		$list_form{'descend'}	 = Slim::Music::Info::isList($item) ? 1 : 0;
-		$list_form{'odd'}		 = ($itemnumber + 1) % 2;
-		$list_form{'itemobj'}	 = $item;
+		$list_form{'hierarchy'}  = join('/', @levels, $item->id);
+		$list_form{'descend'}    = Slim::Music::Info::isList($item) ? 1 : 0;
+		$list_form{'odd'}        = ($itemnumber + 1) % 2;
+		$list_form{'itemobj'}    = $item;
+		$list_form{'hreftype'}   = 'browseTree';
 
 		# Don't display the edit dialog for cue sheets.
 		if ($item->isCUE) {

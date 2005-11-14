@@ -2,7 +2,7 @@
 	<td width="100%">
 		[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
 		[% IF item.descend %]
-			[% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
+			[% IF item.hierarchy %]<a [% PROCESS ${item.hreftype}ItemHRef %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
 
 			<!-- Include the artist for the album view -->
 			[% IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]

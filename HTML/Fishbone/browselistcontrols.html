@@ -1,8 +1,0 @@
-[% class='listing' width='9' height='11' target='status' %]
-[% PROCESS browselinks.html cmdType='insert' cmdstring='NEXT' img='queue.gif' %]
-[% PROCESS browselinks.html cmdType='play'   cmdstring='PLAY' img='play.this.gif' %]
-[% PROCESS browselinks.html cmdType='add'    cmdstring='ADD_TO_PLAYLIST' img='add.gif' %]
-[% PROCESS browselinks.html cmdType='remove' cmdstring='REMOVE_FROM_PLAYLIST' img='subtract.gif' %]
-[% FOREACH mixer = mixerlinks.values.sort %]
-	[% PROCESS $mixer %]
-[% END %]

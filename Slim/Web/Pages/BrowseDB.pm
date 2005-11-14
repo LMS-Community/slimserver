@@ -285,8 +285,9 @@ sub browsedb {
 			}
 
 			$list_form{'descend'}      = 1;
+			$list_form{'hreftype'}     = 'browseDb';
 			$list_form{'player'}       = $player;
-			$list_form{'odd'}	   = ($itemnumber + 1) % 2;
+			$list_form{'odd'}          = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
 			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
 
@@ -317,9 +318,10 @@ sub browsedb {
 
 				$list_form{'text'}        = $vaObj->name;
 				$list_form{'descend'}     = $descend;
+				$list_form{'hreftype'}    = 'browseDb';
 				$list_form{'hiearchy'}    = $hierarchy;
-				$list_form{'level'}	  = $level + 1;
-				$list_form{'odd'}	  = ($itemnumber + 1) % 2;
+				$list_form{'level'}       = $level + 1;
+				$list_form{'odd'}         = ($itemnumber + 1) % 2;
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
 
 				push @{$params->{'browse_items'}}, \%list_form;
@@ -354,19 +356,20 @@ sub browsedb {
 			my $itemname = &{$levelInfo->{'resultToName'}}($item);
 			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
 
-			$list_form{'hierarchy'}	    = $hierarchy;
-			$list_form{'level'}	    = $level + 1;
+			$list_form{'hierarchy'}     = $hierarchy;
+			$list_form{'level'}         = $level + 1;
+			$list_form{'levelName'}     = $attrName;
+			$list_form{'text'}          = $itemname;
+			$list_form{'hreftype'}      = 'browseDb';
+			$list_form{'descend'}       = $descend;
+			$list_form{'odd'}	        = ($itemnumber + 1) % 2;
+			$list_form{'skinOverride'}  = $params->{'skinOverride'};
+			$list_form{'itemnumber'}    = $itemnumber;
+			$list_form{'itemobj'}       = $item;
 			$list_form{'attributes'}    = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '') . '&' .
 				$attrName . '=' . Slim::Utils::Misc::escape($itemid);
 
-			$list_form{'levelName'}	    = $attrName;
-			$list_form{'text'}	    = $itemname;
-			$list_form{'descend'}	    = $descend;
-			$list_form{'odd'}	    = ($itemnumber + 1) % 2;
 			$list_form{$levelInfo->{'nameTransform'} || $levels[$level]} = $itemid;
-			$list_form{'skinOverride'}  = $params->{'skinOverride'};
-			$list_form{'itemnumber'}    = $itemnumber;
-			$list_form{'itemobj'}	    = $item;
 
 			# This is calling into the %fieldInfo hash
 			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria);

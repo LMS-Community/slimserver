@@ -1,7 +1,0 @@
-[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' %]
-[% header='1' width='13' height='13' %]
-[% PROCESS browselinks.html cmdType='play' cmdstring='PLAY' %]
-[% PROCESS browselinks.html cmdType='add'  cmdstring='ADD_TO_PLAYLIST' %]
-[% FOREACH mixer = mixerlinks.values.sort %]
-	[% PROCESS $mixer %]
-[% END %]

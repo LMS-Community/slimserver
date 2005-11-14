@@ -5,11 +5,11 @@
 	
 	[% IF item.artwork %]
 
-		<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF $item.year; ($item.year); END;"%]</a>
+		<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% PROCESS thumbnailItemImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF $item.year; ($item.year); END;"%]</a>
 
 	[% END %]
 	
-	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
+	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
 
 		<!-- Include the artist for the album view -->
 		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
