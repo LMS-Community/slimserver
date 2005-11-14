@@ -1381,7 +1381,10 @@ sub execute {
  			}
 
  		}
- 	}				
+ 	} else {
+ 		# to prevent problems with callbacks which check for defined $client
+ 		$client = undef;
+ 	}
  		
  	# extended CLI API calls do push their return values directly
  	if ($pushParams) {
