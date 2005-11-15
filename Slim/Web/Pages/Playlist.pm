@@ -125,8 +125,8 @@ sub playlist {
 				'path'         => $params->{'path'},
 				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()) . "&",
 				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'browselist_header'},
-				'pageBarRef'   => \$params->{'browselist_pagebar'},
+				'headerRef'    => \$params->{'playlist_header'},
+				'pageBarRef'   => \$params->{'playlist_pagebar'},
 				'skinOverride' => $params->{'skinOverride'},
 				'perPage'      => $params->{'itemsPerPage'},
 			}
