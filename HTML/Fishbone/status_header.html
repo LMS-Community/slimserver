@@ -177,8 +177,9 @@
 						</nobr></tr></table>
 					</td>
 					<td width="2%" >&nbsp;</td>
-					[% PROCESS tonecontrol  type="bass" label='B' -%]
-					[% PROCESS tonecontrol  type="treble" label='T' -%]
+					[%# bug 2560 tone controls disabled until proper support exists
+					[%# PROCESS tonecontrol  type="bass" label='B' -%]
+					[%# PROCESS tonecontrol  type="treble" label='T' -%]
 				</table>
 			[% END %]
 		</table></div>
