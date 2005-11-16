@@ -242,7 +242,6 @@ sub setupGroup {
 	return (\%Group, \%Prefs);
 }
 
-
 sub updateFeedNames {
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
 	my @feedNamePrefs;
@@ -360,7 +359,7 @@ sub getFeedXml {
 		my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
 		if ($@) {
-			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
+			$::d_plugins && msg("PodCastBrowser failed to parse feed <$feed_url> because: $@\n");
 			return 0;
 		}
 
@@ -369,8 +368,6 @@ sub getFeedXml {
 
 	return 0;
 }
-
-
 
 sub strings { return q!
 PLUGIN_PODCAST

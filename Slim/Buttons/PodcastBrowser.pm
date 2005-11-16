@@ -12,23 +12,23 @@
 # rename this file and mode if they have a better name idea).
 
 package Slim::Buttons::PodcastBrowser;
+
 use strict;
+use XML::Simple;
+
+use Slim::Buttons::Common;
+use Slim::Control::Command;
+use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::Cache;
+use Slim::Utils::Misc;
 
 # When to expire feeds from cache, in seconds.
 our $default_cache_expiration = 60 * 60;
 
-use Slim::Utils::Misc;
-use Slim::Networking::SimpleAsyncHTTP;
-use XML::Simple;
-use Slim::Buttons::Common;
-use Slim::Control::Command;
-use Slim::Utils::Cache;
-
 our $feedCache = Slim::Utils::Cache->new();
 
 sub init {
-	Slim::Buttons::Common::addMode('podcastbrowser', getFunctions(),
-								   \&setMode);
+	Slim::Buttons::Common::addMode('podcastbrowser', getFunctions(), \&setMode);
 }
 
 sub getFunctions {
@@ -52,21 +52,21 @@ sub setMode {
 			# TODO: l10n
 			"Podcast Browse Mode requires url param",
 		);
+
 		#TODO: display the error on the client
 		my %params = (
 			header => "{PODCAST_ERROR} {count}",
 			listRef => \@lines,
 		);
+
 		Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+
 	} else {
 
 		getFeedAsync($client, $url);
-
 		# we're done.  gotFeed callback will finish setting up mode.
 	}
 }
-
-
 
 sub getFeedAsync {
 	my $client = shift;
@@ -74,6 +74,7 @@ sub getFeedAsync {
 
 	# try to get from cache
 	my $feed = $feedCache->get($url);
+
 	if ($feed) {
 		return gotFeed($client, $url, $feed);
 	}
@@ -83,36 +84,38 @@ sub getFeedAsync {
 	# URL is remote, load it asynchronously...
 
 	# give user feedback while loading
-	Slim::Buttons::Block::block($client,
-								$client->string('PODCAST_LOADING'),
-								$client->param('title') || $url);
+	$client->block(
+		$client->string('PODCAST_LOADING'),
+		$client->param('title') || $url,
+	);
 
 	# if not found in cache, get via HTTP
 	getFeedViaHTTP($client, $url, \&gotFeed, \&gotError);
 }
 
 sub gotFeed {
-	my $client = shift;
-	my $url = shift;
-	my $feed = shift;
+	my ($client, $url, $feed) = @_;
 
 	# must unblock now, before pushMode is called by getRSS or gotOPML
-	Slim::Buttons::Block::unblock($client);
+	$client->unblock;
 
 	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
 	if ($feed->{'type'} eq 'rss') {
+
 		gotRSS($client, $url, $feed);
+
 	} elsif ($feed->{'type'} eq 'opml') {
+
 		gotOPML($client, $url, $feed);
+
 	} else {
+
 		$client->update();
 	}
 }
 
 sub gotRSS {
-	my $client = shift;
-	my $url = shift;
-	my $feed = shift;
+	my ($client, $url, $feed) = @_;
 
 	# Include an item to access feed info
 	if (($feed->{'items'}->[0]->{'value'} ne 'description') &&
@@ -131,42 +134,49 @@ sub gotRSS {
 			# play all enclosures...
 			onPlay => sub {
 				my $client = shift;
+
 				# play this feed as a playlist
-				Slim::Control::Command::execute( $client,
-												 [ 'playlist', 'play',
-												   $client->param('url'),
-												   $client->param('feed')->{'title'},
-											   ] );
+				$client->execute(
+					[ 'playlist', 'play',
+					$client->param('url'),
+					$client->param('feed')->{'title'},
+				] );
 			},
+
 			onAdd => sub {
 				my $client = shift;
-				# play this feed as a playlist
-				Slim::Control::Command::execute( $client,
-												 [ 'playlist', 'add',
-												   $client->param('url'),
-												   $client->param('feed')->{'title'},
-											   ] );
+
+				# addthis feed as a playlist
+				$client->execute(
+					[ 'playlist', 'add',
+					$client->param('url'),
+					$client->param('feed')->{'title'},
+				] );
 			},
 
 			overlayRef => [ undef, Slim::Display::Display::symbol('rightarrow') ],
 		);
+
 		unshift @{$feed->{'items'}}, \%desc; # prepend
 	}
 
 	# use INPUT.Choice mode to display the feed.
 	my %params = (
-		url => $url,
-		feed => $feed,
+		url      => $url,
+		feed     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		modeName => "PodcastBrowser:$url",
-		header => $feed->{'title'} . ' {count}',
+		header   => $feed->{'title'} . ' {count}',
+
 		# TODO: we show only items here, we skip the description of the entire channel
-		listRef => $feed->{'items'},
+		listRef  => $feed->{'items'},
+
 		name => sub {
 			my $client = shift;
 			my $item = shift;
 			return $item->{'title'};
 		},
+
 		onRight => sub {
 			my $client = shift;
 			my $item = shift;
@@ -176,31 +186,38 @@ sub gotRSS {
 				displayItemLink($client, $item);
 			}
 		},
+
 		onPlay => sub {
 			my $client = shift;
 			my $item = shift;
 			playItem($client, $item);
 		},
+
 		onAdd => sub {
 			my $client = shift;
 			my $item = shift;
 			playItem($client, $item, 'add');
 		},
+
 		overlayRef => sub {
 			my $client = shift;
 			my $item = shift;
 
 			my $overlay;
+
 			if (hasAudio($item)) {
 				$overlay .= Slim::Display::Display::symbol('notesymbol');
 			}
+
 			if (hasDescription($item) || hasLink($item)) {
 				$overlay .= Slim::Display::Display::symbol('rightarrow');
 			}
+
 			return [ undef, $overlay ];
 		},
 
 	);
+
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
@@ -209,72 +226,102 @@ sub gotRSS {
 # podcasts.  Currently this has been tested only with those OPML
 # examples, it may or may not work perfectly with others.
 sub gotOPML {
-	my $client = shift;
-	my $url = shift;
-	my $feed = shift;
+	my ($client, $url, $feed) = @_;
 
 	my %params = (
-		url => $url,
-		feed => $feed,
+		url      => $url,
+		feed     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		modeName => "PodcastBrowser:$url",
-		header => $feed->{'title'} . ' {count}',
-		listRef => $feed->{'items'},
-		onRight => sub {
+		header   => $feed->{'title'} . ' {count}',
+		listRef  => $feed->{'items'},
+
+		onRight  => sub {
 			my $client = shift;
 			my $item = shift;
-			if ($item->{'url'}) {
+
+			if ($item->{'url'} && !scalar @{$item->{'items'}}) {
+
 				# follow a link
 				my %params = (
-					url => $item->{'url'},
+					url   => $item->{'url'},
 					title => $item->{'name'},
 				);
-				Slim::Buttons::Common::pushMode($client, 'podcastbrowser',
-													\%params);
+
+				Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+
 			} elsif ($item->{'items'}) {
-				#recurse into OPML item
+
+				# recurse into OPML item
 				browseOPML($client, $client->param('url'), $item);
+
 			} else {
+
 				$client->bumpRight();
 			}
 		},
+
 		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
-#recusively browse OPML outline
+# recusively browse OPML outline
 sub browseOPML {
-	my $client = shift;
-	my $url = shift;
-	my $item = shift;
+	my ($client, $url, $item) = @_;
 
 	my %params = (
-		url => $url,
-		item => $item,
+		url      => $url,
+		item     => $item,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		modeName => "PodcastBrowser:$url:" . $item->{'name'},
-		header => $item->{'name'} . ' {count}',
-		listRef => $item->{'items'},
-		onRight => sub {
+		header   => $item->{'name'} . ' {count}',
+		listRef  => $item->{'items'},
+
+		onRight  => sub {
 			my $client = shift;
-			my $item = shift;
-			if ($item->{'value'}) {
+			my $item   = shift;
+
+			if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
+
+				playItem($client, $item);
+
+			} elsif ($item->{'value'} && !scalar @{$item->{'items'}}) {
+
 				# follow a link
 				my %params = (
-					url => $item->{'value'},
+					url   => $item->{'value'},
 					title => $item->{'name'},
 				);
-				Slim::Buttons::Common::pushMode($client, 'podcastbrowser',
-													\%params);
+
+				Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+
 			} elsif ($item->{'items'}) {
-				#recurse into OPML item
+
+				# recurse into OPML item
 				browseOPML($client, $client->param('url'), $item);
+
 			} else {
+
 				$client->bumpRight();
 			}
 		},
+
+		onPlay  => sub {
+			my $client = shift;
+			my $item   = shift;
+
+			if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
+
+				playItem($client, $item);
+
+			} else {
+
+				$client->bumpRight();
+			}
+		},
+
 		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
 	);
 
@@ -283,26 +330,35 @@ sub browseOPML {
 
 sub hasAudio {
 	my $item = shift;
-   	if ($item->{'enclosure'} && 
-		($item->{'enclosure'}->{'type'} =~ /audio/)) {
+
+   	if ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/)) {
+
 		return $item->{'enclosure'}->{'url'};
+
 	} else {
+
 		return undef;
 	}
 }
 
 sub hasLink {
 	my $item = shift;
+
 	# for now, only follow link in "slim" namespace
 	return $item->{'slim:link'};
 }
 
 sub hasDescription {
 	my $item = shift;
+
 	my $description = $item->{'description'};
+
 	if ($description and !ref($description)) {
+
 		return $description;
+
 	} else {
+
 		return undef;
 	}
 }
@@ -316,20 +372,47 @@ sub gotError {
 	$::d_plugins && msg($err);
 
 	# unblock client
-	Slim::Buttons::Block::unblock($client);
+	$client->unblock;
 
 	my @lines = (
 		"{PODCAST_GET_FAILED} <$url>",
 		$err,
 	);
+
 	#TODO: display the error on the client
 	my %params = (
 		header => "{PODCAST_ERROR} {count}",
 		listRef => \@lines,
 	);
+
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
+sub _breakItemIntoLines {
+	my ($client, $item) = @_;
+
+	my @lines   = ();
+	my $curline = '';
+	my $description = $item->{'description'};
+
+	while ($description =~ /(\S+)/g) {
+
+		my $newline = $curline . ' ' . $1;
+
+		if ($client->measureText($newline, 2) > $client->displayWidth) {
+			push @lines, trim($curline);
+			$curline = $1;
+		} else {
+			$curline = $newline;
+		}
+	}
+
+	if ($curline) {
+		push @lines, trim($curline);
+	}
+
+	return ($curline, @lines);
+}
 
 sub displayItemDescription {
 	my $client = shift;
@@ -342,31 +425,19 @@ sub displayItemDescription {
 	# use remotetrackinfo mode to display item in detail
 
 	# break description into lines
-	my @lines;
-	my $curline = '';
-	my $description = $item->{'description'};
-	while ($description =~ /(\S+)/g) {
-        my $newline = $curline . ' ' . $1;
-        if ($client->measureText($newline, 2) > $client->displayWidth) {
-            push @lines, trim($curline);
-            $curline = $1;
-        }
-        else {
-            $curline = $newline;
-        }
-    }
-    if ($curline) {
-        push @lines, trim($curline);
-    }
+	my ($curline, @lines) = _breakItemIntoLines($client, $item);
 
 	if (my $link = hasLink($item)) {
+
 		push @lines, {
 			name => '{PODCAST_LINK}: ' . $link,
 			value => $link,
 			overlayRef => [ undef, Slim::Display::Display::symbol('rightarrow') ],
 		}
 	}
+
 	if (hasAudio($item)) {
+
 		push @lines, {
 			name => '{PODCAST_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
 			value => $item->{'enclosure'}->{'url'},
@@ -375,8 +446,8 @@ sub displayItemDescription {
 
 		# its a remote audio source, use remotetrackinfo
 		my %params = (
-			title =>$item->{'title'},
-			url => $item->{'enclosure'}->{'url'},
+			title   =>$item->{'title'},
+			url     => $item->{'enclosure'}->{'url'},
 			details => \@lines,
 			onRight => sub {
 				my $client = shift;
@@ -386,26 +457,29 @@ sub displayItemDescription {
 			hideTitle => 1,
 			hideURL => 1,
 		);
-		Slim::Buttons::Common::pushModeLeft($client,
-										'remotetrackinfo',
-										\%params);
+
+		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+
 	} else {
 		# its not audio, use INPUT.Choice to display...
 
 		my %params = (
-			item => $item,
-			header => $item->{'title'} . ' {count}',
+			item    => $item,
+			header  => $item->{'title'} . ' {count}',
 			listRef => \@lines,
+
 			onRight => sub {
 				my $client = shift;
 				my $item = $client->param('item');
 				displayItemLink($client, $item);
 			},
+
 			onPlay => sub {
 				my $client = shift;
 				my $item = $client->param('item');
 				playItem($client, $item);
 			},
+
 			onAdd => sub {
 				my $client = shift;
 				my $item = $client->param('item');
@@ -428,30 +502,17 @@ sub displayFeedDescription {
 	# use remotetrackinfo mode to display item in detail
 
 	# break description into lines
-	my @lines;
-	my $curline = '';
-	my $description = $feed->{'description'};
-	while ($description =~ /(\S+)/g) {
-        my $newline = $curline . ' ' . $1;
-        if ($client->measureText($newline, 2) > $client->displayWidth) {
-            push @lines, trim($curline);
-            $curline = $1;
-        }
-        else {
-            $curline = $newline;
-        }
-    }
-    if ($curline) {
-        push @lines, trim($curline);
-    }
+	my ($curline, @lines) = _breakItemIntoLines($client, $feed);
 
 	# how many enclosures?
 	my $count = 0;
+
 	for my $i (@{$feed->{'items'}}) {
 		if (hasAudio($i)) {
 			$count++;
 		}
 	}
+
 	if ($count) {
 		push @lines, {
 			name => '{PODCAST_AUDIO_ENCLOSURES}: ' . $count,
@@ -459,8 +520,10 @@ sub displayFeedDescription {
 			overlayRef => [ undef, Slim::Display::Display::symbol('notesymbol') ],
 		};
 	}
+
 	push @lines, '{PODCAST_URL}: ' . $client->param('url');
-	$feed->{'lastBuildDate'} && push @lines, '{PODCAST_DATE}: ' . $feed->{'lastBuildDate'};
+
+	$feed->{'lastBuildDate'}  && push @lines, '{PODCAST_DATE}: ' . $feed->{'lastBuildDate'};
 	$feed->{'managingEditor'} && push @lines, '{PODCAST_EDITOR}: ' . $feed->{'managingEditor'};
 	
 	# TODO: more lines to show feed date, ttl, source, etc.
@@ -496,12 +559,13 @@ sub displayItemLink {
 		url => $url,
 		title => $item->{'title'},
 	);
+
 	Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
 }
 
 sub playItem {
 	my $client = shift;
-	my $item = shift;
+	my $item   = shift;
 	my $action = shift || 'play';
 
 	# verbose debug
@@ -509,33 +573,37 @@ sub playItem {
 	#use Data::Dumper;
 	#print Dumper($item);
 
-	if ($item->{'enclosure'} && 
-		($item->{'enclosure'}->{'type'} =~ /audio/ || Slim::Music::Info::typeFromSuffix($item->{'enclosure'}->{'url'} ne 'unk')) ) {
-		Slim::Control::Command::execute( $client,
-										 [ 'playlist', $action,
-										   $item->{'enclosure'}->{'url'},
-										   $item->{'title'},
-									   ] );
+	if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
+
+		$client->execute([ 'playlist', $action, $item->{'url'}, $item->{'name'} ]);
+
+	} elsif ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/ || 
+		Slim::Music::Info::typeFromSuffix($item->{'enclosure'}->{'url'} ne 'unk')) ) {
+
+		$client->execute( [ 'playlist', $action, $item->{'enclosure'}->{'url'}, $item->{'title'}, ] );
+
 	} else {
-		$client->showBriefly($item->{'title'},
-							 $client->string("PODCAST_NOTHING_TO_PLAY"));
+
+		$client->showBriefly($item->{'title'}, $client->string("PODCAST_NOTHING_TO_PLAY"));
 	}
-
 }
-
 
 sub getFeedViaHTTP {
 	my $client = shift;
-	my $url = shift;
-	my $cb = shift;
-	my $ecb = shift;
+	my $url    = shift;
+	my $cb     = shift;
+	my $ecb    = shift;
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&gotViaHTTP,
-													  \&gotErrorViaHTTP,
-													  {client => $client,
-													   cb => $cb,
-													   ecb => $ecb});
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&gotViaHTTP, \&gotErrorViaHTTP, {
+
+			client => $client,
+			cb     => $cb,
+			ecb    => $ecb
+	});
+
 	$::d_plugins && msg("Podcast: async request: $url\n");
+
 	$http->get($url);
 }
 
@@ -568,9 +636,7 @@ sub gotViaHTTP {
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($content, 
-						   forcearray => ["item", "outline"],
-						   keyattr => []) };
+	my $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
 
 	if ($@) {
 		$::d_plugins && msg("Podcast: failed to parse feed because:\n$@\n");
@@ -601,9 +667,7 @@ sub gotViaHTTP {
 	}
 
 	# cache feed to save time and effort next time we need it.
-	$feedCache->put($http->url(),
-					$feed,
-					Time::HiRes::time() + $default_cache_expiration);
+	$feedCache->put($http->url(), $feed, Time::HiRes::time() + $default_cache_expiration);
 
 	# call cb
 	gotFeed($params->{'client'}, $http->url(), $feed);
@@ -614,47 +678,52 @@ sub gotViaHTTP {
 sub parseRSS {
 	my $xml = shift;
 
-	my %feed;
-	$feed{'type'} = 'rss';
-	$feed{'items'} = ();
-
-	$feed{'title'} = unescapeAndTrim($xml->{channel}->{title});
-	$feed{'description'} = unescapeAndTrim($xml->{channel}->{description});
-	$feed{'lastBuildDate'} = unescapeAndTrim($xml->{channel}->{lastBuildDate});
-	$feed{'managingEditor'} = unescapeAndTrim($xml->{channel}->{managingEditor});
-	$feed{'xmlns:slim'} = unescapeAndTrim($xml->{'xmlsns:slim'});
-	# anything else worth grabbing?
+	my %feed = (
+		'type'           => 'rss',
+		'items'          => (),
+		'title'          => unescapeAndTrim($xml->{'channel'}->{'title'}),
+		'description'    => unescapeAndTrim($xml->{'channel'}->{'description'}),
+		'lastBuildDate'  => unescapeAndTrim($xml->{'channel'}->{'lastBuildDate'}),
+		'managingEditor' => unescapeAndTrim($xml->{'channel'}->{'managingEditor'}),
+		'xmlns:slim'     => unescapeAndTrim($xml->{'xmlsns:slim'}),
+	);
 
 	# some feeds (slashdot) have items at same level as channel
 	my $items;
-	if ($xml->{item}) {
-		$items = $xml->{item};
+
+	if ($xml->{'item'}) {
+		$items = $xml->{'item'};
 	} else {
-		$items = $xml->{channel}->{item};
+		$items = $xml->{'channel'}->{'item'};
 	}
 
 	my $count = 1;
-	for my $itemXML (@$items) {
-		my %item;
-		$item{'description'} = unescapeAndTrim($itemXML->{description});
-		$item{'title'} = unescapeAndTrim($itemXML->{title});
-		$item{'link'} = unescapeAndTrim($itemXML->{link});
-		$item{'slim:link'} = unescapeAndTrim($itemXML->{'slim:link'});
 
-		my $enclosure = $itemXML->{enclosure};
+	for my $itemXML (@$items) {
+
+		my %item = (
+			'description' => unescapeAndTrim($itemXML->{'description'}),
+			'title'       => unescapeAndTrim($itemXML->{'title'}),
+			'link'        => unescapeAndTrim($itemXML->{'link'}),
+			'slim:link'   => unescapeAndTrim($itemXML->{'slim:link'}),
+		);
+
+		my $enclosure = $itemXML->{'enclosure'};
 
 		if (ref $enclosure eq 'ARRAY') {
 			$enclosure = $enclosure->[0];
 		}
 
 		if ($enclosure) {
-			$item{'enclosure'}->{'url'} = trim($enclosure->{url});
-			$item{'enclosure'}->{'type'} = trim($enclosure->{type});
-			$item{'enclosure'}->{'length'} = trim($enclosure->{length});
+			$item{'enclosure'}->{'url'}    = trim($enclosure->{'url'});
+			$item{'enclosure'}->{'type'}   = trim($enclosure->{'type'});
+			$item{'enclosure'}->{'length'} = trim($enclosure->{'length'});
 		}
+
 		# this is a convencience for using INPUT.Choice later.
 		# it expects each item in it list to have some 'value'
 		$item{'value'} = $count++;
+
 		push @{$feed{'items'}}, \%item;
 	}
 
@@ -665,29 +734,41 @@ sub parseRSS {
 sub parseOPML {
 	my $xml = shift;
 
-	my %feed;
-	$feed{'type'} = 'opml';
-	$feed{'title'} = unescapeAndTrim($xml->{head}->{title});
-	$feed{'items'} = _parseOPMLOutline($xml->{body}->{outline});
-	return \%feed;
+	return {
+		'type'  => 'opml',
+		'title' => unescapeAndTrim($xml->{'head'}->{'title'}),
+		'items' => _parseOPMLOutline($xml->{'body'}->{'outline'}),
+	};
 }
 
 # recursively parse an OPML outline entry
 sub _parseOPMLOutline {
 	my $outlines = shift;
-	my @items;
+
+	my @items = ();
+
 	for my $itemXML (@$outlines) {
-		my %item;
-		# compatable with INPUT.Choice, which expects 'name' and 'value'
-		$item{'name'} = $itemXML->{text};
-		$item{'value'} = $itemXML->{url} || $itemXML->{text};
-		$item{'url'} = $itemXML->{url};
-		$item{'items'} = _parseOPMLOutline($itemXML->{outline});
-		push @items, \%item;
+
+		my $url = $itemXML->{'url'} || $itemXML->{'URL'};
+
+		# Some programs, such as OmniOutliner put garbage in the URL.
+		if ($url) {
+			$url =~ s/^.*?<(\w+:\/\/.+?)>.*$/$1/;
+		}
+
+		push @items, {
+
+			# compatable with INPUT.Choice, which expects 'name' and 'value'
+			'name'  => $itemXML->{'text'},
+			'value' => $url || $itemXML->{'text'},
+			'url'   => $url,
+			'type'  => $itemXML->{'type'},
+			'items' => _parseOPMLOutline($itemXML->{'outline'}),
+		};
 	}
+
 	return \@items;
 }
-
 
 #### Some routines for munging strings
 sub unescape {
@@ -745,7 +826,5 @@ sub unescapeAndTrim {
 
 	return $data;
 }
-
-
 
 1;
