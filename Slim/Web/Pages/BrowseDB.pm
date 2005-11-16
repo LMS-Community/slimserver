@@ -319,7 +319,7 @@ sub browsedb {
 				$list_form{'text'}        = $vaObj->name;
 				$list_form{'descend'}     = $descend;
 				$list_form{'hreftype'}    = 'browseDb';
-				$list_form{'hiearchy'}    = $hierarchy;
+				$list_form{'hierarchy'}    = $hierarchy;
 				$list_form{'level'}       = $level + 1;
 				$list_form{'odd'}         = ($itemnumber + 1) % 2;
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
