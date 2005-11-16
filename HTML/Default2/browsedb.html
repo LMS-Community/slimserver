@@ -2,7 +2,7 @@
 
 <p id="pagetitle">
  <a onclick="parent.browseurl('home.html?')">[% "HOME" | string %]</a>
- [% pwd_list %]
+ [% PROCESS crumblist %]
  [% IF song_count %]
  <span id="songcount">
  [% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
@@ -30,7 +30,12 @@
 [% END %]
 
 <table class="browsetable">
-[% browse_list %]
+[% IF browse_items %]
+	[% FOREACH item = browse_items %]
+		[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+		[% ELSE; PROCESS browsedbitems_list.html; END %]
+	[% END %]
+[% ELSE; browse_list; END %]
 </table>
 
 <p class="pagebar">
