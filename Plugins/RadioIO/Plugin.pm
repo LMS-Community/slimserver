@@ -232,6 +232,8 @@ package Plugins::RadioIO::ProtocolHandler;
 use strict;
 use base  qw(Slim::Player::Protocols::HTTP);
 
+use Scalar::Util qw(blessed);
+
 use Slim::Formats::Parse;
 use Slim::Player::Source;
 
