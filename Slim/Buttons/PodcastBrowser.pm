@@ -283,11 +283,7 @@ sub browseOPML {
 			my $client = shift;
 			my $item   = shift;
 
-			if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
-
-				playItem($client, $item);
-
-			} elsif ($item->{'value'} && !scalar @{$item->{'items'}}) {
+			if ($item->{'value'} && !scalar @{$item->{'items'}}) {
 
 				# follow a link
 				my %params = (
@@ -295,7 +291,7 @@ sub browseOPML {
 					title => $item->{'name'},
 				);
 
-				Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+				Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);
 
 			} elsif ($item->{'items'}) {
 
@@ -306,20 +302,15 @@ sub browseOPML {
 
 				$client->bumpRight();
 			}
+
+			$client->update;
 		},
 
 		onPlay  => sub {
 			my $client = shift;
 			my $item   = shift;
 
-			if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
-
-				playItem($client, $item);
-
-			} else {
-
-				$client->bumpRight();
-			}
+			playItem($client, $item);
 		},
 
 		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
