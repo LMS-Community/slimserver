@@ -85,7 +85,7 @@ sub getFeedAsync {
 
 	# give user feedback while loading
 	$client->block(
-		$client->string('PODCAST_LOADING'),
+		$client->string( $client->param('header') || 'PODCAST_LOADING' ),
 		$client->param('title') || $url,
 	);
 
@@ -652,7 +652,7 @@ sub gotViaHTTP {
 
 	# convert XML into data structure
 	my $feed;
-	if ($xml && $xml->{body} && $xml->{body}->{outline}) {
+	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
 		# its OPML outline
 		$feed = parseOPML($xml);
 	} else {
