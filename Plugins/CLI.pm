@@ -235,6 +235,7 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'outbuff'} = ();
 			$connections{$client_socket}{'listen'} = 0;
 			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
+			$connections{$client_socket}{'terminator'} = $LF;
 
 			$::d_cli && msg("CLI: Accepted connection from ". $connections{$client_socket}{'id'} . " (" . (scalar keys %connections) . " active connections)\n");
 		} 
@@ -314,28 +315,24 @@ sub client_socket_buf_parse {
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)	
 	while ($connections{$client_socket}{'inbuff'}) {
 
-#		my $str;
-#		for (my $i = 0; $i < length($connections{$client_socket}{'inbuff'}); $i++) {
-#			$str .= ord(substr($connections{$client_socket}{'inbuff'}, $i, 1)) . " ";
-#		}
-#		print("Buffer: $str\n");
-
-		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)[$CR|$LF|$CR$LF]+(.*)/s) {
-
-#		my $str;
-#		for (my $i = 0; $i < length($1); $i++) {
-#			$str .= ord(substr($1, $i, 1)) . " ";
-#		}
-#		print("     1: $str\n");
-#		$str = "";
-#		for (my $i = 0; $i < length($2); $i++) {
-#			$str .= ord(substr($2, $i, 1)) . " ";
-#		}
-#		print("     2: $str\n");
-
+		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)([$CR|$LF|$CR$LF|\x0]+)(.*)/s) {
+			
+			# $1 : command
+			# $2 : terminator used
+			# $3 : rest of buffer
 
 			# Keep the leftovers for the next run...
-			$connections{$client_socket}{'inbuff'} = $2;
+			$connections{$client_socket}{'inbuff'} = $3;
+
+			# Remember the terminator used
+			$connections{$client_socket}{'terminator'} = $2;
+			if ($::d_cli) {
+				my $str;
+				for (my $i = 0; $i < length($2); $i++) {
+					$str .= ord(substr($2, $i, 1)) . " ";
+				}
+				msg("CLI: using terminator $str\n");
+			}
 
 			# Process the command
 			# Indicate busy so that any incoming data is buffered and not parsed
@@ -680,7 +677,7 @@ sub cli_response_write {
 	my $output = join " ",  @{$connections{$client_socket}{'response'}};
 	$::d_cli && msg("CLI: Response: " . $output . "\n");
 	
-	client_socket_buffer($client_socket, $output . $LF);
+	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
 
 
@@ -712,7 +709,7 @@ sub cli_executeCallback {
 		chop($output);
 		
 		# send to client
-		client_socket_buffer($client_socket, $output . $LF);
+		client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 
 		# not sure why client_socket_write would be needed here
 #		client_socket_write($client_socket);
@@ -1452,6 +1449,14 @@ SETUP_CLIPORT_OK
 
 ";
 }
+
+
+#		my $str;
+#		for (my $i = 0; $i < length($1); $i++) {
+#			$str .= ord(substr($1, $i, 1)) . " ";
+#		}
+#		print("     1: $str\n");
+
 
 
 1;

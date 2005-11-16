@@ -16,9 +16,9 @@
 	systems.</p>
 
 <p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
-	hexadecimal 0x0A). The server accepts LF or CR (or any combination
-	thereof) as end of line, but always terminates replies with LF. For
-	strings, SlimServer uses the UTF-8 charset. Some extended queries allow
+	hexadecimal 0x0A). The server accepts LF, CR or 0x00 (or any combination
+	thereof) as end of line, and replies with whatever was used for the command.
+	For strings, SlimServer uses the UTF-8 charset. Some extended queries allow
 	to return data in a different charset.</p>
 
 <p>To use the command line interface interactively, use the telnet
@@ -41,6 +41,10 @@
 <ul>
 <li>The Command Line Interface is now a plugin. It can be disabled if not
 	used.</li>
+</ul>
+<li>0x00 is now a valid end of line / command separator. In addition, the
+	server replies with whatever combination of CR, LF and 0x00 was used in
+	the query.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
