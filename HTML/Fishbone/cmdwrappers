@@ -4,7 +4,7 @@
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-	<p><a [% content %] [% UNLESS noTarget %]target="[% IF target; target; ELSE %]status[% END %]"[% END %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 align="center" height="11"  alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]' onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
+	<p><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 align="center" height="11"  alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]' onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
 </td>
 [% END %]
 
@@ -92,6 +92,7 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
+	[% width='9' height='11' target='status' %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           %][% END %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         %][% END %]
 	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind %][% END %]
@@ -100,7 +101,7 @@
 [% END %]
 
 [% BLOCK browsecontrols %]
-	[% class='listing' width='9' height='11' target='status' %]
+	[% width='9' height='11' target='status' %]
 	[% WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END %]
 	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
 	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
