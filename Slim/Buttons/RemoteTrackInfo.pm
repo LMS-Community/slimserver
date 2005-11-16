@@ -1,16 +1,17 @@
 package Slim::Buttons::RemoteTrackInfo;
 
+# $Id$
+
 # SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-
 use strict;
 use Slim::Buttons::Common;
-#use Slim::Buttons::Input::Choice;
+use Slim::Music::Info;
+use Slim::Utils::Favorites;
 use Slim::Utils::Misc;
-
 
 sub init {
 	Slim::Buttons::Common::addMode('remotetrackinfo', {}, \&setMode);
@@ -25,18 +26,19 @@ sub setMode {
 		return;
 	}
 
-	my $url = $client->param('url');
-
-	my @list;
+	my $url  = $client->param('url');
+	my @list = ();
 
 	# TODO: use client specific title format?
 	my $title = $client->param('title') || Slim::Music::Info::standardTitle($client, $url);
+
 	push @list, "{TITLE}: $title" unless $client->param('hideTitle');
 
 	push @list, "{URL}: $url" unless $client->param('hideURL');
 
 	# include any special (plugin-specific details)
 	my $details = $client->param('details');
+
 	for my $item (@{$details}) {
 		push @list, $item;
 	}
@@ -58,6 +60,7 @@ sub setMode {
 				return "{FAVORITES_RIGHT_TO_ADD}";
 			}
 		},
+
 		onRight => sub {
 			my $client = shift;
 			my $num = $client->param('favorite');
@@ -68,8 +71,7 @@ sub setMode {
 			} else {
 				$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
 				$client->param('favorite', $num);
-				$client->showBriefly($client->string('FAVORITES_ADDING'),
-									 $client->param('title'));
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $client->param('title'));
 			}
 		}
 	};
@@ -91,27 +93,21 @@ sub setMode {
 
 			my $station = $client->param('url');
 
-			Slim::Control::Command::execute( $client,
-											 [ 'playlist', 'play', $station ] );
+			$client->execute( [ 'playlist', 'play', $station ] );
 		},
+
 		onAdd => sub {
 			my $client = shift;
 
 			my $station = $client->param('url');
 
-			Slim::Control::Command::execute( $client,
-											 [ 'playlist', 'add', $station ] );
+			$client->execute( [ 'playlist', 'add', $station ] );
 		},
-		onRight => $client->param('onRight'), # passthrough
 
+		onRight => $client->param('onRight'), # passthrough
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
 1;
-
-
-
-
-
