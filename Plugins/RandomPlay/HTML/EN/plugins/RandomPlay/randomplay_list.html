@@ -191,6 +191,12 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 				[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
 				<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
 				[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
+				<br>
+				<label>
+				  <input class="stdedit" type="checkbox" name="continuousMode" value="1"
+					[% IF pluginRandomContinuousMode %]checked[% END %]>
+				  [% "PLUGIN_RANDOM_CONTINUOUS_MODE" | string %]
+			  </label>
 			</td>
 		</tr>
 

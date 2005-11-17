@@ -176,6 +176,8 @@ sub playRandom {
 
 	$type ||= 'track';
 	$type   = lc($type);
+	# Whether to keep adding tracks after generating the initial playlist
+	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');;
 	
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
@@ -283,15 +285,18 @@ sub playRandom {
 		}
 		$type{$client} = undef;
 	} else {
-		$::d_plugins && msgf("RandomPlay: Playing continuous %s mode with %i items\n",
+		$::d_plugins && msgf("RandomPlay: Playing %s %s mode with %i items\n",
+							 $continuousMode ? 'continuous' : 'static',
 							 $type,
 							 Slim::Player::Playlist::count($client));
-		Slim::Control::Command::setExecuteCallback(\&commandCallback);
-		
-		# Do this last to prevent menu items changing too soon
-		$type{$client} = $type;
-		# Make sure that changes in menu items are displayed
-		#$client->update();
+
+		if ($continuousMode) {
+			# Watch out for songs ending in order to add new songs
+			Slim::Control::Command::setExecuteCallback(\&commandCallback);
+
+			# Record current mix type.  Do this last to prevent menu items changing too soon
+			$type{$client} = $type;
+		}
 	}
 }
 
@@ -307,7 +312,7 @@ sub getDisplayText {
 			year   => 'PLUGIN_RANDOM_YEAR',
 			genreFilter => 'PLUGIN_RANDOM_GENRE_FILTER'
 		)
-	}		
+	}	
 	# if showing the current mode, show altered string
 	if ($item eq $type{$client}) {
 		return string($displayText{$item} . '_PLAYING');
@@ -478,7 +483,7 @@ sub commandCallback {
 	# we dont care about generic ir blasts
 	return if $slimCommand eq 'ir';
 
-	$::d_plugins && msgf("RandomPlay: received command %s\n", join(' ', @$paramsRef));
+	#$::d_plugins && msgf("RandomPlay: received command %s\n", join(' ', @$paramsRef));
 
 	if (!defined $client || !defined $type{$client}) {
 
@@ -489,15 +494,15 @@ sub commandCallback {
 		return;
 	}
 	
-	$::d_plugins && msgf("RandomPlay: while in mode: %s, from %s\n",
-						 $type{$client}, $client->name);
+	#$::d_plugins && msgf("RandomPlay: while in mode: %s, from %s\n",
+	#					 $type{$client}, $client->name);
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 
 	if ($slimCommand eq 'newsong'
 		|| $slimCommand eq 'playlist' && $paramsRef->[1] eq 'delete' && $paramsRef->[2] > $songIndex) {
 
-		if ($::d_plugins) {
+        if ($::d_plugins) {
 			if ($slimCommand eq 'newsong') {
 				msg("RandomPlay: new song detected ($songIndex)\n");
 			} else {
@@ -601,7 +606,9 @@ sub handleWebList {
 	$params->{'pluginRandomGenreList'} = {getGenres($client)};
 	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+	$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
 	$params->{'pluginRandomNowPlaying'} = $type{$client};
+	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
 
@@ -643,6 +650,7 @@ sub handleWebSettings {
 	} else {
 		$::d_plugins && msg("RandomPlay: Invalid value for numOldTracks\n");
 	}
+	Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', $params->{'continuousMode'} ? 1 : 0);
 
 	# Pass on to check if the user requested a new mix as well
 	handleWebMix($client, $params);
@@ -660,6 +668,12 @@ sub checkDefaults {
 		# Default to keeping all tracks
 		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_old_tracks to ''\n");
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
+	}
+
+	if (! defined Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks')) {
+		# Default to continous mode
+		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_keep_adding_tracks to 1\n");
+		Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', 1);
 	}
 
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_exclude_genres')) {
@@ -813,6 +827,9 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	DE	wiedergegebene Lieder anzeigen.
 	EN	recently played songs.
 	ES	canciones escuchadas recientemente.
+
+PLUGIN_RANDOM_CONTINUOUS_MODE
+	EN	Keep adding new stuff.
 
 PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
