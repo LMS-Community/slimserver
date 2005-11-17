@@ -938,6 +938,7 @@ ALARM_SET_VOLUME_SHORT
 	ZH_CN	闹钟音量：
 
 ALARM_FADE
+	DE	Wecker einblenden
 	EN	Alarm Fade-in
 
 ALARM_SET_ENTRY
@@ -1602,6 +1603,7 @@ SETUP_GROUP_ALARM
 	ZH_CN	闹钟
 
 SETUP_GROUP_ALARM_DESC
+	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist. Sie können auch festlegen, dass der Wecker über 20 Sekunden eingeblendet wird.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
 
 SETUP_GROUP_IRSETS
