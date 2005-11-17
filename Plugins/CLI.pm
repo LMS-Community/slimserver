@@ -671,7 +671,7 @@ sub cli_response_write {
 		
 	foreach my $elem (@{$connections{$client_socket}{'response'}}) {
 		$elem = Slim::Utils::Unicode::utf8encode($elem, $encoding);
-		$elem = URI::Escape::uri_escape($elem);
+		$elem = URI::Escape::uri_escape_utf8($elem);
 	}
 	
 	my $output = join " ",  @{$connections{$client_socket}{'response'}};
