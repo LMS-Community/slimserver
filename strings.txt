@@ -937,6 +937,9 @@ ALARM_SET_VOLUME_SHORT
 	SE	Väckningsvolym
 	ZH_CN	闹钟音量：
 
+ALARM_FADE
+	EN	Alarm Fade-in
+
 ALARM_SET_ENTRY
 	CZ	Čas buzení
 	DE	Stellen der Weckzeit
@@ -1599,9 +1602,7 @@ SETUP_GROUP_ALARM
 	ZH_CN	闹钟
 
 SETUP_GROUP_ALARM_DESC
-	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist.
-	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week.
-	ES	Este reproductor puede tener hasta 8 alarmas: una alarma que suena todos los días, y una alarma individual para cada día de la semana.
+	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
 
 SETUP_GROUP_IRSETS
 	CZ	Dálkové ovládání

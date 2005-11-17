@@ -976,36 +976,21 @@ sub validMode {
 	return exists $modes{$mode} ? 1 : 0;
 }
 
+# standard UI feature enable/disable a setting
+sub checkBoxOverlay {
+	my $value = shift;
+	
+	return $value ? "[X]" : "[ ]";
+}
+
 sub param {
 	my $client = shift;
 	return $client->param(@_);
-#	my $name   = shift;
-#	my $value  = shift;
-#
-#	my $mode   = $client->modeParameterStack(-1) || return undef;
-#
-#	if (defined $value) {
-#
-#		$mode->{$name} = $value;
-#
-#	} else {
-#
-#		return $mode->{$name};
-#	}
 }
 
 sub paramOrPref {
 	my $client = shift;
 	return $client->paramOrPref(@_);
-#	my $name   = shift;
-#
-#	my $mode   = $client->modeParameterStack(-1) || return undef;
-#
-#	if (defined $mode && defined $mode->{$name}) {
-#		return $mode->{$name};
-#	}
-#
-#	return $client->prefGet($name);
 }
 
 # pushMode takes the following parameters:

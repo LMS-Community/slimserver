@@ -20,7 +20,8 @@ use Slim::Utils::Misc;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
-my $interval = 1; # check every x seconds
+my $interval    = 1;  # check every x seconds
+my $FADESECONDS = 20; # fade-in of 20 seconds
 
 my (%functions, %menuSelection, %specialPlaylists);
 
@@ -199,6 +200,20 @@ sub init {
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Bar',\%params);
 
+			# choice is alarm fade time setting.  create params and enter the bar input mode.
+			} elsif ($menuChoice eq 'ALARM_FADE') {
+
+				my $newval;
+				if ($client->prefGet("alarmfadeseconds")) {
+					$newval = 0;
+				} else {
+					$newval = 1;
+				}
+				
+				$client->prefSet("alarmfadeseconds", $newval);
+
+				$client->update();
+
 			# choice is weekday alarms.  create params and enter the list input mode.
 			# creates a list of days, so that pressing right on a day re-enters alarm menu system with the specific day set.
 			} elsif ($menuChoice eq 'ALARM_WEEKDAYS') {
@@ -275,6 +290,15 @@ sub setMode {
 	# create a preset time if none is found.
 	unless (defined $time) {
 		$client->prefSet("alarmtime", 9 * 60 * 60, $weekDay);
+	}
+	
+	# entering alarm settings, add teh fade timing global pref unless already there
+	if (!defined $client->param('day')) {
+		push @browseMenuChoices, 'ALARM_FADE' unless $browseMenuChoices[-1] eq 'ALARM_FADE';
+	
+	# remove for weekday pref menus
+	} elsif($browseMenuChoices[-1] eq 'ALARM_FADE') {
+		pop @browseMenuChoices;
 	}
 }
 
@@ -365,8 +389,8 @@ sub checkAlarms {
 					$client->execute(["mixer", "volume", $volume]);
 				}
 
-				# fade volume over time
-				$client->fade_volume($client->prefGet("alarmfadeseconds", $day));
+				# fade volume over 20s if enabled.
+				$client->fade_volume($client->prefGet("alarmfadeseconds") * $FADESECONDS);
 
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
@@ -463,6 +487,8 @@ sub lines {
 	my $line2;
 	my $max;
 	
+	my $overlay2 =  $client->symbols('rightarrow');
+	
 	# create line 1, showing the chosen weekday if applicable
 	if ($weekDay) {
 		$line1 = sprintf('%s - %s', $client->string('ALARM_WEEKDAYS'), $client->string("ALARM_DAY$weekDay"));
@@ -481,11 +507,15 @@ sub lines {
 	} else {
 		$line2 = $client->string($browseMenuChoices[$index]);
 	}
+	
+	if ($browseMenuChoices[$index] eq 'ALARM_FADE') {
+		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet("alarmfadeseconds"));
+	}
 
 	return {
 		'line1'   => $line1,
 		'line2'   => $line2,
-		'overlay2' => $client->symbols('rightarrow'),
+		'overlay2' => $overlay2,
 	};
 }
 

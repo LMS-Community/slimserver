@@ -843,14 +843,21 @@ sub initSetupConfig {
 		,'GroupOrder' => ['AlarmClock','AlarmDay0','AlarmDay1','AlarmDay2','AlarmDay3','AlarmDay4','AlarmDay5','AlarmDay6','AlarmDay7']
 		,'Groups' => {
 			'AlarmClock' => {
-				'PrefOrder' => undef
+				'PrefOrder' => ['alarmfadeseconds']
 				,'GroupHead' => string('SETUP_GROUP_ALARM')
 				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
 				,'GroupLine' => 1
+				,'Suppress_PrefLine' => 1
+				,'Suppress_PrefHead' => 1
 			}
 		}
 		,'Prefs' => {
-		undef
+			'alarmfadeseconds' => {
+				'validate' => \&validateTrueFalse,
+				'PrefChoose' => string('ALARM_FADE').string('COLON'),
+				'changeIntro' => string('ALARM_FADE').string('COLON'),
+				'inputTemplate' => 'setup_input_chk.html',
+			}
 		},
 	}
 	,'audio' => {
