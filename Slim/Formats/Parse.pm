@@ -465,9 +465,9 @@ sub parseCUE {
 
 		$::d_parse && msg("    URL: " . $track->{'URI'} . "\n");
 
-		# Ensure that we have a CT
-		if (!defined $track->{'CT'}) {
-			$track->{'CT'} = Slim::Music::Info::typeFromPath($file, 'mp3');
+		# Ensure that we have a CONTENT_TYPE
+		if (!defined $track->{'CONTENT_TYPE'}) {
+			$track->{'CONTENT_TYPE'} = Slim::Music::Info::typeFromPath($file, 'mp3');
 		}
 
 		$track->{'TRACKNUM'} = $key;
@@ -576,7 +576,7 @@ sub readCUE {
 			$basetrack = $ds->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
 				'attributes' => {
-					'CT'    => 'cur',
+					'CONTENT_TYPE'    => 'cur',
 					'AUDIO' => 0
 				},
 				'readTags'   => 1,
