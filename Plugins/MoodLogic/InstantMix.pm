@@ -8,7 +8,9 @@ package Plugins::MoodLogic::InstantMix;
 # version 2.
 
 use strict;
+
 use Slim::Buttons::Common;
+use Slim::Music::TitleFormatter;
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 
@@ -119,7 +121,7 @@ sub lines {
 	
 	$line1 .= sprintf(" (%d ".$client->string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
 
-	my $line2 = Slim::Music::Info::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
+	my $line2 = Slim::Music::TitleFormatter::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
 
 	return {
 		'line1'    => $line1,
