@@ -21,26 +21,25 @@ CREATE TABLE tracks (
   titlesearch varchar,     -- version of title used for searching
   album integer,           -- album object
   tracknum integer,        -- track number in album
-  ct varchar,              -- content type of track
+  content_type varchar,    -- content type of track
   tag integer,             -- have we read the tags yet
-  age integer,             -- timestamp for listing
-  fs integer,              -- file size in bytes
-  size integer,            -- audio size in bytes
-  offset integer,          -- offset to start of track
+  timestamp integer,       -- timestamp for listing
+  filesize integer,        -- file size in bytes
+  audio_size integer,      -- audio size in bytes
+  audio_offset integer,    -- offset to start of track
   year integer,            -- year
   secs integer,            -- total seconds
   cover varchar,           -- cover art
   thumb varchar,           -- thumbnail cover art
   vbr_scale varchar,       -- vbr/cbr
   bitrate integer,         -- bitrate
-  rate integer,            -- sample rate
+  samplerate integer,      -- sample rate
   samplesize integer,      -- sample size
   channels integer,        -- number of channels
-  blockalign integer,      -- block alignment
+  block_alignment integer, -- block alignment
   endian integer,          -- 0 - little endian, 1 - big endian
   bpm integer,             -- beats per minute
   tagversion varchar,      -- ID3 tag version
-  tagsize integer,         -- tagsize
   drm integer,             -- DRM enabled
   rating integer,          -- track rating - placeholder
   disc integer,            -- album number in set
@@ -65,7 +64,7 @@ CREATE INDEX trackTitleIndex ON tracks (title);
 
 CREATE INDEX trackAlbumIndex ON tracks (album);
 
-CREATE INDEX ctSortIndex ON tracks (ct);
+CREATE INDEX ctSortIndex ON tracks (content_type);
 
 CREATE INDEX trackSortIndex ON tracks (titlesort);
 

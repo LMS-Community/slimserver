@@ -97,6 +97,7 @@ sub add {
 
 			# This combination already exists in the db - don't re(create) it.
 			if (defined $contributorTrackObj) {
+				push @contributors, $contributorObj;
 				next;
 			}
 

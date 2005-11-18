@@ -18,8 +18,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->has_a(genre => 'Slim::DataStores::DBI::Genre');
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');
-
-	$class->add_constructor('genresFor' => 'track = ?');
 }
 
 1;

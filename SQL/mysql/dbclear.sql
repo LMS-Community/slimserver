@@ -1,3 +1,5 @@
+SET foreign_key_checks = 0;
+
 UPDATE metainformation set track_count = 0;
 
 UPDATE metainformation set total_time = 0;
@@ -23,3 +25,5 @@ DELETE FROM genre_track;
 DELETE FROM comments;
 
 DELETE FROM pluginversion;
+
+SET foreign_key_checks = 1;

@@ -257,7 +257,7 @@ sub artScan {
 
 	if (defined $album && $album =~ /^\d+$/) {
 
-		my $track = $ds->objectForId('track', $artwork{$album}); 
+		my $track = $ds->objectForId('lightweighttrack', $artwork{$album}); 
 
 		# Make sure we have an object for the url, and it has a thumbnail.	 
 		if (blessed($track) && $track->can('coverArt') && $track->coverArt('thumb')) {

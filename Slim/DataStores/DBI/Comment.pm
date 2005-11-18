@@ -15,8 +15,6 @@ use base 'Slim::DataStores::DBI::DataModel';
 	$class->columns(Essential => qw/track value/);
 
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');
-
-	$class->add_constructor('commentsOf' => 'track = ?');
 }
 
 1;

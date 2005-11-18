@@ -4,76 +4,26 @@ package Slim::DataStores::DBI::Track;
 
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
+
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 
-# Map the database column to the accessor name. Not quite sure why we did it this way..
-our %primaryColumns = (
-	'id' => 'id',
-);
+our @allColumns = (qw(
+	id url content_type title titlesort titlesearch album tracknum timestamp
+	filesize tag disc thumb remote audio multialbumsortkey audio_size audio_offset
+	year secs cover vbr_scale bitrate samplerate samplesize channels block_alignment
+	endian bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
+	musicbrainz_id playCount lastPlayed lossless lyrics replay_gain replay_peak
+));
 
-our %essentialColumns = (
-	'url' => 'url',
-	'ct' => 'content_type',
-	'title' => 'title',
-	'titlesort' => 'titlesort',
-	'album' => 'album',
-	'tracknum' => 'tracknum',
-	'age' => 'timestamp',
-	'fs' => 'filesize',
-	'tag' => 'tag',
-	'disc' => 'disc',
-	'thumb' => 'thumb',
-	'remote' => 'remote',
-	'audio' => 'audio',
-	'multialbumsortkey' => 'multialbumsortkey',
-);
-
-our %otherColumns = (
-	'size' => 'audio_size',
-	'offset' => 'audio_offset',
-	'year' => 'year',
-	'secs' => 'secs',
-	'cover' => 'cover',
-	'vbr_scale' => 'vbr_scale',
-	'bitrate' => 'bitrate',
-	'rate' => 'samplerate',
-	'samplesize' => 'samplesize',
-	'channels' => 'channels',
-	'blockalign' => 'block_alignment',
-	'endian' => 'endian',
-	'bpm' => 'bpm',
-	'tagversion' => 'tagversion',
-	'tagsize' => 'tagsize',
-	'drm' => 'drm',
-	'moodlogic_id' => 'moodlogic_id',
-	'moodlogic_mixable' => 'moodlogic_mixable',
-	'musicmagic_mixable' => 'musicmagic_mixable',
-	'musicbrainz_id' => 'musicbrainz_id',
-	'playCount' => 'playCount',
-	'lastPlayed' => 'lastPlayed',
-	'lossless' => 'lossless',
-	'titlesearch' => 'titlesearch',
-	'lyrics' => 'lyrics',
-	'replay_gain' => 'replay_gain',
-	'replay_peak' => 'replay_peak',
-);
-
-our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
-
-{
+INIT: {
 	my $class = __PACKAGE__;
 
 	$class->table('tracks');
 
-	$class->columns(Primary => keys %primaryColumns);
-	$class->columns(Essential => keys %essentialColumns);
-	#$class->columns(Essential => keys %allColumns);
-
-	# Combine essential and other for now for performance, at the price of
-	# larger in-memory object size
-	$class->columns(Others => keys %otherColumns);
+	$class->columns(Primary => 'id');
+	$class->columns(Essential => @allColumns);
 	$class->columns(Stringify => qw/url/);
 
 	# setup our relationships
@@ -90,24 +40,10 @@ our %allColumns = ( %primaryColumns, %essentialColumns, %otherColumns );
 	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
 }
 
-our $loader;
-
-sub setLoader {
-	my $class = shift;
-
-	$loader = shift;
-}
-
 sub attributes {
 	my $class = shift;
 
-	return \%allColumns;
-}
-
-sub accessor_name {
-	my ($class, $column) = @_;
-	
-	return $allColumns{$column};
+	return { map { $_ => 1 } @allColumns };
 }
 
 sub albumid {

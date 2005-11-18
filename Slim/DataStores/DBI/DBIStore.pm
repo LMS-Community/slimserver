@@ -22,6 +22,7 @@ use Tie::Cache::LRU::Expires;
 use Slim::DataStores::DBI::DataModel;
 
 use Slim::DataStores::DBI::Album;
+use Slim::DataStores::DBI::Comment;
 use Slim::DataStores::DBI::Contributor;
 use Slim::DataStores::DBI::ContributorAlbum;
 use Slim::DataStores::DBI::Genre;
@@ -67,6 +68,17 @@ my %typeToClass = (
 	'genre'  => 'Slim::DataStores::DBI::Genre',
 );
 
+# Map the tags we get from metadata onto the database
+my %tagMapping = (
+	'size'       => 'audio_size',
+	'offset'     => 'audio_offset',
+	'rate'       => 'samplerate',
+	'age'        => 'timestamp',
+	'ct'         => 'content_type',
+	'fs'         => 'filesize',
+	'blockalign' => 'block_alignment',
+);
+
 #
 # Readable DataStore interface methods:
 #
@@ -90,7 +102,6 @@ sub new {
 
 	bless $self, $class;
 
-	Slim::DataStores::DBI::Track->setLoader($self);
 	Slim::DataStores::DBI::DataModel->db_Main(1);
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
@@ -500,11 +511,13 @@ sub newTrack {
 	# Walk our list of valid attributes, and turn them into something ->create() can use.
 	while (my ($key, $val) = each %$attributeHash) {
 
-		if (defined $val && exists $trackAttrs->{lc $key}) {
+		$key = lc($key);
+
+		if (defined $val && exists $trackAttrs->{$key}) {
 
 			$::d_info && msg("Adding $url : $key to $val\n");
 
-			$columnValueHash->{lc $key} = $val;
+			$columnValueHash->{$key} = $val;
 		}
 	}
 
@@ -590,7 +603,7 @@ sub updateOrCreate {
 		# 
 		# Bug: 2335 - readTags is set in Slim::Formats::Parse - when
 		# we create/update a cue sheet to have a CT of 'cur'
-		if ($readTags && $track->audio && !$track->remote && $attributeHash->{'CT'} ne 'cur') {
+		if ($readTags && $track->audio && !$track->remote && $attributeHash->{'CONTENT_TYPE'} ne 'cur') {
 
 			$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 		}
@@ -602,7 +615,9 @@ sub updateOrCreate {
 
 		while (my ($key, $val) = each %$attributeHash) {
 
-			if (defined $val && $val ne '' && exists $trackAttrs->{lc $key}) {
+			$key = lc($key);
+
+			if (defined $val && $val ne '' && exists $trackAttrs->{$key}) {
 
 				$::d_info && msg("Updating $url : $key to $val\n");
 
@@ -627,8 +642,8 @@ sub updateOrCreate {
 		});
 	}
 
-	if ($attributeHash->{'CT'}) {
-		$contentTypeCache{$url} = $attributeHash->{'CT'};
+	if ($attributeHash->{'CONTENT_TYPE'}) {
+		$contentTypeCache{$url} = $attributeHash->{'CONTENT_TYPE'};
 	}
 
 	return $track;
@@ -988,8 +1003,6 @@ sub wipeCaches {
 sub wipeAllData {
 	my $self = shift;
 
-	$self->forceCommit;
-
 	# clear the references to these singletons
 	$_unknownArtist = '';
 	$_unknownGenre  = '';
@@ -1105,7 +1118,7 @@ sub getPlaylists {
 	return () unless (scalar @playlists);
 
 	# Add search criteria for playlists
-	$find->{'ct'} = \@playlists;
+	$find->{'content_type'} = \@playlists;
 		
 	# Add title search if any
 	$find->{'track.titlesearch'} = $search if (defined $search);
@@ -1214,11 +1227,11 @@ sub readTags {
 
 	if (-e $filepath) {
 		# cache the file size & date
-		($attributesHash->{'FS'}, $attributesHash->{'AGE'}) = (stat($filepath))[7,9];
+		($attributesHash->{'FILESIZE'}, $attributesHash->{'TIMESTAMP'}) = (stat($filepath))[7,9];
 	}
 
 	# Only set if we couldn't read it from the file.
-	$attributesHash->{'CT'} ||= $type;
+	$attributesHash->{'CONTENT_TYPE'} ||= $type;
 
 	# note that we've read in the tags.
 	$attributesHash->{'TAG'} = 1;
@@ -1453,6 +1466,15 @@ sub _preCheckAttributes {
 
 	# Copy the incoming hash, so we don't modify it
 	my $attributes = { %$attributeHash };
+
+	# Normalize attribute names
+	while (my ($key, $val) = each %$attributes) {
+
+		if (exists $tagMapping{$key}) {
+
+			$attributes->{ $tagMapping{$key} } = delete $attributes->{$key};
+		}
+	}
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};

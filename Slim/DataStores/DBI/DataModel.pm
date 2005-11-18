@@ -149,11 +149,11 @@ sub db_Main {
 
 	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
 
-	$::d_info && msg("Metadata database saving into: $dbname\n");
-
 	my $source = sprintf(Slim::Utils::Prefs::get('dbsource'), $dbname);
 	my $username = Slim::Utils::Prefs::get('dbusername');
 	my $password = Slim::Utils::Prefs::get('dbpassword');
+
+	$::d_info && msg("Metadata database saving into: $source\n");
 
 	$dbh = DBI->connect($source, $username, $password, { 
 		RaiseError => 1,
@@ -164,7 +164,7 @@ sub db_Main {
 	});
 
 	# Not much we can do if there's no DB.
-	unless ($dbh) {
+	if (!$dbh) {
 		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
 		bt();
 		exit;
@@ -201,6 +201,7 @@ sub db_Main {
 	} while ($nextversion);
 	
 	if (!defined($version)) {
+
 		$::d_info && msg("Creating new database.\n");
 		$class->executeSQLFile("dbcreate.sql");
 	}
@@ -345,14 +346,18 @@ our %searchFieldMap = (
 	'track.titlesort' => 'tracks.titlesort', 
 	'track.titlesearch' => 'tracks.titlesearch', 
 	'tracknum' => 'tracks.tracknum', 
-	'ct' => 'tracks.ct', 
-	'age' => 'tracks.age', 
-	'size' => 'tracks.size', 
+	'ct' => 'tracks.content_type', 
+	'content_type' => 'tracks.content_type',
+	'age' => 'tracks.timestamp', 
+	'timestamp' => 'tracks.timestamp', 
+	'size' => 'tracks.audio_size', 
+	'audio_size' => 'tracks.audio_size',
 	'year' => 'tracks.year', 
 	'secs' => 'tracks.secs', 
 	'vbr_scale' => 'tracks.vbr_scale',
 	'bitrate' => 'tracks.bitrate', 
-	'rate' => 'tracks.rate', 
+	'rate' => 'tracks.samplerate', 
+	'samplerate' => 'tracks.samplerate',
 	'samplesize' => 'tracks.samplesize', 
 	'channels' => 'tracks.channels', 
 	'bpm' => 'tracks.bpm', 
