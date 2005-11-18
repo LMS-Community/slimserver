@@ -30,16 +30,16 @@ my %tagMapping = (
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
 sub getTag {
-
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	my $mpc = Audio::Musepack->new($file);
 
 	my $tags = $mpc->tags() || {};
 
 	# Check for the presence of the info block here
-	unless (defined $mpc->{'bitRate'}) {
-		return undef;
+	if (!defined $mpc->{'bitRate'}) {
+		return {};
 	}
 
 	# There should be a TITLE tag if the APE tags are to be trusted

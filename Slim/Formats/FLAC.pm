@@ -52,7 +52,8 @@ my $ESCIENT_ARTWORK = 1163084622;
 # Choose between returning a standard tag
 # or parsing through an embedded cuesheet
 sub getTag {
-	my $file   = shift || "";
+	my $class  = shift;
+	my $file   = shift || return {};
 	my $anchor = shift || "";
 
 	my $flac   = Audio::FLAC::Header->new($file) || do {

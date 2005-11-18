@@ -18,15 +18,19 @@ my %tagMapping = (
 	'ENCRYPTED' => 'DRM',
 );
 
-if ($] > 5.007) {
-
-	MP4::Info::use_mp4_utf8(1)
-}
-
 my $tagCache = [];
 
+INIT: {
+
+	if ($] > 5.007) {
+
+		MP4::Info::use_mp4_utf8(1)
+	}
+}
+
 sub getTag {
-	my $file = shift || return {};
+	my $class = shift;
+	my $file  = shift || return {};
 
 	my $tags = MP4::Info::get_mp4tag($file) || {};
 

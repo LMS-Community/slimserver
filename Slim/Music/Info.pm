@@ -57,75 +57,10 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
 # Map our tag functions - so they can be dynamically loaded.
-our %tagFunctions = (
-	'mp3' => {
-		'module' => 'Slim::Formats::MP3',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::MP3::getTag,
-	},
-
-	'mp2' => {
-		'module' => 'Slim::Formats::MP3',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::MP3::getTag,
-	},
-
-	'ogg' => {
-		'module' => 'Slim::Formats::Ogg',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Ogg::getTag,
-	},
-
-	'flc' => {
-		'module' => 'Slim::Formats::FLAC',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::FLAC::getTag,
-	},
-
-	'wav' => {
-		'module' => 'Slim::Formats::Wav',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Wav::getTag,
-	},
-
-	'aif' => {
-		'module' => 'Slim::Formats::AIFF',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::AIFF::getTag,
-	},
-
-	'wma' => {
-		'module' => 'Slim::Formats::WMA',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::WMA::getTag,
-	},
-
-	'mov' => {
-		'module' => 'Slim::Formats::Movie',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Movie::getTag,
-	},
-
-	'shn' => {
-		'module' => 'Slim::Formats::Shorten',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Shorten::getTag,
-	},
-
-	'mpc' => {
-		'module' => 'Slim::Formats::Musepack',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::Musepack::getTag,
-	},
-
-	'ape' => {
-		'module' => 'Slim::Formats::APE',
-		'loaded' => 0,
-		'getTag' => \&Slim::Formats::APE::getTag,
-	},
-);
+our (%tagClasses, %loadedTagClasses);
 
 sub init {
+
 	# Allow external programs to use Slim::Utils::Misc, without needing
 	# the entire DBI stack.
 	require Slim::DataStores::DBI::DBIStore;
@@ -139,48 +74,20 @@ sub init {
 	# precompute the valid extensions
 	validTypeExtensions();
 
-	# use all the genres we know about...
-	MP3::Info::use_winamp_genres();
-	
-	# also get the album, performer and title sort information
-	$MP3::Info::v2_to_v1_names{'TSOA'} = 'ALBUMSORT';
-	$MP3::Info::v2_to_v1_names{'TSOP'} = 'ARTISTSORT';
-	$MP3::Info::v2_to_v1_names{'XSOP'} = 'ARTISTSORT';
-	$MP3::Info::v2_to_v1_names{'TSOT'} = 'TITLESORT';
-
-	# get composers
-	$MP3::Info::v2_to_v1_names{'TCM'} = 'COMPOSER';
-	$MP3::Info::v2_to_v1_names{'TCOM'} = 'COMPOSER';
-
-	# get band/orchestra
-	$MP3::Info::v2_to_v1_names{'TP2'} = 'BAND';
-	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
-
-	# get artwork
-	$MP3::Info::v2_to_v1_names{'PIC'} = 'PIC';
-	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
-
-	# Set info
-	$MP3::Info::v2_to_v1_names{'TPA'} = 'SET';
-	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SET';	
-
-	# get conductors
-	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
-	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
-	
-	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
-	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
-
-	$MP3::Info::v2_to_v1_names{'ULT'} = 'LYRICS';
-	$MP3::Info::v2_to_v1_names{'USLT'} = 'LYRICS';
-
-	# Pull the Relative Volume Adjustment tags
-	$MP3::Info::v2_to_v1_names{'RVA'}  = 'RVAD';
-	$MP3::Info::v2_to_v1_names{'RVAD'} = 'RVAD';
-	$MP3::Info::v2_to_v1_names{'RVA2'} = 'RVA2';
-
-	# iTunes writes out it's own tag denoting a compilation
-	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
+	# Our loader classes for tag formats.
+	%tagClasses = (
+		'mp3' => 'Slim::Formats::MP3',
+		'mp2' => 'Slim::Formats::MP3',
+		'ogg' => 'Slim::Formats::Ogg',
+		'flc' => 'Slim::Formats::FLAC',
+		'wav' => 'Slim::Formats::Wav',
+		'aif' => 'Slim::Formats::AIFF',
+		'wma' => 'Slim::Formats::WMA',
+		'mov' => 'Slim::Formats::Movie',
+		'shn' => 'Slim::Formats::Shorten',
+		'mpc' => 'Slim::Formats::Musepack',
+		'ape' => 'Slim::Formats::APE',
+	);
 }
 
 sub getCurrentDataStore {
@@ -1833,23 +1740,31 @@ sub typeFromPath {
 
 # Dynamically load the formats modules.
 sub loadTagFormatForType {
-	my $type = shift;
+	my $class = shift;
+	my $type  = shift;
 
-	return if $tagFunctions{$type}->{'loaded'};
+	return if $loadedTagClasses{$type};
 
-	$::d_info && msg("Trying to load $tagFunctions{$type}->{'module'}\n");
+	$::d_info && msg("Trying to load $tagClasses{$type}\n");
 
-	eval "require $tagFunctions{$type}->{'module'}";
+	eval "require $tagClasses{$type}";
 
 	if ($@) {
 
-		msg("Couldn't load module: $tagFunctions{$type}->{'module'} : [$@]\n");
+		msg("Couldn't load module: $tagClasses{$type} : [$@]\n");
 		bt();
 
 	} else {
 
-		$tagFunctions{$type}->{'loaded'} = 1;
+		$loadedTagClasses{$type} = 1;
 	}
+}
+
+sub classForFormat {
+	my $class = shift;
+	my $type  = shift;
+
+	return $tagClasses{$type};
 }
 
 sub variousArtistString {

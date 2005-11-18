@@ -17,14 +17,16 @@ my %tagMapping = (
 	'VBR'		=> 'VBR_SCALE',
 );
 
-# WMA tags are stored as UTF-16 by default.
-if ($] > 5.007) {
-	Audio::WMA->setConvertTagsToUTF8(1);
+INIT: {
+	# WMA tags are stored as UTF-16 by default.
+	if ($] > 5.007) {
+		Audio::WMA->setConvertTagsToUTF8(1);
+	}
 }
 
 sub getTag {
-
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = {};

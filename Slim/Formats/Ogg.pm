@@ -7,14 +7,6 @@ package Slim::Formats::Ogg;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-###############################################################################
-# FILE: Slim::Formats::Ogg.pm
-#
-# DESCRIPTION:
-#   Extract Ogg tag information and store in a hash for easy retrieval.
-#
-###############################################################################
-
 use strict;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
@@ -37,8 +29,8 @@ my %tagMapping = (
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
 sub getTag {
-
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
 	my $tags = {};

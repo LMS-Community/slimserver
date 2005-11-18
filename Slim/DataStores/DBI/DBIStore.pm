@@ -14,7 +14,6 @@ use base qw(Slim::DataStores::Base);
 use DBI;
 use File::Basename qw(dirname);
 use List::Util qw(max);
-use MP3::Info;
 use Scalar::Util qw(blessed);
 use Storable;
 use Tie::Cache::LRU::Expires;
@@ -1164,19 +1163,16 @@ sub readTags {
 	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
 
 		# Extract tag and audio info per format
-		if (exists $Slim::Music::Info::tagFunctions{$type}) {
+		if (my $tagReaderClass = Slim::Music::Info->classForFormat($type)) {
 
 			# Dynamically load the module in.
-			if (!$Slim::Music::Info::tagFunctions{$type}->{'loaded'}) {
-			
-				Slim::Music::Info::loadTagFormatForType($type);
-			}
+			Slim::Music::Info->loadTagFormatForType($type);
 
-			$attributesHash = eval { &{$Slim::Music::Info::tagFunctions{$type}->{'getTag'}}($filepath, $anchor) };
+			$attributesHash = eval { $tagReaderClass->getTag($filepath, $anchor) };
 		}
 
 		if ($@) {
-			msg("The following error occurred: $@\n");
+			errorMsg("readTags: While trying to ->getTag($filepath) : $@\n");
 			bt();
 		}
 
@@ -1203,9 +1199,11 @@ sub readTags {
 
 		# fix the genre
 		if (defined($attributesHash->{'GENRE'}) && $attributesHash->{'GENRE'} =~ /^\((\d+)\)$/) {
+
 			# some programs (SoundJam) put their genres in as text digits surrounded by parens.
 			# in this case, look it up in the table and use the real value...
-			if (defined($MP3::Info::mp3_genres[$1])) {
+			if ($INC{'MP3::Info'} && defined($MP3::Info::mp3_genres[$1])) {
+
 				$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
 			}
 		}

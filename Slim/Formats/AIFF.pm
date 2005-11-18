@@ -6,13 +6,12 @@ package Slim::Formats::AIFF;
 # version 2.
 
 use strict;
-use MP3::Info;  # because AIFF files sometimes have ID3 tags in them!
 
-# Given a file, return a hash of name value pairs,
-# where each name is a tag name.
+use MP3::Info;
+
 sub getTag {
-
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	my $filesize = -s $file;
 
@@ -27,12 +26,13 @@ sub getTag {
 	my $f;
 	my $chunkheader;
 	
-	open $f, "<$file" || return undef;
-	$::d_formats && msg("opened file\n");
+	open $f, $file || return undef;
+
 	return undef if read($f, $chunkheader, 12) < 12;
 
 	my ($tag, $size, $format) = unpack "a4Na4", $chunkheader;
 	my $chunkpos = 12;
+
 	$size += 8; # size is chunk data size, without the chunk header.
 	$tags->{'ENDIAN'} = 1; # unless told otherwise, AIFF/AIFC is big-endian
 	$tags->{'FS'} = $filesize;
@@ -41,8 +41,9 @@ sub getTag {
 	
 	return undef if ($tag ne 'FORM' || ($format ne 'AIFF' && $format ne 'AIFC'));
 	if ($::d_formats && $size != $filesize) {
-# itunes rips with bogus size info...
-		msg("  ignores invalid filesize in header = $size, actual file size = $filesize\n");
+
+	# iTunes rips with bogus size info...
+		msg("AIFF::getTag: ignores invalid filesize in header = $size, actual file size = $filesize\n");
 	}
 
 	my %readchunks = ();
@@ -103,12 +104,14 @@ sub getTag {
 	} continue {
 		$chunkpos += 8 + $size + ($size & 1);
 	}
-	unless ($readchunks{'COMM'}) {
-# we don't know anything about sample rates, number of channels, sample size, etc...
-# could be 8-bit mono, 16-bit stereo, ...
+
+	if (!$readchunks{'COMM'}) {
+		# we don't know anything about sample rates, number of channels, sample size, etc...
+		# could be 8-bit mono, 16-bit stereo, ...
 		$::d_formats && msg("AIFF: Missing COMM chunk\n");
 		return undef;
 	}
+
 	return $tags;
 }
 

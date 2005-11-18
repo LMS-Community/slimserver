@@ -16,15 +16,15 @@ package Slim::Formats::Shorten;
 use strict;
 
 use Audio::Wav;
-use MP3::Info;  # because WAV files sometimes have ID3 tags in them!
-use Slim::Utils::Misc; # this will give a sub redefined error because we ues Slim::Music::Info;
+use MP3::Info;
 
-my $bail;  # nasty global to know when we had a fatal error on a file.
+use Slim::Utils::Misc;
 
 # Given a file, return a hash of name value pairs, where each name is
 # a tag name.
 sub getTag {
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	# Extract the file and read from the pipe; redirect stderr to
 	# /dev/null since we will be closing the pipe before the
@@ -40,8 +40,7 @@ sub getTag {
 		$file = $shorten." -x \Q$file\E - 2>/dev/null|";
 	}
 
-	$::d_source &&
-	  msg( "Reading WAV information from $file\n");
+	$::d_source && msg( "Reading WAV information from $file\n");
 
 	# This hash will map the keys in the tag to their values.
 	# Don't use MP3::Info since we can't seek around the stream
@@ -52,40 +51,37 @@ sub getTag {
 	$tags->{'SIZE'} ||= 0;
 	$tags->{'SECS'} ||= 0;
 
-	$bail = undef;
+	my $bail = undef;
+	my $wav  = Audio::Wav->new();
 
-	my $wav = Audio::Wav->new();
+	$wav->set_error_handler(sub {
 
-	$wav->set_error_handler( \&myErrorHandler );
+		my %parameters = @_;
+
+		if ($parameters{'warning'} or
+		     # When reading from a pipeline, the seek done in
+		     # Audio::Wav::move_to will fail, but we don't really care about that
+		     ($parameters{'filename'} =~ /\|$/ and
+		      $parameters{'message'} =~ /^can\'t move to position/)) {
+
+			# This is a non-critical warning
+			$::d_source && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+		} else {
+			# Critical error!
+			$bail = 1;
+			$::d_source && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+		}
+	});
 
 	my $read = $wav->read($file);
 
-	unless ($bail) {
+	if (!$bail) {
 		$tags->{'OFFSET'} = $read->position();
 		$tags->{'SIZE'}   = $read->length();
 		$tags->{'SECS'}   = $read->length_seconds();
 	}
 
 	return $tags;
-}
-
-sub myErrorHandler {
-	my %parameters = @_;
-
-	if ( $parameters{'warning'} or
-
-	     # When reading from a pipeline, the seek done in
-	     # Audio::Wav::move_to will fail, but we don't really care
-	     # about that
-	     ($parameters{'filename'} =~ /\|$/ and
-	      $parameters{'message'} =~ /^can\'t move to position/)) {
-		# This is a non-critical warning
-		$::d_source && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
-	} else {
-		# Critical error!
-		$bail = 1;
-		$::d_source && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
-	}
 }
 
 1;

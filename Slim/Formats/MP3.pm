@@ -32,16 +32,63 @@ my %tagMapping = (
 # Allow us to reuse tag data when fetching artwork if we can.
 my $tagCache = [];
 
-# Don't try and convert anything to latin1
-if ($] > 5.007) {
+INIT: {
 
-	MP3::Info::use_mp3_utf8(1);
+	# Don't try and convert anything to latin1
+	if ($] > 5.007) {
+
+		MP3::Info::use_mp3_utf8(1);
+	}
+
+	#
+	MP3::Info::use_winamp_genres();
+
+	# also get the album, performer and title sort information
+	$MP3::Info::v2_to_v1_names{'TSOA'} = 'ALBUMSORT';
+	$MP3::Info::v2_to_v1_names{'TSOP'} = 'ARTISTSORT';
+	$MP3::Info::v2_to_v1_names{'XSOP'} = 'ARTISTSORT';
+	$MP3::Info::v2_to_v1_names{'TSOT'} = 'TITLESORT';
+
+	# get composers
+	$MP3::Info::v2_to_v1_names{'TCM'} = 'COMPOSER';
+	$MP3::Info::v2_to_v1_names{'TCOM'} = 'COMPOSER';
+
+	# get band/orchestra
+	$MP3::Info::v2_to_v1_names{'TP2'} = 'BAND';
+	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
+
+	# get artwork
+	$MP3::Info::v2_to_v1_names{'PIC'} = 'PIC';
+	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
+
+	# Set info
+	$MP3::Info::v2_to_v1_names{'TPA'} = 'SET';
+	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SET';	
+
+	# get conductors
+	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
+	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
+	
+	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
+	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
+
+	$MP3::Info::v2_to_v1_names{'ULT'} = 'LYRICS';
+	$MP3::Info::v2_to_v1_names{'USLT'} = 'LYRICS';
+
+	# Pull the Relative Volume Adjustment tags
+	$MP3::Info::v2_to_v1_names{'RVA'}  = 'RVAD';
+	$MP3::Info::v2_to_v1_names{'RVAD'} = 'RVAD';
+	$MP3::Info::v2_to_v1_names{'RVA2'} = 'RVA2';
+
+	# iTunes writes out it's own tag denoting a compilation
+	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
 }
 
 sub getTag {
-	my $file = shift || return undef;
+	my $class = shift;
+	my $file  = shift || return {};
 
-	open(my $fh, $file) or return undef;
+	open(my $fh, $file) or return {};
 
 	my $tags = MP3::Info::get_mp3tag($fh); 
 	my $info = MP3::Info::get_mp3info($fh);
@@ -55,13 +102,13 @@ sub getTag {
 
 	# sometimes we don't get this back correctly
 	$info->{'OFFSET'} += 0;
-	
+
 	return undef if (!$info->{'SIZE'});
-	
+
 	my ($start, $end);
 
 	($start, undef) = seekNextFrame($fh, $info->{'OFFSET'}, 1);
-	(undef, $end) = seekNextFrame($fh, $info->{'OFFSET'} + $info->{'SIZE'}, -1);
+	(undef, $end)   = seekNextFrame($fh, $info->{'OFFSET'} + $info->{'SIZE'}, -1);
 
 	if ($start) {
 		$info->{'OFFSET'} = $start;

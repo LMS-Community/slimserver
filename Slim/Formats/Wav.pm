@@ -7,49 +7,46 @@ package Slim::Formats::Wav;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-###############################################################################
-# FILE: Slim::Formats::Wav.pm
-#
-# DESCRIPTION:
-#   Extract Wav tag information and store in a hash for easy retrieval.
-#   Useage of Nick Peskett's Audio::Wav
-#
-# NOTES:
-#   This code has only been tested on Linux.
-###############################################################################
 use strict;
+
 use Audio::Wav;
-use MP3::Info;  # because WAV files sometimes have ID3 tags in them!
-use Slim::Utils::Misc; # this will give a sub redefined error because we ues Slim::Music::Info;
+use MP3::Info;
 
-my $bail;  # nasty global to know when we had a fatal error on a file.
+#use Slim::Utils::Misc;
 
-# Given a file, return a hash of name value pairs,
-# where each name is a tag name.
 sub getTag {
-
-	my $file = shift || "";
-
-	$::d_formats && msg( "Reading WAV information for $file\n");
+	my $class = shift;
+	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
-	my $tags = MP3::Info::get_mp3tag($file);
+	my $tags = MP3::Info::get_mp3tag($file) || return {};
 
 	# bogus files are considered empty
 	$tags->{'SIZE'} ||= 0;
 	$tags->{'SECS'} ||= 0;
 
-	$bail = undef;
+	my $bail = undef;
+	my $wav  = Audio::Wav->new();
 	
-	my $wav = Audio::Wav->new();
-	
-	$wav->set_error_handler( \&myErrorHandler );
-	
+	$wav->set_error_handler(sub {
+		my %parameters = @_;
+
+		if ( $parameters{'warning'} ) {
+			# This is a non-critical warning
+			$::d_formats && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+		} else {
+			# Critical error!
+			$bail = 1;
+			$::d_formats && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+		}
+	});
+
 	my $read = $wav->read($file);
 
-	unless ($bail) {
+	if (!$bail) {
 
-	    my $details = $read -> details();
+		my $details = $read->details();
+
 		$tags->{'OFFSET'} = $read->offset();
 		$tags->{'SIZE'}   = $read->length();
 		$tags->{'SECS'}   = $read->length_seconds();
@@ -73,19 +70,6 @@ sub getTag {
 	}
 
 	return $tags;
-}
-
-sub myErrorHandler {
-	my %parameters = @_;
-
-	if ( $parameters{'warning'} ) {
-		# This is a non-critical warning
-		$::d_formats && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
-	} else {
-		# Critical error!
-		$bail = 1;
-		$::d_formats && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
-	}
 }
 
 1;

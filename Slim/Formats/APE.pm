@@ -1,7 +1,7 @@
 package Slim::Formats::APE;
 
 # $tagsd: APE.pm,v 1.0 2004/01/27 00:00:00 daniel Exp $
-# $Id: APE.pm,v 1.1 2005/01/02 22:28:08 kdf Exp $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -23,16 +23,16 @@ use Audio::APE;
 use MP3::Info ();
 
 my %tagMapping = (
-	'TRACK'	=> 'TRACKNUM',
-	'DATE'		=> 'YEAR',
-	'DISCNUMBER'	=> 'DISC',
+	'TRACK'	     => 'TRACKNUM',
+	'DATE'       => 'YEAR',
+	'DISCNUMBER' => 'DISC',
 );
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
 sub getTag {
-
-	my $file = shift || "";
+	my $class = shift;
+	my $file  = shift || return {};
 
 	my $mac = Audio::APE->new($file);
 
