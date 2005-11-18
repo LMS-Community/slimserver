@@ -1468,9 +1468,9 @@ sub _preCheckAttributes {
 	# Normalize attribute names
 	while (my ($key, $val) = each %$attributes) {
 
-		if (exists $tagMapping{$key}) {
+		if (exists $tagMapping{lc $key}) {
 
-			$attributes->{ $tagMapping{$key} } = delete $attributes->{$key};
+			$attributes->{ $tagMapping{lc $key} } = delete $attributes->{$key};
 		}
 	}
 
