@@ -12,14 +12,14 @@ use strict;
 use Audio::Wav;
 use MP3::Info;
 
-#use Slim::Utils::Misc;
+use Slim::Utils::Misc;
 
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
-	my $tags = MP3::Info::get_mp3tag($file) || return {};
+	my $tags = MP3::Info::get_mp3tag($file) || {};
 
 	# bogus files are considered empty
 	$tags->{'SIZE'} ||= 0;

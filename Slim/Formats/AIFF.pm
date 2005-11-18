@@ -21,7 +21,7 @@ sub getTag {
 	$::d_formats && msg( "Reading AIFF information for $file\n");
 
 	# This hash will map the keys in the tag to their values.
-	my $tags = MP3::Info::get_mp3tag($file);
+	my $tags = MP3::Info::get_mp3tag($file) || {};
 
 	my $f;
 	my $chunkheader;
@@ -40,9 +40,10 @@ sub getTag {
 	$::d_formats && msg("read first tag: $tag $size $format\n");
 	
 	return undef if ($tag ne 'FORM' || ($format ne 'AIFF' && $format ne 'AIFC'));
+
 	if ($::d_formats && $size != $filesize) {
 
-	# iTunes rips with bogus size info...
+		# iTunes rips with bogus size info...
 		msg("AIFF::getTag: ignores invalid filesize in header = $size, actual file size = $filesize\n");
 	}
 
