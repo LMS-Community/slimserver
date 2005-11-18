@@ -419,7 +419,7 @@ our %sortFieldMap = (
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
 	'playCount' => ['tracks.playCount desc'],
-	'age' => ['tracks.age desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
+	'age' => ['tracks.timestamp desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
 );
 
 our %sortRandomMap = (
