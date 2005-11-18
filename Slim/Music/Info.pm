@@ -1740,7 +1740,6 @@ sub typeFromPath {
 
 # Dynamically load the formats modules.
 sub loadTagFormatForType {
-	my $class = shift;
 	my $type  = shift;
 
 	return if $loadedTagClasses{$type};
@@ -1761,7 +1760,6 @@ sub loadTagFormatForType {
 }
 
 sub classForFormat {
-	my $class = shift;
 	my $type  = shift;
 
 	return $tagClasses{$type};

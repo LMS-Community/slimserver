@@ -1163,10 +1163,10 @@ sub readTags {
 	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
 
 		# Extract tag and audio info per format
-		if (my $tagReaderClass = Slim::Music::Info->classForFormat($type)) {
+		if (my $tagReaderClass = Slim::Music::Info::classForFormat($type)) {
 
 			# Dynamically load the module in.
-			Slim::Music::Info->loadTagFormatForType($type);
+			Slim::Music::Info::loadTagFormatForType($type);
 
 			$attributesHash = eval { $tagReaderClass->getTag($filepath, $anchor) };
 		}
@@ -1354,7 +1354,10 @@ sub _commitDBTimer {
 		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
 	}
 
-	Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_SAVE_INTERVAL, \&_commitDBTimer);
+	if ($INC{'Slim::Utils::Timers'}) {
+
+		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_SAVE_INTERVAL, \&_commitDBTimer);
+	}
 }
 
 sub _checkValidity {

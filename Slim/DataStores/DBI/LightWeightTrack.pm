@@ -19,7 +19,7 @@ INIT: {
 
 	# Merge in columns that aren't in our essential from our super class
 	# to the 'Others' column group.
-	for my $key ($class->SUPER::columns('Essential')) {
+	for my $key (keys %{$class->attributes}) {
 
 		if (!$essentialKeys{$key}) {
 
@@ -32,7 +32,7 @@ INIT: {
 	$class->columns(Primary   => 'id');
 	$class->columns(Essential => @essentialColumns);
 	$class->columns(Others    => @otherColumns);
-	$class->columns(Stringify => qw/url/);
+	$class->columns(Stringify => 'url');
 }
 
 # Call SUPER explictly, as ->bitrate isn't a pure ->get of the column, but
