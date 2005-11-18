@@ -9,17 +9,19 @@ use base 'Slim::DataStores::DBI::Track';
 # this class has a smaller set of essential columns, the inflation cost
 # is smaller.
 
-our @essentialColumns = qw(url content_type multialbumsortkey album);
+our @essentialColumns = qw(id url content_type multialbumsortkey album);
 our @otherColumns     = ();
 
 INIT: {
 	my $class = __PACKAGE__;
 
+	my %essentialKeys = map { $_ => 1 } @essentialColumns;
+
 	# Merge in columns that aren't in our essential from our super class
 	# to the 'Others' column group.
 	for my $key ($class->SUPER::columns('Essential')) {
 
-		if (grep { $key ne $_ } @essentialColumns) {
+		if (!$essentialKeys{$key}) {
 
 			push @otherColumns, $key;
 		}
@@ -33,7 +35,14 @@ INIT: {
 	$class->columns(Stringify => qw/url/);
 }
 
+# Call SUPER explictly, as ->bitrate isn't a pure ->get of the column, but
+# does some calculations instead.
 sub bitrate {
-	my  $self = shift;
+	my $self = shift;
+
 	return $self->SUPER::bitrate(@_);
 }
+
+1;
+
+__END__
