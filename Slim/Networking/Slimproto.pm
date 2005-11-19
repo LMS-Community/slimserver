@@ -40,11 +40,22 @@ our %sock2client;	# reference to client for each sonnected sock
 our %status;
 
 our %callbacks;
+our %callbacksRAWI;
 
 sub setEventCallback {
 	my $event	= shift;
 	my $funcptr = shift;
 	$callbacks{$event} = $funcptr;
+}
+
+sub setCallbackRAWI {
+	my $callbackRef = shift;
+	$callbacksRAWI{$callbackRef} = $callbackRef;
+}
+
+sub clearCallbackRAWI {
+	my $callbackRef = shift;
+	delete $callbacksRAWI{$callbackRef};
 }
 
 sub init {
@@ -253,7 +264,6 @@ GETMORE:
 	goto GETMORE;
 }
 
-
 sub process_slimproto_frame {
 	my ($s, $op, $data) = @_;
 
@@ -406,6 +416,15 @@ sub process_slimproto_frame {
 		$::d_slimproto && msg("Raw IR, ".(length($data)/4)."samples\n");
 		
 		#TODO: something interesting
+
+		{
+			no strict 'refs';
+		
+			foreach my $callbackRAWI (keys %callbacksRAWI) {
+				$callbackRAWI = $callbacksRAWI{$callbackRAWI};
+				&$callbackRAWI( $client, $data);
+			}
+		}
 
 	} elsif ($op eq 'RESP') {
 		# HTTP stream headers
