@@ -671,7 +671,7 @@ sub parseRSS {
 
 	my %feed = (
 		'type'           => 'rss',
-		'items'          => (),
+		'items'          => [],
 		'title'          => unescapeAndTrim($xml->{'channel'}->{'title'}),
 		'description'    => unescapeAndTrim($xml->{'channel'}->{'description'}),
 		'lastBuildDate'  => unescapeAndTrim($xml->{'channel'}->{'lastBuildDate'}),
