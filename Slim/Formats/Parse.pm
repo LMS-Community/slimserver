@@ -604,6 +604,7 @@ sub readCUE {
 			next if $attribute eq 'url';
 			next if $attribute =~ /^_/;
 			next unless exists $basetrack->{$attribute};
+			
 			$track->{uc $attribute} = $basetrack->{$attribute} unless exists $track->{uc $attribute};
 		}
 
@@ -649,7 +650,7 @@ sub processAnchor {
 		return 0;
 	}
 
-	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
+	my $byterate   = $attributesHash->{'AUDIO_SIZE'} / $attributesHash->{'SECS'};
 	my $header     = $attributesHash->{'OFFSET'} || 0;
 	my $startbytes = int($byterate * $start);
 	my $endbytes   = int($byterate * $end);
@@ -658,7 +659,7 @@ sub processAnchor {
 	$endbytes   -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
 			
 	$attributesHash->{'OFFSET'} = $header + $startbytes;
-	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
+	$attributesHash->{'AUDIO_SIZE'} = $endbytes - $startbytes;
 	$attributesHash->{'SECS'} = $duration;
 
 	if ($::d_parse) {
