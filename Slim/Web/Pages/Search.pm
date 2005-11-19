@@ -1,6 +1,6 @@
 package Slim::Web::Pages::Search;
 
-# $Id: Pages.pm 5121 2005-11-09 17:07:36Z dsully $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -15,10 +15,10 @@ use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::DataStores::Base;
-use Slim::Music::LiveSearch;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+use Slim::Web::Pages::LiveSearch;
 
 sub init {
 	
@@ -51,7 +51,7 @@ sub basicSearch {
 	}
 
 	# Don't kill the database - use limit & offsets
-	my $data = Slim::Music::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
+	my $data = Slim::Web::Pages::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
 
 	# The user has hit enter, or has a browser that can't handle the javascript.
 	if ($params->{'manualSearch'}) {
@@ -89,9 +89,9 @@ sub basicSearch {
 
 	# do it live - and send back the div
 	if ($params->{'xmlmode'}) {
-		return Slim::Music::LiveSearch->outputAsXML($query, $data, $player);
+		return Slim::Web::Pages::LiveSearch->outputAsXML($query, $data, $player);
 	} else {
-		return Slim::Music::LiveSearch->outputAsXHTML($query, $data, $player);
+		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, $data, $player);
 	}
 }
 

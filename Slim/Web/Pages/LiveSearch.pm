@@ -1,4 +1,4 @@
-package Slim::Music::LiveSearch;
+package Slim::Web::Pages::LiveSearch;
 
 # $Id$
 
