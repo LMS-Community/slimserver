@@ -21,6 +21,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
+use Slim::Utils::Unicode;
 
 # three hashes containing the types we know about, populated by the loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg

@@ -22,17 +22,20 @@ use Fcntl qw(:seek);
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
 use Text::Unidecode;
 
-if ($] > 5.007) {
-	require Encode;
-	require File::BOM;
-}
-
 use Slim::Utils::Misc;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE);
 
-INIT {
+INIT: {
+	if ($] > 5.007) {
+		require Encode;
+		require Encode::Guess;
+		require File::BOM;
+
+		$Encode::Guess::NoUTFAutoGuess = 1;
+	}
+
         if ($^O =~ /Win32/) {
 
 		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();

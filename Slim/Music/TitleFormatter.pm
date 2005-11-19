@@ -15,6 +15,7 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Unicode;
 
 our ($elemstring, @elements, $elemRegex, %parsedFormats);
 
