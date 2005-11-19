@@ -829,7 +829,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	ES	canciones escuchadas recientemente.
 
 PLUGIN_RANDOM_CONTINUOUS_MODE
-	EN	Keep adding new stuff.
+	EN	Add new items when old ones finish
 
 PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
