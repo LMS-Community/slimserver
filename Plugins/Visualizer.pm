@@ -65,42 +65,50 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	DE	Visualizer Bildschirmschoner
 	EN	Visualizer Screensaver
 	ES	Salvapantallas de Visualizador
+	NL	Visualisatie schermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	DE	Benötigt Squeezebox2
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
+	NL	Squeezebox2 nodig
 
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum Analyzer
 	ES	Analizador de Espectro
+	NL	Spectrum analysator
 
 PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
 	EN	Analog VU Meter
 	ES	VUmetro análogo
+	NL	Analoge VU meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
 	EN	Digital VU Meter
 	ES	VUmetro digital
+	NL	Digitale VU meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver 
 	ES	Presionar -> para activar este salvapantallas
+	NL	Druk -> om deze schermbeveiliger aan te zetten
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	CZ	Spořič je nastaven
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
+	NL	Deze schermbeveiliger is aan
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CZ	Výchozí spořič
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
+	NL	standaard schermbeveiliger
 
 '};
 

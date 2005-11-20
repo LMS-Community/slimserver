@@ -949,12 +949,14 @@ sub strings {
 	return q^PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 	ES	Radio por Internet Live365
+	NL	Live365 Internet radio
 
 PLUGIN_LIVE365_LOGOUT
 	CZ	Odhlásit
 	DE	Abmelden
 	EN	Log out
 	ES	Desconectarse
+	NL	Log uit
 
 PLUGIN_LIVE365_LOGIN
 	CZ	Přihlásit
@@ -966,147 +968,174 @@ PLUGIN_LIVE365_NOT_LOGGED_IN
 	DE	Nicht bei Live365 angemeldet
 	EN	Not logged in to Live365
 	ES	No se ha ingresado a Live365
+	NL	Niet ingelogd bij Live365
 
 PLUGIN_LIVE365_NO_CREDENTIALS
 	DE	Keine Live365 Anmeldeinformationen
 	EN	No Live365 account information
 	ES	No existe información de cuenta para Live365
+	NL	Geen Live365 account informatie
 
 PLUGIN_LIVE365_LOGIN_SUCCESS
 	DE	Erfolgreich
 	EN	Successful
 	ES	Exitoso
+	NL	Succesvol
 
 PLUGIN_LIVE365_LOGIN_ERROR_NAME
 	DE	Problem mit Anmeldenamen
 	EN	Member name problem
 	ES	Problema con el nombre de miembro
+	NL	Gebruikersnaam probleem
 
 PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
 	CZ	Problém s přihlášením
 	DE	Problem beim Anmelden
 	EN	Login problem
 	ES	Problema de conexión
+	NL	Inlog probleem
 
 PLUGIN_LIVE365_LOGIN_ERROR_ACTION
 	DE	Unbekannter Vorgang
 	EN	Unknown action
 	ES	Acción desconocida
+	NL	Onbekende actie
 
 PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
 	DE	Unbekannte Organisation
 	EN	Unknown organization
 	ES	Organización desconocida
+	NL	Onbekende organisatie
 
 PLUGIN_LIVE365_LOGIN_ERROR_SESSION
 	DE	Sitzung abgelaufen. Bitte neu anmelden.
 	EN	Session no longer valid. Log in again.
 	ES	La sesión ya no es válida. Conectate nuevamente.
+	NL	Sessie niet langer geldig. Log opnieuw in.
 
 PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 	DE	Problem mit Live365 Website. Bitte neu versuchen.
 	EN	Live365 website error, try again
 	ES	Error del sitio web de Live365, intentar nuevamente
+	NL	Live365 website fout, probeer opnieuw
 
 PLUGIN_LIVE365_LOADING_GENRES
 	CZ	Stahuji žánry z Live365...
 	DE	Genre-Liste wird von Live365 geladen...
 	EN	Loading genre list from Live365...
 	ES	Cargando la lista de géneros de Live365...
+	NL	Laden genrelijst van Live365...
 
 PLUGIN_LIVE365_LOADING_GENRES_ERROR
 	CZ	Chyba při stahování stylů. Zkuste to prosím později.
 	DE	Fehler beim Laden der Genre-Liste. Bitte neu versuchen.
 	EN	Error loading genres, try again
 	ES	Error al cargar géneros, intente nuevamente...
+	NL	Fout bij laden genres, probeer opnieuw
 
 PLUGIN_LIVE365_PRESETS
 	DE	Meine Voreinstellungen
 	EN	My presets
 	ES	Mis presets
+	NL	Mijn voorkeuzes
 
 PLUGIN_LIVE365_BROWSEGENRES
 	CZ	Procházeet žánry
 	DE	Musikstile durchsuchen
 	EN	Browse genres
 	ES	Examinar géneros
+	NL	Bekijk op genre
 
 PLUGIN_LIVE365_BROWSEALL
 	CZ	Procházet všechny stanice (mnoho)
 	DE	Alle Stationen durchsuchen (viele)
 	EN	Browse all stations (many)
 	ES	Recorrer todas las estaciones (muchas)
+	NL	Bekijk alle radiozenders (veel!)
 
 PLUGIN_LIVE365_BROWSEPICKS
 	DE	Editor Picks durchsuchen
 	EN	Browse editor picks
 	ES	Revisar las elegidas por el editor
+	NL	Bekijk editor tips
 
 PLUGIN_LIVE365_BROWSEPROS
 	CZ	Procházet profesionální stanice
 	DE	Professionelle Stationen durchsuchen
 	EN	Browse professional stations
 	ES	Recorrer estaciones profesionales
+	NL	Bekijk professionele zenders
 
 PLUGIN_LIVE365_SEARCH
 	DE	Live365 durchsuchen
 	EN	Search Live365
 	ES	Buscar en Live365
+	NL	Zoek Live365
 
 PLUGIN_LIVE365_SEARCHPROMPT
 	DE	Live365 durchsuchen nach:
 	EN	Search Live365:
 	ES	Buscar en Live365:
+	NL	Zoek Live365:
 
 PLUGIN_LIVE365_LOADING_DIRECTORY
 	CZ	Nahrávám...
 	DE	Lade...
 	EN	Loading...
 	ES	Cargando...
+	NL	Laden...
 
 PLUGIN_LIVE365_NOSTATIONS
 	DE	Keine Station gefunden
 	EN	No stations found
 	ES	No se encontraron estaciones
+	NL	Geen zenders gevonden
 
 PLUGIN_LIVE365_LOADING_INFORMATION
 	DE	Senderinformation wird geladen...
 	EN	Loading channel information...
 	ES	Cargando información de canales...
+	NL	Laden kanaalinformatie...
 
 PLUGIN_LIVE365_DESCRIPTION
 	CZ	Popis stanice
 	DE	Sender Beschreibung
 	EN	Station Description
 	ES	Descripción de estación
+	NL	Zenderbeschrijving
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
 	CZ	Aktivních posluchačů
 	DE	Aktive Zuhörer
 	EN	Active listeners
 	ES	Oyentes activos
+	NL	Actieve luisteraars
 
 PLUGIN_LIVE365_STATION_LISTENERS_MAX
 	CZ	Maximum posluchačů
 	DE	Maximale Anzahl Zuhörer
 	EN	Maximum listeners
 	ES	Cantidad máxima de oyentes
+	NL	Maximum luisteraars
 
 PLUGIN_LIVE365_LISTENER_ACCESS
 	DE	Zuhörer Zugang
 	EN	Listener access
 	ES	Acceso para oyentes
+	NL	Luisteraar toegang
 
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
 	CZ	Kvalita vysílání stanice
 	DE	Sender Qualität
 	EN	Station quality
 	ES	Calidad de la estación
+	NL	Zender kwaliteit
 
 PLUGIN_LIVE365_STATION_CONNECTION
 	DE	Bandbreite
 	EN	Bandwidth
 	ES	Ancho de Banda
+	NL	Bandbreedte
 
 PLUGIN_LIVE365_STATION_CODEC
 	EN	Codec
@@ -1116,117 +1145,140 @@ PLUGIN_LIVE365_ERROR
 	DE	Live365 Fehler
 	EN	Live365 ERROR
 	ES	ERROR de Live365
+	NL	Live365 FOUT
 
 PLUGIN_LIVE365_SEARCH_TAC
 	DE	Nach Interpret/Lied/Album suchen
 	EN	Search Artists/Tracks/CDs
 	ES	Buscar Artistas/Canciones/CDs
+	NL	Zoek artiest/liedje/cd's
 
 PLUGIN_LIVE365_SEARCH_A
 	DE	Suche Interpret
 	EN	Search Artists
 	ES	Buscar Artistas
+	NL	Zoek artiesten
 
 PLUGIN_LIVE365_SEARCH_T
 	DE	Suche Lieder
 	EN	Search Tracks
 	ES	Buscar Canciones
+	NL	Zoek liedjes
 
 PLUGIN_LIVE365_SEARCH_C
 	DE	Suche Album
 	EN	Search Albums
 	ES	Buscar Discos
+	NL	Zoek albums
 
 PLUGIN_LIVE365_SEARCH_E
 	DE	Nach Sender suchen
 	EN	Search Stations
 	ES	Buscar estaciones
+	NL	Zoek zenders
 
 PLUGIN_LIVE365_SEARCH_L
 	DE	Nach Region suchen
 	EN	Search Locations
 	ES	Buscar Lugares
+	NL	Zoek locaties
 
 PLUGIN_LIVE365_SEARCH_H
 	DE	Nach Broadcaster suchen
 	EN	Search Broadcasters
 	ES	Buscar emisoras
+	NL	Zoek omroepen
 
 SETUP_GROUP_PLUGIN_LIVE365
 	EN	Live365 Internet Radio
 	ES	Radio por Internet Live365
+	NL	Live365 Internet radio
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
 	CZ	Prohledávat, procházet a ladit stanice Live365
 	DE	Suche und höre Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 	ES	Buscar, recorrer y sintonizar estaciones Live365
+	NL	Zoek, bekijk en stel Live365 zenders in
 
 SETUP_PLUGIN_LIVE365_USERNAME
 	DE	Live365 Benutzername
 	EN	Live365 Username
 	ES	Usuario de Live365
+	NL	Live365 gebruikersnaam
 
 SETUP_PLUGIN_LIVE365_USERNAME_DESC
 	DE	Ihr Live365 Benutzername, besuche live365.com zum Einschreiben
 	EN	Your Live365 username, visit live365.com to sign up
 	ES	Tu nombre de usuario de Live365,  visitar live365.com para registrarse
+	NL	Je Live365 gebruikersnaam, bezoek live365.com om je aan te melden
 
 SETUP_PLUGIN_LIVE365_PASSWORD
 	DE	Live365 Passwort
 	EN	Live365 Password
 	ES	Contraseña para Live365
+	NL	Live365 wachtwoord
 
 SETUP_PLUGIN_LIVE365_PASSWORD_DESC
 	DE	Dein Live365 Passwort
 	EN	Your Live365 password
 	ES	Tu contraseña para Live365
+	NL	Je Live365 wachtwoord
 
 SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED
 	DE	Dein Live365 Passwort wurde geändert
 	EN	Your Live365 password has been changed
 	ES	La contraseña para Live365 ha sido cambiada
+	NL	Je Live365 wachtwoord is gewijzigd
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER
 	DE	Spalten sortieren
 	EN	Sort columns
 	ES	Columnas para ordenar
+	NL	Sorteer kolommen
 
 SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC
 	DE	Sortierreihenfolge der Sender definieren
 	EN	Define the sort order of stations
 	ES	Definir la secuencia de ordenamiento para estaciones
+	NL	Definieer de sorteervolgorde van zenders
 
 SETUP_PLUGIN_LIVE365_SORT_TITLE
 	CZ	Název stanice
 	DE	Sender Sortierung
 	EN	Station title
 	ES	Título de la estación
+	NL	Zender titel
 
 SETUP_PLUGIN_LIVE365_SORT_BPS
 	DE	Sender Bitrate
 	EN	Station bitrate
 	ES	Tasa de bits de la estación
+	NL	Zender bitrate
 
 SETUP_PLUGIN_LIVE365_SORT_RATING
 	DE	Sender Beurteilung
 	EN	Station rating
 	ES	Calificación de la estación
+	NL	Zender notering
 
 SETUP_PLUGIN_LIVE365_SORT_LISTENERS
 	DE	Anzahl Hörer
 	EN	Number of listeners
 	ES	Número de Oyentes
+	NL	Aantal luisteraars
 
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS
 	DE	Detaillierte Live365 Suchresultate
 	EN	Detailed Live365 search results
 	ES	Resultados detallados de búsqueda en Live365
+	NL	Gedetailleerde Live365 zoekresultaten
 
 SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
 	DE	Zeige detaillierte Suchresultate, wenn im Live365 Webinterface gesucht wird. Dies beinhaltet Interpreten, Titel und Albuminformationen wenn nach einem dieser Kriterien gesucht wird. Dies kann die Suchresultate etwas unübersichtlicher machen.
 	EN	Show detailed results when searching Live365 through the web interface.  Includes artist, track, and album info when searching for one of these.  May make your search results longer and harder to browse.
 	ES	Mostrar resultados detallados cuando se busca en Live365 a través de la interface web. Se incluye información de  artista, canción y disco cuando se busca por alguno de ellos. Esto puede generar resultados más largos y dificiles de recorrer.
+	NL	Laat gedetailleerde resultaten zien bij het zoeken op de Live365 website. Laat artiest, liedje en albuminfo zien bij het zoeken naar &eacute;&eacute;n van deze. Het kan je zoekresultaten langer en moeilijker te lezen maken.
 
 PLUGIN_LIVE365_GENRES
 	CZ	Styly Live365
@@ -1238,10 +1290,12 @@ PLUGIN_LIVE365_STATIONS
 	DE	Live365 Sender
 	EN	Live365 stations
 	ES	Estaciones de Live365
+	NL	Live365 zenders
 
 PLUGIN_LIVE365_POPULAR
 	DE	Populär
 	EN	Popular
+	NL	Populair
 
 PLUGIN_LIVE365_RECENT
 	DE	Kürzlich gehört
@@ -1251,6 +1305,7 @@ PLUGIN_LIVE365_RECENT
 PLUGIN_LIVE365_NO_INFO
 	DE	Fehler beim Laden der Informationen
 	EN	Error loading info
+	NL	Fout bij laden informatie
 
 TACMATCHING
 	DE	Passende Interpreten/Titel/Alben
@@ -1271,6 +1326,7 @@ BROADCASTERSMATCHING
 	DE	Passende Broadcaster
 	EN	Broadcasters matching
 	ES	Emisoras coincidentes
+	NL	Omroep matching
 
 PLUGIN_LIVE365_NO_INFO
 	DE	Fehler beim Laden der Informationen

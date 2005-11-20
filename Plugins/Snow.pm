@@ -36,124 +36,145 @@ PLUGIN_SCREENSAVER_SNOW
 	EN	Snow Screensaver
 	ES	Salvapantallas de Nieve
 	FR	Ecran de veille Neige
+	NL	Sneeuw schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	DE	Schnee Einstellungen
 	EN	Snow Screensaver settings
 	ES	Parámetros para Salvapantallas de Nieve
 	FR	Réglages Ecran de veille Neige
+	NL	Sneeuw schermbeveiliger instellingen
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
 	DE	Diesen Bildschirmschoner aktivieren
 	EN	Select Current Screensaver
 	ES	Elegir Salvapantallas Actual
 	FR	Choisir écran de veille courant
+	NL	Selecteer je huidige schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
 	DE	Aktueller Bildschirmschoner
 	EN	Current Screensaver
 	ES	Salvapantallas Actual
 	FR	Ecran de veille courant
+	NL	Huidige schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATED
 	DE	Schnee Bildschirmschoner aktivieren
 	EN	Use Snow as current screensaver
 	ES	Utilizar Nieve como salvapantallas actual.
 	FR	Utiliser Neige comme écran de veille
+	NL	Gebruik sneeuw als huidige schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_DEFAULT
 	DE	Standard-Bildschirmschoner aktivieren
 	EN	Use default screensaver (not Snow)
 	ES	Utilizar salvapantallas por defecto (No Nieve)
 	FR	Utiliser écran de veille par défaut (hors Neige)
+	NL	Gebruik standaard schermbeveiliger (niet sneeuw)
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	DE	Schneemenge
 	EN	Quantity of snow
 	ES	Cantidad de nieve
 	FR	Intensité neige
+	NL	Hoeveelheid sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	DE	Schnee Bildschirmschoner: Schneemenge
 	EN	Snow Screensaver: Quantity of snow
 	ES	Salvapantallas de Nieve: Cantidad de nieve
 	FR	Ecran de veille neige: Intensité
+	NL	Sneeuw schermbeveiliger: hoeveelheid sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DE	Ein paar Schneeflocken
 	EN	Light flurries
 	ES	Copos livianos
 	FR	Quelques flocons
+	NL	Lichte vlagen
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
 	DE	Weihnächtlich weiss
 	EN	Christmassy
 	ES	Estilo Navidad
 	FR	C\'est Noël !
+	NL	Kerstmisachtig
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
 	DE	Heftiges Schneegestöber
 	EN	Blizzard
 	ES	Tormenta
 	FR	Tempête
+	NL	Sneeuwstorm
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	DE	Dichtes Schneegestöber
 	EN	Whiteout
 	ES	Resplandor Blanco
+	NL	White-out
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
 	DE	Schneetyp ein
 	EN	Style of snow when on
 	ES	Estilo de nieve on
 	FR	Type neige on
+	NL	Sneeuwstijl indien aan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	DE	Schneetyp aus
 	EN	Style of snow when off
 	ES	Estilo de nieve off
 	FR	Type neige off
+	NL	Sneeuwstijl indien uit
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	DE	Schnee Bildschirmschoner: Schneetyp
 	EN	Snow Screensaver: Style of snow
 	ES	Salvapantallas de Nieve: Estilo de nieve
 	FR	Ecran de veille Neige: Type
+	NL	Sneeuw schermbeveiliger: sneeuwstijl
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	DE	Es läuft gerade... mit Schnee im Hintergrund
 	EN	Now Playing, snow falling behind
 	ES	Se está escuchando, la nieve cae detrás
 	FR	Lecture + neige en arrière-plan
+	NL	Speelt nu, sneeuw valt achter
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	DE	Es läuft gerade... mit Schnee im Vordergrund
 	EN	Now Playing, snow falling in front
 	ES	Se está escuchando, la nieve cae delante
 	FR	Lecture +  neige en avant-plan
+	NL	Speelt nu, sneeuw valt vooraan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
 	DE	Datum/Zeit
 	EN	Date/Time
 	ES	Fecha/Hora
 	FR	Date/Heure
+	NL	Datum/tijd
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_4
 	DE	Nur Schnee
 	EN	Just snow
 	ES	Solo nieve
 	FR	Neige seule
+	NL	Alleen sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_5
 	DE	Automatisch
 	EN	Automatic
 	ES	Automático
 	FR	Automatique
+	NL	Automatisch
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	DE	Frohe Feiertage!
 	EN	Season\'s Greetings
 	ES	Saludos para las Fiestas
+	NL	Kerstgroeten
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
 	DE	4
@@ -166,32 +187,38 @@ PLUGIN_SCREENSAVER_SNOW_WORD_0
 	EN	MERRY
 	ES	FELIZ
 	FR	JOYEUX
+	NL	Vrolijk
 
 PLUGIN_SCREENSAVER_SNOW_WORD_1
 	DE	WEIHNACHTEN
 	EN	CHRISTMAS
 	ES	NAVIDAD
 	FR	NOEL
+	NL	kerstfeest
 
 PLUGIN_SCREENSAVER_SNOW_WORD_2
 	DE	UND EIN GUTES
 	EN	AND A VERY
 	ES	Y UN MUY
+	NL	en een heel
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
 	DE	GLÜCKLICHES
 	EN	HAPPY
 	ES	PRÓSPERO
+	NL	gelukkig
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
 	ES	AÑO NUEVO !
+	NL	nieuw jaar!
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
 	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
 	ES	Lo siento, la Nieve no funciona en este reproductor.
+	NL	Sorry, sneeuw werkt niet op deze speler
 '};
 
 ##################################################

@@ -281,26 +281,31 @@ PLUGIN_FAVORITES_MODULE_NAME
 	DE	Favoriten
 	EN	Favorites
 	ES	Favoritas
+	NL	Favorieten
 
 PLUGIN_FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht!
 	EN	Favorite #%s not defined.
 	ES	Favorita #%s no definida
+	NL	Favoriet #%s niet gedefinieerd.
 
 PLUGIN_FAVORITES_NONE_DEFINED
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
 	ES	No existen Favoritas
+	NL	Er zijn geen favorieten
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...
 	EN	Playing favorite #%s
 	ES	Se está escuchando favorita #%s
+	NL	Speel favoriet #%s
 
 PLUGIN_FAVORITES_ADDING
 	DE	Füge Favorit Nr. %s zur Wiedergabeliste hinzu...
 	EN	Adding favorite #%s
 	ES	Añadiendo favorita #%s
+	NL	Toevoegen favoriet #%s
 ";}
 
 1;

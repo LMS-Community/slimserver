@@ -1413,7 +1413,7 @@ SETUP_CLIPORT
 	ES	Número de puerto para la interfaz de linea de comandos
 	FR	Numéro de port de l'interface en ligne de commande
 	JP	コマンドライン インターフェース ポートナンバー
-	NL	Poortnummer van de command line interface
+	NL	Poortnummer van de Opdrachtprompt interface
 	NO	Portnummer for terminalgrensesnitt
 	PT	Porta TCP da Interface de Linha de Comando
 	SE	Portnummer för terminalgränssnitt
@@ -1427,7 +1427,7 @@ SETUP_CLIPORT_DESC
 	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.
 	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine.
 	JP	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
-	NL	U kan het poortnummer dat gebruikt wordt om de player via een command line interface te bedienen aanpassen.
+	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een Opdrachtprompt interface te bedienen. Zet dit poortnummer op 0 (nul) als je de Opdrachtprompt interface wilt uitschakelen.
 	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
 	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
@@ -1441,7 +1441,7 @@ SETUP_CLIPORT_OK
 	ES	Utilizando puerto:
 	FR	L'interface en ligne de commande utilise maintenant le port :
 	JP	現在コマンドライン インターフェースには、以下のポートが使われています:
-	NL	De volgende poort wordt gebruikt voor de command line interface:
+	NL	De volgende poort wordt gebruikt voor de Opdrachtprompt interface:
 	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
 	PT	A porta para acesso via linha de comando é
 	SE	Använder nu följande portnummer för terminalgränssnittet:

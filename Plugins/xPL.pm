@@ -664,6 +664,7 @@ SETUP_GROUP_XPL
 	ES	Configuración de xPL
 	FR	Paramètres xPL
 	JP	xPL セッティング
+	NL	xPL instellingen
 	NO	xPL-innstillinger
 	SE	xPL-inställningar
 	ZH_CN	xPL设置
@@ -674,6 +675,7 @@ SETUP_GROUP_XPL_DESC
 	ES	Estos valores controlan el comportamiento del protocolo xPL
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
 	JP	これらのセッティングはxPLプロトコルを調節します
+	NL	Deze instellingen wijzigen het gedrag van het xPL protocol.
 	NO	Dette er innstillinger for xPL-protokollen
 	SE	Detta är inställningar för xPL-protokollet
 	ZH_CN	控制xPL协议的设置
@@ -684,6 +686,7 @@ SETUP_XPLSUPPORT
 	ES	soporte xPL
 	FR	Support du xPL
 	JP	xPL サポート
+	NL	xPL ondersteuning
 	NO	xPL støtte
 	SE	xPL-stöd
 	ZH_CN	xPL支持
@@ -693,6 +696,7 @@ SETUP_XPLSUPPORT_CHOOSE
 	EN	xPL support:
 	ES	soporte xPL:
 	FR	Support du xPL :
+	NL	xPL ondersteuning:
 	NO	xPL støtte:
 	SE	xPL-stöd:
 	ZH_CN	xPL支持：
@@ -704,6 +708,7 @@ SETUP_XPLINTERVAL
 	ES	Intervalo de latidos
 	FR	Intervale
 	JP	インターバル
+	NL	Heartbeat interval
 	NO	Intervall
 	SE	Hjärtrytm, intervall
 	ZH_CN	心跳间隔时间
@@ -715,6 +720,7 @@ SETUP_XPLINTERVAL_CHOOSE
 	ES	Intervalo de latidos:
 	FR	Intervalle :
 	JP	インターバル:
+	NL	Heartbeat interval:
 	NO	Intervall:
 	SE	Hjärtrytm, intervall:
 	ZH_CN	心跳间隔时间：
@@ -725,6 +731,7 @@ SETUP_XPLIR
 	ES	Procesando Infra-rojo
 	FR	Traitement infrarouge
 	JP	赤外線プロセシング
+	NL	Infrarood verwerking
 	NO	Infrarød håndtering
 	SE	Infraröd, hantering
 	ZH_CN	红外线处理
@@ -746,6 +753,7 @@ SETUP_XPLIR_NONE
 	ES	Ninguno
 	FR	Aucun
 	JP	なし
+	NL	Geen
 	NO	Ingen
 	SE	Ingen
 	ZH_CN	无
@@ -757,6 +765,7 @@ SETUP_XPLIR_BUTTONS
 	ES	Botones
 	FR	Touches
 	JP	ボタン
+	NL	Knoppen
 	NO	Knapper
 	SE	Knappar
 	ZH_CN	按钮
@@ -767,6 +776,7 @@ SETUP_XPLIR_RAW
 	ES	Crudo
 	FR	Brut
 	JP	列
+	NL	Ruw (Raw)
 	NO	Rå
 	SE	Rå
 	ZH_CN	生
@@ -778,6 +788,7 @@ SETUP_XPLIR_BOTH
 	ES	Ambos
 	FR	Les deux
 	JP	両方
+	NL	Beide
 	NO	Begge
 	SE	Båda
 	ZH_CN	两者皆是

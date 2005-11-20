@@ -377,16 +377,19 @@ PLUGIN_PODCAST
 PODCAST_ERROR
 	DE	Fehler
 	EN	Error
+	NL	Fout
 
 PODCAST_GET_FAILED
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
 	ES	Error de parse
+	NL	Analyseren lukte niet
 
 PODCAST_LOADING
 	DE	Hole Casts...
 	EN	Fetching...
 	ES	Recuperando...
+	NL	Ophalen...
 
 PODCAST_LINK
 	EN	Link
@@ -394,52 +397,63 @@ PODCAST_LINK
 
 PODCAST_URL
 	EN	Url
+	NL	URL
 
 PODCAST_DATE
 	DE	Datum
 	EN	Date
 	ES	Fecha
+	NL	Datum
 
 PODCAST_EDITOR
 	DE	Herausgeber
 	EN	Editor
+	NL	Redacteur
 
 PODCAST_ENCLOSURE
 	EN	Enclosure
+	NL	Bijlage
 
 PODCAST_AUDIO_ENCLOSURES
 	DE	Audio Enclosure
 	EN	Audio Enclosures
+	NL	Audio bijlagen
 
 PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play
 	ES	Nada para escuchar
+	NL	Niets te spelen
 
 PODCAST_FEED_DESCRIPTION
 	DE	Über diesen Podcast
 	EN	About this podcast
 	ES	Acerca de este podcast
+	NL	Over deze Podcast
 
 PODCAST_GROUP_DESC
 	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 	ES	El plugin Navegador de Podcasts permite ver y escuchar podcasts.
+	NL	Met de Podcast plugin kun je Podcasts bekijken en beluisteren.
 
 PODCAST_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Reinicializar
+	NL	Herstellen
 
 PODCAST_RESETTING
 	DE	Setze Podcasts zurück
 	EN	Resetting to default podcasts
 	ES	Reestableciendo podcasts por defecto
+	NL	Standaard Podcasts herstellen
 
 PODCAST_FEEDS_CHANGE
 	DE	Die Podcast Liste wurde geändert.
 	EN	Podcast list changed.
 	ES	Lista de Podcast modificada.
+	NL	Podcast lijst gewijzigd.
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
@@ -448,6 +462,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	DE	Podcasts zurücksetzen
 	EN	Reset default Podcasts
 	ES	Reinicializar Podcasts por defecto
+	NL	Herstel standaard Podcasts
 
 !};
 

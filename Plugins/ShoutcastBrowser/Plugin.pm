@@ -1114,51 +1114,61 @@ sub strings {
 	return q^PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
+	NL	SHOUTcast Internet radio
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	DE	Verbinde mit SHOUTcast...
 	EN	Connecting to SHOUTcast...
 	ES	Conectando a SHOUTcast...
+	NL	Connectie maken naar SHOUTcast...
 
 PLUGIN_SHOUTCASTBROWSER_REDIRECT
 	DE	Bitte haben Sie etwas Geduld, während die Stream-Informationen von der SHOUTcast Website geladen werden...
 	EN	Please stay tuned while I'm looking up stream information on the SHOUTcast web site...
 	ES	Por favor, permanezca conectado mientras busco información de streams en el sitio web de SHOUTcast...
+	NL	Wacht even terwijl naar de streaminformatie wordt gekeken op de SHOUTcast website...
 
 PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT
 	DE	Klicken Sie hier, falls die Seite nicht automatisch aktualisiert wird
 	EN	Click here if this page isn't updated automatically
 	ES	Presionar aqui si  esta página no se actualiza automáticamente
+	NL	Klik hier als deze pagina niet automatisch wijzigt
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH
 	DE	Aktualisieren
 	EN	Refresh
 	ES	Refrescar
+	NL	Vernieuwen
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH_NOW
 	DE	RECHTS drücken zum Aktualisieren
 	EN	Press RIGHT to refresh the list
 	ES	Presionar DERECHA para refrescar la lista
+	NL	Druk -> om de lijst te vernieuwen
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 	DE	Liste der Streams aktualisieren
 	EN	Refresh stream list
 	ES	Refrescar la lista de streams
+	NL	Vernieuw stream lijst
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	CZ	CHYBA: web SHOUTcast je nedostupný
 	DE	Fehler: SHOUTcast ist nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
+	NL	Fout: SHOUTcast website niet beschikbaar
 
 PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	DE	Beim Auswerten der Stream-Informationen ist ein Fehler aufgetreten. Reduzieren Sie allenfalls die Anzahl Streams, falls Sie eine grosse Zahl anfordern wollten.
 	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
 	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
+	NL	Er was een fout bij het analyseren van de streaminformatie. Probeer het aantal streams verminderen als je een groot aantal hebt ingesteld.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR
 	DE	Kein Player verfügbar.
 	EN	Sorry, valid player not found.
+	NL	Sorry, geen geldige speler was gevonden.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
@@ -1167,11 +1177,13 @@ PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS
 	DE	Alle Streams
 	EN	All Streams
 	ES	Todos los streams
+	NL	Alle streams
 
 PLUGIN_SHOUTCASTBROWSER_NONE
 	DE	Keine
 	EN	None
 	ES	Ninguno
+	NL	Geen
 
 PLUGIN_SHOUTCASTBROWSER_BITRATE
 	EN	Bitrate
@@ -1184,152 +1196,182 @@ PLUGIN_SHOUTCASTBROWSER_RECENT
 	DE	Kürzlich gehört
 	EN	Recently played
 	ES	Recientemente escuchado
+	NL	Recent afgespeeld
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	CZ	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular
+	NL	Meest populair
 
 PLUGIN_SHOUTCASTBROWSER_MISC
 	DE	Diverse Stile
 	EN	Misc. genres
 	ES	Géneros misceláneos
+	NL	Diverse genres
 
 PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM
 	DE	Zufälligen Stream spielen
 	EN	Play random stream
 	ES	Reproducir stream al azar
+	NL	Speel willekeurige stream
 
 PLUGIN_SHOUTCASTBROWSER_WAS_PLAYING
 	DE	Spielte zuletzt
 	EN	Was playing
 	ES	Se estaba escuchando
+	NL	Speelde af
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER
 	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
+	NL	SHOUTcast Internet radio
 
 SETUP_GROUP_PLUGIN_SHOUTCASTBROWSER_DESC
 	DE	Blättere durch die Liste der SHOUTcast Internet Radiostationen.
 	EN	Browse SHOUTcast list of Internet Radio streams.
 	ES	Recorrer la lista de streams de Radio por Internet de  SHOUTcast.
+	NL	Bekijk SHOUTcast lijst van Internet radio streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS
 	DE	Anzahl Streams
 	EN	Number of Streams
 	ES	Número de Streams
+	NL	Aantal streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 	DE	Anzahl aufzulistender Streams (Radiostationen). Voreinstellung ist 300, das Maximum 2000.
 	EN	How many streams to get.  Default is 300, maximum is 2000.
 	ES	Cuántos streams traer. Por defecto es 300, máximo es 2000.
+	NL	Hoeveel streams ophalen. Standaard is 300, maximum is 2000.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION
 	DE	Sortierkriterium für Musikstile
 	EN	Sort Criterion for Genres
 	ES	Criterio para Ordenar por Géneros
+	NL	Sorteercriteria voor genres
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION_DESC
 	DE	Kriterium für die Sortierung der Musikstile
 	EN	Criterion for sorting genres.
 	ES	Criterio para Ordenar por Géneros
+	NL	Criterium voor sorteren genres.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION
 	DE	Sortierkriterium für Streams
 	EN	Sort Criterion for Streams
 	ES	Criterio para ordenar streams.
+	NL	Sorteer criteria voor streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION_DESC
 	DE	Kriterium für die Sortierung der Streams (Radiostationen)
 	EN	Criterion for sorting streams.
 	ES	Criterio para ordenar streams.
+	NL	Criterium voor sorteren streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	DE	Minimale Bitrate
 	EN	Minimum Bitrate
 	ES	Mínima Tasa de Bits
+	NL	Minimum bitrate
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
 	DE	Minimal erwünschte Bitrate (0 für unbeschränkt).
 	EN	Minimum Bitrate in which you are interested (0 for no limit).
 	ES	Mínima Tasa de Bits que nos interesa (0 para no tener límite).
+	NL	Minimum bitrate waarin je ge&iuml;nteresseerd bent (0 voor geen limiet).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 	DE	Maximale Bitrate
 	EN	Maximum Bitrate
 	ES	Máxima Tasa de Bits
+	NL	Maximum bitrate
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
 	DE	Maximal erwünschte Bitrate (0 für unbeschränkt).
 	EN	Maximum Bitrate in which you are interested (0 for no limit).
 	ES	Máxima Tasa de Bits que nos interesa (0 para no tener límite).
+	NL	Maximum bitrate waarin je geïnteresseerd bent (0 voor geen limiet).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
 	DE	Zuletzt gehörte Streams
 	EN	Recent Streams
 	ES	Streams recientes
+	NL	Recente streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	DE	Anzahl zu merkender Streams (Radiostationen)
 	EN	Maximum number of recently played streams to remember.
 	ES	Máximo número a recordar de streams escuchados recientemente.
+	NL	Maximum te onthouden recent afgespeelde streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	CZ	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular
+	NL	Meest populair
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	DE	Die Anzahl Streams, die unter "Populäre Streams" aufgeführt werden sollen. Die Beliebtheit misst sich an der Anzahl Hörer aller Bitraten.
 	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
 	ES	Número de streams a incluir en la categoría de streams más populares, medida por el total de oyentes en todas las tasas de bits.
+	NL	Aantal streams dat in de 'Meest populair' categorie komt, wordt gemeten naar het aantal luisteraars op alle bitrates.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	DE	Alphabetisch (umgekehrte Reihenfolge)
 	EN	Alphabetical (reverse)
 	ES	Alfabético (reverso)
+	NL	Alfabetisch (omgekeerd)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS
 	DE	Anzahl Streams
 	EN	Number of streams
 	ES	Número de streams
+	NL	Aantal streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFSTREAMS_REVERSE
 	DE	Anzahl Streams (umgekehrte Reihenfolge)
 	EN	Number of streams (reverse)
 	ES	Número de Streams (reverso)
+	NL	Aantal streams (omgekeerd)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_DEFAULT_ALPHA
 	DE	Alphabetisch (Standard)
 	EN	Alphabetical (Default)
 	ES	Alfabético (Por Defecto)
+	NL	Alfabetisch (standaard)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS
 	DE	Anzahl Hörer
 	EN	Number of listeners
 	ES	Número de oyentes
+	NL	Aantal luisteraars
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_LISTENERS
 	DE	Hörer
 	EN	Listeners
 	ES	Oyentes
+	NL	Luisteraars
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_NUMBEROFLISTENERS_REVERSE
 	DE	Anzahl Hörer (umgekehrte Reihenfolge)
 	EN	Number of listeners (reverse)
 	ES	Número de oyentes (reverso)
+	NL	Aantal luisteraars (omgekeerd)
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE
 	DE	Musikstile normalisieren
 	EN	Normalise genres
 	ES	Normalizar géneros
+	NL	Normaliseer genres
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE_DESC
 	DE	Standardmässig wird versucht, die Musikstile zu normalisieren, weil sonst beinahe so viele Stile wie Streams aufgeführt werden. Falls Sie alle Stile unverändert aufführen wollen, so deaktivieren Sie diese Option.
 	EN	By default, genres are normalised based on keywords, because otherwise there are nearly as many genres as there are streams. If you would like to see the genre listing as defined by each stream, turn off this parameter.
 	ES	Por defecto, los géneros se normalizan en base a palabras clave, ya que de lo contrario existen casi tantos géneros como streams. Si se quiere ver la lista de géneros tal cual se la define en cada stream,   desactivar este parámetro.
+	NL	Standaard zijn genres genormaliseerd op sleutelwoorden omdat er anders vrijwel net zoveel genres zouden zijn als streams. Zet deze optie uit als je de genre lijst wilt zien zoals gedefinieerd door elke stream
 ^;
 }
 
