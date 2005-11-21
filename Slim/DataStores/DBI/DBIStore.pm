@@ -1536,10 +1536,7 @@ sub _preCheckAttributes {
 		push @$comments, delete $attributes->{'URL'};
 	}
 
-	if (scalar @$comments) {
-		
-		$attributes->{'COMMENT'} = $comments;
-	}
+	$attributes->{'COMMENT'} = $comments;
 
 	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
