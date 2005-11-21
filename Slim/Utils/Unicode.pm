@@ -561,8 +561,14 @@ sub encodingFromFileHandle {
 	#
 	# These must be seek() and not sysseek(), as File::BOM uses seek(),
 	# and they'll get confused otherwise.
-	my $pos  = tell($fh);
-	my $size = seek($fh, 0, SEEK_END);
+	my $maxsz = 4096;
+	my $pos   = tell($fh);
+	my $size  = seek($fh, 0, SEEK_END) ? tell($fh) : $maxsz;
+
+	# Set a limit on the size to read.
+	if ($size > $maxsz || $size < 0) {
+		$size = $maxsz;
+	}
 
 	# Don't do any translation.
 	binmode($fh, ":raw");
