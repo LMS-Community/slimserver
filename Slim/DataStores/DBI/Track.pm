@@ -310,7 +310,7 @@ sub setTracks {
 			# which still deals with URLs - get the objects to add.
 			if (!blessed($track) || !$track->can('url')) {
 
-				$track = $ds->objectForUrl($track, 1, 0, 1);
+				$track = $ds->objectForUrl($track, 1, 1, 1);
 			}
 
 			if (blessed($track) && $track->can('id')) {
