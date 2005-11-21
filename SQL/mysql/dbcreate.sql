@@ -13,10 +13,10 @@ SET foreign_key_checks = 0;
 CREATE TABLE metainformation (
   version  int(10) unsigned,
   track_count  int(10) unsigned,
-  total_time  int(10) unsigned
+  total_time   int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (18, 0, 0);
+INSERT INTO metainformation VALUES (19, 0, 0);
 
 --
 -- Table: tracks
@@ -24,9 +24,9 @@ INSERT INTO metainformation VALUES (18, 0, 0);
 CREATE TABLE tracks (
   id int(10) unsigned NOT NULL auto_increment,
   url text NOT NULL,
-  title varchar(255),
-  titlesort varchar(255),
-  titlesearch varchar(255),
+  title text,
+  titlesort text,
+  titlesearch text,
   album  int(10) unsigned,
   tracknum  int(10) unsigned,
   content_type varchar(255),
@@ -36,11 +36,11 @@ CREATE TABLE tracks (
   audio_size  int(10) unsigned,
   audio_offset  int(10) unsigned,
   year  smallint(5) unsigned,
-  secs  int(10) unsigned,
+  secs  float unsigned,
   cover varchar(255),
   thumb varchar(255),
   vbr_scale varchar(255),
-  bitrate  int(10) unsigned,
+  bitrate  float unsigned,
   samplerate  int(10) unsigned,
   samplesize  int(10) unsigned,
   channels  tinyint(1) unsigned,
@@ -64,11 +64,11 @@ CREATE TABLE tracks (
   replay_gain float,
   replay_peak float,
   multialbumsortkey  text,
-  INDEX trackTitleIndex (title),
+  INDEX trackTitleIndex (title(255)),
   INDEX trackAlbumIndex (album),
   INDEX ctSortIndex (content_type),
-  INDEX trackSortIndex (titlesort),
-  INDEX trackSearchIndex (titlesearch),
+  INDEX trackSortIndex (titlesort(255)),
+  INDEX trackSearchIndex (titlesearch(255)),
   INDEX trackRatingIndex (rating),
   INDEX trackPlayCountIndex (playCount),
   INDEX trackAudioIndex (audio),
@@ -110,10 +110,10 @@ CREATE TABLE dirlist_track (
 --
 CREATE TABLE albums (
   id int(10) unsigned NOT NULL auto_increment,
-  title varchar(255),
-  titlesort varchar(255),
-  titlesearch varchar(255),
-  contributor varchar(255),
+  title text,
+  titlesort text,
+  titlesearch text,
+  contributor text,
   compilation tinyint(1) unsigned,
   year  smallint(5) unsigned,
   artwork int(10) unsigned, -- pointer to a track id that contains artwork
@@ -123,9 +123,9 @@ CREATE TABLE albums (
   replay_peak float,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable tinyint(1) unsigned,
-  INDEX albumsTitleIndex (title),
-  INDEX albumsSortIndex (titlesort),
-  INDEX albumsSearchIndex (titlesearch),
+  INDEX albumsTitleIndex (title(255)),
+  INDEX albumsSortIndex (titlesort(255)),
+  INDEX albumsSearchIndex (titlesearch(255)),
   INDEX compilationSortIndex (compilation),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
@@ -137,16 +137,16 @@ CREATE TABLE albums (
 --
 CREATE TABLE contributors (
   id int(10) unsigned NOT NULL auto_increment,
-  name varchar(255),
-  namesort varchar(255),
-  namesearch varchar(255),
+  name text,
+  namesort text,
+  namesearch text,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable tinyint(1) unsigned,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable tinyint(1) unsigned,
-  INDEX contributorsNameIndex (name),
-  INDEX contributorsSortIndex (namesort),
-  INDEX contributorsSearchIndex (namesearch),
+  INDEX contributorsNameIndex (name(255)),
+  INDEX contributorsSortIndex (namesort(255)),
+  INDEX contributorsSearchIndex (namesearch(255)),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
@@ -158,11 +158,11 @@ CREATE TABLE contributor_track (
   role  int(10) unsigned,
   contributor  int(10) unsigned,
   track  int(10) unsigned,
-  namesort varchar(255),
+  namesort text,
   INDEX contributor_trackContribIndex (contributor),
   INDEX contributor_trackTrackIndex (track),
   INDEX contributor_trackRoleIndex (role),
-  INDEX contributor_trackSortIndex (namesort),
+  INDEX contributor_trackSortIndex (namesort(255)),
   PRIMARY KEY (id),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
@@ -189,15 +189,15 @@ CREATE TABLE contributor_album (
 --
 CREATE TABLE genres (
   id int(10) unsigned NOT NULL auto_increment,
-  name varchar(255),
-  namesort varchar(255),
-  namesearch varchar(255),
+  name text,
+  namesort text,
+  namesearch text,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable tinyint(1) unsigned,
   musicmagic_mixable tinyint(1) unsigned,
-  INDEX genreNameIndex (name),
-  INDEX genreSortIndex (namesort),
-  INDEX genreSearchIndex (namesearch),
+  INDEX genreNameIndex (name(255)),
+  INDEX genreSortIndex (namesort(255)),
+  INDEX genreSearchIndex (namesearch(255)),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
