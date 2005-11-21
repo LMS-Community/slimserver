@@ -1516,7 +1516,31 @@ sub _preCheckAttributes {
 		$attributes->{$shortTag} = delete $attributes->{$gainTag};
 		$attributes->{$shortTag} =~ s/\s*dB//gi;
 	}
-			
+
+	# We can take an array too - from vorbis comments, so be sure to handle that.
+	my $comments = [];
+
+	if ($attributes->{'COMMENT'} && !ref($attributes->{'COMMENT'})) {
+
+		$comments = [ $attributes->{'COMMENT'} ];
+
+	} elsif (ref($attributes->{'COMMENT'}) eq 'ARRAY') {
+
+		$comments = $attributes->{'COMMENT'};
+	}
+
+	# Bug: 2605 - Get URL out of the attributes - some programs, and
+	# services such as www.allofmp3.com add it.
+	if ($attributes->{'URL'}) {
+
+		push @$comments, delete $attributes->{'URL'};
+	}
+
+	if (scalar @$comments) {
+		
+		$attributes->{'COMMENT'} = $comments;
+	}
+
 	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
@@ -1911,19 +1935,7 @@ sub _postCheckAttributes {
 	$track->update();
 
 	# Add comments if we have them:
-	# We can take an array too - from vorbis comments, so be sure to handle that.
-	my $comments = [];
-
-	if ($attributes->{'COMMENT'} && !ref($attributes->{'COMMENT'})) {
-
-		$comments = [ $attributes->{'COMMENT'} ];
-
-	} elsif (ref($attributes->{'COMMENT'}) eq 'ARRAY') {
-
-		$comments = $attributes->{'COMMENT'};
-	}
-
-	for my $comment (@$comments) {
+	for my $comment (@{$attributes->{'COMMENT'}}) {
 
 		Slim::DataStores::DBI::Comment->find_or_create({
 			'track' => $trackId,
