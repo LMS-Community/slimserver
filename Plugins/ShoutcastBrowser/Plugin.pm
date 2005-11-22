@@ -229,6 +229,7 @@ sub getModes {
 							if (($method eq 'right') && (time() > $last_time + 60)) {
 								$httpError = undef;
 								Slim::Buttons::Common::popModeRight($client);
+								Slim::Buttons::Common::popModeRight($client);
 								$client->block({'line1' => $client->string('PLUGIN_SHOUTCASTBROWSER_CONNECTING')});
 								loadStreamList($client);
 							}
