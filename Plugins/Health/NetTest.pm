@@ -31,7 +31,7 @@ our %functions = (
 		return if ($button ne 'down');
 
 		my $params = $client->modeParam('Health.NetTest') || return;;
-		setTest($client, $params->{test} + 1, undef, $params);
+		setTest($client, $params->{'test'} + 1, undef, $params);
 		Slim::Utils::Timers::killTimers($client, \&updateDisplay);
 		updateDisplay($client, $params);
 	},
@@ -42,7 +42,7 @@ our %functions = (
 		return if ($button ne 'up');
 
 		my $params = $client->modeParam('Health.NetTest') || return;
-		setTest($client, $params->{test} - 1, undef, $params);
+		setTest($client, $params->{'test'} - 1, undef, $params);
 		Slim::Utils::Timers::killTimers($client, \&updateDisplay);
 		updateDisplay($client, $params);
 	},
@@ -110,12 +110,12 @@ sub setTest {
 		return;
 	}
 
-	$params->{test} = $test;
-	$params->{rate} = $rate;
-	$params->{int} = ($client->screenBytes() + 10) * 8 / $params->{rate} / 1000;
-	$params->{Qlen0} = 0;
-	$params->{Qlen1} = 0;
-	$params->{log}->clear();
+	$params->{'test'} = $test;
+	$params->{'rate'} = $rate;
+	$params->{'int'} = ($client->screenBytes() + 10) * 8 / $params->{'rate'} / 1000;
+	$params->{'Qlen0'} = 0;
+	$params->{'Qlen1'} = 0;
+	$params->{'log'}->clear();
 }
 
 sub startDisplay {
@@ -139,8 +139,8 @@ sub updateDisplay {
 
 	$client->render(lines($client, $params));
 
-	$params->{Qlen0} = 0;
-	$params->{Qlen1} = 0;
+	$params->{'Qlen0'} = 0;
+	$params->{'Qlen1'} = 0;
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1.0, \&updateDisplay, $params);
 }
@@ -154,31 +154,32 @@ sub sendDisplay {
 		return;
 	}
 
-	my $frame = $params->{header} . ${$client->renderCache()->{bitsref}};
+	my $frame = $params->{'header'} . ${$client->renderCache()->{'bitsref'}};
 
 	my $slimprotoQLen = Slim::Networking::Select::writeNoBlockQLen($client->tcpsock);
 
-	$slimprotoQLen ? $params->{Qlen1}++ : $params->{Qlen0}++;
+	$slimprotoQLen ? $params->{'Qlen1'}++ : $params->{'Qlen0'}++;
 
-	if (($slimprotoQLen == 0) && (length($frame) == $params->{frameLen})) {
+	if (($slimprotoQLen == 0) && (length($frame) == $params->{'frameLen'})) {
 		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 	}
 
-	$params->{refresh} += $params->{int} ? $params->{int} : 0.5;
+	$params->{'refresh'} += $params->{'int'} ? $params->{'int'} : 0.5;
 	
-	Slim::Utils::Timers::setHighTimer($client, $params->{refresh}, \&sendDisplay, $params);
+	Slim::Utils::Timers::setHighTimer($client, $params->{'refresh'}, \&sendDisplay, $params);
 }
 
 sub lines {
 	my $client = shift;
 	my $params = shift;
 
-	my $test = $params->{test};
-	my $rate = $params->{rate};
-	my $inst = $params->{Qlen0} ? $params->{Qlen0} / ($params->{Qlen1} + $params->{Qlen0}) : 0;
+	my $test = $params->{'test'};
+	my $rate = $params->{'rate'};
+	my $inst = $params->{'Qlen0'} ? $params->{'Qlen0'} / ($params->{'Qlen1'} + $params->{'Qlen0'}) : 0;
+
 	$params->{log}->log($inst * 100) if ($inst > 0);
 
-	my $avgPercent = $params->{log}->{total} ? $params->{log}->{sum} / $params->{log}->{total} : 0;
+	my $avgPercent = $params->{'log'}->{'total'} ? $params->{'log'}->{'sum'} / $params->{'log'}->{'total'} : 0;
 
 	return {
 		'line1'    => $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE'),
