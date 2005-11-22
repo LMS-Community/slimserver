@@ -59,7 +59,7 @@ sub setMode {
 			listRef => \@lines,
 		);
 
-		Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 
 	} else {
 
@@ -199,23 +199,7 @@ sub gotRSS {
 			playItem($client, $item, 'add');
 		},
 
-		overlayRef => sub {
-			my $client = shift;
-			my $item = shift;
-
-			my $overlay;
-
-			if (hasAudio($item)) {
-				$overlay .= Slim::Display::Display::symbol('notesymbol');
-			}
-
-			if (hasDescription($item) || hasLink($item)) {
-				$overlay .= Slim::Display::Display::symbol('rightarrow');
-			}
-
-			return [ undef, $overlay ];
-		},
-
+		overlayRef => \&overlaySymbol,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -248,7 +232,7 @@ sub gotOPML {
 					title => $item->{'name'},
 				);
 
-				Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
 
 			} elsif ($item->{'items'}) {
 
@@ -261,7 +245,7 @@ sub gotOPML {
 			}
 		},
 
-		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
+		overlayRef => \&overlaySymbol,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -291,7 +275,7 @@ sub browseOPML {
 					title => $item->{'name'},
 				);
 
-				Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);
+				Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
 
 			} elsif ($item->{'items'}) {
 
@@ -313,16 +297,38 @@ sub browseOPML {
 			playItem($client, $item);
 		},
 
-		overlayRef => [undef, Slim::Display::Display::symbol('rightarrow')],
+		overlayRef => \&overlaySymbol,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 }
 
+sub overlaySymbol {
+	my ($client, $item) = @_;
+
+	my $overlay = '';
+
+	if (hasAudio($item)) {
+
+		$overlay .= Slim::Display::Display::symbol('notesymbol');
+	}
+
+	if (hasDescription($item) || hasLink($item)) {
+
+		$overlay .= Slim::Display::Display::symbol('rightarrow');
+	}
+
+	return [ undef, $overlay ];
+}
+
 sub hasAudio {
 	my $item = shift;
 
-   	if ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/)) {
+	if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
+
+		return $item->{'url'};
+
+	} elsif ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/)) {
 
 		return $item->{'enclosure'}->{'url'};
 
@@ -342,7 +348,7 @@ sub hasLink {
 sub hasDescription {
 	my $item = shift;
 
-	my $description = $item->{'description'};
+	my $description = $item->{'description'} || $item->{'name'};
 
 	if ($description and !ref($description)) {
 
@@ -478,7 +484,7 @@ sub displayItemDescription {
 			},
 		);
 
-		Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 	}
 }
 
@@ -671,7 +677,7 @@ sub parseRSS {
 
 	my %feed = (
 		'type'           => 'rss',
-		'items'          => [],
+		'items'          => (),
 		'title'          => unescapeAndTrim($xml->{'channel'}->{'title'}),
 		'description'    => unescapeAndTrim($xml->{'channel'}->{'description'}),
 		'lastBuildDate'  => unescapeAndTrim($xml->{'channel'}->{'lastBuildDate'}),

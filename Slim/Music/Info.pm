@@ -322,10 +322,12 @@ sub setTitle {
 
 	$::d_info && msg("Adding title $title for $url\n");
 
+	# Only readTags if we're not a remote URL. Otherwise, we'll
+	# overwrite the title with the URL.
 	$currentDB->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
-		'readTags'   => 1,
+		'readTags'   => isRemoteURL($url) ? 0 : 1,
 	});
 }
 

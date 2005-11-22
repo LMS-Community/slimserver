@@ -53,7 +53,7 @@ sub setMode {
 		title    => $client->string(getDisplayName()),
 	);
 
-	Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
 }
 
 sub strings {
