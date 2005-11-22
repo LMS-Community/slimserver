@@ -1507,6 +1507,12 @@ sub _preCheckAttributes {
 	# Remote index.
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
+	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
+	if (defined $attributes->{'YEAR'} && $attributes->{'YEAR'} !~ /^\d+$/) {
+
+		delete $attributes->{'YEAR'};
+	}
+
 	# Munge the replaygain values a little
 	for my $gainTag (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
