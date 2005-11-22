@@ -24,84 +24,131 @@ function refresh() {
 
     [% IF perfoff %]
         <p>[% "PLUGIN_HEALTH_PERFOFF_DESC" | string %]
-	<p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=on">[% "PLUGIN_HEALTH_PERF_ENABLE" | string %]</a>
+		<p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=on">[% "PLUGIN_HEALTH_PERF_ENABLE" | string %]</a>
     [% END %]
 
     [% IF perfon %]
         <p>[% "PLUGIN_HEALTH_PERFON_DESC" | string %]
-	<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a>
+		<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a>
         <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=clear">[% "PLUGIN_HEALTH_PERF_CLEAR" | string %]</a>
         <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH_PERF_UPDATE" | string %]</a>
-
         <p>
         <hr>
-        [% IF playername %]<h4>[% playername %]</h4>
-            <p>[% "PLUGIN_HEALTH_SUMMARY_DESC" | string %]
-	[% END %]
-        [% IF summary %]<h5>[% "PLUGIN_HEALTH_SUMMARY" | string %]</h5> 
-            <pre>[% summary %]</pre>
-            <p>
-        [% END %]
-        [% IF warn %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
-            [% FOREACH warn_message = warn %]
-	        <p>[% warn_message %]</p>
+
+		[% IF playername AND NOT nettest_rate%]
+
+		    <h4>[% playername %]</h4>
+			<p>[% "PLUGIN_HEALTH_SUMMARY_DESC" | string %]
+            
+			[% IF summary %]<h5>[% "PLUGIN_HEALTH_SUMMARY" | string %]</h5> 
+                <pre>[% summary %]</pre>
+                <p>
             [% END %]
-        [% END %]
-
-        <hr>
-        [% IF playername %]
-	    <h4>[% "PLUGIN_HEALTH_PLAYERDETAIL" | string %] : [% playername %]</h4>
-	    <p>[% "PLUGIN_HEALTH_PLAYERDETAIL_DESC" | string %]
-	    <p>
-	    [% IF signal %]
-                <h5>[% "PLUGIN_HEALTH_SIGNAL" | string %]</h5>
-	        [% "PLUGIN_HEALTH_SIGNAL_DESC" | string %]
-	        <pre>[% signal %]</pre>
-	    [% END %]
-
-	    [% IF buffer %]
-	        <h5>[% "PLUGIN_HEALTH_BUFFER" | string %]</h5>
-	        [% "PLUGIN_HEALTH_BUFFER_DESC" | string %]
-	        <pre>[% buffer %]</pre>
-	    [% END %]
-
-	    [% IF control %]
-	        <h5>[% "PLUGIN_HEALTH_CONTROL" | string %]</h5>
-	        [% "PLUGIN_HEALTH_CONTROL_DESC" | string %]
-	        <pre>[% control %]</pre>
-	    [% END %]
+            
+			[% IF warn %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
+                [% FOREACH warn_message = warn %]
+	                <p>[% warn_message %]</p>
+                [% END %]
+            [% END %]
 
             <hr>
+
+		[% END %]
+
+		[% IF playername %]
+		    <h4>[% "PLUGIN_HEALTH_NETTEST" | string %] : [% playername %]</h4>
+
+		    [% IF NOT nettest_rate %]
+
+			    [% IF nettest_notsupported %]
+			        <p>[% "PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED" | string %]
+					<p>
+				[% ELSE %]
+			        <p>[% "PLUGIN_HEALTH_NETTEST_DESC1" | string %]			
+					<p><b>[% "PLUGIN_HEALTH_NETTEST_TESTRATE" | string %]</b>
+					[% FOREACH rate = nettest_options %]
+					    | <a href = "[% webroot %]plugins/Health/index.html?player=[% player | uri %]&test=[% rate | uri%]">
+						[% rate %] kbps</a>
+					[% END %]
+					<p>
+				[% END %]
+
+			[% ELSE %]
+			    <h5>[% "PLUGIN_HEALTH_NETTEST_CURRENTRATE" | string %] : [% nettest_rate %] kbps</h5>
+			    <b>[% "PLUGIN_HEALTH_NETTEST_TESTRATE" | string %]</b> |
+			    <a href = "[% webroot %]plugins/Health/index.html?player=[% player | uri %]&test=stop">
+				[% "PLUGIN_HEALTH_NETTEST_STOPTEST" | string %]</a>
+			    [% FOREACH rate = nettest_options %]
+			        | <a href = "[% webroot %]plugins/Health/index.html?player=[% player | uri %]&test=[% rate | uri%]">
+				    [% rate %] kbps</a>
+			    [% END %]
+			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC2" | string %]
+	            <pre>[% nettest_graph %]</pre>
+			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC3" | string %]
+				<p>
+
+			[% END %]
+
+			<hr>
+	    [% END %]
+
+		[% IF playername AND NOT nettest_rate %]
+		    [% IF signal OR buffer OR control %]
+
+			    <h4>[% "PLUGIN_HEALTH_PLAYERDETAIL" | string %] : [% playername %]</h4>
+				<p>[% "PLUGIN_HEALTH_PLAYERDETAIL_DESC" | string %]
+				<p>
+
+				[% IF signal %]
+                    <h5>[% "PLUGIN_HEALTH_SIGNAL" | string %]</h5>
+	                [% "PLUGIN_HEALTH_SIGNAL_DESC" | string %]
+         	        <pre>[% signal %]</pre>
+         	    [% END %]
+
+	            [% IF buffer %]
+                    <h5>[% "PLUGIN_HEALTH_BUFFER" | string %]</h5>
+					[% "PLUGIN_HEALTH_BUFFER_DESC" | string %]
+				    <pre>[% buffer %]</pre>
+				[% END %]
+
+			    [% IF control %]
+				    <h5>[% "PLUGIN_HEALTH_CONTROL" | string %]</h5>
+	                [% "PLUGIN_HEALTH_CONTROL_DESC" | string %]
+	                <pre>[% control %]</pre>
+	            [% END %]
+
+                <hr>
+			[% END %]
+		[% END %]
+
+		<h4>[% "PLUGIN_HEALTH_SERVER_PERF" | string %]</h4>
+		[% "PLUGIN_HEALTH_SERVER_PERF_DESC" | string %]
+
+		[% IF response %]
+		    <h5>[% "PLUGIN_HEALTH_RESPONSE" | string %]</h5>
+			[% "PLUGIN_HEALTH_RESPONSE_DESC" | string %]
+			<pre>[% response %]</pre> 
+		[% END %]
+
+		[% IF timerlate %]
+		    <h5>[% "PLUGIN_HEALTH_TIMER_LATE" | string %]</h5>
+			[% "PLUGIN_HEALTH_TIMER_LATE_DESC" | string %]
+			<pre>[% timerlate %]</pre>
+		[% END %]
+
+		[% IF timerlength %]
+		    <h5>[% "PLUGIN_HEALTH_TIMER_LENGTH" | string %]</h5>
+			[% "PLUGIN_HEALTH_TIMER_LENGTH_DESC" | string %]
+			<pre>[% timerlength %]</pre>
+		[% END %]
+
+		[% IF scheduler %]
+		    <h5>[% "PLUGIN_HEALTH_SCHEDULER" | string %]</h5>
+			[% "PLUGIN_HEALTH_SCHEDULER_DESC" | string %]
+			<pre>[% scheduler %]</pre>
+			[% END %]
+
+			<p>
 	[% END %]
-
-	<h4>[% "PLUGIN_HEALTH_SERVER_PERF" | string %]</h4>
-	[% "PLUGIN_HEALTH_SERVER_PERF_DESC" | string %]
-
-	[% IF response %]
-	   <h5>[% "PLUGIN_HEALTH_RESPONSE" | string %]</h5>
-	   [% "PLUGIN_HEALTH_RESPONSE_DESC" | string %]
-	   <pre>[% response %]</pre> 
-	[% END %]
-
-	[% IF timerlate %]
-	    <h5>[% "PLUGIN_HEALTH_TIMER_LATE" | string %]</h5>
-	    [% "PLUGIN_HEALTH_TIMER_LATE_DESC" | string %]
-	    <pre>[% timerlate %]</pre>
-	[% END %]
-
-	[% IF timerlength %]
-	    <h5>[% "PLUGIN_HEALTH_TIMER_LENGTH" | string %]</h5>
-	    [% "PLUGIN_HEALTH_TIMER_LENGTH_DESC" | string %]
-	    <pre>[% timerlength %]</pre>
-	[% END %]
-
-	[% IF scheduler %]
-	    <h5>[% "PLUGIN_HEALTH_SCHEDULER" | string %]</h5>
-	    [% "PLUGIN_HEALTH_SCHEDULER_DESC" | string %]
-	    <pre>[% scheduler %]</pre>
-	[% END %]
-
-	<p>
-    [% END %]
 </td>
 [% PROCESS pagefooter.html %]

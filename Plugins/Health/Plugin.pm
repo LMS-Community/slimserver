@@ -14,10 +14,50 @@ package Plugins::Health::Plugin;
 use strict;
 
 use vars qw($VERSION);
-$VERSION = "0.01";
+$VERSION = "0.2";
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+use Plugins::Health::NetTest;
+
+#
+# Register Plugin
+#
+
+sub enabled {
+	return ($::VERSION ge '6.2');
+}
+
+# Main web interface
+sub webPages {
+	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
+
+	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
+	}
+
+	return (\%pages);
+}
+
+# Player inteface for network test
+sub getDisplayName {
+	return('PLUGIN_HEALTH_NETTEST');
+}
+
+sub setMode {
+	return Plugins::Health::NetTest::setMode(@_);
+}
+
+sub getFunctions {
+	return \%Plugins::Health::NetTest::functions;
+}
+
+#
+# Web interface for Health page
+# 
 
 sub clearAllCounters {
 	
@@ -25,6 +65,13 @@ sub clearAllCounters {
 		$client->signalStrengthLog()->clear();
 		$client->bufferFullnessLog()->clear();
 		$client->slimprotoQLenLog()->clear();
+
+		if (Slim::Buttons::Common::mode($client) eq 'PLUGIN.Health::Plugin') {
+			my $modeParam = $client->modeParam('Health.NetTest');
+			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined($modeParam->{log})) {
+				$modeParam->{log}->clear();
+			}
+		}
 	}
 	$Slim::Networking::Select::selectPerf->clear();
 	$Slim::Networking::Select::endSelectTime = undef;
@@ -121,22 +168,13 @@ sub summary {
 	return ($summary, \@warn);
 }
 
-sub webPages {
-	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
-
-	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
-	}
-
-	return (\%pages);
-}
-
 sub handleIndex {
 	my ($client, $params) = @_;
 	
-	my $refresh = 30; # default refresh of 30s 
+	my $refresh = 60; # default refresh of 60s 
+	my ($newtest, $stoptest);
+
+	# process input parameters
 
 	if ($params->{'perf'}) {
 		if ($params->{'perf'} eq 'on') {
@@ -151,7 +189,18 @@ sub handleIndex {
 			$refresh = 2;
 		}
 	}
-	
+
+	if (defined($params->{'test'})) {
+		if ($params->{'test'} eq 'stop') {
+			$stoptest = 1;
+		} else {
+			$newtest = $params->{'test'};
+		}
+	}
+
+	# create params to build new page
+
+	# status of perfmon
 	if ($::perfmon) {
 		$params->{'perfon'} = 1;
 	} else {
@@ -159,28 +208,72 @@ sub handleIndex {
 		$refresh = undef;
 	}
 
+	# summary section
+	($params->{'summary'}, $params->{'warn'}) = summary($client);
+	
+	# client specific details
 	if (defined($client)) {
+
 		$params->{'playername'} = $client->name();
-		$params->{'signal'} = $client->signalStrengthLog()->sprint();
-		$params->{'buffer'} = $client->bufferFullnessLog()->sprint();
-		$params->{'control'} = $client->slimprotoQLenLog()->sprint();
+		$params->{'nettest_options'} = \@Plugins::Health::NetTest::testRates;
+
+		if (!$client->isa("Slim::Player::SqueezeboxG")) {
+			$params->{'nettest_notsupported'} = 1;
+			
+		} elsif (Slim::Buttons::Common::mode($client) eq 'PLUGIN.Health::Plugin') {
+			# network test currently running on this player
+			my $modeParam = $client->modeParam('Health.NetTest');
+			if ($stoptest) {
+				# stop tests
+				Plugins::Health::NetTest::exitMode($client);
+				Slim::Buttons::Common::popMode($client);
+				$client->update();
+				$refresh = 2;
+			} elsif (defined($newtest)) {
+				# change test rate
+				Plugins::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
+				$refresh = 2;
+			} 
+			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{log}) { 
+				# display current results
+				$params->{'nettest_rate'} = $modeParam->{rate};
+				$params->{'nettest_graph'} = $modeParam->{log}->sprint();
+			}
+
+		} elsif (defined($newtest)) {
+			# start tests - power on if necessary
+			$client->power(1) if !$client->power();
+			Slim::Buttons::Common::pushMode($client, 'PLUGIN.Health::Plugin');
+			my $modeParam = $client->modeParam('Health.NetTest');
+			Plugins::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
+			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{log}) { 
+				$params->{'nettest_rate'} = $modeParam->{rate};
+				$params->{'nettest_graph'} = $modeParam->{log}->sprint();
+			}
+			$refresh = 2;
+
+		} else {
+			# if network test not running show detailed player logs
+			$params->{'signal'} = $client->signalStrengthLog()->sprint();
+			$params->{'buffer'} = $client->bufferFullnessLog()->sprint();
+			$params->{'control'} = $client->slimprotoQLenLog()->sprint();
+		}
 	}
 
+	# generic server info
 	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
 	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
 	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
 	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerPerf->sprint();
-
-	($params->{'summary'}, $params->{'warn'}) = summary($client);
 
 	$params->{'refresh'} = $refresh;
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Health/index.html',$params);
 }
 
-sub getDisplayName {
-	return('PLUGIN_HEALTH');
-}
+#
+# Strings for Heath Web page & Network Test player interface
+#
 
 sub strings {
 	return '
@@ -269,9 +362,9 @@ PLUGIN_HEALTH_BUFFER
 	NL	Bufferniveau
 
 PLUGIN_HEALTH_BUFFER_DESC
-	DE	Diese Graphik zeigt den Puffer-Füllstand ihres Players. Höhere Werte sind besser. Beachten Sie bitte, dass der Puffer nur während der Wiedergabe gefüllt wird.<p>Die Squeezebox1 besitzt nur einen kleinen Puffer, der während der Wiedergabe stets voll sein sollte. Fällt der Wert auf 0, so ist mit Aussetzern in der Wiedergabe zu rechnen. Dies wäre vermutlich auf Netzwerkprobleme zurückzuführen.<p>Die Squeezebox2 verwendet einen grossen Puffer. Dieser wird am Ende jedes wiedergegebenen Liedes geleert (Füllstand 0) um dann wieder aufzufüllen. Der Füllstand sollte also meist hoch sein.<p>Die Wiedergabe von Online-Radiostationen kann zu niedrigem Puffer-Füllstand führen, da der Player auf die Daten von einem entfernten Server warten muss. Dies ist normales Verhalten und kein Grund zur Beunruhigung. 
-	EN	This graph shows the fill of the player\'s buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
-	ES	Este gráfico muestra el llenado del buffer del reproductor. Cuanto más lleno esté mejor es. Notar que el buffer solo se llena cuando el reproductor está reproduciendo pistas.    Squeezebox1 utiliza un buffer pequeño y se espera que permanezca lleno mientras se reproduce. Si este valor cae a 0 se producirán interrupciones en el audio. Esto se debe muy probablemente a problemas de red.    Squeezebox2 utiliza un buffer grande. Este se vacía (vuelve a 0) al final de cada pista y luego se llena nuevamente para la próxima pista. Solo debería precupar el caso en que el llenado del buffer no tiene un nivel alto durante la mayoría del tiempo en que se esta reproduciendo una pista.    El reproducir streams remotos puede producir que el buffer tenga un nivel de llenado bajo, ya que el reproductor necesitas esperar que lleguen datos del servidor remoto. Esto no es causa para preocuparse.
+	DE	Diese Graphik zeigt den Puffer-Füllstand ihres Players. Höhere Werte sind besser. Beachten Sie bitte, dass der Puffer nur während der Wiedergabe gefüllt wird.<p>Die Squeezebox1 besitzt nur einen kleinen Puffer, der während der Wiedergabe stets voll sein sollte. Fällt der Wert auf 0, so ist mit Aussetzern in der Wiedergabe zu rechnen. Dies wäre vermutlich auf Netzwerkprobleme zurückzuführen.<p>Die Squeezebox2/3 verwendet einen grossen Puffer. Dieser wird am Ende jedes wiedergegebenen Liedes geleert (Füllstand 0) um dann wieder aufzufüllen. Der Füllstand sollte also meist hoch sein.<p>Die Wiedergabe von Online-Radiostationen kann zu niedrigem Puffer-Füllstand führen, da der Player auf die Daten von einem entfernten Server warten muss. Dies ist normales Verhalten und kein Grund zur Beunruhigung. 
+	EN	This graph shows the fill of the player\'s buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2/3 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
+	ES	Este gráfico muestra el llenado del buffer del reproductor. Cuanto más lleno esté mejor es. Notar que el buffer solo se llena cuando el reproductor está reproduciendo pistas.    Squeezebox1 utiliza un buffer pequeño y se espera que permanezca lleno mientras se reproduce. Si este valor cae a 0 se producirán interrupciones en el audio. Esto se debe muy probablemente a problemas de red.    Squeezebox2/3 utiliza un buffer grande. Este se vacía (vuelve a 0) al final de cada pista y luego se llena nuevamente para la próxima pista. Solo debería precupar el caso en que el llenado del buffer no tiene un nivel alto durante la mayoría del tiempo en que se esta reproduciendo una pista.    El reproducir streams remotos puede producir que el buffer tenga un nivel de llenado bajo, ya que el reproductor necesitas esperar que lleguen datos del servidor remoto. Esto no es causa para preocuparse.
 	NL	Deze grafiek toont bufferniveau. Hoger niveau is beter. De buffer is alleen gevuld tijdens het afspelen van muziek.  <br>Squeezebox1 gebruikt een kleine buffer die normaal gesproken altijd vol is. Als het niveau naar 0 gaat zal er hapering in het geluid optreden. Dit komt vaak door netwerkproblemen.  <br>Squeezebox2/3 gebruikt een grote buffer. Hier loopt het bufferniveau naar 0 toe aan het einde van een liedje en vult zich weer aan het begin van het volgende liedje. Alleen als de buffer de meeste tijd niet gevuld is tijdens het spelen moet je actie nemen.  <br>Het spelen van streams op afstand (Internet radio) geeft een laag bufferniveau omdat de speler moet wachten op de server op afstand. Dit is geen gevolg van problemen.
 
 PLUGIN_HEALTH_CONTROL
@@ -380,10 +473,7 @@ PLUGIN_HEALTH_INACTIVE
 	NL	Inactief
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
-	DE	Derzeit ist keine aktive Verbindung für diesen Player vorhanden. Eine Verbindung wird aufgebaut, wenn Sie eine Datei vom Server wiedergeben, nicht aber, wenn Sie eine Internet Radio-Station af einer Squeezebox2 hören.<p>Falls Sie versuchen, eine lokale Datei auf diesem Player abzuspielen, so deutet dies auf ein Netzwerkproblem hin. Bitte überprüfen Sie die Netzwerkkonfiguration und/oder Firewall (TCP Port 9000 darf nicht blockiert sein).
-	EN	There is currently no active connection for streaming to this player.  A connection is required whenever you play a file from the server (but not when you play remote radio streams on a Squeezebox2 player).<p>If you are attempting to play a local file on this player, then this indicates a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
-	ES	No existe una conexión activa para transmitir a este reproductor. Se requiere una conexión siempre que se reproduzca un archivo desde el servidor (pero no cuando se escuchane streams de radios remotas en un reproductor Squeezebox2).    Si se está intentando reproducir un archivo local en este reproductor, entonces esto indica un problema de red. Por favor, verificar que la red y/o el firewall del servidor no estén bloqueando las conexiones TCP en el puerto 9000.
-	NL	Er is op dit moment geen actieve connectie voor het streamen naar deze speler. Een connectie is altijd nodig om bestanden te spelen vanaf de server (maar niet als je enn radiostream op afstand gebruikt bij een Squeezebox2 of 3)  <br>  Als je een lokaal bestand probeert af te spelen dan wijst dit op een netwerkprobleem. Controleer of je netwerk en/of serverfirewall niet TCP poort 9000 blokkeren.
+	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transfered to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
 	DE	Derzeit ist keine aktive Kontroll-Verbindung für diesen Player vorhanden. Bitte stellen Sie sicher, dass das Gerät eingeschaltet ist. Falls der Player keine Netzwerkverbindung aufbauen kann, überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.
@@ -446,9 +536,9 @@ PLUGIN_HEALTH_BUFFER_LOW_DESC1
 	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit kan resulteren in audiohaperingen, zeker als je WAV/AIFF streamt. Controleer de netwerksignaalsterkte en de snelheid waarmee de server reageert als je haperingen hoort.
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC2
-	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies ist eine Squeezebox2, es ist daher normal, dass der Puffer am Ende eines Liedes geleert wird. Diese Warnung wird ev. angezeigt, falls Sie viele kurze Lieder wiedergeben. Falls Sie Tonaussetzer feststellen, überprüfen Sie bitte die Signalstärke.
-	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check our network signal strength.
-	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Este es un Squeezebox2 y por lo tanto es esperable que el buffer se vacíe al final de cada pista. Se puede recibir esta advertencia si se están reproduciendo muchas pistas de corta duración. Si se escuchan interrupciones de audio, por favor, controlar la potencia de señal de red.
+	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies ist eine Squeezebox2/3, es ist daher normal, dass der Puffer am Ende eines Liedes geleert wird. Diese Warnung wird ev. angezeigt, falls Sie viele kurze Lieder wiedergeben. Falls Sie Tonaussetzer feststellen, überprüfen Sie bitte die Signalstärke.
+	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2/3 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check our network signal strength.
+	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Este es un Squeezebox2/3 y por lo tanto es esperable que el buffer se vacíe al final de cada pista. Se puede recibir esta advertencia si se están reproduciendo muchas pistas de corta duración. Si se escuchan interrupciones de audio, por favor, controlar la potencia de señal de red.
 	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit is een Squeezebox2. Daar mag het bufferniveau laag zijn aan het einde van een liedje. Je kunt deze waarschuwing krijgen als je veel korte liedjes afspeelt. Controleer de netwerksignaalsterkte als je haperingen hoort in het geluid.
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT
@@ -492,6 +582,39 @@ PLUGIN_HEALTH_SLIMP3_DESC
 	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.
 	ES	Este es un reproductor SLIMP3. Medidas completas de perfomance no están disponibles para este reproductor.
 	NL	Dit is een Slimp3 speler. Volledig prestatiemonitoring is niet beschikbaar voor deze speler.
+
+PLUGIN_HEALTH_NETTEST
+	EN	Network Test
+	ES	Test de Red
+
+PLUGIN_HEALTH_NETTEST_SELECT_RATE
+	EN	Press Up/Down to select rate
+	ES	Elegir tasa: pres. Arriba/Abajo
+
+PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
+	EN	Not Supported on this Player
+	ES	No soportado en este Reproductor
+
+PLUGIN_HEALTH_NETTEST_DESC1
+	EN	You may test the network performance between your server and this player.  This will enable you to confirm the highest data rate that your network will support and identify network problems.  To start a test select one of the data rates below.<p><b>Warning</b> Running a network test will stop all other activity for this player including streaming.
+
+PLUGIN_HEALTH_NETTEST_DESC2
+	EN	You are currently running a network test on this player.  This disables reporting other player statistics.  You may change the test rate by selecting a new rate above.  To stop the test and return to other player performance information select Stop Test above.<p>The graph below records the percentage of the test rate which is sucessfully sent to the player.  It is updated once per second with the performance measured over the last second.  The result for the last second and long term average at this rate are also shown on the player display while a test is running.  Leave the test running for a period of time at a fixed rate.  The graph will record how frequently the network performance drops below 100% at this rate.
+
+PLUGIN_HEALTH_NETTEST_DESC3
+	EN	The highest test rate which achieves 100% indicates the maximum rate you can stream at.  If this is below the bitrate of your files you should consider configuring bitrate limiting for this player.<p>A Squeezebox2/3 attached to a wired network should be able to achieve at least 3000 kpbs at 100% (Squeezebox1 1500 kbps).  A player attached to a wireless network may also reach up to this rate depending on your wireless network.  Rates significantly below this indicate poor network performance.  Wireless networks may record occasional lower percentages due to interference.  Use the graph above to understand how your network performs.  If the rate drops frequently you should investigate your network.
+
+PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
+	EN	Network tests are not supported on this player.
+
+PLUGIN_HEALTH_NETTEST_CURRENTRATE
+	EN	Current Test Rate
+
+PLUGIN_HEALTH_NETTEST_TESTRATE
+	EN	Test Rate
+
+PLUGIN_HEALTH_NETTEST_STOPTEST
+	EN	Stop Test
 
 '
 }
