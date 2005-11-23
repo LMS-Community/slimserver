@@ -3,7 +3,7 @@
 # Network Throughput Tests for Health Plugin
 # Operated via Health web page or player user interface
 
-# $Id:$
+# $Id$
 
 # This code is derived from code with the following copyright message:
 #
