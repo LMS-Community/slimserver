@@ -164,7 +164,15 @@ sub sendDisplay {
 		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
 	}
 
-	$params->{'refresh'} += $params->{'int'} ? $params->{'int'} : 0.5;
+	if ($params->{'int'}) {
+		my $timenow = Time::HiRes::time();
+		# skip if running late [reduces actual rate sent, but avoids recording throughput drop when timers are late]
+		do {
+			$params->{'refresh'} += $params->{'int'};
+		} while ($params->{'refresh'} < $timenow);
+	} else {
+		$params->{'refresh'} += 0.5;
+	}
 	
 	Slim::Utils::Timers::setHighTimer($client, $params->{'refresh'}, \&sendDisplay, $params);
 }
