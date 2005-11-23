@@ -272,7 +272,14 @@ sub dBToFixed {
 	# Map a floating point dB value to a 16.16 fixed point value to
 	# send as a new style volume to SB2 (FW 22+).
 	my $floatmult = 10 ** ($db/20);
-	return int(($floatmult * (1 << 16)) + 0.5);
+	
+	# use 8 bits of accuracy for dB values greater than -35dB to avoid rounding errors
+	if ($db >= -35 && $db <= 0) {
+		return int($floatmult * (1 << 8) + 0.5) * (1 << 8);
+	}
+	else {
+		return int(($floatmult * (1 << 16)) + 0.5);
+	}
 }
 
 sub volume {
