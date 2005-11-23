@@ -68,8 +68,8 @@ sub clearAllCounters {
 
 		if (Slim::Buttons::Common::mode($client) eq 'PLUGIN.Health::Plugin') {
 			my $modeParam = $client->modeParam('Health.NetTest');
-			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined($modeParam->{log})) {
-				$modeParam->{log}->clear();
+			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined($modeParam->{'log'})) {
+				$modeParam->{'log'}->clear();
 			}
 		}
 	}
@@ -234,10 +234,10 @@ sub handleIndex {
 				Plugins::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
 				$refresh = 2;
 			} 
-			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{log}) { 
+			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
 				# display current results
-				$params->{'nettest_rate'} = $modeParam->{rate};
-				$params->{'nettest_graph'} = $modeParam->{log}->sprint();
+				$params->{'nettest_rate'} = $modeParam->{'rate'};
+				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
 			}
 
 		} elsif (defined($newtest)) {
@@ -246,9 +246,9 @@ sub handleIndex {
 			Slim::Buttons::Common::pushMode($client, 'PLUGIN.Health::Plugin');
 			my $modeParam = $client->modeParam('Health.NetTest');
 			Plugins::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
-			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{log}) { 
-				$params->{'nettest_rate'} = $modeParam->{rate};
-				$params->{'nettest_graph'} = $modeParam->{log}->sprint();
+			if (defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
+				$params->{'nettest_rate'} = $modeParam->{'rate'};
+				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
 			}
 			$refresh = 2;
 
