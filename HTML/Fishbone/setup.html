@@ -16,7 +16,7 @@
 		[% IF page == 'player' %]
 				<h3>[% "FORGET_PLAYER" | string %]</h3>
 				<p>[% "FORGET_PLAYER_DESC" | string %]</p>
-				<p><a href="[% webroot %]home.html?player=[% playerURI %]&forget=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
+				<p><a href="[% webroot %]home.html?player=[% playerURI %]&forget=[% playerid | uri %]" target="header" onClick="parent.window.location='index.html'">[% "FORGET_PLAYER_LINK" | string %]</a></p>
 			<hr>
 		[% END %]
 	
