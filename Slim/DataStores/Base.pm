@@ -484,8 +484,13 @@ sub init {
 				# Show the artist in the album view
 				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					$form->{'artist'}        = $item->contributor;
-					$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+					my @artists = $item->artists;
+
+					if (scalar @artists) {
+
+						$form->{'artist'}        = $artists[0];
+						$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+					}
 				}
 
 				my $Imports = Slim::Music::Import::importers();
