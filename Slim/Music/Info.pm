@@ -1354,6 +1354,14 @@ sub variousArtistString {
 	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
 }
 
+sub infoFormat {
+
+	errorMsg("Slim::Music::Info::infoFormat() has been deprecated!\n");
+	errorMsg("Please notify the Plugin author to use Slim::Music::TitleFormatter::infoFormat() instead!\n");
+
+	return Slim::Music::TitleFormatter::infoFormat(@_);
+}
+
 1;
 
 __END__
