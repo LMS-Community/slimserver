@@ -273,8 +273,8 @@ sub dBToFixed {
 	# send as a new style volume to SB2 (FW 22+).
 	my $floatmult = 10 ** ($db/20);
 	
-	# use 8 bits of accuracy for dB values greater than -35dB to avoid rounding errors
-	if ($db >= -35 && $db <= 0) {
+	# use 8 bits of accuracy for dB values greater than -30dB to avoid rounding errors
+	if ($db >= -30 && $db <= 0) {
 		return int($floatmult * (1 << 8) + 0.5) * (1 << 8);
 	}
 	else {
