@@ -384,9 +384,11 @@ sub init {
 				# Show the artist in the album view
 				if (Slim::Utils::Prefs::get('showArtist')) {
 
-					if (my $contributor = $item->contributor) {
+					my @artists = $item->artists;
 
-						$form->{'artist'}        = $contributor;
+					if (scalar @artists) {
+
+						$form->{'artist'}        = $artists[0];
 						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 						$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
 

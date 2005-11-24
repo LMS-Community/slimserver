@@ -113,7 +113,6 @@ CREATE TABLE albums (
   title text,
   titlesort text,
   titlesearch text,
-  contributor int(10) unsigned NOT NULL,
   compilation tinyint(1) unsigned,
   year  smallint(5) unsigned,
   artwork int(10) unsigned, -- pointer to a track id that contains artwork

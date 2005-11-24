@@ -14,13 +14,11 @@ use Slim::Utils::Misc;
 
 	$class->columns(Primary => qw/id/);
 
-	$class->columns(Essential => qw/title titlesort contributor compilation year artwork disc discc musicmagic_mixable/);
+	$class->columns(Essential => qw/title titlesort compilation year artwork disc discc musicmagic_mixable/);
 
 	$class->columns(Others    => qw/titlesearch replay_gain replay_peak musicbrainz_id/);
 
 	$class->columns(Stringify => qw/title/);
-
-	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 
 	# This has the same sort order as %DataModel::sortFieldMap{'album'}
 	$class->add_constructor('hasArtwork' => 'artwork IS NOT NULL ORDER BY titlesort, disc');
@@ -96,11 +94,11 @@ sub artists {
 
 		@artists = Slim::DataStores::DBI::DBIStore->variousArtistsObject;
 
-	} elsif (@artists == 0 && $self->contributor) {
+	} elsif (@artists == 0) {
 
 		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributor);
 
-		@artists = $self->contributor;
+		@artists = $self->artistsForRole('ARTIST');
 	}
 
 	return @artists;
