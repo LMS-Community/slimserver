@@ -476,18 +476,19 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif (($levels[$level] eq 'album') && $level == 0) {
+	} elsif (($levels[$level] eq 'album')) {
 
 		my @name = &{$levelInfo->{'resultToName'}}($item);
+		my $findCriteria = $client->param('findCriteria') || {};
 
-		if (Slim::Utils::Prefs::get('showYear')) {
+		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year'}) {
 
 			my $year = $item->year;
 
 			push @name, " ($year)" if $year;
 		}
 
-		if (Slim::Utils::Prefs::get('showArtist')) {
+		if (Slim::Utils::Prefs::get('showArtist') && !$findCriteria->{'artist'}) {
 
 			my @artists  = ();
 			my $noArtist = $client->string('NO_ARTIST');
