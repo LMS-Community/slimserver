@@ -463,8 +463,8 @@ sub parseBMP {
 	}
 	
 	my ($type, $fsize, $offset, 
-	    $biSize, $biWidth, $biHeight, $biPlanes, $biBitCount, $biCompression, $biSizeImage  ) 
-		= unpack("a2 V xx xx V  V V V v v V V xxxx xxxx xxxx xxxx", $fontstring);
+	    $biSize, $biWidth, $biHeight, $biPlanes, $biBitCount, $biCompression, $biSizeImage, $biFirstPaletteEntry ) 
+		= unpack("a2 V xx xx V  V V V v v V V xxxx xxxx xxxx xxxx V", $fontstring);
 	
 	if ($type ne "BM") { msg(" No BM header on $fontfile\n"); return undef; }
 	if ($fsize ne -s $fontfile) { msg(" Bad size in $fontfile\n"); return undef; }
@@ -486,9 +486,17 @@ sub parseBMP {
 		my $bsLength  = length($bitstring);
 
 		# Surprisingly, this loop is about 20% faster than doing split(//, $bitString)
-		for (my $j = 0; $j < $bsLength; $j++) {
 
-			$line[$j] = substr($bitstring, $j, 1);
+		if ($biFirstPaletteEntry == 0xFFFFFF) {
+			# normal palette
+			for (my $j = 0; $j < $bsLength; $j++) {
+				$line[$j] = substr($bitstring, $j, 1);
+			}
+		} else {
+			# reversed palette
+			for (my $j = 0; $j < $bsLength; $j++) {
+				$line[$j] = substr($bitstring, $j, 1) ? 0 : 1;
+			}
 		}
 
 		$font[$biHeight-$i-1] = \@line;
