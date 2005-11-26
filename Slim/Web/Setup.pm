@@ -854,7 +854,7 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'alarmfadeseconds' => {
 				'validate' => \&validateTrueFalse,
-				'PrefChoose' => string('ALARM_FADE').string('COLON'),
+				'PrefChoose' => string('ALARM_FADE'),
 				'changeIntro' => string('ALARM_FADE').string('COLON'),
 				'inputTemplate' => 'setup_input_chk.html',
 			}

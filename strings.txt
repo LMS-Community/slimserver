@@ -948,7 +948,7 @@ ALARM_SET_VOLUME_SHORT
 
 ALARM_FADE
 	DE	Wecker einblenden
-	EN	Alarm Fade-in
+	EN	Fade Alarms In	
 
 ALARM_SET_ENTRY
 	CZ	Čas buzení
