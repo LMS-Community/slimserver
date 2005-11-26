@@ -1812,6 +1812,9 @@ sub _postCheckAttributes {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
+		# Add an album artist if it exists.
+		$albumObj->contributor($contributor) if blessed($contributor);
+
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$albumObj->titlesort($sortable_title);
 
@@ -1909,6 +1912,15 @@ sub _postCheckAttributes {
 	if (blessed($contributor) && $contributor->can('namesort')) {
 
 		$primaryContributor = $contributor->namesort;
+
+	} elsif (blessed($albumObj) && $albumObj->can('contributor')) {
+
+		$contributor = $albumObj->contributor;
+
+		if (blessed($contributor) && $contributor->can('namesort')) {
+
+			$primaryContributor = $contributor->namesort;
+		}
 	}
 
 	# Save 2 get calls

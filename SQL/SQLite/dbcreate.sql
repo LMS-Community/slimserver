@@ -101,6 +101,7 @@ CREATE TABLE albums (
   title varchar,           -- title
   titlesort varchar,       -- version of title used for sorting
   titlesearch varchar,     -- version of title used for searching
+  contributor varchar,     -- pointer to the album contributor
   compilation integer,     -- boolean for compilation album
   year integer,            -- year
   artwork integer,         -- pointer to a track id that contains artwork.
