@@ -602,8 +602,6 @@ sub _hello_handler {
 		return;
 	} elsif ($deviceids[$deviceid] eq 'squeezebox2') {
 		$client_class = 'Slim::Player::Squeezebox2';
-	} elsif ($deviceids[$deviceid] eq 'shocker') {
-		$client_class = 'Slim::Player::Shocker';
 	} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
 		if ($bitmapped) {
 				$client_class = 'Slim::Player::SqueezeboxG';
