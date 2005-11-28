@@ -93,6 +93,17 @@ sub getTag {
 	my $tags = MP3::Info::get_mp3tag($fh); 
 	my $info = MP3::Info::get_mp3info($fh);
 
+	# Some MP3 files don't have their header information readily
+	# accessable. So try seeking in a bit further.
+	if (!scalar keys %$info) {
+
+		$MP3::Info::try_harder = 6;
+
+		$info = MP3::Info::get_mp3info($fh);
+
+		$MP3::Info::try_harder = 0;
+	}
+
 	doTagMapping($tags);
 
 	# we'll always have $info, as it's machine generated.

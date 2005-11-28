@@ -834,7 +834,7 @@ sub get_mp3tag {
 								# Text based genres will fall through.
 								if ($name && $name ne "\000") {
 									$data = $name;
-								} elsif ($index) {
+								} elsif (defined $index) {
 									$data = $mp3_genres[$index];
 								}
 							}
@@ -1058,6 +1058,11 @@ sub get_mp3info {
 
 	$off = 0;
 	$tot = 8192;
+
+	# Let the caller change how far we seek in looking for a header.
+	if ($try_harder) {
+		$tot *= $try_harder;
+	}
 
 	binmode $fh;
 	seek $fh, $off, 0;
