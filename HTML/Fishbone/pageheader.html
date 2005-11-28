@@ -132,10 +132,11 @@
 		</FORM>
 	</table>
 </div>
-[% END %]
+[% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
 [% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
 [% PROCESS crumblist %]
 [% pageHeaderInfo %]
 [% UNLESS noHR %]<hr>[% END %]
+[% END %]

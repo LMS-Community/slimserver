@@ -124,7 +124,7 @@
 	[% ELSE %]
 		[% item.text | html %]
 	[% END %]
-	[% item.noAlbum %]
+	
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
 	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %][% "FROM" | string %]
