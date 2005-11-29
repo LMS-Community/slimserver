@@ -98,7 +98,8 @@ sub _updateMetaData {
 
 		my $track = $ds->objectForUrl($entry);
 
-		if ((blessed($track) && $track->can('title') && !$track->title) || !blessed($track)) {
+		if ((blessed($track) && $track->can('title') && (!$track->title || $track->title ne $title)) || 
+			!blessed($track)) {
 
 			$attributes->{'TITLE'} = $title;
 		}
