@@ -470,7 +470,7 @@ sub reshuffle {
 			# Pull out the album id, and accumulate all of the
 			# tracks for that album into a hash. Also map that
 			# object to a poisition in the playlist.
-			if (blessed($trackObj) && $track->can('albumid')) {
+			if (blessed($trackObj) && $trackObj->can('albumid')) {
 
 				my $albumid = $trackObj->albumid() || 0;
 

@@ -665,7 +665,7 @@ sub execute {
 					}
 
 					# Un-escape URI that have been escaped again.
-					if (Slim::Music::Info::isRemoteURL($path)) {
+					if (Slim::Music::Info::isRemoteURL($path) && $path =~ /%3A%2F%2F/) {
 
 						$path = Slim::Utils::Misc::unescape($path);
 					}
