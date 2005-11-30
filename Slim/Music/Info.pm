@@ -1196,6 +1196,12 @@ sub validTypeExtensions {
 
 		while (my ($suffix, $value) = each %suffixes) {
 
+			# Don't display .lnk files on Non-Windows machines!
+			# We can't parse them. Bug: 2654
+			if (Slim::Utils::OSDetect::OS() ne 'win' && $suffix eq 'lnk') {
+				next;
+			}
+
 			if ($ext eq $value && $suffix !~ /playlist:/) {
 				push @extensions, $suffix;
 			}
