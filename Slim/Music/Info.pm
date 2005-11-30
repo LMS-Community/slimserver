@@ -1188,6 +1188,7 @@ sub validTypeExtensions {
 	}
 
 	my @extensions = ();
+	my $osType     = Slim::Utils::OSDetect::OS();
 
 	while (my ($ext, $type) = each %slimTypes) {
 
@@ -1198,7 +1199,7 @@ sub validTypeExtensions {
 
 			# Don't display .lnk files on Non-Windows machines!
 			# We can't parse them. Bug: 2654
-			if (Slim::Utils::OSDetect::OS() ne 'win' && $suffix eq 'lnk') {
+			if ($osType ne 'win' && $suffix eq 'lnk') {
 				next;
 			}
 
