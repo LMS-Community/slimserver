@@ -5,14 +5,20 @@
 var playlistcombo;
 var playlistObj;
 
+function getPlaylistInit() {
+	if (!curPlayer) return;
+	playlistObj = ss.call("slim.getPlaylist", [ curPlayer, 0, 100 ]).result;
+	updatePlaylist();
+}
+
 function getPlaylist() {
 	if (!curPlayer) return;
 	if (playlistcombo.getEl().isDragging) return;
 
-	var po = ss.call("slim.getPlaylist", [ curPlayer, 0, 100 ]).result;
-	playlistObj = po;
-
-	updatePlaylist();
+	ss.call("slim.getPlaylist", [ curPlayer, 0, 100 ], function(rv) {
+		playlistObj = rv.result;
+		updatePlaylist();
+	});
 }
 
 function updatePlaylist() {

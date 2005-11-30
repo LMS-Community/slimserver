@@ -132,9 +132,10 @@ function rotateShuffle() {
 	curShuf++;
 	if (curShuf == 3) curShuf = 0;
 	for (var i = 0; i < 3; i++) shufflebuttons[i].setState(i == curShuf);
-	ss.call("slim.doCommand", [ curPlayer, [ "playlist", "shuffle", curShuf ] ]);
-	getPlaylist();
-	getStatus();
+	ss.call("slim.doCommand", [ curPlayer, [ "playlist", "shuffle", curShuf ] ], function() {
+		getPlaylist();
+		getStatus();
+	});
 }
 
 
@@ -206,8 +207,11 @@ function getStatusPeriodically() {
 function getStatus() {
 	if (!curPlayer) return;
 
-	var statusobj = ss.call("slim.doCommand", [ curPlayer, [ "status" ] ]).result;
-	var so = unCLI(statusobj);
+	ss.call("slim.doCommand", [ curPlayer, [ "status" ] ], getStatusResponse);
+}
+
+function getStatusResponse(statusobj) {
+	var so = unCLI(statusobj.result);
 
 	currentSong = so.playlist_cur_index;
 	if (currentSong == undefined) currentSong = -1;

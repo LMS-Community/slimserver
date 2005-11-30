@@ -137,15 +137,8 @@ JXTK2.JSONRPC.Proxy = function(url) {
 	};
 
 	this.call = function (methodName, methodParams, onResp) {
-		//alert("calling " + methodName + "(" + methodParams.join(", ") + ") via " + proxyurl);
 
 		if (typeof methodParams != 'object') methodParams = [];
-
-		if (onResp == true) {
-			// "Fork" into background
-			setTimeout(function() { self.call(methodName, methodParams); }, 0);
-			return;
-		}
 
 		this.queueCall(methodName, methodParams);
 		var json = JXTK2.JSON.serialize(queue.length > 1 ? queue : queue[0]);
@@ -166,14 +159,15 @@ JXTK2.JSONRPC.Proxy = function(url) {
 
 		var isFunc = (typeof onResp == "function");
 
-		xmlreq.open("POST", proxyurl, isFunc);
+		xmlreq.open("POST", proxyurl, (onResp ? true : false));
+
 		if (isFunc) {
 			xmlreq.onreadystatechange = function () { handleResp(xmlreq, onResp); };
 		}
 
 		xmlreq.send(json);
 
-		if (!isFunc) return handleResp(xmlreq, onResp);
+		if (!onResp) return handleResp(xmlreq, onResp);
 	}
 
 	// Private Functions

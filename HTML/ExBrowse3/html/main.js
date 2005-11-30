@@ -11,7 +11,7 @@ var loadSteps = [
 	{ str : "Initializing Playlist...",	func : initPlaylist	},
 	{ str : "Downloading Player List...",	func : initPlayerList	},
 	{ str : "Downloading Strings...",	func : getStrings	},
-	{ str : "Loading Playlist...",		func : getPlaylist	},
+	{ str : "Loading Playlist...",		func : getPlaylistInit	},
 	{ str : "Loading Status...",		func : getStatusPeriodically	},
 	{ str : "Loading Home...",		func : loadHome		}
 ];
@@ -34,12 +34,15 @@ function mainload() {
 }
 
 function initPlayerList() {
-	setTimeout(initPlayerList, 9700);
-	getPlayerList();
+	getPlayerListContinue(ss.call("slim.getPlayers"));
+
+	setInterval(function() {
+		ss.call("slim.getPlayers", [], getPlayerListContinue);
+	}, 9700);
 }
 
-function getPlayerList() {
-	var players = ss.call("slim.getPlayers").result;
+function getPlayerListContinue(res) {
+	var players = res.result;
 
         var indexToSelect = 0;
 
@@ -47,7 +50,7 @@ function getPlayerList() {
 		var pli = players[i];
 
 		pli.value = pli.id;
-              	if (pli.id == curPlayer) {
+		if (pli.id == curPlayer) {
                	        indexToSelect = i;
 		}
 	}
