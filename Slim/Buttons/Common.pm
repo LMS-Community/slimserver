@@ -1029,12 +1029,18 @@ sub pushMode {
 
 	push @{$client->modeParameterStack}, $paramHashRef;
 
-	my $fun = $modes{$setmode};
-	if (!$fun || ref($fun) ne "CODE") {
+	my $newModeFunction = $modes{$setmode};
+
+	if (!$newModeFunction || ref($newModeFunction) ne "CODE") {
 		bt();
 		msg("Crashing because '$setmode' has no mode function or a bogus function.  Perhaps you mis-typed the mode name.\n");
 	}
-	&$fun($client,'push');
+
+	eval { &$newModeFunction($client, 'push') };
+
+	if ($@) {
+		msg("Couldn't push into new mode: [$setmode] !: $@\n");
+	}
 
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
