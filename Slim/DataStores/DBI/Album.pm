@@ -25,7 +25,7 @@ use Slim::Utils::Misc;
 	# This has the same sort order as %DataModel::sortFieldMap{'album'}
 	$class->add_constructor('hasArtwork' => 'artwork IS NOT NULL ORDER BY titlesort, disc');
 
-	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'multialbumsortkey'});
+	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'disc,tracknum,titlesort'});
 	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorAlbum' => 'contributor'] => 'album');
 }
 

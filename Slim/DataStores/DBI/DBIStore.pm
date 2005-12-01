@@ -395,7 +395,7 @@ sub count {
 	#
 	# But don't restrict if we have an album (this may be wrong) - 
 	# for VA albums, we want the correct count.
-	if ($field eq 'contributor' && !$findCriteria{'album'}) {
+	if ($field eq 'contributor' && !$findCriteria{'album'} && !$findCriteria{'genre'}) {
 
 		if (my $roles = $self->artistOnlyRoles) {
 

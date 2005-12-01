@@ -113,7 +113,7 @@ sub addLibraryStats {
 	my $ds   = Slim::Music::Info::getCurrentDataStore();
 	my $find = {};
 
-	$find->{'genre'}       = $genre  if $genre;
+	$find->{'genre'}       = $genre  if $genre  && !$album;
 	$find->{'contributor'} = $artist if $artist && !$album;
 	$find->{'album'}       = $album  if $album;
 
@@ -134,6 +134,10 @@ sub addLibraryStats {
 		delete $find->{'contributor'};
 
 		$find->{'album.compilation'} = 1;
+
+		# Don't display wonked or zero counts when we're working on the meta VA object
+		delete $params->{'song_count'};
+		delete $params->{'album_count'};
 	}
 
 	$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
