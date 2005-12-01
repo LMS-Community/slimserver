@@ -91,40 +91,41 @@ sub dispatch {
 	my $request = shift;
 
 	# we can do some preflighting here...
-	
+
 	# get the request name for debug and easy reference
 	my $requestText = $request->getRequest();
-	
+
 	$::d_command && msg("dispatch(): Dispatching request [$requestText]\n" );
-	
+
 	# get the function pointer
 	my $funcPtr;
+
 	if ($request->query()) {
 		$funcPtr = $dispatchQueries{$requestText};
 	}
 	else {
 		$funcPtr = $dispatchCommands{$requestText};
 	}
-	
+
 	# can't find no function for that request, returning...
-	unless ($funcPtr) {
-		errorMsg("dispatch(): Found no function for request [$requestText]\n" );
+	if (!$funcPtr) {
+
+		$::d_command && errorMsg("dispatch(): Found no function for request [$requestText]\n" );
 		return ();
 	}
-	
+
 	$request->setStatusDispatched();
-	
+
 	# got it, now do it
 	&{$funcPtr}($request);
-	
+
 	# check status
 	if ($request->isStatusDone()) {
 		$::d_command && msg("dispatch(): Done request [$requestText]\n");
-		
+
 		# notify watchers of commands
 		notify($request) if !$request->query();
 	}	
 }
 
 1;
-
