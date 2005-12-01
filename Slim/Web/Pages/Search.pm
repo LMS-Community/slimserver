@@ -15,6 +15,7 @@ use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::DataStores::Base;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
@@ -183,7 +184,7 @@ sub advancedSearch {
 	# Turn our conversion list into a nice type => name hash.
 	my %types  = ();
 
-	for my $type (keys %{ Slim::Player::Source::Conversions() }) {
+	for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
 
 		$type = (split /-/, $type)[0];
 

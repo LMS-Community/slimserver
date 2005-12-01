@@ -678,26 +678,20 @@ sub execute {
 						my $fixpath = Slim::Utils::Misc::fixPath($path);
 
 						$client->currentPlaylist($fixpath);
-
-						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
-
 						$client->currentPlaylistModified(0);
 
 					} elsif ($p1 =~ /^(add|append)$/) {
 
 						my $fixpath = Slim::Utils::Misc::fixPath($path);
-
-						Slim::Music::Info::setTitle($fixpath, $p3) if defined $p3;
-
 						$client->currentPlaylistModified(1);
 
 					} else {
 
 						$client->currentPlaylistModified(1);
 					}
-					
+
 					$path = Slim::Utils::Misc::virtualToAbsolute($path);
-					
+
 					if ($p1 =~ /^(play|load)$/) { 
 
 						$jumpToIndex = 0;

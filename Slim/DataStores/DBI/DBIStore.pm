@@ -28,6 +28,7 @@ use Slim::DataStores::DBI::Genre;
 use Slim::DataStores::DBI::LightWeightTrack;
 use Slim::DataStores::DBI::Track;
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -1160,7 +1161,28 @@ sub readTags {
 	# get the type without updating the cache
 	my $type = Slim::Music::Info::typeFromPath($filepath);
 
-	if (Slim::Music::Info::isSong($file, $type) && !Slim::Music::Info::isRemoteURL($file)) {
+	# Populate the DB with information for the remote URL now - and not at the time we play.
+	if (Slim::Music::Info::isRemoteURL($file)) {
+
+		my $stream = Slim::Player::ProtocolHandlers->openRemoteStream($file);
+
+		# Try and get a content type from the stream.
+		if (blessed($stream) && $stream->can('contentType')) {
+
+			my $contentType = Slim::Music::Info::mimeToType($stream->contentType) || 
+					  Slim::Music::Info::typeFromSuffix($file) ||
+					  $stream->contentType;
+
+			$attributesHash->{'CONTENT_TYPE'} = $contentType;
+			$attributesHash->{'TITLE'}        = $stream->title;
+			$attributesHash->{'BITRATE'}      = $stream->bitrate;
+
+		} else {
+
+			$attributesHash->{'CONTENT_TYPE'} = Slim::Music::Info::typeFromSuffix($file);
+		}
+
+	} elsif (Slim::Music::Info::isSong($file, $type)) {
 
 		# Extract tag and audio info per format
 		if (my $tagReaderClass = Slim::Music::Info::classForFormat($type)) {

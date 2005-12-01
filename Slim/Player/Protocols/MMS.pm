@@ -8,16 +8,14 @@ package Slim::Player::Protocols::MMS;
 # version 2.  
 
 use strict;
-
-use File::Spec::Functions qw(:ALL);
-use IO::Socket qw(:DEFAULT :crlf);
-use Audio::WMA;
-
-use Slim::Player::Pipeline;
-
 use base qw(Slim::Player::Pipeline);
 
-use Slim::Display::Display;
+use Audio::WMA;
+use File::Spec::Functions qw(:ALL);
+use IO::Socket qw(:DEFAULT :crlf);
+
+use Slim::Player::Source;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 
 # The following are class variables, since they hold state used during
@@ -28,8 +26,10 @@ use Slim::Utils::Misc;
 # to split the two into different classes - the socket version and the
 # protocol parsing version. For now we live with the ugliness of both
 # roles in the same package.
-our %stream_nums;
-our %parser_state;
+our %stream_nums  = ();
+our %parser_state = ();
+
+use constant DEFAULT_TYPE => 'wma';
 
 sub new {
 	my $class = shift;
@@ -39,17 +39,17 @@ sub new {
 	my $client = $args->{'client'};
 
 	# Set the content type to 'wma' to get the convert command
-	Slim::Music::Info::setContentType($url, 'wma');
-
-	my ($command, $type, $format) = Slim::Player::Source::getConvertCommand($client, $url);
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::::getConvertCommand($client, $url, DEFAULT_TYPE);
 
 	unless (defined($command) && $command ne '-') {
+
 		$::d_remotestream && msg "Couldn't find conversion command for wma\n";
+
+		# XXX - errorOpening should not be in Source!
 		Slim::Player::Source::errorOpening($client,Slim::Utils::Strings::string('WMA_NO_CONVERT_CMD'));
+
 		return undef;
 	}
-
-	Slim::Music::Info::setContentType($url, $format);
 
 	my $maxRate = 0;
 	my $quality = 1;
@@ -59,7 +59,7 @@ sub new {
 		$quality = $client->prefGet('lameQuality');
 	}
 
-	$command = Slim::Player::Source::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
+	$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
 
 	return $class->SUPER::new(undef, $command);
 }
@@ -137,10 +137,9 @@ sub requestString {
 }
 
 sub getFormatForURL {
-	my $classOrSelf = shift;
-	my $url = shift;
+	my ($classOrSelf, $url) = @_;
 
-	return 'wma';
+	return DEFAULT_TYPE;
 }
 
 sub parseDirectHeaders {
@@ -197,6 +196,8 @@ sub parseDirectHeaders {
 		$parser_state{$client}{"bytes_received"} = 0;
 	}
 
+	${*$self}{'contentType'} = $contentType;
+
 	return (undef, undef, 0, '', $contentType, $length, $body);
 }
 
@@ -250,6 +251,7 @@ sub parseDirectBody {
 	my $body = shift;
 
 	my $io = IO::String->new($body);
+
 	$::d_directstream && msg("MMS protocol handler received response body\n");
 	
 	# If it's a WMA header, then parse to get the stream number.
@@ -260,19 +262,38 @@ sub parseDirectBody {
 		my $wma  = Audio::WMA->new($io) || return ();
 		
 		my $stream = $wma->stream(0) || return ();
+
 		return unless defined($stream->{'flags_raw'});
 
 		$stream_nums{$url} = $stream->{'flags_raw'} & 0x007F;
 
 		$::d_directstream && msg("Parsed body as WMA header.\n");
 
-		return ($url);
+		return $url;
 	}
 	# Otherwise assume that it's an asx redirector and parse
 	# appropriately.
 	else {
 		return Slim::Formats::Parse::parseList($url, $io);
 	}
+}
+
+sub title {
+	my $self = shift;
+
+	return ${*$self}{'title'};
+}
+
+sub bitrate {
+	my $self = shift;
+
+	return ${*$self}{'bitrate'};
+}
+
+sub contentType {
+	my $self = shift;
+
+	return ${*$self}{'contentType'};
 }
 
 1;

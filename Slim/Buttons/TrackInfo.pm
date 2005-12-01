@@ -9,11 +9,13 @@ package Slim::Buttons::TrackInfo;
 # in the now playing screen.
 
 use strict;
+use Scalar::Util qw(blessed);
+
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Favorites;
-use Scalar::Util qw(blessed);
 
 our %functions = ();
 
@@ -422,7 +424,7 @@ sub preloadLines {
 
 	if (my $bitrate = $track->bitrate) {
 
-		my $undermax = Slim::Player::Source::underMax($client, $url);
+		my $undermax = Slim::Player::TranscodingHelper::underMax($client, $url);
 
 		my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." ABR";
 

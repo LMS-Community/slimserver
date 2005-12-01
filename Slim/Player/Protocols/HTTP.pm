@@ -26,7 +26,6 @@ BEGIN {
 	}
 }
 
-use Slim::Display::Display;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
@@ -137,18 +136,8 @@ sub request {
 	my $url     = $args->{'url'};
 	my $infoUrl = $args->{'infoUrl'};
 	my $post    = $args->{'post'};
-	my $create  = $args->{'create'};
 
-	# Try and use a track object if we have one - otherwise fall back to the URL.
-	my $track = $args->{'track'} || $infoUrl;
-
-	# Most callers will want create on. Some want it off. So check for the explict 0 value.
-	unless (defined $create) {
-		$create = 1;
-	}
-
-	my $class = ref $self;
-
+	my $class   = ref $self;
 	my $request = $self->requestString($url, $post);
 	
 	$::d_remotestream && msg("Request: $request");
@@ -181,10 +170,9 @@ sub request {
 	}
 	
 	my $redir = '';
-	my $ct    = Slim::Music::Info::typeFromPath($track, 'mp3');
+	my $ct    = Slim::Music::Info::typeFromPath($infoUrl, 'mp3');
 
 	${*$self}{'contentType'} = $ct;
-	Slim::Music::Info::setContentType($track, $ct) if $create;
 
 	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
 
@@ -192,15 +180,11 @@ sub request {
 
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 
-			my $title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
-
-			Slim::Music::Info::setCurrentTitle($infoUrl, $title) if $create;
-
-			${*$self}{'title'} = $title;
+			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 		}
 
 		if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
-			Slim::Music::Info::setBitrate($infoUrl, $1 * 1000) if $create;
+			${*$self}{'bitrate'} = $1 * 1000;
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
@@ -215,16 +199,13 @@ sub request {
 		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
 			my $contentType = $1;
 			
-			if (($contentType =~ /text/i) &&
-				!($contentType =~ /text\/xml/i)) {
+			if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
 				# webservers often lie about playlists.  This will
 				# make it guess from the suffix.  (unless text/xml)
 				$contentType = '';
 			}
 			
 			${*$self}{'contentType'} = $contentType;
-
-			Slim::Music::Info::setContentType($track, $contentType) if $create;
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
@@ -244,60 +225,14 @@ sub request {
 		# Close the existing handle and refcnt-- to avoid keeping the
 		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
-		undef $self;
 
 		$::d_remotestream && msg("Redirect to: $redir\n");
 
-		my $ds       = Slim::Music::Info::getCurrentDataStore();
-		my $oldTrack = $ds->objectForUrl($infoUrl);
-
-		if (!blessed($oldTrack) || !$oldTrack->can('title')) {
-
-			errorMsg("Slim::Player::Protocols::HTTP::request: Couldn't retrieve track object for: [$infoUrl]\n");
-
-			return $self;
-		}	
-
-		my $oldTitle = $oldTrack->title() if $create;
-		
-		$self = $class->open({
+		return $class->open({
 			'url'     => $redir,
 			'infoUrl' => $redir,
-			'create'  => $create,
 			'post'    => $post,
 		});
-		
-		# if we've opened the redirect, re-use the old title and new content type.
-		
-		if (defined($self)) {
-
-			if (defined($oldTitle)) { 
-
-				my $newTrack = $ds->objectForUrl($redir);
-				my $newTitle = $newTrack->title();
-
-				if (Slim::Music::Info::plainTitle($redir) eq $newTitle) {
-
-					$::d_remotestream && msg("Saving old title: $oldTitle for $redir\n");
-
-					Slim::Music::Info::setTitle($redir, $oldTitle);
-
-				} elsif (Slim::Music::Info::plainTitle($infoUrl) eq Slim::Music::Info::title($infoUrl)) {
-
-					$::d_remotestream && msg("Saving using redirected title for original URL: $oldTitle for $redir\n");
-					Slim::Music::Info::setTitle($infoUrl, $newTitle);
-				}
-			}
-
-			my $redirectedContentType = Slim::Music::Info::contentType($redir);
-
-			$::d_remotestream && msg("Content type ($redirectedContentType) of $infoUrl is being set to the contentType of: $redir\n");
-
-			${*$self}{'contentType'} = $redirectedContentType;
-			Slim::Music::Info::setContentType($infoUrl, $redirectedContentType) if $create;
-		}
-		
-		return $self;
 	}
 
 	$::d_remotestream && msg("opened stream!\n");
@@ -347,6 +282,7 @@ sub sysread {
 		if ($metaPointer == $metaInterval) {
 
 			$self->readMetaData();
+
 			${*$self}{'metaPointer'} = 0;
 
 		} elsif ($metaPointer > $metaInterval) {
@@ -419,6 +355,7 @@ sub readMetaData {
 		do {
 			$metadatapart = '';
 			$byteRead = $self->SUPER::sysread($metadatapart, $metadataSize);
+
 			if ($!) {
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
 					$::d_remotestream && msg("Metadata bytes not read! $!\n");  
@@ -427,15 +364,17 @@ sub readMetaData {
 					$::d_remotestream && msg("Metadata bytes not read, trying again: $!\n");  
 				}			 
 			}
+
 			$byteRead = 0 if (!defined($byteRead));
 			$metadataSize -= $byteRead;	
 			$metadata .= $metadatapart;	
+
 		} while ($metadataSize > 0);			
-		
+
 		$::d_remotestream && msg("metadata: $metadata\n");
-		
-		my $url = ${*$self}{'infoUrl'};
-		my $title = parseMetadata($client, $url, $metadata);
+
+		my $url   = $self->url;
+		my $title = $self->parseMetadata($client, $url, $metadata);
 
 		${*$self}{'title'} = $title;
 
@@ -445,19 +384,20 @@ sub readMetaData {
 }
 
 sub parseMetadata {
-	my $client = shift;
-	my $url = shift;
+	my $self     = shift;
+	my $client   = shift;
+	my $url      = shift;
 	my $metadata = shift;
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
-		my $oldTitle = Slim::Music::Info::getCurrentTitle(undef, $url) || '';
+		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-		my $title    = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+		my $oldTitle = $self->title;
 
 		# capitalize titles that are all lowercase
-		if (lc($title) eq $title) {
-			$title =~ s/ (
+		if (lc($newTitle) eq $newTitle) {
+			$newTitle =~ s/ (
 					  (^\w)    #at the beginning of the line
 					  |        # or
 					  (\s\w)   #preceded by whitespace
@@ -467,26 +407,39 @@ sub parseMetadata {
 				/\U$1/xg;
 		}
 
-		if (defined($title) && $title ne '' && $oldTitle ne $title) {
+		if ($newTitle && $oldTitle ne $newTitle) {
 
-			Slim::Music::Info::setCurrentTitle($url, $title);
+			Slim::Music::Info::setCurrentTitle($url, $newTitle);
 
 			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 				$everybuddy->update();
 			}
 		}
-			
-		$::d_remotestream && msg("shoutcast title = $1\n");
-		return $title;
+
+		$::d_remotestream && msg("shoutcast title = $newTitle\n");
+
+		return $newTitle;
 	}
 
 	return undef;
+}
+
+sub url {
+	my $self = shift;
+
+	return ${*$self}{'infoUrl'};
 }
 
 sub title {
 	my $self = shift;
 
 	return ${*$self}{'title'};
+}
+
+sub bitrate {
+	my $self = shift;
+
+	return ${*$self}{'bitrate'};
 }
 
 sub contentLength {

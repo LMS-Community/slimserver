@@ -12,6 +12,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use HTTP::Status;
 
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -1507,11 +1508,11 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
-				my $formatslistref = Slim::Player::Source::Conversions();
+				my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
 
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					next if $formats =~ /\-transcode\-/;
-					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::Source::checkBin($formats) ? 1 : 0);
+					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::TranscodingHelper::checkBin($formats) ? 1 : 0);
 					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
 						delete $paramref->{"formatslist$i"};
 					}
@@ -1523,11 +1524,14 @@ sub initSetupConfig {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
 				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+
 				Slim::Utils::Prefs::delete('disabledformats');
-				my $formatslistref = Slim::Player::Source::Conversions();
+
+				my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
+
 				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
 					next if $formats =~ /\-transcode\-/;
-					my $binAvailable = Slim::Player::Source::checkBin($formats);
+					my $binAvailable = Slim::Player::TranscodingHelper::checkBin($formats);
 
 					# First time through, set the value of the checkbox
 					# based on whether the conversion was explicitly 
@@ -1593,7 +1597,7 @@ sub initSetupConfig {
 								my ($client,$value,$key) = @_;
 									
 								if ($key =~ /\D+(\d+)$/) {
-									my $formatslistref = Slim::Player::Source::Conversions();
+									my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
 									my $profile = (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref})))[$1];
 									my @profileitems = split('-', $profile);
 									pop @profileitems; # drop ID
