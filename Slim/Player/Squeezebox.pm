@@ -11,16 +11,17 @@ package Slim::Player::Squeezebox;
 # GNU General Public License for more details.
 #
 use strict;
+
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 use IO::Socket;
-use Slim::Player::Player;
-use Slim::Utils::Misc;
 use MIME::Base64;
 
-use Slim::Hardware::mas35x9;
-
 use base qw(Slim::Player::Player);
+
+use Slim::Hardware::mas35x9;
+use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Misc;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -558,7 +559,9 @@ sub stream {
 		my $handler;
 		my $server_url = $client->canDirectStream($url);
 		if ($server_url) {
-			$handler = Slim::Player::Source::protocolHandlerForURL($server_url);			
+
+			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
+
 			if ($handler->can("getFormatForURL")) {
 				$format = $handler->getFormatForURL($server_url, $format);
 			}

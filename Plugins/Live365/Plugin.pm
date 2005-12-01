@@ -23,10 +23,10 @@ use strict;
 use vars qw( $VERSION );
 $VERSION = 1.20;
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Strings qw( string );
 use Slim::Utils::Misc qw( msg );
 use Slim::Control::Command;
-use Slim::Display::Animation;
 
 # Need this to include the other modules now that we split up Live365.pm
 use Plugins::Live365::Web;
@@ -37,7 +37,8 @@ use constant ROWS_TO_RETRIEVE => 50;
 
 # {{{ Initialize
 our $live365;
-Slim::Player::Source::registerProtocolHandler("live365", "Plugins::Live365::ProtocolHandler");
+
+Slim::Player::ProtocolHandlers->registerHandler("live365", "Plugins::Live365::ProtocolHandler");
 
 sub addMenu {
 	return "RADIO";

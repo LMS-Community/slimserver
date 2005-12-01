@@ -11,10 +11,10 @@ package Slim::Player::SoftSqueeze;
 # GNU General Public License for more details.
 
 use strict;
-use Slim::Player::Squeezebox2;
-use Slim::Utils::Prefs;
-
 use base qw(Slim::Player::Squeezebox2);
+
+use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Prefs;
 
 sub new {
         my $class = shift;
@@ -57,7 +57,7 @@ sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
 
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
 	if ($handler && $handler->can("canDirectStream") && !$handler->isa("Slim::Player::Protocols::MMS")) {
 		return $handler->canDirectStream($url);

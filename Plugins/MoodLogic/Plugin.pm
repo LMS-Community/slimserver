@@ -5,6 +5,7 @@ use strict;
 
 use File::Spec::Functions qw(catfile);
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -85,7 +86,7 @@ sub shutdownPlugin {
 	# remove playlists
 	
 	# disable protocol handler
-	#Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	#Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
 	
 	# reset last scan time
 
@@ -166,7 +167,7 @@ sub initPlugin {
 	map { $mood_hash{$_} = $i++ } @mood_names;
 
 	#Slim::Utils::Strings::addStrings($strings);
-	Slim::Player::Source::registerProtocolHandler("moodlogicplaylist", "0");
+	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
 	Slim::Music::Import::addImporter('MOODLOGIC', {
 		'scan'      => \&startScan,

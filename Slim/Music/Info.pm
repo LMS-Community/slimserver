@@ -17,6 +17,7 @@ use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
 use Slim::Music::TitleFormatter;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -1016,18 +1017,36 @@ sub isHTTPURL {
 }
 
 sub isRemoteURL {
-	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && $Slim::Player::Source::protocolHandlers{$1});
+	my $url = shift || return 0;
+
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1)) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub isPlaylistURL {
-	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}) && !isFileURL($url));
+	my $url = shift || return 0;
+
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1) && !isFileURL($url)) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub isURL {
-	my $url = shift;
-	return (defined($url) && ($url =~ /^([a-zA-Z0-9\-]+):/) && exists($Slim::Player::Source::protocolHandlers{$1}));
+	my $url = shift || return 0;
+
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && defined Slim::Player::ProtocolHandlers->isValidHandler($1)) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub _isContentTypeHelper {

@@ -17,9 +17,8 @@ use Scalar::Util qw(blessed);
 
 use Slim::Buttons::Common;
 use Slim::Control::Command;
-use Slim::Display::Display;
+use Slim::Player::ProtocolHandlers;
 use Slim::Music::Info;
-use Slim::Player::Source;
 
 our %current = ();
 
@@ -48,7 +47,8 @@ sub enabled {
 }
 
 sub initPlugin {
-	Slim::Player::Source::registerProtocolHandler("radioio", "Plugins::RadioIO::ProtocolHandler");
+
+	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
 }
 
 # Just so we don't have plain text URLs in the code.

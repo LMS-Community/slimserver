@@ -29,14 +29,11 @@ BEGIN {
 }
 
 use Slim::Control::Command;
-use Slim::Display::Display;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Player::Pipeline;
-use Slim::Web::RemoteStream;
-use Slim::Player::Protocols::HTTP;
-use Slim::Player::Protocols::MMS;
+use Slim::Player::ProtocolHandlers;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
@@ -46,16 +43,6 @@ use constant STATUS_PLAYING => 1;
 
 our %commandTable = ();
 our %binaries = ();
-
-# the protocolHandlers hash contains the modules that handle specific URLs, indexed by the URL protocol.
-# built-in protocols are exist in the hash, but have a zero value
-our %protocolHandlers = ( 
-	http     => qw(Slim::Player::Protocols::HTTP),
-	icy      => qw(Slim::Player::Protocols::HTTP),
-	mms      => qw(Slim::Player::Protocols::MMS),
-	file     => 0,
-	playlist => 0,
-);
 
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('sysseek');
@@ -1354,7 +1341,7 @@ sub openSong {
 			$::d_source && msg("URL is remote : $fullpath\n");
 
 			# we don't get the content type until after the stream is opened
-			my $sock = openRemoteStream($track, $client);
+			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
 	
 			if ($sock) {
 	
@@ -2162,55 +2149,10 @@ sub pauseSynced {
 	}
 }
 
-sub registerProtocolHandler {
-	my $protocol = shift;
-	my $class = shift;
-	
-	$Slim::Player::Source::protocolHandlers{$protocol} = $class;
-}
-
 sub openRemoteStream {
-	my $track  = shift;
-	my $client = shift;
+	warn "Slim::Player::openRemoteStream is deprecated. Please use Slim::Player::ProtocolHandlers->openRemoteStream()\n";
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	# Make sure we're dealing with a track object.
-	if (!blessed($track) || !$track->can('url')) {
-
-		$track = $ds->objectForUrl($track, 1);
-	}
-
-	my $url        = $track->url;
-	my $protoClass = protocolHandlerForURL($url);
-
-	$::d_source && msg("Trying to open protocol stream for $url\n");
-
-	if ($protoClass) {
-
-		$::d_source && msg("Found handler for $url - using $protoClass\n");
-
-		return $protoClass->new({
-			'track'  => $track,
-			'url'    => $url,
-			'client' => $client,
-			'create' => 1,
-		});
-	}
-
-	$::d_source && msg("Couldn't find protocol handler for $url\n");
-
-	return undef;
-}
-
-sub protocolHandlerForURL {
-	my $url = shift;
-	
-	my ($protocol) = $url =~ /^([a-zA-Z0-9\-]+):/;
-
-	return undef if !$protocol;
-
-	return $protocolHandlers{lc $protocol};
+	return Slim::Player::ProtocolHandlers->openRemoteStream(@_);
 }
 
 1;

@@ -7,7 +7,7 @@ use strict;
 use File::Spec::Functions qw(catfile);
 use Scalar::Util qw(blessed);
 
-use Slim::Player::Source;
+use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
@@ -96,7 +96,7 @@ sub shutdownPlugin {
 	# remove playlists
 	
 	# disable protocol handler?
-	#Slim::Player::Source::registerProtocolHandler("musicmaglaylist", "0");
+	#Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
 	
 	# reset last scan time
 
@@ -170,7 +170,7 @@ sub initPlugin {
 
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
 
-		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
+		Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
 
 		addGroups();
 	}

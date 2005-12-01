@@ -49,6 +49,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -179,7 +180,7 @@ sub initPlugin {
 	});
 
 	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
-	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	$initialized = 1;
 
@@ -245,7 +246,7 @@ sub shutdownPlugin {
 	# remove playlists
 
 	# disable protocol handler
-	#Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	#Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	# reset last scan time
 	$lastMusicLibraryFinishTime = undef;

@@ -28,6 +28,7 @@ use URI::file;
 
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
+require Slim::Player::ProtocolHandlers;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
@@ -269,7 +270,7 @@ sub stripAnchorFromURL {
 sub crackURL {
 	my ($string) = @_;
 
-	my $urlstring = join('|',keys %Slim::Player::Source::protocolHandlers);
+	my $urlstring = join('|', Slim::Player::ProtocolHandlers->registeredHandlers);
 	$string =~ m|[$urlstring]://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my $user = $1;

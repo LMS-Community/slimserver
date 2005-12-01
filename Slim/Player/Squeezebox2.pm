@@ -22,6 +22,7 @@ use IO::Socket;
 use MIME::Base64;
 
 use Slim::Player::Player;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -658,7 +659,8 @@ sub canDirectStream {
 	my $client = shift;
 	my $url = shift;
 
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+
 	if ($handler && $handler->can("canDirectStream")) {
 		return $handler->canDirectStream($url);
 	}
@@ -688,7 +690,7 @@ sub directHeaders {
 	# to return a specific number of bytes or look for a specific 
 	# byte sequence and make this less HTTP specific. For now, we only
 	# support this type of direct streaming for HTTP-esque protocols.
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);	
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
 	# Trim embedded nulls 
 	$headers =~ s/[\0]*$//;
@@ -810,7 +812,7 @@ sub directBodyFrame {
 	my $body = shift;
 
 	my $url = $client->directURL();
-	my $handler = Slim::Player::Source::protocolHandlerForURL($url);
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	my $done = 0;
 
 	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");

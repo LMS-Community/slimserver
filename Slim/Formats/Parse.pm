@@ -16,6 +16,7 @@ use Scalar::Util qw(blessed);
 use XML::Simple;
 use URI::Escape;
 
+use Slim::Player::ProtocolHandlers;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
@@ -945,7 +946,7 @@ sub readASX {
 							$href = $url->as_string();
 						}
 
-						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
+						if (Slim::Player::ProtocolHandlers->loadHandler(lc $scheme)) {
 
 							$::d_parse && msg("Found a handler for: $url\n");
 							$path = $href;
