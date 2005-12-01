@@ -1,6 +1,6 @@
 package Slim::Player::Pipeline;
 
-# $Id: Pipeline.pm,v 1.4 2004/11/28 18:32:17 dsully Exp $
+# $Id$
 
 # SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -35,48 +35,64 @@ sub new {
 	my $self = $class->SUPER::new();
 	my ($reader, $writer);
 	if ($^O =~ /Win32/) {
-		my $listenReader = IO::Socket::INET->new(LocalAddr => 'localhost',
-												 Listen => 5);
+
+		my $listenReader = IO::Socket::INET->new(
+			LocalAddr => 'localhost',
+			Listen    => 5
+		);
+
 		unless (defined($listenReader)) {
 			$::d_source && msg "Error creating listen socket for reader: !@\n";
 			return undef;
 		}
+
 		my $readerPort = $listenReader->sockport;
 		
 		my ($listenWriter, $writerPort);
+
 		if ($source) {
-			$listenWriter = IO::Socket::INET->new(LocalAddr => 'localhost',
-												  Listen => 5);
+
+			$listenWriter = IO::Socket::INET->new(
+				LocalAddr => 'localhost',
+				Listen    => 5
+			);
+
 			unless (defined($listenWriter)) {
 				$::d_source && msg "Error creating listen socket for writer: !@\n";
 				return undef;
 			}
+
 			$writerPort = $listenWriter->sockport;
 		}
 		
 		$command =~ s/"/\\"/g;
-		my $newcommand = '"' . Slim::Utils::Misc::findbin('socketwrapper') . 
-			'" ';
+
+		my $newcommand = '"' . Slim::Utils::Misc::findbin('socketwrapper') .  '" ';
+
 		if ($listenWriter) {
 			$newcommand .= '-i ' . $writerPort . ' ';
 		}
-		$newcommand .=  '-o ' . $readerPort . ' -c "' .
-			$command . '"';
+
+		$newcommand .=  '-o ' . $readerPort . ' -c "' .  $command . '"';
 
 		$::d_source && msg "Launching process with command: $newcommand\n";
 
-		eval "use Win32::Process";
 		my $processObj;
-		unless (Win32::Process::Create($processObj,
-								   Slim::Utils::Misc::findbin("socketwrapper"),
-								   $newcommand,
-								   0, 0x20,
-								   ".")) {
+
+		eval "use Win32::Process";
+
+		if ($@ || !Win32::Process::Create(
+			$processObj, Slim::Utils::Misc::findbin("socketwrapper"), $newcommand, 0, 0x20, ".")
+		) {
+
 			$::d_source && msg "Couldn't create socketwrapper process\n";
+
 			$listenReader->close();
+
 			if ($listenWriter) {
 				$listenWriter->close();
 			}
+
 			return undef;
 		}
 
@@ -157,6 +173,7 @@ sub acceptWriter {
 	my $pipeline = ${*$listener}{'pipeline'};
 
 	my $writer = $listener->accept();
+
 	unless (defined($writer)) {
 		$::d_source && msg "Error accepting on writer listener: !@\n";
 		${*$pipeline}{'pipeline_error'} = 1;
@@ -198,6 +215,7 @@ sub sysread {
 	my $reader = ${*$self}{'pipeline_reader'};
 	my $writer = ${*$self}{'pipeline_writer'};
 	my $source = ${*$self}{'pipeline_source'};
+
 	unless (defined($reader) && (!defined($source) || defined($writer))) {
 		$! = EWOULDBLOCK;
 		return undef;
@@ -218,11 +236,13 @@ sub sysread {
 			}
 			else {
 				$::d_source && msg("Pipeline doesn't have  pending bytes - trying to get some from source\n");
-				my $socketReadlen = $source->sysread($pendingBytes, 
-													 $chunksize);
+
+				my $socketReadlen = $source->sysread($pendingBytes, $chunksize);
+
 				if (!$socketReadlen) {
 					return $socketReadlen;
 				}
+
 				$pendingSize = $socketReadlen;
 			}
 
