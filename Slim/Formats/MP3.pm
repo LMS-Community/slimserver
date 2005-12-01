@@ -90,7 +90,15 @@ sub getTag {
 
 	open(my $fh, $file) or return {};
 
-	my $tags = MP3::Info::get_mp3tag($fh); 
+	# Try to pull ID3v2 tags first. If those don't exist, proceed to v1
+	my $tags = MP3::Info::get_mp3tag($fh, 2); 
+
+	if (!scalar keys %$tags) {
+
+		$tags = MP3::Info::get_mp3tag($fh, 1); 
+	}
+
+	# Now fetch the audio header information.
 	my $info = MP3::Info::get_mp3info($fh);
 
 	# Some MP3 files don't have their header information readily
@@ -127,6 +135,8 @@ sub getTag {
 			$info->{'SIZE'} = $end - $start + 1;
 		}
 	}
+
+	close($fh);
 	
 	# when scanning we brokenly align by bytes.  
 	$info->{'BLOCKALIGN'} = 1;
@@ -167,8 +177,6 @@ sub getTag {
 		delete $info->{'RVA2'};
 	}
 
-	close($fh);
-
 	# Allow getCoverArt to reuse what we just fetched.
 	$tagCache = [ $file, $info ];
 
@@ -189,7 +197,7 @@ sub getCoverArt {
 		return $pic;
 	}
 
-	my $tags = MP3::Info::get_mp3tag($file) || {};
+	my $tags = MP3::Info::get_mp3tag($file, 2) || {};
 
 	if (defined $tags->{'PIC'} && defined $tags->{'PIC'}->{'DATA'}) {
 

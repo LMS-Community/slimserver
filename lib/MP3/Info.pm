@@ -551,7 +551,9 @@ sub get_mp3tag {
 		}
 	}
 
-	($v2, $v2h) = _get_v2tag($fh);
+	if ($ver == 2 || $ver == 0) {
+		($v2, $v2h) = _get_v2tag($fh);
+	}
 
 	unless ($v1 || $v2) {
 		_close($file, $fh);
