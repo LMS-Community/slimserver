@@ -1,3 +1,5 @@
+package Slim::Networking::SliMP3::Protocol;
+
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -7,16 +9,15 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-package Slim::Networking::Protocol;
 
 use strict;
 
 use IO::Socket;
 
-use Slim::Networking::Select;
-use Slim::Utils::Misc;
 use Slim::Player::SLIMP3;
+use Slim::Networking::Select;
+use Slim::Networking::SliMP3::Discovery;
+use Slim::Utils::Misc;
 
 # The following settings are for testing the new streaming protocol.
 # They allow easy simulation of latency and packet loss in the receive direction.
@@ -61,7 +62,7 @@ sub processMessage {
 
 		my ($wptr, $rptr, $seq) = unpack 'xxxxxxnnn', $msg;
 
-		Slim::Networking::Stream::gotAck($client, $wptr, $rptr, $seq);
+		Slim::Networking::SliMP3::Stream::gotAck($client, $wptr, $rptr, $seq);
 
 		Slim::Player::Sync::checkSync($client);
 
@@ -93,18 +94,18 @@ sub init {
 	# say hello to the old slimp3 clients that we might remember...
 	for my $clientid (Slim::Utils::Prefs::getKeys("clients")) {
 
-			# make sure any new preferences get set to default values
-			assert($clientid);
+		# make sure any new preferences get set to default values
+		assert($clientid);
 
-			# skip client addrs that aren't dotted-4 with a port
-			next unless ($clientid =~ /\d+\.\d+\.\d+\.\d+:\d+/);
+		# skip client addrs that aren't dotted-4 with a port
+		next unless ($clientid =~ /\d+\.\d+\.\d+\.\d+:\d+/);
 
-			$::d_protocol && msg("Saying hello to $clientid\n");
+		$::d_protocol && msg("Saying hello to $clientid\n");
 
-			Slim::Network::Discovery::sayHello($udpsock, ipaddress2paddr($clientid));
-			
-			# throttle the broadcasts
-			select(undef,undef,undef,0.05);
+		Slim::Networking::SliMP3::Discovery::sayHello($udpsock, ipaddress2paddr($clientid));
+		
+		# throttle the broadcasts
+		select(undef,undef,undef,0.05);
 	}
 }
 
@@ -128,8 +129,7 @@ sub readUDP {
 	
 				if ($SIMULATE_RX_DELAY) {
 					# simulate rx delay
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $SIMULATE_RX_DELAY/1000,
-								\&Slim::Networking::Protocols::processMessage, $msg);
+					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $SIMULATE_RX_DELAY/1000, \&processMessage, $msg);
 				} else {
 					processMessage($client, $msg);
 				}
@@ -141,8 +141,10 @@ sub readUDP {
 				# Squeezebox sends all fields correctly.
 	
 				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
+
 				my $mac = join(':', @mac);
-				Slim::Network::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
+
+				Slim::Networking::SliMP3::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
 	
 			# Playlist::executecommand can be accessed over the UDP port
 			} elsif ($msg=~/^executecommand\((.*)\)$/) {
@@ -218,7 +220,8 @@ sub getUdpClient {
 
 		} else {
 
-			Slim::Network::Discovery::sayHello($sock, $clientpaddr);
+			Slim::Networking::SliMP3::Discovery::sayHello($sock, $clientpaddr);
+
 			return undef;
 		} 
 	}

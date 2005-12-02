@@ -122,7 +122,7 @@ sub select {
 			$count++;
 
 			# Conditionally readUDP if there are SLIMP3's connected.
-			Slim::Networking::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
+			Slim::Networking::SliMP3::Protocol::readUDP() if $Slim::Player::SLIMP3::SLIMP3Connected;
 
 			# return if select has been run more recently than thisInstance (if run inside callback)
 			return $count if ($thisInstance != $selectInstance);

@@ -1,7 +1,6 @@
-package Slim::Networking::Stream;
-#%DB::packages = ( 'Slim::Networking::Stream' => 1);
+package Slim::Networking::SliMP3::Stream;
 
-# $Id: Stream.pm,v
+# $Id4
 
 # SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

@@ -218,7 +218,6 @@ use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
-use Slim::Networking::Discovery;
 use Slim::Display::Display;
 use Slim::Display::Graphics;
 use Slim::Web::HTTP;
@@ -232,7 +231,7 @@ use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Prefs;
-use Slim::Networking::Protocol;
+use Slim::Networking::SliMP3::Protocol;
 use Slim::Networking::Select;
 use Slim::Utils::Scheduler;
 use Slim::Web::Setup;
@@ -491,7 +490,7 @@ sub init {
 		}
 	
 		$::d_server && msg("Old SLIMP3 Protocol init...\n");
-		Slim::Networking::Protocol::init();
+		Slim::Networking::SliMP3::Protocol::init();
 	
 		$::d_server && msg("Slimproto Init...\n");
 		Slim::Networking::Slimproto::init();

@@ -35,7 +35,7 @@ sub new {
 
 	# dsully - Mon Mar 21 20:17:44 PST 2005
 	# Load these modules on the fly to save approx 700k of memory.
-	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::Stream)) {
+	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::SliMP3::Stream)) {
 
 		$::d_protocol && msg("Loading module: $module\n");
 
@@ -127,7 +127,7 @@ sub play {
 	# is still processing the i2c commands we just sent.
 	select(undef,undef,undef,.05);
 
-	Slim::Networking::Stream::newStream($client, $paused);
+	Slim::Networking::SliMP3::Stream::newStream($client, $paused);
 	return 1;
 }
 
@@ -137,9 +137,9 @@ sub play {
 sub resume {
 	my $client = shift;
 	# make sure volume is set, without changing temp setting
-	$client->volume($client->volume(),
-					defined($client->tempVolume()));
-	Slim::Networking::Stream::unpause($client);
+	$client->volume($client->volume(), defined($client->tempVolume()));
+
+	Slim::Networking::SliMP3::Stream::unpause($client);
 	$client->SUPER::resume();
 	return 1;
 }
@@ -149,8 +149,11 @@ sub resume {
 #
 sub pause {
 	my $client = shift;
-	Slim::Networking::Stream::pause($client);
+
+	Slim::Networking::SliMP3::Stream::pause($client);
+
 	$client->SUPER::pause();
+
 	return 1;
 }
 
@@ -159,7 +162,8 @@ sub pause {
 #
 sub stop {
 	my $client = shift;
-	Slim::Networking::Stream::stop($client);
+
+	Slim::Networking::SliMP3::Stream::stop($client);
 }
 
 #
@@ -167,13 +171,15 @@ sub stop {
 #
 sub playout {
 	my $client = shift;
-	Slim::Networking::Stream::playout($client);
+
+	Slim::Networking::SliMP3::Stream::playout($client);
 	return 1;
 }
 
 sub bufferFullness {
 	my $client = shift;
-	return Slim::Networking::Stream::fullness($client);
+
+	return Slim::Networking::SliMP3::Stream::fullness($client);
 }
 
 sub bufferSize {

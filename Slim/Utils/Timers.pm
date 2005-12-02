@@ -79,7 +79,7 @@ sub checkTimers {
 	# completed check of High Priority timers
 
 	if ($Slim::Player::SLIMP3::SLIMP3Connected && !$::scanOnly) {
-		Slim::Networking::Protocol::readUDP();
+		Slim::Networking::SliMP3::Protocol::readUDP();
 	}
   	
 	# Check Normal timers - return if already inside one

@@ -1,4 +1,4 @@
-package Slim::Network::Discovery;
+package Slim::Networking::SliMP3::Discovery;
 
 # $Id$
 
@@ -40,7 +40,6 @@ sub sayHello {
 	$::d_protocol && msg(" Saying hello!\n");	
 	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
-
 
 #
 # We received a discovery request

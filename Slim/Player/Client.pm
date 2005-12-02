@@ -802,7 +802,7 @@ sub ipport {
 	my $client = shift;
 	assert(defined($client->paddr));
 	assert($client->paddr);
-	return Slim::Networking::Protocol::paddr2ipaddress($client->paddr);
+	return Slim::Networking::SliMP3::Protocol::paddr2ipaddress($client->paddr);
 }
 
 # returns IP address
