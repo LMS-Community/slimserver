@@ -7,6 +7,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 use Scalar::Util qw(blessed);
 
+use Slim::Music::Artwork;
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 our @allColumns = (qw(
@@ -239,7 +241,7 @@ sub coverArt {
 
 	if ($artwork && $artwork != 1) {
 
-		($body, $contentType) = Slim::Music::Info::getImageContentAndType($artwork);
+		($body, $contentType) = Slim::Music::Artwork->getImageContentAndType($artwork);
 
 		if ($body && $contentType) {
 
@@ -252,7 +254,7 @@ sub coverArt {
 	# If we didn't already store an artwork value - look harder.
 	if (!$artwork || $artwork == 1 || !$body) {
 
-		($body, $contentType, $path) = Slim::Music::Info::readCoverArt($self, $artType);
+		($body, $contentType, $path) = Slim::Music::Artwork->readCoverArt($self, $artType);
 	}
 
 	# kick this back up to the webserver so we can set last-modified
