@@ -417,7 +417,7 @@ sub playmode {
 				$master->streamformat(),
 				$currentSong,
 				(defined($seekoffset) && $seekoffset > 0),
-				shouldLoop($master),
+				$master->shouldLoop,
 				Slim::Player::ReplayGain->fetchGainMode($master),
 			);
 
@@ -862,51 +862,6 @@ sub dropStreamingConnection {
 	foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
 		push @{$buddy->chunks}, \'';
 	}
-}
-
-# Should we use the inifinite looping option that some players
-# (Squeezebox2) have as an optimization?
-sub shouldLoop {
-	my $client = shift;
-
-	# XXX Not turned on yet for regular SlimServer, since we
-	# need to deal with the user:
-	# 1) Turning off the repeat flag
-	# 2) Adding a new track in playlist repeat mode
-	return 0;
-
-	# No looping if we have synced players
-	return 0 if Slim::Player::Sync::isSynced($client);
-
-	# This only makes sense if the player is in song repeat mode or
-	# in playlist repeat mode with just one song on the list.
-	return 0 unless (Slim::Player::Playlist::repeat($client) == 1 ||
-					 (Slim::Player::Playlist::repeat($client) == 2 &&
-					Slim::Player::Playlist::count($client) == 1));
-
-	my $url = Slim::Player::Playlist::song($client, streamingSongIndex($client));
-
-	if (!$url) {
-		errorMsg("shouldLoop: Invalid URL for client song!: [$url]\n");
-		return 0;
-	}
-
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
-	my $track = $ds->objectForUrl($url);
-
-	if (!blessed($track) || !$track->can('audio_size')) {
-		return 0;
-	}
-
-	my $audio_size = $track->audio_size();
-
-	# If we don't know the size of the track, don't bother
-	return 0 unless $audio_size;
-
-	# Ask the client if the track is small enough for this
-	return 0 unless ($client->canLoop($audio_size));
-	
-	return 1;
 }
 
 # For backwards compatability

@@ -1426,6 +1426,12 @@ sub contentTypeSupported {
 	return 0;
 }
 
+sub shouldLoop {
+	my $client = shift;
+
+	return 0;
+}
+
 # data accessors
 
 sub id {

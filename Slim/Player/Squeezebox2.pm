@@ -767,9 +767,13 @@ sub directHeaders {
 			}
 
 			# update bitrate, content-type title for this URL...
+			# XXXX - dsully
+			if (0) {
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
 			Slim::Music::Info::setCurrentTitle($url, $title) if $title;
+			}
+
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
 
 			if ($redir) {
@@ -786,20 +790,17 @@ sub directHeaders {
 				$client->sendFrame('body', \(pack('N', $length)));
 
 			} elsif ($client->contentTypeSupported($contentType)) {
+
 				$::d_directstream && msg("Beginning direct stream!\n");
-				my $loop = 0;
-				if ($length) {
-				    my $currentDB = Slim::Music::Info::getCurrentDataStore();
-				    $currentDB->updateOrCreate({
-					'url'        => $url,
-					'attributes' => { 'SIZE' => $length },
-				    });
-				    
-				    $loop = Slim::Player::Source::shouldLoop($client);
-				}
+
+				my $loop = $client->shouldLoop($length);
+
 				$client->streamformat($contentType);
+
 				$client->sendFrame('cont', \(pack('NC',$metaint, $loop)));		
+
 			} else {
+
 				$::d_directstream && msg("Direct stream failed\n");
 				$client->failedDirectStream();
 			}
@@ -892,6 +893,46 @@ sub failedDirectStream {
 	} else {
 		Slim::Player::Source::playmode($client, 'stop');
 	}
+}
+
+# Should we use the inifinite looping option that some players
+# (Squeezebox2) have as an optimization?
+sub shouldLoop {
+	my $client     = shift;
+	my $audio_size = shift;
+
+	# XXX Not turned on yet for regular SlimServer, since we
+	# need to deal with the user:
+	# 1) Turning off the repeat flag
+	# 2) Adding a new track in playlist repeat mode
+	return 0;
+
+	# No looping if we have synced players
+	return 0 if Slim::Player::Sync::isSynced($client);
+
+	# This only makes sense if the player is in song repeat mode or
+	# in playlist repeat mode with just one song on the list.
+	return 0 unless (Slim::Player::Playlist::repeat($client) == 1 ||
+		(Slim::Player::Playlist::repeat($client) == 2 &&
+		Slim::Player::Playlist::count($client) == 1));
+
+	my $url = Slim::Player::Playlist::song(
+		$client,
+		Slim::Player::Source::streamingSongIndex($client)
+	);
+
+	if (!$url) {
+		errorMsg("shouldLoop: Invalid URL for client song!: [$url]\n");
+		return 0;
+	}
+
+	# If we don't know the size of the track, don't bother
+	return 0 unless $audio_size;
+
+	# Ask the client if the track is small enough for this
+	return 0 unless ($client->canLoop($audio_size));
+	
+	return 1;
 }
 
 sub canLoop {
