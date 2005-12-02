@@ -27,7 +27,7 @@ sub fetchGainMode {
 
 	my $ds  = Slim::Music::Info::getCurrentDataStore();
 
-	my $url = Slim::Player::Playlist::song($client, streamingSongIndex($client));
+	my $url = Slim::Player::Playlist::song($client, Slim::Player::Source::streamingSongIndex($client));
 
 	if (!$url) {
 		errorMsg("Invalid URL for client song!: [$url]\n");
