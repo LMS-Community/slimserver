@@ -12,6 +12,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use Path::Class;
 use Scalar::Util qw(blessed);
+use Tie::Cache::LRU;
 
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
@@ -21,13 +22,15 @@ use Slim::Utils::Prefs;
 # Global caches:
 my $artworkDir   = '';
 
+tie my %lastFile, 'Tie::Cache::LRU', 32;
+
 # Public class methods
 sub getImageContentAndType {
 	my $class = shift;
 	my $path  = shift;
 
 	use bytes;
-	my $content;
+	my $content = '';
 
 	if (open (TEMPLATE, $path)) { 
 		local $/ = undef;

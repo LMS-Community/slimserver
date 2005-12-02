@@ -38,7 +38,6 @@ our %suffixes = ();
 our %slimTypes = ();
 
 # Make sure that these can't grow forever.
-tie our %lastFile, 'Tie::Cache::LRU', 64;
 tie our %displayCache, 'Tie::Cache::LRU', 64;
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 
@@ -178,7 +177,6 @@ sub clearStaleCacheEntries {
 sub clearFormatDisplayCache {
 
 	%displayCache  = ();
-	%lastFile      = ();
 	%currentTitles = ();
 }
 
