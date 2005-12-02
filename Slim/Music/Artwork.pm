@@ -99,19 +99,19 @@ sub _readCoverArtTags {
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
-		if (isMP3($track) || isWav($track) || isAIFF($track)) {
+		if (Slim::Music::Info::isMP3($track) || Slim::Music::Info::isWav($track) || Slim::Music::Info::isAIFF($track)) {
 
 			Slim::Music::Info::loadTagFormatForType('mp3');
 
 			$body = Slim::Formats::MP3::getCoverArt($file);
 
-		} elsif (isMOV($track)) {
+		} elsif (Slim::Music::Info::isMOV($track)) {
 
 			Slim::Music::Info::loadTagFormatForType('mov');
 
 			$body = Slim::Formats::Movie::getCoverArt($file);
 
-		} elsif (isFLAC($track)) {
+		} elsif (Slim::Music::Info::isFLAC($track)) {
 
 			Slim::Music::Info::loadTagFormatForType('flc');
 
