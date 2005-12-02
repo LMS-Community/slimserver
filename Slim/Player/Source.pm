@@ -1364,7 +1364,10 @@ sub openSong {
 		} else {
 
 			my $quality = $client->prefGet('lameQuality');
-			$command = tokenizeConvertCommand($command, $type, $filepath, $fullpath, $samplerate, $maxRate,undef,$quality);
+
+			$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
+				$command, $type, $filepath, $fullpath, $samplerate, $maxRate, undef, $quality
+			);
 
 			$client->audioFilehandle( FileHandle->new() );
 			$client->audioFilehandle->open($command);
