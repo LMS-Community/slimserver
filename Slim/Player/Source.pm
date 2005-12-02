@@ -1167,15 +1167,22 @@ sub openSong {
 						my $maxRate = Slim::Utils::Prefs::maxRate($client);
 						my $quality = $client->prefGet('lameQuality');
 						
-						$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
+						$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
+							$command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality
+						);
+
 						$::d_source && msg("tokenized command $command\n");
+
 						my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+
 						if (!defined($pipeline)) {
+
 							$::d_source && msg("Error creating conversion pipeline\n");
 							errorOpening($client);
+
 							return undef;
 						}
-		
+
 						my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $track);
 
 						$::d_source && msg("remoteURL command $command type $type format $format\n");
@@ -1183,7 +1190,8 @@ sub openSong {
 
 						$client->streamformat($format);
 		
-						unless (defined($command)) {
+						if (!defined($command)) {
+
 							$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
 							errorOpening($client);
 							
@@ -1193,7 +1201,7 @@ sub openSong {
 						my $duration  = $track->durationSeconds();
 		
 						if (defined($duration)) {
-							$song->{duration} = $duration;
+							$song->{'duration'} = $duration;
 						}
 		
 						# this case is when we play the file through as-is
@@ -1205,19 +1213,25 @@ sub openSong {
 							my $maxRate = Slim::Utils::Prefs::maxRate($client);
 							my $quality = $client->prefGet('lameQuality');
 							
-							$command = tokenizeConvertCommand($command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality);
+							$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
+								$command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality
+							);
+
 							$::d_source && msg("tokenized command $command\n");
+
 							my $pipeline = Slim::Player::Pipeline->new($sock, $command);
+
 							if (!defined($pipeline)) {
 								$::d_source && msg("Error creating conversion pipeline\n");
 								errorOpening($client);
 								return undef;
 							}
+
 							$client->audioFilehandle($pipeline);
 							$client->audioFilehandleIsSocket(2);
 						}
-
 					}
+
 					$client->remoteStreamStartTime(Time::HiRes::time());
 					$client->pauseTime(0);
 
@@ -1282,7 +1296,7 @@ sub openSong {
 		my ($size, $duration, $offset, $samplerate, $blockalign, $endian,$drm) = (0, 0, 0, 0, 0, undef,undef);
 		
 		# don't try and read this if we're a pipe
-		unless (-p $filepath) {
+		if (!-p $filepath) {
 
 			# XXX - endian can be undef here - set to ''.
 			$size       = $track->audio_size();
@@ -1408,6 +1422,7 @@ sub openSong {
 			Slim::Music::Info::contentType($fullpath) .
 			"! Stopping! $fullpath\n"
 		);
+
 		errorOpening($client);
 		return undef;
 	}
@@ -1443,8 +1458,7 @@ sub openSong {
 		Slim::Player::Playlist::refreshPlaylist($client);
 		Slim::Control::Command::executeCallback($client, ["newsong"])
 	}
-	
-	
+
 	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 
 	return 1;
@@ -1453,24 +1467,28 @@ sub openSong {
 sub readNextChunk {
 	my $client = shift;
 	my $givenChunkSize = shift;
-	
+
 	if (!defined($givenChunkSize)) {
 		$givenChunkSize = Slim::Utils::Prefs::get('udpChunkSize') * 10;
 	} 
-	
+
 	my $chunksize = $givenChunkSize;
-	
+
 	my $chunk  = '';
 
 	my $endofsong = undef;
-	
+
 	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
 	
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...
 		foreach my $buddy (Slim::Player::Sync::syncedWith($client), $client) {
+
 			my $asilence = $buddy->prefGet('mp3SilencePrelude');
-			$silence = $asilence if ($asilence && ($asilence > $silence));
+
+			if ($asilence && ($asilence > $silence)) {
+				$silence = $asilence;
+			}
 		}
 
 		$::d_source && msg("We need to send $silence seconds of silence...\n");
@@ -1500,8 +1518,11 @@ sub readNextChunk {
 			if ($rate != 0 && $rate != 1) {
 				
 				if ($client->trickSegmentRemaining()) {
+
 					# we're in the middle of a trick segment
-					$::d_source && msg("still in the middle of a trick segment: ". $client->trickSegmentRemaining() . " bytes remaining\n");
+					$::d_source && msgf("still in the middle of a trick segment: %d bytes remaining\n",
+						$client->trickSegmentRemaining
+					);
 					
 				} else {
 					# starting a new trick segment, calculate the chunk offset and length
@@ -1534,10 +1555,18 @@ sub readNextChunk {
 					my $tricksegmentbytes = int($byterate * $TRICKSEGMENTDURATION);				
 
 					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
+
 					if ($client->streamformat() eq 'mp3') {
+
 						Slim::Music::Info::loadTagFormatForType('mp3');
-						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
-						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
+
+						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame(
+							$client->audioFilehandle(), $seekpos, 1
+						);
+
+						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame(
+							$client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1
+						);
 						
 						if ($seekpos == 0 || $endsegment == 0) {
 							$endofsong = 1;
@@ -1548,9 +1577,17 @@ sub readNextChunk {
 						}
 					}
 					elsif ($client->streamformat() eq 'flc') {
+
 						Slim::Music::Info::loadTagFormatForType('flc');
-						$seekpos = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos, 1);
-						my $endsegment = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1);
+
+						$seekpos = Slim::Formats::FLAC::seekNextFrame(
+							$client->audioFilehandle(), $seekpos, 1
+						);
+
+						my $endsegment = Slim::Formats::FLAC::seekNextFrame(
+							$client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1
+						);
+
 						if ($seekpos == 0 || $endsegment == 0 ||
 							$seekpos == $endsegment) {
 							$endofsong = 1;
@@ -1571,11 +1608,10 @@ sub readNextChunk {
 				if ($chunksize > $client->trickSegmentRemaining()) { 
 					$chunksize = $client->trickSegmentRemaining(); 
 				}
-				
 			}
 
 			# don't send extraneous ID3 data at the end of the file
-			my $songLengthInBytes = $song->{totalbytes};
+			my $songLengthInBytes = $song->{'totalbytes'};
 			my $pos		      = $client->songBytes() || 0;
 			
 			if ($pos + $chunksize > $songLengthInBytes) {
@@ -1596,11 +1632,11 @@ sub readNextChunk {
 				$endofsong = 1;
 			}
 		}
-		
+
 		if ($chunksize > 0) {
 
 			my $readlen = $client->audioFilehandle()->sysread($chunk, $chunksize);
-			
+
 			if (!defined($readlen)) { 
 
 				if ($! != EWOULDBLOCK) {
@@ -1657,7 +1693,10 @@ bail:
 		$::d_source_v && msg("read a chunk of $chunkLength length\n");
 		$client->songBytes($client->songBytes() + $chunkLength);
 		$client->streamBytes($client->streamBytes() + $chunkLength);
-		$client->trickSegmentRemaining($client->trickSegmentRemaining() - $chunkLength) if ($client->trickSegmentRemaining())
+
+		if ($client->trickSegmentRemaining) {
+			$client->trickSegmentRemaining($client->trickSegmentRemaining - $chunkLength);
+		}
 	}
 	
 	return \$chunk;
