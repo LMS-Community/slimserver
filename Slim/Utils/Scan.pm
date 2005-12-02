@@ -58,9 +58,10 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
-use Slim::Music::Info;
-use Slim::Utils::Misc;
 use Slim::Formats::Parse;
+use Slim::Music::Info;
+use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Misc;
 
 #my $::d_scan=1;  # scan debugging
 
@@ -429,8 +430,10 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	my $playlistpath = $playlisturl;
 	
 	if (Slim::Music::Info::isRemoteURL($playlisturl)) {
+
 		$::d_scan && msg("Scan::readList opening remote stream $playlisturl\n");
-		$playlist_filehandle = Slim::Player::Source::openRemoteStream($playlisturl);
+
+		$playlist_filehandle = Slim::Player::ProtocolHandlers->openRemoteStream(($playlisturl);
 
 		unless ($playlist_filehandle) {
 			warn "cannot connect to http daemon to get playlist";
