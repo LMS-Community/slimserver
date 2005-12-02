@@ -433,7 +433,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		$::d_scan && msg("Scan::readList opening remote stream $playlisturl\n");
 
-		$playlist_filehandle = Slim::Player::ProtocolHandlers->openRemoteStream(($playlisturl);
+		$playlist_filehandle = Slim::Player::ProtocolHandlers->openRemoteStream($playlisturl);
 
 		unless ($playlist_filehandle) {
 			warn "cannot connect to http daemon to get playlist";
