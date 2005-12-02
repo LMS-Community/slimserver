@@ -162,12 +162,13 @@ sub getConvertCommand {
 	my $clientid;
 	my $command  = undef;
 	my $format   = undef;
+	my $url      = blessed($track) && $track->can('url') ? $track->url : $track;
 
 	my @supportedformats = ();
 	my %formatcounter    = ();
 	my $audibleplayers   = 0;
 
-	my $undermax;
+	my $underMax;
 
 	if (defined($client)) {
 
@@ -175,9 +176,9 @@ sub getConvertCommand {
 
 		$player   = $client->model();
 		$clientid = $client->id();	
-		$undermax = underMax($client, blessed($track) && $track->can('url') ? $track->url : $track, $type);
+		$underMax = underMax($client, $url, $type);
 
-		$::d_source && msg("undermax = $undermax, type = $type, $player = $clientid\n");
+		$::d_source && msg("undermax = $underMax, type = $type, $player = $clientid\n");
 	
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
@@ -200,12 +201,12 @@ sub getConvertCommand {
 
 	} else {
 
-		$undermax = 1;
+		$underMax = 1;
 		@supportedformats = qw(aif wav mp3);
 	}
 
 	foreach my $checkFormat (@supportedformats) {
-		
+
 		my @profiles = ();
 
 		if ($client) {
@@ -217,11 +218,11 @@ sub getConvertCommand {
 		}
 
 		push @profiles, "$type-$checkFormat-*-*";
-		
+
 		foreach my $profile (@profiles) {
-			
+
 			$command = checkBin($profile);
-			
+
 			last if $command;
 		}
 
@@ -231,7 +232,7 @@ sub getConvertCommand {
 
 			# special case for mp3 to mp3 when input is higher than
 			# specified max bitrate.
-			if (!$undermax && $type eq "mp3") {
+			if (!$underMax && $type eq "mp3") {
 				$command = $commandTable{"mp3-mp3-transcode-*"};
 			}			
 
@@ -240,11 +241,11 @@ sub getConvertCommand {
 			# to a complete stream that we can send to SB2.
 			# Yucky, but a stopgap until we get FLAC seeking code into
 			# a Perl invokable form.
-			elsif (($type eq "flc") && ($track->url =~ /#([^-]+)-([^-]+)$/)) {
+			elsif (($type eq "flc") && ($url =~ /#([^-]+)-([^-]+)$/)) {
 				$command = $commandTable{"flc-flc-transcode-*"};
 			}
 
-			$undermax = 1;
+			$underMax = 1;
 
 			# We can't handle WMA Lossless in firmware. So move to the next format type.
 			if ($type eq 'wma' && $checkFormat eq 'wma' && $track->lossless) {
@@ -254,7 +255,9 @@ sub getConvertCommand {
 		}
 
 		# only finish if the rate isn't over the limit
-		last if ($command && (!defined($client) || underMax($client, ref($track) ? $track->url : $track, $format)));
+		if ($command && (!defined($client) || underMax($client, $url, $format))) {
+			last;
+		}
 	}
 
 	if (!defined $command) {
