@@ -60,19 +60,23 @@
     </div>
    [%- END %]
    [%- WRAPPER contentcontainer listid = 'browselist' %]
-    [%- FOREACH item = browse_items %]
+    [%- IF browse_items %]
+     [%- FOREACH item = browse_items %]
 
-     [%- WRAPPER contentitem
-	     lineclass = 'browseline'
-	     controls = 'browsecontrols'
-         itemobj = item.itemobj
-         attributes = item.attributes
-         mixerlinks = item.mixerlinks
-	     odd = item.odd %]
-	  [%- PROCESS browsedbitems_list.html -%]
-     [%- END %]
-    [%- END %]
-   [%- END %]
+      [%- WRAPPER contentitem
+          lineclass = 'browseline'
+          controls = 'browsecontrols'
+          itemobj = item.itemobj
+          attributes = item.attributes
+          mixerlinks = item.mixerlinks
+          odd = item.odd %]
+       [%- PROCESS browsedbitems_list.html -%]
+      [%- END %][%# end contentitem wrapper %]
+     [%- END %][%# end for browse_items %]
+    [%- ELSE %][%# no browse_items %]
+        <li>[% "EMPTY" | string %]</li>
+    [%- END %][%# end if browse_items %]
+   [%- END %][%# end contentcontainer wrapper %]
    [%- IF browselist_pagebar %]
     <div id="bottombrowselistpagebar" class="pagebar">
       <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>

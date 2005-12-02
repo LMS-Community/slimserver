@@ -60,7 +60,7 @@
 [%- END %]
 
 [% BLOCK scanwarning -%]
-<div id="warning>[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
+<div id="warning">[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
 		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
 	[%- END %]
