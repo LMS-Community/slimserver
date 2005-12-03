@@ -1,17 +1,15 @@
-# Podcast Browser v0.0
+package Slim::Buttons::XMLBrowser;
+
+# $Id$
+
 # Copyright (c) 2005 Slim Devices, Inc. (www.slimdevices.com)
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This file create the 'podcastbrowser' mode.  The mode allows users
-# to scroll through podcast entries and play audio enclosures.  The
-# name is a misnomer, really, as this mode also browses RSS news
-# feeds, and recently added, some OPML outlines.  (someone could
-# rename this file and mode if they have a better name idea).
-
-package Slim::Buttons::PodcastBrowser;
+# This file create the 'xmlbrowser' mode.  The mode allows users to scroll
+# through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
 
 use strict;
 use XML::Simple;
@@ -28,7 +26,7 @@ our $default_cache_expiration = 60 * 60;
 our $feedCache = Slim::Utils::Cache->new();
 
 sub init {
-	Slim::Buttons::Common::addMode('podcastbrowser', getFunctions(), \&setMode);
+	Slim::Buttons::Common::addMode('xmlbrowser', getFunctions(), \&setMode);
 }
 
 sub getFunctions {
@@ -165,7 +163,7 @@ sub gotRSS {
 		url      => $url,
 		feed     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "PodcastBrowser:$url",
+		modeName => "XMLBrowser:$url",
 		header   => $feed->{'title'} . ' {count}',
 
 		# TODO: we show only items here, we skip the description of the entire channel
@@ -216,7 +214,7 @@ sub gotOPML {
 		url      => $url,
 		feed     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "PodcastBrowser:$url",
+		modeName => "XMLBrowser:$url",
 		header   => $feed->{'title'} . ' {count}',
 		listRef  => $feed->{'items'},
 
@@ -232,7 +230,7 @@ sub gotOPML {
 					title => $item->{'name'},
 				);
 
-				Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
+				Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
 
 			} elsif ($item->{'items'}) {
 
@@ -259,7 +257,7 @@ sub browseOPML {
 		url      => $url,
 		item     => $item,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "PodcastBrowser:$url:" . $item->{'name'},
+		modeName => "XMLBrowser:$url:" . $item->{'name'},
 		header   => $item->{'name'} . ' {count}',
 		listRef  => $item->{'items'},
 
@@ -557,7 +555,7 @@ sub displayItemLink {
 		title => $item->{'title'},
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
 }
 
 sub playItem {

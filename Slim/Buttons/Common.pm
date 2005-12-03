@@ -15,7 +15,7 @@ use Slim::Utils::Misc;
 use Slim::Buttons::Plugins;
 use Slim::Display::Display;
 use Slim::Buttons::SqueezeNetwork;
-use Slim::Buttons::PodcastBrowser;
+use Slim::Buttons::XMLBrowser;
 
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
@@ -70,7 +70,7 @@ sub init {
 	Slim::Buttons::BrowseTree::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
-	Slim::Buttons::PodcastBrowser::init();
+	Slim::Buttons::XMLBrowser::init();
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();

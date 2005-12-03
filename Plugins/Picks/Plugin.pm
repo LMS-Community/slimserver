@@ -9,7 +9,7 @@ package Plugins::Picks::Plugin;
 use strict;
 
 use Slim::Buttons::Common;
-use Slim::Buttons::PodcastBrowser;
+use Slim::Buttons::XMLBrowser;
 use Slim::Utils::Misc;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
@@ -53,7 +53,7 @@ sub setMode {
 		title    => $client->string(getDisplayName()),
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'podcastbrowser', \%params);
+	Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
 }
 
 sub strings {

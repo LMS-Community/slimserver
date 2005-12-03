@@ -128,7 +128,7 @@ sub setMode {
 				url => $item->{'value'},
 				title => $item->{'name'},
 			);
-			Slim::Buttons::Common::pushMode($client, 'podcastbrowser', \%params);
+			Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 		},
 		onPlay => sub {
 			my $client = shift;
@@ -276,12 +276,16 @@ sub updateFeedNames {
 				# does a synchronous get
 				my $xml = getFeedXml($url);
 
-				if ($xml && exists $xml->{channel}->{title}) {
+				if ($xml && exists $xml->{'channel'}->{'title'}) {
+
 					# here for podcasts and RSS
-					$feedNamePrefs[$i] = Slim::Buttons::PodcastBrowser::unescapeAndTrim($xml->{channel}->{title});
-				} elsif ($xml && exists $xml->{head}->{title}) {
+					$feedNamePrefs[$i] = Slim::Buttons::XMLBrowser::unescapeAndTrim($xml->{'channel'}->{'title'});
+
+				} elsif ($xml && exists $xml->{'head'}->{'title'}) {
+
 					# here for OPML
-					$feedNamePrefs[$i] = Slim::Buttons::PodcastBrowser::unescapeAndTrim($xml->{head}->{title});
+					$feedNamePrefs[$i] = Slim::Buttons::XMLBrowser::unescapeAndTrim($xml->{'head'}->{'title'});
+
 				} else {
 					# use url as title since we have nothing else
 					$feedNamePrefs[$i] = $url;
@@ -329,7 +333,7 @@ sub updateFeedNames {
 # copied from RSS news plugin
 # gets the xml for a feed synchronously
 # only used to support the web interface
-# when browsing, feeds are downloaded asynchronously, see PodcastBrowser.pm
+# when browsing, feeds are downloaded asynchronously, see XMLBrowser.pm
 sub getFeedXml {
 	my $feed_url = shift;
 
@@ -359,7 +363,7 @@ sub getFeedXml {
 		my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
 		if ($@) {
-			$::d_plugins && msg("PodCastBrowser failed to parse feed <$feed_url> because: $@\n");
+			$::d_plugins && msg("XMLBrowser failed to parse feed <$feed_url> because: $@\n");
 			return 0;
 		}
 
