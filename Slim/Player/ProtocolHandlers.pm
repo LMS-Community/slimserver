@@ -103,6 +103,11 @@ sub loadHandler {
 
 		eval "use $handlerClass";
 
+		if ($@) {
+			errorMsg("loadHandler: Couldn't load class: [$handlerClass] - [$@]\n");
+			return undef;
+		}
+
 		$loadedHandlers{$handlerClass} = 1;
 	}
 
