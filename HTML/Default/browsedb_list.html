@@ -4,7 +4,7 @@
 	
 	[% IF artwork %]
 
-		<a [% browseDbHRef %]>[% PROCESS thumnailImg height=30 alt="$item | html; IF $artist; "BY" | string; $artist; END; IF$ year; ($year); END;" title="$item | html; IF $artist; "BY" | string; $artist; END; IF $year; ($year); END;"%]</a>
+		<a [% browseDbHRef %]>[% PROCESS thumbnailImg height=30 alt="$item | html; IF $artist; "BY" | string; $artist; END; IF$ year; ($year); END;" title="$item | html; IF $artist; "BY" | string; $artist; END; IF $year; ($year); END;"%]</a>
 
 	[% END %]
 	
