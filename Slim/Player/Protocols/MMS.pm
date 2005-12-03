@@ -39,7 +39,7 @@ sub new {
 	my $client = $args->{'client'};
 
 	# Set the content type to 'wma' to get the convert command
-	my ($command, $type, $format) = Slim::Player::TranscodingHelper::::getConvertCommand($client, $url, DEFAULT_TYPE);
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, DEFAULT_TYPE);
 
 	unless (defined($command) && $command ne '-') {
 
