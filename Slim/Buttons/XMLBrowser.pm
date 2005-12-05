@@ -12,6 +12,7 @@ package Slim::Buttons::XMLBrowser;
 # through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
 
 use strict;
+use File::Slurp;
 use XML::Simple;
 
 use Slim::Buttons::Common;
@@ -68,19 +69,30 @@ sub setMode {
 
 sub getFeedAsync {
 	my $client = shift;
-	my $url = shift;
+	my $url    = shift;
 
-	# try to get from cache
-	my $feed = $feedCache->get($url);
+	my $feed   = '';
+
+	if (Slim::Music::Info::isFileURL($url)) {
+
+		my $path    = Slim::Utils::Misc::pathFromFileURL($url);
+
+		# read_file from File::Slurp
+		my $content = read_file($path);
+
+		$feed = eval { parseXMLIntoFeed($content) };
+
+	} else {
+
+		# try to get from cache for remote feeds
+		$feed = $feedCache->get($url);
+	}
 
 	if ($feed) {
 		return gotFeed($client, $url, $feed);
 	}
 
-	# TODO: if url is local file, read it
-
 	# URL is remote, load it asynchronously...
-
 	# give user feedback while loading
 	$client->block(
 		$client->string( $client->param('header') || 'PODCAST_LOADING' ),
@@ -363,7 +375,7 @@ sub gotError {
 	my $url = shift;
 	my $err = shift;
 
-	$::d_plugins && msg("Podcast: error retrieving <$url>:\n");
+	$::d_plugins && msg("XMLBrowser: error retrieving <$url>:\n");
 	$::d_plugins && msg($err);
 
 	# unblock client
@@ -597,7 +609,7 @@ sub getFeedViaHTTP {
 			ecb    => $ecb
 	});
 
-	$::d_plugins && msg("Podcast: async request: $url\n");
+	$::d_plugins && msg("XMLBrowser: async request: $url\n");
 
 	$http->get($url);
 }
@@ -606,8 +618,8 @@ sub gotErrorViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
 
-	$::d_plugins && msg("Podcast: error getting " . $http->url() . "\n");
-	$::d_plugins && msg("Podcast: " . $http->error() . "\n");
+	$::d_plugins && msg("XMLBrowser: error getting " . $http->url() . "\n");
+	$::d_plugins && msg("XMLBrowser: " . $http->error() . "\n");
 
 	# call ecb
 	gotError($params->{'client'}, $http->url(), $http->error());
@@ -617,42 +629,16 @@ sub gotViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
 
-	$::d_plugins && msg("Podcast: got " . $http->url() . "\n");
-	$::d_plugins && msg("Podcast: content type is " . $http->headers()->{'Content-Type'} . "\n");
+	$::d_plugins && msg("XMLBrowser: got " . $http->url() . "\n");
+	$::d_plugins && msg("XMLBrowser: content type is " . $http->headers()->{'Content-Type'} . "\n");
 
-	# verbose debug
-	#$::d_plugins && msg("Podcast: content:\n " . $http->content() . "\n\n");
-	
-	my $content = $http->content();
-	
-	# deal with windows encoding stupidity (see Bug #1392)
-	$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
-
-	# async http request succeeded.  Parse XML
-	# forcearray to treat items as array,
-	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
+	# Try and turn the content we fetched into a parsed data structure.
+	my $feed = eval { parseXMLIntoFeed($http->content) };
 
 	if ($@) {
-		$::d_plugins && msg("Podcast: failed to parse feed because:\n$@\n");
-		$::d_plugins && msg("Podcast: here's the bad feed:\n" . $http->content() . "\n\n");
 		# call ecb
-		gotError($params->{'client'}, $http->url(), $@);
+		gotError($params->{'client'}, $http->url, $@);
 		return;
-	}
-
-	# verbose debug
-	#use Data::Dumper;
-	#print Dumper($xml);
-
-	# convert XML into data structure
-	my $feed;
-	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
-		# its OPML outline
-		$feed = parseOPML($xml);
-	} else {
-		# its RSS or podcast
-		$feed = parseRSS($xml);
 	}
 
 	if (!$feed) {
@@ -666,6 +652,40 @@ sub gotViaHTTP {
 
 	# call cb
 	gotFeed($params->{'client'}, $http->url(), $feed);
+}
+
+sub parseXMLIntoFeed {
+	my $content = shift || return undef;
+
+	# deal with windows encoding stupidity (see Bug #1392)
+	$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
+
+	# async http request succeeded.  Parse XML
+	# forcearray to treat items as array,
+	# keyattr => [] prevents id attrs from overriding
+	my $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
+
+	if ($@) {
+		errorMsg("XMLBrowser: failed to parse feed because:\n$@\n");
+		errorMsg("XMLBrowser: here's the bad feed:\n[$content]\n\n");
+
+		# Ugh. Need real exceptions!
+		die $@;
+	}
+
+	# convert XML into data structure
+	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
+
+		# its OPML outline
+		return parseOPML($xml);
+
+	} elsif ($xml) {
+
+		# its RSS or podcast
+		return parseRSS($xml);
+	}
+
+	return undef;
 }
 
 # takes XML podcast
