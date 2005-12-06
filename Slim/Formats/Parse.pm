@@ -44,8 +44,9 @@ sub parseList {
 	my $list = shift;
 	my $file = shift;
 	my $base = shift;
-	
-	my $type = Slim::Music::Info::contentType($list);
+
+	# Allow the caller to pass a content type
+	my $type = shift || Slim::Music::Info::contentType($list);
 
 	# We want the real type from a internal playlist.
 	if ($type eq 'ssp') {
@@ -1106,7 +1107,7 @@ sub playlistEntryIsValid {
 
 	my $caller = (caller(1))[3];
 
-	if (Slim::Music::Info::isRemoteURL($entry)) {
+	if (Slim::Music::Info::isRemoteURL($entry) || Slim::Music::Info::isRemoteURL($url)) {
 
 		return 1;
 	}

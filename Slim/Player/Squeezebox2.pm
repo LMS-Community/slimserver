@@ -767,12 +767,9 @@ sub directHeaders {
 			}
 
 			# update bitrate, content-type title for this URL...
-			# XXXX - dsully
-			if (0) {
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
 			Slim::Music::Info::setCurrentTitle($url, $title) if $title;
-			}
 
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
 

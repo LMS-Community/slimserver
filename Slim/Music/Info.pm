@@ -83,6 +83,10 @@ sub init {
 		'shn' => 'Slim::Formats::Shorten',
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',
+
+		# Remote types
+		'http' => 'Slim::Formats::HTTP',
+		'mms'  => 'Slim::Formats::MMS',
 	);
 }
 

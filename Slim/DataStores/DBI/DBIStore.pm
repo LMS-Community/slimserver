@@ -474,8 +474,8 @@ sub newTrack {
  	my $attributeHash = $args->{'attributes'} || {};
 
 	# Not sure how we can get here - but we can.
-	if (!defined $url || ref($url)) {
-	
+	if (!$url || $url =~ /^\s*$/ || ref($url)) {
+
 		msg("newTrack: Bogus value for 'url'\n");
 		require Data::Dumper;
 		print Data::Dumper::Dumper($url);
@@ -1164,7 +1164,24 @@ sub readTags {
 	# Populate the DB with information for the remote URL now - and not at the time we play.
 	if (Slim::Music::Info::isRemoteURL($file)) {
 
-		my $stream = Slim::Player::ProtocolHandlers->openRemoteStream($file);
+		my $stream = '';
+
+		# Give it a chance
+		my $format = ($file =~ /^(http|mms):/);
+
+		# Extract tag and audio info per format
+		if (my $tagReaderClass = Slim::Music::Info::classForFormat($format)) {
+
+			# Dynamically load the module in.
+			Slim::Music::Info::loadTagFormatForType($format);
+
+			$stream = eval { $tagReaderClass->getTag($file) };
+		}
+
+		if ($@) {
+			errorMsg("readTags: While trying to ->getTag($file) : $@\n");
+			bt();
+		}
 
 		# Try and get a content type from the stream.
 		if (blessed($stream) && $stream->can('contentType')) {

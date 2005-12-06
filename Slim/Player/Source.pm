@@ -1220,7 +1220,7 @@ sub openSong {
 					my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
 
 					# hack to preserve the title of a song redirected through a playlist
-					if (scalar(@items) == 1 && defined($track->title)) {
+					if (scalar(@items) == 1 && $items[0] && defined($track->title)) {
 
 						Slim::Music::Info::setTitle($items[0], $track->title);
 					}
