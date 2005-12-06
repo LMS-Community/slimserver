@@ -818,7 +818,7 @@ sub generateHTTPResponse {
 				$response->content_type( $Slim::Music::Info::types{$obj->content_type()} );
 				$response->content_length($obj->filesize());
 				$response->header('Content-Disposition', 
-					sprintf('attachment; filename="%s"', Slim::utils::Misc::unescape(basename($obj->url())))
+					sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($obj->url())))
 				);
 
 				my $headers = _stringifyHeaders($response) . $CRLF;
