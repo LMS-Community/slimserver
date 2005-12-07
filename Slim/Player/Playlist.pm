@@ -69,7 +69,12 @@ sub song {
 		$objOrUrl = ${playList($client)}[$index];
 	}
 
-	return blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+	if (!blessed($objOrUrl) || !$objOrUrl->can('url')) {
+
+		 $objOrUrl = $ds->objectForUrl($objOrUrl, 1, 1, 1);
+	}
+
+	return $objOrUrl;
 }
 
 sub shuffleList {
