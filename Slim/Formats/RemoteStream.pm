@@ -31,6 +31,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
+use constant MAXCHUNKSIZE => 32768;
+
 sub open {
 	my $class = shift;
 	my $args  = shift;
@@ -193,6 +195,29 @@ sub request {
 	$::d_remotestream && msg("opened stream!\n");
 
 	return $self;
+}
+
+# small wrapper to grab the content and give time to the players.
+# This should really use the async http code.
+sub content {
+	my $self   = shift;
+	my $length = shift || $self->contentLength() || MAXCHUNKSIZE();
+
+	my $content = '';
+	my $bytesread = $self->sysread($content, $length);
+
+	while ((defined($bytesread) && ($bytesread != 0)) || (!defined($bytesread) && $! == EWOULDBLOCK )) {
+
+		main::idleStreams(0.1);
+
+		$bytesread = $self->sysread(my $buf, $length);
+
+		if ($bytesread) {
+			$content .= $buf;
+		}
+	}
+
+	return $content;
 }
 
 sub syswrite {

@@ -433,10 +433,20 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		$::d_scan && msg("Scan::readList opening remote stream $playlisturl\n");
 
-		$playlist_filehandle = Slim::Player::ProtocolHandlers->openRemoteStream($playlisturl);
+		# Give it a chance
+		my ($format) = ($playlisturl =~ m|^(\w+)://|);
 
-		unless ($playlist_filehandle) {
-			warn "cannot connect to http daemon to get playlist";
+		# Extract tag and audio info per format
+		if (my $tagReaderClass = Slim::Music::Info::classForFormat($format)) {
+
+			# Dynamically load the module in.
+			Slim::Music::Info::loadTagFormatForType($format);
+
+			$playlist_filehandle = eval { $tagReaderClass->getTag($playlisturl) };
+		}
+
+		if (!$playlist_filehandle) {
+			errorMsg("readList: Cannot connect to remote HTTP server to get playlist for url: [$playlisturl]\n");
 			return 0;
 		}
 
@@ -624,6 +634,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	
 	if ($playlist_filehandle) {
 		my $playlist_base = undef;
+		my $content_type  = undef;
 
 		if (Slim::Music::Info::isFileURL($playlisturl)) {
 			#XXX This was removed before in 3427, but it really works best this way
@@ -635,7 +646,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			$::d_scan && msg("gonna scan $playlisturl, with path $playlistpath, for base: $playlist_base\n");
 		}
 
-		if (ref($playlist_filehandle) eq 'Slim::Player::Protocols::HTTP') {
+		if (ref($playlist_filehandle) eq 'Slim::Formats::HTTP') {
 			# we've just opened a remote playlist.  Due to the synchronous
 			# nature of our parsing code and our http socket code, we have
 			# to make sure we download the entire file right now, before
@@ -643,6 +654,8 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# convert the resulting string into the stream expected by the
 			# parsers.
 			my $playlist_str = $playlist_filehandle->content();
+
+			$content_type = Slim::Music::Info::mimeToType($playlist_filehandle->contentType);
 
 			# Be sure to close the socket before reusing the
 			# scalar - otherwise we'll leave the socket in a
@@ -654,7 +667,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		}
 
 		$::d_scan && msg("Scan::readList loading $playlisturl with base $playlist_base\n");
-		$numitems = (push @$listref, Slim::Formats::Parse::parseList($playlisturl, $playlist_filehandle, $playlist_base)) - $startingsize;
+
+		push @$listref, Slim::Formats::Parse::parseList(
+			$playlisturl, $playlist_filehandle, $playlist_base, $content_type
+		);
+
+		$numitems = (scalar @$listref - $startingsize);
 
 		if (ref($playlist_filehandle) eq 'IO::String') {
 			untie $playlist_filehandle;

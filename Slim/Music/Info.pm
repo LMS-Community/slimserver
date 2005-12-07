@@ -1110,7 +1110,11 @@ sub typeFromPath {
 		$type = $defaultType;
 	}
 
-	$urlToTypeCache{$fullpath} = $type;
+	# Don't cache remote URL types, as they may change.
+	if (!isRemoteURL($fullpath)) {
+
+		$urlToTypeCache{$fullpath} = $type;
+	}
 
 	$::d_info && msg("$type file type for $fullpath\n");
 

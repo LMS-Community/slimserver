@@ -1167,7 +1167,7 @@ sub readTags {
 		my $stream = '';
 
 		# Give it a chance
-		my $format = ($file =~ /^(http|mms):/);
+		my ($format) = ($file =~ m|^(\w+)://|);
 
 		# Extract tag and audio info per format
 		if (my $tagReaderClass = Slim::Music::Info::classForFormat($format)) {

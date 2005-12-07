@@ -108,9 +108,9 @@ sub _updateMetaData {
 	}
 
 	return $ds->updateOrCreate({
-		'url' => $entry,
+		'url'        => $entry,
 		'attributes' => $attributes,
-		'readTags' => 1
+		'readTags'   => 1,
 	});
 }
 
