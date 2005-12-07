@@ -419,7 +419,7 @@ sub checkAlarms {
 					#if all else fails, just try to play the current playlist.
 					} else {
 						# no object, so try to play the current playlist
-						$client->execute(['play']);
+						$client->execute(['play'], \&playDone, [$client]);
 					}
 
 				# check random playlist choice, but only if RandomPlay plugin is enabled at this time.
