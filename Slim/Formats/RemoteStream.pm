@@ -128,14 +128,14 @@ sub request {
 	my $class   = ref $self;
 	my $request = $self->requestString($url, $post);
 	
-	$::d_remotestream && msg("Request: $request");
+	$::d_remotestream && msg("Request: \n$request\n");
 
 	$self->syswrite($request);
 
 	my $timeout  = $self->timeout();
 	my $response = Slim::Utils::Misc::sysreadline($self, $timeout);
 
-	$::d_remotestream && msg("Response: $response");
+	$::d_remotestream && msg("Response: $response\n");
 
 	if (!$response || $response !~ / (\d\d\d)/) {
 		$self->close();

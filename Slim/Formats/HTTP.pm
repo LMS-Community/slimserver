@@ -18,6 +18,8 @@ use MIME::Base64;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
+use constant DEFAULT_TYPE => 'mp3';
+
 # Class constructor for just reading metadata from the stream / remote playlist
 sub getTag {
 	my $class = shift;
@@ -33,6 +35,12 @@ sub getTag {
 	$self->request($args);
 
 	return $self;
+}
+
+sub getFormatForURL {
+	my $class = shift;
+
+	return DEFAULT_TYPE;
 }
 
 sub requestString {

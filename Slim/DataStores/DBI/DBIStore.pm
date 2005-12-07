@@ -1169,8 +1169,10 @@ sub readTags {
 		# Give it a chance
 		my ($format) = ($file =~ m|^(\w+)://|);
 
+		my $tagReaderClass = Slim::Music::Info::classForFormat($format);
+
 		# Extract tag and audio info per format
-		if (my $tagReaderClass = Slim::Music::Info::classForFormat($format)) {
+		if ($tagReaderClass) {
 
 			# Dynamically load the module in.
 			Slim::Music::Info::loadTagFormatForType($format);
@@ -1184,7 +1186,7 @@ sub readTags {
 		}
 
 		# Try and get a content type from the stream.
-		if (blessed($stream) && $stream->can('contentType')) {
+		if (blessed($stream) && $stream->can('contentType') && $stream->contentType) {
 
 			my $contentType = Slim::Music::Info::mimeToType($stream->contentType) || 
 					  Slim::Music::Info::typeFromSuffix($file) ||
@@ -1196,7 +1198,20 @@ sub readTags {
 
 		} else {
 
-			$attributesHash->{'CONTENT_TYPE'} = Slim::Music::Info::typeFromSuffix($file);
+			my $contentType = Slim::Music::Info::typeFromSuffix($file);
+
+			if ($contentType && $format && $format ne $contentType) {
+
+				$attributesHash->{'CONTENT_TYPE'} = $contentType;
+
+			} elsif ($tagReaderClass) {
+
+				$attributesHash->{'CONTENT_TYPE'} = $tagReaderClass->getFormatForURL($file);
+
+			} else {
+
+				$attributesHash->{'CONTENT_TYPE'} = $contentType;
+			}
 		}
 
 	} elsif (Slim::Music::Info::isSong($file, $type)) {
