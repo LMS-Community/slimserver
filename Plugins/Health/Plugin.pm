@@ -407,7 +407,7 @@ PLUGIN_HEALTH_TIMER_LATE_DESC
 	DE	SlimServer benutzt einen Timer, um Ereignisse wie z.B. Updates der Programmoberfläche zu steuern. Diese Graphik zeigt die Genauigkeit, mit welcher Timer-gesteuerte Abläufe im Vergleich zum vorgesehenen zeitlichen Ablauf ausgeführt werden. Die Masseinheit ist Sekunden.<p>Aufgaben werden auf einen bestimmten Zeitpunkt festgelegt. Da stets nur ein Timer ablaufen kann und der Server auch andere Aktivitäten ausführt, kommt es stets zu einer minimalen Verzögerung. Kommt es allerdings zu einer markanten Verzögerung, so kann es zu wahrnehmbaren Störungen der Benutzeroberfläche kommen. 
 	EN	Slimserver uses a timer mechanism to trigger events such as updating the user interface.  This graph shows how accurately each timer task is run relative to the time it was intended to be run.  It is measured in seconds.<p>Timer tasks are scheduled by the server to run at some point in the future.  As only one timer task can run at once and the server may also be performing other activity, timer tasks always run slightly after the time they are scheduled for.  However if timer tasks run significantly after they are scheduled this can become noticable through delay in the user interface.
 	ES	Slimserver usa un mecanismo de "timer" para disparar eventos, tales como la actualización de la interface de usuario.  Este gráfico muestra que tan preciso es cada tarea del "timer" para ejecutarse en relación al momento en que se intentaba que corriera. Se mide en segundos.    Las tareas de "timers" con planificadas por el servidor para ser corridas en algón momento en el futuro. Como solo una tarea de "timer" puede correr por vez, y ademá el servidor puede estar desarrollando alguna otra actividad, las tareas de "timer"siempre corren levemente después del momento para el cual se las había planificado.   Sin embargo, si las tareas corren significativamente más tarde de lo planificado, esto puede percibirse como un retraso en la interface de usuario.
-	NL	SlimServer gebruikt een timermechanisme om zaken zoals het bijwerken van de gebruikersinterface te activeren. Deze grafiek toont hoe accuraat elke timertaak is uitgevoerd relatief tot de tijd waarin het uitgevoerd had moeten worden. De uitkomst is in seconden.  <br>Timertaken worden gepland door de server om op een moment in de toekomst te draaien. Daar slechts ÃƒÂƒÃ‚Â©ÃƒÂƒÃ‚Â©n timertaak tegelijk kan draaien en de server ook andere taken uitvoert draaien timertaken altijd korte tijd nadat ze gepland zijn. Als timertaken echter significant later draaien dan gepland kan dit in de gebruikersinterface merkbaar worden als vertraging.
+	NL	SlimServer gebruikt een timermechanisme om zaken zoals het bijwerken van de gebruikersinterface te activeren. Deze grafiek toont hoe accuraat elke timertaak is uitgevoerd relatief tot de tijd waarin het uitgevoerd had moeten worden. De uitkomst is in seconden.  <br>Timertaken worden gepland door de server om op een moment in de toekomst te draaien. Daar slechts 1 timertaak tegelijk kan draaien en de server ook andere taken uitvoert draaien timertaken altijd korte tijd nadat ze gepland zijn. Als timertaken echter significant later draaien dan gepland kan dit in de gebruikersinterface merkbaar worden als vertraging.
 
 PLUGIN_HEALTH_TIMER_LENGTH
 	DE	Timer Ausführungsdauer 
@@ -473,7 +473,9 @@ PLUGIN_HEALTH_INACTIVE
 	NL	Inactief
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
+	DE	Derzeit existiert keine aktive Verbindung zu diesem Gerät. Eine Verbindung ist notwendig, um eine Datei zum Player übertragen zu können. Squeezebox2/3 können die Streaming-Verbindung gegen Ende eines Liedes schliessen, sobald die Daten im Puffer auf dem Gerät angekommen sind. Das ist kein Grund zur Beunruhigung.<p>Falls Sie Probleme haben, Musikdateien abzuspielen und Sie nie eine aktive Verbindung sehen, dann kann das auf Netzwerkprobleme hindeuten. Bitte verifizieren Sie, dass das Netzwerk und/oder die Firewall Verbindungen auf Port 9000 nicht blockieren. 
 	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transfered to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
+	NL	Er is op dit moment geen actieve streaming connectie naar deze speler. Een connectie is nodig om een stream te sturen naar je speler. Squeezebox 2/3 kunnen een connectie sluiten tegen het einde van een nummer zodra het verstuurd is naar de buffer in de speler. Dit wijst niet op een probleem.  <br>  Als je problemen hebt bij het afspelen van bestanden en nooit een actieve connectie ziet kan dit de een indicatie zijn van een netwerkprobleem. Controleer of je netwerk en/of je serverfirewall geen connecties naar TCP poort 9000 blokkeren.
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
 	DE	Derzeit ist keine aktive Kontroll-Verbindung für diesen Player vorhanden. Bitte stellen Sie sicher, dass das Gerät eingeschaltet ist. Falls der Player keine Netzwerkverbindung aufbauen kann, überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.
@@ -584,37 +586,57 @@ PLUGIN_HEALTH_SLIMP3_DESC
 	NL	Dit is een Slimp3 speler. Volledig prestatiemonitoring is niet beschikbaar voor deze speler.
 
 PLUGIN_HEALTH_NETTEST
+	DE	Netzwerktest
 	EN	Network Test
 	ES	Test de Red
+	NL	Netwerk test
 
 PLUGIN_HEALTH_NETTEST_SELECT_RATE
+	DE	Bitte mit auf/ab Rate wählen
 	EN	Press Up/Down to select rate
 	ES	Elegir tasa: pres. Arriba/Abajo
+	NL	Selecteer snelheid met op/neer
 
 PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
+	DE	Wird auf diesem Player nicht unterstützt.
 	EN	Not Supported on this Player
 	ES	No soportado en este Reproductor
+	NL	Niet ondersteund op deze speler
 
 PLUGIN_HEALTH_NETTEST_DESC1
+	DE	Sie können die Netzwerk-Leistung zwischen dem Server und diesem Player testen. Das erlaubt es ihnen, die höchst mögliche Datenrate zu bestimmen, die ihr Netzwerk übertragen kann. Auch kann es beim Aufspüren von Netzwerkproblemen dienen. Um einen Test zu starten, wählen Sie eine der folgenden Datenraten.<p><b>Achtung:</b> das Durchführen eines Netzwerktests unterbricht alle anderen Aktivitäten auf diesem Gerät.
 	EN	You may test the network performance between your server and this player.  This will enable you to confirm the highest data rate that your network will support and identify network problems.  To start a test select one of the data rates below.<p><b>Warning</b> Running a network test will stop all other activity for this player including streaming.
+	NL	Je kunt de netwerkprestatie tussen je server en deze speler testen. Hiermee kun je zien wat de hoogste snelheid is die je netwerk ondersteunt en om problemen te identificeren. Om de test te starten kies je een testsnelheid.  <br>  <b>Waarschuwing</b> Tijdens de netwerktest stoppen alle andere activiteiten van de speler, ook het streamen.
 
 PLUGIN_HEALTH_NETTEST_DESC2
+	DE	Es läuft derzeit ein Netzwerktest auf diesem Gerät. Dies unterbindet die Erstellung anderer Statistiken. Sie können unten eine neu Testrate definieren. Um den Test zu stoppen und zu den anderen Geräteleistungs-Informationen zu gelangen, wählen Sie "Test anhalten".<p>Die Graphik zeigt den erfolgreich übetragenen Anteil an der Testrate in Prozent an. Sie wird einmal pro Sekunde aktualisiert. Es werden das Resultat für die letzte Sekunde sowie der längerfristige Durchschnitt auch auf dem Display des Players angezeigt. Lassen Sie den Test eine Weile auf einer bestimmten Datenrate laufen. Die Grafik zeigt dann an, wie oft der Datendurchsatz unter 100% der gewünschten Rate gefallen ist.
 	EN	You are currently running a network test on this player.  This disables reporting other player statistics.  You may change the test rate by selecting a new rate above.  To stop the test and return to other player performance information select Stop Test above.<p>The graph below records the percentage of the test rate which is sucessfully sent to the player.  It is updated once per second with the performance measured over the last second.  The result for the last second and long term average at this rate are also shown on the player display while a test is running.  Leave the test running for a period of time at a fixed rate.  The graph will record how frequently the network performance drops below 100% at this rate.
+	NL	Je laat nu een netwerk test lopen voor deze speler. Andere spelerstatistieken zijn nu uitgeschakeld. Je kunt de testsnelheid wijzigen door hierboven een andere testsnelheid te kiezen. Om de test te stoppen en terug te keren naar de andere spelerstatistieken selecteer je Stop test hierboven.  <br>  De grafiek hieronder toont het percentage van de testsnelheid dat succesvol is verstuurd naar de speler. Elke seconde wordt het resultaat van de laatste seconde bijgewerkt. Het resultaat van de laatste seconde en het resultaat over een langere periode worden ook getoond op het scherm van de speler. Laat de test een tijdje lopen op een gekozen testsnelheid. De grafiek zal registreren hoe frequent de netwerksnelheid onder de 100% komt.
 
 PLUGIN_HEALTH_NETTEST_DESC3
-	EN	The highest test rate which achieves 100% indicates the maximum rate you can stream at.  If this is below the bitrate of your files you should consider configuring bitrate limiting for this player.<p>A Squeezebox2/3 attached to a wired network should be able to achieve at least 3000 kpbs at 100% (Squeezebox1 1500 kbps).  A player attached to a wireless network may also reach up to this rate depending on your wireless network.  Rates significantly below this indicate poor network performance.  Wireless networks may record occasional lower percentages due to interference.  Use the graph above to understand how your network performs.  If the rate drops frequently you should investigate your network.
+	DE	Die höchste Datenrate, die zu 100% übertragen wird, ist die höchste Rate, die für Streaming zur Verfügung steht. Falls diese geringer ist als die Bitrate ihrer Dateien, so sollten Sie eine Beschränkung der Bitrate in Betracht ziehen.<p>Squeezebox2/3, die per Kabel ans Netzwerk angeschlossen sind, sollten mindestens 3000kbps zu 100% erreichen, die Squeezebox1 ca. 1500kbps. Drahtlos angeschlossene Geräte können ebenfalls solche Werte erreichen, doch hängt das Resultat stark vom Netzwerk ab. Werte, die erheblich niedriger sind, deuten auf Netzwerkprobleme hin. Wireless Netzwerke können durchaus geringere Werte erreichen. Benutzen Sie die Grafik, um die Leistung zu verstehen. Falls die Datenrate häufig absinkt, dann sollten Sie das Netzwerk überprüfen.
+	EN	The highest test rate which achieves 100% indicates the maximum rate you can stream at.  If this is below the bitrate of your files you should consider configuring bitrate limiting for this player.<p>A Squeezebox2/3 attached to a wired network should be able to achieve at least 3000 kbps at 100% (Squeezebox1 1500 kbps).  A player attached to a wireless network may also reach up to this rate depending on your wireless network.  Rates significantly below this indicate poor network performance.  Wireless networks may record occasional lower percentages due to interference.  Use the graph above to understand how your network performs.  If the rate drops frequently you should investigate your network.
+	NL	De hoogste testsnelheid waar je 100% haalt is de maximale snelheid waarmee je een stream kunt sturen. Als dit onder de bitrate is van je bestanden moet je overwegen om een bitrate limiet in te stellen.  <br> Een Squeezebox2/3 verbonden via een bedraad netwerk moet op zijn minst 3000 kbps op 100% halen (Squeezebox 1 1500 kbps). Een speler gekoppeld aan een draadloos netwerk kan ook deze snelheid halen, afhankelijk van je draadloze netwerk. Snelheden die significant onder de bovenstaande waarden liggen wijzen op een slechte netwerkperformance. Draadloze netwerken kunnen af en toe lagere percentages geven door interferentie. Gebruik de bovenstaande grafiek om na te gaan hoe je netwerkperformance is. Als de snelheid regelmatig laag is moet je het netwerk controleren.
 
 PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
+	DE	Dieser Player unterstützt keine Netzwerktests.
 	EN	Network tests are not supported on this player.
+	NL	Netwerk testen zijn niet ondersteund op deze speler.
 
 PLUGIN_HEALTH_NETTEST_CURRENTRATE
+	DE	Aktuelle Testrate
 	EN	Current Test Rate
+	NL	Huidige testsnelheid
 
 PLUGIN_HEALTH_NETTEST_TESTRATE
+	DE	Test Datenrate
 	EN	Test Rate
+	NL	Testsnelheid
 
 PLUGIN_HEALTH_NETTEST_STOPTEST
+	DE	Test anhalten
 	EN	Stop Test
+	NL	Stop test
 
 '
 }

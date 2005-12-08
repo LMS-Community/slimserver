@@ -377,6 +377,7 @@ sub strings { return q!
 PLUGIN_PODCAST
 	EN	Podcast Browser
 	ES	Navegador de Podcasts
+	NL	Podcast browser
 
 PODCAST_ERROR
 	DE	Fehler

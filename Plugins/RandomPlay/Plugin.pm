@@ -858,7 +858,9 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	NL	recent afgespeelde liedjes.
 
 PLUGIN_RANDOM_CONTINUOUS_MODE
+	DE	Neue Objekte ergänzen, wenn alte fertig gespielt sind
 	EN	Add new items when old ones finish
+	NL	Voeg nieuwe items toe zodra oude eindigen
 
 PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
