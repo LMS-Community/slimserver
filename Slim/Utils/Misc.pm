@@ -30,7 +30,6 @@ require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
 
 our $log    = "";
-our $watch  = 0;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -924,92 +923,8 @@ sub stillScanning {
 	return Slim::Music::Import::stillScanning();
 }
 
-# Use Tie::Watch to keep track of a variable, and report when it changes.
-sub watchVariable {
-	my $var = shift;
-
-	unless ($watch) {
-		eval "use Tie::Watch";
-
-		if ($@) {
-			return;
-		} else {
-			$watch = 1;
-		}
-	}
-
-	# See the Tie::Watch manpage for more info.
-	Tie::Watch->new(
-		-variable => $var,
-		-shadow   => 0,
-
-		-clear    => sub {
-			msg("In clear callback for $var!\n");
-			bt();
-		},
-
-		-destroy  => sub {
-			msg("In destroy callback for $var!\n");
-			bt();
-		},
-
-		-fetch   => sub {
-			my ($self, $key) = @_;
-
-			my $val  = $self->Fetch($key);
-			my $args = $self->Args(-fetch);
-
-			bt();
-			msgf("In fetch callback, key=$key, val=%s, args=('%s')\n",
-				$self->Say($val), ($args ? join("', '",  @$args) : 'undef')
-			);
-
-			return $val;
-		},
-
-		-store    => sub {
-			my ($self, $key, $new_val) = @_;
-
-			my $val  = $self->Fetch($key);
-			my $args = $self->Args(-store);
-
-			$self->Store($key, $new_val);
-
-			bt();
-			msgf("In store callback, key=$key, val=%s, new_val=%s, args=('%s')\n",
-				$self->Say($val), $self->Say($new_val), ($args ? join("', '",  @$args) : 'undef')
-			);
-
-			return $new_val;
-		},
-	);
-}
-
-sub deparseCoderef {
-	my $coderef = shift;
-
-	eval "use B::Deparse ()";
-	my $deparse = B::Deparse->new('-si8T') unless $@ =~ /Can't locate/;
-
-	eval "use Devel::Peek ()";
-	my $peek = 1 unless $@ =~ /Can't locate/;
-
-	return 0 unless $deparse;
-		
-	my $body = $deparse->coderef2text($coderef) || return 0;
-	my $name;
-
-	if ($peek) {
-		my $gv = Devel::Peek::CvGV($coderef);
-		$name  = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'});
-	}
-
-	$name ||= 'ANON';
-
-	return "sub $name $body";
-}
-
 1;
+
 __END__
 
 # Local Variables:
