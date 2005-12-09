@@ -1130,7 +1130,7 @@ sub openSong {
 	
 			if ($sock) {
 
-				my $contentType = Slim::Music::Info::mimeToType($sock->contentType);
+				my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
 	
 				# if it's an audio stream, try to stream,
 				# either directly, or via transcoding.

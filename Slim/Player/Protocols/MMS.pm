@@ -61,7 +61,17 @@ sub new {
 
 	$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);
 
-	return $class->SUPER::new(undef, $command);
+	my $self = $class->SUPER::new(undef, $command);
+
+	${*$self}{'contentType'} = $format;
+
+	return $self;
+}
+
+sub contentType {
+	my $self = shift;
+
+	return ${*$self}{'contentType'};
 }
 
 sub randomGUID {
