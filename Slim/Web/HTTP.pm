@@ -24,7 +24,6 @@ use MIME::QuotedPrint;
 use HTML::Entities;
 use Scalar::Util qw(blessed);
 use Socket qw(:DEFAULT :crlf);
-use Sys::Hostname;
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
@@ -35,6 +34,7 @@ use Slim::Music::Info;
 use Slim::Web::Pages;
 
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
@@ -160,7 +160,7 @@ sub openport {
 
 	) or die "can't setup the listening port $listenerport for the HTTP server: $!";
 	
-	defined(Slim::Utils::Misc::blocking($http_server_socket,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($http_server_socket,0)) || die "Cannot set port nonblocking";
 
 	$openedport = $listenerport;
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
@@ -217,7 +217,7 @@ sub acceptHTTP {
 		return;
 	};
 
-	defined(Slim::Utils::Misc::blocking($httpClient,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($httpClient,0)) || die "Cannot set port nonblocking";
 	
 	binmode($httpClient);
 	
@@ -229,7 +229,7 @@ sub acceptHTTP {
 
 		# Check if source address is valid
 		if (!(Slim::Utils::Prefs::get('filterHosts')) ||
-		     (Slim::Utils::Misc::isAllowedHost($peer))) {
+		     (Slim::Utils::Network::isAllowedHost($peer))) {
 
 			# this is the timeout for the client connection.
 			$httpClient->timeout(KEEPALIVETIMEOUT);
@@ -1737,7 +1737,7 @@ sub _getFileContent {
 }
 
 sub HomeURL {
-	my $host = $main::httpaddr || Sys::Hostname::hostname() || '127.0.0.1';
+	my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
 	my $port = Slim::Utils::Prefs::get('httpport');
 
 	return "http://$host:$port/";

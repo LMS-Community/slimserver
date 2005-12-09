@@ -22,6 +22,7 @@ use base qw(Slim::Player::Player);
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -379,7 +380,7 @@ sub upgradeFirmware_SDK5 {
 	
 	$client->textSize($oldsize);
 
-#	Slim::Utils::Misc::blocking($client->tcpsock, 0);
+#	Slim::Utils::Network::blocking($client->tcpsock, 0);
 	
 	return undef;
 }

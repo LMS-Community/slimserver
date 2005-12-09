@@ -1,4 +1,5 @@
-#
+package Slim::Buttons::Information;
+
 #	$Id$
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
@@ -40,15 +41,15 @@
 #
 #
 
-package Slim::Buttons::Information;
-
 use strict;
-use vars qw($VERSION);
-
-$VERSION = substr(q$Revision: 1.10 $,10);
 
 use File::Spec::Functions qw(catdir);
-use Socket;
+
+use Slim::Buttons::Common;
+use Slim::Display::Display;
+use Slim::Music::Info;
+use Slim::Utils::Misc;
+use Slim::Utils::Network;
 
 our $modules = ();
 our %enabled = ();
@@ -173,8 +174,8 @@ sub init {
 				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
 				sub { Slim::Utils::Prefs::get('httpport') },
-				\&Slim::Utils::Misc::hostName,
-				sub { Slim::Utils::Misc::hostToAddr(Slim::Utils::Misc::hostName()) },
+				\&Slim::Utils::Network::hostName,
+				sub { Slim::Utils::Network::hostToAddr(Slim::Utils::Network::hostName()) },
 				\&Slim::Player::Client::clientCount,
 			],
 

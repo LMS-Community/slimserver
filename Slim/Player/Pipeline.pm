@@ -9,13 +9,15 @@ package Slim::Player::Pipeline;
 
 use strict;
 
+use base qw(IO::Handle);
+use bytes;
+
 use IPC::Open2;
 use IO::Handle;
-use Slim::Utils::Misc;
-use Slim::Utils::OSDetect;
 
-use bytes;
-use base qw(IO::Handle);
+use Slim::Utils::Misc;
+use Slim::Utils::Network;
+use Slim::Utils::OSDetect;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -113,14 +115,14 @@ sub new {
 		$writer = IO::Handle->new();
 
 		my $child_pid = open2($reader, $writer, $command);
-		unless (defined(Slim::Utils::Misc::blocking($reader, 0))) {
+		unless (defined(Slim::Utils::Network::blocking($reader, 0))) {
 			$::d_source && msg "Cannot set pipe line reader to nonblocking\n";
 			$reader->close();
 			$writer->close();
 			return undef;
 		}
 		
-		unless (defined(Slim::Utils::Misc::blocking($writer, 0))) {
+		unless (defined(Slim::Utils::Network::blocking($writer, 0))) {
 			$::d_source && msg "Cannot set pipe line writer to nonblocking\n";
 			$reader->close();
 			$writer->close();
@@ -156,7 +158,7 @@ sub acceptReader {
 		return;		
 	}
 
-	unless (defined(Slim::Utils::Misc::blocking($reader, 0))) {
+	unless (defined(Slim::Utils::Network::blocking($reader, 0))) {
 		$::d_source && msg "Cannot set pipe line reader to nonblocking\n";
 		${*$pipeline}{'pipeline_error'} = 1;
 		return;		
@@ -180,7 +182,7 @@ sub acceptWriter {
 		return;
 	}
 
-	unless (defined(Slim::Utils::Misc::blocking($writer, 0))) {
+	unless (defined(Slim::Utils::Network::blocking($writer, 0))) {
 		$::d_source && msg "Cannot set pipe line writer to nonblocking\n";
 		${*$pipeline}{'pipeline_error'} = 1;
 		return;

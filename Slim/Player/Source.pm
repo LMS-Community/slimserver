@@ -30,6 +30,7 @@ BEGIN {
 
 use Slim::Control::Command;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Scan;
 use Slim::Player::Pipeline;
@@ -1137,7 +1138,7 @@ sub openSong {
 	
 					$::d_source && msg("remoteURL is a song : $fullpath\n");
 	
-					if ($sock->opened() && !defined(Slim::Utils::Misc::blocking($sock, 0))) {
+					if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
 
 						$::d_source && msg("Cannot set remote stream nonblocking\n");
 

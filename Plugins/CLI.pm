@@ -11,15 +11,15 @@ use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
-use Slim::Utils::Misc;
+use Slim::Control::Request;
+use Slim::Music::Info;
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
-use Slim::DataStores::Base;
+use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::Pages::Search;
-
-use Slim::Control::Request;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -224,7 +224,7 @@ sub cli_socket_accept {
 
 		# Check allowed hosts
 		
-		if (!(Slim::Utils::Prefs::get('filterHosts')) || (Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
+		if (!(Slim::Utils::Prefs::get('filterHosts')) || (Slim::Utils::Network::isAllowedHost($tmpaddr))) {
 
 			Slim::Networking::Select::addRead($client_socket, \&client_socket_read);
 			Slim::Networking::Select::addError($client_socket, \&client_socket_close);

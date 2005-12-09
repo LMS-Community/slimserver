@@ -28,6 +28,7 @@ BEGIN {
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
@@ -78,7 +79,7 @@ sub open {
 
 	# Manually connect, so we can set blocking.
 	# I hate Windows.
-	Slim::Utils::Misc::blocking($sock, 0) || do {
+	Slim::Utils::Network::blocking($sock, 0) || do {
 		$::d_remotestream && msg("Couldn't set non-blocking on socket!\n");
 	};
 
@@ -133,7 +134,7 @@ sub request {
 	$self->syswrite($request);
 
 	my $timeout  = $self->timeout();
-	my $response = Slim::Utils::Misc::sysreadline($self, $timeout);
+	my $response = Slim::Utils::Network::sysreadline($self, $timeout);
 
 	$::d_remotestream && msg("Response: $response\n");
 
@@ -165,7 +166,7 @@ sub request {
 
 	my @headers = ();
 
-	while(my $header = Slim::Utils::Misc::sysreadline($self, $timeout)) {
+	while(my $header = Slim::Utils::Network::sysreadline($self, $timeout)) {
 
 		# Stop at the end of the headers
 		if ($header =~ /^[\r\n]+$/) {

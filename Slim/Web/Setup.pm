@@ -14,6 +14,7 @@ use HTTP::Status;
 
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 
 our %setup = ();
@@ -3804,7 +3805,7 @@ sub validateAllowedHosts {
 	my $val = shift;
 	$val =~ s/\s+//g;
 	if (!defined($val) || $val eq '') {
-	    return join(',', Slim::Utils::Misc::hostaddr());
+	    return join(',', Slim::Utils::Network::hostAddr());
 	} else {
  		return $val;
  	}

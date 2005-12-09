@@ -16,6 +16,7 @@ use Digest::MD5;
 use YAML qw(DumpFile LoadFile);
 
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Unicode;
 
 our %prefs = ();
@@ -99,7 +100,7 @@ sub init {
 		"username"		=> '',
 		"password"		=> '',
 		"filterHosts"		=> 0,				# No filtering by default
-		"allowedHosts"		=> join(',', Slim::Utils::Misc::hostaddr()),
+		"allowedHosts"		=> join(',', Slim::Utils::Network::hostAddr()),
 		"tcpReadMaximum"	=> 20,
 		"tcpWriteMaximum"	=> 20,
 		"tcpConnectMaximum"	=> 30,

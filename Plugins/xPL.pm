@@ -16,11 +16,11 @@
 use strict;
 use IO::Socket;
 use Scalar::Util qw(blessed);
-use Sys::Hostname;
 
-use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
 use Slim::Music::Info;
+use Slim::Utils::Misc;
+use Slim::Utils::Network;
+use Slim::Utils::Prefs;
 
 my $xpl_source = "slimdev-slimserv";
 my $localip;
@@ -39,7 +39,7 @@ my $d_xpl = 0;
 # plugin: initialize xPL support
 sub initPlugin {
 
-	my $computername = Sys::Hostname::hostname();
+	my $computername = Slim::Utils::Network::hostName();
 
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
 
@@ -73,7 +73,7 @@ sub initPlugin {
 		}
 	}
 
-	defined(Slim::Utils::Misc::blocking($xpl_socket,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($xpl_socket,0)) || die "Cannot set port nonblocking";
 	die "Could not create socket: $!\n" unless $xpl_socket;
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();

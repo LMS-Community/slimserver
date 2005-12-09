@@ -1,3 +1,5 @@
+package Slim::Player::Client;
+
 # $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
@@ -9,16 +11,21 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-package Slim::Player::Client;
 
 use strict;
+
+use Slim::Control::Command;
+use Slim::Player::Sync;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
+use Slim::Utils::PerfMon;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings;
-use File::Spec::Functions qw(:ALL);
+use Slim::Utils::Timers;
+use Slim::Web::HTTP;
 
 # depricated, use $client->maxVolume
-$Slim::Player::Client::maxVolume = 100;
+our $maxVolume = 100;
 
 # This is a hash of clientState structs, indexed by the IP:PORT of the client
 # Use the access functions.
@@ -800,9 +807,10 @@ sub clients {
 # returns ip:port
 sub ipport {
 	my $client = shift;
-	assert(defined($client->paddr));
+
 	assert($client->paddr);
-	return Slim::Networking::SliMP3::Protocol::paddr2ipaddress($client->paddr);
+
+	return Slim::Utils::Network::paddr2ipaddress($client->paddr);
 }
 
 # returns IP address

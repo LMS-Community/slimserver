@@ -21,6 +21,7 @@ use Slim::Player::SqueezeboxG;
 use Slim::Player::Squeezebox2;
 use Slim::Player::SoftSqueeze;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 
 use Errno qw(:POSIX);
@@ -94,7 +95,7 @@ sub init {
 		Timeout   => 0.001
 	) || die "Can't listen on port $listenerport for Slim protocol: $!";
 
-	defined(Slim::Utils::Misc::blocking($slimproto_socket,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($slimproto_socket,0)) || die "Cannot set port nonblocking";
 
 	Slim::Networking::Select::addRead($slimproto_socket, \&slimproto_accept);
 
@@ -106,7 +107,7 @@ sub slimproto_accept {
 
 	return unless $clientsock;
 
-	defined(Slim::Utils::Misc::blocking($clientsock,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($clientsock,0)) || die "Cannot set port nonblocking";
 
 	# Use the Socket variables this way to silence a warning on perl 5.6
 	setsockopt ($clientsock, Socket::IPPROTO_TCP(), Socket::TCP_NODELAY(), 1);
@@ -129,7 +130,7 @@ sub slimproto_accept {
 		
 	my $tmpaddr = inet_ntoa($peer);
 
-	if (Slim::Utils::Prefs::get('filterHosts') && !(Slim::Utils::Misc::isAllowedHost($tmpaddr))) {
+	if (Slim::Utils::Prefs::get('filterHosts') && !(Slim::Utils::Network::isAllowedHost($tmpaddr))) {
 		$::d_slimproto && msg ("Slimproto unauthorized host, accept denied: $tmpaddr\n");
 		$clientsock->close();
 		return;

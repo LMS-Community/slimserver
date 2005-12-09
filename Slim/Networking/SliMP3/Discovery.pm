@@ -10,11 +10,12 @@ package Slim::Networking::SliMP3::Discovery;
 use strict;
 
 use IO::Socket;
+
 use Slim::Utils::Misc;
-use Sys::Hostname;
+use Slim::Utils::Network;
 
 sub serverHostname {
-	my $hostname = hostname();
+	my $hostname = Slim::Utils::Network::hostName();
 	
 	# may return several lines of hostnames, just take the first.	
 	$hostname =~ s/\n.*//;

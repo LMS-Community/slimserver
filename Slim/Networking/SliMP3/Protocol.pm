@@ -18,6 +18,7 @@ use Slim::Player::SLIMP3;
 use Slim::Networking::Select;
 use Slim::Networking::SliMP3::Discovery;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 
 # The following settings are for testing the new streaming protocol.
 # They allow easy simulation of latency and packet loss in the receive direction.
@@ -87,7 +88,7 @@ sub init {
 		exit 1;
 	};
 	
-	defined(Slim::Utils::Misc::blocking($udpsock,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($udpsock,0)) || die "Cannot set port nonblocking";
 
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 	
@@ -102,7 +103,7 @@ sub init {
 
 		$::d_protocol && msg("Saying hello to $clientid\n");
 
-		Slim::Networking::SliMP3::Discovery::sayHello($udpsock, ipaddress2paddr($clientid));
+		Slim::Networking::SliMP3::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientid));
 		
 		# throttle the broadcasts
 		select(undef,undef,undef,0.05);
@@ -167,19 +168,6 @@ sub readUDP {
 	} while $clientpaddr;
 }
 
-sub paddr2ipaddress {
-	my ($port, $nip) = sockaddr_in(shift);
-	my $ip = inet_ntoa($nip);
-	return $ip.":".$port;
-}
-
-sub ipaddress2paddr {
-	my ($ip, $port) = split( /:/, shift);
-	$ip = inet_aton($ip);
-	my $paddr = sockaddr_in($port, $ip);
-	return $paddr;
-}
-
 ###################
 # return the client based on IP address and socket.  will create a new one if
 # necessary 
@@ -211,7 +199,7 @@ sub getUdpClient {
 			if ($deviceid != 0x01) { return undef;}
 
 			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .
-				paddr2ipaddress($clientpaddr) . "\n");
+				Slim::Utils::Network::paddr2ipaddress($clientpaddr) . "\n");
 
 			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);			
 
