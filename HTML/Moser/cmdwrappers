@@ -33,6 +33,10 @@
 		cmdshown = "<span>&times;</span>" -%]
 [%- END %]
 
+[%# no real need for dummy entries in a list layout, but have to have this defined %]
+[% BLOCK dummy -%]
+[% END %]
+
 [% BLOCK listitem -%]
 <li class="[% odd ? "odd" : "even" %]">
 	[% IF content == '' %]
