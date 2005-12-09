@@ -336,10 +336,11 @@ our %functions = (
 		if ($client->power()) {
 			$brightmode = 'powerOnBrightness';
 			
-			if ($mode eq $client->prefGet('screensaver') ||
+			if (($mode eq $client->prefGet('screensaver') ||
 					$mode eq $client->prefGet('idlesaver') || 
-						($client->prefGet('autobrightness') &&
-							Slim::Hardware::IR::lastIRTime($client) &&
+						$client->prefGet('autobrightness')) 
+						&&
+						(	Slim::Hardware::IR::lastIRTime($client) &&
 							Slim::Hardware::IR::lastIRTime($client) < Time::HiRes::time() - $client->prefGet("screensavertimeout")
 						)
 					) {
@@ -351,6 +352,7 @@ our %functions = (
 			$brightmode = 'powerOffBrightness';
 		}
 		
+		$::d_ui && msg("UI: Brightness using $brightmode during mode: $mode\n");
 		my $newBrightness;
 		if ($buttonarg eq 'toggle') {
 			$newBrightness = $client->brightness() - 1;
