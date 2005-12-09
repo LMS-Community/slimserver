@@ -29,13 +29,11 @@ require Slim::Utils::OSDetect;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
 
-our $log    = "";
+our $log = "";
 
-BEGIN {
+INIT: {
 	if ($^O =~ /Win32/) {
-
 		require Win32::Shortcut;
-		require Win32::OLE::NLS;
 		require Win32;
 	}
 }
@@ -917,10 +915,6 @@ sub delimitThousands {
 
 	0 while $len =~ s/^(-?\d+)(\d{3})/$1$sep$2/;
 	return $len;
-}
-
-sub stillScanning {
-	return Slim::Music::Import::stillScanning();
 }
 
 1;

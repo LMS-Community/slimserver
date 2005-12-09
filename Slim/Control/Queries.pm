@@ -14,10 +14,10 @@ package Slim::Control::Queries;
 
 use strict;
 
-use Slim::Utils::Misc;
-
 use Slim::Control::Request;
-
+use Slim::Music::Import;
+use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 sub prefQuery {
 	my $request = shift;
@@ -53,7 +53,7 @@ sub rescanQuery {
 
 	# no params for the rescan query
 
-	my $isValue = Slim::Utils::Misc::stillScanning() ? 1 : 0;
+	my $isValue = Slim::Music::Import::stillScanning() ? 1 : 0;
 	
 	$request->addResult('isValue', $isValue);
 	
@@ -105,5 +105,6 @@ sub debugQuery {
 	$request->setStatusDone();
 }
 
-
 1;
+
+__END__

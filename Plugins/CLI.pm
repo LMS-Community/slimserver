@@ -12,6 +12,7 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 
 use Slim::Control::Request;
+use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
@@ -1147,7 +1148,7 @@ sub cli_cmd_artists_albums_genres {
 		}
 	}
 	
-	if (Slim::Utils::Misc::stillScanning()) {
+	if (Slim::Music::Import::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
 
@@ -1212,7 +1213,7 @@ sub cli_cmd_titles {
 		$tags = $tags . "t";
 	}
 	
-	if (Slim::Utils::Misc::stillScanning()) {
+	if (Slim::Music::Import::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
 
@@ -1259,7 +1260,7 @@ sub cli_cmd_playlists {
 		$search = Slim::Web::Pages::Search::searchStringSplit($search);
 	}
 
-	if (Slim::Utils::Misc::stillScanning()) {
+	if (Slim::Music::Import::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
 
@@ -1299,7 +1300,7 @@ sub cli_cmd_playlisttracks {
 	my $iterator;
 	my @tracks;
 
-	if (Slim::Utils::Misc::stillScanning()) {
+	if (Slim::Music::Import::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
 
@@ -1374,7 +1375,7 @@ sub cli_cmd_songinfo {
 		}
 	}
 
-	if (Slim::Utils::Misc::stillScanning()) {
+	if (Slim::Music::Import::stillScanning()) {
 		cli_response_push($client_socket, "rescan:1");
 	}
 

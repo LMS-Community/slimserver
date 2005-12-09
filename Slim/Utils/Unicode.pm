@@ -1,9 +1,7 @@
 package Slim::Utils::Unicode;
 
 # $Id$
-
-use strict;
-
+#
 # This module is a wrapper around Encode:: functions, and comprises character
 # set guessing, encoding, decoding and translation. 
 #
@@ -18,6 +16,7 @@ use strict;
 #
 # Proper documentation forthcoming.
 
+use strict;
 use Fcntl qw(:seek);
 use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
 use Text::Unidecode;
@@ -37,6 +36,8 @@ INIT: {
 	}
 
         if ($^O =~ /Win32/) {
+
+                require Win32::OLE::NLS;
 
 		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();
 		my $lcid   = Win32::OLE::NLS::MAKELCID($langid);

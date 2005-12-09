@@ -16,14 +16,14 @@ use IO::Socket qw(:DEFAULT :crlf);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
+use Slim::Control::Dispatch;
 use Slim::DataStores::Base;
 use Slim::Display::Display;
+use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
-
-use Slim::Control::Dispatch;
 
 our %executeCallbacks = ();
 
@@ -241,9 +241,9 @@ sub execute {
 #	
 #		if (defined $p1 && $p1 eq '?') {
 #
-#			$p1 = Slim::Utils::Misc::stillScanning() ? 1 : 0;
+#			$p1 = Slim::Music::Import::stillScanning() ? 1 : 0;
 #
-#		} elsif (!Slim::Utils::Misc::stillScanning()) {
+#		} elsif (!Slim::Music::Import::stillScanning()) {
 #
 #			if (defined $p1 && $p1 eq 'playlists') {
 #
@@ -264,7 +264,7 @@ sub execute {
 # handled by dispatch
 #	} elsif ($p0 eq "wipecache") {
 #
-#		if (!Slim::Utils::Misc::stillScanning()) {
+#		if (!Slim::Music::Import::stillScanning()) {
 #
 #			# Clear all the active clients's playlists
 #			for my $client (Slim::Player::Client::clients()) {
@@ -526,7 +526,7 @@ sub execute {
  			my @songs;
  			my $size = 0;
  			
- 			if (Slim::Utils::Misc::stillScanning()) {
+ 			if (Slim::Music::Import::stillScanning()) {
  				push @returnArray, "rescan:1";
  			}
 
@@ -1240,7 +1240,7 @@ sub execute {
 			my $songCount = Slim::Player::Playlist::count($client);
 			my $idx = 0;
  		    	
- 			if (Slim::Utils::Misc::stillScanning()) {
+ 			if (Slim::Music::Import::stillScanning()) {
  				push @returnArray, "rescan:1";
  			}
  			

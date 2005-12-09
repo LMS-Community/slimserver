@@ -1,6 +1,6 @@
 package Slim::Web::Pages::BrowseDB;
 
-# $Id: Pages.pm 5121 2005-11-09 17:07:36Z dsully $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -239,10 +239,6 @@ sub browsedb {
 		$descend = ($level >= $maxLevel) ? undef : 'true';
 
 		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
-
-			if ($params->{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
-				# XXX include statistics
-			}
 
 			my $nextLevelInfo;
 

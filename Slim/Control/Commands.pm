@@ -14,10 +14,12 @@ package Slim::Control::Commands;
 
 use strict;
 
-use Slim::Utils::Misc;
-
 use Slim::Control::Request;
-
+use Slim::Music::Import;
+use Slim::Music::Info;
+use Slim::Player::Client;
+use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 sub prefCommand {
 	my $request = shift;
@@ -53,7 +55,7 @@ sub rescanCommand {
 	my $playlistsOnly = $request->getParam('playlistsOnly') || $request->getParam('_p1') || 0;
 	
 	# if we're scanning allready, don't do it twice
-	if (!Slim::Utils::Misc::stillScanning()) {
+	if (!Slim::Music::Import::stillScanning()) {
 
 		if ($playlistsOnly) {
 
@@ -83,7 +85,7 @@ sub wipecacheCommand {
 	# no parameters
 	
 	# if we're scanning allready, don't do it twice
-	if (!Slim::Utils::Misc::stillScanning()) {
+	if (!Slim::Music::Import::stillScanning()) {
 
 		# Clear all the active clients's playlists
 		for my $client (Slim::Player::Client::clients()) {
@@ -131,6 +133,6 @@ sub debugCommand {
 	$request->setStatusDone();
 }
 
-
-
 1;
+
+__END__
