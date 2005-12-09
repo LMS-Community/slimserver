@@ -34,6 +34,10 @@
 		cmdimage = "b_delete" %]
 [% END %]
 
+[% BLOCK dummy %]
+	<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even"	bgcolor="#FFFFFF"[% END %] width="13"></td>
+[% END %]
+
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
 		[% IF content == '' %]

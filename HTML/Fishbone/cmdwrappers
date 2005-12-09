@@ -45,6 +45,11 @@
 		target = "browser" %]
 [% END %]
 
+[% BLOCK dummy %]
+<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
+</td>
+[% END %]
+
 [% BLOCK listitem %]
 	<td class="listing" align="left">
 		[% IF content == '' %]

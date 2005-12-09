@@ -39,6 +39,11 @@
 </td>
 [% END %]
 
+[%# this is to fill in unused cells in table rows with unused links %]
+[% BLOCK dummy %]
+	<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]></td>
+[% END %]
+
 [%# this is to wrap around ? %]
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
