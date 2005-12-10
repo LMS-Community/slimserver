@@ -13,6 +13,7 @@ use base qw(Exporter);
 our @EXPORT = qw(hostAddr hostName addrToHost hostToAddr);
 
 use IO::Select;
+use IO::Socket;
 use Sys::Hostname;
 use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
