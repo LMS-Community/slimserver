@@ -251,7 +251,7 @@ GETMORE:
 			$inputbuffer{$s} = '';
 			$parser_state{$s} = 'LENGTH';
 
-			$d::protocol && msg("got op: ". $parser_frametype{$s}."\n");
+			$::d_slimproto_v && msg("got op: ". $parser_frametype{$s}."\n");
 
 		} elsif ($parser_state{$s} eq 'LENGTH') {
 			assert(length($inputbuffer{$s}) == 4);
@@ -281,8 +281,7 @@ GETMORE:
 					if ($op eq 'HELO') {
 						$handler_ref->($s, \$inputbuffer{$s});
 					} else {
-						msg("Client not found for slimproto msg\n");
-						return;
+						msg("Client not found for slimproto msg op: $op\n");
 					}
 				} else {
 					$handler_ref->($client, \$inputbuffer{$s});
