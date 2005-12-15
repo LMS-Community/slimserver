@@ -201,6 +201,18 @@ sub isNotCommand {
 	return !$self->__isCmdQuery(0, $possibleNames);
 }
 
+# returns true if $param is undefined or not one of the possible values
+# not really a method on request data members but defined as such since it is
+# useful for command and queries implementation.
+sub paramUndefinedOrNotOneOf {
+	my $self = shift;
+	my $param = shift;
+	my $possibleValues = shift;
+
+	return 1 if !defined $param;
+	return 1 if !defined $possibleValues;
+	return !grep(/$param/, @{$possibleValues});
+}
 
 ################################################################################
 # Other
@@ -213,6 +225,7 @@ sub execute {
 
 sub callback {
 }
+
 
 sub addParam {
 	my $self = shift;
@@ -283,6 +296,10 @@ sub getArray {
 }
 
 ################################################################################
+# Special
+################################################################################
+
+################################################################################
 # Private methods
 ################################################################################
 sub __isCmdQuery {
@@ -292,8 +309,7 @@ sub __isCmdQuery {
 	
 	if ($isQuery == $self->query()){
 		my $name = $self->getRequest();
-		my $result = grep(/$name/, @{$possibleNames});
-		return $result;
+		return grep(/$name/, @{$possibleNames});
 	}
 	return 0;
 }

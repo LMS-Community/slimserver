@@ -43,6 +43,31 @@ sub prefQuery {
 	$request->setStatusDone();
 }
 
+sub playerprefQuery {
+	my $request = shift;
+	
+	# check this is the correct command. Syntax approved by Dean himself!
+	if ($request->isNotQuery(['playerpref'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# use positional parameters as backups
+	my $client   = $request->client();
+	my $prefName = $request->getParam('prefName') || $request->getParam('_p1');
+	
+	if (!defined $client || !defined $prefName) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $isValue = $client->prefGet($prefName);
+	
+	$request->addResult('isValue', $isValue);
+	
+	$request->setStatusDone();
+}
+
 sub rescanQuery {
 	my $request = shift;
 	
@@ -104,6 +129,139 @@ sub debugQuery {
 	
 	$request->setStatusDone();
 }
+
+sub infototalQuery {
+	my $request = shift;
+	
+	# check this is the correct command.
+	if ($request->isNotQuery(['info'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# use positional parameters as backups
+	my $total  = $request->getParam('total') || $request->getParam('_p1');
+	my $entity = $request->getParam('entity') || $request->getParam('_p2');
+
+	if (!defined $total || $total ne 'total') {
+		$request->setStatusBadParams();
+		return;
+	}		
+	
+	# get the DB
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	
+	if (!defined $entity || $entity eq 'genres') {
+		$request->addResult('genres', $ds->count('genre'));
+	}
+	if (!defined $entity || $entity eq 'artists') {
+		$request->addResult('artists', $ds->count('contributor'));
+	}
+	if (!defined $entity || $entity eq 'albums') {
+		$request->addResult('albums', $ds->count('album'));
+	}
+	if (!defined $entity || $entity eq 'songs') {
+		$request->addResult('songs', $ds->count('track'));
+	}			
+	
+	$request->setStatusDone();
+}
+
+sub sleepQuery {
+	my $request = shift;
+	
+	# check this is the correct command. Syntax approved by Dean himself!
+	if ($request->isNotQuery(['sleep'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $client = $request->client();
+	
+	if (!defined $client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $isValue = $client->sleepTime() - Time::HiRes::time();
+	if ($isValue < 0) {
+		$isValue = 0;
+	}
+	
+	$request->addResult('isValue', $isValue);
+	
+	$request->setStatusDone();
+}
+
+sub modeQuery {
+	my $request = shift;
+	
+	# check this is the correct command. Syntax approved by Dean himself!
+	if ($request->isNotQuery(['mode'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $client = $request->client();
+	
+	if (!defined $client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $isValue = Slim::Player::Source::playmode($client);
+	
+	$request->addResult('isValue', $isValue);
+	
+	$request->setStatusDone();
+}
+
+sub connectedQuery {
+	my $request = shift;
+	
+	# check this is the correct command.
+	if ($request->isNotQuery(['connected'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $client = $request->client();
+	
+	if (!defined $client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $isValue = $client->connected() || 0;
+	
+	$request->addResult('isValue', $isValue);
+	
+	$request->setStatusDone();
+}
+
+sub signalstrengthQuery {
+	my $request = shift;
+	
+	# check this is the correct command.
+	if ($request->isNotQuery(['signalstrength'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $client = $request->client();
+	
+	if (!defined $client) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $isValue = $client->signalStrength() || 0;
+	
+	$request->addResult('isValue', $isValue);
+	
+	$request->setStatusDone();
+}
+
 
 1;
 

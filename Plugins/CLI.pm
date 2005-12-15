@@ -465,9 +465,9 @@ sub cli_process {
 			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
 		}
 
-		elsif ($cmd eq 'info') {
-			cli_cmd_info($client_socket, $cmdRef);
-		}
+#		elsif ($cmd eq 'info') {
+#			cli_cmd_info($client_socket, $cmdRef);
+#		}
 		
 		elsif ($cmd eq 'listen') {
 			cli_cmd_listen($client_socket, $cmdRef);
@@ -1006,29 +1006,30 @@ sub cli_cmd_listen {
 }
 
 
+# handled by dispatch
 # Handles the "info" query
-sub cli_cmd_info {
-	my $client_socket = shift;
-	my $cmdRef = shift;
-
-	$d_cli_vv && msg("CLI: cli_cmd_info()\n");
-
-	my $p1 = $cmdRef->{'_p1'};
-	return unless (defined $p1 && $p1 eq "total");
-	
-	my $p2 = $cmdRef->{'_p2'};
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if ($p2 =~ /^(genre|artist|album|song)s$/) {
-
-		my $field = $1;
-
-		$field = 'track'       if $field eq 'song';
-		$field = 'contributor' if $field eq 'artist';
-
-		cli_response_push($client_socket, $ds->count($field));
-	}
-}
+#sub cli_cmd_info {
+#	my $client_socket = shift;
+#	my $cmdRef = shift;
+#
+#	$d_cli_vv && msg("CLI: cli_cmd_info()\n");
+#
+#	my $p1 = $cmdRef->{'_p1'};
+#	return unless (defined $p1 && $p1 eq "total");
+#	
+#	my $p2 = $cmdRef->{'_p2'};
+#	my $ds = Slim::Music::Info::getCurrentDataStore();
+#
+#	if ($p2 =~ /^(genre|artist|album|song)s$/) {
+#
+#		my $field = $1;
+#
+#		$field = 'track'       if $field eq 'song';
+#		$field = 'contributor' if $field eq 'artist';
+#
+#		cli_response_push($client_socket, $ds->count($field));
+#	}
+#}
 
 # Handles the "player" query
 sub cli_cmd_player {

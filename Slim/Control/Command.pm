@@ -131,17 +131,12 @@ sub execute {
 # COMMAND LIST #
   
 # C     P0             P1                          P2                            P3            P4         P5        P6
-    
-# GENERAL
-# N    debug           <debugflag>                 <0|1|?|>
-# N    pref            <prefname>                  <prefvalue|?>
 
 # PLAYERS
-# Y    sleep           <0..n|?>
 # Y    sync            <playerindex|playerid|-|?>
 # Y    power           <0|1|?|>
-# Y    signalstrength  ?
-# Y    connected       ?
+
+
 # Y    mixer           volume                      <0..100|-100..+100|?>
 # Y    mixer           balance                     (not implemented)
 # Y    mixer           bass                        <0..100|-100..+100|?>
@@ -151,22 +146,13 @@ sub execute {
 # Y    display         <line1>                     <line2>                       <duration>
 # Y    display         ?                           ?
 # Y    displaynow      ?                           ?
-# Y    playerpref      <prefname>                  <prefvalue|?>
-# Y    button          <buttoncode>
-# Y    ir              <ircode>                    <time>
 # Y    rate            <rate|?>
 
-#DATABASE    
-# N    rescan          <?>    	
-# N    rescan          playlists
-# N    wipecache
 
 #PLAYLISTS
-# Y    mode            <play|pause|stop|?>    
-# Y    play        
-# Y    pause           <0|1|>    
-# Y    stop
+
 # Y    time|gototime   <0..n|-n|+n|?>
+
 # Y    genre           ?
 # Y    artist          ?
 # Y    album           ?
@@ -316,44 +302,47 @@ sub execute {
 
 	} elsif ($client) {
 
-		if ($p0 eq "playerpref") {
+# handled by dispatch
+#		if ($p0 eq "playerpref") {
+#
+#			if (defined($p2) && $p2 ne '?' && !$::nosetup) {
+#				$client->prefSet($p1, $p2);
+#			}
+#
+#			$p2 = $client->prefGet($p1);
 
-			if (defined($p2) && $p2 ne '?' && !$::nosetup) {
-				$client->prefSet($p1, $p2);
-			}
+# handled by dispatch
+#		} elsif ($p0 eq "play") {
+#
+#			Slim::Player::Source::playmode($client, "play");
+#			Slim::Player::Source::rate($client,1);
+#			$client->update();
 
-			$p2 = $client->prefGet($p1);
+# handled by dispatch
+#		} elsif ($p0 eq "pause") {
+#
+#			if (defined($p1)) {
+#				if ($p1 && Slim::Player::Source::playmode($client) eq "play") {
+#					$client->rate(1);
+#					Slim::Player::Source::playmode($client, "pause");
+#				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "pause") {
+#					Slim::Player::Source::playmode($client, "resume");
+#				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "stop") {
+#					Slim::Player::Source::playmode($client, "play");
+#				}
+#			} else {
+#				if (Slim::Player::Source::playmode($client) eq "pause") {
+#					Slim::Player::Source::playmode($client, "resume");
+#				} elsif (Slim::Player::Source::playmode($client) eq "play") {
+#					$client->rate(1);
+#					Slim::Player::Source::playmode($client, "pause");
+#				} elsif (Slim::Player::Source::playmode($client) eq "stop") {
+#					Slim::Player::Source::playmode($client, "play");
+#				}
+#			}
+#			$client->update();
 
-		} elsif ($p0 eq "play") {
-
-			Slim::Player::Source::playmode($client, "play");
-			Slim::Player::Source::rate($client,1);
-			$client->update();
-
-		} elsif ($p0 eq "pause") {
-
-			if (defined($p1)) {
-				if ($p1 && Slim::Player::Source::playmode($client) eq "play") {
-					$client->rate(1);
-					Slim::Player::Source::playmode($client, "pause");
-				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "pause") {
-					Slim::Player::Source::playmode($client, "resume");
-				} elsif (!$p1 && Slim::Player::Source::playmode($client) eq "stop") {
-					Slim::Player::Source::playmode($client, "play");
-				}
-			} else {
-				if (Slim::Player::Source::playmode($client) eq "pause") {
-					Slim::Player::Source::playmode($client, "resume");
-				} elsif (Slim::Player::Source::playmode($client) eq "play") {
-					$client->rate(1);
-					Slim::Player::Source::playmode($client, "pause");
-				} elsif (Slim::Player::Source::playmode($client) eq "stop") {
-					Slim::Player::Source::playmode($client, "play");
-				}
-			}
-			$client->update();
-
-		} elsif ($p0 eq "rate") {
+		if ($p0 eq "rate") {
 
 			if ($client->directURL() || $client->audioFilehandleIsSocket) {
 				Slim::Player::Source::rate($client, 1);
@@ -363,52 +352,27 @@ sub execute {
 				Slim::Player::Source::rate($client,$p1);
 			}
 
-		} elsif ($p0 eq "stop") {
+# handled by dispatch
+#		} elsif ($p0 eq "stop") {
+#
+#			Slim::Player::Source::playmode($client, "stop");
+#			# Next time we start, start at normal playback rate
+#			$client->rate(1);
+#			$client->update();
 
-			Slim::Player::Source::playmode($client, "stop");
-			# Next time we start, start at normal playback rate
-			$client->rate(1);
-			$client->update();
-
-		} elsif ($p0 eq "mode") {
-
-			if (!defined($p1) || $p1 eq "?") {
-				$p1 = Slim::Player::Source::playmode($client);
-			} else {
-				if (Slim::Player::Source::playmode($client) eq "pause" && $p1 eq "play") {
-					Slim::Player::Source::playmode($client, "resume");
-				} else {
-					Slim::Player::Source::playmode($client, $p1);
-				}
-				$client->update();
-			}
-
-		} elsif ($p0 eq "sleep") {
-			if ($p1 eq "?") {
-				$p1 = $client->sleepTime() - Time::HiRes::time();
-				if ($p1 < 0) {
-					$p1 = 0;
-				}
-			} else {
-				Slim::Utils::Timers::killTimers($client, \&sleepStartFade);
-				Slim::Utils::Timers::killTimers($client, \&sleepPowerOff);
-				
-				if ($p1 != 0) {
-					my $fadeTime = 0;
-					$fadeTime = $p1 - 40 if ($p1>40);
-					my $offTime = $p1;
-				
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $offTime, \&sleepPowerOff);
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $fadeTime, \&sleepStartFade);
-
-
-					$client->sleepTime(Time::HiRes::time() + $offTime);
-					$client->currentSleepTime($offTime / 60);
-				} else {
-					$client->sleepTime(0);
-					$client->currentSleepTime(0);
-				}
-			}
+# handled by dispatch
+#		} elsif ($p0 eq "mode") {
+#
+#			if (!defined($p1) || $p1 eq "?") {
+#				$p1 = Slim::Player::Source::playmode($client);
+#			} else {
+#				if (Slim::Player::Source::playmode($client) eq "pause" && $p1 eq "play") {
+#					Slim::Player::Source::playmode($client, "resume");
+#				} else {
+#					Slim::Player::Source::playmode($client, $p1);
+#				}
+#				$client->update();
+#			}
 
 		} elsif ($p0 eq "gototime" || $p0 eq "time") {
 			if ($p1 eq "?") {
@@ -444,14 +408,17 @@ sub execute {
 
 			$p1 = Slim::Player::Playlist::song($client) || 0;
 
-		} elsif ($p0 eq "connected") {
+# handled by dispatch
+#		} elsif ($p0 eq "connected") {
+#
+#			$p1 = $client->connected() || 0;
+#
 
-			$p1 = $client->connected() || 0;
-
-		} elsif ($p0 eq "signalstrength") {
-
-			$p1 = $client->signalStrength() || 0;
-
+# handled by dispatch
+#		} elsif ($p0 eq "signalstrength") {
+#
+#			$p1 = $client->signalStrength() || 0;
+#
 		} elsif ($p0 eq "power") {
 
 			if (!defined $p1) {
@@ -1212,15 +1179,17 @@ sub execute {
 				$client->showBriefly($p1, $p2, $p3, $p4);
 			}
 
-		} elsif ($p0 eq "button") {
+# handled by dispatch
+#		} elsif ($p0 eq "button") {
+#
+#			# all buttons now go through execute()
+#			Slim::Hardware::IR::executeButton($client, $p1, $p2, undef, defined($p3) ? $p3 : 1);
 
-			# all buttons now go through execute()
-			Slim::Hardware::IR::executeButton($client, $p1, $p2, undef, defined($p3) ? $p3 : 1);
-
-		} elsif ($p0 eq "ir") {
-
-			# all ir signals go through execute()
-			Slim::Hardware::IR::processIR($client, $p1, $p2);
+# handled by dispatch
+#		} elsif ($p0 eq "ir") {
+#
+#			# all ir signals go through execute()
+#			Slim::Hardware::IR::processIR($client, $p1, $p2);
 	
  		# Extended CLI API STATUS		
  		} elsif ($p0 eq "status") {
@@ -1558,27 +1527,6 @@ sub singletonRef {
 	}
 }
 
-sub sleepStartFade {
-	my $client = shift;
-
-	$::d_command && msg("sleepStartFade()\n");
-	
-	if ($client->isPlayer()) {
-		$client->fade_volume(-60, undef, [$client]);
-	}
-}
-
-sub sleepPowerOff {
-	my $client = shift;
-	
-	$::d_command && msg("sleepPowerOff()\n");
-
-	$client->sleepTime(0);
-	$client->currentSleepTime(0);
-	
-	execute($client, ['stop', 0]);
-	execute($client, ['power', 0]);
-}
 
 sub mute {
 	my $client = shift;

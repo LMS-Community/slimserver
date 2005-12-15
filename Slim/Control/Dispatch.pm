@@ -31,18 +31,76 @@ our %notifications = ();
 our %dispatchCommands = ();
 our %dispatchQueries = ();
 
+# COMMAND LIST #
+  
+# C     P0             P1                          P2                            P3            P4         P5        P6
+        
+# GENERAL
+# N    debug           <debugflag>                 <0|1|?|>
+# N    pref            <prefname>                  <prefvalue|?>
+# N    version         ?
+
+# DATABASE    
+# N    rescan          <|playlists|?>    	
+# N    wipecache
+
+# PLAYERS
+# Y    button          <buttoncode>
+# Y    ir              <ircode>                    <time>
+# Y    sleep           <0..n|?>
+# Y    signalstrength  ?
+# Y    connected       ?
+# Y    playerpref      <prefname>                  <prefvalue|?>
+
+# PLAYLISTS
+# Y    mode            <play|pause|stop|?>    
+# Y    play        
+# Y    pause           <0|1|>    
+# Y    stop
+
 
 # add standard commands and queries to the dispatch hashes...
 sub init {
-	addCommand('pref', \&Slim::Control::Commands::prefCommand);
-	addQuery('pref', \&Slim::Control::Queries::prefQuery);
-	addCommand('rescan', \&Slim::Control::Commands::rescanCommand);
-	addQuery('rescan', \&Slim::Control::Queries::rescanQuery);
-	addCommand('wipecache', \&Slim::Control::Commands::wipecacheCommand);
-	addQuery('version', \&Slim::Control::Queries::versionQuery);
-	addCommand('debug', \&Slim::Control::Commands::debugCommand);
-	addQuery('debug', \&Slim::Control::Queries::debugQuery);
+
+	addCommand(	'button', 			\&Slim::Control::Commands::buttonCommand);
+
+	addQuery(	'connected', 		\&Slim::Control::Queries::connectedQuery);
+
+	addCommand(	'debug', 			\&Slim::Control::Commands::debugCommand);
+	addQuery(	'debug',			\&Slim::Control::Queries::debugQuery);
+
+	addQuery(	'info', 			\&Slim::Control::Queries::infototalQuery);
+
+	addCommand(	'ir', 				\&Slim::Control::Commands::irCommand);
+
+	addCommand(	'pref', 			\&Slim::Control::Commands::prefCommand);
+	addQuery(	'pref', 			\&Slim::Control::Queries::prefQuery);
+
+	addCommand(	'play', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'stop', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'pause', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'mode', 			\&Slim::Control::Commands::playcontrolCommand);
+	addQuery(	'mode', 			\&Slim::Control::Queries::modeQuery);
+
+	addCommand(	'playerpref', 		\&Slim::Control::Commands::playerprefCommand);
+	addQuery(	'playerpref', 		\&Slim::Control::Queries::playerprefQuery);
+
+#	addCommand(	'rate',	 			\&Slim::Control::Commands::rateCommand);
+#	addQuery(	'rate', 			\&Slim::Control::Queries::rateQuery);
+
+	addCommand(	'rescan', 			\&Slim::Control::Commands::rescanCommand);
+	addQuery(	'rescan', 			\&Slim::Control::Queries::rescanQuery);
+
+	addQuery(	'signalstrength', 	\&Slim::Control::Queries::signalstrengthQuery);
+
+	addCommand(	'sleep', 			\&Slim::Control::Commands::sleepCommand);
+	addQuery(	'sleep', 			\&Slim::Control::Queries::sleepQuery);
+
+	addQuery(	'version', 			\&Slim::Control::Queries::versionQuery);
+
+	addCommand(	'wipecache', 		\&Slim::Control::Commands::wipecacheCommand);
 }
+
 
 
 # add a command to the dispatcher
