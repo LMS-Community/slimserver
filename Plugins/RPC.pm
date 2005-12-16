@@ -134,9 +134,12 @@ sub getFunctions {
 
 sub webPages {
 	my %pages = (
-		'rpc.xml' => sub { handleReqXML(@_)},
-		'rpc.js' => sub { handleReqJSON(@_)},
+		'rpc.xml' => \&handleReqXML,
+		'rpc.js' => \&handleReqJSON,
 	);
+
+	$Slim::Web::HTTP::dangerousCommands{\&handleReqJSON} = ".";
+	$Slim::Web::HTTP::dangerousCommands{\&handleReqXML} = ".";
 
 	return (\%pages);
 }

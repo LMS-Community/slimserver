@@ -161,6 +161,11 @@ JXTK2.JSONRPC.Proxy = function(url) {
 
 		xmlreq.open("POST", proxyurl, (onResp ? true : false));
 
+		try {
+			xmlreq.setRequestHeader("Referer", document.location.href);
+		} catch (err) {
+		}
+
 		if (isFunc) {
 			xmlreq.onreadystatechange = function () { handleResp(xmlreq, onResp); };
 		}

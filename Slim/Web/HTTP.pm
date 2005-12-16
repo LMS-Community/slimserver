@@ -2056,7 +2056,7 @@ sub isRequestCSRFSafe {
 		if ( ! isCsrfAuthCodeValid($request) ) {
 
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
-			$::d_http && msg("No valid CSRF auth code: [" . join(' ', ($request->method(), $request->uri(), $request-header('X-Slim-CSRF'))) . "]\n");
+			$::d_http && msg("No valid CSRF auth code: [" . join(' ', ($request->method(), $request->uri(), $request->header('X-Slim-CSRF'))) . "]\n");
 
 		} else {
 
