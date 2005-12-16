@@ -182,8 +182,13 @@ sub handleReqXML {
 sub handleReqJSON {
 	my ($client, $params, $prepareResponseForSending, $httpClient, $response) = @_;
 	my $output;
+	my $input;
 
-	if (!$params->{content}) {
+	if ($params->{json}) {
+		$input = $params->{json};
+	} elsif ($params->{content}) {
+		$input = $params->{content};
+	} else {
 		$response->code(RC_BAD_REQUEST);
 		$response->content_type('text/html');
 		$response->header('Connection' => 'close');
@@ -191,11 +196,11 @@ sub handleReqJSON {
 		return Slim::Web::HTTP::filltemplatefile('html/errors/400.html');
 	}
 
-	$::d_plugins && msg("JSON request: " . $params->{content} . "\n");
+	$::d_plugins && msg("JSON request: " . $input . "\n");
 
 	my @resparr;
 
-	my $objlist = jsonToObj($params->{content});
+	my $objlist = jsonToObj($input);
 	$objlist = [ $objlist ] if ref($objlist) eq 'HASH';
 
 	if (ref($objlist) ne 'ARRAY') {
@@ -230,6 +235,10 @@ sub handleReqJSON {
 	}
 
 	my $rpcresponse = objToJson($respobj);
+
+	if ($params->{asyncId}) {
+		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{asyncId} . "," . $rpcresponse . ")";
+	}
 
 	$::d_plugins && msg("JSON response ready\n");
 
