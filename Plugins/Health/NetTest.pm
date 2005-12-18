@@ -185,9 +185,10 @@ sub lines {
 	my $rate = $params->{'rate'};
 	my $inst = $params->{'Qlen0'} ? $params->{'Qlen0'} / ($params->{'Qlen1'} + $params->{'Qlen0'}) : 0;
 
-	$params->{log}->log($inst * 100) if ($inst > 0);
+	$params->{'log'}->log($inst * 100) if ($inst > 0);
 
-	my $avgPercent = $params->{'log'}->{'total'} ? $params->{'log'}->{'sum'} / $params->{'log'}->{'total'} : 0;
+	my $logTotal = defined($params->{'log'}) ? $params->{'log'}->count() : 0;
+	my $avgPercent = $logTotal ? $params->{'log'}->{'sum'} / $logTotal : 0;
 
 	return {
 		'line1'    => $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE'),

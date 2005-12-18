@@ -84,7 +84,7 @@ sub _updateSelect {
 sub select {
 	my $select_time = shift;
 
-	$::perfmon && $endSelectTime && $selectPerf->log(Time::HiRes::time() - $endSelectTime);
+	$::perfmon && $endSelectTime && $selectPerf->logLite(Time::HiRes::time() - $endSelectTime);
 	
 	my ($r, $w, $e) = IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 

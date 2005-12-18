@@ -23,25 +23,30 @@ sub new {
 }
 
 sub adjust {
-	my ($ref, $name, $buckets, $warnLow, $warnHigh) = @_;
+	my ($ref, $name, $array, $warnLo, $warnHi) = @_;
 
-	$ref->{name} = $name;
-	$ref->{total} = 0;
-	$ref->{over} = 0;
-	$ref->{max} = 0;
-	$ref->{min} = 0;
-	$ref->{sum} = 0;
-	$ref->{array} = [];
-	$ref->{warnlo} = undef;
-	$ref->{warnhi} = undef;
+	my $buckets = $#{$array};
 
-    for my $entry (0..$#{$buckets}) {
-		$ref->{array}[$entry]->{val} = 0;
-		$ref->{array}[$entry]->{thres} = @$buckets[$entry];
+	$ref->{name} = $name;                  # name of log - used in warning msgs
+	$ref->{buckets} = $buckets;            # number of buckets
+	$ref->{over} = 0;                      # count of values exceeding highest threshold
+	$ref->{max} = 0;                       # max logged value
+	$ref->{min} = @$array[$buckets] || 0;  # min logged value (assumed < highest thres)
+	$ref->{sum} = 0;                       # sum of logged values
+	$ref->{val} = [];                      # array holding counts per bucket
+	$ref->{thres} = [];                    # array holding thresholds per bucket
+	$ref->{warnlo} = $warnLo;              # low warning threshold - msg if crossed
+	$ref->{warnhi} = $warnHi;              # high warning threshold - msg if crossed
+
+	# optimise speed of logging to lowest & highest buckets by storing extra data in hash direct
+	$ref->{valL}   = 0;                    # val for bucket 0
+	$ref->{thresL} = @$array[0] || 0;      # thres for bucket 0
+	$ref->{thresH} = @$array[$buckets]||0; # thres for overflow
+
+    for my $entry (0..$buckets) {
+		$ref->{val}[$entry] = 0;
+		$ref->{thres}[$entry] = @$array[$entry];
     }
-
-	$ref->{warnlo} = $warnLow if $warnLow;
-	$ref->{warnhi} = $warnHigh if $warnHigh;
 
 	return $ref;
 }
@@ -63,38 +68,57 @@ sub setWarnHigh {
 sub clear {
 	my $ref = shift;
 
-	$ref->{total} = 0;
 	$ref->{over} = 0; 
 	$ref->{max} = 0;
-	$ref->{min} = undef;
+	$ref->{min} = $ref->{thres}[$ref->{buckets}] || 0;
 	$ref->{sum} = 0;
 
-	my @array = @{$ref->{array}};
-	for my $entry (0..$#array) {
-		$array[$entry]->{val} = 0;
+	for my $entry (0..$ref->{buckets}) {
+		$ref->{val}[$entry]  = 0;
 	}
+	$ref->{valL} = 0;
 }	
-	
+
 sub log {
+	# normal logging method including checking of warning thresholds
+	# [optimised for speed by use of && rather than if statements]
 	my $ref = shift;
 	my $val = shift;
 
-	$ref->{total}++;
 	$ref->{sum} += $val;
-	$ref->{max} = $val if ($val > $ref->{max});
-	$ref->{min} = $val if (!defined($ref->{min}) || ($val < $ref->{min}));
+	($val > $ref->{max}) && ($ref->{max} = $val);
+	($val < $ref->{min}) && ($ref->{min} = $val);
 
+	# test for crossing warning threshold and log msg if appropriate
 	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." below threshold: ".$val."\n");
 	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." above threshold: ".$val."\n");
 
-	my @array = @{$ref->{array}};
-	for my $entry (0..$#array) {
-		if ($array[$entry]->{thres} > $val) {
-			$array[$entry]->{val}++;
-			return;
-		}
+	# shortcut for hits on first bucket
+	($val < $ref->{thresL}) && ++$ref->{valL} && return;
+
+	# shortcut for overflows past all buckets
+	($val >= $ref->{thresH}) && ++$ref->{over} && return;
+
+	# update appropriate other bucket
+	for my $entry (1..$ref->{buckets}) {
+		($val < $ref->{thres}[$entry]) && ++$ref->{val}[$entry] && return;
 	}
-	$ref->{over}++;
+}
+
+sub logLite {
+	# light weight logger with no warnings >10% faster than log for lowest bucket
+	my $ref = shift;
+	my $val = shift;
+
+	$ref->{sum} += $val;
+	($val > $ref->{max}) && ($ref->{max} = $val);
+	($val < $ref->{min}) && ($ref->{min} = $val);
+	($val < $ref->{thresL}) && ++$ref->{valL} && return;
+	($val>= $ref->{thresH}) && ++$ref->{over} && return;
+
+	for my $entry (1..$ref->{buckets}) {
+		($val < $ref->{thres}[$entry]) && ++$ref->{val}[$entry] && return;
+	}
 }
 
 sub sprint {
@@ -103,20 +127,19 @@ sub sprint {
 
 	my $str = '';
 
-	my $total = $ref->{total} || return $str;
+	my $total = $ref->count() || return $str;
 
 	$str .= $ref->{name}.":\n" if $displayTitle;
 
-	my @array = @{$ref->{array}};
-	for my $entry (0..$#array) {
-		my $val = $array[$entry]->{val};
+	for my $entry (0..$ref->{buckets}) {
+		my $val = $entry ? $ref->{val}[$entry] : $ref->{valL};
 		my $percent = $val/$total*100;
-		$str .= sprintf "%8s : %8d :%3.0f%% %s\n","< ".$array[$entry]->{thres}, $val, $percent, "#" x ($percent/2);
+		$str .= sprintf "%8s : %8d :%3.0f%% %s\n","< ".$ref->{thres}[$entry], $val, $percent, "#" x ($percent/2);
 	}
-	$str .= sprintf "%8s : %8d :%3.0f%% %s\n", ">=".$array[$#array]->{thres},$ref->{over}, $ref->{over}/$total*100, "#" x ($ref->{over}/$total*100/2);
+	$str .= sprintf "%8s : %8d :%3.0f%% %s\n", ">=".$ref->{thres}[$ref->{buckets}], $ref->{over}, $ref->{over}/$total*100, "#" x ($ref->{over}/$total*100/2);
 	$str .= sprintf "    max  : %8f\n", $ref->{max};
 	$str .= sprintf "    min  : %8f\n", $ref->{min};
-	$str .= sprintf "    avg  : %8f\n", $ref->{sum}/$ref->{total};
+	$str .= sprintf "    avg  : %8f\n", $ref->{sum}/$total;
 
 	return $str
 }
@@ -125,16 +148,27 @@ sub print {
 	print sprint(@_);
 }
 
+sub count {
+	my $ref = shift;
+
+	my $count = $ref->{over};
+
+	for my $entry (0..$ref->{buckets}) {
+		$count += $entry ? $ref->{val}[$entry] : $ref->{valL};
+	}
+
+	return $count;
+}	
+
 sub above {
 	my $ref = shift;
 	my $val = shift;
 
 	my $count = $ref->{over};
 
-	my @array = @{$ref->{array}};
-	for my $entry (0..$#array) {
-		if ($array[$entry]->{thres} > $val) {
-			$count += $array[$entry]->{val};
+	for my $entry (0..$ref->{buckets}) {
+		if ($ref->{thres}[$entry] > $val) {
+			$count += $entry ? $ref->{val}[$entry] : $ref->{valL};
 		}
 	}
 	return $count;
@@ -146,10 +180,9 @@ sub below {
 
 	my $count = 0;
 
-	my @array = @{$ref->{array}};
-	for my $entry (0..$#array) {
-		if ($array[$entry]->{thres} <= $val) {
-			$count += $array[$entry]->{val};
+	for my $entry (0..$ref->{buckets}) {
+		if ($ref->{thres}[$entry] <= $val) {
+			$count += $entry ? $ref->{val}[$entry] : $ref->{valL};
 		}
 	}
 	return $count;
@@ -159,7 +192,7 @@ sub percentAbove {
 	my $ref = shift;
 	my $val = shift;
 
-	my $total = $ref->{total} || return 0;
+	my $total = $ref->count() || return 0;
 	return $ref->above($val)/$total*100;
 }
 
@@ -167,7 +200,7 @@ sub percentBelow {
 	my $ref = shift;
 	my $val = shift;
 
-	my $total = $ref->{total} || return 0;
+	my $total = $ref->count() || return 0;
 	return $ref->below($val)/$total*100;
 }
 
