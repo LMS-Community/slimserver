@@ -50,15 +50,6 @@ sub syncwith {
 	} else { return undef;}
 }
 
-sub syncIDs {
-	my $client = shift;
-	if (isSynced($client)) {
-		my @buddies = syncedWith($client);
-		my @ids = map {$_->id()} @buddies;
-		return join " ",@ids;
-	} else { return undef;}
-}
-
 # unsync a client from its buddies
 sub unsync {
 	my $client = shift;

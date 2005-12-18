@@ -51,54 +51,82 @@ our %dispatchQueries = ();
 # Y    signalstrength  ?
 # Y    connected       ?
 # Y    playerpref      <prefname>                  <prefvalue|?>
+# Y    sync            <playerindex|playerid|-|?>
+# Y    power           <0|1|?|>
+# Y    display         <line1>                     <line2>                       <duration>
+# Y    display         ?                           ?
+# Y    displaynow      ?                           ?
+# Y    mixer           volume                      <0..100|-100..+100|?>
+# Y    mixer           bass                        <0..100|-100..+100|?>
+# Y    mixer           treble                      <0..100|-100..+100|?>
+# Y    mixer           pitch                       <80..120|-100..+100|?>
+# Y    mixer           muting					   <|?>
 
 # PLAYLISTS
 # Y    mode            <play|pause|stop|?>    
 # Y    play        
 # Y    pause           <0|1|>    
 # Y    stop
+# Y    rate            <rate|?>
+# Y    time|gototime   <0..n|-n|+n|?>
+# Y    genre           ?
+# Y    artist          ?
+# Y    album           ?
+# Y    title           ?
+# Y    duration        ?
+# Y    path	           ?
 
 
 # add standard commands and queries to the dispatch hashes...
 sub init {
 
+
 	addCommand(	'button', 			\&Slim::Control::Commands::buttonCommand);
-
-	addQuery(	'connected', 		\&Slim::Control::Queries::connectedQuery);
-
 	addCommand(	'debug', 			\&Slim::Control::Commands::debugCommand);
-	addQuery(	'debug',			\&Slim::Control::Queries::debugQuery);
-
-	addQuery(	'info', 			\&Slim::Control::Queries::infototalQuery);
-
+	addCommand(	'display', 			\&Slim::Control::Commands::displayCommand);
+	addCommand(	'gototime',			\&Slim::Control::Commands::timeCommand);
 	addCommand(	'ir', 				\&Slim::Control::Commands::irCommand);
-
-	addCommand(	'pref', 			\&Slim::Control::Commands::prefCommand);
-	addQuery(	'pref', 			\&Slim::Control::Queries::prefQuery);
-
-	addCommand(	'play', 			\&Slim::Control::Commands::playcontrolCommand);
-	addCommand(	'stop', 			\&Slim::Control::Commands::playcontrolCommand);
-	addCommand(	'pause', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'mixer', 			\&Slim::Control::Commands::mixerCommand);
 	addCommand(	'mode', 			\&Slim::Control::Commands::playcontrolCommand);
-	addQuery(	'mode', 			\&Slim::Control::Queries::modeQuery);
-
+	addCommand(	'pause', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'play', 			\&Slim::Control::Commands::playcontrolCommand);
 	addCommand(	'playerpref', 		\&Slim::Control::Commands::playerprefCommand);
-	addQuery(	'playerpref', 		\&Slim::Control::Queries::playerprefQuery);
-
-#	addCommand(	'rate',	 			\&Slim::Control::Commands::rateCommand);
-#	addQuery(	'rate', 			\&Slim::Control::Queries::rateQuery);
-
+	addCommand(	'power', 			\&Slim::Control::Commands::powerCommand);
+	addCommand(	'pref', 			\&Slim::Control::Commands::prefCommand);
+	addCommand(	'rate',	 			\&Slim::Control::Commands::rateCommand);
 	addCommand(	'rescan', 			\&Slim::Control::Commands::rescanCommand);
-	addQuery(	'rescan', 			\&Slim::Control::Queries::rescanQuery);
-
-	addQuery(	'signalstrength', 	\&Slim::Control::Queries::signalstrengthQuery);
-
 	addCommand(	'sleep', 			\&Slim::Control::Commands::sleepCommand);
-	addQuery(	'sleep', 			\&Slim::Control::Queries::sleepQuery);
+	addCommand(	'stop', 			\&Slim::Control::Commands::playcontrolCommand);
+	addCommand(	'sync', 			\&Slim::Control::Commands::syncCommand);
+	addCommand(	'time',	 			\&Slim::Control::Commands::timeCommand);
+	addCommand(	'wipecache', 		\&Slim::Control::Commands::wipecacheCommand);
 
+
+	addQuery(	'album',			\&Slim::Control::Queries::cursonginfoQuery);
+	addQuery(	'artist',			\&Slim::Control::Queries::cursonginfoQuery);
+	addQuery(	'connected', 		\&Slim::Control::Queries::connectedQuery);
+	addQuery(	'debug',			\&Slim::Control::Queries::debugQuery);
+	addQuery(	'displaynow',		\&Slim::Control::Queries::displaynowQuery);
+	addQuery(	'duration',			\&Slim::Control::Queries::cursonginfoQuery);
+	addQuery(	'genre',			\&Slim::Control::Queries::cursonginfoQuery);
+	addQuery(	'gototime',			\&Slim::Control::Queries::timeQuery);
+	addQuery(	'info', 			\&Slim::Control::Queries::infototalQuery);
+	addQuery(	'linesperscreen',	\&Slim::Control::Queries::linesperscreenQuery);
+	addQuery(	'mixer', 			\&Slim::Control::Queries::mixerQuery);
+	addQuery(	'mode', 			\&Slim::Control::Queries::modeQuery);
+	addQuery(	'path',				\&Slim::Control::Queries::cursonginfoQuery);
+	addQuery(	'playerpref', 		\&Slim::Control::Queries::playerprefQuery);
+	addQuery(	'power', 			\&Slim::Control::Queries::powerQuery);
+	addQuery(	'pref', 			\&Slim::Control::Queries::prefQuery);
+	addQuery(	'rate', 			\&Slim::Control::Queries::rateQuery);
+	addQuery(	'rescan', 			\&Slim::Control::Queries::rescanQuery);
+	addQuery(	'signalstrength', 	\&Slim::Control::Queries::signalstrengthQuery);
+	addQuery(	'sleep', 			\&Slim::Control::Queries::sleepQuery);
+	addQuery(	'sync', 			\&Slim::Control::Queries::syncQuery);
+	addQuery(	'time', 			\&Slim::Control::Queries::timeQuery);
+	addQuery(	'title',			\&Slim::Control::Queries::cursonginfoQuery);
 	addQuery(	'version', 			\&Slim::Control::Queries::versionQuery);
 
-	addCommand(	'wipecache', 		\&Slim::Control::Commands::wipecacheCommand);
 }
 
 

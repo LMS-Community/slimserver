@@ -133,33 +133,9 @@ sub execute {
 # C     P0             P1                          P2                            P3            P4         P5        P6
 
 # PLAYERS
-# Y    sync            <playerindex|playerid|-|?>
-# Y    power           <0|1|?|>
 
 
-# Y    mixer           volume                      <0..100|-100..+100|?>
-# Y    mixer           balance                     (not implemented)
-# Y    mixer           bass                        <0..100|-100..+100|?>
-# Y    mixer           treble                      <0..100|-100..+100|?>
-# Y    mixer           pitch                       <80..120|-100..+100|?>
-# Y    mixer           muting
-# Y    display         <line1>                     <line2>                       <duration>
-# Y    display         ?                           ?
-# Y    displaynow      ?                           ?
-# Y    rate            <rate|?>
-
-
-#PLAYLISTS
-
-# Y    time|gototime   <0..n|-n|+n|?>
-
-# Y    genre           ?
-# Y    artist          ?
-# Y    album           ?
-# Y    title           ?
-# Y    duration        ?
-# Y    path|url        ?
- 
+#PLAYLISTS 
 # Y    playlist        playtracks                  <searchterms>    
 # Y    playlist        loadtracks                  <searchterms>    
 # Y    playlist        addtracks                   <searchterms>    
@@ -342,15 +318,16 @@ sub execute {
 #			}
 #			$client->update();
 
-		if ($p0 eq "rate") {
-
-			if ($client->directURL() || $client->audioFilehandleIsSocket) {
-				Slim::Player::Source::rate($client, 1);
-			} elsif (!defined($p1) || $p1 eq "?") {
-				$p1 = Slim::Player::Source::rate($client);
-			} else {
-				Slim::Player::Source::rate($client,$p1);
-			}
+# handled by dispatch
+#			if ($p0 eq "rate") {
+#
+#			if ($client->directURL() || $client->audioFilehandleIsSocket) {
+#				Slim::Player::Source::rate($client, 1);
+#			} elsif (!defined($p1) || $p1 eq "?") {
+#				$p1 = Slim::Player::Source::rate($client);
+#			} else {
+#				Slim::Player::Source::rate($client,$p1);
+#			}
 
 # handled by dispatch
 #		} elsif ($p0 eq "stop") {
@@ -374,39 +351,43 @@ sub execute {
 #				$client->update();
 #			}
 
-		} elsif ($p0 eq "gototime" || $p0 eq "time") {
-			if ($p1 eq "?") {
-				$p1 = Slim::Player::Source::songTime($client);
-			} else {
-				Slim::Player::Source::gototime($client, $p1);
-			}
+# handled by dispatch
+#		} elsif ($p0 eq "gototime" || $p0 eq "time") {
+#			if ($p1 eq "?") {
+#				$p1 = Slim::Player::Source::songTime($client);
+#			} else {
+#				Slim::Player::Source::gototime($client, $p1);
+#			}
 
-		} elsif ($p0 =~ /^(duration|artist|album|title|genre)$/) {
+# handled by dispatch
+#		} elsif ($p0 =~ /^(duration|artist|album|title|genre)$/) {
+#
+#			my $method = $1;
+#			my $url    = Slim::Player::Playlist::song($client);
+#			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+#
+#			if (blessed($track) && $track->can('secs')) {
+#
+#				if ($p0 eq 'duration') {
+#				
+#					$p1 = $track->secs() || 0;
+#					
+#				} else {
+#
+#					$p1 = $track->$method() || 0;
+#				}
+#
+#			} else {
+#
+#				msg("Couldn't fetch object for URL: [$url] - skipping track\n");
+#				bt();
+#			}
+#
 
-			my $method = $1;
-			my $url    = Slim::Player::Playlist::song($client);
-			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
-
-			if (blessed($track) && $track->can('secs')) {
-
-				if ($p0 eq 'duration') {
-				
-					$p1 = $track->secs() || 0;
-					
-				} else {
-
-					$p1 = $track->$method() || 0;
-				}
-
-			} else {
-
-				msg("Couldn't fetch object for URL: [$url] - skipping track\n");
-				bt();
-			}
-
-		} elsif ($p0 eq "path") {
-
-			$p1 = Slim::Player::Playlist::song($client) || 0;
+# handled by dispatch
+#		} elsif ($p0 eq "path") {
+#
+#			$p1 = Slim::Player::Playlist::song($client) || 0;
 
 # handled by dispatch
 #		} elsif ($p0 eq "connected") {
@@ -419,72 +400,75 @@ sub execute {
 #
 #			$p1 = $client->signalStrength() || 0;
 #
-		} elsif ($p0 eq "power") {
 
-			if (!defined $p1) {
-				
-				my $newPower = $client->power() ? 0 : 1;
+# handled by dispatch
+#		if ($p0 eq "power") {
+#
+#			if (!defined $p1) {
+#				
+#				my $newPower = $client->power() ? 0 : 1;
+#
+#				if (Slim::Player::Sync::isSynced($client)) {
+#
+#					syncFunction($client, $newPower, "power", undef);
+#				}
+#
+#				$client->power($newPower);
+#
+#			} elsif ($p1 eq "?") {
+#
+#				$p1 = $client->power();
+#
+#			} else {
+#
+#				if (Slim::Player::Sync::isSynced($client)) {
+#
+#					syncFunction($client, $p1, "power", undef);
+#				}
+#
+#				$client->power($p1);
+#				
+#				if ($p1 eq "0") {
+#					# Powering off cancels sleep...
+#					Slim::Utils::Timers::killTimers($client, \&sleepStartFade);
+#					Slim::Utils::Timers::killTimers($client, \&sleepPowerOff);
+#					$client->sleepTime(0);
+#					$client->currentSleepTime(0);
+#				}
+#			}
 
-				if (Slim::Player::Sync::isSynced($client)) {
+# handled by dispatch
+#		if ($p0 eq "sync") {
+#
+#			if (!defined $p1) {
+#
+#			} elsif ($p1 eq "?") {
+#
+#				$p1 = Slim::Player::Sync::syncIDs($client)
+#
+#			} elsif ($p1 eq "-") {
+#
+#				Slim::Player::Sync::unsync($client);
+#
+#			} else {
+#
+#				my $buddy;
+#
+#				if (Slim::Player::Client::getClient($p1)) {
+#
+#					$buddy = Slim::Player::Client::getClient($p1);
+#
+#				} else {
+#
+#					my @clients = Slim::Player::Client::clients();
+#					if (defined $clients[$p1]) {
+#						$buddy = $clients[$p1];
+#					}
+#				}
+#				Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
+#			}
 
-					syncFunction($client, $newPower, "power", undef);
-				}
-
-				$client->power($newPower);
-
-			} elsif ($p1 eq "?") {
-
-				$p1 = $client->power();
-
-			} else {
-
-				if (Slim::Player::Sync::isSynced($client)) {
-
-					syncFunction($client, $p1, "power", undef);
-				}
-
-				$client->power($p1);
-				
-				if ($p1 eq "0") {
-					# Powering off cancels sleep...
-					Slim::Utils::Timers::killTimers($client, \&sleepStartFade);
-					Slim::Utils::Timers::killTimers($client, \&sleepPowerOff);
-					$client->sleepTime(0);
-					$client->currentSleepTime(0);
-				}
-			}
-
-		} elsif ($p0 eq "sync") {
-
-			if (!defined $p1) {
-
-			} elsif ($p1 eq "?") {
-
-				$p1 = Slim::Player::Sync::syncIDs($client)
-
-			} elsif ($p1 eq "-") {
-
-				Slim::Player::Sync::unsync($client);
-
-			} else {
-
-				my $buddy;
-
-				if (Slim::Player::Client::getClient($p1)) {
-
-					$buddy = Slim::Player::Client::getClient($p1);
-
-				} else {
-
-					my @clients = Slim::Player::Client::clients();
-					if (defined $clients[$p1]) {
-						$buddy = $clients[$p1];
-					}
-				}
-				Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
-			}
-
-		} elsif ($p0 eq "playlistcontrol") {
+		if ($p0 eq "playlistcontrol") {
 		
  			$pushParams = 0;
  	
@@ -1033,151 +1017,157 @@ sub execute {
 
 			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
-		} elsif ($p0 eq "mixer") {
+# handled by dispatch
+#		} elsif ($p0 eq "mixer") {
+#
+#			if ($p1 eq "volume") {
+#				my $newvol;
+#				my $oldvol = $client->prefGet("volume"); 
+#
+#				if ($p2 eq "?") {
+#
+#					$p2 = $oldvol;
+#
+#				} else {
+#
+#					if ($oldvol < 0) {
+#						# volume was previously muted
+#						$oldvol *= -1;      # un-mute volume
+#					} 
+#					
+#					if ($p2 =~ /^[\+\-]/) {
+#						$newvol = $oldvol + $p2;
+#					} else {
+#						$newvol = $p2;
+#					}
+#					
+#					$newvol = $client->volume($newvol);
+#					
+#					if (Slim::Player::Sync::isSynced($client)) {
+#						syncFunction($client, $newvol, "volume",\&setVolume);
+#					}
+#				}
+#
+#			} elsif ($p1 eq "muting") {
+#				my $vol = $client->volume();
+#				my $fade;
+#				
+#				if ($vol < 0) {
+#					# need to un-mute volume
+#					$::d_command && msg("Unmuting, volume is $vol.\n");
+#					$client->prefSet("mute", 0);
+#					$fade = 0.3125;
+#				} else {
+#					# need to mute volume
+#					$::d_command && msg("Muting, volume is $vol.\n");
+#					$client->prefSet("mute", 1);
+#					$fade = -0.3125;
+#				}
+#
+#				$client->fade_volume($fade, \&mute, [$client]);
+# 
+#				if (Slim::Player::Sync::isSynced($client)) {
+#					syncFunction($client, $fade, "mute", undef);
+#				}
+#
+#			} elsif ($p1 eq "balance") {
+#
+#				# unsupported yet
+#
+#			} elsif ($p1 eq "treble") {
+#
+#				my $newtreb;
+#				my $oldtreb = $client->treble();
+#				if ($p2 eq "?") {
+#					$p2 = $oldtreb;
+#				} else {
+#				
+#					if ($p2 =~ /^[\+\-]/) {
+#						$newtreb = $oldtreb + $p2;
+#					} else {
+#						$newtreb = $p2;
+#					}
+#
+#					$newtreb = $client->treble($newtreb);
+#
+#					if (Slim::Player::Sync::isSynced($client)) {
+#						syncFunction($client, $newtreb, "treble",\&setTreble);
+#					}
+#				}
+#
+#			} elsif ($p1 eq "bass") {
+#
+#				my $newbass;
+#				my $oldbass = $client->bass();
+#
+#				if ($p2 eq "?") {
+#					$p2 = $oldbass;
+#				} else {
+#				
+#					if ($p2 =~ /^[\+\-]/) {
+#						$newbass = $oldbass + $p2;
+#					} else {
+#						$newbass = $p2;
+#					}
+#
+#					$newbass = $client->bass($newbass);
+#
+#					if (Slim::Player::Sync::isSynced($client)) {
+#						syncFunction($client, $newbass, "bass",\&setBass);
+#					}
+#				}
+#
+#			} elsif ($p1 eq "pitch") {
+#
+#				my $newpitch;
+#				my $oldpitch = $client->pitch();
+#
+#				if ($p2 eq "?") {
+#
+#					$p2 = $oldpitch;
+#
+#				} else {
+#
+#					if ($p2 =~ /^[\+\-]/) {
+#						$newpitch = $oldpitch + $p2;
+#					} else {
+#						$newpitch = $p2;
+#					}
+#
+#					$newpitch = $client->pitch($newpitch);
+#
+#					if (Slim::Player::Sync::isSynced($client)) {
+#						syncFunction($client, $newpitch, "pitch",\&setPitch);
+#					}
+#				}
+#			}
 
-			if ($p1 eq "volume") {
-				my $newvol;
-				my $oldvol = $client->prefGet("volume"); 
+# handled by dispatch
+#		} elsif ($p0 eq "displaynow") {
+#
+#			if ($p1 eq "?" && $p2 eq "?") {
+#				$p1 = $client->prevline1();
+#				$p2 = $client->prevline2();
+#			} 
+#
 
-				if ($p2 eq "?") {
+# handled by dispatch
+#		} elsif ($p0 eq "linesperscreen") {
+#
+#			$p1 = $client->linesPerScreen();
+#
 
-					$p2 = $oldvol;
-
-				} else {
-
-					if ($oldvol < 0) {
-						# volume was previously muted
-						$oldvol *= -1;      # un-mute volume
-					} 
-					
-					if ($p2 =~ /^[\+\-]/) {
-						$newvol = $oldvol + $p2;
-					} else {
-						$newvol = $p2;
-					}
-					
-					$newvol = $client->volume($newvol);
-					
-					if (Slim::Player::Sync::isSynced($client)) {
-						syncFunction($client, $newvol, "volume",\&setVolume);
-					}
-				}
-
-			} elsif ($p1 eq "muting") {
-				my $vol = $client->volume();
-				my $fade;
-				
-				if ($vol < 0) {
-					# need to un-mute volume
-					$::d_command && msg("Unmuting, volume is $vol.\n");
-					$client->prefSet("mute", 0);
-					$fade = 0.3125;
-				} else {
-					# need to mute volume
-					$::d_command && msg("Muting, volume is $vol.\n");
-					$client->prefSet("mute", 1);
-					$fade = -0.3125;
-				}
- 
-				$client->fade_volume($fade, \&mute, [$client]);
- 
-				if (Slim::Player::Sync::isSynced($client)) {
-					syncFunction($client, $fade, "mute", undef);
-				}
-
-			} elsif ($p1 eq "balance") {
-
-				# unsupported yet
-
-			} elsif ($p1 eq "treble") {
-
-				my $newtreb;
-				my $oldtreb = $client->treble();
-				if ($p2 eq "?") {
-					$p2 = $oldtreb;
-				} else {
-				
-					if ($p2 =~ /^[\+\-]/) {
-						$newtreb = $oldtreb + $p2;
-					} else {
-						$newtreb = $p2;
-					}
-
-					$newtreb = $client->treble($newtreb);
-
-					if (Slim::Player::Sync::isSynced($client)) {
-						syncFunction($client, $newtreb, "treble",\&setTreble);
-					}
-				}
-
-			} elsif ($p1 eq "bass") {
-
-				my $newbass;
-				my $oldbass = $client->bass();
-
-				if ($p2 eq "?") {
-					$p2 = $oldbass;
-				} else {
-				
-					if ($p2 =~ /^[\+\-]/) {
-						$newbass = $oldbass + $p2;
-					} else {
-						$newbass = $p2;
-					}
-
-					$newbass = $client->bass($newbass);
-
-					if (Slim::Player::Sync::isSynced($client)) {
-						syncFunction($client, $newbass, "bass",\&setBass);
-					}
-				}
-
-			} elsif ($p1 eq "pitch") {
-
-				my $newpitch;
-				my $oldpitch = $client->pitch();
-
-				if ($p2 eq "?") {
-
-					$p2 = $oldpitch;
-
-				} else {
-
-					if ($p2 =~ /^[\+\-]/) {
-						$newpitch = $oldpitch + $p2;
-					} else {
-						$newpitch = $p2;
-					}
-
-					$newpitch = $client->pitch($newpitch);
-
-					if (Slim::Player::Sync::isSynced($client)) {
-						syncFunction($client, $newpitch, "pitch",\&setPitch);
-					}
-				}
-			}
-
-		} elsif ($p0 eq "displaynow") {
-
-			if ($p1 eq "?" && $p2 eq "?") {
-				$p1 = $client->prevline1();
-				$p2 = $client->prevline2();
-			} 
-
-		} elsif ($p0 eq "linesperscreen") {
-
-			$p1 = $client->linesPerScreen();
-
-		} elsif ($p0 eq "display") {
-
-			if ($p1 eq "?" && $p2 eq "?") {
-				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
-				$p1 = $parsed->{line1} || '';
-				$p2 = $parsed->{line2} || '';
-			} else {
-				Slim::Buttons::ScreenSaver::wakeup($client);
-				$client->showBriefly($p1, $p2, $p3, $p4);
-			}
+# handled by dispatch
+#		} elsif ($p0 eq "display") {
+#
+#			if ($p1 eq "?" && $p2 eq "?") {
+#				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
+#				$p1 = $parsed->{line1} || '';
+#				$p2 = $parsed->{line2} || '';
+#			} else {p1
+#				Slim::Buttons::ScreenSaver::wakeup($client);
+#				$client->showBriefly($p1, $p2, $p3, $p4);
+#			}
 
 # handled by dispatch
 #		} elsif ($p0 eq "button") {
@@ -1377,65 +1367,67 @@ sub execute {
 	return @returnArray;
 }
 
-sub syncFunction {
-	my $client = shift;
-	my $newval = shift;
-	my $setting = shift;
-	my $controlRef = shift;
-	
-	my @buddies = Slim::Player::Sync::syncedWith($client);
+# handled by dispatch
+#sub syncFunction {
+#	my $client = shift;
+#	my $newval = shift;
+#	my $setting = shift;
+#	my $controlRef = shift;
+#	
+#	my @buddies = Slim::Player::Sync::syncedWith($client);
+#
+#	if (scalar(@buddies) > 0) {
+#
+#		for my $eachclient (@buddies) {
+#
+#			if ($eachclient->prefGet('syncVolume')) {
+#
+#				if ($setting eq "mute") {
+#					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
+#				} else {
+#					$eachclient->prefSet($setting, $newval);
+#					&$controlRef($eachclient, $newval) if ($controlRef);
+#				}
+#
+#				if ($setting eq "volume") {
+#					Slim::Display::Display::volumeDisplay($eachclient);
+#				}
+#			}
+#
+# handled in powerCommand in dispatch
+#			if ($client->prefGet('syncPower')) {
+#
+#				if ($setting eq "power") {
+#					$eachclient->power($newval);
+#				}
+#			}
+#		}
+#	}
+#}
 
-	if (scalar(@buddies) > 0) {
+#sub setVolume {
+#	my $client = shift;
+#	my $volume = shift;
+#	$client->volume($volume);
+#}
 
-		for my $eachclient (@buddies) {
+#sub setBass {
+#	my $client = shift;
+#	my $bass = shift;
+#	$client->bass($bass);
+#}
 
-			if ($eachclient->prefGet('syncVolume')) {
+#sub setPitch {
+#	my $client = shift;
+#	my $pitch = shift;
+#	$client->pitch($pitch);
+#}
 
-				if ($setting eq "mute") {
-					$eachclient->fade_volume($newval, \&mute, [$eachclient]);
-				} else {
-					$eachclient->prefSet($setting, $newval);
-					&$controlRef($eachclient, $newval) if ($controlRef);
-				}
-
-				if ($setting eq "volume") {
-					Slim::Display::Display::volumeDisplay($eachclient);
-				}
-			}
-
-			if ($client->prefGet('syncPower')) {
-
-				if ($setting eq "power") {
-					$eachclient->power($newval);
-				}
-			}
-		}
-	}
-}
-
-sub setVolume {
-	my $client = shift;
-	my $volume = shift;
-	$client->volume($volume);
-}
-
-sub setBass {
-	my $client = shift;
-	my $bass = shift;
-	$client->bass($bass);
-}
-
-sub setPitch {
-	my $client = shift;
-	my $pitch = shift;
-	$client->pitch($pitch);
-}
-
-sub setTreble {
-	my $client = shift;
-	my $treble = shift;
-	$client->treble($treble);
-}
+#sub setTreble {
+#	my $client = shift;
+#	my $treble = shift;
+#	$client->treble($treble);
+#}
 
 sub setExecuteCallback {
 	my $callbackRef = shift;
@@ -1525,12 +1517,6 @@ sub singletonRef {
 	} else {
 		return [];
 	}
-}
-
-
-sub mute {
-	my $client = shift;
-	$client->mute();
 }
 
 sub parseSearchTerms {
