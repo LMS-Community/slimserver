@@ -717,11 +717,11 @@ PLUGIN_RANDOM_TRACK_DISABLE
 PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
-	ES	Mezcla al azar por �?lbum
+	ES	Mezcla al azar por Álbum
 	NL	Willekeurige albummix
 
 PLUGIN_RANDOM_ALBUM_ITEM
-	DE	Zufälliges album
+	DE	Zufälliges Album
 	EN	Random Album
 	ES	Álbum al Azar
 	NL	Willekeurig album
