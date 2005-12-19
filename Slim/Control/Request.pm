@@ -22,21 +22,20 @@ use Slim::Utils::Misc;
 
 sub new {
 	my $class = shift;
-	my $request = shift || return;
-	my $isQuery = shift;
 	my $client = shift;
 	
 	tie (my %paramHash, "Tie::LLHash", {lazy => 1});
 	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
 	
 	my $self = {
-		'_request' => $request,
-		'_isQuery' => $isQuery,
+		'_request' => [],
+		'_isQuery' => undef,
 		'_client' => $client,
 		'_params' => \%paramHash,
-		'_curparam' => 1,
+		'_curparam' => 0,
 		'_status' => 0,
 		'_results' => \%resultHash,
+		'_func' => undef
 	};
 	# MISSING SOURCE, CALLBACK
 	
@@ -45,57 +44,10 @@ sub new {
 	return $self;
 }
 
-sub dump {
-	my $self = shift;
-	
-	my $str = "Request: Dumping ";
-	
-	if ($self->query()) {
-		$str .= 'query ';
-	} else {
-		$str .= 'command ';
-	}
-	
-	if (my $client = $self->client()){
-		my $clientid = $client->id();
-		$str .= "[$clientid->" . $self->getRequest() . "]";
-	} else {
-		$str .= "[" . $self->getRequest() . "]";
-	}
-	
-	if ($self->isStatusNew()) {
-		$str .= " (New)\n";
-	} elsif ($self->isStatusDispatched()) {
-		$str .= " (Dispatched)\n";
-	} elsif ($self->isStatusDone()) {
-		$str .= " (Done)\n";
-	} elsif ($self->isStatusBadDispatch()) {
-		$str .= " (Bad Dispatch)\n";
-	} elsif ($self->isStatusBadParams()) {
-		$str .= " (Bad Params)\n";
-	}
-	
-	msg($str);
-
-	while (my ($key, $val) = each %{$self->{'_params'}}) {
-    	msg("   Param: [$key] = [$val]\n");
- 	}
- 	
-	while (my ($key, $val) = each %{$self->{'_results'}}) {
-    	msg("   Result: [$key] = [$val]\n");
- 	}
-}
 
 ################################################################################
 # Read/Write basic query attributes
 ################################################################################
-
-# returns the request name. Read-only
-sub getRequest {
-	my $self = shift;
-	
-	return $self->{_request};
-}
 
 # sets/returns the query state of the request
 sub query {
@@ -125,6 +77,7 @@ sub client {
 # 10 done
 # 101 bad dispatch
 # 102 bad params
+# 103 missing client
 
 sub isStatusNew {
 	my $self = shift;
@@ -176,6 +129,104 @@ sub isStatusBadParams {
 	return ($self->__status() == 102);
 }
 
+sub setStatusNeedsClient {
+	my $self = shift;	
+	$self->__status(103);
+}
+sub isStatusNeedsClient {
+	my $self = shift;
+	return ($self->__status() == 103);
+}
+
+################################################################################
+# Request mgmt
+################################################################################
+
+# returns the request name. Read-only
+sub getRequestString {
+	my $self = shift;
+	
+	return join " ", @{$self->{_request}};
+}
+
+# add a request value to the request array
+sub addRequest {
+	my $self = shift;
+	my $text = shift;
+
+	push @{$self->{'_request'}}, $text;
+	++$self->{'_curparam'};
+}
+
+sub getRequest {
+	my $self = shift;
+	my $idx = shift;
+	
+	return $self->{'_request'}->[$idx];
+}
+
+sub getRequestCount {
+	my $self = shift;
+	my $idx = shift;
+	
+	return scalar @{$self->{'_request'}};
+}
+
+################################################################################
+# Param mgmt
+################################################################################
+
+sub addParam {
+	my $self = shift;
+	my $key = shift;
+	my $val = shift;
+
+	${$self->{'_params'}}{$key} = $val;
+	++$self->{'_curparam'};
+}
+
+
+sub addParamHash {
+	my $self = shift;
+	my $hashRef = shift || return;
+	
+	while (my ($key,$value) = each %{$hashRef}) {
+        $self->addParam($key, $value);
+    }
+}
+
+sub addParamPos {
+	my $self = shift;
+	my $val = shift;
+	
+	${$self->{'_params'}}{ "_p" . $self->{'_curparam'}++ } = $val;
+}
+
+sub getParam {
+	my $self = shift;
+	my $key = shift || return;
+	
+	return ${$self->{'_params'}}{$key};
+}
+
+################################################################################
+# Result mgmt
+################################################################################
+
+sub addResult {
+	my $self = shift;
+	my $key = shift;
+	my $val = shift;
+
+	${$self->{'_results'}}{$key} = $val;
+}
+
+sub getResult {
+	my $self = shift;
+	my $key = shift || return;
+	
+	return ${$self->{'_results'}}{$key};
+}
 
 
 
@@ -220,68 +271,84 @@ sub paramUndefinedOrNotOneOf {
 sub execute {
 	my $self = shift;
 	
-	Slim::Control::Dispatch::dispatch($self);
+	return if $self->isStatusError();
+	
+	if (defined (my $funcPtr = $self->{'_func'})) {
+		&{$funcPtr}($self);
+	} else {
+		Slim::Control::Dispatch::dispatch($self);
+	}
 }
 
 sub callback {
 }
 
-
-sub addParam {
+sub setFunc {
 	my $self = shift;
-	my $key = shift;
-	my $val = shift;
-
-	${$self->{'_params'}}{$key} = $val;
-	++$self->{'_curparam'};
-}
-
-sub addParamHash {
-	my $self = shift;
-	my $hashRef = shift || return;
+	my $funcPtr = shift;
 	
-	while (my ($key,$value) = each %{$hashRef}) {
-        $self->addParam($key, $value);
-    }
+	$self->{'_func'} = $funcPtr;
 }
 
-sub addParamPos {
+
+
+
+################################################################################
+# Special
+################################################################################
+sub dump {
 	my $self = shift;
-	my $val = shift;
 	
-	${$self->{'_params'}}{ "_p" . $self->{'_curparam'}++ } = $val;
-}
-
-sub getParam {
-	my $self = shift;
-	my $key = shift || return;
+	my $str = "Request: Dumping ";
 	
-	return ${$self->{'_params'}}{$key};
-}
-
-sub addResult {
-	my $self = shift;
-	my $key = shift;
-	my $val = shift;
-
-	${$self->{'_results'}}{$key} = $val;
-}
-
-sub getResult {
-	my $self = shift;
-	my $key = shift || return;
+	if ($self->query()) {
+		$str .= 'query ';
+	} else {
+		$str .= 'command ';
+	}
 	
-	return ${$self->{'_results'}}{$key};
+	if (my $client = $self->client()){
+		my $clientid = $client->id();
+		$str .= "[$clientid->" . $self->getRequestString() . "]";
+	} else {
+		$str .= "[" . $self->getRequestString() . "]";
+	}
+	
+	if ($self->isStatusNew()) {
+		$str .= " (New)\n";
+	} elsif ($self->isStatusDispatched()) {
+		$str .= " (Dispatched)\n";
+	} elsif ($self->isStatusDone()) {
+		$str .= " (Done)\n";
+	} elsif ($self->isStatusBadDispatch()) {
+		$str .= " (Bad Dispatch)\n";
+	} elsif ($self->isStatusBadParams()) {
+		$str .= " (Bad Params)\n";
+	} elsif ($self->isStatusNeedsClient()) {
+		$str .= " (Needs client)\n";
+	}
+	
+	msg($str);
+
+	while (my ($key, $val) = each %{$self->{'_params'}}) {
+    	msg("   Param: [$key] = [$val]\n");
+ 	}
+ 	
+	while (my ($key, $val) = each %{$self->{'_results'}}) {
+    	msg("   Result: [$key] = [$val]\n");
+ 	}
 }
 
+# support for legacy applications
+# returns all requests/params/results as an array
 sub getArray {
 	my $self = shift;
 	my @returnArray;
 	
-	push @returnArray, $self->getRequest();
+	push @returnArray, @{$self->{_request}};
 	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
-    	if ($key =~ /_p*/) {
+    	if ($key =~ /_*/) {
     		push @returnArray, $val;
     	}
  	}
@@ -289,15 +356,15 @@ sub getArray {
  	# any client expecting something more sophisticated should not go
  	# through execute but through dispatch directly...
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
-    	push @returnArray, $val;
+		if ($key =~ /_p*/) {
+    		push @returnArray, $val;
+    	} else {
+    		push @returnArray, ($key . ':' . $val);
+    	}
  	}
 	
 	return @returnArray;
 }
-
-################################################################################
-# Special
-################################################################################
 
 ################################################################################
 # Private methods
@@ -308,7 +375,7 @@ sub __isCmdQuery {
 	my $possibleNames = shift;
 	
 	if ($isQuery == $self->query()){
-		my $name = $self->getRequest();
+		my $name = $self->getRequest(0);
 		return grep(/$name/, @{$possibleNames});
 	}
 	return 0;

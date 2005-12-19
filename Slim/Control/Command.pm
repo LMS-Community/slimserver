@@ -35,6 +35,8 @@ our %searchMap = (
 	'track'  => 'track.titlesearch',
 );
 
+$::d_command = 1;
+
 #############################################################################
 # execute - does all the hard work.  Use it.
 # takes:
@@ -61,57 +63,7 @@ sub execute {
 	my @returnArray = ();
 	my $pushParams = 1;
 
-
-	# Try and go through dispatch
-
-	# Determine if this is a query
-	my $query = 0;
-	for my $p (@$parrayref) {
-		# if a param is ? then it is a query...
-		if ($p eq '?') {
-			$query = 1;
-			last;
-		}
-	}
-	
-	my $cmdText = $p0;
-	
-	# create a request
-	my $cmd = new Slim::Control::Request($cmdText, $query, $client);
-	
-	# add all parameters by position
-	my $first = 1;
-	for my $p (@$parrayref) {
-		# need to skip $p0 without changing the array
-		# there is probably a more elegant Perl solution but this works...
-		if (!$first && $p ne '?') {
-			$cmd->addParamPos($p);
-		}
-		$first = 0;
-	}
-	
-	$::d_command && $cmd->dump();
-	
-	$cmd->execute();
-	
-	if ($cmd->wasStatusDispatched()){
-	
-		$::d_command && $cmd->dump();
-		
-		# make sure we don't execute again if ever dispatch knows
-		# about a command still below
-		$p0 .= "(was dispatched)";
-		
-		# prevent pushing $p0 again..
-		$pushParams = 0;
-	
-		# patch the return array so that callbacks function as before
-		@returnArray = $cmd->getArray();
-	}
-		
-# END
-
-	$::d_command && msg("Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
+	$::d_command && msg("Command::Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
 			(defined $p1 ? $p1 : "") . ") (" .
 			(defined $p2 ? $p2 : "") . ") (" .
 			(defined $p3 ? $p3 : "") . ") (" .
@@ -119,6 +71,35 @@ sub execute {
 			(defined $p5 ? $p5 : "") . ") (" .
 			(defined $p6 ? $p6 : "") . ") (" .
 			(defined $p7 ? $p7 : "") . ")\n");
+
+	# Try and go through dispatch
+
+	# create a request from the array
+	my $request = Slim::Control::Dispatch::requestFromArray($client, $parrayref);
+	
+	if (defined $request) {
+		$::d_command && $request->dump();
+	
+		$request->execute();
+
+		if ($request->wasStatusDispatched()){
+	
+			$::d_command && $request->dump();
+		
+			# make sure we don't execute again if ever dispatch knows
+			# about a command still below
+			$p0 .= "(was dispatched)";
+		
+			# prevent pushing $p0 again..
+			$pushParams = 0;
+	
+			# patch the return array so that callbacks function as before
+			@returnArray = $request->getArray();
+		}
+	}
+		
+# END
+
 	
 	
 
@@ -131,18 +112,12 @@ sub execute {
 # COMMAND LIST #
   
 # C     P0             P1                          P2                            P3            P4         P5        P6
-
-# PLAYERS
-
-
 #PLAYLISTS 
 # Y    playlist        playtracks                  <searchterms>    
 # Y    playlist        loadtracks                  <searchterms>    
 # Y    playlist        addtracks                   <searchterms>    
 # Y    playlist        inserttracks                <searchterms>    
 # Y    playlist        deletetracks                <searchterms>   
-# Y    playlistcontrol <params>
-
 # Y    playlist        play|load                   <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        add|append                  <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
@@ -169,6 +144,9 @@ sub execute {
 # Y    playlist        tracks                      ?
 # Y    playlist        shuffle                     <0|1|2|?|>
 # Y    playlist        repeat                      <0|1|2|?|>
+
+# Y    playlistcontrol <params>
+
 
 #NOTIFICATION
 # The following 'terms' go through execute for its notification ability, but 
@@ -1355,7 +1333,7 @@ sub execute {
 
 	executeCallback($client, \@returnArray);
 	
-	$::d_command && msg(" Returning array: " . $returnArray[0] . " (" .
+	$::d_command && msg("Command::Returning array: " . $returnArray[0] . " (" .
 			(defined $returnArray[1] ? $returnArray[1] : "") . ") (" .
 			(defined $returnArray[2] ? $returnArray[2] : "") . ") (" .
 			(defined $returnArray[3] ? $returnArray[3] : "") . ") (" .
