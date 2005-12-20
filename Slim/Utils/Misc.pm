@@ -586,7 +586,8 @@ sub readDirectory {
 		# Ignore special named files and directories
 		# __ is a match against our old __history and __mac playlists.
 		# ._Foo is a OS X meta file.
-		next if $item =~ /^(?:_|\.)_/;
+		next if $item =~ /^__\S+\.m3u$/;
+		next if $item =~ /^\._/;
 
 		if ($ignore ne '') {
 			next if $item =~ /$ignore/;
