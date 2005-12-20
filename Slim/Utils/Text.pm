@@ -62,11 +62,11 @@ sub ignoreArticles {
 		# allow a space seperated list in preferences (easier for humans to deal with)
 		$ignoredArticles =~ s/\s+/|/g;
 
-		$ignoredArticles = qr/$ignoredArticles/;
+		$ignoredArticles = qr/^($ignoredArticles)\s+/i;
 	}
-	
+
 	# set up array for sorting items without leading articles
-	$item =~ s/^($ignoredArticles)\s+//i;
+	$item =~ s/$ignoredArticles//;
 
 	return $item;
 }
