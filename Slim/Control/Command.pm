@@ -35,7 +35,7 @@ our %searchMap = (
 	'track'  => 'track.titlesearch',
 );
 
-$::d_command = 1;
+#$::d_command = 1;
 
 #############################################################################
 # execute - does all the hard work.  Use it.
