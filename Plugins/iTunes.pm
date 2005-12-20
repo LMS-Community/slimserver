@@ -933,7 +933,7 @@ sub handleStartElement {
 	}
 
 	# Store this value somewhere.
-	if ($element eq 'string' || $element eq 'integer') {
+	if ($element eq 'string' || $element eq 'integer' || $element eq 'date') {
 		$inValue = 1;
 	}
 }
@@ -1031,7 +1031,7 @@ sub handleEndElement {
 		return;
 	}
 
-	if ($element eq 'string' || $element eq 'integer') {
+	if ($element eq 'string' || $element eq 'integer' || $element eq 'date') {
 		$inValue = 0;
 	}
 
