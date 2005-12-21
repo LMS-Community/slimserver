@@ -417,8 +417,10 @@ sub rescanCommand {
 			Slim::Music::Import::cleanupDatabase(1);
 		}
 
+		# rescan should not reset importers. currently iTunes # is the
+		# only scanner that defines a reset function, # and that's for
+		# the wipedb case only.
 		Slim::Music::Info::clearPlaylists();
-		Slim::Music::Import::resetImporters();
 		Slim::Music::Import::startScan();
 	}
 
