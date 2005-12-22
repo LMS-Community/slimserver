@@ -24,7 +24,7 @@ use Text::Unidecode;
 use Slim::Utils::Misc;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
-our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE);
+our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE, $bomRE, $FB_QUIET);
 
 INIT: {
 	if ($] > 5.007) {
@@ -33,6 +33,16 @@ INIT: {
 		require File::BOM;
 
 		$Encode::Guess::NoUTFAutoGuess = 1;
+
+		$FB_QUIET = Encode::FB_QUIET();
+
+		$bomRE = qr/^(?:
+			\xef\xbb\xbf     |
+			\xfe\xff         |
+			\xff\xfe         |
+			\x00\x00\xfe\xff |
+			\xff\xfe\x00\x00
+		)/x;
 	}
 
         if ($^O =~ /Win32/) {
@@ -364,7 +374,7 @@ sub utf8decode_guess {
 
 			if (ref $icode) {
 
-				$string = Encode::decode($icode, $string, Encode::FB_QUIET());
+				$string = Encode::decode($icode, $string, $FB_QUIET);
 
 			} else {
 
@@ -372,7 +382,7 @@ sub utf8decode_guess {
 
 					while ($prefer_encoding = shift) {
 
-						$string = Encode::decode($prefer_encoding, $string, Encode::FB_QUIET());
+						$string = Encode::decode($prefer_encoding, $string, $FB_QUIET);
 
 						last if $icode =~ /$prefer_encoding/;
 					}
@@ -389,7 +399,7 @@ sub utf8decode_locale {
 
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::decode($locale, $string, Encode::FB_QUIET());
+		$string = Encode::decode($locale, $string, $FB_QUIET);
 	}
 
 	return $string;
@@ -411,7 +421,7 @@ sub utf8encode {
 	# If the incoming string already is utf8, turn off the utf8 flag.
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::encode($encoding, $string, Encode::FB_QUIET());
+		$string = Encode::encode($encoding, $string, $FB_QUIET);
 
 	} elsif ($string && $] > 5.007) {
 
@@ -456,21 +466,21 @@ sub utf8on {
 sub looks_like_ascii {
 	use bytes;
 
-	return 1 if $_[0] !~ /([^\x00-\x7F])/;
+	return 1 if $_[0] !~ /[^\x00-\x7F]/;
 	return 0;
 }
 
 sub looks_like_latin1 {
 	use bytes;
 
-	return 1 if $_[0] !~ /([^\x00-\x7F\xA0-\xFF])/;
+	return 1 if $_[0] !~ /[^\x00-\x7F\xA0-\xFF]/;
 	return 0;
 }
 
 sub looks_like_cp1252 {
 	use bytes;
 
-	return 1 if $_[0] !~ /([^\x00-\xFF])/;
+	return 1 if $_[0] !~ /[^\x00-\xFF]/;
 	return 0;
 }
 
@@ -486,7 +496,7 @@ sub latin1toUTF8 {
 
 	if ($] > 5.007) {
 
-		$data = eval { Encode::encode('utf8', $data, Encode::FB_QUIET()) } || $data;
+		$data = eval { Encode::encode('utf8', $data, $FB_QUIET) } || $data;
 
 	} else {
 
@@ -501,7 +511,7 @@ sub utf8toLatin1 {
 
 	if ($] > 5.007) {
 
-		$data = eval { Encode::encode('iso-8859-1', $data, Encode::FB_QUIET()) } || $data;
+		$data = eval { Encode::encode('iso-8859-1', $data, $FB_QUIET) } || $data;
 
 	} else {
 
@@ -678,13 +688,7 @@ sub stripBOM {
 
 		use bytes;
 
-		$string =~ s/^(?:
-			\xef\xbb\xbf     |
-			\xfe\xff         |
-			\xff\xfe         |
-			\x00\x00\xfe\xff |
-			\xff\xfe\x00\x00
-		)//x;
+		$string =~ s/$bomRE//;
 	}
 
 	return $string;

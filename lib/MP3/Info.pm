@@ -762,7 +762,7 @@ sub get_mp3tag {
 								} elsif ($encoding eq "\000") {
 
 									# Only guess if it's not ascii.
-									if ($data && $data !~ /[\x00-\x7F]/) {
+									if ($data && $data !~ /^[\x00-\x7F]+$/) {
 
 										# Try and guess the encoding, otherwise just use latin1
 										my $dec = Encode::Guess->guess($data);
