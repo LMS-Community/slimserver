@@ -87,17 +87,23 @@ sub new {
 
 	my $self = {
 		# Values persisted in metainformation table
-		trackCount => 0,
-		totalTime => 0,
-		# Non-persistent cache to make sure we don't set album artwork
-		# too many times.
+		trackCount   => 0,
+		totalTime    => 0,
+
+		# Non-persistent cache to make sure we don't set album artwork too many times.
+
 		artworkCache => {},
+
 		# Optimization to cache last track accessed rather than retrieve it again. 
 		lastTrackURL => '',
-		lastTrack => {},
+		lastTrack    => {},
+
 		# Tracks that are out of date and should be deleted the next time
 		# we get around to it.
-		zombieList => {},
+		zombieList   => {},
+
+		# Only do this once.
+		trackAttrs   => Slim::DataStores::DBI::Track::attributes(),
 	};
 
 	bless $self, $class;
@@ -506,14 +512,12 @@ sub newTrack {
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = {};
 
-	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
-
 	# Walk our list of valid attributes, and turn them into something ->create() can use.
 	while (my ($key, $val) = each %$attributeHash) {
 
 		$key = lc($key);
 
-		if (defined $val && exists $trackAttrs->{$key}) {
+		if (defined $val && exists $self->{'trackAttrs'}->{$key}) {
 
 			$::d_info && msg("Adding $url : $key to $val\n");
 
@@ -593,8 +597,6 @@ sub updateOrCreate {
 		$track = $self->_retrieveTrack($url);
 	}
 
-	my $trackAttrs = Slim::DataStores::DBI::Track::attributes();
-
 	# XXX - exception should go here. Comming soon.
 	if (blessed($track) && $track->can('url')) {
 
@@ -627,7 +629,7 @@ sub updateOrCreate {
 
 			$key = lc($key);
 
-			if (defined $val && $val ne '' && exists $trackAttrs->{$key}) {
+			if (defined $val && $val ne '' && exists $self->{'trackAttrs'}->{$key}) {
 
 				$::d_info && msg("Updating $url : $key to $val\n");
 

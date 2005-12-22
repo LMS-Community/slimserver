@@ -14,6 +14,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->columns(Essential => qw/track value/);
 
+	$class->columns(UTF8 => qw/value/);
+
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');
 }
 

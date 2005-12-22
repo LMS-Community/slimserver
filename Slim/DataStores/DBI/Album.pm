@@ -20,6 +20,8 @@ use Slim::Utils::Misc;
 
 	$class->columns(Stringify => qw/title/);
 
+	$class->columns(UTF8 => qw/title titlesort/);
+
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 
 	# This has the same sort order as %DataModel::sortFieldMap{'album'}

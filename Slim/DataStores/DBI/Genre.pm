@@ -19,6 +19,8 @@ use Scalar::Util qw(blessed);
 
 	$class->columns(Stringify => qw/name/);
 
+	$class->columns(UTF8 => qw/name namesort/);
+
 	$class->has_many('genreTracks' => ['Slim::DataStores::DBI::GenreTrack' => 'genre']);
 }
 

@@ -28,6 +28,9 @@ INIT: {
 	$class->columns(Essential => @allColumns);
 	$class->columns(Stringify => qw/url/);
 
+	# Columns that need to be upgraded to UTF8
+	$class->columns(UTF8 => qw/title titlesort/);
+
 	# setup our relationships
 	$class->has_a(album => 'Slim::DataStores::DBI::Album');
 

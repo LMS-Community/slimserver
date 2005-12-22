@@ -37,7 +37,7 @@ our $cleanupIds;
 our $lastPingTime = 0;
 our $pingInterval = 1800;
 
-{
+INIT: {
 	my $class = __PACKAGE__;
 
 	# The Live Object Index causes far more trouble than it's worth.
@@ -45,6 +45,31 @@ our $pingInterval = 1800;
 
 	# Create a low-memory & cpu usage call for DB cleanup
 	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
+
+	$class->add_trigger('select' => sub {
+		my $self = shift;
+
+		for my $column ($self->columns('UTF8')) {
+
+			next if ref $self->{$column};
+
+			# flip the bit..
+			next if !defined $self->{$column};
+
+			Encode::_utf8_on($self->{$column});
+
+			# ..sanity check
+			if (!utf8::valid($self->{$column})) {
+
+				# if we're in an eval, let's at least not _completely_ stuff
+				# the process. Turn the bit off again.
+				Encode::_utf8_off($self->{$column});
+
+				# ..and die
+				$self->_croak("Invalid UTF8 from database in column '$_'");
+			}
+		}
+	});
 }
 
 sub driver {
@@ -838,30 +863,6 @@ sub find_or_create {
 	my $hash     = ref $_[0] eq "HASH" ? shift: {@_};
 	my ($exists) = $class->_do_search("="  => $hash);
 	return defined($exists) ? $exists : $class->_create($hash);
-}
-
-# overload Class::DBI's get, because DBI doesn't support auto-flagging of utf8
-# data retrieved from the db, we need to do it ourselves.
-sub get {
-	my ($self, @attrs) = @_;
-
-	my @values = ();
-	my $i = 0;
-
-	for my $value ($self->SUPER::get(@attrs)) {
-
-		# I don't like the hardcoded list - but we don't want to flag
-		# everything. url's will get munged otherwise. - dsully
-		if ($] > 5.007 && $attrs[$i] =~ /^(?:(?:name|title)(?:sort)?|item|value|text)$/o) {
-			Encode::_utf8_on($value);
-		}
-
-		push @values, $value;
-
-		$i++;
-	}
-
-	return wantarray ? @values : $values[0];
 }
 
 # Walk any table and check for foreign rows that still exist.
