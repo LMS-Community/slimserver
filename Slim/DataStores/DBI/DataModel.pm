@@ -54,22 +54,25 @@ INIT: {
 
 			for my $column ($self->columns('UTF8')) {
 
-				next if ref $self->{$column};
+				if (ref $self->{$column} || !defined $self->{$column}) {
+					next;
+				}
 
 				# flip the bit..
-				next if !defined $self->{$column};
-
 				Encode::_utf8_on($self->{$column});
 
 				# ..sanity check
-				if (!utf8::valid($self->{$column})) {
+				# XXX - disabled for now - Dean found a
+				# crasher, not sure how to reproduce yet. We
+				# didn't have this in the old ::get() subclassing.
+				if (0 && !utf8::valid($self->{$column})) {
 
 					# if we're in an eval, let's at least not _completely_ stuff
 					# the process. Turn the bit off again.
 					Encode::_utf8_off($self->{$column});
 
 					# ..and die
-					$self->_croak("Invalid UTF8 from database in column '$_'");
+					$self->_croak("Invalid UTF8 from database in class: [%s], column '$column'", ref($self));
 				}
 			}
 		});
