@@ -381,12 +381,12 @@ sub addToList_run {
 		push @$arrayref, $itempath;
 		$jobState->numitems($jobState->numitems+1);
 		
-		# force the loading of tag data. the 3rd argument to
-		# objectForUrl tells it to read the tags.
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-		my $track = $ds->objectForUrl($itempath, 1, 1);
-
-		$ds->markEntryAsValid($itempath);
+		# force the loading of tag data.
+		$ds->updateOrCreate({
+			'url'        => $itempath,
+			'readTags'   => 1,
+			'checkMTime' => 1,
+		});
 
 		return 1;
 	}

@@ -570,6 +570,7 @@ sub updateOrCreate {
 	my $attributeHash = $args->{'attributes'} || {};
 	my $commit        = $args->{'commit'};
 	my $readTags      = $args->{'readTags'};
+	my $checkMTime    = $args->{'checkMTime'};
 
 	# XXX - exception should go here. Comming soon.
 	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
@@ -587,7 +588,8 @@ sub updateOrCreate {
 	# create this item.
 	delete $self->{'zombieList'}->{$url};
 
-	if (!blessed($track)) {
+	# Track will be defined or not based on the blessed() assignment above.
+	if (!defined $track) {
 		$track = $self->_retrieveTrack($url);
 	}
 
@@ -595,6 +597,14 @@ sub updateOrCreate {
 
 	# XXX - exception should go here. Comming soon.
 	if (blessed($track) && $track->can('url')) {
+
+		# Check the timestamp & size to make sure they've not changed.
+		if ($checkMTime && Slim::Music::Info::isFileURL($url) && !$self->_hasChanged($track, $url)) {
+
+			$::d_info && msg("Track is still valid! Skipping update! $url\n");
+
+			return $track;
+		}
 
 		$::d_info && msg("Merging entry for $url\n");
 
@@ -1388,7 +1398,7 @@ sub _retrieveTrack {
 	}
 
 	# XXX - exception should go here. Comming soon.
-	if (blessed($track) && $track->can('audio') && $track->audio && !$lightweight) {
+	if (!$lightweight && blessed($track) && $track->can('audio') && $track->audio) {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{$dirname} = $track;

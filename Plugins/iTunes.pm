@@ -845,6 +845,7 @@ sub handleTrack {
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
 			'readTags'   => 1,
+			'checkMTime' => 1,
 
 		}) || do {
 
