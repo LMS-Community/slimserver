@@ -760,13 +760,19 @@ sub get_mp3tag {
 									# make sure string is UTF8, and set flag appropriately
 									$data = Encode::decode('utf8', $data);
 								} elsif ($encoding eq "\000") {
-									# Try and guess the encoding, otherwise just use latin1
-									my $dec = Encode::Guess->guess($data);
-									if (ref $dec) {
-										$data = $dec->decode($data);
-									} else {
-										# Best try
-										$data = Encode::decode('iso-8859-1', $data);
+
+									# Only guess if it's not ascii.
+									if ($data && $data !~ /[\x00-\x7F]/) {
+
+										# Try and guess the encoding, otherwise just use latin1
+										my $dec = Encode::Guess->guess($data);
+
+										if (ref $dec) {
+											$data = $dec->decode($data);
+										} else {
+											# Best try
+											$data = Encode::decode('iso-8859-1', $data);
+										}
 									}
 								}
 
