@@ -46,30 +46,34 @@ INIT: {
 	# Create a low-memory & cpu usage call for DB cleanup
 	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
 
-	$class->add_trigger('select' => sub {
-		my $self = shift;
+	if ($] > 5.007) {
+		require Encode;
 
-		for my $column ($self->columns('UTF8')) {
+		$class->add_trigger('select' => sub {
+			my $self = shift;
 
-			next if ref $self->{$column};
+			for my $column ($self->columns('UTF8')) {
 
-			# flip the bit..
-			next if !defined $self->{$column};
+				next if ref $self->{$column};
 
-			Encode::_utf8_on($self->{$column});
+				# flip the bit..
+				next if !defined $self->{$column};
 
-			# ..sanity check
-			if (!utf8::valid($self->{$column})) {
+				Encode::_utf8_on($self->{$column});
 
-				# if we're in an eval, let's at least not _completely_ stuff
-				# the process. Turn the bit off again.
-				Encode::_utf8_off($self->{$column});
+				# ..sanity check
+				if (!utf8::valid($self->{$column})) {
 
-				# ..and die
-				$self->_croak("Invalid UTF8 from database in column '$_'");
+					# if we're in an eval, let's at least not _completely_ stuff
+					# the process. Turn the bit off again.
+					Encode::_utf8_off($self->{$column});
+
+					# ..and die
+					$self->_croak("Invalid UTF8 from database in column '$_'");
+				}
 			}
-		}
-	});
+		});
+	}
 }
 
 sub driver {
