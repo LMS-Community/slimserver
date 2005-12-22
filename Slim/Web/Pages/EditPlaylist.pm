@@ -250,8 +250,8 @@ sub renamePlaylist {
 			$ds->updateOrCreate({
 				'url'        => $playlistObj,
 				'attributes' => {
-					'url'   => $newUrl,
-					'title' => $newName,
+					'URL'   => $newUrl,
+					'TITLE' => $newName,
 				},
 				'commit'     => 1,
 			});
