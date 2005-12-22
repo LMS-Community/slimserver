@@ -14,7 +14,7 @@ use base 'DBI::db';
 package DBIx::ContextualFetch::st;
 use base 'DBI::st';
 
-sub execute {
+sub execute_slimdevices_disabled {
 	my ($sth) = shift;
 
 	my $rv;
