@@ -3820,48 +3820,6 @@ SETUP_ITUNESSCANINTERVAL_OK
 	SE	Minsta omläsningstid för iTunes musikbibliotek
 	ZH_CN	iTunes音乐库极少刷新时间
 
-SETUP_ITUNES_LIBRARY_AUTOLOCATE
-	DE	iTunes Musiksammlung automatisch finden
-	EN	Find iTunes Library Automatically
-	ES	Encontrar iTunes Library Automaticamente
-	FR	Localisation automatique de la bibliothèque iTunes
-	JP	iTunesライブラリーを自動的に検索する。
-	NL	Zoek iTunes muziekcollectie automatisch
-	SE	Hitta ditt iTunes musikbibliotek
-	ZH_CN	自动寻找iTunes音乐库
-
-SETUP_ITUNES_LIBRARY_AUTOLOCATE_DESC
-	DE	Sie können wählen, ob SlimServer versuchen soll, die iTunes Musiksammlung automatisch zu finden, oder ob Sie dies manuell tun wollen. Für eine manuelle Wahl wählen Sie "iTunes Musiksammlung manuell suchen" und geben den Pfad zur iTunes Music Library.xml Datei an.
-	EN	You may choose to have the server try to find the iTunes Music Library automatically or specify the locations manually.  To specify the locations, choose Specify iTunes Library Locations below and enter the path to the iTunes Music Library.xml file and your iTunes Music folder.
-	ES	Se puede elegir si el SlimServer intentará encontrar la iTunes Music Library automáticamente o se especificarán las ubicaciones en forma manual. Para especificar las ubicaciones, elegir Especificar las ubicaciones de iTunes Library debajo e ingresar el camino al archivo iTunes Music Library.xml y a las carpetas de iTunes Music.
-	FR	Vous pouvez choisir que le SlimServer tente de localiser la bibliothèque iTunes automatiquement ou que son emplacement soit spécifié. Pour spécifier l'emplacement, choisissez Spécifier l'emplacement de la bibliothèque iTunes ci-dessous et entrez le chemin vers votre fichier iTunes Music Library.xml et votre dossier iTunes.
-	JP	サーバーはiTunes音楽ライブラリーを自動的に検索するか、あるいは、手動で場所を指定することができます。手動で指定する場合には、以下で、xmlファイルとiTunesフォルダーがある場所を指定してください。
-	NL	Je kunt kiezen om de server te laten proberen de iTunes muziekcollectie automatisch te laten vinden of handmatig. Om de locatie te specificeren, kies Specificeer iTunes muziekcollectie locaties hieronder en typ het pad naar de iTunes muziekcollectie library.xml en je iTunes muziekfolder.
-	SE	Du kan välja mellan att låta SlimServer försöka finna iTunes automatiskt eller specificera var det är intstallerat. Klicka nedan för att specificera manuellt och ange läget på "iTunes Music Library.xml"-fil och ditt iTunes musikbibliotek
-	ZH_CN	您可以让伺服器尝试自动寻找iTunes音乐库或您可直接指定它确实的地点。如果您决定直接指定地点，请在如下输入iTunes Music Library.xml及iTunes音乐文件夹的完整路径。
-
-SETUP_ITUNES_LIBRARY_AUTOLOCATE_0
-	CZ	Zadejte cestu k složce obsahující knihovnu iTunes.
-	DE	iTunes Musiksammlung manuell suchen
-	EN	Specify iTunes Library Locations
-	ES	Especificar las ubicaciones de iTunes Library
-	FR	Spécifier l'emplacement de la bibliothèque iTunes
-	JP	iTunesライブラリー場所を指定する
-	NL	Specificeer iTunes muziekcollectie locaties
-	SE	Specificera var iTunes musikbibliotek är installerat
-	ZH_CN	指定iTunes音乐库地点
-
-SETUP_ITUNES_LIBRARY_AUTOLOCATE_1
-	CZ	Najít knihovnu iTunes automaticky
-	DE	iTunes Musiksammlung automatisch finden
-	EN	Find iTunes Library Automatically
-	ES	Encontrar iTunes Library Automaticamente
-	FR	Localiser automatiquement la bibliothèque iTunes
-	JP	iTunesライブラリーを自動的に検索する
-	NL	Zoek iTunes muziekcollectie automatisch
-	SE	Hitta iTunes musikbibliotek automatiskt
-	ZH_CN	自动寻找iTunes音乐库地点
-
 SETUP_ITUNES_LIBRARY_XML_PATH
 	DE	Speicherort der iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
@@ -3874,7 +3832,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad inkl. Dateiname an.
-	EN	If you are specifying the location of your iTunes Music Library, enter the path to the iTunes Music Library.xml file here, including the whole file name.
+	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar aquí el camino hacia el archivo iTunes Music Library.xml ,incluyendo el nombre completo del archivo.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
 	JP	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
@@ -3895,7 +3853,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CZ	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
 	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad zu ihrem iTunes Musik Ordner an.
-	EN	If you are specifying the location of your iTunes Music Library, enter the path, including the folder name, containing your iTunes Music.
+	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
 	JP	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
