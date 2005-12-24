@@ -840,11 +840,10 @@ sub _isContentTypeHelper {
 
 sub isType {
 	my $pathOrObj = shift || return 0;
-	my $testtype  = shift;
+	my $testType  = shift;
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
 
-	my $type      = _isContentTypeHelper($pathOrObj);
-
-	if ($type && ($type eq $testtype)) {
+	if ($type && ($type eq $testType)) {
 		return 1;
 	} else {
 		return 0;
@@ -854,50 +853,49 @@ sub isType {
 sub isWinShortcut {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'lnk');
+	return isType($pathOrObj, 'lnk', @_);
 }
 
 sub isMP3 {
 	my $pathOrObj = shift;
+	my $type      = shift;
 
-	return isType($pathOrObj, 'mp3') || isType($pathOrObj, 'mp2');
+	return isType($pathOrObj, 'mp3', $type) || isType($pathOrObj, 'mp2', $type);
 }
 
 sub isOgg {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'ogg');
+	return isType($pathOrObj, 'ogg', @_);
 }
 
 sub isWav {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'wav');
+	return isType($pathOrObj, 'wav', @_);
 }
 
 sub isMOV {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'mov');
+	return isType($pathOrObj, 'mov', @_);
 }
 
 sub isFLAC {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'flc');
+	return isType($pathOrObj, 'flc', @_);
 }
 
 sub isAIFF {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'aif');
+	return isType($pathOrObj, 'aif', @_);
 }
 
 sub isSong {
 	my $pathOrObj = shift;
-	my $type = shift;
-
-	$type = _isContentTypeHelper($pathOrObj, $type);
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
@@ -907,38 +905,38 @@ sub isSong {
 sub isDir {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'dir');
+	return isType($pathOrObj, 'dir', @_);
 }
 
 sub isM3U {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'm3u');
+	return isType($pathOrObj, 'm3u', @_);
 }
 
 sub isPLS {
 	my $pathOrObj = shift;
 
-	return isType($pathOrObj, 'pls');
+	return isType($pathOrObj, 'pls', @_);
 }
 
 sub isCUE {
 	my $pathOrObj = shift;
+	my $type      = shift;
 
-	return isType($pathOrObj, 'cue') || isType($pathOrObj, 'fec');
+	return isType($pathOrObj, 'cue', $type) || isType($pathOrObj, 'fec', $type);
 }
 
 sub isKnownType {
 	my $pathOrObj = shift;
+	my $type      = shift;
 
-	return !isType($pathOrObj, 'unk');
+	return !isType($pathOrObj, 'unk', $type);
 }
 
 sub isList {
 	my $pathOrObj = shift;
-	my $type = shift;
-
-	$type = _isContentTypeHelper($pathOrObj, $type);
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} =~ /list/) {
 		return $type;
@@ -947,9 +945,7 @@ sub isList {
 
 sub isPlaylist {
 	my $pathOrObj = shift;
-	my $type = shift;
-
-	$type = _isContentTypeHelper($pathOrObj, $type);
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'playlist') {
 		return $type;
@@ -958,9 +954,11 @@ sub isPlaylist {
 
 sub isContainer {
 	my $pathOrObj = shift;
+	my $type      = shift || _isContentTypeHelper($pathOrObj);
 
-	for my $type (qw{cur fec}) {
-		if (isType($pathOrObj, $type)) {
+	for my $testType (qw(cur fec)) {
+
+		if ($type eq $testType) {
 			return 1;
 		}
 	}
