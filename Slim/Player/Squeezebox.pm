@@ -779,7 +779,7 @@ sub sendPitch {
 }
 	
 sub maxPitch {
-	return 120;
+	return 110;
 }
 
 sub minPitch {
