@@ -64,9 +64,6 @@ sub add {
 
 	my @contributors = ();
 
-	# Dynamically determine the constructor if we need to force object creation.
-	my $createMethod = 'find_or_create';
-
 	# Bug 1955 - Previously 'last one in' would win for a
 	# contributorTrack - ie: contributor & role combo, if a track
 	# had an ARTIST & COMPOSER that were the same value.
@@ -89,45 +86,24 @@ sub add {
 			'namesearch' => $search,
 		});
 
-		if ($contributorObj) {
-
-			my ($contributorTrackObj) = Slim::DataStores::DBI::ContributorTrack->search({
-				'contributor' => $contributorObj,
-				'role'        => $role,
-				'track'       => $track,
-			});
-
-			# This combination already exists in the db - don't re(create) it.
-			if (defined $contributorTrackObj) {
-				push @contributors, $contributorObj;
-				next;
-			}
-
-			$createMethod = 'create';
-
-		} else {
+		if (!$contributorObj) {
 
 			$contributorObj = Slim::DataStores::DBI::Contributor->create({ 
-				namesearch => $search,
+				'namesearch'     => $search,
+				'name'           => $name,
+				'namesort'       => $sort,
+				'musicbrainz_id' => $brainzID,
 			});
 		}
-
-		$contributorObj->name($name);
-		$contributorObj->namesort($sort);
-		$contributorObj->musicbrainz_id($brainzID);
-		$contributorObj->update;
 
 		push @contributors, $contributorObj;
 
 		# Create a contributor <-> track mapping table.
-		my $contributorTrack = Slim::DataStores::DBI::ContributorTrack->$createMethod({
-			track       => $track,
-			contributor => $contributorObj,
-			namesort    => $sort,
+		Slim::DataStores::DBI::ContributorTrack->find_or_create({
+			'track'       => $track,
+			'contributor' => $contributorObj,
+			'role'        => $role,
 		});
-
-		$contributorTrack->role($role);
-		$contributorTrack->update;
 	}
 
 	return wantarray ? @contributors : $contributors[0];

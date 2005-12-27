@@ -507,7 +507,11 @@ sub newTrack {
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 	}
 
-	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 1);
+	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
+		'url'        => $url,
+		'attributes' => $attributeHash,
+		'create'     => 1,
+	});
 
 	# Creating the track only wants lower case values from valid columns.
 	my $columnValueHash = {};
@@ -543,9 +547,13 @@ sub newTrack {
 
 	# Now that we've created the track, and possibly an album object -
 	# update genres, etc - that we need the track ID for.
-	$self->_postCheckAttributes($track, $deferredAttributes, 1);
+	$self->_postCheckAttributes({
+		'track'      => $track,
+		'attributes' => $deferredAttributes,
+		'create'     => 1,
+	});
 
-	if ($track->audio) {
+	if ($columnValueHash->{'audio'}) {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{dirname($url)} = $track;
@@ -621,7 +629,10 @@ sub updateOrCreate {
 		}
 
 		my $deferredAttributes;
-		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes($url, $attributeHash, 0);
+		($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
+			'url'        => $url,
+			'attributes' => $attributeHash,
+		});
 
 		my %set = ();
 
@@ -640,9 +651,13 @@ sub updateOrCreate {
 		# Just make one call.
 		$track->set(%set);
 
-		$self->_postCheckAttributes($track, $deferredAttributes, 0);
+		# _postCheckAttributes does an update
+		$self->_postCheckAttributes({
+			'track'      => $track,
+			'attributes' => $deferredAttributes,
+		});
 
-		$self->updateTrack($track, $commit);
+		$self->dbh->commit if $commit;
 
 	} else {
 
@@ -680,15 +695,14 @@ sub delete {
 
 		# XXX - make sure that playlisttracks are deleted on cascade 
 		# otherwise call $track->setTracks() with an empty list
+		my ($audio, $secs) = $track->getFast(qw(audio secs));
 
-		if ($track->audio) {
+		if ($audio) {
 
 			$self->{'trackCount'}--;
 
-			my $time = $track->get('secs');
-
-			if ($time) {
-				$self->{'totalTime'} -= $time;
+			if ($secs) {
+				$self->{'totalTime'} -= $secs;
 			}
 		}
 
@@ -1171,10 +1185,11 @@ sub readTags {
 	}
 
 	# get the type without updating the cache
-	my $type = Slim::Music::Info::typeFromPath($filepath);
+	my $type   = Slim::Music::Info::typeFromPath($filepath);
+	my $remote = Slim::Music::Info::isRemoteURL($file);
 
 	# Populate the DB with information for the remote URL now - and not at the time we play.
-	if (Slim::Music::Info::isRemoteURL($file)) {
+	if (0 && $remote) {
 
 		my $stream = '';
 
@@ -1226,7 +1241,7 @@ sub readTags {
 			}
 		}
 
-	} elsif (Slim::Music::Info::isSong($file, $type)) {
+	} elsif (Slim::Music::Info::isSong($file, $type) && !$remote) {
 
 		# Extract tag and audio info per format
 		if (my $tagReaderClass = Slim::Music::Info::classForFormat($type)) {
@@ -1303,7 +1318,7 @@ sub readTags {
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	while (my ($tag, $value) = each %{$attributesHash}) {
 
-		$attributesHash->{$tag} = Slim::Utils::Unicode::stripBOM($value);
+		$attributesHash->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
 	}
 
 	return $attributesHash;
@@ -1394,8 +1409,6 @@ sub _retrieveTrack {
 
 	} else {
 
-		# XXX - keep a url => id cache. so we can use the
-		# live_object_index and not hit the db.
 		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
 	}
 
@@ -1434,14 +1447,14 @@ sub _checkValidity {
 	return undef unless blessed($track);
 	return undef unless $track->can('url');
 
-	my $url = $track->url;
+	my ($url, $audio, $remote) = $track->getFast(qw(url audio remote));
 
 	return undef if $self->{'zombieList'}->{$url};
 
 	$::d_info && msg("_checkValidity: Checking to see if $url has changed.\n");
 
 	# Don't check for remote tracks, or things that aren't audio
-	if ($track->audio && !$track->remote && $self->_hasChanged($track, $url)) {
+	if ($audio && !$remote && $self->_hasChanged($track, $url)) {
 
 		$::d_info && msg("_checkValidity: Re-reading tags from $url as it has changed.\n");
 
@@ -1478,17 +1491,15 @@ sub _hasChanged {
 
 	# Return if it's a directory - they expire themselves 
 	# Todo - move directory expire code here?
-	#return 0 if -d $filepath;
-	return 0 if Slim::Music::Info::isDir($track);
-	return 0 if Slim::Music::Info::isWinShortcut($track);
+	return 0 if -d $filepath;
+	return 0 if $filepath =~ /\.lnk$/i;
 
 	# See if the file exists
 	#
 	# Reuse _, as we only need to stat() once.
 	if (-e $filepath) {
 
-		my $filesize  = $track->filesize();
-		my $timestamp = $track->timestamp();
+		my ($filesize, $timestamp) = $track->getFast(qw(filesize timestamp));
 
 		# Check filesize and timestamp to decide if we use the cached data.
 		my $fsdef   = (defined $filesize);
@@ -1526,13 +1537,15 @@ sub _hasChanged {
 
 sub _preCheckAttributes {
 	my $self = shift;
-	my $url = shift;
- 	my $attributeHash = shift;
- 	my $create = shift;
+	my $args = shift;
+
+	my $url    = $args->{'url'};
+	my $create = $args->{'create'} || 0;
+
 	my $deferredAttributes = {};
 
 	# Copy the incoming hash, so we don't modify it
-	my $attributes = { %$attributeHash };
+	my $attributes = { %{ $args->{'attributes'} } };
 
 	# Normalize attribute names
 	while (my ($key, $val) = each %$attributes) {
@@ -1631,9 +1644,11 @@ sub _preCheckAttributes {
 
 sub _postCheckAttributes {
 	my $self = shift;
-	my $track = shift;
-	my $attributes = shift;
-	my $create = shift;
+	my $args = shift;
+
+	my $track      = $args->{'track'};
+	my $attributes = $args->{'attributes'};
+	my $create     = $args->{'create'} || 0;
 
 	# XXX - exception should go here. Comming soon.
 	if (!blessed($track) || !$track->can('get')) {
@@ -1642,15 +1657,18 @@ sub _postCheckAttributes {
 
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
-	if (Slim::Music::Info::isDir($track) || Slim::Music::Info::isWinShortcut($track)) {
+	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = $track->getFast(qw(id url content_type audio remote));
+
+	if ($trackType eq 'dir' || $trackType eq 'lnk') {
+
+		$track->update;
+
 		return undef;
 	}
 
-	my ($trackId, $trackUrl) = $track->get(qw(id url));
-
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
-	my $isLocal = Slim::Music::Info::isSong($track) && !Slim::Music::Info::isRemoteURL($track);
+	my $isLocal = $trackAudio && !$trackRemote;
 
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
@@ -1772,7 +1790,7 @@ sub _postCheckAttributes {
 
 		if (
 			$self->{'lastTrack'}->{$basename} && 
-			$self->{'lastTrack'}->{$basename}->album &&
+			$self->{'lastTrack'}->{$basename}->albumid &&
 			blessed($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
 			$self->{'lastTrack'}->{$basename}->album->get('title') eq $album &&
 			(!$checkDisc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))
@@ -1878,26 +1896,28 @@ sub _postCheckAttributes {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
+		my %set = ();
+
 		# Add an album artist if it exists.
-		$albumObj->contributor($contributor) if blessed($contributor);
+		$set{'contributor'} = $contributor if blessed($contributor);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
-		$albumObj->titlesort($sortable_title);
+		$set{'titlesort'}   = $sortable_title;
 
 		# And our searchable version.
-		$albumObj->titlesearch(Slim::Utils::Text::ignoreCaseArticles($album));
+		$set{'titlesearch'} = Slim::Utils::Text::ignoreCaseArticles($album);
 
 		# Bug 2393 - Check for 'no' instead of just true or false
 		if ($attributes->{'COMPILATION'} && $attributes->{'COMPILATION'} !~ /no/i) {
 
-			$albumObj->compilation(1);
+			$set{'compilation'} = 1;
 
 		} else {
 
-			$albumObj->compilation(0);
+			$set{'compilation'} = 0;
 		}
 
-		$albumObj->musicbrainz_id($attributes->{'MUSICBRAINZ_ALBUM_ID'});
+		$set{'musicbrainz_id'} = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
 
 		# Handle album gain tags.
 		for my $gainTag (qw(REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
@@ -1909,11 +1929,11 @@ sub _postCheckAttributes {
 
 				$attributes->{$gainTag} =~ s/\s*dB//gi;
 
-				$albumObj->set($shortTag, $attributes->{$gainTag});
+				$set{$shortTag} = $attributes->{$gainTag};
 
 			} else {
 
-				$albumObj->set($shortTag, undef);
+				$set{$shortTag} = undef;
 			}
 		}
 
@@ -1923,13 +1943,15 @@ sub _postCheckAttributes {
 			$discc = max($disc, $discc, $albumObj->discc);
 		}
 
-		$albumObj->disc($disc);
-		$albumObj->discc($discc);
-		$albumObj->year($track->year);
+		$set{'disc'}  = $disc;
+		$set{'discc'} = $discc;
+		$set{'year'}  = $track->year;
+
+		$albumObj->set(%set);
 		$albumObj->update;
 
 		# Don't add an album to container tracks - See bug 2337
-		if (!Slim::Music::Info::isContainer($track)) {
+		if (!Slim::Music::Info::isContainer($track, $trackType)) {
 
 			$track->album($albumObj);
 		}
@@ -1962,46 +1984,8 @@ sub _postCheckAttributes {
 		}
 	}
 
-	# Compute a compound sort key we'll use for queries that involve
-	# multiple albums. Rather than requiring a multi-way join to get
-	# all the individual sort keys from different tables, this is an
-	# optimization that only requires the tracks table.
-	$albumObj ||= $track->album();
-
-	my ($albumName, $primaryContributor) = ('', '');
-
-	if (blessed($albumObj) && $albumObj->can('titlesort')) {
-		$albumName = $albumObj->titlesort;
-	}
-
-	# Find a contributor associated with this track.
-	if (blessed($contributor) && $contributor->can('namesort')) {
-
-		$primaryContributor = $contributor->namesort;
-
-	} elsif (blessed($albumObj) && $albumObj->can('contributor')) {
-
-		$contributor = $albumObj->contributor;
-
-		if (blessed($contributor) && $contributor->can('namesort')) {
-
-			$primaryContributor = $contributor->namesort;
-		}
-	}
-
-	# Save 2 get calls
-	my ($titlesort, $tracknum) = $track->get(qw(titlesort tracknum));
-
-	my @keys = ();
-
-	push @keys, $primaryContributor || '';
-	push @keys, $albumName || '';
-	push @keys, $disc if defined($disc);
-	push @keys, sprintf("%03d", $tracknum) if defined $tracknum;
-	push @keys, $titlesort || '';
-
-	$track->multialbumsortkey(join ' ', @keys);
-	$track->update();
+	# Save any changes - such as album.
+	$track->update;
 
 	# Add comments if we have them:
 	for my $comment (@{$attributes->{'COMMENT'}}) {

@@ -19,14 +19,15 @@ use base 'Class::DBI';
 use DBI;
 use File::Basename;
 use File::Path;
-use SQL::Abstract;
-use SQL::Abstract::Limit;
-use Tie::Cache::LRU;
-use UNIVERSAL;
-
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
+use SQL::Abstract;
+use SQL::Abstract::Limit;
+use Scalar::Util qw(blessed);
+
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+use Slim::Utils::OSDetect;
 
 our $dbh;
 our $driver;
@@ -191,7 +192,6 @@ sub db_Main {
 		RaiseError => 1,
 		AutoCommit => 0,
 		PrintError => 1,
-		Taint      => 1,
 		RootClass  => "DBIx::ContextualFetch"
 	});
 
@@ -286,7 +286,7 @@ sub wipeDB {
 	my $class = shift;
 
 	$class->clearObjectCaches;
-	$class->executeSQLFile("dbdrop.sql");
+	$class->executeSQLFile("dbclear.sql");
 
 	$class->dbh->commit;
 	$class->dbh->disconnect;
@@ -333,7 +333,7 @@ sub getWhereValues {
 				# recurse if needed
 				push @values, getWhereValues($item);
 
-			} elsif (ref $item && UNIVERSAL::isa($item, 'Slim::DataStores::DBI::DataModel')) {
+			} elsif (blessed($item) && $item->isa('Slim::DataStores::DBI::DataModel')) {
 
 				push @values, $item->id();
 
@@ -343,7 +343,7 @@ sub getWhereValues {
 			}
 		}
 
-	} elsif (ref $term && UNIVERSAL::isa($term, 'Slim::DataStores::DBI::DataModel')) {
+	} elsif (blessed($term) && $term->isa('Slim::DataStores::DBI::DataModel')) {
 
 		push @values, $term->id();
 
@@ -443,10 +443,9 @@ our %cmpFields = (
 our %sortFieldMap = (
 	'title' => ['tracks.titlesort'],
 	'genre' => ['genres.namesort'],
-	'album' => ['albums.titlesort','albums.disc','tracks.multialbumsortkey'],
+	'album' => ['albums.titlesort','albums.disc'],
 	'contributor' => ['contributors.namesort'],
 	'artist' => ['contributors.namesort'],
-	'track' => ['tracks.multialbumsortkey', 'tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'tracknum' => ['tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
@@ -865,11 +864,91 @@ sub print {
 	}
 }
 
-sub find_or_create {
-	my $class    = shift;
-	my $hash     = ref $_[0] eq "HASH" ? shift: {@_};
-	my ($exists) = $class->_do_search("="  => $hash);
-	return defined($exists) ? $exists : $class->_create($hash);
+# Class::DBI overrides.
+sub create {
+	my $class = shift;
+
+	# Take a copy of the incoming hash ref
+	my $data = { %{ +shift } };
+
+	my $self = bless {}, $class;
+           $self->_attribute_store(%$data);
+
+	# Make sure that HasA relationships are properly deflated.
+	while (my ($col, $val) = each %{$data}) {
+
+		$data->{$col} = $self->_deflated_column($col, $val);
+	}
+
+	my @primary_columns = $self->primary_columns;
+
+	$self->_prepopulate_id if $self->_undefined_primary;
+	$self->_insert_row($data, \@primary_columns);
+
+	if (scalar @primary_columns == 1) {
+
+		$self->_attribute_store($primary_columns[0] => $data->{ $primary_columns[0] });
+	}
+
+	delete $self->{'__Changed'};
+
+	return $self;
+}
+
+sub _insert_row {
+	my ($self, $data, $primary_columns) = @_;
+
+	eval {
+		my @columns = keys %$data;
+		my $sth     = $self->sql_MakeNewObj(
+			join(', ', @columns), join(', ', map { '?' } @columns),
+		);
+
+		$sth->execute(values %$data);
+
+		if (scalar @{$primary_columns} == 1 && !defined $data->{ $primary_columns->[0] }) {
+
+			$data->{ $primary_columns->[0] } = $self->_auto_increment_value;
+		}
+	};
+
+	if ($@) {
+		my $class = ref $self;
+
+		return $self->_croak(
+			"Can't insert new $class: $@",
+			err    => $@,
+			method => 'create'
+		);
+	}
+
+	return 1;
+}
+
+sub update {
+	my $self  = shift;
+	my $class = ref($self) or return $self->_croak("Can't call update as a class method");
+
+	my @changed_cols = $self->is_changed;
+
+	if (!scalar @changed_cols) {
+		return 1;
+	}
+
+	$self->call_trigger('deflate_for_update');
+
+	my $sth = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
+
+	eval { $sth->execute($self->_update_vals, $self->id) };
+
+	if ($@) {
+		return $self->_croak("Can't update $self: $@", err => $@);
+	}
+
+	$dirtyCount++;
+	delete $self->{'__Changed'};
+
+	return 1;
 }
 
 # Walk any table and check for foreign rows that still exist.
@@ -920,31 +999,6 @@ sub retrieveAllOnlyIds {
 
 	# Turn this into a nicer array.
 	return [ map { $_->[0] } @{$ids} ];
-}
-
-# overload update() to maintain $dirtyCount
-sub update {
-	my $self = shift;
-
-	if ($self->is_changed()) {
-
-		$self->SUPER::update();
-		$dirtyCount++;
-	}
-}
-
-# Override a CDBI method that we've added for this purpose.
-# We don't want to have two different copies of effectively the same object
-# floating around.
-sub _class_for_ref {
-        my $self  = shift;
-        my $class = ref($self) || $self;
-
-        if ($class eq 'Slim::DataStores::DBI::LightWeightTrack') {
-                $class = 'Slim::DataStores::DBI::Track';
-        }
-
-        return $class;
 }
 
 1;

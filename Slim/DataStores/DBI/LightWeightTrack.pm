@@ -9,7 +9,7 @@ use base 'Slim::DataStores::DBI::Track';
 # this class has a smaller set of essential columns, the inflation cost
 # is smaller.
 
-our @essentialColumns = qw(id url content_type multialbumsortkey album);
+our @essentialColumns = qw(id url content_type album);
 our @otherColumns     = ();
 
 INIT: {

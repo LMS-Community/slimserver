@@ -31,23 +31,12 @@ sub add {
 
 	my @genres = ();
 
-	# Handle the case where $genre is already an object:
-	if (blessed($genre) && $genre->isa('Slim::DataStores::DBI::Genre')) {
-
-		Slim::DataStores::DBI::GenreTrack->find_or_create({
-			track => $track,
-			genre => $genre,
-		});
-
-		return wantarray ? ($genre) : $genre;
-	}
-
 	for my $genreSub (Slim::Music::Info::splitTag($genre)) {
 
 		my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
 
 		my ($genreObj) = Slim::DataStores::DBI::Genre->search({ 
-			namesort => $namesort,
+			'namesort' => $namesort,
 		});
 
 		if (!defined $genreObj) {
@@ -56,12 +45,10 @@ sub add {
 			use locale;
 
 			$genreObj = Slim::DataStores::DBI::Genre->create({ 
-				namesort => $namesort,
+				'namesort'   => $namesort,
+				'name'       => ucfirst($genreSub),
+				'namesearch' => $namesort,
 			});
-
-			$genreObj->name(ucfirst($genreSub)),
-			$genreObj->namesearch($namesort);
-			$genreObj->update;
 		}
 
 		push @genres, $genreObj;

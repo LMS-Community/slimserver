@@ -12,9 +12,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('genre_track');
 
-	$class->columns(Primary => qw/id/);
-
-	$class->columns(Essential => qw/genre track/);
+	$class->columns(Primary => qw/genre track/);
 
 	$class->has_a(genre => 'Slim::DataStores::DBI::Genre');
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');

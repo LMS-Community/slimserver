@@ -114,7 +114,8 @@ sub addToList {
 
 	$playlisturl = Slim::Utils::Misc::fixPath($playlisturl);
 
-	if (Slim::Music::Info::isWinShortcut($playlisturl)) {
+	if ($^O =~ /Win32/ && $playlisturl =~ /\.lnk$/) {
+
 		$playlisturl = Slim::Utils::Misc::pathFromWinShortcut($playlisturl);
 	}
 
@@ -241,7 +242,7 @@ sub addToList_run {
 			my $itemsToAddref  = $curdirState->itemsToAdd;
 			my $cachedPlaylist = Slim::Music::Info::cachedPlaylist($curdirState->path);
 
-			if (Slim::Music::Info::isWinShortcut($curdirState->path) && Slim::Music::Info::isDir(@{$cachedPlaylist})) {
+			if ($^O =~ /Win32/ && $curdirState->path =~ /\.lnk$/ && Slim::Music::Info::isDir(@{$cachedPlaylist})) {
 
 				$curdirState->path(@{$cachedPlaylist});
 			}
@@ -368,12 +369,8 @@ sub addToList_run {
 		$jobState->numitems($jobState->numitems+1);
 
 		return 1;
-	}
 
-	######### Else if it's a single item - look up the sort key (takes a while)
-	$::d_scan && msg("not a list: $itempath\n");
-
-	if (Slim::Music::Info::isSong($itempath)) {
+	} else {
 
 		$::d_scan && msg("adding single item: $itempath, type " . Slim::Music::Info::contentType($itempath) . "\n");
 
@@ -467,7 +464,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 	} else {
 
 		# it's pointing to a local file...
-		if (Slim::Music::Info::isWinShortcut($playlisturl)) {
+		if ($^O =~ /Win32/i && $playlisturl =~ /\.lnk$/i) {
 
 			$playlistpath = Slim::Utils::Misc::fileURLFromWinShortcut($playlisturl) || return 0;
 
@@ -491,7 +488,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		$playlistpath = Slim::Utils::Misc::fixPath($playlistpath);
 		
-		$::d_scan && msg("Gonna try to open playlist $playlistpath\n");
+		$::d_scan && msg("Trying to open playlist [$playlistpath]\n");
 
 		if ($playlistpath =~ /\.\.[\/\\]/) {
 			# bogus path containing .. is illegal
@@ -521,7 +518,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			  )
 			) {
 			
-			$::d_scan && msg("*** found a current entry for $playlisturl in playlist cache ***\n");
+			$::d_scan && msg("*** found a current entry for $playlisturl in the database***\n");
 
 			if ($pls) {
 
@@ -537,9 +534,9 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				$numitems = 0;
 			}
 			
-		} elsif (Slim::Music::Info::isDir($playlistpath)) {
+		} elsif (-d $playlistpathpath) {
 
-			$::d_scan && msg("*** didn't find $playlistpath in playlist cache ***\n");
+			$::d_scan && msg("*** didn't find $playlistpath in database***\n");
 			$::d_scan && msg("Treating directory like a playlist\n");
 
 			$numitems = 0;
@@ -552,7 +549,11 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 				$::d_scan && msg(" directory entry: $url\n");
 
-				push @$listref, $ds->objectForUrl($url, 1);
+				push @$listref, $ds->updateOrCreate({
+					'url'        => $url,
+					'readTags'   => 1,
+					'checkMTime' => 1,
+				});
 
 				$numitems++;
 			}
@@ -583,7 +584,6 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			if (!@cachedtracks) {
 				#TODO: rescan container if it's not type 'cur'
 				$::d_scan && msg("*** scanning container $playlisturl to get contents ***\n");
-
 			}
 			
 			for my $track (@cachedtracks) {

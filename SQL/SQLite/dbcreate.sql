@@ -139,11 +139,10 @@ CREATE INDEX contributorsSortIndex ON contributors (namesort);
 CREATE INDEX contributorsSearchIndex ON contributors (namesearch);
 
 CREATE TABLE contributor_track (
-  id integer UNIQUE PRIMARY KEY NOT NULL,
   role integer,           -- role - enumerated type
   contributor integer,    -- contributor object
   track integer,          -- track object
-  namesort varchar        -- convenience for sorting, no longer used
+  UNIQUE (role,contributor,track)
 );
 
 CREATE INDEX contributor_trackContribIndex ON contributor_track (contributor);
@@ -152,13 +151,11 @@ CREATE INDEX contributor_trackRoleIndex ON contributor_track (role);
 
 CREATE INDEX contributor_trackTrackIndex ON contributor_track (track);
 
-CREATE INDEX contributor_trackSortIndex ON contributor_track (namesort);
-
 CREATE TABLE contributor_album (
-  id integer UNIQUE PRIMARY KEY NOT NULL,
   role integer,           -- role - enumerated type
   contributor integer,    -- contributor object
-  album integer          -- album object
+  album integer,          -- album object
+  UNIQUE (role,contributor,album)
 );
 
 CREATE INDEX contributor_albumContribIndex ON contributor_album (contributor);
@@ -184,9 +181,9 @@ CREATE INDEX genreSortIndex ON genres (namesort);
 CREATE INDEX genreSearchIndex ON genres (namesearch);
 
 CREATE TABLE genre_track (
-  id integer UNIQUE PRIMARY KEY NOT NULL,
   genre integer,          -- genre object
-  track integer           -- track object
+  track integer,          -- track object
+  UNIQUE (genre,track)
 );
 
 CREATE INDEX genre_trackGenreIndex ON genre_track (genre);

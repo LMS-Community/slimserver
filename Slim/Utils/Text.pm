@@ -8,9 +8,8 @@ package Slim::Utils::Text;
 # version 2.
 
 use strict;
-use Tie::Cache::LRU;
 
-tie my %caseArticlesMemoize, 'Tie::Cache::LRU', 128;
+my %caseArticlesCache = ();
 
 # Article list to ignore.
 my $ignoredArticles = undef;
@@ -74,15 +73,17 @@ sub ignoreArticles {
 sub ignoreCaseArticles {
 	my $s = shift || return undef;
 
-	if (defined $caseArticlesMemoize{$s}) {
-		return $caseArticlesMemoize{$s};
+	if (scalar keys %caseArticlesCache > 256) {
+		%caseArticlesCache = ();
 	}
 
-	return ($caseArticlesMemoize{$s} = ignorePunct(ignoreArticles(matchCase($s))));
+	return $caseArticlesCache{$s} ||= ignorePunct(ignoreArticles(matchCase($s)));
 }
 
 sub clearCaseArticleCache {
-	%caseArticlesMemoize = ();
+
+	%caseArticlesCache = ();
+	$ignoredArticles   = undef;
 }
 
 1;

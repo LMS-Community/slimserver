@@ -31,6 +31,9 @@ require Slim::Utils::Unicode;
 
 our $log = "";
 
+our %pathToFileCache = ();
+our %fileToPathCache = ();
+
 INIT: {
 	if ($^O =~ /Win32/) {
 		require Win32::Shortcut;
@@ -141,6 +144,10 @@ sub fileURLFromWinShortcut {
 sub pathFromFileURL {
 	my $url = shift;
 	my $file = '';
+
+	if ($fileToPathCache{$url}) {
+		return $fileToPathCache{$url};
+	}
 	
 	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
 
@@ -166,7 +173,7 @@ sub pathFromFileURL {
 	# Use File::Spec::rel2abs ? or something along those lines?
 	#
 	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
-	if ($uri->scheme() && $uri->scheme() eq 'file') {
+	if ($uri->scheme() eq 'file') {
 
 		my $path = $uri->path();
 
@@ -188,17 +195,36 @@ sub pathFromFileURL {
 		$::d_files && msg("extracted: $file from $url\n");
 	}
 
+	if (scalar keys %fileToPathCache > 32) {
+		%fileToPathCache = ();
+	}
+
+	$fileToPathCache{$url} = $file;
+
 	return $file;
 }
 
 sub fileURLFromPath {
 	my $path = shift;
-	
+
+	if ($pathToFileCache{$path}) {
+		return $pathToFileCache{$path};
+	}
+
 	return $path if (Slim::Music::Info::isURL($path));
 
 	my $uri  = URI::file->new($path);
-	$uri->host('');
-	return $uri->as_string;
+	   $uri->host('');
+
+	my $file = $uri->as_string;
+
+	if (scalar keys %pathToFileCache > 32) {
+		%pathToFileCache = ();
+	}
+
+	$pathToFileCache{$path} = $file;
+
+	return $file;
 }
 
 ########
@@ -301,9 +327,9 @@ sub fixPath {
 
 	if (Slim::Music::Info::isURL($file)) { 
 
-		my $uri = URI->new($file);
+		my $uri = URI->new($file) || return $file;
 
-		if ($uri->scheme() && $uri->scheme() eq 'file') {
+		if ($uri->scheme() eq 'file') {
 
 			$uri->host('');
 		}
@@ -492,13 +518,15 @@ sub virtualToAbsolute {
 
 		next if (Slim::Music::Info::isDir(fileURLFromPath($curdir)));
 
-		if (Slim::Music::Info::isWinShortcut(fileURLFromPath($curdir))) {
+		if ($^O =~ /Win32/ && Slim::Music::Info::isWinShortcut(fileURLFromPath($curdir))) {
+
 			if (defined($Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)})) {
 				$curdir = $Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)}
 			} else {
 				$curdir = pathFromWinShortcut(fileURLFromPath($curdir));
 			}
 		}
+
 		#continue traversing if curdir is a list
 		next if (Slim::Music::Info::isList(fileURLFromPath($curdir)));
 		#otherwise stop traversing, non-list items cannot be traversed
@@ -824,6 +852,8 @@ sub assert {
 }
 
 sub bt {
+	my $return = shift || 0;
+
 	my $frame = 1;
 
 	my $msg = "Backtrace:\n\n";
@@ -855,6 +885,8 @@ sub bt {
 	}
 	
 	$msg.="\n";
+
+	return $msg if $return;
 
 	&msg($msg);
 }

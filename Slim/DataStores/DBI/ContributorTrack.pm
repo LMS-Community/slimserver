@@ -12,9 +12,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('contributor_track');
 
-	$class->columns(Primary => qw/id/);
-
-	$class->columns(Essential => qw/role contributor track namesort/);
+	$class->columns(Primary => qw/role contributor track/);
 
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');

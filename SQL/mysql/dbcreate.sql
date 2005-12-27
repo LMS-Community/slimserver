@@ -154,16 +154,13 @@ CREATE TABLE contributors (
 -- Table: contributor_track
 --
 CREATE TABLE contributor_track (
-  id int(10) unsigned NOT NULL auto_increment,
   role  int(10) unsigned,
   contributor  int(10) unsigned,
   track  int(10) unsigned,
-  namesort text,
   INDEX contributor_trackContribIndex (contributor),
   INDEX contributor_trackTrackIndex (track),
   INDEX contributor_trackRoleIndex (role),
-  INDEX contributor_trackSortIndex (namesort(255)),
-  PRIMARY KEY (id),
+  PRIMARY KEY (role,contributor,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
@@ -172,14 +169,13 @@ CREATE TABLE contributor_track (
 -- Table: contributor_album
 --
 CREATE TABLE contributor_album (
-  id int(10) unsigned NOT NULL auto_increment,
   role  int(10) unsigned,
   contributor  int(10) unsigned,
   album  int(10) unsigned,
   INDEX contributor_trackContribIndex (contributor),
   INDEX contributor_trackAlbumIndex (album),
   INDEX contributor_trackRoleIndex (role),
-  PRIMARY KEY (id),
+  PRIMARY KEY (role,contributor,album),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;
@@ -205,12 +201,11 @@ CREATE TABLE genres (
 -- Table: genre_track
 --
 CREATE TABLE genre_track (
-  id int(10) unsigned NOT NULL auto_increment,
   genre  int(10) unsigned,
   track  int(10) unsigned,
   INDEX genre_trackGenreIndex (genre),
-  INDEX genre_trackTraclIndex (track),
-  PRIMARY KEY (id),
+  INDEX genre_trackTrackIndex (track),
+  PRIMARY KEY (genre,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
   FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB;

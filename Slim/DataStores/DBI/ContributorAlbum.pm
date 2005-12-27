@@ -12,9 +12,7 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('contributor_album');
 
-	$class->columns(Primary => qw/id/);
-
-	$class->columns(Essential => qw/role contributor album/);
+	$class->columns(Primary => qw/role contributor album/);
 
 	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
 	$class->has_a(album       => 'Slim::DataStores::DBI::Album');

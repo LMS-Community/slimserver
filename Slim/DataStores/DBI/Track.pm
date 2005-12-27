@@ -13,7 +13,7 @@ use Slim::Utils::Misc;
 
 our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum timestamp
-	filesize tag disc thumb remote audio multialbumsortkey audio_size audio_offset
+	filesize tag disc thumb remote audio audio_size audio_offset
 	year secs cover vbr_scale bitrate samplerate samplesize channels block_alignment
 	endian bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
 	musicbrainz_id playCount lastPlayed lossless lyrics replay_gain replay_peak
@@ -49,6 +49,13 @@ sub attributes {
 	my $class = shift;
 
 	return { map { $_ => 1 } @allColumns };
+}
+
+sub getFast {
+	my $self = shift;
+
+	# Bypass all the find_column crap when we have an object.
+	return $self->_attrs(@_);
 }
 
 sub albumid {
