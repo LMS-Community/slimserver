@@ -1,0 +1,32 @@
+<!-- hitlist_list.html -->
+<tr height="15" [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
+<td width="5%" align="right">
+<font class="actiontext">	
+([% item.song_count %])
+   </td>  
+
+<td width="75%" style="padding-left:5px">
+[% PROCESS trackinfo %]
+</td>
+
+
+<td>
+<nobr>
+<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% item.attributes %]&player=[% playerURI %]">
+<font class="actiontext">[% "PLAY" | string %]</a>
+|&nbsp;
+<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% item.attributes | html %]&player=[% playerURI %]">
+<font class="actiontext">[% "NEXT" | string %]</a>
+|&nbsp;
+<a href="[% webroot %][% path %]?command=playlist&subcommand=addtracks[% item.attributes %]&player=[% playerURI %]">
+<font class="actiontext">[% "ADD" | string %]</a>
+&nbsp;
+</nobr>
+</td>
+
+
+   <td width="20%" align="right" style="padding-right:15px">
+       <nobr>[% item.song_bar %]</nobr>
+  </td>
+</tr>
+<!-- /Element hitlist_list.html -->

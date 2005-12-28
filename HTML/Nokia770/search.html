@@ -1,0 +1,26 @@
+[%# Page search.html %]
+<!--search.html-->
+[% pagetitle = BLOCK %]
+[%- playermodel | string %] : [% "SEARCH" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
+
+[% IF not query %][% PROCESS searchinput.html %][% END %]
+
+[% IF numresults != '-1' %]
+    [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
+    [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
+    [% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]": [% numresults %]<p>
+[% END %]
+
+[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]:</font> <font size="+3">[% searchlist_pagebar %]</font>[% END %]
+[% IF searchlist_header %]<p>[% searchlist_header %]:</p>[% END %]
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
+    [% browse_list %]
+</table>
+
+[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]:</font> <font size="+3">[% searchlist_pagebar %]</font>[% END %]
+[% PROCESS detailed_footer.html %]
+[%# /Page search.html %]

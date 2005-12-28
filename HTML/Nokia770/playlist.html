@@ -1,0 +1,59 @@
+[%# Page playlist.html %]
+<!--playlist.html-->
+[% pagetitle = BLOCK %]
+[%- playermodel | string %] : [% "PLAYLIST" | string -%]
+[%- END -%]
+[%- pageicon = 'MUSIC'
+    browse   = '0'
+    music    = '0'
+    playlist = '1'
+    status   = '0'
+    setup = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
+
+<table bgcolor="#EEEEEE" width=100% border="0">
+	<tr>
+		<td align="left"><font class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
+		</td>
+	</tr>
+	<tr>
+		<td class = 'pagebartext'>
+			[% IF playlist_pagebar %]&nbsp;[% playlist_pagebar %]</font>[% END %]
+			[% IF playlist_header %]&nbsp;|&nbsp;<font class="pagebartext">[% playlist_header %]</font>[% END %]
+		</td>
+</tr>
+</table>
+
+<table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0">
+	<tr>
+	<td class = 'smalltext'>
+	[% IF cansave %]
+	<a href="edit_playlist.html?player=[% playerURI %]&saveCurrentPlaylist=1">[% "SAVE" | string %]</a>&nbsp;|
+	<a href="status.m3u?player=[% playerURI %]" target="playlist">[% "DOWNLOAD" | string %]</a>&nbsp;|
+	<a href="playlist.html?p0=playlist&p1=clear&player=[% playerURI %]">[% "CLEAR" | string %]</a>
+	[% END %]
+	[% IF not cansave %]&nbsp;[% END %]
+	</td>
+	</tr>
+</table>
+
+<table cellspacing="0" border="0" cellpadding="0" width="100%"><font class="itemtext">
+       [% IF not playlist_items %][% "EMPTY" | string %][% END %]
+       [%- statusroot_old = statusroot; statusroot = 'playlist.html'; -%]
+       [% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
+       [%- statusroot = statusroot_old -%]
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#FFFFFF">
+<tr><td height="30"></td></tr></table>
+
+
+[% IF playlist_pagebar %]
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#C5C5C5">
+<tr><td><font class="pagebartext">&nbsp;[% playlist_pagebar %]</td>
+</table>
+[% END %]
+
+[% PROCESS detailed_footer.html %]
+[%# /Page playlist.html %]

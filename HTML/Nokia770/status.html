@@ -1,0 +1,336 @@
+[%# Page status.html %]
+<!-- status.html -->
+[% pagetitle = BLOCK %]
+[%- playermodel | string %] : [% "PLAYING" | string -%]
+[%- END -%]
+[% IF player_name %][% player_name = player_name %][% END %]
+[% player.name %]
+[%- pageicon = 'MUSIC'
+    setup    = '1'
+    music    = '0'
+    playlist = '0'
+    status   = '1' -%]
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
+
+<table width = '100%' bgcolor="#EEEEEE" border="0" cellspacing="2" cellpadding="2">
+
+<tr>
+	<td valign = 'top' align = 'left' width = '150px'>
+		[% INCLUDE cover_art_display %]
+	</td>
+	<td valign = 'top' align = 'left' width = '650px'>
+		[% INCLUDE song_info_display %]
+	</td>
+</tr>
+
+<tr bgcolor = 'white'>
+	<td colspan = 2>
+	<table width = 100%>
+	<tr>
+		<td width = '50%'>
+		[% INCLUDE player_controls %]
+		</td>
+		<td width = '50%'>
+		[% INCLUDE volume_settings %]
+		</td>
+	</tr>
+	</table>
+	</td>
+</tr>
+
+<tr bgcolor = 'white'>
+	<td colspan = 2>
+	<table width = 100%>
+	<tr>
+		<td width = '50%'>
+			[% INCLUDE repeat_settings %]
+		</td>
+		<td width = '50%'>
+			[% INCLUDE shuffle_settings %]
+		</td>
+	</tr>
+	</table>
+	</td>
+</tr>
+
+<!-- It is my opinion that bass treble is fairly worthless in this context. If you disagree, feel free to uncomment this-->
+<!--
+<tr>
+	<td colspan = 2>
+		[% INCLUDE bass_treble %]
+	</td>
+</tr>
+-->
+</table>
+
+[% PROCESS detailed_footer.html %]
+
+[%# /Page status.html %]
+
+[% BLOCK bass_treble %]
+<table>
+	<tr>
+	<td>
+	[% FOREACH tone = ['bass','treble'] %]
+		<table width="100%" border="0" cellspacing="0" cellpadding="4">
+		<tr>
+			<td><img src="html/images/[% tone %]_symbol.gif" width = 50></td>
+			[% FOREACH level=['10','20','30','40','50','60','70','80','90','100'] %]
+			<td width="25" onclick="location.href='status.html?p0=mixer&p1=[% tone %]&p2=[% level %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
+			<img src="html/images/bar[% IF $tone == level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*3 %]"></td>
+			[% END %]
+			<td></td>
+		</tr>
+		</table>
+	[% END %]
+	</td>
+	</tr>
+</table>
+
+[% END %]
+
+[% BLOCK repeat_settings %]
+
+<table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
+	<tr>
+		<td width="100"><img src="html/images/repeat_symbol.gif"></td>
+		[% FOREACH type= ['off_symbol','song_symbol','playlist_symbol'] %]
+		<td align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]'">
+		<img src="html/images/[% type %][% IF repeat==loop.index %]_active[% END %].gif" border="0" width = '20' height = '20'></a>
+		</td>
+		[% END %]
+	</tr>
+</table>
+
+[% END %]
+
+[% BLOCK shuffle_settings %]
+
+<table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
+	<tr>
+		<td width = '100'><img src="html/images/shuffle_symbol.gif"></td>
+		[% FOREACH type = ['off_symbol','song_symbol','album_symbol'] %]
+		<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]'">
+			<img src="html/images/[% type %][% IF shuffle==loop.index %]_active[% END %].gif" border="0" width="20" height="20"></a>
+		</td>
+		[% END %]
+	</tr>
+</table>
+
+[% END %]
+
+[% BLOCK cover_art_display %]
+	<table bgcolor="#EEEEEE" cellspacing="0" cellpadding="0">
+		<tr>
+		<td>
+		[% IF coverThumb -%]
+			<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="150" %]
+		[% ELSE -%]   
+			<img src="html/images/nocoverart.gif" width = '150' height="150" STYLE="border: 1px solid black">
+		[%- END %]
+		</td>
+		</tr>
+	</table>
+[% END %]
+
+[% BLOCK song_info_display %]
+	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class = 'smalltext' valign = 'top' colspan = '2'>
+			[% IF modeplay %][% "PLAYING" | string %][% END %]
+			[% IF modepause %][% "PAUSED_ON" | string %][% END %]
+			[% IF modestop %][% "STOPPED_ON" | string %][% END %]
+			[% IF currentsong %]<b>[% currentsong %]</b>&nbsp;[% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
+			<a href="status.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[zap]</a>
+			</td>
+		</tr>
+		<tr>
+			<td class = 'normaltext' valign = 'top'>[% "TITLE" | string %]:</td>
+			<td class = 'normaltext'>
+			[% IF songtitle %]
+			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% songtitle %]</a>
+			[% END %]
+			</td>
+		</tr>
+		<tr>
+			<td class="normaltext" valign = 'top'>[% "ARTIST" | string %]:</td>
+			<td class = 'normaltext'>
+			[% IF itemobj.artist.id %]
+			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.artist %]</a>
+[% END %]
+			</td>
+		</tr>
+		<tr>
+			<td class = 'normaltext' valign = 'top'>[% "ALBUM" | string %]:</td>
+			<td class = 'normaltext'>
+			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.album %]</a>
+			[% END %]
+			</td>
+		</tr>
+		<tr>
+			<td class="normaltext" valign = 'top'>[% "GENRE" | string %]:</td>
+			<td class = 'normaltext'>
+			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.genre %]</a>[% END %]
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			[% IF player_chooser_list %]
+			<form method="get" action="[% webroot %][% path %]">
+				<select name="player" onChange="submit();">
+				[% player_chooser_list %]
+				</select>
+			</form>
+			[% END %]
+			</td>
+		</tr>
+	</table>
+	
+<script language="JavaScript">
+<!--
+/*
+	var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% END %][% IF not durationseconds %][% refresh %][% END %];
+	var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
+	var p = 1;
+	setTimeout( "refresh()", [% refresh %]*1000);
+
+function refresh() {
+	window.location.replace("[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
+}
+
+// Update the progress dialog with the current state
+function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]	
+	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+	if (document.all)
+		{
+			p = (document.body.clientWidth * 0.8 / _progressEnd) * _progressAt;
+			//document.all.progressBar.innerWidth = p+" ";
+			eval("document.progressBar.width=p");
+		}
+
+	else if (document.getElementById)
+		{
+			p = (document.width * 0.8 / _progressEnd) * _progressAt;
+			document.getElementById("progressBar").width=p+" ";
+			//eval("document.progressBar.width=p");
+		}
+			setTimeout("ProgressUpdate()", 1000);
+		}
+
+function Click()
+	{
+		if (document.all||document.getElementById)
+		document.write('<center><table width="80%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="5"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="5"></td></table>');
+		ProgressUpdate()
+	}
+
+if (document.all||document.getElementById)
+	Click()
+	else
+		window.onload=Click
+
+*/
+-->
+
+</script>
+[% END %]
+
+[% BLOCK player_controls %]
+<table class = 'thinborder' width = 100%>
+	<tr>
+	<td>
+	<table bgcolor="#FFFFFF" border="0" cellspacing="10" cellpadding="0" width = 100%>
+		<tr align="center">
+
+		<td onclick="location.href='status.html?p0=play&player=[% playerURI %]'">
+[% IF modeplay %]<img src="html/images/smaller/play[% IF rateval == '1' %]_active[% END %].gif" border="0">[% END %]
+[% IF not modeplay %]<img src="html/images/smaller/play.gif" border="0">[% END %]
+		</td>
+        
+		<td onclick="location.href='status.html?p0=pause&player=[% playerURI %]'">
+		<img src="html/images/smaller/pause[% IF modepause %]_active[% END %].gif" border="0">
+		</td>
+        
+		<td onclick="location.href='status.html?p0=stop&player=[% playerURI %]'">
+		<img src="html/images/smaller/stop[% IF modestop %]_active[% END %].gif" border="0">
+		</td>   
+        
+		<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]'" onMouseDown="document.prev.src = 'html/images/smaller/prev_active.gif';">
+<img src="html/images/smaller/prev.gif" border="0" name="prev">
+		</td>
+      
+<!-- ffw and rewind are really lame from a web browser. really lame
+
+<td onclick="location.href='status.html?p0=rate&p1=-2&player=[% playerURI %]&start=[% start %]'" onMouseDown="document.rew.src = 'html/images/smaller/rew_active.gif';">
+<img src="html/images/smaller/rew[% IF rateval < '0' %]_active[% END %].gif" border="0" name="rew"></td>
+
+<td onclick="location.href='status.html?p0=rate&p1=2&player=[% playerURI %]&start=[% start %]'" onMouseDown="document.ffw.src = 'html/images/smaller/ffw_active.gif';">
+<img src="html/images/smaller/ffw[% IF rateval > '1' %]_active[% END %].gif" border="0" name="ffw"></td>
+
+-->
+
+		<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]'" onMouseDown="document.next.src = 'html/images/smaller/next_active.gif';">
+<img src="html/images/smaller/next.gif" border="0" name="next">
+		</td>
+
+	</tr>
+	</table>
+</td></tr>
+</table>
+
+[% END %]
+
+[% BLOCK volume_settings %]
+<table class = 'thinborder' width = 100% cellpadding = '3'>
+	[% IF isplayer %]
+	<tr>
+	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
+
+	[% IF volume < 39 ;vol=['5','10','15','20','30',40]; ELSE ;vol=['5','10','15','20','30','40','50','60','80','100']; END %]
+	[% FOREACH level IN vol %]
+	<td width="25" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% level %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
+<img src="html/images/bar[% IF volume == level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*4 %]">
+	</td>
+	[% END %]
+	</tr>
+	[% END %]
+</table>
+
+[% END %]
+
+[% BLOCK sleep_settings %]
+<table width="100%" border="0" cellspacing="0" cellpadding="7" align="left">
+	<tr>
+		<td>
+		<A href="status.html?p0=button&p1=sleep&player=[% playerURI %]" style="text-decoration:none"><p align="left">
+		<img src="html/images/zzz_symbol.gif" border="0"></a>
+		</td>
+
+		<td align="center">
+		[% IF sleeptime == '0' %]<img src="html/images/Sleep00_active.gif" border="0" width="40" height="40">[% END %]
+		[% IF sleeptime %]<img src="html/images/Sleep00.gif" border="0" width="40" height="40">[% END %]
+		</td>
+
+		<td align="center">
+		[% IF sleeptime == '15' %]<img src="html/images/Sleep15_active.gif" border="0" width="40" height="40">[% END %]
+		[% IF sleeptime != '15' %]<img src="html/images/Sleep15.gif" border="0" width="40" height="40">[% END %]
+		</td>
+
+		<td align="center">
+		[% IF sleeptime == '30' %]<img src="html/images/Sleep30_active.gif" border="0" width="40" height="40">[% END %]
+		[% IF sleeptime != '30' %]<img src="html/images/Sleep30.gif" border="0" width="40" height="40">[% END %]
+		</td>
+
+		<td align="center">
+		[% IF sleeptime == '45' %]<img src="html/images/Sleep45_active.gif" border="0" width="40" height="40">[% END %]
+		[% IF sleeptime != '45' %]<img src="html/images/Sleep45.gif" border="0" width="40" height="40">[% END %]
+		</td>
+
+		<td align="center">
+		[% IF sleeptime == '60' %]<img src="html/images/Sleep60_active.gif" border="0" width="40" height="40">[% END %]
+		[% IF sleeptime != '60' %]<img src="html/images/Sleep60.gif" border="0" width="40" height="40">[% END %]
+		</td>
+	</tr>
+</table>
+[% END %]

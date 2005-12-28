@@ -1,0 +1,26 @@
+<!-- pageheader.html -->
+<html>
+      <head>
+            [% PROCESS standardheader.html %]
+      </head>
+
+<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>
+
+<!--preload play/add/delete/next icons; this is an effort to have the 770 browser not screw up the rendering of the table on every other load. don't think it's gonna do the trick, but it can't hurt to try...-->
+<div style = 'display: none;'>
+<img src = "play.this.gif">
+<img src = "add.gif"> 
+<img src = "next.gif"> 
+<img src = "queue.gif"> 
+<img src = "remove.gif">
+<img src = "info.gif">
+</div>
+
+<table width="100%" bgcolor="#333333">
+      <tr>
+      <td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17">
+      [% IF player_name %]<font class="statusbartext">[% player_name %]</font>[% END %]
+      </td>
+      </tr>
+</table>
+<!-- /Element pageheader.html -->

@@ -1,0 +1,18 @@
+<!--artistsAsHTML.html-->
+[% UNLESS noby %][% "BY" | string %] [% END %]
+[%- FILTER null %]
+[% contributorsHTML = [] %]
+
+[% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
+
+	[% contributor = contributorTuple.artist %]
+	[% attrs  = contributorTuple.attributes | html %]
+	[% target = notarget ? '' : 'target="browser"' %]
+
+	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=artist,album,track&amp;$attrs&amp;level=1&amp;player=$playerURI\" $target >$contributor.name</a>" %]
+
+	[% contributorsHTML.push(contributorHTMLFrag) %]
+
+[% END %]
+[% END -%]
+[% contributorsHTML.join(', ') %]

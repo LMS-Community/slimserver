@@ -1,0 +1,31 @@
+<!--status_list.html-->
+[%# Element status_list.html %]
+<tr [% IF not item.odd %]bgcolor="#EEEEEE"[% END %]>
+	<td class = 'numbertext'>
+		<a name=[% item.num %]>&nbsp;[% item.num + 1 %].</a>
+	</td>
+	<td align = 'left'>
+		<a [% PROCESS songinfoItemHRef %]>[% IF item.currentsong %]<font class="playingitemtext">[[% END %][% IF not item.currentsong %][% END %]<font class="itemtext">[% item.title %][% IF item.currentsong %]<font class="playingitemtext">&nbsp;][% END %]</a></font>
+	</td>
+	<td align="right" class = 'actiontext'><nobr>[% num = item.num; useStart = 1 %]
+		<a [% PROCESS cmdHRef cmdType = 'jump' %]>
+		[% "PLAY" | string %]
+		</a>
+	   |
+           <a [% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind %]>
+	   [% "NEXT" | string %]
+	   </a>
+	   |
+           <a [% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           %]>
+           [% "UP" | string %]
+           </a>
+  
+           |<a [% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown        %]>
+           [% "DOWN" | string %]
+           </a>
+   
+           |<a [% PROCESS cmdHRef cmdType = 'delete' %]>
+           [% "DELETE" | string %]
+           </a></td></nobr>
+</tr>
+[%# /Element status_list.html %]
