@@ -24,6 +24,12 @@
 	</td>
 </tr>
 
+<tr>
+	<td colspan = 2 valign = 'top' align = 'left' width = '100%'>
+	[% INCLUDE progress_bar_display %]
+	</td>
+</tr>
+
 <tr bgcolor = 'white'>
 	<td colspan = 2>
 	<table width = 100%>
@@ -187,9 +193,11 @@
 		</tr>
 	</table>
 	
+[% END %]
+
+[% BLOCK progress_bar_display %]
 <script language="JavaScript">
 <!--
-/*
 	var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% END %][% IF not durationseconds %][% refresh %][% END %];
 	var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
 	var p = 1;
@@ -221,7 +229,7 @@ function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]
 function Click()
 	{
 		if (document.all||document.getElementById)
-		document.write('<center><table width="80%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="5"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="5"></td></table>');
+		document.write('<table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td></table>');
 		ProgressUpdate()
 	}
 
@@ -230,7 +238,6 @@ if (document.all||document.getElementById)
 	else
 		window.onload=Click
 
-*/
 -->
 
 </script>
