@@ -1,9 +1,7 @@
 <!--browsedb_artwork.html-->
 <div align="center" width="100%" style="float:left">
-	<font size="+3">
-	<center>
 
-	<table class="even" cellpadding="5" cellspacing="0" border="0" align="left">
+	<table cellpadding="5" cellspacing="0" align="left" class = 'thinborder'>
 	<tr>
 		<td width="[% size %]">
 		[% IF item.coverThumb %]
@@ -43,8 +41,29 @@
 		</tr>
 			<center><table cellspacing="0" cellpadding="0"><tr><td align="center">
 	-->
-	<tr><td align = 'center' valign = 'top'><table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
+	<tr>
+		<td align = 'center' valign = 'top'>
+		<table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
+<!-- failed attempt to print the album/artist in the browse artwork page
+			<tr>
+				<td colspan = 4 class = 'supertinytext' align = 'center' width = '80'>
+				[%# album title %]
+				[% item.artist | html %] - [% item.item | html %]
+				</td>
+			</tr>
+-->
+			<tr>
+       			 [% PROCESS browsecontrols
+       	         itemobj = item.itemobj
+       	         attributes = item.attributes
+       	         odd = item.odd
+       	         mixerlinks = item.mixerlinks %]
+			</tr>
+		</table>
+		</td>
+	</tr>
 
+<!--
 	[% newpath = 'playlist.html' %]
 	<tr>
 		<td>
@@ -66,7 +85,6 @@
 			<font class="actiontext">[% "DELETE" | string %]</a></font>
 		</td>
 	</tr>
+-->
 	</table>
-	</td>
-</tr></table>
 </div>
