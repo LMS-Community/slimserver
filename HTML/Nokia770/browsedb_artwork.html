@@ -45,23 +45,24 @@
 	-->
 	<tr><td align = 'center' valign = 'top'><table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
 
+	[% newpath = 'playlist.html' %]
 	<tr>
 		<td>
-			<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% item.attributes %]&player=[% playerURI %]">
+			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=loadtracks[% item.attributes %]&player=[% playerURI %]">
 			<font class="actiontext">[% "PLAY" | string %]</a>
 		</td>
 		<td>
-			<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% item.attributes | html %]&player=[% playerURI %]">
+			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=inserttracks[% item.attributes | html %]&player=[% playerURI %]">
 			<font class="actiontext">[% "NEXT" | string %]</a>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<a href="[% webroot %][% path %]?command=playlist&subcommand=addtracks[% item.attributes %]&player=[% playerURI %]">
+			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=addtracks[% item.attributes %]&player=[% playerURI %]">
 			<font class="actiontext">[% "ADD" | string %]</a></font>
 		</td>
 		<td>
-			<a href="[% webroot %][% path %]?command=playlist&subcommand=deletetracks[% item.attributes | html %]&player=[% playerURI %]">
+			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=deletetracks[% item.attributes | html %]&player=[% playerURI %]">
 			<font class="actiontext">[% "DELETE" | string %]</a></font>
 		</td>
 	</tr>
