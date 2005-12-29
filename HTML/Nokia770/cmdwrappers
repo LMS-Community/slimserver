@@ -1,9 +1,9 @@
 [%- FILTER null %]
-[% statusroot = 'playlist.html' %]
+[% statusroot = 'status.html' %]
 [% noHomeLink = 1 %]
 
 [% BLOCK cmdlink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="20" align="center">
+<td class="[% isCurrent ? "listing2" : "listing" %]" align="center">
 	<p><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 align="center" height="11"  alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]' onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
 </td>
 [% END %]
