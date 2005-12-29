@@ -32,10 +32,6 @@
 
 		<td><center><a href="home.html?browse_radio=1&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/smaller/radio_active.gif';"><img src="html/images/smaller/radio.gif" name="bild8" border="0"></a></td>
 
-		<td align="center">
-			<a href="search.html?type=artist&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/smaller/search_active.gif';"><img src="html/images/smaller/search.gif" name="bild7" border="0"></a>
-		</td>
-
 	<tr>
 	[% IF not nofolder %]
 		<td align="center" class="menutext">[% "MUSIC" | string %]</td>
@@ -43,7 +39,6 @@
 		<td align="center" class="menutext">[% "COVERART" | string %]</td>
 		<td align="center" class="menutext">[% "ARTIST" | string %]</td>
 		<td align="center" class = 'menutext'>[% "RADIO" | string %]</td>
-		<td align="center" class = 'menutext'>[% "SEARCH" | string %]</td>
 	</tr>
 
 	<tr>
@@ -55,10 +50,12 @@
 <center><img src="html/images/smaller/album.gif" name="bild4" border="0"></a>
 		</td>
 
+<!--
 		<td align="center">
 			<a href="[% webroot %]hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/smaller/statistics_active.gif';">
 <center><img src="html/images/smaller/statistics.gif" name="bild9" border="0"></a>
 		</td>
+-->
 
 		<td><a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/smaller/playlist_active.gif';">
 <center><img src="html/images/smaller/playlist.gif" border="0" name="bild1"></a></td>
@@ -67,13 +64,18 @@
 			<a href="browsedb.html?hierarchy=genre,artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/smaller/genre_active.gif';">
 <center><img src="html/images/smaller/genre.gif" name="bild2" border="0"></a>
 		</td>
+		<td align="center">
+			<a href="search.html?type=artist&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/smaller/search_active.gif';"><img src="html/images/smaller/search.gif" name="bild7" border="0"></a>
+		</td>
+
 	</tr>
 
 	<tr>
 		<td align="center" class="menutext">[% "ALBUM" | string %]</td>
-		<td align="center" class="menutext">Statistics</td>
+<!--		<td align="center" class="menutext">Statistics</td>-->
 		<td align="center" class="menutext">[% "PLAYLIST" | string %]</td>
 		<td align="center" class="menutext">[% "GENRE" | string %]</td>
+		<td align="center" class = 'menutext'>[% "SEARCH" | string %]</td>
 	</tr>
 	[% ELSE %]
 
@@ -96,11 +98,13 @@
 </table>
 <table width="100%" bgcolor="#666666">
 	<tr>
-		<td align="right">
-			<a href="html/about.html" style="text-decoration:none"><font class="statusbartext">About</a>&nbsp;|&nbsp;</font>
-			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=server"><font class="statusbartext">Server Settings</a>&nbsp;|&nbsp;</font>
-			<a class = 'statusbartext' href="[% webroot %]setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]"><font class = 'statusbartext'>[% "PLAYER_SETTINGS" | string %]</a>&nbsp;|&nbsp;</font>
-			<a href="home.html?p0=rescan" style="text-decoration:none"><font class="statusbartext">[% "SETUP_RESCAN" | string %]</a></font>
+		<td align="right" class = 'statusbartext'>
+			<a href="[% webroot %]hitlist.html" class = 'statusbartext'>Statistics</a>
+			&nbsp;|&nbsp;
+			<a href="html/about.html" style="text-decoration:none" class="statusbartext">About</a>&nbsp;|&nbsp;
+			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=server" class="statusbartext">Server Settings</a>&nbsp;|&nbsp;
+			<a class = 'statusbartext' href="[% webroot %]setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" class = 'statusbartext'>[% "PLAYER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
+			<a href="home.html?p0=rescan" style="text-decoration:none" class="statusbartext">[% "SETUP_RESCAN" | string %]</a>
 		</td>
 		<td width="4"></td>
 	</tr>
