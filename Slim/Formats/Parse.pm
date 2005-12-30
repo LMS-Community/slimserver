@@ -600,6 +600,10 @@ sub readCUE {
 		}
 
 		push @items, $track->{'URI'}; #url;
+		
+		# Bug 1855: force track size metadata from basetrack into indexed track.
+		# this forces the basetrack object expansion as well, so other metadata
+		$track->{'SIZE'} = $basetrack->audio_size;
 
 		# our tracks won't be visible if we don't include some data from the base file
 		for my $attribute (keys %$basetrack) {
@@ -653,7 +657,7 @@ sub processAnchor {
 		return 0;
 	}
 
-	my $byterate   = $attributesHash->{'AUDIO_SIZE'} / $attributesHash->{'SECS'};
+	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
 	my $header     = $attributesHash->{'OFFSET'} || 0;
 	my $startbytes = int($byterate * $start);
 	my $endbytes   = int($byterate * $end);
@@ -662,7 +666,7 @@ sub processAnchor {
 	$endbytes   -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
 			
 	$attributesHash->{'OFFSET'} = $header + $startbytes;
-	$attributesHash->{'AUDIO_SIZE'} = $endbytes - $startbytes;
+	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 	$attributesHash->{'SECS'} = $duration;
 
 	if ($::d_parse) {
