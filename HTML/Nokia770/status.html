@@ -229,7 +229,7 @@ function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]
 function Click()
 	{
 		if (document.all||document.getElementById)
-		document.write('<table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td></table>');
+		document.write('<table width="100%" class = "thinborder" cellspacing="0" cellpadding="0">[% IF itemobj.duration %]<td width = "10" class = "smalltext" nowrap>0:00</td>[% END %]<td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td>[% IF itemobj.duration %]<td width = "10" class = "smalltext" nowrap>[% itemobj.duration %]</td>[% END %]</table>');
 		ProgressUpdate()
 	}
 
@@ -242,6 +242,8 @@ if (document.all||document.getElementById)
 
 </script>
 [% END %]
+
+		<!--document.write('<table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td></table>');-->
 
 [% BLOCK player_controls %]
 <table class = 'thinborder' width = 100%>
