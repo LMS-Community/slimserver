@@ -10,8 +10,10 @@ $files{'search'}++;
 $files{'genre'}++;
 $files{'artwork'}++;
 $files{'folder'}++;
+$files{'random'}++;
 
-my $command = '/usr/bin/convert -geometry 100x100 ';
+my $dimension = $ARGV[0] || 140;
+my $command = "/usr/bin/convert -geometry ${dimension}x${dimension} ";
 opendir(DIR,".");
 while(my $file = readdir(DIR)) {
 	for my $key (sort keys %files) {
@@ -24,4 +26,3 @@ while(my $file = readdir(DIR)) {
 	}
 }
 closedir(DIR);
-my $command = 'convert -geometry 100x100 ';
