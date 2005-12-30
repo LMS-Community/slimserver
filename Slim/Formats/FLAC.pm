@@ -20,6 +20,7 @@ use strict;
 use Audio::FLAC::Header;
 use File::Basename;
 use IO::Seekable qw(SEEK_SET);
+use MIME::Base64 qw(decode_base64);
 
 use Slim::Formats::Parse;
 use Slim::Utils::Misc;
@@ -38,9 +39,14 @@ my %tagMapping = (
 	'MUSICBRAINZ_SORTNAME'		=> 'MUSICBRAINZ_SORTNAME',
 	'MUSICBRAINZ_TRACKID'		=> 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ_TRMID'		=> 'MUSICBRAINZ_TRM_ID',
+
+	# J.River once again.. can't these people use existing standards?
+	'REPLAY GAIN'			=> 'REPLAYGAIN_TRACK_GAIN',
+	'PEAK LEVEL'			=> 'REPLAYGAIN_TRACK_PEAK',
 );
 
 my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUMBER DATE);
+my $tagCache = [];
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
@@ -160,21 +166,26 @@ sub getTag {
 sub getCoverArt {
 	my $file = shift;
 
+	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+
+		my $artwork = $tagCache->[1]->{'ARTWORK'};
+
+		# Invalidate the cache
+		$tagCache = [];
+
+		return $artwork;
+	}
+
 	my $flac = Audio::FLAC::Header->new($file) || do {
-		errorMsg("Couldn't open file: [$file] for reading: $!\n");
+		errorMsg("FLAC: Couldn't open file: [$file] for reading: $!\n");
 		return;
 	};
 
-	my $artwork = '';
+	my $tags = $flac->tags() || {};
 
-	if ($artwork = $flac->application($ESCIENT_ARTWORK)) {
+	addArtworkTags($flac, $tags);
 
-		if (substr($artwork, 0, 4, '') eq 'PIC1') {
-			return $artwork;
-		}
-	}
-
-	return $artwork;
+	return $tags->{'ARTWORK'};
 }
 
 # Given a file, return a hash of name value pairs,
@@ -199,6 +210,9 @@ sub getStandardTag {
 
 	doTagMapping($tags);
 	addInfoTags($flac, $tags);
+	addArtworkTags($flac, $tags);
+
+	$tagCache = [ $file, $tags ];
 
 	return $tags;
 }
@@ -248,6 +262,26 @@ sub addInfoTags {
 	$tags->{'SS'}	    = int $tags->{'SECS'} % 60;
 	$tags->{'MS'}	    = (($tags->{'SECS'} - ($tags->{'MM'} * 60) - $tags->{'SS'}) * 1000);
 	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
+}
+
+sub addArtworkTags {
+	my ($flac, $tags) = @_;
+
+	# As seen in J.River Media Center FLAC files.
+	if ($tags->{'COVERART'}) {
+
+		$tags->{'ARTWORK'} = decode_base64($tags->{'COVERART'});
+
+		delete $tags->{'COVERART'};
+
+	} elsif (my $artwork = $flac->application($ESCIENT_ARTWORK)) {
+
+		if (substr($artwork, 0, 4, '') eq 'PIC1') {
+			$tags->{'ARTWORK'} = $artwork;
+		}
+	}
+
+	return $tags;
 }
 
 sub getSubFileTags {
