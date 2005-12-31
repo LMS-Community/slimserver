@@ -8,11 +8,20 @@ scrollbar-3dlight-color: white;
 scrollbar-darkshadow-color: white;
 scrollbar-shadow-color: white;
 scrollbar-arrow-color: black;
+background-color: "#333333";
+color: "#666666";
+
+left-margin: 0px;
+top-margin: 0px;
+
 }
+/*leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>
+*/
 
 a:hover, a:visited, a:active, a:link
 {
 text-decoration:none;
+color: #666666;
 }
 
 a:hover
@@ -27,13 +36,13 @@ font-family: Arial, Helvetica, sans-serif;
 
 .itemtext
 {
-font-size: 22px;
+font-size: 32px;
 text-decoration: none;
 }
 
 .numbertext
 {
-font-size: 12px;
+font-size: 14px;
 }
 
 .actiontext
@@ -48,7 +57,7 @@ font-size: 26px;
 
 .playingitemtext
 {
-font-size: 22px;
+font-size: 32px;
 color: #BB5544;
 }
 
@@ -59,7 +68,8 @@ font-size: 20px;
 
 .menutext
 {
-font-size: 14px;
+font-size: 18px;
+font-weight: bold;
 color: #888888;
 }
 
@@ -75,11 +85,22 @@ color: #FFFFFF;
 text-decoration: none;
 }
 
+a.statusbartext {
+	color: white;
+}
+a.statusbartext:hover {
+	color:#AAAA44;
+}
 .smalltext
 {
 font-size: 14px;
 }
 
+.smallwhitetext
+{
+font-size: 14px;
+color: white;
+}
 .supertinytext
 {
 font-size: 8px;
@@ -91,7 +112,7 @@ font-size: 16px;
 }
 
 .logotext
-{font-size: 30;
+{font-size: 26px;
 }
 
 table.thinborder { border: 1px solid black;}
@@ -99,4 +120,11 @@ table.noborder { border: none;}
 
 div#hidden {
 	display: none;
+}
+
+tr.odd, td.odd {
+	background-color: #d0d0d0;
+}
+tr.even, td.even {
+	background-color: #FFFFFF;
 }

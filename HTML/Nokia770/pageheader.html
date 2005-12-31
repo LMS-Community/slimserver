@@ -4,7 +4,7 @@
             [% PROCESS standardheader.html %]
       </head>
 
-<body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>
+<body bgcolor = '#666666' marginwidth=0 marginheight=0>
 
 <!--preload play/add/delete/next icons; this is an effort to have the 770 browser not screw up the rendering of the table on every other load. don't think it's gonna do the trick, but it can't hurt to try...-->
 <div style = 'display: none;'>
@@ -19,9 +19,9 @@
 <table width="100%" bgcolor="#333333">
       <tr>
       <td><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0">
-      [% IF player_name %]<font class="statusbartext">[% player_name %]</font>[% END %]
       </td>
-	<td><!-- this is where the player choose would go--></td>
-      </tr>
+	<td align = 'right' class = 'smallwhitetext'>
+[% IF player_chooser_list %]<form method="get" >Currently selected player:<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">>[% player_chooser_list %]</select></form>[% END %]
+</td></tr>
 </table>
 <!-- /Element pageheader.html -->
