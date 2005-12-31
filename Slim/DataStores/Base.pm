@@ -102,7 +102,7 @@ sub init {
 					return [];
 				}
 
-				if (Slim::Utils::Prefs::get('noGenreFilter')) {
+				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'genre'}) {
 
 					if (defined $findCriteria->{'album'}) {
 
@@ -323,7 +323,9 @@ sub init {
 					$findCriteria->{'contributor.role'} = $roles;
 				}
 
-				if (Slim::Utils::Prefs::get('noGenreFilter') && defined $findCriteria->{'artist'}) {
+				if (Slim::Utils::Prefs::get('noGenreFilter') && 
+					defined $findCriteria->{'genre'} &&
+					defined $findCriteria->{'artist'}) {
 
 					# Don't filter by genre - it's unneccesary and
 					# creates a intensive query. We're already at
