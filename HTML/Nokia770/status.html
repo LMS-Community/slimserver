@@ -16,22 +16,42 @@
 <table width = '100%' bgcolor="#EEEEEE" border="0" cellspacing="2" cellpadding="2">
 
 <tr>
-	<td valign = 'top' align = 'left' width = '150px'>
+	<td valign = 'top' align = 'left' width = '200px'>
 		[% INCLUDE cover_art_display %]
 	</td>
-	<td valign = 'top' align = 'left' width = '650px'>
+	<td valign = 'top' align = 'left'>
 		[% INCLUDE song_info_display %]
+	</td>
+	<td valign = 'bottom' align = 'right'>
+		<table class = 'thinborder' bgcolor = 'white'>
+		[% IF not playlist_items %]
+			<tr><td class = 'supertinytext'>Playlist for this player is empty</td></tr>
+		[% ELSE %]
+			<tr><td colspan = '2' align = 'left' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
+			[% FOREACH item = playlist_items %]
+			[% IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END %]
+			[% END %]
+			[% FOREACH item = playlist_items %]
+				[% NEXT IF item.num < previous %]
+				[% LAST IF item.num > next %]
+				[% PROCESS playlist_row 
+					previous = previous 
+					next = next
+				%]
+			[% END %]
+		[% END %]
+		</table>
 	</td>
 </tr>
 
 <tr>
-	<td colspan = 2 valign = 'top' align = 'left' width = '100%'>
+	<td colspan = 3 valign = 'top' align = 'left' width = '100%'>
 	[% INCLUDE progress_bar_display %]
 	</td>
 </tr>
 
 <tr bgcolor = 'white'>
-	<td colspan = 2>
+	<td colspan = 3>
 	<table width = 100%>
 	<tr>
 		<td width = '50%'>
@@ -46,7 +66,7 @@
 </tr>
 
 <tr bgcolor = 'white'>
-	<td colspan = 2>
+	<td colspan = 3>
 	<table width = 100%>
 	<tr>
 		<td width = '50%'>
@@ -63,7 +83,7 @@
 <!-- It is my opinion that bass treble is fairly worthless in this context. If you disagree, feel free to uncomment this-->
 <!--
 <tr>
-	<td colspan = 2>
+	<td colspan = 3>
 		[% INCLUDE bass_treble %]
 	</td>
 </tr>
@@ -131,9 +151,9 @@
 		<tr>
 		<td>
 		[% IF coverThumb -%]
-			<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="150" %]
+			<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="200" %]
 		[% ELSE -%]   
-			<img src="html/images/nocoverart.gif" width = '150' height="150" STYLE="border: 1px solid black">
+			<img src="html/images/nocoverart.gif" width = '200' height="200" STYLE="border: 1px solid black">
 		[%- END %]
 		</td>
 		</tr>
@@ -143,7 +163,7 @@
 [% BLOCK song_info_display %]
 	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td class = 'smalltext' valign = 'top' colspan = '2'>
+			<td class = 'smalltext' valign = 'top' colspan = '2' nowrap>
 			[% IF modeplay %][% "PLAYING" | string %][% END %]
 			[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 			[% IF modestop %][% "STOPPED_ON" | string %][% END %]
@@ -152,36 +172,36 @@
 			</td>
 		</tr>
 		<tr>
-			<td class = 'normaltext' valign = 'top'>[% "TITLE" | string %]:</td>
-			<td class = 'normaltext'>
+			<td class = 'normaltext' valign = 'top' nowrap>[% "TITLE" | string %]:</td>
+			<td class = 'normaltext' nowrap>
 			[% IF songtitle %]
 			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% songtitle %]</a>
 			[% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top'>[% "ARTIST" | string %]:</td>
-			<td class = 'normaltext'>
+			<td class="normaltext" valign = 'top' nowrap>[% "ARTIST" | string %]:</td>
+			<td class = 'normaltext' nowrap>
 			[% IF itemobj.artist.id %]
 			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.artist %]</a>
 [% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class = 'normaltext' valign = 'top'>[% "ALBUM" | string %]:</td>
-			<td class = 'normaltext'>
+			<td class = 'normaltext' valign = 'top' nowrap>[% "ALBUM" | string %]:</td>
+			<td class = 'normaltext' nowrap>
 			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.album %]</a>
 			[% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top'>[% "GENRE" | string %]:</td>
-			<td class = 'normaltext'>
+			<td class="normaltext" valign = 'top' nowrap>[% "GENRE" | string %]:</td>
+			<td class = 'normaltext' nowrap>
 			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.genre %]</a>[% END %]
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2">
+			<td colspan="2" nowrap>
 			[% IF player_chooser_list %]
 			<form method="get" action="[% webroot %][% path %]">
 				<select name="player" onChange="submit();">
@@ -291,7 +311,7 @@ if (document.all||document.getElementById)
 [% END %]
 
 [% BLOCK volume_settings %]
-<table class = 'thinborder' width = 100% cellpadding = '3'>
+<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
 	[% IF isplayer %]
 	<tr>
 	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
@@ -342,4 +362,17 @@ if (document.all||document.getElementById)
 		</td>
 	</tr>
 </table>
+[% END %]
+
+[% BLOCK playlist_row %]
+
+<tr>
+
+	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
+		[% IF item.num == previous %]prev[% ELSIF item.currentsong %]current[% ELSIF item.num == next %]next[% END %]
+	</td>
+	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
+		[% item.title %]
+	</td>
+</tr>
 [% END %]

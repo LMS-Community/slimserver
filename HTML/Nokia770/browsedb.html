@@ -46,7 +46,7 @@
 </table">
 -->
 
-<table width = '100%' class = 'noborder'>
+<table width = '100%' class = 'noborder' bgcolor = 'white'>
 	<tr>
 [% IF coverArt %]
 		<td valign = 'top' width = '205'>
@@ -56,7 +56,7 @@
 		</td>
 [% END %]
 		<td valign = 'top'>
-		<table cellspacing="0" border="0" cellpadding="0" width="100%">
+		<table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor = 'white'>
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]
 					[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]

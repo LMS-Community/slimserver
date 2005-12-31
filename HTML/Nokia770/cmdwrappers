@@ -102,7 +102,12 @@
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         %][% END %]
 	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind %][% END %]
 	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                         %][% END %]
-	[% WRAPPER infolink     %][% PROCESS songinfoItemHRef                                   %][% END %]
+[% END %]
+
+[% BLOCK browsecontrols_abbr %]
+	[% width='20' height='20' target='status' %]
+	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
+	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]

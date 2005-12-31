@@ -96,6 +96,12 @@ a.statusbartext:hover {
 font-size: 14px;
 }
 
+.smallplayingitemtext
+{
+font-size: 12px;
+color: #BB5544;
+}
+
 .smallwhitetext
 {
 font-size: 14px;
@@ -103,7 +109,7 @@ color: white;
 }
 .supertinytext
 {
-font-size: 8px;
+font-size: 12px;
 }
 
 .pagebarheadertext
