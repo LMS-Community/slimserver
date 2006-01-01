@@ -658,14 +658,14 @@ sub processAnchor {
 	}
 
 	my $byterate   = $attributesHash->{'SIZE'} / $attributesHash->{'SECS'};
-	my $header     = $attributesHash->{'OFFSET'} || 0;
+	my $header     = $attributesHash->{'AUDIO_OFFSET'} || 0;
 	my $startbytes = int($byterate * $start);
 	my $endbytes   = int($byterate * $end);
 			
-	$startbytes -= $startbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
-	$endbytes   -= $endbytes % $attributesHash->{'BLOCKALIGN'} if $attributesHash->{'BLOCKALIGN'};
+	$startbytes -= $startbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
+	$endbytes   -= $endbytes % $attributesHash->{'BLOCK_ALIGNMENT'} if $attributesHash->{'BLOCK_ALIGNMENT'};
 			
-	$attributesHash->{'OFFSET'} = $header + $startbytes;
+	$attributesHash->{'AUDIO_OFFSET'} = $header + $startbytes;
 	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 	$attributesHash->{'SECS'} = $duration;
 
