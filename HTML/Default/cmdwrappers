@@ -2,7 +2,7 @@
 [% statusroot = 'status_header.html' %]
 
 [% BLOCK cmdlink %]
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %] width="13">
+<td class="[% class %]" width="13">
 	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a></nobr>
 </td>
 [% END %]
@@ -123,9 +123,12 @@ END %]
 		[% END %]
 		</span>
 
-		<span class="exboldnowplaying"></span>
-
+		[% IF item.currentsong %]
+		<a name="currentsong"></a>
+		<span class="exboldlisting">
+		[% ELSE %]
 		<span class="exlisting">
+		[% END %]
 		[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 
 			[% "FROM" | string %]
