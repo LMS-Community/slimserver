@@ -9,34 +9,16 @@ package Slim::Control::Dispatch;
 
 use strict;
 
-#use File::Basename;
-#use File::Spec::Functions qw(:ALL);
-#use FileHandle;
-#use IO::Socket qw(:DEFAULT :crlf);
-#use Scalar::Util qw(blessed);
-#use Time::HiRes;
-
-use Data::Dumper;
-
-
-#use Slim::DataStores::Base;
-#use Slim::Display::Display;
-#use Slim::Music::Info;
-use Slim::Utils::Misc;
-#use Slim::Utils::Scan;
-#use Slim::Utils::Strings qw(string);
-
-
-
 use Slim::Control::Commands;
 use Slim::Control::Queries;
 use Slim::Control::Request;
+use Slim::Utils::Misc;
 
 our %notifications = ();
 our %dispatchDB;
 
 # COMMAND LIST #
-  
+
 # C     P0             P1                          P2                            P3            P4         P5        P6
         
 # GENERAL
@@ -45,7 +27,7 @@ our %dispatchDB;
 # N    version         ?
 
 # DATABASE    
-# N    rescan          <|playlists|?>    	
+# N    rescan          <|playlists|?>       
 # N    wipecache
 
 # PLAYERS
@@ -64,7 +46,7 @@ our %dispatchDB;
 # Y    mixer           bass                        <0..100|-100..+100|?>
 # Y    mixer           treble                      <0..100|-100..+100|?>
 # Y    mixer           pitch                       <80..120|-100..+100|?>
-# Y    mixer           muting					   <|?>
+# Y    mixer           muting                      <|?>
 
 # PLAYLISTS
 # Y    mode            <play|pause|stop|?>    
@@ -78,7 +60,7 @@ our %dispatchDB;
 # Y    album           ?
 # Y    title           ?
 # Y    duration        ?
-# Y    path	           ?
+# Y    path            ?
 # Y    playlist        name                        ?
 # Y    playlist        url                         ?
 # Y    playlist        modified                    ?
@@ -90,94 +72,90 @@ our %dispatchDB;
 
 # add standard commands and queries to the dispatch hashes...
 sub init {
-#																						 |requires Client
-#																						 |  |is a Query
-#																						 |  |  |has Tags
-#																						 |  |  |  |Function to call
-#                 P0             	P1                   P2              P3              C  Q  T  F
+#                                                                                        |requires Client
+#                                                                                        |  |is a Query
+#                                                                                        |  |  |has Tags
+#                                                                                        |  |  |  |Function to call
+#                 P0                P1                   P2              P3              C  Q  T  F
 
-	addDispatch(['album', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['artist', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['button',			'_buttoncode'],										[1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
-	addDispatch(['connected',		'?'],												[1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
-	addDispatch(['debug', 			'_debugflag', 		'?'], 							[0, 1, 0, \&Slim::Control::Queries::debugQuery]);
-	addDispatch(['debug', 			'_debugflag', 		,'_newvalue'], 					[0, 0, 0, \&Slim::Control::Commands::debugCommand]);
-	addDispatch(['display', 		'?', 				'?'],							[1, 1, 0, \&Slim::Control::Queries::displayQuery]);
-	addDispatch(['display', 		'_line1', 			'_line2', 		'_duration'], 	[1, 0, 0, \&Slim::Control::Commands::displayCommand]);
-	addDispatch(['displaynow', 		'?', 				'?'], 							[1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
-	addDispatch(['duration', 		'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['genre', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['gototime', 		'?'],												[1, 1, 0, \&Slim::Control::Queries::timeQuery]);
-	addDispatch(['gototime', 		'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::timeCommand]);
-	addDispatch(['info', 			'total',			'albums', 		'?'],			[0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
-	addDispatch(['info', 			'total',			'artists', 		'?'],			[0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
-	addDispatch(['info', 			'total',			'genres', 		'?'],			[0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
-	addDispatch(['info', 			'total',			'songs', 		'?'],			[0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
-	addDispatch(['ir',				'_ircode',			'_time'],						[1, 0, 0, \&Slim::Control::Commands::irCommand]);
-	addDispatch(['linesperscreen',	'?'],												[1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
-	addDispatch(['mixer',			'bass', 			'?'],							[1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',			'bass', 			'_newvalue'],					[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mixer',			'muting', 			'?'],							[1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',			'muting', 			'_newvalue'],					[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mixer',			'pitch', 			'?'],							[1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',			'pitch', 			'_newvalue'],					[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mixer',			'treble', 			'?'],							[1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',			'treble', 			'_newvalue'],					[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mixer',			'volume', 			'?'],							[1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
-	addDispatch(['mixer',			'volume', 			'_newvalue'],					[1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-	addDispatch(['mode',			'pause'], 											[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['mode',			'play'], 											[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['mode',			'stop'], 											[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['mode', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::modeQuery]);
-	addDispatch(['path', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['pause', 			'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['play'], 																[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['playlist',		'album',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'artist',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'duration',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'delete',			'_index'],						[1, 0, 0, \&Slim::Control::Commands::playlistdeleteCommand]);
-	addDispatch(['playlist',		'genre',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'index',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'index',			'_index',		'_noplay'],		[1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
-	addDispatch(['playlist',		'jump',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'jump',				'_index',		'_noplay'],		[1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
-	addDispatch(['playlist',		'modified',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'name',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'path',				'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'repeat',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'shuffle',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'title',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'tracks',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'url',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
-	addDispatch(['playlist',		'zap',				'_index'],						[1, 0, 0, \&Slim::Control::Commands::playlistzapCommand]);
-	addDispatch(['playlistcontrol'],													[1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
-	addDispatch(['playerpref', 		'_prefname', 		'?'], 							[1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
-	addDispatch(['playerpref', 		'_prefname', 		'_newvalue'], 					[1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
-	addDispatch(['power', 			'?'], 												[1, 1, 0, \&Slim::Control::Queries::powerQuery]);
-	addDispatch(['power', 			'_newvalue'], 										[1, 0, 0, \&Slim::Control::Commands::powerCommand]);
-	addDispatch(['pref', 			'_prefname', 		'?'], 							[0, 1, 0, \&Slim::Control::Queries::prefQuery]);
-	addDispatch(['pref', 			'_prefname', 		'_newvalue'], 					[0, 0, 0, \&Slim::Control::Commands::prefCommand]);
-	addDispatch(['rate', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::rateQuery]);
-	addDispatch(['rate', 			'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::rateCommand]);
-	addDispatch(['rescan', 			'?'], 												[0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
-	addDispatch(['rescan',			'_playlists'], 										[0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
-	addDispatch(['signalstrength',	'?'],												[1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
-	addDispatch(['sleep',			'?'],												[1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
-	addDispatch(['sleep',			'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::sleepCommand]);
-	addDispatch(['stop'], 																[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	addDispatch(['sync', 			'?'], 												[1, 1, 0, \&Slim::Control::Queries::syncQuery]);
-	addDispatch(['sync', 			'_indexid-'], 										[1, 0, 0, \&Slim::Control::Commands::syncCommand]);
-	addDispatch(['time', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::timeQuery]);
-	addDispatch(['time', 			'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::timeCommand]);
-	addDispatch(['title', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-	addDispatch(['version', 		'?'], 												[0, 1, 0, \&Slim::Control::Queries::versionQuery]);
-	addDispatch(['wipecache'], 															[0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
+    addDispatch(['album',           '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['artist',          '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['button',          '_buttoncode'],                                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
+    addDispatch(['connected',       '?'],                                               [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
+    addDispatch(['debug',           '_debugflag',       '?'],                           [0, 1, 0, \&Slim::Control::Queries::debugQuery]);
+    addDispatch(['debug',           '_debugflag',       ,'_newvalue'],                  [0, 0, 0, \&Slim::Control::Commands::debugCommand]);
+    addDispatch(['display',         '?',                '?'],                           [1, 1, 0, \&Slim::Control::Queries::displayQuery]);
+    addDispatch(['display',         '_line1',           '_line2',       '_duration'],   [1, 0, 0, \&Slim::Control::Commands::displayCommand]);
+    addDispatch(['displaynow',      '?',                '?'],                           [1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
+    addDispatch(['duration',        '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['genre',           '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['gototime',        '?'],                                               [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
+    addDispatch(['gototime',        '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
+    addDispatch(['info',            'total',            'albums',       '?'],           [0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
+    addDispatch(['info',            'total',            'artists',      '?'],           [0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
+    addDispatch(['info',            'total',            'genres',       '?'],           [0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
+    addDispatch(['info',            'total',            'songs',        '?'],           [0, 1, 0, \&Slim::Control::Queries::infototalQuery]);
+    addDispatch(['ir',              '_ircode',          '_time'],                       [1, 0, 0, \&Slim::Control::Commands::irCommand]);
+    addDispatch(['linesperscreen',  '?'],                                               [1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
+    addDispatch(['mixer',           'bass',             '?'],                           [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+    addDispatch(['mixer',           'bass',             '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+    addDispatch(['mixer',           'muting',           '?'],                           [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+    addDispatch(['mixer',           'muting',           '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+    addDispatch(['mixer',           'pitch',            '?'],                           [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+    addDispatch(['mixer',           'pitch',            '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+    addDispatch(['mixer',           'treble',           '?'],                           [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+    addDispatch(['mixer',           'treble',           '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+    addDispatch(['mixer',           'volume',           '?'],                           [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
+    addDispatch(['mixer',           'volume',           '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
+    addDispatch(['mode',            'pause'],                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',            'play'],                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',            'stop'],                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',            '?'],                                               [1, 1, 0, \&Slim::Control::Queries::modeQuery]);
+    addDispatch(['path',            '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['pause',           '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['play'],                                                               [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['playlist',        'album',            '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'artist',           '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'duration',         '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'delete',           '_index'],                      [1, 0, 0, \&Slim::Control::Commands::playlistdeleteCommand]);
+    addDispatch(['playlist',        'genre',            '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'index',            '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'index',            '_index',       '_noplay'],     [1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
+    addDispatch(['playlist',        'jump',             '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'jump',             '_index',       '_noplay'],     [1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
+    addDispatch(['playlist',        'modified',         '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'name',             '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'path',             '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'repeat',           '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'shuffle',          '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'title',            '_index',       '?'],           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'tracks',           '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'url',              '?'],                           [1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+    addDispatch(['playlist',        'zap',              '_index'],                      [1, 0, 0, \&Slim::Control::Commands::playlistzapCommand]);
+    addDispatch(['playlistcontrol'],                                                    [1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
+    addDispatch(['playerpref',      '_prefname',        '?'],                           [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
+    addDispatch(['playerpref',      '_prefname',        '_newvalue'],                   [1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
+    addDispatch(['power',           '?'],                                               [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
+    addDispatch(['power',           '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::powerCommand]);
+    addDispatch(['pref',            '_prefname',        '?'],                           [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
+    addDispatch(['pref',            '_prefname',        '_newvalue'],                   [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
+    addDispatch(['rate',            '?'],                                               [1, 1, 0, \&Slim::Control::Queries::rateQuery]);
+    addDispatch(['rate',            '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::rateCommand]);
+    addDispatch(['rescan',          '?'],                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
+    addDispatch(['rescan',          '_playlists'],                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
+    addDispatch(['signalstrength',  '?'],                                               [1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
+    addDispatch(['sleep',           '?'],                                               [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
+    addDispatch(['sleep',           '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::sleepCommand]);
+    addDispatch(['stop'],                                                               [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['sync',            '?'],                                               [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
+    addDispatch(['sync',            '_indexid-'],                                       [1, 0, 0, \&Slim::Control::Commands::syncCommand]);
+    addDispatch(['time',            '?'],                                               [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
+    addDispatch(['time',            '_newvalue'],                                       [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
+    addDispatch(['title',           '?'],                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['version',         '?'],                                               [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
+    addDispatch(['wipecache'],                                                          [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
-
-	
-#	addDispatch(['status',			'_from', '_to'], 	['!params',		'statusCommand']);
-
-
+#   addDispatch(['status',          '_from', '_to'],    ['!params',     'statusCommand']);
 }
 
 sub addDispatch {
@@ -229,8 +207,6 @@ sub addDispatch {
 	}
 }
 
-
-
 # for the moment, no identified need to REMOVE commands/queries
 
 # add a watcher to be notified of commands
@@ -256,7 +232,6 @@ sub notify {
 		&$notifyFuncRef($request);
 	}
 }
-
 
 # do the job, i.e. dispatch a request
 sub dispatch {
@@ -300,7 +275,6 @@ sub dispatch {
 	}	
 }
 
-
 sub requestFromArray {
 	my $client = shift;
 	my $requestLineRef = shift;
@@ -328,7 +302,7 @@ sub requestFromArray {
 		}
 
 		$debug && msg("..Trying to match [$match]\n");
-		$debug && print Dumper($DBp);
+		$debug && print Data::Dumper::Dumper($DBp);
 
 		# Our verb does not match in the hash 
 		if (!defined $DBp->{$match}) {
@@ -345,7 +319,6 @@ sub requestFromArray {
 			
 				my $foundparam = 0;
 				my $key;
-
 
 				# Can we find a key that starts with '_' ?
 				$debug && msg("...looking for a key starting with _\n");
@@ -408,7 +381,6 @@ sub requestFromArray {
 			$match = $requestLineRef->[++$LRindex];
 		}
 	}
-	
 
 	if (defined $found) {
 		# 0: needs client
@@ -450,7 +422,5 @@ sub requestFromArray {
 	$::d_command && msg("Dispatch::requestFromArray: Request [" . (join " ", @{$requestLineRef}) . "]: no match in dispatchDB!\n");
 	return undef;
 }
-
-
 
 1;
