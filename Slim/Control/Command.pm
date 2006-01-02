@@ -118,35 +118,23 @@ sub execute {
 # Y    playlist        addtracks                   <searchterms>    
 # Y    playlist        inserttracks                <searchterms>    
 # Y    playlist        deletetracks                <searchterms>   
+
 # Y    playlist        play|load                   <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        add|append                  <item>                       [<title>] (item can be a song, playlist or directory)
 # Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
 # Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
 # Y    playlist        move                        <fromindex>                 <toindex>    
-# Y    playlist        delete                      <index>
+
 # Y    playlist        resume                      <playlist>    
 # Y    playlist        save                        <playlist>    
+
 # Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>        <songtitle>
 # Y    playlist        addalbum                    <genre>                     <artist>         <album>        <songtitle>
 # Y    playlist        insertalbum                 <genre>                     <artist>         <album>        <songtitle>
 # Y    playlist        deletealbum                 <genre>                     <artist>         <album>        <songtitle>
 # Y    playlist        clear    
-# Y    playlist        zap                         <index>
-# Y    playlist        name                        ?
-# Y    playlist        url                         ?
-# Y    playlist        modified                    ?
-# Y    playlist        index|jump                  <index|?>    
-# Y    playlist        genre                       <index>                     ?
-# Y    playlist        artist                      <index>                     ?
-# Y    playlist        album                       <index>                     ?
-# Y    playlist        title                       <index>                     ?
-# Y    playlist        duration                    <index>                     ?
-# Y    playlist        tracks                      ?
 # Y    playlist        shuffle                     <0|1|2|?|>
 # Y    playlist        repeat                      <0|1|2|?|>
-
-# Y    playlistcontrol <params>
-
 
 #NOTIFICATION
 # The following 'terms' go through execute for its notification ability, but 
@@ -446,90 +434,92 @@ sub execute {
 #				Slim::Player::Sync::sync($buddy, $client) if defined $buddy;
 #			}
 
-		if ($p0 eq "playlistcontrol") {
-		
- 			$pushParams = 0;
- 	
- 			my $ds     = Slim::Music::Info::getCurrentDataStore();
- 			my %params = parseParams($parrayref, \@returnArray);
- 			my @songs;
- 			my $size = 0;
- 			
- 			if (Slim::Music::Import::stillScanning()) {
- 				push @returnArray, "rescan:1";
- 			}
+# handled by dispatch
+#			if ($p0 eq "playlistcontrol") {
+#		
+#			$pushParams = 0;
+#	
+# 			my $ds     = Slim::Music::Info::getCurrentDataStore();
+# 			my %params = parseParams($parrayref, \@returnArray);
+# 			my @songs;
+# 			my $size = 0;
+# 			
+# 			if (Slim::Music::Import::stillScanning()) {
+# 				push @returnArray, "rescan:1";
+# 			}
+#
+#			if (defined $params{'cmd'}) {
+#
+#				my $load = ($params{'cmd'} eq 'load');
+#				my $insert = ($params{'cmd'} eq 'insert');
+#				my $add = ($params{'cmd'} eq 'add');
+#				my $delete = ($params{'cmd'} eq 'delete');
+#	
+#				Slim::Player::Source::playmode($client, "stop") if $load;
+#				Slim::Player::Playlist::clear($client) if $load;
+#				
+#				if (defined $params{'playlist_id'}){
+#					# Special case...
+#
+#					my $obj = $ds->objectForId('track', $params{'playlist_id'});
+#
+#					if (blessed($obj) && $obj->can('tracks')) {
+#
+#						# We want to add the playlist name to the client object.
+#						$client->currentPlaylist($obj) if $load;
+#
+#						@songs = $obj->tracks;
+#					}
+#				}
+#				else {
+#					if (defined $params{'genre_id'}){
+#						$find->{'genre'} = $params{'genre_id'};
+#					}
+#					if (defined $params{'artist_id'}){
+#						$find->{'artist'} = $params{'artist_id'};
+#					}
+#					if (defined $params{'album_id'}){
+#						$find->{'album'} = $params{'album_id'};
+#					}
+#					if (defined $params{'track_id'}){
+#						$find->{'id'} = $params{'track_id'};
+#					}
+#					if (defined $params{'year_id'}){
+#						$find->{'year'} = $params{'year_id'};
+#					}
+#						
+#					my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+#
+#					if ($load || $add || $insert || $delete){
+#
+#						@songs = @{ $ds->find({
+#							'field'   => 'lightweighttrack',
+#							'find'    => $find,
+#							'sortyBy' => $sort,
+#						}) };
+#					}
+#				}
+#				
+#				$size  = scalar(@songs);
+#				my $playListSize = Slim::Player::Playlist::count($client);
+#				
+#				push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
+#				Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
+#				
+#				insert_done($client, $playListSize, $size) if $insert;
+#				
+#				Slim::Player::Playlist::reshuffle($client,$load?1:0) if ($load || $add);
+#				Slim::Player::Source::jumpto($client, 0) if $load;
+#	
+#				$client->currentPlaylistModified(1) if ($add || $insert || $delete);
+#				$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
+#				#$client->currentPlaylist(undef) if $load;
+#			}			
+#
+#	 		push @returnArray, "count:$size";
+#
 
-			if (defined $params{'cmd'}) {
-
-				my $load = ($params{'cmd'} eq 'load');
-				my $insert = ($params{'cmd'} eq 'insert');
-				my $add = ($params{'cmd'} eq 'add');
-				my $delete = ($params{'cmd'} eq 'delete');
-	
-				Slim::Player::Source::playmode($client, "stop") if $load;
-				Slim::Player::Playlist::clear($client) if $load;
-				
-				if (defined $params{'playlist_id'}){
-					# Special case...
-
-					my $obj = $ds->objectForId('track', $params{'playlist_id'});
-
-					if (blessed($obj) && $obj->can('tracks')) {
-
-						# We want to add the playlist name to the client object.
-						$client->currentPlaylist($obj) if $load;
-
-						@songs = $obj->tracks;
-					}
-				}
-				else {
-					if (defined $params{'genre_id'}){
-						$find->{'genre'} = $params{'genre_id'};
-					}
-					if (defined $params{'artist_id'}){
-						$find->{'artist'} = $params{'artist_id'};
-					}
-					if (defined $params{'album_id'}){
-						$find->{'album'} = $params{'album_id'};
-					}
-					if (defined $params{'track_id'}){
-						$find->{'id'} = $params{'track_id'};
-					}
-					if (defined $params{'year_id'}){
-						$find->{'year'} = $params{'year_id'};
-					}
-						
-					my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
-
-					if ($load || $add || $insert || $delete){
-
-						@songs = @{ $ds->find({
-							'field'   => 'lightweighttrack',
-							'find'    => $find,
-							'sortyBy' => $sort,
-						}) };
-					}
-				}
-				
-				$size  = scalar(@songs);
-				my $playListSize = Slim::Player::Playlist::count($client);
-				
-				push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
-				Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
-				
-				insert_done($client, $playListSize, $size) if $insert;
-				
-				Slim::Player::Playlist::reshuffle($client,$load?1:0) if ($load || $add);
-				Slim::Player::Source::jumpto($client, 0) if $load;
-	
-				$client->currentPlaylistModified(1) if ($add || $insert || $delete);
-				$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
-				#$client->currentPlaylist(undef) if $load;
-			}			
-
-	 		push @returnArray, "count:$size";
-
-		} elsif ($p0 eq "playlist") {
+		if ($p0 eq "playlist") {
 
 			my $results;
 
@@ -871,9 +861,9 @@ sub execute {
 
 					Slim::Player::Playlist::repeat($client, (Slim::Player::Playlist::repeat($client) + 1) % 3);
 
-				} elsif ($p2 eq "?") {
-
-					$p2 = Slim::Player::Playlist::repeat($client);
+#				} elsif ($p2 eq "?") {
+#
+#					$p2 = Slim::Player::Playlist::repeat($client);
 
 				} else {
 
@@ -888,9 +878,9 @@ sub execute {
 					Slim::Player::Playlist::shuffle($client, $nextmode);
 					Slim::Player::Playlist::reshuffle($client);
 
-				} elsif ($p2 eq "?") {
-
-					$p2 = Slim::Player::Playlist::shuffle($client);
+#				} elsif ($p2 eq "?") {
+#
+#					$p2 = Slim::Player::Playlist::shuffle($client);
 
 				} else {
 
@@ -913,84 +903,92 @@ sub execute {
 				$client->currentPlaylistModified(1);
 				$client->currentPlaylistChangeTime(time());
 			
-			} elsif ($p1 eq "delete") {
-
-				if (defined($p2)) {
-					Slim::Player::Playlist::removeTrack($client,$p2);
-				}
-
-				$client->currentPlaylistModified(1);
-				$client->currentPlaylistChangeTime(time());
+# handled by dispatch
+#			} elsif ($p1 eq "delete") {
+#
+#				if (defined($p2)) {
+#					Slim::Player::Playlist::removeTrack($client, $p2);
+#				}
+#
+#				$client->currentPlaylistModified(1);
+#				$client->currentPlaylistChangeTime(time());
 			
-			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
+# handled by dispatch
+#			} elsif (($p1 eq "jump") || ($p1 eq "index")) {
+#
+#				if ($p2 eq "?") {
+#					$p2 = Slim::Player::Source::playingSongIndex($client);
+#				} else {
+#					Slim::Player::Source::jumpto($client, $p2, $p3);
+#				}
 
-				if ($p2 eq "?") {
-					$p2 = Slim::Player::Source::playingSongIndex($client);
-				} else {
-					Slim::Player::Source::jumpto($client, $p2, $p3);
-				}
+# handled by dispatch
+#			} elsif ($p1 eq "name") {
+#
+#				$p2 = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 
-			} elsif ($p1 eq "name") {
+# handled by dispatch
+#			} elsif ($p1 eq "url") {
+#
+#				$p2 = $client->currentPlaylist();
 
-				$p2 = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
+# handled by dispatch
+#			} elsif ($p1 eq "tracks") {
+#
+#				$p2 = Slim::Player::Playlist::count($client);
 
-			} elsif ($p1 eq "url") {
+# handled by dispatch
+#			} elsif ($p1 =~ /(?:duration|artist|album|title|genre)/) {
+#
+#				my $url = Slim::Player::Playlist::song($client, $p2);
+#				my $obj = $ds->objectForUrl($url, 1, 1);
+#
+#				if (blessed($obj) && $obj->can('secs')) {
+#
+#					# Just call the method on Track
+#					if ($p1 eq 'duration') {
+#						$p3 = $obj->secs();
+#					}
+#					else {
+#						$p3 = $obj->$p1();
+#					}
+#				}
 
-				$p2 = $client->currentPlaylist();
-
-			} elsif ($p1 eq "tracks") {
-
-				$p2 = Slim::Player::Playlist::count($client);
-
-			} elsif ($p1 =~ /(?:duration|artist|album|title|genre)/) {
-
-				my $url = Slim::Player::Playlist::song($client, $p2);
-				my $obj = $ds->objectForUrl($url, 1, 1);
-
-				if (blessed($obj) && $obj->can('secs')) {
-
-					# Just call the method on Track
-					if ($p1 eq 'duration') {
-						$p3 = $obj->secs();
-					}
-					else {
-						$p3 = $obj->$p1();
-					}
-				}
-
-			} elsif ($p1 eq "path") {
-
-				$p3 = Slim::Player::Playlist::song($client,$p2) || 0;
+# handled by dispatch
+#			} elsif ($p1 eq "path") {
+#
+#				$p3 = Slim::Player::Playlist::song($client,$p2) || 0;
 			
-			} elsif ($p1 eq "zap") {
-
-				my $zapped   = string('ZAPPED_SONGS');
-				my $zapsong  = Slim::Player::Playlist::song($client,$p2);
-				my $zapindex = defined $p2 ? $p2 : Slim::Player::Source::playingSongIndex($client);
- 
-				#  Remove from current playlist
-				if (Slim::Player::Playlist::count($client) > 0) {
-
-					# Callo ourselves.
-					execute($client, ["playlist", "delete", $zapindex]);
-				}
-
-				my $playlistObj = $ds->updateOrCreate({
-					'url'        => "playlist://$zapped",
-					'attributes' => {
-						'TITLE' => $zapped,
-						'CT'    => 'ssp',
-					},
-				});
-
-				my @list = $playlistObj->tracks;
-				push @list,$zapsong;
-
-				$playlistObj->setTracks(\@list);
-				$playlistObj->update();
-
-				$client->currentPlaylistModified(1);
-				$client->currentPlaylistChangeTime(time());
+# handled by dispatch
+#			} elsif ($p1 eq "zap") {
+#
+#				my $zapped   = string('ZAPPED_SONGS');
+#				my $zapsong  = Slim::Player::Playlist::song($client, $p2);
+#				my $zapindex = defined $p2 ? $p2 : Slim::Player::Source::playingSongIndex($client);
+#
+#				#  Remove from current playlist
+#				if (Slim::Player::Playlist::count($client) > 0) {
+#
+#					# Callo ourselves.
+#					execute($client, ["playlist", "delete", $zapindex]);
+#				}
+#
+#				my $playlistObj = $ds->updateOrCreate({
+#					'url'        => "playlist://$zapped",
+#					'attributes' => {
+#						'TITLE' => $zapped,
+#						'CT'    => 'ssp',
+#					},
+#				});
+#
+#				my @list = $playlistObj->tracks;
+#				push @list, $zapsong;
+#
+#				$playlistObj->setTracks(\@list);
+#				$playlistObj->update();
+#
+#				$client->currentPlaylistModified(1);
+#				$client->currentPlaylistChangeTime(time());
 			}
 
 			Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
@@ -1469,7 +1467,7 @@ sub insert_done {
 	} else {
 
 		if (Slim::Player::Playlist::count($client) != $size) {
-			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex,$size);
+			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex, $size);
 		}
 
 		Slim::Player::Playlist::reshuffle($client);

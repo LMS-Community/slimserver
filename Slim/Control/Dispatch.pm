@@ -34,8 +34,6 @@ use Slim::Control::Request;
 
 our %notifications = ();
 our %dispatchDB;
-#our %dispatchCommands = ();
-#our %dispatchQueries = ();
 
 # COMMAND LIST #
   
@@ -81,6 +79,13 @@ our %dispatchDB;
 # Y    title           ?
 # Y    duration        ?
 # Y    path	           ?
+# Y    playlist        name                        ?
+# Y    playlist        url                         ?
+# Y    playlist        modified                    ?
+# Y    playlist        index|jump                  <index|?>    
+# Y    playlist        delete                      <index>
+# Y    playlist        zap                         <index>
+# Y    playlistcontrol <params>
 
 
 # add standard commands and queries to the dispatch hashes...
@@ -127,6 +132,25 @@ sub init {
 	addDispatch(['path', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['pause', 			'_newvalue'],										[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
 	addDispatch(['play'], 																[1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+	addDispatch(['playlist',		'album',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'artist',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'duration',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'delete',			'_index'],						[1, 0, 0, \&Slim::Control::Commands::playlistdeleteCommand]);
+	addDispatch(['playlist',		'genre',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'index',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'index',			'_index',		'_noplay'],		[1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
+	addDispatch(['playlist',		'jump',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'jump',				'_index',		'_noplay'],		[1, 0, 0, \&Slim::Control::Commands::playlistjumpCommand]);
+	addDispatch(['playlist',		'modified',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'name',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'path',				'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'repeat',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'shuffle',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'title',			'_index',		'?'],			[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'tracks',			'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'url',				'?'],							[1, 1, 0, \&Slim::Control::Queries::playlistinfoQuery]);
+	addDispatch(['playlist',		'zap',				'_index'],						[1, 0, 0, \&Slim::Control::Commands::playlistzapCommand]);
+	addDispatch(['playlistcontrol'],													[1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
 	addDispatch(['playerpref', 		'_prefname', 		'?'], 							[1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
 	addDispatch(['playerpref', 		'_prefname', 		'_newvalue'], 					[1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
 	addDispatch(['power', 			'?'], 												[1, 1, 0, \&Slim::Control::Queries::powerQuery]);
@@ -148,8 +172,9 @@ sub init {
 	addDispatch(['title', 			'?'],												[1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
 	addDispatch(['version', 		'?'], 												[0, 1, 0, \&Slim::Control::Queries::versionQuery]);
 	addDispatch(['wipecache'], 															[0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
+
+
 	
-#	addDispatch(['playlistcontrol'],						['!params',		'playlistcontrolCommand']);
 #	addDispatch(['status',			'_from', '_to'], 	['!params',		'statusCommand']);
 
 

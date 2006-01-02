@@ -24,6 +24,8 @@ use Slim::Utils::Prefs;
 sub cursonginfoQuery {
 	my $request = shift;
 	
+	$::d_command && msg("cursonginfoQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['duration', 'artist', 'album', 'title', 'genre', 'path'])) {
 		$request->setStatusBadDispatch();
@@ -70,6 +72,8 @@ sub cursonginfoQuery {
 sub connectedQuery {
 	my $request = shift;
 	
+	$::d_command && msg("connectedQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['connected'])) {
 		$request->setStatusBadDispatch();
@@ -86,6 +90,8 @@ sub connectedQuery {
 sub debugQuery {
 	my $request = shift;
 	
+	$::d_command && msg("debugQuery()\n");
+
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotQuery(['debug'])) {
 		$request->setStatusBadDispatch();
@@ -114,6 +120,8 @@ sub debugQuery {
 sub displayQuery {
 	my $request = shift;
 	
+	$::d_command && msg("displayQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['display'])) {
 		$request->setStatusBadDispatch();
@@ -133,6 +141,8 @@ sub displayQuery {
 sub displaynowQuery {
 	my $request = shift;
 	
+	$::d_command && msg("displaynowQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['displaynow'])) {
 		$request->setStatusBadDispatch();
@@ -150,6 +160,8 @@ sub displaynowQuery {
 sub infototalQuery {
 	my $request = shift;
 	
+	$::d_command && msg("infototalQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['info'])) {
 		$request->setStatusBadDispatch();
@@ -187,6 +199,8 @@ sub infototalQuery {
 sub linesperscreenQuery {
 	my $request = shift;
 	
+	$::d_command && msg("linesperscreenQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['linesperscreen'])) {
 		$request->setStatusBadDispatch();
@@ -203,6 +217,8 @@ sub linesperscreenQuery {
 sub mixerQuery {
 	my $request = shift;
 	
+	$::d_command && msg("mixerQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['mixer'])) {
 		$request->setStatusBadDispatch();
@@ -229,6 +245,8 @@ sub mixerQuery {
 sub modeQuery {
 	my $request = shift;
 	
+	$::d_command && msg("modeQuery()\n");
+
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotQuery(['mode'])) {
 		$request->setStatusBadDispatch();
@@ -242,9 +260,79 @@ sub modeQuery {
 	$request->setStatusDone();
 }
 
+sub playlistinfoQuery {
+	my $request = shift;
+	
+	$::d_command && msg("playlistinfoQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery(['playlist'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client   = $request->client();
+	my $entity = $request->getRequest(1);
+	my $index = $request->getParam('_index');
+	
+	if ($request->paramUndefinedOrNotOneOf($entity, ['name', 'url', 'modified', 
+			'tracks', 'duration', 'artist', 'album', 'title', 'genre', 'path', 
+			'repeat', 'shuffle', 'index', 'jump'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	if ($entity eq 'repeat') {
+		$request->addResult("_$entity", Slim::Player::Playlist::repeat($client));
+	}
+	if ($entity eq 'shuffle') {
+		$request->addResult("_$entity", Slim::Player::Playlist::shuffle($client));
+	}
+	if ($entity eq 'index' || $entity eq 'jump') {
+		$request->addResult("_$entity", Slim::Player::Source::playingSongIndex($client));
+	}
+	if ($entity eq 'name') {
+		$request->addResult("_$entity", Slim::Music::Info::standardTitle($client, $client->currentPlaylist()));
+	}
+	if ($entity eq 'url') {
+		$request->addResult("_$entity", $client->currentPlaylist());
+	}
+	if ($entity eq 'modified') {
+		$request->addResult("_$entity", $client->currentPlaylistModified());
+	}
+	if ($entity eq 'tracks') {
+		$request->addResult("_$entity", Slim::Player::Playlist::count($client));
+	}
+	if ($entity eq 'path') {
+		$request->addResult("_$entity", Slim::Player::Playlist::song($client, $index) || 0);
+	}
+	if ($entity =~ /(duration|artist|album|title|genre)/) {
+
+		my $ds = Slim::Music::Info::getCurrentDataStore();
+		my $url = Slim::Player::Playlist::song($client, $index);
+		my $obj = $ds->objectForUrl($url, 1, 1);
+
+		if (blessed($obj) && $obj->can('secs')) {
+
+			# Just call the method on Track
+			if ($entity eq 'duration') {
+				$request->addResult("_$entity", $obj->secs());
+			}
+			else {
+				$request->addResult("_$entity", $obj->$entity());
+			}
+		}
+	}
+	
+	$request->setStatusDone();
+}
+
 sub playerprefQuery {
 	my $request = shift;
 	
+	$::d_command && msg("playerprefQuery()\n");
+
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotQuery(['playerpref'])) {
 		$request->setStatusBadDispatch();
@@ -268,6 +356,8 @@ sub playerprefQuery {
 sub powerQuery {
 	my $request = shift;
 	
+	$::d_command && msg("powerQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['power'])) {
 		$request->setStatusBadDispatch();
@@ -284,6 +374,8 @@ sub powerQuery {
 sub prefQuery {
 	my $request = shift;
 	
+	$::d_command && msg("prefQuery()\n");
+
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotQuery(['pref'])) {
 		$request->setStatusBadDispatch();
@@ -305,6 +397,8 @@ sub prefQuery {
 sub rateQuery {
 	my $request = shift;
 	
+	$::d_command && msg("rateQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['rate'])) {
 		$request->setStatusBadDispatch();
@@ -321,6 +415,8 @@ sub rateQuery {
 sub rescanQuery {
 	my $request = shift;
 	
+	$::d_command && msg("rescanQuery()\n");
+
 	if ($request->isNotQuery(['rescan'])) {
 		$request->setStatusBadDispatch();
 		return;
@@ -336,6 +432,8 @@ sub rescanQuery {
 sub signalstrengthQuery {
 	my $request = shift;
 	
+	$::d_command && msg("signalstrengthQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['signalstrength'])) {
 		$request->setStatusBadDispatch();
@@ -352,6 +450,8 @@ sub signalstrengthQuery {
 sub sleepQuery {
 	my $request = shift;
 	
+	$::d_command && msg("sleepQuery()\n");
+
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotQuery(['sleep'])) {
 		$request->setStatusBadDispatch();
@@ -373,6 +473,8 @@ sub sleepQuery {
 sub syncQuery {
 	my $request = shift;
 	
+	$::d_command && msg("syncQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['sync'])) {
 		$request->setStatusBadDispatch();
@@ -398,6 +500,8 @@ sub syncQuery {
 sub timeQuery {
 	my $request = shift;
 	
+	$::d_command && msg("timeQuery()\n");
+
 	# check this is the correct command.
 	if ($request->isNotQuery(['time', 'gototime'])) {
 		$request->setStatusBadDispatch();
@@ -414,6 +518,8 @@ sub timeQuery {
 sub versionQuery {
 	my $request = shift;
 	
+	$::d_command && msg("versionQuery()\n");
+
 	if ($request->isNotQuery(['version'])) {
 		$request->setStatusBadDispatch();
 		return;

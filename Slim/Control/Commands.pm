@@ -14,12 +14,15 @@ package Slim::Control::Commands;
 
 use strict;
 
-use Slim::Control::Request;
-use Slim::Music::Import;
-use Slim::Music::Info;
-use Slim::Player::Client;
-use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
+use Scalar::Util qw(blessed);
+
+use Slim::Utils::Misc qw(msg);
+
+#use Slim::Control::Request;
+#use Slim::Music::Import;
+#use Slim::Music::Info;
+#use Slim::Player::Client;
+#use Slim::Utils::Prefs;
 
 sub buttonCommand {
 	my $request = shift;
@@ -84,6 +87,8 @@ sub debugCommand {
 sub displayCommand {
 	my $request = shift;
 	
+	$::d_command && msg("displayCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['display'])) {
 		$request->setStatusBadDispatch();
@@ -110,6 +115,8 @@ sub displayCommand {
 sub irCommand {
 	my $request = shift;
 	
+	$::d_command && msg("irCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['ir'])) {
 		$request->setStatusBadDispatch();
@@ -134,6 +141,8 @@ sub irCommand {
 sub mixerCommand {
 	my $request = shift;
 	
+	$::d_command && msg("mixerCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['mixer'])) {
 		$request->setStatusBadDispatch();
@@ -207,13 +216,15 @@ sub mixerCommand {
 sub playcontrolCommand {
 	my $request = shift;
 	
+	$::d_command && msg("playcontrolCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['play', 'stop', 'pause', 'mode'])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get the parameters
 	my $client = $request->client();
 	my $cmd    = $request->getRequest(0);
 	my $param  = $request->getRequest(1);
@@ -275,6 +286,220 @@ sub playcontrolCommand {
 	$request->setStatusDone();
 }
 
+sub playlistdeleteCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistdeleteCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand(['playlist'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $delete  = $request->getRequest(1);
+	my $index  = $request->getParam('_index');;
+	
+	if (!defined $index) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	Slim::Player::Playlist::removeTrack($client, $index);
+
+	$client->currentPlaylistModified(1);
+	$client->currentPlaylistChangeTime(time());
+	Slim::Player::Playlist::refreshPlaylist($client);
+	
+	$request->setStatusDone();
+}
+
+sub playlistcontrolCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistcontrolCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand(['playlistcontrol'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $cmd    = $request->getParam('cmd');;
+	
+	if ($request->paramUndefinedOrNotOneOf($cmd, ['load', 'insert', 'add', 'delete'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+
+	my $load = ($cmd eq 'load');
+	my $insert = ($cmd eq 'insert');
+	my $add = ($cmd eq 'add');
+	my $delete = ($cmd eq 'delete');
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+ 			
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+
+	# find the songs
+	my $find = {};
+	my @songs;
+ 	my $playlist;
+
+	if (defined(my $playlist_id = $request->getParam('playlist_id'))){
+		# Special case...
+
+		my $playlist = $ds->objectForId('track', $playlist_id);
+
+		if (blessed($playlist) && $playlist->can('tracks')) {
+
+			# We want to add the playlist name to the client object.
+			$client->currentPlaylist($playlist) if $load && defined $playlist;
+
+			@songs = $playlist->tracks();
+		}
+	}
+	else {
+		if (defined(my $genre_id = $request->getParam('genre_id'))){
+			$find->{'genre'} = $genre_id;
+		}
+		if (defined(my $artist_id = $request->getParam('artist_id'))){
+			$find->{'artist'} = $artist_id;
+		}
+		if (defined(my $album_id = $request->getParam('album_id'))){
+			$find->{'album'} = $album_id;
+		}
+		if (defined(my $track_id = $request->getParam('track_id'))){
+			$find->{'id'} = $track_id;
+		}
+		if (defined(my $year_id = $request->getParam('year_id'))){
+			$find->{'year'} = $year_id;
+		}
+			
+		my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
+
+		@songs = @{ $ds->find({
+			'field'   => 'lightweighttrack',
+			'find'    => $find,
+			'sortBy' => $sort,
+		}) };
+	}
+	my $size  = scalar(@songs);
+
+	# start the show...
+
+	Slim::Player::Source::playmode($client, "stop") if $load;
+	Slim::Player::Playlist::clear($client) if $load;
+				
+	my $playListSize = Slim::Player::Playlist::count($client);
+	
+	push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
+	Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
+	
+	_insert_done($client, $playListSize, $size) if $insert;
+	
+	Slim::Player::Playlist::reshuffle($client, $load?1:0) if ($load || $add);
+	Slim::Player::Source::jumpto($client, 0) if $load;
+
+	$client->currentPlaylistModified(1) if ($add || $insert || $delete);
+	$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
+
+	$request->addResult('count', $size);
+
+	$request->setStatusDone();
+}
+
+sub playlistjumpCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistjumpCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand(['playlist'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $jump   = $request->getRequest(1);
+	my $index  = $request->getParam('_index');;
+	my $noplay = $request->getParam('_noplay');;
+	
+	if ($request->paramUndefinedOrNotOneOf($jump, ['jump', 'index'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	Slim::Player::Source::jumpto($client, $index, $noplay);
+
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+	
+	$request->setStatusDone();
+}
+
+sub playlistzapCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistzapCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand(['playlist'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $zap    = $request->getRequest(1);
+	my $index  = $request->getParam('_index');;
+	
+	if ($request->paramUndefinedOrNotOneOf($zap, ['zap'])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	my $zapped   = Slim::Utils::Strings::string('ZAPPED_SONGS');
+	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
+	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
+
+	#  Remove from current playlist
+	if (Slim::Player::Playlist::count($client) > 0) {
+
+		# Callo ourselves.
+		Slim::Control::Command::execute($client, ["playlist", "delete", $zapindex]);
+	}
+
+	my $playlistObj = $ds->updateOrCreate({
+		'url'        => "playlist://$zapped",
+		'attributes' => {
+			'TITLE' => $zapped,
+			'CT'    => 'ssp',
+		},
+	});
+
+	my @list = $playlistObj->tracks();
+	push @list, $zapsong;
+
+	$playlistObj->setTracks(\@list);
+	$playlistObj->update();
+
+	$client->currentPlaylistModified(1);
+	$client->currentPlaylistChangeTime(time());
+	Slim::Player::Playlist::refreshPlaylist($client);
+	
+	$request->setStatusDone();
+}
+
 sub playerprefCommand {
 	my $request = shift;
 	
@@ -303,6 +528,8 @@ sub playerprefCommand {
 sub powerCommand {
 	my $request = shift;
 	
+	$::d_command && msg("powerCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['power'])) {
 		$request->setStatusBadDispatch();
@@ -368,6 +595,8 @@ sub prefCommand {
 sub rateCommand {
 	my $request = shift;
 	
+	$::d_command && msg("rateCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['rate'])) {
 		$request->setStatusBadDispatch();
@@ -430,6 +659,8 @@ sub rescanCommand {
 sub sleepCommand {
 	my $request = shift;
 	
+	$::d_command && msg("sleepCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['sleep'])) {
 		$request->setStatusBadDispatch();
@@ -478,6 +709,8 @@ sub sleepCommand {
 sub syncCommand {
 	my $request = shift;
 	
+	$::d_command && msg("syncCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['sync'])) {
 		$request->setStatusBadDispatch();
@@ -519,6 +752,8 @@ sub syncCommand {
 sub timeCommand {
 	my $request = shift;
 	
+	$::d_command && msg("timeCommand()\n");
+
 	# check this is the correct command.
 	if ($request->isNotCommand(['time', 'gototime'])) {
 		$request->setStatusBadDispatch();
@@ -597,7 +832,48 @@ sub _sleepPowerOff {
 
 sub _mixer_mute {
 	my $client = shift;
+
+	$::d_command && msg("_mixer_mute()\n");
+
 	$client->mute();
+}
+
+sub _insert_done {
+	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
+
+	$::d_command && msg("_insert_done()\n");
+
+	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	my @reshuffled;
+
+	if (Slim::Player::Playlist::shuffle($client)) {
+
+		for (my $i = 0; $i < $size; $i++) {
+			push @reshuffled, ($listsize + $i);
+		};
+			
+		$client = Slim::Player::Sync::masterOrSelf($client);
+		
+		if (Slim::Player::Playlist::count($client) != $size) {	
+			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
+		}
+		else {
+			push @{$client->shufflelist}, @reshuffled;
+		}
+	} else {
+
+		if (Slim::Player::Playlist::count($client) != $size) {
+			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex, $size);
+		}
+
+		Slim::Player::Playlist::reshuffle($client);
+	}
+
+	Slim::Player::Playlist::refreshPlaylist($client);
+
+	$callbackf && (&$callbackf(@$callbackargs));
+
+	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
 }
 
 
