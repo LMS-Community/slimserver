@@ -1,7 +1,7 @@
 <!-- home.html -->
 [% pagetitle = "HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
 
-[% PROCESS pageheader.html %]
+[% PROCESS pageheader.html bgcolor = '#666666' %]
 [% PROCESS menu.html %]
 
 
@@ -105,8 +105,8 @@
 			&nbsp;|&nbsp;
 			<a href="html/about.html" style="text-decoration:none" class="statusbartext">About</a>&nbsp;|&nbsp;
 			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=server" class="statusbartext">Server Settings</a>&nbsp;|&nbsp;
-			<a class = 'statusbartext' href="[% webroot %]setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" class = 'statusbartext'>[% "PLAYER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
-			<a href="home.html?p0=rescan" style="text-decoration:none" class="statusbartext">[% "SETUP_RESCAN" | string %]</a>
+			<a class = 'statusbartext' href="[% webroot %]setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" class = 'statusbartext'>[% "PLAYER_SETTINGS" | string %]</a><!--&nbsp;|&nbsp;
+			<a href="home.html?p0=rescan" style="text-decoration:none" class="statusbartext">[% "SETUP_RESCAN" | string %]</a>-->
 		</td>
 		<td width="4"></td>
 	</tr>

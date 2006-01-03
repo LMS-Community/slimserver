@@ -44,13 +44,14 @@ return true;
 
 
 <center>
-
-
+<table width = '100%' bgcolor = '#EEEEEE'>
+<tr><td>
+<form name="FormSong" method="Get" action = 'search.html'>
 <table width="100%" bgcolor="#EEEEEE" cellpadding="0" cellspacing="0" border="0">
 
 <tr>
-<td align="left" height="45" valign="bottom" style="padding-left:40px;"><font class="headertext">[% "SEARCH" | string %]</td>
-<td align="right" colspan="4" style="padding-right:15px;"><a href="home.html?p0=rescan" style="text-decoration:none"><font class="smalltext">[% "SETUP_RESCAN" | string %]</a></td>
+<td colspan = '8' align="left" height="45" valign="bottom" style="padding-left:40px;"><font class="headertext">[% "SEARCH" | string %]</td>
+<!--<td align="right" colspan="4" style="padding-right:15px;"><a href="home.html?p0=rescan" style="text-decoration:none"><font class="smalltext">[% "SETUP_RESCAN" | string %]</a></td>-->
 </tr>
 
 
@@ -59,7 +60,6 @@ return true;
 <tr><td height="20"></td></tr>
 
 <tr><td colspan="8" height="30" align = 'center'>
-              <form name="FormSong" method="Get" action="[% webroot %]search.html">
 	      <input type=hidden value="track" name="type">
               &nbsp;<input type=text name="query" value="[% query %]" size="20" style="
 	border: 1px solid black;
@@ -102,15 +102,17 @@ return true;
 >
               <input type=hidden value="[% playerURI %]" name="player">
               [% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-              </form>
 
 
           </td>
       </tr>
 	<tr><td height="10"></td></tr>
 </table>
-<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
+</form>
+</td></tr>
+<tr><td>
 
+<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 <form name="Keyboard">
 <tr>
 <td width="100"></td>
@@ -130,79 +132,16 @@ return true;
 </td></tr>
 	<tr><td height="15"></td></tr>
 </table>
+</td></tr>
+</table>
 
 <table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
 
-
-<!--
-<tr><td align="left" colspan="2"><img src="html/images/leftcorner.gif" border="0"></td><td></td>
-<td align="right" colspan="2"><img src="html/images/rightcorner.gif" border="0"></td></tr>
--->
 
 <tr><td>&nbsp;</td></tr>
 
 
 </table>
-<!--
-
-
-
-
-<p align="center">
-<input type=button value="1" name="Key1" onclick="Change('1')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="2" name="Key2" onclick="Change('2')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="3" name="Key3" onclick="Change('3')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="4" name="Key4" onclick="Change('4')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="5" name="Key5" onclick="Change('5')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="6" name="Key6" onclick="Change('6')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="7" name="Key7" onclick="Change('7')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="8" name="Key8" onclick="Change('8')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="9" name="Key9" onclick="Change('9')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="0" name="Key0" onclick="Change('0')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<br>
-
-<img src="html/images/trans.gif" width="5">
-<input type=button value="Q" name="KeyQ" onclick="Change('Q')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="W" name="KeyW" onclick="Change('W')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="E" name="KeyE" onclick="Change('E')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="R" name="KeyR" onclick="Change('R')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="T" name="KeyT" onclick="Change('T')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="Y" name="KeyY" onclick="Change('Y')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="U" name="KeyU" onclick="Change('U')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="I" name="KeyI" onclick="Change('I')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="O" name="KeyO" onclick="Change('O')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="P" name="KeyP" onclick="Change('P')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<BR>
-
-<img src="html/images/trans.gif" width="12">
-<input type=button value="A" name="KeyA" onclick="Change('A')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="S" name="KeyS" onclick="Change('S')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="D" name="KeyD" onclick="Change('D')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="F" name="KeyF" onclick="Change('F')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="G" name="KeyG" onclick="Change('G')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="H" name="KeyH" onclick="Change('H')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="J" name="KeyJ" onclick="Change('J')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="K" name="KeyK" onclick="Change('K')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="L" name="KeyL" onclick="Change('L')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
-
-<BR>
-<img src="html/images/trans.gif" width="24">
-<input type=button value="Z" name="KeyZ" onclick="Change('Z')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="X" name="KeyX" onclick="Change('X')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="C" name="KeyC" onclick="Change('C')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="V" name="KeyV" onclick="Change('V')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="B" name="KeyB" onclick="Change('B')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="N" name="KeyN" onclick="Change('N')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="M" name="KeyM" onclick="Change('M')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="," name="KeyComma" onclick="Change(',')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="." name="KeyPeriod" onclick="Change('.')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;">
-<input type=button value="-" name="KeyDash" onclick="Change('-')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonKB.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 55;HEIGHT: 36;"><br>
-
-<input type=button value="SPACE" name="KeySpace" onclick="Change(' ')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/buttonSpace.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 222;HEIGHT: 36;">
--->
 </form>
 
 <!-- /Element searchinput.html -->

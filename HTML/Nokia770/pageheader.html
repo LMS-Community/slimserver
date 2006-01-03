@@ -4,7 +4,7 @@
             [% PROCESS standardheader.html %]
       </head>
 
-<body bgcolor = '#666666' marginwidth=0 marginheight=0>
+<body bgcolor = '[% IF bgcolor %][% bgcolor %][% ELSE %]white[% END %]' marginwidth=0 marginheight=0>
 
 <!--preload play/add/delete/next icons; this is an effort to have the 770 browser not screw up the rendering of the table on every other load. don't think it's gonna do the trick, but it can't hurt to try...-->
 <div style = 'display: none;'>
@@ -16,6 +16,7 @@
 <img src = "info.gif">
 </div>
 
+<div id = 'page'>
 <table width="100%" bgcolor="#333333">
       <tr>
       <td><a href = 'http://slimdevices.com' title = 'slimdevices website'><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0" alt = 'slimdevices website'></a>

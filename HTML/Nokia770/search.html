@@ -4,7 +4,7 @@
 [%- playermodel | string %] : [% "SEARCH" | string -%]
 [%- END -%]
 [%- pageicon = 'MUSIC' -%]
-[%- PROCESS pageheader.html -%]
+[%- PROCESS pageheader.html bgcolor = '#666666' -%]
 [%- PROCESS menu.html -%]
 
 [% IF not query %][% PROCESS searchinput.html %][% END %]
