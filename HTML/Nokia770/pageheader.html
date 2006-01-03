@@ -18,10 +18,10 @@
 
 <table width="100%" bgcolor="#333333">
       <tr>
-      <td><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0">
+      <td><a href = 'http://slimdevices.com' title = 'slimdevices website'><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0" alt = 'slimdevices website'></a>
       </td>
 	<td align = 'right' class = 'smallwhitetext'>
-[% IF player_chooser_list %]<form method="get" >Currently selected player:<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">>[% player_chooser_list %]</select></form>[% END %]
+[% IF player_chooser_list %]<form method="get" >Current player:<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">>[% player_chooser_list %]</select></form>[% END %]
 </td></tr>
 </table>
 <!-- /Element pageheader.html -->
