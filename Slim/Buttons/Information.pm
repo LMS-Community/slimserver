@@ -144,7 +144,7 @@ sub init {
 			'externRefArgs' => 'CV',
 			'valueFunctRef' => [
 				sub { shift->name },
-				sub { shift->model },
+				sub { return playerModel(shift) },
 				sub { shift->revision },
 				sub { shift->ip },
 				sub { shift->port },
@@ -318,6 +318,21 @@ sub setMode {
 	my %params = %{$menuParams{'main'}};
 	$params{'valueRef'} = \$current{$client}{main};
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+}
+
+sub playerModel {
+	my $client = shift;
+	
+	# special case for squeezebox v3 (can't use in $client->model due to some images
+	# expecting "squeezebox" for v1-3)
+	if ($client->macaddress =~ /^00:04:20((:\d\d){3})/) {
+		my $id = $1;
+		$id =~ s/://g;
+		if ($id > "60000") {
+			return "Squeezebox v3";
+		}
+	}
+	return $client->model;
 }
 
 sub updateSignalStrength {
