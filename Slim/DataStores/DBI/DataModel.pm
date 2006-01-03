@@ -935,11 +935,12 @@ sub update {
 		return 1;
 	}
 
-	$self->call_trigger('deflate_for_update');
+	my $sth  = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
 
-	my $sth = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
+	# Get the list of values to insert - deflating relationships on the fly.
+	my @vals = map { ref($_) ? $_->id : $_ } $self->_attrs(@changed_cols);
 
-	eval { $sth->execute($self->_update_vals, $self->id) };
+	eval { $sth->execute(@vals, $self->id) };
 
 	if ($@) {
 		return $self->_croak("Can't update $self: $@", err => $@);
