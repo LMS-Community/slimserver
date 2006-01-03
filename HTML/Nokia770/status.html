@@ -54,10 +54,10 @@
 	<td colspan = 3>
 	<table width = 100%>
 	<tr>
-		<td width = '50%'>
+		<td width = '50%' align = 'center'>
 		[% INCLUDE player_controls %]
 		</td>
-		<td width = '50%'>
+		<td width = '50%' align = 'center'>
 		[% INCLUDE volume_settings %]
 		</td>
 	</tr>
@@ -69,10 +69,10 @@
 	<td colspan = 3>
 	<table width = 100%>
 	<tr>
-		<td width = '50%'>
+		<td width = '50%' align = 'center'>
 			[% INCLUDE repeat_settings %]
 		</td>
-		<td width = '50%'>
+		<td width = '50%' align = 'center'>
 			[% INCLUDE shuffle_settings %]
 		</td>
 	</tr>
@@ -200,17 +200,6 @@
 			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.genre %]</a>[% END %]
 			</td>
 		</tr>
-		<tr>
-			<td colspan="2" nowrap>
-			[% IF player_chooser_list %]
-			<form method="get" action="[% webroot %][% path %]">
-				<select name="player" onChange="submit();">
-				[% player_chooser_list %]
-				</select>
-			</form>
-			[% END %]
-			</td>
-		</tr>
 	</table>
 	
 [% END %]
@@ -311,8 +300,8 @@ if (document.all||document.getElementById)
 [% END %]
 
 [% BLOCK volume_settings %]
-<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
 	[% IF isplayer %]
+<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
 	<tr>
 	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
 
@@ -323,8 +312,10 @@ if (document.all||document.getElementById)
 	</td>
 	[% END %]
 	</tr>
-	[% END %]
 </table>
+	[% ELSE %]
+	<span class = 'smalltext'>volume settings not available for this player</span>
+	[% END %]
 
 [% END %]
 
