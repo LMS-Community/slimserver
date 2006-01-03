@@ -1,5 +1,7 @@
 body
 {
+background-color: "#333333";
+color: "#666666";
 scrollbar-base-color: white;
 scrollbar-track-color: white;
 scrollbar-face-color: #666666;
@@ -8,9 +10,6 @@ scrollbar-3dlight-color: white;
 scrollbar-darkshadow-color: white;
 scrollbar-shadow-color: white;
 scrollbar-arrow-color: black;
-background-color: "#333333";
-color: "#666666";
-
 left-margin: 0px;
 top-margin: 0px;
 
@@ -36,7 +35,7 @@ font-family: Arial, Helvetica, sans-serif;
 
 .itemtext
 {
-font-size: 32px;
+font-size: 26px;
 text-decoration: none;
 }
 
@@ -57,7 +56,7 @@ font-size: 26px;
 
 .playingitemtext
 {
-font-size: 32px;
+font-size: 26px;
 color: #BB5544;
 }
 
@@ -133,4 +132,8 @@ tr.odd, td.odd {
 }
 tr.even, td.even {
 	background-color: #FFFFFF;
+}
+
+div#page {
+	width: 800px;
 }
