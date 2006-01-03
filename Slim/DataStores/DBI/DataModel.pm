@@ -938,7 +938,20 @@ sub update {
 	my $sth  = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
 
 	# Get the list of values to insert - deflating relationships on the fly.
-	my @vals = map { ref($_) ? $_->id : $_ } $self->_attrs(@changed_cols);
+	my @vals = ();
+
+	# Anything that is a DataModel - deflate to ->id. Stringify everything else.
+	for my $value ($self->_attrs(@changed_cols)) {
+
+		if (blessed($value) && $value->isa('Slim::DataStores::DBI::DataModel')) {
+
+			push @vals, $value->id;
+
+		} else {
+
+			push @vals, "$value";
+		}
+	}
 
 	eval { $sth->execute(@vals, $self->id) };
 
