@@ -9,14 +9,11 @@
                 odd = item.odd
                 mixerlinks = item.mixerlinks %]
 
-	<td class = 'numbertext' align = 'right'>
-		<a name=[% item.num %]>&nbsp;[% item.num + 1 %].</a>&nbsp;&nbsp;
+	<td class = 'numbertext' align = 'right' width = 10>
+		&nbsp;
 	</td>
 	<td align = 'left'>
-		[% IF item.currentsong %]<font class="playingitemtext">[[% ELSE %]
-		<font class="itemtext">[% END %]
-		<a [% PROCESS songinfoItemHRef %]>[% IF item.currentsong %]<font class = 'playingitemtext'>[% END %][% item.title %][% IF item.currentsong %]</font>[% END %]</a>
-		[% IF item.currentsong %]&nbsp;][% END %]</font>
+		<a [% PROCESS songinfoItemHRef %]><font class = [% IF item.currentsong %]'playingitemtext'[% ELSE %]'itemtext'[% END %]>[% item.title %]</font></a>
 	</td>
 </tr>
 [%# /Element status_list.html %]
