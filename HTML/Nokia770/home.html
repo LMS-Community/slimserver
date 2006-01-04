@@ -62,11 +62,11 @@
 <center><img src="html/images/smaller/genre.gif" name="bild8" border="0"></a>
 		</td>
 		<td align="center">
-			<a href="search.html?type=artist&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/smaller/search_active.gif';"><img src="html/images/smaller/search.gif" name="bild9" border="0"></a>
+			<a href="hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/smaller/statistics_active.gif';"><img src="html/images/smaller/statistics.gif" name="bild9" border="0"></a>
 		</td>
 		<td align="center">
-			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild10.src = 'html/images/smaller/statistics_active.gif';">
-<center><img src="html/images/smaller/statistics.gif" name="bild10" border="0"></a>
+			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild10.src = 'html/images/smaller/favorites_active.gif';">
+<center><img src="html/images/smaller/favorites.gif" name="bild10" border="0"></a>
 		</td>
 
 
@@ -76,7 +76,7 @@
 		<td align="center" class="menutext">[% "ALBUM" | string %]</td>
 		<td align="center" class="menutext">Playlists</td>
 		<td align="center" class="menutext">[% "GENRE" | string %]</td>
-		<td align="center" class = 'menutext'>[% "SEARCH" | string %]</td>
+		<td align="center" class = 'menutext'>[% "STATISTICS" | string %]</td>
 		<td align="center" class="menutext">Favorites</td>
 	</tr>
 	[% ELSE %]
@@ -101,8 +101,6 @@
 <table width="100%" bgcolor="#666666">
 	<tr>
 		<td align="right" class = 'statusbartext'>
-			<a href="[% webroot %]hitlist.html" class = 'statusbartext'>Statistics</a>
-			&nbsp;|&nbsp;
 			<a href="html/about.html" style="text-decoration:none" class="statusbartext">About</a>&nbsp;|&nbsp;
 			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=server" class="statusbartext">Server Settings</a>&nbsp;|&nbsp;
 			<a class = 'statusbartext' href="[% webroot %]setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" class = 'statusbartext'>[% "PLAYER_SETTINGS" | string %]</a><!--&nbsp;|&nbsp;
