@@ -2,7 +2,7 @@
 [% statusroot = 'status_header.html' %]
 
 [% BLOCK cmdlink %]
-<td class="[% class %]" width="13">
+<td class="[% IF class ; class ;ELSIF odd %]odd" bgcolor="#d0d0d0[% ELSE %]even" bgcolor="#FFFFFF[% END %]" width="13">
 	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a></nobr>
 </td>
 [% END %]
