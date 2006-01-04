@@ -514,6 +514,80 @@ sub playlistShuffleCommand {
 	$request->setStatusDone();
 }
 
+sub playlistXalbumCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistXalbumCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['playalbum', 'loadalbum', 'addalbum', 'insertalbum', 'deletealbum']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client   = $request->client();
+	my $cmd      = $request->getRequest(1);
+	my $genre    = $request->getParam('_genre'); #p2
+	my $artist   = $request->getParam('_artist');#p3
+	my $album    = $request->getParam('_album'); #p4
+	my $title    = $request->getParam('_title'); #p5
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $find = {};
+
+	# Find the songs for the passed params
+	my $sort = 'track';
+
+	if (_playlistXalbum_specified($genre)) {
+		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
+	}
+	if (_playlistXalbum_specified($artist)) {
+		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
+	}
+	if (_playlistXalbum_specified($album)) {
+		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
+		$sort = 'tracknum';
+	}
+	if (_playlistXalbum_specified($title)) {
+		$find->{'track.title'} = _playlistXalbum_singletonRef($title);
+	}
+	
+	msg("$sort\n");
+
+	my $results = $ds->find({
+		'field'  => 'lightweighttrack',
+		'find'   => $find,
+		'sortBy' => $sort,
+		});
+
+	my $load   = ($cmd eq 'loadalbum' || $cmd eq 'playalbum');
+	my $insert = ($cmd eq 'insertalbum');
+	my $add    = ($cmd eq 'addalbum');
+	my $delete = ($cmd eq 'deletealbum');
+
+	my $playListSize = Slim::Player::Playlist::count($client);
+	my $size = scalar(@$results);
+
+	Slim::Player::Source::playmode($client, 'stop') 				if $load;
+	Slim::Player::Playlist::clear($client) 							if $load;
+
+	push(@{Slim::Player::Playlist::playList($client)}, @$results) 	if $load || $add || $insert;
+	_insert_done($client, $playListSize, $size)						if                  $insert;
+	Slim::Player::Playlist::removeMultipleTracks($client, $results)	if                             $delete;
+
+	Slim::Player::Playlist::reshuffle($client, $load?1:undef)		if $load || $add;
+	Slim::Player::Source::jumpto($client, 0) 						if $load;
+
+	$client->currentPlaylist(undef) 								if $load;
+	$client->currentPlaylistModified(1)								if          $add || $insert || $delete;	
+	$client->currentPlaylistChangeTime(time()) 						if $load || $add || $insert || $delete;			
+
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+
+	$request->setStatusDone();
+}
+
 sub playlistZapCommand {
 	my $request = shift;
 	
@@ -1039,6 +1113,31 @@ sub _insert_done {
 
 	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
 }
+
+# defined, but does not contain a *
+sub _playlistXalbum_specified {
+	my $i = shift;
+
+	return 0 if ref($i) eq 'ARRAY';
+	return 0 unless defined $i;
+	return $i !~ /\*/;
+}
+
+sub _playlistXalbum_singletonRef {
+	my $arg = shift;
+
+	if (!defined($arg)) {
+		return [];
+	} elsif ($arg eq '*') {
+		return [];
+	} elsif ($arg) {
+		# force stringification of a possible object.
+		return ["" . $arg];
+	} else {
+		return [];
+	}
+}
+
 
 
 1;

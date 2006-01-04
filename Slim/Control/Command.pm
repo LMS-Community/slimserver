@@ -126,10 +126,6 @@ sub execute {
 # Y    playlist        resume                      <playlist>    
 # Y    playlist        save                        <playlist>    
 
-# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>        <songtitle>
-# Y    playlist        addalbum                    <genre>                     <artist>         <album>        <songtitle>
-# Y    playlist        insertalbum                 <genre>                     <artist>         <album>        <songtitle>
-# Y    playlist        deletealbum                 <genre>                     <artist>         <album>        <songtitle>
 
 #NOTIFICATION
 # The following 'terms' go through execute for its notification ability, but 
@@ -164,36 +160,36 @@ sub execute {
 			my $jumpToIndex;
 
 			# Query for the passed params
-			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
-
-				my $sort = 'track';
-				# XXX - FIXME - searching for genre.name with
-				# anything else kills the database. As a
-				# stop-gap, don't add the search for
-				# genre.name if we have a more specific query.
-				if (specified($p2) && !specified($p3)) {
-					$find->{'genre.name'} = singletonRef($p2);
-				}
-
-				if (specified($p3)) {
-					$find->{'contributor.name'} = singletonRef($p3);
-				}
-
-				if (specified($p4)) {
-					$find->{'album.title'} = singletonRef($p4);
-					$sort = 'tracknum';
-				}
-
-				if (specified($p5)) {
-					$find->{'track.title'} = singletonRef($p5);
-				}
-
-				$results = $ds->find({
-					'field'  => 'lightweighttrack',
-					'find'   => $find,
-					'sortBy' => $sort,
-				});
-			}
+#			if ($p1 =~ /^(play|load|add|insert|delete)album$/) {
+#
+#				my $sort = 'track';
+#				# XXX - FIXME - searching for genre.name with
+#				# anything else kills the database. As a
+#				# stop-gap, don't add the search for
+#				# genre.name if we have a more specific query.
+#				if (specified($p2) && !specified($p3)) {
+#					$find->{'genre.name'} = singletonRef($p2);
+#				}
+#
+#				if (specified($p3)) {
+#					$find->{'contributor.name'} = singletonRef($p3);
+#				}
+#
+#				if (specified($p4)) {
+#					$find->{'album.title'} = singletonRef($p4);
+#					$sort = 'tracknum';
+#				}
+#
+#				if (specified($p5)) {
+#					$find->{'track.title'} = singletonRef($p5);
+#				}
+#
+#				$results = $ds->find({
+#					'field'  => 'lightweighttrack',
+#					'find'   => $find,
+#					'sortBy' => $sort,
+#				});
+#			}
 
 			# here are all the commands that add/insert/replace songs/directories/playlists on the current playlist
 			if ($p1 =~ /^(play|load|append|add|resume|insert|insertlist)$/) {
@@ -303,37 +299,37 @@ sub execute {
 
 				$client->currentPlaylistChangeTime(time());
 			
-			} elsif ($p1 eq "loadalbum" || $p1 eq "playalbum") {
-
-				Slim::Player::Source::playmode($client, "stop");
-				Slim::Player::Playlist::clear($client);
-
-				push(@{Slim::Player::Playlist::playList($client)}, @$results);
-
-				Slim::Player::Playlist::reshuffle($client, 1);
-				Slim::Player::Source::jumpto($client, 0);
-				$client->currentPlaylist(undef);
-				$client->currentPlaylistChangeTime(time());
-			
-			} elsif ($p1 eq "addalbum") {
-
-				push(@{Slim::Player::Playlist::playList($client)}, @$results);
-
-				Slim::Player::Playlist::reshuffle($client);
-				$client->currentPlaylistModified(1);
-				$client->currentPlaylistChangeTime(time());
-			
-			} elsif ($p1 eq "insertalbum") {
-
-				my $playListSize = Slim::Player::Playlist::count($client);
-				my $size = scalar(@$results);
-
-				push(@{Slim::Player::Playlist::playList($client)}, @$results);
-					
-				insert_done($client, $playListSize, $size);
-				#Slim::Player::Playlist::reshuffle($client);
-				$client->currentPlaylistModified(1);
-				$client->currentPlaylistChangeTime(time());
+#			} elsif ($p1 eq "loadalbum" || $p1 eq "playalbum") {
+#
+#				Slim::Player::Source::playmode($client, "stop");
+#				Slim::Player::Playlist::clear($client);
+#
+#				push(@{Slim::Player::Playlist::playList($client)}, @$results);
+#
+#				Slim::Player::Playlist::reshuffle($client, 1);
+#				Slim::Player::Source::jumpto($client, 0);
+#				$client->currentPlaylist(undef);
+#				$client->currentPlaylistChangeTime(time());
+#			
+#			} elsif ($p1 eq "addalbum") {
+#
+#				push(@{Slim::Player::Playlist::playList($client)}, @$results);
+#
+#				Slim::Player::Playlist::reshuffle($client);
+#				$client->currentPlaylistModified(1);
+#				$client->currentPlaylistChangeTime(time());
+#			
+#			} elsif ($p1 eq "insertalbum") {
+#
+#				my $playListSize = Slim::Player::Playlist::count($client);
+#				my $size = scalar(@$results);
+#
+#				push(@{Slim::Player::Playlist::playList($client)}, @$results);
+#					
+#				insert_done($client, $playListSize, $size);
+#				#Slim::Player::Playlist::reshuffle($client);
+#				$client->currentPlaylistModified(1);
+#				$client->currentPlaylistChangeTime(time());
 			
 			} elsif ($p1 eq "loadtracks" || $p1 eq "playtracks") {
 				Slim::Player::Source::playmode($client, "stop");
@@ -434,11 +430,11 @@ sub execute {
 				# Pass this back to the caller.
 				$p0 = $playlistObj;
 
-			} elsif ($p1 eq "deletealbum") {
-
-				Slim::Player::Playlist::removeMultipleTracks($client, $results);
-				$client->currentPlaylistModified(1);
-				$client->currentPlaylistChangeTime(time());
+#			} elsif ($p1 eq "deletealbum") {
+#
+#				Slim::Player::Playlist::removeMultipleTracks($client, $results);
+#				$client->currentPlaylistModified(1);
+#				$client->currentPlaylistChangeTime(time());
 			
 			}
 

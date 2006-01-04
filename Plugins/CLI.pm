@@ -1,9 +1,10 @@
-﻿package Plugins::CLI;
+package Plugins::CLI;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
 
 use strict;
 use IO::Socket;
@@ -30,16 +31,11 @@ use Slim::Web::Pages::Search;
 #  artists
 #  exit
 #  genres
-#  info
 #  login
 #  listen
-#  player
-#  players
-#  playlists
 #  playlisttracks
 #  songinfo
 #  titles, tracks, songs
-#  version
 # Other CLI queries/commands are handled in Command.pm
 
 
@@ -465,26 +461,10 @@ sub cli_process {
 			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
 		}
 
-#		elsif ($cmd eq 'info') {
-#			cli_cmd_info($client_socket, $cmdRef);
-#		}
-		
 		elsif ($cmd eq 'listen') {
 			cli_cmd_listen($client_socket, $cmdRef);
 		} 
 		
-		elsif ($cmd eq "player") {
-	 		cli_cmd_player($client_socket, $cmdRef);
-		}
-
-		elsif ($cmd eq "players") {
-	 		cli_cmd_players($client_socket, $cmdRef);
-		}
-		
-		elsif ($cmd eq 'playlists') {
-			cli_cmd_playlists($client_socket, $cmdRef);
-		}
-
 		elsif ($cmd eq 'playlisttracks') {
 			cli_cmd_playlisttracks($client_socket, $cmdRef);
 		}
@@ -1005,117 +985,6 @@ sub cli_cmd_listen {
 	}
 }
 
-
-# handled by dispatch
-# Handles the "info" query
-#sub cli_cmd_info {
-#	my $client_socket = shift;
-#	my $cmdRef = shift;
-#
-#	$d_cli_vv && msg("CLI: cli_cmd_info()\n");
-#
-#	my $p1 = $cmdRef->{'_p1'};
-#	return unless (defined $p1 && $p1 eq "total");
-#	
-#	my $p2 = $cmdRef->{'_p2'};
-#	my $ds = Slim::Music::Info::getCurrentDataStore();
-#
-#	if ($p2 =~ /^(genre|artist|album|song)s$/) {
-#
-#		my $field = $1;
-#
-#		$field = 'track'       if $field eq 'song';
-#		$field = 'contributor' if $field eq 'artist';
-#
-#		cli_response_push($client_socket, $ds->count($field));
-#	}
-#}
-
-# Handles the "player" query
-sub cli_cmd_player {
-	my $client_socket = shift;
-	my $cmdRef = shift;
-
-	$d_cli_vv && msg("CLI: cli_cmd_player()\n");
-
-	my $p1 = $cmdRef->{'_p1'};
-	
-	return unless defined $p1;
-	
-	if ($p1 eq "count") {
-
-		cli_response_push($client_socket, Slim::Player::Client::clientCount());
-
-	} elsif ($p1 =~ /^(?:name|address|ip|id|model|displaytype)$/) {
-	
-		my $p2client;
-		my $p2 = $cmdRef->{'_p2'};
-		
-		# were we passed an ID?
-		if (defined $p2 && Slim::Player::Client::getClient($p2)) {
-
-			$p2client = Slim::Player::Client::getClient($p2);
-
-		} else {
-		
-			# otherwise, try for an index
-			my @clients = Slim::Player::Client::clients();
-
-			if (defined $p2 && defined $clients[$p2]) {
-				$p2client = $clients[$p2];
-			}
-		}
-		
-		if (defined $p2client) {
-
-			if ($p1 eq "name") {
-				cli_response_push($client_socket, $p2client->name());
-			} elsif ($p1 eq "address" || $p1 eq "id") {
-				cli_response_push($client_socket, $p2client->id());
-			} elsif ($p1 eq "ip") {
-				cli_response_push($client_socket, $p2client->ipport());
-			} elsif ($p1 eq "model") {
-				cli_response_push($client_socket, $p2client->model());
-			} elsif ($p1 eq "displaytype") {
-				cli_response_push($client_socket, $p2client->vfdmodel());
-			}
-		}
-	}
-}
-
-# Handles the "players" command
-sub cli_cmd_players {
-	my $client_socket = shift;
-	my $cmdRef = shift;
-
-	$d_cli_vv && msg("CLI: cli_cmd_players()\n");
-
-	my $count = Slim::Player::Client::clientCount();
-	cli_response_push($client_socket, "count:" . $count);
-	
-	my ($valid, $start, $end) = cli_normalize($cmdRef, $count);
-
-	if ($valid) {
-		my $idx = $start;
-		my @players = Slim::Player::Client::clients();
-
-		if (scalar(@players) > 0) {
-
-			for my $eachclient (@players[$start..$end]) {
-				cli_response_push($client_socket, "playerindex:" . $idx);
-				cli_response_push($client_socket, "playerid:" . $eachclient->id());
-				cli_response_push($client_socket, "ip:" . $eachclient->ipport());
-				cli_response_push($client_socket, "name:" . $eachclient->name());
-				cli_response_push($client_socket, "model:" . $eachclient->model()); #squeezebox, softsqueeze, slimp3
-				cli_response_push($client_socket, "displaytype:" . $eachclient->vfdmodel()); 
-				cli_response_push($client_socket, "connected:" . ($eachclient->connected() || 0));
-				$idx++;
-			}	
-		}
-	}
-}
-
-#} elsif ($p0 =~ /^(artist|album|genre)s$/) {
 sub cli_cmd_artists_albums_genres {
 	my $client_socket = shift;
 	my $cmdRef = shift;
@@ -1245,46 +1114,6 @@ sub cli_cmd_titles {
 	}
 }
 	
-# handles the "playlists" query
-sub cli_cmd_playlists {
-	my $client_socket = shift;
-	my $cmdRef = shift;
-
-	$d_cli_vv && msg("CLI: cli_cmd_playlists()\n");
-
-	my $ds 		= Slim::Music::Info::getCurrentDataStore();
-	my $search	= $cmdRef->{'search'};
-	my $tags    = $cmdRef->{'tags'} || '';
-
-	# Normalize any search parameters
-	if (defined $search) {
-		$search = Slim::Web::Pages::Search::searchStringSplit($search);
-	}
-
-	if (Slim::Music::Import::stillScanning()) {
-		cli_response_push($client_socket, "rescan:1");
-	}
-
-	my $iterator = $ds->getPlaylists('all', $search);
-
-	if (defined $iterator) {
-
-		my $numitems = scalar @$iterator;
-		
-		cli_response_push($client_socket, "count:$numitems");
-		
-		my ($valid, $start, $end) = cli_normalize($cmdRef, $numitems);
-
-		if ($valid) {
-			for my $eachitem (@$iterator[$start..$end]) {
-				cli_response_push($client_socket, "id:"  . $eachitem->id);
-				cli_response_push($client_socket, "playlist:" . Slim::Music::Info::standardTitle(undef, $eachitem));
-				cli_response_push($client_socket, "url:" . $eachitem->url) if ($tags =~ /u/);
-			}
-		}
-	} 
-}
-
 
 # handles the "playlisttracks" query
 sub cli_cmd_playlisttracks {

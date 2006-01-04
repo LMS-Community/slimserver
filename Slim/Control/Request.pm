@@ -474,23 +474,23 @@ sub __isCmdQuery {
 	if ($isQuery == $self->query()){
 	
 		my $possibleNamesCount = scalar (@{$possibleNames});
-#		msg("possibleNamesCount:$possibleNamesCount\n");
+
 		# we must have the same number (or more) of request terms
 		# than of passed names
 		if ((scalar(@{$self->{'_request'}})) >= $possibleNamesCount) {
-#			msg("Have enough\n");
+
 			my $match = 1; #assume it works
 			
 			# now check each request term matches one of the passed params
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
 				
 				my $name = $self->{'_request'}->[$i];;
-#				msg("Looping $i: checking [$name] against " . join(" ", @{$possibleNames->[$i]}) . "\n");
 				$match = $match && grep(/$name/, @{$possibleNames->[$i]});
 			
 				return 0 if !$match; # return as soon we fail
 			}
-#			msg("Done loop returning 1\n");
+			
+			# everything matched
 			return 1;
 		}
 	}

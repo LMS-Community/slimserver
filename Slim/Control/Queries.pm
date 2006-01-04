@@ -254,10 +254,109 @@ sub modeQuery {
 	$request->setStatusDone();
 }
 
-sub playlistinfoQuery {
+sub playerXQuery {
+	my $request = shift;
+
+	$::d_command && msg("playerXQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $entity      = $request->getRequest(1);
+	my $clientparam = $request->getParam('_IDorIndex');
+	
+	if ($entity eq 'count') {
+		$request->addResult("_$entity", Slim::Player::Client::clientCount());
+
+	} else {	
+		my $client;
+		
+		# were we passed an ID?
+		if (defined $clientparam && Slim::Player::Client::getClient($clientparam)) {
+
+			$client = Slim::Player::Client::getClient($clientparam);
+
+		} else {
+		
+			# otherwise, try for an index
+			my @clients = Slim::Player::Client::clients();
+
+			if (defined $clientparam && defined $clients[$clientparam]) {
+				$client = $clients[$clientparam];
+			}
+		}
+		
+		if (defined $client) {
+
+			if ($entity eq "name") {
+				$request->addResult("_$entity", $client->name());
+			} elsif ($entity eq "address" || $entity eq "id") {
+				$request->addResult("_$entity", $client->id());
+			} elsif ($entity eq "ip") {
+				$request->addResult("_$entity", $client->ipport());
+			} elsif ($entity eq "model") {
+				$request->addResult("_$entity", $client->model());
+			} elsif ($entity eq "displaytype") {
+				$request->addResult("_$entity", $client->vfdmodel());
+			}
+		}
+	}
+	
+	$request->setStatusDone();
+}
+
+sub playersQuery {
+	my $request = shift;
+
+	$::d_command && msg("playersQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['players']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	
+	my $count = Slim::Player::Client::clientCount();
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $idx = $start;
+		my $cnt = 0;
+		my @players = Slim::Player::Client::clients();
+
+		if (scalar(@players) > 0) {
+
+			for my $eachclient (@players[$start..$end]) {
+				$request->addResultLoop('@players', $cnt, 'playerindex', $idx);
+				$request->addResultLoop('@players', $cnt, 'playerid', $eachclient->id());
+				$request->addResultLoop('@players', $cnt, 'ip', $eachclient->ipport());
+				$request->addResultLoop('@players', $cnt, 'name', $eachclient->name());
+				$request->addResultLoop('@players', $cnt, 'model', $eachclient->model());
+				$request->addResultLoop('@players', $cnt, 'displaytype', $eachclient->vfdmodel());
+				$request->addResultLoop('@players', $cnt, 'connected', ($eachclient->connected() || 0));
+				$idx++;
+				$cnt++;
+			}	
+		}
+	}
+	
+	$request->setStatusDone();
+}
+
+sub playlistXQuery {
 	my $request = shift;
 	
-	$::d_command && msg("playlistinfoQuery()\n");
+	$::d_command && msg("playlistXQuery()\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
@@ -274,29 +373,29 @@ sub playlistinfoQuery {
 		
 	if ($entity eq 'repeat') {
 		$request->addResult("_$entity", Slim::Player::Playlist::repeat($client));
-	}
-	if ($entity eq 'shuffle') {
+
+	} elsif ($entity eq 'shuffle') {
 		$request->addResult("_$entity", Slim::Player::Playlist::shuffle($client));
-	}
-	if ($entity eq 'index' || $entity eq 'jump') {
+
+	} elsif ($entity eq 'index' || $entity eq 'jump') {
 		$request->addResult("_$entity", Slim::Player::Source::playingSongIndex($client));
-	}
-	if ($entity eq 'name') {
+
+	} elsif ($entity eq 'name') {
 		$request->addResult("_$entity", Slim::Music::Info::standardTitle($client, $client->currentPlaylist()));
-	}
-	if ($entity eq 'url') {
+
+	} elsif ($entity eq 'url') {
 		$request->addResult("_$entity", $client->currentPlaylist());
-	}
-	if ($entity eq 'modified') {
+
+	} elsif ($entity eq 'modified') {
 		$request->addResult("_$entity", $client->currentPlaylistModified());
-	}
-	if ($entity eq 'tracks') {
+
+	} elsif ($entity eq 'tracks') {
 		$request->addResult("_$entity", Slim::Player::Playlist::count($client));
-	}
-	if ($entity eq 'path') {
+
+	} elsif ($entity eq 'path') {
 		$request->addResult("_$entity", Slim::Player::Playlist::song($client, $index) || 0);
-	}
-	if ($entity =~ /(duration|artist|album|title|genre)/) {
+
+	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 		my $url = Slim::Player::Playlist::song($client, $index);
@@ -313,6 +412,58 @@ sub playlistinfoQuery {
 			}
 		}
 	}
+	
+	$request->setStatusDone();
+}
+
+sub playlistsQuery {
+	my $request = shift;
+
+	$::d_command && msg("playlistsQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['playlists']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search	 = $request->getParam('search');
+	my $tags     = $request->getParam('tags') || '';
+
+	my $ds 		= Slim::Music::Info::getCurrentDataStore();
+
+	# Normalize any search parameters
+	if (defined $search) {
+		$search = Slim::Web::Pages::Search::searchStringSplit($search);
+	}
+
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
+	my $iterator = $ds->getPlaylists('all', $search);
+
+	if (defined $iterator) {
+
+		my $numitems = scalar @$iterator;
+		
+		$request->addResult("count", $numitems);
+		
+		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $numitems);
+
+		if ($valid) {
+			my $cnt = 0;
+			for my $eachitem (@$iterator[$start..$end]) {
+				$request->addResultLoop('@playlists', $cnt, "id", $eachitem->id);
+				$request->addResultLoop('@playlists', $cnt, "playlist", Slim::Music::Info::standardTitle(undef, $eachitem));
+				$request->addResultLoop('@playlists', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
+				$cnt++;
+			}
+		}
+	} 
 	
 	$request->setStatusDone();
 }
