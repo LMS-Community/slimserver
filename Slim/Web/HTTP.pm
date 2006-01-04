@@ -39,6 +39,16 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
+# art resizing support by using GD, requires JPEG support built in
+my $canUseGD = eval {
+	require GD;
+	if (GD::Image->can('jpeg')) {
+		return 1;
+	} else {
+		return 0;
+	}
+};
+
 # constants
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -767,6 +777,8 @@ sub generateHTTPResponse {
 
 	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)\.jpg$/) {
 
+		#TODO: memoize thumb resizing, if necessary 
+		
 		my ($obj, $imageData);
 		my $image = $2;
 		my $ds    = Slim::Music::Info::getCurrentDataStore();
@@ -791,11 +803,42 @@ sub generateHTTPResponse {
 		}
 
 		if (defined($imageData)) {
+			$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
+			
+			# if it's a thumb, resize to size per pref.
+			if ($canUseGD && ($path =~ /thumb\.jpg$/)) {
+				GD::Image->trueColor(1);
+				my $size = Slim::Utils::Prefs::get('thumbSize') || 100;
+				my $origImage = GD::Image->new($imageData);
 
-			$body = \$imageData;
+				if ($origImage && $origImage->width() > $size) {
+					$::d_http && msg("loaded image, using gd resizing image to dimension $size from width ". $origImage->width . "\n");
 
+					my $thumb = GD::Image->new($size, $size);
+					$thumb->copyResampled($origImage,
+						0, 0,               # (destX, destY)
+						0, 0,               # (srcX,  srxY )
+						$size, $size,    # (destX, destY)
+						$origImage->width, $origImage->height
+					);
+				 	my $newImage = $thumb->jpeg;
+				 	$contentType = 'image/jpg';
+				 	
+					$::d_http && msg("resized to new jpg of size ". length($newImage) . " bytes\n");
+					$body = \$newImage;
+				} else {
+					if (!$origImage) {
+						$::d_http && msg("can't resize using GD, wouldn't create image object\n");
+					} else {
+						$::d_http && msg("not resizing, original width was ". $origImage->width() . "\n");
+					}
+					
+					$body = \$imageData;
+				}
+			} else {
+					$body = \$imageData;
+			}				
 		} else {
-
 			($body, $mtime, $inode, $size) = getStaticContent("html/images/cover.png");
 			$contentType = "image/png";
 		}
