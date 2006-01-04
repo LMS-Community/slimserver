@@ -15,6 +15,13 @@
 
 <table width = '100%' bgcolor="#EEEEEE" border="0" cellspacing="2" cellpadding="2">
 
+		[% IF not playlist_items %]
+<tr>
+	<td valign = 'middle' align = 'center' width = '100%' height = '225px' class = 'playingitemtext'>
+		Playlist for this player is empty
+	</td>
+</tr>
+		[% ELSE %]
 <tr>
 	<td valign = 'top' align = 'left' width = '200px'>
 		[% INCLUDE cover_art_display %]
@@ -24,9 +31,6 @@
 	</td>
 	<td valign = 'bottom' align = 'right'>
 		<table class = 'thinborder' bgcolor = 'white'>
-		[% IF not playlist_items %]
-			<tr><td class = 'supertinytext'>Playlist for this player is empty</td></tr>
-		[% ELSE %]
 			<tr><td colspan = '2' align = 'left' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
 			[% FOREACH item = playlist_items %]
 			[% IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END %]
@@ -39,7 +43,6 @@
 					next = next
 				%]
 			[% END %]
-		[% END %]
 		</table>
 	</td>
 </tr>
@@ -49,6 +52,7 @@
 	[% INCLUDE progress_bar_display %]
 	</td>
 </tr>
+		[% END %]
 
 <tr bgcolor = 'white'>
 	<td colspan = 3>
@@ -136,9 +140,9 @@
 <table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
 	<tr>
 		<td width = '100'><img src="html/images/shuffle_symbol.gif"></td>
-		[% FOREACH type = ['off_symbol','song_symbol','album_symbol'] %]
-		<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]'">
-			<img src="html/images/[% type %][% IF shuffle==loop.index %]_active[% END %].gif" border="0" width="20" height="20"></a>
+		[% FOREACH type = ['off','song','album'] %]
+		<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]'" title = 'shuffle [% type %]'>
+			<img src="html/images/[% type %]_symbol[% IF shuffle==loop.index %]_active[% END %].gif" border="0" width="20" height="20" alt = 'shuffle [% type %]'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -308,7 +312,7 @@ if (document.all||document.getElementById)
 	[% IF volume < 39 ;vol=['5','10','15','20','30',40]; ELSE ;vol=['5','10','15','20','30','40','50','60','80','100']; END %]
 	[% FOREACH level IN vol %]
 	<td width="25" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% level %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume == level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*4 %]">
+<img src="html/images/bar[% IF volume >= level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*4 %]">
 	</td>
 	[% END %]
 	</tr>
@@ -360,7 +364,7 @@ if (document.all||document.getElementById)
 <tr>
 
 	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
-		[% IF item.num == previous %]prev[% ELSIF item.currentsong %]current[% ELSIF item.num == next %]next[% END %]
+		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
 	</td>
 	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
 		[% item.title %]
