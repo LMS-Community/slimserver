@@ -22,7 +22,11 @@
 	</td>
 </tr>
 		[% ELSE %]
+[% radio = songtitle.match('\w+:') %]
 <tr>
+[% IF radio %]
+	[% INCLUDE radio_info_display %]
+[% ELSE %]
 	<td valign = 'top' align = 'left' width = '200px'>
 		[% INCLUDE cover_art_display %]
 	</td>
@@ -45,6 +49,7 @@
 			[% END %]
 		</table>
 	</td>
+[% END %]
 </tr>
 
 <tr>
@@ -153,26 +158,31 @@
 [% BLOCK cover_art_display %]
 	<table bgcolor="#EEEEEE" cellspacing="0" cellpadding="0">
 		<tr>
-		<td>
+		<td> 
 		[% IF coverThumb -%]
 			<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="195" %]
-		[% ELSE -%]   
+		[% ELSE -%]
 			<img src="html/images/nocoverart.gif" width = '195' height="195" STYLE="border: 1px solid black">
+		
 		[%- END %]
 		</td>
 		</tr>
 	</table>
 [% END %]
 
-[% BLOCK song_info_display %]
-	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
-		<tr>
-			<td class = 'smalltext' valign = 'top' colspan = '2' nowrap>
+[% BLOCK control_display %]
 			[% IF modeplay %][% "PLAYING" | string %][% END %]
 			[% IF modepause %][% "PAUSED_ON" | string %][% END %]
 			[% IF modestop %][% "STOPPED_ON" | string %][% END %]
 			[% IF currentsong %]<b>[% currentsong %]</b>&nbsp;[% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
 			<a href="status.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[zap]</a>
+[% END %]
+
+[% BLOCK song_info_display %]
+	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
+		<tr>
+			<td class = 'normaltext' valign = 'top' colspan = '2' nowrap>
+			[% INCLUDE control_display %]
 			</td>
 		</tr>
 		<tr>
@@ -370,4 +380,15 @@ if (document.all||document.getElementById)
 		[% item.title %]
 	</td>
 </tr>
+[% END %]
+
+[% BLOCK radio_info_display %]
+	<td valign = 'top' align = 'left' width = '200px'>
+		<img src="html/images/radio.gif" width = '195' height="195">
+	</td>
+        <td class = 'normaltext' valign = 'top' colspan = 2>
+	[% INCLUDE control_display %]
+		<p>Internet Stream URL:<br>
+		<span class = 'playingitemtext'>[% songtitle | html %]</span>
+	</td>
 [% END %]
