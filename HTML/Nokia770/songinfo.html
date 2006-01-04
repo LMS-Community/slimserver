@@ -26,12 +26,16 @@
 		<table width="100%" cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td align="left">
-				<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" style="text-decoration:none">
+				<a href="[% webroot %][% statusroot %]?command=playlist&subcommand=loadtracks&track=[% itemobj.id %]&player=[% playerURI %]" style = 'text-decoration: none'>
 				<font class="menutext">[% "PLAY" | string %]</a>&nbsp;&nbsp;&nbsp;
-				<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% playerURI %]">
+<!-- need to find out subcommand for 'next'
+				<a href="[% webroot %][% statusroot %]?command=playlist&subcommand=addtracks&track=[% itemobj.id %]&player=[% playerURI %]" style = 'text-decoration: none'>
 				[% "NEXT" | string %]</a>
-				&nbsp;<a href="[% webroot %][% path %]?[% queryparams %]&p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" style="text-decoration:none">
+-->
+				[% playlist_page = 'playlist.html' %]
+				&nbsp;<a href="[% webroot %][% playlist_page %]?command=playlist&subcommand=addtracks&track=[% itemobj.id %]&player=[% playerURI %]" style = 'text-decoration: none'>
 				&nbsp;[% "ADD" | string %]</a>&nbsp;</small>
+
 				</td>
 			</tr>
 			<tr>
