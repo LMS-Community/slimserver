@@ -16,7 +16,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
-use Slim::Utils::Misc qw(msg);
+use Slim::Utils::Misc qw(msg errorMsg);
 
 #use Slim::Control::Request;
 #use Slim::Music::Import;
@@ -30,16 +30,16 @@ sub buttonCommand {
 	$::d_command && msg("buttonCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['button'])) {
+	if ($request->isNotCommand([['button']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
+	# get the parameters
 	my $client     = $request->client();
 	my $button     = $request->getParam('_buttoncode');
-	my $time       = $request->getParam('time')            || $request->getParam('_p2');
-	my $orFunction = $request->getParam('orFunction')      || $request->getParam('_p3');
+	my $time       = $request->getParam('_time');
+	my $orFunction = $request->getParam('_orFunction');
 	
 	if (!defined $button ) {
 		$request->setStatusBadParams();
@@ -57,12 +57,12 @@ sub debugCommand {
 	$::d_command && msg("debugCommand()\n");
 
 	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotCommand(['debug'])) {
+	if ($request->isNotCommand([['debug']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
+	# get the parameters
 	my $debugFlag = $request->getParam('_debugflag');
 	my $newValue = $request->getParam('_newvalue');
 	
@@ -90,11 +90,12 @@ sub displayCommand {
 	$::d_command && msg("displayCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['display'])) {
+	if ($request->isNotCommand([['display']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
+	# get the parameters
 	my $client   = $request->client();
 	my $line1    = $request->getParam('_line1');
 	my $line2    = $request->getParam('_line2');
@@ -118,12 +119,12 @@ sub irCommand {
 	$::d_command && msg("irCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['ir'])) {
+	if ($request->isNotCommand([['ir']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get the parameters
 	my $client      = $request->client();
 	my $irCodeBytes = $request->getParam('_ircode');
 	my $irTime      = $request->getParam('_time');	
@@ -144,20 +145,15 @@ sub mixerCommand {
 	$::d_command && msg("mixerCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['mixer'])) {
+	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get the parameters
 	my $client   = $request->client();
 	my $entity   = $request->getRequest(1);
 	my $newvalue = $request->getParam('_newvalue');
-
-	if ($request->paramUndefinedOrNotOneOf($entity, ['volume', 'muting', 'treble', 'bass', 'pitch']) ) {
-		$request->setStatusBadParams();
-		return;
-	}
 
 	my @buddies;
 
@@ -219,7 +215,8 @@ sub playcontrolCommand {
 	$::d_command && msg("playcontrolCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['play', 'stop', 'pause', 'mode'])) {
+	if ($request->isNotCommand([['play', 'stop', 'pause']]) &&
+		$request->isNotCommand([['mode'], ['play', 'pause', 'stop']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -229,11 +226,6 @@ sub playcontrolCommand {
 	my $cmd    = $request->getRequest(0);
 	my $param  = $request->getRequest(1);
 	
-	if ($cmd eq 'mode' && $request->paramUndefinedOrNotOneOf($param, ['play', 'pause', 'stop'])) {
-		$request->setStatusBadParams();
-		return;
-	}
-
 	# which state are we in?
 	my $curmode = Slim::Player::Source::playmode($client);
 	
@@ -286,20 +278,45 @@ sub playcontrolCommand {
 	$request->setStatusDone();
 }
 
-sub playlistdeleteCommand {
+sub playlistClearCommand {
 	my $request = shift;
 	
-	$::d_command && msg("playlistdeleteCommand()\n");
+	$::d_command && msg("playlistClearCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['playlist'])) {
+	if ($request->isNotCommand([['playlist'], ['clear']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
 	# get the parameters
 	my $client = $request->client();
-	my $delete  = $request->getRequest(1);
+
+	Slim::Player::Playlist::clear($client);
+	Slim::Player::Source::playmode($client, "stop");
+	$client->currentPlaylist(undef);
+	$client->currentPlaylistChangeTime(time());
+	
+	# The above changes the playlist but I am not sure this is ever
+	# executed, or even if it should be
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+	
+	$request->setStatusDone();
+}
+
+sub playlistDeleteCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistDeleteCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['delete']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
 	my $index  = $request->getParam('_index');;
 	
 	if (!defined $index) {
@@ -316,13 +333,243 @@ sub playlistdeleteCommand {
 	$request->setStatusDone();
 }
 
+sub playlistDeleteitemCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistDeleteitemCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['deleteitem']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client      = $request->client();
+	my $item        = $request->getParam('_item');;
+	
+	if (!defined $item || $item eq '') {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# This used to update $p2; anybody depending on this behaviour needs
+	# to be changed to used the returned result (commented below)
+	my $absitem = Slim::Utils::Misc::virtualToAbsolute($item);
+	#$request->addResult('__absitem', $absitem);
+
+	my $contents;
+
+	if (!Slim::Music::Info::isList($absitem)) {
+
+		Slim::Player::Playlist::removeMultipleTracks($client, [$absitem]);
+
+	} elsif (Slim::Music::Info::isDir($absitem)) {
+
+		Slim::Utils::Scan::addToList({
+			'listRef' 	=> \@{$contents},
+			'url'		=> $absitem,
+			'recursive' => 1
+		});
+
+		Slim::Player::Playlist::removeMultipleTracks($client, \@{$contents});
+
+	} else {
+
+		$contents = Slim::Music::Info::cachedPlaylist($absitem);
+
+		if (!defined $contents) {
+
+			my $playlist_filehandle;
+
+			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($absitem))) {
+
+				errorMsg("Couldn't open playlist file $absitem : $!\n");
+
+				$playlist_filehandle = undef;
+
+			} else {
+
+				$contents = [Slim::Formats::Parse::parseList($absitem, $playlist_filehandle, dirname($absitem))];
+			}
+		}
+
+		if (defined($contents)) {
+			Slim::Player::Playlist::removeMultipleTracks($client, $contents);
+		}
+	}
+
+	$client->currentPlaylistModified(1);
+	$client->currentPlaylistChangeTime(time());
+	Slim::Player::Playlist::refreshPlaylist($client);
+	
+	$request->setStatusDone();
+}
+
+sub playlistJumpCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistJumpCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['jump', 'index']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $index  = $request->getParam('_index');;
+	my $noplay = $request->getParam('_noplay');;
+	
+	Slim::Player::Source::jumpto($client, $index, $noplay);
+
+	# Does the above change the playlist?
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+	
+	$request->setStatusDone();
+}
+
+sub playlistMoveCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistMoveCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['move']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client     = $request->client();
+	my $fromindex  = $request->getParam('_fromindex');;
+	my $toindex    = $request->getParam('_toindex');;
+	
+	if (!defined $fromindex || !defined $toindex) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	Slim::Player::Playlist::moveSong($client, $fromindex, $toindex);
+	$client->currentPlaylistModified(1);
+	$client->currentPlaylistChangeTime(time());
+	
+	Slim::Player::Playlist::refreshPlaylist($client);
+	
+	$request->setStatusDone();
+}
+
+sub playlistRepeatCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistRepeatCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['repeat']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client   = $request->client();
+	my $newvalue = $request->getParam('_newvalue');
+	
+	if (!defined $newvalue) {
+		# original code: (Slim::Player::Playlist::repeat($client) + 1) % 3
+		$newvalue = (1,2,0)[Slim::Player::Playlist::repeat($client)];
+	}
+	
+	Slim::Player::Playlist::repeat($client, $newvalue);
+	
+	$request->setStatusDone();
+}
+
+sub playlistShuffleCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistShuffleCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['shuffle']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client   = $request->client();
+	my $newvalue = $request->getParam('_newvalue');
+	
+	if (!defined $newvalue) {
+		$newvalue = (1,2,0)[Slim::Player::Playlist::shuffle($client)];
+	}
+	
+	Slim::Player::Playlist::shuffle($client, $newvalue);
+	Slim::Player::Playlist::reshuffle($client);
+	$client->currentPlaylistChangeTime(time());
+	
+	# Does the above change the playlist?
+	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+	
+	$request->setStatusDone();
+}
+
+sub playlistZapCommand {
+	my $request = shift;
+	
+	$::d_command && msg("playlistZapCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['zap']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client = $request->client();
+	my $index  = $request->getParam('_index');;
+	
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	my $zapped   = Slim::Utils::Strings::string('ZAPPED_SONGS');
+	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
+	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
+
+	#  Remove from current playlist
+	if (Slim::Player::Playlist::count($client) > 0) {
+
+		# Callo ourselves.
+		Slim::Control::Command::execute($client, ["playlist", "delete", $zapindex]);
+	}
+
+	my $playlistObj = $ds->updateOrCreate({
+		'url'        => "playlist://$zapped",
+		'attributes' => {
+			'TITLE' => $zapped,
+			'CT'    => 'ssp',
+		},
+	});
+
+	my @list = $playlistObj->tracks();
+	push @list, $zapsong;
+
+	$playlistObj->setTracks(\@list);
+	$playlistObj->update();
+
+	$client->currentPlaylistModified(1);
+	$client->currentPlaylistChangeTime(time());
+	Slim::Player::Playlist::refreshPlaylist($client);
+	
+	$request->setStatusDone();
+}
+
 sub playlistcontrolCommand {
 	my $request = shift;
 	
 	$::d_command && msg("playlistcontrolCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['playlistcontrol'])) {
+	if ($request->isNotCommand([['playlistcontrol']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -331,11 +578,14 @@ sub playlistcontrolCommand {
 	my $client = $request->client();
 	my $cmd    = $request->getParam('cmd');;
 	
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+
 	if ($request->paramUndefinedOrNotOneOf($cmd, ['load', 'insert', 'add', 'delete'])) {
 		$request->setStatusBadParams();
 		return;
 	}
-
 
 	my $load = ($cmd eq 'load');
 	my $insert = ($cmd eq 'insert');
@@ -344,9 +594,6 @@ sub playlistcontrolCommand {
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
  			
-	if (Slim::Music::Import::stillScanning()) {
-		$request->addResult('rescan', "1");
-	}
 
 	# find the songs
 	my $find = {};
@@ -386,8 +633,8 @@ sub playlistcontrolCommand {
 		my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
 
 		@songs = @{ $ds->find({
-			'field'   => 'lightweighttrack',
-			'find'    => $find,
+			'field'  => 'lightweighttrack',
+			'find'   => $find,
 			'sortBy' => $sort,
 		}) };
 	}
@@ -416,96 +663,12 @@ sub playlistcontrolCommand {
 	$request->setStatusDone();
 }
 
-sub playlistjumpCommand {
-	my $request = shift;
-	
-	$::d_command && msg("playlistjumpCommand()\n");
-
-	# check this is the correct command.
-	if ($request->isNotCommand(['playlist'])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get the parameters
-	my $client = $request->client();
-	my $jump   = $request->getRequest(1);
-	my $index  = $request->getParam('_index');;
-	my $noplay = $request->getParam('_noplay');;
-	
-	if ($request->paramUndefinedOrNotOneOf($jump, ['jump', 'index'])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	Slim::Player::Source::jumpto($client, $index, $noplay);
-
-	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
-	
-	$request->setStatusDone();
-}
-
-sub playlistzapCommand {
-	my $request = shift;
-	
-	$::d_command && msg("playlistzapCommand()\n");
-
-	# check this is the correct command.
-	if ($request->isNotCommand(['playlist'])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get the parameters
-	my $client = $request->client();
-	my $zap    = $request->getRequest(1);
-	my $index  = $request->getParam('_index');;
-	
-	if ($request->paramUndefinedOrNotOneOf($zap, ['zap'])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	my $zapped   = Slim::Utils::Strings::string('ZAPPED_SONGS');
-	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
-	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
-
-	#  Remove from current playlist
-	if (Slim::Player::Playlist::count($client) > 0) {
-
-		# Callo ourselves.
-		Slim::Control::Command::execute($client, ["playlist", "delete", $zapindex]);
-	}
-
-	my $playlistObj = $ds->updateOrCreate({
-		'url'        => "playlist://$zapped",
-		'attributes' => {
-			'TITLE' => $zapped,
-			'CT'    => 'ssp',
-		},
-	});
-
-	my @list = $playlistObj->tracks();
-	push @list, $zapsong;
-
-	$playlistObj->setTracks(\@list);
-	$playlistObj->update();
-
-	$client->currentPlaylistModified(1);
-	$client->currentPlaylistChangeTime(time());
-	Slim::Player::Playlist::refreshPlaylist($client);
-	
-	$request->setStatusDone();
-}
-
 sub playerprefCommand {
 	my $request = shift;
 	
 	$::d_command && msg("playerprefCommand()\n");
 
-	if ($request->isNotCommand(['playerpref'])) {
+	if ($request->isNotCommand([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -531,12 +694,12 @@ sub powerCommand {
 	$::d_command && msg("powerCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['power'])) {
+	if ($request->isNotCommand([['power']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get our parameters
 	my $client   = $request->client();
 	my $newpower = $request->getParam('_newvalue');
 	
@@ -573,12 +736,12 @@ sub prefCommand {
 	
 	$::d_command && msg("prefCommand()\n");
 
-	if ($request->isNotCommand(['pref'])) {
+	if ($request->isNotCommand([['pref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# uses positional things as backups
+	# get our parameters
 	my $prefName = $request->getParam('_prefname');
 	my $newValue = $request->getParam('_newvalue');
 
@@ -598,12 +761,12 @@ sub rateCommand {
 	$::d_command && msg("rateCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['rate'])) {
+	if ($request->isNotCommand([['rate']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get our parameters
 	my $client  = $request->client();
 	my $newrate = $request->getParam('_newvalue');
 	
@@ -627,11 +790,12 @@ sub rescanCommand {
 	
 	$::d_command && msg("rescanCommand()\n");
 
-	if ($request->isNotCommand(['rescan'])) {
+	if ($request->isNotCommand([['rescan']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
+	# get our parameters
 	my $playlistsOnly = $request->getParam('_playlists') || 0;
 	
 	# if we're scanning allready, don't do it twice
@@ -662,12 +826,12 @@ sub sleepCommand {
 	$::d_command && msg("sleepCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['sleep'])) {
+	if ($request->isNotCommand([['sleep']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get our parameters
 	my $client        = $request->client();
 	my $will_sleep_in = $request->getParam('_newvalue');
 	
@@ -712,12 +876,12 @@ sub syncCommand {
 	$::d_command && msg("syncCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['sync'])) {
+	if ($request->isNotCommand([['sync']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get our parameters
 	my $client   = $request->client();
 	my $newbuddy = $request->getParam('_indexid-');
 	
@@ -755,12 +919,12 @@ sub timeCommand {
 	$::d_command && msg("timeCommand()\n");
 
 	# check this is the correct command.
-	if ($request->isNotCommand(['time', 'gototime'])) {
+	if ($request->isNotCommand([['time', 'gototime']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	# use positional parameters as backups
+	# get our parameters
 	my $client  = $request->client();
 	my $newtime = $request->getParam('_newvalue');
 	
@@ -779,7 +943,7 @@ sub wipecacheCommand {
 	
 	$::d_command && msg("wipecacheCommand()\n");
 
-	if ($request->isNotCommand(['wipecache'])) {
+	if ($request->isNotCommand([['wipecache']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}

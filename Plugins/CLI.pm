@@ -1,4 +1,4 @@
-package Plugins::CLI;
+﻿package Plugins::CLI;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -921,7 +921,7 @@ sub cli_songdata {
 			}
 	
 			if ($tag eq 'q' && defined(my $discc = $album->discc())) {
-				push @returnArray, "disccount:$discc";
+				push @returnArray, "disccount:$discc" unless $discc eq '';
 				next;
 			}
 		}

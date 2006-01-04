@@ -63,7 +63,7 @@ sub getPlaylist {
 
 	return \@returnArray if ($songCount == 0);
 
-	my ($valid, $start, $end) = Slim::Control::Command::normalize($p1, $p2, $songCount);
+	my ($valid, $start, $end) = Slim::Control::Queries::_normalize($p1, $p2, $songCount);
 
 	if ($valid) {
 		my $ds = Slim::Music::Info::getCurrentDataStore();

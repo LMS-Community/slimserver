@@ -26,8 +26,8 @@ sub cursonginfoQuery {
 	
 	$::d_command && msg("cursonginfoQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['duration', 'artist', 'album', 'title', 'genre', 'path'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre', 'path']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -35,14 +35,14 @@ sub cursonginfoQuery {
 	my $client = $request->client();
 
 	# get the query
-	my $method = $request->getRequest();
+	my $method = $request->getRequest(0);
 	my $url = Slim::Player::Playlist::song($client);
 	
 	if (defined $url) {
 
 		if ($method eq 'path') {
 			
-			$request->addResult('_p1', $url);
+			$request->addResult("_$method", $url);
 		
 		} else {
 			
@@ -56,11 +56,11 @@ sub cursonginfoQuery {
 			
 				if ($method eq 'duration') {
 			
-					$request->addResult('_p1', $track->secs() || 0);
+					$request->addResult("_$method", $track->secs() || 0);
 				
 				} else {
 					
-					$request->addResult('_p1', $track->$method() || 0);
+					$request->addResult("_$method", $track->$method() || 0);
 				}
 			}
 		}
@@ -74,15 +74,16 @@ sub connectedQuery {
 	
 	$::d_command && msg("connectedQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['connected'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['connected']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get our parameters
 	my $client = $request->client();
 	
-	$request->addResult('_p1', $client->connected() || 0);
+	$request->addResult('_connected', $client->connected() || 0);
 	
 	$request->setStatusDone();
 }
@@ -92,13 +93,13 @@ sub debugQuery {
 	
 	$::d_command && msg("debugQuery()\n");
 
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['debug'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['debug']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
+	# get our parameters
 	my $debugFlag = $request->getParam('_debugflag');
 	
 	if ( !defined $debugFlag || !($debugFlag =~ /^d_/) ) {
@@ -112,7 +113,7 @@ sub debugQuery {
 	my $isValue = $$debugFlag;
 	$isValue ||= 0;
 	
-	$request->addResult('_p2', $isValue);
+	$request->addResult('_value', $isValue);
 	
 	$request->setStatusDone();
 }
@@ -122,18 +123,19 @@ sub displayQuery {
 	
 	$::d_command && msg("displayQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['display'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['display']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get our parameters
 	my $client = $request->client();
 	
 	my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
 
-	$request->addResult('_p1', $parsed->{line1} || '');
-	$request->addResult('_p2', $parsed->{line2} || '');
+	$request->addResult('_line1', $parsed->{line1} || '');
+	$request->addResult('_line2', $parsed->{line2} || '');
 		
 	$request->setStatusDone();
 }
@@ -143,54 +145,47 @@ sub displaynowQuery {
 	
 	$::d_command && msg("displaynowQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['displaynow'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['displaynow']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get our parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', $client->prevline1());
-	$request->addResult('_p2', $client->prevline2());
+	$request->addResult('_line1', $client->prevline1());
+	$request->addResult('_line2', $client->prevline2());
 		
 	$request->setStatusDone();
 }
 
-sub infototalQuery {
+sub infoTotalQuery {
 	my $request = shift;
 	
-	$::d_command && msg("infototalQuery()\n");
+	$::d_command && msg("infoTotalQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['info'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	my $total  = $request->getRequest(1);
+	# get our parameters
 	my $entity = $request->getRequest(2);
-
-	if (!defined $total || $total ne 'total' ||
-		$request->paramUndefinedOrNotOneOf($entity, ['genres', 'artists', 'albums', 'songs'])) {
-		$request->setStatusBadParams();
-		return;
-	}		
-
-	# get the DB
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	
 	if ($entity eq 'albums') {
-		$request->addResult('_p3', $ds->count('album'));
+		$request->addResult("_$entity", $ds->count('album'));
 	}
 	if ($entity eq 'artists') {
-		$request->addResult('_p3', $ds->count('contributor'));
+		$request->addResult("_$entity", $ds->count('contributor'));
 	}
 	if ($entity eq 'genres') {
-		$request->addResult('_p3', $ds->count('genre'));
+		$request->addResult("_$entity", $ds->count('genre'));
 	}
 	if ($entity eq 'songs') {
-		$request->addResult('_p3', $ds->count('track'));
+		$request->addResult("_$entity", $ds->count('track'));
 	}			
 	
 	$request->setStatusDone();
@@ -201,15 +196,16 @@ sub linesperscreenQuery {
 	
 	$::d_command && msg("linesperscreenQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['linesperscreen'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['linesperscreen']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get our parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', $client->linesPerScreen());
+	$request->addResult('_linesperscreen', $client->linesPerScreen());
 	
 	$request->setStatusDone();
 }
@@ -219,24 +215,21 @@ sub mixerQuery {
 	
 	$::d_command && msg("mixerQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['mixer'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
+	# get our parameters
 	my $client = $request->client();
 	my $entity = $request->getRequest(1);
 
-	if ($request->paramUndefinedOrNotOneOf($entity, ['volume', 'muting', 'treble', 'bass', 'pitch'])) {
-		$request->setStatusBadParams();
-		return;
-	}		
 	
 	if ($entity eq 'muting') {
-		$request->addResult('_p2', $client->prefGet("mute"));
+		$request->addResult("_$entity", $client->prefGet("mute"));
 	} else {
-		$request->addResult('_p2', $client->$entity());
+		$request->addResult("_$entity", $client->$entity());
 	}
 	
 	$request->setStatusDone();
@@ -247,15 +240,16 @@ sub modeQuery {
 	
 	$::d_command && msg("modeQuery()\n");
 
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['mode'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['mode']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get our parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', Slim::Player::Source::playmode($client));
+	$request->addResult('_mode', Slim::Player::Source::playmode($client));
 	
 	$request->setStatusDone();
 }
@@ -266,23 +260,18 @@ sub playlistinfoQuery {
 	$::d_command && msg("playlistinfoQuery()\n");
 
 	# check this is the correct query
-	if ($request->isNotQuery(['playlist'])) {
+	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
+			'tracks', 'duration', 'artist', 'album', 'title', 'genre', 'path', 
+			'repeat', 'shuffle', 'index', 'jump']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
 	# get the parameters
-	my $client   = $request->client();
+	my $client = $request->client();
 	my $entity = $request->getRequest(1);
-	my $index = $request->getParam('_index');
-	
-	if ($request->paramUndefinedOrNotOneOf($entity, ['name', 'url', 'modified', 
-			'tracks', 'duration', 'artist', 'album', 'title', 'genre', 'path', 
-			'repeat', 'shuffle', 'index', 'jump'])) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
+	my $index  = $request->getParam('_index');
+		
 	if ($entity eq 'repeat') {
 		$request->addResult("_$entity", Slim::Player::Playlist::repeat($client));
 	}
@@ -333,13 +322,13 @@ sub playerprefQuery {
 	
 	$::d_command && msg("playerprefQuery()\n");
 
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['playerpref'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['playerpref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
+	# get the parameters
 	my $client   = $request->client();
 	my $prefName = $request->getParam('_prefname');
 	
@@ -358,15 +347,16 @@ sub powerQuery {
 	
 	$::d_command && msg("powerQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['power'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['power']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', $client->power());
+	$request->addResult('_power', $client->power());
 	
 	$request->setStatusDone();
 }
@@ -376,12 +366,13 @@ sub prefQuery {
 	
 	$::d_command && msg("prefQuery()\n");
 
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['pref'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['pref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $prefName = $request->getParam('_prefname');
 	
 	if (!defined $prefName) {
@@ -399,15 +390,16 @@ sub rateQuery {
 	
 	$::d_command && msg("rateQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['rate'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['rate']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', Slim::Player::Source::rate($client));
+	$request->addResult('_rate', Slim::Player::Source::rate($client));
 	
 	$request->setStatusDone();
 }
@@ -417,14 +409,15 @@ sub rescanQuery {
 	
 	$::d_command && msg("rescanQuery()\n");
 
-	if ($request->isNotQuery(['rescan'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['rescan']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
 	# no params for the rescan query
 
-	$request->addResult('_p1', Slim::Music::Import::stillScanning() ? 1 : 0);
+	$request->addResult('_rescan', Slim::Music::Import::stillScanning() ? 1 : 0);
 	
 	$request->setStatusDone();
 }
@@ -434,15 +427,16 @@ sub signalstrengthQuery {
 	
 	$::d_command && msg("signalstrengthQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['signalstrength'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['signalstrength']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', $client->signalStrength() || 0);
+	$request->addResult('_signalstrength', $client->signalStrength() || 0);
 	
 	$request->setStatusDone();
 }
@@ -452,12 +446,13 @@ sub sleepQuery {
 	
 	$::d_command && msg("sleepQuery()\n");
 
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['sleep'])) {
+	# check this is the correct query
+	if ($request->isNotQuery([['sleep']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
 	my $isValue = $client->sleepTime() - Time::HiRes::time();
@@ -465,7 +460,174 @@ sub sleepQuery {
 		$isValue = 0;
 	}
 	
-	$request->addResult('_p1', $isValue);
+	$request->addResult('_sleep', $isValue);
+	
+	$request->setStatusDone();
+}
+
+sub statusQuery {
+	my $request = shift;
+	
+	$::d_command && msg("statusQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['status']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the initial parameters
+	my $client = $request->client();
+	
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	
+	my $connected = $client->connected() || 0;
+	my $power     = $client->power();
+	my $repeat    = Slim::Player::Playlist::repeat($client);
+	my $shuffle   = Slim::Player::Playlist::shuffle($client);
+	my $songCount = Slim::Player::Playlist::count($client);
+	my $idx = 0;
+		
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+	
+	$request->addResult("player_name", $client->name());
+	$request->addResult("player_connected", $connected);
+	$request->addResult("power", $power);
+	
+	if ($client->model() eq "squeezebox" || $client->model() eq "squeezebox2") {
+		$request->addResult("signalstrength", ($client->signalStrength() || 0));
+	}
+	
+	if ($power) {
+	
+		$request->addResult("mode", Slim::Player::Source::playmode($client));
+
+		if (Slim::Player::Playlist::song($client)) { 
+			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+
+			my $dur   = 0;
+
+			if (blessed($track) && $track->can('secs')) {
+
+				$dur = $track->secs;
+			}
+
+			if ($dur) {
+				$request->addResult("rate", Slim::Player::Source::rate($client));
+				$request->addResult("time", Slim::Player::Source::songTime($client));
+				$request->addResult("duration", $dur);
+			}
+		}
+		
+		if ($client->currentSleepTime()) {
+
+			my $sleep = $client->sleepTime() - Time::HiRes::time();
+			$request->addResult("sleep", $client->currentSleepTime() * 60);
+			$request->addResult("will_sleep_in", ($sleep < 0 ? 0 : $sleep));
+		}
+		
+		if (Slim::Player::Sync::isSynced($client)) {
+
+			my $master = Slim::Player::Sync::masterOrSelf($client);
+
+			$request->addResult("sync_master", $master->id());
+
+			my @slaves = Slim::Player::Sync::slaves($master);
+			my @sync_slaves = map { $_->id } @slaves;
+
+			$request->addResult("sync_slaves", join(" ", @sync_slaves));
+		}
+	
+		$request->addResult("mixer volume", $client->volume());
+		$request->addResult("mixer treble", $client->treble());
+		$request->addResult("mixer bass", $client->bass());
+
+		if ($client->model() ne "slimp3") {
+			$request->addResult("mixer pitch", $client->pitch());
+		}
+
+		$request->addResult("playlist repeat", $repeat); 
+		$request->addResult("playlist shuffle", $shuffle); 
+	
+		if ($songCount > 0) {
+			$idx = Slim::Player::Source::playingSongIndex($client);
+			$request->addResult("playlist_cur_index", $idx);
+		}
+
+		$request->addResult("playlist_tracks", $songCount);
+	}
+	
+	if ($songCount > 0 && $power) {
+	
+		# get the other parameters
+		my $tags     = $request->getParam('tags');
+		my $index    = $request->getParam('_index');
+		my $quantity = $request->getParam('_quantity');
+	
+		$tags = 'gald' if !defined $tags;
+		my $loop = '@playlist';
+
+		# we can return playlist data.
+		# which mode are we in?
+		my $modecurrent = 0;
+
+		if (defined($index) && ($index eq "-")) {
+			$modecurrent = 1;
+		}
+		
+		# if repeat is 1 (song) and modecurrent, then show the current song
+		if ($modecurrent && ($repeat == 1) && $quantity) {
+
+			$request->addResultLoop($loop, 0, 'playlist index', $idx);
+			_addSong($request, $loop, 0, Slim::Player::Playlist::song($client, $idx), $tags);
+
+		} else {
+
+			my ($valid, $start, $end);
+			
+			if ($modecurrent) {
+				($valid, $start, $end) = _normalize($idx, scalar($quantity), $songCount);
+			} else {
+				($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $songCount);
+			}
+
+			if ($valid) {
+				my $count = 0;
+
+				for ($idx = $start; $idx <= $end; $idx++){
+					$request->addResultLoop($loop, $count, 'playlist index', $idx);
+					_addSong($request, $loop, $count, Slim::Player::Playlist::song($client, $idx), $tags);
+					$count++;
+					::idleStreams() ;
+				}
+				
+				my $repShuffle = Slim::Utils::Prefs::get('reshuffleOnRepeat');
+				my $canPredictFuture = ($repeat == 2)  			# we're repeating all
+										&& 						# and
+										(	($shuffle == 0)		# either we're not shuffling
+											||					# or
+											(!$repShuffle));	# we don't reshuffle
+				
+				if ($modecurrent && $canPredictFuture && ($count < scalar($quantity))) {
+
+					# wrap around the playlist...
+					($valid, $start, $end) = _normalize(0, (scalar($quantity) - $count), $songCount);		
+
+					if ($valid) {
+
+						for ($idx = $start; $idx <= $end; $idx++){
+							$request->addResultLoop($loop, $count, 'playlist index', $idx);
+							_addSong($request, $loop, $count, Slim::Player::Playlist::song($client, $idx), $tags);
+							$count++;
+							::idleStreams() ;
+						}
+					}						
+				}
+			}
+		}
+	}
 	
 	$request->setStatusDone();
 }
@@ -475,23 +637,25 @@ sub syncQuery {
 	
 	$::d_command && msg("syncQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['sync'])) {
+	# check this is the correct query
+	if ($request->isNotQuery([['sync']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
 	if (Slim::Player::Sync::isSynced($client)) {
 	
 		my @buddies = Slim::Player::Sync::syncedWith($client);
+		my $i = 0;
 		for my $eachclient (@buddies) {
-			$request->addResult('_p1', $eachclient->id());
+			$request->addResultLoop('@syncedWith', $i++, '_playerid', $eachclient->id());
 		}
 	} else {
 	
-		$request->addResult('_p1', '-');
+		$request->addResult('_sync', '-');
 	}
 	
 	$request->setStatusDone();
@@ -502,15 +666,16 @@ sub timeQuery {
 	
 	$::d_command && msg("timeQuery()\n");
 
-	# check this is the correct command.
-	if ($request->isNotQuery(['time', 'gototime'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['time', 'gototime']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
+	# get the parameters
 	my $client = $request->client();
 
-	$request->addResult('_p1', Slim::Player::Source::songTime($client));
+	$request->addResult('_time', Slim::Player::Source::songTime($client));
 	
 	$request->setStatusDone();
 }
@@ -520,19 +685,173 @@ sub versionQuery {
 	
 	$::d_command && msg("versionQuery()\n");
 
-	if ($request->isNotQuery(['version'])) {
+	# check this is the correct query.
+	if ($request->isNotQuery([['version']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
 	# no params for the version query
 
-	$request->addResult('_p1', $::VERSION);
+	$request->addResult('_version', $::VERSION);
 	
 	$request->setStatusDone();
 }
 
+################################################################################
+# Helper functions
+################################################################################
 
+sub _normalize {
+	my $from = shift;
+	my $numofitems = shift;
+	my $count = shift;
+	
+	my $start = 0;
+	my $end   = 0;
+	my $valid = 0;
+	
+	if ($numofitems && $count) {
+
+		my $lastidx = $count - 1;
+
+		if ($from > $lastidx) {
+			return ($valid, $start, $end);
+		}
+
+		if ($from < 0) {
+			$from = 0;
+		}
+	
+		$start = $from;
+		$end = $start + $numofitems - 1;
+	
+		if ($end > $lastidx) {
+			$end = $lastidx;
+		}
+
+		$valid = 1;
+	}
+
+	return ($valid, $start, $end);
+}
+
+sub _addSong {
+	my $request   = shift; # request
+	my $loop      = shift; # loop
+	my $index     = shift; # loop index
+	my $pathOrObj = shift; # song path or object
+	my $tags      = shift; # tags to use
+
+	my $ds        = Slim::Music::Info::getCurrentDataStore();
+	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	
+	if (!blessed($track) || !$track->can('id')) {
+		msg("Slim::Control::Command::pushSong called on undefined track!\n");
+		return;
+	}
+	
+	$request->addResultLoop($loop, $index, 'id', $track->id());
+	$request->addResultLoop($loop, $index, 'title', $track->title());
+	
+	# Allocation map: capital letters are still free:
+	#  a b c d e f g h i j k l m n o p q r s t u v X y z
+
+	my %cliTrackMap = (
+		'g' => 'genre',
+		'a' => 'artist',
+		'l' => 'album',
+		't' => 'tracknum',
+		'y' => 'year',
+		'm' => 'bpm',
+		'k' => 'comment',
+		'v' => 'tagversion',
+		'r' => 'bitrate',
+		'z' => 'drm',
+		'n' => 'modificationTime',
+		'u' => 'url',
+		'f' => 'filesize',
+	);
+	
+	for my $tag (split //, $tags) {
+
+		if (my $method = $cliTrackMap{$tag}) {
+
+			my $value = $track->$method();
+
+			if (defined $value && $value !~ /^\s*$/) {
+
+				$request->addResultLoop($loop, $index, $method, $value);
+			}
+
+			next;
+		}
+
+		if ($tag eq 'b' && (my @bands = $track->band())) {
+			$request->addResultLoop($loop, $index, 'band', $bands[0]);
+			next;
+		}
+		
+		if ($tag eq 'c' && (my @composers = $track->composer())) {
+			$request->addResultLoop($loop, $index, 'composer', $composers[0]);
+			next;
+		}
+
+		if ($tag eq 'd' && defined(my $duration = $track->secs())) {
+			$request->addResultLoop($loop, $index, 'duration', $duration);
+			next;
+		}
+
+		if ($tag eq 'h' && (my @conductors = $track->conductor())) {
+			$request->addResultLoop($loop, $index, 'conductor', $conductors[0]);
+			next;
+		}
+
+		if ($tag eq 'i' && defined(my $disc = $track->disc())) {
+			$request->addResultLoop($loop, $index, 'disc', $disc);
+			next;
+		}
+
+		if ($tag eq 'j' && $track->coverArt()) {
+			$request->addResultLoop($loop, $index, 'coverart', 1);
+			next;
+		}
+
+		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
+			$request->addResultLoop($loop, $index, 'type', Slim::Utils::Strings::string(uc($ct)));
+			next;
+		}
+
+		if ($tag eq 'p' && defined(my $genre = $track->genre())) {
+			if (defined(my $id = $genre->id())) {
+				$request->addResultLoop($loop, $index, 'genre_id', $id);
+				next;
+			}
+		}
+
+		if ($tag eq 's' && defined(my $artist = $track->artist())) {
+			if (defined(my $id = $artist->id())) {
+				$request->addResultLoop($loop, $index, 'artist_id', $id);
+				next;
+			}
+		}
+		
+		if (defined(my $album = $track->album())) {
+		
+			if ($tag eq 'e' && defined(my $id = $album->id())) {
+				$request->addResultLoop($loop, $index, 'album_id', $id);
+				next;
+			}
+	
+			if ($tag eq 'q' && defined(my $discc = $album->discc())) {
+				$request->addResultLoop($loop, $index, 'disccount', $discc) unless $discc eq '';
+				next;
+			}
+		}
+
+	}
+
+}
 
 1;
 
