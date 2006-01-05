@@ -8,7 +8,15 @@
 <table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0">
 	<tr>
 		<td rowspan="2" valign="center" class = 'headertext'>
-			[% IF browse_radio %][% "RADIO" | string %][% ELSE %][% "BROWSE_MUSIC" | string %][% END %]</td><td width="40"></td>
+			[% IF browse_radio %]
+				[% "RADIO" | string %]
+			[% ELSE %]
+				[% "BROWSE_MUSIC" | string %][% END %]</td>
+		<td align = 'right'>
+			[% IF browse_radio %]
+				[% INCLUDE tune_in_form %]
+			[% ELSE %]&nbsp;[% END %]
+		</td>
 	</tr>
 </table>
 
@@ -80,7 +88,6 @@
 		<td align="center" class="menutext">Favorites</td>
 	</tr>
 	[% ELSE %]
-
 		[% FOREACH key = additionalLinks.radio.keys %]
 				<tr><td height="15" valign="center" class = 'menutext'><a href="[% additionalLinks.radio.$key %]player=[% playerURI %]" onMouseDown="document.bild8.src = 'html/images/smaller/radio_active.gif';"><img src="html/images/smaller/radio.gif" name="bild8" border="0">[% key | string %]</a></td></tr>
 		[% END %]
@@ -121,3 +128,13 @@
 <!-- /Element pagefooter.html -->
 [% PROCESS pagefooter.html %]
 
+[% BLOCK tune_in_form %]
+        <form name="tune" method="get" action="status.html">
+        <input type="hidden" name="p0" value="playlist">
+        <input type="hidden" name="p1" value="play">
+        <input type="hidden" name="player" value="[% playerURI %]">
+        Radio URL:
+        <input type="text" class="stdedit" name="p2" size="40">
+        <input type="submit" class="stdclick" value="Tune In">
+</form>
+[% END %]
