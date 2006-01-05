@@ -35,9 +35,12 @@ sub new {
 		'_curparam' => 0,
 		'_status' => 0,
 		'_results' => \%resultHash,
-		'_func' => undef
+		'_func' => undef,
+		'_cb_enable' => 1,
+		'_cb_func' => undef,
+		'_cb_args' => undef,
 	};
-	# MISSING SOURCE, CALLBACK
+	# MISSING SOURCE
 	
 	bless $self, $class;
 	
@@ -67,6 +70,33 @@ sub client {
 	$self->{'_client'} = $client if defined $client;
 	
 	return $self->{'_client'};
+}
+
+sub callbackEnabled {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_cb_enable'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_cb_enable'};
+}
+
+sub callbackFunction {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_cb_func'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_cb_func'};
+}
+
+sub callbackArguments {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_cb_args'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_cb_args'};
 }
 
 ################################################################################
@@ -285,7 +315,7 @@ sub getResultLoop {
 
 
 ################################################################################
-# Compound requests
+# Compound calls
 ################################################################################
 
 # accepts a reference to an array containing references to arrays containing
@@ -319,6 +349,16 @@ sub paramUndefinedOrNotOneOf {
 	return 1 if !defined $param;
 	return 1 if !defined $possibleValues;
 	return !grep(/$param/, @{$possibleValues});
+}
+
+# sets callback parameters (function and arguments) in a single call...
+sub callbackParameters {
+	my $self = shift;
+	my $callbackf = shift;
+	my $callbackargs = shift;
+
+	$self->{'_cb_func'} = $callbackf;
+	$self->{'_cb_args'} = $callbackargs;	
 }
 
 ################################################################################
@@ -369,6 +409,15 @@ sub dump {
 	} else {
 		$str .= "[" . $self->getRequestString() . "]";
 	}
+
+	if ($self->callbackFunction()) {
+		if ($self->callbackEnabled()) {
+			$str .= " cb+ ";
+		} else {
+			$str .= " cb- ";
+		}
+	}
+
 	
 	if ($self->isStatusNew()) {
 		$str .= " (New)\n";
@@ -385,7 +434,8 @@ sub dump {
 	}
 	
 	msg($str);
-
+	
+	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
     	msg("   Param: [$key] = [$val]\n");
  	}

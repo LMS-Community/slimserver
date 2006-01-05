@@ -607,6 +607,7 @@ sub xplExecuteCallback {
 		return;
 	}
 
+	
 	my $clientname = validInstance($client->name);
 	my $power = 'off';
 	

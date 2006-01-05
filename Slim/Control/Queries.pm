@@ -380,8 +380,8 @@ sub playlistXQuery {
 	} elsif ($entity eq 'index' || $entity eq 'jump') {
 		$request->addResult("_$entity", Slim::Player::Source::playingSongIndex($client));
 
-	} elsif ($entity eq 'name') {
-		$request->addResult("_$entity", Slim::Music::Info::standardTitle($client, $client->currentPlaylist()));
+	} elsif ($entity eq 'name' && defined(my $playlistObj = $client->currentPlaylist())) {
+		$request->addResult("_$entity", Slim::Music::Info::standardTitle($client, $playlistObj));
 
 	} elsif ($entity eq 'url') {
 		$request->addResult("_$entity", $client->currentPlaylist());

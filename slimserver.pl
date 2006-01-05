@@ -218,6 +218,7 @@ use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
 use Slim::Control::Command;
+use Slim::Control::Dispatch;
 use Slim::Display::Display;
 use Slim::Display::Graphics;
 use Slim::Web::HTTP;
