@@ -1,4 +1,4 @@
-﻿package Slim::Control::Dispatch;
+package Slim::Control::Dispatch;
 
 # $Id$
 #
