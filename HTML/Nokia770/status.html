@@ -22,7 +22,7 @@
 	</td>
 </tr>
 		[% ELSE %]
-[% radio = songtitle.match('\w+:') %]
+[% radio = songtitle.match('\w+://') %]
 <tr>
 [% IF radio %]
 	[% INCLUDE radio_info_display %]
@@ -183,36 +183,36 @@
 [% BLOCK song_info_display %]
 	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td class = 'normaltext' valign = 'top' colspan = '2' nowrap>
+			<td class = 'normaltext' valign = 'top' colspan = '2' height = '35' nowrap>
 			[% INCLUDE control_display %]
 			</td>
 		</tr>
 		<tr>
-			<td class = 'normaltext' valign = 'top' nowrap>[% "TITLE" | string %]:</td>
-			<td class = 'normaltext' nowrap>
+			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			[% IF songtitle %]
 			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% songtitle %]</a>
 			[% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top' nowrap>[% "ARTIST" | string %]:</td>
-			<td class = 'normaltext' nowrap>
+			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.artist.id %]
 			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.artist %]</a>
 [% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class = 'normaltext' valign = 'top' nowrap>[% "ALBUM" | string %]:</td>
-			<td class = 'normaltext' nowrap>
+			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.album %]</a>
 			[% END %]
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top' nowrap>[% "GENRE" | string %]:</td>
-			<td class = 'normaltext' nowrap>
+			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
 			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.genre %]</a>[% END %]
 			</td>
 		</tr>
