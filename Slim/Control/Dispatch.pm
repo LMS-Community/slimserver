@@ -7,10 +7,9 @@ package Slim::Control::Dispatch;
 
 use strict;
 
-#use Slim::Control::Commands;
-#use Slim::Control::Queries;
-#use Slim::Control::Request;
-#use Slim::Utils::Misc;
+use Slim::Control::Commands;
+use Slim::Control::Queries;
+use Slim::Utils::Misc qw(msg);
 
 ######################################################################################################################################################################
 # COMMANDS & QUERIES LIST
