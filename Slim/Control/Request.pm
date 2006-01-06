@@ -16,6 +16,7 @@ use strict;
 use Tie::LLHash;
 
 use Slim::Utils::Misc;
+use Slim::Control::Commands;
 
 # This class implements a generic request, that will be dispatched to the
 # correct function by Slim::Control::Dispatch code.
