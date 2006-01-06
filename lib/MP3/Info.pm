@@ -599,7 +599,7 @@ sub get_mp3tag {
 						my @ufid_list = split(/\0/, $v2->{$id});
 						$info{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
 
-					} elsif ($id =~ /^X?RVA[D2]?$/) {
+					} elsif ($id =~ /^RVA[D2]?$/) {
 
 						# Expand these binary fields. See the ID3 spec for Relative Volume Adjustment.
 						if ($id eq 'RVA2') {
@@ -620,17 +620,27 @@ sub get_mp3tag {
 									sprintf('%f', _grab_int_16(\$rvad) / 512);
 							}
 
-						} elsif ($id eq 'RVAD' || $id eq 'RVA' || $id eq 'XRVA') {
+						} elsif ($id eq 'RVAD' || $id eq 'RVA') {
 
 							my $rvad  = $v2->{$id};
 							my $flags = ord(substr($rvad, 0, 1, ''));
 							my $desc  = ord(substr($rvad, 0, 1, ''));
 
+							# iTunes appears to be the only program that actually writes
+							# out a RVA/RVAD tag. Everyone else punts.
 							for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
 
 								for my $channel (qw(RIGHT LEFT)) {
 
-									my $val = _grab_uint_16(\$rvad);
+									my $val = _grab_uint_16(\$rvad) / 256;
+
+									# iTunes uses a range of -255 to 255
+									# to be -100% (silent) to 100% (+6dB)
+									if ($val == -255) {
+										$val = -96.0;
+									} else {
+										$val = 20.0 * log(($val+255)/255)/log(10);
+									}
 		
 									$info{$hash->{$id}}->{$channel}->{$type} = $flags & 0x01 ? $val : -$val;
 								}
