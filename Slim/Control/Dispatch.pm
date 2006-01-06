@@ -9,6 +9,7 @@ use strict;
 
 use Slim::Control::Commands;
 use Slim::Control::Queries;
+use Slim::Control::Request;
 use Slim::Utils::Misc qw(msg);
 
 ######################################################################################################################################################################
