@@ -375,10 +375,10 @@ if (document.all||document.getElementById)
 
 <tr>
 
-	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
+	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
 		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
 	</td>
-	<td align = 'left' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
+	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
 		[% item.title %]
 	</td>
 </tr>
