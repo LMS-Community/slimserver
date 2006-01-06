@@ -273,7 +273,24 @@ sub addResultLoop{
 	
 	${${$self->{'_results'}}{$loop}->[$loopidx]}{$key} = $val;
 }
+
+sub setResultLoopHash {
+	my $self = shift;
+	my $loop = shift;
+	my $loopidx = shift;
+	my $hashRef = shift;
 	
+	if ($loop !~ /^@.*/) {
+		$loop = '@' . $loop;
+	}
+	
+	if (!defined ${$self->{'_results'}}{$loop}) {
+		${$self->{'_results'}}{$loop} = [];
+	}
+	
+	${$self->{'_results'}}{$loop}->[$loopidx] = $hashRef;
+}
+
 sub getResult {
 	my $self = shift;
 	my $key = shift || return;

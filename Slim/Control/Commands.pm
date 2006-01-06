@@ -18,7 +18,7 @@ use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 
-use Slim::Utils::Misc qw(msg errorMsg);
+use Slim::Utils::Misc qw(msg errorMsg specified);
 
 sub buttonCommand {
 	my $request = shift;
@@ -588,17 +588,17 @@ sub playlistXalbumCommand {
 	# Find the songs for the passed params
 	my $sort = 'track';
 
-	if (_playlistXalbum_specified($genre)) {
+	if (specified($genre)) {
 		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
 	}
-	if (_playlistXalbum_specified($artist)) {
+	if (specified($artist)) {
 		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
 	}
-	if (_playlistXalbum_specified($album)) {
+	if (specified($album)) {
 		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
 		$sort = 'tracknum';
 	}
-	if (_playlistXalbum_specified($title)) {
+	if (specified($title)) {
 		$find->{'track.title'} = _playlistXalbum_singletonRef($title);
 	}
 	
@@ -1405,15 +1405,6 @@ sub _insert_done {
 	$callbackf && (&$callbackf(@$callbackargs));
 
 	Slim::Control::Command::executeCallback($client, ['playlist', 'load_done']);
-}
-
-# defined, but does not contain a *
-sub _playlistXalbum_specified {
-	my $i = shift;
-
-	return 0 if ref($i) eq 'ARRAY';
-	return 0 unless defined $i;
-	return $i !~ /\*/;
 }
 
 sub _playlistXalbum_singletonRef {

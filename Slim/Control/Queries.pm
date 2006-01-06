@@ -16,10 +16,99 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
-use Slim::Control::Request;
-use Slim::Music::Import;
-use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
+#use Slim::Control::Request;
+#use Slim::Music::Import;
+use Slim::Utils::Misc qw(msg errorMsg specified);
+#use Slim::Utils::Prefs;
+
+our %searchMap = (
+
+	'artist' => 'contributor.namesearch',
+	'genre'  => 'genre.namesearch',
+	'album'  => 'album.titlesearch',
+	'track'  => 'track.titlesearch',
+);
+
+sub browseXQuery {
+	my $request = shift;
+
+	$::d_command && msg("browseXQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['artists', 'albums', 'genres']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $label    = $request->getRequest(0);
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search	 = $request->getParam('search');
+	my $genreID	 = $request->getParam('genre_id');
+	my $artistID = $request->getParam('artist_id');
+	my $albumID	 = $request->getParam('album_id');
+
+	chop($label);
+
+	my $ds 		= Slim::Music::Info::getCurrentDataStore();
+	my $find = {};
+
+	# Normalize any search parameters
+	if (defined $searchMap{$label} && specified($search)) {
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
+	}
+	if (defined $genreID){
+		$find->{'genre'} = $genreID;
+	}
+	if (defined $artistID){
+		$find->{'artist'} = $artistID;
+	}
+	if (defined $albumID){
+		$find->{'album'} = $albumID;
+	}
+
+	if ($label eq 'artist') {
+
+		# The user may not want to include all the composers/conductors
+		if (my $roles = $ds->artistOnlyRoles) {
+
+			$find->{'contributor.role'} = $roles;
+		}
+	}
+	
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
+	my $results = $ds->find({
+		'field'  => $label,
+		'find'   => $find,
+		'sortBy' => $label,
+#		'limit'  => $cmdRef->{'_p2'},
+#		'offset' => $cmdRef->{'_p1'},
+	});
+
+	my $count = scalar @$results;
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@' . $label . 's';
+		my $cnt = 0;
+		
+		for my $eachitem (@$results[$start..$end]) {
+			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+			$request->addResultLoop($loopname, $cnt, $label, $eachitem);
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
 
 sub cursonginfoQuery {
 	my $request = shift;
@@ -416,6 +505,79 @@ sub playlistXQuery {
 	$request->setStatusDone();
 }
 
+sub playlisttracksQuery {
+	my $request = shift;
+
+	$::d_command && msg("playlisttracksQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['playlisttracks']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
+	my $find  = {};
+	my $tags  = 'gald';
+
+	# get our parameters
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	my $tagsprm	   = $request->getParam('tags');
+	my $playlistID = $request->getParam('playlist_id');
+
+	if (!defined $playlistID) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# did we have override on the defaults?
+	$tags = $tagsprm if defined $tagsprm;
+
+	my $iterator;
+	my @tracks;
+
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
+	my $playlistObj = $ds->objectForId('track', $playlistID);
+				
+	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
+		$iterator = $playlistObj->tracks();
+	}
+
+	if (defined $iterator) {
+
+		my $count = $iterator->count();
+
+		$request->addResult("count", $count);
+		
+		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+		my $cur = $start;
+		my $cnt = 0;
+
+		if ($valid) {
+
+			for my $eachitem ($iterator->slice($start, $end)) {
+
+				_addSong($request, '@playlisttracks', $cnt, $eachitem, $tags, 
+						"playlist index", $cur);
+
+				$cur++;
+				$cnt++;
+			}
+		}
+
+	} else {
+
+		$request->addResult("count", 0);
+	}
+
+	$request->setStatusDone();	
+}
+
 sub playlistsQuery {
 	my $request = shift;
 
@@ -647,13 +809,13 @@ sub statusQuery {
 	$request->addResult("player_connected", $connected);
 	$request->addResult("power", $power);
 	
-	if ($client->model() eq "squeezebox" || $client->model() eq "squeezebox2") {
+	if ($client->model() eq 'squeezebox' || $client->model() eq 'squeezebox2') {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
 	if ($power) {
 	
-		$request->addResult("mode", Slim::Player::Source::playmode($client));
+		$request->addResult('mode', Slim::Player::Source::playmode($client));
 
 		if (Slim::Player::Playlist::song($client)) { 
 			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
@@ -666,29 +828,29 @@ sub statusQuery {
 			}
 
 			if ($dur) {
-				$request->addResult("rate", Slim::Player::Source::rate($client));
-				$request->addResult("time", Slim::Player::Source::songTime($client));
-				$request->addResult("duration", $dur);
+				$request->addResult('rate', Slim::Player::Source::rate($client));
+				$request->addResult('time', Slim::Player::Source::songTime($client));
+				$request->addResult('duration', $dur);
 			}
 		}
 		
 		if ($client->currentSleepTime()) {
 
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
-			$request->addResult("sleep", $client->currentSleepTime() * 60);
-			$request->addResult("will_sleep_in", ($sleep < 0 ? 0 : $sleep));
+			$request->addResult('sleep', $client->currentSleepTime() * 60);
+			$request->addResult('will_sleep_in', ($sleep < 0 ? 0 : $sleep));
 		}
 		
 		if (Slim::Player::Sync::isSynced($client)) {
 
 			my $master = Slim::Player::Sync::masterOrSelf($client);
 
-			$request->addResult("sync_master", $master->id());
+			$request->addResult('sync_master', $master->id());
 
 			my @slaves = Slim::Player::Sync::slaves($master);
 			my @sync_slaves = map { $_->id } @slaves;
 
-			$request->addResult("sync_slaves", join(" ", @sync_slaves));
+			$request->addResult('sync_slaves', join(" ", @sync_slaves));
 		}
 	
 		$request->addResult("mixer volume", $client->volume());
@@ -731,9 +893,10 @@ sub statusQuery {
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
-			$request->addResultLoop($loop, 0, 'playlist index', $idx);
-			_addSong($request, $loop, 0, Slim::Player::Playlist::song($client, $idx), $tags);
-
+			_addSong(	$request, $loop, 0, 
+						Slim::Player::Playlist::song($client, $idx), $tags,
+						'playlist index', $idx
+					);
 		} else {
 
 			my ($valid, $start, $end);
@@ -748,8 +911,10 @@ sub statusQuery {
 				my $count = 0;
 
 				for ($idx = $start; $idx <= $end; $idx++){
-					$request->addResultLoop($loop, $count, 'playlist index', $idx);
-					_addSong($request, $loop, $count, Slim::Player::Playlist::song($client, $idx), $tags);
+					_addSong(	$request, $loop, $count, 
+								Slim::Player::Playlist::song($client, $idx), $tags,
+								'playlist index', $idx
+							);
 					$count++;
 					::idleStreams() ;
 				}
@@ -769,8 +934,10 @@ sub statusQuery {
 					if ($valid) {
 
 						for ($idx = $start; $idx <= $end; $idx++){
-							$request->addResultLoop($loop, $count, 'playlist index', $idx);
-							_addSong($request, $loop, $count, Slim::Player::Playlist::song($client, $idx), $tags);
+							_addSong(	$request, $loop, $count, 
+										Slim::Player::Playlist::song($client, $idx), $tags,
+										'playlist index', $idx
+									);
 							$count++;
 							::idleStreams() ;
 						}
@@ -782,6 +949,87 @@ sub statusQuery {
 	
 	$request->setStatusDone();
 }
+
+sub songinfoQuery {
+	my $request = shift;
+
+	$::d_command && msg("songinfoQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['songinfo']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
+	my $find  = {};
+	my $tags  = 'abcdefghijklmnopqrstvwyz'; # all letter EXCEPT u AND x
+	my $track;
+
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $url	     = $request->getParam('url');
+	my $trackID  = $request->getParam('track_id');
+	my $tagsprm	 = $request->getParam('tags');
+
+	if (!defined $trackID && !defined $url) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# did we have override on the defaults?
+	$tags = $tagsprm if defined $tagsprm;
+
+	# find the track
+	if (defined $trackID){
+
+		if ($tags !~ /u/) {
+			$tags .= 'u';
+		}
+
+		$track = $ds->objectForId('track', $trackID);
+
+	} else {
+
+		if (defined $url && Slim::Music::Info::isSong($url)){
+
+			if ($tags !~ /x/) {
+				$tags .= 'x';
+			}
+
+			$track = $ds->objectForUrl($url)
+		}
+	}
+	
+	if (blessed($track) && $track->can('id')) {
+
+		my $hashRef = _songData($track, $tags);
+		my $count = scalar (keys %{$hashRef});
+
+		$request->addResult("count", $count);
+
+		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+		if ($valid) {
+			my $idx = 0;
+			while (my ($key, $val) = each %{$hashRef}) {
+    			if ($idx >= $start && $idx <= $end) {
+    				$request->addResult($key, $val);
+    			}
+    			$idx++;
+ 			}
+
+		}
+	}
+
+	$request->setStatusDone();
+}
+
 
 sub syncQuery {
 	my $request = shift;
@@ -828,6 +1076,91 @@ sub timeQuery {
 
 	$request->addResult('_time', Slim::Player::Source::songTime($client));
 	
+	$request->setStatusDone();
+}
+
+sub titlesQuery {
+	my $request = shift;
+
+	$::d_command && msg("titlesQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
+	my $find  = {};
+	my $label = 'track';
+	my $sort  = 'title';
+	my $tags  = 'gald';
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $tagsprm	 = $request->getParam('tags');
+	my $sortprm	 = $request->getParam('sort');
+	my $search	 = $request->getParam('search');
+	my $genreID	 = $request->getParam('genre_id');
+	my $artistID = $request->getParam('artist_id');
+	my $albumID	 = $request->getParam('album_id');
+
+	# did we have override on the defaults?
+	# note that this is not equivalent to 
+	# $val = $param || $default;
+	# since when $default eq '' -> $val eq $param
+	$sort = $sortprm if defined $sortprm;
+	$tags = $tagsprm if defined $tagsprm;
+
+	# Normalize any search parameters
+	if (defined $searchMap{$label} && specified($search)) {
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
+	}
+	if (defined $genreID){
+		$find->{'genre'} = $genreID;
+	}
+	if (defined $artistID){
+		$find->{'artist'} = $artistID;
+	}
+	if (defined $albumID){
+		$find->{'album'} = $albumID;
+	}
+
+	if ($sort eq "tracknum" && !($tags =~ /t/)) {
+		$tags = $tags . "t";
+	}
+	
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
+	my $results = $ds->find({
+		'field'  => $label,
+		'find'   => $find,
+		'sortBy' => $sort,
+#		'limit'  => $cmdRef->{'_p2'},
+#		'offset' => $cmdRef->{'_p1'},
+	});
+	
+	my $count = scalar @$results;
+
+	$request->addResult("count", $count);
+
+	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		
+		my $cnt = 0;
+	
+		for my $item (@$results[$start..$end]) {
+
+			_addSong($request, '@titles', $cnt++, $item, $tags);
+
+			::idleStreams();
+		}
+	}
+
 	$request->setStatusDone();
 }
 
@@ -893,22 +1226,54 @@ sub _addSong {
 	my $index     = shift; # loop index
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
+	my $prefixKey = shift; # prefix key, if any
+	my $prefixVal = shift; # prefix value, if any   
 
-	my $ds        = Slim::Music::Info::getCurrentDataStore();
-	my $track     = ref $pathOrObj ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	# get the hash with the data	
+	my $hashRef = _songData($pathOrObj, $tags);
 	
-	if (!blessed($track) || !$track->can('id')) {
-		msg("Slim::Control::Command::pushSong called on undefined track!\n");
-		return;
+	# add the prefix in the first position, use a fancy feature of
+	# Tie::LLHash
+	if (defined $prefixKey) {
+		(tied %{$hashRef})->first($prefixKey => $prefixVal);
 	}
 	
-	$request->addResultLoop($loop, $index, 'id', $track->id());
-	$request->addResultLoop($loop, $index, 'title', $track->title());
+	# add it directly to the result loop
+	$request->setResultLoopHash($loop, $index, $hashRef);
+}
+
+sub _songData {
+	my $pathOrObj = shift; # song path or object
+	my $tags      = shift; # tags to use
+	
+	my $ds    = Slim::Music::Info::getCurrentDataStore();
+	my $track = blessed($pathOrObj) && $pathOrObj->can('id') ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	
+	if (!blessed($track) || !$track->can('id')) {
+
+		errorMsg("Queries::_songData called with invalid object or path: $pathOrObj!\n");
+		
+		# For some reason, $pathOrObj may be an id... try that before giving up...
+		$track = $ds->objectForId('track', $pathOrObj);
+
+		if (!blessed($track) || !$track->can('id')) {
+
+			errorMsg("Queries::_songData cannot make track from: $pathOrObj!\n");
+			return;
+		}
+	}
+	
+	# define an ordered hash for our results
+	tie (my %returnHash, "Tie::LLHash", {lazy => 1});
+
+	# add fields present no matter $tags
+	$returnHash{'id'}    = $track->id();
+	$returnHash{'title'} = $track->title();
 	
 	# Allocation map: capital letters are still free:
 	#  a b c d e f g h i j k l m n o p q r s t u v X y z
 
-	my %cliTrackMap = (
+	my %tag2fieldMap = (
 		'g' => 'genre',
 		'a' => 'artist',
 		'l' => 'album',
@@ -922,67 +1287,79 @@ sub _addSong {
 		'n' => 'modificationTime',
 		'u' => 'url',
 		'f' => 'filesize',
+# special cased		
+#		'c' => 'composer',
+#		'b' => 'band',
+#		'h' => 'conductor',
+# 		'd' => 'duration',
+# 		'i' => 'disc',
+# 		'j' => 'Cover art',
+# 		'o' => 'type',
+# 		'q' => 'disc count',
+# 		'e' => 'album_id',
+# 		'p' => 'genre_id',
+# 		's' => 'artist_id',
 	);
 	
 	for my $tag (split //, $tags) {
 
-		if (my $method = $cliTrackMap{$tag}) {
+		if (my $method = $tag2fieldMap{$tag}) {
 
 			my $value = $track->$method();
 
 			if (defined $value && $value !~ /^\s*$/) {
 
-				$request->addResultLoop($loop, $index, $method, $value);
+				$returnHash{$method} = $value;
 			}
 
 			next;
 		}
 
 		if ($tag eq 'b' && (my @bands = $track->band())) {
-			$request->addResultLoop($loop, $index, 'band', $bands[0]);
+			$returnHash{'band'} = $bands[0];
 			next;
 		}
 		
 		if ($tag eq 'c' && (my @composers = $track->composer())) {
-			$request->addResultLoop($loop, $index, 'composer', $composers[0]);
+			$returnHash{'composer'} = $composers[0];
 			next;
 		}
 
 		if ($tag eq 'd' && defined(my $duration = $track->secs())) {
-			$request->addResultLoop($loop, $index, 'duration', $duration);
+			$returnHash{'duration'} = $duration;
 			next;
 		}
 
 		if ($tag eq 'h' && (my @conductors = $track->conductor())) {
-			$request->addResultLoop($loop, $index, 'conductor', $conductors[0]);
+			$returnHash{'conductor'} = $conductors[0];
 			next;
 		}
 
 		if ($tag eq 'i' && defined(my $disc = $track->disc())) {
-			$request->addResultLoop($loop, $index, 'disc', $disc);
+			$returnHash{'disc'} = $disc;
 			next;
 		}
 
 		if ($tag eq 'j' && $track->coverArt()) {
-			$request->addResultLoop($loop, $index, 'coverart', 1);
+			$returnHash{'coverart'} = 1;
 			next;
 		}
 
 		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
-			$request->addResultLoop($loop, $index, 'type', Slim::Utils::Strings::string(uc($ct)));
+			$returnHash{'type'} = Slim::Utils::Strings::string(uc($ct));
 			next;
 		}
 
 		if ($tag eq 'p' && defined(my $genre = $track->genre())) {
 			if (defined(my $id = $genre->id())) {
-				$request->addResultLoop($loop, $index, 'genre_id', $id);
+				$returnHash{'genre_id'} = $id;
 				next;
 			}
 		}
 
 		if ($tag eq 's' && defined(my $artist = $track->artist())) {
 			if (defined(my $id = $artist->id())) {
-				$request->addResultLoop($loop, $index, 'artist_id', $id);
+				$returnHash{'artist_id'} = $id;
 				next;
 			}
 		}
@@ -990,18 +1367,19 @@ sub _addSong {
 		if (defined(my $album = $track->album())) {
 		
 			if ($tag eq 'e' && defined(my $id = $album->id())) {
-				$request->addResultLoop($loop, $index, 'album_id', $id);
+				$returnHash{'album_id'} = $id;
 				next;
 			}
 	
 			if ($tag eq 'q' && defined(my $discc = $album->discc())) {
-				$request->addResultLoop($loop, $index, 'disccount', $discc) unless $discc eq '';
+				$returnHash{'disccount'} = $discc unless $discc eq '';
 				next;
 			}
 		}
 
 	}
 
+	return \%returnHash;
 }
 
 1;

@@ -10,7 +10,7 @@ package Slim::Utils::Misc;
 use strict;
 use base qw(Exporter);
 
-our @EXPORT = qw(assert bt msg msgf watchDog errorMsg);
+our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified);
 
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
@@ -949,6 +949,16 @@ sub delimitThousands {
 	0 while $len =~ s/^(-?\d+)(\d{3})/$1$sep$2/;
 	return $len;
 }
+
+# defined, but does not contain a *
+sub specified {
+	my $i = shift;
+
+	return 0 if ref($i) eq 'ARRAY';
+	return 0 unless defined $i;
+	return $i !~ /\*/;
+}
+
 
 1;
 

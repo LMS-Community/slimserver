@@ -1,7 +1,5 @@
 package Slim::Control::Dispatch;
 
-# $Id$
-#
 # SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -9,21 +7,19 @@ package Slim::Control::Dispatch;
 
 use strict;
 
-use Slim::Control::Commands;
-use Slim::Control::Queries;
-use Slim::Control::Request;
-use Slim::Utils::Misc;
+#use Slim::Control::Commands;
+#use Slim::Control::Queries;
+#use Slim::Control::Request;
+#use Slim::Utils::Misc;
 
-our %notifications = ();
-our %dispatchDB;
-
-################
-# COMMAND LIST #
-################
-
+######################################################################################################################################################################
+# COMMANDS & QUERIES LIST
+######################################################################################################################################################################
+#
 # This table lists all supported commands with their parameters. 
-
-# C     P0             P1                          P2                          P3               P4       P5        P6
+#
+# C     P0             P1                          P2                          P3               P4       P5
+######################################################################################################################################################################
 
 # GENERAL
 # N    debug           <debugflag>                 <0|1|?|>
@@ -80,13 +76,11 @@ our %dispatchDB;
 # Y    playlist        index|jump                  <index|?>
 # Y    playlist        delete                      <index>
 # Y    playlist        zap                         <index>
-# Y    playlistcontrol <params>
 # Y    playlist        move                        <fromindex>                 <toindex>
 # Y    playlist        clear
 # Y    playlist        shuffle                     <0|1|2|?|>
 # Y    playlist        repeat                      <0|1|2|?|>
 # Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
-# Y    status          <startindex>                <numitems>                  <tagged parameters>
 # Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
 # Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
 # Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
@@ -101,22 +95,41 @@ our %dispatchDB;
 # Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
 # Y    playlist        resume                      <playlist>    
 # Y    playlist        save                        <playlist>    
+# Y    playlistcontrol <tagged parameters>
+# Y    status          <startindex>                <numitems>                  <tagged parameters>
+# Y    artists         <startindex>                <numitems>                  <tagged parameters>
+# Y    albums          <startindex>                <numitems>                  <tagged parameters>
+# Y    genres          <startindex>                <numitems>                  <tagged parameters>
+# Y    titles          <startindex>                <numitems>                  <tagged parameters>
+# Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
+# Y    playlists       <startindex>                <numitems>                  <tagged parameters>
+# Y    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
+######################################################################################################################################################################
 
 
 
-# add standard commands and queries to the dispatch hashes...
+our %notifications = ();		# contains the clients to the notification
+								# mechanism
+								
+our %dispatchDB;				# contains a multi-level hash pointing to
+								# each command or query subroutine
+
+
+# adds standard commands and queries to the dispatch hashes...
 sub init {
 
-#############################################################################################################################################
+######################################################################################################################################################################
 #                                                                                                     |requires Client
 #                                                                                                     |  |is a Query
 #                                                                                                     |  |  |has Tags
 #                                                                                                     |  |  |  |Function to call
 #                 P0               P1              P2            P3             P4         P5         C  Q  T  F
-#############################################################################################################################################
+######################################################################################################################################################################
 
     addDispatch(['album',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['albums',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['artist',         '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['artists',        '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['button',         '_buttoncode',  '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
     addDispatch(['connected',      '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
     addDispatch(['debug',          '_debugflag',   '?'],                                             [0, 1, 0, \&Slim::Control::Queries::debugQuery]);
@@ -126,6 +139,7 @@ sub init {
     addDispatch(['displaynow',     '?',            '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
     addDispatch(['duration',       '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genre',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['genres',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['gototime',       '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
     addDispatch(['gototime',       '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
     addDispatch(['info',           'total',        'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
@@ -188,7 +202,7 @@ sub init {
     addDispatch(['playlist',       'modified',     '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'move',         '_fromindex', '_toindex'],                        [1, 0, 0, \&Slim::Control::Commands::playlistMoveCommand]);
     addDispatch(['playlist',       'name',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
-    addDispatch(['playlist'.       'path',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
+    addDispatch(['playlist',       'path',         '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'play',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
     addDispatch(['playlist',       'playalbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
     addDispatch(['playlist',       'playtracks',   '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
@@ -202,6 +216,7 @@ sub init {
     addDispatch(['playlist',       'tracks',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'url',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'zap',          '_index'],                                        [1, 0, 0, \&Slim::Control::Commands::playlistZapCommand]);
+    addDispatch(['playlisttracks', '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::playlisttracksQuery]);
     addDispatch(['playlists',      '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsQuery]);
     addDispatch(['playlistcontrol'],                                                                 [1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
     addDispatch(['power',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
@@ -215,6 +230,7 @@ sub init {
     addDispatch(['signalstrength', '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
     addDispatch(['sleep',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
     addDispatch(['sleep',          '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::sleepCommand]);
+    addDispatch(['songinfo',       '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::songinfoQuery]);
     addDispatch(['status',         '_index',      '_quantity'],                                      [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
     addDispatch(['stop'],                                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['sync',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
@@ -222,30 +238,59 @@ sub init {
     addDispatch(['time',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
     addDispatch(['time',           '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
     addDispatch(['title',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['titles',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
+######################################################################################################################################################################
+
 }
 
-sub addDispatch {
-	my $arrayCmdRef = shift;
-	my $arrayDataRef = shift;
 
-	my $DBp = \%dispatchDB;
-	my $CRindex = 0;
-	my $done = 0;
+# parse the first array in parameter to create a multi level hash providing
+# fast access to 2nd array data, i.e. (the example is incomplete!)
+# { 
+#  'rescan' => {
+#               '?'          => [2nd param array of 1st array ['rescan', '?']]
+#               '_playlists' => [2nd param array of 1st array ['rescan', '_playlists']]
+#              },
+#  'info'   => {
+#               'total'      => {
+#                                'albums'  => [$arrayDataRef of ['info', 'total', albums']]
+# ...
+#
+# this is used by init() above to add the standard commands and queries to the 
+# table and by the plugin glue code to add plugin-specific and plugin-defined
+# commands and queries to the system.
+# Note that for the moment, there is no identified need to ever REMOVE commands
+# from the dispatch table (and consequently no defined function for that).
+sub addDispatch {
+	my $arrayCmdRef  = shift; # the array containing the command or query
+	my $arrayDataRef = shift; # the array containing the function to call
+
+	$::d_command && msg("Dispatch::addDispatch()\n");
+
+	my $DBp     = \%dispatchDB;	    # pointer to the current table level
+	my $CRindex = 0;                # current index into $arrayCmdRef
+	my $done    = 0;                # are we done
 	
 	while (!$done) {
 	
+		# check if we have a subsequent verb in the command
 		my $haveNextLevel = defined $arrayCmdRef->[$CRindex + 1];
-		my $curVerb = $arrayCmdRef->[$CRindex];
+		
+		# get the verb at the current level of the command
+		my $curVerb       = $arrayCmdRef->[$CRindex];
 	
+		# if the verb is undefined at the current level
 		if (!defined $DBp->{$curVerb}) {
 		
+			# if we have a next verb, prepare a hash for it
 			if ($haveNextLevel) {
 			
 				$DBp->{$curVerb} = {};
-				
+			
+			# else store the 2nd array and we're done
 			} else {
 			
 				$DBp->{$curVerb} = $arrayDataRef;
@@ -253,15 +298,22 @@ sub addDispatch {
 			}
 		}
 		
+		# if the verb defined at the current level points to an array
 		elsif (ref $DBp->{$curVerb} eq 'ARRAY') {
 		
+			# if we have more terms, move the array to the next level using
+			# an empty verb
+			# (note: at the time of writing these lines, this never occurs with
+			# the commands as defined now)
 			if ($haveNextLevel) {
 			
 				$DBp->{$curVerb} = {'', $DBp->{$curVerb}};
-				
+			
+			# if we're out of terms, something is maybe wrong as we're adding 
+			# twice the same command. In Perl hash fashion, replace silently with
+			# the new value and we're done
 			} else {
 			
-				# replace...
 				$DBp->{$curVerb} = $arrayDataRef;
 				$done = 1;
 			}
@@ -276,33 +328,8 @@ sub addDispatch {
 	}
 }
 
-# for the moment, no identified need to REMOVE commands/queries
-
-# add a watcher to be notified of commands
-sub setNotify {
-	my $notifyFuncRef = shift;
-	$notifications{$notifyFuncRef} = $notifyFuncRef;
-}
-
-# remove a watcher
-sub clearNotify {
-	my $notifyFuncRef = shift;
-	delete $notifications{$notifyFuncRef};
-}
-
-# notify watchers...
-sub notify {
-	my $request = shift;
-
-#	no strict 'refs';
-		
-	for my $notification (keys %notifications) {
-		my $notifyFuncRef = $notifications{$notification};
-		&$notifyFuncRef($request);
-	}
-}
-
 # do the job, i.e. dispatch a request
+# TO REVISIT
 sub dispatch {
 	my $request = shift;
 
@@ -326,7 +353,7 @@ sub dispatch {
 	# can't find no function for that request, returning...
 	if (!$funcPtr) {
 
-		$::d_command && errorMsg("dispatch(): Found no function for request [$requestText]\n" );
+		errorMsg("dispatch(): Found no function for request [$requestText]\n" );
 		return ();
 	}
 
@@ -344,28 +371,38 @@ sub dispatch {
 	}	
 }
 
+# given a command or query in an array, walk down the dispatch table to find
+# the function to call for it. Create a complete request object in the process
+# and return it to the caller, ready for execution.
 sub requestFromArray {
-	my $client = shift;
-	my $requestLineRef = shift;
-	
-	my $debug = 0;
-	
-	$::d_command && msg("Dispatch::requestFromArray(" . (join " ", @{$requestLineRef}) . ")\n");
+	my $client         = shift;     # client, if any, to which the query applies
+	my $requestLineRef = shift;     # reference to an array containing the 
+									# query verbs
+		
+	$::d_command && msg("Dispatch::requestFromArray(" 
+						. (join " ", @{$requestLineRef}) . ")\n");
 
-	my $DBp = \%dispatchDB;
-	my $LRindex = 0;
-	my $found;
-	my $done = 0;
-	my $match = $requestLineRef->[$LRindex];
-	my $outofverbs = !defined $match;
+	my $debug = 0;					# debug flag internal to the function
+
+
+	my $found;						# have we found the right command
+	my $outofverbs;					# signals we're out of verbs to try and match
+	my $LRindex    = 0;				# index into $requestLineRef
+	my $done       = 0;				# are we done yet?
+	my $DBp        = \%dispatchDB;	# pointer in the dispatch table
+	my $match      = $requestLineRef->[$LRindex];
+									# verb of the command we're trying to match
+
 	
+	# create the request with what we have so far (the client)
 	my $request = new Slim::Control::Request($client);
+	
 	
 	while (!$done) {
 	
-		# We're out of verbs to check for a match -> check if we can
+		# we're out of verbs to check for a match -> try with ''
 		if (!defined $match) {
-			# we don't, try to match ''
+
 			$match = '';
 			$outofverbs = 1;
 		}
@@ -373,7 +410,7 @@ sub requestFromArray {
 		$debug && msg("..Trying to match [$match]\n");
 		$debug && print Data::Dumper::Dumper($DBp);
 
-		# Our verb does not match in the hash 
+		# our verb does not match in the hash 
 		if (!defined $DBp->{$match}) {
 		
 			$debug && msg("..no match for [$match]\n");
@@ -491,5 +528,33 @@ sub requestFromArray {
 	$::d_command && msg("Dispatch::requestFromArray: Request [" . (join " ", @{$requestLineRef}) . "]: no match in dispatchDB!\n");
 	return undef;
 }
+
+
+
+
+# add a watcher to be notified of commands
+sub setNotify {
+	my $notifyFuncRef = shift;
+	$notifications{$notifyFuncRef} = $notifyFuncRef;
+}
+
+# remove a watcher
+sub clearNotify {
+	my $notifyFuncRef = shift;
+	delete $notifications{$notifyFuncRef};
+}
+
+# notify watchers...
+sub notify {
+	my $request = shift;
+
+#	no strict 'refs';
+		
+	for my $notification (keys %notifications) {
+		my $notifyFuncRef = $notifications{$notification};
+		&$notifyFuncRef($request);
+	}
+}
+
 
 1;
