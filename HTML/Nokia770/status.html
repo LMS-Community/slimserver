@@ -22,9 +22,8 @@
 	</td>
 </tr>
 		[% ELSE %]
-[% radio = songtitle.match('\w+://') %]
 <tr>
-[% IF radio %]
+[% IF itemobj.isRemoteURL %]
 	[% INCLUDE radio_info_display %]
 [% ELSE %]
 	<td valign = 'top' align = 'left' width = '200px'>
@@ -52,7 +51,7 @@
 [% END %]
 </tr>
 
-[% UNLESS radio %]
+[% UNLESS itemobj.isRemoteURL %]
 <tr>
 	<td colspan = 3 valign = 'top' align = 'left' width = '100%'>
 	[% INCLUDE progress_bar_display %]
