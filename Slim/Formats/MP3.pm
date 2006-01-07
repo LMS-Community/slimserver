@@ -91,7 +91,8 @@ sub getTag {
 	open(my $fh, $file) or return {};
 
 	# Try to pull ID3v2 tags first. If those don't exist, proceed to v1
-	my $tags = MP3::Info::get_mp3tag($fh, 2); 
+	# Also try and get an APE tag, which may have ReplayGain data.
+	my $tags = MP3::Info::get_mp3tag($fh, 2, undef, 1); 
 
 	if (!scalar keys %$tags) {
 

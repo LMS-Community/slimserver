@@ -455,8 +455,15 @@ data (if TAGVERSION argument is C<0>, may contain two versions).
 =cut
 
 sub get_mp3tag {
-	my($file, $ver, $raw_v2) = @_;
-	my($tag, $v1, $v2, $v2h, %info, @array, $fh);
+	my ($file, $ver, $raw_v2, $find_ape) = @_;
+	my ($tag, $v2h, $fh);
+
+	my $v1    = {};
+	my $v2    = {};
+	my $ape   = {};
+	my %info  = ();
+	my @array = ();
+
 	$raw_v2 ||= 0;
 	$ver = !$ver ? 0 : ($ver == 2 || $ver == 1) ? $ver : 0;
 
@@ -483,68 +490,18 @@ sub get_mp3tag {
 
 	binmode $fh;
 
+	# Try and find an APE Tag - this is where FooBar2k & others
+	# store ReplayGain information
+	if ($find_ape) {
+
+		$ape = _parse_ape_tag($fh, $filesize, \%info);
+	}
+
 	if ($ver < 2) {
-		my $pre_tag;
 
-		seek $fh, -256, 2;
-		read($fh, $pre_tag, 128);
-		read($fh, $tag, 128);
+		$v1 = _get_v1tag($fh, \%info);
 
-		_parse_ape_tag($fh, $filesize, $tag, $pre_tag, \%info);
-
-		if (defined($tag) && $tag =~ /^TAG/) {
-			$v1 = 1;
-			if (substr($tag, -3, 2) =~ /\000[^\000]/) {
-				(undef, @info{@v1_tag_names}) =
-					(unpack('a3a30a30a30a4a28', $tag),
-					ord(substr($tag, -2, 1)),
-					$mp3_genres[ord(substr $tag, -1)]);
-				$info{TAGVERSION} = 'ID3v1.1';
-			} else {
-				(undef, @info{@v1_tag_names[0..4, 6]}) =
-					(unpack('a3a30a30a30a4a30', $tag),
-					$mp3_genres[ord(substr $tag, -1)]);
-				$info{TAGVERSION} = 'ID3v1';
-			}
-			if ($UNICODE) {
-
-				# Save off the old suspects list, since we add
-				# iso-8859-1 below, but don't want that there
-				# for possible ID3 v2.x parsing below.
-				my $oldSuspects = $Encode::Encoding{'Guess'}->{'Suspects'};
-
-				for my $key (keys %info) {
-					next unless $info{$key};
-
-					# Try and guess the encoding.
-					my $value = $info{$key};
-					my $icode = Encode::Guess->guess($value);
- 	 
-					unless (ref($icode)) {
- 	 
-						# Often Latin1 bytes are
-						# stuffed into a 1.1 tag.
-						Encode::Guess->add_suspects('iso-8859-1');
-
-						while (length($value)) {
-
-							$icode = Encode::Guess->guess($value);
-
-							last if ref($icode);
-
-							# Remove garbage and retry
-							# (string is truncated in the
-							# middle of a multibyte char?)
-							$value =~ s/(.)$//;
-						}
-					}
- 	 
-					$info{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info{$key});
-				}
-
-				Encode::Guess->set_suspects(keys %{$oldSuspects});
-			}
-		} elsif ($ver == 1) {
+		if ($ver == 1 && !$v1) {
 			_close($file, $fh);
 			$@ = "No ID3v1 tag found";
 			return undef;
@@ -555,343 +512,28 @@ sub get_mp3tag {
 		($v2, $v2h) = _get_v2tag($fh);
 	}
 
-	unless ($v1 || $v2) {
+	if (!$v1 && !$v2 && !$ape) {
 		_close($file, $fh);
 		$@ = "No ID3 tag found";
 		return undef;
 	}
 
 	if (($ver == 0 || $ver == 2) && $v2) {
+
 		if ($raw_v2 == 1 && $ver == 2) {
+
 			%info = %$v2;
-			$info{TAGVERSION} = $v2h->{version};
+
+			$info{'TAGVERSION'} = $v2h->{'version'};
+
 		} else {
 
-			# Make sure any existing TXXX flags are an array.
-			# As we might need to append comments to it below.
-			if ($v2->{'TXXX'} && ref($v2->{'TXXX'}) ne 'ARRAY') {
+			_parse_v2tag($raw_v2, $v2, \%info);
 
-				$v2->{'TXXX'} = [ $v2->{'TXXX'} ];
-			}
-
-			# J.River Media Center sticks RG tags in comments.
-			# Ugh. Make them look like TXXX tags, which is really what they are.
-			if (ref($v2->{'COMM'}) eq 'ARRAY' && grep { /Media Jukebox/ } @{$v2->{'COMM'}}) {
-
-				for my $comment (@{$v2->{'COMM'}}) {
-
-					if ($comment =~ /Media Jukebox/) {
-
-						# we only want one null to lead.
-						$comment =~ s/^\000+//g;
-
-						push @{$v2->{'TXXX'}}, "\000$comment";
-					}
-				}
-			}
-
-			my $hash = $raw_v2 == 2 ? { map { ($_, $_) } keys %v2_tag_names } : \%v2_to_v1_names;
-			for my $id (keys %$hash) {
-				if (exists $v2->{$id}) {
-
-					if ($id =~ /^UFID?$/) {
-
-						my @ufid_list = split(/\0/, $v2->{$id});
-						$info{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
-
-					} elsif ($id =~ /^RVA[D2]?$/) {
-
-						# Expand these binary fields. See the ID3 spec for Relative Volume Adjustment.
-						if ($id eq 'RVA2') {
-
-							# ID is a text string
-							($info{$hash->{$id}}->{'ID'}, my $rvad) = split /\0/, $v2->{$id};
-
-							my $channel = $rva2_channel_types{ ord(substr($rvad, 0, 1, '')) };
-
-							$info{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_GAIN'} = 
-								sprintf('%f', _grab_int_16(\$rvad) / 512);
-
-							my $peakBytes = ord(substr($rvad, 0, 1, ''));
-
-							if (int($peakBytes / 8)) {
-
-								$info{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_PEAK'} = 
-									sprintf('%f', _grab_int_16(\$rvad) / 512);
-							}
-
-						} elsif ($id eq 'RVAD' || $id eq 'RVA') {
-
-							my $rvad  = $v2->{$id};
-							my $flags = ord(substr($rvad, 0, 1, ''));
-							my $desc  = ord(substr($rvad, 0, 1, ''));
-
-							# iTunes appears to be the only program that actually writes
-							# out a RVA/RVAD tag. Everyone else punts.
-							for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
-
-								for my $channel (qw(RIGHT LEFT)) {
-
-									my $val = _grab_uint_16(\$rvad) / 256;
-
-									# iTunes uses a range of -255 to 255
-									# to be -100% (silent) to 100% (+6dB)
-									if ($val == -255) {
-										$val = -96.0;
-									} else {
-										$val = 20.0 * log(($val+255)/255)/log(10);
-									}
-		
-									$info{$hash->{$id}}->{$channel}->{$type} = $flags & 0x01 ? $val : -$val;
-								}
-							}
-						}
-
-					} elsif ($id =~ /^A?PIC$/) {
-
-						my $pic = $v2->{$id};
-
-						# if there is more than one picture, just grab the first one.
-						if (ref($pic) eq 'ARRAY') {
-							$pic = (@$pic)[0];
-						}
-
-						use bytes;
-
-						my $valid_pic  = 0;
-						my $pic_len    = 0;
-						my $pic_format = '';
-
-						# look for ID3 v2.2 picture
-						if ($pic && $id eq 'PIC') {
-
-							# look for ID3 v2.2 picture
-							my ($encoding, $format, $picture_type, $description) = unpack 'Ca3CZ*', $pic;
-							$pic_len = length($description) + 1 + 5;
-
-							# skip extra terminating null if unicode
-							if ($encoding) { $pic_len++; }
-
-							if ($pic_len < length($pic)) {
-								$valid_pic  = 1;
-								$pic_format = $format;
-							}
-
-						} elsif ($pic && $id eq 'APIC') {
-
-							# look for ID3 v2.3 picture
-							my ($encoding, $format) = unpack 'C Z*', $pic;
-
-							$pic_len = length($format) + 2;
-
-							if ($pic_len < length($pic)) {
-
-								my ($picture_type, $description) = unpack "x$pic_len C Z*", $pic;
-
-								$pic_len += 1 + length($description) + 1;
-
-								# skip extra terminating null if unicode
-								if ($encoding) { $pic_len++; }
-
-								$valid_pic  = 1;
-								$pic_format = $format;
-							}
-						}
-
-						# Proceed if we have a valid picture.
-						if ($valid_pic && $pic_format) {
-
-							my ($data) = unpack("x$pic_len A*", $pic);
-
-							if (length($data) && $pic_format) {
-
-								$info{$hash->{$id}} = {
-									'DATA'   => $data,
-									'FORMAT' => $pic_format,
-								}
-							}
-						}
-
-					} else {
-						my $data1 = $v2->{$id};
-
-						# this is tricky ... if this is an arrayref,
-						# we want to only return one, so we pick the
-						# first one.  but if it is a comment, we pick
-						# the first one where the first charcter after
-						# the language is NULL and not an additional
-						# sub-comment, because that is most likely to be
-						# the user-supplied comment
-						if (ref $data1 && !$raw_v2) {
-							if ($id =~ /^COMM?$/) {
-								my($newdata) = grep /^(....\000)/, @{$data1};
-								$data1 = $newdata || $data1->[0];
-							} elsif ($id !~ /^(?:TXXX?|PRIV)$/) {
-								# We can get multiple User Defined Text frames in a mp3 file
-								$data1 = $data1->[0];
-							}
-						}
-
-						$data1 = [ $data1 ] if ! ref $data1;
-
-						for my $data (@$data1) {
-							# TODO : this should only be done for certain frames;
-							# using RAW still gives you access, but we should be smarter
-							# about how individual frame types are handled.  it's not
-							# like the list is infinitely long.
-							$data =~ s/^(.)//; # strip first char (text encoding)
-							my $encoding = $1;
-							my $desc;
-
-							# Comments & Unsyncronized Lyrics have the same format.
-							if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
-
-								$data =~ s/^(?:...)//;		# strip language
-							}
-
-							if ($UNICODE) {
-								if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
-									# text fields can be null-separated lists;
-									# UTF-16 therefore needs special care
-									#
-									# foobar2000 encodes tags in UTF-16LE
-									# (which is apparently illegal)
-									# Encode dies on a bad BOM, so it is
-									# probably wise to wrap it in an eval
-									# anyway
-									$data = eval { Encode::decode('utf16', $data) } || Encode::decode('utf16le', $data);
-									# this split we do doesn't work, because obviously
-									# two NULLs can appear where we don't want ...
-									#$data = join "\000", map {
-									#	eval { Encode::decode('utf16', $_) } || Encode::decode('utf16le', $_)
-									#} split /\000\000/, $data;
-
-								} elsif ($encoding eq "\003") { # UTF-8
-									# make sure string is UTF8, and set flag appropriately
-									$data = Encode::decode('utf8', $data);
-								} elsif ($encoding eq "\000") {
-
-									# Only guess if it's not ascii.
-									if ($data && $data !~ /^[\x00-\x7F]+$/) {
-
-										# Try and guess the encoding, otherwise just use latin1
-										my $dec = Encode::Guess->guess($data);
-
-										if (ref $dec) {
-											$data = $dec->decode($data);
-										} else {
-											# Best try
-											$data = Encode::decode('iso-8859-1', $data);
-										}
-									}
-								}
-
-								# do we care about trailing NULL?
-								# $data =~ s/\000$//;
-
-							} else {
-								# If the string starts with an
-								# UTF-16 little endian BOM, use a hack to
-								# convert to ASCII per best-effort
-								my $pat;
-								if ($data =~ s/^\xFF\xFE//) {
-									$pat = 'v';
-								} elsif ($data =~ s/^\xFE\xFF//) {
-									$pat = 'n';
-								}
-								if ($pat) {
-									$data = pack 'C*', map {
-										(chr =~ /[[:ascii:]]/ && chr =~ /[[:print:]]/)
-											? $_
-											: ord('?')
-									} unpack "$pat*", $data;
-								}
-							}
-
-							# We do this after decoding so we could be certain we're dealing
-							# with 8-bit text.
-							if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
-								$data =~ s/^(.*?)\000//;	# strip up to first NULL(s),
-												# for sub-comments (TODO:
-												# handle all comment data)
-								$desc = $1;
-							} elsif ($id =~ /^TCON?$/) {
-
-								my ($index, $name);
-
-								# Turn multiple nulls into a single.
-								$data =~ s/\000+/\000/g;
-
-								# Handle the ID3v2.x spec - 
-								#
-								# just an index number, possibly
-								# paren enclosed - referer to the v1 genres.
-								if ($data =~ /^ \(? (\d+) \)?\000?$/sx) {
-
-									$index = $1;
-
-								# Paren enclosed index with refinement.
-								# (4)Eurodisco
-								} elsif ($data =~ /^ \( (\d+) \)\000? ([^\(].+)$/x) {
-
-									($index, $name) = ($1, $2);
-
-								# List of indexes: (37)(38)
-								} elsif ($data =~ /^ \( (\d+) \)\000?/x) {
-
-									my @genres = ();
-
-									while ($data =~ s/^ \( (\d+) \)\000?//x) {
-
-										push @genres, $mp3_genres[$1];
-									}
-
-									$data = \@genres;
-								}
-
-								# Text based genres will fall through.
-								if ($name && $name ne "\000") {
-									$data = $name;
-								} elsif (defined $index) {
-									$data = $mp3_genres[$index];
-								}
-							}
-
-							if ($raw_v2 == 2 && $desc) {
-								$data = { $desc => $data };
-							}
-
-							if ($raw_v2 == 2 && exists $info{$hash->{$id}}) {
-								if (ref $info{$hash->{$id}} eq 'ARRAY') {
-									push @{$info{$hash->{$id}}}, $data;
-								} else {
-									$info{$hash->{$id}} = [ $info{$hash->{$id}}, $data ];
-								}
-							} else {
-
-								# User defined frame
-								if ($id eq 'TXXX') {
-
-									my ($key, $val) = split(/\0/, $data);
-									$info{uc($key)} = $val;
-
-								} elsif ($id eq 'PRIV') {
-
-									my ($key, $val) = split(/\0/, $data);
-									$info{uc($key)} = unpack('v', $val);
-
-								} else {
-									$info{$hash->{$id}} = $data;
-								}
-							}
-						}
-					}
-				}
-			}
-			if ($ver == 0 && $info{TAGVERSION}) {
-				$info{TAGVERSION} .= ' / ' . $v2h->{version};
+			if ($ver == 0 && $info{'TAGVERSION'}) {
+				$info{'TAGVERSION'} .= ' / ' . $v2h->{'version'};
 			} else {
-				$info{TAGVERSION} = $v2h->{version};
+				$info{'TAGVERSION'} = $v2h->{'version'};
 			}
 		}
 	}
@@ -909,13 +551,415 @@ sub get_mp3tag {
 		}
 	}
 
-	if (keys %info && exists $info{GENRE} && ! defined $info{GENRE}) {
-		$info{GENRE} = '';
+	if (keys %info && exists $info{'GENRE'} && ! defined $info{'GENRE'}) {
+		$info{'GENRE'} = '';
 	}
 
 	_close($file, $fh);
 
 	return keys %info ? {%info} : undef;
+}
+
+sub _get_v1tag {
+	my ($fh, $info) = @_;
+
+	seek $fh, -128, 2;
+	read($fh, my $tag, 128);
+
+	if (!defined($tag) || $tag !~ /^TAG/) {
+
+		return 0;
+	}
+
+	if (substr($tag, -3, 2) =~ /\000[^\000]/) {
+
+		(undef, @{$info}{@v1_tag_names}) =
+			(unpack('a3a30a30a30a4a28', $tag),
+			ord(substr($tag, -2, 1)),
+			$mp3_genres[ord(substr $tag, -1)]);
+
+		$info->{'TAGVERSION'} = 'ID3v1.1';
+
+	} else {
+
+		(undef, @{$info}{@v1_tag_names[0..4, 6]}) =
+			(unpack('a3a30a30a30a4a30', $tag),
+			$mp3_genres[ord(substr $tag, -1)]);
+
+		$info->{'TAGVERSION'} = 'ID3v1';
+	}
+
+	if ($UNICODE) {
+
+		# Save off the old suspects list, since we add
+		# iso-8859-1 below, but don't want that there
+		# for possible ID3 v2.x parsing below.
+		my $oldSuspects = $Encode::Encoding{'Guess'}->{'Suspects'};
+
+		for my $key (keys %{$info}) {
+
+			next unless $info->{$key};
+
+			# Try and guess the encoding.
+			my $value = $info->{$key};
+			my $icode = Encode::Guess->guess($value);
+
+			unless (ref($icode)) {
+
+				# Often Latin1 bytes are
+				# stuffed into a 1.1 tag.
+				Encode::Guess->add_suspects('iso-8859-1');
+
+				while (length($value)) {
+
+					$icode = Encode::Guess->guess($value);
+
+					last if ref($icode);
+
+					# Remove garbage and retry
+					# (string is truncated in the
+					# middle of a multibyte char?)
+					$value =~ s/(.)$//;
+				}
+			}
+
+			$info->{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info->{$key});
+		}
+
+		Encode::Guess->set_suspects(keys %{$oldSuspects});
+	}
+
+	return 1;
+}
+
+sub _parse_v2tag {
+	my ($raw_v2, $v2, $info) = @_;
+
+	# Make sure any existing TXXX flags are an array.
+	# As we might need to append comments to it below.
+	if ($v2->{'TXXX'} && ref($v2->{'TXXX'}) ne 'ARRAY') {
+
+		$v2->{'TXXX'} = [ $v2->{'TXXX'} ];
+	}
+
+	# J.River Media Center sticks RG tags in comments.
+	# Ugh. Make them look like TXXX tags, which is really what they are.
+	if (ref($v2->{'COMM'}) eq 'ARRAY' && grep { /Media Jukebox/ } @{$v2->{'COMM'}}) {
+
+		for my $comment (@{$v2->{'COMM'}}) {
+
+			if ($comment =~ /Media Jukebox/) {
+
+				# we only want one null to lead.
+				$comment =~ s/^\000+//g;
+
+				push @{$v2->{'TXXX'}}, "\000$comment";
+			}
+		}
+	}
+
+	my $hash = $raw_v2 == 2 ? { map { ($_, $_) } keys %v2_tag_names } : \%v2_to_v1_names;
+
+	for my $id (keys %$hash) {
+
+		next if !exists $v2->{$id};
+
+		if ($id =~ /^UFID?$/) {
+
+			my @ufid_list = split(/\0/, $v2->{$id});
+
+			$info->{$hash->{$id}} = $ufid_list[1] if ($#ufid_list > 0);
+
+		} elsif ($id =~ /^RVA[D2]?$/) {
+
+			# Expand these binary fields. See the ID3 spec for Relative Volume Adjustment.
+			if ($id eq 'RVA2') {
+
+				# ID is a text string
+				($info->{$hash->{$id}}->{'ID'}, my $rvad) = split /\0/, $v2->{$id};
+
+				my $channel = $rva2_channel_types{ ord(substr($rvad, 0, 1, '')) };
+
+				$info->{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_GAIN'} = 
+					sprintf('%f', _grab_int_16(\$rvad) / 512);
+
+				my $peakBytes = ord(substr($rvad, 0, 1, ''));
+
+				if (int($peakBytes / 8)) {
+
+					$info->{$hash->{$id}}->{$channel}->{'REPLAYGAIN_TRACK_PEAK'} = 
+						sprintf('%f', _grab_int_16(\$rvad) / 512);
+				}
+
+			} elsif ($id eq 'RVAD' || $id eq 'RVA') {
+
+				my $rvad  = $v2->{$id};
+				my $flags = ord(substr($rvad, 0, 1, ''));
+				my $desc  = ord(substr($rvad, 0, 1, ''));
+
+				# iTunes appears to be the only program that actually writes
+				# out a RVA/RVAD tag. Everyone else punts.
+				for my $type (qw(REPLAYGAIN_TRACK_GAIN REPLAYGAIN_TRACK_PEAK)) {
+
+					for my $channel (qw(RIGHT LEFT)) {
+
+						my $val = _grab_uint_16(\$rvad) / 256;
+
+						# iTunes uses a range of -255 to 255
+						# to be -100% (silent) to 100% (+6dB)
+						if ($val == -255) {
+							$val = -96.0;
+						} else {
+							$val = 20.0 * log(($val+255)/255)/log(10);
+						}
+
+						$info->{$hash->{$id}}->{$channel}->{$type} = $flags & 0x01 ? $val : -$val;
+					}
+				}
+			}
+
+		} elsif ($id =~ /^A?PIC$/) {
+
+			my $pic = $v2->{$id};
+
+			# if there is more than one picture, just grab the first one.
+			if (ref($pic) eq 'ARRAY') {
+				$pic = (@$pic)[0];
+			}
+
+			use bytes;
+
+			my $valid_pic  = 0;
+			my $pic_len    = 0;
+			my $pic_format = '';
+
+			# look for ID3 v2.2 picture
+			if ($pic && $id eq 'PIC') {
+
+				# look for ID3 v2.2 picture
+				my ($encoding, $format, $picture_type, $description) = unpack 'Ca3CZ*', $pic;
+				$pic_len = length($description) + 1 + 5;
+
+				# skip extra terminating null if unicode
+				if ($encoding) { $pic_len++; }
+
+				if ($pic_len < length($pic)) {
+					$valid_pic  = 1;
+					$pic_format = $format;
+				}
+
+			} elsif ($pic && $id eq 'APIC') {
+
+				# look for ID3 v2.3 picture
+				my ($encoding, $format) = unpack 'C Z*', $pic;
+
+				$pic_len = length($format) + 2;
+
+				if ($pic_len < length($pic)) {
+
+					my ($picture_type, $description) = unpack "x$pic_len C Z*", $pic;
+
+					$pic_len += 1 + length($description) + 1;
+
+					# skip extra terminating null if unicode
+					if ($encoding) { $pic_len++; }
+
+					$valid_pic  = 1;
+					$pic_format = $format;
+				}
+			}
+
+			# Proceed if we have a valid picture.
+			if ($valid_pic && $pic_format) {
+
+				my ($data) = unpack("x$pic_len A*", $pic);
+
+				if (length($data) && $pic_format) {
+
+					$info->{$hash->{$id}} = {
+						'DATA'   => $data,
+						'FORMAT' => $pic_format,
+					}
+				}
+			}
+
+		} else {
+			my $data1 = $v2->{$id};
+
+			# this is tricky ... if this is an arrayref,
+			# we want to only return one, so we pick the
+			# first one.  but if it is a comment, we pick
+			# the first one where the first charcter after
+			# the language is NULL and not an additional
+			# sub-comment, because that is most likely to be
+			# the user-supplied comment
+			if (ref $data1 && !$raw_v2) {
+				if ($id =~ /^COMM?$/) {
+					my($newdata) = grep /^(....\000)/, @{$data1};
+					$data1 = $newdata || $data1->[0];
+				} elsif ($id !~ /^(?:TXXX?|PRIV)$/) {
+					# We can get multiple User Defined Text frames in a mp3 file
+					$data1 = $data1->[0];
+				}
+			}
+
+			$data1 = [ $data1 ] if ! ref $data1;
+
+			for my $data (@$data1) {
+				# TODO : this should only be done for certain frames;
+				# using RAW still gives you access, but we should be smarter
+				# about how individual frame types are handled.  it's not
+				# like the list is infinitely long.
+				$data =~ s/^(.)//; # strip first char (text encoding)
+				my $encoding = $1;
+				my $desc;
+
+				# Comments & Unsyncronized Lyrics have the same format.
+				if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+
+					$data =~ s/^(?:...)//;		# strip language
+				}
+
+				if ($UNICODE) {
+
+					if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
+						# text fields can be null-separated lists;
+						# UTF-16 therefore needs special care
+						#
+						# foobar2000 encodes tags in UTF-16LE
+						# (which is apparently illegal)
+						# Encode dies on a bad BOM, so it is
+						# probably wise to wrap it in an eval
+						# anyway
+						$data = eval { Encode::decode('utf16', $data) } || Encode::decode('utf16le', $data);
+
+					} elsif ($encoding eq "\003") { # UTF-8
+
+						# make sure string is UTF8, and set flag appropriately
+						$data = Encode::decode('utf8', $data);
+
+					} elsif ($encoding eq "\000") {
+
+						# Only guess if it's not ascii.
+						if ($data && $data !~ /^[\x00-\x7F]+$/) {
+
+							# Try and guess the encoding, otherwise just use latin1
+							my $dec = Encode::Guess->guess($data);
+
+							if (ref $dec) {
+								$data = $dec->decode($data);
+							} else {
+								# Best try
+								$data = Encode::decode('iso-8859-1', $data);
+							}
+						}
+					}
+
+				} else {
+
+					# If the string starts with an
+					# UTF-16 little endian BOM, use a hack to
+					# convert to ASCII per best-effort
+					my $pat;
+					if ($data =~ s/^\xFF\xFE//) {
+						$pat = 'v';
+					} elsif ($data =~ s/^\xFE\xFF//) {
+						$pat = 'n';
+					}
+
+					if ($pat) {
+						$data = pack 'C*', map {
+							(chr =~ /[[:ascii:]]/ && chr =~ /[[:print:]]/)
+								? $_
+								: ord('?')
+						} unpack "$pat*", $data;
+					}
+				}
+
+				# We do this after decoding so we could be certain we're dealing
+				# with 8-bit text.
+				if ($id =~ /^(COM[M ]?|USLT)$/) { # space for iTunes brokenness
+
+					$data =~ s/^(.*?)\000//;	# strip up to first NULL(s),
+									# for sub-comments (TODO:
+									# handle all comment data)
+					$desc = $1;
+
+				} elsif ($id =~ /^TCON?$/) {
+
+					my ($index, $name);
+
+					# Turn multiple nulls into a single.
+					$data =~ s/\000+/\000/g;
+
+					# Handle the ID3v2.x spec - 
+					#
+					# just an index number, possibly
+					# paren enclosed - referer to the v1 genres.
+					if ($data =~ /^ \(? (\d+) \)?\000?$/sx) {
+
+						$index = $1;
+
+					# Paren enclosed index with refinement.
+					# (4)Eurodisco
+					} elsif ($data =~ /^ \( (\d+) \)\000? ([^\(].+)$/x) {
+
+						($index, $name) = ($1, $2);
+
+					# List of indexes: (37)(38)
+					} elsif ($data =~ /^ \( (\d+) \)\000?/x) {
+
+						my @genres = ();
+
+						while ($data =~ s/^ \( (\d+) \)\000?//x) {
+
+							push @genres, $mp3_genres[$1];
+						}
+
+						$data = \@genres;
+					}
+
+					# Text based genres will fall through.
+					if ($name && $name ne "\000") {
+						$data = $name;
+					} elsif (defined $index) {
+						$data = $mp3_genres[$index];
+					}
+				}
+
+				if ($raw_v2 == 2 && $desc) {
+					$data = { $desc => $data };
+				}
+
+				if ($raw_v2 == 2 && exists $info->{$hash->{$id}}) {
+
+					if (ref $info->{$hash->{$id}} eq 'ARRAY') {
+						push @{$info->{$hash->{$id}}}, $data;
+					} else {
+						$info->{$hash->{$id}} = [ $info->{$hash->{$id}}, $data ];
+					}
+
+				} else {
+
+					# User defined frame
+					if ($id eq 'TXXX') {
+
+						my ($key, $val) = split(/\0/, $data);
+						$info->{uc($key)} = $val;
+
+					} elsif ($id eq 'PRIV') {
+
+						my ($key, $val) = split(/\0/, $data);
+						$info->{uc($key)} = unpack('v', $val);
+
+					} else {
+
+						$info->{$hash->{$id}} = $data;
+					}
+				}
+			}
+		}
+	}
 }
 
 sub _get_v2tag {
@@ -1430,14 +1474,19 @@ sub _grab_int_32 {
 }
 
 sub _parse_ape_tag {
-	my ($fh, $filesize, $tag, $pre_tag, $info) = @_;
+	my ($fh, $filesize, $info) = @_;
 
 	my $ape_tag_id = 'APETAGEX';
+
+	seek $fh, -256, 2;
+	read($fh, my $tag, 256);
+	my $pre_tag = substr($tag, 0, 128, '');
 
 	# Try and bail early if there's no ape tag.
 	if (substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
 
-		return;
+		seek($fh, 0, 0);
+		return 0;
 	}
 
 	my $id3v1_tag_size      = 128;
@@ -1502,6 +1551,10 @@ sub _parse_ape_tag {
 			$info->{$tag_item_key} = substr($ape_tag_data, 0, $tag_len, '');
 		}
 	}
+
+	seek($fh, 0, 0);
+
+	return 1;
 }
 
 sub _parse_ape_header_or_footer {
