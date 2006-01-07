@@ -13,38 +13,6 @@ a {
 	text-decoration:none;
 }
 
-h4
-{
-	font-style: normal;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	font-size: 9px;
-	font-stretch: ultra-condensed;
-	margin-top: 5px;
-	height: 13px;
-	text-transform: uppercase;
-	text-indent: 3px;
-	border-style: solid;
-	border-width: 5px;
-	border-color: #ececec;
-	color: #737373;
-	background: #ececec;
-	padding-bottom: 0px;
-	margin-bottom: 5px;
-}
-
-li {
-	margin-left: 8px;
-	padding-left: 0px;
-	padding-top: 0px;
-	padding-bottom: 3px;
-}
-
-ul {
-	padding: 0px;
-	margin: 0px;
-}
-
 a:active {
 	color: #000;
 }
@@ -66,15 +34,61 @@ a:hover {
 	font-weight: bold;
 }
 
-pre, code, h3 {
-	font-size: 11px;
+#attributeBold {
+	color: #000000;
+	font-weight: bold;
+	font-style: normal;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 9px;
+	font-stretch: ultra-condensed;
+	text-decoration: none;
+	margin-left: 5px;
+	display: inline;
+	white-space: nowrap;
 }
 
-.screenshot {
+#valueBold {
+	color: #ececec;
+	font-weight: bold;
+	font-style: normal;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 9px;
+	font-stretch: ultra-condensed;
+	text-decoration: none;
+	padding-right: 2.5px;
+	display: inline;
+	white-space: nowrap;
+}
+
+#valueSelected {
+	color: #ff7f00;
+	font-weight: bold;
+	font-style: normal;
+	font-family: Verdana, Helvetica, sans-serif;
+	font-size: 9px;
+	font-stretch: ultra-condensed;
+	text-decoration: none;
+	padding-right: 2.5px;
+	display: inline;
+	white-space: nowrap;
+}
+
+#largeAttribute {
+        color: #ececec;
+        font-weight: normal;
+        font-style: normal;
+        font-family: Verdana, Helvetica, sans-serif;
+        text-decoration: none;
+        display: inline;
+        white-space: nowrap;
+        font-size: 18px;
+        position: absolute;
+        left: 4px;
+        width: 40px;
+}
+
+pre, code, h3 {
 	font-size: 11px;
-	background-color: #000;
-	color: #0fe;
-	padding: 5px;
 }
 
 .textfield {
@@ -130,111 +144,138 @@ img {
 	width: 200px;
 }
 
-.alignright {
-	text-align: right;
-	width: 100%;
-	vertical-align: bottom;
+div#topGraphicBox {
+        background-color: #333333;
+        height: 77px;
 }
 
-.alignleft {
-	text-align: left;
-	width: 100%;
-	vertical-align: bottom;
+div#topGraphicMenu1 {
+        background-color: #737373;
+        position: relative;
+        height: 60px;
+        width: auto;
+        margin-left: 8px;
+        margin-right: 4px;
+        border-bottom: 1px #9D9D9D solid;
+        top: 15px;
 }
 
-/* Start various helpers for the live search */
-
-#right li:before {
+div#topGraphicMenu2 {
+        background-color: #737373;
+        position: relative;
+        height: 20px;
+        width: auto;
+        margin-left: 8px;
+        top: 15px;
+        margin-right: 4px;
 }
 
-#right li {
-	margin: 0px;
-	line-height: 1.3em;
-	padding-top: 0px;
-	padding-bottom: 3px;
-	text-indent: -1em;
-	padding-left: 1em;
-	padding-right: 1em;
-	border: 0px;
+div#topGraphicMenu3 {
+        background-color: #c5c5c5;
+        position: relative;
+        height: 40px;
+        width: auto;
+        margin-left: 8px;
+        top: 15px;
+        margin-right: 4px;
 }
 
-#right {
-        width: 145px;
-        margin: 5px;
-        padding: 0px;
-        padding-top: 27px;
-        margin-top: 0px;
-        
-        padding-left: 42px;
-        height: 400px;
+div#topGraphicMenu1 #largeAttribute {
+        position: absolute;
+        top: 5px;
+        left: 5px;
 }
 
-#right ul  {
-        list-style-type: none;
-        margin-left: 0px;
-        padding-left: 0px;
-        margin-top: 5px;
+div#topGraphicBox img {
+        margin-top: 10px;
+        margin-left: 10px;
 }
 
-#right a {
-        padding-left: 0px;
-        
-        padding-bottom: 1px;
-        color: black;
-        font-size: 11px;
+div#topGraphicMenu1 #playerChooser {
+        position: absolute;
+        right: 10px;
+        top: 10px;
 }
 
-.formfield {
-	border: 2px solid #CCCCCC;
-	width: 300px;
+div#topGraphicMenu1 #powerButtons {
+        position: absolute;
+        left: 280px;
+        top: 20px;
 }
 
-.right {
-	position: absolute;
-	left: 622px;
-	width: 150px;
+div#topGraphicMenu1 #transportButtons {
+        left: 10px;
+        position: absolute;
+        top: 40px;
 }
 
-/* These are all for live search below */
-#LSResult {    
-	position: absolute;
-	/*background-color: #aaa;  */
-	min-width: 180px; 
-	margin-left: 2px;
-	margin-top: 1px;
+div#topGraphicMenu1 #volumeButtons {
+        position: absolute;
+        left: 280px;
+        top: 40px;
 }
 
-#LSResult ul {
-	margin-bottom: -5px;
-	margin-top: 0px;
-	padding-top: 0px;  
-	width: 440px;
+div#topGraphicMenu2 #repeatButtons {
+        position: absolute;
+        left: 5px;
+        top: 3px;
 }
 
-#LSShadow {
-	position: relative;
-	right: 1px;
-	bottom: 6px;
-	background-color: 666;
-	color: inherit;
+div#topGraphicMenu2 #shuffleButtons {
+        position: absolute;
+        left: 280px;
+        top: 3px;
 }
 
-.LSRes {
-	position: relative;
-	bottom: 1px;
-	right: 1px;
-	background-color: white;
-	border:  1px solid #AAA;
+div#topGraphicMenu3 #playingStatus {
+        position: absolute;
+        left: 5px;
+        top: 5px;
 }
 
-#LSHighlight {
-	background-color: grey;
+div#topGraphicMenu3 #statusMessage {
+        position: absolute;
+        left: 30px;
+        top: 18px;
+	color: #111;
+	font-weight: bold;
 }
 
-#livesearch {
-	width: 240px;
+div#topGraphicMenu3 #statusSongRemoveButton {
+        position: absolute;
+        right: 10px;
+        top: 5px;
 }
 
-.searchHighlight {
-	background-color: #ffff00;
+div#homeMenu {
+        background-color: #ffffff;
+        position: relative;
+        height: auto;
+        width: auto;
+        margin-left: 4px;
+        top: 25px;
+        margin-right: 4px;
+}
+
+div#homeMenuHeader {
+        background-color: #ececec;
+        position: relative;
+        height: 13px;
+        width: auto;
+	margin-left: 4px;
+        margin-right: 4px;
+        padding-top: 8px;
+	padding-left: 6px;
+        padding-bottom: 4px;
+	font-weight: bold;
+}
+
+div#homeMenuItemList {
+        background-color: #ffffff;
+        position: relative;
+        height: auto;
+        width: auto;
+	padding-top: 8px;
+	padding-bottom: 8px;
+        margin-left: 14px;
 }

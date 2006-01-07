@@ -1,100 +1,207 @@
+[% statusroot = 'status_header.html' %]
+[% PROCESS hreftemplate %]
+
 <html>
 <head>
-
-[% pagetitle = "SQUEEZEBOX_MUSIC_PLAYER" | string %]
-[% IF player_name; name = player_name | html; END -%]
-[% pagetitle = pagetitle _ ' ' _ name %]
-[% PROCESS standardheader.html %]
-[% PROCESS html/common.js %] 
+	[% pagetitle = "SQUEEZEBOX_MUSIC_PLAYER" | string %]
+	[% IF player_name; name = player_name | html; END -%]
+	[% pagetitle = pagetitle _ ' ' _ name %]
+	[% PROCESS standardheader.html %]
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="doLoad();">
-	<table width="100%" cellspacing="0">
-		<tr height="32">
-			<td width="4" class="darkgrey"></td>
-			<td colspan="2" style="vertical-align:middle"  class="darkgrey" height="37" align="right"
-				><img src="html/images/spacer.gif" width="6"
-				><a href="http://www.slimdevices.com/" target="slimdevices"
-				><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="SQUEEZEBOX" width="134" height="19"
-				></a><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""
-				></td>
-			<td class="darkgrey" width="8"><img src="html/images/spacer.gif" width="8"></td>
-		<td width="8" class="darkgrey"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
-		</tr>
-		<tr height="40">
-			<td class="darkgrey" width="4"><img src="html/images/spacer.gif" width="4" height="40" alt=""></td>
-			<td class="dmedgrey" width="269"><img src="html/images/musicplayer.gif" width="121" height="25" alt="Music Player"></td>
-			<td class="dmedgrey"  align="right" valign="center">
-				<table width="100%"  cellspacing="0" cellpadding="0">
-					<tr height="20"><td align="right"
-							>[% IF player_chooser_list %]<form style="text-align:right; vertical-align:middle;"  method="get" action="[% webroot %]index.html" target="_top"
-							><select name="player" onchange="switchPlayer(this);" class="exnowplaying"
-							>[% player_chooser_list %]</div>
-							</select
-							><img src="[% webroot %]html/images/spacer.gif" width="8" alt=""
-							></form>[% END %]</td>
-					</tr>
-					<tr height="20"><td class="dmedgrey" align="right" valign=bottom nowrap bgcolor=red>				
-						[% IF isplayer %]<img src="html/images/nav_power.gif" alt="" height="13">[% IF mode == 'off' %]<a target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=1">[% END %]<img src="html/images/player_on[% IF mode != 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode == 'off' %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF mode != 'off' %]<a target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=0">[% END %]<img src="html/images/player_standby[% IF mode == 'off' %]_sel[% END %].gif" alt="" height="13">[% IF mode != 'off' %]</a>[% END %][% END %]
-					</td></tr>
-				</table>
-			</td>
-			<td class="dmedgrey" width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
-		<td width="8" class="darkgrey"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
-		</tr>
-	<tr height="19">
-		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
-		<td class="dmedgrey" height="19" nowrap><a href="status_header.html?p0=playlist&amp;p1=jump&amp;p2=%2b1&amp;player=[% playerURI %]"><img src="html/images/nav_skip.gif" alt="" height="13"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF not modeplay %]<a href="status_header.html?p0=play&amp;player=[% playerURI %]">[% END %]<img src="html/images/nav_play[% IF modeplay %]_sel[% END %].gif" alt="" height="13">[% IF not modeplay %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13"><a href="status_header.html?p0=pause&amp;player=[% playerURI %]"><img src="html/images/nav_pause[% IF modepause %]_sel[% END %].gif" alt="" height="13"></a><img src="html/images/nav_spacer.gif" alt="" width="1" height="13">[% IF not modestop %]<a href="status_header.html?p0=stop&amp;player=[% playerURI %]">[% END %]<img src="html/images/nav_stop[% IF modestop %]_sel[% END %].gif" alt="" height="13">[% IF not modestop %]</a>[% END %]</td>
-		<td colspan="2" class="dmedgrey" nowrap>[% IF isplayer %]<img src="html/images/nav_volume.gif" alt="" height="13">
-				[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
-					[% IF loop.first %][% IF volume != '0' %]<a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=0&amp;player=[% playerURI %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_1[% IF volume == '0' %]_sel[% END %].gif" alt="1" width="13" height="13">[% IF volume != '0' %]</a>[% END %]
-					[% ELSE %]
-						[%- IF  (volume < loop.prev +1 || volume > vol) %]<a href="status_header.html?p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% playerURI %]&amp;start=[% start %]">[% END %]
-						<img src="html/images/nav_[% loop.count %][%- IF  (!loop.first && volume > loop.prev && volume <= vol) %]_sel[% END %].gif" alt="[% loop.count %]" width="13" height="13">
-						[%- IF  (volume < loop.prev +1 || volume > vol) %]</a>[% END %]
-					[% END %]
-				[%- END %]
-				[% END %]</td>
-		<td width="8" height="19"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
-	</tr>
-	<tr height="1">
-		<td width="4" height="1"><img src="html/images/spacer.gif" width="4" height="1" alt=""></td>
-		<td colspan="3" class="greyline" height="1"><img src="html/images/spacer.gif" height="1" alt=""></td>
-		<td width="8" height="1"><img src="html/images/spacer.gif" width="8" height="1" alt=""></td>
-	</tr>
-	<tr height="19">
-  		<td width="4" height="19"><img src="html/images/spacer.gif" width="4" height="19" alt=""></td>
-			<td class="dmedgrey" nowrap height="19"><img src="html/images/nav_repeat.gif" height="13" alt="">
-			[% img = ['off','one','all'] %]
-			[% FOREACH type = ['repeatoff','repeatone','repeatall'] %]
-				[% index = loop.index %]
-				[% IF not $type %]<a href="status_header.html?p0=playlist&amp;p1=repeat&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% img.$index %][% IF $type %]_sel[% END %].gif" alt="" height="13">[% IF not $type %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
+
+<body leftmargin="0" topmargin="0" mPlayerarginwidth="0" marginheight="0" onload="doLoad();">
+
+[% BLOCK statusLink %]
+
+	[% IF link && !linkString %]
+
+		[% linkName = link %]
+
+	[% ELSIF linkString && !link %]
+
+		[% linkName = linkString | string | upper %]
+
+	[% END %]
+
+	<a href="[% webroot %]status_header.html?p0=[% p0 %]&amp;p1=[% p1 %]&amp;p2=[% p2 %]&amp;player=[% player | uri %]" class="[% divID %]"><div id="[% divID %]">[% linkName %]</div></a>
+
+[% END %]
+
+<div id="topGraphicBox">
+
+	<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" width="134" height="19"></a>
+
+	<div id="topGraphicMenu1">
+		<div id="largeAttribute">[% "SQUEEZEBOX_MUSIC_PLAYER" | string %]</div>
+
+		[% IF player_chooser_list %]
+		<div id="playerChooser">
+			<form style="text-align:right; vertical-align:middle;" method="GET" action="[% webroot %]index.html" target="_top">
+			<select name="player" onchange="switchPlayer(this);" class="exnowplaying">
+				[% player_chooser_list %]
+			</select>
+			</form>
+		</div>
+		[% END %]
+
+		[% IF isplayer %]
+		<div id="powerButtons">
+			<div id="attributeBold">[% "POWER" | string | upper %]:</div>
+
+			[% PROCESS statusLink p0 = 'power' p1 = 1 linkString = 'ON'  divID = mode == 'on'  ? 'valueSelected' : 'valueBold' %]
+			[% PROCESS statusLink p0 = 'power' p1 = 0 linkString = 'OFF' divID = mode == 'off' ? 'valueSelected' : 'valueBold' %]
+		</div>
+		[% END %]
+
+		<div id="transportButtons">
+
+			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = '%2b1' linkString = 'SKIP' divID = 'valueBold' %]
+
+			[% PROCESS statusLink p0 = 'play'  linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
+			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
+			[% PROCESS statusLink p0 = 'stop'  linkString = 'STOP'  divID = modestop  ? 'valueSelected' : 'valueBold' %]
+		</div>
+
+		[% IF isplayer %]
+		<div id="volumeButtons">
+
+			<div id="attributeBold">[% "VOLUME" | string | upper %]:</div>
+
+			[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
+
+				[% PROCESS statusLink 
+					p0         = 'mixer'
+					p1         = 'volume'
+					p2         = vol
+					link       = loop.count
+					divID      = (!loop.first && (volume > loop.prev) && (volume <= vol)) ? 'valueSelected' : 'valueBold'
+					linkString = ''
+				%]
+
 			[% END %]
-			<td class="dmedgrey" nowrap colspan="2"><img src="html/images/nav_shuffle.gif" alt="" height="13">
-			[% img = ['off','songs','albums'] %]
-			[% FOREACH type = ['shuffleoff','shuffleon','shufflealbum'] %]
+		</div>
+		[% END %]
+	</div>
+
+	<div id="topGraphicMenu2">
+		<div id="repeatButtons">
+
+			<div id="attributeBold">[% "REPEAT" | string | upper %]:</div>
+
+			[% repeatStrings = ['OFF', 'ONE', 'ALL'] %]
+
+			[% FOREACH repeatType = ['repeatoff', 'repeatone', 'repeatall'] %]
+
 				[% index = loop.index %]
-				[% IF not $type %]<a href="status_header.html?p0=playlist&amp;p1=shuffle&amp;p2=[% loop.index %]&amp;player=[% player %]&amp;start=[% start %]">[% END %]<img src="html/images/nav_[% img.$index %][% IF $type %]_sel[% END %].gif" alt="" height="13">[% IF not $type %]</a>[% END %]<img src="html/images/nav_spacer.gif" alt="" width="1" height="13">
+
+				[% PROCESS statusLink 
+					p0         = 'playlist'
+					p1         = 'repeat'
+					p2         = index
+					linkString = repeatStrings.$index
+					link       = ''
+					divID      = $repeatType ? 'valueSelected' : 'valueBold'
+				%]
+
 			[% END %]
-		<td width="8" height="19"><img src="html/images/spacer.gif" width="8" height="19" alt=""></td>
-	</tr>
-	<tr height="20">
-			<td width="4" height="20"><img src="html/images/spacer.gif" width="4" height="20" alt=""></td>
-		<td colspan="3" class="medgrey" height="20"><img src="html/images/nav_[% IF playercount == '0' %]stopped[% END %][% IF modeplay %]nowplaying[% END %][% IF modepause %]nowplaying[% END %][% IF modestop %]stopped[% END %].gif" alt="" height="20"></td>
-			<td width="8" height="20"><img src="html/images/spacer.gif" width="8" height="20" alt=""></td>
-	</tr>
-		<tr height="24">
-			<td width="4" height="24"><img src="html/images/spacer.gif" width="4" height="24" alt=""></td>
-			<td colspan="3" class="medgrey" height="24">
-				<table cellspacing="0" width="100%"><tr>
-					<td><img src="html/images/spacer.gif" width="4" alt=""></td>
-					<td><span
-						class="exboldnowplaying">[% IF player_needs_upgrade %][% "PLAYER_NEEDS_UPGRADE" | string %][% END %][% IF not player_needs_upgrade %][% IF playercount == '0' %][% "NO_PLAYER_FOUND" | string %][% END %][% IF playercount != '0' %][% IF songcount == '0' %][% "NOTHING" | string %][% END %][% END %][% END %]
-						[% INCLUDE tracklink.html item=1 text=songtitle %]
-					</td>
-			<td width="21" valign="center" class="medgrey" align="right" nowrap>[% IF songcount %]<a href="status_header.html?p0=playlist&amp;p1=delete&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]&amp;start=[% start %]"><img src="html/images/b_delete_white.gif" width="13" height="13"  alt="[% "REMOVE_FROM_PLAYLIST" | string %]" title="[% "REMOVE_FROM_PLAYLIST" | string %]"></a>[% END %]<img src="html/images/spacer.gif" width="8" height="13" alt=""></td>
-				</tr></table>
-		<td width="8"><img src="html/images/spacer.gif" width="8" alt=""></td>
-	</tr>
-	</table>
-  </body>
-  </html>
+		</div>
+
+		<div id="shuffleButtons">
+
+			<div id="attributeBold">[% "SHUFFLE" | string | upper %]:</div>
+
+			[% shuffleStrings = ['OFF', 'SONGS', 'ALBUMS'] %]
+
+			[% FOREACH shuffleType = ['shuffleoff', 'shuffleon', 'shufflealbum'] %]
+
+				[% index = loop.index %]
+
+				[% PROCESS statusLink 
+					p0         = 'playlist'
+					p1         = 'shuffle'
+					p2         = index
+					linkString = shuffleStrings.$index
+					link       = ''
+					divID      = $shuffleType ? 'valueSelected' : 'valueBold'
+				%]
+
+			[% END %]
+		</div>
+	</div>
+
+	<div id="topGraphicMenu3">
+		<div id="playingStatus">
+			<div id="attributeBold">
+				[% IF playercount == 0 || modestop %]
+
+					[% "STOPPED" | string | upper %]
+
+				[% ELSIF modeplay || modepause %]
+
+					[% "NOW_PLAYING" | string | upper %]
+
+				[% END %]
+			</div>
+		</div>
+
+		<div id="statusMessage">
+			[% IF player_needs_upgrade %]
+
+				[% "PLAYER_NEEDS_UPGRADE" | string %]
+
+			[% ELSE %]
+
+				[% IF playercount == 0 %]
+
+					[% "NO_PLAYER_FOUND" | string %]
+
+				[% ELSE %]
+
+					[% IF songcount == 0; "NOTHING" | string; END %]
+
+				[% END %]
+
+			[% END %]
+
+			<a [% songinfoHRef %] target="browser">[% songtitle %]</a>
+		</div>
+
+		<div id="statusSong">
+
+			[% IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum %]
+
+				<span class="exnotactivenowplaying">[% "FROM" | string %] </span>
+
+				<span class="exnowplaying"><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a></span>
+
+			[% END %]
+
+			[% IF includeArtist && itemobj.artist && itemobj.artist != noArtist %]
+				<span class="exnowplaying">[% PROCESS artistsAsHTML.html %]</span>
+			[% END %]
+
+		</div>
+
+		[% IF songcount %]
+			<div id="statusSongRemoveButton">
+
+			[% title = 'REMOVE_FROM_PLAYLIST' | string %]
+
+			[% PROCESS statusLink
+				p0         = 'playlist'
+				p1         = 'delete'
+				p2         = thissongnum
+				linkString = ''
+				link       = "<img src=\"html/images/b_delete_white.gif\" width=\"13\" height=\"13\" alt=\"$title\" title=\"$title\">"
+				divID      = mode == 'off' ? 'valueSelected' : 'valueBold'
+			%]
+
+			</div>
+
+		[% END %]
+
+	</div>
+</div>
+
+</body>
+</html>
