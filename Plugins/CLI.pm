@@ -61,7 +61,7 @@ sub initPlugin {
 	$d_cli_vv && msg("CLI: initPlugin()\n");
 
 	# enable general debug if verbose debug is on
-	$::d_cli = $d_cli_v;
+	$::d_cli = $d_cli_v if !$::d_cli;
 	
 	# make sure we have a default value for our preference
 	if (!defined Slim::Utils::Prefs::get('cliport')) {
@@ -437,10 +437,18 @@ sub cli_process {
 	
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
-		$request->client(cli_random_client());
+		my $client = cli_random_client();
+		$request->client($client);
+		if ($::d_cli) {
+			if (defined $client) {
+				msg("CLI: Request [$cmd] requires client, allocated " . $client->id() . "\n");
+			} else {
+				msg("CLI: Request [$cmd] requires client, none found!\n");
+			}
+		}
 	}
 			
-	$::d_cli && msg("CLI: Processing command [$cmd]\n");
+	$::d_cli && msg("CLI: Processing request [$cmd]\n");
 	
 	# try login before checking for authentication
 	if ($cmd eq 'login') {
@@ -478,6 +486,8 @@ sub cli_process {
 		
 			# Don't write output if listen is 1, the callback willl
 			$writeoutput = !$connections{$client_socket}{'listen'} || $request->query();
+		} else {
+			$::d_cli && msg("CLI: Request [$cmd] unkown or missing client -- will echo as is...\n");
 		}
 	}
 		
@@ -641,8 +651,15 @@ sub cli_cmd_listen {
 	}
 	
 	Slim::Control::Dispatch::subscribe(\&Plugins::CLI::cli_request_notification);
+#	Slim::Control::Command::setExecuteCallback(\&Plugins::CLI::cli_test_executeCallback_glue);
 }
 
+#sub cli_test_executeCallback_glue {
+#	my $client = shift;
+#	my $paramsRef = shift;
+	
+#	$::d_cli && msg("CLI: cli_test_executeCallback_glue(" . join(" ", @$paramsRef) . ")\n");
+#}
 
 ################################################################################
 # PLUGIN STRINGS

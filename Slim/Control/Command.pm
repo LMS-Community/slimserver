@@ -111,6 +111,9 @@ sub clearExecuteCallback {
 sub executeCallback {
 	my $client = shift;
 	my $paramsRef = shift;
+	my $dontcallDispatch = shift;
+
+	$::d_command && msg("Command: executeCallback()\n");
 
 	no strict 'refs';
 		
@@ -118,6 +121,8 @@ sub executeCallback {
 		$executecallback = $executeCallbacks{$executecallback};
 		&$executecallback($client, $paramsRef);
 	}
+	
+	Slim::Control::Dispatch::notifyFromArray($client, $paramsRef, "no no no") if !defined $dontcallDispatch;
 }
 
 1;

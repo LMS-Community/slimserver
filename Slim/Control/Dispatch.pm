@@ -556,6 +556,7 @@ sub unsubscribe {
 # notify subscribers...
 sub notify {
 	my $request = shift || return;
+	my $dontcallExecuteCallback = shift;
 
 	for my $subscriber (keys %subscribers) {
 
@@ -581,6 +582,15 @@ sub notify {
 		
 		my $notifyFuncRef = $subscribers{$subscriber}->[0];
 		&$notifyFuncRef($request);
+	}
+	
+	if (!defined $dontcallExecuteCallback) {
+		my @params = $request->renderAsArray();
+		Slim::Control::Command::executeCallback(
+			$request->client(),
+			\@params,
+			"not again"
+			);
 	}
 }
 
