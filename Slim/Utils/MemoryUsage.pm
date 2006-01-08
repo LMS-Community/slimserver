@@ -33,6 +33,7 @@ use Devel::Peek ();
 use Devel::Size ();
 use Devel::Size::Report ();
 use Devel::Symdump ();
+use Scalar::Util qw(blessed);
 
 my $dumperClass;
 {
@@ -218,8 +219,11 @@ sub CV_walk {
 	catchSTDERR();
 
 	if ($order eq 'exec') {
+
 		B::walkoptree_exec($cv->START, $meth);
-	} else {
+
+	} elsif ($cv->can('first')) {
+
 		B::walkoptree_slow($cv->ROOT, $meth);
 	}
 
@@ -369,6 +373,16 @@ sub B::OP::terse_size {
 	}
 
 	print indent($level), peekop($op), $targ, "\n";
+}
+
+sub B::SVOP::size {
+	my $obj = shift;
+
+	if (!blessed($obj) || !blessed($obj->sv)) {
+		return;
+	}
+
+	return B::Sizeof::SVOP + $obj->sv->size;
 }
 
 sub B::SVOP::terse_size {
@@ -868,19 +882,31 @@ sub noh_b_lexinfo {
 	return \$html;
 }
 
+use Slim::Utils::Misc;
+
 sub status_memory_usage {
 	my $class = shift;
 
 	my $stab = Devel::Symdump->rnew('main');
+
 	my %total;
 	my @retval = ();
 	my ($clen, $slen, $nlen);
 
-	for my $package ('main', $stab->packages) {
+	for my $package ('main', sort $stab->packages) {
 
-		my($subs, $opcount, $opsize) = total_package_size($package);
+		next if $package =~ /Slim::Utils::MemoryUsage/;
+		next if $package =~ /^B::/;
+		next if $package =~ /^B$/;
+		next if $package =~ /^Devel::/;
+		next if $package =~ /^Data::\w*?Dumper/;
+		next if $package =~ /::SUPER$/;
+		next if $package =~ /::ISA::CACHE$/;
+
+		my ($subs, $opcount, $opsize) = package_size($package);
 
 		$total{$package} = {'count' => $opcount, 'size' => $opsize};
+
 		$nlen = max($nlen, length $package);
 		$slen = max($slen, length $opsize);
 		$clen = max($clen, length $opcount);
@@ -890,11 +916,6 @@ sub status_memory_usage {
 	my $totalOpCodes = 0;
 
 	for (sort { $total{$b}->{size} <=> $total{$a}->{size} } keys %total) {
-
-		next if /Slim::Utils::MemoryUsage/;
-		next if /^B::/;
-		next if /^Devel::/;
-		next if /^Data::\w*?Dumper/;
 
 		my $link = qq(<a href="$script?item=$_&command=noh_b_package_size">);
 
