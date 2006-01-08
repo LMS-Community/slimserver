@@ -199,7 +199,7 @@ div#topGraphicBox #playerChooser {
 
 div#topGraphicMenu1 #powerButtons {
 	position: absolute;
-	left: 280px;
+	right: 10px;
 	top: 20px;
 }
 
@@ -211,7 +211,7 @@ div#topGraphicMenu1 #transportButtons {
 
 div#topGraphicMenu1 #volumeButtons {
 	position: absolute;
-	left: 280px;
+	right: 10px;
 	top: 40px;
 }
 
@@ -223,7 +223,7 @@ div#topGraphicMenu2 #repeatButtons {
 
 div#topGraphicMenu2 #shuffleButtons {
 	position: absolute;
-	left: 280px;
+	right: 10px;
 	top: 3px;
 }
 
