@@ -10,7 +10,7 @@ use strict;
 use Slim::Control::Commands;
 use Slim::Control::Queries;
 use Slim::Control::Request;
-use Slim::Utils::Misc qw(msg);
+use Slim::Utils::Misc qw(msg bt);
 
 ######################################################################################################################################################################
 # COMMANDS & QUERIES LIST
@@ -104,11 +104,20 @@ use Slim::Utils::Misc qw(msg);
 # Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
 # Y    playlists       <startindex>                <numitems>                  <tagged parameters>
 # Y    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
+
+# NOTIFICATION
+# The following 'terms' are used for notifications 
+
+# Y    newclient
+# Y    playlist        newsong
+# Y    playlist        open                        <url>
+# Y    playlist        sync
+
 ######################################################################################################################################################################
 
 
 
-our %notifications = ();		# contains the clients to the notification
+our %subscribers = ();   		# contains the clients to the notification
 								# mechanism
 								
 our %dispatchDB;				# contains a multi-level hash pointing to
@@ -242,6 +251,11 @@ sub init {
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
+    addDispatch(['newclient'],                                                                       [1, 0, 0, undef]);
+    addDispatch(['playlist',       'open',        '_path'],                                          [1, 0, 0, undef]);
+    addDispatch(['playlist',       'newsong'],                                                       [1, 0, 0, undef]);
+    addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);
+
 ######################################################################################################################################################################
 
 }
@@ -268,7 +282,7 @@ sub addDispatch {
 	my $arrayCmdRef  = shift; # the array containing the command or query
 	my $arrayDataRef = shift; # the array containing the function to call
 
-	$::d_command && msg("Dispatch::addDispatch()\n");
+#	$::d_command && msg("Dispatch: addDispatch()\n");
 
 	my $DBp     = \%dispatchDB;	    # pointer to the current table level
 	my $CRindex = 0;                # current index into $arrayCmdRef
@@ -328,49 +342,6 @@ sub addDispatch {
 	}
 }
 
-# do the job, i.e. dispatch a request
-# TO REVISIT
-sub dispatch {
-	my $request = shift;
-
-	# we can do some preflighting here...
-
-	# get the request name for debug and easy reference
-	my $requestText = $request->getRequest();
-
-	$::d_command && msg("dispatch(): Dispatching request [$requestText]\n" );
-
-	# get the function pointer
-	my $funcPtr;
-
-	if ($request->query()) {
-#		$funcPtr = $dispatchQueries{$requestText};
-	}
-	else {
-#		$funcPtr = $dispatchCommands{$requestText};
-	}
-
-	# can't find no function for that request, returning...
-	if (!$funcPtr) {
-
-		errorMsg("dispatch(): Found no function for request [$requestText]\n" );
-		return ();
-	}
-
-	$request->setStatusDispatched();
-
-	# got it, now do it
-	&{$funcPtr}($request);
-
-	# check status
-	if ($request->isStatusDone()) {
-		$::d_command && msg("dispatch(): Done request [$requestText]\n");
-
-		# notify watchers of commands
-		notify($request) if !$request->query();
-	}	
-}
-
 # given a command or query in an array, walk down the dispatch table to find
 # the function to call for it. Create a complete request object in the process
 # and return it to the caller, ready for execution.
@@ -379,7 +350,7 @@ sub requestFromArray {
 	my $requestLineRef = shift;     # reference to an array containing the 
 									# query verbs
 		
-	$::d_command && msg("Dispatch::requestFromArray(" 
+	$::d_command && msg("Dispatch: requestFromArray(" 
 						. (join " ", @{$requestLineRef}) . ")\n");
 
 	my $debug = 0;					# debug flag internal to the function
@@ -509,52 +480,142 @@ sub requestFromArray {
 			}
 		}
 
+		$request->needClient($found->[0]);
 		$request->query($found->[1]);
-		$request->setFunc($found->[3]);
-		
-		if (!defined $client && $found->[0]) {
-			$request->setStatusNeedsClient();
+		$request->executeFunction($found->[3]);
+				
+	} else {
+
+		$::d_command && msg("Dispatch::requestFromArray: Request [" . (join " ", @{$requestLineRef}) . "]: no match in dispatchDB!\n");
+
+		# handle the remaining params, if any...
+		# only for the benefit of CLI echoing...
+		for (my $i=$LRindex; $i < scalar @{$requestLineRef}; $i++) {
+			$request->addParamPos($requestLineRef->[$i]);
 		}
-
-		return $request;
-	}
-
-	# handle the remaining params, if any...
-	# only for the benefit of CLI echoing...
-	for (my $i=++$LRindex; $i < scalar @{$requestLineRef}; $i++) {
-		$request->addParamPos($requestLineRef->[$i]);
 	}
 	
-	$::d_command && msg("Dispatch::requestFromArray: Request [" . (join " ", @{$requestLineRef}) . "]: no match in dispatchDB!\n");
-	return undef;
+	$request->validate();
+
+	return $request;
 }
 
+################################################################################
+# NOTIFICATIONS
+################################################################################
+# The dispatch mechanism can notify "subscriber" functions of successful
+# command request execution (not of queries). Callback functions have a single
+# parameter corresponding to the request object.
+# Optionally, the subscribe routine accepts a filter, which limits calls to the
+# subscriber callback to those requests matching the filter. The filter is
+# in the form of an array ref containing arrays refs (one per dispatch level) 
+# containing lists of desirable commands (easier to code than explain, see
+# examples below)
+#
+# Example
+#
+# Slim::Control::Dispatch::subscribe( \&myCallbackFunction, 
+#                                     [['playlist']]);
+# -> myCallbackFunction will be called for any command starting with 'playlist'
+# in the table above ('playlist save', playlist loadtracks', etc).
+#
+# Slim::Control::Dispatch::subscribe( \&myCallbackFunction, 
+#				                      [['mode'], ['play', 'pause']]);
+# -> myCallbackFunction will be called for commands "mode play" and
+# "mode pause", but not for "mode stop".
+#
+# In both cases, myCallbackFunction must be defined as:
+# sub myCallbackFunction {
+#      my $request = shift;
+#
+#      # do something useful here
+# }
+################################################################################
 
-
-
-# add a watcher to be notified of commands
-sub setNotify {
-	my $notifyFuncRef = shift;
-	$notifications{$notifyFuncRef} = $notifyFuncRef;
+# add a subscriber to be notified of requests
+sub subscribe {
+	my $subscriberFuncRef = shift || return;
+	my $requestsRef = shift;
+	
+	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
+	
+	$::d_command && msg("Dispatch: subscribe($subscriberFuncRef) - ("
+		. scalar(keys %subscribers) . " suscribers)\n");
 }
 
-# remove a watcher
-sub clearNotify {
-	my $notifyFuncRef = shift;
-	delete $notifications{$notifyFuncRef};
+# remove a subscriber
+sub unsubscribe {
+	my $subscriberFuncRef = shift;
+	
+	delete $subscribers{$subscriberFuncRef};
+	
+	$::d_command && msg("Dispatch: unsubscribe($subscriberFuncRef) - (" 
+		. scalar(keys %subscribers) . " suscribers)\n");
 }
 
-# notify watchers...
+# notify subscribers...
 sub notify {
-	my $request = shift;
+	my $request = shift || return;
 
-#	no strict 'refs';
+	for my $subscriber (keys %subscribers) {
+
+		# filter based on desired requests
+		# undef means no filter
+		my $requestsRef = $subscribers{$subscriber}->[1];
 		
-	for my $notification (keys %notifications) {
-		my $notifyFuncRef = $notifications{$notification};
+		if (defined($requestsRef)) {
+
+			if ($request->isNotCommand($requestsRef)) {
+
+				$::d_command && msg("Dispatch: Don't notify $subscriber of "
+					. $request->getRequestString() . " !~ "
+					. filterString($requestsRef) . "\n");
+
+				next;
+			}
+		}
+
+		$::d_command && msg("Dispatch: Notifying $subscriber of " 
+			. $request->getRequestString() . " =~ "
+			. filterString($requestsRef) . "\n");
+		
+		my $notifyFuncRef = $subscribers{$subscriber}->[0];
 		&$notifyFuncRef($request);
 	}
 }
 
+# notify subscribers from an array, useful for notifying w/o execution
+# (requests must, however, be defined in the dispatch table)
+sub notifyFromArray {
+	my $client         = shift;     # client, if any, to which the query applies
+	my $requestLineRef = shift;     # reference to an array containing the 
+									# query verbs
+
+	$::d_command && msg("Dispatch: notifyFromArray(" .
+						(join " ", @{$requestLineRef}) . ")\n");
+
+	my $request = requestFromArray($client, $requestLineRef);
+	
+	notify($request);
+}
+
+# returns a string corresponding to the filter, useful for debugging
+sub filterString {
+	my $requestsRef = shift;
+	
+	return "(no filter)" if !defined $requestsRef;
+	
+	my $str = "[";
+
+	foreach my $req (@$requestsRef) {
+		$str .= "[";
+		my @list = map { "\'$_\'" } @$req;
+		$str .= join(",", @list);
+		$str .= "]";
+	}
+		
+	$str .= "]";
+
+}
 
 1;

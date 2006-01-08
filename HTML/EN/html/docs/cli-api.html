@@ -44,6 +44,12 @@
 <li>0x00 is now a valid end of line / command separator. In addition, the
 	server replies with whatever combination of CR, LF and 0x00 was used in
 	the query.</li>
+<li>Changed &quot;<a href="#mixermuting">mixer muting</a>&quot; to be 
+	coherent with other commands. There is now a query mode 
+	&quot;mixer muting ?&quot;, and parameters 1 or 0 are accepted.</li>
+<li>Changed &quot;<a href="#sync">sync ?</a>&quot; to return &quot;-&quot; 
+	instead of  nothing if the player is not synced. This is coherent with 
+	using &quot;-&quot; to unsync the player.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
@@ -482,14 +488,24 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
   <p>Request: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; sync &lt;playerindex|playerid|-|?&gt;</code></strong></p>
-<p>The &quot;sync&quot; command specifies the player to synchronise with the given playerid. You may query which players are 
-already synced with this player by passing in a &quot;?&quot; parameter.  Multiple playerids are separated by a space. To unsync a player, use the - parameter.</p>
+<br><p id="sync">
+	<strong>
+		<code>&lt;playerid&gt; sync &lt;playerindex|playerid|-|?&gt;</code>
+	</strong>
+</p>
+<p>The &quot;sync&quot; command specifies the player to synchronise with the
+   given playerid. You may query which players are already synced with this
+   player by passing in a &quot;?&quot; parameter.  Multiple playerids are 
+   separated by a space. If the player is not synced, &quot;-&quot; is returned.
+   To unsync a player, use the &quot;-&quot; parameter.</p>
 <p>Examples: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 sync ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;
+  	<br>Response: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync ?&lt;LF&gt;&quot;
+  	<br>Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
+  	<br>Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; power &lt;0|1|?|&gt;</code></strong></p>
@@ -539,10 +555,12 @@ already synced with this player by passing in a &quot;?&quot; parameter.  Multip
      Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; mixer muting</code></strong></p>
-<p>The &quot;mixer muting&quot; command mutes or unmutes the player. The 
-	&quot;<a href="#volume">mixer volume</a>&quot; command returns a negative
-	value if the player is muted.</p>
+<br><p id="mixermuting">
+	<strong><code>&lt;playerid&gt; mixer muting &lt;0|1|?|&gt;</code></strong></p>
+<p>The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to 
+	unmute, 1 to mute, ? to query and no parameter to toggle the muting state 
+	of the player. Note also the &quot;<a href="#volume">mixer volume</a>&quot;
+	command returns a negative value if the player is muted.</p>
 <p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>

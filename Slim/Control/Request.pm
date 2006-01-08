@@ -32,6 +32,7 @@ sub new {
 		'_request' => [],
 		'_isQuery' => undef,
 		'_client' => $client,
+		'_needClient' => 0,
 		'_params' => \%paramHash,
 		'_curparam' => 0,
 		'_status' => 0,
@@ -53,7 +54,33 @@ sub new {
 # Read/Write basic query attributes
 ################################################################################
 
-# sets/returns the query state of the request
+# sets/returns the client
+sub client {
+	my $self = shift;
+	my $client = shift;
+	
+	if (defined $client) {
+		$self->{'_client'} = $client;
+		$self->validate();
+	}
+	
+	return $self->{'_client'};
+}
+
+# sets/returns the need client state
+sub needClient {
+	my $self = shift;
+	my $needClient = shift;
+	
+	if (defined $needClient) {
+		$self->{'_needClient'} = $needClient;
+		$self->validate();
+	}
+
+	return $self->{'_needClient'};
+}
+
+# sets/returns the query state
 sub query {
 	my $self = shift;
 	my $isQuery = shift;
@@ -63,16 +90,20 @@ sub query {
 	return $self->{'_isQuery'};
 }
 
-# sets/returns the client, if any, that applies to the request
-sub client {
+# sets/returns the function that executes the request
+sub executeFunction {
 	my $self = shift;
-	my $client = shift;
+	my $newvalue = shift;
 	
-	$self->{'_client'} = $client if defined $client;
+	if (defined $newvalue) {
+		$self->{'_func'} = $newvalue;
+		$self->validate();
+	}
 	
-	return $self->{'_client'};
+	return $self->{'_func'};
 }
 
+# sets/returns the callback enabled state
 sub callbackEnabled {
 	my $self = shift;
 	my $newvalue = shift;
@@ -82,6 +113,7 @@ sub callbackEnabled {
 	return $self->{'_cb_enable'};
 }
 
+# sets/returns the callback function
 sub callbackFunction {
 	my $self = shift;
 	my $newvalue = shift;
@@ -91,6 +123,7 @@ sub callbackFunction {
 	return $self->{'_cb_func'};
 }
 
+# sets/returns the callback arguments
 sub callbackArguments {
 	my $self = shift;
 	my $newvalue = shift;
@@ -100,32 +133,60 @@ sub callbackArguments {
 	return $self->{'_cb_args'};
 }
 
+
+
 ################################################################################
 # Read/Write status
 ################################################################################
-# 0 new
-# 1 dispatched
+# 0 new,
+# 1 dispatchable
+# 2 dispatched
 # 10 done
+# 11 callback done
 # 101 bad dispatch
 # 102 bad params
 # 103 missing client
+# 104 unkown in dispatch table
+
+sub validate {
+	my $self = shift;
+
+	if (ref($self->executeFunction) ne 'CODE'){
+		$self->setStatusNotDispatchable();
+
+	} elsif ($self->needClient() && !$self->client()) {
+		$self->setStatusNeedsClient();
+
+	} else {
+		$self->setStatusDispatchable();
+	}
+}
 
 sub isStatusNew {
 	my $self = shift;
 	return ($self->__status() == 0);
 }
 
-sub setStatusDispatched {
+sub setStatusDispatchable {
 	my $self = shift;
 	$self->__status(1);
 }
-sub isStatusDispatched {
+sub isStatusDispatchable {
 	my $self = shift;
 	return ($self->__status() == 1);
 }
+
+sub setStatusDispatched {
+	my $self = shift;
+	$self->__status(2);
+}
+sub isStatusDispatched {
+	my $self = shift;
+	return ($self->__status() == 2);
+}
 sub wasStatusDispatched {
 	my $self = shift;
-	return ($self->__status() > 0);
+	return ($self->__status() > 1);
 }
 
 sub setStatusDone {
@@ -135,6 +196,15 @@ sub setStatusDone {
 sub isStatusDone {
 	my $self = shift;
 	return ($self->__status() == 10);
+}
+
+sub setStatusCallbackDone {
+	my $self = shift;
+	$self->__status(11);
+}
+sub isStatusCallbackDone {
+	my $self = shift;
+	return ($self->__status() == 11);
 }
 
 sub isStatusError {
@@ -167,6 +237,15 @@ sub setStatusNeedsClient {
 sub isStatusNeedsClient {
 	my $self = shift;
 	return ($self->__status() == 103);
+}
+
+sub setStatusNotDispatchable {
+	my $self = shift;	
+	$self->__status(104);
+}
+sub isStatusNotDispatchable {
+	my $self = shift;
+	return ($self->__status() == 104);
 }
 
 ################################################################################
@@ -356,6 +435,13 @@ sub isNotCommand {
 	return !$self->__isCmdQuery(0, $possibleNames);
 }
 
+sub isCommand{
+	my $self = shift;
+	my $possibleNames = shift;
+	
+	return $self->__isCmdQuery(0, $possibleNames);
+}
+
 # returns true if $param is undefined or not one of the possible values
 # not really a method on request data members but defined as such since it is
 # useful for command and queries implementation.
@@ -382,26 +468,63 @@ sub callbackParameters {
 ################################################################################
 # Other
 ################################################################################
+
+# execute the request
 sub execute {
 	my $self = shift;
 	
-	return if $self->isStatusError();
+	$::d_command && msg("\n");
+	$::d_command && $self->dump("Request");
+
+	# do nothing if something's wrong
+	if ($self->isStatusError()) {
+		$::d_command && msg('Request: Request in error, exiting');
+		return;
+	}
 	
-	if (defined (my $funcPtr = $self->{'_func'})) {
+	# call the execute function
+	if (defined (my $funcPtr = $self->executeFunction())) {
 		&{$funcPtr}($self);
+	}
+	
+	# if the status is done
+	if ($self->isStatusDone()){
+
+		$::d_command && $self->dump('Request');
+		
+		# perform the callback
+		$self->callback();
+		
+		# notify for commands
+		if (!$self->query()) {
+		
+			Slim::Control::Dispatch::notify($self);
+		}
 	} else {
-		Slim::Control::Dispatch::dispatch($self);
+		$::d_command && $self->dump('Request');
 	}
 }
 
 sub callback {
-}
-
-sub setFunc {
 	my $self = shift;
-	my $funcPtr = shift;
+
+	# do nothing unless callback is enabled
+	if ($self->callbackEnabled()){
+		
+		if (defined(my $funcPtr = $self->callbackFunction())) {
+		
+			$::d_command && msg("Request: Calling callback function\n");
+
+			my $args = $self->callbackArguments();
+		
+			&$funcPtr($self, @$args);
+			
+			$self->setStatusCallbackDone();
+		}
+	} else {
 	
-	$self->{'_func'} = $funcPtr;
+		$::d_command && msg("Request: Callback disabled\n");
+	}
 }
 
 
@@ -412,13 +535,14 @@ sub setFunc {
 ################################################################################
 sub dump {
 	my $self = shift;
+	my $introText = shift || '?';
 	
-	my $str = "Request: Dumping ";
+	my $str = $introText . ": ";
 	
 	if ($self->query()) {
-		$str .= 'query ';
+		$str .= 'Query ';
 	} else {
-		$str .= 'command ';
+		$str .= 'Command ';
 	}
 	
 	if (my $client = $self->client()){
@@ -439,6 +563,8 @@ sub dump {
 	
 	if ($self->isStatusNew()) {
 		$str .= " (New)\n";
+	} elsif ($self->isStatusDispatchable()) {
+		$str .= " (Dispatchable)\n";
 	} elsif ($self->isStatusDispatched()) {
 		$str .= " (Dispatched)\n";
 	} elsif ($self->isStatusDone()) {
@@ -449,6 +575,8 @@ sub dump {
 		$str .= " (Bad Params!)\n";
 	} elsif ($self->isStatusNeedsClient()) {
 		$str .= " (Needs client!)\n";
+	} elsif ($self->isStatusNotDispatchable()) {
+		$str .= " (Not dispatchable!)\n";
 	}
 	
 	msg($str);
@@ -481,6 +609,8 @@ sub dump {
 # returns the request as an array
 sub renderAsArray {
 	my $self = shift;
+	my $encoding = shift;
+	
 	my @returnArray;
 	
 	# conventions: 
@@ -494,6 +624,7 @@ sub renderAsArray {
 	
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
+		$val = Slim::Utils::Unicode::utf8encode($val, $encoding) if defined $encoding;
     	if ($key =~ /^__/) {
     		# no output
     	} elsif ($key =~ /^_/) {
@@ -505,10 +636,12 @@ sub renderAsArray {
  	
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
+		$val = Slim::Utils::Unicode::utf8encode($val, $encoding) if defined $encoding;
     	if ($key =~ /^@/) {
     		# loop over each elements
     		foreach my $hash (@{${$self->{'_results'}}{$key}}) {
 				while (my ($key2, $val2) = each %{$hash}) {
+					$val2 = Slim::Utils::Unicode::utf8encode($val2, $encoding) if defined $encoding;
 					if ($key2 =~ /^__/) {
 						# no output
 					} elsif ($key2 =~ /^_/) {
@@ -539,7 +672,7 @@ sub __isCmdQuery {
 	my $possibleNames = shift;
 	
 	# the query state must match
-	if ($isQuery == $self->query()){
+	if ($isQuery == $self->{'_isQuery'}){
 	
 		my $possibleNamesCount = scalar (@{$possibleNames});
 
@@ -547,15 +680,18 @@ sub __isCmdQuery {
 		# than of passed names
 		if ((scalar(@{$self->{'_request'}})) >= $possibleNamesCount) {
 
-			my $match = 1; #assume it works
+#			my $match = 1; #assume it works
 			
 			# now check each request term matches one of the passed params
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
 				
 				my $name = $self->{'_request'}->[$i];;
-				$match = $match && grep(/$name/, @{$possibleNames->[$i]});
+#				$match = $match && grep(/$name/, @{$possibleNames->[$i]});
+
+				# return as soon we fail
+				return 0 if !grep(/$name/, @{$possibleNames->[$i]});
 			
-				return 0 if !$match; # return as soon we fail
+#				return 0 if !$match; # return as soon we fail
 			}
 			
 			# everything matched

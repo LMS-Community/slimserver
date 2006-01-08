@@ -191,7 +191,8 @@ sub sync {
 	# Save Status to Prefs file
 	saveSyncPrefs($client);
 	
-	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
+#	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
+	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'sync']);
 }
 
 sub saveSyncPrefs {
@@ -433,7 +434,7 @@ sub masterOrSelf {
 	my $client = shift;
 	
 	assert($client);
-	
+
 	return $client->master || $client;
 }
 

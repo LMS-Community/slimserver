@@ -78,7 +78,12 @@ sub initPlugin {
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
 	
-	Slim::Control::Command::setExecuteCallback(\&Plugins::xPL::xplExecuteCallback);
+#	Slim::Control::Command::setExecuteCallback(\&Plugins::xPL::xplExecuteCallback);
+	Slim::Control::Dispatch::subscribe(\&Plugins::xPL::xplExecuteCallback);
+}
+
+sub shutdownPlugin {
+	Slim::Control::Dispatch::unsubscribe(\&Plugins::xPL::xplExecuteCallback);
 }
 
 # plugin: name of our plugin
@@ -595,15 +600,19 @@ sub handleConfigResponse {
 # it processes.
 
 sub xplExecuteCallback {
-	my $client = shift;
-	my $paramsRef = shift;
-
-	my $command    = $paramsRef->[0];
-	my $subCommand = $paramsRef->[1];
+#	my $client = shift;
+#	my $paramsRef = shift;
+	my $request = shift;
+	
+	my $client = $request->client();
+	
+#	my $command    = $request->getRequest(0);
+#	my $subCommand = $request->getRequest(1);
 
 	# callback is all client based below, so avoid a crash and shortcut all of it when no client supplied
 	unless (defined $client) {
-		$d_xpl && msg("xPL: xplExecuteCallback without a client: $command - $subCommand\n");
+#		$d_xpl && msg("xPL: xplExecuteCallback without a client: $command - $subCommand\n");
+		$d_xpl && msg("xPL: xplExecuteCallback without a client: " . $request->getRequestString() . "\n");
 		return;
 	}
 
@@ -615,37 +624,47 @@ sub xplExecuteCallback {
 		$power = ($client->power()==0 ? 'off' : 'on');
 	}
 	
-	if ($command eq 'newclient') {
+#	if ($command eq 'newclient') {
+	if ($request->isCommand([['newclient']])) {
 		$d_xpl && msg("xPL: xplExecuteCallback for new client\n");
 		
 		sendXplHBeatMsg($client);
 	}
 	
-	elsif ($command eq 'power') {
+#	elsif ($command eq 'power') {
+	elsif ($request->isCommand([['power']])) {
 		$d_xpl && msg("xPL: xplExecuteCallback for power\n");
 		
 		sendXplHBeatMsg($client, 1);
 	}
 	
-	elsif ($command eq 'button' && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
+#	elsif ($command eq 'button' && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
+	elsif ($request->isCommand([['button']]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 		$d_xpl && msg("xPL: xplExecuteCallback for button\n");
 		
-		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+		my $param = $request->getParam('_buttoncode');
+#		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);
 	}
 	
-	elsif ($command eq 'ir' && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
+#	elsif ($command eq 'ir' && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
+	elsif ($request->isCommand([['ir']]) && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
 		$d_xpl && msg("xPL: xplExecuteCallback for IR\n");
 		
-		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+		my $param = $request->getParam('_ircode');
+#		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);
 	}
 
-	elsif ($command eq 'newsong') {
+#	elsif ($command eq 'newsong') {
+	elsif ($request->isCommand([['playlist'], ['newsong']])) {
 		$d_xpl && msg("xPL: xplExecuteCallback for newsong\n");
 		
 		sendXplHBeatMsg($client, 1);
 	}
 	
-	elsif ($command eq 'stop') {
+#	elsif ($command eq 'stop') {
+	elsif ($request->isCommand([['stop']]) || $request->isCommand([['mode'], ['stop']])) {
 		$d_xpl && msg("xPL: xplExecuteCallback for stop\n");
 
 		sendXplHBeatMsg($client, 1);

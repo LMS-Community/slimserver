@@ -605,12 +605,15 @@ sub scheduleWriteOfPlaylist {
 }
 
 sub newSongPlaylistCallback {
-	my $client = shift;
-	my $params = shift;
+#	my $client = shift;
+#	my $params = shift;
+	my $request = shift;
+	
+	my $client = $request->client();
 
-	return unless $params->[0] eq 'newsong';
-	return unless $client->currentPlaylist;
-
+#	return unless $params->[0] eq 'newsong';
+#	return unless $client->currentPlaylist;
+	
 	my $playlist = '';
 
 	if ($client->currentPlaylist && ref($client->currentPlaylist)) {
@@ -630,6 +633,8 @@ sub newSongPlaylistCallback {
 
 	return if Slim::Music::Info::isRemoteURL($playlist);
 
+	$::d_playlist && msg("Playlist: newSongPlaylistCallback() writeCurTrackForM3U()\n");
+
 	Slim::Formats::Parse::writeCurTrackForM3U(
 		$playlist,
 		Slim::Player::Source::playingSongIndex($client)
@@ -637,20 +642,30 @@ sub newSongPlaylistCallback {
 }
 
 sub modifyPlaylistCallback {
-	my $client = shift;
-	my $paramsRef = shift;
-
+#	my $client = shift;
+#	my $paramsRef = shift;
+	my $request = shift;
+	
+	my $client = $request->client();
+	
 	if ($client && Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
 
-		my $command    = $paramsRef->[0];
-		my $subCommand = $paramsRef->[1];
+#		my $command    = $paramsRef->[0];
+#		my $subCommand = $paramsRef->[1];
 
 		# Did the playlist change?
-		my $saveplaylist = $command eq 'playlist' && $validSubCommands{$subCommand};
+#		my $saveplaylist = $command eq 'playlist' && $validSubCommands{$subCommand};
+		my $saveplaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
 
 		# Did the playlist or the current song change?
-		my $savecurrsong = $saveplaylist || $command eq 'open' || 
-			($command eq 'playlist' && $subCommand =~ /^(jump|index|shuffle)$/);
+#		my $savecurrsong = $saveplaylist || $command eq 'open' || 
+#			($command eq 'playlist' && $subCommand =~ /^(jump|index|shuffle)$/);
+		my $savecurrsong = 
+			$saveplaylist || 
+			$request->isCommand([['playlist'], ['open']]) || 
+			($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
+
+		$::d_playlist && msg("Playlist: modifyPlaylistCallback() savecurrsong is $savecurrsong\n");
 
 		return if !$savecurrsong;
 

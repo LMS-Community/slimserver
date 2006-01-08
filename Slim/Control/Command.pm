@@ -26,14 +26,6 @@ our %executeCallbacks = ();
 # currently patched to process all commands and queries through Dispatch
 # and Request(s) objects.
 
-# NOTIFICATION
-# The following 'terms' go through execute for its notification ability, but 
-# do not actually do anything
-# Y    favorite	       add         // Favorite plugin; ever used ?
-# Y    newclient                   // there is a new client
-# Y    newsong                     // song starts to play
-# Y    open                        // file is opened (for playing)
-# Y    playlist        sync
 
 
 sub execute {
@@ -51,7 +43,7 @@ sub execute {
 	my $callcallback = 1;
 	my @returnArray = ();
 
-	$::d_command && msg("Command::Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
+	$::d_command && msg("Command: Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
 			(defined $p1 ? $p1 : "") . ") (" .
 			(defined $p2 ? $p2 : "") . ") (" .
 			(defined $p3 ? $p3 : "") . ") (" .
@@ -65,19 +57,15 @@ sub execute {
 	# create a request from the array
 	my $request = Slim::Control::Dispatch::requestFromArray($client, $parrayref);
 	
-	if (defined $request) {
+	if (defined $request && $request->isStatusDispatchable()) {
 		
 		# add callback stuff, even if for now this will be handled here below
-		$request->callbackParameters($callbackf, $callbackargs);
-	
-		$::d_command && $request->dump();
-	
+#		$request->callbackParameters($callbackf, $callbackargs);
+		
 		$request->execute();
 
 		if ($request->wasStatusDispatched()){
-	
-			$::d_command && $request->dump();
-		
+			
 			# make sure we don't execute again if ever dispatch knows
 			# about a command still below
 			$p0 .= "(was dispatched)";
@@ -94,7 +82,7 @@ sub execute {
 
 	executeCallback($client ? $client:undef, \@returnArray);
 	
-	$::d_command && msg("Command::Returning array: " . $returnArray[0] . " (" .
+	$::d_command && msg("Command: Returning array: " . $returnArray[0] . " (" .
 			(defined $returnArray[1] ? $returnArray[1] : "") . ") (" .
 			(defined $returnArray[2] ? $returnArray[2] : "") . ") (" .
 			(defined $returnArray[3] ? $returnArray[3] : "") . ") (" .
@@ -109,11 +97,15 @@ sub execute {
 sub setExecuteCallback {
 	my $callbackRef = shift;
 	$executeCallbacks{$callbackRef} = $callbackRef;
+	errorMsg("Slim::Control::Command::setExecuteCallback() has been deprecated!\n");
+	errorMsg("Please use Slim::Control::Dispatch::subscribe() instead!\n");
 }
 
 sub clearExecuteCallback {
 	my $callbackRef = shift;
 	delete $executeCallbacks{$callbackRef};
+	errorMsg("Slim::Control::Command::clearExecuteCallback() has been deprecated!\n");
+	errorMsg("Please use Slim::Control::Dispatch::unsubscribe() instead!\n");
 }
 
 sub executeCallback {

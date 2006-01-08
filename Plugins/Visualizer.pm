@@ -282,7 +282,8 @@ sub setVisualizerMode() {
 
 	# do it again at the next period
 	if ($screensaver_info{$mode}->{showtext}) {
-		Slim::Control::Command::setExecuteCallback(\&_showsongtransition);
+#		Slim::Control::Command::setExecuteCallback(\&_showsongtransition);
+		Slim::Control::Dispatch::subscribe(\&_showsongtransition, [['playlist'], ['newsong']]);
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $initialtextofftime,
 									  \&_pushon,
 									  $client);
@@ -290,10 +291,14 @@ sub setVisualizerMode() {
 }
 
 sub _showsongtransition {
-	my $client = shift;
-	my $paramsRef = shift;
+#	my $client = shift;
+#	my $paramsRef = shift;
+	my $request = shift;
 	
-	return if ($paramsRef->[0] ne 'newsong');
+	my $client = $request->client();
+	
+#	return if ($paramsRef->[0] ne 'newsong');
+	$::d_plugins && Slim::Utils::Misc::msg("Visualizer: _showsongtransition()\n");
 	
 	my $mode = Slim::Buttons::Common::mode($client);
 	return if (!$mode || $mode !~ /^SCREENSAVER.visualizer_/);
@@ -337,6 +342,10 @@ sub _pushoff {
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $textofftime,
 								  \&_pushon,
 								  $client);	
+}
+
+sub shutdownPlugin {
+	Slim::Control::Dispatch::unsubscribe(\&_showsongtransition);
 }
 
 1;

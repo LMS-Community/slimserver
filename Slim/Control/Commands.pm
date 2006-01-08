@@ -159,26 +159,35 @@ sub mixerCommand {
 	}
 	
 	if ($entity eq 'muting') {
-		my $vol = $client->volume();
-		my $fade;
-		
-		if ($vol < 0) {
-			# need to un-mute volume
-			$::d_command && msg("Unmuting, volume is $vol.\n");
-			$client->prefSet("mute", 0);
-			$fade = 0.3125;
-		} else {
-			# need to mute volume
-			$::d_command && msg("Muting, volume is $vol.\n");
-			$client->prefSet("mute", 1);
-			$fade = -0.3125;
+	
+		my $curmute = $client->prefGet("mute");
+	
+		if (!defined $newvalue) { # toggle
+			$newvalue = !$curmute;
 		}
-
-		$client->fade_volume($fade, \&_mixer_mute, [$client]);
-
-		for my $eachclient (@buddies) {
-			if ($eachclient->prefGet('syncVolume')) {
-				$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+		
+		if ($newvalue != $curmute) {		
+			my $vol = $client->volume();
+			my $fade;
+			
+			if ($newvalue == 0) {
+				# need to un-mute volume
+				$::d_command && msg("Unmuting, volume is $vol.\n");
+				$client->prefSet("mute", 0);
+				$fade = 0.3125;
+			} else {
+				# need to mute volume
+				$::d_command && msg("Muting, volume is $vol.\n");
+				$client->prefSet("mute", 1);
+				$fade = -0.3125;
+			}
+	
+			$client->fade_volume($fade, \&_mixer_mute, [$client]);
+	
+			for my $eachclient (@buddies) {
+				if ($eachclient->prefGet('syncVolume')) {
+					$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
+				}
 			}
 		}
 	} else {
@@ -822,7 +831,6 @@ sub playlistXtracksCommand {
 		@songs = _playlistXtracksCommand_parseListRef($client, $what, $listref);
 	} else {
 		@songs = _playlistXtracksCommand_parseSearchTerms($client, $what);
-		print Data::Dumper::Dumper($client->currentPlaylist());
 	}
 
 	my $size  = scalar(@songs);
@@ -847,7 +855,8 @@ sub playlistXtracksCommand {
 
 			# And set a callback so that we can
 			# update CURTRACK when the song changes.
-			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::newSongPlaylistCallback);
+#			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::newSongPlaylistCallback);
+			Slim::Control::Dispatch::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
 
 		Slim::Player::Source::jumpto($client, $jumpToIndex);
@@ -1366,7 +1375,8 @@ sub _playlistXitem_load_done {
 
 	$callbackf && (&$callbackf(@$callbackargs));
 
-	Slim::Control::Command::executeCallback($client, ['playlist','load_done']);
+#	Slim::Control::Command::executeCallback($client, ['playlist', 'load_done']);
+	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'load_done']);
 }
 
 sub _insert_done {
@@ -1404,7 +1414,9 @@ sub _insert_done {
 
 	$callbackf && (&$callbackf(@$callbackargs));
 
-	Slim::Control::Command::executeCallback($client, ['playlist', 'load_done']);
+#	Slim::Control::Command::executeCallback($client, ['playlist', 'load_done']);
+	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'load_done']);
+
 }
 
 sub _playlistXalbum_singletonRef {

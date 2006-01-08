@@ -13,30 +13,23 @@ use Scalar::Util qw(blessed);
 use URI::Escape;
 
 use Slim::Control::Request;
-use Slim::Music::Import;
-use Slim::Music::Info;
-use Slim::Networking::mDNS;
-use Slim::Networking::Select;
 use Slim::Utils::Misc;
-use Slim::Utils::Network;
-use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
-use Slim::Web::Pages::Search;
+#use Slim::Music::Import;
+#use Slim::Music::Info;
+#use Slim::Networking::mDNS;
+#use Slim::Networking::Select;
+#use Slim::Utils::Network;
+#use Slim::Web::Pages::Search;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
 
 # Queries and commands handled by this module:
-#  albums
-#  artists
 #  exit
-#  genres
 #  login
 #  listen
-#  playlisttracks
-#  songinfo
-#  titles, tracks, songs
-# Other CLI queries/commands are handled in Command.pm
+# Other CLI queries/commands are handled through Dispatch.pm
 
 
 my $d_cli_v = 0;			# verbose debug, for developpement
@@ -122,6 +115,8 @@ sub shutdownPlugin {
 	cli_socket_close();
 }
 
+# plugin strings at the end of the file
+
 
 ################################################################################
 # SOCKETS
@@ -150,9 +145,7 @@ sub cli_socket_open {
 		Slim::Networking::Select::addRead($cli_socket, \&cli_socket_accept);
 	
 		Slim::Networking::mDNS->addService('_slimcli._tcp', $cli_socket_port);
-	
-		Slim::Control::Command::setExecuteCallback(\&Plugins::CLI::cli_executeCallback);
-		
+
 		$::d_cli && msg("CLI: Now accepting connections on port $listenerport\n");
 	}
 }
@@ -197,7 +190,7 @@ sub cli_socket_close {
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();
 		$cli_socket_port = 0;
-		Slim::Control::Command::clearExecuteCallback(\&Plugins::CLI::cli_executeCallback);
+		Slim::Control::Dispatch::unsubscribe(\&Plugins::CLI::cli_request_notification);
 	}
 }
 
@@ -420,26 +413,45 @@ sub cli_process {
 
 	$d_cli_vv && msg("CLI: cli_process($command)\n");
 	
-	my $exit = 0;
+	my $exit = 0;			# do we close the connection after this command
 	my $writeoutput = 1;
 
 	# Parse the command
-	my $cmdRef = cli_command_parse($client_socket, $command);
+	my ($arrayRef, $clientRef) = cli_string_to_array($command);
 	
-	return if !defined $cmdRef;
+	return if !defined $arrayRef;
 	
-	my $cmd = $cmdRef->{'_command'};
-	my $encoding = $cmdRef->{'charset'} || "utf8";
+	# Ask dispatch for a request
+	my $request = Slim::Control::Dispatch::requestFromArray(${$clientRef}, $arrayRef);
+
+	return if !defined $request;
 	
-	$::d_cli && msg("CLI: Processing command [$cmd]\n");
+	my $cmd = $request->getRequest();
 	
-	# Try pureblood
-	if ($cmd eq 'login') {
-		$exit = cli_cmd_login($client_socket, $cmdRef);
+	# if a command cannot be found in the dispatch table, then the request
+	# name is partial or even empty. In this last case, consider the first
+	# element of the array as the command
+	if (!defined $cmd && $request->isStatusNotDispatchable()) {
+		$cmd = $arrayRef->[0];	
 	}
 	
+	# give the command a client if it misses one
+	if ($request->isStatusNeedsClient()) {
+		$request->client(cli_random_client());
+	}
+			
+	$::d_cli && msg("CLI: Processing command [$cmd]\n");
+	
+	# try login before checking for authentication
+	if ($cmd eq 'login') {
+		$exit = cli_cmd_login($client_socket, $request);
+	}
+	
+	# check authentication
 	elsif ($connections{$client_socket}{'auth'} == 0) {
 			$::d_cli && msg("CLI: Connection requires authentication, bye!\n");
+			# log it so that old code knows what the problem is
+			errorMsg("CLI: Connections require authentication, check login command. Disconnecting: " . $connections{$client_socket}{'id'} . "\n");
 			$exit = 1;
 	}
 	
@@ -450,201 +462,100 @@ sub cli_process {
 		}
 
 		elsif ($cmd eq 'listen') {
-			cli_cmd_listen($client_socket, $cmdRef);
+			cli_cmd_listen($client_socket, $request);
 		} 
 		
-		else {
+		elsif ($request->isStatusDispatchable()) {
 		
-			$::d_cli && msg("CLI: Forwarding [$cmd] to Command.pm\n");
+			# add our callback
+			#$request->callbackFunction(\&cli_request_callback);
+			#$request->callbackArguments(['hello', 'world']);
 		
-			# Need to call the mothership command.pm
-			cli_command_command($client_socket, $cmdRef);
+		
+			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
 			
+			$request->execute();
+		
 			# Don't write output if listen is 1, the callback willl
-			$writeoutput = !$connections{$client_socket}{'listen'};
+			$writeoutput = !$connections{$client_socket}{'listen'} || $request->query();
 		}
 	}
-	
-	cli_response_write($client_socket, $encoding) if $writeoutput;
+		
+	cli_request_write($client_socket, $request) if $writeoutput;
 	
 	return $exit;
 }
 
 
-# parse the command
-sub cli_command_parse {
-	my $client_socket = shift;
+# transforms a CLI/STDIO string into an array (returned). If the first
+# array element is a client, it is removed from the array and stored
+# in the $clientRef provided reference.
+sub cli_string_to_array {
 	my $command = shift;
 	
-	$d_cli_vv && msg("CLI: cli_command_parse($command)\n");
-
-	# Remember command line
-	$connections{$client_socket}{'command'} = $command;
-	# Delete response array
-	@{$connections{$client_socket}{'response'}} = ();
-
+	$d_cli_vv && msg("CLI: cli_string_to_array($command)\n");
 
 	$d_cli_v && msg("CLI: Handling command: $command\n");
-
 
 	# Split the command string
 	# Space in parameters are to be encoded as %20
 	my @elements  = split(" ", $command);
 	
 	# Unescape
-	foreach my $elem (@elements) {
-		$elem = URI::Escape::uri_unescape($elem);
-#		$::d_cli && msg("CLI: cli_parse_command: Found [$elem]\n");
-	}
+	map { $_ = URI::Escape::uri_unescape($_) } @elements;
 
 	return if !scalar @elements;
 		
-	# Now this gets messy...
-	# Legacy CLI queries have one or more param eq '?'
-	# Extended CLI queries have 2 positional parameters, then tags
-	# Legacy CLI commands have no '?'
-	# Extended CLI commands have no positional parameters
-	# Nevertheless we want to return params in a given order -> array
-	# But we want control over the VALUE charset -> hash
-	# We'd need an ordered hash that accepts multiple time the same value...
-
-	# Store the parsed command data in a hash for easy access...
-	# Pseudo-params (positional) have keys starting with _
-	my %cmdHash;	
-	
 	# Check if first param is a client...
 	my $client = Slim::Player::Client::getClient($elements[0]);
 
 	if (defined $client) {
+		$::d_cli && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
+
 		# Remove the client from the param array
 		shift @elements;
-		# Remember the client in the hash...
-		$cmdHash{'_client'} = $client;
-		$::d_cli && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
-		# Push the client in the answer
-		cli_response_push($client_socket, $client->id());
 	}
 	
-	# Remember command array if ever we need to call Command.pm
-	@{$connections{$client_socket}{'command_array'}} = @elements;
+	return (\@elements, \$client);
+}
 
+# generate a string output from a request
+sub cli_request_write {
+	my $client_socket = shift;
+	my $request = shift;
 	
-	# Populate the hash, positional parameters have keys _pX
+	$d_cli_vv && msg("CLI: cli_request_write()\n");
 
-	for(my $i=0; $i < scalar @elements; $i++) {
+	my $encoding = $request->getParam('charset');
+	my @elements = $request->renderAsArray($encoding);
+	my $client   = $request->client();
 	
-		# Special case mac address as param...
-		if ($elements[$i] =~ /[0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F]:[0-9a-fA-F][0-9a-fA-F]/) {
-			$cmdHash{($i==0?'_command':"_p$i")} = $elements[$i];
-			$::d_cli && msg("CLI: Parsing command: Found param [$i], value mac address [" . $cmdHash{"_p$i"} . "]\n");			
-		}
-		elsif ($elements[$i] =~ /([^:]+):(.*)/) {
-			$cmdHash{$1} = $2;
-			$::d_cli && msg("CLI: Parsing command: Found param [$1], value [$2]\n");
-		}
-		else {
-			$cmdHash{($i==0?'_command':"_p$i")} = $elements[$i];
-			$::d_cli && msg("CLI: Parsing command: Found " . ($i==0?"command":"param [$i]") . ", value [" . $cmdHash{($i==0?'_command':"_p$i")} . "]\n");
-		}
+	unshift @elements, $client->id() if defined $client;
+	
+	map { $_ = URI::Escape::uri_escape_utf8($_) } @elements;
 		
-		# Unless it is '?', push it back...
-		unless ($elements[$i] eq '?') {
-			cli_response_push($client_socket, $elements[$i]);
-		}
-	}
-
-	# We'd really need to know the arguments types for each command
-	#  positional or tagged (to allow ":" in a positional parameter)
-	#  string or number or flag or whatever (for utf8 handling)
-	#  client is $p0 or not
-	
-	# check $p0, is it command?
-	# .. if yes and require client assign random client
-	# .. if yes and does not require client use params
-	# .. if no, is $p1 a command?
-	# ... if yes, is $p0 a client?
-	# .... if no, error
-	# .... if yes, does it require a client?
-	
-	return \%cmdHash;
-}
-
-
-# Execute command through Command.pm
-sub cli_command_command {
-	my $client_socket = shift;
-	my $cmdRef = shift;
-
-	$d_cli_vv && msg("CLI: cli_command_command()\n");
-
-	# Clear response array, command.pm operates differently than us
-	@{$connections{$client_socket}{'response'}} = ();
-
-	# Add client to response if we have one
-	if (defined $cmdRef->{'_client'}) {
-		push @{$connections{$client_socket}{'response'}}, 
-			$cmdRef->{'_client'}->id();
-	}
-	else {
-		# Mimic stdio, find a client if we have none
-		$cmdRef->{'_client'} = cli_random_client();
-	}
-	
-	push @{$connections{$client_socket}{'response'}},
-		Slim::Control::Command::execute(
-			$cmdRef->{'_client'}, 
-			\@{$connections{$client_socket}{'command_array'}});	
-
-}
-	
-	
-# add some data to the current response
-sub cli_response_push {
-	my $client_socket = shift;
-	my $value = shift;
-	my $key = shift;
-
-	$d_cli_vv && msg("CLI: cli_response_push($value)\n");
-	
-	my $data;
-	
-	if (defined $key) {
-		$data = $key . ':' . $value;
-	}
-	else {
-		$data = $value;
-	}
-
-	push @{$connections{$client_socket}{'response'}}, $data;
-}
-
-
-# generate a string output from the current response array
-sub cli_response_write {
-	my $client_socket = shift;
-	my $encoding = shift;
-	
-	$d_cli_vv && msg("CLI: cli_response_write()\n");
-		
-	foreach my $elem (@{$connections{$client_socket}{'response'}}) {
-		$elem = Slim::Utils::Unicode::utf8encode($elem, $encoding);
-		$elem = URI::Escape::uri_escape_utf8($elem);
-	}
-	
-	my $output = join " ",  @{$connections{$client_socket}{'response'}};
-	$::d_cli && msg("CLI: Response: " . $output . "\n");
+	my $output = join " ",  @elements;
+	$::d_cli && msg("CLI: Sending: " . $output . "\n");
 	
 	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
 
 
+sub cli_request_callback {
+	my $request = shift;
+	my $argument1 = shift;
+	my $argument2 = shift;
+	
+	msg("CLI: cli_request_callback($argument1, $argument2)\n");
+}
 
-# handles callbacks from Slim::Command::execute
-sub cli_executeCallback {
-	my $client = shift;
-	my $paramsRef = shift;
 
-	$d_cli_vv && msg("CLI: cli_executeCallback()\n");
+# handles notifications from Dispatch
+# note that we subscribe in the listen command handler
+sub cli_request_notification {
+	my $request = shift;
+
+	$d_cli_vv && msg("CLI: cli_request_notification()\n");
 
 	# XXX - this should really be passed and not global.
 	foreach my $client_socket (keys %connections) {
@@ -654,28 +565,15 @@ sub cli_executeCallback {
 		# retrieve the socket object
 		$client_socket = $connections{$client_socket}{'socket'};
 
-		# Format reply
-		my $output = '';
-		
-		$output = URI::Escape::uri_escape($client->id()) . ' ' if $client;
-
-		foreach my $param (@$paramsRef) {
-			$output .= URI::Escape::uri_escape($param) . ' ';
-		}
-		
-		chop($output);
-		
-		# send to client
-		client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
-
-		# not sure why client_socket_write would be needed here
-#		client_socket_write($client_socket);
+		# write request
+		cli_request_write($client_socket, $request);
 	}
 }
 
 ################################################################################
 # Utilities
 ################################################################################
+
 # determine a random client
 sub cli_random_client {
 
@@ -693,19 +591,18 @@ sub cli_random_client {
 # CLI commands & queries
 ################################################################################
 
-# Handles the "login" command
+# handles the "login" command
 sub cli_cmd_login {
 	my $client_socket = shift;
-	my $cmdRef = shift;
+	my $request = shift;
 
 	$d_cli_vv && msg("CLI: cli_cmd_login()\n");
 
-	my $login = $cmdRef->{'_p1'};
-	my $pwd = $cmdRef->{'_p2'};
+	my $login = $request->getParam('_p1');
+	my $pwd   = $request->getParam('_p2');
 	
-	# Replace pushed p2 with *****
-	pop @{$connections{$client_socket}{'response'}};
-	cli_response_push($client_socket, '******');
+	# Replace _p2 with ***** in all cases...
+	$request->addParam('_p2', '******');
 	
 	# if we're not authorized yet, try to be...
 	if ($connections{$client_socket}{'auth'} == 0) {
@@ -719,18 +616,18 @@ sub cli_cmd_login {
 	return 0;
 }
 
-# Handles the "listen" command
+# handles the "listen" command
 sub cli_cmd_listen {
 	my $client_socket = shift;
-	my $cmdRef = shift;
+	my $request = shift;
 
 	$d_cli_vv && msg("CLI: cli_cmd_listen()\n");
 
-	my $param = $cmdRef->{'_p1'};
+	my $param = $request->getParam('_p1');
 
 	if (defined $param) {
 		if ($param eq "?") {
-			cli_response_push($client_socket, $connections{$client_socket}{'listen'}||0);
+			$request->addParam('_p1',  $connections{$client_socket}{'listen'}||0);
 		}
 		elsif ($param == 0) {
 			$connections{$client_socket}{'listen'} = 0;
@@ -742,8 +639,14 @@ sub cli_cmd_listen {
 	else {
 		$connections{$client_socket}{'listen'} = !$connections{$client_socket}{'listen'};
 	}
+	
+	Slim::Control::Dispatch::subscribe(\&Plugins::CLI::cli_request_notification);
 }
 
+
+################################################################################
+# PLUGIN STRINGS
+################################################################################
 # plugin: return strings
 sub strings {
 	return "

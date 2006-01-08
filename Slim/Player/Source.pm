@@ -527,7 +527,8 @@ sub underrun {
 		
 		# Not sure we can safely go through execute for the call to stop here
 		# use execute callback...
-		Slim::Control::Command::executeCallback($client, ['stop']);
+#		Slim::Control::Command::executeCallback($client, ['stop']);
+		Slim::Control::Dispatch::notifyFromArray($client, ['stop']);
 	}
 }
 
@@ -977,7 +978,9 @@ sub trackStartEvent {
 
 	$client->currentPlaylistChangeTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
-	Slim::Control::Command::executeCallback($client, ["newsong"]);
+#	Slim::Control::Command::executeCallback($client, ["newsong"]);
+	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'newsong']);
+
 
 	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 }
@@ -1445,10 +1448,12 @@ sub openSong {
 
 		$client->currentPlaylistChangeTime(time());
 		Slim::Player::Playlist::refreshPlaylist($client);
-		Slim::Control::Command::executeCallback($client, ["newsong"])
+#		Slim::Control::Command::executeCallback($client, ["newsong"])
+		Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'newsong']);
 	}
 
-	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
+#	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
+	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'open', $fullpath]);
 
 	return 1;
 }

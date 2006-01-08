@@ -246,7 +246,11 @@ sub init {
 
 			if ($newvalue) {
 
-				Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+#				Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+				Slim::Control::Dispatch::subscribe(
+					\&Slim::Player::Playlist::modifyPlaylistCallback, 
+					[['playlist']]
+					);
 
 				for my $client (Slim::Player::Client::clients()) {
 					next if Slim::Player::Sync::isSlave($client);
@@ -254,7 +258,8 @@ sub init {
 				}
 
 			} else {
-				Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+#				Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+				Slim::Control::Dispatch::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 			}
 		}
 	);

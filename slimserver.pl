@@ -528,7 +528,11 @@ sub init {
 	if (!$scanOnly) {
 		$::d_server && msg("SlimServer persist playlists...\n");
 		if (Slim::Utils::Prefs::get('persistPlaylists')) {
-			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+#			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+			Slim::Control::Dispatch::subscribe(
+				\&Slim::Player::Playlist::modifyPlaylistCallback, 
+				[['playlist']]
+				);
 		}
 
 		checkVersion();
@@ -1185,6 +1189,12 @@ sub cleanup {
 	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;
 	Slim::Buttons::Plugins::shutdownPlugins();
+
+	if (Slim::Utils::Prefs::get('persistPlaylists')) {
+		Slim::Control::Dispatch::unsubscribe(
+			\&Slim::Player::Playlist::modifyPlaylistCallback);
+	}
+
 
 	remove_pid_file();
 }
