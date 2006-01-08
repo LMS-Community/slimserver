@@ -29,29 +29,34 @@ sub init {
 			my $button = shift;
 			my $buttonarg = shift;
 			my $pdm = $client->prefGet("playingDisplayMode");
+			my $index = -1;
+			
+			#find index of the existing display mode in the pref array
+			for ($client->prefGetArray('playingDisplayModes')) {
+				$index++;
+				last if $pdm == $_;
+			}
+			$pdm = $index unless $index == -1;
+				
 			unless (defined $pdm) { $pdm = 1; };
 			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
 			if ($button eq 'playdisp_toggle') {
 				my $playlistlen = Slim::Player::Playlist::count($client);
-				# playingDisplayModes are
-				# 0 show nothing
-				# 1 show elapsed time
-				# 2 show remaining time
-				# 3 show progress bar
-				# 4 show elapsed time and progress bar
-				# 5 show remaining time and progress bar
+				
 				if (($playlistlen > 0) && (showingNowPlaying($client))) {
-					$pdm = ($pdm + 1) % $client->nowPlayingModes();
+					$pdm = ($pdm + 1) % ($client->prefGetArrayMax('playingDisplayModes') +1);
 				} elsif ($playlistlen > 0) {
 					browseplaylistindex($client,Slim::Player::Source::playingSongIndex($client));
 				}
 			} else {
-				if ($buttonarg && $buttonarg < $client->nowPlayingModes()) {
+				if ($buttonarg && $buttonarg < ($client->prefGetArrayMax('playingDisplayModes') +1)) {
 					$pdm = $buttonarg;
 				}
 			}
-			$client->param('animateTop',$pdm);
-			$client->prefSet("playingDisplayMode", $pdm);
+			
+			#find mode number at the new index, and save to the prefs
+			$client->param('animateTop',${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
+			$client->prefSet("playingDisplayMode", ${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
 			$client->update();
 		},
 		'up' => sub  {

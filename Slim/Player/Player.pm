@@ -43,6 +43,7 @@ our $defaultPrefs = {
 		,'offDisplaySize'		=> 0
 		,'pitch'				=> 100
 		,'playingDisplayMode'	=> 0
+		,'playingDisplayModes'	=> [0..5]
 		,'power'				=> 1
 		,'powerOffBrightness'	=> 1
 		,'powerOnBrightness'	=> 4
@@ -1528,15 +1529,14 @@ sub currentSongLines {
 sub playingModeOptions { 
 	my $client = shift;
 	my %options = (
-		'0' => $client->string('BLANK')
-		,'1' => $client->string('ELAPSED')
-		,'2' => $client->string('REMAINING')
-		,'3' => $client->string('PROGRESS_BAR')
-		,'4' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
-		,'5' => $client->string('REMAINING') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR')
+		'0' => $client->string('BLANK'),
+		'1' => $client->string('ELAPSED'),
+		'2' => $client->string('REMAINING'),
+		'3' => $client->string('PROGRESS_BAR'),
+		'4' => $client->string('ELAPSED') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR'),
+		'5' => $client->string('REMAINING') . ' ' . $client->string('AND') . ' ' . $client->string('PROGRESS_BAR'),
+		'6' => $client->string('SETUP_SHOWBUFFERFULLNESS'),
 	);
-	
-	$options{'6'} = $client->string('SETUP_SHOWBUFFERFULLNESS') if $client->prefGet('showbufferfullness');
 	
 	return \%options;
 }

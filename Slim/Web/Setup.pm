@@ -126,8 +126,11 @@ sub initSetupConfig {
 							$pageref->{'Prefs'}{'idlesaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 							$pageref->{'Prefs'}{'offsaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 						}
-						$pageref->{'Prefs'}{'playingDisplayMode'}{'options'} = $client->playingModeOptions();
-						$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,scalar($pageref->{'Prefs'}{'playingDisplayMode'}{'options'}),1,1];					} else {
+						
+						my $displayHash = $client->playingModeOptions();
+						$displayHash->{-1} = ' ' ;
+						$pageref->{'Prefs'}{'playingDisplayModes'}{'options'} = $displayHash;
+						$pageref->{'Prefs'}{'playingDisplayModes'}{'validateArgs'} = [$pageref->{'Prefs'}{'playingDisplayModes'}{'options'}];					} else {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
 					}
 					
@@ -150,11 +153,6 @@ sub initSetupConfig {
 					$paramref->{'macaddress'} = $client->macaddress;
 					$paramref->{'signalstrength'} = $client->signalStrength;
 
-					if ($client->isPlayer()) {
-						$pageref->{'Prefs'}{'playingDisplayMode'}{'options'} = $client->playingModeOptions();
-						$pageref->{'Prefs'}{'playingDisplayMode'}{'validateArgs'} = [0,scalar($pageref->{'Prefs'}{'playingDisplayMode'}{'options'}),1,1];
-					}
-
 					$client->update();
 				}
 		#,'template' => 'setup_player.html'
@@ -175,13 +173,18 @@ sub initSetupConfig {
 					,'GroupLine' => 1
 				}
 			,'Display' => {
-					'PrefOrder' => ['playingDisplayMode','showbufferfullness']
+					'PrefOrder' => ['playingDisplayModes']
+					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub'  => 1
 					,'GroupHead' => string('SETUP_PLAYINGDISPLAYMODE')
 					,'GroupDesc' => string('SETUP_PLAYINGDISPLAYMODE_DESC')
+					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
+										'</th><th></th><th>' . string('DISPLAY_SETTINGS') . '</th><th></th></tr>'
 					,'GroupLine' => 1
+					,'GroupSub'  => 1
 				}
 			,'ScreenSaver' => {
 				'PrefOrder' => ['screensaver','idlesaver','offsaver','screensavertimeout']
@@ -206,21 +209,31 @@ sub initSetupConfig {
 							'validate' => \&validateInt
 							,'validateArgs' => [] #will be set by preEval
 						}
-			,'playingDisplayMode' 	=> {
+			,'playingDisplayMode'	=> {
 							'validate' => \&validateInt
-							,'validateArgs' => undef
-							,'options' => undef
-							,'optionSort' => 'NK'
-							,'PrefChoose' => string('SETUP_PLAYINGDISPLAYMODE').string('COLON')
-							,'onChange'   => sub { shift->update(); }
+							,'validateArgs' => [] # will be set by preEval
 						}
-			,'showbufferfullness' => {
-						'validate' => \&validateTrueFalse
-						,'options' => {
-								'0' => string('DISABLED')
-								,'1' => string('ENABLED')
-								}
-					}
+			,'playingDisplayModes' 	=> {
+							'isArray' => 1
+							,'arrayAddExtra' => 1
+							,'arrayDeleteNull' => 1
+							,'arrayDeleteValue' => -1
+							,'arrayBasicValue' => 0
+							,'arrayCurrentPref' => 'playingDisplayMode'
+							,'inputTemplate' => 'setup_input_array_sel.html'
+							,'validate' => \&validateInHash
+							,'validateArgs' => [] #filled by initSetup
+							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
+							,'optionSort' => 'NK'
+							,'onChange' => sub {
+										my ($client,$changeref,$paramref,$pageref) = @_;
+										if (exists($changeref->{'playingDisplayModes'}{'Processed'})) {
+											return;
+										}
+										processArrayChange($client,'playingDisplayModes',$paramref,$pageref);
+										$changeref->{'playingDisplayModes'}{'Processed'} = 1;
+									}
+						}
 			,'titleFormat'		=> {
 							'isArray' => 1
 							,'arrayAddExtra' => 1

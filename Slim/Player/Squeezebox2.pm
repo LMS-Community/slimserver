@@ -27,15 +27,16 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
-	'activeFont'		=> [qw(light standard full)],
-	'activeFont_curr'	=> 1,
-	'idleFont'		=> [qw(light standard full)],
-	'idleFont_curr'		=> 1,
-	'idleBrightness'	=> 2,
+	'activeFont'			=> [qw(light standard full)],
+	'activeFont_curr'		=> 1,
+	'idleFont'				=> [qw(light standard full)],
+	'idleFont_curr'			=> 1,
+	'idleBrightness'		=> 2,
 	'transitionType'		=> 0,
-	'transitionDuration'		=> 0,
+	'transitionDuration'	=> 0,
 	'replayGainMode'		=> '3',
-	'playingDisplayMode'		=> 6,
+	'playingDisplayMode'	=> 5,
+	'playingDisplayModes'	=> [0..11]
 };
 
 # Parameters for the vumeter:
@@ -152,11 +153,8 @@ sub playingModeOptions {
 		'9' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'),
 		'10' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
 		'11' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
+		'12' => $client->string('SETUP_SHOWBUFFERFULLNESS'),
 	);
-
-	if ($client->prefGet('showbufferfullness')) {	
-		$options{'12'} = $client->string('SETUP_SHOWBUFFERFULLNESS');
-	}
 	
 	return \%options;
 }
@@ -184,13 +182,8 @@ sub init {
 
 sub nowPlayingModes {
 	my $client = shift;
-	my $count = scalar(@modes);
 	
-	if (!$client->prefGet('showbufferfullness')) {
-		$count--;
-	}
-	
-	return $count;
+	return scalar(keys %{$client->playingModeOptions()});
 }
 
 sub showVisualizer {
