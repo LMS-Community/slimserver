@@ -74,17 +74,17 @@ a:hover {
 }
 
 #largeAttribute {
-        color: #ececec;
-        font-weight: normal;
-        font-style: normal;
-        font-family: Verdana, Helvetica, sans-serif;
-        text-decoration: none;
-        display: inline;
-        white-space: nowrap;
-        font-size: 18px;
-        position: absolute;
-        left: 4px;
-        width: 40px;
+	color: #ececec;
+	font-weight: normal;
+	font-style: normal;
+	font-family: Verdana, Helvetica, sans-serif;
+	text-decoration: none;
+	display: inline;
+	white-space: nowrap;
+	font-size: 18px;
+	position: absolute;
+	left: 4px;
+	width: 40px;
 }
 
 pre, code, h3 {
@@ -145,137 +145,137 @@ img {
 }
 
 div#topGraphicBox {
-        background-color: #333333;
-        height: 77px;
+	background-color: #333333;
+	height: 77px;
 }
 
 div#topGraphicMenu1 {
-        background-color: #737373;
-        position: relative;
-        height: 60px;
-        width: auto;
-        margin-left: 8px;
-        margin-right: 4px;
-        border-bottom: 1px #9D9D9D solid;
-        top: 15px;
+	background-color: #737373;
+	position: relative;
+	height: 60px;
+	width: auto;
+	margin-left: 8px;
+	margin-right: 4px;
+	border-bottom: 1px #9D9D9D solid;
+	top: 15px;
 }
 
 div#topGraphicMenu2 {
-        background-color: #737373;
-        position: relative;
-        height: 20px;
-        width: auto;
-        margin-left: 8px;
-        top: 15px;
-        margin-right: 4px;
+	background-color: #737373;
+	position: relative;
+	height: 20px;
+	width: auto;
+	margin-left: 8px;
+	top: 15px;
+	margin-right: 4px;
 }
 
 div#topGraphicMenu3 {
-        background-color: #c5c5c5;
-        position: relative;
-        height: 40px;
-        width: auto;
-        margin-left: 8px;
-        top: 15px;
-        margin-right: 4px;
+	background-color: #c5c5c5;
+	position: relative;
+	height: 40px;
+	width: auto;
+	margin-left: 8px;
+	top: 15px;
+	margin-right: 4px;
 }
 
 div#topGraphicMenu1 #largeAttribute {
-        position: absolute;
-        top: 5px;
-        left: 5px;
+	position: absolute;
+	top: 5px;
+	left: 5px;
 }
 
 div#topGraphicBox img {
-        margin-top: 10px;
-        margin-left: 10px;
+	margin-top: 10px;
+	margin-left: 10px;
 }
 
-div#topGraphicMenu1 #playerChooser {
-        position: absolute;
-        right: 10px;
-        top: 10px;
+div#topGraphicBox #playerChooser {
+	position: absolute;
+	right: 20px;
+	top: 10px;
 }
 
 div#topGraphicMenu1 #powerButtons {
-        position: absolute;
-        left: 280px;
-        top: 20px;
+	position: absolute;
+	left: 280px;
+	top: 20px;
 }
 
 div#topGraphicMenu1 #transportButtons {
-        left: 10px;
-        position: absolute;
-        top: 40px;
+	left: 10px;
+	position: absolute;
+	top: 40px;
 }
 
 div#topGraphicMenu1 #volumeButtons {
-        position: absolute;
-        left: 280px;
-        top: 40px;
+	position: absolute;
+	left: 280px;
+	top: 40px;
 }
 
 div#topGraphicMenu2 #repeatButtons {
-        position: absolute;
-        left: 5px;
-        top: 3px;
+	position: absolute;
+	left: 5px;
+	top: 3px;
 }
 
 div#topGraphicMenu2 #shuffleButtons {
-        position: absolute;
-        left: 280px;
-        top: 3px;
+	position: absolute;
+	left: 280px;
+	top: 3px;
 }
 
 div#topGraphicMenu3 #playingStatus {
-        position: absolute;
-        left: 5px;
-        top: 5px;
+	position: absolute;
+	left: 5px;
+	top: 5px;
 }
 
 div#topGraphicMenu3 #statusMessage {
-        position: absolute;
-        left: 30px;
-        top: 18px;
+	position: absolute;
+	left: 10px;
+	top: 18px;
 	color: #111;
 	font-weight: bold;
 }
 
 div#topGraphicMenu3 #statusSongRemoveButton {
-        position: absolute;
-        right: 10px;
-        top: 5px;
+	position: absolute;
+	right: 10px;
+	top: 5px;
 }
 
 div#homeMenu {
-        background-color: #ffffff;
-        position: relative;
-        height: auto;
-        width: auto;
-        margin-left: 4px;
-        top: 25px;
-        margin-right: 4px;
+	background-color: #ffffff;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 4px;
+	top: 25px;
+	margin-right: 4px;
 }
 
 div#homeMenuHeader {
-        background-color: #ececec;
-        position: relative;
-        height: 13px;
-        width: auto;
+	background-color: #ececec;
+	position: relative;
+	height: 13px;
+	width: auto;
 	margin-left: 4px;
-        margin-right: 4px;
-        padding-top: 8px;
+	margin-right: 4px;
+	padding-top: 8px;
 	padding-left: 6px;
-        padding-bottom: 4px;
+	padding-bottom: 4px;
 	font-weight: bold;
 }
 
 div#homeMenuItemList {
-        background-color: #ffffff;
-        position: relative;
-        height: auto;
-        width: auto;
+	background-color: #ffffff;
+	position: relative;
+	height: auto;
+	width: auto;
 	padding-top: 8px;
 	padding-bottom: 8px;
-        margin-left: 14px;
+	margin-left: 14px;
 }

@@ -7,6 +7,7 @@
 	[% IF player_name; name = player_name | html; END -%]
 	[% pagetitle = pagetitle _ ' ' _ name %]
 	[% PROCESS standardheader.html %]
+	[% PROCESS html/common.js %]
 </head>
 
 <body leftmargin="0" topmargin="0" mPlayerarginwidth="0" marginheight="0" onload="doLoad();">
@@ -30,19 +31,17 @@
 <div id="topGraphicBox">
 
 	<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" width="134" height="19"></a>
-
+	[% IF player_chooser_list %]
+	<div id="playerChooser">
+		<form style="text-align:right; vertical-align:middle;" method="GET" action="[% webroot %]index.html" target="_top">
+		<select name="player" onchange="switchPlayer(this);" class="exnowplaying">
+			[% player_chooser_list %]
+		</select>
+		</form>
+	</div>
+	[% END %]
 	<div id="topGraphicMenu1">
 		<div id="largeAttribute">[% "SQUEEZEBOX_MUSIC_PLAYER" | string %]</div>
-
-		[% IF player_chooser_list %]
-		<div id="playerChooser">
-			<form style="text-align:right; vertical-align:middle;" method="GET" action="[% webroot %]index.html" target="_top">
-			<select name="player" onchange="switchPlayer(this);" class="exnowplaying">
-				[% player_chooser_list %]
-			</select>
-			</form>
-		</div>
-		[% END %]
 
 		[% IF isplayer %]
 		<div id="powerButtons">
