@@ -80,7 +80,8 @@ sub execute {
 		
 	$callcallback && $callbackf && (&$callbackf(@$callbackargs, \@returnArray));
 
-	executeCallback($client ? $client:undef, \@returnArray);
+# don't callback twice
+#	executeCallback($client ? $client:undef, \@returnArray);
 	
 	$::d_command && msg("Command: Returning array: " . $returnArray[0] . " (" .
 			(defined $returnArray[1] ? $returnArray[1] : "") . ") (" .
