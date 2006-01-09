@@ -92,7 +92,14 @@
 	</tr>
 	[% ELSE %]
 		[% FOREACH key = additionalLinks.radio.keys %]
-				<tr><td height="15" valign="center" class = 'menutext'><a href="[% additionalLinks.radio.$key %]player=[% playerURI %]" onMouseDown="document.bild8.src = 'html/images/smaller/radio_active.gif';"><img src="html/images/smaller/radio.gif" name="bild8" border="0">[% key | string %]</a></td></tr>
+			<tr>
+				<td valign="middle" class = 'menutext' width = '90'>
+					<a href="[% additionalLinks.radio.$key %]player=[% playerURI %]"><img src="html/images/smaller/radio.gif" width = '90' height = '75' border="0"></a>
+				</td>
+				<td valign="middle" class = 'menutext' align = 'left'>
+					<a href="[% additionalLinks.radio.$key %]player=[% playerURI %]" onMouseDown="document.bild8.src = 'html/images/smaller/radio_active.gif';">[% key | string %]</a>
+				</td>
+			</tr>
 		[% END %]
 	
 	[% END %]
