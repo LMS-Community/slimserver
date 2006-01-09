@@ -22,6 +22,10 @@ table, td, tr, form, h4 {
 	vertical-align: top;
 }
 
+.floater {
+	float: left;
+}
+
 ul {
 	margin-top: 0px;
 	margin-bottom: 10px;
