@@ -11,7 +11,7 @@
 			[% IF browse_radio %]
 				[% "RADIO" | string %]
 			[% ELSE %]
-				[% "BROWSE_MUSIC" | string %][% END %]</td>
+				[% "BROWSE" | string %][% END %]</td>
 		<td align = 'right'>
 			[% IF browse_radio %]
 				[% INCLUDE tune_in_form %]
@@ -73,6 +73,8 @@
 			<a href="hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/smaller/statistics_active.gif';"><img src="html/images/smaller/statistics.gif" name="bild9" border="0"></a>
 		</td>
 		<td align="center">
+<!-- this is the link for new music page
+<a href = "browsedb.html?hierarchy=age,track&level=0&player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild10.src = 'html/images/smaller/favorites_active.gif';">-->
 			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild10.src = 'html/images/smaller/favorites_active.gif';">
 <center><img src="html/images/smaller/favorites.gif" name="bild10" border="0"></a>
 		</td>
