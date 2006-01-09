@@ -98,10 +98,7 @@ sub readMetaData {
 
 		$::d_remotestream && msg("metadata: $metadata\n");
 
-		my $url   = $self->url;
-		my $title = $self->parseMetadata($client, $url, $metadata);
-
-		${*$self}{'title'} = $title;
+		${*$self}{'title'} = parseMetadata($client, $self->url, $metadata);
 
 		# new song, so reset counters
 		$client->songBytes(0);
@@ -109,16 +106,23 @@ sub readMetaData {
 }
 
 sub parseMetadata {
-	my $self     = shift;
 	my $client   = shift;
 	my $url      = shift;
 	my $metadata = shift;
+
+	# XXXX - find out how we're being called - $self->url should be set.
+	if (!$url) {
+
+		$url = Slim::Player::Playlist::song(
+			$client, Slim::Player::Source::streamingSongIndex($client)
+		);
+	}
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-		my $oldTitle = $self->title;
+		my $oldTitle = Slim::Music::Info::getCurrentTitle($url) || '';
 
 		# capitalize titles that are all lowercase
 		if (lc($newTitle) eq $newTitle) {
