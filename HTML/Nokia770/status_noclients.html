@@ -1,10 +1,9 @@
+[%# Page status_noclients.html %]
 <!-- status_noclients.html -->
-<html>
-<head>
-      <title>[% playermodel _ "_MUSIC_PLAYER" | string %]</title>
-      <meta http-equiv="refresh" content="[% refresh %]; url=status.html">
-</head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" >
+[%- PROCESS pageheader.html -%]
+[%- PROCESS menu.html -%]
+
+<body marginwidth="0" marginheight="0">
 
 <table border="0" cellpadding="2" cellspacing="0" width="100%"  bordercolor="#111111">
     <tr>
@@ -21,7 +20,6 @@
         </td>
     </tr>
 </table>
-
-</body>
-</html>
 <!-- /Page status_noclients.html -->
+
+[% PROCESS detailed_footer.html %]
