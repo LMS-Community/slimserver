@@ -1,7 +1,7 @@
 body
 {
-background-color: "#333333";
-color: "#666666";
+background-color: white;
+color: #333333;
 scrollbar-base-color: white;
 scrollbar-track-color: white;
 scrollbar-face-color: #666666;
@@ -16,6 +16,13 @@ top-margin: 0px;
 }
 /*leftmargin=0 topmargin=0 marginwidth=0 marginheight=0>
 */
+
+body.default {
+	background-color: white;
+}
+body.custom {
+	background-color: #666666;
+}
 
 a:hover, a:visited, a:active, a:link
 {

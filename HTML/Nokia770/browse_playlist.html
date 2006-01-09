@@ -7,7 +7,7 @@
     browse   = '0'
     playlist = '1'
     music    = '1' -%]
-[%- PROCESS pageheader.html -%]
+[%- PROCESS pageheader.html class = 'custom' -%]
 [%- PROCESS menu.html -%]
 
 [% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %]<a href="browsetree.html?player=[% playerURI %]"><font class="pagebartext">[% "HERE" | string %]</a>.[% END %]</p>[% END %]

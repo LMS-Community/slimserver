@@ -4,7 +4,7 @@
             [% PROCESS standardheader.html %]
       </head>
 
-<body bgcolor = '[% IF bgcolor %][% bgcolor %][% ELSE %]white[% END %]' marginwidth=0 marginheight=0>
+<body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
 <!--preload play/add/delete/next icons; this is an effort to have the 770 browser not screw up the rendering of the table on every other load. don't think it's gonna do the trick, but it can't hurt to try...-->
 <div style = 'display: none;'>
