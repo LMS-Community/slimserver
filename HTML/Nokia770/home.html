@@ -26,23 +26,23 @@
 	[% IF ! browse_radio %]
 	<tr>
 	[% IF not nofolder %]
-		<td align = 'center'><a href="browsetree.html?player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/smaller/folder_active.gif';">
+		<td align = 'center'><a href="browsetree.html?player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild1.src = 'html/images/smaller/folder_active.gif';" onMouseOut="document.bild1.src = 'html/images/smaller/folder.gif';">
 <img src="html/images/smaller/folder.gif" name="bild1" border="0" alt = 'music folder'></a></td>
 	[% END %]
-		<td align = 'center'><a href="browsedb.html?hierarchy=artwork,track&level=0&player=[% playerURI %]&artwork=1" style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/smaller/artwork_active.gif';">
+		<td align = 'center'><a href="browsedb.html?hierarchy=artwork,track&level=0&player=[% playerURI %]&artwork=1" style="text-decoration:none" onMouseOver="document.bild2.src = 'html/images/smaller/artwork_active.gif';" onMouseOut="document.bild2.src = 'html/images/smaller/artwork.gif';">
 <img src="html/images/smaller/artwork.gif" name="bild2" border="0" alt = 'artwork'></a></td>
 
 		<td align = 'center'>
-			<a href="browsedb.html?hierarchy=artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild3.src = 'html/images/smaller/artist_active.gif';">
+			<a href="browsedb.html?hierarchy=artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild3.src = 'html/images/smaller/artist_active.gif';" onMouseOut="document.bild3.src = 'html/images/smaller/artist.gif';">
 <img src="html/images/smaller/artist.gif" name="bild3" border="0" alt = 'artist'></a>
 		</td>
 
 		<td align = 'center'>
-			<a href = "browsedb.html?hierarchy=age,track&level=0&player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild4.src = 'html/images/smaller/new_music_active.gif';"><img src = 'html/images/smaller/new_music.gif' name = 'bild4' border = '0' alt = 'new'></a>
+			<a href = "browsedb.html?hierarchy=age,track&level=0&player=[% playerURI %]" style='text-decoration:none' onMouseOver="document.bild4.src = 'html/images/smaller/new_music_active.gif';" onMouseOut="document.bild4.src = 'html/images/smaller/new_music.gif';"><img src = 'html/images/smaller/new_music.gif' name = 'bild4' border = '0' alt = 'new'></a>
 		</td>
 
 		<td align = 'center'>
-			<a href="/plugins/RandomPlay/randomplay_list.html?player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/smaller/random_active.gif';"><img src="html/images/smaller/random.gif" name="bild5" border="0" alt = 'random'></a>
+			<a href="/plugins/RandomPlay/randomplay_list.html?player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild5.src = 'html/images/smaller/random_active.gif';" onMouseOut="document.bild5.src = 'html/images/smaller/random.gif';"><img src="html/images/smaller/random.gif" name="bild5" border="0" alt = 'random'></a>
 		</td>
 	</tr>
 	<tr>
@@ -60,22 +60,22 @@
 	</tr>
 	<tr>
 		<td align = 'center'>
-			<a href="browsedb.html?hierarchy=album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild6.src = 'html/images/smaller/album_active.gif';">
+			<a href="browsedb.html?hierarchy=album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild6.src = 'html/images/smaller/album_active.gif';" onMouseOut="document.bild6.src = 'html/images/smaller/album.gif';">
 <img src="html/images/smaller/album.gif" name="bild6" border="0" alt = 'album'></a>
 		</td>
 
-		<td align = 'center'><a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/smaller/playlist_active.gif';">
+		<td align = 'center'><a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none" onMouseOver="document.bild7.src = 'html/images/smaller/playlist_active.gif';" onMouseOut="document.bild7.src = 'html/images/smaller/playlist.gif';">
 <img src="html/images/smaller/playlist.gif" border="0" name="bild7" alt = 'playlist'></a></td>
 
 		<td align = 'center'>
-			<a href="browsedb.html?hierarchy=genre,artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/smaller/genre_active.gif';">
+			<a href="browsedb.html?hierarchy=genre,artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild8.src = 'html/images/smaller/genre_active.gif';" onMouseOut="document.bild8.src = 'html/images/smaller/genre.gif';">
 <img src="html/images/smaller/genre.gif" name="bild8" border="0" alt = 'genre'></a>
 		</td>
 		<td align="center">
-			<a href="hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/smaller/statistics_active.gif';"><img src="html/images/smaller/statistics.gif" name="bild9" border="0" alt = 'stats'></a>
+			<a href="hitlist.html" style="text-decoration:none" onMouseOver="document.bild9.src = 'html/images/smaller/statistics_active.gif';" onMouseOut="document.bild9.src = 'html/images/smaller/statistics.gif';"><img src="html/images/smaller/statistics.gif" name="bild9" border="0" alt = 'stats'></a>
 		</td>
 		<td align="center">
-			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseDown="document.bild10.src = 'html/images/smaller/favorites_active.gif';">
+			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseOver="document.bild10.src = 'html/images/smaller/favorites_active.gif';" onMouseOut="document.bild10.src = 'html/images/smaller/favorites.gif';">
 <img src="html/images/smaller/favorites.gif" name="bild10" border="0" alt = 'favorites'></a>
 		</td>
 
