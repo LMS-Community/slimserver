@@ -24,73 +24,71 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 
-<div class="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]<br></div>
-
-<div class="homeMenuItemList">
-
-	[% FOREACH link = additionalLinks.browse %]
-		&bull; <a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a><br>
-	[% END %]
+<div class="homeMenuSection">
+	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
+	<ul>
+	[%- FOREACH link = additionalLinks.browse %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+	[%- END %]
+	</ul>
 </div>
 
-<div class="homeMenuHeader">[% "SEARCH" | string | upper %]<br></div>
-
-<div class="homeMenuItemList">
-
-	[% FOREACH key = additionalLinks.search.keys %]
-		&bull; <a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
-	[% END %]
+<div class="homeMenuSection">
+	<div>[% "SEARCH" | string | upper %]</div>
+	<ul>
+	[%- FOREACH key = additionalLinks.search.keys %]
+		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+	</ul>
 </div>
 
-<div class="homeMenuHeader">[% "RADIO" | string | upper %]<br></div>
-
-<div class="homeMenuItemList">
-
-	[% FOREACH key = additionalLinks.radio.keys %]
-		&bull; <a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
-	[% END %]
-
-	&bull; <a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a><br>
+<div class="homeMenuSection">
+	<div>[% "RADIO" | string | upper %]</div>
+	<ul>
+	[%- FOREACH key = additionalLinks.radio.keys %]
+		<li><a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>
+	</ul>	
 </div>
 
 [% IF not nosetup %]
-	
-	<div class="homeMenuHeader">[% "SETTINGS" | string | upper %]<br></div>
+<div class="homeMenuSection">
+	<div>[% "SETTINGS" | string | upper %]</div>
+	<ul>
+	[%- IF not noserver %]
+		<li><a href="setup.html?page=server&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
+	[%- END %]
 
-	<div class="homeMenuItemList">
-	[% IF not noserver %]
-		&bull; <a href="setup.html?page=server&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a><br>
-	[% END %]
+	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
+		<li><a href="setup.html?page=player&amp;player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+	[%- END %]
 
-	[% player_list %]
-
-	[% FOREACH key = additionalLinks.settings.keys %]
-		&bull; <a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
-	[% END %]
-	</div>
-
+	[%- FOREACH key = additionalLinks.settings.keys %]
+		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
 [% END %]
 
 [% IF additionalLinks.plugins %]
-
-	<div class="homeMenuHeader">[% "PLUGINS" | string | upper %]<br></div>
-
-	<div class="homeMenuItemList">
-
-		[% FOREACH key = additionalLinks.plugins.keys %]
-			&bull; <a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
-		[% END %]
-	</div>
-
+<div class="homeMenuSection">
+	<div>[% "PLUGINS" | string | upper %]</div>
+	<ul>
+		[%- FOREACH key = additionalLinks.plugins.keys %]
+			<li><a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+		[%- END %]
+	</ul>
+</div>
 [% END %]
 
-<div class="homeMenuHeader">[% "HELP" | string | upper %]<br></div>
-
-<div class="homeMenuItemList">
-
-	[% FOREACH link = additionalLinks.help %]
-		&bull; <a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a><br>
-	[% END %]
+<div class="homeMenuSection">
+	<div>[% "HELP" | string | upper %]</div>
+	<ul>
+	[%- FOREACH link = additionalLinks.help %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+	[%- END %]
+	</ul>
 </div>
 
 [% PROCESS pagefooter.html %]

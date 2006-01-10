@@ -149,7 +149,6 @@ img {
 
 div#topGraphicBox {
 	background: url(html/images/topbar.gif) repeat-x top left;
-	margin: 0;
 }
 
 div#topGraphicMenu1 {
@@ -260,27 +259,20 @@ div#homeMenu {
 	margin-right: 4px;
 }
 
-div.homeMenuHeader {
+.homeMenuSection div {
+	/* home menu list header */
 	background-color: #ececec;
-	position: relative;
 	height: 13px;
-	width: auto;
 	margin-left: 4px;
-	margin-right: 4px;
-	padding-top: 8px;
-	padding-left: 6px;
-	padding-bottom: 4px;
+	padding: 8px 6px 4px;
 	font-weight: bold;
 }
 
-div.homeMenuItemList {
+.homeMenuSection ul {
+	/* the list of home menu items */
 	background-color: #ffffff;
-	position: relative;
-	height: auto;
-	width: auto;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	margin-left: 14px;
+	padding: 0;
+	margin: 8px 28px;
 }
 
 div#browsedbListItem {
