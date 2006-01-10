@@ -32,11 +32,38 @@ my @visualizer_screensavers = ( 'SCREENSAVER.visualizer_spectrum',
 								'SCREENSAVER.visualizer_digital_vumeter', 
 								'SCREENSAVER.visualizer_analog_vumeter' );
 my %screensaver_info = ( 
+
+# Parameters for the spectrum analyzer:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Bandwidth: 0..22050Hz == 0, 0..11025Hz == 1
+#   2 - Preemphasis in dB per KHz
+# Left channel parameters:
+#   3 - Position in pixels
+#   4 - Width in pixels
+#   5 - orientation: left to right == 0, right to left == 1
+#   6 - Bar width in pixels
+#   7 - Bar spacing in pixels
+#   8 - Clipping: show all subbands == 0, clip higher subbands == 1
+#   9 - Bar intensity (greyscale): 1-3
+#   10 - Bar cap intensity (greyscale): 1-3
+# Right channel parameters (not required for mono):
+#   11-18 - same as left channel parameters
+
 	'SCREENSAVER.visualizer_spectrum' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
 		params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
 		showtext => 1,
 	},
+
+# Parameters for the vumeter:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Style: digital == 0, analog == 1
+# Left channel parameters:
+#   2 - Position in pixels
+#   3 - Width in pixels
+# Right channel parameters (not required for mono):
+#   4-5 - same as left channel parameters
+
 	'SCREENSAVER.visualizer_analog_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER',
 		params => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
