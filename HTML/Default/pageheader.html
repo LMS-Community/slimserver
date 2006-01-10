@@ -7,22 +7,22 @@
 
 <div id="topGraphicBox">
 
-        <a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" width="134" height="19"></a>
+	<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" width="134" height="19"></a>
 
-        <div id="topGraphicMenu1">
-                <div id="largeAttribute">[% pagetitle %]</div>
-	</div>
-
-        <div id="topGraphicMenu2">
-	</div>
-
-	<div id="topGraphicMenu3">
-		<div id="statusMessage">
-		[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
-		[%- PROCESS crumblist IF pwd_list %]
+	<div id="topGraphicMenu1">
+		<div id="largeAttribute">[% pagetitle %]</div>
 		</div>
-	</div>
-</div>
-<div id="homeMenu">
 
-	<div id="pageHeaderInfo">[% pageHeaderInfo %]</div>
+		<div id="topGraphicMenu2">
+		</div>
+
+		<div id="topGraphicMenu3">
+			<div id="statusMessage">
+			[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+			[%- PROCESS crumblist IF pwd_list %]
+			</div>
+		</div>
+
+	<div id="homeMenu">
+
+		[% pageHeaderInfo %]

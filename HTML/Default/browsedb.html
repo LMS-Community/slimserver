@@ -1,6 +1,7 @@
 [% IF song_count; pageHeaderInfo = BLOCK %]
 	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
 [% END; END %]  
+
 [% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %] [% PROCESS pageheader.html %]
 
 <div id="browsedbHeader">
@@ -11,7 +12,8 @@
 </div>
 
 	[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
-	<div id="browsedbList">
+
+<div id="browsedbList">
 		[% IF coverArt %]
 			<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 		[% END %]
