@@ -1,4 +1,4 @@
-<div id="browsedbListItem" [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+<div id=[% IF item.currentsong %]"currentListItem"[% ELSE %]"browsedbListItem"[% END %] [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 		[% PROCESS trackinfo %]
 	<div id="browsedbControls" [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 		[% PROCESS playlistcontrols

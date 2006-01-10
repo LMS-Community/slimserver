@@ -283,6 +283,12 @@ div#browsedbListItem {
 	padding: 6px;
 }
 
+div#currentListItem {
+	position: relative;
+	padding: 6px;
+	border: 1px solid #000;
+}
+
 div#browsedbControls {
 	position: absolute;
 	top: 0px;
