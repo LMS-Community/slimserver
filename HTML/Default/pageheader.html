@@ -1,28 +1,26 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 	[% PROCESS standardheader.html %]
 	[% PROCESS html/common.js %]
 </head>
-<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" [% bodyscript %]>
+<body [% bodyscript %]>
 
 <div id="topGraphicBox">
-
 	<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" width="134" height="19"></a>
-
 	<div id="topGraphicMenu1">
 		<div id="largeAttribute">[% pagetitle %]</div>
-		</div>
-
-		<div id="topGraphicMenu2">
-		</div>
-
-		<div id="topGraphicMenu3">
-			<div id="statusMessage">
+	</div>
+	<div id="topGraphicMenu2">
+	</div>
+	<div id="topGraphicMenu3">
+		<div id="statusMessage">
 			[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
 			[%- PROCESS crumblist IF pwd_list %]
-			</div>
 		</div>
-
+	</div>
+</div>
 	<div id="homeMenu">
 		<div id="pageHeaderInfo">
 			[% pageHeaderInfo %]

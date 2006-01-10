@@ -1,3 +1,4 @@
+[% FILTER null %]
 [% pagetitle = "HOME" | string; noSpacer = 1; noHomeLink = 1 %]
 
 [% IF warn %]
@@ -20,33 +21,33 @@
 	</div>
 
 [% END %]	
-
+[% END -%]
 [% PROCESS pageheader.html %]
 
-<div id="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]<br></div>
+<div class="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]<br></div>
 
-<div id="homeMenuItemList">
+<div class="homeMenuItemList">
 
 	[% FOREACH link = additionalLinks.browse %]
-		&bull; <a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a><br>
+		&bull; <a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a><br>
 	[% END %]
 </div>
 
-<div id="homeMenuHeader">[% "SEARCH" | string | upper %]<br></div>
+<div class="homeMenuHeader">[% "SEARCH" | string | upper %]<br></div>
 
-<div id="homeMenuItemList">
+<div class="homeMenuItemList">
 
 	[% FOREACH key = additionalLinks.search.keys %]
-		&bull; <a href="[% additionalLinks.search.$key %]player=[% playerURI %]">[% key | string %]</a><br>
+		&bull; <a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
 	[% END %]
 </div>
 
-<div id="homeMenuHeader">[% "RADIO" | string | upper %]<br></div>
+<div class="homeMenuHeader">[% "RADIO" | string | upper %]<br></div>
 
-<div id="homeMenuItemList">
+<div class="homeMenuItemList">
 
 	[% FOREACH key = additionalLinks.radio.keys %]
-		&bull; <a href="[% additionalLinks.radio.$key %]player=[% playerURI %]">[% key | string %]</a><br>
+		&bull; <a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
 	[% END %]
 
 	&bull; <a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a><br>
@@ -54,9 +55,9 @@
 
 [% IF not nosetup %]
 	
-	<div id="homeMenuHeader">[% "SETTINGS" | string | upper %]<br></div>
+	<div class="homeMenuHeader">[% "SETTINGS" | string | upper %]<br></div>
 
-	<div id="homeMenuItemList">
+	<div class="homeMenuItemList">
 	[% IF not noserver %]
 		&bull; <a href="setup.html?page=server&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a><br>
 	[% END %]
@@ -64,7 +65,7 @@
 	[% player_list %]
 
 	[% FOREACH key = additionalLinks.settings.keys %]
-		&bull; <a href="[% additionalLinks.settings.$key %]player=[% playerURI %]">[% key | string %]</a><br>
+		&bull; <a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
 	[% END %]
 	</div>
 
@@ -72,23 +73,23 @@
 
 [% IF additionalLinks.plugins %]
 
-	<div id="homeMenuHeader">[% "PLUGINS" | string | upper %]<br></div>
+	<div class="homeMenuHeader">[% "PLUGINS" | string | upper %]<br></div>
 
-	<div id="homeMenuItemList">
+	<div class="homeMenuItemList">
 
 		[% FOREACH key = additionalLinks.plugins.keys %]
-			&bull; <a href="[% additionalLinks.plugins.$key %]player=[% playerURI %]">[% key | string %]</a><br>
+			&bull; <a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a><br>
 		[% END %]
 	</div>
 
 [% END %]
 
-<div id="homeMenuHeader">[% "HELP" | string | upper %]<br></div>
+<div class="homeMenuHeader">[% "HELP" | string | upper %]<br></div>
 
-<div id="homeMenuItemList">
+<div class="homeMenuItemList">
 
 	[% FOREACH link = additionalLinks.help %]
-		&bull; <a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a><br>
+		&bull; <a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a><br>
 	[% END %]
 </div>
 

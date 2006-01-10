@@ -1,4 +1,4 @@
-<script language="JavaScript">
+<script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
 
 function to_currentsong() {
