@@ -14,18 +14,16 @@
 	[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
 
 <div id="browsedbList">
-		[% IF coverArt %]
-			<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+	[% IF coverArt %]
+		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+	[% END %]
+	[% IF browse_items %]
+		[% FOREACH item = browse_items %]
+			[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+			[% ELSE; PROCESS browsedbitems_list.html; END %]
 		[% END %]
-	
-		[% IF browse_items %]
-			[% FOREACH item = browse_items %]
-				[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
-				[% ELSE; PROCESS browsedbitems_list.html; END %]
-			[% END %]
-		[% ELSE; browse_list; END %]
-	</div>
-	[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
-
+	[% ELSE; browse_list; END %]
+</div>
+[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
 
 [% PROCESS pagefooter.html %]

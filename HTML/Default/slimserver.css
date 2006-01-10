@@ -346,3 +346,33 @@ div#playList #pageHeaderInfo {
 	position: relative;
 	margin-left:10px;
 }
+
+div#artwork {
+	padding: 0px;
+	overflow: hidden;
+}
+
+div#artwork img {
+	padding: 0px;
+	margin: 0px;
+}
+
+div#browsedbArtItem {
+	align: left;
+	width: 50px;
+	overflow: hidden;
+	float:left;
+	margin:0px;
+}
+
+div#browsedbArtItem #artworkControls {
+	position: relative;
+	top: 0px;
+	right: 0px;
+}
+
+div#artworkControls img {
+	margin-left: 6px;
+	margin-top: 0px;
+	padding-top: 6px;
+}
