@@ -6,6 +6,7 @@ body, table, input, select, textarea, select, p, li {
 
 body {
 	margin: 0;
+	padding: 0;
 }
 
 .exlisting, p, ol, ul, dl, dd, td, .stdclick, .stdedit, .exboldlisting, th, h5 {
@@ -148,6 +149,7 @@ img {
 
 div#topGraphicBox {
 	background: url(html/images/topbar.gif) repeat-x top left;
+	margin: 0;
 }
 
 div#topGraphicMenu1 {
