@@ -59,7 +59,7 @@ sub fetchGainMode {
 	}
 
 	# Mode 3 is determine dynamically whether to use album or track
-	if ($album->replay_gain() && ($class->trackAlbumMatch($ds, $client, -1) || $class->trackAlbumMatch($ds, $client, 1))) {
+	if (defined $album->replay_gain() && ($class->trackAlbumMatch($ds, $client, -1) || $class->trackAlbumMatch($ds, $client, 1))) {
 
 		return $album->replay_gain();
 	}
