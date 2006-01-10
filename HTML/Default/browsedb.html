@@ -3,40 +3,27 @@
 [% END; END %]  
 [% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %] [% PROCESS pageheader.html %]
 
-<tr height="100%">
-	<td width="4" height="100%"></td>
-	<td height="100%">
-		[% IF browseby != 'BROWSE_BY_ARTWORK' %]
-			[% IF browselist_header %][% browselist_header %][% END %]
+<div id="browsedbHeader">
+	[% IF browseby != 'BROWSE_BY_ARTWORK' %]
+		[% IF browselist_header %][% browselist_header %][% END %]
+	[% END %]
+	[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
+</div>
+
+	[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
+	<div id="browsedbList">
+		[% IF coverArt %]
+			<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 		[% END %]
-		[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
 	
-		<table cellspacing="0" width=100% >
-			<tr valign=middle height="24">
-				<td class="exlisting">[% IF browselist_pagebar %]<div style="margin-left:5px; margin-top:5px;">[% browselist_pagebar %]</div>[% END %]</td>
-			</tr>
-			<tr>
-				<td>
-					[% IF coverArt %]
-						<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
-					[% END %]
-				
-					[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellspacing="0" cellpadding="4" width="100%">[% END %]
-					[% IF browse_items %]
-						[% FOREACH item = browse_items %]
-							[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
-							[% ELSE; PROCESS browsedbitems_list.html; END %]
-						[% END %]
-					[% ELSE; browse_list; END %]
-					[% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
-				</td>
-			</tr>
-			<tr valign=middle height="27" >
-				<td class="exlisting" valign=middle>[% IF browselist_pagebar %]<p><div style="margin-left:5px; margin-top:5px;">[% browselist_pagebar %]</div>[% END %]</td>
-			</tr>
-			
-		</table>
-	</td>
-	<td width="4" height="100%"></td>
-</tr>
+		[% IF browse_items %]
+			[% FOREACH item = browse_items %]
+				[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+				[% ELSE; PROCESS browsedbitems_list.html; END %]
+			[% END %]
+		[% ELSE; browse_list; END %]
+	</div>
+	[% IF browselist_pagebar %]<div id="pagebar">[% browselist_pagebar %]</div>[% END %]
+
+
 [% PROCESS pagefooter.html %]

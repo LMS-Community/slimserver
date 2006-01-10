@@ -7,67 +7,28 @@
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="javascript:to_currentsong()">
 
-<table cellspacing="0" width=100% >
+<div id="playList">
 	[% IF playercount == '0' %]
-	<tr height="10"><td colspan="10"></tr>
 	[% ELSE %]
-	<tr height="23">
-		<td colspan=2></td>
-		<td class="exlisting" valign=middle height="23" colspan=4 nowrap><table cellspacing="0" width="100%">
-			<tr><td><img alt="The current playlist:" src="html/images/nav_currentplaylist.gif" alt=""  height="13">[% IF cansave %][% PROCESS savePlaylistLink img='<img src="html/images/nav_save.gif" alt="Save" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% END %][% PROCESS downloadPlaylistLink img='<img src="html/images/nav_download.gif" alt="Download" height="13">' %]<img src="html/images/nav_spacer_dark.gif" alt="" width="1" height="13">[% PROCESS clearPlaylistLink img='<img src="html/images/nav_clear.gif" alt="Clear" height="13">' %]</td>
-				<td align=right valign=middle>[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]</td>
-			</tr>
-			</table>
-		<td colspan=4></td>
-	</tr>
+	<div id="pageHeaderInfo">
+		<div id="attributeBold">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]</div>[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %][% END %][% PROCESS downloadPlaylistLink %][% PROCESS clearPlaylistLink %]
+		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+	</div>
 	[% END %]
-	<tr>
-		<td width="4"></td>
-		<td width="8"></td>
-		<td class="exlisting" valign=top><img src="html/images/spacer.gif" alt="" width="1" height="1"></td>
-		<td valign=top width="13"></td>
-		<td valign=top width="13"></td>
-		<td valign=top width="13"></td>
-		<td width="8"></td>
-	</tr>
-	[% IF playlist_pagebar %]<tr height="23">
-		<td width="4" height="21"></td>		
-		<td width="8" height="21"></td>
-		<td class="exlisting" valign=middle height="21"><img src="html/images/nav_pages.gif" alt="" width="38" height="13" align="top"><img src="html/images/spacer.gif" alt="" width="4" height="9" align="top">[% playlist_pagebar %]<img src="html/images/spacer.gif" alt="" width="8" height="9" align="top"><img src="html/images/spacer.gif" alt="" width="6" height="10" align="top"></td>
-		<td valign=top width="13" height="21"></td>
-		<td valign=top width="13" height="21"></td>
-		<td valign=top width="13" height="21"></td>
-		<td width="8" height="21"></td>
-	</tr>[% END %]
-	[% IF playercount == '0' %]
-		<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "NO_PLAYER_DETAILS" | string %]</p></td></tr>
-	[% ELSE %]
-		[% IF playlist_items %]
-			[% FOREACH item = playlist_items %]
-				[% PROCESS status_list.html %]
-			[% END %]
-		[% ELSE %]<tr><td width="4"></td><td width="8"></td><td colspan=8><p>[% "EMPTY" | string %]<a name="currentsong"></a></p></td></tr>[% END %]
-	[% END %]
-	<tr>
-		<td width="4"></td>
-		<td width="8"></td>
-		<td class="exlisting" valign=top><img src="html/images/spacer.gif" alt="" width="1" height="1"></td>
-		<td valign=top width="13"></td>
-		<td valign=top width="13"></td>
-		<td valign=top width="13"></td>
-		<td width="8"></td>
-	</tr>
-	[% IF playlist_pagebar %]<tr height="23">
-		<td width="4" height="23"></td>
-		<td width="8" height="23"></td>
-		
-	    <td class="exlisting" valign=middle height="23"><img src="html/images/nav_pages.gif" alt="" width="38" height="13" align="top"><img src="html/images/spacer.gif" alt="" width="4" height="9" align="top">[% playlist_pagebar %]<img src="html/images/spacer.gif" alt="" width="8" height="9" align="top"><img src="html/images/spacer.gif" alt="" width="6" height="10" align="top"></td>
-		<td valign=top width="13" height="23"></td>
-		<td valign=top width="13" height="23"></td>
-		<td valign=top width="13" height="23"></td>
-		<td width="8" height="23"></td>
-	</tr>[% END %]
+	[% IF playlist_pagebar %]<div id="pagebar">[% playlist_pagebar %]</div>[% END %]
+	<div id="browsedbList">
+		[% IF playercount == '0' %]
+			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+		[% ELSE %]
+			[% IF playlist_items %]
+				[% FOREACH item = playlist_items %]
+					[% PROCESS status_list.html %]
+				[% END %]
+			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
+		[% END %]
+	</div>
+	[% IF playlist_pagebar %]<div id="pagebar">[% playlist_pagebar %]</div>[% END %]
 
-</table>
-	</body>
+</div>
+</body>
 </html>

@@ -124,11 +124,9 @@ table, td, tr, form {
 }
 
 .odd {
-	padding: 4px;
 }
 
 .even {
-	padding: 4px;
 	background-color: #ffffff;
 }
 
@@ -278,4 +276,72 @@ div#homeMenuItemList {
 	padding-top: 8px;
 	padding-bottom: 8px;
 	margin-left: 14px;
+}
+
+div#browsedbListItem {
+	position: relative;
+	padding: 6px;
+}
+
+div#browsedbControls {
+	position: absolute;
+	top: 0px;
+	right: 10px;
+	padding: 6 0 0 6;
+}
+
+div#browsedbControls img {
+	margin-left: 3px;
+}
+
+div#homeMenu #browsedbList {
+	position: relative;
+	padding: 8 6 0 6;
+}
+
+div#homeMenu #browsedbHeader {
+	position: relative;
+	padding: 8 6 0 6;
+}
+
+div#homeMenu #pagebar {
+	position: relative;
+	margin-left:10px;
+	margin-top:5px;
+}
+
+div#homeMenu #pageHeaderInfo {
+	position: relative;
+	margin-left:10px;
+}
+
+div#playList {
+	background-color: #ffffff;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 4px;
+	top: 5px;
+	margin-right: 4px;
+}
+
+div#playList #browsedbList {
+	position: relative;
+	padding: 8 6 0 6;
+}
+
+div#playList #browsedbHeader {
+	position: relative;
+	padding: 8 6 0 6;
+}
+
+div#playList #pagebar {
+	position: relative;
+	margin-left:10px;
+	margin-top:5px;
+}
+
+div#playList #pageHeaderInfo {
+	position: relative;
+	margin-left:10px;
 }

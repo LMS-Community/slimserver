@@ -1,19 +1,8 @@
-<tr>
-	[% IF item.odd; SET class = "odd"; ELSE; SET class = "even"; END %]
-
-	<td width="4" height=21>
-		&nbsp;
-	</td>
-	<td class="[% class %]" width="8">
-		&nbsp;
-	</td>
-	<td valign="center" class="[% class %]">
+<div id="browsedbListItem" [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 		[% PROCESS trackinfo %]
-	</td>
-
-	[% PROCESS playlistcontrols
-				num = item.num
-				useStart = 1 %]
-
-	<td width="8"></td>
-</tr>
+	<div id="browsedbControls" [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+		[% PROCESS playlistcontrols
+		num = item.num
+		useStart = 1 %]
+	</div>
+</div>
