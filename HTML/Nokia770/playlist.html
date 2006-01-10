@@ -38,8 +38,8 @@
 	</tr>
 </table>
 
-<table cellspacing="0" border="0" cellpadding="0" width="100%"><font class="itemtext">
-       [% IF not playlist_items %][% "EMPTY" | string %][% END %]
+<table bgcolor = 'white' cellspacing="0" border="0" cellpadding="0" width="100%">
+       [% IF not playlist_items %]<tr><td class = 'itemtext'>[% "EMPTY" | string %]</td></tr>[% END %]
        [%- statusroot_old = statusroot; statusroot = 'playlist.html'; -%]
        [% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
        [%- statusroot = statusroot_old -%]
