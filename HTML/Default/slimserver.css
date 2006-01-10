@@ -293,11 +293,12 @@ div#browsedbControls {
 	position: absolute;
 	top: 0px;
 	right: 10px;
-	padding: 6 0 0 6;
 }
 
 div#browsedbControls img {
 	margin-left: 3px;
+	margin-top: 0px;
+	padding-top: 6px;
 }
 
 div#homeMenu #browsedbList {
@@ -305,12 +306,12 @@ div#homeMenu #browsedbList {
 	padding: 8 6 0 6;
 }
 
-div#homeMenu #browsedbHeader {
+div#browsedbHeader {
 	position: relative;
 	padding: 8 6 0 6;
 }
 
-div#homeMenu #pagebar {
+div#pagebar {
 	position: relative;
 	margin-left:10px;
 	margin-top:5px;
@@ -339,12 +340,6 @@ div#playList #browsedbList {
 div#playList #browsedbHeader {
 	position: relative;
 	padding: 8 6 0 6;
-}
-
-div#playList #pagebar {
-	position: relative;
-	margin-left:10px;
-	margin-top:5px;
 }
 
 div#playList #pageHeaderInfo {
