@@ -254,7 +254,7 @@ div#homeMenu {
 	position: relative;
 	height: auto;
 	width: auto;
-	margin-left: 4px;
+	margin-left: 8px;
 	margin-top: 20px;
 	margin-right: 4px;
 }
@@ -263,7 +263,6 @@ div#homeMenu {
 	/* home menu list header */
 	background-color: #ececec;
 	height: 13px;
-	margin-left: 4px;
 	padding: 8px 6px 4px;
 	font-weight: bold;
 }
@@ -275,48 +274,42 @@ div#homeMenu {
 	margin: 8px 28px;
 }
 
-div#browsedbListItem {
+.browsedbListItem {
 	position: relative;
 	padding: 6px;
 }
 
-div#currentListItem {
+.currentListItem {
 	position: relative;
 	padding: 6px;
 	border: 1px solid #000;
 }
 
-div#browsedbControls {
+.browsedbControls {
 	position: absolute;
 	top: 0px;
+	padding-top: 6px;
 	right: 10px;
 }
 
-div#browsedbControls img {
-	margin-left: 3px;
-	margin-top: 0px;
-	padding-top: 6px;
-}
-
-div#homeMenu #browsedbList {
+div#browsedbList {
 	position: relative;
-	padding: 8 6 0 6;
+	width: auto;
+	height: auto;
 }
 
 div#browsedbHeader {
-	position: relative;
-	padding: 8 6 0 6;
+	margin-left:0px;
 }
 
-div#pagebar {
+.pagebar {
 	position: relative;
-	margin-left:10px;
+	margin-left:2px;
 	margin-top:5px;
 }
 
-div#homeMenu #pageHeaderInfo {
-	position: relative;
-	margin-left:10px;
+#pageHeaderInfo {
+	margin-left:2px;
 }
 
 div#playList {
@@ -324,52 +317,28 @@ div#playList {
 	position: relative;
 	height: auto;
 	width: auto;
-	margin-left: 4px;
+	margin-left: 8px;
 	top: 5px;
 	margin-right: 4px;
 }
 
-div#playList #browsedbList {
+.browsedbArtItem {
 	position: relative;
-	padding: 8 6 0 6;
-}
-
-div#playList #browsedbHeader {
-	position: relative;
-	padding: 8 6 0 6;
-}
-
-div#playList #pageHeaderInfo {
-	position: relative;
-	margin-left:10px;
-}
-
-div#artwork {
-	padding: 0px;
-	overflow: hidden;
-}
-
-div#artwork img {
-	padding: 0px;
-	margin: 0px;
-}
-
-div#browsedbArtItem {
-	align: left;
-	width: 50px;
-	overflow: hidden;
 	float:left;
 	margin:0px;
+	padding: 6px;
 }
 
-div#browsedbArtItem #artworkControls {
-	position: relative;
-	top: 0px;
-	right: 0px;
+.thumbnail {
+	padding: 0px;
+	text-align: center;
 }
 
-div#artworkControls img {
-	margin-left: 6px;
-	margin-top: 0px;
+.artworkControls {
+	padding: 0px;
+}
+
+.artworkControls img {
+	margin-left: 5px;
 	padding-top: 6px;
 }

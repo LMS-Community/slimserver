@@ -17,8 +17,8 @@
 		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 	</div>
 	[% END %]
-	[% IF playlist_pagebar %]<div id="pagebar">[% playlist_pagebar %]</div>[% END %]
-	<div id="browsedbList">
+	[% IF playlist_pagebar %]<div class="pagebar">[% playlist_pagebar %]</div>[% END %]
+	<div class="browsedbList">
 		[% IF playercount == '0' %]
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 		[% ELSE %]
@@ -29,7 +29,7 @@
 			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
 		[% END %]
 	</div>
-	[% IF playlist_pagebar %]<div id="pagebar">[% playlist_pagebar %]</div>[% END %]
+	[% IF playlist_pagebar %]<div class="pagebar">[% playlist_pagebar %]</div>[% END %]
 
 </div>
 </body>

@@ -2,7 +2,7 @@
 [% statusroot = 'status_header.html' %]
 
 [% BLOCK cmdlink %]
-	<nobr><a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a></nobr>
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
 [% END %]
 
 [% BLOCK playlink %]
@@ -18,7 +18,7 @@
 [% END %]
 
 [% BLOCK descendlink %]
-	<nobr><a [% content %]><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a></nobr>
+	<a [% content %]><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a>
 [% END %]
 
 [% BLOCK insertlink %]

@@ -135,12 +135,12 @@ href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&am
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]
-	href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
+	href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the browsetree page for item %]
 [% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is a generic href for item, or the item itself if no href present %]
