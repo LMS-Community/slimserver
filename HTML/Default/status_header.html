@@ -29,7 +29,7 @@
 
 <div id="topGraphicBox">
 
-	<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" width="134" height="19"></a>
+	<div id="player_logo"><a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" alt="[% playermodel %]" width="134" height="19"></a></div>
 	[% IF player_chooser_list %]
 	<div id="playerChooser">
 		<form style="text-align:right; vertical-align:middle;" method="GET" action="[% webroot %]index.html" target="_top">
@@ -40,13 +40,14 @@
 	</div>
 	[% END %]
 	<div id="topGraphicMenu1">
-		<div class="largeAttribute">[% "SQUEEZEBOX_MUSIC_PLAYER" | string %]</div>
+		<div class="largeAttribute">[% "MUSIC_PLAYER" | string %]</div>
 
 		[% IF isplayer %]
 		<div id="powerButtons">
 			<div class="attributeBold">[% "POWER" | string | upper %]:</div>
 
 			[% PROCESS statusLink p0 = 'power' p1 = 1 linkString = 'ON'  divID = mode == 'on'  ? 'valueSelected' : 'valueBold' %]
+			<span class="bar">|</bar>
 			[% PROCESS statusLink p0 = 'power' p1 = 0 linkString = 'OFF' divID = mode == 'off' ? 'valueSelected' : 'valueBold' %]
 		</div>
 		[% END %]
@@ -54,9 +55,11 @@
 		<div id="transportButtons">
 
 			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = '%2b1' linkString = 'SKIP' divID = 'valueBold' %]
-
+			<span class="bar">|</bar>
 			[% PROCESS statusLink p0 = 'play'  linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
+			<span class="bar">|</bar>
 			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
+			<span class="bar">|</bar>
 			[% PROCESS statusLink p0 = 'stop'  linkString = 'STOP'  divID = modestop  ? 'valueSelected' : 'valueBold' %]
 		</div>
 
@@ -100,6 +103,7 @@
 					link       = ''
 					divID      = $repeatType ? 'valueSelected' : 'valueBold'
 				%]
+				[% IF index < 2 %]<span class="bar">|</bar>[% END %]
 
 			[% END %]
 		</div>
@@ -122,14 +126,14 @@
 					link       = ''
 					divID      = $shuffleType ? 'valueSelected' : 'valueBold'
 				%]
-
+				[% IF index < 2 %]<span class="bar">|</bar>[% END %]
+ 
 			[% END %]
 		</div>
 	</div>
 
 	<div id="topGraphicMenu3">
 		<div id="playingStatus">
-			<div class="attributeBold">
 				[% IF playercount == 0 || modestop %]
 
 					[% "STOPPED" | string | upper %]
@@ -139,10 +143,9 @@
 					[% "NOW_PLAYING" | string | upper %]
 
 				[% END %]
-			</div>
 		</div>
 
-		<div id="statusMessage">
+		<div id="playingSong">
 			[% IF player_needs_upgrade %]
 
 				[% "PLAYER_NEEDS_UPGRADE" | string %]

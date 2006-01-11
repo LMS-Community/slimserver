@@ -1,5 +1,5 @@
 body, table, input, select, textarea, select, p, li {
-	color: #444;
+	color: #333;
 	font-size: 10px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
@@ -14,17 +14,16 @@ body {
 }
 
 a {
-	color: #111;
-	text-decoration:none;
+	color: #333;
+	text-decoration: none;
 }
 
 a:active {
-	color: #000;
+	color: #555;
 }
 
 a:hover {
-	color: #111;
-	text-decoration:underline;
+	text-decoration: underline;
 }
 
 .statusarea {
@@ -39,7 +38,7 @@ a:hover {
 	font-weight: bold;
 }
 
-.attributeBold {
+.attributeBold, #playingStatus, #currentPlaylistLabel, #currentPlaylistCommands, .pagebar, .valueBold, .valueSelected, .bar {
 	color: #000000;
 	font-weight: bold;
 	font-style: normal;
@@ -47,19 +46,26 @@ a:hover {
 	font-size: 9px;
 	font-stretch: ultra-condensed;
 	text-decoration: none;
-	margin-left: 5px;
+	text-transform: uppercase;
+}
+
+.attributeBold, #playingStatus, #currentPlaylistLabel, #currentPlaylistCommands {
+	margin-left: 0px;
 	display: inline;
 	white-space: nowrap;
 }
 
-.valueBold {
-	color: #ececec;
-	font-weight: bold;
-	font-style: normal;
-	font-family: Verdana, Helvetica, sans-serif;
-	font-size: 9px;
-	font-stretch: ultra-condensed;
-	text-decoration: none;
+#currentPlaylistLabel, #currentPlaylistCommands {
+	position: relative;
+	left: 9px;
+}
+
+.homeMenuHeader, #playingStatus, #currentPlaylistLabel {
+	color: #737373;
+}
+
+.valueBold, .valueSelected, .bar {
+	color: #c5c5c5;
 	padding-right: 2.5px;
 	display: inline;
 	white-space: nowrap;
@@ -67,26 +73,21 @@ a:hover {
 
 .valueSelected {
 	color: #ff7f00;
-	font-weight: bold;
-	font-style: normal;
-	font-family: Verdana, Helvetica, sans-serif;
-	font-size: 9px;
-	font-stretch: ultra-condensed;
-	text-decoration: none;
-	padding-right: 2.5px;
-	display: inline;
-	white-space: nowrap;
+}
+
+.bar {
+	font-weight: normal;
 }
 
 .largeAttribute {
-	color: #ececec;
+	color: #c5c5c5;
 	font-weight: normal;
 	font-style: normal;
 	font-family: Verdana, Helvetica, sans-serif;
 	text-decoration: none;
 	display: inline;
 	white-space: nowrap;
-	font-size: 18px;
+	font-size: 17px;
 	position: absolute;
 	left: 4px;
 	width: 40px;
@@ -149,43 +150,56 @@ img {
 
 div#topGraphicBox {
 	background: url(html/images/topbar.gif) repeat-x top left;
+	width: 100%;
+}
+
+div#player_logo  {
+	position: absolute;
+	left: 5px;
+	top: -1px;
+}  
+
+div#sdi_logo {
+	position: absolute;
+	left: 6px;
+	top: 0px;
 }
 
 div#topGraphicMenu1 {
 	background-color: #737373;
 	position: relative;
+	top: 36px;
 	height: 60px;
 	width: auto;
 	margin-left: 8px;
-	margin-right: 4px;
+	margin-right: 8px;
 	border-bottom: 1px #9D9D9D solid;
-	top: 15px;
 }
 
 div#topGraphicMenu2 {
 	background-color: #737373;
 	position: relative;
-	height: 20px;
+	top: 36px;
+	height: 19px;
 	width: auto;
+	margin-right: 8px;
 	margin-left: 8px;
-	top: 15px;
-	margin-right: 4px;
 }
 
 div#topGraphicMenu3 {
 	background-color: #c5c5c5;
 	position: relative;
-	height: 40px;
+	top: 36px;
+	height: 44px;
 	width: auto;
+	margin-right: 8px;
 	margin-left: 8px;
-	top: 15px;
-	margin-right: 4px;
 }
 
 div#topGraphicMenu1 .largeAttribute {
 	position: absolute;
 	top: 5px;
-	left: 5px;
+	left: 7px;
 }
 
 div#topGraphicBox img {
@@ -195,6 +209,7 @@ div#topGraphicBox img {
 
 div#topGraphicBox #playerChooser {
 	position: absolute;
+	float: left;
 	right: 20px;
 	top: 10px;
 }
@@ -203,30 +218,35 @@ div#topGraphicMenu1 #powerButtons {
 	position: absolute;
 	right: 10px;
 	top: 20px;
+	white-space: nowrap;
 }
 
 div#topGraphicMenu1 #transportButtons {
 	left: 10px;
 	position: absolute;
 	top: 40px;
+	white-space: nowrap;
 }
 
 div#topGraphicMenu1 #volumeButtons {
 	position: absolute;
 	right: 10px;
 	top: 40px;
+	white-space: nowrap;
 }
 
 div#topGraphicMenu2 #repeatButtons {
 	position: absolute;
 	left: 5px;
 	top: 3px;
+	white-space: nowrap;
 }
 
 div#topGraphicMenu2 #shuffleButtons {
 	position: absolute;
 	right: 10px;
 	top: 3px;
+	white-space: nowrap;
 }
 
 div#topGraphicMenu3 #playingStatus {
@@ -235,12 +255,19 @@ div#topGraphicMenu3 #playingStatus {
 	top: 5px;
 }
 
+div#topGraphicMenu3 #playingSong {
+	position: absolute;
+	left: 14px;
+	top: 22px;
+	color: #111;
+	font-weight: bold;	
+}
+
 div#topGraphicMenu3 #statusMessage {
 	position: absolute;
-	left: 10px;
-	top: 18px;
+	left: 7px;
+	top: 6px;
 	color: #111;
-	font-weight: bold;
 }
 
 div#topGraphicMenu3 #statusSongRemoveButton {
@@ -255,7 +282,7 @@ div#homeMenu {
 	height: auto;
 	width: auto;
 	margin-left: 8px;
-	margin-top: 20px;
+	top: 41px;
 	margin-right: 4px;
 }
 
@@ -263,8 +290,10 @@ div#homeMenu {
 	/* home menu list header */
 	background-color: #ececec;
 	height: 13px;
+	margin-right: 4px;
 	padding: 8px 6px 4px;
 	font-weight: bold;
+	font-size: 9px;
 }
 
 .homeMenuSection ul {
@@ -282,7 +311,7 @@ div#homeMenu {
 .currentListItem {
 	position: relative;
 	padding: 6px;
-	border: 1px solid #000;
+	border: 1px solid #888;
 }
 
 .browsedbControls {
@@ -312,6 +341,7 @@ div#browsedbHeader {
 
 #pageHeaderInfo {
 	margin-left:2px;
+	float: left;
 }
 
 div#playList {
@@ -319,8 +349,8 @@ div#playList {
 	position: relative;
 	height: auto;
 	width: auto;
-	margin-left: 8px;
-	top: 5px;
+	left: 4px;
+	margin-left: 4px;
 	margin-right: 4px;
 }
 
@@ -329,6 +359,11 @@ div#playList {
 	float:left;
 	margin:0px;
 	padding: 6px;
+}
+
+div#playList #browsedbHeader {
+	position: relative;
+	padding: 8 6 0 6;
 }
 
 .thumbnail {

@@ -12,10 +12,10 @@
 <div id="playList">
 	[% IF playercount == '0' %]
 	[% ELSE %]
-	<div id="pageHeaderInfo">
-		<div id="attributeBold">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]</div>[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %][% END %][% PROCESS downloadPlaylistLink %][% PROCESS clearPlaylistLink %]
+		<div id="currentPlaylistLabel">
+		[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</bar> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</bar> [% PROCESS clearPlaylistLink %]
 		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
-	</div>
+		</span></div>
 	[% END %]
 	[% IF playlist_pagebar %]<div class="pagebar">[% playlist_pagebar %]</div>[% END %]
 	<div class="browsedbList">
