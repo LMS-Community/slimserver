@@ -39,7 +39,7 @@ a:hover {
 	font-weight: bold;
 }
 
-#attributeBold {
+.attributeBold {
 	color: #000000;
 	font-weight: bold;
 	font-style: normal;
@@ -52,7 +52,7 @@ a:hover {
 	white-space: nowrap;
 }
 
-#valueBold {
+.valueBold {
 	color: #ececec;
 	font-weight: bold;
 	font-style: normal;
@@ -65,7 +65,7 @@ a:hover {
 	white-space: nowrap;
 }
 
-#valueSelected {
+.valueSelected {
 	color: #ff7f00;
 	font-weight: bold;
 	font-style: normal;
@@ -78,7 +78,7 @@ a:hover {
 	white-space: nowrap;
 }
 
-#largeAttribute {
+.largeAttribute {
 	color: #ececec;
 	font-weight: normal;
 	font-style: normal;
@@ -182,7 +182,7 @@ div#topGraphicMenu3 {
 	margin-right: 4px;
 }
 
-div#topGraphicMenu1 #largeAttribute {
+div#topGraphicMenu1 .largeAttribute {
 	position: absolute;
 	top: 5px;
 	left: 5px;
