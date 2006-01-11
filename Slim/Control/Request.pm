@@ -624,7 +624,7 @@ sub renderAsArray {
 	
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
-		$val = Slim::Utils::Unicode::utf8encode($val, $encoding) if defined $encoding;
+		$val = Encode::encode($encoding, $val) if $encoding;
     	if ($key =~ /^__/) {
     		# no output
     	} elsif ($key =~ /^_/) {
@@ -636,12 +636,12 @@ sub renderAsArray {
  	
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
-		$val = Slim::Utils::Unicode::utf8encode($val, $encoding) if defined $encoding;
+		$val = Encode::encode($encoding, $val) if $encoding;
     	if ($key =~ /^@/) {
     		# loop over each elements
     		foreach my $hash (@{${$self->{'_results'}}{$key}}) {
 				while (my ($key2, $val2) = each %{$hash}) {
-					$val2 = Slim::Utils::Unicode::utf8encode($val2, $encoding) if defined $encoding;
+					$val2 = Encode::encode($encoding, $val2) if $encoding;
 					if ($key2 =~ /^__/) {
 						# no output
 					} elsif ($key2 =~ /^_/) {

@@ -536,13 +536,13 @@ sub cli_request_write {
 	
 	$d_cli_vv && msg("CLI: cli_request_write()\n");
 
-	my $encoding = $request->getParam('charset');
+	my $encoding = $request->getParam('charset') || 'utf8';
 	my @elements = $request->renderAsArray($encoding);
 	my $client   = $request->client();
 	
 	unshift @elements, $client->id() if defined $client;
 	
-	map { $_ = URI::Escape::uri_escape_utf8($_) } @elements;
+	map { $_ = URI::Escape::uri_escape($_) } @elements;
 		
 	my $output = join " ",  @elements;
 	$::d_cli && msg("CLI: Sending: " . $output . "\n");
