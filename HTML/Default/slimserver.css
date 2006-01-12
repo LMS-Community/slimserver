@@ -66,7 +66,8 @@ a:hover {
 
 .valueBold, .valueSelected, .bar {
 	color: #c5c5c5;
-	padding-right: 2.5px;
+	padding-right: 1.25px;
+	padding-left: 1.25px;
 	display: inline;
 	white-space: nowrap;
 }
@@ -237,7 +238,7 @@ div#topGraphicMenu1 #volumeButtons {
 
 div#topGraphicMenu2 #repeatButtons {
 	position: absolute;
-	left: 5px;
+	left: 10px;
 	top: 3px;
 	white-space: nowrap;
 }
@@ -283,14 +284,13 @@ div#homeMenu {
 	width: auto;
 	margin-left: 8px;
 	top: 41px;
-	margin-right: 4px;
+	margin-right: 8px;
 }
 
 .homeMenuSection div {
 	/* home menu list header */
 	background-color: #ececec;
 	height: 13px;
-	margin-right: 4px;
 	padding: 8px 6px 4px;
 	font-weight: bold;
 	font-size: 9px;
@@ -301,6 +301,35 @@ div#homeMenu {
 	background-color: #ffffff;
 	padding: 0;
 	margin: 8px 28px;
+}
+
+.songInfo ul {
+	/* the list of home menu items */
+	background-color: #ffffff;
+	padding: 0;
+	list-style: none;
+	margin: 8px;
+}
+
+.songInfo li {
+	position: relative;
+	padding-top: 10px;
+	clear: left;
+	list-style-position: inside;
+}
+
+.songInfoTitle {
+	float: left;
+	right: 0px;
+	padding: 0;
+	width:25%;
+}
+
+.songInfoText {
+	right: 0px;
+	padding: 0;
+	width: 75%;
+	margin-left: 25%;
 }
 
 .browsedbListItem {
@@ -323,12 +352,18 @@ div#homeMenu {
 
 div#browsedbList {
 	position: relative;
+	clear: left;
 	width: auto;
 	height: auto;
 }
 
 div#browsedbHeader {
 	margin-left:0px;
+}
+
+div#songInfoHeader a{
+	margin-left:5px;
+	padding: 5px;
 }
 
 .pagebar {
@@ -349,9 +384,8 @@ div#playList {
 	position: relative;
 	height: auto;
 	width: auto;
-	left: 4px;
-	margin-left: 4px;
-	margin-right: 4px;
+	margin-left: 8px;
+	margin-right: 8px;
 }
 
 .browsedbArtItem {
@@ -363,7 +397,6 @@ div#playList {
 
 div#playList #browsedbHeader {
 	position: relative;
-	padding: 8 6 0 6;
 }
 
 .thumbnail {
@@ -378,4 +411,24 @@ div#playList #browsedbHeader {
 .artworkControls img {
 	margin-left: 5px;
 	padding-top: 6px;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+	padding-left: 4px;
+	padding-right: 0px;
+	padding-top: 10px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+	padding-right: 6px;
+}
+
+.thumbwrap a span {
+	display: block;
+	overflow: hidden;
 }
