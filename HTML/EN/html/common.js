@@ -10,15 +10,19 @@ function to_currentsong() {
 [% IF refresh %]function doLoad() {
 
 	setTimeout( "refresh()", [% refresh %]*1000);
-
-	if (parent.playlist.location.host != '') {
-		// Putting a time-dependant string in the URL seems to be the only way to make Safari
-		// refresh properly. Stitching it together as below is needed to put the salt before
-		// the hash (#currentsong).
-		var plloc = top.frames.playlist.location;
-		var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-			+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
-		plloc.replace(newloc);
+	try {
+		if (parent.playlist.location.host != '') {
+			// Putting a time-dependant string in the URL seems to be the only way to make Safari
+			// refresh properly. Stitching it together as below is needed to put the salt before
+			// the hash (#currentsong).
+			var plloc = top.frames.playlist.location;
+			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
+				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+			plloc.replace(newloc);
+		}
+	}
+	catch (err) {
+		// first load can fail, so swallow that initial exception.
 	}
 }
 

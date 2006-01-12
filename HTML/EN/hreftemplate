@@ -155,4 +155,11 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
+[%# img tag for album thumbnail in browse artwork context %]
+[% BLOCK dummyItemImg -%]
+	[%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
+	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
+[%- END %]
+
 [% END -%]
