@@ -1,5 +1,5 @@
 <div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %]>
-	<div class=[% IF item.currentsong %]"currentListItem"[% ELSE %]"browsedbListItem"[% END %]>
+	<div class="browsedbListItem"[% IF item.currentsong %]id="currentListItem"[% END %]>
 		[% PROCESS trackinfo %]
 		<div class="browsedbControls">
 			[% PROCESS playlistcontrols

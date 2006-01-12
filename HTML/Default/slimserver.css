@@ -60,7 +60,7 @@ a:hover {
 	left: 9px;
 }
 
-.homeMenuHeader, #playingStatus, #currentPlaylistLabel {
+.homeMenuSection div, #playingStatus, #currentPlaylistLabel {
 	color: #737373;
 }
 
@@ -304,7 +304,7 @@ div#homeMenu {
 }
 
 .songInfo ul {
-	/* the list of home menu items */
+	/* the list of song info items */
 	background-color: #ffffff;
 	padding: 0;
 	list-style: none;
@@ -335,18 +335,16 @@ div#homeMenu {
 .browsedbListItem {
 	position: relative;
 	padding: 6px;
+	padding-right: 65px;
 }
 
-.currentListItem {
-	position: relative;
-	padding: 6px;
+#currentListItem {
 	border: 1px solid #888;
 }
 
 .browsedbControls {
 	position: absolute;
-	top: 0px;
-	padding-top: 6px;
+	top: 6px;
 	right: 10px;
 }
 

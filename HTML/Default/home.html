@@ -25,7 +25,7 @@
 [% PROCESS pageheader.html %]
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]</div>
+	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.browse %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
@@ -34,7 +34,7 @@
 </div>
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "SEARCH" | string | upper %]</div>
+	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
 	[%- FOREACH key = additionalLinks.search.keys %]
 		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
@@ -43,7 +43,7 @@
 </div>
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "RADIO" | string | upper %]</div>
+	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
 	[%- FOREACH key = additionalLinks.radio.keys %]
 		<li><a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
@@ -54,7 +54,7 @@
 
 [% IF not nosetup %]
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "SETTINGS" | string | upper %]</div>
+	<div>[% "SETTINGS" | string | upper %]</div>
 	<ul>
 	[%- IF not noserver %]
 		<li><a href="setup.html?page=server&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
@@ -73,7 +73,7 @@
 
 [% IF additionalLinks.plugins %]
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "PLUGINS" | string | upper %]</div>
+	<div>[% "PLUGINS" | string | upper %]</div>
 	<ul>
 		[%- FOREACH key = additionalLinks.plugins.keys %]
 			<li><a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
@@ -83,7 +83,7 @@
 [% END %]
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "HELP" | string | upper %]</div>
+	<div>[% "HELP" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.help %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
