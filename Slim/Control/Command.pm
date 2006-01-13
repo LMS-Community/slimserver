@@ -49,7 +49,7 @@ sub execute {
 	# Try and go through dispatch
 
 	# create a request from the array
-#	my $request = new Slim::Control::Request($client, $parrayref);
+#	my $request = Slim::Control::Request->new($client, $parrayref);
 	
 #	if (defined $request && $request->isStatusDispatchable()) {
 		

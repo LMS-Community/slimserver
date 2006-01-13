@@ -436,7 +436,7 @@ sub notifyFromArray {
 	$::d_command && $d_notify && msg("Request: notifyFromArray(" .
 						(join " ", @{$requestLineRef}) . ")\n");
 
-	my $request = new Slim::Control::Request($client, $requestLineRef);
+	my $request = Slim::Control::Request->new($client, $requestLineRef);
 	
 	$request->notify() if defined $request;
 }
@@ -447,7 +447,7 @@ sub executeRequest {
 	my($client, $parrayref, $callbackf, $callbackargs) = @_;
 
 	# create a request from the array
-	my $request = new Slim::Control::Request($client, $parrayref);
+	my $request = Slim::Control::Request->new($client, $parrayref);
 	
 	if (defined $request && $request->isStatusDispatchable()) {
 		
@@ -456,6 +456,7 @@ sub executeRequest {
 		
 		$request->execute();
 	}
+
 	return $request;
 }
 

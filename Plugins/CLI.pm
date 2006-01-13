@@ -418,16 +418,16 @@ sub cli_process {
 
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
+
 	$::d_cli && $client && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
 
-
 	return if !defined $arrayRef;
-	
+
 	# ask dispatch for a request
-	my $request = new Slim::Control::Request($client, $arrayRef);
+	my $request = Slim::Control::Request->new($client, $arrayRef);
 
 	return if !defined $request;
-	
+
 	# remember we're the source
 	$request->source('CLI');
 	
@@ -439,7 +439,7 @@ sub cli_process {
 	if (!defined $cmd && $request->isStatusNotDispatchable()) {
 		$cmd = $arrayRef->[0];	
 	}
-	
+
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
 		$client = Slim::Player::Client::clientRandom();
