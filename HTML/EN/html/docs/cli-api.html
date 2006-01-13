@@ -41,6 +41,8 @@
 <ul>
 <li>The Command Line Interface is now a plugin. It can be disabled if not
 	used.</li>
+<li>The charset parameter now applies only to field values, not to tags. See the 
+	<a href="#Notes">charset notes</a></li>
 <li>0x00 is now a valid end of line / command separator. In addition, the
 	server replies with whatever combination of CR, LF and 0x00 was used in
 	the query.</li>
@@ -321,12 +323,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	</li>
 	
 	<li>Extended queries accepting the &quot;charset&quot; parameter normally
-		return data in utf8, Perl's lenient version of UTF-8. The value of this
-		parameter is sent as is to Perl's Encode plumbing. As a consequence,
-		any encoding known to Perl is valid, for example &quot;iso-8859-1&quot;
-		(the web standard), &quot;cp437&quot; (MS-DOS), etc. More exotic
-		choices like &quot;UTF-16&quot; or &quot;shiftjis&quot; are possible.
-		Note that the server will likely crash if the encoding is unknown.
+		return field values in utf8, Perl's lenient version of UTF-8. The value 
+		of this parameter is sent as is to Perl's Encode plumbing. As a 
+		consequence, any encoding known to Perl is valid, for example 
+		&quot;iso-8859-1&quot; (the web standard), &quot;cp437&quot; (MS-DOS), 
+		etc. More exotic choices like &quot;UTF-16&quot; or &quot;shiftjis&quot;
+		are possible. Note that the server will crash if the encoding is 
+		unknown.
 	</li>
 </ul>
 

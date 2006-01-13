@@ -8,7 +8,7 @@ use strict;
 
 package Slim::Buttons::SqueezeNetwork;
 
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Utils::Timers;
 use Slim::Buttons::Common;
 
@@ -27,7 +27,7 @@ sub setMode {
 	my $client = shift;
 
 	# Stop the player before disconnecting
-	Slim::Control::Command::execute($client, ['stop']);
+	Slim::Control::Request::executeRequest($client, ['stop']);
 
 	$client->lines(\&lines);
 

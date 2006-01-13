@@ -14,7 +14,7 @@ package Slim::Player::Client;
 
 use strict;
 
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Player::Sync;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -773,7 +773,7 @@ sub new {
 	$client->paddr($paddr);
 
 #	Slim::Control::Command::executeCallback($client, ['newclient']);
-	Slim::Control::Dispatch::notifyFromArray($client, ['newclient']);
+	Slim::Control::Request::notifyFromArray($client, ['newclient']);
 
 	return $client;
 }
@@ -1010,7 +1010,7 @@ sub initial_add_done {
 sub execute {
 	my $self = shift;
 
-	Slim::Control::Command::execute($self, @_);
+	Slim::Control::Request::executeRequest($self, @_);
 }
 
 sub needsUpgrade {

@@ -310,7 +310,7 @@ sub setVisualizerMode() {
 	# do it again at the next period
 	if ($screensaver_info{$mode}->{showtext}) {
 #		Slim::Control::Command::setExecuteCallback(\&_showsongtransition);
-		Slim::Control::Dispatch::subscribe(\&_showsongtransition, [['playlist'], ['newsong']]);
+		Slim::Control::Request::subscribe(\&_showsongtransition, [['playlist'], ['newsong']]);
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $initialtextofftime,
 									  \&_pushon,
 									  $client);
@@ -372,7 +372,7 @@ sub _pushoff {
 }
 
 sub shutdownPlugin {
-	Slim::Control::Dispatch::unsubscribe(\&_showsongtransition);
+	Slim::Control::Request::unsubscribe(\&_showsongtransition);
 }
 
 1;

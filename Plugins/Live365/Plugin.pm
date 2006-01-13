@@ -26,7 +26,7 @@ $VERSION = 1.20;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Strings qw( string );
 use Slim::Utils::Misc qw( msg );
-use Slim::Control::Command;
+use Slim::Control::Request;
 
 # Need this to include the other modules now that we split up Live365.pm
 use Plugins::Live365::Web;

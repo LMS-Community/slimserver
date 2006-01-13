@@ -29,7 +29,7 @@ use Slim::Utils::Unicode;
 #  exit
 #  login
 #  listen
-# Other CLI queries/commands are handled through Dispatch.pm
+# Other CLI queries/commands are handled through Request.pm
 
 
 my $d_cli_v = 0;			# verbose debug, for developpement
@@ -190,7 +190,7 @@ sub cli_socket_close {
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();
 		$cli_socket_port = 0;
-		Slim::Control::Dispatch::unsubscribe(\&Plugins::CLI::cli_request_notification);
+		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
 	}
 }
 
@@ -416,17 +416,20 @@ sub cli_process {
 	my $exit = 0;			# do we close the connection after this command
 	my $writeoutput = 1;
 
-	# Parse the command
+	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
 	$::d_cli && $client && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
 
 
 	return if !defined $arrayRef;
 	
-	# Ask dispatch for a request
-	my $request = Slim::Control::Dispatch::requestFromArray($client, $arrayRef);
+	# ask dispatch for a request
+	my $request = new Slim::Control::Request($client, $arrayRef);
 
 	return if !defined $request;
+	
+	# remember we're the source
+	$request->source('CLI');
 	
 	my $cmd = $request->getRequest();
 	
@@ -588,16 +591,13 @@ sub cli_cmd_listen {
 		$connections{$client_socket}{'listen'} = !$connections{$client_socket}{'listen'};
 	}
 	
-	Slim::Control::Dispatch::subscribe(\&Plugins::CLI::cli_request_notification);
-#	Slim::Control::Command::setExecuteCallback(\&Plugins::CLI::cli_test_executeCallback_glue);
+	Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
+	Slim::Control::Request::subscribe(\&Plugins::CLI::cli_dd, [['mixer'], ['volume']]);
 }
 
-#sub cli_test_executeCallback_glue {
-#	my $client = shift;
-#	my $paramsRef = shift;
-	
-#	$::d_cli && msg("CLI: cli_test_executeCallback_glue(" . join(" ", @$paramsRef) . ")\n");
-#}
+sub cli_dd {
+	shift->dump();
+}
 
 ################################################################################
 # PLUGIN STRINGS

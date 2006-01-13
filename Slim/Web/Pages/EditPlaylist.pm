@@ -186,17 +186,12 @@ sub saveCurrentPlaylist {
 
 		# Changed by Fred to fix the issue of getting the playlist object
 		# by setting $p1 to it, which was messing up callback and the CLI.
-		# This is temporary until the re-routing of calls away from execute()
-		# is finalized.
 
-		my $request = Slim::Control::Dispatch::requestFromArray($client, ['playlist', 'save', $title]);
+		my $request = Slim::Control::executeRequest($client, ['playlist', 'save', $title]);
 		
 		if (defined $request) {
 		
-			$request->execute();
-#			$request->dump();
 			$params->{'playlist'} = $request->getResult('__playlist_id');
-#			Slim::Control::Command::executeCallback($client, ['playlist', 'save', $title]);
 		}
 
 		# setup browsedb params to view the current playlist

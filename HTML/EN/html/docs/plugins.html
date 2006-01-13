@@ -98,7 +98,7 @@ sub getNewModeFunctions &#123;
      'play' => sub &#123;
         my $client = shift;
         my @pargs=('rescan');
-        Slim::Control::Command::execute($client, \@pargs, undef, undef);
+        Slim::Control::Request::executeRequest($client, \@pargs);
         $client->showBriefly( {
 	    $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
 	    $client->string('PLUGIN_RESCAN_RESCANNING'),
@@ -257,7 +257,7 @@ return (\%setupGroup,\%setupPrefs,1);
 <pre>sub strings &#123; return '
 PLUGIN_STRING_ONE
 &lt;tab&gt; EN &lt;tab&gt; English version of line one
-&lt;tab&gt; FR &lt;tab&gt; Version française de la ligne une
+&lt;tab&gt; FR &lt;tab&gt; Version franÃ§aise de la ligne une
 '&#125;;
 </pre></blockquote>and to use your strings in your module, you make the call to strings in any place where you would use a text string.   For example:
 			<pre>$client->string('MY_STRING');</pre></blockquote>
@@ -438,7 +438,7 @@ my %functions = (
 	'play' =&gt; sub {
 		my $client = shift;
 		my @pargs=('rescan');
-		Slim::Control::Command::execute($client, \@pargs, undef, undef);
+		Slim::Control::Request::executeRequest($client, \@pargs);
 		$client->showBriefly( {
 			'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
 			'line2' => $client->string('PLUGIN_RESCAN_RESCANNING'),

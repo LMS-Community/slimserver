@@ -12,7 +12,7 @@
 package Plugins::Rescan;
 
 use strict;
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Time::HiRes;
 
 our $interval = 1; # check every x seconds
@@ -208,7 +208,7 @@ sub checkScanTimer {
 			}
 
 			if ($time == $scantime && !Slim::Music::Import::stillScanning()) {
-				Slim::Control::Command::execute(undef,['rescan']);
+				Slim::Control::Request::executeRequest(undef, ['rescan']);
 			}
 		}
 	}

@@ -170,8 +170,7 @@ sub playRandom {
 
 	# disable this during the course of this function, since we don't want
 	# to retrigger on commands we send from here.
-#	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-	Slim::Control::Dispatch::unsubscribe(\&commandCallback);
+	Slim::Control::Request::unsubscribe(\&commandCallback);
 
 
 	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
@@ -205,8 +204,8 @@ sub playRandom {
 
 	if ($numItems) {
 		unless ($addOnly) {
-			Slim::Control::Command::execute($client, [qw(stop)]);
-			Slim::Control::Command::execute($client, [qw(power 1)]);
+			Slim::Control::Request::executeRequest($client, [qw(stop)]);
+			Slim::Control::Request::executeRequest($client, [qw(power 1)]);
 		}
 		Slim::Player::Playlist::shuffle($client, 0);
 		
@@ -280,7 +279,7 @@ sub playRandom {
 	
 	if ($type eq 'disable') {
 #		Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-		Slim::Control::Dispatch::unsubscribe(\&commandCallback);
+		Slim::Control::Request::unsubscribe(\&commandCallback);
 		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
 		# Don't do showBrieflys if visualiser screensavers are running as the display messes up
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
@@ -296,7 +295,7 @@ sub playRandom {
 		if ($continuousMode) {
 			# Watch out for songs ending in order to add new songs
 #			Slim::Control::Command::setExecuteCallback(\&commandCallback);
-			Slim::Control::Dispatch::subscribe(\&commandCallback, 
+			Slim::Control::Request::subscribe(\&commandCallback, 
 				[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
 
 			# Record current mix type.  Do this last to prevent menu items changing too soon
@@ -530,13 +529,13 @@ sub commandCallback {
 			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
 
 #			Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-			Slim::Control::Dispatch::unsubscribe(\&commandCallback);
+			Slim::Control::Request::unsubscribe(\&commandCallback);
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
-				Slim::Control::Command::execute($client, ['playlist', 'delete', 0]);
+				Slim::Control::Request::executeRequest($client, ['playlist', 'delete', 0]);
 			}
 #			Slim::Control::Command::setExecuteCallback(\&commandCallback);
-			Slim::Control::Dispatch::subscribe(\&commandCallback, 
+			Slim::Control::Request::subscribe(\&commandCallback, 
 				[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
 		}
 
@@ -566,7 +565,7 @@ sub initPlugin {
 
 sub shutdownPlugin {
 #	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-	Slim::Control::Dispatch::unsubscribe(\&commandCallback);
+	Slim::Control::Request::unsubscribe(\&commandCallback);
 }
 
 sub getFunctions {

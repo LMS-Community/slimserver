@@ -63,7 +63,7 @@ my %mainModeFunctions = (
 	       'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
 	   });  
 	   
-	   Slim::Control::Command::execute( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
+	   Slim::Control::Request::executeRequest( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
    },
 );
 

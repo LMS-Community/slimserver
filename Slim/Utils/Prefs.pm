@@ -247,7 +247,7 @@ sub init {
 			if ($newvalue) {
 
 #				Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-				Slim::Control::Dispatch::subscribe(
+				Slim::Control::Request::subscribe(
 					\&Slim::Player::Playlist::modifyPlaylistCallback, 
 					[['playlist']]
 					);
@@ -259,7 +259,7 @@ sub init {
 
 			} else {
 #				Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-				Slim::Control::Dispatch::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
+				Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 			}
 		}
 	);

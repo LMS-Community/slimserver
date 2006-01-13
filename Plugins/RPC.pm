@@ -37,7 +37,7 @@ sub doCommand {
 	my $playername = scalar ($reqParams->[0]);
 	$client = Slim::Player::Client::getClient($playername);
 
-	my @resp = Slim::Control::Command::execute($client, $commandargs, undef, undef);
+	my @resp = Slim::Control::Request::executeLegacy($client, $commandargs);
 
 	return \@resp;
 }

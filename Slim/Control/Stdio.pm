@@ -18,7 +18,7 @@ use vars qw($stdin);
 
 
 # This module provides a command-line interface to the server via STDIN/STDOUT.
-# see the documentation in Dispatch.pm for details on the commands
+# see the documentation in Request.pm for details on the commands
 # This does not support shell like escaping. See the CLI documentation.
 
 
@@ -31,6 +31,8 @@ sub init {
 	$stdout = shift;
 
 	return if Slim::Utils::OSDetect::OS() eq 'win';
+
+	$::d_stdio && msg("Stdio: init()\n");
 
 	Slim::Networking::Select::addRead($stdin, \&processRequest);
 
@@ -47,12 +49,13 @@ sub processRequest {
 	if (defined($firstline)) {
 
 		#process the commands
-		$::d_stdio && msg("Got line: $firstline\n");
 		chomp $firstline; 
+		$::d_stdio && msg("Stdio: Got line: $firstline\n");
+		
 		my $message = executeCmd($firstline);
 
-		$::d_stdio && msg("response is: $message\n");
-		$stdout->print($message . "\n") if $message;
+		$::d_stdio && msg("Stdio: Response is: $message\n");
+		$stdout->print("$message\n");
 	}
 }
 
@@ -67,7 +70,7 @@ sub executeCmd {
 	#if we don't have a player specified, just pick one
 	$client = Slim::Player::Client::clientRandom() if !defined $client;
 	
-	my @outputParams = Slim::Control::Command::execute($client, $arrayRef);
+	my @outputParams = Slim::Control::Request::executeLegacy($client, $arrayRef);
 		
 	return array_to_string($client, \@outputParams);
 }

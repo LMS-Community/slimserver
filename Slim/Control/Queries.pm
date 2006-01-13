@@ -16,10 +16,9 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
-#use Slim::Control::Request;
-#use Slim::Music::Import;
 use Slim::Utils::Misc qw(msg errorMsg specified);
-#use Slim::Utils::Prefs;
+
+my $d_queries = 0; # local debug flag
 
 our %searchMap = (
 
@@ -32,7 +31,7 @@ our %searchMap = (
 sub browseXQuery {
 	my $request = shift;
 
-	$::d_command && msg("browseXQuery()\n");
+	$d_queries && msg("browseXQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['artists', 'albums', 'genres']])) {
@@ -113,7 +112,7 @@ sub browseXQuery {
 sub cursonginfoQuery {
 	my $request = shift;
 	
-	$::d_command && msg("cursonginfoQuery()\n");
+	$d_queries && msg("cursonginfoQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre', 'path']])) {
@@ -161,7 +160,7 @@ sub cursonginfoQuery {
 sub connectedQuery {
 	my $request = shift;
 	
-	$::d_command && msg("connectedQuery()\n");
+	$d_queries && msg("connectedQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['connected']])) {
@@ -180,7 +179,7 @@ sub connectedQuery {
 sub debugQuery {
 	my $request = shift;
 	
-	$::d_command && msg("debugQuery()\n");
+	$d_queries && msg("debugQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['debug']])) {
@@ -210,7 +209,7 @@ sub debugQuery {
 sub displayQuery {
 	my $request = shift;
 	
-	$::d_command && msg("displayQuery()\n");
+	$d_queries && msg("displayQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['display']])) {
@@ -232,7 +231,7 @@ sub displayQuery {
 sub displaynowQuery {
 	my $request = shift;
 	
-	$::d_command && msg("displaynowQuery()\n");
+	$d_queries && msg("displaynowQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['displaynow']])) {
@@ -252,7 +251,7 @@ sub displaynowQuery {
 sub infoTotalQuery {
 	my $request = shift;
 	
-	$::d_command && msg("infoTotalQuery()\n");
+	$d_queries && msg("infoTotalQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
@@ -283,7 +282,7 @@ sub infoTotalQuery {
 sub linesperscreenQuery {
 	my $request = shift;
 	
-	$::d_command && msg("linesperscreenQuery()\n");
+	$d_queries && msg("linesperscreenQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['linesperscreen']])) {
@@ -302,7 +301,7 @@ sub linesperscreenQuery {
 sub mixerQuery {
 	my $request = shift;
 	
-	$::d_command && msg("mixerQuery()\n");
+	$d_queries && msg("mixerQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
@@ -327,7 +326,7 @@ sub mixerQuery {
 sub modeQuery {
 	my $request = shift;
 	
-	$::d_command && msg("modeQuery()\n");
+	$d_queries && msg("modeQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mode']])) {
@@ -346,7 +345,7 @@ sub modeQuery {
 sub playerXQuery {
 	my $request = shift;
 
-	$::d_command && msg("playerXQuery()\n");
+	$d_queries && msg("playerXQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype']])) {
@@ -401,7 +400,7 @@ sub playerXQuery {
 sub playersQuery {
 	my $request = shift;
 
-	$::d_command && msg("playersQuery()\n");
+	$d_queries && msg("playersQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['players']])) {
@@ -445,7 +444,7 @@ sub playersQuery {
 sub playlistXQuery {
 	my $request = shift;
 	
-	$::d_command && msg("playlistXQuery()\n");
+	$d_queries && msg("playlistXQuery()\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
@@ -508,7 +507,7 @@ sub playlistXQuery {
 sub playlisttracksQuery {
 	my $request = shift;
 
-	$::d_command && msg("playlisttracksQuery()\n");
+	$d_queries && msg("playlisttracksQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playlisttracks']])) {
@@ -581,7 +580,7 @@ sub playlisttracksQuery {
 sub playlistsQuery {
 	my $request = shift;
 
-	$::d_command && msg("playlistsQuery()\n");
+	$d_queries && msg("playlistsQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playlists']])) {
@@ -633,7 +632,7 @@ sub playlistsQuery {
 sub playerprefQuery {
 	my $request = shift;
 	
-	$::d_command && msg("playerprefQuery()\n");
+	$d_queries && msg("playerprefQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref']])) {
@@ -658,7 +657,7 @@ sub playerprefQuery {
 sub powerQuery {
 	my $request = shift;
 	
-	$::d_command && msg("powerQuery()\n");
+	$d_queries && msg("powerQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['power']])) {
@@ -677,7 +676,7 @@ sub powerQuery {
 sub prefQuery {
 	my $request = shift;
 	
-	$::d_command && msg("prefQuery()\n");
+	$d_queries && msg("prefQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref']])) {
@@ -701,7 +700,7 @@ sub prefQuery {
 sub rateQuery {
 	my $request = shift;
 	
-	$::d_command && msg("rateQuery()\n");
+	$d_queries && msg("rateQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rate']])) {
@@ -720,7 +719,7 @@ sub rateQuery {
 sub rescanQuery {
 	my $request = shift;
 	
-	$::d_command && msg("rescanQuery()\n");
+	$d_queries && msg("rescanQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescan']])) {
@@ -738,7 +737,7 @@ sub rescanQuery {
 sub signalstrengthQuery {
 	my $request = shift;
 	
-	$::d_command && msg("signalstrengthQuery()\n");
+	$d_queries && msg("signalstrengthQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['signalstrength']])) {
@@ -757,7 +756,7 @@ sub signalstrengthQuery {
 sub sleepQuery {
 	my $request = shift;
 	
-	$::d_command && msg("sleepQuery()\n");
+	$d_queries && msg("sleepQuery()\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sleep']])) {
@@ -781,7 +780,7 @@ sub sleepQuery {
 sub statusQuery {
 	my $request = shift;
 	
-	$::d_command && msg("statusQuery()\n");
+	$d_queries && msg("statusQuery()\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -953,7 +952,7 @@ sub statusQuery {
 sub songinfoQuery {
 	my $request = shift;
 
-	$::d_command && msg("songinfoQuery()\n");
+	$d_queries && msg("songinfoQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -1034,7 +1033,7 @@ sub songinfoQuery {
 sub syncQuery {
 	my $request = shift;
 	
-	$::d_command && msg("syncQuery()\n");
+	$d_queries && msg("syncQuery()\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sync']])) {
@@ -1063,7 +1062,7 @@ sub syncQuery {
 sub timeQuery {
 	my $request = shift;
 	
-	$::d_command && msg("timeQuery()\n");
+	$d_queries && msg("timeQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['time', 'gototime']])) {
@@ -1082,7 +1081,7 @@ sub timeQuery {
 sub titlesQuery {
 	my $request = shift;
 
-	$::d_command && msg("titlesQuery()\n");
+	$d_queries && msg("titlesQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -1167,7 +1166,7 @@ sub titlesQuery {
 sub versionQuery {
 	my $request = shift;
 	
-	$::d_command && msg("versionQuery()\n");
+	$d_queries && msg("versionQuery()\n");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['version']])) {

@@ -14,7 +14,7 @@ use strict;
 
 package Plugins::DateTime::Plugin;
 
-use Slim::Control::Command;
+use Slim::Control::Request;
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision: 1.5 $,10);

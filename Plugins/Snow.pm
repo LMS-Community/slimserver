@@ -17,7 +17,7 @@ use strict;
 ### Section 1. Change these as required ###
 ###########################################
 
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Utils::Timers;
 use Slim::Hardware::VFD;
 use File::Spec::Functions qw(:ALL);

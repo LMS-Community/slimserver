@@ -79,11 +79,11 @@ sub initPlugin {
 	sendxplhbeat();
 	
 #	Slim::Control::Command::setExecuteCallback(\&Plugins::xPL::xplExecuteCallback);
-	Slim::Control::Dispatch::subscribe(\&Plugins::xPL::xplExecuteCallback);
+	Slim::Control::Request::subscribe(\&Plugins::xPL::xplExecuteCallback);
 }
 
 sub shutdownPlugin {
-	Slim::Control::Dispatch::unsubscribe(\&Plugins::xPL::xplExecuteCallback);
+	Slim::Control::Request::unsubscribe(\&Plugins::xPL::xplExecuteCallback);
 }
 
 # plugin: name of our plugin

@@ -1335,7 +1335,7 @@ sub initSetupConfig {
 						$rescanType = [qw(rescan playlists)];
 					}
 
-					Slim::Control::Command::execute($client, $rescanType);
+					Slim::Control::Request::executeRequest($client, $rescanType);
 				},
 				'inputTemplate' => 'setup_input_submit.html',
 				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
@@ -1699,7 +1699,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
 			},
 
@@ -1709,7 +1709,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+					Slim::Control::Command::execute($client, ['wipecache']);
 				},
 			},
 
@@ -1816,7 +1816,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					Slim::Control::Command::execute($client, ["wipecache"], undef, undef);
+					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
 
 				'options' => {

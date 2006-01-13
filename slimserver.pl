@@ -217,8 +217,8 @@ use Slim::Buttons::Input::List;
 use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
 use Slim::Player::Client;
-use Slim::Control::Command;
-use Slim::Control::Dispatch;
+#use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Display::Display;
 use Slim::Display::Graphics;
 use Slim::Web::HTTP;
@@ -473,8 +473,8 @@ sub init {
 		$::d_server && msg("SlimServer setting language...\n");
 		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
 		
-		$::d_server && msg("SlimServer Dispatch init...\n");
-		Slim::Control::Dispatch::init();
+		$::d_server && msg("SlimServer Request init...\n");
+		Slim::Control::Request::init();
 	
 		$::d_server && msg("SlimServer IR init...\n");
 		Slim::Hardware::IR::init();
@@ -529,7 +529,7 @@ sub init {
 		$::d_server && msg("SlimServer persist playlists...\n");
 		if (Slim::Utils::Prefs::get('persistPlaylists')) {
 #			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
-			Slim::Control::Dispatch::subscribe(
+			Slim::Control::Request::subscribe(
 				\&Slim::Player::Playlist::modifyPlaylistCallback, 
 				[['playlist']]
 				);
@@ -1047,7 +1047,7 @@ sub checkDataSource {
 
 			# Let's go through Command rather than calling
 			# Slim::Music::Import::startScan() directly...
-			Slim::Control::Command::execute(undef, ["rescan"], undef, undef);
+			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 	}
 }
@@ -1191,7 +1191,7 @@ sub cleanup {
 	Slim::Buttons::Plugins::shutdownPlugins();
 
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
-		Slim::Control::Dispatch::unsubscribe(
+		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
 

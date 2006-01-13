@@ -16,7 +16,7 @@ use File::Slurp;
 use XML::Simple;
 
 use Slim::Buttons::Common;
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;

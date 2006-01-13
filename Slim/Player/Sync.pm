@@ -192,7 +192,7 @@ sub sync {
 	saveSyncPrefs($client);
 	
 #	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
-	Slim::Control::Dispatch::notifyFromArray($client, ['playlist', 'sync']);
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'sync']);
 }
 
 sub saveSyncPrefs {

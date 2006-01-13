@@ -16,7 +16,7 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Buttons::Common;
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Player::ProtocolHandlers;
 use Slim::Music::Info;
 

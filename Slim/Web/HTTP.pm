@@ -646,7 +646,7 @@ sub processURL {
 			}
 		}
 
-		Slim::Control::Command::execute($client, \@p, \&generateHTTPResponse, \@callbackargs);
+		Slim::Control::Request::executeRequest($client, \@p, \&generateHTTPResponse, \@callbackargs);
 
 	} else {
 

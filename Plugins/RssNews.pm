@@ -70,7 +70,7 @@ our %default_feeds = (
 
 # INTERNAL VARIABLES and STUFF!. Do not edit.
 use Slim::Buttons::Common;
-use Slim::Control::Command;
+use Slim::Control::Request;
 use Slim::Player::Source;
 use Slim::Utils::Timers;
 use Slim::Utils::Misc;
