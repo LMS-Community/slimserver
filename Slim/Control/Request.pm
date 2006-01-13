@@ -133,8 +133,6 @@ sub callbackArguments {
 	return $self->{'_cb_args'};
 }
 
-
-
 ################################################################################
 # Read/Write status
 ################################################################################
@@ -151,13 +149,16 @@ sub callbackArguments {
 sub validate {
 	my $self = shift;
 
-	if (ref($self->executeFunction) ne 'CODE'){
+	if (ref($self->executeFunction) ne 'CODE') {
+
 		$self->setStatusNotDispatchable();
 
 	} elsif ($self->needClient() && !$self->client()) {
+
 		$self->setStatusNeedsClient();
 
 	} else {
+
 		$self->setStatusDispatchable();
 	}
 }
@@ -171,6 +172,7 @@ sub setStatusDispatchable {
 	my $self = shift;
 	$self->__status(1);
 }
+
 sub isStatusDispatchable {
 	my $self = shift;
 	return ($self->__status() == 1);
@@ -180,10 +182,12 @@ sub setStatusDispatched {
 	my $self = shift;
 	$self->__status(2);
 }
+
 sub isStatusDispatched {
 	my $self = shift;
 	return ($self->__status() == 2);
 }
+
 sub wasStatusDispatched {
 	my $self = shift;
 	return ($self->__status() > 1);
@@ -193,6 +197,7 @@ sub setStatusDone {
 	my $self = shift;
 	$self->__status(10);
 }
+
 sub isStatusDone {
 	my $self = shift;
 	return ($self->__status() == 10);
@@ -202,6 +207,7 @@ sub setStatusCallbackDone {
 	my $self = shift;
 	$self->__status(11);
 }
+
 sub isStatusCallbackDone {
 	my $self = shift;
 	return ($self->__status() == 11);
@@ -216,6 +222,7 @@ sub setStatusBadDispatch {
 	my $self = shift;	
 	$self->__status(101);
 }
+
 sub isStatusBadDispatch {
 	my $self = shift;
 	return ($self->__status() == 101);
@@ -225,6 +232,7 @@ sub setStatusBadParams {
 	my $self = shift;	
 	$self->__status(102);
 }
+
 sub isStatusBadParams {
 	my $self = shift;
 	return ($self->__status() == 102);
@@ -234,6 +242,7 @@ sub setStatusNeedsClient {
 	my $self = shift;	
 	$self->__status(103);
 }
+
 sub isStatusNeedsClient {
 	my $self = shift;
 	return ($self->__status() == 103);
@@ -243,6 +252,7 @@ sub setStatusNotDispatchable {
 	my $self = shift;	
 	$self->__status(104);
 }
+
 sub isStatusNotDispatchable {
 	my $self = shift;
 	return ($self->__status() == 104);
@@ -331,7 +341,7 @@ sub addResult {
 	${$self->{'_results'}}{$key} = $val;
 }
 
-sub addResultLoop{
+sub addResultLoop {
 	my $self = shift;
 	my $loop = shift;
 	my $loopidx = shift;
@@ -483,12 +493,26 @@ sub execute {
 	}
 	
 	# call the execute function
-	if (defined (my $funcPtr = $self->executeFunction())) {
-		&{$funcPtr}($self);
+	if (my $funcPtr = $self->executeFunction()) {
+
+		if (defined $funcPtr && ref($funcPtr) eq 'CODE') {
+
+			eval { &{$funcPtr}($self) };
+
+			if ($@) {
+				errorMsg("execute: Error when trying to run coderef: [$@]\n");
+				$self->dump('Request');
+			}
+
+		} else {
+
+			errorMsg("execute: Didn't get a valid coderef from ->executeFunction\n");
+			$self->dump('Request');
+		}
 	}
 	
 	# if the status is done
-	if ($self->isStatusDone()){
+	if ($self->isStatusDone()) {
 
 		$::d_command && $self->dump('Request');
 		
@@ -500,7 +524,9 @@ sub execute {
 		
 			Slim::Control::Dispatch::notify($self);
 		}
+
 	} else {
+
 		$::d_command && $self->dump('Request');
 	}
 }
@@ -509,36 +535,46 @@ sub callback {
 	my $self = shift;
 
 	# do nothing unless callback is enabled
-	if ($self->callbackEnabled()){
+	if ($self->callbackEnabled()) {
 		
 		if (defined(my $funcPtr = $self->callbackFunction())) {
-		
+
 			$::d_command && msg("Request: Calling callback function\n");
 
 			my $args = $self->callbackArguments();
 		
 			# if we have no arg, use the request
 			if (!defined $args) {
-				&$funcPtr($self);
+
+				eval { &$funcPtr($self) };
+
+				if ($@) { 
+					errorMsg("execute: Error when trying to run coderef: [$@]\n");
+					$self->dump('Request');
+				}
 			
 			# else use the provided arguments
 			} else {
-				&$funcPtr(@$args);
+
+				eval { &$funcPtr(@$args) };
+
+				if ($@) { 
+					errorMsg("execute: Error when trying to run coderef: [$@]\n");
+					$self->dump('Request');
+				}
 			}
-			
+
 			$self->setStatusCallbackDone();
 		}
+
 	} else {
 	
 		$::d_command && msg("Request: Callback disabled\n");
 	}
 }
 
-
-
-
 ################################################################################
-# Special
+# Utility function to dump state of the request object to stdout
 ################################################################################
 sub dump {
 	my $self = shift;
@@ -552,7 +588,7 @@ sub dump {
 		$str .= 'Command ';
 	}
 	
-	if (my $client = $self->client()){
+	if (my $client = $self->client()) {
 		my $clientid = $client->id();
 		$str .= "[$clientid->" . $self->getRequestString() . "]";
 	} else {
@@ -560,13 +596,13 @@ sub dump {
 	}
 
 	if ($self->callbackFunction()) {
+
 		if ($self->callbackEnabled()) {
 			$str .= " cb+ ";
 		} else {
 			$str .= " cb- ";
 		}
 	}
-
 	
 	if ($self->isStatusNew()) {
 		$str .= " (New)\n";
@@ -585,30 +621,35 @@ sub dump {
 	} elsif ($self->isStatusNotDispatchable()) {
 		$str .= " (Not dispatchable!)\n";
 	}
-	
+
 	msg($str);
-	
-	
+
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
-    	msg("   Param: [$key] = [$val]\n");
+
+    		msg("   Param: [$key] = [$val]\n");
  	}
  	
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
     	
-    	if ($key =~ /^@/) {
-    		my $count = scalar @{${$self->{'_results'}}{$key}};
-    		msg("   Result: [$key] is loop with $count elements:\n");
-    		
-    		# loop over each elements
- 			for(my $i = 0; $i < $count; $i++) {
- 				my $hash = ${$self->{'_results'}}{$key}->[$i];
+		if ($key =~ /^@/) {
+
+			my $count = scalar @{${$self->{'_results'}}{$key}};
+
+			msg("   Result: [$key] is loop with $count elements:\n");
+			
+			# loop over each elements
+			for (my $i = 0; $i < $count; $i++) {
+
+				my $hash = ${$self->{'_results'}}{$key}->[$i];
+
 				while (my ($key2, $val2) = each %{$hash}) {
 					msg("   Result:   $i. [$key2] = [$val2]\n");
 				}	
-    		}
-    	} else {
-    		msg("   Result: [$key] = [$val]\n");
-    	}
+			}
+
+		} else {
+			msg("   Result: [$key] = [$val]\n");
+		}
  	}
 }
 
@@ -627,28 +668,36 @@ sub renderAsArray {
 	# -- anything else: output "key:value"
 	
 	# push the request terms
-	push @returnArray, @{$self->{_request}};
+	push @returnArray, @{$self->{'_request'}};
 	
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
+
 		$val = Encode::encode($encoding, $val) if $encoding;
-    	if ($key =~ /^__/) {
-    		# no output
-    	} elsif ($key =~ /^_/) {
-    		push @returnArray, $val;
-    	} else {
-    		push @returnArray, ($key . ":" . $val);
-    	}
+
+		if ($key =~ /^__/) {
+			# no output
+		} elsif ($key =~ /^_/) {
+			push @returnArray, $val;
+		} else {
+			push @returnArray, ($key . ":" . $val);
+		}
  	}
  	
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
+
 		$val = Encode::encode($encoding, $val) if $encoding;
-    	if ($key =~ /^@/) {
-    		# loop over each elements
-    		foreach my $hash (@{${$self->{'_results'}}{$key}}) {
+
+		if ($key =~ /^@/) {
+
+			# loop over each elements
+			foreach my $hash (@{${$self->{'_results'}}{$key}}) {
+
 				while (my ($key2, $val2) = each %{$hash}) {
+
 					$val2 = Encode::encode($encoding, $val2) if $encoding;
+
 					if ($key2 =~ /^__/) {
 						# no output
 					} elsif ($key2 =~ /^_/) {
@@ -657,14 +706,15 @@ sub renderAsArray {
 						push @returnArray, ($key2 . ':' . $val2);
 					}
 				}	
-    		}
-    	} elsif ($key =~ /^__/) {
-    		# no output
-    	} elsif ($key =~ /^_/) {
-    		push @returnArray, $val;
-    	} else {
-    		push @returnArray, ($key . ':' . $val);
-    	}
+			}
+
+		} elsif ($key =~ /^__/) {
+			# no output
+		} elsif ($key =~ /^_/) {
+			push @returnArray, $val;
+		} else {
+			push @returnArray, ($key . ':' . $val);
+		}
  	}
 	
 	return @returnArray;
@@ -679,7 +729,7 @@ sub __isCmdQuery {
 	my $possibleNames = shift;
 	
 	# the query state must match
-	if ($isQuery == $self->{'_isQuery'}){
+	if ($isQuery == $self->{'_isQuery'}) {
 	
 		my $possibleNamesCount = scalar (@{$possibleNames});
 
@@ -718,7 +768,6 @@ sub __status {
 	return $self->{'_status'};
 }
 
-
-
-
 1;
+
+__END__
