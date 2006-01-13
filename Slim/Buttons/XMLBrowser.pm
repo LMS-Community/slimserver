@@ -124,6 +124,22 @@ sub gotFeed {
 	}
 }
 
+sub gotPlaylist {
+	my ($client, $url, $feed) = @_;
+
+	# must unblock now, before pushMode is called by getRSS or gotOPML
+	$client->unblock;
+
+	my @urls = ();
+
+	for my $item (@{$feed->{'items'}}) {
+
+		push @urls, $item->{'url'};
+	}
+
+	$client->execute(['playlist', 'loadtracks', 'listref', \@urls]);
+}
+
 sub gotRSS {
 	my ($client, $url, $feed) = @_;
 
@@ -219,78 +235,50 @@ sub gotRSS {
 # because podcast alley uses OPML to list its top 10, and newest
 # podcasts.  Currently this has been tested only with those OPML
 # examples, it may or may not work perfectly with others.
-sub gotOPML {
-	my ($client, $url, $feed) = @_;
-
-	my %params = (
-		url      => $url,
-		feed     => $feed,
-		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "XMLBrowser:$url",
-		header   => $feed->{'title'} . ' {count}',
-		listRef  => $feed->{'items'},
-
-		onRight  => sub {
-			my $client = shift;
-			my $item = shift;
-
-			if ($item->{'url'} && !scalar @{$item->{'items'}}) {
-
-				# follow a link
-				my %params = (
-					url   => $item->{'url'},
-					title => $item->{'name'},
-				);
-
-				Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
-
-			} elsif ($item->{'items'}) {
-
-				# recurse into OPML item
-				browseOPML($client, $client->param('url'), $item);
-
-			} else {
-
-				$client->bumpRight();
-			}
-		},
-
-		overlayRef => \&overlaySymbol,
-	);
-
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
-}
-
+#
 # recusively browse OPML outline
-sub browseOPML {
-	my ($client, $url, $item) = @_;
+sub gotOPML {
+	my ($client, $url, $opml) = @_;
+
+	my $base = $opml->{'base'} || '';
 
 	my %params = (
 		url      => $url,
-		item     => $item,
+		item     => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "XMLBrowser:$url:" . $item->{'name'},
-		header   => $item->{'name'} . ' {count}',
-		listRef  => $item->{'items'},
+		modeName => "XMLBrowser:$url:" . $opml->{'name'},
+		header   => $opml->{'name'} . ' {count}',
+		listRef  => $opml->{'items'},
 
 		onRight  => sub {
 			my $client = shift;
 			my $item   = shift;
 
-			if ($item->{'value'} && !scalar @{$item->{'items'}}) {
+			my $hasItems = scalar @{$item->{'items'}};
+			my $isAudio  = $item->{'type'} eq 'audio' ? 1 : 0;
+			my $url      = $item->{'url'} || $item->{'value'};
+
+			if ($url && !$hasItems) {
 
 				# follow a link
 				my %params = (
-					url   => $item->{'value'},
-					title => $item->{'name'},
+					url   => $base . $url,
+					title => ($item->{'name'} || $item->{'title'}),
 				);
 
-				Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+				if ($isAudio) {
 
-			} elsif ($item->{'items'}) {
+					Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+
+				} else {
+
+					Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
+				}
+
+			} elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
 
 				# recurse into OPML item
-				browseOPML($client, $client->param('url'), $item);
+				gotOPML($client, $client->param('url'), $item);
 
 			} else {
 
@@ -580,18 +568,37 @@ sub playItem {
 	#use Data::Dumper;
 	#print Dumper($item);
 
-	if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
+	my $url   = $item->{'url'}  || $item->{'enclosure'}->{'url'};
+	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
+	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
 
-		$client->execute([ 'playlist', $action, $item->{'url'}, $item->{'name'} ]);
+	if ($type eq 'audio') {
 
-	} elsif ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/ || 
-		Slim::Music::Info::typeFromSuffix($item->{'enclosure'}->{'url'} ne 'unk')) ) {
+		$client->execute([ 'playlist', $action, $url, $title ]);
 
-		$client->execute( [ 'playlist', $action, $item->{'enclosure'}->{'url'}, $item->{'title'}, ] );
+		Slim::Music::Info::setCurrentTitle($url, $title);
+
+	} elsif ($type eq 'playlist') {
+
+		# URL is remote, load it asynchronously...
+		# give user feedback while loading
+		$client->block(
+			$client->string( $client->param('header') || 'PODCAST_LOADING' ),
+			$title || $url,
+		);
+
+		# if not found in cache, get via HTTP
+		getFeedViaHTTP($client, $url, \&gotPlaylist, \&gotError);
+
+	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url ne 'unk'))) {
+
+		$client->execute([ 'playlist', $action, $url, $title ]);
+
+		Slim::Music::Info::setCurrentTitle($url, $title);
 
 	} else {
 
-		$client->showBriefly($item->{'title'}, $client->string("PODCAST_NOTHING_TO_PLAY"));
+		$client->showBriefly($title, $client->string("PODCAST_NOTHING_TO_PLAY"));
 	}
 }
 
@@ -622,7 +629,7 @@ sub gotErrorViaHTTP {
 	$::d_plugins && msg("XMLBrowser: " . $http->error() . "\n");
 
 	# call ecb
-	gotError($params->{'client'}, $http->url(), $http->error());
+	&{$params->{'ecb'}}($params->{'client'}, $http->url, $http->error);
 }
 
 sub gotViaHTTP {
@@ -637,13 +644,13 @@ sub gotViaHTTP {
 
 	if ($@) {
 		# call ecb
-		gotError($params->{'client'}, $http->url, $@);
+		&{$params->{'ecb'}}($params->{'client'}, $http->url, $@);
 		return;
 	}
 
 	if (!$feed) {
 		# call ecb
-		gotError($params->{'client'}, $http->url(), '{PARSE_ERROR}');
+		&{$params->{'ecb'}}($params->{'client'}, $http->url, '{PARSE_ERROR}');
 		return;
 	}
 
@@ -651,7 +658,7 @@ sub gotViaHTTP {
 	$feedCache->put($http->url(), $feed, Time::HiRes::time() + $default_cache_expiration);
 
 	# call cb
-	gotFeed($params->{'client'}, $http->url(), $feed);
+	&{$params->{'cb'}}($params->{'client'}, $http->url, $feed);
 }
 
 sub parseXMLIntoFeed {
@@ -749,11 +756,16 @@ sub parseRSS {
 sub parseOPML {
 	my $xml = shift;
 
-	return {
+	my $opml = {
 		'type'  => 'opml',
+		'base'  => $xml->{'head'}->{'base'},
 		'title' => unescapeAndTrim($xml->{'head'}->{'title'}),
 		'items' => _parseOPMLOutline($xml->{'body'}->{'outline'}),
 	};
+
+	$xml = undef;
+
+	return $opml;
 }
 
 # recursively parse an OPML outline entry
