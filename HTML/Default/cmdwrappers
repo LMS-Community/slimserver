@@ -114,14 +114,7 @@ END %]
 		[% ELSE %]
 			[% item.text | html %]
 		[% END %]
-		</span>
 
-		[% IF item.currentsong %]
-		<a name="currentsong"></a>
-		<span class="exboldlisting">
-		[% ELSE %]
-		<span class="exlisting">
-		[% END %]
 		[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 
 			[% "FROM" | string %]

@@ -344,7 +344,8 @@ div#homeMenu {
 
 .browsedbControls {
 	position: absolute;
-	top: 6px;
+	top: 0px;
+	padding-top: 6px;
 	right: 10px;
 }
 
