@@ -59,8 +59,8 @@ sub execute {
 	
 	if (defined $request && $request->isStatusDispatchable()) {
 		
-		# add callback stuff, even if for now this will be handled here below
-#		$request->callbackParameters($callbackf, $callbackargs);
+		# add callback params
+		$request->callbackParameters($callbackf, $callbackargs);
 		
 		$request->execute();
 
@@ -74,13 +74,13 @@ sub execute {
 			@returnArray = $request->renderAsArray();
 			
 			# correct callback enable status
-			$callcallback = $request->callbackEnabled();
+#			$callcallback = $request->callbackEnabled();
 		}
 	}
-		
-	$callcallback && $callbackf && (&$callbackf(@$callbackargs, \@returnArray));
 
-# don't callback twice
+		
+#	$callcallback && $callbackf && (&$callbackf(@$callbackargs, \@returnArray));
+
 #	executeCallback($client ? $client:undef, \@returnArray);
 	
 	$::d_command && msg("Command: Returning array: " . $returnArray[0] . " (" .

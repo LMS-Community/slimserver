@@ -617,9 +617,10 @@ sub processURL {
 	}
 
 	# if we don't have a player specified, just pick one if there is one...
-	if (!defined($client) && Slim::Player::Client::clientCount() > 0) {
-		$client = (Slim::Player::Client::clients())[0];
-	}
+#	if (!defined($client) && Slim::Player::Client::clientCount() > 0) {
+#		$client = (Slim::Player::Client::clients())[0];
+#	}
+	$client = Slim::Player::Client::clientRandom() if !defined $client;
 
 	$peerclient{$httpClient} = $client;
 

@@ -18,10 +18,9 @@ use vars qw($stdin);
 
 
 # This module provides a command-line interface to the server via STDIN/STDOUT.
-# see the documentation in Command.pm for details on the command syntax
+# see the documentation in Dispatch.pm for details on the commands
+# This does not support shell like escaping. See the CLI documentation.
 
-
-#$::d_stdio = 1;
 
 my $stdout;
 my $curline = "";
@@ -39,9 +38,7 @@ sub init {
 	$stdout->autoflush(1);
 }
 
-#
-#  Handle an Stdio request
-#
+#  handles Stdio I/O
 sub processRequest {
 	my $clientsock = shift || return;
 
@@ -59,50 +56,70 @@ sub processRequest {
 	}
 }
 
-# executeCmd - handles the execution of the stdio request
-#
-#
+# handles the execution of the stdio request
 sub executeCmd {
 	my $command = shift;
-
-	my $output  = undef;
-	# People wanting spaces need to use %20
-	my @params  = split(" ", $command);
-
-	foreach my $param (@params) {
-		$param = Slim::Utils::Misc::unescape($param);
-	}
-
-	if (defined $params[0]) {
-
-		my $client = Slim::Player::Client::getClient($params[0]);
-		my $prefix = "";
-		
-		if (defined($client)) {
-			$prefix = Slim::Utils::Misc::escape($params[0]) . " ";
-			shift @params;
-		}
-		
-		#if we don't have a player specified, just pick one if there is one...
-		if (!defined($client) && Slim::Player::Client::clientCount > 0) {
-			my @allclients = Slim::Player::Client::clients();
-			$client = $allclients[0];
-		}
 	
-		my @outputParams = Slim::Control::Command::execute($client, \@params);
+	my ($client, $arrayRef)  = string_to_array($command);
+	
+	return if !defined $arrayRef;
+
+	#if we don't have a player specified, just pick one
+	$client = Slim::Player::Client::clientRandom() if !defined $client;
+	
+	my @outputParams = Slim::Control::Command::execute($client, $arrayRef);
 		
-		foreach my $param (@outputParams) {
-			$param = Slim::Utils::Misc::escape($param);
-		}
-
-		$output = $prefix . join(" ", @outputParams);
-
-	} else {
-		$::d_stdio && msg("No params parsed from stdio!\n");
-	}
-
-	return $output;
+	return array_to_string($client, \@outputParams);
 }
+
+
+# transforms an escaped string into an array (returned). If the first
+# array element is a client, it is removed from the array and returned
+# individually.
+sub string_to_array {
+	my $string = shift;
+	
+	# Split the command string
+	# Space in parameters are to be encoded as %20
+	my @elements  = split(" ", $string);
+
+	return if !scalar @elements;
+	
+	# Unescape
+	map { $_ = URI::Escape::uri_unescape($_) } @elements;
+		
+	# Check if first param is a client...
+	my $client = Slim::Player::Client::getClient($elements[0]);
+
+	if (defined $client) {
+		# Remove the client from the param array
+		shift @elements;
+	}
+	
+	return ($client, \@elements);
+}
+
+# transforms an array into an escaped string (returned). If $client is
+# defined, its ID is added in the first position in the array.
+sub array_to_string {
+	my $client   = shift;
+	my $arrayRef = shift;
+
+	# make a copy, we'll change it
+	my @elements = @$arrayRef;
+
+	# add client if if there is a client
+	unshift @elements, $client->id() if defined $client;
+	
+	# escape all the terms
+	map { $_ = URI::Escape::uri_escape($_) } @elements;
+	
+	# join by space and return!
+	return join " ",  @elements;
+}
+
+
+
 
 1;
 

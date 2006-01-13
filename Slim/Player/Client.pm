@@ -789,6 +789,17 @@ sub init {
 ###################
 # Accessors for the list of known clients
 
+# returns all clients
+sub clients {
+	return values %clientHash;
+}
+
+# returns the number of known clients
+sub clientCount {
+	return scalar(keys %clientHash);
+}
+
+# return IP info of all clients
 sub clientIPs {
 	my @players;
 	foreach my $client (values %clientHash) {
@@ -797,13 +808,17 @@ sub clientIPs {
 	return @players;
 }
 
-sub clientCount {
-	return scalar(keys %clientHash);
+# returns a random client
+sub clientRandom {
+
+	# the "randomness" of this is limited to the hashing mysteries
+	
+	return (values %clientHash)[0];
 }
 
-sub clients {
-	return values %clientHash;
-}
+
+###################
+# Client methods
 
 # returns ip:port
 sub ipport {
@@ -937,6 +952,8 @@ sub startup {
 
 sub initial_add_done {
 	my ($client, $currsong) = @_;
+
+	$client->debug("initial_add_done()");
 
 	return unless defined($currsong);
 

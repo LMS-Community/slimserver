@@ -517,7 +517,14 @@ sub callback {
 
 			my $args = $self->callbackArguments();
 		
-			&$funcPtr($self, @$args);
+			# if we have no arg, use the request
+			if (!defined $args) {
+				&$funcPtr($self);
+			
+			# else use the provided arguments
+			} else {
+				&$funcPtr(@$args);
+			}
 			
 			$self->setStatusCallbackDone();
 		}

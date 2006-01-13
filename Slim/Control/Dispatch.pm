@@ -265,12 +265,12 @@ sub init {
 # fast access to 2nd array data, i.e. (the example is incomplete!)
 # { 
 #  'rescan' => {
-#               '?'          => [2nd param array of 1st array ['rescan', '?']]
-#               '_playlists' => [2nd param array of 1st array ['rescan', '_playlists']]
+#               '?'          => 2nd array associated with ['rescan', '?']
+#               '_playlists' => 2nd array associated with ['rescan', '_playlists']
 #              },
 #  'info'   => {
 #               'total'      => {
-#                                'albums'  => [$arrayDataRef of ['info', 'total', albums']]
+#                                'albums'  => 2nd array associated with ['info', 'total', albums']
 # ...
 #
 # this is used by init() above to add the standard commands and queries to the 
@@ -287,6 +287,7 @@ sub addDispatch {
 	my $DBp     = \%dispatchDB;	    # pointer to the current table level
 	my $CRindex = 0;                # current index into $arrayCmdRef
 	my $done    = 0;                # are we done
+	my $oldDR;						# if we replace, what did we?
 	
 	while (!$done) {
 	
@@ -328,6 +329,7 @@ sub addDispatch {
 			# the new value and we're done
 			} else {
 			
+				$oldDR = $DBp->{$curVerb};
 				$DBp->{$curVerb} = $arrayDataRef;
 				$done = 1;
 			}
@@ -340,6 +342,9 @@ sub addDispatch {
 			$CRindex++;
 		}
 	}
+	
+	# return what we replaced, if any
+	return $oldDR;
 }
 
 # given a command or query in an array, walk down the dispatch table to find
@@ -625,7 +630,6 @@ sub filterString {
 	}
 		
 	$str .= "]";
-
 }
 
 1;

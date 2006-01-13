@@ -403,7 +403,7 @@ sub client_socket_buffer {
 }
 
 ################################################################################
-# COMMAND PROECESSING
+# COMMAND PROCESSING
 ################################################################################
 
 
@@ -417,12 +417,14 @@ sub cli_process {
 	my $writeoutput = 1;
 
 	# Parse the command
-	my ($arrayRef, $clientRef) = cli_string_to_array($command);
-	
+	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
+	$::d_cli && $client && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
+
+
 	return if !defined $arrayRef;
 	
 	# Ask dispatch for a request
-	my $request = Slim::Control::Dispatch::requestFromArray(${$clientRef}, $arrayRef);
+	my $request = Slim::Control::Dispatch::requestFromArray($client, $arrayRef);
 
 	return if !defined $request;
 	
@@ -437,7 +439,7 @@ sub cli_process {
 	
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
-		my $client = cli_random_client();
+		$client = Slim::Player::Client::clientRandom();
 		$request->client($client);
 		if ($::d_cli) {
 			if (defined $client) {
@@ -496,39 +498,6 @@ sub cli_process {
 	return $exit;
 }
 
-
-# transforms a CLI/STDIO string into an array (returned). If the first
-# array element is a client, it is removed from the array and stored
-# in the $clientRef provided reference.
-sub cli_string_to_array {
-	my $command = shift;
-	
-	$d_cli_vv && msg("CLI: cli_string_to_array($command)\n");
-
-	$d_cli_v && msg("CLI: Handling command: $command\n");
-
-	# Split the command string
-	# Space in parameters are to be encoded as %20
-	my @elements  = split(" ", $command);
-	
-	# Unescape
-	map { $_ = URI::Escape::uri_unescape($_) } @elements;
-
-	return if !scalar @elements;
-		
-	# Check if first param is a client...
-	my $client = Slim::Player::Client::getClient($elements[0]);
-
-	if (defined $client) {
-		$::d_cli && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
-
-		# Remove the client from the param array
-		shift @elements;
-	}
-	
-	return (\@elements, \$client);
-}
-
 # generate a string output from a request
 sub cli_request_write {
 	my $client_socket = shift;
@@ -538,27 +507,13 @@ sub cli_request_write {
 
 	my $encoding = $request->getParam('charset') || 'utf8';
 	my @elements = $request->renderAsArray($encoding);
-	my $client   = $request->client();
 	
-	unshift @elements, $client->id() if defined $client;
+	my $output = Slim::Control::Stdio::array_to_string($request->client(), \@elements);
 	
-	map { $_ = URI::Escape::uri_escape($_) } @elements;
-		
-	my $output = join " ",  @elements;
 	$::d_cli && msg("CLI: Sending: " . $output . "\n");
 	
 	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
-
-
-sub cli_request_callback {
-	my $request = shift;
-	my $argument1 = shift;
-	my $argument2 = shift;
-	
-	msg("CLI: cli_request_callback($argument1, $argument2)\n");
-}
-
 
 # handles notifications from Dispatch
 # note that we subscribe in the listen command handler
@@ -579,23 +534,6 @@ sub cli_request_notification {
 		cli_request_write($client_socket, $request);
 	}
 }
-
-################################################################################
-# Utilities
-################################################################################
-
-# determine a random client
-sub cli_random_client {
-
-	$d_cli_vv && msg("CLI: cli_random_client()\n");
-
-	if (Slim::Player::Client::clientCount > 0) {
-		my @allclients = Slim::Player::Client::clients();
-		return $allclients[0];
-	}
-	return undef;
-}
-
 
 ################################################################################
 # CLI commands & queries
