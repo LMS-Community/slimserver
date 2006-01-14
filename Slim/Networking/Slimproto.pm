@@ -30,6 +30,8 @@ my $SLIMPROTO_PORT = 3483;
 
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2');
 
+my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this 
+
 my $slimproto_socket;
 
 our %ipport;		# ascii IP:PORT
@@ -159,8 +161,10 @@ sub slimproto_close {
 	# close socket
 	$clientsock->close();
 
-	# notify before all is deleted
 	if (defined(my $client = $sock2client{$clientsock})) {
+		# set timer to forget client
+		Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
+		# notify of disconnect
 		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 	}
 	
@@ -170,6 +174,11 @@ sub slimproto_close {
 	delete($parser_framelength{$clientsock});
 	delete($sock2client{$clientsock});
 }		
+
+sub _forgetDisconnectedClient {
+	my $client = shift;
+	Slim::Control::Request::executeRequest($client, ['client', 'forget']);
+}
 
 sub client_writeable {
 	my $clientsock = shift;
@@ -642,6 +651,7 @@ sub _hello_handler {
 		$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 	} else {
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
+		Slim::Utils::Timers::killTimers($client, \&_forgetDisconnectedClient);
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 	}
