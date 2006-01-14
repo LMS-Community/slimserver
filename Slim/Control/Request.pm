@@ -174,7 +174,7 @@ our %dispatchDB;				# contains a multi-level hash pointing to
 our %subscribers = ();   		# contains the clients to the notification
 								# mechanism
 
-my $d_notify = 0;               # local debug flag for notifications. Note that
+my $d_notify = 1;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
 
 ################################################################################

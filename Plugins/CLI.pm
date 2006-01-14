@@ -591,12 +591,18 @@ sub cli_cmd_listen {
 		$connections{$client_socket}{'listen'} = !$connections{$client_socket}{'listen'};
 	}
 	
-	Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
-	Slim::Control::Request::subscribe(\&Plugins::CLI::cli_dd, [['mixer'], ['volume']]);
-}
+	# do we need to subscribe?
+	my $subscribe = 0;
+	foreach my $client_socket (keys %connections) {
 
-sub cli_dd {
-	shift->dump();
+		$subscribe++ if ($connections{$client_socket}{'listen'} == 1)
+	}
+	
+	if ($subscribe) {
+		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
+	} else {
+		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
+	}
 }
 
 ################################################################################
