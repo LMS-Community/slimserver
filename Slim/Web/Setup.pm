@@ -2549,7 +2549,7 @@ sub setup_HTTP {
 	if (exists $pagesetup{'isClient'}) {
 		$client = Slim::Player::Client::getClient($paramref->{'playerid'});
 	} else {
-		$client = 0;
+		$client = undef;
 	}
 
 	if (defined $pagesetup{'preEval'}) {
