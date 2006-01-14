@@ -70,7 +70,7 @@ sub execute {
 #			(defined $returnArray[6] ? $returnArray[6] : "") . ") (" .
 #			(defined $returnArray[7] ? $returnArray[7] : "") . ")\n");
 	
-	return Slim::Control::Request::legacyExecute(@_);
+	return Slim::Control::Request::executeLegacy(@_);
 }
 
 sub setExecuteCallback {
