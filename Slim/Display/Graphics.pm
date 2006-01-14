@@ -297,7 +297,8 @@ sub graphicsDirs {
 		push @dirs, "/Library/SlimDevices/Graphics/";
 	}
 
-	return @dirs;
+	# graphics files also allowed in root directory of plugins
+	return @dirs, Slim::Buttons::Plugins::pluginRootDirs();
 }
 
 sub fontCacheFile {

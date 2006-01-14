@@ -25,6 +25,7 @@ use FindBin qw($Bin);
 my $addGroups = 0;
 my $plugins_read;
 our @pluginDirs = ();
+our @pluginRootDirs = ();
 
 sub pluginDirs {
 	if (!scalar @pluginDirs) {
@@ -90,6 +91,8 @@ sub playerPlugins {
 sub installedPlugins {
 	my %pluginlist = ();
 
+	my $firstCall = !scalar(@pluginRootDirs); # first call loads @pluginRootDirs
+
 	for my $plugindir (pluginDirs()) {
 
 		opendir(DIR, $plugindir) || next;
@@ -112,6 +115,8 @@ sub installedPlugins {
 				my $pluginname = $plugin . '::' . "Plugin";
 
 				$pluginlist{$pluginname} = exists($plugins{$pluginname}) ? $plugins{$pluginname}{'name'} : $plugin;
+				
+				push @pluginRootDirs, catdir($plugindir, $plugin) if $firstCall;
 			}
 		}
 
@@ -493,6 +498,14 @@ sub unusedPluginOptions {
 sub pluginCount {
 	return scalar(enabledPlugins(shift));
 }
+
+sub pluginRootDirs {
+	# returns root directory of installed plugins with their own directory 
+	# not expected to be called until after initPlugins
+	return @pluginRootDirs;
+}
+
+
 
 1;
 
