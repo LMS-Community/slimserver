@@ -1,8 +1,12 @@
-[%- pagetitle = 'PLUGIN_LIVE365_SEARCH' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; PROCESS cmdwrappers -%]
-[%- pwd_list = BLOCK -%]
-	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>
-	/ <a href="search.html?player=[% player | uri %]&type=[% type %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>[% pwd_list %]
-[% END %]
+[% FILTER null %]
+[%- pagetitle = 'PLUGIN_LIVE365_SEARCH' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; -%]
+[% BLOCK Live365SearchItemHRef -%]
+href="search.html?type=[% item.type | uri %]&amp;query=[% item.query | uri %]&amp;player=[% playerURI %]"
+[%- END %]
+[% BLOCK Live365IndexItemHRef -%]
+href="index.html?player=[% playerURI %]"
+[%- END %]
+[% END -%]
 [% PROCESS pageheader.html %]
 
 	[% IF errmsg %]

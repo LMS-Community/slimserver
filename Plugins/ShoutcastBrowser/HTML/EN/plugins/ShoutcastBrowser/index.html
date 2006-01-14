@@ -1,10 +1,19 @@
-[%- pagetitle = 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; -%]
-[%- pwd_list = BLOCK -%]
-	/ [% IF streams || streaminfo %]<a href="index.html?player=[% player | uri %]">[% END %][% "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %][% IF streams || streaminfo %]</a> / 
-	[% ELSE %] (<a href="index.html?player=[% player | uri %]&amp;action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)[% END %]
-	[% IF streams || streaminfo %][% IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&amp;player=[% player | uri %]">[% END %][% genre %][% IF streaminfo %]</a> /[% END %][% END %]
-	[% IF streaminfo %][% stream %][% END %]
-[%- END -%]
+[% FILTER null %]
+[% pagetitle = 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; %]
+[% pwd_list = [];
+   pwd_list.0 = BLOCK -%]
+	[%- IF streams || streaminfo %]<a href="index.html?player=[% playerURI %]">[%- "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</a>
+	[%- ELSE %]
+		[%- "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %](<a href="index.html?player=[% playerURI %]&amp;action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
+	[%- END %]
+[%- END %]
+[% IF streams || streaminfo; pwd_list.1 = BLOCK %]
+	[%- IF streaminfo %]<a href="index.html?genreID=[% genreID | uri %]&amp;player=[% playerURI %]">[% END %]
+	[%- genre %]
+	[%- IF streaminfo %]</a>[% END %]
+[%- END; END %]
+[% IF streaminfo; pwd_list.push(stream); END %]
+[% END # filter -%]
 [% PROCESS pageheader.html %]
 
 			[% IF msg %][% WRAPPER contentcontainer %]

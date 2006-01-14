@@ -1,7 +1,8 @@
+[% FILTER null %]
 [% pageicon = 'RADIO' %]
 [% pagetitle = 'PLUGIN_LIVE365_MODULE_NAME' | string %]
-[% PROCESS cmdwrappers %]
-[% pageHeaderMenu = BLOCK %] / <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>[% END %]
+[% pwd_list = BLOCK %]<a href="index.html?player=[% playerURI %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>[% END %]
+[% END -%]
 [% PROCESS pageheader.html noSpacer=1 %] 
 
 [% warning %]
@@ -11,7 +12,7 @@
 [% END %]
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]</div>
+	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 		<li><a href="browse.html?type=presets&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_PRESETS" | string %]</a></li>
 		
@@ -26,14 +27,14 @@
 </div>
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">[% "SEARCH" | string | upper %]</div>
+	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
 		<li><a href="search.html?type=tac&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a></li>
 	</ul>
 </div>
 
 <div class="homeMenuSection">
-	<div class="homeMenuHeader">ACCOUNT</div>
+	<div>ACCOUNT</div>
 	<ul>
 	<li>[% IF loggedin %]
 		<a href="loginout.html?action=out&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGOUT" | string %]</a>

@@ -1,4 +1,3 @@
-[%- WRAPPER contentcontainer %]
 	[%- BLOCK l365control -%]
 		[% IF stationmode %][% WRAPPER playlink %]href="action.html?action=play&amp;mode=[% mode %]&amp;current=[% current %]&amp;id=[% stationid %]&amp;player=[% player | uri %]" target="status"[% END %]
 		[% ELSE %]
@@ -8,7 +7,7 @@
 		[% END %]
 	[%- END %]
 	[%- WRAPPER contentitem controls = 'l365control' %]
-		[% IF genremode %]<a href="browse.html?type=genres&amp;id=[% genreid | uri %]&amp;name=[% genrename | uri %]&amp;player=[% player | uri %]">[% genrename | html %]</a>
+		[% IF genremode %]<a href="browse.html?type=genres&amp;id=[% genreid | uri %]&amp;name=[% genrename | uri %]&amp;player=[% playerURI %]">[% genrename | html %]</a>
 		[% ELSIF stationmode %][% stationname %] - [% connection %]k -
 		 [% IF access == "PRIVATE" %]
 		    (PRIVATE)
@@ -18,7 +17,6 @@
 		[% END %]
 	[%- END %]
 	[%- odd = (not odd) %]
-[%- END %]
 
 [% IF extrainfo %]
 	[%- WRAPPER contentitem %]

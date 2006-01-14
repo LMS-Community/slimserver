@@ -149,15 +149,6 @@ sub completeBrowseGenre {
 	my $fullparams = fetchAsyncRequest('xxx','genre');
 	my $params = $fullparams->{'params'};
 
-	my %pwd_form = %$params;
-	$pwd_form{'genreid'} = 'root';
-	delete $pwd_form{'id'};
-	$pwd_form{'pwditem'} = $params->{'listname'} =
-		string('PLUGIN_LIVE365_BROWSEGENRES');
-	$params->{'pwd_list'} .=
-		${filltemplatefile("live365_browse_pwdlist.html",
-						   \%pwd_form)};
-
 	my $genreid = $params->{'id'};
 
 	if ($genreid eq 'root') {
@@ -181,20 +172,19 @@ sub completeBrowseGenre {
 			}
 		}
 	} else {
-		$pwd_form{'pwditem'} = $params->{'listname'} = $pwd_form{'genrename'} = 
-			$params->{'name'};
-		$pwd_form{'genreid'} = $params->{'id'};
-		$params->{'pwd_list'} .=
-			${filltemplatefile("live365_browse_pwdlist.html",
-							   \%pwd_form)};
-
+		push @{$params->{'pwd_list'}}, {'hreftype' => 'Live365Browse',
+										'title' => $params->{'name'},
+										'genreid' => $genreid,
+										'genrename' => $params->{'name'},
+										'type' => 'genres'
+										};
+		$params->{'listname'} = $params->{'name'};
 		$body = buildStationBrowseHTML($params);
 	}
 
 	if ($body eq "") {
 		$body = filltemplatefile("live365_browse.html", $params);
 	}
-		
 	createAsyncWebPage($client,$body,$fullparams);
 }
 
@@ -211,18 +201,9 @@ sub errorBrowseGenre {
 	my $genreid = $params->{'id'};
 
 	if ($genreid eq 'root') {
-		
 		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 		$body = handleIndex($client,$params);
 	} else {
-		my %pwd_form = %$params;
-		$pwd_form{'genreid'} = 'root';
-		delete $pwd_form{'id'};
-		$pwd_form{'pwditem'} = $params->{'listname'} =
-			string('PLUGIN_LIVE365_BROWSEGENRES');
-		$params->{'pwd_list'} .=
-			${filltemplatefile("live365_browse_pwdlist.html",
-						   \%pwd_form)};
 		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 		$body = filltemplatefile("live365_browse.html", $params);
 	}
@@ -266,6 +247,7 @@ my %lookupStrings = (
 	"station"		=> "PLUGIN_LIVE365_SEARCH_E",
 	"location"		=> "PLUGIN_LIVE365_SEARCH_L",
 	"broadcaster"	=> "PLUGIN_LIVE365_SEARCH_H",
+	"genres"		=> "PLUGIN_LIVE365_BROWSEGENRES",
         );
 
 my %lookupGenres = (
@@ -332,13 +314,6 @@ sub completeBrowseStation {
 	my $params = $fullparams->{'params'};
 	my $brtype = $params->{'type'};
 
-	my %pwd_form = %$params;
-	$pwd_form{'pwditem'} = $params->{'listname'} = 
-		string($lookupStrings{$brtype});
-	$params->{'pwd_list'} .= 
-		${filltemplatefile("live365_browse_pwdlist.html", 
-						   \%pwd_form)};
-
 	my $body = buildStationBrowseHTML($params);
 		
 	createAsyncWebPage($client,$body,$fullparams);
@@ -384,6 +359,9 @@ sub buildStationBrowseHTML {
 		$targetParms = "type=" . $params->{'type'} . "&player=" . $params->{'player'};
 		if ($params->{'id'}) {
 			$targetParms .= "&id=" . $params->{'id'};
+		}
+		if ($params->{'name'}) {
+			$targetParms .= "&name=" . $params->{'name'};
 		}
 	}
 
@@ -464,6 +442,21 @@ sub handleBrowse {
 		return handleIndex(@_);
 	}
 
+	my $brtype = $params->{'type'};
+
+	$params->{'listname'} = string($lookupStrings{$brtype});
+
+	$params->{'pwd_list'} = [
+							{'hreftype' => 'Live365Index',
+								'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+								},
+							{'hreftype' => 'Live365Browse',
+								'title' => $params->{'listname'},
+								'genreid' => $params->{'type'} eq "genres" ? 'root' : '',
+								'type' => $brtype,
+								},
+							];
+
 	if ($params->{'type'} eq "genres") {
 		return handleBrowseGenre(@_);
 	}
@@ -486,6 +479,20 @@ sub handleSearch {
 		$params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
 		return handleIndex(@_);
 	}
+
+	my $brtype = $params->{'type'};
+
+	$params->{'listname'} = string($lookupStrings{$brtype});
+
+	$params->{'pwd_list'} = [
+							{'hreftype' => 'Live365Index',
+								'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+								},
+							{'hreftype' => 'Live365Search',
+								'title' => string("PLUGIN_LIVE365_SEARCH"),
+								'type' => $brtype,
+								},
+							];
 
 	# Short circuit error msg if query param not given
 	unless ($params->{'query'}) {
@@ -551,10 +558,10 @@ sub startSearch {
 			\&completeSearch,
 			\&errorSearch,
 			0,
-			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			searchfields	=> $lookupSearchFields{$type},
-			rows			=> ROWS_TO_RETRIEVE,
-			searchdesc		=> $query,
+			'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			'searchfields'	=> $lookupSearchFields{$type},
+			'rows'			=> ROWS_TO_RETRIEVE,
+			'searchdesc'		=> $query,
 			@optionalFirstParam
 		);
 
@@ -569,19 +576,12 @@ sub completeSearch {
 	my $brtype = $params->{'type'};
 
 	my $showDetails = Slim::Utils::Prefs::get( 'plugin_live365_web_show_details' );
-	my %pwd_form = %$params;
-	$pwd_form{'pwditem'} = $params->{'listname'} = 
-		string($lookupStrings{$brtype});
-	$params->{'pwd_list'} .= 
-		${filltemplatefile("live365_browse_pwdlist.html", 
-						   \%pwd_form)};
 
-	$pwd_form{'genreid'} = $params->{'id'};
-	$pwd_form{'pwditem'} = $params->{'listname'} = 
-		$params->{'name'};
-	$params->{'pwd_list'} .= 
-		${filltemplatefile("live365_browse_pwdlist.html", 
-						   \%pwd_form)};
+	push @{$params->{'pwd_list'}},	{'hreftype' => 'Live365Search',
+								'title' => $params->{'listname'} . ' -> ' . $params->{'query'},
+								'type' => $brtype,
+								'query' => $params->{'query'},
+								};
 
 	if ($showDetails) {
 		$params->{'extrainfo_function'} = $lookupExtraInfo{$brtype};

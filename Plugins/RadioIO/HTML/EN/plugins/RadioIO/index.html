@@ -1,8 +1,9 @@
 [%- pagetitle = 'PLUGIN_RADIOIO_MODULE_NAME' | string; pageicon = 'RADIO'; noSpacer = (stationname ? 0 : 1); -%]
-[%- pwd_list = BLOCK -%]
-	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</a> 
-	[% IF stationname %]/ [% stationname %][% END %]</p>
-[%- END -%]
+[%- pwd_list = [];
+  pwd_list.0 = BLOCK -%]
+<a href="index.html?player=[% playerURI %]">[% "PLUGIN_RADIOIO_MODULE_NAME" | string %]</a>
+[% END -%]
+[% IF stationname; pwd_list.push(stationname); END -%]
 [%- PROCESS pageheader.html -%]
 	<!-- start plugins output -->
 	[% WRAPPER contentcontainer %]
