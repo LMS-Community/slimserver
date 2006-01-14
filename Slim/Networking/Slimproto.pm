@@ -159,6 +159,11 @@ sub slimproto_close {
 	# close socket
 	$clientsock->close();
 
+	# notify before all is deleted
+	if (defined(my $client = $sock2client{$clientsock})) {
+		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
+	}
+	
 	# forget state
 	delete($ipport{$clientsock});
 	delete($parser_state{$clientsock});
@@ -638,6 +643,7 @@ sub _hello_handler {
 	} else {
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
+		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 	}
 	
 	$sock2client{$s}=$client;

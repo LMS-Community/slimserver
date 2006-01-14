@@ -104,7 +104,9 @@ package Slim::Control::Request;
 # NOTIFICATION
 # The following 'terms' are used for notifications 
 
-# Y    newclient
+# Y    client          new
+# Y    client          reconnect
+# Y    client          disconnect
 # Y    playlist        newsong
 # Y    playlist        open                        <url>
 # Y    playlist        sync
@@ -310,7 +312,9 @@ sub init {
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
-    addDispatch(['newclient'],                                                                       [1, 0, 0, undef]);
+    addDispatch(['client',         'new'],                                                           [1, 0, 0, undef]);
+    addDispatch(['client',         'reconnect'],                                                     [1, 0, 0, undef]);
+    addDispatch(['client',         'disconnect'],                                                    [1, 0, 0, undef]);
     addDispatch(['playlist',       'open',        '_path'],                                          [1, 0, 0, undef]);
     addDispatch(['playlist',       'newsong'],                                                       [1, 0, 0, undef]);
     addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);

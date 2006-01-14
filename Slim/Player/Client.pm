@@ -772,8 +772,7 @@ sub new {
 
 	$client->paddr($paddr);
 
-#	Slim::Control::Command::executeCallback($client, ['newclient']);
-	Slim::Control::Request::notifyFromArray($client, ['newclient']);
+	Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
 
 	return $client;
 }
