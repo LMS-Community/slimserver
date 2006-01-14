@@ -47,7 +47,7 @@
 			<div class="attributeBold">[% "POWER" | string | upper %]:</div>
 
 			[% PROCESS statusLink p0 = 'power' p1 = 1 linkString = 'ON'  divID = mode == 'on'  ? 'valueSelected' : 'valueBold' %]
-			<span class="bar">|</bar>
+			<span class="bar">|</span>
 			[% PROCESS statusLink p0 = 'power' p1 = 0 linkString = 'OFF' divID = mode == 'off' ? 'valueSelected' : 'valueBold' %]
 		</div>
 		[% END %]
@@ -55,11 +55,11 @@
 		<div id="transportButtons">
 
 			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = '%2b1' linkString = 'SKIP' divID = 'valueBold' %]
-			<span class="bar">|</bar>
+			<span class="bar">|</span>
 			[% PROCESS statusLink p0 = 'play'  linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
-			<span class="bar">|</bar>
+			<span class="bar">|</span>
 			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
-			<span class="bar">|</bar>
+			<span class="bar">|</span>
 			[% PROCESS statusLink p0 = 'stop'  linkString = 'STOP'  divID = modestop  ? 'valueSelected' : 'valueBold' %]
 		</div>
 
@@ -103,7 +103,7 @@
 					link       = ''
 					divID      = $repeatType ? 'valueSelected' : 'valueBold'
 				%]
-				[% IF index < 2 %]<span class="bar">|</bar>[% END %]
+				[% IF index < 2 %]<span class="bar">|</span>[% END %]
 
 			[% END %]
 		</div>
@@ -126,7 +126,7 @@
 					link       = ''
 					divID      = $shuffleType ? 'valueSelected' : 'valueBold'
 				%]
-				[% IF index < 2 %]<span class="bar">|</bar>[% END %]
+				[% IF index < 2 %]<span class="bar">|</span>[% END %]
  
 			[% END %]
 		</div>
