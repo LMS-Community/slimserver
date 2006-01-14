@@ -63,6 +63,7 @@
 	treble and pitch information according to the above limitations.</li>
 <li>Added the &quot;<a href="#clientforget">client forget</a>&quot; command.</li>
 <li>Added the &quot;<a href="#alarms">alarms</a>&quot; extended query.</li>
+<li>Added the &quot;<a href="#shutdown">shutdown</a>&quot; command.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
@@ -430,6 +431,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 <blockquote> 
   <p>Request: &quot;exit&lt;LF&gt;&quot;<br>
     Response: &quot;exit&lt;LF&gt;&quot;<br>
+    (Connection terminated)</p>
+</blockquote>
+
+<br><p id="shutdown"><strong><code>shutdown</code></strong><br></p>
+<p>The &quot;shutdown&quot; command shuts down the server.</p>
+<p>Examples:</p>
+<blockquote> 
+  <p>Request: &quot;shutdown&lt;LF&gt;&quot;<br>
+    Response: &quot;shutdown&lt;LF&gt;&quot;<br>
     (Connection terminated)</p>
 </blockquote>
 

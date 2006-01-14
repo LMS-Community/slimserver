@@ -474,6 +474,12 @@ sub cli_process {
 			$exit = 1;
 		}
 
+		elsif ($cmd eq 'shutdown') {
+			# delay execution so we have time to reply...
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2, \&cli_cmd_shutdown);
+			$exit = 1;
+		} 
+
 		elsif ($cmd eq 'listen') {
 			cli_cmd_listen($client_socket, $request);
 		} 
@@ -603,6 +609,10 @@ sub cli_cmd_listen {
 	} else {
 		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
 	}
+}
+
+sub cli_cmd_shutdown {
+	$::stop = 1;
 }
 
 ################################################################################
