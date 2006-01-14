@@ -100,7 +100,9 @@ sub connectSqueezeNetwork {
 		# TODO: ensure client actually received the message
 
 		# if message recieved, client has disconnected
-		$client->forgetClient();
+		Slim::Control::Request::executeRequest(
+			$client,
+			['client', 'forget']);
 	}
 }
 

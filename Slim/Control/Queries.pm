@@ -28,6 +28,75 @@ our %searchMap = (
 	'track'  => 'track.titlesearch',
 );
 
+sub alarmsQuery {
+	my $request = shift;
+
+	$d_queries && msg("alarmsQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['alarms']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client   = $request->client();
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $filter	 = $request->getParam('filter');
+	my $alarmDOW = $request->getParam('dow');
+	
+	
+	if ($request->paramNotOneOfIfDefined($filter, ['all', 'defined', 'enabled'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	my @results;
+	
+	if (defined $alarmDOW) {
+		my $defined;
+		($results[0], $defined) = _alarmGet($client, $alarmDOW);
+	} else {
+		my $i = 0;
+		$filter = 'enabled' if !defined $filter;
+		for $alarmDOW (0..7) {
+			my ($hashRef, $defined) = _alarmGet($client, $alarmDOW);
+			
+			my $wanted = 	( 
+								($filter eq 'all') ||
+								($filter eq 'defined' && $defined) ||
+								($filter eq 'enabled' && $hashRef->{'enabled'})
+							);
+			$results[$i++] = $hashRef if $wanted;
+		}
+	}
+
+	my $count = scalar @results;
+
+	$request->addResult('fade', $client->prefGet('alarmfadeseconds'));
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@alarms';
+		my $cnt = 0;
+		
+		for my $eachitem (@results[$start..$end]) {
+			$request->addResultLoop($loopname, $cnt, 'dow', $eachitem->{'dow'});
+			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->{'enabled'});
+			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->{'time'});
+			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->{'volume'});
+			$request->addResultLoop($loopname, $cnt, 'playlist url', $eachitem->{'playlist'});
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
+
 sub browseXQuery {
 	my $request = shift;
 
@@ -1388,6 +1457,29 @@ sub _songData {
 
 	return \%returnHash;
 }
+
+sub _alarmGet {
+	my $client = shift;
+	my $alarmDOW = shift;
+	
+	my %alarmData;
+	
+	$alarmData{'dow'} = $alarmDOW;
+	$alarmData{'enabled'} = $client->prefGet('alarm', $alarmDOW);
+	$alarmData{'time'} = $client->prefGet('alarmtime', $alarmDOW);
+	$alarmData{'volume'} = $client->prefGet('alarmvolume', $alarmDOW);
+	$alarmData{'playlist'} = $client->prefGet('alarmplaylist', $alarmDOW);
+	
+	my $undefined = (
+						$alarmData{'enabled'} == 0 &&
+						$alarmData{'time'} == 0 &&
+						$alarmData{'volume'} == 50 &&
+						$alarmData{'playlist'} eq ''
+					);
+				
+	return (\%alarmData, !$undefined);
+}
+	
 
 1;
 

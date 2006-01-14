@@ -49,6 +49,25 @@ sub buttonCommand {
 	$request->setStatusDone();
 }
 
+sub clientForgetCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::clientForgetCommand()\n");
+
+	# check this is the correct command. Syntax approved by Dean himself!
+	if ($request->isNotCommand([['client'], ['forget']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client     = $request->client();
+
+	$client->forgetClient();
+	
+	$request->setStatusDone();
+}
+
 sub debugCommand {
 	my $request = shift;
 	

@@ -37,7 +37,10 @@ sub home {
 	my %listform = %$params;
 
 	if (defined $params->{'forget'}) {
-		Slim::Player::Client::forgetClient(Slim::Player::Client::getClient($params->{'forget'}));
+#		Slim::Player::Client::forgetClient(Slim::Player::Client::getClient($params->{'forget'}));
+		Slim::Control::Request::executeRequest(
+			Slim::Player::Client::getClient($params->{'forget'}),
+			['client', 'forget']);
 	}
 
 	$params->{'nosetup'}  = 1 if $::nosetup;

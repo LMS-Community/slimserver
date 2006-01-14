@@ -29,9 +29,9 @@
 	as in shell-like environments. </p>
 
 <p>For debugging purposes, CLI formatted commands can be sent using
-	standard in and out. CLI queries are not supported. This support is only
-	available on Unix platforms (MacOS X included), and must be enabled by
-	launching the server with the &quot;--stdio&quot; command line option.</p>
+	standard in and out. This support is only available on Unix platforms (MacOS
+	X included), and must be enabled by launching the server with the 
+	&quot;--stdio&quot; command line option.</p>
 
  
 <hr>
@@ -61,6 +61,8 @@
 	supported by SliMP3 and SqueezeBox 1 players.</li>
 <li>Updated the &quot;<a href="#status">status</a>&quot; query to return bass,
 	treble and pitch information according to the above limitations.</li>
+<li>Added the &quot;<a href="#clientforget">client forget</a>&quot; command.</li>
+<li>Added the &quot;<a href="#alarms">alarms</a>&quot; extended query.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
@@ -144,15 +146,16 @@
 	<p><code>&lt;playerid&gt;</code> is the unique identifier for the
 		player, as above.</p>
 	<p><code>&lt;command&gt;</code> is the command name, currently one of
-		&quot;<a href="#players">players</a>&quot;, &quot;<a
-		href="#genres">genres</a>&quot;, &quot;<a
-		href="#artists">artists</a>&quot;, &quot;<a
-		href="#albums">albums</a>&quot;, &quot;<a
-		href="#titles">titles</a>&quot;, &quot;<a
-		href="#playlists">playlists</a>&quot;, &quot;<a
-		href="#playlisttracks">playlisttracks</a>&quot;, &quot;<a
-		href="#songinfo">songinfo</a>&quot; or &quot;<a
-		href="#status">status</a>&quot;.</p>
+		&quot;<a href="#players">players</a>&quot;, 
+		&quot;<a href="#genres">genres</a>&quot;, 
+		&quot;<a href="#artists">artists</a>&quot;,
+		&quot;<a href="#alarms">alarms</a>&quot;,
+		&quot;<a href="#albums">albums</a>&quot;, 
+		&quot;<a href="#titles">titles</a>&quot;, 
+		&quot;<a href="#playlists">playlists</a>&quot;,
+		&quot;<a href="#playlisttracks">playlisttracks</a>&quot;,
+		&quot;<a href="#songinfo">songinfo</a>&quot; or
+		&quot;<a href="#status">status</a>&quot;.</p>
 	<p><code>&lt;start&gt;</code> and <code>&lt;itemsPerResponse&gt;</code>
 		are <em>positional</em> parameters that control the response
 		chunking. <code>&lt;start&gt;</code> is a zero-based index of the
@@ -693,10 +696,21 @@ preferences values.</p>
   <p>Request: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;<br>Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<br><p id="clientforget"><strong>
+	<code>&lt;playerid&gt; client forget</code>
+	</strong></p>
+<p>The &quot;client forget&quot; command deletes the client/player from the
+   server database.
+<p>Example:</p>
+<blockquote> 
+  <p>  Request: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+  <br>Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;</p>
+</blockquote>
+
 <br><p id="players"><strong>
 	<code>players &lt;start&gt; &lt;itemsPerResponse&gt;</code>
 </strong></p>
-<p>The &quot;players&quot; command returns information about all players
+<p>The &quot;players&quot; query returns information about all players
 	known by the SlimServer.</p>
 <p>Accepted tagged parameters:</p>
 <table border="0" spacing="50">
@@ -761,6 +775,85 @@ preferences values.</p>
      name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<br><p id="alarms"><strong>
+	<code>&lt;playerid&gt; alarms &lt;start&gt; &lt;itemsPerResponse&gt;</code>
+</strong></p>
+<p>The &quot;alarms&quot; query returns information about player alarms.</p>
+<p>Accepted tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>dow</td>
+		<td>If present, the query returns information about this Day Of Week 
+		only. Note this takes precedence over any &quot;filter&quot; parameter.
+		0 is every day, 1 is Monday, etc. up to 7 being Sunday.
+		</td>
+	</tr>
+	<tr>
+		<td>filter</td>
+		<td>One of &quot;all&quot;, &quot;defined&quot; or &quot;enabled&quot; 
+		(the default). To get all 8 possible alarms, use &quot;all&quot;. To
+		get only alarms with defined values (different than the default values),
+		use &quot;defined&quot;. To get only enabled alarms, use 
+		&quot;enabled&quot;</td>
+	</tr>
+	<tr>
+		<td>charset</td>
+		<td>Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.</td>
+	</tr>
+</table>
+<p>Returned tagged parameters:</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>fade</td>
+		<td>1 if the alarms fade in.</td>
+	</tr>
+	<tr>
+		<td>count</td>
+		<td>Number of alarms returned, based on the filters above.</td>
+	</tr>
+	<tr>
+		<td><em>For each alarm:</em></td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;<b>dow</b></td>
+		<td>Day Of Week of this alarm. Item delimiter.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;enabled</td>
+		<td>1 if the alarm is enabled.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;time</td>
+		<td>Time of the alarms, in seconds from midnight.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;volume</td>
+		<td>Mixer volume of the alarm.</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;playlist url</td>
+		<td>URL (or internal name tag for current and random special playlists)
+		of the alarm playlist.</td>
+	</tr>
+</table>
+<p>Example:</p>
+<blockquote> 
+  <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
+	time:3600 volume:50 playlist url:PLUGIN_RANDOM_TRACK dow:5 enabled:1 time:81000 
+	volume:77 playlist url:file:///Volumes/Sid/slimp3/Playlists/AAA.m3u
+	&lt;LF&gt;&quot;</p>
+</blockquote>
 
 <hr>
 <h4 id="DB">Database commands</h4>

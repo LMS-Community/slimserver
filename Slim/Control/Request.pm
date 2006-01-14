@@ -173,8 +173,8 @@ use Slim::Utils::Misc;
 our %dispatchDB;				# contains a multi-level hash pointing to
 								# each command or query subroutine
 
-our %subscribers = ();   		# contains the clients to the notification
-								# mechanism
+our %subscribers = ();          # contains the clients to the notification
+                                # mechanism
 
 my $d_notify = 1;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
@@ -196,11 +196,13 @@ sub init {
 #                 P0               P1              P2            P3             P4         P5         C  Q  T  F
 ######################################################################################################################################################################
 
+    addDispatch(['alarms',         '_index',      '_quantity'],                                      [1, 1, 1, \&Slim::Control::Queries::alarmsQuery]);
     addDispatch(['album',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['albums',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['artist',         '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['artists',        '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['button',         '_buttoncode',  '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
+    addDispatch(['client',         'forget'],                                                        [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
     addDispatch(['connected',      '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
     addDispatch(['debug',          '_debugflag',   '?'],                                             [0, 1, 0, \&Slim::Control::Queries::debugQuery]);
     addDispatch(['debug',          '_debugflag',   '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::debugCommand]);
@@ -936,6 +938,17 @@ sub paramUndefinedOrNotOneOf {
 	my $possibleValues = shift;
 
 	return 1 if !defined $param;
+	return 1 if !defined $possibleValues;
+	return !grep(/$param/, @{$possibleValues});
+}
+
+# returns true if $param being defined, it is not one of the possible values
+sub paramNotOneOfIfDefined {
+	my $self = shift;
+	my $param = shift;
+	my $possibleValues = shift;
+
+	return 0 if !defined $param;
 	return 1 if !defined $possibleValues;
 	return !grep(/$param/, @{$possibleValues});
 }
