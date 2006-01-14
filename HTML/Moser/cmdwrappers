@@ -76,17 +76,17 @@
     <ul>
       <li>[% PROCESS homelink %]</li>
       [%- FOREACH item = pwd_list.list %]
-        [% PROCESS crumblistitem %]
-      [% END -%]
+        [%- PROCESS crumblistitem | indent(6) -%]
+      [% END %]
     </ul>
   </div>
 [%- END %]
 
 [% BLOCK crumblistitem -%]
-[%- IF item.title -%]
+[%- IF item.title %]
 <li> / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a></li>
-[%- ELSE -%]
-<li> / [% item %]</li>
+[%- ELSE %]
+<li> / [%- item | replace('^\s*/','') %]</li>
 [%- END -%]
 [%- END %]
 
