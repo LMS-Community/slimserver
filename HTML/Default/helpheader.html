@@ -1,6 +1,6 @@
 [% pagetitle = 'HELP' | string; pageicon = 'help' %]
 [% pageHeaderMenu = BLOCK %]
-	&nbsp;/	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a> /[% END %]
+	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a> /[% END %]
 	[% pagetitle %]&nbsp;
 [% END %]
 [% PROCESS pageheader.html %]
