@@ -52,6 +52,15 @@
 <li>Changed &quot;<a href="#sync">sync ?</a>&quot; to return &quot;-&quot; 
 	instead of  nothing if the player is not synced. This is coherent with 
 	using &quot;-&quot; to unsync the player.</li>
+<li>Documented correctly system support for 
+	&quot;<a href="#mixerbass">mixer bass</a>&quot;, 
+	&quot;<a href="#mixertreble">mixer treble</a>&quot; and
+	&quot;<a href="#mixerpitch">mixer pitch</a>&quot;. These 3 options are
+	not (yet) supported on the most recent players, SqueezeBox2 and SqueezeBox3.
+	Pitch is only supported by SqueezeBox 1 players; bass and treble are
+	supported by SliMP3 and SqueezeBox 1 players.</li>
+<li>Updated the &quot;<a href="#status">status</a>&quot; query to return bass,
+	treble and pitch information according to the above limitations.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
@@ -569,33 +578,53 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
   <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; mixer bass &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer bass&quot; command returns or sets the current bass setting for the player. For more information on
-   the 0 to 100 scale, please refer to the &quot;<a href="#volume">mixer volume</a>&quot; command.</p>
+<br><p id ="mixerbass"><strong>
+	<code>&lt;playerid&gt; mixer bass &lt;0 .. 100|-100 .. +100|?&gt;</code>
+</strong></p>
+<p>The &quot;mixer bass&quot; command returns or sets the current bass setting 
+   for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
+   players. For more information on the 0 to 100 scale, please refer to 
+   the &quot;<a href="#volume">mixer volume</a>&quot; command. </p>
 <p> Example: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</code></strong></p>
-<p>The &quot;mixer treble&quot; command returns or sets the current treble setting for the player. For more information on
-   the 0 to 100 scale, please refer to the &quot;<a href="#volume">mixer volume</a>&quot; command.</p>
-<p> Example: </p>
+<br><p id="mixertreble"><strong>
+	<code>&lt;playerid&gt; mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</code>
+</strong></p>
+<p>The &quot;mixer treble&quot; command returns or sets the current treble 
+   setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
+   players. For more information on the 0 to 100 scale, please refer to 
+   the &quot;<a href="#volume">mixer volume</a>&quot; command. </p>
+<p> Example: </p><p> Example: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; mixer pitch &lt;80 .. 120|-40 .. +40|?&gt;</code></strong></p>
-<p>The &quot;mixer pitch&quot; command returns or sets the current pitch setting for the player (only supported by Squeezebox players).</p>
+<br><p id="mixerpitch"><strong>
+	<code>&lt;playerid&gt; mixer pitch &lt;80 .. 120|-40 .. +40|?&gt;</code>
+</strong></p>
+<p>The &quot;mixer pitch&quot; command returns or sets the current pitch setting
+   for the player (only supported by SqueezeBox (SB1) players).</p>
 <p> Example: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer pitch 98&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;</p>
+  <p>Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
+  <br>Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;</p>
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; rate &lt;rate|?&gt;</code></strong></p>
@@ -1827,15 +1856,15 @@ of &lt;itemsPerResponse&gt;.</p>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;mixer treble</td>
-		<td></td>
+		<td>Only for SliMP3 and SqueezeBox 1 players.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;mixer bass</td>
-		<td></td>
+		<td>Only for SliMP3 and SqueezeBox 1 players.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;mixer pitch</td>
-		<td>Not for SliMP3 players.</td>
+		<td>Only for SqueezeBox 1 players.</td>
 	</tr>
 	<tr>
 		<td>&nbsp;&nbsp;playlist repeat</td>

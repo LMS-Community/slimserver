@@ -791,6 +791,11 @@ sub statusQuery {
 	# get the initial parameters
 	my $client = $request->client();
 	
+	my $SP3  = ($client->model() eq 'slimp3');
+	my $SQ   = ($client->model() eq 'softsqueeze');
+	my $SB   = ($client->model() eq 'squeezebox');
+	my $SB2  = ($client->model() eq 'squeezebox2');
+	
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	
 	my $connected = $client->connected() || 0;
@@ -808,7 +813,7 @@ sub statusQuery {
 	$request->addResult("player_connected", $connected);
 	$request->addResult("power", $power);
 	
-	if ($client->model() eq 'squeezebox' || $client->model() eq 'squeezebox2') {
+	if ($SB || $SB2) {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
@@ -853,10 +858,13 @@ sub statusQuery {
 		}
 	
 		$request->addResult("mixer volume", $client->volume());
-		$request->addResult("mixer treble", $client->treble());
-		$request->addResult("mixer bass", $client->bass());
+		
+		if ($SB || $SP3) {
+			$request->addResult("mixer treble", $client->treble());
+			$request->addResult("mixer bass", $client->bass());
+		}
 
-		if ($client->model() ne "slimp3") {
+		if ($SB) {
 			$request->addResult("mixer pitch", $client->pitch());
 		}
 
