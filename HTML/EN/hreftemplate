@@ -13,7 +13,7 @@ MoveDown = "%2B1"; # +1
 
 [%# href for home page %]
 [% BLOCK homeLink; homeString = "HOME" | string -%]
-	[% "<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>" -%]
+	[% "<a href=\"";webroot;"home.html?player=$playerURI\" ; IF target; target=\""; $target; "\"; END; >"; img or homeString; "</a>" -%]
 [%- END %]
 
 [%# href for save playlist command %]

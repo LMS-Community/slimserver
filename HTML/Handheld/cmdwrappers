@@ -39,10 +39,6 @@
 </td>
 [% END %]
 
-[% BLOCK dummy %]
-<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %] width="13"></td>
-[% END %]
-
 [% BLOCK listitem %]
 	<td align="left" bgcolor="[% PROCESS oddOrEvenC %]">
 		[% IF content == '' %]
@@ -87,6 +83,27 @@
 [%- ELSE -%]
 [% item %]
 [%- END -%]
+[%- END %]
+
+[% BLOCK contentcontainer %]
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	
+		[%- content | indent(4) %]
+	
+</table>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<tr>
+	[%- IF anchor %]
+		<a name="[% anchor %]"></a>
+	[%- END %]
+
+	<div class="[% lineclass || 'browsedbListItem' %]">
+
+	[%- content | indent(4) %]
+	</div>
+</tr>
 [%- END %]
 
 [% BLOCK playlistcontrols %]

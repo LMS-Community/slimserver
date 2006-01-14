@@ -9,7 +9,7 @@ BODY {
 
 H3 {
 	font-size : 14px;
-	font-weight : bold;	
+	font-weight : bold;
 	text-align : left;
 	margin:2 0 2 0;
 	padding: 2 0 2 0;
@@ -221,6 +221,7 @@ DIV.menu2 .stdedit {
 {
 	display: none;
 }
+
 .darkbutton
 {
 	color:#bbb ! important;

@@ -96,6 +96,32 @@
  [%- END -%]
 [%- END %]
 
+[% BLOCK contentcontainer %]
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	
+		[%- content | indent(4) %]
+	
+</table>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<tr><td class="listing" align="left">
+	[%- IF anchor %]
+		<a name="[% anchor %]"></a>
+	[%- END %]
+
+	<div class="[% lineclass || 'browsedbListItem' %]">
+
+	[%- content | indent(4) %]
+	</td>
+	[% IF controls %]
+	<div class="browsedbControls">
+	[%- PROCESS $controls %][% END %]
+	</div>
+	</div>
+</tr>
+[%- END %]
+
 [% BLOCK playlistcontrols %]
 	[% width='20' height='20' target='status' %]
 	[% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                           %][% END %]

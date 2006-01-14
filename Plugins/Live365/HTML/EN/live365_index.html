@@ -10,46 +10,37 @@
 	<p align="center"><b>[% errmsg | string %]</b></p>
 [% END %]
 
-    <h4>[% "BROWSE_MUSIC" | string %]</h4>
-    <ul style="list-style: none;">
-    <li>
-		&bull; <a href="browse.html?type=presets&player=[% player | uri %]">[% "PLUGIN_LIVE365_PRESETS" | string %]</a>
- 	</li>
+<div class="homeMenuSection">
+	<div class="homeMenuHeader">[% "BROWSE_MUSIC" | string | upper %]</div>
+	<ul>
+		<li><a href="browse.html?type=presets&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_PRESETS" | string %]</a></li>
+		
+		<li><a href="browse.html?type=genres&amp;id=root&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEGENRES" | string %]</a></li>
+		
+		<li><a href="browse.html?type=picks&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPICKS" | string %]</a></li>
+		
+		<li><a href="browse.html?type=pro&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPROS" | string %]</a></li>
+		
+		<li><a href="browse.html?type=all&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEALL" | string %]</a></li>
+	</ul>
+</div>
 
-    <li>
- 		&bull; <a href="browse.html?type=genres&id=root&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEGENRES" | string %]</a>
- 	</li>
+<div class="homeMenuSection">
+	<div class="homeMenuHeader">[% "SEARCH" | string | upper %]</div>
+	<ul>
+		<li><a href="search.html?type=tac&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a></li>
+	</ul>
+</div>
 
-    <li>
- 		&bull; <a href="browse.html?type=picks&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPICKS" | string %]</a>
- 	</li>
-
-    <li>
- 		&bull; <a href="browse.html?type=pro&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEPROS" | string %]</a>
- 	</li>
-
-    <li>
- 		&bull; <a href="browse.html?type=all&player=[% player | uri %]">[% "PLUGIN_LIVE365_BROWSEALL" | string %]</a>
- 	</li>
-    </ul>
-
-    <h4>[% "SEARCH" | string %]</h4>
-    <ul style="list-style: none;">
-    <li>
- 		&bull; <a href="search.html?type=tac&player=[% player | uri %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>
- 	</li>
-    </ul>
-
-    <h4>Account</h4>
-    <ul style="list-style: none;">
-    <li>
-[% IF loggedin %]
- 		&bull; <a href="loginout.html?action=out&player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGOUT" | string %]</a>
-[% ELSE %]
- 		&bull; <a href="loginout.html?action=in&player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGIN" | string %]</a>
-[% END %]
- 	</li>
-
-    </ul>
-  </body>
+<div class="homeMenuSection">
+	<div class="homeMenuHeader">ACCOUNT</div>
+	<ul>
+	<li>[% IF loggedin %]
+		<a href="loginout.html?action=out&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGOUT" | string %]</a>
+	[% ELSE %]
+		<a href="loginout.html?action=in&amp;player=[% player | uri %]">[% "PLUGIN_LIVE365_LOGIN" | string %]</a>
+	[% END %]</li>
+	</ul>
+</div>
+</body>
 </html>

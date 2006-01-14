@@ -1,61 +1,61 @@
 [%- FILTER null %]
 [% statusroot = 'status_header.html' %]
 
-[% BLOCK cmdlink %]
+[% BLOCK cmdlink -%]
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
-[% END %]
+[%- END %]
 
-[% BLOCK playlink %]
-	[% PROCESS cmdlink
+[% BLOCK playlink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "PLAY"
-		cmdimage = "b_play" %]
-[% END %]
+		cmdimage = "b_play" -%]
+[%- END %]
 
-[% BLOCK addlink %]
-	[% PROCESS cmdlink
+[% BLOCK addlink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "ADD_TO_PLAYLIST"
-		cmdimage = "b_add" %]
-[% END %]
+		cmdimage = "b_add" -%]
+[%- END %]
 
-[% BLOCK descendlink %]
+[% BLOCK descendlink -%]
 	<a [% content %]><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a>
-[% END %]
+[%- END %]
 
-[% BLOCK insertlink %]
-[% END %]
+[% BLOCK insertlink -%]
+[%- END %]
 
-[% BLOCK removelink %]
-	[% PROCESS cmdlink
+[% BLOCK removelink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
-		cmdimage = "b_delete" %]
-[% END %]
+		cmdimage = "b_delete" -%]
+[%- END %]
 
-[% BLOCK dummy %]
-[% END %]
+[% BLOCK dummy -%]
+[%- END %]
 
-[% BLOCK listitem %]
+[% BLOCK listitem -%]
 	[% IF content == '' %]
-		[% title %]		
+		[% title | html %]		
 	[% ELSE %]
-		<a [% content %] >[% title %]</a>
+		<a [% content %] >[% title | html %]</a>
 	[% END %]
-[% END %]
+[%- END %]
 
 [% BLOCK homelink; homeString = "HOME" | string;
-	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
+	"<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; $target; "\""; END; ">"; img or homeString; "</a>";
 END %]
 
-[% BLOCK moveuplink %]
-	[% PROCESS cmdlink
+[% BLOCK moveuplink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "MOVEUP"
-		cmdimage = "b_up" %]
-[% END %]
+		cmdimage = "b_up" -%]
+[%- END %]
 
-[% BLOCK movedownlink %]
-	[% PROCESS cmdlink
+[% BLOCK movedownlink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "MOVEDOWN"
-		cmdimage = "b_down" %]
-[% END %]
+		cmdimage = "b_down" -%]
+[%- END %]
 
 [% BLOCK scanwarning -%]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
@@ -80,20 +80,45 @@ END %]
 	[%- END -%]
 [%- END %]
 
-[% BLOCK playlistcontrols %]
+[% BLOCK contentcontainer %]
+<div id="[% listid || 'browsedbList' %]">
+	
+		[%- content | indent(4) %]
+	
+</div>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<div class="[% odd ? "odd" : "even" %]">
+	[%- IF anchor %]
+		<a name="[% anchor %]"></a>
+	[%- END -%]
+	
+	<div class="[% lineclass || 'browsedbListItem' %]">
+		[%- content | indent(4) %]
+		[%- IF controls -%]
+			<div class="browsedbControls">
+			[%- PROCESS $controls -%]
+			</div>
+		[%- END %]
+	</div>
+</div>
+[%- END %]
+
+[%- BLOCK playlistcontrols %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
 	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
-[% END %]
+[%- END %]
 
-[% BLOCK browsecontrols %]
+[% BLOCK browsecontrols -%]
 	[% SET width='13' height='13' header='1' target='status' %]
 	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 	[% FOREACH mixer = mixerlinks.values.sort %]
 		[% PROCESS $mixer %]
 	[% END %]
-[% END %]
+[%- END %]
 
 [% BLOCK trackinfo %]
 		[% IF item.currentsong %]

@@ -39,11 +39,6 @@
 </td>
 [% END %]
 
-[%# this is to fill in unused cells in table rows with unused links %]
-[% BLOCK dummy %]
-	<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]></td>
-[% END %]
-
 [%# this is to wrap around ? %]
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
@@ -98,6 +93,27 @@ END %]
 [%- ELSE -%]
 [% item | replace('^\s*/','') %]
 [%- END -%]
+[%- END %]
+
+[% BLOCK contentcontainer %]
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	
+		[%- content | indent(4) %]
+	
+</table>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<tr>
+	[%- IF anchor %]
+		<a name="[% anchor %]"></a>
+	[%- END %]
+
+	<div class="[% lineclass || 'browsedbListItem' %]">
+
+	[%- content | indent(4) %]
+	</div>
+</tr>
 [%- END %]
 
 [%# these are the links to be shown with items on the playlist %]

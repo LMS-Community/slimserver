@@ -11,9 +11,9 @@
 	<p>
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-    <table cellspacing="0" border="0" cellpadding="4" width="100%">
+    [% WRAPPER contentcontainer %]
       [% browse_list %]
-    </table>
+    [% END %]
    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
 [% pagefooter.html %]

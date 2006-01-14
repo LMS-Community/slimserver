@@ -893,7 +893,7 @@ sub doSearch {
 	my $client = shift;
 	my $exitType = shift;
 
-	my $arrow = $client->symbols('rightarrow');
+	my $arrow = Slim::Display::Display::symbol('rightarrow');
 	$searchString{$client} =~ s/$arrow//;
 
 	ExitEventType: {

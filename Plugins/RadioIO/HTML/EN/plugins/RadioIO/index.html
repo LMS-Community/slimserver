@@ -5,36 +5,35 @@
 [%- END -%]
 [%- PROCESS pageheader.html -%]
 		<!-- start plugins output -->
-		<br>
-		<table border="0" cellspacing="0" cellpadding="4" width="100%">
+		[% WRAPPER contentcontainer %]
 			[% IF stationnames %]
 				[% odd = 1 %]
 				[% FOREACH station = stationnames %]
-					<tr>
-					[% WRAPPER listitem title=station %]
-						href="index.html?p0=[% station | uri %]&player=[% player | uri %]"
+					[% BLOCK radiocontrol %]
+						[% WRAPPER insertlink %]
+							href="[% webroot %][% statusroot %]?p0=playlist&p1=insert&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
+						[% END %]
+						[% WRAPPER playlink %]
+							href="[% webroot %][% statusroot %]?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
+						[% END %]
+						[% WRAPPER addlink %]
+							href="[% webroot %][% statusroot %]?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
+						[% END %]
 					[% END %]
-				
-					[% WRAPPER insertlink %]
-						href="[% webroot %][% statusroot %]?p0=playlist&p1=insert&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
+					
+					[%- WRAPPER contentitem controls = 'radiocontrol' %]
+						<a href="index.html?p0=[% station | uri %]&player=[% player | uri %]">[% station %]</a>
 					[% END %]
-					[% WRAPPER playlink %]
-						href="[% webroot %][% statusroot %]?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
-					[% END %]
-					[% WRAPPER addlink %]
-						href="[% webroot %][% statusroot %]?p0=playlist&p1=add&p2=[% 'radioio://' | uri %][% station | uri %].mp3&p3=[% station | uri %]&player=[% player | uri %]"
-					[% END %]
-					</tr>
 					[% odd = (not odd) %]
 				[% END %]
 			[% END %]
 			
 			[% IF stationname %]
 				[% BLOCK streaminfo %][% IF content %]
-				<tr>
-					<td>[% title | string %][% "COLON" | string %]</td>
-					<td>[% content %]</td>
-				</tr>
+				[% WRAPPER contentitem %]
+					[% title | string %][% "COLON" | string %]
+					[% content %]
+				[% END %]
 				[% END %][% END %]
 
 				[% WRAPPER streaminfo title='TITLE' %]
@@ -49,6 +48,6 @@
 					<a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% 'radioio://' %][% stationname %].mp3</a>
 				[% END %]
 			[% END %]
-		</table>
+		[% END %]
 		<!-- end plugins output -->
 [% PROCESS pagefooter.html %]

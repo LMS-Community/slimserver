@@ -33,10 +33,6 @@
 		cmdshown = "<span>&times;</span>" -%]
 [%- END %]
 
-[%# no real need for dummy entries in a list layout, but have to have this defined %]
-[% BLOCK dummy -%]
-[% END %]
-
 [% BLOCK listitem -%]
 <li class="[% odd ? "odd" : "even" %]">
 	[% IF content == '' %]
@@ -95,13 +91,9 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
-<div class="controls">
-  <ul class="songctl">
     [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
     [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
     [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
-  </ul>
-</div>
 [% END %]
 
 [% BLOCK contentcontainer %]
@@ -117,14 +109,18 @@
   [%- IF anchor %]
   <a name="[% anchor %]"></a>
   [%- END %]
-
-  [%- PROCESS $controls | indent(2) %]
+  [%- IF controls %][%# allow for a line with no controls %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $controls | indent(2) -%]
+    </ul>
+  </div>
+  [%- END %]
   <div class="[% lineclass || 'browseline' %]">
-
   [%- content | indent(4) %]
   </div>
 </li>
-[%- END %]
+[% END %]
 
 [% BLOCK galleryitem -%]
 <li class="gallery">
@@ -138,20 +134,19 @@
     <a [% PROCESS browseDbItemHRef %] target="browser">[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</a>
 [% END %]
   </div>
-
-  [%- PROCESS $controls | indent(2) %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $controls | indent(2) %]
+    </ul>
+  </div>
 </li>
 [%- END %]
 
 [% BLOCK browsecontrols -%]
-<div class="controls">
-  <ul class="songctl">
     [% WRAPPER playlink   %][% PROCESS cmdHRef cmdType = "play"   %][% END %]
     [% WRAPPER insertlink %][% PROCESS cmdHRef cmdType = "insert" %][% END %]
     [% WRAPPER addlink    %][% PROCESS cmdHRef cmdType = "add"    %][% END %]
     [% WRAPPER removelink %][% PROCESS cmdHRef cmdType = "remove" %][% END %]
-  </ul>
-</div>
 [%- END %]
 
 [% BLOCK trackinfo -%]

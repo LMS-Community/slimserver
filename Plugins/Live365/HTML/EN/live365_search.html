@@ -1,18 +1,13 @@
-<html>
-  <head>
-    <title>[% "PLUGIN_LIVE365_SEARCH" | string %]</title>
-    <link rel="stylesheet" href="[% webroot %]slimserver.css">
-  </head>
-  <body bgcolor="#FFFFFF">
+[%- pagetitle = 'PLUGIN_LIVE365_SEARCH' | string; pageicon = 'RADIO'; noSpacer = NOT streaminfo; PROCESS cmdwrappers -%]
+[%- pwd_list = BLOCK -%]
+	/ <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a>
+	/ <a href="search.html?player=[% player | uri %]&type=[% type %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>[% pwd_list %]
+[% END %]
+[% PROCESS pageheader.html %]
 
-    <p>
-
-    <h3>[% "PLUGIN_LIVE365_SEARCH" | string %]</h3>
-    <p>
-
-    <a href="[% webroot %]home.html?player=[% player | uri %]">[% playermodel _ "_HOME" | string %]</a> /
-    <a href="index.html?player=[% player | uri %]">[% "PLUGIN_LIVE365_MODULE_NAME" | string %]</a> /
-    <a href="search.html?player=[% player | uri %]&type=[% type %]">[% "PLUGIN_LIVE365_SEARCH" | string %]</a>
+	[% IF errmsg %]
+		<p align="center"><b>[% errmsg | string %]</b></p>
+	[% END %]
 
 	<form method="get" action="search.html">
         <select name="type">

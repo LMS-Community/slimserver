@@ -45,11 +45,6 @@
 		target = "browser" %]
 [% END %]
 
-[% BLOCK dummy %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
-</td>
-[% END %]
-
 [% BLOCK listitem %]
 	<td class="listing" align="left">
 		[% IF content == '' %]
@@ -95,6 +90,41 @@
 [% item | replace('^\s*/','') %]
  [%- END -%]
 [%- END %]
+
+[% BLOCK crumblistitem -%]
+	[%- IF item.title -%]
+<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+	[%- ELSE -%]
+		[%- item | replace('^\s*/','') %]
+	[%- END -%]
+[%- END %]
+
+[% BLOCK contentcontainer %]
+<table border="0" cellspacing="0" cellpadding="4" width="100%">
+	
+		[%- content | indent(4) %]
+	
+</table>
+[%- END %]
+
+[% BLOCK contentitem -%]
+<tr><td class="listing" align="left">
+	[%- IF anchor %]
+		<a name="[% anchor %]"></a>
+	[%- END %]
+
+	<div class="[% lineclass || 'browsedbListItem' %]">
+
+	[%- content | indent(4) %]
+	</td>
+	[% IF controls %]
+	<div class="browsedbControls">
+	[%- PROCESS $controls %][% END %]
+	</div>
+	</div>
+</tr>
+[%- END %]
+
 
 [% BLOCK playlistcontrols %]
 	[% width='9' height='11' target='status' %]
