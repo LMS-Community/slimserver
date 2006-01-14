@@ -35,22 +35,22 @@ my $live365_base = "http://www.live365.com";
 # API objects.  That way we only login/logout once even if we have
 # multiple clients attached.
 my %loginInformation = (
-		sessionid	=> undef,
-		vip			=> 0,
-		loggedin	=> 0
+		'sessionid'	=> undef,
+		'vip'       => 0,
+		'loggedin'  => 0
 		);
 
 sub new {
 	my $class = shift;  
 	my $self  = {
-		member_name		=> '',
-		password		=> '',
-		sessionid		=> '',
-		stationPointer	=> 0,
-		genrePointer	=> 0,
-		stationSource   => '',
-		reqBatch		=> 1,
-		status			=> 0,
+		'member_name'    => '',
+		'password'       => '',
+		'sessionid'      => '',
+		'stationPointer' => 0,
+		'genrePointer'   => 0,
+		'stationSource'  => '',
+		'reqBatch'       => 1,
+		'status'         => 0,
 		@_
 	};
 
@@ -122,10 +122,10 @@ sub GetLive365Playlist {
 	my $callbackargs = shift;
 
     my %args = (
-        handler  => 'playlist',
-        cmd      => 'view',
-        handle   => $isVIP ? "afl:$handle" : $handle,
-        viewType => 'xml'
+        'handler'  => 'playlist',
+        'cmd'      => 'view',
+        'handle'   => $isVIP ? "afl:$handle" : $handle,
+        'viewType' => 'xml'
     );
 
 	$self->asyncHTTPRequest('/pls/front',
@@ -170,11 +170,11 @@ sub login {
 	my $callback = shift;
 
 	my %args = (
-		action		=> 'login',
-		remember	=> 'Y',
-		org			=> 'live365',
-		member_name	=> $username,
-		password	=> $password
+		'action'      => 'login',
+		'remember'    => 'Y',
+		'org'         => 'live365',
+		'member_name' => $username,
+		'password'    => $password
 	);
 
 	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
@@ -198,9 +198,9 @@ sub logout {
 	}
 
 	my %args = (
-		action		=> 'logout',
-		sessionid	=> $loginInformation{sessionid},
-		org			=> 'live365'
+		'action'    => 'logout',
+		'sessionid' => $loginInformation{sessionid},
+		'org'       => 'live365'
 	);
 
 	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
@@ -298,7 +298,7 @@ sub loadGenreList {
 	my $errorSub = shift;
 
 	my %args = (
-		format		=> 'xml',
+		'format' => 'xml',
 	);
 
 	$self->asyncHTTPRequest('/cgi-bin/api_genres.cgi',
@@ -386,25 +386,25 @@ sub loadMemberPresets {
 	my $errorSub = shift;
 
 	my %args = (
-		action		=> "get",
-		sessionid	=> $loginInformation{sessionid},
-		device_id	=> "UNKNOWN",
-		app_id		=> "live365:BROWSER",
-		first		=> 1,
-		rows		=> 200,
-		access		=> "ALL",
-		format		=> "xml"
+		'action'    => "get",
+		'sessionid' => $loginInformation{sessionid},
+		'device_id' => "UNKNOWN",
+		'app_id'    => "live365:BROWSER",
+		'first'     => 1,
+		'rows'      => 200,
+		'access'    => "ALL",
+		'format'    => "xml"
 	);
 
 	$self->asyncHTTPRequest('/cgi-bin/api_presets.cgi',
 							\%args,
 							\&presetsLoadSub,
 							\&presetsErrorSub,
-							{self => $self,
-							 client => $client,
-							 source => $source,
-							 loadSub => $loadSub,
-							 errorSub => $errorSub,});
+							{'self'     => $self,
+							 'client'   => $client,
+							 'source'   => $source,
+							 'loadSub'  => $loadSub,
+							 'errorSub' => $errorSub,});
 }
 
 sub presetsLoadSub {
@@ -481,23 +481,23 @@ sub loadStationDirectory {
 	}
 
 	my %args = (
-		site		=> "xml",		# requests the data in XML format
-		access		=> "ALL",		# "ALL:PUBLIC:PRIVATE:NONE"
-		clienttype	=> 0,			# 3rd party MP3 player
-		first		=> 1,			# first row to print
-		rows		=> 50,			# number of rows to print, default 25, max 200
-		genre		=> "All",		# Limit display to these genres
-		maxspeed	=> 256,			# max bitrate to include
-		minspeed	=> 0,			# min bitrate to include
-		quality		=> 0,			# AM (0-99), FM (100-199), CD (200+)
-		only		=> "",			# "E:I:L:O:R:S:X" only include stations with these attribs
-		searchdesc	=> "",			# search term to look for
-		searchgenre	=> "All",		# genre restriction when searching
-		searchfields=> "T:A:C",		# "K:E:D:G:H:T:A:C:F:L:I:S", fields for searchdesc
-		sort		=> "L:D;R:D",	# "T|D|C|G|R|L|H:U|D;<2>;<3>"
-		source		=> "Live365:RdRunnder:BT",
-		tag			=> "",
-		text		=> "",
+		'site'         => "xml",     # requests the data in XML format
+		'access'       => "ALL",     # "ALL:PUBLIC:PRIVATE:NONE"
+		'clienttype'   => 0,         # 3rd party MP3 player
+		'first'        => 1,         # first row to print
+		'rows'         => 50,        # number of rows to print, default 25, max 200
+		'genre'        => "All",     # Limit display to these genres
+		'maxspeed'     => 256,       # max bitrate to include
+		'minspeed'     => 0,         # min bitrate to include
+		'quality'      => 0,         # AM (0-99), FM (100-199), CD (200+)
+		'only'         => "",        # "E:I:L:O:R:S:X" only include stations with these attribs
+		'searchdesc'   => "",        # search term to look for
+		'searchgenre'  => "All",     # genre restriction when searching
+		'searchfields' => "T:A:C",   # "K:E:D:G:H:T:A:C:F:L:I:S", fields for searchdesc
+		'sort'         => "L:D;R:D", # "T|D|C|G|R|L|H:U|D;<2>;<3>"
+		'source'       => "Live365:RdRunnder:BT",
+		'tag'          => "",
+		'text'         => "",
 		@addlargs
 	);
 
@@ -686,9 +686,9 @@ sub loadInfoForStation {
 	}
 
 	my %args = (
-		format	=> 'xml',
-		in		=> 'STATIONS',
-		channel	=> $stationID
+		'format'  => 'xml',
+		'in'      => 'STATIONS',
+		'channel' => $stationID
 	);
 
 	$self->asyncHTTPRequest('/cgi-bin/station_info.cgi',
