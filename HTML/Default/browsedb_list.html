@@ -1,4 +1,4 @@
-<div[% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+<div class=[% odd ? "odd" : "even" %]>
 	<div class="browsedbListItem">
 		[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 		

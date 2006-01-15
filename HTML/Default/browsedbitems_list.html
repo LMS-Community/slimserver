@@ -1,4 +1,4 @@
-<div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %]>
+<div class=[% item.odd ? "odd" : "even" %]>
 	<div class="browsedbListItem">
 		[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
 		
@@ -23,5 +23,5 @@
 					odd = item.odd
 					mixerlinks = item.mixerlinks %]
 		</div>
-	</div
+	</div>
 </div>
