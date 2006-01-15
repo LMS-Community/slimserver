@@ -299,35 +299,38 @@ div#homeMenu {
 .homeMenuSection ul {
 	/* the list of home menu items */
 	background-color: #ffffff;
-	padding: 0;
+	padding: 0px;
 	margin: 8px 28px;
+}
+
+.songInfo {
+	position: relative;
+	height: auto;
 }
 
 .songInfo ul {
 	/* the list of song info items */
 	background-color: #ffffff;
-	padding: 0;
+	padding: 0px;
 	list-style: none;
 	margin: 8px;
 }
 
 .songInfo li {
 	position: relative;
-	padding-top: 10px;
+	padding-top: 5px;
 	clear: left;
-	list-style-position: inside;
 }
 
 .songInfoTitle {
-	float: left;
 	right: 0px;
-	padding: 0;
-	width:25%;
+	padding: 0px;
+	width: 25%;
 }
 
 .songInfoText {
 	right: 0px;
-	padding: 0;
+	padding: 0px;
 	width: 75%;
 	margin-left: 25%;
 }
