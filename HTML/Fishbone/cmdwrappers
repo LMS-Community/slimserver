@@ -102,11 +102,11 @@
 [%- END %]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="4" width="100%">
+<div id="[% listid || 'browsedbList' %]">
 	
 		[%- content | indent(4) %]
 	
-</table>
+</div>
 [%- END %]
 
 [% BLOCK contentitem -%]

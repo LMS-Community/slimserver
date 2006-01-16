@@ -332,7 +332,7 @@ div#browsedbHeader {
 
 .browsedbListItem {
 	position: relative;
-	padding-right: 65px;
+	padding-right: 60px;
 }
 
 .browsedbControls {
@@ -353,4 +353,71 @@ div#browsedbHeader {
 #pageHeaderInfo {
 	margin-left:2px;
 	float: left;
+}
+
+.songInfo {
+	position: relative;
+	height: auto;
+}
+
+.songInfo ul {
+	/* the list of song info items */
+	background-color: #ffffff;
+	padding: 0px;
+	list-style: none;
+	margin: 8px;
+}
+
+.songInfo li {
+	position: relative;
+	padding-top: 5px;
+	clear: left;
+}
+
+.songInfoTitle {
+	right: 0px;
+	padding: 0px;
+	width: 25%;
+}
+
+.songInfoText {
+	right: 0px;
+	padding: 0px;
+	width: 75%;
+	margin-left: 25%;
+}
+
+.thumbnail {
+	padding: 0px;
+	text-align: center;
+}
+
+.artworkControls {
+	padding: 0px;
+	margin: 0px;
+}
+
+.artworkControls img {
+	margin-left: 1px;
+	padding-top: 6px;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+	padding-left: 4px;
+	padding-right: 0px;
+	padding-top: 10px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+	padding-right: 6px;
+}
+
+.thumbwrap a span {
+	display: block;
+	overflow: hidden;
 }

@@ -1,42 +1,16 @@
-<div class="coverart" align="left" style="width:[% item.size + 10 %]px;">
-<table cellpadding="5" align="left">
-<tr>
-	<td>
-		[% IF item.coverThumb %]<div class="covertext" style="height:[% item.size +2%]px;">
-			<table>
-				<tr>
-					<td width="[% size %]">
-						<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a>
-					</td>
-				</tr>
-			</table>
-		</div>[% END %]
-		[% IF not item.coverThumb %]<div class="covertext" style="height:[% item.size +2%]px;">
-			<table>
-				<tr>
-					<td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>
-						<center>[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</center></a>
-					</td>
-					<td>
-						<a href=""><img src="[% webroot %]html/images/spacer.gif" height="[% item.size %]" width="0"></a>
-					</td>
-				</tr>
-			</table>
-		</div>[% END %]
-	</td>
-</tr>
-<tr>
-	<td><center>
-		<table height="18" cellpadding="0" cellspacing="0" border="0">
-			<tr>
-				[% PROCESS browsecontrols
-					itemobj = item.itemobj
-					attributes = item.attributes
-					odd = item.odd
-					mixerlinks = item.mixerlinks %]
-			</tr>
-		</table></center>
-	</td>
-</tr>
-</table>
-</div>
+<li><div style="width:[% item.size %]px;">
+	<div >
+		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
+		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
+	</div>
+	<div class="artworkControls">
+			[% SET class = 'even' odd = 0 %]
+					[% PROCESS browsecontrols
+						itemobj = item.itemobj
+						attributes = item.attributes
+						odd = item.odd
+						mixerlinks = item.mixerlinks %]
+	</div>
+	<div><a [% PROCESS browseDbItemHRef %] target="browser"><span style="width:[% item.size %]px;">[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</span></a>
+	</div>
+</div></li>
