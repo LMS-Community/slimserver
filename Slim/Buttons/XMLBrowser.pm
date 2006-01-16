@@ -257,14 +257,14 @@ sub gotOPML {
 
 			my $hasItems = scalar @{$item->{'items'}};
 			my $isAudio  = $item->{'type'} eq 'audio' ? 1 : 0;
-			my $url      = $item->{'url'}  || $item->{'value'};
+			my $itemURL  = $item->{'url'}  || $item->{'value'};
 			my $title    = $item->{'name'} || $item->{'title'};
 
-			if ($url && !$hasItems) {
+			if ($itemURL && !$hasItems) {
 
 				# follow a link
 				my %params = (
-					url   => $base . $url,
+					url   => $base . $itemURL,
 					title => $title,
 				);
 
@@ -282,12 +282,19 @@ sub gotOPML {
 				# recurse into OPML item
 				my $listIndex = $client->param('listIndex');
 
-				my %params = (
-					url   => $base . $item->{'items'}->[$listIndex]->{'url'},
-					title => $title,
-				);
+				if ($base && $item->{'items'}->[$listIndex]->{'url'}) {
 
-				Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
+					my %params = (
+						url   => $base . $item->{'items'}->[$listIndex]->{'url'},
+						title => $title,
+					);
+
+					Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
+
+				} else {
+
+					gotOPML($client, $client->param('url'), $item);
+				}
 
 			} else {
 
