@@ -150,11 +150,17 @@ sub canPlugin {
 	# don't verify a second time
 	return 0 if ($brokenplugins{$plugin});
 
+	# This shouldn't be here - but I can't think of a better place.
+	# Also, the plugin loader really shouldn't be in 'Buttons'
+	if (!Slim::Utils::Prefs::get('xplsupport') && $plugin =~ /xPL/) {
+		return 0;
+	}
+
 	if ($plugins{$plugin} && defined($plugins{$plugin}{'name'})) {
 		# plugin is already initialized
 		return $plugins{$plugin}{'name'};
 	}
-	
+
 	no strict 'refs';
 
 	my $fullname = "Plugins::$plugin";
@@ -174,6 +180,7 @@ sub canPlugin {
 	
 	# load up the localized strings, if available
 	my $strings = eval { &{$fullname . "::strings"}() };
+
 	if (!$@ && $strings) {
 		# flag strings as UTF8
 		if ($] > 5.007) {
@@ -194,16 +201,22 @@ sub canPlugin {
 	# Older plugins don't send back the string token - so we don't
 	# want to load them.
 	if ($displayName && !Slim::Utils::Strings::stringExists($displayName)) {
+
 		$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token, strings() must not use _DATA_)\n");
 		$brokenplugins{$plugin} = 1;
+
 		return 0;
 
 	} elsif ($displayName && Slim::Utils::Strings::stringExists($displayName)) {
+
 		return $displayName;
 
 	} else {
+
 		$::d_plugins && msg("Can't load $fullname for Plugins menu: $@\n");
+
 		$brokenplugins{$plugin} = 1;
+
 		return 0;
 	}
 }

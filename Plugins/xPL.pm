@@ -426,7 +426,12 @@ sub sendxplmsg {
 
 	$sockUDP->autoflush(1);
 	$sockUDP->sockopt(SO_BROADCAST,1);
-	$sockUDP->send($msg,0,$portaddr);
+
+	eval { $sockUDP->send( Slim::Utils::Unicode::utf8encode($msg), 0, $portaddr ) };
+
+	if ($@) {
+		errorMsg("xPL - caught exception when trying to ->send: [$@]\n");
+	}
 	
 	$d_xpl && msg("xPL: sending [$msg]\n\n");
 
