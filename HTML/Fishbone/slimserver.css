@@ -342,6 +342,13 @@ div#browsedbHeader {
 	vertical-align: top;
 }
 
+.playlistControls {
+	position: absolute;
+	top: 0px;
+	right: 4px;
+	vertical-align: top;
+}
+
 .pagebar {
 	width: 100%;
 	clear: left;
