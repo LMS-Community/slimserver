@@ -6,15 +6,6 @@
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
-<!--preload play/add/delete/next icons; this is an effort to have the 770 browser not screw up the rendering of the table on every other load. don't think it's gonna do the trick, but it can't hurt to try...-->
-<div style = 'display: none;'>
-<img src = "play.this.gif" alt = 'play'>
-<img src = "add.gif" alt = 'add'> 
-<img src = "next.gif" alt = 'next'> 
-<img src = "queue.gif" alt = 'queue'> 
-<img src = "remove.gif" alt = 'remove'>
-</div>
-
 <div id = 'page'>
 <table width="100%" bgcolor="#333333">
       <tr>
@@ -26,6 +17,8 @@
 		<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">
 		[% player_chooser_list %]
 		</select>
+	[% IF page %]<input type = 'hidden' name = 'page' value = '[% page %]'>[% END %]
+	[% IF playerid %]<input type = 'hidden' name = 'playerid' value = '[% playerid %]'>[% END %]
 	</form>
 [% ELSE %]
 	[%- USE Clients; players = Clients.get("id") -%]
@@ -37,8 +30,11 @@
 	[%- END %]
 	[% END %]
 		</select>
+	[% IF page %]<input type = 'hidden' name = 'page' value = '[% page %]'>[% END %]
+	[% IF playerid %]<input type = 'hidden' name = 'playerid' value = '[% playerid %]'>[% END %]
 	</form>
 [% END %]
 </td></tr>
 </table>
 <!-- /Element pageheader.html -->
+[% PROCESS menu.html %]

@@ -1,7 +1,6 @@
 [% pagetitle = "HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
 
 [% PROCESS pageheader.html class = 'custom' %]
-[% PROCESS menu.html %]
 
 <!-- home.html -->
 <table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
@@ -42,7 +41,7 @@
 		</td>
 
 		<td align = 'center'>
-			<a href="/plugins/RandomPlay/randomplay_list.html?player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild5.src = 'html/images/smaller/random_active.gif';" onMouseOut="document.bild5.src = 'html/images/smaller/random.gif';"><img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
+			<a href="plugins/RandomPlay/randomplay_list.html?player=[% playerURI %]" style="text-decoration:none" onMouseOver="document.bild5.src = 'html/images/smaller/random_active.gif';" onMouseOut="document.bild5.src = 'html/images/smaller/random.gif';"><img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
 		</td>
 	</tr>
 	<tr>
@@ -75,7 +74,7 @@
 			<a href="hitlist.html" style="text-decoration:none" onMouseOver="document.bild9.src = 'html/images/smaller/statistics_active.gif';" onMouseOut="document.bild9.src = 'html/images/smaller/statistics.gif';"><img src="html/images/smaller/statistics.gif" width="120" height="101" name="bild9" border="0" alt = 'stats'></a>
 		</td>
 		<td align="center">
-			<a href="/plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseOver="document.bild10.src = 'html/images/smaller/favorites_active.gif';" onMouseOut="document.bild10.src = 'html/images/smaller/favorites.gif';">
+			<a href="plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none' onMouseOver="document.bild10.src = 'html/images/smaller/favorites_active.gif';" onMouseOut="document.bild10.src = 'html/images/smaller/favorites.gif';">
 <img src="html/images/smaller/favorites.gif" width="120" height="101" name="bild10" border="0" alt = 'favorites'></a>
 		</td>
 
