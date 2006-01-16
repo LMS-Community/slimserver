@@ -240,14 +240,15 @@ sub gotRSS {
 sub gotOPML {
 	my ($client, $url, $opml) = @_;
 
-	my $base = $opml->{'base'} || '';
+	my $base     = !ref($opml->{'base'}) ? ($opml->{'base'} || '') : '';
+	my $title    = $opml->{'name'} || $opml->{'title'};
 
 	my %params = (
 		url      => $url,
 		item     => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "XMLBrowser:$url:" . $opml->{'name'},
-		header   => $opml->{'name'} . ' {count}',
+		modeName => "XMLBrowser:$url:$title",
+		header   => "$title {count}",
 		listRef  => $opml->{'items'},
 
 		onRight  => sub {
@@ -256,14 +257,15 @@ sub gotOPML {
 
 			my $hasItems = scalar @{$item->{'items'}};
 			my $isAudio  = $item->{'type'} eq 'audio' ? 1 : 0;
-			my $url      = $item->{'url'} || $item->{'value'};
+			my $url      = $item->{'url'}  || $item->{'value'};
+			my $title    = $item->{'name'} || $item->{'title'};
 
 			if ($url && !$hasItems) {
 
 				# follow a link
 				my %params = (
 					url   => $base . $url,
-					title => ($item->{'name'} || $item->{'title'}),
+					title => $title,
 				);
 
 				if ($isAudio) {
@@ -278,7 +280,14 @@ sub gotOPML {
 			} elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
 
 				# recurse into OPML item
-				gotOPML($client, $client->param('url'), $item);
+				my $listIndex = $client->param('listIndex');
+
+				my %params = (
+					url   => $base . $item->{'items'}->[$listIndex]->{'url'},
+					title => $title,
+				);
+
+				Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
 
 			} else {
 
