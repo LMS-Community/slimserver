@@ -266,8 +266,6 @@ DIV.menu2 .stdedit {
 	background:black;
 	color:#999;
 	padding-left: 1px;
-	margin-top:2px;
-	margin-bottom:4px;
 	border-top:solid 1px #333;
 	#border-bottom:solid 1px black;
 }
@@ -276,12 +274,12 @@ img {
 	border-style: none;
 }
 
-TD.listing A, TD.listing2 A, TD.odd A, TD.even A
+.listing A, .listing2 A, .odd A, .even A
 {
 	color : white ! important;
 }
 
-.listing2
+#currentListItem
 {
 	background:#333;
 	border-top:solid 1px #EE3823;
@@ -319,4 +317,40 @@ TD.listing A, TD.listing2 A, TD.odd A, TD.even A
 
 DIV.menu2 TABLE {
 	border-collapse: collapse;
+}
+
+div#browsedbList {
+	position: relative;
+	clear: left;
+	width: auto;
+	height: auto;
+}
+
+div#browsedbHeader {
+	margin-left:0px;
+}
+
+.browsedbListItem {
+	position: relative;
+	padding-right: 65px;
+}
+
+.browsedbControls {
+	position: absolute;
+	top: 0px;
+	left: 85%;
+	vertical-align: top;
+}
+
+.pagebar {
+	width: 100%;
+	clear: left;
+	position: relative;
+	margin-left:2px;
+	margin-top:5px;
+}
+
+#pageHeaderInfo {
+	margin-left:2px;
+	float: left;
 }

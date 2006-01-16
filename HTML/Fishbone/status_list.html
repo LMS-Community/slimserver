@@ -1,9 +1,10 @@
-<tr>
-	<td [% IF item.currentsong %]class="listing2" ><a name="currentsong"></a>[% ELSE %]class="listing"><a name="[% item.num %]"></a>[% END %]
-	[% PROCESS trackinfo %]
-	</td>
-	[% PROCESS playlistcontrols
-		isCurrent = item.currentsong
-		num = item.num
-		useStart = 1  %]
-</tr>
+<div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %]>
+	<div class="browsedbListItem"[% IF item.currentsong %]id="currentListItem"[% END %]>
+		[% PROCESS trackinfo %]
+		<div class="browsedbControls">
+			[% PROCESS playlistcontrols
+			num = item.num
+			useStart = 1 %]
+		</div>
+	</div>
+</div>
