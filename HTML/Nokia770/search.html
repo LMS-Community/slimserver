@@ -4,7 +4,7 @@
 [%- playermodel | string %] : [% "SEARCH" | string -%]
 [%- END -%]
 [%- pageicon = 'MUSIC' -%]
-[%- PROCESS pageheader.html class = 'custom' -%]
+[%- PROCESS pageheader.html class = 'custom' thispage = 'search' -%]
 
 [% IF not query %][% PROCESS searchinput.html %][% END %]
 
