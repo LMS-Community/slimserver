@@ -97,28 +97,24 @@
 [%- END %]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="4" width="100%">
-	
+<table border="0" cellspacing="0" cellpadding="0" width="100%">
 		[%- content | indent(4) %]
-	
 </table>
 [%- END %]
 
 [% BLOCK contentitem -%]
-<tr><td class="listing" align="left">
-	[%- IF anchor %]
-		<a name="[% anchor %]"></a>
-	[%- END %]
+<tr>[%- IF anchor %]
+<a name = "[% anchor %]"></a>
+[% END %]
 
-	<div class="[% lineclass || 'browsedbListItem' %]">
-
+	[% IF controls %]<table><tr>
+	[%- PROCESS $controls %]
+	[%- END -%]
+	<td class = 'listing' width = '20'>&nbsp;</td>
+	<td class="listing" align="left">
 	[%- content | indent(4) %]
 	</td>
-	[% IF controls %]
-	<div class="browsedbControls">
-	[%- PROCESS $controls %][% END %]
-	</div>
-	</div>
+	[% IF controls %]</tr></table>[% END %]
 </tr>
 [%- END %]
 
