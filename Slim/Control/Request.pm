@@ -52,6 +52,9 @@ package Slim::Control::Request;
 # N    player          name                        <index or ID>               ?
 # N    player          model                       <index or ID>               ?
 # N    player          displaytype                 <index or ID>               ?
+# Y    client          forget
+# Y    alarms          <startindex>                <numitems>                  <tagged parameters>
+# Y    alarm           <tagged parameters>
 
 # PLAYLISTS
 # Y    mode            <play|pause|stop|?>
@@ -104,12 +107,14 @@ package Slim::Control::Request;
 # NOTIFICATION
 # The following 'terms' are used for notifications 
 
+# Y    client          disconnect
 # Y    client          new
 # Y    client          reconnect
-# Y    client          disconnect
+# Y    playlist        load_done
 # Y    playlist        newsong
 # Y    playlist        open                        <url>
 # Y    playlist        sync
+# N    rescan          done
 
 ######################################################################################################################################################################
 
@@ -168,6 +173,7 @@ use Tie::LLHash;
 use Slim::Control::Commands;
 use Slim::Control::Queries;
 use Slim::Utils::Misc;
+use Slim::Utils::Alarms;
 
 
 our %dispatchDB;				# contains a multi-level hash pointing to
@@ -196,6 +202,7 @@ sub init {
 #                 P0               P1              P2            P3             P4         P5         C  Q  T  F
 ######################################################################################################################################################################
 
+    addDispatch(['alarm'],                                                                           [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
     addDispatch(['alarms',         '_index',      '_quantity'],                                      [1, 1, 1, \&Slim::Control::Queries::alarmsQuery]);
     addDispatch(['album',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['albums',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
@@ -314,12 +321,14 @@ sub init {
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
+    addDispatch(['client',         'disconnect'],                                                    [1, 0, 0, undef]);
     addDispatch(['client',         'new'],                                                           [1, 0, 0, undef]);
     addDispatch(['client',         'reconnect'],                                                     [1, 0, 0, undef]);
-    addDispatch(['client',         'disconnect'],                                                    [1, 0, 0, undef]);
-    addDispatch(['playlist',       'open',        '_path'],                                          [1, 0, 0, undef]);
+    addDispatch(['playlist',       'load_done'],                                                     [1, 0, 0, undef]);
     addDispatch(['playlist',       'newsong'],                                                       [1, 0, 0, undef]);
+    addDispatch(['playlist',       'open',        '_path'],                                          [1, 0, 0, undef]);
     addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);
+    addDispatch(['rescan',         'done'],                                                          [0, 0, 0, undef]);
 
 ######################################################################################################################################################################
 

@@ -631,7 +631,7 @@ sub idle {
 	Slim::Utils::Timers::checkTimers();	
 	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
 	
-	# handle HTTP and command line interface activity, including:
+	# handle HTTP interface activity, including:
 	#   opening sockets, 
 	#   reopening sockets if the port has changed, 
 	Slim::Web::HTTP::idle();

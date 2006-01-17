@@ -630,7 +630,7 @@ sub xplExecuteCallback {
 	}
 	
 #	if ($command eq 'newclient') {
-	if ($request->isCommand([['newclient']])) {
+	if ($request->isCommand([['client'], ['new']])) {
 		$d_xpl && msg("xPL: xplExecuteCallback for new client\n");
 		
 		sendXplHBeatMsg($client);

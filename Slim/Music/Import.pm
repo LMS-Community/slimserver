@@ -211,6 +211,7 @@ sub endImporter {
 			$ds->wipeCaches;
 
 			$::d_import && msg("Import: Finished background scanning.\n");
+			Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
 		}
 	}
 }

@@ -19,8 +19,74 @@ use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 
 use Slim::Utils::Misc qw(msg errorMsg specified);
+use Slim::Utils::Alarms;
 
 my $d_commands = 0; # local debug flag
+
+sub alarmCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::alarmCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['alarm']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client      = $request->client();
+	my $cmd         = $request->getParam('cmd');
+	my $fade        = $request->getParam('fade');
+	my $dow         = $request->getParam('dow');
+	my $enable      = $request->getParam('enabled');
+	my $time        = $request->getParam('time');
+	my $volume      = $request->getParam('volume');
+	my $playlisturl = $request->getParam('playlist url');
+	my $playlistid  = $request->getParam('playlist_id');
+	
+	
+	if ($request->paramUndefinedOrNotOneOf($cmd, ['set', 'clear', 'update']) ||
+		$request->paramNotOneOfIfDefined($fade, ['0', '1']) ||
+		$request->paramNotOneOfIfDefined($dow, ['0', '1', '2', '3', '4', '5', '6', '7']) ) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!defined $fade && !defined $dow) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+#	my $set = $cmd eq 'set';
+#	my $clear = $cmd eq 'clear';
+#	my $update = $cmd eq 'update';
+	
+	my $alarm;
+	
+	if ($cmd eq 'update') {
+		$alarm = Slim::Utils::Alarms->newLoaded($client, $dow);
+	} else {
+		$alarm = Slim::Utils::Alarms->new($client, $dow);
+	}
+	
+	if (defined $alarm) {
+		if ($cmd eq 'set' || $cmd eq 'update') {
+		
+			$client->prefSet('alarmfadeseconds', $fade) if defined $fade;
+			$alarm->time($time) if defined $time;
+			$alarm->playlistid($playlistid) if defined $playlistid;
+			$alarm->playlist($playlisturl) if defined $playlisturl;
+			$alarm->volume($volume) if defined $volume;
+			$alarm->enabled($enable) if defined $enable;
+		}
+
+		$alarm->save();
+		$request->addResult('count', 1);
+	}
+	
+	$request->setStatusDone();
+}
 
 sub buttonCommand {
 	my $request = shift;
@@ -640,29 +706,13 @@ sub playlistXalbumCommand {
 		'sortBy' => $sort,
 		});
 
-	my $load   = ($cmd eq 'loadalbum' || $cmd eq 'playalbum');
-	my $insert = ($cmd eq 'insertalbum');
-	my $add    = ($cmd eq 'addalbum');
-	my $delete = ($cmd eq 'deletealbum');
+	$cmd =~ s/album/tracks/;
 
-	my $playListSize = Slim::Player::Playlist::count($client);
-	my $size = scalar(@$results);
+	Slim::Control::Request::executeRequest(
+			$client, 
+			['playlist', $cmd, 'listref', $results]
+		);
 
-	Slim::Player::Source::playmode($client, 'stop') 				if $load;
-	Slim::Player::Playlist::clear($client) 							if $load;
-
-	push(@{Slim::Player::Playlist::playList($client)}, @$results) 	if $load || $add || $insert;
-	_insert_done($client, $playListSize, $size)						if                  $insert;
-	Slim::Player::Playlist::removeMultipleTracks($client, $results)	if                             $delete;
-
-	Slim::Player::Playlist::reshuffle($client, $load?1:undef)		if $load || $add;
-	Slim::Player::Source::jumpto($client, 0) 						if $load;
-
-	$client->currentPlaylist(undef) 								if $load;
-	$client->currentPlaylistModified(1)								if          $add || $insert || $delete;	
-	$client->currentPlaylistChangeTime(time()) 						if $load || $add || $insert || $delete;			
-
-	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 	$request->setStatusDone();
 }
@@ -876,7 +926,6 @@ sub playlistXtracksCommand {
 
 			# And set a callback so that we can
 			# update CURTRACK when the song changes.
-#			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::newSongPlaylistCallback);
 			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::newSongPlaylistCallback, [['playlist'], ['newsong']]);
 		}
 
@@ -1434,7 +1483,6 @@ sub _insert_done {
 
 	$callbackf && (&$callbackf(@$callbackargs));
 
-#	Slim::Control::Command::executeCallback($client, ['playlist', 'load_done']);
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
 
 }

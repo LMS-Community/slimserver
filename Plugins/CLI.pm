@@ -29,6 +29,7 @@ use Slim::Utils::Unicode;
 #  exit
 #  login
 #  listen
+#  shutdown
 # Other CLI queries/commands are handled through Request.pm
 
 

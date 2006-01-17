@@ -79,6 +79,13 @@ sub enabledPlugins {
 	return @enabled;
 }
 
+sub enabledPlugin {
+	my $plugin = shift;
+	my $client = shift;
+
+	return grep(/$plugin/, enabledPlugins($client));
+}
+
 sub playerPlugins {
 	# remove disabled plugins
 	foreach (keys %playerplugins) {

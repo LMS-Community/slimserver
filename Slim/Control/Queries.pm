@@ -17,6 +17,7 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc qw(msg errorMsg specified);
+use Slim::Utils::Alarms;
 
 my $d_queries = 0; # local debug flag
 
@@ -53,22 +54,24 @@ sub alarmsQuery {
 	}
 	
 	my @results;
-	
+
 	if (defined $alarmDOW) {
-		my $defined;
-		($results[0], $defined) = _alarmGet($client, $alarmDOW);
+
+		$results[0] = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
+
 	} else {
+
 		my $i = 0;
 		$filter = 'enabled' if !defined $filter;
 		for $alarmDOW (0..7) {
-			my ($hashRef, $defined) = _alarmGet($client, $alarmDOW);
+			my $alarm = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
 			
 			my $wanted = 	( 
 								($filter eq 'all') ||
-								($filter eq 'defined' && $defined) ||
-								($filter eq 'enabled' && $hashRef->{'enabled'})
+								($filter eq 'defined' && !$alarm->undefined()) ||
+								($filter eq 'enabled' && $alarm->enabled())
 							);
-			$results[$i++] = $hashRef if $wanted;
+			$results[$i++] = $alarm if $wanted;
 		}
 	}
 
@@ -85,11 +88,12 @@ sub alarmsQuery {
 		my $cnt = 0;
 		
 		for my $eachitem (@results[$start..$end]) {
-			$request->addResultLoop($loopname, $cnt, 'dow', $eachitem->{'dow'});
-			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->{'enabled'});
-			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->{'time'});
-			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->{'volume'});
-			$request->addResultLoop($loopname, $cnt, 'playlist url', $eachitem->{'playlist'});
+			$request->addResultLoop($loopname, $cnt, 'dow', $eachitem->dow());
+			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->enabled());
+			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->time());
+			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->volume());
+			$request->addResultLoop($loopname, $cnt, 'playlist url', $eachitem->playlist());
+			$request->addResultLoop($loopname, $cnt, 'playlist_id', $eachitem->playlistid());
 			$cnt++;
 		}
 	}
@@ -1457,29 +1461,6 @@ sub _songData {
 
 	return \%returnHash;
 }
-
-sub _alarmGet {
-	my $client = shift;
-	my $alarmDOW = shift;
-	
-	my %alarmData;
-	
-	$alarmData{'dow'} = $alarmDOW;
-	$alarmData{'enabled'} = $client->prefGet('alarm', $alarmDOW);
-	$alarmData{'time'} = $client->prefGet('alarmtime', $alarmDOW);
-	$alarmData{'volume'} = $client->prefGet('alarmvolume', $alarmDOW);
-	$alarmData{'playlist'} = $client->prefGet('alarmplaylist', $alarmDOW);
-	
-	my $undefined = (
-						$alarmData{'enabled'} == 0 &&
-						$alarmData{'time'} == 0 &&
-						$alarmData{'volume'} == 50 &&
-						$alarmData{'playlist'} eq ''
-					);
-				
-	return (\%alarmData, !$undefined);
-}
-	
 
 1;
 
