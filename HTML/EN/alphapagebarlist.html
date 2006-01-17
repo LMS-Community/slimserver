@@ -1,2 +1,2 @@
-[% IF not currpage %] <a href="[% path | html %]?[% otherparams  | html %]&amp;start=[% itemnum0 %][% fragment  | html %]">[% pagenum %]</a> [% END %]
-[% IF currpage %] <a href="[% path  | html %]?[% otherparams  | html %]&amp;start=[% itemnum0 %][% fragment  | html %]"><b>[% pagenum %]</b></a> [% END %]
+[% IF not currpage %] <a href="[% path | html %]?[% otherparams  | html %]&amp;start=[% itemnum0 %][% fragment | uri %]">[% pagenum %]</a> [% END %]
+[% IF currpage %] <a href="[% path  | html %]?[% otherparams  | html %]&amp;start=[% itemnum0 %][% fragment | uri %]"><b>[% pagenum %]</b></a> [% END %]
