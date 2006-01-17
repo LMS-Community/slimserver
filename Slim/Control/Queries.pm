@@ -92,7 +92,7 @@ sub alarmsQuery {
 			$request->addResultLoop($loopname, $cnt, 'enabled', $eachitem->enabled());
 			$request->addResultLoop($loopname, $cnt, 'time', $eachitem->time());
 			$request->addResultLoop($loopname, $cnt, 'volume', $eachitem->volume());
-			$request->addResultLoop($loopname, $cnt, 'playlist url', $eachitem->playlist());
+			$request->addResultLoop($loopname, $cnt, 'url', $eachitem->playlist());
 			$request->addResultLoop($loopname, $cnt, 'playlist_id', $eachitem->playlistid());
 			$cnt++;
 		}

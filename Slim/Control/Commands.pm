@@ -42,7 +42,7 @@ sub alarmCommand {
 	my $enable      = $request->getParam('enabled');
 	my $time        = $request->getParam('time');
 	my $volume      = $request->getParam('volume');
-	my $playlisturl = $request->getParam('playlist url');
+	my $playlisturl = $request->getParam('url');
 	my $playlistid  = $request->getParam('playlist_id');
 	
 	
