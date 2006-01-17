@@ -93,14 +93,6 @@
  [%- END -%]
 [%- END %]
 
-[% BLOCK crumblistitem -%]
-	[%- IF item.title -%]
-<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
-	[%- ELSE -%]
-		[%- item | replace('^\s*/','') %]
-	[%- END -%]
-[%- END %]
-
 [% BLOCK contentcontainer %]
 <div id="[% listid || 'browsedbList' %]">
 	
@@ -125,7 +117,6 @@
 	</div>
 </div>
 [%- END %]
-
 
 [% BLOCK playlistcontrols %]
 	[% width='9' height='11' target='status' %]
