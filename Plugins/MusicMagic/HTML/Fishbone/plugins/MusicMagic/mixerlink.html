@@ -1,8 +1,7 @@
-<td  [% IF currentsong %]class="listing2"[% END %][% IF not currentsong %]class="listing"[% END %] align="center" width="11">
-	<nobr><a href="plugins/MusicMagic/musicmagic_mix.html?song=[% item.item | uri %]&genre=[% item.genre | uri %]&artist=[% item.artist | uri %]&album=[% item.album | uri %]&player=[% player | uri %]" alt="[% "MUSICMAGIC_MIX" | string %]" target="browser">
-		<img src="[% webroot %]html/images/mmmix.gif" border=0 height="11" 
-						alt='[% "MUSICMAGIC_MIX" | string %]' 
-						title='[% "MUSICMAGIC_MIX" | string %]' 
-						onMouseOver="self.status='[% "MUSICMAGIC_MIX" | string %]';return true">
-	</a></nobr>
-</td>
+<a href="plugins/MusicMagic/musicmagic_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" 
+	alt="[% "MUSICMAGIC_MIX" | string %]" target="browser">
+	<img src="[% webroot %]html/images/mmmix.gif" border=0 align="center" height="11" 
+		alt='[% "MUSICMAGIC_MIX" | string %]' 
+		title='[% "MUSICMAGIC_MIX" | string %]' 
+		onMouseOver="self.status='[% "MUSICMAGIC_MIX" | string %]';return true">
+</a>

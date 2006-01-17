@@ -1,24 +1,25 @@
-[%- pageicon = 'MusicMagic' -%]
+[%- pageicon = 'MoodLogic' -%]
 [%- pagetitle = "MOODLOGIC_INSTANT_MIX" | string -%]
 [%- PROCESS pageheader.html -%] 
 
 	[% IF browselist_header %][% browselist_header %][% END %]
 	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-	<table cellspacing="0" border="0" cellpadding="4" width="100%">
-	<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td><td></td>
-	[% WRAPPER playlink %]
-
-		href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
-
+	[% WRAPPER contentcontainer %]
+		[% BLOCK controls %]
+			[% WRAPPER playlink %]
+				href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
+			[% END %]
+			[% WRAPPER addlink %]
+				href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
+			[% END %]
+		[% END %]
+		[% WRAPPER contentitem controls='controls' %]
+			[% "THIS_ENTIRE_PLAYLIST" | string %]
+		[% END %]
 	[% END %]
-	[% WRAPPER addlink %]
-		href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
-
-	[% END %]
-	</tr>
 	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
 	[% END %]
-	</table>
+[% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 [% PROCESS pagefooter.html %]

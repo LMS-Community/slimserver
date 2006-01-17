@@ -4,27 +4,22 @@
 
 [% IF browselist_header %][% browselist_header %][% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-<table cellspacing="0" border="0" cellpadding="4" width="100%">
-	[% odd = 1 %]
+[% WRAPPER contentcontainer %]
+[% odd = 1 %]
 	[% FOREACH mood = mood_list %]
-		<tr>
-			[% WRAPPER listitem title = mood %]
-				 href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]"
-			[% END %]
+		[% BLOCK controls %]
 			[% WRAPPER playlink %]
-
 				href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
-
 			[% END %]
-
 			[% WRAPPER addlink %]
-
 				href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
-
 			[% END %]
-		</tr>
+		[% END %]
+		[% WRAPPER contentitem controls='controls'%]
+			<a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]">[% mood %]</a>
+		[% END %]
 		[% odd = (not odd) %]
 	[% END %]
-</table>
+[% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 [% PROCESS pagefooter.html %]
