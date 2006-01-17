@@ -27,6 +27,8 @@ use Socket qw(:DEFAULT :crlf);
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
+use YAML;
+
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
@@ -1611,8 +1613,32 @@ sub newSkinTemplate {
 	my $skin = shift;
 	my $baseSkin = baseSkin();
 	my @include_path = ();
+	my @skinparents = ();
+	my $skinsettings;
+	
+	for my $rootdir (HTMLTemplateDirs()) {
+		my $skinconfig = catfile($rootdir,$skin,'skinconfig.yml');
+		if (-r $skinconfig) {
+				eval {
+				$skinsettings = YAML::LoadFile($skinconfig);
+			};
+			if ($@) {
+				errorMsg("Could not load skin configuration file: $skinconfig\n");
+			}
+			last;
+		}
+	}
+	if (ref $skinsettings eq 'HASH') {
+		for my $skinparent (@{$skinsettings->{'skinparents'}}) {
+			if (my $checkedskin = isaSkin($skinparent)) {
+				next if $checkedskin eq $skin;
+				next if $checkedskin eq $baseSkin;
+				push @skinparents, $checkedskin;
+			}
+		}
+}
 
-	foreach my $dir ($skin, $baseSkin) {
+	foreach my $dir ($skin, @skinparents, $baseSkin) {
 
 		foreach my $rootdir (HTMLTemplateDirs()) {
 			push @include_path, catdir($rootdir,$dir);
