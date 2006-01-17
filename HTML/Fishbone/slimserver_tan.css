@@ -272,8 +272,6 @@ DIV.menu2 .stdedit {
 	background: #fcf2d4;
 	color:#996600 ;
 	padding-left: 1px;
-	margin-top:1px;
-	margin-bottom:1px;
 	border-top:solid 2px #996633;
 	border-bottom:solid 2px cc9966;
 }
@@ -282,14 +280,14 @@ img {
 	border-style: none;
 }
 
-TD.listing A, TD.listing2 A, TD.odd A, TD.even A
+.listing A, .listing2 A, .odd A, .even A
 {
 	color : #663300 ! important;
 	font-family: Arial, Helvetica, sans-serif;
 
 }
 
-.listing2
+#currentListItem
 {
 	background:#ffe580;
 	border-top:solid 2px #EE3823;
@@ -329,4 +327,111 @@ TD.listing A, TD.listing2 A, TD.odd A, TD.even A
 
 DIV.menu2 TABLE {
 	border-collapse: collapse;
+}
+
+div#browsedbList {
+	position: relative;
+	clear: left;
+	width: auto;
+	height: auto;
+}
+
+div#browsedbHeader {
+	margin-left:0px;
+}
+
+.browsedbListItem {
+	position: relative;
+	padding-right: 60px;
+}
+
+.browsedbControls {
+	position: absolute;
+	top: 0px;
+	left: 85%;
+	vertical-align: top;
+}
+
+.playlistControls {
+	position: absolute;
+	top: 0px;
+	right: 4px;
+	vertical-align: top;
+}
+
+.pagebar {
+	width: 100%;
+	clear: left;
+	position: relative;
+	margin-left:2px;
+	margin-top:5px;
+}
+
+#pageHeaderInfo {
+	margin-left:2px;
+	float: left;
+}
+
+.songInfo ul {
+	/* the list of song info items */
+	padding: 0px;
+	list-style: none;
+	margin: 8px;
+}
+
+.songInfo li {
+	position: relative;
+	padding-top: 5px;
+	margin: 0px;
+	clear: left;
+}
+
+.songInfoTitle {
+	float: left;
+	right: 0px;
+	padding: 0px;
+	width: 25%;
+}
+
+.songInfoText {
+	right: 0px;
+	padding: 0px;
+	margin: 0px;
+	width: 75%;
+	margin-left: 25%;
+}
+
+.thumbnail {
+	padding: 0px;
+	text-align: center;
+}
+
+.artworkControls {
+	padding: 0px;
+	margin: 0px;
+}
+
+.artworkControls img {
+	margin-left: 1px;
+	padding-top: 6px;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+	padding-left: 4px;
+	padding-right: 0px;
+	padding-top: 10px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+	padding-right: 6px;
+}
+
+.thumbwrap a span {
+	display: block;
+	overflow: hidden;
 }
