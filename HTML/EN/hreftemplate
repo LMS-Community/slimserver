@@ -40,7 +40,7 @@ MoveDown = "%2B1"; # +1
 
 [%# img tag for album thumbnail in the now playing status context %]
 [% BLOCK statusImg -%]
-	[% "<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+	[% "<img src=\"/music/$coverThumb/cover.jpg\" height=\"";height or 100;"\" 
 		alt=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
 		title=\"";IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\">" -%]
 [%- END %]
