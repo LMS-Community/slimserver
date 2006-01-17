@@ -1723,7 +1723,7 @@ sub _generateContentFromFile {
 		}
 
 		unless ($template->process($path,$params,\$output)) {
-			print $template->error() . "\n";
+			errorMsg($template->error() . "\n");
 		}
 
 		return \$output;
