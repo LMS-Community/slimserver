@@ -15,6 +15,7 @@
 package Plugins::RssNews;
 
 use strict;
+use File::Slurp;
 
 # plugin state variables.
 our %feed_urls;
@@ -468,25 +469,25 @@ sub getFeedXml {
 		#accomodate windows drive letter suckiness
 		$feed_file =~ s/^\/([a-z]:)/$1/i;
 
-		open (DIN, $feed_file);
-        if ($@) {
+		my $content = eval { read_file($feed_file) };
+
+		if ($@) {
 			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
 			$getFeedXml_semaphore = 0;
 			return 0;
-        }
-		my @content = <DIN>;
-		close DIN;
-		my $content = join ("\n", @content);
+		}
 
-        my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+		my $xml = eval { XMLin(\$content, forcearray => ["item"], keyattr => []) };
+
 		$getFeedXml_semaphore = 0;
 
-        if ($@) {
+		if ($@) {
 			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
 			return 0;
-        }
+		}
+
 		return ($xml);	
-    }
+	}
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => $feed_url,
@@ -495,21 +496,16 @@ sub getFeedXml {
 
 	if (defined $http) {
 
-		my $content = $http->content();
-
-		$http->close();
-
-		return 0 unless defined $content;
-
 		# very verbose debugging
 		#$::d_plugins && msg("RssNews: $feed_url\n");
 		#$::d_plugins && msg("\n$content\n\n");
 
 		# forcearray to treat items as array,
 		# keyattr => [] prevents id attrs from overriding
-		my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+		my $xml = eval { XMLin($http->contentRef, forcearray => ["item"], keyattr => []) };
 
 		$getFeedXml_semaphore = 0;
+		$http->close;
 
 		if ($@) {
 			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");

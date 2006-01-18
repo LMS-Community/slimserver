@@ -473,7 +473,7 @@ sub extractStreamInfoXML {
 
 	eval { require Compress::Zlib };
 	$data = Compress::Zlib::uncompress($data) unless ($@);
-	$data = eval { XML::Simple::XMLin($data, SuppressEmpty => ''); };
+	$data = eval { XML::Simple::XMLin(\$data, SuppressEmpty => ''); };
 
 	if ($@ || !exists $data->{'playlist'} || 
 	    ref($data->{'playlist'}->{'entry'}) ne 'ARRAY') {

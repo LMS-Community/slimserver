@@ -909,7 +909,7 @@ sub readASX {
 			# have a choice - we can't change the XML, as the
 			# XML::Simple warning suggests.
 			no warnings;
-			$asx_playlist = XMLin($asxstr, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
+			$asx_playlist = XMLin(\$asxstr, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 		
 		$::d_parse && msg("parsing ASX: $asxfile url: [$url]\n");
@@ -1021,8 +1021,7 @@ sub readPodcast {
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($in,
-							 forcearray => ["item"], keyattr => []) };
+	my $xml = eval { XMLin(\$in, forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
 		$::d_parse && msg("Parse: failed to parse podcast because:\n$@\n");

@@ -221,14 +221,13 @@ sub authLoadSub {
 
 	$self->{asyncHTTP} = undef;
 
-	my $xmlResponse = $http->content();
-	if( !defined $xmlResponse ) {
+	if(!defined $http->contentRef) {
 		&$callback($client, 6); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 		return;  
 	}
 
-	my $resp;
-	eval '$resp = XMLin( $xmlResponse )'; 
+	my $resp = eval { XMLin($http->contentRef) }; 
+
 	if ($@) {
 		&$callback($client, 2); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
 		return;  
@@ -318,17 +317,15 @@ sub genreListLoadSub {
 	my $loadSub = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
-	my $xmlGenres = $http->content();
-
 	$self->{asyncHTTP} = undef;
 
-	if (!defined($xmlGenres)) {
+	if (!defined($http->contentRef)) {
 		&$errorSub($client);
 		return;
 	}
 
-	my $genres;
-	eval '$genres = XMLin( $xmlGenres )'; 
+	my $genres = eval { XMLin($http->contentRef) };
+
 	if ($@) {
 		&$errorSub($client);
 		return;
@@ -415,16 +412,15 @@ sub presetsLoadSub {
 	my $loadSub = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
-	my $xmlPresets = $http->content();
-
 	$self->{asyncHTTP} = undef;
 
-	if( !defined $xmlPresets ) {
+	if( !defined $http->contentRef ) {
 		&$errorSub($client);
 		return;
 	}
 
-	eval '$self->{Directory} = XMLin( $xmlPresets, forcearray => [ "LIVE365_STATION" ] )';
+	$self->{Directory} = eval { XMLin($http->contentRef, forcearray => [ "LIVE365_STATION" ]) };
+
 	if ($@) {
 		$::d_plugins && msg("Error parsing presets: $@" );
 		&$errorSub($client);
@@ -432,8 +428,10 @@ sub presetsLoadSub {
 	}
 	
 	if( defined $self->{Directory}->{LIVE365_STATION} ) {
+
 		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
-	} elsif ($xmlPresets =~ /Failed - invalid login session/) {
+
+	} elsif ($http->content =~ /Failed - invalid login session/) {
 
 		# Very lazy way to search the XML for an error message
 		# indicating that our session timed out
@@ -441,7 +439,9 @@ sub presetsLoadSub {
 		$::d_plugins && msg("Login session timed out");
 		&$errorSub($client);
 		return;
+
 	} else {
+
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
 
@@ -520,16 +520,15 @@ sub stationLoadSub {
 	my $loadSub = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
-	my $xmlDirectory = $http->content();
-
 	$self->{asyncHTTP} = undef;
 
-	if( !defined $xmlDirectory ) {
+	if( !defined $http->contentRef ) {
 		&$errorSub($client);
 		return;
 	}
 
-	eval '$self->{Directory} = XMLin( $xmlDirectory, forcearray => [ "LIVE365_STATION" ] )';
+	$self->{Directory} = eval { XMLin($http->contentRef, forcearray => [ "LIVE365_STATION" ] ) };
+
 	if ($@) {
 		$::d_plugins && msg("Error parsing station directory: $@" );	
 		&$errorSub($client);
@@ -710,16 +709,15 @@ sub infoLoadSub {
 	my $errorSub = $http->params('errorSub');
 	my $stationID = $http->params('stationID');
 
-	my $xmlInfo = $http->content();
-
 	$self->{asyncHTTP} = undef;
 
-	if (!defined($xmlInfo)) {
+	if (!defined($http->contentRef)) {
 		&$errorSub($client);
 		return;
 	}
 
-	eval '$self->{StationInfo} = XMLin( $xmlInfo )';
+	$self->{StationInfo} = eval { XMLin($http->contentRef) };
+
 	if ($@) {
 		$::d_plugins && msg("Error parsing station info: $@" );	
 		&$errorSub($client);

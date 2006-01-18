@@ -129,11 +129,16 @@ sub playlistLoaded {
 	my $newTitle = '';
 	my $nowPlaying;
 	my $nextRefresh;
+
 	if (defined($playlist)) {
+
 		$::d_plugins && msg( "Got playlist response: $playlist\n" );
 
-		eval '$nowPlaying = XMLin( $playlist, ForceContent => 1, ForceArray => [ "PlaylistEntry" ] )';
-		$@ && $::d_plugins && msg( "Live365 playlist didn't parse: '$@'\n" );
+		$nowPlaying = eval { XMLin(\$playlist, ForceContent => 1, ForceArray => [ "PlaylistEntry" ]) };
+
+		if ($@) {
+			 errorMsg( "Live365 playlist didn't parse: '$@'\n" );
+		}
 	}
 
 	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {

@@ -360,7 +360,7 @@ sub getFeedXml {
 
 		# forcearray to treat items as array,
 		# keyattr => [] prevents id attrs from overriding
-		my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
+		my $xml = eval { XMLin(\$content, forcearray => ["item"], keyattr => []) };
 
 		if ($@) {
 			$::d_plugins && msg("XMLBrowser failed to parse feed <$feed_url> because: $@\n");
