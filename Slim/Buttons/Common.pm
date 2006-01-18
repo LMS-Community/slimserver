@@ -12,7 +12,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Player::Client;
 use Slim::Utils::Misc;
-use Slim::Buttons::Plugins;
+use Slim::Utils::PluginManager;
 use Slim::Display::Display;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;

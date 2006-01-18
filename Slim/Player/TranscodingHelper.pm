@@ -43,7 +43,7 @@ sub loadConversionTables {
 
 	# custom convert files allowed at server root or root of plugin directories
 	push @convertFiles, catdir($Bin, 'slimserver-convert.conf');
-	foreach my $dir (Slim::Buttons::Plugins::pluginRootDirs()) {
+	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
 		push @convertFiles, catdir($dir, 'slimserver-convert.conf');
 	}
 

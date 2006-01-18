@@ -26,6 +26,13 @@ package Slim::Control::Request;
 # N    rescan          <|playlists|?>
 # N    wipecache
 # N    playlists       <startindex>                <numitems>                  <tagged parameters>
+# Y    artists         <startindex>                <numitems>                  <tagged parameters>
+# Y    albums          <startindex>                <numitems>                  <tagged parameters>
+# Y    genres          <startindex>                <numitems>                  <tagged parameters>
+# Y    titles          <startindex>                <numitems>                  <tagged parameters>
+# Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
+# Y    playlists       <startindex>                <numitems>                  <tagged parameters>
+# Y    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
 
 
 # PLAYERS
@@ -96,13 +103,6 @@ package Slim::Control::Request;
 # Y    playlist        save                        <playlist>    
 # Y    playlistcontrol <tagged parameters>
 # Y    status          <startindex>                <numitems>                  <tagged parameters>
-# Y    artists         <startindex>                <numitems>                  <tagged parameters>
-# Y    albums          <startindex>                <numitems>                  <tagged parameters>
-# Y    genres          <startindex>                <numitems>                  <tagged parameters>
-# Y    titles          <startindex>                <numitems>                  <tagged parameters>
-# Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
-# Y    playlists       <startindex>                <numitems>                  <tagged parameters>
-# Y    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
 
 # NOTIFICATION
 # The following 'terms' are used for notifications 
@@ -310,6 +310,7 @@ sub init {
     addDispatch(['sleep',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
     addDispatch(['sleep',          '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::sleepCommand]);
     addDispatch(['songinfo',       '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::songinfoQuery]);
+    addDispatch(['songs',          '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['status',         '_index',      '_quantity'],                                      [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
     addDispatch(['stop'],                                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['sync',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
@@ -318,6 +319,7 @@ sub init {
     addDispatch(['time',           '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
     addDispatch(['title',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['titles',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
+    addDispatch(['tracks',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
@@ -475,14 +477,6 @@ sub executeRequest {
 	return $request;
 }
 
-# perform the same feat that the old execute: array in, array out
-sub executeLegacy {
-
-	my $request = executeRequest(@_);
-	
-	return $request->renderAsArray() if defined $request;
-}
-
 ################################################################################
 # Constructors
 ################################################################################
@@ -562,7 +556,7 @@ sub query {
 }
 
 # sets/returns the function that executes the request
-sub executeFunction {
+sub function {
 	my $self = shift;
 	my $newvalue = shift;
 	
@@ -635,11 +629,11 @@ my %statusMap = (
 sub validate {
 	my $self = shift;
 
-	if (ref($self->executeFunction) ne 'CODE') {
+	if (ref($self->{'_func'}) ne 'CODE') {
 
 		$self->setStatusNotDispatchable();
 
-	} elsif ($self->needClient() && !$self->client()) {
+	} elsif ($self->{'_needClient'} && !$self->{'_client'}) {
 
 		$self->setStatusNeedsClient();
 
@@ -906,7 +900,6 @@ sub getResultLoop {
 }
 
 
-
 ################################################################################
 # Compound calls
 ################################################################################
@@ -990,7 +983,7 @@ sub execute {
 	}
 	
 	# call the execute function
-	if (my $funcPtr = $self->executeFunction()) {
+	if (my $funcPtr = $self->{'_func'}) {
 
 		if (defined $funcPtr && ref($funcPtr) eq 'CODE') {
 
@@ -1003,7 +996,7 @@ sub execute {
 
 		} else {
 
-			errorMsg("execute: Didn't get a valid coderef from ->executeFunction\n");
+			errorMsg("execute: Didn't get a valid coderef from ->{'_func'}\n");
 			$self->dump('Request');
 		}
 	}
@@ -1115,6 +1108,15 @@ sub notify {
 # Legacy
 ################################################################################
 # support for legacy applications
+
+# perform the same feat that the old execute: array in, array out
+sub executeLegacy {
+
+	my $request = executeRequest(@_);
+	
+	return $request->renderAsArray() if defined $request;
+}
+
 # returns the request as an array
 sub renderAsArray {
 	my $self = shift;

@@ -209,7 +209,7 @@ use Slim::Buttons::Home;
 use Slim::Buttons::Power;
 use Slim::Buttons::Search;
 use Slim::Buttons::ScreenSaver;
-use Slim::Buttons::Plugins;
+use Slim::Utils::PluginManager;
 use Slim::Buttons::Synchronize;
 use Slim::Buttons::Input::Text;
 use Slim::Buttons::Input::Time;
@@ -519,7 +519,7 @@ sub init {
 	Slim::Music::PlaylistFolderScan::init();
 
 	$::d_server && msg("SlimServer Plugins init...\n");
-	Slim::Buttons::Plugins::init();
+	Slim::Utils::PluginManager::init();
 
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
@@ -1188,7 +1188,7 @@ sub cleanup {
 
 	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;
-	Slim::Buttons::Plugins::shutdownPlugins();
+	Slim::Utils::PluginManager::shutdownPlugins();
 
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(

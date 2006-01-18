@@ -191,7 +191,7 @@ sub init {
 				Slim::Hardware::IR::loadMapFile($newvalue);
 
 				if ($newvalue eq Slim::Hardware::IR::defaultMapFile()) {
-					Slim::Buttons::Plugins::addDefaultMaps();
+					Slim::Utils::PluginManager::addDefaultMaps();
 				}
 			},
 		},

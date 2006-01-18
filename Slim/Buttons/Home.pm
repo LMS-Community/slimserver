@@ -507,7 +507,7 @@ sub unusedMenuOptions {
 	my %menuChoices = menuOptions($client);
 	delete $menuChoices{""};
 
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
 	for my $plugin (values %{$pluginsRef}) {
 		next unless defined $plugin;
 		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
@@ -530,7 +530,7 @@ sub updateMenu {
 	my @home = ();
 	
 	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
 	
 	for my $menuItem ($client->prefGetArray('menuItem')) {
 

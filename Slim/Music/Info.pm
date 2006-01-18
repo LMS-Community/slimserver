@@ -108,7 +108,7 @@ sub loadTypesConfig {
 
 	# custom types file allowed at server root or root of plugin directories
 	push @typesFiles, catdir($Bin, 'custom-types.conf');
-	foreach my $dir (Slim::Buttons::Plugins::pluginRootDirs()) {
+	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
 		push @typesFiles, catdir($dir, 'custom-types.conf');
 	}
 

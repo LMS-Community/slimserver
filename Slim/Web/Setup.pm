@@ -634,7 +634,7 @@ sub initSetupConfig {
 					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
 					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
 					$i = 0;
-					foreach my $pluginItem (Slim::Buttons::Plugins::unusedPluginOptions($client)) {
+					foreach my $pluginItem (Slim::Utils::PluginManager::unusedPluginOptions($client)) {
 						$paramref->{'pluginItem' . $i++} = $pluginItem;
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
@@ -664,7 +664,7 @@ sub initSetupConfig {
 						delete $paramref->{'nonMenuItem' . $i++};
 					}
 					$i = 0;
-					foreach my $pluginItem (Slim::Buttons::Plugins::unusedPluginOptions($client)) {
+					foreach my $pluginItem (Slim::Utils::PluginManager::unusedPluginOptions($client)) {
 						$paramref->{'pluginItem' . $i++} = $pluginItem;
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
@@ -1293,10 +1293,10 @@ sub initSetupConfig {
 				'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages],
 				'options'      => undef,  # filled by initSetup using Slim::Utils::Strings::hash_of_languages()
 				'onChange'     => sub {
-					Slim::Buttons::Plugins::clearPlugins();
+					Slim::Utils::PluginManager::clearPlugins();
 					Slim::Utils::Strings::init();
 					Slim::Web::Setup::initSetup();
-					Slim::Buttons::Plugins::initPlugins();
+					Slim::Utils::PluginManager::initPlugins();
 					Slim::Music::Import::resetSetupGroups();
 				},
 			},
@@ -1394,7 +1394,7 @@ sub initSetupConfig {
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
-				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
+				,'onChange' => \&Slim::Utils::PluginManager::clearGroups
 				,'externalValue' => sub {
 						my ($client, $value, $key) = @_;
 						return getPluginState($client, $value, $key);
@@ -1443,7 +1443,7 @@ sub initSetupConfig {
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
-				,'onChange' => \&Slim::Buttons::Plugins::clearGroups
+				,'onChange' => \&Slim::Utils::PluginManager::clearGroups
 				,'externalValue' => sub {
 						my ($client,$value,$key) = @_;
 						return getPluginState($client, $value, $key, 'RADIO');
@@ -2308,7 +2308,7 @@ sub initSetupConfig {
 		$setup{'debug'}{'Prefs'}{$key}{'PrefChoose'} = $key;
 		$setup{'debug'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
-	if (scalar(keys %{Slim::Buttons::Plugins::installedPlugins()})) {
+	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
 		Slim::Web::Setup::addChildren('server','PLUGINS');
 
@@ -2457,7 +2457,7 @@ sub playerChildren {
 	if ($client->isPlayer()) {
 		$pageref->{'children'} = ['player','homemenu','display','alarm','audio','remote'];
 		push @{$pageref->{'children'}},@newPlayerChildren;
-		if (scalar(keys %{Slim::Buttons::Plugins::playerPlugins()})) {
+		if (scalar(keys %{Slim::Utils::PluginManager::playerPlugins()})) {
 			push @{$pageref->{'children'}}, 'player_plugins';
 		}
 	} else {
@@ -2472,7 +2472,7 @@ sub addPlayerChild {
 sub menuItemName {
 	my ($client,$value) = @_;
 
-	my $pluginsRef = Slim::Buttons::Plugins::installedPlugins();
+	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
 
 	if (Slim::Utils::Strings::stringExists($value)) {
 
@@ -3451,12 +3451,12 @@ sub getCategoryPlugins {
 	no strict 'refs';
 	my $client = shift;
 	my $category = shift || 'PLUGINS';
-	my $pluginlistref = Slim::Buttons::Plugins::installedPlugins();
+	my $pluginlistref = Slim::Utils::PluginManager::installedPlugins();
 
 	for my $plugin (keys %{$pluginlistref}) {
 		# get plugin's displayName if it's not available, yet
 		unless (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
-			$pluginlistref->{$plugin} = Slim::Buttons::Plugins::canPlugin($plugin);
+			$pluginlistref->{$plugin} = Slim::Utils::PluginManager::canPlugin($plugin);
 		}
 		
 		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
@@ -3511,7 +3511,7 @@ sub processPluginsList {
 	no strict 'refs';
 	for my $plugin (@sorted) {
 		if (defined $paramref->{"pluginlist$i"} && not $paramref->{"pluginlist$i"}) {
-			Slim::Buttons::Plugins::shutdownPlugin($plugin);
+			Slim::Utils::PluginManager::shutdownPlugin($plugin);
 		}
 
 		if (!exists $paramref->{"pluginlist$i"}) {
@@ -3532,8 +3532,8 @@ sub processPluginsList {
 	}
 
 	Slim::Web::HTTP::initSkinTemplateCache();
-	Slim::Buttons::Plugins::initPlugins();
-	Slim::Buttons::Plugins::addSetupGroups();
+	Slim::Utils::PluginManager::initPlugins();
+	Slim::Utils::PluginManager::addSetupGroups();
 
 	$i = 0;
 	# refresh the list of plugins as some of them might have been disable during intialization

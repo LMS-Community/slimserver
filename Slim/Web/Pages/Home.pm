@@ -101,7 +101,7 @@ sub home {
 		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
 
-	Slim::Buttons::Plugins::addSetupGroups();
+	Slim::Utils::PluginManager::addSetupGroups();
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);

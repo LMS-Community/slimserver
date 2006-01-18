@@ -1,4 +1,4 @@
-package Slim::Buttons::Plugins;
+package Slim::Utils::PluginManager;
 
 # Plugins.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Re-written by Kevin Walsh (kevin@cursor.biz) January 2003
@@ -10,7 +10,7 @@ package Slim::Buttons::Plugins;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id$
+# $Id: Plugins.pm 5666 2006-01-17 00:16:36Z fred $
 #
 
 use strict;
