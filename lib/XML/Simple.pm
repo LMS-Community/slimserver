@@ -218,8 +218,10 @@ sub XMLin {
 
   # Parsing is required, so let's get on with it
 
-  my $tree =  $self->build_tree($filename, $string);
+  my $tree =  $self->build_tree($filename, ref($string) ? $string : \$string);
 
+  # Don't leak
+  undef($string);
 
   # Now work some magic on the resulting parse tree
 
@@ -288,11 +290,11 @@ sub build_tree {
     $tree = $sp->parse_uri($filename);
   }
   else {
-    if(ref($string)) {
+    if(ref($string) && ref($string) ne 'SCALAR') {
       $tree = $sp->parse_file($string);
     }
     else {
-      $tree = $sp->parse_string($string);
+      $tree = $sp->parse_string($$string);
     }
   }
 
@@ -336,7 +338,7 @@ sub build_tree_xml_parser {
     close(XML_FILE);
   }
   else {
-    $tree = $xp->parse($string);
+    $tree = $xp->parse($$string);
   }
 
   return($tree);
