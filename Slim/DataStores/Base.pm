@@ -439,7 +439,25 @@ sub init {
 
 			'resultToSortedName' => sub {
 				my $obj = shift;
-				return $obj->titlesort;
+				my $sort = shift;
+
+				if (defined($sort) && $sort =~ /^artist/ ) {
+					
+					if (blessed($obj->contributor) && $obj->contributor->can('namesort')) {
+
+						return $obj->contributor->namesort;
+						
+					} else {
+
+						return '';
+
+					}
+
+				} else {
+
+					return $obj->titlesort;
+
+				}
 			},
 
 			'find' => sub {
@@ -447,6 +465,7 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 				my $idOnly = shift;
+				my $sort = shift;
 
 				# The user may not want to include all the composers / conductors
 				if (my $roles = $ds->artistOnlyRoles) {
@@ -459,7 +478,7 @@ sub init {
 					return $ds->find({
 						'field'  => 'album',
 						'find'   => $findCriteria,
-						'sortBy' => 'album',
+						'sortBy' => $sort || 'album',
 						'idOnly' => $idOnly,
 					});
 				}
@@ -472,17 +491,20 @@ sub init {
 				my $form = shift;
 				my $item = shift;
 				my $itemname = shift;
+				my $descend = shift;
+				my $findCriteria = shift;
+				my $sort = shift;
 
 				$form->{'coverThumb'} = $item->artwork || 0;
 
 				# add the year to artwork browsing if requested.
-				if (Slim::Utils::Prefs::get('showYear')) {
+				if (Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/ ) {
 
 					$form->{'year'} = $item->year;
 				}
 
 				# Show the artist in the album view
-				if (Slim::Utils::Prefs::get('showArtist')) {
+				if (Slim::Utils::Prefs::get('showArtist') || $sort =~ /^artist/ ) {
 
 					$form->{'artist'}        = $item->contributor;
 					$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
@@ -507,7 +529,14 @@ sub init {
 			'nameTransform' => 'album',
 			'descendTransform' => 'album,track',
 			'ignoreArticles' => 1,
-			'alphaPageBar' => sub { return 1; },
+
+			'alphaPageBar' => sub {
+				my $findCriteria = shift;
+				my $sort = shift; 
+
+				return (!defined($sort) || $sort =~ /^artist|^album/ ) ? 1 : 0;
+			},
+
 			'suppressAll' => 1
 		},
 

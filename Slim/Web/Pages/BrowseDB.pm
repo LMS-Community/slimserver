@@ -40,6 +40,7 @@ sub browsedb {
 	# XXX - why do we default to genre?
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
+	my $sort      = $params->{'sort'};
 	my $player    = $params->{'player'};
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
@@ -180,11 +181,12 @@ sub browsedb {
 		'player=' . Slim::Utils::Misc::escape($player || ''),
 		"hierarchy=$hierarchy",
 		"level=$level",
+		"sort=$sort",
 		@attrs,
 	);
 
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
-	my $items     = &{$levelInfo->{'find'}}($ds, $levels[$level], \%findCriteria);
+	my $items     = &{$levelInfo->{'find'}}($ds, $levels[$level], \%findCriteria, undef, $sort);
 
 	if ($items && scalar(@$items)) {
 
@@ -204,9 +206,9 @@ sub browsedb {
 				}
 			);
 
-		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria)) {
+		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria, $sort)) {
 
-			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
+			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_, $sort), @$items ];
 
 			($start, $end) = Slim::Web::Pages->alphaPageBar({
 					'itemsRef'    => $alphaitems,,
@@ -368,7 +370,7 @@ sub browsedb {
 			$list_form{$levelInfo->{'nameTransform'} || $levels[$level]} = $itemid;
 
 			# This is calling into the %fieldInfo hash
-			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria);
+			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria, $sort);
 
 			if (defined $itemsort) {
 

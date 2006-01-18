@@ -451,6 +451,13 @@ our %sortFieldMap = (
 	'lastPlayed' => ['tracks.lastPlayed'],
 	'playCount' => ['tracks.playCount desc'],
 	'age' => ['tracks.timestamp desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
+
+	# following sort definitions used to allow complex sorts of browse views
+	'artist,album' => ['contributors.namesort', 'albums.titlesort', 'albums.disc'],
+	'artist,year,album' => ['contributors.namesort', 'tracks.year', 'albums.titlesort', 'albums.disc'],
+	'year,album' => ['tracks.year', 'albums.titlesort', 'albums.disc'],
+	'year,artist' => ['tracks.year', 'contributors.namesort'],
+	'year,artist,album' => ['tracks.year', 'contributors.namesort', 'albums.titlesort', 'albums.disc'],
 );
 
 our %sortRandomMap = (
