@@ -456,7 +456,10 @@ sub init {
 
 	# valueRef stuff copied from INPUT.List.  Is it really necessary?
 	$client->param('listIndex', $listIndex);
-	$client->param('valueRef', \$listRef->[$listIndex]);
+
+	# Take a copy of the current value;
+	my $valueRef = $listRef->[$listIndex];
+	$client->param('valueRef', \$valueRef);
 
 	return 1;
 }
