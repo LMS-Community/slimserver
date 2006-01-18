@@ -493,7 +493,7 @@ sub new {
 	my $self = {
 		'_request'    => [],
 		'_isQuery'    => undef,
-		'_client'     => $client,
+		'_client'     => $client->id,
 		'_needClient' => 0,
 		'_params'     => \%paramHash,
 		'_curparam'   => 0,
@@ -525,11 +525,11 @@ sub client {
 	my $client = shift;
 	
 	if (defined $client) {
-		$self->{'_client'} = $client;
+		$self->{'_client'} = $client->id;
 		$self->validate();
 	}
 	
-	return $self->{'_client'};
+	return Slim::Player::Client::getClient($self->{'_client'});
 }
 
 # sets/returns the need client state

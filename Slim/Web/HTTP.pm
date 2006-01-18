@@ -624,7 +624,10 @@ sub processURL {
 #	}
 	$client = Slim::Player::Client::clientRandom() if !defined $client;
 
-	$peerclient{$httpClient} = $client;
+	if (blessed($client) && $client->can('id')) {
+
+		$peerclient{$httpClient} = $client->id;
+	}
 
 	if ($client && $client->isa("Slim::Player::SLIMP3")) {
 
@@ -1352,9 +1355,7 @@ sub addStreamingResponse {
 	# we aren't going to read from this socket anymore so don't select on it...
 	Slim::Networking::Select::addRead($httpClient, undef);
 
-	my $client = $peerclient{$httpClient};
-
-	if ($client) {
+	if (my $client = Slim::Player::Client::getClient($peerclient{$httpClient})) {
 
 		$client->streamingsocket($httpClient);
 
@@ -1366,19 +1367,15 @@ sub addStreamingResponse {
 
 sub clearOutputBuffer {
 	my $client = shift;
-	foreach my $httpClient (keys %peerclient) {
-		if ($client eq $peerclient{$httpClient}) {
-			delete $outbuf{$httpClient};
-			last;
-		}
-	}	
+
+	delete $outbuf{$client->id};
 }
 
 sub sendStreamingResponse {
 	my $httpClient = shift;
 	my $sentbytes;
 
-	my $client = $peerclient{$httpClient};
+	my $client = Slim::Player::Client::getClient($peerclient{$httpClient});
 	
 	# when we are streaming a file, we may not have a client, rather it might just be going to a web browser.
 	# assert($client);

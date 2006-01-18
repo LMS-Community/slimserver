@@ -161,7 +161,8 @@ sub slimproto_close {
 	# close socket
 	$clientsock->close();
 
-	if (defined(my $client = $sock2client{$clientsock})) {
+	if (defined(my $client = Slim::Player::Client::getClient($sock2client{$clientsock}))) {
+
 		# set timer to forget client
 		Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
 		# notify of disconnect
@@ -289,7 +290,7 @@ GETMORE:
 			
 			if (defined($handler_ref)) {
 				
-				my $client = $sock2client{$s};
+				my $client = Slim::Player::Client::getClient($sock2client{$s});
 			
 				if (!defined($client)) {
 					if ($op eq 'HELO') {
@@ -656,7 +657,7 @@ sub _hello_handler {
 		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 	}
 	
-	$sock2client{$s}=$client;
+	$sock2client{$s} = $client->id;
 	
 	if ($client->needsUpgrade()) {
 		# ask for an update if the player will do it automatically

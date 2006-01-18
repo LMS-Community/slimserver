@@ -169,7 +169,7 @@ sub bodyCB {
 
 	} else {
 
-		$self->{'content'} = $content;
+		$self->{'content'} = \$content;
 
 		&{$self->{'cb'}}($self);
 	}
@@ -178,6 +178,12 @@ sub bodyCB {
 }
 
 sub content {
+	my $self = shift;
+
+	return ${$self->{'content'}};
+}
+
+sub contentRef {
 	my $self = shift;
 
 	return $self->{'content'};
