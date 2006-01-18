@@ -168,6 +168,7 @@ package Slim::Control::Request;
 
 use strict;
 
+use Scalar::Util qw(blessed);
 use Tie::LLHash;
 
 use Slim::Control::Commands;
@@ -493,7 +494,7 @@ sub new {
 	my $self = {
 		'_request'    => [],
 		'_isQuery'    => undef,
-		'_client'     => $client->id,
+		'_client'     => (blessed($client) ? $client->id : undef),
 		'_needClient' => 0,
 		'_params'     => \%paramHash,
 		'_curparam'   => 0,
