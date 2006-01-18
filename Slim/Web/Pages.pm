@@ -443,7 +443,7 @@ sub alphaPageBar {
 			my $curLetter = substr($itemsref->[$j], 0, 1);
 			$curLetter = '' if (!defined($curLetter));
 
-			if ($lastLetter ne $curLetter) {
+			if ($lastLetter lt $curLetter) {
 
 				if (($j - $lastLetterIndex) > $maxcount) {
 					if ($end == -1 && $j > $start) {
