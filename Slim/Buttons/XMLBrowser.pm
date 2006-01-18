@@ -13,18 +13,13 @@ package Slim::Buttons::XMLBrowser;
 
 use strict;
 use File::Slurp;
+use Scalar::Util qw(weaken);
 use XML::Simple;
 
 use Slim::Buttons::Common;
 use Slim::Control::Request;
 use Slim::Networking::SimpleAsyncHTTP;
-use Slim::Utils::Cache;
 use Slim::Utils::Misc;
-
-# When to expire feeds from cache, in seconds.
-our $default_cache_expiration = 60 * 60;
-
-our $feedCache = Slim::Utils::Cache->new();
 
 sub init {
 	Slim::Buttons::Common::addMode('xmlbrowser', getFunctions(), \&setMode);
@@ -80,12 +75,7 @@ sub getFeedAsync {
 		# read_file from File::Slurp
 		my $content = read_file($path);
 
-		$feed = eval { parseXMLIntoFeed($content) };
-
-	} else {
-
-		# try to get from cache for remote feeds
-		$feed = $feedCache->get($url);
+		$feed = eval { parseXMLIntoFeed(\$content) };
 	}
 
 	if ($feed) {
@@ -99,7 +89,6 @@ sub getFeedAsync {
 		$client->param('title') || $url,
 	);
 
-	# if not found in cache, get via HTTP
 	getFeedViaHTTP($client, $url, \&gotFeed, \&gotError);
 }
 
@@ -250,6 +239,13 @@ sub gotOPML {
 		modeName => "XMLBrowser:$url:$title",
 		header   => "$title {count}",
 		listRef  => $opml->{'items'},
+
+		isSorted  => 1,
+		lookupRef => sub {
+			my $index = shift;
+
+			return $opml->{'items'}->[$index]->{'name'};
+		},
 
 		onRight  => sub {
 			my $client = shift;
@@ -603,7 +599,6 @@ sub playItem {
 			$title || $url,
 		);
 
-		# if not found in cache, get via HTTP
 		getFeedViaHTTP($client, $url, \&gotPlaylist, \&gotError);
 
 	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url ne 'unk'))) {
@@ -656,7 +651,7 @@ sub gotViaHTTP {
 	$::d_plugins && msg("XMLBrowser: content type is " . $http->headers()->{'Content-Type'} . "\n");
 
 	# Try and turn the content we fetched into a parsed data structure.
-	my $feed = eval { parseXMLIntoFeed($http->content) };
+	my $feed = eval { parseXMLIntoFeed($http->contentRef) };
 
 	if ($@) {
 		# call ecb
@@ -670,11 +665,10 @@ sub gotViaHTTP {
 		return;
 	}
 
-	# cache feed to save time and effort next time we need it.
-	$feedCache->put($http->url(), $feed, Time::HiRes::time() + $default_cache_expiration);
-
 	# call cb
 	&{$params->{'cb'}}($params->{'client'}, $http->url, $feed);
+
+	undef($http);
 }
 
 sub parseXMLIntoFeed {
@@ -686,11 +680,14 @@ sub parseXMLIntoFeed {
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
+	our $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
+
+	# Release
+	undef $content;
 
 	if ($@) {
 		errorMsg("XMLBrowser: failed to parse feed because:\n$@\n");
-		errorMsg("XMLBrowser: here's the bad feed:\n[$content]\n\n");
+		errorMsg("XMLBrowser: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
 
 		# Ugh. Need real exceptions!
 		die $@;
@@ -780,6 +777,9 @@ sub parseOPML {
 	};
 
 	$xml = undef;
+
+	# Don't leak
+	weaken(\$opml);
 
 	return $opml;
 }
