@@ -112,11 +112,14 @@ sub getExtVal {
 
 	if (ref $value eq 'CODE') {
 
-		eval { $value->($client, getItem($client)) };
+		my $ret = eval { $value->($client, getItem($client)) };
 
 		if ($@) {
 			errorMsg("INPUT.Choice: getExtVal - couldn't run coderef. [$@]\n");
+			return '';
 		}
+
+		return $ret;
 
 	} else {
 
