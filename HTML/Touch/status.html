@@ -30,7 +30,7 @@
 <td rowspan="6" colspan="5">	   
 
 [% IF coverThumb %]
-	<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="220" %]
+	<a [% albumHRef %] target="browser">[% PROCESS statusImg height="220" %]
 [% END %]   
 
 [% IF not coverThumb %]
@@ -63,7 +63,7 @@
 
 </tr>
 <tr><td colspan="2"><p align="left"><img src="html/images/leftcorner.gif" border="0" width="40" height="40"></p></td>
-<td colspan="7"><p align="left">[% IF player_chooser_list %]<form method="get" action="[% webroot %][% path %]"><select name="player"onchange="submit()">[% player_chooser_list %]</select></form>[% END %]
+<td colspan="7"><p align="left">
 </td>
 <td colspan="3"><p align="right"><img src="html/images/rightcorner.gif" border="0" width="40" height="40"></p></td>
 
