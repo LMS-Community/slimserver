@@ -73,7 +73,8 @@ sub home {
 	}
 
 	if (Slim::Utils::Prefs::get('lookForArtwork')) {
-		$class->addPageLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0"});
+		my $sort = Slim::Utils::Prefs::get('sortBrowseArt');
+		$class->addPageLinks("browse",{'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=artwork,track&level=0&sort=$sort"});
 	} else {
 		$class->addPageLinks("browse",{'BROWSE_BY_ARTWORK' => undef});
 		$params->{'noartwork'} = 1;

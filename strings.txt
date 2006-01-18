@@ -11550,3 +11550,29 @@ SETUP_XPLIR_RAW
 SETUP_XPLIR_BUTTONS
 	HE	כפתורים
 
+SETUP_SORTBROWSEART
+	EN	Browse By Artwork Order
+
+SETUP_SORTBROWSEART_DESC
+	EN	Choose the default order that the Browse Artwork web page displays albums.  (This feature currently requires placeholders to be included in the browse view - see above.)
+
+SETUP_SORTBROWSEART_ALBUM
+	EN	Album
+
+SETUP_SORTBROWSEART_ARTISTALBUM
+	EN	Artist, Album
+
+SETUP_SORTBROWSEART_ARTISTYEARALBUM
+	EN	Artist, Year, Album
+
+SETUP_SORTBROWSEART_YEARALBUM
+	EN	Year, Album
+
+SETUP_SORTBROWSEART_YEARARTISTALBUM
+	EN	Year, Artist, Album
+
+SETUP_SORTBROWSEART_GENREALBUM
+	EN	Genre, Album
+
+SETUP_SORTBROWSEART_GENREARTISTALBUM
+	EN	Genre, Artist, Album

@@ -1462,7 +1462,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb',
-					'artfolder','thumbSize','includeNoArt']
+					'artfolder','thumbSize','includeNoArt','sortBrowseArt']
 				}
 			}
 		,'Prefs' => {
@@ -1510,6 +1510,18 @@ sub initSetupConfig {
 						,'options' => {
 								'1' => string('SETUP_INCLUDENOART_1')
 								,'0' => string('SETUP_INCLUDENOART_0')
+							}
+					}
+			,'sortBrowseArt' => {
+						'validate' => \&validateAcceptAll
+						,'options' => {
+								'album' => string('SETUP_SORTBROWSEART_ALBUM')
+								,'artist,album' => string('SETUP_SORTBROWSEART_ARTISTALBUM')
+								,'artist,year,album' => string('SETUP_SORTBROWSEART_ARTISTYEARALBUM')
+								,'year,album' => string('SETUP_SORTBROWSEART_YEARALBUM')
+								,'year,artist,album' => string('SETUP_SORTBROWSEART_YEARARTISTALBUM')
+								,'genre,album' => string('SETUP_SORTBROWSEART_GENREALBUM')
+								,'genre,artist,album' => string('SETUP_SORTBROWSEART_GENREARTISTALBUM')
 							}
 					}
 			}

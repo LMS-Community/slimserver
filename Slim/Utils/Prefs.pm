@@ -170,6 +170,7 @@ sub init {
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'databaseTempStorage'   => 'MEMORY',
 		'databaseCacheSize'     => 10000,
+		'sortBrowseArt'     => 'album',
 	);
 
 	# The following hash contains functions that are executed when the pref corresponding to
