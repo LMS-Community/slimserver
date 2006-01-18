@@ -26,7 +26,7 @@ use Slim::Display::Display;
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
 
-Slim::Buttons::Common::addMode('INPUT.Choice',getFunctions(),\&setMode);
+Slim::Buttons::Common::addMode('INPUT.Choice', getFunctions(), \&setMode);
 
 # get the value the user is currently referencing.
 # item could be hash, string or code
@@ -35,13 +35,12 @@ sub getItem {
 	my $index = shift;
 
 	if (!defined($index)) {
-		$index = Slim::Buttons::Common::param($client, 'listIndex') || 0;
+		$index = $client->param('listIndex') || 0;
 	}
 
-	my $listref = Slim::Buttons::Common::param($client, 'listRef');
+	my $listref = $client->param('listRef');
 
-	my $item = $listref->[$index];
-	return $item;
+	return $listref->[$index];
 }
 
 # Each item in our list has a "name" which will be displayed on the
@@ -53,6 +52,7 @@ sub getItemName {
 	my $index = shift; # optional
 
 	if (!defined($index)) {
+
 		# if name has been overridden by a function, this code will get that.
 		my $name = getParam($client, 'name');
 		if ($name) {
@@ -62,9 +62,11 @@ sub getItemName {
 
 	# name not overridden, get it from the item
 	my $item = getItem($client, $index);
+
 	if (ref($item)) {
 		return $item->{'name'};
 	}
+
 	return $item;
 }
 
@@ -77,6 +79,7 @@ sub getItemValue {
 	if (ref($item)) {
 		return $item->{'value'};
 	}
+
 	return $item;
 }
 
@@ -86,12 +89,15 @@ sub getParam {
 	my $name = shift;
 
 	my $item = getItem($client);
+
 	if (ref($item)) {
+
 		if ($item->{$name}) {
 			return $item->{$name};
 		}
 	}
-	return Slim::Buttons::Common::param($client, $name);
+
+	return $client->param($name);
 }
 
 # Most of the data required by this mode can be either a hard value,
@@ -104,14 +110,16 @@ sub getExtVal {
 	my $client = shift;
 	my $value = shift;
 
-	if (!ref($value)) {
-		return $value;
-	} elsif (ref($value) eq 'CODE') {
-		my @args;
-		push @args, $client;
-		push @args, getItem($client);
-		return $value->(@args);
+	if (ref $value eq 'CODE') {
+
+		eval { $value->($client, getItem($client)) };
+
+		if ($@) {
+			errorMsg("INPUT.Choice: getExtVal - couldn't run coderef. [$@]\n");
+		}
+
 	} else {
+
 		return $value;
 	}
 }
@@ -120,42 +128,69 @@ sub getExtVal {
 #Button mode specific junk#
 ###########################
 my %functions = (
-	#change character at cursorPos (both up and down)
-	'up' => sub {
-		my ($client,$funct,$functarg) = @_;
-		changePos($client,-1);
-		},
-	'down' => sub {
-		my ($client,$funct,$functarg) = @_;
-		changePos($client,1);
-	},
-	'numberScroll' => sub {
-		my ($client,$funct,$functarg) = @_;
-		my $listRef = Slim::Buttons::Common::param($client,'listRef');
 
-		my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $listRef, 0);
+	# change character at cursorPos (both up and down)
+	'up' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		changePos($client, -1);
+	},
+
+	'down' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		changePos($client, 1);
+	},
+
+	'numberScroll' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		my $listRef = $client->param('listRef');
+
+		my $newIndex = Slim::Buttons::Common::numberScroll(
+			$client,
+			$functarg,
+			$listRef,
+			$client->param('isSorted') ? 1 : 0,
+			$client->param('lookupRef'),
+		);
+
 		if (defined $newIndex) {
-			Slim::Buttons::Common::param($client,'listIndex',$newIndex);
-			my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
-			$$valueRef = $listRef->[$newIndex];
-			my $onChange = getParam($client,'onChange');
+
+			$client->param('listIndex', $newIndex);
+
+			my $valueRef = $client->param('valueRef');
+			  $$valueRef = $listRef->[$newIndex];
+
+			my $onChange = getParam($client, 'onChange');
+
 			if (ref($onChange) eq 'CODE') {
-				$onChange->($client, $valueRef ? ($$valueRef) : undef);
+
+				eval { $onChange->($client, $valueRef ? ($$valueRef) : undef) };
+
+				if ($@) {
+					errorMsg("INPUT.Choice: numberScroll caught error: [$@]\n");
+				}
 			}
 		}
+
 		$client->update;
 	},
-	#call callback procedure
+
+	# call callback procedure
 	'exit' => sub {
 		my ($client,$funct,$functarg) = @_;
+
 		if (!defined($functarg) || $functarg eq '') {
 			$functarg = 'exit'
 		}
+
 		exitInput($client,$functarg);
 	},
+
 	'passback' => \&passback,
-	'play' => sub {callCallback('onPlay', @_)},
-	'add' => sub {callCallback('onAdd', @_)},
+	'play'     => sub { callCallback('onPlay', @_) },
+	'add'      => sub { callCallback('onAdd', @_)  },
 
 	# right and left buttons is handled in exitInput
 
@@ -164,10 +199,18 @@ my %functions = (
 
 # use the parent mode's function...
 sub passback {
-	my ($client,$funct,$functarg) = @_;
-	my $parentMode = Slim::Buttons::Common::param($client,'parentMode');
+	my ($client, $funct, $functarg) = @_;
+
+	my $parentMode = $client->param('parentMode');
+
 	if (defined($parentMode)) {
-		Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
+
+		Slim::Hardware::IR::executeButton(
+			$client,
+			$client->lastirbutton,
+			$client->lastirtime,
+			$parentMode
+		);
 	}
 }
 
@@ -180,34 +223,50 @@ sub callCallback {
 	my $funct = shift;
 	my $functarg = shift;
 
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
-	my $cb = getParam($client, $callbackName);
-	if (ref($cb) eq 'CODE') {
+	my $valueRef = $client->param('valueRef');
+	my $callback = getParam($client, $callbackName);
+
+	if (ref($callback) eq 'CODE') {
+
 		my @args = ($client, $valueRef ? ($$valueRef) : undef);
-		$cb->(@args);
+
+		eval { $callback->(@args) };
+
+		if ($@) {
+			errorMsg("INPUT.Choice: Couldn't run callback: [$callbackName] : $@\n");
+		}
+
 	} else {
+
 		passback($client, $funct, $functarg);
 	}
 }
 
 sub changePos {
 	my ($client, $dir) = @_;
-	my $listRef = Slim::Buttons::Common::param($client,'listRef');
-	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
+
+	my $listRef   = $client->param('listRef');
+	my $listIndex = $client->param('listIndex');
+
 	if (getParam($client,'noWrap') 
 		&& (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0))) {
-			#not wrapping and at end of list
-			return;
+
+		#not wrapping and at end of list
+		return;
 	}
+
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
-	my $valueRef = Slim::Buttons::Common::param($client,'valueRef');
+	my $valueRef = $client->param('valueRef');
+
 	$$valueRef = $listRef->[$newposition];
-	Slim::Buttons::Common::param($client,'listIndex',$newposition);
+	$client->param('listIndex',$newposition);
+
 	my $onChange = getParam($client,'onChange');
 
 	if (ref($onChange) eq 'CODE') {
 		$onChange->($client, $valueRef ? ($$valueRef) : undef);
 	}
+
 	if ($newposition != $listIndex) {
 		if ($dir < 0) {
 			$client->pushUp();
@@ -218,10 +277,13 @@ sub changePos {
 
 	# if unique mode name supplied, remember where client was browsing
 	if ($client->param("modeName") && $$valueRef) {
+
 		my $value = $$valueRef;
+
 		if (ref($value) eq 'HASH' && $value->{'value'}) {
 			$value = $value->{'value'};
 		}
+
 		$browseCache{$client}{$client->param("modeName")} = $value;
 	}
 }
@@ -239,6 +301,7 @@ sub formatString {
 	my $listRef = shift;
 
 	while ($string =~ /(.*?)\{(.*?)\}(.*)/) {
+
 		if ($2 eq 'count') {
 			# replace {count} with (n of M)
 			$string = $1 . ' (' . ($listIndex + 1) . ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')' . $3;
@@ -247,6 +310,7 @@ sub formatString {
 			$string = $1 . $client->string($2) . $3;
 		}
 	}
+
 	return $string;
 }
 
@@ -254,11 +318,16 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	my $listIndex = Slim::Buttons::Common::param($client,'listIndex');
-	my $listRef = Slim::Buttons::Common::param($client,'listRef');
-	if (!defined($listRef)) { return ('','');}
+	my $listIndex = $client->param('listIndex');
+	my $listRef   = $client->param('listRef');
+
+	if (!defined($listRef)) {
+
+		return ('','');
+	}
+
 	if ($listIndex == scalar(@$listRef)) {
-		Slim::Buttons::Common::param($client,'listIndex',$listIndex-1);
+		$client->param('listIndex',$listIndex-1);
 		$listIndex--;
 	}
 
@@ -268,13 +337,15 @@ sub lines {
 
 	# deprecated.
 	# callers should insert {STRING} into their header
-	if (getParam($client,'stringHeader') && 
-		Slim::Utils::Strings::stringExists($line1)) {
+	if (getParam($client,'stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+
 		$line1 = $client->string($line1);
 	}
 
 	if (scalar(@$listRef) == 0) {
+
 		$line2 = $client->string('EMPTY');
+
 	} else {
 
 		# deprecated
@@ -292,15 +363,21 @@ sub lines {
 		# deprecated. don't set stringName or stringHeader, put strings
 		# to be translated within curly brackets instead
 		if (getParam($client,'stringName') && 
+
 			Slim::Utils::Strings::stringExists($line2)) {
+
 			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
+
 		} else {
+
 			$line2 = formatString($client, $line2, $listIndex, $listRef);
 		}
 	}
+
 	# overlayRef must refer to 2 element array, overlays for both lines
 	my $overlayref = getExtVal($client, getParam($client, 'overlayRef'));
-	return ($line1, $line2, defined($overlayref) ? @$overlayref : undef);
+
+	return ($line1, $line2, (ref($overlayref) eq 'ARRAY' ? @$overlayref : undef));
 }
 
 sub getFunctions {
@@ -323,46 +400,64 @@ sub init {
 	my $client = shift;
 	my $setMethod = shift;
 
-	my $init = Slim::Buttons::Common::param($client,'init');
+	my $init = $client->param('init');
+
 	if ($init && (ref($init) eq 'CODE')) {
 		$init->($client);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'parentMode'))) {
+
+	if (!defined($client->param('parentMode'))) {
+
 		my $i = -2;
-		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		Slim::Buttons::Common::param($client,'parentMode',$client->modeStack->[$i]);
+
+		while ($client->modeStack->[$i] =~ /^INPUT./) {
+			$i--;
+		}
+
+		$client->param('parentMode', $client->modeStack->[$i]);
 	}
-	if (!defined(Slim::Buttons::Common::param($client,'header'))) {
-		Slim::Buttons::Common::param($client,'header',$client->string('SELECT_ITEM'));
+
+	if (!defined($client->param('header'))) {
+
+		$client->param('header',$client->string('SELECT_ITEM'));
 	}
-	my $listRef = Slim::Buttons::Common::param($client,'listRef');
+
+	my $listRef = $client->param('listRef');
 
 	return undef if !defined($listRef);
 
 	# observe initial value only if pushing modes, not popping.
-	my $listIndex = Slim::Buttons::Common::param($client,'listIndex') || 0;
+	my $listIndex = $client->param('listIndex') || 0;
+
 	if ($setMethod eq 'push') {
+
 		my $initialValue = getExtVal($client, getParam($client, 'initialValue'));
+
 		# if initialValue not provided, use the one we saved
 		if (!$initialValue && $client->param("modeName")) {
+
 			$initialValue = $browseCache{$client}{$client->param("modeName")};
 		}
+
 		if ($initialValue) {
 			my $newIndex;
+
 			for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
+
 				last if $initialValue eq getItemValue($client, $newIndex);
 			}
+
 			if ($newIndex < scalar(@$listRef)) {
+
 				$listIndex = $newIndex;
 			}
 		}
 	}
 
 	# valueRef stuff copied from INPUT.List.  Is it really necessary?
-	Slim::Buttons::Common::param($client,'listIndex',$listIndex);
-	my $valueRef;
-	$$valueRef = $listRef->[$listIndex];
-	$client->param('valueRef', $valueRef);
+	$client->param('listIndex', $listIndex);
+	$client->param('valueRef', \$listRef->[$listIndex]);
+
 	return 1;
 }
 
@@ -370,34 +465,46 @@ sub init {
 # Why is pressing right handled here, instead of in our function callbacks???
 sub exitInput {
 	my ($client,$exitType) = @_;
+
 	my $callbackFunct = getParam($client,'callback');
 	my $onRight;
 	my $valueRef;
 
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
+
 		if ($exitType eq 'right') {
+
 			# if user has requested a callback when right is pressed, give it to 'em
 			$onRight = getParam($client,'onRight');
+
 			if (defined($onRight) && (ref($onRight) eq 'CODE')) {
-				$valueRef = Slim::Buttons::Common::param($client,'valueRef');
+
+				$valueRef = $client->param('valueRef');
+
 				my $lines = $onRight->($client, (defined($valueRef) ? ($$valueRef) : undef));
+
 				if (defined($lines) && (ref($lines) eq 'ARRAY')) {
 					# if onRight returns lines, show them.
 					$client->showBriefly($lines->[0], $lines->[1], undef, 1);
 				}
+
 			} else {
 				$client->bumpRight();
 			}
+
 		} elsif ($exitType eq 'left') {
+
 			Slim::Buttons::Common::popModeRight($client);
+
 		} else {
+
 			Slim::Buttons::Common::popMode($client);
 		}
-		return;
+
 	} else {
+
 		$callbackFunct->(@_);
 	}
 }
 
 1;
-
