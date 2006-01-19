@@ -24,10 +24,9 @@ my $dlext  = $Config{'dlext'};
 # The list of all the packages needed.
 my @packages = qw(
 	Compress-Zlib-1.41.tar.gz
-	DBD-SQLite-1.11.tar.gz
 	DBI-1.50.tar.gz
+	DBD-SQLite-1.11.tar.gz
 	HTML-Parser-3.48.tar.gz
-	sox-12.17.7-sdi.tar.gz
 	Template-Toolkit-2.14.tar.gz
 	Time-HiRes-1.86.tar.gz
 	XML-Parser-2.34.tar.gz
