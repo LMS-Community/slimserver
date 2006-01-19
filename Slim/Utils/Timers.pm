@@ -270,7 +270,7 @@ sub killTimers {
 
 	while ($timer = $highTimers[$i]) {
 
-		if (($timer->{'client'} eq $client->id) && ($timer->{'subptr'} eq $subptr)) {
+		if (($timer->{'client'} eq ($client ? $client->id : $client)) && ($timer->{'subptr'} eq $subptr)) {
 
 			splice( @highTimers, $i, 1);
 			$killed++;
@@ -285,7 +285,7 @@ sub killTimers {
 
 	while ($timer = $normalTimers[$i]) {
 
-		if (($timer->{'client'} eq $client->id) && ($timer->{'subptr'} eq $subptr)) {
+		if (($timer->{'client'} eq ($client ? $client->id : $client)) && ($timer->{'subptr'} eq $subptr)) {
 
 			splice( @normalTimers, $i, 1);
 			$killed++;
