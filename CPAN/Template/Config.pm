@@ -17,7 +17,7 @@
 #
 #------------------------------------------------------------------------
 #
-#   $Id$
+#   $Id: Config.pm,v 2.68 2004/01/30 19:32:23 abw Exp $
 #
 #========================================================================
  
@@ -32,7 +32,7 @@ use vars qw( $VERSION $DEBUG $ERROR $INSTDIR
              $LATEX_PATH $PDFLATEX_PATH $DVIPS_PATH
 	     $STASH $SERVICE $CONTEXT $CONSTANTS @PRELOAD );
 
-$VERSION   = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION   = sprintf("%d.%02d", q$Revision: 2.68 $ =~ /(\d+)\.(\d+)/);
 $DEBUG     = 0 unless defined $DEBUG;
 $ERROR     = '';
 $CONTEXT   = 'Template::Context';
@@ -42,7 +42,7 @@ $PARSER    = 'Template::Parser';
 $PLUGINS   = 'Template::Plugins';
 $PROVIDER  = 'Template::Provider';
 $SERVICE   = 'Template::Service';
-$STASH     = 'Template::Stash';
+$STASH     = 'Template::Stash::XS';
 $CONSTANTS = 'Template::Namespace::Constants';
 
 @PRELOAD   = ( $CONTEXT, $FILTERS, $ITERATOR, $PARSER,
@@ -56,9 +56,6 @@ $INSTDIR  = '';
 $LATEX_PATH    = '';
 $PDFLATEX_PATH = '';
 $DVIPS_PATH    = '';
-
-# Keep a cache of our loaded modules - eval() is expensive.
-my %loaded = ();
 
 #========================================================================
 #                       --- CLASS METHODS ---
@@ -89,21 +86,22 @@ sub preload {
 # or undef on error.  Use $class->error() to examine the error string.
 #------------------------------------------------------------------------
 
+my %loaded = ();
+
 sub load {
     my ($class, $module) = @_;
     $module =~ s[::][/]g;
     $module .= '.pm';
 
     return 1 if $loaded{$module};
-
-#    print STDERR "loading $module\n";
+#    print STDERR "loading $module\n"
 #	if $DEBUG;
     eval {
 	require $module;
     };
 
     if ($@) {
-        return $class->error("failed to load $module: $@")
+        return $class->error("failed to load $module: $@");
     }
 
     return $loaded{$module} = 1;
@@ -452,8 +450,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.67, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.68, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

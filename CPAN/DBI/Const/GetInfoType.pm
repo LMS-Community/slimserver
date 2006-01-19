@@ -1,4 +1,4 @@
-# $Id: GetInfoType.pm,v 1.1 2005/01/11 04:20:33 dsully Exp $
+# $Id: GetInfoType.pm,v 1.5 2003/02/26 17:56:01 timbo Exp $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -19,11 +19,11 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %GetInfoType);
 @EXPORT = qw(%GetInfoType);
 
 my
-$VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", '$Revision: 1.5 $ ' =~ /(\d+)\.(\d+)/;
 
 =head1 NAME
 
-  DBI::Const::GetInfoType - Data describing GetInfo type codes
+DBI::Const::GetInfoType - Data describing GetInfo type codes
 
 =head1 SYNOPSIS
 

@@ -1,4 +1,4 @@
-# $Id: ANSI.pm,v 1.1 2005/01/11 04:20:33 dsully Exp $
+# $Id: ANSI.pm,v 1.3 2003/02/26 17:56:01 timbo Exp $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -12,7 +12,7 @@ package DBI::Const::GetInfo::ANSI;
 
 =head1 NAME
 
- DBI::Const::GetInfo::ANSI - ISO/IEC SQL/CLI Constants for GetInfo
+DBI::Const::GetInfo::ANSI - ISO/IEC SQL/CLI Constants for GetInfo
 
 =head1 SYNOPSIS
 
@@ -38,7 +38,7 @@ The API for this module is private and subject to change.
 =cut
 
 my
-$VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", '$Revision: 1.3 $ ' =~ /(\d+)\.(\d+)/;
 
 %InfoTypes =
 (

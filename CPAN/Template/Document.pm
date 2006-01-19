@@ -20,7 +20,7 @@
 # 
 #----------------------------------------------------------------------------
 #
-# $Id: Document.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
+# $Id: Document.pm,v 2.74 2004/09/17 07:58:36 abw Exp $
 #
 #============================================================================
 
@@ -29,11 +29,26 @@ package Template::Document;
 require 5.004;
 
 use strict;
-use vars qw( $VERSION $ERROR $COMPERR $DEBUG $AUTOLOAD );
+use vars qw( $VERSION $ERROR $COMPERR $DEBUG $AUTOLOAD $UNICODE );
 use base qw( Template::Base );
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.74 $ =~ /(\d+)\.(\d+)/);
+
+BEGIN {
+    # UNICODE is supported in versions of Perl from 5.008 onwards
+    if ($UNICODE = $] > 5.007 ? 1 : 0) {
+        if ($^V gt v5.8.0) {
+            # utf8::is_utf8() available from Perl 5.8.1 onwards
+            *is_utf8 = \&utf8::is_utf8;
+        }
+        elsif ($^V eq v5.8.0) {
+            # use Encode::is_utf8() for Perl 5.8.0
+            require Encode;
+            *is_utf8 = \&Encode::is_utf8;
+        }
+    }
+}
 
 
 #========================================================================
@@ -224,17 +239,17 @@ sub as_perl {
     $block =~ s/\s+$//;
 
     $defblocks = join('', map {
-	my $code = $defblocks->{ $_ };
-	$code =~ s/\n/\n        /g;
-	$code =~ s/\s*$//;
-	"        '$_' => $code,\n";
+        my $code = $defblocks->{ $_ };
+        $code =~ s/\n/\n        /g;
+        $code =~ s/\s*$//;
+        "        '$_' => $code,\n";
     } keys %$defblocks);
     $defblocks =~ s/\s+$//;
 
     $metadata = join('', map { 
-	my $x = $metadata->{ $_ }; 
-	$x =~ s/(['\\])/\\$1/g; 
-	"        '$_' => '$x',\n";
+        my $x = $metadata->{ $_ }; 
+        $x =~ s/(['\\])/\\$1/g; 
+        "        '$_' => '$x',\n";
     } keys %$metadata);
     $metadata =~ s/\s+$//;
 
@@ -280,12 +295,18 @@ sub write_perl_file {
         ($fh, $tmpfile) = File::Temp::tempfile( 
             DIR => File::Basename::dirname($file) 
         );
-	print $fh $class->as_perl($content) || die $!;
-	close($fh);
+        my $perlcode = $class->as_perl($content) || die $!;
+        
+        if ($UNICODE && is_utf8($perlcode)) {
+            $perlcode = "use utf8;\n\n$perlcode";
+            binmode $fh, ":utf8";
+        }
+        print $fh $perlcode;
+        close($fh);
     };
     return $class->error($@) if $@;
     return rename($tmpfile, $file)
-	|| $class->error($!);
+        || $class->error($!);
 }
 
 
@@ -466,8 +487,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.71, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.74, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

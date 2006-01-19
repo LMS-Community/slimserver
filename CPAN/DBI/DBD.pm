@@ -3,51 +3,15 @@ package DBI::DBD;
 
 use vars qw($VERSION);	# set $VERSION early so we don't confuse PAUSE/CPAN etc
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/o);
+$VERSION = sprintf("%d.%02d", q$Revision: 11.21 $ =~ /(\d+)\.(\d+)/o);
 
-
-# $Id: DBD.pm,v 1.1 2005/01/11 04:20:33 dsully Exp $
+# $Id: DBD.pm,v 11.21 2004/02/01 11:16:16 timbo Exp $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann, Steffen
 # Goeldner and Tim Bunce
 #
 # You may distribute under the terms of either the GNU General Public
 # License or the Artistic License, as specified in the Perl README file.
-
-########################################################################
-# JL 2002-12-30 - Ouch!
-# NB: In Perl 5.6.x and earlier, POD only supports =head1 and =head2,
-# whereas in Perl 5.8.0 and later, POD supports =head3 and =head4 too.
-# This document reads better in HTML if =head3 and =head4 are used.
-# To convert this document to Perl 5.8.0 POD markup, run this script:
-#
-##!/bin/perl -w
-##
-## Remove Perl 5.6.x and earlier POD markup, leaving Perl 5.8.0 POD
-## markup (=head3, =head4) visible.
-#
-#while (<>)
-#{
-#    if (m/^#=POD-Perl-5.6.x=begin/o)
-#    {
-#        while (<>)
-#        {
-#            last if m/^#=POD-Perl-5.6.x=end/o;
-#        }
-#        next;
-#    }
-#    elsif (m/^#=head[34]\s/o)
-#    {
-#        s/^#//o;
-#        $_ = "=pod\n\n$_\n=cut\n\n";
-#    }
-#    print $_;
-#}
-#
-# NBB: POD does not provide a mechanism for embedding comments in POD
-# material.  Hence the convoluted =cut, # comments, and =pod directives
-# (which are supported as far back as Perl 5.005_03).
-########################################################################
 
 =head1 NAME
 
@@ -59,8 +23,8 @@ DBI::DBD - Perl DBI Database Driver Writer's Guide
 
 =head2 Version and volatility
 
-  $Revision: 1.1 $
-  $Date: 2005/01/11 04:20:33 $
+  $Revision: 11.21 $
+  $Date: 2004/02/01 11:16:16 $
 
 This document is I<still> a minimal draft which is in need of further work.
 
@@ -178,7 +142,9 @@ driver and a prefix for the driver.
 Typically, the name is based on the name of the database software it
 uses, and the prefix is a contraction of that.
 Hence, DBD::Oracle has the name Oracle and the prefix 'ora_'.
-This information will be recorded in the DBI documentation.
+This information will be recorded in the DBI module.
+Apart from documentation purposes, registration is a prerequisite for
+L<installing private methods|DBI/install_method>.
 
 This document assumes you are writing a driver called DBD::Driver, and
 that the prefix 'drv_' is assigned to the driver.
@@ -204,40 +170,25 @@ Perl driver or a C/XS driver.
 There are no extra files needed only by a pure Perl driver, but there are
 several extra files needed only by a C/XS driver.
 
-=cut
-
-#=head3 Files common to pure Perl and C/XS drivers
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=over 2
-
-=item Files common to pure Perl and C/XS drivers
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 Files common to pure Perl and C/XS drivers
 
 Assuming that your driver is called DBD::Driver, these files are:
 
 =over 4
 
-=item Makefile.PL
+=item * Makefile.PL
 
-=item README
+=item * README
 
-=item MANIFEST
+=item * MANIFEST
 
-=item Driver.pm
+=item * Driver.pm
 
-=item lib/Bundle/DBD/Driver.pm
+=item * lib/Bundle/DBD/Driver.pm
 
-=item lib/DBD/Driver/Summary.pm
+=item * lib/DBD/Driver/Summary.pm
 
-=item t/*.t
+=item * t/*.t
 
 =back
 
@@ -297,47 +248,33 @@ The module itself would usually be in a file SubModule.pm.
 All such sub-modules should themselves be version stamped (see the
 discussions far below).
 
-=cut
-
-#=head3 Extra files needed by C/XS drivers
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Extra files needed by C/XS drivers
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 Extra files needed by C/XS drivers
 
 The software for a C/XS driver will typically contain at least four
 extra files that are not relevant to a pure Perl driver.
 
 =over 4
 
-=item Driver.xs
+=item * Driver.xs
 
-=item Driver.h
+=item * Driver.h
 
-=item dbdimp.h
+=item * dbdimp.h
 
-=item dbdimp.c
+=item * dbdimp.c
 
 =back
 
 The Driver.xs file is used to generate C code that Perl can call to gain
 access to the C functions you write that will, in turn, call down onto
 your database software.
+
 The Driver.h header is a stylized header that ensures you can access the
 necessary Perl and DBI macros, types, and function declarations.
+
 The dbdimp.h is used to specify which functions have been implemented by
 your driver.
+
 The dbdimp.c file is where you write the C code that does the real work
 of translating between Perl-ish data types and what the database expects
 to use and return.
@@ -348,20 +285,6 @@ drivers, so those files are described both in the section on creating a
 pure Perl driver and in the section on creating a C/XS driver.
 
 Obviously, you can add extra source code files to the list.
-
-=cut
-
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
 
 =head2 Requirements on a driver and driver writer
 
@@ -465,8 +388,8 @@ A full-fledged Makefile.PL can be quite large (for example, the files
 for DBD::Oracle and DBD::Informix are both over 1000 lines long, and the
 Informix one uses - and creates - auxilliary modules too).
 
-See also L<ExtUtils::MakeMaker(3)> and L<ExtUtils::MM_Unix(3)>.
-Consider using L<CPAN::MakeMaker(3)> in place of ExtUtils::MakeMaker.
+See also L<ExtUtils::MakeMaker> and L<ExtUtils::MM_Unix>.
+Consider using L<CPAN::MakeMaker> in place of ExtUtils::MakeMaker.
 
 =head2 README
 
@@ -641,59 +564,14 @@ Now let's take a closer look at an excerpt of File.pm as an example.
 We ignore things that are common to any module (even non-DBI modules)
 or really specific to the DBD::File package.
 
-=cut
+=head3 The DBD::Driver package
 
-#=head3 The DBD::Driver package
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=over 2
-
-=item The DBD::Driver package
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-=cut
-
-#=head4 The header
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The header
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The header
 
   package DBD::File;
 
   use strict;
-  use vars qw($err $errstr $state $drh);
-
-  $err = 0;             # holds error code   for DBI::err
-  $errstr = "";         # holds error string for DBI::errstr
-  $sqlstate = "S1000";  # holds SQL state    for DBI::state
-
-These variables are used for storing error states and messages.
-Note that most pure Perl drivers do not support the SQL standard error
-indicator SQLSTATE, and for such drivers, the value "S1000" is
-appropriate.
-If your database does support SQLSTATE, then initialize $sqlstate to an
-empty string.
-However, it is crucial to understand that you must not modify them
-directly; see below.
+  use vars qw($VERSION $drh);
 
   $VERSION = "1.23.00"  # Version number of DBD::File
 
@@ -709,7 +587,7 @@ version 1.10 to precede version 1.9, so that using a raw CVS, RCS or
 SCCS version number is probably not appropriate (despite being very
 common). For RCS or CVS you can use this code:
 
-  $VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+  $VERSION = sprintf "%d.%02d", '$Revision: 11.21 $ ' =~ /(\d+)\.(\d+)/;
 
 which pads out the fractional part with leading zeros so all is well
 (so long as you don't go past x.99)
@@ -719,24 +597,7 @@ which pads out the fractional part with leading zeros so all is well
 This is where the driver handle will be stored, once created.
 Note that you may assume there is only one handle for your driver.
 
-=cut
-
-#=head4 The driver constructor
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The driver constructor
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The driver constructor
 
 Note that the I<driver> method is in the DBD::Driver package, not in one
 of the sub-packages DBD::Driver::dr, DBD::Driver::db, or
@@ -763,7 +624,7 @@ DBD::Driver::db.
 The I<driver> method is the driver handle constructor. It's a
 reasonable example of how DBI implements its handles. There are three
 kinds: B<driver handles> (typically stored in C<$drh>; from now on
-called C<drh> of C<$drh>), B<database handles> (from now on called C<dbh> or
+called C<drh> or C<$drh>), B<database handles> (from now on called C<dbh> or
 C<$dbh>) and B<statement handles> (from now on called C<sth> or
 C<$sth>).
 
@@ -798,6 +659,8 @@ The I<DBI::new_drh> method and the I<driver> method both return C<undef>
 for failure (in which case you must look at $DBI::err and $DBI::errstr
 for the failure information, because you have no driver handle to use).
 
+=head4 The CLONE special subroutine
+
 Also needed here, in the DBD::Driver package, is a CLONE() method
 that will be called by perl when an intrepreter is cloned. All your
 CLONE method needs to do, currently, is clear the cached $drh so
@@ -805,46 +668,15 @@ the new interpreter won't start using the cached $drh from the old
 interpreter:
 
   sub CLONE {
-    undef $rdh;
+    undef $drh;
   }
 
-=cut
+See L<http://search.cpan.org/dist/perl/pod/perlmod.pod#Making_your_module_threadsafe>
+for details.
 
-#=head3 The DBD::Driver::dr package
-#=POD-Perl-5.6.x=begin
+=head3 The DBD::Driver::dr package
 
-=pod
-
-=back
-
-=over 2
-
-=item The DBD::Driver::dr package
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-=cut
-
-#=head4 The database handle constructor
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The database handle constructor
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The database handle constructor
 
 The next lines of code look as follows:
 
@@ -861,7 +693,7 @@ to change the namespace.
 
   sub connect
   {
-      my ($drh, $dbname, $user, $auth, $attr) = @_;
+      my ($drh, $dr_dsn, $user, $auth, $attr) = @_;
 
       # Some database specific verifications, default settings
       # and the like can go here. This should only include
@@ -871,35 +703,58 @@ to change the namespace.
       # environment variables to be set; this could be where you
       # validate that they are set, or default them if they are not set.
 
-      # create a 'blank' dbh (call superclass constructor)
-      my $dbh = DBI::_new_dbh($drh, {
-              'Name'         => $dbname,
-          })
-          or return undef;
+      $my $driver_prefix = "drv_"; # the assigned prefix for this driver
 
       # Process attributes from the DSN; we assume ODBC syntax
       # here, that is, the DSN looks like var1=val1;...;varN=valN
-      foreach my $var (split(/;/, $dbname)) {
-          if ($var =~ m/(.*?)=(,*)/) {
-              # Not !!! $dbh->{$var} = $val;
-              $dbh->STORE($var, $val);
-          }
+      foreach my $var ( split /;/, $dr_dsn ) {
+          my ($attr_name, $attr_value) = split '=', $var, 2;
+	  return $drh->set_err(1, "Can't parse DSN part '$var'")
+              unless defined $attr_value;
+
+          # add driver prefix to attribute name if it doesn't have it already
+          $attr_name = $driver_prefix.$attr_name
+              unless $attr_name =~ /^$driver_prefix/o;
+
+	  # Store attribute into %$attr, replacing any existing value.
+          # The DBI will STORE() these into $dbh after we've connected
+	  $attr->{$attr_name} = $attr_value;
       }
-      $dbh;
+
+      # Get the attributes we'll use to connect.
+      # We use delete here because these no need to STORE them
+      my $db = delete $attr->{drv_database} || delete $attr->{drv_db}
+          or return $drh->set_err(1, "No database name given in DSN '$dr_dsn'");
+      my $host = delete $attr->{drv_host} || 'localhost';
+      my $port = delete $attr->{drv_port} || 123456;
+
+      # Assume you can attach to your database via drv_connect:
+      my $connection = drv_connect($db, $host, $port, $user, $auth)
+          or return $drh->set_err(1, "Can't connect to $dr_dsn: ...");
+
+      # create a 'blank' dbh (call superclass constructor)
+      my ($outer, $dbh) = DBI::_new_dbh($drh, { Name => $dr_dsn });
+
+      $dbh->STORE('Active', 1 );
+      $dbh->{drv_connection} = $connection;
+
+      return $outer;
   }
 
 The Name attribute is a standard DBI attribute.
 
 This is mostly the same as in the I<driver handle constructor> above.
 The arguments are described in the DBI man page.
-See L<DBI(3)>.
+See L<DBI>.
 The constructor _new_dbh is called, returning a database handle.
 The constructor's prototype is:
 
-  $dbh = DBI::_new_dbh($drh, $public_attr, $private_attr);
+  ($outer, $inner) = DBI::_new_dbh($drh, $public_attr, $private_attr);
 
 with similar arguments to those in the I<driver handle constructor>,
 except that the C<$class> is replaced by C<$drh>.
+
+In scalar context, only the outer handle is returned.
 
 Note the use of the I<STORE> method for setting the dbh attributes.
 That's because within the driver code, the handle object you have is
@@ -916,24 +771,7 @@ like PrintError, don't actually exist in the hash and must be
 read via $h->FETCH($attrib) and set via $h->STORE($attrib, $value).
 If in any doubt, use these methods.
 
-=cut
-
-#=head4 The data_sources method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The data_sources method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The data_sources method
 
 The data_sources method must populate and return a list of valid data
 sources, prefixed with the "dbi:Driver" incantation that allows them to
@@ -944,7 +782,7 @@ As a trivial example, consider a fixed list of data sources:
 
   sub data_sources
   {
-      my($srh, $attr) = @_;
+      my($drh, $attr) = @_;
       my(@list) = ();
       # You need more sophisticated code than this to set @list...
       push @list, "dbi:Driver:abc";
@@ -954,24 +792,7 @@ As a trivial example, consider a fixed list of data sources:
       return @list;
   }
 
-=cut
-
-#=head4 Error handling
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Error handling
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Error handling
 
 It is quite likely that something fails in the connect method.
 With DBD::File for example, you might catch an error when setting the
@@ -992,86 +813,18 @@ usually be simplified to something like this:
 
   return $h->set_err($err, $errmsg, $state) if ...;
 
-=cut
-
-#=head4 The disconnect_all method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The disconnect_all method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The disconnect_all method
 
 If you need to release any resources when the driver is unloaded, you
 can provide a disconnect_all method.
 
-=cut
-
-#=head4 Other driver handle methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Other driver handle methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Other driver handle methods
 
 If you need any other driver handle methods, they can follow here.
 
-=cut
+=head3 The DBD::Driver::db package
 
-#=head3 The DBD::Driver::db package
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The DBD::Driver::db package
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-=cut
-
-#=head4 The statement handle constructor
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The statement handle constructor
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The statement handle constructor
 
 There's nothing much new in the statement handle constructor.
 
@@ -1084,22 +837,24 @@ There's nothing much new in the statement handle constructor.
       my ($dbh, $statement, @attribs) = @_;
 
       # create a 'blank' sth
-      my $sth = DBI::_new_sth($dbh, {
-          'Statement' => $statement,
-          });
+      my ($outer, $sth) = DBI::_new_sth($dbh, { Statement => $statement });
 
-      # Setup module specific data
-      $sth->STORE('drv_params', []);
       $sth->STORE('NUM_OF_PARAMS', ($statement =~ tr/?//));
 
-      $sth;
+      $sth->{drv_params} = [];
+
+      return $outer;
   }
 
 This is still the same: check the arguments and call the super class
 constructor I<DBI::_new_sth>.
+Again, in scalar context, only the outer handle is returned.
 The C<Statement> attribute should be cached as shown.
+
 Note the prefix I<drv_> in the attribute names: it is required that
-your private attributes are lowercased and use such a prefix.
+all your private attributes use a lowercase prefix unique to your driver.
+The DBI contains a registry of known driver prefixes and may one day
+warn about unknown attributes that don't have a registered prefix.
 
 Note that we parse the statement here in order to set the attribute
 I<NUM_OF_PARAMS>.
@@ -1110,24 +865,7 @@ We could set I<NUM_OF_PARAMS> in the I<execute> method instead because
 the DBI specification explicitly allows a driver to defer this, but then
 the user could not call I<bind_param>.
 
-=cut
-
-#=head4 Transaction handling
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Transaction handling
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Transaction handling
 
 Pure Perl drivers will rarely support transactions. Thus your I<commit>
 and I<rollback> methods will typically be quite simple:
@@ -1154,24 +892,7 @@ do nothing except return undef.
 
 The DBI's default begin_work method can be used by inheritance.
 
-=cut
-
-#=head4 The STORE and FETCH methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The STORE and FETCH methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The STORE and FETCH methods
 
 These methods (that we have already used, see above) are called for
 you, whenever the user does a:
@@ -1182,7 +903,7 @@ or, respectively,
 
   $val = $dbh->{$attr};
 
-See L<perltie(1)> for details on tied hash refs to understand why these
+See L<perltie> for details on tied hash refs to understand why these
 methods are required.
 
 The DBI will handle most attributes for you, in particular attributes
@@ -1204,7 +925,7 @@ A good example might look like this:
       if ($attr =~ m/^drv_/) {
           # Handle only our private attributes here
           # Note that we could trigger arbitrary actions.
-          # Ideally we should catch unknown attributes.
+          # Ideally we should warn about unknown attributes.
           $dbh->{$attr} = $val; # Yes, we are allowed to do this,
           return 1;             # but only for our private attributes
       }
@@ -1234,24 +955,7 @@ you need extra logic/checks, beyond getting or setting the value.
 Unless your driver documentation indicates otherwise, the return value of
 the STORE method is unspecified and the caller shouldn't use that value.
 
-=cut
-
-#=head4 Other database handle methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Other database handle methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Other database handle methods
 
 As with the driver package, other database handle methods may follow
 here.
@@ -1279,43 +983,9 @@ parse_trace_flag() method (note that's parse_trace_flag not parse_trace_flags).
 All private flag names must be lowercase, and all private flags
 must be in the top 8 of the 32 bits.
 
-=cut
+=head3 The DBD::Driver::st package
 
-#=head3 The DBD::Driver::st package
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The DBD::Driver::st package
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-=cut
-
-#=head4 The execute method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The execute method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 The execute method
 
 This is perhaps the most difficult method because we have to consider
 parameter bindings here. We present a simplified implementation by
@@ -1333,7 +1003,7 @@ using the I<drv_params> attribute from above:
           my $dbh = $sth->{Database};
           $val = $dbh->quote($sth, $type);
       }
-      my $params = $sth->FETCH('drv_params');
+      my $params = $sth->{drv_params};
       $params->[$pNum-1] = $val;
       1;
   }
@@ -1343,10 +1013,10 @@ using the I<drv_params> attribute from above:
       my ($sth, @bind_values) = @_;
 
       # start of by finishing any previous execution if still active
-      $sth->finish if $sth->{Active};
+      $sth->finish if $sth->FETCH('Active');
 
       my $params = (@bind_values) ?
-          \@bind_values : $sth->FETCH('drv_params');
+          \@bind_values : $sth->{drv_params};
       my $numParam = $sth->FETCH('NUM_OF_PARAMS');
       return $sth->set_err(1, "Wrong number of parameters")
           if @$params != $numParam;
@@ -1365,8 +1035,8 @@ using the I<drv_params> attribute from above:
 There are a number of things you should note here.
 We setup the NUM_OF_FIELDS attribute
 here, because this is essential for I<bind_columns> to work.
-We use attribute I<$sth->{'Statement'}> which we created
-within I<prepare>. The attribute I<$sth->{'Database'}>, which is
+We use attribute C<$sth-E<gt>{Statement}> which we created
+within I<prepare>. The attribute C<$sth-E<gt>{Database}>, which is
 nothing else than the I<dbh>, was automatically created by DBI.
 
 Finally note that (as specified in the DBI specification) we return the
@@ -1375,24 +1045,7 @@ equal to zero.
 
   $sth->execute() or die $sth->errstr;
 
-=cut
-
-#=head4 Fetching data
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Fetching data
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Fetching data
 
 We should not implement the methods I<fetchrow_array>, I<fetchall_arrayref>,
 ... because these are already part of DBI.
@@ -1402,10 +1055,10 @@ I<fetchrow_arrayref>:
   sub fetchrow_arrayref
   {
       my ($sth) = @_;
-      my $data = $sth->FETCH('drv_data');
+      my $data = $sth->{drv_data};
       my $row = shift @$data;
       if (!$row) {
-          $sth->{Active} = 0; # mark as no longer active 
+          $sth->STORE(Active => 0); # mark as no longer active
           return undef;
       }
       if ($sth->FETCH('ChopBlanks')) {
@@ -1415,8 +1068,6 @@ I<fetchrow_arrayref>:
   }
   *fetch = \&fetchrow_arrayref; # required alias for fetchrow_arrayref
 
-  sub rows { shift->FETCH('drv_rows') }
-
 Note the use of the method I<_set_fbav>: This is required so that
 I<bind_col> and I<bind_columns> work.
 
@@ -1424,24 +1075,16 @@ If an error occurs which leaves the $sth in a state where remaining rows
 can't be fetched then Active should be turned off
 before the method returns.
 
-=cut
+The rows method for this driver can be implemented like this:
 
-#=head4 Statement attributes
-#=POD-Perl-5.6.x=begin
+  sub rows { shift->{drv_rows} }
 
-=pod
+because it knows in advance how many rows it has fetched.
+Alternatively you could delete that method and so fallback
+to the DBI's own method which does the right thing based
+on the number of calls to _set_fbav().
 
-=back
-
-=over 2
-
-=item Statement attributes
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Statement attributes
 
 The main difference between dbh and sth attributes is, that you
 should implement a lot of attributes here that are required by
@@ -1450,31 +1093,10 @@ the DBI, such as I<NAME>, I<NULLABLE>, I<TYPE>, ...
 Besides that the STORE and FETCH methods are mainly the same
 as above for dbh's.
 
-=cut
-
-#=head4 Other statement methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Other statement methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head4 Other statement methods
 
 A trivial C<finish> method to discard the stored data and do
 $sth->SUPER::finish;
-
-A C<table_info> method to return details of available tables.
-
-A C<type_info_all> method to return details of supported types.
 
 If you've defined a parse_trace_flag() method in ::db you'll also want
 it in ::st, so just alias it in:
@@ -1486,20 +1108,13 @@ specification, in particular to make metadata available.
 Remember that they must have names that begin with your drivers
 registered prefix so they can be installed using install_method().
 
+If DESTROY() is called on a statement handle that's still active
+($sth->{Active} is true) then it should effectively call finish().
 
-=cut
-
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+    sub DESTROY {
+        my $sth = shift;
+        $sth->finish if $sth->FETCH('Active');
+    }
 
 =head2 Tests
 
@@ -1632,22 +1247,7 @@ Now let's take a closer look at an excerpt from Oracle.pm (revised
 heavily to remove idiosyncrasies) as an example.
 We also ignore things that are already discussed for pure Perl drivers.
 
-=cut
-
-#=head3 The connect method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=over 2
-
-=item The connect method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The connect method
 
 The connect method is the database handle constructor.
 You could write either of two versions of this method: either one which
@@ -1687,56 +1287,18 @@ It is implemented in Driver.xst (you should not implement it) and calls
 I<dbd_db_login6> from I<dbdimp.c>.
 See below for details.
 
-=over 4
+ *FIX ME* Discuss removing attributes from hash reference as an optimization
+ to skip later calls to $dbh->STORE made by DBI->connect.
 
-*FIX ME* Discuss removing attributes from hash reference as an optimization
-to skip later calls to $dbh->STORE made by DBI->connect.
+ *FIX ME* Discuss removing attributes in Perl code.
 
-*FIX ME* Discuss removing attributes in Perl code.
+ *FIX ME* Discuss removing attributes in C code.
 
-*FIX ME* Discuss removing attributes in C code.
+=head3 The disconnect_all method
 
-=back
+ *FIX ME* T.B.S
 
-=cut
-
-#=head3 The disconnect_all method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The disconnect_all method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-*FIX ME* T.B.S
-
-=cut
-
-#=head3 The data_sources method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The data_sources method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The data_sources method
 
 If your I<data_sources> method can be implemented in pure Perl, then do
 so because it is easier than doing it in XS code (see the section above
@@ -1747,24 +1309,7 @@ will trigger Driver.xst (in DBI v1.33 or greater) to generate the XS
 code that calls your actual C function (see the discussion below for
 details) and you do not code anything in Driver.pm to handle it.
 
-=cut
-
-#=head3 The prepare method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The prepare method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The prepare method
 
 The prepare method is the statement handle constructor, and most of it
 is not new.
@@ -1791,82 +1336,17 @@ Like the I<connect> method, it now has a C callback:
       $sth;
   }
 
-=cut
+=head3 The execute method
 
-#=head3 The execute method
-#=POD-Perl-5.6.x=begin
+ *FIX ME* T.B.S
 
-=pod
+=head3 The fetchrow_arrayref method
 
-=back
+ *FIX ME* T.B.S
 
-=over 2
+=head3 Other methods?
 
-=item The execute method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-*FIX ME* T.B.S
-
-=cut
-
-#=head3 The fetchrow_arrayref method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The fetchrow_arrayref method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-*FIX ME* T.B.S
-
-=cut
-
-#=head3 Other methods?
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Other methods?
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
-
-*FIX ME* T.B.S
-
-=cut
-
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+ *FIX ME* T.B.S
 
 =head2 Driver.xs
 
@@ -1906,7 +1386,7 @@ constants of its own, analogous to the SQL types available when you say:
 
   use DBI qw(:sql_types);
 
-*FIX ME* T.B.S
+ *FIX ME* T.B.S
 
 =head2 Driver.h
 
@@ -2071,22 +1551,7 @@ I<dbd_db_login>.
 Then you should only implement one of the alternatives, and generally
 the newer one of the alternatives.
 
-=cut
-
-#=head3 The dbd_init method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=over 2
-
-=item The dbd_init method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_init method
 
   #include "Driver.h"
 
@@ -2105,24 +1570,7 @@ They will include your private header file I<dbdimp.h> in turn.
 Note that DBISTATE_INIT requires the name of the argument to I<dbd_init>
 to be called I<dbistate>.
 
-=cut
-
-#=head3 The dbd_drv_error method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_drv_error method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_drv_error method
 
 You need a function to record errors so DBI can access them properly.
 You can call it whatever you like, but we'll call it C<dbd_drv_error>
@@ -2187,24 +1635,7 @@ You can define up to 8 private trace flags using the top 8 bits of
 DBIc_TRACE_FLAGS(imp), that is: 0xFF000000. See the parse_trace_flag() method
 elsewhere in this document.
 
-=cut
-
-#=head3 The dbd_dr_data_sources method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_dr_data_sources method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_dr_data_sources method
 
 This method is optional; the support for it was added in DBI v1.33.
 
@@ -2242,24 +1673,7 @@ and uses #define'd constatnts for the array sizes.
       return(av);
   }
 
-=cut
-
-#=head3 The dbd_db_login6 method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_login6 method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_login6 method
 
   int dbd_db_login6(SV* dbh, imp_dbh_t* imp_dbh, char* dbname,
                    char* user, char* auth, SV *attr);
@@ -2340,24 +1754,7 @@ The missing argument is the attributes.
 There are ways to work around the missing attributes, but they are
 ungainly; it is much better to use the 6-argument form.
 
-=cut
-
-#=head3 The dbd_db_commit and dbd_db_rollback methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_commit and dbd_db_rollback methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_commit and dbd_db_rollback methods
 
   int dbd_db_commit(SV *dbh, imp_dbh_t *imp_dbh);
   int dbd_db_rollback(SV* dbh, imp_dbh_t* imp_dbh);
@@ -2371,24 +1768,7 @@ always.
 
 These functions should return TRUE for success, FALSE otherwise.
 
-=cut
-
-#=head3 The dbd_db_disconnect method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_disconnect method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_disconnect method
 
 This is your private part of the I<disconnect> method. Any dbh with
 the I<ACTIVE> flag on must be disconnected. (Note that you have to set
@@ -2424,24 +1804,7 @@ it does not attempt to free the actual handle structures.
 This function should return TRUE for success, FALSE otherwise, but
 it is not clear what anything can do about a failure.
 
-=cut
-
-#=head3 The dbd_db_discon_all method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_discon_all method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_discon_all method
 
   int dbd_discon_all (SV *drh, imp_drh_t *imp_drh);
 
@@ -2453,24 +1816,7 @@ but return 'success'.
 This function should return TRUE for success, FALSE otherwise, but
 it is not clear what anything can do about a failure.
 
-=cut
-
-#=head3 The dbd_db_destroy method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_destroy method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_destroy method
 
 This is your private part of the database handle destructor. Any dbh with
 the I<IMPSET> flag on must be destroyed, so that you can safely free
@@ -2491,24 +1837,7 @@ A DBI handle doesn't keep references to its children. But children
 do keep references to their parents. So a database handle won't be
 DESTROY'd until all its children have been DESTROY'd.
 
-=cut
-
-#=head3 The dbd_db_STORE_attrib method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_STORE_attrib method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_STORE_attrib method
 
 This function handles
 
@@ -2533,7 +1862,7 @@ C<$dbh-E<gt>errstr>.
 
 I cannot recommend a general way of going on, if I<dbd_drv_error> returns,
 but there are examples where even the DBI specification expects that
-you croak(). (See the I<AutoCommit> method in L<DBI(3)>.)
+you croak(). (See the I<AutoCommit> method in L<DBI>.)
 
 If you have to store attributes, you should either use your private
 data structure imp_xxx, the handle hash (via (HV*)SvRV(dbh)), or use
@@ -2545,24 +1874,7 @@ values the user may want to get/set via driver-specific attributes.
 The private imp_data is an additional SV attached to the handle. You
 could think of it as an unnamed handle attribute. It's not normally used.
 
-=cut
-
-#=head3 The dbd_db_FETCH_attrib method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_db_FETCH_attrib method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_db_FETCH_attrib method
 
 This is the counterpart of dbd_db_STORE_attrib, needed for:
 
@@ -2583,24 +1895,7 @@ dbh itself:
   if (cacheit) /* cache value for later DBI 'quick' fetch? */
       hv_store((HV*)SvRV(dbh), key, kl, cachesv, 0);
 
-=cut
-
-#=head3 The dbd_st_prepare method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_prepare method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_prepare method
 
 This is the private part of the I<prepare> method. Note that you
 B<must not> really execute the statement here. You may, for example,
@@ -2627,24 +1922,7 @@ I<dbd_db_connect> above:
 
   DBIc_IMPSET_on(imp_sth);
 
-=cut
-
-#=head3 The dbd_st_execute method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_execute method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_execute method
 
 This is where a statement will really be executed.
 
@@ -2704,24 +1982,7 @@ Meantime, if you want to know how ugly it can get, try looking at the
 I<dbd_ix_preparse> in DBD::Informix I<dbdimp.ec> and the related
 functions in I<iustoken.c> and I<sqltoken.c>.
 
-=cut
-
-#=head3 The dbd_st_fetch method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_fetch method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_fetch method
 
 This function fetches a row of data. The row is stored in in an array,
 of SV's that DBI prepares for you. This has two advantages: it is fast
@@ -2769,36 +2030,15 @@ NULL values must be returned as undef. You can use code like this:
 The function returns the AV prepared by DBI for success or C<Nullav>
 otherwise.
 
-=over 4
-
-*FIX ME* Discuss what happens when there's no more data to fetch.
-Are errors permitted if another fetch occurs after the first fetch
-that reports no more data. (Permitted, not required.)
-
-=back
+ *FIX ME* Discuss what happens when there's no more data to fetch.
+ Are errors permitted if another fetch occurs after the first fetch
+ that reports no more data. (Permitted, not required.)
 
 If an error occurs which leaves the $sth in a state where remaining
 rows can't be fetched then Active should be turned off before the
 method returns.
 
-=cut
-
-#=head3 The dbd_st_finish3 method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_finish3 method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_finish3 method
 
 The C<$sth-E<gt>finish> method can be called if the user wishes to
 indicate that no more rows will be fetched even if the database has more
@@ -2839,24 +2079,7 @@ the Active flag in this case.
 The function returns TRUE for success, FALSE otherwise, but there isn't
 a lot anyone can do to recover if there is an error.
 
-=cut
-
-#=head3 The dbd_st_destroy method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_destroy method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_destroy method
 
 This function is the private part of the statement handle destructor.
 
@@ -2868,24 +2091,7 @@ This function is the private part of the statement handle destructor.
 The DBI Driver.xst code will call dbd_st_finish for you, if the sth has
 the ACTIVE flag set, before calling dbd_st_destroy.
 
-=cut
-
-#=head3 The dbd_st_STORE_attrib and dbd_st_FETCH_attrib methods
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_st_STORE_attrib and dbd_st_FETCH_attrib methods
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_st_STORE_attrib and dbd_st_FETCH_attrib methods
 
 These functions correspond to dbd_db_STORE and dbd_db_FETCH attrib
 above, except that they are for statement handles.
@@ -2895,24 +2101,7 @@ See above.
                           SV* valuesv);
   SV* dbd_st_FETCH_attrib(SV* sth, imp_sth_t* imp_sth, SV* keysv);
 
-=cut
-
-#=head3 The dbd_bind_ph method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item The dbd_bind_ph method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 The dbd_bind_ph method
 
 This function is internally used by the I<bind_param> method, the
 I<bind_param_inout> method and by the DBI Driver.xst code if C<execute>
@@ -2936,24 +2125,7 @@ In drivers of simple databases the function will, for example, store
 the value in a parameter array and use it later in I<dbd_st_execute>.
 See the I<DBD::mysql> driver for an example.
 
-=cut
-
-#=head3 Implementing bind_param_inout support
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Implementing bind_param_inout support
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 Implementing bind_param_inout support
 
 To provide support for parameters bound by reference rather than by
 value, the driver must do a number of things.  First, and most
@@ -2973,20 +2145,6 @@ If the user writes:
 then DBI automatically calls the binding code for each element of
 @values.  These calls are indistinguishable from explicit user calls to
 bind_param.
-
-=cut
-
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
 
 =head2 C/XS version of Makefile.PL
 
@@ -3109,22 +2267,7 @@ The metadata methods are all associated with a database handle.
 The DBI::DBD::Metadata module is a good semi-automatic way for the developer of a DBD module to
 write the get_info and type_info functions quickly and accurately.
 
-=cut
-
-#=head3 Generating the get_info method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=over 2
-
-=item Generating the get_info method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 Generating the get_info method
 
 Prior to DBI v1.33, this existed as the method write_getinfo_pm in the
 DBI::DBD module.
@@ -3150,24 +2293,7 @@ your Driver.pm file and the code that should be written to
 lib/DBD/Driver/GetInfo.pm.
 You should review the output to ensure that it is sensible.
 
-=cut
-
-#=head3 Generating the type_info method
-#=POD-Perl-5.6.x=begin
-
-=pod
-
-=back
-
-=over 2
-
-=item Generating the type_info method
-
-=cut
-
-#=POD-Perl-5.6.x=end
-
-=pod
+=head3 Generating the type_info method
 
 Given the idea of the write_getinfo_pm method, it was not hard to devise
 a parallel method, write_typeinfo_pm, which does the analogous job for the
@@ -3189,8 +2315,6 @@ The procedure writes to standard output the code that should be added to
 your Driver.pm file and the code that should be written to
 lib/DBD/Driver/TypeInfo.pm.
 You should review the output to ensure that it is sensible.
-
-=back
 
 =head2 Writing DBD::Driver::db::get_info
 
@@ -3230,48 +2354,28 @@ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::table_info
 
-=over 4
-
-*FIX ME* The guidelines on writing this method have not been written yet.
-No sample implementation is available.
-
-=back
+ *FIX ME* The guidelines on writing this method have not been written yet.
+ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::column_info
 
-=over 4
-
-*FIX ME* The guidelines on writing this method have not been written yet.
-No sample implementation is available.
-
-=back
+ *FIX ME* The guidelines on writing this method have not been written yet.
+ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::primary_key_info
 
-=over 4
-
-*FIX ME* The guidelines on writing this method have not been written yet.
-No sample implementation is available.
-
-=back
+ *FIX ME* The guidelines on writing this method have not been written yet.
+ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::primary_key
 
-=over 4
-
-*FIX ME* The guidelines on writing this method have not been written yet.
-No sample implementation is available.
-
-=back
+ *FIX ME* The guidelines on writing this method have not been written yet.
+ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::foreign_key_info
 
-=over 4
-
-*FIX ME* The guidelines on writing this method have not been written yet.
-No sample implementation is available.
-
-=back
+ *FIX ME* The guidelines on writing this method have not been written yet.
+ No sample implementation is available.
 
 =head2 Writing DBD::Driver::db::tables
 
@@ -3575,7 +2679,7 @@ quoted from I<DBD::CSV>:
 
 Note that we cannot do a
 
-  $srh->SUPER::connect($dbname, $user, $auth, $attr);
+  $drh->SUPER::connect($dbname, $user, $auth, $attr);
 
 as we would usually do in a an OO environment, because $drh is an instance
 of I<DBI::dr>. And note, that the I<connect> method of I<DBD::File> is
@@ -3660,18 +2764,23 @@ sub _inst_checks {
 	&& $Config{cc} eq 'cl'
 	&& !(exists $ENV{'LIB'} && exists $ENV{'INCLUDE'}))
     {
-	print <<EOT;
-*** You're using Microsoft Visual C++ compiler but the LIB and INCLUDE environment
-    variables are not both set. If you have 'unresolved external symbol'
-    errors during linking, run the vcvars32.bat batch file to set up your
-    LIB and INCLUDE environment variables, and try again.
+	die <<EOT;
+*** You're using Microsoft Visual C++ compiler or similar but
+    the LIB and INCLUDE environment variables are not both set.
+
+    You need to run the VCVARS32.BAT batch file that was supplied
+    with the compiler before you can use it.
+
     A copy of vcvars32.bat can typically be found in the following
     directories under your Visual Studio install directory:
         Visual C++ 6.0:     vc98\\bin
         Visual Studio .NET: vc7\\bin
 
+    Find it, run it, then retry this.
+
+    If you think this error is not correct then just set the LIB and
+    INCLUDE environment variables to some value to disable the check.
 EOT
-	sleep 2;
     }
 }
 
@@ -3745,7 +2854,8 @@ sub dbd_dbi_arch_dir {
     _inst_checks();
     return '$(INST_ARCHAUTODIR)' if $is_dbi;
     my $dbidir = dbd_dbi_dir();
-    my @try = map  {    vmsify( unixify($_) . "/auto/DBI/"  ) } @INC;
+    my %seen;
+    my @try = grep { not $seen{$_}++ } map { vmsify( unixify($_) . "/auto/DBI/" ) } @INC;
     my @xst = grep { -f vmsify( unixify($_) . "/Driver.xst" ) } @try;
     Carp::croak("Unable to locate Driver.xst in @try") unless @xst;
     Carp::carp( "Multiple copies of Driver.xst found in: @xst") if @xst > 1;

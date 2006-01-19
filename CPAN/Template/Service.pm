@@ -19,7 +19,7 @@
 # 
 #----------------------------------------------------------------------------
 #
-# $Id: Service.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
+# $Id: Service.pm,v 2.77 2004/09/17 07:31:30 abw Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use Template::Config;
 use Template::Exception;
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.77 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0 unless defined $DEBUG;
 
 
@@ -65,43 +65,43 @@ sub process {
                  ')') if $self->{ DEBUG };
 
     $context->reset()
-	if $self->{ AUTO_RESET };
+        if $self->{ AUTO_RESET };
 
     # pre-request compiled template from context so that we can alias it 
     # in the stash for pre-processed templates to reference
     eval { $template = $context->template($template) };
     return $self->error($@)
-	if $@;
+        if $@;
 
     # localise the variable stash with any parameters passed
     # and set the 'template' variable
     $params ||= { };
     $params->{ template } = $template 
-	unless ref $template eq 'CODE';
+        unless ref $template eq 'CODE';
     $context->localise($params);
 
     SERVICE: {
-	# PRE_PROCESS
-	eval {
-	    foreach $name (@{ $self->{ PRE_PROCESS } }) {
+        # PRE_PROCESS
+        eval {
+            foreach $name (@{ $self->{ PRE_PROCESS } }) {
                 $self->debug("PRE_PROCESS: $name") if $self->{ DEBUG };
-		$output .= $context->process($name);
-	    }
-	};
-	last SERVICE if ($error = $@);
+                $output .= $context->process($name);
+            }
+        };
+        last SERVICE if ($error = $@);
 
-	# PROCESS
-	eval {
-	    foreach $name (@{ $self->{ PROCESS } || [ $template ] }) {
+        # PROCESS
+        eval {
+            foreach $name (@{ $self->{ PROCESS } || [ $template ] }) {
                 $self->debug("PROCESS: $name") if $self->{ DEBUG };
-		$procout .= $context->process($name);
-	    }
-	};
-	if ($error = $@) {
-	    last SERVICE
-		unless defined ($procout = $self->_recover(\$error));
-	}
-
+                $procout .= $context->process($name);
+            }
+        };
+        if ($error = $@) {
+            last SERVICE
+                unless defined ($procout = $self->_recover(\$error));
+        }
+        
         if (defined $procout) {
             # WRAPPER
             eval {
@@ -113,23 +113,23 @@ sub process {
             last SERVICE if ($error = $@);
             $output .= $procout;
         }
-
-	# POST_PROCESS
-	eval {
-	    foreach $name (@{ $self->{ POST_PROCESS } }) {
+        
+        # POST_PROCESS
+        eval {
+            foreach $name (@{ $self->{ POST_PROCESS } }) {
                 $self->debug("POST_PROCESS: $name") if $self->{ DEBUG };
-		$output .= $context->process($name);
-	    }
-	};
-	last SERVICE if ($error = $@);
+                $output .= $context->process($name);
+            }
+        };
+        last SERVICE if ($error = $@);
     }
 
     $context->delocalise();
     delete $params->{ template };
 
     if ($error) {
-#	$error = $error->as_string if ref $error;
-	return $self->error($error);
+    #	$error = $error->as_string if ref $error;
+        return $self->error($error);
     }
 
     return $output;
@@ -160,26 +160,26 @@ sub _init {
     # coerce PRE_PROCESS, PROCESS and POST_PROCESS to arrays if necessary, 
     # by splitting on non-word characters
     foreach $item (qw( PRE_PROCESS PROCESS POST_PROCESS WRAPPER )) {
-	$data = $config->{ $item };
+        $data = $config->{ $item };
         $self->{ $item } = [ ], next unless (defined $data);
-	$data = [ split($delim, $data || '') ]
-	    unless ref $data eq 'ARRAY';
+        $data = [ split($delim, $data || '') ]
+            unless ref $data eq 'ARRAY';
         $self->{ $item } = $data;
     }
     # unset PROCESS option unless explicitly specified in config
     $self->{ PROCESS } = undef
-	unless defined $config->{ PROCESS };
+        unless defined $config->{ PROCESS };
     
     $self->{ ERROR      } = $config->{ ERROR } || $config->{ ERRORS };
     $self->{ AUTO_RESET } = defined $config->{ AUTO_RESET }
-			  ? $config->{ AUTO_RESET } : 1;
+                            ? $config->{ AUTO_RESET } : 1;
     $self->{ DEBUG      } = ( $config->{ DEBUG } || 0 )
                             & Template::Constants::DEBUG_SERVICE;
-
+    
     $context = $self->{ CONTEXT } = $config->{ CONTEXT }
         || Template::Config->context($config)
-	|| return $self->error(Template::Config->error);
-
+        || return $self->error(Template::Config->error);
+    
     return $self;
 }
 
@@ -209,42 +209,42 @@ sub _recover {
     # a 'stop' exception is thrown by [% STOP %] - we return the output
     # buffer stored in the exception object
     return $$error->text()
-	if $$error->type() eq 'stop';
+        if $$error->type() eq 'stop';
 
     my $handlers = $self->{ ERROR }
         || return undef;					## RETURN
 
     if (ref $handlers eq 'HASH') {
-	if ($hkey = $$error->select_handler(keys %$handlers)) {
-	    $handler = $handlers->{ $hkey };
+        if ($hkey = $$error->select_handler(keys %$handlers)) {
+            $handler = $handlers->{ $hkey };
             $self->debug("using error handler for $hkey") if $self->{ DEBUG };
-	}
-	elsif ($handler = $handlers->{ default }) {
-	    # use default handler
+        }
+        elsif ($handler = $handlers->{ default }) {
+            # use default handler
             $self->debug("using default error handler") if $self->{ DEBUG };
-	}
-	else {
-	    return undef;					## RETURN
-	}
+        }
+        else {
+            return undef;					## RETURN
+        }
     }
     else {
-	$handler = $handlers;
+        $handler = $handlers;
         $self->debug("using default error handler") if $self->{ DEBUG };
     }
-
+    
     eval { $handler = $context->template($handler) };
     if ($@) {
-	$$error = $@;
-	return undef;						## RETURN
+        $$error = $@;
+        return undef;						## RETURN
     };
-
+    
     $context->stash->set('error', $$error);
     eval {
-	$output .= $context->process($handler);
+        $output .= $context->process($handler);
     };
     if ($@) {
-	$$error = $@;
-	return undef;						## RETURN
+        $$error = $@;
+        return undef;						## RETURN
     }
 
     return $output;
@@ -749,8 +749,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.79, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.81, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

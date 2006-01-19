@@ -1,6 +1,6 @@
 package DBI::DBD::Metadata;
 
-# $Id: Metadata.pm,v 1.1 2005/01/11 04:20:34 dsully Exp $
+# $Id: Metadata.pm,v 1.5 2004/02/01 11:16:16 timbo Exp $
 #
 # Copyright (c) 1997-2003 Jonathan Leffler, Jochen Wiedmann,
 # Steffen Goeldner and Tim Bunce
@@ -18,7 +18,7 @@ use DBI::Const::GetInfoType qw(%GetInfoType);
 @ISA = qw(Exporter);
 @EXPORT = qw(write_getinfo_pm write_typeinfo_pm);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
 
@@ -243,7 +243,7 @@ A possible implementation of DBD::Driver::type_info_all() may look like:
   sub type_info_all {
     my ($dbh) = @_;
     require DBD::Driver::TypeInfo;
-    return $DBD::Driver::TypeInfo::type_info_all;
+    return [ @$DBD::Driver::TypeInfo::type_info_all ];
   }
 
 Please replace Driver (or "<foo>") with the name of your driver.
@@ -326,7 +326,7 @@ package DBD::${driver}::db;         # This line can be removed once transferred.
     {
         my (\$dbh) = \@_;
         require DBD::${driver}::TypeInfo;
-        return \$DBD::${driver}::TypeInfo::type_info_all;
+        return [ \@\$DBD::${driver}::TypeInfo::type_info_all ];
     }
 
 # Transfer this to lib/DBD/${driver}/TypeInfo.pm.

@@ -10,6 +10,20 @@ Add this line to your F<httpd.conf>:
 
   PerlSetEnv DBI_PROFILE DBI::ProfileDumper::Apache
 
+Under mod_perl2 RC5+ you'll need to also add:
+
+  PerlSetEnv DBI_PROFILE_APACHE_LOG_DIR /server_root/logs
+
+OR add
+
+  PerlOptions +GlobalRequest
+
+to the gobal config section you're about test with DBI::ProfileDumper::Apache.
+If you don't do this, you'll see messages in your error_log similar to:
+
+  DBI::ProfileDumper::Apache on_destroy failed: Global $r object is not available. Set:
+    PerlOptions +GlobalRequest in httpd.conf at ..../DBI/ProfileDumper/Apache.pm line 144
+
 Then restart your server.  Access the code you wish to test using a
 web browser, then shutdown your server.  This will create a set of
 F<dbi.prof.*> files in your Apache log directory.  Get a profiling
@@ -106,11 +120,12 @@ it under the same terms as Perl 5 itself.
 =cut
 
 use vars qw($VERSION @ISA);
-$VERSION = "1.0";
+$VERSION = "1.1";
 @ISA = qw(DBI::ProfileDumper);
 use DBI::ProfileDumper;
-use Apache;
 use File::Spec;
+
+use constant MP2 => ($ENV{MOD_PERL_API_VERSION} and $ENV{MOD_PERL_API_VERSION} == 2) ? 1 : 0;
 
 # Override flush_to_disk() to setup File just in time for output.
 # Overriding new() would work unless the user creates a DBI handle
@@ -120,7 +135,21 @@ sub flush_to_disk {
     my $self = shift;
     
     # setup File per process
-    my $path = Apache->server_root_relative("logs/");
+    my $path;
+    if (MP2) {
+        if ($ENV{DBI_PROFILE_APACHE_LOG_DIR}) {
+            $path = $ENV{DBI_PROFILE_APACHE_LOG_DIR};
+        }
+        else {
+            require Apache2::RequestUtil;
+            require Apache2::ServerUtil;
+            $path = Apache2::ServerUtil::server_root_relative(Apache2::RequestUtil->request()->pool, "logs/")
+        }
+    }
+    else {
+       require Apache;
+       $path = Apache->server_root_relative("logs/");
+    }
     my $old_file = $self->{File};
     $self->{File} = File::Spec->catfile($path, "$old_file.$$");
 

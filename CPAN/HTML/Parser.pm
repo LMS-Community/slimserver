@@ -9,14 +9,12 @@ package HTML::Parser;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '3.45';  # $Date: 2005/01/11 04:20:35 $
+$VERSION = '3.48';  # $Date: 2005/12/02 17:37:06 $
 
 require HTML::Entities;
 
-require DynaLoader;
-@ISA=qw(DynaLoader);
-HTML::Parser->bootstrap($VERSION);
-
+require XSLoader;
+XSLoader::load('HTML::Parser', $VERSION);
 
 sub new
 {
@@ -355,6 +353,22 @@ behaviour is what at least MSIE does.  Enabling this attribute makes
 closing "</plaintext>" tag effective and the parsing process will resume
 after seeing this tag.  This emulates gecko-based browsers.
 
+=item $p->empty_element_tags
+
+=item $p->empty_element_tags( $bool )
+
+By default, empty element tags are not recognized as such and the "/"
+before ">" is just treated like a nomal name character (unless
+C<strict_names> is enabled).  Enabling this attribute make
+C<HTML::Parser> recognize these tags.
+
+Empty element tags look like start tags, but end with the character
+sequence "/>" instead of ">".  When recognized by C<HTML::Parser> they
+cause an artificial end event in addition to the start event.  The
+C<text> for the artificial end event will be empty and the C<tokenpos>
+array will be undefined even though the the token array will have one
+element containg the tag name.
+
 =item $p->marked_sections
 
 =item $p->marked_sections( $bool )
@@ -462,21 +476,18 @@ This option is only available with perl-5.8 or better.
 =item $p->xml_mode( $bool )
 
 Enabling this attribute changes the parser to allow some XML
-constructs such as I<empty element tags> and I<XML processing
-instructions>.  It disables forcing tag and attribute names to lower
-case when they are reported by the C<tagname> and C<attr> argspecs,
-and suppresses special treatment of elements that are parsed as CDATA
-for HTML.
+constructs.  This enables the behaviour controlled by individually by
+the C<case_sensitive>, C<empty_element_tags>, C<strict_names> and
+C<xml_pic> attributes and also suppresses special treatment of
+elements that are parsed as CDATA for HTML.
 
-I<Empty element tags> look like start tags, but end with the character
-sequence "/>".  When recognized by C<HTML::Parser> they cause an
-artificial end event in addition to the start event.  The C<text> for
-the artificial end event will be empty and the C<tokenpos> array will
-be undefined even though the only element in the token array will have
-the correct tag name.
+=item $p->xml_pic
 
-I<XML processing instructions> are terminated by "?>" instead of a
-simple ">" as is the case for HTML.
+=item $p->xml_pic( $bool )
+
+By default, I<processing instructions> are terminated by ">". When
+this attribute is enabled, processing instructions are terminated by
+"?>" instead.
 
 =back
 
@@ -585,14 +596,27 @@ I<well formed>.
 =item $p->ignore_tags( @tags )
 
 Any C<start> and C<end> events involving any of the tags given are
-suppressed.
+suppressed.  To reset the filter (i.e. don't suppress any C<start> and
+C<end> events), call C<ignore_tags> without an argument.
 
 =item $p->report_tags( @tags )
 
 Any C<start> and C<end> events involving any of the tags I<not> given
-are suppressed.
+are suppressed.  To reset the filter (i.e. report all C<start> and
+C<end> events), call C<report_tags> without an argument.
 
 =back
+
+Internally, the system has two filter lists, one for C<report_tags>
+and one for C<ignore_tags>, and both filters are applied.  This
+effectivly gives C<ignore_tags> precendence over C<report_tags>.
+
+Examples:
+
+   $p->ignore_tags(qw(style));
+   $p->report_tags(qw(script style));
+
+results in only C<script> events being reported.
 
 =head2 Argspec
 
@@ -1200,7 +1224,7 @@ be found at C<http://www.sgml.u-net.com/book/sgml-8.htm>.
 
 =head1 COPYRIGHT
 
- Copyright 1996-2004 Gisle Aas. All rights reserved.
+ Copyright 1996-2005 Gisle Aas. All rights reserved.
  Copyright 1999-2000 Michael A. Chase.  All rights reserved.
 
 This library is free software; you can redistribute it and/or

@@ -381,6 +381,52 @@ then by default the statement handles created from it all contribute
 to the same merged profile data tree.
 
 
+=head1 CUSTOM DATA MANIPULATION
+
+Recall that C<$h->{Profile}->{Data}> is a reference to the collected data.
+Either to a 'leaf' array (when the Path is empty, i.e., DBI_PROFILE env var is 1),
+or a reference to hash containing values that are either further hash
+references or leaf array references.
+
+Sometimes it's useful to be able to summarise some or all of the collected data.
+The dbi_profile_merge() function can be used to merge leaf node values.
+
+=head2 dbi_profile_merge
+
+  use DBI qw(dbi_profile_merge);
+
+  $time_in_dbi = dbi_profile_merge(my $totals=[], @$leaves);
+
+Merges profile data node. Given a reference to a destination array, and zero or
+more references to profile data, merges the profile data into the destination array.
+For example:
+
+  $time_in_dbi = dbi_profile_merge(
+      my $totals=[],
+      [ 10, 0.51, 0.11, 0.01, 0.22, 1023110000, 1023110010 ],
+      [ 15, 0.42, 0.12, 0.02, 0.23, 1023110005, 1023110009 ],
+  );        
+
+$totals will then contain
+
+  [ 25, 0.93, 0.11, 0.01, 0.23, 1023110000, 1023110010 ]
+
+and $time_in_dbi will be 0.93;
+
+For example, to get the time spent 'inside' the DBI during an http request,
+your logging code run at the end of the request (i.e. mod_perl LogHandler)
+could use:
+
+  my $time_in_dbi = 0;
+  if (my $Profile = $dbh->{Profile}) { # if DBI profiling is enabled
+      $time_in_dbi = dbi_profile_merge(my $total=[], $Profile->{Data});
+      $Profile->{Data} = {}; # reset the profile data
+  }
+
+If profiling has been enabled then $time_in_dbi will hold the time spent inside
+the DBI for that handle (and any other handles that share the same profile data)
+since the last request.
+
 =head1 CUSTOM DATA COLLECTION
 
 =head2 Using The Path Attribute
@@ -480,7 +526,7 @@ use Carp;
 
 use DBI qw(dbi_time dbi_profile dbi_profile_merge);
 
-$VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", '$Revision: 1.7 $ ' =~ /(\d+)\.(\d+)/;
 
 @ISA = qw(Exporter);
 @EXPORT = qw(

@@ -1,4 +1,4 @@
-# $Id: ODBC.pm,v 1.1 2005/01/11 04:20:33 dsully Exp $
+# $Id: ODBC.pm,v 1.3 2003/02/26 17:56:01 timbo Exp $
 #
 # Copyright (c) 2002  Tim Bunce  Ireland
 #
@@ -12,7 +12,7 @@ package DBI::Const::GetInfo::ODBC;
 
 =head1 NAME
 
- DBI::Const::GetInfo::ODBC - ODBC Constants for GetInfo
+DBI::Const::GetInfo::ODBC - ODBC Constants for GetInfo
 
 =head1 SYNOPSIS
 
@@ -35,7 +35,7 @@ The API for this module is private and subject to change.
 =cut
 
 my
-$VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
+$VERSION = sprintf "%d.%02d", '$Revision: 1.3 $ ' =~ /(\d+)\.(\d+)/;
 
 %InfoTypes =
 (
@@ -99,6 +99,7 @@ $VERSION = sprintf "%d.%02d", '$Revision: 1.1 $ ' =~ /(\d+)\.(\d+)/;
 , SQL_CURSOR_SENSITIVITY              => 10001
 , SQL_DATA_SOURCE_NAME                =>     2
 , SQL_DATA_SOURCE_READ_ONLY           =>    25
+, SQL_DATABASE_NAME                   =>    16 
 , SQL_DATETIME_LITERALS               =>   119
 , SQL_DBMS_NAME                       =>    17
 , SQL_DBMS_VER                        =>    18
@@ -327,6 +328,7 @@ See: mk:@MSITStore:X:\dm\cli\mdac\sdk26\Docs\odbc.chm::/htm/odbcsqlgetinfo.htm
 , SQL_CURSOR_SENSITIVITY              => 'SQLUINTEGER'         # 10001
 , SQL_DATA_SOURCE_NAME                => 'SQLCHAR'             #     2
 , SQL_DATA_SOURCE_READ_ONLY           => 'SQLCHAR'             #    25
+, SQL_DATABASE_NAME                   => 'SQLCHAR'             #    16 
 , SQL_DATETIME_LITERALS               => 'SQLUINTEGER bitmask' #   119
 , SQL_DBMS_NAME                       => 'SQLCHAR'             #    17
 , SQL_DBMS_VER                        => 'SQLCHAR'             #    18

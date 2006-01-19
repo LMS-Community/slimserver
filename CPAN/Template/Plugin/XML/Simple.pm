@@ -16,7 +16,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Simple.pm,v 1.2 2004/05/30 16:26:22 dean Exp $
+# $Id: Simple.pm,v 2.65 2004/09/24 06:49:13 abw Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use XML::Simple;
 use base qw( Template::Plugin );
 use vars qw( $VERSION );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.65 $ =~ /(\d+)\.(\d+)/);
 
 
 #------------------------------------------------------------------------
@@ -44,7 +44,18 @@ sub new {
     my $input   = shift;
     my $args    = ref $_[-1] eq 'HASH' ? pop(@_) : { };
 
-    XMLin($input, %$args);
+    if (defined($input)) {  
+        # an input parameter can been be provided and can contain 
+        # XML text or the filename of an XML file, which we load
+        # using insert() to honour the INCLUDE_PATH; then we feed 
+        # it into XMLin().
+        $input = $context->insert($input) unless ( $input =~ /</ );
+        return XMLin($input, %$args);
+    } 
+    else {
+        # otherwise return a XML::Simple object
+        return new XML::Simple;
+    }
 }
 
 
@@ -83,8 +94,15 @@ Template::Plugin::XML::Simple - Plugin interface to XML::Simple
 
 =head1 SYNOPSIS
 
-    # load plugin and specify XML file to parse
+    # load plugin and specify XML text or file to parse
     [% USE xml = XML.Simple(xml_file_or_text) %]
+
+    # or load plugin as an object...
+    [% USE xml = XML.Simple %]
+
+    # ...then use XMLin or XMLout as usual
+    [% xml.XMLout(data_ref, args) %]
+    [% xml.XMLin(xml_file_or_text, args) %]
 
 =head1 DESCRIPTION
 
@@ -107,8 +125,8 @@ was written by Grant McLean E<lt>grantm@web.co.nzE<gt>.
 
 =head1 VERSION
 
-2.63, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.65, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

@@ -40,7 +40,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Iterator.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
+# $Id: Iterator.pm,v 2.65 2004/01/30 19:32:26 abw Exp $
 #
 #============================================================================
 
@@ -54,7 +54,7 @@ use base qw( Template::Base );
 use Template::Constants;
 use Template::Exception;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.65 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0 unless defined $DEBUG;
 
 
@@ -430,8 +430,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.64, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.65, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

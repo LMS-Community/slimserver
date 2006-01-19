@@ -1,10 +1,10 @@
 package HTML::LinkExtor;
 
-# $Id: LinkExtor.pm,v 1.1 2005/01/11 04:20:35 dsully Exp $
+# $Id: LinkExtor.pm,v 1.33 2003/10/10 10:20:56 gisle Exp $
 
 require HTML::Parser;
 @ISA = qw(HTML::Parser);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.33 $ =~ /(\d+)\.(\d+)/);
 
 =head1 NAME
 

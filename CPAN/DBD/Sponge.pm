@@ -5,9 +5,9 @@
     require Carp;
 
     @EXPORT = qw(); # Do NOT @EXPORT anything.
-    $VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/o);
+    $VERSION = sprintf("%d.%02d", q$Revision: 11.10 $ =~ /(\d+)\.(\d+)/o);
 
-#   $Id$
+#   $Id: Sponge.pm,v 11.10 2004/01/07 17:38:51 timbo Exp $
 #
 #   Copyright (c) 1994-2003 Tim Bunce Ireland
 #
@@ -15,7 +15,6 @@
 #   License or the Artistic License, as specified in the Perl README file.
 
     $drh = undef;	# holds driver handle once initialised
-    $err = 0;		# The $DBI::err value
     my $methods_already_installed;
 
     sub driver{
@@ -254,7 +253,7 @@ No username and password are needed.
 
 =over 4
 
-=item o
+=item *
 
 The C<$statement> here is an arbitrary statement or name you want
 to provide as identity of your data. If you're using DBI::Profile
@@ -263,16 +262,16 @@ it will appear in the profile data.
 Generally it's expected that you are preparing a statement handle
 as if a C<select> statement happened.
 
-=item o
+=item *
 
 C<$data> is a reference to the data you are providing, given as an array of arrays.
 
-=item o
+=item *
 
 C<$names> is a reference an array of column names for the C<$data> you are providing.
 The number and order should match the number and ordering of the C<$data> columns. 
 
-=item o
+=item *
 
 C<%attr> is a hash of other standard DBI attributes that you might pass to a prepare statement.
 
@@ -296,6 +295,6 @@ is granted to Tim Bunce for distributing this as a part of the DBI.
 
 =head1 SEE ALSO
 
-L<DBI(3)>
+L<DBI>
 
 =cut

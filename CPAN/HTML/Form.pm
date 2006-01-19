@@ -1,6 +1,6 @@
 package HTML::Form;
 
-# $Id: Form.pm,v 1.1 2004/08/10 23:08:13 dean Exp $
+# $Id: Form.pm 1152 2004-08-10 23:08:33Z dean $
 
 use strict;
 use URI;

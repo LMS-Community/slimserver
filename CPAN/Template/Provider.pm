@@ -27,7 +27,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Provider.pm,v 1.3 2004/07/13 23:11:47 vidur Exp $
+# $Id: Provider.pm,v 2.81 2004/07/23 12:49:53 abw Exp $
 #
 #============================================================================
 
@@ -36,7 +36,7 @@ package Template::Provider;
 require 5.004;
 
 use strict;
-use vars qw( $VERSION $DEBUG $ERROR $DOCUMENT $STAT_TTL $MAX_DIRS );
+use vars qw( $VERSION $DEBUG $ERROR $DOCUMENT $STAT_TTL $MAX_DIRS $UNICODE );
 use base qw( Template::Base );
 use Template::Config;
 use Template::Constants;
@@ -44,7 +44,7 @@ use Template::Document;
 use File::Basename;
 use File::Spec;
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 2.81 $ =~ /(\d+)\.(\d+)/);
 
 # name of document class
 $DOCUMENT = 'Template::Document' unless defined $DOCUMENT;
@@ -63,6 +63,27 @@ use constant NEXT   => 4;
 use constant STAT   => 5;
 
 $DEBUG = 0 unless defined $DEBUG;
+
+# UNICODE is supported in versions of Perl from 5.007 onwards
+$UNICODE = $] > 5.007 ? 1 : 0;
+
+my $boms = [
+    'UTF-8'    => "\x{ef}\x{bb}\x{bf}",
+    'UTF-32BE' => "\x{0}\x{0}\x{fe}\x{ff}",
+    'UTF-32LE' => "\x{ff}\x{fe}\x{0}\x{0}",
+    'UTF-16BE' => "\x{fe}\x{ff}",
+    'UTF-16LE' => "\x{ff}\x{fe}",
+];
+
+# hack so that 'use bytes' will compile on versions of Perl earlier than 
+# 5.6, even though we never call _decode_unicode() on those systems
+BEGIN { 
+    if ($] < 5.006) { 
+        package bytes; 
+        $INC{'bytes.pm'} = 1; 
+    } 
+}
+
 
 #========================================================================
 #                         -- PUBLIC METHODS --
@@ -394,6 +415,10 @@ sub _init {
 #   $self->{ PREFIX       } = $params->{ PREFIX };
     $self->{ PARAMS       } = $params;
 
+    # look for user-provided UNICODE parameter or use default from package var
+    $self->{ UNICODE      } = defined $params->{ UNICODE } 
+                                    ? $params->{ UNICODE } : $UNICODE;
+
     return $self;
 }
 
@@ -579,16 +604,6 @@ sub _load_compiled {
     # %INC entry to ensure it is reloaded (we don't 
     # want 1 returned by require() to say it's in memory)
     delete $INC{ $file };
-    # Ugly stop-gap hack to deal with a difference in the
-    # ActiveState interpreter used in executables generated
-    # with PerlApp. Windows file separators were getting
-    # converted to Unix file separators in the %INC hash.
-    # The patch tries to remove both versions from the hash.
-    if ($file =~ /\\/) {
-        my $file2 = $file;
-        $file2 =~ s/\\/\//g;
-        delete $INC{ $file2 };
-    }
     eval { $compiled = require $file; };
     return $@
         ? $self->error("compiled template $compiled: $@")
@@ -638,6 +653,7 @@ sub _load {
         elsif (ref $name) {
             # ...or a GLOB or file handle...
             my $text = <$name>;
+            $text = $self->_decode_unicode($text) if $self->{ UNICODE };
             $data = {
                 name => defined $alias ? $alias : 'input file handle',
                 text => $text,
@@ -648,6 +664,7 @@ sub _load {
         elsif (-f $name) {
             if (open(FH, $name)) {
                 my $text = <FH>;
+                $text = $self->_decode_unicode($text) if $self->{ UNICODE };
                 $data = {
                     name => $alias,
                     path => $name,
@@ -976,6 +993,42 @@ sub _dump_cache {
 	}
     }
 }
+
+
+#------------------------------------------------------------------------
+# _decode_unicode
+#
+# Decodes encoded unicode text that starts with a BOM and
+# turns it into perl's internal representation
+#------------------------------------------------------------------------
+
+
+sub _decode_unicode
+{
+    use bytes;
+
+    my $self   = shift;
+    my $string = shift;
+
+    # try all the BOMs in order looking for one (order is important
+    # 32bit BOMs look like 16bit BOMs)
+    my $count = 0;
+    while ($count < @{ $boms }) {
+        my $enc = $boms->[$count++];
+        my $bom = $boms->[$count++];
+        
+        # does the string start with the bom?
+        if ($bom eq substr($string, 0, length($bom))) {
+            # decode it and hand it back
+            require Encode;
+            return Encode::decode($enc, substr($string, length($bom)), 1);
+        }
+    }
+
+    # no boms matched so it must be a non unicode string which we return as is
+    return $string;
+}
+
 
 1;
 
@@ -1433,8 +1486,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.79, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.81, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

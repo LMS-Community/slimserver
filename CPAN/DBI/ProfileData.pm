@@ -91,6 +91,8 @@ sub PATH      () { 7 };
 
 =item $prof = DBI::ProfileData->new(File => "dbi.prof")
 
+=item $prof = DBI::ProfileData->new(File => "dbi.prof", Filter => sub { ... })
+
 =item $prof = DBI::ProfileData->new(Files => [ "dbi.prof.1", "dbi.prof.2" ])
 
 Creates a a new DBI::ProfileData object.  Takes either a single file
@@ -98,12 +100,43 @@ through the File option or a list of Files in an array ref.  If
 multiple files are specified then the header data from the first file
 is used.
 
+The C<Filter> parameter can be used to supply a code reference that can
+manipulate the profile data as it is being read. This is most useful for
+editing SQL statements so that slightly different statements in the raw data
+will be merged and aggregated in the loaded data. For example:
+
+  Filter => sub {
+      my ($path_ref, $data_ref) = @_;
+      s/foo = '.*?'/foo = '...'/ for @$path_ref;
+  }
+
+Here's an example that performs some normalization on the SQL. It converts all
+numbers to C<N> and all quoted strings to C<S>.  It can also convert digits to
+N within names. Finally, it summarizes long "IN (...)" clauses.
+
+It's aggressive and simplistic, but it's often sufficient, and serves as an
+example that you can tailor to suit your own needs:
+
+  Filter => sub {
+      my ($path_ref, $data_ref) = @_;
+      local $_ = $path_ref->[0]; # whichever element contains the SQL Statement
+      s/\b\d+\b/N/g;             # 42 -> N
+      s/\b0x[0-9A-Fa-f]+\b/N/g;  # 0xFE -> N
+      s/'.*?'/'S'/g;             # single quoted strings (doesn't handle escapes)
+      s/".*?"/"S"/g;             # double quoted strings (doesn't handle escapes)
+      # convert names like log_20001231 into log_NNNNNNNN, controlled by $opt{n}
+      s/([a-z_]+)(\d{$opt{n},})/$1.('N' x length($2))/ieg if $opt{n};
+      # abbreviate massive "in (...)" statements and similar
+      s!(([NS],){100,})!sprintf("$2,{repeated %d times}",length($1)/2)!eg;
+  }
+
 =cut
 
 sub new {
     my $pkg = shift;
     my $self = {                
                 Files        => [ "dbi.prof" ],
+		Filter       => undef,
                 _header      => {},
                 _nodes       => [],
                 _node_lookup => {},
@@ -164,6 +197,7 @@ sub _read_body {
     my ($self, $fh, $filename) = @_;
     my $nodes = $self->{_nodes};
     my $lookup = $self->{_node_lookup};
+    my $filter = $self->{Filter};
 
     # build up node array
     my @path = ("");
@@ -197,6 +231,11 @@ sub _read_body {
             # no data?
             croak("Invalid data syntax format in $filename line $.: $_") unless @data;
 
+	    # hook to enable pre-processing of the data - such as mangling SQL
+	    # so that slightly different statements get treated as the same
+	    # and so merged in the results
+	    $filter->(\@path, \@data) if $filter;
+
             # elements of @path can't have NULLs in them, so this
             # forms a unique string per @path.  If there's some way I
             # can get this without arbitrarily stripping out a
@@ -220,30 +259,6 @@ sub _read_body {
             croak("Invalid line type syntax error in $filename line $.: $_");
 	}
     }
-}
-
-# takes an existing node and merges in new data points
-sub _merge_data {	# XXX use dbi_profile_merge instead
-    my ($self, $node, $data) = @_;
-
-    # add counts and total duration
-    $node->[COUNT] += $data->[COUNT];
-    $node->[TOTAL] += $data->[TOTAL];
-    
-    # first duration untouched
-
-    # take new shortest duration if shorter
-    $node->[SHORTEST] = $data->[SHORTEST]
-      if $data->[SHORTEST] < $node->[SHORTEST];
-
-    # take new longest duration if longer
-    $node->[LONGEST] = $data->[LONGEST]
-      if $data->[LONGEST] > $node->[LONGEST];
-
-    # time of first event untouched
-
-    # take time of last event
-    $node->[LAST_AT] = $data->[LAST_AT];
 }
 
 

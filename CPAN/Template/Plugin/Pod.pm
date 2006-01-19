@@ -15,7 +15,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Pod.pm,v 1.2 2004/05/30 16:26:18 dean Exp $
+#   $Id: Pod.pm,v 2.63 2004/01/30 19:33:19 abw Exp $
 #
 #============================================================================
 
@@ -28,7 +28,7 @@ use Template::Plugin;
 use vars qw( $VERSION );
 use base qw( Template::Plugin );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.63 $ =~ /(\d+)\.(\d+)/);
 
 use Pod::POM;
 
@@ -90,8 +90,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.62, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.63, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

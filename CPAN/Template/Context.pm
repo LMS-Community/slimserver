@@ -18,7 +18,7 @@
 #   modify it under the same terms as Perl itself.
 # 
 # REVISION
-#   $Id: Context.pm,v 1.2 2004/05/30 16:26:14 dean Exp $
+#   $Id: Context.pm,v 2.91 2004/10/04 10:02:29 abw Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use Template::Config;
 use Template::Constants;
 use Template::Exception;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.91 $ =~ /(\d+)\.(\d+)/);
 $DEBUG_FORMAT = "\n## \$file line \$line : [% \$text %] ##\n";
 
 
@@ -325,7 +325,7 @@ sub process {
             $compiled = shift @compiled;
             my $element = ref $compiled eq 'CODE' 
                 ? { (name => (ref $name ? '' : $name), modtime => time()) }
-	        : $compiled;
+                : $compiled;
 
             if (UNIVERSAL::isa($component, 'Template::Document')) {
                 $element->{ caller } = $component->{ name };
@@ -361,6 +361,16 @@ sub process {
                 }
             }
             $output .= $tmpout;
+
+            # pop last item from callers.  
+            # NOTE - this will not be called if template throws an 
+            # error.  The whole issue of caller and callers should be 
+            # revisited to try and avoid putting this info directly into
+            # the component data structure.  Perhaps use a local element
+            # instead?
+
+            pop(@{$element->{ callers }})
+                if (UNIVERSAL::isa($element, 'Template::Document'));
         }
         $stash->set('component', $component);
     };
@@ -1544,8 +1554,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.89, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.91, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 

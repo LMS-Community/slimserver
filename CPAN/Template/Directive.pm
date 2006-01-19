@@ -25,7 +25,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Directive.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
+# $Id: Directive.pm,v 2.19 2004/05/20 08:46:54 abw Exp $
 #
 #============================================================================
 
@@ -41,7 +41,7 @@ use Template::Exception;
 use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG $PRETTY $WHILE_MAX $OUTPUT );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.19 $ =~ /(\d+)\.(\d+)/);
 
 $WHILE_MAX = 1000 unless defined $WHILE_MAX;
 $PRETTY    = 0 unless defined $PRETTY;
@@ -794,7 +794,7 @@ $block
 
     \$stash->set('view', \$oldv);
     \$view->seal();
-    \$output;
+#    \$output;     # not used - commented out to avoid warning
 };
 EOF
 }

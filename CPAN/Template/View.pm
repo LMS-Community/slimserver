@@ -22,7 +22,7 @@
 #    view.print(hash3) %] or [% view.print(hash1, hash2, hash3, { }) %]
 #
 # REVISION
-#   $Id: View.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
+#   $Id: View.pm,v 2.9 2004/01/30 18:36:11 abw Exp $
 #
 #============================================================================
 
@@ -34,7 +34,7 @@ use strict;
 use vars qw( $VERSION $DEBUG $AUTOLOAD @BASEARGS $MAP );
 use base qw( Template::Base );
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 2.9 $ =~ /(\d+)\.(\d+)/);
 $DEBUG    = 0 unless defined $DEBUG;
 @BASEARGS = qw( context );
 $MAP = {
@@ -731,7 +731,7 @@ Andy Wardley E<lt>abw@kfs.orgE<gt>
 
 =head1 REVISION
 
-$Revision: 1.2 $
+$Revision: 2.9 $
 
 =head1 COPYRIGHT
 

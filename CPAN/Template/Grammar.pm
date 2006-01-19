@@ -26,7 +26,7 @@
 #
 #------------------------------------------------------------------------
 #
-# $Id: Grammar.pm,v 1.2 2004/05/30 16:26:15 dean Exp $
+# $Id: Grammar.pm,v 2.22 2004/01/13 16:19:10 abw Exp $
 #
 #========================================================================
 
@@ -37,7 +37,7 @@ require 5.004;
 use strict;
 use vars qw( $VERSION );
 
-$VERSION  = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION  = sprintf("%d.%02d", q$Revision: 2.22 $ =~ /(\d+)\.(\d+)/);
 
 my (@RESERVED, %CMPOP, $LEXTABLE, $RULES, $STATES);
 my ($factory, $rawstart);

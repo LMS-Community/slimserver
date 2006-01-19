@@ -23,18 +23,20 @@ my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
 my @packages = qw(
-	Compress-Zlib-1.33.tar.gz
-	DBI-1.46.tar.gz
-	DBD-SQLite-1.08.tar.gz
-	HTML-Parser-3.45.tar.gz
-	Template-Toolkit-2.13.tar.gz
-	Time-HiRes-1.66.tar.gz
+	Compress-Zlib-1.41.tar.gz
+	DBD-SQLite-1.11.tar.gz
+	DBI-1.50.tar.gz
+	HTML-Parser-3.48.tar.gz
+	sox-12.17.7-sdi.tar.gz
+	Template-Toolkit-2.14.tar.gz
+	Time-HiRes-1.86.tar.gz
 	XML-Parser-2.34.tar.gz
+	YAML-Syck-0.28.tar.gz
 );
 
 # Options for specific packages
 my %packageOptions = (
-	'Template-Toolkit-2.13' => {
+	'Template-Toolkit-2.14' => {
 
 		'Makefile.PL' => join(' ', qw(
 			TT_DOCS=n
@@ -50,9 +52,9 @@ my %packageOptions = (
 		)),
 	},
 
-	'DBD-SQLite-1.08' => {
+	'DBD-SQLite-1.11' => {
 
-		'env' => [qw(DBI-1.46/blib/lib: DBI-1.46/blib/arch)],
+		'env' => [qw(DBI-1.50/blib/lib: DBI-1.50/blib/arch)],
 	},
 );
 
@@ -62,15 +64,10 @@ sub main {
 	my $archname = $Config{'archname'};
 	my $version  = $Config{'version'};
 
-	# Perl 5.6 doesn't have these as part of base.
-	if ($] < 5.007) {
-
-		push @packages, qw(Digest-MD5-2.33.tar.gz Storable-2.12.tar.gz);
-	}
-
 	print "Welcome to the Slim Devices perl module installer.\n\n";
-	print "These packages are needed for SlimServer 6 to function.\n";
+	print "These packages are needed for SlimServer to function.\n";
 	print "You will need a C compiler (gcc), make, and perl installed.\n\n";
+	print "You may also need development libraries for expat. eg: libexpat1-dev\n\n";
 
 	print "*** Ignore any warnings about AppConfig. ***\n\n";
 

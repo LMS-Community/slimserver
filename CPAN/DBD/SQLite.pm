@@ -1,11 +1,11 @@
-# $Id$
+# $Id: SQLite.pm,v 1.51 2005/12/02 17:31:57 matt Exp $
 
 package DBD::SQLite;
 use strict;
 
 use DBI;
 use vars qw($err $errstr $state $drh $VERSION @ISA);
-$VERSION = '1.08';
+$VERSION = '1.11';
 
 use DynaLoader();
 @ISA = ('DynaLoader');
@@ -348,7 +348,30 @@ limited by the typeless nature of the SQLite database.
 
 =item sqlite_version
 
-Returns the version of the SQLite library which DBD::SQLite is using, e.g., "2.8.0".
+Returns the version of the SQLite library which DBD::SQLite is using,
+e.g., "2.8.0". Can only be read.
+
+=item unicode
+
+If set to a true value, DBD::SQLite will turn the UTF-8 flag on for all text
+strings coming out of the database. For more details on the UTF-8 flag see
+L<perlunicode>. The default is for the UTF-8 flag to be turned off.
+
+Also note that due to some bizareness in SQLite's type system (see
+http://www.sqlite.org/datatype3.html), if you want to retain
+blob-style behavior for B<some> columns under C<< $dbh->{unicode} = 1
+>> (say, to store images in the database), you have to state so
+explicitely using the 3-argument form of L<DBI/bind_param> when doing
+updates:
+
+    use DBI qw(:sql_types);
+    $dbh->{unicode} = 1;
+    my $sth = $dbh->prepare
+         ("INSERT INTO mytable (blobcolumn) VALUES (?)");
+    $sth->bind_param(1, $binary_data, SQL_BLOB); # binary_data will
+    # be stored as-is.
+
+Defining the column type as BLOB in the DDL is B<not> sufficient.
 
 =back
 
@@ -367,7 +390,7 @@ DBI.
 
 Retrieve the current busy timeout.
 
-=head2 $dbh->finc( $ms, 'busy_timeout' )
+=head2 $dbh->func( $ms, 'busy_timeout' )
 
 Set the current busy timeout. The timeout is in milliseconds.
 
@@ -493,6 +516,31 @@ The aggregate function can then be used as:
 
     SELECT group_name, variance(score) FROM results
     GROUP BY group_name;
+
+=head1 BLOBS
+
+As of version 1.11, blobs should "just work" in SQLite as text columns. However
+this will cause the data to be treated as a string, so SQL statements such
+as length(x) will return the length of the column as a NUL terminated string,
+rather than the size of the blob in bytes. In order to store natively as a
+BLOB use the following code:
+
+  use DBI qw(:sql_types);
+  my $dbh = DBI->connect("dbi:sqlite:/path/to/db");
+  
+  my $blob = `cat foo.jpg`;
+  my $sth = $dbh->prepare("INSERT INTO mytable VALUES (1, ?)");
+  $sth->bind_param(1, $blob, SQL_BLOB);
+  $sth->execute();
+
+And then retreival just works:
+
+  $sth = $dbh->prepare("SELECT * FROM mytable WHERE id = 1");
+  $sth->execute();
+  my $row = $sth->fetch;
+  my $blobo = $row->[1];
+  
+  # now $blobo == $blob
 
 =head1 NOTES
 

@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Plugins.pm,v 1.2 2004/05/30 16:26:16 dean Exp $
+# $Id: Plugins.pm,v 2.71 2004/01/30 19:32:28 abw Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG $STD_PLUGINS );
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.71 $ =~ /(\d+)\.(\d+)/);
 
 $STD_PLUGINS   = {
     'autoformat' => 'Template::Plugin::Autoformat',
@@ -104,29 +104,28 @@ sub fetch {
     unshift @$args, $context;
 
     $factory = $self->{ FACTORY }->{ $name } ||= do {
-	($factory, $error) = $self->_load($name, $context);
-	return ($factory, $error) if $error;			## RETURN
-	$factory;
+        ($factory, $error) = $self->_load($name, $context);
+        return ($factory, $error) if $error;			## RETURN
+        $factory;
     };
 
     # call the new() method on the factory object or class name
     eval {
-	if (ref $factory eq 'CODE') {
-	    defined( $plugin = &$factory(@$args) )
-		|| die "$name plugin failed\n";
-	}
-	else {
-	    defined( $plugin = $factory->new(@$args) )
-		|| die "$name plugin failed: ", $factory->error(), "\n";
-	}
+        if (ref $factory eq 'CODE') {
+            defined( $plugin = &$factory(@$args) )
+                || die "$name plugin failed\n";
+        }
+        else {
+            defined( $plugin = $factory->new(@$args) )
+                || die "$name plugin failed: ", $factory->error(), "\n";
+        }
     };
     if ($error = $@) {
-#	chomp $error;
-	return $self->{ TOLERANT } 
-	       ? (undef,  Template::Constants::STATUS_DECLINED)
-	       : ($error, Template::Constants::STATUS_ERROR);
+        return $self->{ TOLERANT } 
+            ? (undef,  Template::Constants::STATUS_DECLINED)
+            : ($error, Template::Constants::STATUS_ERROR);
     }
-
+    
     return $plugin;
 }
 
@@ -145,11 +144,11 @@ sub fetch {
 sub _init {
     my ($self, $params) = @_;
     my ($pbase, $plugins, $factory) = 
-	@$params{ qw( PLUGIN_BASE PLUGINS PLUGIN_FACTORY ) };
+        @$params{ qw( PLUGIN_BASE PLUGINS PLUGIN_FACTORY ) };
 
     $plugins ||= { };
     if (ref $pbase ne 'ARRAY') {
-	$pbase = $pbase ? [ $pbase ] : [ ];
+        $pbase = $pbase ? [ $pbase ] : [ ];
     }
     push(@$pbase, 'Template::Plugin');
 
@@ -179,74 +178,74 @@ sub _load {
     my ($factory, $module, $base, $pkg, $file, $ok, $error);
 
     if ($module = $self->{ PLUGINS }->{ $name }) {
-	# plugin module name is explicitly stated in PLUGIN_NAME
-	$pkg = $module;
-	($file = $module) =~ s|::|/|g;
-	$file =~ s|::|/|g;
-	$self->debug("loading $module.pm (PLUGIN_NAME)")
+        # plugin module name is explicitly stated in PLUGIN_NAME
+        $pkg = $module;
+        ($file = $module) =~ s|::|/|g;
+        $file =~ s|::|/|g;
+        $self->debug("loading $module.pm (PLUGIN_NAME)")
             if $self->{ DEBUG };
-	$ok = eval { require "$file.pm" };
-	$error = $@;
+        $ok = eval { require "$file.pm" };
+        $error = $@;
     }
     else {
-	# try each of the PLUGIN_BASE values to build module name
-	($module = $name) =~ s/\./::/g;
-
-	foreach $base (@{ $self->{ PLUGIN_BASE } }) {
-	    $pkg = $base . '::' . $module;
-	    ($file = $pkg) =~ s|::|/|g;
-
-	    $self->debug("loading $file.pm (PLUGIN_BASE)")
+        # try each of the PLUGIN_BASE values to build module name
+        ($module = $name) =~ s/\./::/g;
+        
+        foreach $base (@{ $self->{ PLUGIN_BASE } }) {
+            $pkg = $base . '::' . $module;
+            ($file = $pkg) =~ s|::|/|g;
+            
+            $self->debug("loading $file.pm (PLUGIN_BASE)")
                 if $self->{ DEBUG };
-
-	    $ok = eval { require "$file.pm" };
-	    last unless $@;
-	
-	    $error .= "$@\n" 
-		unless ($@ =~ /^Can\'t locate $file\.pm/);
-	}
+            
+            $ok = eval { require "$file.pm" };
+            last unless $@;
+            
+            $error .= "$@\n" 
+                unless ($@ =~ /^Can\'t locate $file\.pm/);
+        }
     }
-
+    
     if ($ok) {
-	$self->debug("calling $pkg->load()") if $self->{ DEBUG };
-
-	$factory = eval { $pkg->load($context) };
-	$error   = '';
-	if ($@ || ! $factory) {
-	    $error = $@ || 'load() returned a false value';
-	}
+        $self->debug("calling $pkg->load()") if $self->{ DEBUG };
+        
+        $factory = eval { $pkg->load($context) };
+        $error   = '';
+        if ($@ || ! $factory) {
+            $error = $@ || 'load() returned a false value';
+        }
     }
     elsif ($self->{ LOAD_PERL }) {
-	# fallback - is it a regular Perl module?
-	($file = $module) =~ s|::|/|g;
-	eval { require "$file.pm" };
-	if ($@) {
-	    $error = $@;
-	}
-	else {
-	    # this is a regular Perl module so the new() constructor
-	    # isn't expecting a $context reference as the first argument;
-	    # so we construct a closure which removes it before calling
-	    # $module->new(@_);
-	    $factory = sub {
-		shift;
-		$module->new(@_);
-	    };
-	    $error   = '';
-	}
+        # fallback - is it a regular Perl module?
+        ($file = $module) =~ s|::|/|g;
+        eval { require "$file.pm" };
+        if ($@) {
+            $error = $@;
+        }
+        else {
+            # this is a regular Perl module so the new() constructor
+            # isn't expecting a $context reference as the first argument;
+            # so we construct a closure which removes it before calling
+            # $module->new(@_);
+            $factory = sub {
+                shift;
+                $module->new(@_);
+            };
+            $error   = '';
+        }
     }
-
+    
     if ($factory) {
-	$self->debug("$name => $factory") if $self->{ DEBUG };
-	return $factory;
+        $self->debug("$name => $factory") if $self->{ DEBUG };
+        return $factory;
     }
     elsif ($error) {
-	return $self->{ TOLERANT } 
+        return $self->{ TOLERANT } 
 	    ? (undef,  Template::Constants::STATUS_DECLINED) 
-	    : ($error, Template::Constants::STATUS_ERROR);
+            : ($error, Template::Constants::STATUS_ERROR);
     }
     else {
-	return (undef, Template::Constants::STATUS_DECLINED);
+        return (undef, Template::Constants::STATUS_DECLINED);
     }
 }
 
@@ -1015,8 +1014,8 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.70, distributed as part of the
-Template Toolkit version 2.13, released on 30 January 2004.
+2.71, distributed as part of the
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 
