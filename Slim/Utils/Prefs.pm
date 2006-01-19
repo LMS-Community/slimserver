@@ -13,7 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Path;
 use FindBin qw($Bin);
 use Digest::MD5;
-use YAML qw(DumpFile LoadFile);
+use YAML::Syck qw(DumpFile LoadFile);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -891,7 +891,7 @@ sub writePrefs {
 		binmode(\*OUT, ":raw");
 	}
 
-	print OUT YAML::Dump(\%prefs);
+	print OUT YAML::Syck::Dump(\%prefs);
 
 	close(OUT);
 	$writePending = 0;

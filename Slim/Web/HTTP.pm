@@ -27,7 +27,7 @@ use Socket qw(:DEFAULT :crlf);
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
-use YAML;
+use YAML::Syck;
 
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
@@ -1608,37 +1608,48 @@ sub nonBreaking {
 
 sub newSkinTemplate {
 	my $skin = shift;
+
 	my $baseSkin = baseSkin();
+
 	my @include_path = ();
-	my @skinparents = ();
-	my $skinsettings;
+	my @skinParents  = ();
+	my $skinSettings = '';
 	
-	for my $rootdir (HTMLTemplateDirs()) {
-		my $skinconfig = catfile($rootdir,$skin,'skinconfig.yml');
-		if (-r $skinconfig) {
-				eval {
-				$skinsettings = YAML::LoadFile($skinconfig);
-			};
+	for my $rootDir (HTMLTemplateDirs()) {
+
+		my $skinConfig = catfile($rootDir, $skin, 'skinconfig.yml');
+
+		if (-r $skinConfig) {
+
+			$skinSettings = eval { YAML::Syck::LoadFile($skinConfig) };
+
 			if ($@) {
-				errorMsg("Could not load skin configuration file: $skinconfig\n");
+				errorMsg("Could not load skin configuration file: $skinConfig\n");
 			}
+
 			last;
 		}
 	}
-	if (ref $skinsettings eq 'HASH') {
-		for my $skinparent (@{$skinsettings->{'skinparents'}}) {
-			if (my $checkedskin = isaSkin($skinparent)) {
-				next if $checkedskin eq $skin;
-				next if $checkedskin eq $baseSkin;
-				push @skinparents, $checkedskin;
+
+	if (ref($skinSettings) eq 'HASH') {
+
+		for my $skinParent (@{$skinSettings->{'skinparents'}}) {
+
+			if (my $checkedSkin = isaSkin($skinParent)) {
+
+				next if $checkedSkin eq $skin;
+				next if $checkedSkin eq $baseSkin;
+
+				push @skinParents, $checkedSkin;
 			}
 		}
-}
+	}
 
-	foreach my $dir ($skin, @skinparents, $baseSkin) {
+	foreach my $dir ($skin, @skinParents, $baseSkin) {
 
-		foreach my $rootdir (HTMLTemplateDirs()) {
-			push @include_path, catdir($rootdir,$dir);
+		foreach my $rootDir (HTMLTemplateDirs()) {
+
+			push @include_path, catdir($rootDir, $dir);
 		}
 	}
 
@@ -1649,14 +1660,14 @@ sub newSkinTemplate {
 		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
 		PRE_PROCESS => ['hreftemplate', 'cmdwrappers'],
 		FILTERS => {
-			'string' => \&Slim::Utils::Strings::string,
-			'nbsp' => \&nonBreaking,
-			'uri' => \&URI::Escape::uri_escape_utf8,
-			'unuri' => \&URI::Escape::uri_unescape,
+			'string'     => \&Slim::Utils::Strings::string,
+			'nbsp'       => \&nonBreaking,
+			'uri'        => \&URI::Escape::uri_escape_utf8,
+			'unuri'      => \&URI::Escape::uri_unescape,
 			'utf8decode' => \&Slim::Utils::Unicode::utf8decode,
 			'utf8encode' => \&Slim::Utils::Unicode::utf8encode,
-			'utf8on' => \&Slim::Utils::Unicode::utf8on,
-			'utf8off' => \&Slim::Utils::Unicode::utf8off,
+			'utf8on'     => \&Slim::Utils::Unicode::utf8on,
+			'utf8off'    => \&Slim::Utils::Unicode::utf8off,
 		},
 
 		EVAL_PERL => 1,
