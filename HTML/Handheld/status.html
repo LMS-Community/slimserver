@@ -25,7 +25,7 @@
 				<td><a href="songinfo.html?item=[% itemobj.id %]&player=[% playerURI %]">[% songtitle %]</a></td>
 			</tr>
 		[% END %]
-	   		
+		
 		[% IF itemobj.artist && itemobj.artist != noArtist %]
 			<tr>
 				<td>[% "ARTIST" | string %][% "COLON" | string %]</td>
@@ -48,7 +48,7 @@
 		[% IF itemobj.coverArt('thumb', 1) %]
 			<tr>
 				<td></td>
-				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]"><img src="/music/[% itemobj.id %]/thumb.jpg" border="0"></a></td>
+				<td><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% PROCESS statusImg %]</a></td>
 			</tr>
 		[% END %]
 	</table>
