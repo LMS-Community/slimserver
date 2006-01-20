@@ -31,6 +31,46 @@ function refresh() {
 }
 [% END %]
 
+[% BLOCK addCaseLinks %]
+	[% IF links %]
+		[% FOREACH link = links %]
+		case "[% link.key %]":
+			url = "[% link.value %]"
+			page = "[% link.key %]"
+			suffix = "page=" + page
+			[% IF cookie %]homestring = "[% link.key | string %]"
+			cookie = [% cookie %][% END %]
+		break
+		[% END %]
+	[% END %]
+[% END %]
+
+function chooseSettings(value,option)
+{
+	var url;
+
+	switch(option)
+	{
+		[% IF playerid %][% PROCESS addCaseLinks links=additionalLinks.playersetup  %]
+						 [% PROCESS addCaseLinks links=additionalLinks.playerplugin %]
+		[% ELSE %][% PROCESS addCaseLinks links=additionalLinks.setup   %]
+				  [% PROCESS addCaseLinks links=additionalLinks.plugin %][% END %]
+		case "HOME":
+			url = "[% webroot %]home.html?"
+		break
+		case "PLAYER_SETTINGS":
+			url = "[% webroot %]setup.html?page=PLAYER_SETTINGS&"
+		break
+		case "SERVER_SETTINGS":
+			url = "[% webroot %]setup.html?page=SERVER_SETTINGS&"
+		break
+	}
+
+	if (option) {
+		window.location = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid %][% END %]';
+	}
+}
+
 function switchPlayer(player_List) {
 	var newPlayer = player_List.options[player_List.selectedIndex].value;
 	parent.playlist.location="playlist.html?player="+newPlayer;

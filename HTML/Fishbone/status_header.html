@@ -86,7 +86,7 @@
 					[% IF mode != 'off' %]
 						<A href="[% statusroot %]?p0=button&p1=sleep&player=[% playerURI %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
 					[% END %][% IF mode != 'off' %] / [% END %]
-					[% IF not nosetup  %]<a href="setup.html?page=player&player=[% playerURI %]&playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
+					[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 					[% END %][% IF not undock %] /
 					<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>[% END %]
 				</td>
@@ -120,7 +120,7 @@
 		<table  width="100%">
 			<tr>
 				[% IF coverThumb %]<td valign="top">
-					<a [% albumHRef %] target="browser">[% PROCESS statusImg %]
+					<a [% albumHRef %] target="browser">[% PROCESS statusImg %]</a>
 				</td>[% END %]
 				<td><img src="[% webroot %]html/images/spacer.gif" width="5"></td>
 				<td valign="top" width="100%">

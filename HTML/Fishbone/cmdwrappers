@@ -1,6 +1,7 @@
 [%- FILTER null %]
 [% statusroot = 'status_header.html' %]
 [% noHomeLink = 1 %]
+[% setting_chooser_noHome = 1 %]
 
 [% BLOCK cmdlink %]
 <a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]>

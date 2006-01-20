@@ -8339,6 +8339,9 @@ SLIMTRIS
 	SE	SlimTris
 	ZH_CN	SlimTris
 
+PLAYER_PLUGINS
+	EN	Plugins
+
 PLUGINS
 	CZ	Pluginy
 	DE	Plugins

@@ -97,7 +97,7 @@ sub shutdownPlugin {
 	
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('moodlogic');
-	Slim::Web::Setup::delGroup('server','moodlogic',1);
+	Slim::Web::Setup::delGroup('SERVER_SETTINGS','moodlogic',1);
 	
 	# set importer to not use
 	#Slim::Utils::Prefs::set('moodlogic', 0);
@@ -191,8 +191,8 @@ sub initPlugin {
 
 sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
-	Slim::Web::Setup::addGroup('server','moodlogic',$groupRef,undef,$prefRef);
-	Slim::Web::Setup::addChildren('server','moodlogic');
+	Slim::Web::Setup::addGroup('SERVER_SETTINGS','moodlogic',$groupRef,undef,$prefRef);
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS','moodlogic');
 	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
 }
 
@@ -723,7 +723,7 @@ sub checkDefaults {
 sub setupCategory {
 	my %setupCategory =(
 		'title' => string('SETUP_MOODLOGIC')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
 		,'Groups' => {
 			'Default' => {

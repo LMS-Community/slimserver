@@ -150,6 +150,11 @@ DIV.menu2 .stdedit {
    margin: 2 3 2 3;
 }
 
+div#statusMessage form{
+	padding-top: 7px;
+}
+
+
 .stdedit {
    font-family: Verdana, Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
@@ -260,14 +265,14 @@ DIV.menu2 .stdedit {
 	margin-top: 8px;
 }
 
-.listing, .listing2, .even, .odd
+.listing, .listing2, .even, .odd 
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background:black;
 	color:#999;
 	padding-left: 1px;
+	margin: 0px;
 	border-top:solid 1px #333;
-	#border-bottom:solid 1px black;
 }
 
 img {
@@ -315,6 +320,14 @@ img {
 	color:white;
 }
 
+div#statusMessage
+{
+	margin:0px;
+	padding: 0 0 1 8;
+	background:#999;
+	color:white;
+}
+
 DIV.menu2 TABLE {
 	border-collapse: collapse;
 }
@@ -339,13 +352,15 @@ div#browsedbHeader {
 	position: absolute;
 	top: 0px;
 	left: 85%;
+	margin: 0px;
 	vertical-align: top;
 }
 
 .playlistControls {
 	position: absolute;
 	top: 0px;
-	right: 4px;
+	right: 1px;
+	margin: 0px;
 	vertical-align: top;
 }
 

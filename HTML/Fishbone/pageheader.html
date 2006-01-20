@@ -101,7 +101,7 @@
 		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 	[% IF not nosetup && not noserver %]
-		<a href="[% webroot %]setup.html?page=server&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
+		<a href="[% webroot %]setup.html?page=SERVER_SETTINGS&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
 		 / 
 	[% END %]
 		<a href="[% webroot %]home.html?page=help&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a></nobr>
@@ -146,8 +146,10 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
-[% PROCESS crumblist %]
+[% IF pagetitle and not pageHeaderMenu %]<h3>[% pagetitle %]</h3><p>[% END %]
+[% UNLESS pwd_list %]
+	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
+	[%- PROCESS crumblist IF pwd_list %]
 [% pageHeaderInfo %]
 [% UNLESS noHR %]<hr>[% END %]
 [% END %]

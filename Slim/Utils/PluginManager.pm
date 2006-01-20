@@ -425,10 +425,11 @@ sub addSetupGroups {
 
 		if ($groupRef && $prefRef && exists($plugins{$plugin})) {
 			my %params = (
-				title      => $plugins{$plugin}->{'name'},
-				Groups     => { 'Default' => $groupRef },
-				GroupOrder => ['Default'],
-				Prefs      => $prefRef
+				'title'      => $plugins{$plugin}->{'name'},
+				'parent'     => 'SERVER_SETTINGS',
+				'Groups'     => { 'Default' => $groupRef },
+				'GroupOrder' => ['Default'],
+				'Prefs'      => $prefRef
 			);
 
 			my $menu = 'PLUGINS';
@@ -438,7 +439,11 @@ sub addSetupGroups {
 			}
 	
 			if (defined $isClient && $isClient) {
-				$menu = 'player_plugins' if ($menu eq 'PLUGINS');
+				if ($menu eq 'PLUGINS') {
+					$menu = 'PLAYER_PLUGINS';
+					$params{'parent'} = 'PLAYER_SETTINGS';
+					#Slim::Web::Pages->addPageLinks("playerplugin",{"$plugins{$plugin}->{'name'}"  => "setup.html?page=$plugins{$plugin}->{'name'}"});
+				}
 				$playerplugins{$plugins{$plugin}->{'name'}} = not exists $disabledplugins{$plugin};
 			}
 	
@@ -448,6 +453,7 @@ sub addSetupGroups {
 			else {
 				Slim::Web::Setup::addGroup($menu, $plugin, $groupRef, undef, $prefRef);
 				Slim::Web::Setup::addCategory("PLUGINS.${plugin}", \%params);
+				#Slim::Web::Pages->addPageLinks("plugin",{"$plugins{$plugin}->{'name'}"  => "setup.html?page=$plugins{$plugin}->{'name'}"});
 			}
 		}
 		

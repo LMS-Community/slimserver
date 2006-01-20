@@ -16,6 +16,7 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Validate;
 
 our %setup = ();
 our @newPlayerChildren;
@@ -107,7 +108,7 @@ our @newPlayerChildren;
 
 sub initSetupConfig {
 	%setup = (
-	'player' => {
+	'PLAYER_SETTINGS' => {
 		'title' => string('PLAYER_SETTINGS') #may be modified in postChange to reflect player name
 		,'children' => []
 		,'GroupOrder' => []
@@ -201,16 +202,16 @@ sub initSetupConfig {
 		}
 		,'Prefs' => {
 			'playername' => {
-							'validate' => \&validateHasText
+							'validate' => \&Slim::Utils::Validate::hasText
 							,'validateArgs' => [] #will be set by preEval
 							,'PrefSize' => 'medium'
 						}
 			,'titleFormatCurr'	=> {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [] #will be set by preEval
 						}
 			,'playingDisplayMode'	=> {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [] # will be set by preEval
 						}
 			,'playingDisplayModes' 	=> {
@@ -221,7 +222,7 @@ sub initSetupConfig {
 							,'arrayBasicValue' => 0
 							,'arrayCurrentPref' => 'playingDisplayMode'
 							,'inputTemplate' => 'setup_input_array_sel.html'
-							,'validate' => \&validateInHash
+							,'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [] #filled by initSetup
 							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
 							,'optionSort' => 'NK'
@@ -242,7 +243,7 @@ sub initSetupConfig {
 							,'arrayBasicValue' => 0
 							,'arrayCurrentPref' => 'titleFormatCurr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
-							,'validate' => \&validateInHash
+							,'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [] #filled by initSetup
 							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
 							,'optionSort' => 'NK'
@@ -256,30 +257,30 @@ sub initSetupConfig {
 									}
 						}
 			,'screensaver'	=> {
-							'validate' => \&validateInHash
+							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
 							,'options' => undef #will be set by preEval  
 						}
 			,'idlesaver'	=> {
-							'validate' => \&validateInHash
+							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
 							,'options' => undef #will be set by preEval  
 						}
 			,'offsaver'	=> {
-							'validate' => \&validateInHash
+							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
 							,'options' => undef #will be set by preEval  
 						}
 			,'screensavertimeout' => {
-							'validate' => \&validateNumber
+							'validate' => \&Slim::Utils::Validate::number
 							,'validateArgs' => [0,undef,1]
 						}
 			}
 		} #end of setup{'player'} hash
 
-	,'display' => {
+	,'DISPLAY_SETTINGS' => {
 		'title' => string('DISPLAY_SETTINGS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'GroupOrder' => [undef,undef,undef,'ScrollMode','ScrollPause','ScrollRate', undef]
 		,'preEval' => sub {
@@ -445,7 +446,7 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'powerOnBrightness' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
 							,'optionSort' => 'NK'
 							,'options' => {
@@ -457,7 +458,7 @@ sub initSetupConfig {
 									}
 						}
 			,'powerOffBrightness' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
 							,'optionSort' => 'NK'
 							,'options' => {
@@ -469,7 +470,7 @@ sub initSetupConfig {
 									}
 						}
 			,'idleBrightness' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
 							,'optionSort' => 'NK'
 							,'options' => {
@@ -481,7 +482,7 @@ sub initSetupConfig {
 									}
 						}
 			,'doublesize' => {
-							'validate' => \&validateInList
+							'validate' => \&Slim::Utils::Validate::IinList
 							,'validateArgs' => [0,1]
 							,'options' => {
 								'0' => string('SMALL'),
@@ -496,7 +497,7 @@ sub initSetupConfig {
 									}
 						}
 			,'offDisplaySize' => {
-							'validate' => \&validateInList
+							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0,1]
 							,'options' => {
 								'0' => string('SMALL'),
@@ -505,7 +506,7 @@ sub initSetupConfig {
 							,'PrefChoose' => string('SETUP_OFFDISPLAYSIZE').string('COLON')
 						}
 			,'largeTextFont' => {
-							'validate' => \&validateInList
+							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0,1]
 							,'options' => {
 								'0' => string('SETUP_LARGETEXTFONT_0'),
@@ -520,7 +521,7 @@ sub initSetupConfig {
 							,'arrayBasicValue' => 0
 							,'arrayCurrentPref' => 'activeFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
-							,'validate' => \&validateInHash
+							,'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [] #filled by initSetup
 							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
 							,'onChange' => sub {
@@ -540,7 +541,7 @@ sub initSetupConfig {
 							,'arrayBasicValue' => 0
 							,'arrayCurrentPref' => 'idleFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
-							,'validate' => \&validateInHash
+							,'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [] #filled by initSetup
 							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
 							,'onChange' => sub {
@@ -553,17 +554,17 @@ sub initSetupConfig {
 									}
 						}
 			,'activeFont_curr' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
 							,'changeIntro' => string('SETUP_ACTIVEFONT')
 						}
 			,'idleFont_curr' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
 							,'changeIntro' => string('SETUP_IDLEFONT')
 						}
 			,'autobrightness' => {
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
 								'1' => string('SETUP_AUTOBRIGHTNESS_ON')
 								,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
@@ -571,7 +572,7 @@ sub initSetupConfig {
 						,'changeIntro' => string ('SETUP_AUTOBRIGHTNESS_CHOOSE')
 					}
 			,'scrollMode' => {
-				'validate' => \&validateNumber
+				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,2]
 				,'options' => {
 					 '0' => string('SETUP_SCROLLMODE_DEFAULT')
@@ -580,34 +581,34 @@ sub initSetupConfig {
 				},
 			},
 			,'scrollPause' => {
-				'validate' => \&validateNumber
+				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,1]
 				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollPauseDouble' => {
-				'validate' => \&validateNumber
+				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,1]
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPAUSE').string('COLON')
 			},
 			'scrollRate' => {
-				'validate' => \&validateNumber
+				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,1]
 				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 			},
 			'scrollRateDouble' => {
-				'validate' => \&validateNumber
+				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,1]
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLRATE').string('COLON')
 			},
 			'scrollPixels' => {
-				'validate' => \&validateInt
+				'validate' => \&Slim::Utils::Validate::isInt
 				,'validateArgs' => [1,20,1,20]
 				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 			},
 			'scrollPixelsDouble' => {
-				'validate' => \&validateInt
+				'validate' => \&Slim::Utils::Validate::isInt
 				,'validateArgs' => [1,20,1,20]
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
@@ -616,9 +617,9 @@ sub initSetupConfig {
 
 		}
 	}
-	,'homemenu' => {
+	,'MENU_SETTINGS' => {
 		'title' => string('MENU_SETTINGS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'GroupOrder' => ['MenuItems','NonMenuItems','Plugins']
 		,'preEval' => sub {
@@ -713,7 +714,7 @@ sub initSetupConfig {
 						,'arrayDeleteValue' => ''
 						,'arrayBasicValue' => 'NOW_PLAYING'
 						,'inputTemplate' => 'setup_input_array_udr.html'
-						,'validate' => \&validateInHash
+						,'validate' => \&Slim::Utils::Validate::IinHash
 						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
 						,'externalValue' => \&menuItemName
 						,'onChange' => sub {
@@ -833,9 +834,9 @@ sub initSetupConfig {
 					}
 			}
 	}
-	,'alarm' => {
+	,'ALARM_SETTINGS' => {
 		'title' => string('ALARM_SETTINGS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -868,16 +869,16 @@ sub initSetupConfig {
 		}
 		,'Prefs' => {
 			'alarmfadeseconds' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'PrefChoose' => string('ALARM_FADE'),
 				'changeIntro' => string('ALARM_FADE').string('COLON'),
 				'inputTemplate' => 'setup_input_chk.html',
 			}
 		},
 	}
-	,'audio' => {
+	,'AUDIO_SETTINGS' => {
 		'title' => string('AUDIO_SETTINGS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 
@@ -1011,7 +1012,7 @@ sub initSetupConfig {
 					}
 							
 			,'maxBitrate' => {
-							'validate' => \&validateInList
+							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
 							,'optionSort' => 'NK'
 							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
@@ -1028,14 +1029,14 @@ sub initSetupConfig {
 							,'PrefDesc' => undef
 						}
 			,'lame' => {
-						'validate' => \&validateAcceptAll
+						'validate' => \&Slim::Utils::Validate::acceptAll
 						,'validateArgs' => [] #filled by preEval
 						,'noWarning' => 1
 						,'dontSet' => 1
 						,'inputTemplate' => undef
 						}
 			,'lameQuality' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [0,9,1,1]
 							,'optionSort' => 'NK'
 							,'options' => {
@@ -1054,7 +1055,7 @@ sub initSetupConfig {
 			,'synchronize' => {
 							'dontSet' => 1
 							,'options' => {} #filled by preEval
-							,'validate' => \&validateInHash
+							,'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [] #filled by initSetup
 							,'currentValue' => sub {
 									my ($client,$key,$ind) = @_;
@@ -1076,14 +1077,14 @@ sub initSetupConfig {
 								}
 						}
 			,'syncVolume' => {
-							'validate' => \&validateTrueFalse  
+							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
 									'1' => string('SETUP_SYNCVOLUME_ON')
 									,'0' => string('SETUP_SYNCVOLUME_OFF')
 								}
 						}			
 			,'syncPower' => {
-							'validate' => \&validateTrueFalse  
+							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
 									'1' => string('SETUP_SYNCPOWER_ON')
 									,'0' => string('SETUP_SYNCPOWER_OFF')
@@ -1105,7 +1106,7 @@ sub initSetupConfig {
 							}
 						}
 			,'digitalVolumeControl' => {
-							'validate' => \&validateTrueFalse  
+							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
 									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
 									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
@@ -1116,15 +1117,15 @@ sub initSetupConfig {
 							}
 						}
 			,'preampVolumeControl' => {
-							'validate' => \&validateNumber
+							'validate' => \&Slim::Utils::Validate::number
 							,'validateArgs' => [0, undef, 63]
 						}
 			,'mp3SilencePrelude' => {
-							'validate' => \&validateNumber  
+							'validate' => \&Slim::Utils::Validate::number  
 							,'validateArgs' => [0,undef,5]
 						}
 			,'transitionType' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [0,4,1,1]
 							,'optionSort' => 'K'
 							,'options' => {
@@ -1136,7 +1137,7 @@ sub initSetupConfig {
 								}
 						}
 			,'transitionDuration' => {
-							'validate' => \&validateInt  
+							'validate' => \&Slim::Utils::Validate::isInt  
 						}
 			,'replayGainMode' => {
 							'optionSort' => 'K',
@@ -1149,9 +1150,9 @@ sub initSetupConfig {
 						}
 		}
 	}
-	,'remote' => {
+	,'REMOTE_SETTINGS' => {
 		'title' => string('REMOTE_SETTINGS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -1214,14 +1215,14 @@ sub initSetupConfig {
 		}
 		,'Prefs' => {
 			'irmap' => {
-				'validate' => \&validateInHash  
+				'validate' => \&Slim::Utils::Validate::inHash  
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
 				,'options' => undef #will be set by preEval  
 			},
 			'irsetlist' => {
 				'isArray' => 1
 				,'dontSet' => 1
-				,'validate' => \&validateTrueFalse
+				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_IRSETLIST_CHANGE')
@@ -1237,9 +1238,9 @@ sub initSetupConfig {
 			},
 		}
 	}
-	,'player_plugins' => {
+	,'PLAYER_PLUGINS' => {
 		'title' => string('PLUGINS')
-		,'parent' => 'player'
+		,'parent' => 'PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -1248,9 +1249,9 @@ sub initSetupConfig {
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
-	,'server' => {
+	,'SERVER_SETTINGS' => {
 
-		'children' => [qw(server interface behavior formats formatting security performance network debug)],
+		'children' => [qw(SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
 		'title'    => string('SERVER_SETTINGS'),
 		'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS'),
 
@@ -1289,7 +1290,7 @@ sub initSetupConfig {
 
 			'language' => {
 
-				'validate'     => \&validateInHash,
+				'validate'     => \&Slim::Utils::Validate::inHash,
 				'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages],
 				'options'      => undef,  # filled by initSetup using Slim::Utils::Strings::hash_of_languages()
 				'onChange'     => sub {
@@ -1302,7 +1303,7 @@ sub initSetupConfig {
 			},
 
 			'audiodir' => {
-				'validate'     => \&validateIsAudioDir,
+				'validate'     => \&Slim::Utils::Validate::isAudioDir,
 				'validateArgs' => [1],
 				'changeIntro'  => string('SETUP_OK_USING'),
 				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
@@ -1310,7 +1311,7 @@ sub initSetupConfig {
 			},
 
 			'playlistdir' => {
-				'validate'     => \&validateIsDir,
+				'validate'     => \&Slim::Utils::Validate::isDir,
 				'validateArgs' => [1],
 				'changeIntro'  => string('SETUP_PLAYLISTDIR_OK'),
 				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
@@ -1319,7 +1320,7 @@ sub initSetupConfig {
 
 			'rescan' => {
 
-				'validate' => \&validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 
 				'onChange' => sub {
 					my ($client, $changeref) = @_;
@@ -1344,7 +1345,7 @@ sub initSetupConfig {
 				'changeMsg'     => '',
 			},
 			'rescantype' => {
-				'validate' => \&validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'optionSort' => 'K',
 				'options' => {
 					'1rescan'   => string('SETUP_STANDARDRESCAN'),
@@ -1361,7 +1362,7 @@ sub initSetupConfig {
 
 	,'PLUGINS' => {
 		'title' => string('PLUGINS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref);
@@ -1390,7 +1391,7 @@ sub initSetupConfig {
 			'pluginlist' => {
 				'isArray' => 1
 				,'dontSet' => 1
-				,'validate' => \&validateTrueFalse
+				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
@@ -1401,7 +1402,7 @@ sub initSetupConfig {
 					}
 				}
 			,'plugins-onthefly' => {
-				'validate' => \&validateTrueFalse
+				'validate' => \&Slim::Utils::Validate::trueFalse
 				,'options' => {
 						'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
 						,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
@@ -1411,7 +1412,7 @@ sub initSetupConfig {
 		} #end of setup{'PLUGINS'}
 	,'RADIO' => {
 		'title' => string('RADIO')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref, 'RADIO');
@@ -1439,7 +1440,7 @@ sub initSetupConfig {
 			'pluginlist' => {
 				'isArray' => 1
 				,'dontSet' => 1
-				,'validate' => \&validateTrueFalse
+				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
 				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
@@ -1451,9 +1452,9 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'RADIO'}
-	,'interface' => {
+	,'INTERFACE_SETTINGS' => {
 		'title' => string('INTERFACE_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					$pageref->{'Prefs'}{'skin'}{'options'} = {skins(1)};
@@ -1467,7 +1468,7 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'skin'		=> {
-						'validate' => \&validateInHash
+						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [\&skins]
 						,'options' => undef #filled by initSetup using skins()
 						,'changeIntro' => string('SETUP_SKIN_OK')
@@ -1479,34 +1480,34 @@ sub initSetupConfig {
 						}
 					}
 			,'itemsPerPage'	=> {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,undef,1]
 					}
 			,'refreshRate'	=> {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [2,undef,1]
 					}
 			,'coverArt' => {
-						'validate' => \&validateAcceptAll
+						'validate' => \&Slim::Utils::Validate::acceptAll
 						,'PrefSize' => 'large'
 					}
 			,'coverThumb' => {
-						'validate' => \&validateAcceptAll
+						'validate' => \&Slim::Utils::Validate::acceptAll
 						,'PrefSize' => 'large'
 					}
 			,'artfolder' => {
-					'validate' => \&validateIsDir
+					'validate' => \&Slim::Utils::Validate::isDir
 					,'validateArgs' => [1]
 					,'changeIntro' => string('SETUP_ARTFOLDER')
 					,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
 					,'PrefSize' => 'large'
 				}
 			,'thumbSize' => {
-					'validate' => \&validateInt
+					'validate' => \&Slim::Utils::Validate::isInt
 					,'validateArgs' => [25,250,1,1]
 				}
 			,'includeNoArt' => {
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
 								'1' => string('SETUP_INCLUDENOART_1')
 								,'0' => string('SETUP_INCLUDENOART_0')
@@ -1525,11 +1526,11 @@ sub initSetupConfig {
 							}
 					}
 			}
-		}# end of setup{'interface'} hash
+		}# end of setup{'INTERFACE_SETTINGS'} hash
 
-	,'formats' => {
+	,'FORMATS_SETTINGS' => {
 		'title' => string('FORMATS_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				my $i = 0;
@@ -1615,7 +1616,7 @@ sub initSetupConfig {
 				'formatslist' => {
 					'isArray' => 1
 					,'dontSet' => 1
-					,'validate' => \&validateTrueFalse
+					,'validate' => \&Slim::Utils::Validate::trueFalse
 					,'inputTemplate' => 'setup_input_array_chk.html'
 					,'arrayMax' => undef #set in preEval
 					,'changeMsg' => string('SETUP_FORMATSLIST_CHANGE')
@@ -1649,9 +1650,9 @@ sub initSetupConfig {
 		} #end of setup{'formats'}
 
 
-	,'behavior' => {
+	,'BEHAVIOR_SETTINGS' => {
 		'title' => string('BEHAVIOR_SETTINGS'),
-		'parent' => 'server',
+		'parent' => 'SERVER_SETTINGS',
 		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default CommonAlbumTitles)],
 		'Groups' => {
 	
@@ -1696,17 +1697,17 @@ sub initSetupConfig {
 		'Prefs' => {
 
 			'displaytexttimeout' => {
-				'validate'     => \&validateNumber,
+				'validate'     => \&Slim::Utils::Validate::number,
 				'validateArgs' => [0.1,undef,1],
 			},
 
 			'browseagelimit' => {
-				'validate'     	=> \&validateNumber,
+				'validate'     	=> \&Slim::Utils::Validate::number,
 				'validateArgs' => [0,undef,1,undef],
 			},
 
 			'ignoredarticles' => {
-				'validate' => \&validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large',
 				'onChange' => sub {
 					my $client = shift;
@@ -1716,7 +1717,7 @@ sub initSetupConfig {
 			},
 
 			'splitList' => {
-				'validate' => \&validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large',
 				'onChange' => sub {
 					my $client = shift;
@@ -1726,7 +1727,7 @@ sub initSetupConfig {
 			},
 
 			'variousArtistAutoIdentification' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1'),
 					'0' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0'),
@@ -1734,7 +1735,7 @@ sub initSetupConfig {
 			},
 
 			'useBandAsAlbumArtist' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => string('SETUP_USEBANDASALBUMARTIST_1'),
 					'0' => string('SETUP_USEBANDASALBUMARTIST_0'),
@@ -1742,12 +1743,12 @@ sub initSetupConfig {
 			},
 
 			'variousArtistsString' => {
-				'validate' => \&validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large',
 			},
 
 			'playtrackalbum' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
 					'1' => string('SETUP_PLAYTRACKALBUM_1'),
 					'0' => string('SETUP_PLAYTRACKALBUM_0'),
@@ -1758,25 +1759,25 @@ sub initSetupConfig {
 
 				'inputTemplate' => 'setup_input_chk.html',
 				'PrefChoose'    => string('COMPOSER'),
-				'validate'      => \&validateTrueFalse,
+				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'conductorInArtists' => { 	 
 
 				'inputTemplate' => 'setup_input_chk.html',
 				'PrefChoose'    => string('CONDUCTOR'),
-				'validate'      => \&validateTrueFalse,
+				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'bandInArtists' => { 	 
 
 				'inputTemplate' => 'setup_input_chk.html',
 				'PrefChoose'    => string('BAND'),
-				'validate'      => \&validateTrueFalse,
+				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'noGenreFilter' => { 	 
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => { 	 
 					'1' => string('SETUP_NOGENREFILTER_1'),
 					'0' => string('SETUP_NOGENREFILTER_0'),
@@ -1784,7 +1785,7 @@ sub initSetupConfig {
 			},
 
 			'searchSubString' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
 					'1' => string('SETUP_SEARCHSUBSTRING_1'),
 					'0' => string('SETUP_SEARCHSUBSTRING_0'),
@@ -1792,7 +1793,7 @@ sub initSetupConfig {
 			},
 
 			'persistPlaylists' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
 					'1' => string('SETUP_PERSISTPLAYLISTS_1'),
 					'0' => string('SETUP_PERSISTPLAYLISTS_0'),
@@ -1800,7 +1801,7 @@ sub initSetupConfig {
 			},
 
 			'reshuffleOnRepeat' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
 					'1' => string('SETUP_RESHUFFLEONREPEAT_1'),
 					'0' => string('SETUP_RESHUFFLEONREPEAT_0'),
@@ -1808,7 +1809,7 @@ sub initSetupConfig {
 			},
 
 			'saveShuffled' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => string('SETUP_SAVESHUFFLED_1'),
 					'0' => string('SETUP_SAVESHUFFLED_0'),
@@ -1816,7 +1817,7 @@ sub initSetupConfig {
 			},
 
 			'checkVersion' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => string('SETUP_CHECKVERSION_1'),
 					'0' => string('SETUP_CHECKVERSION_0'),
@@ -1824,7 +1825,7 @@ sub initSetupConfig {
 			},
 
 			'groupdiscs' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'onChange' => sub {
 					my $client = shift;
 
@@ -1838,7 +1839,7 @@ sub initSetupConfig {
 			 },
 
 			'commonAlbumTitlesToggle' => {
-				'validate'      => \&validateAcceptAll,
+				'validate'      => \&Slim::Utils::Validate::acceptAll,
 				'inputTemplate' => 'setup_input_chk.html',
 				'PrefChoose'    => string('SETUP_COMMONALBUMTITLES_TOGGLE'),
 			},
@@ -1866,9 +1867,9 @@ sub initSetupConfig {
 		}
 	} #end of setup{'behavior'} hash
 
-	,'formatting' => {
+	,'FORMATTING_SETTINGS' => {
 		'title' => string('FORMATTING_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
@@ -1911,7 +1912,7 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'titleFormatWeb' => {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [0,undef,1]
 						,'onChange' => sub {
 								if (Slim::Utils::Prefs::get('titleFormatWeb') > Slim::Utils::Prefs::getArrayMax('titleFormat')) {
@@ -1931,7 +1932,7 @@ sub initSetupConfig {
 						,'arrayCurrentPref' => 'titleFormatWeb'
 						,'PrefSize' => 'large'
 						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&validateFormat
+						,'validate' => \&Slim::Utils::Validate::format
 						,'changeAddlText' => 'Format will be changed for any clients using this setting'
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
@@ -1944,14 +1945,14 @@ sub initSetupConfig {
 								}
 							}
 			,'showArtist' => {
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
 									'0' => string('DISABLED')
 									,'1' => string('ENABLED')
 								}
 							}
 			,'showYear' => {
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
 									'0' => string('DISABLED')
 									,'1' => string('ENABLED')
@@ -1965,7 +1966,7 @@ sub initSetupConfig {
 						,'arrayBasicValue' => 0
 						,'PrefSize' => 'large'
 						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&validateFormat
+						,'validate' => \&Slim::Utils::Validate::format
 						,'changeAddlText' => 'All files without tags will be processed this way'
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
@@ -1973,12 +1974,12 @@ sub initSetupConfig {
 										return;
 									}
 									processArrayChange($client,'guessFileFormats',$paramref,$pageref);
-									$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
+									$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 									$changeref->{'guessFileFormats'}{'Processed'} = 1;
 								}
 					}
 			,"longdateFormat" => {
-						'validate' => \&validateInHash
+						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [] # set in initSetup
 						,'options' => { # WWWW is the name of the day of the week
 								# WWW is the abbreviation of the name of the day of the week
@@ -2007,7 +2008,7 @@ sub initSetupConfig {
 								}
 					}
 			,"shortdateFormat" => {
-						'validate' => \&validateInHash
+						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [] # set in initSetup
 						,'options' => { # MM is the month of the year
 								# DD is the day of the year
@@ -2031,7 +2032,7 @@ sub initSetupConfig {
 								}
 					}
 			,"timeFormat" => {
-						'validate' => \&validateInHash
+						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [] # set in initSetup
 						,'options' => { # hh is hours
 								# h is hours (leading zero removed)
@@ -2064,10 +2065,10 @@ sub initSetupConfig {
 								}
 					}
 			}
-		} #end of setup{'formatting'} hash
-	,'security' => {
+		} #end of setup{'FORMATTING_SETTINGS'} hash
+	,'SECURITY_SETTINGS' => {
 		'title' => string('SECURITY_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'GroupOrder' => ['BasicAuth','Default']
 		,'Groups' => {
 			'Default' => {
@@ -2083,25 +2084,25 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'authorize' => {
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
 								'0' => string('SETUP_NO_AUTHORIZE')
 								,'1' => string('SETUP_AUTHORIZE')
 								}
 					}
 			,'username' => {
-						'validate' => \&validateAcceptAll
+						'validate' => \&Slim::Utils::Validate::acceptAll
 						,'PrefSize' => 'large'
 					}
 			,'password' => {
-						'validate' => \&validatePassword
+						'validate' => \&Slim::Utils::Validate::password
 						,'inputTemplate' => 'setup_input_passwd.html'
 						,'changeMsg' => string('SETUP_PASSWORD_CHANGED')
 						,'PrefSize' => 'large'
 					}
 			,'filterHosts' => {
 						
-						'validate' => \&validateTrueFalse
+						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'PrefHead' => string('SETUP_IPFILTER_HEAD')
 						,'PrefDesc' => string('SETUP_IPFILTER_DESC')
 						,'options' => {
@@ -2110,7 +2111,7 @@ sub initSetupConfig {
 							}
 					}
 			,'csrfProtectionLevel' => {
-							'validate' => \&validateInt
+							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [0,2,1,1]
 							,'optionSort' => 'V'
 							,'options' => {
@@ -2121,7 +2122,7 @@ sub initSetupConfig {
 								}
 						}
 			,'allowedHosts' => {
-						'validate' => \&validateAllowedHosts
+						'validate' => \&Slim::Utils::Validate::allowedHosts
 						,'PrefHead' => string('SETUP_FILTERRULE_HEAD')
 						,'PrefDesc' => string('SETUP_FILTERRULE_DESC')
 						,'PrefSize' => 'large'
@@ -2129,9 +2130,9 @@ sub initSetupConfig {
 
 			}
 		} #end of setup{'security'} hash
-	,'performance' => {
+	,'PERFORMANCE_SETTINGS' => {
 		'title' => string('PERFORMANCE_SETTINGS'),
-		'parent' => 'server',
+		'parent' => 'SERVER_SETTINGS',
 		'GroupOrder' => ['Default'],
 
 		'Groups' => {
@@ -2150,7 +2151,7 @@ sub initSetupConfig {
 
 		'Prefs' => {
 			'lookForArtwork' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'0' => string('SETUP_NO_ARTWORK'),
 					'1' => string('SETUP_LOOKFORARTWORK'),
@@ -2158,23 +2159,23 @@ sub initSetupConfig {
 			},
 
 			'itemsPerPass' => {
-				'validate' => \&validateInt,
+				'validate' => \&Slim::Utils::Validate::isInt,
 			},
 
 			'prefsWriteDelay' => {
-				'validate' => \&validateInt,
+				'validate' => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,undef,1],
 			},
 
 			'keepUnswappedInterval' => {
-				'validate' => \&validateInt,
+				'validate' => \&Slim::Utils::Validate::isInt,
 			},
 
 			'databaseCacheSize' => {
 				'PrefHead' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD'),
 				'PrefDesc' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_DESC'),
 
-				'validate' => \&validateInt,
+				'validate' => \&Slim::Utils::Validate::isInt,
 
 				'onChange' => sub {
 					my ($client, $changeref) = @_;
@@ -2208,9 +2209,9 @@ sub initSetupConfig {
 			},
 		},
 	} #end of setup{'performance'} hash
-	,'network' => {
+	,'NETWORK_SETTINGS' => {
 		'title' => string('NETWORK_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
@@ -2231,7 +2232,7 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'httpport'	=> {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1025,65535,undef,1]
 						,'changeAddlText' => string('SETUP_NEW_VALUE')
 									. '<blockquote><a target="_top" href="[EVAL]Slim::Web::HTTP::HomeURL()[/EVAL]">'
@@ -2242,7 +2243,7 @@ sub initSetupConfig {
 								}
 					}
 			,'webproxy'	=> {
-						'validate' => \&validateHostNameOrIPAndPort,
+						'validate' => \&Slim::Utils::Validate::hostNameOrIPAndPort,
 						'PrefSize' => 'large'
 					}
 			,'mDNSname'	=> {
@@ -2250,26 +2251,26 @@ sub initSetupConfig {
 							,'PrefSize' => 'medium'
 					}
 			,'remotestreamtimeout' => {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,undef,1]
 					}
 			,'tcpReadMaximum' => {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,undef,1]
 					}
 			,"tcpWriteMaximum" => {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,undef,1]
 					}
 			,"udpChunkSize" => {
-						'validate' => \&validateInt
+						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,4096,1,1] #limit to 4096
 					}
 			}
 		} #end of setup{'network'} hash
-	,'debug' => {
+	,'DEBUGGING_SETTINGS' => {
 		'title' => string('DEBUGGING_SETTINGS')
-		,'parent' => 'server'
+		,'parent' => 'SERVER_SETTINGS'
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					no strict 'refs';
@@ -2293,7 +2294,7 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'd_' => { #template for the debug settings
-					'validate' => \&validateTrueFalse
+					'validate' => \&Slim::Utils::Validate::trueFalse
 					,'inputTemplate' => 'setup_input_chk.html'
 					,'dontSet' => 1
 					,'currentValue' => sub {
@@ -2314,37 +2315,37 @@ sub initSetupConfig {
 	); #end of setup hash
 	foreach my $key (sort keys %main:: ) {
 		next unless $key =~ /^d_/;
-		my %debugTemp = %{$setup{'debug'}{'Prefs'}{'d_'}};
-		push @{$setup{'debug'}{'Groups'}{'Default'}{'PrefOrder'}},$key;
-		$setup{'debug'}{'Prefs'}{$key} = \%debugTemp;
-		$setup{'debug'}{'Prefs'}{$key}{'PrefChoose'} = $key;
-		$setup{'debug'}{'Prefs'}{$key}{'changeIntro'} = $key;
+		my %debugTemp = %{$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{'d_'}};
+		push @{$setup{'DEBUGGING_SETTINGS'}{'Groups'}{'Default'}{'PrefOrder'}},$key;
+		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key} = \%debugTemp;
+		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'PrefChoose'} = $key;
+		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
 	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
-		Slim::Web::Setup::addChildren('server','PLUGINS');
+		Slim::Web::Setup::addChildren('SERVER_SETTINGS','PLUGINS');
 
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		Slim::Web::Setup::addChildren('server','RADIO');
+		Slim::Web::Setup::addChildren('SERVER_SETTINGS','RADIO');
 	}
 }
 
 sub initSetup {
 	initSetupConfig();
-	$setup{'server'}{'Prefs'}{'language'}{'options'} = {Slim::Utils::Strings::hash_of_languages()};
-	$setup{'interface'}{'Prefs'}{'skin'}{'options'} = {skins(1)};
-	$setup{'formatting'}{'Prefs'}{'longdateFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'longdateFormat'}{'options'}];
-	$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'shortdateFormat'}{'options'}];
-	$setup{'formatting'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'formatting'}{'Prefs'}{'timeFormat'}{'options'}];
+	$setup{'SERVER_SETTINGS'}{'Prefs'}{'language'}{'options'} = {Slim::Utils::Strings::hash_of_languages()};
+	$setup{'INTERFACE_SETTINGS'}{'Prefs'}{'skin'}{'options'} = {skins(1)};
+	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'options'}];
+	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'options'}];
+	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'options'}];
 	fillFormatOptions();
-	fillSetupOptions('player','titleFormat','titleFormat');
+	fillSetupOptions('PLAYER_SETTINGS','titleFormat','titleFormat');
 	fillAlarmOptions();
 }
 
 sub fillAlarmOptions {
-	$setup{'alarm'}{'Prefs'}{'alarmtime'} = {
+	$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'} = {
 		'onChange' => sub {
 			my ($client,$changeref,$paramref,$pageref,$key,$index) = @_;
 			
@@ -2366,8 +2367,8 @@ sub fillAlarmOptions {
 	};
 
 	for my $i (0..7) {
-		$setup{'alarm'}{'Prefs'}{'alarmvolume'.$i} = {
-			'validate' => \&validateNumber
+		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmvolume'.$i} = {
+			'validate' => \&Slim::Utils::Validate::number
 			,'PrefChoose' => string('SETUP_ALARMVOLUME').string('COLON')
 			,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
 			,'currentValue' => sub {
@@ -2377,8 +2378,8 @@ sub fillAlarmOptions {
 			}
 		};
 
-		$setup{'alarm'}{'Prefs'}{'alarmtime'.$i} = {
-			'validate' => \&validateTime
+		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'.$i} = {
+			'validate' => \&Slim::Utils::Validate::isTime
 			,'validateArgs' => [0,undef],
 			,'PrefChoose' => string('ALARM_SET').string('COLON')
 			,'changeIntro' => string('ALARM_SET')
@@ -2395,8 +2396,8 @@ sub fillAlarmOptions {
 				return $timestring;
 			}
 		};
-		$setup{'alarm'}{'Prefs'}{'alarm'.$i} = {
-			'validate' => \&validateTrueFalse
+		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarm'.$i} = {
+			'validate' => \&Slim::Utils::Validate::trueFalse
 			,'PrefHead' => ' '
 			,'PrefChoose' => string('SETUP_ALARM').string('COLON')
 			,'options' => {
@@ -2409,8 +2410,8 @@ sub fillAlarmOptions {
 					return $client->prefGet( "alarm",$i);
 				}
 		};
-		$setup{'alarm'}{'Prefs'}{'alarmplaylist'.$i} = {
-			'validate' => \&validateInHash
+		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmplaylist'.$i} = {
+			'validate' => \&Slim::Utils::Validate::inHash
 			,'PrefChoose' => string('ALARM_SELECT_PLAYLIST').string('COLON')
 			,'validateArgs' => undef
 			,'options' => undef
@@ -2420,7 +2421,7 @@ sub fillAlarmOptions {
 					return $client->prefGet( "alarmplaylist",$i);
 				}
 		};
-		$setup{'alarm'}{'Groups'}{'AlarmDay'.$i} = {
+		$setup{'ALARM_SETTINGS'}{'Groups'}{'AlarmDay'.$i} = {
 			'PrefOrder' => ['alarm'.$i,'alarmtime'.$i,'alarmvolume'.$i,'alarmplaylist'.$i]
 			,'PrefsInTable' => 1
 			,'Suppress_PrefHead' => 1
@@ -2435,7 +2436,7 @@ sub fillAlarmOptions {
 }
 
 sub fillFormatOptions {
-	$setup{'formatting'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
+	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 }
 
 sub fillSetupOptions {
@@ -2466,15 +2467,18 @@ sub playerChildren {
 	my $client = shift;
 	my $pageref = shift;
 	return if (!$client);
+
 	if ($client->isPlayer()) {
-		$pageref->{'children'} = ['player','homemenu','display','alarm','audio','remote'];
+
+		$pageref->{'children'} = ['PLAYER_SETTINGS','MENU_SETTINGS','DISPLAY_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS','REMOTE_SETTINGS'];
 		push @{$pageref->{'children'}},@newPlayerChildren;
 		if (scalar(keys %{Slim::Utils::PluginManager::playerPlugins()})) {
-			push @{$pageref->{'children'}}, 'player_plugins';
+			push @{$pageref->{'children'}}, 'PLAYER_PLUGINS';
 		}
 	} else {
-		$pageref->{'children'} = ['player','alarm','audio'];
+		$pageref->{'children'} = ['PLAYER_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS'];
 	}
+	
 }
 
 sub addPlayerChild {
@@ -2545,14 +2549,14 @@ sub setup_HTTP {
 	my $changed;
 	my $rejected;
 	
-	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'server')) {
+	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'SERVER_SETTINGS')) {
 		$response->code(RC_FORBIDDEN);
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
 
 	if (!defined($paramref->{'page'}) || !exists($setup{$paramref->{'page'}})) {
 		$response->code(RC_NOT_FOUND);
-		$paramref->{'suggestion'} = "Try adding page=server.";
+		$paramref->{'suggestion'} = "Try adding page=SERVER_SETTINGS.";
 		return Slim::Web::HTTP::filltemplatefile('html/errors/404.html',$paramref);
 	}
 
@@ -2584,6 +2588,8 @@ sub setup_HTTP {
 	#puts the list of options in the param 'preference_options'
 	options_HTTP($client,$paramref,$pagesetup{'Prefs'});
 	buildHTTP($client,$paramref,\%pagesetup);
+	
+	$paramref->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 	
 	return Slim::Web::HTTP::filltemplatefile('setup.html', $paramref);
 }
@@ -2795,6 +2801,7 @@ sub buildHTTP {
 		unshift @pages,$page;
 		$page = $setup{$page}{'parent'};
 	}
+
 	$paramref->{'linktree'} = buildLinkList('tree',$paramref,@pages);;
 	
 	# set up sibling bar
@@ -2802,6 +2809,8 @@ sub buildHTTP {
 		@pages = @{$setup{$pageref->{'parent'}}{'children'}};
 		if (scalar(@pages) > 1) {
 			$paramref->{'siblings'} = buildLinkList('tab',$paramref,@pages);
+
+			buildPulldown($paramref, @pages);
 		}
 	}
 	
@@ -2822,7 +2831,27 @@ sub buildHTTP {
 			$linkinfo{'linktitle'} = $setup{$pageref->{'children'}[0]}{'title'};
 		}
 
+		buildPulldown($paramref, @pages);
+
 		$paramref->{'singleChildLink'} = ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
+	}
+}
+
+sub buildPulldown {
+	my ($paramref,@pages) = @_;
+	
+	for my $page (@pages) {
+		next if $page eq "SERVER_SETTINGS";
+		next if $page eq "PLAYER_SETTINGS";
+		if (defined $paramref->{'playerid'}) {
+			Slim::Web::Pages->addPageLinks("playersetup",{"$page"  => "setup.html?page=$page"});
+			for my $playerplugin (@newPlayerChildren) {
+				Slim::Web::Pages->addPageLinks("playerplugin",{"$playerplugin"  => "setup.html?page=$playerplugin"});
+			}
+		
+		} else {
+			Slim::Web::Pages->addPageLinks("setup",{"$page"  => "setup.html?page=$page"});
+		}
 	}
 }
 
@@ -3575,265 +3604,75 @@ sub getPluginState {
 # Validation Functions
 ######################################################################
 sub validateAcceptAll {
-	my $val = shift;
-	return $val;
+	Slim::Utils::Validate::acceptAll(@_);
 }
 
 sub validateTrueFalse {
-	# use the perl idea of true and false.
-	my $val = shift;
-	if ($val) {
-		return 1;
-	} else {
-		return 0;
-	}
+	Slim::Utils::Validate::trueFalse(@_);
 }
 
 sub validateInt {
-	my ($val,$low,$high,$setLow,$setHigh) = @_;
-	if ($val !~ /^-?\d+$/) { #not an integer
-		return undef;
-	} elsif (defined($low) && $val < $low) { # too low, equal to $low is acceptable
-		if ($setLow) {
-			return $low;
-		} else {
-			return undef;
-		}
-	} elsif (defined($high) && $val > $high) { # too high, equal to $high is acceptable
-		if ($setHigh) {
-			return $high;
-		} else {
-			return undef;
-		}
-	}
-	return $val;
+	Slim::Utils::Validate::isInt(@_);
 }
 
 sub validatePort {
-	my $val = shift;
-
-	# not an integer
-	if (!defined $val || $val !~ /^-?\d+$/) {
-		return undef;
-	}
-
-	if ($val == 0) {
-		return $val;
-	}
-
-	if ($val < 1024) {
-		return undef;
-	}
-
-	if ($val > 65535) {
-		return undef;
-	}
-
-	return $val;
+	Slim::Utils::Validate::port(@_);
 }
 
 sub validateHostNameOrIPAndPort {
-	my $val = shift || return '';
-
-	# If we're just an IP:Port - hand off
-	if ($val =~ /^[\d\.:]+$/) {
-		return validateIPPort($val);
-	}
-
-	my ($host, $port) = split /:/, $val;
-
-	# port is bogus - return here.
-	unless (validatePort($port)) {
-		return undef;
-	}
-
-	# Otherwise - try to make sure it has at least valid chars
-	return undef if $host !~ /^[\w\d\._-]+$/;
-
-        return $val;
+	Slim::Utils::Validate::hostNameOrIPAndPort(@_);
 }
 
 sub validateIPPort {
-	my $val = shift;
-
-	if (length($val) == 0) {
-		return $val;
-	}
-	
-	if ($val !~ /^(\d+)\.(\d+)\.(\d+)\.(\d+):(\d+)$/) { 
-		#not formatted properly
-		return undef;
-	}
-
-	if (
-		($1 < 0) || ($2 < 0) || ($3 < 0) || ($4 < 0) || ($5 < 0) ||
-		($1 > 255) || ($2 > 255) || ($3 > 255) || ($4 > 255) || ($5 > 65535)
-		) {
-		# bad number
-		return undef;
-	}
-
-	return $val;
+	Slim::Utils::Validate::IPPort(@_);
 }
 
 sub validateNumber {
-	my ($val,$low,$high,$setLow,$setHigh) = @_;
-	if ($val !~ /^-?\.?\d+\.?\d*$/) { # this doesn't recognize scientific notation
-		return undef;
-	} elsif (defined($low) && $val < $low) { # too low, equal to $low is acceptable
-		if ($setLow) {
-			return $low;
-		} else {
-			return undef;
-		}
-	} elsif (defined($high) && $val > $high) { # too high, equal to $high is acceptable
-		if ($setHigh) {
-			return $high;
-		} else {
-			return undef;
-		}
-	}
-	return $val;
+	Slim::Utils::Validate::number(@_);
 }
 
 sub validateInList {
-	my ($val,@valList) = @_;
-	my $inList = 0;
-	foreach my $valFromList (@valList) {
-		$inList = ($valFromList eq $val);
-		last if $inList;
-	}
-	if ($inList) {
-		return $val;
-	} else {
-		return undef;
-	}
+	Slim::Utils::Validate::inList(@_);
 }
 
 sub validateTime {
-	my $val = shift;
-	if ($val =~ m/^([0\s]?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$/isg) {
-		return $val;
-	} else {
-		return undef;
-	}
+	Slim::Utils::Validate::isTime(@_);
 }
 
 # determines if the value is one of the keys of the supplied hash
 # the hash is supplied in the form of a reference either to a hash, or to code which returns a hash
 sub validateInHash {
-	my $val = shift;
-	my $ref = shift;
-	my $codereturnsref = shift; #should be set to 1 if $ref is to code that returns a hash reference
-	my %hash = ();
-	if (ref($ref)) {
-		if (ref($ref) eq 'HASH') {
-			%hash = %{$ref}
-		} elsif (ref($ref) eq 'CODE') {
-			if ($codereturnsref) {
-				%hash = %{&{$ref}};
-			} else {
-				%hash = &{$ref};
-			}
-		}
-	}
-	if (exists $hash{$val}) {
-		return $val;
-	} else {
-		return undef;
-	}
+	Slim::Utils::Validate::inHash(@_);
 }
 
 sub validateIsFile {
-	my $val = shift;
-	my $allowEmpty = shift;
-	if (-r $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
-		return $val;
-	} elsif ($allowEmpty && defined($val) && $val eq '') {
-		return $val;
-	} else  {
-		return (undef, "SETUP_BAD_FILE") ;
-	}
+	Slim::Utils::Validate::isFile(@_);
 }
 
 sub validateIsDir {
-	my $val = shift;
-	my $allowEmpty = shift;
-	if (-d $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
-		return $val;
-	} elsif ($allowEmpty && defined($val) && $val eq '') {
-		return $val;
-	} else  {
-		return (undef, "SETUP_BAD_DIRECTORY") ;
-	}
+	Slim::Utils::Validate::isDir(@_);
 }
 
 sub validateIsAudioDir {
-	my $val = shift;
-	
-	my $allowEmpty = shift;
-	
-	if (-d $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
-		return $val;
-	} elsif ($allowEmpty && defined($val) && $val eq '') {
-		return $val;
-	} else  {
-		print $!;
-		return (undef, "SETUP_BAD_DIRECTORY") ;
-	}
+	Slim::Utils::Validate::isAudioDir(@_);
 }
 
 sub validateHasText {
-	my $val = shift; # value to validate
-	my $defaultText = shift; #value to use if nothing in the $val param
-
-	if (defined($val) && $val ne '') {
-		return $val;
-	} else {
-		return $defaultText;
-	}
+	Slim::Utils::Validate::hasText(@_);
 }
 
 sub validatePassword {
-	my $val = shift;
-	my $currentPassword = Slim::Utils::Prefs::get('password');
-	if (defined($val) && $val ne '' && $val ne $currentPassword) {
-		srand (time());
-		my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
-		my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
-		return crypt($val, $salt);
-	} else {
-		return $currentPassword;
-	}
+	Slim::Utils::Validate::password(@_);
 }
 
 # TODO make this actually check to see if the format is valid
 sub validateFormat {
-	my $val = shift;
-	if (!defined($val)) {
-		return undef;
-	} elsif ($val eq '') {
-		return $val;
-	} else {
-		return $val;
-	}
+	Slim::Utils::Validate::format(@_);
 }
 
 # Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
 sub validateAllowedHosts {
-	my $val = shift;
-	$val =~ s/\s+//g;
-	if (!defined($val) || $val eq '') {
-	    return join(',', Slim::Utils::Network::hostAddr());
-	} else {
- 		return $val;
- 	}
+	Slim::Utils::Validate::allowedHosts(@_);
  }
 
 1;

@@ -233,7 +233,7 @@ sub shutdownPlugin {
 
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('itunes');
-	Slim::Web::Setup::delGroup('server','itunes',1);
+	Slim::Web::Setup::delGroup('SERVER_SETTINGS','itunes',1);
 
 	# set importer to not use
 	#Slim::Utils::Prefs::set('itunes', 0);
@@ -241,12 +241,12 @@ sub shutdownPlugin {
 }
 
 sub addGroups {
-	Slim::Web::Setup::addChildren('server','itunes',3);
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS','itunes',3);
 	Slim::Web::Setup::addCategory('itunes',&setupCategory);
 
 	my ($groupRef,$prefRef) = &setupUse();
 
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addGroup('SERVER_SETTINGS','itunes',$groupRef,2,$prefRef);
 }
 
 sub findLibraryFromPlist {
@@ -1148,7 +1148,7 @@ sub setupCategory {
 
 		'title' => string('SETUP_ITUNES'),
 
-		'parent' => 'server',
+		'parent' => 'SERVER_SETTINGS',
 
 		'GroupOrder' => [qw(Default iTunesPlaylistFormat)],
 

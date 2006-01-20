@@ -271,6 +271,10 @@ div#topGraphicMenu3 #statusMessage {
 	color: #111;
 }
 
+div#statusMessage form{
+	padding-top: 7px;
+}
+
 div#topGraphicMenu3 #statusSongRemoveButton {
 	position: absolute;
 	right: 10px;
@@ -285,6 +289,7 @@ div#homeMenu {
 	margin-left: 8px;
 	top: 41px;
 	margin-right: 8px;
+	padding-bottom: 40px;
 }
 
 .homeMenuSection div {
@@ -346,6 +351,13 @@ div#homeMenu {
 }
 
 .browsedbControls {
+	position: absolute;
+	top: 0px;
+	padding-top: 6px;
+	right: 10px;
+}
+
+.playlistControls {
 	position: absolute;
 	top: 0px;
 	padding-top: 6px;
