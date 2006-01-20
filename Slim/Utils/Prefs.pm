@@ -484,26 +484,38 @@ sub initClientPrefs {
 	my $defaultPrefs = shift;
 	
 	my $prefs = getClientPrefs($client->id());
+
 	for my $key (keys %{$defaultPrefs}) {
+
 		if (!defined($prefs->{$key})) {
+
+			# Take a copy of the default prefs
 			if (ref($defaultPrefs->{$key}) eq 'ARRAY') {
-				my @temp = @{$defaultPrefs->{$key}};
-				$prefs->{$key} = \@temp;
+
+				$prefs->{$key} = [ @{$defaultPrefs->{$key}} ];
+
 			} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
-				my %temp = %{$defaultPrefs->{$key}};
-				$prefs->{$key} = \%temp;
-			} else {
+
+				$prefs->{$key} = { %{$defaultPrefs->{$key}} };
+
+			} elsif (defined($defaultPrefs->{$key})) {
+
 				$prefs->{$key} = $defaultPrefs->{$key};
 			}
+
 		} elsif (ref($defaultPrefs->{$key}) eq 'HASH') {
+
 			# check defaults for individual hash prefs
 			for my $subkey (keys %{$defaultPrefs->{$key}}) {
+
 				if (!defined $prefs->{$key}{$subkey}) {
+
 					$prefs->{$key}{$subkey} = $defaultPrefs->{$key}{$subkey};
 				}
 			}
 		}
 	}
+
 	scheduleWrite() unless $writePending;
 }
 
