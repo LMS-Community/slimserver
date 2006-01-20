@@ -283,6 +283,7 @@ sub strings {
 	EN	Rescan Music Library
 	ES	Recopilar nuevamente la Colección Musical
 	FR	Répertorier musique
+	HE	תוסף סריקת הסיפריה
 	NL	Opnieuw scannen muziekcollectie
 	
 PLUGIN_RESCAN_RESCANNING
@@ -305,6 +306,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	DE	Automatisches Durchsuchen 
 	EN	Rescan Timer
 	ES	Timer de Recopilación
+	HE	מצב התוסף
 	NL	Herscantimer
 
 PLUGIN_RESCAN_TIMER_SET
@@ -312,6 +314,7 @@ PLUGIN_RESCAN_TIMER_SET
 	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
 	ES	Establecer Horario de Recopilación
+	HE	שעת הסריקה
 	NL	Stel herscantijd in 
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
@@ -319,6 +322,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	DE	Automatisches Durchsuchen deaktivieren...
 	EN	Turning rescan timer off...
 	ES	Apagando el timer de recopilación...
+	HE	מכבה טיימר סריקה
 	NL	Bezig met herscantimer uitzetten...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
@@ -326,6 +330,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	DE	Automatisches Durchsuchen aktivieren...
 	EN	Turning rescan timer on...
 	ES	Encendiendo el timer de recopilación...
+	HE	מדליק טיימר סריקה
 	NL	Bezig met herscantimer aanzetten...
 
 PLUGIN_RESCAN_TIMER_ON
@@ -333,6 +338,7 @@ PLUGIN_RESCAN_TIMER_ON
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 	ES	Timer de Recopilación ENCENDIDO
+	HE	הדלק סריקת ספרייה אוטומטית
 	NL	Herscantimer aan
 
 PLUGIN_RESCAN_TIMER_DESC
@@ -340,6 +346,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede elegir tener una recopilación programada de la colección musical cada 24 horas. Establecer la hora, y poner el Timer de Recopilación en ENCENDIDO para utilizar esta característica.
+	HE	תוסף זה מעדכן את הסיפריה בכל 24 שעות
 	NL	Je kunt kiezen voor een om het scannen van de muziekcollectie elke 24 uur te plannen. Stel de tijd in en zet de herscantimer Aan om deze optie te gebruiken.
 
 PLUGIN_RESCAN_TIMER_OFF
@@ -347,6 +354,7 @@ PLUGIN_RESCAN_TIMER_OFF
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 	ES	Timer de Recopilación APAGADO
+	HE	כבה סריקת ספרייה אוטומטית
 	NL	Herscantimer uit
 ^;
 }

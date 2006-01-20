@@ -950,6 +950,7 @@ sub strings {
 	return q^PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 	ES	Radio por Internet Live365
+	HE	LIVE365
 	NL	Live365 Internet radio
 
 PLUGIN_LIVE365_LOGOUT

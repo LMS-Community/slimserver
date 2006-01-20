@@ -633,6 +633,7 @@ SETUP_CLIPORT
 	EN	Command Line Interface Port Number
 	ES	Número de puerto para la interfaz de linea de comandos
 	FR	Numéro de port de l'interface en ligne de commande
+	HE	פורט לממשק שורת הפקודה
 	JP	コマンドライン インターフェース ポートナンバー
 	NL	Poortnummer van de Opdrachtprompt interface
 	NO	Portnummer for terminalgrensesnitt
@@ -647,6 +648,7 @@ SETUP_CLIPORT_DESC
 	EN	You can change the port number that is used to by a command line interface to control the player.
 	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.
 	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine.
+	HE	פורט זה משמש לשליטה על נגנים
 	JP	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
 	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een Opdrachtprompt interface te bedienen. Zet dit poortnummer op 0 (nul) als je de Opdrachtprompt interface wilt uitschakelen.
 	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.

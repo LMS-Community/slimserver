@@ -222,6 +222,7 @@ sub strings
 PLUGIN_RADIOIO_MODULE_NAME
 	EN	radioio.com - no boundaries.
 	ES	radioio.com - sin límites.
+	HE	רדיו אינטרנט ללא גבולות
 
 PLUGIN_RADIOIO_MODULE_TITLE
 	EN	radioio.com

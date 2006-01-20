@@ -699,6 +699,7 @@ SETUP_GROUP_XPL_DESC
 	EN	These settings control the behavior of the xPL protocol
 	ES	Estos valores controlan el comportamiento del protocolo xPL
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	HE	הגדרות הפרוטוקול
 	JP	これらのセッティングはxPLプロトコルを調節します
 	NL	Deze instellingen wijzigen het gedrag van het xPL protocol.
 	NO	Dette er innstillinger for xPL-protokollen
@@ -777,6 +778,7 @@ SETUP_XPLIR_NONE
 	EN	None
 	ES	Ninguno
 	FR	Aucun
+	HE	אף אחד
 	JP	なし
 	NL	Geen
 	NO	Ingen
@@ -789,6 +791,7 @@ SETUP_XPLIR_BUTTONS
 	EN	Buttons
 	ES	Botones
 	FR	Touches
+	HE	כפתורים
 	JP	ボタン
 	NL	Knoppen
 	NO	Knapper
@@ -800,6 +803,7 @@ SETUP_XPLIR_RAW
 	EN	Raw
 	ES	Crudo
 	FR	Brut
+	HE	גולמי
 	JP	列
 	NL	Ruw (Raw)
 	NO	Rå
@@ -812,6 +816,7 @@ SETUP_XPLIR_BOTH
 	EN	Both
 	ES	Ambos
 	FR	Les deux
+	HE	שניהם
 	JP	両方
 	NL	Beide
 	NO	Begge

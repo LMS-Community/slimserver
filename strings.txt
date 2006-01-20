@@ -8676,6 +8676,7 @@ SLIMSERVER_SETTINGS
 	ES	Configuración del SlimServer
 	FI	SlimServer palvelimen asetukset
 	FR	Réglages du SlimServer
+	HE	הגדרות שרת
 	JP	SlimServerセッティング
 	NL	SlimServer instellingen
 	NO	SlimServer instillinger
@@ -11313,266 +11314,37 @@ MERGEVARIOUSALBUMS
 CLEANUPSTALEENTRIES
 	EN	cleanupStaleEntries()
 
-PLUGIN_STRINGEDITOR_SEARCH
-	HE	חיפוש
-
-PLUGIN_STRINGEDITOR_HELPER
-	HE	מתרגם
-
-PLUGIN_STRINGEDITOR_NOT_TRANSLATED
-	HE	תרגום חסר
-
-PLUGIN_STRINGEDITOR_ADD_LANGUAGE
-	HE	הוספת שפה
-
-PLUGIN_STRINGEDITOR_ADD_LANGUAGE_CREDITS
-	HE	אבי סטון
-
-PLUGIN_STRINGEDITOR_ADD_LANGUAGE_ID
-	HE	HE
-
-PLUGIN_STRINGEDITOR_RESET
-	HE	איפוס תרגום
-
-PLUGIN_STRINGEDITOR_CHANGELOG
-	HE	רשימת שינויים
-
-PLUGIN_STRINGEDITOR_SHOW_STRINGS
-	HE	צפייה בקובץ התרגום
-
-PLUGIN_STRINGEDITOR_SEND_STRINGS
-	HE	שליחת התרגום
-
-PLUGIN_STRINGEDITOR_SEARCH_STRING
-	HE	חיפוש מילה
-
-PLUGIN_FAVORITES_MODULE_NAME
-	HE	מועדפים
-
-PLUGIN_RANDOM
-	HE	מיקס אקראי
-
-PLUGIN_HEALTH
-	HE	תקינות השרת
-
-SETUP_RESCAN_DESC}
-	HE	בחר את סוג הסריקה שתתבצע ברגע. פעולה זו צורכת זמן מה.
-
-PLUGIN_STRINGEDITOR_SEARCH_DESC
-	HE	הקלד שם מחרוזת מבוקשת לתרגום
-
-PLUGIN_STRINGEDITOR_ADD_LANGUAGE_DESC
-	HE	הוסף שפה חדשה לשרת
-
-PLUGIN_STRINGEDITOR_ADD_LANGUAGE_NAME
-	HE	שם השפה החדשה
-
-PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
-	HE	ShoutCast
-
-PLUGIN_PICKS_MODULE_NAME
-	HE	המומלצים
-
-PLUGIN_RADIOIO_MODULE_NAME
-	HE	רדיו אינטרנט ללא גבולות
-
-PLUGIN_LIVE365_MODULE_NAME
-	HE	LIVE365
-
-PLUGIN_RESCAN_MUSIC_LIBRARY
-	HE	תוסף סריקת הסיפריה
-
-PLUGIN_RESCAN_TIMER_DESC
-	HE	תוסף זה מעדכן את הסיפריה בכל 24 שעות
-
-LUGIN_RESCAN_TIMER_NAME
-	HE	מצב התוסף
-
-FILE_LENGTH
-	HE	גודל הקובץ
-
-PLUGIN_RANDOM_CHOOSE_BELOW
-	HE	בחר מיקס אקראי
-
-PLUGIN_RANDOM_TRACK_WEB
-	HE	שירים באקראי
-
-PLUGIN_RANDOM_ARTIST_WEB
-	HE	אמנים באקראי
-
-PLUGIN_RANDOM_ALBUM_WEB
-	HE	אלבומים באקראי
-
-PLUGIN_RANDOM_YEAR_WEB
-	HE	שנים באקראי
-
-PLUGIN_RANDOM_GENRE_FILTER_WEB
-	HE	סוגי מוזיקה שיכללו
-
-PLUGIN_RANDOM_SELECT_ALL
-	HE	בחר הכל
-
-PLUGIN_RANDOM_BEFORE_NUM_TRACKS
-	HE	 
-
-PLUGIN_RANDOM_AFTER_NUM_TRACKS
-	HE	מספר השירים שנוגנו ויוצגו
-
-PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
-	HE	מספר השירים הבאים שיוצגו
-
-PLUGIN_STRINGEDITOR_FOUND_DESC
-	HE	בחר מחרוזת לתרגום
-
-PLUGIN_STRINGEDITOR_IDENTIFIER
-	HE	מזהה
-
-PLUGIN_STRINGEDITOR_DEFAULT_STRING
-	HE	שם ברירת מחדל
-
-PLUGIN_RESCAN_TIMER_NAME
-	HE	מצב פעילות
-
-PLUGIN_RESCAN_TIMER_SET
-	HE	שעת הסריקה
-
-PLUGIN_SCREENSAVER_DATETIME
-	HE	שומר מסך תאריכון
-
-PLUGIN_RANDOM_ARTIST
-	HE	מיקס אמן אקראי
-
-PLUGIN_RANDOM_ALBUM
-	HE	מיקס אלבום אקראי
-
-PLUGIN_RANDOM_TRACK
-	HE	מיקס שיר אקראי
-
-QUEEZEBOX2_HOME
-	HE	ברוכים המאזינים
-
-PLUGIN_RANDOM_DISABLED
-	HE	מיקס אקראי מופסק
-
-PLUGIN_RESCAN_TIMER_OFF
-	HE	כבה סריקת ספרייה אוטומטית
-
-PLUGIN_RESCAN_TIMER_ON
-	HE	הדלק סריקת ספרייה אוטומטית
-
-PLUGIN_RESCAN_TIMER_TURNING_ON
-	HE	מדליק טיימר סריקה
-
-PLUGIN_RESCAN_TIMER_TURNING_OFF
-	HE	מכבה טיימר סריקה
-
-PLUGIN_STRINGEDITOR_TRANSLATED_STRING
-	HE	מתורגם ל
-
-PLUGIN_PICKS_STATION
-	HE	תחנה
-
-PLUGIN_PICKS_LOADING_PICKS
-	HE	טוען מועדפים
-
-PLUGIN_PICKS_LOADING_ERROR
-	HE	שגיאה בטעינת מועדפים
-
-PLUGIN_HEALTH_BUFFER_DESC
-	HE	תצוגה גרפית של סטטיסטיקות
-
-PLUGIN_HEALTH_BUFFER_LOW_DESC1
-	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
-
-PLUGIN_HEALTH_BUFFER_LOW_DESC2
-	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
-
-PLUGIN_HEALTH_CONTROLCONGEST_DESC
-	HE	הקישור בין הנגן לשרת נקטע מספר פעמים. בדוק רשת
-
-PLUGIN_HEALTH_CONTROLFAIL_DESC
-	HE	הנגן לא מחובר. בדוק אם הוא מחובר לחשמל
-
-PLUGIN_HEALTH_CONTROL_DESC
-	HE	אם הערכים בגרף הם מעל 1 או 2 בדוק רשת
-
-PLUGIN_HEALTH_NO_PLAYER_DESC
-	HE	השרת לא מוצא נגן, בדוק רשת וחומת אש
-
-PLUGIN_HEALTH_PERFON_DESC
-	HE	תוסף איסוף סטטיסטיקות מופעל
-
-PLUGIN_HEALTH_PLAYERDETAIL_DESC
-	HE	הגרף מציג סטטיסטיקות. בדוק אותו לאחר הפעלת התוסף המתאים לאורך זמן מה
-
-PLUGIN_HEALTH_RESPONSE_DESC
-	HE	במידה וגרף זה מציג זמנים מעל שניה אחת יש בעיה ברשת או שהשרת עמוס
-
-PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
-	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-
-PLUGIN_HEALTH_RESPONSE_POOR_DESC
-	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-
-SLIMSERVER_SETTING
-	HE	הגדרות שרת
-
-PLUGIN_HEALTH_SCHEDULER_DESC
-	HE	במחשבים ישנים עליית השרת יכולה להעמיס על המחשב ולהאט אותו. ביר כאן לעליה מבוקרת של השרת
-
-PLUGIN_HEALTH_TIMER_LATE_DESC
-	HE	זמן התגובה לרענון ממשק האינטרנט
-
-PLUGIN_HEALTH_TIMER_LENGTH_DESC
-	HE	במידה והגרף מציג זמנים ארוכים מחצי שניה, בדוק עומס על השרת
-
-PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
-	HE	שגיאה בניתוח מידע
-
-SETUP_CLIPORT
-	HE	פורט לממשק שורת הפקודה
-
-SETUP_CLIPORT_DESC
-	HE	פורט זה משמש לשליטה על נגנים
-
-SETUP_GROUP_XPL_DESC
-	HE	הגדרות הפרוטוקול
-
-SETUP_XPLIR_BOTH
-	HE	שניהם
-
-SETUP_XPLIR_NONE
-	HE	אף אחד
-
-SETUP_XPLIR_RAW
-	HE	גולמי
-
-SETUP_XPLIR_BUTTONS
-	HE	כפתורים
-
 SETUP_SORTBROWSEART
+	DE	Sortierreihenfolge für Plattenhüllen
 	EN	Browse By Artwork Order
 
 SETUP_SORTBROWSEART_DESC
+	DE	Wählen Sie die Standard Sortierreihenfolge, die beim Nachschlagen von Plattenhüllen verwendet werden soll. (Diese Funktion benötigt die oben definierten Platzhalter)
 	EN	Choose the default order that the Browse Artwork web page displays albums.  (This feature currently requires placeholders to be included in the browse view - see above.)
 
 SETUP_SORTBROWSEART_ALBUM
 	EN	Album
 
 SETUP_SORTBROWSEART_ARTISTALBUM
+	DE	Interpret, Album
 	EN	Artist, Album
 
 SETUP_SORTBROWSEART_ARTISTYEARALBUM
+	DE	Interpret, Jahr, Album
 	EN	Artist, Year, Album
 
 SETUP_SORTBROWSEART_YEARALBUM
+	DE	Jahr, Album
 	EN	Year, Album
 
 SETUP_SORTBROWSEART_YEARARTISTALBUM
+	DE	Jahr, Artist, Album
 	EN	Year, Artist, Album
 
 SETUP_SORTBROWSEART_GENREALBUM
+	DE	Stil, Album
 	EN	Genre, Album
 
 SETUP_SORTBROWSEART_GENREARTISTALBUM
+	DE	Stil, Interpret, Album
 	EN	Genre, Artist, Album

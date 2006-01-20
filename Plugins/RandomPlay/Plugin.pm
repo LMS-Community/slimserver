@@ -707,18 +707,21 @@ PLUGIN_RANDOM
 	DE	Zufalls Mix
 	EN	Random Mix
 	ES	Mezcla al azar
+	HE	מיקס אקראי
 	NL	Willekeurige mix
 
 PLUGIN_RANDOM_DISABLED
 	DE	Zufalls Mix angehalten
 	EN	Random Mix Stopped
 	ES	Mezcla al Azar Detenida
+	HE	מיקס אקראי מופסק
 	NL	Willekeurige mix gestopt
 
 PLUGIN_RANDOM_TRACK
 	DE	Zufälliger Lieder Mix
 	EN	Random Song Mix
 	ES	Mezcla por Canción al Azar
+	HE	מיקס שיר אקראי
 	NL	Willekeurige liedjesmix
 
 PLUGIN_RANDOM_TRACK_PLAYING
@@ -737,6 +740,7 @@ PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
 	ES	Mezcla al azar por Álbum
+	HE	מיקס אלבום אקראי
 	NL	Willekeurige albummix
 
 PLUGIN_RANDOM_ALBUM_ITEM
@@ -760,6 +764,7 @@ PLUGIN_RANDOM_ARTIST
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
 	ES	Mezcla por Artista al Azar
+	HE	מיקס אמן אקראי
 	NL	Willekeurige artiestenmix
 
 PLUGIN_RANDOM_ARTIST_ITEM
@@ -814,6 +819,7 @@ PLUGIN_RANDOM_SELECT_ALL
 	DE	Alle wählen
 	EN	Select All
 	ES	Elegir Todo
+	HE	בחר הכל
 	NL	Selecteer alles
 
 PLUGIN_RANDOM_SELECT_NONE
@@ -826,36 +832,42 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla al azar de mósica de tu colección:
+	HE	בחר מיקס אקראי
 	NL	Kies een willekeurige muziekmix vanuit je muziekcollectie:
 
 PLUGIN_RANDOM_TRACK_WEB
 	DE	Zufällige Lieder
 	EN	Random songs
 	ES	Canciones al azar
+	HE	שירים באקראי
 	NL	Willekeurige liedjes
 
 PLUGIN_RANDOM_ARTIST_WEB
 	DE	Zufällige Interpreten
 	EN	Random artists
 	ES	Artistas al azar
+	HE	אמנים באקראי
 	NL	Willekeurige artiesten
 
 PLUGIN_RANDOM_ALBUM_WEB
 	DE	Zufällige Alben
 	EN	Random albums
 	ES	Álbumes al azar
+	HE	אלבומים באקראי
 	NL	Willekeurige albums
 
 PLUGIN_RANDOM_YEAR_WEB
 	DE	Zufällige Jahrgänge
 	EN	Random years
 	ES	Años al azar
+	HE	שנים באקראי
 	NL	Willekeurige jaren
 
 PLUGIN_RANDOM_GENRE_FILTER_WEB
 	DE	Im Mix zu berücksichtigende Stile: 
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en tu mezcla:
+	HE	סוגי מוזיקה שיכללו
 	NL	Genres om toe te voegen in je mix:
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
@@ -868,12 +880,14 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	DE	noch abzuspielende und
 	EN	upcoming songs and
 	ES	próximas canciones y
+	HE	מספר השירים שנוגנו ויוצגו
 	NL	volgende liedje en
 
 PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	DE	wiedergegebene Lieder anzeigen.
 	EN	recently played songs.
 	ES	canciones escuchadas recientemente.
+	HE	מספר השירים הבאים שיוצגו
 	NL	recent afgespeelde liedjes.
 
 PLUGIN_RANDOM_CONTINUOUS_MODE

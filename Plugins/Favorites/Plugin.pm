@@ -281,6 +281,7 @@ PLUGIN_FAVORITES_MODULE_NAME
 	DE	Favoriten
 	EN	Favorites
 	ES	Favoritas
+	HE	מועדפים
 	NL	Favorieten
 
 PLUGIN_FAVORITES_NOT_DEFINED

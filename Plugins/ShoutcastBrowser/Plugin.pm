@@ -1115,6 +1115,7 @@ sub strings {
 	return q^PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	EN	SHOUTcast Internet Radio
 	ES	Radio por Internet SHOUTcast
+	HE	ShoutCast
 	NL	SHOUTcast Internet radio
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
@@ -1164,6 +1165,7 @@ PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	DE	Beim Auswerten der Stream-Informationen ist ein Fehler aufgetreten. Reduzieren Sie allenfalls die Anzahl Streams, falls Sie eine grosse Zahl anfordern wollten.
 	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
 	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
+	HE	שגיאה בניתוח מידע
 	NL	Er was een fout bij het analyseren van de streaminformatie. Probeer het aantal streams verminderen als je een groot aantal hebt ingesteld.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR

@@ -30,6 +30,7 @@ PLUGIN_SCREENSAVER_DATETIME
 	EN	Date and Time
 	ES	Salvapantallas de Fecha y Hora
 	FR	Ecran de veille Date/Heure
+	HE	שומר מסך תאריכון
 	NL	Datum en tijd
 	
 PLUGIN_SCREENSAVER_DATETIME_ENABLE
