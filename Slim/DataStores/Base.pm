@@ -443,7 +443,7 @@ sub init {
 
 				if (defined($sort) && $sort =~ /^artist/ ) {
 					
-					if (blessed($obj->contributor) && $obj->contributor->can('namesort')) {
+					if (!$obj->compilation && blessed($obj->contributor) && $obj->contributor->can('namesort')) {
 
 						return $obj->contributor->namesort;
 						

@@ -445,25 +445,30 @@ sub alphaPageBar {
 
 			if ($lastLetter ne $curLetter) {
 
-				if (($j - $lastLetterIndex) > $maxcount) {
-					if ($end == -1 && $j > $start) {
-						$end = $j - 1;
+				if ($curLetter ne '') {
+					
+					if (($j - $lastLetterIndex) > $maxcount) {
+						if ($end == -1 && $j > $start) {
+							$end = $j - 1;
+						}
+						$lastLetterIndex = $j;
 					}
-					$lastLetterIndex = $j;
+
+					$pageslist .= ${Slim::Web::HTTP::filltemplatefile('alphapagebarlist.html', {
+						'currpage'     => ($lastLetterIndex == $start),
+						'itemnum0'     => $lastLetterIndex,
+						'itemnum1'     => ($lastLetterIndex + 1),
+						'pagenum'      => $curLetter,
+						'fragment'     => ("#" . $curLetter),
+						'otherparams'  => ($otherparams || ''),
+						'skinOverride' => $skinOverride,
+						'path'         => $path
+						})};
+					
+					$lastLetter = $curLetter;
+
 				}
 
-				$pageslist .= ${Slim::Web::HTTP::filltemplatefile('alphapagebarlist.html', {
-					'currpage'     => ($lastLetterIndex == $start),
-					'itemnum0'     => $lastLetterIndex,
-					'itemnum1'     => ($lastLetterIndex + 1),
-					'pagenum'      => $curLetter,
-					'fragment'     => ("#" . $curLetter),
-					'otherparams'  => ($otherparams || ''),
-					'skinOverride' => $skinOverride,
-					'path'         => $path
-				})};
-
-				$lastLetter = $curLetter;
 			}
 		}
 
