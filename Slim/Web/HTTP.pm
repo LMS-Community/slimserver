@@ -27,7 +27,7 @@ use Socket qw(:DEFAULT :crlf);
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
-use YAML::Syck;
+use YAML qw(LoadFile);
 
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
@@ -1621,7 +1621,7 @@ sub newSkinTemplate {
 
 		if (-r $skinConfig) {
 
-			$skinSettings = eval { YAML::Syck::LoadFile($skinConfig) };
+			$skinSettings = eval { LoadFile($skinConfig) };
 
 			if ($@) {
 				errorMsg("Could not load skin configuration file: $skinConfig\n");

@@ -139,7 +139,7 @@ BEGIN {
 
 	# Here's what we want to try and load. This will need to be updated
 	# when a new XS based module is added to our CPAN tree.
-	my @modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib YAML::Syck);
+	my @modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib);
 
 	if ($] <= 5.007) {
 		push @modules, qw(Storable Digest::MD5);
