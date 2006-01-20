@@ -106,7 +106,18 @@ sub checkTimers {
 		$::perfmon && $timerLate->log($now - $timer->{'when'});
 	
 		no strict 'refs';
-		&$subptr(Slim::Player::Client::getClient($client), @{$args});
+		# Changed to allow timers on non Client objects: Required by SlimScrobbler
+
+		if (ref($client)) {
+
+			$::d_time && msg("Timer used for non player object so using $client for callback\n");
+
+			&$subptr($client, @{$args});
+
+		} else {
+
+			&$subptr(Slim::Player::Client::getClient($client), @{$args});
+		}
 
 		$::d_perf && ((Time::HiRes::time() - $now) > 0.5) && msg("timer $subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
 
