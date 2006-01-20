@@ -13,7 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Path;
 use FindBin qw($Bin);
 use Digest::MD5;
-use YAML qw(DumpFile LoadFile);
+use YAML qw(DumpFile LoadFile Dump);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
