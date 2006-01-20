@@ -415,7 +415,6 @@ sub cli_process {
 	$d_cli_vv && msg("CLI: cli_process($command)\n");
 	
 	my $exit = 0;			# do we close the connection after this command
-	my $writeoutput = 1;
 
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
@@ -431,6 +430,7 @@ sub cli_process {
 
 	# remember we're the source
 	$request->source('CLI');
+	$request->privateData($client_socket);
 	
 	my $cmd = $request->getRequest();
 	
@@ -496,14 +496,12 @@ sub cli_process {
 			
 			$request->execute();
 		
-			# Don't write output if listen is 1, the callback willl
-			$writeoutput = !$connections{$client_socket}{'listen'} || $request->query();
 		} else {
 			$::d_cli && msg("CLI: Request [$cmd] unkown or missing client -- will echo as is...\n");
 		}
 	}
 		
-	cli_request_write($client_socket, $request) if $writeoutput;
+	cli_request_write($client_socket, $request);
 	
 	return $exit;
 }
@@ -518,7 +516,7 @@ sub cli_request_write {
 	my $encoding = $request->getParam('charset') || 'utf8';
 	my @elements = $request->renderAsArray($encoding);
 	
-	my $output = Slim::Control::Stdio::array_to_string($request->client(), \@elements);
+	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 	
 	$::d_cli && msg("CLI: Sending: " . $output . "\n");
 	
@@ -531,11 +529,14 @@ sub cli_request_notification {
 	my $request = shift;
 
 	$d_cli_vv && msg("CLI: cli_request_notification()\n");
-
-	# XXX - this should really be passed and not global.
+	
 	foreach my $client_socket (keys %connections) {
 
+		# don't echo for those not listening
 		next unless ($connections{$client_socket}{'listen'} == 1);
+		
+		# don't echo to the sender
+		next if ($request->source() eq 'CLI' && $request->privateData() eq $client_socket);
 
 		# retrieve the socket object
 		$client_socket = $connections{$client_socket}{'socket'};

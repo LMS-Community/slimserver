@@ -27,7 +27,7 @@ sub strings { return '
 PLUGIN_SCREENSAVER_DATETIME
 	CZ	Datumový spořič
 	DE	Datum/Zeit Bildschirmschoner
-	EN	Date and Time
+	EN	Date and Time Screensaver
 	ES	Salvapantallas de Fecha y Hora
 	FR	Ecran de veille Date/Heure
 	HE	שומר מסך תאריכון

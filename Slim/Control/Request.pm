@@ -494,7 +494,7 @@ sub new {
 	my $self = {
 		'_request'    => [],
 		'_isQuery'    => undef,
-		'_client'     => (blessed($client) ? $client->id : undef),
+		'_clientid'   => (blessed($client) ? $client->id() : undef),
 		'_needClient' => 0,
 		'_params'     => \%paramHash,
 		'_curparam'   => 0,
@@ -505,6 +505,7 @@ sub new {
 		'_cb_func'    => undef,
 		'_cb_args'    => undef,
 		'_source'     => undef,
+		'_private'    => undef,
 	};
 
 	bless $self, $class;
@@ -520,17 +521,30 @@ sub new {
 # Read/Write basic query attributes
 ################################################################################
 
-# sets/returns the client
+# sets/returns the client (we store the id only)
 sub client {
 	my $self = shift;
 	my $client = shift;
 	
 	if (defined $client) {
-		$self->{'_client'} = $client->id;
+		$self->{'_clientid'} = (blessed($client) ? $client->id() : undef);
 		$self->validate();
 	}
 	
-	return Slim::Player::Client::getClient($self->{'_client'});
+	return Slim::Player::Client::getClient($self->{'_clientid'});
+}
+
+# sets/returns the client ID
+sub clientid {
+	my $self = shift;
+	my $clientid = shift;
+	
+	if (defined $clientid) {
+		$self->{'_clientid'} = $clientid;
+		$self->validate();
+	}
+	
+	return $self->{'_clientid'};
 }
 
 # sets/returns the need client state
@@ -609,6 +623,16 @@ sub source {
 	return $self->{'_source'};
 }
 
+# sets/returns the source private data
+sub privateData {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_private'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_private'};
+}
+
 
 ################################################################################
 # Read/Write status
@@ -634,7 +658,7 @@ sub validate {
 
 		$self->setStatusNotDispatchable();
 
-	} elsif ($self->{'_needClient'} && !$self->{'_client'}) {
+	} elsif ($self->{'_needClient'} && !$self->{'_clientid'}) {
 
 		$self->setStatusNeedsClient();
 

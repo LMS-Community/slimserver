@@ -72,7 +72,7 @@ sub executeCmd {
 	
 	my @outputParams = Slim::Control::Request::executeLegacy($client, $arrayRef);
 		
-	return array_to_string($client, \@outputParams);
+	return array_to_string($client->id(), \@outputParams);
 }
 
 
@@ -102,17 +102,17 @@ sub string_to_array {
 	return ($client, \@elements);
 }
 
-# transforms an array into an escaped string (returned). If $client is
-# defined, its ID is added in the first position in the array.
+# transforms an array into an escaped string (returned). If $clientid is
+# defined, it is added in the first position in the array.
 sub array_to_string {
-	my $client   = shift;
+	my $clientid   = shift;
 	my $arrayRef = shift;
 
 	# make a copy, we'll change it
 	my @elements = @$arrayRef;
 
 	# add client if if there is a client
-	unshift @elements, $client->id() if defined $client;
+	unshift @elements, $clientid if defined $clientid;
 	
 	# escape all the terms
 	map { $_ = URI::Escape::uri_escape($_) } @elements;
