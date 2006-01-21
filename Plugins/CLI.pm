@@ -419,12 +419,14 @@ sub cli_process {
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
 
-	$::d_cli && $client && msg("CLI: Parsing command: Found client [" . $client->id() ."]\n");
+	my $clientId = blessed($client) ? $client->id : $client;
+
+	$::d_cli && $client && msg("CLI: Parsing command: Found client [$clientId]\n");
 
 	return if !defined $arrayRef;
 
 	# create a request
-	my $request = Slim::Control::Request->new($client->id(), $arrayRef);
+	my $request = Slim::Control::Request->new($clientId, $arrayRef);
 
 	return if !defined $request;
 
@@ -447,7 +449,7 @@ sub cli_process {
 		$request->client($client);
 		if ($::d_cli) {
 			if (defined $client) {
-				msg("CLI: Request [$cmd] requires client, allocated " . $client->id() . "\n");
+				msg("CLI: Request [$cmd] requires client, allocated $clientId\n");
 			} else {
 				msg("CLI: Request [$cmd] requires client, none found!\n");
 			}
