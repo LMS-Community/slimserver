@@ -127,6 +127,7 @@ sub browsedb {
 		'title'	       => string($title),
 		'hierarchy'    => $hierarchy,
 		'level'	       => 0,
+		'sort'         => $sort,
 		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	};
 
@@ -161,10 +162,11 @@ sub browsedb {
 			push @attrs, $attr . '=' . Slim::Utils::Misc::escape($params->{$attr});
 
 			push @{$params->{'pwd_list'}}, {
-				 'hreftype' => 'browseDb',
-				 'title'      => $names{$attr},
-				 'hierarchy'	=> $hierarchy,
-				 'level'	=> $i+1,
+				 'hreftype'     => 'browseDb',
+				 'title'        => $names{$attr},
+				 'hierarchy'    => $hierarchy,
+				 'level'        => $i+1,
+				 'sort'         => $sort,
 				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 			};
 
