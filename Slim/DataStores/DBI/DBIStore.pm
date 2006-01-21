@@ -443,12 +443,6 @@ sub count {
 	});
 }
 
-sub albumsWithArtwork {
-	my $self = shift;
-	
-	return [ Slim::DataStores::DBI::Album->hasArtwork ];
-}
-
 sub totalTime {
 	my $self = shift;
 

@@ -38,7 +38,7 @@ should override all of these methods.
 
 	$class->virtual_methods(qw(
 		new classForType contentType objectForUrl objectForId find count
-		albumsWithArtwork totalTime updateTrack newTrack updateOrCreate
+		totalTime updateTrack newTrack updateOrCreate
 		delete markAllEntriesStale markEntryAsValid markEntryAsInvalid
 		cleanupStaleEntries cleanupStaleTrackEntries cleanupStaleTableEntries
 		wipeCaches wipeAllData forceCommit clearExternalPlaylists clearInternalPlaylists
