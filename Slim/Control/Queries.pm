@@ -927,7 +927,7 @@ sub statusQuery {
 			my @slaves = Slim::Player::Sync::slaves($master);
 			my @sync_slaves = map { $_->id } @slaves;
 
-			$request->addResult('sync_slaves', join(" ", @sync_slaves));
+			$request->addResult('sync_slaves', join(",", @sync_slaves));
 		}
 	
 		$request->addResult("mixer volume", $client->volume());
@@ -1128,10 +1128,9 @@ sub syncQuery {
 	if (Slim::Player::Sync::isSynced($client)) {
 	
 		my @buddies = Slim::Player::Sync::syncedWith($client);
-		my $i = 0;
-		for my $eachclient (@buddies) {
-			$request->addResultLoop('@syncedWith', $i++, '_playerid', $eachclient->id());
-		}
+		my @sync_buddies = map { $_->id() } @buddies;
+
+		$request->addResult('_sync', join(",", @sync_buddies));
 	} else {
 	
 		$request->addResult('_sync', '-');

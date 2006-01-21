@@ -1044,6 +1044,14 @@ sub playlistcontrolCommand {
 			@songs = $playlist->tracks();
 		}
 	}
+	elsif (defined(my $track_id_list = $request->getParam('track_id'))){
+		# split on commas
+		my @track_ids = split(/,/, $track_id_list);
+		
+		foreach my $id (@track_ids) {
+			push @songs, $ds->objectForId('lightweighttrack', $id);
+		}
+	}
 	else {
 		if (defined(my $genre_id = $request->getParam('genre_id'))){
 			$find->{'genre'} = $genre_id;
@@ -1053,9 +1061,6 @@ sub playlistcontrolCommand {
 		}
 		if (defined(my $album_id = $request->getParam('album_id'))){
 			$find->{'album'} = $album_id;
-		}
-		if (defined(my $track_id = $request->getParam('track_id'))){
-			$find->{'id'} = $track_id;
 		}
 		if (defined(my $year_id = $request->getParam('year_id'))){
 			$find->{'year'} = $year_id;
@@ -1069,23 +1074,19 @@ sub playlistcontrolCommand {
 			'sortBy' => $sort,
 		}) };
 	}
-	my $size  = scalar(@songs);
-	my $playListSize = Slim::Player::Playlist::count($client);
 
-	# start the show...
+	# don't call Xtracks if we got no songs
+	if (@songs) {
 	
-	push(@{Slim::Player::Playlist::playList($client)}, @songs) if ($load || $add || $insert);
-	Slim::Player::Playlist::removeMultipleTracks($client, \@songs) if $delete;
+		$cmd .= "tracks";
 	
-	_insert_done($client, $playListSize, $size) if $insert;
+		Slim::Control::Request::executeRequest(
+				$client, 
+				['playlist', $cmd, 'listref', \@songs]
+			);
+	}
 	
-	Slim::Player::Playlist::reshuffle($client, $load?1:0) if ($load || $add);
-	Slim::Player::Source::jumpto($client, 0) if $load;
-
-	$client->currentPlaylistModified(1) if ($add || $insert || $delete);
-	$client->currentPlaylistChangeTime(time()) if ($load || $add || $insert || $delete);
-
-	$request->addResult('count', $size);
+	$request->addResult('count', scalar(@songs));
 
 	$request->setStatusDone();
 }
