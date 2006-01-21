@@ -52,9 +52,9 @@ function chooseSettings(value,option)
 	switch(option)
 	{
 		[% IF playerid %][% PROCESS addCaseLinks links=additionalLinks.playersetup  %]
-						 [% PROCESS addCaseLinks links=additionalLinks.playerplugin %]
+						 [%# PROCESS addCaseLinks links=additionalLinks.playerplugin %]
 		[% ELSE %][% PROCESS addCaseLinks links=additionalLinks.setup   %]
-				  [% PROCESS addCaseLinks links=additionalLinks.plugin %][% END %]
+				  [%# PROCESS addCaseLinks links=additionalLinks.plugin %][% END %]
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break

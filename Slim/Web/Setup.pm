@@ -2846,7 +2846,7 @@ sub buildPulldown {
 		if (defined $paramref->{'playerid'}) {
 			Slim::Web::Pages->addPageLinks("playersetup",{"$page"  => "setup.html?page=$page"});
 			for my $playerplugin (@newPlayerChildren) {
-				Slim::Web::Pages->addPageLinks("playerplugin",{"$playerplugin"  => "setup.html?page=$playerplugin"});
+				#Slim::Web::Pages->addPageLinks("playerplugin",{"$playerplugin"  => "setup.html?page=$playerplugin"});
 			}
 		
 		} else {
