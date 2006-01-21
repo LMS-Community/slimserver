@@ -120,7 +120,7 @@ sub initSetupConfig {
 
 					if ($client->isPlayer()) {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats','Display'];
-						fillSetupOptions('player','titleFormat','titleFormat');
+						fillSetupOptions('PLAYER_SETTINGS','titleFormat','titleFormat');
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
 							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
@@ -300,8 +300,8 @@ sub initSetupConfig {
 							$pageref->{'Prefs'}{'activeFont_curr'}{'validateArgs'} = [0,$activeFontMax,1,1];
 							$pageref->{'Prefs'}{'idleFont_curr'}{'validateArgs'} = [0,$idleFontMax,1,1];
 		
-							fillFontOptions($client,'display','idleFont');
-							fillFontOptions($client,'display','activeFont');
+							fillFontOptions($client,'DISPLAY_SETTINGS','idleFont');
+							fillFontOptions($client,'DISPLAY_SETTINGS','activeFont');
 							removeExtraArrayEntries($client,'activeFont',$paramref,$pageref);
 							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
 						} else {
@@ -2458,7 +2458,8 @@ sub fillFontOptions {
 		}
 	}
 	
-	$allowedfonts{'-1'} = ' ';
+	$allowedfonts{'-1'} = ' ';;
+
 	$setup{$set}{'Prefs'}{$pref}{'options'} = \%allowedfonts;
 	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [\%allowedfonts];
 }
