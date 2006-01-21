@@ -10,6 +10,7 @@ use strict;
 use File::Spec::Functions;
 use Scalar::Util qw(blessed);
 
+use Slim::Control::Request;
 use Slim::Formats::Parse;
 use Slim::Music::Info;
 use Slim::Player::Playlist;
@@ -187,7 +188,7 @@ sub saveCurrentPlaylist {
 		# Changed by Fred to fix the issue of getting the playlist object
 		# by setting $p1 to it, which was messing up callback and the CLI.
 
-		my $request = Slim::Control::executeRequest($client, ['playlist', 'save', $title]);
+		my $request = Slim::Control::Request::executeRequest($client, ['playlist', 'save', $title]);
 		
 		if (defined $request) {
 		
