@@ -502,7 +502,7 @@ sub getFeedXml {
 
 		# forcearray to treat items as array,
 		# keyattr => [] prevents id attrs from overriding
-		my $xml = eval { XMLin($http->contentRef, forcearray => ["item"], keyattr => []) };
+		my $xml = eval { XMLin($http->content, forcearray => ["item"], keyattr => []) };
 
 		$getFeedXml_semaphore = 0;
 		$http->close;
