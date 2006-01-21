@@ -78,6 +78,7 @@ sub setExecuteCallback {
 	$executeCallbacks{$callbackRef} = $callbackRef;
 	errorMsg("Slim::Control::Command::setExecuteCallback() has been deprecated!\n");
 	errorMsg("Please use Slim::Control::Request::subscribe() instead!\n");
+	errorMsg("Documentation is available in Slim::Control::Request.pm\n");
 }
 
 sub clearExecuteCallback {
@@ -85,6 +86,7 @@ sub clearExecuteCallback {
 	delete $executeCallbacks{$callbackRef};
 	errorMsg("Slim::Control::Command::clearExecuteCallback() has been deprecated!\n");
 	errorMsg("Please use Slim::Control::Request::unsubscribe() instead!\n");
+	errorMsg("Documentation is available in Slim::Control::Request.pm\n");
 }
 
 sub executeCallback {

@@ -132,8 +132,97 @@ package Slim::Control::Request;
 # is an option of specifying a callback function, to be called once the 
 # request is executed. In addition, it is possible to be notified of command
 # execution (see NOTIFICATIONS below).
-
-
+#
+#
+# Function "Slim::Control::Request::executeRequest" accepts the usual parameters
+# of client, command array and callback params, and returns the request object.
+# This command can be used in place of "Slim::Control::Command::execute", but
+# it does not return the array as execute did. If you need the array returned,
+# use "executeLegacy".
+#
+# Slim::Control::Request::executeRequest($client, ['stop']);
+# my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
+#
+#
+# REQUESTS
+#
+# Requests are object that embodies all data related to performing an action or
+# a query.
+#
+# ** client ID **          
+#   Requests store the client ID, if any, to with it applies
+#     my $clientid = $request->clientid();   # read
+#     $request->clientid($client->id());     # set
+#
+#   Methods are provided for convenience using a client, in particular all 
+#   executeXXXX calls
+#     my $client = $request->client();       # read
+#     $request->client($client);             # set
+#
+#   Some requests require a client to operate. This is encoded in the
+#   request for error detection. These calls are unlikely to be useful to 
+#   users of the class but mentioned here for completeness.
+#     if ($request->needClient()) { ...      # read
+#     $request->needClient(1);               # set
+#
+# ** type **
+#   Requests are commands that do something or query that change nothing but
+#   mainly return data. They are differentiated mainly for performance reasons,
+#   for example queries are NOT notified. These calls are unlikely to be useful
+#   to users of the class but mentioned here for completeness.
+#     if ($request->query()) {...            # read
+#     $request->query(1);                    # set
+#
+# ** request name **
+#   For historical reasons, command names are composed of multiple terms, f.e.
+#   "playlist save" or "info total genres", represented as an array. This
+#   convention was kept, mainly because of the amount of code relying on it.
+#   The request name is therefore represented as an array, that you can access
+#   using the getRequest method
+#     $request->getRequest(0);               # read the first term f.e. "playlist"
+#     $request->getRequest(1);               # read 2nd term, f.e. "save"
+#     my $cnt = $request->getRequestCount(); # number of terms
+#     my $str = $request->getRequestString();# string of all terms, f.e. "playlist save"
+#
+#   Normally, creating the request is performed through the execute calls or by
+#   calling new with an array that is parsed by the code here to match the
+#   available commands and automatically assign parameters. The following
+#   method is unlikely to be useful to users of this class, but is mentioned
+#   for completeness.
+#     $request->addRequest($term);           # add a term to the request
+#
+# ** parameters **
+#   The parsing performed on the array names all parameters, positional or
+#   tagged. Positional parameters are assigned a name from the addDispatch table,
+#   and any extra parameters are added as "_pX", where X is the position in the
+#   array.
+#   As a consequence, users of the class only access parameter by name
+#     $request->getParam('_index');          # get the '_index' param
+#     $request->getParam('_p4');             # get the '_p4' param (auto named)
+#     $request->getParam('cmd');             # get a tagged param
+#
+#   Here again, the routine used to add a positional params is normally not used
+#   by users of this class, but for completeness
+#     $request->addParamPos($value);         # adds positional parameter
+#     $request->addParam($key, $value);      # adds named parameter
+#   
+# ** results **
+#   Queries, but some commands as well, do add results to a request. Results
+#   are either single data points (f.e. how many elements where inserted) or 
+#   loops (i.e. data for song 1, data being a list of single data point, data for
+#   song 2, etc).
+#   Results are named like parameters. Obviously results are only available 
+#   once the request has been executed (without errors)
+#     my $data = $request->getResult('_value');
+#                                            # get a result
+#
+#   There can be multiple loops in the results. Each loop is named and starts
+#   with a '@'.
+#     my $looped = $request->getResultLoop('@songs', 0, '_value');
+#                                            # get first '_value' result in
+#                                            # loop '@songs'
+#
+#
 # NOTIFICATIONS
 #
 # The Request mechanism can notify "subscriber" functions of successful
@@ -162,8 +251,17 @@ package Slim::Control::Request;
 #      my $request = shift;
 #
 #      # do something useful here
+#      # use the methods of $request to find all information on the
+#      # request.
+#
+#      my $client = $request->client();
+#
+#      my $cmd = $request->getRequest(0);
+#
+#      msg("myCallbackFunction called for cmd $cmd\n");
 # }
-
+#
+# 
 
 
 use strict;
@@ -177,8 +275,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Alarms;
 
 
-our %dispatchDB;				# contains a multi-level hash pointing to
-								# each command or query subroutine
+our %dispatchDB;                # contains a multi-level hash pointing to
+                                # each command or query subroutine
 
 our %subscribers = ();          # contains the clients to the notification
                                 # mechanism
@@ -465,7 +563,10 @@ sub executeRequest {
 	my($client, $parrayref, $callbackf, $callbackargs) = @_;
 
 	# create a request from the array
-	my $request = Slim::Control::Request->new($client, $parrayref);
+	my $request = Slim::Control::Request->new( 
+									(blessed($client) ? $client->id() : undef), 
+									$parrayref
+								);
 	
 	if (defined $request && $request->isStatusDispatchable()) {
 		
@@ -483,8 +584,8 @@ sub executeRequest {
 ################################################################################
 
 sub new {
-	my $class = shift;             # class to construct
-	my $client = shift;            # client, if any, to which the request applies
+	my $class          = shift;    # class to construct
+	my $clientid       = shift;    # clientid, if any, to which the request applies
 	my $requestLineRef = shift;    # reference to an array containing the 
                                    # request verbs
 	
@@ -494,7 +595,7 @@ sub new {
 	my $self = {
 		'_request'    => [],
 		'_isQuery'    => undef,
-		'_clientid'   => (blessed($client) ? $client->id() : undef),
+		'_clientid'   => $clientid,
 		'_needClient' => 0,
 		'_params'     => \%paramHash,
 		'_curparam'   => 0,
@@ -801,6 +902,7 @@ sub getRequestCount {
 # Param mgmt
 ################################################################################
 
+# add a parameter
 sub addParam {
 	my $self = shift;
 	my $key = shift;
@@ -810,16 +912,7 @@ sub addParam {
 	++$self->{'_curparam'};
 }
 
-
-sub addParamHash {
-	my $self = shift;
-	my $hashRef = shift || return;
-	
-	while (my ($key,$value) = each %{$hashRef}) {
-        $self->addParam($key, $value);
-    }
-}
-
+# add a nameless parameter
 sub addParamPos {
 	my $self = shift;
 	my $val = shift;
@@ -827,6 +920,7 @@ sub addParamPos {
 	${$self->{'_params'}}{ "_p" . $self->{'_curparam'}++ } = $val;
 }
 
+# get a parameter by name
 sub getParam {
 	my $self = shift;
 	my $key = shift || return;
@@ -1151,7 +1245,7 @@ sub renderAsArray {
 	
 	# conventions: 
 	# -- parameter or result with key starting with "_": value outputted
-	# -- parameter or result with key starting with "__": no output TODO
+	# -- parameter or result with key starting with "__": no output
 	# -- result starting with "@": is a loop
 	# -- anything else: output "key:value"
 	

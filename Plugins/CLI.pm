@@ -423,12 +423,12 @@ sub cli_process {
 
 	return if !defined $arrayRef;
 
-	# ask dispatch for a request
-	my $request = Slim::Control::Request->new($client, $arrayRef);
+	# create a request
+	my $request = Slim::Control::Request->new($client->id(), $arrayRef);
 
 	return if !defined $request;
 
-	# remember we're the source
+	# remember we're the source and the $client_socket
 	$request->source('CLI');
 	$request->privateData($client_socket);
 	
@@ -485,12 +485,7 @@ sub cli_process {
 			cli_cmd_listen($client_socket, $request);
 		} 
 		
-		elsif ($request->isStatusDispatchable()) {
-		
-			# add our callback
-			#$request->callbackFunction(\&cli_request_callback);
-			#$request->callbackArguments(['hello', 'world']);
-		
+		elsif ($request->isStatusDispatchable()) {		
 		
 			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
 			
@@ -523,7 +518,7 @@ sub cli_request_write {
 	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
 
-# handles notifications from Dispatch
+# handles notifications
 # note that we subscribe in the listen command handler
 sub cli_request_notification {
 	my $request = shift;
@@ -613,6 +608,7 @@ sub cli_cmd_listen {
 	}
 }
 
+# handles the "shutdown" command
 sub cli_cmd_shutdown {
 	$::stop = 1;
 }
