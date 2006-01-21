@@ -4,10 +4,11 @@
 
 [% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
 
-  [% IF warning %]
-  <p><b>[% warning %]</b></p>
-  <hr>
-  [% END %]
+  <div class="statusarea">
+  	[% IF warning %]
+  		[% warning %]
+  	[% END %]
+  </div>
   <form method="post" action="setup.html?page=[% page %]&amp;player=[% playerURI %]&amp;playerid=[% playerid | uri %]">
     <input type=hidden value="[% player %]" name="player">
     [% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
@@ -15,8 +16,8 @@
     [% GroupList %] 
   </form>
   [% IF page == 'PLAYER_SETTINGS' %] 
-  <h3>[% "FORGET_PLAYER" | string %]</h3>
-  <p>[% "FORGET_PLAYER_DESC" | string %]</p>
+  <div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
+  <div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
   <p><a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerURI %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a></p>
   <hr>
   [% END %] 

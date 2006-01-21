@@ -372,6 +372,22 @@ div#browsedbHeader {
 	float: left;
 }
 
+.settingSection .prefHead {
+	/* home menu list header */
+	height: 13px;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.settingSection {
+	position: relative;
+	border-bottom:2px solid #bbb;
+}
+
+.prefDesc,.prefHead {
+	padding-bottom: 5px;
+}
+
 .songInfo ul {
 	/* the list of song info items */
 	padding: 0px;

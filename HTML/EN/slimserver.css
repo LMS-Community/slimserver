@@ -1,3 +1,28 @@
+div#homeMenu {
+	background-color: #ffffff;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding-bottom: 40px;
+}
 
+.homeMenuSection div {
+	font-weight: bold;
+}
 
+.settingSection {
+	border-bottom: 2px solid;
+	padding-bottom: 5px;
+}
 
+.prefHead {
+	padding-bottom: 8px;
+	padding-top: 3px;
+	font-weight: bold;
+}
+
+.prefDesc,.prefHead {
+	padding-bottom: 10px;
+}

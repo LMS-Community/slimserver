@@ -16,9 +16,9 @@
 
 <FORM name="setup_chooser" method="Get" action="[% webroot %]setup.html" target="header">
 	<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
-		[% UNLESS setting_chooser_noHome %]<OPTION [% IF page == "HOME" %]selected[% END %] value="HOME" label=[% "HOME" | string %]>[% "HOME" | string %]</OPTION>[% END %]
-		[% IF playerid %]<OPTION [% IF page == "PLAYER_SETTINGS" %]selected[% END %] value="PLAYER_SETTINGS" label=[% "PLAYER_SETTINGS" | string %]>[% "PLAYER_SETTINGS" | string %]</OPTION>
-		[% ELSE %]<OPTION [% IF page == "SERVER_SETTINGS" %]selected[% END %] value="SERVER_SETTINGS" label=[% "SERVER_SETTINGS" | string %]>[% "SERVER_SETTINGS" | string %]</OPTION>[% END %]
+		[% UNLESS setting_chooser_noHome %]<OPTION [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</OPTION>[% END %]
+		[% IF playerid %]<OPTION [% IF page == "PLAYER_SETTINGS" %]selected[% END %] value="PLAYER_SETTINGS" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
+		[% ELSE %]<OPTION [% IF page == "SERVER_SETTINGS" %]selected[% END %] value="SERVER_SETTINGS" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>[% END %]
 		[% IF playerid %][% PROCESS addSetupLinks  links=additionalLinks.playersetup  %]
 						 [%# PROCESS addPluginLinks links=additionalLinks.playerplugin %]
 		[% ELSE %][% PROCESS addSetupLinks  links=additionalLinks.setup %][% END %]

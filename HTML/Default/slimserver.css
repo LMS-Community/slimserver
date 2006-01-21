@@ -60,7 +60,7 @@ a:hover {
 	left: 9px;
 }
 
-.homeMenuSection div, #playingStatus, #currentPlaylistLabel {
+.homeMenuSection div, .settingSection div, #playingStatus, #currentPlaylistLabel {
 	color: #737373;
 }
 
@@ -292,13 +292,17 @@ div#homeMenu {
 	padding-bottom: 40px;
 }
 
-.homeMenuSection div {
+.homeMenuSection div,.settingSection .prefHead {
 	/* home menu list header */
 	background-color: #ececec;
 	height: 13px;
 	padding: 8px 6px 4px;
 	font-weight: bold;
 	font-size: 9px;
+}
+
+.prefDesc,.prefHead {
+	padding-bottom: 10px;
 }
 
 .homeMenuSection ul {
