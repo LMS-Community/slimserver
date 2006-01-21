@@ -11322,8 +11322,8 @@ SETUP_SORTBROWSEART
 	EN	Browse By Artwork Order
 
 SETUP_SORTBROWSEART_DESC
-	DE	Wählen Sie die Standard Sortierreihenfolge, die beim Nachschlagen von Plattenhüllen verwendet werden soll. (Diese Funktion benötigt die oben definierten Platzhalter)
-	EN	Choose the default order that the Browse Artwork web page displays albums.  (This feature currently requires placeholders to be included in the browse view - see above.)
+	DE	Wählen Sie die Standard Sortierreihenfolge, die beim Nachschlagen von Plattenhüllen verwendet werden soll.
+	EN	Choose the default order that the Browse Artwork web page displays albums.
 
 SETUP_SORTBROWSEART_ALBUM
 	EN	Album

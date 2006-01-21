@@ -402,6 +402,7 @@ our %searchFieldMap = (
 	'album.titlesort' => 'albums.titlesort',
 	'album.titlesearch' => 'albums.titlesearch',
 	'album.compilation' => 'albums.compilation',
+	'album.artwork' => 'albums.artwork',
 	'genre' => 'genre_track.genre', 
 	'genre.name' => 'genres.name', 
 	'genre.namesort' => 'genres.namesort', 

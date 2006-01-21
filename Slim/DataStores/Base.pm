@@ -473,17 +473,19 @@ sub init {
 					$findCriteria->{'contributor.role'} = $roles;
 				}
 
-				if (Slim::Utils::Prefs::get('includeNoArt')) {
+				# remove albums with no artwork if requested
+				if (!Slim::Utils::Prefs::get('includeNoArt')) {
 
-					return $ds->find({
-						'field'  => 'album',
-						'find'   => $findCriteria,
-						'sortBy' => $sort || 'album',
-						'idOnly' => $idOnly,
-					});
+					$findCriteria->{'album.artwork'} = { '!=' => undef };
+
 				}
 
-				return $ds->albumsWithArtwork;
+				return $ds->find({
+					'field'  => 'album',
+					'find'   => $findCriteria,
+					'sortBy' => $sort || 'album',
+					'idOnly' => $idOnly,
+				});
 			},
 
 			'listItem' => sub {
