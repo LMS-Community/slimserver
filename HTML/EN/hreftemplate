@@ -134,7 +134,7 @@ href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&am
 
 [%# this is the link tree for the setup pages %]
 [% BLOCK setupItemHRef -%]
-href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %]&amp;playerid=[% playerid | uri %]"
+href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid | uri %][% END %]"
 [%- END %]
 
 
