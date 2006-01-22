@@ -1,6 +1,6 @@
 	[% pagetitle = "SETTINGS" | string %]
 	[% pageHeaderMenu = BLOCK %]
-		/ [% children %] [% siblings %]
+		[% PROCESS setting_tablist.html %]
 	[% END %]
 	[% PROCESS pageheader.html %]
 

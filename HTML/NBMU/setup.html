@@ -29,10 +29,8 @@
       [% IF warning %]
       <p><b>[% warning %]</b></p>
       <hr>
-      [% END %] [% IF siblings %][% siblings %]
-      [% END %] [% IF children %][% children %]
-      <hr>
       [% END %] 
+      [% PROCESS setting_tablist.html %]
       <form method="post" action="setup.html?page=[% page %]&player=[% playerURI %]&playerid=[% playerid | uri %]">
         <input type=hidden value="[% player %]" name="player">
         <input type=hidden value="[% playerid %]" name="playerid">

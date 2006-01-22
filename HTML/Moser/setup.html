@@ -11,9 +11,7 @@
 
     <h3>[% pagetitle %]</h3>
     <div class="linktree"><ul><li><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a></li>[% IF linktree %][% linktree %][% END %]</ul></div>
-    [% IF warning %]<div id="warning">[% warning %]</div>[% END %]
-    [% IF siblings %]<div id="setuptabs"><ul>[% siblings %]</ul></div>[% END %]
-    [% IF children %]<div id="setuptabs"><ul>[% children %]</ul></div>[% END %]
+	[% PROCESS setting_tablist.html sytle = "list" %]
 	<form method="post" action="setup.html?page=[% page %]&player=[% playerURI %]&playerid=[% playerid | uri %]">
 	<input type=hidden value="[% player %]" name="player">
 	<input type=hidden value="[% playerid %]" name="playerid">
