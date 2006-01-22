@@ -1,16 +1,16 @@
 var p = 1;
 function switchPlayer(player_List){
-	var newPlayer = player_List.options[player_List.selectedIndex].value;
+	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
 	
-	parent.playlist.location="playlist.html?player=" + newPlayer;
-	window.location="status.html?player=" + newPlayer;
+	parent.playlist.location="playlist.html?player" + newPlayer;
+	window.location="status.html?player" + newPlayer;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newValue(parent.browser.document,newPlayer);
 	} else {
 		myString = new String(parent.browser.location.href);
-		var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
+		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 		parent.browser.location=myString.replace(rExp, newPlayer);
 	}
 	parent.header.location.reload(false);
@@ -22,7 +22,7 @@ function newValue(doc,plyr) {
 		if (doc.forms[j].player) {
 			var myString = new String(doc.forms[j].player.value);
 			var rString = plyr;
-			var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
+			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 			doc.forms[j].player.value = myString.replace(rExp, rString);
 		}
 	}
