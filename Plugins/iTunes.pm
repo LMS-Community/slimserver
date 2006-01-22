@@ -242,7 +242,7 @@ sub shutdownPlugin {
 
 sub addGroups {
 	Slim::Web::Setup::addChildren('SERVER_SETTINGS','itunes',3);
-	Slim::Web::Setup::addCategory('itunes',&setupCategory);
+	Slim::Web::Setup::addCategory('ITUNES',&setupCategory);
 
 	my ($groupRef,$prefRef) = &setupUse();
 

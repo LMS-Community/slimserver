@@ -225,7 +225,7 @@ sub playMix {
 sub addGroups {
 	my $category = &setupCategory;
 
-	Slim::Web::Setup::addCategory('musicmagic',$category);
+	Slim::Web::Setup::addCategory('MUSICMAGIC',$category);
 	
 	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);

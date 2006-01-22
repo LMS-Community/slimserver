@@ -193,7 +193,7 @@ sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('SERVER_SETTINGS','moodlogic',$groupRef,undef,$prefRef);
 	Slim::Web::Setup::addChildren('SERVER_SETTINGS','moodlogic');
-	Slim::Web::Setup::addCategory('moodlogic',&setupCategory);
+	Slim::Web::Setup::addCategory('MOODLOGIC',&setupCategory);
 }
 
 sub isMusicLibraryFileChanged {
