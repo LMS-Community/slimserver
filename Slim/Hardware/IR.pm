@@ -289,6 +289,33 @@ sub loadIRFile {
 	}
 }	
 
+# returns the code for a CodeByte
+# for now copycat of lookup for detecting unknown codes
+# result of this investigation should be reused, but too delicate operation now
+sub lookupCodeBytes {
+	my $client = shift;
+	my $irCodeBytes = shift;
+		
+	if (defined $irCodeBytes) {
+	
+		my %enabled = %irCodes;
+		
+		for ($client->prefGetArray('disabledirsets')) {delete $enabled{$_}};
+		
+		for my $irset (keys %enabled) {
+			if (defined (my $code = $irCodes{$irset}{$irCodeBytes})) {
+
+				$::d_ir && msg("IR: $irCodeBytes -> code: $code\n");
+				return $code;
+			}
+		}
+	}
+	
+	$::d_ir && msg("IR: $irCodeBytes -> unknown\n");
+	return undef;
+}
+	
+
 #
 # Look up an IR code by hex value for enabled remotes, then look up the function for the current
 # mode, and return the name of the function, eg "play"
@@ -441,6 +468,20 @@ sub processIR {
 	my $irCodeBytes = shift;
 	my $irTime = shift;	
 		
+
+	if ($irCodeBytes eq "00000000") {
+		$::d_ir && msg("Ignoring spurious null repeat code.\n");
+		return;
+	}
+
+	# lookup the bytes, if we don't know them no point in continuing
+	my $code = lookupCodeBytes($client, $irCodeBytes);
+	
+	if (!defined $code) {
+		Slim::Control::Request::notifyFromArray($client, ['unknownir', $irCodeBytes, $irTime]);
+		return;
+	}
+
 	my $timediff = $irTime - $client->lastirtime();
 	if ($timediff < 0) {$timediff += (0xffffffff / $client->ticspersec());}
 
@@ -462,10 +503,7 @@ sub processIR {
 	if ($::d_ir) {
 		msg("$irCodeBytes\t$irTime\t".Time::HiRes::time()."\n");
 	}
-	if ($irCodeBytes eq "00000000") {
-		$::d_ir && msg("Ignoring spurious null repeat code.\n");
-		return;
-	} 
+
 
 	if (($irCodeBytes eq ($client->lastircodebytes())) #same button press as last one
 		&& ( ($client->irtimediff < $Slim::Hardware::IR::IRMINTIME) #within the minimum time to be considered a repeat

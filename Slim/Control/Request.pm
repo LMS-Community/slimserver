@@ -394,13 +394,13 @@ sub init {
     addDispatch(['playlist',       'tracks',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'url',          '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'zap',          '_index'],                                        [1, 0, 0, \&Slim::Control::Commands::playlistZapCommand]);
-    addDispatch(['playlisttracks', '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::playlisttracksQuery]);
+    addDispatch(['playlisttracks', '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlisttracksQuery]);
     addDispatch(['playlists',      '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsQuery]);
     addDispatch(['playlistcontrol'],                                                                 [1, 0, 1, \&Slim::Control::Commands::playlistcontrolCommand]);
     addDispatch(['power',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
     addDispatch(['power',          '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::powerCommand]);
-    addDispatch(['pref',           '_prefname',   '?'],                                              [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
-    addDispatch(['pref',           '_prefname',   '_newvalue'],                                      [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
+    addDispatch(['pref',           '_prefname',    '?'],                                             [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
+    addDispatch(['pref',           '_prefname',    '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
     addDispatch(['rate',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::rateQuery]);
     addDispatch(['rate',           '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::rateCommand]);
     addDispatch(['rescan',         '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
@@ -408,17 +408,17 @@ sub init {
     addDispatch(['signalstrength', '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
     addDispatch(['sleep',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
     addDispatch(['sleep',          '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::sleepCommand]);
-    addDispatch(['songinfo',       '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::songinfoQuery]);
-    addDispatch(['songs',          '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
-    addDispatch(['status',         '_index',      '_quantity'],                                      [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
+    addDispatch(['songinfo',       '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::songinfoQuery]);
+    addDispatch(['songs',          '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
+    addDispatch(['status',         '_index',       '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
     addDispatch(['stop'],                                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['sync',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
     addDispatch(['sync',           '_indexid-'],                                                     [1, 0, 0, \&Slim::Control::Commands::syncCommand]);
     addDispatch(['time',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
     addDispatch(['time',           '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
     addDispatch(['title',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-    addDispatch(['titles',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
-    addDispatch(['tracks',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
+    addDispatch(['titles',         '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
+    addDispatch(['tracks',         '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
@@ -427,9 +427,10 @@ sub init {
     addDispatch(['client',         'reconnect'],                                                     [1, 0, 0, undef]);
     addDispatch(['playlist',       'load_done'],                                                     [1, 0, 0, undef]);
     addDispatch(['playlist',       'newsong'],                                                       [1, 0, 0, undef]);
-    addDispatch(['playlist',       'open',        '_path'],                                          [1, 0, 0, undef]);
+    addDispatch(['playlist',       'open',         '_path'],                                         [1, 0, 0, undef]);
     addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);
     addDispatch(['rescan',         'done'],                                                          [0, 0, 0, undef]);
+    addDispatch(['unknownir',      '_ircode',      '_time'],                                         [1, 0, 0, undef]);
 
 ######################################################################################################################################################################
 
@@ -552,7 +553,10 @@ sub notifyFromArray {
 	$::d_command && $d_notify && msg("Request: notifyFromArray(" .
 						(join " ", @{$requestLineRef}) . ")\n");
 
-	my $request = Slim::Control::Request->new($client, $requestLineRef);
+	my $request = Slim::Control::Request->new(
+									(blessed($client) ? $client->id() : undef), 
+									$requestLineRef
+								);
 	
 	$request->notify() if defined $request;
 }

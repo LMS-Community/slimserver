@@ -328,6 +328,8 @@ sub playcontrolCommand {
 		
 		# we want to go to $param if the command is mode
 		$wantmode = $param;
+		# and for pause we want 1
+		$param = 1;
 	}
 	
 	if ($cmd eq 'pause') {

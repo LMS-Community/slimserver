@@ -419,7 +419,7 @@ sub cli_process {
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
 
-	my $clientId = blessed($client) ? $client->id : $client;
+	my $clientId = blessed($client) ? $client->id() : $client;
 
 	$::d_cli && $client && msg("CLI: Parsing command: Found client [$clientId]\n");
 
@@ -446,7 +446,8 @@ sub cli_process {
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
 		$client = Slim::Player::Client::clientRandom();
-		$request->client($client);
+		$clientId = blessed($client) ? $client->id : $client;
+		$request->clientid($clientId);
 		if ($::d_cli) {
 			if (defined $client) {
 				msg("CLI: Request [$cmd] requires client, allocated $clientId\n");
