@@ -59,15 +59,15 @@ function chooseSettings(value,option)
 			url = "[% webroot %]home.html?"
 		break
 		case "PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=PLAYER_SETTINGS&"
+			url = "[% webroot %]setup.html?page=PLAYER_SETTINGS&amp;"
 		break
 		case "SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=SERVER_SETTINGS&"
+			url = "[% webroot %]setup.html?page=SERVER_SETTINGS&amp;"
 		break
 	}
 
 	if (option) {
-		window.location = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid %][% END %]';
+		window.location = url + 'player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid %][% END %]';
 	}
 }
 
