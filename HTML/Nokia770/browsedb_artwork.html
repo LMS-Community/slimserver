@@ -1,26 +1,15 @@
 <!--browsedb_artwork.html-->
-<div align="center" width="100%" style="float:left">
 
-	<table cellpadding="5" cellspacing="0" align="left" class = 'noborder'>
+	<table cellpadding="0" cellspacing="0" border = '0' align="center">
 	<tr>
-		<td width="[% size %]">
+		<td width="100">
 		[% IF item.coverThumb %]
-			<center>
-			<table border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="[% size %]" align = 'center'>
-					<a [% PROCESS browseDbItemHRef %]>
-					[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" style='STYLE="border: 1px solid black"' %]</a>
-					</td>
-				</tr>
-			</table>
-		[% ELSE %]
-			<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
 			<a [% PROCESS browseDbItemHRef %]>
-			<center>[% item.album | html %]</center></a></td><td>
-			<a href=""><img src="html/images/spacer.gif" border="0" height="80" width="0" alt="[% item.artist | html %] - [% item.album | html %]"></a></td></table>
+			[% PROCESS thumbnailItemImg height="100" width="100" style='STYLE="border: 1px solid black"' %]</a>
+		[% ELSE %]
+			<a [% PROCESS browseDbItemHRef %]>
+			<img src = "[% webroot %]html/images/cover.png" border = '0' width="100" style='STYLE="border: 1px solid white"'></a>
 		[% END %]
-
 		</td>
 	</tr>
 	<!--
@@ -44,14 +33,6 @@
 	<tr>
 		<td align = 'center' valign = 'top'>
 		<table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
-<!-- failed attempt to print the album/artist in the browse artwork page
-			<tr>
-				<td colspan = 4 class = 'supertinytext' align = 'center' width = '80'>
-				[%# album title %]
-				[% item.artist | html %] - [% item.item | html %]
-				</td>
-			</tr>
--->
 			<tr>
        			 [% PROCESS browsecontrols_abbr
        	         itemobj = item.itemobj
@@ -87,4 +68,3 @@
 	</tr>
 -->
 	</table>
-</div>
