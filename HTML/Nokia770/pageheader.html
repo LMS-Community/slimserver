@@ -6,7 +6,7 @@
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
-<div id = 'page'>
+<div id = 'page[% UNLESS thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>
 <table width="100%" bgcolor="#333333">
       <tr>
       <td><a href = 'http://slimdevices.com' title = 'slimdevices website'><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0" alt = 'slimdevices website'></a>

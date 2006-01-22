@@ -122,3 +122,7 @@ tr.even, td.even {
 div#page {
 	width: 800px;
 }
+
+div#page_with_bar {
+	width: 778px;
+}
