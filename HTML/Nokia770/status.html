@@ -162,7 +162,7 @@
 		[% IF coverThumb -%]
 			<a [% albumHRef %] target="browser">[% PROCESS thumbnailImg height="195" %]
 		[% ELSE -%]
-			<img src="html/images/nocoverart.gif" width = '195' height="195" STYLE="border: 1px solid black">
+			<img src="[% webroot %]html/images/cover.png" width = '195' height="195" STYLE="border: 1px solid black">
 		
 		[%- END %]
 		</td>
