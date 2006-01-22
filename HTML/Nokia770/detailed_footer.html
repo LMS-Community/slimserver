@@ -1,13 +1,17 @@
 <!-- detailed_footer.html -->
-<table width="100%" bgcolor="#666666" align="left">
+<table width="100%" bgcolor="#666666">
 	<tr>
-		<td width="4"></td>
-		<td align="right">
+	<td align="right">
 		<a href="[% webroot %]html/about.html" class = 'statusbartext'>[% "ABOUT_SHORT" | string %]</a>&nbsp;|&nbsp;
 		<a href="[% webroot %]setup.html?player=[% playerURI %]&page=SERVER_SETTINGS" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
 		<a class = 'statusbartext' href="[% webroot %]setup.html?page=PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
+[% IF isplayer %]
+		&nbsp;|&nbsp;
+		<a href = "[% webroot %][% statusroot %]?p0=power&p1=1&p2=&player=[% playerURI %]&start=" class= 'statusbartext'>ON</a>&nbsp;|&nbsp;
+		<a href = "[% webroot %][% statusroot %]?p0=power&p1=0&p2=&player=[% playerURI %]&start=" class = 'statusbartext'>OFF</a>
+[% END %]
 	</td>
-	<td width="4"></td>
+	<td width = '4'></td>
 	</tr>
 </table>
 
