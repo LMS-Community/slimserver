@@ -30,9 +30,6 @@
 		cmdimage = "b_delete" -%]
 [%- END %]
 
-[% BLOCK dummy -%]
-[%- END %]
-
 [% BLOCK listitem -%]
 	[% IF content == '' %]
 		[% title | html %]		

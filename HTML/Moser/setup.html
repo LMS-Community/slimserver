@@ -10,7 +10,7 @@
     <p>
 
     <h3>[% pagetitle %]</h3>
-    <div class="linktree"><ul><li><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a></li>[% IF linktree %][% linktree %][% END %]</ul></div>
+    [% IF linklist %][%- PROCESS crumblist pwd_list = linklist %][% END %]
 	[% PROCESS setting_tablist.html sytle = "list" %]
 	<form method="post" action="setup.html?page=[% page %]&player=[% playerURI %]&playerid=[% playerid | uri %]">
 	<input type=hidden value="[% player %]" name="player">

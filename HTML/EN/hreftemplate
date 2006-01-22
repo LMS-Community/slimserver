@@ -132,6 +132,12 @@ href="/music/[% item.coverArt %]/cover.jpg"
 href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the link tree for the setup pages %]
+[% BLOCK setupItemHRef -%]
+href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %]&amp;playerid=[% playerid | uri %]"
+[%- END %]
+
+
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]

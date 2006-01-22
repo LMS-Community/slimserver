@@ -613,8 +613,6 @@ sub initSetupConfig {
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 			},
-
-
 		}
 	}
 	,'MENU_SETTINGS' => {
@@ -2595,47 +2593,6 @@ sub setup_HTTP {
 	return Slim::Web::HTTP::filltemplatefile('setup.html', $paramref);
 }
 
-sub buildLinkList {
-	my ($separator,$paramref,@pages) = @_;
-
-	my $output = '';
-	my $pagenum = 0;
-	my %linkinfo;
-
-	foreach my $page (@pages) {
-
-		next if !(defined $page && $page ne "");
-
-		%linkinfo = ();
-
-		#usePrefix is true for all but first item
-		$linkinfo{'usePrefix'} = $pagenum;
-
-		#useSuffix is true for all but last item
-		$linkinfo{'useSuffix'} = !($pagenum == scalar(@pages));
-
-		$pagenum++;
-
-		$linkinfo{'paramlist'} = '?page=' . $page . '&player=' . (Slim::Utils::Misc::escape($paramref->{'player'})); 
-
-		if (defined $paramref->{'playerid'}) {$linkinfo{'paramlist'} .= '&playerid=' . (Slim::Utils::Misc::escape($paramref->{'playerid'}));}
-
-		$linkinfo{'linktitle'} = $setup{$page}{'title'};
-
-		if ($separator ne 'tree') {
-			$linkinfo{'currpage'} = ($paramref->{'page'} eq $page);
-		}
-
-		$linkinfo{'linkpage'} = 'setup.html';
-		$linkinfo{'separator'} = $separator;
-		$linkinfo{'skinOverride'} = $$paramref{'skinOverride'};
-
-		$output .= ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
-	}
-
-	return $output;
-}
-
 sub buildHTTP {
 	my ($client,$paramref,$pageref) = @_;
 
@@ -2803,53 +2760,57 @@ sub buildHTTP {
 		$page = $setup{$page}{'parent'};
 	}
 
-	$paramref->{'linktree'} = buildLinkList('tree',$paramref,@pages);;
-	
+	@{$paramref->{'linklist'}} = ({
+		'hreftype'  => 'setup',
+		'title'     => string($paramref->{'page'}),
+		'page'      => $paramref->{'page'},
+	});
+
 	# set up sibling bar
 	if (defined $pageref->{'parent'} && defined $setup{$pageref->{'parent'}}{'children'}) {
 		@pages = @{$setup{$pageref->{'parent'}}{'children'}};
-		if (scalar(@pages) > 1) {
-			$paramref->{'siblings'} = buildLinkList('tab',$paramref,@pages);
 
-			buildPulldown($paramref, @pages);
+		@{$paramref->{'linklist'}} = ({
+			'hreftype'  => 'setup',
+			'title'     => string($pageref->{'parent'}),
+			'page'      => $pageref->{'parent'},
+		});
+
+		if (scalar(@pages) > 1) {
+
+			buildLinks($paramref, @pages);
 		}
 	}
-	
+
 	# set up children bar and single child link
 	if (defined $pageref->{'children'} && defined $pageref->{'children'}[0]) {
 
 		@pages = @{$pageref->{'children'}};
-		$paramref->{'children'} = buildLinkList('list',$paramref,@pages);
 
-		my %linkinfo = ('linkpage' => 'setup.html'
-				,'paramlist' => '?page=' . $pageref->{'children'}[0] . '&player=' . Slim::Utils::Misc::escape($paramref->{'player'}) . '&playerid=' . (defined $paramref->{'playerid'} ? Slim::Utils::Misc::escape($paramref->{'playerid'}) : "")
-				,'skinOverride' => $$paramref{'skinOverride'}
-				);
-
-		if (defined $pageref->{'singleChildLinkText'}) {
-			$linkinfo{'linktitle'} = $pageref->{'singleChildLinkText'};
-		} else {
-			$linkinfo{'linktitle'} = $setup{$pageref->{'children'}[0]}{'title'};
-		}
-
-		buildPulldown($paramref, @pages);
-
-		$paramref->{'singleChildLink'} = ${Slim::Web::HTTP::filltemplatefile('linklist.html',\%linkinfo)};
+		buildLinks($paramref, @pages);
 	}
 }
 
-sub buildPulldown {
+# This function builds the list of settings page links. 
+# in future this will be done at startup and by plugins where needed
+sub buildLinks {
 	my ($paramref,@pages) = @_;
 	
 	for my $page (@pages) {
+		
+		# Don't include in the sorted list, let skins include or not and where they want.
 		next if $page eq "SERVER_SETTINGS";
 		next if $page eq "PLAYER_SETTINGS";
+		
+		# Grab player tabs.  
+		# TODO do this on startup only and allow plugins to add themselves
 		if (defined $paramref->{'playerid'}) {
 			Slim::Web::Pages->addPageLinks("playersetup",{"$page"  => "setup.html?page=$page"});
 			for my $playerplugin (@newPlayerChildren) {
 				#Slim::Web::Pages->addPageLinks("playerplugin",{"$playerplugin"  => "setup.html?page=$playerplugin"});
 			}
 		
+		# global setup pages, need to do this at startup too
 		} else {
 			Slim::Web::Pages->addPageLinks("setup",{"$page"  => "setup.html?page=$page"});
 		}

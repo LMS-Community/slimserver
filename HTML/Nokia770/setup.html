@@ -9,11 +9,9 @@
 
 <font face="arial,helvetica">
 
-<small>[% PROCESS setting_tablist.html %]</small>
+<small>[%- PROCESS crumblist pwd_list = linklist noHomeLink=1%] <span class="bar">|</span>[% PROCESS setting_tablist.html %]<small>
 
-[% IF linktree %]
-    <br><small>Current Page:</small> [% linktree %]<br>
-[% END %]
+    <br><small>Current Page:</small> [% page | string %]<br>
 
 [% IF warning %]
 <table width="100%" bgcolor="#cfcfcf">
