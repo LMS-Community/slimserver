@@ -9,8 +9,7 @@
 
 <font face="arial,helvetica">
 
-[% IF children %][% children %][% END %]
-[% IF siblings %][% siblings %][% END %]
+[% PROCESS setting_tablist.html %]
 
 [% IF linktree %]
     <br><small>Current Page:</small> [% linktree %]<br>
