@@ -105,13 +105,13 @@ sub string_to_array {
 # transforms an array into an escaped string (returned). If $clientid is
 # defined, it is added in the first position in the array.
 sub array_to_string {
-	my $clientid   = shift;
+	my $clientid = shift;
 	my $arrayRef = shift;
 
 	# make a copy, we'll change it
 	my @elements = @$arrayRef;
 
-	# add client if if there is a client
+	# add clientid if there is a client
 	unshift @elements, $clientid if defined $clientid;
 	
 	# escape all the terms

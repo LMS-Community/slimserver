@@ -70,6 +70,7 @@
 <li>Changed &quot;<a href="#sync">sync</a>&quot; and 
 	&quot;<a href="#status">status</a>&quot; queries to return their list of 
 	synced players as comma-separated (instead of space-separated).</li>
+<li>Added a note about paths and urls being double URL encoded.</li>
 </ul>
 <h4>Changes starting from SlimServer 6.2</h4>
 <p>The following changes or new commands are available starting with
@@ -350,6 +351,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		etc. More exotic choices like &quot;UTF-16&quot; or &quot;shiftjis&quot;
 		are possible. Note that the server will crash if the encoding is 
 		unknown.
+	</li>
+
+	<li>All paths and URLs, for example the ones returned by the query
+		&quot;<a href="#songinfo">songinfo</a>&quot; are double URL escaped.
+		To get a useable path (that you can use with your file system), you will
+		need to unescape the field twice. 
 	</li>
 </ul>
 

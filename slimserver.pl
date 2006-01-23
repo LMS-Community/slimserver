@@ -1143,6 +1143,10 @@ sub keepSlimServerInMemory {
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&keepSlimServerInMemory);
 }
 
+sub forceStopServer {
+	$::stop = 1;
+}
+
 #------------------------------------------
 #
 # Clean up resources and exit.

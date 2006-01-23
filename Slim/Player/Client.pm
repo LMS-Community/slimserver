@@ -815,7 +815,6 @@ sub clientRandom {
 	return (values %clientHash)[0];
 }
 
-
 ###################
 # Client methods
 

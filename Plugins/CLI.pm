@@ -33,24 +33,26 @@ use Slim::Utils::Unicode;
 # Other CLI queries/commands are handled through Request.pm
 
 
-my $d_cli_v = 0;			# verbose debug, for developpement
-my $d_cli_vv = 0;			# very verbose debug, function calls...
+my $d_cli_v = 0;            # verbose debug, for developpement
+my $d_cli_vv = 0;           # very verbose debug, function calls...
 
 
-my $cli_socket;				# server socket
-my $cli_socket_port = 0;	# CLI port on which socket is opened
+my $cli_socket;             # server socket
+my $cli_socket_port = 0;    # CLI port on which socket is opened
 
-my $cli_busy = 0;			# 1 if CLI is processing command
+my $cli_busy = 0;           # 1 if CLI is processing command
+my $cli_subscribed = 0;     # 1 if CLI is subscribed to the notification system
 
-our %connections;			# hash indexed by client_sock value
-							# each element is a hash with following keys
-							# .. id: 		"IP:PORT" for debug
-							# .. socket: 	the socket (a hash key is *not* an object, but the value is...)
-							# .. inbuff: 	input buffer
-							# .. outbuff: 	output buffer (array)
-							# .. listen:	listen command value for this connection
-							# .. auth:		1 if connection authenticated (login)
-							
+our %connections;           # hash indexed by client_sock value
+                            # each element is a hash with following keys
+                            # .. id:         "IP:PORT" for debug
+                            # .. socket:     the socket (a hash key is *not* an 
+                            #                object, but the value is...)
+                            # .. inbuff:     input buffer
+                            # .. outbuff:    output buffer (array)
+                            # .. listen:     listen command value for this connection
+                            # .. auth:       1 if connection authenticated (login)
+
 
 ################################################################################
 # PLUGIN CODE
@@ -224,7 +226,7 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'id'} = $tmpaddr.':'.$client_socket->peerport;
 			$connections{$client_socket}{'inbuff'} = '';
 			$connections{$client_socket}{'outbuff'} = ();
-			$connections{$client_socket}{'listen'} = 0;
+			$connections{$client_socket}{'subscribe'} = undef;
 			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
@@ -418,15 +420,14 @@ sub cli_process {
 
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
+	my $clientid = blessed($client) ? $client->id() : undef;
 
-	my $clientId = blessed($client) ? $client->id() : $client;
-
-	$::d_cli && $client && msg("CLI: Parsing command: Found client [$clientId]\n");
+	$::d_cli && $clientid && msg("CLI: Parsing command: Found client [$clientid]\n");
 
 	return if !defined $arrayRef;
 
 	# create a request
-	my $request = Slim::Control::Request->new($clientId, $arrayRef);
+	my $request = Slim::Control::Request->new($clientid, $arrayRef);
 
 	return if !defined $request;
 
@@ -446,11 +447,11 @@ sub cli_process {
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
 		$client = Slim::Player::Client::clientRandom();
-		$clientId = blessed($client) ? $client->id : $client;
-		$request->clientid($clientId);
+		$clientid = blessed($client) ? $client->id() : undef;
+		$request->clientid($clientid);
 		if ($::d_cli) {
 			if (defined $client) {
-				msg("CLI: Request [$cmd] requires client, allocated $clientId\n");
+				msg("CLI: Request [$cmd] requires client, allocated $clientid\n");
 			} else {
 				msg("CLI: Request [$cmd] requires client, none found!\n");
 			}
@@ -480,7 +481,8 @@ sub cli_process {
 
 		elsif ($cmd eq 'shutdown') {
 			# delay execution so we have time to reply...
-			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2, \&cli_cmd_shutdown);
+			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2,
+				\&main::forceStopServer);
 			$exit = 1;
 		} 
 
@@ -488,6 +490,10 @@ sub cli_process {
 			cli_cmd_listen($client_socket, $request);
 		} 
 		
+		elsif ($cmd eq 'subscribe') {
+			cli_cmd_subscribe($client_socket, $request);
+		} 
+
 		elsif ($request->isStatusDispatchable()) {		
 		
 			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
@@ -530,17 +536,49 @@ sub cli_request_notification {
 	
 	foreach my $client_socket (keys %connections) {
 
-		# don't echo for those not listening
-		next unless ($connections{$client_socket}{'listen'} == 1);
-		
 		# don't echo to the sender
-		next if ($request->source() eq 'CLI' && $request->privateData() eq $client_socket);
-
+		next if ($request->source() eq 'CLI' && 
+			$request->privateData() eq $client_socket);
+			
+		next if !defined($connections{$client_socket}{'subscribe'});
+		
+		if (ref $connections{$client_socket}{'subscribe'} eq 'ARRAY') {
+			next unless ($request->isCommand($connections{$client_socket}{'subscribe'}));
+		}
+		
 		# retrieve the socket object
 		$client_socket = $connections{$client_socket}{'socket'};
 
 		# write request
 		cli_request_write($client_socket, $request);
+		
+	}
+}
+
+# subscribes or unsubscribes to the notification system
+sub cli_manage_subscription {
+
+	# do we need to subscribe?
+	my $subscribe = 0;
+	foreach my $client_socket (keys %connections) {
+
+		if (defined ($connections{$client_socket}{'subscribe'})) {
+			$subscribe++;
+			last;
+		}
+	}
+	
+	# subscribe
+	if ($subscribe && !$cli_subscribed) {
+
+		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
+		$cli_subscribed = 1;
+
+	# unsubscribe
+	} elsif (!$subscribe && $cli_subscribed) {
+
+		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
+		$cli_subscribed = 0;
 	}
 }
 
@@ -582,38 +620,38 @@ sub cli_cmd_listen {
 
 	my $param = $request->getParam('_p1');
 
-	if (defined $param) {
-		if ($param eq "?") {
-			$request->addParam('_p1',  $connections{$client_socket}{'listen'}||0);
-		}
-		elsif ($param == 0) {
-			$connections{$client_socket}{'listen'} = 0;
-		} 
-		elsif ($param == 1) {
-			$connections{$client_socket}{'listen'} = 1;
-		}			
-	} 
-	else {
-		$connections{$client_socket}{'listen'} = !$connections{$client_socket}{'listen'};
+	if (!defined $param) {
+		$param = !defined($connections{$client_socket}{'subscribe'});
 	}
-	
-	# do we need to subscribe?
-	my $subscribe = 0;
-	foreach my $client_socket (keys %connections) {
 
-		$subscribe++ if ($connections{$client_socket}{'listen'} == 1)
+	if ($param eq "?") {
+		$request->addParam('_p1',  defined ($connections{$client_socket}{'subscribe'}));
 	}
+	elsif ($param == 0) {
+		$connections{$client_socket}{'subscribe'} = undef;
+	} 
+	elsif ($param == 1) {
+		$connections{$client_socket}{'subscribe'} = 1;
+	}			
 	
-	if ($subscribe) {
-		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
-	} else {
-		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
-	}
+	cli_manage_subscription();
 }
 
-# handles the "shutdown" command
-sub cli_cmd_shutdown {
-	$::stop = 1;
+# handles the "subscribe" command
+sub cli_cmd_subscribe {
+	my $client_socket = shift;
+	my $request = shift;
+
+	$d_cli_vv && msg("CLI: cli_cmd_subscribe()\n");
+
+	my $param = $request->getParam('_p1');
+
+	if (defined $param) {
+		my @elems = split(/,/, $param);
+		$connections{$client_socket}{'subscribe'} = [\@elems];
+	}
+	
+	cli_manage_subscription();
 }
 
 ################################################################################

@@ -1135,6 +1135,7 @@ sub powerCommand {
 	
 	# handle toggle
 	if (!defined $newpower) {
+
 		$newpower = $client->power() ? 0 : 1;
 	}
 
