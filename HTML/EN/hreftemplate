@@ -141,7 +141,7 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%]&amp;sort=[% sort %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%]&amp;sort=[% item.sort %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the browsetree page for item %]

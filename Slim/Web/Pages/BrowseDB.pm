@@ -358,6 +358,7 @@ sub browsedb {
 
 			$list_form{'hierarchy'}     = $hierarchy;
 			$list_form{'level'}         = $level + 1;
+			$list_form{'sort'}          = $sort;
 			$list_form{'levelName'}     = $attrName;
 			$list_form{'text'}          = $itemname;
 			$list_form{'hreftype'}      = 'browseDb';
