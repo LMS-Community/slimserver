@@ -12,24 +12,6 @@
 		[% END %]
 		</td>
 	</tr>
-	<!--
-	<tr>
-		<td>
-			<table cellpadding="0" cellspacing="0" border="1" align="center">
-				<tr><td class="even">
-			[% IF item.mixable_descend %]
-			<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
-			<img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]"></a></nobr>
-			[% END %]
-
-			[% IF item.mixable_not_descend %]
-				<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
-<img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_MIX" | string %]"></a></nobr>
-			[% END %]
-			</td>
-		</tr>
-			<center><table cellspacing="0" cellpadding="0"><tr><td align="center">
-	-->
 	<tr>
 		<td align = 'center' valign = 'top'>
 		<table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
@@ -43,28 +25,4 @@
 		</table>
 		</td>
 	</tr>
-
-<!--
-	[% newpath = 'playlist.html' %]
-	<tr>
-		<td>
-			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=loadtracks[% item.attributes %]&player=[% playerURI %]">
-			<font class="actiontext">[% "PLAY" | string %]</a>
-		</td>
-		<td>
-			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=inserttracks[% item.attributes | html %]&player=[% playerURI %]">
-			<font class="actiontext">[% "NEXT" | string %]</a>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=addtracks[% item.attributes %]&player=[% playerURI %]">
-			<font class="actiontext">[% "ADD" | string %]</a></font>
-		</td>
-		<td>
-			<a href="[% webroot %][% newpath %]?command=playlist&subcommand=deletetracks[% item.attributes | html %]&player=[% playerURI %]">
-			<font class="actiontext">[% "DELETE" | string %]</a></font>
-		</td>
-	</tr>
--->
 	</table>
