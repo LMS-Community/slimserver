@@ -46,6 +46,7 @@ body, table, input, select, p, li, a {
 
 .playingitemtext {
 	font-size: 26px;
+	font-weight: bold;
 	color: #BB5544;
 }
 
