@@ -42,7 +42,7 @@
 	[% PROCESS cmdlink
 		cmdtitle = "SONG_INFO"
 		cmdimage = "song_info.gif"
-		target = "browser" %]
+		 %]
 [% END %]
 
 [% BLOCK dummy %]
@@ -119,7 +119,7 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
-	[% width='20' height='20' target='status' %]
+	[% width='20' height='20'  %]
 	[% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                           %][% END %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           %][% END %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         %][% END %]
@@ -128,13 +128,13 @@
 [% END %]
 
 [% BLOCK browsecontrols_abbr %]
-	[% width='20' height='20' target='status' %]
+	[% width='20' height='20'  %]
 	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
 	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]
-	[% width='20' height='20' target='status' %]
+	[% width='20' height='20'  %]
 	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
 	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
 	[% WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END %]
@@ -145,7 +145,7 @@
 [% END %]
 
 [% BLOCK browsecontrols_small %]
-	[% width='20' height='11' target='status' %]
+	[% width='20' height='11'  %]
 	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
 	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
 	[% WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END %]
@@ -157,14 +157,14 @@
 
 [% BLOCK trackinfo %]
 	[% IF item.num || item.num == 0 %]
-			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
-			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a></b>
+			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] >&nbsp;[% item.num + 1 %].&nbsp;</a>
+			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] >[% item.title | html %]</a></b>
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]
 	[% ELSIF item.item || !item.defined('level') %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
 	[% ELSIF item.songtitle %]
-		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
+		<a [% PROCESS songinfoItemHRef %] >[% item.songtitle | html %]</a>
 	[% ELSE %]
 		[% item.text | html %]
 	[% END %]
@@ -174,7 +174,7 @@
 [%# IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 [%# "FROM" | string %]
 <!--<i><a 
-[%# PROCESS albumItemHRef %] target="browser">
+[%# PROCESS albumItemHRef %] >
 [%# item.itemobj.album.title | html %]
 </a></i>-->
 [%# END %]

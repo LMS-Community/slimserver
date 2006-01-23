@@ -15,7 +15,7 @@
 
 <small>[% IF player_name %][% player_name %][% END %] [% IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %]:[% END %]</small>
 <small>
-[% IF player_chooser_list %]<form method="get" action="[% webroot %]status.html" target="_top">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input class="stdclick" type="submit" value="Change"></form>[% END %]
+[% IF player_chooser_list %]<form method="get" action="[% webroot %]status.html">[% "CURRENT_PLAYER" | string %] <select name="player">[% player_chooser_list %]</select><input class="stdclick" type="submit" value="Change"></form>[% END %]
 [% IF modeplay %][% "PLAYING" | string %][% END %]
 [% IF modepause %][% "PAUSED_ON" | string %][% END %]
 [% IF modestop %][% "STOPPED_ON" | string %][% END %]

@@ -18,7 +18,7 @@
 	[% IF includeAlbum && album && album != noAlbum %]
 
 		[% "FROM" | string %]
-		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]" target="browser"><font class="itemtext">[% album.title | html %]</font></a></i>
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]"><font class="itemtext">[% album.title | html %]</font></a></i>
 
 	[% END %]
 
