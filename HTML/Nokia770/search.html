@@ -1,25 +1,55 @@
-[%# Page search.html %]
-<!--search.html-->
-[% pagetitle = BLOCK %]
-[%- playermodel | string %] : [% "SEARCH" | string -%]
-[%- END -%]
-[%- pageicon = 'MUSIC' -%]
-[%- PROCESS pageheader.html class = 'custom' thispage = 'search' -%]
-
-[% IF not query %][% PROCESS searchinput.html %][% END %]
-
-[% IF numresults != '-1' %]
-    [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
-    [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
-    [% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]": [% numresults %]<p>
+[% pagetitle = 'Search'; pageicon = 'Search' %]
+[% pageHeaderMenu = BLOCK %]
+	<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
 [% END %]
+[% thispage = 'search' %]
+[% IF query %][% thispage = 'results' %][% END %]
+[% PROCESS pageheader.html thispage = thispage %]
+<script type="text/javascript" src="/html/prototype.js"></script>
 
-[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]:</font> <font size="+3">[% searchlist_pagebar %]</font>[% END %]
-[% IF searchlist_header %]<p>[% searchlist_header %]:</p>[% END %]
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
-    [% browse_list %]
-</table>
+[% IF not query %]
+	[% PROCESS searchinput.html %]
+[% ELSE %]
+	<div id="search-results"></div>
 
-[% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %]:</font> <font size="+3">[% searchlist_pagebar %]</font>[% END %]
+	<div id="browsedbHeader">
+		[% IF searchError %]
+			[% searchError %]
+		[% END %]
+		
+		[% IF searchlist_pagebar %]
+			[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
+		[% END %] 
+	</div>
+
+	<div id="browsedbList">
+			[% IF numresults != '-1' && numresults != '0' %]
+			<div class="even">
+				<div class="browsedbListItem">
+					<div class="browsedbControls">
+						<table>
+							<tr><td>
+							<table width = '75'><tr>
+								<td>
+									<a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults"><img src="[% webroot %]html/images/b_play.gif" border = '0' width=20 height=20 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+								</td>
+								<td>
+									<a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="[% webroot %]html/images/b_add.gif" border = '0' width=20 height=20 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
+								</td>
+							</tr></table>
+							</td>
+							<td align = 'left'>All Search Results</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<table border="0" cellspacing="0" cellpadding="0" width="100%">
+			[% browse_list %]
+			</table>
+			[% END %]
+	</div>
+[% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]
+
+[% END %]
 [% PROCESS detailed_footer.html %]
-[%# /Page search.html %]

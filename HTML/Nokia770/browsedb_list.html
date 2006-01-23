@@ -2,23 +2,33 @@
 <table width=100% border="0" cellspacing="0">
 
 <tr [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
-  <td>
+<td>
+	<table width = '75'><tr>
+                 [% PROCESS browsecontrols_abbr
+                 itemobj = itemobj
+                 attributes = attributes
+                 odd = odd
+                 mixerlinks = mixerlinks %]
+	</tr></table>
+</td>
+<td align = 'left' class = 'smalltext' width = '100%'>
+
 [% IF anchor %]<a name="[% anchor %]"></a>[% END %]
 
 [% IF descend %]
 
-	&nbsp;[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% playerURI %]">[% END %]<font class="itemtext">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
+	&nbsp;[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% playerURI %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>:
 
 	<!-- Include the artist for the album view -->
 	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 
 [% ELSE %]
-	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% playerURI %]"><font class="itemtext">:[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
+	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% playerURI %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
 
 	[% IF includeAlbum && album && album != noAlbum %]
 
 		[% "FROM" | string %]
-		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]"><font class="itemtext">[% album.title | html %]</font></a></i>
+		<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% album.id %]&player=[% playerURI %]">[% album.title | html %]</a></i>
 
 	[% END %]
 
@@ -27,44 +37,5 @@
 [% END %]
 
   </td>
-<td align="right" style="padding-right:15px;">
-<nobr>
-[% IF itemobj.isRemoteURL %]
-<a href="[% webroot %][% path %]?p0=playlist&p1=play&p2=[% itempath | uri %]&player=[% playerURI %]">
-[% ELSE %]
-<a href="[% webroot %][% path %]?command=playlist&subcommand=loadtracks[% attributes %]&player=[% playerURI %]">
-[% END %]
-
-<font class="actiontext">[% "PLAY" | string %]</a>
-
-|&nbsp;
-
-[% IF itemobj.isRemoteURL %]
-<a href="[% webroot %][% path %]?p0=playlist&p1=insert&p2=[% itempath | uri %]&player=[% playerURI %]">
-[% ELSE %]
-<a href="[% webroot %][% path %]?command=playlist&subcommand=inserttracks[% attributes | html %]&player=[% playerURI %]">
-[% END %]
-
-<font class="actiontext">[% "NEXT" | string %]</a>
-
-|&nbsp;
-
-[% IF itemobj.isRemoteURL %]
-<a href="[% webroot %][% path %]?p0=playlist&p1=add&p2=[% itempath | uri %]&player=[% playerURI %]">
-[% ELSE %]
-<a href="[% webroot %][% path %]?command=playlist&subcommand=addtracks[% attributes %]&player=[% playerURI %]">
-[% END %]
-<font class="actiontext">[% "ADD" | string %]</a>
-
-|&nbsp;
-
-[% IF itemobj.isRemoteURL %]
-<a href="[% webroot %][% path %]?p0=playlist&p1=deleteitem&p2=[% itempath | uri %]&player=[% playerURI %]">
-[% ELSE %]
-<a href="[% webroot %][% path %]?command=playlist&subcommand=deletetracks[% attributes | html %]&player=[% playerURI %]">
-[% END %]
-<font class="actiontext">[% "DELETE" | string %]</a>
-
-</td>
-
 </tr>
+</table>
