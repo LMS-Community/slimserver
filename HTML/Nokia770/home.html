@@ -26,29 +26,32 @@
 
 <table bgcolor="FFFFFF" width="100%" border="0">
 	<tr>
-		<td height="5"></td>
+		<td height="10"></td>
 	</tr>
 	[% IF ! browse_radio %]
 	<tr>
 	[% IF not nofolder %]
-		<td align = 'center'><a href="[% webroot %]browsetree.html?player=[% playerURI %]" style="text-decoration:none">
-<img src="html/images/smaller/folder.gif" width="120" height="101" name="bild1" border="0" alt = 'music folder'></a></td>
+		<td align = 'center'>
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_MUSIC_FOLDER %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/folder.gif" width="120" height="101" name="bild1" border="0" alt = 'music folder'></a></td>
 	[% END %]
 		<td align = 'center'>
 <a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ARTWORK %]&player=[% playerURI %]&artwork=1" style="text-decoration:none">
 <img src="html/images/smaller/artwork.gif" width="120" height="101" name="bild2" border="0" alt = 'artwork'></a></td>
 
 		<td align = 'center'>
-			<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none">
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ARTIST %]&player=[% playerURI %]" style="text-decoration:none">
 <img src="html/images/smaller/artist.gif" width="120" height="101" name="bild3" border="0" alt = 'artist'></a>
 		</td>
 
 		<td align = 'center'>
-			<a href = "[% webroot %]browsedb.html?hierarchy=age,track&level=0&player=[% playerURI %]" style='text-decoration:none'><img src = 'html/images/smaller/new_music.gif' width="120" height="101" name = 'bild4' border = '0' alt = 'new'></a>
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_NEW_MUSIC %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src = 'html/images/smaller/new_music.gif' width="120" height="101" name = 'bild4' border = '0' alt = 'new'></a>
 		</td>
 
 		<td align = 'center'>
-			<a href="[% webroot %]plugins/RandomPlay/randomplay_list.html?player=[% playerURI %]" style="text-decoration:none"><img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
+			<a href="[% webroot %][% additionalLinks.browse.PLUGIN_RANDOM %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
 		</td>
 	</tr>
 	<tr>
@@ -62,27 +65,30 @@
 	</tr>
 
 	<tr>
-		<td height="10"></td>
+		<td height="30"></td>
 	</tr>
 	<tr>
 		<td align = 'center'>
-			<a href="[% webroot %]browsedb.html?hierarchy=album,track&level=0&player=[% playerURI %]" style="text-decoration:none">
-<img src="html/images/smaller/album.gif" width="120" height="101" name="bild6" border="0" alt = 'album'></a>
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/album.gif" width="120" height="101" name="bild6" border="0" alt = 'album'></a>
 		</td>
 
-		<td align = 'center'><a href="[% webroot %]browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none">
-<img src="html/images/smaller/playlist.gif" width="120" height="101" border="0" name="bild7" alt = 'playlist'></a></td>
+		<td align = 'center'>
+			<a href="[% webroot %][% additionalLinks.browse.SAVED_PLAYLISTS %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/playlist.gif" width="120" height="101" border="0" name="bild7" alt = 'playlist'></a>
+		</td>
 
 		<td align = 'center'>
-			<a href="[% webroot %]browsedb.html?hierarchy=genre,artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none">
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_GENRE %]&player=[% playerURI %]" style="text-decoration:none">
 <img src="html/images/smaller/genre.gif" width="120" height="101" name="bild8" border="0" alt = 'genre'></a>
 		</td>
 		<td align="center">
-			<a href="[% webroot %]hitlist.html" style="text-decoration:none"><img src="html/images/smaller/statistics.gif" width="120" height="101" name="bild9" border="0" alt = 'stats'></a>
+			<a href="[% webroot %]hitlist.html" style="text-decoration:none">
+			<img src="html/images/smaller/statistics.gif" width="120" height="101" name="bild9" border="0" alt = 'stats'></a>
 		</td>
 		<td align="center">
-			<a href="[% webroot %]plugins/Favorites/favorites_list.html?player=[% playerURI %]" style='text-decoration:none'>
-<img src="html/images/smaller/favorites.gif" width="120" height="101" name="bild10" border="0" alt = 'favorites'></a>
+			<a href="[% webroot %][% additionalLinks.browse.PLUGIN_FAVORITES_MODULE_NAME %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/favorites.gif" width="120" height="101" name="bild10" border="0" alt = 'favorites'></a>
 		</td>
 
 
@@ -109,7 +115,7 @@
 	
 	[% END %]
 	<tr>
-		<td height="5"></td>
+		<td height="10"></td>
 	</tr>
 </table>
 
