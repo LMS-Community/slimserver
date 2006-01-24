@@ -37,16 +37,21 @@ sub loadConversionTables {
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/convert.conf";
 		push @convertFiles, "/Library/SlimDevices/convert.conf";
+		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/custom-convert.conf";
+		push @convertFiles, "/Library/SlimDevices/custom-convert.conf";
 		push @convertFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-convert.conf";
 		push @convertFiles, "/Library/SlimDevices/slimserver-convert.conf";
 	}
 
 	# custom convert files allowed at server root or root of plugin directories
+	push @convertFiles, catdir($Bin, 'custom-convert.conf');
 	push @convertFiles, catdir($Bin, 'slimserver-convert.conf');
 	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
+		push @convertFiles, catdir($dir, 'custom-convert.conf');
 		push @convertFiles, catdir($dir, 'slimserver-convert.conf');
 	}
 
+	push @convertFiles, catdir($Bin, '.custom-convert.conf');
 	push @convertFiles, catdir($Bin, '.slimserver-convert.conf');
 	
 	foreach my $convertFileName (@convertFiles) {
