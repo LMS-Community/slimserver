@@ -47,7 +47,7 @@ body, table, input, select, p, li, a {
 }
 
 .pagebartext {
-	font-size: 26px;
+	font-size: 22px;
 }
 
 .playingitemtext {
@@ -68,6 +68,7 @@ body, table, input, select, p, li, a {
 
 .headertext {
 	font-size: 26px;
+	padding-left: 10px;
 }
 
 .statusbartext {
