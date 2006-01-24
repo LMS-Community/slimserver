@@ -56,7 +56,11 @@
 				</td>
 			</tr>
 		[% END %]
-		[% browse_list %] 
+		[% IF browse_items %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+		[% END %]
 	</table>
 	[% IF searchlist_pagebar %]
 		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>

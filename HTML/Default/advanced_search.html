@@ -184,20 +184,24 @@
 	</div>
 
 	<div id="browsedbList">
-			[% IF numresults != '-1' && numresults != '0' %]
-			<div class="even">
-				<div class="browsedbListItem">
-					[% "ALL_SONGS" | string %]
-					<div class="browsedbControls">
-						<a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
-						<a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
-					</div>
+		[% IF numresults != '-1' && numresults != '0' %]
+		<div class="even">
+			<div class="browsedbListItem">
+				[% "ALL_SONGS" | string %]
+				<div class="browsedbControls">
+					<a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status"><img src="html/images/b_play.gif" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+					<a href="[% webroot %]status_header.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
 				</div>
 			</div>
-			[% ELSIF numresults == '0' %]
-				[% "EMPTY" | string%]
+		</div>
+		[% ELSIF numresults == '0' %]
+			[% "EMPTY" | string%]
+		[% END %]
+		[% IF browse_items %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
 			[% END %]
-			[% browse_list %] 
+		[% END %]
 	</div>
 
 [% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]

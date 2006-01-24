@@ -159,7 +159,11 @@
 	[% ELSIF numresults == '0' %]
 		<td align="left">[% "EMPTY" | string%]</td>
 	[% END %]
-		[% browse_list %]
+	[% IF browse_items %]
+		[% FOREACH item = browse_items %]
+			[% PROCESS browsedbitems_list.html %]
+		[% END %]
+	[% END %]
 	</table>
 
 	[% IF searchlist_pagebar %]

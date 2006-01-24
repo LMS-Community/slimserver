@@ -49,7 +49,11 @@
 			[% ELSIF numresults == '0' %]
 				[% "EMPTY" | string%]
 			[% END %]
-			[% browse_list %] 
+			[% IF browse_items %]
+				[% FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+				[% END %]
+			[% END %]
 	</div>
 [% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]
 

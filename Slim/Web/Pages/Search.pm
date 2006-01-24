@@ -40,6 +40,7 @@ sub basicSearch {
 	$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
 	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
+	$params->{'browse_items'} = [];
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
@@ -107,6 +108,7 @@ sub advancedSearch {
 	# template defaults
 	$params->{'browse_list'} = " ";
 	$params->{'liveSearch'}  = 0;
+	$params->{'browse_items'} = [];
 
 	# Prep the date format
 	$params->{'dateFormat'} = Slim::Utils::Misc::shortDateF();
@@ -242,9 +244,11 @@ sub fillInSearchResults {
 	# put in the type separator
 	if ($type && !$ds) {
 
-		$params->{'browse_list'} .= sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": %d<br/><br/></td></tr>",
-			Slim::Utils::Strings::string(uc($type . 'SMATCHING')), $params->{'numresults'},
-		);
+		# add reduced item for type headings
+		push @{$params->{'browse_items'}}, {'numresults' => $params->{'numresults'},
+											'query'   => $query,
+											'heading' => $type,
+										};
 	}
 
 	if ($params->{'numresults'}) {
@@ -337,7 +341,6 @@ sub fillInSearchResults {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
 			}
 
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 			push @{$params->{'browse_items'}}, \%list_form;
 		}
 	}

@@ -32,13 +32,13 @@ function refresh() {
 [% END %]
 
 [% BLOCK addCaseLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
-		case "[% link.key %]":
-			url = "[% link.value %]"
-			page = "[% link.key %]"
+	[% IF setuplinks %]
+		[% FOREACH setuplink = setuplinks %]
+		case "[% setuplink.key %]":
+			url = "[% setuplink.value %]"
+			page = "[% setuplink.key %]"
 			suffix = "page=" + page
-			[% IF cookie %]homestring = "[% link.key | string %]"
+			[% IF cookie %]homestring = "[% setuplink.key | string %]"
 			cookie = [% cookie %][% END %]
 		break
 		[% END %]
@@ -51,10 +51,10 @@ function chooseSettings(value,option)
 
 	switch(option)
 	{
-		[% IF playerid %][% PROCESS addCaseLinks links=additionalLinks.playersetup  %]
-						 [%# PROCESS addCaseLinks links=additionalLinks.playerplugin %]
-		[% ELSE %][% PROCESS addCaseLinks links=additionalLinks.setup   %]
-				  [%# PROCESS addCaseLinks links=additionalLinks.plugin %][% END %]
+		[% IF playerid %][% PROCESS addCaseLinks setuplinks=additionalLinks.playersetup  %]
+						 [%# PROCESS addCaseLinks setuplinks=additionalLinks.playerplugin %]
+		[% ELSE %][% PROCESS addCaseLinks setuplinks=additionalLinks.setup   %]
+				  [%# PROCESS addCaseLinks setuplinks=additionalLinks.plugin %][% END %]
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break

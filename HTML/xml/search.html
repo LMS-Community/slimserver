@@ -6,5 +6,9 @@
 	<num_results>[% numresults | html %]</num_results>
 	<query>[% query | html %]</query>
 	[% IF searchlist_header %][% searchlist_header %][% END %]
-	[% browse_list %]
+	[% IF browse_items %]
+		[% FOREACH item = browse_items %]
+			[% PROCESS browsedbitems_list.html %]
+		[% END %]
+	[% END %]
 </search>

@@ -1,4 +1,8 @@
-
+[% IF item.heading %]
+	<tr><td><hr width=\"75%%\"/><br/>
+		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.results %]
+	<br/><br/></td></tr>
+[% ELSE %]
 <tr>
   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
 	[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
@@ -24,4 +28,4 @@
 		odd = item.odd
 		mixerlinks = item.mixerlinks %]
 </tr>
-
+[% END %]

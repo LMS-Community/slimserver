@@ -51,7 +51,11 @@
 					<a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults"><img src="html/images/b_add.gif" width=13 height=13 alt="[% "ADD_TO_PLAYLIST" | string %]" title="[% "ADD_TO_PLAYLIST" | string %]"></a>
 				</td>
 			</tr>
-		[% browse_list %]
+		[% IF browse_items %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+		[% END %]
 	</table>
 	[% END %]
 		
