@@ -1,6 +1,6 @@
 [% IF item.heading %]
 	<tr><td><hr width=\"75%%\"/><br/>
-		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.results %]
+		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
 	<br/><br/></td></tr>
 [% ELSE %]
 <tr>

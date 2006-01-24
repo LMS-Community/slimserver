@@ -406,6 +406,10 @@ div#playList {
 	margin-right: 8px;
 }
 
+.searchHeader {
+	margin-top: 20px;
+}
+
 .browsedbArtItem {
 	position: relative;
 	float:left;

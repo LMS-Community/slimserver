@@ -276,6 +276,10 @@ DIV.menu2 .stdedit {
 	border-bottom:solid 2px cc9966;
 }
 
+.searchHeader {
+	margin-top: 20px;
+}
+
 img {
 	border-style: none;
 }

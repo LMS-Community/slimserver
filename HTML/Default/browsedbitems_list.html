@@ -1,3 +1,8 @@
+[% IF item.heading %]
+	<div class="searchHeader">
+		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
+	</div>
+[% ELSE %]
 <div class=[% item.odd ? "odd" : "even" %]>
 	<div class="browsedbListItem">
 		[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
@@ -25,3 +30,4 @@
 		</div>
 	</div>
 </div>
+[% END %]

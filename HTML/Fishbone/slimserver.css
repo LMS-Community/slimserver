@@ -275,6 +275,10 @@ div#statusMessage form{
 	border-top:solid 1px #333;
 }
 
+.searchHeader {
+	margin-top: 20px;
+}
+
 img {
 	border-style: none;
 }
