@@ -96,7 +96,7 @@ sub shutdownPlugin {
 	$initialized = 0;
 	
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('moodlogic');
+	Slim::Web::Setup::delCategory('MOODLOGIC');
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','moodlogic',1);
 	
 	# set importer to not use
@@ -192,7 +192,7 @@ sub initPlugin {
 sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('SERVER_SETTINGS','moodlogic',$groupRef,undef,$prefRef);
-	Slim::Web::Setup::addChildren('SERVER_SETTINGS','moodlogic');
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS','MOODLOGIC');
 	Slim::Web::Setup::addCategory('MOODLOGIC',&setupCategory);
 }
 

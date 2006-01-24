@@ -232,7 +232,7 @@ sub shutdownPlugin {
 	$initialized = 0;
 
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('itunes');
+	Slim::Web::Setup::delCategory('ITUNES');
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','itunes',1);
 
 	# set importer to not use
@@ -241,7 +241,7 @@ sub shutdownPlugin {
 }
 
 sub addGroups {
-	Slim::Web::Setup::addChildren('SERVER_SETTINGS','itunes',3);
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS','ITUNES',3);
 	Slim::Web::Setup::addCategory('ITUNES',&setupCategory);
 
 	my ($groupRef,$prefRef) = &setupUse();

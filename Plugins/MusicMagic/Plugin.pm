@@ -106,7 +106,7 @@ sub shutdownPlugin {
 	$initialized = 0;
 
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('musicmagic');
+	Slim::Web::Setup::delCategory('MUSICMAGIC');
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','musicmagic',1);
 	
 	# set importer to not use, but only for this session.
@@ -230,7 +230,7 @@ sub addGroups {
 	my ($groupRef,$prefRef) = &setupUse();
 	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
 
-	Slim::Web::Setup::addChildren('SERVER_SETTINGS', 'musicmagic');
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS', 'MUSICMAGIC');
 }
 
 sub isMusicLibraryFileChanged {
