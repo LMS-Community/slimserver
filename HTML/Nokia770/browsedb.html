@@ -56,6 +56,14 @@
 		</table>
 		</td>
 	</tr>
+	<tr>
+		<td>[% IF browselist_pagebar %]<font class="pagebartext">&nbsp;[% browselist_pagebar %]</font>[% END %]
+			[% IF browselist_header %]<font class="pagebartext">&nbsp;|&nbsp;[% browselist_header %]</font>[% END %]
+		</td>
+	</tr>
+	<tr>
+		<td>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]</td>
+	</tr>
 </table>
 
 <div style="float:left">
