@@ -129,8 +129,8 @@
 
 [% BLOCK browsecontrols_abbr %]
 	[% width='20' height='20'  %]
-	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
-	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html'   %][% END %]
+	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
+	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'  statusroot = 'playlist.html' %][% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]
