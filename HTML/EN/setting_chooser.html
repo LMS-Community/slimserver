@@ -1,14 +1,14 @@
 [% BLOCK addSetupLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
+	[% IF setuplinks %]
+		[% FOREACH link = setuplinks %]
 			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 		[% END %]
 	[% END %]
 [% END %]
 
 [% BLOCK addPluginLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
+	[% IF setuplinks %]
+		[% FOREACH link = setuplinks %]
 			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="PLUGIN: [% link.key | string %]">PLUGIN: [% link.key | string %]</OPTION>
 		[% END %]
 	[% END %]
@@ -19,10 +19,11 @@
 		[% UNLESS setting_chooser_noHome %]<OPTION [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</OPTION>[% END %]
 		[% IF playerid %]<OPTION [% IF page == "PLAYER_SETTINGS" %]selected[% END %] value="PLAYER_SETTINGS" label="[% "PLAYER_SETTINGS" | string %]">[% "PLAYER_SETTINGS" | string %]</OPTION>
 		[% ELSE %]<OPTION [% IF page == "SERVER_SETTINGS" %]selected[% END %] value="SERVER_SETTINGS" label="[% "SERVER_SETTINGS" | string %]">[% "SERVER_SETTINGS" | string %]</OPTION>[% END %]
-		[% IF playerid %][% PROCESS addSetupLinks   links=additionalLinks.playersetup %]
-						 [%# PROCESS addPluginLinks links=additionalLinks.playerplugin %]
-		[% ELSE %][% PROCESS addSetupLinks  links=additionalLinks.setup %][% END %]
-				  [%# PROCESS addPluginLinks links=additionalLinks.plugin %]
+		[% IF playerid %]gggg[% PROCESS addSetupLinks   setuplinks=additionalLinks.playersetup %]
+						 [%# PROCESS addPluginLinks setuplinks=additionalLinks.playerplugin %]
+		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
+				  [%# PROCESS addPluginLinks setuplinks=additionalLinks.plugin %]
 	</SELECT>
 	<input type=hidden value="[% page %]" name="page">
+	<input type=hidden value="[% playerid | uri %]" name="playerid">
 </FORM>
