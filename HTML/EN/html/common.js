@@ -67,7 +67,7 @@ function chooseSettings(value,option)
 	}
 
 	if (option) {
-		window.location = url + 'player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid %][% END %]';
+		window.location = url + 'player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid | uri %][% END %]';
 	}
 }
 
