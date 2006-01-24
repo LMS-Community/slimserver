@@ -31,7 +31,7 @@ function refresh() {
 }
 [% END %]
 
-[% BLOCK addCaseLinks %]
+[% BLOCK addSetupCaseLinks %]
 	[% IF setuplinks %]
 		[% FOREACH setuplink = setuplinks %]
 		case "[% setuplink.key %]":
@@ -51,10 +51,10 @@ function chooseSettings(value,option)
 
 	switch(option)
 	{
-		[% IF playerid %][% PROCESS addCaseLinks setuplinks=additionalLinks.playersetup  %]
-						 [%# PROCESS addCaseLinks setuplinks=additionalLinks.playerplugin %]
-		[% ELSE %][% PROCESS addCaseLinks setuplinks=additionalLinks.setup   %]
-				  [%# PROCESS addCaseLinks setuplinks=additionalLinks.plugin %][% END %]
+		[% IF playerid %][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
+						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
+		[% ELSE %][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
+				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][% END %]
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break
