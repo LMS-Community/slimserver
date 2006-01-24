@@ -1730,6 +1730,11 @@ sub _generateContentFromFile {
 			$params->{'LOCALE'} = $Slim::Utils::Unicode::locale || 'iso-8859-1';
 		}
 
+		# BUG 2842: find out how we get here without a defined template
+		unless (defined $template) {
+			Slim::Utils::Misc::bt();
+			msg("Missing template for skin: $skin\n");
+		};
 		unless ($template->process($path,$params,\$output)) {
 			errorMsg($template->error() . "\n");
 		}
