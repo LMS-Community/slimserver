@@ -10,8 +10,11 @@ body.default {
 	background-color: white;
 }
 
-body.custom {
+body.home {
 	background-color: #666666;
+}
+body.search {
+	background-color: #EEEEEE;
 }
 
 a:hover, a:visited, a:active, a:link {
@@ -28,8 +31,11 @@ body, table, input, select, p, li, a {
 }
 
 .itemtext {
-	font-size: 26px;
+	font-size: 22px;
 	text-decoration: none;
+}
+.smallitemtext {
+	font-size: 18px;
 }
 
 .numbertext {
@@ -107,6 +113,11 @@ table.thinborder {
 }
 table.noborder { 
 	border: none;
+}
+
+div#pagecontainer {
+	height: 364px;
+	overflow: visible;
 }
 
 div#hidden {

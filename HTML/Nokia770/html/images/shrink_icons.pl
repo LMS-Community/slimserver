@@ -11,8 +11,10 @@ $files{'genre'}++;
 $files{'artwork'}++;
 $files{'folder'}++;
 $files{'random'}++;
+$files{'favorites'}++;
+$files{'new_music'}++;
 
-my $dimension = $ARGV[0] || 140;
+my $dimension = $ARGV[0] || 120;
 my $command = "/usr/bin/convert -geometry ${dimension}x${dimension} ";
 opendir(DIR,".");
 while(my $file = readdir(DIR)) {

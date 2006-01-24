@@ -170,7 +170,7 @@
 	[% END %]
 
 [%# this is the "by Band from Album" code. I commented it out because I didn't think it had high enough value, at least for the way I typically view songs (by full album) #%]
-[%# [% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[%# IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 [%# IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 [%# "FROM" | string %]
 <!--<i><a 

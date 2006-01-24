@@ -7,7 +7,7 @@
    playlist = '0'
    music    = '1'
    pageicon = 'MUSIC' -%]
-[%- PROCESS pageheader.html class = 'custom' -%]
+[%- PROCESS pageheader.html -%]
 
 [% IF warn %]
 	<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] 
@@ -56,6 +56,8 @@
 		</table>
 		</td>
 	</tr>
+</table>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
 	<tr>
 		<td>[% IF browselist_pagebar %]<font class="pagebartext">&nbsp;[% browselist_pagebar %]</font>[% END %]
 			[% IF browselist_header %]<font class="pagebartext">&nbsp;|&nbsp;[% browselist_header %]</font>[% END %]
@@ -76,6 +78,7 @@
 	</tr>
 </table>
 </div>
+
 [% END %]
 [% PROCESS detailed_footer.html %]
 [%# /Page browsedb.html %]

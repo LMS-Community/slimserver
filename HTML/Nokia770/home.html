@@ -5,6 +5,7 @@
 [%- ELSE -%]
 	[%- thispage = 'home' -%]
 [%- END -%]
+
 [% PROCESS pageheader.html class = 'custom' thispage = thispage %]
 
 <!-- home.html -->
@@ -112,13 +113,21 @@
 	</tr>
 </table>
 
+[% PROCESS detailed_footer.html %]
 
-<table bgcolor="#EEEEEE" width="100%" cellspacing="0" cellpadding="0" border="0">
-<tr>
-        <td height = '5'></td>
-</tr>
+[% BLOCK tune_in_form %]
+        <form name="tune" method="get" action="status.html">
+        <input type="hidden" name="p0" value="playlist">
+        <input type="hidden" name="p1" value="play">
+        <input type="hidden" name="player" value="[% playerURI %]">
+        Radio URL:
+        <input type="text" class="stdedit" name="p2" size="40">
+        <input type="submit" class="stdclick" value="[% "RADIO_TUNEIN_CHOOSE" | string %]">
+</form>
+[% END %]
 
-</table>
+[% BLOCK library_stats %]
+[%# to add back in on a rainy day... %]
 <table width="100%" bgcolor="#666666">
 	<tr>
 		<td align="right">
@@ -137,17 +146,4 @@
 	</tr>
 [% END %]
 </table>
-
-<!-- /Element pagefooter.html -->
-[% PROCESS pagefooter.html %]
-
-[% BLOCK tune_in_form %]
-        <form name="tune" method="get" action="status.html">
-        <input type="hidden" name="p0" value="playlist">
-        <input type="hidden" name="p1" value="play">
-        <input type="hidden" name="player" value="[% playerURI %]">
-        Radio URL:
-        <input type="text" class="stdedit" name="p2" size="40">
-        <input type="submit" class="stdclick" value="[% "RADIO_TUNEIN_CHOOSE" | string %]">
-</form>
 [% END %]
