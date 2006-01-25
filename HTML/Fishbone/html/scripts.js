@@ -33,7 +33,7 @@ function newHref(doc,plyr) {
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
 		var rString = plyr;
-		var rExp = /(\w\w(:|%3A)){5}(\w\w)/gi;
+		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 		doc.links[j].href = myString.replace(rExp, rString);
 	}
 }
