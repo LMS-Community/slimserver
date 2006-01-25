@@ -91,7 +91,7 @@ sub outputAsXHTML {
 
 	my @xml = (
 		'<?xml version="1.0" encoding="utf-8" ?>',
-		'<table cellspacing="0" cellpadding="4">',
+		'<div id="browsedbList">',
 	);
 
 	for my $result (@$results) {
@@ -121,20 +121,20 @@ sub outputAsXHTML {
 			$count++;
 		}
 
-		push @xml, sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": $total<br/><br/></td></tr>", 
+		push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><hr width=\"75%%\"/><br/>%s \"$query\": $total<br/><br/></div></div>", 
 			Slim::Utils::Strings::string(uc($type . 'SMATCHING'))
 		);
 
 		push @xml, @output if $count;
 
 		if ($total && $total > MAXRESULTS) {
-			push @xml, sprintf("<tr><td class=\"even\"> <p> <a href=\"search.html?manualSearch=1&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></td></tr>\n",
+			push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><a href=\"search.html?manualSearch=1&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></div></div>\n",
 				$query, $type, $player, Slim::Utils::Strings::string('MORE_MATCHES')
 			);
 		}
 	}
 
-	push @xml, "</table>\n";
+	push @xml, "</div>\n";
 	my $string = join('', @xml);
 
 	return \$string;
@@ -194,23 +194,18 @@ sub renderItem {
 	   $url = "browsedb.html?hierarchy=artist,album,track\&amp;level=1\&amp;artist=$id";
 	}
 	
-	push @xml,"<tr>
-		<td width=\"100%\" class=\"$rowType\">
+	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
 			<a href=\"$url\&amp;player=$player\">$name</a>$artist $album
-		</td>";
+		";
 		
-	push @xml,"<td align=\"right\" class=\"$rowType\"></td>\n
-		<td align=\"right\" width=\"13\" class=\"$rowType\">\n
+	push @xml,"<div class=\"browsedbControls\">
 
-		<nobr><a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
-		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a></nobr>\n\n
+		<a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a>\n\n
 
-		</td>
-		<td  align=\"right\" width=\"13\" class=\"$rowType\">\n
-			<nobr><a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
-			<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a></nobr> \n
-		</td>\n
-		</tr>\n";
+		<a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a> \n
+		</div>\n</div>\n</div>\n";
 
 	my $string = join('', @xml);
 
