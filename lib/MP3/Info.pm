@@ -887,6 +887,11 @@ sub _parse_v2tag {
 									# handle all comment data)
 					$desc = $1;
 
+					if ($encoding eq "\001" || $encoding eq "\002") {
+
+						$data =~ s/^\x{feff}//;
+					}
+
 				} elsif ($id =~ /^TCON?$/) {
 
 					my ($index, $name);
@@ -947,6 +952,13 @@ sub _parse_v2tag {
 					if ($id eq 'TXXX') {
 
 						my ($key, $val) = split(/\0/, $data);
+
+						# Some programs - such as FB2K leave a UTF-16 BOM on the value
+						if ($encoding eq "\001" || $encoding eq "\002") {
+
+							$val =~ s/^\x{feff}//;
+						}
+
 						$info->{uc($key)} = $val;
 
 					} elsif ($id eq 'PRIV') {
