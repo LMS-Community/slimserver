@@ -72,6 +72,20 @@ sub init {
 				delete $prefs{'itunesscaninterval'};
 			}
 		},
+
+		'6.5b1-2006-01-25' => sub {
+
+			if (Slim::Utils::OSDetect::OS() eq 'unix') {
+				my $olddb = catdir(Slim::Utils::Prefs::get('cachedir'), '.slimserversql.db');
+				my $newdb = catdir(Slim::Utils::Prefs::get('cachedir'), 'slimserversql.db');
+
+				if (-e $olddb) {
+					rename($olddb,$newdb);
+				}
+			}
+		},
+						   
+
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -167,6 +181,7 @@ sub init {
 		'upgrade-6.2b1-script'	=> 1,
 		'upgrade-6.2b1-2005-09-19-script' => 1,
 		'upgrade-6.2.1-2005-11-07-script' => 1,
+		'upgrade-6.5b1-2006-01-25-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'databaseTempStorage'   => 'MEMORY',
 		'databaseCacheSize'     => 10000,
@@ -374,7 +389,7 @@ sub defaultCacheDir {
 
 	} elsif ($os eq 'unix') {
 
-		$CacheDir = $ENV{'HOME'};
+		$CacheDir = catdir($ENV{'HOME'},'Cache');
 	}
 
 	my @CacheDirs = splitdir($CacheDir);

@@ -178,7 +178,7 @@ sub db_Main {
 		return $class->dbh;
 	}
 
-	my $dbname = Slim::Utils::OSDetect::OS() eq 'unix' ? '.slimserversql.db' : 'slimserversql.db';
+	my $dbname = 'slimserversql.db';
 
 	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
 
