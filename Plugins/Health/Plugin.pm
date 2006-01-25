@@ -479,6 +479,7 @@ PLUGIN_HEALTH_INACTIVE
 	DE	Inaktiv
 	EN	Inactive
 	ES	Inactivo
+	IT	Inattivo
 	NL	Inactief
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC

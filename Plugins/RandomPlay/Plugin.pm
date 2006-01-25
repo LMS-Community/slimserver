@@ -874,6 +874,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Die Wiedergabeliste wird
 	EN	Now Playing will show
 	ES	Se Está Escuchando mostrará
+	IT	Riproduzione in corso mostrera'
 	NL	Speelt nu laat zien
 
 PLUGIN_RANDOM_AFTER_NUM_TRACKS

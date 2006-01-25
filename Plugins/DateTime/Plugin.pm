@@ -31,6 +31,7 @@ PLUGIN_SCREENSAVER_DATETIME
 	ES	Salvapantallas de Fecha y Hora
 	FR	Ecran de veille Date/Heure
 	HE	שומר מסך תאריכון
+	IT	Data e ora
 	NL	Datum en tijd
 	
 PLUGIN_SCREENSAVER_DATETIME_ENABLE
@@ -38,6 +39,7 @@ PLUGIN_SCREENSAVER_DATETIME_ENABLE
 	EN	Press PLAY to enable this screensaver
 	ES	Presionar PLAY para activar este salvapantallas
 	FR	Appuyer sur PLAY pour activer
+	IT	Premi PLAY per abilitare questo salvaschermo
 	NL	Zet schermbeveiliger aan met PLAY toets
 
 PLUGIN_SCREENSAVER_DATETIME_DISABLE
@@ -46,6 +48,7 @@ PLUGIN_SCREENSAVER_DATETIME_DISABLE
 	EN	Press PLAY to disable this screensaver
 	ES	Presionar PLAY para desactivar este salvapantallas
 	FR	Appuyer sur PLAY pour désactiver
+	IT	Premi PLAY per disabilitare questo salvaschermo
 	NL	Zet schermbeveiliger uit met PLAY toets
 	
 PLUGIN_SCREENSAVER_DATETIME_ENABLING

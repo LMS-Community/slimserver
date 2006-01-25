@@ -98,23 +98,27 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	DE	Benötigt Squeezebox2
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
+	IT	Necessita Squeezebox2/3
 	NL	Squeezebox2 nodig
 
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum Analyzer
 	ES	Analizador de Espectro
+	IT	Analizzatore di spettro
 	NL	Spectrum analysator
 
 PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
 	EN	Analog VU Meter
 	ES	VUmetro análogo
+	IT	VU meter analogico
 	NL	Analoge VU meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
 	EN	Digital VU Meter
 	ES	VUmetro digital
+	IT	VU meter digitale
 	NL	Digitale VU meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
@@ -128,6 +132,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
+	IT	Questo salvaschermo e\' abilitato
 	NL	Deze schermbeveiliger is aan
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
@@ -135,6 +140,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
+	IT	Salvaschermo di default
 	NL	standaard schermbeveiliger
 
 '};

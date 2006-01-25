@@ -1,4 +1,4 @@
-﻿package Plugins::xPL;
+package Plugins::xPL;
 # SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -700,6 +700,7 @@ SETUP_GROUP_XPL_DESC
 	ES	Estos valores controlan el comportamiento del protocolo xPL
 	FR	Ces réglages permettent de paramétrer le protocole xPL.
 	HE	הגדרות הפרוטוקול
+	IT	Queste impostazioni controllano il comportamento del protocollo xPL.
 	JP	これらのセッティングはxPLプロトコルを調節します
 	NL	Deze instellingen wijzigen het gedrag van het xPL protocol.
 	NO	Dette er innstillinger for xPL-protokollen
@@ -779,6 +780,7 @@ SETUP_XPLIR_NONE
 	ES	Ninguno
 	FR	Aucun
 	HE	אף אחד
+	IT	Nessuno
 	JP	なし
 	NL	Geen
 	NO	Ingen
@@ -817,6 +819,7 @@ SETUP_XPLIR_BOTH
 	ES	Ambos
 	FR	Les deux
 	HE	שניהם
+	IT	Entrambi
 	JP	両方
 	NL	Beide
 	NO	Begge

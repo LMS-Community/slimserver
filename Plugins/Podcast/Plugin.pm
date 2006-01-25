@@ -382,6 +382,7 @@ PLUGIN_PODCAST
 PODCAST_ERROR
 	DE	Fehler
 	EN	Error
+	IT	Errore
 	NL	Fout
 
 PODCAST_GET_FAILED
@@ -398,6 +399,7 @@ PODCAST_LOADING
 
 PODCAST_LINK
 	EN	Link
+	IT	Collegamento
 	ES	Vínculo
 
 PODCAST_URL
@@ -408,6 +410,7 @@ PODCAST_DATE
 	DE	Datum
 	EN	Date
 	ES	Fecha
+	IT	Data
 	NL	Datum
 
 PODCAST_EDITOR
@@ -428,6 +431,7 @@ PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play
 	ES	Nada para escuchar
+	IT	Niente da riprodurre
 	NL	Niets te spelen
 
 PODCAST_FEED_DESCRIPTION

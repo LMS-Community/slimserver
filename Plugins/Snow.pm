@@ -36,6 +36,7 @@ PLUGIN_SCREENSAVER_SNOW
 	EN	Snow Screensaver
 	ES	Salvapantallas de Nieve
 	FR	Ecran de veille Neige
+	IT	Salvaschermo Neve
 	NL	Sneeuw schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_SETTINGS
@@ -43,6 +44,7 @@ PLUGIN_SCREENSAVER_SNOW_SETTINGS
 	EN	Snow Screensaver settings
 	ES	Parámetros para Salvapantallas de Nieve
 	FR	Réglages Ecran de veille Neige
+	IT	Impostazioni salvaschermo Neve
 	NL	Sneeuw schermbeveiliger instellingen
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE
@@ -50,6 +52,7 @@ PLUGIN_SCREENSAVER_SNOW_ACTIVATE
 	EN	Select Current Screensaver
 	ES	Elegir Salvapantallas Actual
 	FR	Choisir écran de veille courant
+	IT	Seleziona il salvaschermo in uso
 	NL	Selecteer je huidige schermbeveiliger
 
 PLUGIN_SCREENSAVER_SNOW_ACTIVATE_TITLE
@@ -140,6 +143,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	EN	Now Playing, snow falling behind
 	ES	Se está escuchando, la nieve cae detrás
 	FR	Lecture + neige en arrière-plan
+	IT	Riproduzione in corso, nevicata sullo sfondo
 	NL	Speelt nu, sneeuw valt achter
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_2
@@ -147,6 +151,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_2
 	EN	Now Playing, snow falling in front
 	ES	Se está escuchando, la nieve cae delante
 	FR	Lecture +  neige en avant-plan
+	IT	Riproduzione in corso, nevicata di fronte
 	NL	Speelt nu, sneeuw valt vooraan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_3
@@ -218,6 +223,7 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
 	ES	Lo siento, la Nieve no funciona en este reproductor.
+	IT	Scusa, Neve non funziona con questo lettore.
 	NL	Sorry, sneeuw werkt niet op deze speler
 '};
 
