@@ -17,14 +17,17 @@ use Slim::Utils::Network;
 ######################################################################
 sub acceptAll {
 	my $val = shift;
+
 	return $val;
 }
 
 sub trueFalse {
 	# use the perl idea of true and false.
 	my $val = shift;
+
 	if ($val) {
 		return 1;
+
 	} else {
 		return 0;
 	}
@@ -32,21 +35,29 @@ sub trueFalse {
 
 sub isInt {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
+
 	if ($val !~ /^-?\d+$/) { #not an integer
 		return undef;
+
 	} elsif (defined($low) && $val < $low) { # too low, equal to $low is acceptable
+
 		if ($setLow) {
 			return $low;
+
 		} else {
 			return undef;
 		}
+
 	} elsif (defined($high) && $val > $high) { # too high, equal to $high is acceptable
+
 		if ($setHigh) {
 			return $high;
+
 		} else {
 			return undef;
 		}
 	}
+
 	return $val;
 }
 
@@ -78,20 +89,20 @@ sub hostNameOrIPAndPort {
 
 	# If we're just an IP:Port - hand off
 	if ($val =~ /^[\d\.:]+$/) {
-		return validateIPPort($val);
+		return IPPort($val);
 	}
 
 	my ($host, $port) = split /:/, $val;
 
 	# port is bogus - return here.
-	unless (validatePort($port)) {
+	unless (port($port)) {
 		return undef;
 	}
 
 	# Otherwise - try to make sure it has at least valid chars
 	return undef if $host !~ /^[\w\d\._-]+$/;
 
-        return $val;
+	return $val;
 }
 
 sub IPPort {
@@ -119,33 +130,45 @@ sub IPPort {
 
 sub number {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
+
 	if ($val !~ /^-?\.?\d+\.?\d*$/) { # this doesn't recognize scientific notation
+
 		return undef;
+
 	} elsif (defined($low) && $val < $low) { # too low, equal to $low is acceptable
+
 		if ($setLow) {
 			return $low;
+
 		} else {
 			return undef;
 		}
+
 	} elsif (defined($high) && $val > $high) { # too high, equal to $high is acceptable
+
 		if ($setHigh) {
 			return $high;
+
 		} else {
 			return undef;
 		}
 	}
+
 	return $val;
 }
 
 sub inList {
 	my ($val,@valList) = @_;
 	my $inList = 0;
+
 	foreach my $valFromList (@valList) {
 		$inList = ($valFromList eq $val);
 		last if $inList;
 	}
+
 	if ($inList) {
 		return $val;
+
 	} else {
 		return undef;
 	}
@@ -153,8 +176,10 @@ sub inList {
 
 sub isTime {
 	my $val = shift;
+
 	if ($val =~ m/^([0\s]?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$/isg) {
 		return $val;
+
 	} else {
 		return undef;
 	}
@@ -167,17 +192,22 @@ sub inHash {
 	my $ref = shift;
 	my $codereturnsref = shift; #should be set to 1 if $ref is to code that returns a hash reference
 	my %hash = ();
+
 	if (ref($ref)) {
 		if (ref($ref) eq 'HASH') {
 			%hash = %{$ref}
+
 		} elsif (ref($ref) eq 'CODE') {
+
 			if ($codereturnsref) {
 				%hash = %{&{$ref}};
+
 			} else {
 				%hash = &{$ref};
 			}
 		}
 	}
+
 	if (exists $hash{$val}) {
 		return $val;
 	} else {
@@ -188,12 +218,15 @@ sub inHash {
 sub isFile {
 	my $val = shift;
 	my $allowEmpty = shift;
+
 	if (-r $val) {
 		$val =~ s|[/\\]$||;
 		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
+
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
+
 	} else  {
 		return (undef, "SETUP_BAD_FILE") ;
 	}
@@ -202,12 +235,15 @@ sub isFile {
 sub isDir {
 	my $val = shift;
 	my $allowEmpty = shift;
+
 	if (-d $val) {
 		$val =~ s|[/\\]$||;
 		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
+
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
+
 	} else  {
 		return (undef, "SETUP_BAD_DIRECTORY") ;
 	}
@@ -222,8 +258,10 @@ sub isAudioDir {
 		$val =~ s|[/\\]$||;
 		$val = Slim::Utils::Misc::fixPathCase($val);
 		return $val;
+
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
 		return $val;
+
 	} else  {
 		print $!;
 		return (undef, "SETUP_BAD_DIRECTORY") ;
@@ -244,6 +282,7 @@ sub hasText {
 sub password {
 	my $val = shift;
 	my $currentPassword = Slim::Utils::Prefs::get('password');
+
 	if (defined($val) && $val ne '' && $val ne $currentPassword) {
 		srand (time());
 		my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
@@ -257,6 +296,7 @@ sub password {
 # TODO make this actually check to see if the format is valid
 sub format {
 	my $val = shift;
+
 	if (!defined($val)) {
 		return undef;
 	} elsif ($val eq '') {
@@ -269,13 +309,15 @@ sub format {
 # Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
 sub allowedHosts {
 	my $val = shift;
+
 	$val =~ s/\s+//g;
+
 	if (!defined($val) || $val eq '') {
-	    return join(',', Slim::Utils::Network::hostAddr());
+		return join(',', Slim::Utils::Network::hostAddr());
 	} else {
- 		return $val;
- 	}
- }
+		return $val;
+	}
+}
 
 1;
 
