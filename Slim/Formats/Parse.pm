@@ -136,15 +136,17 @@ sub readM3U {
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
 
-		if (!$foundBOM) {
+		# Guess the encoding of each line in the file. Bug 1876
+		# includes a playlist that has latin1 titles, and utf8 paths.
+		my $enc = Slim::Utils::Unicode::encodingFromString($entry);
+
+		# Only strip the BOM off of UTF-8 encoded bytes. Encode will
+		# handle UTF-16
+		if (!$foundBOM && $enc eq 'utf8') {
 
 			$entry = Slim::Utils::Unicode::stripBOM($entry);
 			$foundBOM = 1;
 		}
-
-		# Guess the encoding of each line in the file. Bug 1876
-		# includes a playlist that has latin1 titles, and utf8 paths.
-		my $enc = Slim::Utils::Unicode::encodingFromString($entry);
 
 		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 
@@ -251,15 +253,17 @@ sub readPLS {
 		# strip whitespace from end
 		$line =~ s/\s*$//;
 
-		if (!$foundBOM) {
-
-			$line = Slim::Utils::Unicode::stripBOM($line);
-			$foundBOM = 1;
-		}
-
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
 		my $enc = Slim::Utils::Unicode::encodingFromString($line);
+
+		# Only strip the BOM off of UTF-8 encoded bytes. Encode will
+		# handle UTF-16
+		if (!$foundBOM && $enc eq 'utf8') {
+
+			$entry = Slim::Utils::Unicode::stripBOM($entry);
+			$foundBOM = 1;
+		}
 
 		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
 

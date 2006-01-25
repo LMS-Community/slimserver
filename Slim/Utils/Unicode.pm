@@ -357,8 +357,7 @@ sub utf8decode {
 }
 
 sub utf8decode_guess {
-	my $string = shift;
-	my $prefer_encoding;
+	my ($string, $preferedEncoding) = @_;
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string)) {
@@ -370,22 +369,24 @@ sub utf8decode_guess {
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
 		eval {
-			my $icode = Encode::Guess::guess_encoding($string);
 
-			if (ref $icode) {
+			if ($preferedEncoding) {
 
-				$string = Encode::decode($icode, $string, $FB_QUIET);
+				$string = Encode::decode($preferedEncoding, $string, $FB_QUIET);
 
 			} else {
 
-				if ($icode !~ /^no /i) {
+				my $icode = Encode::Guess::guess_encoding($string);
 
-					while ($prefer_encoding = shift) {
+				if (ref $icode) {
 
-						$string = Encode::decode($prefer_encoding, $string, $FB_QUIET);
+					$string = Encode::decode($icode, $string, $FB_QUIET);
 
-						last if $icode =~ /$prefer_encoding/;
-					}
+				} else {
+
+					errorMsg("Couldn't find a valid encoding for string: [$string]\n");
+
+					$string = $orig;
 				}
 			}
 		}
@@ -487,7 +488,22 @@ sub looks_like_cp1252 {
 sub looks_like_utf8 {
 	use bytes;
 
+	return 1 if $_[0] =~ /^\xef\xbb\xbf/;
 	return 1 if $_[0] =~ /($utf8_re_bits)/o;
+	return 0;
+}
+
+sub looks_like_utf16 {
+	use bytes;
+
+	return 1 if $_[0] =~ /^(?:\xfe\xff|\xff\xfe)/;
+	return 0;
+}
+
+sub looks_like_utf32 {
+	use bytes;
+
+	return 1 if $_[0] =~ /^(?:\x00\x00\xfe\xff|\xff\xfe\x00\x00)/;
 	return 0;
 }
 
@@ -536,6 +552,14 @@ sub encodingFromString {
 	if (looks_like_ascii($_[0])) {
 
 		$encoding = 'ascii';
+
+	} elsif (looks_like_utf32($_[0])) {
+
+		$encoding = 'utf-32';
+
+	} elsif (looks_like_utf16($_[0])) {
+	
+		$encoding = 'utf-16';
 
 	} elsif (looks_like_utf8($_[0])) {
 	
