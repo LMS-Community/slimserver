@@ -261,7 +261,7 @@ sub readPLS {
 		# handle UTF-16
 		if (!$foundBOM && $enc eq 'utf8') {
 
-			$entry = Slim::Utils::Unicode::stripBOM($entry);
+			$line = Slim::Utils::Unicode::stripBOM($line);
 			$foundBOM = 1;
 		}
 
