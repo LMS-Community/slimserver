@@ -104,21 +104,14 @@ sub loadTypesConfig {
 		push @typesFiles, "/Library/SlimDevices/types.conf";
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/custom-types.conf";
 		push @typesFiles, "/Library/SlimDevices/custom-types.conf";
-		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/slimserver-types.conf";
-		push @typesFiles, "/Library/SlimDevices/slimserver-types.conf";
 	}
 
 	# custom types file allowed at server root or root of plugin directories
 	push @typesFiles, catdir($Bin, 'custom-types.conf');
-	push @typesFiles, catdir($Bin, 'slimserver-types.conf');
 	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
 		push @typesFiles, catdir($dir, 'custom-types.conf');
-		push @typesFiles, catdir($dir, 'slimserver-types.conf');
 	}
 
-	push @typesFiles, catdir($Bin, '.custom-types.conf');
-	push @typesFiles, catdir($Bin, '.slimserver-types.conf');
-	
 	foreach my $typeFileName (@typesFiles) {
 		if (open my $typesFile, $typeFileName) {
 			for my $line (<$typesFile>) {

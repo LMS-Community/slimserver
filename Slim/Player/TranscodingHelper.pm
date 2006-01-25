@@ -48,11 +48,7 @@ sub loadConversionTables {
 	push @convertFiles, catdir($Bin, 'slimserver-convert.conf');
 	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
 		push @convertFiles, catdir($dir, 'custom-convert.conf');
-		push @convertFiles, catdir($dir, 'slimserver-convert.conf');
 	}
-
-	push @convertFiles, catdir($Bin, '.custom-convert.conf');
-	push @convertFiles, catdir($Bin, '.slimserver-convert.conf');
 	
 	foreach my $convertFileName (@convertFiles) {
 

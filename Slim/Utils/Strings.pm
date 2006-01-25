@@ -67,11 +67,7 @@ sub stringsFiles {
 
 	my @stringsFiles = qw(
 		strings.txt
-		.slimp3-strings.txt
-		slimp3-strings.txt 
-		.slimserver-strings.txt
 		slimserver-strings.txt
-		.custom-strings.txt
 		custom-strings.txt
 	);
 
