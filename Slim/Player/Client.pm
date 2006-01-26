@@ -891,7 +891,7 @@ sub forgetClient {
 	
 	if ($client) {
 		Slim::Web::HTTP::forgetClient($client);
-		Slim::Utils::Timers::forgetClient($client);
+		Slim::Utils::Timers::forgetTimer($client);
 		delete $clientHash{$client->id()};
 	}	
 }
