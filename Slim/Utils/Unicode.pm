@@ -357,7 +357,7 @@ sub utf8decode {
 }
 
 sub utf8decode_guess {
-	my ($string, $preferedEncoding) = @_;
+	my ($string, @preferedEncodings) = @_;
 
 	# Bail early if it's just ascii
 	if (looks_like_ascii($string)) {
@@ -370,23 +370,19 @@ sub utf8decode_guess {
 
 		eval {
 
-			if ($preferedEncoding) {
+			my $icode = Encode::Guess::guess_encoding($string);
 
-				$string = Encode::decode($preferedEncoding, $string, $FB_QUIET);
+			if (ref $icode) {
+
+				$string = Encode::decode($icode, $string, $FB_QUIET);
 
 			} else {
 
-				my $icode = Encode::Guess::guess_encoding($string);
+				for my $encoding (@preferedEncodings) {
 
-				if (ref $icode) {
+					$string = Encode::decode($encoding, $string, $FB_QUIET);
 
-					$string = Encode::decode($icode, $string, $FB_QUIET);
-
-				} else {
-
-					errorMsg("Couldn't find a valid encoding for string: [$string]\n");
-
-					$string = $orig;
+					last if $icode =~ /$encoding/;
 				}
 			}
 		}
