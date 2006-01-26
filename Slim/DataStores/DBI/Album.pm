@@ -16,7 +16,7 @@ use Slim::Utils::Misc;
 
 	$class->columns(Essential => qw/title titlesort contributor compilation year artwork disc discc musicmagic_mixable/);
 
-	$class->columns(Others    => qw/titlesearch replay_gain replay_peak musicbrainz_id/);
+	$class->columns(Others    => qw/titlesearch customsearch replay_gain replay_peak musicbrainz_id/);
 
 	$class->columns(Stringify => qw/title/);
 

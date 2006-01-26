@@ -11,7 +11,7 @@ CREATE TABLE metainformation (
   total_time integer      -- cumulative play time
 );
 
-INSERT INTO metainformation VALUES (18, 0, 0);
+INSERT INTO metainformation VALUES (19, 0, 0);
 
 CREATE TABLE tracks (
   id integer UNIQUE PRIMARY KEY NOT NULL,
@@ -19,6 +19,7 @@ CREATE TABLE tracks (
   title varchar,           -- title
   titlesort varchar,       -- version of title used for sorting
   titlesearch varchar,     -- version of title used for searching
+  customsearch varchar,    -- version of title optionally used by plugins
   album integer,           -- album object
   tracknum integer,        -- track number in album
   content_type varchar,    -- content type of track
@@ -70,6 +71,8 @@ CREATE INDEX trackSortIndex ON tracks (titlesort);
 
 CREATE INDEX trackSearchIndex ON tracks (titlesearch);
 
+CREATE INDEX trackCustomSearchIndex ON tracks (customsearch);
+
 CREATE INDEX trackRatingIndex ON tracks (rating);
 
 CREATE INDEX trackPlayCountIndex ON tracks (playCount);
@@ -101,6 +104,7 @@ CREATE TABLE albums (
   title varchar,           -- title
   titlesort varchar,       -- version of title used for sorting
   titlesearch varchar,     -- version of title used for searching
+  customsearch varchar,    -- version of title optionally used by plugins
   contributor varchar,     -- pointer to the album contributor
   compilation integer,     -- boolean for compilation album
   year integer,            -- year
@@ -119,6 +123,8 @@ CREATE INDEX albumsSortIndex ON albums (titlesort);
 
 CREATE INDEX albumsSearchIndex ON albums (titlesearch);
 
+CREATE INDEX albumsCustomSearchIndex ON albums (customsearch);
+
 CREATE INDEX compilationSortIndex ON albums (compilation);
 
 CREATE TABLE contributors (
@@ -126,6 +132,7 @@ CREATE TABLE contributors (
   name varchar,           -- name of contributor
   namesort varchar,       -- version of name used for sorting 
   namesearch varchar,     -- version of name used for search matching 
+  customsearch varchar,   -- version of name optionally used by plugins
   moodlogic_id integer,   -- these will eventually be dynamically created by the plugin
   moodlogic_mixable integer,
   musicbrainz_id varchar,  -- musicbrainz uuid (36 bytes of text)
@@ -137,6 +144,8 @@ CREATE INDEX contributorsNameIndex ON contributors (name);
 CREATE INDEX contributorsSortIndex ON contributors (namesort);
 
 CREATE INDEX contributorsSearchIndex ON contributors (namesearch);
+
+CREATE INDEX contributorsCustomSearchIndex ON contributors (customsearch);
 
 CREATE TABLE contributor_track (
   role integer,           -- role - enumerated type
@@ -169,6 +178,7 @@ CREATE TABLE genres (
   name varchar,           -- genre name
   namesort varchar,       -- version of name used for sorting 
   namesearch varchar,     -- version of name used for searching 
+  customsearch varchar,   -- version of name optionally used by plugins
   moodlogic_id integer,   -- these will eventually be dynamically created by the plugin
   moodlogic_mixable integer,
   musicmagic_mixable integer -- musicmagic fields
@@ -179,6 +189,8 @@ CREATE INDEX genreNameIndex ON genres (name);
 CREATE INDEX genreSortIndex ON genres (namesort);
 
 CREATE INDEX genreSearchIndex ON genres (namesearch);
+
+CREATE INDEX genreCustomSearchIndex ON genres (customsearch);
 
 CREATE TABLE genre_track (
   genre integer,          -- genre object

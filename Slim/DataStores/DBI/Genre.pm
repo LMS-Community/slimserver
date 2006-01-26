@@ -15,7 +15,7 @@ use Scalar::Util qw(blessed);
 
 	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
 
-	$class->columns(Others => qw/namesearch/);
+	$class->columns(Others => qw/namesearch customsearch/);
 
 	$class->columns(Stringify => qw/name/);
 

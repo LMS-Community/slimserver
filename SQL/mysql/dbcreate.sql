@@ -16,7 +16,7 @@ CREATE TABLE metainformation (
   total_time   int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (19, 0, 0);
+INSERT INTO metainformation VALUES (20, 0, 0);
 
 --
 -- Table: tracks
@@ -27,6 +27,7 @@ CREATE TABLE tracks (
   title text,
   titlesort text,
   titlesearch text,
+  customsearch text,
   album  int(10) unsigned,
   tracknum  int(10) unsigned,
   content_type varchar(255),
@@ -69,6 +70,7 @@ CREATE TABLE tracks (
   INDEX ctSortIndex (content_type),
   INDEX trackSortIndex (titlesort(255)),
   INDEX trackSearchIndex (titlesearch(255)),
+  INDEX trackCustomSearchIndex (customsearch(255)),
   INDEX trackRatingIndex (rating),
   INDEX trackPlayCountIndex (playCount),
   INDEX trackAudioIndex (audio),
@@ -113,6 +115,7 @@ CREATE TABLE albums (
   title text,
   titlesort text,
   titlesearch text,
+  customsearch text,
   contributor int(10) unsigned NOT NULL,
   compilation tinyint(1) unsigned,
   year  smallint(5) unsigned,
@@ -126,6 +129,7 @@ CREATE TABLE albums (
   INDEX albumsTitleIndex (title(255)),
   INDEX albumsSortIndex (titlesort(255)),
   INDEX albumsSearchIndex (titlesearch(255)),
+  INDEX albumsCustomSearchIndex (customsearch(255)),
   INDEX compilationSortIndex (compilation),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
@@ -140,6 +144,7 @@ CREATE TABLE contributors (
   name text,
   namesort text,
   namesearch text,
+  customsearch text,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable tinyint(1) unsigned,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
@@ -147,6 +152,7 @@ CREATE TABLE contributors (
   INDEX contributorsNameIndex (name(255)),
   INDEX contributorsSortIndex (namesort(255)),
   INDEX contributorsSearchIndex (namesearch(255)),
+  INDEX contributorsCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 
@@ -188,12 +194,14 @@ CREATE TABLE genres (
   name text,
   namesort text,
   namesearch text,
+  customsearch text,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable tinyint(1) unsigned,
   musicmagic_mixable tinyint(1) unsigned,
   INDEX genreNameIndex (name(255)),
   INDEX genreSortIndex (namesort(255)),
   INDEX genreSearchIndex (namesearch(255)),
+  INDEX genreCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
 ) TYPE=InnoDB;
 

@@ -23,7 +23,7 @@ our %contributorToRoleMap = (
 
 	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
 
-	$class->columns(Others => qw/namesearch musicbrainz_id/);
+	$class->columns(Others => qw/namesearch customsearch musicbrainz_id/);
 
 	$class->columns(Stringify => qw/name/);
 
