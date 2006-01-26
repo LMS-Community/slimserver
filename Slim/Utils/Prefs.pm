@@ -78,9 +78,17 @@ sub init {
 			if (Slim::Utils::OSDetect::OS() eq 'unix') {
 				my $olddb = catdir(Slim::Utils::Prefs::get('cachedir'), '.slimserversql.db');
 				my $newdb = catdir(Slim::Utils::Prefs::get('cachedir'), 'slimserversql.db');
+				my $oldPref = catdir(preferencesPath(), '.slimserver.pref');
+				my $newPref = catdir(preferencesPath(), 'slimserver.pref');
 
 				if (-e $olddb) {
 					rename($olddb,$newdb);
+				}
+
+				if (-e $oldPref && $prefsFile eq $oldPref) {
+					# have loaded old file name at this point, move and change to new name
+					rename($oldPref, $newPref);
+					$prefsFile = $newPref;
 				}
 			}
 		},
@@ -971,8 +979,10 @@ sub prefsFile {
 	} else {
 		if (-r '/etc/slimserver.conf') {
 			$prefsFile = '/etc/slimserver.conf';
-		} else {
+		} elsif (-r catdir($pref_path, '.slimserver.pref')) {
 			$prefsFile = catdir($pref_path, '.slimserver.pref');
+		} else {
+			$prefsFile = catdir($pref_path, 'slimserver.pref');
 		}
 	}
 	
@@ -989,29 +999,6 @@ sub load {
 	my $nosetup = shift;
 
 	my $readFile = prefsFile($setFile);
-
-	# if we can't open up the new one, try the old ones
-	if (!-r $readFile) {
-		$readFile = '/etc/slimp3.pref';
-	}
-
-	if (!-r $readFile) {
-		$readFile = catdir(preferencesPath(), 'SLIMP3.PRF');
-	}
-
-	if (!-r $readFile) {
-		if (exists($ENV{'windir'})) {
-			$readFile = catdir($ENV{'windir'}, 'SLIMP3.PRF');
-		}
-	}
-
-	if (!-r $readFile && preferencesPath()) {
-		$readFile = catdir(preferencesPath(), '.slimp3.pref');
-	}
-
-	if (!-r $readFile && $ENV{'HOME'}) {
-		$readFile = catdir($ENV{'HOME'}, '.slimp3.pref');
-	}
 
 	# if we found some file to read, then let's read it!
 	eval {
