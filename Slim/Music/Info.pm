@@ -19,6 +19,7 @@ use Tie::Cache::LRU;
 use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
+use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
@@ -95,10 +96,12 @@ sub getCurrentDataStore {
 }
 
 sub loadTypesConfig {
-	my @typesFiles;
+	my @typesFiles = ();
+
 	$::d_info && msg("loading types config file...\n");
 	
 	push @typesFiles, catdir($Bin, 'types.conf');
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
 		push @typesFiles, "/Library/SlimDevices/types.conf";
@@ -108,21 +111,26 @@ sub loadTypesConfig {
 
 	# custom types file allowed at server root or root of plugin directories
 	push @typesFiles, catdir($Bin, 'custom-types.conf');
+
 	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
 		push @typesFiles, catdir($dir, 'custom-types.conf');
 	}
 
 	foreach my $typeFileName (@typesFiles) {
+
 		if (open my $typesFile, $typeFileName) {
+
 			for my $line (<$typesFile>) {
+
 				# get rid of comments and leading and trailing white space
 				$line =~ s/#.*$//;
 				$line =~ s/^\s//;
 				$line =~ s/\s$//;
 	
 				if ($line =~ /^(\S+)\s+(\S+)\s+(\S+)\s+(\S+)/) {
+
 					my $type = $1;
-					my @suffixes = split ',', $2;
+					my @suffixes  = split ',', $2;
 					my @mimeTypes = split ',', $3;
 					my @slimTypes = split ',', $4;
 					
@@ -147,6 +155,7 @@ sub loadTypesConfig {
 					}				
 				}
 			}
+
 			close $typesFile;
 		}
 	}

@@ -17,22 +17,29 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
+use FindBin qw($Bin);
+
+use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
-use FindBin qw($Bin);
-
 my $addGroups = 0;
 my $plugins_read;
-our @pluginDirs = ();
-our @pluginRootDirs = ();
+my @pluginDirs = ();
+my @pluginRootDirs = ();
+my %plugins = ();
+my %playerplugins = ();
+my %brokenplugins = ();
 
 sub pluginDirs {
+
 	if (!scalar @pluginDirs) {
+
 		if (Slim::Utils::OSDetect::OS() eq 'mac') {
 			push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
 			push @pluginDirs, "/Library/SlimDevices/Plugins/";
 		}
+
 		push @pluginDirs, catdir($Bin, "Plugins");
 	}
 		
@@ -40,10 +47,6 @@ sub pluginDirs {
 }
 
 use lib (pluginDirs());
-
-our %plugins = ();
-our %playerplugins = ();
-my %brokenplugins = ();
 
 sub init {
 	no strict 'refs';
@@ -386,7 +389,7 @@ sub addWebPages {
 			}
 
 			if ($index) {
-				Slim::Web::Pages->addPageLinks("plugins", {	$plugins{$plugin}->{'name'} => $urlbase . $index });
+				Slim::Web::Pages->addPageLinks("plugins", { $plugins{$plugin}->{'name'} => $urlbase . $index });
 			}
 		}
 	}
@@ -530,8 +533,6 @@ sub pluginRootDirs {
 	# not expected to be called until after initPlugins
 	return @pluginRootDirs;
 }
-
-
 
 1;
 
