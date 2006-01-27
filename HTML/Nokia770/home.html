@@ -180,9 +180,17 @@
 		<img src = 'html/images/smaller/new_music.gif' width="120" height="101" name = 'bild4' border = '0' alt = 'new'></a>
 	[% INCLUDE link_foot title = 'New Music' %]
 [% END %]
+
 [% BLOCK random_mix %]
 	[% INCLUDE link_head %]
 			<a href="[% webroot %][% additionalLinks.browse.PLUGIN_RANDOM %]&player=[% playerURI %]" style="text-decoration:none">
 			<img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
 	[% INCLUDE link_foot title = 'Random Mix' %]
+[% END %]
+
+[% BLOCK year %]
+	[% INCLUDE link_head %]
+			<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_YEAR %]&player=[% playerURI %]" style="text-decoration:none">
+			<img src="html/images/smaller/genre.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
+	[% INCLUDE link_foot title = 'Year' %]
 [% END %]
