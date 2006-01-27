@@ -1,3 +1,27 @@
+[% BLOCK home_links %]
+[%# rearrange these as you see fit. this is the layout of the icons on the main home page %]
+[%# INCLUDE year is not used, but available %]
+	<tr>
+		[% IF not nofolder %]
+			[% INCLUDE music_folder %]
+		[% END %]
+		[% INCLUDE artwork %]
+		[% INCLUDE artist %]
+		[% INCLUDE new_music %]
+		[% INCLUDE random_mix %]
+	</tr>
+	<tr>
+		<td height="30"></td>
+	</tr>
+	<tr>
+		[% INCLUDE albums %]
+		[% INCLUDE playlists %]
+		[% INCLUDE genre %]
+		[% INCLUDE statistics %]
+		[% INCLUDE favorites %]
+	</tr>
+[% END %]
+
 [% pagetitle = "HOME" | string %] [% pageicon = 'MUSIC' %] [% browse = '1' %] [% music = '1' %][% playlist = '0' %]
 
 [%- IF browse_radio -%]
@@ -29,25 +53,7 @@
 		<td height="10"></td>
 	</tr>
 	[% IF ! browse_radio %]
-	<tr>
-		[% IF not nofolder %]
-			[% INCLUDE music_folder %]
-		[% END %]
-		[% INCLUDE artwork %]
-		[% INCLUDE artist %]
-		[% INCLUDE new_music %]
-		[% INCLUDE random_mix %]
-	</tr>
-	<tr>
-		<td height="30"></td>
-	</tr>
-	<tr>
-		[% INCLUDE albums %]
-		[% INCLUDE playlists %]
-		[% INCLUDE genre %]
-		[% INCLUDE statistics %]
-		[% INCLUDE favorites %]
-	</tr>
+	[% INCLUDE home_links %]
 	[% ELSE %]
 		[% FOREACH key = additionalLinks.radio.keys %]
 			<tr>
