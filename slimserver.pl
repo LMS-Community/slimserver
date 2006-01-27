@@ -181,6 +181,11 @@ BEGIN {
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
+
+	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
+	unlink("$Bin/CPAN/MP3/Info.pm");
+	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
+	unlink("$Bin/CPAN/XML/Simple.pm");
 };
 
 use Time::HiRes;
