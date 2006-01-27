@@ -117,7 +117,7 @@ sub load_strings_file {
 
 		$strings = <STRINGS>;
 
-		if ($Slim::Utils::Unicode::locale =~ /^iso-8859/) {
+		if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859/) {
 			$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
 		}
 

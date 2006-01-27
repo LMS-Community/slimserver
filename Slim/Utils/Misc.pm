@@ -815,7 +815,7 @@ sub userAgentString {
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),
 		Slim::Utils::Prefs::get('language'),
-		$Slim::Utils::Unicode::locale,
+		Slim::Utils::Unicode::currentLocale(),
 	);
 
 	return $userAgentString;
@@ -834,7 +834,7 @@ sub settingsDiagString {
 		$::REVISION,
 		$osDetails->{'osName'},
 		Slim::Utils::Prefs::get('language'),
-		$Slim::Utils::Unicode::locale,
+		Slim::Utils::Unicode::currentLocale(),
 	);
 
 	return $diagString;

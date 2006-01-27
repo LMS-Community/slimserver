@@ -445,7 +445,7 @@ sub infoFormat {
 	if ($str && $] > 5.007) {
 
 		eval {
-			Encode::from_to($str, $Slim::Utils::Unicode::locale, 'utf8');
+			Encode::from_to($str, Slim::Utils::Unicode::currentLocale(), 'utf8');
 			Encode::_utf8_on($str);
 		};
 

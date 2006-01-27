@@ -352,6 +352,10 @@ INIT: {
 	$decomposeRE = qr/($decomposeRE)/o;
 }
 
+sub currentLocale {
+	return $locale;
+}
+
 sub utf8decode {
 	return utf8decode_guess(@_);
 }

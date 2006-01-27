@@ -19,9 +19,9 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use FindBin qw($Bin);
 
-use Slim::Utils::OSDetect;
-use Slim::Utils::Prefs;
-use Slim::Utils::Misc;
+require Slim::Utils::Misc;
+require Slim::Utils::Prefs;
+require Slim::Utils::Unicode;
 
 my $addGroups = 0;
 my $plugins_read;
@@ -35,7 +35,7 @@ sub pluginDirs {
 
 	if (!scalar @pluginDirs) {
 
-		if (Slim::Utils::OSDetect::OS() eq 'mac') {
+		if ($^O eq 'darwin') {
 			push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
 			push @pluginDirs, "/Library/SlimDevices/Plugins/";
 		}
@@ -197,7 +197,7 @@ sub canPlugin {
 			$strings = pack "U0C*", unpack "C*", $strings;
 		} else {
 			# for the 5.6 laggers.
-			if ($Slim::Utils::Unicode::locale =~ /^iso-8859/) {
+			if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859/) {
 				$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
 			}
 		}

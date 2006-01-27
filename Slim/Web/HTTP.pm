@@ -1019,7 +1019,7 @@ sub generateHTTPResponse {
 		if ($] > 5.007) {
 			$contentType .= '; charset=utf-8';
 		} else {
-			$contentType .= "; charset=$Slim::Utils::Unicode::locale";
+			$contentType .= sprintf("; charset=%s", Slim::Utils::Unicode::currentLocale());
 		}
 	}
 
@@ -1727,7 +1727,7 @@ sub _generateContentFromFile {
 
 		} else {
 
-			$params->{'LOCALE'} = $Slim::Utils::Unicode::locale || 'iso-8859-1';
+			$params->{'LOCALE'} = Slim::Utils::Unicode::currentLocale() || 'iso-8859-1';
 		}
 
 		# BUG 2842: find out how we get here without a defined template
