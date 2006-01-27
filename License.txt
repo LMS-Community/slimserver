@@ -18,6 +18,9 @@ included below for your convenience.
 
 - SoftSqueeze is (c) Richard Titmuss and is licensed under GPL.
 
+- The CODE2000 TrueType Font is (c) James Kass and is Shareware.
+  See Graphics/CODE2000.HTM for more information.
+
 - Certain integral components of Slim Server, such as CPAN modules, 
 are (c) of their respective authors, and are included in SlimServer
 per their respective licenses.
