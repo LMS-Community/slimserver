@@ -154,6 +154,12 @@ sub writeNoBlock {
 		addWrite($socket);
 		return;
 	}
+
+	# Bug 2762, make sure the segment length matches the actual length of the data
+	my $actual_length = length ${$segment->{'data'}};
+	if ( $segment->{'length'} > $actual_length ) {
+		$segment->{'length'} = $actual_length;
+	}
 	
 	$::d_select && msg("writeNoBlock: writing a segment of length: " . $segment->{'length'} . "\n");
 	
