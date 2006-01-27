@@ -164,7 +164,7 @@ sub slimproto_close {
 	if (defined(my $client = Slim::Player::Client::getClient($sock2client{$clientsock}))) {
 
 		# set timer to forget client
-		Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
+		Slim::Utils::Timers::setTimer($client->id, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
 		# notify of disconnect
 		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 	}
@@ -652,7 +652,7 @@ sub _hello_handler {
 		$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
 	} else {
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
-		Slim::Utils::Timers::killTimers($client, \&_forgetDisconnectedClient);
+		Slim::Utils::Timers::killTimers($client->id, \&_forgetDisconnectedClient);
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 	}
