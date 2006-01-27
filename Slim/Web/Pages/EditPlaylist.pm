@@ -51,7 +51,7 @@ sub editplaylist {
 
 	my $ds       = Slim::Music::Info::getCurrentDataStore();
 
-	my $playlist = $ds->objectForId('playlist', $params->{'id'});
+	my $playlist = $ds->objectForId('playlist', $params->{'playlist'});
 
 	if (!blessed($playlist) || !$playlist->tracks) {
 
