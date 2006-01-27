@@ -139,7 +139,6 @@ sub writeNoBlock {
 	return unless ($socket && $socket->opened());
 	
 	if (defined $chunkRef) {	
-		use bytes;
 
 		push @{$writeQueue{$socket}}, {
 			'data'   => $chunkRef,
@@ -155,12 +154,6 @@ sub writeNoBlock {
 		return;
 	}
 
-	# Bug 2762, make sure the segment length matches the actual length of the data
-	my $actual_length = length ${$segment->{'data'}};
-	if ( $segment->{'length'} > $actual_length ) {
-		$segment->{'length'} = $actual_length;
-	}
-	
 	$::d_select && msg("writeNoBlock: writing a segment of length: " . $segment->{'length'} . "\n");
 	
 	my $sentbytes = syswrite($socket, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
