@@ -1,6 +1,8 @@
-[% pageHeaderMenu = BLOCK %][% noHomeLink = 1 -%][% setting_chooser_noHome = 1 %]
-	<a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / [% IF playerid %][% "PLAYER_SETTINGS" | string %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
-	[% PROCESS setting_chooser.html %]
+[% pwd_list = BLOCK %]
+	[% IF playerid %][% "PLAYER_SETTINGS" | string %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
+[% END %]
+[% pageHeaderInfo = BLOCK %]
+	[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 [% END %]
 
 [% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 

@@ -269,9 +269,8 @@ div#topGraphicMenu3 #playingSong {
 }
 
 div#topGraphicMenu3 #statusMessage {
-	position: absolute;
-	left: 7px;
-	top: 6px;
+	padding-left: 7px;
+	padding-top: 6px;
 	color: #111;
 }
 
@@ -397,8 +396,8 @@ div#songInfoHeader a{
 }
 
 #pageHeaderInfo {
-	margin-left:2px;
-	float: left;
+	margin-left:7px;
+	margin-top: 6px;
 }
 
 div#playList {
