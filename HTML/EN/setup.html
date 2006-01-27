@@ -1,4 +1,5 @@
-[% pageHeaderMenu = BLOCK %][% noHomeLink = 1 -%]
+[% pageHeaderMenu = BLOCK %][% noHomeLink = 1 -%][% setting_chooser_noHome = 1 %]
+	<a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / [% IF playerid %][% "PLAYER_SETTINGS" | string %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
 	[% PROCESS setting_chooser.html %]
 [% END %]
 
