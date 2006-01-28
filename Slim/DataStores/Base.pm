@@ -443,7 +443,7 @@ sub init {
 
 				if (defined($sort) && $sort =~ /^artist/ ) {
 					
-					if (!$obj->compilation && blessed($obj->contributor) && $obj->contributor->can('namesort')) {
+					if (blessed($obj->contributor) && $obj->contributor->can('namesort')) {
 
 						return $obj->contributor->namesort;
 						
@@ -467,12 +467,6 @@ sub init {
 				my $idOnly = shift;
 				my $sort = shift;
 
-				# The user may not want to include all the composers / conductors
-				if (my $roles = $ds->artistOnlyRoles) {
-
-					$findCriteria->{'contributor.role'} = $roles;
-				}
-
 				# remove albums with no artwork if requested
 				if (!Slim::Utils::Prefs::get('includeNoArt')) {
 
@@ -480,12 +474,20 @@ sub init {
 
 				}
 
+				# if sort includes artist ensure album contributor is used so all VA albums appear in one place
+				if ($sort =~ /artist/) {
+
+ 					$findCriteria->{'contributorId'} = \ '= albums.contributor';
+
+				}
+
 				return $ds->find({
-					'field'  => 'album',
+					'field'  => 'artwork',
 					'find'   => $findCriteria,
 					'sortBy' => $sort || 'album',
 					'idOnly' => $idOnly,
 				});
+
 			},
 
 			'listItem' => sub {
