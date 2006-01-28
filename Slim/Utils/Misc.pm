@@ -418,7 +418,12 @@ sub fixPath {
 		if ($volume && $volume =~ m|^\\|) {
 
 			# And map them to drive letters.
-			$fixed = catfile(Win32::FileOp::Mapped($volume), $dirs, $file);
+			$volume = Win32::FileOp::Mapped($volume);
+
+			if ($volume && $volume =~ /^[A-Z]:/) {
+
+				$fixed = catfile($volume, $dirs, $file);
+			}
 		}
 
 		$fixed = fixPathCase($fixed);

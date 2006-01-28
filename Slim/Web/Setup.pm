@@ -1301,7 +1301,7 @@ sub initSetupConfig {
 			},
 
 			'audiodir' => {
-				'validate'     => \&Slim::Utils::Validate::isAudioDir,
+				'validate'     => \&Slim::Utils::Validate::isDir,
 				'validateArgs' => [1],
 				'changeIntro'  => string('SETUP_OK_USING'),
 				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
@@ -3616,7 +3616,7 @@ sub validateIsDir {
 }
 
 sub validateIsAudioDir {
-	Slim::Utils::Validate::isAudioDir(@_);
+	Slim::Utils::Validate::isDir(@_);
 }
 
 sub validateHasText {

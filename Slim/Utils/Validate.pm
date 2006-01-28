@@ -1,6 +1,6 @@
 package Slim::Utils::Validate;
 
-# $Id: Validate.pm 5684 2006-01-18 02:13:36Z kdf $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -216,55 +216,41 @@ sub inHash {
 }
 
 sub isFile {
-	my $val = shift;
-	my $allowEmpty = shift;
-
-	if (-r $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
-		return $val;
-
-	} elsif ($allowEmpty && defined($val) && $val eq '') {
-		return $val;
-
-	} else  {
-		return (undef, "SETUP_BAD_FILE") ;
-	}
-}
-
-sub isDir {
-	my $val = shift;
-	my $allowEmpty = shift;
-
-	if (-d $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
-		return $val;
-
-	} elsif ($allowEmpty && defined($val) && $val eq '') {
-		return $val;
-
-	} else  {
-		return (undef, "SETUP_BAD_DIRECTORY") ;
-	}
+	return _isValidPath('file', @_, 'SETUP_BAD_FILE');
 }
 
 sub isAudioDir {
-	my $val = shift;
+	return _isValidPath('dir', @_, 'SETUP_BAD_DIRECTORY');
+}
+
+sub isDir {
+	return _isValidPath('dir', @_, 'SETUP_BAD_DIRECTORY');
+}
+
+sub _isValidPath {
+	my ($type, $val, $allowEmpty, $invalidString) = @_;
+
+	if ($val) {
+		$val = Slim::Utils::Misc::pathFromFileURL( Slim::Utils::Misc::fixPath($val) );
+	}
 	
-	my $allowEmpty = shift;
-	
-	if (-d $val) {
-		$val =~ s|[/\\]$||;
-		$val = Slim::Utils::Misc::fixPathCase($val);
+	if ($type eq 'dir' && -d $val) {
+
+		return $val;
+
+	} elsif ($type eq 'file' && -r $val) {
+
 		return $val;
 
 	} elsif ($allowEmpty && defined($val) && $val eq '') {
+
 		return $val;
 
-	} else  {
-		print $!;
-		return (undef, "SETUP_BAD_DIRECTORY") ;
+	} else {
+
+		errorMsg("_isValidPath: Couldn't find directory: [$val] on disk: [$!]\n");
+
+		return (undef, $invalidString) ;
 	}
 }
 
