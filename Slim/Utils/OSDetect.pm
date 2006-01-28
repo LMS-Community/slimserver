@@ -10,7 +10,7 @@ package Slim::Utils::OSDetect;
 use strict;
 use Config;
 
-require Slim::Utils::Misc;
+use Slim::Utils::Misc;
 
 my $detectedOS = undef;
 my %osDetails  = ();

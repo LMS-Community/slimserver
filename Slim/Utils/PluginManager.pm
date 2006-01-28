@@ -19,9 +19,9 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use FindBin qw($Bin);
 
-require Slim::Utils::Misc;
-require Slim::Utils::Prefs;
-require Slim::Utils::Unicode;
+use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+use Slim::Utils::Unicode;
 
 my $addGroups = 0;
 my $plugins_read;
