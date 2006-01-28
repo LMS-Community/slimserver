@@ -16,7 +16,6 @@ body {
 .faq p, h5 {
 	font-size: 11px;
 }
-
 a {
 	color: #333;
 	text-decoration: none;
@@ -368,6 +367,7 @@ div#homeMenu {
 	position: absolute;
 	top: 0px;
 	padding-top: 6px;
+	padding-right: 6px;
 	right: 10px;
 }
 
