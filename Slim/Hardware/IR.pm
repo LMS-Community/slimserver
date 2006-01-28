@@ -299,9 +299,12 @@ sub lookupCodeBytes {
 	if (defined $irCodeBytes) {
 	
 		my %enabled = %irCodes;
-		
-		for ($client->prefGetArray('disabledirsets')) {delete $enabled{$_}};
-		
+
+		if ($client) {
+
+			map { delete $enabled{$_} } $client->prefGetArray('disabledirsets');
+		}
+
 		for my $irset (keys %enabled) {
 			if (defined (my $code = $irCodes{$irset}{$irCodeBytes})) {
 
