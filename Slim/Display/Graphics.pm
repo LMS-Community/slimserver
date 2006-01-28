@@ -99,11 +99,15 @@ sub init {
 			%TTFCache    = ();
 	
 			# This should be configurable.
-			$gd = GD::Image->new(32, 32);
+			$gd = eval { GD::Image->new(32, 32) };
+
+			if ($gd) {
 	
-			$GDWhite = $gd->colorAllocate(255,255,255);
-			$GDBlack = $gd->colorAllocate(0,0,0);
-		}	
+				$GDWhite = $gd->colorAllocate(255,255,255);
+				$GDBlack = $gd->colorAllocate(0,0,0);
+			}
+		}
+
 	} else { 
 		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
 	}
