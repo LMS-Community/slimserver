@@ -477,7 +477,9 @@ sub init {
 				# if sort includes artist ensure album contributor is used so all VA albums appear in one place
 				if ($sort =~ /artist/) {
 
- 					$findCriteria->{'contributorId'} = \ '= albums.contributor';
+					# This allows SQL::Abstract to see a scalar
+					# reference passed and treat it as literal.
+ 					$findCriteria->{'contributorId'} = \'= albums.contributor';
 
 				}
 
