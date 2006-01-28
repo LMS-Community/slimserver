@@ -125,6 +125,11 @@ div#hidden {
 	display: none;
 }
 
+div#footer {
+	position: relative;
+	clear: both;
+}
+
 tr.odd, td.odd {
 	background-color: #d0d0d0;
 }
