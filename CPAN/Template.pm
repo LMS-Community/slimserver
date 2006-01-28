@@ -17,7 +17,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Template.pm 997 2004-05-29 22:57:13Z dean $
+#   $Id: Template.pm,v 2.80 2004/10/04 10:24:10 abw Exp $
 #
 #========================================================================
  
@@ -38,14 +38,9 @@ use File::Path;
 
 ## This is the main version number for the Template Toolkit.
 ## It is extracted by ExtUtils::MakeMaker and inserted in various places.
-$VERSION     = '2.13';
+$VERSION     = '2.14';
 $ERROR       = '';
 $DEBUG       = 0;
-
-# we used to default to binary mode for all win32 files but that make
-# line endings strange, so we're turning it off and letting users set
-# it explicitly as an argument to process()
-# $BINMODE     = ($^O eq 'MSWin32') ? 1 : 0;
 $BINMODE     = 0 unless defined $BINMODE;
 
 # preload all modules if we're running under mod_perl
@@ -196,7 +191,14 @@ sub _output {
             ($error = $@) =~ s/ at \S+ line \d+\n?$//;
         }
         elsif (open(FP, ">$where")) { 
-            binmode FP if $options->{ binmode };
+            # binmode option can be 1 or a specific layer, e.g. :utf8
+            my $bm = $options->{ binmode };
+            if ($bm && +$bm == 1) { 
+                binmode FP;
+            }
+            elsif ($bm){ 
+                binmode FP, $bm;
+            }
             print FP $$textref;
             close FP;
         }
@@ -284,8 +286,8 @@ class) instantiates a new Template object.  A reference to a hash
 array of configuration items may be passed as a parameter.
 
     my $tt = Template->new({
-	INCLUDE_PATH => '/usr/local/templates',
-	EVAL_PERL    => 1,
+    	INCLUDE_PATH => '/usr/local/templates',
+	    EVAL_PERL    => 1,
     }) || die $Template::ERROR, "\n";
 
 A reference to a new Template object is returned, or undef on error.
@@ -357,8 +359,8 @@ Examples:
 
     # reference to output subroutine
     sub myout {
-	my $output = shift;
-	...
+    	my $output = shift;
+	    ...
     }
     $tt->process('welcome.tt2', $vars, \&myout)
         || die $tt->error(), "\n";
@@ -401,13 +403,19 @@ binary mode.
     $tt->process($infile, $vars, $outfile, binmode => 1)
         || die $tt->error(), "\n";
 
+Alternately, the binmode argument can specify a particular IO layer such 
+as ":utf8".
+
+    $tt->process($infile, $vars, $outfile, binmode => ':utf8')
+        || die $tt->error(), "\n";
+
 The OUTPUT configuration item can be used to specify a default output 
 location other than \*STDOUT.  The OUTPUT_PATH specifies a directory
 which should be prefixed to all output locations specified as filenames.
 
     my $tt = Template->new({
-	OUTPUT      => sub { ... },       # default
-	OUTPUT_PATH => '/tmp',
+    	OUTPUT      => sub { ... },       # default
+	    OUTPUT_PATH => '/tmp',
 	...
     }) || die Template->error(), "\n";
 
@@ -453,10 +461,10 @@ operator allowing the object reference itself to be printed to return
 the formatted error string.
 
     $tt->process('somefile') || do {
-	my $error = $tt->error();
-	print "error type: ", $error->type(), "\n";
-	print "error info: ", $error->info(), "\n";
-	print $error, "\n";
+    	my $error = $tt->error();
+	    print "error type: ", $error->type(), "\n";
+    	print "error info: ", $error->info(), "\n";
+	    print $error, "\n";
     };
 
 =head2 service()
@@ -938,7 +946,7 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-Template Toolkit version 2.13, released on 30 January 2004.
+Template Toolkit version 2.14, released on 04 October 2004.
 
 =head1 COPYRIGHT
 
