@@ -11,8 +11,8 @@
 
 <body onload="doLoad();">
 
-[% BLOCK statusLink %]
-
+[% BLOCK statusLink -%]
+[% FILTER null %]
 	[% IF link && !linkString %]
 
 		[% linkName = link %]
@@ -22,10 +22,9 @@
 		[% linkName = linkString | string | upper %]
 
 	[% END %]
-
-	<a href="[% webroot %]status_header.html?p0=[% p0 %]&amp;p1=[% p1 %]&amp;p2=[% p2 %]&amp;player=[% player | uri %]" class="[% divID %]"><span class="[% divID %]">[% linkName %]</span></a>
-
-[% END %]
+[% END -%]
+<a href="[% webroot %]status_header.html?p0=[% p0 %]&amp;p1=[% p1 %]&amp;p2=[% p2 %]&amp;player=[% playerURI %]" class="[% divID %]"><span class="[% divID %]">[% linkName %]</span></a>
+[%- END %]
 
 <div id="topGraphicBox">
 
@@ -54,9 +53,9 @@
 
 		<div id="transportButtons">
 
-			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = '%2b1' linkString = 'SKIP' divID = 'valueBold' %]
+			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = plusOne linkString = 'SKIP' divID = 'valueBold' %]
 			<span class="bar">|</span>
-			[% PROCESS statusLink p0 = 'play'  linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
+			[% PROCESS statusLink p0 = 'play'  p1 = '' p2 = '' linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
 			<span class="bar">|</span>
 			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
 			<span class="bar">|</span>
