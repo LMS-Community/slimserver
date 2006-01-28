@@ -40,7 +40,7 @@ sub browsedb {
 	# XXX - why do we default to genre?
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
-	my $sort      = $params->{'sort'};
+	my $sort      = $params->{'sort'} || "";
 	my $player    = $params->{'player'};
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
@@ -155,6 +155,13 @@ sub browsedb {
 		if (defined $params->{'noEdit'}) {
 
 			push @attrs, join('=', 'noEdit', $params->{'noEdit'});
+		}
+
+		# editplaylist might pass this along - we want to keep it in the attrs
+		# for thepagebar and pwd_list so that we don't go into edit mode. Bug 2870
+		if (defined $params->{'saveCurrentPlaylist'}) {
+
+			push @attrs, join('=', 'saveCurrentPlaylist', $params->{'saveCurrentPlaylist'});
 		}
 
 		if ($params->{$attr}) {
