@@ -1072,6 +1072,11 @@ sub typeFromPath {
 
 			$anchorlessPath = Slim::Utils::Misc::stripAnchorFromURL($fullpath);
 
+			# strip any parameters trailing url to allow types to be inferred from url ending
+			if (isRemoteURL($anchorlessPath) && $anchorlessPath =~ /(.*)\?(.*)/) {
+				$anchorlessPath = $1;
+			}
+
 			$type = typeFromSuffix($anchorlessPath, $defaultType);
 		}
 	}
