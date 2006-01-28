@@ -36,8 +36,9 @@ our %fileToPathCache = ();
 
 INIT: {
 	if ($^O =~ /Win32/) {
-		require Win32::Shortcut;
 		require Win32;
+		require Win32::FileOp;
+		require Win32::Shortcut;
 	}
 }
 
@@ -369,13 +370,17 @@ sub fixPath {
 	} elsif ($base) {
 
 		if (file_name_is_absolute($file)) {
+
 			if (Slim::Utils::OSDetect::OS() eq "win") {
+
 				my ($volume) = splitpath($file);
+
 				if (!$volume) {
 					($volume) = splitpath($base);
 					$file = $volume . $file;
 				}
 			}
+
 			$fixed = fixPath($file);
 
 		} else {
@@ -406,6 +411,15 @@ sub fixPath {
 	# what we get from the filesystem. Fix that all up so we don't create
 	# duplicate entries in the database.
 	if (Slim::Utils::OSDetect::OS() eq "win" && !Slim::Music::Info::isFileURL($fixed)) {
+
+		my ($volume, $dirs, $file) = splitpath($fixed);
+
+		# Look for UNC paths
+		if ($volume && $volume =~ m|^\\|) {
+
+			# And map them to drive letters.
+			$fixed = catfile(Win32::FileOp::Mapped($volume), $dirs, $file);
+		}
 
 		$fixed = fixPathCase($fixed);
 	}
