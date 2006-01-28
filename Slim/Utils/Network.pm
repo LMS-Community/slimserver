@@ -160,7 +160,11 @@ sub paddr2ipaddress {
 sub ipaddress2paddr {
         my ($ip, $port) = split( /:/, shift);
 
-        return sockaddr_in($port, inet_aton($ip));
+	if (!defined $ip || !defined $port) {
+		return;
+	}
+
+        return sockaddr_in($port, (inet_aton($ip) || $ip));
 }
 
 # this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html
