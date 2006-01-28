@@ -352,15 +352,17 @@ div#browsedbHeader {
 .browsedbControls {
 	position: absolute;
 	top: 0px;
-	left: 83%;
-	vertical-align: top;
+	right: 4px;
 }
 
 .playlistControls {
 	position: absolute;
 	top: 0px;
 	right: 4px;
-	vertical-align: top;
+}
+
+.browsedbControls img, .playlistControls img {
+	vertical-align: middle;
 }
 
 .pagebar {

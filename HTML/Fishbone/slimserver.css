@@ -255,6 +255,9 @@ div#statusMessage form{
 {
 	padding: 0 8 0 8;
 	margin:0px;
+	height: auto;
+	width: auto;
+	position: relative;
 	margin-top: 0px;
 }
 
@@ -355,17 +358,17 @@ div#browsedbHeader {
 .browsedbControls {
 	position: absolute;
 	top: 0px;
-	left: 85%;
-	margin: 0px;
-	vertical-align: top;
+	right: 4px;
 }
 
 .playlistControls {
 	position: absolute;
 	top: 0px;
-	right: 1px;
-	margin: 0px;
-	vertical-align: top;
+	right: 4px;
+}
+
+.browsedbControls img, .playlistControls img {
+	vertical-align: middle;
 }
 
 .pagebar {
