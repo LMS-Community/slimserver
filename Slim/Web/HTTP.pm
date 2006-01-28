@@ -380,7 +380,8 @@ sub processHTTP {
 					# string with the appropriate magic set.
 					if ($value ne '*' && $value ne '') {
 
-						$value = Slim::Utils::Unicode::utf8decode($value);
+						$value = Slim::Utils::Unicode::utf8on($value);
+						$value = Slim::Utils::Unicode::utf8encode_locale($value);
 					}
 
 					$params->{$name} = $value;
