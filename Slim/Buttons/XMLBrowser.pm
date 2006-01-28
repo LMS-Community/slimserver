@@ -229,8 +229,7 @@ sub gotRSS {
 sub gotOPML {
 	my ($client, $url, $opml) = @_;
 
-	my $base     = !ref($opml->{'base'}) ? ($opml->{'base'} || '') : '';
-	my $title    = $opml->{'name'} || $opml->{'title'};
+	my $title = $opml->{'name'} || $opml->{'title'};
 
 	my %params = (
 		url      => $url,
@@ -260,7 +259,7 @@ sub gotOPML {
 
 				# follow a link
 				my %params = (
-					url   => $base . $itemURL,
+					url   => $itemURL,
 					title => $title,
 				);
 
@@ -276,21 +275,7 @@ sub gotOPML {
 			} elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
 
 				# recurse into OPML item
-				my $listIndex = $client->param('listIndex');
-
-				if ($base && $item->{'items'}->[$listIndex]->{'url'}) {
-
-					my %params = (
-						url   => $base . $item->{'items'}->[$listIndex]->{'url'},
-						title => $title,
-					);
-
-					Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
-
-				} else {
-
-					gotOPML($client, $client->param('url'), $item);
-				}
+				gotOPML($client, $client->param('url'), $item);
 
 			} else {
 
@@ -771,7 +756,6 @@ sub parseOPML {
 
 	my $opml = {
 		'type'  => 'opml',
-		'base'  => $xml->{'head'}->{'base'},
 		'title' => unescapeAndTrim($xml->{'head'}->{'title'}),
 		'items' => _parseOPMLOutline($xml->{'body'}->{'outline'}),
 	};
