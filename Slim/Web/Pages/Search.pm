@@ -325,9 +325,11 @@ sub fillInSearchResults {
 				if ($type eq 'artist') {
 					$list_form{'hierarchy'}	   = 'artist,album,track';
 					$list_form{'level'}        = 1;
+					$list_form{'hreftype'}        = 'browseDb';
 				} elsif ($type eq 'album') {
 					$list_form{'hierarchy'}	   = 'album,track';
-					$list_form{'level'}        = 1;				
+					$list_form{'level'}        = 1;
+					$list_form{'hreftype'}        = 'browseDb';
 				}
 				
 				$list_form{'text'} = $title;
