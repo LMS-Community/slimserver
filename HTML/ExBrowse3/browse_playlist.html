@@ -36,7 +36,7 @@ END
   <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="40"/>
   <input name="submit" type="submit" value="[% saveButtonName | string %]"/>
   <input type="hidden" name="renamePlaylist" value="1"/>
-  <input type="hidden" name="id" value="[% playlist.id %]"/>
+  <input type="hidden" name="playlist" value="[% playlist.id %]"/>
   <input type="hidden" value="[% player %]" name="player"/>
   [% IF RENAME_WARNING %]<input type="checkbox" name="overwrite" class="stdedit"/>
   [% "CONFIRM_OVERWRITE" | string %][% END %]

@@ -57,7 +57,7 @@
        <input type=hidden name="dir" value="[% dir %]"></td>
        </form></tr>
 [% END %]
-[% IF titled %]<tr><td><a href="edit_playlist.html?player=[% playerURI %]&id=[% playlist.id %]&deletePlaylist=1"><font class="actiontext">[% "DELETE_THIS_PLAYLIST" | string %]</a></td></tr>[% END %]
+[% IF titled %]<tr><td><a href="edit_playlist.html?player=[% playerURI %]&amp;playlist=[% playlist.id %]&deletePlaylist=1"><font class="actiontext">[% "DELETE_THIS_PLAYLIST" | string %]</a></td></tr>[% END %]
 [% IF playlistname %]
 </table>
 [% END %]

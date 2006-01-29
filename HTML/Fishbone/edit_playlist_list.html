@@ -1,5 +1,5 @@
 [% BLOCK link %]<td class="listing" width="11" align="center">
-	<a href="edit_playlist.html?player=[% playerURI %]&[% cmd %]&id=[% playlist.id %]&item=[% loop.count %]">
+	<a href="edit_playlist.html?player=[% playerURI %]&[% cmd %]&amp;playlist=[% playlist.id %]&item=[% loop.count %]">
 	<img src="[% webroot %]html/images/[% img %]" width="11" height="11" align="center" alt='[% text | string %]'
 			title='[% text | string %]' onMouseOver="self.status='[% text | string %]';return true">
 		</a>

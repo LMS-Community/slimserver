@@ -6,21 +6,21 @@
   </td>
 
   <td class="[% class %]">
-    <a href="edit_playlist.html?player=[% playerURI %]&up=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_up.gif" width="13" height="13"></a>
+    <a href="edit_playlist.html?player=[% playerURI %]&up=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_up.gif" width="13" height="13"></a>
   </td>
 
   <td class="[% class %]">
-    <a class="down" href="edit_playlist.html?player=[% playerURI %]&down=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_down.gif" width="13" height="13"></a>
+    <a class="down" href="edit_playlist.html?player=[% playerURI %]&down=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_down.gif" width="13" height="13"></a>
   </td>
 
   <td class="[% class %]">
 [% IF item.isRemoteURL %]
-    <a class="edit" href="edit_playlist.html?player=[% playerURI %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_edit.gif" width="13" height="13"></a>
+    <a class="edit" href="edit_playlist.html?player=[% playerURI %]&edit=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_edit.gif" width="13" height="13"></a>
 [% END %]
   </td>
 
   <td class="[% class %]">
-    <a class="delete" href="edit_playlist.html?player=[% playerURI %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_delete.gif" width="13" height="13"></a>
+    <a class="delete" href="edit_playlist.html?player=[% playerURI %]&delete=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]"><img src="html/images/b_delete.gif" width="13" height="13"></a>
   </td>
 
 </tr>

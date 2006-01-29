@@ -43,7 +43,7 @@
 
 		[% IF isplayer %]
 		<div id="powerButtons">
-			<div class="attributeBold">[% "POWER" | string | upper %]:</div>
+			<div class="attributeBold">[% "POWER" | string | upper %]:&nbsp;</div>
 
 			[% PROCESS statusLink p0 = 'power' p1 = 1 linkString = 'ON'  divID = mode == 'on'  ? 'valueSelected' : 'valueBold' %]
 			<span class="bar">|</span>
@@ -65,7 +65,7 @@
 		[% IF isplayer %]
 		<div id="volumeButtons">
 
-			<div class="attributeBold">[% "VOLUME" | string | upper %]:</div>
+			<div class="attributeBold">[% "VOLUME" | string | upper %]:&nbsp;</div>
 
 			[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
 
@@ -86,7 +86,7 @@
 	<div id="topGraphicMenu2">
 		<div id="repeatButtons">
 
-			<div class="attributeBold">[% "REPEAT" | string | upper %]:</div>
+			<div class="attributeBold">[% "REPEAT" | string | upper %]:&nbsp;</div>
 
 			[% repeatStrings = ['OFF', 'ONE', 'ALL'] %]
 
@@ -109,7 +109,7 @@
 
 		<div id="shuffleButtons">
 
-			<div class="attributeBold">[% "SHUFFLE" | string | upper %]:</div>
+			<div class="attributeBold">[% "SHUFFLE" | string | upper %]:&nbsp;</div>
 
 			[% shuffleStrings = ['OFF', 'SONGS', 'ALBUMS'] %]
 

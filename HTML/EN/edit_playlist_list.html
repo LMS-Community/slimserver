@@ -6,21 +6,21 @@
   </td>
 
   <td class="[% class %]">
-    <a href="edit_playlist.html?player=[% playerURI %]&up=1&id=[% playlist.id %]&item=[% loop.count %]">[% "UP" | string %]</a>
+    <a href="edit_playlist.html?player=[% playerURI %]&up=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "UP" | string %]</a>
   </td>
 
   <td class="[% class %]">
-    <a class="down" href="edit_playlist.html?player=[% playerURI %]&down=1&id=[% playlist.id %]&item=[% loop.count %]">[% "DOWN" | string %]</a>
+    <a class="down" href="edit_playlist.html?player=[% playerURI %]&down=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "DOWN" | string %]</a>
   </td>
 
   <td class="[% class %]">
 [% IF item.isRemoteURL %]
-    <a class="edit" href="edit_playlist.html?player=[% playerURI %]&edit=1&id=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
+    <a class="edit" href="edit_playlist.html?player=[% playerURI %]&edit=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
 [% END %]
   </td>
 
   <td class="[% class %]">
-    <a class="delete" href="edit_playlist.html?player=[% playerURI %]&delete=1&id=[% playlist.id %]&item=[% loop.count %]">[% "DELETE" | string %]</a>
+    <a class="delete" href="edit_playlist.html?player=[% playerURI %]&delete=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "DELETE" | string %]</a>
   </td>
 
 </tr>
