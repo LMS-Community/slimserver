@@ -15,12 +15,6 @@ use URI::Escape;
 use Slim::Control::Request;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
-#use Slim::Music::Import;
-#use Slim::Music::Info;
-#use Slim::Networking::mDNS;
-#use Slim::Networking::Select;
-#use Slim::Utils::Network;
-#use Slim::Web::Pages::Search;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -30,7 +24,10 @@ use Slim::Utils::Unicode;
 #  login
 #  listen
 #  shutdown
+#  subscribe
 # Other CLI queries/commands are handled through Request.pm
+#
+# This module also handles parameters "charset" and "subscribe"
 
 
 my $d_cli_v = 0;            # verbose debug, for developpement
@@ -50,8 +47,12 @@ our %connections;           # hash indexed by client_sock value
                             #                object, but the value is...)
                             # .. inbuff:     input buffer
                             # .. outbuff:    output buffer (array)
-                            # .. listen:     listen command value for this connection
                             # .. auth:       1 if connection authenticated (login)
+                            # .. terminator: terminator last used by client, we
+                            #                use it when replying
+                            # .. subscribe:  undef is the client is not listening
+                            #                to anything, otherwise see below.
+                            
 
 
 ################################################################################
@@ -226,7 +227,7 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'id'} = $tmpaddr.':'.$client_socket->peerport;
 			$connections{$client_socket}{'inbuff'} = '';
 			$connections{$client_socket}{'outbuff'} = ();
-			$connections{$client_socket}{'subscribe'} = undef;
+#			$connections{$client_socket}{'subscribe'} = undef;
 			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
@@ -337,6 +338,9 @@ sub client_socket_buf_parse {
 			if ($exit) {
 				client_socket_write($client_socket);
 				client_socket_close($client_socket);
+				
+				# cancel our subscription if we can
+				cli_subscribe_manage();
 				return;
 			}
 		}
@@ -446,9 +450,11 @@ sub cli_process {
 
 	# give the command a client if it misses one
 	if ($request->isStatusNeedsClient()) {
+	
 		$client = Slim::Player::Client::clientRandom();
 		$clientid = blessed($client) ? $client->id() : undef;
 		$request->clientid($clientid);
+		
 		if ($::d_cli) {
 			if (defined $client) {
 				msg("CLI: Request [$cmd] requires client, allocated $clientid\n");
@@ -464,7 +470,7 @@ sub cli_process {
 	if ($cmd eq 'login') {
 		$exit = cli_cmd_login($client_socket, $request);
 	}
-	
+
 	# check authentication
 	elsif ($connections{$client_socket}{'auth'} == 0) {
 			$::d_cli && msg("CLI: Connection requires authentication, bye!\n");
@@ -472,7 +478,7 @@ sub cli_process {
 			errorMsg("CLI: Connections require authentication, check login command. Disconnecting: " . $connections{$client_socket}{'id'} . "\n");
 			$exit = 1;
 	}
-	
+
 	else {
 		
 		if ($cmd eq 'exit'){
@@ -489,24 +495,36 @@ sub cli_process {
 		elsif ($cmd eq 'listen') {
 			cli_cmd_listen($client_socket, $request);
 		} 
-		
+
 		elsif ($cmd eq 'subscribe') {
 			cli_cmd_subscribe($client_socket, $request);
 		} 
 
-		elsif ($request->isStatusDispatchable()) {		
-		
+		elsif ($request->isStatusDispatchable()) {
+
 			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
-			
+
 			$request->execute();
+
+			if ($request->isStatusError()) {
+
+				$::d_cli && msg ("CLI: Request [$cmd] failed with error: "
+					. $request->getStatusText() . "\n");
+
+			} else {
+
+				cli_request_check_subscribe($client_socket, $request);
+			}
+		} 
 		
-		} else {
+		else {
+
 			$::d_cli && msg("CLI: Request [$cmd] unkown or missing client -- will echo as is...\n");
 		}
 	}
 		
 	cli_request_write($client_socket, $request);
-	
+
 	return $exit;
 }
 
@@ -514,72 +532,35 @@ sub cli_process {
 sub cli_request_write {
 	my $client_socket = shift;
 	my $request = shift;
-	
+
 	$d_cli_vv && msg("CLI: cli_request_write()\n");
 
 	my $encoding = $request->getParam('charset') || 'utf8';
 	my @elements = $request->renderAsArray($encoding);
-	
+
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
-	
+
 	$::d_cli && msg("CLI: Sending: " . $output . "\n");
-	
+
 	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
 
-# handles notifications
-# note that we subscribe in the listen command handler
-sub cli_request_notification {
+# check for subscribe parameters in suitable commands
+sub cli_request_check_subscribe {
+	my $client_socket = shift;
 	my $request = shift;
 
-	$d_cli_vv && msg("CLI: cli_request_notification()\n");
-	
-	foreach my $client_socket (keys %connections) {
+	# we must have a subscribe param
+	my $subparam = $request->getParam('subscribe');
 
-		# don't echo to the sender
-		next if ($request->source() eq 'CLI' && 
-			$request->privateData() eq $client_socket);
-			
-		next if !defined($connections{$client_socket}{'subscribe'});
-		
-		if (ref $connections{$client_socket}{'subscribe'} eq 'ARRAY') {
-			next unless ($request->isCommand($connections{$client_socket}{'subscribe'}));
-		}
-		
-		# retrieve the socket object
-		$client_socket = $connections{$client_socket}{'socket'};
+	return unless defined $subparam;
 
-		# write request
-		cli_request_write($client_socket, $request);
-		
-	}
-}
+	# and we only care about status
+	return unless $request->isQuery([['status']]);
 
-# subscribes or unsubscribes to the notification system
-sub cli_manage_subscription {
+	$d_cli_vv && msg("CLI: cli_request_check_subscribe()\n");
 
-	# do we need to subscribe?
-	my $subscribe = 0;
-	foreach my $client_socket (keys %connections) {
-
-		if (defined ($connections{$client_socket}{'subscribe'})) {
-			$subscribe++;
-			last;
-		}
-	}
-	
-	# subscribe
-	if ($subscribe && !$cli_subscribed) {
-
-		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_request_notification);
-		$cli_subscribed = 1;
-
-	# unsubscribe
-	} elsif (!$subscribe && $cli_subscribed) {
-
-		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
-		$cli_subscribed = 0;
-	}
+	cli_subscribe_status($client_socket, $request, $subparam);
 }
 
 ################################################################################
@@ -628,13 +609,11 @@ sub cli_cmd_listen {
 		$request->addParam('_p1',  defined ($connections{$client_socket}{'subscribe'}));
 	}
 	elsif ($param == 0) {
-		$connections{$client_socket}{'subscribe'} = undef;
+		cli_subscribe_terms_none($client_socket);
 	} 
 	elsif ($param == 1) {
-		$connections{$client_socket}{'subscribe'} = 1;
+		cli_subscribe_terms_all($client_socket);
 	}			
-	
-	cli_manage_subscription();
 }
 
 # handles the "subscribe" command
@@ -644,15 +623,289 @@ sub cli_cmd_subscribe {
 
 	$d_cli_vv && msg("CLI: cli_cmd_subscribe()\n");
 
-	my $param = $request->getParam('_p1');
-
-	if (defined $param) {
+	if (defined (my $param = $request->getParam('_p1'))) {
 		my @elems = split(/,/, $param);
-		$connections{$client_socket}{'subscribe'} = [\@elems];
+		cli_subscribe_terms($client_socket, \@elems);
+	} else {
+		cli_subscribe_terms_none();
+	}
+}
+
+################################################################################
+# Subscription management
+################################################################################
+
+# subscribe hash:
+# .. listen:      * to get everything
+#                 array ref containing array ref containing list of cmds to get
+#                 (in Request->isCommand form, i.e. [['cmd1', 'cmd2', 'cmd3']]
+# .. status:      hash ref:
+#                   ..<clientid> : Request object to use for client
+#
+#
+# commands we want:
+# if *: undef
+# if [[]]: [[]]
+# if status:
+#  .. client disconnect, power, repeat, shuffle, (rescan), (player name)
+#  .. (signalstrength), play/stop/pause/mode, rate, sleep, sync,
+#  .. mixer, client newsong
+
+# N    rescan          <|playlists|?>
+# N    wipecache
+# N    rescan          done
+
+# Y    sleep           <0..n|?>
+# Y    sync            <playerindex|playerid|-|?>
+# Y    power           <0|1|?|>
+# Y    mixer           volume                      <0..100|-100..+100|?>
+# Y    mixer           bass                        <0..100|-100..+100|?>
+# Y    mixer           treble                      <0..100|-100..+100|?>
+# Y    mixer           pitch                       <80..120|-100..+100|?>
+# Y    mixer           muting                      <|?>
+# Y    mode            <play|pause|stop|?>
+# Y    play
+# Y    pause           <0|1|>
+# Y    stop
+# Y    rate            <rate|?>
+# Y    time|gototime   <0..n|-n|+n|?>
+# Y    playlist        index|jump                  <index|?>
+# Y    playlist        delete                      <index>
+# Y    playlist        zap                         <index>
+# Y    playlist        move                        <fromindex>                 <toindex>
+# Y    playlist        clear
+# Y    playlist        shuffle                     <0|1|2|?|>
+# Y    playlist        repeat                      <0|1|2|?|>
+# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
+# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        playtracks                  <searchterms>    
+# Y    playlist        loadtracks                  <searchterms>    
+# Y    playlist        addtracks                   <searchterms>    
+# Y    playlist        inserttracks                <searchterms>    
+# Y    playlist        deletetracks                <searchterms>   
+# Y    playlist        play|load                   <item> (item can be a song, playlist or directory)
+# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
+# Y    playlist        resume                      <playlist>    
+# Y    playlist        save                        <playlist>    
+# Y    playlistcontrol <tagged parameters>
+# Y    client          disconnect
+# Y    client          reconnect
+# Y    playlist        load_done
+
+# Y    playlist        newsong
+
+# Y    client          forget
+
+
+# cancels all subscriptions
+sub cli_subscribe_terms_none {
+	my $client_socket = shift;
+
+	$d_cli_vv && msg("CLI: cli_subscribe_terms_none()\n");
+
+	delete $connections{$client_socket}{'subscribe'}{'listen'};
+	
+	cli_subscribe_manage();
+}
+
+# monitor all things happening on server
+sub cli_subscribe_terms_all {
+	my $client_socket = shift;
+	
+	$d_cli_vv && msg("CLI: cli_subscribe_terms_all()\n");
+
+	$connections{$client_socket}{'subscribe'}{'listen'} = '*';
+	
+	cli_subscribe_manage();
+}
+
+# monitor only certain commands
+sub cli_subscribe_terms {
+	my $client_socket = shift;
+	my $array_ref = shift;
+	
+	$d_cli_vv && msg("CLI: cli_subscribe_terms()\n");
+
+	$connections{$client_socket}{'subscribe'}{'listen'} = [$array_ref];
+	
+	cli_subscribe_manage();
+}
+
+# monitor status for a given client
+sub cli_subscribe_status {
+	my $client_socket = shift;
+	my $request = shift;
+	my $subparam = shift;
+	
+	$d_cli_vv && msg("CLI: cli_subscribe_status()\n");
+
+	my $clientid = $request->clientid();
+	
+	if ($subparam ne '-') {
+		
+		# copy the request
+		my $copy = $request->virginCopy();
+
+		$connections{$client_socket}{'subscribe'}{'status'}{$clientid} = $copy;
+
+		# start the timer
+#		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2,
+#				\&main::forceStopServer);
+
+	} else {
+
+		delete $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
+#		Slim::Utils::Timers::killOneTimer(undef, whatever);
 	}
 	
-	cli_manage_subscription();
+	cli_subscribe_manage();
 }
+
+# subscribes or unsubscribes to the Request notification system
+sub cli_subscribe_manage {
+
+	$d_cli_vv && msg("CLI: cli_subscribe_manage()\n");
+
+	# do we need to subscribe?
+	my $subscribe = 0;
+	foreach my $client_socket (keys %connections) {
+
+		if (keys(%{$connections{$client_socket}{'subscribe'}})) {
+
+			$subscribe++;
+			last;
+		}
+	}
+	
+	# subscribe
+	if ($subscribe && !$cli_subscribed) {
+
+		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_subscribe_notification);
+		$cli_subscribed = 1;
+
+	# unsubscribe
+	} elsif (!$subscribe && $cli_subscribed) {
+
+		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_subscribe_notification);
+		$cli_subscribed = 0;
+	}
+}
+
+# handles notifications
+sub cli_subscribe_notification {
+	my $request = shift;
+
+	$d_cli_vv && msg("CLI: cli_subscribe_notification()\n");
+	
+	foreach my $client_socket (keys %connections) {
+
+		# don't send if unsubscribed
+		next if !defined($connections{$client_socket}{'subscribe'});
+
+		# retrieve the socket object
+		$client_socket = $connections{$client_socket}{'socket'};
+		
+		# remember if we sent command
+		my $sent = 0;
+	
+		# handle sending unique commands
+		if (defined $connections{$client_socket}{'subscribe'}{'listen'}) {
+
+			# don't echo twice to the sender
+			next if ($request->source() eq 'CLI' && 
+				$request->privateData() eq $client_socket);
+			
+			# if we have an array in {'listen'}
+			if (ref $connections{$client_socket}{'subscribe'}{'listen'} eq 'ARRAY') {
+			
+				# check the command matches the list of wanted commands
+				next unless ($request->isCommand($connections{$client_socket}{'subscribe'}{'listen'}));
+			}
+			
+			# anything else than an array and we send everything!
+			
+			# write request
+			cli_request_write($client_socket, $request);
+			$sent = 1;
+		}
+		
+		# commands we ignore for status (to change if other subscriptions are
+		# supported!)
+		next if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
+		next if $request->isCommand([['playlist'], ['open']]);
+
+		# retrieve the clientid
+		my $clientid = $request->clientid();
+		
+		next if !defined $clientid;
+		
+		# handle status sending on changes
+		if (defined (my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid})) {
+			msg("CLI: Handling " . $request->getRequestString() . "\n");
+			# special case: the client is gone!
+			if ($request->isCommand([['client', 'forget']])) {
+				msg("CLI: Client is gone\n");
+				# abandon ship, client is gone!
+				cli_subscribe_status($client_socket, $statusrequest, '-');
+				
+				# notify listener if not already done
+				cli_request_write($client_socket, $request) if !$sent;
+			}
+			
+			else {
+			
+				# don't delay sending this!
+				if ($request->isCommand([['playlist'], ['newsong']])) {
+					msg("CLI: Immediate\n");
+					cli_subscribe_status_output($statusrequest);
+				}
+				
+				else {
+					# send everyother notif with a small delay to accomodate
+					# bursts of commands
+					msg("CLI: Delayed\n");
+					Slim::Utils::Timers::killTimers($statusrequest,
+						\&cli_subscribe_status_output);
+					Slim::Utils::Timers::setTimer($statusrequest, 
+						Time::HiRes::time() + 0.3,
+						\&cli_subscribe_status_output);
+					
+				
+				}
+			}
+		}
+	}
+}
+
+sub cli_subscribe_status_output {
+	my $request = shift;
+	
+	$d_cli_vv && msg("CLI: cli_subscribe_status_output()\n");
+msg("CLI: SENDING\n");
+#	my $copy = $request->virginCopy();
+#	$copy->dump();
+	$request->cleanResults();
+	$request->dump();
+	$request->execute();
+	cli_request_write($request->privateData(), $request);
+	
+	# reset the N seconds timer
+	
+	# kill the delay timer (there is at most one)
+	Slim::Utils::Timers::killTimers($request,
+		\&cli_subscribe_status_output);
+}
+
+sub cli_subscribe_status_periodic {
+	my $whataver = shift;
+
+	$d_cli_vv && msg("CLI: cli_subscribe_status_periodic()\n");
+}
+
 
 ################################################################################
 # PLUGIN STRINGS
