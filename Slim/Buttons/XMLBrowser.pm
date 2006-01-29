@@ -281,8 +281,6 @@ sub gotOPML {
 
 				$client->bumpRight();
 			}
-
-			$client->update;
 		},
 
 		onPlay  => sub {
