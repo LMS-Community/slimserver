@@ -1551,7 +1551,7 @@ sub nowPlayingModeLines {
 	my ($client, $parts) = @_;
 	my $overlay;
 	my $fractioncomplete   = 0;
-	my $playingDisplayMode = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
+	my $playingDisplayMode = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
 
 	$client->param(
 		'animateTop',

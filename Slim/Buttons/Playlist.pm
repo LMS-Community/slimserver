@@ -28,7 +28,7 @@ sub init {
 			my $client = shift;
 			my $button = shift;
 			my $buttonarg = shift;
-			my $pdm = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
+			my $pdm = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
 			my $index = -1;
 			
 			#find index of the existing display mode in the pref array

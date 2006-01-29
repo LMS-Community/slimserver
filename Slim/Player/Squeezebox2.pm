@@ -373,7 +373,7 @@ sub visualizer {
 	my $paramsref = $client->modeParam('visu');
 	
 	if (!$paramsref) {
-		my $visu = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
+		my $visu = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
 
 		$visu = 0 if (!$client->showVisualizer());
 		
@@ -561,7 +561,7 @@ sub nowPlayingModeLines {
 	my $overlay;
 	my $fractioncomplete   = 0;
 	
-	my $mode = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
+	my $mode = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
 
 	my $songtime = '';
 	
