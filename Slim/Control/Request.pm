@@ -281,6 +281,8 @@ our %dispatchDB;                # contains a multi-level hash pointing to
 our %subscribers = ();          # contains the clients to the notification
                                 # mechanism
 
+our @notificationQueue;         # contains the Requests waiting to be notified
+
 my $d_notify = 1;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
 
@@ -558,7 +560,23 @@ sub notifyFromArray {
 									$requestLineRef
 								);
 	
-	$request->notify() if defined $request;
+#	$request->notify() if defined $request;
+	msg("Pushing notif for ". $request->getRequestString() . " for notifyFromArray\n");
+	push @notificationQueue, $request;
+}
+
+# sends notifications currently in the queue
+sub checkNotifications {
+	if (scalar @notificationQueue) {
+		
+		# empty the queue and copy the values
+		my @requests = reverse @notificationQueue;
+		@notificationQueue = undef;
+		
+		foreach (@requests) {
+			$_->notify() if blessed($_);
+		}
+	}
 }
 
 # convenient function to execute a request from an array, with optional
@@ -616,11 +634,44 @@ sub new {
 	bless $self, $class;
 	
 	# parse $requestLineRef to finish create the Request
-	$self->__parse($requestLineRef);
+	$self->__parse($requestLineRef) if defined $requestLineRef;
+	
+	$self->validate();
 	
 	return $self;
 }
 
+# makes a request out of another one, discarding results and callback data.
+# except for '_private' which we don't know about, all data is 
+# duplicated
+sub virginCopy {
+	my $self = shift;
+	
+	my $copy = Slim::Control::Request->new($self->clientid());
+	
+	# fill in the scalars
+	$copy->{'_isQuery'} = $self->{'_isQuery'};
+	$copy->{'_needClient'} = $self->{'_needClient'};
+	$copy->{'_func'} = \&{$self->{'_func'}};
+	$copy->{'_source'} = $self->{'_source'};
+	$copy->{'_private'} = $self->{'_private'};
+	$copy->{'_curparam'} = $self->{'_curparam'};
+	
+	# duplicate the arrays and hashes
+	my @request = @{$self->{'_request'}};
+	$copy->{'_request'} = \@request;
+
+	tie (my %paramHash, "Tie::LLHash", {lazy => 1});	
+	while (my ($key, $val) = each %{$self->{'_params'}}) {
+		$paramHash{$key} = $val;
+ 	}
+	$copy->{'_params'} = \%paramHash;
+	
+	$self->validate();
+	
+	return $copy;
+}
+	
 
 ################################################################################
 # Read/Write basic query attributes
@@ -763,9 +814,12 @@ sub validate {
 
 		$self->setStatusNotDispatchable();
 
-	} elsif ($self->{'_needClient'} && !$self->{'_clientid'}) {
+	} elsif ($self->{'_needClient'} && 
+				(!defined $self->{'_clientid'} || 
+				!defined Slim::Player::Client::getClient($self->{'_clientid'}))){
 
 		$self->setStatusNeedsClient();
+		$self->{'_clientid'} = undef;
 
 	} else {
 
@@ -868,6 +922,10 @@ sub isStatusNotDispatchable {
 	return ($self->__status() == 104);
 }
 
+sub getStatusText {
+	my $self = shift;
+	return ($statusMap{$self->__status()});
+}
 ################################################################################
 # Request mgmt
 ################################################################################
@@ -930,6 +988,14 @@ sub getParam {
 	my $key = shift || return;
 	
 	return ${$self->{'_params'}}{$key};
+}
+
+# delete a parameter by name
+sub deleteParam {
+	my $self = shift;
+	my $key = shift || return;
+	
+	delete ${$self->{'_params'}}{$key};
 }
 
 ################################################################################
@@ -1022,6 +1088,20 @@ sub getResultLoop {
 	return undef;
 }
 
+sub cleanResults {
+	my $self = shift;
+
+	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+	
+	# not sure this helps release memory, but can't hurt
+	delete $self->{'_results'};
+
+	$self->{'_results'} = \%resultHash;
+	
+	# this will reset it to dispatchable so we can execute it once more
+	$self->validate();
+}
+
 
 ################################################################################
 # Compound calls
@@ -1052,6 +1132,13 @@ sub isCommand{
 	my $possibleNames = shift;
 	
 	return $self->__isCmdQuery(0, $possibleNames);
+}
+
+sub isQuery{
+	my $self = shift;
+	my $possibleNames = shift;
+	
+	return $self->__isCmdQuery(1, $possibleNames);
 }
 
 # returns true if $param is undefined or not one of the possible values
@@ -1099,6 +1186,11 @@ sub execute {
 	$::d_command && msg("\n");
 #	$::d_command && $self->dump("Request");
 
+	# some time may have elapsed between the request creation
+	# and its execution, and the client, f.e., could have disappeared
+	# check all is OK once more...
+	$self->validate();
+
 	# do nothing if something's wrong
 	if ($self->isStatusError()) {
 		$::d_command && msg('Request: Request in error, exiting');
@@ -1108,7 +1200,8 @@ sub execute {
 	# call the execute function
 	if (my $funcPtr = $self->{'_func'}) {
 
-		if (defined $funcPtr && ref($funcPtr) eq 'CODE') {
+# The call to validate() above checks this
+#		if (defined $funcPtr && ref($funcPtr) eq 'CODE') {
 
 			eval { &{$funcPtr}($self) };
 
@@ -1117,11 +1210,11 @@ sub execute {
 				$self->dump('Request');
 			}
 
-		} else {
+#		} else {
 
-			errorMsg("execute: Didn't get a valid coderef from ->{'_func'}\n");
-			$self->dump('Request');
-		}
+#			errorMsg("execute: Didn't get a valid coderef from ->{'_func'}\n");
+#			$self->dump('Request');
+#		}
 	}
 	
 	# if the status is done
@@ -1135,7 +1228,9 @@ sub execute {
 		# notify for commands
 		if (!$self->query()) {
 		
-			$self->notify();
+#			$self->notify();
+			msg("Pushing notif for ". $self->getRequestString() . "\n");
+			push @notificationQueue, $self;
 		}
 
 	} else {
@@ -1338,7 +1433,7 @@ sub dump {
 		}
 	}
 
-	$str .= ' (' . $statusMap{$self->__status()} . ")\n";
+	$str .= ' (' . $self->getStatusText() . ")\n";
 		
 	msg($str);
 
@@ -1579,8 +1674,6 @@ sub __parse {
 			$self->addParamPos($requestLineRef->[$i]);
 		}
 	}
-	
-	$self->validate();
 }
 
 

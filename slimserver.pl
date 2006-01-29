@@ -642,6 +642,9 @@ sub idle {
 	Slim::Web::HTTP::idle();
 	if ($::d_perf) { $to = watchDog($to, "http::idle"); }
 
+	# handle queued notifications
+	Slim::Control::Request::checkNotifications();
+
 	return $::stop;
 }
 
