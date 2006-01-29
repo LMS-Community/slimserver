@@ -561,7 +561,7 @@ sub notifyFromArray {
 								);
 	
 #	$request->notify() if defined $request;
-	msg("Pushing notif for ". $request->getRequestString() . " for notifyFromArray\n");
+#	msg("Pushing notif for ". $request->getRequestString() . " for notifyFromArray\n");
 	push @notificationQueue, $request;
 }
 
@@ -1229,7 +1229,7 @@ sub execute {
 		if (!$self->query()) {
 		
 #			$self->notify();
-			msg("Pushing notif for ". $self->getRequestString() . "\n");
+#			msg("Pushing notif for ". $self->getRequestString() . "\n");
 			push @notificationQueue, $self;
 		}
 
