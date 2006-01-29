@@ -586,7 +586,14 @@ sub scheduleWriteOfPlaylist {
 				# This can happen if the user removes the
 				# playlist - because this is a closure, we get
 				# a bogus object back)
-				unless ($playlistObj->can('tracks')) {
+				if (!$playlistObj->can('tracks')) {
+					return 0;
+				}
+
+				if ($playlistObj->title eq $client->string('UNTITLED')) {
+
+					$::d_playlist && msg("Not writing out untitled playlist.\n");
+
 					return 0;
 				}
 
@@ -605,15 +612,10 @@ sub scheduleWriteOfPlaylist {
 }
 
 sub newSongPlaylistCallback {
-#	my $client = shift;
-#	my $params = shift;
 	my $request = shift;
 	
 	my $client = $request->client();
 
-#	return unless $params->[0] eq 'newsong';
-#	return unless $client->currentPlaylist;
-	
 	my $playlist = '';
 
 	if ($client->currentPlaylist && ref($client->currentPlaylist)) {
@@ -642,24 +644,15 @@ sub newSongPlaylistCallback {
 }
 
 sub modifyPlaylistCallback {
-#	my $client = shift;
-#	my $paramsRef = shift;
 	my $request = shift;
 	
 	my $client = $request->client();
 	
 	if ($client && Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
 
-#		my $command    = $paramsRef->[0];
-#		my $subCommand = $paramsRef->[1];
-
-		# Did the playlist change?
-#		my $saveplaylist = $command eq 'playlist' && $validSubCommands{$subCommand};
 		my $saveplaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
 
 		# Did the playlist or the current song change?
-#		my $savecurrsong = $saveplaylist || $command eq 'open' || 
-#			($command eq 'playlist' && $subCommand =~ /^(jump|index|shuffle)$/);
 		my $savecurrsong = 
 			$saveplaylist || 
 			$request->isCommand([['playlist'], ['open']]) || 

@@ -189,7 +189,7 @@ sub saveCurrentPlaylist {
 		# by setting $p1 to it, which was messing up callback and the CLI.
 
 		my $request = Slim::Control::Request::executeRequest($client, ['playlist', 'save', $title]);
-		
+
 		if (defined $request) {
 		
 			$params->{'playlist'} = $request->getResult('__playlist_id');
@@ -251,14 +251,9 @@ sub renamePlaylist {
 				$existingPlaylist = undef;
 			}
 
-			$ds->updateOrCreate({
-				'url'        => $playlistObj,
-				'attributes' => {
-					'URL'   => $newUrl,
-					'TITLE' => $newName,
-				},
-				'commit'     => 1,
-			});
+			$playlistObj->set('url', $newUrl);
+			$playlistObj->set('title', $newName);
+			$playlistObj->update;
 
 			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 		}

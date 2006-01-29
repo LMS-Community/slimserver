@@ -593,25 +593,24 @@ sub playlistSaveCommand {
 	# get the parameters
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $ds     = Slim::Music::Info::getCurrentDataStore();
 
 	my $playlistObj = $ds->updateOrCreate({
-		'url'        => Slim::Utils::Misc::fileURLFromPath(
-							catfile(
-								Slim::Utils::Prefs::get('playlistdir'), 
-								$title . '.m3u'
-								)
-							),
-		'attributes' => {
-						'TITLE' => $title,
-						'CT'    => 'ssp',
-						},
-		});
 
-	my $annotatedList;
+		'url'        => Slim::Utils::Misc::fileURLFromPath(
+				catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
+		),
+
+		'attributes' => {
+			'TITLE' => $title,
+			'CT'    => 'ssp',
+		},
+	});
+
+	my $annotatedList = [];
 
 	if (Slim::Utils::Prefs::get('saveShuffled')) {
-				
+
 		for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
 			push @$annotatedList, @{Slim::Player::Playlist::playList($client)}[$shuffleitem];
 		}
