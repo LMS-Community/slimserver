@@ -386,7 +386,8 @@ sub forgetTimer {
 
 	for (my $i = 0; $i < $count; $i++) {
 
-		if (matchedTimer($highTimers[$i], $objRef)) {
+#		if (matchedTimer($highTimers[$i], $objRef)) {
+		if (matchedTimer($normalTimers[$i], $objRef)) {
 
 			splice( @normalTimers, $i, 1);
 			redo;
@@ -487,7 +488,8 @@ sub firePendingTimer {
 
 		for (my $i = 0; $i < $count; $i++) {
 
-			if (matchedTimer($highTimers[$i], $objRef, $subptr)) {
+#			if (matchedTimer($highTimers[$i], $objRef, $subptr)) {
+			if (matchedTimer($normalTimers[$i], $objRef, $subptr)) {
 
 				$foundTimer = splice( @normalTimers, $i, 1);
 
