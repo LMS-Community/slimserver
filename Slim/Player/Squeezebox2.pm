@@ -199,7 +199,7 @@ sub displayWidth {
 	# if we're showing the always-on visualizer & the current buttonmode 
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? $client->prefGet("playingDisplayMode") : 0;
+	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")] : 0;
 	return $modes[$mode || 0]{width};
 }
 
@@ -373,7 +373,7 @@ sub visualizer {
 	my $paramsref = $client->modeParam('visu');
 	
 	if (!$paramsref) {
-		my $visu = $client->prefGet("playingDisplayMode");
+		my $visu = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
 
 		$visu = 0 if (!$client->showVisualizer());
 		
@@ -561,7 +561,8 @@ sub nowPlayingModeLines {
 	my $overlay;
 	my $fractioncomplete   = 0;
 	
-	my $mode = $client->prefGet("playingDisplayMode");
+	my $mode = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
+
 	my $songtime = '';
 	
 	Slim::Buttons::Common::param(

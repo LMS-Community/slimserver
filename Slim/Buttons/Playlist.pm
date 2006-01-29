@@ -28,7 +28,7 @@ sub init {
 			my $client = shift;
 			my $button = shift;
 			my $buttonarg = shift;
-			my $pdm = $client->prefGet("playingDisplayMode");
+			my $pdm = ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")];
 			my $index = -1;
 			
 			#find index of the existing display mode in the pref array
@@ -56,7 +56,7 @@ sub init {
 			
 			#find mode number at the new index, and save to the prefs
 			$client->param('animateTop',${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
-			$client->prefSet("playingDisplayMode", ${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
+			$client->prefSet("playingDisplayMode", $pdm);
 			$client->update();
 		},
 		'up' => sub  {
