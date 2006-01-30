@@ -17,9 +17,9 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use FindBin qw($Bin);
 
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
@@ -31,22 +31,17 @@ my %plugins = ();
 my %playerplugins = ();
 my %brokenplugins = ();
 
-sub pluginDirs {
+BEGIN {
 
-	if (!scalar @pluginDirs) {
-
-		if ($^O eq 'darwin') {
-			push @pluginDirs, $ENV{'HOME'} . "/Library/SlimDevices/Plugins/";
-			push @pluginDirs, "/Library/SlimDevices/Plugins/";
-		}
-
-		push @pluginDirs, catdir($Bin, "Plugins");
-	}
-		
-	return @pluginDirs;
+	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 }
 
-use lib (pluginDirs());
+use lib @pluginDirs;
+
+sub pluginDirs {
+
+	return @pluginDirs;
+}
 
 sub init {
 	no strict 'refs';

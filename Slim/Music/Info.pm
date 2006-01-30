@@ -11,7 +11,6 @@ use strict;
 
 use File::Path;
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
@@ -99,21 +98,17 @@ sub loadTypesConfig {
 	my @typesFiles = ();
 
 	$::d_info && msg("loading types config file...\n");
-	
-	push @typesFiles, catdir($Bin, 'types.conf');
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/types.conf";
-		push @typesFiles, "/Library/SlimDevices/types.conf";
-		push @typesFiles, $ENV{'HOME'} . "/Library/SlimDevices/custom-types.conf";
-		push @typesFiles, "/Library/SlimDevices/custom-types.conf";
-	}
 
 	# custom types file allowed at server root or root of plugin directories
-	push @typesFiles, catdir($Bin, 'custom-types.conf');
+	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
+	
+		push @typesFiles, catdir($baseDir, 'types.conf');
+		push @typesFiles, catdir($baseDir, 'custom-types.conf');
+	}
 
-	foreach my $dir (Slim::Utils::PluginManager::pluginRootDirs()) {
-		push @typesFiles, catdir($dir, 'custom-types.conf');
+	foreach my $baseDir (Slim::Utils::PluginManager::pluginRootDirs()) {
+
+		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
 
 	foreach my $typeFileName (@typesFiles) {

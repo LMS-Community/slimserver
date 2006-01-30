@@ -7,7 +7,6 @@ package Slim::Display::Graphics;
 
 use strict;
 use File::Spec::Functions qw(catdir);
-use FindBin qw($Bin);
 use List::Util qw(max);
 use Tie::Cache::LRU;
 
@@ -294,15 +293,11 @@ sub measureText {
 	
 sub graphicsDirs {
 
-	my @dirs = catdir($Bin,"Graphics");
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/Graphics/";
-		push @dirs, "/Library/SlimDevices/Graphics/";
-	}
-
 	# graphics files also allowed in root directory of plugins
-	return @dirs, Slim::Utils::PluginManager::pluginRootDirs();
+	return (
+		Slim::Utils::OSDetect::dirsFor('Graphics'),
+		Slim::Utils::PluginManager::pluginRootDirs(),
+	);
 }
 
 sub fontCacheFile {

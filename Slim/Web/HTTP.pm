@@ -114,12 +114,7 @@ our %dangerousCommands = (
 # initialize the http server
 sub init {
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @templateDirs, $ENV{'HOME'} . "/Library/SlimDevices/html/";
-		push @templateDirs, "/Library/SlimDevices/html/";
-	}
-
-	push @templateDirs, catdir($Bin, 'HTML');
+	push @templateDirs, Slim::Utils::OSDetect::dirsFor('HTML');
 
 	# Try and use the faster XS module if it's available.
 	eval { require Template::Stash::XS };

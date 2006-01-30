@@ -20,7 +20,6 @@ use DBI;
 use File::Basename;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 use SQL::Abstract;
 use SQL::Abstract::Limit;
 use Scalar::Util qw(blessed);
@@ -96,7 +95,7 @@ sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
 
-	my $sqlFile = catdir($Bin, "SQL", $class->driver, $file);
+	my $sqlFile = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $class->driver, $file );
 
 	$::d_info && msg("Executing SQL file $sqlFile\n");
 
@@ -217,7 +216,8 @@ sub db_Main {
 			
 			if ($nextversion && ($nextversion ne 99999)) {
 
-				my $upgradeFile = catdir("Upgrades", $nextversion.".sql" );
+				my $upgradeFile = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), 'Upgrades', "$nextversion.sql" );
+
 				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
 				$class->executeSQLFile($upgradeFile);
 
@@ -247,7 +247,7 @@ sub findUpgrade {
 	my $class       = shift;
 	my $currVersion = shift;
 
-	my $sqlVerFilePath = catdir($Bin, "SQL", $class->driver, "sql.version");
+	my $sqlVerFilePath = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $class->driver, 'sql.version' );
 
 	my $versionFile;
 
@@ -271,7 +271,7 @@ sub findUpgrade {
 		return 0;
 	}
 
-	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
+	my $file = shift || catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $driver, 'Upgrades', "$to.sql" );
 
 	if (!-f $file && ($to != 99999)) {
 		$::d_info && msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");

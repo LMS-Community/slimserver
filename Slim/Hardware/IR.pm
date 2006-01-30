@@ -9,7 +9,6 @@ package Slim::Hardware::IR;
 
 use strict;
 use File::Spec::Functions qw(catdir);
-use FindBin qw($Bin);
 use Time::HiRes qw(gettimeofday);
 
 use Slim::Buttons::Common;
@@ -126,14 +125,8 @@ sub init {
 }
 
 sub IRFileDirs {
-	my @dirs = catdir($Bin,"IR");
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/IR/";
-		push @dirs, "/Library/SlimDevices/IR/";
-	}
-
-	return @dirs;
+	return Slim::Utils::OSDetect::dirsFor('IR');
 }
 
 #returns a reference to a hash of filenames/external names

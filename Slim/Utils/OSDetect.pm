@@ -9,6 +9,8 @@ package Slim::Utils::OSDetect;
 
 use strict;
 use Config;
+use File::Spec::Functions qw(:ALL);
+use FindBin qw($Bin);
 
 use Slim::Utils::Misc;
 
@@ -58,6 +60,91 @@ sub init {
 
 		$::d_os && msg("OS detection skipped, using \"$detectedOS\".\n");
 	}
+}
+
+# Return OS Specific directories.
+sub dirsFor {
+	my $dir     = shift;
+
+	my @dirs    = ();
+	my $OS      = OS();
+	my $details = details();
+
+	if ($OS eq 'mac') {
+
+		if ($dir =~ /^(?:Plugins|strings|convert|types)$/) {
+
+			push @dirs, $Bin;
+		}
+
+		if ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
+
+			# For some reason the dir is lowercase on OS X.
+			if ($dir eq 'HTML') {
+				$dir = lc($dir);
+			}
+
+			push @dirs, catdir($Bin, $dir);
+			push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/$dir";
+			push @dirs, "/Library/SlimDevices/$dir";
+
+		} else {
+
+			push @dirs, catdir($Bin, $dir);
+		}
+
+	# Debian specific paths.
+	} elsif ($details->{'osName'} eq 'Debian' && -d '/usr/share/slimserver/Firmware') {
+
+		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|SQL)$/) {
+
+			push @dirs, "/usr/share/slimserver/$dir";
+
+		} elsif ($dir eq 'Plugins') {
+
+			push @dirs, "/usr/share/slimserver";
+			push @dirs, "/usr/share/slimserver/$dir";
+
+		} elsif ($dir eq 'strings') {
+
+			push @dirs, "/usr/share/slimserver";
+
+		} elsif ($dir =~ /^(?:types|convert|pref)$/) {
+
+			push @dirs, "/etc/slimserver";
+
+		} elsif ($dir eq 'log') {
+
+			push @dirs, "/var/log/slimserver";
+
+		} elsif ($dir eq 'cache') {
+
+			push @dirs, "/var/cache/slimserver";
+
+		} else {
+
+			errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
+		}
+
+	} else {
+
+		# Everyone else - Windows, and *nix.
+		if ($dir =~ /^(?:strings|convert|types)$/) {
+
+			push @dirs, $Bin;
+
+		} elsif ($dir eq 'Plugins') {
+
+			push @dirs, $Bin;
+			push @dirs, catdir($Bin, $dir);
+
+		} else {
+
+			push @dirs, catdir($Bin, $dir);
+		}
+	}
+
+	return @dirs;
 }
 
 sub details {

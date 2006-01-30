@@ -13,7 +13,6 @@ package Slim::Player::Squeezebox;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 use IO::Socket;
 use MIME::Base64;
 
@@ -257,7 +256,7 @@ sub needsUpgrade {
 	return 0 unless $from;
 	my $model = $client->model;
 	
-	my $versionFilePath = catdir($Bin, "Firmware", $model . ".version");
+	my $versionFilePath = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "$model.version" );
 	my $versionFile;
 
 	if (!open($versionFile, "<$versionFilePath")) {
@@ -304,7 +303,7 @@ sub needsUpgrade {
 
 	# skip upgrade if file doesn't exist
 
-	my $file = shift || catdir($Bin, "Firmware", $model . "_$to.bin");
+	my $file = shift || catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $model . "_$to.bin" );
 
 	unless (-r $file && -s $file) {
 		$::d_firmware && msg ("$model v. $from could be upgraded to v. $to if the file existed.\n");
@@ -452,7 +451,7 @@ sub upgradeFirmware {
 
 	$to_version = $client->revision unless $to_version;
 
-	my $filename = catdir($Bin, "Firmware", "squeezebox_$to_version.bin");
+	my $filename = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
 
 	if (!-f$filename) {
 		warn("file does not exist: $filename\n");

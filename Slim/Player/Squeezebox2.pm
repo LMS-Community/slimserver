@@ -17,7 +17,6 @@ use strict;
 use base qw(Slim::Player::SqueezeboxG);
 
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 use IO::Socket;
 use MIME::Base64;
 
@@ -536,7 +535,7 @@ sub upgradeFirmware {
 		$::d_firmware && msg ("upgrading to same rev: $to_version\n");
 	}
 
-	my $filename = catdir($Bin, "Firmware", $client->model . "_$to_version.bin");
+	my $filename = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
 
 	if (!-f $filename) {
 		warn("file does not exist: $filename\n");

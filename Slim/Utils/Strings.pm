@@ -15,7 +15,6 @@ use base qw(Exporter);
 @EXPORT_OK = qw(string);
 
 use File::Spec::Functions qw(:ALL);
-use FindBin;
 use Slim::Utils::Misc;
 
 #-------------------------------------------------
@@ -54,13 +53,10 @@ sub init {
 
 sub stringsDirs {
 
-	my @pluginDirs = ($FindBin::Bin, Slim::Utils::Prefs::preferencesPath());
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-	        push @pluginDirs, ($ENV{'HOME'} . "/Library/SlimDevices/", "/Library/SlimDevices/");
-	}
-
-	return @pluginDirs;
+	return (
+		Slim::Utils::OSDetect::dirsFor('strings'),
+		Slim::Utils::Prefs::preferencesPath(),
+	);
 }
 
 sub stringsFiles {
