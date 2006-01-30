@@ -282,6 +282,7 @@ sub strings {
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
 	ES	Recopilar nuevamente la Colección Musical
+	FI	Sekoitukseen haluamasi tyylilajit:
 	FR	Répertorier musique
 	HE	תוסף סריקת הסיפריה
 	NL	Opnieuw scannen muziekcollectie
@@ -291,6 +292,7 @@ PLUGIN_RESCAN_RESCANNING
 	DE	Server durchsucht Verzeichnisse...
 	EN	Server now rescanning...
 	ES	El server está recopilando...
+	FI	Palvelin lukee hakemistojen sisältöä...
 	FR	En cours...
 	NL	Server bezig met herscannen...
 
@@ -299,6 +301,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 	DE	Drücke Play, um Durchsuchen zu starten
 	EN	Press PLAY to rescan now.
 	ES	Presionar PLAY para recopilar ahora.
+	FI	Paina "PLAY" lukeaksesi hakemiston sisältö nyt.
 	NL	Druk op PLAY voor nu herscannen.
 
 PLUGIN_RESCAN_TIMER_NAME

@@ -281,6 +281,7 @@ PLUGIN_FAVORITES_MODULE_NAME
 	DE	Favoriten
 	EN	Favorites
 	ES	Favoritas
+	FI	Suosikit
 	HE	מועדפים
 	IT	Favoriti
 	NL	Favorieten
@@ -295,6 +296,7 @@ PLUGIN_FAVORITES_NONE_DEFINED
 	DE	Es sind noch keine Favoriten definiert
 	EN	No Favorites exist
 	ES	No existen Favoritas
+	FI	Suosikkeja ei ole
 	NL	Er zijn geen favorieten
 
 PLUGIN_FAVORITES_PLAYING

@@ -1165,6 +1165,7 @@ PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	DE	Fehler: SHOUTcast ist nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
+	FI	Virhe: SHOUTcast web palvelin ei ole tavoitettavissa
 	IT	Errore: sito web SHOUTcast non disponibile
 	NL	Fout: SHOUTcast website niet beschikbaar
 

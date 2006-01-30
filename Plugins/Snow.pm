@@ -35,6 +35,7 @@ PLUGIN_SCREENSAVER_SNOW
 	DE	Schnee Bildschirmschoner
 	EN	Snow Screensaver
 	ES	Salvapantallas de Nieve
+	FI	Lumi ruudunsäästäjä
 	FR	Ecran de veille Neige
 	IT	Salvaschermo Neve
 	NL	Sneeuw schermbeveiliger
@@ -80,6 +81,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY
 	DE	Schneemenge
 	EN	Quantity of snow
 	ES	Cantidad de nieve
+	FI	Lumen määrä
 	FR	Intensité neige
 	NL	Hoeveelheid sneeuw
 
@@ -94,6 +96,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DE	Ein paar Schneeflocken
 	EN	Light flurries
 	ES	Copos livianos
+	FI	Kevyitä hiutaleita
 	FR	Quelques flocons
 	NL	Lichte vlagen
 
@@ -121,6 +124,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	DE	Schneetyp ein
 	EN	Style of snow when on
 	ES	Estilo de nieve on
+	FI	Lumen tyyli kun päällä
 	FR	Type neige on
 	NL	Sneeuwstijl indien aan
 

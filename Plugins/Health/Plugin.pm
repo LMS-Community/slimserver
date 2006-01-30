@@ -281,6 +281,7 @@ PLUGIN_HEALTH
 	DE	Server & Netzwerk Zustand
 	EN	Server & Network Health
 	ES	Salud del Servidor y la Red
+	FI	Palvelimen ja verkon tila
 	HE	תקינות השרת
 	NL	Server- en netwerktoestand
 
@@ -300,24 +301,28 @@ PLUGIN_HEALTH_PERF_CLEAR
 	DE	Zähler zurücksetzen
 	EN	Reset Counters
 	ES	Reiniciar Contadores
+	FI	Tyhjennä laskurit
 	NL	Terugzetten tellers
 
 PLUGIN_HEALTH_PERF_UPDATE
 	DE	Seite aktualisieren
 	EN	Update Page
 	ES	Actualizar Página
+	FI	Päivityssivu
 	NL	Ververs pagina
 
 PLUGIN_HEALTH_PERFOFF_DESC
 	DE	Die Leistungsüberwachung ist zurzeit nicht aktiviert.
 	EN	Performance monitoring is not currently enabled on your server.
 	ES	El monitoreo de perfomance no se encuentra habilitado actualmente en el servidor.
+	FI	Suorituskyvyn valvonta ei ole tällä hetkellä kytketty päälle palvelimella.
 	NL	Prestatiemonitoring is op dit moment niet actief op je server.
 
 PLUGIN_HEALTH_PERFON_DESC
 	DE	Die Leistungsüberwachung ist auf ihrem Server aktiviert. Der Server sammelt während der Ausführung Leistungsdaten.
 	EN	Performance monitoring is currently enabled on your server.	Performance statistics are being collected in the background while your server is running.
 	ES	El monitoreo de Perfomance está actualmente habilitado en su servidor. Las estadísticas de perfomance se recopilan en el fondo, mientras el servidor esta corriendo.
+	FI	Suorituskyvyn valvonta on tällä hetkellä kytketty päälle palvelimellasi. Palvelin kerää tilastotietoa taustalla.
 	HE	תוסף איסוף סטטיסטיקות מופעל
 	NL	Prestatiemonitoring is op dit moment actief op je server. Prestatiestatistieken worden bijgehouden in de achtergrond terwijl je server draait.
 
@@ -337,6 +342,7 @@ PLUGIN_HEALTH_PLAYERDETAIL
 	DE	Player-Leistung
 	EN	Player Performance
 	ES	Performance del Reproductor
+	FI	Soittimen suorituskyky
 	NL	Speler prestatie
 
 PLUGIN_HEALTH_PLAYERDETAIL_DESC
@@ -350,6 +356,7 @@ PLUGIN_HEALTH_SIGNAL
 	DE	Signalstärke
 	EN	Player Signal Strength
 	ES	Potencia de la Señal  del Reproductor
+	FI	Soittimen signaalivoimakkuus
 	NL	Spelersignaalsterkte
 
 PLUGIN_HEALTH_SIGNAL_DESC
@@ -362,6 +369,7 @@ PLUGIN_HEALTH_BUFFER
 	DE	Puffer-Füllstand
 	EN	Buffer Fullness
 	ES	Llenado del Buffer
+	FI	Puskurin täyttöaste
 	NL	Bufferniveau
 
 PLUGIN_HEALTH_BUFFER_DESC
@@ -375,6 +383,7 @@ PLUGIN_HEALTH_CONTROL
 	DE	Kontrollverbindung
 	EN	Control Connection
 	ES	Conexión de Control
+	FI	Hallintayhteys
 	NL	Controleconnectie
 
 PLUGIN_HEALTH_CONTROL_DESC
@@ -394,6 +403,7 @@ PLUGIN_HEALTH_SERVER_PERF
 	DE	Server-Leistung
 	EN	Server Performance
 	ES	Perfomance del Servidor
+	FI	Palvelimen suorituskyky
 	NL	Serverprestatie
 
 PLUGIN_HEALTH_SERVER_PERF_DESC
@@ -419,6 +429,7 @@ PLUGIN_HEALTH_TIMER_LENGTH
 	DE	Timer Ausführungsdauer 
 	EN	Timer Task Duration
 	ES	Duración de Tarea de Timer
+	FI	Ajastimen tehtävän kesto
 	NL	Timertaakduur
 
 PLUGIN_HEALTH_TIMER_LENGTH_DESC
@@ -473,6 +484,7 @@ PLUGIN_HEALTH_CONGEST
 	DE	Überlastung
 	EN	Congested
 	ES	Congestionado
+	FI	Ruuhkautunut
 	NL	Congestie
 
 PLUGIN_HEALTH_INACTIVE
@@ -480,6 +492,7 @@ PLUGIN_HEALTH_INACTIVE
 	EN	Inactive
 	ES	Inactivo
 	IT	Inattivo
+	FI	Ei aktiivinen
 	NL	Inactief
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
@@ -505,6 +518,7 @@ PLUGIN_HEALTH_SIGNAL_INTERMIT
 	DE	Gut, aber mit vereinzelten Ausfällen 
 	EN	Good, but Intermittent Drops
 	ES	Buena, pero con Cortes Intermitentes
+	FI	Hyvä, mutta satunnaisia katkoja
 	NL	Goed maar af en toe haperingen
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC
@@ -529,6 +543,7 @@ PLUGIN_HEALTH_SIGNAL_BAD
 	DE	Schlecht
 	EN	Bad
 	ES	Mala
+	FI	Huono
 	NL	Slecht
 
 PLUGIN_HEALTH_SIGNAL_BAD_DESC
@@ -541,6 +556,7 @@ PLUGIN_HEALTH_BUFFER_LOW
 	DE	Niedrig
 	EN	Low
 	ES	Bajo
+	FI	Matala
 	NL	Laag
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC1
@@ -561,6 +577,7 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT
 	DE	Teilweise schlechte Antwortzeiten
 	EN	Occasional Poor Response
 	ES	Ocasionalmente Respuesta Pobre
+	FI	Satunnaista huonoa vastetta
 	NL	Af en toe slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
@@ -574,6 +591,7 @@ PLUGIN_HEALTH_RESPONSE_POOR
 	DE	Schlechte Antwortzeiten
 	EN	Poor Response
 	ES	Respuesta Pobre
+	FI	Huono vaste
 	NL	Slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_POOR_DESC
@@ -587,6 +605,7 @@ PLUGIN_HEALTH_NORMAL
 	DE	Dieser Player verhält sich normal.
 	EN	This player is performing normally.
 	ES	Este reproductor está funcionando normalmente.
+	FI	Tämä soitin toimii normaalisti.
 	NL	Deze speler functioneert normaal.
 
 PLUGIN_HEALTH_NO_PLAYER_DESC

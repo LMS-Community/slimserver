@@ -1046,6 +1046,7 @@ PLUGIN_LIVE365_BROWSEGENRES
 	DE	Musikstile durchsuchen
 	EN	Browse genres
 	ES	Examinar géneros
+	FI	Selaa tyylilajeittain
 	NL	Bekijk op genre
 
 PLUGIN_LIVE365_BROWSEALL
@@ -1053,6 +1054,7 @@ PLUGIN_LIVE365_BROWSEALL
 	DE	Alle Stationen durchsuchen (viele)
 	EN	Browse all stations (many)
 	ES	Recorrer todas las estaciones (muchas)
+	FI	Selaa kaikki asemat (paljon)
 	NL	Bekijk alle radiozenders (veel!)
 
 PLUGIN_LIVE365_BROWSEPICKS
@@ -1066,6 +1068,7 @@ PLUGIN_LIVE365_BROWSEPROS
 	DE	Professionelle Stationen durchsuchen
 	EN	Browse professional stations
 	ES	Recorrer estaciones profesionales
+	FI	Selaa ammattimaiset asemat
 	NL	Bekijk professionele zenders
 
 PLUGIN_LIVE365_SEARCH
@@ -1336,11 +1339,13 @@ LOCATIONSMATCHING
 	DE	Passende Region
 	EN	Locations matching
 	ES	Ubicaciones coincidentes
+	FI	Täsmäävät sijainnit
 
 BROADCASTERSMATCHING
 	DE	Passende Broadcaster
 	EN	Broadcasters matching
 	ES	Emisoras coincidentes
+	FI	Lähettäjät jotka täsmäävät
 	NL	Omroep matching
 
 PLUGIN_LIVE365_NO_INFO

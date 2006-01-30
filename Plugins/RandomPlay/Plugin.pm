@@ -707,6 +707,7 @@ PLUGIN_RANDOM
 	DE	Zufalls Mix
 	EN	Random Mix
 	ES	Mezcla al azar
+	FI	Satunnainen sekoitus
 	HE	מיקס אקראי
 	NL	Willekeurige mix
 
@@ -813,6 +814,7 @@ PLUGIN_RANDOM_GENRE_FILTER
 	DE	Zu berücksichtigende Stile wählen
 	EN	Select Genres To Include
 	ES	Elegir Géneros A Incluir
+	FI	Valitse sisällytettävät tyylilajit
 	NL	Selecteer genres om toe te voegen
 
 PLUGIN_RANDOM_SELECT_ALL
@@ -867,6 +869,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	DE	Im Mix zu berücksichtigende Stile: 
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en tu mezcla:
+	FI	Sekoitukseen haluamasi tyylilajit:
 	HE	סוגי מוזיקה שיכללו
 	NL	Genres om toe te voegen in je mix:
 
@@ -874,6 +877,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Die Wiedergabeliste wird
 	EN	Now Playing will show
 	ES	Se Está Escuchando mostrará
+	FI	"Nyt soi" näyttää
 	IT	Riproduzione in corso mostrera'
 	NL	Speelt nu laat zien
 
@@ -881,6 +885,7 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	DE	noch abzuspielende und
 	EN	upcoming songs and
 	ES	próximas canciones y
+	FI	tulevaa kappaletta ja
 	HE	מספר השירים שנוגנו ויוצגו
 	NL	volgende liedje en
 
@@ -888,6 +893,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	DE	wiedergegebene Lieder anzeigen.
 	EN	recently played songs.
 	ES	canciones escuchadas recientemente.
+	FI	viimeksi soitettua kappaletta.
 	HE	מספר השירים הבאים שיוצגו
 	NL	recent afgespeelde liedjes.
 

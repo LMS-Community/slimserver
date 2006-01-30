@@ -92,6 +92,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	DE	Visualizer Bildschirmschoner
 	EN	Visualizer Screensaver
 	ES	Salvapantallas de Visualizador
+	FI	Visualisointi ruudunsäästäjä
 	NL	Visualisatie schermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
@@ -111,6 +112,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
 	EN	Analog VU Meter
 	ES	VUmetro análogo
+	FI	Analoginen VU-mittari
 	IT	VU meter analogico
 	NL	Analoge VU meter
 
@@ -118,6 +120,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
 	EN	Digital VU Meter
 	ES	VUmetro digital
+	FI	Digitaalinen VU-mittari
 	IT	VU meter digitale
 	NL	Digitale VU meter
 
@@ -132,6 +135,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
+	FI	Tämä ruudunsäästäjä on kytketty
 	IT	Questo salvaschermo e\' abilitato
 	NL	Deze schermbeveiliger is aan
 

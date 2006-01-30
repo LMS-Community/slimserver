@@ -733,6 +733,7 @@ SETUP_XPLINTERVAL
 	DE	Heartbeat Intervall
 	EN	Heartbeat Interval
 	ES	Intervalo de latidos
+	FI	Sykeväli
 	FR	Intervale
 	JP	インターバル
 	NL	Heartbeat interval
@@ -817,6 +818,7 @@ SETUP_XPLIR_BOTH
 	DE	Beide
 	EN	Both
 	ES	Ambos
+	FI	Molemmat
 	FR	Les deux
 	HE	שניהם
 	IT	Entrambi
