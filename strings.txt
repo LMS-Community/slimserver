@@ -14,7 +14,7 @@ CREDITS
 	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	DK	Ulrik Mehr, Morten Fischer-Madsen
 	ES	Andy Spiers, Néstor Spedalieri
-	FI	Tomi Tuominen
+	FI	Tomi Tuominen, Jarkko Ahonen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	HE	Avi Stone
 	IT	Marco Barbieri, Riccardo Raponi
@@ -46,6 +46,7 @@ BASE_SKIN
 	DE	Light
 	EN	Light
 	ES	Liviana
+	FI	Valo
 	FR	Light
 	HE	ממשק בסיסי
 	JP	ライト
@@ -60,6 +61,7 @@ DEFAULT_SKIN
 	DE	Standard
 	EN	Default
 	ES	Por defecto
+	FI	Oletus
 	HE	ממשק ברירת המחדל
 	JP	スタンダード
 	NL	Standaard
@@ -133,6 +135,7 @@ PLAYER_VERSION
 	DE	Player Firmware Version
 	EN	Player Firmware Version
 	ES	Versión del firmware
+	FI	Soittimen ohjelmistoversio
 	FR	Version du micrologiciel de la platine
 	HE	גרסת קושחה של הנגן
 	IT	Versione firmware del lettore
@@ -148,6 +151,7 @@ ABOUT_SLIMDEVICES
 	DE	Über Slim Devices
 	EN	About Slim Devices
 	ES	Acerca de Slim Devices
+	FI	Yleistä Slimdevicesista
 	FR	A propos de Slim Devices
 	HE	Slim Devices אודות
 	JP	スリムデバイス社について
@@ -197,7 +201,7 @@ SQUEEZEBOX2_HOME
 	DK	Squeezebox Hovedmenu
 	EN	Squeezebox Home
 	ES	Inicio Squeezebox
-	FI	Squeezebox Alkuun
+	FI	Squeezebox Alku
 	FR	Menu Squeezebox
 	IT	Pagina iniziale Squeezebox
 	JP	Squeezebox �ーム
@@ -228,6 +232,7 @@ LIBRARY_CONTAINS
 	DK	Musiksamlingen indeholder
 	EN	Your music library contains
 	ES	La colección musical contiene
+	FI	Musiikkikirjastosi sisältää
 	FR	La collection contient
 	HE	בספריה
 	IT	La tua raccolta musicale contiene
@@ -367,6 +372,7 @@ GAMES
 	DE	Spiele
 	EN	Games
 	ES	Juegos
+	FI	Pelejä
 	FR	Jeux
 	HE	משחקים
 	IT	Giochi
@@ -460,6 +466,7 @@ NOW_REWINDING
 	DK	Spoler tilbage
 	EN	Now Rewinding
 	ES	Rebobinando
+	FI	Nyt kelaa takaisin
 	FR	Retour rapide
 	JP	巻き戻しています
 	NL	Terug aan het spoelen
@@ -474,6 +481,7 @@ EVERYTHING
 	DK	Alt
 	EN	Everything
 	ES	Todo
+	FI	kaikki
 	FR	Tout
 	JP	すべて
 	NL	Alles
@@ -637,6 +645,7 @@ ADDING_TO_PLAYLIST_DBL
 	DE	Füge hinzu
 	EN	Adding
 	ES	Añadiendo
+	FI	Lisätään
 	HE	מוסיף
 	IT	Sto aggiungendo
 	NL	Aan het toevoegen
@@ -649,6 +658,7 @@ INSERT_TO_PLAYLIST
 	DK	Tilføjer til afspilning næste gang:
 	EN	Adding to play next:
 	ES	Añadiendo como próxima canción:
+	FI	Lisätään seuraavaksi soitettavaksi:
 	FR	Ajoute après le morceau en cours :
 	HE	הוסף לרשימת ניגון
 	IT	Aggiungi come brano successivo:
@@ -663,6 +673,7 @@ INSERT_TO_PLAYLIST_DBL
 	DE	Füge ein
 	EN	Adding
 	ES	Añadiendo
+	FI	Lisätään
 	HE	מוסיף לרשימת ניגון
 	IT	Aggiungi
 	NL	Aan het toevoegen
@@ -706,6 +717,7 @@ PLAYING_RANDOMLY_FROM_DBL
 	DE	Spiele zufällig
 	EN	Play shuffled
 	ES	Reproducir al azar
+	FI	Satunnaissoitto
 	HE	נגן מעורבב
 	IT	Riproduci casualmente
 	NL	Speel willekeurig
@@ -797,6 +809,7 @@ NOW_PLAYING_FROM_DBL
 	DE	Starte Wiedergabe
 	EN	Playing
 	ES	Se está escuchando
+	FI	Soittaa
 	HE	מנגן
 	IT	In riproduzione
 	NL	Aan het spelen
@@ -911,6 +924,7 @@ ALARM
 	DK	Alarm
 	EN	Alarm Clock
 	ES	Reloj de Alarma
+	FI	Herätyskello
 	FR	Réveil
 	HE	שעון מעורר
 	IT	Sveglia
@@ -927,6 +941,7 @@ ALARM_SET
 	DK	Indstil alarmtid
 	EN	Set Alarm Time
 	ES	Establecer Hora de Alarma
+	FI	Aseta herätyksen aika
 	FR	Heure de réveil
 	HE	קביעת שעה
 	IT	Imposta orario sveglia
@@ -943,6 +958,7 @@ ALARM_ON
 	DK	Til (Tryk HØJRE for at slå fra)
 	EN	On (Press RIGHT to turn off)
 	ES	Encendido (Presionar DERECHA para apagar)
+	FI	Päälle (paina OIKEALLE sammuttaaksesi)
 	FR	Activé (Appuyer sur DROITE pour désactiver)
 	HE	שעון מעורר פעיל. ימינ לכיבוי
 	IT	Acceso (Premi DESTRA per disattivare)
@@ -959,6 +975,7 @@ ALARM_OFF
 	DK	Fra (Tryk HØJRE for at slå til)
 	EN	Off (Press RIGHT to turn on)
 	ES	Apagado (Presionar DERECHA para encender)
+	FI	Pois päältä (paina OIKEALLE laittaaksesi päälle)
 	FR	Désactivé (Appuyer sur DROITE pour activer)
 	HE	שעון מעורר כבוי. ימינה להפעלה
 	IT	Spento (Premi Destra per attivare)
@@ -975,6 +992,7 @@ ALARM_SELECT_PLAYLIST
 	DK	Vælg playliste for alarmen
 	EN	Alarm Playlist
 	ES	Elegir Lista para Alarma
+	FI	Herätyskellon soittolista
 	FR	Sélection de la liste de lecture pour le réveil
 	HE	בחירת רשימת ניגון לשעון מעורר
 	IT	Lista di esecuzione sveglia
@@ -991,6 +1009,7 @@ ALARM_SET_VOLUME
 	DK	Indstil volume for alarmen
 	EN	Alarm Volume
 	ES	Establecer volumen de alarma
+	FI	Hälytyksen äänenvoimakkuus
 	FR	Réglage du volume de réveil
 	HE	עוצמת שעון מעורר
 	IT	Volume sveglia
@@ -1007,6 +1026,7 @@ ALARM_SET_VOLUME_SHORT
 	DK	Alarm vol:
 	EN	Alarm Vol
 	ES	Vol Alarma
+	FI	Hälyytyksen voimakkuus
 	FR	Volume réveil
 	HE	עוצמת שעון מעורר
 	IT	Vol. sveglia
@@ -1028,6 +1048,7 @@ ALARM_SET_ENTRY
 	DK	Alarmtid
 	EN	Alarm Clock Set Time
 	ES	Establecer Hora de Alarma
+	FI	Herätyskellon ajan asetus
 	FR	Heure de réveil
 	HE	כוון שעון מעורר
 	IT	Imposta orario sveglia
@@ -1044,6 +1065,7 @@ ALARM_TURNING_ON
 	DK	Alarmen slås til...
 	EN	Turning alarm on...
 	ES	Encendiendo alarma...
+	FI	Herätyksen kytkentä...
 	FR	Activation du réveil...
 	HE	הפעלת שעון מעורר
 	IT	Sto attivando la sveglia...
@@ -1060,6 +1082,7 @@ ALARM_TURNING_OFF
 	DK	Alarmen slås fra...
 	EN	Turning alarm off...
 	ES	Apagando alarma...
+	FI	Herätyksen poiskytkentä...
 	FR	Désactivation du réveil...
 	HE	כיבוי שעון מעורר
 	IT	Sto disattivando la sveglia...
@@ -1076,6 +1099,7 @@ ALARM_NOW_PLAYING
 	DK	Alarmen afspiller nu
 	EN	Alarm Clock Now Playing
 	ES	La Alarma esta reproduciendo
+	FI	Herätyskello soittaa juuri nyt
 	FR	Le réveil est en marche
 	HE	השעון המעורר מנגן
 	IT	Riproduzione in corso (sveglia):
@@ -1090,6 +1114,7 @@ ALARM_WEEKDAYS
 	DE	Wecker je Wochentag
 	EN	Weekday Alarms
 	ES	Alarmas en días de semana
+	FI	Arkipäivän hälytykset
 	HE	שעון מעורר יומי
 	IT	Sveglia settimanale
 	NL	Weekdag wektijden
@@ -1100,6 +1125,7 @@ ALARM_DAY0
 	DE	Täglich
 	EN	Every Day
 	ES	Todos los días
+	FI	Joka päivä
 	HE	כל יום
 	IT	Ogni giorno
 	NL	Elke dag
@@ -1109,6 +1135,7 @@ ALARM_DAY1
 	DE	Montag
 	EN	Monday
 	ES	Lunes
+	FI	Maanantai
 	FR	Lundi
 	HE	שני
 	IT	Lunedi'
@@ -1120,6 +1147,7 @@ ALARM_DAY2
 	DE	Dienstag
 	EN	Tuesday
 	ES	Martes
+	FI	Tiistai
 	FR	Mardi
 	HE	שלישי
 	IT	Martedi'
@@ -1131,6 +1159,7 @@ ALARM_DAY3
 	DE	Mittwoch
 	EN	Wednesday
 	ES	Miercoles
+	FI	Keskiviikko
 	FR	Mercredi
 	HE	רביעי
 	IT	Mercoledi'
@@ -1142,6 +1171,7 @@ ALARM_DAY4
 	DE	Donnerstag
 	EN	Thursday
 	ES	Jueves
+	FI	Torstai
 	FR	Jeudi
 	HE	חמישי
 	IT	Giovedi'
@@ -1153,6 +1183,7 @@ ALARM_DAY5
 	DE	Freitag
 	EN	Friday
 	ES	Viernes
+	FI	Perjantai
 	FR	Vendredi
 	HE	שישי
 	IT	Venerdi'
@@ -1164,6 +1195,7 @@ ALARM_DAY6
 	DE	Samstag
 	EN	Saturday
 	ES	Sábado
+	FI	Lauantai
 	FR	Samedi
 	HE	שבת
 	IT	Sabato
@@ -1175,6 +1207,7 @@ ALARM_DAY7
 	DE	Sonntag
 	EN	Sunday
 	ES	Domingo
+	FI	Sunnuntai
 	FR	Dimanche
 	HE	ראשון
 	IT	Domenica
@@ -1282,6 +1315,7 @@ FREE_YOUR_MUSIC
 	DK	Lyt til din musik!
 	EN	Free your music
 	ES	Libera tu música
+	FI	Vapauta musiikkisi
 	FR	Libérez votre musique
 	HE	זרום עם המוסיקה שלך
 	IT	Libera la tua musica !
@@ -1296,6 +1330,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
+	FI	Päivitetään Squeezeboxin ohjelmistoa.
 	FR	Mise à jour du micrologiciel Squeezebox
 	IT	Aggiornamento firmware Squeezebox.
 	JP	ファームウェアをアップデートしています
@@ -1309,6 +1344,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
+	FI	Päivitetään Squeezeboxin ohjelmistoa.
 	FR	Mise à jour du micrologiciel Squeezebox
 	IT	Aggiornamento firmware Squeezebox.
 	JP	ファームウェアをアップデートしています
@@ -1324,6 +1360,7 @@ CONNECTING_FOR
 	DK	Forbinder for afspilning:
 	EN	Connecting to play:
 	ES	Conectando a:
+	FI	Yhdistetään soittaakseni:
 	FR	Connexion à :
 	JP	接続しています:
 	NL	Verbinden voor afspelen van:
@@ -1366,6 +1403,7 @@ NO_PLAYLIST_DIR
 	DE	Problem: kein Wiedergabelisten Ordner
 	EN	Problem: No Saved Playlist folder.
 	ES	Problem: No existe una carpeta de Listas Guardadas
+	FI	Ongelma: Tallenettujen soittolistojen hakemistoa ei ole.
 	FR	Dossier Listes de lecture enregistrées introuvable.
 	HE	אין ספרייה מוגדרת לרשימות ניגון
 	JP	エラー: プレイ  リストがみつかりません
@@ -1378,6 +1416,7 @@ NO_PLAYLIST_DIR_MORE
 	DE	Bitte Server Einstellungen überprüfen
 	EN	Visit Server Settings to fix this.
 	ES	Ver Configuración del Servidor para solucionar esto.
+	FI	Korjaa tämä palvelimen asetuksista.
 	FR	Consultez "Réglages du serveur".
 	HE	תקן זאת בשרת
 	IT	Rivedi le impostazioni del Server per sistemare il problema.
@@ -1408,6 +1447,7 @@ STATUS
 	DE	Status
 	EN	Status
 	ES	Estado
+	FI	Tila
 	FR	État
 	HE	מצב
 	IT	Stato
@@ -1470,6 +1510,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	DE	Die Helligkeit der Anzeige kann für die drei Zustände ein, aus und Bildschirmschoner definiert werden. Sie kann auch automatisch geregelt werden, sobald Sie einen Knopf drücken, die Wiedergabe starten oder eine Weile nicht benutzen. Diese Automatik kann deaktiviert werden.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	La luminosidad del display del reproductor se puede establecer para cuando está encendido, apagado, o inactivo (salvapantalla). También puede ajustarse automaticamente cuando se aprieta un botón, al comenzar una canción, o al estar sin actividad por un tiempo. Se puede elegir deshabilitar este comportamiento.
+	FI	Soittimen näytön kirkkaus voidaan säätää erikseen soittimen ollessa päällä, pois päältä tai toimettomana (ruudunsäästäjä). Sitä voidaan säätää myös automaattisesti kun painat nappulaa, aloitat toiston tai jätät soittimen hetkeksi rauhaan. Tämän automaattisen toiminnon voi kytkeä pois päältä.
 	FR	La luminosité de l'afficheur de la platine peut être modifiée lorsque cette dernière est allumée, éteinte ou en veille (activation de l'écran de veille). Elle peut également être réglée automatiquement lorsque vous pressez une touche de la télécommande, qu'un fichier audio est lancé ou que la platine n'est pas utilisée. Ce réglage automatique peut être désactivé.
 	HE	הגדרת בהירות התצוגה במצבי מערכת שונים
 	IT	La luminosita' dello schermo del lettore puo' essere impostata per quando e' acceso, spento o inattivo (salvaschermo). Puo' anche essere regolata automaticamente quando premi un pulsante, riproduci un brano o rimane inattivo per un po'. Puoi anche scegliere di disabilitare questo automatismo.
@@ -1534,6 +1575,7 @@ SETUP_GROUP_MENUITEMS
 	DK	Tilpas hovedmenuen
 	EN	Home Menu
 	ES	Personalización de Menú de Inicio
+	FI	Päävalikko
 	FR	Personnalisation du Menu principal
 	HE	תפריט ראשי
 	IT	Menu iniziale
@@ -1549,6 +1591,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	DK	Du kan tilpasse hovedmenuen på din. Klik for at flytte menupunkter op og ned eller for at fjerne dem. Klik "Tilføj" for at tilføje et fjernet menupunkt til menuen.
 	EN	You can customize the choices that are available on the top-level Home menu on the player's display. Click to move items up and down or to remove menu items. Click on "Add" to add a removed item back to the menu.
 	ES	Se pueden personalizar las opciones que estan disponibles en el nivel superior del menu de Inicio de la pantalla del reproductor. Hacer click para mover items hacia arriba o abajo, o para removerlos. Hacer click en "Añadir" para añadir al menu un item previamente eliminado.
+	FI	Voit muokata kotivalikossa tarjolla olevia vaihtoehtoja. Paina nuolia siirtääksesi vaihtoehtoa tai ruksia poistaaksesi vaihtoehdon kotivalikosta. Paina "+" nappulaa lisätäksesi poistetun vaihtoehdon takaisin valikkoon.
 	FR	Vous pouvez personnaliser les choix disponibles dans le Menu principal. Cliquez pour supprimer un choix ou pour le déplacer verticalement. Cliquer sur "Ajouter" pour restaurer un choix supprimé.
 	HE	ניתן לבחור אילו פריטים יופיעו בתפריט הנגן ובאיז סדר
 	IT	Puoi personalizzare le scelte disponibili nel menu' della pagina principale dello Squeezebox. Premi per muovere le voci su e giu' o per rimuovere voci dal menu. Premi su "Aggiungi" per reinserire una voce rimossa di nuovo nel menu.
@@ -1580,6 +1623,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	DK	Inaktive menupunkter:
 	EN	Inactive menu items:
 	ES	Items inactivos
+	FI	Ei aktiiviset vaihtoehdot:
 	FR	Eléments de menu inactifs :
 	HE	פריטים שאינם מופיעים בתפריט הנגן
 	IT	Voci inattive del menu':
@@ -1594,6 +1638,7 @@ SETUP_FONTLIST
 	DE	Schriftartenliste
 	EN	Font List
 	ES	Lista de Fuentes
+	FI	Kirjaisinlista
 	FR	Liste des polices
 	IT	Lista caratteri
 	JP	フォントリスト
@@ -1606,6 +1651,7 @@ SETUP_ACTIVEFONT
 	DE	Schriftart
 	EN	Font
 	ES	Fuente
+	FI	Kirjaisin
 	FR	Police
 	HE	גופן בפעילות
 	IT	Carattere
@@ -1618,6 +1664,7 @@ SETUP_ACTIVEFONT_DESC
 	DE	Sie können den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um zwischen den verschiedenen Schriften des Displays umzuschalten. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
 	ES	Se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reproductor. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
+	FI	Voit käyttää kaukosäätimen SIZE näppäintä tai allaolevia näppäimiä vaihtaaksesi näytön kirjaisinta eri vaihtoehtojen välillä. Voit valita alla missä järjestyksessä vaihtoehdot käydään.
 	FR	Vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée par la platine. L'ordre d'affichage des polices peut être modifié ci-dessous.
 	HE	בחר את סוג הגופן במצב פעיל
 	IT	Puoi usare il tasto SIZE (dimensione) sul telecomando o i bottoni piu' sotto per passare tra i diversi caratteri sullo schermo del lettore. Puoi scegliere l'ordine in cui appariranno usando il menu' piu' sotto.
@@ -1630,6 +1677,7 @@ SETUP_IDLEFONT
 	DE	Schriftart (Standby)
 	EN	Standby Font
 	ES	Fuente para Standby
+	FI	Valmiustilan kirjaisin
 	FR	Police (mode veille)
 	HE	גופן בחוסר פעילות
 	IT	Carattere in Standby
@@ -1642,6 +1690,7 @@ SETUP_IDLEFONT_DESC
 	DE	Wenn der Player im Standby-Modus ist, können Sie den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um die Schrift für die Uhr zu definieren. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.
 	ES	Cuando el reproductor está en standby, se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reloj. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
+	FI	Kun soitin on valmiustilassa, voit käyttää kaukosäätimen SIZE näppäintä tai allaolevia näppäimiä vaihtaaksesi kellon kirjaisinta eri vaihtoehtojen välillä. Voit valita alla missä järjestyksessä vaihtoehdot käydään.
 	FR	Lorsque la platine est en mode veille, vous pouvez utiliser la touche SIZE de la télécommande ou les cases à cocher ci-dessous pour modifier la police de caractères utilisée. L'ordre d'affichage des polices peut être modifié ci-dessous.
 	HE	בחר את סוג הגופן בחוסר פעילות
 	IT	Quando il lettore e' in standby, puoi usare il tasto SIZE del telecomando o il bottone piu' sotto per passare tra i caratteri per la visualizzazione dell'orologio. Puoi scegliere l'ordine in cui appaiono usando il menu' piu' sotto.
@@ -1671,6 +1720,7 @@ SETUP_DOUBLESIZE_DESC
 	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
+	FI	Valitse soittimen näytön tekstin koko
 	IT	Scegli la dimensione del testo per lo schermo del lettore
 	JP	プレーヤーディスプレイのテキストサイズを選んでください
 	NL	Kies een tekstgrootte voor het scherm van de speler
@@ -1695,6 +1745,7 @@ SETUP_SCROLLPAUSE
 	DE	Pause vor dem Scrollen
 	EN	Scroll Pause
 	ES	Pausa de Desplazamiento
+	FI	Vierityksen tauko
 	FR	Pause avant défilement
 	HE	השהיית גלגול
 	IT	Pausa di scorrimento
@@ -1708,6 +1759,7 @@ SETUP_SCROLLPAUSEDOUBLE
 	DE	Pause für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Pause
 	ES	Pausa de Desplazamiento en Texto Grande
+	FI	Suuren tekstin vierityksen tauko
 	IT	Pausa di scorrimento con testo grande
 	NL	Tekstlooppauze (grote tekst)
 	SE	Paus vid skollning med stor text
@@ -1717,6 +1769,7 @@ SETUP_SCROLLPAUSE_DESC
 	DE	Sie können die Zeit definieren, die der Player wartet, bevor er mit dem horizontalen Scrollen beginnt. Geben Sie einen Wert in Sekunden ein, die vor oder zwischen dem Scrollen gewartet werden soll. Null (0) unterdrückt jegliche Pause und scrollt sofort. Standardwert ist 3.6 Sekunden.
 	EN	You can adjust the amount of time that the player waits before starting horizontal scrolling of the text on the display.  Enter a value, in seconds, for the amount of time to wait before scrolling or between scrolling.  Enter zero to not pause at all and scroll immediately. 3.6 seconds is the default.
 	ES	Se puede ajustar el tiempo que el reproductor esperará antes de empezar a desplazar horizontalmente el texto en la pantalla. Ingresar un valor, en segundos, a esperar antes de desplazar el texto. Ingresar cero para eliminar la pausa y desplazar inmediatamente. 3.6 segundos es la pausa por defecto.
+	FI	Voit säätää kuinka kauan soitin odottaa ennen vierityksen aloittamista ruudulla. Syötä arvo sekunneissa. Nolla tarkoittaa välitöntä vieritystä. Oletusarvo on 3.6 sekuntia.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement horizontal du texte sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Entrez zéro (0) pour un défilement continu. La valeur par défaut est de 3.6 secondes.
 	HE	קבע את משך ההשהייה לפני גילגול הטקסט
 	IT	Puoi regolare la pausa di tempo che il lettore antepone allo scorrimento orizzontale del testo sullo schermo. Inserisci un valore, in secondi, per la quantita' di tempo da attendere prima, o tra, lo scorrimento. Inserisci zero per non attendere ed iniziare immediatamente lo scorrimento. 3.6 secondi sono il valore di default.
@@ -1729,6 +1782,7 @@ SETUP_SCROLLRATE
 	DE	Scrollrate
 	EN	Scroll Rate
 	ES	Tasa de desplazamiento
+	FI	Vieritysnopeus
 	FR	Vitesse de défilement
 	HE	קצב הגילגול
 	IT	Velocita' di scorrimento
@@ -1742,6 +1796,7 @@ SETUP_SCROLLRATEDOUBLE
 	DE	Tempo für Scrollen bei grosser Schriftart
 	EN	Large Text Scroll Rate
 	ES	Tasa de desplazamiento en Texto Grande
+	FI	Suuren tekstin vieritysnopeus
 	IT	Velocita' di scorrimento con testo grande
 	NL	Hoge tekstloopsnelheid
 	SE	Tempo för skrollning av stor text
@@ -1751,6 +1806,7 @@ SETUP_SCROLLRATE_DESC
 	DE	Sie können die Scrollrate definieren, mit welcher Text auf dem Bildschirm bewegt wird. Die Scrollrate definiert die Dauer zwischen zwei Display-Updates. Auf Playern mit graphischer Anzeige kann dieser Wert zusammen mit den Scroll-Pixeln dazu verwendet werden, Qualität und Geschwindigkeit des Scrollens zu optimieren: der Text wird jede "Scrollrate" Sekunden um die Anzahl "Scrollpixels" verschoben. Auf reinen Text Anzeigen definiert dieser Wert die Verweildauer, bevor der Text um ein Zeichen verschoben wird. Geben Sie die Dauer in Sekunden ein. Kleinere Werte beschleunigen den Scrollvorgang. Standardwert ist 0.15 Sekunden.
 	EN	You can adjust the rate at which scrolling text moves across the screen. The Scroll Rate defines the length of time between display updates.  On a player with a graphical display this can be adjusted in combination with Scroll Pixels to set the speed and quality of scrolling (the text will move by Scroll Pixels once every Scroll Rate seconds).  On a player with a character display this defines the length of time before scrolling to the next character.  Enter a value, in seconds, for the amount of time between updates.  Lower numbers make scrolling faster.  0.15 seconds is the default for single-line, 0.1 seconds for double-line.
 	ES	Se puede ajustar el tiempo que el reproductor esperará antes de desplazar otra letra del texto en la pantalla. Ingresar un valor, en segundos, a esperar antes de desplazar el texto. Números bajos producen un desplazamiento más veloz. 0.15 es el valor por defecto para una línea sola, 0.1 segundos para línea doble.
+	FI	Voi säätää millä nopeudella teksti vierii ruudulla. Vieritysnopeus määrittelee ruudunpäivitysten välisen ajan. Graafisen näytön omaavissa soittimissa, tätä voidaan säätää vierityspikselien kanssa vierityksen laadun määrittämiseksi. Merkkipohjaisissa näytöissä, tämä määrittelee kuinka kauan odotetaan, ennenkuin vieritetään seuraavaan merkkiin. Syötä arvo sekunneissa. Pienemmät arvot nopeuttavat vieritystä. 0.15 on yksirivisen näytön oletusarvo ja 0.1 kaksirivisen.
 	FR	Vous pouvez ajuster le temps de pause avant que la platine active le défilement du caractère suivant sur l'afficheur. Entrez le temps d'attente avant défilement en secondes. Plus le nombre est bas, plus le défilement sera rapide. La valeur par défaut est de 0.15 seconde.
 	HE	קבע את קצב הגלגול בשניות
 	IT	Puoi regolare la velocita' alla quale il testo scorre attraverso lo schermo. La Velocita' di scorrimento definisce la durata di aggiornamento dello schermo. Su un lettore con schermo grafico puo' essere impostata congiuntamente allo Scorrimento dei pixel per impostare la velocita' e la qualita' dello scorrimento (il testo si muovera' di tot. pixel ogni tot. secondi). Su un lettore con uno schermo a carattere definisce la durata tra un carattere e il successivo. Inserisci un valore, in secondi, per la durata di aggiornamento. Numeri piu' bassi rendono lo scorrimento piu' veloce. 0.15 secondi e' il valore di default per la linea singola, 0.1 secondi per la linea doppia.
@@ -1765,6 +1821,7 @@ DOUBLE-LINE
 	DE	Doppelte Höhe
 	EN	Double-Size
 	ES	Tamaño Doble
+	FI	Tuplakoko
 	HE	שורה כפולה
 	JP	ダブルサイズ
 	NL	Dubbele hoogte
@@ -1775,6 +1832,7 @@ SINGLE-LINE
 	DE	Einzelne Zeile
 	EN	Single Line
 	ES	Línea única
+	FI	Yhden rivin
 	HE	שורה בודדת
 	IT	Linea singola
 	NL	Enkele regel
@@ -1786,6 +1844,7 @@ SETUP_GROUP_ALARM
 	DK	Alarm
 	EN	Alarm Clock
 	ES	Reloj de Alarma
+	FI	Herätyskello
 	FR	Réveil
 	HE	שעון מעורר
 	IT	Sveglia
@@ -1799,6 +1858,7 @@ SETUP_GROUP_ALARM
 SETUP_GROUP_ALARM_DESC
 	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist. Sie können auch festlegen, dass der Wecker über 20 Sekunden eingeblendet wird.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
+	FI	Tähän soittimeen voi määrittää kahdeksan hälytystä. Yksi päivittäinen hälytys ja yksittäisiä hälytyksiä mille tahansa viikon päivälle.
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
 	IT	Questo lettore puo' avere sino ad 8 sveglie: una sveglia quotidiana e sveglie per ogni singolo giorno della settimana.
 	NL	Deze speler kan tot 8 wektijden hebben: 1 wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
@@ -1976,6 +2036,7 @@ FILE_FORMAT
 	DE	Dateiformat
 	EN	File Format
 	ES	Formato de Archivo
+	FI	tiedostomuoto
 	FR	Type fichier
 	HE	סוג הקובץ
 	IT	Formato file
@@ -1990,6 +2051,7 @@ STREAM_FORMAT
 	DE	Streamingformat
 	EN	Stream Format
 	ES	Formato de transmisión
+	FI	Vuon formaatti
 	FR	Type stream
 	HE	יתנגן כ
 	IT	Formato audio
@@ -2004,6 +2066,7 @@ PLAYER_TYPE
 	DE	Wiedergabegerät
 	EN	Player Type
 	ES	Tipo de Reproductor
+	FI	Soittimen tyyppi
 	FR	Type platine
 	JP	プレーヤー タイプ
 	NL	Spelertype
@@ -2016,6 +2079,7 @@ PLAYER_ID
 	DE	Player ID
 	EN	Player ID
 	ES	ID del Reproductor
+	FI	Soittimen tunniste
 	FR	ID platine
 	HE	זהות הנגן
 	JP	プレーヤーID
@@ -2029,6 +2093,7 @@ COMMAND
 	DE	Befehl
 	EN	Command
 	ES	Comando
+	FI	Komento
 	FR	Commande
 	IT	Comando
 	JP	コマンド
@@ -2042,6 +2107,7 @@ DECODER
 	DE	Decoder
 	EN	Decoder
 	ES	Decodificador
+	FI	Dekooderi
 	FR	Décodeur
 	HE	יקודד באמצעות
 	IT	Decodificatore
@@ -2239,6 +2305,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	DK	Indstil lysstyrke manuelt
 	EN	Adjust Brightness Manually
 	ES	Ajustar Luminosidad en Forma Manual
+	FI	Säädä kirkkaus käsin
 	FR	Régler la luminosité manuellement
 	HE	כבוי
 	IT	Regola manualmente la luminosita'
@@ -2255,6 +2322,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	DK	Indstil lysstyrke automatisk
 	EN	Adjust Brightness Automatically
 	ES	Ajustar Luminosidad en Forma Automática
+	FI	Säädä kirkkaus automaattisesti
 	FR	Régler la luminosité automatiquement
 	HE	פעיל
 	IT	Regola automaticamente la luminosita'
@@ -2271,6 +2339,7 @@ SETUP_ALARM
 	DK	Alarm
 	EN	Alarm
 	ES	Alarma
+	FI	Herätyskello
 	FR	Réveil
 	HE	שעון מעורר
 	IT	Sveglia
@@ -2287,6 +2356,7 @@ SETUP_ALARMVOLUME
 	DK	Indstil volume for alarmen (0-100)
 	EN	Alarm Volume (0-100)
 	ES	Establecer Volumen de Alarma (0-100)
+	FI	Herätyksen äänenvoimakkuus (0-100)
 	FR	Réglage du volume de réveil (0-100)
 	HE	עצמת שמע
 	IT	Volume sveglia (0-100)
@@ -2303,6 +2373,7 @@ SETUP_ALARMPLAYLIST
 	DK	Playliste for alarmen
 	EN	Playlist for Alarm
 	ES	Lista de temas para Alarma
+	FI	Herätyskellon soittolista
 	FR	Liste de lecture pour le réveil
 	IT	Lista di escuzione per la Sveglia
 	JP	アラーム用のプレイリスト
@@ -2631,6 +2702,7 @@ CONVERTED_TO
 	DE	Konvertiert nach
 	EN	Converted to
 	ES	Convertido a 
+	FI	Muunnettu
 	FR	Converti en
 	IT	Convertito in
 	JP	以下のフォーマットに変換されました
@@ -2667,6 +2739,7 @@ LAME0
 	DE	Höchste Qualität, sehr langsam
 	EN	Highest Quality, very slow
 	ES	Mejor calidad posible, muy lento
+	FI	Korkein laatu, hyvin hidas
 	IT	Migliore qualita', molto lento
 	NL	Hoogste kwaliteit, zeer langzaam
 	SE	Högsta kvalitet, långsamt
@@ -2677,6 +2750,7 @@ LAME9
 	DE	Geringe Qualität, aber schnell
 	EN	Poor Quality, but fast
 	ES	Baja calidad, pero rápido
+	FI	Huono laatu, mutta nopea
 	IT	Mediocre qualita', ma veloce
 	NL	Slechte kwaliteit, maar snel
 	SE	Lägsta kvalitet, snabbt
@@ -2782,6 +2856,7 @@ ALBUMREPLAYGAIN
 	DE	Album Lautstärken-Normalisierung
 	EN	Album Volume Adjustment
 	ES	Ajuste de Volumen del Álbum
+	FI	Levyn äänenvoimakkuuden säätö
 	HE	התאמת עוצמת שמע אלבום
 	IT	Regolazione volume album
 	NL	Album volume-aanpassing
@@ -3121,6 +3196,7 @@ FOLDER
 	DE	Ordner
 	EN	Folder
 	ES	Carpeta
+	FI	Kansio
 	IT	Cartella
 	ZH_CN	文件夹
 
@@ -3132,6 +3208,7 @@ YES
 	DE	Ja
 	EN	Yes
 	ES	Si
+	FI	Kyllä
 	FR	Oui
 	HE	כן
 	IT	Si'
@@ -3142,6 +3219,7 @@ NO
 	DE	Nein
 	EN	No
 	ES	No
+	FI	Ei
 	FR	Non
 	HE	לא
 	NL	Nee
@@ -3464,6 +3542,7 @@ SETUP_AUDIODIR
 	DE	Musikverzeichnis
 	EN	Music Folder
 	ES	Carpeta de Música
+	FI	Musiikkikansio
 	FR	Dossier de musique
 	HE	ספריית קבצי המוזיקה
 	IT	Cartella musica
@@ -3477,6 +3556,7 @@ SETUP_AUDIODIR_DESC
 	DE	Sie können ein Verzeichnis definieren, dessen Musikdateien vom SlimServer durchsucht und zur Musiksammlung hinzugefügt werden sollen. Definieren Sie den Pfad zum Ordner im folgenden Feld. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
 	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 	ES	Se puede especificar una carpeta que contenga archivos de música que SlimServer va a recopilar y añadir a la colección musical. Ingrese el camino a la carpeta debajo. Se puede dejar este campo en blanco si se está importando la información de la colección musical desde iTunes o MoodLogic.
+	FI	Voit määritellä hakemiston, joka sisältää musiikkitiedostoja, jotka SlimServer lukee musiikki kirjastoonsa. Syötä hakemiston polku allaolevaan kenttään. Voit jättää kentän tyhjäksi jos musiikkikirjastosi tiedot tulevat iTunesista tai MoodLogicista.
 	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le SlimServer le répertorie et ajoute son contenu à votre collection de musique. Entrez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous utilisez iTunes ou Moodlogic pour gérer votre collection de musique.
 	HE	ספריית קבצי המוזיקה אותה השרת יסרוק באופן קבוע ואשר תהווה בסיס לספריית המוזיקה
 	IT	Puoi indicare una cartella contenente file musicali che lo SlimServer analizzera' e aggiungera' alla tua libreria musicale. Inserisci il percorso della cartella qui' sotto. Puoi lasciare il campo vuoto se stai importando la libreria musicale da iTunes o MoodLogic.
@@ -3523,6 +3603,7 @@ SETUP_ARTFOLDER
 	DE	Ordner für Plattenhüllen
 	EN	Artwork Folder
 	ES	Carpeta de Arte de Tapa
+	FI	Kansikuvahakemisto
 	FR	Dossier des pochettes
 	HE	ספריית עטיפות
 	IT	Cartella copertine
@@ -3537,6 +3618,7 @@ SETUP_ARTFOLDER_DESC
 	DE	Sie können einen Ordner definieren, in welchem alle Plattenhüllen abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattenhüllen schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	ES	Se puede elegir almacenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
+	FI	Voit valita hakemiston, mihin kaikki kansikuvat tallennetaan, käyttäen ylläolevaa muokattua tiedoston nimeämiskäytäntöä. Palvelin etsii kuvatiedostoja myös jokaisen musiikkitiedoston hakemistosta, jos kansikuvaa ei löydy tästä hakemistosta.
 	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Entrez l'emplacement des fichiers de pochettes ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le SlimServer la cherchera à l'emplacement du fichier de musique.
 	HE	במידה והעטיפות מרוכזות בספרייה אחת, ציין אותה
 	IT	Puoi scegliere di archiviare tutte le copertine in una sola cartella, usando le variabili per i nomi file indicate sopra. Inserisci qui l'indirizzo dei file delle copertine. Nonostante cio', il server cerchera' comunque le copertine anche allo stesso indirizzo di ciascun file audio se nessuna copertina corrispondente verra' trovata nella cartella copertine.
@@ -3625,6 +3707,7 @@ SETUP_RESCAN
 	DE	Musiksammlung neu einlesen
 	EN	Rescan Music Library
 	ES	Volver a recopilar la Colección Musical
+	FI	Lue musiikkihakemiston sisältö kantaan uudelleen
 	FR	Répertorier le dossier de musique
 	HE	סריקת הספרייה
 	IT	Rianalisi della libreria musicale.
@@ -3653,6 +3736,7 @@ SETUP_RESCAN_DESC
 	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.
 	ES	Presionar en Recopilar para que SlimServer recorra la colección musical y añada nueva música o actualice canciones que hayan cambiado.
+	FI	Paina "Lue uudelleen" nappulaa, jotta SlimServer käy hakemistosi läpi ja lisää uudet kappaleet tai päivittää muuttuneet kappaleet.
 	FR	Cliquer "Répertorier" et  SlimServer va répertorier de nouveau son contenu.
 	HE	לחץ על כפתור הסריקה לביצוע הסריקה הנבחרת
 	IT	Premi Rianalisi per far si' che lo SlimServer analizzi la libreria musicale e aggiunga la nuova musica o aggiorni i brani che sono cambiati.
@@ -3663,6 +3747,7 @@ SETUP_WIPEDB
 	DE	Datenbank löschen und alles neu durchsuchen
 	EN	Clear library and rescan everything
 	ES	Limpiar la información previa de la colección y volver a recopilar todo
+	FI	Tyhjennä nykyinen kirjasto ja lue hakemiston sisältö uudelleen
 	HE	סרוק הכל מחדש
 	IT	Cancella la libreria musicale e rianalizza tutto.
 	NL	Leeg muziekdatabase en scan alles opnieuw
@@ -3672,6 +3757,7 @@ SETUP_STANDARDRESCAN
 	DE	Nach neuen und veränderten Musikstücken suchen
 	EN	Look for new and changed music
 	ES	Buscar música nueva y modificada
+	FI	Etsi uudet ja muuttuneet kappaleet
 	HE	מצא מוזיקה חדשה
 	IT	Cerca la musica nuova e modificata.
 	NL	Zoek naar nieuwe en gewijzigde muziek
@@ -3680,6 +3766,7 @@ SETUP_PLAYLISTRESCAN
 	DE	Nur nach Wiedergabelisten suchen
 	EN	Only rescan playlists
 	ES	Solo volver a recopilar listas
+	FI	Lue uudelleen vain soittolistat
 	HE	סרוק רשימות השמעה בלבד
 	IT	Rianalisi delle sole liste di esecuzione
 	NL	Scan alleen playlists opnieuw
@@ -3706,6 +3793,7 @@ RESCANNING_SHORT
 	DE	Durchsuche Musiksammlung...
 	EN	Rescanning Music Library...
 	ES	Recopilando la colección musical...
+	FI	Lukee musiikkikirjastoa uudelleen...
 	IT	Rianalisi della raccolta musicale.
 	NL	Opnieuw scannen muziekcollectie...
 	ZH_CN	重新扫描音乐库中...
@@ -3715,6 +3803,7 @@ USING_ITUNES
 	DE	Der Server wird die Informationen aus iTunes importieren.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
+	FI	Palvelin tuo tietoja iTunesista
 	FR	Le SlimServer importera les données iTunes.
 	IT	Il server importera' le informazioni da iTunes.
 	JP	サーバーはiTunesの情報をインポートします。
@@ -3726,6 +3815,7 @@ NOT_USING_ITUNES
 	DE	Der Server wird keine Informationen aus iTunes mehr importieren.
 	EN	The server will no longer import iTunes information.
 	ES	El servidor dejará de importar información de iTunes.
+	FI	Palvelin ei enää tuo tietoja iTunesista.
 	FR	Le SlimServer n'importera plus les données iTunes.
 	IT	Il server non importera' piu' le informazioni da iTunes.
 	JP	サーバーはiTunesの情報をインポートしません。
@@ -3739,6 +3829,7 @@ USE_ITUNES
 	DK	Anvend iTunes
 	EN	Use iTunes
 	ES	Usar iTunes
+	FI	Käytä iTunesia
 	FR	Utiliser iTunes
 	IT	Usa iTunes
 	JP	iTunesを使用する
@@ -3753,6 +3844,7 @@ DONT_USE_ITUNES
 	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
 	ES	No Utilizar iTunes
+	FI	Älä käytä iTunesia
 	FR	Ne pas utiliser iTunes
 	IT	Non usare iTunes
 	JP	iTunesを使用しない
@@ -3800,6 +3892,7 @@ USE_MOODLOGIC
 	DK	Anvend MoodLogic
 	EN	Use MoodLogic
 	ES	Usar Moodlogic
+	FI	Käytä Moodlogicia
 	FR	Utiliser MoodLogic
 	IT	Usa MoodLogic
 	JP	ムードロジックを使用する
@@ -3815,6 +3908,7 @@ DONT_USE_MOODLOGIC
 	DK	Anvend ikke MoodLogic
 	EN	Don't use MoodLogic
 	ES	No usar MoodLogic
+	FI	Älä käytä Moodlogicia
 	FR	Ne pas utiliser MoodLogic
 	IT	Non usare MoodLogic
 	JP	ムードロジックを使用しない
@@ -3830,6 +3924,7 @@ USE_MUSICMAGIC
 	DK	Anvend MusicMagic
 	EN	Use MusicMagic
 	ES	Usar MusicMagic
+	FI	Käytä MusicMagiciä
 	FR	Utiliser MusicMagic
 	NL	MusicMagic inschakelen
 	NO	Bruk MusicMagic
@@ -3880,6 +3975,7 @@ MMMMIXTYPE_TRACKS
 	DE	Anzahl Lieder
 	EN	Number of Tracks
 	ES	Número de Pistas
+	FI	Kappaleiden määrä
 	IT	Numero di brani
 	NL	Aantal liedjes
 	ZH_CN	轨道数量
@@ -3889,6 +3985,7 @@ MMMMIXTYPE_MIN
 	DE	Dauer in Minuten
 	EN	Number of Minutes
 	ES	Número de Minutos
+	FI	Minuutteja
 	IT	Numero di minuti
 	NL	Aantal minuten
 	ZH_CN	分钟总数
@@ -3898,6 +3995,7 @@ MMMMIXTYPE_MBYTES
 	DE	Anzahl Megabytes
 	EN	Number of MegaBytes
 	ES	Número de MegaBytes
+	FI	Megatavuja
 	IT	Numero di Megabyte
 	NL	Aantal Megabytes
 	ZH_CN	兆字节总数
@@ -4007,7 +4105,7 @@ SETUP_SKIN_DESC
 	DK	Du kan her vælge et layout ("skin") for web-interfacet.
 	EN	You can choose a look or "skin" for the web interface from the list below.
 	ES	Puede elegir un estilo para la interfaz web de esta lista:
-	FI	Alla olevasta valikoista voit valita miltä käyttöliittymä näyttää.
+	FI	Allaolevasta valikosta voit valita miltä käyttöliittymä näyttää.
 	FR	Vous pouvez choisir l'apparence (ou "skin") de l'interface web dans la liste ci-dessous.
 	HE	בחר ממשק לתצוגת האינטרנט
 	IT	Puoi scegliere un aspetto (o "skin") per l'interfaccia web dalla lista qui' sotto.
@@ -4066,6 +4164,7 @@ SETUP_REFRESHRATE
 	DE	Automatische Browser Aktualisierung
 	EN	Browser Refresh Timing
 	ES	Intervalo entre refrescos del navegador.
+	FI	Selaimen ruudunpäivityksen ajastus
 	FR	Recharge automatique du navigateur
 	HE	ריענון דפדפן
 	IT	Temporizzazione aggiornamento browser
@@ -4080,6 +4179,7 @@ SETUP_REFRESHRATE_DESC
 	DE	Setzen Sie die gewünschte Wartezeit in Sekunden zwischen automatischen Browser Aktualisierungen. Während dem Abspielen eines Liedes wird der Server den Refresh nahe dem Lied-Ende durchführen, falls er vor Ablauf der gewünschten Wartezeit liegt. (Vorgabe 30, minimum 2)
 	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
 	ES	Establecer el intervalo entre refrescos del navegador, en segundos. Mientras se escucha una canción, el servidor pondrá el refresco cerca del final de esta, si es menor que este valor. (Por defecto es 30, el mínimo es 2)
+	FI	Aseta selaimen uudelleenlatauksen välinen aika sekunneissa. Soitettaessa musiikkia, palvelin asettaa päivityksen kappaleen lopun lähelle, jos päivitys olisi lyhyempi kuin asetettu arvo (oletus on 30, minimi 2)
 	FR	Définissez le délai en secondes entre chaque recharge automatique du navigateur. Pendant l'écoute d'un morceau, le serveur forcera la recharge vers la fin du morceau s'il reste moins que le délai prévu. (Défaut 30, minimum 2)
 	HE	עמוד האינטרנט מתעדכן כל מספר שניות. בחר ערך בין 2 ל 30
 	IT	Imposta l'intervallo di aggiornamento del browser in secondi. Durante la riproduzione di un brano, il server impostera', comunque,  l'aggiornamento verso la fine del brano se e' inferiore a questo valore (per default e' 30, il minimo e' 2).
@@ -4233,6 +4333,7 @@ SETUP_COVERART
 	DK	Cover-billeder
 	EN	Artwork
 	ES	Arte de tapa
+	FI	Kansikuvat
 	FR	Pochettes
 	HE	עטיפות דיסקים
 	IT	Copertine
@@ -4249,6 +4350,7 @@ SETUP_COVERART_DESC
 	DK	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
 	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un álbum o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de álbumes. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de álbumes o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - ALBUM, buscará el par Artista - Album.jpg que coincida con la información de artista y álbum encontrada.
+	FI	Kansikuvat näytetään (jos niitä on) kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3 otsikoista, tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii kuvia  "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" tai "thumb.jpg" nimillä. Voit myö määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muotoa Artist - album.jpg
 	FR	Si elle existe, l'image de la pochette du disque est affichée en regard de l'information d'un album ou d'un morceau. Les images se trouvent soit dans un repère ID3 par morceau, soit dans le même répertoire que les fichiers. Le serveur recherche de lui-même les noms de fichiers suivants: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", ou "thumb.jpg". Vous pouvez spécifier d'autres noms de fichiers pour les images de pochettes, et spécifier différents noms de fichiers pour les vignettes ou les images.
 	HE	מומלץ בחום לא לגעת. נגעת נסעת, ובהצלחה
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate assieme all'album o alle informazioni sul brano. Le copertine possono essere inserite all'interno delle tag ID3 di ogni singolo brano o possono risiedere nella stessa cartella dei file dei brani. Per default, le immagini possono essere denominate "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg".  Puoi usare anche un nome alternativo da usare per le immagini delle copertine. Puoi usare nomi differenti per le miniature o per l'immagine intera. Anteponi il segno % a qualsiasi stringa composta dagli stessi elementi disponibili per il formato Titolo (es. %ARTIST - ALBUM, cerchera' il file "Artist - Album.jpg" che corrisponde alle informazioni sull'artista e album trovato).
@@ -4265,6 +4367,7 @@ SETUP_COVERART_OK
 	DK	Filnavne for cover-billeder gemt som:
 	EN	Artwork image file name set to
 	ES	El nombre de archivo para el Arte de Tapa es	
+	FI	Kansikuvatiedostojen nimet asetettu
 	FR	Nom de fichier pour les images de pochette :
 	IT	Nome file copertine impostato a
 	JP	アートワーク イメージファイル名設定:
@@ -4280,6 +4383,7 @@ SETUP_COVERTHUMB
 	DK	Små cover-billeder
 	EN	Artwork Thumbnail
 	ES	Imagen de Muestra de Arte de Tapa
+	FI	Kansikuvien pikkukuvat
 	FR	Vignettes
 	HE	עטיפות ממוזערות
 	IT	Miniature copertine
@@ -4295,6 +4399,7 @@ SETUP_COVERTHUMB_DESC
 	DE	Für das Nachschlagen von Plattenhüllen wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
 	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
+	FI	Selataksesi kansikuvia pikkukuvien avulla, palvelin hakee kuvia samoilla oletusasetuksilla kuin yllä. Jos kuitenkin haluat käyttää muokattuja kuvatiedostojen nimiä, syötä nimeämiskäytäntösi tähän.
 	HE	נגעת? מגיע לך
 	IT	Per sfogliare le miniature delle copertine, il server cerchera' il file di default indicato sopra e quindi nelle tag ID3. Comunque, se desideri utilizzare la possibilita' di un nome file modificabile o specificarne uno di tua scelta, inseriscilo qui.
 	NL	Bij "Bekijk op hoezen" zal de server naar dezelfde standaard bestanden zoeken als hierboven en in de ID3 informatie. Indien je de optie met variabelen wilt gebruiken of je eigen bestandsnaam wilt specificeren moet je dat hier doen.
@@ -4320,6 +4425,7 @@ SETUP_THUMBSIZE
 	DE	Grösse der Vorschaubilder
 	EN	Thumbnail Size
 	ES	Tamaño de imagen de muestra
+	FI	Pikkukuvan koko
 	FR	Taille des vignettes
 	HE	גודל עטיפה
 	IT	Dimensione miniature
@@ -4334,6 +4440,7 @@ SETUP_THUMBSIZE_DESC
 	DE	Wählen Sie die Grösse der Plattenhüllen-Vorschaubilder in Pixeln (25-250). Voreinstellung ist 100.
 	EN	Choose the size in pixels (25-250) for the default thumbnail image when browsing by artwork. Default is 100.
 	ES	Elegir el tamaño en pixels (25-250) para el tamaño por defecto de la imagen de muestra cuando se examina por arte de tapa. Por defecto es 100.
+	FI	Valitse oletusarvoisen pikkukuvan koko pikseleissä (25-250). Tätä asetusta käytetään kansikuvia selattaessa. Oletusarvo on 100.
 	FR	Choisissez une taille en pixels (entre 25 et 250) pour l'affichage par défaut de la vignette en mode "Parcourir les pochettes". La valeur par défaut est 100.
 	HE	ציין ערך בין 25 ל 250 עבור גודל העטיפה שתוצג בפיקסלים. ברירת המחדל הינה 100
 	IT	Scegli la dimensione in pixel (25-250) delle miniature dell'immagine quando sfogli le copertine. Di default e' 100.
@@ -4348,6 +4455,7 @@ SETUP_INCLUDENOART_0
 	DE	Keine Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Delete placeholders from the list
 	ES	Borrar los álbumes sin Arte de Tapa
+	FI	Poista paikanmerkit listasta
 	FR	Ne pas afficher les albums sans pochette
 	HE	הצג רק דיסקים עם עטיפות
 	IT	Elimina i "segnaposti" dalla lista
@@ -4362,6 +4470,7 @@ SETUP_INCLUDENOART_1
 	DE	Alle Alben anzeigen, Platzhalter für nicht vorhandene Plattenhüllen verwenden.
 	EN	Include all albums, using placeholders
 	ES	Incluir todos los álbumes, utilizando aquellos sin Arte de Tapa
+	FI	Sisällytä kaikki albumit käyttäen paikanmerkkejä
 	FR	Afficher tous les albums, avec image vide le cas échéant
 	HE	הצג הכל ושמור מקום לעטיפות חסרות
 	IT	Includi tutti gli album usando i "segnaposti"
@@ -4376,6 +4485,7 @@ SETUP_INCLUDENOART
 	DE	Plattenhüllen nachschlagen
 	EN	Browse By Artwork
 	ES	Examinar por Arte de Tapa
+	FI	Selaa kansikuvilla
 	FR	Parcourir les pochettes
 	HE	דפדוף בעטיפות הדיסקים
 	IT	Sfoglia per copertina
@@ -4390,6 +4500,7 @@ SETUP_INCLUDENOART_DESC
 	DE	Legen Sie fest, ob Alben ohne Plattenhülle beim Durchsuchen der Plattenhüllen angezeigt werden sollen. Fehlt die Plattenhülle, so wird ein leerer Platzhalter eingesetzt, oder das Album wird gänzlich weggelassen.
 	EN	Choose whether or not to include albums that currently have no artwork when browsing by artwork.  Where no art is found, a blank image will be inserted as a placeholder, or they can be left out of the browse entirely.
 	ES	Elegir si se debe incluir o no los álbumes que actualmente no tienen arte de tapa cuando se busca por arte de tapa. Cuando no se encuentre arte de tapa, una imagen vacía se insertará en el lugar del arte de tapa, o se puede deshechar completamente de la búsqueda.
+	FI	Valitse näytetäänkö myös albumit, joilla ei ole kansikuvaa. Jos kansikuvaa ei ole, palvelin asettaa tyhjän kuvan paikanmerkiksi jos kansikuvattomat albumit halutaan näkyviin.
 	FR	Choisissez si l'interface doit afficher ou non les albums qui ne possèdent pas de pochette en mode Parcourir les pochettes. En l'absence de pochette, vous pouvez soit afficher une image vide, soit ignorer l'album.
 	HE	מדיניות הצגת עטיפות חסרות
 	IT	Scegli se includere oppure no gli album che non hanno la copertina quando sfogli le copertine. Se non viene trovata l'immagine, potra' essere inserita una immagine vuota come segnaposto, oppure potranno essere scartate del tutto dall'elenco.
@@ -4809,6 +4920,7 @@ SETUP_CHECKVERSION
 	DK	Softwareopdateringer
 	EN	Software Updates
 	ES	Actualizaciones de Software
+	FI	Ohjelmistopäivitykset
 	FR	Mise à jour du logiciel
 	IT	Aggiornamento software
 	JP	ソフトウェア アップデート
@@ -4839,6 +4951,7 @@ SETUP_CHECKVERSION_1
 	DK	Check automatisk for softwareopdateringer
 	EN	Automatically Check For Software Updates
 	ES	Buscar Actualizaciones de Software en forma Automática
+	FI	Tarkista ohjelmistopäivitysten varalta automaattisesti
 	FR	Vérifier automatiquement
 	IT	Verifica automaticamente gli aggiornamenti software
 	JP	ソフトウェアのアップデートを自動的に確認する
@@ -4854,6 +4967,7 @@ SETUP_CHECKVERSION_0
 	DK	Check ikke automatisk for softwareopdateringer
 	EN	Don't Check For Software Updates
 	ES	No Buscar Actualizaciones de Software
+	FI	Älä tarkista ohjelmistopäivityksien varalta
 	FR	Ne pas vérifier
 	IT	Non verificare gli aggiornamenti software
 	JP	ソフトウェアのアップデートを確認しない
@@ -4881,6 +4995,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	DE	Alle Lieder aufführen
 	EN	Include all songs
 	ES	Incluir todas las canciones
+	FI	Sisällytä kaikki kappaleet
 	NL	Voeg alle liedjes toe
 	ZH_CN	包括所有歌曲在内
 
@@ -4888,6 +5003,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	DE	Deaktivierte Lieder nicht aufführen
 	EN	Don't include unchecked songs
 	ES	No incluir las canciones no marcadas
+	FI	Älä sisällytä valitsemattomia kappaleita
 	NL	Niet gemarkeerde liedjes niet toevoegen.
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
@@ -5041,6 +5157,7 @@ SCREENSAVER_NONE
 	DE	Keiner
 	EN	None
 	ES	Ninguno
+	FI	Ei mitään
 	HE	ללא שומר מסך
 	NL	Geen
 	ZH_CN	无
@@ -5127,6 +5244,7 @@ SETUP_SEARCHSUBSTRING
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
+	FI	Etsi sanojen sisältä
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
 	ZH_CN	在词内搜寻
@@ -5136,6 +5254,7 @@ SETUP_SEARCHSUBSTRING_0
 	DE	Am Wortanfang suchen
 	EN	Search Beginning of Words
 	ES	Buscar Comienzos de Palabras
+	FI	Etsi sanojen alkuja
 	IT	Cerca all'inizio delle parole
 	NL	Zoek aan het begin van woorden
 	ZH_CN	由词的前头搜寻
@@ -5145,6 +5264,7 @@ SETUP_SEARCHSUBSTRING_1
 	DE	Innerhalb eines Wortes suchen
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
+	FI	Etsi sanojen sisältä
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
 	ZH_CN	在词内搜寻
@@ -5197,6 +5317,7 @@ SETUP_COMPOSERINARTISTS
 	DK	Komponist, band og orkester som kunstner
 	EN	Composer, Band and Orchestra in Artists
 	ES	Compositor, Banda y Orquesta en Artistas
+	FI	Säveltäjä, yhtye ja orkesteri artisteissa
 	FR	Compositeur, Groupe et Orchestre
 	IT	Compositore, Gruppo e Orchestra in Artisti
 	JP	「アーチスト」に、作曲家、バンド、オーケストラ
@@ -5212,6 +5333,7 @@ SETUP_COMPOSERINARTISTS_1
 	DK	Vis komponist, band og orkester som kunstner
 	EN	Include composer, band and orchestra in artists
 	ES	Incluir compositor, banda y orquesta en artistas
+	FI	Sisällytä yhtye, säveltäjä tai orkesteri artisteihin
 	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
 	IT	Includi Compositore, Gruppo e Orchestra in Artisti
 	JP	「アーチスト」に、作曲家、バンド、オーケストラを含める
@@ -5227,6 +5349,7 @@ SETUP_COMPOSERINARTISTS_0
 	DK	Vis ikke komponist, band og orkester som kunstner
 	EN	Don't include composer, band and orchestra in artists
 	ES	No incluir compositor, banda y orquesta en artistas
+	FI	Älä sisällytä säveltäjää, yhtyettä tai orkesteria artisteihin
 	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
 	IT	Non includere Compositore, Gruppo e Orchestra in Artisti
 	JP	「アーチスト」に、作曲家、バンド、オーケストラを含めない
@@ -5242,6 +5365,7 @@ SETUP_COMPOSERINARTISTS_DESC
 	DK	Sanginformation om komponister, bands og orkestre kan vises i kunstnerlisten ved gennemsøgning af din musik.
 	EN	Song information about composers, bands and orchestras can be included in the artists list for browsing and search.
 	ES	La información acerca de compositores, bandas y orquestas de una canción puede ser incluida en la lista de artistas para recorrer y buscar.
+	FI	Artistien hakuun ja selailuun voidaan lisätä tieto säveltäjästä, yhtyeestä tai orkesterista
 	FR	Les informations relatives aux compositeurs, groupes et orchestres contenues dans les morceaux peuvent être ajoutées à la liste d'artistes pour parcourir ou rechercher.
 	IT	Informazioni sul brano circa Compositori, Gruppi e Orchestre possono essere sfogliate o cercate se incluse nella lista degli artisti.
 	JP	作曲家、バンド、オーケストラの情報は、ブラウズ・検索の時にアーチスト情報として認識させることができます。
@@ -5911,6 +6035,7 @@ SETUP_UDPCHUNKSIZE
 	DK	Maksimum UDP-datastørrelse
 	EN	Maximum UDP Data Size
 	ES	Tamaño Máximo de Datos UDP
+	FI	Suurin sallittu UDP datakoko
 	FR	Taille maximum des paquets UDP
 	JP	UDP最大データサイズ
 	NL	Maximale UDP datagrootte
@@ -5964,6 +6089,7 @@ SETUP_WEBPROXY_CHOOSE
 	DE	Web Proxy Adresse
 	EN	Web Proxy Address
 	ES	Dirección del Proxy de Web
+	FI	WWW välityspalvelimen osoite
 	FR	Adresse du proxy web
 	HE	כתובת השרת
 	JP	ウェブ プロキシーアドレス
@@ -5976,6 +6102,7 @@ SETUP_SHOWBUFFERFULLNESS
 	DE	Puffer-Füllstatus anzeigen
 	EN	Show Buffer Fullness
 	ES	Mostrar nivel de carga del buffer
+	FI	Näytä puskurin täyttöaste
 	FR	Affichage état mémoire tampon
 	HE	הצג זכרון מטמון
 	IT	Mostra riempimento del buffer
@@ -5989,6 +6116,7 @@ SETUP_SHOWBUFFERFULLNESS_CHOOSE
 	DE	Buffer Füllstand zur Liste der Anzeigemodi hinzufügen:
 	EN	Include buffer fullness in Playing Display Mode list:
 	ES	Incluir el nivel de carga del buffer en la lista:
+	FI	Sisällytä puskurin täyttöaste soiton näyttötilojen listaan:
 	FR	Inclure l'état de la mémoire tampon dans la liste Mode d'affichage durant la lecture :
 	HE	האם להציג את מלאי זכרון המטמון
 	IT	Includi il livello del buffer nelle informazioni sulla riproduzione in corso:
@@ -6068,6 +6196,7 @@ SETUP_IPFILTER
 	DK	Blokér
 	EN	Block
 	ES	Bloquear
+	FI	Estä
 	FR	Bloquer
 	HE	חסום גישה
 	IT	Blocca
@@ -6131,6 +6260,7 @@ SETUP_ALLOWEDHOSTS
 	DK	Tilladte IP-adresser ved indgående forbindelser
 	EN	IP addresses allowed to make incoming connections
 	ES	Direcciones IP habilitadas a realizar conexiones entrantes
+	FI	Osoitteet, joista saa ottaa yhteyttä palvelimeen
 	FR	Adresses IP autorisées pour les connexions entrantes
 	JP	外からの接続を許可するIPアドレス
 	NL	IP adressen die een verbinding mogen maken
@@ -6301,6 +6431,7 @@ SETUP_USERNAME
 	DK	Brugernavn
 	EN	Username
 	ES	Nombre de usuario
+	FI	Käyttäjätunnus
 	FR	Nom d'utilisateur
 	HE	שם משתמש
 	IT	Codice utente
@@ -6726,6 +6857,7 @@ FFWD
 	DK	Spol frem
 	EN	Fast Forward
 	ES	Avance rápido
+	FI	Pikakelaus eteenpäin
 	FR	Avance rapide
 	JP	早送り
 	NL	Vooruitspoelen
@@ -6772,6 +6904,7 @@ PLAY_THIS_SONG
 	DK	Afspil denne sang
 	EN	Play this song
 	ES	Escuchar esta canción
+	FI	Soita tämä kappale
 	FR	Lire ce morceau
 	IT	Riproduci questo brano
 	JP	この曲を再生する
@@ -6802,6 +6935,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	DK	Tilføj denne sang til playlisten
 	EN	Add this song to the playlist
 	ES	Añadir esta canción a la lista
+	FI	Lisää tämä kappale soittolistaan
 	FR	Ajouter ce morceau à la liste de lecture
 	HE	הוסף שיר זה לרשימת השמעה
 	IT	Aggiungi il brano alla lista di esecuzione
@@ -7015,6 +7149,7 @@ MOVEUP
 	DK	Flyt op
 	EN	Move Up
 	ES	Mover hacia arriba
+	FI	Ylöspäin
 	FR	Haut
 	HE	למעלה
 	IT	Muovi Su'
@@ -7031,6 +7166,7 @@ MOVEDOWN
 	DK	Flyt ned
 	EN	Move Down
 	ES	Mover hacia abajo
+	FI	Siirry alas
 	FR	Bas
 	HE	למטה
 	IT	Muovi giu'
@@ -7047,6 +7183,7 @@ ADD
 	DK	Tilføj
 	EN	Add
 	ES	Añadir
+	FI	Lis��
 	FR	Ajouter
 	HE	הוסף
 	IT	Aggiungi
@@ -7143,6 +7280,7 @@ ENABLED
 	DE	Aktiviert
 	EN	Enabled
 	ES	Habilitado
+	FI	Sallittu
 	FR	Activé
 	HE	הפעל
 	IT	Abilitato
@@ -7157,6 +7295,7 @@ DISABLED
 	DE	Deaktiviert
 	EN	Disabled
 	ES	Deshabilitado
+	FI	Estetty
 	FR	Désactivé
 	HE	בטל
 	IT	Disabilitato
@@ -7237,6 +7376,7 @@ TREBLE
 	DK	Diskant
 	EN	Treble
 	ES	Agudos
+	FI	Diskantti
 	FR	Aigus
 	IT	Alti
 	JP	高音
@@ -7252,6 +7392,7 @@ BASS
 	DK	Bas
 	EN	Bass
 	ES	Graves
+	FI	Basso
 	FR	Graves
 	IT	Bassi
 	JP	低音
@@ -7294,6 +7435,7 @@ OFFDISPLAYSIZE
 	DE	Textgrösse im Standby Modus
 	EN	Standby Text Size
 	ES	Tamaño de texto para modo Standby
+	FI	Valmiustilan tekstikoko
 	FR	Taille du texte en veille
 	IT	Dimensione del testo in Standby
 	JP	スタンドバイ状態でのテキストサイズ
@@ -7340,6 +7482,7 @@ MEDIUM
 	DE	Mittel
 	EN	Medium
 	ES	Medio
+	FI	Keskitaso
 	FR	Moyenne
 	HE	בינונית
 	IT	Medio
@@ -7352,6 +7495,7 @@ HUGE
 	DE	Sehr Gross
 	EN	Huge
 	ES	Muy grande
+	FI	Valtava
 	FR	Très grand
 	IT	Molto grande
 	JP	特大
@@ -7363,6 +7507,7 @@ NONE
 	DE	Keine
 	EN	None
 	ES	Ninguno
+	FI	Ei mitään
 	HE	ללא
 	IT	Nessuno
 	NL	Geen
@@ -7373,6 +7518,7 @@ HIGH
 	DE	Hoch
 	EN	High
 	ES	Alto
+	FI	Korkea
 	HE	גבוהה
 	IT	Micro
 	NL	Hoog
@@ -7487,6 +7633,7 @@ RENAME
 NAME
 	EN	Name:
 	ES	Nombre:
+	FI	Nimi:
 	FR	Nom :
 	IT	Nome:
 	NL	Naam:
@@ -7647,6 +7794,7 @@ CONFIRM_OVERWRITE
 	DE	Überschreiben bestätigen
 	EN	Confirm Overwrite
 	ES	Confirmar Sobre-escritura
+	FI	Vahvista päällekirjoitus
 	FR	Confirmer remplacement
 	IT	Conferma sovrascrittura
 	JP	上書き確認
@@ -7658,6 +7806,7 @@ CONFIRM_DELETE
 	DE	Wirklich löschen?
 	EN	Confirm Delete
 	ES	Confirma Eliminar
+	FI	Vahvista poisto
 	IT	Conferma cancellazione
 	NL	Bevestig verwijderen
 	ZH_CN	确定删除
@@ -7736,6 +7885,7 @@ COMPOSER
 	DK	Komponist
 	EN	Composer
 	ES	Compositor
+	FI	Säveltäjä
 	FR	Compositeur
 	IT	Compositore
 	JP	作曲家
@@ -7750,6 +7900,7 @@ CONDUCTOR
 	DE	Dirigent
 	EN	Conductor
 	ES	Conductor
+	FI	Kapellimestari
 	FR	Chef d'Orchestre
 	IT	Direttore
 	JP	指揮者
@@ -7764,6 +7915,7 @@ BAND
 	DK	Band/Orkester
 	EN	Band/Orchestra
 	ES	Banda/Orquesta
+	FI	Yhtye/Orkesteri
 	FR	Groupe/Orchestre
 	IT	Complesso/Orchestra
 	JP	バンド/オーケストラ
@@ -7794,6 +7946,7 @@ DISC
 	DK	Disc
 	EN	Disc
 	ES	Disco
+	FI	Levy
 	FR	Disque
 	IT	Disco
 	JP	ディスク
@@ -7825,6 +7978,7 @@ TYPE
 	DK	Filformat
 	EN	File Format
 	ES	Formato de Archivo
+	FI	Tiedostomuoto
 	FR	Format de fichier
 	HE	סוג הקובץ
 	IT	Formato file
@@ -7839,6 +7993,7 @@ DIR
 	DE	Verzeichnis
 	EN	Directory
 	ES	Directorio
+	FI	Hakemisto
 	HE	ספריית קבצים
 	NL	Folder
 	ZH_CN	目录
@@ -7861,6 +8016,7 @@ MOV
 	DK	Apple AAC eller film
 	EN	Apple AAC, Lossless or Movie File
 	ES	AAC, Lossless or archivo tipo Movie de Apple
+	FI	Apple AAC, Häviötön tai Elokuvatiedosto
 	FR	Apple AAC ou film
 	JP	アップルAAC、ロスレスまたはムービーファイル
 	NL	Apple AAC of film
@@ -7873,6 +8029,7 @@ M3U
 	DE	M3U Wiedergabeliste
 	EN	M3U Playlist
 	ES	Lista M3U
+	FI	M3U soittolista
 	FR	Liste M3U
 	IT	Lista di esecuzione M3U
 	JP	M3Uプレイリスト
@@ -7905,6 +8062,7 @@ M4P
 	DE	Geschütztes AAC
 	EN	Protected AAC
 	ES	AAC Protegido
+	FI	Suojattu AAC
 	FR	AAC protégé
 	IT	AAC protetto
 	JP	保護されたAAC
@@ -7922,6 +8080,7 @@ UNK
 	DK	Ukendt
 	EN	Unknown
 	ES	Desconocido
+	FI	Tuntematon
 	FR	Inconnu
 	IT	Sconosciuto
 	JP	不明
@@ -7941,6 +8100,7 @@ FEC
 	DE	FLAC mit eingebettetem CUEsheet
 	EN	FLAC with embedded CUEsheet
 	ES	FLAC con CUEsheet embebida
+	FI	FLAC sisällytetyllä sisällysluettelolla
 	NL	FLAC met ingesloten CUElijst
 	ZH_CN	FLAC内置CUEsheet
 
@@ -7952,6 +8112,7 @@ MODIFIED
 	DE	Geändert
 	EN	Modified
 	ES	Modificado
+	FI	Muokattu
 	FR	Modifié
 	JP	変更された
 	NL	Gewijzigd
@@ -7963,6 +8124,7 @@ MODTIME
 	DK	Dato ændret
 	EN	Date Modified
 	ES	Fecha de Modificación
+	FI	Muokattu
 	FR	Dernière modif.
 	HE	תאריך שינוי
 	JP	変更された日付
@@ -7978,6 +8140,7 @@ COVERART
 	DK	Cover-billede
 	EN	Artwork
 	ES	Arte de Tapa
+	FI	Kansikuvat
 	FR	Pochette
 	IT	Copertina
 	JP	アートワーク
@@ -8010,6 +8173,7 @@ NO_ARTIST
 	DK	Ingen kunstner
 	EN	No Artist
 	ES	Sin Artista
+	FI	Ei artistia
 	FR	Pas d'artiste
 	IT	Nessun Artista
 	JP	アーチストなし
@@ -8025,6 +8189,7 @@ NO_ALBUM
 	DK	Intet album
 	EN	No Album
 	ES	Sin Álbum
+	FI	Ei albumia
 	FR	Pas d'album
 	JP	アルバムなし
 	NL	Geen album
@@ -8039,6 +8204,7 @@ NO_GENRE
 	DK	Ingen genre
 	EN	No Genre
 	ES	Sin Género
+	FI	Ei tyylilajia
 	FR	Pas de genre
 	JP	ジャンルなし
 	NL	Geen genre
@@ -8053,6 +8219,7 @@ NO_TITLE
 	DK	Ingen titel
 	EN	No Title
 	ES	Sin Título
+	FI	Ei nimeä
 	FR	Pas de titre
 	JP	タイトルなし
 	NL	Geen titel
@@ -8114,6 +8281,7 @@ BPM
 	DE	Beats pro Minute
 	EN	Beats Per Minute
 	ES	Golpes Po Minuto
+	FI	Tahtia minuutissa
 	FR	Bats par Minute
 	HE	מקצב
 	IT	Battute al minuto
@@ -8201,6 +8369,7 @@ LOCATION
 	DK	Sti
 	EN	Location
 	ES	Ubicación
+	FI	Sijanti
 	FR	Emplacement
 	JP	場所
 	NL	Plaats
@@ -8228,6 +8397,7 @@ NO_LIMIT
 	DE	Keine Einschränkung
 	EN	No Limit
 	ES	Sin Límite
+	FI	Ei rajaa
 	FR	Pas de limite
 	HE	ללא הגבלה
 	IT	Nessun limite
@@ -8275,7 +8445,7 @@ LCARTISTS
 	DK	kunstnere
 	EN	artists
 	ES	artistas
-	FI	esittäjät
+	FI	esittäjää
 	FR	artistes
 	IT	artisti
 	JP	アーチスト
@@ -8291,7 +8461,7 @@ ALBUMS
 	DK	Albums
 	EN	Albums
 	ES	Álbumes
-	FI	Levyjen nimet
+	FI	Levy&auml
 	FR	Albums
 	HE	אלבומים
 	JP	アルバム
@@ -8307,7 +8477,7 @@ LCALBUMS
 	DK	albums
 	EN	albums
 	ES	álbumes
-	FI	levyjen nimet
+	FI	albumia
 	FR	albums
 	HE	אלבומים
 	JP	アルバム
@@ -8323,6 +8493,7 @@ ALL_SONGS
 	DK	Alle sange
 	EN	All Songs
 	ES	Todas las canciones
+	FI	Kaikki kappaleet
 	FR	Tous les morceaux
 	HE	כל השירים
 	IT	Tutti i brani
@@ -8338,6 +8509,7 @@ ALL_ARTISTS
 	DE	Alle Interpreten
 	EN	All Artists
 	ES	Todos los Artistas
+	FI	Kaikki artistit
 	FR	Tous les Artistes
 	HE	כל האמנים
 	IT	Tutti gli Artisti
@@ -8353,6 +8525,7 @@ ALL_ALBUMS
 	DK	Alle albums
 	EN	All Albums
 	ES	Todos los Álbumes
+	FI	Kaikki albumit
 	FR	Tous les albums
 	HE	כל האלבומים
 	IT	Tutti gli albums
@@ -8368,6 +8541,7 @@ ALL_SUBFOLDERS
 	DE	Alle Unterverzeichnisse
 	EN	All Subfolders
 	ES	Todas las Subcarpetas
+	FI	Kaikki alihakemistot
 	FR	Tous les dossiers
 	IT	Tutte le Sottocartelle
 	JP	全てのサブフォルダー
@@ -8415,6 +8589,7 @@ WITH
 	DK	med
 	EN	with
 	ES	con
+	FI	joissa
 	FR	avec
 	HE	עם
 	IT	con
@@ -8462,7 +8637,7 @@ SONGS
 	DK	Sange
 	EN	Songs
 	ES	Canciones
-	FI	Kappaleita
+	FI	Kappaletta
 	FR	Morceaux
 	HE	שירים
 	IT	Brani
@@ -8479,7 +8654,7 @@ SONG
 	DK	Sange
 	EN	Song
 	ES	Canción
-	FI	Kappaleita
+	FI	Kappale
 	FR	Morceau
 	HE	שיר
 	IT	Brano
@@ -8496,7 +8671,7 @@ LCSONGS
 	DK	sange
 	EN	songs
 	ES	canciones
-	FI	kappaleita
+	FI	kappaletta
 	FR	morceaux
 	IT	Brani
 	JP	曲
@@ -8603,6 +8778,7 @@ BROWSE_BY_ARTWORK
 	DE	Plattenhülle nachschlagen
 	EN	Browse Artwork
 	ES	Examinar por Arte de Tapa
+	FI	Selaa kansikuvia
 	FR	Parcourir les pochettes
 	HE	עטיפות דיסקים
 	IT	Sfoglia per copertine
@@ -8620,6 +8796,7 @@ BROWSE_NEW_MUSIC
 	DE	Neue Musikstücke
 	EN	New Music
 	ES	Música nueva
+	FI	Uutta musiikkia
 	HE	דפדוף במוזיקה שהוספה לאחרונה
 	IT	Musica recente
 	NL	Nieuwe muziek
@@ -8650,6 +8827,7 @@ BROWSE_BY_YEAR
 	DE	Jahrgänge nachschlagen
 	EN	Browse Years
 	ES	Examinar por Año
+	FI	Selaa vuosittain
 	HE	דפדוף לפי שנים
 	IT	Sfoglia per anno
 	NL	Bekijk op jaar
@@ -8694,6 +8872,7 @@ NOT_SYNCHRONIZED
 	DE	Nicht synchronisiert
 	EN	Not Synchronized
 	ES	No Sincronizado
+	FI	Ei synkronoitu
 	FR	Non synchronisé
 	IT	Non sincronizzato
 	NL	Niet gesynchroniseerd
@@ -8706,6 +8885,7 @@ SYNCHRONIZED_WITH
 	DK	Synkroniseret med
 	EN	Synced with
 	ES	Sincronizado con
+	FI	Synkronoitu
 	FR	Synchronisé avec
 	IT	Sincronizzato con
 	JP	シンクロされている
@@ -8897,6 +9077,7 @@ DELETE_WARNING
 	DE	Soll die Wiedergabeliste wirklich gelöscht werden? 
 	EN	Are you sure you want to delete? Check 'confirm delete' to delete your playlist.
 	ES	Está seguro que quiere eliminar? Marque "Confirma eliminar" para eliminar la lista.
+	FI	Oletko varma, että haluat poistaa? Valitse 'Vahvista poisto' poistaaksesi soittolistasi.
 	HE	האם אתה בטוח שברצונך למחוק
 	IT	Sei sicuro di cancellare? Spunta "conferma cancellazione" e poi Cancella per cancellare la lista di esecuzione.
 	NL	Weet je zeker dat je wilt verwijderen? Markeer 'Bevestig verwijderen' om de playlists te verwijderen.
@@ -8998,6 +9179,7 @@ ALARM_SETTINGS
 	DE	Wecker
 	EN	Alarm
 	ES	Alarma
+	FI	Herätys
 	FR	Réveil
 	HE	הגדרות שעון מעורר
 	IT	Sveglia
@@ -9010,6 +9192,7 @@ MENU_SETTINGS
 	DE	Menüs
 	EN	Menus
 	ES	Menus
+	FI	Valikot
 	HE	הגדרות תפריטים
 	IT	Menu
 	JP	分
@@ -9021,6 +9204,7 @@ DISPLAY_SETTINGS
 	DE	Anzeige
 	EN	Display
 	ES	Pantalla
+	FI	Näyttö
 	FR	Affichage
 	HE	הגדרות תצוגה
 	IT	Visualizzazione
@@ -9032,6 +9216,7 @@ AUDIO_SETTINGS
 	CZ	Audio
 	EN	Audio
 	ES	Audio
+	FI	Ääni
 	HE	הגדרות שמע
 	JP	オーディオ
 	SE	Ljudinställningar
@@ -9054,6 +9239,7 @@ PLAYERIR_SETTINGS
 	DK	IR-indstillinger
 	EN	IR Settings
 	ES	Configuración IR
+	FI	Infrapuna-asetukset
 	FR	Réglages infrarouge
 	HE	הגדרות אינפרא אדום לנגן
 	IT	Impostazioni IR
@@ -9120,6 +9306,7 @@ INTERFACE_SETTINGS
 	DK	Interface
 	EN	Interface
 	ES	Interfaz
+	FI	Käyttöliittymä
 	FR	Interface
 	HE	שינויים בממשק
 	IT	Interfaccia
@@ -9136,6 +9323,7 @@ BEHAVIOR_SETTINGS
 	DK	Funktion
 	EN	Behavior
 	ES	Comportamiento
+	FI	Käytös
 	FR	Comportement
 	HE	התנהגות השרת
 	IT	Comportamento
@@ -9152,6 +9340,7 @@ FORMATS_SETTINGS
 	DK	Filtyper
 	EN	File Types
 	ES	Tipos de Archivo
+	FI	Tiedostomuodot
 	FR	Types de fichier
 	HE	הגדרות פורמטים
 	IT	Tipi di file
@@ -9168,6 +9357,7 @@ SECURITY_SETTINGS
 	DK	Sikkerhed
 	EN	Security
 	ES	Seguridad
+	FI	Tietoturva
 	FR	Sécurité
 	HE	הגדרות אבטחה
 	IT	Sicurezza
@@ -9184,6 +9374,7 @@ PERFORMANCE_SETTINGS
 	DK	Ydelse
 	EN	Performance
 	ES	Perfomance
+	FI	Suorituskyky
 	FR	Performance
 	HE	הגדרות ביצועים
 	IT	Prestazioni
@@ -9216,6 +9407,7 @@ NETWORK_SETTINGS
 	DK	Netværk
 	EN	Network
 	ES	Red
+	FI	Verkko
 	FR	Réseau
 	HE	הגדרות רשת
 	IT	Rete
@@ -9429,6 +9621,7 @@ VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	DE	Kleines Spectrum
 	EN	Small Spectrum
 	ES	Espectro pequeño
+	FI	Pieni spektri
 	HE	קטן ספקטרום
 	IT	Spettro piccolo
 	NL	Klein spectrum
@@ -9439,6 +9632,7 @@ VISUALIZER_VUMETER_SMALL
 	DE	Kleiner VU
 	EN	Small VU
 	ES	VU pequeño
+	FI	Pieni VU
 	HE	מחוגי עוצמה
 	IT	VU meter piccoli
 	NL	Kleine VU
@@ -9448,6 +9642,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	CZ	Frekvenční spektrum
 	EN	Spectrum
 	ES	Espectro
+	FI	Spektri
 	HE	ספקטרום
 	IT	Spettro
 	ZH_CN	音谱
@@ -9455,6 +9650,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 VISUALIZER_VUMETER
 	EN	VU Meter
 	ES	VU metro
+	FI	VU-mittari
 	NL	VU meter
 	ZH_CN	音量表
 
@@ -9662,7 +9858,7 @@ SECONDS
 	DK	sekunder
 	EN	seconds
 	ES	segundos
-	FI	sekunnit
+	FI	sekuntia
 	FR	secondes
 	HE	שניות
 	JP	秒
@@ -9708,6 +9904,7 @@ DISPLAY_PLUGINS
 	DK	Viser Modul-menuen på SlimServer:
 	EN	Display the Plugins menu on the Slim player:
 	ES	Mostrar en menú de Plugins en el reproductor Slim:
+	FI	Näytä plugin valikko soittimella:
 	FR	Afficher le menu Module d'extensions sur la platine Slim :
 	JP	プラグインのメニューをプレーヤーに表示する :
 	NL	Toon het plugins menu op de SlimServer:
@@ -9737,6 +9934,7 @@ NO_PLUGINS
 	DK	Ingen moduler til rådighed.
 	EN	No Plugins available.
 	ES	No existen Plugins disponibles
+	FI	Ei plugineja saatavilla
 	FR	Aucun module d'extension disponible.
 	JP	利用可能なプラグインはありません。
 	NL	Geen plugins beschikbaar.
@@ -9807,7 +10005,7 @@ SOFTSQUEEZE_MUSIC_PLAYER
 	DK	SoftSqueeze-afspiller
 	EN	SoftSqueeze Music Player
 	ES	Reproductor de Música SoftSqueeze 
-	FI	SoftSqueeze soitin
+	FI	SoftSqueeze musiikkisoitin
 	FR	Platine SoftSqueeze
 	JP	SoftSqueezeプレーヤー
 	NL	SoftSqueeze muziekspeler
@@ -9889,6 +10087,7 @@ NO_PLAYER_DETAILS
 	DK	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
 	EN	<b>If you own a Squeezebox:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un Squeezebox:</b><ul><li>Asegurarse que el reproductor esta conectado y su configuración de red sea correcta. Hacer Click en el botón de Actualizar una vez que el reproductor este conectado.</ul><p><b>Si no posee un Squeezebox:</b><ul><li>Se puede escuchar la colección musical utilizando <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede utilizar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar su colección musical con SlimServer, conectandose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>	
+	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi Slimserverin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	HE	אין פרטי נגן
 	IT	Se possiedi uno Squeezebox:    - Accertati che il tuo lettore sia collegato e le impostazioni di rete corrette. Premi il bottone Aggiorna non appena il tuo lettore e' connesso.    Se non possiedi uno Squeezebox:    - Puoi ascoltare la tua raccolta musicale usando lo SoftSqueeze, la versione software dello Squeezebox.  - Puoi usare un lettore MP3 software (come WinAmp o iTunes) per ascoltare la tua libreria musicale con lo SlimServer collegandoti a questa URL:  http://localhost:9000/stream.mp3
@@ -9904,6 +10103,7 @@ PLAYER_NEEDS_UPGRADE
 	DE	Squeezebox Software Update notwendig
 	EN	Squeezebox Software Update Required
 	ES	Se requiere actualización del software del Squeezebox
+	FI	Tarvitaan SqueezeBox ohjelmiston päivitys
 	FR	Mise à jour du logiciel Squeezebox nécessaire
 	JP	Squeezeboxソフトウェアのアップデートが必要です
 	NL	Squeezebox programma bijwerken nodig
@@ -9916,6 +10116,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 	DE	Die Software in ihrer Squeezebox muss aktualisiert werden.  Bitte halten Sie den BRIGHTNESS Knopf auf der Fernsteuerung gedrückt, bis ihre Squeezebox anzeigt, dass das Update installiert wird. Dieser Vorgang dauert nur wenige Sekunden.
 	EN	The software in your Squeezebox needs to be updated to the latest version.  Please press and hold the BRIGHTNESS button on your remote until the display on your Squeezebox indicates that the update has begun.  The update only takes a few seconds.
 	ES	El software en tu Squeezebox necesita actualizarse a la última versión. Por favor, presionar y mantener presionado el botón BRIGHTNESS (Luminosidad) en el control remoto hasta que en la pantalla del Squeezebox se indique que la actualización comenzó. La actualización puede tomar algunos segundos.
+	FI	Squeezeboxisi ohjelmisto täytyy päivittää. Pidä BRIGHTNESS näppäintä pohjassa kunnes Squeezeboxisi näyttö ilmaisee, että päivitys on alkanut. Päivitys vie vain muutamia sekunteja.
 	FR	Le logiciel de votre Squeezebox doit être mis à jour. Veuillez appuyer et laisser appuyer le bouton BRIGHTNESS de votre télécommande jusqu'à ce que la Squeezbox indique la mise à jour. Cette procédure prendra quelques secondes.
 	HE	הנגן זקוק לעדכון קושחה. לחץ על בהירות מספר שניות
 	IT	Il software dello Squeezebox puo' essere aggiornato ad una versione piu' recente. Mantieni premuto il tasto BRIGHTNESS sul telecomando fino all'indicazione sullo schermo dello Squeezebox di inizio aggiornamento. L'operazione impieghera' pochi secondi.
@@ -9930,6 +10131,7 @@ PLAYER_NEEDS_UPGRADE_1
 	DE	Squeezebox Software Update
 	EN	Squeezebox Software Update
 	ES	Actualización de Software del Squeezebox
+	FI	Squeezeboxin ohjelmistopäivitys
 	FR	Mise à jour du logiciel Squeezebox
 	IT	Aggiornamento software Squeezebox
 	JP	Squeezeboxソフトウェアアップデート
@@ -9943,6 +10145,7 @@ PLAYER_NEEDS_UPGRADE_2
 	DE	Halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
 	EN	Press and hold BRIGHTNESS key to begin.
 	ES	Presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) para comenzar.
+	FI	Pidä BRIGHTNESS näppäintä pohjassa aloittaaksesi.
 	FR	Appuyez sur BRIGHTNESS et laissez appuyé pour lancer la mise à jour
 	IT	Mantieni premuto il tasto BRIGHTNESS per iniziare.
 	JP	開始するにはリモートのBRIGHTNESSボタンを押しつづけてください。
@@ -9970,6 +10173,7 @@ UPGRADE_COMPLETE_DETAILS
 	DE	Update abgeschlossen.
 	EN	Your update is complete.
 	ES	La actualización ha finalizado.
+	FI	Päivityksesi on valmis
 	FR	La mise à jour a réussi
 	IT	L'aggiornamento e' completo
 	JP	アップデート完了
@@ -9983,6 +10187,7 @@ UPGRADE_COMPLETE
 	DE	Firmware Update
 	EN	Firmware Update
 	ES	Actualización de Firmware
+	FI	Ohjelmiston päivitys
 	FR	Mise à jour micrologiciel
 	IT	Firmware aggiornato
 	JP	ファームウェアアップデート
@@ -9995,6 +10200,7 @@ CHECKVERSION_PROBLEM
 	DE	Beim Suchen nach einem SlimServer Update trat ein Problem auf. (Fehlercode %s)
 	EN	There was a problem while checking for updates to SlimServer. (Error code %s)
 	ES	Hubo un error al buscar actualizaciones para SlimServer. (Código de error %s)
+	FI	SlimServerin päivityksiä etsittäessä tapahtui virhe. (Virhekoodi %s)
 	IT	Si e' verficato un errore durante la ricerca di aggiornamenti per lo SlimServer (Codice d'errore %s)
 	NL	Er is een fout opgetreden tijdens het controleren van op nieuwe versie van SlimServer. (Fout code %s)
 	ZH_CN	当与SlimServer查证韧件更新时出现错误。（Error code %s）
@@ -10003,6 +10209,7 @@ CHECKVERSION_ERROR
 	DE	Beim Suchen nach einem SlimServer Update trat ein Fehler auf:
 	EN	There was an error while checking for updates to SlimServer:
 	ES	Hubo un error al buscar actualizaciones para SlimServer:
+	FI	SlimServerin päivityksiä etsittäessä tapahtui virhe
 	IT	Si e' verificato un errore tentando di aggiornare lo SlimServer:
 	NL	Er is een fout opgetreden tijdens het controleren op een nieuwe versie van SlimServer:
 	ZH_CN	与SlimServer查证韧间更新时出现错误：
@@ -10104,6 +10311,7 @@ MUTE
 	DE	Stumm
 	EN	Mute
 	ES	Silenciar
+	FI	Vaimennus
 	FR	Silence
 	JP	ミュート
 	NO	Mute - ingen lyd
@@ -10130,6 +10338,7 @@ ADVANCEDSEARCH
 	DE	Erweiterte Suche
 	EN	Advanced Search
 	ES	Búsqueda Avanzada
+	FI	Laajennettu haku
 	FR	Recherche Avançée
 	HE	חיפוש מתקדם
 	IT	Ricerca avanzata
@@ -10230,7 +10439,7 @@ SEARCHFOR_ALBUMS
 	DK	Søg efter Albums
 	EN	Search For Albums
 	ES	Buscar Álbumes
-	FI	Hae Levyjen nimet
+	FI	Hae albumin nimellä
 	FR	Rechercher des albums
 	IT	Ricerca album
 	JP	アルバムを検索する
@@ -10250,7 +10459,7 @@ SEARCHFOR_SONGS
 	DK	Søg efter Sange
 	EN	Search For Songs
 	ES	Buscar Canciones
-	FI	Hae Kappaleita
+	FI	Hae kappaleittain
 	FR	Rechercher des morceaux
 	IT	Ricerca brani
 	JP	曲を検索する
@@ -10319,7 +10528,7 @@ SEARCH_FOR_SONGS
 	DK	Søg efter sange
 	EN	Search For Songs
 	ES	Buscar por canciones
-	FI	Hae kappaleita
+	FI	Hae kappaleittain
 	FR	Rechercher des morceaux
 	HE	חפש שירים
 	IT	Ricerca brani
@@ -10460,6 +10669,7 @@ MORE_MATCHES
 	DE	Mehr Treffer...
 	EN	More matches...
 	ES	Más coincidencias...
+	FI	Lisää vastaavuuksia
 	NL	Meer overeenkomsten...
 	ZH_CN	更多匹配
 
@@ -10503,6 +10713,7 @@ MOODLOGIC_SELECT_MOOD
 	DK	Vælg en stemning for dit mix
 	EN	Select a Mood for your Mix
 	ES	Elegir un ambiente para la Mezcla
+	FI	Valitse sekoituksesi tunnelma
 	FR	Sélectionnez une ambiance pour votre mix
 	JP	ミックス用にムードを選んでください
 	NL	Kies een sfeer voor de mix
@@ -10517,6 +10728,7 @@ MOODLOGIC_SELECT_MOOD_SHORT
 	DK	Vælg en stemning
 	EN	Select a Mood
 	ES	Elegir un Ambiente
+	FI	Valitse fiilis
 	FR	Choisissez une ambiance
 	JP	ムード選択
 	NL	Kies een sfeer
@@ -10529,6 +10741,7 @@ MOODLOGIC_MIX
 	DE	Mix
 	EN	Mix
 	ES	Mezcla
+	FI	Sekoitus
 	FR	Mix
 	JP	ミックス
 	NL	Mix
@@ -10545,6 +10758,7 @@ MUSICMAGIC_MIX
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
 	ES	Mezcla instantánea de MoodLogic
+	FI	MoodLogic välitön sekoitus
 	ZH_CN	MoodLogic即时混音
 
 MOODLOGIC_MOOD_0
@@ -10553,6 +10767,7 @@ MOODLOGIC_MOOD_0
 	DK	Overraskelse
 	EN	Surprise
 	ES	Sorpresa
+	FI	Yllätys
 	FR	Surprise
 	JP	サプライズ
 	NL	Verrassing
@@ -10565,6 +10780,7 @@ MOODLOGIC_MOOD_1
 	DE	Upbeat
 	EN	Upbeat
 	ES	Alegre
+	FI	Iloinen
 	FR	Rythmé
 	JP	アップビート
 	NO	Tempo
@@ -10576,6 +10792,7 @@ MOODLOGIC_MOOD_2
 	DK	Easy
 	EN	Easy
 	ES	Tranquilo
+	FI	Letkeä
 	FR	Easy
 	JP	イージー
 	NL	Easy
@@ -10588,6 +10805,7 @@ MOODLOGIC_MOOD_3
 	DE	Sanft
 	EN	Mild
 	ES	Dulce
+	FI	Mieto
 	FR	Doux
 	JP	マイルド
 	NO	Mild
@@ -10599,6 +10817,7 @@ MOODLOGIC_MOOD_4
 	DK	Trist
 	EN	Blue
 	ES	Triste
+	FI	Surullinen
 	FR	Blues
 	JP	ブルー
 	NL	Blue
@@ -10623,6 +10842,7 @@ MOODLOGIC_MOOD_6
 	DE	Wild
 	EN	Wild
 	ES	Salvaje
+	FI	Villi
 	FR	Sauvage
 	JP	ワイルド
 	NO	Vill
@@ -10742,6 +10962,7 @@ FAQ
 	DK	Ofte stillede spørgsmål (FAQ) (Engelsk)
 	EN	Frequently Asked Questions
 	ES	Preguntas más frecuentes
+	FI	Usein kysytyt kysymykset
 	FR	Foire Aux Questions
 	HE	שאלות נפוצות
 	IT	FAQ Domande ricorrenti
@@ -10774,6 +10995,7 @@ REMOTE_STREAMING
 	DK	Fjern-streaming
 	EN	Remote Streaming
 	ES	Transmisión remota
+	FI	Kaukosoitto
 	FR	Diffusion à distance
 	HE	ניגון מתחנות אינטרנט
 	JP	リモート ストリーミング
@@ -10823,6 +11045,7 @@ STATISTICS
 	DK	Statistik
 	EN	Statistics
 	ES	Estadísticas
+	FI	Tilastot
 	FR	Statistiques
 	HE	סטטיסטיקה
 	IT	Statistiche
@@ -10838,6 +11061,7 @@ EDIT_PLAYLIST
 	DE	Wiedergabeliste bearbeiten
 	EN	Edit Playlist
 	ES	Editar Lista
+	FI	Muokkaa soittolistaa
 	FR	Modifier la liste de lecture
 	HE	ערוך רשימת השמעה
 	IT	Modifica la lista di esecuzione
@@ -10852,6 +11076,7 @@ DONE_EDITING
 	DE	Bearbeitung abgeschlossen
 	EN	Done Editing
 	ES	Edición finalizada
+	FI	Muokkaus on valmis
 	FR	Modification effectuée
 	JP	編集完了
 	NL	Wijzigen klaar
@@ -10877,6 +11102,7 @@ DOWN
 	DE	Runter
 	EN	Down
 	ES	Abajo
+	FI	Alas
 	FR	Bas
 	JP	下
 	NL	Neer
@@ -10889,6 +11115,7 @@ EDIT
 	DE	Editieren
 	EN	Edit
 	ES	Editar
+	FI	Muokkaa
 	FR	Modifier
 	HE	ערוך
 	IT	Modifica
@@ -10925,6 +11152,7 @@ PLAYLIST_SAVE
 	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:
 	EN	Press RIGHT again to save playlist as:
 	ES	Presionar DERECHA para guardar la lista como:
+	FI	Paina OIKEALLE uudestaan tallentaaksesi soittolistan nimellä:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
 	IT	Premi DESTRA ancora per salvare la lista di esecuzione come:
 	JP	プレイリストを保存するにはRIGHTをもう一度押してください :
@@ -10938,6 +11166,7 @@ PLAYLIST_AS
 	DE	Wiedergabeliste unter folgendem Namen speichern:
 	EN	Save current playlist as:
 	ES	Guardar la lista actual como:
+	FI	Tallenna nykyinen soittolista nimellä:
 	FR	Enregistrer la liste de lecture sous :
 	IT	Salva la lista di esecuzione in uso come:
 	JP	現在のプレイリストを別の名前で保存する :
@@ -10951,6 +11180,7 @@ PLAYLIST_SAVING
 	DE	Speichere Wiedergabeliste als:
 	EN	Saving current playlist as:
 	ES	Guardando la lista actual como:
+	FI	Tallennetaan nykyinen soittolista nimellä:
 	FR	Enregistre la liste de lecture sous :
 	IT	Salvataggio della lista di esecuzione in uso come:
 	JP	現在のプレイリストを別の名前で保存する :
@@ -10964,6 +11194,7 @@ INFORMATION
 	DE	Informationen
 	EN	Information
 	ES	Información
+	FI	Tietoja
 	FR	Infos
 	HE	מידע
 	IT	Informazioni
@@ -10978,6 +11209,7 @@ INFORMATION_MENU_PLAYER
 	DE	Player Informationen
 	EN	Player Information
 	ES	Información del reproductor
+	FI	Soittimen tiedot
 	FR	Infos platine
 	HE	מידע על הנגן
 	IT	Informazioni sul lettore
@@ -10992,6 +11224,7 @@ INFORMATION_MENU_SERVER
 	DE	Server Informationen
 	EN	Server Information
 	ES	Información del servidor
+	FI	Palvelimen tiedot
 	FR	Infos serveur
 	HE	מידע על השרת
 	IT	Informazioni sul server
@@ -11006,6 +11239,7 @@ INFORMATION_MENU_LIBRARY
 	DE	Musikbibliotheks Statistiken
 	EN	Library statistics
 	ES	Estadísticas de la colección
+	FI	Kirjaston tilastot
 	FR	Statistiques
 	HE	סטטיסטיקות ספרייה
 	IT	Statistiche libreria
@@ -11033,6 +11267,7 @@ INFORMATION_PLAYER_NAME
 	DE	Player Name
 	EN	Player Name
 	ES	Nombre del reproductor
+	FI	Soittimen nimi
 	FR	Nom platine
 	HE	שם נגן
 	IT	Nome lettore
@@ -11047,6 +11282,7 @@ INFORMATION_PLAYER_MODEL
 	DE	Player Modell
 	EN	Player Model
 	ES	Modelo del reproductor
+	FI	Soittimen malli
 	FR	Modèle platine
 	HE	מודל הנגן
 	IT	Modello del lettore
@@ -11061,6 +11297,7 @@ INFORMATION_FIRMWARE
 	DE	Player Firmware-Version
 	EN	Player Firmware Version
 	ES	Versión de Firmware del Reproductor
+	FI	Soittimen ohjelmistoversio
 	FR	Version micrologiciel platine
 	HE	גרסת קושחה
 	IT	Versione firmware del lettore
@@ -11075,6 +11312,7 @@ INFORMATION_PLAYER_IP
 	DE	Player IP Adresse
 	EN	Player IP Address
 	ES	Dirección IP del Reproductor
+	FI	Soittimen IP-osoite
 	FR	Adresse IP platine
 	HE	כתובת נגן
 	IT	Indirizzo IP del lettore
@@ -11088,6 +11326,7 @@ INFORMATION_PLAYER_PORT
 	DE	Player Portnummer
 	EN	Player Port Number
 	ES	Número de puerto del Reproductor
+	FI	Soittimen porttinumero
 	FR	Port platine
 	HE	פורט הנגן
 	IT	Porta del lettore
@@ -11101,6 +11340,7 @@ INFORMATION_PLAYER_MAC
 	DE	Player MAC Adresse
 	EN	Player MAC Address
 	ES	Dirección MAC del reproductor
+	FI	Soittimen MAC-osoite
 	FR	Adresse MAC platine
 	HE	MAC
 	IT	Indirizzo MAC del lettore
@@ -11115,6 +11355,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 	DE	Wireless Signalstärke
 	EN	Wireless Signal Strength
 	ES	Potencia de señal inalámbrica
+	FI	Langattoman signaalin voimakkuus
 	FR	Puissance signal sans fil
 	HE	עוצמת שידור אלחוטי
 	IT	Potenza segnale wireless
@@ -11129,6 +11370,7 @@ INFORMATION_CLIENTS
 	DE	Anzahl erkannte Player
 	EN	Total Players Recognised
 	ES	Número de Reproductores reconocidos
+	FI	Soittimia tunnistettu
 	FR	Platine(s) identifiée(s)
 	HE	מספר נגנים
 	IT	Totale lettori riconosciuti
@@ -11143,6 +11385,7 @@ INFORMATION_SERVER_IP
 	DE	Server IP Adresse
 	EN	Server IP Address
 	ES	Dirección IP del Servidor
+	FI	Palvelimen IP-osoite
 	FR	Adresse IP serveur
 	HE	כתובת שרת
 	IT	Indirizzo Ip del server
@@ -11157,6 +11400,7 @@ INFORMATION_SERVER_PORT
 	DE	Server Portnummer
 	EN	Server Port Number
 	ES	Número de puerto del Servidor
+	FI	Palvelimen porttinumero
 	FR	Port serveur
 	HE	פורט שרת
 	IT	Porta del server
@@ -11170,6 +11414,7 @@ INFORMATION_SERVER_HTTP
 	DE	Server HTTP Portnummer
 	EN	Server HTTP Port Number
 	ES	Número de puerto HTTP del Servidor
+	FI	Palvelimen HTTP porttinumero
 	FR	Port HTTP serveur
 	HE	פורט שרת
 	IT	Porta HTTP del server
@@ -11184,6 +11429,7 @@ INFORMATION_ALBUMS
 	DE	Anzahl Alben
 	EN	Total Albums
 	ES	Total de Álbumes
+	FI	Albumeja yhteensä
 	FR	Albums
 	HE	מספר אלבומים
 	IT	Numero Album
@@ -11198,6 +11444,7 @@ INFORMATION_ARTISTS
 	DE	Anzahl Interpreten
 	EN	Total Artists
 	ES	Total de Artistas
+	FI	Artisteja yhteensä
 	FR	Artistes
 	HE	מספר אמנים
 	IT	Numero Artisti
@@ -11212,6 +11459,7 @@ INFORMATION_GENRES
 	DE	Anzahl Stilrichtungen
 	EN	Total Genres
 	ES	Total de Géneros
+	FI	Tyylilajeja yhteensä
 	FR	Genres
 	HE	סוגי מוסיקה
 	IT	Generi musicali
@@ -11226,6 +11474,7 @@ INFORMATION_TRACKS
 	DE	Anzahl Titel
 	EN	Total Tracks
 	ES	Total de Temas
+	FI	Kappaleita yhteensä
 	FR	Morceaux
 	HE	מספר שירים כולל
 	IT	Totale brani
@@ -11240,6 +11489,7 @@ INFORMATION_TIME
 	DE	Gesamte Spieldauer
 	EN	Total Playing Time
 	ES	Duración Total
+	FI	Kokonaissoittoaika
 	FR	Durée totale
 	HE	זמן ניגון כולל
 	IT	Tempo totale d'ascolto
@@ -11254,6 +11504,7 @@ INFORMATION_VERSION
 	DE	Version
 	EN	Version
 	ES	Versión
+	FI	Versio
 	FR	Version
 	HE	גרסה
 	IT	Versione
@@ -11267,6 +11518,7 @@ INFORMATION_DIAGSTRING
 	DE	Versions Information
 	EN	Version Info
 	ES	Info de Versión
+	FI	Versiotieto
 	HE	גרסה
 	IT	Info versione
 	NL	Versie info
@@ -11275,6 +11527,7 @@ INFORMATION_DIAGSTRING
 INFORMATION_HOSTNAME
 	EN	Hostname
 	ES	Nombre de Host
+	FI	Laitenimi
 	IT	Nome host
 	NL	Hostnaam
 	ZH_CN	主机名字
@@ -11283,6 +11536,7 @@ INFORMATION_HOSTIP
 	DE	Host IP Addresse
 	EN	Host IP Address
 	ES	Dirección IP de Host
+	FI	Palvelimen IP osoite
 	HE	כתובת שרת
 	IT	Indirizzo IP host
 	NL	Host IP adres
@@ -11293,6 +11547,7 @@ INFORMATION_INSTALLED
 	DE	Installiert
 	EN	Installed
 	ES	Instalado
+	FI	Asennettu
 	FR	Installé
 	IT	Installato
 	JP	インストールされている
@@ -11306,6 +11561,7 @@ INFORMATION_DISABLED
 	DE	DEAKTIVIERT
 	EN	DISABLED
 	ES	DESHABILITADO
+	FI	ESTETTY
 	FR	DÉSACTIVÉ
 	HE	אין מידע
 	IT	DISABILITATO
@@ -11320,6 +11576,7 @@ INFORMATION_NO_VERSION
 	DE	Keine Versionsnummer
 	EN	No version number
 	ES	Sin número de versión
+	FI	Ei versionumeroa
 	FR	Pas de version
 	HE	אין מידע
 	IT	Nessun numero di versione
@@ -11344,6 +11601,7 @@ BEFORE
 	DE	vor
 	EN	before
 	ES	antes
+	FI	ennen
 	FR	avant
 	HE	לפני
 	IT	prima
@@ -11356,6 +11614,7 @@ AFTER
 	DE	nach
 	EN	after
 	ES	después
+	FI	jälkeen
 	FR	après
 	HE	אחרי
 	IT	dopo
@@ -11369,6 +11628,7 @@ IS
 	DE	ist
 	EN	is
 	ES	de
+	FI	on
 	FR	est
 	HE	הוא
 	IT	è
@@ -11380,6 +11640,7 @@ EQUALS
 	DE	gleich
 	EN	equals
 	ES	igual a
+	FI	yhtäkuin
 	FR	les égales moins
 	HE	שווה
 	IT	uguali
@@ -11392,6 +11653,7 @@ LESSTHAN
 	DE	kleiner als
 	EN	less than
 	ES	menos que
+	FI	Vähemmän kuin
 	FR	que plus
 	HE	פחות מ
 	IT	meno più
@@ -11404,6 +11666,7 @@ GREATERTHAN
 	DE	grösser als
 	EN	greater than
 	ES	mayores que
+	FI	suurempi kuin
 	FR	grandes que
 	HE	יותר מ
 	IT	grandi di
@@ -11416,6 +11679,7 @@ NOT
 	DE	nicht
 	EN	not
 	ES	no
+	FI	ei
 	FR	non
 	HE	לא
 	IT	non
@@ -11452,6 +11716,7 @@ SETUP_SCROLLPIXELS
 	DE	Scroll Pixel
 	EN	Scroll Pixels
 	ES	Desplazamiento de pixels
+	FI	Vieritys pikseleinä
 	HE	פיקסלים בגילגול
 	IT	Scorrimento dei pixel
 	NL	Tekstlooppixels
@@ -11461,6 +11726,7 @@ SETUP_SCROLLPIXELS_DESC
 	DE	Bei Playern mit graphischem Display kann die Anzahl Pixel, die pro Interval gescrollt wird, definiert werden. Optimieren Sie damit die Qualität und Geschwindigkeit der Anzeige. Beachten Sie dabei bitte, dass geringe Werte mit geringer Scrollrate zwar gut aussehen, aber auch erheblich mehr Leistung vom Prozessor und Netzwerk verlangen. Belassen Sie im Zweifelsfall den Vorgabewert von 7 (min. 1, max. 20).
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
 	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
+	FI	Soittimessa, jossa on graafinen näyttö, vierityksen määrää voi säätää pikseleissä. Säädä tätä yhdessä vieritysnopeuden kanssa säätääksesi nopeutta ja laatua. Huomaa, että pienet arvot vieritysnopeudessa näyttävät hyvältä, mutta vaativat enemmän palvelimelta ja verkolta. Jos et ole varma, jätä asetus 7 pikselin oletusarvoon. (Minimi 1, Maksimi 20).
 	HE	קבע את מספר הפיקסלים בכל תזוזת טקסט
 	IT	Su un lettore con schermo grafico puoi impostare il numero di pixel che il lettore scorre nell'intervallo definito sopra. Imposta questo valore assieme alla velocita' di scorrimento per regolare la velocita' con la qualita'. Nota che valori minimi con una bassa velocita' di scorrimento danno un aspetto migliore ma richiedono un server piu' potente e una rete non congestionata. Nel dubbio lascia come impostato di default a 7 pixel (min 1, max 20).
 	NL	Op een grafisch scherm kun je het aantal pixels (punten) dat de tekst elke keer loopt. Pas dit aan in combinatie met de tekstloopsnelheid om de kwaliteit van de tekstloop in te stellen.  <br>Lage waardes met een lage tekstloopsnelheid tonen mooi maar hebben een hogere serverprestatie nodig en een goed netwerk. Laat bij twijfel de waarde op de standaard van 7 staan (minimum 1, maximum 20).
@@ -11471,6 +11737,7 @@ ANY_GENRE
 	DE	Beliebige Stilrichtung
 	EN	Any Genre
 	ES	Cualquier género
+	FI	Mikä tahansa tyylilaji
 	HE	כל סוג
 	IT	Qualsiasi Genere
 	NL	Elk genre
@@ -11481,6 +11748,7 @@ ANY_VALUE
 	DE	Beliebiger Wert
 	EN	Any Value
 	ES	Cualquier valor
+	FI	Mikä tahansa arvo
 	HE	כל ערך
 	IT	Qualsiasi valore
 	NL	Elke waarde
@@ -11491,6 +11759,7 @@ ANY_TYPE
 	DE	Beliebiges Format
 	EN	Any File Format
 	ES	Cualquier formato de archivo
+	FI	Mikä tahansa tiedostomuoto
 	HE	כל קובץ
 	IT	Qualsiasi formato di file
 	NL	Elk bestandsformaat
@@ -11513,6 +11782,7 @@ FAVORITES_FAVORITE_NUM
 	DE	Favorit Nr.
 	EN	Favorite #
 	ES	Favorita #
+	FI	Suosikki nro
 	IT	Favoriti #
 	NL	Favoriet #
 	ZH_CN	最喜爱#
@@ -11521,6 +11791,7 @@ FAVORITES_RIGHT_TO_DELETE
 	DE	 (RECHTS zum löschen)
 	EN	 (RIGHT to delete)
 	ES	(RIGHT para eliminar)
+	FI	(OIKEALLE poistaaksesi)
 	IT	(DESTRA per cancellare)
 	NL	(Toets -> om te verwijderen)
 	ZH_CN	 （删除按右方向键）
@@ -11529,6 +11800,7 @@ FAVORITES_NOT_A_FAVORITE
 	DE	Kein Favorit
 	EN	Not a favorite
 	ES	No es una favorita...
+	FI	Ei suosikki
 	IT	Non piu' tra i favoriti
 	NL	Geen favoriet
 	ZH_CN	不是最喜爱的
@@ -11537,6 +11809,7 @@ FAVORITES_RIGHT_TO_ADD
 	DE	RECHTS drücken um den Favoriten zuzuordnen
 	EN	Press RIGHT to add to favorites
 	ES	Presionar RIGHT para añadir a favoritas
+	FI	Paina oikealle lisätäksesi suosikkeihin
 	IT	Premi DESTRA per aggiungere ai favoriti
 	NL	Druk -> om favoriet toe te voegen
 	ZH_CN	列入最喜爱的按右方向键
@@ -11545,6 +11818,7 @@ FAVORITES_ADDING
 	DE	Favoriten werden gespeichert...
 	EN	Saving favorites...
 	ES	Guardando favoritas...
+	FI	Tallentaa suosikkeja...
 	IT	Salvataggio favoriti...
 	NL	Bewaren favorieten...
 	ZH_CN	保存最喜爱的...
@@ -11553,6 +11827,7 @@ FAVORITES_DELETING
 	DE	Favorit wird gelöscht...
 	EN	Deleting favorite...
 	ES	Borrando favorita...
+	FI	Poistan suosikkia...
 	IT	Cancellazione favoriti...
 	NL	Verwijderen favorieten...
 	ZH_CN	删除最喜爱的...
@@ -11572,6 +11847,7 @@ SQUEEZENETWORK_CONNECTING
 	DE	Verbinde zum SqueezeNetwork...
 	EN	Connecting to SqueezeNetwork...
 	ES	Conectándose a SqueezeNetwork...
+	FI	Yhdistetään SqueezeNetworkiin...
 	FR	Connecte à SqueezeNetwork...
 	IT	In connessione a SqueezeNetwork...
 	NL	Connectie maken met SqueezeNetwork...
@@ -11581,6 +11857,7 @@ SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine Squeezebox2 oder neuer.
 	EN	Sorry, requires a newer Squeezebox.
 	ES	Lo siento, requiere Squeezebox2
+	FI	Valitettavasti tämä tarvitsee uudemman Squeezeboxin.
 	FR	Cette fonction nécessite Squeezebox2 ou plus récent.
 	IT	Scusa, e' necessario uno Squeezebox piu' recente.
 	NL	Sorry, nieuwere Squeezebox nodig.
@@ -11590,6 +11867,7 @@ SETUP_SCROLLMODE
 	DE	Scroll Modus
 	EN	Scroll Mode
 	ES	Modo de Desplazamiento
+	FI	Vieritystila
 	HE	גילגול טקסט
 	IT	Modalita' di scorrimento
 	NL	Tekstloopmode
@@ -11599,6 +11877,7 @@ SETUP_SCROLLMODE_DESC
 	DE	Sie können wählen, wie Text, der zu breit für eine Zeile ist, auf der zweiten Zeile angezeigt werden soll. Der normale Scrollmodus wartet erst während der definierten Zeitdauer, bevor die Zeile vorbei gescrollt wird. Dies wiederholt sich so lange, wie der Text angezeigt werden soll. Alternativ kann der Scrollvorgang nach einmaligem Scrollen unterdrückt oder gänzlich deaktiviert werden.
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
 	ES	Se puede elegir la forma en que un reproductor mostrará texto en la segunda línea en los casos en que sea demasiado largo para mostrarse en la pantalla. El modo de desplazamiento horizontal esperará por el intervalo de Pausa de Desplazamiento y luego desplazará el texto para mostrar la línea completa. El desplazamiento continuará mientras el reproductor esé mostrando esta pantalla. Los modos alternativos permiten desplazar el texto una sola vez y luego parar, o no desplazar el texto en ningún momento.
+	FI	Voit valita mitä soitin näyttää ruudun toisella rivillä, kun teksti on liian pitkä mahtuakseen ruudulle. Vakio horisontaalinen vieritystila odottaa vierityksen taukointervallin verran ja vierittää sitten tekstiä näyttääkseen koko rivin. Vieritys jatkuu niin kauan kun soitin näyttää samaa tietoa. Vaihtoehtoiset tilat mahdollistavat tekstin vierityksen kerran tai ei vieritystä lainkaan.
 	HE	סוג הגלגול כאשר טקסט מוצג גדול מהתצוגה הנראית
 	IT	Puoi selezionare come il lettore visualizzera' il testo troppo lungo sulla seconda linea dello schermo. Il modo di scorrimento standard aspettera' il tempo impostato in Pausa di scorrimento e quindi scorrera' il testo per visualizzare l'intera linea. Lo scorrimento continuera' fino a che il lettore visualizzera' questa schermata. I modi alternativi sono lo scorrimento una sola volta o il non scorrimento.
 	NL	Je kunt selecteren hoe de speler de tekst op de tweede regel moet tonen als die te lang is om in ÃÂ©ÃÂ©n keer te laten zien.<br>De standaard "Tekst laten lopen" optie wacht tot de pauzeinterval voorbij is en laat dan de tekst lopen. Het lopen zal voortduren zolang de tekst op het scherm getoond wordt.<br>De alternatieve manieren laten  de tekst ÃÂ©ÃÂ©n keer lopen en stopt vervolgens of laat de tekst in het geheel niet lopen.
@@ -11608,6 +11887,7 @@ SETUP_SCROLLMODE_DEFAULT
 	DE	Normales Scrollen
 	EN	Standard scrolling
 	ES	Desplazamiento estándar
+	FI	Normaali vieritys
 	HE	גלגול רגיל
 	IT	Scorrimento normale
 	NL	Tekst laten lopen
@@ -11617,6 +11897,7 @@ SETUP_SCROLLMODE_SCROLLONCE
 	DE	Einmal scrollen, dann anhalten
 	EN	Scroll once and stop
 	ES	Desplazar una vez y parar
+	FI	Vieritä kerran ja pysähdy
 	HE	גלגול חד פעמי
 	IT	Scorri solo una volta
 	NL	Laat tekst &eacute;&eacute;n keer lopen en stop
@@ -11626,6 +11907,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	DE	Nicht scrollen
 	EN	Do not scroll
 	ES	No desplazar
+	FI	Älä vieritä
 	HE	ללא גלגול
 	IT	Non scorrere
 	NL	Niet tekst laten lopen
@@ -11635,6 +11917,7 @@ COMPILATION
 	DE	Sampler
 	EN	Compilation
 	ES	Compilación
+	FI	Kokoelma
 	NL	Verzamel
 	ZH_CN	合辑
 
@@ -11642,6 +11925,7 @@ SETUP_VARIOUSARTISTS
 	DE	Sampler
 	EN	Compilations
 	ES	Compilaciones
+	FI	Kokoelmat
 	IT	Compilation
 	NL	Verzamelalbums
 	ZH_CN	合辑
@@ -11650,6 +11934,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	DE	Sampler Alben
 	EN	Compilation Albums
 	ES	Álbumes Compilados
+	FI	Kokoelmalevyt
 	NL	Verzamelalbums
 	ZH_CN	合辑
 
@@ -11657,6 +11942,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	DE	Sie können Sampler (Alben mit mehreren Interpreten) zusammen unter "Diverse Interpreten" aufführen lassen, oder aber SlimServer anweisen, die einzelnen Lieder bei den einzelnen Interpreten aufzulisten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 	ES	Se puede elegir entre ubicar los álbumes  de compilaciones bajo "Varios Artistas" o ubicarles debajo de cada artista en la compilación.
+	FI	Voit valita näkyvätkö kokoelmalevyt yksittäisten artistien alla vai "Eri Esittäjiä" otsikon alla
 	IT	Puoi decidere di inserire gli album di compilation tutti assieme sotto "Artisti vari" o mostrarli sotto ogni voce di artista della compilation.
 	NL	Je kunt kiezen om verzamelalbums te tonen bij "Various Artists" of ze te tonen bij elke artiest in het verzamelalbum.
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
@@ -11665,6 +11951,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	DE	Sampler gruppiert auflisten
 	EN	Group compilation albums together
 	ES	Agrupar juntos los álbumes de compilaciones
+	FI	Ryhmitä kokoelmalevyt yhteen
 	IT	Raggruppa le compilation assieme
 	NL	Toon verzamelalbums bij elkaar
 	ZH_CN	把合辑组合在一起
@@ -11673,6 +11960,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	DE	Lieder aus Samplern den Interpreten zuordnen
 	EN	List compilation albums under each artist
 	ES	Listar álbumes de compilaciones debajo de cada artista
+	FI	Näytä kokoelmalevy jokaisen artistin alla
 	IT	Elenca le compilation per singolo artista
 	NL	Toon verzamelalbums bij de individuele artiesten
 	ZH_CN	把合辑发表在个别艺人中
@@ -11681,6 +11969,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	DE	Wenn Sampler gruppiert aufgeführt werden, so sind sie per Voreinstellung unter "Diverse Interpreten" zu finden. Dieser Text kann hier geändert werden.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
 	ES	Cuando los álbumes compilados se agrupan juntos, aparecen bajo "Varios Artistas" por defecto. Se puede cambiar ese nombre debajo.
+	FI	Kun kokoelmalevyt on ryhmitelty yhteen, ne näkyvät oletusarvoisesti "Eri Esittäiä" otsikon alla. Voit vaihtaa tämän otsikon alla
 	IT	Quando gli album di compilation sono raggruppati assieme, per default appaiono sotto "Artisti Vari". Puoi cambiare la denominazione piu' sotto.
 	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn komen ze standaard terecht bij "Various Artists". Je  kunt die naam hieronder wijzigen.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
@@ -11689,6 +11978,7 @@ VARIOUSARTISTS
 	DE	Diverse Interpreten
 	EN	Various Artists
 	ES	Varios Artistas
+	FI	Eri Esittäjiä
 	IT	Artisti Vari
 	ZH_CN	多位艺人
 
@@ -11696,6 +11986,7 @@ ALBUMARTIST
 	DE	Album-Interpret
 	EN	Album Artist
 	ES	Artista del Álbum
+	FI	Albumin artisti
 	IT	Album dell'artista
 	NL	Album artiest
 	ZH_CN	乐谱帖艺人
@@ -11710,6 +12001,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	DE	Alben, die Lieder enthalten, die mit einem Band Tag (TPE2) versehen sind, können unter diesem Interpreten oder bei den übrigen Interpreten des Albums aufgeführt werden. Das Band Tag TPE2 kann in einigen Programmen auch unter der Bezeichnung "Album Artist" auftauchen.
 	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 	ES	Los álbumes que contienen canciones que estan marcadas ("tagged") con una banda pueden ser listados solo bajo el nombre de ese artista o junto a todos los artistas de ese álbum. El tag "band" es conocido también como TPE2 y puede aparecer como "album artist" en algún software.
+	FI	Albumit, jotka sisältävät kappaleita, joissa on yhtyeen tiedot voidaan listata yhtyeen nimen alla tai muiden saman albumin artistien kanssa. Artisti tag tunnetaan TPE2 tai "album artist" tagina eri ohjelmissa.
 	IT	Gli album che contengono brani con Gruppo tra le Tag possono essere elencati sotto quel nome o sotto il nome degli altri artisti di quell'album. La Tag Gruppo e' anche conosciuta come TPE2 e' puo' figurare come "artista album" in qualche programma.
 	NL	Albums die liedjes hebben die Band taginformatie hebben kunnen getoond worden bij die band of bij de andere artiesten van dat album.  De band tag is ook bekend als TPE2 en heet in andere programma's soms "Album artist".
 
@@ -11717,6 +12009,7 @@ SETUP_USEBANDASALBUMARTIST_1
 	DE	Alben bei der Band aufführen
 	EN	List albums by band
 	ES	Listar álbumes por banda
+	FI	Listaa albumit yhtyeittäin
 	IT	Elenca gli album per gruppo
 	NL	Toon albums per band
 
@@ -11724,6 +12017,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	DE	Alben bei allen Interpreten des Albums aufführen
 	EN	List albums by all artists for that album
 	ES	Listar álbumes con todos los artistas de ese álbum
+	FI	Listaa albumit kaikkien albumin artistien perusteella
 	IT	Elenca gli album sotto ogni artista di quell'album
 	NL	Toon albums bij alle artiesten voor dat album
 
@@ -11731,6 +12025,7 @@ LYRICS
 	DE	Liedertexte
 	EN	Lyrics
 	ES	Letras
+	FI	Sanoitukset
 	NL	Songteksten
 
 SETUP_POWERONRESUME
@@ -11801,6 +12096,7 @@ ARTWORK
 	DE	Plattenhüllen
 	EN	Artwork
 	ES	Arte de tapa
+	FI	Kansikuvat
 	IT	Copertina
 	NL	Hoesjes
 
@@ -11808,6 +12104,7 @@ OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
 	EN	SlimServer failed retrive the resource you were looking for.
 	ES	SlimServer no pudo recuperar el recurso que estaba buscando.
+	FI	Slimserver epäonnistui noutaessaan pyytämääsi resurssia.
 	IT	Lo SlimServer non ha trovato la risorsa che stavi cercando.
 	NL	SlimServer kon de hulpbron niet benaderen die je wilde hebben.
 
@@ -11815,6 +12112,7 @@ SETUP_LARGETEXTFONT
 	DE	Grosse Schrift
 	EN	Large Text Font
 	ES	Fuente de Texto Grande
+	FI	Suuren tekstin kirjaisin
 	IT	Carattere per testo grande
 	NL	Grote tekst font
 
@@ -11822,6 +12120,7 @@ SETUP_LARGETEXTFONT_DESC
 	DE	Wählen Sie, welche Schrift Sie bei doppelter Grösse anzeigen wollen
 	EN	Choose which font you would like to use when displaying large text.
 	ES	Elegir que fuente utilizar cuando se muestra texto grande.
+	FI	Valitse mitä kirjaisinta haluat käyttää isolle tekstille.
 	IT	Scegli quale carattere usare quando visualizzi testo grande.
 	NL	Kies welk font je wilt gebruiken wanneer je grote tekst wil gebruiken.
 
@@ -11829,12 +12128,14 @@ SETUP_LARGETEXTFONT_0
 	DE	Klassisch
 	EN	Classic
 	ES	Clásico
+	FI	Klassinen
 	IT	Classico
 	NL	Klassiek
 
 SETUP_LARGETEXTFONT_1
 	EN	Modern
 	ES	Moderno
+	FI	Moderni
 	IT	Moderno
 	NL	Modern
 
