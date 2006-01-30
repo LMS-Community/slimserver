@@ -582,11 +582,15 @@ sub cli_cmd_login {
 	
 	# if we're not authorized yet, try to be...
 	if ($connections{$client_socket}{'auth'} == 0) {
+	
 		if (Slim::Web::HTTP::checkAuthorization($login, $pwd)) {
-			$::d_cli && msg("CLI: Connection requires authentication, authorized!\n");
+
+			$::d_cli && msg("CLI: Connection requires authentication: authorized!\n");
 			$connections{$client_socket}{'auth'} = 1;
 			return 0;
 		}
+
+		$::d_cli && msg("CLI: Connection requires authentication: wrong creditentials received, bye!\n");
 		return 1;
 	}
 	return 0;
