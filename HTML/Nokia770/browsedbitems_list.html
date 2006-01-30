@@ -1,4 +1,9 @@
 <!-- browsedbitems_list.html -->
+[% IF item.heading %]
+	<div class="searchHeader">
+	[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
+	</div>
+[% ELSE %]
 <tr [% IF item.odd %]class="odd"[% ELSE %]class="even"[% END %]>
 	<td width = '80'>
 		<table width = '100%' class = 'noborder'>
@@ -31,3 +36,4 @@
 		</table>
 	</td>
 </tr>
+[% END %]
