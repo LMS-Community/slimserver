@@ -40,7 +40,7 @@ sub browsedb {
 	# XXX - why do we default to genre?
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
-	my $sort      = $params->{'sort'} || "";
+	my $sort      = $params->{'sort'};
 	my $player    = $params->{'player'};
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
@@ -190,9 +190,10 @@ sub browsedb {
 		'player=' . Slim::Utils::Misc::escape($player || ''),
 		"hierarchy=$hierarchy",
 		"level=$level",
-		"sort=$sort",
 		@attrs,
 	);
+
+	if (defined $sort) { $otherparams .= '&' . "sort=$sort"; }
 
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
 	my $items     = &{$levelInfo->{'find'}}($ds, $levels[$level], \%findCriteria, undef, $sort);
@@ -294,6 +295,7 @@ sub browsedb {
 			$list_form{'descend'}      = 1;
 			$list_form{'hreftype'}     = 'browseDb';
 			$list_form{'player'}       = $player;
+			$list_form{'sort'}         = $sort;
 			$list_form{'odd'}          = ($itemnumber + 1) % 2;
 			$list_form{'skinOverride'} = $params->{'skinOverride'};
 			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
@@ -328,6 +330,7 @@ sub browsedb {
 				$list_form{'hreftype'}    = 'browseDb';
 				$list_form{'hierarchy'}   = $hierarchy;
 				$list_form{'level'}       = $level + 1;
+				$list_form{'sort'}        = $sort;
 				$list_form{'odd'}         = ($itemnumber + 1) % 2;
 				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
 
