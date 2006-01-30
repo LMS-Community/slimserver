@@ -1320,29 +1320,39 @@ sub sleepCommand {
 		$request->setStatusBadParams();
 		return;
 	}
-	
+
+
 	# Cancel the timers, we'll set them back if needed
 	Slim::Utils::Timers::killTimers($client, \&_sleepStartFade);
 	Slim::Utils::Timers::killTimers($client, \&_sleepPowerOff);
 		
 	# if we have a sleep duration
 	if ($will_sleep_in > 0) {
+	
 		my $now = Time::HiRes::time();
-		my $offTime = $now + $will_sleep_in;
 		
-		# do a nice fade if time allows. The duration of the fade is 60 seconds
-		my $fadeTime = $offTime;
-		if ($will_sleep_in > 60) {
-			$fadeTime -= 60;
-		}
+		# this is when we want to power off
+		my $offTime = $now + $will_sleep_in;
+	
+		# this is the time we have to fade
+		my $fadeDuration = $offTime - $now - 1;
+		# fade for the last 60 seconds max
+		$fadeDuration = 60 if ($fadeDuration > 60); 
+
+		# time at which we start fading
+		my $fadeTime = $offTime - $fadeDuration;
 			
 		# set our timers
 		Slim::Utils::Timers::setTimer($client, $offTime, \&_sleepPowerOff);
-		Slim::Utils::Timers::setTimer($client, $fadeTime, \&_sleepStartFade) if $fadeTime != $offTime;
+		Slim::Utils::Timers::setTimer($client, $fadeTime, 
+			\&_sleepStartFade, $fadeDuration);
 
 		$client->sleepTime($offTime);
-		$client->currentSleepTime($will_sleep_in / 60); # for some reason this is minutes...
+		# for some reason this is minutes...
+		$client->currentSleepTime($will_sleep_in / 60); 
+		
 	} else {
+
 		# finish canceling any sleep in progress
 		$client->sleepTime(0);
 		$client->currentSleepTime(0);
@@ -1458,14 +1468,14 @@ sub wipecacheCommand {
 
 sub _sleepStartFade {
 	my $client = shift;
+	my $fadeDuration = shift;
 
 	$d_commands && msg("Commands::_sleepStartFade()\n");
 	
 	if ($client->isPlayer()) {
-		$client->fade_volume(-60);
+		$client->fade_volume(-$fadeDuration);
 	}
 }
-
 
 sub _sleepPowerOff {
 	my $client = shift;
