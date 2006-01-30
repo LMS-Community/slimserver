@@ -50,7 +50,7 @@ our %connections;           # hash indexed by client_sock value
                             # .. auth:       1 if connection authenticated (login)
                             # .. terminator: terminator last used by client, we
                             #                use it when replying
-                            # .. subscribe:  undef is the client is not listening
+                            # .. subscribe:  undef if the client is not listening
                             #                to anything, otherwise see below.
                             
 
@@ -638,67 +638,9 @@ sub cli_cmd_subscribe {
 # subscribe hash:
 # .. listen:      * to get everything
 #                 array ref containing array ref containing list of cmds to get
-#                 (in Request->isCommand form, i.e. [['cmd1', 'cmd2', 'cmd3']]
+#                 (in Request->isCommand form, i.e. [['cmd1', 'cmd2', 'cmd3']])
 # .. status:      hash ref:
 #                   ..<clientid> : Request object to use for client
-#
-#
-# commands we want:
-# if *: undef
-# if [[]]: [[]]
-# if status:
-#  .. client disconnect, power, repeat, shuffle, (rescan), (player name)
-#  .. (signalstrength), play/stop/pause/mode, rate, sleep, sync,
-#  .. mixer, client newsong
-
-# N    rescan          <|playlists|?>
-# N    wipecache
-# N    rescan          done
-
-# Y    sleep           <0..n|?>
-# Y    sync            <playerindex|playerid|-|?>
-# Y    power           <0|1|?|>
-# Y    mixer           volume                      <0..100|-100..+100|?>
-# Y    mixer           bass                        <0..100|-100..+100|?>
-# Y    mixer           treble                      <0..100|-100..+100|?>
-# Y    mixer           pitch                       <80..120|-100..+100|?>
-# Y    mixer           muting                      <|?>
-# Y    mode            <play|pause|stop|?>
-# Y    play
-# Y    pause           <0|1|>
-# Y    stop
-# Y    rate            <rate|?>
-# Y    time|gototime   <0..n|-n|+n|?>
-# Y    playlist        index|jump                  <index|?>
-# Y    playlist        delete                      <index>
-# Y    playlist        zap                         <index>
-# Y    playlist        move                        <fromindex>                 <toindex>
-# Y    playlist        clear
-# Y    playlist        shuffle                     <0|1|2|?|>
-# Y    playlist        repeat                      <0|1|2|?|>
-# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
-# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        playtracks                  <searchterms>    
-# Y    playlist        loadtracks                  <searchterms>    
-# Y    playlist        addtracks                   <searchterms>    
-# Y    playlist        inserttracks                <searchterms>    
-# Y    playlist        deletetracks                <searchterms>   
-# Y    playlist        play|load                   <item> (item can be a song, playlist or directory)
-# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
-# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
-# Y    playlist        resume                      <playlist>    
-# Y    playlist        save                        <playlist>    
-# Y    playlistcontrol <tagged parameters>
-# Y    client          disconnect
-# Y    client          reconnect
-# Y    playlist        load_done
-
-# Y    playlist        newsong
-
-# Y    client          forget
 
 
 # cancels all subscriptions
@@ -748,18 +690,25 @@ sub cli_subscribe_status {
 	if ($subparam ne '-') {
 		
 		# copy the request
-		my $copy = $request->virginCopy();
+		my $statusrequest = $request->virginCopy();
 
-		$connections{$client_socket}{'subscribe'}{'status'}{$clientid} = $copy;
+		$connections{$client_socket}{'subscribe'}{'status'}{$clientid} = $statusrequest;
 
-		# start the timer
-#		Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2,
-#				\&main::forceStopServer);
+		if ($subparam > 0) {
+			# start the timer
+			Slim::Utils::Timers::setTimer($statusrequest, 
+				Time::HiRes::time() + $subparam,
+				\&cli_subscribe_status_output);
+		}
 
 	} else {
+	
+		my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
 
 		delete $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
-#		Slim::Utils::Timers::killOneTimer(undef, whatever);
+
+		Slim::Utils::Timers::killOneTimer($statusrequest,
+			\&cli_subscribe_status_output);
 	}
 	
 	cli_subscribe_manage();
@@ -799,8 +748,12 @@ sub cli_subscribe_manage {
 sub cli_subscribe_notification {
 	my $request = shift;
 
-	$d_cli_vv && msg("CLI: cli_subscribe_notification()\n");
-	
+	$::d_cli && msg("CLI: cli_subscribe_notification(" 
+		. $request->getRequestString() . ")\n");
+
+
+	# iterate over each connection, we have a single notification handler
+	# for all connections
 	foreach my $client_socket (keys %connections) {
 
 		# don't send if unsubscribed
@@ -808,31 +761,32 @@ sub cli_subscribe_notification {
 
 		# retrieve the socket object
 		$client_socket = $connections{$client_socket}{'socket'};
-		
-		# remember if we sent command
+
 		my $sent = 0;
-	
+
 		# handle sending unique commands
 		if (defined $connections{$client_socket}{'subscribe'}{'listen'}) {
 
 			# don't echo twice to the sender
 			next if ($request->source() eq 'CLI' && 
 				$request->privateData() eq $client_socket);
-			
+
 			# if we have an array in {'listen'}
 			if (ref $connections{$client_socket}{'subscribe'}{'listen'} eq 'ARRAY') {
-			
+
 				# check the command matches the list of wanted commands
 				next unless ($request->isCommand($connections{$client_socket}{'subscribe'}{'listen'}));
 			}
-			
+
 			# anything else than an array and we send everything!
-			
+
 			# write request
 			cli_request_write($client_socket, $request);
+
+			# remember we sent the command
 			$sent = 1;
 		}
-		
+
 		# commands we ignore for status (to change if other subscriptions are
 		# supported!)
 		next if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
@@ -840,41 +794,41 @@ sub cli_subscribe_notification {
 
 		# retrieve the clientid
 		my $clientid = $request->clientid();
-		
 		next if !defined $clientid;
-		
+
 		# handle status sending on changes
 		if (defined (my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid})) {
-			msg("CLI: Handling " . $request->getRequestString() . "\n");
+
 			# special case: the client is gone!
-			if ($request->isCommand([['client', 'forget']])) {
-				msg("CLI: Client is gone\n");
+			if ($request->isCommand([['client'], ['forget']])) {
+
 				# abandon ship, client is gone!
 				cli_subscribe_status($client_socket, $statusrequest, '-');
-				
+
 				# notify listener if not already done
 				cli_request_write($client_socket, $request) if !$sent;
 			}
-			
+
+			# something happened to our client, send status
 			else {
-			
-				# don't delay sending this!
+
+				# don't delay for newsong
 				if ($request->isCommand([['playlist'], ['newsong']])) {
-					msg("CLI: Immediate\n");
+
 					cli_subscribe_status_output($statusrequest);
 				}
 				
 				else {
+
 					# send everyother notif with a small delay to accomodate
 					# bursts of commands
-					msg("CLI: Delayed\n");
-					Slim::Utils::Timers::killTimers($statusrequest,
+
+					Slim::Utils::Timers::killOneTimer($statusrequest,
 						\&cli_subscribe_status_output);
+
 					Slim::Utils::Timers::setTimer($statusrequest, 
 						Time::HiRes::time() + 0.3,
 						\&cli_subscribe_status_output);
-					
-				
 				}
 			}
 		}
@@ -883,27 +837,33 @@ sub cli_subscribe_notification {
 
 sub cli_subscribe_status_output {
 	my $request = shift;
-	
+
 	$d_cli_vv && msg("CLI: cli_subscribe_status_output()\n");
-msg("CLI: SENDING\n");
-#	my $copy = $request->virginCopy();
-#	$copy->dump();
+
 	$request->cleanResults();
-	$request->dump();
 	$request->execute();
-	cli_request_write($request->privateData(), $request);
 	
-	# reset the N seconds timer
-	
+	my $client_socket = $request->privateData();
+
+	cli_request_write($client_socket, $request);
+
 	# kill the delay timer (there is at most one)
-	Slim::Utils::Timers::killTimers($request,
-		\&cli_subscribe_status_output);
-}
+	Slim::Utils::Timers::killOneTimer($request, \&cli_subscribe_status_output);
 
-sub cli_subscribe_status_periodic {
-	my $whataver = shift;
+	# set the timer according to the subscribe value
+	my $delay = $request->getParam('subscribe');
 
-	$d_cli_vv && msg("CLI: cli_subscribe_status_periodic()\n");
+	if (!defined $delay || $delay eq '-') {
+		# Houston we have a problem, this should not happen!
+		cli_subscribe_status($client_socket, $request, '-');
+	}
+
+	elsif ($delay > 0) {
+
+		Slim::Utils::Timers::setTimer($request, 
+			Time::HiRes::time() + $delay,
+			\&cli_subscribe_status_output);
+	}
 }
 
 

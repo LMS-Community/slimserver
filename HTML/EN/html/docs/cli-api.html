@@ -5,7 +5,8 @@
 
 <h4>Introduction</h4>
 
-<p>The SlimServer provides a command-line interface to the Slim Devices
+<p>
+	The SlimServer provides a command-line interface to the Slim Devices
 	players via TCP/IP.  After starting
 	the server, commands and queries may be sent by connecting to a
 	specific TCP/IP port.  The server
@@ -13,94 +14,173 @@
 	requested data (for queries). By default, the SlimServer will listen
 	for connections on TCP/IP port 9090. This format is designed for
 	ease of integration into AMX, Crestron and other automation
-	systems.</p>
-
-<p>The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
+	systems.
+</p>
+<p>
+	The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
 	hexadecimal 0x0A). The server accepts LF, CR or 0x00 (or any combination
 	thereof) as end of line, and replies with whatever was used for the command.
 	For strings, SlimServer uses the UTF-8 charset. Some extended queries allow
-	to return data in a different charset.</p>
-
-<p>To use the command line interface interactively, use the telnet
+	to return data in a different charset.
+</p>
+<p>
+	To use the command line interface interactively, use the telnet
 	command from your system's command prompt: <em>telnet localhost
 	9090</em> and when it connects, you can start typing commands.
 	Beware that the server expects parameters to be encoded using
 	percent-style escaping (see below); &quot; and \ are not supported
-	as in shell-like environments. </p>
-
-<p>For debugging purposes, CLI formatted commands can be sent using
+	as in shell-like environments.
+</p>
+<p>
+	For debugging purposes, CLI formatted commands can be sent using
 	standard in and out. This support is only available on Unix platforms (MacOS
 	X included), and must be enabled by launching the server with the 
-	&quot;--stdio&quot; command line option.</p>
+	&quot;--stdio&quot; command line option.
+</p>
 
  
 <hr>
 <h4>Changes starting from SlimServer 6.5</h4>
-<p>The following changes or new commands are available starting with
-	SlimServer 6.5:</p>
+<p>
+	The following syntax changes apply to the CLI in SlimServer 6.5. <b>These 
+	changes may impact CLI clients.</b>
+</p>
 <ul>
-<li>The Command Line Interface is now a plugin. It can be disabled if not
-	used.</li>
-<li>The charset parameter now applies only to field values, not to tags. See the 
-	<a href="#Notes">charset notes</a>.</li>
-<li>0x00 is now a valid end of line / command separator. In addition, the
-	server replies with whatever combination of CR, LF and 0x00 was used in
-	the query.</li>
-<li>Changed &quot;<a href="#mixermuting">mixer muting</a>&quot; to be 
-	coherent with other commands. There is now a query mode 
-	&quot;mixer muting ?&quot;, and parameters 1 or 0 are accepted.</li>
-<li>Changed &quot;<a href="#sync">sync ?</a>&quot; to return &quot;-&quot; 
-	instead of  nothing if the player is not synced. This is coherent with 
-	using &quot;-&quot; to unsync the player.</li>
-<li>Documented correctly system support for 
-	&quot;<a href="#mixerbass">mixer bass</a>&quot;, 
-	&quot;<a href="#mixertreble">mixer treble</a>&quot; and
-	&quot;<a href="#mixerpitch">mixer pitch</a>&quot;. These 3 options are
-	not (yet) supported on the most recent players, SqueezeBox2 and SqueezeBox3.
-	Pitch is only supported by SqueezeBox 1 players; bass and treble are
-	supported by SliMP3 and SqueezeBox 1 players.</li>
-<li>Updated the &quot;<a href="#status">status</a>&quot; query to only return 
-	bass, treble and pitch information for players that support them.</li>
-<li>Added the &quot;<a href="#clientforget">client forget</a>&quot; command.</li>
-<li>Added the &quot;<a href="#alarms">alarms</a>&quot; extended query and its
-    companion the &quot;<a href="#alarm">alarm</a>&quot; extended command.</li>
-<li>Added the &quot;<a href="#shutdown">shutdown</a>&quot; command.</li>
-<li>Changed command &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
-	to accept a list of comma-separated track_ids as parameter.</li>
-<li>Changed &quot;<a href="#sync">sync</a>&quot; and 
-	&quot;<a href="#status">status</a>&quot; queries to return their list of 
-	synced players as comma-separated (instead of space-separated).</li>
-<li>Added a note about paths and urls being double URL encoded.</li>
+	<li>
+		The Command Line Interface is now a plugin. It can be disabled if not
+		used.
+	</li>
+	<li>
+		The charset parameter now applies only to field values, and no longer to
+		tags as well. See the <a href="#Notes">charset notes</a>.
+	</li>
+	<li>
+		Changed &quot;<a href="#sync">sync ?</a>&quot; to return &quot;-&quot;
+		instead of nothing if the player is not synced. This is coherent with
+		using &quot;-&quot; to unsync the player.
+	</li>
+	<li>
+		Changed &quot;<a href="#sync">sync</a>&quot; and 
+		&quot;<a href="#status">status</a>&quot; queries to return their list of 
+		synced players as comma-separated (instead of space-separated).
+	</li>
+	<li>
+		Command &quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;
+		is deprecated. Please use commands &quot;<a href="#play">play</a>&quot;, 
+		&quot;<a href="#stop">stop</a>&quot; and
+		&quot;<a href="#pause">pause</a>&quot;. The query 
+		&quot;<a href="#mode">mode ?</a>&quot; is not affected by this change.
 </ul>
-<h4>Changes starting from SlimServer 6.2</h4>
-<p>The following changes or new commands are available starting with
-	SlimServer 6.2:</p>
+<p>
+	The following changes or new commands are available starting with
+	SlimServer 6.5. These changes should not have any impact on existing 
+	clients:
+</p>
 <ul>
-<li>Changed &quot;<a href="#playlists">playlists</a>&quot; command to
-	return IDs for playlists. The new &quot;<a
-	href="#playlisttracks">playlisttracks</a>&quot; query returns the
-	playlist tracks. Finally, command &quot;<a
-	href="#playlistcontrol">playlistcontrol</a>&quot; now accepts a
-	playlist_id parameter.</li>
-<li>Added optional &quot;charset&quot; parameter to all extended queries, 
-	allowing them to return data in something different than utf8. See the 
-	<a href="#Notes">charset notes</a> and the definitions of 
-	&quot;<a href="#players">players</a>&quot;, 
-	&quot;<a href="#genres">genres</a>&quot;, 
-	&quot;<a href="#artists">artists</a>&quot;, 
-	&quot;<a href="#albums">albums</a>&quot;, 
-	&quot;<a href="#titles">titles</a>&quot;, 
-	&quot;<a href="#playlists">playlists</a>&quot;, 
-	&quot;<a href="#playlisttracks">playlisttracks</a>&quot;, 
-	&quot;<a href="#songinfo">songinfo</a>&quot; and 
-	&quot;<a href="#status">status</a>&quot;.</li>
-<li>Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
-    rescanning only the playlists.</li>
-<li>Due to internal changes to SlimServer, the 
-	&quot;<a href="#mode">mode</a>&quot; command or query does no longer support 
-    parameter &quot;off&quot;.</li>
-<li>&quot;<a href="#listen">listen</a>&quot; now supports a query mode:
-	&quot;listen ?&quot;.</li>
+	<li>
+		Added the &quot;<a href="#clientforget">client forget</a>&quot; command.
+	</li>
+	<li>
+		Added the &quot;<a href="#alarms">alarms</a>&quot; extended query and 
+		its companion the &quot;<a href="#alarm">alarm</a>&quot; extended 
+		command.
+	</li>
+	<li>
+		Added the &quot;<a href="#shutdown">shutdown</a>&quot; command.
+	</li>
+	<li>
+		Added the &quot;<a href="#subscribe">subscribe</a>&quot; command.
+	</li>
+	<li>
+		Added the &quot;subscribe&quot; parameter to the
+		&quot;<a href="#status">status</a>&quot; query.
+	</li>
+	<li>
+		Updated command 
+		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
+		to accept a list of comma-separated track_ids as parameter.
+	</li>
+	<li>
+		0x00 is now a valid end of line / command separator. In addition, the
+		server replies with whatever combination of CR, LF and 0x00 was used in
+		the query.
+	</li>
+	<li>
+		Documented correctly system support for 
+		&quot;<a href="#mixerbass">mixer bass</a>&quot;, 
+		&quot;<a href="#mixertreble">mixer treble</a>&quot; and
+		&quot;<a href="#mixerpitch">mixer pitch</a>&quot;. These 3 options are
+		not (yet) supported on the most recent players, Squeezebox2 and 
+		Squeezebox3. Pitch is only supported by Squeezebox1 players; bass and 
+		treble are supported by SliMP3 and Squeezebox1 players.
+	</li>
+	<li>
+		Updated the &quot;<a href="#status">status</a>&quot; query to only
+		return bass, treble and/or pitch information for players that supports
+		it.
+	</li>
+	<li>
+		Changed &quot;<a href="#mixermuting">mixer muting</a>&quot; to be
+		coherent with other commands. There is now a query mode &quot;mixer
+		muting ?&quot;, and parameters 1 or 0 are accepted.
+	</li>
+	<li>
+		Added a <a href="#Notes">note</a> about paths and urls being double URL
+		encoded.
+	</li>
+	<li>
+		Added a <a href="#DC">Deprecated commands</a> section (for 
+		&quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;.)
+	</li>
+	<li>
+		Added a <a href="#NC">Notifications</a> section to describe
+		some echoed commands available when using commands
+		&quot;<a href="#listen">listen</a>&quot; or 
+		&quot;<a href="#subscribe">subscribe</a>&quot;.
+	</li>
+</ul>
+
+<h4>Changes starting from SlimServer 6.2</h4>
+<p>
+	The following changes or new commands are available starting with
+	SlimServer 6.2:
+</p>
+<ul>
+	<li>
+		Changed &quot;<a href="#playlists">playlists</a>&quot; command to return
+		IDs for playlists. The new &quot;<a
+		href="#playlisttracks">playlisttracks</a>&quot; query returns the
+		playlist tracks. Finally, command &quot;<a
+		href="#playlistcontrol">playlistcontrol</a>&quot; now accepts a
+		playlist_id parameter.
+	</li>
+	<li>
+		Added optional &quot;charset&quot; parameter to all extended queries, 
+		allowing them to return data in something different than utf8. See the 
+		<a href="#Notes">charset notes</a> and the definitions of 
+		&quot;<a href="#players">players</a>&quot;, 
+		&quot;<a href="#genres">genres</a>&quot;, 
+		&quot;<a href="#artists">artists</a>&quot;, 
+		&quot;<a href="#albums">albums</a>&quot;, 
+		&quot;<a href="#titles">titles</a>&quot;, 
+		&quot;<a href="#playlists">playlists</a>&quot;, 
+		&quot;<a href="#playlisttracks">playlisttracks</a>&quot;, 
+		&quot;<a href="#songinfo">songinfo</a>&quot; and 
+		&quot;<a href="#status">status</a>&quot;.
+	</li>
+	<li>
+		Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
+    	rescanning only the playlists.
+    </li>
+	<li>
+		Due to internal changes to SlimServer, the 
+		&quot;<a href="#mode">mode</a>&quot; command or query does no longer
+		support parameter &quot;off&quot;.
+	</li>
+	<li>
+		&quot;<a href="#listen">listen</a>&quot; now supports a query mode:
+		&quot;listen ?&quot;.
+	</li>
 </ul>
 <hr>
 
@@ -343,7 +423,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		</blockquote>
 	</li>
 	
-	<li>Extended queries accepting the &quot;charset&quot; parameter normally
+	<li>
+		Extended queries accepting the &quot;charset&quot; parameter normally
 		return field values in utf8, Perl's lenient version of UTF-8. The value 
 		of this parameter is sent as is to Perl's Encode plumbing. As a 
 		consequence, any encoding known to Perl is valid, for example 
@@ -353,7 +434,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		unknown.
 	</li>
 
-	<li>All paths and URLs, for example the ones returned by the query
+	<li>
+		All paths and URLs, for example the ones returned by the query
 		&quot;<a href="#songinfo">songinfo</a>&quot; are double URL escaped.
 		To get a useable path (that you can use with your file system), you will
 		need to unescape the field twice. 
@@ -363,16 +445,36 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 
 
 <h4>Supported Commands</h4>
-<p>The supported commands are listed below, grouped by their scope:</p>
+<p>
+	The supported commands are listed below, grouped by their scope:
+</p>
 <ul>
-  <li><strong><a href="#GC">General</a></strong>: commands for general
-  	management of the server</li>
-  <li><strong><a href="#PC">Players</a></strong>: commands to manage and
-  	get information on players</li>
-  <li><strong><a href="#DB">Database</a></strong>: commands to manage
-  	and browse the music database</li>
-  <li><strong><a href="#PL">Playlist</a></strong>: commands to get
-  	information on and manage the playlist for each player</li>
+	<li>
+  		<strong><a href="#GC">General</a></strong>: commands for general
+  		management of the server.
+  	</li>
+	<li>
+		<strong><a href="#PC">Players</a></strong>: commands to manage and
+  		get information on players.
+  	</li>
+	<li>
+		<strong><a href="#DB">Database</a></strong>: commands to manage
+		and browse the music database.
+	</li>
+	<li>
+		<strong><a href="#PL">Playlist</a></strong>: commands to get
+		information on and manage the playlist for each player.
+	</li>
+	<li>
+		<strong><a href="#NC">Notifications</a></strong>: internal server
+		commands echoed to the CLI by using the 
+		&quot;<a href="#listen">listen</a>&quot; or 
+		&quot;<a href="#subscribe">subscribe</a>&quot; commands.
+	</li>
+	<li>
+		<strong><a href="#DC">Deprecated</a></strong>: commands which are still
+		available but not for much longer...
+	</li>
 </ul>
 
 <hr>
@@ -414,20 +516,90 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
   </p>
 </blockquote>
 
-<br><p id="listen"><strong><code>listen &lt;0|1|?&gt;</code></strong></p>
-<p>The &quot;listen&quot; command tells the server to send command
-	events to the command-line client for all activity in the
-	SlimServer, not just the activity triggered by the command line. 
-	This is useful for monitoring user activity from the remote control
-	or web interface. Use 0 to clear, 1 to set, ? to query, and no parameter to
-	toggle the listen state of the command-line connection.</p>
-<p>Examples: </p>
+<br>
+<p id="listen">
+	<strong>
+		<code>
+			listen
+			&lt;0|1|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;listen&quot; command enables to receive asynchronously internal
+	server commands (notifications) on the CLI connection. Notifications concern
+	all activity in the SlimServer, not just the activity triggered by the
+	command-line.  Use 0 to clear, 1 to set, ? to query, and no parameter to
+	toggle the listen state of the command-line connection. 
+	<br>
+	If only certain notifications are of interrest, consider using the 
+	&quot;<a href="#subscribe">subscribe</a>&quot; command
+	below. Also, the &quot;subscribe&quot; mode of the 
+	&quot;<a href="#status">status</a>&quot; query enables to track the state
+	of a given player.
+	<br>
+	Please consult section <a href="#NC">Notifications</a> for a list of 
+	possible notifications.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;listen 1&lt;LF&gt;&quot;<br>Response: <br>listen 1&lt;LF&gt;
-  <br>04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
-  <br>04:20:00:12:23:45 pause&lt;LF&gt;
-  <br>...</p>
+	<p>
+		Request: &quot;listen 1&lt;LF&gt;&quot;
+		<br>
+		Response:
+		<br>
+		listen 1&lt;LF&gt;
+		<br>
+		04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
+		<br>
+		04:20:00:12:23:45 pause&lt;LF&gt;
+		<br>
+		...
+	</p>
 </blockquote>
+
+<br>
+<p id="subscribe">
+	<strong>
+		<code>
+			subscribe
+			&lt;comma_separated_notification_list&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;subscribe&quot; command is similar to &quot;<a
+	href="#listen">listen</a>&quot; but echoes only a subset of the
+	notifications, indicated by a comma separated list. If no list is provided,
+	the notifications are turned off. This command shares some of its internal
+	plumbing with &quot;listen&quot; so using &quot;listen 0&quot; or
+	&quot;listen 1&quot; changes the list of echoed notifications (to nothing
+	and everything, respectively).
+	<br>
+	Please consult section <a href="#NC">Notifications</a> for a list of 
+	possible notifications.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;subscribe mixer,pause&lt;LF&gt;&quot;
+		<br>
+		Response:
+		<br>
+		subscribe mixer,pause&lt;LF&gt;
+		<br>
+		04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
+		<br>
+		04:20:00:12:23:45 pause&lt;LF&gt;
+		<br>
+		...
+	</p>
+</blockquote>
+
 
 <br><p><strong><code>pref &lt;prefname&gt; &lt;prefvalue|?&gt;</code></strong><br></p>
 <p>The &quot;pref&quot; command allows the caller to set and query the SlimServer's internal preferences values. </p>
@@ -715,22 +887,54 @@ preferences values.</p>
   <p>Request: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 button stop&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; ir &lt;ircode&gt; &lt;time&gt;</code></strong></p>
-<p>The &quot;ir&quot; command simulates an IR code. Valid IR codes are defined in the Default.map file.
-<p>Example:</p>
+<br>
+<p id="ir">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			ir
+			&lt;ircode&gt;
+			&lt;time&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;ir&quot; command simulates an IR code. Valid IR codes are defined
+	in the Default.map file.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>Request: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;<br>Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p id="clientforget"><strong>
-	<code>&lt;playerid&gt; client forget</code>
-	</strong></p>
-<p>The &quot;client forget&quot; command deletes the client/player from the
-   server database.
-<p>Example:</p>
+<br>
+<p id="clientforget">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			client
+			forget
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;client forget&quot; command deletes the client/player from the
+	server database.
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>  Request: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
-  <br>Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;bd:a5:a9:9b:9d:df client forget&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br><p id="players"><strong>
@@ -985,31 +1189,63 @@ preferences values.</p>
 <hr>
 <h4 id="DB">Database commands</h4>
 
-<p id="rescan"><strong><code>rescan &lt;|playlists|?&gt;</code></strong></p>
-<p>The &quot;rescan&quot; command causes SlimServer to rescan the entire music 
-   library, reloading the music file information. If &quot;playlists&quot; is 
-   indicated (&quot;rescan playlists&quot;), only the playlist directory is
-   rescanned. Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
-   SlimServer is currently scanning. Scanning occurs when SlimServer starts and 
-   following &quot;rescan&quot; and &quot;wipecache&quot; commands.</p>
-<p>Examples:</p> 
+<p id="rescan">
+	<strong>
+		<code>
+			rescan 
+			&lt;|playlists|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;rescan&quot; command causes SlimServer to rescan the entire music 
+   	library, reloading the music file information. If &quot;playlists&quot; is 
+   	indicated (&quot;rescan playlists&quot;), only the playlist directory is
+   	rescanned. Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
+   	SlimServer is currently scanning. Scanning occurs when SlimServer starts and 
+   	following &quot;rescan&quot; and 
+   	&quot;<a href="#wipecache">wipecache</a>&quot; commands.
+</p>
+<p>
+	Examples:
+</p> 
 <blockquote> 
-	<p>Request: &quot;rescan&lt;LF&gt;&quot;<br> 
-	  Response: &quot;rescan&lt;LF&gt;&quot;</p> 
-	<p>Request: &quot;rescan ?&lt;LF&gt;&quot;<br>
-	  Response: &quot;rescan 1&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;rescan&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;rescan&lt;LF&gt;&quot;
+	</p> 
+	<p>
+		Request:  &quot;rescan ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;rescan 1&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>wipecache</code></strong></p>
-<p>The &quot;wipecache&quot; command allows the caller to have the SlimServer 
-  rescan its music library, reloading the music file information. This differs
-  from the &quot;rescan&quot; command in that it first clears the tag database.
-  During a rescan triggered by &quot;wipecache&quot;, &quot;rescan ?&quot; 
-  returns true.</p>
-<p>Examples:</p>
+<br>
+<p id="wipecache">
+	<strong>
+		<code>
+			wipecache
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;wipecache&quot; command allows the caller to have the SlimServer
+	rescan its music library, reloading the music file information. This differs
+	from the &quot;<a href="#rescan">rescan</a>&quot; command in that it first
+	clears the tag database. During a rescan triggered by &quot;wipecache&quot;,
+	&quot;rescan ?&quot; returns true.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;wipecache&lt;LF&gt;&quot;<br>
-    Response: &quot;wipecache&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;wipecache&lt;LF&gt;&quot;
+		<br>
+    	Response: &quot;wipecache&lt;LF&gt;&quot;
+    </p>
 </blockquote>
 
 <br><p><strong><code>info total genres ?</code></strong></p>
@@ -1639,36 +1875,91 @@ preferences values.</p>
 <hr>
 <h4 id="PL">Playlist commands</h4>
 
-<p id="mode"><strong><code>&lt;playerid&gt; mode
-	&lt;play|pause|stop|?&gt;</code></strong></p>
-<p>The &quot;mode&quot; command allows to set the player playlist mode
-	directly, or to query the player state. &quot;mode play&quot; is
-	equivalent to &quot;play&quot;, &quot;mode stop&quot; to
-	&quot;stop&quot; and &quot;mode pause&quot; to &quot;pause 1&quot;. If the
-	player is off, &quot;mode ?&quot returned value is undefined.</p>
+<p id="play">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			play
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;play&quot; command allows to start playing the current playlist.
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;<br>
-    Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; play</code></strong></p>
-<p>The &quot;play&quot; command allows to start playing the current playlist.</p>
+<br>
+<p id="stop">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			stop
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;stop&quot; command allows to stop playing the current playlist.
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 play&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; stop</code></strong></p>
-<p>The &quot;stop&quot; command allows to stop playing the current playlist.</p>
+<br>
+<p id="pause">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			pause
+			&lt;0|1|&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	You may use &quot;pause 1&quot; to force the player to pause, 
+	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
+	toggle the pause state.
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;</p>
+	<p>
+		Request:  &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; pause &lt;0|1|&gt;</code></strong></p>
-<p>You may use &quot;pause 1&quot; to force the player to pause, &quot;pause 0&quot; to force
-  the player to unpause and &quot;pause&quot; to toggle the pause state.</p>
- <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;</p>
+<br>
+<p id="mode">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			mode
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mode&quot; command allows to query the player state and returns
+	one of &quot;play&quot;, &quot;stop&quot; or &quot;pause&quot;. If the
+	player is off, &quot;mode ?&quot; returned value is undefined.
+</p>
+<blockquote> 
+ 	<p>
+ 		Request:  &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;
+ 		<br>
+    	Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;
+    </p>
 </blockquote>
+
 
 <br><p><strong><code>&lt;playerid&gt; time &lt;number|-number|+number|?&gt;</code></strong></p>
 <p>The &quot;time&quot; command allows you to query the current number of seconds 
@@ -1994,156 +2285,473 @@ and saves in the top level of the playlists directory.</p>
   	 	cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="status"><strong><code>&lt;playerid&gt; status &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;status&quot; command returns the complete status about a given player, including the current playlist. Set the &lt;start&gt; parameter
-to &quot;-&quot; to get the playlist data starting from the current song. <br>
-In this &quot;curent&quot; mode and if repeat is on, SlimServer will attempt to return &lt;itemsPerResponse&gt;
-elements, by repeating the playlist at most once, unless shuffling is on and SlimServer is configured to re-shuffle the playlist at each loop (in which
-case it is impossible to predict the song following the last one in the playlist until this last song has finished playing).<br>
-Similarly, in the &quot;curent&quot; mode, if repeat is one, only the current song is returned, regardless of the value
-of &lt;itemsPerResponse&gt;.</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="status">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			status 
+			&lt;start&gt; 
+			&lt;itemsPerResponse&gt; 
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;status&quot; command returns the complete status about a given
+	player, including the current playlist. Set the &lt;start&gt; parameter to
+	&quot;-&quot; to get the playlist data starting from the current song.
+	<br>
+	In this &quot;curent&quot; mode and if repeat is on, SlimServer will attempt
+	to return &lt;itemsPerResponse&gt; elements, by repeating the playlist at
+	most once, unless shuffling is on and SlimServer is configured to re-shuffle
+	the playlist at each loop (in which case it is impossible to predict the
+	song following the last one in the playlist until this last song has
+	finished playing).
+	<br>
+	Similarly, in the &quot;curent&quot; mode, if repeat
+	is one, only the current song is returned, regardless of the value of
+	&lt;itemsPerResponse&gt;.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see command 
-		    &quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible fields and their identifying 
-		    letter). The default tags value for this command is &quot;gald&quot;.</td>
+		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified
+			by a letter (see command 
+			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
+			fields and their identifying letter). The default tags value for 
+			this query is &quot;gald&quot;.
+		</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			subscribe
+		</td>
+		<td>
+			&quot;-&quot; to disable or a positive number to enable automatic
+			re-generation of this status query on player change. The number
+			indicates the time interval in seconds between automatic generations
+			in case nothing happened to the player in the interval. Use
+			&quot;0&quot; to disable this feature and only be notified on player
+			or playlist changes. All values are accepted but values below 15
+			seconds are not recommended. Please see the example.
+			<br>
+			Some situations will lead to multiple status queries
+			generated very close to another. This is a limitation of the 
+			change detection &quot;algorithm&quot;. A single 
+			subscribe status query is possible per player and connection.
+			<br>
+			If the player is manually (through the web page) or automatically
+			deleted from SlimServer, &quot;client forget&quot; is sent instead
+			of the status query and the subscribtion is terminated.
+		</td>
 	</tr>
 </table>
-<p>Returned tagged parameters:</p>
+<p>
+	Returned tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
-		Not returned if no scan is in progress.</td>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning the
+			database. The results may therefore be incomplete. Not returned if
+			no scan is in progress.
+		</td>
 	</tr>
 	<tr>
-		<td>player_name</td>
-		<td>Name of the player.</td>
+		<td>
+			player_name
+		</td>
+		<td>
+			Name of the player.
+		</td>
 	</tr>
 	<tr>
-		<td>player_connected</td>
-		<td>Connected state of the player.</td>
+		<td>
+			player_connected
+		</td>
+		<td>
+			Connected state of the player.
+		</td>
 	</tr>
 	<tr>
-		<td>power</td>
-		<td>Power state of the player.</td>
+		<td>
+			power
+		</td>
+		<td>
+			Power state of the player.
+		</td>
 	</tr>
 	<tr>
-		<td>signalstrength</td>
-		<td>Signal strength (only for Squeezeboxen).</td>
+		<td>
+			signalstrength
+		</td>
+		<td>
+			Signal strength (only for Squeezeboxen).
+		</td>
 	</tr>
 	<tr>
-		<td><em>If player is on:</em></td>
-		<td></td>
+		<td>
+			<em>If player is on:</em>
+		</td>
+		<td>
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;mode</td>
-		<td>Player mode.</td>
+		<td>
+			&nbsp;&nbsp;mode
+		</td>
+		<td>
+			Player mode.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;rate</td>
-		<td>Player rate. Only if there is a current song.</td>
+		<td>
+			&nbsp;&nbsp;rate
+		</td>
+		<td>
+			Player rate. Only if there is a current song.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;time</td>
-		<td>Elapsed time into the current song. Decimal seconds. Only if current song.</td>
+		<td>
+			&nbsp;&nbsp;time
+		</td>
+		<td>
+			Elapsed time into the current song. Decimal seconds. Only if current
+			song.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;duration</td>
-		<td>Duration of the current song. Decimal seconds. Only if current song.</td>
+		<td>
+			&nbsp;&nbsp;duration
+		</td>
+		<td>
+			Duration of the current song. Decimal seconds. Only if current song.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;sleep</td>
-		<td>If set to sleep, the amount (in seconds) it was set to.</td>
+		<td>
+			&nbsp;&nbsp;sleep
+		</td>
+		<td>
+			If set to sleep, the amount (in seconds) it was set to.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;will_sleep_in</td>
-		<td>Seconds left until sleeping. Only if set to sleep.</td>
+		<td>
+			&nbsp;&nbsp;will_sleep_in
+		</td>
+		<td>
+			Seconds left until sleeping. Only if set to sleep.
+		</td>
 	</tr>
-		<td>&nbsp;&nbsp;sync_master</td>
-		<td>ID of the master player in the sync group this player belongs to. Only if synced.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;sync_slaves</td>
-		<td>Comma-separated list of player IDs, slaves to sync_master in the sync group this player belongs to. Only if synced.</td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;mixer volume</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>&nbsp;&nbsp;mixer treble</td>
-		<td>Only for SliMP3 and SqueezeBox 1 players.</td>
+		<td>
+			&nbsp;&nbsp;sync_master
+		</td>
+		<td>
+			ID of the master player in the sync group this player belongs to.
+			Only if synced.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;mixer bass</td>
-		<td>Only for SliMP3 and SqueezeBox 1 players.</td>
+		<td>
+			&nbsp;&nbsp;sync_slaves
+		</td>
+		<td>
+			Comma-separated list of player IDs, slaves to sync_master in the 
+			sync group this player belongs to. Only if synced.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;mixer pitch</td>
-		<td>Only for SqueezeBox 1 players.</td>
+		<td>
+			&nbsp;&nbsp;mixer volume
+		</td>
+		<td>
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;playlist repeat</td>
-		<td>0 no repeat, 1 repeat song, 2 repeat playlist.</td>
+		<td>
+			&nbsp;&nbsp;mixer treble
+		</td>
+		<td>
+			Only for SliMP3 and Squeezebox1 players.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;playlist shuffle</td>
-		<td>0 no shuffle, 1 shuffle songs, 2 shuffle albums.</td>
+		<td>
+			&nbsp;&nbsp;mixer bass
+		</td>
+		<td>
+			Only for SliMP3 and Squeezebox1 players.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;playlist_cur_index</td>
-		<td>Index (first is 0) of the current song in the playlist. Only if there is a playlist.</td>
+		<td>
+			&nbsp;&nbsp;mixer pitch
+		</td>
+		<td>
+			Only for Squeezebox1 players.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;playlist_tracks</td>
-		<td>Number of tracks in the current playlist. Only if there is a playlist.</td>
+		<td>
+			&nbsp;&nbsp;playlist repeat
+		</td>
+		<td>
+			0 no repeat, 1 repeat song, 2 repeat playlist.
+		</td>
 	</tr>
 	<tr>
-		<td><em>If playlist information exist/requested, for each song in the playlist:</em></td>
-		<td></td>
+		<td>
+			&nbsp;&nbsp;playlist shuffle
+		</td>
+		<td>
+			0 no shuffle, 1 shuffle songs, 2 shuffle albums.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>playlist index</b></td>
-		<td>Index (first item is 0) of the playlist entry in the player playlist. 
-		Unless &lt;start&gt; is &quot;-&quot;, the first returned instance of this field is equal 
-		to start. If &lt;start&gt; is &quot;-&quot;, the first returned instance of this field contains 
-		the index of the currently playing song in the player playlist. Item seperator.</td>
+		<td>
+			&nbsp;&nbsp;playlist_cur_index
+		</td>
+		<td>
+			Index (first is 0) of the current song in the playlist. Only if 
+			there is a playlist.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<em>Tags</em></td>
-		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
+		<td>
+			&nbsp;&nbsp;playlist_tracks
+		</td>
+		<td>
+			Number of tracks in the current playlist. Only if there is a 
+			playlist.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>If playlist information exist/requested, for each song in the
+			playlist:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>playlist index</b>
+		</td>
+		<td>
+			Index (first item is 0) of the playlist entry in the player
+			playlist. Unless &lt;start&gt; is &quot;-&quot;, the first returned
+			instance of this field is equal to start. If &lt;start&gt; is
+			&quot;-&quot;, the first returned instance of this field contains
+			the index of the currently playing song in the player playlist. Item
+			seperator.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<em>Tags</em>
+		</td>
+		<td>
+			Same tags as defined in command 
+			&quot;<a href="#songinfo">songinfo</a>&quot;.
+		</td>
 	</tr>
 </table>
-<p>Example:</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;a5:41:d2:cd:cd:05 status 0 2 tags:&lt;LF&gt;&quot;<br>
-  	 Response: &quot;a5:41:d2:cd:cd:05 status 0 2 tags: player_name:127.0.0.1 
-  	 player_connected:1 power:1 mode:play rate:1 time:13.7129358076728 duration:252.630204081633 
-  	 mixer%20volume:50 mixer%20treble:50 mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
-  	 playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3 playlist%20index:0 
-  	 title:Left%20Outside%20Alone playlist%20index:1 title:Bounce%20[Original%20Version]&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;a5:41:d2:cd:cd:05 status - 2 tags:&lt;LF&gt;&quot;<br>
-  	 Response: &quot;a5:41:d2:cd:cd:05 status - 2 tags: player_name:127.0.0.1 
-  	 player_connected:1 power:1 mode:play rate:1 time:18.721127818274 duration:252.630204081633 
-  	 mixer%20volume:50 mixer%20treble:50 mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
-  	 playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3 playlist%20index:1 
-  	 title:Bounce%20[Original%20Version] playlist%20index:2 title:Open%20Up%20[Radio%20Edit]&lt;LF&gt;&quot;</p>
+	<p>
+		<em>Simple example</em>
+		<br>
+		Request: &quot;a5:41:d2:cd:cd:05 status 0 2 tags:&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;a5:41:d2:cd:cd:05 status 0 2 tags: player_name:127.0.0.1 
+		player_connected:1 power:1 mode:play rate:1 time:13.7129358076728 
+		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50 
+		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+		playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3
+		playlist%20index:0 title:Left%20Outside%20Alone playlist%20index:1 
+		title:Bounce%20[Original%20Version]&lt;LF&gt;&quot;
+	</p>
+	<p>
+		<em>Current mode example</em>
+		<br>
+		Request: &quot;a5:41:d2:cd:cd:05 status - 2 tags:&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;a5:41:d2:cd:cd:05 status - 2 tags: player_name:127.0.0.1 
+		player_connected:1 power:1 mode:play rate:1 time:18.721127818274 
+		duration:252.630204081633 mixer%20volume:50 mixer%20treble:50 
+		mixer%20bass:50 mixer%20pitch:100 playlist%20repeat:2 
+		playlist%20shuffle:0 playlist_cur_index:1 playlist_tracks:3
+		playlist%20index:1 title:Bounce%20[Original%20Version] 
+		playlist%20index:2 title:Open%20Up%20[Radio%20Edit]&lt;LF&gt;&quot;
+	</p>
+	<p>
+		<em>Subscribe mode example</em>
+		<br>
+		Request: &quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		player_name:127.0.0.1 ... <em>(same as above)</em>
+		<br>
+		<br>
+		<em>10 seconds later, player is turned off, CLI generates and sends:</em>
+		<br>
+		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		player_name:127.0.0.1 player_connected:1 power:0&lt;LF&gt;&quot;
+		<br>
+		<br>
+		<em>30 seconds (the subscribe value) elapse, no changes to the player, the
+		CLI generates and sends:</em>
+		<br>
+		&quot;a5:41:d2:cd:cd:05 status - 2 subscribe:30 
+		player_name:127.0.0.1 player_connected:1 power:0&lt;LF&gt;&quot;
+	</p>
 </blockquote>
+
+
+<hr>
+<h4 id="NC">Notifications</h4>
+<p>
+	All commands listed in this document are notifications as well as being
+	commands and can be received when using &quot;listen 1&quot; (if they do not
+	originate from the command-line; no command is echoed twice). Note that
+	queries (for example, &quot;display ? ?&quot;) are not notified. Other
+	available notifications are listed below with their meaning. Please note
+	that other notifications or commands may exist, but internal to the server
+	and therefore not documented in this CLI document.
+</p>
+
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			client
+			&lt;new|disconnect|reconnect&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	A new client is notified using &quot;client new&quot. 
+	&quot;client disconnect&quot; is sent when a client disconnects. Unless it 
+	reconnects (as signaled by &quot;client reconnect&quot;) before a number of
+	minutes, the client will be automatically forgotten by SlimServer (as 
+	indicated by command/notification 
+	&quot;<a href="#clientforget">client forget</a>&quot;.)
+</p>
+
+<br>
+<p>
+	<strong>
+		<code>
+			rescan
+			done
+		</code>
+	</strong>
+</p>
+<p>
+	This signals the end of a &quot;<a href="#rescan">rescan</a>&quot;
+	or &quot;<a href="#wipecache">wipecache</a>&quot;.
+</p>
+
+<br>
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			unknownir
+			&lt;ircode&gt;
+			&lt;time&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This signals an IR code unkown by the server. The syntax is the same than
+	the one used by &quot;<a href="#ir">ir</a>&quot;.
+</p>
+
+<br>
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			newsong
+		</code>
+	</strong>
+</p>
+<p>
+	This signals the start of a new song as reported by the player hardware
+	(SB1/2/3 only; for SliMP3 players, this happens a couple of seconds before
+	music starts on the player).
+</p>
+
+<hr>
+<h4 id="DC">Deprecated commands</h4>
+<p>
+	The following commands are still supported but their usage is not
+	recommended.
+</p>
+
+<p id="dc_mode">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			mode
+			&lt;play|pause|stop&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mode&quot; command allows to set the player playlist
+	mode directly. &quot;mode play&quot; is equivalent to &quot;play&quot;,
+	&quot;mode stop&quot; to &quot;stop&quot; and &quot;mode pause&quot; to
+	&quot;pause 1&quot;.
+</p>
+<blockquote>
+	<p>
+		Request:  &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;
+		<br>
+    	Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;
+    </p>
+</blockquote>
+
 
 [% PROCESS helpfooter.html %]
