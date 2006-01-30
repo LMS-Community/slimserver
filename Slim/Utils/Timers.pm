@@ -14,8 +14,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 
 # Timers are stored in a list of hashes containing:
-# - the time after which the timer should fire, 
-# - a reference to the function, 
+# - the time at which the timer should fire, 
+# - a reference to an object
+# - a reference to the function,
 # - and a list of arguments.
 #
 # Two classes of timer exist - Normal timers and High Priority timers
@@ -47,20 +48,23 @@ our $timerLength = Slim::Utils::PerfMon->new('Timer Length', [0.002, 0.005, 0.01
 #
 sub checkTimers {
 
- 	# Check High Priority timers (animation) first - return if already inside one
- 	if ($checkingHighTimers) {
- 		$::d_time && msg("blocked checking high timers - already processing a high timer!\n");
- 		return;
- 	}
+	# check High Priority timers first (animation)
+	
+	# return if already inside one
+	if ($checkingHighTimers) {
+	
+		$::d_time && msg("blocked checking high timers - already processing a high timer!\n");
+		return;
+	}
 
- 	$checkingHighTimers = 1;
+	$checkingHighTimers = 1;
 
 	my $now = Time::HiRes::time();
 	my $fired = 0;
-  	
+
 	while (defined($nextHigh) && ($nextHigh <= $now)) {
 
-	    	my $high_timer = shift(@highTimers);
+		my $high_timer = shift(@highTimers);
 		$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
 		$fired++;
 
@@ -80,13 +84,14 @@ sub checkTimers {
 
 	$checkingHighTimers = 0;
 
-	# completed check of High Priority timers
 	return if $fired;
+
+	# completed check of High Priority timers
 
 	if ($Slim::Player::SLIMP3::SLIMP3Connected && !$::scanOnly) {
 		Slim::Networking::SliMP3::Protocol::readUDP();
 	}
-  	
+	
 	# Check Normal timers - return if already inside one
 	if ($checkingNormalTimers) {
 		$::d_time && msg("blocked checking normal timers - already processing a normal timer!\n");
@@ -137,7 +142,9 @@ sub adjustAllTimers {
 # Return nothing if there are no timers
 #
 sub nextTimer {
+
 	my $next = (defined($nextNormal) && !$checkingNormalTimers) ? $nextNormal : undef;
+	
 	if (defined($nextHigh) && (!defined($next) || $nextHigh < $next) && !$checkingHighTimers ) {
 		$next = $nextHigh;
 	}
@@ -172,7 +179,8 @@ sub listTimers {
 
 #
 #  Schedule a High Priority timer to fire after $when, calling $subptr with
-#  arguments @args.  Returns a reference to the timer so that it can be killed specifically later.
+#  arguments $objRef and @args.  Returns a reference to the timer so that it can
+#  be killed specifically later.
 #
 sub setHighTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
@@ -215,8 +223,9 @@ sub setHighTimer {
 }
 
 #
-#  Schedule a Normal priority timer to fire after $when, calling $subptr with
-#  arguments @args.  Returns a reference to the timer so that it can be killed specifically later.
+#  Schedule a Normal Priority timer to fire after $when, calling $subptr with
+#  arguments $objRef and @args.  Returns a reference to the timer so that it can
+#  be killed specifically later.
 #
 sub setTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
@@ -260,6 +269,10 @@ sub setTimer {
 	return $newtimer;
 }
 
+#
+#  Compares a timer with an object and function reference. Returns 1 if the
+#  time matches the object and the function (if defined), 0 otherwise.
+#
 sub matchedTimer {
 	my $timer  = shift;
 	my $objRef = shift;
@@ -282,7 +295,10 @@ sub matchedTimer {
 	return 0;
 }
 
-# throw out any pending timers that match the objRef and the subroutine
+#
+# Throw out any pending timers (Normal or High) that match the objRef and the 
+# subroutine
+#
 sub killTimers {
 	my $objRef = shift || return;
 	my $subptr = shift || return;
@@ -324,7 +340,10 @@ sub killTimers {
 	return $killed;
 }
 
-# optimize if we know there's only one outstanding timer that matches
+#
+# Throw out any pending timers (Normal or High) that match the objRef and the 
+# subroutine. Optimized version to use when callers knows a single timer matches.
+#
 sub killOneTimer {
 	my $objRef = shift || return;
 	my $subptr = shift || return;
@@ -338,7 +357,7 @@ sub killOneTimer {
 			splice( @highTimers, $i, 1);
 
 			if ($i == 0) {
-			    	$nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
+			    $nextHigh = defined($highTimers[0]) ? $highTimers[0]->{'when'} : undef;
 			}
 
 			return
@@ -367,6 +386,9 @@ sub killOneTimer {
 	}
 }
 
+#
+# Throw out all pending timers (Normal or High) matching the objRef.
+#
 sub forgetTimer {
 	my $objRef = shift;
 	my $count;
@@ -398,7 +420,9 @@ sub forgetTimer {
 	$nextNormal = defined($normalTimers[0]) ? $normalTimers[0]->{'when'} : undef;
 }
 
-# kill a specific timer
+#
+# Kill a specific timer
+#
 sub killSpecific {
 	my $timer = shift;
 	my $count;
@@ -440,7 +464,9 @@ sub killSpecific {
 	return 0;
 }
 
-# count the matching timers for a given objRef and subroutine
+#
+# Count the matching timers for a given objRef and subroutine
+#
 sub pendingTimers {
 	my $objRef = shift;
 	my $subptr = shift;
@@ -457,7 +483,9 @@ sub pendingTimers {
 	return $count;
 }
 
+#
 # Fire the first timer matching a client/subptr
+#
 sub firePendingTimer {
 	my $objRef = shift;
 	my $subptr = shift;
