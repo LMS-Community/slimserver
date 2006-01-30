@@ -17,6 +17,8 @@
 	</td>
 	<td align = 'left'>
 		<a [% PROCESS songinfoItemHRef %]><font class = [% IF item.currentsong %]'playingitemtext'[% ELSE %]'itemtext'[% END %]>[% item.title %]</font></a>
+		[% PROCESS by_from_info %]
+
 	</td>
 </tr>
 [%# /Element status_list.html %]
