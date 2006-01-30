@@ -1298,28 +1298,31 @@ sub notify {
 
 	for my $subscriber (keys %subscribers) {
 
-		# filter based on desired requests
-		# undef means no filter
-		my $requestsRef = $subscribers{$subscriber}->[1];
+		if ( $subscribers{$subscriber} ) {
+
+			# filter based on desired requests
+			# undef means no filter
+			my $requestsRef = $subscribers{$subscriber}->[1];
 		
-		if (defined($requestsRef)) {
+			if (defined($requestsRef)) {
 
-			if ($self->isNotCommand($requestsRef)) {
+				if ($self->isNotCommand($requestsRef)) {
 
-				$::d_command && $d_notify && msg("Request: Don't notify "
-					. $subscriber . " of " . $self->getRequestString() . " !~ "
-					. __filterString($requestsRef) . "\n");
+					$::d_command && $d_notify && msg("Request: Don't notify "
+						. $subscriber . " of " . $self->getRequestString() . " !~ "
+						. __filterString($requestsRef) . "\n");
 
-				next;
+					next;
+				}
 			}
-		}
 
-		$::d_command && $d_notify && msg("Request: Notifying $subscriber of " 
-			. $self->getRequestString() . " =~ "
-			. __filterString($requestsRef) . "\n");
+			$::d_command && $d_notify && msg("Request: Notifying $subscriber of " 
+				. $self->getRequestString() . " =~ "
+				. __filterString($requestsRef) . "\n");
 		
-		my $notifyFuncRef = $subscribers{$subscriber}->[0];
-		&$notifyFuncRef($self);
+			my $notifyFuncRef = $subscribers{$subscriber}->[0];
+			&$notifyFuncRef($self);
+		}
 	}
 	
 	if (!defined $dontcallExecuteCallback) {
