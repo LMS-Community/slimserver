@@ -12,6 +12,15 @@ package Slim::Control::Queries;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+################################################################################
+
+# This module implements most SlimServer queries and is designed to 
+# be exclusively called through Request.pm and the mechanisms it defines.
+
+# There are no important differences between the code for a query and one for
+# a command. Please check the commented command in Commands.pm.
+
+
 use strict;
 
 use Scalar::Util qw(blessed);
@@ -28,6 +37,7 @@ our %searchMap = (
 	'album'  => 'album.titlesearch',
 	'track'  => 'track.titlesearch',
 );
+
 
 sub alarmsQuery {
 	my $request = shift;
@@ -100,6 +110,7 @@ sub alarmsQuery {
 
 	$request->setStatusDone();
 }
+
 
 sub browseXQuery {
 	my $request = shift;
@@ -182,6 +193,7 @@ sub browseXQuery {
 	$request->setStatusDone();
 }
 
+
 sub cursonginfoQuery {
 	my $request = shift;
 	
@@ -230,6 +242,7 @@ sub cursonginfoQuery {
 	$request->setStatusDone();
 }
 
+
 sub connectedQuery {
 	my $request = shift;
 	
@@ -248,6 +261,7 @@ sub connectedQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub debugQuery {
 	my $request = shift;
@@ -279,6 +293,7 @@ sub debugQuery {
 	$request->setStatusDone();
 }
 
+
 sub displayQuery {
 	my $request = shift;
 	
@@ -301,6 +316,7 @@ sub displayQuery {
 	$request->setStatusDone();
 }
 
+
 sub displaynowQuery {
 	my $request = shift;
 	
@@ -320,6 +336,7 @@ sub displaynowQuery {
 		
 	$request->setStatusDone();
 }
+
 
 sub infoTotalQuery {
 	my $request = shift;
@@ -352,6 +369,7 @@ sub infoTotalQuery {
 	$request->setStatusDone();
 }
 
+
 sub linesperscreenQuery {
 	my $request = shift;
 	
@@ -370,6 +388,7 @@ sub linesperscreenQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub mixerQuery {
 	my $request = shift;
@@ -396,6 +415,7 @@ sub mixerQuery {
 	$request->setStatusDone();
 }
 
+
 sub modeQuery {
 	my $request = shift;
 	
@@ -414,6 +434,7 @@ sub modeQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub playerXQuery {
 	my $request = shift;
@@ -470,6 +491,7 @@ sub playerXQuery {
 	$request->setStatusDone();
 }
 
+
 sub playersQuery {
 	my $request = shift;
 
@@ -513,6 +535,7 @@ sub playersQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistXQuery {
 	my $request = shift;
@@ -576,6 +599,7 @@ sub playlistXQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlisttracksQuery {
 	my $request = shift;
@@ -650,6 +674,7 @@ sub playlisttracksQuery {
 	$request->setStatusDone();	
 }
 
+
 sub playlistsQuery {
 	my $request = shift;
 
@@ -702,6 +727,7 @@ sub playlistsQuery {
 	$request->setStatusDone();
 }
 
+
 sub playerprefQuery {
 	my $request = shift;
 	
@@ -727,6 +753,7 @@ sub playerprefQuery {
 	$request->setStatusDone();
 }
 
+
 sub powerQuery {
 	my $request = shift;
 	
@@ -745,6 +772,7 @@ sub powerQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub prefQuery {
 	my $request = shift;
@@ -770,6 +798,7 @@ sub prefQuery {
 	$request->setStatusDone();
 }
 
+
 sub rateQuery {
 	my $request = shift;
 	
@@ -789,6 +818,7 @@ sub rateQuery {
 	$request->setStatusDone();
 }
 
+
 sub rescanQuery {
 	my $request = shift;
 	
@@ -806,6 +836,7 @@ sub rescanQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub signalstrengthQuery {
 	my $request = shift;
@@ -825,6 +856,7 @@ sub signalstrengthQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub sleepQuery {
 	my $request = shift;
@@ -849,6 +881,7 @@ sub sleepQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub statusQuery {
 	my $request = shift;
@@ -1030,6 +1063,7 @@ sub statusQuery {
 	$request->setStatusDone();
 }
 
+
 sub songinfoQuery {
 	my $request = shift;
 
@@ -1139,6 +1173,7 @@ sub syncQuery {
 	$request->setStatusDone();
 }
 
+
 sub timeQuery {
 	my $request = shift;
 	
@@ -1157,6 +1192,7 @@ sub timeQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub titlesQuery {
 	my $request = shift;
@@ -1243,6 +1279,7 @@ sub titlesQuery {
 	$request->setStatusDone();
 }
 
+
 sub versionQuery {
 	my $request = shift;
 	
@@ -1299,6 +1336,7 @@ sub _normalize {
 	return ($valid, $start, $end);
 }
 
+
 sub _addSong {
 	my $request   = shift; # request
 	my $loop      = shift; # loop
@@ -1320,6 +1358,7 @@ sub _addSong {
 	# add it directly to the result loop
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
+
 
 sub _songData {
 	my $pathOrObj = shift; # song path or object

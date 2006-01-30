@@ -12,6 +12,15 @@ package Slim::Control::Commands;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+################################################################################
+
+# This module implements most SlimServer commands and is designed to 
+# be exclusively called through Request.pm and the mechanisms it defines.
+
+# The code for the "alarm" command is heavily commented and corresponds to
+# a "model" command.
+
+
 use strict;
 
 use Scalar::Util qw(blessed);
@@ -23,18 +32,30 @@ use Slim::Utils::Alarms;
 
 my $d_commands = 0; # local debug flag
 
+
 sub alarmCommand {
+	# functions designed to execute requests have a single parameter, the
+	# Request object
 	my $request = shift;
 	
+	# this is convenient to check the mapping in debug mode.
 	$d_commands && msg("Commands::alarmCommand()\n");
 
-	# check this is the correct command.
+	# check this is the correct command. In theory this should never happen
+	# but we check anyway since it is easy to err in the big dispatch table.
+	# Please check other commands for examples of more advanced usage of
+	# isNotCommand for multi-term commands
 	if ($request->isNotCommand([['alarm']])) {
+	
+		# set an appropriate error state. This will stop execute and callback
+		# and notification, etc.
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# get the parameters
+	# get the parameters. In this case the parameters are defined here only
+	# but for some commands, the parameters name start with _ and are defined
+	# in the big dispatch table (see Request.pm).
 	my $client      = $request->client();
 	my $cmd         = $request->getParam('cmd');
 	my $fade        = $request->getParam('fade');
@@ -45,22 +66,21 @@ sub alarmCommand {
 	my $playlisturl = $request->getParam('url');
 	my $playlistid  = $request->getParam('playlist_id');
 	
-	
+	# validate the parameters using request's convenient functions
 	if ($request->paramUndefinedOrNotOneOf($cmd, ['set', 'clear', 'update']) ||
 		$request->paramNotOneOfIfDefined($fade, ['0', '1']) ||
 		$request->paramNotOneOfIfDefined($dow, ['0', '1', '2', '3', '4', '5', '6', '7']) ) {
+		
+		# set an appropriate error state if something is wrong
 		$request->setStatusBadParams();
 		return;
 	}
-
+	
+	# more parameter checking and reporting
 	if (!defined $fade && !defined $dow) {
 		$request->setStatusBadParams();
 		return;
 	}
-
-#	my $set = $cmd eq 'set';
-#	my $clear = $cmd eq 'clear';
-#	my $update = $cmd eq 'update';
 	
 	my $alarm;
 	
@@ -82,11 +102,17 @@ sub alarmCommand {
 		}
 
 		$alarm->save();
+		
+		# we add a result for the benefit of the caller (in this case, most
+		# likely the CLI).
 		$request->addResult('count', 1);
 	}
 	
+	# indicate the request is done. This enables execute to continue with
+	# calling the callback and notifying, etc...
 	$request->setStatusDone();
 }
+
 
 sub buttonCommand {
 	my $request = shift;
@@ -115,6 +141,7 @@ sub buttonCommand {
 	$request->setStatusDone();
 }
 
+
 sub clientForgetCommand {
 	my $request = shift;
 	
@@ -133,6 +160,7 @@ sub clientForgetCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub debugCommand {
 	my $request = shift;
@@ -167,6 +195,7 @@ sub debugCommand {
 	$request->setStatusDone();
 }
 
+
 sub displayCommand {
 	my $request = shift;
 	
@@ -196,6 +225,7 @@ sub displayCommand {
 	$request->setStatusDone();
 }
 
+
 sub irCommand {
 	my $request = shift;
 	
@@ -221,6 +251,7 @@ sub irCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub mixerCommand {
 	my $request = shift;
@@ -301,6 +332,7 @@ sub mixerCommand {
 	$request->setStatusDone();
 }
 
+
 sub playcontrolCommand {
 	my $request = shift;
 	
@@ -372,6 +404,7 @@ sub playcontrolCommand {
 	$request->setStatusDone();
 }
 
+
 sub playlistClearCommand {
 	my $request = shift;
 	
@@ -397,6 +430,7 @@ sub playlistClearCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistDeleteCommand {
 	my $request = shift;
@@ -426,6 +460,7 @@ sub playlistDeleteCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistDeleteitemCommand {
 	my $request = shift;
@@ -500,6 +535,7 @@ sub playlistDeleteitemCommand {
 	$request->setStatusDone();
 }
 
+
 sub playlistJumpCommand {
 	my $request = shift;
 	
@@ -523,6 +559,7 @@ sub playlistJumpCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistMoveCommand {
 	my $request = shift;
@@ -554,6 +591,7 @@ sub playlistMoveCommand {
 	$request->setStatusDone();
 }
 
+
 sub playlistRepeatCommand {
 	my $request = shift;
 	
@@ -578,6 +616,7 @@ sub playlistRepeatCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistSaveCommand {
 	my $request = shift;
@@ -631,6 +670,7 @@ sub playlistSaveCommand {
 	$request->setStatusDone();
 }
 
+
 sub playlistShuffleCommand {
 	my $request = shift;
 	
@@ -659,6 +699,7 @@ sub playlistShuffleCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistXalbumCommand {
 	my $request = shift;
@@ -717,6 +758,7 @@ sub playlistXalbumCommand {
 
 	$request->setStatusDone();
 }
+
 
 sub playlistXitemCommand {
 	my $request = shift;
@@ -860,6 +902,7 @@ sub playlistXitemCommand {
 	$request->setStatusDone();
 }
 
+
 sub playlistXtracksCommand {
 	my $request = shift;
 	
@@ -942,6 +985,7 @@ sub playlistXtracksCommand {
 	$request->setStatusDone();
 }
 
+
  sub playlistZapCommand {
 	my $request = shift;
 	
@@ -990,6 +1034,7 @@ sub playlistXtracksCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistcontrolCommand {
 	my $request = shift;
@@ -1092,6 +1137,7 @@ sub playlistcontrolCommand {
 	$request->setStatusDone();
 }
 
+
 sub playerprefCommand {
 	my $request = shift;
 	
@@ -1116,6 +1162,7 @@ sub playerprefCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub powerCommand {
 	my $request = shift;
@@ -1161,6 +1208,7 @@ sub powerCommand {
 	$request->setStatusDone();
 }
 
+
 sub prefCommand {
 	my $request = shift;
 	
@@ -1184,6 +1232,7 @@ sub prefCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub rateCommand {
 	my $request = shift;
@@ -1214,6 +1263,7 @@ sub rateCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub rescanCommand {
 	my $request = shift;
@@ -1249,6 +1299,7 @@ sub rescanCommand {
 
 	$request->setStatusDone();
 }
+
 
 sub sleepCommand {
 	my $request = shift;
@@ -1300,6 +1351,7 @@ sub sleepCommand {
 	$request->setStatusDone();
 }
 
+
 sub syncCommand {
 	my $request = shift;
 	
@@ -1343,6 +1395,7 @@ sub syncCommand {
 	$request->setStatusDone();
 }
 
+
 sub timeCommand {
 	my $request = shift;
 	
@@ -1367,6 +1420,7 @@ sub timeCommand {
 	
 	$request->setStatusDone();
 }
+
 
 sub wipecacheCommand {
 	my $request = shift;
@@ -1412,6 +1466,7 @@ sub _sleepStartFade {
 	}
 }
 
+
 sub _sleepPowerOff {
 	my $client = shift;
 	
@@ -1424,6 +1479,7 @@ sub _sleepPowerOff {
 	Slim::Control::Request::executeRequest($client, ['power', 0]);
 }
 
+
 sub _mixer_mute {
 	my $client = shift;
 
@@ -1431,6 +1487,7 @@ sub _mixer_mute {
 
 	$client->mute();
 }
+
 
 sub _playlistXitem_load_done {
 	my ($client, $index, $callbackf, $callbackargs) = @_;
@@ -1450,6 +1507,7 @@ sub _playlistXitem_load_done {
 
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
 }
+
 
 sub _insert_done {
 	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
@@ -1490,6 +1548,7 @@ sub _insert_done {
 
 }
 
+
 sub _playlistXalbum_singletonRef {
 	my $arg = shift;
 
@@ -1504,6 +1563,7 @@ sub _playlistXalbum_singletonRef {
 		return [];
 	}
 }
+
 
 sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
@@ -1580,6 +1640,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}) };
 	}
 }
+
 
 sub _playlistXtracksCommand_parseListRef {
 	my $client  = shift;

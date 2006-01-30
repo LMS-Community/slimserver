@@ -12,99 +12,104 @@ package Slim::Control::Request;
 # COMMANDS & QUERIES LIST
 ######################################################################################################################################################################
 #
-# This table lists all supported commands with their parameters. 
+# This table lists all supported commands and queries with their parameters. 
 #
 # C     P0             P1                          P2                          P3               P4       P5
 ######################################################################################################################################################################
 
-# GENERAL
+#### GENERAL ####
 # N    debug           <debugflag>                 <0|1|?|>
 # N    pref            <prefname>                  <prefvalue|?>
 # N    version         ?
 
-# DATABASE
+
+#### DATABASE ####
 # N    rescan          <|playlists|?>
 # N    wipecache
-# N    playlists       <startindex>                <numitems>                  <tagged parameters>
-# Y    artists         <startindex>                <numitems>                  <tagged parameters>
+
 # Y    albums          <startindex>                <numitems>                  <tagged parameters>
+# Y    artists         <startindex>                <numitems>                  <tagged parameters>
 # Y    genres          <startindex>                <numitems>                  <tagged parameters>
-# Y    titles          <startindex>                <numitems>                  <tagged parameters>
-# Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
-# Y    playlists       <startindex>                <numitems>                  <tagged parameters>
+# N    playlists       <startindex>                <numitems>                  <tagged parameters>
 # Y    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
+# Y    songinfo        <startindex>                <numitems>                  <tagged parameters>
+# Y    titles          <startindex>                <numitems>                  <tagged parameters>
 
 
-# PLAYERS
+#### PLAYERS ####
+# Y    alarm           <tagged parameters>
 # Y    button          <buttoncode>
-# Y    ir              <ircode>                    <time>
-# Y    sleep           <0..n|?>
-# Y    signalstrength  ?
-# Y    connected       ?
-# Y    playerpref      <prefname>                  <prefvalue|?>
-# Y    sync            <playerindex|playerid|-|?>
-# Y    power           <0|1|?|>
+# Y    client          forget
 # Y    display         <line1>                     <line2>                       <duration>
-# Y    display         ?                           ?
-# Y    displaynow      ?                           ?
+# Y    ir              <ircode>                    <time>
 # Y    mixer           volume                      <0..100|-100..+100|?>
 # Y    mixer           bass                        <0..100|-100..+100|?>
 # Y    mixer           treble                      <0..100|-100..+100|?>
 # Y    mixer           pitch                       <80..120|-100..+100|?>
 # Y    mixer           muting                      <|?>
-# N    players         <startindex>                <numitems>                  <tagged parameters>
+# Y    playerpref      <prefname>                  <prefvalue|?>
+# Y    power           <0|1|?|>
+# Y    sleep           <0..n|?>
+# Y    sync            <playerindex|playerid|-|?>
+
+# Y    alarms          <startindex>                <numitems>                  <tagged parameters>
+# Y    signalstrength  ?
+# Y    connected       ?
+# Y    display         ?                           ?
+# Y    displaynow      ?                           ?
 # N    player          count                       ?
 # N    player          ip                          <index or ID>               ?
 # N    player          id|address                  <index or ID>               ?
 # N    player          name                        <index or ID>               ?
 # N    player          model                       <index or ID>               ?
 # N    player          displaytype                 <index or ID>               ?
-# Y    client          forget
-# Y    alarms          <startindex>                <numitems>                  <tagged parameters>
-# Y    alarm           <tagged parameters>
+# N    players         <startindex>                <numitems>                  <tagged parameters>
 
-# PLAYLISTS
-# Y    mode            <play|pause|stop|?>
-# Y    play
+
+#### PLAYLISTS ####
 # Y    pause           <0|1|>
-# Y    stop
+# Y    play
+# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+# Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        addtracks                   <searchterms>    
+# Y    playlist        clear
+# Y    playlist        delete                      <index>
+# Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
+# Y    playlist        deletetracks                <searchterms>   
+# Y    playlist        index|jump                  <index|?>
+# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
+# Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        inserttracks                <searchterms>    
+# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
+# Y    playlist        loadtracks                  <searchterms>    
+# Y    playlist        move                        <fromindex>                 <toindex>
+# Y    playlist        play|load                   <item> (item can be a song, playlist or directory)
+# Y    playlist        playtracks                  <searchterms>    
+# Y    playlist        repeat                      <0|1|2|?|>
+# Y    playlist        shuffle                     <0|1|2|?|>
+# Y    playlist        resume                      <playlist>    
+# Y    playlist        save                        <playlist>    
+# Y    playlist        zap                         <index>
+# Y    playlistcontrol <tagged parameters>
 # Y    rate            <rate|?>
+# Y    stop
 # Y    time|gototime   <0..n|-n|+n|?>
-# Y    genre           ?
+
 # Y    artist          ?
 # Y    album           ?
-# Y    title           ?
 # Y    duration        ?
+# Y    genre           ?
+# Y    title           ?
+# Y    mode            ?
 # Y    path            ?
 # Y    playlist        name                        ?
 # Y    playlist        url                         ?
 # Y    playlist        modified                    ?
-# Y    playlist        index|jump                  <index|?>
-# Y    playlist        delete                      <index>
-# Y    playlist        zap                         <index>
-# Y    playlist        move                        <fromindex>                 <toindex>
-# Y    playlist        clear
-# Y    playlist        shuffle                     <0|1|2|?|>
-# Y    playlist        repeat                      <0|1|2|?|>
-# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
-# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        playtracks                  <searchterms>    
-# Y    playlist        loadtracks                  <searchterms>    
-# Y    playlist        addtracks                   <searchterms>    
-# Y    playlist        inserttracks                <searchterms>    
-# Y    playlist        deletetracks                <searchterms>   
-# Y    playlist        play|load                   <item> (item can be a song, playlist or directory)
-# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
-# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
-# Y    playlist        resume                      <playlist>    
-# Y    playlist        save                        <playlist>    
-# Y    playlistcontrol <tagged parameters>
 # Y    status          <startindex>                <numitems>                  <tagged parameters>
 
-# NOTIFICATION
+
+#### NOTIFICATION ####
 # The following 'terms' are used for notifications 
 
 # Y    client          disconnect
@@ -115,6 +120,11 @@ package Slim::Control::Request;
 # Y    playlist        open                        <url>
 # Y    playlist        sync
 # N    rescan          done
+# Y    unknownir       <ircode>                    <timestamp>
+
+# DEPRECATED (BUT STILL SUPPORTED)
+# Y    mode            <play|pause|stop>
+
 
 ######################################################################################################################################################################
 
