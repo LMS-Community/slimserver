@@ -9,6 +9,11 @@ body {
 	padding: 0;
 }
 
+/* Hack for IE to prevent horizontal scrollbars with frames */
+* html {
+	overflow-y: scroll;
+}
+
 .exlisting, p, ol, ul, dl, dd, td, .stdclick, .stdedit, .exboldlisting, th, h5 {
 	color: #666;
 }
@@ -89,12 +94,8 @@ a:hover {
 	font-style: normal;
 	font-family: Verdana, Helvetica, sans-serif;
 	text-decoration: none;
-	display: inline;
 	white-space: nowrap;
 	font-size: 17px;
-	position: absolute;
-	left: 4px;
-	width: 40px;
 }
 
 pre, code, h3 {
@@ -158,21 +159,17 @@ div#topGraphicBox {
 }
 
 div#player_logo  {
-	position: absolute;
-	left: 5px;
-	top: -1px;
+	padding-left: 6px;
+	height: 36px;
 }  
 
 div#sdi_logo {
-	position: absolute;
-	left: 6px;
-	top: 0px;
+	padding-left: 6px;
+	height: 36px;
 }
 
 div#topGraphicMenu1 {
 	background-color: #737373;
-	position: relative;
-	top: 36px;
 	height: 60px;
 	width: auto;
 	margin-left: 8px;
@@ -182,8 +179,6 @@ div#topGraphicMenu1 {
 
 div#topGraphicMenu2 {
 	background-color: #737373;
-	position: relative;
-	top: 36px;
 	height: 19px;
 	width: auto;
 	margin-right: 8px;
@@ -192,8 +187,6 @@ div#topGraphicMenu2 {
 
 div#topGraphicMenu3 {
 	background-color: #c5c5c5;
-	position: relative;
-	top: 36px;
 	height: 44px;
 	width: auto;
 	margin-right: 8px;
@@ -201,68 +194,71 @@ div#topGraphicMenu3 {
 }
 
 div#topGraphicMenu1 .largeAttribute {
-	position: absolute;
-	top: 5px;
-	left: 7px;
+	padding-top: 5px;
+	margin-left: 7px;
 }
 
-div#topGraphicBox img {
+#sdi_logo img {
 	margin-top: 10px;
 	margin-left: 10px;
 }
 
+#player_logo img {
+	margin-top: 9px;
+	margin-left: 9px;
+}
+
 div#topGraphicBox #playerChooser {
 	position: absolute;
-	float: left;
 	right: 20px;
 	top: 10px;
 }
 
 div#topGraphicMenu1 #powerButtons {
 	position: absolute;
-	right: 10px;
-	top: 20px;
+	right: 18px;
+	top: 56px;
 	white-space: nowrap;
 }
 
 div#topGraphicMenu1 #transportButtons {
-	left: 10px;
+	left: 18px;
 	position: absolute;
-	top: 40px;
+	top: 76px;
 	white-space: nowrap;
 }
 
 div#topGraphicMenu1 #volumeButtons {
 	position: absolute;
-	right: 10px;
-	top: 40px;
+	right: 18px;
+	top: 76px;
 	white-space: nowrap;
 }
 
 div#topGraphicMenu2 #repeatButtons {
 	position: absolute;
-	left: 10px;
-	top: 3px;
+	left: 18px;
+	top: 100px;
 	white-space: nowrap;
 }
 
 div#topGraphicMenu2 #shuffleButtons {
 	position: absolute;
-	right: 10px;
-	top: 3px;
+	right: 18px;
+	top: 100px;
 	white-space: nowrap;
 }
 
 div#topGraphicMenu3 #playingStatus {
 	position: absolute;
-	left: 5px;
-	top: 5px;
+	left: 13px;
+	top: 121px;
 }
 
 div#topGraphicMenu3 #playingSong {
 	position: absolute;
-	left: 14px;
-	top: 22px;
+	left: 22px;
+	top: 138px;
 	color: #111;
 	font-weight: bold;	
 }
@@ -279,19 +275,17 @@ div#statusMessage form{
 
 div#topGraphicMenu3 #statusSongRemoveButton {
 	position: absolute;
-	right: 10px;
-	top: 5px;
+	right: 18px;
+	top: 131px;
 }
 
 div#homeMenu {
 	background-color: #ffffff;
-	position: relative;
 	height: auto;
 	width: auto;
+	margin-top: 5px;
 	margin-left: 8px;
-	top: 41px;
 	margin-right: 8px;
-	padding-bottom: 40px;
 }
 
 .homeMenuSection div,.settingSection .prefHead {
@@ -315,7 +309,6 @@ div#homeMenu {
 }
 
 .songInfo {
-	position: relative;
 	height: auto;
 }
 
@@ -328,22 +321,20 @@ div#homeMenu {
 }
 
 .songInfo li {
-	position: relative;
 	padding-top: 5px;
 	clear: left;
 }
 
 .songInfoTitle {
-	right: 0px;
+	float: left;
 	padding: 0px;
 	width: 25%;
 }
 
 .songInfoText {
-	right: 0px;
+	float: left;
 	padding: 0px;
-	width: 75%;
-	margin-left: 25%;
+	width: 72%;
 }
 
 .browsedbListItem {
@@ -388,9 +379,7 @@ div#songInfoHeader a{
 }
 
 .pagebar {
-	width: 100%;
 	clear: left;
-	position: relative;
 	margin-left:2px;
 	margin-top:0px;
 }
