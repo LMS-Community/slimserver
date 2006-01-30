@@ -7183,7 +7183,7 @@ ADD
 	DK	Tilføj
 	EN	Add
 	ES	Añadir
-	FI	Lis��
+	FI	Lisää
 	FR	Ajouter
 	HE	הוסף
 	IT	Aggiungi
@@ -8461,7 +8461,7 @@ ALBUMS
 	DK	Albums
 	EN	Albums
 	ES	Álbumes
-	FI	Levy&auml
+	FI	Levyä
 	FR	Albums
 	HE	אלבומים
 	JP	アルバム
