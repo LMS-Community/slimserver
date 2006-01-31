@@ -14,6 +14,13 @@ use FindBin qw($Bin);
 
 use Slim::Utils::Misc;
 
+BEGIN {
+
+	if ($^O =~ /Win32/) {
+		require Win32;
+	}
+}
+
 my $detectedOS = undef;
 my %osDetails  = ();
 
