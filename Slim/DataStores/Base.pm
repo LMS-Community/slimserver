@@ -308,7 +308,25 @@ sub init {
 
 			'resultToSortedName' => sub {
 				my $obj = shift;
-				return $obj->titlesort;
+				my $sort = shift;
+
+				if (defined($sort) && $sort =~ /^artist/ ) {
+					
+					if (blessed($obj->contributor) && $obj->contributor->can('namesort')) {
+
+						return $obj->contributor->namesort;
+						
+					} else {
+
+						return '';
+
+					}
+
+				} else {
+
+					return $obj->titlesort;
+
+				}
 			},
 
 			'find' => sub {
@@ -316,6 +334,7 @@ sub init {
 				my $level = shift;
 				my $findCriteria = shift;
 				my $idOnly = shift;
+				my $sort = shift;
 
 				# The user may not want to include all the composers / conductors
 				if (my $roles = $ds->artistOnlyRoles) {
@@ -340,10 +359,19 @@ sub init {
 					delete $findCriteria->{'album.compilation'};
 				}
 
+				# if sort includes artist ensure album contributor is used so all VA albums appear in one place
+				if ($sort =~ /artist/) {
+
+					# This allows SQL::Abstract to see a scalar
+					# reference passed and treat it as literal.
+ 					$findCriteria->{'contributorId'} = \'= albums.contributor';
+
+				}
+
 				return $ds->find({
 					'field'  => 'album',
 					'find'   => $findCriteria,
-					'sortBy' => 'album',
+					'sortBy' => $sort || 'album',
 					'idOnly' => $idOnly,
 				});
 			},
@@ -369,12 +397,13 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 				my $findCriteria = shift;
+				my $sort = shift;
 
 				$form->{'text'}       = $item->title;
 				$form->{'coverThumb'} = $item->artwork || 0;
 				$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
 
-				if (my $showYear = Slim::Utils::Prefs::get('showYear')) {
+				if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/) {
 
 					# Don't show years when browsing years..
 					if (!$findCriteria->{'year'}) {
@@ -384,7 +413,7 @@ sub init {
 				}
 
 				# Show the artist in the album view
-				if (Slim::Utils::Prefs::get('showArtist')) {
+				if (Slim::Utils::Prefs::get('showArtist') || $sort =~ /^artist/) {
 
 					if (my $contributor = $item->contributor) {
 
@@ -408,7 +437,13 @@ sub init {
 			},
 
 			'ignoreArticles' => 1,
-			'alphaPageBar' => sub { return 1; },
+			'alphaPageBar' => sub {
+				my $findCriteria = shift;
+				my $sort = shift; 
+
+				return (!defined($sort) || $sort =~ /^artist|^album/ ) ? 1 : 0;
+			},
+
 		},
 
 		'artwork' => {
