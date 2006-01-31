@@ -1,44 +1,36 @@
 package YAML::Error;
-use strict;
-use YAML;
-use Carp;
+use strict; use warnings;
+use YAML::Base; use base 'YAML::Base';
+
+field 'code';
+field 'type' => 'Error';
+field 'line';
+field 'document';
+field 'arguments' => [];
 
 my ($error_messages, %line_adjust);
 
-sub new {
-    my ($class, $code, $line, $document, @args) = @_;
-    croak "No such YAML error message: '$code'" 
-      unless defined $error_messages->{$code}; 
-    croak "Invalid YAML error code: $code\n"
-      unless $code =~ 
-        /^YAML_(PARSE|LOAD|DUMP|EMIT)_(ERR|WARN|USAGE)(_\w+)?$/;
-    my ($operation, $severity) = ($1, $2);
-    my $msg = sprintf($error_messages->{$code}, @args);
-    $msg =~ s/\\n/\n/g;
-    $class = 'YAML::Warning' if $severity eq 'WARN';
-    my $self = bless { code => $code,
-                       msg => $msg, 
-	             }, $class;  
-    if ($severity ne 'USAGE' and 
-        $operation eq 'LOAD' or 
-        $operation eq 'PARSE'
-       ) {
-        $self->{line} = $line - ($line_adjust{$code} || 0);
-        $self->{document} = $document if defined $document;
+sub format_message {
+    my $self = shift;
+    my $output = 'YAML ' . $self->type . ': ';
+    my $code = $self->code;
+    if ($error_messages->{$code}) {
+        $code = sprintf($error_messages->{$code}, @{$self->arguments});
     }
-    $self
+    $output .= $code . "\n";
+
+    $output .= '   Code: ' . $self->code . "\n"
+        if defined $self->code;
+    $output .= '   Line: ' . $self->line . "\n"
+        if defined $self->line;
+    $output .= '   Document: ' . $self->document . "\n"
+        if defined $self->document;
+    return $output;
 }
 
-sub msg { $_[0]->{msg} }
-
-sub dump {
-    my ($self) = @_;
-    local $YAML::Indent = 4;
-    local $YAML::UseHeader = 1;
-    local $YAML::UseVersion = 0;
-    local $YAML::SortKeys = [qw(code msg line document)];
-    YAML::Dump($self)
-} 
+sub error_messages {
+    $error_messages;
+}
 
 %$error_messages = map {s/^\s+//;$_} split "\n", <<'...';
 YAML_PARSE_ERR_BAD_CHARS
@@ -80,7 +72,7 @@ YAML_DUMP_ERR_FILE_OUTPUT
 YAML_DUMP_ERR_NO_HEADER
   With UseHeader=0, the node must be a plain hash or array
 YAML_DUMP_WARN_BAD_NODE_TYPE
-  Can't perform serialization for node type %s
+  Can't perform serialization for node type: '%s'
 YAML_EMIT_WARN_KEYS
   Encountered a problem with 'keys':\n%s
 YAML_DUMP_WARN_DEPARSE_FAILED
@@ -111,12 +103,6 @@ YAML_DUMP_ERR_BAD_GLOB
   '%s' is an invalid value for Perl glob
 YAML_DUMP_ERR_BAD_REGEXP
   '%s' is an invalid value for Perl Regexp
-YAML_LOAD_ERR_BAD_STR_TO_INT
-  Can't transfer string to integer
-YAML_LOAD_ERR_BAD_STR_TO_DATE
-  Can't transfer string to date object
-YAML_LOAD_ERR_BAD_STR_TO_TIME
-  Can't transfer string to time object
 YAML_LOAD_ERR_BAD_MAP_ELEMENT
   Invalid element in map
 YAML_LOAD_WARN_DUPLICATE_KEY
@@ -145,8 +131,6 @@ YAML_LOAD_WARN_NO_REGEXP_IN_REGEXP
   No 'REGEXP' element for Perl regexp
 YAML_LOAD_WARN_BAD_REGEXP_ELEM
   Unknown element '%s' in Perl regexp
-YAML_LOAD_WARN_REGEXP_CREATE
-  Couldn't create regexp qr(%s)%s: %s
 YAML_LOAD_WARN_GLOB_NAME
   No 'NAME' element for Perl glob
 YAML_LOAD_WARN_PARSE_CODE
@@ -203,4 +187,32 @@ YAML_LOAD_WARN_GLOB_IO
 package YAML::Warning;
 use base 'YAML::Error';
 
-1;
+__END__
+
+=head1 NAME
+
+YAML::Error - Error formatting class for YAML modules
+
+=head1 SYNOPSIS
+
+    $self->die('YAML_PARSE_ERR_NO_ANCHOR', $alias);
+    $self->warn('YAML_LOAD_WARN_DUPLICATE_KEY');
+
+=head1 DESCRIPTION
+
+This module provides a C<die> and a C<warn> facility.
+
+=head1 AUTHOR
+
+Ingy döt Net <ingy@cpan.org>
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006. Ingy döt Net. All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut

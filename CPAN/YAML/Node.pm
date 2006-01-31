@@ -1,12 +1,9 @@
 package YAML::Node;
+use strict; use warnings;
+use YAML::Base; use base 'YAML::Base';
+use YAML::Tag;
 
-use Exporter;
-@ISA = qw(Exporter);
-@EXPORT = qw(ynode);
-
-use strict;
-use YAML::Family;
-use Carp;
+our @EXPORT = qw(ynode);
 
 sub ynode {
     my $self;
@@ -22,20 +19,16 @@ sub ynode {
     return (ref($self) =~ /^yaml_/) ? $self : undef;
 }
 
-sub info {
-    ($_[0] =~ qr{^(?:(.*)\=)?([^=]*)\(([^\(]*)\)$}o);
-}
-
 sub new {
-    my ($class, $node, $family) = @_;
+    my ($class, $node, $tag) = @_;
     my $self;
     $self->{NODE} = $node;
-    my (undef, $type) = info($node);
+    my (undef, $type) = $class->node_info($node);
     $self->{KIND} = (not defined $type) ? 'scalar' :
                     ($type eq 'ARRAY') ? 'sequence' :
 		    ($type eq 'HASH') ? 'mapping' :
-		    croak "Can't create YAML::Node from '$type'";
-    family($self, ($family || ''));
+		    $class->die("Can't create YAML::Node from '$type'");
+    tag($self, ($tag || ''));
     if ($self->{KIND} eq 'scalar') {
 	yaml_scalar->new($self, $_[1]);
 	return \ $_[1];
@@ -46,14 +39,14 @@ sub new {
 
 sub node { $_->{NODE} }
 sub kind { $_->{KIND} }
-sub family {
+sub tag {
     my ($self, $value) = @_;
     if (defined $value) {
-       	$self->{FAMILY} = YAML::Family->new($value);
+       	$self->{TAG} = YAML::Tag->new($value);
 	return $self;
     }
     else {
-       return $self->{FAMILY};
+       return $self->{TAG};
     }
 }
 sub keys {
@@ -217,7 +210,6 @@ sub EXISTS {
 
 __END__
 
-
 =head1 NAME
 
 YAML::Node - A generic data node that encapsulates YAML information
@@ -233,7 +225,7 @@ YAML::Node - A generic data node that encapsulates YAML information
 
 yields:
 
-    --- #YAML:1.0 !ingerson.com/fruit
+    --- !ingerson.com/fruit
     orange: orange
     apple: red
     grape: green
@@ -242,17 +234,17 @@ yields:
 
 A generic node in YAML is similar to a plain hash, array, or scalar node
 in Perl except that it must also keep track of its type. The type is a
-URI called the YAML type family.
+URI called the YAML type tag.
 
 YAML::Node is a class for generating and manipulating these containers.
 A YAML node (or ynode) is a tied hash, array or scalar. In most ways it
 behaves just like the plain thing. But you can assign and retrieve and
-YAML type family URI to it. For the hash flavor, you can also assign the
+YAML type tag URI to it. For the hash flavor, you can also assign the
 order that the keys will be retrieved in. By default a ynode will offer
 its keys in the same order that they were assigned.
 
 YAML::Node has a class method call new() that will return a ynode. You
-pass it a regular node and an optional type family. After that you can
+pass it a regular node and an optional type tag. After that you can
 use it like a normal Perl node, but when you YAML::Dump it, the magical
 properties will be honored.
 
@@ -275,7 +267,7 @@ keys() works like this:
 
 produces:
 
-    --- #YAML:1.0
+    ---
     grape: green
     apple: red
 
@@ -289,10 +281,11 @@ The upcoming versions of YAML.pm will have much more information on this.
 
 =head1 AUTHOR
 
-Brian Ingerson <INGY@cpan.org>
+Ingy döt Net <ingy@cpan.org>
 
 =head1 COPYRIGHT
 
+Copyright (c) 2006. Ingy döt Net. All rights reserved.
 Copyright (c) 2002. Brian Ingerson. All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
