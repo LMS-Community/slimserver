@@ -12172,7 +12172,7 @@ SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE
 	NL	Gebruik harde schijf als tijdelijke opslag (Langzamer)
 
 SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD
-	DE	Optimierung des Datenbanck Caches (SQLite)
+	DE	Optimierung des Datenbank Caches (SQLite)
 	EN	Database Cache Size Tuning (SQLite)
 	ES	Afinación del Tamaño de Cache de la Base de Datos (SQLite)
 	HE	זכרון מטמון
