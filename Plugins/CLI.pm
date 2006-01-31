@@ -585,12 +585,15 @@ sub cli_cmd_login {
 	
 		if (Slim::Web::HTTP::checkAuthorization($login, $pwd)) {
 
-			$::d_cli && msg("CLI: Connection requires authentication: authorized!\n");
+			$::d_cli && 
+				msg("CLI: Connection requires authentication: authorized!\n");
 			$connections{$client_socket}{'auth'} = 1;
 			return 0;
 		}
 
-		$::d_cli && msg("CLI: Connection requires authentication: wrong creditentials received, bye!\n");
+		errorMsg("CLI: Connections require authentication, "
+			."wrong creditentials received. Disconnecting: " 
+			. $connections{$client_socket}{'id'} . "\n");
 		return 1;
 	}
 	return 0;

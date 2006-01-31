@@ -1008,7 +1008,7 @@ sub initial_add_done {
 sub execute {
 	my $self = shift;
 
-	Slim::Control::Request::executeRequest($self, @_);
+	return Slim::Control::Request::executeRequest($self, @_);
 }
 
 sub needsUpgrade {

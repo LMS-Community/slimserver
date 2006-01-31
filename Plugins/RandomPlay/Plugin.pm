@@ -21,6 +21,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 my %stopcommands = ();
+
 # Random play type for each client
 my %type         = ();
 # Display text for each mix type
@@ -61,18 +62,33 @@ sub findAndAdd {
 							 $type, $string, $item->id);
 
 		# Replace the current playlist with the first item / track or add it to end
-		$client->execute(['playlist', $addOnly ? 'addtracks' : 'loadtracks',
-		                  sprintf('%s=%d', $type, $item->id)]);
+		my $request = $client->execute(['playlist', 
+				                        $addOnly ? 'addtracks' : 'loadtracks',
+		                                sprintf('%s=%d', $type, $item->id())]);
+		# indicate request source
+		$request->source('PLUGIN_RANDOM');
 		
 		# Add the remaining items to the end
 		if ($type eq 'track') {
+
 			if (! defined $limit || $limit > 1) {
-				$::d_plugins && msgf("Adding %i tracks to end of playlist\n", scalar @$items);
-				$client->execute(['playlist', 'addtracks', 'listRef', $items]);
+
+				$::d_plugins && 
+					msgf("RandomPlay: Adding %i tracks to end of playlist\n", 
+					scalar @$items);
+					
+				$request = $client->execute(['playlist', 
+				                             'addtracks', 
+				                             'listRef', 
+				                             $items]);
+				$request->source('PLUGIN_RANDOM');
 			}
 		}
+
 		return $string;
+
 	} else {
+
 		return undef;
 	}
 }
@@ -168,15 +184,11 @@ sub playRandom {
 	# If addOnly, then track(s) are appended to end.  Otherwise, a new playlist is created.
 	my ($client, $type, $addOnly) = @_;
 
-	# disable this during the course of this function, since we don't want
-	# to retrigger on commands we send from here.
-	Slim::Control::Request::unsubscribe(\&commandCallback);
-
-
 	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
 
 	$type ||= 'track';
 	$type   = lc($type);
+	
 	# Whether to keep adding tracks after generating the initial playlist
 	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');;
 	
@@ -204,8 +216,8 @@ sub playRandom {
 
 	if ($numItems) {
 		unless ($addOnly) {
-			Slim::Control::Request::executeRequest($client, [qw(stop)]);
-			Slim::Control::Request::executeRequest($client, [qw(power 1)]);
+			$client->execute(['stop']);
+			$client->execute(['power', '1']);
 		}
 		Slim::Player::Playlist::shuffle($client, 0);
 		
@@ -278,25 +290,27 @@ sub playRandom {
 	}
 	
 	if ($type eq 'disable') {
-#		Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-		Slim::Control::Request::unsubscribe(\&commandCallback);
+
 		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
-		# Don't do showBrieflys if visualiser screensavers are running as the display messes up
+
+		# Don't do showBrieflys if visualiser screensavers are running as 
+		# the display messes up
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
-			$client->showBriefly(string('PLUGIN_RANDOM'), string('PLUGIN_RANDOM_DISABLED'));
+
+			$client->showBriefly(string('PLUGIN_RANDOM'), 
+                                 string('PLUGIN_RANDOM_DISABLED'));
 		}
+
 		$type{$client} = undef;
+
 	} else {
+
 		$::d_plugins && msgf("RandomPlay: Playing %s %s mode with %i items\n",
 							 $continuousMode ? 'continuous' : 'static',
 							 $type,
 							 Slim::Player::Playlist::count($client));
 
 		if ($continuousMode) {
-			# Watch out for songs ending in order to add new songs
-#			Slim::Control::Command::setExecuteCallback(\&commandCallback);
-			Slim::Control::Request::subscribe(\&commandCallback, 
-				[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
 
 			# Record current mix type.  Do this last to prevent menu items changing too soon
 			$type{$client} = $type;
@@ -480,22 +494,17 @@ sub setMode {
 }
 
 sub commandCallback {
-#	my ($client, $paramsRef) = @_;
 	my $request = shift;
 	
 	my $client = $request->client();
 
-#	my $slimCommand = $request->getRequest(0);
+	if ($request->source() eq 'PLUGIN_RANDOM') {
+		return;
+	}
 
-	# we dont care about generic ir blasts
-#	return if $slimCommand eq 'ir';
-
-	#$::d_plugins && msgf("RandomPlay: received command %s\n", join(' ', @$paramsRef));
-	$::d_plugins && msgf("RandomPlay: received command %s\n", $request->getRequestString());
-
-	# Fred: because of the filter this should never happen
-	# Fred: in addition there are valid commands (rescan f.e.) that have no
-	# Fred: client so the bt() is strange here
+	$::d_plugins && msgf("RandomPlay: received command %s\n", 
+		$request->getRequestString());
+		
 	if (!defined $client || !defined $type{$client}) {
 
 		if ($::d_plugins) {
@@ -510,37 +519,36 @@ sub commandCallback {
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 
-#	if ($slimCommand eq 'newsong'
-#		|| $slimCommand eq 'playlist' && $paramsRef->[1] eq 'delete' && $paramsRef->[2] > $songIndex) {
-	if ($request->isCommand([['playlist'], ['newsong']])
-		|| $request->isCommand([['playlist'], ['delete']]) && $request->getParam('_index') > $songIndex) {
+	if ($request->isCommand([['playlist'], ['newsong']]) || 
+	    $request->isCommand([['playlist'], ['delete']]) && 
+	    $request->getParam('_index') > $songIndex) {
 
         if ($::d_plugins) {
 			if ($request->isCommand([['playlist'], ['newsong']])) {
 				msg("RandomPlay: new song detected ($songIndex)\n");
 			} else {
-#				msg("RandomPlay: deletion detected ($paramsRef->[2]");
-				msg("RandomPlay: deletion detected (" . $request->getParam('_index') . ")\n");
+				msg("RandomPlay: deletion detected (" 
+					. $request->getParam('_index') . ")\n");
 			}
 		}
 		
-		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+		my $songsToKeep = 
+			Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+			
 		if ($songIndex && $songsToKeep ne '') {
-			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
+			$::d_plugins && 
+				msg("RandomPlay: Stripping off completed track(s)\n");
 
-#			Slim::Control::Command::clearExecuteCallback(\&commandCallback);
-			Slim::Control::Request::unsubscribe(\&commandCallback);
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
-				Slim::Control::Request::executeRequest($client, ['playlist', 'delete', 0]);
+			
+				my $request = $client->execute(['playlist', 'delete', 0]);
+				$request->source('PLUGIN_RANDOM');
 			}
-#			Slim::Control::Command::setExecuteCallback(\&commandCallback);
-			Slim::Control::Request::subscribe(\&commandCallback, 
-				[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
 		}
 
 		playRandom($client, $type{$client}, 1);
-#	} elsif (($slimCommand eq 'playlist') && exists $stopcommands{$paramsRef->[1]}) {
+
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
 		$::d_plugins && msgf("RandomPlay: cyclic mode ending due to playlist: %s command\n", $request->getRequestString());
@@ -561,10 +569,15 @@ sub initPlugin {
 	);
 	
 	checkDefaults();
+
+	# set up our subscription
+	Slim::Control::Request::subscribe(\&commandCallback, 
+		[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
 }
 
 sub shutdownPlugin {
-#	Slim::Control::Command::clearExecuteCallback(\&commandCallback);
+
+	# unsubscribe
 	Slim::Control::Request::unsubscribe(\&commandCallback);
 }
 

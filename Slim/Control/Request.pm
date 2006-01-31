@@ -1446,6 +1446,10 @@ sub dump {
 		}
 	}
 
+	if ($self->source()) {
+		$str .= " from " . $self->source() ." ";
+	}
+
 	$str .= ' (' . $self->getStatusText() . ")\n";
 		
 	msg($str);
