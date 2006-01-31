@@ -72,11 +72,6 @@ sub dirsFor {
 
 	if ($OS eq 'mac') {
 
-		if ($dir =~ /^(?:Plugins|strings|convert|types)$/) {
-
-			push @dirs, $Bin;
-		}
-
 		if ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
 
 			# For some reason the dir is lowercase on OS X.
@@ -84,13 +79,19 @@ sub dirsFor {
 				$dir = lc($dir);
 			}
 
-			push @dirs, catdir($Bin, $dir);
 			push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/$dir";
 			push @dirs, "/Library/SlimDevices/$dir";
+			push @dirs, catdir($Bin, $dir);
 
 		} else {
 
 			push @dirs, catdir($Bin, $dir);
+		}
+
+		# These are all at the top level.
+		if ($dir =~ /^(?:Plugins|strings|convert|types)$/) {
+
+			push @dirs, $Bin;
 		}
 
 	# Debian specific paths.
