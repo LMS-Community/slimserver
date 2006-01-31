@@ -25,7 +25,7 @@ One or more continuous pixels in this row indicate the end of the previous chara
 
 <p>Each file has up to 256 characters using the latin1 character set, in order from 0 to 255.  
 
-<p>The first 31 characters in each standard font are reserved for use in special graphics characters:
+<p>The first 31 characters in each standard font are reserved for use as special graphics characters.  The first 17 of these are:
 
 <ul>
 	<li>0 - Inter-character spacing
@@ -66,7 +66,7 @@ characters to display on a graphics player.  In this case the plugin
 should be distributed with font files which follow the naming
 convention: 
 <p>&lt fontname &gt . &lt line_number &gt . font . bmp
-<p>These files must be placed in the Graphics directory and slimserver
+<p>These files should be placed in the plugin's root directory and slimserver
 restarted before they are available to the server.
 
 <p>Custom fonts files define characters for the fontname specified by
