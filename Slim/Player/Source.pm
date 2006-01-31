@@ -470,9 +470,13 @@ sub playmode {
 		if ($newmode eq 'play' && $everyclient->directURL()) {
 			if (!Slim::Player::Playlist::repeat($client) &&
 				(streamingSongIndex($client) == (Slim::Player::Playlist::count($client) - 1))) {
+				
+				# buffer into emptying mode, end playback when buffer empty
 				$everyclient->playmode('playout-stop');
 			}
 			else {
+				
+				# buffer into emptying mode, continue on underrun
 				$everyclient->playmode('playout-play');
 			}
 		}
