@@ -612,6 +612,23 @@ sub playlistRepeatCommand {
 		$newvalue = (1,2,0)[Slim::Player::Playlist::repeat($client)];
 	}
 	
+	# Check the buffers for the client and reset based on repeat change
+	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
+		
+		if ($everyclient->playmode() =~ /playout/) {
+			
+			if ($newvalue) {
+				
+				# changing to repeat all or one, set to continue playback
+				$everyclient->playmode('playout-play');
+			} else {
+				
+				# repeat off, set to stop at end of track
+				$everyclient->playmode('playout-stop');
+			}
+		}
+	}
+	
 	Slim::Player::Playlist::repeat($client, $newvalue);
 	
 	$request->setStatusDone();
