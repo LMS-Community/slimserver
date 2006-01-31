@@ -576,7 +576,6 @@ our %queryPath = (
 
 our %fieldToNodeMap = (
 	'album' => 'album',
-	'artwork' => 'albumartwork',
 	'genre' => 'genre',
 	'contributor' => 'contributor',
 	'artist' => 'contributor',
