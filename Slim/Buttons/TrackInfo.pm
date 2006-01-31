@@ -485,7 +485,7 @@ sub lines {
 	my $client = shift;
 
 	# Show the title of the song
-	my $line1 = Slim::Music::Info::standardTitle($client, track($client));
+	my $line1 = Slim::Music::Info::getCurrentTitle($client, track($client));
 
 	# add position string
 	my $overlay1 = ' (' . (currentLine($client)+1)
