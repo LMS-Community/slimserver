@@ -268,10 +268,6 @@ use vars qw($VERSION $REVISION @AUTHORS);
 
 $VERSION  = '6.5b1';
 
-# old preferences settings, only used by the .slim.conf configuration.
-# real settings are stored in the new preferences file:  .slim.pref
-use vars qw($audiodir $playlistdir $httpport);
-
 use vars qw(
 	$d_artwork
 	$d_cli
@@ -328,6 +324,9 @@ use vars qw(
 	$d_usage
 	$d_filehandle
 
+	$audiodir
+	$playlistdir
+	$httpport
 	$cachedir
 	$user
 	$group
@@ -877,12 +876,6 @@ sub initSettings {
 
 	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
-
-	# upgrade mp3dir => audiodir
-	if (my $mp3dir = Slim::Utils::Prefs::get('mp3dir')) {
-		Slim::Utils::Prefs::delete("mp3dir");
-		$audiodir = $mp3dir;
-	}
 
 	# upgrade splitchars => splitList
 	if (my $splitChars = Slim::Utils::Prefs::get('splitchars')) {
