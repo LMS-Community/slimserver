@@ -1,5 +1,5 @@
 var p = 1;
-function switchPlayer(player_List){
+function changePlayer(player_List){
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
 	

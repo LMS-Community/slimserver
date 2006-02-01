@@ -96,7 +96,7 @@
 			<table  width="100%" height="24">
 				[% IF player_chooser_list  && NOT undock%]
 					<form><td align="left">
-						<select name="player" onchange="switchPlayer(this);" class="stdedit">[% player_chooser_list %]</select>
+						<select name="player" onchange="changePlayer(this);" class="stdedit">[% player_chooser_list %]</select>
 					</td></form>
 				[% ELSE %]
 					<td align="left">

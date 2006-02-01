@@ -90,6 +90,7 @@
 <![endif]-->
 </head>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0">
+
 [% IF home %]
 <div class="masthead" width="100%">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" bordercolor="#111111" height="17">
@@ -146,10 +147,10 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle and not pageHeaderMenu %]<h3>[% pagetitle %]</h3><p>[% END %]
+[% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
 [% UNLESS pwd_list %]
 	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
-	[%- PROCESS crumblist IF pwd_list %]
+	[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]<br>[% END %]
 [% pageHeaderInfo %]
 [% UNLESS noHR %]<hr>[% END %]
 [% END %]

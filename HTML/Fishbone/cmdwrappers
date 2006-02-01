@@ -140,6 +140,9 @@
 [% END %]
 
 [% BLOCK trackinfo %]
+	[% IF item.currentsong %]
+		<a name="currentsong"></a>
+	[% END %]
 	[% IF item.num || item.num == 0 %]
 			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
 			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a></b>
