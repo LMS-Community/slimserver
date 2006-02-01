@@ -147,14 +147,16 @@ BEGIN {
 
 	my @SlimINC = (
 		$Bin, 
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}), 
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'), 
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}), 
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'), 
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
+		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
 		catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
 		catdir($Bin,'lib'), 
 		catdir($Bin,'CPAN'), 
 	);
+
+	my %libPaths = map { $_ => 1 } @SlimINC;
 
 	# This works like 'use lib'
 	# prepend our directories to @INC so we look there first.
@@ -164,9 +166,8 @@ BEGIN {
 	# binaries for that version/architecture combo
 	my @failed = tryModuleLoad(@modules);
 
-	# Remove our CPAN path so we can try loading the failed modules from
-	# the default system @INC
-	splice(@INC, 0, scalar @SlimINC);
+	# Remove our paths so we can try loading the failed modules from the default system @INC
+	@INC = grep { !$libPaths{$_} } @INC;
 
 	my @reallyFailed = tryModuleLoad(@failed);
 
@@ -174,9 +175,10 @@ BEGIN {
 
 		printf("The following modules failed to load: %s\n\n", join(' ', @reallyFailed));
 
-		#print "Compress::Zlib and XML::Parser are optional modules and are not required to run SlimServer.\n\n";
-
 		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl\n\n";
+		print "Exiting..\n";
+
+		exit;
 	}
 
 	# And we're done with the trying - put our CPAN path back on @INC.

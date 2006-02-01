@@ -31,12 +31,12 @@ my %plugins = ();
 my %playerplugins = ();
 my %brokenplugins = ();
 
-BEGIN {
+INIT: {
 
 	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
-}
 
-use lib @pluginDirs;
+	unshift @INC, @pluginDirs;
+}
 
 sub pluginDirs {
 
@@ -137,6 +137,7 @@ sub initPlugins {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 
 	for my $plugin (keys %{installedPlugins()}) {
+
 		if (addPlugin($plugin, \%disabledplugins)) {
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
@@ -171,7 +172,7 @@ sub canPlugin {
 	my $fullname = "Plugins::$plugin";
 	$::d_plugins && msg("Requiring $fullname plugin.\n");	
 
-	eval "require $fullname";
+	eval "use $fullname";
 
 	if ($@) {
 		$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
