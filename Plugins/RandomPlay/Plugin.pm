@@ -21,9 +21,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 my %stopcommands = ();
-
-# Random play type for each client
-my %type         = ();
+# Information on each clients random mix
+my %mixInfo      = ();
 # Display text for each mix type
 my %displayText  = ();
 # Genres for each client (don't access this directly - use getGenres())
@@ -187,7 +186,7 @@ sub playRandom {
 	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
 
 	$type ||= 'track';
-	$type   = lc($type);
+	$type = lc($type);
 	
 	# Whether to keep adding tracks after generating the initial playlist
 	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');;
@@ -209,7 +208,7 @@ sub playRandom {
 			$::d_plugins && msgf("RandomPlay: $songsRemaining items remaining so not adding new track\n");
 		}
 
-	} elsif ($type ne 'disable' && ($type ne $type{$client} || ! $addOnly || $songsRemaining <= 0)) {
+	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
 		# Old artist/album/year is finished or new random mix started.  Add a new one
 		$numItems = 1;
 	}
@@ -225,6 +224,11 @@ sub playRandom {
 		# all genres, this clause will be ignored by find, so all genres will be used.
 		my @filteredGenres = getFilteredGenres($client);
 		my $find = {'genre.name' => \@filteredGenres};
+
+		# Prevent items that have already been played from being played again
+		if ($mixInfo{$client}) {
+			$find->{'lastPlayed'} = {'<' => $mixInfo{$client}->{'startTime'}};
+		}
 		
 		if ($type eq 'track' || $type eq 'year') {
 			# Find only tracks, not albums etc
@@ -271,7 +275,7 @@ sub playRandom {
 
 		# Do a show briefly the first time things are added, or every time a new album/artist/year
 		# is added
-		if (!$addOnly || $type ne $type{$client} || $type ne 'track') {
+		if (!$addOnly || $type ne $mixInfo{$client}->{'type'} || $type ne 'track') {
 			if ($type eq 'track') {
 				$string = $client->string("PLUGIN_RANDOM_TRACK");
 			}
@@ -300,8 +304,7 @@ sub playRandom {
 			$client->showBriefly(string('PLUGIN_RANDOM'), 
                                  string('PLUGIN_RANDOM_DISABLED'));
 		}
-
-		$type{$client} = undef;
+		$mixInfo{$client} = undef;
 
 	} else {
 
@@ -310,10 +313,12 @@ sub playRandom {
 							 $type,
 							 Slim::Player::Playlist::count($client));
 
-		if ($continuousMode) {
-
-			# Record current mix type.  Do this last to prevent menu items changing too soon
-			$type{$client} = $type;
+		if ($continuousMode && $mixInfo{$client}->{'type'} ne $type) {
+			# Record current mix type and the time it was started.
+			# Do this last to prevent menu items changing too soon
+			$::d_plugins && msgf("RandomPlay: New mix started\n");
+			$mixInfo{$client}->{'type'} = $type;
+			$mixInfo{$client}->{'startTime'} = time();
 		}
 	}
 }
@@ -321,7 +326,6 @@ sub playRandom {
 # Returns the display text for the currently selected item in the menu
 sub getDisplayText {
 	my ($client, $item) = @_;
-	
 	if (! %displayText) {
 		%displayText = (
 			track  => 'PLUGIN_RANDOM_TRACK',
@@ -332,13 +336,14 @@ sub getDisplayText {
 		)
 	}	
 	# if showing the current mode, show altered string
-	if ($item eq $type{$client}) {
+	if ($item eq $mixInfo{$client}->{'type'}) {
 		return string($displayText{$item} . '_PLAYING');
 		
 	# if a mode is active, handle the temporarily added disable option
-	} elsif ($item eq 'disable' && $type{$client}) {
-		return string('PLUGIN_RANDOM_PRESS_RIGHT')." ".string('PLUGIN_RANDOM_'.uc($type{$client}).'_DISABLE');
-	
+	} elsif ($item eq 'disable' && $mixInfo{$client}) {
+		return string('PLUGIN_RANDOM_PRESS_RIGHT')
+			   . ' '
+			   . string('PLUGIN_RANDOM_' . uc($mixInfo{$client}->{'type'}) . '_DISABLE');
 	} else {
 		return string($displayText{$item});
 	}
@@ -408,7 +413,7 @@ sub toggleGenreState {
 # Do what's necessary when play or add button is pressed
 sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
-	$::d_plugins && msgf("RandomPlay: %s %s\n", $add ? 'Add' : 'Play', $item);
+	$::d_plugins && msgf("RandomPlay: %s button pushed on type %s\n", $add ? 'Add' : 'Play', $item);
 	
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
@@ -418,14 +423,15 @@ sub handlePlayOrAdd {
 			pop @$listRef;
 		
 		# only add disable option if starting a mode from idle state
-		} elsif (!$type{$client}) {
+		} elsif (! $mixInfo{$client}) {
 			push @$listRef, 'disable';
 		}
 		Slim::Buttons::Common::param($client, 'listRef', $listRef);
-	}
 
-	# Don't play/add for genre filter or a mix that's already enabled
-	if ($item ne 'genreFilter') {	
+		# Clear any current mix type in case user is restarting an already playing mix
+		$mixInfo{$client} = undef;
+
+		# Go go go!
 		playRandom($client, $item, $add);
 	}
 }
@@ -486,7 +492,7 @@ sub setMode {
 	);
 
 	# if we have an active mode, temporarily add the disable option to the list.
-	if ($type{$client}) {
+	if ($mixInfo{$client}) {
 		push @{$params{listRef}},'disable';
 	}
 
@@ -502,13 +508,9 @@ sub commandCallback {
 		return;
 	}
 
-	if (!defined $client || !defined $type{$client}) {
-
-# No need to advertise that much this likely event
-#		if ($::d_plugins) {
-#			msg("RandomPlay: No client!\n");
-#			bt();
-#		}
+	if (!defined $client || !defined $mixInfo{$client}) {
+		# This is nothing unexpected - some events don't provide $client
+		# e.g. rescan
 		return;
 	}
 	
@@ -516,7 +518,7 @@ sub commandCallback {
 		msgf("RandomPlay: received command %s\n", 
 				$request->getRequestString());
 		msgf("RandomPlay: while in mode: %s, from %s\n",
-				$type{$client}, $client->name);
+				$mixInfo{$client}->{'type'}, $client->name);
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -549,7 +551,7 @@ sub commandCallback {
 			}
 		}
 
-		playRandom($client, $type{$client}, 1);
+		playRandom($client, $mixInfo{$client}->{'type'}, 1);
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
@@ -578,7 +580,6 @@ sub initPlugin {
 }
 
 sub shutdownPlugin {
-
 	# unsubscribe
 	Slim::Control::Request::unsubscribe(\&commandCallback);
 }
@@ -641,7 +642,7 @@ sub handleWebList {
 	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 	$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-	$params->{'pluginRandomNowPlaying'} = $type{$client};
+	$params->{'pluginRandomNowPlaying'} = $mixInfo{$client}->{'type'};
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
