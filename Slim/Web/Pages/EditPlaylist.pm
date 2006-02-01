@@ -217,7 +217,7 @@ sub renamePlaylist {
 	$params->{'level'}     = 0;
 
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my $playlistObj = $ds->objectForId('track', $params->{'id'});
+	my $playlistObj = $ds->objectForId('track', $params->{'playlist'});
 
 	if (blessed($playlistObj) && $playlistObj->can('id') && $params->{'newname'}) {
 
