@@ -191,6 +191,12 @@ sub playRandom {
 	# Whether to keep adding tracks after generating the initial playlist
 	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');;
 	
+	# If this is a new mix, store the start time
+	my $startTime = undef;
+	if ($continuousMode && $mixInfo{$client}->{'type'} ne $type) {
+		$startTime = time();
+	}
+
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
 	$::d_plugins && msg("RandomPlay: $songsRemaining songs remaining, songIndex = $songIndex\n");
@@ -313,12 +319,13 @@ sub playRandom {
 							 $type,
 							 Slim::Player::Playlist::count($client));
 
-		if ($continuousMode && $mixInfo{$client}->{'type'} ne $type) {
+		# $startTime will only be defined if this is a new (or restarted) mix
+		if (defined $startTime) {
 			# Record current mix type and the time it was started.
 			# Do this last to prevent menu items changing too soon
-			$::d_plugins && msgf("RandomPlay: New mix started\n");
+			$::d_plugins && msgf("RandomPlay: New mix started at %i\n", $startTime);
 			$mixInfo{$client}->{'type'} = $type;
-			$mixInfo{$client}->{'startTime'} = time();
+			$mixInfo{$client}->{'startTime'} = $startTime;
 		}
 	}
 }
