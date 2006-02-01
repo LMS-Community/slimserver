@@ -508,8 +508,7 @@ sub commandCallback {
 	if (!defined $client || !defined $type{$client}) {
 
 		if ($::d_plugins) {
-			msg("RandomPlay: No client!\n");
-			bt();
+			msg("RandomPlay: no client or mix to process.\n");
 		}
 		return;
 	}
