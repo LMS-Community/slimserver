@@ -502,19 +502,22 @@ sub commandCallback {
 		return;
 	}
 
-	$::d_plugins && msgf("RandomPlay: received command %s\n", 
-		$request->getRequestString());
-		
 	if (!defined $client || !defined $type{$client}) {
 
-		if ($::d_plugins) {
-			msg("RandomPlay: no client or mix to process.\n");
-		}
+# No need to advertise that much this likely event
+#		if ($::d_plugins) {
+#			msg("RandomPlay: No client!\n");
+#			bt();
+#		}
 		return;
 	}
 	
-	$::d_plugins && msgf("RandomPlay: while in mode: %s, from %s\n",
-						 $type{$client}, $client->name);
+	if ($::d_plugins) {
+		msgf("RandomPlay: received command %s\n", 
+				$request->getRequestString());
+		msgf("RandomPlay: while in mode: %s, from %s\n",
+				$type{$client}, $client->name);
+	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 

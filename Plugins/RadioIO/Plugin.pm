@@ -51,6 +51,24 @@ sub enabled {
 sub initPlugin {
 
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
+	
+	# register our functions
+	
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+
+    Slim::Control::Request::addDispatch(['radioio.stations', '_index', '_quantity'],  
+        [0, 1, 1, \&stationsQuery]);
+    Slim::Control::Request::addDispatch(['radioio.stationinfo'],  
+        [0, 1, 1, \&stationinfoQuery]);
+#    Slim::Control::Request::addDispatch(['radioio',    '?'],          
+#       [0, 1, 0, \&listenQuery]);
+#    Slim::Control::Request::addDispatch(['radioio', '_functions'], 
+#        [0, 0, 0, \&subscribeCommand]);
+
 }
 
 # Just so we don't have plain text URLs in the code.
@@ -100,9 +118,10 @@ our %functions = (
 				'overlay1' => $client->symbols('notesymbol')
 			});
 
-			$client->execute(['playlist', 'clear']);
-			$client->execute(['playlist', 'add', $url]);
-			$client->execute(['play']);
+#			$client->execute(['playlist', 'clear']);
+#			$client->execute(['playlist', 'add', $url]);
+#			$client->execute(['play']);
+			$client->execute(['playlist', 'load', $url]);
 		}
 	},
 	'add' => sub {
@@ -189,11 +208,11 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params) = @_;
 	
-	if (defined $params->{'p0'} && $stations{$params->{'p0'}}) {
-		$params->{'stationname'} = $params->{'p0'};
+	if (defined $params->{'stationinfo'} && $stations{$params->{'stationinfo'}}) {
+		$params->{'stationname'} = $params->{'stationinfo'};
 
 		# let's open the stream to get some more information
-		my $url     = "radioio://$params->{'p0'}.mp3";
+		my $url     = "radioio://$params->{'stationinfo'}.mp3";
 		my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
 
 		my $ds      = Slim::Music::Info::getCurrentDataStore();
@@ -215,6 +234,86 @@ sub handleWebIndex {
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/RadioIO/index.html', $params);
 }
+
+# handles the "radioio.stations" query
+sub stationsQuery {
+	my $request = shift;
+ 
+	#msg("RadioIO::stationsQuery()\n");
+ 
+	if ($request->isNotQuery([['radioio.stations']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	
+	my $count = scalar(@station_names);
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $idx = $start;
+		my $cnt = 0;
+
+		for my $eachstation (@station_names[$start..$end]) {
+			$request->addResultLoop('@stations', $cnt, 'station', $eachstation);
+			$cnt++;
+		}	
+	}
+
+	$request->setStatusDone();
+}
+
+# handles the "radioio.stationinfo" query
+sub stationinfoQuery {
+	my $request = shift;
+ 
+	#msg("RadioIO::stationinfoQuery()\n");
+ 
+	if ($request->isNotQuery([['radioio.stationinfo']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $station  = $request->getParam('station');
+
+	if (!defined $station || !$stations{$station}) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# let's open the stream to get some more information
+	my $url     = "radioio://$station.mp3";
+	my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
+
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
+	my $track   = $ds->objectForUrl($url, 1, 1);
+
+	if (blessed($track) && $track->can('bitrate')) {
+	
+#		print Data::Dumper::Dumper($track);
+
+		$request->addResult('fulltitle', Slim::Music::Info::getCurrentTitle(undef, $track));
+		#$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $track);
+		$request->addResult('bitrate', $track->bitrate());
+		#$params->{'bitrate'}   = $track->bitrate;
+		$request->addResult('type', $track->content_type());
+		#$params->{'type'}      = $track->content_type;
+	}
+
+	undef $stream;
+
+	$request->setStatusDone();
+}
+
+
+
+
 
 sub strings
 {

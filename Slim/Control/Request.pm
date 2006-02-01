@@ -1151,6 +1151,17 @@ sub isQuery{
 	return $self->__isCmdQuery(1, $possibleNames);
 }
 
+
+# sets callback parameters (function and arguments) in a single call...
+sub callbackParameters {
+	my $self = shift;
+	my $callbackf = shift;
+	my $callbackargs = shift;
+
+	$self->{'_cb_func'} = $callbackf;
+	$self->{'_cb_args'} = $callbackargs;	
+}
+
 # returns true if $param is undefined or not one of the possible values
 # not really a method on request data members but defined as such since it is
 # useful for command and queries implementation.
@@ -1175,15 +1186,41 @@ sub paramNotOneOfIfDefined {
 	return !grep(/$param/, @{$possibleValues});
 }
 
-# sets callback parameters (function and arguments) in a single call...
-sub callbackParameters {
+sub normalize {
 	my $self = shift;
-	my $callbackf = shift;
-	my $callbackargs = shift;
+	my $from = shift;
+	my $numofitems = shift;
+	my $count = shift;
+	
+	my $start = 0;
+	my $end   = 0;
+	my $valid = 0;
+	
+	if ($numofitems && $count) {
 
-	$self->{'_cb_func'} = $callbackf;
-	$self->{'_cb_args'} = $callbackargs;	
+		my $lastidx = $count - 1;
+
+		if ($from > $lastidx) {
+			return ($valid, $start, $end);
+		}
+
+		if ($from < 0) {
+			$from = 0;
+		}
+	
+		$start = $from;
+		$end = $start + $numofitems - 1;
+	
+		if ($end > $lastidx) {
+			$end = $lastidx;
+		}
+
+		$valid = 1;
+	}
+
+	return ($valid, $start, $end);
 }
+
 
 ################################################################################
 # Other

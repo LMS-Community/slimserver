@@ -20,6 +20,7 @@ use Slim::Utils::Unicode;
 # See cli-api.html for documentation.
 
 # Queries and commands handled by this module:
+#  can
 #  exit
 #  login
 #  listen
@@ -71,6 +72,24 @@ sub initPlugin {
 	if (!defined Slim::Utils::Prefs::get('cliport')) {
 		Slim::Utils::Prefs::set('cliport', 9090);
 	}
+	
+	# register our functions
+	
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+
+    Slim::Control::Request::addDispatch(['can'], 
+        [0, 1, 0, \&canQuery]);
+    Slim::Control::Request::addDispatch(['listen',    '_newvalue'],  
+        [0, 0, 0, \&listenCommand]);
+    Slim::Control::Request::addDispatch(['listen',    '?'],          
+        [0, 1, 0, \&listenQuery]);
+    Slim::Control::Request::addDispatch(['subscribe', '_functions'], 
+        [0, 0, 0, \&subscribeCommand]);
+
 	
 	# open our socket
 	cli_socket_change();
@@ -492,14 +511,6 @@ sub cli_process {
 			$exit = 1;
 		} 
 
-		elsif ($cmd eq 'listen') {
-			cli_cmd_listen($client_socket, $request);
-		} 
-
-		elsif ($cmd eq 'subscribe') {
-			cli_cmd_subscribe($client_socket, $request);
-		} 
-
 		elsif ($request->isStatusDispatchable()) {
 
 			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
@@ -599,43 +610,142 @@ sub cli_cmd_login {
 	return 0;
 }
 
-# handles the "listen" command
-sub cli_cmd_listen {
-	my $client_socket = shift;
+# handles the "can" query
+sub canQuery {
 	my $request = shift;
+ 
+	$d_cli_vv && msg("CLI::canQuery()\n");
+ 
+	if ($request->isNotQuery([['can']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
 
-	$d_cli_vv && msg("CLI: cli_cmd_listen()\n");
+	my @array;
+	my $i = 1;
+	
+	# get all parameters in the array
+	while (defined(my $elem = $request->getParam("_p$i"))) {
+	
+		if ($elem eq '?') {
+			# the ? has not been deleted by the parsing since it does not
+			# appear in the parsing array above. It does not appear because
+			# we do not know how many parameters the request name to test has!
+			# delete the ? so that we don't echo it back
+			$request->deleteParam("_p$i");
+			last;
+			
+		} else {
+			# add the term to our array
+			push @array, $elem;
+			$i++;
+		}
+	}
+	
+	if ($array[0] eq 'login' || 
+	    $array[0] eq 'shutdown' || 
+	    $array[0] eq 'exit' ) {
 
-	my $param = $request->getParam('_p1');
+		# these do not go through the normal mechanism and are always available
+		$request->addResult('_can', 1);
+	    
+	} else {
+		# create a request with the array...
+		my $testrequest = Slim::Control::Request->new(undef, \@array);
+		
+		# ... and return if we found a func for it or not
+		$request->addResult('_can', 
+			($testrequest->isStatusNotDispatchable()?0:1));
+			
+		undef $testrequest;
+	}
+	
+	$request->setStatusDone();
+}
+
+# handles the "listen" command
+sub listenCommand {
+	my $request = shift;
+ 
+	$d_cli_vv && msg("CLI::listenCommand()\n");
+ 
+	if ($request->isNotCommand([['listen']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $param = $request->getParam('_newvalue');
+	my $client_socket = $request->privateData();
+	
+	if (!defined $client_socket) {
+		$request->setStatusBadParams();
+		return;
+	}	
 
 	if (!defined $param) {
 		$param = !defined($connections{$client_socket}{'subscribe'});
 	}
 
-	if ($param eq "?") {
-		$request->addParam('_p1',  defined ($connections{$client_socket}{'subscribe'}));
-	}
-	elsif ($param == 0) {
+	if ($param == 0) {
 		cli_subscribe_terms_none($client_socket);
 	} 
 	elsif ($param == 1) {
 		cli_subscribe_terms_all($client_socket);
-	}			
+	}
+
+	$request->setStatusDone();
+}
+
+# handles the "listen" query
+sub listenQuery {
+	my $request = shift;
+ 
+	$d_cli_vv && msg("CLI::listenQuery()\n");
+ 
+	if ($request->isNotQuery([['listen']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $client_socket = $request->privateData();
+	
+	if (!defined $client_socket) {
+		$request->setStatusBadParams();
+		return;
+	}	
+
+	$request->addResult('_listen',  defined($connections{$client_socket}{'subscribe'}{'listen'}) || 0);
+
+	$request->setStatusDone();
 }
 
 # handles the "subscribe" command
-sub cli_cmd_subscribe {
-	my $client_socket = shift;
+sub subscribeCommand {
 	my $request = shift;
+ 
+	$d_cli_vv && msg("CLI::subscribeCommand()\n");
+ 
+	if ($request->isNotCommand([['subscribe']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
 
-	$d_cli_vv && msg("CLI: cli_cmd_subscribe()\n");
+	my $param = $request->getParam('_functions');
+	my $client_socket = $request->privateData();
+	
+	if (!defined $client_socket) {
+		$request->setStatusBadParams();
+		return;
+	}	
 
-	if (defined (my $param = $request->getParam('_p1'))) {
+	if (defined $param) {
 		my @elems = split(/,/, $param);
 		cli_subscribe_terms($client_socket, \@elems);
 	} else {
 		cli_subscribe_terms_none();
 	}
+
+	$request->setStatusDone();
 }
 
 ################################################################################

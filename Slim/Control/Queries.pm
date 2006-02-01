@@ -90,7 +90,7 @@ sub alarmsQuery {
 	$request->addResult('fade', $client->prefGet('alarmfadeseconds'));
 	$request->addResult('count', $count);
 
-	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 
@@ -176,7 +176,7 @@ sub browseXQuery {
 
 	$request->addResult('count', $count);
 
-	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 
@@ -510,7 +510,7 @@ sub playersQuery {
 	my $count = Slim::Player::Client::clientCount();
 	$request->addResult('count', $count);
 
-	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 		my $idx = $start;
@@ -649,7 +649,7 @@ sub playlisttracksQuery {
 
 		$request->addResult("count", $count);
 		
-		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 		my $cur = $start;
 		my $cnt = 0;
@@ -711,7 +711,7 @@ sub playlistsQuery {
 		
 		$request->addResult("count", $numitems);
 		
-		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $numitems);
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
 
 		if ($valid) {
 			my $cnt = 0;
@@ -1015,9 +1015,9 @@ sub statusQuery {
 			my ($valid, $start, $end);
 			
 			if ($modecurrent) {
-				($valid, $start, $end) = _normalize($idx, scalar($quantity), $songCount);
+				($valid, $start, $end) = $request->normalize($idx, scalar($quantity), $songCount);
 			} else {
-				($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $songCount);
+				($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $songCount);
 			}
 
 			if ($valid) {
@@ -1042,7 +1042,7 @@ sub statusQuery {
 				if ($modecurrent && $canPredictFuture && ($count < scalar($quantity))) {
 
 					# wrap around the playlist...
-					($valid, $start, $end) = _normalize(0, (scalar($quantity) - $count), $songCount);		
+					($valid, $start, $end) = $request->normalize(0, (scalar($quantity) - $count), $songCount);		
 
 					if ($valid) {
 
@@ -1127,7 +1127,7 @@ sub songinfoQuery {
 
 		$request->addResult("count", $count);
 
-		my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
 			my $idx = 0;
@@ -1262,7 +1262,7 @@ sub titlesQuery {
 
 	$request->addResult("count", $count);
 
-	my ($valid, $start, $end) = _normalize(scalar($index), scalar($quantity), $count);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
 		
@@ -1301,41 +1301,6 @@ sub versionQuery {
 ################################################################################
 # Helper functions
 ################################################################################
-
-sub _normalize {
-	my $from = shift;
-	my $numofitems = shift;
-	my $count = shift;
-	
-	my $start = 0;
-	my $end   = 0;
-	my $valid = 0;
-	
-	if ($numofitems && $count) {
-
-		my $lastidx = $count - 1;
-
-		if ($from > $lastidx) {
-			return ($valid, $start, $end);
-		}
-
-		if ($from < 0) {
-			$from = 0;
-		}
-	
-		$start = $from;
-		$end = $start + $numofitems - 1;
-	
-		if ($end > $lastidx) {
-			$end = $lastidx;
-		}
-
-		$valid = 1;
-	}
-
-	return ($valid, $start, $end);
-}
-
 
 sub _addSong {
 	my $request   = shift; # request
