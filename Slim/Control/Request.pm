@@ -542,7 +542,7 @@ sub subscribe {
 	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
 	$::d_command && $d_notify && msg("Request: subscribe($subscriberFuncRef)"
-		. " - (" . scalar(keys %subscribers) . " suscribers)\n");
+		. " - (" . scalar(keys %subscribers) . " subscribers)\n");
 }
 
 # remove a subscriber
