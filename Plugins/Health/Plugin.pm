@@ -265,6 +265,7 @@ sub handleIndex {
 	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
 	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
 	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerPerf->sprint();
+	$params->{'irresponse'} = $Slim::Hardware::IR::irPerf->sprint();
 
 	$params->{'refresh'} = $refresh;
 
@@ -464,6 +465,12 @@ PLUGIN_HEALTH_SCHEDULER_DESC
 	ES	El servidor ejecuta tareas que son intensivas en el procesador (tales como recopilar la colección musical) diviendolas en piezas mas pequeñas, que se planifican para ejecutar cuando los reproductores activos no están requiriendo datos. Este gráfico muestra el tiempo (en segundos) durante el que corre una tarea planificada antes de devolver el control al servidor. Las tareas que toman más de 0.5 segundo pueden influir en reducir la perfomance de la interface de usuario.
 	HE	במחשבים ישנים עליית השרת יכולה להעמיס על המחשב ולהאט אותו. ביר כאן לעליה מבוקרת של השרת
 	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu\'s).
+
+PLUGIN_HEALTH_IRRESPONSE
+	EN	IR Response Time
+
+PLUGIN_HEALTH_IRRESPONSE_DESC
+	EN	This graph shows the time between the server receiving IR key presses and processing them.
 
 PLUGIN_HEALTH_WARNINGS
 	DE	Warnungen

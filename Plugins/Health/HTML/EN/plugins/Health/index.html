@@ -148,6 +148,12 @@ function refresh() {
 			<pre>[% scheduler %]</pre>
 			[% END %]
 
+		[% IF irresponse %]
+		    <h5>[% "PLUGIN_HEALTH_IRRESPONSE" | string %]</h5>
+			[% "PLUGIN_HEALTH_IRRESPONSE_DESC" | string %]
+			<pre>[% irresponse %]</pre>
+			[% END %]
+
 			<p>
 	[% END %]
 </td>

@@ -40,6 +40,10 @@ my ($serverStartSeconds, $serverStartMicros);
 my @queuedClientTime = ();
 my @queuedServerTime = ();
 
+my @queuedServerTimePerf = ();
+
+our $irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+
 {
 	if ($::d_irtm) {
 		($serverStartSeconds, $serverStartMicros) = gettimeofday();
@@ -60,6 +64,10 @@ sub enqueue {
 	push @queuedBytes, $irCodeBytes;
 	push @queuedTime, $irTime;
 	push @queuedClient, $client;
+
+	if ($::perfmon) {
+		push @queuedServerTimePerf, Time::HiRes::time();
+	}
 
 	if ($::d_irtm) {
 
@@ -82,6 +90,10 @@ sub enqueue {
 
 sub idle {
 	if (scalar(@queuedBytes)) {
+
+		if ($::perfmon) {
+			$irPerf->log(Time::HiRes::time() - (shift @queuedServerTimePerf));
+		}
 
 		my $client = shift @queuedClient;		
 		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
