@@ -121,8 +121,14 @@ sub init {
 			my $button = shift;
 			my $digit = shift;
 			my $newposition;
+			
 			# do an unsorted jump
 			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, Slim::Player::Playlist::shuffleList($client), 0);
+			
+			# reset showingnowplaying status, since this command overrides the automatic states
+			$client->param('showingnowplaying',0);
+			
+			# set browse location to the new index, proportional based on the number pressed
 			browseplaylistindex($client,$newposition);
 			$client->update();	
 		},
