@@ -11,18 +11,11 @@
       </ul>
     </div>
   </div>
- [%- IF playlist_pagebar %]
-  <div id="topplaylistpagebar" class="pagebar">
-    <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-    <div class="controls">
-      <ul>
-[% playlist_pagebar -%]
-      </ul>
-    </div>
-  </div>
- [%- END %]
- [%- IF playlist_header %]
-  <div id="playlist_header">[% playlist_header %][% "COLON" | string %]</div>
+ [%- IF pageinfo.totalpages > 1 %]
+  [%- FILTER indent(2) %]
+   [%- PROCESS pagebar pagebarid = 'topplaylistpagebar' %]
+  [%- END %]
+  <div id="playlist_header">[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
  [%- END %]
  [%- IF playlist_items %]
   [%- FILTER indent(2) %]
@@ -43,14 +36,9 @@
  [%- ELSE %]
     <div id="playlist"><p>[% "EMPTY" | string %]<p></div>
  [%- END %]
- [%- IF playlist_pagebar %]
-  <div id="bottomplaylistpagebar" class="pagebar">
-    <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-    <div class="controls">
-      <ul>
-[% playlist_pagebar -%]
-      </ul>
-    </div>
-  </div>
+ [%- IF pageinfo.totalpages > 1 %]
+  [%- FILTER indent(2) %]
+   [%- PROCESS pagebar pagebarid = 'bottomplaylistpagebar' %]
+  [%- END %]
  [%- END %]
 </div>

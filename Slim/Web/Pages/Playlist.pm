@@ -90,6 +90,7 @@ sub playlist {
 		$params->{'playlist_header'}  = $client->currentPlaylistRender()->[3];
 		$params->{'playlist_pagebar'} = $client->currentPlaylistRender()->[4];
 		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[5];
+		$params->{'pageinfo'}         = $client->currentPlaylistRender()->[6];
 
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	}
@@ -104,6 +105,15 @@ sub playlist {
 
 	$params->{'cansave'} = 1;
 	
+	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+				'itemCount'    => $songcount,
+				'currentItem'  => Slim::Player::Source::playingSongIndex($client),
+				'path'         => $params->{'path'},
+				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()) . "&",
+				'start'        => $params->{'start'},
+				'perPage'      => $params->{'itemsPerPage'},
+	});
+
 	my ($start, $end);
 	
 	if (defined $params->{'nopagebar'}) {
@@ -220,7 +230,8 @@ sub playlist {
 			($params->{'start'}),
 			$params->{'playlist_header'},
 			$params->{'playlist_pagebar'},
-			$params->{'playlist_items'}
+			$params->{'playlist_items'},
+			$params->{'pageinfo'},
 		]);
 	}
 

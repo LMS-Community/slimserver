@@ -177,5 +177,37 @@
 [%- END %]
 [%- END %]
 
+[% BLOCK pagebar %]
+[%- PROCESS pagebarcalc pagesperbar = 7 %]
+<div [% IF pagebarid %]id="[% pagebarid %]" [% END %]class="pagebar">
+  <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
+  <div class="controls">
+    <ul>
+[% IF pagesstart -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=0"><span>|&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pagesprev || pagesprev == '0' -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesprev %]"><span>&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pageprev || pageprev == '0' -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageprev %]"><span>&lt;</span></a></li>
+[% END -%]
+[% FOREACH ind=[pagebarstart..pagebarend] -%]
+      <li[% IF ind == pageinfo.currentpage %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% ind * pageinfo.itemsperpage %]"><span>[% ind + 1 %]</span></a></li>
+[% END %]
+[%- IF pagenext -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagenext %]"><span>&gt;</span></a></li>
+[% END -%]
+[%- IF pagesnext -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesnext %]"><span>&gt;&gt;</span></a></li>
+[% END -%]
+[%- IF pagesend -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesend %]"><span>&gt;&gt;|</span></a></li>
+[% END -%]
+    </ul>
+  </div>
+</div>
+[%- END %]
+
 [%# This is the end, never put anything below this next END or the FILTER will not work %]
 [% END -%] 

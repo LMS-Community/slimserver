@@ -170,4 +170,32 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
+[% BLOCK pagebarcalc;
+	pagebarstart = pageinfo.currentpage - (pagesperbar div 2);
+	IF (pagebarstart < 0) || (pagesperbar >= pageinfo.totalpages); pagebarstart = 0; END;
+	lastpage = pageinfo.totalpages - 1;
+	pagebarend = pagebarstart + pagesperbar - 1;
+	IF pagebarend > lastpage; pagebarend = lastpage; END;
+	IF pagebarstart > 0; 
+	  pagesstart = 1;
+	  pagesprev = pageinfo.currentpage - pagesperbar;
+	  IF pagesprev < 0; pagesprev = 0; END;
+	  pagesprev = pagesprev * pageinfo.itemsperpage;
+	ELSE; 
+	  pagesstart = 0;
+	  pagesprev = '';
+	END;
+	IF pagebarend < lastpage;
+	  pagesend = lastpage * pageinfo.itemsperpage;
+	  pagesnext = pageinfo.currentpage + pagesperbar;
+	  IF pagesnext > lastpage; pagesnext = lastpage; END;
+	  pagesnext = pagesnext * pageinfo.itemsperpage;
+	ELSE;
+	  pagesend = 0;
+	  pagesnext = '';
+	END;
+	pageprev = pageinfo.currentpage > 0 ? ((pageinfo.currentpage - 1) * pageinfo.itemsperpage) : '';
+	pagenext = (pageinfo.currentpage < lastpage) ? ((pageinfo.currentpage + 1) * pageinfo.itemsperpage) : '';
+   END %]
+
 [% END -%]

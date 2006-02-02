@@ -91,7 +91,7 @@ sub addPageLinks {
 	while (my ($title, $path) = each %$links) {
 		if (defined($path)) {
 			$additionalLinks{$category}->{$title} = $path . 
-				($noquery ? '' : (($path =~ /\?/) ? '&' : '?'));
+				($noquery ? '' : (($path =~ /\?/) ? '&' : '?' )); #'
 		} else {
 			delete($additionalLinks{$category}->{$title});
 		}
@@ -310,6 +310,104 @@ sub simpleHeader {
 	})};
 
 	return ($start, $end);
+}
+
+# Return a hashref with paging information, all list indexes are zero based
+
+# named arguments:
+# itemsRef : reference to the list of items
+# itemCount : number of items in the list, not needed if itemsRef supplied
+# otherParams : used to build the query portion of the url
+# path : used to build the path portion of the url
+# start : starting index of the displayed page in the list of items
+# PerPage : items per page to display, preference used by default
+# addAlpha : flag determining whether to build the alpha map, requires itemsRef
+# currentItem : the index of the "current" item in the list, 
+#                if start not supplied this will be used to determine starting page
+
+# Hash keys set:
+# startitem : index in list of first item on page
+# enditem : index in list of last item on page
+# totalitems : number of items in the list
+# itemsperpage : number of items on each page
+# currentpage : index of current page in list of pages
+# totalpages : number of pages of items
+# otherparams : as above
+# path : as above
+# alphamap : hash relating first character of sorted list to the index of the
+#             first appearance of that character in the list.
+
+sub pageInfo {
+	my ($class, $args) = @_;
+	
+	my $itemsref     = $args->{'itemsRef'};
+	my $otherparams  = $args->{'otherParams'};
+	my $start        = $args->{'start'};
+	my $itemsperpage = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+
+	my %pageinfo = ();
+	my $end;
+	my $itemcount;
+
+	if ($itemsref && ref($itemsref eq 'ARRAY')) {
+		$itemcount = scalar(@$itemsref);
+	} else {
+		$itemcount = $args->{'itemCount'} || 0;
+	}
+
+	if (!$itemsperpage || $itemsperpage > $itemcount) {
+		# we divide by this, so make sure it will never be 0
+		$itemsperpage = $itemcount || 1;
+	}
+
+	if (!defined($start) || $start eq '') {
+		if ($args->{'currentItem'}) {
+			$start = int($args->{'currentItem'} / $itemsperpage) * $itemsperpage;
+		} else {
+			$start = 0;
+		}
+	}
+
+	if ($start >= $itemcount) {
+		$start = $itemcount - $itemsperpage;
+		if ($start < 0) {
+			$start = 0;
+		}
+	}
+
+	$end = $start + $itemsperpage - 1;
+
+	if ($end >= $itemcount) {
+		$end = $itemcount - 1;
+	}
+
+	$pageinfo{'startitem'}    = $start;
+	$pageinfo{'enditem'}      = $end;
+	$pageinfo{'totalitems'}   = $itemcount;
+	$pageinfo{'itemsperpage'} = $itemsperpage;
+	$pageinfo{'currentpage'}  = int($start/$itemsperpage);
+	$pageinfo{'totalpages'}   = POSIX::ceil($itemcount/$itemsperpage);
+	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
+	$pageinfo{'path'}         = $args->{'path'};
+	
+	if ($args->{'addAlpha'} && $itemsref && ref($itemsref) eq 'ARRAY') {
+		my %alphamap = ();
+		for my $index (reverse(0..$#$itemsref)) {
+			my $curletter = substr($itemsref->[$index],0,1);
+			if (defined($curletter) && $curletter ne '') {
+				$alphamap{$curletter} = $index;
+			}
+		}
+		$pageinfo{'alphamap'} = \%alphamap;
+		my @letterstarts = sort {$a <=> $b} values(%alphamap);
+		my $newend = $end;
+		while ($letterstarts[-1] > $end) {
+			$newend = pop @letterstarts;
+			$newend--;
+		}
+		$pageinfo{'enditem'} = $newend;
+	}
+	return \%pageinfo;
 }
 
 # Build a bar of links to multiple pages of items
