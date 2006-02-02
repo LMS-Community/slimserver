@@ -219,6 +219,8 @@ sub yaml_load {
     return qr{$qr};
 }
 
+1;
+
 __END__
 
 =head1 NAME

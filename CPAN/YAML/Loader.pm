@@ -718,6 +718,8 @@ sub _unescape {
     return $node;
 }
 
+1;
+
 __END__
 
 =head1 NAME

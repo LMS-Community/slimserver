@@ -31,6 +31,8 @@ sub load {
     die 'load() not implemented in this class.';
 }
 
+1;
+
 __END__
 
 =head1 NAME

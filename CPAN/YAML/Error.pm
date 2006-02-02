@@ -187,6 +187,8 @@ YAML_LOAD_WARN_GLOB_IO
 package YAML::Warning;
 use base 'YAML::Error';
 
+1;
+
 __END__
 
 =head1 NAME
