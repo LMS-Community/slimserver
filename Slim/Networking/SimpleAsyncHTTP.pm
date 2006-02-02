@@ -68,6 +68,12 @@ sub post {
 	$self->_createHTTPRequest('POST', @_);
 }
 
+sub head {
+	my $self = shift;
+	
+	$self->_createHTTPRequest('HEAD', @_);
+}
+
 # Parameters are passed to Net::HTTP::NB::formatRequest, meaning you
 # can override default headers, and pass in content.
 # Examples:
