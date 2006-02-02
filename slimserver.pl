@@ -79,8 +79,11 @@ use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
 
+use lib $Bin;
+
 BEGIN {
 	use Symbol;
+	use Slim::Utils::OSDetect;
 
 	# This begin statement contains some trickery to deal with modules
 	# that need to load XS code. Previously, we would check in a module
@@ -145,16 +148,24 @@ BEGIN {
 		push @modules, qw(Storable Digest::MD5);
 	}
 
-	my @SlimINC = (
-		$Bin, 
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-		catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
-		catdir($Bin,'lib'), 
-		catdir($Bin,'CPAN'), 
-	);
+	my @SlimINC = ();
+
+	if (Slim::Utils::OSDetect::isDebian()) {
+
+		@SlimINC = Slim::Utils::OSDetect::dirsFor('lib');
+
+	} else {
+
+		@SlimINC = (
+			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
+			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
+			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
+			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
+			catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
+			catdir($Bin,'lib'), 
+			catdir($Bin,'CPAN'), 
+		);
+	}
 
 	my %libPaths = map { $_ => 1 } @SlimINC;
 
@@ -185,9 +196,12 @@ BEGIN {
 	unshift @INC, @SlimINC;
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
-	unlink("$Bin/CPAN/MP3/Info.pm");
-	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-	unlink("$Bin/CPAN/XML/Simple.pm");
+	if (!Slim::Utils::OSDetect::isDebian()) {
+
+		unlink("$Bin/CPAN/MP3/Info.pm");
+		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
+		unlink("$Bin/CPAN/XML/Simple.pm");
+	}
 };
 
 use Time::HiRes;

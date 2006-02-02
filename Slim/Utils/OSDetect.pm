@@ -12,8 +12,6 @@ use Config;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
-use Slim::Utils::Misc;
-
 BEGIN {
 
 	if ($^O =~ /Win32/) {
@@ -34,7 +32,7 @@ sub OS {
 sub init {
 	if (!$detectedOS) {
 
-		$::d_os && msg("Auto-detecting OS: $^O\n");
+		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
 
 		if ($^O =~/darwin/i) {
 
@@ -61,11 +59,11 @@ sub init {
 			initDetailsForUnix();
 		}
 
-		$::d_os && msg("I think it's \"$detectedOS\".\n");
+		$::d_os && Slim::Utils::Misc::msg("I think it's \"$detectedOS\".\n");
 
 	} else {
 
-		$::d_os && msg("OS detection skipped, using \"$detectedOS\".\n");
+		$::d_os && Slim::Utils::Misc::msg("OS detection skipped, using \"$detectedOS\".\n");
 	}
 }
 
@@ -102,9 +100,9 @@ sub dirsFor {
 		}
 
 	# Debian specific paths.
-	} elsif ($details->{'osName'} eq 'Debian' && -d '/usr/share/slimserver/Firmware') {
+	} elsif (isDebian()) {
 
-		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|SQL)$/) {
+		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|SQL|lib)$/) {
 
 			push @dirs, "/usr/share/slimserver/$dir";
 
@@ -131,7 +129,7 @@ sub dirsFor {
 
 		} else {
 
-			errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
+			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
 		}
 
 	} else {
@@ -157,6 +155,19 @@ sub dirsFor {
 
 sub details {
 	return \%osDetails;
+}
+
+sub isDebian {
+
+	# Initialize
+	my $OS      = OS();
+	my $details = details();
+
+	if ($details->{'osName'} eq 'Debian' && -d '/usr/share/slimserver/Firmware') {
+		return 1;
+	}
+
+	return 0;
 }
 
 sub initDetailsForWin32 {
