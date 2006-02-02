@@ -5706,6 +5706,22 @@ SETUP_ANIMATIONLEVEL_DESC
 	SE	Detta val avgör tillåten animering. Animering är kortvariga meddelanden, skärmåkningar vid navigering samt rullande långa titlar.
 	ZH_CN	这个选项决定了所允许的动画量。动画包括简要消息显示、在漫游时的屏幕转换效果、和长标题的卷动。
 
+SETUP_DISABLESTATISTICS
+	DE	Musiksammlungsstatistik
+	EN	Library Statistics
+
+SETUP_DISABLESTATISTICS_DESC
+	DE	Beim Anzeigen der SlimServer Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Wenn Sie diese Funktion deaktivieren, kann die Startseite schneller angezeigt werden.
+	EN	When the SlimServer front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
+
+SETUP_DISABLE_STATISTICS
+	DE	Statistik nicht anzeigen
+	EN	Disable library statistics
+
+SETUP_ENABLE_STATISTICS
+	DE	Statistik anzeigen
+	EN	Enable library statistics
+
 SETUP_LOOKFORARTWORK
 	CZ	Hledat obal
 	DE	Plattenhüllen nachschlagen

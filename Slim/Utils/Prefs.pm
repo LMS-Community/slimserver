@@ -130,6 +130,7 @@ sub init {
 		'webproxy'		=> '',
 		"udpChunkSize"		=> 1400,
 		'itemsPerPage'		=> 50,
+		'disableStatistics'	=> 0,
 		'lookForArtwork'	=> 1,
 		'includeNoArt'		=> 0,
 		'artfolder'		=> '',

@@ -117,30 +117,29 @@ sub addLibraryStats {
 	$find->{'contributor'} = $artist if $artist && !$album;
 	$find->{'album'}       = $album  if $album;
 
-	$params->{'song_count'}   = $class->_lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
-	$params->{'album_count'}  = $class->_lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
-
-	# Right now hitlist.html is the only page that uses genre_count -
-	# which can be expensive. Only generate it if we need to.
-	if ($params->{'path'} =~ /hitlist/) {
-
-		$params->{'genre_count'} = $class->_lcPlural($ds->count('genre', $find), 'GENRE', 'GENRES');
+	if (Slim::Utils::Prefs::get('disableStatistics')) {
+		$params->{'song_count'}   = 0;
+		$params->{'album_count'}  = 0;
+		$params->{'artist_count'} = 0;
+	} else {
+		$params->{'song_count'}   = $class->_lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
+		$params->{'album_count'}  = $class->_lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
+	
+		# Bug 1913 - don't put counts for contributor & tracks when an artist
+		# is a composer on a different artist's tracks.
+		if ($artist && $artist eq $ds->variousArtistsObject->id) {
+	
+			delete $find->{'contributor'};
+	
+			$find->{'album.compilation'} = 1;
+	
+			# Don't display wonked or zero counts when we're working on the meta VA object
+			delete $params->{'song_count'};
+			delete $params->{'album_count'};
+		}
+	
+		$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 	}
-
-	# Bug 1913 - don't put counts for contributor & tracks when an artist
-	# is a composer on a different artist's tracks.
-	if ($artist && $artist eq $ds->variousArtistsObject->id) {
-
-		delete $find->{'contributor'};
-
-		$find->{'album.compilation'} = 1;
-
-		# Don't display wonked or zero counts when we're working on the meta VA object
-		delete $params->{'song_count'};
-		delete $params->{'album_count'};
-	}
-
-	$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
 }
 
 sub addPlayerList {

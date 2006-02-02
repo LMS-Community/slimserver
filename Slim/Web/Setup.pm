@@ -2137,6 +2137,7 @@ sub initSetupConfig {
 
 			'Default' => {
 				'PrefOrder' => [qw(
+					disableStatistics
 					lookForArtwork
 					itemsPerPass
 					prefsWriteDelay
@@ -2148,6 +2149,14 @@ sub initSetupConfig {
 		},
 
 		'Prefs' => {
+			'disableStatistics' => {
+				'validate' => \&validateTrueFalse,
+				'options' => {
+					'1' => string('SETUP_DISABLE_STATISTICS'),
+					'0' => string('SETUP_ENABLE_STATISTICS'),
+				},
+			},
+
 			'lookForArtwork' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
