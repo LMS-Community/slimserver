@@ -57,6 +57,10 @@ a:hover {
 	text-transform: uppercase;
 }
 
+.pagebar {
+	font-weight: normal !important;
+}
+
 .attributeBold, #playingStatus, #currentPlaylistLabel, #currentPlaylistCommands {
 	margin-left: 0px;
 	display: inline;
