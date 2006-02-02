@@ -157,10 +157,11 @@ sub canPlugin {
 	return 0 if ($brokenplugins{$plugin});
 
 	# This shouldn't be here - but I can't think of a better place.
-	# Also, the plugin loader really shouldn't be in 'Buttons'
-	if (!Slim::Utils::Prefs::get('xplsupport') && $plugin =~ /xPL/) {
-		return 0;
-	}
+	# Fred: commented out to re-enable xPL waiting for a better solution
+	# Done this way xPL is forever disabled.
+#	if (!Slim::Utils::Prefs::get('xplsupport') && $plugin =~ /xPL/) {
+#		return 0;
+#	}
 
 	if ($plugins{$plugin} && defined($plugins{$plugin}{'name'})) {
 		# plugin is already initialized
@@ -260,6 +261,10 @@ sub addPlugin {
 		Slim::Buttons::Common::addMode("PLUGIN.$plugin", &{"Plugins::${plugin}::getFunctions"}, \&{"Plugins::${plugin}::setMode"});
 	}
 
+	if (UNIVERSAL::can("Plugins::${plugin}","getDisplayDescription")) {
+		$plugins{$plugin}->{'desc'} = &{"Plugins::${plugin}::getDisplayDescription"};
+	}
+	
 	return 1;
 }
 

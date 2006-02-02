@@ -100,6 +100,10 @@ sub getDisplayName {
 	return 'PLUGIN_CLI';
 }
 
+sub getDisplayDescription {
+	return "PLUGIN_CLI_DESC";
+}
+
 # plugin: manage the CLI preference
 sub setupGroup {
 	my $client = shift;
@@ -993,6 +997,9 @@ sub strings {
 PLUGIN_CLI
 	EN	Command Line Interface (CLI)
 	ES	Interface de Línea de Comando (CLI)
+
+PLUGIN_CLI_DESC
+	EN	The Command Line Interface plugin allows SlimServer and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 
 SETUP_CLIPORT
 	CZ	Číslo portu příkazové řádky

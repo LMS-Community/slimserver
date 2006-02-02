@@ -293,6 +293,9 @@ our %subscribers = ();          # contains the clients to the notification
 
 our @notificationQueue;         # contains the Requests waiting to be notified
 
+my $callExecuteCallback = 0;    # flag to know if we must call the legacy
+                                # Slim::Control::Command::executeCallback
+
 my $d_notify = 1;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
 
@@ -348,9 +351,6 @@ sub init {
     addDispatch(['mixer',          'treble',       '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
     addDispatch(['mixer',          'volume',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
     addDispatch(['mixer',          'volume',       '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
-    addDispatch(['mode',           'pause'],                                                         [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-    addDispatch(['mode',           'play'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-    addDispatch(['mode',           'stop'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['mode',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::modeQuery]);
     addDispatch(['path',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['pause',          '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
@@ -434,6 +434,7 @@ sub init {
     addDispatch(['version',        '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                       [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 
+# NOTIFICATIONS
     addDispatch(['client',         'disconnect'],                                                    [1, 0, 0, undef]);
     addDispatch(['client',         'new'],                                                           [1, 0, 0, undef]);
     addDispatch(['client',         'reconnect'],                                                     [1, 0, 0, undef]);
@@ -443,6 +444,12 @@ sub init {
     addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);
     addDispatch(['rescan',         'done'],                                                          [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',      '_time'],                                         [1, 0, 0, undef]);
+
+# DEPRECATED
+	addDispatch(['mode',           'pause'],                                                         [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',           'play'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',           'stop'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+	# use commands pause, play, stop
 
 ######################################################################################################################################################################
 
@@ -1362,7 +1369,13 @@ sub notify {
 		}
 	}
 	
-	if (!defined $dontcallExecuteCallback) {
+	# if we must call executeCallback (there are entries in its queue) and
+	# this is not where we're been call from, render as Array and call
+	# executeCallback with the array.
+	# The reason for the first parameter is that renderAsArray is somewhat
+	# expensive and we try to avoid it if we can.
+	# The reason for the second parameter is simply to avoid a infinite loop...
+	if ($callExecuteCallback && !defined $dontcallExecuteCallback) {
 		my @params = $self->renderAsArray();
 		Slim::Control::Command::executeCallback(
 			$self->client(),
@@ -1450,6 +1463,13 @@ sub renderAsArray {
  	}
 	
 	return @returnArray;
+}
+
+# called from Slim::Control::Command::set/clearExecuteCallback, this 
+# lets us know if there are entries in the queue and consequently, if 
+# we should call the legacy routine.
+sub needToCallExecuteCallback {
+	$callExecuteCallback = shift;
 }
 
 ################################################################################

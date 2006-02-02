@@ -12,8 +12,8 @@ use Slim::Utils::Misc qw(msg errorMsg);
 
 our %executeCallbacks = ();
 
-#############################################################################
-# execute - did all the hard work, thanks. Please use now the Request class 
+# execute - did all the hard work, thanks. 
+# PLEASE USE THE REQUEST.PM CLASS
 # takes:
 #   a client reference
 #   a reference to an array of parameters
@@ -21,71 +21,36 @@ our %executeCallbacks = ();
 #   a list of callback function args
 #
 # returns an array containing the given parameters
-
 sub execute {
-#	my($client, $parrayref, $callbackf, $callbackargs) = @_;
 
-#	my $p0 = $parrayref->[0];
-#	my $p1 = $parrayref->[1];
-#	my $p2 = $parrayref->[2];
-#	my $p3 = $parrayref->[3];
-#	my $p4 = $parrayref->[4];
-#	my $p5 = $parrayref->[5];
-#	my $p6 = $parrayref->[6];
-#	my $p7 = $parrayref->[7];
-
-#	my $callcallback = 1;
-#	my @returnArray = ();
-
-#	$::d_command && msg("Command: Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
-#			(defined $p1 ? $p1 : "") . ") (" .
-#			(defined $p2 ? $p2 : "") . ") (" .
-#			(defined $p3 ? $p3 : "") . ") (" .
-#			(defined $p4 ? $p4 : "") . ") (" .
-#			(defined $p5 ? $p5 : "") . ") (" .
-#			(defined $p6 ? $p6 : "") . ") (" .
-#			(defined $p7 ? $p7 : "") . ")\n");
-
-	# Try and go through dispatch
-
-	# create a request from the array
-#	my $request = Slim::Control::Request->new($client, $parrayref);
-	
-#	if (defined $request && $request->isStatusDispatchable()) {
-		
-		# add callback params
-#		$request->callbackParameters($callbackf, $callbackargs);
-		
-#		$request->execute();
-#	}
-	
-#	@returnArray = $request->renderAsArray();
-	
-#	$::d_command && msg("Command: Returning array: " . $returnArray[0] . " (" .
-#			(defined $returnArray[1] ? $returnArray[1] : "") . ") (" .
-#			(defined $returnArray[2] ? $returnArray[2] : "") . ") (" .
-#			(defined $returnArray[3] ? $returnArray[3] : "") . ") (" .
-#			(defined $returnArray[4] ? $returnArray[4] : "") . ") (" .
-#			(defined $returnArray[5] ? $returnArray[5] : "") . ") (" .
-#			(defined $returnArray[6] ? $returnArray[6] : "") . ") (" .
-#			(defined $returnArray[7] ? $returnArray[7] : "") . ")\n");
-	
 	return Slim::Control::Request::executeLegacy(@_);
 }
 
 sub setExecuteCallback {
 	my $callbackRef = shift;
+	
 	$executeCallbacks{$callbackRef} = $callbackRef;
-	errorMsg("Slim::Control::Command::setExecuteCallback() has been deprecated!\n");
-	errorMsg("Please use Slim::Control::Request::subscribe() instead!\n");
+	
+	# Let Request know if it needs to call us
+	Slim::Control::Request::needToCallExecuteCallback(scalar(keys %executeCallbacks));
+	
+	# warn about deprecated call
+	errorMsg("Slim::Control::Command::setExecuteCallback() has been deprecated!");
+	errorMsg("Please use Slim::Control::Request::subscribe() instead!");
 	errorMsg("Documentation is available in Slim::Control::Request.pm\n");
 }
 
 sub clearExecuteCallback {
 	my $callbackRef = shift;
+	
 	delete $executeCallbacks{$callbackRef};
-	errorMsg("Slim::Control::Command::clearExecuteCallback() has been deprecated!\n");
-	errorMsg("Please use Slim::Control::Request::unsubscribe() instead!\n");
+	
+	# Let Request know if it needs to call us
+	Slim::Control::Request::needToCallExecuteCallback(scalar(keys %executeCallbacks));
+	
+	# warn about deprecated call
+	errorMsg("Slim::Control::Command::clearExecuteCallback() has been deprecated!");
+	errorMsg("Please use Slim::Control::Request::unsubscribe() instead!");
 	errorMsg("Documentation is available in Slim::Control::Request.pm\n");
 }
 
@@ -103,7 +68,10 @@ sub executeCallback {
 		&$executecallback($client, $paramsRef);
 	}
 	
-	Slim::Control::Request::notifyFromArray($client, $paramsRef, "no no no") if !defined $dontcallDispatch;
+	# make sure we inform Request not to call us again by defining the third
+	# parameter. Request does the same for us, so we avoid an infinite loop.
+	Slim::Control::Request::notifyFromArray($client, $paramsRef, "no no no") 
+		if !defined $dontcallDispatch;
 }
 
 1;
