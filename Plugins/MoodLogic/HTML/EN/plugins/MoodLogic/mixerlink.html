@@ -1,4 +1,3 @@
-  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      [% IF item.mixable_descend %] <nobr><a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&artist=[% item.artist | uri %]&album=[% item.album | uri %]&player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a></nobr> [% END %]
-      [% IF item.mixable_not_descend %] <nobr><a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&genre=[% item.genre | uri %]&artist=[% item.artist | uri %]&album=[% item.album | uri %]&player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a></nobr> [% END %]
-  </td>
+[% IF item.mixable_descend %]<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a>[% END %]
+[% IF item.mixable_not_descend %]<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a>[% END %]
+
