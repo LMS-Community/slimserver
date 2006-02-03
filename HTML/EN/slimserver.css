@@ -1,3 +1,10 @@
+.odd {
+}
+
+.even {
+	background-color: #d0d0d0;
+}
+
 div#homeMenu {
 	background-color: #ffffff;
 	position: relative;
@@ -25,4 +32,73 @@ div#homeMenu {
 
 .prefDesc,.prefHead {
 	padding-bottom: 10px;
+}
+
+div#playList {
+	border-top: 2px solid;
+	position: relative;
+	height: auto;
+	width: auto;
+}
+
+div#browsedbList {
+	position: relative;
+	clear: left;
+	width: auto;
+	height: auto;
+}
+
+.browsedbListItem {
+	position: relative;
+	padding-right: 100px;
+}
+
+.playlistControls {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+.browsedbControls {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+div#browsedbHeader {
+	margin-left:0px;
+}
+
+.thumbnail {
+	padding: 0px;
+	text-align: center;
+}
+
+.artworkControls {
+	padding: 0px;
+}
+
+.artworkControls img {
+	margin-left: 5px;
+	padding-top: 6px;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+	padding-left: 4px;
+	padding-right: 0px;
+	padding-top: 10px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+	padding-right: 6px;
+}
+
+.thumbwrap a span {
+	display: block;
+	overflow: hidden;
 }

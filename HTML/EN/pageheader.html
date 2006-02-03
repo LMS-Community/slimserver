@@ -1,10 +1,12 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
 		[% PROCESS standardheader.html %]
 		[% PROCESS html/common.js %]
 	</head>
 	<body>
-	[% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
+	[% IF pagetitle %]<h3>[% pagetitle %]</h3><br>[% END %]
 [%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list %]
 	[% PROCESS crumblist IF pwd_list %]
 	[% pageHeaderInfo %]

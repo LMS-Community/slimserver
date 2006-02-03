@@ -1,31 +1,33 @@
 [% IF item.heading %]
-	<tr><td><hr width=\"75%%\"/><br/>
+	<div class="searchHeader">
 		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
-	<br/><br/></td></tr>
+	</div>
 [% ELSE %]
-<tr>
-  <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-	[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
+<div class=[% item.odd ? "odd" : "even" %]>
+	<div class="browsedbListItem">
+		[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
+		
+		[% IF item.artwork %]
 	
-	[% IF item.artwork %]
-
-		<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% PROCESS thumbnailItemImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF $item.year; ($item.year); END;"%]</a>
-
-	[% END %]
+			<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% PROCESS thumbnailItemImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist | html; END; IF $item.year; ($item.year); END;"%]</a>
 	
-	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
-
-		<!-- Include the artist for the album view -->
-		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
-
-	[% ELSE %]
-		[% PROCESS trackinfo %]
-	[% END %]
-  </td>
-	[% PROCESS browsecontrols
-		itemobj = item.itemobj
-		attributes = item.attributes
-		odd = item.odd
-		mixerlinks = item.mixerlinks %]
-</tr>
+		[% END %]
+		
+		[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
+	
+			<!-- Include the artist for the album view -->
+			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+	
+		[% ELSE %]
+			[% PROCESS trackinfo %]
+		[% END %]
+		<div class="browsedbControls">
+			[% PROCESS browsecontrols
+					itemobj = item.itemobj
+					attributes = item.attributes
+					odd = item.odd
+					mixerlinks = item.mixerlinks %]
+		</div>
+	</div>
+</div>
 [% END %]

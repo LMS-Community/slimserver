@@ -1,18 +1,23 @@
-<hr>
-[% "CURRENT_PLAYLIST" | string %]: [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
-
-[% IF playlist_items %]([% IF cansave %]<a target="browser" href="edit_playlist.html?player=[% playerURI %]&saveCurrentPlaylist=1">[% "SAVE" | string %]</a>, [% END %]<a href="status.m3u?player=[% playerURI %]">[% "DOWNLOAD" | string %]</a>, 
-
-<a href="status.html?p0=playlist&p1=clear&player=[% playerURI %]">[% "CLEAR" | string %]</a>)[% END %]</p>
-[% IF playlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</p>[% END %]
-[% IF playlist_header; playlist_header; "COLON" | string; END %]
-
-<table cellspacing="0" border="0" cellpadding="4" width="100%">
-	[% IF playlist_items %]
-		[% FOREACH item = playlist_items %]
-			[% PROCESS status_list.html %]
+<div id="playList">
+	[% IF playercount == '0' %]
+	[% ELSE %]
+		<div id="currentPlaylistLabel">
+		[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</span> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</span> [% PROCESS clearPlaylistLink %]
+		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+		</span></div>
+	[% END %]
+	[% IF playlist_pagebar %]<div class="pagebar">[% playlist_pagebar %]</div>[% END %]
+	<div class="browsedbList">
+		[% IF playercount == '0' %]
+			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+		[% ELSE %]
+			[% IF playlist_items %]
+				[% FOREACH item = playlist_items %]
+					[% PROCESS status_list.html %]
+				[% END %]
+			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
 		[% END %]
-	[% ELSE; "EMPTY" | string; END %]
-</table>
+	</div>
+	[% IF playlist_pagebar %]<div class="pagebar">[% playlist_pagebar %]</div>[% END %]
 
-[% IF playlist_pagebar %]<p>[% "PAGES" | string %][% "COLON" | string %][% playlist_pagebar %]</p>[% END %]
+</div>
