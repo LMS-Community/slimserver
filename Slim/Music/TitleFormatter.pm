@@ -235,9 +235,17 @@ sub init {
 	};
 
 	# Add date/time elements
-	$parsedFormats{'LONGDATE'}  = \&Slim::Utils::Misc::longDateF;
-	$parsedFormats{'SHORTDATE'} = \&Slim::Utils::Misc::shortDateF;
-	$parsedFormats{'CURRTIME'}  = \&Slim::Utils::Misc::timeF;
+	$parsedFormats{'LONGDATE'}  = sub {
+		return Slim::Utils::Misc::longDateF(); 
+	};
+	
+	$parsedFormats{'SHORTDATE'} = sub {
+		return Slim::Utils::Misc::shortDateF();
+	};
+	
+	$parsedFormats{'CURRTIME'}  = sub {
+		Slim::Utils::Misc::timeF();
+	};
 	
 	# Add localized from/by
 	$parsedFormats{'FROM'} = sub { return string('FROM'); };
