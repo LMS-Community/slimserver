@@ -336,6 +336,7 @@ sub simpleHeader {
 # path : as above
 # alphamap : hash relating first character of sorted list to the index of the
 #             first appearance of that character in the list.
+# totalalphapages : total number of pages in alpha pagebar
 
 sub pageInfo {
 	my ($class, $args) = @_;
@@ -349,7 +350,7 @@ sub pageInfo {
 	my $end;
 	my $itemcount;
 
-	if ($itemsref && ref($itemsref eq 'ARRAY')) {
+	if ($itemsref && ref($itemsref) eq 'ARRAY') {
 		$itemcount = scalar(@$itemsref);
 	} else {
 		$itemcount = $args->{'itemCount'} || 0;
@@ -390,7 +391,7 @@ sub pageInfo {
 	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
 	$pageinfo{'path'}         = $args->{'path'};
 	
-	if ($args->{'addAlpha'} && $itemsref && ref($itemsref) eq 'ARRAY') {
+	if ($args->{'addAlpha'} && $itemcount && $itemsref && ref($itemsref) eq 'ARRAY') {
 		my %alphamap = ();
 		for my $index (reverse(0..$#$itemsref)) {
 			my $curletter = substr($itemsref->[$index],0,1);
@@ -398,14 +399,30 @@ sub pageInfo {
 				$alphamap{$curletter} = $index;
 			}
 		}
-		$pageinfo{'alphamap'} = \%alphamap;
 		my @letterstarts = sort {$a <=> $b} values(%alphamap);
+		my @pagestarts = (@letterstarts[0]);
 		my $newend = $end;
-		while ($letterstarts[-1] > $end) {
-			$newend = pop @letterstarts;
-			$newend--;
+		for my $nextend (@letterstarts) {
+			if ($nextend > $end && $newend == $end) {
+				$newend = $nextend - 1;
+			}
+			if ($pagestarts[0] + $itemsperpage < $nextend) {
+				# build pagestarts in descending order
+				unshift @pagestarts, $nextend;
+			}
 		}
 		$pageinfo{'enditem'} = $newend;
+		$pageinfo{'totalalphapages'} = scalar(@pagestarts);
+		KEYLOOP: for my $alphakey (keys %alphamap) {
+			my $alphavalue = $alphamap{$alphakey};
+			for my $pagestart (@pagestarts) {
+				if ($alphavalue >= $pagestart) {
+					$alphamap{$alphakey} = $pagestart;
+					next KEYLOOP;
+				}
+			}
+		}
+		$pageinfo{'alphamap'} = \%alphamap;
 	}
 	return \%pageinfo;
 }

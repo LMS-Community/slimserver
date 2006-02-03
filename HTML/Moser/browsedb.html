@@ -1,18 +1,11 @@
 [%- pagetitle = browseby | string -%]
 [%- WRAPPER leftside.html -%]
-  [%- IF browselist_header %]
-    <div id="browselist_header">[% browselist_header %]</div>
+ [%- IF pageinfo.totalpages > 1 %]
+    <div id="browselist_header">[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
+  [%- FILTER indent(2) %]
+   [%- PROCESS pagebar pagebarid = 'topbrowselistpagebar' %]
   [%- END %]
-  [%- IF browselist_pagebar %]
-    <div id="topbrowselistpagebar" class="pagebar">
-      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-      <div class="controls">
-        <ul class="alpha">
-[% browselist_pagebar -%]
-        </ul>
-      </div>
-    </div>
-   [%- END %]
+ [%- END %]
    [%- IF coverArt %]
     <div class="coverArt">
       <a [% coverArtHRef %] target="cover">[% PROCESS coverImg | replace('">', '" />')%]</a>
@@ -42,14 +35,9 @@
         <li>[% "EMPTY" | string %]</li>
     [%- END %][%# end if browse_items %]
    [%- END %][%# end contentcontainer wrapper %]
-[% IF browselist_pagebar -%]
-    <div id="bottombrowselistpagebar" class="pagebar">
-      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-      <div class="controls">
-        <ul class="alpha">
-[% browselist_pagebar -%]
-        </ul>
-      </div>
-    </div>
-[% END -%]
+ [%- IF pageinfo.totalpages > 1 %]
+  [%- FILTER indent(2) %]
+   [%- PROCESS pagebar pagebarid = 'bottombrowselistpagebar' %]
+  [%- END %]
+ [%- END %]
 [%- END -%]

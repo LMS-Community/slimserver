@@ -178,11 +178,11 @@
 [%- END %]
 
 [% BLOCK pagebar %]
-[%- PROCESS pagebarcalc pagesperbar = 7 %]
+[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 7; END %]
 <div [% IF pagebarid %]id="[% pagebarid %]" [% END %]class="pagebar">
   <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
   <div class="controls">
-    <ul>
+    <ul[% IF pageinfo.alphamap %] class="alpha"[% END %]>
 [% IF pagesstart -%]
       <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=0"><span>|&lt;&lt;</span></a></li>
 [% END -%]
@@ -192,9 +192,15 @@
 [%- IF pageprev || pageprev == '0' -%]
       <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageprev %]"><span>&lt;</span></a></li>
 [% END -%]
-[% FOREACH ind=[pagebarstart..pagebarend] -%]
+[%- IF pageinfo.alphamap %]
+[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+      <li[% IF pageinfo.alphamap.$alphakey == pageinfo.startitem %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.$alphakey %]#[% alphakey %]"><span>[% alphakey %]</span></a></li>
+[% END %]
+[%- ELSE %]
+[%- FOREACH ind=[pagebarstart..pagebarend] -%]
       <li[% IF ind == pageinfo.currentpage %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% ind * pageinfo.itemsperpage %]"><span>[% ind + 1 %]</span></a></li>
 [% END %]
+[%- END %]
 [%- IF pagenext -%]
       <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagenext %]"><span>&gt;</span></a></li>
 [% END -%]

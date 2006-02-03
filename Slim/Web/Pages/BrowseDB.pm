@@ -204,6 +204,20 @@ sub browsedb {
 
 		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
 
+		my $alphaitems;
+		if (!defined $params->{'nopagebar'} && &{$levelInfo->{'alphaPageBar'}}(\%findCriteria, $sort)) {
+			$alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_, $sort), @$items ];
+		}
+
+		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+			'itemsRef'     => $alphaitems ? $alphaitems : $items,
+			'addAlpha'     => defined $alphaitems,
+			'path'         => $params->{'path'},
+			'otherParams'  => $otherparams,
+			'start'        => $params->{'start'},
+			'perPage'      => $params->{'itemsPerPage'},
+		});
+
 		if (defined $params->{'nopagebar'}) {
 	
 			($start, $end) = Slim::Web::Pages->simpleHeader({
@@ -216,12 +230,10 @@ sub browsedb {
 				}
 			);
 
-		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria, $sort)) {
-
-			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_, $sort), @$items ];
+		} elsif (defined $alphaitems) {
 
 			($start, $end) = Slim::Web::Pages->alphaPageBar({
-					'itemsRef'    => $alphaitems,,
+					'itemsRef'     => $alphaitems,
 					'path'         => $params->{'path'},
 					'otherParams'  => $otherparams,
 					'startRef'     => \$params->{'start'},
