@@ -269,7 +269,7 @@ sub deletePlaylist {
 	my ($client, $params) = @_;
 
 	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my $playlistObj = $ds->objectForId('track', $params->{'id'});
+	my $playlistObj = $ds->objectForId('track', $params->{'playlist'});
 
 	$params->{'level'}     = 0;
 	
