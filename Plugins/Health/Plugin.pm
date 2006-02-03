@@ -78,6 +78,7 @@ sub clearAllCounters {
 	$Slim::Utils::Timers::timerLate->clear();
 	$Slim::Utils::Timers::timerLength->clear();
 	$Slim::Utils::Scheduler::schedulerPerf->clear();
+	$Slim::Hardware::IR::irPerf->clear();
 }
 	
 sub summary {
