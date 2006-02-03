@@ -1479,10 +1479,15 @@ sub currentSongLines {
 
 		if (Slim::Player::Source::playmode($client) eq "pause") {
 
-			$parts->{line1} = sprintf(
-				$client->string('PAUSED')." (%d %s %d) ",
-				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
-			);
+			if ( $playlistlen == 1 ) {
+				$parts->{line1} = $client->string('PAUSED');
+			}
+			else {
+				$parts->{line1} = sprintf(
+					$client->string('PAUSED')." (%d %s %d) ",
+					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				);
+			}
 
 		# for taking photos of the display, comment out the line above, and use this one instead.
 		# this will cause the display to show the "Now playing" screen to show when paused.
@@ -1490,10 +1495,15 @@ sub currentSongLines {
 
 		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
 
-			$parts->{line1} = sprintf(
-				$client->string('STOPPED')." (%d %s %d) ",
-				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
-			);
+			if ( $playlistlen == 1 ) {
+				$parts->{line1} = $client->string('STOPPED');
+			}
+			else {
+				$parts->{line1} = sprintf(
+					$client->string('STOPPED')." (%d %s %d) ",
+					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				);
+			}
 
 		} else {
 
@@ -1509,10 +1519,12 @@ sub currentSongLines {
 				$parts->{line1} .= " ". $client->string('LCMUTED');
 			}
 
-			$parts->{line1} = $parts->{line1} . sprintf(
-				" (%d %s %d) ",
-				Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
-			);
+			if ( $playlistlen > 1 ) {
+				$parts->{line1} = $parts->{line1} . sprintf(
+					" (%d %s %d) ",
+					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
+				);
+			}
 		} 
 
 		$parts->{line2} = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
