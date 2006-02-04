@@ -124,7 +124,7 @@
 	<td>&nbsp;</td>
 	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END -%]
 	[% FOREACH mixer = mixerlinks.values.sort %]
-		[% PROCESS $mixer %]
+		<td>&nbsp;</td><td>[% PROCESS $mixer %]</td>
 	[% END %]
 [% END %]
 
