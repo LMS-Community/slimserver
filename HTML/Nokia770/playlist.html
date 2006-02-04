@@ -13,15 +13,14 @@
 
 <table bgcolor="#EEEEEE" width=100% border="0">
 	<tr>
-		<td align="left"><font class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
+		<td align="left" class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
 		</td>
 	</tr>
 	<tr>
 		<td class = 'pagebartext'>
-			[% IF playlist_pagebar %]&nbsp;[% playlist_pagebar %]</font>[% END %]
-			[% IF playlist_header %]&nbsp;|&nbsp;<font class="pagebartext">[% playlist_header %]</font>[% END %]
+			[% IF pageinfo.totalpages > 1 %]&nbsp;[% PROCESS pagebar %]&nbsp;|&nbsp;[% PROCESS pagebarheader %][% END %]
 		</td>
-</tr>
+	</tr>
 </table>
 
 <table bgcolor="#EEEEEE" width=100% cellspacing="0" cellpadding="0" border="0">
@@ -46,9 +45,9 @@
 
 
 
-[% IF playlist_pagebar %]
+[% IF pageinfo.totalpages > 1 %]
 <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#C5C5C5">
-<tr><td><font class="pagebartext">&nbsp;[% playlist_pagebar %]</td>
+<tr><td class="pagebartext">&nbsp;[% PROCESS pagebar %]</td>
 </table>
 [% END %]
 

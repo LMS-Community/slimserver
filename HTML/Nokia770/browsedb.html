@@ -21,8 +21,10 @@
 		<td>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]</td>
 	</tr>
 	<tr>
-		<td>[% IF browselist_pagebar %]<font class="pagebartext">&nbsp;[% browselist_pagebar %]</font>[% END %]
-			[% IF browselist_header %]<font class="pagebartext">&nbsp;|&nbsp;[% browselist_header %]</font>[% END %]
+		<td class="pagebartext">
+			[%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]&nbsp;[% PROCESS pagebar %]
+				[%- IF NOT pageinfo.alphamap %]&nbsp;|&nbsp;[% PROCESS pagebarheader %][% END %]
+			[%- END %]
 		</td>
 	</tr>
 </table>
@@ -59,8 +61,10 @@
 </table>
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
 	<tr>
-		<td>[% IF browselist_pagebar %]<font class="pagebartext">&nbsp;[% browselist_pagebar %]</font>[% END %]
-			[% IF browselist_header %]<font class="pagebartext">&nbsp;|&nbsp;[% browselist_header %]</font>[% END %]
+		<td class="pagebartext">
+			[%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]&nbsp;[% PROCESS pagebar %]
+				[%- IF NOT pageinfo.alphamap %]&nbsp;|&nbsp;[% PROCESS pagebarheader %][% END %]
+			[%- END %]
 		</td>
 	</tr>
 	<tr>

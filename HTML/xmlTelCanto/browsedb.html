@@ -6,7 +6,11 @@
 	[% IF itunes %]<itunes/>[% END %]
 	[% IF warn %]<still_scanning/>[% END %]
 	[% IF pwd_list %]<location>[% pwd_list %]</location>[% END %]
-	[% IF browselist_header %][% browselist_header %][% END %]
+	[% IF pageinfo.totalpages > 1 %]<offsets>
+		<from>[% pageinfo.startitem %]</from>
+		<to>[% pageinfo.enditem %]</to>
+		<last>[% pageinfo.totalitems - 1 %]</last>
+	</offsets>[% END %]
 	[% IF coverArt %]<coverart><![CDATA[music/[% coverArt %]/cover.jpg]]></coverart>[% END %]
 	[% browse_list %]
 </browse>

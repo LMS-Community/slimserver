@@ -172,8 +172,6 @@
 	[%# INCLUDE by_from_info %]
 [% END %]
 
-[% END -%]
-
 [% BLOCK by_from_info %]
 	<span class = 'smalltext'>
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist %]
@@ -185,3 +183,32 @@
 	[% END %]
 	</span>
 [% END %]
+
+[% BLOCK pagebar %]
+[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 11; END %]
+[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
+[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
+[%- IF pageinfo.alphamap %]
+[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+ [%- curpage = (pageinfo.alphamap.$alphakey == pageinfo.startitem) -%]
+ <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.$alphakey %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+[%- END %]
+[%- ELSE %]
+[%- FOREACH ind=[pagebarstart..pagebarend] -%]
+ [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
+ [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+ [%- END %]
+[% END %]
+[%- END %]
+[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]">[% "NEXT" | string %]</a> [% END %]
+[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
+[% END %]
+
+[% BLOCK pagebarheader %]
+<span class="pagebarheadertext">
+Items [% pageinfo.startitem %] [% "TO" | string %] [% pageinfo.enditem %] [% "OF" | string %] [% pageinfo.totalitems %]
+</span>
+[% END %]
+
+[%# The following is the end of the null filter, don't put anything below it %]
+[% END -%]

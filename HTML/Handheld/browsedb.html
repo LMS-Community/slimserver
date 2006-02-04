@@ -2,9 +2,7 @@
 	[% PROCESS pageheader.html %]
 
 	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
-		<tr><td>
-			[% IF browselist_pagebar %][% browselist_pagebar %][% END %][% IF browselist_header %]&nbsp;|&nbsp;[% browselist_header %][% END %]
-		</td></tr>
+		[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
 	[%- END -%]
 	
 	[% IF warn %]

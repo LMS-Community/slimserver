@@ -1,6 +1,6 @@
 [%- pagetitle = browseby | string -%]
 [%- WRAPPER leftside.html -%]
- [%- IF pageinfo.totalpages > 1 %]
+ [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
     <div id="browselist_header">[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
   [%- FILTER indent(2) %]
    [%- PROCESS pagebar pagebarid = 'topbrowselistpagebar' %]
@@ -35,7 +35,7 @@
         <li>[% "EMPTY" | string %]</li>
     [%- END %][%# end if browse_items %]
    [%- END %][%# end contentcontainer wrapper %]
- [%- IF pageinfo.totalpages > 1 %]
+ [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
   [%- FILTER indent(2) %]
    [%- PROCESS pagebar pagebarid = 'bottombrowselistpagebar' %]
   [%- END %]

@@ -6,11 +6,11 @@
 
 <div id="browsedbHeader">
 	[% IF browseby != 'BROWSE_BY_ARTWORK' %]
-		[% IF browselist_header %][% browselist_header %][% END %]
+		[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 	[% END %]
 	[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
 
-	[% IF browselist_pagebar %]<div class="pagebar">[% browselist_pagebar %]</div>[% END %]
+	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
 
 <div id="browsedbList">
@@ -26,6 +26,7 @@
 	[% ELSE; browse_list; END %]
 	[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]</ul>[% END %]
 </div>
-[% IF browselist_pagebar  %]<div class="pagebar">[% browselist_pagebar %]</div>[% END %]
-
+<div id="browsedbFooter">
+[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
+</div>
 [% PROCESS pagefooter.html %]
