@@ -747,57 +747,32 @@ sub findAndScanDirectoryTree {
 # remove the leading zeros for single digit dates and hours
 # where a | is specified in the format
 
+# The LC_TIME is set in ::Unicode when we start.
 sub longDateF {
 	my $time = shift || time();
-	my $date = localeStrftime(Slim::Utils::Prefs::get('longdateFormat'), $time);
-	$date =~ s/\|0*//;
+
+	my $date = strftime(Slim::Utils::Prefs::get('longdateFormat'), localtime($time));
+	   $date =~ s/\|0*//;
+
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
 sub shortDateF {
 	my $time = shift || time();
-	my $date = localeStrftime(Slim::Utils::Prefs::get('shortdateFormat'),  $time);
-	$date =~ s/\|0*//;
+
+	my $date = strftime(Slim::Utils::Prefs::get('shortdateFormat'), localtime($time));
+	   $date =~ s/\|0*//;
+
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
 sub timeF {
 	my $ltime = shift || time();
-	my $time = localeStrftime(Slim::Utils::Prefs::get('timeFormat'),  $ltime);
+
 	# remove leading zero if another digit follows
-	$time =~ s/\|0?(\d+)/$1/;
-	return Slim::Utils::Unicode::utf8decode_locale($time);
-}
+	my $time  = strftime(Slim::Utils::Prefs::get('timeFormat'), localtime($ltime));
+	   $time =~ s/\|0?(\d+)/$1/;
 
-sub localeStrftime {
-	my $format = shift;
-	my $ltime = shift;
-	
-	(my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
-
-	# we can't display japanese or chinese, etc right now.
-	unless ($Slim::Player::Client::validClientLanguages{$language}) {
-		$language = $Slim::Player::Client::failsafeLanguage;
-	}
-
-	(my $country = $language) =~ tr/a-z/A-Z/;
-
-	# This is for when we can display japanese on the display.
-	# We might want to consider changing s/JP/JA/ in strings.txt ?
-	if ($language eq 'jp') {
-		$language = 'ja';
-	}
-	
-	my $serverlocale = $language . "_" . $country;
-
-	my $saved_locale = setlocale(LC_TIME, $serverlocale);
-	my $time = strftime $format, localtime($ltime);
-	
-	# XXX - we display in utf8 now
-	# these strings may come back as utf8, make sure they are latin1 when we display them
-	# $time = utf8toLatin1($time);
-	
-	setlocale(LC_TIME, "");
 	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
 

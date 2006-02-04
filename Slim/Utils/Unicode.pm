@@ -18,13 +18,16 @@ package Slim::Utils::Unicode;
 
 use strict;
 use Fcntl qw(:seek);
-use POSIX qw(strftime setlocale LC_TIME LC_CTYPE);
+use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
 use Slim::Utils::Misc;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
-our ($locale, $utf8_re_bits, $recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE, $bomRE, $FB_QUIET);
+our (
+	$sysLang, $locale, $lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
+	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE,
+);
 
 INIT: {
 	if ($] > 5.007) {
@@ -45,66 +48,102 @@ INIT: {
 		)/x;
 	}
 
+	# Set some defaults:
+	$sysLang = 'en';
+	$locale  = 'en_US';
+
         if ($^O =~ /Win32/) {
 
-                require Win32::OLE::NLS;
+		require Win32::OLE::NLS;
+		require Win32::Locale;
 
 		my $langid = Win32::OLE::NLS::GetUserDefaultLangID();
 		my $lcid   = Win32::OLE::NLS::MAKELCID($langid);
 		my $linfo  = Win32::OLE::NLS::GetLocaleInfo($lcid, Win32::OLE::NLS::LOCALE_IDEFAULTANSICODEPAGE());
 
-		$locale = "cp$linfo";
+		$lc_ctype = "cp$linfo";
+
+		$locale   = Win32::Locale::get_locale($langid);
+		$lc_time  = POSIX::setlocale(LC_TIME, $locale);
+
+		$sysLang  = $locale;
+		$sysLang =~ s/_\w+$//;
 
 	} elsif ($^O =~ /darwin/) {
 
 		# I believe this is correct from reading:
 		# http://developer.apple.com/documentation/MacOSX/Conceptual/SystemOverview/FileSystem/chapter_8_section_6.html
-		$locale = 'utf8';
+		$lc_ctype = 'utf8';
+
+		# Now figure out what the locale is - something like en_US
+		if (open(LOCALE, "/usr/bin/defaults read 'Apple Global Domain' AppleLocale |")) {
+
+			chomp($locale = <LOCALE>);
+			close(LOCALE);
+		}
+
+		# On OSX - LC_TIME doesn't get updated even if you change the
+		# language / formatting. Set it here, so we don't need to do a
+		# system call for every clock second update.
+		$lc_time = POSIX::setlocale(LC_TIME, $locale);
+
+		# Will return something like:
+		# (en, ja, fr, de, es, it, nl, sv, nb, da, fi, pt, "zh-Hant", "zh-Hans", ko)
+		# We want to use the first value. See:
+		# http://gemma.apple.com/documentation/MacOSX/Conceptual/BPInternational/Articles/ChoosingLocalizations.html
+		if (open(LANG, "/usr/bin/defaults read 'Apple Global Domain' AppleLanguages |")) {
+
+			chomp(my $languages = <LANG>);
+
+			$languages =~ s/[\(\)]//g;
+			$sysLang = (split /, /, $languages)[0];
+
+			close(LANG);
+		}
 
 	} else {
 
-		my $lc = POSIX::setlocale(LC_CTYPE) || 'C';
+		$lc_time  = POSIX::setlocale(LC_TIME)  || 'C';
+		$lc_ctype = POSIX::setlocale(LC_CTYPE) || 'C';
 
 		# If the locale is C or POSIX, that's ASCII - we'll set to iso-8859-1
 		# Otherwise, normalize the codeset part of the locale.
-		if ($lc eq 'C' || $lc eq 'POSIX') {
-			$lc = 'iso-8859-1';
+		if ($lc_ctype eq 'C' || $lc_ctype eq 'POSIX') {
+			$lc_ctype = 'iso-8859-1';
 		} else {
-			$lc = lc((split(/\./, $lc))[1]);
+			$lc_ctype = lc((split(/\./, $lc_ctype))[1]);
 		}
 
 		# Locale can end up with nothing, if it's invalid, such as "en_US"
-		if (!defined $lc || $lc =~ /^\s*$/) {
-			$lc = 'iso-8859-1';
+		if (!defined $lc_ctype || $lc_ctype =~ /^\s*$/) {
+			$lc_ctype = 'iso-8859-1';
 		}
 
 		# Sometimes underscores can be aliases - Solaris
-		$lc =~ s/_/-/g;
+		$lc_ctype =~ s/_/-/g;
 
 		# ISO encodings with 4 or more digits use a hyphen after "ISO"
-		$lc =~ s/^iso(\d{4})/iso-$1/;
+		$lc_ctype =~ s/^iso(\d{4})/iso-$1/;
 
 		# Special case ISO 2022 and 8859 to be nice
-		$lc =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
+		$lc_ctype =~ s/^iso-(2022|8859)([^-])/iso-$1-$2/;
 
-		$lc =~ s/utf-8/utf8/gi;
+		$lc_ctype =~ s/utf-8/utf8/gi;
 
 		# CJK Locales
-		$lc =~ s/eucjp/euc-jp/i;
-		$lc =~ s/ujis/euc-jp/i;
-		$lc =~ s/sjis/shiftjis/i;
-		$lc =~ s/euckr/euc-kr/i;
-		$lc =~ s/big5/big5-eten/i;
-		$lc =~ s/gb2312/euc-cn/i;
-
-		$locale = $lc;
+		$lc_ctype =~ s/eucjp/euc-jp/i;
+		$lc_ctype =~ s/ujis/euc-jp/i;
+		$lc_ctype =~ s/sjis/shiftjis/i;
+		$lc_ctype =~ s/euckr/euc-kr/i;
+		$lc_ctype =~ s/big5/big5-eten/i;
+		$lc_ctype =~ s/gb2312/euc-cn/i;
 	}
 
 	# Setup suspects for Encode::Guess based on the locale - we might also
 	# want to use our own Language pref?
-	if ($locale ne 'utf8') {
+	if ($lc_ctype ne 'utf8') {
 
-		Encode::Guess->add_suspects($locale);
+		Encode::Guess->add_suspects($lc_ctype);
 	}
 
 	# Create a regex for looks_like_utf8()
@@ -353,7 +392,7 @@ INIT: {
 }
 
 sub currentLocale {
-	return $locale;
+	return $lc_ctype;
 }
 
 sub utf8decode {
@@ -400,7 +439,7 @@ sub utf8decode_locale {
 
 	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
 
-		$string = Encode::decode($locale, $string, $FB_QUIET);
+		$string = Encode::decode($lc_ctype, $string, $FB_QUIET);
 	}
 
 	return $string;
@@ -441,7 +480,7 @@ sub utf8encode {
 
 sub utf8encode_locale {
 
-	return utf8encode($_[0], $locale);
+	return utf8encode($_[0], $lc_ctype);
 }
 
 sub utf8off {
@@ -641,7 +680,7 @@ sub encodingFromFileHandle {
 sub encodingFromFile {
 	my $file = shift;
 
-	my $encoding = $locale;
+	my $encoding = $lc_ctype;
 
 	if (ref($file) && $file->can('seek')) {
 
