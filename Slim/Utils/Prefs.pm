@@ -93,7 +93,22 @@ sub init {
 			}
 		},
 						   
+		'6.5b1-2006-02-03' => sub {
 
+			# Update our language list to be in line with ISO 639-1
+			my %languages = (
+				'CZ' => 'CS',
+				'DK' => 'DA',
+				'JP' => 'JA',
+				'SE' => 'SV',
+			);
+
+			my $newLang = $languages{ $prefs{'language'} };
+
+			if (defined $newLang) {
+				$prefs{'language'} = $newLang;
+			}
+		},
 	);
 
 	# When adding new server and client preference options, put a default value for the option

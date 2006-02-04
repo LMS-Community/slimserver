@@ -113,7 +113,7 @@ sub load_strings_file {
 
 		$strings = <STRINGS>;
 
-		if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859/) {
+		if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859-1/) {
 			$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
 		}
 
@@ -325,7 +325,7 @@ sub validClientLanguages {
 
 	# This should really be dynamically generated - how?
 	# list_of_languages grab - and walk the list - check for stringExists(VALID_CLIENT_LANGUAGE)
-	return map { $_, 1 } qw(DE DK EN ES FI FR IT NL NO PT SE);
+	return map { $_, 1 } qw(CS DE DA EN ES FI FR IT NL NO PT SV);
 }
 
 1;
