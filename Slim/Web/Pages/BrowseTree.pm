@@ -62,6 +62,14 @@ sub browsetree {
 
 	my ($start, $end) = (0, $count);
 
+	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+		'itemCount'    => $count,
+		'path'         => $params->{'path'},
+		'otherParams'  => "hierarchy=$hierarchy&player=$player",
+		'start'        => $params->{'start'},
+		'perPage'      => $params->{'itemsPerPage'},
+	});
+
 	# Create a numeric pagebar if we need to.
 	if ($count > $itemsPer) {
 
