@@ -191,6 +191,15 @@ sub playlist {
 		$list_form{'num'} = $listBuild{'item'};
 		$list_form{'odd'} = ($listBuild{'item'} + $listBuild{'offset'}) % 2;
 
+		my $Imports = Slim::Music::Import::importers();
+
+		for my $mixer (keys %{$Imports}) {
+		
+			if (defined $Imports->{$mixer}->{'mixerlink'}) {
+				&{$Imports->{$mixer}->{'mixerlink'}}($track,\%list_form,1);
+			}
+		}
+
 		if ($listBuild{'item'} == $listBuild{'currsongind'}) {
 			$list_form{'currentsong'} = "current";
 			$list_form{'title'}    = Slim::Music::Info::isRemoteURL($track) ? Slim::Music::Info::standardTitle(undef, $track) : Slim::Music::Info::getCurrentTitle(undef, $track);
