@@ -154,7 +154,6 @@ div#statusMessage form{
 	padding-top: 7px;
 }
 
-
 .stdedit {
    font-family: Verdana, Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
@@ -255,9 +254,6 @@ div#statusMessage form{
 {
 	padding: 0 8 0 8;
 	margin:0px;
-	height: auto;
-	width: auto;
-	position: relative;
 	margin-top: 0px;
 }
 
@@ -344,6 +340,7 @@ div#browsedbList {
 	clear: left;
 	width: auto;
 	height: auto;
+	border: 1px solid pink;
 }
 
 div#browsedbHeader {

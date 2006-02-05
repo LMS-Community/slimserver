@@ -11,9 +11,17 @@
 	<div ID="playlist" class="playlist">
 		
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
-		<table cellspacing="0" border="0" cellpadding="0" width="100%">
-			[% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
-		</table>
+	<div class="browsedbList">
+		[% IF playercount == '0' %]
+			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+		[% ELSE %]
+			[% IF playlist_items %]
+				[% FOREACH item = playlist_items %]
+					[% PROCESS status_list.html %]
+				[% END %]
+			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
+		[% END %]
+	</div>
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
 	</div>
 	[% END %]

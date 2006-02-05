@@ -151,6 +151,10 @@ DIV.menu2 .stdedit {
    margin: 2 3 2 3;
 }
 
+div#statusMessage form{
+	padding-top: 7px;
+}
+
 .stdedit {
    font-family: Arial, Helvetica, sans-serif; 
    background-color : rgb(255,255,255); 
@@ -325,6 +329,14 @@ img {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding:4 2 4 2;
+	background:#999;
+	color:white;
+}
+
+div#statusMessage
+{
+	margin:0px;
+	padding: 0 0 1 8;
 	background:#999;
 	color:white;
 }
