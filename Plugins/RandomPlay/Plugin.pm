@@ -232,7 +232,7 @@ sub playRandom {
 		my $find = {'genre.name' => \@filteredGenres};
 
 		# Prevent items that have already been played from being played again
-		if ($mixInfo{$client}) {
+		if ($mixInfo{$client}->{'startTime'}) {
 			$find->{'lastPlayed'} = {'<' => $mixInfo{$client}->{'startTime'}};
 		}
 		
