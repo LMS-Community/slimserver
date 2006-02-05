@@ -1,5 +1,5 @@
 [% IF song_count; pageHeaderInfo = BLOCK %]
-	<br>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
+	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
 [% END; END %]  
 
 [% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %] [% PROCESS pageheader.html %]
@@ -29,5 +29,4 @@
 <div id="browsedbFooter">
 [% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
-
 [% PROCESS pagefooter.html %]

@@ -8,6 +8,6 @@
 	<body>
 	[% IF pagetitle %]<h3>[% pagetitle %]</h3><br>[% END %]
 [%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list %]
-	[% PROCESS crumblist IF pwd_list %]
+	[% PROCESS crumblist IF pwd_list %]<br>
 	[% pageHeaderInfo %]
 	[% UNLESS noHR %]<hr>[% END %]
