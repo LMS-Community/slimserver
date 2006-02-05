@@ -20,31 +20,30 @@ function refresh() {
 
 <p><a href="[% webroot %]home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / <a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH" | string %]</a></p>
 
-    <h3>[% "PLUGIN_HEALTH" | string %]</h3><p>
+    <h3>[% "PLUGIN_HEALTH" | string %]</h3>
 
+	<p></p>
     [% IF perfoff %]
-        <p>[% "PLUGIN_HEALTH_PERFOFF_DESC" | string %]
-		<p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=on">[% "PLUGIN_HEALTH_PERF_ENABLE" | string %]</a>
+        <p>[% "PLUGIN_HEALTH_PERFOFF_DESC" | string %]</p>
+		<p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=on">[% "PLUGIN_HEALTH_PERF_ENABLE" | string %]</a></p>
     [% END %]
 
     [% IF perfon %]
-        <p>[% "PLUGIN_HEALTH_PERFON_DESC" | string %]
-		<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a>
-        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=clear">[% "PLUGIN_HEALTH_PERF_CLEAR" | string %]</a>
-        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH_PERF_UPDATE" | string %]</a>
-        <p>
+        <p>[% "PLUGIN_HEALTH_PERFON_DESC" | string %]</p>
+		<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a></p>
+        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]&perf=clear">[% "PLUGIN_HEALTH_PERF_CLEAR" | string %]</a></p>
+        <p><a href="[% webroot %]plugins/Health/index.html?player=[% player | uri %]">[% "PLUGIN_HEALTH_PERF_UPDATE" | string %]</a></p>
         <hr>
 
 		[% IF playername AND NOT nettest_rate%]
 
 		    <h4>[% playername %]</h4>
-			<p>[% "PLUGIN_HEALTH_SUMMARY_DESC" | string %]
-            
-			[% IF summary %]<h5>[% "PLUGIN_HEALTH_SUMMARY" | string %]</h5> 
+			<p>[% "PLUGIN_HEALTH_SUMMARY_DESC" | string %]</p>
+
+			[% IF summary %]<h5>[% "PLUGIN_HEALTH_SUMMARY" | string %]</h5>
                 <pre>[% summary %]</pre>
-                <p>
             [% END %]
-            
+
 			[% IF warn %]<h5>[% "PLUGIN_HEALTH_WARNINGS" | string %]</h5>
                 [% FOREACH warn_message = warn %]
 	                <p>[% warn_message %]</p>
@@ -61,16 +60,15 @@ function refresh() {
 		    [% IF NOT nettest_rate %]
 
 			    [% IF nettest_notsupported %]
-			        <p>[% "PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED" | string %]
-					<p>
+			        <p>[% "PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED" | string %]</p>
 				[% ELSE %]
-			        <p>[% "PLUGIN_HEALTH_NETTEST_DESC1" | string %]			
+			        <p>[% "PLUGIN_HEALTH_NETTEST_DESC1" | string %]</p>
 					<p><b>[% "PLUGIN_HEALTH_NETTEST_TESTRATE" | string %]</b>
 					[% FOREACH rate = nettest_options %]
 					    | <a href = "[% webroot %]plugins/Health/index.html?player=[% player | uri %]&test=[% rate | uri%]">
 						[% rate %] kbps</a>
 					[% END %]
-					<p>
+					</p>
 				[% END %]
 
 			[% ELSE %]
@@ -82,10 +80,9 @@ function refresh() {
 			        | <a href = "[% webroot %]plugins/Health/index.html?player=[% player | uri %]&test=[% rate | uri%]">
 				    [% rate %] kbps</a>
 			    [% END %]
-			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC2" | string %]
+			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC2" | string %]</p>
 	            <pre>[% nettest_graph %]</pre>
-			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC3" | string %]
-				<p>
+			    <p>[% "PLUGIN_HEALTH_NETTEST_DESC3" | string %]</p>
 
 			[% END %]
 
@@ -96,8 +93,7 @@ function refresh() {
 		    [% IF signal OR buffer OR control %]
 
 			    <h4>[% "PLUGIN_HEALTH_PLAYERDETAIL" | string %] : [% playername %]</h4>
-				<p>[% "PLUGIN_HEALTH_PLAYERDETAIL_DESC" | string %]
-				<p>
+				<p>[% "PLUGIN_HEALTH_PLAYERDETAIL_DESC" | string %]</p>
 
 				[% IF signal %]
                     <h5>[% "PLUGIN_HEALTH_SIGNAL" | string %]</h5>
@@ -116,7 +112,6 @@ function refresh() {
 	                [% "PLUGIN_HEALTH_CONTROL_DESC" | string %]
 	                <pre>[% control %]</pre>
 	            [% END %]
-
                 <hr>
 			[% END %]
 		[% END %]
@@ -127,7 +122,7 @@ function refresh() {
 		[% IF response %]
 		    <h5>[% "PLUGIN_HEALTH_RESPONSE" | string %]</h5>
 			[% "PLUGIN_HEALTH_RESPONSE_DESC" | string %]
-			<pre>[% response %]</pre> 
+			<pre>[% response %]</pre>
 		[% END %]
 
 		[% IF timerlate %]
@@ -154,7 +149,7 @@ function refresh() {
 			<pre>[% irresponse %]</pre>
 			[% END %]
 
-			<p>
+			<p></p>
 	[% END %]
 </td>
 [% PROCESS pagefooter.html %]

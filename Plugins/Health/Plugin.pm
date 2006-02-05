@@ -471,7 +471,7 @@ PLUGIN_HEALTH_IRRESPONSE
 	EN	IR Response Time
 
 PLUGIN_HEALTH_IRRESPONSE_DESC
-	EN	This graph shows the time between the server receiving IR key presses and processing them.
+	EN	This graph shows the time between the server receiving remote control key presses and processing them.  When the server is busy remote key presses are stored for processing later.  This graph gives an indication of how long key presses are stored for.
 
 PLUGIN_HEALTH_WARNINGS
 	DE	Warnungen
