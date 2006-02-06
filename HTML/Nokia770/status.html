@@ -25,7 +25,7 @@
 [% IF itemobj.isRemoteURL %]
 	[% INCLUDE radio_info_display %]
 [% ELSE %]
-	<td valign = 'top' align = 'left' width = '200px'>
+	<td valign = 'top' align = 'left'>
 		[% INCLUDE cover_art_display %]
 	</td>
 	<td valign = 'top' align = 'left'>
@@ -189,7 +189,9 @@
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			[% IF songtitle %]
-			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% songtitle %]</a>
+			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">
+	[% INCLUDE truncated_string string = songtitle length = '40' %] 
+</a>
 			[% END %]
 			</td>
 		</tr>
@@ -197,21 +199,27 @@
 			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.artist.id %]
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.artist %]</a>
+			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
+[% INCLUDE truncated_string string = itemobj.artist length = '40' %] 
+</a>
 [% END %]
 			</td>
 		</tr>
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
-			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.album %]</a>
+			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
+[% INCLUDE truncated_string string = itemobj.album length = '40' %] 
+			</a>
 			[% END %]
 			</td>
 		</tr>
 		<tr>
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
-			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.genre %]</a>[% END %]
+			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
+[% INCLUDE truncated_string string = itemobj.genre length = '40' %] 
+			</a>[% END %]
 			</td>
 		</tr>
 	</table>
@@ -313,6 +321,32 @@ if (document.all||document.getElementById)
 
 [% END %]
 
+[% BLOCK new_volume_settings %]
+	[% IF isplayer %]
+<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
+	<tr>
+	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
+
+	[% vol = 1 %]
+	<td><table width = '100%' cellpadding = '0' cellspacing = '0' bgcolor = 'white'><tr>
+	[% WHILE vol <= 40 %]
+	<td width="5" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% vol %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
+		<table width = '100%' cellpadding = '0' cellspacing = '0'><tr>
+			<td valign = 'bottom' bgcolor = '[% IF volume >= vol %]#000000;[% ELSE %]#CCCCCC;[% END %]' height = '[% vol %]'>
+	</td>
+		</tr></table>
+	</td>
+		[% vol = vol + 1 %]
+	[% END %]
+	</tr></table></td>
+	</tr>
+</table>
+	[% ELSE %]
+	<span class = 'smalltext'>volume settings not available for this player</span>
+	[% END %]
+
+[% END %]
+
 [% BLOCK volume_settings %]
 	[% IF isplayer %]
 <table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
@@ -373,11 +407,11 @@ if (document.all||document.getElementById)
 
 <tr>
 
-	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
+	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
 		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
 	</td>
-	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %]>
-		[% item.title %]
+	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
+	[% INCLUDE truncated_string string = item.title length = '20' %] 
 	</td>
 </tr>
 [% END %]
