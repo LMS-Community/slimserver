@@ -1161,7 +1161,7 @@ PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 	NL	Vernieuw stream lijst
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
-	CZ	CHYBA: web SHOUTcast je nedostupný
+	CS	CHYBA: web SHOUTcast je nedostupný
 	DE	Fehler: SHOUTcast ist nicht verfügbar
 	EN	Error: SHOUTcast web site not available
 	ES	Error: el sitio web de SHOUTcast no está disponible
@@ -1214,7 +1214,7 @@ PLUGIN_SHOUTCASTBROWSER_RECENT
 	NL	Recent afgespeeld
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
-	CZ	Nejpopulárnější
+	CS	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular
@@ -1338,7 +1338,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	NL	Maximum te onthouden recent afgespeelde streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
-	CZ	Nejpopulárnější
+	CS	Nejpopulárnější
 	DE	Populäre Streams
 	EN	Most Popular
 	ES	Más Popular

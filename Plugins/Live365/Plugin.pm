@@ -954,14 +954,14 @@ sub strings {
 	NL	Live365 Internet radio
 
 PLUGIN_LIVE365_LOGOUT
-	CZ	Odhlásit
+	CS	Odhlásit
 	DE	Abmelden
 	EN	Log out
 	ES	Desconectarse
 	NL	Log uit
 
 PLUGIN_LIVE365_LOGIN
-	CZ	Přihlásit
+	CS	Přihlásit
 	DE	Anmelden
 	EN	Log in
 	ES	Conectarse
@@ -991,7 +991,7 @@ PLUGIN_LIVE365_LOGIN_ERROR_NAME
 	NL	Gebruikersnaam probleem
 
 PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-	CZ	Problém s přihlášením
+	CS	Problém s přihlášením
 	DE	Problem beim Anmelden
 	EN	Login problem
 	ES	Problema de conexión
@@ -1022,14 +1022,14 @@ PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 	NL	Live365 website fout, probeer opnieuw
 
 PLUGIN_LIVE365_LOADING_GENRES
-	CZ	Stahuji žánry z Live365...
+	CS	Stahuji žánry z Live365...
 	DE	Genre-Liste wird von Live365 geladen...
 	EN	Loading genre list from Live365...
 	ES	Cargando la lista de géneros de Live365...
 	NL	Laden genrelijst van Live365...
 
 PLUGIN_LIVE365_LOADING_GENRES_ERROR
-	CZ	Chyba při stahování stylů. Zkuste to prosím později.
+	CS	Chyba při stahování stylů. Zkuste to prosím později.
 	DE	Fehler beim Laden der Genre-Liste. Bitte neu versuchen.
 	EN	Error loading genres, try again
 	ES	Error al cargar géneros, intente nuevamente...
@@ -1042,7 +1042,7 @@ PLUGIN_LIVE365_PRESETS
 	NL	Mijn voorkeuzes
 
 PLUGIN_LIVE365_BROWSEGENRES
-	CZ	Procházeet žánry
+	CS	Procházeet žánry
 	DE	Musikstile durchsuchen
 	EN	Browse genres
 	ES	Examinar géneros
@@ -1050,7 +1050,7 @@ PLUGIN_LIVE365_BROWSEGENRES
 	NL	Bekijk op genre
 
 PLUGIN_LIVE365_BROWSEALL
-	CZ	Procházet všechny stanice (mnoho)
+	CS	Procházet všechny stanice (mnoho)
 	DE	Alle Stationen durchsuchen (viele)
 	EN	Browse all stations (many)
 	ES	Recorrer todas las estaciones (muchas)
@@ -1064,7 +1064,7 @@ PLUGIN_LIVE365_BROWSEPICKS
 	NL	Bekijk editor tips
 
 PLUGIN_LIVE365_BROWSEPROS
-	CZ	Procházet profesionální stanice
+	CS	Procházet profesionální stanice
 	DE	Professionelle Stationen durchsuchen
 	EN	Browse professional stations
 	ES	Recorrer estaciones profesionales
@@ -1084,7 +1084,7 @@ PLUGIN_LIVE365_SEARCHPROMPT
 	NL	Zoek Live365:
 
 PLUGIN_LIVE365_LOADING_DIRECTORY
-	CZ	Nahrávám...
+	CS	Nahrávám...
 	DE	Lade...
 	EN	Loading...
 	ES	Cargando...
@@ -1103,21 +1103,21 @@ PLUGIN_LIVE365_LOADING_INFORMATION
 	NL	Laden kanaalinformatie...
 
 PLUGIN_LIVE365_DESCRIPTION
-	CZ	Popis stanice
+	CS	Popis stanice
 	DE	Sender Beschreibung
 	EN	Station Description
 	ES	Descripción de estación
 	NL	Zenderbeschrijving
 
 PLUGIN_LIVE365_STATION_LISTENERS_ACTIVE
-	CZ	Aktivních posluchačů
+	CS	Aktivních posluchačů
 	DE	Aktive Zuhörer
 	EN	Active listeners
 	ES	Oyentes activos
 	NL	Actieve luisteraars
 
 PLUGIN_LIVE365_STATION_LISTENERS_MAX
-	CZ	Maximum posluchačů
+	CS	Maximum posluchačů
 	DE	Maximale Anzahl Zuhörer
 	EN	Maximum listeners
 	ES	Cantidad máxima de oyentes
@@ -1130,7 +1130,7 @@ PLUGIN_LIVE365_LISTENER_ACCESS
 	NL	Luisteraar toegang
 
 PLUGIN_LIVE365_STATION_QUALITY_LEVEL
-	CZ	Kvalita vysílání stanice
+	CS	Kvalita vysílání stanice
 	DE	Sender Qualität
 	EN	Station quality
 	ES	Calidad de la estación
@@ -1200,7 +1200,7 @@ SETUP_GROUP_PLUGIN_LIVE365
 	NL	Live365 Internet radio
 
 SETUP_GROUP_PLUGIN_LIVE365_DESC
-	CZ	Prohledávat, procházet a ladit stanice Live365
+	CS	Prohledávat, procházet a ladit stanice Live365
 	DE	Suche und höre Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 	ES	Buscar, recorrer y sintonizar estaciones Live365
@@ -1256,7 +1256,7 @@ SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC
 	NL	Definieer de sorteervolgorde van zenders
 
 SETUP_PLUGIN_LIVE365_SORT_TITLE
-	CZ	Název stanice
+	CS	Název stanice
 	DE	Sender Sortierung
 	EN	Station title
 	ES	Título de la estación
@@ -1299,7 +1299,7 @@ SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
 	NL	Laat gedetailleerde resultaten zien bij het zoeken op de Live365 website. Laat artiest, liedje en albuminfo zien bij het zoeken naar &eacute;&eacute;n van deze. Het kan je zoekresultaten langer en moeilijker te lezen maken.
 
 PLUGIN_LIVE365_GENRES
-	CZ	Styly Live365
+	CS	Styly Live365
 	DE	Live365 Musikstile
 	EN	Live365 genres
 	ES	Géneros de Live365

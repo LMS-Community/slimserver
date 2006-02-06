@@ -278,7 +278,7 @@ sub setupGroup {
 
 sub strings {
 	return q^PLUGIN_RESCAN_MUSIC_LIBRARY
-	CZ	Aktualizovat informace z hudebního archivu
+	CS	Aktualizovat informace z hudebního archivu
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
 	ES	Recopilar nuevamente la Colección Musical
@@ -288,7 +288,7 @@ sub strings {
 	NL	Opnieuw scannen muziekcollectie
 	
 PLUGIN_RESCAN_RESCANNING
-	CZ	Server právě aktualizuje informace z hudebního archivu
+	CS	Server právě aktualizuje informace z hudebního archivu
 	DE	Server durchsucht Verzeichnisse...
 	EN	Server now rescanning...
 	ES	El server está recopilando...
@@ -297,7 +297,7 @@ PLUGIN_RESCAN_RESCANNING
 	NL	Server bezig met herscannen...
 
 PLUGIN_RESCAN_PRESS_PLAY
-	CZ	Stiskněte PLAY a aktualizujte informace z  hudebního archivu.
+	CS	Stiskněte PLAY a aktualizujte informace z  hudebního archivu.
 	DE	Drücke Play, um Durchsuchen zu starten
 	EN	Press PLAY to rescan now.
 	ES	Presionar PLAY para recopilar ahora.
@@ -305,7 +305,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 	NL	Druk op PLAY voor nu herscannen.
 
 PLUGIN_RESCAN_TIMER_NAME
-	CZ	Časovač aktualizace
+	CS	Časovač aktualizace
 	DE	Automatisches Durchsuchen 
 	EN	Rescan Timer
 	ES	Timer de Recopilación
@@ -313,7 +313,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	NL	Herscantimer
 
 PLUGIN_RESCAN_TIMER_SET
-	CZ	Nastavte čas pravidelné aktualizace
+	CS	Nastavte čas pravidelné aktualizace
 	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
 	ES	Establecer Horario de Recopilación
@@ -321,7 +321,7 @@ PLUGIN_RESCAN_TIMER_SET
 	NL	Stel herscantijd in 
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
-	CZ	Vypínám automatickou aktualizaci...
+	CS	Vypínám automatickou aktualizaci...
 	DE	Automatisches Durchsuchen deaktivieren...
 	EN	Turning rescan timer off...
 	ES	Apagando el timer de recopilación...
@@ -329,7 +329,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	NL	Bezig met herscantimer uitzetten...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
-	CZ	Zapínám automatickou aktualizaci...
+	CS	Zapínám automatickou aktualizaci...
 	DE	Automatisches Durchsuchen aktivieren...
 	EN	Turning rescan timer on...
 	ES	Encendiendo el timer de recopilación...
@@ -337,7 +337,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	NL	Bezig met herscantimer aanzetten...
 
 PLUGIN_RESCAN_TIMER_ON
-	CZ	Časovač aktualizace zapnut
+	CS	Časovač aktualizace zapnut
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 	ES	Timer de Recopilación ENCENDIDO
@@ -345,7 +345,7 @@ PLUGIN_RESCAN_TIMER_ON
 	NL	Herscantimer aan
 
 PLUGIN_RESCAN_TIMER_DESC
-	CZ	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
+	CS	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede elegir tener una recopilación programada de la colección musical cada 24 horas. Establecer la hora, y poner el Timer de Recopilación en ENCENDIDO para utilizar esta característica.
@@ -353,7 +353,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	NL	Je kunt kiezen voor een om het scannen van de muziekcollectie elke 24 uur te plannen. Stel de tijd in en zet de herscantimer Aan om deze optie te gebruiken.
 
 PLUGIN_RESCAN_TIMER_OFF
-	CZ	Časovač aktualizace vypnut
+	CS	Časovač aktualizace vypnut
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 	ES	Timer de Recopilación APAGADO

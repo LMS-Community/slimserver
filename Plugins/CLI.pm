@@ -1002,50 +1002,50 @@ PLUGIN_CLI_DESC
 	EN	The Command Line Interface plugin allows SlimServer and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 
 SETUP_CLIPORT
-	CZ	Číslo portu příkazové řádky
+	CS	Číslo portu příkazové řádky
 	DE	Kommandozeilen-Schnittstellen Port-Nummer
-	DK	Port-nummer for Command Line Interface
+	DA	Port-nummer for Command Line Interface
 	EN	Command Line Interface Port Number
 	ES	Número de puerto para la interfaz de linea de comandos
 	FR	Numéro de port de l'interface en ligne de commande
 	HE	פורט לממשק שורת הפקודה
 	IT	Numero della porta dell'Interfaccia a linea di comando
-	JP	コマンドライン インターフェース ポートナンバー
+	JA	コマンドライン インターフェース ポートナンバー
 	NL	Poortnummer van de Opdrachtprompt interface
 	NO	Portnummer for terminalgrensesnitt
 	PT	Porta TCP da Interface de Linha de Comando
-	SE	Portnummer för terminalgränssnitt
+	SV	Portnummer för terminalgränssnitt
 	ZH_CN	命令行界面端口号
 
 SETUP_CLIPORT_DESC
-	CZ	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky.
+	CS	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky.
 	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll.
-	DK	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet.
+	DA	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet.
 	EN	You can change the port number that is used to by a command line interface to control the player.
 	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.
 	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine.
 	HE	פורט זה משמש לשליטה על נגנים
 	IT	Puoi cambiare il numero della porta usata dall'interfaccia a linea di comando per controllare il lettore. (Imposta a zero per disabilitare l'interfaccia a linea di comando).
-	JP	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
+	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
 	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een Opdrachtprompt interface te bedienen. Zet dit poortnummer op 0 (nul) als je de Opdrachtprompt interface wilt uitschakelen.
 	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
-	SE	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
+	SV	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
 	ZH_CN	您可以改变控制播放机的命令行界面所使用的端口号。
 
 SETUP_CLIPORT_OK
-	CZ	Nyní bude používán následující port pro ovládaní příkazovým řádkem
+	CS	Nyní bude používán následující port pro ovládaní příkazovým řádkem
 	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
-	DK	Anvender nu følgende port til Command Line Interfacet:
+	DA	Anvender nu følgende port til Command Line Interfacet:
 	EN	Now using the following port for the command line interface:
 	ES	Utilizando puerto:
 	FR	L'interface en ligne de commande utilise maintenant le port :
 	IT	E' attualmente in uso la seguente porta per l'interfaccia a linea di comando:
-	JP	現在コマンドライン インターフェースには、以下のポートが使われています:
+	JA	現在コマンドライン インターフェースには、以下のポートが使われています:
 	NL	De volgende poort wordt gebruikt voor de Opdrachtprompt interface:
 	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
 	PT	A porta para acesso via linha de comando é
-	SE	Använder nu följande portnummer för terminalgränssnittet:
+	SV	Använder nu följande portnummer för terminalgränssnittet:
 	ZH_CN	当前正使用如下的命令行界面端口：
 
 ";

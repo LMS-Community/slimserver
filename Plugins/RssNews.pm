@@ -125,7 +125,7 @@ PLUGIN_RSSNEWS_NO_DESCRIPTION
 	NL	Beschrijving niet beschikbaar
 
 PLUGIN_RSSNEWS_NO_TITLE
-	CZ	Název není dostupný
+	CS	Název není dostupný
 	DE	Kein Titel verfübar
 	EN	Title not available
 	ES	Título no disponible
@@ -156,7 +156,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
 	NL	Selecteer huidige schermbeveiliger
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
-	CZ	Aktuální spořič
+	CS	Aktuální spořič
 	DE	Dieser Bildschirmschoner
 	EN	Current Screensaver
 	ES	Salvapantallas actual
@@ -164,7 +164,7 @@ PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE
 	NL	Huidige schermbeveiliger
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED
-	CZ	Použít RSS News jako aktuální spořič
+	CS	Použít RSS News jako aktuální spořič
 	DE	RSS News als Bildschirmschoner verwenden
 	EN	Use RSS News as current screensaver
 	ES	Utilizar Noticias RSS como el Salvapantallas actual
@@ -251,7 +251,7 @@ PLUGIN_RSSNEWS_RESETTING
 	NL	Herstellen standaard RSS feeds.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
-	CZ	Resetovat
+	CS	Resetovat
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Reestablecer
@@ -272,7 +272,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	NL	Het maximum aantal te tonen items voor elke feed wanneer de schermbeveiliger actief is. Een hogere waarde zorgt ervoor dat de schermbeveiliger meer items toont voor door te gaan naar de volgende feed.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
-	CZ	Položek na kanál
+	CS	Položek na kanál
 	DE	Einträge pro Feed
 	EN	Items per channel
 	ES	Elementos por canal

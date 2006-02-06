@@ -131,7 +131,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	NL	Druk -> om deze schermbeveiliger aan te zetten
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
-	CZ	Spořič je nastaven
+	CS	Spořič je nastaven
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
 	ES	Este salvapantallas está activo
@@ -140,7 +140,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	NL	Deze schermbeveiliger is aan
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
-	CZ	Výchozí spořič
+	CS	Výchozí spořič
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
