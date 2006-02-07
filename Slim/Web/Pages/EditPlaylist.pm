@@ -250,6 +250,7 @@ sub renamePlaylist {
 
 				$existingPlaylist = undef;
 			}
+			removePlaylistFromDisk($playlistObj);
 
 			$playlistObj->set('url', $newUrl);
 			$playlistObj->set('title', $newName);
