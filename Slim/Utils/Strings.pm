@@ -145,6 +145,15 @@ sub addStrings {
 	my $language = '';
 	my $stringname = '';
 	my $ln = 0;
+	
+	# TEMP changed language IDs for temporary ID translation (needed for plugins' 6.2.x <-> 6.5 compatibility)
+	my %legacyLanguages = (
+		'CZ' => 'CS',
+		'DK' => 'DA',
+		'JP' => 'JA',
+		'SE' => 'SV',
+	);
+	# /TEMP
 
 	my $currentLanguage  = getLanguage();
 	my $failSafeLanguage = failsafeLanguage();
@@ -166,13 +175,20 @@ sub addStrings {
 		} elsif ($line =~ /^\t(\S*)\t(.+)$/) {
 
 			my $one = $1;
-			
+			$string = $2;
+
+			# TEMP temporary ID translation for backwards compatibility
+			# print a warning for plugin authors
+			if ($legacyLanguages{$one} && $legacyLanguages{$one} eq $currentLanguage) {
+				msg("Please tell the plugin author to update string '$string': '$one' should be '$legacyLanguages{$one}'\n");
+				$one = $legacyLanguages{$one};
+			}
+			# /TEMP
+						
 			# only read strings in our preferred and the failback language - plus the language names for the setup page
 			if ($one ne $failSafeLanguage && $one ne $currentLanguage && $stringname ne 'LANGUAGE_CHOICES') {
 				next LINE;
 			}
-			
-			$string = $2;
 
 			if ($one =~ /./) {
 				# if the string spans multiple lines, language can be left blank, and
