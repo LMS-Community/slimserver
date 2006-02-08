@@ -72,7 +72,7 @@ sub writeList {
 	my $writer;
 
 	if (exists $playlistInfo{$type} && ($writer = $playlistInfo{$type}->[1])) {
-		return &$writer($listref, $playlistname, Slim::Utils::Misc::pathFromFileURL($fulldir));
+		return &$writer($listref, $playlistname, Slim::Utils::Misc::pathFromFileURL($fulldir), 1);
 	}
 }
 
