@@ -250,6 +250,8 @@ sub _readCoverArtFiles {
 
 			$::d_artwork && msg("Found $image file: $file\n");
 
+			$lastFile{$image} = $file;
+
 			return ($body, $contentType, $file);
 
 		} else {
