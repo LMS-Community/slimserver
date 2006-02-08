@@ -121,11 +121,13 @@
 
 [% BLOCK playlistcontrols %]
 	[% width='9' height='11' target='status' %]
+	[% FOREACH mixer = item.mixerlinks.values.sort %]
+		[% PROCESS $mixer %]
+	[% END %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           %][% END %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         %][% END %]
 	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind %][% END %]
 	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                         %][% END %]
-	[% WRAPPER infolink     %][% PROCESS songinfoItemHRef                                   %][% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]
@@ -145,7 +147,7 @@
 	[% END %]
 	[% IF item.num || item.num == 0 %]
 			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">&nbsp;[% item.num + 1 %].&nbsp;</a>
-			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% item.title | html %]</a></b>
+			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a></b>
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]
 	[% ELSIF item.item || !item.defined('level') %]
@@ -158,7 +160,7 @@
 	
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
-	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %][% "FROM" | string %]
+	[% IF item.includeAlbum && item.album && item.album != item.noAlbum && item.album != "" %][% "FROM" | string %]
 	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
 [% END %]
 
