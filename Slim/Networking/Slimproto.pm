@@ -546,14 +546,6 @@ sub _stat_handler {
 	if ($callback && ref($callback) eq 'CODE') {
 
 		eval { &$callback($client) };
-
-		if ($@) {
-			errorMsg("_stat_handler: Got error from callback: [$@]\n");
-		}
-
-	} else {
-
-		errorMsg("_stat_handler: Didn't get a valid callback!\n");
 	}
 }
 	
