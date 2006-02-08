@@ -132,14 +132,26 @@ my $httpError;
 # time of last list refresh
 my $last_time = 0;
 
+# Most systems have Compress::Zlib, but a few don't.
+my $hasZlib = 0;
+
 sub initPlugin {
 	checkDefaults();
 
+	eval { require Compress::Zlib };
+
+	if (!$@) {
+		$hasZlib = 1;
+	}
+
 	if (defined @genre_keywords) {
+
 		foreach my $genre (keys %genre_aka) {
+
 			foreach (split /\|/, $genre_aka{$genre}) {
 				$genre_aka{$_} = $genre;
 			}
+
 			delete $genre_aka{$genre};
 		}
 
@@ -150,6 +162,7 @@ sub initPlugin {
 		}
 		undef @genre_keywords;
 	}
+
 	@legit_genres = map { s/_/ /g; $_; } @legit_genres;
 	
 	return 1;	
@@ -163,7 +176,8 @@ sub getDisplayName {
 	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
 }
 
-my %modes;
+my %modes = ();
+
 sub getModes {
 	my $client = shift;
 	
@@ -260,6 +274,7 @@ sub getModes {
 		# keep track of the current language so we can update if the language changes
 		$status{'language'} = Slim::Utils::Strings::getLanguage();
 	}
+
 	return \%modes;
 }
 
@@ -299,12 +314,14 @@ sub setMode {
 		$status{$client}{status} = 1;
 		getModes($client);
 
-		my @modeOrder = map { "{$_}" } ('PLUGIN_SHOUTCASTBROWSER_RECENT', 
-										'PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR', 
-										'BROWSE_BY_GENRE', 
-										'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS',
-										'PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM',
-										'PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST');
+		my @modeOrder = map { "{$_}" } (
+			'PLUGIN_SHOUTCASTBROWSER_RECENT', 
+			'PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR', 
+			'BROWSE_BY_GENRE', 
+			'PLUGIN_SHOUTCASTBROWSER_ALL_STREAMS',
+			'PLUGIN_SHOUTCASTBROWSER_RANDOM_STREAM',
+			'PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST'
+		);
 
 		my %params = (
 			header => '{PLUGIN_SHOUTCASTBROWSER_MODULE_NAME} {count}',
@@ -367,7 +384,14 @@ sub browseStreamsExitHandler {
 			$status{$client}{'bitrate'} = $bitrates[0];
 			showStreamInfo($client);
 		} else {
-			@bitrates = map {$client->string('PLUGIN_SHOUTCASTBROWSER_BITRATE') . $client->string('COLON') . " $_ " . $client->string('PLUGIN_SHOUTCASTBROWSER_KBPS')} @bitrates;
+
+			@bitrates = map {
+				$client->string('PLUGIN_SHOUTCASTBROWSER_BITRATE') . 
+				$client->string('COLON') .
+				" $_ " .
+				$client->string('PLUGIN_SHOUTCASTBROWSER_KBPS')
+			} @bitrates;
+
 			my %params = (
 				header => $item,
 				valueRef => \$status{$client}{'bitrate'},
@@ -384,23 +408,40 @@ sub loadStreamList {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
 	# only start if it's not been launched by another client
-	if (not defined $httpError) {
-		# reset the modes
-		undef %modes;
-		$last_time = time();
-		$::d_plugins && msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
-		
-		$httpError = -1;
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(\&gotViaHTTP, \&gotErrorViaHTTP, {client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
-	
-		my $url = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
-		$url .= '&limit=' . Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams') if Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams');
-		eval { require Compress::Zlib };
-		$url .= '&no_compress=1' if $@;
-
-		$::d_plugins && msg("Shoutcast: async request\n");
-		$http->get($url);
+	if (defined $httpError) {
+		return;
 	}
+
+	# reset the modes
+	undef %modes;
+
+	$last_time = time();
+
+	$::d_plugins && msg("Shoutcast: next update " . localtime($last_time + UPDATEINTERVAL) . "\n");
+	
+	$httpError = -1;
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&gotViaHTTP, \&gotErrorViaHTTP, {
+		client     => $client,
+		params     => $params,
+		callback   => $callback,
+		httpClient => $httpClient,
+		response   => $response
+	});
+
+	my $url = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
+
+	if (my $streamLimit = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_how_many_streams')) {
+
+		$url .= '&limit=' . $streamLimit;
+	}
+
+	# If we can decompress it - use that instead.
+	$url .= '&no_compress=1' if !$hasZlib;
+
+	$::d_plugins && msg("Shoutcast: async request\n");
+
+	$http->get($url);
 }
 
 sub gotViaHTTP {
@@ -430,12 +471,17 @@ sub gotViaHTTP {
 		sortGenres();
 		$httpError = 0;
 	}
+
 	undef $data;
-	
+
 	$::d_plugins && msg("Shoutcast: create page\n");
+
 	createAsyncWebPage($params);
+
 	$::d_plugins && msg("Shoutcast: that's it\n");
+
 	if (defined $params->{'client'}) {
+
 		$params->{'client'}->unblock();
 		$params->{'client'}->update();
 	}
@@ -455,10 +501,15 @@ sub gotErrorViaHTTP {
 
 sub createAsyncWebPage {
 	my $params = shift;
+
 	# create webpage if we were called by the web interface
+
 	if ($params->{httpClient}) {
+
 		my $output = handleWebIndex($params->{client}, $params->{params}, $params->{callback}, $params->{httpClient}, $params->{response});
+
 		my $current_player;
+
 		if (defined($params->{client})) {
 			$current_player = $params->{client}->id();
 		}
@@ -468,21 +519,21 @@ sub createAsyncWebPage {
 }
 
 sub extractStreamInfoXML {
-	my $data = shift;
-	return 0 unless ($data);
+	my $data = shift || return 0;
 
-	eval { require Compress::Zlib };
-	$data = Compress::Zlib::uncompress($data) unless ($@);
+	if ($hasZlib) {
+		$data = Compress::Zlib::uncompress($data);
+	}
+
 	$data = eval { XML::Simple::XMLin(\$data, SuppressEmpty => ''); };
 
-	if ($@ || !exists $data->{'playlist'} || 
-	    ref($data->{'playlist'}->{'entry'}) ne 'ARRAY') {
+	if ($@ || !exists $data->{'playlist'} || ref($data->{'playlist'}->{'entry'}) ne 'ARRAY') {
+
 		$::d_plugins && msg("Shoutcast: problem reading XML: $@\n");
 		return 0;
 	}
-	else {
-		return $data;
-	}
+
+	return $data;
 }
 
 sub extractStreamInfo {
@@ -490,17 +541,28 @@ sub extractStreamInfo {
 	my $data = shift;
 
 	my $munge_genres = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_munge_genre');
-	my $min_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
-	my $max_bitrate = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
-	my $miscName = (defined($client) ? $client->string('PLUGIN_SHOUTCASTBROWSER_MISC') : string('PLUGIN_SHOUTCASTBROWSER_MISC'));
+	my $min_bitrate  = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_min_bitrate');
+	my $max_bitrate  = Slim::Utils::Prefs::get('plugin_shoutcastbrowser_max_bitrate');
+	my $miscName     = (defined($client) ? $client->string('PLUGIN_SHOUTCASTBROWSER_MISC') : string('PLUGIN_SHOUTCASTBROWSER_MISC'));
 
 	for my $entry (@{$data->{'playlist'}->{'entry'}}) {
-		my $bitrate	 = $entry->{'Bitrate'};
+
+		my $bitrate = $entry->{'Bitrate'};
+
 		next if ($min_bitrate and $bitrate < $min_bitrate);
 		next if ($max_bitrate and $bitrate > $max_bitrate);
 
-		my $name = cleanStreamInfo($entry->{'Name'});
+		my $name  = cleanStreamInfo($entry->{'Name'});
+
+		# XXX - We can't handle AAC Streams yet.
+		if ($entry->{'Name'} =~ /aacplus/i || $entry->{'Nowplaying'} =~ /aacplus/i) {
+
+			$::d_plugins && msg("Shoutcast: extractStreamInfo- skipping AACPlus Stream [$name]\n");
+			next;
+		}
+
 		my $genre = my $original = cleanStreamInfo($entry->{'Genre'});
+
 		$genre = "\L$genre";
 		$genre =~ s/\s+/ /g;
 		$genre =~ s/^ //;
@@ -509,8 +571,11 @@ sub extractStreamInfo {
 		my @keywords = ();
 
 		if ($munge_genres) {
-			my %new_genre;
+
+			my %new_genre = ();
+
 			for my $old_genre (split / /, $genre) {
+
 				if (my $new_genre = $genre_aka{$old_genre}) {
 					$new_genre{"\u$new_genre"}++;
 				}
@@ -521,18 +586,22 @@ sub extractStreamInfo {
 			}
 	
 		} else {
+
 			@keywords = ($original);
 		}
 
 		foreach (@keywords) {
+
 			push @{$genreStreams{$_}}, $name;
 		}
 
-		$streamList{$name}{$bitrate} = [$entry->{'Playstring'}, 
-										$entry->{'Listeners'},
-										$bitrate,
-										cleanStreamInfo($entry->{'Nowplaying'}), 
-										$original];
+		$streamList{$name}{$bitrate} = [
+			$entry->{'Playstring'},
+			$entry->{'Listeners'},
+			$bitrate,
+			cleanStreamInfo($entry->{'Nowplaying'}),
+			$original
+		];
 	}
 }
 
