@@ -577,8 +577,6 @@ sub notifyFromArray {
 									$requestLineRef
 								);
 	
-#	$request->notify() if defined $request;
-#	msg("Pushing notif for ". $request->getRequestString() . " for notifyFromArray\n");
 	push @notificationQueue, $request;
 }
 
@@ -586,13 +584,13 @@ sub notifyFromArray {
 sub checkNotifications {
 	if (scalar @notificationQueue) {
 		
-		# empty the queue and copy the values
-		my @requests = @notificationQueue;
-		@notificationQueue = undef;
-		
-		foreach (@requests) {
+		# notify
+		foreach (@notificationQueue) {
 			$_->notify() if blessed($_);
 		}
+		
+		# empty queue
+		@notificationQueue = ();
 	}
 }
 
@@ -1254,8 +1252,12 @@ sub execute {
 	# call the execute function
 	if (my $funcPtr = $self->{'_func'}) {
 
-# The call to validate() above checks this
-#		if (defined $funcPtr && ref($funcPtr) eq 'CODE') {
+			# notify for commands
+			# done here so that order of calls is maintained in all cases.
+			if (!$self->query()) {
+		
+				push @notificationQueue, $self;
+			}
 
 			eval { &{$funcPtr}($self) };
 
@@ -1264,11 +1266,6 @@ sub execute {
 				$self->dump('Request');
 			}
 
-#		} else {
-
-#			errorMsg("execute: Didn't get a valid coderef from ->{'_func'}\n");
-#			$self->dump('Request');
-#		}
 	}
 	
 	# if the status is done
@@ -1279,15 +1276,16 @@ sub execute {
 		# perform the callback
 		$self->callback();
 		
-		# notify for commands
-		if (!$self->query()) {
-		
-#			$self->notify();
-#			msg("Pushing notif for ". $self->getRequestString() . "\n");
-			push @notificationQueue, $self;
-		}
-
 	} else {
+	
+		# remove the notification if we pushed it...
+		my $notif = pop @notificationQueue;
+		
+		if ($notif != $self) {
+		
+			# oops wrong one, repush it...
+			push @notificationQueue, $notif;
+		}
 
 		$::d_command && $self->dump('Request');
 	}

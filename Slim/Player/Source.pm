@@ -982,7 +982,6 @@ sub trackStartEvent {
 
 	$client->currentPlaylistChangeTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
-#	Slim::Control::Command::executeCallback($client, ["newsong"]);
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
 
 
@@ -1452,12 +1451,15 @@ sub openSong {
 
 		$client->currentPlaylistChangeTime(time());
 		Slim::Player::Playlist::refreshPlaylist($client);
-#		Slim::Control::Command::executeCallback($client, ["newsong"])
-		Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
 	}
 
-#	Slim::Control::Command::executeCallback($client,  ['open', $fullpath]);
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'open', $fullpath]);
+
+	# make sure newsong comes after open, like it does for sbs
+	if (!$client->reportsTrackStart()) {
+
+		Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
+	}
 
 	return 1;
 }
