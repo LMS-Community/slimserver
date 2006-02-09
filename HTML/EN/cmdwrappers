@@ -77,7 +77,7 @@ END %]
 [%# this is an individual bread crumb %]
 [% BLOCK crumblistitem -%]
 [%- IF item.title -%]
-<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title | html %]</a>
 [%- ELSE -%]
 [% item | replace('^\s*/','') %]
 [%- END -%]

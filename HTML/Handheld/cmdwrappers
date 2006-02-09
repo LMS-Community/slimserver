@@ -79,7 +79,7 @@
 
 [% BLOCK crumblistitem -%]
 [%- IF item.title -%]
- / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+ / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title | html %]</a>
 [%- ELSE -%]
 [% item %]
 [%- END -%]
