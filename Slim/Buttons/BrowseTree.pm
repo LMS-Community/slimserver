@@ -111,7 +111,7 @@ sub init {
 						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath'));
 					}
 
-					if (Slim::Music::Info::isDir($items->[$i])) {
+					unless (Slim::Music::Info::isSong($items->[$i])) {
 						$listIndex-- unless $i > $listIndex;
 						next;
 					}
