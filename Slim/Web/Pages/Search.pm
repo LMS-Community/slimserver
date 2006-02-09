@@ -231,8 +231,9 @@ sub fillInSearchResults {
 	$params->{'type'} = $type;
 	
 	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 
-			  '&type=' . ($type ? $type : ''). 
-			  '&query=' . Slim::Utils::Misc::escape($query) . '&' .
+			  ($type ?'&type='. $type : '') . 
+			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
+			  '&' .
 			  join('&', @$qstring);
 
 	# Make sure that we have something to show.

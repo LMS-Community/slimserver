@@ -1,23 +1,44 @@
-[%- pagetitle = "ADVANCEDSEARCH" | string -%]
-[%- pageHeaderMenu = BLOCK -%]
- / <a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
-[%- END -%]
-[%- PROCESS pageheader.html -%]
-[% IF searchlist_header or numresults > -1 %]
-	<p>
-		[% IF searchlist_header %]
-			[% searchlist_header %]
-		[% ELSIF numresults != '-1' %]
-			[% "TRACKSMATCHING" | string %][% "COLON" | string %] [% numresults %]
-		[% END %]
-		&nbsp;
-	</p>
-	<hr>
+[% pagetitle = 'ADVANCEDSEARCH' | string %]
+[% pageicon = 'ADVANCEDSEARCH' %]
+[% pageHeaderMenu = BLOCK %]
+	<a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
-	<div align="center">
-		<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
-		<form action="advanced_search.html" method="GET" name="searchForm">
+[% PROCESS pageheader.html %]
+
+[% MACRO logicalSelectionBlock BLOCK %]
+
+	<select name="[% name %]">
+		<option value="=" >[% "EQUALS" | string %]</option>
+		<option value="&lt;" >[% "LESSTHAN" | string %]</option>
+		<option value="&gt;" >[% "GREATERTHAN" | string %]</option>
+		<option value="!=" >[% "NOT" | string %]</option>
+	</select>
+
+[% END %]
+
+[% MACRO timeSelectionBlock BLOCK %]
+
+	<select name="[% name %]">
+		<option value="=" >[% "IS" | string %]</option>
+		<option value="&lt;" >[% "BEFORE" | string %]</option>
+		<option value="&gt;" >[% "AFTER" | string %]</option>
+	</select>
+
+[% END %]
+
+[% BLOCK  field %]
+			<tr>
+				<td class="content" align="right" valign="middle" width="30%">[% title | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="70%">
+				  [% content %]
+				</td>
+			</tr>
+[% END %]
+
+		<form action="advanced_search.html" method="GET" name="searchForm"><br>
 		<input type="hidden" value="[% player %]" name="player">
+
+		<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
         	<tbody>
 
 [% WRAPPER field title='TRACK' %]
@@ -35,10 +56,14 @@
 [% WRAPPER field title='GENRE' %]
 		<select name="search.genre">
 			<option value="">[% "ANY_GENRE" | string %]</option>
-			[%- FOREACH genre = genres -%]
-				[%- NEXT IF NOT genre.name OR genre.id == 1 %]
-			<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name %]</option>
-			[%- END %]
+
+			[% FOREACH genre = genres %]
+
+				[% NEXT IF NOT genre.name OR genre.id == 1 %]
+
+				<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name | html %]</option>
+
+			[% END %]
 		</select>
 [% END %]
 
@@ -73,9 +98,11 @@
 
 		<select name="search.bitrate">
 			<option value="">[% "ANY_VALUE" | string %]</option>
-		[%- FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
-			<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
-		[%- END %]
+
+			[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
+				<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
+			[% END %]
+
 		</select> [% "KBPS" | string %]
 [% END %]
 
@@ -100,9 +127,10 @@
 [% WRAPPER field title='TYPE' %]
 		<select name="search.ct">
 			<option value="">[% "ANY_TYPE" | string %]</option>
-		[%- FOREACH type = fileTypes.keys %]
-			<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
-		[%- END %]
+
+			[% FOREACH type = fileTypes.keys %]
+				<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
+			[% END %]
 		</select>
 [% END %]
 
@@ -116,8 +144,15 @@
 	Not yet.
 
 			<tr>
-				<td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">Lyrics</td>
-				<td class="content" align="left" valign="middle" width="70%">
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
+				<td class="content" align="left" valign="middle" width="75%">
+					<input name="search.comments" value="" size="35" maxlength="1000" type="text">
+				</td>
+			</tr>
+
+			<tr>
+				<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">Lyrics</td>
+				<td class="content" align="left" valign="middle" width="75%">
 				  <input name="search.lyrics" value="" size="35" maxlength="1000" type="text">
 				</td>
 			</tr>
@@ -131,73 +166,41 @@
 				</td>
 			</tr>
 		
-		</tbody></table>
-	<div>
+		</tbody></table></form>
 
-	<p>
-	[% IF numresults != '-1' %]
-		<hr>
-		<p>
-	[% END %]
+	<br>
 
-	[% IF searchlist_pagebar %]
-		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-	[% END %]
-
-	<table cellspacing="0" cellpadding="4">
-		[% IF numresults != '-1' && numresults != '0' %]
-		<tr>
-			<td width="100%" class="even">[% "ALL_SONGS" | string %]</td>
-			<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
-			      <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults" target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a></nobr>
-			</td>
-			
-			<td align="right" width="13" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
-			      <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
-			</td>
-		</tr>
-	[% ELSIF numresults == '0' %]
-		<td align="left">[% "EMPTY" | string%]</td>
-	[% END %]
-	[% IF browse_items %]
-		[% FOREACH item = browse_items %]
-			[% PROCESS browsedbitems_list.html %]
+	<div id="browsedbHeader">
+		[% IF searchError %]
+			[% searchError %]
 		[% END %]
-	[% END %]
-	</table>
+		
+		[% IF searchlist_pagebar %]
+			[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
+		[% END %] 
+	</div>
 
-	[% IF searchlist_pagebar %]
-		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-	[% END %]
+	<div id="browsedbList">
+		[% IF numresults != '-1' && numresults != '0' %]
+		<div class="even">
+			<div class="browsedbListItem">
+				[% "ALL_SONGS" | string %]
+				<div class="browsedbControls">
+					<a href="[% webroot %]status_header.html?player=[% playerURI %]&amp;command=playlist&amp;subcommand=playtracks&amp;listref=searchResults" target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a>
+					<a href="[% webroot %]status_header.html?player=[% playerURI %]&amp;command=playlist&amp;subcommand=addtracks&amp;listref=searchResults" target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a>
+				</div>
+			</div>
+		</div>
+		[% ELSIF numresults == '0' %]
+			[% "EMPTY" | string%]
+		[% END %]
+		[% IF browse_items %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+		[% END %]
+	</div>
 
-	
-  </body>
-</html>
-[%- FILTER null %]
+[% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]
 
-[% MACRO logicalSelectionBlock BLOCK %]
-	<select name="[% name %]">
-		<option value="=" >[% "EQUALS" | string %]</option>
-		<option value="&lt;" >[% "LESSTHAN" | string %]</option>
-		<option value="&gt;" >[% "GREATERTHAN" | string %]</option>
-		<option value="!=" >[% "NOT" | string %]</option>
-	</select>
-[% END %]
-
-[% MACRO timeSelectionBlock BLOCK %]
-	<select name="[% name %]">
-		<option value="=" >[% "IS" | string %]</option>
-		<option value="&lt;" >[% "BEFORE" | string %]</option>
-		<option value="&gt;" >[% "AFTER" | string %]</option>
-	</select>
-[% END %]
-
-[% BLOCK  field %]
-			<tr>
-				<td class="content" align="right" valign="middle" width="30%">[% title | string %]&nbsp;</td>
-				<td class="content" align="left" valign="middle" width="70%">
-				  [% content %]
-				</td>
-			</tr>
-[% END %]
-[% END -%]
+[% PROCESS pagefooter.html %]

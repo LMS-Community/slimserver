@@ -43,8 +43,8 @@
 [% END %]
 
 [%# this is a link to the home page %]
-[% BLOCK homelink; homeString = "HOME" | string; 
-	"<a href=\"";webroot;"home.html?player=$playerURI\" target=\"";$target or '';"\">"; img or homeString; "</a>";
+[% BLOCK homelink; homeString = "HOME" | string;
+	"<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; $target; "\""; END; ">"; img or homeString; "</a>";
 END %]
 
 [%# this is to wrap around a link which moves something up a list %]

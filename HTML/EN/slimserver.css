@@ -102,3 +102,32 @@ div#browsedbHeader {
 	display: block;
 	overflow: hidden;
 }
+
+.songInfo {
+	height: auto;
+}
+
+.songInfo ul {
+	/* the list of song info items */
+	background-color: #ffffff;
+	padding: 0px;
+	list-style: none;
+	margin: 8px;
+}
+
+.songInfo li {
+	padding-top: 5px;
+	clear: left;
+}
+
+.songInfoTitle {
+	float: left;
+	padding: 0px;
+	width: 25%;
+}
+
+.songInfoText {
+	float: left;
+	padding: 0px;
+	width: 72%;
+}
