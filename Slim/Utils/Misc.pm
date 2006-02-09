@@ -59,7 +59,7 @@ sub findbin {
 	my @paths = (
 		catdir($Bin, 'Bin', $arch),
 		catdir($Bin, 'Bin', $^O),
-		Slim::Utils::OSDetect::dirsFor('Bin');
+		Slim::Utils::OSDetect::dirsFor('Bin'),
 	);
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
