@@ -443,8 +443,13 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		}
 
 		if (!$playlist_filehandle) {
+
 			errorMsg("readList: Cannot connect to remote HTTP server to get playlist for url: [$playlisturl]\n");
 			return 0;
+
+		} elsif (blessed($playlist_filehandle) && $playlist_filehandle->can('contentType')) {
+
+			Slim::Music::Info::setContentType($playlisturl, $playlist_filehandle->contentType);
 		}
 
 		# Check if it's still a playlist after we open the

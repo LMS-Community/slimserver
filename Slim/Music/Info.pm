@@ -304,7 +304,7 @@ sub setContentType {
 		'url'        => $url,
 		'attributes' => { 'CT' => $type },
 		'commit'     => 1,
-		'readTags'   => 1,
+		'readTags'   => isRemoteURL($url) ? 0 : 1,
 	});
 
 	$::d_info && msg("Content type for $url is cached as $type\n");
