@@ -60,9 +60,9 @@
 		if (option) {
 			if (cookie) {
 				setCookie("SlimServer-Browserpage",url + suffix);
-				parent.header.location =  "home.html?page=" + page + '&player=' + getPlayer('SlimServer-player');
+				parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
 			}
-			parent.browser.location = url + suffix + '&player=' + getPlayer('SlimServer-player');
+			parent.browser.location = url + suffix + '&player' + getPlayer('SlimServer-player');
 		}
 	}
 	
