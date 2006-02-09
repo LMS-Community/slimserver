@@ -1425,7 +1425,8 @@ sub sendStreamingResponse {
 
 			$::d_http && msg("(silence)");
 
-			my $silencedataref = getStaticContent("html/silence.mp3");
+			my $bitrate = Slim::Utils::Prefs::maxRate($client);
+			my $silencedataref = ($bitrate == 320 || $bitrate == 0) ? getStaticContent("html/silence.mp3") : getStaticContent("html/lbrsilence.mp3");
 
 			my %segment = ( 
 				'data'   => $silencedataref,
