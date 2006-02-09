@@ -587,7 +587,7 @@ sub checkNotifications {
 	if (scalar @notificationQueue) {
 		
 		# empty the queue and copy the values
-		my @requests = reverse @notificationQueue;
+		my @requests = @notificationQueue;
 		@notificationQueue = undef;
 		
 		foreach (@requests) {
