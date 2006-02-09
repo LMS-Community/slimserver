@@ -32,9 +32,8 @@ sub getTag {
 
 	my $self = $class->SUPER::open($args);
 
-	$self->request($args);
-
-	return $self;
+	# We might have redirected - be sure to return that object.
+	return $self->request($args);
 }
 
 sub getFormatForURL {
