@@ -728,7 +728,7 @@ sub directHeaders {
 				# This code could move to the HTTP protocol handler
 				foreach my $header (@headers) {
 				
-					$::d_directstream && msg("header: " . $header . "\n");
+					$::d_directstream && msg("header-ds: " . $header . "\n");
 		
 					if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
 						

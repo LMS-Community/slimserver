@@ -99,7 +99,7 @@ sub parseHeaders {
 
 	for my $header (@headers) {
 
-		$::d_remotestream && msg("header: " . $header);
+		$::d_remotestream && msg("header-rs: " . $header);
 
 		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
 
@@ -125,7 +125,7 @@ sub parseHeaders {
 		if ($header =~ /^Content-Type:\s*(.*)$CRLF$/i) {
 
 			my $contentType = $1;
-			
+
 			if (($contentType =~ /text/i) && !($contentType =~ /text\/xml/i)) {
 				# webservers often lie about playlists.  This will
 				# make it guess from the suffix.  (unless text/xml)
