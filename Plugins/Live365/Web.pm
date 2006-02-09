@@ -42,16 +42,14 @@ $VERSION = 1.20;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Web::HTTP;
-use Slim::Utils::Strings qw (string);
+use Slim::Utils::Strings qw(string);
 use Slim::Utils::Misc;
-use Data::Dumper;
 
 use Plugins::Live365::Live365API;
 
 use constant ROWS_TO_RETRIEVE => 50;
 
-my $API = new Plugins::Live365::Live365API();
+my $API = Plugins::Live365::Live365API->new();
 
 #
 #  Handle play or add actions on a station

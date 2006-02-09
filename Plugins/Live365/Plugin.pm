@@ -29,7 +29,6 @@ use Slim::Utils::Misc qw( msg );
 use Slim::Control::Request;
 
 # Need this to include the other modules now that we split up Live365.pm
-use Plugins::Live365::Web;
 use Plugins::Live365::ProtocolHandler;
 use Plugins::Live365::Live365API;
 
@@ -1360,6 +1359,10 @@ PLUGIN_LIVE365_NO_INFO
 # Add web pages and handlers.  See Plugins::Live365::Web for handlers.
 #
 sub webPages {
+
+	# Only load when the web page is called.
+	eval { require Plugins::Live365::Web };
+
 	my %pages = (
 		"browse\.(?:htm|xml)" => \&Plugins::Live365::Web::handleBrowse,
 		"search\.(?:htm|xml)" => \&Plugins::Live365::Web::handleSearch,
