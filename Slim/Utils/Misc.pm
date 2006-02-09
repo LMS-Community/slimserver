@@ -55,11 +55,7 @@ sub findbin {
 	   $arch =~ s/^i[3456]86-([^-]+).*$/i386-$1/;
 
 	my $path;
-	my @paths = (
-		catdir($Bin, 'Bin', $arch),
-		catdir($Bin, 'Bin', $^O),
-		catdir($Bin, 'Bin'),
-	);
+	my @paths = Slim::Utils::OSDetect::dirsFor('Bin');
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
