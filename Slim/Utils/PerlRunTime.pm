@@ -11,11 +11,12 @@ use strict;
 
 use B::Deparse;
 use Devel::Peek;
-use Tie::Watch;
 
 # Use Tie::Watch to keep track of a variable, and report when it changes.
 sub watchVariable {
 	my $var = shift;
+
+	require Tie::Watch;
 
 	# See the Tie::Watch manpage for more info.
 	Tie::Watch->new(
