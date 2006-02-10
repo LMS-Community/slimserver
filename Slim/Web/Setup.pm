@@ -2941,6 +2941,9 @@ sub skins {
 			next if $forUI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 			
+			# Disable broken skins for now, until Jacob (or anyone) gets a chance to fix
+			next if $dir =~ /^(?:ExBrowse3|Default2)$/i;
+
 			#my $path = catdir($templatedir, $dir);
 			
 			$::d_http && msg(" skin entry: $dir\n");
