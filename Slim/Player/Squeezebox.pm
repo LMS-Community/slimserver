@@ -259,6 +259,8 @@ sub needsUpgrade {
 	my $versionFilePath = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "$model.version" );
 	my $versionFile;
 
+	$::d_firmware && msg("Reading firmware version file: $versionFilePath\n");
+
 	if (!open($versionFile, "<$versionFilePath")) {
 		warn("can't open $versionFilePath\n");
 		return 0;
