@@ -131,3 +131,10 @@ div#browsedbHeader {
 	padding: 0px;
 	width: 72%;
 }
+
+.playingSong {
+	clear: all;
+}
+
+.playingSongControls {
+}

@@ -104,9 +104,9 @@ function getArgs() {
 	return args;
 }
 
-function getPlayer(Player) 
+function getCookie(cookie)
 {
-	var search = Player + "=";
+	var search = cookie + "=";
 	if (document.cookie.length > 0) {
 		offset = document.cookie.indexOf(search);
 		if (offset != -1) {
@@ -117,7 +117,14 @@ function getPlayer(Player)
 			return unescape(document.cookie.substring(offset, end));
 		}
 	}
-	return "";
+	return;
+}
+
+function getPlayer(Player) 
+{
+	plyr = getCookie(Player);
+	if (plyr == 'undefined') return "";
+	return plyr;
 }
 
 function goHome(plyr)
@@ -128,20 +135,9 @@ function goHome(plyr)
 
 function getHomeCookie(Name) 
 {
-	var search = Name + "=";
-	if (document.cookie.length > 0) {
-		offset = document.cookie.indexOf(search);
-		if (offset != -1) {
-			offset += search.length;
-			end = document.cookie.indexOf(";", offset);
-			if (end == -1)
-				end = document.cookie.length;
-			url = unescape(document.cookie.substring(offset, end));
-			if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
-			return url;
-		}
-	}
-	return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	url = getCookie(Name);
+	if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	return url;
 }
 
 function getPage() {

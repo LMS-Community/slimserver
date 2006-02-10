@@ -164,11 +164,8 @@
 			[% END %]
 
 			<a [% songinfoHRef %] target="browser">[% songtitle %]</a>
-		</div>
 
-		<div id="statusSong">
-
-			[% IF includeAlbum && itemobj.album.title && itemobj.album.title != noAlbum %]
+			[% IF itemobj.album.title && itemobj.album.title != noAlbum %]
 
 				<span class="exnotactivenowplaying">[% "FROM" | string %] </span>
 
@@ -176,7 +173,7 @@
 
 			[% END %]
 
-			[% IF includeArtist && itemobj.artist && itemobj.artist != noArtist %]
+			[% IF itemobj.artist && itemobj.artist != noArtist %]
 				<span class="exnowplaying">[% PROCESS artistsAsHTML.html %]</span>
 			[% END %]
 
