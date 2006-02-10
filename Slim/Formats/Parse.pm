@@ -226,6 +226,8 @@ sub writeCurTrackForM3U {
 	if (-w $path) {
 
 		rename("$path.tmp", $path);
+	} else {
+		unlink("$path.tmp");
 	}
 }
 
