@@ -77,9 +77,6 @@ sub checkTimers {
 		no strict 'refs';
 
 		&$high_subptr($high_objRef, @{$high_args});
-
-		$::d_perf && ((Time::HiRes::time() - $now) > 0.05) && 
-			msg("high timer $high_subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
 	}
 
 	$checkingHighTimers = 0;
@@ -113,8 +110,6 @@ sub checkTimers {
 		my $args   = $timer->{'args'};
 	
 		&$subptr($objRef, @{$args});
-
-		$::d_perf && ((Time::HiRes::time() - $now) > 0.5) && msg("timer $subptr too long: " . (Time::HiRes::time() - $now) . "seconds!\n");
 
 		$::perfmon && $timerLength->log(Time::HiRes::time() - $now);
 	}

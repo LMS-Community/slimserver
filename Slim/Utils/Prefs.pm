@@ -301,7 +301,12 @@ sub init {
 #				Slim::Control::Command::clearExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 				Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 			}
+		},
+				   
+		'httpport' => sub {
+			Slim::Web::HTTP::adjustHTTPPort();
 		}
+
 	);
 }
 

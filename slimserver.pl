@@ -313,7 +313,6 @@ use vars qw(
 	$d_mp3
 	$d_musicmagic
 	$d_os
-	$d_perf
 	$d_parse
 	$d_paths
 	$d_playlist
@@ -353,8 +352,6 @@ use vars qw(
 	$httpaddr
 	$lastlooptime
 	$logfile
-	$loopcount
-	$loopsecond
 	$localClientNetAddr
 	$localStreamAddr
 	$newVersion
@@ -561,8 +558,6 @@ sub init {
 	
 # otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
-	$loopcount = 0;
-	$loopsecond = int($lastlooptime);
 			
 	$::d_server && msg("SlimServer done init...\n");
 }
@@ -593,21 +588,10 @@ sub scanOnlyIdle {
 }
 
 sub idle {
-	my $select_time;
-	my $now = Time::HiRes::time();
-	my $to;
+	my ($to, $tasks, $queuedIR, $queuedNotifications);
 
-	if ($::d_perf) {
-		if (int($now) == $loopsecond) {
-			$loopcount++;
-		} else {
-			msg("Idle loop speed: $loopcount iterations per second\n");
-			$loopcount = 0;
-			$loopsecond = int($now);
-		}
-		$to = watchDog();
-	}
-	
+	my $now = Time::HiRes::time();
+
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
 	if ($now < $lastlooptime) {
 		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
@@ -615,50 +599,39 @@ sub idle {
 	} 
 	$lastlooptime = $now;
 
-	# check the timers for any new tasks		
-	Slim::Utils::Timers::checkTimers();	
-	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
+	my $select_time = 0; # default to not waiting in select
 
-	# handle queued IR activity
-	Slim::Hardware::IR::idle();
-	if ($::d_perf) { $to = watchDog($to, "IR::idle"); }
-	
-	# check the timers for any new tasks		
-	Slim::Utils::Timers::checkTimers();	
-	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
+ 	# handle queued IR activity
+	$queuedIR = Slim::Hardware::IR::idle();
 
-	my $tasks = Slim::Utils::Scheduler::run_tasks();
-	if ($::d_perf) { $to = watchDog($to, "run_tasks"); } 
-	
-	# if background tasks are running, don't wait in select.
-	if ($tasks) {
-		$select_time = 0;
-	} else {
-		# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
-		$select_time = Slim::Utils::Timers::nextTimer();
+	if (!$queuedIR) {
+
+		# handle notifications once IR queue is empty
+		$queuedNotifications = Slim::Control::Request::checkNotifications();
+
+		if (!$queuedNotifications) {
+
+			# handle scheduled tasks as long as no IR or notifications
+			$tasks = Slim::Utils::Scheduler::run_tasks();
+
+			if (!$tasks) {
+				# set timeout to wait in select based on when next timer is due, or once per second
+				$select_time = Slim::Utils::Timers::nextTimer();
+
+				if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 		
-		# loop through once a second, at a minimum
-		if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
-		
-		$::d_time && msg("select_time: $select_time\n");
+				$::d_time && msg("select_time: $select_time\n");
+
+			}
+
+		}
 	}
 	
+	# call select and process any IO
 	Slim::Networking::Select::select($select_time);
 
-	if ($::d_perf) { $to = watchDog(); }
-
-	# check the timers for any new tasks		
+	# check the timers for any new tasks
 	Slim::Utils::Timers::checkTimers();	
-	if ($::d_perf) { $to = watchDog($to, "checkTimers"); }
-	
-	# handle HTTP interface activity, including:
-	#   opening sockets, 
-	#   reopening sockets if the port has changed, 
-	Slim::Web::HTTP::idle();
-	if ($::d_perf) { $to = watchDog($to, "http::idle"); }
-
-	# handle queued notifications
-	Slim::Control::Request::checkNotifications();
 
 	return $::stop;
 }
@@ -677,10 +650,7 @@ sub idleStreams {
 
 	Slim::Networking::Select::select($select_time);
 
-	if ($::d_perf) { $to = watchDog(); }
-
 	Slim::Utils::Timers::checkTimers();		    
-	if ($::d_perf) { $to = watchDog($to, "checkTimers - idleStreams"); }
 }
 
 sub showUsage {
@@ -768,7 +738,6 @@ to the console via stderr:
     --d_mp3    		 => MP3 frame detection
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
-    --d_perf         => Performance information
     --d_parse        => Playlist parsing information
     --d_playlist     => High level playlist and control information
     --d_plugins      => Show information about plugins
@@ -854,7 +823,6 @@ sub initOptions {
 		'd_musicmagic'		=> \$d_musicmagic,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
-		'd_perf'			=> \$d_perf,
 		'd_parse'			=> \$d_parse,
 		'd_playlist'		=> \$d_playlist,
 		'd_plugins'			=> \$d_plugins,

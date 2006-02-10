@@ -886,24 +886,6 @@ sub bt {
 	&msg($msg);
 }
 
-sub watchDog {
-	if (!$::d_perf) {return;}
-	
-	my $lapse = shift;
-	my $warn = shift;
-	my $now = Time::HiRes::time();
-	
-	if (!defined($lapse)) { return $now; };
-	
-	my $delay = $now - $lapse;
-	
-	if (($delay) > 0.5) {
-		msg("*****Watchpup: $warn took too long: $delay (now: $now)\n");
-	}
-	
-	return $now;
-}
-
 sub msg {
 	use bytes;
 	my $entry = shift;

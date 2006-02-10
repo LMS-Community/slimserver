@@ -85,7 +85,6 @@ sub run_tasks {
 			    $client->isPlayer() && 
 			    $client->usage() < 0.5) {
 				$busy = 1;
-				$::d_perf && msg($client->id() . " Usage low, not running tasks.\n");
 				last;
 			}
 		}
@@ -95,7 +94,6 @@ sub run_tasks {
 		$taskptr = $background_tasks[$curtask];
 		
 		($subptr, @subargs) = @$taskptr;
-		if ($::d_perf) { $to = watchDog(); }
 		if (&$subptr(@subargs) == 0) {
 			# the task has finished. Remove it from the list.
 			$::d_scheduler && msg("TASK FINISHED: $subptr\n");
@@ -103,15 +101,12 @@ sub run_tasks {
 		} else {
 			$curtask++;
 		}
-		$::d_perf && watchDog($to, "run task: $subptr");
 		$lastpass = $now;
 
 		# loop around when we get to the end of the list
 		if ($curtask >= (@background_tasks)) {
 			$curtask = 0;
 		}
-					
-		$::d_perf && msg("Ran tasks..\n");
 	}
 
 	$::perfmon && $schedulerPerf->log(Time::HiRes::time() - $now);

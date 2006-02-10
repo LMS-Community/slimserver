@@ -65,9 +65,7 @@ sub enqueue {
 	push @queuedTime, $irTime;
 	push @queuedClient, $client;
 
-	if ($::perfmon) {
-		push @queuedServerTimePerf, Time::HiRes::time();
-	}
+	$::perfmon && push @queuedServerTimePerf, Time::HiRes::time();
 
 	if ($::d_irtm) {
 
@@ -89,11 +87,11 @@ sub enqueue {
 }
 
 sub idle {
-	if (scalar(@queuedBytes)) {
+	my $queue = scalar(@queuedBytes);
 
-		if ($::perfmon) {
-			$irPerf->log(Time::HiRes::time() - (shift @queuedServerTimePerf));
-		}
+	if ($queue) {
+
+		$::perfmon && $irPerf->log(Time::HiRes::time() - (shift @queuedServerTimePerf));
 
 		my $client = shift @queuedClient;		
 		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
@@ -119,7 +117,11 @@ sub idle {
 				$client->sendFrame('irtm', \$msg);
 			}
 		}
+
+		return ($queue - 1);
 	}
+
+	return 0;
 }
 
 sub init {

@@ -134,7 +134,10 @@ sub init {
 	# this initializes the %fieldInfo structure
 	Slim::Web::Pages::init();
 
-	idle();
+	# if we've got an HTTP port specified, open it up!
+	if (Slim::Utils::Prefs::get('httpport')) {
+		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
+	}
 }
 
 sub escape {
@@ -178,13 +181,12 @@ sub openport {
 	Slim::Networking::mDNS->addService('_slimhttp._tcp', $listenerport);
 }
 
-sub checkHTTP {
+sub adjustHTTPPort {
+	# do this on a timer so current page can be updated first and it executed outside select
+	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.5, \&_adjustHTTPPortCallback);
+}
 
-	# check to see if our HTTP port has changed, and return if we haven't
-	if ($openedport == Slim::Utils::Prefs::get('httpport')) {
-		return;
-	}
-
+sub _adjustHTTPPortCallback {
 	# if we've already opened a socket, let's close it
 	if ($openedport) {
 
@@ -198,7 +200,7 @@ sub checkHTTP {
 		$openedport = 0;
 	}
 
-	# if we've got an HTTP port specified, open it up!
+	# open new port if specified
 	if (Slim::Utils::Prefs::get('httpport')) {
 		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
 	}
@@ -207,11 +209,6 @@ sub checkHTTP {
 # TODO: Turn this back on
 #		my $tcpReadMaximum = Slim::Utils::Prefs::get("tcpReadMaximum");
 #		my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
-
-sub idle {
-	# check to see if the HTTP settings have changed
-	checkHTTP();
-}
 
 sub connectedSocket {
 	return $connected;

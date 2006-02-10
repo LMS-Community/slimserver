@@ -580,18 +580,19 @@ sub notifyFromArray {
 	push @notificationQueue, $request;
 }
 
-# sends notifications currently in the queue
+# sends notifications for first entry in queue - called once per idle loop
 sub checkNotifications {
-	if (scalar @notificationQueue) {
-		
-		# notify
-		foreach (@notificationQueue) {
-			$_->notify() if blessed($_);
-		}
-		
-		# empty queue
-		@notificationQueue = ();
+	my $queue = scalar @notificationQueue;
+
+	if ($queue) {
+		# notify first entry on queue
+		my $request = shift @notificationQueue;
+		$request->notify() if blessed($request);
+
+		return ($queue - 1);
 	}
+
+	return 0;
 }
 
 # convenient function to execute a request from an array, with optional
