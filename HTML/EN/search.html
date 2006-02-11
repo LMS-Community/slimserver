@@ -1,18 +1,10 @@
-<html>
-  <head>
-    <title>[% "SEARCH" | string %]</title>
-    <link rel="stylesheet" href="slimserver.css">
-	<script type="text/javascript" src="/html/prototype.js"></script>
-  </head>
-  <body bgcolor="#FFFFFF" onload="document.searchForm.query.focus();">
-    <p>
-    <h3>[% 'SEARCH' | string %]</h3><p>
-							
-	<p><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a></p>
-
-	<p>
-		[% IF pageinfo.totalpages > 1 %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
-	</p>
+[% pagetitle = 'Search'; pageicon = 'Search' %]
+[% bodyscript = 'onload="document.searchForm.query.focus();"' %]
+[% pwd_list = BLOCK %]
+<a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+[% END %]
+[% PROCESS pageheader.html %]
+<script type="text/javascript" src="/html/prototype.js"></script>
 
 	[% IF liveSearch %]
 
@@ -33,33 +25,35 @@
 
 	<div id="search-results"></div>
 
+	<div id="browsedbHeader">
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
+		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+	</div>
 
-	[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
-	<table cellspacing="0" cellpadding="4">
-		[% IF numresults != '-1' && numresults != '0' %]
-			<tr>
-				<td width="100%" class="even">[% "ALL_SONGS" | string %]</td>
-				<td align="right" width="13" class="even">
-				    <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=playtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "PLAY" | string %][% END %]</a></nobr>
-				</td>
-				
-				<td align="right" width="13" class="even">
-				    <nobr><a href="[% webroot %]status.html?player=[% playerURI %]&command=playlist&subcommand=addtracks&listref=searchResults"  target="status">[% FILTER nbsp %][% "ADD_TO_PLAYLIST" | string %][% END %]</a></nobr>
-				</td>
-			</tr>
-		[% END %]
-		[% IF browse_items %]
-			[% FOREACH item = browse_items %]
-				[% PROCESS browsedbitems_list.html %]
+	<div id="browsedbList">
+			[% IF numresults != '-1' && numresults != '0' %]
+			<div class="even">
+				<div class="browsedbListItem">
+					[% "ALL_SONGS" | string %]
+					<div class="browsedbControls">
+						[% WRAPPER playlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=playtracks&amp;listref=searchResults"[% END %]
+						[% WRAPPER addlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=addtracks&amp;listref=searchResults"[% END %]
+					</div>
+				</div>
+			</div>
+			[% ELSIF numresults == '0' %]
+				[% "EMPTY" | string%]
 			[% END %]
-		[% END %]
-	</table>
-	[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]  
+			[% IF browse_items %]
+				[% FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+				[% END %]
+			[% END %]
+	</div>
+[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
 [% IF liveSearch; INCLUDE "search-observer.html"; END %]
 
-  </body>
-</html>
+[% PROCESS pagefooter.html %]
