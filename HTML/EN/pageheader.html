@@ -5,9 +5,13 @@
 		[% PROCESS standardheader.html %]
 		[% PROCESS html/common.js %]
 	</head>
-	<body>
-	[% IF pagetitle %]<h3>[% pagetitle %]</h3><br>[% END %]
-[%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list %]
-	[% PROCESS crumblist IF pwd_list %]<br>
-	[% pageHeaderInfo %]
-	[% UNLESS noHR %]<hr>[% END %]
+	<body  [% bodyscript %]>
+	[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %]</div>[% END %]
+	<div id="statusMessage">
+		[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+		[%- PROCESS crumblist IF pwd_list %]
+	</div>
+	<div id="pageHeaderInfo">
+		[% pageHeaderInfo %]
+	</div>
+	<div id="homeMenu">
