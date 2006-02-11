@@ -252,9 +252,9 @@ sub fillInSearchResults {
 										};
 	}
 
-	if ($params->{'numresults'}) {
+	my ($start, $end);
 
-		my ($start, $end);
+	if ($params->{'numresults'}) {
 
 		if (defined $params->{'nopagebar'}) {
 
@@ -281,11 +281,23 @@ sub fillInSearchResults {
 				}
 			);
 		}
+
+		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+				'itemCount'    => $params->{'numresults'},
+				'path'         => $params->{'path'},
+				'otherParams'  => $otherParams,
+				'start'        => $params->{'start'},
+				'perPage'      => $params->{'itemsPerPage'},
+			}
+		);
+
+		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+		$end = $params->{'pageinfo'}{'enditem'};
 		
 		my $itemnumber = 0;
 		my $lastAnchor = '';
 
-		for my $item (@$results) {
+		for my $item (@{$results}[$start..$end]) {
 
 			next unless defined $item && ref($item);
 

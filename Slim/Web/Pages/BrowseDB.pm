@@ -158,7 +158,7 @@ sub browsedb {
 		}
 
 		# editplaylist might pass this along - we want to keep it in the attrs
-		# for thepagebar and pwd_list so that we don't go into edit mode. Bug 2870
+		# for the pagebar and pwd_list so that we don't go into edit mode. Bug 2870
 		if (defined $params->{'saveCurrentPlaylist'}) {
 
 			push @attrs, join('=', 'saveCurrentPlaylist', $params->{'saveCurrentPlaylist'});
@@ -217,49 +217,10 @@ sub browsedb {
 			'start'        => $params->{'start'},
 			'perPage'      => $params->{'itemsPerPage'},
 		});
-
-		if (defined $params->{'nopagebar'}) {
-	
-			($start, $end) = Slim::Web::Pages->simpleHeader({
-					'itemCount'    => scalar(@$items),
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'        => $params->{'itemsPerPage'},
-					'offset'       => $ignoreArticles ? (scalar(@$items) > 1) : 0,
-				}
-			);
-
-		} elsif (defined $alphaitems) {
-
-			($start, $end) = Slim::Web::Pages->alphaPageBar({
-					'itemsRef'     => $alphaitems,
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherparams,
-					'startRef'     => \$params->{'start'},
-					'pageBarRef'   => \$params->{'browselist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
-
-		} else {
-
-			($start, $end) = Slim::Web::Pages->pageBar({
-					'itemCount'    => scalar(@$items),
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherparams,
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'pageBarRef'   => \$params->{'browselist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
-		}
-
-		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-
+		
+		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+		$end = $params->{'pageinfo'}{'enditem'};
+		
 		$descend = ($level >= $maxLevel) ? undef : 'true';
 
 		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {

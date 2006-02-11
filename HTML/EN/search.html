@@ -11,10 +11,7 @@
 	<p><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a></p>
 
 	<p>
-		[% IF searchlist_header %]
-			[% searchlist_header %]
-		[% END %]
-		&nbsp;
+		[% IF pageinfo.totalpages > 1 %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 	</p>
 
 	[% IF liveSearch %]
@@ -40,9 +37,7 @@
 			[% searchError %]
 		[% END %]
 
-	[% IF searchlist_pagebar %]
-		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-	[% END %] 
+	[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
 	<table cellspacing="0" cellpadding="4">
 		[% IF numresults != '-1' && numresults != '0' %]
 			<tr>
@@ -62,9 +57,7 @@
 			[% END %]
 		[% END %]
 	</table>
-	[% IF searchlist_pagebar %]
-		<p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-	[% END %] 
+	[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]  
 
 [% IF liveSearch; INCLUDE "search-observer.html"; END %]
 

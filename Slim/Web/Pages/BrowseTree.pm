@@ -70,21 +70,8 @@ sub browsetree {
 		'perPage'      => $params->{'itemsPerPage'},
 	});
 
-	# Create a numeric pagebar if we need to.
-	if ($count > $itemsPer) {
-
-		($start, $end) = Slim::Web::Pages->pageBar({
-				'itemCount'    => $count,
-				'path'         => $params->{'path'},
-				'otherParams'  => "hierarchy=$hierarchy&player=$player",
-				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'browselist_header'},
-				'pageBarRef'   => \$params->{'browselist_pagebar'},
-				'skinOverride' => $params->{'skinOverride'},
-				'perPage'      => $params->{'itemsPerPage'},
-			}
-		);
-	}
+	$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+	$end = $params->{'pageinfo'}{'enditem'};
 
 	# Setup an 'All' button.
 	# I believe this will play only songs, and not playlists.
@@ -144,7 +131,6 @@ sub browsetree {
 
 		$itemnumber++;
 
-		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
 		push @{$params->{'browse_items'}}, \%list_form;
 
 		if (!$params->{'coverArt'} && $item->coverArt) {

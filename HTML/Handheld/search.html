@@ -31,11 +31,7 @@
 	
 	[% IF numresults != '-1' %]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
-	    [% IF searchlist_pagebar %]
-	    <tr><td>
-		    [% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
-	    </td></tr>
-	    [% END %]
+	    [% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 	</table>
 	
 	<table border="0" cellspacing="0" cellpadding="0" width="100%">

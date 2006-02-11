@@ -5,7 +5,11 @@
 <search xmlns="http://www.slimdevices.com/slimserver/xml">
 	<num_results>[% numresults | html %]</num_results>
 	<query>[% query | html %]</query>
-	[% IF searchlist_header %][% searchlist_header %][% END %]
+	[% IF pageinfo.totalpages > 1 %]<offsets>
+		<from>[% pageinfo.startitem %]</from>
+		<to>[% pageinfo.enditem %]</to>
+		<last>[% pageinfo.totalitems - 1 %]</last>
+	</offsets>[% END %]
 	[% IF browse_items %]
 		[% FOREACH item = browse_items %]
 			[% PROCESS browsedbitems_list.html %]

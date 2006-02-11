@@ -343,7 +343,7 @@ sub pageInfo {
 	
 	my $itemsref     = $args->{'itemsRef'};
 	my $otherparams  = $args->{'otherParams'};
-	my $start        = $args->{'start'} || 0;
+	my $start        = $args->{'start'};
 	my $itemsperpage = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my %pageinfo = ();

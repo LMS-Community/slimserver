@@ -1,6 +1,6 @@
 [% pagetitle = 'Search'; pageicon = 'Search' %]
-[% pageHeaderMenu = BLOCK %]
-	<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
+[% pwd_list = BLOCK %]
+<a href="search.html?player=[% playerURI %]">[% "SEARCH" | string %]</a>
 [% END %]
 [% thispage = 'search' %]
 [% IF query %][% thispage = 'results' %][% END %]
@@ -17,9 +17,7 @@
 			[% searchError %]
 		[% END %]
 		
-		[% IF searchlist_pagebar %]
-			[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]
-		[% END %] 
+		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
 	</div>
 
 	<div id="browsedbList">
@@ -55,7 +53,7 @@
 			</div>
 			[% END %]
 	</div>
-[% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]
+[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
 [% END %]
 [% PROCESS detailed_footer.html %]

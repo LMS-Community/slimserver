@@ -1,10 +1,10 @@
 [% pagetitle = 'ADVANCEDSEARCH' | string %]
 [% pageicon = 'ADVANCEDSEARCH' %]
-[% pageHeaderMenu = BLOCK %]
-	<a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
+[% pwd_list = BLOCK %]
+<a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
 [% PROCESS pageheader.html %]
-
+[% FILTER null %]
 [% MACRO logicalSelectionBlock BLOCK %]
 	<select name="[% name %]">
 		<option value="=" >[% "EQUALS" | string %]</option>
@@ -30,7 +30,7 @@
 		</td>
 	</tr>
 [% END %]
-
+[% END %]
 	<form action="advanced_search.html" method="GET" name="searchForm"><br>
 	<input type="hidden" value="[% player %]" name="player">
 
@@ -171,9 +171,7 @@
 			[% searchError %]
 		[% END %]
 		
-		[% IF searchlist_pagebar %]
-			<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>
-		[% END %] 
+		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
 	</div>
 
 	<div id="browsedbList">
@@ -197,6 +195,6 @@
 		[% END %]
 	</div>
 
-[% IF searchlist_pagebar %]<div class="pagebar">[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</div>[% END %]
+[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
 [% PROCESS pagefooter.html %]

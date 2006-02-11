@@ -26,14 +26,12 @@
 [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]
 [% END %]
 </div>
-[% IF searchlist_pagebar %]    <div id="topbrowselistpagebar" class="pagebar">
-      <div class="controls">
-        <ul[% IF type != 'song' %] class="alpha"[% END %]>
-          [% searchlist_pagebar %]
-        </ul>
-      </div>
-    </div>[% END %]
-     [% IF searchlist_header %]<div id="searchlist_header">[% searchlist_header %][% "COLON" | string %]</div>[% END %]
+ [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
+    <div id="browselist_header">[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
+  [%- FILTER indent(4) %]
+   [%- PROCESS pagebar pagebarid = 'topbrowselistpagebar' %]
+  [%- END %]
+ [%- END %]
     <div id="browselist">
       <ul>
       [% IF browse_items %]
@@ -43,13 +41,11 @@
       [% END %]
       </ul>
     </div>
-[% IF searchlist_pagebar %]    <div id="bottombrowselistpagebar" class="pagebar">
-      <div class="controls">
-        <ul[% IF type != 'song' %] class="alpha"[% END %]>
-          [% searchlist_pagebar %]
-        </ul>
-      </div>
-    </div>[% END %]
+ [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
+  [%- FILTER indent(4) %]
+   [%- PROCESS pagebar pagebarid = 'bottombrowselistpagebar' %]
+  [%- END %]
+ [%- END %]
   </body>
 </html>
 
