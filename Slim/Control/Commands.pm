@@ -803,11 +803,15 @@ sub playlistXitemCommand {
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
 
+	# Strip off leading and trailing whitespace. PEBKAC
+	$item =~ s/^\s*//;
+	$item =~ s/\s*$//;
+
 	my $path = $item;
 
 	# correct the path
 	# this only seems to be useful for playlists?
-	if (!-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
+	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
 
 		my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($item) . ".m3u");
 
@@ -830,20 +834,19 @@ sub playlistXitemCommand {
 
 		$path = Slim::Utils::Misc::unescape($path);
 	}
-					
+
 	if ($cmd =~ /^(play|load|resume)$/) {
 
 		Slim::Player::Source::playmode($client, 'stop');
 		Slim::Player::Playlist::clear($client);
 
-		my $fixpath = Slim::Utils::Misc::fixPath($path);
+		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
-		$client->currentPlaylist($fixpath);
 		$client->currentPlaylistModified(0);
 
 	} elsif ($cmd =~ /^(add|append)$/) {
 
-		my $fixpath = Slim::Utils::Misc::fixPath($path);
+		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 		$client->currentPlaylistModified(1);
 
 	} else {
@@ -851,7 +854,10 @@ sub playlistXitemCommand {
 		$client->currentPlaylistModified(1);
 	}
 
-	$path = Slim::Utils::Misc::virtualToAbsolute($path);
+	if (!Slim::Music::Info::isRemoteURL($path)) {
+
+		$path = Slim::Utils::Misc::virtualToAbsolute($path);
+	}
 
 	if ($cmd =~ /^(play|load)$/) { 
 
@@ -918,7 +924,6 @@ sub playlistXitemCommand {
 
 	$request->setStatusDone();
 }
-
 
 sub playlistXtracksCommand {
 	my $request = shift;
