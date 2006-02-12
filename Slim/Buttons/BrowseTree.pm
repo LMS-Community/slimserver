@@ -105,9 +105,11 @@ sub init {
 				$client->execute(['playlist', 'clear']);
 
 				$::d_playlist && msg("Playing all in folder, starting with $listIndex\n");
-				
+
 				my @playlist;
-				for my $i (0 .. scalar @{$items}-1) {
+				
+				# iterate through list in reverse order, so that dropped items don't affect the index as we subtract.
+				for my $i (reverse (0..scalar @{$items}-1)) {
 
 					if (!ref $items->[$i]) {
 						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath'));
@@ -117,15 +119,14 @@ sub init {
 						$::d_playlist && msgf("Dropping %s from play all in folder at index %d\n",$items->[$i],$i);
 						if ($i < $listIndex) {
 							$listIndex --;
-							$::d_playlist && msg("Index shifted to $listIndex\n");
 						}
 						next;
 					}
 
-					push (@playlist, $items->[$i]);
+					unshift (@playlist, $items->[$i]);
 				}
 
-				$::d_playlist && msg("Load folder playlist, starting at index: $listIndex\n");
+				$::d_playlist && msg("Load folder playlist, now starting at index: $listIndex\n");
 				$client->execute(['playlist', 'addtracks','listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
