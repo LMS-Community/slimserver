@@ -89,7 +89,7 @@ sub init {
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum') || $addorinsert) {
+			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum') || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 
@@ -104,6 +104,8 @@ sub init {
 
 				$client->execute(['playlist', 'clear']);
 
+				$::d_playlist && msg("Playing all in folder, starting with $listIndex\n");
+				
 				my @playlist;
 				for my $i (0 .. scalar @{$items}-1) {
 
@@ -112,13 +114,18 @@ sub init {
 					}
 
 					unless (Slim::Music::Info::isSong($items->[$i])) {
-						$listIndex-- unless $i > $listIndex;
+						$::d_playlist && msgf("Dropping %s from play all in folder at index %d\n",$items->[$i],$i);
+						if ($i < $listIndex) {
+							$listIndex --;
+							$::d_playlist && msg("Index shifted to $listIndex\n");
+						}
 						next;
 					}
 
 					push (@playlist, $items->[$i]);
 				}
 
+				$::d_playlist && msg("Load folder playlist, starting at index: $listIndex\n");
 				$client->execute(['playlist', 'addtracks','listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
