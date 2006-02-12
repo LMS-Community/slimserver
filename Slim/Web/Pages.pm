@@ -364,6 +364,7 @@ sub pageInfo {
 	if (!defined($start) || $start eq '') {
 		if ($args->{'currentItem'}) {
 			$start = int($args->{'currentItem'} / $itemsperpage) * $itemsperpage;
+		
 		} else {
 			$start = 0;
 		}
@@ -375,14 +376,13 @@ sub pageInfo {
 			$start = 0;
 		}
 	}
-
+	
 	$end = $start + $itemsperpage - 1;
 
 	if ($end >= $itemcount) {
 		$end = $itemcount - 1;
 	}
 
-	$pageinfo{'startitem'}    = $start;
 	$pageinfo{'enditem'}      = $end;
 	$pageinfo{'totalitems'}   = $itemcount;
 	$pageinfo{'itemsperpage'} = $itemsperpage;
@@ -401,6 +401,10 @@ sub pageInfo {
 		}
 		my @letterstarts = sort {$a <=> $b} values(%alphamap);
 		my @pagestarts = (@letterstarts[0]);
+		
+		# some cases of alphamap shift the start index from 0, trap this.
+		$start = @letterstarts[0];
+		
 		my $newend = $end;
 		for my $nextend (@letterstarts) {
 			if ($nextend > $end && $newend == $end) {
@@ -424,6 +428,10 @@ sub pageInfo {
 		}
 		$pageinfo{'alphamap'} = \%alphamap;
 	}
+	
+	# set the start index, accounding for alpha cases
+	$pageinfo{'startitem'} = $start;
+
 	return \%pageinfo;
 }
 
