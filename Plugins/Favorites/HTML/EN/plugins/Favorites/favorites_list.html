@@ -6,35 +6,33 @@
 
 [% warning %]
 <!-- start plugins output -->
-<table border="0" cellspacing="0" cellpadding="4" width="100%">
-		[% odd = 1 %]
-		[% FOREACH fav = titles %]
-			<tr>
-				[% text = IF fav ; fav ; ELSE ;"EMPTY" | string ; END; %]
-				[% WRAPPER listitem title = loop.count _ '. ' _ text %]
-					 href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]"
-				[% END %]
-			
-				[% WRAPPER moveuplink noTarget=1 %]
-					href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]"
-				[% END %]
-			
-				[% WRAPPER movedownlink noTarget=1 %]
-					href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]"
-				[% END %]
-			
-				[% WRAPPER removelink noTarget=1 %]
-					href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]"
-				[% END %]
-			
-				[% WRAPPER playlink %]
-					href="[% webroot %][% statusroot %]s?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]"
-				[% END %]
-			</tr>
-			[% odd = (not odd) %]
+[% WRAPPER contentcontainer %]
+	[% odd = 1 %]
+	[% FOREACH fav = titles %]
+		[% text = IF fav ; fav ; ELSE ;"EMPTY" | string ; END; %]
+	
+		[% BLOCK favcontrols %]
+			[% WRAPPER moveuplink noTarget=1 %]
+				href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]"
+			[% END %]
+		
+			[% WRAPPER movedownlink noTarget=1 %]
+				href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]"
+			[% END %]
+		
+			[% WRAPPER removelink noTarget=1 %]
+				href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]"
+			[% END %]
+		
+			[% WRAPPER playlink %]
+				href="[% webroot %][% statusroot %]s?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]"
+			[% END %]
 		[% END %]
-</table>
-<!-- end plugins output -->
+	
+		[% WRAPPER contentitem controls = 'favcontrols' %]
+			 <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% loop.count _ '. ' _ text %]</a>
+		[% END %]
+		[% odd = (not odd) %]
+	[% END %]
+[% END %]
 [% PROCESS pagefooter.html %]
-
-
