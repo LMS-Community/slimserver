@@ -12,56 +12,49 @@
     status   = '1' -%]
 [%- PROCESS pageheader.html thispage = 'status' -%]
 
-<table width = '100%' bgcolor="#EEEEEE" border="0" cellspacing="2" cellpadding="2">
-
-		[% IF not playlist_items %]
+[% IF not playlist_items %]
 <tr>
 	<td valign = 'middle' align = 'center' width = '100%' height = '225px' class = 'playingitemtext'>
 		Playlist for this player is empty
 	</td>
 </tr>
 		[% ELSE %]
-<tr>
 [% IF itemobj.isRemoteURL %]
 	[% INCLUDE radio_info_display %]
 [% ELSE %]
-	<td valign = 'top' align = 'left'>
+	<div id = 'coverart'>
 		[% INCLUDE cover_art_display %]
-	</td>
-	<td valign = 'top' align = 'left'>
+	</div>
+	<div id = 'songinfo'>
 		[% INCLUDE song_info_display %]
-	</td>
-	<td valign = 'bottom' align = 'right'>
-		<table class = 'thinborder' bgcolor = 'white'>
+	</div>
+	<div id = 'playlistbox'>
+		<table class = 'thinborder' bgcolor = 'white' width = '100%'>
 			<tr><td colspan = '2' align = 'left' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
-			[% FOREACH item = playlist_items %]
-			[% IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END %]
-			[% END %]
-			[% FOREACH item = playlist_items %]
-				[% NEXT IF item.num < previous %]
-				[% LAST IF item.num > next %]
-				[% PROCESS playlist_row 
-					previous = previous 
-					next = next
-				%]
-			[% END %]
+			[%- FOREACH item = playlist_items -%]
+			[%- IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END -%]
+			[%- END -%]
+			[%- FOREACH item = playlist_items -%]
+				[%- NEXT IF item.num < previous -%]
+				[%- LAST IF item.num > next -%]
+				[%- PROCESS playlist_row previous = previous next = next -%]
+			[%- END -%]
 		</table>
-	</td>
+	</div>
 [% END %]
-</tr>
 
 [% UNLESS itemobj.isRemoteURL %]
-<tr>
-	<td colspan = 3 valign = 'top' align = 'left' width = '100%'>
+<div id = 'progressbar'>
 	[% INCLUDE progress_bar_display %]
-	</td>
-</tr>
+</div>
 [% END %]
 		[% END %]
 
+<div id = 'controls'>
+<table width = '100%'>
 <tr bgcolor = 'white'>
 	<td colspan = 3>
-	<table width = 100%>
+	<table width = '100%'>
 	<tr>
 		<td width = '50%' align = 'center'>
 		[% INCLUDE player_controls %]
@@ -76,7 +69,7 @@
 
 <tr bgcolor = 'white'>
 	<td colspan = 3>
-	<table width = 100%>
+	<table width = '100%'>
 	<tr>
 		<td width = '50%' align = 'center'>
 			[% INCLUDE repeat_settings %]
@@ -88,42 +81,16 @@
 	</table>
 	</td>
 </tr>
-
-<!-- It is my opinion that bass treble is fairly worthless in this context. If you disagree, feel free to uncomment this-->
-<!--
-<tr>
-	<td colspan = 3>
-		[% INCLUDE bass_treble %]
-	</td>
-</tr>
--->
 </table>
 
 [% PROCESS detailed_footer.html %]
 
+<!-- end controls div -->
+</div>
+
+[% PROCESS footer.html %]
+
 [%# /Page status.html %]
-
-[% BLOCK bass_treble %]
-<table>
-	<tr>
-	<td>
-	[% FOREACH tone = ['bass','treble'] %]
-		<table width="100%" border="0" cellspacing="0" cellpadding="4">
-		<tr>
-			<td><img src="html/images/[% tone %]_symbol.gif" width = 50></td>
-			[% FOREACH level=['10','20','30','40','50','60','70','80','90','100'] %]
-			<td width="25" onclick="location.href='status.html?p0=mixer&p1=[% tone %]&p2=[% level %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
-			<img src="html/images/bar[% IF $tone == level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*3 %]"></td>
-			[% END %]
-			<td></td>
-		</tr>
-		</table>
-	[% END %]
-	</td>
-	</tr>
-</table>
-
-[% END %]
 
 [% BLOCK repeat_settings %]
 
@@ -156,7 +123,7 @@
 [% END %]
 
 [% BLOCK cover_art_display %]
-	<table bgcolor="#EEEEEE" cellspacing="0" cellpadding="0">
+	<table class = 'thinborder' cellspacing="0" cellpadding="0">
 		<tr>
 		<td> 
 		[% IF coverThumb -%]
@@ -179,7 +146,7 @@
 [% END %]
 
 [% BLOCK song_info_display %]
-	<table bgcolor="#EEEEEE" border="0" cellspacing="0" cellpadding="0">
+	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class = 'normaltext' valign = 'top' colspan = '2' height = '35' nowrap>
 			[% INCLUDE control_display %]
@@ -190,8 +157,8 @@
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			[% IF songtitle %]
 			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">
-	[% INCLUDE truncated_string string = songtitle length = '40' %] 
-</a>
+			[% INCLUDE truncated_string string = songtitle length = '50' %]
+			</a>
 			[% END %]
 			</td>
 		</tr>
@@ -200,16 +167,16 @@
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.artist.id %]
 			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-[% INCLUDE truncated_string string = itemobj.artist length = '40' %] 
+			[% INCLUDE truncated_string string = itemobj.artist length = '50' %]
 </a>
-[% END %]
+			[% END %]
 			</td>
 		</tr>
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-[% INCLUDE truncated_string string = itemobj.album length = '40' %] 
+			[% INCLUDE truncated_string string = itemobj.album length = '50' %]
 			</a>
 			[% END %]
 			</td>
@@ -218,12 +185,11 @@
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
 			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-[% INCLUDE truncated_string string = itemobj.genre length = '40' %] 
+			[% INCLUDE truncated_string string = itemobj.genre length = '50' %]
 			</a>[% END %]
 			</td>
 		</tr>
 	</table>
-	
 [% END %]
 
 [% BLOCK progress_bar_display %]
@@ -406,12 +372,11 @@ if (document.all||document.getElementById)
 [% BLOCK playlist_row %]
 
 <tr>
-
 	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
 		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
 	</td>
 	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
-	[% INCLUDE truncated_string string = item.title length = '20' %] 
+	[% INCLUDE truncated_string string = item.title length = '25' %]
 	</td>
 </tr>
 [% END %]

@@ -4,6 +4,8 @@ body {
 	margin-top: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
+	height: 480px;
+	overflow: visible;
 }
 
 body.default {
@@ -116,7 +118,13 @@ table.noborder {
 	border: none;
 }
 
+div {
+	overflow: visible;
+}
+
 div#pagecontainer {
+	position: absolute;
+	top: 80;
 	height: 364px;
 	overflow: visible;
 }
@@ -139,8 +147,71 @@ tr.even, td.even {
 
 div#page {
 	width: 800px;
+	z-index: -100;
+	height: 480px;
+	overflow: visible;
 }
 
 div#page_with_bar {
 	width: 778px;
+	z-index: -100;
+	height: 480px;
+	overflow: visible;
+}
+
+div#topbar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 20;
+	overflow: visible;
+}
+
+div#menu {
+	position: absolute;
+	top: 25;
+	left: 0;
+	overflow: visible;
+}
+
+div#coverart {
+        position: absolute;
+        left: 6;
+        width: 200;
+        top: 15;
+	overflow: visible;
+	z-index: 0;
+}
+
+div#songinfo {
+	position: relative;
+	left: 220;
+	top: 10;
+	width: 550;
+	overflow: hidden;
+        z-index: 1;
+}
+
+div#playlistbox {
+        position: absolute;
+	left: 530;
+        top: 130;
+	width: 250;
+	z-index: 2;
+	overflow: hidden;
+}
+
+
+div#controls {
+       position: absolute;
+       top:241;
+	left: 0;
+       width: 800;
+}
+
+div#progressbar {
+	position: absolute;
+	left: 6;
+	width: 780;
+	top: 220;
 }

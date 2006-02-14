@@ -50,7 +50,7 @@
 
 <table bgcolor="FFFFFF" width="100%" border="0">
 	<tr>
-		<td height="10"></td>
+		<td height="15"></td>
 	</tr>
 	[% IF ! browse_radio %]
 	[% INCLUDE home_links %]
@@ -68,11 +68,13 @@
 	
 	[% END %]
 	<tr>
-		<td height="10"></td>
+		<td height="13"></td>
 	</tr>
 </table>
 
 [% PROCESS detailed_footer.html %]
+</div>
+[% PROCESS footer.html %]
 
 [% BLOCK tune_in_form %]
         <form name="tune" method="get" action="status.html">

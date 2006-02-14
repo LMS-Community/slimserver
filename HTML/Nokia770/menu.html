@@ -1,28 +1,29 @@
 <!-- menu.html -->
 
+<div id = 'menu'>
 <table bgcolor="#666666" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td><img src="[% webroot %]html/images/spacer.gif" border=0 width=4 height=4 alt=""></td></tr>
 
 <tr align="center">
 <td width="10"></td>
 
-<td width = '150'>
+<td>
 	<a href="[% webroot %]home.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_home[% IF thispage == 'home' %]_active[% END %].gif" name = 'nav1' border="0" width="80" height="50" alt = 'home'></a>
 </td>
 
-<td width = '150'>
+<td>
 	<a href="[% webroot %]status.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_status[% IF thispage == 'status' %]_active[% END %].gif" name = 'nav2' border="0" width="80" height="50" alt = 'now playing'></a>
 </td>
       
-<td width = '150'>
+<td>
 	<a href="[% webroot %]playlist.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_playlist[% IF thispage == 'playlist' %]_active[% END %].gif" name = 'nav3' border="0" width="80" height="50" alt = 'current playlist'></a>
 </td>
       
-<td width = '150'>
+<td>
 	<a href="[% webroot %]home.html?browse_radio=1&player=[% playerURI %]"><img src="[% webroot %]html/images/menu_radio[% IF thispage == 'radio' %]_active[% END %].gif" name = 'nav4' border="0" width="80" height="50" alt = 'radio'></a>
 </td>
       
-<td width = '150'>
+<td>
 	<a href="[% webroot %]search.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_search[% IF thispage == 'search' %]_active[% END %].gif" name = 'nav5' border="0" width="80" height="50" alt = 'search'></a>
 </td>
        
@@ -31,5 +32,6 @@
 
 <tr><td><img src="[% webroot %]html/images/spacer.gif" border=0 width=4 height=4 alt=""></td></tr>
 </table>
+</div>
 <!-- /Menu -->
 <div id = 'pagecontainer'>
