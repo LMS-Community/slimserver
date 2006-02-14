@@ -94,15 +94,15 @@
 [%- END %]
 
 [% BLOCK contentitem -%]
-<tr>
+<tr ><td bgcolor="[% PROCESS oddOrEvenC %]">
 	[%- IF anchor %]
 		<a name="[% anchor %]"></a>
 	[%- END %]
-
-	<div class="[% lineclass || 'browsedbListItem' %]">
-
+	
 	[%- content | indent(4) %]
-	</div>
+		[%- IF controls -%]
+		[%- PROCESS $controls -%]
+	[%- END %]
 </tr>
 [%- END %]
 

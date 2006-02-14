@@ -35,3 +35,16 @@ small {
 	font-family: sans-serif;
 	font-size: 100%;
 }
+
+.browsedbListItem {
+	position: relative;
+	padding: 1px;
+	padding-right: 65px;
+}
+
+
+.browsedbControls {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
