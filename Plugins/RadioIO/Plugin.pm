@@ -28,7 +28,8 @@ our %stations = (
 	'radioio70s'       => '3765',			
 	'radioio70sPOP'    => '3910',			
 	'radioio80s'       => '3795',
-	'radioio80sPOP'    => '3935',			
+	'radioio80sPOP'    => '3935',	
+	'radioio90s'       => '3860',
 	'radioioACOUSTIC'  => '3675',
 	'radioioAMBIENT'   => '3605',
 	'radioioBEAT'      => '3725',
@@ -36,10 +37,13 @@ our %stations = (
 	'radioioCOUNTRY'   => '3055',				 
 	'radioioECLECTIC'  => '3586',
 	'radioioEDGE'      => '3995',
+	'radioioHISTORY'   => '3845',
 	'radioioJAM'       => '3970',
 	'radioioJAZZ'      => '3545',
+	'radioioONE'       => '3900',
 	'radioioPOP'       => '3965',
 	'radioioROCK'      => '3515',
+	'radioioWORLD'     => '3820',
 );
 
 our @station_names = sort keys %stations;
