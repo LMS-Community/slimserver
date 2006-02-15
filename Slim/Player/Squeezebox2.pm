@@ -137,8 +137,19 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], fullness => 1 }
 );
 
+sub nowPlayingModes {
+	return 13;
+	
+	# Optimization: This used to be:
+	# return scalar(keys %{$client->playingModeOptions()});
+	# which made tons of useless string calls!
+}
+
 sub playingModeOptions { 
 	my $client = shift;
+	
+	# NOTE: if you add an option here, update the count in nowPlayingModes above
+	
 	my %options = (
 		'0' => $client->string('BLANK'),
 		'1' => $client->string('ELAPSED'),
@@ -177,12 +188,6 @@ sub init {
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
 	$client->SUPER::init();
-}
-
-sub nowPlayingModes {
-	my $client = shift;
-	
-	return scalar(keys %{$client->playingModeOptions()});
 }
 
 sub showVisualizer {
