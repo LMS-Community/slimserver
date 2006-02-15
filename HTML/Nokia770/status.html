@@ -13,11 +13,9 @@
 [%- PROCESS pageheader.html thispage = 'status' -%]
 
 [% IF not playlist_items %]
-<tr>
-	<td valign = 'middle' align = 'center' width = '100%' height = '225px' class = 'playingitemtext'>
-		Playlist for this player is empty
-	</td>
-</tr>
+	<div id = 'songinfo'>
+	<span class = 'playingitemtext'><p>Playlist for this player is empty</span>
+	</div>
 		[% ELSE %]
 [% IF itemobj.isRemoteURL %]
 	[% INCLUDE radio_info_display %]
@@ -382,12 +380,12 @@ if (document.all||document.getElementById)
 [% END %]
 
 [% BLOCK radio_info_display %]
-	<td valign = 'top' align = 'left' width = '200px'>
+	<div id = 'coverart'>
 		<img src="html/images/radio.gif" width = '195' height="195">
-	</td>
-        <td class = 'normaltext' valign = 'top' colspan = 2>
+	</div>
+	<div id = 'songinfo'>
 	[% INCLUDE control_display %]
 		<p>Internet Stream URL:<br>
 		<span class = 'playingitemtext'>[% songtitle | html %]</span>
-	</td>
+	</div>
 [% END %]
