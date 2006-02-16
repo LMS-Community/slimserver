@@ -20,6 +20,7 @@ my %irMap   = ();
 my @queuedBytes = ();
 my @queuedTime = ();
 my @queuedClient = ();
+my @queuedServerAbsoluteTime = ();
 
 my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
 my $defaultMapFile;
@@ -33,14 +34,15 @@ $Slim::Hardware::IR::IRHOLDTIME  = 0.512;
 # 256 ms
 $Slim::Hardware::IR::IRSINGLETIME = 0.256;
 
+# Max time an IR key code is queued for before being discarded [if server is busy]
+my $maxIRQTime = 5.0;
+
 # and more things for diagnostics.  Define d_irtm to turn diagnostics on.
 my ($serverStartSeconds, $serverStartMicros);
 
 # queued variables used for diagnostics.
 my @queuedClientTime = ();
 my @queuedServerTime = ();
-
-my @queuedServerTimePerf = ();
 
 our $irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
@@ -64,8 +66,7 @@ sub enqueue {
 	push @queuedBytes, $irCodeBytes;
 	push @queuedTime, $irTime;
 	push @queuedClient, $client;
-
-	$::perfmon && push @queuedServerTimePerf, Time::HiRes::time();
+	push @queuedServerAbsoluteTime, Time::HiRes::time();
 
 	if ($::d_irtm) {
 
@@ -91,10 +92,20 @@ sub idle {
 
 	if ($queue) {
 
-		$::perfmon && $irPerf->log(Time::HiRes::time() - (shift @queuedServerTimePerf));
-
+		my $now = Time::HiRes::time();
+		my $receivedTime = shift @queuedServerAbsoluteTime;
 		my $client = shift @queuedClient;		
-		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
+
+		if (($now - $receivedTime) < $maxIRQTime) {
+			# process IR code
+			$::perfmon && $irPerf->log($now - $receivedTime);
+			$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
+
+		} else {
+			# discard IR code
+			shift @queuedBytes;
+			shift @queuedTime;
+		}
 		
 		if ($::d_irtm) {
 			# compute current time in microseconds
