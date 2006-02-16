@@ -155,7 +155,7 @@
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			[% IF songtitle %]
 			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">
-			[% INCLUDE truncated_string string = songtitle length = '50' %]
+			[% songtitle | truncate(50) %]
 			</a>
 			[% END %]
 			</td>
@@ -165,7 +165,7 @@
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.artist.id %]
 			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% INCLUDE truncated_string string = itemobj.artist length = '50' %]
+			[% itemobj.artist | truncate(50) %]
 </a>
 			[% END %]
 			</td>
@@ -174,7 +174,7 @@
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% INCLUDE truncated_string string = itemobj.album length = '50' %]
+			[% itemobj.album | truncate(50) %]
 			</a>
 			[% END %]
 			</td>
@@ -183,7 +183,7 @@
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
 			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% INCLUDE truncated_string string = itemobj.genre length = '50' %]
+			[% itemobj.genre | truncate(50) %]
 			</a>[% END %]
 			</td>
 		</tr>
@@ -374,7 +374,7 @@ if (document.all||document.getElementById)
 		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
 	</td>
 	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
-	[% INCLUDE truncated_string string = item.title length = '25' %]
+	[% item.title | truncate(25) %]
 	</td>
 </tr>
 [% END %]

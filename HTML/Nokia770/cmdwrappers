@@ -204,13 +204,6 @@
 [% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
 [% END %]
 
-[% BLOCK truncated_string %]
-       [% USE String %]
-       [% test = String.new(string) %]
-       [% truncated = test.truncate(length,'...') %]
-       [% truncated %]
-[% END %]
-
 [% BLOCK pagebarheader %]
 <span class="pagebarheadertext">
 Items [% pageinfo.startitem %] [% "TO" | string %] [% pageinfo.enditem %] [% "OF" | string %] [% pageinfo.totalitems %]
