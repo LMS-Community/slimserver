@@ -102,9 +102,14 @@ sub idle {
 			$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
 
 		} else {
-			# discard IR code
-			shift @queuedBytes;
-			shift @queuedTime;
+			# discard all queued IR as they are potentially stale
+			@queuedServerAbsoluteTime = ();
+			@queuedClient = ();
+			@queuedBytes = ();
+			@queuedTime = ();
+			@queuedClientTime = ();
+			@queuedServerTime = ();
+			return 0;
 		}
 		
 		if ($::d_irtm) {
