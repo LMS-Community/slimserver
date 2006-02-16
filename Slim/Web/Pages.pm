@@ -403,7 +403,7 @@ sub pageInfo {
 		my @pagestarts = (@letterstarts[0]);
 		
 		# some cases of alphamap shift the start index from 0, trap this.
-		#$start = @letterstarts[0];
+		$start = @letterstarts[0] unless $args->{'start'} ;
 		
 		my $newend = $end;
 		for my $nextend (@letterstarts) {
