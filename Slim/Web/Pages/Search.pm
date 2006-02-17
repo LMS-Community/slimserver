@@ -81,9 +81,12 @@ sub basicSearch {
 			fillInSearchResults($params, $item->[2], $descend, \@qstring);
 		}
 
-		if (defined $client && scalar @results) {
-
-			$client->param('searchResults', @results);
+		if (defined $client && scalar @results && !$params->{'start'}) {
+			# stash the full resultset if not paging through the results
+			# assumes that when the start parameter is 0 or undefined that
+			# the query has just been run
+			my $fulldata = Slim::Web::Pages::LiveSearch->query($query, [ 'track' ]);
+			$client->param('searchResults', $fulldata->[0][2]);
 		}
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
@@ -109,6 +112,7 @@ sub advancedSearch {
 	$params->{'browse_list'} = " ";
 	$params->{'liveSearch'}  = 0;
 	$params->{'browse_items'} = [];
+	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
 
 	# Prep the date format
 	$params->{'dateFormat'} = Slim::Utils::Misc::shortDateF();
@@ -212,10 +216,26 @@ sub advancedSearch {
 		'field'  => 'track',
 		'find'   =>  \%query,
 		'sortBy' => 'title',
+		'limit'  => $params->{'itemsPerPage'},
+		'offset' => ($params->{'start'} || 0),
 	});
 
-	$client->param('searchResults', $results) if defined $client;
-
+	if (defined $client && !$params->{'start'}) {
+		# stash the full resultset if not paging through the results
+		# assumes that when the start parameter is 0 or undefined that
+		# the query has just been run
+		my $fullresults = $ds->find({
+			'field'  => 'track',
+			'find'   =>  \%query,
+			'sortBy' => 'title',
+		});
+		$client->param('searchResults', $fullresults);
+	}
+	
+	if (scalar(@$results) == $params->{'itemsPerPage'}) {
+		$params->{'numresults'} = $ds->count('track', \%query);
+	}
+	
 	fillInSearchResults($params, $results, undef, \@qstring, $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
@@ -256,32 +276,6 @@ sub fillInSearchResults {
 
 	if ($params->{'numresults'}) {
 
-		if (defined $params->{'nopagebar'}) {
-
-			($start, $end) = Slim::Web::Pages->simpleHeader({
-					'itemCount'    => $params->{'numresults'},
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'        => $params->{'itemsPerPage'},
-				}
-			);
-
-		} else {
-
-			($start, $end) = Slim::Web::Pages->pageBar({
-					'itemCount'    => $params->{'numresults'},
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherParams,
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'searchlist_header'},
-					'pageBarRef'   => \$params->{'searchlist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
-		}
-
 		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'    => $params->{'numresults'},
 				'path'         => $params->{'path'},
@@ -294,10 +288,10 @@ sub fillInSearchResults {
 		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
 		$end = $params->{'pageinfo'}{'enditem'};
 		
-		my $itemnumber = 0;
+		my $itemnumber = 1;
 		my $lastAnchor = '';
 
-		for my $item (@{$results}[$start..$end]) {
+		for my $item (@$results) {
 
 			next unless defined $item && ref($item);
 
@@ -308,7 +302,7 @@ sub fillInSearchResults {
 
 			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
 			$list_form{'descend'}      = $descend;
-			$list_form{'odd'}          = ($itemnumber + 1) % 2;
+			$list_form{'odd'}          = ($itemnumber) % 2;
 
 			if ($type eq 'track') {
 				
