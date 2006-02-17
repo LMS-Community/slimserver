@@ -34,7 +34,12 @@ sub model {
 sub formats {
 	my $client = shift;
 
-	return qw(flc aif wav mp3);
+	if ($client->revision() == 2) {
+		return qw(ogg flc aif wav mp3);
+	}
+	else {
+		return qw(flc aif wav mp3);
+	}
 }
 
 sub signalStrength {

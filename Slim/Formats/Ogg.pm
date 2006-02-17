@@ -116,8 +116,7 @@ sub getTag {
 		$tags->{'VBR_SCALE'} = 0;
 	}
 	
-	# temporary for now - Ogg:: doesn't expose this yet.
-	$tags->{'OFFSET'}   = $ogg->info('offset') || 0;
+	$tags->{'OFFSET'}   =  0; # the header is an important part of the file. don't skip it
 
 	return $tags;
 }

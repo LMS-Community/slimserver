@@ -604,6 +604,12 @@ sub stream {
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
+		} elsif ($format eq 'ogg') {
+                        $formatbyte = 'o';
+                        $pcmsamplesize = '?';
+                        $pcmsamplerate = '?';
+                        $pcmendian = '?';
+                        $pcmchannels = '?';
 		} else { # assume MP3
 			$formatbyte = 'm';
 			$pcmsamplesize = '?';
