@@ -588,7 +588,7 @@ sub scanOnlyIdle {
 }
 
 sub idle {
-	my ($to, $tasks, $queuedIR, $queuedNotifications);
+	my ($queuedIR, $queuedNotifications);
 
 	my $now = Time::HiRes::time();
 
@@ -601,31 +601,31 @@ sub idle {
 
 	my $select_time = 0; # default to not waiting in select
 
- 	# handle queued IR activity
-	$queuedIR = Slim::Hardware::IR::idle();
+	# empty IR queue
+	if (!Slim::Hardware::IR::idle()) {
 
-	if (!$queuedIR) {
+		# empty notifcation queue
+		if (!Slim::Control::Request::checkNotifications()) {
 
-		# handle notifications once IR queue is empty
-		$queuedNotifications = Slim::Control::Request::checkNotifications();
+			my $timer_due = Slim::Utils::Timers::nextTimer();
 
-		if (!$queuedNotifications) {
+			if (!defined($timer_due) || $timer_due > 0) {
+				
+				# run scheduled task if no timers overdue
+				if (!Slim::Utils::Scheduler::run_tasks()) {
 
-			# handle scheduled tasks as long as no IR or notifications
-			$tasks = Slim::Utils::Scheduler::run_tasks();
-
-			if (!$tasks) {
-				# set timeout to wait in select based on when next timer is due, or once per second
-				$select_time = Slim::Utils::Timers::nextTimer();
-
-				if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
-		
-				$::d_time && msg("select_time: $select_time\n");
+					# set select time if no scheduled task
+					$select_time = $timer_due;
+					if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
+				}
 
 			}
 
 		}
+
 	}
+
+	$::d_time && msg("select_time: $select_time\n");
 	
 	# call select and process any IO
 	Slim::Networking::Select::select($select_time);
