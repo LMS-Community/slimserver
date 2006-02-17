@@ -107,11 +107,12 @@ sub run_tasks {
 		if ($curtask >= (@background_tasks)) {
 			$curtask = 0;
 		}
-	}
 
-	$::perfmon && $schedulerPerf->log(Time::HiRes::time() - $now);
+		$::perfmon && $schedulerPerf->log(Time::HiRes::time() - $now);
+
+	}
 		
-	return scalar(@background_tasks);
+	return 1;
 }
 
 

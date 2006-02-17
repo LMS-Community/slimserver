@@ -88,56 +88,52 @@ sub enqueue {
 }
 
 sub idle {
-	my $queue = scalar(@queuedBytes);
+	# return 0 only if no IR in queue
+	return 0 if (!scalar(@queuedBytes));
 
-	if ($queue) {
+	my $now = Time::HiRes::time();
+	my $receivedTime = shift @queuedServerAbsoluteTime;
+	my $client = shift @queuedClient;		
 
-		my $now = Time::HiRes::time();
-		my $receivedTime = shift @queuedServerAbsoluteTime;
-		my $client = shift @queuedClient;		
+	if (($now - $receivedTime) < $maxIRQTime) {
+		# process IR code
+		$::perfmon && $irPerf->log($now - $receivedTime);
+		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
 
-		if (($now - $receivedTime) < $maxIRQTime) {
-			# process IR code
-			$::perfmon && $irPerf->log($now - $receivedTime);
-			$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
-
-		} else {
-			# discard all queued IR as they are potentially stale
-			@queuedServerAbsoluteTime = ();
-			@queuedClient = ();
-			@queuedBytes = ();
-			@queuedTime = ();
-			@queuedClientTime = ();
-			@queuedServerTime = ();
-			return 0;
-		}
+	} else {
+		# discard all queued IR as they are potentially stale
+		@queuedServerAbsoluteTime = ();
+		@queuedClient = ();
+		@queuedBytes = ();
+		@queuedTime = ();
+		@queuedClientTime = ();
+		@queuedServerTime = ();
+		return 1;
+	}
 		
-		if ($::d_irtm) {
-			# compute current time in microseconds
-			my ($nowSeconds, $nowMicros) = gettimeofday();
-			my $nowTime = ($nowSeconds - $serverStartSeconds) * 1000000;
+	if ($::d_irtm) {
+		# compute current time in microseconds
+		my ($nowSeconds, $nowMicros) = gettimeofday();
+		my $nowTime = ($nowSeconds - $serverStartSeconds) * 1000000;
+		
+		$nowTime += $nowMicros;
 
-			$nowTime += $nowMicros;
-
-			# pop diagnostic info off stack
-			my $clientTime = shift(@queuedClientTime);
-			my $serverReceivedTime = shift(@queuedServerTime);
-			my $clientCount = Slim::Player::Client::clientCount();
-
-			# send a message to the client that the IR has been processed.
-			# note that during execute() above, the client's display may have been updated a number of times.  So the deltaT we return here may be longer than what the client experienced.  However, a pending command from another client could have been waiting all that time.
-			if ($client->isa("Slim::Player::Squeezebox")) {
-				my $serverDeltaT = $nowTime - $serverReceivedTime;
-				my $msg = "<irtm clientSentTime=$clientTime serverReceivedTime=$serverReceivedTime serverDeltaT=$serverDeltaT clientCount=$clientCount>";
-
-				$client->sendFrame('irtm', \$msg);
-			}
+		# pop diagnostic info off stack
+		my $clientTime = shift(@queuedClientTime);
+		my $serverReceivedTime = shift(@queuedServerTime);
+		my $clientCount = Slim::Player::Client::clientCount();
+		
+		# send a message to the client that the IR has been processed.
+		# note that during execute() above, the client's display may have been updated a number of times.  So the deltaT we return here may be longer than what the client experienced.  However, a pending command from another client could have been waiting all that time.
+		if ($client->isa("Slim::Player::Squeezebox")) {
+			my $serverDeltaT = $nowTime - $serverReceivedTime;
+			my $msg = "<irtm clientSentTime=$clientTime serverReceivedTime=$serverReceivedTime serverDeltaT=$serverDeltaT clientCount=$clientCount>";
+			
+			$client->sendFrame('irtm', \$msg);
 		}
-
-		return ($queue - 1);
 	}
 
-	return 0;
+	return 1;
 }
 
 sub init {
