@@ -1607,6 +1607,7 @@ sub newSkinTemplate {
 
 	my @include_path = ();
 	my @skinParents  = ();
+	my @preprocess   = qw(hreftemplate cmdwrappers);
 	my $skinSettings = '';
 	
 	for my $rootDir (HTMLTemplateDirs()) {
@@ -1618,7 +1619,7 @@ sub newSkinTemplate {
 			$skinSettings = eval { LoadFile($skinConfig) };
 
 			if ($@) {
-				errorMsg("Could not load skin configuration file: $skinConfig\n");
+				errorMsg("Could not load skin configuration file: $skinConfig\n$!\n");
 			}
 
 			last;
@@ -1646,13 +1647,27 @@ sub newSkinTemplate {
 			push @include_path, catdir($rootDir, $dir);
 		}
 	}
+	
+	if (ref($skinSettings) eq 'HASH' && ref $skinSettings->{'preprocess'} eq "ARRAY") {
+		for my $checkfile (@{$skinSettings->{'preprocess'}}) {
+			my $found = 0;
+			DIRS: for my $checkdir (@include_path) {
+				if (-r catfile($checkdir,$checkfile)) {
+					push @preprocess, $checkfile;
+					$found = 1;
+					last DIRS;
+				}
+			}
+			$::d_http && !$found && msg("$checkfile not found in include path, skipping\n");
+		}
+	}
 
 	$skinTemplates{$skin} = Template->new({
 
 		INCLUDE_PATH => \@include_path,
 		COMPILE_DIR => templateCacheDir(),
 		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
-		PRE_PROCESS => ['hreftemplate', 'cmdwrappers'],
+		PRE_PROCESS => \@preprocess,
 		FILTERS => {
 			'string'     => \&Slim::Utils::Strings::string,
 			'nbsp'       => \&nonBreaking,
