@@ -430,6 +430,10 @@ div#playList #browsedbHeader {
 	padding-top: 6px;
 }
 
+.artworkText {
+	text-align: center;
+}
+
 .thumbwrap {
 	display: inline-block;
 	margin: 0px;
@@ -443,6 +447,7 @@ div#playList #browsedbHeader {
 	display: inline-block;  /* Op, Saf, IE \*/
 	vertical-align: top;
 	padding-right: 6px;
+	padding-top: 6px;
 }
 
 .thumbwrap a span {

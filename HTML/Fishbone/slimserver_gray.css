@@ -450,6 +450,10 @@ div#browsedbHeader {
 	padding-top: 6px;
 }
 
+.artworkText {
+	text-align: center;
+}
+
 .thumbwrap {
 	display: inline-block;
 	margin: 0px;

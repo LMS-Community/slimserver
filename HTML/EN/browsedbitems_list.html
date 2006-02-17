@@ -13,7 +13,8 @@
 	
 		[% END %]
 		
-		[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %][% IF item.hierarchy %]</a>[% END %]
+		[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]
+		[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
 	
 			<!-- Include the artist for the album view -->
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]

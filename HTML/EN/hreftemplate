@@ -36,8 +36,8 @@ MoveDown = "%2B1"; # +1
 [%# img tag for album thumbnail in browse artwork context %]
 [%- BLOCK thumbnailImg %]
 	[% "<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
-		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; " ($year)"; END; "\" 
-		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist ; END ; IF year; " ($year)"; END; "\">" %] 
+		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\" 
+		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\">" %] 
 [% END -%]
 
 [%# img tag for album thumbnail in the now playing status context %]
@@ -159,15 +159,15 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%]
 	[%- "<img $style src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\"" %]
-	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
-	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
+	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK dummyItemImg -%]
 	[%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
-	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
-	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
+	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
 [% BLOCK pagebarcalc;

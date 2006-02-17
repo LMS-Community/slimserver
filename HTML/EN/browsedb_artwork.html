@@ -11,7 +11,9 @@
 						odd = item.odd
 						mixerlinks = item.mixerlinks %]
 	</div>
-	<div><a [% PROCESS browseDbItemHRef %] target="browser"><span style="width:[% item.size %]px;">[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</span></a>
+	<div class="artworkText"><span style="width:[% item.size %]px;">
+	<a [% PROCESS browseDbItemHRef %] target="browser">[% item.item | html %]</a>
+	[% IF item.artist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+	[% IF item.year %] <a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]</span>
 	</div>
 </div></li>
-

@@ -438,7 +438,11 @@ div#browsedbHeader {
 
 .artworkControls img {
 	margin-left: 1px;
-	padding-top: 6px;
+	padding-top: 2px;
+}
+
+.artworkText {
+	text-align: center;
 }
 
 .thumbwrap {
