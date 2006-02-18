@@ -499,7 +499,7 @@ sub setMode {
 	);
 
 	# if we have an active mode, temporarily add the disable option to the list.
-	if ($mixInfo{$client}) {
+	if ($mixInfo{$client} && $mixInfo{$client}->{'type'}) {
 		push @{$params{listRef}},'disable';
 	}
 
