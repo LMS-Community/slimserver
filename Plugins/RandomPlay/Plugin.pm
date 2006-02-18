@@ -232,9 +232,13 @@ sub playRandom {
 		my $find = {'genre.name' => \@filteredGenres};
 
 		# Prevent items that have already been played from being played again
-		if ($mixInfo{$client}->{'startTime'}) {
-			$find->{'lastPlayed'} = {'<' => $mixInfo{$client}->{'startTime'}};
-		}
+		# Following doesn't work as it excludes tracks that haven't
+		# ever been played.  Need to be able to say NULL OR < startTime
+		# Additionally, this fails when multiple clients are playing
+		# random mixes.  -- Max
+		#if ($mixInfo{$client}->{'startTime'}) {
+		#	$find->{'lastPlayed'} = {'<' => $mixInfo{$client}->{'startTime'}};
+		#}
 		
 		if ($type eq 'track' || $type eq 'year') {
 			# Find only tracks, not albums etc
