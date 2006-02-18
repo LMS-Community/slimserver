@@ -76,3 +76,13 @@ A:active {
    border-color : black; 
    height : 18px; 
 }
+
+div#homeMenu {
+	background-color: #DEDEEF;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding-bottom: 40px;
+}

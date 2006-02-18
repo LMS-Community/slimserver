@@ -2,7 +2,8 @@
   <head>
     <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% playerURI %]&start=[% start %]&refresh=1">
     <title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %] </title>
-    <link rel="stylesheet" href="slimserver.css">
+    <link rel="stylesheet" href="slimserver.css" type="text/css">
+    <link rel="stylesheet" href="slimserver.css" type="text/css">
   </head>
   <body bgcolor="#FFFFFF">
 	[% playermodel _ "_MUSIC_PLAYER" | string %] | <a href="hitlist.html">[% "STATISTICS" | string %]</a>
@@ -15,9 +16,17 @@
     [% IF modepause %][% "PAUSED_ON" | string %][% END %]
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]
-[% PROCESS tracklink.html %]
+   <div class="playingSong"><a href="status.html?player=[% playerURI %]#currentsong">[% songtitle %]</a></span>
+   [% IF itemobj.album.title && itemobj.album.title != noAlbum %]
+    [% "FROM" | string %] <a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>
+   [%- END %]
+   [% IF itemobj.artist && itemobj.artist != noArtist %]
+    [% PROCESS artistsAsHTML.html %]
+   [%- END %]
 [% IF songcount %] (<a href="status.html?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[% "DELETE" | string %]</a>)[% END %]
 [% IF not songcount %] [% "NOTHING" | string %] [% END %]
+   </div>
+
 <hr><a href="status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]">[% "PREV" | string %]</a>
 <a href="status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]">[% "SKIP" | string %]</a>
     <a href="status.html?p0=play&player=[% playerURI %]">[% IF modeplay %]<b>[% END %][% "PLAY" | string %][% IF modeplay %]</b>[% END %]</a>
