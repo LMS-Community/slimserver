@@ -390,7 +390,7 @@ div#browsedbHeader {
 	float: left;
 }
 
-.settingSection .prefHead {
+.settingSection .groupHead {
 	/* home menu list header */
 	height: 13px;
 	font-weight: bold;
@@ -400,6 +400,10 @@ div#browsedbHeader {
 .settingSection {
 	position: relative;
 	border-bottom:2px solid #bbb;
+}
+
+.prefHead {
+	font-weight: bold;
 }
 
 .prefDesc,.prefHead {

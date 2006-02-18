@@ -292,7 +292,7 @@ div#homeMenu {
 	margin-right: 8px;
 }
 
-.homeMenuSection div,.settingSection .prefHead {
+.homeMenuSection div,.settingSection .groupHead {
 	/* home menu list header */
 	background-color: #ececec;
 	height: 13px;
@@ -301,7 +301,18 @@ div#homeMenu {
 	font-size: 9px;
 }
 
-.prefDesc,.prefHead {
+.prefHead {
+	height: 13px;
+	padding: 8px 6px 2px 0px;
+	font-weight: bold;
+	font-size: 9px;
+}
+
+.groupHead {
+	margin-top: 6px;
+}
+
+.prefDesc,.groupDesc,.groupHead {
 	padding-bottom: 10px;
 }
 

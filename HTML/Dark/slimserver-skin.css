@@ -53,3 +53,16 @@ A:hover, A.selected {
     font-weight : bold;
 }
 
+div#homeMenu {
+	background-color: #000000;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding-bottom: 40px;
+}
+
+img {
+	margin: 0px;
+}
