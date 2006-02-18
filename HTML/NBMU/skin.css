@@ -129,3 +129,13 @@ A.linkbtn:hover {
    border-color : #999999; 
    height : 18px; 
 }
+
+div#homeMenu {
+	background-color: #333333;
+	position: relative;
+	height: auto;
+	width: auto;
+	margin-left: 8px;
+	margin-right: 8px;
+	padding-bottom: 40px;
+}
