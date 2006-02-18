@@ -2,8 +2,8 @@
   <head>
     <meta http-equiv="refresh" content="[% refresh %]; url=status.html?player=[% playerURI %]&start=[% start %]&refresh=1">
     <title>[% playermodel _ "_MUSIC_PLAYER" | string %] [% IF player_name %][% player_name %][% END %] </title>
-    <link rel="stylesheet" href="slimserver.css" type="text/css">
-    <link rel="stylesheet" href="slimserver.css" type="text/css">
+    <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
+    <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
   </head>
   <body bgcolor="#FFFFFF">
 	[% playermodel _ "_MUSIC_PLAYER" | string %] | <a href="hitlist.html">[% "STATISTICS" | string %]</a>

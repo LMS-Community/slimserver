@@ -1,7 +1,8 @@
 <html>
   <head>
     <title>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</title>
-    <link rel="stylesheet" href="slimserver.css">
+    <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
+    <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
     <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
   </head>
   
