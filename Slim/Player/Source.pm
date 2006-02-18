@@ -806,7 +806,7 @@ sub gotoNext {
 				dropStreamingConnection($client);
 
 				$client->update();
-
+				
 				return 0;
 
 			} else {
@@ -939,7 +939,6 @@ sub playingSongDuration {
 	return defined($song) ? $song->{duration} : 0;
 }
 
-
 sub resetSongQueue {
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	my $queue = $client->currentsongqueue();
@@ -950,6 +949,12 @@ sub resetSongQueue {
 	$#{$queue} = -1;
 	push @$queue, $playingsong;
 	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
+	
+	# update CURTRACK of a known playlist back to start
+	my $request = Slim::Control::Request->new( 
+					(blessed($client) ? $client->id() : undef));
+	$request->addParam('reset',1);
+	Slim::Player::Playlist::newSongPlaylistCallback($request);
 }
 
 sub markStreamingTrackAsPlayed {

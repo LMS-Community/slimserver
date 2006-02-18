@@ -988,7 +988,9 @@ sub playlistXtracksCommand {
 
 		if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
 
-			$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
+			unless  (Slim::Player::Playlist::shuffle($client)) {
+				$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
+			}
 
 			# And set a callback so that we can
 			# update CURTRACK when the song changes.

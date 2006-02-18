@@ -633,13 +633,13 @@ sub newSongPlaylistCallback {
 		$playlist = $client->currentPlaylist;
 	}
 
-	return if Slim::Music::Info::isRemoteURL($playlist);
+	return if Slim::Music::Info::isRemoteURL($playlist) || Slim::Player::Playlist::shuffle($client);
 
 	$::d_playlist && msg("Playlist: newSongPlaylistCallback() writeCurTrackForM3U()\n");
 
 	Slim::Formats::Parse::writeCurTrackForM3U(
 		$playlist,
-		Slim::Player::Source::playingSongIndex($client)
+		$request->getParam('reset') ? 0 : Slim::Player::Source::playingSongIndex($client)
 	);
 }
 
