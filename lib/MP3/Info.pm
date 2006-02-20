@@ -918,9 +918,19 @@ sub _parse_v2tag {
 
 						my @genres = ();
 
-						while ($data =~ s/^ \( (\d+) \)\000?//x) {
+						while ($data =~ s/^ \( (\d+) \)//x) {
 
-							push @genres, $mp3_genres[$1];
+							# The indexes might have a refinement
+							# not sure why one wouldn't just use
+							# the proper genre in the first place..
+							if ($data =~ s/^ ( [^\(]\D+ ) ( \000 | \( | \Z)/$2/x) {
+
+								push @genres, $1;
+
+							} else {
+
+								push @genres, $mp3_genres[$1];
+							}
 						}
 
 						$data = \@genres;
