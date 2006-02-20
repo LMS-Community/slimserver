@@ -1729,7 +1729,7 @@ sub __parse {
 				$self->addParamPos($requestLineRef->[$i]);
 			}
 		}
-
+		
 		$self->{'_needClient'} = $found->[0];
 		$self->{'_isQuery'} = $found->[1];
 		$self->{'_func'} = $found->[3];
@@ -1742,6 +1742,16 @@ sub __parse {
 		# only for the benefit of CLI echoing...
 		for (my $i=$LRindex; $i < scalar @{$requestLineRef}; $i++) {
 			$self->addParamPos($requestLineRef->[$i]);
+		}
+	}
+	
+	# handle encoding
+	my $encoding = ${$self->{'_params'}}{'charset'};
+	$encoding = 'utf8' unless defined $encoding;
+	if ($] > 5.007) {
+		while (my ($key, $val) = each %{$self->{'_params'}}) {
+			$val = Encode::decode($encoding, $val);
+			${$self->{'_params'}}{$key} = $val;
 		}
 	}
 }
