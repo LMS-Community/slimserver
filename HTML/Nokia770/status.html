@@ -1,4 +1,7 @@
 [%# Page status.html %]
+[%- IF ajaxRequest -%]
+	[% PROCESS ajaxRequest.xml %]
+[%- ELSE -%]
 <!-- status.html -->
 [% pagetitle = BLOCK %]
 [%- playermodel | string %] : [% "PLAYING" | string -%]
@@ -89,6 +92,8 @@
 [% PROCESS pagefooter.html %]
 
 [%# /Page status.html %]
+
+[% END %]
 
 [% BLOCK repeat_settings %]
 
@@ -237,8 +242,6 @@ if (document.all||document.getElementById)
 
 </script>
 [% END %]
-
-		<!--document.write('<table width="100%" border="1" cellspacing="0" cellpadding="0" style="border-color:#EEEEEE;"><td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td></table>');-->
 
 [% BLOCK player_controls %]
 <table class = 'thinborder' width = 100%>
