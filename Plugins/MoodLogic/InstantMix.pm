@@ -21,7 +21,7 @@ our %functions = ();
 
 sub init {
 
-	Slim::Buttons::Common::addMode('instant_mix', getFunctions(), \&setMode);
+	Slim::Buttons::Common::addMode('moodlogic_instant_mix', getFunctions(), \&setMode);
 
 	%functions = (
 		'up' => sub  {
