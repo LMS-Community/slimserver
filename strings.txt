@@ -6135,18 +6135,6 @@ SETUP_SHOWBUFFERFULLNESS
 	SV	Visa bufferminnets fyllnadsgrad
 	ZH_CN	显示缓冲存储器的丰满度
 
-SETUP_SHOWBUFFERFULLNESS_CHOOSE
-	DE	Buffer Füllstand zur Liste der Anzeigemodi hinzufügen:
-	EN	Include buffer fullness in Playing Display Mode list:
-	ES	Incluir el nivel de carga del buffer en la lista:
-	FI	Sisällytä puskurin täyttöaste soiton näyttötilojen listaan:
-	FR	Inclure l'état de la mémoire tampon dans la liste Mode d'affichage durant la lecture :
-	HE	האם להציג את מלאי זכרון המטמון
-	IT	Includi il livello del buffer nelle informazioni sulla riproduzione in corso:
-	JA	プレーヤーのディスプレーモードリストに、バッファー使用状態を入れる:
-	NL	Neem bufferniveau op in tonen mode lijst:
-	ZH_CN	在播放显示程式中显示缓冲存储器的丰满度
-
 SETUP_TITLEFORMATWEB
 	CS	Aktuální formát skladby na webu
 	DE	Aktuelles Web-Format
