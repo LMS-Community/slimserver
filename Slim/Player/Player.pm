@@ -58,7 +58,6 @@ our $defaultPrefs = {
 		,'scrollRateDouble'		=> 0.1
 		,'scrollPixels'			=> 7
 		,'scrollPixelsDouble'   => 7
-		,'showbufferfullness'	=> 0
 		,'silent'				=> 0
 		,'syncPower'			=> 0
 		,'syncVolume'			=> 0
@@ -1586,20 +1585,16 @@ sub nowPlayingModeLines {
 	my $songtime = " " . Slim::Player::Source::textSongTime($client, $playingDisplayMode);
 
 	if ( $playingDisplayMode == 6) {
-		if (!$client->prefGet('showbufferfullness')) {
-			$playingDisplayMode = 1; #sanity check.  revert to showing nothign is showbufferfullnes has been turned off.
-		} else {
-			# show both the usage bar and numerical usage
-			$fractioncomplete = $client->usage();
-			my $usageLine = ' ' . int($fractioncomplete * 100 + 0.5)."%";
-			my $usageLineLength = $client->measureText($usageLine,1);
-			
-			my $leftLength = $client->measureText($parts->{line1}, 1);
-			my $barlen = $client->displayWidth()  - $leftLength - $usageLineLength;
-			my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
-	
-			$overlay = $bar . $usageLine;
-		}
+		# show both the usage bar and numerical usage
+		$fractioncomplete = $client->usage();
+		my $usageLine = ' ' . int($fractioncomplete * 100 + 0.5)."%";
+		my $usageLineLength = $client->measureText($usageLine,1);
+
+		my $leftLength = $client->measureText($parts->{line1}, 1);
+		my $barlen = $client->displayWidth()  - $leftLength - $usageLineLength;
+		my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
+
+		$overlay = $bar . $usageLine;
 	}
 	
 	if ($playingDisplayMode == 1 || $playingDisplayMode == 2) {

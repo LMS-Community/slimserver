@@ -131,7 +131,7 @@ my @modes = (
 	  width => 320, 
 	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
 	  
-	{ bar => 0, 
+	{ bar => 1, 
 	  secs => 0, 
 	  width => 320, 
 	  params => [$VISUALIZER_NONE], fullness => 1 }
