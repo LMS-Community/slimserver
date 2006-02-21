@@ -6,19 +6,19 @@
 [%- END -%]
 [%- FOREACH item = playlist_items -%]
 	[%- IF item.num == previous %]
-		<previoussong>(prev) [% item.title %]</previoussong>
+		<previoussong><![CDATA[(prev) [% item.title %]]]></previoussong>
 	[%- ELSIF item.num == current %]
-		<currentsong>[% item.title %]</currentsong>
+		<currentsong><![CDATA[% item.title %]]></currentsong>
 	[%- ELSIF item.num == next %]
-		<nextsong>(next) [% item.title %]</nextsong>
+		<nextsong><![CDATA[(next) [% item.title %]]]></nextsong>
 	[%- END %]
 	[%- LAST IF item.num > next -%]
 [%- END -%]
 
-		<songtitle>[% songtitle %]</songtitle>
-		<artist>[% itemobj.artist %]</artist>
-		<album>[% itemobj.album %]</album>
-		<genre>[% itemobj.genre %]</genre>
+		<songtitle><![CDATA[% songtitle %]]></songtitle>
+		<artist><![CDATA[% itemobj.artist %]]></artist>
+		<album><![CDATA[% itemobj.album %]]></album>
+		<genre><![CDATA[% itemobj.genre %]]></genre>
 
 		<!-- mm:ss length of song -->
 		<duration>[% itemobj.duration %]</duration>
@@ -50,7 +50,7 @@
 		<!-- where this track sits on that playlist -->
 		<thissongnum>[% thissongnum %]</thissongnum>
 
-		<player_name>[% player_name %]</player_name>
+		<player_name><![CDATA[% player_name %]</player_name>
 		<status>status: [% myClientState %]</status>
 
 		<!-- path to cover art -->
