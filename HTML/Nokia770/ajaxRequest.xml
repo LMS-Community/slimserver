@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<data>
+[%- FOREACH item = playlist_items -%]
+	[%- IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END -%]
+[%- END -%]
+[%- FOREACH item = playlist_items -%]
+	[%- IF item.num == previous %]
+		<previoussong>(prev) [% item.title %]</previoussong>
+	[%- ELSIF item.num == current %]
+		<currentsong>[% item.title %]</currentsong>
+	[%- ELSIF item.num == next %]
+		<nextsong>(next) [% item.title %]</nextsong>
+	[%- END %]
+	[%- LAST IF item.num > next -%]
+[%- END -%]
+
+		<songtitle>[% songtitle %]</songtitle>
+		<artist>[% itemobj.artist %]</artist>
+		<album>[% itemobj.album %]</album>
+		<genre>[% itemobj.genre %]</genre>
+
+		<!-- mm:ss length of song -->
+		<duration>[% itemobj.duration %]</duration>
+
+		<!-- length of song -->
+		<durationseconds>[% durationseconds %]</durationseconds>
+
+		<!-- elapsed time -->
+		<songtime>[% songtime %]</songtime>
+
+		<!-- time remaining -->
+		<refresh>[% refresh %]</refresh>
+
+		<volume>[% volume %]</volume>
+
+		<!-- repeat settings: 0 = no repeat, 1 = repeat song, 2 = repeat playlist -->
+
+		<repeat>[% repeat %]</repeat>
+
+		<!-- shuffle settings: 0 = no shuffle, 1 = shuffle song, 2 = shuffle album -->
+		<shuffle>[% shuffle %]</shuffle>
+
+		<!-- status of player: 0 = stopped, 1 = playing, 2 = paused -->
+		<mode>[% IF modestop %]0[% ELSIF modeplay %]1[% ELSIF modepause %]2[% END %]</mode>
+
+		<!-- length of playlist -->
+		<songcount>[% songcount %]</songcount>
+
+		<!-- where this track sits on that playlist -->
+		<thissongnum>[% thissongnum %]</thissongnum>
+
+		<player_name>[% player_name %]</player_name>
+		<status>status: [% myClientState %]</status>
+
+		<!-- path to cover art -->
+		<coverartpath>[% IF coverThumb %]<![CDATA[[% albumHRef %]]]>[% ELSE %]<![CDATA[href="[% webroot %]html/images/cover.png"]]>[% END %]</coverartpath>
+	</data>
+</root>
