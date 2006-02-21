@@ -15,10 +15,10 @@
 	[%- LAST IF item.num > next -%]
 [%- END -%]
 
-		<songtitle><![CDATA[% songtitle %]]></songtitle>
-		<artist><![CDATA[% itemobj.artist %]]></artist>
-		<album><![CDATA[% itemobj.album %]]></album>
-		<genre><![CDATA[% itemobj.genre %]]></genre>
+		<songtitle><![CDATA[[% songtitle %]]]></songtitle>
+		<artist><![CDATA[[% itemobj.artist %]]]></artist>
+		<album><![CDATA[[% itemobj.album %]]]></album>
+		<genre><![CDATA[[% itemobj.genre %]]]></genre>
 
 		<!-- mm:ss length of song -->
 		<duration>[% itemobj.duration %]</duration>
@@ -50,10 +50,16 @@
 		<!-- where this track sits on that playlist -->
 		<thissongnum>[% thissongnum %]</thissongnum>
 
-		<player_name><![CDATA[% player_name %]</player_name>
+		<player_name><![CDATA[[% player_name %]]]></player_name>
 		<status>status: [% myClientState %]</status>
 
 		<!-- path to cover art -->
-		<coverartpath>[% IF coverThumb %]<![CDATA[[% albumHRef %]]]>[% ELSE %]<![CDATA[href="[% webroot %]html/images/cover.png"]]>[% END %]</coverartpath>
+		<coverartpath>
+			[%- IF coverThumb -%]
+				<![CDATA[[% albumHRef %]]]>
+			[%- ELSE -%]
+				<![CDATA[href="[% webroot %]html/images/cover.png"]]>
+			[% END %]
+		</coverartpath>
 	</data>
 </root>
