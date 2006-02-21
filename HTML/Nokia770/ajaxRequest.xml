@@ -41,8 +41,9 @@
 		<!-- shuffle settings: 0 = no shuffle, 1 = shuffle song, 2 = shuffle album -->
 		<shuffle>[% shuffle %]</shuffle>
 
+		<mode>[% mode %]</mode>
 		<!-- status of player: 0 = stopped, 1 = playing, 2 = paused -->
-		<mode>[% IF modestop %]0[% ELSIF modeplay %]1[% ELSIF modepause %]2[% END %]</mode>
+		<playmode>[% IF modestop %]0[% ELSIF modeplay %]1[% ELSIF modepause %]2[% END %]</playmode>
 
 		<!-- length of playlist -->
 		<songcount>[% songcount %]</songcount>
@@ -51,7 +52,7 @@
 		<thissongnum>[% thissongnum %]</thissongnum>
 
 		<player_name><![CDATA[[% player_name %]]]></player_name>
-		<status>status: [% myClientState %]</status>
+		<player_id>[% myClientState.id %]</player_id>
 
 		<!-- path to cover art -->
 		<coverartpath>
