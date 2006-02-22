@@ -458,6 +458,9 @@ sub cli_process {
 
 	return if !defined $request;
 
+	# fix the encoding and/or manage charset param
+	$request->fixEncoding();
+
 	# remember we're the source and the $client_socket
 	$request->source('CLI');
 	$request->privateData($client_socket);

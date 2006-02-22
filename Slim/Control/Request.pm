@@ -1381,6 +1381,22 @@ sub notify {
 	}
 }
 
+# handle encoding for external commands
+sub fixEncoding {
+	my $self = shift || return;
+	
+	my $encoding = ${$self->{'_params'}}{'charset'} || 'utf8';
+
+	while (my ($key, $val) = each %{$self->{'_params'}}) {
+
+		if (!ref($val)) {
+
+			${$self->{'_params'}}{$key} = Slim::Utils::Unicode::decode($encoding, $val);
+		}
+	}
+}
+
+
 ################################################################################
 # Legacy
 ################################################################################
@@ -1413,7 +1429,7 @@ sub renderAsArray {
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
-		$val = Encode::encode($encoding, $val) if $encoding && $] > 5.007;
+		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
 
 		if ($key =~ /^__/) {
 			# no output
@@ -1427,7 +1443,7 @@ sub renderAsArray {
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
 
-		$val = Encode::encode($encoding, $val) if $encoding && $] > 5.007;
+		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
 
 		if ($key =~ /^@/) {
 
@@ -1436,8 +1452,8 @@ sub renderAsArray {
 
 				while (my ($key2, $val2) = each %{$hash}) {
 
-					$val2 = Encode::encode($encoding, $val2) 
-						if $encoding && $] > 5.007;
+					$val2 = Slim::Utils::Unicode::encode($encoding, $val2) 
+						if $encoding;
 
 					if ($key2 =~ /^__/) {
 						# no output
@@ -1742,41 +1758,6 @@ sub __parse {
 		# only for the benefit of CLI echoing...
 		for (my $i=$LRindex; $i < scalar @{$requestLineRef}; $i++) {
 			$self->addParamPos($requestLineRef->[$i]);
-		}
-	}
-	
-	# handle encoding
-	my $encoding = ${$self->{'_params'}}{'charset'} || 'utf8';
-
-	if ($] > 5.007) {
-
-		while (my ($key, $val) = each %{$self->{'_params'}}) {
-
-			# XXXX - This should really be using Slim::Utils::Unicode
-			if (ref($val) eq 'ARRAY') {
-
-				for (my $i = 0; $i < scalar @$val; $i++) {
-
-					$val->[$i] = Encode::decode($encoding, $val->[$i]);
-				}
-		
-			} elsif (ref($val) eq 'HASH') {
-
-				while (my ($subKey, $subVal) = each %{$val}) {
-					
-					$val->{$subKey} = Encode::decode($encoding, $subVal);
-				}
-
-			} elsif (ref($val) eq 'SCALAR') {
-
-				$val = \Encode::decode($encoding, $$val);
-
-			} else {
-
-				$val = Encode::decode($encoding, $val);
-			}
-
-			${$self->{'_params'}}{$key} = $val;
 		}
 	}
 }

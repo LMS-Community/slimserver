@@ -757,6 +757,26 @@ sub stripBOM {
 	return $string;
 }
 
+# Alias Encode::decode
+sub decode {
+	my $encoding = shift;
+	my $string = shift;
+	
+	return $string unless $] > 5.007;
+	
+	return Encode::decode($encoding, $string);
+}
+
+# Alias Encode::encode
+sub encode {
+	my $encoding = shift;
+	my $string = shift;
+	
+	return $string unless $] > 5.007;
+	
+	return Encode::encode($encoding, $string);
+}
+
 1;
 
 __END__
