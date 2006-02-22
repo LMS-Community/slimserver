@@ -3101,6 +3101,24 @@ SETUP_MMMFILTER_DESC
 	NL	Je kunt filtersets met condities maken in MusicMagic. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer.
 	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
 
+SETUP_MMMMIXGENRE
+	EN	MusicMagic Mix Genre
+
+SETUP_MMMMIXGENRE_DESC
+	EN	Restrict mix to the genre of the seed (Default: no)
+
+SETUP_MMMREJECTTYPE
+	EN	MusicMagic Reject Type
+
+SETUP_MMMREJECTTYPE_DESC
+	EN	Set the units for reject size. (Default: tracks)
+
+SETUP_MMMREJECTSIZE
+	EN	MusicMagic Reject Size.
+
+SETUP_MMMREJECTSIZE_DESC
+	EN	Set the number of items to skip before repeating a type. (Default: 12)
+
 SETUP_MMSHOST
 	EN	MusicMagic HTTP Host
 	ES	Host HTTP de MusicMagic

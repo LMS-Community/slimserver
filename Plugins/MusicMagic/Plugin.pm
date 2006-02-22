@@ -11,6 +11,7 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
+use Slim::Formats::Parse;
 
 use Plugins::MusicMagic::Settings;
 
@@ -21,6 +22,8 @@ my $export = '';
 my $count = 0;
 my $playlistindex = 0;
 my @playlists;
+my $moodindex = 0;
+my @moods;
 my $scan = 0;
 my $MMSHost;
 my $MMSport;
@@ -119,7 +122,7 @@ sub initPlugin {
 	return 1 if $initialized;
 	
 	checkDefaults();
-
+	
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
 		$::d_musicmagic && msg("MusicMagic: don't initialize, it's disabled\n");
 		$initialized = 0;
@@ -173,6 +176,7 @@ sub initPlugin {
 		Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
 
 		addGroups();
+		grabMoods();
 	}
 	
 	$mixFunctions{'play'} = \&playMix;
@@ -470,6 +474,60 @@ sub grabFilters {
 	}
 
 	return %filterHash;
+}
+
+sub grabMoods {
+	my @moods;
+	my %moodHash;
+	
+	return unless $initialized;
+	
+	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		$::d_musicmagic && msg("MusicMagic: don't get moods list, it's disabled\n");
+		return %moodHash;
+	}
+	
+	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
+	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
+
+	$::d_musicmagic && msg("MusicMagic: get moods list\n");
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/moods",
+		'create' => 0,
+	});
+
+	if ($http) {
+
+		@moods = split(/\n/, $http->content);
+		$http->close;
+
+		if ($::d_musicmagic && scalar @moods) {
+
+			msg("MusicMagic: found moods:\n");
+
+			for my $mood (@moods) {
+				msg("MusicMagic:\t$mood\n");
+			}
+		}
+	}
+
+	my $none = sprintf('(%s)', Slim::Utils::Strings::string('NONE'));
+
+	push @moods, $none;
+
+	foreach my $mood ( @moods ) {
+
+		if ($mood eq $none) {
+
+			$moodHash{0} = $mood;
+			next
+		}
+
+		$moodHash{$mood} = $mood;
+	}
+
+	return %moodHash;
 }
 
 sub exportFunction {
@@ -796,6 +854,74 @@ sub exportFunction {
 			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
 		}
 	}
+	
+	#$export = 'moods';
+	if ($export eq 'moods' && $initialized !~ m/1\.1$/) {
+
+		if (@moods) {
+			my $i = $moodindex -1;
+			my %cacheEntry = ();
+			
+			my $moodref;
+			@$moodref = ();
+			my $numcontents = Slim::Utils::Scan::readList($moods[$moodindex].".m3u",$moodref);
+			
+			print Data::Dumper::Dumper($numcontents,$moodref);
+			my $count2 = $numcontents;
+		
+			my $name = shift @moods;
+			my $url = 'musicmagicplaylist:' . Slim::Utils::Misc::escape($name);
+			$url = Slim::Utils::Misc::fixPath($url);
+
+			# add this playlist to our playlist library
+			$cacheEntry{'TITLE'} = join('', 
+				Slim::Utils::Prefs::get('MusicMagicplaylistprefix'),
+				"Mood - ".$name,
+				Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
+			);
+			
+			my @list = ();
+
+			for (my $j = 0; $j < $count2; $j++) {
+				push @list, Slim::Utils::Misc::fileURLFromPath(convertPath($moodref->[$j]));
+			}
+
+			$::d_musicmagic && msg("MusicMagic: got mood $name with " .scalar @list." items.\n");
+
+			$cacheEntry{'LIST'} = \@list;
+			$cacheEntry{'CT'} = 'mmp';
+			$cacheEntry{'TAG'} = 1;
+			$cacheEntry{'VALID'} = '1';
+
+			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+			$moodindex ++;
+			
+			# are we done with playlists?
+			if (!@moods) {
+				$export = 'done';
+				$playlistindex = 0;
+			}
+		} else {
+			$::d_musicmagic && msg("MusicMagic: Checking for moods.\n");
+			
+			$http = Slim::Player::Protocols::HTTP->new({
+				'url'    => "http://$MMSHost:$MMSport/api/moods",
+				'create' => 0,
+			});
+	
+	
+			if ($http) {
+				@moods = split(/\n/, $http->content);
+				$moodindex = 0;
+				$http->close;
+				$export = 'done' unless @moods;
+			} else {
+				$export = 'done';
+			}
+		}
+		
+		return 1;
+	}
 
 	$::d_musicmagic && msgf("MusicMagic: finished export (%d records)\n",$scan - 1);
 
@@ -961,30 +1087,48 @@ sub getMix {
 	if (defined $client) {
 		%args = (
 			# Set the size of the list (default 12)
-			size	 => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+			size	   => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			sizetype => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+			sizetype   => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
 	
 			# Set the style slider (default 20)
-			style	 => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+			style	   => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
 	
 			# Set the variety slider (default 0)
-			variety	 => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+			variety	   => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+
+			# mix genres or stick with that of the seed. (Default: match seed)
+			mixgenre   => $client->prefGet('MMMMixGenre') || Slim::Utils::Prefs::get('MMMMixGenre'),
+	
+			# Set the number of songs before allowing dupes (default 12)
+			rejectsize => $client->prefGet('MMMRejectSize') || Slim::Utils::Prefs::get('MMMRejectSize'),
+	
+			# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
+			rejecttype => $type[$client->prefGet('MMMRejectType') || Slim::Utils::Prefs::get('MMMRejectType')],
 		);
 	} else {
 		%args = (
 			# Set the size of the list (default 12)
-			size	 => Slim::Utils::Prefs::get('MMMSize') || 12,
+			size	   => Slim::Utils::Prefs::get('MMMSize') || 12,
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			sizetype => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
+			sizetype   => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
 	
 			# Set the style slider (default 20)
-			style	 => Slim::Utils::Prefs::get('MMMStyle') || 20,
+			style	   => Slim::Utils::Prefs::get('MMMStyle') || 20,
 	
 			# Set the variety slider (default 0)
-			variety	 => Slim::Utils::Prefs::get('MMMVariety') || 0,
+			variety	   => Slim::Utils::Prefs::get('MMMVariety') || 0,
+
+			# mix genres or stick with that of the seed. (Default: match seed)
+			mixgenre   => Slim::Utils::Prefs::get('MMMMixGenre') || 0,
+	
+			# Set the number of songs before allowing dupes (default 12)
+			rejectsize => Slim::Utils::Prefs::get('MMMRejectSize') || 12,
+	
+			# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
+			rejecttype => $type[Slim::Utils::Prefs::get('MMMRejectType') || 0],
 		);
 	}
 
@@ -1199,7 +1343,7 @@ sub playerGroup {
 	my %group = (
 		'Groups' => {
 			'Default' => {
-				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter)]
+				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter MMMMixGenre MMMRejectType MMMRejectSize)]
 			},
 		},
 	);
@@ -1285,7 +1429,7 @@ sub setupCategory {
 		'Groups' => {
 
 			'Default' => {
-				'PrefOrder' => [qw(MMMPlayerSettings MMMSize MMMMixType MMMStyle MMMVariety MMMFilter musicmagicscaninterval MMSport)]
+				'PrefOrder' => [qw(MMMPlayerSettings MMMSize MMMMixType MMMStyle MMMVariety MMMMixGenre MMMRejectType MMMRejectSize MMMFilter musicmagicscaninterval MMSport)]
 				
 				# disable remote host access, its confusing and only works in specific cases
 				# leave it here for hackers who really want to try it
@@ -1340,7 +1484,12 @@ sub setupCategory {
 				'validate' => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]
 			},
-
+			
+			'MMMRejectSize' => {
+				'validate' => \&Slim::Web::Setup::validateInt,
+				'validateArgs' => [1,undef,1]
+			},
+			
 			'MMMMixType' => {
 				'validate' => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
@@ -1350,7 +1499,25 @@ sub setupCategory {
 					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
 				}
 			},
-
+			
+			'MMMRejectType' => {
+				'validate' => \&Slim::Web::Setup::validateInList,
+				'validateArgs' => [0,1,2],
+				'options'=> {
+					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
+					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
+					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
+				}
+			},
+			
+			'MMMMixGenre' => {
+				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				,'options' => {
+						'1' => Slim::Utils::Strings::string('YES')
+						,'0' => Slim::Utils::Strings::string('NO')
+					}
+			},
+			
 			'MMMStyle' => {
 				'validate' => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [0,200,1,1],
@@ -1401,6 +1568,18 @@ sub checkDefaults {
 
 	if (!Slim::Utils::Prefs::isDefined('MMMSize')) {
 		Slim::Utils::Prefs::set('MMMSize',12);
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('MMMMixGenre')) {
+		Slim::Utils::Prefs::set('MMMMixGenre',0);
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('MMMRejectSize')) {
+		Slim::Utils::Prefs::set('MMMRejectSize',12);
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('MMMRejectType')) {
+		Slim::Utils::Prefs::set('MMMRejectType',0);
 	}
 
 	if (!Slim::Utils::Prefs::isDefined('MusicMagicplaylistprefix')) {
