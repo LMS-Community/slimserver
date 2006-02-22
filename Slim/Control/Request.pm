@@ -1746,16 +1746,40 @@ sub __parse {
 	}
 	
 	# handle encoding
-	my $encoding = ${$self->{'_params'}}{'charset'};
-	$encoding = 'utf8' unless defined $encoding;
+	my $encoding = ${$self->{'_params'}}{'charset'} || 'utf8';
+
 	if ($] > 5.007) {
+
 		while (my ($key, $val) = each %{$self->{'_params'}}) {
-			$val = Encode::decode($encoding, $val);
+
+			# XXXX - This should really be using Slim::Utils::Unicode
+			if (ref($val) eq 'ARRAY') {
+
+				for (my $i = 0; $i < scalar @$val; $i++) {
+
+					$val->[$i] = Encode::decode($encoding, $val->[$i]);
+				}
+		
+			} elsif (ref($val) eq 'HASH') {
+
+				while (my ($subKey, $subVal) = each %{$val}) {
+					
+					$val->{$subKey} = Encode::decode($encoding, $subVal);
+				}
+
+			} elsif (ref($val) eq 'SCALAR') {
+
+				$val = \Encode::decode($encoding, $$val);
+
+			} else {
+
+				$val = Encode::decode($encoding, $val);
+			}
+
 			${$self->{'_params'}}{$key} = $val;
 		}
 	}
 }
-
 
 
 1;
