@@ -112,8 +112,8 @@ sub init {
 			'initialValue' => sub { return $_[0]->prefGet("alarmtime", weekDay($_[0])) },
 			'cursorPos'    => 0,
 			'callback'     => \&exitSetHandler,
-			'onChange'     => sub { $_[0]->prefSet('alarmtime', $_[0]->param('valueRef'), weekDay($_[0])) },
-			'onChangeArgs' => 'C',
+			'onChange'     => sub { $_[0]->prefSet('alarmtime', $_[1], weekDay($_[0])) },
+			'onChangeArgs' => 'CV',
 		},
 
 		'alarm/ALARM_SET_VOLUME' => {
@@ -267,7 +267,7 @@ sub exitSetHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
 
-		$client->prefSet("alarmtime", $client->param('valueRef'), weekDay($client));
+		$client->prefSet("alarmtime", ${$client->param('valueRef')}, weekDay($client));
 
 		Slim::Buttons::Common::popModeRight($client);
 

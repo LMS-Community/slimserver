@@ -123,10 +123,8 @@ our %functions = (
 				}
 			}
 			
-			my $time = ($h0 * 10 + $h1) * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+			$$valueRef = timeDigitsToTime($h0, $h1, $m0, $m1, $p);
 	
-			$client->param('valueRef',$time);
-			
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			
 			#update the display
@@ -169,10 +167,10 @@ sub lines {
 		$line1 = $client->string($line1);
 	}
 	
-	my $valueRef = \&timeString($client,timeDigits($client,$client->param('valueRef')));
+	my $timestring = timeString($client,timeDigits($client,$client->param('valueRef')));
 	
-	if (!defined($valueRef)) { return ('',''); }
-	$line2 = $$valueRef;
+	if (!defined($timestring)) { return ('',''); }
+	$line2 = $timestring;
 	
 	return ($line1,$line2);
 }
@@ -225,17 +223,28 @@ sub init {
 	}
 	
 	my $valueRef = $client->param('valueRef');
-	if (ref($valueRef)) {
+	if (!defined($valueRef)) {
+		$$valueRef = '';
+		$client->param('valueRef',$valueRef);
+	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
-		$valueRef = $$value;
+		$valueRef = \$value;
 		$client->param('valueRef',$valueRef);
 	}
+
 	return 1;
 }
 
 sub timeDigits {
 	my $client = shift;
-	my $time = shift || 0;
+	my $timeRef = shift;
+	my $time;
+
+	if (ref($timeRef))  {
+		$time = $$timeRef || 0;
+	} else {
+		$time = $timeRef || 0;
+	}
 
 	my $h = int($time / (60*60));
 	my $m = int(($time - $h * 60 * 60) / 60);
@@ -257,6 +266,18 @@ sub timeDigits {
 	my $m1 = substr($m, 1, 1);
 
 	return ($h0, $h1, $m0, $m1, $p);
+}
+
+sub timeDigitsToTime {
+	my ($h0, $h1, $m0, $m1, $p) = @_;
+
+	$p ||= 0;
+	
+	my $time = (((($p * 12)            # pm adds 12 hours
+	         + ($h0 * 10) + $h1) * 60) # convert hours to minutes
+	         + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
+
+	return $time;
 }
 
 sub timeString {
@@ -294,7 +315,6 @@ sub moveCursor {
 	my $client = shift;
 	my $increment = shift || 1;
 	
-	my $valueRef = \&timeString($client,timeDigits($client,$client->param('valueRef')));
 	my $cursorPos = $client->param('cursorPos');
 
 	$cursorPos += $increment;
@@ -335,7 +355,15 @@ sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
 	
 	$c = $client->param('cursorPos') unless defined $c;
-	$valueRef = $client->param('valueRef') unless defined $valueRef;
+	
+	if (defined $valueRef) {
+		if (!ref $valueRef) {
+			my $value = $valueRef;
+			$valueRef = \$value;
+		}
+	} else {
+		$valueRef = $client->param('valueRef');
+	}
 	
 	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 
@@ -382,11 +410,9 @@ sub scrollTime {
 		}
 	}
 	
-	my $time = $h0 * 10 * 60 * 60 + $h1 * 60 * 60 + $m0 * 10 * 60 + $m1 * 60 + $p * 12 * 60 * 60;
+	$$valueRef = timeDigitsToTime($h0, $h1, $m0, $m1, $p);
 	
-	$client->param('valueRef',$time);
-	
-	return $time;
+	return $$valueRef;
 }
 
 1;
