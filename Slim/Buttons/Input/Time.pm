@@ -161,11 +161,19 @@ our %functions = (
 
 sub lines {
 	my $client = shift;
+	
 	my ($line1, $line2);
+	
 	$line1 = $client->param('header');
+	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+		$line1 = $client->string($line1);
+	}
+	
 	my $valueRef = \&timeString($client,timeDigits($client,$client->param('valueRef')));
+	
 	if (!defined($valueRef)) { return ('',''); }
 	$line2 = $$valueRef;
+	
 	return ($line1,$line2);
 }
 
@@ -175,6 +183,7 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
+	
 	#my $setMethod = shift;
 	#possibly skip the init if we are popping back to this mode
 	if (!init($client)) {
@@ -196,6 +205,7 @@ sub setMode {
 # onChangeArgs = CV
 sub init {
 	my $client = shift;
+	
 	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
@@ -212,6 +222,13 @@ sub init {
 	}
 	if (!defined($client->param('onChangeArgs'))) {
 		$client->param('onChangeArgs','CV');
+	}
+	
+	my $valueRef = $client->param('valueRef');
+	if (ref($valueRef)) {
+		my $value = $valueRef;
+		$valueRef = $$value;
+		$client->param('valueRef',$valueRef);
 	}
 	return 1;
 }
@@ -255,7 +272,9 @@ sub timeString {
 
 sub exitInput {
 	my ($client,$exitType) = @_;
+	
 	my $callbackFunct = $client->param('callback');
+	
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -267,6 +286,7 @@ sub exitInput {
 sub nextChar {
 	my $client = shift;
 	my $increment = shift || 1;
+	
 	moveCursor($client,$increment);
 }
 
@@ -297,8 +317,10 @@ sub moveCursor {
 
 sub scroll {
 	my ($client,$dir) = @_;
+	
 	my $time = scrollTime($client,$dir);
 	my $onChange = $client->param('onChange');
+	
 	if (ref($onChange) eq 'CODE') {
 		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;
