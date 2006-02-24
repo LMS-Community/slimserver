@@ -400,7 +400,7 @@ sub checkAlarms {
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
-				if ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Buttons::Plugins::installedPlugins()}) 
+				if ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager::installedPlugins()}) 
 							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
 					
 					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
