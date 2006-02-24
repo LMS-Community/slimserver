@@ -60,7 +60,7 @@ sub useWeekday {
 # some initialization code, adding modes for this module
 sub init {
 
-	Slim::Buttons::Common::addMode('alarm', undef, \&setMode);
+	Slim::Buttons::Common::addMode('alarm', {}, \&setMode);
 	setTimer();
 
 	# check if Random plugin is isntalled and not disabled.  create items for the special random playlists
