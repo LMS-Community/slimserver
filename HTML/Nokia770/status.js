@@ -38,7 +38,7 @@ function refreshNothing() {
 	return true;
 }
 
-function fullRefresh(theData) {
+function refreshAll(theData) {
 	//var parsedData = fillDataHash(theData);
 	refreshControls(theData);
 	refreshOtherElements(theData);
@@ -111,7 +111,7 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 	} else if (selected == 'prev' || selected == 'next') {
 		document.getElementById('playercontrol_prev').src = 'html/images/smaller/prev.gif';
 		document.getElementById('playercontrol_next').src = 'html/images/smaller/next.gif';
-		getStatusData(param, fullRefresh);
+		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'player') {
 		getStatusData(param, refreshPlayerStatus);
 	} else {
@@ -142,6 +142,19 @@ function playerControl(selected, param) {
 function refreshOtherElements(theData) {
 	var parsedData = fillDataHash(theData);
 	// refresh cover art
+	if ($('albumhref')) {
+		document.getElementById('albumhref').href = parsedData['albumHRef'];
+	}
+	if ($('coverartpath')) {
+		var coverPath = null;
+		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
+			coverPath = parsedData['coverartpath'];
+		} else {
+			coverPath = '/music/'+parsedData['coverartpath']+'/cover.jpg';
+		}
+		document.getElementById('coverartpath').src = coverPath;
+	}
+
 	// refresh song info
 	var songinfoArray = [ 'songtitle', 'artist', 'album', 'genre' ];
 	for (var i=0; i < songinfoArray.length; i++) {
@@ -185,5 +198,6 @@ function parseData(thisData) {
 
 window.onload= function() {
 	var args = 'player=[% player %]&ajaxRequest=1';
-	getStatusData(args, updateStatus);
+	//getStatusData(args, updateStatus);
+	getStatusData(args, refreshAll);
 }
