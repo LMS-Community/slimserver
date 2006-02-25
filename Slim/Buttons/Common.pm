@@ -805,11 +805,6 @@ sub scroll_getInitialScrollParams {
 	return $result;
 }
 
-# DEPRECATED: Use INPUT.Time mode instead
-sub scrollTime {
-	Slim::Buttons::Input::Time::scrollTime(@_);
-}
-
 sub mixer {
 	my $client = shift;
 	my $feature = shift; # bass/treble/pitch

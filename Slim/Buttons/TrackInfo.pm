@@ -28,238 +28,56 @@ sub init {
 
 		'play' => sub  {
 			my $client = shift;
-
-			my $curItem = $client->trackInfoContent->[currentLine($client)];
-
-			unless ($curItem) {
-				Slim::Buttons::Common::popModeRight($client);
-				$client->execute(["button", "play", undef]);
-				return;
-			}
-
-			my ($string, $line1);
-
-			if (Slim::Player::Playlist::shuffle($client)) {
-				$string = 'PLAYING_RANDOMLY_FROM';
-			} else {
-				$string = 'NOW_PLAYING_FROM';
-			}
-			
-			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
-
-			if ($client->linesPerScreen == 1) {
-				$line2 = $client->doubleString($string);
-			} else {
-				$line1 = $client->string($string);
-			}
-			
-			$client->showBriefly( {
-				'line1' => $line1,
-				'line2' => $line2,
-				'overlay2' => $client->symbols('notesymbol'),
-			});
-
-			$client->execute(['playlist', 'loadtracks', $termlist]);
+			playOrAdd($client,"play");
 			$client->execute(['playlist', 'jump', 0]);
 		},
 		
 		'add' => sub  {
-			my $client = shift;
-
-			my $curItem = $client->trackInfoContent->[currentLine($client)];
-
-			unless ($curItem) {
-				Slim::Buttons::Common::popModeRight($client);
-				$client->execute(["button", "add", undef]);
-				return;
-			}
-
-			my ($line1, $string);
-
-			$string = 'ADDING_TO_PLAYLIST';
-
-			my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
-
-			if ($client->linesPerScreen == 1) {
-				$line2 = $client->doubleString($string);
-			} else {
-				$line1 = $client->string($string);
-			}
-
-			$client->showBriefly( {
-				'line1' => $line1,
-				'line2' => $line2,
-				'overlay2' => $client->symbols('notesymbol'),
-			});
-
-			$client->execute(["playlist", "addtracks", $termlist]);
+			playOrAdd(shift,"add");
 		},
-		
-		'up' => sub  {
-			my $client = shift;
-
-			my $newpos = Slim::Buttons::Common::scroll($client, -1, $#{$client->trackInfoLines} + 1, currentLine($client));
-			if ($newpos != 	currentLine($client)) {
-				currentLine($client, $newpos);
-				$client->pushUp;
-			}
-		},
-
-		'down' => sub  {
-			my $client = shift;
-			my $newpos = Slim::Buttons::Common::scroll($client, +1, $#{$client->trackInfoLines} + 1, currentLine($client));
-			if ($newpos != 	currentLine($client)) {
-				currentLine($client, $newpos);
-				$client->pushDown;
-			}
-		},
-
-		'left' => sub  {
-			my $client = shift;
-			Slim::Buttons::Common::popModeRight($client);
-		},
-
-		'right' => sub  {
-			my $client = shift;
-
-			my $push     = 1;
-			# Look up if this is an artist, album, year etc
-			my $curitem  = $client->trackInfoContent->[currentLine($client)];
-			my @oldlines = Slim::Display::Display::curLines($client);
-
-			if (!defined($curitem)) {
-				$curitem = "";
-			}
-
-			# Get object for currently being browsed song from the datasource
-			# This probably isn't necessary as track($client) is already an object!
-			my $ds      = Slim::Music::Info::getCurrentDataStore();
-			my $track   = $ds->objectForUrl(track($client));
-
-			if (!blessed($track) || !$track->can('album') || !$track->can('artist')) {
-
-				errorMsg("Unable to fetch valid track object for currently selected item!\n");
-				return 0;
-			}
-
-			my $album  = $track->album;
-			my $artist = $track->artist;
-
-			# Bug: 2528
-			#
-			# Only check to see if album & artist are valid
-			# objects if we're going to be performing a method
-			# call on them. Otherwise it's ok to not have them for
-			# Internet Radio streams which can be saved to favorites.
-			if ($curitem =~ /^(?:ALBUM|ARTIST|COMPOSER|CONDUCTOR|BAND|YEAR|GENRE)$/) {
-
-				if (!blessed($album) || !blessed($artist) || !$album->can('id') || !$artist->can('id')) {
-
-					errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
-					return 0;
-				}
-			}
-
-			if ($curitem eq 'ALBUM') {
-
-				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'    => 'track',
-					'level'        => 0,
-					'findCriteria' => { 'album' => $album->id },
-					'selectionCriteria' => {
-						'track'  => $track->id,
-						'album'  => $album->id,
-						'artist' => $artist->id,
-					},
-				});
-
-			} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
-
-				my $lcItem = lc($curitem);
-
-				my ($contributor) = $track->$lcItem();
-
-				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'    => 'album,track',
-					'level'        => 0,
-					'findCriteria' => { 'artist' => $contributor->id },
-					'selectionCriteria' => {
-						'track'  => $track->id,
-						'album'  => $album->id,
-						'artist' => $artist->id,
-					},
-				});
-
-			} elsif ($curitem eq 'GENRE') {
-
-				my $genre = $track->genre;
-				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'  => 'artist,album,track',
-					'level'      => 0,
-					'findCriteria' => { 'genre' => $genre->id,},
-					'selectionCriteria' => {
-						'track'  => $track->id,
-						'album'  => $album->id,
-						'artist' => $artist->id,
-					},
-				});
-
-			} elsif ($curitem eq 'YEAR') {
-
-				my $year = $track->year;
-
-				Slim::Buttons::Common::pushMode($client, 'browsedb', {
-					'hierarchy'  => 'album,track',
-					'level'      => 0,
-					'findCriteria' => { 'year' => $year,},
-					'selectionCriteria' => {
-						'track'  => $track->id,
-						'album'  => $album->id,
-						'artist' => $artist->id,
-					},
-				});
-
-			} elsif ($curitem eq 'FAVORITE') {
-
-				my $num = $client->param('favorite');
-
-				if ($num < 0) {
-
-					my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
-
-					$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
-
-					$client->param('favorite', $num);
-
-				} else {
-
-					Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
-
-					$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
-
-					$client->param('favorite', -1);
-				}
-
-				$push = 0;
-
-			} else {
-
-				$push = 0;
-				$client->bumpRight;
-			}
-
-			if ($push) {
-				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
-			}
-		},
-
-		'numberScroll' => sub  {
-			my ($client, $button, $digit) = @_;
-
-			currentLine($client, Slim::Buttons::Common::numberScroll($client, $digit, $client->trackInfoLines, 0));
-			$client->update;
-		}
 	);
+}
+
+sub playOrAdd {
+	my $client = shift;
+	my $btn = shift;
+
+	my ($command, $string, $line1);
+	
+	if ($btn eq "play") {
+		if (Slim::Player::Playlist::shuffle($client)) {
+			$string = 'PLAYING_RANDOMLY_FROM';
+		} else {
+			$string = 'NOW_PLAYING_FROM';
+		}
+		$command = "loadtracks";
+	} else {
+		$string = 'ADDING_TO_PLAYLIST';
+		$command = "addtracks";
+	}
+	my $curItem = $client->trackInfoContent->[$client->param('listIndex')];
+
+	unless ($curItem) {
+		Slim::Buttons::Common::popModeRight($client);
+		$client->execute(["button", $btn, undef]);
+		return;
+	}
+
+	my ($line2, $termlist) = _trackDataForCurrentItem($client, $curItem);
+
+	if ($client->linesPerScreen == 1) {
+		$line2 = $client->doubleString($string);
+	} else {
+		$line1 = $client->string($string);
+	}
+	
+	$client->showBriefly( {
+		'line1' => $line1,
+		'line2' => $line2,
+		'overlay2' => $client->symbols('notesymbol'),
+	});
+
+	$client->execute(['playlist', $command, $termlist]);
 }
 
 sub _trackDataForCurrentItem {
@@ -320,24 +138,37 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	my $item = shift;
-	$client->lines(\&lines);
+	my $method = shift;
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
 	preloadLines($client, track($client));
+	
+	my %params = (
+		'header'         => sub { return Slim::Music::Info::getCurrentTitle($_[0], track($_[0]))},
+		'headerArgs'     => 'CVI',
+		'listRef'        => \@{$client->trackInfoLines},
+		'externRef'      => \&infoLine,
+		'externRefArgs'  => 'CVI',
+		'overlayRef'     => \&overlay,
+		'overlayRefArgs' => 'CVI',
+		'callback'       => \&listExitHandler,
+		
+		# carry some params forward
+		'track'          => $client->param('track'),
+		'current'          => $client->param('current'),
+		'favorite'          => $client->param('favorite'),
+	);
+	
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
 # get (and optionally set) the track URL
 sub track {
 	my $client = shift;
 	return $client->param( 'track', shift);
-}
-
-# get (and optionally set) the track info scroll position
-sub currentLine {
-	my $client = shift;
-
-	my $line = $client->param( 'line', shift) || 0;
-
-	return $line
 }
 
 sub preloadLines {
@@ -478,26 +309,150 @@ sub preloadLines {
 	}
 }
 
-#
-# figure out the lines to be put up to display the directory
-#
-sub lines {
-	my $client = shift;
+sub listExitHandler {
+	my ($client,$exittype) = @_;
+	$exittype = uc($exittype);
+	if ($exittype eq 'LEFT') {
+		Slim::Buttons::Common::popModeRight($client);
+		
+	} elsif ($exittype eq 'RIGHT') {
+		my $push     = 1;
+		# Look up if this is an artist, album, year etc
+		my $curitem  = $client->trackInfoContent->[$client->param('listIndex')];
+		my @oldlines = Slim::Display::Display::curLines($client);
 
-	# Show the title of the song
-	my $line1 = Slim::Music::Info::getCurrentTitle($client, track($client));
+		if (!defined($curitem)) {
+			$curitem = "";
+		}
 
-	# add position string
-	my $overlay1 = ' (' . (currentLine($client)+1)
-				. ' ' . $client->string('OF') .' ' . scalar(@{$client->trackInfoLines}) . ')';
-	# add note symbol
-	$overlay1 .= Slim::Display::Display::symbol('notesymbol');
-	
+		# Get object for currently being browsed song from the datasource
+		# This probably isn't necessary as track($client) is already an object!
+		my $ds      = Slim::Music::Info::getCurrentDataStore();
+		my $track   = $ds->objectForUrl(track($client));
+
+		if (!blessed($track) || !$track->can('album') || !$track->can('artist')) {
+
+			errorMsg("Unable to fetch valid track object for currently selected item!\n");
+			return 0;
+		}
+
+		my $album  = $track->album;
+		my $artist = $track->artist;
+
+		# Bug: 2528
+		#
+		# Only check to see if album & artist are valid
+		# objects if we're going to be performing a method
+		# call on them. Otherwise it's ok to not have them for
+		# Internet Radio streams which can be saved to favorites.
+		if ($curitem =~ /^(?:ALBUM|ARTIST|COMPOSER|CONDUCTOR|BAND|YEAR|GENRE)$/) {
+
+			if (!blessed($album) || !blessed($artist) || !$album->can('id') || !$artist->can('id')) {
+
+				errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
+				return 0;
+			}
+		}
+
+		if ($curitem eq 'ALBUM') {
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy'    => 'track',
+				'level'        => 0,
+				'findCriteria' => { 'album' => $album->id },
+				'selectionCriteria' => {
+					'track'  => $track->id,
+					'album'  => $album->id,
+					'artist' => $artist->id,
+				},
+			});
+
+		} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
+
+			my $lcItem = lc($curitem);
+
+			my ($contributor) = $track->$lcItem();
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy'    => 'album,track',
+				'level'        => 0,
+				'findCriteria' => { 'artist' => $contributor->id },
+				'selectionCriteria' => {
+					'track'  => $track->id,
+					'album'  => $album->id,
+					'artist' => $artist->id,
+				},
+			});
+
+		} elsif ($curitem eq 'GENRE') {
+
+			my $genre = $track->genre;
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy'  => 'artist,album,track',
+				'level'      => 0,
+				'findCriteria' => { 'genre' => $genre->id,},
+				'selectionCriteria' => {
+					'track'  => $track->id,
+					'album'  => $album->id,
+					'artist' => $artist->id,
+				},
+			});
+
+		} elsif ($curitem eq 'YEAR') {
+
+			my $year = $track->year;
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy'  => 'album,track',
+				'level'      => 0,
+				'findCriteria' => { 'year' => $year,},
+				'selectionCriteria' => {
+					'track'  => $track->id,
+					'album'  => $album->id,
+					'artist' => $artist->id,
+				},
+			});
+
+		} elsif ($curitem eq 'FAVORITE') {
+
+			my $num = $client->param('favorite');
+
+			if ($num < 0) {
+
+				my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
+
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
+
+				$client->param('favorite', $num);
+
+			} else {
+
+				Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
+
+				$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
+
+				$client->param('favorite', -1);
+			}
+
+			$push = 0;
+
+		} else {
+
+			$push = 0;
+			$client->bumpRight;
+		}
+
+		if ($push) {
+			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		}
+	}
+}
+
+sub infoLine {
+	my ($client,$value,$index) = @_;
+
 	# 2nd line's content is provided entirely by trackInfoLines, which returns an array of information lines
-	my $line2 = $client->trackInfoLines->[currentLine($client)];
-	
-	# add right arrow symbol if current line can point to more info e.g. artist, album, year etc
-	my $overlay2 = defined($client->trackInfoContent->[currentLine($client)]) ? Slim::Display::Display::symbol('rightarrow') : undef;
+	my $line2 = $client->trackInfoLines->[$index];
 
 	# special case favorites line, which must be determined dynamically
 	if ($line2 eq 'FAVORITE') {
@@ -506,10 +461,24 @@ sub lines {
 		} else {
 			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
 		}
-		$overlay2 = undef;
 	}
 
-	return ($line1, $line2, $overlay1, $overlay2);
+	return $line2;
+}
+
+sub overlay {
+	my ($client,$value,$index) = @_;
+
+	# add position string
+	my $overlay1 = ' (' . ($index+1)
+				. ' ' . $client->string('OF') .' ' . scalar(@{$client->trackInfoLines}) . ')';
+	# add note symbol
+	$overlay1 .= Slim::Display::Display::symbol('notesymbol');
+	
+	# add right arrow symbol if current line can point to more info e.g. artist, album, year etc
+	my $overlay2 = defined($client->trackInfoContent->[$index]) ? Slim::Display::Display::symbol('rightarrow') : undef;
+
+	return ($overlay1, $overlay2);
 }
 
 1;
