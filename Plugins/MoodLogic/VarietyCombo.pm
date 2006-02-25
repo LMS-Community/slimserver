@@ -89,7 +89,7 @@ sub init {
 			}
 
 			if (scalar @$instantMix) {
-				Slim::Buttons::Common::pushMode($client, 'instant_mix', { 'mix' => $instantMix });
+				Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', { 'mix' => $instantMix });
 				specialPushLeft($client, 0);
 			} else {
 				$client->bumpRight()
@@ -101,7 +101,7 @@ sub init {
 			my $currentItem;
 			if (defined $client->param( 'song')) {
 				$currentItem = $client->param( 'song');
-				Slim::Buttons::Common::pushMode($client, 'instant_mix', {'song' => $client->param( 'song')});
+				Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => $client->param( 'song')});
 				specialPushLeft($client, 0);
 			} else {
 				$client->bumpRight()

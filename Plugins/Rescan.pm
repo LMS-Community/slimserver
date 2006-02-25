@@ -61,10 +61,11 @@ sub initPlugin {
 			my $client = shift;
 
 			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_SET')) {
+				my $value = Slim::Utils::Prefs::get("rescan-time");
 				
 				my %params = (
 					'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
-					'valueRef' => Slim::Utils::Prefs::get("rescan-time"),
+					'valueRef' => \$value,
 					'cursorPos' => 1,
 					'callback' => \&settingsExitHandler
 				);
@@ -162,6 +163,7 @@ sub settingsExitHandler {
 	if ($exittype eq 'LEFT') {
 
 		Slim::Utils::Prefs::set("rescan-time",${$client->param('valueRef')});
+
 		Slim::Buttons::Common::popModeRight($client);
 
 	} elsif ($exittype eq 'RIGHT') {
