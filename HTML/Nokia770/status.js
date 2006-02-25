@@ -39,40 +39,53 @@ function refreshNothing() {
 }
 
 function fullRefresh(theData) {
-	var parsedData = fillDataHash(theData);
+	//var parsedData = fillDataHash(theData);
 	refreshControls(theData);
 	refreshOtherElements(theData);
 	refreshProgressBar(theData);
 }
 
 function refreshControls(theData) {
+
 	var parsedData = fillDataHash(theData);
 	// refresh control_display in songinfo section
-	refreshControlDisplay(theData);
-	// refresh play/stop/pause/forw/back buttons
-	refreshPlayerControls(theData);
+	refreshPlayerStatus(theData);
+
+	// refresh player controls
+	var selected=null;
+	if (parsedData['playmode'] == 0) {
+		selected = 'stop';
+	} else if (parsedData['playmode'] == 1) {
+		selected = 'play';
+	} else if (parsedData['playmode'] == 2) {
+		selected = 'pause';
+	}
+	playerButtonControl('player', selected, '', true);
 	// refresh shuffle controls
 	// refresh repeat controls
 	// refresh volume (?)
+
 }
 
-function refreshPlayerControls(theData) {
+function refreshPlayerStatus(theData) {
 	var parsedData = fillDataHash(theData);
 	var controls = ['playtextmode', 'thissongnum', 'songcount'];
 	for (var i=0; i < controls.length; i++) {
 		var key = controls[i];
-		$(key).innerHTML = parsedData[key];
+		if ($(key)) {
+			$(key).innerHTML = parsedData[key];
+		}
 	}
 }
 
 function refreshElement(element, value) {
 	if ($(element)) {
-		$(element).innerHTML = parsedData[key];
+		$(element).innerHTML = value;
 	}
 }
 
 // called from onClick on repeat or shuffle controls
-function playerButtonControl(playerRepeatOrShuffle, selected, param) {
+function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) {
 	// make the image selected 'active'
 	// make the rest not active
 	var controls = ['off', 'song', 'album', 'playlist', 'play', 'pause', 'stop'];
@@ -93,10 +106,14 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param) {
 			document.getElementById(turnOn).style.display = "block";
 		}
 	}
-	if (selected == 'prev' || selected == 'next') {
+	if (noRequest) {
+		return true;
+	} else if (selected == 'prev' || selected == 'next') {
+		document.getElementById('playercontrol_prev').src = 'html/images/smaller/prev.gif';
+		document.getElementById('playercontrol_next').src = 'html/images/smaller/next.gif';
 		getStatusData(param, fullRefresh);
 	} else if (playerRepeatOrShuffle == 'player') {
-		getStatusData(param, refreshPlayerControls);
+		getStatusData(param, refreshPlayerStatus);
 	} else {
 		getStatusData(param, refreshNothing);
 	}
@@ -133,12 +150,21 @@ function refreshOtherElements(theData) {
 	}
 	// refresh links in song info section
 	// refresh playlist
+	var playlistArray = ['previoussong', 'currentsong', 'nextsong' ];
+	for (var i=0; i < playlistArray.length; i++) {
+		var key = playlistArray[i];
+		if ($(key)) {
+			$(key).innerHTML = '';
+			$(key).innerHTML = parsedData[key];
+		}
+	}
 	// refresh player ON/OFF
 }
 
 function refreshProgressBar() {
 	// update progress bar based on time and elapsed time
 	// update time-to-refresh-all based on time left
+	return true;
 }
 
 function parseData(thisData) {
