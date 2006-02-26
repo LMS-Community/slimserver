@@ -68,11 +68,6 @@ sub initPlugin {
         [0, 1, 1, \&stationsQuery]);
     Slim::Control::Request::addDispatch(['radioio.stationinfo'],  
         [0, 1, 1, \&stationinfoQuery]);
-#    Slim::Control::Request::addDispatch(['radioio',    '?'],          
-#       [0, 1, 0, \&listenQuery]);
-#    Slim::Control::Request::addDispatch(['radioio', '_functions'], 
-#        [0, 0, 0, \&subscribeCommand]);
-
 }
 
 # Just so we don't have plain text URLs in the code.
@@ -215,21 +210,13 @@ sub handleWebIndex {
 	if (defined $params->{'stationinfo'} && $stations{$params->{'stationinfo'}}) {
 		$params->{'stationname'} = $params->{'stationinfo'};
 
-		# let's open the stream to get some more information
-		my $url     = "radioio://$params->{'stationinfo'}.mp3";
-		my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
-
-		my $ds      = Slim::Music::Info::getCurrentDataStore();
-		my $track   = $ds->objectForUrl($url, 1, 1);
-
-		if (blessed($track) && $track->can('bitrate')) {
-
-			$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $track);
-			$params->{'bitrate'}   = $track->bitrate;
-			$params->{'type'}      = $track->content_type;
+		my $data = stationInfo($params->{'stationname'});
+		
+		if (defined $data) {
+			$params->{'fulltitle'} = $data->{'fulltitle'};
+			$params->{'bitrate'}   = $data->{'bitrate'};
+			$params->{'type'}      = $data->{'type'};
 		}
-
-		undef $stream;
 
 	} else {
 
@@ -238,6 +225,34 @@ sub handleWebIndex {
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/RadioIO/index.html', $params);
 }
+
+# returns data about a station
+sub stationInfo {
+	my $station = shift;
+	
+	# let's open the stream to get some more information
+	my $url     = "radioio://$station.mp3";
+	my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
+
+	my $ds      = Slim::Music::Info::getCurrentDataStore();
+	my $track   = $ds->objectForUrl($url, 1, 1);
+
+	my %result;
+
+	if (blessed($track) && $track->can('bitrate')) {
+
+		$result{'fulltitle'} = Slim::Music::Info::getCurrentTitle(undef, $track);
+		$result{'bitrate'}   = $track->bitrate;
+		$result{'type'}      = $track->content_type;
+		$result{'station'}   = $station;
+		$result{'url'}       = $url;
+	}
+	
+	undef $stream;
+	
+	return \%result;
+}
+
 
 # handles the "radioio.stations" query
 sub stationsQuery {
@@ -265,6 +280,7 @@ sub stationsQuery {
 
 		for my $eachstation (@station_names[$start..$end]) {
 			$request->addResultLoop('@stations', $cnt, 'station', $eachstation);
+			$request->addResultLoop('@stations', $cnt, 'url', "radioio://$eachstation.mp3");
 			$cnt++;
 		}	
 	}
@@ -291,33 +307,18 @@ sub stationinfoQuery {
 		return;
 	}
 
-	# let's open the stream to get some more information
-	my $url     = "radioio://$station.mp3";
-	my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
+	my $data = stationInfo($station);
 
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
-	my $track   = $ds->objectForUrl($url, 1, 1);
-
-	if (blessed($track) && $track->can('bitrate')) {
+	if (defined $data) {
 	
-#		print Data::Dumper::Dumper($track);
-
-		$request->addResult('fulltitle', Slim::Music::Info::getCurrentTitle(undef, $track));
-		#$params->{'fulltitle'} = Slim::Music::Info::getCurrentTitle($client, $track);
-		$request->addResult('bitrate', $track->bitrate());
-		#$params->{'bitrate'}   = $track->bitrate;
-		$request->addResult('type', $track->content_type());
-		#$params->{'type'}      = $track->content_type;
+		$request->addResult('fulltitle', $data->{'fulltitle'});
+		$request->addResult('bitrate', $data->{'bitrate'});
+		$request->addResult('type', $data->{'type'});
+		$request->addResult('url', $data->{'url'});
 	}
-
-	undef $stream;
 
 	$request->setStatusDone();
 }
-
-
-
-
 
 sub strings
 {
