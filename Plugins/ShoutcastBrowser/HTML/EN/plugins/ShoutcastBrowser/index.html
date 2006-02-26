@@ -4,7 +4,7 @@
    pwd_list.0 = BLOCK -%]
 	[%- IF streams || streaminfo %]<a href="index.html?player=[% playerURI %]">[%- "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %]</a>
 	[%- ELSE %]
-		[%- "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %](<a href="index.html?player=[% playerURI %]&amp;action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
+		[%- "PLUGIN_SHOUTCASTBROWSER_MODULE_NAME" | string %] (<a href="index.html?player=[% playerURI %]&amp;action=refresh">[% 'PLUGIN_SHOUTCASTBROWSER_REFRESH' | string %]</a>)
 	[%- END %]
 [%- END %]
 [% IF streams || streaminfo; pwd_list.1 = BLOCK %]
@@ -26,12 +26,13 @@
 			[% END %][% END %]
 
 			[% IF streaminfo %]
+			<div class="songInfo">
+				<ul>
 				[% WRAPPER contentcontainer %]
 					[% BLOCK streaminfo %][% IF content %]
-						[% WRAPPER contentitem %]
-							[% title | string %][% "COLON" | string %]
-							[% content %]
-						[% END %]
+						<li><div class="songInfoTitle">[% title | string; "COLON" | string %]</div>
+							<div class="songInfoText">[% content %]</div>
+						</li>
 					[% END %][% END %]
 				
 					[% WRAPPER streaminfo title='TITLE' %]
@@ -45,6 +46,8 @@
 						<a href="[% streaminfo.0 | html %]" target="_blank">[% streaminfo.0 | html %]</a>
 					[% END %]
 				[% END %]
+				</ul>
+			</div>
 			[% END %]
 			
 			[%- odd = 1 %]

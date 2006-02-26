@@ -30,11 +30,11 @@
 		[% END %]
 		
 		[% IF stationname %]
+			<div class="songInfo"><ul>
 			[% BLOCK streaminfo %][% IF content %]
-			[% WRAPPER contentitem %]
-				[% title | string %][% "COLON" | string %]
-				[% content %]
-			[% END %]
+				<li><div class="songInfoTitle">[% title | string; "COLON" | string %]</div>
+					<div class="songInfoText">[% content %]</div>
+				</li>
 			[% END %][% END %]
 
 			[% WRAPPER streaminfo title='TITLE' %]
@@ -48,6 +48,7 @@
 			[% WRAPPER streaminfo title='URL' %]
 				<a href="[% webroot %]status.html?p0=playlist&p1=play&p2=[% 'radioio://' | uri %][% stationname | uri %].mp3&p3=[% stationname | uri %]&player=[% player | uri %]" target="status">[% 'radioio://' %][% stationname %].mp3</a>
 			[% END %]
+			</ul></div>
 		[% END %]
 	[% END %]
 	<!-- end plugins output -->
