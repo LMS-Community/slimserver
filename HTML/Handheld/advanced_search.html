@@ -5,8 +5,6 @@
 
 	[% PROCESS pageheader.html %]
 
-	[%# WRAPPER submenu url='advanced_search.html' linktitle=pagetitle %][%# END %]
-
 	[% MACRO logicalSelectionBlock BLOCK %]	
 		<select name="[% name %]">
 			<option value="=" >[% "EQUALS" | string %]</option>

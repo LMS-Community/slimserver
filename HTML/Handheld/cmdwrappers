@@ -81,7 +81,7 @@
 [%- IF item.title -%]
  / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title | html %]</a>
 [%- ELSE -%]
-[% item %]
+[%- item | replace('^\s*/?',' / ') %]
 [%- END -%]
 [%- END %]
 

@@ -52,4 +52,5 @@
 		<tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 	</table>
 
-[%- IF pageHeaderMenu; SET pwd_list = pageHeaderMenu IF not pwd_list; PROCESS submenu; END %]
+[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+[%- PROCESS submenu IF pwd_list and not noSubMenu %]
