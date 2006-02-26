@@ -11,7 +11,7 @@ use Slim::Utils::Misc;
 my $FEED = 'http://content.us.squeezenetwork.com:8080/lma/artists.opml';
 
 sub enabled {
-	return ($::VERSION ge '6.1');
+	return ($::VERSION ge '6.5');
 }
 
 sub initPlugin {
@@ -59,6 +59,7 @@ PLUGIN_LMA_MODULE_NAME
 	EN	Live Music Archive
 
 PLUGIN_LMA_LOADING
+	DE	Lade Live Music Archive...
 	EN	Loading Live Music Archive...
 ";}
 
