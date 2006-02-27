@@ -64,7 +64,38 @@ function refreshControls(theData) {
 	// refresh shuffle controls
 	// refresh repeat controls
 	// refresh volume (?)
+	refreshVolumeControl(theData);
+}
 
+function refreshVolumeControl(theData) {
+	var parsedData = fillDataHash(theData);
+	var levels = [0, 20, 35, 50, 75, 80, 85, 90, 95, 100];
+	for (var i=0; i < levels.length; i++) {
+		var key = 'bar_'+levels[i];
+		var activeKey = 'bar_active_'+levels[i];
+		var turnOn = null;
+		var turnOff = null;
+		var intVolume = parseInt(parsedData['volume'], 10);
+		if (intVolume == 0 && levels[i] == 0) {
+			turnOn = activeKey;
+			turnOff = key;
+		} else if (levels[i] == 0) {
+			turnOn = key;
+			turnOff = activeKey;
+		} else if (intVolume >= levels[i]) {
+			turnOn = activeKey;
+			turnOff = key;
+		} else {
+			turnOn = key;
+			turnOff = activeKey;
+		}
+		if ($(turnOff)) {
+			document.getElementById(turnOff).style.display = "none";
+		}
+		if ($(turnOn)) {
+			document.getElementById(turnOn).style.display = "block";
+		}
+	}
 }
 
 function refreshPlayerStatus(theData) {
@@ -82,6 +113,10 @@ function refreshElement(element, value) {
 	if ($(element)) {
 		$(element).innerHTML = value;
 	}
+}
+
+function volumeControl(level, param) {
+	getStatusData(param,refreshVolumeControl);
 }
 
 // called from onClick on repeat or shuffle controls
@@ -114,6 +149,8 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'player') {
 		getStatusData(param, refreshPlayerStatus);
+	} else if (playerRepeatOrShuffle == 'shuffle') {
+		getStatusData(param, refreshAll);
 	} else {
 		getStatusData(param, refreshNothing);
 	}
@@ -168,8 +205,10 @@ function refreshOtherElements(theData) {
 		var key = playlistArray[i];
 		if ($(key)) {
 			$(key).innerHTML = '';
-			$(key).innerHTML = parsedData[key];
-		}
+			if (parsedData[key]) {
+				$(key).innerHTML = parsedData[key];
+			}
+		} 
 	}
 	// refresh player ON/OFF
 }
