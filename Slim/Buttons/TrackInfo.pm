@@ -28,38 +28,40 @@ sub init {
 
 		'play' => sub  {
 			my $client = shift;
-			playOrAdd($client,"play");
-			$client->execute(['playlist', 'jump', 0]);
-		},
-		
-		'add' => sub  {
-			playOrAdd(shift,"add");
+			my $button = shift;
+			my $addOrInsert = shift;
+
+			playOrAdd($client,$addOrInsert);
+			$client->execute(['playlist', 'jump', 0]) unless $addOrInsert;
 		},
 	);
 }
 
 sub playOrAdd {
 	my $client = shift;
-	my $btn = shift;
+	my $addOrInsert = shift || 0;
 
 	my ($command, $string, $line1);
 	
-	if ($btn eq "play") {
+	if ($addOrInsert == 2) {
+		$string = 'INSERT_TO_PLAYLIST';
+		$command = "inserttracks";
+	} elsif ($addOrInsert == 1) {
+		$string = 'ADDING_TO_PLAYLIST';
+		$command = "addtracks";
+	} else {
 		if (Slim::Player::Playlist::shuffle($client)) {
 			$string = 'PLAYING_RANDOMLY_FROM';
 		} else {
 			$string = 'NOW_PLAYING_FROM';
 		}
 		$command = "loadtracks";
-	} else {
-		$string = 'ADDING_TO_PLAYLIST';
-		$command = "addtracks";
 	}
 	my $curItem = $client->trackInfoContent->[$client->param('listIndex')];
 
 	unless ($curItem) {
 		Slim::Buttons::Common::popModeRight($client);
-		$client->execute(["button", $btn, undef]);
+		$client->execute(["button", $addOrInsert ? "add" : "play", undef]);
 		return;
 	}
 

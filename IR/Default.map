@@ -225,7 +225,7 @@ stop					= dead
 play					= dead
 play.single				= play_0
 play.hold				= create_mix
-add					= dead
+add						= dead
 add.single				= play_1
 add.hold				= play_2
 
@@ -233,7 +233,15 @@ add.hold				= play_2
 play					= dead
 play.single				= play_0
 play.hold				= create_mix
-add					= dead
+add						= dead
+add.single				= play_1
+add.hold				= play_2
+
+[trackinfo]
+play					= dead
+play.single				= play_0
+play.hold				= create_mix
+add						= dead
 add.single				= play_1
 add.hold				= play_2
 
