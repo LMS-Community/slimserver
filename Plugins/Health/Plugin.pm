@@ -468,9 +468,11 @@ PLUGIN_HEALTH_SCHEDULER_DESC
 	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu\'s).
 
 PLUGIN_HEALTH_IRRESPONSE
+	DE	Infrarot Antwortzeit
 	EN	IR Response Time
 
 PLUGIN_HEALTH_IRRESPONSE_DESC
+	DE	Die Graphik zeigt die Zeit auf, die zwischen dem Empfang und der Verarbeitung von Fernsteuerungs-Befehlen liegt. Wenn der Server ausgelastet ist, dann werden die Befehle in eine Warteschlange gestellt. Diese Graphik gibt Informationen darüber, wie lange ein Befehl in der Warteschlange stand.
 	EN	This graph shows the time between the server receiving remote control key presses and processing them.  When the server is busy remote key presses are stored for processing later.  This graph gives an indication of how long key presses are stored for.
 
 PLUGIN_HEALTH_WARNINGS
