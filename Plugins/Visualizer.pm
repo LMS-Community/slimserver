@@ -188,8 +188,13 @@ our %configFunctions = (
 		my $client = shift;
 
 		my $screensaver = $client_context{$client}->{list}->[$client_context{$client}->{position}];
-		$client_context{$client}->{screensaver} = $screensaver;
-		$client->prefSet('screensaver',$screensaver);
+		my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+		
+		if ($client->prefGet($saver) ne $screensaver) {
+			$client->prefSet($saver,$screensaver);
+		} else {
+			$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
+		}
 		$client->update();
 	}
 );
@@ -197,23 +202,19 @@ our %configFunctions = (
 sub configLines {
 	my $client = shift;
 	
+	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	
 	my ($line1, $line2, $select);
 	my $item = $client_context{$client}->{list}->[$client_context{$client}->{position}];
-	if ($item eq $client_context{$client}->{screensaver}) {
-		$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER_ENABLED');
-		$select = '[x]';
-	}
-	else {
-		$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE');
-		$select = '[ ]';
-	}
 
-	$line2 = $client->string($screensaver_info{$item}->{name});
+	my $line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');
+	my $line2 = $client->string($screensaver_info{$item}->{name});
+	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq $item);
 
 	return {
 		'line1'    => $line1,
 		'line2'    => $line2, 
-		'overlay2' => $select,
+		'overlay2' => $overlay2,
 	};
 }
 

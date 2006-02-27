@@ -1,5 +1,3 @@
-# datetime.pm by kdf Dec 2003
-#
 # This code is derived from code with the following copyright message:
 #
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
@@ -17,7 +15,7 @@ package Plugins::DateTime::Plugin;
 use Slim::Control::Request;
 
 use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.5 $,10);
+$VERSION = substr(q$Revision: 1.6 $,10);
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';
@@ -33,38 +31,6 @@ PLUGIN_SCREENSAVER_DATETIME
 	HE	שומר מסך תאריכון
 	IT	Data e ora
 	NL	Datum en tijd
-	
-PLUGIN_SCREENSAVER_DATETIME_ENABLE
-	DE	PLAY drücken zum Aktivieren des Bildschirmschoners
-	EN	Press PLAY to enable this screensaver
-	ES	Presionar PLAY para activar este salvapantallas
-	FR	Appuyer sur PLAY pour activer
-	IT	Premi PLAY per abilitare questo salvaschermo
-	NL	Zet schermbeveiliger aan met PLAY toets
-
-PLUGIN_SCREENSAVER_DATETIME_DISABLE
-	CS	Stiskněte PLAY pro zakázání spořiče
-	DE	PLAY drücken zum Deaktivieren dieses Bildschirmschoners 
-	EN	Press PLAY to disable this screensaver
-	ES	Presionar PLAY para desactivar este salvapantallas
-	FR	Appuyer sur PLAY pour désactiver
-	IT	Premi PLAY per disabilitare questo salvaschermo
-	NL	Zet schermbeveiliger uit met PLAY toets
-	
-PLUGIN_SCREENSAVER_DATETIME_ENABLING
-	DE	Datum/Zeit Bildschirmschoner aktivieren
-	EN	Enabling DateTime as current screensaver
-	ES	Activando Hora y Fecha como salvapantallas actual
-	FR	Activation écran de veille Date/Heure
-	NL	Datum en tijd als huidige schermbeveiliger instellen
-
-PLUGIN_SCREENSAVER_DATETIME_DISABLING
-	CS	Nastavit výchozí spořič
-	DE	Standard-Bildschirmschoner aktivieren
-	EN	Resetting to default screensaver
-	ES	Restableciendo el salvapantallas por defecto
-	FR	Retour à l\'écran de veille par défaut
-	NL	Standaard schermbeveiliger instellen
 '};
 
 ##################################################
@@ -100,22 +66,13 @@ our %functions = (
 	},
 	'right' => sub  {
 		my $client = shift;
-		$client->bumpRight();
-	},
-	'play' => sub  {
-		my $client = shift;
-		if ($client->prefGet('screensaver') ne 'SCREENSAVER.datetime') {
-			$client->prefSet('screensaver','SCREENSAVER.datetime');
-			$client->showBriefly( {
-				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
-				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLING'),
-			});
+		
+		my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+		
+		if ($client->prefGet($saver) ne 'SCREENSAVER.datetime') {
+			$client->prefSet($saver,'SCREENSAVER.datetime');
 		} else {
-			$client->prefSet('screensaver','screensaver');
-			$client->showBriefly( {
-				'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
-				'line2' => $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLING'),
-			});
+			$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
 		}
 	},
 	'stop' => sub {
@@ -126,15 +83,15 @@ our %functions = (
 
 sub lines {
 	my $client = shift;
-	my $line2;
-	if ($client->prefGet('screensaver') ne 'SCREENSAVER.datetime') {
-		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_ENABLE');
-	} else {
-		$line2 = $client->string('PLUGIN_SCREENSAVER_DATETIME_DISABLE');
-	};
+	
+	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	my $line2 = $client->string('SETUP_SCREENSAVER_USE');
+	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq 'SCREENSAVER.datetime');
+	
 	return {
 		'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
 		'line2' => $line2,
+		'overlay2' => $overlay2,
 	};
 }
 

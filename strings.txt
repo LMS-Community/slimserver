@@ -1042,7 +1042,7 @@ ALARM_SET_VOLUME_SHORT
 
 ALARM_FADE
 	DE	Wecker einblenden
-	EN	Fade Alarms In	
+	EN	Fade Alarms In
 	NL	Fade wekalarm in
 
 ALARM_SET_ENTRY
@@ -5089,6 +5089,9 @@ SETUP_IDLESAVER
 	NL	Schermbeveiliger indien gestopt
 	SV	Skärmsläckare i stoppat läge
 	ZH_CN	屏幕保护程序（停止播放时）
+
+SETUP_SCREENSAVER_USE
+	EN	Use as current screensaver
 
 SETUP_SCREENSAVER_CHOOSE
 	CS	Vyberte spořič pro dobu, kdy přehrávač hraje:
