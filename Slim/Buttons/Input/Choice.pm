@@ -250,6 +250,17 @@ sub changePos {
 
 	my $listRef   = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
+	
+	# Bump if the list is empty
+	if ( scalar @{$listRef} == 0 ) {
+		if ( $dir < 0 ) {
+			$client->bumpUp();
+		}
+		else {
+			$client->bumpDown();
+		}
+		return;
+	}
 
 	if (getParam($client,'noWrap') 
 		&& (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0))) {
