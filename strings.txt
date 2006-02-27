@@ -3102,21 +3102,27 @@ SETUP_MMMFILTER_DESC
 	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
 
 SETUP_MMMMIXGENRE
+	DE	MusicMagic Mix Stil
 	EN	MusicMagic Mix Genre
 
 SETUP_MMMMIXGENRE_DESC
+	DE	Beschränken Sie den Mix auf die Musikstile des Seeds (Vorgabe: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
 
 SETUP_MMMREJECTTYPE
+	DE	MusicMagic Ablehnungsart
 	EN	MusicMagic Reject Type
 
 SETUP_MMMREJECTTYPE_DESC
+	DE	Definieren Sie die Einheit für die Ablehnungsgrösse. (Vorgabe: Lieder)
 	EN	Set the units for reject size. (Default: tracks)
 
 SETUP_MMMREJECTSIZE
+	DE	MusicMagic Ablehnungsgrösse
 	EN	MusicMagic Reject Size.
 
 SETUP_MMMREJECTSIZE_DESC
+	DE	Definieren Sie die Anzahl an Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird.
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
 
 SETUP_MMSHOST
@@ -5091,6 +5097,7 @@ SETUP_IDLESAVER
 	ZH_CN	屏幕保护程序（停止播放时）
 
 SETUP_SCREENSAVER_USE
+	DE	Als Bildschirmschoner verwenden
 	EN	Use as current screensaver
 
 SETUP_SCREENSAVER_CHOOSE
