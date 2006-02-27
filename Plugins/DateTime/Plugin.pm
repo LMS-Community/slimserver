@@ -89,8 +89,8 @@ sub lines {
 	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq 'SCREENSAVER.datetime');
 	
 	return {
-		'line1' => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
-		'line2' => $line2,
+		'line1'    => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
+		'line2'    => $line2,
 		'overlay2' => $overlay2,
 	};
 }
@@ -153,10 +153,10 @@ sub screensaverDateTimelines {
 		'center1' => Slim::Utils::Misc::longDateF(),
 		'center2' => Slim::Utils::Misc::timeF(),
 		'overlay1'=> ($alarmOn ? $client->symbols('bell') : undef),
-		'fonts'   => { 'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
-					   'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
-					   'text' =>            { 'displayoverlays' => 1 },
-				   },
+		'fonts'   => {	'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
+						'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
+						'text'            => { 'displayoverlays' => 1 },
+					},
 	};
 }
 

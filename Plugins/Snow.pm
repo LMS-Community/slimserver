@@ -245,10 +245,10 @@ our %menuParams = (
 		'overlayRefArgs'  => 'C',
 	},
 	catdir('snow','SETUP_SCREENSAVER_USE') => {
-			'useMode'      => 'boolean',
+		'useMode'         => 'boolean',
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_QUANTITY') => {
-		'useMode'          => 'INPUT.List',
+		'useMode'         => 'INPUT.List',
 		'listRef'         => [0,1,2,3],
 		'externRef'       => ['PLUGIN_SCREENSAVER_SNOW_QUANTITY_0', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_1', 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_2','PLUGIN_SCREENSAVER_SNOW_QUANTITY_3'],
 		'stringExternRef' => 1,
@@ -302,7 +302,6 @@ sub overlayFunc {
 	} else {
 		return (undef,Slim::Display::Display::symbol('rightarrow'));
 	}
-
 };
 
 sub snowExitHandler {

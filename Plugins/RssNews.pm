@@ -332,10 +332,10 @@ sub enabled {
 
 # initialize the list of channels (feeds) to display
 sub initPlugin {
-	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
+	my @feedURLPrefs  = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
 	my @feedNamePrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_names");
 	my $feedsModified = Slim::Utils::Prefs::get("plugin_RssNews_feeds_modified");
-	my $version = Slim::Utils::Prefs::get("plugin_RssNews_feeds_version");
+	my $version       = Slim::Utils::Prefs::get("plugin_RssNews_feeds_version");
 
 	# No prefs set or we've had a version change and they weren't modified, 
 	# so we'll use the defaults
@@ -480,8 +480,8 @@ sub getFeedXml {
 		$getFeedXml_semaphore = 1;
 	}
 
-    if ($feed_url =~ /^file/)
-    {
+	if ($feed_url =~ /^file/)
+	{
 		my $feed_file = $feed_url;
 		$feed_file =~ s/^file://;
 		$feed_file =~ s/^\/+/\//;
@@ -543,7 +543,7 @@ sub retrieveNews {
 	my $feedname = shift;
 
 	my $now = time();
-    
+	
 	my $must_get_news = 0;
 	my $display_current = $client->param('PLUGIN.RssNews.display_current');
 
@@ -555,7 +555,7 @@ sub retrieveNews {
 	if (!$feedname) {
 		$feedname = $display_current;
 	}
-    
+	
 	if (!$thenews{$feedname}) {
 		$must_get_news = 1;
 	} elsif ($now - $thenews{$feedname}{"refresh_last"} > $refresh_sec) {
@@ -611,51 +611,51 @@ sub retrieveNews {
 
 sub setupGroup {
 	my %Group = (
-		PrefOrder => [
+		PrefOrder         => [
 			'plugin_RssNews_items_per_feed', 'plugin_RssNews_reset', 'plugin_RssNews_feeds', 
 		],
-		GroupHead => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS'),
-		GroupDesc => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS_DESC'),
-		GroupLine => 1,
-		GroupSub => 1,
+		GroupHead         => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS'),
+		GroupDesc         => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS_DESC'),
+		GroupLine         => 1,
+		GroupSub          => 1,
 		Suppress_PrefSub  => 1,
 		Suppress_PrefLine => 1,
 	);
 
 	my %Prefs = (
 		plugin_RssNews_items_per_feed => {
-			'validate' => \&Slim::Web::Setup::validateInt
-			,'validateArgs' => [1,undef,1]
-			,'onChange' => sub {
+			'validate'       => \&Slim::Web::Setup::validateInt,
+			'validateArgs'  => [1,undef,1],
+			'onChange'      => sub {
 				$screensaver_items_per_feed = $_[1]->{plugin_RssNews_items_per_feed}->{new};
 				Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', 
 										$screensaver_items_per_feed);
-			}
+			},
 		},
 		plugin_RssNews_reset => {
-			'validate' => \&Slim::Web::Setup::validateAcceptAll
-			,'onChange' => sub {
+			'validate'       => \&Slim::Web::Setup::validateAcceptAll,
+			'onChange'      => sub {
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", undef);
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", undef);
 				initPlugin();
-			}
-			,'inputTemplate' => 'setup_input_submit.html'
-			,'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RSSNEWS_RESETTING')
-			,'ChangeButton' => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON')
-			,'dontSet' => 1
-			,'changeMsg' => ''
+			},
+			'inputTemplate' => 'setup_input_submit.html',
+			'changeIntro'   => Slim::Utils::Strings::string('PLUGIN_RSSNEWS_RESETTING'),
+			'ChangeButton'  => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON'),
+			'dontSet'       => 1,
+			'changeMsg'     => '',
 		},
 		plugin_RssNews_feeds => { 
-			'isArray' => 1
-			,'arrayAddExtra' => 1
-			,'arrayDeleteNull' => 1
-			,'arrayDeleteValue' => ''
-			,'arrayBasicValue' => 0
-			,'PrefSize' => 'large'
-			,'inputTemplate' => 'setup_input_array_txt.html'
-			,'PrefInTable' => 1
-			,'showTextExtValue' => 1
-			,'externalValue' => sub {
+			'isArray'          => 1,
+			'arrayAddExtra'    => 1,
+			'arrayDeleteNull'  => 1,
+			'arrayDeleteValue' => '',
+			'arrayBasicValue'  => 0,
+			'PrefSize'         => 'large',
+			'inputTemplate'    => 'setup_input_array_txt.html',
+			'PrefInTable'      => 1,
+			'showTextExtValue' => 1,
+			'externalValue'    => sub {
 				my ($client, $value, $key) = @_;
 				
 				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feed_order))) {
@@ -663,8 +663,8 @@ sub setupGroup {
 				}
 
 				return '';
-			}
-			,'onChange' => sub {
+			},
+			'onChange'         => sub {
 				my ($client,$changeref,$paramref,$pageref) = @_;
 				if (exists($changeref->{'plugin_RssNews_feeds'}{'Processed'})) {
 					return;
@@ -673,8 +673,8 @@ sub setupGroup {
 				updateFeedNames();
 
 				$changeref->{'plugin_RssNews_feeds'}{'Processed'} = 1;
-			}
-			,'changeMsg' => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE')
+			},
+			'changeMsg'        => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE'),
 		},
 	);
 
@@ -773,9 +773,9 @@ sub tickerLines {
 		}
 
 		my $line2 = sprintf($screensaver_item_format,
-						   $i + 1,
-						   unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
-						   unescapeAndTrim($description));
+						$i + 1,
+						unescapeAndTrim($thenews{$display_current}->{item}[$i]->{title}),
+						unescapeAndTrim($description));
 
 		if (length($line2) > $screensaver_chars_per_item) {
 			$line2 = substr($line2, 0, $screensaver_chars_per_item);
@@ -875,31 +875,23 @@ sub leaveScreenSaverRssNews {
 # Screensaver Settings Mode
 #
 
-my @screensaverSettingsMenu = ('PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE');
+my @screensaverSettingsMenu = ('SETUP_SCREENSAVER_USE');
 our %current;
 our %menuParams = (
-				  'rssnews' => {
-					  'listRef' => \@screensaverSettingsMenu
-						  ,'stringExternRef' => 1
-						  ,'header' => 'PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS'
-						  ,'stringHeader' => 1
-						  ,'headerAddCount' => 1
-						  ,'callback' => \&screensaverSettingsCallback
-						  ,'overlayRef' => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));}
-					  ,'overlayRefArgs' => ''
-					  }
-				  ,catdir('rssnews','PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE') => {
-					  'useMode' => 'INPUT.List'
-						  ,'listRef' => [0,1]
-						  ,'externRef' => ['PLUGIN_RSSNEWS_SCREENSAVER_DEFAULT', 'PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATED']
-						  ,'stringExternRef' => 1
-						  ,'header' => 'PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE_TITLE'
-						  ,'stringHeader' => 1
-						  ,'onChange' => sub { $_[0]->prefSet('screensaver',$_[1]?'SCREENSAVER.rssnews':'screensaver'); }
-					  ,'onChangeArgs' => 'CV'
-						  ,'initialValue' => sub { ($_[0]->prefGet('screensaver') eq 'SCREENSAVER.rssnews' ? 1 : 0); }
-				  }
-				  );
+				'rssnews' => {
+					'listRef'         => \@screensaverSettingsMenu,
+					'stringExternRef' => 1,
+					'header'          => 'PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS',
+					'stringHeader'    => 1,
+					'headerAddCount'  => 1,
+					'callback'        => \&screensaverSettingsCallback,
+					'overlayRef'      => \&screensaverSettingsOverlay,
+					'overlayRefArgs'  => 'C',
+				},
+				catdir('rssnews','SETUP_SCREENSAVER_USE') => {
+					'useMode'         => 'boolean',
+				},
+			);
 
 sub screensaverSettingsCallback {
 	my ($client,$exittype) = @_;
@@ -910,6 +902,21 @@ sub screensaverSettingsCallback {
 		my $nextmenu = catdir('rssnews',$current{$client});
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
+			
+			if ($nextParams{'useMode'} eq 'boolean') {
+				
+				my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+				
+				if ($client->prefGet($saver) eq 'SCREENSAVER.rssnews') {
+					$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
+				} else {
+					$client->prefSet($saver, 'SCREENSAVER.rssnews');
+				}
+				
+				$client->update();
+				return;
+			}
+			
 			if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
@@ -921,9 +928,9 @@ sub screensaverSettingsCallback {
 				$nextParams{'valueRef'} = \$value;
 			}
 			Slim::Buttons::Common::pushModeLeft(
-												$client
-												,$nextParams{'useMode'}
-												,\%nextParams
+													$client,
+													$nextParams{'useMode'},
+													\%nextParams,
 												);
 		} else {
 			$client->bumpRight();
@@ -932,6 +939,28 @@ sub screensaverSettingsCallback {
 		return;
 	}
 }
+
+sub screensaverSettingsOverlay {
+	my $client = shift;
+	
+	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	
+	my $nextmenu = catdir('rssnews',$current{$client});
+	if (exists($menuParams{$nextmenu})) {
+		my %nextParams = %{$menuParams{$nextmenu}};
+		
+		if ($nextParams{'useMode'} eq 'boolean') {
+			return (
+				undef,
+				Slim::Buttons::Common::checkBoxOverlay(
+					$client->prefGet($saver) eq 'SCREENSAVER.rssnews'
+				),
+			);
+		}
+	} else {
+		return (undef,Slim::Display::Display::symbol('rightarrow'));
+	}
+};
 
 sub screensaverSettingsSetMode {
 	my $client = shift;
@@ -950,13 +979,9 @@ sub screensaverSettingsSetMode {
 our %noModeFunctions = ();
 
 Slim::Buttons::Common::addMode('PLUGIN.RssNews.screensaversettings', 
-                               \%noModeFunctions, 
-                               \&screensaverSettingsSetMode);
-
-
-
-
-
+									\%noModeFunctions, 
+									\&screensaverSettingsSetMode,
+								);
 
 #############################
 # Main mode
@@ -964,7 +989,7 @@ Slim::Buttons::Common::addMode('PLUGIN.RssNews.screensaversettings',
 
 sub mainModeCallback {
 	my ($client,$exittype) = @_;
-    
+	
 	$exittype = uc($exittype);
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
@@ -972,15 +997,18 @@ sub mainModeCallback {
 	elsif ($exittype eq 'RIGHT') {
 		my $listIndex = $client->param('listIndex');
 		my $feedname = $feed_order[$listIndex];
-        
+		
 		retrieveNews($client, $feedname);
 		
 		if ($thenews{$feedname} &&
 			$thenews{$feedname}) {
 			Slim::Buttons::Common::pushModeLeft($client, 
-                                                'PLUGIN.RssNews.headlines',
-                                                { feed => unescapeAndTrim($thenews{$feedname}->{title}),
-                                                  feedItems => $thenews{$feedname}->{item} });
+													'PLUGIN.RssNews.headlines',
+													{
+														feed      => unescapeAndTrim($thenews{$feedname}->{title}),
+														feedItems => $thenews{$feedname}->{item}
+													}
+												);
 		} else {
 			$client->showBriefly( {
 				'line1' => $client->string('PLUGIN_RSSNEWS_ERROR'),
@@ -998,18 +1026,18 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-        
+	
 	my %params = (
-				  stringHeader => 1,
-				  header => 'PLUGIN_RSSNEWS_NAME',
-				  listRef => \@feed_order,
-				  callback => \&mainModeCallback,
-				  valueRef => \$context{$client}->{mainModeIndex},
-				  headerAddCount => 1,
-				  overlayRef => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));},
-				  parentMode => Slim::Buttons::Common::mode($client),		  
-				  );
-        
+				stringHeader   => 1,
+				header         => 'PLUGIN_RSSNEWS_NAME',
+				listRef        => \@feed_order,
+				callback       => \&mainModeCallback,
+				valueRef       => \$context{$client}->{mainModeIndex},
+				headerAddCount => 1,
+				overlayRef     => sub {return (undef,Slim::Display::Display::symbol('rightarrow'));},
+				parentMode     => Slim::Buttons::Common::mode($client),
+			);
+	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
 
@@ -1055,12 +1083,14 @@ sub headlinesModeCallback {
 			$title = $client->string('PLUGIN_RSSNEWS_NO_TITLE');
 		}
 		my $feed = $client->param('feed');
-        
+	
 		Slim::Buttons::Common::pushModeLeft($client, 
-                                            'PLUGIN.RssNews.description',
-                                            { feed => $feed,
-                                              title => "$title",
-                                              description => "$description" });
+												'PLUGIN.RssNews.description',
+												{ feed          => $feed,
+													title       => "$title",
+													description => "$description" 
+												}
+											);
 	}
 }
 
@@ -1069,30 +1099,30 @@ our %headlinesModeFunctions = ();
 sub headlinesSetMode {
 	my $client = shift;
 	my $method = shift;
-    
+	
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-    
+	
 	my $feed = $client->param('feed');
 	my $items = $client->param('feedItems');
-    
+	
 	my @lines = map unescapeAndTrim($_->{title}), @$items;
-    
+	
 	my %params = (
-                  header => $feed,
-                  listRef => \@lines,
-                  callback => \&headlinesModeCallback,
-                  valueRef => \$context{$client}->{headlinesModeIndex},
-                  headerAddCount => 1,
-				  # show right arrow only if list not empty
-                  overlayRef => scalar(@lines) ? sub {return (undef,Slim::Display::Display::symbol('rightarrow'));} : undef,
-                  parentMode => Slim::Buttons::Common::mode($client),		  
-                  feed => $feed,		  
-                  feedItems => $items,
-                  );
-    
+				header         => $feed,
+				listRef        => \@lines,
+				callback       => \&headlinesModeCallback,
+				valueRef       => \$context{$client}->{headlinesModeIndex},
+				headerAddCount => 1,
+				# show right arrow only if list not empty
+				overlayRef     => scalar(@lines) ? sub {return (undef,Slim::Display::Display::symbol('rightarrow'));} : undef,
+				parentMode     => Slim::Buttons::Common::mode($client),
+				feed           => $feed,
+				feedItems      => $items,
+			);
+	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
 
@@ -1107,8 +1137,8 @@ Slim::Buttons::Common::addMode('PLUGIN.RssNews.headlines',
 
 sub descriptionModeCallback {
 	my ($client,$exittype) = @_;
-    
-    $exittype = uc($exittype);
+	
+	$exittype = uc($exittype);
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
 	} 
@@ -1122,16 +1152,16 @@ our %descriptionModeFunctions = ();
 sub descriptionSetMode {
 	my $client = shift;
 	my $method = shift;
-    
+	
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-    
+	
 	my $feed = $client->param('feed');
 	my $title = unescapeAndTrim($client->param('title'));
 	my $description = unescapeAndTrim($client->param('description'));
-    
+	
 	my @lines;
 	my $curline = '';
 	# break story up into lines.
@@ -1148,7 +1178,7 @@ sub descriptionSetMode {
 	if ($curline) {
 		push @lines, trim($curline);
 	}
-    
+	
 	# also shorten title to fit
 	# leave a bunch of extra pixels to display the (n out of M) text
 	my $titleline = '';
@@ -1161,18 +1191,17 @@ sub descriptionSetMode {
 			$titleline = $newline;
 		}
 	}
-    
+	
 	my %params = (
-                  header => trim($titleline),
-                  listRef => \@lines,
-                  callback => \&descriptionModeCallback,
-                  valueRef => \$context{$client}->{descriptionModeIndex},
-                  headerAddCount => 1,
-                  parentMode => Slim::Buttons::Common::mode($client),		  
-                  );
-    
+					header         => trim($titleline),
+					listRef        => \@lines,
+					callback       => \&descriptionModeCallback,
+					valueRef       => \$context{$client}->{descriptionModeIndex},
+					headerAddCount => 1,
+					parentMode     => Slim::Buttons::Common::mode($client),
+				);
+	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-    
 }
 
 Slim::Buttons::Common::addMode('PLUGIN.RssNews.description', 
@@ -1192,14 +1221,13 @@ sub addMenu {
 	} else {
 		# add a mode to the screensaver submenu...
 		my %params = ('useMode' => "PLUGIN.RssNews.screensaversettings",
-					  'header' => "PLUGIN_RSSNEWS_SCREENSAVER");
+					  'header'  => "PLUGIN_RSSNEWS_SCREENSAVER");
 		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", \%params);
 	}
 
 	# also add ourselves to the plugins menu
 	return "PLUGINS";
 }
-
 
 1;
 

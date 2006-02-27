@@ -81,12 +81,12 @@ sub setMode {
 							0;
 
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
-			'callback' => \&Plugins::SavePlaylist::savePluginCallback,
-			'valueRef' => \$context{$client},
-			'charsRef' => \@LegalChars,
+			'callback'        => \&Plugins::SavePlaylist::savePluginCallback,
+			'valueRef'        => \$context{$client},
+			'charsRef'        => \@LegalChars,
 			'numberLetterRef' => \@legalMixed,
-			'header' => $client->string('PLAYLIST_AS'),
-			'cursorPos' => $cursorpos,
+			'header'          => $client->string('PLAYLIST_AS'),
+			'cursorPos'       => $cursorpos,
 		});
 	}
 }
@@ -113,7 +113,7 @@ sub lines {
 
 	my ($line1, $line2, $arrow);
 	
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
 		catfile(Slim::Utils::Prefs::get('playlistdir'), $context{$client} . '.m3u')
 	);
