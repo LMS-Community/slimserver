@@ -27,45 +27,45 @@ sub init {
 	my %browse = (
 
 		'BROWSE_NEW_MUSIC' => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'age,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'BROWSE_BY_GENRE'  => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'genre,artist,album,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'BROWSE_BY_ARTIST' => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'artist,album,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'BROWSE_BY_ALBUM'  => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'album,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'BROWSE_BY_YEAR'  => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'year,album,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'BROWSE_BY_SONG'   => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'track',
-			'level' => 0,
+			'level'     => 0,
 		},
 
 		'SAVED_PLAYLISTS'  => {
-			'useMode'  => 'browsedb',
+			'useMode'   => 'browsedb',
 			'hierarchy' => 'playlist,track',
-			'level' => 0,
+			'level'     => 0,
 		},
 	);
 	
@@ -84,8 +84,8 @@ sub init {
 			my $button = shift;
 			my $addorinsert = shift || 0;
 
-			my $items = $client->param('listRef');
-			my $listIndex = $client->param('listIndex');
+			my $items       = $client->param('listRef');
+			my $listIndex   = $client->param('listIndex');
 			my $currentItem = $items->[$listIndex];
 
 			return unless defined($currentItem);
@@ -101,7 +101,7 @@ sub init {
 
 			} elsif ($addorinsert == 2) {
 
-				$string = 'INSERT_TO_PLAYLIST';
+				$string  = 'INSERT_TO_PLAYLIST';
 				$command = "inserttracks";
 
 			} else {
@@ -127,14 +127,14 @@ sub init {
 			}
 
 			$client->showBriefly({
-				'line1' => $line1,
-				'line2' => $line2,
+				'line1'    => $line1,
+				'line2'    => $line2,
 				'overlay2' => $client->symbols('notesymbol'),
 			});
 
-			my $hierarchy = $client->param('hierarchy');
-			my $level     = $client->param('level');
-			my $descend   = $client->param('descend');
+			my $hierarchy    = $client->param('hierarchy');
+			my $level        = $client->param('level');
+			my $descend      = $client->param('descend');
 			my $findCriteria = $client->param('findCriteria');
 			
 			my @levels = split(",", $hierarchy);
@@ -246,17 +246,17 @@ sub init {
 				# store existing browsedb params for use later.
 				$params->{'parentParams'} = $client->modeParameterStack(-1);
 				
-				$params->{'listRef'} = \@mixers;
+				$params->{'listRef'}         = \@mixers;
 				$params->{'stringExternRef'} = 1;
 				
-				$params->{'header'} = 'INSTANT_MIX';
+				$params->{'header'}         = 'INSTANT_MIX';
 				$params->{'headerAddCount'} = 1;
-				$params->{'callback'} = \&mixerExitHandler;
+				$params->{'callback'}       = \&mixerExitHandler;
 		
 				$params->{'overlayRef'} = sub { return (undef, Slim::Display::Display::symbol('rightarrow')) };
 		
 				$params->{'overlayRefArgs'} = '';
-				$params->{'valueRef'} = \$mixer;
+				$params->{'valueRef'}       = \$mixer;
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
 			
@@ -310,7 +310,7 @@ sub browsedbExitCallback {
 	} 
 	# Right means select the current item
 	elsif ($exittype eq 'RIGHT') {
-		my $items = $client->param('listRef');
+		my $items     = $client->param('listRef');
 		my $hierarchy = $client->param('hierarchy');
 		my $level     = $client->param('level');
 		my $descend   = $client->param('descend');
@@ -385,9 +385,9 @@ sub browsedbExitCallback {
 			}
 
 			my %params = (
-				hierarchy => $hierarchy,
-				level => $level + 1,
-				findCriteria => $findCriteria,
+				hierarchy         => $hierarchy,
+				level             => $level + 1,
+				findCriteria      => $findCriteria,
 				selectionCriteria => $selectionCriteria,
 			);
 
@@ -554,10 +554,10 @@ sub setMode {
 		return;
 	}
 
-	my $hierarchy = $client->param('hierarchy') || "genre";
-	my $level     = $client->param('level') || 0;
+	my $hierarchy    = $client->param('hierarchy') || "genre";
+	my $level        = $client->param('level') || 0;
 	my $findCriteria = $client->param('findCriteria') || {};
-	my $search    = $client->param('search');
+	my $search       = $client->param('search');
 
 	$::d_files && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
@@ -720,31 +720,31 @@ sub setMode {
 	my %params = (
 
 		# Parameters for INPUT.List
-		header => $header,
-		headerAddCount => (scalar(@$items) > 0),
-		listRef => $items,
-		listIndex => $listIndex,
-		noWrap => (scalar(@$items) <= 1),
-		callback => \&browsedbExitCallback,
-		externRef => \&browsedbItemName,
-		externRefArgs  => 'CVI',
-		overlayRef => \&browsedbOverlay,
-		onChange => sub {
-			$_[0]->lastID3Selection($selectionKey,$_[1]);
-		},
-		onChangeArgs => 'CI',
+		header            => $header,
+		headerAddCount    => (scalar(@$items) > 0),
+		listRef           => $items,
+		listIndex         => $listIndex,
+		noWrap            => (scalar(@$items) <= 1),
+		callback          => \&browsedbExitCallback,
+		externRef         => \&browsedbItemName,
+		externRefArgs     => 'CVI',
+		overlayRef        => \&browsedbOverlay,
+		onChange          => sub {
+							$_[0]->lastID3Selection($selectionKey,$_[1]);
+						},
+		onChangeArgs      => 'CI',
 
 		# Parameters that reflect the state of this mode
-		hierarchy => $hierarchy,
-		level => $level,
-		descend => $descend,
-		search => $search,
-		selectionKey => $selectionKey,
-		findCriteria => $findCriteria,
+		hierarchy         => $hierarchy,
+		level             => $level,
+		descend           => $descend,
+		search            => $search,
+		selectionKey      => $selectionKey,
+		findCriteria      => $findCriteria,
 		selectionCriteria => $selectionCriteria,
 	);
 
-	$params{'favorite'} = $client->param('favorite');
+	$params{'favorite'}   = $client->param('favorite');
 
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
