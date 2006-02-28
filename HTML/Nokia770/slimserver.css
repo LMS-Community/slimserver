@@ -89,6 +89,10 @@ a.statusbartext:hover {
 .smalltext {
 	font-size: 14px;
 }
+.smalltext_overlay {
+	font-size: 14px;
+	color: white;
+}
 
 .smallplayingitemtext {
 	font-size: 12px;
@@ -112,6 +116,9 @@ a.statusbartext:hover {
 }
 
 table.thinborder { 
+	border: 1px solid black;
+}
+table.thinborder_grey { 
 	border: 1px solid black;
 }
 table.noborder { 
@@ -214,4 +221,13 @@ div#progressbar {
 	left: 6;
 	width: 780;
 	top: 220;
+	z-index: 2;
+}
+
+div#progressbar_overlay {
+	position: absolute;
+	left: 6;
+	width: 780;
+	top: 220;
+	z-index: 3;
 }
