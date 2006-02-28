@@ -46,7 +46,7 @@ sub startScan {
 				$importsRunning{$importer} = Time::HiRes::time();
 
 				# rescan each enabled Import, or scan the newly enabled Import
-				$::d_import && msgf("Import: Starting %s scan\n", string($importer));
+				$::d_import && msg("Import: Starting $importer scan\n");
 
 				&{$Importers{$importer}->{'scan'}};
 			}
@@ -87,7 +87,7 @@ sub addImporter {
 
 	$Importers{$import} = $params;
 
-	$::d_import && msgf("Import: Adding %s Scan\n", string($import));
+	$::d_import && msgf("Import: Adding $import Scan\n");
 }
 
 sub countImporters {
@@ -150,7 +150,7 @@ sub endImporter {
 	if (exists $importsRunning{$import}) { 
 
 		$::d_import && msgf("Import: Completed %s Scan in %s seconds.\n",
-			string($import), int(Time::HiRes::time() - $importsRunning{$import})
+			$import, int(Time::HiRes::time() - $importsRunning{$import})
 		);
 
 		delete $importsRunning{$import};
@@ -225,7 +225,7 @@ sub stillScanning {
 
 		while (my ($importer, $started) = each %importsRunning) {
 
-			msgf("\t%s scan started at: %s\n", string($importer), (localtime($started) . ''));
+			msgf("\t%s scan started at: %s\n", $importer, (localtime($started) . ''));
 		}
 
 		msg("\n");

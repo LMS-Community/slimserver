@@ -12227,13 +12227,6 @@ SETUP_DATBASE_TUNE_CACHE_SIZE_DESC
 	IT	Imposta la dimensione della cache del database. Un numero piu' grande usera' piu' memoria. L'impostazione di default di 10000 pagine usa circa 15MB di RAM.
 	NL	Stel de databasecache in. Een hoger getal zal tot meer geheugengebruik leiden. De standaardwaarde is 10000 pagina's en gebruikt ongeveer 15MB RAM.
 
-MERGEVARIOUSALBUMS
-	EN	mergeVariousArtists()
-	IT	unisciArtistiVari()
-
-CLEANUPSTALEENTRIES
-	EN	cleanupStaleEntries()
-
 SETUP_SORTBROWSEART
 	DE	Sortierreihenfolge für Plattenhüllen
 	EN	Browse By Artwork Order
