@@ -2,6 +2,12 @@
 <html>
       <head>
             [% PROCESS standardheader.html %]
+		[%- IF thispage == 'status' -%]
+		<script src="/html/prototype.js"></script>
+		<script>
+		[% PROCESS status.js %]
+		</script>
+		[% END %]
       </head>
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
@@ -15,7 +21,7 @@
 	<td align = 'right' class = 'smallwhitetext'>
 [% IF player_chooser_list %]
 	<form method="get">Current player:
-		<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">
+		<select name="player" style="font-size: 14px; background: #666666; color: white;" onChange="submit();">
 		[% player_chooser_list %]
 		</select>
 	[% IF page %]<input type = 'hidden' name = 'page' value = '[% page %]'>[% END %]

@@ -175,6 +175,12 @@ function refreshPlayerStatus(theData) {
 	}
 }
 
+function refreshHref (element, value) {
+	if ($(element)) {
+		document.getElementById(element).href = value;
+	}
+}
+
 function refreshElement(element, value) {
 	if ($(element)) {
 		$(element).innerHTML = value;
@@ -246,7 +252,7 @@ function refreshOtherElements(theData) {
 	var parsedData = fillDataHash(theData);
 	// refresh cover art
 	if ($('albumhref')) {
-		document.getElementById('albumhref').href = parsedData['albumHRef'];
+		document.getElementById('albumhref').href = parsedData['albumhref'];
 	}
 	if ($('coverartpath')) {
 		var coverPath = null;
@@ -260,9 +266,19 @@ function refreshOtherElements(theData) {
 
 	// refresh song info
 	var songinfoArray = [ 'songtitle', 'artist', 'album', 'genre' ];
+	var linkStubs = [
+			'songinfo.html?item=', 
+			'browsedb.html?hierarchy=album,track&level=0&artist=',
+			'browsedb.html?hierarchy=track&level=0&album=',
+			'browsedb.html?hierarchy=artist,album,track&level=0&genre='
+			];
 	for (var i=0; i < songinfoArray.length; i++) {
 		var key = songinfoArray[i];
 		refreshElement(key, parsedData[key]);
+		var linkIdKey = key + '_link';
+		var linkKey = key + 'id';
+		var newHref = linkStubs[i] + parsedData[linkKey] + '&amp;player=' + player;
+		refreshHref(linkIdKey, newHref);
 	}
 	// refresh links in song info section
 	// refresh playlist
@@ -273,6 +289,8 @@ function refreshOtherElements(theData) {
 			$(key).innerHTML = '';
 			if (parsedData[key]) {
 				$(key).innerHTML = parsedData[key];
+			} else {
+				$(key).innerHTML = '(ssh...it\'s a secret)';
 			}
 		} 
 	}

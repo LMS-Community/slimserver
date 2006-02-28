@@ -1,6 +1,6 @@
 [%# Page status.html %]
 [%- IF ajaxRequest -%]
-	[% PROCESS ajaxRequest.xml %]
+	[% PROCESS ajaxRequest.txt %]
 [%- ELSE -%]
 <!-- status.html -->
 [% pagetitle = BLOCK %]
@@ -30,24 +30,38 @@
 		[% INCLUDE song_info_display %]
 	</div>
 	<div id = 'playlistbox'>
-		<table class = 'thinborder' bgcolor = 'white' width = '100%'>
-			<tr><td colspan = '2' align = 'left' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
-			[%- FOREACH item = playlist_items -%]
-			[%- IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END -%]
-			[%- END -%]
-			[%- FOREACH item = playlist_items -%]
-				[%- NEXT IF item.num < previous -%]
-				[%- LAST IF item.num > next -%]
-				[%- PROCESS playlist_row previous = previous next = next -%]
-			[%- END -%]
+		<table class = 'playlistbox'>
+			<tr><td colspan = 2 align = 'right' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
+			<tr>
+				<td align = 'right' id = 'previoussong' class = 'supertinytext'></td>
+				<td align = 'right' class = 'supertinytext'>
+					<img id = 'previoussong_link' src = 'html/images/smaller/prev_active.gif' onClick="javascript:playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
+				</td>
+			</tr>
+			<tr>
+				<td align = 'right' id = 'currentsong' class = 'smallplayingitemtext'></td>
+				<td align = 'right' class = 'supertinytext'>&nbsp;</td>
+			</tr>
+			<tr>
+				<td align = 'right' id = 'nextsong' class = 'supertinytext'></td>
+				<td align = 'right' >
+					<img id = 'nextsong_link' src="html/images/smaller/next_active.gif" border="0" name="next" onclick="playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
+				</td>
+			</tr>
+			[%#- FOREACH item = playlist_items -%]
+			[%#- IF item.currentsong %][%# previous = item.num - 1 %][%# current = item.num %][%# next = item.num + 1 %][%# LAST %][%# END -%]
+			[%#- END -%]
+			[%#- FOREACH item = playlist_items -%]
+				[%#- NEXT IF item.num < previous -%]
+				[%#- LAST IF item.num > next -%]
+				[%#- PROCESS playlist_row previous = previous next = next -%]
+			[%#- END -%]
 		</table>
 	</div>
 [% END %]
 
 [% UNLESS itemobj.isRemoteURL %]
-<div id = 'progressbar'>
 	[% INCLUDE progress_bar_display %]
-</div>
 [% END %]
 		[% END %]
 
@@ -100,9 +114,10 @@
 <table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
 	<tr>
 		<td width="100"><img src="html/images/repeat_symbol.gif"></td>
-		[% FOREACH type= ['off_symbol','song_symbol','playlist_symbol'] %]
-		<td align="center" onclick="location.href='status.html?p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]'">
-		<img src="html/images/[% type %][% IF repeat==loop.index %]_active[% END %].gif" border="0" width = '20' height = '20'></a>
+		[% FOREACH type= ['off','song','playlist'] %]
+		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');">
+		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" width = '20' height = '20' style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
+		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" width = '20' height = '20' style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -116,8 +131,9 @@
 	<tr>
 		<td width = '100'><img src="html/images/shuffle_symbol.gif"></td>
 		[% FOREACH type = ['off','song','album'] %]
-		<td align="center" onclick="location.href='status.html?p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]'" title = 'shuffle [% type %]'>
-			<img src="html/images/[% type %]_symbol[% IF shuffle==loop.index %]_active[% END %].gif" border="0" width="20" height="20" alt = 'shuffle [% type %]'></a>
+		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = 'shuffle [% type %]'>
+			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" width="20" height="20" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
+			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" width="20" height="20" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -129,22 +145,22 @@
 	<table class = 'thinborder' cellspacing="0" cellpadding="0">
 		<tr>
 		<td> 
+			<a href = 'http://google.com' id = 'albumhref'>
 		[% IF coverThumb -%]
-			<a [% albumHRef %]>[% PROCESS statusImg height="195" %]
+			<!--<a [% albumHRef %] id = 'albumhref'>[% PROCESS statusImg height="190" %]</a>-->
+			<img src="[% webroot %]html/images/cover.png" width = '190' height="190" STYLE="border: 1px solid black" id = 'coverartpath'>
 		[% ELSE -%]
-			<img src="[% webroot %]html/images/cover.png" width = '190' height="190" STYLE="border: 1px solid black">
-		
+			<img src="[% webroot %]html/images/cover.png" width = '190' height="190" STYLE="border: 1px solid black" id = 'coverartpath'>
 		[%- END %]
+			</a>
 		</td>
 		</tr>
 	</table>
 [% END %]
 
 [% BLOCK control_display %]
-			[% IF modeplay %][% "PLAYING" | string %][% END %]
-			[% IF modepause %][% "PAUSED_ON" | string %][% END %]
-			[% IF modestop %][% "STOPPED_ON" | string %][% END %]
-			[% IF currentsong %]<b>[% currentsong %]</b>&nbsp;[% "OUT_OF" | string %]<b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
+<span id = 'playtextmode'></span> <span id = 'thissongnum' style = 'font-weight: bold;'></span> [% "OUT_OF" | string %] <span id = 'songcount' style = 'font-weight: bold;'></span>
+&nbsp;
 			<a href="status.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[zap]</a>
 [% END %]
 
@@ -155,12 +171,15 @@
 			[% INCLUDE control_display %]
 			</td>
 		</tr>
+	</table>
+	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			[% IF songtitle %]
-			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">
-			[% songtitle | truncate(50) %]
+			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]" id = 'songtitle_link'>
+			<span id = 'songtitle'></span>
+			[%# songtitle | truncate(50) %]
 			</a>
 			[% END %]
 			</td>
@@ -169,8 +188,9 @@
 			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			[% IF itemobj.artist.id %]
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% itemobj.artist | truncate(50) %]
+			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" id = 'artist_link' style="text-decoration:none">
+			<span id = 'artist'></span>
+			[%# itemobj.artist | truncate(50) %]
 </a>
 			[% END %]
 			</td>
@@ -178,8 +198,9 @@
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
-			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% itemobj.album | truncate(50) %]
+			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" id = 'album_link' style="text-decoration:none">
+			<span id = 'album'></span>
+			[%# itemobj.album | truncate(50) %]
 			</a>
 			[% END %]
 			</td>
@@ -187,8 +208,9 @@
 		<tr>
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
-			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none">
-			[% itemobj.genre | truncate(50) %]
+			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" id = 'genre_link' style="text-decoration:none">
+			<span id = 'genre'></span>
+			[%# itemobj.genre | truncate(50) %]
 			</a>[% END %]
 			</td>
 		</tr>
@@ -196,51 +218,23 @@
 [% END %]
 
 [% BLOCK progress_bar_display %]
-<script language="JavaScript">
-<!--
-	var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% END %][% IF not durationseconds %][% refresh %][% END %];
-	var _progressAt = [% IF songtime %][% songtime %][% END %][% IF not songtime %]0[% END %];
-	var p = 1;
-	setTimeout( "refresh()", [% refresh %]*1000);
 
-function refresh() {
-	window.location.replace("[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
-}
+<div id = 'progressbar_overlay'>
+	<table width="788" class = "thinborder_grey" cellspacing="0" cellpadding="0">
+		[% IF itemobj.duration %]<td class = "pbar_white" align = 'left' nowrap>0:00</td>[% END %]
+		[% IF itemobj.duration %]<td class = "pbar" align = 'right' nowrap id = "duration">[% itemobj.duration %]</td>[% END %]
+	</table>
+</div>
+<div id = 'progressbar'>
+	<table width="788" cellspacing="0" cellpadding="0">
+		<tr>
+		<td valign = 'middle'>
+			<img id="progressBar" name="progressBar" src="html/images/progress_color.gif" width="1" height="18">
+		</td>
+		</tr>
+	</table>
+</div>
 
-// Update the progress dialog with the current state
-function ProgressUpdate(){[% IF modeplay %]_progressAt++;[% END %]	
-	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
-	if (document.all)
-		{
-			p = (document.body.clientWidth * 0.8 / _progressEnd) * _progressAt;
-			//document.all.progressBar.innerWidth = p+" ";
-			eval("document.progressBar.width=p");
-		}
-
-	else if (document.getElementById)
-		{
-			p = (document.width * 0.8 / _progressEnd) * _progressAt;
-			document.getElementById("progressBar").width=p+" ";
-			//eval("document.progressBar.width=p");
-		}
-			setTimeout("ProgressUpdate()", 1000);
-		}
-
-function Click()
-	{
-		if (document.all||document.getElementById)
-		document.write('<table width="100%" class = "thinborder" cellspacing="0" cellpadding="0">[% IF itemobj.duration %]<td width = "10" class = "smalltext" nowrap>0:00</td>[% END %]<td height="10"><img id="progressBar" name="progressBar" src="html/images/progress.gif" width="1" height="10"></td>[% IF itemobj.duration %]<td width = "10" class = "smalltext" nowrap>[% itemobj.duration %]</td>[% END %]</table>');
-		ProgressUpdate()
-	}
-
-if (document.all||document.getElementById)
-	Click()
-	else
-		window.onload=Click
-
--->
-
-</script>
 [% END %]
 
 [% BLOCK player_controls %]
@@ -249,22 +243,24 @@ if (document.all||document.getElementById)
 	<td>
 	<table bgcolor="#FFFFFF" border="0" cellspacing="10" cellpadding="0" width = 100%>
 		<tr align="center">
-
-		<td onclick="location.href='status.html?p0=play&player=[% playerURI %]'">
-[% IF modeplay %]<img src="html/images/smaller/play[% IF rateval == '1' %]_active[% END %].gif" border="0">[% END %]
-[% IF not modeplay %]<img src="html/images/smaller/play.gif" border="0">[% END %]
+		<td onClick="playerButtonControl('player', 'play', 'p0=play&player=[% playerURI %]&ajaxRequest=1');">
+		<img id = 'playercontrol_active_play' src = "html/images/smaller/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];'>
+		<img id = 'playercontrol_play' src = "html/images/smaller/play.gif" border="0" style = 'display:[% IF modeplay %]none[% ELSE %]block[% END %];'>
 		</td>
         
-		<td onclick="location.href='status.html?p0=pause&player=[% playerURI %]'">
-		<img src="html/images/smaller/pause[% IF modepause %]_active[% END %].gif" border="0">
+		<td onclick="playerButtonControl('player', 'pause','p0=pause&player=[% playerURI %]&ajaxRequest=1');">
+		<img id = 'playercontrol_active_pause' src = "html/images/smaller/pause_active.gif" border="0" style = 'display:[% IF modepause %]block[% ELSE %]none[% END %];'>
+		<img id = 'playercontrol_pause' src = "html/images/smaller/pause.gif" border="0" style = 'display:[% IF modepause %]none[% ELSE %]block[% END %];'>
 		</td>
         
-		<td onclick="location.href='status.html?p0=stop&player=[% playerURI %]'">
-		<img src="html/images/smaller/stop[% IF modestop %]_active[% END %].gif" border="0">
+		<td onclick="playerButtonControl('player', 'stop','p0=stop&player=[% playerURI %]&ajaxRequest=1');">
+		<img id = 'playercontrol_active_stop' src = "html/images/smaller/stop_active.gif" border="0" style = 'display:[% IF modestop %]block[% ELSE %]none[% END %];'>
+		<img id = 'playercontrol_stop' src = "html/images/smaller/stop.gif" border="0" style = 'display:[% IF modestop %]none[% ELSE %]block[% END %];'>
 		</td>   
         
-		<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=-1&player=[% playerURI %]'" onMouseDown="document.prev.src = 'html/images/smaller/prev_active.gif';">
-<img src="html/images/smaller/prev.gif" border="0" name="prev">
+		<td> 
+		<img id = 'playercontrol_prev' src="html/images/smaller/prev.gif" border="0" name="prev"
+onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');"> 
 		</td>
       
 <!-- ffw and rewind are really lame from a web browser. really lame
@@ -277,8 +273,7 @@ if (document.all||document.getElementById)
 
 -->
 
-		<td onclick="location.href='status.html?p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]'" onMouseDown="document.next.src = 'html/images/smaller/next_active.gif';">
-<img src="html/images/smaller/next.gif" border="0" name="next">
+		<td><img id = 'playercontrol_next' src="html/images/smaller/next.gif" border="0" name="next" onclick="document.next.src = 'html/images/smaller/next_active.gif'; playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');">
 		</td>
 
 	</tr>
@@ -320,10 +315,15 @@ if (document.all||document.getElementById)
 	<tr>
 	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
 
-	[% IF volume < 39 ;vol=['5','10','15','20','30',40]; ELSE ;vol=['5','10','15','20','30','40','50','60','80','100']; END %]
+	<td width="25" onclick='volumeControl("0","p0=mixer&p1=volume&p2=0&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
+	<img src="html/images/off_symbol_active.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];">
+	<img src="html/images/off_symbol.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];">
+	</td>
+	[% vol= [20, 35, 50, 75, 80, 85, 90, 95, 100]  %]
 	[% FOREACH level IN vol %]
-	<td width="25" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% level %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
-<img src="html/images/bar[% IF volume >= level %]_active[% END %].gif" border="0" width="20" height="[% loop.count*4 %]">
+	<td width="25" onclick='volumeControl("[% level %]","p0=mixer&p1=volume&p2=[% level %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
+	<img src="html/images/bar_active.gif" id = 'bar_active_[% level %]' border="0" width="20" height="[% loop.count*4 %]" style="display:[% IF volume >= level %]block[% ELSE %]none[% END %];">
+	<img src="html/images/bar.gif" id = 'bar_[% level %]' border="0" width="20" [% IF level != 0 %]height="[% loop.count*4 %]"[% END %] style="display:[% IF volume >= level %]none[% ELSE %]block[% END %];">
 	</td>
 	[% END %]
 	</tr>
@@ -338,7 +338,7 @@ if (document.all||document.getElementById)
 <table width="100%" border="0" cellspacing="0" cellpadding="7" align="left">
 	<tr>
 		<td>
-		<A href="status.html?p0=button&p1=sleep&player=[% playerURI %]" style="text-decoration:none"><p align="left">
+		<a href="status.html?p0=button&p1=sleep&player=[% playerURI %]" style="text-decoration:none"><p align="left">
 		<img src="html/images/zzz_symbol.gif" border="0"></a>
 		</td>
 
@@ -374,7 +374,7 @@ if (document.all||document.getElementById)
 
 <tr>
 	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
-		[% IF item.num == previous %](prev)[% ELSIF item.currentsong %]&nbsp;[% ELSIF item.num == next %](next)[% END %]
+		<a href = "http://google.com" [% IF item.num == previous %]id = 'playlist_previous'>(prev)[% ELSIF item.currentsong %]id = 'playlist_current' disabled>&nbsp;[% ELSIF item.num == next %]id = 'playlist_next'>(next)[% END %]</a>
 	</td>
 	<td align = 'left' valign = 'top' class = [% IF item.currentsong %]'smallplayingitemtext'[% ELSE %]'supertinytext'[% END %] nowrap>
 	[% item.title | truncate(25) %]
