@@ -1,4 +1,11 @@
 var alreadyParsed = false;
+var player = '[% player %]';
+var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% ELSE %][% refresh %][% END %];
+var _progressAt = [% IF songtime %][% songtime %][% ELSE %]0[% END %];
+var _progressBarWidth = 788;
+var p = 1;
+var inc = 0;
+var intervalID = false;
 
 // xmlHttpRequest of ajaxRequest.txt through status.html
 function getStatusData(params, action) {
@@ -10,6 +17,68 @@ function getStatusData(params, action) {
 			parameters: params, 
 			onComplete: action
 		});
+}
+
+function doRefresh() {
+        var args = 'player='+player+'&ajaxRequest=1';
+        getStatusData(args, refreshAll);
+}
+
+// Update the progress dialog with the current state
+function refreshProgressBar(theData) {
+	var parsedData = fillDataHash(theData);
+	// update duration time
+	if ($('duration')) {
+		$('duration').innerHTML = '';
+		if (parsedData['duration']) {
+			$('duration').innerHTML = parsedData['duration'];
+		}
+	}
+	_progressAt = parseInt(parsedData['songtime'], 10);
+	_progressEnd = parseInt(parsedData['durationseconds'], 10);
+	setProgressBarWidth();
+	if (!intervalID) {
+		progressUpdate();
+	}
+}
+
+function progressUpdate() {
+	if ($('playtextmode').innerHTML.match('playing')) {
+		inc++;
+		_progressAt++;
+		setProgressBarWidth();
+		// do an ajax update every 20 seconds while playing
+		if (inc == 20) {
+		        var args = 'player='+player+'&ajaxRequest=1';
+			getStatusData(args, refreshAll);
+			inc = 0;
+		}
+		// player is playing, therefore run this function again in 1 second
+		if (!intervalID) {
+			intervalID = setInterval("progressUpdate()", 1000);
+		}
+	// do not run progressUpdate if the player is not playing
+	} else {
+		inc = 0;
+		clearIntervalCall();
+	}
+}
+
+function clearIntervalCall() {
+	if (intervalID) {
+		clearInterval(intervalID);
+		intervalID = false;
+	}
+}
+
+function setProgressBarWidth() {
+	if ( _progressAt >= _progressEnd) {
+		_progressAt = _progressEnd;
+		clearIntervalCall();
+		doRefresh();
+	}
+	p = ( _progressBarWidth / _progressEnd) * _progressAt;
+	document.getElementById("progressBar").width=p+" ";
 }
 
 // parses the data if it has not been done already
@@ -25,20 +94,14 @@ function fillDataHash(theData) {
 	return returnData;
 }
 
-function updateStatus(theData) {
-	var parsedData = fillDataHash(theData);
-	for (var key in parsedData) {
-		if ($(key)) {
-			$(key).innerHTML = parsedData[key];
-		}
-	}
-}
-
 function refreshNothing() {
 	return true;
 }
 
 function refreshAll(theData) {
+	inc = 0;
+	// stop progress bar refreshing for this track
+	clearIntervalCall();
 	//var parsedData = fillDataHash(theData);
 	refreshControls(theData);
 	refreshOtherElements(theData);
@@ -106,6 +169,9 @@ function refreshPlayerStatus(theData) {
 		if ($(key)) {
 			$(key).innerHTML = parsedData[key];
 		}
+	}
+	if (!intervalID) {
+		progressUpdate();
 	}
 }
 
@@ -213,11 +279,6 @@ function refreshOtherElements(theData) {
 	// refresh player ON/OFF
 }
 
-function refreshProgressBar() {
-	// update progress bar based on time and elapsed time
-	// update time-to-refresh-all based on time left
-	return true;
-}
 
 function parseData(thisData) {
 	var lines = thisData.split("\n");
@@ -236,7 +297,7 @@ function parseData(thisData) {
 }
 
 window.onload= function() {
-	var args = 'player=[% player %]&ajaxRequest=1';
-	//getStatusData(args, updateStatus);
+	var args = 'player='+player+'&ajaxRequest=1';
 	getStatusData(args, refreshAll);
+	progressUpdate()
 }
