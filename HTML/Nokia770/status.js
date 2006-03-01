@@ -252,7 +252,7 @@ function refreshOtherElements(theData) {
 	var parsedData = fillDataHash(theData);
 	// refresh cover art
 	if ($('albumhref')) {
-		document.getElementById('albumhref').href = parsedData['albumhref'];
+		document.getElementById('albumhref').href = 'browsedb.html?hierarchy=track&level=0&album='+parsedData['albumid']+'&amp;player='+player;
 	}
 	if ($('coverartpath')) {
 		var coverPath = null;
