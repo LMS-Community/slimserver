@@ -8097,6 +8097,12 @@ SHN
 WMA
 	EN	Windows Media
 
+MMS
+	EN	Microsoft Media Server
+
+ASX
+	EN	ASX Playlist
+
 M4P
 	DE	Geschütztes AAC
 	EN	Protected AAC
