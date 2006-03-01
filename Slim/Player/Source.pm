@@ -333,13 +333,25 @@ sub playmode {
 		# if we couldn't open the song, then stop...
 		my $opened = openSong($master, $seekoffset) || do {
 
-			errorMsg("Couldn't open song.\n");
+			# If there aren't anymore items in the
+			# playlist - just return, don't try and play again.
+			if (noMoreValidTracks($client)) {
 
-			trackStartEvent($client);
+				$::d_source && msg("playmode: No more valid tracks on the playlist. Stopping.\n");
 
-			if (!gotoNext($client,1)) {
-				errorMsg("Couldn't gotoNext, stopping\n");
 				$newmode = 'stop';
+
+			} else {
+
+				# Otherwise, try and open the next item on the list.
+				trackStartEvent($client);
+
+				if (!gotoNext($client,1)) {
+
+					# Still couldn't open? Stop the player.
+					errorMsg("playmode: Couldn't gotoNext song on playlist, stopping\n");
+					$newmode = 'stop';
+				}
 			}
 		};
 
@@ -488,9 +500,21 @@ sub playmode {
 	$::d_source && msg($client->id() . ": Current playmode: $newmode\n");
 	# if we're doing direct streaming, we want to handle the end of the stream gracefully...
 
-
-	
 	return _returnPlayMode($client);
+}
+
+# If there are no more tracks in the queue, or the track on the queue has
+# already been marked as invalid, stop.
+sub noMoreValidTracks {
+	my $client = shift;
+
+	my $count  = Slim::Player::Playlist::count($client);
+
+	if (streamingSongIndex($client) == ($count - 1) || !$count) {
+		return 1;
+	}
+
+	return 0;
 }
 
 sub decoderUnderrun {
@@ -794,8 +818,7 @@ sub gotoNext {
 		} else {
 
 			# stop at the end of the list or when list is empty
-			if (streamingSongIndex($client) == (Slim::Player::Playlist::count($client) - 1) ||
-				!Slim::Player::Playlist::count($client)) {
+			if (noMoreValidTracks($client)) {
 
 				$nextsong = 0;
 
@@ -1134,7 +1157,7 @@ sub openSong {
 
 		if (!$directStream) {
 
-			$::d_source && msg("URL is remote : $fullpath\n");
+			$::d_source && msg("openSong: URL is remote [$fullpath]\n");
 
 			# we don't get the content type until after the stream is opened
 			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
@@ -1147,11 +1170,11 @@ sub openSong {
 				# either directly, or via transcoding.
 				if (Slim::Music::Info::isSong($track, $contentType)) {
 	
-					$::d_source && msg("remoteURL is a song : $fullpath\n");
+					$::d_source && msg("openSong: remoteURL is a song : $fullpath\n");
 	
 					if ($sock->opened() && !defined(Slim::Utils::Network::blocking($sock, 0))) {
 
-						$::d_source && msg("Cannot set remote stream nonblocking\n");
+						$::d_source && msg("openSong: Cannot set remote stream nonblocking for url: [$fullpath]\n");
 
 						errorOpening($client);
 
@@ -1164,7 +1187,7 @@ sub openSong {
 
 					if (!defined $command) {
 
-						$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
+						$::d_source && msg("openSong: Couldn't create command line for $type playback for [$fullpath]\n");
 
 						errorOpening($client);
 
@@ -1172,8 +1195,8 @@ sub openSong {
 					}
 
 					if ($::d_source) {
-						msg("remoteURL command $command type $type format $format\n");
-						msg("remoteURL stream format : $contentType\n");
+						msg("openSong: remoteURL command $command type $type format $format\n");
+						msg("openSong: remoteURL stream format : $contentType\n");
 					}
 
 					$client->streamformat($format);
@@ -1195,20 +1218,20 @@ sub openSong {
 
 						if (!defined($command)) {
 
-							$::d_source && msg("Couldn't create command line for $type playback for $fullpath\n");
+							$::d_source && msg("openSong: Couldn't create command line for $type playback for [$fullpath]\n");
 
 							errorOpening($client);
 							
 							return undef;
 						}
 
-						$::d_source && msg("tokenized command $command\n");
+						$::d_source && msg("openSong: Tokenized command $command\n");
 
 						my $pipeline = Slim::Player::Pipeline->new($sock, $command);
 
 						if (!defined($pipeline)) {
 
-							$::d_source && msg("Error creating conversion pipeline\n");
+							$::d_source && msg("openSong: Error creating conversion pipeline for: [$fullpath]\n");
 							errorOpening($client);
 
 							return undef;
@@ -1249,7 +1272,7 @@ sub openSong {
 
 				} else {
 	
-					$::d_source && msg("don't know how to handle content for $fullpath\n");
+					$::d_source && msg("openSong: don't know how to handle content for [$fullpath]\n");
 
 					$sock->close();
 					$sock = undef;
@@ -1259,7 +1282,7 @@ sub openSong {
 
 			} else { 
 
-				$::d_source && msg("Remote stream failed to open, showing message.\n");
+				$::d_source && msg("openSong: Remote stream failed to open [$fullpath].\n");
 
 				$client->audioFilehandle(undef);
 
@@ -1305,14 +1328,14 @@ sub openSong {
 
 			if ($drm) {
 
-				$::d_source && msg("openSong: $fullpath is rights protected. skipping.\n");
+				$::d_source && msg("openSong: [$fullpath] is rights protected. skipping.\n");
 				errorOpening($client);
 				return undef;
 			}
 
 			if (!$size || !$duration) {
 
-				$::d_source && msg("openSong: not bothering opening file with zero size or duration\n");
+				$::d_source && msg("openSong: [$fullpath] not bothering opening file with zero size or duration\n");
 				errorOpening($client);
 				return undef;
 			}
@@ -1332,9 +1355,8 @@ sub openSong {
 
 		unless (defined($command)) {
 
-			$::d_source && msg(
-				"Couldn't create command line for $type playback for $fullpath\n"
-			);
+			$::d_source && msg("openSong: Couldn't create command line for $type playback for [$fullpath]\n");
+
 			errorOpening($client);
 
 			return undef;
@@ -1352,11 +1374,11 @@ sub openSong {
 
 			if ($client->audioFilehandle->open($filepath)) {
 
-				$::d_source && msg(" seeking in $offset into $filepath\n");
+				$::d_source && msg("openSong: seeking in $offset into $filepath\n");
 
 				if ($offset) {
 					if (!defined(sysseek($client->audioFilehandle, $offset, 0))) {
-						msg("couldn't seek to $offset for $filepath");
+						msg("openSong: couldn't seek to $offset for $filepath");
 					};
 					$offset -= $seekoffset;
 				}
@@ -1399,7 +1421,7 @@ sub openSong {
 
 		$client->streamformat($format);
 
-		$::d_source && msg("Streaming with format: $format\n");
+		$::d_source && msg("openSong: Streaming with format: $format\n");
 
 		# Deal with the case where we are rewinding and get to
 		# this song. In this case, we should jump to the end of
@@ -1413,11 +1435,7 @@ sub openSong {
 
 	} else {
 
-		$::d_source && msg(
-			"Song is of unrecognized type " .
-			Slim::Music::Info::contentType($fullpath) .
-			"! Stopping! $fullpath\n"
-		);
+		errorMsg("openSong: [$fullpath] Unrecognized type " . Slim::Music::Info::contentType($fullpath) . "!\n");
 
 		errorOpening($client);
 		return undef;
@@ -1442,7 +1460,7 @@ sub openSong {
 	} else {
 
 		# XXX - need to propagate an exception to the caller!
-		$::d_source && msg("Can't open [$fullpath] : $!\n");
+		$::d_source && msg("openSong: Can't open [$fullpath] : $!\n");
 
 		my $line1 = $client->string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, $track);
