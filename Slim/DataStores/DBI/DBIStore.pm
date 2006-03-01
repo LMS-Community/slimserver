@@ -17,6 +17,7 @@ use List::Util qw(max);
 use Scalar::Util qw(blessed);
 use Storable;
 use Tie::Cache::LRU::Expires;
+use URI;
 
 use Slim::DataStores::DBI::DataModel;
 
@@ -184,7 +185,7 @@ sub contentType {
 
 	# See if we were handed a track object already, or just a plain url.
 	my $track       = blessed($urlOrObj) && $urlOrObj->can('id') ? $urlOrObj : undef;
-	my $url         = blessed($track) && $track->can('url') ? $track->url : $urlOrObj;
+	my $url         = blessed($track) && $track->can('url') ? $track->url : URI->new($urlOrObj)->canonical->as_string;
 
 	# We can't get a content type on a undef url
 	if (!defined $url) {
@@ -243,7 +244,7 @@ sub objectForUrl {
 
 	# Confirm that the URL itself isn't an object (see bug 1811)
 	# XXX - exception should go here. Comming soon.
-	if (blessed($url) && blessed($url) =~ /Track/) {
+	if (blessed($url) =~ /Track/) {
 		return $url;
 	}
 
@@ -253,6 +254,9 @@ sub objectForUrl {
 		return undef;
 	}
 
+	# Create a canonical version, to make sure we only have one copy.
+	$url = URI->new($url)->canonical->as_string;
+
 	my $track = $self->_retrieveTrack($url, $lightweight);
 
 	if (blessed($track) && $track->can('url') && !$create && !$lightweight) {
@@ -261,7 +265,7 @@ sub objectForUrl {
 
 	# Handle the case where an object has been deleted out from under us.
 	# XXX - exception should go here. Comming soon.
-	if (blessed($track) && blessed($track) eq 'Class::DBI::Object::Has::Been::Deleted') {
+	if (blessed($track) eq 'Class::DBI::Object::Has::Been::Deleted') {
 
 		$track  = undef;
 		$create = 1;
@@ -486,6 +490,9 @@ sub newTrack {
 
 	my $deferredAttributes;
 
+	# Create a canonical version, to make sure we only have one copy.
+	$url = URI->new($url)->canonical->as_string;
+
 	$::d_info && msg("New track for $url\n");
 
 	# Default the tag reading behaviour if not explicitly set
@@ -580,7 +587,7 @@ sub updateOrCreate {
 
 	# XXX - exception should go here. Comming soon.
 	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
-	my $url   = blessed($track) && $track->can('url') ? $track->url : $urlOrObj;
+	my $url   = blessed($track) && $track->can('url') ? $track->url : URI->new($urlOrObj)->canonical->as_string;
 
 	if (!defined($url)) {
 		require Data::Dumper;
