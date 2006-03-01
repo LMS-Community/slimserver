@@ -3,15 +3,23 @@
 [%# set statusroot to either status.html or status_header.html, depending on which you use %]
 [% statusroot = 'status.html' %]
 
-[%# this is to wrap around an href which does a play command %]
-[% BLOCK playlink %]
-<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "PLAY" | string %]</a>
+[% BLOCK cmdlink -%]
+<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
 [% END %]
 
-[%# this is to wrap around an href which does an add command %]
-[% BLOCK addlink %]
-<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "ADD_TO_PLAYLIST" | string %]</a>
-[% END %]
+[%# this is to wrap around an href which does a play command, with a default image for skins that support it %]
+[% BLOCK playlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "PLAY"
+		cmdimage = "b_play" -%]
+[%- END %]
+
+[%# this is to wrap around an href which does an add command, with a default image for skins that support it %]
+[% BLOCK addlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdimage = "b_add" -%]
+[%- END %]
 
 [%# this is to wrap around an href which does an insert command %]
 [% BLOCK insertlink %]
@@ -26,10 +34,12 @@
 <a [% content %]>[% "NEXT" | string %]</a>
 [% END %]
 
-[%# this is to wrap around an href which does a remove command %]
-[% BLOCK removelink %]
-<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "DELETE" | string %]</a>
-[% END %]
+[%# this is to wrap around an href which does a remove command, with default image reference %]
+[% BLOCK removelink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "DELETE"
+		cmdimage = "b_delete" -%]
+[%- END %]
 
 [%# this is to wrap around ? %]
 [% BLOCK listitem %]
@@ -48,14 +58,18 @@
 END %]
 
 [%# this is to wrap around a link which moves something up a list %]
-[% BLOCK moveuplink %]
-<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEUP" | string %]</a>
-[% END %]
+[% BLOCK moveuplink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "MOVEUP"
+		cmdimage = "b_up" -%]
+[%- END %]
 
 [%# this is to wrap around a link which moves something down a list %]
-[% BLOCK movedownlink %]
-<a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% "MOVEDOWN" | string %]</a>
-[% END %]
+[% BLOCK movedownlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "MOVEDOWN"
+		cmdimage = "b_down" -%]
+[%- END %]
 
 [%# this is the warning shown while SlimServer is still scanning -%]
 [% BLOCK scanwarning %]

@@ -79,46 +79,6 @@
 	[%- END %]
 [% END %]
 
-[% BLOCK crumblist -%]
-[%- FOREACH item = pwd_list.list -%]
-  [%- IF not loop.first %] / [% END -%]
-  [%- PROCESS crumblistitem -%]
-[%- END -%]
-[%- END %]
-
-[% BLOCK crumblistitem -%]
- [%- IF item.title -%]
-<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title | html %]</a>
- [%- ELSE -%]
-[% item | replace('^\s*/','') %]
- [%- END -%]
-[%- END %]
-
-[% BLOCK contentcontainer %]
-<div id="[% listid || 'browsedbList' %]">
-	
-		[%- content | indent(4) %]
-	
-</div>
-[%- END %]
-
-[% BLOCK contentitem -%]
-<div class="[% odd ? "odd" : "even" %]">
-	[%- IF anchor %]
-		<a name="[% anchor %]"></a>
-	[%- END -%]
-	
-	<div class="[% lineclass || 'browsedbListItem' %]">
-		[%- content | indent(4) %]
-		[%- IF controls -%]
-			<div class="browsedbControls">
-			[%- PROCESS $controls -%]
-			</div>
-		[%- END %]
-	</div>
-</div>
-[%- END %]
-
 [% BLOCK playlistcontrols %]
 	[% width='9' height='11' target='status' %]
 	[% FOREACH mixer = item.mixerlinks.values.sort %]

@@ -1,3 +1,5 @@
 ---
 skinparents:
  - Default
+preprocess:
+ - cmdwrappers_Fishbone

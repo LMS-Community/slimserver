@@ -5,29 +5,8 @@
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
 [%- END %]
 
-[% BLOCK playlink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "PLAY"
-		cmdimage = "b_play" -%]
-[%- END %]
-
-[% BLOCK addlink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "ADD_TO_PLAYLIST"
-		cmdimage = "b_add" -%]
-[%- END %]
-
 [% BLOCK descendlink -%]
 	<a [% content %]><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a>
-[%- END %]
-
-[% BLOCK insertlink -%]
-[%- END %]
-
-[% BLOCK removelink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "DELETE"
-		cmdimage = "b_delete" -%]
 [%- END %]
 
 [% BLOCK listitem -%]
@@ -41,64 +20,6 @@
 [% BLOCK homelink; homeString = "HOME" | string;
 	"<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; $target; "\""; END; ">"; img or homeString; "</a>";
 END %]
-
-[% BLOCK moveuplink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "MOVEUP"
-		cmdimage = "b_up" -%]
-[%- END %]
-
-[% BLOCK movedownlink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "MOVEDOWN"
-		cmdimage = "b_down" -%]
-[%- END %]
-
-[% BLOCK scanwarning -%]
-<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
-	[%- IF audiodir -%]
-		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
-	[%- END %]
-[% END %]
-
-[% BLOCK crumblist -%]
-	[%- IF NOT noHomeLink %][% PROCESS homelink %][% END -%]
-	[%- FOREACH item = pwd_list.list -%]
-		[%- IF not noHomeLink or not loop.first %] / [% END -%]
-		[%- PROCESS crumblistitem -%]
-	[%- END -%]
-[%- END %]
-
-[% BLOCK crumblistitem -%]
-	[%- IF item.title -%]
-<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title | html %]</a>
-	[%- ELSE -%]
-		[%- item | replace('^\s*/','') %]
-	[%- END -%]
-[%- END %]
-
-[% BLOCK contentcontainer %]
-<div id="[% listid || 'browsedbList' %]">
-	[%- content | indent(4) %]
-</div>
-[%- END %]
-
-[% BLOCK contentitem -%]
-<div class="[% odd ? "odd" : "even" %]">
-	[%- IF anchor %]
-		<a name="[% anchor %]"></a>
-	[%- END -%]
-	
-	<div class="[% lineclass || 'browsedbListItem' %]">
-		[%- content | indent(4) %]
-		[%- IF controls -%]
-			<div class="browsedbControls">
-			[%- PROCESS $controls -%]
-			</div>
-		[%- END %]
-	</div>
-</div>
-[%- END %]
 
 [%- BLOCK playlistcontrols %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
