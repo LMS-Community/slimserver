@@ -13,7 +13,7 @@
 	
 		[% END %]
 		
-		[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]
+		[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]</a>
 		[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
 	
 			<!-- Include the artist for the album view -->

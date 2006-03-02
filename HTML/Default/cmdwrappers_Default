@@ -6,7 +6,10 @@
 [%- END %]
 
 [% BLOCK descendlink -%]
-	<a [% content %]><img src="[% webroot %]html/images/b_next.gif" width=13 height=13 alt="[% "NEXT" | string %]" title="[% "NEXT" | string %]"></a>
+	[% PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdimage = "b_next" 
+		noTarget = 1 %]
 [%- END %]
 
 [% BLOCK listitem -%]
