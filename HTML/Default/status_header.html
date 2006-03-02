@@ -51,17 +51,6 @@
 		</div>
 		[% END %]
 
-		<div id="transportButtons">
-
-			[% PROCESS statusLink p0 = 'playlist' p1 = 'jump' p2 = plusOne linkString = 'SKIP' divID = 'valueBold' %]
-			<span class="bar">|</span>
-			[% PROCESS statusLink p0 = 'play'  p1 = '' p2 = '' linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
-			<span class="bar">|</span>
-			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
-			<span class="bar">|</span>
-			[% PROCESS statusLink p0 = 'stop'  linkString = 'STOP'  divID = modestop  ? 'valueSelected' : 'valueBold' %]
-		</div>
-
 		[% IF isplayer %]
 		<div id="volumeButtons">
 
@@ -81,6 +70,18 @@
 			[% END %]
 		</div>
 		[% END %]
+
+		<div id="transportButtons">
+
+			[% PROCESS statusLink link = '' p0 = 'playlist' p1 = 'jump' p2 = plusOne linkString = 'SKIP' divID = 'valueBold' %]
+			<span class="bar">|</span>
+			[% PROCESS statusLink p0 = 'play'  p1 = '' p2 = '' linkString = 'PLAY'  divID = modeplay  ? 'valueSelected' : 'valueBold' %]
+			<span class="bar">|</span>
+			[% PROCESS statusLink p0 = 'pause' linkString = 'PAUSE' divID = modepause ? 'valueSelected' : 'valueBold' %]
+			<span class="bar">|</span>
+			[% PROCESS statusLink p0 = 'stop'  linkString = 'STOP'  divID = modestop  ? 'valueSelected' : 'valueBold' %]
+		</div>
+
 	</div>
 
 	<div id="topGraphicMenu2">
