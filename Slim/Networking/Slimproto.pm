@@ -711,6 +711,8 @@ sub _hello_handler {
 	$sock2client{$s} = $client->id;
 	
 	if ($client->needsUpgrade()) {
+		# don't start playing if we're upgrading
+		$client->execute(['stop']);
 
 		# ask for an update if the player will do it automatically
 		$client->sendFrame('ureq');

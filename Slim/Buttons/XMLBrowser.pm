@@ -108,7 +108,6 @@ sub gotFeed {
 		gotOPML($client, $url, $feed);
 
 	} else {
-
 		$client->update();
 	}
 }
@@ -269,7 +268,7 @@ sub gotOPML {
 
 				} else {
 
-					Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
+					Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 				}
 
 			} elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {

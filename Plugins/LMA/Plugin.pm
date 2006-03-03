@@ -50,7 +50,7 @@ sub setMode {
 		title    => $client->string(getDisplayName()),
 	);
 
-	Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
+	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 }
 
 sub strings {

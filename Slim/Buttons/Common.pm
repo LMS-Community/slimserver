@@ -1081,10 +1081,11 @@ sub popMode {
 sub setMode {
 	my $client = shift;
 	my $setmode = shift;
+	my $paramHashRef = shift;
 
 	while (popMode($client)) {};
 
-	pushMode($client, $setmode);
+	pushMode($client, $setmode, $paramHashRef);
 }
 
 sub pushModeLeft {
