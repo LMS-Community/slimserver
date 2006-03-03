@@ -123,7 +123,7 @@ function getCookie(cookie)
 function getPlayer(Player) 
 {
 	plyr = getCookie(Player);
-	if (plyr == 'undefined') return "";
+	if (!plyr) return "";
 	return plyr;
 }
 
@@ -136,25 +136,30 @@ function goHome(plyr)
 function getHomeCookie(Name) 
 {
 	url = getCookie(Name);
-	if (url == 'undefined') return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	if (!url) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 	return url;
 }
 
 function getPage() {
 	var url = getHomeCookie('SlimServer-Browserpage');
-	if (url.length > 0) {
-		offset = url.indexOf('page=');
-		if (offset != -1) {
-			offset += 5;
-			end = url.indexOf(";", offset);
-			if (end == -1)
-				end = url.length;
-			page = unescape(url.substring(offset, end));
-			if (page == 'undefined') return "BROWSE_BY_ALBUM";
-			return page;
-		}
+	if (!url) { 
+		return "BROWSE_BY_ALBUM"; 
 	}
-	return "BROWSE_BY_ALBUM";
+	else {
+		if (url.length > 0) {
+			offset = url.indexOf('page=');
+			if (offset != -1) {
+				offset += 5;
+				end = url.indexOf(";", offset);
+				if (end == -1)
+					end = url.length;
+				page = unescape(url.substring(offset, end));
+				if (!page) return "BROWSE_BY_ALBUM";
+				return page;
+			}
+		}
+		return "BROWSE_BY_ALBUM";
+	}
 }
 
 var selectedLink;
