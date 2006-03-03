@@ -1097,7 +1097,10 @@ sub pushModeLeft {
 
 	pushMode($client, $setmode, $paramHashRef);
 
-	$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	if (!$client->param('handledTransition')) {
+		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		$client->param('handledTransition',0);
+	}
 }
 
 sub popModeRight {
