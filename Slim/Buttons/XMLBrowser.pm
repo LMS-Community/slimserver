@@ -670,7 +670,10 @@ sub parseXMLIntoFeed {
 
 	if ($@) {
 		errorMsg("XMLBrowser: failed to parse feed because:\n$@\n");
-		errorMsg("XMLBrowser: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
+
+		if (defined $content && ref($content) eq 'SCALAR') {
+			errorMsg("XMLBrowser: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
+		}
 
 		# Ugh. Need real exceptions!
 		die $@;
