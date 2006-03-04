@@ -452,7 +452,7 @@ PLUGIN_HEALTH_RESPONSE_DESC
 	EN	This graph shows the length of time between slimserver responding to requests from any player.  It is measured in seconds. Lower numbers are better.  If you notice response times of over 1 second this could lead to problems with audio performance.<p>The cause of long response times could be either other programs running on the server or slimserver processing a complex task.
 	ES	Este gráfico muestra el tiempo de respuesta de Slimserver a requerimientos de cualquier reproductor. Se mide en segundos. Valores bajos son mejores. Si se nota tiempos de respuesta de más de 1 segundo esto puede producir problemas con la perfomance de audio.    La causa de tiempos de respuesta grandes puede ser o bien otros programas corriendo en el servidor, o bien que Slimserver esté procesando una tarea compleja.
 	HE	במידה וגרף זה מציג זמנים מעל שניה אחת יש בעיה ברשת או שהשרת עמוס
-	NL	Deze grafiek toont de tijd waarbinnen SlimServer reageert op verzoeken van de speler. De uitkomst is in seconden. Lagere waardes zijn beter. Als je reactietijden hebt van meer dan 1 seconde kan dit leiden tot problemen bij afspelen van audio.  <br>De oorzaak van lange reactietijden kan liggen bij andere programma's die draaien op de server of dat SlimServer een complexe taak uitvoert.
+	NL	Deze grafiek toont de tijd waarbinnen SlimServer reageert op verzoeken van de speler. De uitkomst is in seconden. Lagere waardes zijn beter. Als je reactietijden hebt van meer dan 1 seconde kan dit leiden tot problemen bij afspelen van audio.  <br>De oorzaak van lange reactietijden kan liggen bij andere programma\'s die draaien op de server of dat SlimServer een complexe taak uitvoert.
 
 PLUGIN_HEALTH_SCHEDULER
 	DE	Geplante Aufgaben
@@ -465,7 +465,7 @@ PLUGIN_HEALTH_SCHEDULER_DESC
 	EN	The server runs processor intensive tasks (such as scanning your music collection) by breaking them into short pieces which are scheduled when when active players are not requesting data.  This graph shows the length of time in seconds that a scheduled task runs for before returning control to the server.  Tasks taking over 0.5 second may lead to reduced performance for the user interface.
 	ES	El servidor ejecuta tareas que son intensivas en el procesador (tales como recopilar la colección musical) diviendolas en piezas mas pequeñas, que se planifican para ejecutar cuando los reproductores activos no están requiriendo datos. Este gráfico muestra el tiempo (en segundos) durante el que corre una tarea planificada antes de devolver el control al servidor. Las tareas que toman más de 0.5 segundo pueden influir en reducir la perfomance de la interface de usuario.
 	HE	במחשבים ישנים עליית השרת יכולה להעמיס על המחשב ולהאט אותו. ביר כאן לעליה מבוקרת של השרת
-	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu's).
+	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu\'s).
 
 PLUGIN_HEALTH_IRRESPONSE
 	DE	Infrarot Antwortzeit
@@ -595,7 +595,7 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
 	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.
 	ES	El tiempo de respuesta del servidor es ocasionalmente más alto que el deseado. Esto puede causar interrupciones audio, especialmente en los reproductores Slimp3 y Squeezebox1. Puede deberse a una carga de procesos de fondo, o a que una tarea de Slimserver está tomando más tiempo que el normal.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma's zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
+	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma\'s zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
 
 PLUGIN_HEALTH_RESPONSE_POOR
 	DE	Schlechte Antwortzeiten
