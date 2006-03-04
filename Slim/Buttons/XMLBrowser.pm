@@ -49,8 +49,8 @@ sub setMode {
 
 		#TODO: display the error on the client
 		my %params = (
-			header => "{PODCAST_ERROR} {count}",
-			listRef => \@lines,
+			'header'  => "{PODCAST_ERROR} {count}",
+			'listRef' => \@lines,
 		);
 
 		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -137,16 +137,16 @@ sub gotRSS {
 		!($feed->{'xmlns:slim'} && !$feed->{'description'})) {
 
 		my %desc = (
-			name => '{PODCAST_FEED_DESCRIPTION}',
-			value => 'description',
-			onRight => sub {
+			'name'       => '{PODCAST_FEED_DESCRIPTION}',
+			'value'      => 'description',
+			'onRight'    => sub {
 				my $client = shift;
-				my $item = shift;
+				my $item   = shift;
 				displayFeedDescription($client, $client->param('feed'));
 			},
 
 			# play all enclosures...
-			onPlay => sub {
+			'onPlay'     => sub {
 				my $client = shift;
 
 				# play this feed as a playlist
@@ -157,7 +157,7 @@ sub gotRSS {
 				] );
 			},
 
-			onAdd => sub {
+			'onAdd'      => sub {
 				my $client = shift;
 
 				# addthis feed as a playlist
@@ -168,7 +168,7 @@ sub gotRSS {
 				] );
 			},
 
-			overlayRef => [ undef, Slim::Display::Display::symbol('rightarrow') ],
+			'overlayRef' => [ undef, Slim::Display::Display::symbol('rightarrow') ],
 		);
 
 		unshift @{$feed->{'items'}}, \%desc; # prepend
@@ -176,24 +176,24 @@ sub gotRSS {
 
 	# use INPUT.Choice mode to display the feed.
 	my %params = (
-		url      => $url,
-		feed     => $feed,
+		'url'      => $url,
+		'feed'     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "XMLBrowser:$url",
-		header   => $feed->{'title'} . ' {count}',
+		'modeName' => "XMLBrowser:$url",
+		'header'   => $feed->{'title'} . ' {count}',
 
 		# TODO: we show only items here, we skip the description of the entire channel
-		listRef  => $feed->{'items'},
+		'listRef'  => $feed->{'items'},
 
-		name => sub {
+		'name' => sub {
 			my $client = shift;
-			my $item = shift;
+			my $item   = shift;
 			return $item->{'title'};
 		},
 
-		onRight => sub {
+		'onRight' => sub {
 			my $client = shift;
-			my $item = shift;
+			my $item   = shift;
 			if (hasDescription($item)) {
 				displayItemDescription($client, $item);
 			} else {
@@ -201,19 +201,19 @@ sub gotRSS {
 			}
 		},
 
-		onPlay => sub {
+		'onPlay' => sub {
 			my $client = shift;
-			my $item = shift;
+			my $item   = shift;
 			playItem($client, $item);
 		},
 
-		onAdd => sub {
+		'onAdd' => sub {
 			my $client = shift;
-			my $item = shift;
+			my $item   = shift;
 			playItem($client, $item, 'add');
 		},
 
-		overlayRef => \&overlaySymbol,
+		'overlayRef' => \&overlaySymbol,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -231,21 +231,21 @@ sub gotOPML {
 	my $title = $opml->{'name'} || $opml->{'title'};
 
 	my %params = (
-		url      => $url,
-		item     => $opml,
+		'url'        => $url,
+		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		modeName => "XMLBrowser:$url:$title",
-		header   => "$title {count}",
-		listRef  => $opml->{'items'},
+		'modeName'   => "XMLBrowser:$url:$title",
+		'header'     => "$title {count}",
+		'listRef'    => $opml->{'items'},
 
-		isSorted  => 1,
-		lookupRef => sub {
+		'isSorted'   => 1,
+		'lookupRef'  => sub {
 			my $index = shift;
 
 			return $opml->{'items'}->[$index]->{'name'};
 		},
 
-		onRight  => sub {
+		'onRight'    => sub {
 			my $client = shift;
 			my $item   = shift;
 
@@ -258,8 +258,8 @@ sub gotOPML {
 
 				# follow a link
 				my %params = (
-					url   => $itemURL,
-					title => $title,
+					'url'   => $itemURL,
+					'title' => $title,
 				);
 
 				if ($isAudio) {
@@ -282,14 +282,20 @@ sub gotOPML {
 			}
 		},
 
-		onPlay  => sub {
+		'onPlay'     => sub {
 			my $client = shift;
 			my $item   = shift;
 
 			playItem($client, $item);
 		},
+		'onAdd'      => sub {
+			my $client = shift;
+			my $item   = shift;
 
-		overlayRef => \&overlaySymbol,
+			playItem($client, $item,'add');
+		},
+		
+		'overlayRef' => \&overlaySymbol,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -370,8 +376,8 @@ sub gotError {
 
 	#TODO: display the error on the client
 	my %params = (
-		header => "{PODCAST_ERROR} {count}",
-		listRef => \@lines,
+		'header'  => "{PODCAST_ERROR} {count}",
+		'listRef' => \@lines,
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -419,32 +425,32 @@ sub displayItemDescription {
 	if (my $link = hasLink($item)) {
 
 		push @lines, {
-			name => '{PODCAST_LINK}: ' . $link,
-			value => $link,
-			overlayRef => [ undef, Slim::Display::Display::symbol('rightarrow') ],
+			'name'       => '{PODCAST_LINK}: ' . $link,
+			'value'      => $link,
+			'overlayRef' => [ undef, Slim::Display::Display::symbol('rightarrow') ],
 		}
 	}
 
 	if (hasAudio($item)) {
 
 		push @lines, {
-			name => '{PODCAST_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
-			value => $item->{'enclosure'}->{'url'},
-			overlayRef => [ undef, Slim::Display::Display::symbol('notesymbol') ],
+			'name'       => '{PODCAST_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
+			'value'      => $item->{'enclosure'}->{'url'},
+			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
 		};
 
 		# its a remote audio source, use remotetrackinfo
 		my %params = (
-			title   =>$item->{'title'},
-			url     => $item->{'enclosure'}->{'url'},
-			details => \@lines,
-			onRight => sub {
+			'title'     =>$item->{'title'},
+			'url'       => $item->{'enclosure'}->{'url'},
+			'details'   => \@lines,
+			'onRight'   => sub {
 				my $client = shift;
 				my $item = $client->param('item');
 				displayItemLink($client, $item);
 			},
-			hideTitle => 1,
-			hideURL => 1,
+			'hideTitle' => 1,
+			'hideURL'   => 1,
 		);
 
 		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
@@ -453,25 +459,25 @@ sub displayItemDescription {
 		# its not audio, use INPUT.Choice to display...
 
 		my %params = (
-			item    => $item,
-			header  => $item->{'title'} . ' {count}',
-			listRef => \@lines,
+			'item'    => $item,
+			'header'  => $item->{'title'} . ' {count}',
+			'listRef' => \@lines,
 
-			onRight => sub {
+			'onRight' => sub {
 				my $client = shift;
-				my $item = $client->param('item');
+				my $item   = $client->param('item');
 				displayItemLink($client, $item);
 			},
 
-			onPlay => sub {
+			'onPlay'  => sub {
 				my $client = shift;
-				my $item = $client->param('item');
+				my $item   = $client->param('item');
 				playItem($client, $item);
 			},
 
-			onAdd => sub {
+			'onAdd'   => sub {
 				my $client = shift;
-				my $item = $client->param('item');
+				my $item   = $client->param('item');
 				playItem($client, $item, 'add');
 			},
 		);
@@ -504,9 +510,9 @@ sub displayFeedDescription {
 
 	if ($count) {
 		push @lines, {
-			name => '{PODCAST_AUDIO_ENCLOSURES}: ' . $count,
-			value => $feed,
-			overlayRef => [ undef, Slim::Display::Display::symbol('notesymbol') ],
+			'name'       => '{PODCAST_AUDIO_ENCLOSURES}: ' . $count,
+			'value'      => $feed,
+			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
 		};
 	}
 
@@ -519,13 +525,13 @@ sub displayFeedDescription {
 	# even a line to play all enclosures
 
 	my %params = (
-		url => $client->param('url'),
-		title => $feed->{'title'},
-		feed => $feed,
-		header => $feed->{'title'} . ' {count}',
-		details => \@lines,
-		hideTitle => 1,
-		hideURL => 1,
+		'url'       => $client->param('url'),
+		'title'     => $feed->{'title'},
+		'feed'      => $feed,
+		'header'    => $feed->{'title'} . ' {count}',
+		'details'   => \@lines,
+		'hideTitle' => 1,
+		'hideURL'   => 1,
 
 	);
 
@@ -545,8 +551,8 @@ sub displayItemLink {
 
 	# use PLUGIN.podcast mode to show the next url
 	my %params = (
-		url => $url,
-		title => $item->{'title'},
+		'url'   => $url,
+		'title' => $item->{'title'},
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'xmlbrowser', \%params);
@@ -570,6 +576,19 @@ sub playItem {
 
 		$client->execute([ 'playlist', $action, $url, $title ]);
 
+		my $string; 
+		if ($action eq 'add') {
+			$string = 'ADDING_TO_PLAYLIST';
+		} else {
+			if (Slim::Player::Playlist::shuffle($client)) {
+				$string = 'PLAYING_RANDOMLY_FROM';
+			} else {
+				$string = 'NOW_PLAYING_FROM';
+			}
+		}
+
+		$client->showBriefly($client->string($string), $title);
+
 		Slim::Music::Info::setCurrentTitle($url, $title);
 
 	} elsif ($type eq 'playlist') {
@@ -584,7 +603,7 @@ sub playItem {
 		getFeedViaHTTP($client, $url, \&gotPlaylist, \&gotError);
 
 	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url ne 'unk'))) {
-
+		
 		$client->execute([ 'playlist', $action, $url, $title ]);
 
 		Slim::Music::Info::setCurrentTitle($url, $title);
@@ -604,9 +623,9 @@ sub getFeedViaHTTP {
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&gotViaHTTP, \&gotErrorViaHTTP, {
 
-			client => $client,
-			cb     => $cb,
-			ecb    => $ecb
+			'client' => $client,
+			'cb'     => $cb,
+			'ecb'    => $ecb
 	});
 
 	$::d_plugins && msg("XMLBrowser: async request: $url\n");
