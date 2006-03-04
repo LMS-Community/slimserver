@@ -1,4 +1,3 @@
-var alreadyParsed = false;
 var player = '[% player %]';
 var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% ELSE %][% refresh %][% END %];
 var _progressAt = [% IF songtime %][% songtime %][% ELSE %]0[% END %];
@@ -84,14 +83,51 @@ function setProgressBarWidth() {
 // parses the data if it has not been done already
 function fillDataHash(theData) {
 	var returnData = null;
-	if (alreadyParsed) {
-		returnData = theData;
+	if (theData['player_id']) { 
+		return theData;
 	} else {
 		var myData = theData.responseText;
 		returnData = parseData(myData);
-		//alreadyParsed = true;
 	}
+
+	// make the correct divs be shown; this is a good spot for this because fillDataHash is called first by all refreshFunctions()
+	var hideDivs;
+	var showDivs;
+	// radio
+	if (returnData['streamtitle']) {
+		showDivs = [ 'radioinfo', 'radioart', 'streaminfo', 'playliststatus', 'playlistbox' ];
+		hideDivs = [ 'songinfo', 'progressbar', 'progressbar_overlay', 'coverart', 'emptyplayer' ];
+	// track
+	} else if (returnData['songcount'] > 0) {
+		hideDivs = [ 'radioinfo', 'radioart', 'streaminfo', 'emptyplayer'  ];
+		showDivs = [ 'playliststatus', 'playlistbox', 'songinfo', 'progressbar', 'progressbar_overlay', 'coverart' ];
+	// empty playlist
+	} else {
+		showDivs = [ 'emptyplayer'  ];
+		hideDivs = [ 'playliststatus', 'playlistbox', 'songinfo', 'progressbar', 'progressbar_overlay', 'coverart', 'radioinfo', 'radioart', 'streaminfo' ];
+	}
+	hideElements(hideDivs);
+	showElements(showDivs);
 	return returnData;
+}
+
+function hideElements(myAry) {
+	for (var i = 0; i < myAry.length; i++) {
+		var div = myAry[i];
+		if ($(div)) {
+		//	document.getElementById(div).style.display = "none";
+			$(div).style.display = 'none';
+		}
+	}
+}
+function showElements(myAry) {
+	for (var i = 0; i < myAry.length; i++) {
+		var div = myAry[i];
+		if ($(div)) {
+			//document.getElementByID(div).style.display = 'block';
+			$(div).style.display = 'block';
+		}
+	}
 }
 
 function refreshNothing() {
@@ -102,17 +138,17 @@ function refreshAll(theData) {
 	inc = 0;
 	// stop progress bar refreshing for this track
 	clearIntervalCall();
-	//var parsedData = fillDataHash(theData);
-	refreshControls(theData);
-	refreshOtherElements(theData);
-	refreshProgressBar(theData);
+	var parsedData = fillDataHash(theData);
+	refreshControls(parsedData);
+	refreshOtherElements(parsedData);
+	refreshProgressBar(parsedData);
 }
 
 function refreshControls(theData) {
 
 	var parsedData = fillDataHash(theData);
 	// refresh control_display in songinfo section
-	refreshPlayerStatus(theData);
+	refreshPlayerStatus(parsedData);
 
 	// refresh player controls
 	var selected=null;
@@ -127,7 +163,7 @@ function refreshControls(theData) {
 	// refresh shuffle controls
 	// refresh repeat controls
 	// refresh volume (?)
-	refreshVolumeControl(theData);
+	refreshVolumeControl(parsedData);
 }
 
 function refreshVolumeControl(theData) {
@@ -279,6 +315,9 @@ function refreshOtherElements(theData) {
 		var linkKey = key + 'id';
 		var newHref = linkStubs[i] + parsedData[linkKey] + '&amp;player=' + player;
 		refreshHref(linkIdKey, newHref);
+	}
+	if (parsedData['streamtitle']) {
+		refreshElement('streamtitle', parsedData['streamtitle']);
 	}
 	// refresh links in song info section
 	// refresh playlist

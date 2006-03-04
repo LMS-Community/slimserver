@@ -13,6 +13,7 @@ nextsong|(next) [% item.title %]
 [%- END -%]
 
 songtitle|[% songtitle %]
+[% IF itemobj.isRemoteURL %]streamtitle|[% songtitle %][% END %]
 artist|[% itemobj.artist %]
 album|[% itemobj.album %]
 genre|[% itemobj.genre %]

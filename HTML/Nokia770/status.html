@@ -15,21 +15,26 @@
     status   = '1' -%]
 [%- PROCESS pageheader.html thispage = 'status' -%]
 
-[% IF not playlist_items %]
-	<div id = 'songinfo'>
+	<div id = 'emptyplayer' style = 'display: none;'>
 	<span class = 'playingitemtext'><p>Playlist for this player is empty</span>
 	</div>
-		[% ELSE %]
-[% IF itemobj.isRemoteURL %]
-	[% INCLUDE radio_info_display %]
-[% ELSE %]
-	<div id = 'coverart'>
+
+	<div id = 'coverart' style = 'display: none;'>
 		[% INCLUDE cover_art_display %]
 	</div>
-	<div id = 'songinfo'>
+	<div id = 'radioart' style = 'display: none;'>
+		<img src="html/images/radio.gif" width = '195' height="195">
+	</div>
+	<div id = 'playliststatus' style = 'display: none;'>
+		[% INCLUDE playlist_info_display %]
+	</div>
+	<div id = 'radioinfo' style = 'display: none;'>
+		[% INCLUDE radio_info_display %]
+	</div>
+	<div id = 'songinfo' style = 'display: none;'>
 		[% INCLUDE song_info_display %]
 	</div>
-	<div id = 'playlistbox'>
+	<div id = 'playlistbox' style = 'display: none;'>
 		<table class = 'playlistbox'>
 			<tr><td colspan = 2 align = 'right' class = 'supertinytext'>Current Playlist <a href="[% webroot %]playlist.html?player=[% playerURI %]">(edit)</a></td></tr>
 			<tr>
@@ -48,22 +53,10 @@
 					<img id = 'nextsong_link' src="html/images/smaller/next_active.gif" border="0" name="next" onclick="playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
 				</td>
 			</tr>
-			[%#- FOREACH item = playlist_items -%]
-			[%#- IF item.currentsong %][%# previous = item.num - 1 %][%# current = item.num %][%# next = item.num + 1 %][%# LAST %][%# END -%]
-			[%#- END -%]
-			[%#- FOREACH item = playlist_items -%]
-				[%#- NEXT IF item.num < previous -%]
-				[%#- LAST IF item.num > next -%]
-				[%#- PROCESS playlist_row previous = previous next = next -%]
-			[%#- END -%]
 		</table>
 	</div>
-[% END %]
 
-[% UNLESS itemobj.isRemoteURL %]
 	[% INCLUDE progress_bar_display %]
-[% END %]
-		[% END %]
 
 <div id = 'controls'>
 <table width = '100%'>
@@ -164,7 +157,7 @@
 			<a href="status.html?p0=playlist&p1=zap&p2=[% thissongnum %]&player=[% playerURI %]&start=[% start %]">[zap]</a>
 [% END %]
 
-[% BLOCK song_info_display %]
+[% BLOCK playlist_info_display %]
 	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class = 'normaltext' valign = 'top' colspan = '2' height = '35' nowrap>
@@ -172,46 +165,42 @@
 			</td>
 		</tr>
 	</table>
+[% END %]
+
+[% BLOCK song_info_display %]
 	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
-			[% IF songtitle %]
-			<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]" id = 'songtitle_link'>
+			<a href="http://google.com" id = 'songtitle_link'>
 			<span id = 'songtitle'></span>
 			[%# songtitle | truncate(50) %]
 			</a>
-			[% END %]
 			</td>
 		</tr>
 		<tr>
 			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
-			[% IF itemobj.artist.id %]
-			<a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" id = 'artist_link' style="text-decoration:none">
+			<a href="http://google.com" id = 'artist_link' style="text-decoration:none">
 			<span id = 'artist'></span>
-			[%# itemobj.artist | truncate(50) %]
-</a>
-			[% END %]
+			</a>
 			</td>
 		</tr>
 		<tr>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
-			[% IF itemobj.album.id %]<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" id = 'album_link' style="text-decoration:none">
+			<a href="http://google.com" id = 'album_link' style="text-decoration:none">
 			<span id = 'album'></span>
-			[%# itemobj.album | truncate(50) %]
 			</a>
-			[% END %]
 			</td>
 		</tr>
 		<tr>
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
-			[% IF itemobj.genre.id %]<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" id = 'genre_link' style="text-decoration:none">
+			<a href="http://google.com" id = 'genre_link' style="text-decoration:none">
 			<span id = 'genre'></span>
 			[%# itemobj.genre | truncate(50) %]
-			</a>[% END %]
+			</a>
 			</td>
 		</tr>
 	</table>
@@ -219,13 +208,13 @@
 
 [% BLOCK progress_bar_display %]
 
-<div id = 'progressbar_overlay'>
+<div id = 'progressbar_overlay' style = 'display: none;'>
 	<table width="788" class = "thinborder_grey" cellspacing="0" cellpadding="0">
-		[% IF itemobj.duration %]<td class = "pbar_white" align = 'left' nowrap>0:00</td>[% END %]
-		[% IF itemobj.duration %]<td class = "pbar" align = 'right' nowrap id = "duration">[% itemobj.duration %]</td>[% END %]
+		<td class = "pbar_white" align = 'left' nowrap>0:00</td>
+		<td class = "pbar" align = 'right' nowrap id = "duration"></td>
 	</table>
 </div>
-<div id = 'progressbar'>
+<div id = 'progressbar' style = 'display: none;'>
 	<table width="788" cellspacing="0" cellpadding="0">
 		<tr>
 		<td valign = 'middle'>
@@ -280,32 +269,6 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 	</table>
 </td></tr>
 </table>
-
-[% END %]
-
-[% BLOCK new_volume_settings %]
-	[% IF isplayer %]
-<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
-	<tr>
-	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif"></td>
-
-	[% vol = 1 %]
-	<td><table width = '100%' cellpadding = '0' cellspacing = '0' bgcolor = 'white'><tr>
-	[% WHILE vol <= 40 %]
-	<td width="5" onclick="location.href='status.html?p0=mixer&p1=volume&p2=[% vol %]&player=[% playerURI %]&start=[% start %]';" valign="bottom">
-		<table width = '100%' cellpadding = '0' cellspacing = '0'><tr>
-			<td valign = 'bottom' bgcolor = '[% IF volume >= vol %]#000000;[% ELSE %]#CCCCCC;[% END %]' height = '[% vol %]'>
-	</td>
-		</tr></table>
-	</td>
-		[% vol = vol + 1 %]
-	[% END %]
-	</tr></table></td>
-	</tr>
-</table>
-	[% ELSE %]
-	<span class = 'smalltext'>volume settings not available for this player</span>
-	[% END %]
 
 [% END %]
 
@@ -383,12 +346,8 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 [% END %]
 
 [% BLOCK radio_info_display %]
-	<div id = 'coverart'>
-		<img src="html/images/radio.gif" width = '195' height="195">
-	</div>
-	<div id = 'songinfo'>
-	[% INCLUDE control_display %]
+	<div id = 'streaminfo' style = 'display: none;'>
 		<p>Internet Stream URL:<br>
-		<span class = 'playingitemtext'>[% songtitle | html %]</span>
+		<span id = 'streamtitle' class = 'playingitemtext'></span>
 	</div>
 [% END %]

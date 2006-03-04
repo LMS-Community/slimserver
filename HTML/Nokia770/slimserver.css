@@ -191,6 +191,15 @@ div#menu {
 	overflow: visible;
 }
 
+div#emptyplayer {
+        position: absolute;
+        left: 180;
+        width: 788;
+        top: 70;
+	overflow: visible;
+	z-index: 1;
+}
+
 div#coverart {
         position: absolute;
         left: 6;
@@ -200,10 +209,37 @@ div#coverart {
 	z-index: 1;
 }
 
+div#radioart {
+        position: absolute;
+        left: 6;
+        width: 200;
+        top: 15;
+	overflow: visible;
+	z-index: 1;
+}
+
+div#radioinfo {
+	position: relative;
+	left: 220;
+	top: 15;
+	width: 550;
+	overflow: visible;
+        z-index: 2;
+}
+
 div#songinfo {
 	position: relative;
 	left: 220;
-	top: 10;
+	top: 15;
+	width: 550;
+	overflow: visible;
+        z-index: 2;
+}
+
+div#playliststatus {
+	position: relative;
+	left: 220;
+	top: 15;
 	width: 550;
 	overflow: visible;
         z-index: 2;
