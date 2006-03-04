@@ -28,9 +28,8 @@ function refreshProgressBar(theData) {
 	var parsedData = fillDataHash(theData);
 	// update duration time
 	if ($('duration')) {
-		$('duration').innerHTML = '';
 		if (parsedData['duration']) {
-			$('duration').innerHTML = parsedData['duration'];
+			refreshElement('duration', parsedData['duration']);
 		}
 	}
 	_progressAt = parseInt(parsedData['songtime'], 10);
@@ -203,7 +202,7 @@ function refreshPlayerStatus(theData) {
 	for (var i=0; i < controls.length; i++) {
 		var key = controls[i];
 		if ($(key)) {
-			$(key).innerHTML = parsedData[key];
+			refreshElement(key, parsedData[key]);
 		}
 	}
 	if (!intervalID) {
@@ -217,8 +216,13 @@ function refreshHref (element, value) {
 	}
 }
 
-function refreshElement(element, value) {
+function refreshElement(element, value, truncate) {
+	if (value.length > truncate) {
+		var smaller = value.substring(0,truncate);
+		value = smaller+'...';
+	}
 	if ($(element)) {
+		$(element).innerHTML = '';
 		$(element).innerHTML = value;
 	}
 }
@@ -310,14 +314,14 @@ function refreshOtherElements(theData) {
 			];
 	for (var i=0; i < songinfoArray.length; i++) {
 		var key = songinfoArray[i];
-		refreshElement(key, parsedData[key]);
+		refreshElement(key, parsedData[key], 50);
 		var linkIdKey = key + '_link';
 		var linkKey = key + 'id';
 		var newHref = linkStubs[i] + parsedData[linkKey] + '&amp;player=' + player;
 		refreshHref(linkIdKey, newHref);
 	}
 	if (parsedData['streamtitle']) {
-		refreshElement('streamtitle', parsedData['streamtitle']);
+		refreshElement('streamtitle', parsedData['streamtitle'], 50);
 	}
 	// refresh links in song info section
 	// refresh playlist
@@ -325,12 +329,13 @@ function refreshOtherElements(theData) {
 	for (var i=0; i < playlistArray.length; i++) {
 		var key = playlistArray[i];
 		if ($(key)) {
-			$(key).innerHTML = '';
+			var value;
 			if (parsedData[key]) {
-				$(key).innerHTML = parsedData[key];
+				value = parsedData[key];
 			} else {
-				$(key).innerHTML = '(ssh...it\'s a secret)';
+				value = '(ssh...it\'s a secret)';
 			}
+			refreshElement(key, value, 40);
 		} 
 	}
 	// refresh player ON/OFF
