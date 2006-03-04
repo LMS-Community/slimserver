@@ -1,4 +1,5 @@
 var player = '[% player %]';
+var url = 'status.html';
 var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% ELSE %][% refresh %][% END %];
 var _progressAt = [% IF songtime %][% songtime %][% ELSE %]0[% END %];
 var _progressBarWidth = 788;
@@ -6,23 +7,7 @@ var p = 1;
 var inc = 0;
 var intervalID = false;
 
-// xmlHttpRequest of ajaxRequest.txt through status.html
-function getStatusData(params, action) {
-	var url = 'status.html';
-	var myAjax = new Ajax.Request(
-		url, 
-		{
-			method: 'get', 
-			parameters: params, 
-			onComplete: action
-		});
-}
-
-function doRefresh() {
-        var args = 'player='+player+'&ajaxRequest=1';
-        getStatusData(args, refreshAll);
-}
-
+[% PROCESS global.js %]
 // Update the progress dialog with the current state
 function refreshProgressBar(theData) {
 	var parsedData = fillDataHash(theData);
@@ -59,13 +44,6 @@ function progressUpdate() {
 	} else {
 		inc = 0;
 		clearIntervalCall();
-	}
-}
-
-function clearIntervalCall() {
-	if (intervalID) {
-		clearInterval(intervalID);
-		intervalID = false;
 	}
 }
 
@@ -108,29 +86,6 @@ function fillDataHash(theData) {
 	hideElements(hideDivs);
 	showElements(showDivs);
 	return returnData;
-}
-
-function hideElements(myAry) {
-	for (var i = 0; i < myAry.length; i++) {
-		var div = myAry[i];
-		if ($(div)) {
-		//	document.getElementById(div).style.display = "none";
-			$(div).style.display = 'none';
-		}
-	}
-}
-function showElements(myAry) {
-	for (var i = 0; i < myAry.length; i++) {
-		var div = myAry[i];
-		if ($(div)) {
-			//document.getElementByID(div).style.display = 'block';
-			$(div).style.display = 'block';
-		}
-	}
-}
-
-function refreshNothing() {
-	return true;
 }
 
 function refreshAll(theData) {
@@ -207,23 +162,6 @@ function refreshPlayerStatus(theData) {
 	}
 	if (!intervalID) {
 		progressUpdate();
-	}
-}
-
-function refreshHref (element, value) {
-	if ($(element)) {
-		document.getElementById(element).href = value;
-	}
-}
-
-function refreshElement(element, value, truncate) {
-	if (value.length > truncate) {
-		var smaller = value.substring(0,truncate);
-		value = smaller+'...';
-	}
-	if ($(element)) {
-		$(element).innerHTML = '';
-		$(element).innerHTML = value;
 	}
 }
 
@@ -339,23 +277,6 @@ function refreshOtherElements(theData) {
 		} 
 	}
 	// refresh player ON/OFF
-}
-
-
-function parseData(thisData) {
-	var lines = thisData.split("\n");
-	var returnData = new Array();
-	for (i=0; i<lines.length; i++) {
-		var commentLine = lines[i].match(/^#/);
-		var blankLine = lines[i].match(/^\s*$/);
-		if (!commentLine && !blankLine) {
-			var keyValue = lines[i].split('|');
-			var key = keyValue[0];
-			var value = keyValue[1];
-			returnData[key] = value;
-		}
-	}
-	return returnData;
 }
 
 window.onload= function() {

@@ -1,4 +1,7 @@
 [%# Page playlist.html %]
+[%- IF ajaxRequest -%]
+        [% PROCESS ajaxRequest.txt page = 'playlist' %]
+[%- ELSE -%]
 <!--playlist.html-->
 [% pagetitle = BLOCK %]
 [%- playermodel | string %] : [% "PLAYLIST" | string -%]
@@ -55,3 +58,4 @@
 
 [% PROCESS detailed_footer.html %]
 [% PROCESS pagefooter.html %]
+[% END %]

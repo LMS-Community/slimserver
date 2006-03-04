@@ -1,6 +1,6 @@
 [%# Page status.html %]
 [%- IF ajaxRequest -%]
-	[% PROCESS ajaxRequest.txt %]
+	[% PROCESS ajaxRequest.txt page = 'status' %]
 [%- ELSE -%]
 <!-- status.html -->
 [% pagetitle = BLOCK %]
