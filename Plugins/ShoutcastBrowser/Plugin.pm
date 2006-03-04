@@ -1199,35 +1199,35 @@ PLUGIN_SHOUTCASTBROWSER_REDIRECT
 	EN	Please stay tuned while I'm looking up stream information on the SHOUTcast web site...
 	ES	Por favor, permanezca conectado mientras busco información de streams en el sitio web de SHOUTcast...
 	IT	Per favore, rimani sintonizzato mentre cerco le informazioni dei canali sul sito di SHOUTcast...
-	NL	Wacht even terwijl naar de streaminformatie wordt gekeken op de SHOUTcast website...
+	NL	Even wachten aub tijdens het zoeken naar de stream informatie op de SHOUTcast website...
 
 PLUGIN_SHOUTCASTBROWSER_CLICK_REDIRECT
 	DE	Klicken Sie hier, falls die Seite nicht automatisch aktualisiert wird
 	EN	Click here if this page isn't updated automatically
 	ES	Presionar aqui si  esta página no se actualiza automáticamente
 	IT	Premi qui se questa pagina non viene aggiornata automaticamente.
-	NL	Klik hier als deze pagina niet automatisch wijzigt
+	NL	Klik hier als deze pagina niet automatisch wordt bijgewerkt
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH
 	DE	Aktualisieren
 	EN	Refresh
 	ES	Refrescar
 	IT	Aggiorna
-	NL	Vernieuwen
+	NL	Verversen
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH_NOW
 	DE	RECHTS drücken zum Aktualisieren
 	EN	Press RIGHT to refresh the list
 	ES	Presionar DERECHA para refrescar la lista
 	IT	Premi DESTRA per aggiornare la lista
-	NL	Druk -> om de lijst te vernieuwen
+	NL	Druk --> om lijst te verversen
 
 PLUGIN_SHOUTCASTBROWSER_REFRESH_STREAMLIST
 	DE	Liste der Streams aktualisieren
 	EN	Refresh stream list
 	ES	Refrescar la lista de streams
 	IT	Aggiorna la lista dei canali
-	NL	Vernieuw stream lijst
+	NL	Ververs stream lijst
 
 PLUGIN_SHOUTCASTBROWSER_NETWORK_ERROR
 	CS	CHYBA: web SHOUTcast je nedostupný
@@ -1243,13 +1243,13 @@ PLUGIN_SHOUTCASTBROWSER_PARSE_ERROR
 	EN	There was an error parsing the stream information. Try reducing the number of streams if you've set a great number.
 	ES	Hubo un error al analizar la información del stream. Intente reducir el numero de streams si se estableció un número  muy grande.
 	HE	שגיאה בניתוח מידע
-	NL	Er was een fout bij het analyseren van de streaminformatie. Probeer het aantal streams verminderen als je een groot aantal hebt ingesteld.
+	NL	Er was een fout bij het decoderen van de stream informatie. Probeer het aantal streams te verminderen als je een groot aantal hebt.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_CLIENT_ERROR
 	DE	Kein Player verfügbar.
 	EN	Sorry, valid player not found.
 	IT	Scusa, non trovato un lettore valido.
-	NL	Sorry, geen geldige speler was gevonden.
+	NL	Sorry, geen geldige speler gevonden.
 
 PLUGIN_SHOUTCASTBROWSER_SHOUTCAST
 	EN	SHOUTcast
@@ -1280,7 +1280,7 @@ PLUGIN_SHOUTCASTBROWSER_RECENT
 	EN	Recently played
 	ES	Recientemente escuchado
 	IT	Riprodotti di recente
-	NL	Recent afgespeeld
+	NL	Recent gespeeld
 
 PLUGIN_SHOUTCASTBROWSER_MOST_POPULAR
 	CS	Nejpopulárnější
@@ -1334,14 +1334,14 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_HOW_MANY_STREAMS_DESC
 	EN	How many streams to get.  Default is 300, maximum is 2000.
 	ES	Cuántos streams traer. Por defecto es 300, máximo es 2000.
 	IT	Quanti canali ricevere. Di default sono 300, il massimo e' 2000.
-	NL	Hoeveel streams ophalen. Standaard is 300, maximum is 2000.
+	NL	Hoeveel streams ophalen. Standaard is 300, Maximum is 2000.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION
 	DE	Sortierkriterium für Musikstile
 	EN	Sort Criterion for Genres
 	ES	Criterio para Ordenar por Géneros
 	IT	Criterio di ordinamento per i generi
-	NL	Sorteercriteria voor genres
+	NL	Sorteer criterium voor genres
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_GENRE_CRITERION_DESC
 	DE	Kriterium für die Sortierung der Musikstile
@@ -1355,14 +1355,14 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION
 	EN	Sort Criterion for Streams
 	ES	Criterio para ordenar streams.
 	IT	Criterio di ordinamento per i canali
-	NL	Sorteer criteria voor streams
+	NL	Sorteer criterium voor streams
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_STREAM_CRITERION_DESC
 	DE	Kriterium für die Sortierung der Streams (Radiostationen)
 	EN	Criterion for sorting streams.
 	ES	Criterio para ordenar streams.
 	IT	Criterio per ordinare i canali.
-	NL	Criterium voor sorteren streams.
+	NL	Criterium voor het sorteren van streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE
 	DE	Minimale Bitrate
@@ -1376,7 +1376,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MIN_BITRATE_DESC
 	EN	Minimum Bitrate in which you are interested (0 for no limit).
 	ES	Mínima Tasa de Bits que nos interesa (0 para no tener límite).
 	IT	Bitrate minimo a cui sei interessato (0 per nessun limite).
-	NL	Minimum bitrate waarin je ge&iuml;nteresseerd bent (0 voor geen limiet).
+	NL	Minimum bitrate die je wilt zien (kies 0 als je geen limiet wilt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE
 	DE	Maximale Bitrate
@@ -1390,7 +1390,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_BITRATE_DESC
 	EN	Maximum Bitrate in which you are interested (0 for no limit).
 	ES	Máxima Tasa de Bits que nos interesa (0 para no tener límite).
 	IT	Bitrate massimo a cui sei interessato (0 per nessun limite).
-	NL	Maximum bitrate waarin je geïnteresseerd bent (0 voor geen limiet).
+	NL	Maximum bitrate die je wilt zien (kies 0 als je geen limiet wilt).
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT
 	DE	Zuletzt gehörte Streams
@@ -1404,7 +1404,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_RECENT_DESC
 	EN	Maximum number of recently played streams to remember.
 	ES	Máximo número a recordar de streams escuchados recientemente.
 	IT	Numero massimo di canali recenti da ricordare.
-	NL	Maximum te onthouden recent afgespeelde streams
+	NL	Maximum aantal te onthouden recent gespeelde streams.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR
 	CS	Nejpopulárnější
@@ -1419,7 +1419,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MAX_POPULAR_DESC
 	EN	Number of streams to include in the category of most popular streams, measured by the total of all listeners at all bitrates.
 	ES	Número de streams a incluir en la categoría de streams más populares, medida por el total de oyentes en todas las tasas de bits.
 	IT	Numero di canali da includere nella categoria dei canali piu' popolari, misurati attraverso il totale di tutti gli ascoltatori a tutti i bitrate.
-	NL	Aantal streams dat in de 'Meest populair' categorie komt, wordt gemeten naar het aantal luisteraars op alle bitrates.
+	NL	Aantal streams om op te nemen in de categorie van meest populaire streams. Dit is gemeten naar het totaal aantal luisteraars op alle bitrates.
 
 SETUP_PLUGIN_SHOUTCASTBROWSER_ALPHA_REVERSE
 	DE	Alphabetisch (umgekehrte Reihenfolge)
@@ -1482,7 +1482,7 @@ SETUP_PLUGIN_SHOUTCASTBROWSER_MUNGE_GENRE_DESC
 	EN	By default, genres are normalised based on keywords, because otherwise there are nearly as many genres as there are streams. If you would like to see the genre listing as defined by each stream, turn off this parameter.
 	ES	Por defecto, los géneros se normalizan en base a palabras clave, ya que de lo contrario existen casi tantos géneros como streams. Si se quiere ver la lista de géneros tal cual se la define en cada stream,   desactivar este parámetro.
 	IT	Per default, i generi sono identificati attraverso delle parole chiave, perche' altrimenti ci sarebbero quasi tanti generi quanti sono i canali. Se pero' vuoi vedere la lista dei generi cosi' come definita da ciascun canale, disabilita questo parametro.
-	NL	Standaard zijn genres genormaliseerd op sleutelwoorden omdat er anders vrijwel net zoveel genres zouden zijn als streams. Zet deze optie uit als je de genre lijst wilt zien zoals gedefinieerd door elke stream
+	NL	Standaard worden de genre namen genormaliseerd. Anders krijg je net zoveel genres als er streams zijn! Als je de genres wilt zien zoals ze zijn aangemaakt in elke stream moet je deze instelling uitzetten.
 ^;
 }
 

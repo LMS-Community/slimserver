@@ -3183,6 +3183,7 @@ SETUP_MMMVARIETY_DESC
 MUSICMAGIC_MIXING
 	EN	MusicMagic Mixing
 	ES	Mezcla MusicMagic
+	NL	MusicMagic mixing
 	ZH_CN	MusicMagic混音
 
 SETUP_MMMPLAYERSETTINGS
@@ -3216,6 +3217,7 @@ MUSICMAGIC_MIXRIGHT
 MOODLOGIC_MIXING
 	EN	MoodLogic Mixing
 	ES	Mezcla MoodLogic
+	NL	MoodLogic mixing
 	ZH_CN	MoodLogic混音中
 
 FOLDER
@@ -6317,7 +6319,7 @@ SETUP_FILTERRULE_DESC
 	HE	ניתן לציין רשימת כתובות, המופרדות בפסיקים, להם תותר גישה. מותר גם שימוש ב * לציון קבוצת כתובות
 	IT	Se hai abilitato il blocco, puoi inserire gli indirizzi ai quali permettere la connessione allo SlimServer.  Questo campo accetta una lista di specifici indirizzi IP, il carattere jolly *, ed intervalli di indirizzi IP in una lista separata da virgole. Per esempio:    10.1.2.2 accettera' la connessione solo da 10.1.2.2    10.1.2.* accettera' la connessione a tutti gli indirizzi che iniziano con 10.1.2.x    10.1.2.2-50 accettera' la connessione degli indirizzi IP nell'intervallo 10.1.2.2 e 10.1.2.50    Per finire, piu' voci possono essere unite con virgole, come queste:  10.1.2.2,172.16.1.*,192.168.1-255.*    L'indirizzo IP speciale 127.0.0.1 permette al browser di connettersi allo SlimServer in funzione su quello stesso computer.
 	JA	ブロックする、と指定したのであれば、SlimServerに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがSlimServerに接続する時に接続を可能にします。
-	NL	Indien je 'Blokkeren' hebt ingesteld kun je de adressen ingeven die je toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, wildcards zoals '*' en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de servermachine zelf draaien.
+	NL	Indien je 'Blokkeren' hebt ingesteld kun je de adressen ingeven die je toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, wildcards zoals '*' en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de server zelf draaien.
 	NO	Hvis du har aktivert blokkering kan du liste de IP-adresser du vil tillate skal kunne koble seg til SlimServer.<br><br>Dette feltet aksepterer en komma-separert liste med IP-adresser som f.eks:<br><br><b>10.1.2.2</b> vil bare tillate 10.1.2.2 å koble til<br><br><b>10.1.2.*</b> vil tillate alle IP-adresser av formatet 10.1.2.*<br><br><b<10.1.2.2-50</b> vil tillate IP-adresser i området 10.1.2.2 til 10.1.2.50<br><br>Ulike typer kan kombineres med komma slik: <b>10.1.2.2,172.61.1.*,192.168.1-255.*</b><br><br>IP-adressen 127.0.0.1 tillater web browsere å koble til SlimServer som kjøres lokalt på maskinen.
 	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao SlimServer.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
 	SV	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till SlimServer.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som SlimServer att ansluta.
@@ -7965,16 +7967,11 @@ BAND
 	ZH_CN	乐队
 
 ALBUM
-	DE	Album
-	DA	Album
 	EN	Album
 	ES	Álbum
 	FI	Levyn nimi
-	FR	Album
 	HE	אלבום
 	JA	アルバム
-	NL	Album
-	NO	Album
 	PT	Álbum
 	SV	Album
 	ZH_CN	乐谱帖
@@ -7982,7 +7979,6 @@ ALBUM
 DISC
 	CS	Disk
 	DE	Disk
-	DA	Disc
 	EN	Disc
 	ES	Disco
 	FI	Levy
@@ -8039,16 +8035,14 @@ DIR
 
 APE
 	EN	Monkey's Audio
-	ES	Monkey's Audio
+	NL	Monkey's audio
 
 MP3
 	CS	mp3
 	EN	MP3
-	ES	MP3
 
 MP2
 	EN	MP2
-	ES	MP2
 
 MOV
 	DE	Apple AAC- oder Film-Datei
@@ -8092,7 +8086,6 @@ MPC
 
 SHN
 	EN	Shorten
-	NL	Verkorten
 
 WMA
 	EN	Windows Media
@@ -10799,12 +10792,14 @@ MOODLOGIC_MIX
 MUSICMAGIC_MIX
 	EN	MusicMagic Mix
 	ES	Mezcla MusicMagic
+	NL	MusicMagic mix
 	ZH_CN	MusicMagic混音
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
 	ES	Mezcla instantánea de MoodLogic
 	FI	MoodLogic välitön sekoitus
+	NL	MoodLogic instant mix
 	ZH_CN	MoodLogic即时混音
 
 MOODLOGIC_MOOD_0
@@ -11926,7 +11921,7 @@ SETUP_SCROLLMODE_DESC
 	FI	Voit valita mitä soitin näyttää ruudun toisella rivillä, kun teksti on liian pitkä mahtuakseen ruudulle. Vakio horisontaalinen vieritystila odottaa vierityksen taukointervallin verran ja vierittää sitten tekstiä näyttääkseen koko rivin. Vieritys jatkuu niin kauan kun soitin näyttää samaa tietoa. Vaihtoehtoiset tilat mahdollistavat tekstin vierityksen kerran tai ei vieritystä lainkaan.
 	HE	סוג הגלגול כאשר טקסט מוצג גדול מהתצוגה הנראית
 	IT	Puoi selezionare come il lettore visualizzera' il testo troppo lungo sulla seconda linea dello schermo. Il modo di scorrimento standard aspettera' il tempo impostato in Pausa di scorrimento e quindi scorrera' il testo per visualizzare l'intera linea. Lo scorrimento continuera' fino a che il lettore visualizzera' questa schermata. I modi alternativi sono lo scorrimento una sola volta o il non scorrimento.
-	NL	Je kunt selecteren hoe de speler de tekst op de tweede regel moet tonen als die te lang is om in ÃÂ©ÃÂ©n keer te laten zien.<br>De standaard "Tekst laten lopen" optie wacht tot de pauzeinterval voorbij is en laat dan de tekst lopen. Het lopen zal voortduren zolang de tekst op het scherm getoond wordt.<br>De alternatieve manieren laten  de tekst ÃÂ©ÃÂ©n keer lopen en stopt vervolgens of laat de tekst in het geheel niet lopen.
+	NL	Je kunt selecteren hoe de speler de tekst op de tweede regel moet tonen als die te lang is om in één keer te laten zien.<br>De standaard "Tekst laten lopen" optie wacht tot de pauze interval voorbij is en laat dan de tekst lopen. Het lopen zal voortduren zolang de tekst op het scherm getoond wordt.<br>De alternatieve manieren laten  de tekst één keer lopen en stopt vervolgens of laat de tekst in het geheel niet lopen.
 	ZH_CN	您可以选择播放机在文体太长无法恰当显示时如何将其显示在第二行。
 
 SETUP_SCROLLMODE_DEFAULT

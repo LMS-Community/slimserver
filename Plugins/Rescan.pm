@@ -279,7 +279,8 @@ sub setupGroup {
 };
 
 sub strings {
-	return q^PLUGIN_RESCAN_MUSIC_LIBRARY
+	return q^
+PLUGIN_RESCAN_MUSIC_LIBRARY
 	CS	Aktualizovat informace z hudebního archivu
 	DE	Musikverzeichnis erneut durchsuchen
 	EN	Rescan Music Library
@@ -288,7 +289,7 @@ sub strings {
 	FR	Répertorier musique
 	HE	תוסף סריקת הסיפריה
 	NL	Opnieuw scannen muziekcollectie
-	
+
 PLUGIN_RESCAN_RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu
 	DE	Server durchsucht Verzeichnisse...
@@ -308,11 +309,11 @@ PLUGIN_RESCAN_PRESS_PLAY
 
 PLUGIN_RESCAN_TIMER_NAME
 	CS	Časovač aktualizace
-	DE	Automatisches Durchsuchen 
+	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
 	ES	Timer de Recopilación
 	HE	מצב התוסף
-	NL	Herscantimer
+	NL	Herscan timer
 
 PLUGIN_RESCAN_TIMER_SET
 	CS	Nastavte čas pravidelné aktualizace
@@ -320,7 +321,7 @@ PLUGIN_RESCAN_TIMER_SET
 	EN	Set Rescan Time
 	ES	Establecer Horario de Recopilación
 	HE	שעת הסריקה
-	NL	Stel herscantijd in 
+	NL	Stel herscan tijd in
 
 PLUGIN_RESCAN_TIMER_TURNING_OFF
 	CS	Vypínám automatickou aktualizaci...
@@ -328,7 +329,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	EN	Turning rescan timer off...
 	ES	Apagando el timer de recopilación...
 	HE	מכבה טיימר סריקה
-	NL	Bezig met herscantimer uitzetten...
+	NL	Uitzetten herscan timer...
 
 PLUGIN_RESCAN_TIMER_TURNING_ON
 	CS	Zapínám automatickou aktualizaci...
@@ -336,7 +337,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	EN	Turning rescan timer on...
 	ES	Encendiendo el timer de recopilación...
 	HE	מדליק טיימר סריקה
-	NL	Bezig met herscantimer aanzetten...
+	NL	Aanzetten herscan timer...
 
 PLUGIN_RESCAN_TIMER_ON
 	CS	Časovač aktualizace zapnut
@@ -344,7 +345,7 @@ PLUGIN_RESCAN_TIMER_ON
 	EN	Rescan Timer ON
 	ES	Timer de Recopilación ENCENDIDO
 	HE	הדלק סריקת ספרייה אוטומטית
-	NL	Herscantimer aan
+	NL	Herscan timer AAN
 
 PLUGIN_RESCAN_TIMER_DESC
 	CS	Můžete zvolit automatickou denní aktualizaci informací z hudebního archivu. Nastavte čas, kdy se má aktualizace provést a volbou ON tuto funkci aktivujte.
@@ -352,7 +353,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede elegir tener una recopilación programada de la colección musical cada 24 horas. Establecer la hora, y poner el Timer de Recopilación en ENCENDIDO para utilizar esta característica.
 	HE	תוסף זה מעדכן את הסיפריה בכל 24 שעות
-	NL	Je kunt kiezen voor een om het scannen van de muziekcollectie elke 24 uur te plannen. Stel de tijd in en zet de herscantimer Aan om deze optie te gebruiken.
+	NL	Je kunt het gepland herscannen van je muziekcollectie instellen per 24 uur. Stel de tijd in en zet de herscan timer op AAN om deze optie te gebruiken.
 
 PLUGIN_RESCAN_TIMER_OFF
 	CS	Časovač aktualizace vypnut
@@ -360,7 +361,7 @@ PLUGIN_RESCAN_TIMER_OFF
 	EN	Rescan Timer OFF
 	ES	Timer de Recopilación APAGADO
 	HE	כבה סריקת ספרייה אוטומטית
-	NL	Herscantimer uit
+	NL	Herscan timer UIT
 ^;
 }
 

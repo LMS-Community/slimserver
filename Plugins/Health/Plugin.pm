@@ -335,10 +335,10 @@ PLUGIN_HEALTH_SUMMARY
 	NL	Samenvatting
 
 PLUGIN_HEALTH_SUMMARY_DESC
-	DE	Bitte erstellen Sie eine Wiedergabeliste auf ihrem Player und starten Sie die Wiedergabe. Drücken Sie dann "Zähler zurücksetzen", um die Statistiken neu zu starten und die Anzeige zu aktualisieren. 
+	DE	Bitte erstellen Sie eine Wiedergabeliste auf ihrem Player und starten Sie die Wiedergabe. Drücken Sie dann "Zähler zurücksetzen", um die Statistiken neu zu starten und die Anzeige zu aktualisieren.
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset Counters link above to clear the statistics and update this display.
 	ES	Por favor, encolar varias pistas para escuchar en este reproductor, y empezar a reproducir. Luego presionar en el link "Reiniciar Contadores" más arriba para limpiar las estadísticas y actualizar el display.
-	NL	Zet een aantal liedjes in de playlist voor deze speler en start afspelen. Klik dan op Terugzetten tellers hierboven om de statistieken leeg te maken en het scherm bij te werken.
+	NL	et een aantal liedjes in de playlist voor deze speler en start afspelen. Klik dan op Terugzetten tellers hierboven om de statistieken leeg te maken en het scherm bij te werken.
 
 PLUGIN_HEALTH_PLAYERDETAIL
 	DE	Player-Leistung
@@ -352,7 +352,7 @@ PLUGIN_HEALTH_PLAYERDETAIL_DESC
 	EN	The graphs shown here record the long term trend for each of the player performance measurements below.  They display the number and percentage of measurements which fall within each measurement band.<p>It is imporant to leave the player playing for a while and then assess the graphs.
 	ES	Los gráficos mostrados aquí registran la tendencia a largo plazo de las mediciones de perfomance de los reproductores debajo. Muestran el nómero y porcentaje de mediciones que caen dentro de cada banda de medición.    Es importante dejar el reproductor funcionando durante un tiempo antes de considerar los gráficos.
 	HE	הגרף מציג סטטיסטיקות. בדוק אותו לאחר הפעלת התוסף המתאים לאורך זמן מה
-	NL	De hier getoonde grafieken laten de langetermijntrend zien voor de speler prestatiemetingen hieronder. Ze laten het getal en percentage zien van de metingen die in elk metingsgebied valt.  <br>Het is belangrijk om de speler een tijdje te laten spelen en daarna de grafieken te raadplegen.
+	NL	De hier getoonde grafieken laten de langetermijn trend zien voor de speler prestatiemetingen hieronder. Ze laten het getal en percentage zien van de metingen die in elk metingsgebied valt.  <br>Het is belangrijk om de speler een tijdje te laten spelen en daarna de grafieken te raadplegen.
 
 PLUGIN_HEALTH_SIGNAL
 	DE	Signalstärke
@@ -375,7 +375,7 @@ PLUGIN_HEALTH_BUFFER
 	NL	Bufferniveau
 
 PLUGIN_HEALTH_BUFFER_DESC
-	DE	Diese Graphik zeigt den Puffer-Füllstand ihres Players. Höhere Werte sind besser. Beachten Sie bitte, dass der Puffer nur während der Wiedergabe gefüllt wird.<p>Die Squeezebox1 besitzt nur einen kleinen Puffer, der während der Wiedergabe stets voll sein sollte. Fällt der Wert auf 0, so ist mit Aussetzern in der Wiedergabe zu rechnen. Dies wäre vermutlich auf Netzwerkprobleme zurückzuführen.<p>Die Squeezebox2/3 verwendet einen grossen Puffer. Dieser wird am Ende jedes wiedergegebenen Liedes geleert (Füllstand 0) um dann wieder aufzufüllen. Der Füllstand sollte also meist hoch sein.<p>Die Wiedergabe von Online-Radiostationen kann zu niedrigem Puffer-Füllstand führen, da der Player auf die Daten von einem entfernten Server warten muss. Dies ist normales Verhalten und kein Grund zur Beunruhigung. 
+	DE	Diese Graphik zeigt den Puffer-Füllstand ihres Players. Höhere Werte sind besser. Beachten Sie bitte, dass der Puffer nur während der Wiedergabe gefüllt wird.<p>Die Squeezebox1 besitzt nur einen kleinen Puffer, der während der Wiedergabe stets voll sein sollte. Fällt der Wert auf 0, so ist mit Aussetzern in der Wiedergabe zu rechnen. Dies wäre vermutlich auf Netzwerkprobleme zurückzuführen.<p>Die Squeezebox2/3 verwendet einen grossen Puffer. Dieser wird am Ende jedes wiedergegebenen Liedes geleert (Füllstand 0) um dann wieder aufzufüllen. Der Füllstand sollte also meist hoch sein.<p>Die Wiedergabe von Online-Radiostationen kann zu niedrigem Puffer-Füllstand führen, da der Player auf die Daten von einem entfernten Server warten muss. Dies ist normales Verhalten und kein Grund zur Beunruhigung.
 	EN	This graph shows the fill of the player\'s buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2/3 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
 	ES	Este gráfico muestra el llenado del buffer del reproductor. Cuanto más lleno esté mejor es. Notar que el buffer solo se llena cuando el reproductor está reproduciendo pistas.    Squeezebox1 utiliza un buffer pequeño y se espera que permanezca lleno mientras se reproduce. Si este valor cae a 0 se producirán interrupciones en el audio. Esto se debe muy probablemente a problemas de red.    Squeezebox2/3 utiliza un buffer grande. Este se vacía (vuelve a 0) al final de cada pista y luego se llena nuevamente para la próxima pista. Solo debería precupar el caso en que el llenado del buffer no tiene un nivel alto durante la mayoría del tiempo en que se esta reproduciendo una pista.    El reproducir streams remotos puede producir que el buffer tenga un nivel de llenado bajo, ya que el reproductor necesitas esperar que lleguen datos del servidor remoto. Esto no es causa para preocuparse.
 	HE	תצוגה גרפית של סטטיסטיקות
@@ -412,7 +412,7 @@ PLUGIN_HEALTH_SERVER_PERF_DESC
 	DE	Die folgenden Graphen zeigen den Langzeit-Trend für alle Server-Leistungsdaten auf. Sie zeigen die Anzahl und den Prozentanteil der Messungen, die in eine bestimmte Wertekategorie fallen.
 	EN	The graphs shown here record the long term trend for each of the server performance measurements below.  They display the number and percentage of measurements which fall within each measurement band.
 	ES	Los gráficos mostrados aquíÂ­ registran la tendencia a largo plazo de las mediciones de perfomance de   los servidores debajo. Muestran el nómero y porcentaje de mediciones que caen dentro de cada banda de medición.
-	NL	De hier getoonde grafieken laten de langetermijntrend zien van de server prestatiemetingen hieronder. Ze laten het getal en percentage zien van de metingen die in elk metingsgebied valt.
+	NL	De hier getoonde grafieken laten de langetermijn trend zien van de server prestatiemetingen hieronder. Ze laten het getal en percentage zien van de metingen die in elk metingsgebied valt.
 
 PLUGIN_HEALTH_TIMER_LATE
 	DE	Timer Genauigkeit
@@ -421,21 +421,21 @@ PLUGIN_HEALTH_TIMER_LATE
 	NL	Timeraccuraatheid
 
 PLUGIN_HEALTH_TIMER_LATE_DESC
-	DE	SlimServer benutzt einen Timer, um Ereignisse wie z.B. Updates der Programmoberfläche zu steuern. Diese Graphik zeigt die Genauigkeit, mit welcher Timer-gesteuerte Abläufe im Vergleich zum vorgesehenen zeitlichen Ablauf ausgeführt werden. Die Masseinheit ist Sekunden.<p>Aufgaben werden auf einen bestimmten Zeitpunkt festgelegt. Da stets nur ein Timer ablaufen kann und der Server auch andere Aktivitäten ausführt, kommt es stets zu einer minimalen Verzögerung. Kommt es allerdings zu einer markanten Verzögerung, so kann es zu wahrnehmbaren Störungen der Benutzeroberfläche kommen. 
+	DE	SlimServer benutzt einen Timer, um Ereignisse wie z.B. Updates der Programmoberfläche zu steuern. Diese Graphik zeigt die Genauigkeit, mit welcher Timer-gesteuerte Abläufe im Vergleich zum vorgesehenen zeitlichen Ablauf ausgeführt werden. Die Masseinheit ist Sekunden.<p>Aufgaben werden auf einen bestimmten Zeitpunkt festgelegt. Da stets nur ein Timer ablaufen kann und der Server auch andere Aktivitäten ausführt, kommt es stets zu einer minimalen Verzögerung. Kommt es allerdings zu einer markanten Verzögerung, so kann es zu wahrnehmbaren Störungen der Benutzeroberfläche kommen.
 	EN	Slimserver uses a timer mechanism to trigger events such as updating the user interface.  This graph shows how accurately each timer task is run relative to the time it was intended to be run.  It is measured in seconds.<p>Timer tasks are scheduled by the server to run at some point in the future.  As only one timer task can run at once and the server may also be performing other activity, timer tasks always run slightly after the time they are scheduled for.  However if timer tasks run significantly after they are scheduled this can become noticable through delay in the user interface.
 	ES	Slimserver usa un mecanismo de "timer" para disparar eventos, tales como la actualización de la interface de usuario.  Este gráfico muestra que tan preciso es cada tarea del "timer" para ejecutarse en relación al momento en que se intentaba que corriera. Se mide en segundos.    Las tareas de "timers" con planificadas por el servidor para ser corridas en algón momento en el futuro. Como solo una tarea de "timer" puede correr por vez, y ademá el servidor puede estar desarrollando alguna otra actividad, las tareas de "timer"siempre corren levemente después del momento para el cual se las había planificado.   Sin embargo, si las tareas corren significativamente más tarde de lo planificado, esto puede percibirse como un retraso en la interface de usuario.
 	HE	זמן התגובה לרענון ממשק האינטרנט
-	NL	SlimServer gebruikt een timermechanisme om zaken zoals het bijwerken van de gebruikersinterface te activeren. Deze grafiek toont hoe accuraat elke timertaak is uitgevoerd relatief tot de tijd waarin het uitgevoerd had moeten worden. De uitkomst is in seconden.  <br>Timertaken worden gepland door de server om op een moment in de toekomst te draaien. Daar slechts 1 timertaak tegelijk kan draaien en de server ook andere taken uitvoert draaien timertaken altijd korte tijd nadat ze gepland zijn. Als timertaken echter significant later draaien dan gepland kan dit in de gebruikersinterface merkbaar worden als vertraging.
+	NL	SlimServer gebruikt een timermechanisme om zaken zoals het bijwerken van de gebruikersinterface te activeren. Deze grafiek toont hoe accuraat elke timertaak is uitgevoerd relatief tot de tijd waarin het uitgevoerd had moeten worden. De uitkomst is in seconden.  <br>Timertaken worden gepland door de server om op een moment in de toekomst te draaien. Daar slechts &eacute;&eacute;n timertaak tegelijk kan draaien en de server ook andere taken uitvoert draaien timertaken altijd korte tijd nadat ze gepland zijn. Als timertaken echter significant later draaien dan gepland kan dit in de gebruikersinterface merkbaar worden als vertraging.
 
 PLUGIN_HEALTH_TIMER_LENGTH
-	DE	Timer Ausführungsdauer 
+	DE	Timer Ausführungsdauer
 	EN	Timer Task Duration
 	ES	Duración de Tarea de Timer
 	FI	Ajastimen tehtävän kesto
 	NL	Timertaakduur
 
 PLUGIN_HEALTH_TIMER_LENGTH_DESC
-	DE	Diese Graphik zeigt die Dauer, während der Timer-gesteuerte Abläufe ausgeführt werden. Die Masseinheit ist Sekunden. Braucht ein Vorgang länger als 0.5 Sekunden, so führt das mit grosser Wahrscheinlichkeit zu Störungen der Benutzeroberfläche.  
+	DE	Diese Graphik zeigt die Dauer, während der Timer-gesteuerte Abläufe ausgeführt werden. Die Masseinheit ist Sekunden. Braucht ein Vorgang länger als 0.5 Sekunden, so führt das mit grosser Wahrscheinlichkeit zu Störungen der Benutzeroberfläche.
 	EN	This graph shows how long each timer task runs for.  It is measured in seconds.  If any timer task takes more than 0.5 seconds this is likely to impact the user interface.
 	ES	Este gráfico muestra durante cuanto tiempo corre cada "timer". Se mide en segundos. Si cualquier tarea de un "timer" toma más de 0.5 segundos, es muy probable que esto impacte en la interface de usuario.
 	HE	במידה והגרף מציג זמנים ארוכים מחצי שניה, בדוק עומס על השרת
@@ -452,7 +452,7 @@ PLUGIN_HEALTH_RESPONSE_DESC
 	EN	This graph shows the length of time between slimserver responding to requests from any player.  It is measured in seconds. Lower numbers are better.  If you notice response times of over 1 second this could lead to problems with audio performance.<p>The cause of long response times could be either other programs running on the server or slimserver processing a complex task.
 	ES	Este gráfico muestra el tiempo de respuesta de Slimserver a requerimientos de cualquier reproductor. Se mide en segundos. Valores bajos son mejores. Si se nota tiempos de respuesta de más de 1 segundo esto puede producir problemas con la perfomance de audio.    La causa de tiempos de respuesta grandes puede ser o bien otros programas corriendo en el servidor, o bien que Slimserver esté procesando una tarea compleja.
 	HE	במידה וגרף זה מציג זמנים מעל שניה אחת יש בעיה ברשת או שהשרת עמוס
-	NL	Deze grafiek toont de tijd waarbinnen SlimServer reageert op verzoeken van de speler. De uitkomst is in seconden. Lagere waardes zijn beter. Als je reactietijden hebt van meer dan 1 seconde kan dit leiden tot problemen bij afspelen van audio.  <br>De oorzaak van lange reactietijden kan liggen bij andere programma\'s die draaien op de servermachine of dat SlimServer een complexe taak uitvoert.
+	NL	Deze grafiek toont de tijd waarbinnen SlimServer reageert op verzoeken van de speler. De uitkomst is in seconden. Lagere waardes zijn beter. Als je reactietijden hebt van meer dan 1 seconde kan dit leiden tot problemen bij afspelen van audio.  <br>De oorzaak van lange reactietijden kan liggen bij andere programma's die draaien op de server of dat SlimServer een complexe taak uitvoert.
 
 PLUGIN_HEALTH_SCHEDULER
 	DE	Geplante Aufgaben
@@ -461,11 +461,11 @@ PLUGIN_HEALTH_SCHEDULER
 	NL	Geplande taken
 
 PLUGIN_HEALTH_SCHEDULER_DESC
-	DE	Der Server führt Prozessor-intensive Aufgaben wie z.B. das Durchsuchen nach neuen Musikstücken in Etappen aus, welche zwischen Anfragen von Playern durchgeführt werden. Diese Graphik zeigt die Länge in Sekunden, die eine Ausführung dauert, bevor der Server die Kontrolle wieder übernehmen kann. Aufgaben, welche länger als 0.5 Sekunden dauern, können zu Störungen der Benutzeroberfläche führen. 
+	DE	Der Server führt Prozessor-intensive Aufgaben wie z.B. das Durchsuchen nach neuen Musikstücken in Etappen aus, welche zwischen Anfragen von Playern durchgeführt werden. Diese Graphik zeigt die Länge in Sekunden, die eine Ausführung dauert, bevor der Server die Kontrolle wieder übernehmen kann. Aufgaben, welche länger als 0.5 Sekunden dauern, können zu Störungen der Benutzeroberfläche führen.
 	EN	The server runs processor intensive tasks (such as scanning your music collection) by breaking them into short pieces which are scheduled when when active players are not requesting data.  This graph shows the length of time in seconds that a scheduled task runs for before returning control to the server.  Tasks taking over 0.5 second may lead to reduced performance for the user interface.
 	ES	El servidor ejecuta tareas que son intensivas en el procesador (tales como recopilar la colección musical) diviendolas en piezas mas pequeñas, que se planifican para ejecutar cuando los reproductores activos no están requiriendo datos. Este gráfico muestra el tiempo (en segundos) durante el que corre una tarea planificada antes de devolver el control al servidor. Las tareas que toman más de 0.5 segundo pueden influir en reducir la perfomance de la interface de usuario.
 	HE	במחשבים ישנים עליית השרת יכולה להעמיס על המחשב ולהאט אותו. ביר כאן לעליה מבוקרת של השרת
-	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu\'s).
+	NL	De server draait processorintensieve taken (zoals het scannen van je muziekcollectie) door deze op te breken in korte stukken die vervolgens gepland worden op momenten dat spelers niet vragen om gegevens. Deze grafiek toont de tijd in seconden dat een geplande taak draait voordat hij controle teruggeeft aan de server. Taken die meer tijd in beslag nemen dan 0.5 seconden kunnen leiden tot een slechtere prestatie van de gebruikersinterface (haperende menu's).
 
 PLUGIN_HEALTH_IRRESPONSE
 	DE	Infrarot Antwortzeit
@@ -501,21 +501,21 @@ PLUGIN_HEALTH_INACTIVE
 	DE	Inaktiv
 	EN	Inactive
 	ES	Inactivo
-	IT	Inattivo
 	FI	Ei aktiivinen
+	IT	Inattivo
 	NL	Inactief
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
-	DE	Derzeit existiert keine aktive Verbindung zu diesem Gerät. Eine Verbindung ist notwendig, um eine Datei zum Player übertragen zu können. Squeezebox2/3 können die Streaming-Verbindung gegen Ende eines Liedes schliessen, sobald die Daten im Puffer auf dem Gerät angekommen sind. Das ist kein Grund zur Beunruhigung.<p>Falls Sie Probleme haben, Musikdateien abzuspielen und Sie nie eine aktive Verbindung sehen, dann kann das auf Netzwerkprobleme hindeuten. Bitte verifizieren Sie, dass das Netzwerk und/oder die Firewall Verbindungen auf Port 9000 nicht blockieren. 
+	DE	Derzeit existiert keine aktive Verbindung zu diesem Gerät. Eine Verbindung ist notwendig, um eine Datei zum Player übertragen zu können. Squeezebox2/3 können die Streaming-Verbindung gegen Ende eines Liedes schliessen, sobald die Daten im Puffer auf dem Gerät angekommen sind. Das ist kein Grund zur Beunruhigung.<p>Falls Sie Probleme haben, Musikdateien abzuspielen und Sie nie eine aktive Verbindung sehen, dann kann das auf Netzwerkprobleme hindeuten. Bitte verifizieren Sie, dass das Netzwerk und/oder die Firewall Verbindungen auf Port 9000 nicht blockieren.
 	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transfered to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
-	NL	Er is op dit moment geen actieve streaming connectie naar deze speler. Een connectie is nodig om een stream te sturen naar je speler. Squeezebox 2/3 kunnen een connectie sluiten tegen het einde van een nummer zodra het verstuurd is naar de buffer in de speler. Dit wijst niet op een probleem.  <br>  Als je problemen hebt bij het afspelen van bestanden en nooit een actieve connectie ziet kan dit de een indicatie zijn van een netwerkprobleem. Controleer of je netwerk en/of je serverfirewall geen connecties naar TCP poort 9000 blokkeren.
+	NL	Er is op dit moment geen actieve connectie voor het streamen naar deze speler. Een connectie is altijd nodig om bestanden te spelen vanaf de server (maar niet als je een radiostream op afstand gebruikt bij een Squeezebox2 of 3)  <br>  Als je een lokaal bestand probeert af te spelen dan wijst dit op een netwerkprobleem. Controleer of je netwerk en/of server firewall niet TCP poort 9000 blokkeren.
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
 	DE	Derzeit ist keine aktive Kontroll-Verbindung für diesen Player vorhanden. Bitte stellen Sie sicher, dass das Gerät eingeschaltet ist. Falls der Player keine Netzwerkverbindung aufbauen kann, überprüfen sie bitte die Netzwerkkonfiguration und/oder Firewall. Diese darf TCP und UPD Ports 3483 nicht blockieren.
 	EN	There is no currently active control connection to this player.  Please check the player is powered on.  If the player is unable to establish a connection, please check your network and and/or server firewall do not block connections to TCP & UDP port 3483.
 	ES	No existe una conexión de control activa a este reproductor. Por favor, verificar que el reproductor esté encendido. Si el reproductor no puede establecer una conexión,  por favor, verificar que la red y/o el firewall del servidor no estén bloqueando las conexiones TCP y UDP  en el puerto 3483.
 	HE	הנגן לא מחובר. בדוק אם הוא מחובר לחשמל
-	NL	Er is momenteel geen actieve controleconnectie naar deze speler. Controleer of de speler aan staat. Controleer of je netwerk en/of serverfirewall geen connecties blokkeren naar TCP & UDP poort 3483 als je speler geen connectie kan maken.
+	NL	Er is momenteel geen actieve controleconnectie naar deze speler. Controleer of de speler aan staat. Controleer of je netwerk en/of server firewall geen connecties blokkeren naar TCP & UDP poort 3483 als je speler geen connectie kan maken.
 
 PLUGIN_HEALTH_CONTROLCONGEST_DESC
 	DE	Die Kontroll-Verbindung zu diesem Player hat Überlastungen erfahren. Dies ist üblicherweise ein Hinweis auf schlechte Netzwerkverbindung, oder dass das Gerät vor kurzem vom Netz genommen wurde.
@@ -525,7 +525,7 @@ PLUGIN_HEALTH_CONTROLCONGEST_DESC
 	NL	De controleconnectie naar deze speler heeft last gehad van congestie. Dit is meestal een indicatie van een slechte netwerkconnectie (of een speler die recent van het netwerk losgekoppeld is geweest).
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT
-	DE	Gut, aber mit vereinzelten Ausfällen 
+	DE	Gut, aber mit vereinzelten Ausfällen
 	EN	Good, but Intermittent Drops
 	ES	Buena, pero con Cortes Intermitentes
 	FI	Hyvä, mutta satunnaisia katkoja
@@ -574,7 +574,7 @@ PLUGIN_HEALTH_BUFFER_LOW_DESC1
 	EN	The playback buffer for this player is occasionally falling lower than ideal.  This may result in audio dropouts especually if you are streaming as WAV/AIFF.  If you are hearing these, please check your network signal strength and server response times.
 	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Esto puede producir interrupciones en el audio, especialmente si se está transmitiendo en formato WAV/AIFF. Si se escuchan estos, por favor, controlar la potencia de señal de red y los tiempos de respuesta del servidor.
 	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
-	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit kan resulteren in audiohaperingen, zeker als je WAV/AIFF streamt. Controleer de netwerksignaalsterkte en de snelheid waarmee de server reageert als je haperingen hoort.
+	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit kan resulteren in audio haperingen, zeker als je WAV/AIFF streamt. Controleer de netwerksignaalsterkte en de snelheid waarmee de server reageert als je haperingen hoort.
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC2
 	DE	Der Wiedergabe-Puffer dieses Players ist zeitweise niedriger als wünschenswert. Dies ist eine Squeezebox2/3, es ist daher normal, dass der Puffer am Ende eines Liedes geleert wird. Diese Warnung wird ev. angezeigt, falls Sie viele kurze Lieder wiedergeben. Falls Sie Tonaussetzer feststellen, überprüfen Sie bitte die Signalstärke.
@@ -595,7 +595,7 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
 	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.
 	ES	El tiempo de respuesta del servidor es ocasionalmente más alto que el deseado. Esto puede causar interrupciones audio, especialmente en los reproductores Slimp3 y Squeezebox1. Puede deberse a una carga de procesos de fondo, o a que una tarea de Slimserver está tomando más tiempo que el normal.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma\'s zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
+	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma's zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
 
 PLUGIN_HEALTH_RESPONSE_POOR
 	DE	Schlechte Antwortzeiten
@@ -623,13 +623,13 @@ PLUGIN_HEALTH_NO_PLAYER_DESC
 	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
 	ES	Slimserver no puede encontrar ningón reproductor. Si existe un reproductor esto puede deberse a bloqueos de conexión de red entre el servidor y el reproductor. Por favor, verificar que la red y/o el firewall del servidor no estén bloqueando las conexiones TCP y UDP en el puerto 3483.
 	HE	השרת לא מוצא נגן, בדוק רשת וחומת אש
-	NL	SlimServer kan geen speler vinden. Als je een speler hebt kan dit komen door een netwerk dat connecties blokkeert tussen de speler en server. Controleer of je netwerk en/of serverfirewall niet TCP & UDP poort 3483 blokkeert.
+	NL	SlimServer kan geen speler vinden. Als je een speler hebt kan dit komen door een netwerk dat connecties blokkeert tussen de speler en server. Controleer of je netwerk en/of server firewall niet TCP & UDP poort 3483 blokkeert.
 
 PLUGIN_HEALTH_SLIMP3_DESC
 	DE	Sie verwenden einen SliMP3 Player. Für diesen stehen nicht die vollen Messungen zur Verfügung.
 	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.
 	ES	Este es un reproductor SLIMP3. Medidas completas de perfomance no están disponibles para este reproductor.
-	NL	Dit is een Slimp3 speler. Volledig prestatiemonitoring is niet beschikbaar voor deze speler.
+	NL	Dit is een Slimp3 speler. Volledige prestatiemonitoring is niet beschikbaar voor deze speler.
 
 PLUGIN_HEALTH_NETTEST
 	DE	Netzwerktest
@@ -683,7 +683,6 @@ PLUGIN_HEALTH_NETTEST_STOPTEST
 	DE	Test anhalten
 	EN	Stop Test
 	NL	Stop test
-
 '
 }
 

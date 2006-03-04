@@ -66,14 +66,14 @@ PLUGIN_PICKS_MODULE_NAME
 	EN	Slim Devices Picks
 	ES	Preferidas de Slim Devices
 	HE	המומלצים
-	NL	Slim Devices tips
+	NL	De beste van Slim Devices
 
 PLUGIN_PICKS_LOADING_PICKS
 	DE	Lade Slim Devices Picks...
 	EN	Loading Slim Devices Picks...
 	ES	Cargando las Preferidas de Slim Devices...
 	HE	טוען מועדפים
-	NL	Laden Slim Devices tips...
+	NL	Laden van de beste van Slim Devices...
 ";}
 
 1;

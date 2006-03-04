@@ -100,13 +100,13 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
 	IT	Necessita Squeezebox2/3
-	NL	Squeezebox2 nodig
+	NL	Squeezebox2/3 nodig
 
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum Analyzer
 	ES	Analizador de Espectro
 	IT	Analizzatore di spettro
-	NL	Spectrum analysator
+	NL	Spectrum analyser
 
 PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
@@ -126,9 +126,9 @@ PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
-	EN	Press -> to enable this screensaver 
+	EN	Press -> to enable this screensaver
 	ES	Presionar -> para activar este salvapantallas
-	NL	Druk -> om deze schermbeveiliger aan te zetten
+	NL	Druk -> om deze schermbeveiliger te activeren
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	CS	Spořič je nastaven
@@ -137,7 +137,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	ES	Este salvapantallas está activo
 	FI	Tämä ruudunsäästäjä on kytketty
 	IT	Questo salvaschermo e\' abilitato
-	NL	Deze schermbeveiliger is aan
+	NL	Deze schermbeveiliger is actief
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
@@ -145,8 +145,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
 	IT	Salvaschermo di default
-	NL	standaard schermbeveiliger
-
+	NL	Standaard schermbeveiliger
 '};
 
 ##################################################
