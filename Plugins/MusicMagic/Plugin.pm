@@ -32,20 +32,24 @@ our %artwork = ();
 
 our %mixMap  = (
 	'add.single' => 'play_1',
-	'add.hold' => 'play_2'
+	'add.hold'   => 'play_2'
 );
 
 our %mixFunctions = ();
 
 our %validMixTypes = (
-	'track'   => 'song',
+	'track'  => 'song',
 	'album'  => 'album',
 	'artist' => 'artist',
 	'genre'  => 'genre',
+	'mood'   => 'mood',
 );
 
 sub strings {
-	return '';
+	return '
+MUSICMAGIC_MOODS
+	EN	MusicMagic Mood Mix
+	';
 }
 
 sub getFunctions {
@@ -176,7 +180,13 @@ sub initPlugin {
 		Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
 
 		addGroups();
-		grabMoods();
+		if (scalar @{grabMoods()}) {
+			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
+			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', {
+				'useMode'  => 'musicmagic_moods',
+				'mood'     => 'none',
+			});
+		}
 	}
 	
 	$mixFunctions{'play'} = \&playMix;
@@ -512,22 +522,38 @@ sub grabMoods {
 		}
 	}
 
-	my $none = sprintf('(%s)', Slim::Utils::Strings::string('NONE'));
+	return \@moods;
+}
 
-	push @moods, $none;
-
-	foreach my $mood ( @moods ) {
-
-		if ($mood eq $none) {
-
-			$moodHash{0} = $mood;
-			next
-		}
-
-		$moodHash{$mood} = $mood;
+sub setMoodMode {
+	my $client = shift;
+	my $method = shift;
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
+	
+	my %params = (
+		'header'         => $client->string('MUSICMAGIC_MOODS'),
+		'listRef'        => &grabMoods,
+		'headerAddCount' => 1,
+		'overlayRef'     => sub {return (undef, $client->symbols('rightarrow'));},
+		'mood'           => 'none',
+		'callback'       => sub {
+			my $client = shift;
+			my $method = shift;
 
-	return %moodHash;
+			if ($method eq 'right') {
+				print Data::Dumper::Dumper(${$client->param('valueRef')});
+				mixerFunction($client);
+			}
+			elsif ($method eq 'left') {
+				Slim::Buttons::Common::popModeRight($client);
+			}
+		},
+	);
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 }
 
 sub exportFunction {
@@ -918,8 +944,13 @@ sub mixerFunction {
 
 	my $currentItem = $items->[$listIndex];
 
+	# start by checking for moods
+	if ($paramref->{'mood'}) {
+		$mixSeed = $currentItem;
+		$levels[$level] = 'mood';
+	
 	# if we've chosen a particular song
-	if (!$descend || $levels[$level] eq 'track') {
+	} elsif (!$descend || $levels[$level] eq 'track') {
 
 		$mixSeed = $currentItem->path;
 
@@ -932,7 +963,7 @@ sub mixerFunction {
 		$mixSeed = $currentItem->name;
 	}
 
-	if ($currentItem && $currentItem->musicmagic_mixable) {
+	if ($currentItem && ($paramref->{'mood'} || $currentItem->musicmagic_mixable)) {
 
 		# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 		$mix = getMix($client, $mixSeed, $levels[$level]);
@@ -1225,12 +1256,12 @@ sub musicmagic_mix {
 
 		push @{$params->{'browse_items'}}, {
 
-			'text'       => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
-			'attributes' => "&listRef=musicmagic_mix",
-			'odd'        => ($itemnumber + 1) % 2,
-			'webroot'    => $params->{'webroot'},
+			'text'         => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
+			'attributes'   => "&listRef=musicmagic_mix",
+			'odd'          => ($itemnumber + 1) % 2,
+			'webroot'      => $params->{'webroot'},
 			'skinOverride' => $params->{'skinOverride'},
-			'player' => $params->{'player'},
+			'player'       => $params->{'player'},
 		};
 
 		$itemnumber++;
@@ -1287,18 +1318,18 @@ sub setupUse {
 	my $client = shift;
 
 	my %setupGroup = (
-		'PrefOrder' => ['musicmagic'],
-		'PrefsInTable' => 1,
+		'PrefOrder'         => ['musicmagic'],
+		'PrefsInTable'      => 1,
 		'Suppress_PrefLine' => 1,
-		'Suppress_PrefSub' => 1,
-		'GroupLine' => 1,
-		'GroupSub' => 1,
+		'Suppress_PrefSub'  => 1,
+		'GroupLine'         => 1,
+		'GroupSub'          => 1,
 	);
 
 	my %setupPrefs = (
 
-		'musicmagic' => {
-			'validate' => \&Slim::Web::Setup::validateTrueFalse,
+		'musicmagic'  => {
+			'validate'    => \&Slim::Web::Setup::validateTrueFalse,
 			'changeIntro' => "",
 
 			'options' => {
@@ -1329,9 +1360,9 @@ sub setupUse {
 sub setupGroup {
 	my $category = &setupCategory;
 
-	$category->{'parent'} = 'PLAYER_SETTINGS';
+	$category->{'parent'}     = 'PLAYER_SETTINGS';
 	$category->{'GroupOrder'} = ['Default'];
-	$category->{'Groups'} = %{&playerGroup}->{'Groups'};
+	$category->{'Groups'}     = %{&playerGroup}->{'Groups'};
 	
 	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
 }
@@ -1369,16 +1400,16 @@ sub setupCategory {
 			},
 
 			'MusicMagicPlaylistFormat' => {
-				'PrefOrder' => ['MusicMagicplaylistprefix','MusicMagicplaylistsuffix'],
-				'PrefsInTable' => 1,
+				'PrefOrder'         => ['MusicMagicplaylistprefix','MusicMagicplaylistsuffix'],
+				'PrefsInTable'      => 1,
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefDesc' => 1,
 				'Suppress_PrefLine' => 1,
-				'Suppress_PrefSub' => 1,
-				'GroupHead' => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT'),
-				'GroupDesc' => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC'),
-				'GroupLine' => 1,
-				'GroupSub' => 1,
+				'Suppress_PrefSub'  => 1,
+				'GroupHead'         => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT'),
+				'GroupDesc'         => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC'),
+				'GroupLine'         => 1,
+				'GroupSub'          => 1,
 			}
 		},
 
@@ -1386,7 +1417,7 @@ sub setupCategory {
 			'MMMPlayerSettings' => {
 				'validate' => \&Slim::Web::Setup::validateTrueFalse,
 				,'options' => {
-						'1' => Slim::Utils::Strings::string('YES')
+						'1'  => Slim::Utils::Strings::string('YES')
 						,'0' => Slim::Utils::Strings::string('NO')
 					}
 			},
@@ -1402,30 +1433,30 @@ sub setupCategory {
 			},
 
 			'musicmagicscaninterval' => {
-				'validate' => \&Slim::Web::Setup::validateNumber,
+				'validate'     => \&Slim::Web::Setup::validateNumber,
 				'validateArgs' => [0,undef,1000],
 			},
 
 			,'MMMFilter' => {
-				'validate' => \&Slim::Web::Setup::validateInHash
+				'validate'      => \&Slim::Web::Setup::validateInHash
 				,'validateArgs' => [\&grabFilters]
-				,'options' => {grabFilters()}
+				,'options'      => {grabFilters()}
 			},
 			
 			'MMMSize' => {
-				'validate' => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMRejectSize' => {
-				'validate' => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMMixType' => {
-				'validate' => \&Slim::Web::Setup::validateInList,
+				'validate'     => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
-				'options'=> {
+				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
 					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
 					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
@@ -1433,9 +1464,9 @@ sub setupCategory {
 			},
 			
 			'MMMRejectType' => {
-				'validate' => \&Slim::Web::Setup::validateInList,
+				'validate'     => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
-				'options'=> {
+				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
 					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
 					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
@@ -1445,23 +1476,23 @@ sub setupCategory {
 			'MMMMixGenre' => {
 				'validate' => \&Slim::Web::Setup::validateTrueFalse,
 				,'options' => {
-						'1' => Slim::Utils::Strings::string('YES')
+						'1'  => Slim::Utils::Strings::string('YES')
 						,'0' => Slim::Utils::Strings::string('NO')
 					}
 			},
 			
 			'MMMStyle' => {
-				'validate' => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [0,200,1,1],
 			},
 
 			'MMMVariety' => {
-				'validate' => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [0,9,1,1],
 			},
 
 			'MMSport' => {
-				'validate' => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1025,65535,undef,1],
 			},
 
