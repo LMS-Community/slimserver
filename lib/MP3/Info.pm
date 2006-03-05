@@ -514,7 +514,7 @@ sub get_mp3tag {
 		($v2, $v2h) = _get_v2tag($fh);
 	}
 
-	if (!$v1 && !$v2 && !$ape) {
+	if (!$v1 || !$v2 || !$ape) {
 		_close($file, $fh);
 		$@ = "No ID3 tag found";
 		return undef;
@@ -541,6 +541,8 @@ sub get_mp3tag {
 	}
 
 	unless ($raw_v2 && $ver == 2) {
+
+		# Strip out NULLs unless we want the raw data.
 		foreach my $key (keys %info) {
 			if (defined $info{$key}) {
 				$info{$key} =~ s/\000+.*//g;
