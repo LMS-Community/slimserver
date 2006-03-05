@@ -10,7 +10,7 @@ package Slim::Utils::PluginManager;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 #
-# $Id: Plugins.pm 5666 2006-01-17 00:16:36Z fred $
+# $Id$
 #
 
 use strict;
