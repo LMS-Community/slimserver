@@ -315,7 +315,7 @@ sub nextTopic {
 			$::d_plugins && msg("RssNews: feed order:\n" . 
 								join('\n', @feed_order) . "\n");
 		} else {
-			$d::plugins && msg("RssNews: display_current is $display_current\n");
+			$::d_plugins && msg("RssNews: display_current is $display_current\n");
 		}
 		$client->param('PLUGIN.RssNews.display_current', $display_current);
 	} else {
