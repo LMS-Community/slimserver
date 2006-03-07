@@ -38,31 +38,35 @@ tie my %TTFCache, 'Tie::Cache::LRU', 256;
 
 my %font2TTF = (
 
+	# The standard size - .1 is top line, .2 is bottom.
 	'standard.1' => {
-		'GDFontSize' => 8,
+		'GDFontSize' => 10,
 		'GDBaseline' => 8,
 	},
 
 	'standard.2' => {
-		'GDFontSize' => 14,
-		'GDBaseline' => 27,
+		'GDFontSize' => 18,
+		'GDBaseline' => 28,
 	},
 
+	# Small size - .1 is top line, .2 is bottom.
 	'light.1' => {
-		'GDFontSize' => 9,
+		'GDFontSize' => 11,
 		'GDBaseline' => 10,
 	},
 
 	'light.2' => {
-		'GDFontSize' => 11,
-		'GDBaseline' => 28,
+		'GDFontSize' => 12,
+		'GDBaseline' => 29,
 	},
 
+	# Huge - only one line.
 	'full.2' => {
-		'GDFontSize' => 18,
-		'GDBaseline' => 24,
+		'GDFontSize' => 28,
+		'GDBaseline' => 24.5,
 	},
 
+	# Not sure what high.2 is for..
 	'high.2' => {
 		'GDFontSize' => 7,
 		'GDBaseline' => 7,
