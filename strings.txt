@@ -46,8 +46,8 @@ CHOOSE_A_LANGUAGE
 
 BASE_SKIN
 	CS	Světlý
-	DE	Light
 	DA	Lys
+	DE	Light
 	EN	Light
 	ES	Liviana
 	FI	Valo
@@ -62,8 +62,8 @@ BASE_SKIN
 
 DEFAULT_SKIN
 	CS	Výchozí
-	DE	Standard
 	DA	Standard
+	DE	Standard
 	EN	Default
 	ES	Por defecto
 	FI	Oletus
@@ -74,8 +74,8 @@ DEFAULT_SKIN
 
 DEFAULT_MAP
 	CS	Standardní
-	DE	Standard
 	DA	Standard
+	DE	Standard
 	EN	Standard
 	ES	Estandar
 	FI	Normaali ulkoasu
@@ -124,7 +124,6 @@ LANGUAGE_CHOICES
 SERVER_VERSION
 	CS	Verze SlimServeru
 	DE	SlimServer Version
-	DA	SlimServer Version
 	EN	SlimServer Version
 	ES	Versión del SlimServer
 	FR	Version du SlimServer
@@ -139,8 +138,8 @@ SERVER_VERSION
 
 PLAYER_VERSION
 	CS	Verze firmwaru přehrávače
-	DE	Player Firmware Version
 	DA	Afspiller version
+	DE	Player Firmware Version
 	EN	Player Firmware Version
 	ES	Versión del firmware
 	FI	Soittimen ohjelmistoversio
@@ -156,8 +155,8 @@ PLAYER_VERSION
 
 ABOUT_SLIMDEVICES
 	CS	O Slim Devices
-	DE	Über Slim Devices
 	DA	Om Slim Devices
+	DE	Über Slim Devices
 	EN	About Slim Devices
 	ES	Acerca de Slim Devices
 	FI	Yleistä Slimdevicesista
@@ -353,8 +352,8 @@ ONLY_ONE
 
 SCREENSAVERS
 	CS	Spořiče
-	DE	Bildschirmschoner
 	DA	Pauseskærm
+	DE	Bildschirmschoner
 	EN	Screensavers
 	ES	Salvapantallas
 	FR	Ecrans de veille
@@ -380,8 +379,8 @@ RADIO
 
 GAMES
 	CS	Hry
-	DE	Spiele
 	DA	Spil
+	DE	Spiele
 	EN	Games
 	ES	Juegos
 	FI	Pelejä
@@ -572,7 +571,6 @@ PAUSED
 
 SLIMSERVER
 	DE	SlimServer
-	DA	SlimServer
 	EN	SlimServer
 	ES	SlimServer
 	HE	SlimServer
@@ -639,8 +637,8 @@ ZAPPED_SONGS
 
 ADDING_TO_PLAYLIST
 	CS	Přidat na konec playlistu
-	DE	Am Ende der Wiedergabeliste hinzufügen:
 	DA	Tilføjer til slutning af playlisten:
+	DE	Am Ende der Wiedergabeliste hinzufügen:
 	EN	Adding to end of playlist:
 	ES	Añadiendo al final de la lista:
 	FI	Lisätään soittolistalle:
@@ -655,8 +653,8 @@ ADDING_TO_PLAYLIST
 	ZH_CN	列入播放表中：
 
 ADDING_TO_PLAYLIST_DBL
-	DE	Füge hinzu
 	DA	Tilføjer
+	DE	Füge hinzu
 	EN	Adding
 	ES	Añadiendo
 	FI	Lisätään
@@ -684,8 +682,8 @@ INSERT_TO_PLAYLIST
 	ZH_CN	列入并紧接在下一首播放
 
 INSERT_TO_PLAYLIST_DBL
-	DE	Füge ein
 	DA	Tilføjer
+	DE	Füge ein
 	EN	Adding
 	ES	Añadiendo
 	FI	Lisätään
@@ -729,8 +727,8 @@ PLAYING_RANDOMLY_FROM
 	ZH_CN	随机抽样播放中：
 
 PLAYING_RANDOMLY_FROM_DBL
-	DE	Spiele zufällig
 	DA	Afspil tilfældig
+	DE	Spiele zufällig
 	EN	Play shuffled
 	ES	Reproducir al azar
 	FI	Satunnaissoitto
@@ -822,8 +820,8 @@ NOW_PLAYING_FROM
 	ZH_CN	播放中：
 
 NOW_PLAYING_FROM_DBL
-	DE	Starte Wiedergabe
 	DA	Afspiller
+	DE	Starte Wiedergabe
 	EN	Playing
 	ES	Se está escuchando
 	FI	Soittaa
@@ -927,8 +925,8 @@ POWERING_OFF
 	ZH_CN	进入备用状态中...
 
 POWER
-	DE	Power
 	DA	Tænd
+	DE	Power
 	EN	Power
 	ES	Encendido
 	HE	הדלקה
@@ -1056,8 +1054,8 @@ ALARM_SET_VOLUME_SHORT
 	ZH_CN	闹钟音量：
 
 ALARM_FADE
-	DE	Wecker einblenden
 	DA	Fade alarmer ind
+	DE	Wecker einblenden
 	EN	Fade Alarms In
 	NL	Fade wekalarm in
 
@@ -1130,8 +1128,8 @@ ALARM_NOW_PLAYING
 	ZH_CN	闹钟播放中
 
 ALARM_WEEKDAYS
-	DE	Wecker je Wochentag
 	DA	Alarm hverdage
+	DE	Wecker je Wochentag
 	EN	Weekday Alarms
 	ES	Alarmas en días de semana
 	FI	Arkipäivän hälytykset
@@ -1142,8 +1140,8 @@ ALARM_WEEKDAYS
 	ZH_CN	周日闹钟
 
 ALARM_DAY0
-	DE	Täglich
 	DA	Daglig
+	DE	Täglich
 	EN	Every Day
 	ES	Todos los días
 	FI	Joka päivä
@@ -1153,8 +1151,8 @@ ALARM_DAY0
 	SV	Varje Dag
 
 ALARM_DAY1
-	DE	Montag
 	DA	Mandag
+	DE	Montag
 	EN	Monday
 	ES	Lunes
 	FI	Maanantai
@@ -1166,8 +1164,8 @@ ALARM_DAY1
 	ZH_CN	星期一
 
 ALARM_DAY2
-	DE	Dienstag
 	DA	Tirsdag
+	DE	Dienstag
 	EN	Tuesday
 	ES	Martes
 	FI	Tiistai
@@ -1179,8 +1177,8 @@ ALARM_DAY2
 	ZH_CN	星期二
 
 ALARM_DAY3
-	DE	Mittwoch
 	DA	Onsdag
+	DE	Mittwoch
 	EN	Wednesday
 	ES	Miercoles
 	FI	Keskiviikko
@@ -1192,8 +1190,8 @@ ALARM_DAY3
 	ZH_CN	星期三
 
 ALARM_DAY4
-	DE	Donnerstag
 	DA	Torsdag
+	DE	Donnerstag
 	EN	Thursday
 	ES	Jueves
 	FI	Torstai
@@ -1205,8 +1203,8 @@ ALARM_DAY4
 	ZH_CN	星期四
 
 ALARM_DAY5
-	DE	Freitag
 	DA	Fredag
+	DE	Freitag
 	EN	Friday
 	ES	Viernes
 	FI	Perjantai
@@ -1218,8 +1216,8 @@ ALARM_DAY5
 	ZH_CN	星期五
 
 ALARM_DAY6
-	DE	Samstag
 	DA	Lørdag
+	DE	Samstag
 	EN	Saturday
 	ES	Sábado
 	FI	Lauantai
@@ -1231,8 +1229,8 @@ ALARM_DAY6
 	ZH_CN	星期六
 
 ALARM_DAY7
-	DE	Sonntag
 	DA	Søndag
+	DE	Sonntag
 	EN	Sunday
 	ES	Domingo
 	FI	Sunnuntai
@@ -1355,8 +1353,8 @@ FREE_YOUR_MUSIC
 
 UPDATING_FIRMWARE_SQUEEZEBOX
 	CS	Aktualizuji Squeezebox firmware.
-	DE	Firmware wird aktualisiert.
 	DA	Opdaterer Squeezebox firmware.
+	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
 	FI	Päivitetään Squeezeboxin ohjelmistoa.
@@ -1370,8 +1368,9 @@ UPDATING_FIRMWARE_SQUEEZEBOX
 	ZH_CN	更新Squeezebox韧件
 
 UPDATING_FIRMWARE_SQUEEZEBOX2
-	DE	Firmware wird aktualisiert.
+	CS	Aktualizuji Squeezebox firmware.
 	DA	Opdaterer Squeezebox firmware.
+	DE	Firmware wird aktualisiert.
 	EN	Updating Squeezebox firmware.
 	ES	Actualizando firmware de Squeezebox
 	FI	Päivitetään Squeezeboxin ohjelmistoa.
@@ -1430,8 +1429,8 @@ PROBLEM_OPENING
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
-	DE	Problem: kein Wiedergabelisten Ordner
 	DA	Problem: Der findes ingen folder med gemte playlister.
+	DE	Problem: kein Wiedergabelisten Ordner
 	EN	Problem: No Saved Playlist folder.
 	ES	Problem: No existe una carpeta de Listas Guardadas
 	FI	Ongelma: Tallenettujen soittolistojen hakemistoa ei ole.
@@ -1444,8 +1443,8 @@ NO_PLAYLIST_DIR
 
 NO_PLAYLIST_DIR_MORE
 	CS	Přejít na nastavení serveru a opravit.
-	DE	Bitte Server Einstellungen überprüfen
 	DA	Gå til serverindstillinger for at korrigere dette.
+	DE	Bitte Server Einstellungen überprüfen
 	EN	Visit Server Settings to fix this.
 	ES	Ver Configuración del Servidor para solucionar esto.
 	FI	Korjaa tämä palvelimen asetuksista.
@@ -1477,7 +1476,6 @@ HOME
 STATUS
 	CS	Stav
 	DE	Status
-	DA	Status
 	EN	Status
 	ES	Estado
 	FI	Tila
@@ -1504,8 +1502,8 @@ SERVER
 
 ABOUT_SHORT
 	CS	O programu
-	DE	Über...
 	DA	Om
+	DE	Über...
 	EN	About
 	ES	Acerca de
 	FR	A propos
@@ -1541,8 +1539,8 @@ SETUP_GROUP_BRIGHTNESS
 
 SETUP_GROUP_BRIGHTNESS_DESC
 	CS	Jas displeje přehrávače může být nastaven pro  různé stavy přehrávače: zapnut, vypnut, nehraje. Může být také nastaven automaticky když zmáčknete tlačítko, začnete přehrávat skladbu, nebo necháte přehrávač chvíli bez ovládání. Je možno také vypnout toto automatické chování.
+	DA	Lysstyrken på afspillerens display kan indstilles til når den er tændt, slukket eller ledig (pauseskærm). Den kan også justeres automatisk når du trykker p� en knap, starter afspilling af en sang, eller efter en tids inaktivitet. Du kan vlæge at slå denne automatik fra.
 	DE	Die Helligkeit der Anzeige kann für die drei Zustände ein, aus und Bildschirmschoner definiert werden. Sie kann auch automatisch geregelt werden, sobald Sie einen Knopf drücken, die Wiedergabe starten oder eine Weile nicht benutzen. Diese Automatik kann deaktiviert werden.
-	DA	Lysstyrken på afspillerens display kan indstilles til når den er tændt, slukket eller ledig (pauseskærm). Den kan også justeres automatisk når du trykker p� en knap, starter afspilling af en sang, eller efter en tids inaktivitet. Du kan vlæge at slå denne automatik fra.
 	EN	The brightness of the player's display can be set for when it's on, off, or sitting idle (screensaver). It can also be adjusted automatically when you press a button, start playing a song, or leave it alone for a while.  You can choose to disable this automatic behavior.
 	ES	La luminosidad del display del reproductor se puede establecer para cuando está encendido, apagado, o inactivo (salvapantalla). También puede ajustarse automaticamente cuando se aprieta un botón, al comenzar una canción, o al estar sin actividad por un tiempo. Se puede elegir deshabilitar este comportamiento.
 	FI	Soittimen näytön kirkkaus voidaan säätää erikseen soittimen ollessa päällä, pois päältä tai toimettomana (ruudunsäästäjä). Sitä voidaan säätää myös automaattisesti kun painat nappulaa, aloitat toiston tai jätät soittimen hetkeksi rauhaan. Tämän automaattisen toiminnon voi kytkeä pois päältä.
@@ -1670,8 +1668,8 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 
 SETUP_FONTLIST
 	CS	nabídka fontů
-	DE	Schriftartenliste
 	DA	Skrifttypeliste
+	DE	Schriftartenliste
 	EN	Font List
 	ES	Lista de Fuentes
 	FI	Kirjaisinlista
@@ -1684,8 +1682,8 @@ SETUP_FONTLIST
 
 SETUP_ACTIVEFONT
 	CS	Font písma
-	DE	Schriftart
 	DA	Skrifttype
+	DE	Schriftart
 	EN	Font
 	ES	Fuente
 	FI	Kirjaisin
@@ -1698,8 +1696,8 @@ SETUP_ACTIVEFONT
 
 SETUP_ACTIVEFONT_DESC
 	CS	Můžete použít tlačítko SIZE na dvém dálkovém ovladači, nebo přepínače níže abyste  změnili velikost písma na displeji přehrávače. Také můžete použít volbu, co se bude objevovat, použitím menu níže.
-	DE	Sie können den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um zwischen den verschiedenen Schriften des Displays umzuschalten. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	DA	Du kan bruge SIZE knappen pæ fjernbetjeningen eller radio knapperne nedenunder til at skifte mellem skrifttyper pæ afspillerens display. Du kan ogsæ vælge den rækkefælge skrifttyperne vises i.
+	DE	Sie können den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um zwischen den verschiedenen Schriften des Displays umzuschalten. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	You can use the SIZE button on the remote or the radio buttons below to switch between fonts on the player display. You may choose the order that they appear using the menus below.
 	ES	Se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reproductor. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
 	FI	Voit käyttää kaukosäätimen SIZE näppäintä tai allaolevia näppäimiä vaihtaaksesi näytön kirjaisinta eri vaihtoehtojen välillä. Voit valita alla missä järjestyksessä vaihtoehdot käydään.
@@ -1712,8 +1710,8 @@ SETUP_ACTIVEFONT_DESC
 	ZH_CN	您可使用遥控器的大小按钮或如下的无线电按钮设定播放机显示屏的字体大小。您可在如下的菜单设定它们出现的排序。
 
 SETUP_IDLEFONT
-	DE	Schriftart (Standby)
 	DA	Standby skrifttype
+	DE	Schriftart (Standby)
 	EN	Standby Font
 	ES	Fuente para Standby
 	FI	Valmiustilan kirjaisin
@@ -1726,8 +1724,8 @@ SETUP_IDLEFONT
 	ZH_CN	备用字体
 
 SETUP_IDLEFONT_DESC
-	DE	Wenn der Player im Standby-Modus ist, können Sie den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um die Schrift für die Uhr zu definieren. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	DA	Nær afspilleren er i standby kan du bruge SIZE knappen pæ fjernbetjeningen eller radio knapperne nedenunder til at skifte mellem skrifttyper for ur visning. Du kan ogsæ vælge den rækkefælge skrifttyperne vises i.
+	DE	Wenn der Player im Standby-Modus ist, können Sie den SIZE-Knopf der Fernsteuerung oder die Knöpfe unten verwenden, um die Schrift für die Uhr zu definieren. Mit dem untenstehenden Menü können Sie die Reihenfolge festlegen, in welcher die Schriften erscheinen.
 	EN	When the player is standby, you can use the SIZE button on the remote or the radio buttons below to switch between fonts for the clock display. You may choose the order that they appear using the menus below.
 	ES	Cuando el reproductor está en standby, se puede utilizar el botón SIZE en el control remoto o los botones debajo para cambiar entre los diferentes fuentes del display del reloj. Se puede elegir el orden en que apararecerán utilizando el menu debajo.
 	FI	Kun soitin on valmiustilassa, voit käyttää kaukosäätimen SIZE näppäintä tai allaolevia näppäimiä vaihtaaksesi kellon kirjaisinta eri vaihtoehtojen välillä. Voit valita alla missä järjestyksessä vaihtoehdot käydään.
@@ -1757,8 +1755,8 @@ SETUP_DOUBLESIZE
 
 SETUP_DOUBLESIZE_DESC
 	CS	Vyberte velikost písma textu na displeji přehrávače
-	DE	Schriftgrösse wählen
 	DA	Vælg tekststørrelse for afspillerens display
+	DE	Schriftgrösse wählen
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
 	FI	Valitse soittimen näytön tekstin koko
@@ -1769,8 +1767,8 @@ SETUP_DOUBLESIZE_DESC
 	ZH_CN	请选择播放机显示屏的字体大小
 
 SETUP_OFFDISPLAYSIZE
-	DE	Textgrösse im Standby Modus
 	DA	Standby tekststørrelse
+	DE	Textgrösse im Standby Modus
 	EN	Standby Text Size
 	ES	Tamaño de Texto para standby
 	FR	Taille du texte en veille
