@@ -66,7 +66,7 @@ my %font2TTF = (
 		'GDBaseline' => 24.5,
 	},
 
-	# Not sure what high.2 is for..
+	# High - line2 at top of screen [used for visualizer plugin]
 	'high.2' => {
 		'GDFontSize' => 7,
 		'GDBaseline' => 7,
