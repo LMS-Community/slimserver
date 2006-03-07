@@ -21,6 +21,7 @@ package Slim::Control::Request;
 # N    debug           <debugflag>                 <0|1|?|>
 # N    pref            <prefname>                  <prefvalue|?>
 # N    version         ?
+# N    stopserver
 
 
 #### DATABASE ####
@@ -424,6 +425,7 @@ sub init {
     addDispatch(['songs',          '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['status',         '_index',       '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::statusQuery]);
     addDispatch(['stop'],                                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['stopserver'],                                                                      [0, 0, 0, \&main::stopServer]);
     addDispatch(['sync',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::syncQuery]);
     addDispatch(['sync',           '_indexid-'],                                                     [1, 0, 0, \&Slim::Control::Commands::syncCommand]);
     addDispatch(['time',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
