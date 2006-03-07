@@ -154,7 +154,12 @@ sub clientForgetCommand {
 	}
 	
 	# get the parameters
-	my $client     = $request->client();
+	my $client = $request->client();
+	
+	# Bug 3115, temporarily unsync player when disconnecting
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		Slim::Player::Sync::unsync( $client, 'temp' );
+	}
 
 	$client->forgetClient();
 	
