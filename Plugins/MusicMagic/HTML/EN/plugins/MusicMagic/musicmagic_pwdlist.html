@@ -1,4 +1,4 @@
 /
-<a href="musicmagic_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]">
+<a href="musicmagic_mix.html?[% IF playlist %]playlist=[% playlist | uri %][% ELSE %]song=[% song | uri %][% END %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]">
 	[% src_mix %] [% "MUSICMAGIC_MIX" | string %]
 </a>

@@ -515,12 +515,12 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		my $pls = Slim::Music::Info::cachedPlaylist($obj);
 
 		if (Slim::Music::Info::isPlaylistURL($playlistpath) ||
-			(
-				defined $pls && 
-			  	(Slim::Music::Info::isDir($playlistpath) && 
-			  	($playlistpathAge == $obj->timestamp())) &&
-			  	($playlistpathAge != 315529200)
-			  )
+				(
+					defined $pls && 
+					(Slim::Music::Info::isDir($playlistpath) && 
+					($playlistpathAge == $obj->timestamp())) &&
+					($playlistpathAge != 315529200)
+				)
 			) {
 			
 			$::d_scan && msg("*** found a current entry for $playlisturl in the database***\n");
@@ -687,6 +687,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		# Add playlists to the database.
 		if ($numitems && scalar @$listref) {
+			my $mixable = 0;
 
 			# Create a playlist container
 			my $title = Slim::Utils::Misc::unescape(basename($playlisturl));
@@ -708,12 +709,14 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 				!Slim::Music::Info::isCUE($playlisturl)
 			) {
 				$ct = 'ssp';
+				$mixable = 1;
 			}
 
 			Slim::Music::Info::updateCacheEntry($playlisturl, {
 				'TITLE' => $title,
 				'CT'    => $ct,
 				'LIST'  => $listref,
+				'MUSICMAGIC_MIXABLE' => $mixable, 
 			});
 		}
 

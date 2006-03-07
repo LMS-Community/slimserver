@@ -38,11 +38,12 @@ our %mixMap  = (
 our %mixFunctions = ();
 
 our %validMixTypes = (
-	'track'  => 'song',
-	'album'  => 'album',
-	'artist' => 'artist',
-	'genre'  => 'genre',
-	'mood'   => 'mood',
+	'track'    => 'song',
+	'album'    => 'album',
+	'artist'   => 'artist',
+	'genre'    => 'genre',
+	'mood'     => 'mood',
+	'playlist' => 'playlist',
 );
 
 sub strings {
@@ -544,7 +545,7 @@ sub setMoodMode {
 			my $method = shift;
 
 			if ($method eq 'right') {
-				print Data::Dumper::Dumper(${$client->param('valueRef')});
+				
 				mixerFunction($client);
 			}
 			elsif ($method eq 'left') {
@@ -1175,18 +1176,32 @@ sub musicmagic_mix {
 	my $output = "";
 	my $mix;
 
-	my $song   = $params->{'song'};
-	my $artist = $params->{'artist'};
-	my $album  = $params->{'album'};
-	my $genre  = $params->{'genre'};
-	my $player = $params->{'player'};
-	my $p0     = $params->{'p0'};
+	my $song     = $params->{'song'};
+	my $artist   = $params->{'artist'};
+	my $album    = $params->{'album'};
+	my $genre    = $params->{'genre'};
+	my $player   = $params->{'player'};
+	my $playlist = $params->{'playlist'};
+	my $p0       = $params->{'p0'};
 
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
 
-	if ($song) {
+	if ($playlist) {
+		my ($obj) = $ds->objectForUrl($playlist);
+
+		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
+
+			if ($obj->musicmagic_mixable) {
+
+				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
+				$mix = getMix($client, $playlist, 'playlist');
+			}
+
+			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
+		}
+	} elsif ($song) {
 
 		my ($obj) = $ds->objectForId('track', $song);
 
@@ -1238,7 +1253,7 @@ sub musicmagic_mix {
 	
 	} else {
 
-		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix');
+		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix\n');
 		return 1;
 	}
 
