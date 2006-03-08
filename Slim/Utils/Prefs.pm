@@ -274,9 +274,12 @@ sub init {
 			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
 				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 			}
-			if (-d $newvalue) {
+			
+			if (defined(Slim::Utils::Prefs::get('playlistdir')) && -d Slim::Utils::Prefs::get("playlistdir")) {
 				Slim::Music::Import::useImporter('PLAYLIST', 1);
 				Slim::Music::Import::startScan('PLAYLIST');
+			} else {
+				Slim::Music::Import::useImporter('PLAYLIST', 0);
 			}
 
 			for my $client (Slim::Player::Client::clients()) {
