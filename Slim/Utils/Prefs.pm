@@ -274,6 +274,10 @@ sub init {
 			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
 				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 			}
+			if (-d $newvalue) {
+				Slim::Music::Import::useImporter('PLAYLIST', 1);
+				Slim::Music::Import::startScan('PLAYLIST');
+			}
 
 			for my $client (Slim::Player::Client::clients()) {
 				Slim::Buttons::Home::updateMenu($client);
