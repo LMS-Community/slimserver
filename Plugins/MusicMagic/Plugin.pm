@@ -47,10 +47,7 @@ our %validMixTypes = (
 );
 
 sub strings {
-	return '
-MUSICMAGIC_MOODS
-	EN	MusicMagic Mood Mix
-	';
+	return '';
 }
 
 sub getFunctions {
