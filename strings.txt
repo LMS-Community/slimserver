@@ -8426,6 +8426,7 @@ COMMENT
 	ZH_CN	备注
 
 RATING
+	DE	Bewertung
 	EN	Rating
 
 TAGVERSION
@@ -10836,9 +10837,7 @@ MUSICMAGIC_MIX
 	ZH_CN	MusicMagic混音
 
 MUSICMAGIC_MOODS
-	EN	MusicMagic Mood Mix
-
-MUSICMAGIC_MOODS
+	DE	MusicMagic Stimmungs-Mix
 	EN	MusicMagic Mood Mix
 
 MOODLOGIC_INSTANT_MIX
