@@ -8425,6 +8425,9 @@ COMMENT
 	SV	Kommentar
 	ZH_CN	备注
 
+RATING
+	EN	Rating
+
 TAGVERSION
 	CS	Verze ID tagu
 	DE	ID3-Tag Version
@@ -10831,6 +10834,12 @@ MUSICMAGIC_MIX
 	ES	Mezcla MusicMagic
 	NL	MusicMagic mix
 	ZH_CN	MusicMagic混音
+
+MUSICMAGIC_MOODS
+	EN	MusicMagic Mood Mix
+
+MUSICMAGIC_MOODS
+	EN	MusicMagic Mood Mix
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix

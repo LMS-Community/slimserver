@@ -100,7 +100,13 @@
 				<div class="songInfoText"><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a></div>
 			</li>
 		[% END %]
-	
+		
+		[% IF itemobj.rating %] 
+			<li><div class="songInfoTitle">[% "RATING" | string; "COLON" | string %]</div>
+				<div class="songInfoText">[% itemobj.rating %] /100</div>
+			</li>
+		[% END %]
+			
 		[% IF comment %] 
 			<li><div class="songInfoTitle">[% "COMMENT" | string; "COLON" | string %]</div>
 				<div class="songInfoText">[% comment %]</div>
@@ -162,9 +168,8 @@
 		[% END %]
 	
 		[% IF itemobj.coverArt('cover', 1) %]
-			<li><div class="songInfoTitle">[% "COVERART" | string; "COLON" | string %]</div>
-				<div class="songInfoText"><a href="/music/[% itemobj.id %]/cover.jpg" target="cover"><img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt"></a></div>
-			</li>
+			<li><div class="songInfoTitle">[% "COVERART" | string; "COLON" | string %]</div></li>
+			<li><div class="songInfoTitle"><a href="/music/[% itemobj.id %]/cover.jpg" target="cover"><img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)"></a></div></li>
 		[% END %]
 	</ul>
 </div>

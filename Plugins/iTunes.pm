@@ -755,10 +755,12 @@ sub handleTrack {
 			$cacheEntry{'SECS'} = $curTrack->{'Total Time'} / 1000;
 		}
 
-		$cacheEntry{'BITRATE'} = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
-		$cacheEntry{'YEAR'}    = $curTrack->{'Year'};
-		$cacheEntry{'COMMENT'} = $curTrack->{'Comments'};
-		$cacheEntry{'RATE'}    = $curTrack->{'Sample Rate'};
+		$cacheEntry{'BITRATE'}   = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
+		$cacheEntry{'YEAR'}      = $curTrack->{'Year'};
+		$cacheEntry{'COMMENT'}   = $curTrack->{'Comments'};
+		$cacheEntry{'RATE'}      = $curTrack->{'Sample Rate'};
+		$cacheEntry{'RATING'}    = $curTrack->{'Rating'};
+		$cacheEntry{'PLAYCOUNT'} = $curTrack->{'Play Count'};
 		
 		my $gain = $curTrack->{'Volume Adjustment'};
 		

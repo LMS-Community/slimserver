@@ -178,7 +178,7 @@ sub initPlugin {
 
 		Slim::Music::Import::useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
 
-		Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
+		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 		addGroups();
 		if (scalar @{grabMoods()}) {
@@ -655,6 +655,9 @@ sub exportFunction {
 			$cacheEntry{'TITLE'}  = $songInfo{'name'};
 			$cacheEntry{'ARTIST'} = $songInfo{'artist'};
 			$cacheEntry{'GENRE'}  = $songInfo{'genre'};
+			if (defined $songInfo{'rating'}) {
+				$cacheEntry{'RATING'} = $songInfo{'rating'} * 20; #make rating out of 100, MMM uses scale of 5
+			}
 		
 			my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
 
