@@ -248,6 +248,11 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 	
+	if (my $rating = $track->rating) {
+		push (@{$client->trackInfoLines}, $client->string('RATING') . ": " . sprintf("%d",$rating) . " /100");
+		push (@{$client->trackInfoContent}, undef);
+	}
+	
 	if (blessed($album) && $album->can('replay_gain')) {
 		if (my $albumreplaygain = $album->replay_gain) {
 			push (@{$client->trackInfoLines}, $client->string('ALBUMREPLAYGAIN') . ": " . sprintf("%2.2f",$albumreplaygain) . " dB");
