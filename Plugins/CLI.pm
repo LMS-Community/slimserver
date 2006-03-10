@@ -811,6 +811,15 @@ sub cli_subscribe_status {
 
 	my $clientid = $request->clientid();
 	
+	# kill any previous subscription we might have laying around
+	my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
+
+	delete $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
+
+	Slim::Utils::Timers::killOneTimer($statusrequest,
+		\&cli_subscribe_status_output);
+
+	# store the new subscription if this is what is asked of us
 	if ($subparam ne '-') {
 		
 		# copy the request
@@ -824,15 +833,6 @@ sub cli_subscribe_status {
 				Time::HiRes::time() + $subparam,
 				\&cli_subscribe_status_output);
 		}
-
-	} else {
-	
-		my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
-
-		delete $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
-
-		Slim::Utils::Timers::killOneTimer($statusrequest,
-			\&cli_subscribe_status_output);
 	}
 	
 	cli_subscribe_manage();
@@ -886,29 +886,34 @@ sub cli_subscribe_notification {
 		# retrieve the socket object
 		$client_socket = $connections{$client_socket}{'socket'};
 
+		# remember & decide if we send the echo
 		my $sent = 0;
 
 		# handle sending unique commands
 		if (defined $connections{$client_socket}{'subscribe'}{'listen'}) {
 
 			# don't echo twice to the sender
-			next if ($request->source() eq 'CLI' && 
-				$request->privateData() eq $client_socket);
+			if (!($request->source() eq 'CLI' && 
+				  $request->privateData() eq $client_socket)) {
 
-			# if we have an array in {'listen'}
-			if (ref $connections{$client_socket}{'subscribe'}{'listen'} eq 'ARRAY') {
+				# assume no array in {'listen'}: we send everything
+				$sent = 1;
+				
+				# if we have an array in {'listen'}...
+				if (ref $connections{$client_socket}{'subscribe'}{'listen'} 
+					eq 'ARRAY') {
 
-				# check the command matches the list of wanted commands
-				next unless ($request->isCommand($connections{$client_socket}{'subscribe'}{'listen'}));
+					# check the command matches the list of wanted commands
+					$sent = $request->isCommand($connections{$client_socket}{'subscribe'}{'listen'});
+				}
+
+				# send if needed
+				if ($sent) {
+
+					# write request
+					cli_request_write($client_socket, $request);
+				}
 			}
-
-			# anything else than an array and we send everything!
-
-			# write request
-			cli_request_write($client_socket, $request);
-
-			# remember we sent the command
-			$sent = 1;
 		}
 
 		# commands we ignore for status (to change if other subscriptions are
