@@ -330,11 +330,11 @@ sub init {
 			},
 
 			'find' => sub {
-				my $ds = shift;
-				my $level = shift;
+				my $ds           = shift;
+				my $level        = shift;
 				my $findCriteria = shift;
-				my $idOnly = shift;
-				my $sort = shift;
+				my $idOnly       = shift;
+				my $sort         = shift;
 
 				# The user may not want to include all the composers / conductors
 				if (my $roles = $ds->artistOnlyRoles) {
@@ -377,9 +377,9 @@ sub init {
 			},
 
 			'search' => sub {
-				my $ds = shift;
-				my $terms = shift;
-				my $type = shift || 'album';
+				my $ds     = shift;
+				my $terms  = shift;
+				my $type   = shift || 'album';
 				my $idOnly = shift;
 
 				return $ds->find({
@@ -391,17 +391,19 @@ sub init {
 			},
 
 			'listItem' => sub {
-				my $ds = shift;
-				my $form = shift;
-				my $item = shift;
-				my $itemname = shift;
-				my $descend = shift;
+				my $ds           = shift;
+				my $form         = shift;
+				my $item         = shift;
+				my $itemname     = shift;
+				my $descend      = shift;
 				my $findCriteria = shift;
-				my $sort = shift;
+				my $sort         = shift;
 
 				$form->{'text'}       = $item->title;
 				$form->{'coverThumb'} = $item->artwork || 0;
 				$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
+
+				$form->{'item'}       = $itemname;
 
 				if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/) {
 
@@ -432,11 +434,10 @@ sub init {
 						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,$descend);
 					}
 				}
-
-				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
 			},
 
 			'ignoreArticles' => 1,
+
 			'alphaPageBar' => sub {
 				my $findCriteria = shift;
 				my $sort = shift; 
@@ -509,6 +510,23 @@ sub init {
 
 				}
 
+				if (Slim::Utils::Prefs::get('noGenreFilter') && 
+					defined $findCriteria->{'genre'} &&
+					defined $findCriteria->{'artist'}) {
+
+					# Don't filter by genre - it's unneccesary and
+					# creates a intensive query. We're already at
+					# the album level for an artist
+					delete $findCriteria->{'genre'};
+				}
+
+				# Bug: 2192 - Don't filter out compilation
+				# albums at the artist level - we want to see all of them for an artist.
+				if ($findCriteria->{'artist'} && !$findCriteria->{'album.compilation'}) {
+
+					delete $findCriteria->{'album.compilation'};
+				}
+
 				# if sort includes artist ensure album contributor is used so all VA albums appear in one place
 				if ($sort =~ /artist/) {
 
@@ -528,27 +546,39 @@ sub init {
 			},
 
 			'listItem' => sub {
-				my $ds   = shift;
-				my $form = shift;
-				my $item = shift;
-				my $itemname = shift;
-				my $descend = shift;
+				my $ds           = shift;
+				my $form         = shift;
+				my $item         = shift;
+				my $itemname     = shift;
+				my $descend      = shift;
 				my $findCriteria = shift;
-				my $sort = shift;
+				my $sort         = shift;
 
+				$form->{'text'}       = $item->title;
 				$form->{'coverThumb'} = $item->artwork || 0;
+				$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
+				$form->{'item'}       = $itemname;
+				$form->{'artwork'}    = 1;
 
-				# add the year to artwork browsing if requested.
-				if (Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/ ) {
+				if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/) {
 
-					$form->{'year'} = $item->year;
+					# Don't show years when browsing years..
+					if (!$findCriteria->{'year'}) {
+						$form->{'showYear'} = $showYear;
+						$form->{'year'} = $item->year;
+					}
 				}
 
 				# Show the artist in the album view
-				if (Slim::Utils::Prefs::get('showArtist') || $sort =~ /^artist/ ) {
+				if (Slim::Utils::Prefs::get('showArtist') || $sort =~ /^artist/) {
 
-					$form->{'artist'}        = $item->contributor;
-					$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+					if (my $contributor = $item->contributor) {
+
+						$form->{'artist'}        = $contributor;
+						$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
+						$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+
+					}
 				}
 
 				my $Imports = Slim::Music::Import::importers();
@@ -559,17 +589,7 @@ sub init {
 						&{$Imports->{$mixer}->{'mixerlink'}}($item,$form,1);
 					}
 				}
-
-				#$form->{'mixerlinks'} = $Slim::Web::Pages::additionalLinks{'mixer'};
-
-				$form->{'item'}    = $itemname;
-				$form->{'artwork'} = 1;
-				$form->{'size'}    = Slim::Utils::Prefs::get('thumbSize');
 			},
-
-			'nameTransform' => 'album',
-			'descendTransform' => 'album,track',
-			'ignoreArticles' => 1,
 
 			'alphaPageBar' => sub {
 				my $findCriteria = shift;
@@ -578,7 +598,10 @@ sub init {
 				return (!defined($sort) || $sort =~ /^artist|^album/ ) ? 1 : 0;
 			},
 
-			'suppressAll' => 1
+			'suppressAll'      => 1,
+			'nameTransform'    => 'album',
+			'descendTransform' => 'album,track',
+			'ignoreArticles'   => 1,
 		},
 
 		'artist' => {
