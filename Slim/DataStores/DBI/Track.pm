@@ -16,7 +16,7 @@ our @allColumns = (qw(
 	customsearch filesize tag disc thumb remote audio audio_size audio_offset
 	year secs cover vbr_scale bitrate samplerate samplesize channels block_alignment
 	endian bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
-	musicbrainz_id playCount lastPlayed lossless lyrics rating replay_gain replay_peak
+	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
 ));
 
 INIT: {
