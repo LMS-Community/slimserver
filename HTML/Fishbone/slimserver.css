@@ -74,23 +74,23 @@ A {
 }
 
 HR {
-    border : 0;
-    border-bottom:2px solid #bbb;
+	border : 0;
+	border-bottom:2px solid #bbb;
 }
 
 TH {
-    background : #CFCFCF;
-    font-size : 10pt;
-    text-align : center;
-    font-weight : bold;	
+	background : #CFCFCF;
+	font-size : 10pt;
+	text-align : center;
+	font-weight : bold;	
 }
 
 A:link, A:visited {
-    color : Yellow;
+	color : Yellow;
 }
 
 A:hover, A:selected {
-    color : #EE3823;
+	color : #EE3823;
 }
 
 DIV.nowplaying A
@@ -102,52 +102,52 @@ DIV.nowplaying A
 }
 
 .linkbtn {
-   font-size : 8pt;
-   font-family: Verdana, Arial, Helvetica, sans-serif;
-   font-weight: bold;
-   color: #EE3823;
-   background-color : Black;
-   border-width : thin;
-   border-style : outset;
-   padding : 0em 0.3em 0em 0.5em;
+	font-size : 8pt;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	color: #EE3823;
+	background-color : Black;
+	border-width : thin;
+	border-style : outset;
+	padding : 0em 0.3em 0em 0.5em;
 }
 
 A.linkbtn:visited {
-   color: Yellow;
-   text-decoration : none; 
+	color: Yellow;
+	text-decoration : none; 
 }
 
 A.linkbtn:link {
-   color: Yellow;
-   text-decoration : none; 
+	color: Yellow;
+	text-decoration : none; 
 }
 
 A.linkbtn:active {
-   color: #EE3823;
-   text-decoration : none; 
+	color: #EE3823;
+	text-decoration : none; 
 }
 
 A.linkbtn:hover {
-   color: #EE3823;
-   text-decoration : none; 
+	color: #EE3823;
+	text-decoration : none; 
 }
 
 .stdclick {
-   font : 9px Arial; 
-   color: Yellow;
-   background-color : rgb(25,25,25);
-   margin-bottom: 2px;
-   margin-top: 2px;
+	font : 9px Arial; 
+	color: Yellow;
+	background-color : rgb(25,25,25);
+	margin-bottom: 2px;
+	margin-top: 2px;
 }
 
-DIV.menu2 .stdclick {
-   font : 9px Arial; 
-   color: Yellow;
-   margin: 2 3 2 3;
+DIV.playlistform,DIV.menu2 .stdclick {
+	font : 9px Arial; 
+	color: Yellow;
+	margin: 2 3 2 3;
 }
 
-DIV.menu2 .stdedit {
-   margin: 2 3 2 3;
+DIV.playlistform,DIV.menu2 .stdedit {
+	margin: 2 3 2 3;
 }
 
 div#statusMessage form{
@@ -155,18 +155,18 @@ div#statusMessage form{
 }
 
 .stdedit {
-   font-family: Verdana, Arial, Helvetica, sans-serif; 
-   background-color : rgb(255,255,255); 
-   padding : 1px;
-   margin-bottom: 2px;
-   margin-top: 2px;
-   font-size:9px;
-   background:#ddd;
-   color:#444;
-   border-width : 1px; 
-   border-style : inset; 
-   border-color : black; 
-   height : 18px; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	background-color : rgb(255,255,255); 
+	padding : 1px;
+	margin-bottom: 2px;
+	margin-top: 2px;
+	font-size:9px;
+	background:#ddd;
+	color:#444;
+	border-width : 1px; 
+	border-style : inset; 
+	border-color : black; 
+	height : 18px; 
 }
 
 .masthead
@@ -313,7 +313,7 @@ img {
 	color:white;
 }
 
-.menu2
+DIV.playlistform,.menu2
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
@@ -331,7 +331,7 @@ div#statusMessage
 	color:white;
 }
 
-DIV.menu2 TABLE {
+DIV.playlistform,DIV.menu2 TABLE {
 	border-collapse: collapse;
 }
 
