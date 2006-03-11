@@ -41,11 +41,11 @@
 [%- END -%]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="4" width="100%">
-	
+<table border="0" cellspacing="0" cellpadding="4" width="100%"><tr><td>
+
 		[%- content | indent(4) %]
 	
-</table>
+<tr><td></table>
 [%- END %]
 
 [% BLOCK contentitem -%]
