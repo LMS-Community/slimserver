@@ -1,26 +1,23 @@
-[% IF loop.count % 2; class = "odd"; ELSE; class = "even"; END %]
+[% IF loop.count % 2; odd = 1; ELSE; odd = 0; END %]
 
-<tr>
-  <td class="[% class %]" width="100%">
-    [% item.title | html %]
-  </td>
+[% BLOCK editcontrols %]
+	[% WRAPPER moveuplink noTarget=1 %]
+		href="edit_playlist.html?player=[% playerURI %]&amp;up=1&amp;playlist=[% playlist.id %]&amp;item=[% loop.count %]"
+	[% END %]
 
-  <td class="[% class %]">
-    <a href="edit_playlist.html?player=[% playerURI %]&up=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "UP" | string %]</a>
-  </td>
+	[% WRAPPER movedownlink noTarget=1 %]
+		href="edit_playlist.html?player=[% playerURI %]&amp;down=1&amp;playlist=[% playlist.id %]&amp;item=[% loop.count %]"
+	[% END %]
 
-  <td class="[% class %]">
-    <a class="down" href="edit_playlist.html?player=[% playerURI %]&down=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "DOWN" | string %]</a>
-  </td>
+	[% IF item.isRemoteURL %][% WRAPPER editlink noTarget=1 %]
+		href="edit_playlist.html?player=[% playerURI %]&amp;edit=1&amp;playlist=[% playlist.id %]&amp;item=[% loop.count %]"
+	[% END %][% END %]
 
-  <td class="[% class %]">
-[% IF item.isRemoteURL %]
-    <a class="edit" href="edit_playlist.html?player=[% playerURI %]&edit=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "EDIT" | string %]</a>
+	[% WRAPPER removelink %]
+		href="edit_playlist.html?player=[% playerURI %]&amp;delete=1&amp;playlist=[% playlist.id %]&amp;item=[% loop.count %]"
+	[% END %]
 [% END %]
-  </td>
 
-  <td class="[% class %]">
-    <a class="delete" href="edit_playlist.html?player=[% playerURI %]&delete=1&amp;playlist=[% playlist.id %]&item=[% loop.count %]">[% "DELETE" | string %]</a>
-  </td>
-
-</tr>
+[% WRAPPER contentitem  controls = 'editcontrols' %]
+	[% item.title | html %]
+[% END %]

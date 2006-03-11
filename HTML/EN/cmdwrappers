@@ -46,6 +46,13 @@
 		cmdimage = "b_delete" -%]
 [%- END %]
 
+[%# this is to wrap around an href which does a url edit command, with default image reference %]
+[% BLOCK editlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "EDIT"
+		cmdimage = "b_edit" -%]
+[%- END %]
+
 [%# this is to wrap around browse list items %]
 [% BLOCK listitem %]
 	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
