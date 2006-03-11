@@ -1,7 +1,7 @@
 [%- pageicon = 'BROWSE_PLAYLISTS' -%]
 [%- pagetitle = 'PLUGIN_FAVORITES_MODULE_NAME' | string -%]
 [%- pwd_list = BLOCK -%]/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
-		</p></a>[% END -%]
+[% END -%]
 [%- PROCESS pageheader.html -%] 
 
 [% warning %]
@@ -13,24 +13,24 @@
 	
 		[% BLOCK favcontrols %]
 			[% WRAPPER moveuplink noTarget=1 %]
-				href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2D1&player=[% player | uri %]"
+				href="favorites_list.html?p0=move&amp;p1=[% loop.index %]&amp;p2=%2D1&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER movedownlink noTarget=1 %]
-				href="favorites_list.html?p0=move&p1=[% loop.index %]&p2=%2B1&player=[% player | uri %]"
+				href="favorites_list.html?p0=move&amp;p1=[% loop.index %]&amp;p2=%2B1&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER removelink noTarget=1 %]
-				href="favorites_list.html?p0=delete&p1=[% loop.index %]&player=[% player | uri %]"
+				href="favorites_list.html?p0=delete&amp;p1=[% loop.index %]&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER playlink %]
-				href="[% webroot %][% statusroot %]s?p0=playlist&p1=play&p2=[% faves.$fav | uri %]&player=[% player | uri %]"
+				href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=play&amp;p2=[% faves.$fav | uri %]&amp;player=[% player | uri %]"
 			[% END %]
 		[% END %]
 	
 		[% WRAPPER contentitem controls = 'favcontrols' %]
-			 <a href="favorites_list.html?p0=[% fav | uri %]&player=[% player | uri %]">[% loop.count _ '. ' _ text %]</a>
+			 <a href="favorites_list.html?p0=[% fav | uri %]&amp;player=[% player | uri %]">[% loop.count _ '. ' _ text %]</a>
 		[% END %]
 		[% odd = (not odd) %]
 	[% END %]
