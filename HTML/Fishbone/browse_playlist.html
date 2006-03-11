@@ -1,8 +1,6 @@
-<html>
-	<head>
-		[% PROCESS customheader.html %]
-	</head>
-	<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+[% pagetitle = "SAVED_PLAYLISTS" | string %]
+[% pageicon = 'SAVED_PLAYLISTS' %]
+[% PROCESS pageheader.html %] 
 		[% IF warn %]<div class="nowplaying"><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] [% IF audiodir %][% "SCAN_CLICK" | string %] <a href="browsetree.html?player=[% playerURI %]">[% "HERE" | string %]</a>.[% END %]
 		</div>[% END %]
 		[% IF RENAME_WARNING %]<div class="nowplaying"><p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]</div>[% END %]
@@ -64,6 +62,4 @@
 			[% ELSE; browse_list; END %]
 		</table>
 		[% browselist_pagebar %]
-	</div>
-	</body>
-</html>
+[% PROCESS pagefooter.html %]

@@ -1,17 +1,8 @@
 <html>
-  <head>
-    [% pagetitle = "SAVED_PLAYLISTS" | string %]
-    [% PROCESS standardheader.html %]
-    [% PROCESS html/common.js %]
-  </head>
-  <body bgcolor="#FFFFFF">
+[% pagetitle = "SAVED_PLAYLISTS" | string %]
+[% pageicon = 'SAVED_PLAYLISTS' %]
+[% PROCESS pageheader.html %] 
 
-	<p>
-
-	<h3>[% "SAVED_PLAYLISTS" | string %]</h3><p>
-
-	[% PROCESS crumblist %]
-	<p><hr>
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 
 	[% IF RENAME_WARNING %]<p><b>[% "NOTE" | string %]</b> [% "RENAME_WARNING" | string %]<p><hr>[% END %]
@@ -77,5 +68,4 @@
 		[% ELSE %][% browse_list %][% END %]
     </table>
     [% browselist_pagebar %]
-  </body>
-</html>
+[% PROCESS pageheader.html %]

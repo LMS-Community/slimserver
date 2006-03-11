@@ -108,6 +108,12 @@ END %]
 </div>
 [%- END %]
 
+[% BLOCK gallerycontainer %]
+<div id="[% listid || 'browsedbList' %]"><ul class="thumbwrap">
+	[%- content | indent(4) %]
+</ul></div>
+[%- END %]
+
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]">
 	[%- IF anchor %]
@@ -124,6 +130,23 @@ END %]
 	</div>
 </div>
 [%- END %]
+
+[% BLOCK galleryitem %]
+<li><div style="width:[% item.size %]px;">
+	<div >
+		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
+		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
+	</div>
+	[% SET class = 'even' odd = 0 %]
+	<div class="artworkControls">
+		[%- PROCESS $controls -%]
+	</div>
+	<div class="artworkText"><span style="width:[% item.size %]px;">
+	[%- content | indent(4) %]
+	</span></div>
+</div></li>
+[%- END %]
+
 
 [%# these are the links to be shown with items on the playlist %]
 [% BLOCK playlistcontrols %]
@@ -151,27 +174,40 @@ END %]
 
 [%# this formats the track item %]
 [% BLOCK trackinfo %]
-		[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
-		
-		[% IF item.num || item.num == 0 %]
-				[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% END %]
-				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
-		[%# browse list items %]
-		[%# no level info means its a music folder item %]
-		[% ELSIF item.item || !item.defined('level') %]
-			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
-		[% ELSIF item.songtitle %]
-			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
-		[% ELSE %]
-			[% item.text | html %]
-		[% END %]
-		
-		[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-		
-		[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != item.noAlbum %][% "FROM" | string %]
-		<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
- 		[% IF item.currentsong %]</b>[% END %]
+	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
+	
+	[% IF item.num || item.num == 0 %]
+			[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% END %]
+			[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
+	[%# browse list items %]
+	[%# no level info means its a music folder item %]
+	[% ELSIF item.item || !item.defined('level') %]
+		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+	[% ELSIF item.songtitle %]
+		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
+	[% ELSE %]
+		[% item.text | html %]
+	[% END %]
+	
+	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	
+	[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != item.noAlbum %][% "FROM" | string %]
+	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+	[% IF item.currentsong %]</b>[% END %]
 [% END %]
+
+[% BLOCK iteminfo %]
+	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]</a>
+	[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+
+		<!-- Include the artist for the album view -->
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+
+	[% ELSE %]
+		[% PROCESS trackinfo %]
+	[% END %]
+[% END %]
+
 
 [%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 [% BLOCK pagebar %]
