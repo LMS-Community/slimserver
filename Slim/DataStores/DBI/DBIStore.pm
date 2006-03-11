@@ -1695,9 +1695,7 @@ sub _postCheckAttributes {
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
-		for my $genreObj ($track->genres) {
-			$genreObj->delete;
-		}
+		Slim::DataStores::DBI::GenreTrack->sql_fastDelete->execute($track->id);
 
 		Slim::DataStores::DBI::Genre->add($genre, $track);
 	}

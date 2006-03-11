@@ -14,6 +14,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->columns(Primary => qw/genre track/);
 
+	$class->set_sql('fastDelete' => 'DELETE FROM __TABLE__ WHERE track = ?');
+
 	$class->has_a(genre => 'Slim::DataStores::DBI::Genre');
 	$class->has_a(track => 'Slim::DataStores::DBI::Track');
 }
