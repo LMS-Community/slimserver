@@ -76,10 +76,11 @@ sub setupGroup {
 		plugin_live365_password => { 
 			'onChange' => sub {
 				my $encoded = pack( 'u', $_[1]->{plugin_live365_password}->{new} );
+				chomp $encoded;
 				Slim::Utils::Prefs::set( 'plugin_live365_password', $encoded );
-			}
-			,'inputTemplate' => 'setup_input_pwd.html'
-			,'changeMsg' => string('SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED')
+			},
+			'inputTemplate' => 'setup_input_pwd.html',
+			'changeMsg' => string('SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED'),
 		},
 		plugin_live365_sort_order => {
 			options => \%sort_options
