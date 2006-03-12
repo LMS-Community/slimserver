@@ -4363,7 +4363,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad inkl. Dateiname an.
+	DE	Falls Sie iTunes auf einem anderen Rechner als SlimServer betreiben, so können Sie hier den kompletten Pfad zur Datei iTunes Music Library.xml angeben. Lassen Sie das Feld frei, falls iTunes auf demselben Rechner läuft wie der SlimServer.
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar aquí el camino hacia el archivo iTunes Music Library.xml ,incluyendo el nombre completo del archivo.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
@@ -4384,7 +4384,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CS	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
-	DE	Falls Sie den Speicherort ihrer iTunes Music Library.xml Datei manuell definieren wollen, so geben Sie hier den kompletten Pfad zu ihrem iTunes Musik Ordner an.
+	DE	Falls Sie iTunes auf einem anderen Rechner als SlimServer betreiben, so können Sie hier den kompletten Pfad zur iTunes Musiksammlung angeben. Lassen Sie das Feld frei, falls iTunes auf demselben Rechner läuft wie der SlimServer.
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
