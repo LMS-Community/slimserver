@@ -579,7 +579,7 @@ sub scanFunction {
 		local $/ = '</dict>';
 		my $line = <ITUNESLIBRARY>;
 
-		$line =~ s/&#(\d*);/Slim::Web::HTTP::escape(chr($1))/ge;
+		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
 
 		$iTunesParserNB->parse_more($line);
 
