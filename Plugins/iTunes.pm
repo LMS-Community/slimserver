@@ -108,16 +108,6 @@ sub useiTunesLibrary {
 	
 	my $can = canUseiTunesLibrary();
 
-	if (!defined($use) && $can) {
-
-		Slim::Utils::Prefs::set('itunes', 1);
-
-	} elsif (!defined($use) && !$can) {
-
-		Slim::Utils::Prefs::set('itunes', 0);
-	}
-
-	$use = Slim::Utils::Prefs::get('itunes');
 	Slim::Music::Import::useImporter('ITUNES',$use && $can);
 
 	$::d_itunes && msg("iTunes: using itunes library: $use\n");
@@ -160,7 +150,7 @@ sub initPlugin {
 
 	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
-
+	
 	$initialized = 1;
 
 	# Pass checker a value, to let it know that we're just seeing if we're
@@ -584,16 +574,12 @@ sub scanFunction {
 	# parse a little more from the stream.
 	if (defined $iTunesParserNB) {
 
-		$::d_itunes && msg("iTunes: Parsing next bit of XML..\n");
+		#$::d_itunes && msg("iTunes: Parsing next bit of XML..\n");
 
 		local $/ = '</dict>';
-		my $line;
+		my $line = <ITUNESLIBRARY>;
 
-		for (my $i = 0; $i < 25; $i++) {
-			$line .= <ITUNESLIBRARY>;
-		}
-
-		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
+		$line =~ s/&#(\d*);/Slim::Web::HTTP::escape(chr($1))/ge;
 
 		$iTunesParserNB->parse_more($line);
 
@@ -1141,6 +1127,12 @@ sub checkDefaults {
 
 	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
 		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('itunes')) {
+		if (defined(findMusicLibraryFile())) {
+			Slim::Utils::Prefs::set('itunes', 1);
+		}
 	}
 }
 
