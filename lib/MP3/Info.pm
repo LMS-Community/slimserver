@@ -457,19 +457,21 @@ data (if TAGVERSION argument is C<0>, may contain two versions).
 =cut
 
 sub get_mp3tag {
-	my ($file, $ver, $raw_v2, $find_ape) = @_;
-	my ($tag, $v2h, $fh);
+	my $file     = shift;
+	my $ver      = shift || 0;
+	my $raw      = shift || 0;
+	my $find_ape = shift || 0;
+	my $fh;
 
-	my $v1    = {};
-	my $v2    = {};
-	my $ape   = {};
-	my %info  = ();
-	my @array = ();
+	my $has_v1  = 0;
+	my $has_v2  = 0;
+	my $has_ape = 0;
+	my %info    = ();
 
-	$raw_v2 ||= 0;
+	# See if a version number was passed. Make sure it's a 1 or a 2
 	$ver = !$ver ? 0 : ($ver == 2 || $ver == 1) ? $ver : 0;
 
-	if (not (defined $file && $file ne '')) {
+	if (!(defined $file && $file ne '')) {
 		$@ = "No file specified";
 		return undef;
 	}
@@ -481,13 +483,17 @@ sub get_mp3tag {
 		return undef;
 	}
 
-	if (ref $file) { # filehandle passed
+	# filehandle passed
+	if (ref $file) {
+
 		$fh = $file;
+
 	} else {
-		if (not open $fh, '<', $file) {
+
+		open($fh, $file) || do {
 			$@ = "Can't open $file: $!";
 			return undef;
-		}
+		};
 	}
 
 	binmode $fh;
@@ -496,14 +502,14 @@ sub get_mp3tag {
 	# store ReplayGain information
 	if ($find_ape) {
 
-		$ape = _parse_ape_tag($fh, $filesize, \%info);
+		$has_ape = _parse_ape_tag($fh, $filesize, \%info);
 	}
 
 	if ($ver < 2) {
 
-		$v1 = _get_v1tag($fh, \%info);
+		$has_v1 = _get_v1tag($fh, \%info);
 
-		if ($ver == 1 && !$v1) {
+		if ($ver == 1 && !$has_v1) {
 			_close($file, $fh);
 			$@ = "No ID3v1 tag found";
 			return undef;
@@ -511,39 +517,21 @@ sub get_mp3tag {
 	}
 
 	if ($ver == 2 || $ver == 0) {
-		($v2, $v2h) = _get_v2tag($fh);
+		$has_v2 = _get_v2tag($fh, $ver, $raw, \%info);
 	}
 
-	if (!$v1 || !$v2 || !$ape) {
+	if (!$has_v1 && !$has_v2 && !$has_ape) {
 		_close($file, $fh);
-		$@ = "No ID3 tag found";
+		$@ = "No ID3 or APE tag found";
+		print "$@\n";
 		return undef;
 	}
 
-	if (($ver == 0 || $ver == 2) && $v2) {
-
-		if ($raw_v2 == 1 && $ver == 2) {
-
-			%info = %$v2;
-
-			$info{'TAGVERSION'} = $v2h->{'version'};
-
-		} else {
-
-			_parse_v2tag($raw_v2, $v2, \%info);
-
-			if ($ver == 0 && $info{'TAGVERSION'}) {
-				$info{'TAGVERSION'} .= ' / ' . $v2h->{'version'};
-			} else {
-				$info{'TAGVERSION'} = $v2h->{'version'};
-			}
-		}
-	}
-
-	unless ($raw_v2 && $ver == 2) {
+	unless ($raw && $ver == 2) {
 
 		# Strip out NULLs unless we want the raw data.
 		foreach my $key (keys %info) {
+
 			if (defined $info{$key}) {
 				$info{$key} =~ s/\000+.*//g;
 				$info{$key} =~ s/\s+$//;
@@ -555,13 +543,13 @@ sub get_mp3tag {
 		}
 	}
 
-	if (keys %info && exists $info{'GENRE'} && ! defined $info{'GENRE'}) {
+	if (keys %info && !defined $info{'GENRE'}) {
 		$info{'GENRE'} = '';
 	}
 
 	_close($file, $fh);
 
-	return keys %info ? {%info} : undef;
+	return keys %info ? \%info : undef;
 }
 
 sub _get_v1tag {
@@ -593,45 +581,46 @@ sub _get_v1tag {
 		$info->{'TAGVERSION'} = 'ID3v1';
 	}
 
-	if ($UNICODE) {
+	if (!$UNICODE) {
+		return 1;
+	}
 
-		# Save off the old suspects list, since we add
-		# iso-8859-1 below, but don't want that there
-		# for possible ID3 v2.x parsing below.
-		my $oldSuspects = $Encode::Encoding{'Guess'}->{'Suspects'};
+	# Save off the old suspects list, since we add
+	# iso-8859-1 below, but don't want that there
+	# for possible ID3 v2.x parsing below.
+	my $oldSuspects = $Encode::Encoding{'Guess'}->{'Suspects'};
 
-		for my $key (keys %{$info}) {
+	for my $key (keys %{$info}) {
 
-			next unless $info->{$key};
+		next unless $info->{$key};
 
-			# Try and guess the encoding.
-			my $value = $info->{$key};
-			my $icode = Encode::Guess->guess($value);
+		# Try and guess the encoding.
+		my $value = $info->{$key};
+		my $icode = Encode::Guess->guess($value);
 
-			unless (ref($icode)) {
+		unless (ref($icode)) {
 
-				# Often Latin1 bytes are
-				# stuffed into a 1.1 tag.
-				Encode::Guess->add_suspects('iso-8859-1');
+			# Often Latin1 bytes are
+			# stuffed into a 1.1 tag.
+			Encode::Guess->add_suspects('iso-8859-1');
 
-				while (length($value)) {
+			while (length($value)) {
 
-					$icode = Encode::Guess->guess($value);
+				$icode = Encode::Guess->guess($value);
 
-					last if ref($icode);
+				last if ref($icode);
 
-					# Remove garbage and retry
-					# (string is truncated in the
-					# middle of a multibyte char?)
-					$value =~ s/(.)$//;
-				}
+				# Remove garbage and retry
+				# (string is truncated in the
+				# middle of a multibyte char?)
+				$value =~ s/(.)$//;
 			}
-
-			$info->{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info->{$key});
 		}
 
-		Encode::Guess->set_suspects(keys %{$oldSuspects});
+		$info->{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info->{$key});
 	}
+
+	Encode::Guess->set_suspects(keys %{$oldSuspects});
 
 	return 1;
 }
@@ -989,17 +978,17 @@ sub _parse_v2tag {
 }
 
 sub _get_v2tag {
-	my($fh) = @_;
-	my($off, $end, $myseek, $v2, $v2h, $hlen, $num, $wholetag);
+	my ($fh, $ver, $raw, $info) = @_;
+	my ($off, $end, $myseek, $hlen, $num, $wholetag);
 
-	$v2 = {};
-	$v2h = _get_v2head($fh) or return;
+	my $v2  = {};
+	my $v2h = _get_v2head($fh) or return 0;
 
 	if ($v2h->{major_version} < 2) {
 		carp "This is $v2h->{version}; " .
 		     "ID3v2 versions older than ID3v2.2.0 not supported\n"
 		     if $^W;
-		return;
+		return 0;
 	}
 
 	# use syncsafe bytes if using version 2.4
@@ -1071,20 +1060,43 @@ sub _get_v2tag {
 		}
 
 		if (exists $v2->{$id}) {
+
 			if (ref $v2->{$id} eq 'ARRAY') {
 				push @{$v2->{$id}}, $bytes;
 			} else {
 				$v2->{$id} = [$v2->{$id}, $bytes];
 			}
+
 		} else {
+
 			$v2->{$id} = $bytes;
 		}
+
 		$off += $size;
 	}
 
-	return($v2, $v2h);
-}
+	if (($ver == 0 || $ver == 2) && $v2) {
 
+		if ($raw && $ver == 2) {
+
+			$info = $v2;
+
+			$info->{'TAGVERSION'} = $v2h->{'version'};
+
+		} else {
+
+			_parse_v2tag($raw, $v2, $info);
+
+			if ($ver == 0 && $info->{'TAGVERSION'}) {
+				$info->{'TAGVERSION'} .= ' / ' . $v2h->{'version'};
+			} else {
+				$info->{'TAGVERSION'} = $v2h->{'version'};
+			}
+		}
+	}
+
+	return 1;
+}
 
 =pod
 
