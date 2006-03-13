@@ -49,6 +49,7 @@ use Slim::Utils::Strings qw(string);
 
 my $lastMusicLibraryFinishTime = undef;
 my $lastITunesMusicLibraryDate = 0;
+my $currentITunesMusicLibraryDate = 0;
 my $iTunesScanStartTime = 0;
 
 my $isScanning = 0;
@@ -500,19 +501,13 @@ sub doneScanning {
 	# Don't leak filehandles.
 	close(ITUNESLIBRARY);
 
-	# Set the last change time for the next go-round.
-	my $file  = findMusicLibraryFile();
-	my $mtime = (stat($file))[9];
-
-	$lastITunesMusicLibraryDate = $mtime;
-
 	setPodcasts();
 
 	if ($::d_itunes) {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $currentITunesMusicLibraryDate);
 
 	# Take the scanner off the scheduler.
 	Slim::Utils::Scheduler::remove_task(\&scanFunction);
@@ -537,7 +532,10 @@ sub scanFunction {
 
 		resetScanState();
 
-		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', (stat($iTunesLibraryFile))[9]);
+		# Set the last change time for the next go-round.
+		my $mtime = (stat($iTunesLibraryFile))[9];
+	
+		$currentITunesMusicLibraryDate = $mtime;
 	}
 
 	if ($opened && !$locked) {
