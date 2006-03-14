@@ -269,9 +269,12 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		my $jump = undef;
+		
+		my $jump = $client->curSelection($client->curDepth());
 		my @oldlines = Slim::Display::Display::curLines($client);
+		
 		Slim::Buttons::Common::setMode($client, 'home');
+		
 		if ($button eq 'menu_playlist') {
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			$jump = 'NOW_PLAYING';
@@ -310,16 +313,19 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'playlist,playlistTrack', 'level' => 0});
 			$jump = 'SAVED_PLAYLISTS';
 		} elsif ($buttonarg =~ /^plugin/i) {
+			
 			if (exists($modes{$buttonarg})) {
 				Slim::Buttons::Common::pushMode($client, $buttonarg);
 			} else {
 				Slim::Buttons::Common::pushMode($client, 'plugins');
 			}
+			
 			$jump = 'PLUGINS';
 		} elsif ($button eq 'menu_settings') {
 			Slim::Buttons::Common::pushMode($client, 'settings');
 			$jump = 'SETTINGS';
 		}
+		
 		Slim::Buttons::Home::jump($client,$jump);
 		$client->update();
 	},

@@ -237,7 +237,7 @@ sub setMode {
 		updateMenu($client);
 		$client->curDepth('');
 		if (!defined($client->curSelection($client->curDepth()))) {
-			$client->curSelection($client->curDepth(),$@{$homeChoices{$client}}->[0]);
+			$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 		}
 		return;
 	}
@@ -253,6 +253,7 @@ sub setMode {
 	$params{'listRef'} = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
 	$params{'curMenu'} = $client->curDepth();
+	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
 
@@ -338,6 +339,7 @@ sub homeExitHandler {
 			$nextmenu = ${$client->param('valueRef')};
 			$client->curSelection($client->curDepth(),$nextmenu);
 		}
+		
 		unless (defined $nextmenu) {
 			$client->bumpRight();
 			return;
@@ -443,7 +445,7 @@ sub jump {
 	}
 	
 	if (!defined($client->curSelection($client->curDepth()))) {
-			$client->curSelection($client->curDepth(),$@{$homeChoices{$client}}->[0]);
+		$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 	}
 }
 
