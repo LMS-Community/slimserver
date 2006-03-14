@@ -107,7 +107,7 @@
 [% BLOCK contentitem -%]
 <li class="[% odd ? "odd" : "even" %]">
   [%- IF anchor %]
-  <a name="[% anchor %]"></a>
+  <a name="[% anchor | uri %]"></a>
   [%- END %]
   [%- IF controls %][%# allow for a line with no controls %]
   <div class="controls">
@@ -125,7 +125,7 @@
 [% BLOCK galleryitem -%]
 <li class="gallery">
   [%- IF anchor %]
-  <a name="[% anchor %]"></a>
+  <a name="[% anchor | uri %]"></a>
   [%- END %]
   <div class="galleryitem">
    [%- IF item.coverThumb %][% IF not item.artist; item.artist = item.itemobj.artistsWithAttributes.first.artist.name; END; %]

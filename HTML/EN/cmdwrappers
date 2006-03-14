@@ -124,7 +124,7 @@ END %]
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]">
 	[%- IF anchor %]
-		<a name="[% anchor %]"></a>
+		<a name="[% anchor | uri %]"></a>
 	[%- END -%]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
@@ -139,7 +139,11 @@ END %]
 [%- END %]
 
 [% BLOCK galleryitem %]
-<li><div style="width:[% item.size %]px;">
+<li>
+[%- IF anchor %]
+	<a name="[% anchor | uri %]"></a>
+[%- END -%]
+<div style="width:[% item.size %]px;">
 	<div >
 		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
 		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]

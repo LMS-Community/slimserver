@@ -51,7 +51,7 @@
 [% BLOCK contentitem -%]
 <tr ><td bgcolor="[% PROCESS oddOrEvenC %]">
 	[%- IF anchor %]
-		<a name="[% anchor %]"></a>
+		<a name="[% anchor | uri%]"></a>
 	[%- END %]
 	
 	[%- content | indent(4) %]

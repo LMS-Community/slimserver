@@ -2,7 +2,7 @@
 
 <tr [% IF not odd %]bgcolor="#EEEEEE"[% END %]>
   <td>
-[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+[% IF anchor %]<a name="[% anchor | uri %]"></a>[% END %]
 
 [% IF descend %]
 
