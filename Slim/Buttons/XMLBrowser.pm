@@ -676,26 +676,27 @@ sub parseXMLIntoFeed {
 	my $content = shift || return undef;
 
 	# deal with windows encoding stupidity (see Bug #1392)
-	$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
+	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
 	# async http request succeeded.  Parse XML
 	# forcearray to treat items as array,
 	# keyattr => [] prevents id attrs from overriding
 	our $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
 
-	# Release
-	undef $content;
-
 	if ($@) {
 		errorMsg("XMLBrowser: failed to parse feed because:\n$@\n");
 
 		if (defined $content && ref($content) eq 'SCALAR') {
 			errorMsg("XMLBrowser: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
+			undef $content;
 		}
 
 		# Ugh. Need real exceptions!
 		die $@;
 	}
+
+	# Release
+	undef $content;
 
 	# convert XML into data structure
 	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
