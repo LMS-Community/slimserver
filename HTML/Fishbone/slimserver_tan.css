@@ -15,21 +15,6 @@ H3 {
 	padding: 4 0 2 0;
 }
 
-H4
-{
-	font-size : 12pt;
-	font-weight : bold;
-	padding: 0 8 0 8;
-}
-
-H5 {
-	font-size : 12pt;
-	font-weight : bold;	
-	text-align : left;
-	margin:2 0 2 0;
-	padding: 2 0 2 0;
-}
-
 TD, P, A {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size : 12px;
@@ -39,12 +24,6 @@ TD, P, A {
 	line-height: 150%;
 }
 
-TABLE,TBODY {
-	border-spacing: 0px;
-	padding: 0px;
-	margin: 0px;
-}
-
 DIV {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size : 9px;
@@ -52,21 +31,6 @@ DIV {
 	margin-bottom:1pt;
 	line-height: 150%;
 	_height: 0%;
-}
-
-DIV.coverart {
-	overflow: hidden;
-	float:left;
-	margin:0px;
-	height: auto;
-}
-
-DIV.covertext {
-	overflow: hidden;
-}
-
-A {
-	text-decoration: none;
 }
 
 .small {
@@ -87,18 +51,6 @@ TH {
 
 A:link, A:visited {
 	color : #cc0000;
-}
-
-A:hover, A:selected {
-	color : #EE3823;
-}
-
-DIV.nowplaying A
-{
-	font-size:11px;
-	padding: 0 0 0 0  ! important;
-	margin: 0 0 0 0 ! important;
-	line-height: 100% ! important;
 }
 
 .linkbtn {
@@ -122,16 +74,6 @@ A.linkbtn:link {
 	text-decoration : none; 
 }
 
-A.linkbtn:active {
-	color: #EE3823;
-	text-decoration : none; 
-}
-
-A.linkbtn:hover {
-	color: #EE3823;
-	text-decoration : none; 
-}
-
 .stdclick {
 	font : 12px Arial; 
 	color: Black;
@@ -139,20 +81,6 @@ A.linkbtn:hover {
 	background-color : #d1b586;
 	margin-bottom: 2px;
 	margin-top: 2px;
-}
-
-DIV.playlistform,DIV.menu2 .stdclick {
-	font : 9px Arial; 
-	color: Yellow;
-	margin: 2 3 2 3;
-}
-
-DIV.playlistform,DIV.menu2 .stdedit {
-	margin: 2 3 2 3;
-}
-
-div#statusMessage form{
-	padding-top: 7px;
 }
 
 .stdedit {
@@ -177,13 +105,6 @@ div#statusMessage form{
 	background:#f8eabf;
 	color : #663300;
 	border-bottom:2px solid #ffcc66;
-}
-
-.faq
-{
-	padding: 0 8 0 8;
-	margin:0px;
-	margin-top: 8px;
 }
 
 .nowplaying
@@ -247,45 +168,16 @@ div#statusMessage form{
 	line-height: 100%;
 }	
 
-.artistname
-{
-	margin:0px;
-	font-size:11px;
-	font-weight:normal;
-	color:white;
-	line-height: 100%;
-}
-
-.list
-{
-	padding: 0 8 0 8;
-	margin:0px;
-	margin-top: 8px;
-}
-
-.playlist
-{
-	padding: 0 8 0 8;
-	margin:0px;
-	margin-top: 8px;
-}
-
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	background: #fcf2d4;
 	color:#996600 ;
 	padding-left: 1px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 	border-top:solid 2px #996633;
 	border-bottom:solid 2px #cc9966;
-}
-
-.searchHeader {
-	margin-top: 20px;
-}
-
-img {
-	border-style: none;
 }
 
 .listing A, .listing2 A, .odd A, .even A
@@ -333,147 +225,7 @@ DIV.playlistform,.menu2
 	color:white;
 }
 
-div#statusMessage
-{
-	margin:0px;
-	padding: 0 0 1 8;
-	background:#999;
-	color:white;
-}
-
-DIV.playlistform,DIV.menu2 TABLE {
-	border-collapse: collapse;
-}
-
-div#browsedbList {
-	position: relative;
-	clear: left;
-	width: auto;
-	height: auto;
-}
-
-div#browsedbHeader {
-	margin-left:0px;
-}
-
-.browsedbListItem {
-	position: relative;
-	padding-right: 60px;
-}
-
-.browsedbControls {
-	position: absolute;
-	top: 0px;
-	right: 4px;
-}
-
-.playlistControls {
-	position: absolute;
-	top: 0px;
-	right: 4px;
-}
-
-.browsedbControls img, .playlistControls img {
-	vertical-align: middle;
-}
-
-.pagebar {
-	width: 100%;
-	clear: left;
-	position: relative;
-	margin-left:2px;
-	margin-top:5px;
-}
-
-#pageHeaderInfo {
-	margin-left:2px;
-	float: left;
-}
-
-.settingSection .groupHead {
-	/* home menu list header */
-	height: 13px;
-	font-weight: bold;
-	font-size: 12px;
-}
-
-.settingSection {
-	position: relative;
-	border-bottom:2px solid #bbb;
-}
-
-.prefHead {
-	font-weight: bold;
-}
-
-.prefDesc,.prefHead {
-	padding-bottom: 5px;
-}
-
-.songInfo ul {
-	/* the list of song info items */
-	padding: 0px;
-	list-style: none;
-	margin: 8px;
-}
-
-.songInfo li {
-	position: relative;
-	padding-top: 5px;
-	margin: 0px;
-	clear: left;
-}
-
-.songInfoTitle {
-	float: left;
-	right: 0px;
-	padding: 0px;
-	width: 25%;
-}
-
-.songInfoText {
-	right: 0px;
-	padding: 0px;
-	margin: 0px;
-	width: 75%;
-	margin-left: 25%;
-}
-
-.thumbnail {
-	padding: 0px;
-	text-align: center;
-}
-
-.artworkControls {
-	padding: 0px;
-	margin: 0px;
-}
-
 .artworkControls img {
 	margin-left: 1px;
 	padding-top: 6px;
-}
-
-.artworkText {
-	text-align: center;
-}
-
-.thumbwrap {
-	display: inline-block;
-	margin: 0px;
-	padding-left: 4px;
-	padding-right: 0px;
-	padding-top: 10px;
-}
-
-.thumbwrap li {
-	display: -moz-inline-box;  /* Moz */
-	display: inline-block;  /* Op, Saf, IE \*/
-	vertical-align: top;
-	padding-right: 6px;
-}
-
-.thumbwrap a span {
-	display: block;
-	overflow: hidden;
 }
