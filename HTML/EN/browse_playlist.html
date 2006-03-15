@@ -42,14 +42,14 @@
 </form></div>
 [% END %]
 <div id="browsedbHeader">
-	[% browselist_pagebar %]
+	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
 [% WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
 	[% END %]
 [% END %]
-<div id="browsedbFooter">
-	[% browselist_pagebar %]
+<div id="browsedbHeader">
+	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
 [% PROCESS pagefooter.html %]
