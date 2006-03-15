@@ -108,8 +108,8 @@
 [% IF pagesprev || pagesprev == '0' %] <a href="[% pageinfo.path %]?start=[% pagesprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
- [%- curpage = (pageinfo.alphamap.$alphakey == pageinfo.startitem) -%]
- <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.$alphakey %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+ [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
+ <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]
 [%- ELSE %]
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]

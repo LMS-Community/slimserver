@@ -194,7 +194,7 @@
 [% END -%]
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
-      <li[% IF pageinfo.alphamap.$alphakey == pageinfo.startitem %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.$alphakey %]#[% alphakey %]"><span>[% alphakey %]</span></a></li>
+      <li[% IF pageinfo.alphamap.item(alphakey) == pageinfo.startitem %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey %]"><span>[% alphakey %]</span></a></li>
 [% END %]
 [%- ELSE %]
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
