@@ -13,15 +13,15 @@
 	
 		[% BLOCK favcontrols %]
 			[% WRAPPER moveuplink noTarget=1 %]
-				href="favorites_list.html?p0=move&amp;p1=[% loop.index %]&amp;p2=%2D1&amp;player=[% player | uri %]"
+				href="favorites_list.html?p0=favorites&amp;p1=move&amp;p2=[% loop.index %]&amp;p3=%2D1&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER movedownlink noTarget=1 %]
-				href="favorites_list.html?p0=move&amp;p1=[% loop.index %]&amp;p2=%2B1&amp;player=[% player | uri %]"
+				href="favorites_list.html?p0=favorites&amp;p1=move&amp;p2=[% loop.index %]&amp;p3=%2B1&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER removelink noTarget=1 %]
-				href="favorites_list.html?p0=delete&amp;p1=[% loop.index %]&amp;player=[% player | uri %]"
+				href="favorites_list.html?p0=favorites&amp;p1=delete&amp;p2=[% loop.index %]&amp;player=[% player | uri %]"
 			[% END %]
 		
 			[% WRAPPER playlink %]

@@ -95,14 +95,6 @@ sub handleWebIndex {
 	
 	my $now = Time::HiRes::time();
 
-	if (defined $params->{'p0'}) {
-		if ($params->{'p0'} eq 'move') {
-			Slim::Utils::Favorites::moveItem($client, $params->{'p1'}, $params->{'p2'});
-		} elsif ($params->{'p0'} eq 'delete') {
-			Slim::Utils::Favorites->deleteByClientAndId($client, $params->{'p1'});
-		}
-	}
-
 	$params->{'favList'} = {};
 
 	my $favs = Slim::Utils::Favorites->new($client);
@@ -272,8 +264,33 @@ sub initPlugin {
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 	Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
+
+	Slim::Control::Request::addDispatch(['favorites'],[1, 0, 0, \&handleRequest]);
+
 }
 
+sub handleRequest {
+	my $request = shift;
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['favorites']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	my $p1 = $request->getParam('_p1');
+	my $p2 = $request->getParam('_p2');
+	
+	my $client = $request->client();
+
+	if (defined $p1) {
+		if ($p1 eq 'move') {
+			Slim::Utils::Favorites::moveItem($client, $p2, $request->getParam('_p3'));
+		} elsif ($p1 eq 'delete') {
+			Slim::Utils::Favorites->deleteByClientAndId($client, $p2);
+		}
+	}
+	$request->setStatusDone();
+}
 
 sub strings {
 	return "
