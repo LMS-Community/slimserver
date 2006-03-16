@@ -166,6 +166,7 @@ shuffle.*				= dead
 shuffle_off				= dead
 shuffle_on				= dead
 search					= dead
+favorites				= dead
 sleep					= dead
 stop					= dead
 voldown.*				= dead
