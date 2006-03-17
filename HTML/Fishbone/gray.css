@@ -130,7 +130,17 @@ A.linkbtn:link {
 	font-size:10px ! important;
 }
 
-#tan
+.tan
+{
+	display: none;
+}
+
+#grayrefresh
+{
+	display: block;
+}
+
+#standardrefresh
 {
 	display: none;
 }
@@ -140,23 +150,14 @@ A.linkbtn:link {
 	display: none;
 }
 
-#standardrefresh
-{
-	display: none;
-}
-
-.button
+.button, .valueSelected
 {
 	color:white! important;
-	margin:2 0 2 0;
-	font-size:10px ! important;
 }
 
-.darkbutton
+.darkbutton, .valueBold
 {
 	color:#bbb ! important;
-	margin:2 0 2 0;
-	font-size:10px ! important;
 }
 
 .songtitle

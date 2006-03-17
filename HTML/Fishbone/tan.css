@@ -130,19 +130,27 @@ A.linkbtn:link {
 	font-size:10px ! important;
 }
 
-.button
+.button, .valueSelected
 {
 	color:red! important;
-	margin:2 0 2 0;
-	font-size:10px ! important;
 }
 
-#grayrefresh
+.darkbutton, .valueBold
+{
+	color:#f8eabf ! important;
+}
+
+.gray
 {
 	display: none;
 }
 
-#gray
+.tan 
+{
+	display: inline;
+}
+
+#grayrefresh
 {
 	display: none;
 }
@@ -152,11 +160,14 @@ A.linkbtn:link {
 	display: none;
 }
 
-.darkbutton
+#tanrefresh
 {
-	color:#f8eabf ! important;
-	margin:2 0 2 0;
-	font-size:10px ! important;
+	display: block;
+}
+
+.TopMenu3
+{
+	background-color: #c2a05b;
 }
 
 .songtitle
@@ -228,4 +239,8 @@ DIV.playlistform,.menu2
 .artworkControls img {
 	margin-left: 1px;
 	padding-top: 6px;
+}
+
+.artworkText A {
+	color : #996600 ! important;
 }
