@@ -1564,7 +1564,7 @@ sub __isCmdQuery {
 	
 	# the query state must match
 	if ($isQuery == $self->{'_isQuery'}) {
-	
+
 		my $possibleNamesCount = scalar (@{$possibleNames});
 
 		# we must have the same number (or more) of request terms
@@ -1577,9 +1577,9 @@ sub __isCmdQuery {
 				my $name = $self->{'_request'}->[$i];;
 
 				# return as soon we fail
-				return 0 if !grep(/$name/, @{$possibleNames->[$i]});
+				return 0 if !grep(/^$name$/, @{$possibleNames->[$i]});
 			}
-			
+
 			# everything matched
 			return 1;
 		}
