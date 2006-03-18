@@ -919,12 +919,12 @@ sub cli_subscribe_notification {
 		# commands we ignore for status (to change if other subscriptions are
 		# supported!)
 		next if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
-		next if $request->isCommand([['playlist'], ['open']]);
+		next if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 		# retrieve the clientid
 		my $clientid = $request->clientid();
 		next if !defined $clientid;
-
+		
 		# handle status sending on changes
 		if (defined (my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid})) {
 
