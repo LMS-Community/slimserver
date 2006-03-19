@@ -407,6 +407,7 @@ sub mixerQuery {
 
 	if ($entity eq 'muting') {
 		$request->addResult("_$entity", $client->prefGet("mute"));
+	}
 	elsif ($entity eq 'volume') {
 		$request->addResult("_$entity", $client->prefGet("volume"));
 	} else {
