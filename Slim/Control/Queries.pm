@@ -405,9 +405,10 @@ sub mixerQuery {
 	my $client = $request->client();
 	my $entity = $request->getRequest(1);
 
-	
 	if ($entity eq 'muting') {
 		$request->addResult("_$entity", $client->prefGet("mute"));
+	elsif ($entity eq 'volume') {
+		$request->addResult("_$entity", $client->prefGet("volume"));
 	} else {
 		$request->addResult("_$entity", $client->$entity());
 	}
@@ -963,7 +964,7 @@ sub statusQuery {
 			$request->addResult('sync_slaves', join(",", @sync_slaves));
 		}
 	
-		$request->addResult("mixer volume", $client->volume());
+		$request->addResult("mixer volume", $client->prefGet("volume"));
 		
 		if ($SB || $SP3) {
 			$request->addResult("mixer treble", $client->treble());
