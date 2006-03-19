@@ -1901,7 +1901,7 @@ SETUP_GROUP_ALARM_DESC
 	FI	Tähän soittimeen voi määrittää kahdeksan hälytystä. Yksi päivittäinen hälytys ja yksittäisiä hälytyksiä mille tahansa viikon päivälle.
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
 	IT	Questo lettore puo' avere sino ad 8 sveglie: una sveglia quotidiana e sveglie per ogni singolo giorno della settimana.
-	NL	Deze speler kan tot 8 wektijden hebben: 1 wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
+	NL	Deze speler kan tot 8 wektijden hebben: één wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
 
 SETUP_GROUP_IRSETS
 	CS	Dálkové ovládání
@@ -3689,7 +3689,7 @@ SETUP_ARTFOLDER_DESC
 	HE	במידה והעטיפות מרוכזות בספרייה אחת, ציין אותה
 	IT	Puoi scegliere di archiviare tutte le copertine in una sola cartella, usando le variabili per i nomi file indicate sopra. Inserisci qui l'indirizzo dei file delle copertine. Nonostante cio', il server cerchera' comunque le copertine anche allo stesso indirizzo di ciascun file audio se nessuna copertina corrispondente verra' trovata nella cartella copertine.
 	JA	アートワークを１つのフォルダーにまとめて保存しても構いません。以下に入力してください。フォルダー名を指定しても、もし見つからなければ、音楽ファイルがある場所を探します。
-	NL	Je kunt ervoor kiezen om alle hoesafbeeldingen in Ã©Ã©n directory te zetten. Dit werkt op dezelfde manier als met de variabele bestandsnaam optie.  Typ hier de locatie van de hoesafbeeldingen. Onafhankelijk van wat je hier invult zal SlimServer ook nog kijken in de folder waar de audiobestanden staan als geen hoesje gevonden is in de hoesafbeeldingen folder.
+	NL	Je kunt ervoor kiezen om alle hoesafbeeldingen in één directory te zetten. Dit werkt op dezelfde manier als met de variabele bestandsnaam optie.  Typ hier de locatie van de hoesafbeeldingen. Onafhankelijk van wat je hier invult zal SlimServer ook nog kijken in de folder waar de audiobestanden staan als geen hoesje gevonden is in de hoesafbeeldingen folder.
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
 	SV	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果伺服器未能在所指定的图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
@@ -4692,7 +4692,7 @@ SETUP_TRANSCODE-OGG_DESC
 	ES	Si se ha instalado LAME y las herramientas de Ogg Vorbis, se puede hacer que el SlimServer convierta lo archivos Ogg de música en-el-momento para ser escuchados en el reproductor
 	FR	Si vous disposez de LAME et des outils Ogg Vorbis (ogginfo et ogg123), le SlimServer peut convertir en temps réel vos morceaux au format Ogg pour qu'ils soient lus sur le Slim. La conversion est effectuée sur le serveur pendant la lecture et n'est pas stockée sur le disque.
 	JA	LAMEをお持ちで、Ogg Vorbisツール（ogginfo と ogg123）をインストールされているのであれば、Ogg音楽ファイルをSlimプレーヤーで再生することができます。
-	NL	Indien je LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geÃ¯nstalleerd hebt kan je de SlimServer instellen om Ogg bestanden real-time om te zetten zodat deze op je speler afgespeeld kunnen worden.
+	NL	Indien je LAME en de Ogg Vorbis hulpprogramma's (ogginfo en ogg123) geïnstalleerd hebt kan je de SlimServer instellen om Ogg bestanden real-time om te zetten zodat deze op je speler afgespeeld kunnen worden.
 	NO	Om du har LAME og Ogg Vorbis-verktøy (ogginfo & ogg123) installert kan serveren automatisk konvertere Ogg-musikkfiler for avspilning i din spiller.
 	PT	Se tiver instalado no sistema o LAME (utilitários de MP3) ou os utilitários do Ogg Vorbis (ogginfo e ogg123), pode configurar o SlimServer para converter automaticamente os ficheiros para MP3, de forma a serem usados no cliente Slim.
 	SV	Om du har LAME och Ogg Vorbis-verktyg (ogginfo & ogg123) installerade kan din server automatiskt konvertera Ogg-musikfiler för uppspelning i din spelare.
@@ -4823,7 +4823,7 @@ SETUP_TRANSCODE-MOV_DESC
 	ES	Sólo para Macintosh OS X: si se ha instalado LAME, se puede hacer que Slimserver convierta sus películas QuickTime y archivos AAC en-el-momento, para ser escuchadas en el reproductor.
 	FR	Uniquement pour Macintosh OS X : Si vous disposez de LAME, le SlimServer peut convertir en temps réel vos morceaux au format Quicktime movie et AAC pour qu'ils soient lus sur le Slim. La conversion est effectuée pendant la lecture sur le serveur et n'est pas stockée sur le disque.
 	JA	マッキントッシュOSのみ: LAMEがインストールされているのであれば、クイックタイムとACC音楽ファイルをSlimプレーヤーで再生することができます。
-	NL	Alleen voor Macintosh OS X: Indien je LAME geÃÂ¯nstalleerd hebt kun je de SlimServer instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de speler.
+	NL	Alleen voor Macintosh OS X: Indien je LAME geïnstalleerd hebt kun je de SlimServer instellen om QuickTime films (alleen het geluid) en AAC muziekbestanden real-time om te zetten voor weergave op de speler.
 	NO	Kun for Mac OS X: Om du har LAME installert kan din SlimServer automatisk konvertere QuickTime- og AAC-filer for avspilling i din spiller.
 	PT	Apenas Apple OS X
 	SV	Endast Mac OS X: Om du har LAME installerade kan din SlimServer automatiskt konvertera QuickTime- och AAC-filer för uppspelning i din spelare.
@@ -6854,7 +6854,7 @@ SETUP_GROUPDISCS_1
 	FR	Disques multiples en tant qu'album unique
 	IT	Considera i cofanetti come un solo, unico, album
 	JA	複数枚セットのアルバムを１つのアルバムとみなす
-	NL	Behandel dubbel-cd's als 1 album
+	NL	Behandel dubbel-cd's als één album
 	NO	Behandle multiple plater som deler av samme album
 	SV	Behandla multipla diskar som del av samma album
 	ZH_CN	把多个光碟组成的合集视为单一的乐谱帖
