@@ -1,3 +1,422 @@
+<h2><a name="v6.5.x" id="v6.5.x"></a>Version 6.5.x - 2006-MM-DD</h2>
+
+<ul>
+	<li>International:
+	<ul>
+		<li>Huge overhaul of the Dutch translation by Willem Oepkes. Thanks a lot!</li>
+		<li>Jarkko Ahonen updated the Finnish translation.</li>
+		<li>Partial Hebrew translation from Avi Stone.</li>
+		<li>Updated Italian translation. Thanks a lot Riccardo Raponi!</li>
+		<li>Updated German translation - Michael Herger</li>
+		<li>Many Unicode updates - tag parsing, and OPML browsing.</li>
+		<li>Add CODE2000 Unicode TrueType Font to default distribution.</li>
+		<li>Fix locale issues for clock display.<br>
+			Pull current time format information from the system. Use that to set
+			LC_TIME for Windows & OS X system. Use current LC_TIME setting on *nix hosts.</li>
+	</ul>
+	<br />
+
+	<li>Internet Radio:
+	<ul>
+		<li>Podcast Browser / OPML Browser renamed to XMLBrowser.</li>
+		<li>New Slim Devices Picks plugin - allows browsing of our hierarchy</li>
+		<li>Live Music Archive plugin is included by default</li>
+		<li>Fix ogg radio streaming - a station is sending back application/ogg</li>
+		<li>Shoutcast: Don't list AACPlus stations.</li>
+		<li>Live365: password encoding fix.</li>
+	</ul>
+	<br />
+
+	<li>Skins:
+	<ul>
+		<li>Updated all skins to be CSS based, allowing HTML fragment reuse, and faster loading.</li>
+		<li>Added Ben Klass' excellent Nokia770 skin.</li>
+		<li>Change ExBrowse3 / JXTK2 to use asynchronous XMLHttpRequests whenever possible</li>
+	</ul>
+	<br />
+
+	<li>Performance:
+	<ul>
+		<li>First pass at dynamically resizing thumb images to the specified size.</li>
+
+	</ul>
+	<br />
+
+	<li>Platform Support:
+	<ul>
+		<li>Unix: Don't ship binaries for FreeBSD, OpenBSD or Solaris anymore - people using these platforms can build their own.</li>
+		<li>OSX: Update XCode project to 2.2 & native build. Universal 10.4u SDK with ppc & i386 builds.</li>
+		<li>Win32: Map UNC paths to drive letters to avoid duplicates. WMP10 (among others) creates playlists with UNC paths.</li>
+		<li>Win32: Allow UNC style paths in AudioDir/PlaylistDir - map them to real drives if possible.</li>
+		<li>Debian: Add package build files & apt-get archive.</li>
+
+		<li>All: Rationalise file name for custom types/convert/strings: custom-types.conf, custom-convert.conf,
+			custom-strings.txt are the preferred custom file names. For convert and types
+			these are allowed in the server root directory and plugin root directories.
+			(slimserver-convert.conf and slimserver-strings.txt retained in server root
+			for backwards compatability only)</li>
+
+		<li>Unix: Move cachedir to ~/Cache</li>
+		<li>All: Use slimserversql.db for all platforms (and rename database in upgrade script on unix)</li>
+	</ul>
+	<br />
+
+	<li>Tag Reading:
+	<ul>
+		<li>Fix APE tag ReplayGain reading for MP3s.</li>
+		<li>Read ID3v2 tags first from MP3 files. If those don't exist, try v1 tags.<br>
+			This will prevent confusion when tag editors (such as iTunes) don't change v1 tags.
+		</li>
+		<li>Fix ordering of tracks in multi-disc compilation albums.</li>
+	</ul>
+	<br />
+
+	<li>Plugins:
+	<ul>
+		<li>Added IR Learning functionality - Felix Muller</li>
+		<li>Add network test capability to health plugin - Adrian Smith</li>
+		<li>Add customsearch columns for Stuart's popular plugin.</li>
+	</ul>
+	<br />
+
+	<li>CLI API:
+	<ul>
+		<li>Major rework of CLI internals from Fred Thomas. Subscription model is now in place.<br>
+		    Please see his well kept docs in docs/cli-api.html</li>
+		<li>Handle notifications asynchronously.</li>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=91">#0091</a> - Make the (EN) skin more stylesheet friendly</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=142">#0142</a> - Make rating available to player UI and Web Interface</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=252">#0252</a> - Report Raw IR codes via CLI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=305">#0305</a> - Add option to specify sort order of album art.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=662">#0662</a> - Silence MP3 does not honour bitrate limit</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=882">#0882</a> - Title and Artist not displayed in &quot;Browse Artwork&quot;</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1321">#1321</a> - Alarm clock CLI support</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1322">#1322</a> - Asynchronous extended CLI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1354">#1354</a> - Allow lists of track id's in the playlist control command</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1362">#1362</a> - MusicMagic Moods</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1686">#1686</a> - Server should reduce player state and stop display updates on player disconnect</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1729">#1729</a> - Enable playlists to be used as seedings for Musicmagic mixes</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1855">#1855</a> - incorrect cue sheet interpretation</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1859">#1859</a> - Jerky sound with some 24/48 FLAC files</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1917">#1917</a> - Ability to customize the number/type of 'Now Playing' options to cycle through.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2018">#2018</a> - Player Remote Keys sometimes bounce</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2081">#2081</a> - SB2 fails to respond to remote when Slimserver busy</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2331">#2331</a> - FAQ questions in Default skin are tiny in Firefox</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2464">#2464</a> - browse artwork broken when using handheld skin from windows mobile</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2494">#2494</a> - refactor Slim::Control::Command::execute() to lookup table</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2516">#2516</a> - Random Mix: Dynamic addition of songs should be optional.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2551">#2551</a> - Prevent songs being played twice in random mixes</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2555">#2555</a> - Article sorting ignored in 6.5 nightly</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2556">#2556</a> - Browsing into new folder doesn't scan with readTags</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2557">#2557</a> - SB2 dB volume control causes digital round errors</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2560">#2560</a> - Bass/Treble options seem to be broken in Fishbone lately</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2571">#2571</a> - brightness reverts to brightest if you dim while playing then scroll</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2572">#2572</a> - Artwork not constrained in Default skin</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2575">#2575</a> - Gradual volume ramping for Alarm function</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2581">#2581</a> - sb2/3 firmware chokes on this mp3 file, plays static</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2583">#2583</a> - Multi-disc tracks improperly sort in the server/browse pane</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2585">#2585</a> - Sox causing 95+% cpu usage</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2600">#2600</a> - Database schema incorrect concerning bitrate/seconds.  Noticable only with mySQL strict DB checking</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2605">#2605</a> - Scan crashes for playlist ref to WMA file that has a &quot;WM/URL&quot; tag set to allofmp3.com</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2606">#2606</a> - live365 stops slimserver</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2608">#2608</a> - Slim/Utils/Unicode.pm:encodingFromFileHandle: seek() assumed to return file position</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2609">#2609</a> - unicode text in Polish looks very bizarre on sb2/3 display</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2610">#2610</a> - More schema issues - upsets mySQL with alphanumeric blank years (&quot;&quot;) and probable incorrect field def</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2617">#2617</a> - if the path to your music folder contains high ascii characters, the server can't read it</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2619">#2619</a> - Shoutcast - manuall refresh from player broken</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2622">#2622</a> - Fishbone skin: frame bug</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2623">#2623</a> - Problem with tracks that have no 'album' metadata</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2625">#2625</a> - Enhancement request for 'custom search' columns within the SlimServer database</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2626">#2626</a> - option to show year with 'browse artists'</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2629">#2629</a> - Player info - Reports squeezebox2</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2632">#2632</a> - Cannot add MoodLogic playlist with remote.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2633">#2633</a> - Browse genres and browse music folder broken in Handheld skin with svn 5305</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2636">#2636</a> - Server crashes if Favorites button pushed when favorites plugin disabled</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2644">#2644</a> - Shuffled playlist does not play from the top</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2653">#2653</a> - &quot;play other tracks in album or directory&quot; enable on the fly.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2654">#2654</a> - Choosing to play a .lnk file crashes the server</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2658">#2658</a> - Title of remote streams should be able to be changed in _updateMetaData</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2659">#2659</a> - Crash in Slim/Formats/MP3.pm due to possible module conflict</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2662">#2662</a> - Empty genres when browsing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2674">#2674</a> - Wrong Frame selection from the Song Info icon in the Fishbone skin</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2675">#2675</a> - No results in the manual search</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2676">#2676</a> - XMLBrowser crashes on Podcast Play</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2677">#2677</a> - SlimServer stops shortly after SB3 starts playing file with Japanese id3 tags</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2704">#2704</a> - DB scanning fails to find directories starting with double underscores &quot;__&quot;</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2719">#2719</a> - Interpret flac Replay Gain tags as generated by J River Media Center</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2734">#2734</a> - Not receiving tags from streamed media.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2736">#2736</a> - Divide by zero in Squeezebox.pm</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2748">#2748</a> - setting pitch above 110 on an SB1 causes audio dropouts</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2758">#2758</a> - CUE sheet support is broken (File now plays, but navigation impossible).</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2759">#2759</a> - Music will occasionally be queued to the wrong player, depending on UI state</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2762">#2762</a> - server crashes when i tune in to this station in the web interface</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2764">#2764</a> - Cue files, only plays first track with SB2's (SB1's ok)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2772">#2772</a> - Hard to spot currently  playing track in default skin's playlist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2775">#2775</a> - Missing space in tooltip text when browsing artwork</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2780">#2780</a> - SVN 5507 causes crash and breaks artwork</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2784">#2784</a> - Socketwrapper - problem duplicating output socket</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2787">#2787</a> - Random plugin stops playing at end of generated list</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2788">#2788</a> - CLI returns incorrect UTF-8 string</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2793">#2793</a> - Smart Gain - Unexpected behavior  when gain value set to 0dB</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2795">#2795</a> - Problem with mp3 stream from LastFM on 6.5</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2796">#2796</a> - default interface problems in 6.5</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2798">#2798</a> - implement forget command like other commands</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2800">#2800</a> - executeCallback - send an event if a client reconnects</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2803">#2803</a> - Can't save Playlists</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2822">#2822</a> - Search Music results: First line on top of search text box</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2823">#2823</a> - 6.5b1 crash bug, any version, on startup</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2825">#2825</a> - CURRTIME in TitleFormat broken</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2830">#2830</a> - MusicMagic Exporting songs takes hours...</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2834">#2834</a> - Multiple device playlists not displaying correctly in Web UI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2836">#2836</a> - handheld skin--artwork disappears when pressing next or prev on status page</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2842">#2842</a> - Server does not start on 2006-01-19 &amp; 2006-01-20 Nightly builds</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2851">#2851</a> - custom types, strings, convert inconsistent</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2855">#2855</a> - 6.5b1 replaygain info for mp3 files missing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2858">#2858</a> - can't access itunes setup page - error in url?</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2865">#2865</a> - server preference pane does not work on new Intel Macs</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2870">#2870</a> - Viewing second page of to-be-saved playlist jumps to edit mode</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2889">#2889</a> - Dropouts</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2890">#2890</a> - sleep cuts sound early, but then continues</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2908">#2908</a> - Now playing number keys are blocked when showing current song</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2914">#2914</a> - Browsing artwork/albums/artists/etc.  pages are all bold &amp; linked.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2916">#2916</a> - fallback IP for Squeezenetwork is now wrong in sb2/3 firmware</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2930">#2930</a> - Podcasts and some internet radio inaccessible - XML parse error</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2932">#2932</a> - Temp Files are still exist after finished playlist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2939">#2939</a> - Renaming a playlist saves a copy to disk</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2940">#2940</a> - Editing names of items in a playlist does not save the amendments to disk</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2946">#2946</a> - valign = &quot;middle&quot;, not &quot;center&quot;</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2947">#2947</a> - slimserver does not find mplayer.sh (alienbbc) when it is installed in the Bin directroy</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2966">#2966</a> - Press and hold brightness when in player setup locks machine</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2980">#2980</a> - Wrong clip plays</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2986">#2986</a> - favorites_list.html is missing line breaks between entries</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2991">#2991</a> - Request bodyscript hook for Fishbone skins</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3008">#3008</a> - Creating a Moodlogic instant mix causes an error</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3012">#3012</a> - Unicode characters and CLI</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3020">#3020</a> - Confusing &quot;Press RIGHT to&quot; message in random mix menu</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3036">#3036</a> - Buffer fullness pref. problem</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3037">#3037</a> - MusicMagic API Playlist Generation Flawed in 6.2.1</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3045">#3045</a> - Change in Request.pm 6318 introduced new bug</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3105">#3105</a> - Pressing ADD in Live Music Archive plugin does wrong thing</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3129">#3129</a> - ID3v1 chosen over ID3v2 when &quot;disc #&quot; tag is used</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3144">#3144</a> - Unable to &quot;Browse Artitsts&quot; by first letter when named in Unicode</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3155">#3155</a> - Only first page of playlists can be seen</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3162">#3162</a> - p0 in web url without a dispatch handler prevents &quot;generateHTTPResponse&quot;</li>
+
+	</ul>
+</ul>
+
+<h2><a name="v6.2.2" id="v6.2.2"></a>Version 6.2.2 - 2006-MM-DD</h2>
+
+<ul>
+	<li>Firmware Updates:
+	<ul>
+		<li>Update to Firmware 35 for Squeezebox2/Squeezebox v3.</li>
+		<li>Based on a new version of the operating system from our CPU provider.</li>
+		<li>Confirmed fixes for a number of wireless compatibility issues. Also confirmed that some compatibility issues are still there.</li>
+		<li>Fixes issues with some WMA streaming stations, including KQED.</li>
+		<li>Fixes problem where reprogrammng Xilinx would cause DAC to fail.</li>
+		<li>Fixes some low memory problems in the firmware that would cause rebooting, problems connecting, and stuttering</li>
+		<li>Fixes a problem where JVC remotes used for other devices could cause a firmware upgrade by accident.<br />
+		    Only the Slim Devices remote BRIGHTNESS button (or auto-update) will trigger updates now.</li>
+		<li>Increase TCP window for audio connection.</li>
+		<li>24/48 flacs now play more reliably</li>
+		<li>Improved timestamps when playing FLAC and/or vertical scrolling</li>
+		<li>Update firmware to fail back to new SN address.</li>
+		<li>TCP throughput should be improved</li>
+		<li>Fixed crash if pressing and holding brightness while in player setup.</li>
+		<li>Fix factory setting for WPA password to be blank, not "password"</li>
+		<li>Lengthen timeout for connecting to some access points and don't act as if we've connected before association and authentication have completed.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Platform Support:
+	<ul>
+		<li>OS X builds are now Universal Binaries. Works on both PPC and Intel machines.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Performance:
+	<ul>
+		<li>Add an option to not display the library statistics on the
+		web frontpage. This should speed up page creation on lower end systems and
+		with large music collections.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Softsqueeze:
+	<ul>
+		<li>Updated to version 2.3</li>
+		<li>Fixed sync</li>
+		<li>Fixed gapless FLAC playback</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>3rd Party Integration:
+	<ul>
+		<li>iTunes: Scanning should be much faster, and not interrupt music.</li>
+		<li>iTunes: Simplified setup - should work better for all users.</li>
+		<li>iTunes: Fix problem where iTunes was not defaulted on when iTunes XML file is detected.</li>
+		<li>MusicMagic: Speed up scan with a fast delete for overwriting genres.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Translations:
+	<ul>
+		<li>Updated Dutch translation from Willem Oepkes.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Bug Fixes:
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1855">#1855</a> - incorrect cue sheet interpretation</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1859">#1859</a> - Jerky sound with some 24/48 FLAC files</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2018">#2018</a> - Player Remote Keys sometimes bounce</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2169">#2169</a> - Player fails to move to next item in playlist after resuming a song paused near the end.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2505">#2505</a> - Web error:  There is no &quot;:&quot; skin, try http://server:9000/ instead.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2560">#2560</a> - Bass/Treble options seem to be broken in Fishbone lately</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2570">#2570</a> - Selecting Moodlogic from web page return  ARRAY()</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2571">#2571</a> - brightness reverts to brightest if you dim while playing then scroll</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2573">#2573</a> - Use of uninitialized value in ContextualFetch.pm</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2581">#2581</a> - sb2/3 firmware chokes on this mp3 file, plays static</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2583">#2583</a> - Multi-disc tracks improperly sort in the server/browse pane</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2592">#2592</a> - When saving a new playlist the playlist is saved in addition under untitled.m3u</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2605">#2605</a> - Scan crashes for playlist ref to WMA file that has a &quot;WM/URL&quot; tag set to allofmp3.com</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2606">#2606</a> - live365 stops slimserver</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2609">#2609</a> - unicode text in Polish looks very bizarre on sb2/3 display</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2617">#2617</a> - if the path to your music folder contains high ascii characters, the server can't read it</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2622">#2622</a> - Fishbone skin: frame bug</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2623">#2623</a> - Problem with tracks that have no 'album' metadata</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2629">#2629</a> - Player info - Reports squeezebox2</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2632">#2632</a> - Cannot add MoodLogic playlist with remote.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2658">#2658</a> - Title of remote streams should be able to be changed in _updateMetaData</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2693">#2693</a> - slashdot and bbc rss entries don't work lately</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2704">#2704</a> - DB scanning fails to find directories starting with double underscores &quot;__&quot;</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2719">#2719</a> - Interpret flac Replay Gain tags as generated by J River Media Center</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2736">#2736</a> - Divide by zero in Squeezebox.pm</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2748">#2748</a> - setting pitch above 110 on an SB1 causes audio dropouts</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2759">#2759</a> - Music will occasionally be queued to the wrong player, depending on UI state</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2762">#2762</a> - server crashes when i tune in to this station in the web interface</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2775">#2775</a> - Missing space in tooltip text when browsing artwork</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2776">#2776</a> - Songs in Collection Albums presented in alphabetic order by Artist when browsing Albums</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2788">#2788</a> - CLI returns incorrect UTF-8 string</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2793">#2793</a> - Smart Gain - Unexpected behavior  when gain value set to 0dB</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2815">#2815</a> - Live365 Search mode doesn't properly remove right arrow in search text</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2830">#2830</a> - MusicMagic Exporting songs takes hours...</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2865">#2865</a> - server preference pane does not work on new Intel Macs</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2889">#2889</a> - Dropouts</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2890">#2890</a> - sleep cuts sound early, but then continues</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2908">#2908</a> - Now playing number keys are blocked when showing current song</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2916">#2916</a> - fallback IP for Squeezenetwork is now wrong in sb2/3 firmware</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2932">#2932</a> - Temp Files are still exist after finished playlist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2935">#2935</a> - Server crash trying to edit playlist</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2939">#2939</a> - Renaming a playlist saves a copy to disk</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2940">#2940</a> - Editing names of items in a playlist does not save the amendments to disk</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2965">#2965</a> - Crash using ffw on alienbbc prerecorded entry</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2966">#2966</a> - Press and hold brightness when in player setup locks machine</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2980">#2980</a> - Wrong clip plays</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2984">#2984</a> - Audio data TCP throughput issues</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3037">#3037</a> - MusicMagic API Playlist Generation Flawed in 6.2.1</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3053">#3053</a> - Server crash during browsedb</li>
+	</ul>
+	</li>
+</ul>
+
+<h2><a name="v6.2.1" id="v6.2.1"></a>Version 6.2.1 - 2005-11-14</h2>
+
+<ul>
+	<li>Updates:<p>
+	<ul>
+		<li>Update to Firmware 28 for Squeezebox2/Squeezebox v3.
+		<ul>
+			<li>Fixes issues with WMA (and other audio files) not moving onto the next track.
+		</ul>
+		<br />
+
+		<li>SoftSqueeze has been updated to version 2.2<p>
+
+		<li>ID3v2.x Genre handling updates.<p>
+
+		<li>Fixed a memory leak in the HTTP Request code.<p>
+	</ul>
+	<br />
+
+	<li>Bug Fixes:<p>
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1811">#1811</a> - Playback of ShoutCast Radio Stations works only on the second press of PLAY
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2202">#2202</a> - 100% CPU usage every minute with musicmagic
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2203">#2203</a> - Albums with more than one artist being listed many times
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2250">#2250</a> - Interpret Replay Gain tags as generated by J River Media Center
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2317">#2317</a> - Request to support 'Album Artist' Tag from J.River Media Center 11
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2327">#2327</a> - ExBrowse 3 doesn't show Random Mix options
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2335">#2335</a> - Cuesheet + flac image stopped working starting 10-16 nightly
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2345">#2345</a> - Sync Group preferences can leak preferences
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2350">#2350</a> - Blank album names appearing at the start of Browse Album list
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2351">#2351</a> - Reloading playlist frame causes actions to be repeated
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2354">#2354</a> - --prefsfile fails if preferences file does not exist
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2356">#2356</a> - WMA stops at end of track
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2358">#2358</a> - Cannot change current formats
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2359">#2359</a> - SlimServer 6.2.0 crashes when trying to build database
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2361">#2361</a> - Statistics bars in handheld skin
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2362">#2362</a> - Minor Fishbone skin issues
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2363">#2363</a> - Albums breaking up in multiple parts
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2366">#2366</a> - WMA VBR incorrect bit rates shown
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2367">#2367</a> - settings -&gt; alarm menu shows you incorrect options
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2368">#2368</a> - wma internet radio station problem (wma voice)
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2371">#2371</a> - Selecting Year when browsing by year adds entire library
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2372">#2372</a> - compilations in same directory get split into multiple albums incorrectly.
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2376">#2376</a> - Various small artwork problems
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2377">#2377</a> - Slimserver hangs on WMA radio play
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2378">#2378</a> - geekport button input
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2381">#2381</a> - MP3 Replay Gain Tags not seen by SlimServer
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2382">#2382</a> - Tray icon tool-tip says &quot;PerlTray&quot; instead of &quot;SlimServer&quot;
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2385">#2385</a> - Re-count  of albums / songs / artists on the home page causes dropouts
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2386">#2386</a> - status.html (partially?) not uf8 encoded
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2387">#2387</a> - Stutter or bounce on fade on pause.
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2393">#2393</a> - Single artist albums appear under Various Artists
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2394">#2394</a> - Please allow choice of Display Font for SliMP3 in v6.2
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2395">#2395</a> - itunes playlists come up with hex nomenclatures for special characters
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2404">#2404</a> - Particular unicode character in title crashes server
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2405">#2405</a> - Scan track order should have no influence on scanning result
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2410">#2410</a> - Missing tracks in Slimserver database when adding new songs to iTunes
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2411">#2411</a> - Playback of album starts not with first track
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2412">#2412</a> - Playlist title incorrect with Perl 5.6
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2415">#2415</a> - Remember current playlist name when saving a modified playlist
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2416">#2416</a> - SlimServe Scans Playlist when going Home
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2418">#2418</a> - Various Artists category empty on SB2/SB1
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2421">#2421</a> - Unable to set Weekday Alarm settings on Player
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2425">#2425</a> - MusicMagic broken in 6.2.1
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2427">#2427</a> - &quot;touch&quot; skin doesn't automatically refresh status
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2435">#2435</a> - build-perl-modules.pl does not correctly check perlBinary - patch included
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2437">#2437</a> - No Artist if the DB if the artist is also in one of the composers
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2440">#2440</a> - Another unblessed reference
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2449">#2449</a> - Preamp Volume Control feature should not show up on SB1 player settings
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2450">#2450</a> - Picks plugin shows urls instead of titles
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2454">#2454</a> - direct streaming: playing KEXP from iTunes-&gt;Radio-&gt;Public causes SB2 to hang hard
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2456">#2456</a> - Multiple artist sorting broken
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2457">#2457</a> - X-Playerduration header has the wrong value
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2458">#2458</a> - &quot;version&quot; command no longer available
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2460">#2460</a> - Toggling play/pause alters the value of &quot;X-Playervolume&quot; header
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2468">#2468</a> - Artwork broken for album FLACs
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2485">#2485</a> - Looping scans
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2489">#2489</a> - Browsing to &quot;statistics&quot; page crashes SlimServer
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2499">#2499</a> - Fishbone Volume Bars misaligned
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2528">#2528</a> - AlienBBC and Favourites
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2533">#2533</a> - Now Playing doesn't match the actual track if the first is skipped through
+	</ul>
+	<br />
+</ul>
+
 <h2><a name="v6.2.0" id="v6.2.0"></a>Version 6.2.0 - 2005-10-24</h2>
 
 <ul>
@@ -10,16 +429,16 @@
 				<li>Ogg & FLAC with the standard replaygain tools.
 				<li>mp3gain, aacgain, J.River Media Center & iTunes
 			</ul>
-			<br>
+			<br />
 			<li>"Smart" setting mode that will work for whole albums.
 		</ul>
-		<br>
+		<br />
 	
 		<li>WMA Support in Firmware - SB2/SB3
 		<ul>
 			<li>Streaming WMA radio stations and local files.
 		</ul>
-		<br>
+		<br />
 
 		<li>Unicode on the Display - SB2/SB3
 		<ul>
@@ -27,26 +446,26 @@
 
 			<li>See the <a href="http://wiki.slimdevices.com/index.cgi?UnicodeFonts">Wiki</a> for more information.
 		</ul>
-		<br>
+		<br />
 
 		<li>Random Mix
 		<ul>
 			<li>Generate a random mix of your music based on songs, artists or albums. Filter out unwanted genres. 
 			<li>Lots of contributions from Kevin Deane-Freeman & Max Spicer
 		</ul>
-		<br>
+		<br />
 
 		<li>Various Artists
 		<ul>
 			<li>Automatically identify Various Artists / Compilation albums. Allow 'Album Artists' to be set.
 		</ul>
-		<br>
+		<br />
 
 		<li>Wake-on-LAN - SB2/SB3
 		<ul>
 			<li>Sends a WOL packet to SlimServer on local subnet when connecting, to power up your PC.
 		</ul>
-		<br>
+		<br />
 
 		<li>Firmware 24 - SB2/SB3
 		<ul>
@@ -56,21 +475,21 @@
 			<li>WPA2 Support - Support for WPA2 access points.
 			<li>Pre-Amp Volume Control Setting
 		</ul>
-		<br>
+		<br />
 
 		<li>Add basic Lyrics support to the WebUI
 		<ul>
 			<li>iTunes 5 supports the USLT tag
 			<li>Vorbis Comment users can use 'LYRICS' as the tag.
 		</ul>
-		<br>
+		<br />
 
 		<li>Allow multiple comment keys of the same type for Vorbis comments.
 		<ul>
 			<li>This is most useful for: ARTIST, ALBUMARTIST, TRACKARTIST, COMPOSER, CONDUCTOR, BAND & GENRE
 		</ul>
 	</ul>
-	<br>
+	<br />
 
 	<li>Skin Updates:<p>
 	<ul>
@@ -79,27 +498,27 @@
 		<li>Update from "TheEndless" for the XML skin.
 		<li>Removed: WebPad, Ruttenberg, SenseMaker
 	</ul>
-	<br>
+	<br />
 
 	<li>Integration / Plugin Developers:<p>
 	<ul>
 		<li>Add preliminary JSON-RPC support (http://json-rpc.org/)
 		<li>Convert $ds->find() to be call by name.
 	</ul>
-	<br>
+	<br />
 
 	<li>MusicMagic:<p>
 	<ul>
 		<li>Server Setting to restrict Mixes to a given filter.
 	</ul>
-	<br>
+	<br />
 
 	<li>Performance:<p>
 	<ul>
 		<li>Search Improvements - easily search hundreds of thousands of songs in your collection.
 		<li>Rewritten Browse Music Folder functionality.
 	</ul>
-	<br>
+	<br />
 
 	<li>Plugins:<p>
 	<ul>
@@ -107,7 +526,7 @@
 		<li>Snow Screensaver updates from James Craig
 		<li>Health Plugin - from Adrian, giving stats on your Squeezeboxen & Network.
 	</ul>
-	<br>
+	<br />
 
 	<li>Internationalization:<p>
 	<ul>
@@ -117,7 +536,7 @@
 			<li>Chinese (Traditional) from Kok-Bin Lee
 		</ul>
 	</ul>
-	<br>
+	<br />
 
 	<li>Bugs Fixed:<p>
 	<ul>
@@ -365,7 +784,7 @@
 		<ul>
 			<li>Fixed a problem where the bitrate of a track is reset when it was played. This broke transcoding & ffwd/rwd of MP3s.
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.1.0" id="v6.1.0"></a>Version 6.1.0 - 2005-07-21</h2>
@@ -377,14 +796,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Reset error codes when a connection is successfully established to a server, so we don't see the "Problem: Can't connnect" message prematurely when switching between SlimServer and SqueezeNetwork.
 			<li>Change needed to support seamless reconnection to the SqueezeNetwork. Set the reconnect bit of the HELO message if we're playing an infinitely looping short track.
 		</ul>
-	<br>
+	<br />
 
 	<li>Usability:<p>
 		<ul>
 			<li>Dramatically increase performance for the common case of 'Browse Albums' with years.
 			<li>Add a link on the WebUI for PodCast playlists imported from iTunes.
 		</ul>
-	<br>
+	<br />
 
 	<li>Internet Radio:<p>
 		<ul>
@@ -396,7 +815,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			</ul>
 
 		</ul>
-	<br>
+	<br />
 
 	<li>Internationalization:<p>
 		<ul>
@@ -404,13 +823,13 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Updated German translations from Michael Herger
 			<li>Updated Spanish translations from Néstor
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
 			<li>ExBrowse2, Fishbone & Touch Updates.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs Fixed:<p>
 		<ul>
@@ -450,7 +869,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1838">#1838</a> - editing playlists not possible
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1842">#1842</a> - LiveSearch display issue when you delete the search term
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.1b2" id="v6.1b2"></a>Version 6.1b2 - 2005-07-09</h2>
@@ -461,7 +880,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Reduced DNS timeout to 5 seconds
 			<li>If DHCP only hands us one DNS server, clear the second entry.
 		</ul>
-	<br>
+	<br />
 
 	<li>Platform Support:<p>
 		<ul>
@@ -473,7 +892,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 
 			<li>Unicode handling fixes.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs Fixed:<p>
 		<ul>
@@ -519,7 +938,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1771">#1771</a> - SlimServer 6.1b1 quits itself less than 30 seconds after launch
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1780">#1780</a> - lLive 365 Internet Radio appears in browse menu list, with Plugin disabled
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.1b1" id="v6.1b1"></a>Version 6.1b1 - 2005-06-24</h2>
@@ -533,7 +952,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>See <a href="http://www.squeezenetwork.com/">www.squeezenetwork.com</a> for more details.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Squeezebox2 Firmware (Revision 14):<p>
 		<ul>
@@ -544,7 +963,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Fix a problem where some versions of the firmware would hang on completing an upgrade.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Performance Improvements:<p>
 		<ul>
@@ -561,7 +980,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Browsing Albums & Tracks at the Genre & Artist level is now much faster. 
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Internet Radio:<p>
 		<ul>
@@ -574,7 +993,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Web-enabled Live365 plugin from chrisp810. The packages in the old Live365.pm are factored out into individual files in the Live365 directory. Also included are templates for the Default and EN skins. Thanks chrisp810!
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Usability:<p>
 		<ul>
@@ -587,7 +1006,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Unicode / Character set updates, which fix file encoding that was causing SlimServer to skip files with accented characters.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
@@ -596,7 +1015,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Jacob Potter updated ExBrowse2 to use his JXTK, and to have Drag-n-Drop playlist modification.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Windows Platform Support:<p>
 		<ul>
@@ -605,7 +1024,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>The tray tool can check the status of SlimServer, stop and start the service, and launch the web interface in the user's default browser. SlimServer is now always installed as a Windows service (the option of starting automatically at boot time still exists).
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>SoftSqueeze (revision 2.0b9):<p>
 		<ul>
@@ -618,7 +1037,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Added Excession-Thin skin, contributed by Josh Eckels.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>3rd Party Integration:<p>
 		<ul>
@@ -627,7 +1046,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>XPL Updates - patch from John Gorst, including doc update.
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Bugs Fixed:<p>
 		<ul>
@@ -725,7 +1144,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1712">#1712</a> - Browse Playlists via remote, .m3u files have url-style escaping
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1713">#1713</a> - Loading up Browse Playlists takes way too long
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.0.2" id="v6.0.2"></a>Version 6.0.2 - 2005-04-27</h2>
@@ -735,7 +1154,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Work around a bug in 3Com wireless router model 3CRWE454G72 with  firmware 1.03.07A that prevented Squeezebox2 from connecting. 
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Softsqueeze (revision 2.0b6):<p>
 		<ul>
@@ -748,7 +1167,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Moved the Java MP3 Plugin prompt into the audio preference tab. 
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>CLI and web interface:<p>
 		<ul>
@@ -756,7 +1175,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Updates to web interface to support Salling Clicker
 		</ul>
 	</li>
-	<br>
+	<br />
 
 	<li>Lots o' SlimServer bug fixes:<p>
 		<ul>
@@ -791,7 +1210,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Wipe Cache sometimes leaves the database in a bad state</li>
 			<li>mms: protocol recognized as "audio" type so we don't open the stream more than once to check the type</li>
 		</ul>
-	<br>
+	<br />
 </ul>
 
 
@@ -808,7 +1227,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Fix: blank screen after server disconnect.
 			<li>Fix: client-side animations weren't using the correct screen size when we had side visualizers.
 		</ul>
-	<br>
+	<br />
 
 	<li>Usability:<p>
 		<ul>
@@ -816,40 +1235,40 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Don't try to shuffle remote streams - as they won't have a distinct Album.
 			<li>We weren't adding COMPOSER, CONDUCTOR, etc to the title format, which we used to do in 5.4
 		</ul>
-	<br>
+	<br />
 
 	<li>iTunes:<p>
 		<ul>
 			<li>If iTunes is available, turn it on by default.
 			<li>If a user moved their iTunes Music Folder, we still had stale information in the database. Rescan, and pull the correct Music Folder path from the .XML file.
 		</ul>
-	<br>
+	<br />
 
 	<li>Formats:<p>
 		<ul>
 			<li>Updated 'sox' on OSX to be statically linked for Ogg usage.
 			<li>Monkey's Audio: Use mac.exe v3.99 that properly supports stdout.
 		</ul>
-	<br>
+	<br />
 
 	<li>SoftSqueeze:<p>
 		<ul>
 			<li>Fix for Java 1.4 users (OSX mostly) - that prevented SoftSqueeze from being usable.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
 			<li>Fixes for Fishbone & ExBrowse2
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
 			<li>Large playlists can't be saved: bug #1266
 			<li>On some systems (Windows mostly), files with accented characters are not scanned: bug #1226
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -875,7 +1294,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1308">#1308</a> - Can't set effective group at startup
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1312">#1312</a> - clicking download link on some songs in web interface crashes server
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.0" id="v6.0"></a>Version 6.0 - 2005-03-27</h2>
@@ -898,7 +1317,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Memory usage further reduced by dynamically loading SLIMP3 & xPL modules.
 			<li>iTunes rescan performance is now much faster.
 		</ul>
-	<br>
+	<br />
 
 	<li>General:<p>
 		<ul>
@@ -906,19 +1325,19 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Stale Album, Contributor and Genre cleanup happens only after a rescan.
 			<li>Updated to the latest Squeezebox2 Firmware.
 		</ul>
-	<br>
+	<br />
 
 	<li>Formats:<p>
 		<ul>
-			<li>Use sox instead of oggdec for ogg decoding.<br> With sox, we can specify the output audio parameters, so that we will always get 44.1Khz 16-bit audio, even if the input is of a different sample rate.<br>This fixes the chipmunk problem with serveral Ogg streams. 
+			<li>Use sox instead of oggdec for ogg decoding.<br /> With sox, we can specify the output audio parameters, so that we will always get 44.1Khz 16-bit audio, even if the input is of a different sample rate.<br />This fixes the chipmunk problem with serveral Ogg streams. 
 		</ul>
-	<br>
+	<br />
 
 	<li>Command Line Interface:<p>
 		<ul>
 			<li>More updates from Frederic Thomas.
 		</ul>
-	<br>
+	<br />
 
 	<li>Softsqueeze:<p>
 		<ul>
@@ -931,10 +1350,10 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Fixed Softsqueeze configuration error, that could stop ssh tunneling from working.
 			<li>Fixed aac playback in Softsqueeze
 			<li>Fix playback of non 44100 frame rates in Softsqueeze. Let's lose those radio chipmunks.
-			<li>Softsqueeze could not play mp3 streams transcoded to 64 or 96 kbit/s.<br>With these low bit rate streams the output buffer would fill before the decoder buffer reached the autostart threshold.<br>Now we start playback if either buffer is full.
+			<li>Softsqueeze could not play mp3 streams transcoded to 64 or 96 kbit/s.<br />With these low bit rate streams the output buffer would fill before the decoder buffer reached the autostart threshold.<br />Now we start playback if either buffer is full.
 			<li>Fix display brightness.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
@@ -942,20 +1361,20 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Gordon "Flash" skin. has been removed.
 			<li>Fixes for ExBrowse2, NBMU, Touch, Default2 & Handheld.
 		</ul>
-	<br>
+	<br />
 
 	<li>Games:<p>
 		<ul>
 			<li>SlimTris updated for Squeezebox2!
 			<li>Shooter has been removed, as it doesn't work.
 		</ul>
-	<br>
+	<br />
 
 	<li>Platform Support:<p>
 		<ul>
 			<li>Removed bogus setting of the IO::Socket::blocking method on Windows.
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
@@ -964,7 +1383,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>MusicMagic connection settings need to be exposed when plugin is enabled, even though connection cannot be established.
 			<li>Streaming to a SB1 using OSX Tiger has dropouts. Panther works fine.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -1021,14 +1440,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 		<ul>
 			<li>Improved the speed for Browse Music Folder and Browsing Playlists.
 		</ul>
-	<br>
+	<br />
 
 	<li>General:<p>
 		<ul>
 			<li>Fixed a bug that was preventing SoftSqueeze from being launched.
 			<li>Fixed a potential problem that could cause malformed UTF-8 characters on Windows systems.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -1039,7 +1458,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1127">#1127</a> - Installer hangs after clicking Update
 			<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1128">#1128</a> - Clicking on the letters of the alphabet doesnt jump to album beginning with that letter.
 		</ul>
-	<br>
+	<br />
 </ul>
 
 <h2><a name="v6.0b2" id="v6.0b2"></a>Version 6.0b2 - 2005-03-19</h2>
@@ -1059,27 +1478,27 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Only load the MoodLogic plugin on Windows.
 			<li>Don't generate the 'genre_count' unless we're on the Hitlist - it's expensive.
 		</ul>
-	<br>
+	<br />
 
 	<li>Internationalization:<p>
 		<ul>
 			<li>Updated German translations from Michael Herger
 			<li>Updated Spanish translations from Nestor
 		</ul>
-	<br>
+	<br />
 
 	<li>Syncing:<p>
 		<ul>
 			<li>Syncing between a SB1 and SB2 now works.
 		</ul>
-	<br>
+	<br />
 
 	<li>Softsqueeze:<p>
 		<ul>
 			<li>Updated to Softsqueeze 2.0a13
 			<li>Many bugs fixed - need to get a list from Richard.
 		</ul>
-	<br>
+	<br />
 
 	<li>Platform Support:<p>
 		<ul>
@@ -1088,7 +1507,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>We do not support the EIS Linux package - it also has a broken Perl build.
 			<li>Fixed support for Perl 5.6.x users and ISO-8859-1 languages.
 		</ul>
-	<br>
+	<br />
 
 	<li>Importers:<p>
 		<ul>
@@ -1096,14 +1515,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>MusicMagic: Remote access settings are confusing and only work for very specific cases.
 			  Support has been removed.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
 			<li>Updates for Fishbone, Handheld and Touch.
 			<li>ExBrowse2 - now uses XSLT to parse search results - Jacob Potter.
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
@@ -1114,7 +1533,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Streaming to a SB1 using OSX Tiger has dropouts. Panther works fine.
 			<li>Browsing Music Folder is very slow - with lots of top level directories.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -1187,7 +1606,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 				<li>Larger audio buffers
 			</ul>
 		</ul>
-	<br>
+	<br />
 
 	<li>Softsqueeze:<p>
 		<ul>
@@ -1205,26 +1624,26 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 					<li>Java MP3 Plugin may use 100% cpu, if this effects you try jlayer instead for this release.
 				</ul>
 		</ul>
-	<br>
+	<br />
 
 	<li>Performance & Memory usage:<p>
 		<ul>
 			<li>Fixed a filehandle / memory leak when not connecting to remote HTTP servers.
 		</ul>
-	<br>
+	<br />
 
 	<li>Internationalization:<p>
 		<ul>
 			<li>Updated German translations from Michael Herger
 			<li>Updated Spanish translations from Nestor
 		</ul>
-	<br>
+	<br />
 
 	<li>Platforms:<p>
 		<ul>
 			<li>Silence errors from File::Spec::Win32::canonpath when fixCasePath is passed an undefined or non-existant path.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
@@ -1234,7 +1653,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			VERY rough at this point - some things aren't even implemented yet.
 			Check Default2/NOTES.txt for details.
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
@@ -1242,7 +1661,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>MusicMagic connection settings need to be exposed when plugin is enabled, even though connection cannot be established. 
 			<li>Not all skins have been updated to use browsedb. (xmlTelCanto may be broken.)
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -1274,20 +1693,20 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Added links to Default skin to add/play all songs from Advanced Search.
 			<li>Patch from Adrian to optimise SBG scrolling animations.  
 		</ul>
-	<br>
+	<br />
 
 	<li>Internet Radio:<p>
 		<ul>
 			<li>radioIO new channels: 70's Pop, 80's Pop, Country.
 		</ul>
-	<br>
+	<br />
 
 	<li>Performance & Memory usage:<p>
 		<ul>
 			<li>Try to use the faster Template::Stash::XS module for template parsing.
 			<li>Use weaken() if available to make sure we don't have any circular references in the caches.
 		</ul>
-	<br>
+	<br />
 
 	<li>Platform Support:<p>
 		<ul>
@@ -1296,20 +1715,20 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Removed sparc-linux, solaris, solaris64 Time::HiRes modules.
 			<li>Update Time::HiRes to v1.66
 		</ul>
-	<br>
+	<br />
 
 	<li>Backend Database:<p>
 		<ul>
 			<li>Update to DBD::SQLite 1.08 / SQLite 3.13 - performance improvements.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
 			<li>Handheld update from Michael Herger
 			<li>Removed ExBrowse skin, in favor of ExBrowse2
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
@@ -1319,7 +1738,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Ending time missing for files referenced by external cuesheet.
 			<li>Artwork may not be shown for paths with accented characters.
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
@@ -1361,14 +1780,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Added Advanced Search - for complex queries.
 			<li>The Add button will clear the playlist if you hold or just press it.
 		</ul>
-	<br>
+	<br />
 
 	<li>Integration:<p>
 		<ul> 
 			<li>Addition of MusicMagic Mixer integration.
 			<li>Improved MoodLogic & iTunes importers.
 		</ul>
-	<br>
+	<br />
 
 	<li>Internationalization & Translations:<p>
 		<ul>
@@ -1381,21 +1800,21 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 					<li>Swedish - Peter
 				</ul>
 		</ul>
-	<br>
+	<br />
 
 	<li>Performance & Memory usage:<p>
 		<ul>
 			<li>MP3 scanning has been optimized even more.
 			<li>Memory footprint reduced considerably, and stays constant even with large (100k track) libraries.
 		</ul>
-	<br>
+	<br />
 
 	<li>Platform Support:<p>
 		<ul>
 			<li>Added binary modules for Debian Woody (stable) & SuSe i586
 			<li>Windows binaries use perl 5.8.6 - previously was 5.8.3
 		</ul>
-	<br>
+	<br />
 
 	<li>File Formats:<p>
 		<ul>
@@ -1403,14 +1822,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Apple lossless files may have a binary tag for genre.
 			<li>Monkey's Audio support (Currently Windows only)
 		</ul>
-	<br>
+	<br />
 
 	<li>Backend Database:<p>
 		<ul>
 			<li>Massively improved library scanning speed & resource consumption.
 			<li>Fast and complex searching ability.
 		</ul>
-	<br>
+	<br />
 
 	<li>Developer API changes:<p>
 		<ul>
@@ -1426,20 +1845,20 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			  $client is available. Plugins should return the token for getDisplayName()
 			  rather than the string itself.
 		</ul>
-	<br>
+	<br />
 	
 	<li>Command Line API:<p>
 		<ul>
 			<li>Extended CLI, allowing more access to server information - Fred.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skin Developer changes:<p>
 		<ul>
 			<li>browseid3 has been deprecated by browsedb.
 			<li>songinfo.html prefers an item (id), but can still deal with an itempath.
 		</ul>
-	<br>
+	<br />
 
 	<li>SoftSqueeze version 1.17:<p>
 		<ul>
@@ -1462,14 +1881,14 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			<li>Fixed on the fly switching between graphics and noritake modes.
 			<li>Fixed music search to use the browser http tunnel over ssh.
 		</ul>
-	<br>
+	<br />
 
 	<li>Skins:<p>
 		<ul>
 			<li>Added ExBrowse2
 			<li>Removed Experimental, Olson skins.
 		</ul>
-	<br>
+	<br />
 
 	<li>Known Issues:<p>
 		<ul>
@@ -1482,7 +1901,7 @@ qlp_coeff_precision and lpc order over 32 took a different codepath).
 			  Right now, you have to add them one by one.
 			<li>Not all skins have been updated to use browsedb. (xmlTelCanto may be broken.)
 		</ul>
-	<br>
+	<br />
 
 	<li>Bugs fixed:<p>
 		<ul>
