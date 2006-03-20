@@ -1532,7 +1532,7 @@ sub _mixer_mute {
 
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $callbackf, $callbackargs) = @_;
+	my ($client, $index, $callbackf, $callbackargs, $count, $url) = @_;
 
 	$d_commands && msg("Commands::_playlistXitem_load_done()\n");
 
@@ -1543,6 +1543,12 @@ sub _playlistXitem_load_done {
 
 	if (defined($index)) {
 		Slim::Player::Source::jumpto($client, $index);
+	}
+	
+	if ( !$count && $url ) {
+		# If the playlist was unable to load a remote URL, notify
+		# This is used for logging broken stream links
+		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url]);
 	}
 
 	$callbackf && (&$callbackf(@$callbackargs));

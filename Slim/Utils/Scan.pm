@@ -79,7 +79,8 @@ struct (addToList_jobState => [
 	numstack       => '$', # number of levels on the stack
 	numitems       => '$', # number of items currently in the list
 	numitems_start => '$', # number of items in the list before addToList
-	playlisturl	   => '$', # initial value of playlist URL
+	playlisturl    => '$', # initial value of playlist URL
+	originalurl    => '$', # un-fixed URL
 
 	callbackf      => '$', #function to call when we're done
 	callbackargs   => '$', #ref to array of callback args
@@ -130,7 +131,7 @@ sub addToList {
 		# regular playlists (m3u, pls, itu, cue) are parsed and loaded immediately and we never recurse and never sort
 		my $count = readList($playlisturl, $listref);
 
-		$callbackf && (&$callbackf(@{$callbackArgs}, $count));
+		$callbackf && (&$callbackf(@{$callbackArgs}, $count, $args->{'url'}));
 
 	} else {	
 		# Initialize the base directory, with index == -1 to indicate 
@@ -150,6 +151,7 @@ sub addToList {
 		$addToList_jobs{$listref}->callbackf($callbackf);
 		$addToList_jobs{$listref}->callbackargs($callbackArgs);
 		$addToList_jobs{$listref}->playlisturl($playlisturl);
+		$addToList_jobs{$listref}->originalurl($args->{'url'});
 		
 		# if we have a callback function, then schedule it if appropriate
 		
@@ -408,9 +410,10 @@ sub addToList_done {
 		for my $item (@$listref) {
 			msg("  $item\n");
 		}
+		
 	}
 
-	$callbackf && (&$callbackf(@$callbackargs, $jobState->numitems));
+	$callbackf && (&$callbackf(@$callbackargs, $jobState->numitems, $jobState->originalurl));
 }
 
 sub readList {   # reads a directory or playlist and returns the contents as an array

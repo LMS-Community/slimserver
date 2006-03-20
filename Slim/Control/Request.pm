@@ -120,6 +120,7 @@ package Slim::Control::Request;
 # Y    playlist        newsong
 # Y    playlist        open                        <url>
 # Y    playlist        sync
+# Y    playlist        cant_open                   <url>
 # N    rescan          done
 # Y    unknownir       <ircode>                    <timestamp>
 
@@ -442,6 +443,7 @@ sub init {
     addDispatch(['playlist',       'newsong'],                                                       [1, 0, 0, undef]);
     addDispatch(['playlist',       'open',         '_path'],                                         [1, 0, 0, undef]);
     addDispatch(['playlist',       'sync'],                                                          [1, 0, 0, undef]);
+    addDispatch(['playlist',       'cant_open',    '_url'],                                          [1, 0, 0, undef]);
     addDispatch(['rescan',         'done'],                                                          [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',      '_time'],                                         [1, 0, 0, undef]);
 
