@@ -93,7 +93,9 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params) = @_;
 	
-	my $now = Time::HiRes::time();
+# commented out by Fred
+# what's that for?
+#	my $now = Time::HiRes::time();
 
 	$params->{'favList'} = {};
 
@@ -265,32 +267,110 @@ sub initPlugin {
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 	Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
 
-	Slim::Control::Request::addDispatch(['favorites'],[1, 0, 0, \&handleRequest]);
+	# register our functions
+	
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'],  
+		[1, 1, 1, \&listQuery]);
+	Slim::Control::Request::addDispatch(['favorites', 'move', '_fromindex', '_toindex'],  
+		[1, 0, 0, \&moveCommand]);
+	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'],
+		[1, 0, 0, \&deleteCommand]);
 
 }
 
-sub handleRequest {
+# move from to command
+sub moveCommand {
 	my $request = shift;
 
 	# check this is the correct command.
-	if ($request->isNotCommand([['favorites']])) {
+	if ($request->isNotCommand([['favorites'], ['move']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	my $p1 = $request->getParam('_p1');
-	my $p2 = $request->getParam('_p2');
 	
-	my $client = $request->client();
-
-	if (defined $p1) {
-		if ($p1 eq 'move') {
-			Slim::Utils::Favorites::moveItem($client, $p2, $request->getParam('_p3'));
-		} elsif ($p1 eq 'delete') {
-			Slim::Utils::Favorites->deleteByClientAndId($client, $p2);
-		}
+	# get the parameters
+	my $client     = $request->client();
+	my $fromindex  = $request->getParam('_fromindex');;
+	my $toindex    = $request->getParam('_toindex');;
+	
+	if (!defined $fromindex || !defined $toindex) {
+		$request->setStatusBadParams();
+		return;
 	}
+
+	Slim::Utils::Favorites::moveItem($client, $fromindex, $toindex);
+
 	$request->setStatusDone();
 }
+
+# delete command
+sub deleteCommand {
+	my $request = shift;
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['favorites'], ['delete']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client     = $request->client();
+	my $index      = $request->getParam('_index');;
+
+	if (!defined $index) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	Slim::Utils::Favorites->deleteByClientAndId($client, $index);
+
+	$request->setStatusDone();
+}
+
+# favorites list
+sub listQuery {
+	my $request = shift;
+
+	if ($request->isNotQuery([['favorites']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client    = $request->client();
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	
+	my $favs   = Slim::Utils::Favorites->new($client);
+	my @titles = $favs->titles();
+	my @urls   = $favs->urls();
+	
+	my $count = scalar(@titles);
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $idx = $start;
+		my $cnt = 0;
+
+		for my $eachtitle (@titles[$start..$end]) {
+			$request->addResultLoop('@favorites', $cnt, 'id', $idx);
+			$request->addResultLoop('@favorites', $cnt, 'title', $eachtitle);
+			$request->addResultLoop('@favorites', $cnt, 'url', $urls[$idx]);
+			$cnt++;
+			$idx++;
+		}	
+	}
+
+	$request->setStatusDone();
+}
+
 
 sub strings {
 	return "
