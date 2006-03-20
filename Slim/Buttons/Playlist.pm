@@ -204,9 +204,6 @@ sub jump {
 		
 		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
 		
-		#kill the animation to allow the information to update unless doing showBriefly
-		$client->killAnimation() unless ($client->animateState() == 5);
-
 		browseplaylistindex($client,$pos);
 	}
 }
