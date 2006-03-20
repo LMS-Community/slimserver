@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.05';
+$VERSION = '1.06';
 
 my $debug = 0;
 
@@ -294,8 +294,7 @@ my %container_atoms =
      STBL => 1,
      TRAK => 1,
      UDTA => 1,
-     # This atom contains iTunes related information along with data from 'aacgain'
-     '----' => 1,
+     '----' => 1,	# iTunes and aacgain info
     );
 
 
@@ -392,15 +391,15 @@ sub parse_file
     $tags->{ENCRYPTED}= 0                unless defined ($tags->{ENCRYPTED});
 
     # Post process '---' container
-    if ($tags->{MEAN} && ref($tags->{MEAN}) eq 'ARRAY') {
-
-	for (my $i = 0; $i < scalar @{$tags->{MEAN}}; $i++) {
-
-		push @{$tags->{META}}, {
-			MEAN => $tags->{MEAN}->[$i],
-			NAME => $tags->{NAME}->[$i],
-			DATA => $tags->{DATA}->[$i],
-		};
+    if ($tags->{MEAN} && ref($tags->{MEAN}) eq 'ARRAY')
+    {
+	for (my $i = 0; $i < scalar @{$tags->{MEAN}}; $i++)
+	{
+	    push @{$tags->{META}}, {
+				    MEAN => $tags->{MEAN}->[$i],
+				    NAME => $tags->{NAME}->[$i],
+				    DATA => $tags->{DATA}->[$i],
+				   };
 	}
 
 	delete $tags->{MEAN};
@@ -424,7 +423,7 @@ sub parse_container
     $end = (tell $fh) + $size;
     while (tell $fh < $end)
     {
-	$err = parse_atom($fh, $level, $tags);
+	$err = parse_atom($fh, $level, $end-(tell $fh), $tags);
 	return $err if $err;
     }
     if (tell $fh != $end)
@@ -437,10 +436,11 @@ sub parse_container
 
 
 # Pre:	$fh points to start of atom
+#	$parentsize is remaining size of parent container
 # Post:	$fh points past end of atom
 sub parse_atom
 {
-    my ($fh, $level, $tags) = @_;
+    my ($fh, $level, $parentsize, $tags) = @_;
     my ($header, $size, $id, $err);
     if (read ($fh, $header, 8) != 8)
     {
@@ -459,10 +459,23 @@ sub parse_atom
 	    return -1;
 	}
 	($hi,$lo) = unpack 'NN', $header;
-	$size=$hi*(2**32) + $lo - 16;
+	$size=$hi*(2**32) + $lo;
+	if ($size>$parentsize)
+	{
+	    # atom extends outside of parent container - skip to end of parent
+	    seek $fh, $parentsize-16, 1;
+	    return 0;
+	}
+	$size -= 16;
     }
     else
     {
+	if ($size>$parentsize)
+	{
+	    # atom extends outside of parent container - skip to end of parent
+	    seek $fh, $parentsize-8, 1;
+	    return 0;
+	}
 	$size -= 8;
     }
     if ($size<=0)
@@ -680,13 +693,16 @@ sub parse_data
     # Parse out the tuple that contains aacgain data, etc.
     if (($id eq 'MEAN') ||
 	($id eq 'NAME') ||
-	($id eq 'DATA')) {
-
+	($id eq 'DATA'))
+    {
 	# The first 4 or 8 bytes are nulls.
-	if ($id eq 'DATA') {
-		$data = substr ($data, 8);
-	} else {
-		$data = substr ($data, 4);
+	if ($id eq 'DATA')
+	{
+	    $data = substr ($data, 8);
+	}
+	else
+	{
+	    $data = substr ($data, 4);
 	}
 
 	push @{$tags->{$id}}, $data;
@@ -819,7 +835,7 @@ Jonathan Harris E<lt>jhar@cpan.orgE<gt>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt> for writing L<MP3::Info|MP3::Info>
 
-Dan Sully for cover art patches.
+Dan Sully for cover art and iTunes/aacgain metadata patches.
 
 =head1 SEE ALSO
 
