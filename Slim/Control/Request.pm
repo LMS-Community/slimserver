@@ -334,8 +334,6 @@ sub init {
     addDispatch(['duration',       '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genre',          '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genres',         '_index',      '_quantity'],                                      [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
-    addDispatch(['gototime',       '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
-    addDispatch(['gototime',       '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
     addDispatch(['info',           'total',        'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
     addDispatch(['info',           'total',        'artists',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
     addDispatch(['info',           'total',        'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
@@ -451,7 +449,11 @@ sub init {
 	addDispatch(['mode',           'pause'],                                                         [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['mode',           'play'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['mode',           'stop'],                                                          [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
-	# use commands pause, play, stop
+	# use commands "pause", "play" and "stop"
+    
+    addDispatch(['gototime',       '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::timeQuery]);
+    addDispatch(['gototime',       '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::timeCommand]);
+	# use command "time"
 
 ######################################################################################################################################################################
 
@@ -1268,15 +1270,13 @@ sub execute {
 
 	}
 	
-	# if the status is done
-	if ($self->isStatusDone()) {
-
-		$::d_command && $self->dump('Request');
+	# perform the callback
+	# do it unconditionally as it is used to generate the response web page
+	# smart callback routines test the request status!
+	$self->callback();
 		
-		# perform the callback
-		$self->callback();
-		
-	} else {
+#	} else {
+	if (!$self->isStatusDone()) {
 	
 		# remove the notification if we pushed it...
 		my $notif = pop @notificationQueue;
@@ -1286,9 +1286,9 @@ sub execute {
 			# oops wrong one, repush it...
 			push @notificationQueue, $notif;
 		}
-
-		$::d_command && $self->dump('Request');
 	}
+
+	$::d_command && $self->dump('Request');
 }
 
 sub callback {
