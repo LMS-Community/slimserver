@@ -275,7 +275,7 @@ sub stationsQuery {
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
-		my $idx = $start;
+#		my $idx = $start;
 		my $cnt = 0;
 
 		for my $eachstation (@station_names[$start..$end]) {

@@ -2056,19 +2056,43 @@ preferences values.</p>
     </p>
 </blockquote>
 
-
-<br><p><strong><code>&lt;playerid&gt; time &lt;number|-number|+number|?&gt;</code></strong></p>
-<p>The &quot;time&quot; command allows you to query the current number of seconds 
-  that the current song has been playing by passing in a &quot;?&quot;. You may 
-  jump to a particular position in a song by specifying a number of seconds to 
-  seek to. You may also jump to a relative position within a song by putting 
-  an explicit &quot;-&quot; or &quot;+&quot; character before a number of second 
-  you would like to seek.</p>
-<p>Examples: </p>
+<br>
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			time 
+			&lt;number|-number|+number|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;time&quot; command allows you to query the current number of 
+	seconds that the current song has been playing by passing in a 
+	&quot;?&quot;. You may jump to a particular position in a song by 
+	specifying a number of seconds to seek to. You may also jump to a relative 
+	position within a song by putting an explicit &quot;-&quot; or 
+	&quot;+&quot; character before a number of second you would like to seek.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-    <p>Request: &quot;04:20:00:12:23:45 time ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 12.55&lt;LF&gt;&quot;</p>
-    <p>Request: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;</p>
-    <p>Request: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 time ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 time 12.55&lt;LF&gt;&quot;
+	</p>
+    <p>
+    	Request: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;
+    	<br>
+    	Response: &quot;04:20:00:12:23:45 time 5&lt;LF&gt;&quot;
+    </p>
+    <p>
+    	Request: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;
+    	<br>
+    	Response: &quot;04:20:00:12:23:45 time -5&lt;LF&gt;&quot;
+    </p>
 </blockquote>
 
 <br><p id="title"><strong><code>&lt;playerid&gt; genre ?</code></strong><br>

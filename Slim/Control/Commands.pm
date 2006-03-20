@@ -344,6 +344,7 @@ sub playcontrolCommand {
 	$d_commands && msg("playcontrolCommand()\n");
 
 	# check this is the correct command.
+	# "mode" is deprecated
 	if ($request->isNotCommand([['play', 'stop', 'pause']]) &&
 		$request->isNotCommand([['mode'], ['play', 'pause', 'stop']])) {
 		$request->setStatusBadDispatch();
@@ -361,6 +362,7 @@ sub playcontrolCommand {
 	# which state do we want to go to?
 	my $wantmode = $cmd;
 	
+	# the "mode" command is deprecated, please do not use or fix
 	if ($cmd eq 'mode') {
 		
 		# we want to go to $param if the command is mode
@@ -1441,6 +1443,7 @@ sub timeCommand {
 	$d_commands && msg("Commands::timeCommand()\n");
 
 	# check this is the correct command.
+	# "gototime" is deprecated
 	if ($request->isNotCommand([['time', 'gototime']])) {
 		$request->setStatusBadDispatch();
 		return;
