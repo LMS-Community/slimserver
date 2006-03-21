@@ -32,7 +32,6 @@ use Slim::Control::Request;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
-use Slim::Utils::Scan;
 use Slim::Player::Pipeline;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ReplayGain;
@@ -1299,13 +1298,7 @@ sub openSong {
 
 	} elsif (Slim::Music::Info::isSong($track)) {
 	
-		my $filepath;
-
-		if (Slim::Music::Info::isFileURL($track)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-		} else {
-			$filepath = $fullpath;
-		}
+		my $filepath = $track->path;
 
 		my ($size, $duration, $offset, $samplerate, $blockalign, $endian,$drm) = (0, 0, 0, 0, 0, undef,undef);
 		
