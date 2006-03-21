@@ -577,8 +577,6 @@ sub scanFunction {
 		local $/ = '</dict>';
 		my $line = <ITUNESLIBRARY>;
 
-		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
-
 		$iTunesParserNB->parse_more($line);
 
 		return 1;
@@ -893,9 +891,9 @@ sub handleCharElement {
 	if ($inTracks && $inValue) {
 
 		if ($] > 5.007) {
-			$item{$currentKey} = $value;
+			$item{$currentKey} .= $value;
 		} else {
-			$item{$currentKey} = Slim::Utils::Unicode::utf8toLatin1($value);
+			$item{$currentKey} .= Slim::Utils::Unicode::utf8toLatin1($value);
 		}
 
 		return;
