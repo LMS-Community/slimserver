@@ -1359,9 +1359,9 @@ sub notify {
 			my $notifyFuncRef = $subscribers{$subscriber}->[0];
 			my $requestsRef   = $subscribers{$subscriber}->[1];
 
-			my $funcName = '';
+			my $funcName = $subscriber;
 
-			if (ref($notifyFuncRef) eq 'CODE') {
+			if ($::d_command && $d_notify && ref($notifyFuncRef) eq 'CODE') {
 				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
 			}
 		
