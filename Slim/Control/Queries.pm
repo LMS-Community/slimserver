@@ -522,13 +522,22 @@ sub playersQuery {
 		if (scalar(@players) > 0) {
 
 			for my $eachclient (@players[$start..$end]) {
-				$request->addResultLoop('@players', $cnt, 'playerindex', $idx);
-				$request->addResultLoop('@players', $cnt, 'playerid', $eachclient->id());
-				$request->addResultLoop('@players', $cnt, 'ip', $eachclient->ipport());
-				$request->addResultLoop('@players', $cnt, 'name', $eachclient->name());
-				$request->addResultLoop('@players', $cnt, 'model', $eachclient->model());
-				$request->addResultLoop('@players', $cnt, 'displaytype', $eachclient->vfdmodel());
-				$request->addResultLoop('@players', $cnt, 'connected', ($eachclient->connected() || 0));
+				$request->addResultLoop('@players', $cnt, 
+					'playerindex', $idx);
+				$request->addResultLoop('@players', $cnt, 
+					'playerid', $eachclient->id());
+				$request->addResultLoop('@players', $cnt, 
+					'ip', $eachclient->ipport());
+				$request->addResultLoop('@players', $cnt, 
+					'name', $eachclient->name());
+				$request->addResultLoop('@players', $cnt, 
+					'model', $eachclient->model());
+				$request->addResultLoop('@players', $cnt, 
+					'displaytype', $eachclient->vfdmodel())
+					unless ($eachclient->model() eq 'http');
+				$request->addResultLoop('@players', $cnt, 
+					'connected', ($eachclient->connected() || 0));
+					
 				$idx++;
 				$cnt++;
 			}	
@@ -903,6 +912,7 @@ sub statusQuery {
 	my $SQ   = ($client->model() eq 'softsqueeze');
 	my $SB   = ($client->model() eq 'squeezebox');
 	my $SB2  = ($client->model() eq 'squeezebox2');
+	my $RSC  = ($client->model() eq 'http');
 	
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	
@@ -917,20 +927,33 @@ sub statusQuery {
 		$request->addResult('rescan', "1");
 	}
 	
+	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
-	$request->addResult("power", $power);
+	
+	if (!$RSC) {
+		$request->addResult("power", $power);
+	}
 	
 	if ($SB || $SB2) {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
+	# this will be true for http class players
 	if ($power) {
 	
 		$request->addResult('mode', Slim::Player::Source::playmode($client));
 
-		if (Slim::Player::Playlist::song($client)) { 
-			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+		if (my $song = Slim::Player::Playlist::song($client)) {
+
+			$request->addResult('rate', 
+				Slim::Player::Source::rate($client));
+			$request->addResult('current_title', 
+				Slim::Music::Info::getCurrentTitle($client, $song));
+			$request->addResult('time', 
+				Slim::Player::Source::songTime($client));
+			
+			my $track = $ds->objectForUrl($song);
 
 			my $dur   = 0;
 
@@ -940,8 +963,6 @@ sub statusQuery {
 			}
 
 			if ($dur) {
-				$request->addResult('rate', Slim::Player::Source::rate($client));
-				$request->addResult('time', Slim::Player::Source::songTime($client));
 				$request->addResult('duration', $dur);
 			}
 		}
@@ -965,7 +986,10 @@ sub statusQuery {
 			$request->addResult('sync_slaves', join(",", @sync_slaves));
 		}
 	
-		$request->addResult("mixer volume", $client->prefGet("volume"));
+		if (!$RSC) {
+			# undefined for remote streams
+			$request->addResult("mixer volume", $client->prefGet("volume"));
+		}
 		
 		if ($SB || $SP3) {
 			$request->addResult("mixer treble", $client->treble());
@@ -1333,6 +1357,8 @@ sub _songData {
 	
 	my $ds    = Slim::Music::Info::getCurrentDataStore();
 	my $track = blessed($pathOrObj) && $pathOrObj->can('id') ? $pathOrObj : $ds->objectForUrl($pathOrObj);
+	
+#	msg("REMOTE STREAM\n") if Slim::Music::Info::isRemoteURL($pathOrObj);
 	
 	if (!blessed($track) || !$track->can('id')) {
 

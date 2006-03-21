@@ -250,7 +250,6 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'id'} = $tmpaddr.':'.$client_socket->peerport;
 			$connections{$client_socket}{'inbuff'} = '';
 			$connections{$client_socket}{'outbuff'} = ();
-#			$connections{$client_socket}{'subscribe'} = undef;
 			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
