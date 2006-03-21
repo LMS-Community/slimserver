@@ -1356,25 +1356,31 @@ sub notify {
 
 			# filter based on desired requests
 			# undef means no filter
-			my $requestsRef = $subscribers{$subscriber}->[1];
+			my $notifyFuncRef = $subscribers{$subscriber}->[0];
+			my $requestsRef   = $subscribers{$subscriber}->[1];
+
+			my $funcName = '';
+
+			if (ref($notifyFuncRef) eq 'CODE') {
+				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
+			}
 		
 			if (defined($requestsRef)) {
 
 				if ($self->isNotCommand($requestsRef)) {
 
 					$::d_command && $d_notify && msg("Request: Don't notify "
-						. $subscriber . " of " . $self->getRequestString() . " !~ "
+						. $funcName . " of " . $self->getRequestString() . " !~ "
 						. __filterString($requestsRef) . "\n");
 
 					next;
 				}
 			}
 
-			$::d_command && $d_notify && msg("Request: Notifying $subscriber of " 
+			$::d_command && $d_notify && msg("Request: Notifying $funcName of " 
 				. $self->getRequestString() . " =~ "
 				. __filterString($requestsRef) . "\n");
 		
-			my $notifyFuncRef = $subscribers{$subscriber}->[0];
 			&$notifyFuncRef($self);
 		}
 	}
