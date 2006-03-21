@@ -122,7 +122,7 @@ sub parseMetadata {
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-		my $oldTitle = Slim::Music::Info::getCurrentTitle($url) || '';
+		my $oldTitle = Slim::Music::Info::getCurrentTitle($client, $url) || '';
 
 		# capitalize titles that are all lowercase
 		if (lc($newTitle) eq $newTitle) {
@@ -136,13 +136,16 @@ sub parseMetadata {
 				/\U$1/xg;
 		}
 
-		if ($newTitle && $oldTitle ne $newTitle) {
+		if ($newTitle && ($oldTitle ne $newTitle)) {
 
 			Slim::Music::Info::setCurrentTitle($url, $newTitle);
 
 			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 				$everybuddy->update();
 			}
+			
+			# For some purposes, a change of title is a newsong...
+			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
 		}
 
 		$::d_remotestream && msg("shoutcast title = $newTitle\n");
