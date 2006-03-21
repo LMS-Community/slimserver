@@ -523,7 +523,6 @@ sub get_mp3tag {
 	if (!$has_v1 && !$has_v2 && !$has_ape) {
 		_close($file, $fh);
 		$@ = "No ID3 or APE tag found";
-		print "$@\n";
 		return undef;
 	}
 
