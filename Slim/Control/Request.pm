@@ -818,7 +818,7 @@ my %statusMap = (
 	  1 => 'Dispatchable',
 	  2 => 'Dispatched',
 	 10 => 'Done',
-	 11 => 'Callback done',
+#	 11 => 'Callback done',
 	101 => 'Bad dispatch!',
 	102 => 'Bad params!',
 	103 => 'Missing client!',
@@ -886,15 +886,15 @@ sub isStatusDone {
 	return ($self->__status() == 10);
 }
 
-sub setStatusCallbackDone {
-	my $self = shift;
-	$self->__status(11);
-}
+#sub setStatusCallbackDone {
+#	my $self = shift;
+#	$self->__status(11);
+#}
 
-sub isStatusCallbackDone {
-	my $self = shift;
-	return ($self->__status() == 11);
-}
+#sub isStatusCallbackDone {
+#	my $self = shift;
+#	return ($self->__status() == 11);
+#}
 
 sub isStatusError {
 	my $self = shift;
@@ -1256,20 +1256,19 @@ sub execute {
 	# call the execute function
 	if (my $funcPtr = $self->{'_func'}) {
 
-			# notify for commands
-			# done here so that order of calls is maintained in all cases.
-			if (!$self->query()) {
+		# notify for commands
+		# done here so that order of calls is maintained in all cases.
+		if (!$self->query()) {
 		
-				push @notificationQueue, $self;
-			}
+			push @notificationQueue, $self;
+		}
 
-			eval { &{$funcPtr}($self) };
+		eval { &{$funcPtr}($self) };
 
-			if ($@) {
-				errorMsg("execute: Error when trying to run coderef: [$@]\n");
-				$self->dump('Request');
-			}
-
+		if ($@) {
+			errorMsg("execute: Error when trying to run coderef: [$@]\n");
+			$self->dump('Request');
+		}
 	}
 	
 	# perform the callback
@@ -1326,7 +1325,8 @@ sub callback {
 				}
 			}
 
-			$self->setStatusCallbackDone();
+# Don't remember that
+#			$self->setStatusCallbackDone();
 		}
 
 	} else {
