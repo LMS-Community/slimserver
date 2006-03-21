@@ -71,11 +71,18 @@ sub deparseCoderef {
 	my $deparse = B::Deparse->new('-si8T') || return 0;
 
 	my $body = $deparse->coderef2text($coderef) || return 0;
+	my $name = realNameForCodeRef($coderef);
+
+	return "sub $name $body";
+}
+
+sub realNameForCodeRef {
+	my $coderef = shift;
 
 	my $gv   = Devel::Peek::CvGV($coderef);
 	my $name = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'}) || 'ANON';
 
-	return "sub $name $body";
+	return $name;
 }
 
 1;

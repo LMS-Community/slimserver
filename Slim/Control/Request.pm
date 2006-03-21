@@ -283,9 +283,8 @@ use Tie::LLHash;
 
 use Slim::Control::Commands;
 use Slim::Control::Queries;
-use Slim::Utils::Misc;
 use Slim::Utils::Alarms;
-
+use Slim::Utils::Misc;
 
 our %dispatchDB;                # contains a multi-level hash pointing to
                                 # each command or query subroutine
@@ -309,6 +308,11 @@ my $d_notify = 1;               # local debug flag for notifications. Note that
 
 # adds standard commands and queries to the dispatch DB...
 sub init {
+
+	# Allow deparsing of code ref function names.
+	if ($::d_command && $d_notify) {
+		require Slim::Utils::PerlRunTime;
+	}
 
 ######################################################################################################################################################################
 #                                                                                                     |requires Client
@@ -554,8 +558,11 @@ sub subscribe {
 	
 	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
-	$::d_command && $d_notify && msg("Request: subscribe($subscriberFuncRef)"
-		. " - (" . scalar(keys %subscribers) . " subscribers)\n");
+	$::d_command && $d_notify && msgf(
+		"Request: subscribe(%s) - (%d subscribers)\n",
+		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
+		scalar(keys %subscribers)
+	);
 }
 
 # remove a subscriber
@@ -563,9 +570,12 @@ sub unsubscribe {
 	my $subscriberFuncRef = shift;
 	
 	delete $subscribers{$subscriberFuncRef};
-	
-	$::d_command && $d_notify && msg("Request: unsubscribe($subscriberFuncRef)" 
-		. " - (" . scalar(keys %subscribers) . " suscribers)\n");
+
+	$::d_command && $d_notify && msgf(
+		"Request: unsubscribe(%s) - (%d subscribers)\n",
+		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
+		scalar(keys %subscribers)
+	);
 }
 
 # notify subscribers from an array, useful for notifying w/o execution
