@@ -1835,7 +1835,7 @@ sub _postCheckAttributes {
 
 				if ($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) {
 
-					$search->{'contributor'} = $contributor;
+					$search->{'contributor'} = $contributor->id;
 				}
 			}
 
@@ -1898,7 +1898,7 @@ sub _postCheckAttributes {
 		my %set = ();
 
 		# Add an album artist if it exists.
-		$set{'contributor'} = $contributor if blessed($contributor);
+		$set{'contributor'} = $contributor->id if blessed($contributor);
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$set{'titlesort'}   = $sortable_title;
