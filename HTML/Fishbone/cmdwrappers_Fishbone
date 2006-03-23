@@ -28,6 +28,13 @@
 	</td>
 [% END %]
 
+[% BLOCK descendlink -%]
+	[% PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdimage = "next" 
+		noTarget = 1 %]
+[%- END %]
+
 [% BLOCK homelink %][% END %]
 
 [% BLOCK playlistcontrols %]
@@ -77,7 +84,7 @@
 
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
-<p>[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
+<div class="pagebar">[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
 [% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]
@@ -95,7 +102,7 @@
 [% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
 [% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="13" height="13" align="top"></a> [% END %]
 [% IF NOT pageinfo.alphamap && addSummary %]&nbsp;|&nbsp;[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
-</p>
+</div>
 [% END %]
 
 [% END -%]
