@@ -338,9 +338,11 @@ sub find {
 	}
 
 	# Only pull out items that are audio for a track search.
+	# Don't display DRM'd audio.
 	if ($args->{'field'} && $args->{'field'} =~ /track$/) {
 
 		$args->{'find'}->{'audio'} = 1;
+		$args->{'find'}->{'drm'}   = 0;
 	}
 
 	# Try and keep the last result set in memory - so if the user is
@@ -554,7 +556,7 @@ sub newTrack {
 		'create'     => 1,
 	});
 
-	if ($columnValueHash->{'audio'}) {
+	if ($columnValueHash->{'audio'} && !$columnValueHash->{'drm'}) {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{dirname($url)} = $track;
@@ -1294,6 +1296,12 @@ sub readTags {
 		if (!defined $attributesHash->{'AUDIO'}) {
 
 			$attributesHash->{'AUDIO'} = 1;
+		}
+
+		# Set some defaults for the track if the tag reader didn't pull them.
+		for my $key (qw(DRM LOSSLESS)) {
+
+			$attributesHash->{$key} ||= 0;
 		}
 	}
 
