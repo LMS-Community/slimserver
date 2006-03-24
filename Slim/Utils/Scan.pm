@@ -353,7 +353,7 @@ sub addToList_run {
 	$::d_scan && msg("isList($itempath) == ". (Slim::Music::Info::isList($itempath) || 0) . "\n");
 
 	# todo: don't let us recurse indefinitely
-	if (Slim::Music::Info::isList($itempath)) {
+	if ($itempath && Slim::Music::Info::isList($itempath)) {
 
 		if ($jobState->recursive && !Slim::Music::Info::isRemoteURL($itempath)) {
 
@@ -372,7 +372,7 @@ sub addToList_run {
 
 		return 1;
 
-	} else {
+	} elsif ($itempath) {
 
 		$::d_scan && msg("adding single item: $itempath, type " . Slim::Music::Info::contentType($itempath) . "\n");
 

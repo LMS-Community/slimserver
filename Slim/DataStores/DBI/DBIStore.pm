@@ -338,11 +338,9 @@ sub find {
 	}
 
 	# Only pull out items that are audio for a track search.
-	# Don't display DRM'd audio.
 	if ($args->{'field'} && $args->{'field'} =~ /track$/) {
 
 		$args->{'find'}->{'audio'} = 1;
-		$args->{'find'}->{'drm'}   = 0;
 	}
 
 	# Try and keep the last result set in memory - so if the user is
@@ -510,6 +508,13 @@ sub newTrack {
 		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
 	}
 
+	# Abort early and don't add the track if it's DRM'd
+	if ($attributeHash->{'DRM'}) {
+		
+		$::d_info && msg("newTrack: Skipping [$url] - It's DRM hampered.\n");
+		return;
+	}
+
 	($attributeHash, $deferredAttributes) = $self->_preCheckAttributes({
 		'url'        => $url,
 		'attributes' => $attributeHash,
@@ -556,7 +561,7 @@ sub newTrack {
 		'create'     => 1,
 	});
 
-	if ($columnValueHash->{'audio'} && !$columnValueHash->{'drm'}) {
+	if ($columnValueHash->{'audio'}) {
 
 		$self->{'lastTrackURL'} = $url;
 		$self->{'lastTrack'}->{dirname($url)} = $track;
@@ -672,7 +677,7 @@ sub updateOrCreate {
 		});
 	}
 
-	if ($attributeHash->{'CONTENT_TYPE'}) {
+	if ($track && $attributeHash->{'CONTENT_TYPE'}) {
 		$contentTypeCache{$url} = $attributeHash->{'CONTENT_TYPE'};
 	}
 
@@ -1261,6 +1266,11 @@ sub readTags {
 		}
 
 		$::d_info && !defined($attributesHash) && msg("Info: no tags found for $filepath\n");
+
+		# Return early if we have a DRM track
+		if ($attributesHash->{'DRM'}) {
+			return $attributesHash;
+		}
 
 		if (defined $attributesHash->{'TRACKNUM'}) {
 			$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
