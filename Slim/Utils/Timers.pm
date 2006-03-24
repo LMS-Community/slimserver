@@ -404,7 +404,7 @@ sub firePendingTimer {
 
 	# find first pending matching timers 
 	
-	my @high = $high->peek_items( sub {
+	my @normal = $normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{objRef} eq $objRef ) {
 			if ( $timer->{subptr} eq $subptr ) {
@@ -414,25 +414,9 @@ sub firePendingTimer {
 		return 0;	
 	}, 1 );
 	
-	if ( @high ) {
-		$foundTimer = $high[0]->[ITEM_PAYLOAD];
-		$high->remove_item( $high[0]->[ITEM_ID], sub { 1 } );
-	}
-	else {
-		my @normal = $normal->peek_items( sub {
-			my $timer = shift;
-			if ( $timer->{objRef} eq $objRef ) {
-				if ( $timer->{subptr} eq $subptr ) {
-					return 1;
-				}
-			}
-			return 0;	
-		}, 1 );
-		
-		if ( @normal ) {
-			$foundTimer = $normal[0]->[ITEM_PAYLOAD];
-			$normal->remove_item( $normal[0]->[ITEM_ID], sub { 1 } );
-		}
+	if ( @normal ) {
+		$foundTimer = $normal[0]->[ITEM_PAYLOAD];
+		$normal->remove_item( $normal[0]->[ITEM_ID], sub { 1 } );
 	}
 	
 	if (defined $foundTimer) {
