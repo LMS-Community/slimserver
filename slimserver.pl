@@ -639,18 +639,24 @@ sub idle {
 sub idleStreams {
 	my $timeout = shift || 0;
 	my $select_time = 0;
+	my $check_timers = 1;
 	my $to;
 
 	if ($timeout) {
-		my $select_time = Slim::Utils::Timers::nextTimer();
-		if (!defined($select_time) || $select_time > $timeout) { $select_time = $timeout };	    
+		$select_time = Slim::Utils::Timers::nextTimer();
+		if ( !defined($select_time) || $select_time > $timeout ) {
+			$check_timers = 0;
+			$select_time = $timeout;
+		}
 	}
 
-	$::d_time && msg("select_time - idleStreams: $select_time\n");
+	$::d_time && msg("idleStreams: select_time: $select_time, checkTimers: $check_timers\n");
 
 	Slim::Networking::Select::select($select_time);
 
-	Slim::Utils::Timers::checkTimers();		    
+	if ( $check_timers ) {
+		Slim::Utils::Timers::checkTimers();
+	}
 }
 
 sub showUsage {

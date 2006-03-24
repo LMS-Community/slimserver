@@ -931,7 +931,7 @@ sub scrollInit {
 sub scrollStop {
 	my $client = shift;
 
-	Slim::Utils::Timers::killTimers($client, \&scrollUpdate);
+	Slim::Utils::Timers::killHighTimers($client, \&scrollUpdate);
 	$client->scrollState(0);
 	$client->scrollData(undef);
 }
@@ -1103,7 +1103,7 @@ sub killAnimation {
 
 	my $animate = $client->animateState();
 	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
-	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killHighTimers($client, \&pushUpdate) if ($animate == 3);	
 	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5 || $animate == 6);	
 	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
 	$client->animateState(0);

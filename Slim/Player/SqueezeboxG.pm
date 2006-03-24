@@ -767,8 +767,8 @@ sub killAnimation {
 
 	my $animate = $client->animateState();
 	Slim::Utils::Timers::killTimers($client, \&Slim::Player::Player::update) if ($animate == 2);
-	Slim::Utils::Timers::killTimers($client, \&pushUpdate) if ($animate == 3);	
-	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4);	
+	Slim::Utils::Timers::killHighTimers($client, \&pushUpdate) if ($animate == 3);	
+	Slim::Utils::Timers::killHighTimers($client, \&endAnimation) if ($animate == 4);	
 	Slim::Utils::Timers::killTimers($client, \&Slim::Player::Player::endAnimation) if ($animate == 5 || $animate == 6);	
 	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
 	$client->animateState(0);
