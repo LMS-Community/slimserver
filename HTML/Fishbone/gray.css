@@ -107,7 +107,7 @@ A.linkbtn:link {
 	border-bottom:2px solid white;
 }
 
-.nowplaying
+#TopMenu1
 {
 	margin:0px;
 	padding:2 5 2 5;
@@ -214,7 +214,7 @@ A.linkbtn:link {
 }
 
 /* top of right frame*/
-DIV.playlistform,.menu2
+DIV.playlistform,#TopMenu2
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;

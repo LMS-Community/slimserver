@@ -98,7 +98,7 @@ A.linkbtn:link {
 	height : 20px; 
 }
 
-.masthead
+#mastHead
 {
 	margin:0px;
 	padding: 5 8 5 8;
@@ -107,7 +107,7 @@ A.linkbtn:link {
 	border-bottom:2px solid #ffcc66;
 }
 
-.nowplaying
+#TopMenu1
 {
 	margin:0px;
 	padding:2 5 2 5;
@@ -165,7 +165,7 @@ A.linkbtn:link {
 	display: block;
 }
 
-.TopMenu3
+#TopMenu3
 {
 	background-color: #c2a05b;
 }
@@ -215,18 +215,22 @@ A.linkbtn:link {
 }
 
 /* top of left frame*/
-.menu1
+#menuHeader
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	padding:3 8 3 8;
 	background:#f8eabf;
-	color:white;
+	color:black;
+}
+
+#playlistStatus {
+	color: black;
 }
 
 /* top of right frame*/
-DIV.playlistform,.menu2
+DIV.playlistform,#TopMenu2
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;

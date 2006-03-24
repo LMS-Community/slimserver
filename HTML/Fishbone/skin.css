@@ -43,14 +43,6 @@ A:hover, A:selected {
 	color : #EE3823;
 }
 
-DIV.nowplaying A
-{
-	font-size:11px;
-	padding: 0 0 0 0  ! important;
-	margin: 0 0 0 0 ! important;
-	line-height: 100% ! important;
-}
-
 A.linkbtn:active {
 	color: #EE3823;
 	text-decoration : none; 
@@ -61,13 +53,13 @@ A.linkbtn:hover {
 	text-decoration : none; 
 }
 
-DIV.playlistform,DIV.menu2 .stdclick {
+DIV.playlistform,DIV#TopMenu2 .stdclick {
 	font : 9px Arial; 
 	color: Yellow;
 	margin: 2 3 2 3;
 }
 
-DIV.playlistform,DIV.menu2 .stdedit {
+DIV.playlistform,DIV#TopMenu2 .stdedit {
 	margin: 2 3 2 3;
 }
 
@@ -96,6 +88,13 @@ div#statusMessage form{
 	padding: 0 8 0 8;
 	margin: 0px;
 	margin-top: 8px;
+	height: auto;
+	width: auto;
+}
+
+div#playList {
+	margin-top: 0px;
+	padding-top: 0px;
 }
 
 .searchHeader {
@@ -114,12 +113,11 @@ div#statusMessage
 	color: white;
 }
 
-DIV.playlistform,DIV.menu2 TABLE {
+DIV.playlistform,DIV#TopMenu2 TABLE {
 	border-collapse: collapse;
 }
 
 div#browsedbList {
-	position: relative;
 	clear: left;
 	width: auto;
 	height: auto;
@@ -131,6 +129,7 @@ div#browsedbHeader {
 
 .browsedbListItem {
 	position: relative;
+	padding: 0px;
 	padding-right: 70px;
 }
 
@@ -144,7 +143,7 @@ div#browsedbHeader {
 	vertical-align: middle;
 }
 
-.pagebar {
+.pagebar{
 	width: 100%;
 	clear: left;
 	position: relative;
@@ -227,13 +226,20 @@ div#browsedbHeader {
 	overflow: hidden;
 }
 
-.valueBold, .valueSelected, .bar, .darkbutton {
+.valueBold, .valueSelected, .darkbutton {
 	color:#bbb ! important;
 	font-weight: bold;
 	padding-right: 1.25px;
 	padding-left: 1.25px;
 	display: inline;
 	white-space: nowrap;
+}
+
+.bar {
+	position: absolute;
+	background-color: #B0B0B0;
+	width: 1px;
+	height: 85%;
 }
 
 .valueSelected, .button {
@@ -244,6 +250,7 @@ div#browsedbHeader {
 	display: inline;
 	font-weight: bold;
 	color: black;
+	padding-right: 4px;
 }
 
 BODY {
@@ -282,7 +289,7 @@ DIV {
 }
 
 .small {
-	font-size : 6pt;
+	font-size : 6px;
 }
 
 HR {
@@ -345,61 +352,201 @@ A.linkbtn:link {
 	height : 18px; 
 }
 
-.masthead
-{
+#mastHead {
 	margin:0px;
 	padding: 5 8 5 8;
 	background:#333;
 	color:white;
+	height: 18px;
 	border-bottom:2px solid white;
 }
 
-.nowplaying
+#menuHeader {
+	margin:0px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	padding-right: 8;
+	background: #61676c;
+	padding-left: 8;
+	color:white;
+	height: 26px;
+}
+
+#menuHeader FORM
+{
+	display:inline;
+}
+
+#TopMenu1
 {
 	margin:0px;
-	padding:2 5 2 5;
+	padding: 0px;;
 	background:#61676c;
 	color:white;
+	position: absolute;
+	top: 60px;
+	right: 0px;
+	width: 100%;
 }
 
-.TopMenu3 #repeatButtons, #shuffleButtons, #powerButtons {
-	white-space: nowrap;
-	display:inline;
-	padding: 10 2 0 0;
-	margin: 0px;
-	position: relative;
+#TopMenu1 #coverart {
+	padding: 5 5 5 5;
 }
 
-.TopMenu3
+#TopMenu1 #nowplaying
 {
+	position: absolute;
+	top: 0px;
+	left: 110px;
+}
+
+#TopMenu1 A
+{
+	font-size:11px;
+	padding: 0 0 0 0  ! important;
+	margin: 0 0 0 0 ! important;
+	line-height: 100% ! important;
+}
+
+#TopMenu2
+{
+	margin:0 auto;
+	background:#999;
+	padding: 4 8 4 8;
+	color:white;
+	position: absolute;
+	top: 171px;
+	right: 0px;
+	width: 100%;
+}
+
+#TopMenu2 #playControls {
+	float: left;
+	position: relative;
+	white-space: nowrap;
+	text-align: center;
+	border-right: 1px solid #B0B0B0;
+	margin:0 auto;
+	padding: 0 auto;
+	width: 50%;
+}
+	
+#TopMenu2 #playControls table {
+	margin: 0 auto;
+	text-align: left;
+}
+
+#TopMenu2 #volumeControl {
+	white-space: nowrap;
+	float: right;
+	position: relative;
+	white-space: nowrap;
+	text-align: center;
+	width: 49%;
+}
+
+#TopMenu2 #volumeControl .volwidth {
+	margin: 0 auto;
+	text-align: left;
+	width: 190px;
+}
+
+#TopMenu3 {
 	margin:0px;
 	padding: 2 2 2 2;
 	background:#61676c;
+	position: absolute; 
+	top: 222px; 
+	right:0px; 
+	width: 100%;
+	text-align: center;
+	margin:0 auto;
 }
 
-.playControls {
-	padding: 0px;
-	margin: 0px;
-	border: 1px solid black;
+#TopMenu3 #repeatButtons {
 	white-space: nowrap;
+	float: left;
+	text-align: center;
+	margin:0 auto;
+	position: relative;
+	border-right: 1px solid #B0B0B0;
+	width: 32%;
 }
 
-.volumeControls {
-	display:inline;
+#TopMenu3 #shuffleButtons {
+	white-space: nowrap;
+	text-align: center;
+	margin:0 auto;
+	width: 41%
+}
+
+#TopMenu3 #powerButtons {
+	white-space: nowrap;
+	float: right;
+	text-align: center;
+	margin:0 auto;
+	position: relative;
+	border-left: 1px solid #B0B0B0;
+	width: 27%;
+}
+
+#volumeBarText {
+	position: relative;
+	float: right;
+	top: 31px;
+	left: 0px;
+}
+
+#volumeBarText .attributeBold {
+	position: relative;
+	padding-right: 4px;;
+}
+
+.volumeBar,.volumeSpacer {
+	position: relative;
+	float: right;
+	top: 5px;
+	left: 0px;
+}
+
+.volumeBar,.volumeSpacer DIV {
+	width: 4px;
 	padding: 0px;
-	margin-left: 20px;
-	border: 0px;
-	clear: all;
-	font-size: 0 ! important;
+	position: relative;
+	min-height: 1px; 
+}
+
+.volumeSpacer A {
+	height: 37px;
+	width: 3px;
+}
+
+.volfragment {
+	height: 100%;
+	display: block;
+}
+
+#playlistStatus {
+	margin:0px;
+	padding: 0 8 0 8;
+	margin-top: 8px;
+	color:white;
+	height: 18px;
+	width: 100%;
+	position: absolute; top: 235px;
+}
+
+#playlistLinks {
+	padding-right: 20px;
 	position: relative;
 }
 
-.volumeControls IMG {
-	padding: 0px;
-	margin: 0px;
-	border: 0px;
-	display: inline;
-	position: relative;
+#currentPlaylist,#playerlogo, #coverart, #browseForm, #SDlogo, #playerForm {
+	float: left;
+}
+
+#playlistLinks, #playerlinks, #serverlinks, #searchForm {
+	float: right;
 }
 
 .label
@@ -474,17 +621,7 @@ A.linkbtn:link {
 	color:#999;
 }
 
-.menu1
-{
-	margin:0px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	padding: 3 8 3 8;
-	background:#61676c;
-	color:white;
-}
-
-DIV.playlistform,.menu2
+DIV.playlistform
 {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;

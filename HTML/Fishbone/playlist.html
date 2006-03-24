@@ -8,10 +8,10 @@
 	[% ELSIF not playlist_items %]<div class="list"><a name="currentsong"></a></p>[% "EMPTY" | string %]</div>
 	[% ELSE %]
 	
-	<div ID="playlist" class="playlist">
+	<div id="playList" class="playlist">
 		
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
-	<div class="browsedbList">
+	<div id="browsedbList">
 		[% IF playercount == '0' %]
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 		[% ELSE %]
