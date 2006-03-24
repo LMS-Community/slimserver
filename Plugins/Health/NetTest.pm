@@ -82,7 +82,7 @@ sub exitMode {
 	my $client = shift;
 
 	Slim::Utils::Timers::killTimers($client, \&updateDisplay);
-	Slim::Utils::Timers::killTimers($client, \&sendDisplay);
+	Slim::Utils::Timers::killHighTimers($client, \&sendDisplay);
 	Slim::Utils::Timers::killTimers($client, \&startDisplay);
 	
 	$client->modeParam('Health.NetTest', undef);
