@@ -42,14 +42,29 @@ sub addRead {
 	_updateSelect('read', @_);
 }
 
+sub removeRead {
+	
+	_updateSelect('read', shift);
+}
+
 sub addWrite {
 
 	_updateSelect('write', @_);
 }
 
+sub removeWrite {
+	
+	_updateSelect('write', shift);
+}
+
 sub addError {
 
 	_updateSelect('error', @_);
+}
+
+sub removeError {
+	
+	_updateSelect('error', shift);
 }
 
 sub _updateSelect {

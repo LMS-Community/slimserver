@@ -60,6 +60,7 @@ use Time::HiRes;
 
 use Slim::Formats::Parse;
 use Slim::Music::Info;
+use Slim::Networking::AsyncHTTP;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 
@@ -91,6 +92,43 @@ my %addToList_jobs = ();    # each job is referenced by its listref.
 # addToList - Add directory contents to a list, in the background
 #
 sub addToList {
+	my $args = shift;
+	
+	# If we have a remote URL, we need to test that we can connect to it.
+	# This prevents long blocking in the RemoteStream code if the server is
+	# unreachable.  It also allows us to have a common error message
+	# for streams we can't connect to, no matter what the extension.
+	if ( Slim::Music::Info::isHTTPURL( $args->{'url'} ) ) {
+		
+		checkConnect(
+			\&addToList_continue,
+			\&addToList_error,
+			$args,
+		);
+	}
+	else {
+		
+		addToList_continue( $args );
+	}
+}
+
+sub addToList_error {
+	my $args = shift;
+	
+	# a file, directory, or URL to be scanned
+	my $playlisturl  = $args->{'url'};	
+	
+	# Optional: function to call when finished
+	my $callbackf    = $args->{'callback'};
+
+	# Optional: callback args - number of items scanned will be appended.
+	my $callbackArgs = $args->{'callbackArgs'} || [];
+	
+	# Report back to the callback that we scanned 0 items
+	$callbackf && $callbackf->( @{$callbackArgs}, 0, $playlisturl );
+}
+
+sub addToList_continue {
 	my $args = shift;
 
 	# reference to the list which we're to append
@@ -443,11 +481,14 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			Slim::Music::Info::loadTagFormatForType($format);
 
 			$playlist_filehandle = eval { $tagReaderClass->getTag($playlisturl) };
+			if ($@) {
+				errorMsg("Scan::readList: Error getting tag: $@\n");
+			}
 		}
 
 		if (!$playlist_filehandle) {
 
-			errorMsg("readList: Cannot connect to remote HTTP server to get playlist for url: [$playlisturl]\n");
+			errorMsg("Scan::readList: Cannot connect to remote HTTP server to get playlist for url: [$playlisturl]\n");
 			return 0;
 
 		} elsif (blessed($playlist_filehandle) && $playlist_filehandle->can('contentType')) {
@@ -662,7 +703,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 			# convert the resulting string into the stream expected by the
 			# parsers.
 			my $playlist_str = $playlist_filehandle->content();
-
+			
 			$content_type = Slim::Music::Info::mimeToType($playlist_filehandle->contentType);
 
 			# Be sure to close the socket before reusing the
@@ -734,7 +775,54 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 	Slim::Music::Info::markAsScanned($playlistpath);
 	
-	return $numitems
+	return $numitems;
+}
+
+# Check that we can connect to the remote server
+sub checkConnect {
+	my ( $cb, $ecb, $args ) = @_;
+	
+	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL( $args->{'url'} );
+	
+	my $http = Slim::Networking::AsyncHTTP->new(
+		Host     => $server,
+		PeerPort => $port,
+		Timeout  => 5,
+		
+		errorCallback => \&checkConnectError,
+		writeCallback => \&checkConnectResponse,
+		callbackArgs  => [ $cb, $ecb, $args ],
+	);
+}
+
+sub checkConnectResponse {
+	my $http = shift;
+	my ( $cb, $ecb, $args ) = @_;
+	
+	if ( !$http->connected ) {
+		return checkConnectError( $http, $cb, $ecb, $args );
+	}
+	
+	$http->close;
+	
+	$::d_scan && msgf("Scan::checkConnect URL OK: %s\n",
+		$args->{'url'}
+	);
+	
+	$cb->( $args );
+}
+
+sub checkConnectError {
+	my $http = shift;
+	my ( $cb, $ecb, $args ) = @_;
+	
+	$http->close;
+	
+	$::d_scan && msgf("Scan::checkHTTP URL failed: %s\n",
+		$args->{'url'},
+	);
+	
+	$ecb->( $args );
 }
 
 1;

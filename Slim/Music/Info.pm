@@ -788,8 +788,17 @@ sub isFileURL {
 
 sub isHTTPURL {
 	my $url = shift;
+	
+	# We access MMS via HTTP, so it counts as an HTTP URL
+	return 1 if isMMSURL($url);
 
 	return (defined($url) && ($url =~ /^(http|icy):\/\//i));
+}
+
+sub isMMSURL {
+	my $url = shift;
+
+	return (defined($url) && ($url =~ /^mms:\/\//i));
 }
 
 sub isRemoteURL {
@@ -1059,11 +1068,17 @@ sub typeFromPath {
 			
 			return $type if $type ne 'unk';
 
-		} elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
+		}
+		elsif ($fullpath =~ /^([a-z]+:)/ && defined($suffixes{$1})) {
 
 			$type = $suffixes{$1};
 
-		} else {
+		} 
+		elsif ( $fullpath =~ /^(?:radioio|live365)/ ) {
+			# Force mp3 for protocol handlers
+			return 'mp3';
+		}
+		else {
 
 			$anchorlessPath = Slim::Utils::Misc::stripAnchorFromURL($fullpath);
 

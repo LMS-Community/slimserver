@@ -1549,6 +1549,12 @@ sub _playlistXitem_load_done {
 		# If the playlist was unable to load a remote URL, notify
 		# This is used for logging broken stream links
 		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url]);
+		
+		# Show an error message
+		$client->pushBriefly({
+			'line1'    => $client->string('PROBLEM_OPENING_REMOTE_URL'),
+			'line2'    => $url,
+		});
 	}
 
 	$callbackf && (&$callbackf(@$callbackargs));

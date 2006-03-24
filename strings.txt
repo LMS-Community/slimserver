@@ -1426,6 +1426,9 @@ PROBLEM_OPENING
 	PT	Não foi possível abrir o ficheiro para
 	SV	Problem: Kan inte öppna fil för:
 	ZH_CN	失误：无法打开文件：
+	
+PROBLEM_OPENING_REMOTE_URL
+	EN	Error: Can't open remote URL
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
