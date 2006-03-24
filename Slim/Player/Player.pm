@@ -844,7 +844,7 @@ sub bumpDown {
 	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);		
 	$client->updateMode(1);
 	$client->animateState(4);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
 sub bumpUp {
@@ -856,7 +856,7 @@ sub bumpUp {
 	Slim::Hardware::VFD::vfdUpdate($client, $line1, $line2);		
 	$client->updateMode(1);
 	$client->animateState(4);
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
+	Slim::Utils::Timers::setHighTimer($client,Time::HiRes::time() + 0.125, \&endAnimation);
 }
 
 sub scrollInit {
@@ -1104,7 +1104,8 @@ sub killAnimation {
 	my $animate = $client->animateState();
 	Slim::Utils::Timers::killTimers($client, \&update) if ($animate == 2);
 	Slim::Utils::Timers::killHighTimers($client, \&pushUpdate) if ($animate == 3);	
-	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 4 || $animate == 5 || $animate == 6);	
+	Slim::Utils::Timers::killHighTimers($client, \&endAnimation) if ($animate == 4);
+	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 5 || $animate == 6);	
 	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
 	$client->animateState(0);
 	$client->updateMode(0);
