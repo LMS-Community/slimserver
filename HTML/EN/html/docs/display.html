@@ -283,15 +283,22 @@ will automatically call update every X seconds whilst in this mode.</p>
 period of time, before returning to the normal display of the mode.</p>
 
 <p>showBriefly should always be called with a display hash and one or more
-optional parameters:</p>
+optional parameters.  The optional parameters may either be positional parameters or named parameters in a parameter hash.</p>
 
-<pre>$client->showBriefly($hash, $duration, $firstline, $blockupdate)</pre>
+<pre>$client->showBriefly($hash, $duration, $firstline, $blockupdate, $scrolltoend)
+or 
+$client->showBriefly($hash, 
+                     { 'duration' => $duration, 
+                       'firstline' => $firstline, 
+                       'block' => $blockupdate,
+                       'scroll' => $scrolltoend } )</pre>
 <ul>
 	<li>$hash - the display hash
 	<li>$duration - number of seconds to display for (defaults to 1)
 	<li>$firstline - display only line1 if in single line mode (otherwise displays line2 in single line mode)
-	<li>$block - block display so that calls to update during
-$duration do not cancel the showBriefly display (defaults to false)
+	<li>$blockupdate - block display so that calls to update during	$duration do not cancel the showBriefly display (defaults to false)
+	<li>$scrolltoend - if line is too long scroll display and continue until whole line is seen.  This overrides duration.
+
 </ul>
 
 <p>For example:</pre>
@@ -300,7 +307,7 @@ $duration do not cancel the showBriefly display (defaults to false)
    'line1' => $line1,
    'line2' => $line2,
    'overlay2' => $client->symbols('notesymbol'),
-}, 5, undef, 1);</pre>
+}, { 'duration' => 5, 'block' => 1 } );</pre>
 
 <p>Displays two lines plus an overlay for 5 seconds and is not cancelled by
 updates during this time.</p>
