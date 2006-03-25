@@ -175,7 +175,7 @@
 			<div id="shuffleButtons">
 					<div class="attributeBold">[% "SHUFFLE" | string | upper%][% "COLON" | string %]</div>
 					[% FOREACH type = ['off','song','album'] %]
-						[% PROCESS statectrl condition=shuffle == loop.index command='shuffle' arg=loop.index cmdstring=type %]
+						[% PROCESS statectrl condition=shuffle == loop.index item = 'playlist' command='shuffle' arg=loop.index cmdstring=type %]
 					[% END %]
 			</div>
 		</div>
