@@ -56,13 +56,11 @@ div#homeMenu {
 
 div#playList {
 	border-top: 2px solid;
-	position: relative;
 	height: auto;
 	width: auto;
 }
 
 div#browsedbList {
-	position: relative;
 	clear: left;
 	width: auto;
 	height: auto;
@@ -87,6 +85,7 @@ div#browsedbList {
 
 div#browsedbHeader {
 	margin-left:0px;
+	position: relative;
 }
 
 .thumbnail {

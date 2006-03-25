@@ -380,17 +380,19 @@ A.linkbtn:link {
 #TopMenu1
 {
 	margin:0px;
-	padding: 0px;;
+	padding: 0px;
 	background:#61676c;
 	color:white;
 	position: absolute;
 	top: 60px;
+	left: 0px;
 	right: 0px;
-	width: 100%;
+	padding-left: 8px;
+	padding-right: 8px;
 }
 
 #TopMenu1 #coverart {
-	padding: 5 5 5 5;
+	padding: 5 5 5 0;
 }
 
 #TopMenu1 #nowplaying
