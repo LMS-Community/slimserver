@@ -31,10 +31,20 @@ my $canUseGD = eval {
 
 my $gdError = $@;
 
+my $canUseBiDi = eval {
+	require Locale::Hebrew;
+	return 1;
+};
+
 my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF);
 
 # Keep a cache of up to 256 characters at a time.
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
+
+	# Font size & Offsets -- Optimized for the free Japanese TrueType font
+	# 'sazanami-gothic' from 'waka'.
+	#
+	# They seem to work pretty well for CODE2000 & Cyberbit as well. - dsully
 
 my %font2TTF = (
 
@@ -177,19 +187,8 @@ sub string {
 	my $cursorend = 0;
 	my $unpackTemplate = 'C*';
 
-	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
-	# C - is needed for older 5.6 perl's
-	if ($] > 5.007) {
-		$unpackTemplate = 'U*';
-	}
-
-	my @ords = unpack($unpackTemplate, $string);
-
-	# Font size & Offsets -- Optimized for the free Japanese TrueType font
-	# 'sazanami-gothic' from 'waka'.
-	#
-	# They seem to work pretty well for CODE2000 & Cyberbit as well. - dsully
 	my ($GDFontSize, $GDBaseline);
+
 	my $useTTFNow = 0;
 
 	if ($useTTF && defined $font2TTF{$fontname}) {
@@ -198,13 +197,31 @@ sub string {
 		$GDFontSize = $font2TTF{$fontname}->{'GDFontSize'};
 		$GDBaseline = $font2TTF{$fontname}->{'GDBaseline'};
 	}
-
-	# Fall back to transliteration for people who don't have the font installed.
-	if (!$useTTFNow && max(@ords) > 255) {
-
-		@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
+	
+	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
+	# C - is needed for older 5.6 perl's
+	if ($] > 5.007) {
+		$unpackTemplate = 'U*';
 	}
 
+	my @ords = unpack($unpackTemplate, $string);
+
+	my $max = max(@ords);
+	
+	if ($max > 255) {
+
+		if ($useTTFNow) {
+			# if we've got non latin characters, make sure the hebrew is in the right order for printing
+			if ($canUseBiDi) {
+				@ords = unpack($unpackTemplate, Locale::Hebrew::hebrewflip($string));
+			}
+		} else {
+			# Fall back to transliteration for people who don't have the font installed.
+			@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
+		}
+		
+	}
+	
 	for my $ord (@ords) {
 
 		# 29 == \x1d, 28 == \x1c, 10 == \x0a
@@ -222,7 +239,7 @@ sub string {
 
 		} else {
 
-			if ($ord > 255 && $useTTFNow) {
+			if ($ord > 0x20 && $max > 255 && $useTTFNow) {
 
 				my $bits_tmp = $useTTFCache ? $TTFCache{$fontname}{$ord} : '';
 
