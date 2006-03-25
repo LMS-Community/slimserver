@@ -1551,10 +1551,10 @@ sub _playlistXitem_load_done {
 		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url]);
 		
 		# Show an error message
-		$client->pushBriefly({
+		$client->showBriefly({
 			'line1'    => $client->string('PROBLEM_OPENING_REMOTE_URL'),
 			'line2'    => $url,
-		});
+		}, { 'duration' => 2, 'block' => 1, 'scroll' => 1, 'firstline' => 1 });
 	}
 
 	$callbackf && (&$callbackf(@$callbackargs));
