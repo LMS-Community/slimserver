@@ -170,6 +170,11 @@ sub endImporter {
 
 			Slim::Utils::Scheduler::add_task(\&artScan);
 		}
+		else {
+			# simulate end of artwork scan if we don't do one for
+			# the benefit of lauching the next post processing activity
+			$import = 'artwork';
+		}
 
 		# Set this back to 0.
 		scanPlaylistsOnly(0);
