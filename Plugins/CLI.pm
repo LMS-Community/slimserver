@@ -54,7 +54,7 @@ our %connections;           # hash indexed by client_sock value
                             # .. subscribe:  undef if the client is not listening
                             #                to anything, otherwise see below.
                             
-
+our %pending;
 
 ################################################################################
 # PLUGIN CODE
@@ -312,23 +312,46 @@ sub client_socket_read {
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
 		$::d_cli && msg("CLI: connection with " . $connections{$client_socket}{'id'} . " half-closed by peer\n");
-		client_socket_close($client_socket);		
+		client_socket_close($client_socket);
 		return;
 	}
 
 	$connections{$client_socket}{'inbuff'} .= $indata;
 	
 	# only parse when we're not busy
-	client_socket_buf_parse($client_socket) unless $cli_busy;
+	if ($cli_busy) {
+		$pending{$client_socket} = $client_socket;
+		if ($::d_cli) {
+			my $numpending = scalar keys %pending;
+			msg("CLI: BUSY!!!!! ($numpending pending)\n");
+		}
+	}
+	else {
+		client_socket_buf_parse($client_socket);
+		
+		# handle any pending items...
+		while (scalar keys %pending) {
+		
+			$::d_cli && msg("CLI: Found pending reads\n");
+			
+			foreach my $socket (keys %pending) {
+			
+				delete $pending{$socket};
+				
+				$socket = $connections{$socket}{'socket'};
+				client_socket_buf_parse($socket);
+			}
+		}
+	}
 }
 
 # parse buffer data
 sub client_socket_buf_parse {
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_buf_parse()\n");
+	$d_cli_vv && msg("CLI: client_socket_buf_parse(" . $connections{$client_socket}{'id'} . ")\n");
 
-	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)	
+	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)
 	while ($connections{$client_socket}{'inbuff'}) {
 
 		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)([$CR|$LF|$CR$LF|\x0]+)(.*)/s) {
@@ -341,13 +364,15 @@ sub client_socket_buf_parse {
 			$connections{$client_socket}{'inbuff'} = $3;
 
 			# Remember the terminator used
-			$connections{$client_socket}{'terminator'} = $2;
-			if ($::d_cli) {
-				my $str;
-				for (my $i = 0; $i < length($2); $i++) {
-					$str .= ord(substr($2, $i, 1)) . " ";
+			if ($connections{$client_socket}{'terminator'} ne $2) {
+				$connections{$client_socket}{'terminator'} = $2;
+				if ($::d_cli) {
+					my $str;
+					for (my $i = 0; $i < length($2); $i++) {
+						$str .= ord(substr($2, $i, 1)) . " ";
+					}
+					msg("CLI: Using terminator $str for " . $connections{$client_socket}{'id'} . "\n");
 				}
-				msg("CLI: using terminator $str\n");
 			}
 
 			# Process the command
@@ -379,14 +404,19 @@ sub client_socket_buf_parse {
 sub client_socket_write {
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_write()\n");
+	$d_cli_vv && msg("CLI: client_socket_write(" . $connections{$client_socket}{'id'} . ")\n");
 
 	my $message = shift(@{$connections{$client_socket}{'outbuff'}});
 	my $sentbytes;
 
 	return unless $message;
 
-	$::d_cli && msg("CLI: Sending response...\n");
+	if ($::d_cli) {
+		my $msg = substr($message, 0, 40);
+		chop($msg);
+		chop($msg);
+		msg("CLI: Sending response [$msg...] to " . $connections{$client_socket}{'id'} ."\n");
+	}
 	
 	$sentbytes = send($client_socket, $message, 0);
 
@@ -410,7 +440,7 @@ sub client_socket_write {
 		if (@{$connections{$client_socket}{'outbuff'}} == 0) {
 
 			# no more messages to send
-			$::d_cli && msg("CLI: No more messages to send to " . $connections{$client_socket}{'id'}  . "\n");
+			$::d_cli && msg("CLI: Sent response to " . $connections{$client_socket}{'id'}  . "\n");
 			Slim::Networking::Select::addWrite($client_socket, undef);
 			
 		} else {
@@ -425,7 +455,7 @@ sub client_socket_buffer {
 	my $client_socket = shift;
 	my $message = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_buffer()\n");
+	$d_cli_vv && msg("CLI: client_socket_buffer(" . $connections{$client_socket}{'id'} . ")\n");
 
 	push @{$connections{$client_socket}{'outbuff'}}, $message;
 	Slim::Networking::Select::addWrite($client_socket, \&client_socket_write);
@@ -557,7 +587,7 @@ sub cli_request_write {
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 
-	$::d_cli && msg("CLI: Sending: " . $output . "\n");
+#	$::d_cli && msg("CLI: Sending: " . $output . "\n");
 
 	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
 }
