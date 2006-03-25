@@ -109,12 +109,12 @@ sub summary {
 			push @warn, string("PLUGIN_HEALTH_STREAMINACTIVE_DESC");
 		}
 
-		if ($client->signalStrengthLog()->percentBelow(50) < 1) {
+		if ($client->signalStrengthLog()->percentBelow(30) < 1) {
 			$signal = string("PLUGIN_HEALTH_OK");
-		} elsif ($client->signalStrengthLog()->percentBelow(50) < 5) {
+		} elsif ($client->signalStrengthLog()->percentBelow(30) < 5) {
 			$signal = string("PLUGIN_HEALTH_SIGNAL_INTERMIT");
 			push @warn, string("PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC");
-		} elsif ($client->signalStrengthLog()->percentBelow(50) < 20) {
+		} elsif ($client->signalStrengthLog()->percentBelow(30) < 20) {
 			$signal = string("PLUGIN_HEALTH_SIGNAL_POOR");
 			push @warn, string("PLUGIN_HEALTH_SIGNAL_POOR_DESC");
 		} else {
