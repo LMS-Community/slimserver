@@ -220,8 +220,9 @@ sub string {
 			}
 			# if we've got non latin characters, make sure the hebrew is in the right order for printing
 			if ($canUseBiDi) {
-				@ords = unpack($unpackTemplate, Locale::Hebrew::hebrewflip($string));
+				$string = Locale::Hebrew::hebrewflip($string);
 			}
+			@ords = unpack($unpackTemplate, $string);
 		} else {
 			# Fall back to transliteration for people who don't have the font installed.
 			@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
