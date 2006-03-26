@@ -50,18 +50,18 @@ my %font2TTF = (
 
 	# The standard size - .1 is top line, .2 is bottom.
 	'standard.1' => {
-		'GDFontSize' => 10,
+		'GDFontSize' => 9,
 		'GDBaseline' => 8,
 	},
 
 	'standard.2' => {
-		'GDFontSize' => 18,
+		'GDFontSize' => 17,
 		'GDBaseline' => 28,
 	},
 
 	# Small size - .1 is top line, .2 is bottom.
 	'light.1' => {
-		'GDFontSize' => 11,
+		'GDFontSize' => 10,
 		'GDBaseline' => 10,
 	},
 
@@ -72,8 +72,8 @@ my %font2TTF = (
 
 	# Huge - only one line.
 	'full.2' => {
-		'GDFontSize' => 28,
-		'GDBaseline' => 24.5,
+		'GDFontSize' => 26,
+		'GDBaseline' => 25,
 	},
 
 	# High - line2 at top of screen [used for visualizer plugin]
@@ -81,6 +81,11 @@ my %font2TTF = (
 		'GDFontSize' => 7,
 		'GDBaseline' => 7,
 	},
+);
+
+# When using TTF to replace the following fonts, the string is has uc() run on it first
+my %font2uc = ( 
+	'standard.1' => 1,
 );
 
 sub init {
@@ -206,11 +211,13 @@ sub string {
 
 	my @ords = unpack($unpackTemplate, $string);
 
-	my $max = max(@ords);
-	
-	if ($max > 255) {
+	if (max(@ords) > 255) {
 
 		if ($useTTFNow) {
+			# convert to upper case if fontname is in list of uc fonts
+			if ($font2uc{$fontname}) {
+				$string = uc($string);
+			}
 			# if we've got non latin characters, make sure the hebrew is in the right order for printing
 			if ($canUseBiDi) {
 				@ords = unpack($unpackTemplate, Locale::Hebrew::hebrewflip($string));
@@ -239,7 +246,7 @@ sub string {
 
 		} else {
 
-			if ($ord > 0x20 && $max > 255 && $useTTFNow) {
+			if ($ord > 255 && $useTTFNow) {
 
 				my $bits_tmp = $useTTFCache ? $TTFCache{$fontname}{$ord} : '';
 
@@ -298,7 +305,7 @@ sub string {
 	if (defined($cursorpos)) {
 		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}
-		
+	
 	return $bits;
 }
 
