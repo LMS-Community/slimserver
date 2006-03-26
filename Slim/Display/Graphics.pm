@@ -217,12 +217,15 @@ sub string {
 			# convert to upper case if fontname is in list of uc fonts
 			if ($font2uc{$fontname}) {
 				$string = uc($string);
+				@ords = ();
 			}
 			# if we've got non latin characters, make sure the hebrew is in the right order for printing
 			if ($canUseBiDi) {
 				$string = Locale::Hebrew::hebrewflip($string);
+				@ords = ();
 			}
-			@ords = unpack($unpackTemplate, $string);
+			@ords = unpack($unpackTemplate, $string) unless @ords;
+
 		} else {
 			# Fall back to transliteration for people who don't have the font installed.
 			@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
