@@ -158,7 +158,7 @@ sub adjustAllTimers {
 	}
 	
 	for my $item ( $normal->peek_items( sub { 1 } ) ) {
-		$high->adjust_priority( $item->[ITEM_ID], sub { 1 }, $delta );
+		$normal->adjust_priority( $item->[ITEM_ID], sub { 1 }, $delta );
 	}
 }
 
