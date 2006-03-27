@@ -88,6 +88,11 @@
 </p>
 <ul>
 	<li>
+		Added the ability for plugins to define CLI commands and queries. In
+		particular, some Internet Radio plugins now have CLI support. Please
+		refer to <a href="#PG">Plugins</a></strong> section.
+	</li>
+	<li>
 		Added the &quot;<a href="#can">can</a>&quot; query, useful to determine
 		if a certain command or query is available
 	</li>
@@ -483,6 +488,13 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		commands echoed to the CLI by using the 
 		&quot;<a href="#listen">listen</a>&quot; or 
 		&quot;<a href="#subscribe">subscribe</a>&quot; commands.
+	</li>
+	<li>
+		<strong><a href="#PG">Plugins</a></strong>: commands and queries
+		proposed by various SlimServer plugins. These are only available if
+		the plugin is enabled in the SlimServer configuration. The query
+		&quot;<a href="#can">can</a>&quot; can be used to determine if a command
+		or query is available.
 	</li>
 	<li>
 		<strong><a href="#DC">Deprecated</a></strong>: commands which are still
@@ -3065,7 +3077,20 @@ and saves in the top level of the playlists directory.</p>
 </p>
 
 <hr>
-<h4 id="DC">Deprecated commands</h4>
+<h4 id="PG">Plugins commands and queries</h4>
+<p>
+	The following command and queries are proposed by SlimServer plugins. The
+	plugin must be enabled in the SlimServer configuration for the commands
+	and queries to be available to the CLI client. Please use query 
+	&quot;<a href="#can">can</a>&quot; to determine if the given command or
+	query is available.
+<p>
+<h5>Shoutcast Browser<h5>
+<h5>radioio<h5>
+<h5>Favourites<h5>
+
+<hr>
+<h4 id="DC">Deprecated commands and queries</h4>
 <p>
 	The following commands are still supported but their usage is not
 	recommended.
