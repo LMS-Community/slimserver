@@ -64,9 +64,9 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 
-    Slim::Control::Request::addDispatch(['radioio.stations', '_index', '_quantity'],  
+    Slim::Control::Request::addDispatch(['radioio', 'stations', '_index', '_quantity'],  
         [0, 1, 1, \&stationsQuery]);
-    Slim::Control::Request::addDispatch(['radioio.stationinfo'],  
+    Slim::Control::Request::addDispatch(['radioio', 'stationinfo'],  
         [0, 1, 1, \&stationinfoQuery]);
 }
 
@@ -260,7 +260,7 @@ sub stationsQuery {
  
 	#msg("RadioIO::stationsQuery()\n");
  
-	if ($request->isNotQuery([['radioio.stations']])) {
+	if ($request->isNotQuery([['radioio'], ['stations']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -294,7 +294,7 @@ sub stationinfoQuery {
  
 	#msg("RadioIO::stationinfoQuery()\n");
  
-	if ($request->isNotQuery([['radioio.stationinfo']])) {
+	if ($request->isNotQuery([['radioio'], ['stationinfo']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}

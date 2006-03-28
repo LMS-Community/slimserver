@@ -275,11 +275,11 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'],  
-		[1, 1, 1, \&listQuery]);
+		[0, 1, 1, \&listQuery]);
 	Slim::Control::Request::addDispatch(['favorites', 'move', '_fromindex', '_toindex'],  
-		[1, 0, 0, \&moveCommand]);
+		[0, 0, 0, \&moveCommand]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'],
-		[1, 0, 0, \&deleteCommand]);
+		[0, 0, 0, \&deleteCommand]);
 
 }
 
@@ -342,7 +342,7 @@ sub listQuery {
 	}
 
 	# get our parameters
-	my $client    = $request->client();
+	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	
