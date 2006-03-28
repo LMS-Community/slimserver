@@ -35,6 +35,11 @@ use Slim::Utils::Timers;
 sub new {
 	my $class = shift;
 	my %args  = @_;
+
+	# Don't bother resolving localhost
+	if ( $args{'Host'} =~ /^localhost$/i ) {
+		$args{'PeerAddr'} = '127.0.0.1';
+	}
 	
 	# Skip async DNS if we know the IP address
 	if ( $args{'PeerAddr'} || Net::IP::ip_is_ipv4( $args{'Host'} ) ) {
