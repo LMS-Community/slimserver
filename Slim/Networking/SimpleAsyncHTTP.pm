@@ -105,7 +105,7 @@ sub _createHTTPRequest {
 	my $http = Slim::Networking::AsyncHTTP->new(
 		Host     => $server,
 		PeerPort => $port,
-		Timeout  => 5,
+		Timeout  => $self->{'params'}->{'Timeout'} || 10,
 		
 		errorCallback => \&errorCallback,
 		writeCallback => \&writeCallback,
