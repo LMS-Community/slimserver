@@ -5,15 +5,20 @@ function changePlayer(player_List){
 	
 	parent.playlist.location="playlist.html?player" + newPlayer;
 	window.location="status.html?player" + newPlayer;
+
+	var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
+		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,newPlayer);
 	} else {
-		myString = new String(parent.browser.location.href);
-		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
-		parent.browser.location=myString.replace(rExp, newPlayer);
+		browseURL = new String(parent.browser.location.href);
+		parent.browser.location=browseURL.replace(rExp, newPlayer);
 	}
-	parent.header.location.reload(false);
+	parent.header.location=headerURL.replace(rExp, newPlayer);
+	headerURL = new String(parent.header.location.href);
+
+	//parent.header.location.reload(false);
 }
 
 // change form values to correct player
