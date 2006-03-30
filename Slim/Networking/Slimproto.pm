@@ -183,6 +183,7 @@ sub slimproto_close {
 
 sub _forgetDisconnectedClient {
 	my $client = shift;
+	$::d_slimproto && msg("Slimproto - forgetting disconnected client\n");
 	Slim::Control::Request::executeRequest($client, ['client', 'forget']);
 }
 
@@ -700,6 +701,16 @@ sub _hello_handler {
 	} else {
 
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
+
+		my $oldsock = $client->tcpsock();
+
+		if (defined($oldsock) && exists($sock2client{$oldsock})) {
+		
+			$::d_slimproto && msg("closing previous socket to client: $id on ipport: ".
+								  inet_ntoa($oldsock->peeraddr).":".$oldsock->peerport."\n" );
+
+			slimproto_close($client->tcpsock());
+		}
 
 		Slim::Utils::Timers::killTimers($client, \&_forgetDisconnectedClient);
 
