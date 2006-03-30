@@ -15,10 +15,8 @@ function changePlayer(player_List){
 		browseURL = new String(parent.browser.location.href);
 		parent.browser.location=browseURL.replace(rExp, newPlayer);
 	}
-	parent.header.location=headerURL.replace(rExp, newPlayer);
 	headerURL = new String(parent.header.location.href);
-
-	//parent.header.location.reload(false);
+	parent.header.location=headerURL.replace(rExp, newPlayer);
 }
 
 // change form values to correct player
