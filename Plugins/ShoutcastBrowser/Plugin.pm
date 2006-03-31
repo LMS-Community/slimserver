@@ -138,6 +138,23 @@ my $hasZlib = 0;
 sub initPlugin {
 	checkDefaults();
 
+	# register our functions
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['shoutcast', 'genres', '_index', '_quantity' ],
+    	[0, 1, 1, \&cliQuery]);
+    Slim::Control::Request::addDispatch(['shoutcast', 'stations', '_index', '_quantity' ],
+    	[0, 1, 1, \&cliQuery]);
+    Slim::Control::Request::addDispatch(['shoutcast', 'recentlyplayed', '_index', '_quantity' ],
+    	[1, 1, 1, \&cliQuery]);
+    Slim::Control::Request::addDispatch(['shoutcast', 'popularstations', '_index', '_quantity' ],
+    	[0, 1, 0, \&cliQuery]);
+    Slim::Control::Request::addDispatch(['shoutcast', 'stationinfo', '_station' ],
+    	[0, 1, 1, \&cliQuery]);
+
 	eval { require Compress::Zlib };
 
 	if (!$@) {
@@ -1174,6 +1191,218 @@ sub handleWebIndex {
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/ShoutcastBrowser/index.html', $params);
+}
+
+sub cliQuery {
+	my $request = shift;
+ 
+	if ($request->isNotQuery([['shoutcast'], ['stations', 'recentlyplayed', 'popularstations', 'genres', 'stationinfo']]))
+	{
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# download stream information if needed
+	check4Update();
+
+	if (not defined $httpError) {
+		loadStreamList();
+		$request->addResult("waiting", 1);
+		$request->addResult('count', 0);
+	}
+	elsif ($httpError < 0) {
+		$request->addResult("waiting", 1);
+		$request->addResult('count', 0);
+	}
+	elsif ($httpError) {
+		$request->addResult("networkerror", 1);
+		$request->addResult('count', 0);
+	}
+	else {
+		if ($request->isQuery([['shoutcast'], ['stations']])) {
+			cliStationsQuery($request);
+		}
+		elsif ($request->isQuery([['shoutcast'], ['recentlyplayed']])) {
+			cliRecentlyPlayedStations($request);
+		}
+		elsif ($request->isQuery([['shoutcast'], ['popularstations']])) {
+			cliStationsQuery($request, 'mostpopular');
+		}
+		elsif ($request->isQuery([['shoutcast'], ['genres']])) {
+			cliGenresQuery($request);
+		}
+		elsif ($request->isQuery([['shoutcast'], ['stationinfo']])) {
+			cliStationInfoQuery($request);
+		}
+	}	
+	$request->setStatusDone();
+}
+
+sub cliGenresQuery {
+	my $request = shift;
+ 
+	$::d_plugins && msg("Shoutcast: cliGenresQuery\n");
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search   = $request->getParam('search');
+
+	my %genreIdMap;
+	my $count = 0;
+	foreach my $station (@genresList) {
+		if (!$search || $station =~ /$search/i) {
+			$genreIdMap{$station} = $count;
+			$count++;
+		}
+	}
+	$count = scalar(keys %genreIdMap);
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $cnt = 0;
+
+		for my $eachstation ((sort keys %genreIdMap)[$start..$end]) {
+			$request->addResultLoop('@genres', $cnt, 'id', $genreIdMap{$eachstation});
+			$request->addResultLoop('@genres', $cnt, 'genre', $eachstation);
+			$cnt++;
+		}	
+	}	
+}
+
+sub cliStationsQuery {
+	my $request = shift;
+	my $genre_id = shift;
+ 
+	$::d_plugins && msg("Shoutcast: cliStationsQuery\n");
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search   = $request->getParam('search');
+	my $tags     = $request->getParam('tags');
+	$genre_id    = $request->getParam('genre_id') if not defined $genre_id;
+
+	# check tags
+	my %tags;
+	$tags{$1} = 1 while ($tags =~ m{(.)}g);
+	
+	my @filteredStationList;
+	# handle special genres "most popular" && "recently played"
+	if (defined $genre_id && $genre_id eq "mostpopular") {
+		@filteredStationList = @mostPopularStreams;
+	}
+	elsif (defined $genre_id && $genre_id eq "recent") {
+		cliRecentlyPlayedStations($request);
+		return;
+	}
+	elsif (defined $genre_id && $genre_id ne "all") {
+		@filteredStationList = sort { &stream_sort } @{ $genreStreams{$genresList[$genre_id]} };
+	}
+	else {
+		@filteredStationList = sort { &stream_sort } keys %streamList;
+	}
+	if ($search) { @filteredStationList = grep /$search/i, @filteredStationList; }
+
+	my $count;
+	# we have to count all streams with all their bitrates...
+	for my $eachstation (@filteredStationList) {
+		for my $eachbitrate (sort keys %{ $streamList{$eachstation} }) {
+			$count++;
+		}
+	}
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $cnt = 0;
+		# we have to go through all streams with all their bitrates to get the correct count...
+		for my $eachstation (@filteredStationList) {
+			for my $eachbitrate (sort { $a <=> $b } keys %{ $streamList{$eachstation} }) {
+				if ($cnt >= $start && $cnt <= $end)
+				{
+					$request->addResultLoop('@stations', $cnt, 'station', $eachstation);
+					$request->addResultLoop('@stations', $cnt, 'url', $streamList{$eachstation}{$eachbitrate}[0]);
+					$request->addResultLoop('@stations', $cnt, 'bitrate', $eachbitrate) if $tags{'r'};
+					$request->addResultLoop('@stations', $cnt, 'listeners', $streamList{$eachstation}{$eachbitrate}[1]) if $tags{'l'};
+					$request->addResultLoop('@stations', $cnt, 'lastplaying', $streamList{$eachstation}{$eachbitrate}[3]) if $tags{'p'};
+					$request->addResultLoop('@stations', $cnt, 'genre', $streamList{$eachstation}{$eachbitrate}[4]) if $tags{'g'};
+				}
+				$cnt++;
+			}
+		}	
+	}	
+	$request->setStatusDone();
+}
+
+sub cliStationInfoQuery {
+	my $request = shift;
+ 
+	$::d_plugins && msg("Shoutcast: cliStationInfoQuery()\n");
+
+	# get our parameters
+	my $station  = $request->getParam('_station');
+
+	if (!defined $station || !$streamList{$station}) {
+		Slim::Utils::Misc::msg("isnogud\n");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	my $cnt = 0;
+
+	for my $eachbitrate (sort { $a <=> $b } keys %{ $streamList{$station} }) {
+		$request->addResultLoop('@stations', $cnt, 'station', $station);
+		$request->addResultLoop('@stations', $cnt, 'bitrate', $eachbitrate);
+		$request->addResultLoop('@stations', $cnt, 'url', $streamList{$station}{$eachbitrate}[0]);
+		$request->addResultLoop('@stations', $cnt, 'listeners', $streamList{$station}{$eachbitrate}[1]);
+		$request->addResultLoop('@stations', $cnt, 'lastplaying', $streamList{$station}{$eachbitrate}[3]);
+		$request->addResultLoop('@stations', $cnt, 'genre', $streamList{$station}{$eachbitrate}[4]);
+		$cnt++;
+	}
+
+	$request->setStatusDone();
+}
+
+sub cliRecentlyPlayedStations {
+	my $request = shift;
+ 
+	$::d_plugins && msg("Shoutcast: cliRecentlyPlayedStations()\n");
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search   = $request->getParam('search');
+	my $client   = $request->client();
+
+	my @recentStreams = grep /\d+ kbps: .*$search.*/i, @{readRecentStreamList($client)};
+	
+	if (defined @recentStreams)
+	{
+		my $count = scalar(@recentStreams);
+		$request->addResult('count', $count);
+	
+		if ($count) {
+			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+		
+			my $cnt = 0;
+			for my $stream (@recentStreams[$start..$end]) {
+				$stream =~ /(\d+) kbps: (.*)/;
+				$request->addResultLoop('@stations', $cnt, 'station', $2);
+				$request->addResultLoop('@stations', $cnt, 'bitrate', $1);
+				$request->addResultLoop('@stations', $cnt, 'url', $status{$client}{recent_data}{$stream});
+				$cnt++;
+			}
+		}
+	}
+	else {
+		$request->addResult('count', 0);
+	}
+
+	$request->setStatusDone();
 }
 
 sub check4Update {

@@ -1428,6 +1428,7 @@ PROBLEM_OPENING
 	ZH_CN	失误：无法打开文件：
 	
 PROBLEM_OPENING_REMOTE_URL
+	DE	Fehler beim Öffnen der URL
 	EN	Error: Can't open remote URL
 
 NO_PLAYLIST_DIR

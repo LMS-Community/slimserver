@@ -588,6 +588,33 @@ sub initPlugin {
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
 		[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
+
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['randomplay', '_mode'],
+        [1, 0, 0, \&cliRequest]);
+}
+
+sub cliRequest {
+	my $request = shift;
+ 
+	# get our parameters
+	my $mode   = $request->getParam('_mode');
+	my $client = $request->client();
+	my $functions = getFunctions();
+
+	if (!defined $mode || !defined $$functions{$mode} || !$client) {
+		Slim::Utils::Misc::msg("$mode\n");
+		$request->setStatusBadParams();
+		return;
+	}
+
+	&{$$functions{$mode}}($client);
+	
+	$request->setStatusDone();
 }
 
 sub shutdownPlugin {
