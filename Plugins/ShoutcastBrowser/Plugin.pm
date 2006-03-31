@@ -154,6 +154,8 @@ sub initPlugin {
     	[0, 1, 0, \&cliQuery]);
     Slim::Control::Request::addDispatch(['shoutcast', 'stationinfo', '_station' ],
     	[0, 1, 1, \&cliQuery]);
+    Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method', '_url' ],
+    	[1, 1, 1, \&cliQuery]);
 
 	eval { require Compress::Zlib };
 
@@ -962,6 +964,7 @@ sub playStream {
 
 	$client->execute(['playlist', 'clear']) if (lc($method) eq 'play');
 	$client->execute(['playlist', $method, $current_data->[0], $currentStream]);
+
 	unless (defined $addToRecent && not $addToRecent) {
 		writeRecentStreamList($client, $currentStream, $currentBitrate, $current_data);
 	}
@@ -1196,7 +1199,7 @@ sub handleWebIndex {
 sub cliQuery {
 	my $request = shift;
  
-	if ($request->isNotQuery([['shoutcast'], ['stations', 'recentlyplayed', 'popularstations', 'genres', 'stationinfo']]))
+	if ($request->isNotQuery([['shoutcast'], ['stations', 'recentlyplayed', 'popularstations', 'genres', 'stationinfo', 'playlist']]))
 	{
 		$request->setStatusBadDispatch();
 		return;
@@ -1233,6 +1236,9 @@ sub cliQuery {
 		}
 		elsif ($request->isQuery([['shoutcast'], ['stationinfo']])) {
 			cliStationInfoQuery($request);
+		}
+		elsif ($request->isQuery([['shoutcast'], ['playlist']])) {
+			cliPlayStation($request);
 		}
 	}	
 	$request->setStatusDone();
@@ -1347,7 +1353,6 @@ sub cliStationInfoQuery {
 	my $station  = $request->getParam('_station');
 
 	if (!defined $station || !$streamList{$station}) {
-		Slim::Utils::Misc::msg("isnogud\n");
 		$request->setStatusBadParams();
 		return;
 	}
@@ -1400,6 +1405,60 @@ sub cliRecentlyPlayedStations {
 	}
 	else {
 		$request->addResult('count', 0);
+	}
+
+	$request->setStatusDone();
+}
+
+# though radio stations can be played by submitting the url to the server directly
+# shoutcast browser offers a method to have them tracked in the "recently played" list
+sub cliPlayStation {
+	my $request = shift;
+ 
+	$::d_plugins && msg("Shoutcast: cliPlayStation()\n");
+
+	# get our parameters
+	my $method  = $request->getParam('_method');
+	my $url     = $request->getParam('_url');
+	my $bitrate = $request->getParam('bitrate');
+	my $client  = $request->client();
+
+	unless ($method && $url && defined $client) {
+		Slim::Utils::Misc::msg("$method $url $client\n");
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	# get station's name from the url
+	# XXX isn't there a simpler way to do this?
+	my $station;
+	foreach my $eachstation (keys %streamList) {
+		foreach my $eachbitrate (keys %{$streamList{$eachstation}}) {
+			if ($streamList{$eachstation}{$eachbitrate}[0] eq $url) {
+				$station = $eachstation;
+				last;
+			}
+		}
+		last if ($station);
+	}
+
+	# Add all bitrates to current playlist, but only the first one to the recently played list
+	my @bitrates;
+	if (not $bitrate) {
+		@bitrates = keys %{ $streamList{$station} };
+	}
+	else {
+		@bitrates = $bitrate;
+	}
+
+	unless (@bitrates) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	playStream($client, $station, shift @bitrates, $method);
+	for my $eachbitrate (@bitrates) {
+		playStream($client, $station, $eachbitrate, 'add', 0);
 	}
 
 	$request->setStatusDone();
