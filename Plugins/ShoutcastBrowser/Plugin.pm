@@ -1424,7 +1424,6 @@ sub cliPlayStation {
 	my $client  = $request->client();
 
 	unless ($method && $url && defined $client) {
-		Slim::Utils::Misc::msg("$method $url $client\n");
 		$request->setStatusBadParams();
 		return;
 	}
