@@ -68,7 +68,7 @@ sub init {
 			# Bug 2410 - We need a better solution for iTunes
 			# rescanning, but in the meantime, don't scan every 60
 			# seconds. Let the Plugin reset the value.
-			if ($prefs{'itunesscaninterval'} == 60) {
+			if (defined $prefs{'itunesscaninterval'} && $prefs{'itunesscaninterval'} == 60) {
 				delete $prefs{'itunesscaninterval'};
 			}
 		},

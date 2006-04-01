@@ -12,10 +12,11 @@ use base qw(Exporter);
 
 our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified);
 
+use Cwd ();
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
-use POSIX qw(strftime setlocale LC_TIME);
+use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 use URI;
@@ -183,7 +184,7 @@ sub pathFromFileURL {
 
 		# only allow absolute file URLs and don't allow .. in files...
 		if ($path !~ /[\/\\]\.\.[\/\\]/) {
-			$file = $uri->file();
+			$file = fixPathCase($uri->file);
 		} 
 
 	} else {
@@ -215,7 +216,7 @@ sub fileURLFromPath {
 
 	return $path if (Slim::Music::Info::isURL($path));
 
-	my $uri  = URI::file->new($path);
+	my $uri  = URI::file->new( fixPathCase($path) );
 	   $uri->host('');
 
 	my $file = $uri->as_string;
@@ -245,6 +246,22 @@ sub unescape {
 	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
 
 	return $in;
+}
+
+# See http://www.onlamp.com/pub/a/onlamp/2006/02/23/canary_trap.html
+sub removeCanary {
+	my $string = shift;
+
+	for (my $i = 0;  ++$i <= 5;) {  
+
+		last if $$string =~ s/^=://;
+
+		$$string = unescape($$string);
+
+		last if $$string =~ s/^=://;
+	}
+
+	return $string;
 }
 
 sub anchorFromURL {
@@ -313,7 +330,8 @@ sub fixPathCase {
 	# top of the directory tree, which isn't what we want.
 	$path = $orig unless $path;
 
-	return canonpath($path);
+	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
+	return Cwd::abs_path(canonpath($path));
 }
 		
 # there's not really a better way to do this..
@@ -407,23 +425,26 @@ sub fixPath {
 		$fixed = catfile($audiodir, $file);
 	}
 
-	# I hate Windows.
+	# I hate Windows & HFS+.
 	# A playlist or the like can have a completely different case than
 	# what we get from the filesystem. Fix that all up so we don't create
 	# duplicate entries in the database.
-	if (Slim::Utils::OSDetect::OS() eq "win" && !Slim::Music::Info::isFileURL($fixed)) {
+	if (!Slim::Music::Info::isFileURL($fixed)) {
 
-		my ($volume, $dirs, $file) = splitpath($fixed);
+		if (Slim::Utils::OSDetect::OS() eq "win") {
 
-		# Look for UNC paths
-		if ($volume && $volume =~ m|^\\|) {
+			my ($volume, $dirs, $file) = splitpath($fixed);
 
-			# And map them to drive letters.
-			$volume = Win32::FileOp::Mapped($volume);
+			# Look for UNC paths
+			if ($volume && $volume =~ m|^\\|) {
 
-			if ($volume && $volume =~ /^[A-Z]:/) {
+				# And map them to drive letters.
+				$volume = Win32::FileOp::Mapped($volume);
 
-				$fixed = catfile($volume, $dirs, $file);
+				if ($volume && $volume =~ /^[A-Z]:/) {
+
+					$fixed = catfile($volume, $dirs, $file);
+				}
 			}
 		}
 
