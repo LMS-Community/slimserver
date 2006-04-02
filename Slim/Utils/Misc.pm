@@ -312,8 +312,6 @@ sub crackURL {
 
 # fixPathCase makes sure that we are using the actual casing of paths in
 # a case-insensitive but case preserving filesystem.
-# currently only implemented for Win32
-
 sub fixPathCase {
 	my $path = shift;
 	my $orig = $path;
@@ -322,16 +320,19 @@ sub fixPathCase {
 		$path = Win32::GetLongPathName($path);
 	}
 
+	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
+	# But don't for the bogus path we use with embedded cue sheets.
+	if ($^O eq 'darwin' && $path !~ m|^/BOGUS/PATH|) {
+		$path = Cwd::abs_path($path);
+	}
+
 	# Use the original path if we didn't get anything back from
 	# GetLongPathName - this can happen if a cuesheet references a
 	# non-existant .wav file, which is often the case.
 	#
 	# At that point, we'd return a bogus value, and start crawling at the
 	# top of the directory tree, which isn't what we want.
-	$path = $orig unless $path;
-
-	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
-	return Cwd::abs_path(canonpath($path));
+	return $path || $orig;
 }
 		
 # there's not really a better way to do this..
@@ -448,7 +449,7 @@ sub fixPath {
 			}
 		}
 
-		$fixed = fixPathCase($fixed);
+		$fixed = canonpath(fixPathCase($fixed));
 	}
 
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
