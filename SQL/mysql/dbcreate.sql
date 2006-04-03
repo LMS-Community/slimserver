@@ -80,7 +80,7 @@ CREATE TABLE tracks (
   INDEX urlIndex (url(255)),
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
@@ -93,7 +93,7 @@ CREATE TABLE playlist_track (
   track  int(10) unsigned,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
@@ -167,8 +167,8 @@ CREATE TABLE contributor_track (
   INDEX contributor_trackTrackIndex (track),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
@@ -182,8 +182,8 @@ CREATE TABLE contributor_album (
   INDEX contributor_trackAlbumIndex (album),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,album),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
@@ -214,8 +214,8 @@ CREATE TABLE genre_track (
   INDEX genre_trackGenreIndex (genre),
   INDEX genre_trackTrackIndex (track),
   PRIMARY KEY (genre,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
@@ -227,7 +227,7 @@ CREATE TABLE comments (
   value text,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB;
 
 --
