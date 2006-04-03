@@ -827,6 +827,7 @@ my %statusMap = (
 	  0 => 'New',
 	  1 => 'Dispatchable',
 	  2 => 'Dispatched',
+	  3 => 'Processing',
 	 10 => 'Done',
 #	 11 => 'Callback done',
 	101 => 'Bad dispatch!',
@@ -886,25 +887,30 @@ sub wasStatusDispatched {
 	return ($self->__status() > 1);
 }
 
+sub setStatusProcessing {
+	my $self = shift;
+	$self->__status(3);
+}
+
+sub isStatusProcessing {
+	my $self = shift;
+	return ($self->__status() == 3);
+}
+
 sub setStatusDone {
 	my $self = shift;
+	
+	# if we are in processing state, we need to call executeDone AFTER setting
+	# the status to Done...
+	my $callDone = $self->isStatusProcessing();
 	$self->__status(10);
+	$self->executeDone() if $callDone;
 }
 
 sub isStatusDone {
 	my $self = shift;
 	return ($self->__status() == 10);
 }
-
-#sub setStatusCallbackDone {
-#	my $self = shift;
-#	$self->__status(11);
-#}
-
-#sub isStatusCallbackDone {
-#	my $self = shift;
-#	return ($self->__status() == 11);
-#}
 
 sub isStatusError {
 	my $self = shift;
@@ -1195,6 +1201,8 @@ sub paramUndefinedOrNotOneOf {
 }
 
 # returns true if $param being defined, it is not one of the possible values
+# not really a method on request data members but defined as such since it is
+# useful for command and queries implementation.
 sub paramNotOneOfIfDefined {
 	my $self = shift;
 	my $param = shift;
@@ -1205,6 +1213,8 @@ sub paramNotOneOfIfDefined {
 	return !grep(/$param/, @{$possibleValues});
 }
 
+# not really a method on request data members but defined as such since it is
+# useful for command and queries implementation.
 sub normalize {
 	my $self = shift;
 	my $from = shift;
@@ -1276,17 +1286,25 @@ sub execute {
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
-			errorMsg("execute: Error when trying to run coderef: [$@]\n");
+			errorMsg("Request: Error when trying to run function coderef: [$@]\n");
+			$self->setStatusBadDispatch();
 			$self->dump('Request');
 		}
 	}
+	
+	# contine execution unless the Request is still work in progress (async)...
+	$self->executeDone() unless $self->isStatusProcessing();
+}
+
+# perform end of execution, calling the callback etc...
+sub executeDone {
+	my $self = shift;
 	
 	# perform the callback
 	# do it unconditionally as it is used to generate the response web page
 	# smart callback routines test the request status!
 	$self->callback();
 		
-#	} else {
 	if (!$self->isStatusDone()) {
 	
 		# remove the notification if we pushed it...
@@ -1320,7 +1338,7 @@ sub callback {
 				eval { &$funcPtr($self) };
 
 				if ($@) { 
-					errorMsg("callback: Error when trying to run coderef: [$@]\n");
+					errorMsg("Request: Error when trying to run callback coderef: [$@]\n");
 					$self->dump('Request');
 				}
 			
@@ -1330,15 +1348,11 @@ sub callback {
 				eval { &$funcPtr(@$args) };
 
 				if ($@) { 
-					errorMsg("callback: Error when trying to run coderef: [$@]\n");
+					errorMsg("Request: Error when trying to run callback coderef: [$@]\n");
 					$self->dump('Request');
 				}
 			}
-
-# Don't remember that
-#			$self->setStatusCallbackDone();
 		}
-
 	} else {
 	
 		$::d_command && msg("Request: Callback disabled\n");

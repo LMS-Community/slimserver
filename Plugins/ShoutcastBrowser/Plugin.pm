@@ -424,7 +424,7 @@ sub browseStreamsExitHandler {
 }
 
 sub loadStreamList {
-	my ($client, $params, $callback, $httpClient, $response) = @_;
+	my ($client, $params, $callback, $httpClient, $response, $cliCallback, $cliCallbackParams) = @_;
 	
 	# only start if it's not been launched by another client
 	if (defined $httpError) {
@@ -445,7 +445,9 @@ sub loadStreamList {
 		params     => $params,
 		callback   => $callback,
 		httpClient => $httpClient,
-		response   => $response
+		response   => $response,
+		cliCallback => $cliCallback,
+		cliCallbackParams => $cliCallbackParams
 	});
 
 	my $url = unpack 'u', q{M:'1T<#HO+W-H;W5T8V%S="YC;VTO<V)I;B]X;6QL:7-T97(N<&AT;6P_<V5R+=FEC93U3;&E-4#,`};
@@ -499,10 +501,19 @@ sub gotViaHTTP {
 
 	$::d_plugins && msg("Shoutcast: that's it\n");
 
+	#print Data::Dumper::Dumper($http);
+
 	if (defined $params->{'client'}) {
 
+		$::d_plugins && msg("Shoutcast: update client\n");
 		$params->{'client'}->unblock();
 		$params->{'client'}->update();
+	}
+	
+	if (defined $params->{'cliCallback'}) {
+	
+		$::d_plugins && msg("Shoutcast: cli callback\n");
+		&{$params->{'cliCallback'}}($params->{'cliCallbackParams'});
 	}
 }
 
@@ -1209,9 +1220,9 @@ sub cliQuery {
 	check4Update();
 
 	if (not defined $httpError) {
-		loadStreamList();
-		$request->addResult("waiting", 1);
-		$request->addResult('count', 0);
+		loadStreamList(undef, undef, undef, undef, undef, \&cliQuery, $request);
+		$request->setStatusProcessing();
+		return;
 	}
 	elsif ($httpError < 0) {
 		$request->addResult("waiting", 1);
@@ -1341,7 +1352,6 @@ sub cliStationsQuery {
 			}
 		}	
 	}	
-	$request->setStatusDone();
 }
 
 sub cliStationInfoQuery {
@@ -1368,8 +1378,6 @@ sub cliStationInfoQuery {
 		$request->addResultLoop('@stations', $cnt, 'genre', $streamList{$station}{$eachbitrate}[4]);
 		$cnt++;
 	}
-
-	$request->setStatusDone();
 }
 
 sub cliRecentlyPlayedStations {
@@ -1406,8 +1414,6 @@ sub cliRecentlyPlayedStations {
 	else {
 		$request->addResult('count', 0);
 	}
-
-	$request->setStatusDone();
 }
 
 # though radio stations can be played by submitting the url to the server directly

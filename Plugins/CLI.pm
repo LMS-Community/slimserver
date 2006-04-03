@@ -295,38 +295,51 @@ sub client_socket_read {
 	$d_cli_vv && msg("CLI: client_socket_read()\n");
 
 
+	# handle various error cases
+	
 	if (!defined($client_socket)) {
 		$::d_cli && msg("CLI: client_socket undefined in client_socket_read()!\n");
 		return;		
 	}
 
-	if (!($client_socket->connected)) {
-		$::d_cli && msg("CLI: connection with " . $connections{$client_socket}{'id'} . " closed by peer\n");
-		client_socket_close($client_socket);		
+	if (!($client_socket->connected())) {
+		$::d_cli && msg("CLI: connection with " 
+			. $connections{$client_socket}{'id'} . " closed by peer\n");
+		client_socket_close($client_socket);
 		return;
 	}			
 
+	# attempt to read data from the stream
 	my $bytes_to_read = 100;
 	my $indata = '';
 	my $bytes_read = $client_socket->sysread($indata, $bytes_to_read);
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
-		$::d_cli && msg("CLI: connection with " . $connections{$client_socket}{'id'} . " half-closed by peer\n");
+		$::d_cli && msg("CLI: connection with " 
+			. $connections{$client_socket}{'id'} . " half-closed by peer\n");
 		client_socket_close($client_socket);
 		return;
 	}
 
+	# buffer the data
 	$connections{$client_socket}{'inbuff'} .= $indata;
 	
 	# only parse when we're not busy
-	if ($cli_busy) {
+	if ($connections{$client_socket}{'busy'}) {
+	
+		# manage a stack of connections requiring processing
 		$pending{$client_socket} = $client_socket;
+		
 		if ($::d_cli) {
 			my $numpending = scalar keys %pending;
 			msg("CLI: BUSY!!!!! ($numpending pending)\n");
 		}
 	}
 	else {
+	
+		# parse and process
+		# if the underlying code ever calls Idle, there is a chance
+		# we get called again for the same connection (or another)
 		client_socket_buf_parse($client_socket);
 		
 		# handle any pending items...
@@ -378,11 +391,11 @@ sub client_socket_buf_parse {
 			# Process the command
 			# Indicate busy so that any incoming data is buffered and not parsed
 			# during command processing
-			$cli_busy = 1;
+			$connections{$client_socket}{'busy'} = 1;
 			my $exit = cli_process($client_socket, $1);
-			$cli_busy = 0;
+			$connections{$client_socket}{'busy'} = 0 unless $exit == 2;
 			
-			if ($exit) {
+			if ($exit == 1) {
 				client_socket_write($client_socket);
 				client_socket_close($client_socket);
 				
@@ -457,7 +470,13 @@ sub client_socket_buffer {
 
 	$d_cli_vv && msg("CLI: client_socket_buffer(" . $connections{$client_socket}{'id'} . ")\n");
 
+	# we're no longer busy, this is atomic
+	$connections{$client_socket}{'busy'} = 0;
+	
+	# add the message to the buffer
 	push @{$connections{$client_socket}{'outbuff'}}, $message;
+	
+	# signal select we got something to write
 	Slim::Networking::Select::addWrite($client_socket, \&client_socket_write);
 }
 
@@ -560,7 +579,22 @@ sub cli_process {
 
 			} else {
 
+				# check if this command or query needs CLI subscription 
+				# processing
 				cli_request_check_subscribe($client_socket, $request);
+				
+				
+				# handle async commands
+				if ($request->isStatusProcessing()) {
+				
+					$::d_cli && msg ("CLI: Request [$cmd] is async: will be back\n");
+					
+					# add our write routine as a callback
+					$request->callbackParameters(\&cli_request_write);
+					
+					# return async info to caller
+					return 2;
+				}
 			}
 		} 
 		
@@ -570,20 +604,20 @@ sub cli_process {
 		}
 	}
 		
-	cli_request_write($client_socket, $request);
+	cli_request_write($request);
 
 	return $exit;
 }
 
 # generate a string output from a request
 sub cli_request_write {
-	my $client_socket = shift;
 	my $request = shift;
 
 	$d_cli_vv && msg("CLI: cli_request_write()\n");
 
-	my $encoding = $request->getParam('charset') || 'utf8';
-	my @elements = $request->renderAsArray($encoding);
+	my $client_socket = $request->privateData();
+	my $encoding      = $request->getParam('charset') || 'utf8';
+	my @elements      = $request->renderAsArray($encoding);
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 
@@ -940,7 +974,7 @@ sub cli_subscribe_notification {
 				if ($sent) {
 
 					# write request
-					cli_request_write($client_socket, $request);
+					cli_request_write($request);
 				}
 			}
 		}
@@ -964,7 +998,7 @@ sub cli_subscribe_notification {
 				cli_subscribe_status($client_socket, $statusrequest, '-');
 
 				# notify listener if not already done
-				cli_request_write($client_socket, $request) if !$sent;
+				cli_request_write($request) if !$sent;
 			}
 
 			# something happened to our client, send status
@@ -1003,7 +1037,7 @@ sub cli_subscribe_status_output {
 	
 	my $client_socket = $request->privateData();
 
-	cli_request_write($client_socket, $request);
+	cli_request_write($request);
 
 	# kill the delay timer (there is at most one)
 	Slim::Utils::Timers::killOneTimer($request, \&cli_subscribe_status_output);
