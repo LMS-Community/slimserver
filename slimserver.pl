@@ -905,21 +905,21 @@ sub initSettings {
 	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") ne '') {
 		$playlistdir = Slim::Utils::Prefs::get("playlistdir");
 		$playlistdir =~ s|[/\\]$||;
-		$playlistdir = Slim::Utils::Misc::fixPath($playlistdir);
+		$playlistdir = Slim::Utils::Misc::fixPathCase($playlistdir);
 		Slim::Utils::Prefs::set("playlistdir",$playlistdir);
 	}
 
 	if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") ne '') {
 		$audiodir = Slim::Utils::Prefs::get("audiodir");
 		$audiodir =~ s|[/\\]$||;
-		$audiodir = Slim::Utils::Misc::fixPath($audiodir);
+		$audiodir = Slim::Utils::Misc::fixPathCase($audiodir);
 		Slim::Utils::Prefs::set("audiodir",$audiodir);
 	}
 	
 	if (defined(Slim::Utils::Prefs::get("cachedir")) && Slim::Utils::Prefs::get("cachedir") ne '') {
 		$cachedir = Slim::Utils::Prefs::get("cachedir");
 		$cachedir =~ s|[/\\]$||;
-		$cachedir = Slim::Utils::Misc::fixPath($cachedir);
+		$cachedir = Slim::Utils::Misc::fixPathCase($cachedir);
 		Slim::Utils::Prefs::set("cachedir",$cachedir);
 	}
 
