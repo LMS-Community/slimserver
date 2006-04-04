@@ -612,18 +612,23 @@ sub cli_process {
 # generate a string output from a request
 sub cli_request_write {
 	my $request = shift;
+	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: cli_request_write()\n");
+	$d_cli_vv && msg("CLI: cli_request_write("
+		. $request->getRequestString() . ")\n");
 
-	my $client_socket = $request->privateData();
+	$client_socket = $request->privateData() unless defined $client_socket;
 	my $encoding      = $request->getParam('charset') || 'utf8';
 	my @elements      = $request->renderAsArray($encoding);
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 
 #	$::d_cli && msg("CLI: Sending: " . $output . "\n");
-
-	client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
+	if (defined $client_socket) {
+		client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
+	} else {
+		errorMsg("CLI: client_socket undef in cli_request_write()!!!\n");
+	}
 }
 
 # check for subscribe parameters in suitable commands
@@ -974,7 +979,7 @@ sub cli_subscribe_notification {
 				if ($sent) {
 
 					# write request
-					cli_request_write($request);
+					cli_request_write($request, $client_socket);
 				}
 			}
 		}
@@ -998,7 +1003,7 @@ sub cli_subscribe_notification {
 				cli_subscribe_status($client_socket, $statusrequest, '-');
 
 				# notify listener if not already done
-				cli_request_write($request) if !$sent;
+				cli_request_write($request, $client_socket) if !$sent;
 			}
 
 			# something happened to our client, send status
