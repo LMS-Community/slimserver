@@ -25,6 +25,7 @@
 END %]
 
 [%- BLOCK playlistcontrols %]
+	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% END %]
 	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
 	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
 	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
@@ -47,7 +48,7 @@ END %]
 		<span class="exlisting">
 		[% END %]
 		[% IF item.num || item.num == 0 %]
-				[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] target="status">[% END %]
+				[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
 				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 		[%# browse list items %]
 		[%# no level info means its a music folder item %]

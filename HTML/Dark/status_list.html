@@ -3,7 +3,7 @@
    <td>[% IF item.currentsong %]<img src="html/spinner.gif">[% END %]&nbsp;</td>
    <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
        	[% IF item.currentsong %]<a name="currentsong"></a><b>[% END %]
-  			 <a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.title | html %]</a>
+  			 <a [% PROCESS songinfoItemHRef%] target="browser">[% item.title | html %]</a>
  		[% IF item.currentsong %]</b>[% END %]
 
 <span class="small">
@@ -13,8 +13,9 @@
 			<a [% PROCESS albumItemHRef %] target="browser">[% itemobj.album.title | html %]</a>
 		[% END %]
 		[% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-</td>
+</span></td>
    <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      (<a [% PROCESS cmdHRef cmdType = 'delete' num=item.num useStart=1 %]>[% "DELETE" | string %]</a>)
+      (<a [% PROCESS cmdHRef cmdType = 'delete' num=item.num useStart=1 %]>[% "DELETE" | string %]</a>,
+      <a [% PROCESS cmdHRef cmdType = 'jump' %]>[% "PLAY" | string %]</a>)
    </td>
 </tr>

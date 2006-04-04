@@ -162,6 +162,7 @@ END %]
 
 [%# these are the links to be shown with items on the playlist %]
 [% BLOCK playlistcontrols %]
+	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% END %]
 	[% WRAPPER removelink %][% PROCESS cmdHRef cmdType='delete' %][% END %]
 [% END %]
 
@@ -189,7 +190,7 @@ END %]
 	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
 	
 	[% IF item.num || item.num == 0 %]
-			[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% END %]
+			[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
 			[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]

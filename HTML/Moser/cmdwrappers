@@ -91,6 +91,7 @@
 [%- END %]
 
 [% BLOCK playlistcontrols %]
+    [% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                   %][% END %]
     [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
     [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
     [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
@@ -150,7 +151,7 @@
 [%- END %]
 
 [% BLOCK trackinfo -%]
-<span class="songtitle"><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% IF item.currentsong %] id="currentsong"[% END %]>[% item.title | html %]</a></span>
+<span class="songtitle"><a [% PROCESS songinfoItemHRef %][% IF item.currentsong %] id="currentsong"[% END %] target="browser">[% item.title | html %]</a></span>
 [% IF item.album %]
   [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
 [%- END %]
