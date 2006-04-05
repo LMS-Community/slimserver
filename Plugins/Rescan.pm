@@ -67,6 +67,7 @@ sub initPlugin {
 					'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
 					'valueRef' => \$value,
 					'cursorPos' => 1,
+					'pref' => 'rescan-time',
 					'callback' => \&settingsExitHandler
 				);
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
@@ -88,6 +89,24 @@ sub initPlugin {
 				    'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),
 				});
 				setTimer($client);
+			
+			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_TYPE')) {
+				my $value = Slim::Utils::Prefs::get("rescantype");
+				
+				my %params = (
+
+					'header' => 'PLUGIN_RESCAN_TIMER_TYPE',
+					'headerAddCount' => 1,
+					'stringHeader' => 1,
+					'listRef' => ['1rescan','2wipedb','3playlist'],
+					'externRef' => [qw(SETUP_STANDARDRESCAN SETUP_WIPEDB SETUP_PLAYLISTRESCAN)],
+					'stringExternRef' => 1,
+					'valueRef' => \$value,
+					'cursorPos' => 1,
+					'pref' => 'rescan-type',
+					'callback' => \&settingsExitHandler,
+				);
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
 			}
 		},
 
@@ -121,6 +140,7 @@ sub setMode {
 	@browseMenuChoices = (
 		$client->string('PLUGIN_RESCAN_TIMER_SET'),
 		$client->string('PLUGIN_RESCAN_TIMER_OFF'),
+		$client->string('PLUGIN_RESCAN_TIMER_TYPE'),
 		$client->string('PLUGIN_RESCAN_PRESS_PLAY'),
 	);
 
@@ -162,7 +182,7 @@ sub settingsExitHandler {
 
 	if ($exittype eq 'LEFT') {
 
-		Slim::Utils::Prefs::set("rescan-time",${$client->param('valueRef')});
+		Slim::Utils::Prefs::set($client->param('pref'),${$client->param('valueRef')});
 
 		Slim::Buttons::Common::popModeRight($client);
 
@@ -209,8 +229,20 @@ sub checkScanTimer {
 				$interval = 1;
 			}
 
+			my $rescanType = ['rescan'];
+			my $rescanPref = Slim::Utils::Prefs::get('rescan-type');
+
+			if ($rescanPref eq '2wipedb') {
+
+				$rescanType = ['wipecache'];
+
+			} elsif ($rescanPref eq '3playlist') {
+
+				$rescanType = [qw(rescan playlists)];
+			}
+
 			if ($time == $scantime && !Slim::Music::Import::stillScanning()) {
-				Slim::Control::Request::executeRequest(undef, ['rescan']);
+				Slim::Control::Request::executeRequest(undef, $rescanType);
 			}
 		}
 	}
@@ -221,7 +253,7 @@ sub checkScanTimer {
 sub setupGroup {
 
 	my %group = (
-		PrefOrder => ['rescan-scheduled','rescan-time'],
+		PrefOrder => ['rescan-scheduled','rescan-time', 'rescan-type'],
 		PrefsInTable => 1,
 		GroupHead => Slim::Utils::Strings::string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
 		GroupDesc => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_DESC'),
@@ -260,19 +292,33 @@ sub setupGroup {
 			'onChange' => sub {
 				my ($client,$changeref,$paramref,$pageref) = @_;
 				my $time = $changeref->{'rescan-time'}{'new'};
-				my $newtime = 0;
-				$time =~ s{
-					^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-				}{
-					if (defined $3) {
-						$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-					} else {
-						$newtime = ($1 * 60 * 60) + ($2 * 60);
-					}
-				}iegsx;
-				Slim::Utils::Prefs::set('rescan-time',$newtime);
+				if (defined $time) {
+					my $newtime = 0;
+					$time =~ s{
+						^(\s?0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
+					}{
+						if (defined $3) {
+							$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
+						} else {
+							$newtime = ($1 * 60 * 60) + ($2 * 60);
+						}
+					}iegsx;
+					Slim::Utils::Prefs::set('rescan-time',$newtime);
+				}
 			},
 		},
+		
+		'rescan-type' => {
+			'validate' => \&Slim::Utils::Validate::acceptAll,
+			'optionSort' => 'K',
+			'options' => {
+				'1rescan'   => Slim::Utils::Strings::string('SETUP_STANDARDRESCAN'),
+				'2wipedb'   => Slim::Utils::Strings::string('SETUP_WIPEDB'),
+				'3playlist' => Slim::Utils::Strings::string('SETUP_PLAYLISTRESCAN'),
+			},
+			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_TYPE'),
+			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_TYPE'),
+		}
 	);
 
 	return (\%group,\%prefs);
@@ -362,6 +408,9 @@ PLUGIN_RESCAN_TIMER_OFF
 	ES	Timer de Recopilación APAGADO
 	HE	כבה סריקת ספרייה אוטומטית
 	NL	Herscan timer UIT
+
+PLUGIN_RESCAN_TIMER_TYPE
+	EN	Rescan Type
 ^;
 }
 
