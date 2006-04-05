@@ -89,7 +89,7 @@ function Click(mp,end,at)
 	var s = '';
 	if (!mp) s = '_s';
 	if (document.all||document.getElementById)
-	document.write('<table border="0" cellspacing="0" cellpadding="0"><td height="4"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></td></table>');
+	document.write('<div class="progressBar"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></div>');
 	ProgressUpdate(mp,end,at)
 }
 

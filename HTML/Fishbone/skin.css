@@ -130,7 +130,7 @@ div#browsedbHeader {
 .browsedbListItem {
 	position: relative;
 	padding: 0px;
-	padding-right: 70px;
+	padding-right: 78px;
 }
 
 .browsedbControls,.playlistControls {
@@ -375,6 +375,13 @@ A.linkbtn:link {
 #menuHeader FORM
 {
 	display:inline;
+	height: 24px;
+}
+
+.progressBar
+{
+	position: absolute;
+	left: 0px;
 }
 
 #TopMenu1
@@ -400,6 +407,11 @@ A.linkbtn:link {
 	position: absolute;
 	top: 0px;
 	left: 115px;
+}
+
+#TopMenu1 .currentSongData
+{
+	white-space: nowrap;
 }
 
 #TopMenu1 A

@@ -109,20 +109,21 @@
 			<div id="nowplaying">
 				<table  width="100%"><tr>
 					<td valign="top" width="100%">
-						<p class="label">[% IF modeplay %][% "PLAYING" | string %][% END %]
-						[% IF modepause %][% "PAUSED_ON" | string %][% END %]
-						[% IF modestop %][% "STOPPED_ON" | string %][% END %]
+						[% IF modeplay  %][% status = "PLAYING"    %][% END %]
+						[% IF modepause %][% status = "PAUSED_ON"  %][% END %]
+						[% IF modestop  %][% status = "STOPPED_ON" %][% END %]
+						<p class="label">[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]
 						[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</p>
-						<p><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
-						[% IF itemobj.duration %]&nbsp;([% itemobj.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</p>
+						<span class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
+						[% IF itemobj.duration %]&nbsp;([% itemobj.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</span>
 						
-							<p class="label">[% IF itemobj.artist && itemobj.artist != noArtist %][% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</p>
-							[% PROCESS artistsAsHTML.html noby=1 %]
-							[% END %]
-							
-							<p class="label">[% IF itemobj.album.title && itemobj.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</p>
-							[% WRAPPER albumlink %][% albumHRef %][% END %]
-							[% END %]
+						<p class="label">[% IF itemobj.artist && itemobj.artist != noArtist %][% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</p>
+						[% PROCESS artistsAsHTML.html noby=1 %]
+						[% END %]
+						
+						<p class="label">[% IF itemobj.album.title && itemobj.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</p>
+						[% WRAPPER albumlink %][% albumHRef %][% END %]
+						[% END %]
 							
 					</td>
 				</tr></table>
