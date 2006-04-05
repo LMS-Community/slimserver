@@ -497,11 +497,9 @@ sub gotViaHTTP {
 
 	$::d_plugins && msg("Shoutcast: create page\n");
 
-	createAsyncWebPage($params);
-
-	$::d_plugins && msg("Shoutcast: that's it\n");
-
-	#print Data::Dumper::Dumper($http);
+	if ($params->{httpClient}) {
+		createAsyncWebPage($params);
+	}
 
 	if (defined $params->{'client'}) {
 
@@ -515,6 +513,8 @@ sub gotViaHTTP {
 		$::d_plugins && msg("Shoutcast: cli callback\n");
 		&{$params->{'cliCallback'}}($params->{'cliCallbackParams'});
 	}
+
+	$::d_plugins && msg("Shoutcast: that's it\n");
 }
 
 sub gotErrorViaHTTP {
@@ -522,10 +522,22 @@ sub gotErrorViaHTTP {
 	my $params = $http->params();
 
 	$httpError = 99;
-	createAsyncWebPage($params);
+
+	if ($params->{httpClient}) {
+		createAsyncWebPage($params);
+	}
+
 	if (defined $params->{'client'}) {
+
+		$::d_plugins && msg("Shoutcast: update client\n");
 		$params->{'client'}->unblock();
 		$params->{'client'}->update();
+	}
+	
+	if (defined $params->{'cliCallback'}) {
+	
+		$::d_plugins && msg("Shoutcast: cli callback\n");
+		&{$params->{'cliCallback'}}($params->{'cliCallbackParams'});
 	}
 }
 

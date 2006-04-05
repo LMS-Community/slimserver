@@ -3250,9 +3250,13 @@ and saves in the top level of the playlists directory.</p>
 
 <h5>Shoutcast Browser</h5>
 <p>
-	Application authors using the Shoutcast Browser plugin have to take care 
-	of two special return tags "waiting" and "networkerror": these indicate 
-	that the plugin cannot (yet) provide the station information (see below).
+	The Shoutcast Browser plugin allows for browsing internet radio stations
+	provided by shoutcast. It's fetching a list of available stations from 
+	shoutcast.com.
+	<br>Programmers using this CLI have to be aware of a possible
+	delay when the plugin has to download that list: while it's fetching the
+	file, the CLI won't return any value, thus possibly blocking your process.
+	This can take a few seconds.
 </p>
 
 <p>
@@ -3299,18 +3303,11 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			waiting
-		</td>
-		<td>
-			Returns 1, if the plugin has not finished downloading and parsing the stream list. Client applications using the CLI have to handle this case themselves.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			networkerror
 		</td>
 		<td>
-			Returns 1, if the plugin has enountered a network error while downloading. Client applications using the CLI have to handle this case themselves.
+			Returns 1, if the plugin has enountered a network error while downloading stream information.
+			Client applications using the CLI have to handle this case themselves.
 		</td>
 	</tr>
 	<tr>
@@ -3422,18 +3419,11 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			waiting
-		</td>
-		<td>
-			Returns 1, if the plugin has not finished downloading and parsing the stream list. Client applications using the CLI have to handle this case themselves.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			networkerror
 		</td>
 		<td>
-			Returns 1, if the plugin has enountered a network error while downloading. Client applications using the CLI have to handle this case themselves.
+			Returns 1, if the plugin has enountered a network error while downloading stream information.
+			Client applications using the CLI have to handle this case themselves.
 		</td>
 	</tr>
 	<tr>
@@ -3565,7 +3555,8 @@ and saves in the top level of the playlists directory.</p>
 <p>
 	The &quot;shoutcast recentlyplayed&quot; query returns the internet 
 	radio stations made available by the shoutcast plugin that were recently listened 
-	to from the given player.  The plugin must be enabled in the server preferences for this query to work.
+	to from the given player.  The plugin must be enabled in the server preferences 
+	for this query to work.
 </p>
 <p>Accepted tagged parameters:</p>
 <table border="0" spacing="50">
