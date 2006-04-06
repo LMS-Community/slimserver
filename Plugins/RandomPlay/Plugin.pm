@@ -607,7 +607,6 @@ sub cliRequest {
 	my $functions = getFunctions();
 
 	if (!defined $mode || !defined $$functions{$mode} || !$client) {
-		Slim::Utils::Misc::msg("$mode\n");
 		$request->setStatusBadParams();
 		return;
 	}

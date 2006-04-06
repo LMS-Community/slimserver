@@ -104,6 +104,7 @@ sub shutdownPlugin {
 
 sub strings { return '
 PLUGIN_PREVENTSTANDBY
+	DE	Standby Modus während der Wiedergabe verhindern (nur in Windows)
 	EN	Windows: Prevent System Standby While Playing
 '};
 
