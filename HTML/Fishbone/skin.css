@@ -130,17 +130,19 @@ div#browsedbHeader {
 .browsedbListItem {
 	position: relative;
 	padding: 0px;
-	padding-right: 78px;
+	padding-right: 80px;
 }
 
 .browsedbControls,.playlistControls {
-	position: absolute;
-	top: 0px;
-	right: 4px;
+	right: 1px;
 }
 
 .browsedbControls img, .playlistControls img {
 	vertical-align: middle;
+	float: right;
+	padding-top: 3px;
+	margin: auto;
+	padding-right: 2px;
 }
 
 .pagebar{
