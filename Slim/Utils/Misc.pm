@@ -40,6 +40,7 @@ INIT: {
 		require Win32;
 		require Win32::API;
 		require Win32::FileOp;
+		require Win32::Process;
 		require Win32::Shortcut;
 	}
 }
@@ -96,6 +97,33 @@ sub findbin {
 	$::d_paths && msgf("Found binary %s for %s\n", defined $path ? $path : 'undef', $executable);
 
 	return $path;	
+}
+
+sub setPriority {
+	my $priority = shift;
+
+	# By default, set the Windows priority to be high - so we get swapped
+	# back in faster, and have a less likely chance of being swapped out
+	# in the first place.
+	# 
+	# For *nix, including OSX, set whatever priority the user gives us.
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
+		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
+		my $processHandle     = $getCurrentProcess->Call(0) or errorMsg("setPriority: Can't get process handle ($^E)\n");
+
+		if ($setPriorityClass) {
+
+			$setPriorityClass->Call($processHandle, Win32::Process::HIGH_PRIORITY_CLASS()) or 
+				errorMsg("setPriority: Couldn't set priority ($^E)\n");
+		}
+
+	} elsif ($priority) {
+
+		$::d_server && msg("SlimServer - changing process priority to $priority\n");
+                eval { setpriority (0, 0, $priority); };
+	}
 }
 
 sub pathFromWinShortcut {

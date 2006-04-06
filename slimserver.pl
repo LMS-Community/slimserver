@@ -455,13 +455,9 @@ sub init {
 	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
 	changeEffectiveUserAndGroup();
 
-	if ($priority) {
-		$::d_server && msg("SlimServer - changing process priority to $priority\n");
-		eval { setpriority (0, 0, $priority); };
-		msg("setpriority failed error: $@\n") if $@;
-	}
+	Slim::Utils::Misc::setPriority($priority);
 
-# do platform specific environment setup
+	# do platform specific environment setup
 	# we have some special directories under OSX.
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
@@ -475,7 +471,7 @@ sub init {
 		unshift @INC, "/Library/SlimDevices/";
 	}
 
-# initialize slimserver subsystems
+	# initialize slimserver subsystems
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
 
@@ -485,7 +481,7 @@ sub init {
 	$::d_server && msg("SlimServer Setup init...\n");
 	Slim::Web::Setup::initSetup();
 
-# initialize all player UI subsystems (if it's not just a scan process)
+	# initialize all player UI subsystems (if it's not just a scan process)
 	if (!$scanOnly) {
 		$::d_server && msg("SlimServer setting language...\n");
 		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
@@ -541,22 +537,20 @@ sub init {
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
 
-# regular server has a couple more initial operations.
+	# regular server has a couple more initial operations.
 	if (!$scanOnly) {
 		$::d_server && msg("SlimServer persist playlists...\n");
 		if (Slim::Utils::Prefs::get('persistPlaylists')) {
-#			Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+
 			Slim::Control::Request::subscribe(
-				\&Slim::Player::Playlist::modifyPlaylistCallback, 
-				[['playlist']]
-				);
+				\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
+			);
 		}
 
 		checkVersion();
-		keepSlimServerInMemory();
 	}
 	
-# otherwise, get ready to loop
+	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
 			
 	$::d_server && msg("SlimServer done init...\n");
@@ -1105,45 +1099,6 @@ sub checkVersionCB {
 sub checkVersionError {
 	my $http = shift;
 	msg(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error . "\n");
-}
-
-# See Bug 1934 - Some VM's (*cough*Windows*cough*) don't deal well with
-# swapping. So try and keep our memory image in RAM and not swap out.
-sub keepSlimServerInMemory {
-
-	my $interval = Slim::Utils::Prefs::get('keepUnswappedInterval');
-	$interval = 30 if (!(defined($interval)));
-
-	$::d_server && msg("Requesting web page to keep SlimServer unswapped, re-request interval is $interval minutes.\n");
-
-	# Disabled if interval set to less than zero seconds
-	if ($interval <= 0)
-	{
-	    $::d_server && msg("Interval is less than or equal to zero, Keeping SlimServer unswapped is disabled.\n");
-	    return;
-	}
-
-	my $url  = '';
-	my $port = Slim::Utils::Prefs::get('httpport');
-
-	if (Slim::Utils::Prefs::get('authorize')) {
-
-		$url = sprintf("http://%s:%s\@localhost:$port/browsedb.html?hierarchy=age,track&level=0",
-			Slim::Utils::Prefs::get('username'), Slim::Utils::Prefs::get('password')
-		);
-
-	} else {
-
-		$url = "http://localhost:$port/browsedb.html?hierarchy=age,track&level=0";
-	}
-
-	#my $http = Slim::Networking::SimpleAsyncHTTP->new(sub {}, sub {});
-
-	#$http->get($url);
-
-	# Interval is configured in minutes...
-	$interval = $interval * 60;
-	#Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&keepSlimServerInMemory);
 }
 
 sub forceStopServer {

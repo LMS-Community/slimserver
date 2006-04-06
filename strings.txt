@@ -5884,22 +5884,6 @@ SETUP_PREFSWRITEDELAY_DESC
 	NL	Deze instelling geeft aan hoe vaak de voorkeuren naar de harde schijf geschreven worden. Kies 0 om elke wijziging direct naar de harde schijf te schrijven. Een hoger getal geeft aan na hoeveel seconden de voorkeuren naar de harde schijf geschreven moeten worden.
 	ZH_CN	这个设置决定了参数选择纪录到硬盘的频繁度。以0为值则表示将每一个更动即刻纪录到硬盘。较高的值则表示在该指定的秒数内累积多项更动以便到时一起纪录到硬盘上。
 
-SETUP_KEEPUNSWAPPEDINTERVAL
-	DE	Auslagerung verhindern
-	EN	Keep Unswapped interval
-	ES	Intervalo de Recarga (Keep Unswapped)
-	HE	במידה ובמערכת אין זכרון רב, ניתן להכריח את מערכת ההפעלה לשמר את השרת בזכרון
-	IT	Intervallo passaggio alla memoria virtuale
-	NL	Uitschakelen in wisselbestand zetten interval 
-
-SETUP_KEEPUNSWAPPEDINTERVAL_DESC
-	DE	Wenn der Server längere Zeit nicht benutzt wird wird es vom Betriebssystem ausgelagert. Diese Einstellung definiert, nach wievielen Minuten der Server seine Startseite lädt, damit es im Hauptspreicher bleibt. Auf 0 setzen damit dieses Verhalten abgeschaltet wird.
-	EN	If the server is unused for some time, the operating system puts it into swap space. This setting determines after how many minutes the server reloads its main page to keep the server process in main memory. Set to 0 to disable the reloading.
-	ES	Si el servidor no es utilizado por un lapso de tiempo, el sistema operativo lo coloca en espacio de swap. Esta configuración establece cada cuantos minutos el servidor recargará su página principal para mantener al proceso del servidor en la memoria principal. Utilizar 0 para deshabilitar la recarga.
-	HE	רענון השרת במערכת ההפעלה
-	IT	Se il server e' inutilizzato per un certo periodo di tempo, il sistema operativo lo spostera' nella memoria virtuale. Questa impostazione determina dopo quanti minuti il server ricarichera' la sua pagina principale per mantenere il server nella memoria principale. Imposta a 0 per disabilitare il ricaricamento.
-	NL	Indien de server enige tijd niet gebruikt wordt zal het besturingssysteem de server in het wisselbestand zetten. Deze instelling geeft aan na hoeveel minuten de server de hoofdpagina moet herladen om de server in het hoofdgeheugen te houden. Zet op 0 om deze optie uit te schakelen.
-
 SETUP_LONGDATEFORMAT
 	CS	Formát datumu douhý
 	DE	Format des langen Datums

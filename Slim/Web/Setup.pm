@@ -2141,7 +2141,6 @@ sub initSetupConfig {
 					lookForArtwork
 					itemsPerPass
 					prefsWriteDelay
-					keepUnswappedInterval
 					databaseTempStorage
 					databaseCacheSize
 				)],
@@ -2172,10 +2171,6 @@ sub initSetupConfig {
 			'prefsWriteDelay' => {
 				'validate' => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,undef,1],
-			},
-
-			'keepUnswappedInterval' => {
-				'validate' => \&Slim::Utils::Validate::isInt,
 			},
 
 			'databaseCacheSize' => {
