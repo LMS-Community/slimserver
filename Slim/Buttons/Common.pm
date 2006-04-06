@@ -10,6 +10,8 @@ package Slim::Buttons::Common;
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
+use Scalar::Util qw(blessed);
+
 use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
@@ -413,7 +415,24 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
-		if (mode($client) ne 'PLUGIN.Favorites') {
+		
+		if ($buttonarg eq "add") {
+			my $obj = ${$client->param('listRef')}[$client->param('listIndex')];
+			my $title;
+			
+			if (blessed($obj) && $obj->can('title')) {
+				$title = $obj->title;
+			} else {
+				$title = Slim::Music::Info::standardTitle($client, $obj);
+			}
+
+			if (blessed($obj) && $title) {
+				Slim::Utils::Favorites->clientAdd($client, $obj, $title);
+
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+			}
+			
+		} elsif (mode($client) ne 'PLUGIN.Favorites') {
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'PLUGIN.Favorites');
 			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites');

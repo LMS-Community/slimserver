@@ -265,7 +265,7 @@ sub initPlugin {
 	#								   {'useMode' => 'PLUGIN.Favorites'});
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
-	Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
+	#Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
 
 	# register our functions
 	

@@ -1,6 +1,6 @@
 package Slim::Utils::Favorites;
 
-# $Id:$
+# $Id$
 
 # SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -71,6 +71,7 @@ sub _indexByUrl {
 	my $url = shift;
 
 	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
+
 	my $i = 0;
 	my $found = 0;
 	while (!$found && $i < scalar(@urls)) {
@@ -131,12 +132,7 @@ sub deleteByClientAndURL {
 	my $client = shift;
 	my $url = shift;
 
-	my $i = _indexByUrl($url);
-	if (defined($i)) {
-		Slim::Utils::Prefs::set('favorite_titles','', $i);
-		Slim::Utils::Prefs::set('favorite_urls','', $i);
-	}
-
+	$class->deleteByClientAndId($client, _indexByUrl($url));
 }
 
 sub deleteByClientAndId {
@@ -147,8 +143,9 @@ sub deleteByClientAndId {
 	if (defined($i)) {
 		Slim::Utils::Prefs::set('favorite_titles','', $i);
 		Slim::Utils::Prefs::set('favorite_urls','', $i);
+		
+		$::d_favorites && msg("Favorites: deleting favorite number " . ($i+1) . "\n");
 	}
-
 }
 
 # creates a read-only list of favorites.

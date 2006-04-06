@@ -98,7 +98,8 @@ repeat_all				= repeat_2
 
 # search button
 search					= search
-favorites				= favorites
+favorites.single		= favorites
+favorites.hold			= favorites_add
 
 # menu shortcuts
 menu_playlist			= menu_playlist
