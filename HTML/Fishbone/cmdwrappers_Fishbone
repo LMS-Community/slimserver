@@ -65,8 +65,8 @@
 		<a name="currentsong"></a>
 	[% END %]
 	[% IF item.num || item.num == 0 %]
-			<b><a>&nbsp;[% item.num + 1 %].&nbsp;</a>
-			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a></b>
+			&nbsp;[% item.num + 1 %].&nbsp;
+			<b><a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a></b>
 	[%# browse list items %]
 	[%# no level info means its a music folder item %]
 	[% ELSIF item.item || !item.defined('level') %]

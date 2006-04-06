@@ -135,6 +135,8 @@ div#browsedbHeader {
 
 .browsedbControls,.playlistControls {
 	right: 1px;
+	float: right;
+	width: 80px;
 }
 
 .browsedbControls img, .playlistControls img {
