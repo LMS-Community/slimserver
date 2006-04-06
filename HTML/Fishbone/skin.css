@@ -391,6 +391,7 @@ A.linkbtn:link {
 	background:#61676c;
 	color:white;
 	position: absolute;
+	width: 100%;
 	top: 60px;
 	left: 0px;
 	right: 0px;
