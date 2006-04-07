@@ -1,6 +1,8 @@
 [%# Page playlist.html %]
 [%- IF ajaxRequest -%]
+<pre>
         [% PROCESS ajaxRequest.txt page = 'playlist' %]
+</pre>
 [%- ELSE -%]
 <!--playlist.html-->
 [% pagetitle = BLOCK %]
@@ -16,12 +18,12 @@
 
 <table bgcolor="#EEEEEE" width=100% border="0">
 	<tr>
-		<td align="left" class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] ([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])
+		<td align="left" class="normaltext">[% "CURRENT_PLAYLIST" | string %][% IF playlistname %]<b>[% playlistname %]</b>[% END %] (<span id = 'playlistsize'>[% IF myClientState; myClientState.playlist.size; END; %]</span> [% "SONGS" | string %])
 		</td>
 	</tr>
 	<tr>
 		<td class = 'pagebartext'>
-			[% IF pageinfo.totalpages > 1 %]&nbsp;[% PROCESS pagebar %]&nbsp;|&nbsp;[% PROCESS pagebarheader %][% END %]
+			[% IF pageinfo.totalpages > 1 %]&nbsp;[% PROCESS pagebar prefix = 'header_' %]&nbsp;|&nbsp;[% PROCESS pagebarheader prefix = 'header_' %][% END %]
 		</td>
 	</tr>
 </table>
@@ -35,14 +37,16 @@
 	<a href="playlist.html?p0=playlist&p1=clear&player=[% playerURI %]">[% "CLEAR" | string %]</a>
 	[% END %]
 	[% IF not cansave %]&nbsp;[% END %]
+
 	</td>
 	</tr>
 </table>
 
-<table bgcolor = 'white' cellspacing="0" border="0" cellpadding="0" width="100%">
+<table bgcolor = 'white' cellspacing="0" border="0" cellpadding="0" width="100%" id = 'playlist_table'>
        [% IF not playlist_items %]<tr><td class = 'itemtext'>[% "EMPTY" | string %]</td></tr>[% END %]
        [%- statusroot_old = statusroot; statusroot = 'playlist.html'; -%]
-       [% FOREACH item = playlist_items; PROCESS status_list.html; END; %]
+	[% firstItem = pageinfo.startitem %]
+       [% FOREACH item = playlist_items; PROCESS status_list.html firstItem = firstItem ; END; %]
        [%- statusroot = statusroot_old -%]
 </table>
 
@@ -50,7 +54,8 @@
 
 [% IF pageinfo.totalpages > 1 %]
 <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#C5C5C5">
-<tr><td class="pagebartext">&nbsp;[% PROCESS pagebar %]</td>
+<tr><td class="pagebartext">&nbsp;[% PROCESS pagebar prefix = 'footer_' %]&nbsp;|&nbsp;[% PROCESS pagebarheader prefix = 'footer_' %]
+</td></tr>
 </table>
 [% END %]
 [%# /Page playlist.html %]

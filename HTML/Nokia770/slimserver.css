@@ -52,10 +52,14 @@ body, table, input, select, p, li, a {
 	font-size: 22px;
 }
 
-.playingitemtext {
-	font-size: 26px;
+
+.playingitemtext, a.playingitemtext {
+	font-size: 22px;
 	font-weight: bold;
 	color: #BB5544;
+}
+a.playingitemtext:hover {
+	color: black;
 }
 
 .normaltext {
@@ -134,6 +138,14 @@ table.thinborder_grey {
 table.noborder { 
 	border: none;
 }
+table.playlistcontrols {
+	width: 125px;
+	overflow: hidden;
+}
+
+td.playlistcontrols {
+	width: 25px;
+}
 
 div {
 	overflow: visible;
@@ -153,6 +165,10 @@ div#hidden {
 div#footer {
 	position: relative;
 	clear: both;
+}
+
+tr.playing {
+	background-color: #9ef5f6;
 }
 
 tr.odd, td.odd {

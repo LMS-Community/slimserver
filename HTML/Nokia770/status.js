@@ -30,8 +30,8 @@ function progressUpdate() {
 		inc++;
 		_progressAt++;
 		setProgressBarWidth();
-		// do an ajax update every 20 seconds while playing
-		if (inc == 20) {
+		// do an ajax update every 10 seconds while playing
+		if (inc == 10) {
 		        var args = 'player='+player+'&ajaxRequest=1';
 			getStatusData(args, refreshAll);
 			inc = 0;

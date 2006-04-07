@@ -1,17 +1,48 @@
-[%- FOREACH item = playlist_items -%]
+
+# for all pages
+player_id|[% myClientState.id %]
+webroot|[% webroot %]
+
+[%- FOREACH item = playlist_items %]
 	[%- IF item.currentsong %][% previous = item.num - 1 %][% current = item.num %][% next = item.num + 1 %][% LAST %][% END -%]
 [%- END -%]
+
 [%- FOREACH item = playlist_items -%]
 	[%- IF item.num == previous %]
 previoussong|(prev) [% item.title %]
 	[%- ELSIF item.num == current %]
 currentsong|[% item.title %]
+currentsongnum|[% item.num %]
 	[%- ELSIF item.num == next %]
 nextsong|(next) [% item.title %]
 	[%- END %]
 	[%- LAST IF item.num > next -%]
 [%- END -%]
 
+[% IF page == 'playlist' %]
+# playlist page only
+playlistsize|[% IF myClientState %][% myClientState.playlist.size %][% END %]
+[%- FOREACH item = playlist_items -%]
+[%- IF loop.first %]
+first_item|[% item.num %]
+[%- ELSIF loop.last %]
+last_item|[% item.num %]
+[%- END %]
+item_[% item.num %]|[% item.item %]
+title_[% item.num %]|[% item.title %]
+artist_[% item.num %]|[% item.artist %]
+album_[% item.num %]|[% item.album %]
+artistid_[% item.num %]|[% item.itemobj.artist.id %]
+albumid_[% item.num %]|[% item.itemobj.album.id %]
+includeAlbum_[% item.num %]|[% item.includeAlbum %]
+includeArtist_[% item.num %]|[% item.includeArtist %]
+nextsongind_[% item.num %]|[% item.nextsongind %]
+odd_[% item.num %]|[% item.odd %]
+[%- END %]
+[% END %]
+
+[% IF page == 'status' %]
+# status page only
 songtitle|[% songtitle %]
 [% IF itemobj.isRemoteURL %]streamtitle|[% songtitle %][% END %]
 artist|[% itemobj.artist %]
@@ -24,13 +55,10 @@ genreid|[% itemobj.genre.id %]
 
 # mm:ss length of song
 duration|[% itemobj.duration %]
-
 # length of song
 durationseconds|[% durationseconds %]
-
 # elapsed time 
 songtime|[% songtime %]
-
 # time remaining 
 refresh|[% refresh %]
 
@@ -62,7 +90,6 @@ songcount|[% songcount %]
 thissongnum|[% currentsong %]
 
 player_name|[% player_name %]
-player_id|[% myClientState.id %]
 
 # path to cover art 
 coverartpath|
@@ -75,4 +102,5 @@ coverartpath|
 [% strippedURL = albumHRef.replace('href="','') %]
 [% strippedURL = strippedURL.replace('"','') %]
 albumhref|[% strippedURL %]
+[% END %]
 

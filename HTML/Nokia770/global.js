@@ -85,9 +85,12 @@ function parseData(thisData) {
 	var lines = thisData.split("\n");
 	var returnData = new Array();
 	for (i=0; i<lines.length; i++) {
-		var commentLine = lines[i].match(/^#/);
-		var blankLine = lines[i].match(/^\s*$/);
-		if (!commentLine && !blankLine) {
+		var comment = /^#/;
+		var blank = /^\s*$/;
+		var preTag = /<\\*pre>/;
+		var commentLine = lines[i].match(comment);
+		var blankLine = lines[i].match(blank);
+		if (!commentLine && !blankLine && preTag) {
 			var keyValue = lines[i].split('|');
 			var key = keyValue[0];
 			var value = keyValue[1];
@@ -97,3 +100,20 @@ function parseData(thisData) {
 	return returnData;
 }
 
+// METHOD:  truncateAt: truncate specified tableId at specified length
+function truncateAt(tableId, lastRow) {
+	var tableObj, oTr;
+	if ( ! $(tableId) ) { 
+		return null;    
+	}
+	tableObj = $(tableId);
+	if ( ! (oTr = tableObj.rows[lastRow]) ) {
+		return null;
+	}
+	if (tableObj.rows.length >= lastRow) {
+		var startRow = lastRow;
+		for (var r=startRow; r <= tableObj.rows.length; r++ ) {
+			tableObj.deleteRow(r);
+		}
+        }
+}

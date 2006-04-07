@@ -1,9 +1,8 @@
 <!--status_list.html-->
 [%# Element status_list.html %]
-<tr [% IF not item.odd %]class = 'odd'[% ELSE %]class = 'even'[% END %]>
+<tr [% IF item.currentsong %]class = 'playing'[% ELSIF not item.odd %]class = 'odd'[% ELSE %]class = 'even'[% END %] id = 'row[% item.num %]'>
 
-<!--HERE-->
-        [% PROCESS playlistcontrols
+        [% PROCESS ajaxplaylistcontrols
                 itemobj = item.itemobj
                 attributes = item.attributes
                 odd = item.odd
@@ -12,13 +11,79 @@
                 mixerlinks = item.mixerlinks
 		 %]
 
-	<td class = 'numbertext' align = 'right' width = 10>
+	<td class = 'numbertext' align = 'right' width = '10'>
 		&nbsp;
 	</td>
-	<td align = 'left'>
-		<a [% PROCESS songinfoItemHRef %]><font class = [% IF item.currentsong %]'playingitemtext'[% ELSE %]'itemtext'[% END %]>[% item.title %]</font></a>
-		[% PROCESS by_from_info %]
+	<td align = 'left' width = '100%'>
+		<a [% PROCESS songinfoItemHRef %] id = 'tracklink_[% item.num %]' class = [% IF item.currentsong %]'playingitemtext'[% ELSE %]'itemtext'[% END %]>[% item.title %]</a>
+		[% PROCESS ajax_by_from_info %]
 
 	</td>
 </tr>
 [%# /Element status_list.html %]
+
+[% BLOCK ajaxplaylistcontrols %]
+<td><table class = 'playlistcontrols'><tr>
+<td class = 'playlistcontrols' align = 'center'>
+<span id = 'play_[% item.num %]' style = 'display: [% IF item.currentsong %]none[% ELSE %]block[% END %];'>
+	<a href = 'javascript:playlistPlayTrack("p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]&ajaxRequest=1");' id = 'play_link_[% item.num %]'>
+	<img src="/html/images/play.this.gif" border=0 height="20" alt='Play' title='Play'>
+	</a>
+</span>
+<span id = 'playcurrent_[% item.num %]' style = 'display: [% IF item.currentsong %]block[% ELSE %]none[% END %];'>
+	<a href = 'javascript:playlistPlayTrack("p0=play&player=[% playerURI %]&ajaxRequest=1");' id = 'play_link_[% item.num %]'>
+	<img src="/html/images/play.current.gif" border=0 height="20" alt='Play' title='Play'>
+	</a>
+</span>
+</td>
+
+<td class = 'playlistcontrols' align = 'center'> 
+
+<span id = 'up_[% item.num %]' style = 'display: [% IF item.currentsong || item.num == pageinfo.startitem %]none[% ELSE %]block[% END %];'>
+	<a href = 'javascript:playlistSwapTrack("p0=playlist&p1=move&p2=[% item.num %]&p3=[% '%2D' | uri %]1&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %], [% item.num - 1 %]);' id = 'up_link_[% item.num %]'>
+	<img src="/html/images/b_up.gif" border=0 height="20" alt='Move Up' title='Move Up'>
+	</a>
+</span>
+
+</td>
+
+<td class = 'playlistcontrols' align = 'center'>
+<span id = 'pause_[% item.num %]' style = 'display: [% IF item.currentsong %]block[% ELSE %]none[% END %];'>
+	<a href = 'javascript:playlistPlayTrack("p0=pause&player=[% playerURI %]&ajaxRequest=1");' id = 'pause_link_[% item.num %]'>
+	<img src="/html/images/pause.current.gif" border=0 height="20" alt='Pause' title='Pause'>
+	</a>
+</span>
+<span id = 'down_[% item.num %]' style = 'display: [% IF item.currentsong || item.num == pageinfo.enditem %]none[% ELSE %]block[% END %];'>
+	<a href = 'javascript:playlistSwapTrack("p0=playlist&p1=move&p2=[% item.num %]&p3=[% '%2B' | uri %]1&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %], [% item.num + 1%]);' id = 'down_link_[% item.num %]'>
+	<img src="/html/images/b_down.gif" border=0 height="20" alt='Move Down' title='Move Down'>
+	</a>
+</span>
+</td>
+
+<td class = 'playlistcontrols' align = 'center'>
+
+<span id = 'next_[% item.num %]' style = 'display: [% IF item.currentsong %]none[% ELSE %]block[% END %];'>
+	<a href = 'javascript:playlistNextTrack("p0=playlist&p1=move&p2=[% item.num %]&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %]);' id = 'next_link_[% item.num %]'>
+	<img src="/html/images/b_next.gif" border=0 height="20" alt='Next' title='Next'>
+	</a>
+</span>
+
+</td>
+<td class = 'playlistcontrols' align = 'center'>
+
+<span id = 'remove_[% item.num %]' [% IF item.currentsong %]style = 'display: none;'[% END %]>
+	<a href = 'javascript:playlistDeleteTrack("[% item.num %]", "p0=playlist&p1=delete&p2=[% item.num %]&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %]);' id = 'down_link_[% item.num %]'>
+	<img src="/html/images/remove.gif" border=0 height="20" alt='Remove from playlist' title='Remove from playlist'>
+	</a>
+</span>
+
+<span id = 'playnext_[% item.num %]' style = 'display: [% IF item.num == pageinfo.enditem %]none[% ELSIF item.currentsong %]block[% ELSE %]none[% END %];'>
+        <a href = 'javascript:playlistPlayTrack("p0=playlist&p1=jump&p2=[% num + 1 %]&player=[% playerURI %]&ajaxRequest=1");' id = 'playnext_link_[% item.num %]'>
+        <img src="/html/images/playnext.gif" border=0 height="20" alt='Play Next' title='Play Next'>
+        </a>
+</span>
+
+
+</td>
+</tr></table>
+[% END %]
