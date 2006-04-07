@@ -1,5 +1,7 @@
 [%- FILTER null %]
 [% statusroot = 'status_header.html' %]
+[% controlGraphics  = 1 %]
+[% browserTarget  = browser %]
 
 [% BLOCK cmdlink -%]
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>

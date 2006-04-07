@@ -9,6 +9,13 @@
 [%# set setting_chooser_noHome to 1 if you want the home links removed from the server/player settings pulldown menu %]
 [% setting_chooser_noHome = 0 %]
 
+[%# set controGraphics if you wish to have your list controls use graphics, set to 0 if you want text only %]
+[% controlGraphics  = 0 %]
+
+[%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
+[% browserTarget  = 0 %]
+
+
 [% BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
 [% END %]

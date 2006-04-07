@@ -1,3 +1,15 @@
-[% IF item.mixable_descend %]<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a>[% END %]
-[% IF item.mixable_not_descend %]<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" target="browser">[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]</a>[% END %]
+[% IF item.mixable_descend %]
+	<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+[% ELSIF item.mixable_not_descend %]
+	<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+[% END %]
+[%- IF controlGraphics %]
+		<img src="[% webroot %]html/images/b_mix.gif"
+				alt='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+				title='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+				onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
+[% ELSE %]
+		[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]
+[% END %]
+	</a>
 
