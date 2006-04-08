@@ -135,16 +135,18 @@ div#browsedbHeader {
 
 .browsedbControls,.playlistControls {
 	right: 1px;
+	padding: 0px;
+	margin: 0px;
 	float: right;
-	width: 80px;
+	width: 90px;
 }
 
-.browsedbControls img, .playlistControls img {
+.browsedbControls a, .playlistControls a {
 	vertical-align: middle;
 	float: right;
-	padding-top: 3px;
-	margin: auto;
+	position: relative;
 	padding-right: 2px;
+	padding-top: 2px;
 }
 
 .pagebar{
@@ -187,6 +189,10 @@ div#browsedbHeader {
 .songInfo ul {
 	/* the list of song info items */
 	background-color: black;
+}
+
+.songInfoText {
+	width: 68%;
 }
 
 .thumbnail {
@@ -283,15 +289,6 @@ TD, P, A {
 	line-height: 150%;
 }
 
-DIV {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size : 9px;
-	margin:0in; 
-	margin-bottom:1pt;
-	line-height: 150%;
-	_height: 0%;
-}
-
 .small {
 	font-size : 6px;
 }
@@ -358,34 +355,60 @@ A.linkbtn:link {
 
 #mastHead {
 	margin:0px;
-	padding: 5 8 5 8;
+	padding: 0px;
 	background:#333;
+	position: relative;
+	top: 0px;
 	color:white;
-	height: 18px;
+	height: 26px;
 	border-bottom:2px solid white;
+}
+
+#mastHead #playerlogo, #mastHead #SDlogo {
+	padding: 3 8 3 8;
+}
+
+#mastHead #playerlinks, #mastHead #serverlinks {
+	padding: 5 8 5 8;
 }
 
 #menuHeader {
 	margin:0px;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
+	padding: 0px;
 	font-size: 10px;
-	padding-right: 8;
+	padding-right: 8px;
 	background: #61676c;
-	padding-left: 8;
+	padding-left: 8px;
+	position: relative;
+	top: 0px;
 	color:white;
 	height: 26px;
 }
 
-#menuHeader FORM
-{
-	display:inline;
-	height: 24px;
+#menuHeader #playerForm {
+	position: absolute;
+	top:0px;
 }
 
-.progressBar
-{
+#menuHeader FORM {
+	display: inline;
+	height: 22px;
+}
+
+#menuHeader SPAN {
+	padding-top: 3px;
 	position: absolute;
+	top: 0px;
+}
+
+.progressBarDiv
+{
+	position: relative;
 	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	top: 0px;
+	right: 0px;
 }
 
 #TopMenu1
@@ -394,13 +417,14 @@ A.linkbtn:link {
 	padding: 0px;
 	background:#61676c;
 	color:white;
-	position: absolute;
-	width: 100%;
-	top: 60px;
+	position: relative;
+	clear: all;
+	top: 0px;
 	left: 0px;
-	right: 0px;
+	width: 100%;
 	padding-left: 8px;
 	padding-right: 8px;
+	float: left;
 }
 
 #TopMenu1 #coverart {
@@ -433,10 +457,11 @@ A.linkbtn:link {
 	background:#999;
 	padding: 4 8 4 8;
 	color:white;
-	position: absolute;
-	top: 171px;
+	position: relative;
+	top: 0px;
 	right: 0px;
 	width: 100%;
+	float: left;
 }
 
 #TopMenu2 #playControls {
@@ -474,12 +499,13 @@ A.linkbtn:link {
 	margin:0px;
 	padding: 2 2 2 2;
 	background:#61676c;
-	position: absolute; 
-	top: 222px; 
+	position: relative; 
+	top: 0px; 
 	right:0px; 
 	width: 100%;
 	text-align: center;
 	margin:0 auto;
+	float: left;
 }
 
 #TopMenu3 #repeatButtons {
@@ -552,7 +578,28 @@ A.linkbtn:link {
 	color:white;
 	height: 18px;
 	width: 100%;
-	position: absolute; top: 235px;
+	position: relative; 
+	top: 0px;
+	float: left;
+}
+
+#playlistframe {
+	margin:0px;
+	padding: 0px;
+	color:white;
+	width: 100%;
+	position: relative; 
+	top: 0px;
+	clear: all;
+	float: left;
+	border: 0px;
+}
+
+#playlistframe IFRAME {
+	width: 100%;
+	position: relative;
+	top: 0px;
+	float: left;
 }
 
 #playlistLinks {

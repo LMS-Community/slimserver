@@ -41,12 +41,21 @@ function newHref(doc,plyr) {
 	}
 }
 
-function playlistResize(page) {
-	if (page) {
-		var header = page.getElementById('header');
-		
-		top.document.getElementById('player_frame').rows = header.clientHeight+', *';
+function toggleStatus(div) {
+	if (document.getElementById(div).style.display == "none") {
+		document.getElementById(div).style.display = "block";
+		document.getElementById('statusImg_up').style.display = "inline";
+		document.getElementById('statusImg_down').style.display = "none";
+	} else {
+		document.getElementById(div).style.display = "none";
+		document.getElementById('statusImg_up').style.display = "none";
+		document.getElementById('statusImg_down').style.display = "inline";
 	}
+}
+
+function resize(page) {
+
+document.getElementById('playlistIframe').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
 }
 
 function openRemote(player,playername)
@@ -89,7 +98,7 @@ function Click(mp,end,at)
 	var s = '';
 	if (!mp) s = '_s';
 	if (document.all||document.getElementById)
-	document.write('<div class="progressBar"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></div>');
+	document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></div>');
 	ProgressUpdate(mp,end,at)
 }
 

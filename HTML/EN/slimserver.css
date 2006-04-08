@@ -1,3 +1,12 @@
+/* Hack for IE to prevent horizontal scrollbars with frames */
+* html {
+	overflow-y: scroll;
+}
+
+body {
+	background-color: #FFFFFF;
+}
+
 .odd {
 }
 
@@ -15,12 +24,9 @@
 }
 
 div#homeMenu {
-	background-color: #ffffff;
 	position: relative;
 	height: auto;
 	width: auto;
-	margin-left: 8px;
-	margin-right: 8px;
 	padding-bottom: 40px;
 }
 

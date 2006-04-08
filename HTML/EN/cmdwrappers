@@ -16,9 +16,9 @@
 [% browserTarget  = 0 %]
 
 
-[% BLOCK cmdlink -%]
+[%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
-[% END %]
+[%- END -%]
 
 [%# this is to wrap around an href which does a play command, with a default image for skins that support it %]
 [% BLOCK playlink -%]
@@ -35,16 +35,16 @@
 [%- END %]
 
 [%# this is to wrap around an href which does an insert command %]
-[% BLOCK insertlink %]
+[% BLOCK insertlink -%]
 	[% PROCESS cmdlink
 		cmdtitle = "NEXT"
 		cmdimage = "b_queue" %]
-[% END %]
+[%- END %]
 
 [%# this is to wrap around an href which drops down one more level when browsing multi-level lists (eg Shoutcast) %]
-[% BLOCK descendlink %]
+[% BLOCK descendlink -%]
 <a [% content %]>[% "NEXT" | string %]</a>
-[% END %]
+[%- END %]
 
 [%# this is to wrap around an href which does a remove command, with default image reference %]
 [% BLOCK removelink -%]
