@@ -149,6 +149,27 @@ div#browsedbHeader {
 	padding-top: 2px;
 }
 
+.artworkControls {
+	padding: 0px;
+	margin: 0px;
+	height: 15px;
+}
+
+.artworkControls a {
+	vertical-align: middle;
+	position: relative;
+	margin: 0px;
+	top: 0px;
+	float: right;
+	padding-top: 2px;
+	padding-right: 2px;
+}
+
+.artworkControls img {
+	padding: 0px;
+	margin: 0px;
+}
+
 .pagebar{
 	width: 100%;
 	clear: left;
@@ -199,12 +220,6 @@ div#browsedbHeader {
 	padding: 0px;
 	text-align: center;
 }
-
-.artworkControls {
-	padding: 0px;
-	margin: 0px;
-}
-
 
 .artworkText {
 	text-align: center;
@@ -697,7 +712,3 @@ DIV.playlistform
 	color:white;
 }
 
-.artworkControls img {
-	margin-left: 1px;
-	padding-top: 2px;
-}
