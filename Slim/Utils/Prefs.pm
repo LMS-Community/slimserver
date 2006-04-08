@@ -11,6 +11,7 @@ use strict;
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Path;
+use File::Slurp;
 use FindBin qw($Bin);
 use Digest::MD5;
 use YAML qw(DumpFile LoadFile Dump);
@@ -941,21 +942,29 @@ sub writePrefs {
 	return unless $canWrite;
 	
 	my $writeFile = prefsFile();
+	my $prefdump = Dump(\%prefs);
 
 	$::d_prefs && msg("Writing out prefs in $writeFile\n");
-
-	open(OUT, ">$writeFile") or do {
-		msg("Severe Warning! Couldn't write out Prefs file: [$writeFile]: $!\n");
-		return;
-	};
-
+	
 	if ($] > 5.007) {
-		binmode(\*OUT, ":raw");
+		File::Slurp::write_file(
+			$writeFile,
+			{
+				'binmode' => ':raw',
+				'atomic'  => 1,
+				'buf_ref' => \$prefdump,
+			}
+		);
+	} else {
+		File::Slurp::write_file(
+			$writeFile,
+			{
+				'atomic'  => 1,
+				'buf_ref' => \$prefdump,
+			}
+		);
 	}
 
-	print OUT Dump(\%prefs);
-
-	close(OUT);
 	$writePending = 0;
 }
 
