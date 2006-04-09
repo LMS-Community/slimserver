@@ -136,13 +136,13 @@ my %functions = (
 	'up' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		changePos($client, -1);
+		changePos($client, -1, $funct);
 	},
 
 	'down' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		changePos($client, 1);
+		changePos($client, 1, $funct);
 	},
 
 	'numberScroll' => sub {
@@ -246,27 +246,21 @@ sub callCallback {
 }
 
 sub changePos {
-	my ($client, $dir) = @_;
+	my ($client, $dir, $funct) = @_;
 
 	my $listRef   = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
 	
-	# Bump if the list is empty
-	if ( scalar @{$listRef} == 0 ) {
-		if ( $dir < 0 ) {
-			$client->bumpUp();
-		}
-		else {
-			$client->bumpDown();
-		}
-		return;
-	}
-
-	if (getParam($client,'noWrap') 
-		&& (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0))) {
-
+	if ($client->param('noWrap')) {
 		#not wrapping and at end of list
-		return;
+		if ($listIndex == 0 && $dir < 0) {
+			$client->bumpUp() if ($funct !~ /repeat/);
+			return;
+		}
+		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
+			$client->bumpDown() if ($funct !~ /repeat/);
+			return;
+		}
 	}
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
@@ -281,7 +275,13 @@ sub changePos {
 		$onChange->($client, $valueRef ? ($$valueRef) : undef);
 	}
 
-	if ($newposition != $listIndex) {
+	if (scalar(@$listRef) < 2) {
+		if ($dir < 0) {
+			$client->bumpUp() if ($funct !~ /repeat/);
+		} else {
+			$client->bumpDown() if ($funct !~ /repeat/);
+		}
+	} elsif ($newposition != $listIndex) {
 		if ($dir < 0) {
 			$client->pushUp();
 		} else {
