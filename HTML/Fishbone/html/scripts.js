@@ -3,7 +3,7 @@ function changePlayer(player_List){
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
 	
-	parent.playlist.location="playlist.html?player" + newPlayer;
+	//parent.playlist.location="playlist.html?player" + newPlayer;
 	window.location="status.html?player" + newPlayer;
 
 	var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;

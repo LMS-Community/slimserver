@@ -117,11 +117,11 @@
 				<div class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
 				[% IF itemobj.duration %]&nbsp;([% itemobj.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</div>
 				
-				<div class="label">[% IF itemobj.artist && itemobj.artist != noArtist %][% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</div>
+				[% IF itemobj.artist && itemobj.artist != noArtist %]<div class="label">[% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</div>
 				[% PROCESS artistsAsHTML.html noby=1 %]
 				[% END %]
 				
-				<div class="label">[% IF itemobj.album.title && itemobj.album.title != noAlbum %][% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</div>
+				[% IF itemobj.album.title && itemobj.album.title != noAlbum %]<div class="label">[% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</div>
 				[% WRAPPER albumlink %][% albumHRef %][% END %]
 				[% END %]
 			</div>
