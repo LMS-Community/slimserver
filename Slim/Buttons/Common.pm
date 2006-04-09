@@ -924,15 +924,25 @@ sub numberScroll {
 	if ($listsize <= 1) {
 		return 0;
 	}
+
 	my $i;
 	if (!$sorted) {
-		if ($digit == 0) { $digit = 10; }
-		$digit -= 1;
-		if ($listsize < 10) {
-			$i = $digit;
+		# If there are 10 items or less then jump straight to the requested item
+		if ($listsize <= 10) {
+			$i = ($digit - 1) % 10;
 			if ($i > $listsize - 1) { $i = $listsize - 1; }
-		} else {
-			$i = int(($listsize - 1) * $digit/9);
+		}else{
+			my $now = Time::HiRes::time();
+			# If the user hasn't pressed a button for the last 1.0 seconds then jump straight to the requested item
+			if ($client->lastDigitTime + Slim::Utils::Prefs::get("displaytexttimeout") < $now) {
+				$i = ($digit - 1) % 10;
+			}else{
+				$i = $client->lastDigitIndex * 10 + $digit - 1;
+			}
+			if ($i > $listsize - 1) { $i = $listsize - 1; }
+
+			$client->lastDigitIndex($i + 1);
+			$client->lastDigitTime($now);
 		}
 	} else {
 

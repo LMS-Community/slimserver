@@ -536,6 +536,18 @@ lastLetterTime() - type: int
 
 	epoch time of previous letter
 
+=item
+
+lastDigitIndex() - type: int
+
+	the index number entered so far when directly entering an index number in a list
+
+=item
+
+lastDigitTime() - type: int
+
+	epoch time of previous digit
+
 =back
 
 =head1 synchronization mode
@@ -723,6 +735,8 @@ sub new {
 	$client->[103] = 0; # lastVisMode
 	$client->[104] = 0; # animateState
 	$client->[105] = 0; # scrollState
+	$client->[106] = undef; # lastDigitIndex
+	$client->[107] = undef; # lastDigitTime
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -750,6 +764,9 @@ sub new {
 	$client->lastLetterIndex(0);
 	$client->lastLetterDigit('');
 	$client->lastLetterTime(0);
+
+	$client->lastDigitIndex(0);
+	$client->lastDigitTime(0);
 
 	$client->playmode("stop");
 	$client->rate(1);
@@ -841,6 +858,7 @@ sub name {
 	my $client = shift;
 	my $name = shift;
 
+	return unless $client;
 	if (defined $name) {
 
 		$client->prefSet("playername", $name);
@@ -1914,5 +1932,14 @@ sub scrollState {
 	@_ ? ($r->[105] = shift) : $r->[105];
 }    
 
+sub lastDigitIndex {
+	my $r = shift;
+	@_ ? ($r->[106] = shift) : $r->[106];
+}
+
+sub lastDigitTime {
+	my $r = shift;
+	@_ ? ($r->[107] = shift) : $r->[107];
+}
 
 1;
