@@ -379,6 +379,7 @@ PLUGIN_FAVORITES_MODULE_NAME
 	EN	Favorites
 	ES	Favoritas
 	FI	Suosikit
+	FR	Favoris
 	HE	מועדפים
 	IT	Favoriti
 	NL	Favorieten
@@ -387,6 +388,7 @@ PLUGIN_FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht!
 	EN	Favorite #%s not defined.
 	ES	Favorita #%s no definida
+	FR	Favori n°%s non défini
 	NL	Favoriet #%s niet gedefinieerd.
 
 PLUGIN_FAVORITES_NONE_DEFINED
@@ -394,17 +396,20 @@ PLUGIN_FAVORITES_NONE_DEFINED
 	EN	No Favorites exist
 	ES	No existen Favoritas
 	FI	Suosikkeja ei ole
+	FR	Aucun favori défini
 	NL	Er zijn geen favorieten
 
 PLUGIN_FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...
 	EN	Playing favorite #%s
 	ES	Se está escuchando favorita #%s
+	FR	Lecture favori n°%s
 	NL	Speel favoriet #%s
 
 PLUGIN_FAVORITES_ADDING
 	DE	Füge Favorit Nr. %s zur Wiedergabeliste hinzu...
 	EN	Adding favorite #%s
+	FR	Ajout favori n°%s
 	ES	Añadiendo favorita #%s
 	NL	Toevoegen favoriet #%s
 ";}

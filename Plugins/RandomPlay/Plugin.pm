@@ -761,6 +761,7 @@ PLUGIN_RANDOM
 	EN	Random Mix
 	ES	Mezcla al azar
 	FI	Satunnainen sekoitus
+	FR	Mix aléatoire
 	HE	מיקס אקראי
 	NL	Willekeurige mix
 
@@ -868,12 +869,14 @@ PLUGIN_RANDOM_GENRE_FILTER
 	EN	Select Genres To Include
 	ES	Elegir Géneros A Incluir
 	FI	Valitse sisällytettävät tyylilajit
+	FR	Sélectionnez les genres à inclure
 	NL	Selecteer genres om toe te voegen
 
 PLUGIN_RANDOM_SELECT_ALL
 	DE	Alle wählen
 	EN	Select All
 	ES	Elegir Todo
+	FR	Tous les genres
 	HE	בחר הכל
 	NL	Selecteer alles
 
@@ -887,6 +890,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	DE	Wählen Sie einen zufälligen Mix von Musik aus Ihrer Sammlung:
 	EN	Choose a random mix of music from your library:
 	ES	Elegir una mezcla al azar de mósica de tu colección:
+	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre collection :
 	HE	בחר מיקס אקראי
 	NL	Kies een willekeurige mix van je muziek collectie:
 
@@ -894,6 +898,7 @@ PLUGIN_RANDOM_TRACK_WEB
 	DE	Zufällige Lieder
 	EN	Random songs
 	ES	Canciones al azar
+	FR	Morceaux aléatoires
 	HE	שירים באקראי
 	NL	Willekeurige liedjes
 
@@ -901,12 +906,14 @@ PLUGIN_RANDOM_ARTIST_WEB
 	DE	Zufällige Interpreten
 	EN	Random artists
 	ES	Artistas al azar
+	FR	Artistes aléatoires
 	HE	אמנים באקראי
 	NL	Willekeurige artiesten
 
 PLUGIN_RANDOM_ALBUM_WEB
 	DE	Zufällige Alben
 	EN	Random albums
+	FR	Albums aléatoires
 	ES	Álbumes al azar
 	HE	אלבומים באקראי
 	NL	Willekeurige albums
@@ -915,6 +922,7 @@ PLUGIN_RANDOM_YEAR_WEB
 	DE	Zufällige Jahrgänge
 	EN	Random years
 	ES	Años al azar
+	FR	Années aléatoires
 	HE	שנים באקראי
 	NL	Willekeurige jaren
 
@@ -923,6 +931,7 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	EN	Genres to include in your mix:
 	ES	Géneros a incluir en tu mezcla:
 	FI	Sekoitukseen haluamasi tyylilajit:
+	FR	Genres à inclure dans le mix :
 	HE	סוגי מוזיקה שיכללו
 	NL	Genres om op te nemen in je mix:
 
@@ -931,6 +940,7 @@ PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	EN	Now Playing will show
 	ES	Se Está Escuchando mostrará
 	FI	"Nyt soi" näyttää
+	FR	Lecture en cours affichera
 	IT	Riproduzione in corso mostrera'
 	NL	Speelt nu zal tonen:
 
@@ -939,6 +949,7 @@ PLUGIN_RANDOM_AFTER_NUM_TRACKS
 	EN	upcoming songs and
 	ES	próximas canciones y
 	FI	tulevaa kappaletta ja
+	FR	morceau(x) à venir et
 	HE	מספר השירים שנוגנו ויוצגו
 	NL	komende liedjes en
 
@@ -947,6 +958,7 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 	EN	recently played songs.
 	ES	canciones escuchadas recientemente.
 	FI	viimeksi soitettua kappaletta.
+	FR	morceau(x) joué(s) précédemment.
 	HE	מספר השירים הבאים שיוצגו
 	NL	recent gespeelde liedjes.
 

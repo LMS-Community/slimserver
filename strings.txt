@@ -67,6 +67,7 @@ DEFAULT_SKIN
 	EN	Default
 	ES	Por defecto
 	FI	Oletus
+	FR	Défaut
 	HE	ממשק ברירת המחדל
 	JA	スタンダード
 	NL	Standaard
@@ -658,6 +659,7 @@ ADDING_TO_PLAYLIST_DBL
 	EN	Adding
 	ES	Añadiendo
 	FI	Lisätään
+	FR	Ajout
 	HE	מוסיף
 	IT	Sto aggiungendo
 	NL	Aan het toevoegen
@@ -1133,6 +1135,7 @@ ALARM_WEEKDAYS
 	EN	Weekday Alarms
 	ES	Alarmas en días de semana
 	FI	Arkipäivän hälytykset
+	FR	Réveils semaine
 	HE	שעון מעורר יומי
 	IT	Sveglia settimanale
 	NL	Weekdag wektijden
@@ -1145,6 +1148,7 @@ ALARM_DAY0
 	EN	Every Day
 	ES	Todos los días
 	FI	Joka päivä
+	FR	Tous les jours
 	HE	כל יום
 	IT	Ogni giorno
 	NL	Elke dag
@@ -2901,6 +2905,7 @@ ALBUMREPLAYGAIN
 	EN	Album Volume Adjustment
 	ES	Ajuste de Volumen del Álbum
 	FI	Levyn äänenvoimakkuuden säätö
+	FR	Ajustement volume album
 	HE	התאמת עוצמת שמע אלבום
 	IT	Regolazione volume album
 	NL	Album volume-aanpassing
@@ -7873,6 +7878,7 @@ CONFIRM_DELETE
 	EN	Confirm Delete
 	ES	Confirma Eliminar
 	FI	Vahvista poisto
+	FR	Confirmer suppression
 	IT	Conferma cancellazione
 	NL	Bevestig verwijderen
 	ZH_CN	确定删除
@@ -8054,6 +8060,7 @@ DIR
 	EN	Directory
 	ES	Directorio
 	FI	Hakemisto
+	FR	Dossier
 	HE	ספריית קבצים
 	NL	Folder
 	ZH_CN	目录
@@ -8419,11 +8426,11 @@ RATING
 
 TAGVERSION
 	CS	Verze ID tagu
-	DE	ID3-Tag Version
 	DA	ID3-version
+	DE	ID3-Tag Version
 	EN	ID3 Tag Version
 	ES	Versión de TAG ID3
-	FR	Version du repère ID3
+	FR	Version ID3
 	JA	ID3タグ バージョン
 	NL	ID3 tag versie
 	NO	ID3 Tag Versjon
@@ -8865,6 +8872,7 @@ BROWSE_NEW_MUSIC
 	EN	New Music
 	ES	Música nueva
 	FI	Uutta musiikkia
+	FR	Nouveautés
 	HE	דפדוף במוזיקה שהוספה לאחרונה
 	IT	Musica recente
 	NL	Nieuwe muziek
@@ -8896,6 +8904,7 @@ BROWSE_BY_YEAR
 	EN	Browse Years
 	ES	Examinar por Año
 	FI	Selaa vuosittain
+	FR	Parcourir les années
 	HE	דפדוף לפי שנים
 	IT	Sfoglia per anno
 	NL	Bekijk op jaar
@@ -9172,6 +9181,7 @@ HOME_SCAN_WARNING
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Bitte gedulden Sie sich etwas, da dieser Prozess einige Zeit in Anspruch nehmen kann.
 	EN	SlimServer is still scanning your music library, please be patient as this may take a while.
 	ES	SlimServer está todavía recopilando la colección musical, por favor sea paciente ya que esto puede llevar un cierto tiempo.
+	FR	Le SlimServer répertorie le contenu de votre collection, veuillez patienter.
 	HE	השרת עדיין סורק את ספריית המוזיקה, הזדיין בסבלנות
 	IT	Lo SlimServer sta costruendo la tua raccolta musicale, per favore attendi il tempo necessario.
 	NL	SlimServer is bezig je muziekfolders te scannen. Nog even geduld, dit neemt enige tijd in beslag.
@@ -10269,6 +10279,7 @@ CHECKVERSION_PROBLEM
 	EN	There was a problem while checking for updates to SlimServer. (Error code %s)
 	ES	Hubo un error al buscar actualizaciones para SlimServer. (Código de error %s)
 	FI	SlimServerin päivityksiä etsittäessä tapahtui virhe. (Virhekoodi %s)
+	FR	Une erreur s'est produite pendant la recherche de mises à jour du SlimServer (code erreur %s)
 	IT	Si e' verficato un errore durante la ricerca di aggiornamenti per lo SlimServer (Codice d'errore %s)
 	NL	Er is een fout opgetreden tijdens het controleren van op nieuwe versie van SlimServer. (Fout code %s)
 	ZH_CN	当与SlimServer查证韧件更新时出现错误。（Error code %s）
@@ -10278,6 +10289,7 @@ CHECKVERSION_ERROR
 	EN	There was an error while checking for updates to SlimServer:
 	ES	Hubo un error al buscar actualizaciones para SlimServer:
 	FI	SlimServerin päivityksiä etsittäessä tapahtui virhe
+	FR	Une erreur s'est produite pendant la recherche de mises à jour du SlimServer :
 	IT	Si e' verificato un errore tentando di aggiornare lo SlimServer:
 	NL	Er is een fout opgetreden tijdens het controleren op een nieuwe versie van SlimServer:
 	ZH_CN	与SlimServer查证韧间更新时出现错误：
@@ -10407,7 +10419,7 @@ ADVANCEDSEARCH
 	EN	Advanced Search
 	ES	Búsqueda Avanzada
 	FI	Laajennettu haku
-	FR	Recherche Avançée
+	FR	Recherche avancée
 	HE	חיפוש מתקדם
 	IT	Ricerca avanzata
 	JA	高度の調査
@@ -11715,7 +11727,7 @@ EQUALS
 	EN	equals
 	ES	igual a
 	FI	yhtäkuin
-	FR	les égales moins
+	FR	égal à
 	HE	שווה
 	IT	uguali
 	JA	同輩
@@ -11728,7 +11740,7 @@ LESSTHAN
 	EN	less than
 	ES	menos que
 	FI	Vähemmän kuin
-	FR	que plus
+	FR	inférieur à
 	HE	פחות מ
 	IT	meno più
 	JA	より少しより
@@ -11741,7 +11753,7 @@ GREATERTHAN
 	EN	greater than
 	ES	mayores que
 	FI	suurempi kuin
-	FR	grandes que
+	FR	supérieur à
 	HE	יותר מ
 	IT	grandi di
 	JA	大きいより
@@ -11754,7 +11766,7 @@ NOT
 	EN	not
 	ES	no
 	FI	ei
-	FR	non
+	FR	différent de
 	HE	לא
 	IT	non
 	JA	ない
@@ -11812,6 +11824,7 @@ ANY_GENRE
 	EN	Any Genre
 	ES	Cualquier género
 	FI	Mikä tahansa tyylilaji
+	FR	Tous les genres
 	HE	כל סוג
 	IT	Qualsiasi Genere
 	NL	Elk genre
@@ -11823,6 +11836,7 @@ ANY_VALUE
 	EN	Any Value
 	ES	Cualquier valor
 	FI	Mikä tahansa arvo
+	FR	Toutes les valeurs
 	HE	כל ערך
 	IT	Qualsiasi valore
 	NL	Elke waarde
@@ -11834,6 +11848,7 @@ ANY_TYPE
 	EN	Any File Format
 	ES	Cualquier formato de archivo
 	FI	Mikä tahansa tiedostomuoto
+	FR	Tous les formats
 	HE	כל קובץ
 	IT	Qualsiasi formato di file
 	NL	Elk bestandsformaat
@@ -11844,6 +11859,7 @@ WMA_NO_CONVERT_CMD
 	DE	Fehler beim WMA Konvertieren - bitte Dateityp überprüfen
 	EN	WMA convert error - check file types
 	ES	Error de conversión WMA - verificar tipo de archivos
+	FR	Erreur conversion WMA - v�rifiez le type fichier
 	IT	Errore nella conversione WMA - Controlla il tipo di file.
 	NL	WMA converteerfout - controleer bestandstype
 	ZH_CN	WMA转换错误-请检查文件种类
@@ -11857,6 +11873,7 @@ FAVORITES_FAVORITE_NUM
 	EN	Favorite #
 	ES	Favorita #
 	FI	Suosikki nro
+	FR	Favori n°
 	IT	Favoriti #
 	NL	Favoriet #
 	ZH_CN	最喜爱#
@@ -11866,6 +11883,7 @@ FAVORITES_RIGHT_TO_DELETE
 	EN	 (RIGHT to delete)
 	ES	(RIGHT para eliminar)
 	FI	(OIKEALLE poistaaksesi)
+	FR	(DROITE pour supprimer)
 	IT	(DESTRA per cancellare)
 	NL	(Toets -> om te verwijderen)
 	ZH_CN	 （删除按右方向键）
@@ -11875,6 +11893,7 @@ FAVORITES_NOT_A_FAVORITE
 	EN	Not a favorite
 	ES	No es una favorita...
 	FI	Ei suosikki
+	FR	Pas un favori
 	IT	Non piu' tra i favoriti
 	NL	Geen favoriet
 	ZH_CN	不是最喜爱的
@@ -11884,6 +11903,7 @@ FAVORITES_RIGHT_TO_ADD
 	EN	Press RIGHT to add to favorites
 	ES	Presionar RIGHT para añadir a favoritas
 	FI	Paina oikealle lisätäksesi suosikkeihin
+	FR	Appuyez sur DROITE pour ajouter aux favoris
 	IT	Premi DESTRA per aggiungere ai favoriti
 	NL	Druk -> om favoriet toe te voegen
 	ZH_CN	列入最喜爱的按右方向键
@@ -11893,6 +11913,7 @@ FAVORITES_ADDING
 	EN	Saving favorites...
 	ES	Guardando favoritas...
 	FI	Tallentaa suosikkeja...
+	FR	Sauvegarde favori...
 	IT	Salvataggio favoriti...
 	NL	Bewaren favorieten...
 	ZH_CN	保存最喜爱的...
@@ -11902,6 +11923,7 @@ FAVORITES_DELETING
 	EN	Deleting favorite...
 	ES	Borrando favorita...
 	FI	Poistan suosikkia...
+	FR	Suppression favori...
 	IT	Cancellazione favoriti...
 	NL	Verwijderen favorieten...
 	ZH_CN	删除最喜爱的...
@@ -12171,6 +12193,7 @@ ARTWORK
 	EN	Artwork
 	ES	Arte de tapa
 	FI	Kansikuvat
+	FR	Pochette
 	IT	Copertina
 	NL	Hoesjes
 
