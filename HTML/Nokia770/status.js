@@ -1,4 +1,3 @@
-var player = '[% player %]';
 var url = 'status.html';
 var _progressEnd = [% IF durationseconds %][% durationseconds %]+8[% ELSE %][% refresh %][% END %];
 var _progressAt = [% IF songtime %][% songtime %][% ELSE %]0[% END %];
@@ -26,7 +25,7 @@ function refreshProgressBar(theData) {
 }
 
 function progressUpdate() {
-	if ($('playtextmode').innerHTML.match('playing')) {
+	if ($('playercontrol_active_play').style.display == 'block') {
 		inc++;
 		_progressAt++;
 		setProgressBarWidth();
