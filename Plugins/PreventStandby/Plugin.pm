@@ -30,6 +30,14 @@ my $timer = undef;
 # reference to the windows function of same name
 my $SetThreadExecutionState = undef;
 
+sub enabled {
+	return ($::VERSION ge '6.1');
+}
+
+sub getFunctions {
+	return '';
+}
+
 sub getDisplayName {
 	return 'PLUGIN_PREVENTSTANDBY';
 }
@@ -89,6 +97,8 @@ sub stopTimer {
 sub initPlugin {
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		require Win32::API;
 
 		$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
 
