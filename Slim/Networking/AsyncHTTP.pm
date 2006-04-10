@@ -55,6 +55,21 @@ sub new {
 		my $resolver = Net::DNS::Resolver->new;
 		my $bgsock   = $resolver->bgsend( $args{'Host'} );
 		
+		if ( !defined $bgsock ) {
+			my $host  = $args{'Host'};
+			my $error = $resolver->errorstring;
+			errorMsg("AsyncHTTP: Couldn't resolve IP address for $host: $error\n");
+			
+			# Call back to the caller's error handler
+			my $ecb    = $args{'errorCallback'};
+			my $cbArgs = $args{'callbackArgs'} || [];
+			if ( $ecb ) {
+				$ecb->( undef, @{ $cbArgs } );
+			}
+			
+			return;
+		}
+		
 		# We need to access the resolver again..
 		${*$bgsock}{'resolver'}  = $resolver;
 		
