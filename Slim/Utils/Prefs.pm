@@ -24,6 +24,7 @@ our %prefs = ();
 my $prefsPath;
 my $prefsFile;
 my $canWrite;
+my $canWriteAtomic = 0;
 my $writePending = 0;
 
 our %upgradeScripts = ();
@@ -951,7 +952,7 @@ sub writePrefs {
 			$writeFile,
 			{
 				'binmode' => ':raw',
-				'atomic'  => 1,
+				'atomic'  => $canWriteAtomic,
 				'buf_ref' => \$prefdump,
 			}
 		);
@@ -959,7 +960,7 @@ sub writePrefs {
 		File::Slurp::write_file(
 			$writeFile,
 			{
-				'atomic'  => 1,
+				'atomic'  => $canWriteAtomic,
 				'buf_ref' => \$prefdump,
 			}
 		);
@@ -1015,6 +1016,7 @@ sub prefsFile {
 	} else {
 		if (-r '/etc/slimserver.conf') {
 			$prefsFile = '/etc/slimserver.conf';
+			preferencesPath(dirname($prefsFile));
 		} elsif (-r catdir($pref_path, '.slimserver.pref')) {
 			$prefsFile = catdir($pref_path, '.slimserver.pref');
 		} else {
@@ -1062,6 +1064,8 @@ sub load {
 	
 	# see if we can write out the real prefs file
 	$canWrite = (-e prefsFile() && -w prefsFile()) || (-w preferencesPath());
+	
+	$canWriteAtomic = (-w preferencesPath) ? 1 : 0;
 	
 	if (!$canWrite && !$nosetup) {
 		errorMsg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
