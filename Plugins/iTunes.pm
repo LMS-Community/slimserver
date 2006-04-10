@@ -618,9 +618,13 @@ sub handleTrack {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
 
-		if ($] > 5.007 && $file && $Slim::Utils::Unicode::locale ne 'utf8') {
+		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
 
-			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Unicode::locale) };
+			eval { Encode::from_to($file, 'utf8', Slim::Utils::Unicode::currentLocale()) };
+
+			if ($@) {
+				errorMsg("iTunes: handleTrack: [$@]\n");
+			}
 
 			# If the user is using both iTunes & a music folder,
 			# iTunes stores the url as encoded utf8 - but we want
