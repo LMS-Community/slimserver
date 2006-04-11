@@ -280,7 +280,7 @@ sub password {
 }
 
 # TODO make this actually check to see if the format is valid
-sub format {
+sub isFormat {
 	my $val = shift;
 
 	if (!defined($val)) {

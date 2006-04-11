@@ -147,6 +147,7 @@ sub initPlugin {
 	Slim::Music::Import::addImporter('ITUNES', {
 		'scan'  => \&startScan,
 		'reset' => \&resetState,
+		'setup' => \&addGroups,
 	});
 
 	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
@@ -1073,8 +1074,8 @@ sub setupUse {
 		'Suppress_PrefDesc' => 1,
 		'Suppress_PrefLine' => 1,
 		'Suppress_PrefSub' => 1,
-		'GroupHead' => string('SETUP_ITUNES'),
-		'GroupDesc' => string('SETUP_ITUNES_DESC'),
+		'GroupHead' => 'SETUP_ITUNES',
+		'GroupDesc' => 'SETUP_ITUNES_DESC',
 		'GroupLine' => 1,
 		'GroupSub' => 1,
 	);

@@ -1,12 +1,12 @@
+[% FILTER null %]
 [% pwd_list = BLOCK %]
 	[% IF playerid %][% "PLAYER_SETTINGS" | string %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
 [% END %]
 [% pageHeaderInfo = BLOCK %]
 	[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 [% END %]
-
+[% END %]
 [% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
-
   <div class="statusarea">
   	[% IF warning %]
   		[% warning %]

@@ -1,10 +1,10 @@
 [% IF PrefsInTable %]<tr><td>[% END %]
-[% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose %]</label>[% END %]
+[% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose | getstring %]</label>[% END %]
 [% IF PrefsInTable %]</td><td>[% END %]
 <select class="stdedit" name="[% PrefName %]" id="[% PrefName %]">
 	[% PrefOptions %]
 </select>
 [% IF PrefsInTable %]</td><td>[% END %]
-[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton %] class="stdclick">[% END %]
+[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton | getstring %] class="stdclick">[% END %]
 [% IF PrefsInTable %]</td></tr>[% END %]
 [% IF not PrefsInTable %]<br>[% END %]

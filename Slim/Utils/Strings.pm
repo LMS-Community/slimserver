@@ -258,6 +258,22 @@ sub string {
 	return '';
 }
 
+# like string() above, but returns the string token if the string does not exist
+sub getString {
+	my $string = shift;
+	my $stringname = uc($string);
+	my $language   = shift || Slim::Utils::Prefs::get('language');
+
+	for my $tryLang ($language, $failsafe_language) {
+
+		next unless $strings{$stringname}->{$tryLang};
+
+		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') ? " {$stringname}" : '');
+	}
+
+	return $string;
+}
+
 #
 # Returns a string for doublesize mode in the requested language
 #

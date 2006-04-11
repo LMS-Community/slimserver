@@ -4,6 +4,6 @@
 [% IF PrefsInTable %]</td><td>[% END %]
 [% IF PrefExtValue %]<label for="[% PrefName %]" class="stdlabel">[% PrefExtValue %]</label>[% END %]
 [% IF PrefsInTable %]</td><td>[% END %]
-[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton %] class="stdclick">[% END %]
+[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton | getstring %] class="stdclick">[% END %]
 [% IF PrefsInTable %]</td></tr>[% END %]
 [% IF not PrefsInTable %]<br>[% END %]

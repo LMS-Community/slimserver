@@ -83,13 +83,13 @@ our @newPlayerChildren;
 # 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
 # 'noWarning' => flag to suppress change information
 # 'externalValue' => sub ref taking $client,$value, $key as parameters, used to map an internal value to an external one
-# 'PrefHead' => friendly name of the preference (defaults to string('SETUP_$prefname')
-# 'PrefDesc' => long description of the preference (defaults to string('SETUP_$prefname_DESC')
-# 'PrefChoose' => label to use for input of the preference (defaults to string('SETUP_$prefname_CHOOSE')
+# 'PrefHead' => friendly name of the preference (defaults to 'SETUP_$prefname')
+# 'PrefDesc' => long description of the preference (defaults to 'SETUP_$prefname_DESC')
+# 'PrefChoose' => label to use for input of the preference (defaults to 'SETUP_$prefname_CHOOSE')
 # 'PrefSize' => size to use for text box of input (choices are 'small','medium', and 'large', default 'small')
 #	Actual size to use is determined by the setup_input_txt.html template (in EN skin values are 10,20,40)
 # 'ChangeButton' => Text to display on the submit button within the input for this preference
-#	Defaults to string('CHANGE')
+#	Defaults to 'CHANGE'
 # 'inputTemplate' => template to use for the input of the preference (defaults to setup_input_sel.html
 #	for preferences with 'options', setup_input_txt.html otherwise)
 # 'changeIntro' => template for the change introductory text (defaults to 'string('SETUP_NEW_VALUE') string('SETUP_prefname'):')
@@ -120,12 +120,8 @@ sub initSetupConfig {
 
 					if ($client->isPlayer()) {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats','Display'];
-						fillSetupOptions('PLAYER_SETTINGS','titleFormat','titleFormat');
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
-							$pageref->{'Prefs'}{'screensaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
-							$pageref->{'Prefs'}{'idlesaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
-							$pageref->{'Prefs'}{'offsaver'}{'options'} = Slim::Buttons::Common::hash_of_savers();
 						}
 						
 						my $displayHash = $client->playingModeOptions();
@@ -167,8 +163,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_TITLEFORMAT')
-					,'GroupDesc' => string('SETUP_TITLEFORMAT_DESC')
+					,'GroupHead' => 'SETUP_TITLEFORMAT'
+					,'GroupDesc' => 'SETUP_TITLEFORMAT_DESC'
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
 										'</th><th></th><th>' . string('SETUP_FORMATS') . '</th><th></th></tr>'
 					,'GroupLine' => 1
@@ -180,8 +176,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub'  => 1
-					,'GroupHead' => string('SETUP_PLAYINGDISPLAYMODE')
-					,'GroupDesc' => string('SETUP_PLAYINGDISPLAYMODE_DESC')
+					,'GroupHead' => 'SETUP_PLAYINGDISPLAYMODE'
+					,'GroupDesc' => 'SETUP_PLAYINGDISPLAYMODE_DESC'
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
 										'</th><th></th><th>' . string('DISPLAY_SETTINGS') . '</th><th></th></tr>'
 					,'GroupLine' => 1
@@ -194,8 +190,8 @@ sub initSetupConfig {
 				,'Suppress_PrefLine' => 1
 				,'Suppress_PrefSub' => 1
 				,'PrefsInTable' => 1
-				,'GroupHead' => string('SCREENSAVERS')
-				,'GroupDesc' => string('SETUP_SCREENSAVER_DESC')
+				,'GroupHead' => 'SCREENSAVERS'
+				,'GroupDesc' => 'SETUP_SCREENSAVER_DESC'
 				,'GroupLine' => 1
 				,'GroupSub' => 1
 			}
@@ -223,8 +219,8 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'playingDisplayMode'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
+							,'validateArgs' => [] # filled by preEval
+							,'options' => {} # filled by preEval
 							,'optionSort' => 'NK'
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
@@ -244,8 +240,8 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'titleFormatCurr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_prefs('titleFormat')
+							,'validateArgs' => [sub {return hash_of_prefs('titleFormat');}]
+							,'options' => sub {return {hash_of_prefs('titleFormat')};}
 							,'optionSort' => 'NK'
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
@@ -259,17 +255,20 @@ sub initSetupConfig {
 			,'screensaver'	=> {
 							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
-							,'options' => undef #will be set by preEval  
+							,'optionSort' => 'V'
+							,'options' => \&Slim::Buttons::Common::hash_of_savers
 						}
 			,'idlesaver'	=> {
 							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
-							,'options' => undef #will be set by preEval  
+							,'optionSort' => 'V'
+							,'options' => \&Slim::Buttons::Common::hash_of_savers
 						}
 			,'offsaver'	=> {
 							'validate' => \&Slim::Utils::Validate::inHash
 							,'validateArgs' => [\&Slim::Buttons::Common::hash_of_savers,1]
-							,'options' => undef #will be set by preEval  
+							,'optionSort' => 'V'
+							,'options' => \&Slim::Buttons::Common::hash_of_savers
 						}
 			,'screensavertimeout' => {
 							'validate' => \&Slim::Utils::Validate::number
@@ -356,8 +355,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_GROUP_BRIGHTNESS')
-					,'GroupDesc' => string('SETUP_GROUP_BRIGHTNESS_DESC')
+					,'GroupHead' => 'SETUP_GROUP_BRIGHTNESS'
+					,'GroupDesc' => 'SETUP_GROUP_BRIGHTNESS_DESC'
 					,'GroupLine' => 1
 				}
 			,'TextSize' => {
@@ -366,8 +365,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_DOUBLESIZE')
-					,'GroupDesc' => string('SETUP_DOUBLESIZE_DESC')
+					,'GroupHead' => 'SETUP_DOUBLESIZE'
+					,'GroupDesc' => 'SETUP_DOUBLESIZE_DESC'
 					,'GroupLine' => 1
 				}
 			,'LargeFont' => {
@@ -376,8 +375,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_LARGETEXTFONT')
-					,'GroupDesc' => string('SETUP_LARGETEXTFONT_DESC')
+					,'GroupHead' => 'SETUP_LARGETEXTFONT'
+					,'GroupDesc' => 'SETUP_LARGETEXTFONT_DESC'
 					,'GroupLine' => 1
 				}
 			,'activeFont' => {
@@ -386,8 +385,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_ACTIVEFONT')
-					,'GroupDesc' => string('SETUP_ACTIVEFONT_DESC')
+					,'GroupHead' => 'SETUP_ACTIVEFONT'
+					,'GroupDesc' => 'SETUP_ACTIVEFONT_DESC'
 					,'GroupPrefHead' => ''
 					,'GroupLine' => 1
 				}
@@ -397,8 +396,8 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
-					,'GroupHead' => string('SETUP_IDLEFONT')
-					,'GroupDesc' => string('SETUP_IDLEFONT_DESC')
+					,'GroupHead' => 'SETUP_IDLEFONT'
+					,'GroupDesc' => 'SETUP_IDLEFONT_DESC'
 					,'GroupPrefHead' => ''
 					,'GroupLine' => 1
 				}
@@ -408,8 +407,8 @@ sub initSetupConfig {
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_SCROLLMODE')
-				,'GroupDesc' => string('SETUP_SCROLLMODE_DESC')
+				,'GroupHead' => 'SETUP_SCROLLMODE'
+				,'GroupDesc' => 'SETUP_SCROLLMODE_DESC'
 				,'GroupLine' => 1
 			}
 			,'ScrollRate' => {
@@ -418,8 +417,8 @@ sub initSetupConfig {
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_SCROLLRATE')
-				,'GroupDesc' => string('SETUP_SCROLLRATE_DESC')
+				,'GroupHead' => 'SETUP_SCROLLRATE'
+				,'GroupDesc' => 'SETUP_SCROLLRATE_DESC'
 				,'GroupLine' => 1
 			}
 			,'ScrollPause' => {
@@ -428,8 +427,8 @@ sub initSetupConfig {
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_SCROLLPAUSE')
-				,'GroupDesc' => string('SETUP_SCROLLPAUSE_DESC')
+				,'GroupHead' => 'SETUP_SCROLLPAUSE'
+				,'GroupDesc' => 'SETUP_SCROLLPAUSE_DESC'
 				,'GroupLine' => 1
 			}
 			,'ScrollPixels' => {
@@ -438,8 +437,8 @@ sub initSetupConfig {
 				,'Suppress_PrefHead' => 1
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
-				,'GroupHead' => string('SETUP_SCROLLPIXELS')
-				,'GroupDesc' => string('SETUP_SCROLLPIXELS_DESC')
+				,'GroupHead' => 'SETUP_SCROLLPIXELS'
+				,'GroupDesc' => 'SETUP_SCROLLPIXELS_DESC'
 				,'GroupLine' => 1
 			}
 			
@@ -485,10 +484,10 @@ sub initSetupConfig {
 							'validate' => \&Slim::Utils::Validate::IinList
 							,'validateArgs' => [0,1]
 							,'options' => {
-								'0' => string('SMALL'),
-								'1' => string('LARGE')
+								'0' => 'SMALL',
+								'1' => 'LARGE'
 							}
-							,'PrefChoose' => string('SETUP_DOUBLESIZE').string('COLON')
+							,'PrefChoose' => 'SETUP_DOUBLESIZE'
 							,'currentValue' => sub { shift->textSize();}
 							,'onChange' => sub { 
 												my ($client,$changeref,$paramref,$pageref) = @_;
@@ -500,17 +499,17 @@ sub initSetupConfig {
 							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0,1]
 							,'options' => {
-								'0' => string('SMALL'),
-								'1' => string('LARGE')
+								'0' => 'SMALL',
+								'1' => 'LARGE'
 							}
-							,'PrefChoose' => string('SETUP_OFFDISPLAYSIZE').string('COLON')
+							,'PrefChoose' => 'SETUP_OFFDISPLAYSIZE'
 						}
 			,'largeTextFont' => {
 							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0,1]
 							,'options' => {
-								'0' => string('SETUP_LARGETEXTFONT_0'),
-								'1' => string('SETUP_LARGETEXTFONT_1')
+								'0' => 'SETUP_LARGETEXTFONT_0',
+								'1' => 'SETUP_LARGETEXTFONT_1'
 							}
 						}
 			,'activeFont'		=> {
@@ -522,8 +521,8 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'activeFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
+							,'validateArgs' => [] #filled by preEval
+							,'options' => {} #filled by preEval
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'activeFont'}{'Processed'})) {
@@ -542,8 +541,8 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'idleFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by initSetup
-							,'options' => {} #filled by initSetup using hash_of_prefs('activeFont')
+							,'validateArgs' => [] #filled by preEval
+							,'options' => {} #filled by preEval
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'idleFont'}{'Processed'})) {
@@ -556,28 +555,28 @@ sub initSetupConfig {
 			,'activeFont_curr' => {
 							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
-							,'changeIntro' => string('SETUP_ACTIVEFONT')
+							,'changeIntro' => 'SETUP_ACTIVEFONT'
 						}
 			,'idleFont_curr' => {
 							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => undef
-							,'changeIntro' => string('SETUP_IDLEFONT')
+							,'changeIntro' => 'SETUP_IDLEFONT'
 						}
 			,'autobrightness' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
-								'1' => string('SETUP_AUTOBRIGHTNESS_ON')
-								,'0' => string('SETUP_AUTOBRIGHTNESS_OFF')
+								'1' => 'SETUP_AUTOBRIGHTNESS_ON'
+								,'0' => 'SETUP_AUTOBRIGHTNESS_OFF'
 							}
-						,'changeIntro' => string ('SETUP_AUTOBRIGHTNESS_CHOOSE')
+						,'changeIntro' => 'SETUP_AUTOBRIGHTNESS_CHOOSE'
 					}
 			,'scrollMode' => {
 				'validate' => \&Slim::Utils::Validate::number
 				,'validateArgs' => [0,undef,2]
 				,'options' => {
-					 '0' => string('SETUP_SCROLLMODE_DEFAULT')
-					,'1' => string('SETUP_SCROLLMODE_SCROLLONCE')
-					,'2' => string('SETUP_SCROLLMODE_NOSCROLL')
+					 '0' => 'SETUP_SCROLLMODE_DEFAULT'
+					,'1' => 'SETUP_SCROLLMODE_SCROLLONCE'
+					,'2' => 'SETUP_SCROLLMODE_NOSCROLL'
 				},
 			},
 			,'scrollPause' => {
@@ -680,8 +679,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_MENUITEMS')
-					,'GroupDesc' => string('SETUP_GROUP_MENUITEMS_DESC')
+					,'GroupHead' => 'SETUP_GROUP_MENUITEMS'
+					,'GroupDesc' => 'SETUP_GROUP_MENUITEMS_DESC'
 				}
 			,'NonMenuItems' => {
 					'PrefOrder' => ['nonMenuItem']
@@ -691,7 +690,7 @@ sub initSetupConfig {
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
 					,'GroupHead' => ''
-					,'GroupDesc' => string('SETUP_GROUP_NONMENUITEMS_INTRO')
+					,'GroupDesc' => 'SETUP_GROUP_NONMENUITEMS_INTRO'
 				}
 			,'Plugins' => {
 					'PrefOrder' => ['pluginItem']
@@ -701,7 +700,7 @@ sub initSetupConfig {
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
 					,'GroupHead' => ''
-					,'GroupDesc' => string('SETUP_GROUP_PLUGINITEMS_INTRO')
+					,'GroupDesc' => 'SETUP_GROUP_PLUGINITEMS_INTRO'
 					,'GroupLine' => 1
 				}
 		}
@@ -712,7 +711,7 @@ sub initSetupConfig {
 						,'arrayDeleteValue' => ''
 						,'arrayBasicValue' => 'NOW_PLAYING'
 						,'inputTemplate' => 'setup_input_array_udr.html'
-						,'validate' => \&Slim::Utils::Validate::IinHash
+						,'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
 						,'externalValue' => \&menuItemName
 						,'onChange' => sub {
@@ -858,8 +857,8 @@ sub initSetupConfig {
 		,'Groups' => {
 			'AlarmClock' => {
 				'PrefOrder' => ['alarmfadeseconds']
-				,'GroupHead' => string('SETUP_GROUP_ALARM')
-				,'GroupDesc' => string('SETUP_GROUP_ALARM_DESC')
+				,'GroupHead' => 'SETUP_GROUP_ALARM'
+				,'GroupDesc' => 'SETUP_GROUP_ALARM_DESC'
 				,'GroupLine' => 1
 				,'Suppress_PrefLine' => 1
 				,'Suppress_PrefHead' => 1
@@ -868,8 +867,8 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'alarmfadeseconds' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'PrefChoose' => string('ALARM_FADE'),
-				'changeIntro' => string('ALARM_FADE').string('COLON'),
+				'PrefChoose' => 'ALARM_FADE',
+				'changeIntro' => 'ALARM_FADE',
 				'inputTemplate' => 'setup_input_chk.html',
 			}
 		},
@@ -912,21 +911,21 @@ sub initSetupConfig {
 					}
 					
 					if (Slim::Utils::Misc::findbin('lame')) {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_FOUND');
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_FOUND';
 						$pageref->{'GroupOrder'}[4] = 'Quality';
 					} else {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = string('SETUP_LAME_NOT_FOUND');
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_NOT_FOUND';
 						$pageref->{'GroupOrder'}[4] = undef;
 					}
 					
 					$pageref->{'GroupOrder'}[5] ='Format';
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
-						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MAXBITRATE_DESC');
-						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = '  '.string('NO_LIMIT');
+						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = 'SETUP_MAXBITRATE_DESC';
+						$pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'} = 'NO_LIMIT';
 					} else {
 						delete $pageref->{'Prefs'}{'maxBitrate'}{'options'}{'0'};
-						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = string('SETUP_MP3BITRATE_DESC');
+						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = 'SETUP_MP3BITRATE_DESC';
 					}
 
 					if ($client->canDoReplayGain(0)) {
@@ -962,7 +961,7 @@ sub initSetupConfig {
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MAXBITRATE')
+					,'GroupHead' => 'SETUP_MAXBITRATE'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -985,12 +984,12 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'powerOnResume' => {
 					'options' => {
-							'PauseOff-NoneOn' => string('SETUP_POWERONRESUME_PAUSEOFF_NONEON')
-							,'PauseOff-PlayOn' => string('SETUP_POWERONRESUME_PAUSEOFF_PLAYON')
-							,'StopOff-PlayOn' => string('SETUP_POWERONRESUME_STOPOFF_PLAYON')
-							,'StopOff-NoneOn' => string('SETUP_POWERONRESUME_STOPOFF_NONEON')
-							,'StopOff-ResetPlayOn' => string('SETUP_POWERONRESUME_STOPOFF_RESETPLAYON')
-							,'StopOff-ResetOn' => string('SETUP_POWERONRESUME_STOPOFF_RESETON')
+							'PauseOff-NoneOn'      => 'SETUP_POWERONRESUME_PAUSEOFF_NONEON'
+							,'PauseOff-PlayOn'     => 'SETUP_POWERONRESUME_PAUSEOFF_PLAYON'
+							,'StopOff-PlayOn'      => 'SETUP_POWERONRESUME_STOPOFF_PLAYON'
+							,'StopOff-NoneOn'      => 'SETUP_POWERONRESUME_STOPOFF_NONEON'
+							,'StopOff-ResetPlayOn' => 'SETUP_POWERONRESUME_STOPOFF_RESETPLAYON'
+							,'StopOff-ResetOn'     => 'SETUP_POWERONRESUME_STOPOFF_RESETON'
 						}
 					,'currentValue' => sub {
 							my ($client,$key,$ind) = @_;
@@ -1015,7 +1014,7 @@ sub initSetupConfig {
 							,'optionSort' => 'NK'
 							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
 							,'options' => {
-									'0' => string('NO_LIMIT')
+									'0' => 'NO_LIMIT'
 									,'64' => '64 '.string('KBPS')
 									,'96' => '96 '.string('KBPS')
 									,'128' => '128 '.string('KBPS')
@@ -1077,15 +1076,15 @@ sub initSetupConfig {
 			,'syncVolume' => {
 							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
-									'1' => string('SETUP_SYNCVOLUME_ON')
-									,'0' => string('SETUP_SYNCVOLUME_OFF')
+									'1' => 'SETUP_SYNCVOLUME_ON'
+									,'0' => 'SETUP_SYNCVOLUME_OFF'
 								}
 						}			
 			,'syncPower' => {
 							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
-									'1' => string('SETUP_SYNCPOWER_ON')
-									,'0' => string('SETUP_SYNCPOWER_OFF')
+									'1' => 'SETUP_SYNCPOWER_ON'
+									,'0' => 'SETUP_SYNCPOWER_OFF'
 								}
 							,'onChange' => sub {
 								my ($client,$changeref,$paramref,$pageref) = @_;
@@ -1106,8 +1105,8 @@ sub initSetupConfig {
 			,'digitalVolumeControl' => {
 							'validate' => \&Slim::Utils::Validate::trueFalse  
 							,'options' => {
-									'1' => string('SETUP_DIGITALVOLUMECONTROL_ON')
-									,'0' => string('SETUP_DIGITALVOLUMECONTROL_OFF')
+									'1' => 'SETUP_DIGITALVOLUMECONTROL_ON',
+									'0' => 'SETUP_DIGITALVOLUMECONTROL_OFF'
 								}
 							,'onChange' => sub {
 								my $client = shift;
@@ -1125,25 +1124,25 @@ sub initSetupConfig {
 			,'transitionType' => {
 							'validate' => \&Slim::Utils::Validate::isInt
 							,'validateArgs' => [0,4,1,1]
-							,'optionSort' => 'K'
+							,'optionSort' => 'NK'
 							,'options' => {
-									'0' => string('TRANSITION_NONE')
-									,'1' => string('TRANSITION_CROSSFADE')
-									,'2' => string('TRANSITION_FADE_IN')
-									,'3' => string('TRANSITION_FADE_OUT')
-									,'4' => string('TRANSITION_FADE_IN_OUT')
+									'0' => 'TRANSITION_NONE',
+									'1' => 'TRANSITION_CROSSFADE',
+									'2' => 'TRANSITION_FADE_IN',
+									'3' => 'TRANSITION_FADE_OUT',
+									'4' => 'TRANSITION_FADE_IN_OUT',
 								}
 						}
 			,'transitionDuration' => {
 							'validate' => \&Slim::Utils::Validate::isInt  
 						}
 			,'replayGainMode' => {
-							'optionSort' => 'K',
+							'optionSort' => 'NK',
 							'options' => {
-									'0' => string('REPLAYGAIN_DISABLED'),
-									'1' => string('REPLAYGAIN_TRACK_GAIN'),
-									'2' => string('REPLAYGAIN_ALBUM_GAIN'),
-									'3' => string('REPLAYGAIN_SMART_GAIN'),
+									'0' => 'REPLAYGAIN_DISABLED',
+									'1' => 'REPLAYGAIN_TRACK_GAIN',
+									'2' => 'REPLAYGAIN_ALBUM_GAIN',
+									'3' => 'REPLAYGAIN_SMART_GAIN',
 								},
 						}
 		}
@@ -1158,7 +1157,6 @@ sub initSetupConfig {
 				playerChildren($client, $pageref);
 				if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
 					$pageref->{'GroupOrder'}[1] = 'IRMap';  
-					$pageref->{'Prefs'}{'irmap'}{'options'} = Slim::Hardware::IR::mapfiles();  
 				} else {  
 					$pageref->{'GroupOrder'}[1] = undef;
 				}
@@ -1202,8 +1200,8 @@ sub initSetupConfig {
 				,'Suppress_PrefDesc' => 1
 				,'Suppress_PrefLine' => 1
 				,'Suppress_PrefSub' => 1
-				,'GroupHead' => string('SETUP_GROUP_IRSETS')
-				,'GroupDesc' => string('SETUP_GROUP_IRSETS_DESC')
+				,'GroupHead' => 'SETUP_GROUP_IRSETS'
+				,'GroupDesc' => 'SETUP_GROUP_IRSETS_DESC'
 				,'GroupLine' => 1
 				,'GroupSub' => 1
 			}
@@ -1215,7 +1213,7 @@ sub initSetupConfig {
 			'irmap' => {
 				'validate' => \&Slim::Utils::Validate::inHash  
 				,'validateArgs' => [\&Slim::Hardware::IR::mapfiles,1]  
-				,'options' => undef #will be set by preEval  
+				,'options' => \&Slim::Hardware::IR::mapfiles
 			},
 			'irsetlist' => {
 				'isArray' => 1
@@ -1223,7 +1221,7 @@ sub initSetupConfig {
 				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
-				,'changeMsg' => string('SETUP_IRSETLIST_CHANGE')
+				,'changeMsg' => 'SETUP_IRSETLIST_CHANGE'
 				,'externalValue' => sub {
 							my ($client,$value,$key) = @_;
 							return if (!defined($client));
@@ -1278,8 +1276,8 @@ sub initSetupConfig {
 				'Suppress_PrefDesc' => 1,
 				'Suppress_PrefLine' => 1,
 				'Suppress_PrefSub' => 1,
-				'GroupHead' => string('SETUP_RESCAN'),
-				'GroupDesc' => string('SETUP_RESCAN_DESC'),
+				'GroupHead' => 'SETUP_RESCAN',
+				'GroupDesc' => 'SETUP_RESCAN_DESC',
 				'GroupLine' => 1,
 			},
 		},
@@ -1290,7 +1288,7 @@ sub initSetupConfig {
 
 				'validate'     => \&Slim::Utils::Validate::inHash,
 				'validateArgs' => [\&Slim::Utils::Strings::hash_of_languages],
-				'options'      => undef,  # filled by initSetup using Slim::Utils::Strings::hash_of_languages()
+				'options'      => sub {return {Slim::Utils::Strings::hash_of_languages()};},
 				'onChange'     => sub {
 					Slim::Utils::PluginManager::clearPlugins();
 					Slim::Utils::Strings::init();
@@ -1303,16 +1301,16 @@ sub initSetupConfig {
 			'audiodir' => {
 				'validate'     => \&Slim::Utils::Validate::isDir,
 				'validateArgs' => [1],
-				'changeIntro'  => string('SETUP_OK_USING'),
-				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
+				'changeIntro'  => 'SETUP_OK_USING',
+				'rejectMsg'    => 'SETUP_BAD_DIRECTORY',
 				'PrefSize'     => 'large',
 			},
 
 			'playlistdir' => {
 				'validate'     => \&Slim::Utils::Validate::isDir,
 				'validateArgs' => [1],
-				'changeIntro'  => string('SETUP_PLAYLISTDIR_OK'),
-				'rejectMsg'    => string('SETUP_BAD_DIRECTORY'),
+				'changeIntro'  => 'SETUP_PLAYLISTDIR_OK',
+				'rejectMsg'    => 'SETUP_BAD_DIRECTORY',
 				'PrefSize'     => 'large',
 			},
 
@@ -1337,8 +1335,8 @@ sub initSetupConfig {
 					Slim::Control::Request::executeRequest($client, $rescanType);
 				},
 				'inputTemplate' => 'setup_input_submit.html',
-				'ChangeButton'  => string('SETUP_RESCAN_BUTTON'),
-				'changeIntro'   => string('RESCANNING'),
+				'ChangeButton'  => 'SETUP_RESCAN_BUTTON',
+				'changeIntro'   => 'RESCANNING',
 				'dontSet'       => 1,
 				'changeMsg'     => '',
 			},
@@ -1346,9 +1344,9 @@ sub initSetupConfig {
 				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'optionSort' => 'K',
 				'options' => {
-					'1rescan'   => string('SETUP_STANDARDRESCAN'),
-					'2wipedb'   => string('SETUP_WIPEDB'),
-					'3playlist' => string('SETUP_PLAYLISTRESCAN'),
+					'1rescan'   => 'SETUP_STANDARDRESCAN',
+					'2wipedb'   => 'SETUP_WIPEDB',
+					'3playlist' => 'SETUP_PLAYLISTRESCAN',
 				},
 				'dontSet'       => 1,
 				'changeMsg'     => '',
@@ -1379,8 +1377,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_PLUGINS')
-					,'GroupDesc' => string('SETUP_GROUP_PLUGINS_DESC')
+					,'GroupHead' => 'SETUP_GROUP_PLUGINS'
+					,'GroupDesc' => 'SETUP_GROUP_PLUGINS_DESC'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -1392,7 +1390,7 @@ sub initSetupConfig {
 				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
-				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
+				,'changeMsg' => 'SETUP_PLUGINLIST_CHANGE'
 				,'onChange' => \&Slim::Utils::PluginManager::clearGroups
 				,'externalValue' => sub {
 						my ($client, $value, $key) = @_;
@@ -1402,8 +1400,8 @@ sub initSetupConfig {
 			,'plugins-onthefly' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse
 				,'options' => {
-						'1' => string('SETUP_PLUGINS-ONTHEFLY_1')
-						,'0' => string('SETUP_PLUGINS-ONTHEFLY_0')
+						'1' => 'SETUP_PLUGINS-ONTHEFLY_1'
+						,'0' => 'SETUP_PLUGINS-ONTHEFLY_0'
 					}
 				}
 			}
@@ -1428,8 +1426,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('RADIO')
-					,'GroupDesc' => string('SETUP_GROUP_RADIO_DESC')
+					,'GroupHead' => 'RADIO'
+					,'GroupDesc' => 'SETUP_GROUP_RADIO_DESC'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -1441,7 +1439,7 @@ sub initSetupConfig {
 				,'validate' => \&Slim::Utils::Validate::trueFalse
 				,'inputTemplate' => 'setup_input_array_chk.html'
 				,'arrayMax' => undef #set in preEval
-				,'changeMsg' => string('SETUP_PLUGINLIST_CHANGE')
+				,'changeMsg' => 'SETUP_PLUGINLIST_CHANGE'
 				,'onChange' => \&Slim::Utils::PluginManager::clearGroups
 				,'externalValue' => sub {
 						my ($client,$value,$key) = @_;
@@ -1453,10 +1451,6 @@ sub initSetupConfig {
 	,'INTERFACE_SETTINGS' => {
 		'title' => string('INTERFACE_SETTINGS')
 		,'parent' => 'SERVER_SETTINGS'
-		,'preEval' => sub {
-					my ($client,$paramref,$pageref) = @_;
-					$pageref->{'Prefs'}{'skin'}{'options'} = {skins(1)};
-				}
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
@@ -1468,9 +1462,9 @@ sub initSetupConfig {
 			'skin'		=> {
 						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [\&skins]
-						,'options' => undef #filled by initSetup using skins()
-						,'changeIntro' => string('SETUP_SKIN_OK')
-						,'changeAddlText' => string('HIT_RELOAD')
+						,'options' => sub {return {skins(1)};}
+						,'changeIntro' => 'SETUP_SKIN_OK'
+						,'changeAddlText' => 'HIT_RELOAD'
 						,'onChange' => sub {
 							for my $client (Slim::Player::Client::clients()) {
 								$client->currentPlaylistChangeTime(time());
@@ -1496,8 +1490,8 @@ sub initSetupConfig {
 			,'artfolder' => {
 					'validate' => \&Slim::Utils::Validate::isDir
 					,'validateArgs' => [1]
-					,'changeIntro' => string('SETUP_ARTFOLDER')
-					,'rejectMsg' => string('SETUP_BAD_DIRECTORY')
+					,'changeIntro' => 'SETUP_ARTFOLDER'
+					,'rejectMsg' => 'SETUP_BAD_DIRECTORY'
 					,'PrefSize' => 'large'
 				}
 			,'thumbSize' => {
@@ -1507,20 +1501,20 @@ sub initSetupConfig {
 			,'includeNoArt' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
-								'1' => string('SETUP_INCLUDENOART_1')
-								,'0' => string('SETUP_INCLUDENOART_0')
+								'1' => 'SETUP_INCLUDENOART_1',
+								'0' => 'SETUP_INCLUDENOART_0'
 							}
 					}
 			,'sortBrowseArt' => {
 						'validate' => \&validateAcceptAll
 						,'options' => {
-								'album' => string('SETUP_SORTBROWSEART_ALBUM')
-								,'artist,album' => string('SETUP_SORTBROWSEART_ARTISTALBUM')
-								,'artist,year,album' => string('SETUP_SORTBROWSEART_ARTISTYEARALBUM')
-								,'year,album' => string('SETUP_SORTBROWSEART_YEARALBUM')
-								,'year,artist,album' => string('SETUP_SORTBROWSEART_YEARARTISTALBUM')
-								,'genre,album' => string('SETUP_SORTBROWSEART_GENREALBUM')
-								,'genre,artist,album' => string('SETUP_SORTBROWSEART_GENREARTISTALBUM')
+								'album'              => 'SETUP_SORTBROWSEART_ALBUM',
+								'artist,album'       => 'SETUP_SORTBROWSEART_ARTISTALBUM',
+								'artist,year,album'  => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
+								'year,album'         => 'SETUP_SORTBROWSEART_YEARALBUM',
+								'year,artist,album'  => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
+								'genre,album'        => 'SETUP_SORTBROWSEART_GENREALBUM',
+								'genre,artist,album' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
 							}
 					}
 			}
@@ -1599,8 +1593,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_FORMATS')
-					,'GroupDesc' => string('SETUP_GROUP_FORMATS_DESC')
+					,'GroupHead' => 'SETUP_GROUP_FORMATS'
+					,'GroupDesc' => 'SETUP_GROUP_FORMATS_DESC'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 					,'GroupPrefHead' => '<tr><th>&nbsp;' .
@@ -1617,7 +1611,7 @@ sub initSetupConfig {
 					,'validate' => \&Slim::Utils::Validate::trueFalse
 					,'inputTemplate' => 'setup_input_array_chk.html'
 					,'arrayMax' => undef #set in preEval
-					,'changeMsg' => string('SETUP_FORMATSLIST_CHANGE')
+					,'changeMsg' => 'SETUP_FORMATSLIST_CHANGE'
 					,'externalValue' => sub {
 								my ($client,$value,$key) = @_;
 									
@@ -1663,7 +1657,7 @@ sub initSetupConfig {
 
 			'DisplayInArtists' => {
 				'PrefOrder' => [qw(composerInArtists conductorInArtists bandInArtists)],
-				'GroupHead' => string('SETUP_COMPOSERINARTISTS'),
+				'GroupHead' => 'SETUP_COMPOSERINARTISTS',
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefSub' => 1,
 				'GroupSub' => 1,
@@ -1673,7 +1667,7 @@ sub initSetupConfig {
 
 			'CommonAlbumTitles' => {
 				'PrefOrder' => [qw(commonAlbumTitlesToggle commonAlbumTitles)],
-				'GroupHead' => string('SETUP_COMMONALBUMTITLES'),
+				'GroupHead' => 'SETUP_COMMONALBUMTITLES',
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefSub' => 1,
 				'GroupSub' => 1,
@@ -1683,7 +1677,7 @@ sub initSetupConfig {
 
 			'VariousArtists' => {
 				'PrefOrder' => [qw(variousArtistAutoIdentification useBandAsAlbumArtist variousArtistsString)],
-				'GroupHead' => string('SETUP_VARIOUSARTISTS'),
+				'GroupHead' => 'SETUP_VARIOUSARTISTS',
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefSub' => 1,
 				'GroupSub' => 1,
@@ -1727,16 +1721,16 @@ sub initSetupConfig {
 			'variousArtistAutoIdentification' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
-					'1' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1'),
-					'0' => string('SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0'),
+					'1' => 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1',
+					'0' => 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0',
 				},
 			},
 
 			'useBandAsAlbumArtist' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
-					'1' => string('SETUP_USEBANDASALBUMARTIST_1'),
-					'0' => string('SETUP_USEBANDASALBUMARTIST_0'),
+					'1' => 'SETUP_USEBANDASALBUMARTIST_1',
+					'0' => 'SETUP_USEBANDASALBUMARTIST_0',
 				},
 			},
 
@@ -1748,77 +1742,77 @@ sub initSetupConfig {
 			'playtrackalbum' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
-					'1' => string('SETUP_PLAYTRACKALBUM_1'),
-					'0' => string('SETUP_PLAYTRACKALBUM_0'),
+					'1' => 'SETUP_PLAYTRACKALBUM_1',
+					'0' => 'SETUP_PLAYTRACKALBUM_0',
 				},
 			},
 
 			'composerInArtists' => { 	 
 
 				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => string('COMPOSER'),
+				'PrefChoose'    => 'COMPOSER',
 				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'conductorInArtists' => { 	 
 
 				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => string('CONDUCTOR'),
+				'PrefChoose'    => 'CONDUCTOR',
 				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'bandInArtists' => { 	 
 
 				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => string('BAND'),
+				'PrefChoose'    => 'BAND',
 				'validate'      => \&Slim::Utils::Validate::trueFalse,
 			},
 
 			'noGenreFilter' => { 	 
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => { 	 
-					'1' => string('SETUP_NOGENREFILTER_1'),
-					'0' => string('SETUP_NOGENREFILTER_0'),
+					'1' => 'SETUP_NOGENREFILTER_1',
+					'0' => 'SETUP_NOGENREFILTER_0',
 				},
 			},
 
 			'searchSubString' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
-					'1' => string('SETUP_SEARCHSUBSTRING_1'),
-					'0' => string('SETUP_SEARCHSUBSTRING_0'),
+					'1' => 'SETUP_SEARCHSUBSTRING_1',
+					'0' => 'SETUP_SEARCHSUBSTRING_0',
 				},
 			},
 
 			'persistPlaylists' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
-					'1' => string('SETUP_PERSISTPLAYLISTS_1'),
-					'0' => string('SETUP_PERSISTPLAYLISTS_0'),
+					'1' => 'SETUP_PERSISTPLAYLISTS_1',
+					'0' => 'SETUP_PERSISTPLAYLISTS_0',
 				},
 			},
 
 			'reshuffleOnRepeat' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options'  => {
-					'1' => string('SETUP_RESHUFFLEONREPEAT_1'),
-					'0' => string('SETUP_RESHUFFLEONREPEAT_0'),
+					'1' => 'SETUP_RESHUFFLEONREPEAT_1',
+					'0' => 'SETUP_RESHUFFLEONREPEAT_0',
 				},
 			},
 
 			'saveShuffled' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
-					'1' => string('SETUP_SAVESHUFFLED_1'),
-					'0' => string('SETUP_SAVESHUFFLED_0'),
+					'1' => 'SETUP_SAVESHUFFLED_1',
+					'0' => 'SETUP_SAVESHUFFLED_0',
 				},
 			},
 
 			'checkVersion' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
-					'1' => string('SETUP_CHECKVERSION_1'),
-					'0' => string('SETUP_CHECKVERSION_0'),
+					'1' => 'SETUP_CHECKVERSION_1',
+					'0' => 'SETUP_CHECKVERSION_0',
 				},
 			},
 
@@ -1831,15 +1825,15 @@ sub initSetupConfig {
 				},
 
 				'options' => {
-					'1' => string ('SETUP_GROUPDISCS_1'),
-					'0' => string ('SETUP_GROUPDISCS_0'),
+					'1' => 'SETUP_GROUPDISCS_1',
+					'0' => 'SETUP_GROUPDISCS_0',
 				},
 			 },
 
 			'commonAlbumTitlesToggle' => {
 				'validate'      => \&Slim::Utils::Validate::acceptAll,
 				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => string('SETUP_COMMONALBUMTITLES_TOGGLE'),
+				'PrefChoose'    => 'SETUP_COMMONALBUMTITLES_TOGGLE',
 			},
 
 			'commonAlbumTitles'	=> {
@@ -1884,8 +1878,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_TITLEFORMAT')
-					,'GroupDesc' => string('SETUP_GROUP_TITLEFORMATS_DESC')
+					,'GroupHead' => 'SETUP_TITLEFORMAT'
+					,'GroupDesc' => 'SETUP_GROUP_TITLEFORMATS_DESC'
 					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') .
 										'</th><th></th><th>' . string('SETUP_FORMATS') .
 										'</th><th></th></tr>'
@@ -1899,8 +1893,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GUESSFILEFORMATS')
-					,'GroupDesc' => string('SETUP_GROUP_GUESSFILEFORMATS_DESC')
+					,'GroupHead' => 'SETUP_GUESSFILEFORMATS'
+					,'GroupDesc' => 'SETUP_GROUP_GUESSFILEFORMATS_DESC'
 					,'GroupPrefHead' => '<tr><th>' .
 										'</th><th></th><th>' . string('SETUP_FORMATS') .
 										'</th><th></th></tr>'
@@ -1930,30 +1924,29 @@ sub initSetupConfig {
 						,'arrayCurrentPref' => 'titleFormatWeb'
 						,'PrefSize' => 'large'
 						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&Slim::Utils::Validate::format
-						,'changeAddlText' => 'Format will be changed for any clients using this setting'
+						,'validate' => \&Slim::Utils::Validate::isFormat
+						,'changeAddlText' => 'SETUP_TITLEFORMAT_CHANGED'
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
 									if (exists($changeref->{'titleFormat'}{'Processed'})) {
 										return;
 									}
 									processArrayChange($client,'titleFormat',$paramref,$pageref);
-									fillFormatOptions();
 									$changeref->{'titleFormat'}{'Processed'} = 1;
 								}
 							}
 			,'showArtist' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
-									'0' => string('DISABLED')
-									,'1' => string('ENABLED')
+									'0' => 'DISABLED',
+									'1' => 'ENABLED'
 								}
 							}
 			,'showYear' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
-									'0' => string('DISABLED')
-									,'1' => string('ENABLED')
+									'0' => 'DISABLED',
+									'1' => 'ENABLED'
 								}
 							}
 			,'guessFileFormats'	=> {
@@ -1964,15 +1957,14 @@ sub initSetupConfig {
 						,'arrayBasicValue' => 0
 						,'PrefSize' => 'large'
 						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&Slim::Utils::Validate::format
-						,'changeAddlText' => 'All files without tags will be processed this way'
+						,'validate' => \&Slim::Utils::Validate::isFormat
+						,'changeAddlText' => 'SETUP_GUESSFILEFORMATS_CHANGED'
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
 									if (exists($changeref->{'guessFileFormats'}{'Processed'})) {
 										return;
 									}
 									processArrayChange($client,'guessFileFormats',$paramref,$pageref);
-									$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 									$changeref->{'guessFileFormats'}{'Processed'} = 1;
 								}
 					}
@@ -1986,23 +1978,22 @@ sub initSetupConfig {
 								# DD is the day of the month
 								# YYYY is the 4 digit year
 								# YY is the 2 digit year
-								q(%A, %B |%d, %Y)	=> "WWWW, MMMM DD, YYYY"
-								,q(%a, %b |%d, %Y)	=> "WWW, MMM DD, YYYY"
-								,q(%a, %b |%d, '%y)	=> "WWW, MMM DD, 'YY" # '" 
-									# The previous comment fixes syntax highlighting thrown off by the embedded single quote
-								,q(%A, |%d %B %Y)	=> "WWWW, DD MMMM YYYY"
-								,q(%A, |%d. %B %Y)	=> "WWWW, DD. MMMM YYYY"
-								,q(%a, |%d %b %Y)	=> "WWW, DD MMM YYYY"
-								,q(%a, |%d. %b %Y)	=> "WWW, DD. MMM YYYY"
-								,q(%A |%d %B %Y)		=> "WWWW DD MMMM YYYY"
-								,q(%A |%d. %B %Y)	=> "WWWW DD. MMMM YYYY"
-								,q(%a |%d %b %Y)		=> "WWW DD MMM YYYY"
-								,q(%a |%d. %b %Y)	=> "WWW DD. MMM YYYY"
+								q(%A, %B |%d, %Y)  => q(WWWW, MMMM DD, YYYY),
+								q(%a, %b |%d, %Y)  => q(WWW, MMM DD, YYYY),
+								q(%a, %b |%d, '%y) => q(WWW, MMM DD, 'YY),
+								q(%A, |%d %B %Y)   => q(WWWW, DD MMMM YYYY),
+								q(%A, |%d. %B %Y)  => q(WWWW, DD. MMMM YYYY),
+								q(%a, |%d %b %Y)   => q(WWW, DD MMM YYYY),
+								q(%a, |%d. %b %Y)  => q(WWW, DD. MMM YYYY),
+								q(%A |%d %B %Y)    => q(WWWW DD MMMM YYYY),
+								q(%A |%d. %B %Y)   => q(WWWW DD. MMMM YYYY),
+								q(%a |%d %b %Y)    => q(WWW DD MMM YYYY),
+								q(%a |%d. %b %Y)   => q(WWW DD. MMM YYYY),
 								# Japanese styles
-								,q(%Y/%m/%d\(%a\))	=> "YYYY/MM/DD(WWW)"
-								,q(%Y-%m-%d\(%a\))	=> "YYYY-MM-DD(WWW)"
-								,q(%Y/%m/%d %A)	=> "YYYY/MM/DD WWWW"
-								,q(%Y-%m-%d %A)	=> "YYYY-MM-DD WWWW"
+								q(%Y/%m/%d\(%a\))  => q{YYYY/MM/DD(WWW)},
+								q(%Y-%m-%d\(%a\))  => q{YYYY-MM-DD(WWW)},
+								q(%Y/%m/%d %A)     => q{YYYY/MM/DD WWWW},
+								q(%Y-%m-%d %A)     => q{YYYY-MM-DD WWWW},
 								}
 					}
 			,"shortdateFormat" => {
@@ -2012,21 +2003,21 @@ sub initSetupConfig {
 								# DD is the day of the year
 								# YYYY is the 4 digit year
 								# YY is the 2 digit year
-								q(%m/%d/%Y)	=> "MM/DD/YYYY"
-								,q(%m/%d/%y)	=> "MM/DD/YY"
-								,q(%m-%d-%Y)	=> "MM-DD-YYYY"
-								,q(%m-%d-%y)	=> "MM-DD-YY"
-								,q(%m.%d.%Y)	=> "MM.DD.YYYY"
-								,q(%m.%d.%y)	=> "MM.DD.YY"
-								,q(%d/%m/%Y)	=> "DD/MM/YYYY"
-								,q(%d/%m/%y)	=> "DD/MM/YY"
-								,q(%d-%m-%Y)	=> "DD-MM-YYYY"
-								,q(%d-%m-%y)	=> "DD-MM-YY"
-								,q(%d.%m.%Y)	=> "DD.MM.YYYY"
-								,q(%d.%m.%y)	=> "DD.MM.YY"
-								,q(%Y-%m-%d)	=> "YYYY-MM-DD (ISO)"
+								q(%m/%d/%Y) => q{MM/DD/YYYY},
+								q(%m/%d/%y) => q{MM/DD/YY},
+								q(%m-%d-%Y) => q{MM-DD-YYYY},
+								q(%m-%d-%y) => q{MM-DD-YY},
+								q(%m.%d.%Y) => q{MM.DD.YYYY},
+								q(%m.%d.%y) => q{MM.DD.YY},
+								q(%d/%m/%Y) => q{DD/MM/YYYY},
+								q(%d/%m/%y) => q{DD/MM/YY},
+								q(%d-%m-%Y) => q{DD-MM-YYYY},
+								q(%d-%m-%y) => q{DD-MM-YY},
+								q(%d.%m.%Y) => q{DD.MM.YYYY},
+								q(%d.%m.%y) => q{DD.MM.YY},
+								q(%Y-%m-%d) => q{YYYY-MM-DD (ISO)},
 								# Japanese style
-								,q(%Y/%m/%d)	=> "YYYY/MM/DD"
+								q(%Y/%m/%d) => q{YYYY/MM/DD},
 								}
 					}
 			,"timeFormat" => {
@@ -2038,28 +2029,28 @@ sub initSetupConfig {
 								# ss is seconds
 								# pm is either AM or PM
 								# anything at the end in parentheses is just a comment
-								q(%I:%M:%S %p)	=> "hh:mm:ss pm (12h)"
-								,q(%I:%M %p)	=> "hh:mm pm (12h)"
-								,q(%H:%M:%S)	=> "hh:mm:ss (24h)"
-								,q(%H:%M)	=> "hh:mm (24h)"
-								,q(%H.%M.%S)	=> "hh.mm.ss (24h)"
-								,q(%H.%M)	=> "hh.mm (24h)"
-								,q(%H,%M,%S)	=> "hh,mm,ss (24h)"
-								,q(%H,%M)	=> "hh,mm (24h)"
+								q(%I:%M:%S %p)	=> q{hh:mm:ss pm (12h)}
+								,q(%I:%M %p)	=> q{hh:mm pm (12h)}
+								,q(%H:%M:%S)	=> q{hh:mm:ss (24h)}
+								,q(%H:%M)	=> q{hh:mm (24h)}
+								,q(%H.%M.%S)	=> q{hh.mm.ss (24h)}
+								,q(%H.%M)	=> q{hh.mm (24h)}
+								,q(%H,%M,%S)	=> q{hh,mm,ss (24h)}
+								,q(%H,%M)	=> q{hh,mm (24h)}
 								# no idea what the separator between minutes and seconds should be here
-								,q(%Hh%M:%S)	=> "hh'h'mm:ss (24h 03h00:00 15h00:00)"
-								,q(%Hh%M)	=> "hh'h'mm (24h 03h00 15h00)"
-								,q(|%I:%M:%S %p)	=> "h:mm:ss pm (12h)"
-								,q(|%I:%M %p)		=> "h:mm pm (12h)"
-								,q(|%H:%M:%S)		=> "h:mm:ss (24h)"
-								,q(|%H:%M)		=> "h:mm (24h)"
-								,q(|%H.%M.%S)		=> "h.mm.ss (24h)"
-								,q(|%H.%M)		=> "h.mm (24h)"
-								,q(|%H,%M,%S)		=> "h,mm,ss (24h)"
-								,q(|%H,%M)		=> "h,mm (24h)"
+								,q(%Hh%M:%S)	=> q{hh'h'mm:ss (24h 03h00:00 15h00:00)}
+								,q(%Hh%M)	=> q{hh'h'mm (24h 03h00 15h00)}
+								,q(|%I:%M:%S %p)	=> q{h:mm:ss pm (12h)}
+								,q(|%I:%M %p)		=> q{h:mm pm (12h)}
+								,q(|%H:%M:%S)		=> q{h:mm:ss (24h)}
+								,q(|%H:%M)		=> q{h:mm (24h)}
+								,q(|%H.%M.%S)		=> q{h.mm.ss (24h)}
+								,q(|%H.%M)		=> q{h.mm (24h)}
+								,q(|%H,%M,%S)		=> q{h,mm,ss (24h)}
+								,q(|%H,%M)		=> q{h,mm (24h)}
 								# no idea what the separator between minutes and seconds should be here
-								,q(|%Hh%M:%S)		=> "h'h'mm:ss (24h 03h00:00 15h00:00)"
-								,q(|%Hh%M)		=> "h'h'mm (24h 03h00 15h00)"
+								,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 03h00:00 15h00:00)}
+								,q(|%Hh%M)		=> q{h'h'mm (24h 03h00 15h00)}
 								}
 					}
 			}
@@ -2084,8 +2075,8 @@ sub initSetupConfig {
 			'authorize' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
 						,'options' => {
-								'0' => string('SETUP_NO_AUTHORIZE')
-								,'1' => string('SETUP_AUTHORIZE')
+								'0' => 'SETUP_NO_AUTHORIZE',
+								'1' => 'SETUP_AUTHORIZE',
 								}
 					}
 			,'username' => {
@@ -2095,17 +2086,17 @@ sub initSetupConfig {
 			,'password' => {
 						'validate' => \&Slim::Utils::Validate::password
 						,'inputTemplate' => 'setup_input_passwd.html'
-						,'changeMsg' => string('SETUP_PASSWORD_CHANGED')
+						,'changeMsg' => 'SETUP_PASSWORD_CHANGED'
 						,'PrefSize' => 'large'
 					}
 			,'filterHosts' => {
 						
 						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'PrefHead' => string('SETUP_IPFILTER_HEAD')
-						,'PrefDesc' => string('SETUP_IPFILTER_DESC')
+						,'PrefHead' => 'SETUP_IPFILTER_HEAD'
+						,'PrefDesc' => 'SETUP_IPFILTER_DESC'
 						,'options' => {
-								'0' => string('SETUP_NO_IPFILTER')
-								,'1' => string('SETUP_IPFILTER')
+								'0' => 'SETUP_NO_IPFILTER',
+								'1' => 'SETUP_IPFILTER',
 							}
 					}
 			,'csrfProtectionLevel' => {
@@ -2113,16 +2104,16 @@ sub initSetupConfig {
 							,'validateArgs' => [0,2,1,1]
 							,'optionSort' => 'V'
 							,'options' => {
-									'0' => string('NONE')
-									,'1' => string('MEDIUM')
-									,'2' => string('HIGH')
+									'0' => 'NONE',
+									'1' => 'MEDIUM',
+									'2' => 'HIGH',
 
 								}
 						}
 			,'allowedHosts' => {
 						'validate' => \&Slim::Utils::Validate::allowedHosts
-						,'PrefHead' => string('SETUP_FILTERRULE_HEAD')
-						,'PrefDesc' => string('SETUP_FILTERRULE_DESC')
+						,'PrefHead' => 'SETUP_FILTERRULE_HEAD'
+						,'PrefDesc' => 'SETUP_FILTERRULE_DESC'
 						,'PrefSize' => 'large'
 					}
 
@@ -2151,16 +2142,16 @@ sub initSetupConfig {
 			'disableStatistics' => {
 				'validate' => \&validateTrueFalse,
 				'options' => {
-					'1' => string('SETUP_DISABLE_STATISTICS'),
-					'0' => string('SETUP_ENABLE_STATISTICS'),
+					'1' => 'SETUP_DISABLE_STATISTICS',
+					'0' => 'SETUP_ENABLE_STATISTICS',
 				},
 			},
 
 			'lookForArtwork' => {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
-					'0' => string('SETUP_NO_ARTWORK'),
-					'1' => string('SETUP_LOOKFORARTWORK'),
+					'0' => 'SETUP_NO_ARTWORK',
+					'1' => 'SETUP_LOOKFORARTWORK',
 				},
 			},
 
@@ -2174,8 +2165,8 @@ sub initSetupConfig {
 			},
 
 			'databaseCacheSize' => {
-				'PrefHead' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD'),
-				'PrefDesc' => string('SETUP_DATBASE_TUNE_CACHE_SIZE_DESC'),
+				'PrefHead' => 'SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD',
+				'PrefDesc' => 'SETUP_DATBASE_TUNE_CACHE_SIZE_DESC',
 
 				'validate' => \&Slim::Utils::Validate::isInt,
 
@@ -2189,12 +2180,12 @@ sub initSetupConfig {
 			},
 
 			'databaseTempStorage' => {
-				'PrefHead' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD'),
-				'PrefDesc' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC'),
+				'PrefHead' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD',
+				'PrefDesc' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC',
 
 				'options' => {
-					'MEMORY' => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY'),
-					'FILE'   => string('SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE'),
+					'MEMORY' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY',
+					'FILE'   => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE',
 				},
 
 				'onChange' => sub {
@@ -2226,8 +2217,8 @@ sub initSetupConfig {
 					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_GROUP_TCP_PARAMS')
-					,'GroupDesc' => string('SETUP_GROUP_TCP_PARAMS_DESC')
+					,'GroupHead' => 'SETUP_GROUP_TCP_PARAMS'
+					,'GroupDesc' => 'SETUP_GROUP_TCP_PARAMS_DESC'
 					,'GroupLine' => 1
 					,'GroupSub' => 1
 				}
@@ -2291,7 +2282,7 @@ sub initSetupConfig {
 #					,'Suppress_PrefDesc' => 1
 					,'Suppress_PrefLine' => 1
 					,'PrefsInTable' => 1
-					,'GroupDesc' => string('SETUP_GROUP_DEBUG_DESC')
+					,'GroupDesc' => 'SETUP_GROUP_DEBUG_DESC'
 				}
 			}
 		,'Prefs' => {
@@ -2336,13 +2327,9 @@ sub initSetupConfig {
 
 sub initSetup {
 	initSetupConfig();
-	$setup{'SERVER_SETTINGS'}{'Prefs'}{'language'}{'options'} = {Slim::Utils::Strings::hash_of_languages()};
-	$setup{'INTERFACE_SETTINGS'}{'Prefs'}{'skin'}{'options'} = {skins(1)};
 	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'options'}];
 	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'options'}];
 	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'options'}];
-	fillFormatOptions();
-	fillSetupOptions('PLAYER_SETTINGS','titleFormat','titleFormat');
 	fillAlarmOptions();
 }
 
@@ -2371,7 +2358,7 @@ sub fillAlarmOptions {
 	for my $i (0..7) {
 		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmvolume'.$i} = {
 			'validate' => \&Slim::Utils::Validate::number
-			,'PrefChoose' => string('SETUP_ALARMVOLUME').string('COLON')
+			,'PrefChoose' => 'SETUP_ALARMVOLUME'
 			,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
 			,'currentValue' => sub {
 				my $client = shift;
@@ -2383,9 +2370,9 @@ sub fillAlarmOptions {
 		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'.$i} = {
 			'validate' => \&Slim::Utils::Validate::isTime
 			,'validateArgs' => [0,undef],
-			,'PrefChoose' => string('ALARM_SET').string('COLON')
-			,'changeIntro' => string('ALARM_SET')
-			,'rejectIntro' => string('ALARM_SET')
+			,'PrefChoose' => 'ALARM_SET'
+			,'changeIntro' => 'ALARM_SET'
+			,'rejectIntro' => 'ALARM_SET'
 			,'currentValue' => sub {
 				my $client = shift;
 				return if (!defined($client));
@@ -2401,10 +2388,10 @@ sub fillAlarmOptions {
 		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarm'.$i} = {
 			'validate' => \&Slim::Utils::Validate::trueFalse
 			,'PrefHead' => ' '
-			,'PrefChoose' => string('SETUP_ALARM').string('COLON')
+			,'PrefChoose' => 'SETUP_ALARM'
 			,'options' => {
-					'1' => string('ON')
-					,'0' => string('OFF')
+					'1' => 'ON',
+					'0' => 'OFF',
 				}
 			,'currentValue' => sub {
 					my $client = shift;
@@ -2414,7 +2401,7 @@ sub fillAlarmOptions {
 		};
 		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmplaylist'.$i} = {
 			'validate' => \&Slim::Utils::Validate::inHash
-			,'PrefChoose' => string('ALARM_SELECT_PLAYLIST').string('COLON')
+			,'PrefChoose' => 'ALARM_SELECT_PLAYLIST'
 			,'validateArgs' => undef
 			,'options' => undef
 			,'currentValue' => sub {
@@ -2430,15 +2417,11 @@ sub fillAlarmOptions {
 			,'Suppress_PrefDesc' => 1
 			,'Suppress_PrefLine' => 1
 			,'Suppress_PrefSub' => 1
-			,'GroupHead' => string('ALARM_DAY'.$i)
+			,'GroupHead' => "ALARM_DAY$i"
 			,'GroupLine' => 1
 			,'GroupSub' => 1
 		};
 	};
-}
-
-sub fillFormatOptions {
-	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'guessFileFormats'}{'options'} = {hash_of_prefs('guessFileFormats')};
 }
 
 sub fillSetupOptions {
@@ -2559,7 +2542,7 @@ sub setup_HTTP {
 
 	if (!defined($paramref->{'page'}) || !exists($setup{$paramref->{'page'}})) {
 		$response->code(RC_NOT_FOUND);
-		$paramref->{'suggestion'} = "Try adding page=SERVER_SETTINGS.";
+		$paramref->{'suggestion'} = string('SETUP_BAD_PAGE_SUGGEST');
 		return Slim::Web::HTTP::filltemplatefile('html/errors/404.html',$paramref);
 	}
 
@@ -2602,7 +2585,7 @@ sub buildHTTP {
 
 	my ($page,@pages) = ();
 
-	foreach my $group (@{$pageref->{'GroupOrder'}}) {
+	for my $group (@{$pageref->{'GroupOrder'}}) {
 
 		next if !$group || !defined($pageref->{'Groups'}{$group});
 
@@ -2624,19 +2607,19 @@ sub buildHTTP {
 			$prefparams{'skinOverride'}      = $groupparams{'skinOverride'};
 			
 			my $token  = 'SETUP_' . uc($pref);
-			my $tokenDesc   = 'SETUP_' . uc($pref) . '_DESC';
-			my $tokenChoose = 'SETUP_' . uc($pref) . '_CHOOSE';
+			my $tokenDesc   = $token . '_DESC';
+			my $tokenChoose = $token . '_CHOOSE';
 
 			if (!exists $prefparams{'PrefHead'}) {
 				$prefparams{'PrefHead'} = (Slim::Utils::Strings::resolveString($token) || $pref);
 			}
 
 			if (!exists $prefparams{'PrefDesc'} && Slim::Utils::Strings::stringExists($tokenDesc)) {
-				$prefparams{'PrefDesc'} = string($tokenDesc);
+				$prefparams{'PrefDesc'} = $tokenDesc;
 			}
 
 			if (!exists $prefparams{'PrefChoose'} && Slim::Utils::Strings::stringExists($tokenChoose)) {
-				$prefparams{'PrefChoose'} = string($tokenChoose);
+				$prefparams{'PrefChoose'} = $tokenChoose;
 			}
 
 			if (!exists $prefparams{'inputTemplate'}) {
@@ -2644,7 +2627,7 @@ sub buildHTTP {
 			}
 
 			if (!exists $prefparams{'ChangeButton'}) {
-				$prefparams{'ChangeButton'} = string('CHANGE');
+				$prefparams{'ChangeButton'} = 'CHANGE';
 			}
 
 			$prefparams{'page'} = $paramref->{'page'};
@@ -2742,7 +2725,7 @@ sub buildHTTP {
 		}
 
 		if (!exists $groupparams{'ChangeButton'}) {
-			$groupparams{'ChangeButton'} = string('CHANGE');
+			$groupparams{'ChangeButton'} = 'CHANGE';
 		}
 
 		$paramref->{'GroupList'} .= ${Slim::Web::HTTP::filltemplatefile('setup_group.html',\%groupparams)};
@@ -3055,19 +3038,22 @@ sub setup_changes_HTTP {
 			$keyA = $key;
 			$keyI = '';
 		}
-		my $changemsg = undef;
+		my $changemsg  = undef;
 		my $changedval = undef;
+		my $changebase = undef;
 		if (exists $settingsref->{$keyA}{'noWarning'}) {
 			next;
 		}
 		if (exists $settingsref->{$keyA}{'changeIntro'}) {
-			$changemsg = sprintf($settingsref->{$keyA}{'changeIntro'},$keyI);
+			$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeIntro'});
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
-			$changemsg = string('SETUP_' . uc($keyA) . '_OK');
+			$changebase = string('SETUP_' . uc($keyA) . '_OK');
+		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA))) {
+			$changebase = string('SETUP_' . uc($keyA)) . ($keyI ne '' ? " $keyI" : '') . string('COLON');
 		} else {
-			$changemsg = (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA)) ?
-							string('SETUP_' . uc($keyA)) : $keyA) . ' ' . $keyI . ':';
+			$changebase = $keyA . ($keyI ne '' ? " $keyI" : '') . string('COLON');
 		}
+		$changemsg = sprintf($changebase,$keyI);
 		$changemsg .= '<p>';
 		#use external value from 'options' hash
 		if (exists $settingsref->{$keyA}{'changeoptions'}) {
@@ -3075,7 +3061,11 @@ sub setup_changes_HTTP {
 				$changedval = $settingsref->{$keyA}{'changeoptions'}{$changeref->{$key}{'new'}};
 			}
 		} elsif (exists $settingsref->{$keyA}{'options'}) {
-			$changedval = $settingsref->{$keyA}{'options'}{$changeref->{$key}{'new'}};
+			if (ref $settingsref->{$keyA}{'options'} eq 'CODE') {
+				$changedval = &{$settingsref->{$keyA}{'options'}}()->{$changeref->{$key}{'new'}};
+			} else {
+				$changedval = $settingsref->{$keyA}{'options'}{$changeref->{$key}{'new'}};
+			}
 		} elsif (exists $settingsref->{$keyA}{'externalValue'}) {
 			my $client;
 			if (exists $paramref->{'playerid'}) {
@@ -3086,13 +3076,13 @@ sub setup_changes_HTTP {
 			$changedval = $changeref->{$key}{'new'};
 		}
 		if (exists $settingsref->{$keyA}{'changeMsg'}) {
-			$changemsg .= $settingsref->{$keyA}{'changeMsg'};
+			$changemsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeMsg'});
 		} else {
 			$changemsg .= '%s';
 		}
 		$changemsg .= '</p>';
 		if (exists $settingsref->{$keyA}{'changeAddlText'}) {
-			$changemsg .= $settingsref->{$keyA}{'changeAddlText'};
+			$changemsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeAddlText'});
 		}
 		if (defined($changedval) && $changemsg) {
 			$paramref->{'warning'} .= sprintf($changemsg, $changedval);
@@ -3110,7 +3100,8 @@ sub setup_rejects_HTTP {
 		my $keyI = $2;
 		my $rejectmsg;
 		if (exists $settingsref->{$keyA}{'rejectIntro'}) {
-			$rejectmsg = sprintf($settingsref->{$keyA}{'rejectIntro'},$keyI);
+			my $rejectbase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'rejectIntro'});
+			$rejectmsg = sprintf($rejectbase,$keyI);
 		} else {
 			$rejectmsg = string('SETUP_NEW_VALUE') . ' ' . 
 						(string('SETUP_' . uc($keyA)) || $keyA) . ' ' . 
@@ -3118,15 +3109,14 @@ sub setup_rejects_HTTP {
 		}
 		$rejectmsg .= ' <blockquote> ';
 		if (exists $settingsref->{$keyA}{'rejectMsg'}) {
-			$rejectmsg .= $settingsref->{$keyA}{'rejectMsg'};
+			$rejectmsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'rejectMsg'});
 		} else {
 			$rejectmsg .= string('SETUP_BAD_VALUE');
 		}
 		$rejectmsg .= '</blockquote><p>';
 		if (exists $settingsref->{$keyA}{'rejectAddlText'}) {
-			$rejectmsg .= $settingsref->{$keyA}{'rejectAddlText'};
+			$rejectmsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'rejectAddlText'});
 		}
-		#force eval on the filltemplate call
 		$paramref->{'warning'} .= sprintf($rejectmsg, $rejectref->{$key});
 	}
 }
@@ -3136,6 +3126,8 @@ sub options_HTTP {
 
 	foreach my $key (keys %$settingsref) {
 		my $arrayMax = 0;
+		my $keyOptions = undef;
+
 		if (exists($settingsref->{$key}{'isArray'})) {
 			$arrayMax = ($client) ? $client->prefGetArrayMax($key) : Slim::Utils::Prefs::getArrayMax($key);
 			if (!defined $arrayMax) { $arrayMax = 0; }
@@ -3143,13 +3135,22 @@ sub options_HTTP {
 				$arrayMax += $settingsref->{$key}{'arrayAddExtra'};
 			}
 		}
+
+		if (exists $settingsref->{$key}{'options'}) {
+			if (ref $settingsref->{$key}{'options'} eq 'CODE') {
+				$keyOptions = \%{&{$settingsref->{$key}{'options'}}()};
+			} elsif (ref $settingsref->{$key}{'options'} eq 'HASH') {
+				$keyOptions = \%{$settingsref->{$key}{'options'}};
+			}
+		}
+
 		for (my $i=0; $i <= $arrayMax; $i++) {
 			my $key2 = $key . (exists($settingsref->{$key}{'isArray'}) ? $i : '');
-			if (exists $settingsref->{$key}{'options'}) {
+			if (defined $keyOptions) {
 				if ($settingsref->{$key}{'inputTemplate'} && $settingsref->{$key}{'inputTemplate'} eq 'setup_input_radio.html') {
-					$paramref->{$key2 . '_options'} = fillRadioOptions($paramref->{$key2},$settingsref->{$key}{'options'},$key,$settingsref->{$key}{'optionSort'});
+					$paramref->{$key2 . '_options'} = fillRadioOptions($paramref->{$key2},$keyOptions,$key,$settingsref->{$key}{'optionSort'});
 				} else {
-					$paramref->{$key2 . '_options'} = fillOptions($paramref->{$key2},$settingsref->{$key}{'options'},$settingsref->{$key}{'optionSort'});
+					$paramref->{$key2 . '_options'} = fillOptions($paramref->{$key2},$keyOptions,$settingsref->{$key}{'optionSort'});
 				}
 			}
 		}
@@ -3157,8 +3158,7 @@ sub options_HTTP {
 }
 
 # pass in the selected value and a hash of value => text pairs to get the option list filled
-# with the correct option selected.  Since the text portion can be a template (for stringification)
-# perform a filltemplate on the completed list
+# with the correct option selected.
 
 sub fillOptions {
 	my ($selected, $optionref, $sort) = @_;
@@ -3177,8 +3177,7 @@ sub fillOptions {
 }
 
 # pass in the selected value and a hash of value => text pairs to get the option list filled
-# with the correct option selected.  Since the text portion can be a template (for stringification)
-# perform a filltemplate on the completed list
+# with the correct option selected.
 
 sub fillRadioOptions {
 	my ($selected,$optionref,$option,$sort) = @_;
@@ -3205,10 +3204,7 @@ sub _sortOptionArray {
 
 	# First - resolve any string pointers
 	while (my ($key, $value) = each %{$optionref}) {
-
-		if (Slim::Utils::Strings::stringExists($value)) {
-			$optionref->{$key} = string($value);
-		}
+		$optionref->{$key} = Slim::Utils::Strings::getString($value);
 	}
 
 	# Now sort
