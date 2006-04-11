@@ -14,7 +14,7 @@ CREATE TABLE metainformation (
   version  int(10) unsigned,
   track_count  int(10) unsigned,
   total_time   int(10) unsigned
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 INSERT INTO metainformation VALUES (20, 0, 0);
 
@@ -81,7 +81,7 @@ CREATE TABLE tracks (
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: playlist_track
@@ -94,7 +94,7 @@ CREATE TABLE playlist_track (
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: dirlist_track
@@ -105,7 +105,7 @@ CREATE TABLE dirlist_track (
   dirlist  int(10) unsigned,
   item text,
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: albums
@@ -132,7 +132,7 @@ CREATE TABLE albums (
   INDEX albumsCustomSearchIndex (customsearch(255)),
   INDEX compilationSortIndex (compilation),
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 
 -- Testing
@@ -154,7 +154,7 @@ CREATE TABLE contributors (
   INDEX contributorsSearchIndex (namesearch(255)),
   INDEX contributorsCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: contributor_track
@@ -169,7 +169,7 @@ CREATE TABLE contributor_track (
   PRIMARY KEY (role,contributor,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: contributor_album
@@ -184,7 +184,7 @@ CREATE TABLE contributor_album (
   PRIMARY KEY (role,contributor,album),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: genres
@@ -203,7 +203,7 @@ CREATE TABLE genres (
   INDEX genreSearchIndex (namesearch(255)),
   INDEX genreCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: genre_track
@@ -216,7 +216,7 @@ CREATE TABLE genre_track (
   PRIMARY KEY (genre,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: comments
@@ -228,7 +228,7 @@ CREATE TABLE comments (
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: pluginversion
@@ -238,4 +238,4 @@ CREATE TABLE pluginversion (
   name varchar(255),
   version  int(10) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
