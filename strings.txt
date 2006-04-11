@@ -1523,6 +1523,13 @@ ABOUT_SHORT
 	ZH_CN	关于
 
 #
+# Setup page strings
+# General strings for the setup pages
+
+SETUP_BAD_PAGE_SUGGEST
+	EN	Try adding page=SERVER_SETTINGS.
+
+#
 # Setup Group strings
 # Use the following naming convention when adding strings here:
 # SETUP_GROUP_$groupname == Name of group, such as would be used in the header of the group on the web page
@@ -3035,6 +3042,9 @@ SETUP_TITLEFORMAT_DESC
 	NL	Je kunt de manier waarop een liedjestitel wordt getoond aanpassen door een formaat te kiezen hieronder. Deze keuzes zijn beschikbaar op de speler in het spelermenu bij Instellingen - Titelformaat. Klik op een keuzerondje in de Huidige formaten kolom om het huidige formaat te wijzigen. Klik op de knop Veranderen om de wijzigingen te bewaren.
 	ZH_CN	您可以从以下的菜单选择您所要显示在播放机前的歌曲标题格式。您也可以通过播放机上的菜单《设置》->《播放机标题格式》作选择。请点击《当前的》专栏旁的按钮以改变当前的标题格式。选择妥当后,请点击《更动》以保存您的选择。
 
+SETUP_TITLEFORMAT_CHANGED
+	EN	Format will be changed for any clients using this setting
+
 SETUP_ITUNESPLAYLISTFORMAT
 	CS	Formát playlistu iTunes
 	DE	iTunes Wiedergabelisten Format
@@ -3448,6 +3458,9 @@ SETUP_GUESSFILEFORMATS
 	NO	Gjett tag-format
 	SV	Gissa tag-format
 	ZH_CN	猜测标签格式
+
+SETUP_GUESSFILEFORMATS_CHANGED
+	EN	All files without tags will be processed this way
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	CS	Pro formáty souborl, které nemají smysluplné tagy, může se pokusit server nahradit tyko tagy pomocí názvu souboru a jeho cesty. Použitím stejných promněnných jako ve vobe formát skladeb je možné vytvořit předpis pro konverzi názvu souboru do jména tak aby server vytvářel pokud možno dobrou náhražku tagů. priorita se volí pořadím níže. První platný vzorec bude použit.
