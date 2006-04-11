@@ -1006,6 +1006,7 @@ sub mergeVariousArtistsAlbums {
 		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
 
 		$albumObj->compilation(1);
+		$albumObj->contributor($self->variousArtistsObject->id);
 		$albumObj->update;
 	}
 
