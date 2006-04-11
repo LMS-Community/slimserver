@@ -6,7 +6,7 @@ var p = 1;
 var inc = 0;
 var intervalID = false;
 
-[% PROCESS global.js %]
+[% PROCESS html/global.js %]
 // Update the progress dialog with the current state
 function refreshProgressBar(theData) {
 	var parsedData = fillDataHash(theData);

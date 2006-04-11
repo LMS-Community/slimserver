@@ -13,7 +13,7 @@ var thatTrack;
 var timeToRefresh = 20000;
 var previousState = new Object();
 
-[% PROCESS global.js %]
+[% PROCESS html/global.js %]
 
 // parses the data if it has not been done already
 function fillDataHash(theData) {
