@@ -101,6 +101,7 @@ function refreshPlayControls(theData) {
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+style+'.gif';
 			if (timer) {clearTimeout(timer);}
+			interval = 10;
 			if (controls[i] !='stop') {
 				interval = 1;
 			}
@@ -117,8 +118,13 @@ function refreshPlayControls(theData) {
 	}
 	
 	var mp = 0;
-	if (lastControl == 'play') {mp = 1; inc = 10}
-	ProgressUpdate(1,parsedData['durationseconds'],parsedData['songtime'],style);
+	if (lastControl == 'play') {
+		mp = 1;
+		inc = 10;
+		ProgressUpdate(1,parsedData['durationseconds'],parsedData['songtime'],style);
+	} else {
+		timer = setTimeout("ProgressUpdate( "+mp+","+parsedData['durationseconds']+","+parsedData['songtime']+")", interval * 1000);
+	}
 	//DumperPopup(theData.responseText);
 }
 
@@ -135,7 +141,8 @@ function ProgressUpdate(mp,_progressEnd,_progressAt,style) {
 			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
 
 		} else {
-
+			interval = 10;
+			inc = 10;
 			mp = 0;
 			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
 		}
@@ -161,10 +168,11 @@ function ProgressUpdate(mp,_progressEnd,_progressAt,style) {
 	
 	if (inc == 10 || interval == 10) {
 		var args = 'player='+player+'&ajaxRequest=1';
-		
+		//alert(interval);
 		getStatusData(args, refreshAll);
 		inc = 0;
 	} else {
+		//alert(['off',interval]);
 		timer = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval*1000);
 	}
 }
