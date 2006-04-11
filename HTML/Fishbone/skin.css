@@ -149,6 +149,11 @@ div#browsedbHeader {
 	padding-top: 2px;
 }
 
+.browsedbControls img {
+	padding: 0px;
+	margin: 0px;
+}
+
 .artworkControls {
 	padding: 0px;
 	margin: 0px;
@@ -304,6 +309,11 @@ TD, P, A {
 	line-height: 150%;
 }
 
+DIV {
+	line-height: 150%;
+	_height: 0%;
+}
+
 .small {
 	font-size : 6px;
 }
@@ -434,6 +444,7 @@ A.linkbtn:link {
 	color:white;
 	position: relative;
 	clear: all;
+	display: block;
 	top: 0px;
 	left: 0px;
 	width: 100%;
@@ -451,6 +462,7 @@ A.linkbtn:link {
 	position: absolute;
 	top: 0px;
 	left: 115px;
+	width: 100%;
 }
 
 #TopMenu1 .currentSongData
@@ -474,7 +486,6 @@ A.linkbtn:link {
 	color:white;
 	position: relative;
 	top: 0px;
-	right: 0px;
 	width: 100%;
 	float: left;
 }
@@ -613,6 +624,7 @@ A.linkbtn:link {
 #playlistframe IFRAME {
 	width: 100%;
 	position: relative;
+	background-color: black;
 	top: 0px;
 	float: left;
 }

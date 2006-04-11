@@ -53,14 +53,14 @@ function toggleStatus(div) {
 	}
 }
 
-function resize(page) {
+function resizePlaylist(page) {
 
-document.getElementById('playlistIframe').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
+document.getElementById('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
 }
 
 function openRemote(player,playername)
 {
-	window.open('status.html?player='+player+'&undock=1', playername, 'width=480,height=270');
+	window.open('status.html?player='+player+'&undock=1', playername, 'width=480,height=210,status=no');
 }
 
 function setCookie(name, value)
@@ -72,28 +72,7 @@ function setCookie(name, value)
 		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
 
-var p = 1;
-// Update the progress dialog with the current state
-function ProgressUpdate(mp,_progressEnd,_progressAt) 
-{
-	if (mp)_progressAt++;
-	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
-	if (document.all) //if IE 4+
-	{
-		p = (document.body.clientWidth / _progressEnd) * _progressAt;
-		//document.all.progressBar.innerWidth = p+" ";
-		eval("document.progressBar.width=p");
-	}
-	else if (document.getElementById) //else if NS6+
-	{
-		p = (document.width / _progressEnd) * _progressAt;
-		document.getElementById("progressBar").width=p+" ";
-		//eval("document.progressBar.width=p");
-	}
-	setTimeout("ProgressUpdate("+mp+","+_progressEnd+","+_progressAt+")", 1000);
-}
-
-function Click(mp,end,at) 
+function insertProgressBar(mp,end,at) 
 {
 	var s = '';
 	if (!mp) s = '_s';
@@ -191,3 +170,4 @@ function selectLink(lnk,reset) {
 function setLink(lnk) {
 	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player=" + getPlayer('SlimServer-player');
 }
+
