@@ -481,7 +481,7 @@ sub initSetupConfig {
 									}
 						}
 			,'doublesize' => {
-							'validate' => \&Slim::Utils::Validate::IinList
+							'validate' => \&Slim::Utils::Validate::inList
 							,'validateArgs' => [0,1]
 							,'options' => {
 								'0' => 'SMALL',
@@ -571,8 +571,8 @@ sub initSetupConfig {
 						,'changeIntro' => 'SETUP_AUTOBRIGHTNESS_CHOOSE'
 					}
 			,'scrollMode' => {
-				'validate' => \&Slim::Utils::Validate::number
-				,'validateArgs' => [0,undef,2]
+				'validate' => \&Slim::Utils::Validate::inList
+				,'validateArgs' => [0,1,2]
 				,'options' => {
 					 '0' => 'SETUP_SCROLLMODE_DEFAULT'
 					,'1' => 'SETUP_SCROLLMODE_SCROLLONCE'
@@ -603,12 +603,12 @@ sub initSetupConfig {
 			},
 			'scrollPixels' => {
 				'validate' => \&Slim::Utils::Validate::isInt
-				,'validateArgs' => [1,20,1,20]
+				,'validateArgs' => [1,20,1,1]
 				,'PrefChoose' => string('SINGLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 			},
 			'scrollPixelsDouble' => {
 				'validate' => \&Slim::Utils::Validate::isInt
-				,'validateArgs' => [1,20,1,20]
+				,'validateArgs' => [1,20,1,1]
 				,'changeIntro' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 				,'PrefChoose' => string('DOUBLE-LINE').' '.string('SETUP_SCROLLPIXELS').string('COLON')
 			},
@@ -637,7 +637,7 @@ sub initSetupConfig {
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
 					$pageref->{'Prefs'}{'pluginItemAction'}{'arrayMax'} = $i - 1;
-					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
+					removeExtraArrayEntries($client,'pluginItem',$paramref,$pageref);
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -983,6 +983,8 @@ sub initSetupConfig {
 		}
 		,'Prefs' => {
 			'powerOnResume' => {
+					'validate' => \&Slim::Utils::Validate::inHash,
+					'validateArgs' => [sub{return getSetupOptions('AUDIO_SETTINGS','powerOnResume');},1],
 					'options' => {
 							'PauseOff-NoneOn'      => 'SETUP_POWERONRESUME_PAUSEOFF_NONEON'
 							,'PauseOff-PlayOn'     => 'SETUP_POWERONRESUME_PAUSEOFF_PLAYON'
@@ -990,14 +992,14 @@ sub initSetupConfig {
 							,'StopOff-NoneOn'      => 'SETUP_POWERONRESUME_STOPOFF_NONEON'
 							,'StopOff-ResetPlayOn' => 'SETUP_POWERONRESUME_STOPOFF_RESETPLAYON'
 							,'StopOff-ResetOn'     => 'SETUP_POWERONRESUME_STOPOFF_RESETON'
-						}
-					,'currentValue' => sub {
+						},
+					'currentValue' => sub {
 							my ($client,$key,$ind) = @_;
 							return if (!defined($client));
 							return Slim::Player::Sync::syncGroupPref($client,'powerOnResume') ||
 								   $client->prefGet('powerOnResume');
-					}
-					,'onChange' => sub {
+					},
+					'onChange' => sub {
 							my ($client,$changeref,$paramref,$pageref) = @_;
 							return if (!defined($client));
 
@@ -1005,12 +1007,12 @@ sub initSetupConfig {
 							if (Slim::Player::Sync::syncGroupPref($client,'powerOnResume')) {
 								Slim::Player::Sync::syncGroupPref($client,'powerOnResume',$newresume);
 							}
-						}
+						},
 					}
 							
 			,'maxBitrate' => {
-							'validate' => \&Slim::Utils::Validate::inList
-							,'validateArgs' => [0, 64, 96, 128, 160, 192, 256, 320]
+							'validate' => \&Slim::Utils::Validate::inHash
+							,'validateArgs' => [sub{return getSetupOptions('AUDIO_SETTINGS','maxBitrate');},1]
 							,'optionSort' => 'NK'
 							,'currentValue' => sub { return Slim::Utils::Prefs::maxRate(shift, 1); }
 							,'options' => {
@@ -1027,7 +1029,6 @@ sub initSetupConfig {
 						}
 			,'lame' => {
 						'validate' => \&Slim::Utils::Validate::acceptAll
-						,'validateArgs' => [] #filled by preEval
 						,'noWarning' => 1
 						,'dontSet' => 1
 						,'inputTemplate' => undef
@@ -1115,11 +1116,11 @@ sub initSetupConfig {
 						}
 			,'preampVolumeControl' => {
 							'validate' => \&Slim::Utils::Validate::number
-							,'validateArgs' => [0, undef, 63]
+							,'validateArgs' => [0, 63]
 						}
 			,'mp3SilencePrelude' => {
 							'validate' => \&Slim::Utils::Validate::number  
-							,'validateArgs' => [0,undef,5]
+							,'validateArgs' => [0, 5]
 						}
 			,'transitionType' => {
 							'validate' => \&Slim::Utils::Validate::isInt
@@ -1137,6 +1138,8 @@ sub initSetupConfig {
 							'validate' => \&Slim::Utils::Validate::isInt  
 						}
 			,'replayGainMode' => {
+							'validate' => \&Slim::Utils::Validate::inHash,
+							'validateArgs' => [sub{return getSetupOptions('AUDIO_SETTINGS','replayGainMode');},1],
 							'optionSort' => 'NK',
 							'options' => {
 									'0' => 'REPLAYGAIN_DISABLED',
@@ -1506,8 +1509,9 @@ sub initSetupConfig {
 							}
 					}
 			,'sortBrowseArt' => {
-						'validate' => \&validateAcceptAll
-						,'options' => {
+						'validate' => \&Slim::Utils::Validate::inHash,
+						'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
+						'options' => {
 								'album'              => 'SETUP_SORTBROWSEART_ALBUM',
 								'artist,album'       => 'SETUP_SORTBROWSEART_ARTISTALBUM',
 								'artist,year,album'  => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
@@ -1515,7 +1519,7 @@ sub initSetupConfig {
 								'year,artist,album'  => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
 								'genre,album'        => 'SETUP_SORTBROWSEART_GENREALBUM',
 								'genre,artist,album' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
-							}
+							},
 					}
 			}
 		}# end of setup{'INTERFACE_SETTINGS'} hash
@@ -1714,7 +1718,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					Slim::Control::Command::execute($client, ['wipecache']);
+					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
 			},
 
@@ -1970,7 +1974,7 @@ sub initSetupConfig {
 					}
 			,"longdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [] # set in initSetup
+						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','longdateFormat');},1]
 						,'options' => { # WWWW is the name of the day of the week
 								# WWW is the abbreviation of the name of the day of the week
 								# MMMM is the full month name
@@ -1998,7 +2002,7 @@ sub initSetupConfig {
 					}
 			,"shortdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [] # set in initSetup
+						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','shortdateFormat');},1]
 						,'options' => { # MM is the month of the year
 								# DD is the day of the year
 								# YYYY is the 4 digit year
@@ -2022,7 +2026,7 @@ sub initSetupConfig {
 					}
 			,"timeFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [] # set in initSetup
+						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','timeFormat');},1]
 						,'options' => { # hh is hours
 								# h is hours (leading zero removed)
 								# mm is minutes
@@ -2140,7 +2144,7 @@ sub initSetupConfig {
 
 		'Prefs' => {
 			'disableStatistics' => {
-				'validate' => \&validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => 'SETUP_DISABLE_STATISTICS',
 					'0' => 'SETUP_ENABLE_STATISTICS',
@@ -2240,8 +2244,7 @@ sub initSetupConfig {
 						'PrefSize' => 'large'
 					}
 			,'mDNSname'	=> {
-							'validateArgs' => [] #will be set by preEval
-							,'PrefSize' => 'medium'
+							'PrefSize' => 'medium'
 					}
 			,'remotestreamtimeout' => {
 						'validate' => \&Slim::Utils::Validate::isInt
@@ -2327,10 +2330,12 @@ sub initSetupConfig {
 
 sub initSetup {
 	initSetupConfig();
-	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'longdateFormat'}{'options'}];
-	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'shortdateFormat'}{'options'}];
-	$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'validateArgs'} = [$setup{'FORMATTING_SETTINGS'}{'Prefs'}{'timeFormat'}{'options'}];
 	fillAlarmOptions();
+}
+
+sub getSetupOptions {
+	my ($category, $pref) = @_;
+	return $setup{$category}{'Prefs'}{$pref}{'options'};
 }
 
 sub fillAlarmOptions {
