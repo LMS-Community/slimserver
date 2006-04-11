@@ -1,3 +1,4 @@
+var player = '[% playerURI %]';
 // global.js
 // these functions should be generic across all pages that use ajax requests
 // the url var needs to be initialized in the page specific javascript file
