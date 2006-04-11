@@ -70,7 +70,7 @@
 	[% IF nothing %]<meta http-equiv="refresh" content="[% refresh %]; url=[% statusroot %]?player=[% playerURI %]&amp;start=[% start %]&amp;undock=[% undock %]">[% END %]
 	[% pagetitle = player_name %]
 	[% PROCESS customheader.html %]
-	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>
+	[%- IF undock -%]<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>[% END %]
 	[% IF playercount == '0' %]<script TYPE="text/javascript" language="JavaScript">
 		<!--Hide
 		[% IF undock %]self.close();[% ELSE %]
@@ -103,10 +103,10 @@
 			</div>
 		</div>
 
-[%- IF not undock -%]
+[%- IF NOT undock -%]
 		<div id="menuHeader">
 			<form id="playerForm" action="">
-				[% IF player_chooser_list  && NOT undock -%]
+				[% IF player_chooser_list -%]
 					<select name="player" onchange="changePlayer(this);" class="stdedit">[% player_chooser_list %]</select>
 				[%- ELSE -%]
 					[% IF player_name -%]<span class="songtitle">[% player_name %]</span>[%- END -%]
@@ -203,7 +203,7 @@
 			</div>
 		</div>
 
-[% IF not undock %]	
+[% IF NOT undock %]	
 		<div id="playlistStatus">
 			<div id="currentPlaylist">
 				[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %]

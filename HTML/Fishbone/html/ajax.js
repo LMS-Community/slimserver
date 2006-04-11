@@ -17,7 +17,7 @@ var interval = 1;
 var lastControl = '';
 
 [% PROCESS html/global.js %]
-[% PROCESS datadumper.js %]
+[%# PROCESS datadumper.js %]
 
 function processState(param) {
 	getStatusData(param + "&ajaxRequest=1", refreshState);
@@ -89,9 +89,9 @@ function refreshPlayControls(theData) {
 	
 	for (var i=0; i < controls.length; i++) {
 		var obj = 'playmode';
-
 		var objID = $('playCtl' + controls[i]);
 		var style = '';
+		
 		if (objID.style.display == 'hidden') {
 			objID = $('playCtl' + controls[i]+'_tan');
 			style = '_tan';
@@ -117,18 +117,18 @@ function refreshPlayControls(theData) {
 	}
 	
 	var mp = 0;
-	if (lastControl == 'play') {mp = 1;}
-	ProgressUpdate(1,parsedData['durationseconds'],parsedData['songtime'],style,mp);
+	if (lastControl == 'play') {mp = 1; inc = 10}
+	ProgressUpdate(1,parsedData['durationseconds'],parsedData['songtime'],style);
 	//DumperPopup(theData.responseText);
 }
 
 
 // Update the progress dialog with the current state
-function ProgressUpdate(mp,_progressEnd,_progressAt,style,override) {
-
-	if ($('playCtlplay'+style) != null) {
-
-		if ($('playCtlplay'+style).src.indexOf('_s') != -1) {
+function ProgressUpdate(mp,_progressEnd,_progressAt,style) {
+	var playctl = 'playCtlplay';
+	//if (style == '_tan') playctl = 'playCtlplay_tan';
+	if ($('playCtlplay') != null) {
+		if ($('playCtlplay').src.indexOf('_s') != -1) {
 			mp = 1;
 			inc++;
 			interval = 1;
@@ -137,17 +137,10 @@ function ProgressUpdate(mp,_progressEnd,_progressAt,style,override) {
 		} else {
 
 			mp = 0;
-			if (!override) interval = 10;
 			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
 		}
 	}
-	
-	if (inc == 10 || interval == 10) {
-		var args = 'player='+player+'&ajaxRequest=1';
-		//getStatusData(args, refreshAll);
-		inc = 0;
-	}
-	
+
 	if (mp) _progressAt++;
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
@@ -166,11 +159,18 @@ function ProgressUpdate(mp,_progressEnd,_progressAt,style,override) {
 		//eval("document.progressBar.width=p");
 	}
 	
-	timer = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval*1000);
+	if (inc == 10 || interval == 10) {
+		var args = 'player='+player+'&ajaxRequest=1';
+		
+		getStatusData(args, refreshAll);
+		inc = 0;
+	} else {
+		timer = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval*1000);
+	}
 }
 
 function refreshUndock() {
-	window.location.replace("status_header.html?player=[% playerURI %]&amp;undock=1");
+	window.location.replace('status.html?player='+player+'&undock=1');
 }
 
 function refreshAll(theData) {
