@@ -1,6 +1,6 @@
 package Slim::Web::Pages::Playlist;
 
-# $Id: Pages.pm 5121 2005-11-09 17:07:36Z dsully $
+# $Id$
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -154,17 +154,9 @@ sub playlist {
 
 		&{$levelInfo->{'listItem'}}($ds, \%list_form, $track);
 
-		$list_form{'num'} = $itemnum;
-		$list_form{'odd'} = ($itemnum + $offset) % 2;
-
-		my $Imports = Slim::Music::Import::importers();
-
-		for my $mixer (keys %{$Imports}) {
-		
-			if (defined $Imports->{$mixer}->{'mixerlink'}) {
-				&{$Imports->{$mixer}->{'mixerlink'}}($track,\%list_form,1);
-			}
-		}
+		$list_form{'num'}       = $itemnum;
+		$list_form{'levelName'} = 'track';
+		$list_form{'odd'}       = ($itemnum + $offset) % 2;
 
 		if ($itemnum == $currsongind) {
 			$list_form{'currentsong'} = "current";
