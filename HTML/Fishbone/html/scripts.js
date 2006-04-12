@@ -1,4 +1,14 @@
 var p = 1;
+
+// track the progress bar update timer state
+var timerID = false;
+
+// refresh data interval (1s for progress updates, 10s for only status)
+var interval = 1000;
+
+// update timer counter, waits for 10 updates when update interval is 1s
+var inc = 0;
+
 function changePlayer(player_List){
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
@@ -79,6 +89,53 @@ function insertProgressBar(mp,end,at)
 	if (document.all||document.getElementById)
 	document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></div>');
 	ProgressUpdate(mp,end,at)
+}
+
+// Update the progress dialog with the current state
+function ProgressUpdate(mp,_progressEnd,_progressAt,curstyle) {
+	var playctl = 'playCtlplay';
+	//if (style == '_tan') playctl = 'playCtlplay_tan';
+	[% IF undock %]
+	if ($('playCtlplay') != null) {
+		if ($('playCtlplay').src.indexOf('_s') != -1) {
+			mp = 1;
+			inc++;
+			interval = 1000;
+			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
+
+		} else {
+			interval = 10000;
+			mp = 0;
+			inc = 0;
+			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
+		}
+	}
+	[% END %]
+
+	if (mp) _progressAt++;
+	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
+	
+	[% IF undock %]if ((_progressEnd > 0) && (_progressAt > 10) && (_progressAt == _progressEnd)) refreshUndock();[% END %]
+	
+	if (document.all) //if IE 4+
+	{
+		p = (document.body.clientWidth / _progressEnd) * _progressAt;
+		eval("document.progressBar.width=p");
+	}
+	else if (document.getElementById) //else if NS6+
+	{
+		p = (document.width / _progressEnd) * _progressAt;
+		$("progressBar").width=p+" ";
+	}
+	
+	[% IF undock %]
+	if ((mp && inc == 10) || interval == 10000) {
+		var args = 'player='+player+'&ajaxRequest=1';
+		getStatusData(args, refreshAll);
+		inc = 0;
+	}
+	[% END %]
+	timerID = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval);
 }
 
 function getArgs() {

@@ -4,6 +4,7 @@
 
 	[% IF browselist_header %][% browselist_header %][% END %]
     [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+
     [% WRAPPER contentcontainer %]
     [% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
@@ -13,3 +14,4 @@
 
   </body>
 </html>
+[%- PROCESS pagefooter.html %]

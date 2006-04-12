@@ -184,6 +184,9 @@ sub initPlugin {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
 			});
+			Slim::Web::Pages->addPageLinks("browse", {
+				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
+			});
 		}
 	}
 	
@@ -1165,9 +1168,22 @@ sub getMix {
 sub webPages {
 	my %pages = (
 		"musicmagic_mix\.(?:htm|xml)" => \&musicmagic_mix,
+		"musicmagic_moods\.(?:htm|xml)" => \&musicmagic_moods,
 	);
 
 	return (\%pages);
+}
+
+sub musicmagic_moods {
+	my ($client, $params) = @_;
+
+	my $items = "";
+
+	$items = grabMoods();
+
+	$params->{'mood_list'} = $items;
+
+	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_moods.html", $params);
 }
 
 sub musicmagic_mix {
@@ -1180,6 +1196,7 @@ sub musicmagic_mix {
 	my $artist   = $params->{'artist'};
 	my $album    = $params->{'album'};
 	my $genre    = $params->{'genre'};
+	my $mood     = $params->{'mood'};
 	my $player   = $params->{'player'};
 	my $playlist = $params->{'playlist'};
 	my $p0       = $params->{'p0'};
@@ -1188,7 +1205,10 @@ sub musicmagic_mix {
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
 
-	if ($playlist) {
+	if ($mood) {
+		$mix = getMix($client, $mood, 'mood');
+
+	} elsif ($playlist) {
 		my ($obj) = $ds->objectForUrl($playlist);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {

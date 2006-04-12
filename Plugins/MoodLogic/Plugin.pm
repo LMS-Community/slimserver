@@ -866,6 +866,29 @@ sub instant_mix {
 		return undef;
 	}
 
+	if (defined $items && ref $items eq "ARRAY" && defined $client) {
+		# We'll be using this to play the entire mix using 
+		# playlist (add|play|load|insert)tracks listref=moodlogic_mix
+		$client->param('moodlogic_mix',$items);
+	} else {
+		$items = [];
+	}
+
+	if (scalar @$items) {
+
+		push @{$params->{'browse_items'}}, {
+
+			'text'         => Slim::Utils::Strings::string('THIS_ENTIRE_PLAYLIST'),
+			'attributes'   => "&listRef=moodlogic_mix",
+			'odd'          => ($itemnumber + 1) % 2,
+			'webroot'      => $params->{'webroot'},
+			'skinOverride' => $params->{'skinOverride'},
+			'player'       => $params->{'player'},
+		};
+
+		$itemnumber++;
+	}
+
 	for my $item (@$items) {
 
 		my %list_form = '';
@@ -887,11 +910,7 @@ sub instant_mix {
 
 	if (defined $p0 && defined $client) {
 
-		$client->execute(["playlist", $p0 eq "append" ? "append" : "play", $items->[0]]);
-		
-		for (my $i = 1; $i <= $#$items; $i++) {
-			$client->execute(["playlist", "append", $items->[$i]]);
-		}
+		$client->execute(["playlist", $p0 eq "append" ? "addtracks" : "playtracks", "listref=moodlogic_mix"]);
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/instant_mix.html", $params);

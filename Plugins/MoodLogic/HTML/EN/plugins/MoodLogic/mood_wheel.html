@@ -7,16 +7,16 @@
 [% WRAPPER contentcontainer %]
 [% odd = 1 %]
 	[% FOREACH mood = mood_list %]
-		[% BLOCK controls %]
+		[% BLOCK controls %][% IF browserTarget %][% target =  browserTarget %][% END %]
 			[% WRAPPER playlink %]
-				href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
+				href="instant_mix.html?song=[% song | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;genre=[% genre | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=play"
 			[% END %]
 			[% WRAPPER addlink %]
-				href="instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
+				href="instant_mix.html?song=[% song | uri %]&amp;genre=[% genre | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=append"
 			[% END %]
 		[% END %]
 		[% WRAPPER contentitem controls='controls'%]
-			<a href="instant_mix.html?song=[% song | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&genre=[% genre | uri %]&player=[% player | uri %]&mood=[% mood %]">[% mood %]</a>
+			<a href="instant_mix.html?song=[% song | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;genre=[% genre | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]">[% mood %]</a>
 		[% END %]
 		[% odd = (not odd) %]
 	[% END %]

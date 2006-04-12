@@ -1,21 +1,6 @@
 var player = '[% player %]';
 var url = 'status_header.html';
 
-// progress bar temp variable
-var p = 1;
-
-// track the progress bar update timer state
-var timer;
-
-// update timer counter, waits for 10 updates when update interval is 1s
-var inc = 0;
-
-// refresh data interval (1s for progress updates, 10s for only status)
-var interval = 1;
-
-// track the last play control pressed.
-var lastControl = '';
-
 [% PROCESS html/global.js %]
 [%# PROCESS datadumper.js %]
 
@@ -82,99 +67,58 @@ function processPlayControls(param,button) {
 	lastControl = button;
 }
 
-function refreshPlayControls(theData) {
+function refreshPlayControls(theData,auto) {
 
 	var parsedData = fillDataHash(theData);
 	var controls = ['stop', 'play', 'pause'];
+	var mp = 0;
 	
 	for (var i=0; i < controls.length; i++) {
 		var obj = 'playmode';
 		var objID = $('playCtl' + controls[i]);
-		var style = '';
+		var curstyle = '';
 		
 		if (objID.style.display == 'hidden') {
 			objID = $('playCtl' + controls[i]+'_tan');
-			style = '_tan';
+			curstyle = '_tan';
 		}
 		
 		//DumperPopup([i,parsedData['playmode']]);
 		if (parsedData['playmode'] == i) {
-			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+style+'.gif';
-			if (timer) {clearTimeout(timer);}
-			interval = 10;
-			if (controls[i] !='stop') {
-				interval = 1;
+			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+			//if (timer) {clearTimeout(timer);}
+			interval = 1000;
+			if (controls[i] !='play') {
+				interval = 10000;
 			}
 			
 		} else {
-			objID.src = '[% webroot %]html/images/'+controls[i]+style+'.gif';
+			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
 		}
 	}
 	
 	if (parsedData['mute'] == 1) {
-		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+style+'.gif';
+		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';
 	} else {
-		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+style+'.gif';
+		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';
 	}
 	
-	var mp = 0;
-	if (lastControl == 'play') {
+	if (parsedData['playmode'] == 1) {
 		mp = 1;
-		inc = 10;
-		ProgressUpdate(1,parsedData['durationseconds'],parsedData['songtime'],style);
-	} else {
-		timer = setTimeout("ProgressUpdate( "+mp+","+parsedData['durationseconds']+","+parsedData['songtime']+")", interval * 1000);
+	}
+	
+	//alert([auto,mp,parsedData['durationseconds'],parsedData['songtime'],style]);
+	if (auto != 1) {
+		if (timerID) {
+			clearTimeout(timerID);
+			timerID = false;
+		}
+		//alert("refresh");
+		var end = parsedData['durationseconds'];
+		var at = parsedData['songtime'];
+		ProgressUpdate(mp,end,at,curstyle);
 	}
 	//DumperPopup(theData.responseText);
-}
-
-
-// Update the progress dialog with the current state
-function ProgressUpdate(mp,_progressEnd,_progressAt,style) {
-	var playctl = 'playCtlplay';
-	//if (style == '_tan') playctl = 'playCtlplay_tan';
-	if ($('playCtlplay') != null) {
-		if ($('playCtlplay').src.indexOf('_s') != -1) {
-			mp = 1;
-			inc++;
-			interval = 1;
-			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
-
-		} else {
-			interval = 10;
-			inc = 10;
-			mp = 0;
-			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
-		}
-	}
-
-	if (mp) _progressAt++;
-	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
-	
-	[% IF undock %]if ((_progressEnd > 0) && (_progressAt > 10) && (_progressAt == _progressEnd)) refreshUndock();[% END %]
-	
-	if (document.all) //if IE 4+
-	{
-		p = (document.body.clientWidth / _progressEnd) * _progressAt;
-		//document.all.progressBar.innerWidth = p+" ";
-		eval("document.progressBar.width=p");
-	}
-	else if (document.getElementById) //else if NS6+
-	{
-		p = (document.width / _progressEnd) * _progressAt;
-		$("progressBar").width=p+" ";
-		//eval("document.progressBar.width=p");
-	}
-	
-	if (inc == 10 || interval == 10) {
-		var args = 'player='+player+'&ajaxRequest=1';
-		//alert(interval);
-		getStatusData(args, refreshAll);
-		inc = 0;
-	} else {
-		//alert(['off',interval]);
-		timer = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval*1000);
-	}
 }
 
 function refreshUndock() {
@@ -184,10 +128,10 @@ function refreshUndock() {
 function refreshAll(theData) {
 	inc = 0;
 	// stop progress bar refreshing for this track
-	if (timer) clearTimeout(timer);
+	//if (timer) clearTimeout(timer);
 	var parsedData = fillDataHash(theData);
 	refreshVolume(parsedData);
-	refreshPlayControls(parsedData);
+	refreshPlayControls(parsedData,1);
 	refreshState(parsedData);
 }
 

@@ -1,7 +1,7 @@
 [%- FILTER null %]
 [% statusroot = 'status_header.html' %]
 [% controlGraphics  = 1 %]
-[% browserTarget  = browser %]
+[% browserTarget  = "browser" %]
 
 [% BLOCK cmdlink -%]
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
@@ -53,8 +53,8 @@ END %]
 				[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
 				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 		[%# browse list items %]
-		[%# no level info means its a music folder item %]
-		[% ELSIF item.item || !item.defined('level') %]
+		[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
+		[% ELSIF item.item || !item.defined('level') && item.itemobj %]
 		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
 		[% ELSIF item.songtitle %]
 			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>

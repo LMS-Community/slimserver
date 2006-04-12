@@ -3,7 +3,7 @@
 [% noHomeLink = 1 %]
 [% setting_chooser_noHome = 1 %]
 [% controlGraphics  = 1 %]
-[% browserTarget  = browser %]
+[% browserTarget  = "browser" %]
 
 [% BLOCK cmdlink %]
 <a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]>
@@ -70,8 +70,8 @@
 			&nbsp;[% item.num + 1 %].&nbsp;
 			<b><a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a></b>
 	[%# browse list items %]
-	[%# no level info means its a music folder item %]
-	[% ELSIF item.item || !item.defined('level') %]
+	[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
+	[% ELSIF item.item || !item.defined('level') && item.itemobj %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>

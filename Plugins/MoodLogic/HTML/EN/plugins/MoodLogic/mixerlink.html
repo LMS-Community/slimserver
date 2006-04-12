@@ -1,7 +1,7 @@
 [% IF item.mixable_descend %]
-	<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+	<a href="plugins/MoodLogic/mood_wheel.html?genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
 [% ELSIF item.mixable_not_descend %]
-	<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% player | uri %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+	<a href="plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;genre=[% item.genre | uri %]&amp;artist=[% item.artist | uri %]&amp;album=[% item.album | uri %]&amp;player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
 [% END %]
 [%- IF controlGraphics %]
 		<img src="[% webroot %]html/images/b_mix.gif"

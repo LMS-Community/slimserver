@@ -7,14 +7,11 @@
 [% WRAPPER contentcontainer %]
 	[% BLOCK controls %]
 		[% WRAPPER playlink %]
-			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=play"
+			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&amp;genre=[% genre | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=play"
 		[% END %]
 		[% WRAPPER addlink %]
-			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% player | uri %]&mood=[% mood %]&p0=append"
+			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&amp;genre=[% genre | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=append"
 		[% END %]
-	[% END %]
-	[% WRAPPER contentitem controls='controls' %]
-		[% "THIS_ENTIRE_PLAYLIST" | string %]
 	[% END %]
 	
 	[% FOREACH item = browse_items %]

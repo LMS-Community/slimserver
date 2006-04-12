@@ -101,7 +101,6 @@ A.linkbtn:link {
 #mastHead
 {
 	margin:0px;
-	padding: 5 8 5 8;
 	background:#f8eabf;
 	color : #663300;
 	border-bottom:2px solid #ffcc66;
@@ -220,7 +219,7 @@ A.linkbtn:link {
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 12px;
-	padding:3 8 3 8;
+	padding:3 8 0 8;
 	background:#f8eabf;
 	color:black;
 }
