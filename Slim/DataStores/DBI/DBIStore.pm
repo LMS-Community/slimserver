@@ -1761,6 +1761,16 @@ sub _postCheckAttributes {
 	my $disc     = $attributes->{'DISC'};
 	my $discc    = $attributes->{'DISCC'};
 
+	# Make a local variable for COMPILATION, that is easier to handle
+	my $isCompilation = 0;
+
+	if (defined $attributes->{'COMPILATION'} && 
+		$attributes->{'COMPILATION'} =~ /^yes$/i || 
+		$attributes->{'COMPILATION'} == 1) {
+
+		$isCompilation = 1;
+	}
+
 	# we may have an album object already..
 	my $albumObj = $track->album if !$create;
 	
@@ -1841,9 +1851,10 @@ sub _postCheckAttributes {
 			# of trying to match on the artist. Having the
 			# compilation bit means that this is 99% of the time a
 			# Various Artist album, so a contributor match would fail.
-			if (defined $attributes->{'COMPILATION'}) {
+			if ($isCompilation) {
 
-				$search->{'compilation'} = $attributes->{'COMPILATION'};
+				# in the database this is 0 or 1
+				$search->{'compilation'} = $isCompilation;
 
 			} else {
 
@@ -1876,7 +1887,7 @@ sub _postCheckAttributes {
 			# the other track is not in our current directory. If
 			# so, then we need to create a new album. If not, the
 			# album object is valid.
-			if ($albumObj && $checkDisc && !$attributes->{'COMPILATION'}) {
+			if ($albumObj && $checkDisc && !$isCompilation) {
 
 				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
 				my $matchTrack = $tracks{ $track->tracknum };
@@ -1925,15 +1936,8 @@ sub _postCheckAttributes {
 		# And our searchable version.
 		$set{'titlesearch'} = Slim::Utils::Text::ignoreCaseArticles($album);
 
-		# Bug 2393 - Check for 'no' instead of just true or false
-		if ($attributes->{'COMPILATION'} && $attributes->{'COMPILATION'} !~ /no/i) {
-
-			$set{'compilation'} = 1;
-
-		} else {
-
-			$set{'compilation'} = 0;
-		}
+		# Bug 2393 - was fixed here (now obsolete due to further code rework)
+		$set{'compilation'} = $isCompilation;
 
 		$set{'musicbrainz_id'} = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
 
