@@ -649,7 +649,6 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
       try {
   	      this.transport.setRequestHeader("Referer", document.location.href);
   	      } catch (err) {
-  	      alert('barf');
   	  }
 
       var body = this.options.postBody ? this.options.postBody : parameters;
