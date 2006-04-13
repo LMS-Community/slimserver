@@ -34,6 +34,7 @@ use Slim::Networking::Select;
 use Slim::Player::HTTP;
 use Slim::Music::Info;
 use Slim::Web::Pages;
+use Slim::Web::Graphics;
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -41,15 +42,6 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
-# art resizing support by using GD, requires JPEG support built in
-my $canUseGD = eval {
-	require GD;
-	if (GD::Image->can('jpeg')) {
-		return 1;
-	} else {
-		return 0;
-	}
-};
 
 # constants
 BEGIN {
@@ -774,195 +766,9 @@ sub generateHTTPResponse {
 
 		return 0;
 
-	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)(?:_(X|\d+)x(X|\d+))?(?:_([sSpc]))?(?:_([\da-fA-F]{6}))?\.jpg$/) {
+	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/) {
 
-		#TODO: memoize thumb resizing, if necessary 
-		
-		my ($obj, $imageData);
-		my $trackid = $1;
-		my $image = $2;
-		my $requestedWidth = $3; # it's ok if it didn't match and we get undef
-		my $requestedHeight = $4; # it's ok if it didn't match and we get undef
-		my $resizeMode = $5; # stretch, pad or crop
-		my $requestedBackColour = hex $6 || 0xFFFFFF; # bg color used when padding
-
-		# In order to preserve compatability with the previous system, an image won't
-		# be stretched to a larger size unless a size or resizing mode has been specified
-		my $allowStretchLarger  = $requestedWidth || $resizeMode;
-	
-		if ($resizeMode eq "p") {
-			$resizeMode = "pad";
-		} elsif ($resizeMode eq "c") {
-			$resizeMode = "crop";
-		} elsif ($resizeMode eq "S") {
-			$resizeMode = "stretch";
-			$allowStretchLarger = '';
-		} else {
-			$resizeMode = "stretch";
-		}
-
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-		
-		if ($trackid eq "current" && defined $client) {
-
-			# If the object doesn't have any cover art - fall
-			# through to the generic cover image.
-			$obj  = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
-				Slim::Player::Playlist::song($client)
-			));
-
-		} else {
-
-			$obj = $ds->objectForId('track', $trackid);
-		}
-
-		$::d_http && msg("Cover Art asking for: $image" . 
-			($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
-
-		if (blessed($obj) && $obj->can('coverArt')) {
-			$::d_http && msg("can CoverArt\n");
-			($imageData, $contentType, $mtime) = $obj->coverArt($image);
-		}
-
-		if (defined($imageData)) {
-			$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
-			
-			if ($canUseGD) {
-				# If this is a thumb, or a size has been requested then we may need to resize, and
-				# the overhead of loading the image with GD is necessary in order to establish its 
-				# current size
-				if ($image eq "thumb" || $requestedWidth) {
-					GD::Image->trueColor(1);
-					my $origImage = GD::Image->new($imageData);
-
-					if ($origImage) {
-						# deterime the size and of type image to be returned
-						my $returnedWidth;
-						my $returnedHeight;
-						my $returnedType = ($contentType eq "image/png") ? "png" : "jpg";
-
-						# if an X is supplied for the width (height) then the returned image's width (height)
-						# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
-						# a resize mode of 'stretch'.
-						if ($requestedWidth eq "X") {
-							if ($requestedHeight eq "X") {
-								$returnedWidth = $origImage->width;
-								$returnedHeight = $origImage->height;
-							}else{
-								$returnedWidth = $origImage->width / $origImage->height * $requestedHeight;
-								$returnedHeight = $requestedHeight;
-							}
-							$resizeMode = "stretch";
-						}elsif($requestedHeight eq "X"){
-							$returnedWidth =  $requestedWidth;
-							$returnedHeight =  $origImage->height / $origImage->width * $requestedWidth;
-							$resizeMode = "stretch";
-						}else{
-							if ($image eq "cover") {
-								$returnedWidth = $requestedWidth || $origImage->width;
-								$returnedHeight = $requestedHeight || $origImage->height;
-							}else{
-								$returnedWidth = $requestedWidth || Slim::Utils::Prefs::get('thumbSize') || 100;
-								$returnedHeight = $requestedHeight || Slim::Utils::Prefs::get('thumbSize') || 100;
-							}
-						}
-
-						# as mentioned earlier, only stretch the image to a larger size if a size or resize mode 
-						# other than 'S' was specified
-
-						if ($resizeMode ne "stretch" || $allowStretchLarger || $returnedWidth < $origImage->width || $returnedHeight < $origImage->height) {
-							$::d_http && msg("resizing from " . $origImage->width . "x" . $origImage->height . " to " 
-								 . $returnedWidth . "x" . $returnedHeight ." using " . $resizeMode . "\n");
-
-							# determine source and destination upper left corner and width / height
-							# should this be relegated to one of the utility modules?
-							my $sourceAspectRatio = 1.0 * $origImage->width / $origImage->height;
-							my $destAspectRatio = 1.0 * $returnedWidth / $returnedHeight;
-							my ($sourceX, $sourceY, $sourceWidth, $sourceHeight);
-							my ($destX, $destY, $destWidth, $destHeight);
-
-							if ($resizeMode eq "stretch") {
-								$sourceX = 0; $sourceY = 0;
-								$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
-
-								$destX = 0; $destY = 0;
-								$destWidth = $returnedWidth; $destHeight = $returnedHeight;
-							}elsif ($resizeMode eq "pad") {
-								$sourceX = 0; $sourceY = 0;
-								$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
-
-								if ($sourceAspectRatio >= $destAspectRatio) {
-									$destX = 0;
-									$destWidth = $returnedWidth;
-									$destHeight = $returnedWidth / $sourceAspectRatio;
-									$destY = ($returnedHeight - $destHeight) / 2
-								}else{
-									$destY = 0;
-									$destHeight = $returnedHeight;
-									$destWidth = $returnedHeight * $sourceAspectRatio;
-									$destX = ($returnedWidth - $destWidth) / 2
-								}
-							}elsif ($resizeMode eq "crop") {
-								$destX = 0; $destY = 0;
-								$destWidth = $returnedWidth; $destHeight = $returnedHeight;
-
-								if ($sourceAspectRatio >= $destAspectRatio) {
-									$sourceY = 0;
-									$sourceHeight = $origImage->height;
-									$sourceWidth = $origImage->height * $destAspectRatio;
-									$sourceX = ($origImage->width - $sourceWidth) / 2;
-								}else{
-									$sourceX = 0;
-									$sourceWidth = $origImage->width;
-									$sourceHeight = $origImage->width / $destAspectRatio;
-									$sourceY = ($origImage->height - $sourceHeight) / 2;
-								}
-							}
-
-							my $newImage = GD::Image->new($returnedWidth, $returnedHeight);
-
-							$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
-
-							$newImage->copyResampled($origImage,
-								$destX, $destY,
-								$sourceX, $sourceY,
-								$destWidth, $destHeight,
-								$sourceWidth, $sourceHeight);
-
-							my $newImageData;
-
-							# if the source image was a png and GD can output png data
-							# then return a png, else return a jpg
-							if ($returnedType eq "png" && GD::Image->can('png')) {
-							 	$newImageData = $newImage->png;
-							 	$contentType = 'image/png';
-							}else{
-							 	$newImageData = $newImage->jpeg;
-							 	$contentType = 'image/jpeg';
-							}
-
-							$::d_http && msg("outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
-							$body = \$newImageData;
-						}else{
-							$::d_http && msg("not resizing\n");
-							$body = \$imageData;
-						}
-					}else{
-						$::d_http && msg("can't resize using GD, wouldn't create image object\n");
-						$body = \$imageData;
-					}
-				}else{
-					$::d_http && msg("not resizing\n");
-					$body = \$imageData;
-				}
-			} else {
-				$::d_http && msg("can't use GD\n");
-				$body = \$imageData;
-			}				
-		} else {
-			($body, $mtime, $inode, $size) = getStaticContent("html/images/cover.png");
-			$contentType = "image/png";
-		}
+		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path);
 
 	} elsif ($path =~ /music\/(\d+)\/download$/) {
 
