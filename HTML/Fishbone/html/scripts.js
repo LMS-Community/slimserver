@@ -9,6 +9,10 @@ var interval = 1000;
 // update timer counter, waits for 10 updates when update interval is 1s
 var inc = 0;
 
+// progressBar variables
+var _progressEnd = 0;
+var _progressAt = 0
+
 function changePlayer(player_List){
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
@@ -52,20 +56,19 @@ function newHref(doc,plyr) {
 }
 
 function toggleStatus(div) {
-	if (document.getElementById(div).style.display == "none") {
-		document.getElementById(div).style.display = "block";
-		document.getElementById('statusImg_up').style.display = "inline";
-		document.getElementById('statusImg_down').style.display = "none";
+	if ($(div).style.display == "none") {
+		$(div).style.display = "block";
+		$('statusImg_up').style.display = "inline";
+		$('statusImg_down').style.display = "none";
 	} else {
-		document.getElementById(div).style.display = "none";
-		document.getElementById('statusImg_up').style.display = "none";
-		document.getElementById('statusImg_down').style.display = "inline";
+		$(div).style.display = "none";
+		$('statusImg_up').style.display = "none";
+		$('statusImg_down').style.display = "inline";
 	}
 }
 
 function resizePlaylist(page) {
-
-document.getElementById('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
+$	('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
 }
 
 function openRemote(player,playername)
@@ -87,24 +90,29 @@ function insertProgressBar(mp,end,at)
 	var s = '';
 	if (!mp) s = '_s';
 	if (document.all||document.getElementById)
-	document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"></div>');
-	ProgressUpdate(mp,end,at)
+	document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"><\/div>');
+	_progressAt = at;
+	_progressEnd = end;
+	ProgressUpdate(mp)
 }
 
+// update at and end times for the next progress update.
+function updateTime(at,end) {
+	_progressAt = at;
+	_progressEnd = end;
+}
+	
+
 // Update the progress dialog with the current state
-function ProgressUpdate(mp,_progressEnd,_progressAt,curstyle) {
-	var playctl = 'playCtlplay';
-	//if (style == '_tan') playctl = 'playCtlplay_tan';
+function ProgressUpdate(mp,curstyle) {
 	[% IF undock %]
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay').src.indexOf('_s') != -1) {
 			mp = 1;
 			inc++;
-			interval = 1000;
 			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
 
 		} else {
-			interval = 10000;
 			mp = 0;
 			inc = 0;
 			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
@@ -129,13 +137,13 @@ function ProgressUpdate(mp,_progressEnd,_progressAt,curstyle) {
 	}
 	
 	[% IF undock %]
-	if ((mp && inc == 10) || interval == 10000) {
+	if ((mp && inc == 10)) {
 		var args = 'player='+player+'&ajaxRequest=1';
 		getStatusData(args, refreshAll);
 		inc = 0;
 	}
 	[% END %]
-	timerID = setTimeout("ProgressUpdate( "+mp+","+_progressEnd+","+_progressAt+")", interval);
+	timerID = setTimeout("ProgressUpdate( "+mp+")", interval);
 }
 
 function getArgs() {

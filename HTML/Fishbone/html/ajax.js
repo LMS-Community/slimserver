@@ -35,7 +35,6 @@ function refreshState(theData) {
 			}
 		}
 	}
-	//DumperPopup(theData.responseText);
 }
 
 function processVolume(param) {
@@ -53,45 +52,43 @@ function refreshVolume(theData) {
 		var intVolume = parseInt(parsedData['volume'], 10);
 
 		if (intVolume < vols[i]) {
-			//alert(objID.style.background-color);
 			objID.style.backgroundColor = "808080";
 		} else {
 			objID.style.backgroundColor = "00C000";
 		}
 	}
-	//DumperPopup(theData.responseText);
 }
 
-function processPlayControls(param,button) {
+function processPlayControls(param) {
 	getStatusData(param + "&ajaxRequest=1", refreshPlayControls);
-	lastControl = button;
 }
 
-function refreshPlayControls(theData,auto) {
+function refreshPlayControls(theData) {
 
 	var parsedData = fillDataHash(theData);
 	var controls = ['stop', 'play', 'pause'];
 	var mp = 0;
+	var curstyle = getActiveStyleSheet();
 	
+	if (curstyle) DumperAlert(curstyle.indexOf('Tan'));
 	for (var i=0; i < controls.length; i++) {
 		var obj = 'playmode';
 		var objID = $('playCtl' + controls[i]);
 		var curstyle = '';
 		
-		if (objID.style.display == 'hidden') {
-			objID = $('playCtl' + controls[i]+'_tan');
+		if (curstyle && curstyle.indexOf('Tan')) {
+			objID = $('playCtl' + controls[i]+'tan');
 			curstyle = '_tan';
 		}
 		
-		//DumperPopup([i,parsedData['playmode']]);
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
-			//if (timer) {clearTimeout(timer);}
-			interval = 1000;
-			if (controls[i] !='play') {
-				interval = 10000;
-			}
 			
+			if (controls[i] !='play') {
+				$("progressBar").src ='[% webroot %]html/images/pixel.green_s.gif'
+			} else {
+				$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'
+			}
 		} else {
 			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
 		}
@@ -107,32 +104,25 @@ function refreshPlayControls(theData,auto) {
 		mp = 1;
 	}
 	
-	//alert([auto,mp,parsedData['durationseconds'],parsedData['songtime'],style]);
-	if (auto != 1) {
-		if (timerID) {
-			clearTimeout(timerID);
-			timerID = false;
-		}
-		//alert("refresh");
-		var end = parsedData['durationseconds'];
-		var at = parsedData['songtime'];
-		ProgressUpdate(mp,end,at,curstyle);
-	}
-	//DumperPopup(theData.responseText);
+	updateTime(parsedData['songtime'],parsedData['durationseconds']);
 }
 
+// refresh song and artwork
+function refreshInfo() {
+}
+
+// reload undock window
 function refreshUndock() {
 	window.location.replace('status.html?player='+player+'&undock=1');
 }
 
 function refreshAll(theData) {
-	inc = 0;
-	// stop progress bar refreshing for this track
-	//if (timer) clearTimeout(timer);
 	var parsedData = fillDataHash(theData);
+
 	refreshVolume(parsedData);
-	refreshPlayControls(parsedData,1);
+	refreshPlayControls(parsedData);
 	refreshState(parsedData);
+	refreshInfo(parsedData);
 }
 
 function fillDataHash(theData) {
@@ -143,6 +133,5 @@ function fillDataHash(theData) {
 		var myData = theData.responseText;
 		returnData = parseData(myData);
 	}
-
 	return returnData;
 }
