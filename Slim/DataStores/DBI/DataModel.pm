@@ -977,7 +977,7 @@ sub update {
 
 		} else {
 
-			push @vals, "$value";
+			push @vals, (defined $value ? "$value" : undef);
 		}
 	}
 
