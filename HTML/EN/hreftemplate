@@ -41,8 +41,9 @@ MoveDown = "%2B1"; # +1
 [% END -%]
 
 [%# img tag for album thumbnail in the now playing status context %]
-[% BLOCK statusImg -%][% IF NOT height; height = 100; END %]
-	[% "<img src=\"/music/$coverThumb/cover_Xx"; height;".jpg\" height=\"";height;"\" 
+[% BLOCK statusImg -%][% IF NOT height; height = 100; END %][% IF NOT width; width = 'X'; END %]
+	[% "<img src=\"/music/$coverThumb/cover_";width;"x"; height;".jpg\" height=\"";height;"\" 
+		id=\"coverartpath\"
 		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
 		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\">" -%]
 [%- END %]
@@ -158,7 +159,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
-	[%- "<img $style src=\"/music/$item.coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\"" %]
+	[%- "<img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;".jpg\" height=\"";height;"\"" %]
 	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
 	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]

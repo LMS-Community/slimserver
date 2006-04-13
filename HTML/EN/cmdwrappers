@@ -21,25 +21,25 @@
 [%- END -%]
 
 [%# this is to wrap around an href which does a play command, with a default image for skins that support it %]
-[% BLOCK playlink -%]
+[%- BLOCK playlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLAY"
 		cmdimage = "b_play" -%]
-[%- END %]
+[%- END -%]
 
 [%# this is to wrap around an href which does an add command, with a default image for skins that support it %]
-[% BLOCK addlink -%]
+[%- BLOCK addlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "ADD_TO_PLAYLIST"
 		cmdimage = "b_add" -%]
-[%- END %]
+[%- END -%]
 
 [%# this is to wrap around an href which does an insert command %]
-[% BLOCK insertlink -%]
-	[% PROCESS cmdlink
+[%- BLOCK insertlink -%]
+	[%- PROCESS cmdlink
 		cmdtitle = "NEXT"
-		cmdimage = "b_queue" %]
-[%- END %]
+		cmdimage = "b_queue" -%]
+[%- END -%]
 
 [%# this is to wrap around an href which drops down one more level when browsing multi-level lists (eg Shoutcast) %]
 [% BLOCK descendlink -%]
@@ -47,18 +47,18 @@
 [%- END %]
 
 [%# this is to wrap around an href which does a remove command, with default image reference %]
-[% BLOCK removelink -%]
+[%- BLOCK removelink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
 		cmdimage = "b_delete" -%]
-[%- END %]
+[%- END -%]
 
 [%# this is to wrap around an href which does a url edit command, with default image reference %]
-[% BLOCK editlink -%]
+[%- BLOCK editlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "EDIT"
 		cmdimage = "b_edit" -%]
-[%- END %]
+[%- END -%]
 
 [%# this is to wrap around browse list items %]
 [% BLOCK listitem %]
@@ -147,12 +147,11 @@ END %]
 
 [% BLOCK galleryitem %]
 <li>
-
-<div style="width:[% item.size %]px;">
+<div style="width:[% item.size %]px; ">
 [%- IF anchor %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
-	<div >
+	<div class="artworkImage" style="width: [% item.size %];">
 		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>[% END %]
 		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
 	</div>
