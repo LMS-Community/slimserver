@@ -123,16 +123,10 @@ sub initSetupConfig {
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
 						}
-						
-						my $displayHash = $client->playingModeOptions();
-						$displayHash->{-1} = ' ' ;
-						$pageref->{'Prefs'}{'playingDisplayModes'}{'options'} = $displayHash;
-						$pageref->{'Prefs'}{'playingDisplayModes'}{'validateArgs'} = [$pageref->{'Prefs'}{'playingDisplayModes'}{'options'}];					} else {
+					} else {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats'];
 					}
 					
-					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
-
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -199,16 +193,14 @@ sub initSetupConfig {
 		,'Prefs' => {
 			'playername' => {
 							'validate' => \&Slim::Utils::Validate::hasText
-							,'validateArgs' => [] #will be set by preEval
+							,'validateArgs' => sub {my $client = shift || return (); return ($client->defaultName());}
 							,'PrefSize' => 'medium'
 						}
 			,'titleFormatCurr'	=> {
 							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => [] #will be set by preEval
 						}
 			,'playingDisplayMode'	=> {
 							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => [] # will be set by preEval
 						}
 			,'playingDisplayModes' 	=> {
 							'isArray' => 1
@@ -219,8 +211,9 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'playingDisplayMode'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] # filled by preEval
-							,'options' => {} # filled by preEval
+							,'validateArgs' => [\&getPlayingDisplayModes,1]
+							,'validateAddClient' => 1
+							,'options' => \&getPlayingDisplayModes
 							,'optionSort' => 'NK'
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
@@ -294,13 +287,6 @@ sub initSetupConfig {
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
 							$pageref->{'GroupOrder'}[6] = 'ScrollPixels';
 
-							my $activeFontMax = $client->prefGetArrayMax('activeFont') + 1;
-							my $idleFontMax = $client->prefGetArrayMax('idleFont') + 1;
-							$pageref->{'Prefs'}{'activeFont_curr'}{'validateArgs'} = [0,$activeFontMax,1,1];
-							$pageref->{'Prefs'}{'idleFont_curr'}{'validateArgs'} = [0,$idleFontMax,1,1];
-		
-							fillFontOptions($client,'DISPLAY_SETTINGS','idleFont');
-							fillFontOptions($client,'DISPLAY_SETTINGS','activeFont');
 							removeExtraArrayEntries($client,'activeFont',$paramref,$pageref);
 							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
 						} else {
@@ -314,32 +300,6 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[1] = undef;
 						$pageref->{'GroupOrder'}[2] = undef;
 						$pageref->{'GroupOrder'}[6] = undef;
-					}
-
-					$pageref->{'Prefs'}{'playername'}{'validateArgs'} = [$client->defaultName()];
-
-					if (defined $client->maxBrightness) {
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,$client->maxBrightness,1,1];
-						
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{$client->maxBrightness} =  $client->maxBrightness.' ('.string('BRIGHTNESS_BRIGHTEST').')';
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'onChange'} = sub {
-							my ($client, $changeref) = @_;
-							if ($client->power()) { $client->brightness($changeref->{'powerOnBrightness'}{'new'}); }
-						};
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'onChange'} = sub {
-							my ($client, $changeref) = @_;
-							if (!$client->power()) { $client->brightness($changeref->{'powerOffBrightness'}{'new'}); }
-						};
-						# Leave Slim::Buttons::Screensaver::screenSaver to change idle brightness
-					} else {
-						$pageref->{'Prefs'}{'powerOnBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'powerOffBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'validateArgs'} = [0,4,1,1];
-						$pageref->{'Prefs'}{'idleBrightness'}{'options'}{'4'} =  '4 ('.string('BRIGHTNESS_BRIGHTEST').')';
 					}
 
 				}
@@ -445,40 +405,35 @@ sub initSetupConfig {
 			}
 		,'Prefs' => {
 			'powerOnBrightness' => {
-							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => undef
-							,'optionSort' => 'NK'
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
+							'validate'     => \&Slim::Utils::Validate::isInt,
+							'validateArgs' => \&getBrightnessArgs,
+							'optionSort'   => 'NK',
+							'options'      => \&getBrightnessOptions,
+							'onChange'     => sub {
+									my ($client, $changeref) = @_;
+									if (defined $client && defined $client->maxBrightness && $client->power()) {
+										$client->brightness($changeref->{'powerOnBrightness'}{'new'});
 									}
+								},
+							
 						}
 			,'powerOffBrightness' => {
-							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => undef
-							,'optionSort' => 'NK'
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
+							'validate'     => \&Slim::Utils::Validate::isInt,
+							'validateArgs' => \&getBrightnessArgs,
+							'optionSort'   => 'NK',
+							'options'      => \&getBrightnessOptions,
+							'onChange'     => sub {
+									my ($client, $changeref) = @_;
+									if (defined $client && defined $client->maxBrightness && !$client->power()) {
+										$client->brightness($changeref->{'powerOffBrightness'}{'new'});
 									}
+								},
 						}
 			,'idleBrightness' => {
-							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => undef
-							,'optionSort' => 'NK'
-							,'options' => {
-									'0' => '0 ('.string('BRIGHTNESS_DARK').')'
-									,'1' => '1'
-									,'2' => '2'
-									,'3' => '3'
-									,'4' => '4'
-									}
+							'validate'     => \&Slim::Utils::Validate::isInt,
+							'validateArgs' => \&getBrightnessArgs,
+							'optionSort'   => 'NK',
+							'options'      => \&getBrightnessOptions,
 						}
 			,'doublesize' => {
 							'validate' => \&Slim::Utils::Validate::inList
@@ -521,8 +476,9 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'activeFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by preEval
-							,'options' => {} #filled by preEval
+							,'validateArgs' => [\&getFontOptions,1]
+							,'validateAddClient' => 1
+							,'options' => \&getFontOptions
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'activeFont'}{'Processed'})) {
@@ -541,8 +497,9 @@ sub initSetupConfig {
 							,'arrayCurrentPref' => 'idleFont_curr'
 							,'inputTemplate' => 'setup_input_array_sel.html'
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by preEval
-							,'options' => {} #filled by preEval
+							,'validateArgs' => [\&getFontOptions,1]
+							,'validateAddClient' => 1
+							,'options' => \&getFontOptions
 							,'onChange' => sub {
 										my ($client,$changeref,$paramref,$pageref) = @_;
 										if (exists($changeref->{'idleFont'}{'Processed'})) {
@@ -554,12 +511,18 @@ sub initSetupConfig {
 						}
 			,'activeFont_curr' => {
 							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => undef
+							,'validateArgs' => sub {
+									my $client = shift || return ();
+									return (0,($client->prefGetArrayMax('activeFont') + 1),1,1);
+								}
 							,'changeIntro' => 'SETUP_ACTIVEFONT'
 						}
 			,'idleFont_curr' => {
 							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => undef
+							,'validateArgs' => sub {
+									my $client = shift || return ();
+									return (0,($client->prefGetArrayMax('idleFont') + 1),1,1);
+								}
 							,'changeIntro' => 'SETUP_IDLEFONT'
 						}
 			,'autobrightness' => {
@@ -884,9 +847,6 @@ sub initSetupConfig {
 					playerChildren($client, $pageref);
 					if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
 						$pageref->{'GroupOrder'}[0] = 'Synchronize';
-						my $syncGroupsRef = syncGroups($client);
-						$pageref->{'Prefs'}{'synchronize'}{'options'} = $syncGroupsRef;
-						$pageref->{'Prefs'}{'synchronize'}{'validateArgs'} = [$syncGroupsRef];
 					} else {
 						$pageref->{'GroupOrder'}[0] = undef;
 					}
@@ -899,7 +859,6 @@ sub initSetupConfig {
 					
 					if ($client->maxTransitionDuration()) {
 						$pageref->{'GroupOrder'}[2] = 'Transition';
-						$pageref->{'Prefs'}{'transitionDuration'}{'validateArgs'} = [0, $client->maxTransitionDuration(),1,1];
 					} else {
 						$pageref->{'GroupOrder'}[2] = undef;
 					}
@@ -1052,9 +1011,10 @@ sub initSetupConfig {
 						}
 			,'synchronize' => {
 							'dontSet' => 1
-							,'options' => {} #filled by preEval
+							,'options' => \&syncGroups
 							,'validate' => \&Slim::Utils::Validate::inHash
-							,'validateArgs' => [] #filled by initSetup
+							,'validateArgs' => [\&syncGroups,1]
+							,'validateAddClient' => 1
 							,'currentValue' => sub {
 									my ($client,$key,$ind) = @_;
 									return if (!defined($client));
@@ -1135,7 +1095,11 @@ sub initSetupConfig {
 								}
 						}
 			,'transitionDuration' => {
-							'validate' => \&Slim::Utils::Validate::isInt  
+							'validate' => \&Slim::Utils::Validate::isInt,
+							'validateArgs' => sub {
+									my $client = shift || return ();
+									return (0, $client->maxTransitionDuration(),1,1);
+								},
 						}
 			,'replayGainMode' => {
 							'validate' => \&Slim::Utils::Validate::inHash,
@@ -2338,6 +2302,56 @@ sub getSetupOptions {
 	return $setup{$category}{'Prefs'}{$pref}{'options'};
 }
 
+sub getPlayingDisplayModes {
+	my $client = shift || return {};
+	my $displayHash = $client->playingModeOptions();
+	$displayHash->{-1} = ' ' ;
+	return $displayHash;
+}
+
+sub getFontOptions {
+	my $client = shift || return {};
+	my $fonts = Slim::Display::Graphics::fontnames();
+	my %allowedfonts;
+
+	my $displayHeight = $client->displayHeight();
+	foreach my $f (keys %$fonts) {
+		
+		if ($displayHeight == Slim::Display::Graphics::fontheight($f . '.2')) {
+			$allowedfonts{$f} = $f;
+		}
+	}
+	
+	$allowedfonts{'-1'} = ' ';;
+
+	return \%allowedfonts;
+}
+
+sub getBrightnessOptions {
+	my %brightnesses = (
+						'0' => '0 ('.string('BRIGHTNESS_DARK').')',
+						'1' => '1',
+						'2' => '2',
+						'3' => '3',
+						'4' => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
+						);
+	my $client = shift || return \%brightnesses;
+	if (defined $client->maxBrightness) {
+		$brightnesses{'4'} = '4';
+		$brightnesses{$client->maxBrightness} = $client->maxBrightness . ' (' . string('BRIGHTNESS_BRIGHTEST').')';
+	}
+	return \%brightnesses;
+}
+
+sub getBrightnessArgs {
+	my @args = (0,4,1,1);
+	my $client = shift || return @args;
+	if (defined $client->maxBrightness) {
+		$args[1] = $client->maxBrightness;
+	}
+	return @args;
+}
+
 sub fillAlarmOptions {
 	$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'} = {
 		'onChange' => sub {
@@ -2989,12 +3003,23 @@ sub setup_evaluation {
 				if (defined($paramref->{$key2})) {
 					my ($pvalue, $errmsg);
 					if (exists $settingsref->{$key}{'validate'}) {
+						my @args = ($paramref->{$key2});
+
 						if (exists $settingsref->{$key}{'validateArgs'}) {
-							($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2},@{$settingsref->{$key}{'validateArgs'}});
-						} else {
-							($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}($paramref->{$key2});
+							if (ref $settingsref->{$key}{'validateArgs'} eq 'CODE') {
+								my @valargs = &{$settingsref->{$key}{'validateArgs'}}($client);
+								push @args, @valargs;
+							} else {
+								push @args, @{$settingsref->{$key}{'validateArgs'}};
+							}
 						}
-					} else { #accept everything
+
+						if (exists $settingsref->{$key}{'validateAddClient'}) {
+							push @args, $client;
+						}
+
+						($pvalue, $errmsg) = &{$settingsref->{$key}{'validate'}}(@args);
+					} else { # accept everything
 						$pvalue = $paramref->{$key2};
 					}
 					if (defined($pvalue)) {
@@ -3032,6 +3057,12 @@ sub setup_changes_HTTP {
 	my $changeref = shift;
 	my $paramref = shift;
 	my $settingsref = shift;
+
+	my $client;
+	if (exists $paramref->{'playerid'}) {
+		$client = Slim::Player::Client::getClient($paramref->{'playerid'});
+	}
+
 	foreach my $key (keys %{$changeref}) {
 		my ($keyA,$keyI);
 		# split up array preferences into the base + index
@@ -3067,15 +3098,11 @@ sub setup_changes_HTTP {
 			}
 		} elsif (exists $settingsref->{$keyA}{'options'}) {
 			if (ref $settingsref->{$keyA}{'options'} eq 'CODE') {
-				$changedval = &{$settingsref->{$keyA}{'options'}}()->{$changeref->{$key}{'new'}};
+				$changedval = &{$settingsref->{$keyA}{'options'}}($client)->{$changeref->{$key}{'new'}};
 			} else {
 				$changedval = $settingsref->{$keyA}{'options'}{$changeref->{$key}{'new'}};
 			}
 		} elsif (exists $settingsref->{$keyA}{'externalValue'}) {
-			my $client;
-			if (exists $paramref->{'playerid'}) {
-				$client = Slim::Player::Client::getClient($paramref->{'playerid'});
-			}
 			$changedval = &{$settingsref->{$keyA}{'externalValue'}}($client,$changeref->{$key},$key);
 		} else {
 			$changedval = $changeref->{$key}{'new'};
@@ -3143,7 +3170,7 @@ sub options_HTTP {
 
 		if (exists $settingsref->{$key}{'options'}) {
 			if (ref $settingsref->{$key}{'options'} eq 'CODE') {
-				$keyOptions = \%{&{$settingsref->{$key}{'options'}}()};
+				$keyOptions = \%{&{$settingsref->{$key}{'options'}}($client)};
 			} elsif (ref $settingsref->{$key}{'options'} eq 'HASH') {
 				$keyOptions = \%{$settingsref->{$key}{'options'}};
 			}

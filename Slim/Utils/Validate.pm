@@ -191,6 +191,7 @@ sub inHash {
 	my $val = shift;
 	my $ref = shift;
 	my $codereturnsref = shift; #should be set to 1 if $ref is to code that returns a hash reference
+	my $client = shift;
 	my %hash = ();
 
 	if (ref($ref)) {
@@ -200,10 +201,10 @@ sub inHash {
 		} elsif (ref($ref) eq 'CODE') {
 
 			if ($codereturnsref) {
-				%hash = %{&{$ref}};
+				%hash = %{&{$ref}($client)};
 
 			} else {
-				%hash = &{$ref};
+				%hash = &{$ref}($client);
 			}
 		}
 	}
