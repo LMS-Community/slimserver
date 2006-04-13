@@ -1527,6 +1527,7 @@ ABOUT_SHORT
 # General strings for the setup pages
 
 SETUP_BAD_PAGE_SUGGEST
+	DE	Erweiter Adresse um page=SERVER_SETTINGS.
 	EN	Try adding page=SERVER_SETTINGS.
 
 #
@@ -3043,6 +3044,7 @@ SETUP_TITLEFORMAT_DESC
 	ZH_CN	您可以从以下的菜单选择您所要显示在播放机前的歌曲标题格式。您也可以通过播放机上的菜单《设置》->《播放机标题格式》作选择。请点击《当前的》专栏旁的按钮以改变当前的标题格式。选择妥当后,请点击《更动》以保存您的选择。
 
 SETUP_TITLEFORMAT_CHANGED
+	DE	Das Format wird für alle Geräte, die diese Einstellung verwenden, angepasst.
 	EN	Format will be changed for any clients using this setting
 
 SETUP_ITUNESPLAYLISTFORMAT
@@ -3460,6 +3462,7 @@ SETUP_GUESSFILEFORMATS
 	ZH_CN	猜测标签格式
 
 SETUP_GUESSFILEFORMATS_CHANGED
+	DE	Alle Dateien ohne Tags werden auf folgende Art und Weise verarbeitet.
 	EN	All files without tags will be processed this way
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
