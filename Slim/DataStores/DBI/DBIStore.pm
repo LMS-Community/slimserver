@@ -1197,60 +1197,7 @@ sub readTags {
 	my $type   = Slim::Music::Info::typeFromPath($filepath);
 	my $remote = Slim::Music::Info::isRemoteURL($file);
 
-	# Populate the DB with information for the remote URL now - and not at the time we play.
-	if (0 && $remote) {
-
-		my $stream = '';
-
-		# Give it a chance
-		my ($format) = ($file =~ m|^(\w+)://|);
-
-		my $tagReaderClass = Slim::Music::Info::classForFormat($format);
-
-		# Extract tag and audio info per format
-		if ($tagReaderClass) {
-
-			# Dynamically load the module in.
-			Slim::Music::Info::loadTagFormatForType($format);
-
-			$stream = eval { $tagReaderClass->getTag($file) };
-		}
-
-		if ($@) {
-			errorMsg("readTags: While trying to ->getTag($file) : $@\n");
-			bt();
-		}
-
-		# Try and get a content type from the stream.
-		if (blessed($stream) && $stream->can('contentType') && $stream->contentType) {
-
-			my $contentType = Slim::Music::Info::mimeToType($stream->contentType) || 
-					  Slim::Music::Info::typeFromSuffix($file) ||
-					  $stream->contentType;
-
-			$attributesHash->{'CONTENT_TYPE'} = $contentType;
-			$attributesHash->{'TITLE'}        = $stream->title;
-			$attributesHash->{'BITRATE'}      = $stream->bitrate;
-
-		} else {
-
-			my $contentType = Slim::Music::Info::typeFromSuffix($file);
-
-			if ($contentType && $format && $format ne $contentType) {
-
-				$attributesHash->{'CONTENT_TYPE'} = $contentType;
-
-			} elsif ($tagReaderClass) {
-
-				$attributesHash->{'CONTENT_TYPE'} = $tagReaderClass->getFormatForURL($file);
-
-			} else {
-
-				$attributesHash->{'CONTENT_TYPE'} = $contentType;
-			}
-		}
-
-	} elsif (Slim::Music::Info::isSong($file, $type) && !$remote) {
+	if (Slim::Music::Info::isSong($file, $type) && !$remote) {
 
 		# Extract tag and audio info per format
 		if (my $tagReaderClass = Slim::Music::Info::classForFormat($type)) {
@@ -1276,7 +1223,7 @@ sub readTags {
 		if (defined $attributesHash->{'TRACKNUM'}) {
 			$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
 		}
-		
+
 		# Turn the tag SET into DISC and DISCC if it looks like # or #/#
 		if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
 
@@ -1607,9 +1554,13 @@ sub _preCheckAttributes {
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
 	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
-	if (defined $attributes->{'YEAR'} && $attributes->{'YEAR'} !~ /^\d+$/) {
+	# Same for DISC - Bug 2821
+	for my $tag (qw(YEAR DISC DISCC TRACKNUM)) {
 
-		delete $attributes->{'YEAR'};
+		if (defined $attributes->{$tag} && $attributes->{$tag} !~ /^\d+$/) {
+
+			delete $attributes->{$tag};
+		}
 	}
 
 	# Munge the replaygain values a little
@@ -1965,9 +1916,19 @@ sub _postCheckAttributes {
 			$discc = max($disc, $discc, $albumObj->discc);
 		}
 
-		$set{'disc'}  = $disc;
-		$set{'discc'} = $discc;
-		$set{'year'}  = $track->year;
+		# Check that these are the correct types. Otherwise MySQL will
+		# not accept the values.
+		if (defined $disc && $disc =~ /^\d+$/) {
+			$set{'disc'} = $disc;
+		}
+
+		if (defined $discc && $discc =~ /^\d+$/) {
+			$set{'discc'} = $discc;
+		}
+
+		if (defined $track->year && $track->year =~ /^\d+$/) {
+			$set{'year'} = $track->year;
+		}
 
 		$albumObj->set(%set);
 		$albumObj->update;
