@@ -153,8 +153,8 @@ END %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
 	<div >
-		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
-		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
+		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>[% END %]
+		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
 	</div>
 	[% SET class = 'even' odd = 0 %]
 	<div class="artworkControls">

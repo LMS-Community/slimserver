@@ -34,15 +34,15 @@ MoveDown = "%2B1"; # +1
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
-[%- BLOCK thumbnailImg %]
-	[% "<img src=\"/music/$coverThumb/thumb.jpg\" height=\"";height or 100;"\" 
+[%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %]
+	[% "<img src=\"/music/$coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\" 
 		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\" 
 		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\">" %] 
 [% END -%]
 
 [%# img tag for album thumbnail in the now playing status context %]
-[% BLOCK statusImg -%]
-	[% "<img src=\"/music/$coverThumb/cover.jpg\" height=\"";height or 100;"\" 
+[% BLOCK statusImg -%][% IF NOT height; height = 100; END %]
+	[% "<img src=\"/music/$coverThumb/cover_Xx"; height;".jpg\" height=\"";height;"\" 
 		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
 		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist != noArtist; " "; "BY" | string; " "; itemobj.artist ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\">" -%]
 [%- END %]
@@ -157,8 +157,8 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
-[% BLOCK thumbnailItemImg -%]
-	[%- "<img $style src=\"/music/$item.coverThumb/thumb.jpg\" height=\"";height or 100;"\"" %]
+[% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
+	[%- "<img $style src=\"/music/$item.coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\"" %]
 	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
 	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
