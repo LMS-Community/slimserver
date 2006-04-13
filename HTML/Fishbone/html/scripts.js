@@ -137,8 +137,8 @@ function ProgressUpdate(mp,curstyle) {
 	}
 	
 	[% IF undock %]
-	if ((mp && inc == 10)) {
-		var args = 'player='+player+'&ajaxRequest=1';
+	if (inc == 10) {
+		var args = 'player=[% playerURI %]&ajaxRequest=1';
 		getStatusData(args, refreshAll);
 		inc = 0;
 	}

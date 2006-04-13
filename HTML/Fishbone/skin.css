@@ -2,20 +2,19 @@ H4
 {
 	font-size : 12pt;
 	font-weight : bold;
-	padding: 0 8 0 8;
+	padding: 0 8px 0 8px;
 }
 
 IMG {
-	vertical-alignment: bottom;
-	align: bottom;
+	vertical-align: bottom;
 }
 
 H5 {
 	font-size : 12pt;
 	font-weight : bold;	
 	text-align : left;
-	margin: 2 0 2 0;
-	padding: 2 0 2 0;
+	margin: 2px 0 2px 0;
+	padding: 2px 0 2px 0;
 }
 
 TABLE,TBODY {
@@ -39,7 +38,7 @@ A {
 	text-decoration: none;
 }
 
-A:hover, A:selected {
+A:hover, A:active {
 	color : #EE3823;
 }
 
@@ -56,11 +55,11 @@ A.linkbtn:hover {
 DIV.playlistform,DIV#TopMenu2 .stdclick {
 	font : 9px Arial; 
 	color: Yellow;
-	margin: 2 3 2 3;
+	margin: 2px 3px 2px 3px;
 }
 
 DIV.playlistform,DIV#TopMenu2 .stdedit {
-	margin: 2 3 2 3;
+	margin: 2px 3px 2px 3px;
 }
 
 div#statusMessage form{
@@ -69,7 +68,7 @@ div#statusMessage form{
 
 .faq
 {
-	padding: 0 8 0 8;
+	padding: 0 8px 0 8px;
 	margin: 0px;
 	margin-top: 8px;
 }
@@ -85,7 +84,7 @@ div#statusMessage form{
 
 .list,.playlist
 {
-	padding: 0 8 0 8;
+	padding: 0 8px 0 8px;
 	margin: 0px;
 	margin-top: 8px;
 	height: auto;
@@ -108,7 +107,7 @@ img {
 div#statusMessage
 {
 	margin:0px;
-	padding: 0 0 1 8;
+	padding: 0 0 1px 8px;
 	background: #999;
 	color: white;
 }
@@ -154,25 +153,58 @@ div#browsedbHeader {
 	margin: 0px;
 }
 
+.artworkText {
+	text-align: center;
+	overflow: hidden;
+	color: #999;
+}
+
+.artworkText A {
+	color : white ! important;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+	padding-left: 4px;
+	padding-right: 0px;
+	padding-top: 10px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+	padding-right: 6px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.thumbwrap a span {
+	display: block;
+	overflow: hidden;
+}
+
 .artworkControls {
 	padding: 0px;
-	margin: 0px;
+	padding-right: 4px;
+	margin: 0px auto;
 	height: 15px;
 }
 
 .artworkControls a {
 	vertical-align: middle;
+	float: right;
 	position: relative;
 	margin: 0px;
 	top: 0px;
-	float: right;
-	padding-top: 2px;
-	padding-right: 2px;
 }
 
 .artworkControls img {
 	padding: 0px;
 	margin: 0px;
+	padding-top: 1px;
+	padding-right: 2px;
 }
 
 .pagebar{
@@ -226,36 +258,6 @@ div#browsedbHeader {
 	text-align: center;
 }
 
-.artworkText {
-	text-align: center;
-	overflow: hidden;
-	color: #999;
-}
-
-.artworkText A {
-	color : white ! important;
-}
-
-.thumbwrap {
-	display: inline-block;
-	margin: 0px;
-	padding-left: 4px;
-	padding-right: 0px;
-	padding-top: 10px;
-}
-
-.thumbwrap li {
-	display: -moz-inline-box;  /* Moz */
-	display: inline-block;  /* Op, Saf, IE \*/
-	vertical-align: top;
-	padding-right: 6px;
-}
-
-.thumbwrap a span {
-	display: block;
-	overflow: hidden;
-}
-
 .valueBold, .valueSelected, .darkbutton {
 	color:#bbb ! important;
 	font-weight: bold;
@@ -296,8 +298,8 @@ H3 {
 	font-size : 14px;
 	font-weight : bold;
 	text-align : left;
-	margin:2 0 2 0;
-	padding: 2 0 2 0;
+	margin:2px 0 2px 0;
+	padding: 2px 0 2px 0;
 }
 
 TD, P, A {
@@ -390,11 +392,11 @@ A.linkbtn:link {
 }
 
 #mastHead #playerlogo, #mastHead #SDlogo {
-	padding: 3 8 3 8;
+	padding: 3px 8px 3px 8px;
 }
 
 #mastHead #playerlinks, #mastHead #serverlinks {
-	padding: 5 8 5 8;
+	padding: 5px 8px 5px 8px;
 }
 
 #menuHeader {
@@ -443,7 +445,6 @@ A.linkbtn:link {
 	background:#61676c;
 	color:white;
 	position: relative;
-	clear: all;
 	display: block;
 	top: 0px;
 	left: 0px;
@@ -454,7 +455,7 @@ A.linkbtn:link {
 }
 
 #TopMenu1 #coverart {
-	padding: 5 5 5 0;
+	padding: 5px 5px 5px 0;
 }
 
 #TopMenu1 #nowplaying
@@ -482,7 +483,7 @@ A.linkbtn:link {
 {
 	margin:0 auto;
 	background:#999;
-	padding: 4 8 4 8;
+	padding: 4px 8px 4px 8px;
 	color:white;
 	position: relative;
 	top: 0px;
@@ -496,8 +497,7 @@ A.linkbtn:link {
 	white-space: nowrap;
 	text-align: center;
 	border-right: 1px solid #B0B0B0;
-	margin:0 auto;
-	padding: 0 auto;
+	margin: 0 auto;
 	width: 50%;
 }
 	
@@ -523,7 +523,7 @@ A.linkbtn:link {
 
 #TopMenu3 {
 	margin:0px;
-	padding: 2 2 2 2;
+	padding: 2px;
 	background:#61676c;
 	position: relative; 
 	top: 0px; 
@@ -599,7 +599,7 @@ A.linkbtn:link {
 
 #playlistStatus {
 	margin:0px;
-	padding: 0 8 0 8;
+	padding: 0 8px 0 8px;
 	margin-top: 8px;
 	color:white;
 	height: 18px;
@@ -616,7 +616,6 @@ A.linkbtn:link {
 	width: 100%;
 	position: relative; 
 	top: 0px;
-	clear: all;
 	float: left;
 	border: 0px;
 }
@@ -646,13 +645,13 @@ A.linkbtn:link {
 {
 	color:white ! important;
 	border-bottom:1px solid #777;
-	margin:3 0 3 0;
+	margin:3px 0 3px 0;
 }
 
 .label2
 {
 	color:black;
-	margin:3 0 3 0;
+	margin:3px 0 3px 0;
 }
 
 .tan {
@@ -719,7 +718,7 @@ DIV.playlistform
 	margin:0px;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 10px;
-	padding:4 8 4 8;
+	padding:4px 8px 4px 8px;
 	background:#999;
 	color:white;
 }

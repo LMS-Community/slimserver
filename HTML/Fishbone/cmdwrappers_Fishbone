@@ -5,13 +5,12 @@
 [% controlGraphics  = 1 %]
 [% browserTarget  = "browser" %]
 
-[% BLOCK cmdlink %]
-<a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]>
-	<img src="[% webroot %]html/images/[% cmdimage %].gif" border=0 align="middle" height="11"
+[%- BLOCK cmdlink -%]
+<a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" height="11"
 	alt='[% cmdtitle | string %]' 
 	title='[% cmdtitle | string %]' 
 	onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
-[% END %]
+[%- END -%]
 
 [% BLOCK infolink %]
 	[% PROCESS cmdlink
@@ -39,28 +38,28 @@
 
 [% BLOCK homelink %][% END %]
 
-[% BLOCK playlistcontrols %]
+[% BLOCK playlistcontrols -%]
 	[% width='9' height='11' target='status' %]
-	[% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                         -%][% END %]
-	[% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         -%][% END %]
-	[% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           -%][% END %]
-	[% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                           -%][% END %]
-	[% WRAPPER insertlink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind -%][% END %]
-	[% FOREACH mixer = item.mixerlinks.values.sort %]
-		[% PROCESS $mixer %]
-	[% END %]
-[% END %]
+	[%- WRAPPER removelink   -%][%- PROCESS cmdHRef cmdType = 'delete'                         -%][%- END -%]
+	[%- WRAPPER movedownlink -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         -%][%- END -%]
+	[%- WRAPPER moveuplink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           -%][%- END -%]
+	[%- WRAPPER insertlink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind -%][%- END -%]
+	[%- WRAPPER playlink     -%][%- PROCESS cmdHRef cmdType = 'jump'                           -%][%- END -%]
+	[%- FOREACH mixer = item.mixerlinks.values.sort %]
+		[%- PROCESS $mixer -%]
+	[%- END -%]
+[%- END %]
 
-[% BLOCK browsecontrols %]
+[% BLOCK browsecontrols -%]
 	[% width='9' height='11' target='status' %]
-	[% WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END %]
-	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'    %][% END %]
-	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play'   %][% END %]
-	[% WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END %]
-	[% FOREACH mixer = mixerlinks.values.sort %]
-		[% PROCESS $mixer %]
-	[% END %]
-[% END %]
+	[%- WRAPPER removelink -%][%- PROCESS cmdHRef cmdType='remove' -%][%- END %]
+	[%- WRAPPER addlink    -%][%- PROCESS cmdHRef cmdType='add'    -%][%- END %]
+	[%- WRAPPER insertlink -%][%- PROCESS cmdHRef cmdType='insert' -%][%- END %]
+	[%- WRAPPER playlink   -%][%- PROCESS cmdHRef cmdType='play'   -%][%- END %]
+	[%- FOREACH mixer = mixerlinks.values.sort -%]
+		[%- PROCESS $mixer -%]
+	[%- END %]
+[%- END %]
 
 [% BLOCK trackinfo %]
 	[% IF item.currentsong %]

@@ -1,4 +1,4 @@
-var player = '[% player %]';
+var player = '[% playerURI %]';
 var url = 'status_header.html';
 
 [% PROCESS html/global.js %]
@@ -9,7 +9,6 @@ function processState(param) {
 }
 
 function refreshState(theData) {
-
 	var parsedData = fillDataHash(theData);
 	// refresh control_display in songinfo section
 	
@@ -70,7 +69,6 @@ function refreshPlayControls(theData) {
 	var mp = 0;
 	var curstyle = getActiveStyleSheet();
 	
-	if (curstyle) DumperAlert(curstyle.indexOf('Tan'));
 	for (var i=0; i < controls.length; i++) {
 		var obj = 'playmode';
 		var objID = $('playCtl' + controls[i]);
@@ -105,10 +103,36 @@ function refreshPlayControls(theData) {
 	}
 	
 	updateTime(parsedData['songtime'],parsedData['durationseconds']);
+	//DumperPopup(theData.responseText);
 }
 
 // refresh song and artwork
-function refreshInfo() {
+function refreshInfo(theData) {
+	var parsedData = fillDataHash(theData);
+	
+	// refresh cover art
+	if ($('albumhref')) {
+		document.getElementById('albumhref').href = 'browsedb.html?hierarchy=track&level=0&album='+parsedData['albumid']+'&amp;player='+player;
+	}
+	if ($('coverartpath')) {
+		var coverPath = null;
+		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
+			coverPath = parsedData['coverartpath'];
+		} else {
+			coverPath = '/music/'+parsedData['coverartpath']+'/cover.jpg';
+		}
+		document.getElementById('coverartpath').src = coverPath;
+	}
+	
+	refreshElement('artisthtml',parsedData['artisthtml']);
+	//refreshElement('albumhref',parsedData['albumhref']);
+	refreshElement('songtitlehref',parsedData['songtitlehref']);
+	refreshElement('thissongnum',parsedData['thissongnum']);
+	refreshElement('songcount',parsedData['songcount']);
+	refreshElement('duration',parsedData['duration']);
+	refreshElement('bitrate',parsedData['bitrate']);
+	refreshElement('year',parsedData['year']);
+	refreshElement('album',parsedData['album']);
 }
 
 // reload undock window
@@ -118,11 +142,12 @@ function refreshUndock() {
 
 function refreshAll(theData) {
 	var parsedData = fillDataHash(theData);
-
+	//DumperPopup(theData.responseText);
 	refreshVolume(parsedData);
 	refreshPlayControls(parsedData);
-	refreshState(parsedData);
 	refreshInfo(parsedData);
+	refreshState(parsedData);
+
 }
 
 function fillDataHash(theData) {

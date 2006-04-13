@@ -1,11 +1,11 @@
 [%- IF ajaxRequest -%]
 	<pre>
-	[% PROCESS ajaxRequest.txt page = 'status' %]
+	[% PROCESS ajaxRequest.txt page = 'status' %][% PROCESS FBajaxRequest.txt page = 'status' %]
 	</pre>
 [%- ELSE -%]
 [%- FILTER null %]
 [% BLOCK albumlink %]
-	<p><a [% content %] target="browser">[% itemobj.album.title | html %]</a>[% IF itemobj.year %]&nbsp;([% itemobj.year %])[% END %]</p>
+	<p><a [% content %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>[% IF itemobj.year %]&nbsp;(<span id="year">[% itemobj.year %]</span>)[% END %]</p>
 [% END %]
 
 [% BLOCK spacer -%]
@@ -126,9 +126,9 @@
 		<div id="TopMenu1">
 			<div id="coverart">
 				[% IF coverThumb -%]
-					<a [% albumHRef %] target="browser">[% PROCESS statusImg %]</a>
+					<a [% albumHRef %] target="browser" id="albumhref">[% PROCESS statusImg %]</a>
 				[% ELSE -%]
-					<img src="[% webroot %]html/images/cover.png" width = '100' height="100">
+					<img src="[% webroot %]html/images/cover.png" id="coverartpath" width = '100' height="100">
 				[%- END %]
 			</div>
 			<div id="nowplaying">
@@ -136,16 +136,16 @@
 				[% IF modepause %][% status = "PAUSED_ON"  %][% END %]
 				[% IF modestop  %][% status = "STOPPED_ON" %][% END %]
 				[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]
-				[% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</div>
-				<div class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
-				[% IF itemobj.duration %]&nbsp;([% itemobj.duration | html %])[% END %][% IF bitrate %]&nbsp;([% bitrate %])[% END %]</div>
+				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</div>
+				<div class="currentSongData"><span id="songtitlehref"><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a></span>
+				[% IF itemobj.duration %]&nbsp;(<span id="duration">[% itemobj.duration | html %]</span>)[% END %][% IF bitrate %]&nbsp;(<span id="bitrate">[% bitrate %]</span>)[% END %]</div>
 				
 				[% IF itemobj.artist && itemobj.artist != noArtist %]<div class="label">[% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</div>
-				[% PROCESS artistsAsHTML.html noby=1 %]
+				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
 				[% END %]
 				
 				[% IF itemobj.album.title && itemobj.album.title != noAlbum %]<div class="label">[% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</div>
-				[% WRAPPER albumlink %][% albumHRef %][% END %]
+				<span id="albumhref">[% WRAPPER albumlink %][% albumHRef %][% END %]</span>
 				[% END %]
 			</div>
 		</div>
