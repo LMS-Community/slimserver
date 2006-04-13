@@ -2,16 +2,21 @@
 [%- pagetitle = "MUSICMAGIC_MIX" | string -%]
 [%- PROCESS pageheader.html %] 
 
-	[% IF browselist_header %][% browselist_header %][% END %]
-    [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+[% IF browselist_header %][% browselist_header %][% END %]
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 
-    [% WRAPPER contentcontainer %]
-    [% FOREACH item = browse_items %]
+[% WRAPPER contentcontainer %]
+	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
 	[% END %]
-    [% END %]
-   [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+[% END %]
 
-  </body>
-</html>
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+
+[% IF p0 %]
+	<script type="text/javascript">
+		refreshStatus();
+	</script>
+[% END %]
+
 [%- PROCESS pagefooter.html %]

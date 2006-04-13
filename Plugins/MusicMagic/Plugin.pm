@@ -1204,9 +1204,11 @@ sub musicmagic_mix {
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
+	$params->{'levelName'} = "track";
 
 	if ($mood) {
 		$mix = getMix($client, $mood, 'mood');
+		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $mood);
 
 	} elsif ($playlist) {
 		my ($obj) = $ds->objectForUrl($playlist);

@@ -7,28 +7,38 @@ function to_currentsong() {
 	}
 }
 
-[% IF refresh %]function doLoad() {
-
-	setTimeout( "refresh()", [% refresh %]*1000);
-	try {
-		if (parent.playlist.location.host != '') {
-			// Putting a time-dependant string in the URL seems to be the only way to make Safari
-			// refresh properly. Stitching it together as below is needed to put the salt before
-			// the hash (#currentsong).
-			var plloc = top.frames.playlist.location;
-			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
-			plloc.replace(newloc);
+function refreshStatus() {
+	for (var i=0; i < parent.frames.length; i++) {
+		if (parent.frames[i].name == "status" && parent.frames[i].location.pathname != '') {
+			parent.frames[i].location.replace(parent.frames[i].location.pathname + "?player=[% player | uri %]");
 		}
 	}
-	catch (err) {
-		// first load can fail, so swallow that initial exception.
-	}
 }
 
-function refresh() {
-	window.location.replace("[% statusroot %]?player=[% player | uri %]&amp;start=[% start %]&amp;refresh=1");
-}
+
+[% IF refresh %]
+	function doLoad() {
+	
+		setTimeout( "refresh()", [% refresh %]*1000);
+		try {
+			if (parent.playlist.location.host != '') {
+				// Putting a time-dependant string in the URL seems to be the only way to make Safari
+				// refresh properly. Stitching it together as below is needed to put the salt before
+				// the hash (#currentsong).
+				var plloc = top.frames.playlist.location;
+				var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
+					+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+				plloc.replace(newloc);
+			}
+		}
+		catch (err) {
+			// first load can fail, so swallow that initial exception.
+		}
+	}
+	
+	function refresh() {
+		window.location.replace("[% statusroot %]?player=[% player | uri %]");
+	}
 [% END %]
 
 [% BLOCK addSetupCaseLinks %]
@@ -51,10 +61,10 @@ function chooseSettings(value,option)
 
 	switch(option)
 	{
-		[% IF playerid %][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
+		[% IF playerid -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
 						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
-		[% ELSE %][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
-				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][% END %]
+		[%- ELSE -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
+				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][%- END %]
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break
@@ -112,13 +122,13 @@ function resize(src,width)
 	}
 
 [% IF warn %]
-function doLoad() {
-	setTimeout( "refresh()", 300*1000);
-}
-	
-function refresh() {
-	window.location.replace("home.html?player=[% player | uri %]");
-}
+	function doLoad() {
+		setTimeout( "refresh()", 300*1000);
+	}
+		
+	function refresh() {
+		window.location.replace("home.html?player=[% player | uri %]");
+	}
 [% END %]	
 
 // Stop Hiding script --->

@@ -69,11 +69,7 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 			[% IF pluginRandomNowPlaying != '' %]
 				[%# Reload status and playlist to reflect any new mixes %]
 				<script type="text/javascript">
-					for (var i=0; i < parent.frames.length; i++) {
-						if (parent.frames[i].name == "status") {
-							parent.frames[i].location.replace(parent.frames[i].location.pathname + "?player=[% player | uri %]&amp;refresh=1");
-						}
-					}
+					refreshStatus();
 				</script>
 				<tr>
 					<td>&nbsp;</td>

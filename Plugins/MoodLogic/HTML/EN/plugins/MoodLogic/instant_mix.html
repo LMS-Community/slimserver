@@ -4,19 +4,19 @@
 
 [% IF browselist_header %][% browselist_header %][% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+
 [% WRAPPER contentcontainer %]
-	[% BLOCK controls %]
-		[% WRAPPER playlink %]
-			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&amp;genre=[% genre | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=play"
-		[% END %]
-		[% WRAPPER addlink %]
-			href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% song | uri %]&amp;genre=[% genre | uri %]&amp;artist=[% artist | uri %]&amp;album=[% album | uri %]&amp;player=[% playerURI %]&amp;mood=[% mood %]&amp;p0=append"
-		[% END %]
-	[% END %]
-	
 	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]
 	[% END %]
 [% END %]
+
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-[% PROCESS pagefooter.html %]
+
+[% IF p0 %]
+	<script type="text/javascript">
+		refreshStatus();
+	</script>
+[% END %]
+
+[%- PROCESS pagefooter.html -%]
