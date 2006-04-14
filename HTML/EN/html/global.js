@@ -8,11 +8,12 @@ var player = '[% playerURI %]';
 // params is a list of args to send to url
 // action is the function to be called after the ajaxRequest.txt file is spit back
 function getStatusData(params, action) {
+	params = params + '&rnd='+ Math.random()*99999;
 	var myAjax = new Ajax.Request(
 		url, 
 		{
-			method: 'get', 
-			parameters: params, 
+			method: 'post',
+			postBody: params, 
 			onComplete: action
 		});
 }

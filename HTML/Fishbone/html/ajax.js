@@ -122,7 +122,7 @@ function refreshInfo(theData) {
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
-			coverPath = '/music/'+parsedData['coverartpath']+'/cover.jpg';
+			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100.jpg';
 		}
 		document.getElementById('coverartpath').src = coverPath;
 	}
