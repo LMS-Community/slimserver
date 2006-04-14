@@ -2,7 +2,6 @@ var player = '[% playerURI %]';
 var url = 'status_header.html';
 
 [% PROCESS html/global.js %]
-[%# PROCESS datadumper.js %]
 
 function processState(param) {
 	getStatusData(param + "&ajaxRequest=1", refreshState);
@@ -10,7 +9,6 @@ function processState(param) {
 
 function refreshState(theData) {
 	var parsedData = fillDataHash(theData);
-	// refresh control_display in songinfo section
 	
 	var controls = ['repeat', 'shuffle', 'mode'];
 	var power = ['on', 'off'];
@@ -109,6 +107,8 @@ function refreshPlayControls(theData) {
 // refresh song and artwork
 function refreshInfo(theData) {
 	var parsedData = fillDataHash(theData);
+	var hidden = new Array;
+	var shown = new Array;
 	
 	// refresh cover art
 	if ($('albumhref')) {
@@ -124,25 +124,63 @@ function refreshInfo(theData) {
 		document.getElementById('coverartpath').src = coverPath;
 	}
 	
-	refreshElement('artisthtml',parsedData['artisthtml']);
-	//refreshElement('albumhref',parsedData['albumhref']);
-	refreshElement('songtitlehref',parsedData['songtitlehref']);
-	refreshElement('thissongnum',parsedData['thissongnum']);
-	refreshElement('songcount',parsedData['songcount']);
-	refreshElement('duration',parsedData['duration']);
-	refreshElement('bitrate',parsedData['bitrate']);
-	refreshElement('year',parsedData['year']);
-	refreshElement('album',parsedData['album']);
+	// refresh href content
+	refreshHrefElement('albumhref',parsedData['albumid'],"album=");
+	refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
+	refreshHrefElement('removeartisthref',parsedData['artist'],"p4=");
+	refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
+	refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
+
+	//refresh text elements
+	var elems = ['artisthtml', 'songtitle', 'thissongnum', 'playtextmode', 'songcount', 'album'];
+	for (var i=0; i < elems.length; i++) {
+		var key = elems[i];
+		if ($(key)) {
+			refreshElement(key, parsedData[key]);
+		}
+	}
+	var elems = ['duration', 'bitrate', 'year'];
+	for (var i=0; i < elems.length; i++) {
+		var key = elems[i];
+		if ($(key)) {
+			showElements([key],'inline');
+			refreshElement(key, "("+parsedData[key]+")");
+		} else {
+			hideElements([key]);
+		}
+	}
+	
+	if(parsedData['album']) {
+		showElements(['albuminfo']);
+		showElements(['album'], 'inline');
+	} else {
+		hideElements(['albuminfo', 'album']);
+	}
+	if(parsedData['artist']) {
+		showElements(['artistinfo', 'artist']);
+	} else {
+		hideElements(['artistinfo', 'artist']);
+	}
+	
+	if (parsedData['thissongnum']) {
+		hideElements(['notplaying']);
+		showElements(['nowplaying']);
+	} else {
+		hideElements(['nowplaying']);
+		showElements(['notplaying']);
+	}
 }
 
 // reload undock window
 function refreshUndock() {
-	window.location.replace('status.html?player='+player+'&undock=1');
+	var args = 'player=[% playerURI %]&ajaxRequest=1';
+	getStatusData(args, refreshAll);
+	//window.location.replace('status.html?player='+player+'&undock=1');
 }
 
 function refreshAll(theData) {
 	var parsedData = fillDataHash(theData);
-	//DumperPopup(theData.responseText);
+
 	refreshVolume(parsedData);
 	refreshPlayControls(parsedData);
 	refreshInfo(parsedData);

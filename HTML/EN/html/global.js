@@ -45,12 +45,13 @@ function hideElements(myAry) {
 }
 
 // pass an array of div element ids to be shown on the page
-function showElements(myAry) {
+function showElements(myAry,style) {
+	if (!style) style = 'block';
 	for (var i = 0; i < myAry.length; i++) {
 		var div = myAry[i];
 		if ($(div)) {
 			//document.getElementByID(div).style.display = 'block';
-			$(div).style.display = 'block';
+			$(div).style.display = style;
 		}
 	}
 }
@@ -66,6 +67,16 @@ function refreshHref (element, value) {
 		document.getElementById(element).href = value;
 	}
 }
+
+// changes some part of a query in an href of id 'item', finding based on 'rpl', and replacing with 'data'
+function refreshHrefElement (item,data,rpl) {
+	
+	var myString = new String($(item).innerHTML);
+	var rString = rpl + data + "&amp;";
+	var rExp= new RegExp(rpl + ".+&amp;","gi");
+	$(item).innerHTML = myString.replace(rExp, rString);
+}
+
 
 // changes the innerHTML to 'value' of an element id of 'element'
 // if truncate is given, 'value' is reduced to truncate in length, plus a '...'

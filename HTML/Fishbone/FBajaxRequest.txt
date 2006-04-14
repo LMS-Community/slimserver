@@ -1,5 +1,3 @@
 artisthtml|[% PROCESS artistsAsHTML.html noby=1 %]
-albumhref|<p><a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>[% IF itemobj.year %]&nbsp;([% itemobj.year %])[% END %]</p>
-songtitlehref|<a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a>
 bitrate|[% bitrate %]
 year|[% itemobj.year %]

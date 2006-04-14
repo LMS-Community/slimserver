@@ -13,7 +13,7 @@ var inc = 0;
 var _progressEnd = 0;
 var _progressAt = 0
 
-function changePlayer(player_List){
+function changePlayer(player_List) {
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
 	
@@ -55,29 +55,30 @@ function newHref(doc,plyr) {
 	}
 }
 
-function toggleStatus(div) {
-	if ($(div).style.display == "none") {
-		$(div).style.display = "block";
-		$('statusImg_up').style.display = "inline";
-		$('statusImg_down').style.display = "none";
-	} else {
-		$(div).style.display = "none";
-		$('statusImg_up').style.display = "none";
-		$('statusImg_down').style.display = "inline";
+function toggleStatus(divs) {
+
+	for (var i=0; i < divs.length; i++) {
+		if ($(divs[i]).style.display == "none") {
+			$(divs[i]).style.display = "block";
+			$('statusImg_up').style.display = "inline";
+			$('statusImg_down').style.display = "none";
+		} else {
+			$(divs[i]).style.display = "none";
+			$('statusImg_up').style.display = "none";
+			$('statusImg_down').style.display = "inline";
+		}
 	}
 }
 
 function resizePlaylist(page) {
-$	('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
+	$('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
 }
 
-function openRemote(player,playername)
-{
+function openRemote(player,playername) {
 	window.open('status.html?player='+player+'&undock=1', playername, 'width=480,height=210,status=no');
 }
 
-function setCookie(name, value)
-{
+function setCookie(name, value) {
 	var expires = new Date();
 	expires.setTime(expires.getTime() + 1000*60*60*24*365);
 	document.cookie =
@@ -85,8 +86,7 @@ function setCookie(name, value)
 		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
 
-function insertProgressBar(mp,end,at) 
-{
+function insertProgressBar(mp,end,at) {
 	var s = '';
 	if (!mp) s = '_s';
 	if (document.all||document.getElementById)
@@ -109,37 +109,36 @@ function ProgressUpdate(mp,curstyle) {
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay').src.indexOf('_s') != -1) {
 			mp = 1;
-			inc++;
 			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
 
 		} else {
 			mp = 0;
-			inc = 0;
 			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
 		}
 	}
 	[% END %]
-
+	
+	inc++;
 	if (mp) _progressAt++;
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
-	[% IF undock %]if ((_progressEnd > 0) && (_progressAt > 10) && (_progressAt == _progressEnd)) refreshUndock();[% END %]
+	[% IF undock %]refreshElement('inc',inc);
+	if (_progressEnd - _progressAt <= 5 && inc) {
+		doRefresh();
+		inc = 0;
+	}[% END %]
 	
-	if (document.all) //if IE 4+
-	{
+	if (document.all) {
 		p = (document.body.clientWidth / _progressEnd) * _progressAt;
 		eval("document.progressBar.width=p");
-	}
-	else if (document.getElementById) //else if NS6+
-	{
+	} else if (document.getElementById) {
 		p = (document.width / _progressEnd) * _progressAt;
 		$("progressBar").width=p+" ";
 	}
 	
 	[% IF undock %]
 	if (inc == 10) {
-		var args = 'player=[% playerURI %]&ajaxRequest=1';
-		getStatusData(args, refreshAll);
+		doRefresh();
 		inc = 0;
 	}
 	[% END %]

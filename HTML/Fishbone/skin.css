@@ -5,10 +5,6 @@ H4
 	padding: 0 8px 0 8px;
 }
 
-IMG {
-	vertical-align: bottom;
-}
-
 H5 {
 	font-size : 12pt;
 	font-weight : bold;	
@@ -444,7 +440,7 @@ A.linkbtn:link {
 	padding: 0px;
 	background:#61676c;
 	color:white;
-	position: relative;
+	position: relative;z
 	display: block;
 	top: 0px;
 	left: 0px;
@@ -459,6 +455,14 @@ A.linkbtn:link {
 }
 
 #TopMenu1 #nowplaying
+{
+	position: absolute;
+	top: 0px;
+	left: 115px;
+	width: 100%;
+}
+
+#TopMenu1 #notplaying
 {
 	position: absolute;
 	top: 0px;

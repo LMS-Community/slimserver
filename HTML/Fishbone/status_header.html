@@ -4,9 +4,6 @@
 	</pre>
 [%- ELSE -%]
 [%- FILTER null %]
-[% BLOCK albumlink %]
-	<p><a [% content %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>[% IF itemobj.year %]&nbsp;(<span id="year">[% itemobj.year %]</span>)[% END %]</p>
-[% END %]
 
 [% BLOCK spacer -%]
 <img src="[% webroot %]html/images/spacer.gif" width="0">
@@ -85,6 +82,7 @@
 				<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
 			</div>
 			<div id="playerlinks">
+			[% IF undock %]<span id="inc"></span>  [% END %]
 				[% IF sync %]
 					<a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
 					 / 
@@ -96,8 +94,8 @@
 				[%- END -%]
 				[%- IF not undock -%] /
 				<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>
-				<img id="statusImg_up" src="html/images/b_up.gif" onClick="toggleStatus('TopMenu1');toggleStatus('TopMenu2');toggleStatus('TopMenu3');resize();">
-				<img id="statusImg_down" style="display:none;" src="html/images/b_down.gif" onClick="toggleStatus('TopMenu1');toggleStatus('TopMenu2');toggleStatus('TopMenu3');resize();">
+				<img id="statusImg_up" src="html/images/b_up.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
+				<img id="statusImg_down" style="display:none;" src="html/images/b_down.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
 				[%- END %]
 			</div>
 		</div>
@@ -126,26 +124,30 @@
 		<div id="TopMenu1">
 			<div id="coverart">
 				[% IF coverThumb -%]
-					<a [% albumHRef %] target="browser" id="albumhref">[% PROCESS statusImg %]</a>
+					<a [% albumHRef %] target="browser" id="coverhref">[% PROCESS statusImg width="100" %]</a>
 				[% ELSE -%]
 					<img src="[% webroot %]html/images/cover.png" id="coverartpath" width = '100' height="100">
 				[%- END %]
+			</div>
+			<div id="notplaying" style="display:none";>
+			[% "PLAYLIST_EMPTY" | string %]
 			</div>
 			<div id="nowplaying">
 				<div class="label">[% IF modeplay  %][% status = "PLAYING"    %][% END %]
 				[% IF modepause %][% status = "PAUSED_ON"  %][% END %]
 				[% IF modestop  %][% status = "STOPPED_ON" %][% END %]
-				[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]
-				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</div>
-				<div class="currentSongData"><span id="songtitlehref"><a class="songtitle" [% songinfoHRef %] target="browser">[% songtitle %]</a></span>
-				[% IF itemobj.duration %]&nbsp;(<span id="duration">[% itemobj.duration | html %]</span>)[% END %][% IF bitrate %]&nbsp;(<span id="bitrate">[% bitrate %]</span>)[% END %]</div>
+				<span id="playtextmode">[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]</span>
+				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<a id="zaphref" class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</div>
+				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% songtitle %]</span></a>
+				[% IF itemobj.duration %]&nbsp;<span id="duration">([% itemobj.duration | html %])</span>[% END %][% IF bitrate %]&nbsp;<span id="bitrate">([% bitrate %])</span>[% END %]</div>
 				
-				[% IF itemobj.artist && itemobj.artist != noArtist %]<div class="label">[% "ARTIST" | string %]&nbsp;[% PROCESS remove item=itemobj.artist %]</div>
+				[% IF itemobj.artist && itemobj.artist != noArtist %]<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove item=itemobj.artist %]</span></div>
 				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
 				[% END %]
 				
-				[% IF itemobj.album.title && itemobj.album.title != noAlbum %]<div class="label">[% "ALBUM" | string %]&nbsp;[% PROCESS remove item=itemobj.album.title %]</div>
-				<span id="albumhref">[% WRAPPER albumlink %][% albumHRef %][% END %]</span>
+				[% IF itemobj.album.title && itemobj.album.title != noAlbum %]<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove item=itemobj.album.title %]</span></div>
+				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>[% IF itemobj.year %]&nbsp;<span id="year">([% itemobj.year %])</span>[% END %]</span>
+
 				[% END %]
 			</div>
 		</div>
