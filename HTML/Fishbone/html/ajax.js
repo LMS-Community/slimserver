@@ -107,13 +107,16 @@ function refreshPlayControls(theData) {
 // refresh song and artwork
 function refreshInfo(theData) {
 	var parsedData = fillDataHash(theData);
-	var hidden = new Array;
-	var shown = new Array;
+
+	if (parsedData['thissongnum']) {
+		hideElements(['notplaying']);
+		showElements(['nowplaying']);
+	} else {
+		hideElements(['nowplaying']);
+		showElements(['notplaying']);
+	}
 	
 	// refresh cover art
-	if ($('albumhref')) {
-		document.getElementById('albumhref').href = 'browsedb.html?hierarchy=track&level=0&album='+parsedData['albumid']+'&amp;player='+player;
-	}
 	if ($('coverartpath')) {
 		var coverPath = null;
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
@@ -160,14 +163,6 @@ function refreshInfo(theData) {
 		showElements(['artistinfo', 'artist']);
 	} else {
 		hideElements(['artistinfo', 'artist']);
-	}
-	
-	if (parsedData['thissongnum']) {
-		hideElements(['notplaying']);
-		showElements(['nowplaying']);
-	} else {
-		hideElements(['nowplaying']);
-		showElements(['notplaying']);
 	}
 }
 

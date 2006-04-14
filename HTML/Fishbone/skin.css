@@ -432,6 +432,7 @@ A.linkbtn:link {
 	padding: 0px;
 	top: 0px;
 	right: 0px;
+	width: 100%;
 }
 
 #TopMenu1
@@ -650,6 +651,7 @@ A.linkbtn:link {
 	color:white ! important;
 	border-bottom:1px solid #777;
 	margin:3px 0 3px 0;
+	width: auto;
 }
 
 .label2
