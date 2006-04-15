@@ -75,7 +75,7 @@ function refreshHrefElement (item,data,rpl) {
 	
 	var myString = new String($(item).innerHTML);
 	var rString = rpl + data + "&amp;";
-	var rExp= new RegExp(rpl + ".+&amp;","gi");
+	var rExp= new RegExp(rpl + ".+?&amp;","gi");
 	$(item).innerHTML = myString.replace(rExp, rString);
 }
 

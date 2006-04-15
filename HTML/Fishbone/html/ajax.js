@@ -108,6 +108,19 @@ function refreshPlayControls(theData) {
 function refreshInfo(theData) {
 	var parsedData = fillDataHash(theData);
 
+	var myString = new String($('songtitlehref').innerHTML);
+	var rExp= new RegExp("item=(.+?)&amp;","gi");
+	var a = rExp.exec(myString);
+	var samesong = 0;
+	if (rExp.exec(myString) == parsedData['songtitleid']) samesong = 1;
+	
+	
+	var elems = ['thissongnum', 'playtextmode', 'songcount'];
+	if (!samesong) {
+		elems.push('songtitle');
+	}
+
+
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
 		showElements(['nowplaying']);
@@ -117,7 +130,7 @@ function refreshInfo(theData) {
 	}
 	
 	// refresh cover art
-	if ($('coverartpath')) {
+	if ($('coverartpath') && !samesong) {
 		var coverPath = null;
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
@@ -128,43 +141,47 @@ function refreshInfo(theData) {
 	}
 	
 	// refresh href content
-	refreshHrefElement('albumhref',parsedData['albumid'],"album=");
-	refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
-	refreshHrefElement('removeartisthref',parsedData['artist'],"p4=");
-	refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
-	refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
+	if (!samesong) {
+		refreshHrefElement('albumhref',parsedData['albumid'],"album=");
+		refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
+		refreshHrefElement('removeartisthref',parsedData['artist'],"p4=");
+		refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
+		refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
+	}
 
 	//refresh text elements
-	var elems = ['songtitle', 'thissongnum', 'playtextmode', 'songcount'];
 	for (var i=0; i < elems.length; i++) {
 		var key = elems[i];
 		if ($(key)) {
 			refreshElement(key, parsedData[key]);
 		}
 	}
-	var elems = ['duration', 'bitrate', 'year'];
-	for (var i=0; i < elems.length; i++) {
-		var key = elems[i];
-		if (parsedData[key]) {
-			showElements([key],'inline');
-			refreshElement(key, "("+parsedData[key]+")");
-		} else {
-			hideElements([key]);
-		}
-	}
 	
-	if(parsedData['album']) {
-		showElements(['albuminfo']);
-		showElements(['albumhref'], 'inline');
-		refreshElement('album', parsedData['album']);
-	} else {
-		hideElements(['albuminfo', 'albumhref']);
-	}
-	if(parsedData['artist']) {
-		showElements(['artistinfo', 'artisthtml']);
-		refreshElement('artisthtml', parsedData['artisthtml']);
-	} else {
-		hideElements(['artistinfo', 'artisthtml']);
+	if (!samesong) {
+		var elems = ['duration', 'bitrate', 'year'];
+		for (var i=0; i < elems.length; i++) {
+			var key = elems[i];
+			if (parsedData[key]) {
+				showElements([key],'inline');
+				refreshElement(key, "("+parsedData[key]+")");
+			} else {
+				hideElements([key]);
+			}
+		}
+		
+		if(parsedData['album']) {
+			showElements(['albuminfo']);
+			showElements(['albumhref'], 'inline');
+			refreshElement('album', parsedData['album']);
+		} else {
+			hideElements(['albuminfo', 'albumhref']);
+		}
+		if(parsedData['artist']) {
+			showElements(['artistinfo', 'artisthtml']);
+			refreshElement('artisthtml', parsedData['artisthtml']);
+		} else {
+			hideElements(['artistinfo', 'artisthtml']);
+		}
 	}
 }
 

@@ -122,7 +122,8 @@ function ProgressUpdate(mp,curstyle) {
 	if (mp) _progressAt++;
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
-	[% IF undock %]refreshElement('inc',inc);
+	[% IF undock %]
+	refreshElement('inc',inc);
 	if (_progressEnd - _progressAt <= 5 && inc) {
 		doRefresh();
 		inc = 0;
