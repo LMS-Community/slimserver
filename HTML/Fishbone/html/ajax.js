@@ -135,7 +135,7 @@ function refreshInfo(theData) {
 	refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
 
 	//refresh text elements
-	var elems = ['artisthtml', 'songtitle', 'thissongnum', 'playtextmode', 'songcount', 'album'];
+	var elems = ['songtitle', 'thissongnum', 'playtextmode', 'songcount'];
 	for (var i=0; i < elems.length; i++) {
 		var key = elems[i];
 		if ($(key)) {
@@ -145,7 +145,7 @@ function refreshInfo(theData) {
 	var elems = ['duration', 'bitrate', 'year'];
 	for (var i=0; i < elems.length; i++) {
 		var key = elems[i];
-		if ($(key)) {
+		if (parsedData[key]) {
 			showElements([key],'inline');
 			refreshElement(key, "("+parsedData[key]+")");
 		} else {
@@ -155,14 +155,16 @@ function refreshInfo(theData) {
 	
 	if(parsedData['album']) {
 		showElements(['albuminfo']);
-		showElements(['album'], 'inline');
+		showElements(['albumhref'], 'inline');
+		refreshElement('album', parsedData['album']);
 	} else {
-		hideElements(['albuminfo', 'album']);
+		hideElements(['albuminfo', 'albumhref']);
 	}
 	if(parsedData['artist']) {
-		showElements(['artistinfo', 'artist']);
+		showElements(['artistinfo', 'artisthtml']);
+		refreshElement('artisthtml', parsedData['artisthtml']);
 	} else {
-		hideElements(['artistinfo', 'artist']);
+		hideElements(['artistinfo', 'artisthtml']);
 	}
 }
 

@@ -14,7 +14,8 @@ function getStatusData(params, action) {
 		{
 			method: 'post',
 			postBody: params, 
-			onComplete: action
+			onComplete: action,
+			requestHeaders:['Referer', document.location.href]
 		});
 }
 
