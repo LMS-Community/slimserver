@@ -614,8 +614,8 @@ sub setupGroup {
 		PrefOrder         => [
 			'plugin_RssNews_items_per_feed', 'plugin_RssNews_reset', 'plugin_RssNews_feeds', 
 		],
-		GroupHead         => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS'),
-		GroupDesc         => Slim::Utils::Strings::string('SETUP_GROUP_PLUGIN_RSSNEWS_DESC'),
+		GroupHead         => 'SETUP_GROUP_PLUGIN_RSSNEWS',
+		GroupDesc         => 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC',
 		GroupLine         => 1,
 		GroupSub          => 1,
 		Suppress_PrefSub  => 1,
@@ -624,7 +624,7 @@ sub setupGroup {
 
 	my %Prefs = (
 		plugin_RssNews_items_per_feed => {
-			'validate'       => \&Slim::Web::Setup::validateInt,
+			'validate'       => \&Slim::Utils::Validate::isInt,
 			'validateArgs'  => [1,undef,1],
 			'onChange'      => sub {
 				$screensaver_items_per_feed = $_[1]->{plugin_RssNews_items_per_feed}->{new};
@@ -633,15 +633,14 @@ sub setupGroup {
 			},
 		},
 		plugin_RssNews_reset => {
-			'validate'       => \&Slim::Web::Setup::validateAcceptAll,
 			'onChange'      => sub {
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", undef);
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", undef);
 				initPlugin();
 			},
 			'inputTemplate' => 'setup_input_submit.html',
-			'changeIntro'   => Slim::Utils::Strings::string('PLUGIN_RSSNEWS_RESETTING'),
-			'ChangeButton'  => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_RESET_BUTTON'),
+			'changeIntro'   => 'PLUGIN_RSSNEWS_RESETTING',
+			'ChangeButton'  => 'SETUP_PLUGIN_RSSNEWS_RESET_BUTTON',
 			'dontSet'       => 1,
 			'changeMsg'     => '',
 		},
@@ -664,17 +663,8 @@ sub setupGroup {
 
 				return '';
 			},
-			'onChange'         => sub {
-				my ($client,$changeref,$paramref,$pageref) = @_;
-				if (exists($changeref->{'plugin_RssNews_feeds'}{'Processed'})) {
-					return;
-				}
-				Slim::Web::Setup::processArrayChange($client, 'plugin_RssNews_feeds', $paramref, $pageref);
-				updateFeedNames();
-
-				$changeref->{'plugin_RssNews_feeds'}{'Processed'} = 1;
-			},
-			'changeMsg'        => Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE'),
+			'onChange'         => \&updateFeedNames,
+			'changeMsg'        => 'SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE',
 		},
 	);
 

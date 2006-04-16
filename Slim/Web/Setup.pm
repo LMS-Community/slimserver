@@ -215,14 +215,6 @@ sub initSetupConfig {
 							,'validateAddClient' => 1
 							,'options' => \&getPlayingDisplayModes
 							,'optionSort' => 'NK'
-							,'onChange' => sub {
-										my ($client,$changeref,$paramref,$pageref) = @_;
-										if (exists($changeref->{'playingDisplayModes'}{'Processed'})) {
-											return;
-										}
-										processArrayChange($client,'playingDisplayModes',$paramref,$pageref);
-										$changeref->{'playingDisplayModes'}{'Processed'} = 1;
-									}
 						}
 			,'titleFormat'		=> {
 							'isArray' => 1
@@ -236,14 +228,6 @@ sub initSetupConfig {
 							,'validateArgs' => [sub {return hash_of_prefs('titleFormat');}]
 							,'options' => sub {return {hash_of_prefs('titleFormat')};}
 							,'optionSort' => 'NK'
-							,'onChange' => sub {
-										my ($client,$changeref,$paramref,$pageref) = @_;
-										if (exists($changeref->{'titleFormat'}{'Processed'})) {
-											return;
-										}
-										processArrayChange($client,'titleFormat',$paramref,$pageref);
-										$changeref->{'titleFormat'}{'Processed'} = 1;
-									}
 						}
 			,'screensaver'	=> {
 							'validate' => \&Slim::Utils::Validate::inHash
@@ -286,9 +270,6 @@ sub initSetupConfig {
 							$pageref->{'GroupOrder'}[1] = 'activeFont'; 
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
 							$pageref->{'GroupOrder'}[6] = 'ScrollPixels';
-
-							removeExtraArrayEntries($client,'activeFont',$paramref,$pageref);
-							removeExtraArrayEntries($client,'idleFont',$paramref,$pageref);
 						} else {
 							$pageref->{'GroupOrder'}[1] = 'TextSize';
 							$pageref->{'GroupOrder'}[2] = 'LargeFont';
@@ -479,14 +460,6 @@ sub initSetupConfig {
 							,'validateArgs' => [\&getFontOptions,1]
 							,'validateAddClient' => 1
 							,'options' => \&getFontOptions
-							,'onChange' => sub {
-										my ($client,$changeref,$paramref,$pageref) = @_;
-										if (exists($changeref->{'activeFont'}{'Processed'})) {
-											return;
-										}
-										processArrayChange($client,'activeFont',$paramref,$pageref);
-										$changeref->{'activeFont'}{'Processed'} = 1;
-									}
 						}
 			,'idleFont'		=> {
 							'isArray' => 1
@@ -500,14 +473,6 @@ sub initSetupConfig {
 							,'validateArgs' => [\&getFontOptions,1]
 							,'validateAddClient' => 1
 							,'options' => \&getFontOptions
-							,'onChange' => sub {
-										my ($client,$changeref,$paramref,$pageref) = @_;
-										if (exists($changeref->{'idleFont'}{'Processed'})) {
-											return;
-										}
-										processArrayChange($client,'idleFont',$paramref,$pageref);
-										$changeref->{'idleFont'}{'Processed'} = 1;
-									}
 						}
 			,'activeFont_curr' => {
 							'validate' => \&Slim::Utils::Validate::isInt
@@ -593,14 +558,12 @@ sub initSetupConfig {
 					}
 					$pageref->{'Prefs'}{'nonMenuItem'}{'arrayMax'} = $i - 1;
 					$pageref->{'Prefs'}{'nonMenuItemAction'}{'arrayMax'} = $i - 1;
-					removeExtraArrayEntries($client,'menuItem',$paramref,$pageref);
 					$i = 0;
 					foreach my $pluginItem (Slim::Utils::PluginManager::unusedPluginOptions($client)) {
 						$paramref->{'pluginItem' . $i++} = $pluginItem;
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
 					$pageref->{'Prefs'}{'pluginItemAction'}{'arrayMax'} = $i - 1;
-					removeExtraArrayEntries($client,'pluginItem',$paramref,$pageref);
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -677,17 +640,7 @@ sub initSetupConfig {
 						,'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [\&Slim::Buttons::Home::menuOptions]
 						,'externalValue' => \&menuItemName
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									#Handle all changed items whenever the first one is encountered
-									#then set 'Processed' so that the changes aren't repeated
-									if (exists($changeref->{'menuItem'}{'Processed'})) {
-										return;
-									}
-									processArrayChange($client,'menuItem',$paramref,$pageref);
-									Slim::Buttons::Home::updateMenu($client);
-									$changeref->{'menuItem'}{'Processed'} = 1;
-								}
+						,'onChange' => \&Slim::Buttons::Home::updateMenu
 					}
 			,'menuItemAction' => {
 						'isArray' => 1
@@ -1812,17 +1765,6 @@ sub initSetupConfig {
 				'arrayBasicValue'  => 0,
 				'PrefSize'         => 'large',
 				'inputTemplate'    => 'setup_input_array_txt.html',
-				'onChange'         => sub {
-
-					my ($client,$changeref,$paramref,$pageref) = @_;
-
-					if (exists($changeref->{'commonAlbumTitles'}{'Processed'})) {
-						return;
-					}
-
-					processArrayChange($client,'commonAlbumTitles',$paramref,$pageref);
-					$changeref->{'commonAlbumTitles'}{'Processed'} = 1;
-				}
 			}
 		}
 	} #end of setup{'behavior'} hash
@@ -1830,10 +1772,6 @@ sub initSetupConfig {
 	,'FORMATTING_SETTINGS' => {
 		'title' => string('FORMATTING_SETTINGS')
 		,'parent' => 'SERVER_SETTINGS'
-		,'preEval' => sub {
-					my ($client,$paramref,$pageref) = @_;
-					removeExtraArrayEntries($client,'titleFormat',$paramref,$pageref);
-				}
 		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
@@ -1894,14 +1832,6 @@ sub initSetupConfig {
 						,'inputTemplate' => 'setup_input_array_txt.html'
 						,'validate' => \&Slim::Utils::Validate::isFormat
 						,'changeAddlText' => 'SETUP_TITLEFORMAT_CHANGED'
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									if (exists($changeref->{'titleFormat'}{'Processed'})) {
-										return;
-									}
-									processArrayChange($client,'titleFormat',$paramref,$pageref);
-									$changeref->{'titleFormat'}{'Processed'} = 1;
-								}
 							}
 			,'showArtist' => {
 						'validate' => \&Slim::Utils::Validate::trueFalse
@@ -1927,14 +1857,6 @@ sub initSetupConfig {
 						,'inputTemplate' => 'setup_input_array_txt.html'
 						,'validate' => \&Slim::Utils::Validate::isFormat
 						,'changeAddlText' => 'SETUP_GUESSFILEFORMATS_CHANGED'
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									if (exists($changeref->{'guessFileFormats'}{'Processed'})) {
-										return;
-									}
-									processArrayChange($client,'guessFileFormats',$paramref,$pageref);
-									$changeref->{'guessFileFormats'}{'Processed'} = 1;
-								}
 					}
 			,"longdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
@@ -2827,10 +2749,17 @@ sub processChanges {
 	my ($client,$changeref,$paramref,$pageref) = @_;
 	
 	foreach my $key (keys %{$changeref}) {
-		$key =~ /(.+?)(\d*)$/;
-		my $keyA = $1;
-		my $keyI = $2;
-		if (exists $pageref->{'Prefs'}{$keyA}{'onChange'}) {
+		my ($keyA, $keyI) = $key =~ /(.+?)(\d*)$/;
+
+		if (exists($pageref->{'Prefs'}{$keyA}{'isArray'}) && !exists($pageref->{'Prefs'}{$keyA}{'dontSet'})) {
+			if (!exists($changeref->{$keyA}{'Processed'})) {
+				processArrayChange($client, $keyA, $paramref, $pageref);
+				if (exists $pageref->{'Prefs'}{$keyA}{'onChange'}) {
+					&{$pageref->{'Prefs'}{$keyA}{'onChange'}}($client,$changeref,$paramref,$pageref,$keyA,$keyI);
+				}
+				$changeref->{$keyA}{'Processed'} = 1;
+			}
+		} elsif (exists $pageref->{'Prefs'}{$keyA}{'onChange'}) {
 			&{$pageref->{'Prefs'}{$keyA}{'onChange'}}($client,$changeref,$paramref,$pageref,$keyA,$keyI);
 		}
 	}
@@ -2898,16 +2827,56 @@ sub processArrayChange {
 
 sub removeExtraArrayEntries {
 	my ($client,$array,$paramref,$pageref) = @_;
+
 	if (!defined($pageref->{'Prefs'}{$array}{'arrayAddExtra'})) {
 		return;
 	}
-	my $arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
+
+	my $arrayMax;
+	if (defined($pageref->{'Prefs'}{$array}{'arrayMax'})) {
+		$arrayMax = $pageref->{'Prefs'}{$array}{'arrayMax'};
+	} else {
+		$arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
+	}
+
 	my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
+
 	for (my $i = $arrayMax + $pageref->{'Prefs'}{$array}{'arrayAddExtra'};$i > $arrayMax;$i--) {
 		if (exists $paramref->{$array . $i} && (!defined($paramref->{$array . $i}) || $paramref->{$array . $i} eq '' || $paramref->{$array . $i} eq $adval)) {
 			delete $paramref->{$array . $i};
 		}
 	}
+}
+
+sub preprocessArray {
+	my ($client,$array,$paramref,$settingsref) = @_;
+
+	my $arrayMax;
+	if (defined($settingsref->{$array}{'arrayMax'})) {
+		$arrayMax = $settingsref->{$array}{'arrayMax'};
+	} else {
+		$arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
+	}
+
+	my $arrayAddExtra = $settingsref->{$array}{'arrayAddExtra'};
+	if (!defined $arrayAddExtra) {
+		return $arrayMax;
+	}
+
+	my $adval = defined($settingsref->{$array}{'arrayDeleteValue'}) ? $settingsref->{$array}{'arrayDeleteValue'} : '';
+
+	for (my $i=$arrayMax + $arrayAddExtra; $i > $arrayMax; $i--) {
+		if (exists $paramref->{$array . $i}) {
+			if (defined($paramref->{$array . $i}) && $paramref->{$array . $i} ne '' && $paramref->{$array . $i} ne $adval) {
+				$arrayMax = $i;
+				last;
+			} else {
+				delete $paramref->{$array . $i};
+			}
+		}
+	}
+
+	return $arrayMax;
 }
 
 sub playlists {
@@ -2964,22 +2933,9 @@ sub setup_evaluation {
 
 	foreach my $key (keys %$settingsref) {
 		my $arrayMax = 0;
-		if (exists($settingsref->{$key}{'isArray'})) {
 
-			if (defined($settingsref->{$key}{'arrayMax'})) {
-				$arrayMax = $settingsref->{$key}{'arrayMax'};
-			} else {
-				$arrayMax = ($client) ? $client->prefGetArrayMax($key) : Slim::Utils::Prefs::getArrayMax($key);
-			}
-			if (defined($arrayMax) && exists($settingsref->{$key}{'arrayAddExtra'})) {
-				my $adval = defined($settingsref->{$key}{'arrayDeleteValue'}) ? $settingsref->{$key}{'arrayDeleteValue'} : '';
-				for (my $i=$arrayMax + $settingsref->{$key}{'arrayAddExtra'}; $i > $arrayMax; $i--) {
-					if (exists $paramref->{$key . $i} && (defined($paramref->{$key . $i}) || $paramref->{$key . $i} ne '' || $paramref->{$key . $i} ne $adval)) {
-						$arrayMax = $i;
-						last;
-					}
-				}
-			}
+		if (exists($settingsref->{$key}{'isArray'})) {
+			$arrayMax = preprocessArray($client, $key, $paramref, $settingsref);
 		}
 
 		if (defined($arrayMax)) {

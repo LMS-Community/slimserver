@@ -183,8 +183,8 @@ sub setupGroup {
 			'plugin_podcast_reset',
 			'plugin_podcast_feeds',
 		],
-		GroupHead => Slim::Utils::Strings::string('PLUGIN_PODCAST'),
-		GroupDesc => Slim::Utils::Strings::string('PODCAST_GROUP_DESC'),
+		GroupHead => 'PLUGIN_PODCAST',
+		GroupDesc => 'PODCAST_GROUP_DESC',
 		GroupLine => 1,
 		GroupSub => 1,
 		Suppress_PrefSub  => 1,
@@ -193,15 +193,14 @@ sub setupGroup {
 
 	my %Prefs = (
 		plugin_podcast_reset => {
-			'validate' => \&Slim::Web::Setup::validateAcceptAll,
 			'onChange' => sub {
 				Slim::Utils::Prefs::set("plugin_podcast_feeds_modified", undef);
 				Slim::Utils::Prefs::set("plugin_podcast_feeds_version", undef);
 				revertToDefaults();
 			},
 			'inputTemplate' => 'setup_input_submit.html',
-			'changeIntro' => Slim::Utils::Strings::string('PODCAST_RESETTING'),
-			'ChangeButton' => Slim::Utils::Strings::string('PODCAST_RESET_BUTTON'),
+			'changeIntro' => 'PODCAST_RESETTING',
+			'ChangeButton' => 'PODCAST_RESET_BUTTON',
 			'dontSet' => 1,
 			'changeMsg' => '',
 		},
@@ -225,17 +224,8 @@ sub setupGroup {
 
 				return '';
 			},
-			'onChange' => sub {
-				my ($client,$changeref,$paramref,$pageref) = @_;
-				if (exists($changeref->{'plugin_podcast_feeds'}{'Processed'})) {
-					return;
-				}
-				Slim::Web::Setup::processArrayChange($client, 'plugin_podcast_feeds', $paramref, $pageref);
-				updateFeedNames();
-
-				$changeref->{'plugin_podcast_feeds'}{'Processed'} = 1;
-			},
-			'changeMsg' => Slim::Utils::Strings::string('PODCAST_FEEDS_CHANGE'),
+			'onChange' => \&updateFeedNames,
+			'changeMsg' => 'PODCAST_FEEDS_CHANGE',
 		},
 	);
 
