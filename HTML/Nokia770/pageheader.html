@@ -2,10 +2,10 @@
 <html>
       <head>
             [% PROCESS standardheader.html %]
-		[%- IF thispage == 'status' || thispage == 'playlist' -%]
+		[%- IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' -%]
 		<script src="/html/prototype.js"></script>
 		<script>
-		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSE %][% PROCESS playlist.js %][% END %]
+		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' %][% PROCESS artwork.js %][% END %]
 		</script>
 		[% END %]
       </head>

@@ -166,6 +166,11 @@ div#footer {
 	position: relative;
 	clear: both;
 }
+div#absolute_footer {
+	position: absolute;
+	top: 420;
+	left: 0;
+}
 
 tr.playing {
 	background-color: #9ef5f6;
@@ -293,4 +298,34 @@ div#progressbar_overlay {
 	width: 780;
 	top: 220;
 	z-index: 3;
+}
+
+div#last_cover {
+	position: absolute;
+	left: 20;
+	width: 55;
+	top: 160;
+	border: 1px solid black;
+}
+
+div#cover1 {
+	position: absolute;
+	left: 90;
+	width: 300;
+	top: 60;
+}
+
+div#cover2 {
+	position: absolute;
+	left: 410;
+	width: 300;
+	top: 60;
+}
+
+div#next_cover{
+	position: absolute;
+	left: 720;
+	width: 55;
+	top: 160;
+	border: 1px solid black;
 }
