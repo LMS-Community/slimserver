@@ -738,7 +738,7 @@ sub _hello_handler {
 				'graphic-280x16' => 'small',
 				'text'           => 2,
 			}
-		});
+		}, 'upgrade');
 
 	} else {
 

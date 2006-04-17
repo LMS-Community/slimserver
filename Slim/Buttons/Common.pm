@@ -373,7 +373,7 @@ our %functions = (
 			if ($newBrightness < 0) { $newBrightness = 0;}
 		}
 
-		$client->prefSet($brightmode, $newBrightness);
+		$client->prefSet($brightmode, $newBrightness) unless ($mode eq 'block' && $client->modeParam('block.name') eq 'upgrade');
 		$client->brightness($newBrightness);
 	},
 	'playdisp' => sub  {

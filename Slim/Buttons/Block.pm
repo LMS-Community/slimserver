@@ -44,8 +44,11 @@ sub block {
 		$parts = $client->parseLines([$line1,$line2]);
 	}
 
+	my $blockName = shift; # allow caller to associate name with blocked mode
+
 	$client->blocklines($parts);
 	Slim::Buttons::Common::pushMode($client,'block');
+	$client->modeParam('block.name', $blockName);
 
 	if (defined $parts) {
 		$client->showBriefly($parts);
