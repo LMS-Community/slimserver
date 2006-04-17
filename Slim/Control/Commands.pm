@@ -1392,26 +1392,20 @@ sub showCommand {
 		Slim::Buttons::Common::popMode($client);
 	}
 
-	my $oldBrightness = $client->brightness();
-
 	# call showBriefly for the magic!
 	$client->showBriefly(	$hash, 
 							$duration, 
 							0, 			# line2 is single line
 							1, 			# block updates
 							1,			# scroll to end
+							$brightness,# brightness
 										# callback function
 							\&Slim::Control::Commands::_showCommand_done,
 										# callback arguments
 							{
 								'request' => $request,
-								'brightness' => $oldBrightness
 							}
 						);
-
-	# set the brightness to the given value
-	# we'll restore it once done
-	$client->brightness($brightness);
 
 	# we're not done yet
 	$request->setStatusProcessing();
@@ -1806,9 +1800,6 @@ sub _showCommand_done {
 
 	my $request = $args->{'request'};
 	my $client = $request->client();
-	
-	# restore brightness
-	$client->brightness($args->{'brightness'});
 	
 	# now we're done!
 	$request->setStatusDone();

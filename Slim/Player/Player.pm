@@ -639,14 +639,6 @@ sub update {
 			$client->scrollStop();
 		}
 		$client->updateScreen($render);
-		
-		# call our callback if we have one and clear it
-		if (defined(my $cb = $client->updateCallback())) {
-			my $cbargs = $client->updateCallbackArgs();
-			$client->updateCallback(undef);
-			$client->updateCallbackArgs(undef);
-			&$cb($cbargs);
-		}
 	} else {
 		if ($state == 0) {
 			# not scrolling - start scrolling
@@ -717,7 +709,8 @@ sub showBriefly {
 	# return if update blocked
 	return if ($client->updateMode() == 2);
 
-	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $callback, $callbackargs);
+	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs);
+	my $sbData;
 
 	my $parts = shift;
 	if (ref($parts) eq 'HASH') {
@@ -732,13 +725,15 @@ sub showBriefly {
 		$firstLine    = $args->{'firstline'};     # use 1st line in doubled mode
 		$blockUpdate  = $args->{'block'};         # block other updates from cancelling
 		$scrollToEnd  = $args->{'scroll'};        # scroll text once before cancelling if scrolling is necessary
-		$callback     = $args->{'callback'};      # callback when animation's done
+		$brightness   = $args->{'brightness'};    # brightness to display at
+		$callback     = $args->{'callback'};      # callback when showBriefly completes
 		$callbackargs = $args->{'callbackargs'};  # callback arguments
 	} else {
 		$duration = $args || 1;
 		$firstLine    = shift;
 		$blockUpdate  = shift;
 		$scrollToEnd  = shift;
+		$brightness   = shift;
 		$callback     = shift;
 		$callbackargs = shift;
 	}
@@ -751,14 +746,41 @@ sub showBriefly {
 	
 	$client->updateMode( $blockUpdate ? 2 : 1 );
 	$client->animateState(5);
+
+	if (defined($brightness)) {
+		if ($brightness =~ /powerOn|powerOff|idle/) {
+			$brightness = $client->prefGet($brightness.'Brightness');
+		}
+		$sbData->{'oldbrightness'} = $client->brightness();
+		$client->brightness($brightness);
+	}
+
+	if (defined($callback)) {
+		$sbData->{'callback'} = $callback;
+		$sbData->{'callbackargs'} = $callbackargs;
+	}
 	
-	# set our callback
-	$client->updateCallback($callback);
-	$client->updateCallbackArgs($callbackargs);
-	
+	$client->showBrieflyData($sbData);
+
 	if (!$scrollToEnd || !$client->scrollData()) {
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
 	}
+}
+
+sub endShowBriefly {
+	my $client = shift;
+	my $sbData = $client->showBrieflyData() || return;
+
+	if (defined(my $old = $sbData->{'oldbrightness'})) {
+		$client->brightness($old);
+	}
+
+	if (defined(my $cb = $sbData->{'callback'})) {
+		my $cbargs = $sbData->{'callbackargs'};
+		&$cb($cbargs);
+	}
+
+	$client->showBrieflyData(undef);
 }
 
 # An alternative to showBriefly that pushes a timed message.  It should
@@ -1172,7 +1194,7 @@ sub scrollUpdate {
 					$scroll->{paused} = 1;
 					if ($scroll->{scrollonceend}) {
 						# schedule endAnimaton to kill off scrolling and display new screen
-						$client->animateState(6);
+						$client->animateState(6) unless ($client->animateState() == 5);
 						my $end = ($scroll->{pauseInt} > 0.5) ? $scroll->{pauseInt} : 0.5;
 						Slim::Utils::Timers::setTimer($client, $timenow + $end, \&endAnimation);
 					}
@@ -1199,7 +1221,8 @@ sub killAnimation {
 	Slim::Utils::Timers::killHighTimers($client, \&pushUpdate) if ($animate == 3);	
 	Slim::Utils::Timers::killHighTimers($client, \&endAnimation) if ($animate == 4);
 	Slim::Utils::Timers::killTimers($client, \&endAnimation) if ($animate == 5 || $animate == 6);	
-	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll) ;
+	$client->scrollStop() if (($client->scrollState() > 0) && !$exceptScroll);
+	$client->endShowBriefly() if ($animate == 5);
 	$client->animateState(0);
 	$client->updateMode(0);
 }
@@ -1220,6 +1243,7 @@ sub endAnimation {
 		my $screen;
 		my $animate = $client->animateState();
 		$screen = $client->renderCache() unless ($animate == 4 || $animate == 5 || $animate == 6);
+		$client->endShowBriefly() if ($animate == 5);
 		$client->animateState(0);
 		$client->updateMode(0);
 		$client->update($screen);
