@@ -335,7 +335,15 @@ sub parseCUE {
 		$line =~ s/\s*$//;
 
 		if ($line =~ /^TITLE\s+\"(.*)\"/i) {
-			$album = $1;
+
+			if (defined $currtrack) {
+
+				$tracks->{$currtrack}->{'TITLE'} = $1;
+
+			} else {
+
+				$album = $1;
+			}
 
 		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
 			$artist = $1;
@@ -365,35 +373,42 @@ sub parseCUE {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $cuedir);
 
-		} elsif ($line =~ /^\s+TRACK\s+(\d+)\s+AUDIO/i) {
-			$currtrack = int ($1);
+		} elsif ($line =~ /^\s*TRACK\s+(\d+)\s+AUDIO/i) {
 
-		} elsif (defined $currtrack and $line =~ /^\s+PERFORMER\s+\"(.*)\"/i) {
+			$currtrack = int($1);
+
+		} elsif (defined $currtrack and $line =~ /^\s*PERFORMER\s+\"(.*)\"/i) {
+
 			$tracks->{$currtrack}->{'ARTIST'} = $1;
 
 		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_GAIN\s+(.*)dB/i) {
+
 			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_GAIN'} = $1;
 
 		} elsif (defined $currtrack and $line =~ /^(?:\s+REM\s+)?REPLAYGAIN_TRACK_PEAK\s+(.*)/i) {
+
 			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_PEAK'} = $1;
-			
+
 		} elsif (defined $currtrack and
-			 $line =~ /^(?:\s+REM)?\s+(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
+
+			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{uc $1} = $2;
 
-		} elsif (defined $currtrack and $line =~ /^\s+INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
+		} elsif (defined $currtrack and $line =~ /^\s*INDEX\s+00\s+(\d+):(\d+):(\d+)/i) {
 
 			$tracks->{$currtrack}->{'PREGAP'} = ($1 * 60) + $2 + ($3 / 75);
 
-		} elsif (defined $currtrack and $line =~ /^\s+INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
+		} elsif (defined $currtrack and $line =~ /^\s*INDEX\s+01\s+(\d+):(\d+):(\d+)/i) {
 
 			$tracks->{$currtrack}->{'START'} = ($1 * 60) + $2 + ($3 / 75);
 
 		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
+
 			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
 
 		} elsif (defined $currtrack and defined $filename) {
+
 			# Each track in a cue sheet can have a different
 			# filename. See Bug 2126 &
 			# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586

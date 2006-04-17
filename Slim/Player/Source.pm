@@ -1326,7 +1326,7 @@ sub openSong {
 				return undef;
 			}
 
-			if (!$size || !$duration) {
+			if (!$size && !$duration) {
 
 				$::d_source && msg("openSong: [$fullpath] not bothering opening file with zero size or duration\n");
 				errorOpening($client);
