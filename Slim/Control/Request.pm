@@ -58,6 +58,7 @@ package Slim::Control::Request;
 # Y    connected       ?
 # Y    display         ?                           ?
 # Y    displaynow      ?                           ?
+# Y    show
 # N    player          count                       ?
 # N    player          ip                          <index or ID>               ?
 # N    player          id|address                  <index or ID>               ?
@@ -95,7 +96,7 @@ package Slim::Control::Request;
 # Y    playlistcontrol <tagged parameters>
 # Y    rate            <rate|?>
 # Y    stop
-# Y    time|gototime   <0..n|-n|+n|?>
+# Y    time            <0..n|-n|+n|?>
 
 # Y    artist          ?
 # Y    album           ?
@@ -108,6 +109,10 @@ package Slim::Control::Request;
 # Y    playlist        url                         ?
 # Y    playlist        modified                    ?
 # Y    status          <startindex>                <numitems>                  <tagged parameters>
+
+# DEPRECATED (BUT STILL SUPPORTED)
+# Y    mode            <play|pause|stop>
+# Y    gototime        <0..n|-n|+n|?>
 
 
 #### NOTIFICATION ####
@@ -123,10 +128,6 @@ package Slim::Control::Request;
 # Y    playlist        cant_open                   <url>
 # N    rescan          done
 # Y    unknownir       <ircode>                    <timestamp>
-
-# DEPRECATED (BUT STILL SUPPORTED)
-# Y    mode            <play|pause|stop>
-
 
 ######################################################################################################################################################################
 
@@ -244,7 +245,9 @@ package Slim::Control::Request;
 # subscriber callback to those requests matching the filter. The filter is
 # in the form of an array ref containing arrays refs (one per dispatch level) 
 # containing lists of desirable commands (easier to code than explain, see
-# examples below)
+# examples below).
+# Note that notifications are performed asynchronously from the corresponding
+# requests. Notifications are queued and performed when time allows.
 #
 # Example
 #
