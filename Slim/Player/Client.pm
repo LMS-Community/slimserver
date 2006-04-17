@@ -683,7 +683,7 @@ sub new {
 	$client->[50] = undef; # startirhold
 	$client->[51] = undef; # irtimediff
 	$client->[52] = undef; # irrepeattime
-	# $client->[53] = undef; # unused
+	$client->[53] = undef; # updateCallbackArgs
 	$client->[54] = undef; # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
@@ -709,7 +709,7 @@ sub new {
 	$client->[76] = Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[77] = Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[78] = Slim::Utils::PerfMon->new("Slimproto QLen ($id)", [1, 2, 5, 10, 20]);
-	# $client->[79] = undef; # unused
+	$client->[79] = undef; # updateCallback
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
 	$client->[82] = undef; # browseMenuSelection
@@ -1940,6 +1940,16 @@ sub lastDigitIndex {
 sub lastDigitTime {
 	my $r = shift;
 	@_ ? ($r->[107] = shift) : $r->[107];
+}
+
+sub updateCallback {
+	my $r = shift;
+	@_ ? ($r->[79] = shift) : $r->[79];
+}
+
+sub updateCallbackArgs {
+	my $r = shift;
+	@_ ? ($r->[53] = shift) : $r->[53];
 }
 
 1;

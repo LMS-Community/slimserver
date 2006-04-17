@@ -1332,6 +1332,91 @@ sub rescanCommand {
 }
 
 
+sub showCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::showCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['show']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client     = $request->client();
+	my $line1      = $request->getParam('line1');
+	my $line2      = $request->getParam('line2');
+	my $duration   = $request->getParam('duration');
+	my $brightness = $request->getParam('brightness');
+	my $font       = $request->getParam('font');
+	my $centered   = $request->getParam('centered');
+	
+	if (!defined $line1 && !defined $line2) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$brightness = $client->maxBrightness() unless defined($brightness);
+	$duration = 3 unless defined($duration);
+
+	my $hash = {};
+	
+	if ($centered) {
+		$hash->{'center1'} = $line1;
+		$hash->{'center2'} = $line2;
+	}
+	else {
+		$hash->{'line1'} = $line1;
+		$hash->{'line2'} = $line2;
+	}
+	
+	if ($font eq 'huge') {
+		$hash->{'fonts'} = {
+			'graphic-320x32' => 'full',
+			'graphic-280x16' => 'huge',
+			'text'           => 1,
+		};		
+	}
+	else {
+		$hash->{'fonts'} = {
+			'graphic-320x32' => 'standard',
+			'graphic-280x16' => 'medium',
+			'text'           => 2,
+		};
+	}
+
+	# get out of the screensaver if one is active
+	# we'll get back to it as soon as done (automatically)
+	if (Slim::Buttons::Common::mode($client) =~ /screensaver/i) {
+		Slim::Buttons::Common::popMode($client);
+	}
+
+	my $oldBrightness = $client->brightness();
+
+	# call showBriefly for the magic!
+	$client->showBriefly(	$hash, 
+							$duration, 
+							0, 			# line2 is single line
+							1, 			# block updates
+							1,			# scroll to end
+										# callback function
+							\&Slim::Control::Commands::_showCommand_done,
+										# callback arguments
+							{
+								'request' => $request,
+								'brightness' => $oldBrightness
+							}
+						);
+
+	# set the brightness to the given value
+	# we'll restore it once done
+	$client->brightness($brightness);
+
+	# we're not done yet
+	$request->setStatusProcessing();
+}
+
 sub sleepCommand {
 	my $request = shift;
 	
@@ -1713,6 +1798,21 @@ sub _playlistXtracksCommand_parseListRef {
 	}
 }
 
+
+sub _showCommand_done {
+	my $args = shift;
+	
+	$d_commands && msg("Commands::_showCommand_done()\n");
+
+	my $request = $args->{'request'};
+	my $client = $request->client();
+	
+	# restore brightness
+	$client->brightness($args->{'brightness'});
+	
+	# now we're done!
+	$request->setStatusDone();
+}
 
 
 1;

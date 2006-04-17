@@ -639,6 +639,14 @@ sub update {
 			$client->scrollStop();
 		}
 		$client->updateScreen($render);
+		
+		# call our callback if we have one and clear it
+		if (defined(my $cb = $client->updateCallback())) {
+			my $cbargs = $client->updateCallbackArgs();
+			$client->updateCallback(undef);
+			$client->updateCallbackArgs(undef);
+			&$cb($cbargs);
+		}
 	} else {
 		if ($state == 0) {
 			# not scrolling - start scrolling
@@ -709,26 +717,30 @@ sub showBriefly {
 	# return if update blocked
 	return if ($client->updateMode() == 2);
 
-	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd);
+	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $callback, $callbackargs);
 
 	my $parts = shift;
 	if (ref($parts) eq 'HASH') {
 		$parsed = $parts;
 	} else {
-		$parsed = $client->parseLines([$parts,shift]);
+		$parsed = $client->parseLines([$parts, shift]);
 	}
 
 	my $args = shift;
 	if (ref($args) eq 'HASH') {
-		$duration    = $args->{'duration'} || 1; # duration - default to 1 second
-		$firstLine   = $args->{'firstline'};     # use 1st line in doubled mode
-		$blockUpdate = $args->{'block'};         # block other updates from cancelling
-		$scrollToEnd = $args->{'scroll'};        # scroll text once before cancelling if scrolling is necessary
+		$duration     = $args->{'duration'} || 1; # duration - default to 1 second
+		$firstLine    = $args->{'firstline'};     # use 1st line in doubled mode
+		$blockUpdate  = $args->{'block'};         # block other updates from cancelling
+		$scrollToEnd  = $args->{'scroll'};        # scroll text once before cancelling if scrolling is necessary
+		$callback     = $args->{'callback'};      # callback when animation's done
+		$callbackargs = $args->{'callbackargs'};  # callback arguments
 	} else {
 		$duration = $args || 1;
-		$firstLine   = shift;
-		$blockUpdate = shift;
-		$scrollToEnd = shift;
+		$firstLine    = shift;
+		$blockUpdate  = shift;
+		$scrollToEnd  = shift;
+		$callback     = shift;
+		$callbackargs = shift;
 	}
 
 	if ($firstLine && ($client->linesPerScreen() == 1)) {
@@ -739,6 +751,10 @@ sub showBriefly {
 	
 	$client->updateMode( $blockUpdate ? 2 : 1 );
 	$client->animateState(5);
+	
+	# set our callback
+	$client->updateCallback($callback);
+	$client->updateCallbackArgs($callbackargs);
 	
 	if (!$scrollToEnd || !$client->scrollData()) {
 		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $duration, \&endAnimation);
