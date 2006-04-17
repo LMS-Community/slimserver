@@ -615,7 +615,7 @@ sub playItem {
 }
 
 sub getFeedViaHTTP {
-	my $client = shift;
+	my $objRef = shift;
 	my $url    = shift;
 	my $cb     = shift;
 	my $ecb    = shift;
@@ -623,7 +623,7 @@ sub getFeedViaHTTP {
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&gotViaHTTP, \&gotErrorViaHTTP, {
 
-			'client' => $client,
+			'objRef' => $objRef,
 			'cb'     => $cb,
 			'ecb'    => $ecb
 	});
@@ -641,7 +641,7 @@ sub gotErrorViaHTTP {
 	$::d_plugins && msg("XMLBrowser: " . $http->error() . "\n");
 
 	# call ecb
-	&{$params->{'ecb'}}($params->{'client'}, $http->url, $http->error);
+	&{$params->{'ecb'}}($params->{'objRef'}, $http->url, $http->error);
 }
 
 sub gotViaHTTP {
@@ -656,18 +656,18 @@ sub gotViaHTTP {
 
 	if ($@) {
 		# call ecb
-		&{$params->{'ecb'}}($params->{'client'}, $http->url, $@);
+		&{$params->{'ecb'}}($params->{'objRef'}, $http->url, $@);
 		return;
 	}
 
 	if (!$feed) {
 		# call ecb
-		&{$params->{'ecb'}}($params->{'client'}, $http->url, '{PARSE_ERROR}');
+		&{$params->{'ecb'}}($params->{'objRef'}, $http->url, '{PARSE_ERROR}');
 		return;
 	}
 
 	# call cb
-	&{$params->{'cb'}}($params->{'client'}, $http->url, $feed);
+	&{$params->{'cb'}}($params->{'objRef'}, $http->url, $feed);
 
 	undef($http);
 }
