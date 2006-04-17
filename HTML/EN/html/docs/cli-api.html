@@ -114,6 +114,9 @@
 		Added the &quot;<a href="#show">show</a>&quot; command.
 	</li>
 	<li>
+		Added the &quot;<a href="#search">search</a>&quot; query.
+	</li>
+	<li>
 		Added the &quot;subscribe&quot; parameter to the
 		&quot;<a href="#status">status</a>&quot; query.
 	</li>
@@ -241,60 +244,89 @@
 
 <h4>Extended query format</h4>
 
-<p>A few extended queries are defined, to regroup multiple queries and
-	allow browsing the SlimServer database. These queries return
-	<em>multiple</em> items. Overall however, their format is compliant
-	with the general command format above:</p>
-<blockquote> <p><strong><code>[&lt;playerid&gt;] &lt;command&gt;
-	&lt;start&gt; &lt;itemsPerResponse&gt; &lt;p3&gt; ... &lt;pN&gt;
-	&lt;LF&gt;</code></strong></p> </blockquote>
-
-<p>where: </p> 
-
+<p>
+	A few extended queries are defined, to regroup multiple queries and allow 
+	browsing the SlimServer database. These queries return <em>multiple</em> 
+	items. Overall however, their format is compliant with the general command 
+	format above:
+</p>
 <blockquote>
-	<p><code>&lt;playerid&gt;</code> is the unique identifier for the
-		player, as above.</p>
-	<p><code>&lt;command&gt;</code> is the command name, currently one of
-		&quot;<a href="#players">players</a>&quot;, 
-		&quot;<a href="#genres">genres</a>&quot;, 
-		&quot;<a href="#artists">artists</a>&quot;,
-		&quot;<a href="#alarms">alarms</a>&quot;,
-		&quot;<a href="#albums">albums</a>&quot;, 
-		&quot;<a href="#titles">titles</a>&quot;, 
-		&quot;<a href="#playlists">playlists</a>&quot;,
-		&quot;<a href="#playlisttracks">playlisttracks</a>&quot;,
-		&quot;<a href="#songinfo">songinfo</a>&quot; or
-		&quot;<a href="#status">status</a>&quot;.</p>
-	<p><code>&lt;start&gt;</code> and <code>&lt;itemsPerResponse&gt;</code>
+	<p>
+		<strong>
+			<code>
+				[&lt;playerid&gt;]
+				&lt;command&gt;
+				&lt;start&gt;
+				&lt;itemsPerResponse&gt;
+				&lt;p3&gt; ... &lt;pN&gt;
+				&lt;LF&gt;
+			</code>
+		</strong>
+	</p>
+</blockquote>
+<p>
+	where:
+</p> 
+<blockquote>
+	<p>
+		<code>
+			&lt;playerid&gt;
+		</code>
+		is the unique identifier for the player, as above.
+	</p>
+	<p>
+		<code>
+			&lt;command&gt;
+		</code>
+		is the query name.</p>
+	<p>
+		<code>&lt;start&gt;</code> and <code>&lt;itemsPerResponse&gt;</code>
 		are <em>positional</em> parameters that control the response
 		chunking. <code>&lt;start&gt;</code> is a zero-based index of the
 		first item to return, and <code>&lt;itemsPerResponse&gt;</code> is
-		the number of items to return, if possible.</p>
-	<p><code>&lt;p3&gt;</code> through <code>&lt;pN&gt;</code> are
+		the number of items to return, if possible.
+	</p>
+	<p>
+		<code>&lt;p3&gt;</code> through <code>&lt;pN&gt;</code> are
 		<em>tagged</em> parameters. Tags consist of a name followed by 
 		&quot;:&quot;. For example, &quot;artist:Abba&quot;. The tag and
 		the &quot;:&quot; are URL escaped with the field value. Tag
-		names cannot contain &quot;:&quot; but the data can. </p>
+		names cannot contain &quot;:&quot; but the data can.
+	</p>
 </blockquote>
-
-<p>to which the server replies: </p>
-
-<blockquote> <p><strong><code>[&lt;playerid&gt;] &lt;command&gt;
-	&lt;start&gt; &lt;itemsPerResponse&gt; &lt;p3&gt; ... &lt;pN&gt;
-	&lt;pN+1&gt; ... &lt;pM&gt; &lt;LF&gt;</code></strong></p>
-	</blockquote>
-
-<p>where: </p> 
-
+<p>
+	to which the server replies:
+</p>
 <blockquote>
-	<p>The entire query is repeated.</p>
-	<p><code>&lt;pN+1&gt;</code> through <code>&lt;pM&gt;</code> is the
+	<p>
+		<strong>
+			<code>
+				[&lt;playerid&gt;]
+				&lt;command&gt;
+				&lt;start&gt;
+				&lt;itemsPerResponse&gt;
+				&lt;p3&gt; ... &lt;pN&gt;
+				&lt;pN+1&gt; ... &lt;pM&gt;
+				&lt;LF&gt;
+			</code>
+		</strong>
+	</p>
+</blockquote>
+<p>
+	where:
+</p> 
+<blockquote>
+	<p>
+		The entire query is repeated.
+	</p>
+	<p>
+		<code>&lt;pN+1&gt;</code> through <code>&lt;pM&gt;</code> is the
 		<em>tagged</em> returned data. A special tag value is defined in
 		each command to separate the multiple returned items. Data is
 		only returned when applicable, that is, all possible tags are
-		not always returned.</p>
+		not always returned.
+	</p>
 </blockquote>
-
 <p>
 	<b>
 		Example:
@@ -338,10 +370,7 @@
 <blockquote>
 	<p><code>&lt;playerid&gt;</code> is the unique identifier for the
 		player, as above.</p>
-	<p><code>&lt;command&gt;</code> is the command name, currently
-		limited to 
-		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; and
-		&quot;<a href="#alarm">alarm</a>&quot;.</p>
+	<p><code>&lt;command&gt;</code> is the command name.</p>
 	<p><code>&lt;p1&gt;</code> through <code>&lt;pN&gt;</code> are
 		<em>tagged</em> parameters as defined above.</p>
 </blockquote>
@@ -1165,10 +1194,10 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 <blockquote> 
 	<p>
 		Request: &quot;04:20:00:12:23:45 show line1:Hello%20World 
-			line2:Second%20line duration%3A1 centered%3A1&lt;LF&gt;&quot;
+			line2:Second%20line duration:1 centered:1&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 show line1:Hello%20World 
-			line2:Second%20line duration%3A1 centered%3A1&lt;LF&gt;&quot;
+			line2:Second%20line duration:1 centered:1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
@@ -2387,6 +2416,15 @@ preferences values.</p>
 			possible only if tracks are defined and for a single album.
 		</td>
 	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use for the data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -2468,6 +2506,230 @@ preferences values.</p>
 		title:Heavy%20On%20My%20Heart url:...
 		id:1 title:I%20Do url:... id:2 title:Left%20Outside%20Alone 
 		url:...&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="search">
+	<strong>
+		<code>
+			search 
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;search&quot; command returns artists, albums and tracks matching
+	a search string.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			term
+		</td>
+		<td>
+			Search string
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use for the data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning the
+			database. The results may therefore be incomplete. Not returned if
+			no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Total number of results returned by the query. This is the sum
+			of &quot;artists_count&quot;, &quot;albums_count&quot; and 
+			&quot;tracks_count&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			artists_count
+		</td>
+		<td>
+			Total number of artists found.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			albums_count
+		</td>
+		<td>
+			Total number of albums found.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			tracks_count
+		</td>
+		<td>
+			Total number of tracks found.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each artist:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				artist_id
+			</em>
+		</td>
+		<td>
+			Artist ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				artist
+			</em>
+		</td>
+		<td>
+			Artist name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each album:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				album_id
+			</em>
+		</td>
+		<td>
+			Album ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				album
+			</em>
+		</td>
+		<td>
+			Album title.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each track:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				track_id
+			</em>
+		</td>
+		<td>
+			Track ID.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;
+			<em>
+				track
+			</em>
+		</td>
+		<td>
+			Track title.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;search 0 20 term:al&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;search 0 20 term:al count:9 
+			artists_count:2 albums_count:1 tracks_count:6 
+			artist_id:2 artist:Alanis%20Morissette 
+			artist_id:37 artist:Alphaville 
+			album_id:10 album:All%20Time%20Greatest%20Hits%20%5BBarry%20White%5D%20MMM 
+			track_id:11 track:All%20I%20Really%20Want 
+			track_id:68 track:The%20Sun%20Always%20Shines%20On%20TV 
+			track_id:185 track:All%20Around%20The%20World 
+			track_id:189 track:Give%20Me%20All%20Your%20Love%20%5BSingle%20Cut%5D 
+			track_id:245 track:Better%20All%20The%20Time 
+			track_id:306 track:Fuck%20Them%20All&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

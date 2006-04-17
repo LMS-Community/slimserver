@@ -849,6 +849,119 @@ sub rescanQuery {
 }
 
 
+sub searchQuery {
+	my $request = shift;
+	
+	$d_queries && msg("searchQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['search']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $query    = $request->getParam('term');
+
+	if (!defined $query || $query eq '') {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+	
+	my $data = Slim::Web::Pages::LiveSearch->query($query, undef, $quantity);
+	#print Data::Dumper::Dumper($data);
+	
+	my $songCount = 0;
+	for my $item (@$data) {
+		$songCount += $item->[1];
+	}
+	
+	$request->addResult("count", $songCount);
+
+	for my $item (@$data) {
+		my $type = $item->[0];
+		$request->addResult("$type" . "s_count", $item->[1]);
+	}
+
+	if ($songCount > 0) {
+	
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $songCount);
+			
+		if ($valid) {
+
+			my $skip = 0;
+			my $idx = 0;
+
+			for my $item (@$data) {
+				
+				#msg("Considering " . $item->[0] . "...,idx=$idx, start=$start, end=$end\n");
+				
+				# check if we can skip this $item
+				# we can skip this $item if once done, we're still below $start
+				if (($idx + $item->[1]) < $start) {
+					$idx = $idx + $item->[1];
+					#msg("..Skipped, idx=" . $idx . "\n");
+					next;
+				}
+				# ... or because we're done
+				if ($idx > $end) {
+					#msg("..Skipped, done\n");
+					last;
+				}
+
+				# process the item
+				my $results = $item->[2];
+				
+
+				my $loopname = '@' . $item->[0] . 's';
+				my $cnt = 0;
+
+				for my $result (@$results) {
+				
+					#msg("Considering idx=$idx, start=$start, end=$end\n");
+					
+					# check if we can skip this $result
+					if ($idx < $start) {
+						$idx++;
+						#msg(".. Skipped, idx=$idx\n");
+						next;
+					}
+					if ($idx > $end) {
+						#msg(".. Skipped, done idx=$idx\n");
+						last;
+					}
+					
+					# check for valid result
+					if (!blessed($result) || !$result->can('id')) {
+						next;
+					}
+
+					# add result to loop
+					$request->addResultLoop($loopname, $cnt, $item->[0] . '_id', $result->id());
+
+					if ($item->[0] eq 'track') {
+						$request->addResultLoop($loopname, $cnt, $item->[0], $result->title());
+					}
+					else {
+						$request->addResultLoop($loopname, $cnt, $item->[0], $result);
+					}
+
+					$cnt++;
+					$idx++;
+				}
+			}
+		}
+	}
+	
+	$request->setStatusDone();
+}
+
+
 sub signalstrengthQuery {
 	my $request = shift;
 	
