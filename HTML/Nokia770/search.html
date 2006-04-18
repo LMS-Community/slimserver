@@ -44,7 +44,7 @@
 			</div>
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% FOREACH item = browse_items %]
-				[% PROCESS browsedbitems_list.html %]
+				[% PROCESS browsedbitems_list.html verbose = '1' %]
 			[% END %]
 			</table>
 			[% ELSE %]

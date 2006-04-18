@@ -29,7 +29,7 @@
 		<!-- Include the artist for the album view -->
 		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
 	[% ELSE %]
-		[% PROCESS trackinfo %]
+		[% PROCESS trackinfo verbose = verbose %]
 	[% END %]
 			</td>
 			</tr>
