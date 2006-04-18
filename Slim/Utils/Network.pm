@@ -164,7 +164,7 @@ sub ipaddress2paddr {
 		return;
 	}
 
-        return sockaddr_in($port, (inet_aton($ip) || $ip));
+        return pack_sockaddr_in($port, (inet_aton($ip) || $ip));
 }
 
 # this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html
