@@ -33,15 +33,19 @@ PLUGIN_SCREENSAVER_DATETIME
 	NL	Datum en tijd
 
 SETUP_GROUP_DATETIME
+	DE	Datum/Zeit Bildschirmschoner Einstellungen
 	EN	Date and Time Screensaver Settings
 
 SETUP_GROUP_DATETIME_DESC
+	DE	Hier können Sie das Format des Datum/Zeit Bildschirmschoners festlegen.
 	EN	These settings control the behavior of the Date and Time Screensaver
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
+	DE	Slimserver Standard
 	EN	Slimserver Default
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
+	DE	Slimserver Standard
 	EN	Slimserver Default
 '};
 
