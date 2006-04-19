@@ -1860,88 +1860,18 @@ sub initSetupConfig {
 					}
 			,"longdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','longdateFormat');},1]
-						,'options' => { # WWWW is the name of the day of the week
-								# WWW is the abbreviation of the name of the day of the week
-								# MMMM is the full month name
-								# MMM is the abbreviated month name
-								# DD is the day of the month
-								# YYYY is the 4 digit year
-								# YY is the 2 digit year
-								q(%A, %B |%d, %Y)  => q(WWWW, MMMM DD, YYYY),
-								q(%a, %b |%d, %Y)  => q(WWW, MMM DD, YYYY),
-								q(%a, %b |%d, '%y) => q(WWW, MMM DD, 'YY),
-								q(%A, |%d %B %Y)   => q(WWWW, DD MMMM YYYY),
-								q(%A, |%d. %B %Y)  => q(WWWW, DD. MMMM YYYY),
-								q(%a, |%d %b %Y)   => q(WWW, DD MMM YYYY),
-								q(%a, |%d. %b %Y)  => q(WWW, DD. MMM YYYY),
-								q(%A |%d %B %Y)    => q(WWWW DD MMMM YYYY),
-								q(%A |%d. %B %Y)   => q(WWWW DD. MMMM YYYY),
-								q(%a |%d %b %Y)    => q(WWW DD MMM YYYY),
-								q(%a |%d. %b %Y)   => q(WWW DD. MMM YYYY),
-								# Japanese styles
-								q(%Y/%m/%d\(%a\))  => q{YYYY/MM/DD(WWW)},
-								q(%Y-%m-%d\(%a\))  => q{YYYY-MM-DD(WWW)},
-								q(%Y/%m/%d %A)     => q{YYYY/MM/DD WWWW},
-								q(%Y-%m-%d %A)     => q{YYYY-MM-DD WWWW},
-								}
+						,'validateArgs' => [{Slim::Utils::DateTime::longDateFormats()},1]
+						,'options' => {Slim::Utils::DateTime::longDateFormats()}
 					}
 			,"shortdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','shortdateFormat');},1]
-						,'options' => { # MM is the month of the year
-								# DD is the day of the year
-								# YYYY is the 4 digit year
-								# YY is the 2 digit year
-								q(%m/%d/%Y) => q{MM/DD/YYYY},
-								q(%m/%d/%y) => q{MM/DD/YY},
-								q(%m-%d-%Y) => q{MM-DD-YYYY},
-								q(%m-%d-%y) => q{MM-DD-YY},
-								q(%m.%d.%Y) => q{MM.DD.YYYY},
-								q(%m.%d.%y) => q{MM.DD.YY},
-								q(%d/%m/%Y) => q{DD/MM/YYYY},
-								q(%d/%m/%y) => q{DD/MM/YY},
-								q(%d-%m-%Y) => q{DD-MM-YYYY},
-								q(%d-%m-%y) => q{DD-MM-YY},
-								q(%d.%m.%Y) => q{DD.MM.YYYY},
-								q(%d.%m.%y) => q{DD.MM.YY},
-								q(%Y-%m-%d) => q{YYYY-MM-DD (ISO)},
-								# Japanese style
-								q(%Y/%m/%d) => q{YYYY/MM/DD},
-								}
+						,'validateArgs' => [{Slim::Utils::DateTime::shortDateFormats()},1]
+						,'options' => {Slim::Utils::DateTime::shortDateFormats()}
 					}
 			,"timeFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [sub {return getSetupOptions('FORMATTING_SETTINGS','timeFormat');},1]
-						,'options' => { # hh is hours
-								# h is hours (leading zero removed)
-								# mm is minutes
-								# ss is seconds
-								# pm is either AM or PM
-								# anything at the end in parentheses is just a comment
-								q(%I:%M:%S %p)	=> q{hh:mm:ss pm (12h)}
-								,q(%I:%M %p)	=> q{hh:mm pm (12h)}
-								,q(%H:%M:%S)	=> q{hh:mm:ss (24h)}
-								,q(%H:%M)	=> q{hh:mm (24h)}
-								,q(%H.%M.%S)	=> q{hh.mm.ss (24h)}
-								,q(%H.%M)	=> q{hh.mm (24h)}
-								,q(%H,%M,%S)	=> q{hh,mm,ss (24h)}
-								,q(%H,%M)	=> q{hh,mm (24h)}
-								# no idea what the separator between minutes and seconds should be here
-								,q(%Hh%M:%S)	=> q{hh'h'mm:ss (24h 03h00:00 15h00:00)}
-								,q(%Hh%M)	=> q{hh'h'mm (24h 03h00 15h00)}
-								,q(|%I:%M:%S %p)	=> q{h:mm:ss pm (12h)}
-								,q(|%I:%M %p)		=> q{h:mm pm (12h)}
-								,q(|%H:%M:%S)		=> q{h:mm:ss (24h)}
-								,q(|%H:%M)		=> q{h:mm (24h)}
-								,q(|%H.%M.%S)		=> q{h.mm.ss (24h)}
-								,q(|%H.%M)		=> q{h.mm (24h)}
-								,q(|%H,%M,%S)		=> q{h,mm,ss (24h)}
-								,q(|%H,%M)		=> q{h,mm (24h)}
-								# no idea what the separator between minutes and seconds should be here
-								,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 03h00:00 15h00:00)}
-								,q(|%Hh%M)		=> q{h'h'mm (24h 03h00 15h00)}
-								}
+						,'validateArgs' => [{Slim::Utils::DateTime::timeFormats()},1]
+						,'options' => {Slim::Utils::DateTime::timeFormats()}
 					}
 			}
 		} #end of setup{'FORMATTING_SETTINGS'} hash

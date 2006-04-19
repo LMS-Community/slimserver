@@ -31,7 +31,56 @@ PLUGIN_SCREENSAVER_DATETIME
 	HE	שומר מסך תאריכון
 	IT	Data e ora
 	NL	Datum en tijd
+
+SETUP_GROUP_DATETIME
+	EN	Date and Time Screensaver Settings
+
+SETUP_GROUP_DATETIME_DESC
+	EN	These settings control the behavior of the Date and Time Screensaver
+
+SETUP_GROUP_DATETIME_DEFAULTTIME
+	EN	Slimserver Default
+
+SETUP_GROUP_DATETIME_DEFAULTDATE
+	EN	Slimserver Default
 '};
+
+my $timeFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTTIME", Slim::Utils::DateTime::timeFormats()};
+my $dateFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTDATE", Slim::Utils::DateTime::shortDateFormats(), Slim::Utils::DateTime::longDateFormats()};
+
+sub setupGroup {
+	my $client = shift;
+	
+	my %setupGroup = (
+		'PrefOrder' => ['screensaverDateFormat','screensaverTimeFormat']
+		,'PrefsInTable' => 1
+		,'Suppress_PrefHead' => 1
+		,'Suppress_PrefDesc' => 1
+		,'Suppress_PrefLine' => 1
+		,'Suppress_PrefSub' => 1
+		,'GroupHead' => Slim::Utils::Strings::string('SETUP_GROUP_DATETIME')
+		,'GroupDesc' => Slim::Utils::Strings::string('SETUP_GROUP_DATETIME_DESC')
+		,'GroupLine' => 1
+		,'GroupSub' => 1
+	);
+
+	my %setupPrefs = (
+			"screensaverTimeFormat" => {
+						'validate' => \&Slim::Utils::Validate::inHash
+						,'validateArgs' => [$timeFormats,1]
+						,'options' => $timeFormats
+					},
+			"screensaverDateFormat" => {
+						'validate' => \&Slim::Utils::Validate::inHash
+						,'validateArgs' => [$dateFormats,1]
+						,'options' => $dateFormats
+					}
+	);
+	
+	return (\%setupGroup, \%setupPrefs);
+
+	
+}
 
 ##################################################
 ### Section 2. Your variables and code go here ###
@@ -150,8 +199,8 @@ sub screensaverDateTimelines {
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
 
 	return {
-		'center1' => Slim::Utils::Misc::longDateF(),
-		'center2' => Slim::Utils::Misc::timeF(),
+		'center1' => Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat')),
+		'center2' => Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')),
 		'overlay1'=> ($alarmOn ? $client->symbols('bell') : undef),
 		'fonts'   => {	'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
 						'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },

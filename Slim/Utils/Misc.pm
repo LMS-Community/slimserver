@@ -29,6 +29,7 @@ require Slim::Player::ProtocolHandlers;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
+require Slim::Utils::DateTime;
 
 our $log = "";
 
@@ -795,55 +796,24 @@ sub findAndScanDirectoryTree {
 	return ($topLevelObj, $items, $count);
 }
 
-# the following functions cleanup the date and time, specifically:
-# remove the leading zeros for single digit dates and hours
-# where a | is specified in the format
 
-# The LC_TIME is set in ::Unicode when we start.
+# Deprecated, use Slim::Utils::DateTime instead
 sub longDateF {
-	my $time = shift || time();
-
-	my $date = strftime(Slim::Utils::Prefs::get('longdateFormat'), localtime($time));
-	   $date =~ s/\|0*//;
-
-	return Slim::Utils::Unicode::utf8decode_locale($date);
+	return Slim::Utils::DateTime::longDateF(@_);
 }
 
 sub shortDateF {
-	my $time = shift || time();
-
-	my $date = strftime(Slim::Utils::Prefs::get('shortdateFormat'), localtime($time));
-	   $date =~ s/\|0*//;
-
-	return Slim::Utils::Unicode::utf8decode_locale($date);
+	return Slim::Utils::DateTime::shortDateF(@_);
 }
 
 sub timeF {
-	my $ltime = shift || time();
-
-	# remove leading zero if another digit follows
-	my $time  = strftime(Slim::Utils::Prefs::get('timeFormat'), localtime($ltime));
-	   $time =~ s/\|0?(\d+)/$1/;
-
-	return Slim::Utils::Unicode::utf8decode_locale($time);
+	return Slim::Utils::DateTime::timeF(@_);
 }
 
 sub fracSecToMinSec {
-	my $seconds = shift;
-
-	my ($min, $sec, $frac, $fracrounded);
-
-	$min = int($seconds/60);
-	$sec = $seconds%60;
-	$sec = "0$sec" if length($sec) < 2;
-	
-	# We want to round the last two decimals but we
-	# always round down to avoid overshooting EOF on last track
-	$fracrounded = int($seconds * 100) + 100;
-	$frac = substr($fracrounded, -2, 2);
-									
-	return "$min:$sec.$frac";
+	return Slim::Utils::DateTime::fracSecToMinSec(@_);
 }
+
 
 # Utility functions for strings we send out to the world.
 sub userAgentString {
