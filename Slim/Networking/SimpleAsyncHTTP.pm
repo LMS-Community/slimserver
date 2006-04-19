@@ -22,7 +22,10 @@ package Slim::Networking::SimpleAsyncHTTP;
 use strict;
 
 use Slim::Networking::AsyncHTTP;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
+
+use HTTP::Date ();
 
 sub new {
 	my $class    = shift;
@@ -101,11 +104,33 @@ sub _createHTTPRequest {
 	$self->{'user'}     = $user;
 	$self->{'password'} = $password;
 	
+	# Check for cached response
+	if ( $self->{'params'}->{'cache'} ) {
+		
+		my $cache = Slim::Utils::Cache->new();
+		
+		if ( my $data = $cache->get( $self->{'url'} ) ) {			
+			$self->{'cachedResponse'} = $data;
+			
+			# If the data was cached within the past 5 minutes,
+			# return it immediately without revalidation, to improve
+			# UI experience
+			if ( $data->{_no_revalidate} || time - $data->{'_time'} < 300 ) {
+				return $self->sendCachedResponse();
+			}
+		}
+	}
+	
+	my $timeout 
+		=  $self->{'params'}->{'Timeout'} 
+		|| Slim::Utils::Prefs::get('remotestreamtimeout')
+		|| 10;
+	
 	# This is now non-blocking
 	my $http = Slim::Networking::AsyncHTTP->new(
 		Host     => $server,
 		PeerPort => $port,
-		Timeout  => $self->{'params'}->{'Timeout'} || 10,
+		Timeout  => $timeout,
 		
 		errorCallback => \&errorCallback,
 		writeCallback => \&writeCallback,
@@ -120,6 +145,15 @@ sub errorCallback {
 	my $server = $self->{'server'};
 	my $port   = $self->{'port'};
 	
+	# If we have a cached copy of this request, we can use it
+	if ( $self->{'cachedResponse'} ) {
+		$::d_http_async && msg(
+			"SimpleAsyncHTTP: Failed to connect to $server:$port, using cached copy.  Perl's error is '$!'.\n"
+		);
+		
+		return $self->sendCachedResponse();
+	}
+	
 	$self->{'error'} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
 	&{$self->{'ecb'}}($self);
 	return;
@@ -128,11 +162,19 @@ sub errorCallback {
 sub writeCallback {
 	my $http = shift;
 	my $self = shift;
+	
+	# If cached, add If-None-Match and If-Modified-Since headers
+	if ( my $data = $self->{'cachedResponse'} ) {			
+		push @{ $self->{'args'} }, (
+			'If-None-Match'     => $data->{'headers'}->{'ETag'} || undef,
+			'If-Modified-Since' => $data->{'headers'}->{'Last-Modified'} || undef,
+		);
+	}
 
 	# TODO: handle basic auth if username, password provided
 	$http->write_request_async( 
 		$self->{type} => $self->{path}, 
-		@{ $self->{args} } 
+		@{ $self->{'args'} } 
 	);
 	
 	$http->read_response_headers_async(\&headerCB, {
@@ -175,6 +217,14 @@ sub headerCB {
 		&{$self->{'ecb'}}($self);
 
 	} else {
+		
+		# Check if we are cached and got a "Not Modified" response
+		if ( $self->{'cachedResponse'} && $code == 304) {
+			
+			$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
+			
+			return $self->sendCachedResponse();
+		}
 
 		$self->{'code'}    = $code;
 		$self->{'mess'}    = $mess;
@@ -202,11 +252,75 @@ sub bodyCB {
 	} else {
 
 		$self->{'content'} = \$content;
+		
+		# cache the response if requested
+		if ( $self->{'params'}->{'cache'} ) {
+			
+			my $cache = Slim::Utils::Cache->new();
+			
+			my $data = {
+				code    => $self->{'code'},
+				mess    => $self->{'mess'},
+				headers => $self->{'headers'},
+				content => \$content,
+				_time   => time,
+			};
+			
+			# By default, cached content never expires
+			# The ETag/Last Modified code will handle stale data
+			my $expires = $self->{'params'}->{'expires'} || undef;
+			
+			# But if we see max-age or an Expires header, use them
+			my $no_cache;
+			if ( my $cc = $self->{'headers'}->{'Cache-Control'} ) {
+				if ( $cc =~ /no-cache|must-revalidate/ ) {
+					$no_cache = 1;
+				}
+				elsif ( $cc =~ /max-age=(-?\d+)/ ) {
+					$expires = $1;
+				}
+			}			
+			elsif ( my $expire_date = $self->{'headers'}->{'Expires'} ) {
+				$expires = HTTP::Date::str2time($expire_date) - time;
+			}
+			
+			# If there is no ETag/Last Modified, don't cache
+			if (   !$expires
+				&& !$self->{'headers'}->{'Last-Modified'} 
+				&& !$self->{'headers'}->{'ETag'}
+			) {
+				$no_cache = 1;
+			}
+			
+			if ( defined $expires && $expires > 0) {
+				# if we have an explicit expiration time, we can avoid revalidation
+				$data->{_no_revalidate} = 1;
+			}
+			
+			if ( !$no_cache ) {
+				$cache->set( $self->{'url'}, $data, $expires );
+			}
+		}
 
 		&{$self->{'cb'}}($self);
 	}
 
 	$self->close;
+}
+
+sub sendCachedResponse {
+	my $self = shift;
+	
+	my $data = $self->{'cachedResponse'};
+	
+	# populate the object with cached data			
+	$self->{'code'}    = $data->{'code'};
+	$self->{'mess'}    = $data->{'mess'};
+	$self->{'headers'} = $data->{'headers'};
+	$self->{'content'} = $data->{'content'};
+		
+	&{$self->{'cb'}}($self);
+	return;
 }
 
 sub content {
@@ -285,9 +399,15 @@ sub exampleCallback {
 }
 
 
-my $http = Slim::Networking::SimpleAsyncHTTP->new(\&exampleCallback, \&exampleErrorCallback, {
-		'mydata' => 'foo'
-	   });
+my $http = Slim::Networking::SimpleAsyncHTTP->new(
+	\&exampleCallback,
+	\&exampleErrorCallback, 
+	{
+		mydata'  => 'foo',
+		cache    => 1,		# optional, cache result of HTTP request
+		expires => '1h',	# optional, specify the length of time to cache
+	}
+);
 
 # sometime after this call, our exampleCallback will be called with the result
 $http->get("http://www.slimdevices.com");

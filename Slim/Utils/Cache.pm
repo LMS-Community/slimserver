@@ -5,67 +5,47 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# A simple cache for arbitrary data.
-# Each entry has an expiration time (Time::HiRes).
+# A simple cache for arbitrary data using FileCache.
 # TODO: use timers to periodically clean up expired entries. (currently does lazy cleanup)
-# TODO: persist this cache on filesystem or database
 
 package Slim::Utils::Cache;
+
 use strict;
+use base qw(Class::Singleton);
+use Cache::FileCache ();
+use Slim::Utils::OSDetect;
 
-use Time::HiRes;
+sub new { shift->instance(@_) }
 
-sub new {
-	my %cache = ();
-	return bless \%cache;
-}
-
-sub put {
-	my $self = shift;
-	my $key = shift;
-	my $value = shift;
-	my $expiration = shift;
-
-	my @entry;
-	$entry[0] = $value;
-	$entry[1] = $expiration;
-
-	$self->{$key} = \@entry;
-	return;
-}
-
-sub get {
-	my $self = shift;
-	my $key = shift;
-
-	my $returnMe = undef;
-	my $entry = $self->{$key};
-	if ($entry) {
-		if (!expired($entry)) {
-			$returnMe = $entry->[0];
-		} else {
-			# entry has expired
-			delete $self->{$key};
+sub _new_instance {
+	my $class = shift;
+	
+	my $cache = Cache::FileCache->new( {
+		namespace          => 'FileCache',
+		default_expires_in => $Cache::FileCache::EXPIRES_NEVER,
+		cache_root         => Slim::Utils::OSDetect::dirsFor('cache'),
+	} );
+	
+	my $self = bless {
+		_cache => $cache,
+	}, $class;
+	
+	# create proxy methods
+	{
+		my @methods = qw(
+			get set get_object set_object
+			clear purge remove size
+		);
+		
+		no strict 'refs';
+		for my $method (@methods) {
+			*{"$class\::$method"} = sub {
+				return shift->{_cache}->$method(@_);
+			};
 		}
 	}
-	return $returnMe;
+	
+	return $self;
 }
-
-sub expired {
-	my $entry = shift;
-	my $now = Time::HiRes::time();
-
-	my $expiration = $entry->[1];
-
-	if (defined($expiration) && ($expiration <= 0)) {
-		# expiration 0 or -1 means never expire
-		return 0;
-	} elsif (defined($expiration) && ($expiration > $now)) {
-		return 0;
-	} else {
-		return 1;
-	}
-}
-
 
 1;

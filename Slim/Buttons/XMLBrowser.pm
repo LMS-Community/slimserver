@@ -625,7 +625,8 @@ sub getFeedViaHTTP {
 
 			'objRef' => $objRef,
 			'cb'     => $cb,
-			'ecb'    => $ecb
+			'ecb'    => $ecb,
+			'cache'  => 1,
 	});
 
 	$::d_plugins && msg("XMLBrowser: async request: $url\n");
