@@ -45,8 +45,8 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	EN	Slimserver Default
 '};
 
-my $timeFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTTIME", Slim::Utils::DateTime::timeFormats()};
-my $dateFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTDATE", Slim::Utils::DateTime::shortDateFormats(), Slim::Utils::DateTime::longDateFormats()};
+my $timeFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTTIME", %{Slim::Utils::DateTime::timeFormats()}};
+my $dateFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTDATE", %{Slim::Utils::DateTime::shortDateFormats()}, %{Slim::Utils::DateTime::longDateFormats()}};
 
 sub setupGroup {
 	my $client = shift;
@@ -58,8 +58,8 @@ sub setupGroup {
 		,'Suppress_PrefDesc' => 1
 		,'Suppress_PrefLine' => 1
 		,'Suppress_PrefSub' => 1
-		,'GroupHead' => Slim::Utils::Strings::string('SETUP_GROUP_DATETIME')
-		,'GroupDesc' => Slim::Utils::Strings::string('SETUP_GROUP_DATETIME_DESC')
+		,'GroupHead' => 'SETUP_GROUP_DATETIME'
+		,'GroupDesc' => 'SETUP_GROUP_DATETIME_DESC'
 		,'GroupLine' => 1
 		,'GroupSub' => 1
 	);

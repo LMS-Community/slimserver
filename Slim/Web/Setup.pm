@@ -1860,18 +1860,18 @@ sub initSetupConfig {
 					}
 			,"longdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [{Slim::Utils::DateTime::longDateFormats()},1]
-						,'options' => {Slim::Utils::DateTime::longDateFormats()}
+						,'validateArgs' => [\&Slim::Utils::DateTime::longDateFormats,1]
+						,'options' => \&Slim::Utils::DateTime::longDateFormats
 					}
 			,"shortdateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [{Slim::Utils::DateTime::shortDateFormats()},1]
-						,'options' => {Slim::Utils::DateTime::shortDateFormats()}
+						,'validateArgs' => [\&Slim::Utils::DateTime::shortDateFormats,1]
+						,'options' => \&Slim::Utils::DateTime::shortDateFormats
 					}
 			,"timeFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [{Slim::Utils::DateTime::timeFormats()},1]
-						,'options' => {Slim::Utils::DateTime::timeFormats()}
+						,'validateArgs' => [\&Slim::Utils::DateTime::timeFormats,1]
+						,'options' => \&Slim::Utils::DateTime::timeFormats
 					}
 			}
 		} #end of setup{'FORMATTING_SETTINGS'} hash

@@ -65,7 +65,7 @@ sub fracSecToMinSec {
 }
 
 sub timeFormats {
-	return (
+	return {
 		# hh is hours
 		# h is hours (leading zero removed)
 		# mm is minutes
@@ -94,11 +94,11 @@ sub timeFormats {
 		# no idea what the separator between minutes and seconds should be here
 		,q(|%Hh%M:%S)		=> q{h'h'mm:ss (24h 03h00:00 15h00:00)}
 		,q(|%Hh%M)		=> q{h'h'mm (24h 03h00 15h00)}
-	);
+	};
 }
 
 sub longDateFormats {
-	return (
+	return {
 		# WWWW is the name of the day of the week
 		# WWW is the abbreviation of the name of the day of the week
 		# MMMM is the full month name
@@ -122,11 +122,11 @@ sub longDateFormats {
 		q(%Y-%m-%d\(%a\))  => q{YYYY-MM-DD(WWW)},
 		q(%Y/%m/%d %A)     => q{YYYY/MM/DD WWWW},
 		q(%Y-%m-%d %A)     => q{YYYY-MM-DD WWWW},
-	);
+	};
 }
 
 sub shortDateFormats {
-	return (
+	return {
 		# MM is the month of the year
 		# DD is the day of the year
 		# YYYY is the 4 digit year
@@ -146,7 +146,7 @@ sub shortDateFormats {
 		q(%Y-%m-%d) => q{YYYY-MM-DD (ISO)},
 		# Japanese style
 		q(%Y/%m/%d) => q{YYYY/MM/DD},
-	);
+	};
 }
 
 1;
