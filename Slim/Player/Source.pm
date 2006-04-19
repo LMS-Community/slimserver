@@ -1341,12 +1341,14 @@ sub openSong {
 		my $maxRate = Slim::Utils::Prefs::maxRate($client);
 
 		my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $track);
-		
-		$::d_source && msg("openSong: this is an $type file: $fullpath\n");
-		$::d_source && msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
-		$::d_source && msg("  command: $command\n");
 
-		unless (defined($command)) {
+		if ($::d_source) {
+			msg("openSong: this is an $type file: $fullpath\n");
+			msg("  file type: $type format: $format inrate: $rate maxRate: $maxRate\n");
+			msg("  command: $command\n");
+		}
+
+		if (!defined($command)) {
 
 			$::d_source && msg("openSong: Couldn't create command line for $type playback for [$fullpath]\n");
 

@@ -50,8 +50,7 @@ sub new {
 }
 
 sub canDirectStreamDisabled {
-	my $self = shift;
-	my $url = shift;
+	my ($self, $client, $url) = @_;
 
 	if ($url =~ /^radioio:\/\/stream\/(.*)/) {
 		return 'http://' . Plugins::RadioIO::Plugin::decrypt($1);

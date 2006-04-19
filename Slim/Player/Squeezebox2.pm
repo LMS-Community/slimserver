@@ -660,9 +660,9 @@ sub canDirectStream {
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 
 	if ($handler && $handler->can("canDirectStream")) {
-		return $handler->canDirectStream($url);
+		return $handler->canDirectStream($client, $url);
 	}
-	
+
 	return undef;
 }
 	

@@ -24,6 +24,7 @@ BEGIN {
 }
 
 use Slim::Music::Info;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -156,12 +157,17 @@ sub parseMetadata {
 	return undef;
 }
 
-# HTTP direct streaming disabled for SlimServer
-sub canDirectStreamDisabled {
-	my $classOrSelf = shift;
-	my $url = shift;
+sub canDirectStream {
+	my ($classOrSelf, $client, $url) = @_;
 
-	return $url;
+	# Check the available types - direct stream MP3, but not Ogg.
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url);
+
+	if (defined $command && $command eq '-' || $format eq 'mp3') {
+		return $url;
+	}
+
+	return 0;
 }
 
 sub sysread {

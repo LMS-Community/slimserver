@@ -46,7 +46,7 @@ sub new {
 		$::d_remotestream && msg "Couldn't find conversion command for wma\n";
 
 		# XXX - errorOpening should not be in Source!
-		Slim::Player::Source::errorOpening($client,Slim::Utils::Strings::string('WMA_NO_CONVERT_CMD'));
+		Slim::Player::Source::errorOpening($client, $client->string('WMA_NO_CONVERT_CMD'));
 
 		return undef;
 	}
@@ -91,10 +91,18 @@ sub randomGUID {
 }
 
 sub canDirectStream {
-	my $classOrSelf = shift;
-	my $url = shift;
+	my ($classOrSelf, $client, $url) = @_;
 
-	return $url;
+	# Bug 3181 & Others. Check the available types - if the user has
+	# disabled built-in WMA, return false. This is required for streams
+	# that are MMS only, or for WMA codecs we don't support in firmware.
+	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url, DEFAULT_TYPE);
+
+	if (defined $command && $command eq '-') {
+		return $url;
+	}
+
+	return 0;
 }
 
 # Most WM streaming stations also stream via HTTP. The requestString class
