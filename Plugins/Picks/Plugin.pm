@@ -10,6 +10,7 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
+use Slim::Formats::XML;
 use Slim::Utils::Misc;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
@@ -79,15 +80,23 @@ sub picksQuery {
 		return;
 	}
 	
-	Slim::Buttons::XMLBrowser::getFeedViaHTTP($request, $FEED, \&_picksQuery_done, \&_picksQuery_error);
+	Slim::Formats::XML->getFeedAsync(
+		\&_picksQuery_done,
+		\&_picksQuery_error,
+		{
+			'request' => $request,
+			'url'     => $FEED,
+		}
+	);
 	
 	$request->setStatusProcessing();
 }
 
 sub _picksQuery_done {
-	my $request = shift;
-	my $url     = shift;
-	my $feed    = shift;
+	my ( $feed, $params ) = @_;
+	
+	my $request = $params->{'request'};
+	my $url     = $params->{'url'};
 
 	my $loopname = '@loop';
 	my $cnt = 0;
@@ -102,10 +111,11 @@ sub _picksQuery_done {
 }
 
 sub _picksQuery_error {
-	my $request = shift;
-	my $url     = shift;
-	my $err     = shift;
-
+	my ( $err, $params ) = @_;
+	
+	my $request = $params->{'request'};
+	my $url     = $params->{'url'};
+	
 	$::d_plugins && msg("Picks: error retrieving <$url>:\n");
 	$::d_plugins && msg($err);
 	
