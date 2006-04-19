@@ -431,8 +431,28 @@ A.linkbtn:link {
 	margin: 0px;
 	padding: 0px;
 	top: 0px;
+	width: 100%;
+}
+
+.progressBarOverlay
+{
+	position: relative;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	top: -5px;
 	right: 0px;
 	width: 100%;
+}
+
+.progressBarOverlay .segment {
+	position: relative;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	top: 0px;
+	float: left;
+	width: 5%;
 }
 
 #TopMenu1
@@ -441,9 +461,9 @@ A.linkbtn:link {
 	padding: 0px;
 	background:#61676c;
 	color:white;
-	position: relative;z
+	position: relative;
 	display: block;
-	top: 0px;
+	top: -4px;
 	left: 0px;
 	width: 100%;
 	padding-left: 8px;
@@ -460,7 +480,7 @@ A.linkbtn:link {
 	position: absolute;
 	top: 0px;
 	left: 115px;
-	width: 100%;
+	right: 8px;
 }
 
 #TopMenu1 #notplaying
@@ -484,6 +504,13 @@ A.linkbtn:link {
 	line-height: 100% ! important;
 }
 
+#TopMenu1 .label
+{
+	color:white ! important;
+	border-bottom:1px solid #777;
+	margin:3px 0 3px 0;
+}
+
 #TopMenu2
 {
 	margin:0 auto;
@@ -491,7 +518,7 @@ A.linkbtn:link {
 	padding: 4px 8px 4px 8px;
 	color:white;
 	position: relative;
-	top: 0px;
+	top: -4px;
 	width: 100%;
 	float: left;
 }
@@ -531,7 +558,7 @@ A.linkbtn:link {
 	padding: 2px;
 	background:#61676c;
 	position: relative; 
-	top: 0px; 
+	top: -4px; 
 	right:0px; 
 	width: 100%;
 	text-align: center;
@@ -610,7 +637,7 @@ A.linkbtn:link {
 	height: 18px;
 	width: 100%;
 	position: relative; 
-	top: 0px;
+	top: -5px;
 	float: left;
 }
 
@@ -620,7 +647,7 @@ A.linkbtn:link {
 	color:white;
 	width: 100%;
 	position: relative; 
-	top: 0px;
+	top: -5px;
 	float: left;
 	border: 0px;
 }
@@ -644,14 +671,6 @@ A.linkbtn:link {
 
 #playlistLinks, #playerlinks, #serverlinks, #searchForm {
 	float: right;
-}
-
-.label
-{
-	color:white ! important;
-	border-bottom:1px solid #777;
-	margin:3px 0 3px 0;
-	width: auto;
 }
 
 .label2

@@ -13,14 +13,16 @@ var inc = 0;
 var _progressEnd = 0;
 var _progressAt = 0
 
+// regex to match player id, mac and ip format.
+var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
 function changePlayer(player_List) {
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	setCookie('SlimServer-player',newPlayer);
 	
 	//parent.playlist.location="playlist.html?player" + newPlayer;
 	window.location="status.html?player" + newPlayer;
-
-	var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+	
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newHref(parent.header.document,newPlayer);
@@ -39,7 +41,6 @@ function newValue(doc,plyr) {
 		if (doc.forms[j].player) {
 			var myString = new String(doc.forms[j].player.value);
 			var rString = plyr;
-			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 			doc.forms[j].player.value = myString.replace(rExp, rString);
 		}
 	}
@@ -50,7 +51,6 @@ function newHref(doc,plyr) {
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
 		var rString = plyr;
-		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 		doc.links[j].href = myString.replace(rExp, rString);
 	}
 }
@@ -71,7 +71,8 @@ function toggleStatus(divs) {
 }
 
 function resizePlaylist(page) {
-	$('playlist').height = document.body.clientHeight - document.getElementById('playlistframe').offsetTop;
+	//$('playlist').height = document.body.clientHeight - $('playlistframe').offsetTop;
+	top.document.getElementById('player_frame').rows = $('playlistStatus').offsetTop+20+', *';
 }
 
 function openRemote(player,playername) {
@@ -89,8 +90,9 @@ function setCookie(name, value) {
 function insertProgressBar(mp,end,at) {
 	var s = '';
 	if (!mp) s = '_s';
-	if (document.all||document.getElementById)
-	document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"><\/div>');
+	if (document.all||document.getElementById) {
+		document.write('<div class="progressBarDiv"><img id="progressBar" name="progressBar" src="html/images/pixel.green'+s+'.gif" width="1" height="4"><\/div>');
+	}
 	_progressAt = at;
 	_progressEnd = end;
 	ProgressUpdate(mp)
@@ -105,29 +107,27 @@ function updateTime(at,end) {
 
 // Update the progress dialog with the current state
 function ProgressUpdate(mp,curstyle) {
-	[% IF undock %]
+
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay').src.indexOf('_s') != -1) {
 			mp = 1;
-			$("progressBar").src ='[% webroot %]html/images/pixel.green.gif'
+			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
 
 		} else {
 			mp = 0;
-			$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'
+			if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'}
 		}
 	}
-	[% END %]
 	
 	inc++;
 	if (mp) _progressAt++;
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
-	[% IF undock %]
 	refreshElement('inc',inc);
-	if (_progressEnd - _progressAt <= 5 && inc) {
+	if (_progressAt == 1) {
 		doRefresh();
 		inc = 0;
-	}[% END %]
+	}
 	
 	if (document.all) {
 		p = (document.body.clientWidth / _progressEnd) * _progressAt;
@@ -137,12 +137,11 @@ function ProgressUpdate(mp,curstyle) {
 		$("progressBar").width=p+" ";
 	}
 	
-	[% IF undock %]
 	if (inc == 10) {
 		doRefresh();
 		inc = 0;
 	}
-	[% END %]
+
 	timerID = setTimeout("ProgressUpdate( "+mp+")", interval);
 }
 

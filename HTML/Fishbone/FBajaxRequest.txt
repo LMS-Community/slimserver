@@ -1,3 +1,11 @@
 artisthtml|[% PROCESS artistsAsHTML.html noby=1 %]
 bitrate|[% bitrate %]
 year|[% itemobj.year %]
+sleeptime|[% sleeptime %]
+rate|[% rate %]
+
+# path to cover art 
+coverartpath|
+[%- IF coverThumb -%][% coverThumb %]
+[%- ELSE -%][% webroot %]html/images/cover.png
+[% END %]

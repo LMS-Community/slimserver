@@ -32,6 +32,16 @@ function refreshState(theData) {
 			}
 		}
 	}
+	
+	return true;
+}
+
+function processBarClick (num) {
+	var pos = parseInt((_progressEnd/20) * (num - 0.5));
+	//alert([num,pos,_progressEnd]);
+	var param = 'p0=time&p1='+pos+'&player='+player;
+	getStatusData(param + "&ajaxRequest=1", refreshAll);
+	updateTime(pos,_progressEnd);
 }
 
 function processVolume(param) {
@@ -54,6 +64,23 @@ function refreshVolume(theData) {
 			objID.style.backgroundColor = "00C000";
 		}
 	}
+	
+	return true;
+}
+
+function processSleepLink(param) {
+	getStatusData(param + "&ajaxRequest=1", refreshSleepTime);
+}
+
+function refreshSleepTime(theData) {
+	var parsedData = fillDataHash(theData);
+
+	if (parsedData['sleeptime'] && parsedData['sleeptime'] != 0) {
+		showElements(['sleeptime'],'inline');
+		refreshElement('sleeptime', "("+parsedData['sleeptime']+")");
+	} else {
+		hideElements(['sleeptime']);
+	}
 }
 
 function processPlayControls(param) {
@@ -65,42 +92,55 @@ function refreshPlayControls(theData) {
 	var parsedData = fillDataHash(theData);
 	var controls = ['stop', 'play', 'pause'];
 	var mp = 0;
-	var curstyle = getActiveStyleSheet();
+	var activestyle = getActiveStyleSheet();
 	
+	var curstyle = '';
+	if (activestyle && activestyle.indexOf('Tan')) {
+		objID = $('playCtl' + controls[i]+'tan');
+		curstyle = '_tan';
+	}
+
 	for (var i=0; i < controls.length; i++) {
-		var obj = 'playmode';
 		var objID = $('playCtl' + controls[i]);
-		var curstyle = '';
-		
-		if (curstyle && curstyle.indexOf('Tan')) {
-			objID = $('playCtl' + controls[i]+'tan');
-			curstyle = '_tan';
-		}
+
 		
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
 			
 			if (controls[i] !='play') {
-				$("progressBar").src ='[% webroot %]html/images/pixel.green_s.gif'
+				if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'}
 			} else {
-				$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'
+				if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
 			}
 		} else {
 			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
 		}
 	}
 	
+	var controls = ['rew','ffwd'];
+	
+	for (var i=0; i < controls.length; i++) {
+		var objID = $('playCtl' + controls[i]);
+		
+		if (parsedData['rate'] == controls[i]) {
+			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+			
+		} else {
+			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
+		}
+	}
+	
 	if (parsedData['mute'] == 1) {
-		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';
+		if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';}
 	} else {
-		$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';
+		if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
 	}
 	
 	if (parsedData['playmode'] == 1) {
 		mp = 1;
 	}
 	
-	updateTime(parsedData['songtime'],parsedData['durationseconds']);
+	refreshInfo(parsedData);
 	//DumperPopup(theData.responseText);
 }
 
@@ -108,18 +148,27 @@ function refreshPlayControls(theData) {
 function refreshInfo(theData) {
 	var parsedData = fillDataHash(theData);
 
+	refreshSleepTime(parsedData);
+
 	var myString = new String($('songtitlehref').innerHTML);
-	var rExp= new RegExp("item=(.+?)&amp;","gi");
+	var rExp= new RegExp("item=(.+?)&amp;player","i");
+	if (rExp.exec(myString) == null) rExp= new RegExp("item=(.+?)&player","i");
 	var a = rExp.exec(myString);
-	var samesong = 0;
-	if (rExp.exec(myString) == parsedData['songtitleid']) samesong = 1;
+	var newsong = 1;
 	
+	// check to see if server is on a new track
+	if (a[1] == parsedData['songtitleid']) {newsong = 0;}
 	
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
-	if (!samesong) {
+	if (newsong) {
 		elems.push('songtitle');
+		refreshElement('songtitle', parsedData['songtitle']);
+		refreshPlaylist();
 	}
-
+	if (parsedData['streamtitle']) {
+		refreshElement('songtitle', parsedData['streamtitle']);
+	}
+	if (parsedData['durationseconds']) updateTime(parsedData['songtime'],parsedData['durationseconds']);
 
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
@@ -130,21 +179,22 @@ function refreshInfo(theData) {
 	}
 	
 	// refresh cover art
-	if ($('coverartpath') && !samesong) {
+	if ($('coverartpath') && newsong) {
 		var coverPath = null;
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100.jpg';
 		}
-		document.getElementById('coverartpath').src = coverPath;
+		$('coverartpath').src = coverPath;
 	}
 	
 	// refresh href content
-	if (!samesong) {
+	if (newsong) {
 		refreshHrefElement('albumhref',parsedData['albumid'],"album=");
+		refreshHrefElement('coverhref',parsedData['albumid'],"album=");
 		refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
-		refreshHrefElement('removeartisthref',parsedData['artist'],"p4=");
+		refreshHrefElement('removeartisthref',parsedData['artist'],"p3=");
 		refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
 		refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
 	}
@@ -157,11 +207,11 @@ function refreshInfo(theData) {
 		}
 	}
 	
-	if (!samesong) {
+	if (newsong) {
 		var elems = ['duration', 'bitrate', 'year'];
 		for (var i=0; i < elems.length; i++) {
 			var key = elems[i];
-			if (parsedData[key]) {
+			if (parsedData[key] && parsedData[key] != 0) {
 				showElements([key],'inline');
 				refreshElement(key, "("+parsedData[key]+")");
 			} else {
@@ -183,6 +233,7 @@ function refreshInfo(theData) {
 			hideElements(['artistinfo', 'artisthtml']);
 		}
 	}
+	return true;
 }
 
 // reload undock window
@@ -190,6 +241,24 @@ function refreshUndock() {
 	var args = 'player=[% playerURI %]&ajaxRequest=1';
 	getStatusData(args, refreshAll);
 	//window.location.replace('status.html?player='+player+'&undock=1');
+}
+
+function refreshPlaylist() {
+	//alert('playlist');
+	try {
+		if (parent.playlist.location.host != '') {
+			// Putting a time-dependant string in the URL seems to be the only way to make Safari
+			// refresh properly. Stitching it together as below is needed to put the salt before
+			// the hash (#currentsong).
+			var plloc = top.frames.playlist.location;
+			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
+				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+			plloc.replace(newloc);
+		}
+	}
+	catch (err) {
+		// first load can fail, so swallow that initial exception.
+	}
 }
 
 function refreshAll(theData) {

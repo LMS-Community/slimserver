@@ -6,16 +6,19 @@
 [%- FILTER null %]
 
 [% BLOCK spacer -%]
-<img src="[% webroot %]html/images/spacer.gif" width="0">
+<img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="0">
 [%- END %]
 
 [% BLOCK volumectl %]
-[% IF undock %]
 <a class="volfragment" href="javascript:processVolume('p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% playerURI %]');">[% PROCESS spacer %]</a>
-[% ELSE %]
-<a class="volfragment" href="[% statusroot %]?p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% playerURI %]">[% PROCESS spacer %]</a>
 [% END %]
-[% END %]
+
+[%- BLOCK progressOverlay -%]
+<div class="progressBarOverlay">
+[%- FOREACH jump = [1..20] -%]
+<div class="segment" onClick="processBarClick([% jump %]);"><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="0" height="4"></div>
+[%- END -%]</div>
+[%- END -%]
 
 [%- BLOCK volumecontrol %]
 	[% vols = {
@@ -37,22 +40,13 @@
 [% END -%]
 
 [% BLOCK statectrl %]
-	[% IF undock %]
-	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]&amp;player=[% playerURI %]');"><b>[% cmdstring | string | upper%]</b></a>
-	[% ELSE %]
-	<a class="[% IF not condition %]dark[% END %]button" href="[% statusroot %]?p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]&amp;player=[% playerURI %]"><b>[% cmdstring | string | upper%]</b></a>
-	[% END %]
+	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]&amp;player=[% playerURI %]');[% IF command == 'shuffle' %]refreshPlaylist();[% END %]"><b>[% cmdstring | string | upper%]</b></a>
 [% END %]
 
 [% BLOCK playctl %]
 	<td>
-		[% IF undock %]
 			<a href="javascript:processPlayControls('[% command %]&amp;player=[% playerURI %]')">
-			<img id="playCtl[% img %]" valign="bottom" class="gray" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
-		[% ELSE %]
-			<a href="[% statusroot %]?[% command %]&amp;player=[% playerURI %]">
-			<img valign="bottom" class="gray" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img class="tan" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
-		[% END %]
+			<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
 	</td>
 [% END %]
 
@@ -66,7 +60,7 @@
 <head>
 	[% pagetitle = player_name %]
 	[% PROCESS customheader.html %]
-	[%- IF undock -%]<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>[% END %]
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>
 	[% IF playercount == '0' %]<script TYPE="text/javascript" language="JavaScript">
 		<!--Hide
 		[% IF undock %]self.close();[% ELSE %]
@@ -74,12 +68,12 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF not undock %]onload="javascript:doLoad();"[% END %]>
+<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" onload="refreshPlaylist();">
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">
-				<img class="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
-				<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
+				<img class="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
+				<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
 			</div>
 			<div id="playerlinks">
 			[% IF undock %]<span id="inc"></span>  [% END %]
@@ -88,14 +82,14 @@
 					 / 
 				[% END %]
 				[% IF mode != 'off' %]
-					<A href="[% statusroot %]?p0=button&amp;p1=sleep&amp;player=[% playerURI %]">Sleep</a>[% IF sleeptime %] ([% sleep %])[% END %]
+					<A href="javascript:processSleepLink('p0=button&amp;p1=sleep&amp;player=[% playerURI %]');">Sleep</a><span id='sleeptime'>[% IF sleeptime %] ([% sleep %])[% END %]</span>
 				[% END %][% IF mode != 'off' %] / [% END %]
 				[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 				[%- END -%]
 				[%- IF not undock -%] /
 				<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>
-				<img id="statusImg_up" src="html/images/b_up.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
-				<img id="statusImg_down" style="display:none;" src="html/images/b_down.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
+				<img id="statusImg_up" alt="Hide" title="Hide" src="html/images/b_up.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
+				<img id="statusImg_down" alt="Show" title="Show" style="display:none;" src="html/images/b_down.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
 				[%- END %]
 			</div>
 		</div>
@@ -120,24 +114,23 @@
 		else
 			window.onload=insertProgressBar([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
 		-->
-		</script>	
+		</script>
+[%- PROCESS progressOverlay -%]
 		<div id="TopMenu1">
 			<div id="coverart">
-				[% IF coverThumb -%]
-					<a [% albumHRef %] target="browser" id="coverhref">[% PROCESS statusImg width="100" %]</a>
-				[% ELSE -%]
+				<span id='coverhref'><a [% albumHRef %] target="browser">[% IF coverThumb -%]
+					[%- PROCESS statusImg width="100" -%]
+				[%- ELSE -%]
 					<img src="[% webroot %]html/images/cover.png" id="coverartpath" width = '100' height="100">
-				[%- END %]
+				[%- END %]</a></span>
 			</div>
-			<div id="notplaying" style="display:none";>
+			<div id="notplaying" style="display:none;">
 			[% "PLAYLIST_EMPTY" | string %]
 			</div>
 			<div id="nowplaying">
-				<div class="label">[% IF modeplay  %][% status = "PLAYING"    %][% END %]
-				[% IF modepause %][% status = "PAUSED_ON"  %][% END %]
-				[% IF modestop  %][% status = "STOPPED_ON" %][% END %]
+				<div class="label">[% IF modeplay  %][% status = "PLAYING"    %][% END %][% IF modepause %][% status = "PAUSED_ON"  %][% END %][% IF modestop  %][% status = "STOPPED_ON" %][% END %]
 				<span id="playtextmode">[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]</span>
-				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<a id="zaphref" class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %][% "COLON" | string %]</div>
+				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<span id="zaphref"><a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a></span>[% END %][% "COLON" | string %]</div>
 				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% songtitle %]</span></a>
 				[% IF itemobj.duration %]&nbsp;<span id="duration">([% itemobj.duration | html %])</span>[% END %][% IF bitrate %]&nbsp;<span id="bitrate">([% bitrate %])</span>[% END %]</div>
 				
@@ -157,19 +150,14 @@
 				<table><tr valign="bottom">
 						[% PROCESS playctl command='p0=play' img='play' width='42' height='43' condition=modeplay && rate == 'norm' -%]
 						[% PROCESS playctl command='p0=stop' img='stop' width='23' height='32' condition=modestop -%]
-					<td><table  align="bottom">
+					<td><table>
 						<tr>[% IF isplayer %]
 								[% PROCESS playctl command='p0=button&amp;p1=rew.hold' width='30' height='19' img='rew' condition=rate == 'rew' -%]
 								[% PROCESS playctl command='p0=button&amp;p1=fwd.hold' img='ffwd' condition=rate == 'ffwd' -%]
 						</tr><tr>[% END -%]
-								[% IF undock -%]
 								[% plusone = '%2B1' | uri -%][%- minusone = '%2D1' | uri -%]
 								[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$minusone" width='30' height='19' img='back' condition='0' -%]
 								[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$plusone" img='forward' condition='0' -%]
-								[%- ELSE -%]
-								[%- PROCESS playctl command='p0=playlist&amp;p1=jump&amp;p2=-1' width='30' height='19' img='back' condition='0' -%]
-								[%- PROCESS playctl command='p0=playlist&amp;p1=jump&amp;p2=%2b1' img='forward' condition='0' -%]
-								[%- END %]
 								[% PROCESS playctl command='p0=pause' img='pause' condition=modepause -%]
 							[% IF isplayer %]
 								[% PROCESS playctl command='p0=button&amp;p1=muting' img='mute' condition=mute -%]
@@ -222,10 +210,6 @@
 				[% PROCESS downloadPlaylistLink %] /
 				[% PROCESS clearPlaylistLink %]
 			</div>
-		</div>
-
-		<div id="playlistframe">
-			<IFRAME name="playlist" id="playlist" onload="resizePlaylist();" onresize="resizePlaylist();" src="playlist.html?player=[% playerURI %]" frameborder="no"></IFRAME>
 		</div>
 [% END %]
 [% PROCESS pagefooter.html %]
