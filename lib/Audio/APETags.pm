@@ -1,6 +1,8 @@
 package Audio::APETags;
 
 use strict;
+use Fcntl qw(:seek);
+
 use vars qw($VERSION);
 
 $VERSION = '0.01';
@@ -21,6 +23,7 @@ use constant TF_READ_ONLY  => 0x00000001;
 # useful constants
 use constant ID3V1TAGSIZE  => 128;
 use constant APEHEADFOOT   => 32;
+use constant LYRICSTAGSIZE => 10;
 
 sub getTags {
 	my $class = shift;
@@ -66,83 +69,66 @@ sub _init {
 
 	my $fh	 = $self->{'fileHandle'};
 
-	my ($apetest, $buffer, $id3size);
-
 	# look at the end of the file first; APE tags are
 	# more often found there than at the beginning
+	my $tagSize  = ID3V1TAGSIZE + APEHEADFOOT + LYRICSTAGSIZE;
+	my $fileSize = -s $fh;
 
-	# The end of the file may be an ID3V1 tag.  If so,
-	# skip it and then look for the APE tag
-	seek $fh, -(ID3V1TAGSIZE), 2;
-	read $fh, my $id3chk, 3 or return -1;
+	seek($fh, (0 - $tagSize), SEEK_END);
+	read($fh, my $apetest, $tagSize);
 
-	if ($id3chk eq ID3V1FLAG) {
-		# Seek back to -128 as the 'end' of the APE tag
-		seek $fh, -(ID3V1TAGSIZE), 2;
+	if (substr($apetest, length($apetest) - ID3V1TAGSIZE - APEHEADFOOT, 8) eq 'APETAGEX') {
+
+		# APE tag found before ID3v1
+		$self->{'APETagLoc'} = ($fileSize - ID3V1TAGSIZE);
+
+	} elsif (substr($apetest, length($apetest) - APEHEADFOOT, 8) eq 'APETAGEX') {
+
+		# APE tag found, no ID3v1
+		$self->{'APETagLoc'} = $fileSize;
+
 	} else {
-		# No ID3V1, so go back to the end of the file
-		seek $fh, 0, 2;
-	}
 
-	# Go back 32 bytes to check for an APE tag
-	seek $fh, -(APEHEADFOOT), 1;
-
-	# Is there an APE tag here? (At the end of the file)
-	read $fh, $apetest, 8 or return -1;
-
-	if ($apetest ne APEHEADERFLAG) {
-		# OK, there's no APE tag here.  
-		# If there was ID3V1, try again at the end, as a sanity check
-
-		if ($id3chk eq ID3V1FLAG) {
-			seek $fh, -(APEHEADFOOT), 2;
-			read $fh, $apetest, 8 or return -1;
-
-			if ($apetest eq APEHEADERFLAG) {
-				$self->{'APETagLoc'} = (tell $fh)-8;
-				return 0;
-			}
-		}
-		
 		# Try at the beginning of the file.
-		seek $fh, 0, 0;
-		read $fh, $apetest, 8 or return -1;
+		seek($fh, 0, SEEK_SET);
+		read($fh, my $apetest, 8) or return -1;
 
-		if (substr($apetest, 0, 3) eq ID3HEADERFLAG) {
-			# There's an ID3V2 header on the file.
-			# Skip past it.
-			$self->{'ID3V2Tag'}=1;
+		if (substr($apetest, 0, 3) ne ID3HEADERFLAG) {
 
-			# Skip the next two bytes
-			seek $fh, 2, 1;
-
-			# The size of the ID3 tag is a 'synchsafe' 4-byte uint
-			# Read the next 4 bytes one at a time, unpack each one B7,
-			# and concatenate.  When complete, do a bin2dec to determine size
-			$id3size = '';
-			for (my $c=0; $c<4; $c++) {
-				read ($fh, $buffer, 1) or return -1;
-				$id3size .= substr(unpack ("B8", $buffer), 1);
-			}
-
-			# Skip the ID3 tag
-			seek $fh, _bin2dec($id3size) + 10, 0;
-
-			# Re-check for APE header
-			read $fh, $apetest, 8 or return -1;
-
-			if ($apetest ne APEHEADERFLAG) {
-				# No APE tag to be found
-				return -2;
-			}
-		} else {
 			# Proper tags haven't been found, so warn and return an error
 			warn "header not found, ID3 tags corrupt";
 			return -1;
 		}
-	}
 
-	$self->{'APETagLoc'} = (tell $fh)-8;
+		# There's an ID3V2 header on the file.
+		# Skip past it.
+		$self->{'ID3V2Tag'} = 1;
+
+		# Skip the next two bytes
+		seek($fh, 2, SEEK_CUR);
+
+		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
+		# Read the next 4 bytes one at a time, unpack each one B7,
+		# and concatenate.  When complete, do a bin2dec to determine size
+		my $id3size = '';
+
+		for (my $c = 0; $c < 4; $c++) {
+
+			read($fh, my $buffer, 1) or return -1;
+			$id3size .= substr(unpack ("B8", $buffer), 1);
+		}
+
+		# Skip the ID3 tag
+		seek($fh, _bin2dec($id3size) + 10, SEEK_SET);
+
+		# Re-check for APE header
+		read($fh, $apetest, 8) or return -1;
+
+		if ($apetest ne APEHEADERFLAG) {
+			# No APE tag to be found
+			return -2;
+		}
+	}
 
 	return 0;
 }
@@ -151,22 +137,18 @@ sub _parseTags {
 	my $self = shift;
 
 	my $fh	 = $self->{'fileHandle'};
-	my ($tmp,$tagLen,$tagItemKey,$tagFlags,$tagItemVal);
+	my ($tmp, $tagLen, $tagItemKey, $tagFlags, $tagItemVal);
 
 	# Seek to the location of the known APE header/footer
-	seek $fh, $self->{'APETagLoc'}, 0;
-
-	read $fh, $tmp, APEHEADFOOT or return -1;
+	seek($fh, ($self->{'APETagLoc'} - APEHEADFOOT), SEEK_SET);
+	read($fh, $tmp, APEHEADFOOT) or return -1;
 
 	# Skip the first 8 bytes
-	$tmp = substr $tmp, 8;
+	substr($tmp, 0, 8, '');
 
 	$self->{'tagVersion'}     = _grabInt32(\$tmp);
-
 	$self->{'tagTotalSize'}   = _grabInt32(\$tmp);
-
 	$self->{'tagTotalItems'}  = _grabInt32(\$tmp);
-
 	$self->{'tagGlobalFlags'} = _grabInt32(\$tmp);
 
 	# Check the tagGlobalFlags to determine whether or not this
@@ -175,7 +157,7 @@ sub _parseTags {
 		# this is a footer,
 		# so seek backwards tagTotalSize to get to
 		# the beginning of the actual tag info
-		seek $fh, -($self->{'tagTotalSize'}), 1;
+		seek($fh, -($self->{'tagTotalSize'}), SEEK_CUR);
 	} else {
 		# this is a header,
 		# so we are already at the beginning of the
@@ -193,8 +175,14 @@ sub _parseTags {
 	$self->{'tags'} = {};
 	$self->{'tagFlags'} = {};
 
+	# Saftey check to see if our parsing is bogus.
+	if ($self->{'tagTotalItems'} > 128) {
+		return -1;
+	}
+
 	# Parse it for contents
-	for (my $c=0; $c < $self->{'tagTotalItems'}; $c++) {
+	for (my $c = 0; $c < $self->{'tagTotalItems'}; $c++) {
+
 		# Loop through the tag items
 		$tagLen   = _grabInt32(\$tmp);
 		$tagFlags = _grabInt32(\$tmp);
@@ -224,7 +212,7 @@ sub _bin2dec {
 sub _grabInt32 {
 	# Pulls a little-endian unsigned int from a string and returns the remainder
 	my $data  = shift;
-	my $value = unpack('L',substr($$data,0,4));
+	my $value = unpack('V',substr($$data,0,4));
 	$$data    = substr($$data,4);
 	return $value;
 }

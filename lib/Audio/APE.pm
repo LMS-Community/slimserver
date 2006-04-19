@@ -20,12 +20,12 @@ use constant APEHEADERFLAG => 'APETAGEX';
 #	MONKEY_FLAG_SEEK_ELEMENTS  = 16; // Number of seek elements stored
 #	MONKEY_FLAG_WAV_NOT_STORED = 32; // WAV header not stored
 my %flags = (
-	MONKEY_FLAG_8_BIT			=> 15
-	,MONKEY_FLAG_CRC			=> 14
-	,MONKEY_FLAG_PEAK_LEVEL		=> 13
-	,MONKEY_FLAG_24_BIT			=> 12
-	,MONKEY_FLAG_SEEK_ELEMENTS	=> 11
-	,MONKEY_FLAG_WAV_NOT_STORED	=> 10
+	MONKEY_FLAG_8_BIT		=> 15,
+	MONKEY_FLAG_CRC			=> 14,
+	MONKEY_FLAG_PEAK_LEVEL		=> 13,
+	MONKEY_FLAG_24_BIT		=> 12,
+	MONKEY_FLAG_SEEK_ELEMENTS	=> 11,
+	MONKEY_FLAG_WAV_NOT_STORED	=> 10,
 );
 
 sub new {
@@ -196,15 +196,16 @@ sub _getAudioInfo {
 	my $fh   = $self->{'fileHandle'};
 
 	my %profileNames = (
-				1000	=>	"Fast (poor)"
-				,2000	=>	"Normal (good)"
-				,3000	=>	"High (very good)"
-				,4000	=>	"Extra high (best)"
-				,5000	=>	"Insane"
-				,6000	=>	"BrainDead"
-			);
-	my @StereoMode = ('unknown','Mono','Stereo');
-	my @samplFreq = (44100, 48000, 37800, 32000);
+		1000 => 'Fast (poor)',
+		2000 => 'Normal (good)',
+		3000 => 'High (very good)',
+		4000 => 'Extra high (best)',
+		5000 => 'Insane',
+		6000 => 'BrainDead',
+	);
+
+	my @StereoMode = qw(unknown Mono Stereo);
+	my @samplFreq  = qw(44100 48000 37800 32000);
 	
 	my $buffer;
 	my $compressionID;
@@ -218,7 +219,7 @@ sub _getAudioInfo {
 	read $fh, $buffer, 4;
 	$buffer = _getWord($buffer);
 	$self->{'streamVersion'} = _bin2dec(substr($buffer,16,16));
-	
+
 	if ($self->{'streamVersion'} < 3980) {
 		$compressionID = _bin2dec(substr($buffer,0,16));
 		return -1 unless exists $profileNames{$compressionID};
@@ -299,11 +300,11 @@ sub _getAudioInfo {
 	}
 
 	# Calculate other useful file info
-	$self->{'TotalSamples'} = $self->{'BlocksPerFrame'} * ($totalFrames-1) + $finalFrame;
-	$self->{'duration'} = $self->{'TotalSamples'}/$self->{'SampleRate'};
-	$self->{'compression'} = $profileNames{$compressionID};
+	$self->{'TotalSamples'}   = $self->{'BlocksPerFrame'} * ($totalFrames-1) + $finalFrame;
+	$self->{'duration'}       = $self->{'TotalSamples'}/$self->{'SampleRate'};
+	$self->{'compression'}    = $profileNames{$compressionID};
 	$self->{'streamVersion'} /= 1000;
-	$self->{'bitRate'} = 8 * ($self->{'fileSize'} - $self->{'startHeaderInfo'}) / $self->{'duration'};
+	$self->{'bitRate'}        = 8 * ($self->{'fileSize'} - $self->{'startHeaderInfo'}) / $self->{'duration'};
 
 	return 0;
 }
@@ -321,10 +322,11 @@ sub _parseFlags {
 
 sub _getWord {
 	my $inWord = shift;
+
 	# Read in four bytes in reverse order, convert to binary
 	my $outWord = '';
 
-	for (my $c=0; $c<4; $c++) {
+	for (my $c = 0; $c < 4; $c++) {
 		$outWord .= unpack "B8", substr($inWord, 3-$c, 1);
 	}
 	
