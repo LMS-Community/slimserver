@@ -8,15 +8,19 @@ var player = '[% playerURI %]';
 // params is a list of args to send to url
 // action is the function to be called after the ajaxRequest.txt file is spit back
 function getStatusData(params, action) {
-	params = params + '&rnd='+ Math.random()*99999;
+	var requesttype = 'post';
+	if (window.XMLHttpRequest) {
+		requesttype = 'get';
+	}
 	var myAjax = new Ajax.Request(
-		url, 
-		{
-			method: 'post',
-			postBody: params, 
-			onComplete: action,
-			requestHeaders:['Referer', document.location.href]
-		});
+	url,
+	{
+		method: requesttype,
+		postBody: params,
+		parameters: params,
+		onComplete: action,
+		requestHeaders:['Referer', document.location.href]
+	});
 }
 
 // doRefresh
@@ -74,8 +78,10 @@ function refreshHref (element, value) {
 function refreshHrefElement (item,data,rpl) {
 	
 	var myString = new String($(item).innerHTML);
-	var rString = rpl + data + "&amp;";
-	var rExp= new RegExp(rpl + ".+?&amp;","gi");
+	var rString = rpl + data + "&amp;player";
+	var rExp= new RegExp(rpl + ".+?&amp;player","i");
+	//safari hack
+	if (rExp.exec(myString) == null) rExp= new RegExp(rpl + ".+?&player","i");
 	$(item).innerHTML = myString.replace(rExp, rString);
 }
 
