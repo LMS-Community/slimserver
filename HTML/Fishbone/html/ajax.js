@@ -40,8 +40,8 @@ function processBarClick (num) {
 	var pos = parseInt((_progressEnd/20) * (num - 0.5));
 	//alert([num,pos,_progressEnd]);
 	var param = 'p0=time&p1='+pos+'&player='+player;
-	getStatusData(param + "&ajaxRequest=1", refreshAll);
-	updateTime(pos,_progressEnd);
+	getStatusData(param + "&ajaxRequest=1", refreshInfo);
+	//updateTime(pos,_progressEnd);
 }
 
 function processVolume(param) {

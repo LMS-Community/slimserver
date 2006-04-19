@@ -21,7 +21,8 @@ function changePlayer(player_List) {
 	setCookie('SlimServer-player',newPlayer);
 	
 	//parent.playlist.location="playlist.html?player" + newPlayer;
-	window.location="status.html?player" + newPlayer;
+	var args = 'player='+newPlayer+'&ajaxRequest=1';
+	getStatusData(args, refreshAll);
 	
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);

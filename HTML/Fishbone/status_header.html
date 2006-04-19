@@ -68,7 +68,7 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" onload="refreshPlaylist();">
+<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF not undock %]onload="javascript:refreshPlaylist();"[% END %]">
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">
