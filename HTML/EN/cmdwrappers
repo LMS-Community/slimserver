@@ -147,7 +147,7 @@ END %]
 
 [% BLOCK galleryitem %]
 <li>
-<div style="width:[% item.size %]px; ">
+<div style="width:[% item.size %]px;">
 [%- IF anchor %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
