@@ -473,6 +473,7 @@ A.linkbtn:link {
 
 #TopMenu1 #coverart {
 	padding: 5px 5px 5px 0;
+	height: 100px;
 }
 
 #TopMenu1 #nowplaying
@@ -632,7 +633,7 @@ A.linkbtn:link {
 #playlistStatus {
 	margin:0px;
 	padding: 0 8px 0 8px;
-	margin-top: 8px;
+	margin-top: 5px;
 	color:white;
 	height: 18px;
 	width: 100%;

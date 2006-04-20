@@ -27,8 +27,6 @@ TD, P, A {
 DIV {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size : 12px;
-	margin:0in; 
-	margin-bottom:1pt;
 	line-height: 150%;
 	_height: 0%;
 }
@@ -222,9 +220,4 @@ DIV.playlistform,#TopMenu2
 	padding:4px 2px 4px 2px;
 	background:#999;
 	color:white;
-}
-
-.artworkControls img {
-	margin-left: 1px;
-	padding-top: 6px;
 }
