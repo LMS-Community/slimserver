@@ -109,7 +109,7 @@ sub handleFeed {
 	}
 	
 	# play/add stream
-	if ( $stash->{'action'} && $stash->{'action'} =~ /play|add/ ) {
+	if ( $client && $stash->{'action'} && $stash->{'action'} =~ /play|add/ ) {
 		my $play  = ($stash->{'action'} eq 'play');
 		my $url   = $stash->{'streaminfo'}->{'url'};
 		my $title = $stash->{'streaminfo'}->{'title'};
