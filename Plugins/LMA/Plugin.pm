@@ -60,12 +60,12 @@ sub setMode {
 sub webPages {
 	my $title = 'PLUGIN_LMA_MODULE_NAME';
 	
-	Slim::Web::Pages->addPageLinks(
-		'radio' => {
-			$title => 'plugins/LMA/index.html',
-		},
-	);
-	
+	if (grep {$_ eq 'LMA::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/LMA/index.html' });
+	}
+
 	my %pages = ( 
 		'index.html' => sub {
 			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );

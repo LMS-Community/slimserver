@@ -128,13 +128,13 @@ sub _picksQuery_error {
 
 sub webPages {
 	my $title = 'PLUGIN_PICKS_MODULE_NAME';
-	
-	Slim::Web::Pages->addPageLinks(
-		'radio' => {
-			$title => 'plugins/Picks/index.html',
-		},
-	);
-	
+
+	if (grep {$_ eq 'Picks::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/Picks/index.html' });
+	}
+
 	my %pages = ( 
 		'index.html' => sub {
 			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );
