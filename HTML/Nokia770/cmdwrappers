@@ -4,7 +4,7 @@
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">
-	<p><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]' onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
+	<p><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]'></a>
 </td>
 [% END %]
 
@@ -163,6 +163,12 @@
 	[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
 	[% ELSIF item.item || !item.defined('level') && item.itemobj %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
+[% IF verbose %]
+                [% "FROM" | string %]
+                <a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% item.album.id %]&player=[% playerURI %]">[% item.album.title | html %]</a>
+	[% PROCESS artistsAsHTML.html %]
+[% END %]
+[%# IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %] >[% item.songtitle | html %]</a>
 	[% ELSE %]
@@ -201,20 +207,23 @@
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 11; END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
 [% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
+
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
- <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+ <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]
+
 [%- ELSE %]
+
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
  [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
- [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+ [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
  [%- END %]
 [% END %]
 [%- END %]
-[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]">[% "NEXT" | string %]</a> [% END %]
-[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
+[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "NEXT" | string %]</a> [% END %]
+[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "LAST" | string %]</a> [% END %]
 [% END %]
 
 [% BLOCK pagebarheader %]

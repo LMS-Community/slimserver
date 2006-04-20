@@ -1,14 +1,13 @@
 var url = 'browsedb.html';
-
+var parsedData;
 var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=artist,album,track&amp;artist=ARTIST&amp;level=1&player=[% playerURI %]';
 var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=ALBUM&player=[% playerURI %]';
 var thumbHrefTemplate = '/music/COVER/cover.jpg';
-//var blankRequest = '[% additionalLinks.browse.BROWSE_BY_ARTWORK %]&player=[% playerURI %]&artwork=1&ajaxRequest=1';
+var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album=ALBUM&player=[% playerURI %]';
+var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album=ALBUM&player=[% playerURI %]';
 var blankRequest = 'hierarchy=artwork,track&level=0&sort=artist,year,album&&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
-//blankRequest = blankRequest.replace('browsedb.html?','');
 
-var thisAlbum;
-var thatAlbum;
+var thisAlbum, thatAlbum;
 
 [% PROCESS html/global.js %]
 
@@ -38,20 +37,32 @@ function showArrows(firstOne, secondOne, lastOne) {
 }
 
 function refreshThumbs(theData) {
-	var parsedData = fillDataHash(theData);
+	parsedData = fillDataHash(theData);
 	showArrows(thisAlbum, thatAlbum, parsedData['last']);
 	refreshThumb(parsedData, '1', thisAlbum);
 	refreshThumb(parsedData, '2', thatAlbum);
 }
 
 function refreshThumb(theData, whichOne, thatOne) {
-	var parsedData = fillDataHash(theData);
+	parsedData = fillDataHash(theData);
 	var thumbId = 'thumb_' + whichOne;
-	var albumKey = 'coverthumb_' + thatOne;
+	var thumbKey = 'coverthumb_' + thatOne;
+	var albumKey = 'albumid_' + thatOne;
+	var playId = 'play_' + whichOne;
+	var addId = 'add_' + whichOne;
+	var thatThumb = parsedData[thumbKey];
 	var thatAlbum = parsedData[albumKey];
 	if ($(thumbId)) {
-		var thumbHref = thumbHrefTemplate.replace('COVER', thatAlbum);
+		var thumbHref = thumbHrefTemplate.replace('COVER', thatThumb);
 		$(thumbId).src = thumbHref;
+	}
+	if ($(playId)) {
+		var playHref = playAlbumTemplate.replace('ALBUM', thatAlbum);
+		refreshHref(playId, playHref);
+	}
+	if ($(addId)) {
+		var addHref = addAlbumTemplate.replace('ALBUM', thatAlbum);
+		refreshHref(addId, addHref);
 	}
 	var textKeys = [ 'artist_', 'album_' ];
 	for (var i = 0; i < textKeys.length; i++) {
@@ -66,13 +77,13 @@ function refreshThumb(theData, whichOne, thatOne) {
 function lastCover() {
 	thatAlbum = thisAlbum;
 	thisAlbum = parseInt(thisAlbum) - 1;
-	artworkBrowse(blankRequest, thisAlbum, thatAlbum);
+	refreshThumbs(parsedData);
 }
 
 function nextCover() {
 	thisAlbum = thatAlbum;
 	thatAlbum = parseInt(thatAlbum) + 1;
-	artworkBrowse(blankRequest, thisAlbum, thatAlbum);
+	refreshThumbs(parsedData);
 }
 
 function artworkBrowse(urlArgs, thisId, thatId) {
@@ -81,12 +92,7 @@ function artworkBrowse(urlArgs, thisId, thatId) {
 	getStatusData(urlArgs, refreshThumbs);
 }
 
-// create a table with all necessary elements for browsing artwork
-function setupThumbTable() {
-}
-
 window.onload= function() {
-//	setupThumbTable();
 	artworkBrowse(blankRequest, 0, 1);
 }
 
