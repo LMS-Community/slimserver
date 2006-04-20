@@ -7,6 +7,7 @@ package Plugins::LMA::Plugin;
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Utils::Misc;
+use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://content.us.squeezenetwork.com:8080/lma/artists.opml';
 
@@ -54,6 +55,24 @@ sub setMode {
 
 	# we'll handle the push in a callback
 	$client->param('handledTransition',1);
+}
+
+sub webPages {
+	my $title = 'PLUGIN_LMA_MODULE_NAME';
+	
+	Slim::Web::Pages->addPageLinks(
+		'radio' => {
+			$title => 'plugins/LMA/index.html',
+		},
+	);
+	
+	my %pages = ( 
+		'index.html' => sub {
+			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );
+		},
+	);
+	
+	return \%pages;
 }
 
 sub strings {

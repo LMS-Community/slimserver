@@ -17,6 +17,7 @@ use XML::Simple;
 
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Music::Info;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
 sub getFeedAsync {
@@ -24,8 +25,15 @@ sub getFeedAsync {
 	my ( $cb, $ecb, $params ) = @_;
 	
 	my $url = $params->{'url'};
-	my $feed = '';
-
+	
+	# Try to load a cached copy of the parsed XML
+	my $cache = Slim::Utils::Cache->new();
+	my $feed = $cache->get( $url . '_parsedXML' );
+	if ( $feed ) {
+		$::d_plugins && msg("Formats::XML: got cached XML data for $url\n");
+		return $cb->( $feed, $params );
+	}
+	
 	if (Slim::Music::Info::isFileURL($url)) {
 
 		my $path    = Slim::Utils::Misc::pathFromFileURL($url);
@@ -77,6 +85,17 @@ sub gotViaHTTP {
 		$ecb->( '{PARSE_ERROR}', $params->{'params'} );
 		return;
 	}
+	
+	# Cache the feed at least 5 minutes, using the same expiration as SimpleAsyncHTTP if possible
+	my $cache = Slim::Utils::Cache->new();
+	my $expires = 300;
+	if ( my $data = $cache->get( $http->url() ) ) {
+		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
+			$expires = time - ( $data->{'_time'} + $data->{'_expires'} );
+		}
+	}
+	$::d_plugins && msg("Formats::XML: caching parsed XML for $expires seconds\n");
+	$cache->set( $http->url() . '_parsedXML', $feed, $expires );
 
 	# call cb
 	my $cb = $params->{'cb'};

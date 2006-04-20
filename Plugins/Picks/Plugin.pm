@@ -12,6 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
 use Slim::Utils::Misc;
+use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
 
@@ -123,6 +124,24 @@ sub _picksQuery_error {
 	$request->addResult('count', 0);
 
 	$request->setStatusDone();	
+}
+
+sub webPages {
+	my $title = 'PLUGIN_PICKS_MODULE_NAME';
+	
+	Slim::Web::Pages->addPageLinks(
+		'radio' => {
+			$title => 'plugins/Picks/index.html',
+		},
+	);
+	
+	my %pages = ( 
+		'index.html' => sub {
+			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );
+		},
+	);
+	
+	return \%pages;
 }
 
 sub strings {

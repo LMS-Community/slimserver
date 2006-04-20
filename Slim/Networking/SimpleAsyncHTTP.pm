@@ -223,6 +223,12 @@ sub headerCB {
 			
 			$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
 			
+			# update the cache time so we get another 5 minutes with no revalidation
+			my $cache = Slim::Utils::Cache->new();
+			$self->{'cachedResponse'}->{'_time'} = time;
+			my $expires = $self->{'cachedResponse'}->{'_expires'} || undef;
+			$cache->set( $self->{'url'}, $self->{'cachedResponse'}, $expires );
+			
 			return $self->sendCachedResponse();
 		}
 
@@ -294,10 +300,11 @@ sub bodyCB {
 			
 			if ( defined $expires && $expires > 0) {
 				# if we have an explicit expiration time, we can avoid revalidation
-				$data->{_no_revalidate} = 1;
+				$data->{'_no_revalidate'} = 1;
 			}
 			
 			if ( !$no_cache ) {
+				$data->{'_expires'} = $expires;
 				$cache->set( $self->{'url'}, $data, $expires );
 			}
 		}

@@ -1,0 +1,58 @@
+[% FILTER null %]
+[% pageicon = 'RADIO'; noSpacer = NOT streaminfo; %]
+[% pwd_list = [];
+	FOREACH crumb IN crumb;
+		crumbItem = BLOCK %]
+			<a href="index.html?player=[% playerURI %][% IF crumb.index %]&amp;index=[% crumb.index %][% END %]">[% crumb.name %]</a>
+		[% END %]
+		[% pwd_list.push(crumbItem) %]
+	[% END %]
+[% END # filter -%]
+[% PROCESS pageheader.html %]
+
+			[% IF msg %][% WRAPPER contentcontainer %]
+				<b>[% msg %]</b>
+			[% END %][% END %]
+
+			[% IF streaminfo %]
+			<div id="songInfoHeader">
+				<a href="index.html?action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]" target="playlist">[% "PLAY_THIS_SONG" | string %]</a>
+				<br />
+				<a href="index.html?action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]" target="playlist">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+			</div>
+			
+			<div class="songInfo">
+				<ul>
+					<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.title | html %]</div>
+					</li>
+					
+					<li><div class="songInfoTitle">[% "URL" | string; "COLON" | string %]</div>
+						<div class="songInfoText"><a href="[% streaminfo.url | html %]" target="_blank">[% streaminfo.url | html %]</a>
+					</li>
+				</ul>
+			</div>
+			[% END %]
+			
+			[%- odd = 1 %]
+			[%- IF items -%]
+				[%- WRAPPER contentcontainer %]
+					[%- FOREACH item = items %]
+						[%- BLOCK gencontrol -%]
+							[% IF item.type == 'audio' %]
+								[% WRAPPER playlink %]href="index.html?action=play&amp;index=[% index _ loop.index %]&amp;player=[% player | uri %]" target="playlist"[% END %]
+								[% WRAPPER addlink %]href="index.html?action=add&amp;index=[% index _ loop.index %]&amp;player=[% player | uri %]" target="playlist"[% END %]
+							[% ELSE %]
+								[%- WRAPPER descendlink %]href="index.html?index=[% index _ loop.index %]&amp;player=[% player | uri %]"[%- END %]
+							[% END %]
+						[%- END %]
+						[%- WRAPPER contentitem controls = 'gencontrol' %]
+							<a href="index.html?index=[% index _ loop.index %]&amp;player=[% player | uri %]">[% item.name %]</a>
+						[%- END %]
+						[%- odd = (not odd) %]
+					[%- END %]
+				[%- END %]
+			[%- END %]
+
+[% PROCESS pagefooter.html %]
+

@@ -1522,6 +1522,9 @@ ABOUT_SHORT
 	SV	Om
 	ZH_CN	关于
 
+WEB_XML_ERROR
+	EN	There was an error loading the remote feed for
+
 #
 # Setup page strings
 # General strings for the setup pages

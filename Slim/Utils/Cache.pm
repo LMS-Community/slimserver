@@ -13,7 +13,7 @@ package Slim::Utils::Cache;
 use strict;
 use base qw(Class::Singleton);
 use Cache::FileCache ();
-use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
 
 sub new { shift->instance(@_) }
 
@@ -23,7 +23,7 @@ sub _new_instance {
 	my $cache = Cache::FileCache->new( {
 		namespace          => 'FileCache',
 		default_expires_in => $Cache::FileCache::EXPIRES_NEVER,
-		cache_root         => Slim::Utils::OSDetect::dirsFor('cache'),
+		cache_root         => Slim::Utils::Prefs::defaultCacheDir(),
 	} );
 	
 	my $self = bless {
