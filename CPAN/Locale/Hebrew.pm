@@ -7,7 +7,6 @@ use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK);
 use Exporter;
 use DynaLoader;
-use AutoLoader;
 
 @ISA = qw(Exporter DynaLoader);
 @EXPORT = @EXPORT_OK = qw(hebrewflip);
