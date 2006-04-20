@@ -3,7 +3,7 @@
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="index.html?player=[% playerURI %][% IF crumb.index %]&amp;index=[% crumb.index %][% END %]">[% crumb.name %]</a>
+			<a href="index.html?player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -16,20 +16,42 @@
 
 			[% IF streaminfo %]
 			<div id="songInfoHeader">
-				<a href="index.html?action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]">[% "PLAY_THIS_SONG" | string %]</a>
-				<br />
-				<a href="index.html?action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+				[% WRAPPER playlink %]href="index.html?action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+				[% WRAPPER addlink %]href="index.html?action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
 			</div>
 			
 			<div class="songInfo">
 				<ul>
 					<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
-						<div class="songInfoText">[% streaminfo.title | html %]</div>
+						<div class="songInfoText">[% (streaminfo.item.name || streaminfo.item.title) | html %]</div>
 					</li>
 					
+					[% IF streaminfo.item.url %]
 					<li><div class="songInfoTitle">[% "URL" | string; "COLON" | string %]</div>
-						<div class="songInfoText"><a href="[% streaminfo.url | html %]" target="_blank">[% streaminfo.url | html %]</a>
+						<div class="songInfoText"><a href="[% streaminfo.item.url | html %]" target="_blank">[% streaminfo.item.url | html %]</a></div>
 					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.description %]
+					<li><div class="songInfoTitle">[% "PODCAST_FEED_DESCRIPTION" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.description | html %]</div>
+					</li>
+					[% END %]					
+					
+					[% IF streaminfo.item.link %]
+					<li><div class="songInfoTitle">[% "PODCAST_LINK" | string; "COLON" | string %]</div>
+						<div class="songInfoText"><a href="[% streaminfo.item.link | html %]" target="_blank">[% streaminfo.item.link | html %]</a></div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.enclosure %]
+					<li><div class="songInfoTitle">[% "PODCAST_ENCLOSURE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">
+							<a href="[% streaminfo.item.enclosure.url | html %]" target="_blank">[% streaminfo.item.enclosure.url | html %]</a><br />
+							[% FILTER format('%.2f'); streaminfo.item.enclosure.length / 1048576; END %] MB
+						</div>
+					</li>
+					[% END %]					
 				</ul>
 			</div>
 			[% END %]
@@ -39,7 +61,7 @@
 				[%- WRAPPER contentcontainer %]
 					[%- FOREACH item = items %]
 						[%- BLOCK gencontrol -%]
-							[% IF item.type == 'audio' %]
+							[% IF item.type == 'audio' || item.enclosure %]
 								[% WRAPPER playlink %]href="index.html?action=play&amp;index=[% index _ loop.index %]&amp;player=[% player | uri %]"[% END %]
 								[% WRAPPER addlink %]href="index.html?action=add&amp;index=[% index _ loop.index %]&amp;player=[% player | uri %]"[% END %]
 							[% ELSE %]
@@ -47,7 +69,7 @@
 							[% END %]
 						[%- END %]
 						[%- WRAPPER contentitem controls = 'gencontrol' %]
-							<a href="index.html?index=[% index _ loop.index %]&amp;player=[% player | uri %]">[% item.name %]</a>
+							<a href="index.html?index=[% index _ loop.index %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
 						[%- END %]
 						[%- odd = (not odd) %]
 					[%- END %]

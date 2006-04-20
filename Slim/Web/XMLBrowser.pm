@@ -19,15 +19,25 @@ use Slim::Web::HTTP;
 
 sub handleWebIndex {
 	my $class = shift;
-	my $url   = shift;
+	my $feed  = shift;
 	my $title = shift;
+	
+	# If the feed is already XML data (Podcast List), send it to handleFeed
+	if ( ref $feed eq 'HASH' ) {
+		handleFeed( $feed, {
+			'url'   => $feed->{'url'},
+			'title' => $title,
+			'args'  => \@_,
+		} );
+		return;
+	}
 
 	# fetch the remote content
 	Slim::Formats::XML->getFeedAsync(
 		\&handleFeed,
 		\&handleError,
 		{
-			'url'   => $url,
+			'url'   => $feed,
 			'title' => $title,
 			'args'  => \@_,
 		},
@@ -65,7 +75,7 @@ sub handleFeed {
 			
 			push @crumbIndex, $i;
 			push @crumb, {
-				'name'  => $subFeed->{'name'},
+				'name'  => $subFeed->{'name'} || $subFeed->{'title'},
 				'index' => join '.', @crumbIndex,
 			};
 			
@@ -87,11 +97,10 @@ sub handleFeed {
 				return;
 			}
 			
-			# If the feed is an audio feed, display the audio info
-			if ( $subFeed->{'type'} eq 'audio' ) {
+			# If the feed is an audio feed or Podcast enclosure, display the audio info
+			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
 				$stash->{'streaminfo'} = {
-					'url'   => $subFeed->{'url'},
-					'title' => $subFeed->{'name'},
+					'item'  => $subFeed,
 					'index' => join '.', @index,
 				};
 			}
@@ -111,24 +120,32 @@ sub handleFeed {
 	# play/add stream
 	if ( $client && $stash->{'action'} && $stash->{'action'} =~ /play|add/ ) {
 		my $play  = ($stash->{'action'} eq 'play');
-		my $url   = $stash->{'streaminfo'}->{'url'};
-		my $title = $stash->{'streaminfo'}->{'title'};
+		my $url   = $stash->{'streaminfo'}->{'item'}->{'url'};
+		my $title = $stash->{'streaminfo'}->{'item'}->{'name'} 
+			|| $stash->{'streaminfo'}->{'item'}->{'title'};
 		
-		$::d_plugins && msg("XMLBrowser: playing/adding $url\n");
-		
-		Slim::Music::Info::setTitle( $url, $title );
-		
-		if ( $play ) {
-			$client->execute([ 'playlist', 'clear' ]);
-			$client->execute([ 'playlist', 'play', $url ]);
-		}
-		else {
-			$client->execute([ 'playlist', 'add', $url ]);
+		# Podcast enclosures
+		if ( my $enc = $stash->{'streaminfo'}->{'item'}->{'enclosure'} ) {
+			$url = $enc->{'url'};
 		}
 		
-		my $webroot = $stash->{'webroot'};
-		$webroot =~ s/(.*?)plugins.*$/$1/;
-		$template = 'xmlbrowser_redirect.html';
+		if ( $url ) {
+			$::d_plugins && msg("XMLBrowser: playing/adding $url\n");
+		
+			Slim::Music::Info::setTitle( $url, $title );
+		
+			if ( $play ) {
+				$client->execute([ 'playlist', 'clear' ]);
+				$client->execute([ 'playlist', 'play', $url ]);
+			}
+			else {
+				$client->execute([ 'playlist', 'add', $url ]);
+			}
+		
+			my $webroot = $stash->{'webroot'};
+			$webroot =~ s/(.*?)plugins.*$/$1/;
+			$template = 'xmlbrowser_redirect.html';
+		}
 	}
 	
 	my $output = processTemplate($template, $stash);

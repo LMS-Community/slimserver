@@ -13,7 +13,10 @@ use constant FEEDS_VERSION => 1;
 use HTML::Entities;
 use XML::Simple;
 
+use Slim::Formats::XML;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
 
 # default can be overridden by prefs.  See initPlugin()
 # TODO: come up with a better list of defaults.
@@ -60,8 +63,9 @@ sub initPlugin {
 		while ($i < scalar(@feedNamePrefs)) {
 
 			push @feeds, {
-				name => $feedNamePrefs[$i],
-				value => $feedURLPrefs[$i]
+				name  => $feedNamePrefs[$i],
+				value => $feedURLPrefs[$i],
+				type  => 'link',
 			};
 			$i++;
 		}
@@ -81,6 +85,8 @@ sub initPlugin {
 	%feed_names = ();
 
 	map { $feed_names{$_->{'value'} } = $_->{'name'}} @feeds;
+	
+	updateOPMLCache( \@feeds );
 }
 
 sub revertToDefaults {
@@ -97,6 +103,8 @@ sub revertToDefaults {
 	%feed_names = ();
 
 	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
+	
+	updateOPMLCache( \@feeds );
 }
 
 sub getDisplayName {
@@ -153,28 +161,52 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
-## Bug 2451: Weg pages aren't actually used with this plugin, so if we 
-## comment this out, reported warnings should not show up.
-# this will undoubtably change.
-# these are for testing more than anything else.
-#sub webPages {
-#	my %pages = (
-#		myPodcasts => sub {webPage('myPodcasts', @_)},
-#		myPodcasts2 => sub {webPage('myPodcasts2', @_)},
-#	);
-#	use Data::Dumper;
-#	print Dumper(\%pages);
-#	return \%pages;
-#}
+sub webPages {
+	my $title = 'PLUGIN_PODCAST';
+	
+	if (grep {$_ eq 'Podcast::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/Podcast/index.html' });
+	}
 
-#sub webPage {
-#	my $page = shift;
-#	my $client = shift;
-#	my $params = shift;
+	my %pages = ( 
+		'index.html' => sub {
+			# Get OPML list of feeds from cache
+			my $cache = Slim::Utils::Cache->new();
+			my $opml = $cache->get( 'podcasts_opml' );
+			Slim::Web::XMLBrowser->handleWebIndex( $opml, $title, @_ );
+		},
+	);
+	
+	return \%pages;
+}
 
-#	# TODO: set content type to XML
-#	return Slim::Web::HTTP::filltemplatefile("plugins/Podcast/$page", $params);
-#}
+# Update the hashref of podcast feeds for use with the web UI
+sub updateOPMLCache {
+	my $feeds = shift;
+	
+	my $outline = [];
+	for my $item ( @{$feeds} ) {
+		push @{$outline}, {
+			'name'  => $item->{'name'},
+			'url'   => $item->{'value'},
+			'value' => $item->{'value'},
+			'type'  => $item->{'type'},
+			'items' => [],
+		};
+	}
+	
+	my $opml = {
+		'title' => string('PLUGIN_PODCAST'),
+		'url'   => 'podcasts_opml',			# Used so XMLBrowser can look this up in cache
+		'type'  => 'opml',
+		'items' => $outline,
+	};
+		
+	my $cache = Slim::Utils::Cache->new();
+	$cache->set( 'podcasts_opml', $opml );
+}
 
 # for configuring via web interface
 sub setupGroup {
@@ -269,12 +301,12 @@ sub updateFeedNames {
 				if ($xml && exists $xml->{'channel'}->{'title'}) {
 
 					# here for podcasts and RSS
-					$feedNamePrefs[$i] = Slim::Buttons::XMLBrowser::unescapeAndTrim($xml->{'channel'}->{'title'});
+					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
 
 				} elsif ($xml && exists $xml->{'head'}->{'title'}) {
 
 					# here for OPML
-					$feedNamePrefs[$i] = Slim::Buttons::XMLBrowser::unescapeAndTrim($xml->{'head'}->{'title'});
+					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
 
 				} else {
 					# use url as title since we have nothing else
@@ -316,6 +348,8 @@ sub updateFeedNames {
 		%feed_names = ();
 
 		map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
+		
+		updateOPMLCache( \@feeds );
 	}
 
 }
