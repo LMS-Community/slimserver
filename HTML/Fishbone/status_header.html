@@ -10,7 +10,7 @@
 [%- END %]
 
 [% BLOCK volumectl %]
-<a class="volfragment" href="javascript:processVolume('p0=mixer&amp;p1=volume&amp;p2=[% vol %]&amp;player=[% playerURI %]');">[% PROCESS spacer %]</a>
+<a class="volfragment" href="javascript:processVolume('p0=mixer&amp;p1=volume&amp;p2=[% vol %]');">[% PROCESS spacer %]</a>
 [% END %]
 
 [%- BLOCK progressOverlay -%]
@@ -40,12 +40,12 @@
 [% END -%]
 
 [% BLOCK statectrl %]
-	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]&amp;player=[% playerURI %]');[% IF command == 'shuffle' %]refreshPlaylist();[% END %]"><b>[% cmdstring | string | upper%]</b></a>
+	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]');[% IF command == 'shuffle' %]refreshPlaylist();[% END %]"><b>[% cmdstring | string | upper%]</b></a>
 [% END %]
 
 [% BLOCK playctl %]
 	<td>
-			<a href="javascript:processPlayControls('[% command %]&amp;player=[% playerURI %]')">
+			<a href="javascript:processPlayControls('[% command %]')">
 			<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
 	</td>
 [% END %]
@@ -72,8 +72,14 @@
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">
-				<img class="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
-				<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
+				<span id="squeezeboxlogo" [% IF playermodel == 'slimp3' %]style="display:none"[% END %]>
+					<img class="gray" src="[% webroot %]html/images/squeezebox_logo.small.gif" alt="Squeezebox" title="Squeezebox" width="98" height="17">
+					<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt="Squeezebox" title="Squeezebox" width="98" height="17">
+				</span>
+				<span id="slimp3logo" [% IF playermodel != 'slimp3' %]style="display:none"[% END %]>
+					<img class="gray" src="[% webroot %]html/images/slimp3_logo.small.gif" alt="SliMP3" title="SliMP3" width="98" height="17">
+					<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt="SliMP3" title="SliMP3" width="98" height="17">
+				</span>
 			</div>
 			<div id="playerlinks">
 			[% IF undock %]<span id="inc"></span>  [% END %]
@@ -82,12 +88,12 @@
 					 / 
 				[% END %]
 				[% IF mode != 'off' %]
-					<A href="javascript:processSleepLink('p0=button&amp;p1=sleep&amp;player=[% playerURI %]');">Sleep</a><span id='sleeptime'>[% IF sleeptime %] ([% sleep %])[% END %]</span>
+					<A href="javascript:processSleepLink('p0=button&amp;p1=sleep');">Sleep</a><span id='sleeptime'>[% IF sleeptime %] ([% sleep %])[% END %]</span>
 				[% END %][% IF mode != 'off' %] / [% END %]
 				[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 				[%- END -%]
 				[%- IF not undock -%] /
-				<a href="javascript:openRemote('[% playerURI %]','[% player_name %]')">Undock</a>
+				<a href="javascript:openRemote()">Undock</a>
 				<img id="statusImg_up" alt="Hide" title="Hide" src="html/images/b_up.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
 				<img id="statusImg_down" alt="Show" title="Show" style="display:none;" src="html/images/b_down.gif" onClick="toggleStatus(['TopMenu1','TopMenu2','TopMenu3']);resizePlaylist();">
 				[%- END %]
@@ -96,7 +102,7 @@
 
 [%- IF NOT undock -%]
 		<div id="menuHeader">
-			<form id="playerForm" action="">
+			<form id="playerForm" action="javascript:return false">
 				[% IF player_chooser_list -%]
 					<select name="player" onchange="changePlayer(this);" class="stdedit">[% player_chooser_list %]</select>
 				[%- ELSE -%]
@@ -124,24 +130,21 @@
 					<img src="[% webroot %]html/images/cover.png" id="coverartpath" width = '100' height="100">
 				[%- END %]</a></span>
 			</div>
-			<div id="notplaying" style="display:none;">
-			[% "PLAYLIST_EMPTY" | string %]
+			<div id="notplaying" [% IF currentsong %]style="display:none;"[% END %]>
+				<div class="label">[% "PLAYLIST_EMPTY" | string %][% "COLON" | string %]</div>
 			</div>
-			<div id="nowplaying">
+			<div id="nowplaying" [% IF NOT currentsong %]style="display:none;"[% END %]>
 				<div class="label">[% IF modeplay  %][% status = "PLAYING"    %][% END %][% IF modepause %][% status = "PAUSED_ON"  %][% END %][% IF modestop  %][% status = "STOPPED_ON" %][% END %]
-				<span id="playtextmode">[% IF currentsong %][% status | string %][% ELSE %][% "PLAYLIST_EMPTY" | string %][% END %]</span>
-				[% IF currentsong %]<b><span id="thissongnum">[% currentsong %]</span></b> [% "OUT_OF" | string %] <b>&nbsp;<span id="songcount">[% songcount %]</span></b>&nbsp;<span id="zaphref"><a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a></span>[% END %][% "COLON" | string %]</div>
+				<span id="playtextmode">[% IF currentsong %][% status | string %][% END %]</span>
+				<span id="thissongnum">[% IF currentsong %][% currentsong %][% END %]</span><span id="outof">&nbsp;[% "OUT_OF" | string %]&nbsp;</span><span id="songcount">[% IF songcount %][% songcount %][% END %]</span>&nbsp;<span id="zaphref">[% IF currentsong %]<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %]</span>[% IF currentsong %][% "COLON" | string %][% END %]</div>
 				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% songtitle %]</span></a>
-				[% IF itemobj.duration %]&nbsp;<span id="duration">([% itemobj.duration | html %])</span>[% END %][% IF bitrate %]&nbsp;<span id="bitrate">([% bitrate %])</span>[% END %]</div>
+				&nbsp;<span id="duration">[% IF itemobj.duration %]([% itemobj.duration | html %])[% END %]</span>&nbsp;<span id="bitrate">[% IF bitrate %]([% bitrate %])[% END %]</span></div>
 				
-				[% IF itemobj.artist && itemobj.artist != noArtist %]<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove param="p3" value = "$itemobj.artist" %]</span></div>
+				<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove param="p3" value = "$itemobj.artist" %]</span></div>
 				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
-				[% END %]
 				
-				[% IF itemobj.album.title && itemobj.album.title != noAlbum %]<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="p3=&amp;p4" value = "$itemobj.album.title" %]</span></div>
-				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>[% IF itemobj.year %]&nbsp;<span id="year">([% itemobj.year %])</span>[% END %]</span>
-
-				[% END %]
+				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="p3=&amp;p4" value = "$itemobj.album.title" %]</span></div>
+				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;<span id="year">[% IF itemobj.year %]([% itemobj.year %])[% END %]</span></span>
 			</div>
 		</div>
 	

@@ -30,8 +30,8 @@
 	var homestring;
 	function doSearch(value)
 	{
-		selectLink()
-		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player=' + getPlayer('SlimServer-player');
+		selectLink();
+		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
 	}
 	
 	function chooseBrowser(value,option)
@@ -54,15 +54,16 @@
 		case "STATISTICS":
 			url= "hitlist.html"
 			page="STATISTICS"
-			suffix = "?player=[% playerURI %]"
+			suffix = ""
 		}
 
 		if (option) {
 			if (cookie) {
 				setCookie("SlimServer-Browserpage",url + suffix);
-				parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
+				//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
 			}
-			parent.browser.location = url + suffix + '&player' + getPlayer('SlimServer-player');
+			if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
+			parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
 		}
 	}
 	
@@ -108,7 +109,7 @@
 </div>
 
 <div id="menuHeader">
-	<FORM id="browseForm" name="browser" method="Get" action="[% webroot %]home.html" target="header">
+	<FORM id="browseForm" name="browser" action="javascript: return false;" target="header">
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
@@ -130,13 +131,11 @@
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
 
-	<FORM id="SearchForm" name=searcher method="Get" action="[% webroot %]home.html" onSubmit="doSearch(query.value);">
+	<FORM id="SearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
 		[% "SEARCH" | string %]
 		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 		<input type=hidden value="[% player %]" name="player">
 		<input type=hidden value="[% page %]" name="page">
-		[% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-		[% IF noartwork %]<input type=hidden value="1" name="noartwork">[% END %]
 	</FORM>
 </div>
 [% ELSE %]

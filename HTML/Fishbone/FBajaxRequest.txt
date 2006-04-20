@@ -3,6 +3,7 @@ bitrate|[% bitrate %]
 year|[% itemobj.year %]
 sleeptime|[% sleeptime %]
 rate|[% rate %]
+playermodel|[% playermodel %]
 
 # path to cover art 
 coverartpath|

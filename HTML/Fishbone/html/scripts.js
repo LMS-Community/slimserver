@@ -14,15 +14,20 @@ var _progressEnd = 0;
 var _progressAt = 0
 
 // regex to match player id, mac and ip format.
-var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function changePlayer(player_List) {
-	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
-	setCookie('SlimServer-player',newPlayer);
+	player = player_List.options[player_List.selectedIndex].value;
+	setCookie('SlimServer-player',"="+player);
+	player = escape(player);
 	
-	//parent.playlist.location="playlist.html?player" + newPlayer;
-	var args = 'player='+newPlayer+'&ajaxRequest=1';
-	getStatusData(args, refreshAll);
+	var newPlayer = "=" + player;
+	newHref(parent.frames[2].document,newPlayer);
+	parent.playlist.location="playlist.html?player" + newPlayer;
+	//alert([newPlayer,parent.playlist.location])
+	
+	var args = 'player='+player+'&ajaxRequest=1';
+	getStatusData(args, refreshNewPlayer);
 	
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
@@ -30,10 +35,10 @@ function changePlayer(player_List) {
 		newValue(parent.browser.document,newPlayer);
 	} else {
 		browseURL = new String(parent.browser.location.href);
-		parent.browser.location=browseURL.replace(rExp, newPlayer);
+		parent.browser.location=browseURL.replace(playerExp, newPlayer);
 	}
 	headerURL = new String(parent.header.location.href);
-	parent.header.location=headerURL.replace(rExp, newPlayer);
+	//parent.header.location=headerURL.replace(playerExp, newPlayer);
 }
 
 // change form values to correct player
@@ -42,7 +47,7 @@ function newValue(doc,plyr) {
 		if (doc.forms[j].player) {
 			var myString = new String(doc.forms[j].player.value);
 			var rString = plyr;
-			doc.forms[j].player.value = myString.replace(rExp, rString);
+			doc.forms[j].player.value = myString.replace(playerExp, rString);
 		}
 	}
 }
@@ -52,7 +57,7 @@ function newHref(doc,plyr) {
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
 		var rString = plyr;
-		doc.links[j].href = myString.replace(rExp, rString);
+		doc.links[j].href = myString.replace(playerExp, rString);
 	}
 }
 
@@ -76,8 +81,8 @@ function resizePlaylist(page) {
 	top.document.getElementById('player_frame').rows = $('playlistStatus').offsetTop+20+', *';
 }
 
-function openRemote(player,playername) {
-	window.open('status.html?player='+player+'&undock=1', playername, 'width=480,height=210,status=no');
+function openRemote() {
+	window.open('status.html?player='+player+'&undock=1', '', 'width=480,height=210,status=no');
 }
 
 function setCookie(name, value) {

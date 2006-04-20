@@ -4,7 +4,7 @@ var url = 'status_header.html';
 [% PROCESS html/global.js %]
 
 function processState(param) {
-	getStatusData(param + "&ajaxRequest=1", refreshState);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshState);
 }
 
 function refreshState(theData) {
@@ -38,18 +38,15 @@ function refreshState(theData) {
 
 function processBarClick (num) {
 	var pos = parseInt((_progressEnd/20) * (num - 0.5));
-	//alert([num,pos,_progressEnd]);
 	var param = 'p0=time&p1='+pos+'&player='+player;
 	getStatusData(param + "&ajaxRequest=1", refreshInfo);
-	//updateTime(pos,_progressEnd);
 }
 
 function processVolume(param) {
-	getStatusData(param + "&ajaxRequest=1", refreshVolume);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshVolume);
 }
 
 function refreshVolume(theData) {
-
 	var parsedData = fillDataHash(theData);
 	var vols = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84, 90, 95, 100];
 
@@ -69,7 +66,7 @@ function refreshVolume(theData) {
 }
 
 function processSleepLink(param) {
-	getStatusData(param + "&ajaxRequest=1", refreshSleepTime);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshSleepTime);
 }
 
 function refreshSleepTime(theData) {
@@ -84,7 +81,7 @@ function refreshSleepTime(theData) {
 }
 
 function processPlayControls(param) {
-	getStatusData(param + "&ajaxRequest=1", refreshPlayControls);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshPlayControls);
 }
 
 function refreshPlayControls(theData) {
@@ -93,9 +90,9 @@ function refreshPlayControls(theData) {
 	var controls = ['stop', 'play', 'pause'];
 	var mp = 0;
 	var activestyle = getActiveStyleSheet();
-	
 	var curstyle = '';
-	if (activestyle && activestyle.indexOf('Tan')) {
+	
+	if (activestyle != null && activestyle.indexOf('Tan') != -1) {
 		objID = $('playCtl' + controls[i]+'tan');
 		curstyle = '_tan';
 	}
@@ -145,7 +142,7 @@ function refreshPlayControls(theData) {
 }
 
 // refresh song and artwork
-function refreshInfo(theData) {
+function refreshInfo(theData,force) {
 	var parsedData = fillDataHash(theData);
 
 	refreshSleepTime(parsedData);
@@ -157,7 +154,9 @@ function refreshInfo(theData) {
 	var newsong = 1;
 	
 	// check to see if server is on a new track
-	if (a[1] == parsedData['songtitleid']) {newsong = 0;}
+	if (force != 1) {
+		if (a[1] == parsedData['songtitleid']) {newsong = 0;}
+	}
 	
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {
@@ -184,7 +183,7 @@ function refreshInfo(theData) {
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
-			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100.jpg';
+			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100_f_000000.jpg';
 		}
 		$('coverartpath').src = coverPath;
 	}
@@ -232,6 +231,13 @@ function refreshInfo(theData) {
 		} else {
 			hideElements(['artistinfo', 'artisthtml']);
 		}
+		if(parsedData['playermodel'] == 'squeezebox') {
+			showElements(['squeezeboxlogo']);
+			hideElements(['slimp3logo']);
+		} else {
+			hideElements(['squeezeboxlogo']);
+			showElements(['slimp3logo']);
+		}
 	}
 	return true;
 }
@@ -244,7 +250,7 @@ function refreshUndock() {
 }
 
 function refreshPlaylist() {
-	//alert('playlist');
+	
 	try {
 		if (parent.playlist.location.host != '') {
 			// Putting a time-dependant string in the URL seems to be the only way to make Safari
@@ -268,7 +274,13 @@ function refreshAll(theData) {
 	refreshPlayControls(parsedData);
 	refreshInfo(parsedData);
 	refreshState(parsedData);
+}
 
+// handle the player change, force a new set of info
+function refreshNewPlayer(theData) {
+	var parsedData = fillDataHash(theData);
+	refreshInfo(parsedData,1);
+	refreshAll(parsedData);
 }
 
 function fillDataHash(theData) {

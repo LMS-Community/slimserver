@@ -512,6 +512,10 @@ A.linkbtn:link {
 	margin:3px 0 3px 0;
 }
 
+#TopMenu1 #thissongnum, #TopMenu1 #songcount {
+	font-weight: bold;
+}
+
 #TopMenu2
 {
 	margin:0 auto;
