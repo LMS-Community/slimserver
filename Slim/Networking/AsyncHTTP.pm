@@ -172,13 +172,14 @@ sub nonBlockingConnect {
 
 		my $host = $args{'Host'};
 		my $port = $args{'PeerPort'};
+		my $addr = $args{'PeerAddr'};
 		
 		$::d_http_async && msg("AsyncHTTP: Using proxy to connect to $host:$port\n");
 
 		# create instance using proxy server and port
 		my ($pserver, $pport) = split /:/, $proxy;
 
-		$args{'Host'} = $pserver;
+		$args{'Host'} = $args{'PeerAddr'} = $pserver;
 		$args{'PeerPort'} = $pport || 80;
 		
 		# Allow reuse of existing socket on redirects
@@ -192,6 +193,7 @@ sub nonBlockingConnect {
 		# now remember the original host and port, we'll need them to format the request
 		${*$self}{'httpasync_host'} = $host;
 		${*$self}{'httpasync_port'} = $port;
+		${*$self}{'httpasync_addr'} = $addr;
 
 	} else {
 		
