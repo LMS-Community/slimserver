@@ -83,13 +83,13 @@
 			</li>
 		[% END %]
 	
-		[% IF itemobj.replay_gain %] 
+		[% IF itemobj.replay_gain.defined %] 
 			<li><div class="songInfoTitle">[% "REPLAYGAIN" | string; "COLON" | string %]</div>
 				<div class="songInfoText">[% itemobj.replay_gain | format('%2.2f') | html %] dB</div>
 			</li>
 		[% END %]
 	
-		[% IF itemobj.album.replay_gain %] 
+		[% IF itemobj.album.replay_gain.defined %] 
 			<li><div class="songInfoTitle">[% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</div>
 				<div class="songInfoText">[% itemobj.album.replay_gain | format('%2.2f') | html %] dB</div>
 			</li>

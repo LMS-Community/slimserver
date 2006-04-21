@@ -88,12 +88,12 @@
 			[% itemobj.year %] 
 		</td>
 	</tr>
-	[% END %] [% IF itemobj.replay_gain %] 
+	[% END %] [% IF itemobj.replay_gain.defined %] 
 	  <tr> 
 		<td> [% "REPLAYGAIN" | string; "COLON" | string %]</td>
 		<td> [% itemobj.replay_gain | format('%2.2f') | html %] dB</td>
 	  </tr>
-	 [% END %] [% IF itemobj.album.replay_gain %] 
+	 [% END %] [% IF itemobj.album.replay_gain.defined %] 
 	  <tr> 
 		<td> [% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
 		<td> [% itemobj.album.replay_gain | format('%2.2f') | html %] dB</td>
