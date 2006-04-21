@@ -23,7 +23,7 @@ sub _new_instance {
 	my $cache = Cache::FileCache->new( {
 		namespace          => 'FileCache',
 		default_expires_in => $Cache::FileCache::EXPIRES_NEVER,
-		cache_root         => Slim::Utils::Prefs::defaultCacheDir(),
+		cache_root         => Slim::Utils::Prefs::get('cachedir'),
 	} );
 	
 	my $self = bless {
