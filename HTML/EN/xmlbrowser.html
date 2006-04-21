@@ -58,8 +58,10 @@
 			
 			[%- odd = 1 %]
 			[%- IF items -%]
-				[% IF browselist_header %][% browselist_header %][% END %]
-				[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+				[% IF hasPagebar %]
+					[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
+					[% PROCESS pagebar %]
+				[% END %]
 				[%- WRAPPER contentcontainer %]
 					[%- FOREACH item = items %]
 						[%- BLOCK gencontrol -%]

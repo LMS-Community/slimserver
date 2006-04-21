@@ -436,6 +436,7 @@ sub pageInfo {
 }
 
 # Build a bar of links to multiple pages of items
+# Deprecated, use pageInfo instead, and [% PROCESS pagebar %] in the page
 sub pageBar {
 	my ($class, $args) = @_;
 	
@@ -519,6 +520,7 @@ sub pageBar {
 	return ($start, $end);
 }
 
+# Deprecated, use pageInfo instead, and [% PROCESS pagebar %] in the page
 sub alphaPageBar {
 	my ($class, $args) = @_;
 	

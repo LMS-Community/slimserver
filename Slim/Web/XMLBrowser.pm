@@ -18,6 +18,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
+# Does this really need to be a constant, or can we use the itemsPerPage pref?
 use constant ROWS_TO_RETRIEVE => 50;
 
 sub handleWebIndex {
@@ -163,14 +164,11 @@ sub handleFeed {
 			my $otherParams = '&index=' . join('.', @index) 
 				. '&player=' . $params->{'player'};
 			
-			Slim::Web::Pages->pageBar({
+			$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'    => $itemCount,
 				'path'         => 'index.html',
 				'otherParams'  => $otherParams,
 				'startRef'     => \$stash->{'start'},
-				'headerRef'    => \$stash->{'browselist_header'},
-				'pageBarRef'   => \$stash->{'browselist_pagebar'},
-				'skinOverride' => $stash->{'skinOverride'},
 				'perPage'      => ROWS_TO_RETRIEVE,
 			});
 		}
