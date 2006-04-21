@@ -327,6 +327,7 @@ sub format_request {
 		'Cache-Control' => "no-cache",
 		'Connection'    => "close",
 		'Icy-Metadata'  => "1",
+		@_,
 	);
 
 	# Don't proxy for localhost requests.
@@ -339,7 +340,7 @@ sub format_request {
 
 	# when calling SUPER::format_request, include @_ after %headers, so caller may override defaults
 	# @_ may contain additional headers and content
-	return $self->SUPER::format_request($method => $path, %headers, @_);
+	return $self->SUPER::format_request($method => $path, %headers);
 }
 
 # don't use write_request.  Use write_request_async instead.
@@ -368,7 +369,7 @@ sub write_request_async {
 	}
 
 	$::d_http_async && msg("AsyncHTTP: Sending request:\n$request\n\n");
-
+	
 	# write request in non-blocking fashion
 	# this method will return immediately
 	Slim::Networking::Select::writeNoBlock($self, \$request);
