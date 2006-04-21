@@ -50,6 +50,15 @@ sub initPlugin {
 
 	@feeds = ();
 
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['podcast', '_index', '_quantity'],
+        [0, 1, 1, \&cliQuery]);
+
+
 	# No prefs set or we've had a version change and they weren't modified, 
 	# so we'll use the defaults
 	if (scalar(@feedURLPrefs) == 0 ||
@@ -181,6 +190,18 @@ sub webPages {
 	
 	return \%pages;
 }
+
+sub cliQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Podcast: cliQuery()\n");
+	
+	# Get OPML list of feeds from cache
+	my $cache = Slim::Utils::Cache->new();
+	my $opml = $cache->get( 'podcasts_opml' );
+	Slim::Buttons::XMLBrowser::cliQuery('podcast', $opml, $request);
+}
+
 
 # Update the hashref of podcast feeds for use with the web UI
 sub updateOPMLCache {

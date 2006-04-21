@@ -18,6 +18,14 @@ sub enabled {
 sub initPlugin {
 	$::d_plugins && msg("Live Music Archive Plugin initializing.\n");
 
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['lma', '_index', '_quantity'],
+        [0, 1, 1, \&cliQuery]);
+
 	Slim::Buttons::Common::addMode('PLUGIN.LMA', getFunctions(), \&setMode);
 }
 
@@ -73,6 +81,14 @@ sub webPages {
 	);
 	
 	return \%pages;
+}
+
+sub cliQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Live Music Archive: cliQuery()\n");
+	
+	Slim::Buttons::XMLBrowser::cliQuery('lma', $FEED, $request);
 }
 
 sub strings {

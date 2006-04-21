@@ -608,4 +608,205 @@ sub playItem {
 	}
 }
 
+sub cliQuery {
+	my ( $query, $feed, $request ) = @_;
+	
+	$::d_plugins && msg("XMLBrowser: cliQuery()\n");
+
+	$request->setStatusProcessing();
+
+	# check this is the correct query.
+	if ($request->isNotQuery([[$query]])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# If the feed is already XML data (Podcast List), send it to handleFeed
+	if ( ref $feed eq 'HASH' ) {
+		_cliQuery_done( $feed, {
+			'request' => $request,
+			'url'   => $feed->{'url'},
+		} );
+		return;
+	}
+
+	Slim::Formats::XML->getFeedAsync(
+		\&_cliQuery_done,
+		\&_cliQuery_error,
+		{
+			'request' => $request,
+			'url'     => $feed,
+		}
+	);
+}
+
+sub _cliQuery_done {
+	my ( $feed, $params ) = @_;
+	
+	my $url     = $params->{'url'};
+	my $request = $params->{'request'};
+
+	$::d_plugins && msg("XMLBrowser: _cliQuery_done()\n");
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $search   = $request->getParam('search');
+
+	# select the proper list of items
+	my @index = split /\./, $request->getParam('item_id');
+	
+	my $subFeed = $feed;
+	my @crumbIndex = ();
+	if ( scalar @index > 0 ) {
+
+		# descend to the selected item
+		for my $i ( @index ) {
+			$subFeed = $subFeed->{'items'}->[$i];
+
+			push @crumbIndex, $i;
+			
+			# If the feed is another URL, fetch it and insert it into the
+			# current cached feed
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+				$request->setStatusProcessing();
+
+				Slim::Formats::XML->getFeedAsync(
+					\&_cliQuerySubFeed_done,
+					\&_cliQuery_error,
+					{
+						'url'          => $subFeed->{'url'},
+						'parent'       => $feed,
+						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
+						'currentIndex' => \@crumbIndex,
+						'request'      => $request,
+					},
+				);
+				return;
+			}
+
+			# If the feed is an audio feed or Podcast enclosure, display the audio info
+			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
+				if ($subFeed->{'name'}) {
+					$request->addResult('name', $subFeed->{'name'});
+				}
+				elsif ($subFeed->{'title'}) {
+					$request->addResult('name', $subFeed->{'title'});
+				}
+
+				if ($subFeed->{'url'}) {
+					$request->addResult('url', $subFeed->{'url'});
+				}
+				elsif ($subFeed->{'enclosure'}->{'url'}) {
+					$request->addResult('url', $subFeed->{'enclosure'}->{'url'});
+				}
+
+				if ($subFeed->{'type'}) {
+					$request->addResult('type', $subFeed->{'type'});
+				}
+				elsif ($subFeed->{'enclosure'}->{'type'}) {
+					$request->addResult('type', $subFeed->{'enclosure'}->{'type'});
+				}
+
+				$request->addResult('value', $subFeed->{'value'}) if ($subFeed->{'value'});
+				$request->addResult('link', $subFeed->{'link'}) if ($subFeed->{'link'});
+				$request->addResult('description', $subFeed->{'description'}) if ($subFeed->{'description'});
+				$request->addResult('length', $subFeed->{'enclosure'}->{'length'}) if ($subFeed->{'enclosure'}->{'length'});
+	
+				$request->addResult('id', join '.', @index);
+			}
+		}
+	}
+	
+	# allow searching in the name field
+	if ($search && @{$subFeed->{'items'}}) {
+		my @found = ();
+		for my $item ( @{$subFeed->{'items'}} ) {
+			push @found, $item if ($item->{'name'} =~ /$search/i);
+		}
+		
+		$subFeed->{'items'} = \@found;
+	}
+
+	my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
+	
+	# only add item count if there are any items to add
+	if ($count) {	
+		$request->addResult('count', $count);
+	
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	
+		my $loopname = '@loop';
+		my $cnt = 0;
+	
+		if ($valid) {
+			for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+				if ($item->{'name'}) {
+					$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'});
+				}
+				elsif ($item->{'title'}) {
+					$request->addResultLoop($loopname, $cnt, 'name', $item->{'title'});
+				}
+
+				if (defined $item->{'items'}) {
+					$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{'items'}});
+				}
+				elsif (defined $item->{'enclosure'}) {
+					$request->addResultLoop($loopname, $cnt, 'hasitems', 1);
+				}
+
+				$request->addResultLoop($loopname, $cnt, 'description', $item->{'description'}) if ($item->{'description'});
+
+				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, $start + $cnt));
+				$cnt++;
+			}
+		}			
+	}
+
+	$request->setStatusDone();
+}
+
+# Fetch a feed URL that is referenced within another feed.
+# After fetching, insert the contents into the original feed
+sub _cliQuerySubFeed_done {
+	my ( $feed, $params ) = @_;
+	
+	# insert the sub-feed data into the original feed
+	my $parent = $params->{'parent'};
+	my $subFeed = $parent;
+	for my $i ( @{ $params->{'currentIndex'} } ) {
+		$subFeed = $subFeed->{'items'}->[$i];
+	}
+	$subFeed->{'items'} = $feed->{'items'};
+	$subFeed->{'url'}   = undef;
+	
+	# re-cache the parsed XML to include the sub-feed
+	my $cache = Slim::Utils::Cache->new();
+	my $expires = 300;
+	if ( my $data = $cache->get( $params->{'parentURL'} ) ) {
+		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
+			$expires = time - ( $data->{'_time'} + $data->{'_expires'} );
+		}
+	}
+	$::d_plugins && msg("XMLBrowser: re-caching parsed XML for $expires seconds\n");
+	$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+	
+	_cliQuery_done( $parent, $params );
+}
+
+sub _cliQuery_error {
+	my ( $err, $params ) = @_;
+	
+	my $request = $params->{'request'};
+	my $url     = $params->{'url'};
+	
+	$::d_plugins && msg("Picks: error retrieving <$url>:\n");
+	$::d_plugins && msg($err);
+	
+	$request->addResult("networkerror", 1);
+	$request->addResult('count', 0);
+
+	$request->setStatusDone();	
+}
+
 1;

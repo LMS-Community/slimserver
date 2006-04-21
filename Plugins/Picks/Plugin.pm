@@ -24,14 +24,14 @@ sub initPlugin {
 	$::d_plugins && msg("Picks: initPlugin()\n");
 
 	Slim::Buttons::Common::addMode('PLUGIN.Picks', getFunctions(), \&setMode);
-	
+
 #        |requires Client
 #        |  |is a Query
 #        |  |  |has Tags
 #        |  |  |  |Function to call
 #        C  Q  T  F
     Slim::Control::Request::addDispatch(['picks', '_index', '_quantity'],
-        [0, 1, 1, \&picksQuery]);
+        [0, 1, 1, \&cliQuery]);
 
 }
 
@@ -70,60 +70,12 @@ sub setMode {
 	$client->param('handledTransition',1)
 }
 
-sub picksQuery {
+sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Picks: picksQuery()\n");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['picks']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
+	$::d_plugins && msg("Picks: cliQuery()\n");
 	
-	Slim::Formats::XML->getFeedAsync(
-		\&_picksQuery_done,
-		\&_picksQuery_error,
-		{
-			'request' => $request,
-			'url'     => $FEED,
-		}
-	);
-	
-	$request->setStatusProcessing();
-}
-
-sub _picksQuery_done {
-	my ( $feed, $params ) = @_;
-	
-	my $request = $params->{'request'};
-	my $url     = $params->{'url'};
-
-	my $loopname = '@loop';
-	my $cnt = 0;
-		
-	for my $item ( @{$feed->{'items'}} ) {
-		$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'});
-		$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{'items'}});
-		$cnt++;
-	}
-
-	$request->setStatusDone();
-}
-
-sub _picksQuery_error {
-	my ( $err, $params ) = @_;
-	
-	my $request = $params->{'request'};
-	my $url     = $params->{'url'};
-	
-	$::d_plugins && msg("Picks: error retrieving <$url>:\n");
-	$::d_plugins && msg($err);
-	
-	$request->addResult("networkerror", 1);
-	$request->addResult('count', 0);
-
-	$request->setStatusDone();	
+	Slim::Buttons::XMLBrowser::cliQuery('picks', $FEED, $request);
 }
 
 sub webPages {
