@@ -151,23 +151,25 @@ sub handleFeed {
 	else {
 		
 		my $itemCount = scalar @{ $stash->{'items'} };
-		my $otherParams = '&index=' . join('.', @index) 
-				. '&player=' . $params->{'player'};
+		
+		if ( $itemCount > $stash->{'itemsPerPage'} ) {
 			
-		$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
-				'itemCount'    => $itemCount,
-				'path'         => 'index.html',
-				'otherParams'  => $otherParams,
-				'startRef'     => $stash->{'start'},
-				'perPage'      => $stash->{'itemsPerPage'},
-		});
+			my $clientId = ( $client ) ? $client->id : undef;
+			my $otherParams = 'index=' . join('.', @index) 
+					. '&player=' . $clientId;
 			
-		$stash->{'start'} = $stash->{'pageinfo'}{'startitem'}
+			$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+					'itemCount'   => $itemCount,
+					'path'        => 'index.html',
+					'otherParams' => $otherParams,
+					'start'       => $stash->{'start'},
+					'perPage'     => $stash->{'itemsPerPage'},
+			});
+			
+			$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
 
-		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
 		}
-		
 	}
 	
 	my $output = processTemplate($template, $stash);
