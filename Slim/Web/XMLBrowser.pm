@@ -16,6 +16,9 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
+use Slim::Web::Pages;
+
+use constant ROWS_TO_RETRIEVE => 50;
 
 sub handleWebIndex {
 	my $class = shift;
@@ -145,6 +148,31 @@ sub handleFeed {
 			my $webroot = $stash->{'webroot'};
 			$webroot =~ s/(.*?)plugins.*$/$1/;
 			$template = 'xmlbrowser_redirect.html';
+		}
+	}
+	else {
+		
+		my $itemCount = scalar @{ $stash->{'items'} };
+		
+		if ( $itemCount > ROWS_TO_RETRIEVE ) {
+			
+			# Paginate the results
+			my $start = $stash->{'start'} || 0;
+			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $start, ROWS_TO_RETRIEVE;
+		
+			my $otherParams = '&index=' . join('.', @index) 
+				. '&player=' . $params->{'player'};
+			
+			Slim::Web::Pages->pageBar({
+				'itemCount'    => $itemCount,
+				'path'         => 'index.html',
+				'otherParams'  => $otherParams,
+				'startRef'     => \$stash->{'start'},
+				'headerRef'    => \$stash->{'browselist_header'},
+				'pageBarRef'   => \$stash->{'browselist_pagebar'},
+				'skinOverride' => $stash->{'skinOverride'},
+				'perPage'      => ROWS_TO_RETRIEVE,
+			});
 		}
 	}
 	
