@@ -152,7 +152,6 @@ sub handleFeed {
 		
 		my $itemCount = scalar @{ $stash->{'items'} };
 		
-		if ( $itemCount > $stash->{'itemsPerPage'} ) {
 			
 			my $clientId = ( $client ) ? $client->id : undef;
 			my $otherParams = 'index=' . join('.', @index) 
@@ -168,6 +167,7 @@ sub handleFeed {
 			
 			$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
 
+		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
 		}
 	}
