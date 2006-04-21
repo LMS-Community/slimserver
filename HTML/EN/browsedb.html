@@ -6,11 +6,11 @@
 
 <div id="browsedbHeader">
 	[% IF browseby != 'BROWSE_BY_ARTWORK' %]
-		[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
+		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 	[% END %]
 	[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
 
-	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
+	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 </div>
 [%- IF browseby == 'BROWSE_BY_ARTWORK' and level == 0; 
 		container = 'gallerycontainer';
