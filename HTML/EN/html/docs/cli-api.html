@@ -89,7 +89,7 @@
 <ul>
 	<li>
 		Added the ability for plugins to define CLI commands and queries. In
-		particular, some Internet Radio plugins now have CLI support. Please
+		particular, most Internet Radio plugins now have CLI support. Please
 		refer to <a href="#PG">Plugins</a></strong> section.
 	</li>
 	<li>
@@ -4306,6 +4306,179 @@ and saves in the top level of the playlists directory.</p>
 		Request: &quot;radioio stationinfo station:radioio70s&lt;LF&gt;&quot;
 		<br>
 		Response: To be completed when radioio is fixed.
+	</p>
+</blockquote>
+
+
+<h5>XMLBrowser based plugins: Slimdevices Picks, Podcast, Live Music Archive</h5>
+<p>
+	The following instructions are valid for all XMLBrowser based plugins:
+	Slimdevices Picks, Podcast, Live Music Archive. While the CLI calls are
+	identical, the results can vary.
+	<br>Programmers using this CLI have to be aware of a possible delay while 
+	the plugins are fetching data from the internet: the CLI won't return any
+	value, thus possibly blocking the CLI request. This can take a few seconds.
+</p>
+<p>
+	Plugins which would like to use the XMLBrowser's CLI only need to add a 
+	handler in the initPlugin() section:
+</p>
+<code> 
+#        |requires Client<br>
+#        |  |is a Query<br>
+#        |  |  |has Tags<br>
+#        |  |  |  |Function to call<br>
+#        C  Q  T  F<br>
+    Slim::Control::Request::addDispatch(['myplugin', '_index', '_quantity'],<br>
+        [0, 1, 1, sub{<br>
+        	my $request = shift;<br>
+        	Slim::Buttons::XMLBrowser::cliQuery('myplugin', $urlToFeed, $request);<br>
+        }]);
+</code> 
+
+
+<p>
+	<strong>
+		<code>
+			&lt;picks|podcast|lma&gt;
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+		</code>
+	</strong>
+</p>
+</p>
+	The "picks|podcast|lma" query returns items out of a supported XML file.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of an item to be returned. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3
+		</td>
+	</tr>
+	<tr>
+		<td>
+			search
+		</td>
+		<td>
+			When a list of items is to be returned, it can be filtered by it's name
+			or title.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			The number of items available.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			name
+		</td>
+		<td>
+			An item's  (station, track, podcast etc.) name or title.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			hasitems
+		</td>
+		<td>
+			Whether or not an item has sub-items.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			type
+		</td>
+		<td>
+			Stream content type.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			url
+		</td>
+		<td>
+			URL of the station or track. The station can be played using the 
+			&quot;<a href="#playlist play">playlist play</a>&quot; command.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			description
+		</td>
+		<td>
+			Some streams (podcasts) provide further information than the title.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			length
+		</td>
+		<td>
+			Some streams (podcasts) contain information about their size/length.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			id
+		</td>
+		<td>
+			An item's hierarchical id.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;picks 0 2 item_id:0&lt;LF&gt;&quot;
+		<br>
+		Response: "picks 0 2 
+		item_id:0 
+		count:19 
+		name:Alternative | RADIO%20DAVIDBYRNE.COM 
+		hasitems:0
+		id:0.0
+		name:Alternative | KCRW Music
+		hasitems:0 
+		id:0.1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

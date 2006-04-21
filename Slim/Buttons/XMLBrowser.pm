@@ -722,7 +722,7 @@ sub _cliQuery_done {
 	if ($search && @{$subFeed->{'items'}}) {
 		my @found = ();
 		for my $item ( @{$subFeed->{'items'}} ) {
-			push @found, $item if ($item->{'name'} =~ /$search/i);
+			push @found, $item if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i);
 		}
 		
 		$subFeed->{'items'} = \@found;
