@@ -116,7 +116,7 @@ sub setPriority {
 
 		if ($setPriorityClass) {
 
-			$setPriorityClass->Call($processHandle, Win32::Process::HIGH_PRIORITY_CLASS()) or 
+			$setPriorityClass->Call($processHandle, Win32::Process::NORMAL_PRIORITY_CLASS()) or 
 				errorMsg("setPriority: Couldn't set priority ($^E)\n");
 		}
 
