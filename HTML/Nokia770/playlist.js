@@ -91,7 +91,7 @@ function refreshPlaylistElements(theData, r) {
 function getStartTrack(theData) {
 	var parsedData = fillDataHash(theData);
 	if (deleteTrackNum != null) {
-		return parseInt(deleteTrackNum) - 1;
+		return parseInt(deleteTrackNum);
 	} else {
 		var firstItem = parsedData['first_item'];
 		return parseInt(firstItem);
