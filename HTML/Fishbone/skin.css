@@ -420,8 +420,9 @@ A.linkbtn:link {
 
 #menuHeader SPAN {
 	padding-top: 3px;
-	position: absolute;
-	top: 0px;
+	position: relative;
+	top: 4px;
+	
 }
 
 .progressBarDiv
