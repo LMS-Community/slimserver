@@ -10,7 +10,7 @@ function processState(param) {
 function refreshState(theData) {
 	var parsedData = fillDataHash(theData);
 	
-	var controls = ['repeat', 'shuffle', 'mode'];
+	var controls = ['repeat', 'shuffle'];
 	var power = ['on', 'off'];
 	
 	for (var i=0; i < controls.length; i++) {
@@ -19,17 +19,22 @@ function refreshState(theData) {
 		for (var j=0; j <= 2; j++) {
 			var objID;
 			
-			if (i < 2) {
-				objID = $('playlist' + controls[i]+j);
-			} else {
-				objID = $('power' + j);
-			}
+			objID = $('playlist' + controls[i]+j);
 			
-			if (parsedData[obj] == j || parsedData[obj] == power[j]) {
+			if (parsedData[obj] == j) {
 				objID.className = 'button';
 			} else {
 				objID.className = 'darkbutton';
 			}
+		}
+	}
+	
+	for (var j=0;j < power.length; j++) {
+		objID = $('power' + j);
+		if (parsedData['mode'] == power[j]) {
+			objID.className = 'button';
+		} else {
+			objID.className = 'darkbutton';
 		}
 	}
 	
