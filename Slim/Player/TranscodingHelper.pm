@@ -250,7 +250,7 @@ sub getConvertCommand {
 			$underMax = 1;
 
 			# We can't handle WMA Lossless in firmware. So move to the next format type.
-			if ($type eq 'wma' && $checkFormat eq 'wma' && $track->lossless) {
+			if ($type eq 'wma' && $checkFormat eq 'wma' && blessed($track) && $track->lossless) {
 
 				next;
 			}
