@@ -721,6 +721,13 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
+
+    # Seen in the wild - cover art with type 1. Set it to 13 so it's not
+    # treated as character data.
+    if ($type == 1 && $id eq 'COVR') {
+	$type = 13;
+    }
+
     printf "  %sType=$type, Size=$size\n", ' 'x(2*$level) if $debug;
 
     if ($type==0)	# 16bit int data
