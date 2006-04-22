@@ -51,7 +51,7 @@
 			<select name="search.genre">
 				<option value="">[% "ANY_GENRE" | string %]</option>
 				[% FOREACH genre = genres %]
-					[% NEXT IF NOT genre.name OR genre.id == 1 %]
+					[% NEXT IF NOT genre.name %]
 					<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name %]</option>
 				[% END %]
 			</select>
