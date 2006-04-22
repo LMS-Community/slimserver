@@ -1,8 +1,0 @@
-<locator>
-	<locator_name>[% title | html %]</locator_name>
-	<locator_url><![CDATA[[% webroot %]browsetree.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></locator_url>
-	[% IF levelName %]
-		<[% levelName %]>[% item | html %]</[% levelName %]>
-		<[% levelName %]_browse_url><![CDATA[[% webroot %]browsetree.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></[% levelName %]_browse_url>
-	[% END %]
-</locator>
