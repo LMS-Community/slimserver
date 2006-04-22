@@ -167,7 +167,7 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		refreshPlaylist();
+		refreshPlaylist(player);
 	}
 	if (parsedData['streamtitle']) {
 		refreshElement('songtitle', parsedData['streamtitle']);
@@ -254,7 +254,7 @@ function refreshUndock() {
 	//window.location.replace('status.html?player='+player+'&undock=1');
 }
 
-function refreshPlaylist() {
+function refreshPlaylist(newPlayer) {
 	
 	try {
 		if (parent.playlist.location.host != '') {
@@ -262,9 +262,12 @@ function refreshPlaylist() {
 			// refresh properly. Stitching it together as below is needed to put the salt before
 			// the hash (#currentsong).
 			var plloc = top.frames.playlist.location;
+			
 			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
 				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+			newloc=newloc.replace(playerExp, '=' + newPlayer);
 			plloc.replace(newloc);
+			//DumperPopup([plloc,plloc.search.replace(playerExp, '='+newPlayer),plloc.search.replace(/&d=\d+/, '')]);
 		}
 	}
 	catch (err) {

@@ -23,7 +23,8 @@ function changePlayer(player_List) {
 	
 	var newPlayer = "=" + player;
 	newHref(parent.frames[2].document,newPlayer);
-	parent.playlist.location="playlist.html?player" + newPlayer;
+	//parent.playlist.location="playlist.html?player" + newPlayer;
+	refreshPlaylist(player);
 	//alert([newPlayer,parent.playlist.location])
 	
 	var args = 'player='+player+'&ajaxRequest=1';
