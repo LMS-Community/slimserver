@@ -1,6 +1,7 @@
 [%- FILTER null %]
 [% statusroot = 'status.html' %]
 [% noHomeLink = 1 %]
+[% controlGraphics = 1 %]
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">
@@ -131,6 +132,9 @@
 	[% width='20' height='20'  %]
 	[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
 	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add'  statusroot = 'playlist.html' %][% END %]
+       [% FOREACH mixer = mixerlinks.values.sort %]
+               <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</td>
+       [% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]
