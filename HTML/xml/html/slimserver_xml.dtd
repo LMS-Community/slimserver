@@ -349,6 +349,7 @@ in the skin for now.
 
 <!ELEMENT locator (	locator_name, 
 			locator_url, 
+			locator_hierarchy, 
 			(genre, genre_browse_url)?, 
 			(artist, artist_browse_url)?, 
 			(album, album_browse_url)?
@@ -360,6 +361,9 @@ one of genre/artist/album info.
 -->
 <!ELEMENT locator_url	(#PCDATA)>
 <!-- URL to browse the location (used to go up a level of more) 
+-->
+<!ELEMENT locator_hierarchy	(#PCDATA)>
+<!-- hierarchy for the location (useful when browsing by folder) 
 -->
 
 <!-- (Skin file: browse_list.html (browse_playlist_list.html).............. -->
@@ -378,13 +382,17 @@ one of genre/artist/album info.
 <!-- Genre of the dir (if browsing by tag)  		-->
 <!-- Artist of the dir (if browsing by tag) 		-->
 <!-- Album of the dir (if browsing by tag)  		-->
-<!ELEMENT dir (	dir_name, 				
-				dir_browse_url,
-				(genre|artist|album|year|playlist)?
-			  )>
+<!ELEMENT dir (		dir_name, 				
+			dir_browse_url,
+			dir_url,
+			dir_hierarchy,
+			(genre|artist|album|year|playlist)?
+		)>
 				
 <!ELEMENT dir_name 		(#PCDATA)>	<!-- Name of dir/genre/artist/album	-->
 <!ELEMENT dir_browse_url	(#PCDATA)>	<!-- URL to browse it			-->
+<!ELEMENT dir_url		(#PCDATA)>	<!-- URL to entry			-->
+<!ELEMENT dir_hierarchy		(#PCDATA)>	<!-- Hierarchy for entry		-->
 
 <!ELEMENT coverart_thumb	(#PCDATA)>	<!-- Thumbnail URL			-->
 
@@ -408,6 +416,7 @@ one of genre/artist/album info.
 <!ELEMENT songinfo (	song_id,
 			title,
 			(genre_id, genre, genre_browse_url)?,
+			(albumartist_id, albumartist, albumartist_browse_url)?,
 			(artist_id, artist, artist_browse_url)?,
 			(band_id, band, band_browse_url)?,
 			(composer_id, composer, composer_browse_url)?,
@@ -431,41 +440,44 @@ one of genre/artist/album info.
 			append_url
 		)>
 
-<!ELEMENT song_id 		(#PCDATA)>	<!-- Song's ID			-->
-<!ELEMENT title 		(#PCDATA)>	<!-- Song's title		-->
-<!ELEMENT info_url 		(#PCDATA)>	<!-- Link to songinfo page	-->
-<!ELEMENT path 			(#PCDATA)>	<!-- Path to song file (JIC)	-->
-<!ELEMENT genre_id 		(#PCDATA)>	<!-- Song's genre's ID		-->
-<!ELEMENT genre 		(#PCDATA)>	<!-- Song's genre		-->
-<!ELEMENT genre_browse_url 	(#PCDATA)>	<!-- Link to genre browsing	-->
-<!ELEMENT album_id 		(#PCDATA)>	<!-- Song's album's ID		-->
-<!ELEMENT album 		(#PCDATA)>	<!-- Song's album		-->
-<!ELEMENT album_browse_url 	(#PCDATA)>	<!-- Link to album browsing	-->
-<!ELEMENT artist_id 		(#PCDATA)>	<!-- Song's artist's ID		-->
-<!ELEMENT artist 		(#PCDATA)>	<!-- Song's artist		-->
-<!ELEMENT artist_browse_url 	(#PCDATA)>	<!-- Link to artist browsing	-->
-<!ELEMENT band_id		(#PCDATA)>	<!-- Song's band's ID		-->
-<!ELEMENT band 			(#PCDATA)>	<!-- Song's band		-->
-<!ELEMENT band_browse_url 	(#PCDATA)>	<!-- Link to band browsing	-->
+<!ELEMENT song_id 			(#PCDATA)>	<!-- Song's ID				-->
+<!ELEMENT title 			(#PCDATA)>	<!-- Song's title			-->
+<!ELEMENT info_url 			(#PCDATA)>	<!-- Link to songinfo page		-->
+<!ELEMENT path 				(#PCDATA)>	<!-- Path to song file (JIC)		-->
+<!ELEMENT genre_id 			(#PCDATA)>	<!-- Song's genre's ID			-->
+<!ELEMENT genre 			(#PCDATA)>	<!-- Song's genre			-->
+<!ELEMENT genre_browse_url 		(#PCDATA)>	<!-- Link to genre browsing		-->
+<!ELEMENT albumartist_id 		(#PCDATA)>	<!-- Song's albumartist's ID		-->
+<!ELEMENT albumartist 			(#PCDATA)>	<!-- Song's albumartist			-->
+<!ELEMENT albumartist_browse_url	(#PCDATA)>	<!-- Link to albumartist browsing	-->
+<!ELEMENT artist_id 			(#PCDATA)>	<!-- Song's artist's ID			-->
+<!ELEMENT artist 			(#PCDATA)>	<!-- Song's artist			-->
+<!ELEMENT artist_browse_url 		(#PCDATA)>	<!-- Link to artist browsing		-->
+<!ELEMENT band_id			(#PCDATA)>	<!-- Song's band's ID			-->
+<!ELEMENT band 				(#PCDATA)>	<!-- Song's band			-->
+<!ELEMENT band_browse_url 		(#PCDATA)>	<!-- Link to band browsing		-->
 <!-- i.e. browse by artists with artist=composer -->
-<!ELEMENT composer_id 		(#PCDATA)>
-<!ELEMENT composer 		(#PCDATA)>
-<!ELEMENT composer_browse_url 	(#PCDATA)>
-<!ELEMENT conductor_id 		(#PCDATA)>
-<!ELEMENT conductor 		(#PCDATA)>
-<!ELEMENT conductor_browse_url 	(#PCDATA)>
-<!ELEMENT track 		(#PCDATA)>
-<!ELEMENT type 			(#PCDATA)>
-<!ELEMENT duration 		(#PCDATA)>	<!-- in mm:ss		-->
-<!ELEMENT year 			(#PCDATA)>
-<!ELEMENT comment 		(#PCDATA)>
-<!ELEMENT filelength 		(#PCDATA)>	<!-- in bytes		-->
-<!ELEMENT bitrate 		(#PCDATA)>
-<!ELEMENT tagversion 		(#PCDATA)>
-<!ELEMENT modtime 		(#PCDATA)>
-<!ELEMENT song_url 		(#PCDATA)>
-<!ELEMENT download_url 		(#PCDATA)>
-<!ELEMENT mixable 		(#PCDATA)>
+<!ELEMENT composer_id 			(#PCDATA)>
+<!ELEMENT composer 			(#PCDATA)>
+<!ELEMENT composer_browse_url 		(#PCDATA)>
+<!ELEMENT conductor_id 			(#PCDATA)>
+<!ELEMENT conductor 			(#PCDATA)>
+<!ELEMENT conductor_browse_url 		(#PCDATA)>
+<!ELEMENT album_id 			(#PCDATA)>	<!-- Song's album's ID			-->
+<!ELEMENT album 			(#PCDATA)>	<!-- Song's album			-->
+<!ELEMENT album_browse_url 		(#PCDATA)>	<!-- Link to album browsing		-->
+<!ELEMENT track 			(#PCDATA)>
+<!ELEMENT type 				(#PCDATA)>
+<!ELEMENT duration 			(#PCDATA)>	<!-- in mm:ss		-->
+<!ELEMENT year 				(#PCDATA)>
+<!ELEMENT comment 			(#PCDATA)>
+<!ELEMENT filelength 			(#PCDATA)>	<!-- in bytes		-->
+<!ELEMENT bitrate 			(#PCDATA)>
+<!ELEMENT tagversion 			(#PCDATA)>
+<!ELEMENT modtime 			(#PCDATA)>
+<!ELEMENT song_url 			(#PCDATA)>
+<!ELEMENT download_url 			(#PCDATA)>
+<!ELEMENT mixable 			(#PCDATA)>
 
 <!-- .................................................................. -->
 <!-- Song ............................................................. -->
@@ -493,6 +505,7 @@ to various related tidbits.
 <!ELEMENT song (	song_id,
 			title, 
 			(genre_id, genre, genre_browse_url)?,
+			(albumartist_id, albumartist, albumartist_browse_url)?,
 			(artist_id, artist, artist_browse_url)?,
 			(band_id, band, band_browse_url)?,
 			(composer_id, composer, composer_browse_url)?,

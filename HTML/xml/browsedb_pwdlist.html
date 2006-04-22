@@ -1,8 +1,9 @@
 <locator>
-	<locator_name>[% pwditem | html %]</locator_name>
-	<locator_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></locator_url>
-	[% IF levelName %]
-		<[% levelName %]>[% item | html %]</[% levelName %]>
-		<[% levelName %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=[% hierarchy | uri %]&level=[% level %][% attributes %]]]></[% levelName %]_browse_url>
+	<locator_name>[% item.title | html %]</locator_name>
+	<locator_url><![CDATA[[% webroot %][% item.hreftype | lower %].xml?hierarchy=[% item.hierarchy | uri %][% IF item.level %]&level=[% item.level %][% END %][% item.attributes %]]]></locator_url>
+	<locator_hierarchy>[% item.hierarchy | html %]</locator_hierarchy>
+	[% IF item.levelName %]
+		<[% item.levelName %]>[% item.item | html %]</[% item.levelName %]>
+		<[% item.levelName %]_browse_url><![CDATA[[% webroot %][% item.hreftype | lower %].xml?hierarchy=[% item.hierarchy | uri %]&level=[% item.level %][% item.attributes %]]]></[% item.levelName %]_browse_url>
 	[% END %]
 </locator>

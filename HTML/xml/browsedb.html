@@ -9,15 +9,23 @@
 	[% IF artist_count %]<artist_count>[% artist_count %]</artist_count>[% END %]
 	[% IF album_count %]<album_count>[% album_count %]</album_count>[% END %]
 	[% IF browseby %]<browseby>[% browseby %]</browseby>[% END %]
-	[% IF pwd_list %]<location>[% pwd_list %]</location>[% END %]
-	[% IF pageinfo.totalpages > 1 %]<offsets>
-		<from>[% pageinfo.startitem %]</from>
-		<to>[% pageinfo.enditem %]</to>
-		<last>[% pageinfo.totalitems - 1 %]</last>
-	</offsets>[% END %]
+	[% IF pwd_list %]
+		<location>
+			[% FOREACH item = pwd_list.list %]
+				  [% PROCESS browsedb_pwdlist.html %]
+			[% END %]
+		</location>
+	[% END %]
+	[% IF pageinfo.totalpages > 1 %]
+		<offsets>
+			<from>[% pageinfo.startitem %]</from>
+			<to>[% pageinfo.enditem %]</to>
+			<last>[% pageinfo.totalitems - 1 %]</last>
+		</offsets>
+	[% END %]
 	[% IF coverArt %]<coverart><![CDATA[music/[% coverArt %]/cover.jpg]]></coverart>[% END %]
 	[% FOREACH item = browse_items %]
 		[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
-		[% ELSE; PROCESS browsedbitems_list.html; END %]
+		[% ELSE; PROCESS browsedb_list.html; END %]
 	[% END %]
 </browse>
