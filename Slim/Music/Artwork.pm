@@ -18,6 +18,7 @@ use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Unicode;
 
 # Global caches:
 my $artworkDir   = '';
@@ -32,11 +33,14 @@ sub getImageContentAndType {
 	use bytes;
 	my $content = '';
 
-	if (open (TEMPLATE, $path)) { 
+	# Bug 3245
+	$path = Slim::Utils::Unicode::encode(Slim::Utils::Unicode::currentLocale(), $path);
+
+	if (open(IMAGE, $path)) { 
 		local $/ = undef;
-		binmode(TEMPLATE);
-		$content = <TEMPLATE>;
-		close TEMPLATE;
+		binmode(IMAGE);
+		$content = <IMAGE>;
+		close IMAGE;
 	}
 
 	if (defined($content) && length($content)) {
