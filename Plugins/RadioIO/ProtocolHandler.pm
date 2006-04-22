@@ -49,7 +49,7 @@ sub new {
 	});
 }
 
-sub canDirectStreamDisabled {
+sub canDirectStream {
 	my ($self, $client, $url) = @_;
 
 	if ($url =~ /^radioio:\/\/stream\/(.*)/) {
@@ -68,7 +68,10 @@ sub parseDirectBody {
 	my $body = shift;
 
 	my $io = IO::String->new($body);
-	my @items = Slim::Formats::Parse::parseList($url, $io);
+
+	# Need to tell the parser that the playlist is in pls format.
+	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($url);
+	my @items = Slim::Formats::Parse::parseList($pls, $io);
 
 	return () unless scalar(@items);
 
