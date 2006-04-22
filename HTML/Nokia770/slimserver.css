@@ -151,6 +151,10 @@ div {
 	overflow: visible;
 }
 
+img {
+	border: 0;
+}
+
 div#pagecontainer {
 	position: absolute;
 	top: 80;
@@ -329,3 +333,11 @@ div#next_cover{
 	top: 150;
 	border: 1px solid black;
 }
+
+div#systemWorking{
+	position: absolute;
+	left: 0;
+	top: 25;
+	z-index: 10;
+}
+
