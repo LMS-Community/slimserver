@@ -4,6 +4,25 @@ var player = '[% playerURI %]';
 // the url var needs to be initialized in the page specific javascript file
 // and this script is called by a PROCESS global.js
 
+// myGlobalHandlers allows for an element (typically a div) called systemWorking to 
+// appear whenever an ajax request is in progress. Look at Nokia770/pageheader.html for
+// an example
+var myGlobalHandlers = {
+	onCreate: function(){
+		if ($('systemWorking')) {
+			Element.show('systemWorking');
+		}
+	},
+	onComplete: function() {
+		if(Ajax.activeRequestCount == 0) {
+			if ($('systemWorking')) {
+				Element.hide('systemWorking');
+			}
+		}
+	}
+};
+Ajax.Responders.register(myGlobalHandlers);
+
 // getStatusData
 // params is a list of args to send to url
 // action is the function to be called after the ajaxRequest.txt file is spit back
