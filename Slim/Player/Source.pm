@@ -264,6 +264,27 @@ sub textSongTime {
 	return $time;
 }
 
+sub repeatCallback {
+	my $request = shift;
+	
+	my $client = $request->client();
+	
+	# shor circuit if this client isn't the one in playout
+	return unless ($client->playmode =~ /playout/i);
+	
+	# Check the buffers for the client and reset based on repeat change
+	# call playmode function so that sync groups are handled
+	if (!Slim::Player::Playlist::repeat($client) &&
+		(streamingSongIndex($client) == (Slim::Player::Playlist::count($client) - 1))) {
+		
+		playmode($client,'playout-stop');
+	}
+	else {
+		
+		playmode($client,'playout-play');
+	}
+}
+
 sub _returnPlayMode {
 	my $client = shift;
 
@@ -363,6 +384,13 @@ sub playmode {
 		$::d_source && msg($everyclient->id() . " New play mode: " . $newmode . "\n");
 
 		next if $everyclient->prefGet('silent');
+
+		# set up a callback to handle repeat changes during buffer drain
+		if ($newmode =~ /^playout/) {
+			Slim::Control::Request::subscribe(\&repeatCallback,[['playlist'],['repeat']]);
+		} else {
+			Slim::Control::Request::unsubscribe(\&repeatCallback);
+		}
 
 		# when you resume, you go back to play mode
 		if (($newmode eq "resume") ||($newmode eq "resumenow")) {
