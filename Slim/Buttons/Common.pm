@@ -246,10 +246,15 @@ our %functions = (
 		if ($playlistlen == 0) {
 			return;
 		}
-		$client->execute(["pause"]);
-		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
-			Slim::Player::Source::rate($client,1);
-		}
+
+		# try to avoid toggle commands, they make life difficult for listeners
+		my $wantmode = (Slim::Player::Source::playmode($client) eq 'pause') ? '0' : '1';
+
+		$client->execute(["pause", $wantmode]);
+# Fred: done in the command
+#		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
+#			Slim::Player::Source::rate($client,1);
+#		}
 		$client->showBriefly($client->currentSongLines());
 	},
 	'stop' => sub  {
@@ -447,7 +452,7 @@ our %functions = (
 		if (defined $buttonarg && $buttonarg =~ /^[0-2]$/) {
 			$repeat = $buttonarg;
 		}
-		$client->execute(["playlist", "repeat",$repeat]);
+		$client->execute(["playlist", "repeat", $repeat]);
 		# display the fact that we are (not) repeating
 		if (Slim::Player::Playlist::repeat($client) == 0) {
 			$client->showBriefly($client->string('REPEAT_OFF'), "");
@@ -488,7 +493,11 @@ our %functions = (
 	},
 	'muting' => sub  {
 		my $client = shift;
-		$client->execute(["mixer", "muting"]);
+		
+		# try to avoid toggle commands, they make life difficult for listeners
+		my $mute = !($client->prefGet("mute"));
+		
+		$client->execute(["mixer", "muting", $mute]);
 	},
 	'sleep' => sub  {
 		my $client = shift;
@@ -517,13 +526,15 @@ our %functions = (
 		my $button = shift;
 		my $power= undef;
 		
+		# try to avoid toggle commands, they make life difficult for listeners
 		if ($button eq 'power_on') {
-			$client->execute(["power",1]);
+			$power = 1;
 		} elsif ($button eq 'power_off') {
-			$client->execute(["power",0]);
+			$power = 0;
 		} else {
-			$client->execute(["power"]);
+			$power = $client->power() ? 0 : 1;
 		}
+		$client->execute(["power", $power]);
 	},
 	'shuffle' => sub  {
 		my $client = shift;
