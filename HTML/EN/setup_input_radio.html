@@ -1,7 +1,13 @@
 [% IF PrefsInTable %]<tr><td>[% END %]
 [% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose | getstring %]</label>[% END %]
 [% IF PrefsInTable %]</td><td>[% END %]
-	[% PrefOptions %]
+	[% FOREACH option = PrefOptions.order %]
+		[% PROCESS setup_radio_option.html
+			key = option
+			value = PrefOptions.map.item(option)
+			selected = (option == PrefValue)
+		 %]
+	[% END %]
 [% IF PrefsInTable %]</td><td>[% END %]
 [% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton | getstring %] class="stdclick">[% END %]
 [% IF PrefsInTable %]</td></tr>[% END %]

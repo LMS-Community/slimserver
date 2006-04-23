@@ -3065,11 +3065,8 @@ sub options_HTTP {
 		for (my $i=0; $i <= $arrayMax; $i++) {
 			my $key2 = $key . (exists($settingsref->{$key}{'isArray'}) ? $i : '');
 			if (defined $keyOptions) {
-				if ($settingsref->{$key}{'inputTemplate'} && $settingsref->{$key}{'inputTemplate'} eq 'setup_input_radio.html') {
-					$paramref->{$key2 . '_options'} = fillRadioOptions($paramref->{$key2},$keyOptions,$key,$settingsref->{$key}{'optionSort'});
-				} else {
-					$paramref->{$key2 . '_options'} = fillOptions($paramref->{$key2},$keyOptions,$settingsref->{$key}{'optionSort'});
-				}
+				$paramref->{$key2 . '_options'}{'order'} = _sortOptionArray($keyOptions,$settingsref->{$key}{'optionSort'});
+				$paramref->{$key2 . '_options'}{'map'} = $keyOptions;
 			}
 		}
 	}
@@ -3077,6 +3074,7 @@ sub options_HTTP {
 
 # pass in the selected value and a hash of value => text pairs to get the option list filled
 # with the correct option selected.
+# Deprecated - remove after verifying no callers
 
 sub fillOptions {
 	my ($selected, $optionref, $sort) = @_;
@@ -3096,6 +3094,7 @@ sub fillOptions {
 
 # pass in the selected value and a hash of value => text pairs to get the option list filled
 # with the correct option selected.
+# Deprecated - remove after verifying no callers
 
 sub fillRadioOptions {
 	my ($selected,$optionref,$option,$sort) = @_;
@@ -3113,7 +3112,7 @@ sub fillRadioOptions {
 	return join("\n", @optionlist);
 }
 
-# Utility used by both fill*Options functions
+# Utility used to sort and translate options hash
 sub _sortOptionArray {
 	my ($optionref, $sort) = @_;
 
