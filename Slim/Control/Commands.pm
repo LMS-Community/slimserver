@@ -18,7 +18,8 @@ package Slim::Control::Commands;
 # be exclusively called through Request.pm and the mechanisms it defines.
 
 # The code for the "alarm" command is heavily commented and corresponds to
-# a "model" command.
+# a "model" synchronous command.
+# Check CLI handling code in the Shoutcast plugin for an asynchronous command.
 
 
 use strict;
@@ -289,7 +290,7 @@ sub mixerCommand {
 			$newvalue = !$curmute;
 		}
 		
-		if ($newvalue != $curmute) {		
+		if ($newvalue != $curmute) {
 			my $vol = $client->volume();
 			my $fade;
 			
