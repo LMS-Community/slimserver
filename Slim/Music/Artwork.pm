@@ -19,6 +19,7 @@ use Slim::Music::TitleFormatter;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
+use Slim::Utils::OSDetect;
 
 # Global caches:
 my $artworkDir   = '';
@@ -193,6 +194,11 @@ sub _readCoverArtFiles {
 		$::d_artwork && msgf(
 			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
 		);
+
+		if (Slim::Utils::OSDetect::OS() eq 'win') {
+			# Remove illegal characters from filename.
+			$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
+		}
 
 		my $artPath = $parentDir->file($artwork);
 
