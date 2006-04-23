@@ -27,9 +27,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 my %tagMapping = (
-	'TRACKNUMBER'	=> 'TRACKNUM',
-	'DISCNUMBER'	=> 'DISC',
-	'URL'			=> 'URLTAG',
+	'TRACKNUMBER'			=> 'TRACKNUM',
+	'DISCNUMBER'			=> 'DISC',
+	'URL'				=> 'URLTAG',
 	'musicbrainz_sortname'		=> 'ARTISTSORT',
 	'MUSICBRAINZ_ALBUMARTISTID'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MUSICBRAINZ_ALBUMID'		=> 'MUSICBRAINZ_ALBUM_ID',
@@ -62,10 +62,13 @@ sub getTag {
 	my $file   = shift || return {};
 	my $anchor = shift || "";
 
-	my $flac   = Audio::FLAC::Header->new($file) || do {
+	my $flac   = Audio::FLAC::Header->new($file);
+
+	if (ref($flac) ne 'HASH' || scalar keys %{$flac} == 0) {
+
 		errorMsg("Couldn't open file: [$file] for reading: $!\n");
 		return {};
-	};
+	}
 
 	my $tags = getStandardTag($file, $flac);
 	my $cuesheet = $flac->cuesheet();
