@@ -3072,46 +3072,6 @@ sub options_HTTP {
 	}
 }
 
-# pass in the selected value and a hash of value => text pairs to get the option list filled
-# with the correct option selected.
-# Deprecated - remove after verifying no callers
-
-sub fillOptions {
-	my ($selected, $optionref, $sort) = @_;
-
-	my @optionlist = ();
-	my $options    = _sortOptionArray($optionref, $sort);
-
-	for my $curOption (@{$options}) {
-
-		push @optionlist, '<option ' .
-			((defined $selected && $curOption eq $selected) ? 'selected ' : '') .
-			qq(value="$curOption">$optionref->{$curOption}</option>);
-	}
-
-	return join("\n", @optionlist);
-}
-
-# pass in the selected value and a hash of value => text pairs to get the option list filled
-# with the correct option selected.
-# Deprecated - remove after verifying no callers
-
-sub fillRadioOptions {
-	my ($selected,$optionref,$option,$sort) = @_;
-
-	my @optionlist = ();
-	my $options    = _sortOptionArray($optionref, $sort);
-
-	for my $curOption (@{$options}) {
-
-		push @optionlist, '<p><input type="radio" ' . 
-			((defined $selected && $curOption eq $selected) ? 'checked ' : '') .
-			qq(value="$curOption" name="$option">$optionref->{$curOption}</p>);
-	}
-
-	return join("\n", @optionlist);
-}
-
 # Utility used to sort and translate options hash
 sub _sortOptionArray {
 	my ($optionref, $sort) = @_;
