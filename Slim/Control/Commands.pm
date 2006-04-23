@@ -1030,7 +1030,9 @@ sub playlistXtracksCommand {
 	}
 
 	my $playlistObj = $ds->updateOrCreate({
-		'url'        => "playlist://$zapped",
+		'url'        => Slim::Utils::Misc::fileURLFromPath(
+			catfile( Slim::Utils::Prefs::get('playlistdir'), $zapped . '.m3u')
+		),
 		'attributes' => {
 			'TITLE' => $zapped,
 			'CT'    => 'ssp',
