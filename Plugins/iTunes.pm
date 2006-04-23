@@ -638,6 +638,19 @@ sub handleTrack {
 	# Use this for playlist verification.
 	$tracks{$id} = $url;
 
+	# skip track if Disabled in iTunes
+	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+
+		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+
+		$ds->markEntryAsInvalid($url);
+
+		# Don't show these tracks in the playlists either.
+		delete $tracks{$id};
+
+		return 1;
+	}
+
 	if (Slim::Music::Info::isFileURL($url)) {
 
 		# dsully - Sun Mar 20 22:50:41 PST 2005
@@ -656,10 +669,13 @@ sub handleTrack {
 		#
 		# A value of -1 for lastITunesMusicLibraryDate
 		# means the user has pressed 'wipe db'.
+		# also check to see if that track is in the library by looking for 
+		# a lightweighttrack via objectForUrl()
 		if ($lastITunesMusicLibraryDate &&
 		    $lastITunesMusicLibraryDate != -1 &&
 		    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
-		    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
+		    ($mtime && $mtime < $lastITunesMusicLibraryDate) &&
+		    ref($ds->objectForUrl($url,0,0,1))) {
 
 			$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
 
@@ -677,19 +693,6 @@ sub handleTrack {
 
 			return 1;
 		}
-	}
-
-	# skip track if Disabled in iTunes
-	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
-
-		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
-
-		$ds->markEntryAsInvalid($url);
-
-		# Don't show these tracks in the playlists either.
-		delete $tracks{$id};
-
-		return 1;
 	}
 
 	# We don't need to do all the track processing if we just want to map
