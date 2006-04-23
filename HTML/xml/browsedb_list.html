@@ -3,7 +3,7 @@
 		<entry_type>playlist</entry_type>
 		<entry_name>[% item.text | html %]</entry_name>
 		<entry_id>[% item.itemobj.id %]</entry_id>
-		<browse_url><!--[CDATA[[% webroot %]--></browse_url>
+		<browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=playlist,playlistTrack&level=1&playlist=[% item.itemobj.id %]]]></browse_url>
 	[% ELSIF item.descend %]
 		<entry_type>[% IF item.levelName %][% item.levelName %][% ELSIF item.itemobj.isPlaylist %]playlist[% ELSE %]dir[% END %]</entry_type>
 		<entry_name>[% item.text | html %]</entry_name>
