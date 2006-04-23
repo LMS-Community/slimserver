@@ -337,7 +337,7 @@ sub browsedb {
 
 			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
 			my $itemname = &{$levelInfo->{'resultToName'}}($item);
-			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
+			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item, $sort);
 
 			$list_form{'hierarchy'}     = $hierarchy;
 			$list_form{'level'}         = $level + 1;
