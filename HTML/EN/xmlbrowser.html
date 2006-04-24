@@ -51,7 +51,31 @@
 							[% FILTER format('%.2f'); streaminfo.item.enclosure.length / 1048576; END %] MB
 						</div>
 					</li>
-					[% END %]					
+					[% END %]
+					
+					[% IF streaminfo.item.bitrate %]
+					<li><div class="songInfoTitle">[% "BITRATE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.bitrate | html %] [% "KBPS" | string %]</div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.listeners %]
+					<li><div class="songInfoTitle">[% "NUMBER_OF_LISTENERS" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.listeners | html %]</div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.current_track %]
+					<li><div class="songInfoTitle">[% "NOW_PLAYING" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.current_track | html %]</div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.genre %]
+					<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.genre | html %]</div>
+					</li>
+					[% END %]												
 				</ul>
 			</div>
 			[% END %]
@@ -78,7 +102,10 @@
 						[%- odd = (not odd) %]
 					[%- END %]
 				[%- END %]
-				[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+				[% IF hasPagebar %]
+					[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
+					[% PROCESS pagebar %]
+				[% END %]
 			[%- END %]
 
 [% PROCESS pagefooter.html %]

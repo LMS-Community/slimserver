@@ -39,9 +39,13 @@ sub getFeedAsync {
 		my $path    = Slim::Utils::Misc::pathFromFileURL($url);
 
 		# read_file from File::Slurp
-		my $content = read_file($path);
-
-		$feed = eval { parseXMLIntoFeed(\$content) };
+		my $content = eval { read_file($path) };
+		if ( $content ) {
+		    $feed = eval { parseXMLIntoFeed(\$content) };
+	    }
+	    else {
+	        return $ecb->( "Unable to open file '$path'", $params );
+	    }
 	}
 
 	if ($feed) {
@@ -246,6 +250,13 @@ sub _parseOPMLOutline {
 		if ($url) {
 			$url =~ s/^.*?<(\w+:\/\/.+?)>.*$/$1/;
 		}
+		
+		# Pull in all attributes we find
+		my %attrs;
+		for my $attr ( keys %{$itemXML} ) {
+		    next if $attr =~ /text|type|URL/i;
+		    $attrs{$attr} = $itemXML->{$attr};
+	    }
 
 		push @items, {
 
@@ -255,6 +266,7 @@ sub _parseOPMLOutline {
 			'url'   => $url,
 			'type'  => $itemXML->{'type'},
 			'items' => _parseOPMLOutline($itemXML->{'outline'}),
+			%attrs,
 		};
 	}
 
