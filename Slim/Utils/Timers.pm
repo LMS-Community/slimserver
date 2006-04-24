@@ -424,6 +424,36 @@ sub firePendingTimer {
 	}
 }
 
+#
+# This method is not used by anything in trunk, but at least one plugin relies
+# on it (ShutdownServer)
+#
+sub pendingTimers {
+	my $objRef = shift;
+	my $subptr = shift;
+	my $count = 0;
+	
+	$high->peek_items( sub {
+		my $timer = shift;
+		if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{subptr} eq $subptr ) {
+				$count++;
+			}
+		}
+	} );
+	
+	$normal->peek_items( sub {
+		my $timer = shift;
+		if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{subptr} eq $subptr ) {
+				$count++;
+			}
+		}
+	} );
+	
+	return $count;
+}
+
 1;
 
 __END__
