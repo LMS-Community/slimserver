@@ -1,6 +1,6 @@
 <div class="settingSection">
 	[% IF GroupHead %]<div class="groupHead">[% GroupHead | getstring | upper | html %]</div>[% END %]
-		[% IF GroupDesc %]<div class="groupDesc">[% GroupDesc | getstring | html %]</div>[% END %]
+		[% IF GroupDesc %]<div class="groupDesc">[% GroupDesc | getstring %]</div>[% END %]
 		[% IF PrefsInTable %]<table border="0" cellspacing="0" width="100%">[% END %]
 		[% GroupPrefHead %]
 		[% PrefList %]
