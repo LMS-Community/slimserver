@@ -703,7 +703,6 @@ sub _cliQuery_done {
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
 			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
-				_cli_addResult($request, $subFeed, join '.', @index);
 				$request->addResult('id', join '.', @index);
 
 				if ($subFeed->{'name'}) {
@@ -763,7 +762,6 @@ sub _cliQuery_done {
 	
 		if ($valid) {
 			for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
-print Data::Dumper::Dumper($item);
 				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
 
 				if ($item->{'name'}) {
