@@ -64,7 +64,7 @@ sub getTag {
 
 	my $flac   = Audio::FLAC::Header->new($file);
 
-	if (ref($flac) ne 'HASH' || scalar keys %{$flac} == 0) {
+	if (ref($flac) && scalar keys %{$flac} == 0) {
 
 		errorMsg("Couldn't open file: [$file] for reading: $!\n");
 		return {};
