@@ -276,6 +276,22 @@ sub gotOPML {
 
 				if ($isAudio) {
 
+					# Additional info if known
+					my @details = ();
+					if ( $item->{'bitrate'} ) {
+						push @details, '{BITRATE}: ' . $item->{'bitrate'} . ' {KBPS}';
+					}
+					if ( $item->{'listeners'} ) {
+						push @details, '{NUMBER_OF_LISTENERS}: ' . $item->{'listeners'}
+					}
+					if ( $item->{'current_track'} ) {
+						push @details, '{NOW_PLAYING}: ' . $item->{'current_track'};
+					}
+					if ( $item->{'genre'} ) {
+						push @details, '{GENRE}: ' . $item->{'genre'};
+					}
+					$params{'details'} = \@details;
+					
 					Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
 
 				} else {
