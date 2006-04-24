@@ -961,8 +961,10 @@ sub daemonize {
 	# Update plugin / Mac::Applescript::Glue , and setting the process
 	# name after we fork. So don't do it on Mac. The System Preferences
 	# start/stop still works.
-
-	if (Slim::Utils::OSDetect::OS() ne 'mac') {
+	#
+        # Also don't do it for *nix - as startup scripts have problems (FC5)
+        # when our process name gets changed.
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		$0 = "slimserver";
 	}
 
