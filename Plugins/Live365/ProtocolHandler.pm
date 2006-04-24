@@ -78,7 +78,7 @@ sub new {
 sub canDirectStream {
 	my ($self, $client, $url) = @_;
 
-	if ($url !~ m{^live365://(www.live365.com/play/([^/?]+).+)$}) {
+	if ($url !~ m{^live365://(www.live365.com/play/([^/?]+).*)$}) {
 	    return undef;
 	}
 
