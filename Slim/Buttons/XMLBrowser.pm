@@ -703,6 +703,9 @@ sub _cliQuery_done {
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
 			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
+				_cli_addResult($request, $subFeed, join '.', @index);
+				$request->addResult('id', join '.', @index);
+
 				if ($subFeed->{'name'}) {
 					$request->addResult('name', $subFeed->{'name'});
 				}
@@ -728,8 +731,6 @@ sub _cliQuery_done {
 				$request->addResult('link', $subFeed->{'link'}) if ($subFeed->{'link'});
 				$request->addResult('description', $subFeed->{'description'}) if ($subFeed->{'description'});
 				$request->addResult('length', $subFeed->{'enclosure'}->{'length'}) if ($subFeed->{'enclosure'}->{'length'});
-	
-				$request->addResult('id', join '.', @index);
 			}
 		}
 	}
@@ -737,8 +738,13 @@ sub _cliQuery_done {
 	# allow searching in the name field
 	if ($search && @{$subFeed->{'items'}}) {
 		my @found = ();
+		my $i = 0;
 		for my $item ( @{$subFeed->{'items'}} ) {
-			push @found, $item if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i);
+			if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i) {
+				$item->{'_slim_id'} = $i;
+				push @found, $item;
+			}
+			$i++;
 		}
 		
 		$subFeed->{'items'} = \@found;
@@ -757,6 +763,9 @@ sub _cliQuery_done {
 	
 		if ($valid) {
 			for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+print Data::Dumper::Dumper($item);
+				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
+
 				if ($item->{'name'}) {
 					$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'});
 				}
@@ -771,9 +780,24 @@ sub _cliQuery_done {
 					$request->addResultLoop($loopname, $cnt, 'hasitems', 1);
 				}
 
-				$request->addResultLoop($loopname, $cnt, 'description', $item->{'description'}) if ($item->{'description'});
+				if ($item->{'url'}) {
+					$request->addResultLoop($loopname, $cnt, 'url', $item->{'url'});
+				}
+				elsif ($item->{'enclosure'}->{'url'}) {
+					$request->addResultLoop($loopname, $cnt, 'url', $item->{'enclosure'}->{'url'});
+				}
 
-				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, $start + $cnt));
+				if ($item->{'type'}) {
+					$request->addResultLoop($loopname, $cnt, 'type', $item->{'type'});
+				}
+				elsif ($item->{'enclosure'}->{'type'}) {
+					$request->addResultLoop($loopname, $cnt, 'type', $item->{'enclosure'}->{'type'});
+				}
+
+				$request->addResultLoop($loopname, $cnt, 'value', $item->{'value'}) if ($item->{'value'});
+				$request->addResultLoop($loopname, $cnt, 'link', $item->{'link'}) if ($item->{'link'});
+				$request->addResultLoop($loopname, $cnt, 'length', $item->{'enclosure'}->{'length'}) if ($item->{'enclosure'}->{'length'});
+				$request->addResultLoop($loopname, $cnt, 'description', $item->{'description'}) if ($item->{'description'});
 				$cnt++;
 			}
 		}			
@@ -781,6 +805,7 @@ sub _cliQuery_done {
 
 	$request->setStatusDone();
 }
+
 
 # Fetch a feed URL that is referenced within another feed.
 # After fetching, insert the contents into the original feed
