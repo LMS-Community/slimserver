@@ -10,6 +10,26 @@ Additional information can be found on the Wiki at: http://wiki.slimdevices.com/
 
 --------------------------------------------------------------------------------
 
+Generic Notes:
+
+You might be prompted to the Bin/build-perl-modules.pl script on your platform.
+
+If any of the required binary modules fails to load on your system, The script
+will download the modules, and build them for your OS. In order for the
+build-perl-modules script to run successfully, you must have You must have:
+
+- C Compiler - gcc, or your platforms system compiler (ANSI, not K&R)
+
+- make
+
+- Perl 5.6.1 or greater, and the required development libs (if any; some
+  platforms put this in a separate package, such as 'libperl-dev')
+
+- For XML::Parser to build properly - http://expat.sourceforge.net/
+  This might also be a package on your system, such as expat-dev, libexpat-dev, etc.
+
+--------------------------------------------------------------------------------
+
 Linux Notes (RPM Install):
 
 	The Linux RPMs install the software under /usr/local/slimserver
