@@ -119,7 +119,7 @@
       <option value="">Any Value</option>
 
       [% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
-       <option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 100) %]selected[% END %]>[% bitRate %]</option>
+       <option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 1000) %]selected[% END %]>[% bitRate %]</option>
       [% END %]
 
      </select> [% "KBPS" | string %]

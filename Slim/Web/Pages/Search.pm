@@ -149,7 +149,7 @@ sub advancedSearch {
 
 			# Bitrate needs to changed a bit
 			if ($key =~ /bitrate$/) {
-				$params->{$key} *= 100;
+				$params->{$key} *= 1000;
 			}
 
 			# Duration is also special
