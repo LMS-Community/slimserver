@@ -197,7 +197,8 @@ sub nonBlockingConnect {
 
 	} else {
 		
-		$::d_http_async && msg("AsyncHTTP: Connecting to $server\n");
+		my $port = $args{'PeerPort'};
+		$::d_http_async && msg("AsyncHTTP: Connecting to $server:$port\n");
 		
 		# Allow reuse of existing socket on redirects
 		if ( ref $class ) {
@@ -314,15 +315,24 @@ sub format_request {
 	my $self = shift;
 	my $method = shift;
 	my $path = shift;
-	
+
 	# Workaround for an issue with Net::HTTP::Methods where $self->peerport
 	# is not yet defined on our async connection.  This causes http_configure
 	# to setup the host string as "www.hostname.com:"
 	my $host = ${*$self}{'http_host'};
 	$host =~ s/:$//;
 
+	# Don't proxy for localhost requests.
+	if (Slim::Utils::Prefs::get('webproxy') && ${*$self}{'httpasync_host'}) {
+
+		$path = "http://".${*$self}{'httpasync_host'}.":".${*$self}{'httpasync_port'} . $path;
+		
+		$host = ${*$self}{'httpasync_host'};
+	}
+
 	# more headers copied from Slim::Player::Protocol::HTTP
-	my %headers = (
+	# Note this is not a hash because @_ may contain a single value if this is a POST request
+	my @headers = (
 		'Host'          => $host,
 		'User-Agent'    => Slim::Utils::Misc::userAgentString(),
 		'Accept'        => "*/*",
@@ -332,17 +342,7 @@ sub format_request {
 		@_,
 	);
 
-	# Don't proxy for localhost requests.
-	if (Slim::Utils::Prefs::get('webproxy') && ${*$self}{'httpasync_host'}) {
-
-		$path = "http://".${*$self}{'httpasync_host'}.":".${*$self}{'httpasync_port'} . $path;
-
-		$headers{'Host'} = ${*$self}{'httpasync_host'};
-	}
-
-	# when calling SUPER::format_request, include @_ after %headers, so caller may override defaults
-	# @_ may contain additional headers and content
-	return $self->SUPER::format_request($method => $path, %headers);
+	return $self->SUPER::format_request($method => $path, @headers);
 }
 
 # don't use write_request.  Use write_request_async instead.
