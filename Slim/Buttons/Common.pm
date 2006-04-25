@@ -422,21 +422,30 @@ our %functions = (
 		my $playdisp = undef;
 		
 		if ($buttonarg eq "add") {
-			my $obj = ${$client->param('listRef')}[$client->param('listIndex')];
-			my $title;
+			my $list = $client->param('listRef');
+			if ($list) {
 			
-			if (blessed($obj) && $obj->can('title')) {
-				$title = $obj->title;
-			} else {
-				$title = Slim::Music::Info::standardTitle($client, $obj);
-			}
+				my $obj = $list->[$client->param('listIndex')];
+				
+				if (blessed($obj) && $obj->can('url')) {
+					my $title;
+					if ($obj->can('title')) {
+						$title = $obj->title;
+					} else {
+						$title = Slim::Music::Info::standardTitle($client, $obj);
+					}
+	
+					if ($title) {
+						Slim::Utils::Favorites->clientAdd($client, $obj, $title);
+						$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+					}
 
-			if (blessed($obj) && $title) {
-				Slim::Utils::Favorites->clientAdd($client, $obj, $title);
-
-				$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
-			}
-			
+				} else {
+					use Data::Dumper;
+					$::d_favorites && msg("list item is not an object, not adding favorite\n");
+					$::d_favorites && msg(Dumper($obj));
+				}
+			}			
 		} elsif (mode($client) ne 'PLUGIN.Favorites') {
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'PLUGIN.Favorites');

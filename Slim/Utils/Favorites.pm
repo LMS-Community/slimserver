@@ -16,6 +16,7 @@ package Slim::Utils::Favorites;
 use strict;
 
 use FindBin qw($Bin);
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -39,9 +40,15 @@ sub clientAdd {
 		$::d_favorites && msg("No url passed to $class\::clientAdd, skipping.\n");
 		return undef;
 	}
-
-	if (ref($url) && defined($url->url)) { $url = $url->url; } 
-
+	
+	if (blessed($url)) {
+		if ($url->can('url') && defined($url->url)) { 
+			$url = $url->url;
+		} else {
+			return undef;
+		}
+	}
+	
 	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
 	# if its already a favorite, don't add it again
