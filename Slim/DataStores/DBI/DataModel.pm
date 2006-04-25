@@ -459,6 +459,7 @@ our %sortFieldMap = (
 	'album' => ['albums.titlesort','albums.disc'],
 	'contributor' => ['contributors.namesort'],
 	'artist' => ['contributors.namesort'],
+	'track' => ['albums.titlesort','tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'tracknum' => ['tracks.disc','tracks.tracknum','tracks.titlesort'],
 	'year' => ['tracks.year'],
 	'lastPlayed' => ['tracks.lastPlayed'],
