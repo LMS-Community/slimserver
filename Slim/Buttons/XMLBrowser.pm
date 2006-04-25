@@ -704,32 +704,25 @@ sub _cliQuery_done {
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
 			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
 				$request->addResult('id', join '.', @index);
-
-				if ($subFeed->{'name'}) {
-					$request->addResult('name', $subFeed->{'name'});
-				}
-				elsif ($subFeed->{'title'}) {
-					$request->addResult('name', $subFeed->{'title'});
-				}
-
-				if ($subFeed->{'url'}) {
-					$request->addResult('url', $subFeed->{'url'});
-				}
-				elsif ($subFeed->{'enclosure'}->{'url'}) {
-					$request->addResult('url', $subFeed->{'enclosure'}->{'url'});
-				}
-
-				if ($subFeed->{'type'}) {
-					$request->addResult('type', $subFeed->{'type'});
-				}
-				elsif ($subFeed->{'enclosure'}->{'type'}) {
-					$request->addResult('type', $subFeed->{'enclosure'}->{'type'});
+				
+				foreach my $data (keys %{$subFeed}) {
+					if (ref($subFeed->{$data}) eq 'ARRAY') {
+						if (scalar @{$subFeed->{$data}}) {
+							$request->addResult('hasitems', scalar @{$subFeed->{$data}});
+						}
+					}
+					elsif ($data =~ /enclosure/i && defined $subFeed->{$data}) {
+						foreach my $enclosuredata (keys %{$subFeed->{$data}}) {
+							if ($subFeed->{$data}->{$enclosuredata}) {
+								$request->addResult($data . '_' . $enclosuredata, $subFeed->{$data}->{$enclosuredata});
+							}
+						}
+					}
+					elsif ($subFeed->{$data}) {
+						$request->addResult($data, $subFeed->{$data});
+					}
 				}
 
-				$request->addResult('value', $subFeed->{'value'}) if ($subFeed->{'value'});
-				$request->addResult('link', $subFeed->{'link'}) if ($subFeed->{'link'});
-				$request->addResult('description', $subFeed->{'description'}) if ($subFeed->{'description'});
-				$request->addResult('length', $subFeed->{'enclosure'}->{'length'}) if ($subFeed->{'enclosure'}->{'length'});
 			}
 		}
 	}
@@ -764,38 +757,24 @@ sub _cliQuery_done {
 			for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
 
-				if ($item->{'name'}) {
-					$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'});
+				foreach my $data (keys %{$item}) {
+					if (ref($item->{$data}) eq 'ARRAY') {
+						if (scalar @{$item->{$data}}) {
+							$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}});
+						}
+					}
+					elsif ($data =~ /enclosure/i && defined $item->{$data}) {
+						foreach my $enclosuredata (keys %{$item->{$data}}) {
+							if ($item->{$data}->{$enclosuredata}) {
+								$request->addResultLoop($loopname, $cnt, $data . '_' . $enclosuredata, $item->{$data}->{$enclosuredata});
+							}
+						}
+					}
+					elsif ($item->{$data}) {
+						$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
+					}
 				}
-				elsif ($item->{'title'}) {
-					$request->addResultLoop($loopname, $cnt, 'name', $item->{'title'});
-				}
-
-				if (defined $item->{'items'}) {
-					$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{'items'}});
-				}
-				elsif (defined $item->{'enclosure'}) {
-					$request->addResultLoop($loopname, $cnt, 'hasitems', 1);
-				}
-
-				if ($item->{'url'}) {
-					$request->addResultLoop($loopname, $cnt, 'url', $item->{'url'});
-				}
-				elsif ($item->{'enclosure'}->{'url'}) {
-					$request->addResultLoop($loopname, $cnt, 'url', $item->{'enclosure'}->{'url'});
-				}
-
-				if ($item->{'type'}) {
-					$request->addResultLoop($loopname, $cnt, 'type', $item->{'type'});
-				}
-				elsif ($item->{'enclosure'}->{'type'}) {
-					$request->addResultLoop($loopname, $cnt, 'type', $item->{'enclosure'}->{'type'});
-				}
-
-				$request->addResultLoop($loopname, $cnt, 'value', $item->{'value'}) if ($item->{'value'});
-				$request->addResultLoop($loopname, $cnt, 'link', $item->{'link'}) if ($item->{'link'});
-				$request->addResultLoop($loopname, $cnt, 'length', $item->{'enclosure'}->{'length'}) if ($item->{'enclosure'}->{'length'});
-				$request->addResultLoop($loopname, $cnt, 'description', $item->{'description'}) if ($item->{'description'});
+				
 				$cnt++;
 			}
 		}			
