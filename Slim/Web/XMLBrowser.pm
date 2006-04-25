@@ -119,7 +119,7 @@ sub handleFeed {
 	}
 	
 	# play/add stream
-	if ( $client && $stash->{'action'} && $stash->{'action'} =~ /play|add/ ) {
+	if ( $client && $stash->{'action'} && $stash->{'action'} =~ /^(play|add)$/ ) {
 		my $play  = ($stash->{'action'} eq 'play');
 		my $url   = $stash->{'streaminfo'}->{'item'}->{'url'};
 		my $title = $stash->{'streaminfo'}->{'item'}->{'name'} 
@@ -148,24 +148,61 @@ sub handleFeed {
 			$template = 'xmlbrowser_redirect.html';
 		}
 	}
+	# play all/add all
+	elsif ( $client && $stash->{'action'} && $stash->{'action'} =~ /^(playall|addall)$/ ) {
+		my $play  = ($stash->{'action'} eq 'playall');
+		
+		my @urls;
+		for my $item ( @{ $stash->{'items'} } ) {
+			if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
+				push @urls, $item->{'url'};
+				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+			}
+			elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'url'} ) {
+				push @urls, $item->{'enclosure'}->{'url'};
+				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+			}
+		}
+		
+		if ( @urls ) {
+			$::d_plugins && msgf("XMLBrowser: playing/adding all items:\n%s\n",
+				join "\n", @urls
+			);
+			
+			if ( $play ) {
+				$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
+			}
+			else {
+				$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+			}
+		}
+	}
 	else {
 		
-		my $itemCount = scalar @{ $stash->{'items'} };
+		# Check if any of our items contain audio, so we can display an
+		# 'All Songs' link
+		for my $item ( @{ $stash->{'items'} } ) {
+			if ( $item->{'type'} eq 'audio' || $item->{'enclosure'} ) {
+				$stash->{'itemsHaveAudio'} = 1;
+				$stash->{'currentIndex'}   = join '.', @index;
+				last;
+			}
+		}
 		
+		my $itemCount = scalar @{ $stash->{'items'} };
 			
-			my $clientId = ( $client ) ? $client->id : undef;
-			my $otherParams = 'index=' . join('.', @index) 
-					. '&player=' . $clientId;
+		my $clientId = ( $client ) ? $client->id : undef;
+		my $otherParams = 'index=' . join('.', @index) . '&player=' . $clientId;
 			
-			$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
-					'itemCount'   => $itemCount,
-					'path'        => 'index.html',
-					'otherParams' => $otherParams,
-					'start'       => $stash->{'start'},
-					'perPage'     => $stash->{'itemsPerPage'},
-			});
-			
-			$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
+		$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+				'itemCount'   => $itemCount,
+				'path'        => 'index.html',
+				'otherParams' => $otherParams,
+				'start'       => $stash->{'start'},
+				'perPage'     => $stash->{'itemsPerPage'},
+		});
+		
+		$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
 
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
