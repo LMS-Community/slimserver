@@ -163,7 +163,7 @@ sub readM3U {
 		next if $entry eq "";
 
 		$entry =~ s|$LF||g;
-		
+		$entry = Slim::Utils::Unicode::utf8encode_locale($entry);
 		$entry = Slim::Utils::Misc::fixPath($entry, $m3udir);
 
 		if (playlistEntryIsValid($entry, $url)) {
@@ -270,7 +270,7 @@ sub readPLS {
 		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
 
 		if ($line =~ m|File(\d+)=(.*)|i) {
-			$urls[$1] = $2;
+			$urls[$1] = Slim::Utils::Unicode::utf8encode_locale($2);
 			next;
 		}
 
