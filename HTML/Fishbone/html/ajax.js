@@ -33,8 +33,10 @@ function refreshState(theData) {
 		objID = $('power' + j);
 		if (parsedData['mode'] == power[j]) {
 			objID.className = 'button';
+			hideElements(['sleeplink']);
 		} else {
 			objID.className = 'darkbutton';
+			showElements(['sleeplink'],'inline');
 		}
 	}
 	
