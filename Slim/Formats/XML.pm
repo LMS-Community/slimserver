@@ -321,15 +321,15 @@ sub openSearchDescription {
 	my $query = $params->{'params'}->{'query'};
 	$url =~ s/{searchTerms}/$query/;
 	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+	my $asyncHTTP = Slim::Networking::SimpleAsyncHTTP->new(
 		\&openSearchResult,
 		\&gotErrorViaHTTP,
 		$params,
 	);
 
 	$::d_plugins && msg("Formats::XML: async opensearch query: $url\n");
-	
-	$http->get($url);
+
+	$asyncHTTP->get($url);
 }
 
 sub openSearchResult {
