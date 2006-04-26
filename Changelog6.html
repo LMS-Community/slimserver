@@ -239,6 +239,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3144">#3144</a> - Unable to &quot;Browse Artitsts&quot; by first letter when named in Unicode</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3155">#3155</a> - Only first page of playlists can be seen</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3162">#3162</a> - p0 in web url without a dispatch handler prevents &quot;generateHTTPResponse&quot;</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3175">#3175</a> - Crash trying to browse real audio files</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3202">#3202</a> - need Local::Hebrew modules added to CPAN directory</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3204">#3204</a> - internal inconsistency: event should have been found</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3206">#3206</a> - Search music page has invalid link for album under "Songs matching x"</li>
@@ -260,11 +261,6 @@
 <ul>
 	<li>Firmware Updates:
 	<ul>
-		<li>Update to Firmware 48 for Squeezebox2/Squeezebox v3.</li>
-		<ul>
-			<li>Fix for special characters in a WPA key.</li>
-		</ul>
-
 		<li>Update to Firmware 43 for Squeezebox2/Squeezebox v3.</li>
 		<ul>
 			<li>Fix for Draytek WEP+WPA wirless encryption.</li>
@@ -311,6 +307,14 @@
 			<li>Fix factory setting for WPA password to be blank, not "password"</li>
 			<li>Lengthen timeout for connecting to some access points and don't act as if we've connected before association and authentication have completed.</li>
 		</ul>
+		<li>Bug 3208: Disable Favorites button when powered off.</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Audio Browsing:
+	<ul>
+		<li>Don't display DRM'd music.</li>
 	</ul>
 	</li>
 	<br />
@@ -351,9 +355,17 @@
 	</li>
 	<br />
 
-	<li>Translations:
+	<li>Database:
+	<ul>
+		<li>Allow downgrading from 6.5</li>
+	</ul>
+	</li>
+	<br />
+
+	<li>Internationalization:
 	<ul>
 		<li>Updated Dutch translation from Willem Oepkes.</li>
+		<li>Add CODE2000 Unicode TTF</li>
 	</ul>
 	</li>
 	<br />
@@ -368,8 +380,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1946">#1946</a> - please make error messages when failing to connect wirelessly more intuitive</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2018">#2018</a> - Player Remote Keys sometimes bounce</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2169">#2169</a> - Player fails to move to next item in playlist after resuming a song paused near the end.</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2302">#2302</a> - At boot time, player may connect before DHCP has completed</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2322">#2322</a> - VA Album is split when tracks of the album are saved in a playlist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2324">#2324</a> - WPA2+AES fails with wrt54g with latest firmware</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2505">#2505</a> - Web error:  There is no &quot;:&quot; skin, try http://server:9000/ instead.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2508">#2508</a> - WPA2/AES connection failure with D-Link DGL-4300</li>
@@ -392,6 +402,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2623">#2623</a> - Problem with tracks that have no 'album' metadata</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2629">#2629</a> - Player info - Reports squeezebox2</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2632">#2632</a> - Cannot add MoodLogic playlist with remote.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2644">#2644</a> - Shuffled playlist does not play from the top.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2658">#2658</a> - Title of remote streams should be able to be changed in _updateMetaData</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2663">#2663</a> - Strange IP address/settings</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2682">#2682</a> - AAC/ALAC Artwork stopped being displayed in 6.2.1</li>
@@ -405,9 +416,12 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2733">#2733</a> - Advanced bitrate search</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2736">#2736</a> - Divide by zero in Squeezebox.pm</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2740">#2740</a> - report of unreliable wireless connection with wg602</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2744">#2744</a> - Track details shows only first of many Genre values</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2746">#2746</a> - Wake on LAN - PC returns to standby after Power Save period</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2748">#2748</a> - setting pitch above 110 on an SB1 causes audio dropouts</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2759">#2759</a> - Music will occasionally be queued to the wrong player, depending on UI state</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2762">#2762</a> - server crashes when i tune in to this station in the web interface</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2763">#2763</a> - MoodLogic plugin causes SlimServer to stop</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2775">#2775</a> - Missing space in tooltip text when browsing artwork</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2776">#2776</a> - Songs in Collection Albums presented in alphabetic order by Artist when browsing Albums</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2785">#2785</a> - WPA2+AES fails with Cisco AP1200 w/v12.3(7)JA2</li>
@@ -421,8 +435,8 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2865">#2865</a> - server preference pane does not work on new Intel Macs</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2889">#2889</a> - Dropouts</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2890">#2890</a> - sleep cuts sound early, but then continues</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2891">#2891</a> - "repeat 2" ignored if set late</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2905">#2905</a> - can't associate with zoom x6 5590 adsl router</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2906">#2906</a> - Cannot load songs from playlist that contain non ISO-Latin1 characters</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2908">#2908</a> - Now playing number keys are blocked when showing current song</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2916">#2916</a> - fallback IP for Squeezenetwork is now wrong in sb2/3 firmware</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2932">#2932</a> - Temp Files are still exist after finished playlist</li>
@@ -435,11 +449,11 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2980">#2980</a> - Wrong clip plays</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2984">#2984</a> - Audio data TCP throughput issues</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2989">#2989</a> - WPA / WPA2 not working with Motorola WR850G</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2996">#2996</a> - Multiple FLAC DISCNUMBER tags causes indexing failure</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3037">#3037</a> - MusicMagic API Playlist Generation Flawed in 6.2.1</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3053">#3053</a> - Server crash during browsedb</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3075">#3075</a> - wpa and wpa2 fail with Draytek Vigor 2800VG</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3095">#3095</a> - Perl pins cpu at 100% when importing .ape file.</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3110">#3109</a> - wpa and wpa2 incompatible with Netgear DG834PN</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3110">#3110</a> - problems connecting reliably to Netgear DG834G V2 fw3.01.25</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3112">#3112</a> - Files with no "DATE" attribute are not added to library when using MySQL</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3125">#3125</a> - audio stuttering issues with firmware 35 related to buffering</li>
@@ -451,13 +465,14 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3211">#3211</a> - server gets stuck after skipping or stopping from ogg-File</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3219">#3219</a> - DHCP timeout/assignment of local loop IP is user-unfriendly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3224">#3224</a> - One Genre missing from Advanced Search drop down</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3256">#3256</a> - Deletion of playlists on "clear library" rescan</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3275">#3275</a> - After upgrading to an Intel iMac cannot play OGG files</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3286">#3286</a> - slimserver doesn't recognize CUE files generated by "cueconvert"</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3287">#3287</a> - slimserver doesn't correctly recognize multi-track FLACs</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3292">#3292</a> - Play artist plays by tracknumber instead of album</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3300">#3300</a> - sox failes under 10.4.4</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3302">#3302</a> - adhoc networking broke somewhere along the line</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3320">#3320</a> - Too many special characters in a WPA key causes a malloc_failed error</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3306">#3306</a> - Full rescan triggerred each time the service starts up</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3313">#3313</a> - Coverart stored in id3 tags aren't recognized any more</li>
 	</ul>
 	</li>
 </ul>

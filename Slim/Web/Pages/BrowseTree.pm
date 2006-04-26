@@ -124,8 +124,8 @@ sub browsetree {
 		$list_form{'itemobj'}    = $item;
 		$list_form{'hreftype'}   = 'browseTree';
 
-		# Don't display the edit dialog for cue sheets.
-		if ($item->isCUE) {
+		# Don't display the edit dialog for playlists (includes CUE sheets).
+		if ($item->isPlaylist) {
 			$list_form{'noEdit'} = '&noEdit=1';
 		}
 
