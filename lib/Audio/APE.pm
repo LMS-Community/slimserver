@@ -1,15 +1,17 @@
 package Audio::APE;
 
-use Audio::APETags;
+# $Id$
 
 use strict;
-use vars qw($VERSION);
+use Fcntl qw(:seek);
 
-$VERSION = '0.01';
+our $VERSION = '0.02';
 
-# First four bytes of stream are always fLaC
+use Audio::APETags;
+use MP3::Info ();
+
+# First eight bytes of ape v2 tag block are always APETAGEX
 use constant MACHEADERFLAG => 'MAC';
-use constant ID3HEADERFLAG => 'ID3';
 use constant APEHEADERFLAG => 'APETAGEX';
 
 #	Flags for format version <=3.97
@@ -125,12 +127,6 @@ sub _checkHeader {
 	my $self = shift;
 
 	my $fh	 = $self->{'fileHandle'};
-	my $id3size = '';
-
-	# stores how far into the file we've read,
-	# so later reads into the file can skip right
-	# past all of the header stuff
-	my $byteCount = 0;
 
 	# There are two possible variations here.
 	# 1.  There's an ID3V2 tag present at the beginning of the file
@@ -139,55 +135,45 @@ sub _checkHeader {
 	# For each type of tag, check for existence and then skip it before
 	# looking for the MPC header
 
-	# First, check for ID3V2
-	read ($fh, my $buffer, 3) or return -1;
+	# Let MP3::Info find the size of the ID3 header
+	my $v2h = MP3::Info::_get_v2head($fh); 
 
-	if ($buffer eq ID3HEADERFLAG) {
-		$self->{'ID3V2Tag'}=1;
+	if ($v2h && ref($v2h) eq 'HASH' && defined $v2h->{'tag_size'}) {
 
-		# How big is the ID3 header?
-		# Skip the next two bytes
-		read($fh, $buffer, 2) or return -1;
+		$self->{'ID3V2Tag'} = 1;
 
-		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
-		# Read the next 4 bytes one at a time, unpack each one B7,
-		# and concatenate.  When complete, do a bin2dec to determine size
-		for (my $c=0; $c<4; $c++) {
-			read ($fh, $buffer, 1) or return -1;
-			$id3size .= substr(unpack ("B8", $buffer), 1);
-		}
+		seek($fh, $v2h->{'tag_size'}, SEEK_SET);
 
-		seek $fh, _bin2dec($id3size) + 10, 0;
 	} else {
-		# set the pointer back to the original location
-		seek $fh, -3, 1;
+
+		seek($fh, 0, SEEK_SET);
 	}
 
 	# Next, check for APE tag
-	read ($fh, $buffer, 8) or return -1;
+	read($fh, my $buffer, 8) or return -1;
 
 	if ($buffer eq APEHEADERFLAG) {
 
-		read ($fh, $buffer, 24) or return -1;
+		read($fh, $buffer, 24) or return -1;
 		
 		# Skip the ape tag structure
-		seek $fh, unpack ("L",substr($buffer, 4, 4)), 1;
+		seek($fh, unpack ("L",substr($buffer, 4, 4)), SEEK_CUR);
+
 	} else {
+
 		# set the pointer back to original location
-		seek $fh, -8, 1;
+		seek($fh, -8, SEEK_CUR);
 	}
 	
 	# Finally, we should be at the location of the musepack header.
 	read ($fh, $buffer, 3) or return -1;
-	
+
 	if ($buffer ne MACHEADERFLAG) {
 		return -2;
 	}
 
-	$byteCount = tell $fh;
-
 	# at this point, we assume the bitstream is valid
-	return $byteCount;
+	return tell($fh);
 }
 
 sub _getAudioInfo {
@@ -213,10 +199,10 @@ sub _getAudioInfo {
 	my $finalFrame;
 	
 	# Seek to beginning of header information
-	seek $fh, $self->{'startHeaderInfo'}+1, 0;
+	seek($fh, $self->{'startHeaderInfo'}+1, SEEK_SET);
 
 	# Start parsing the bytes
-	read $fh, $buffer, 4;
+	read($fh, $buffer, 4);
 	$buffer = _getWord($buffer);
 	$self->{'streamVersion'} = _bin2dec(substr($buffer,16,16));
 
@@ -245,39 +231,42 @@ sub _getAudioInfo {
 		read $fh, $buffer, 4;
 		$finalFrame = _bin2dec(_getWord($buffer));
 		$self->{'BlocksPerFrame'} = $self->{'streamVersion'} >= 3950 ? 73728 * 4 : 73728;
+
 	} else { # Newer formats for 3.98 and higher
 		read $fh, $buffer, 4;
 		$self->{'DescriptorBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		#HeaderBytes
+		read $fh, $buffer, 4;
+		$self->{'HeaderBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		#SeekTableBytes'
+		read $fh, $buffer, 4;
+		$self->{'SeekTableBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		#HeaderDataBytes'
+		read $fh, $buffer, 4;
+		$self->{'HeaderDataBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		#APEFrameDataBytes'
+		read $fh, $buffer, 4;
+		$self->{'APEFrameDataBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		#APEFrameDataBytesHigh
+		read $fh, $buffer, 4;
+		$self->{'APEFrameDataBytesHigh'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 4;
-		# TerminatingDataBytes
+		read $fh, $buffer, 4;
+		$self->{'TerminatingDataBytes'} = _bin2dec(_getWord($buffer));
 
-		#read $fh, $buffer, 16;
 		# MD5 data
-		# end of Descriptor
-		
-		
-		# Begin at Header block
-		seek $fh, $self->{'DescriptorBytes'}, 0;
+		read $fh, $buffer, 16;
+		$self->{'cFileMD5'} = $buffer;
+
+		# Begin Header block
 		read $fh, $buffer, 4;
 		$buffer = _getWord($buffer);
 		$compressionID = _bin2dec(substr($buffer,16,16));
-		return -1 unless exists $profileNames{$compressionID};
+
+		if (!exists $profileNames{$compressionID}) {
+			return -1;
+		}
+
 		$self->{'Flags'} = substr($buffer,0,16);
 
 		read $fh, $buffer, 4;

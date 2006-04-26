@@ -1,17 +1,15 @@
 package Audio::APETags;
 
+# $Id$
+
 use strict;
 use Fcntl qw(:seek);
+use MP3::Info;
 
-use vars qw($VERSION);
-
-$VERSION = '0.01';
+our $VERSION = '0.02';
 
 # First eight bytes of ape v2 tag block are always APETAGEX
 use constant APEHEADERFLAG  => 'APETAGEX';
-
-use constant ID3HEADERFLAG  => 'ID3';
-use constant ID3V1FLAG      => 'TAG';
 
 # Masks for TAGS FLAGS
 use constant TF_HAS_HEADER => 0x80000000;
@@ -91,35 +89,19 @@ sub _init {
 
 		# Try at the beginning of the file.
 		seek($fh, 0, SEEK_SET);
-		read($fh, my $apetest, 8) or return -1;
 
-		if (substr($apetest, 0, 3) ne ID3HEADERFLAG) {
+		my $v2h = MP3::Info::_get_v2head($fh);
 
-			# Proper tags haven't been found, so warn and return an error
-			warn "header not found, ID3 tags corrupt";
-			return -1;
+		if ($v2h && ref($v2h) eq 'HASH' && defined $v2h->{'tag_size'}) {
+
+			$self->{'ID3v2Tag'} = 1;
+
+			seek($fh, $v2h->{'tag_size'}, SEEK_SET);
+
+		} else {
+
+			seek($fh, 0, SEEK_SET);
 		}
-
-		# There's an ID3V2 header on the file.
-		# Skip past it.
-		$self->{'ID3V2Tag'} = 1;
-
-		# Skip the next two bytes
-		seek($fh, 2, SEEK_CUR);
-
-		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
-		# Read the next 4 bytes one at a time, unpack each one B7,
-		# and concatenate.  When complete, do a bin2dec to determine size
-		my $id3size = '';
-
-		for (my $c = 0; $c < 4; $c++) {
-
-			read($fh, my $buffer, 1) or return -1;
-			$id3size .= substr(unpack ("B8", $buffer), 1);
-		}
-
-		# Skip the ID3 tag
-		seek($fh, _bin2dec($id3size) + 10, SEEK_SET);
 
 		# Re-check for APE header
 		read($fh, $apetest, 8) or return -1;

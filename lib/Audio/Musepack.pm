@@ -1,15 +1,15 @@
 package Audio::Musepack;
 
-use Audio::APETags;
+# $Id$
 
 use strict;
-use vars qw($VERSION);
+use Audio::APETags;
+use MP3::Info;
 
-$VERSION = '0.01';
+our $VERSION = '0.02';
 
 # First four bytes of stream are always fLaC
 use constant MPCHEADERFLAG => 'MP+';
-use constant ID3HEADERFLAG => 'ID3';
 use constant APEHEADERFLAG => 'APETAGEX';
 
 sub new {
@@ -112,42 +112,19 @@ sub _checkHeader {
 	my $self = shift;
 
 	my $fh	 = $self->{'fileHandle'};
-	my $id3size = '';
 
-	# stores how far into the file we've read,
-	# so later reads into the file can skip right
-	# past all of the header stuff
-	my $byteCount = 0;
+	# Let MP3::Info test for the existance of a ID3v2 Tag - skip past it.
+	my $v2h = MP3::Info::_get_v2head($fh);
 
-	# There are two possible variations here.
-	# 1.  There's an ID3V2 tag present at the beginning of the file
-	# 2.  There's an APE tag present at the beginning of the file
-	#     (deprecated, but still possible)
-	# For each type of tag, check for existence and then skip it before
-	# looking for the MPC header
+	if ($v2h && ref($v2h) eq 'HASH' && defined $v2h->{'tag_size'}) {
+			
+		$self->{'ID3v2Tag'} = 1;
 
-	# First, check for ID3V2
-	read ($fh, my $buffer, 3) or return -1;
+		seek($fh, $v2h->{'tag_size'}, SEEK_SET);
 
-	if ($buffer eq ID3HEADERFLAG) {
-		$self->{'ID3V2Tag'}=1;
-
-		# How big is the ID3 header?
-		# Skip the next two bytes
-		read($fh, $buffer, 2) or return -1;
-
-		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
-		# Read the next 4 bytes one at a time, unpack each one B7,
-		# and concatenate.  When complete, do a bin2dec to determine size
-		for (my $c=0; $c<4; $c++) {
-			read ($fh, $buffer, 1) or return -1;
-			$id3size .= substr(unpack ("B8", $buffer), 1);
-		}
-
-		seek $fh, _bin2dec($id3size) + 10, 0;
 	} else {
-		# set the pointer back to the original location
-		seek $fh, -3, 1;
+
+		seek($fh, 0, SEEK_SET);
 	}
 
 	# Next, check for APE tag
@@ -163,18 +140,16 @@ sub _checkHeader {
 		# set the pointer back to original location
 		seek $fh, -8, 1;
 	}
-	
+
 	# Finally, we should be at the location of the musepack header.
 	read ($fh, $buffer, 3) or return -1;
-	
+
 	if ($buffer ne MPCHEADERFLAG) {
 		return -2;
 	}
 
-	$byteCount = tell $fh;
-
 	# at this point, we assume the bitstream is valid
-	return $byteCount;
+	return tell($fh);
 }
 
 sub _getAudioInfo {
@@ -183,11 +158,11 @@ sub _getAudioInfo {
 	my $fh   = $self->{'fileHandle'};
 
 	my @profileNames = (
-        'na', "Unstable/Experimental", 'na', 'na',
-        'na', "below Telephone", "below Telephone", "Telephone",
-        "Thumb", "Radio", "Standard", "Xtreme",
-        "Insane", "BrainDead", "above BrainDead", "above BrainDead"
-	    );
+		'na', "Unstable/Experimental", 'na', 'na',
+		'na', "below Telephone", "below Telephone", "Telephone",
+		"Thumb", "Radio", "Standard", "Xtreme",
+		"Insane", "BrainDead", "above BrainDead", "above BrainDead"
+	);
 
 	my @samplFreq = (44100, 48000, 37800, 32000);
 
@@ -388,7 +363,8 @@ from Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
 =head1 COPYRIGHT
 
-Copyright (c) 2003, Erik Reckase.
+Copyright (c) 2003-2006, Erik Reckase.
+Copyright (c) 2003-2006, Dan Sully & Slim Devices.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,
