@@ -26,6 +26,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
 use HTTP::Date ();
+use MIME::Base64 qw(encode_base64);
 
 sub new {
 	my $class    = shift;
@@ -176,9 +177,15 @@ sub writeCallback {
 		);
 	}
 
-	# TODO: handle basic auth if username, password provided
+	# handle basic auth if username, password provided
+	if ( $self->{'user'} || $self->{'password'} ) {
+		push @{ $self->{'args'} }, (
+			'Authorization' => 'Basic ' . encode_base64( $self->{'user'} . ":" . $self->{'password'} ),
+		);
+	}
+	
 	$http->write_request_async( 
-		$self->{type} => $self->{path}, 
+		$self->{'type'} => $self->{'path'}, 
 		@{ $self->{'args'} } 
 	);
 	
