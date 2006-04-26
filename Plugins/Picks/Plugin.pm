@@ -89,7 +89,11 @@ sub webPages {
 
 	my %pages = ( 
 		'index.html' => sub {
-			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );
+			Slim::Web::XMLBrowser->handleWebIndex( {
+				feed   => $FEED,
+				title  => $title,
+				args   => \@_
+			} );
 		},
 	);
 	

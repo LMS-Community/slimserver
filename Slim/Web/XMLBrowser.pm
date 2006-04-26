@@ -19,17 +19,38 @@ use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
 sub handleWebIndex {
-	my $class = shift;
-	my $feed  = shift;
-	my $title = shift;
+	my ( $class, $args ) = @_;
+	my $feed   = $args->{'feed'};
+	my $title  = $args->{'title'};
+	my $search = $args->{'search'};
+	my $args   = $args->{'args'};
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		handleFeed( $feed, {
-			'url'   => $feed->{'url'},
-			'title' => $title,
-			'args'  => \@_,
+			'url'    => $feed->{'url'},
+			'title'  => $title,
+			'search' => $search,
+			'args'   => $args,
 		} );
+		return;
+	}
+	
+	# Handle search queries
+	if ( my $query = $args->[1]->{'query'} ) {
+		$::d_plugins && msg("XMLBrowser: Search query [$query]\n");
+		
+		Slim::Formats::XML->openSearch(
+			\&handleFeed,
+			\&handleError,
+			{
+				'search' => $search,
+				'query'  => $query,
+				'title'  => $title,
+				'args'   => $args,
+			},
+		);
+		
 		return;
 	}
 
@@ -38,9 +59,10 @@ sub handleWebIndex {
 		\&handleFeed,
 		\&handleError,
 		{
-			'url'   => $feed,
-			'title' => $title,
-			'args'  => \@_,
+			'url'    => $feed,
+			'title'  => $title,
+			'search' => $search,
+			'args'   => $args,
 		},
 	);
 	
@@ -116,6 +138,12 @@ sub handleFeed {
 		$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $feed->{'items'};
+		
+		# insert a search box on the top-level page if we support searching
+		# for this feed
+		if ( $params->{'search'} ) {
+			$stash->{'search'} = 1;
+		}
 	}
 	
 	# play/add stream
@@ -193,6 +221,9 @@ sub handleFeed {
 			
 		my $clientId = ( $client ) ? $client->id : undef;
 		my $otherParams = 'index=' . join('.', @index) . '&player=' . $clientId;
+		if ( $stash->{'query'} ) {
+			$otherParams = 'query=' . $stash->{'query'} . '&' . $otherParams;
+		}
 			
 		$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'   => $itemCount,
@@ -223,7 +254,7 @@ sub handleError {
 	
 	my $title = string($params->{'title'});
 	$stash->{'pagetitle'} = $title;
-	$stash->{'msg'} = string('WEB_XML_ERROR') . "$title: ($error)";
+	$stash->{'msg'} = string('WEB_XML_ERROR') . " $title: ($error)";
 	
 	my $output = processTemplate($template, $stash);
 	

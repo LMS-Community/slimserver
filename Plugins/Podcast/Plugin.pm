@@ -184,7 +184,11 @@ sub webPages {
 			# Get OPML list of feeds from cache
 			my $cache = Slim::Utils::Cache->new();
 			my $opml = $cache->get( 'podcasts_opml' );
-			Slim::Web::XMLBrowser->handleWebIndex( $opml, $title, @_ );
+			Slim::Web::XMLBrowser->handleWebIndex( {
+				feed   => $opml,
+				title  => $title,
+				args   => \@_
+			} );
 		},
 	);
 	

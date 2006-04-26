@@ -273,6 +273,132 @@ sub _parseOPMLOutline {
 	return \@items;
 }
 
+sub openSearch {
+	my $class = shift;
+	my ( $cb, $ecb, $params ) = @_;
+
+	# Fetch the OpenSearch description file
+	my $url = $params->{'search'};
+
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&openSearchDescription,
+		\&gotErrorViaHTTP,
+		{
+			'params' => $params,
+			'cb'     => $cb,
+			'ecb'    => $ecb,
+			'cache'  => 1,
+		},
+	);
+
+	$::d_plugins && msg("Formats::XML: async opensearch description request: $url\n");
+
+	$http->get($url);
+}
+
+sub openSearchDescription {
+	my $http = shift;
+	my $params = $http->params;
+
+	my $desc = eval { parseOpenSearch( $http->contentRef ) };
+	
+	if ($@) {
+		# call ecb
+		my $ecb = $params->{'ecb'};
+		$ecb->( $@, $params->{'params'} );
+		return;
+	}
+
+	if (!$desc) {
+		# call ecb
+		my $ecb = $params->{'ecb'};
+		$ecb->( '{PARSE_ERROR}', $params->{'params'} );
+		return;
+	}
+	
+	# run the search query
+	my $url = $desc->{'Url'}->{'template'};
+	my $query = $params->{'params'}->{'query'};
+	$url =~ s/{searchTerms}/$query/;
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&openSearchResult,
+		\&gotErrorViaHTTP,
+		$params,
+	);
+
+	$::d_plugins && msg("Formats::XML: async opensearch query: $url\n");
+	
+	$http->get($url);
+}
+
+sub openSearchResult {
+	my $http = shift;
+	my $params = $http->params;
+	
+	my $feed = eval { parseXMLIntoFeed($http->contentRef) };
+	
+	if ($@) {
+		# call ecb
+		my $ecb = $params->{'ecb'};
+		$ecb->( $@, $params->{'params'} );
+		return;
+	}
+
+	if (!$feed) {
+		# call ecb
+		my $ecb = $params->{'ecb'};
+		$ecb->( '{PARSE_ERROR}', $params->{'params'} );
+		return;
+	}
+	
+	# check for error reported in RSS
+	if ( $feed->{'items'}->[0]->{'title'} eq 'Error' ) {
+		my $ecb = $params->{'ecb'};
+		return $ecb->( $feed->{'items'}->[0]->{'description'}, $params->{'params'} );
+	}
+	
+	$::d_plugins && msgf("Formats::XML: got opensearch results [%s]\n",
+		scalar @{ $feed->{'items'} },
+	);
+	
+	my $cb = $params->{'cb'};
+	$cb->( $feed, $params->{'params'} );
+}
+
+sub parseOpenSearch {
+	my $content = shift || return undef;
+
+	# deal with windows encoding stupidity (see Bug #1392)
+	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
+
+	# async http request succeeded.  Parse XML
+	# forcearray to treat items as array,
+	# keyattr => [] prevents id attrs from overriding
+	my $xml = eval { 
+		XMLin( $content, 
+			KeyAttr => []
+		)
+	};
+
+	if ($@) {
+		errorMsg("Formats::XML: failed to parse feed because:\n$@\n");
+
+		if (defined $content && ref($content) eq 'SCALAR') {
+			errorMsg("Formats::XML: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
+			undef $content;
+		}
+
+		# Ugh. Need real exceptions!
+		die $@;
+	}
+
+	# Release
+	undef $content;
+	
+	return $xml;	
+}
+
 #### Some routines for munging strings
 sub unescape {
 	my $data = shift;

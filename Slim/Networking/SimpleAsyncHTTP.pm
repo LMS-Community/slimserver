@@ -116,6 +116,11 @@ sub _createHTTPRequest {
 			# return it immediately without revalidation, to improve
 			# UI experience
 			if ( $data->{_no_revalidate} || time - $data->{'_time'} < 300 ) {
+				
+				$::d_http_async && msgf("SimpleAsyncHTTP: Using cached response [%s]\n",
+					$self->{'url'},
+				);
+				
 				return $self->sendCachedResponse();
 			}
 		}
@@ -296,6 +301,9 @@ sub bodyCB {
 				&& !$self->{'headers'}->{'ETag'}
 			) {
 				$no_cache = 1;
+				$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
+					$self->{'url'},
+				);
 			}
 			
 			if ( defined $expires && $expires > 0) {
@@ -306,6 +314,11 @@ sub bodyCB {
 			if ( !$no_cache ) {
 				$data->{'_expires'} = $expires;
 				$cache->set( $self->{'url'}, $data, $expires );
+				
+				$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
+					$self->{'url'},
+					$expires,
+				);
 			}
 		}
 

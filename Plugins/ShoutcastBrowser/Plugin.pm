@@ -10,7 +10,8 @@ use Slim::Formats::XML;
 use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
 
-my $FEED = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
+my $FEED   = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
+my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.xml';
 
 sub enabled {
 	return ($::VERSION ge '6.1');
@@ -85,7 +86,12 @@ sub webPages {
 
 	my %pages = ( 
 		'index.html' => sub {
-			Slim::Web::XMLBrowser->handleWebIndex( $FEED, $title, @_ );
+			Slim::Web::XMLBrowser->handleWebIndex( {
+				feed   => $FEED,
+				title  => $title,
+				search => $SEARCH, 
+				args   => \@_
+			} );
 		},
 	);
 	

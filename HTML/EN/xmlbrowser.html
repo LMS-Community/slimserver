@@ -1,9 +1,14 @@
+[% IF query %]
+	[%# Add the search query to each link if available %]
+	[% searchquery = 'query=' _ query _ '&amp;' %]
+[% END %]
+
 [% FILTER null %]
 [% pageicon = 'RADIO'; noSpacer = NOT streaminfo; %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="index.html?player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
+			<a href="index.html?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -16,8 +21,8 @@
 
 			[% IF streaminfo %]
 			<div id="songInfoHeader">
-				[% WRAPPER playlink %]href="index.html?action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
-				[% WRAPPER addlink %]href="index.html?action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+				[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
 			</div>
 			
 			<div class="songInfo">
@@ -80,6 +85,14 @@
 			</div>
 			[% END %]
 			
+			[% IF search %]
+				<form id="searchForm" name="searchForm" method="GET">
+					<input type="text" id="query" name="query" size="40" value="[% query %]"/>
+					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+					<input type="hidden" value="[% player %]" name="player">
+				</form>
+			[% END %]
+			
 			[%- odd = 1 %]
 			[%- IF items -%]
 				[% IF hasPagebar %]
@@ -89,8 +102,8 @@
 				[%- WRAPPER contentcontainer %]
 					[% IF itemsHaveAudio %]
 						[%- BLOCK allcontrol -%]
-							[% WRAPPER playlink %]href="index.html?action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
-							[% WRAPPER addlink %]href="index.html?action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+							[% WRAPPER playlink %]href="index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+							[% WRAPPER addlink %]href="index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
 						[%- END %]
 						[%- WRAPPER contentitem controls = 'allcontrol' %]
 							[% "ALL_SONGS" | string %]
@@ -100,14 +113,14 @@
 					[%- FOREACH item = items %]
 						[%- BLOCK gencontrol -%]
 							[% IF item.type == 'audio' || item.enclosure %]
-								[% WRAPPER playlink %]href="index.html?action=play&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
-								[% WRAPPER addlink %]href="index.html?action=add&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+								[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+								[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 							[% ELSE %]
-								[%- WRAPPER descendlink %]href="index.html?index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[%- END %]
+								[%- WRAPPER descendlink %]href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[%- END %]
 							[% END %]
 						[%- END %]
 						[%- WRAPPER contentitem controls = 'gencontrol' %]
-							<a href="index.html?index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
+							<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
 						[%- END %]
 						[%- odd = (not odd) %]
 					[%- END %]
