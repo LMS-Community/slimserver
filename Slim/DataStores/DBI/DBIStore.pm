@@ -629,7 +629,7 @@ sub updateOrCreate {
 		# Force a re-read if requested.
 		# But not for remote / non-audio files.
 		# 
-		# Bug: 2335 - readTags is set in Slim::Formats::Parse - when
+		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
 		# we create/update a cue sheet to have a CT of 'cur'
 		if ($readTags && $track->audio && !$track->remote && $attributeHash->{'CONTENT_TYPE'} ne 'cur') {
 
@@ -1796,6 +1796,14 @@ sub _postCheckAttributes {
 			if ($checkDisc) {
 
 				$search->{'disc'} = $disc;
+
+			} elsif ($discc && $discc > 1) {
+
+				# If we're not checking discs - ie: we're in
+				# groupdiscs mode, check discc if it exists,
+				# in the case where there are multiple albums
+				# of the same name by the same artist. bug3254
+				$search->{'discc'} = $discc;
 			}
 
 			# If we have a compilation bit set - use that instead
