@@ -23,8 +23,10 @@ sub initPlugin {
 #        |  |  |has Tags
 #        |  |  |  |Function to call
 #        C  Q  T  F
-    Slim::Control::Request::addDispatch(['lma', '_index', '_quantity'],
+    Slim::Control::Request::addDispatch(['lma', 'items', '_index', '_quantity'],
         [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['lma', 'playlist', '_method' ],
+		[1, 1, 1, \&cliQuery]);
 
 	Slim::Buttons::Common::addMode('PLUGIN.LMA', getFunctions(), \&setMode);
 }

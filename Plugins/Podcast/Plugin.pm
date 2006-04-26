@@ -55,8 +55,10 @@ sub initPlugin {
 #        |  |  |has Tags
 #        |  |  |  |Function to call
 #        C  Q  T  F
-    Slim::Control::Request::addDispatch(['podcast', '_index', '_quantity'],
+    Slim::Control::Request::addDispatch(['podcast', 'items', '_index', '_quantity'],
         [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['podcast', 'playlist', '_method' ],
+		[1, 1, 1, \&cliQuery]);
 
 
 	# No prefs set or we've had a version change and they weren't modified, 

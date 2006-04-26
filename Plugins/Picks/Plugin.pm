@@ -30,8 +30,10 @@ sub initPlugin {
 #        |  |  |has Tags
 #        |  |  |  |Function to call
 #        C  Q  T  F
-    Slim::Control::Request::addDispatch(['picks', '_index', '_quantity'],
+    Slim::Control::Request::addDispatch(['picks', 'items', '_index', '_quantity'],
         [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['picks', 'playlist', '_method' ],
+		[1, 1, 1, \&cliQuery]);
 
 }
 

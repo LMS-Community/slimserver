@@ -643,19 +643,20 @@ sub cliQuery {
 	
 	$::d_plugins && msg("XMLBrowser: cliQuery()\n");
 
-	$request->setStatusProcessing();
-
 	# check this is the correct query.
-	if ($request->isNotQuery([[$query]])) {
+	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
+
+	$request->setStatusProcessing();
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		_cliQuery_done( $feed, {
 			'request' => $request,
-			'url'   => $feed->{'url'},
+			'url'     => $feed->{'url'},
+			'query'   => $query
 		} );
 		return;
 	}
@@ -666,22 +667,26 @@ sub cliQuery {
 		{
 			'request' => $request,
 			'url'     => $feed,
+			'query'   => $query
 		}
 	);
 }
 
 sub _cliQuery_done {
 	my ( $feed, $params ) = @_;
-	
-	my $url     = $params->{'url'};
-	my $request = $params->{'request'};
 
 	$::d_plugins && msg("XMLBrowser: _cliQuery_done()\n");
 
-	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	my $search   = $request->getParam('search');
+	my $request = $params->{'request'};
+	my $query   = $params->{'query'};
+
+	my $isItemQuery = my $isPlaylistCmd = 0;
+	if ($request->isQuery([[$query], ['playlist']])) {
+		$isPlaylistCmd = 1;
+	}
+	elsif ($request->isQuery([[$query], ['items']])) {
+		$isItemQuery = 1;
+	}
 
 	# select the proper list of items
 	my @index = split /\./, $request->getParam('item_id');
@@ -699,8 +704,6 @@ sub _cliQuery_done {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
-				$request->setStatusProcessing();
-
 				Slim::Formats::XML->getFeedAsync(
 					\&_cliQuerySubFeed_done,
 					\&_cliQuery_error,
@@ -710,13 +713,14 @@ sub _cliQuery_done {
 						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 						'currentIndex' => \@crumbIndex,
 						'request'      => $request,
+						'query'        => $query
 					},
 				);
 				return;
 			}
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
-			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
+			if ( $isItemQuery && $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
 				$request->addResult('id', join '.', @index);
 				
 				foreach my $data (keys %{$subFeed}) {
@@ -736,64 +740,111 @@ sub _cliQuery_done {
 						$request->addResult($data, $subFeed->{$data});
 					}
 				}
-
 			}
 		}
 	}
-	
-	# allow searching in the name field
-	if ($search && @{$subFeed->{'items'}}) {
-		my @found = ();
-		my $i = 0;
-		for my $item ( @{$subFeed->{'items'}} ) {
-			if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i) {
-				$item->{'_slim_id'} = $i;
-				push @found, $item;
+
+	if ($isPlaylistCmd) {
+		$::d_plugins && msg("XMLBrowser: _cliQuery_done() - play an item\n");
+
+		# get our parameters
+		my $client = $request->client();
+		my $method = $request->getParam('_method');
+
+		if ($client && $method =~ /^(add|play|insert)$/i
+			&& (defined $subFeed->{'url'} || defined $subFeed->{'enclosure'})
+			&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})) {
+
+			my $title = $subFeed->{'name'} || $subFeed->{'title'};
+			my $url   = $subFeed->{'url'};
+
+			# Podcast enclosures
+			if ( my $enc = $subFeed->{'enclosure'} ) {
+				$url = $enc->{'url'};
 			}
-			$i++;
+
+			if ( $url ) {
+				$::d_plugins && msg("XMLBrowser: $method $url\n");
+			
+				Slim::Music::Info::setTitle( $url, $title );
+			
+				$client->execute([ 'playlist', 'clear' ]) if ($method =~ /play/i);
+				$client->execute([ 'playlist', $method, $url ]);
+			}
 		}
+	}	
+
+	elsif ($isItemQuery) {
+		$::d_plugins && msg("XMLBrowser: _cliQuery_done() - get items\n");
+
+		# get our parameters
+		my $index    = $request->getParam('_index');
+		my $quantity = $request->getParam('_quantity');
+		my $search   = $request->getParam('search');
+	
+		# allow searching in the name field
+		if ($search && @{$subFeed->{'items'}}) {
+			my @found = ();
+			my $i = 0;
+			for my $item ( @{$subFeed->{'items'}} ) {
+				if ($item->{'name'} =~ /$search/i || $item->{'title'} =~ /$search/i) {
+					$item->{'_slim_id'} = $i;
+					push @found, $item;
+				}
+				$i++;
+			}
+			
+			$subFeed->{'items'} = \@found;
+		}
+	
+		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
-		$subFeed->{'items'} = \@found;
-	}
-
-	my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
+		# only add item count if there are any items to add
+		if ($count) {	
+			$request->addResult('count', $count);
+		
+			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+		
+			my $loopname = '@loop';
+			my $cnt = 0;
+			my $haveAudio = 0;
+		
+			if ($valid) {
+				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+					$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
 	
-	# only add item count if there are any items to add
-	if ($count) {	
-		$request->addResult('count', $count);
-	
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-	
-		my $loopname = '@loop';
-		my $cnt = 0;
-	
-		if ($valid) {
-			for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
-				$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
-
-				foreach my $data (keys %{$item}) {
-					if (ref($item->{$data}) eq 'ARRAY') {
-						if (scalar @{$item->{$data}}) {
-							$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}});
-						}
-					}
-					elsif ($data =~ /enclosure/i && defined $item->{$data}) {
-						foreach my $enclosuredata (keys %{$item->{$data}}) {
-							if ($item->{$data}->{$enclosuredata}) {
-								$request->addResultLoop($loopname, $cnt, $data . '_' . $enclosuredata, $item->{$data}->{$enclosuredata});
+					foreach my $data (keys %{$item}) {
+						if (ref($item->{$data}) eq 'ARRAY') {
+							if (scalar @{$item->{$data}}) {
+								$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}});
 							}
 						}
+						elsif ($data =~ /enclosure/i && defined $item->{$data}) {
+							foreach my $enclosuredata (keys %{$item->{$data}}) {
+								if ($item->{$data}->{$enclosuredata}) {
+									$request->addResultLoop($loopname, $cnt, $data . '_' . $enclosuredata, $item->{$data}->{$enclosuredata});
+								}
+							}
+						}
+						elsif ($item->{$data}) {
+							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
+						}
 					}
-					elsif ($item->{$data}) {
-						$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
+	
+					# Check if any of our items contain audio, so we can display an
+					# 'All Songs' link
+					if ( $item->{'type'} eq 'audio' || $item->{'enclosure'} ) {
+						$haveAudio++;
 					}
+					
+					$cnt++;
 				}
-				
-				$cnt++;
 			}
-		}			
+			
+			$request->addResult('itemshaveaudio', $haveAudio) if ($haveAudio);
+		}
 	}
-
+	
 	$request->setStatusDone();
 }
 
