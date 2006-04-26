@@ -135,6 +135,10 @@ sub gotPlaylist {
 	for my $item (@{$feed->{'items'}}) {
 
 		push @urls, $item->{'url'};
+		Slim::Music::Info::setTitle( 
+			$item->{'url'}, 
+			$item->{'name'} || $item->{'title'}
+		);
 	}
 
 	$client->execute(['playlist', 'loadtracks', 'listref', \@urls]);
@@ -160,6 +164,11 @@ sub gotRSS {
 			# play all enclosures...
 			'onPlay'     => sub {
 				my $client = shift;
+				
+				Slim::Music::Info::setTitle( 
+					$client->param('url'),
+					$client->param('feed')->{'title'},
+				);
 
 				# play this feed as a playlist
 				$client->execute(
@@ -171,6 +180,11 @@ sub gotRSS {
 
 			'onAdd'      => sub {
 				my $client = shift;
+				
+				Slim::Music::Info::setTitle( 
+					$client->param('url'),
+					$client->param('feed')->{'title'},
+				);				
 
 				# addthis feed as a playlist
 				$client->execute(
@@ -398,7 +412,7 @@ sub _breakItemIntoLines {
 		my $newline = $curline . ' ' . $1;
 
 		if ($client->measureText($newline, 2) > $client->displayWidth) {
-			push @lines, trim($curline);
+			push @lines, Slim::Formats::XML::trim($curline);
 			$curline = $1;
 		} else {
 			$curline = $newline;
@@ -406,7 +420,7 @@ sub _breakItemIntoLines {
 	}
 
 	if ($curline) {
-		push @lines, trim($curline);
+		push @lines, Slim::Formats::XML::trim($curline);
 	}
 
 	return ($curline, @lines);
@@ -576,6 +590,8 @@ sub playItem {
 	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
 
 	if ($type eq 'audio') {
+		
+		Slim::Music::Info::setTitle( $url, $title );
 
 		$client->execute([ 'playlist', $action, $url, $title ]);
 
@@ -591,8 +607,6 @@ sub playItem {
 		}
 
 		$client->showBriefly($client->string($string), $title);
-
-		Slim::Music::Info::setCurrentTitle($url, $title);
 
 	} elsif ($type eq 'playlist') {
 
@@ -612,11 +626,11 @@ sub playItem {
 			},
 		);
 
-	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url ne 'unk'))) {
+	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url) ne 'unk')) {
+		
+		Slim::Music::Info::setTitle( $url, $title );
 		
 		$client->execute([ 'playlist', $action, $url, $title ]);
-
-		Slim::Music::Info::setCurrentTitle($url, $title);
 
 	} else {
 
