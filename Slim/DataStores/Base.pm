@@ -646,7 +646,7 @@ sub init {
 					$findCriteria->{'contributor.role'} = $roles;
 				}
 
-				if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !$findCriteria->{'genre'}) {
+				if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 					$findCriteria->{'album.compilation'} = 0;
 				}

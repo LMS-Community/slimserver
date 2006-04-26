@@ -57,7 +57,6 @@ sub browsedb {
 
 	my $itemnumber = 0;
 	my $lastAnchor = '';
-	my $descend;
 	my %names = ();
 	my @attrs = ();
 	my %findCriteria = ();	
@@ -198,14 +197,21 @@ sub browsedb {
 	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
 	my $items     = &{$levelInfo->{'find'}}($ds, $levels[$level], \%findCriteria, undef, $sort);
 
+	my $descend   = ($level >= $maxLevel) ? undef : 'true';
+
+	my ($start, $end);
+
+	# Don't bother with idle streams if we only have SB2 clients
+	my $needIdleStreams = Slim::Player::Client::needIdleStreams();
+
 	if ($items && scalar(@$items)) {
 
-		my ($start, $end);
-
-		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
+		main::idleStreams() if $needIdleStreams;
 
 		my $alphaitems;
+
 		if (!defined $params->{'nopagebar'} && &{$levelInfo->{'alphaPageBar'}}(\%findCriteria, $sort)) {
+
 			$alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_, $sort), @$items ];
 		}
 
@@ -219,102 +225,115 @@ sub browsedb {
 		});
 		
 		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
-		$end = $params->{'pageinfo'}{'enditem'};
-		
-		$descend = ($level >= $maxLevel) ? undef : 'true';
+		$end   = $params->{'pageinfo'}{'enditem'};
+	}	
 
-		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
+	if ($items && scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
 
-			my $nextLevelInfo;
+		main::idleStreams() if $needIdleStreams;
 
-			if ($descend) {
-				$nextLevelInfo = $fieldInfo->{ $levels[$level+1] } || $fieldInfo->{'default'};
-			} else {
-				$nextLevelInfo = $fieldInfo->{'track'};
-			}
+		my $nextLevelInfo;
 
-			if ($level == 0) {
+		if ($descend) {
+			$nextLevelInfo = $fieldInfo->{ $levels[$level+1] } || $fieldInfo->{'default'};
+		} else {
+			$nextLevelInfo = $fieldInfo->{'track'};
+		}
 
-				# Sometimes we want a special transform for
-				# the 'All' case - such as New Music.
-				#
-				# Otherwise we might have a regular descend
-				# transform, such as the artwork case.
-				if ($levelInfo->{'allTransform'}) {
+		if ($level == 0) {
 
-					 $list_form{'hierarchy'} = $levelInfo->{'allTransform'};
+			# Sometimes we want a special transform for
+			# the 'All' case - such as New Music.
+			#
+			# Otherwise we might have a regular descend
+			# transform, such as the artwork case.
+			if ($levelInfo->{'allTransform'}) {
 
-				} elsif ($levelInfo->{'descendTransform'}) {
+				 $list_form{'hierarchy'} = $levelInfo->{'allTransform'};
 
-					 $list_form{'hierarchy'} = $levelInfo->{'descendTransform'};
+			} elsif ($levelInfo->{'descendTransform'}) {
 
-				} else {
-
-					 $list_form{'hierarchy'} = join(',', @levels[1..$#levels]);
-				}
-
-				$list_form{'level'} = 0;
+				 $list_form{'hierarchy'} = $levelInfo->{'descendTransform'};
 
 			} else {
 
-				$list_form{'hierarchy'}	= $hierarchy;
-				$list_form{'level'}	= $descend ? $level+1 : $level;
+				 $list_form{'hierarchy'} = join(',', @levels[1..$#levels]);
 			}
 
-			if ($nextLevelInfo->{'allTitle'}) {
-				$list_form{'text'} = string($nextLevelInfo->{'allTitle'});
-			}
+			$list_form{'level'} = 0;
 
-			$list_form{'descend'}      = 1;
-			$list_form{'hreftype'}     = 'browseDb';
-			$list_form{'player'}       = $player;
-			$list_form{'sort'}         = $sort;
-			$list_form{'odd'}          = ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
-			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+		} else {
 
-			# For some queries - such as New Music - we want to
-			# get the list of tracks to play from the fieldInfo
-			if ($levels[$level] eq 'age' && $levelInfo->{'allTransform'}) {
+			$list_form{'hierarchy'}	= $hierarchy;
+			$list_form{'level'}	= $descend ? $level+1 : $level;
+		}
 
-				$list_form{'attributes'} .= sprintf('&fieldInfo=%s', $levelInfo->{'allTransform'});
-			}
+		if ($nextLevelInfo->{'allTitle'}) {
+			$list_form{'text'} = string($nextLevelInfo->{'allTitle'});
+		}
+
+		$list_form{'descend'}      = 1;
+		$list_form{'hreftype'}     = 'browseDb';
+		$list_form{'player'}       = $player;
+		$list_form{'sort'}         = $sort;
+		$list_form{'odd'}          = ($itemnumber + 1) % 2;
+		$list_form{'skinOverride'} = $params->{'skinOverride'};
+		$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+
+		# For some queries - such as New Music - we want to
+		# get the list of tracks to play from the fieldInfo
+		if ($levels[$level] eq 'age' && $levelInfo->{'allTransform'}) {
+
+			$list_form{'attributes'} .= sprintf('&fieldInfo=%s', $levelInfo->{'allTransform'});
+		}
+
+		$itemnumber++;
+
+		push @{$params->{'browse_items'}}, \%list_form;
+	}
+
+	# Dynamic VA/Compilation listing
+	if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+		my %list_form  = '';
+		my $vaObj      = $ds->variousArtistsObject;
+		my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
+
+		# Only show VA item if there's valid listings below
+		# the current level.
+		my %find = map { split /=/ } @attrs, 'album.compilation=1';
+
+		main::idleStreams() if $needIdleStreams;
+
+		if ($ds->count('album', \%find)) {
+
+			$list_form{'text'}        = $vaObj->name;
+			$list_form{'descend'}     = $descend;
+			$list_form{'hreftype'}    = 'browseDb';
+			$list_form{'hierarchy'}   = $hierarchy;
+			$list_form{'level'}       = $level + 1;
+			$list_form{'sort'}        = $sort;
+			$list_form{'odd'}         = ($itemnumber + 1) % 2;
+			$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
+
+			push @{$params->{'browse_items'}}, \%list_form;
 
 			$itemnumber++;
 
-			push @{$params->{'browse_items'}}, \%list_form;
+			main::idleStreams() if $needIdleStreams;
+		}
+	}
+
+	if ($items && scalar(@$items)) {
+
+		# Sanity check - Bug: 3053
+		if ($start > scalar @$items || $start < 0) {
+			$start = 0;
 		}
 
-		# Dynamic VA/Compilation listing
-		if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
-
-			my %list_form  = '';
-			my $vaObj      = $ds->variousArtistsObject;
-			my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
-
-			# Only show VA item if there's valid listings below
-			# the current level.
-			my %find = map { split /=/ } @attrs, 'album.compilation=1';
-
-			if ($ds->count('album', \%find)) {
-
-				$list_form{'text'}        = $vaObj->name;
-				$list_form{'descend'}     = $descend;
-				$list_form{'hreftype'}    = 'browseDb';
-				$list_form{'hierarchy'}   = $hierarchy;
-				$list_form{'level'}       = $level + 1;
-				$list_form{'sort'}        = $sort;
-				$list_form{'odd'}         = ($itemnumber + 1) % 2;
-				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
-
-				push @{$params->{'browse_items'}}, \%list_form;
-
-				$itemnumber++;
-			}
+		if ($end > scalar @$items || $end < 0) {
+			$end = scalar(@$items) - 1;
 		}
-
-		# Don't bother with idle streams if we only have SB2 clients
-		my $needIdleStreams = Slim::Player::Client::needIdleStreams();
 
 		for my $item ( @{$items}[$start..$end] ) {
 
@@ -371,9 +390,7 @@ sub browsedb {
 
 			push @{$params->{'browse_items'}}, \%list_form;
 
-			if ($needIdleStreams) {
-				main::idleStreams();
-			}
+			main::idleStreams() if $needIdleStreams;
 		}
 
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
@@ -388,7 +405,7 @@ sub browsedb {
 	}
 
 	# Give players a bit of time.
-	main::idleStreams();
+	main::idleStreams() if $needIdleStreams;
 
 	$params->{'descend'} = $descend;
 
