@@ -5539,31 +5539,6 @@ SETUP_PERSISTPLAYLISTS_0
 	SV	Behåll inte låtlistor
 	ZH_CN	不要记住播放表
 
-SETUP_COMMONALBUMTITLES
-	CS	Časté tituly alb
-	DE	Geläufige Albumtitel
-	EN	Common Album Titles
-	ES	Títulos Comunes de Álbumes
-	IT	Titoli comuni di album
-	NL	Algemene albumtitels
-	ZH_CN	共同的乐谱帖标题
-
-SETUP_COMMONALBUMTITLES_TOGGLE
-	DE	Eine Liste von geläufigen Albumtiteln definieren
-	EN	Specifiy a list of Common Album Titles
-	ES	Especificar una lista de Nombres Comunes de Álbumes
-	IT	Specifica una lista di titoli comuni di album
-	NL	Geef een lijst op van algemene albumtitels
-
-SETUP_COMMONALBUMTITLES_DESC
-	CS	Standardně SlimServer seskupuje skladby ze stejného alba do jedné skupiny, přestože jsou skladby umístěné v různých adresářích. Pro velice často používané názvy alb, jako například "Greatest Hits", je ještě vyždadováno, aby se pro skladby jednoho alba shodovalo jmého interpreta. Seznam níže reprezentuje skupinu utakovýchto názvů, kde bude tato dodatečné kontrola uplatňována.
-	DE	Meist gruppiert SlimServer Lieder mit dem gleichen Albumnamen auch dann, wenn sie in unterschiedlichen Ordnern liegen. Für sehr geläufige Albentitel wie z.B. "Greatest Hits" muss zusätzlich der Interpret mit einbezogen werden. Diese Liste definiert die Albentitel, für welche SlimServer auch den Interpreten berücksichtigen soll.
-	EN	In most cases, SlimServer groups songs from the same album together even if the songs are in different folders. For very common album titles, such as "Greatest Hits", it additionally requires a match on artist name to correctly group tracks from the same album. The list below represents the album titles for which SlimServer requires an artist match for album grouping.
-	ES	En la mayoría de los casos, SlimServer agrupa las canciones del mismo álbum, incluso si las canciones estan en carpetas diferentes. Para títulos muy comunes de álbumes, como "Grandes Exitos", se requiere además que concuerde al nombre del artista, para que la agrupación sea correcta con las canciones del mismo álbum. La lista debajo representa los títulos de álbumes para los cuales SlimServer requerirá que coincida el artista para agrupar el álbum.
-	IT	In molti casi, lo SlimServer raggruppa assieme i brani di uno stesso album anche se posizionati in cartelle diverse. Per titoli di album molto comuni, come "Il meglio di", in aggiunta richiede la corrispondenza con il nome dell'artista per raggruppare correttamente le tracce dello stesso album. La lista seguente rappresenta i titoli degli album per i quali lo SlimServer  richiede anche la corrispondenza dell'artista per raggrupparli.
-	NL	In de meeste gevallen zal de SlimServer liedjes groeperen van hetzelfde album, ook als de liedjes in verschillende folders staan. Voor zeer algemene albumtitels zoals  "Greatest Hits" is een aanvullende overeenkomst nodig op de artiestnaam om de liedjes correct te groeperen. In de lijst hieronder staan albumtitels waarvoor SlimServer ook een overeenkomst op de artiestnaam nodig heeft.
-	ZH_CN	在一般情况下，SlimServer会将属于共同乐谱帖但保存在不同文件夹里的的歌曲集合在一起。对于一些较常见的乐谱帖标题，譬如＂最佳精选＂，它会进一步针对艺人名字进行匹配来提高准确性。以下为SlimServer决定对乐谱帖标题进行进一步艺人名匹配的标题名。
-
 SETUP_RESHUFFLEONREPEAT
 	CS	Zamíchat při opakování
 	DE	Erneutes Mischen bei Wiederholung

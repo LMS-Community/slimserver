@@ -1566,7 +1566,7 @@ sub initSetupConfig {
 	,'BEHAVIOR_SETTINGS' => {
 		'title' => string('BEHAVIOR_SETTINGS'),
 		'parent' => 'SERVER_SETTINGS',
-		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default CommonAlbumTitles)],
+		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default)],
 		'Groups' => {
 	
 			'Default' => {
@@ -1579,16 +1579,6 @@ sub initSetupConfig {
 			'DisplayInArtists' => {
 				'PrefOrder' => [qw(composerInArtists conductorInArtists bandInArtists)],
 				'GroupHead' => 'SETUP_COMPOSERINARTISTS',
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefSub' => 1,
-				'GroupSub' => 1,
-				'GroupLine' => 1,
-				'Suppress_PrefLine' => 1,
-			},
-
-			'CommonAlbumTitles' => {
-				'PrefOrder' => [qw(commonAlbumTitlesToggle commonAlbumTitles)],
-				'GroupHead' => 'SETUP_COMMONALBUMTITLES',
 				'Suppress_PrefHead' => 1,
 				'Suppress_PrefSub' => 1,
 				'GroupSub' => 1,
@@ -1750,22 +1740,6 @@ sub initSetupConfig {
 					'0' => 'SETUP_GROUPDISCS_0',
 				},
 			 },
-
-			'commonAlbumTitlesToggle' => {
-				'validate'      => \&Slim::Utils::Validate::acceptAll,
-				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => 'SETUP_COMMONALBUMTITLES_TOGGLE',
-			},
-
-			'commonAlbumTitles'	=> {
-				'isArray'          => 1,
-				'arrayAddExtra'    => 1,
-				'arrayDeleteNull'  => 1,
-				'arrayDeleteValue' => '',
-				'arrayBasicValue'  => 0,
-				'PrefSize'         => 'large',
-				'inputTemplate'    => 'setup_input_array_txt.html',
-			}
 		}
 	} #end of setup{'behavior'} hash
 

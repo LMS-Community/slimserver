@@ -39,9 +39,6 @@ use Slim::Utils::Unicode;
 # Save the persistant DB cache on an interval
 my $DB_SAVE_INTERVAL = 30;
 
-# cached value of commonAlbumTitles pref
-our $common_albums;
-
 # hold the current cleanup state
 our $cleanupIds;
 our $cleanupStage;
@@ -114,10 +111,6 @@ sub new {
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	
 	$self->_commitDBTimer();
-
-	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
-
-	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 
 	return $self;
 }
@@ -1820,12 +1813,7 @@ sub _postCheckAttributes {
 				# Check if the album name is one of the "common album names"
 				# we've identified in prefs. If so, we require a match on
 				# both album name and primary artist name.
-				my $commonAlbumTitlesToggle = Slim::Utils::Prefs::get('commonAlbumTitlesToggle');
-
-				if ($commonAlbumTitlesToggle && (grep $album =~ m/^$_$/i, @$common_albums)) {
-
-					$search->{'contributor'} = $contributor->id;
-				}
+				$search->{'contributor'} = $contributor->id;
 			}
 
 			($albumObj) = eval { Slim::DataStores::DBI::Album->search($search) };
@@ -2018,22 +2006,6 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
-}
-
-# This is a callback that is run when the user changes the common album titles
-# preference in settings.
-sub commonAlbumTitlesChanged {
-	my ($value, $key, $index) = @_;
-
-	# Add the new value, or splice it out.
-	if ($value) {
-
-		$common_albums->[$index] = $value;
-
-	} else {
-
-		splice @$common_albums, $index, 1;
-	}
 }
 
 1;
