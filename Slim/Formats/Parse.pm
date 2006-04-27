@@ -23,8 +23,8 @@ sub registerParser {
 sub parseList {
 
 	msg("Warning! - Slim::Formats::Parse::parseList is deprecated!\n");
-	msg("Please update you call to be Slim::Formats::Playlists->parseList()\n");
-	bt()
+	msg("Please update your call to be Slim::Formats::Playlists->parseList()\n");
+	bt();
 
 	return Slim::Formats::Playlists->parseList(@_);
 }
@@ -32,8 +32,8 @@ sub parseList {
 sub writeList {
 
 	msg("Warning! - Slim::Formats::Parse::writeList is deprecated!\n");
-	msg("Please update you call to be Slim::Formats::Playlists->writeList()\n");
-	bt()
+	msg("Please update your call to be Slim::Formats::Playlists->writeList()\n");
+	bt();
 
 	return Slim::Formats::Playlists->writeList(@_);
 }
@@ -41,32 +41,32 @@ sub writeList {
 sub _updateMetaData {
 
 	msg("Warning! - Slim::Formats::Parse::_updateMetaData is deprecated!\n");
-	msg("Please update you code to inherit from Slim::Formats::Playlists::Base\n");
-	bt()
+	msg("Please update your code to inherit from Slim::Formats::Playlists::Base\n");
+	bt();
 
 	return Slim::Formats::Playlists::Base->_updateMetaData(@_);
 }
 
 sub readM3U {
 	msg("Warning! - Slim::Formats::Parse::readM3U is deprecated!\n");
-	msg("Please update you code to call Slim::Formats::Playlists::M3U->read()\n");
-	bt()
+	msg("Please update your code to call Slim::Formats::Playlists::M3U->read()\n");
+	bt();
 
 	return Slim::Formats::Playlists::M3U->read(@_);
 }
 
 sub readPLS {
 	msg("Warning! - Slim::Formats::Parse::readPLS is deprecated!\n");
-	msg("Please update you code to call Slim::Formats::Playlists::PLS->read()\n");
-	bt()
+	msg("Please update your code to call Slim::Formats::Playlists::PLS->read()\n");
+	bt();
 
 	return Slim::Formats::Playlists::PLS->read(@_);
 }
 
 sub writeM3U {
 	msg("Warning! - Slim::Formats::Parse::writeM3U is deprecated!\n");
-	msg("Please update you code to call Slim::Formats::Playlists::M3U->write()\n");
-	bt()
+	msg("Please update your code to call Slim::Formats::Playlists::M3U->write()\n");
+	bt();
 
 	return Slim::Formats::Playlists::M3U->write(@_);
 }
