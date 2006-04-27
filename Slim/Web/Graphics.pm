@@ -6,17 +6,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 
-
-# art resizing support by using GD, requires JPEG support built in
-my $canUseGD = eval {
-	require GD;
-	if (GD::Image->can('jpeg')) {
-		return 1;
-	} else {
-		return 0;
-	}
-};
-
 sub processCoverArtRequest {
 	#TODO: memoize thumb resizing, if necessary 
 
@@ -84,7 +73,7 @@ sub processCoverArtRequest {
 	$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
 	
 
-	if ($canUseGD){
+	if (serverResizesArt()){
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
@@ -210,6 +199,21 @@ sub processCoverArtRequest {
 	return ($body, $mtime, $inode, $size, $contentType);
 }
 
+{
+	#art resizing support by using GD, requires JPEG support built in
+	my $canUseGD = eval {
+		require GD;
+		if (GD::Image->can('jpeg')) {
+			return 1;
+		} else {
+			return 0;
+		}
+	};
+
+	sub serverResizesArt(){
+		return $canUseGD;
+	}
+}
 
 sub getResizeCoords {
 	my $sourceImageWidth = shift;

@@ -671,6 +671,10 @@ sub generateHTTPResponse {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'noserver'} = 1   if $::noserver;
 
+	if (Slim::Web::Graphics::serverResizesArt()) {
+		$params->{'serverResizesArt'} = 1;
+	}
+
 	my $path = $params->{"path"};
 	my $type = Slim::Music::Info::typeFromSuffix($path, 'htm');
 
