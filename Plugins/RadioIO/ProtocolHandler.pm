@@ -17,7 +17,7 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use Scalar::Util qw(blessed);
 
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists;
 use Slim::Player::Source;
 
 sub new {
@@ -38,7 +38,7 @@ sub new {
 		'client' => $client
 	}) || return undef;
 	
-	my @items = Slim::Formats::Parse::parseList($pls, $sock);
+	my @items = Slim::Formats::Playlists->parseList($pls, $sock);
 
 	return undef unless scalar(@items);
 
@@ -71,7 +71,7 @@ sub parseDirectBody {
 
 	# Need to tell the parser that the playlist is in pls format.
 	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($url);
-	my @items = Slim::Formats::Parse::parseList($pls, $io);
+	my @items = Slim::Formats::Playlists->parseList($pls, $io);
 
 	return () unless scalar(@items);
 

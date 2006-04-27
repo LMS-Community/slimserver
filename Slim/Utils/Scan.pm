@@ -58,7 +58,7 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Networking::AsyncHTTP;
 use Slim::Player::ProtocolHandlers;
@@ -717,7 +717,7 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 
 		$::d_scan && msg("Scan::readList loading $playlisturl with base $playlist_base\n");
 
-		push @$listref, Slim::Formats::Parse::parseList(
+		push @$listref, Slim::Formats::Playlists->parseList(
 			$playlisturl, $playlist_filehandle, $playlist_base, $content_type
 		);
 

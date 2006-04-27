@@ -14,6 +14,7 @@ use Audio::WMA;
 use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
 
+use Slim::Formats::Playlists;
 use Slim::Player::Source;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
@@ -305,7 +306,7 @@ sub parseDirectBody {
 
 		$::d_directstream && msg("parseDirectBody: Treating [$url] as playlist.\n");
 
-		return Slim::Formats::Parse::parseList($url, $io);
+		return Slim::Formats::Playlists->parseList($url, $io);
 
 	} else {
 

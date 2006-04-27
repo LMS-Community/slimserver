@@ -84,6 +84,14 @@ sub init {
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',
 
+		# Playlist types
+		'asx' => 'Slim::Formats::Playlists::ASX',
+		'cue' => 'Slim::Formats::Playlists::CUE',
+		'm3u' => 'Slim::Formats::Playlists::M3U',
+		'pls' => 'Slim::Formats::Playlists::PLS',
+		'wpl' => 'Slim::Formats::Playlists::WPL',
+		'wax' => 'Slim::Formats::Playlists::ASX',
+
 		# Remote types
 		'http' => 'Slim::Formats::HTTP',
 		'mms'  => 'Slim::Formats::MMS',

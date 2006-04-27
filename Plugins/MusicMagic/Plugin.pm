@@ -11,7 +11,6 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
-use Slim::Formats::Parse;
 
 use Plugins::MusicMagic::Settings;
 

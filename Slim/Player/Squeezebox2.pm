@@ -20,6 +20,7 @@ use File::Spec::Functions qw(:ALL);
 use IO::Socket;
 use MIME::Base64;
 
+use Slim::Formats::Playlists;
 use Slim::Player::Player;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -842,7 +843,7 @@ sub directBodyFrame {
 			}
 			else {
 				my $io = IO::String->new($client->directBody());
-				@items = Slim::Formats::Parse::parseList($url, $io);
+				@items = Slim::Formats::Playlists->parseList($url, $io);
 			}
 	
 			if (@items && scalar(@items)) { 

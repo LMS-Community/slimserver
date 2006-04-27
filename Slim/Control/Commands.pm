@@ -527,7 +527,7 @@ sub playlistDeleteitemCommand {
 
 			} else {
 
-				$contents = [Slim::Formats::Parse::parseList($absitem, $playlist_filehandle, dirname($absitem))];
+				$contents = [Slim::Formats::Playlists->parseList($absitem, $playlist_filehandle, dirname($absitem))];
 			}
 		}
 
@@ -856,7 +856,7 @@ sub playlistXitemCommand {
 
 	} elsif ($cmd eq "resume" && Slim::Music::Info::isM3U($path)) {
 
-		$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U($path);
+		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
 					
 	if ($cmd =~ /^(insert|insertlist)$/) {
@@ -979,8 +979,8 @@ sub playlistXtracksCommand {
 
 		if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
 
-			unless  (Slim::Player::Playlist::shuffle($client)) {
-				$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
+			if (!Slim::Player::Playlist::shuffle($client)) {
+				$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $client->currentPlaylist->path );
 			}
 
 			# And set a callback so that we can

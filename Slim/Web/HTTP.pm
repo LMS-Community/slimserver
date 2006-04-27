@@ -29,6 +29,7 @@ use Tie::RegexpHash;
 use URI::Escape;
 use YAML qw(LoadFile);
 
+use Slim::Formats::Playlists::M3U;
 use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
@@ -851,7 +852,7 @@ sub generateHTTPResponse {
 		if (defined($client)) {
 
 			my $count = Slim::Player::Playlist::count($client) && do {
-				$$body = Slim::Formats::Parse::writeM3U(\@{Slim::Player::Playlist::playList($client)});
+				$$body = Slim::Formats::Playlists::M3U->write(\@{Slim::Player::Playlist::playList($client)});
 			};
 		}
 

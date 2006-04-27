@@ -22,7 +22,7 @@ use File::Basename;
 use IO::Seekable qw(SEEK_SET);
 use MIME::Base64 qw(decode_base64);
 
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists::CUE;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -110,7 +110,7 @@ sub getTag {
 
 	# get the tracks from the cuesheet - tell parseCUE that we're dealing
 	# with an embedded cue sheet.
-	my $tracks = Slim::Formats::Parse::parseCUE($cuesheet, dirname($file), 1);
+	my $tracks = Slim::Formats::Playlists::CUE->parse($cuesheet, dirname($file), 1);
 
 	# suck in metadata for all these tags
 	my $items = getSubFileTags($flac, $tracks);
@@ -145,7 +145,7 @@ sub getTag {
 		# for each track
 		_decodeUTF8($track);
 
-		Slim::Formats::Parse::processAnchor($track);
+		Slim::Formats::Playlists::CUE->processAnchor($track);
 
 		$ds->updateOrCreate({
 			'url'        => $track->{'URI'},
@@ -711,7 +711,7 @@ sub getCUEinVCs {
 
 	# we don't have a proper dir to send parseCUE(), but we already have urls,
 	# so we can just fake it. Tell parseCUE that we're an embedded cue sheet
-	my $metadata = Slim::Formats::Parse::parseCUE(\@cuesheet, "/BOGUS/PATH/", 1);
+	my $metadata = Slim::Formats::Playlists::CUE->parse(\@cuesheet, "/BOGUS/PATH/", 1);
 
 	# grab file info tags
 	# don't pass $metadata through addInfoTags() or it'll decodeUTF8 too many times

@@ -11,7 +11,7 @@ use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
 use Slim::Control::Command;
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists::M3U;
 use Slim::Player::Source;
 use Slim::Player::Sync;
 use Slim::Utils::Misc;
@@ -597,7 +597,7 @@ sub scheduleWriteOfPlaylist {
 					return 0;
 				}
 
-				Slim::Formats::Parse::writeM3U( 
+				Slim::Formats::Playlists::M3U->write( 
 					[ $playlistObj->tracks ],
 					undef,
 					$playlistObj->path,
@@ -637,7 +637,7 @@ sub newSongPlaylistCallback {
 
 	$::d_playlist && msg("Playlist: newSongPlaylistCallback() writeCurTrackForM3U()\n");
 
-	Slim::Formats::Parse::writeCurTrackForM3U(
+	Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
 		$playlist,
 		$request->getParam('reset') ? 0 : Slim::Player::Source::playingSongIndex($client)
 	);

@@ -11,7 +11,7 @@ use File::Spec::Functions;
 use Scalar::Util qw(blessed);
 
 use Slim::Control::Request;
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Player::Playlist;
 use Slim::Utils::Misc;
@@ -149,7 +149,7 @@ sub editplaylist {
 
 			$::d_playlist && msg("Writing out playlist to disk..\n");
 
-			Slim::Formats::Parse::writeList(\@items, undef, $playlist->url);
+			Slim::Formats::Playlists->writeList(\@items, undef, $playlist->url);
 		}
 
 		$ds->forceCommit;

@@ -29,13 +29,14 @@ BEGIN {
 }
 
 use Slim::Control::Request;
-use Slim::Utils::Misc;
-use Slim::Utils::Network;
-use Slim::Utils::OSDetect;
+use Slim::Formats::Playlists;
 use Slim::Player::Pipeline;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ReplayGain;
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::Misc;
+use Slim::Utils::Network;
+use Slim::Utils::OSDetect;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
@@ -1279,7 +1280,7 @@ sub openSong {
 					# than a stream.
 	
 					# parse out the list
-					my @items = Slim::Formats::Parse::parseList($fullpath, $sock);
+					my @items = Slim::Formats::Playlists->parseList($fullpath, $sock);
 
 					# hack to preserve the title of a song redirected through a playlist
 					if (scalar(@items) == 1 && $items[0] && defined($track->title)) {

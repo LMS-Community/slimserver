@@ -14,7 +14,7 @@ use Audio::WMA;
 use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
 
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
@@ -282,7 +282,7 @@ sub parseBody {
 
 	} else {
 
-		return Slim::Formats::Parse::parseList($url, $io, undef, $self->contentType);
+		return Slim::Formats::Playlists->parseList($url, $io, undef, $self->contentType);
 	}
 }
 
