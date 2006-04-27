@@ -257,7 +257,7 @@ function refreshUndock() {
 }
 
 function refreshPlaylist(newPlayer) {
-	
+	if (newPlayer == null) newPlayer = player;
 	try {
 		if (parent.playlist.location.host != '') {
 			// Putting a time-dependant string in the URL seems to be the only way to make Safari

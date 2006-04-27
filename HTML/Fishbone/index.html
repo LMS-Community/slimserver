@@ -11,6 +11,7 @@
 			}
 			else {
 				var cPlayer = getPlayer('SlimServer-player');
+				if (cPlayer == "") cPlayer = "=[% playerURI %]";
 			}
 			
 			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
