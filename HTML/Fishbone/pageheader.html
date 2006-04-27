@@ -98,7 +98,7 @@
 			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
 	</div>
 	<div id="serverlinks">
-		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this);document.location.reload(true);" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 		[% IF not nosetup && not noserver %]
 			<a href="[% webroot %]setup.html?page=SERVER_SETTINGS&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>

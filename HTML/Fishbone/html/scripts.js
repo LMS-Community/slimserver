@@ -233,8 +233,14 @@ function selectLink(lnk,reset) {
 		lnk.style.fontWeight='bold';
 		selectedLink=lnk;
 	}
-	if (reset) {
+	if (reset == 1) {
 		document.forms[0].browse.options[0].selected = "true";
+	} else {
+		for (var i=0;i < document.forms[0].browse.options.length; i++){
+			if (document.forms[0].browse.options[i] == reset) {
+				document.forms[0].browse.options[i].selected = "true";
+			}
+		}
 	}
 }
 
