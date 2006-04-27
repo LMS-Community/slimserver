@@ -144,7 +144,7 @@ sub write {
 	my $resumetrack  = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, \$string) || return;
+	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
 
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;

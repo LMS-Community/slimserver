@@ -89,7 +89,7 @@ sub write {
 	my $filename     = shift;
 
 	my $string = '';
-	my $output = _filehandleFromNameOrString($filename, \$string) || return;
+	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
 

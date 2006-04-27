@@ -131,7 +131,7 @@ sub write {
 
 	my $string;
 
-	my $output = _filehandleFromNameOrString($filename, \$string) || return;
+	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
 	print $output $xml;
 	close($output) if $filename;
 
