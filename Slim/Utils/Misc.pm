@@ -331,10 +331,6 @@ sub crackURL {
 	
 	$path = '/' unless $path;
 
-	if ( !$port ) {
-		$port = ( $string =~ /^https/i ) ? 443 : 80;
-	}
-	
 	$::d_files && msg("cracked: $string with [$host],[$port],[$path]\n");
 	$::d_files && $user && msg("   user: [$user]\n");
 	$::d_files && $password && msg("   password: [$password]\n");
