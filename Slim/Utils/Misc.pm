@@ -331,7 +331,7 @@ sub crackURL {
 	
 	$path = '/' unless $path;
 
-	$poort = 80 unless $port;
+	$port = 80 unless $port;
 
 	$::d_files && msg("cracked: $string with [$host],[$port],[$path]\n");
 	$::d_files && $user && msg("   user: [$user]\n");
