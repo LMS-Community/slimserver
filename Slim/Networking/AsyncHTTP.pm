@@ -330,9 +330,14 @@ sub format_request {
 		$host = ${*$self}{'httpasync_host'};
 	}
 
+	# pull out POST body
+	my $body;
+	if ( @_ % 2 ) {
+		$body = pop @_;
+	}
+
 	# more headers copied from Slim::Player::Protocol::HTTP
-	# Note this is not a hash because @_ may contain a single value if this is a POST request
-	my @headers = (
+	my %headers = (
 		'Host'          => $host,
 		'User-Agent'    => Slim::Utils::Misc::userAgentString(),
 		'Accept'        => "*/*",
@@ -341,8 +346,8 @@ sub format_request {
 		'Icy-Metadata'  => "1",
 		@_,
 	);
-
-	return $self->SUPER::format_request($method => $path, @headers);
+	
+	return $self->SUPER::format_request($method => $path, %headers, $body);
 }
 
 # don't use write_request.  Use write_request_async instead.
