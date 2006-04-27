@@ -670,7 +670,7 @@ sub setupUse {
 	);
 	my %setupPrefs = (
 		'moodlogic' => {
-			'validate' => \&Slim::Web::Setup::validateTrueFalse
+			'validate' => \&Slim::Utils::Validate::trueFalse
 			,'changeIntro' => ""
 			,'options' => {
 				'1' => string('USE_MOODLOGIC')
@@ -744,23 +744,23 @@ sub setupCategory {
 			}
 		,'Prefs' => {
 			'MoodLogicplaylistprefix' => {
-					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					'validate' => \&Slim::Utils::Validate::acceptAll
 					,'PrefSize' => 'large'
 				}
 			,'MoodLogicplaylistsuffix' => {
-					'validate' => \&Slim::Web::Setup::validateAcceptAll
+					'validate' => \&Slim::Utils::Validate::acceptAll
 					,'PrefSize' => 'large'
 				}
 			,'moodlogicscaninterval' => {
-					'validate' => \&Slim::Web::Setup::validateNumber
+					'validate' => \&Slim::Utils::Validate::number
 					,'validateArgs' => [0,undef,1000]
 				}
 			,'instantMixMax'	=> {
-					'validate' => \&Slim::Web::Setup::validateInt
+					'validate' => \&Slim::Utils::Validate::isInt
 					,'validateArgs' => [1,undef,1]
 				}
 			,'varietyCombo'	=> {
-					'validate' => \&Slim::Web::Setup::validateInt
+					'validate' => \&Slim::Utils::Validate::isInt
 					,'validateArgs' => [1,100,1,1]
 				}
 		}

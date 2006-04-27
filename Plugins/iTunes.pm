@@ -1087,7 +1087,7 @@ sub setupUse {
 
 		'itunes' => {
 
-			'validate' => \&Slim::Web::Setup::validateTrueFalse,
+			'validate' => \&Slim::Utils::Validate::trueFalse,
 			'changeIntro' => "",
 			'options' => {
 				'1' => string('USE_ITUNES'),
@@ -1176,23 +1176,23 @@ sub setupCategory {
 		'Prefs' => {
 
 			'itunesscaninterval' => {
-				'validate' => \&Slim::Web::Setup::validateNumber,
+				'validate' => \&Slim::Utils::Validate::number,
 				'validateArgs' => [0,undef,1000],
 			},
 
 			'iTunesplaylistprefix' => {
-				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large'
 			},
 
 			'iTunesplaylistsuffix' => {
-				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large'
 			},
 
 			'ignoredisableditunestracks' => {
 
-				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'options' => {
 					'1' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_1'),
 					'0' => string('SETUP_IGNOREDISABLEDITUNESTRACKS_0'),
@@ -1200,7 +1200,7 @@ sub setupCategory {
 			},
 
 			'itunes_library_xml_path' => {
-				'validate' => \&Slim::Web::Setup::validateIsFile,
+				'validate' => \&Slim::Utils::Validate::isFile,
 				'validateArgs' => [1],
 				'changeIntro' => string('SETUP_OK_USING'),
 				'rejectMsg' => string('SETUP_BAD_FILE'),
@@ -1208,7 +1208,7 @@ sub setupCategory {
 			},
 
 			'itunes_library_music_path' => {
-				'validate' => \&Slim::Web::Setup::validateIsDir,
+				'validate' => \&Slim::Utils::Validate::isDir,
 				'validateArgs' => [1],
 				'changeIntro' => string('SETUP_OK_USING'),
 				'rejectMsg' => string('SETUP_BAD_DIRECTORY'),

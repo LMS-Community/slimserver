@@ -1365,7 +1365,7 @@ sub setupUse {
 	my %setupPrefs = (
 
 		'musicmagic'  => {
-			'validate'    => \&Slim::Web::Setup::validateTrueFalse,
+			'validate'    => \&Slim::Utils::Validate::trueFalse,
 			'changeIntro' => "",
 
 			'options' => {
@@ -1451,7 +1451,7 @@ sub setupCategory {
 
 		'Prefs' => {
 			'MMMPlayerSettings' => {
-				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				,'options' => {
 						'1'  => Slim::Utils::Strings::string('YES')
 						,'0' => Slim::Utils::Strings::string('NO')
@@ -1459,38 +1459,38 @@ sub setupCategory {
 			},
 
 			'MusicMagicplaylistprefix' => {
-				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large',
 			},
 
 			'MusicMagicplaylistsuffix' => {
-				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large',
 			},
 
 			'musicmagicscaninterval' => {
-				'validate'     => \&Slim::Web::Setup::validateNumber,
+				'validate'     => \&Slim::Utils::Validate::number,
 				'validateArgs' => [0,undef,1000],
 			},
 
 			,'MMMFilter' => {
-				'validate'      => \&Slim::Web::Setup::validateInHash
+				'validate'      => \&Slim::Utils::Validate::inHash
 				,'validateArgs' => [\&grabFilters]
 				,'options'      => {grabFilters()}
 			},
 			
 			'MMMSize' => {
-				'validate'     => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMRejectSize' => {
-				'validate'     => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMMixType' => {
-				'validate'     => \&Slim::Web::Setup::validateInList,
+				'validate'     => \&Slim::Utils::Validate::inList,
 				'validateArgs' => [0,1,2],
 				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
@@ -1500,7 +1500,7 @@ sub setupCategory {
 			},
 			
 			'MMMRejectType' => {
-				'validate'     => \&Slim::Web::Setup::validateInList,
+				'validate'     => \&Slim::Utils::Validate::inList,
 				'validateArgs' => [0,1,2],
 				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
@@ -1510,7 +1510,7 @@ sub setupCategory {
 			},
 			
 			'MMMMixGenre' => {
-				'validate' => \&Slim::Web::Setup::validateTrueFalse,
+				'validate' => \&Slim::Utils::Validate::trueFalse,
 				,'options' => {
 						'1'  => Slim::Utils::Strings::string('YES')
 						,'0' => Slim::Utils::Strings::string('NO')
@@ -1518,27 +1518,27 @@ sub setupCategory {
 			},
 			
 			'MMMStyle' => {
-				'validate'     => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,200,1,1],
 			},
 
 			'MMMVariety' => {
-				'validate'     => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,9,1,1],
 			},
 
 			'MMSport' => {
-				'validate'     => \&Slim::Web::Setup::validateInt,
+				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [1025,65535,undef,1],
 			},
 
 			'MMSHost' => {
-				'validate' => \&Slim::Web::Setup::validateAcceptAll,
+				'validate' => \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large'
 			},
 
 			'MMSremoteRoot'=> {
-				'validate' =>  \&Slim::Web::Setup::validateAcceptAll,
+				'validate' =>  \&Slim::Utils::Validate::acceptAll,
 				'PrefSize' => 'large'
 			}
 		}
