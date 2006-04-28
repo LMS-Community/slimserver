@@ -20,18 +20,20 @@ use Slim::Web::Pages;
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
-	my $feed   = $args->{'feed'};
-	my $title  = $args->{'title'};
-	my $search = $args->{'search'};
-	my $args   = $args->{'args'};
+	my $feed    = $args->{'feed'};
+	my $title   = $args->{'title'};
+	my $search  = $args->{'search'};
+	my $expires = $args->{'expires'};
+	my $args    = $args->{'args'};
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
 		handleFeed( $feed, {
-			'url'    => $feed->{'url'},
-			'title'  => $title,
-			'search' => $search,
-			'args'   => $args,
+			'url'     => $feed->{'url'},
+			'title'   => $title,
+			'search'  => $search,
+			'expires' => $expires,
+			'args'    => $args,
 		} );
 		return;
 	}
@@ -59,10 +61,11 @@ sub handleWebIndex {
 		\&handleFeed,
 		\&handleError,
 		{
-			'url'    => $feed,
-			'title'  => $title,
-			'search' => $search,
-			'args'   => $args,
+			'url'     => $feed,
+			'title'   => $title,
+			'search'  => $search,
+			'expires' => $expires,
+			'args'    => $args,
 		},
 	);
 	
@@ -111,6 +114,7 @@ sub handleFeed {
 					\&handleError,
 					{
 						'url'          => $subFeed->{'url'},
+						'expires'      => $params->{'expires'},
 						'parent'       => $feed,
 						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 						'currentIndex' => \@crumbIndex,
@@ -120,8 +124,11 @@ sub handleFeed {
 				return;
 			}
 			
-			# If the feed is an audio feed or Podcast enclosure, display the audio info
-			if ( $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
+			# If the feed contains no sub-items, display item details
+			if ( !$subFeed->{'items'} 
+				 ||
+				 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
+			) {
 				$stash->{'streaminfo'} = {
 					'item'  => $subFeed,
 					'index' => join '.', @index,
@@ -282,7 +289,7 @@ sub handleSubFeed {
 	my $expires = 300;
 	if ( my $data = $cache->get( $params->{'parentURL'} ) ) {
 		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
-			$expires = time - ( $data->{'_time'} + $data->{'_expires'} );
+			$expires = ( $data->{'_time'} + $data->{'_expires'} ) - time;
 		}
 	}
 	$::d_plugins && msg("Web::XML: re-caching parsed XML for $expires seconds\n");

@@ -287,30 +287,34 @@ sub bodyCB {
 			# By default, cached content never expires
 			# The ETag/Last Modified code will handle stale data
 			my $expires = $self->{'params'}->{'expires'} || undef;
-			
-			# But if we see max-age or an Expires header, use them
+					
 			my $no_cache;
-			if ( my $cc = $self->{'headers'}->{'Cache-Control'} ) {
-				if ( $cc =~ /no-cache|must-revalidate/ ) {
-					$no_cache = 1;
-				}
-				elsif ( $cc =~ /max-age=(-?\d+)/ ) {
-					$expires = $1;
-				}
-			}			
-			elsif ( my $expire_date = $self->{'headers'}->{'Expires'} ) {
-				$expires = HTTP::Date::str2time($expire_date) - time;
-			}
 			
-			# If there is no ETag/Last Modified, don't cache
-			if (   !$expires
-				&& !$self->{'headers'}->{'Last-Modified'} 
-				&& !$self->{'headers'}->{'ETag'}
-			) {
-				$no_cache = 1;
-				$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
-					$self->{'url'},
-				);
+			if ( !$expires ) {
+				
+				# If we see max-age or an Expires header, use them
+				if ( my $cc = $self->{'headers'}->{'Cache-Control'} ) {
+					if ( $cc =~ /no-cache|must-revalidate/ ) {
+						$no_cache = 1;
+					}
+					elsif ( $cc =~ /max-age=(-?\d+)/ ) {
+						$expires = $1;
+					}
+				}			
+				elsif ( my $expire_date = $self->{'headers'}->{'Expires'} ) {
+					$expires = HTTP::Date::str2time($expire_date) - time;
+				}
+			
+				# If there is no ETag/Last Modified, don't cache
+				if (   !$expires
+					&& !$self->{'headers'}->{'Last-Modified'} 
+					&& !$self->{'headers'}->{'ETag'}
+				) {
+					$no_cache = 1;
+					$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
+						$self->{'url'},
+					);
+				}
 			}
 			
 			if ( defined $expires && $expires > 0) {
@@ -318,7 +322,7 @@ sub bodyCB {
 				$data->{'_no_revalidate'} = 1;
 			}
 			
-			if ( !$no_cache ) {
+			if ( !$no_cache && $expires > 0 ) {
 				$data->{'_expires'} = $expires;
 				$cache->set( $self->{'url'}, $data, $expires );
 				

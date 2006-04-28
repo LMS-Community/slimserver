@@ -64,8 +64,9 @@ sub setMode {
 			\&gotFeed,
 			\&gotError,
 			{
-				'client' => $client,
-				'url'    => $url,
+				'client'  => $client,
+				'url'     => $url,
+				'expires' => $client->param('expires'),
 			},
 		);
 

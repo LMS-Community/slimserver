@@ -487,10 +487,10 @@ PODCAST_NOTHING_TO_PLAY
 	NL	Niets om af te spelen
 
 PODCAST_FEED_DESCRIPTION
-	DE	Über diesen Podcast
-	EN	About this podcast
-	ES	Acerca de este podcast
-	NL	Over deze podcast
+	DE	Über diesen Feed
+	EN	About this feed
+	ES	Acerca de este feed
+	NL	Over deze feed
 
 PODCAST_GROUP_DESC
 	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.

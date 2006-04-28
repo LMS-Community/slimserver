@@ -3,8 +3,6 @@ package Plugins::Picks::Plugin;
 # $Id$
 
 # Load Picks via an OPML file - so we can ride on top of the Podcast Browser
-#
-# Still todo - Add web UI to replace old flat Picks list.
 
 use strict;
 

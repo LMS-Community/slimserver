@@ -1524,13 +1524,16 @@ ABOUT_SHORT
 
 WEB_XML_ERROR
 	EN	There was an error loading the remote feed for
-	
+
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
 	EN	Number of listeners
 	ES	Número de oyentes
 	IT	Numero di ascoltatori
 	NL	Aantal luisteraars
+
+DESCRIPTION
+	EN	Description
 
 #
 # Setup page strings

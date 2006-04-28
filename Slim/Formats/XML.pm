@@ -12,6 +12,7 @@ package Slim::Formats::XML;
 
 use strict;
 use File::Slurp;
+use HTML::Entities;
 use Scalar::Util qw(weaken);
 use XML::Simple;
 
@@ -55,15 +56,25 @@ sub getFeedAsync {
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&gotViaHTTP, \&gotErrorViaHTTP, {
 
-			'params' => $params,
-			'cb'     => $cb,
-			'ecb'    => $ecb,
-			'cache'  => 1,
+			'params'  => $params,
+			'cb'      => $cb,
+			'ecb'     => $ecb,
+			'cache'   => 1,
+			'expires' => $params->{'expires'}, 
 	});
 
 	$::d_plugins && msg("Formats::XML: async request: $url\n");
+	
+	# Bug 3165
+	# Override user-agent and Icy-Metadata headers so we appear to be a web browser
+	my $ua = Slim::Utils::Misc::userAgentString();
+	$ua =~ s{iTunes/4.7.1}{Mozilla/5.0};
+	my %headers = (
+		'User-Agent'   => $ua,
+		'Icy-Metadata' => undef,
+	);
 
-	$http->get($url);
+	$http->get( $url, %headers );
 }
 
 sub gotViaHTTP {
@@ -95,7 +106,7 @@ sub gotViaHTTP {
 	my $expires = 300;
 	if ( my $data = $cache->get( $http->url() ) ) {
 		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
-			$expires = time - ( $data->{'_time'} + $data->{'_expires'} );
+			$expires = ( $data->{'_time'} + $data->{'_expires'} ) - time;
 		}
 	}
 	$::d_plugins && msg("Formats::XML: caching parsed XML for $expires seconds\n");
@@ -407,14 +418,8 @@ sub unescape {
 
 	use utf8; # required for 5.6
 	
-	$data =~ s/&amp;/&/sg;
-	$data =~ s/&lt;/</sg;
-	$data =~ s/&gt;/>/sg;
-	$data =~ s/&quot;/\"/sg;
-	$data =~ s/&bull;/\*/sg;
-	$data =~ s/&pound;/\xa3/sg;
-	$data =~ s/&mdash;/-/sg;
-	$data =~ s/&\#(\d+);/chr($1)/gse;
+	# Decode all entities in-place
+	decode_entities($data);
 
 	return $data;
 }

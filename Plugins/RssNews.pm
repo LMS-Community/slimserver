@@ -1,490 +1,280 @@
 package Plugins::RssNews;
 
-# RssNews Ticker v1.0
-# $Id$
+# RSS News Browser
+# Copyright (c) 2006 Slim Devices, Inc. (www.slimdevices.com)
 #
-#
-# Copyright (c) 2004-2006 Slim Devices, Inc. (www.slimdevices.com)
-
-# Based on BBCTicker 1.3 which had this copyright...
-# Copyright (c) 2002-2004 Gordon Johnston (gordonj@newswall.org.uk)
-# http://newswall.org.uk/~slimp3/news_ticker.html
-
-# Also based on Vidur Apparao's Yahoo News plugin.
-
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+#
+# This is a reimplementation of the old RssNews plugin based on
+# the Podcast Browser plugin.
+#
+# $Id$
 
 use strict;
 
-use File::Slurp;
-use File::Spec::Functions qw(:ALL);
-use Socket;
+use constant FEEDS_VERSION => 1.0;
+
+use HTML::Entities;
 use XML::Simple;
 
-use Slim::Buttons::Common;
-use Slim::Control::Request;
-use Slim::Player::Source;
+use Slim::Formats::XML;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
-use Slim::Utils::Timers;
+use Slim::Utils::Strings qw(string);
 
-our %thenews = ();
+# Default feed list
+my @default_feeds = (
+	{
+		name  => 'BBC News World Edition',
+		value => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
+	},
+	{
+		name  => 'CNET News.com',
+		value => 'http://news.com.com/2547-1_3-0-5.xml',
+	},
+	{
+		name  => 'New York Times Home Page',
+		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+	},
+	{
+		name  => 'RollingStone.com Music News',
+		value => 'http://www.rollingstone.com/rssxml/music_news.xml',
+	},
+	{
+		name  => 'Slashdot',
+		value => 'http://rss.slashdot.org/Slashdot/slashdot',
+	},
+	{
+		name  => 'Yahoo! News: Business',
+		value => 'http://rss.news.yahoo.com/rss/business',
+	},
+);
 
-my $state = "wait";
+my @feeds = ();
+my %feed_names; # cache of feed names
+
+# in screensaver mode, number of items to display per channel before switching
+my $screensaver_items_per_feed;
 
 # $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
 my $refresh_sec = 60 * 60;
 
-# plugin state variables.
-our %feed_urls;
-our %feed_names;
-our @feed_order;
-our %context;
-
-# in screensaver mode, number of items to display per channel before switching
-my $screensaver_items_per_feed;
-
-# we need to limit the number of characters we add to the ticker, because the server could crash rendering on pre-SqueezeboxG displays.
-my $screensaver_chars_per_item = 1024;
-
-# How to display items shown by screen saver.
-# %1\$s is item 'number'
-# %2\$s is item title
-# %3\%s is item description
-my $screensaver_item_format = "%2\$s -- %3\$s";
-
-# if user is running perl 5.6, we're going to run into trouble.
-# first the sprintf format defined above will not work.
-if ($] < 5.008) {
-	# perl version < 5.8 does not support the sprintf syntax above
-	$screensaver_item_format = "%s) %s -- %s";
-}
-
-# defaults only if file not found...
-use constant FEEDS_VERSION => 1.0;
-
-our %current    = ();
-our %menuParams = ();
-
-our %default_feeds = (
-	 'BBC News World Edition'      => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
-	 'CNET News.com'               => 'http://news.com.com/2547-1_3-0-5.xml',
-	 'New York Times Home Page'    => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
-	 'RollingStone.com Music News' => 'http://www.rollingstone.com/rssxml/music_news.xml',
-	 'Slashdot'                    => 'http://rss.slashdot.org/Slashdot/slashdot',
-	 'Yahoo! News: Business'       => 'http://rss.news.yahoo.com/rss/business',
-);
-
-sub getDisplayName {
-	return 'PLUGIN_RSSNEWS';
-}
-
 sub enabled {
 	return ($::VERSION ge '6.1');
 }
 
-# initialize the list of channels (feeds) to display
 sub initPlugin {
+	$::d_plugins && msg("RSS Plugin initializing.\n");
 
-	Slim::Buttons::Common::addMode('PLUGIN.RssNews.description', {}, \&descriptionSetMode);
-	Slim::Buttons::Common::addMode('PLUGIN.RssNews.headlines', {}, \&headlinesSetMode);
-	Slim::Buttons::Common::addMode('PLUGIN.RssNews.screensaversettings', {}, \&screensaverSettingsSetMode);
+	Slim::Buttons::Common::addMode('PLUGIN.RSS', getFunctions(), \&setMode);
 
 	my @feedURLPrefs  = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
 	my @feedNamePrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_names");
 	my $feedsModified = Slim::Utils::Prefs::get("plugin_RssNews_feeds_modified");
 	my $version       = Slim::Utils::Prefs::get("plugin_RssNews_feeds_version");
-
-	# No prefs set or we've had a version change and they weren't modified, 
-	# so we'll use the defaults
-	if (scalar(@feedURLPrefs) == 0 || (!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
-
-		my @default_names = sort(keys (%default_feeds));
-
-		@feedURLPrefs = map $default_feeds{$_}, @default_names;
-
-		Slim::Utils::Prefs::set("plugin_RssNews_feeds", \@feedURLPrefs);
-
-		Slim::Utils::Prefs::set("plugin_RssNews_names", [ @default_names ]);
-		Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", FEEDS_VERSION);
-	}
-
-	@feed_urls{@feedNamePrefs} = @feedURLPrefs;
-	%feed_names = reverse %feed_urls;
-	@feed_order = @feedNamePrefs;
-
-	if ($::d_plugins) {
-
-		msg("RSSNews: RSS Feed Info:\n");
-
-		for my $feed (@feed_order) {
-			msg("Feed: $feed, $feed_urls{$feed} \n");
-		}
-
-		msg("\n");
-	}
-
+	
 	$screensaver_items_per_feed = Slim::Utils::Prefs::get('plugin_RssNews_items_per_feed');
-
 	if (!defined $screensaver_items_per_feed) {
 
 		$screensaver_items_per_feed = 3;
 		Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', $screensaver_items_per_feed);
 	}
 
-	# XXXX current WHAT?!
-	%current = ();
+	@feeds = ();
 
-	%menuParams = (
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['rss', 'items', '_index', '_quantity'],
+        [0, 1, 1, \&cliQuery]);
 
-		'rssnews' => {
-			'listRef'         => [ 'SETUP_SCREENSAVER_USE' ],
-			'stringExternRef' => 1,
-			'header'          => 'PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS',
-			'stringHeader'    => 1,
-			'headerAddCount'  => 1,
-			'callback'        => \&screensaverSettingsCallback,
-			'overlayRef'      => \&screensaverSettingsOverlay,
-			'overlayRefArgs'  => 'C',
-		},
 
-		catdir('rssnews','SETUP_SCREENSAVER_USE') => {
-			'useMode'         => 'boolean',
-		},
-	);
+	# No prefs set or we've had a version change and they weren't modified, 
+	# so we'll use the defaults
+	if (scalar(@feedURLPrefs) == 0 ||
+		(!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
+		# use defaults
+		# set the prefs so the web interface will work.
+		revertToDefaults();
+	} else {
+		# use prefs
+		my $i = 0;
+		while ($i < scalar(@feedNamePrefs)) {
+
+			push @feeds, {
+				name  => $feedNamePrefs[$i],
+				value => $feedURLPrefs[$i],
+				type  => 'link',
+			};
+			$i++;
+		}
+	}
+
+	if ($::d_plugins) {
+		msg("RSS Feed Info:\n");
+
+		foreach (@feeds) {
+			msg($_->{'name'} . ", " . $_->{'value'} . "\n");
+		}
+
+		msg("\n");
+	}
+
+	# feed_names should reflect current names
+	%feed_names = ();
+
+	map { $feed_names{$_->{'value'} } = $_->{'name'}} @feeds;
+	
+	updateOPMLCache( \@feeds );
+}
+
+sub revertToDefaults {
+	@feeds = @default_feeds;
+
+	my @urls  = map { $_->{'value'} } @feeds;
+	my @names = map { $_->{'name'}  } @feeds;
+
+	Slim::Utils::Prefs::set('plugin_RssNews_feeds', \@urls);
+	Slim::Utils::Prefs::set('plugin_RssNews_names', \@names);
+	Slim::Utils::Prefs::set('plugin_RssNews_feeds_version', FEEDS_VERSION);
+
+	# feed_names should reflect current names
+	%feed_names = ();
+
+	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
+	
+	updateOPMLCache( \@feeds );
+}
+
+sub getDisplayName {
+	return 'PLUGIN_RSSNEWS';
 }
 
 sub getFunctions {
 	return {};
 }
 
-# advance to next RSS feed
-sub nextTopic {
+sub setMode {
 	my $client = shift;
-	my $display_current;
-	
-	my $display_stack = $client->param('PLUGIN.RssNews.display_stack');
+	my $method = shift;
 
-	# if there are no topics left then wrap around if selected (always wrap when running as screensaver)
-	if (!$display_stack || scalar(@$display_stack) == 0) {
-
-		my @display_stack_copy = @feed_order;
-		$display_stack = \@display_stack_copy;
-
-		$client->param('PLUGIN.RssNews.display_stack', $display_stack);
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
+
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header => '{PLUGIN_RSSNEWS} {count}',
+		listRef => \@feeds,
+		modeName => 'RSS Plugin',
+		onRight => sub {
+			my $client = shift;
+			my $item = shift;
+			my %params = (
+				url     => $item->{'value'},
+				title   => $item->{'name'},
+				expires => $refresh_sec,
+			);
+			Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
+		},
+
+		overlayRef => [
+			undef,
+			Slim::Display::Display::symbol('rightarrow') 
+		],
+	);
+
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
+}
+
+sub webPages {
+	my $title = 'PLUGIN_RSSNEWS';
 	
-	# Move up the list of topics
-	if ($display_stack) {
-
-		$display_current = shift @{$display_stack};
-
-		if (!$display_current) {
-
-			$::d_plugins && msg("RssNews: display_current not set!\n");
-			$::d_plugins && msg("RssNews: feed order:\n" .  join('\n', @feed_order) . "\n");
-
-		} else {
-
-			$::d_plugins && msg("RssNews: display_current is $display_current\n");
-		}
-
-		$client->param('PLUGIN.RssNews.display_current', $display_current);
-
+	if (grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
 	} else {
-
-		errorMsg("RSSNews: nextTopic: Display stack empty\n");
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RssNews/index.html' });
 	}
 
-	# returns a feed name (not the URL)
-	return $display_current;
-}
-
-sub updateFeedNames {
-
-	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
-	my @names        = ();
-
-	for my $feed (@feedURLPrefs) {
-
-		next unless $feed;
-
-		my $name = $feed_names{$feed};
-
-		if ($name && $name !~ /^(?:http|file)\:/) {
-
-			push @names, $name;
-
-		} elsif ($feed =~ /^(?:http|file)\:/) {
-
-			my $xml = getFeedXml($feed);
-
-			if ($xml && exists $xml->{channel}->{title}) {
-
-				# trim required to remove leading newlines
-				push @names, trim($xml->{channel}->{title});
-
-			} else {
-
-				push @names, trim($feed);
-			}
-		}
-	}
-
-	# No prefs set, so we'll use the defaults
-	if (scalar(@names) == 0) {
-
-		my @default_names = sort(keys (%default_feeds));
-		@feedURLPrefs     = map { $default_feeds{$_} } @default_names;
-
-		Slim::Utils::Prefs::set("plugin_RssNews_feeds", \@feedURLPrefs);
-		Slim::Utils::Prefs::set("plugin_RssNews_names", \@default_names);
-
-		@names = @default_names;
-
-	} elsif (join('', sort @feedURLPrefs) ne join('', sort values %default_feeds)) {
-
-		Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", 1);
-	}
-
-	Slim::Utils::Prefs::set("plugin_RssNews_names", \@names);
-
-	@feed_urls{@names} = @feedURLPrefs;
-	%feed_names = reverse %feed_urls;
-	@feed_order = @names;	
-}
-
-sub unescape {
-	my $data = shift;
-
-	return '' unless(defined($data));
-
-	use utf8; # required for 5.6
+	my %pages = ( 
+		'index.html' => sub {
+			# Get OPML list of feeds from cache
+			my $cache = Slim::Utils::Cache->new();
+			my $opml = $cache->get( 'rss_opml' );
+			Slim::Web::XMLBrowser->handleWebIndex( {
+				feed    => $opml,
+				title   => $title,
+				expires => $refresh_sec,
+				args    => \@_
+			} );
+		},
+	);
 	
-	$data =~ s/&amp;/&/sg;
-	$data =~ s/&lt;/</sg;
-	$data =~ s/&gt;/>/sg;
-	$data =~ s/&quot;/\"/sg;
-	$data =~ s/&bull;/\*/sg;
-	$data =~ s/&pound;/\xa3/sg;
-	$data =~ s/&mdash;/-/sg;
-	$data =~ s/&\#(\d+);/chr($1)/gse;
-
-	return $data;
+	return \%pages;
 }
 
-sub trim {
-	my $data = shift;
-	return '' unless(defined($data));
-	use utf8; # important for regexps that follow
-
-	$data =~ s/\s+/ /g; # condense multiple spaces
-	$data =~ s/^\s//g; # remove leading space
-	$data =~ s/\s$//g; # remove trailing spaces
-
-	return $data;
-}
-
-# unescape and also remove unnecesary spaces
-# also get rid of markup tags
-sub unescapeAndTrim {
-	my $data = shift;
-	return '' unless(defined($data));
-	use utf8; # important for regexps that follow
-	my $olddata = $data;
+sub cliQuery {
+	my $request = shift;
 	
-	$data = unescape($data);
-
-	$data = trim($data);
+	$::d_plugins && msg("RSS: cliQuery()\n");
 	
-	# strip all markup tags
-	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
-
-	# apparently utf8::decode is not available in perl 5.6.
-	# (Some characters may not appear correctly in perl < 5.8 !)
-	if ($] >= 5.008) {
-		utf8::decode($data);
-	}
-
-	return $data;
+	# Get OPML list of feeds from cache
+	my $cache = Slim::Utils::Cache->new();
+	my $opml = $cache->get( 'rss_opml' );
+	Slim::Buttons::XMLBrowser::cliQuery('rss', $opml, $request);
 }
 
-# see bug 1307
-# avoid deep recursion
-my $getFeedXml_semaphore = 0;
 
-sub getFeedXml {
-	my $feed_url = shift;
-
-	$::d_plugins && msg("RssNews: getting feed from $feed_url\n");
-
-	# bug 1307.  Avoid recursion.
-	if ($getFeedXml_semaphore) {
-		return 0;
-	} else {
-		$getFeedXml_semaphore = 1;
-	}
-
-	if ($feed_url =~ /^file/) {
-
-		my $feed_file = $feed_url;
-		$feed_file =~ s/^file://;
-		$feed_file =~ s/^\/+/\//;
-		#accomodate windows drive letter suckiness
-		$feed_file =~ s/^\/([a-z]:)/$1/i;
-
-		my $content = eval { read_file($feed_file) };
-
-		if ($@) {
-			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
-			$getFeedXml_semaphore = 0;
-			return 0;
-		}
-
-		my $xml = eval { XMLin(\$content, forcearray => ["item"], keyattr => []) };
-
-		$getFeedXml_semaphore = 0;
-
-		if ($@) {
-			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
-			return 0;
-		}
-
-		return ($xml);	
-	}
-
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => $feed_url,
-		'create' => 0,
-	});
-
-	if (defined $http) {
-
-		# very verbose debugging
-		#$::d_plugins && msg("RssNews: $feed_url\n");
-		#$::d_plugins && msg("\n$content\n\n");
-
-		# forcearray to treat items as array,
-		# keyattr => [] prevents id attrs from overriding
-		my $xml = eval { XMLin($http->content, forcearray => ["item"], keyattr => []) };
-
-		$getFeedXml_semaphore = 0;
-		$http->close;
-
-		if ($@) {
-			$::d_plugins && msg("RssNews failed to parse feed <$feed_url> because:\n$@");
-			return 0;
-		}
-
-		return $xml;
-	}
-
-	$getFeedXml_semaphore = 0;
-
-	return 0;
-}
-
-sub retrieveNews {
-	my $client = shift;
-	my $feedname = shift;
-
-	my $now = time();
+# Update the hashref of RSS feeds for use with the web UI
+sub updateOPMLCache {
+	my $feeds = shift;
 	
-	my $must_get_news = 0;
-	my $display_current = $client->param('PLUGIN.RssNews.display_current');
-
-	if (!$display_current) {
-		# should never be here, but just in case...
-		$display_current = nextTopic($client);
-	}
-
-	if (!$feedname) {
-		$feedname = $display_current;
+	my $outline = [];
+	for my $item ( @{$feeds} ) {
+		push @{$outline}, {
+			'name'  => $item->{'name'},
+			'url'   => $item->{'value'},
+			'value' => $item->{'value'},
+			'type'  => $item->{'type'},
+			'items' => [],
+		};
 	}
 	
-	if (!$thenews{$feedname}) {
-		$must_get_news = 1;
-	} elsif ($now - $thenews{$feedname}{"refresh_last"} > $refresh_sec) {
-		$must_get_news = 1;
-	}
-
-	if ($must_get_news) {
-
-		$thenews{$feedname} = ();
-
-		if (!$client->param('PLUGIN.RssNews.screensaver_mode')) {
-
-			$client->block( {
-				'line1' => $client->string('PLUGIN_RSSNEWS_LOADING_FEED'),
-			});
-		}
-
-		my $xml = getFeedXml($feed_urls{$feedname});
-
-		if (!$client->param('PLUGIN.RssNews.screensaver_mode')) {
-			$client->unblock();
-		}
-
-		my $show_error = 0;
-
-		if ($xml) {
-
-			if ($xml->{'channel'}) {
-				$thenews{$feedname} = $xml->{'channel'};
-
-				# slashdot needs this, yahoo doesn't
-				if ($xml->{'item'}) {
-					$thenews{$feedname}->{'item'} = $xml->{'item'};
-				}
-
-			} else {
-
-				# TODO: better error handling
-				errorMsg("RssNews: failed to parse from $feed_urls{$feedname}. \n");
-				errorMsg("RssNews: Here's the xml:\n\n$xml\n\n");
-				$show_error = 1;
-			}
-
-		} else {
-
-			# TODO: better error handling
-			errorMsg("RssNews.pm failed to retrieve news from $feed_urls{$feedname}.\n");
-			$show_error = 1;
-		}
-
-		if ($show_error) {
-
-			# we did not get the news
-			$client->showBriefly( {
-				'line1' => $client->string('PLUGIN_RSSNEWS_ERROR_IN_FEED'),
-			});
-
-		} else {
-
-			# record the time we last got the news
-			$thenews{$feedname}{"refresh_last"} = $now;
-		}
-	}
-	
-	return $thenews{$feedname};
+	my $opml = {
+		'title' => string('PLUGIN_RSSNEWS'),
+		'url'   => 'rss_opml',			# Used so XMLBrowser can look this up in cache
+		'type'  => 'opml',
+		'items' => $outline,
+	};
+		
+	my $cache = Slim::Utils::Cache->new();
+	$cache->set( 'rss_opml', $opml );
 }
 
+# for configuring via web interface
 sub setupGroup {
 	my %Group = (
-		PrefOrder         => [ qw(plugin_RssNews_items_per_feed plugin_RssNews_reset plugin_RssNews_feeds) ],
-		GroupHead         => 'SETUP_GROUP_PLUGIN_RSSNEWS',
-		GroupDesc         => 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC',
-		GroupLine         => 1,
-		GroupSub          => 1,
+		PrefOrder => [
+			'plugin_RssNews_items_per_feed',
+			'plugin_RssNews_reset',
+			'plugin_RssNews_feeds',
+		],
+		GroupHead => 'PLUGIN_RSSNEWS',
+		GroupDesc => 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC',
+		GroupLine => 1,
+		GroupSub  => 1,
 		Suppress_PrefSub  => 1,
 		Suppress_PrefLine => 1,
 	);
 
 	my %Prefs = (
-
+		
 		plugin_RssNews_items_per_feed => {
 			'validate'       => \&Slim::Utils::Validate::isInt,
 			'validateArgs'  => [1,undef,1],
@@ -493,14 +283,13 @@ sub setupGroup {
 				Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', $screensaver_items_per_feed);
 			},
 		},
-
+		
 		plugin_RssNews_reset => {
 			'onChange'      => sub {
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", undef);
 				Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", undef);
-				initPlugin();
+				revertToDefaults();
 			},
-
 			'inputTemplate' => 'setup_input_submit.html',
 			'changeIntro'   => 'PLUGIN_RSSNEWS_RESETTING',
 			'ChangeButton'  => 'SETUP_PLUGIN_RSSNEWS_RESET_BUTTON',
@@ -521,8 +310,8 @@ sub setupGroup {
 			'externalValue'    => sub {
 				my ($client, $value, $key) = @_;
 
-				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feed_order))) {
-					return $feed_order[$2];
+				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feeds))) {
+					return $feeds[$2]->{'name'};
 				}
 
 				return '';
@@ -535,165 +324,147 @@ sub setupGroup {
 	return (\%Group, \%Prefs);
 }
 
+sub updateFeedNames {
+	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
+	my @feedNamePrefs;
+
+	# verbose debug
+	if ($::d_plugins) {
+
+		require Data::Dumper;
+		msg("RSS: updateFeedNames urls:\n");
+		msg(Data::Dumper::Dumper(\@feedURLPrefs));
+	}
+
+	# case 1: we're reverting to default
+	if (scalar(@feedURLPrefs) == 0) {
+		revertToDefaults();
+	} else {
+		# case 2: url list edited
+
+		my $i = 0;
+		while ($i < scalar(@feedURLPrefs)) {
+
+			my $url = $feedURLPrefs[$i];
+			my $name = $feed_names{$url};
+
+			if ($name && $name !~ /^http\:/) {
+
+				# no change
+				$feedNamePrefs[$i] = $name;
+
+			} elsif ($url =~ /^http\:/) {
+
+				# does a synchronous get
+				# XXX: This should use async instead, but not a very high priority 
+				# as this code is not used very much
+				my $xml = getFeedXml($url);
+
+				if ($xml && exists $xml->{'channel'}->{'title'}) {
+
+					# here for podcasts and RSS
+					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
+
+				} elsif ($xml && exists $xml->{'head'}->{'title'}) {
+
+					# here for OPML
+					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
+
+				} else {
+					# use url as title since we have nothing else
+					$feedNamePrefs[$i] = $url;
+				}
+
+			} else {
+				# use url as title since we have nothing else
+				$feedNamePrefs[$i] = $url;
+			}
+
+			$i++;
+		}
+
+		# if names array contains more than urls, delete the extras
+		while ($feedNamePrefs[$i]) {
+			delete $feedNamePrefs[$i];
+			$i++;
+		}
+
+		# save updated names to prefs
+		Slim::Utils::Prefs::set('plugin_RssNews_names', \@feedNamePrefs);
+
+		# runtime list must reflect changes
+		@feeds = ();
+		$i = 0;
+
+		while ($i < scalar(@feedNamePrefs)) {
+
+			push @feeds, {
+				name => $feedNamePrefs[$i],
+				value => $feedURLPrefs[$i]
+			};
+
+			$i++;
+		}
+
+		# feed_names should reflect current names
+		%feed_names = ();
+
+		map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
+		
+		updateOPMLCache( \@feeds );
+	}
+
+}
+
+#
+# XXX: Fix to use AsyncHTTP
+#
+
+# copied from RSS news plugin
+# gets the xml for a feed synchronously
+# only used to support the web interface
+# when browsing, feeds are downloaded asynchronously, see XMLBrowser.pm
+sub getFeedXml {
+	my $feed_url = shift;
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => $feed_url,
+		'create' => 0,
+	});
+
+	if (defined $http) {
+
+		my $content = $http->content;
+
+		$http->close;
+
+		return 0 unless defined $content;
+
+		# Deal with Windows encoding stupidity.
+		$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
+
+		## Bug 2492
+		## not all entities are understood by XML::Simple, so skip this to allow
+		## parsing to complete
+		#HTML::Entities::encode_entities($content, "\x80-\xff");
+
+		# forcearray to treat items as array,
+		# keyattr => [] prevents id attrs from overriding
+		my $xml = eval { XMLin(\$content, forcearray => ["item"], keyattr => []) };
+
+		if ($@) {
+			$::d_plugins && msg("XMLBrowser failed to parse feed <$feed_url> because: $@\n");
+			return 0;
+		}
+
+		return $xml;
+	}
+
+	return 0;
+}
+
 ################################
 # ScreenSaver Mode
-
-sub tickerUpdate {
-	my $client = shift;
-
-	if ($client->param('PLUGIN.RssNews.newfeed')) {
-		# fetch new feed
-		my $display_current = &nextTopic($client);
-
-		# retrieveNews will only really get new news after refresh_sec time
-		retrieveNews($client, $display_current);
-
-		$client->param('PLUGIN.RssNews.line1', 0);
-	}
-
-	# add item to ticker
-	$client->update(tickerLines($client));
-
-	my ($complete, $queue) = $client->scrollTickerTimeLeft();
-	my $newfeed = $client->param('PLUGIN.RssNews.newfeed');
-
-	# schedule for next item as soon as queue drains if same feed or after ticker completes if new feed
-	my $next = $newfeed ? $complete : $queue;
-
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + (($next > 1) ? $next : 1), \&tickerUpdate);
-}
-
-# check to see if ticker is empty and schedule immediate ticker update if so
-sub tickerUpdateCheck {
-	my $client = shift;
-
-	my ($complete, $queue) = $client->scrollTickerTimeLeft();
-
-	if ($queue == 0 && Slim::Utils::Timers::killTimers($client, \&tickerUpdate)) {
-		tickerUpdate($client);
-	}
-}
-
-# lines when called by server - e.g. on screensaver start or change of font size
-# add undef line2 item to ticker, schedule tickerUpdate to add to ticker if necessary
-sub blankLines {
-	my $client = shift;
-
-	my $parts = {
-		'line1' => $client->param('PLUGIN.RssNews.line1') || '',
-		'line2' => undef,
-		'scrollmode' => 'ticker'
-	};
-
-	# check after the update calling this function is complete to see if ticker is empty
-	# (to refill ticker on font size change as this clears current ticker)
-	Slim::Utils::Timers::killTimers($client, \&tickerUpdateCheck);	
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.1, \&tickerUpdateCheck);
-
-	return $parts;
-}
-
-# lines for tickerUpdate to add to ticker
-sub tickerLines {
-	my $client = shift;
-
-	my $parts         = {};
-	my $new_feed_next = 0; # use new feed next call
-
-	# the current RSS feed
-	my $display_current = $client->param('PLUGIN.RssNews.display_current');
-
-	assert($display_current, "current rss feed not set\n");
-
-	# the current item within each feed.
-	my $display_current_items = $client->param('PLUGIN.RssNews.display_current_items');
-
-	if (!defined ($display_current_items)) {
-
-		$display_current_items = {$display_current => {'next_item' => 0, 'first_item' => 0}};
-
-	} elsif (!defined($display_current_items->{$display_current})) {
-
-		$display_current_items->{$display_current} = {'next_item' => 0, 'first_item' => 0};
-	}
-	
-	# add item to ticker or display error and wait for tickerUpdate to retrieve news
-	if (defined($thenews{$display_current})) {
-	
-		my $line1 = unescapeAndTrim($thenews{$display_current}->{'title'});
-		my $i     = $display_current_items->{$display_current}->{'next_item'};
-		my $description;
-
-		if ((!($thenews{$display_current}->{'item'}[$i]->{'description'})) ||
-			ref ($thenews{$display_current}->{'item'}[$i]->{'description'})) {
-
-			# description not available, just show title
-			$description = "";
-
-		} else {
-
-			$description = $thenews{$display_current}->{'item'}[$i]->{'description'};
-		}
-
-		my $line2 = sprintf($screensaver_item_format,
-			$i + 1,
-			unescapeAndTrim($thenews{$display_current}->{'item'}[$i]->{'title'}),
-			unescapeAndTrim($description)
-		);
-
-		if (length($line2) > $screensaver_chars_per_item) {
-
-			$line2 = substr($line2, 0, $screensaver_chars_per_item);
-
-			$::d_plugins && msg("RssNews screensaver character limit exceeded - truncating.\n");
-		}
-
-		$display_current_items->{$display_current}->{'next_item'} = $i + 1;
-
-		if (!exists($thenews{$display_current}->{'item'}[$display_current_items->{$display_current}->{'next_item'}])) {
-
-			$display_current_items->{$display_current}->{'next_item'} = 0;
-			$display_current_items->{$display_current}->{'first_item'} -= ($i + 1);
-
-			if ($screensaver_items_per_feed >= ($i + 1)) {
-
-				$new_feed_next = 1;
-
-				$display_current_items->{$display_current}->{'first_item'} = 0;
-			}
-		}
-
-		if (($display_current_items->{$display_current}->{'next_item'} - 
-		     $display_current_items->{$display_current}->{'first_item'}) >= $screensaver_items_per_feed) {
-
-			# displayed $screensaver_items_per_feed of this feed, move on to next saving position
-			$new_feed_next = 1;
-			$display_current_items->{$display_current}->{'first_item'} = $display_current_items->{$display_current}->{'next_item'};
-		}
-
-		$parts = {
-			'line1' => $line1,
-			'line2' => $line2,
-			'scrollmode' => 'ticker',
-		};
-
-		$client->param('PLUGIN.RssNews.line1', $line1);
-		$client->param('PLUGIN.RssNews.display_current_items', $display_current_items);
-
-	} else {
-
-		$parts = {
-			'line1' => "RSS News - ".$display_current,
-			'line2' => ($state eq 'wait') ? $client->string('PLUGIN_RSSNEWS_WAIT') : $client->string('PLUGIN_RSSNEWS_ERROR'),
-		};
-
-		$new_feed_next = 1;
-	}
-
-	$client->param('PLUGIN.RssNews.newfeed', $new_feed_next);
-
-	return $parts;
-}
 
 sub screenSaver {
 	Slim::Utils::Strings::addStrings(strings());
@@ -734,7 +505,11 @@ sub setScreensaverRssNewsMode {
 	$client->lines(\&blankLines);
 
 	# start tickerUpdate in future after updates() caused by server mode change
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 0.5, \&tickerUpdate);
+	Slim::Utils::Timers::setTimer(
+		$client, 
+		Time::HiRes::time() + 0.5,
+		\&tickerUpdate
+	);
 }
 
 # kill tickerUpdate
@@ -747,352 +522,250 @@ sub leaveScreenSaverRssNews {
 	$client->param('PLUGIN.RssNews.screensaver_mode', 0);
 }
 
+sub tickerUpdate {
+	my $client = shift;
 
-#############################
-# Screensaver Settings Mode
+	if ( $client->param('PLUGIN.RssNews.newfeed') ) {
+		# we need to fetch the next feed
+		getNextFeed( $client );
+	}
+	else {
+		tickerUpdateContinue( $client );
+	}
+}
 
-sub screensaverSettingsCallback {
-	my ($client,$exittype) = @_;
+sub getNextFeed {
+	my $client = shift;
+	
+	# select the next feed and fetch it
+	my $index = $client->param('PLUGIN.RssNews.feed_index') || 0;
+	$index++;
+	
+	if ( $index > scalar @feeds ) {
+		$index = 1;
+		# reset error count after looping around to the beginning
+		$client->param( 'PLUGIN.RssNews.feed_error', 0 );
+	}
+	
+	$client->param( 'PLUGIN.RssNews.feed_index', $index );
+	
+	my $url = $feeds[$index - 1]->{'value'};
+	
+	$::d_plugins && msg("RSS: Fetching next feed: $url\n");
+	
+	if ( !$client->param( 'PLUGIN.RssNews.current_feed' ) ) {
+		$client->update( {
+			'line1' => $client->string('PLUGIN_RSSNEWS'),
+			'line2' => $client->string('PLUGIN_RSSNEWS_WAIT'),
+		} );
+	}
+	
+	Slim::Formats::XML->getFeedAsync( 
+		\&gotNextFeed,
+		\&gotError,
+		{
+			'url'     => $url,
+			'client'  => $client,
+			'expires' => $refresh_sec,
+		},
+	);
+}
 
-	$exittype = uc($exittype);
+sub gotNextFeed {
+	my ( $feed, $params ) = @_;
+	my $client = $params->{'client'};
+	
+	$client->param( 'PLUGIN.RssNews.current_feed', $feed );
+	
+	tickerUpdateContinue( $client );
+}
 
-	if ($exittype eq 'LEFT') {
+sub gotError {
+	my ( $error, $params ) = @_;
+	my $client = $params->{'client'};
+	
+	# Bug 1664, skip broken feeds in screensaver mode
+	
+	$::d_plugins && msg("RSS: Error loading feed: $error, skipping\n");
+	
+	my $errors = $client->param( 'PLUGIN.RssNews.feed_error' ) || 0;
+	$errors++;
+	$client->param( 'PLUGIN.RssNews.feed_error', $errors );
+	
+	if ( $errors == scalar @feeds ) {
+		$::d_plugins && msg("RSS: All feeds failed, giving up\n");
+	}
+	else {	
+		getNextFeed( $client );
+	}
+}
 
-		Slim::Buttons::Common::popModeRight($client);
+sub tickerUpdateContinue {
+	my $client = shift;
+			
+	$client->param('PLUGIN.RssNews.line1', 0);
 
-	} elsif ($exittype eq 'RIGHT') {
+	# add item to ticker
+	$client->update( tickerLines($client) );
 
-		my $nextmenu = catdir('rssnews',$current{$client});
+	my ($complete, $queue) = $client->scrollTickerTimeLeft();
+	my $newfeed = $client->param('PLUGIN.RssNews.newfeed');
 
-		if (!exists $menuParams{$nextmenu}) {
+	# schedule for next item as soon as queue drains if same feed or after ticker completes if new feed
+	my $next = $newfeed ? $complete : $queue;
 
-			$client->bumpRight;
-			return;
-		}
+	Slim::Utils::Timers::setTimer(
+		$client, 
+		Time::HiRes::time() + ( ($next > 1) ? $next : 1),
+		\&tickerUpdate
+	);
+}
 
-		my %nextParams = %{$menuParams{$nextmenu}};
+# check to see if ticker is empty and schedule immediate ticker update if so
+sub tickerUpdateCheck {
+	my $client = shift;
 
-		if ($nextParams{'useMode'} eq 'boolean') {
+	my ($complete, $queue) = $client->scrollTickerTimeLeft();
 
-			my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	if ( $queue == 0 && Slim::Utils::Timers::killTimers($client, \&tickerUpdate) ) {
+		tickerUpdate($client);
+	}
+}
 
-			if ($client->prefGet($saver) eq 'SCREENSAVER.rssnews') {
+# lines when called by server - e.g. on screensaver start or change of font size
+# add undef line2 item to ticker, schedule tickerUpdate to add to ticker if necessary
+sub blankLines {
+	my $client = shift;
 
-				$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
+	my $parts = {
+		'line1' => $client->param('PLUGIN.RssNews.line1') || '',
+		'line2' => undef,
+		'scrollmode' => 'ticker'
+	};
 
-			} else {
+	# check after the update calling this function is complete to see if ticker is empty
+	# (to refill ticker on font size change as this clears current ticker)
+	Slim::Utils::Timers::killTimers( $client, \&tickerUpdateCheck );	
+	Slim::Utils::Timers::setTimer(
+		$client, 
+		Time::HiRes::time() + 0.1,
+		\&tickerUpdateCheck
+	);
 
-				$client->prefSet($saver, 'SCREENSAVER.rssnews');
-			}
+	return $parts;
+}
 
-			$client->update;
-			return;
-		}
+# lines for tickerUpdate to add to ticker
+sub tickerLines {
+	my $client = shift;
+
+	my $parts         = {};
+	my $new_feed_next = 0; # use new feed next call
+
+	# the current RSS feed
+	my $feed = $client->param('PLUGIN.RssNews.current_feed');
+
+	assert( ref $feed eq 'HASH', "current rss feed not set\n");
+
+	# the current item within each feed.
+	my $current_items = $client->param('PLUGIN.RssNews.current_items');
+
+	if ( !defined $current_items ) {
+
+		$current_items = {
+			$feed => {
+				'next_item'  => 0,
+				'first_item' => 0,
+			},
+		};
+
+	}
+	elsif ( !defined $current_items->{$feed} ) {
+
+		$current_items->{$feed} = {
+			'next_item'  => 0,
+			'first_item' => 0
+		};
+	}
+	
+	# add item to ticker or display error and wait for tickerUpdate to retrieve news
+	if ( defined $feed ) {
+	
+		my $line1 = Slim::Formats::XML::unescapeAndTrim( $feed->{'title'} );
+		my $i     = $current_items->{$feed}->{'next_item'};
 		
-		if ($nextParams{'useMode'} eq 'INPUT.List' && exists($nextParams{'initialValue'})) {
-
-			# set up valueRef for current pref
-			my $value;
-
-			if (ref($nextParams{'initialValue'}) eq 'CODE') {
-
-				$value = eval { $nextParams{'initialValue'}->($client) };
-
-			} else {
-
-				$value = $client->prefGet($nextParams{'initialValue'});
-			}
-
-			$nextParams{'valueRef'} = \$value;
-		}
-
-		Slim::Buttons::Common::pushModeLeft($client, $nextParams{'useMode'}, \%nextParams);
-	}
-}
-
-sub screensaverSettingsOverlay {
-	my $client = shift;
-
-	my $saver    = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-	my $nextmenu = catdir('rssnews', $current{$client});
-
-	if (exists($menuParams{$nextmenu})) {
-
-		my %nextParams = %{$menuParams{$nextmenu}};
-
-		if ($nextParams{'useMode'} eq 'boolean') {
-
-			return (
-				undef,
-				Slim::Buttons::Common::checkBoxOverlay(
-					$client->prefGet($saver) eq 'SCREENSAVER.rssnews'
-				),
-			);
-		}
-
-	} else {
-
-		return (undef, Slim::Display::Display::symbol('rightarrow'));
-	}
-}
-
-sub screensaverSettingsSetMode {
-	my $client = shift;
-	my $method = shift;
-	
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	my %params = %{$menuParams{'rssnews'}};
-
-	$params{'valueRef'} = \$current{$client};
-	
-	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-}
-
-#############################
-# Main mode
-
-sub mainModeCallback {
-	my ($client,$exittype) = @_;
-	
-	$exittype = uc($exittype);
-
-	if ($exittype eq 'LEFT') {
-
-		Slim::Buttons::Common::popModeRight($client);
-
-	} elsif ($exittype eq 'RIGHT') {
-
-		my $listIndex = $client->param('listIndex');
-		my $feedname  = $feed_order[$listIndex];
-
-		retrieveNews($client, $feedname);
-
-		if ($thenews{$feedname} && $thenews{$feedname}) {
-
-			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.RssNews.headlines', {
-				feed      => unescapeAndTrim($thenews{$feedname}->{title}),
-				feedItems => $thenews{$feedname}->{item}
-			});
-
-		} else {
-
-			$client->showBriefly( {
-				'line1' => $client->string('PLUGIN_RSSNEWS_ERROR'),
-			});
-		}
-	}
-}
-
-sub setMode {
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-	
-	my %params = (
-		stringHeader   => 1,
-		header         => 'PLUGIN_RSSNEWS_NAME',
-		listRef        => \@feed_order,
-		callback       => \&mainModeCallback,
-		valueRef       => \$context{$client}->{'mainModeIndex'},
-		headerAddCount => 1,
-		overlayRef     => sub { return (undef,Slim::Display::Display::symbol('rightarrow')) },
-		parentMode     => Slim::Buttons::Common::mode($client),
-	);
-
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-}
-
-#############################
-# Headlines mode
-sub headlinesModeCallback {
-	my ($client,$exittype) = @_;
-
-	$exittype = uc($exittype);
-
-	if ($exittype eq 'LEFT') {
-
-		Slim::Buttons::Common::popModeRight($client);
-
-	} elsif ($exittype eq 'RIGHT') {
-
-		my $listIndex = $client->param('listIndex');
-		my $items     = $client->param('feedItems');
-		my $item      = $items->[$listIndex];
-
-		my $description;
-
-		if (!$item->{'description'} || ref($item->{'description'})) {
-
-			$description = $client->string('PLUGIN_RSSNEWS_NO_DESCRIPTION');
-
-			# we could show them an error message about no description found, but instead just bump.
-			$client->bumpRight();
-			return;
-
-		} else {
-
-			$description = $item->{'description'};
-		}
-
-		my $title = $item->{'title'} || $client->string('PLUGIN_RSSNEWS_NO_TITLE');
-		my $feed  = $client->param('feed');
-	
-		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.RssNews.description', {
-			feed        => $feed,
-			title       => $title,
-			description => $description,
-		});
-	}
-}
-
-sub headlinesSetMode {
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	my $feed  = $client->param('feed');
-	my $items = $client->param('feedItems');
-
-	my @lines = map { unescapeAndTrim($_->{'title'}) } @$items;
-
-	my %params = (
-		# show right arrow only if list not empty
-		overlayRef     => scalar(@lines) ? sub {return (undef,Slim::Display::Display::symbol('rightarrow'));} : undef,
-
-		header         => $feed,
-		listRef        => \@lines,
-		callback       => \&headlinesModeCallback,
-		valueRef       => \$context{$client}->{'headlinesModeIndex'},
-		headerAddCount => 1,
-		parentMode     => Slim::Buttons::Common::mode($client),
-		feed           => $feed,
-		feedItems      => $items,
-	);
-	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-}
-
-#############################
-# Descriptions mode
-sub descriptionModeCallback {
-	my ($client,$exittype) = @_;
-	
-	$exittype = uc($exittype);
-
-	if ($exittype eq 'LEFT') {
-
-		Slim::Buttons::Common::popModeRight($client);
-
-	} elsif ($exittype eq 'RIGHT') {
-
-		$client->bumpRight();
-	}
-}
-
-sub descriptionSetMode {
-	my $client = shift;
-	my $method = shift;
-	
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-	
-	my $feed        = $client->param('feed');
-	my $title       = unescapeAndTrim($client->param('title'));
-	my $description = unescapeAndTrim($client->param('description'));
-	
-	my @lines   = ();
-	my $curline = '';
-
-	# break story up into lines.
-	while ($description =~ /(\S+)/g) {
-
-		my $newline = $curline . ' ' . $1;
-
-		if ($client->measureText($newline, 2) > $client->displayWidth) {
-
-			push @lines, trim($curline);
-			$curline = $1;
-
-		} else {
-
-			$curline = $newline;
-		}
-	}
-
-	if ($curline) {
-		push @lines, trim($curline);
-	}
-	
-	# also shorten title to fit
-	# leave a bunch of extra pixels to display the (n out of M) text
-	my $titleline = '';
-
-	while ($title =~ /(\S+)/g) {
-
-		my $newline = join(' ', $titleline, $1);
-
-		if ($client->measureText($newline . "... (?? of ??)", 1) > ($client->displayWidth)) {
-
-			$titleline .= '...';
-			last;
-
-		} else {
-
-			$titleline = $newline;
-		}
-	}
-	
-	my %params = (
-		header         => trim($titleline),
-		listRef        => \@lines,
-		callback       => \&descriptionModeCallback,
-		valueRef       => \$context{$client}->{'descriptionModeIndex'},
-		headerAddCount => 1,
-		parentMode     => Slim::Buttons::Common::mode($client),
-	);
-	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-}
-
-sub addMenu {
-	# some questionable code follows... This method is designed to simply
-	# return the name of a menu.  But this plugin wants to appear both
-	# in plugins and screensavers.
-
-	# it would be nice if the plugin code gave us a clean way to do
-	# this.  Until it does, we do the following hack.
-
-	if (grep { $_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", undef);
-
-	} else {
-
-		# add a mode to the screensaver submenu...
-		my %params = (
-			'useMode' => "PLUGIN.RssNews.screensaversettings",
-			'header'  => "PLUGIN_RSSNEWS_SCREENSAVER"
+		my $title       = $feed->{'items'}->[$i]->{'title'};
+		my $description = $feed->{'items'}->[$i]->{'description'} || '';
+
+		# How to display items shown by screen saver.
+		# %1\$s is item 'number'	XXX: number not used?
+		# %2\$s is item title
+		# %3\%s is item description
+		my $screensaver_item_format = "%2\$s -- %3\$s";
+		
+		# we need to limit the number of characters we add to the ticker, 
+		# because the server could crash rendering on pre-SqueezeboxG displays.
+		my $screensaver_chars_per_item = 1024;
+		
+		my $line2 = sprintf(
+			$screensaver_item_format,
+			$i + 1,
+			Slim::Formats::XML::unescapeAndTrim($title),
+			Slim::Formats::XML::unescapeAndTrim($description)
 		);
 
-		Slim::Buttons::Home::addSubMenu("SCREENSAVERS","PLUGIN_RSSNEWS_SCREENSAVER", \%params);
+		if ( length $line2 > $screensaver_chars_per_item ) {
+
+			$line2 = substr $line2, 0, $screensaver_chars_per_item;
+
+			$::d_plugins && msg("RSS: screensaver character limit exceeded - truncating.\n");
+		}
+
+		$current_items->{$feed}->{'next_item'} = $i + 1;
+
+		if ( !exists( $feed->{'items'}->[ $current_items->{$feed}->{'next_item'} ] ) ) {
+
+			$current_items->{$feed}->{'next_item'}  = 0;
+			$current_items->{$feed}->{'first_item'} -= ($i + 1);
+
+			if ( $screensaver_items_per_feed >= ($i + 1) ) {
+
+				$new_feed_next = 1;
+
+				$current_items->{$feed}->{'first_item'} = 0;
+			}
+		}
+
+		if ( ($current_items->{$feed}->{'next_item'} - 
+		      $current_items->{$feed}->{'first_item'}) >= $screensaver_items_per_feed ) {
+
+			# displayed $screensaver_items_per_feed of this feed, move on to next saving position
+			$new_feed_next = 1;
+			$current_items->{$feed}->{'first_item'} = $current_items->{$feed}->{'next_item'};
+		}
+
+		$parts = {
+			'line1'      => $line1,
+			'line2'      => $line2,
+			'scrollmode' => 'ticker',
+		};
+
+		$client->param( 'PLUGIN.RssNews.line1', $line1 );
+		$client->param( 'PLUGIN.RssNews.current_items', $current_items );
+	}
+	else {
+
+		$parts = {
+			'line1' => "RSS News - ". $feed->{'title'},
+			'line2' => $client->string('PLUGIN_RSSNEWS_WAIT'),
+		};
+
+		$new_feed_next = 1;
 	}
 
-	# also add ourselves to the plugins menu
-	return 'PLUGINS';
+	$client->param( 'PLUGIN.RssNews.newfeed', $new_feed_next );
+
+	return $parts;
 }
 
 sub strings {
@@ -1112,7 +785,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 
 PLUGIN_RSSNEWS_WAIT
 	DE	Bitte warten...
-	EN	Please wait requesting...
+	EN	Please wait, requesting feed...
 	ES	Por favor esperar, solicitando...
 	NL	Bezig met ophalen...
 
@@ -1210,11 +883,6 @@ PLUGIN_RSSNEWS_LOADING_FEED
 	ES	Cargando feed de RSS
 	NL	Laden RSS feed...
 
-SETUP_GROUP_PLUGIN_RSSNEWS
-	EN	RSS News Ticker
-	ES	Ticker de noticias de RSS
-	NL	RSS nieuwsberichten
-
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
 	EN	The RSS News Ticker plugin can be used to browse and display items from RSS Feeds. The preferences below can be used to determine which RSS Feeds to use and control how they are displayed. Click on the Change button when you are done.
@@ -1296,10 +964,3 @@ SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 }
 
 1;
-
-__END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

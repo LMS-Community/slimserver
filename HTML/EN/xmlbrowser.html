@@ -20,11 +20,13 @@
 			[% END %][% END %]
 
 			[% IF streaminfo %]
-			<div id="songInfoHeader">
-				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
-				[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
-			</div>
-			
+				[% IF streaminfo.item.enclosure %]
+				<div id="songInfoHeader">
+					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+				</div>
+				[% END %]
+				
 			<div class="songInfo">
 				<ul>
 					<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
@@ -38,7 +40,7 @@
 					[% END %]
 					
 					[% IF streaminfo.item.description %]
-					<li><div class="songInfoTitle">[% "PODCAST_FEED_DESCRIPTION" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "DESCRIPTION" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.description | html %]</div>
 					</li>
 					[% END %]					
