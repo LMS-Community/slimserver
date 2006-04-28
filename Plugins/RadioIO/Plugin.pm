@@ -1,6 +1,6 @@
 package Plugins::RadioIO::Plugin;
 
-# $Id: RadioIO.pm 2278 2005-03-02 08:44:14Z dsully $
+# $Id: Plugin.pm 7196 2006-04-28 22:00:45Z andy $
 
 # SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -13,16 +13,151 @@ package Plugins::RadioIO::Plugin;
 # GNU General Public License for more details.
 
 use strict;
-use Scalar::Util qw(blessed);
+
+use MIME::Base64;
 
 use Slim::Buttons::Common;
-use Slim::Control::Request;
-use Slim::Player::ProtocolHandlers;
+use Slim::Buttons::XMLBrowser;
 use Slim::Music::Info;
+use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Misc;
+use Slim::Utils::Strings qw( string );
+use Slim::Web::XMLBrowser;
 
 use Plugins::RadioIO::ProtocolHandler;
 
-our %current = ();
+my $FEED = 'http://www.radioio.com/opml/channelsLOGIN.php?device=Squeezebox&speed=high';
+
+sub enabled {
+	return ($::VERSION ge '6.3');
+}                             
+
+sub initPlugin {
+	$::d_plugins && msg("RadioIO Plugin initializing.\n");
+	
+	# Backwards-compat with radioio:// protocol links
+	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
+
+	Slim::Buttons::Common::addMode('PLUGIN.RadioIO', getFunctions(), \&setMode);
+}
+
+sub addMenu {
+	return 'RADIO';
+}
+
+sub getDisplayName {
+	return 'PLUGIN_RADIOIO_MODULE_NAME';
+}
+
+sub getFunctions {
+	return {};
+}
+
+sub setMode {
+	my $client = shift;
+	my $method = shift;
+
+	if ($method eq 'pop') {
+
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header   => 'PLUGIN_RADIOIO_LOADING',
+		modeName => 'RadioIO Plugin',
+		url      => radioIOURL($client),
+		title    => $client->string(getDisplayName()),
+	);
+
+	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
+
+	# we'll handle the push in a callback
+	$client->param('handledTransition',1);
+}
+
+sub radioIOURL {
+	my $client = shift;
+	
+	my ($username, $password);
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		$username = $client->prefGet('plugin_radioio_username', undef, 1);
+		$password = $client->prefGet('plugin_radioio_password', undef, 1);
+	}
+	else {
+		$username = Slim::Utils::Prefs::get('plugin_radioio_username');
+		$password = Slim::Utils::Prefs::get('plugin_radioio_password');
+	}
+	
+	my $url = $FEED;
+	
+	if ( $username && $password ) {
+		$url .= "&membername=$username&pw=" . decode_base64( $password );
+	}
+	
+	return $url;
+}
+
+# Web pages
+
+sub webPages {
+	my $title = 'PLUGIN_RADIOIO_MODULE_NAME';
+	
+	Slim::Web::Pages->addPageLinks(
+		'radio' => {
+			$title => 'plugins/RadioIO/index.html',
+		},
+	);
+	
+	my %pages = ( 
+		'index.html' => sub {
+			my $client = $_[0];
+			my $url = radioIOURL($client);
+			Slim::Web::XMLBrowser->handleWebIndex( {
+				feed   => $FEED,
+				title  => $title,
+				args   => \@_
+			} );
+		},
+	);
+	
+	return \%pages;
+}
+
+sub setupGroup {
+	my %Group = (
+		PrefOrder => [
+			'plugin_radioio_username',
+			'plugin_radioio_password',
+		],
+		GroupHead => string( 'PLUGIN_RADIOIO_MODULE_NAME' ),
+		GroupDesc => string( 'SETUP_GROUP_PLUGIN_RADIOIO_DESC' ),
+		GroupLine => 1,
+		GroupSub  => 1,
+		Suppress_PrefSub  => 1,
+		Suppress_PrefLine => 1,
+	);
+
+	my %Prefs = (
+		plugin_radioio_username => {},
+		plugin_radioio_password => { 
+			onChange => sub {
+				my $encoded = encode_base64( $_[1]->{plugin_radioio_password}->{new} );
+				chomp $encoded;
+				Slim::Utils::Prefs::set( 'plugin_radioio_password', $encoded );
+			},
+			inputTemplate => 'setup_input_pwd.html',
+			changeMsg     => string('SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED')
+		},
+	);
+
+	return( \%Group, \%Prefs );
+}
+
+###
+# The below code for backwards-compat with old-style radioio:// protocol links
 
 our %stations = (
 	'radioio70s'       => '3765',			
@@ -47,28 +182,6 @@ our %stations = (
 );
 
 our @station_names = sort keys %stations;
-
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
-
-sub initPlugin {
-
-	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
-	
-	# register our functions
-	
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
-
-    Slim::Control::Request::addDispatch(['radioio', 'stations', '_index', '_quantity'],  
-        [0, 1, 1, \&stationsQuery]);
-    Slim::Control::Request::addDispatch(['radioio', 'stationinfo'],  
-        [0, 1, 1, \&stationinfoQuery]);
-}
 
 # Just so we don't have plain text URLs in the code.
 sub decrypt {
@@ -105,220 +218,8 @@ sub getRadioIOURL {
 	return $url;
 }
 
-our %functions = (
-	'play' => sub {
-		my $client = shift;
-		my $url = getRadioIOURL($client->param('listIndex'));
-
-		if (defined($url)) {
-			$client->showBriefly({
-				'line1' => $client->string('CONNECTING_FOR'), 
-				'line2' => ${$client->param('valueRef')}, 
-				'overlay1' => $client->symbols('notesymbol')
-			});
-
-#			$client->execute(['playlist', 'clear']);
-#			$client->execute(['playlist', 'add', $url]);
-#			$client->execute(['play']);
-			$client->execute(['playlist', 'load', $url]);
-		}
-	},
-	'add' => sub {
-		my $client = shift;
-		my $url = getRadioIOURL($client->param('listIndex'));
-
-		if (defined($url)) {
-			$client->showBriefly({
-				'line1' => $client->string('ADDING_TO_PLAYLIST'), 
-				'line2' => ${$client->param('valueRef')}, 
-				'overlay1' => $client->symbols('notesymbol'),
-			});
-
-			$client->execute(['playlist', 'add', $url]);
-		}
-	},
-);
-
-sub setMode {
-	my $client = shift;
-	my $method = shift;
-	
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	$current{$client} ||= 0;
-
-	my %params = (
-		header => $client->string('PLUGIN_RADIOIO_MODULE_TITLE'),
-		listRef => \@station_names,
-		headerAddCount => 1,
-		overlayRef => sub {return (undef, $client->symbols('notesymbol'));},
-#		isSorted => 'I',
-		valueRef => \$current{$client},
-		callback => sub {
-			my $client = shift;
-			my $method = shift;
-
-			if ($method eq 'right') {
-				# use remotetrackinfo mode to display details
-				my %params = (
-					url => getRadioIOURL($client->param('listIndex')),
-					title => ${$client->param('valueRef')}, 
-				);
-				Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
-			}
-			elsif ($method eq 'left') {
-				Slim::Buttons::Common::popModeRight($client);
-			}
-		},
-	);
-
-	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
-}
-
-sub getFunctions {
-	return \%functions;
-}
-
-sub addMenu {
-	return 'RADIO';
-}
-
-sub getDisplayName {
-	return 'PLUGIN_RADIOIO_MODULE_NAME';
-}
-
-# Web pages
-
-sub webPages {
-	my %pages = ("index\.htm" => \&handleWebIndex);
-
-	if (grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => "plugins/RadioIO/index.html" });
-	}
-	
-	return (\%pages);
-}
-
-sub handleWebIndex {
-	my ($client, $params) = @_;
-	
-	if (defined $params->{'stationinfo'} && $stations{$params->{'stationinfo'}}) {
-		$params->{'stationname'} = $params->{'stationinfo'};
-
-		my $data = stationInfo($params->{'stationname'});
-		
-		if (defined $data) {
-			$params->{'fulltitle'} = $data->{'fulltitle'};
-			$params->{'bitrate'}   = $data->{'bitrate'};
-			$params->{'type'}      = $data->{'type'};
-		}
-
-	} else {
-
-		$params->{'stationnames'} = \@station_names;
-	}
-
-	return Slim::Web::HTTP::filltemplatefile('plugins/RadioIO/index.html', $params);
-}
-
-# returns data about a station
-sub stationInfo {
-	my $station = shift;
-	
-	# let's open the stream to get some more information
-	my $url     = "radioio://$station.mp3";
-	my $stream  = Plugins::RadioIO::ProtocolHandler->new({ url => $url });
-
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
-	my $track   = $ds->objectForUrl($url, 1, 1);
-
-	my %result;
-
-	if (blessed($track) && $track->can('bitrate')) {
-
-		$result{'fulltitle'} = Slim::Music::Info::getCurrentTitle(undef, $track);
-		$result{'bitrate'}   = $track->bitrate;
-		$result{'type'}      = $track->content_type;
-		$result{'station'}   = $station;
-		$result{'url'}       = $url;
-	}
-	
-	undef $stream;
-	
-	return \%result;
-}
-
-
-# handles the "radioio.stations" query
-sub stationsQuery {
-	my $request = shift;
- 
-	#msg("RadioIO::stationsQuery()\n");
- 
-	if ($request->isNotQuery([['radioio'], ['stations']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	
-	my $count = scalar(@station_names);
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-#		my $idx = $start;
-		my $cnt = 0;
-
-		for my $eachstation (@station_names[$start..$end]) {
-			$request->addResultLoop('@stations', $cnt, 'station', $eachstation);
-			$request->addResultLoop('@stations', $cnt, 'url', "radioio://$eachstation.mp3");
-			$cnt++;
-		}	
-	}
-
-	$request->setStatusDone();
-}
-
-# handles the "radioio.stationinfo" query
-sub stationinfoQuery {
-	my $request = shift;
- 
-	#msg("RadioIO::stationinfoQuery()\n");
- 
-	if ($request->isNotQuery([['radioio'], ['stationinfo']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $station  = $request->getParam('station');
-
-	if (!defined $station || !$stations{$station}) {
-		$request->setStatusBadParams();
-		return;
-	}
-
-	my $data = stationInfo($station);
-
-	if (defined $data) {
-	
-		$request->addResult('fulltitle', $data->{'fulltitle'});
-		$request->addResult('bitrate', $data->{'bitrate'});
-		$request->addResult('type', $data->{'type'});
-		$request->addResult('url', $data->{'url'});
-	}
-
-	$request->setStatusDone();
-}
+# End backwards-compat
+###
 
 sub strings
 {
@@ -331,6 +232,47 @@ PLUGIN_RADIOIO_MODULE_NAME
 
 PLUGIN_RADIOIO_MODULE_TITLE
 	EN	radioio.com
+	
+PLUGIN_RADIOIO_LOADING
+	DE	Lade RadioIO...
+	EN	Loading RadioIO...
+	
+SETUP_GROUP_PLUGIN_RADIOIO_DESC
+	EN	If you have a RadioIO account, enter your username and password. <a href='http://www.radioio.com/registration.php' target='_new'>Registered members</a> get high quality 128k streams, and <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass members</a> have access to high quality, commercial-free streams.
+
+SETUP_PLUGIN_RADIOIO_USERNAME
+	DE	RadioIO Benutzername
+	EN	RadioIO Username
+	ES	Usuario de RadioIO
+	IT	Codice utente RadioIO
+	NL	RadioIO gebruikersnaam
+
+SETUP_PLUGIN_RADIOIO_USERNAME_DESC
+	DE	Ihr RadioIO Benutzername, besuche <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> zum Einschreiben
+	EN	Your RadioIO username, visit <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> to sign up
+	ES	Tu nombre de usuario de RadioIO,  visitar <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> para registrarse
+	IT	Il tuo codice utente su RadioIO, visita <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> per registrarti
+	NL	Je RadioIO gebruikersnaam, bezoek <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> om aan te melden
+
+SETUP_PLUGIN_RADIOIO_PASSWORD
+	DE	RadioIO Passwort
+	EN	RadioIO Password
+	ES	Contraseña para RadioIO
+	NL	RadioIO wachtwoord
+
+SETUP_PLUGIN_RADIOIO_PASSWORD_DESC
+	DE	Dein RadioIO Passwort
+	EN	Your RadioIO password
+	ES	Tu contraseña para RadioIO
+	IT	La tua password RadioIO
+	NL	Je RadioIO wachtwoord
+
+SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED
+	DE	Dein RadioIO Passwort wurde geändert
+	EN	Your RadioIO password has been changed
+	ES	La contraseña para RadioIO ha sido cambiada
+	IT	La tua password RadioIO e' stata cambiata
+	NL	Je RadioIO wachtwoord is gewijzigd	
 ";}
 
 1;
