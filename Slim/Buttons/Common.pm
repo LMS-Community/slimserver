@@ -341,10 +341,12 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		
-		unless (defined $buttonarg) { return; }
-		
 		my $brightmode;
 		my $mode = Slim::Buttons::Common::mode($client);
+
+		if (!defined $buttonarg || ($mode eq 'block' && $client->modeParam('block.name') eq 'upgrade')) {
+			return;
+		}
 		
 		if ($client->power()) {
 			$brightmode = 'powerOnBrightness';
@@ -378,7 +380,7 @@ our %functions = (
 			if ($newBrightness < 0) { $newBrightness = 0;}
 		}
 
-		$client->prefSet($brightmode, $newBrightness) unless ($mode eq 'block' && $client->modeParam('block.name') eq 'upgrade');
+		$client->prefSet($brightmode, $newBrightness);
 		$client->brightness($newBrightness);
 	},
 	'playdisp' => sub  {

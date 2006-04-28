@@ -44,9 +44,9 @@ sub block {
 		$parts = $client->parseLines([$line1,$line2]);
 	}
 
-	my $blockName = shift; # allow caller to associate name with blocked mode
+	my $blockName = shift;     # associate name with blocked mode
+	my $staticDisplay = shift; # turn off animation
 
-	$client->blocklines($parts);
 	Slim::Buttons::Common::pushMode($client,'block');
 	$client->modeParam('block.name', $blockName);
 
@@ -54,9 +54,15 @@ sub block {
 		$client->showBriefly($parts);
 	}
 
-	# set the first timer to go after .5 sec. We only want to show the status
-	# indicator if it has been a while
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$tickdelay, \&updateBlockedStatus);
+	if ($staticDisplay) {
+		# turn off animation to suppress animation characters if updated is called whilst in this mode
+		$parts->{static} = 1;
+	} else {
+		# animate after .5 sec
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$tickdelay, \&updateBlockedStatus);
+	}
+
+	$client->blocklines($parts);
 }
 
 sub updateBlockedStatus {
@@ -83,10 +89,12 @@ sub lines {
 
 	my $parts = $client->blocklines();
 	
-	if (!defined($parts->{fonts}) && $client->linesPerScreen == 1) {
-		$parts->{overlay2} = $tickchars[$pos];
-	} else {
-		$parts->{overlay1} = $tickchars[$pos];
+	if (!$parts->{static}) {
+		if (!defined($parts->{fonts}) && $client->linesPerScreen == 1) {
+			$parts->{overlay2} = $tickchars[$pos];
+		} else {
+			$parts->{overlay1} = $tickchars[$pos];
+		}
 	}
 	
 	return($parts);

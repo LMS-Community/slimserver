@@ -557,6 +557,7 @@ sub _update_request_handler {
 	# THIS IS ONLY FOR SDK5.X-BASED FIRMWARE OR LATER
 	$::d_slimproto && msg("Client requests firmware update");
 	$client->unblock();
+	Slim::Hardware::IR::forgetQueuedIR($client);
 	$client->upgradeFirmware();		
 }
 	

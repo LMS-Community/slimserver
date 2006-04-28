@@ -326,15 +326,11 @@ sub upgradeFirmware_SDK5 {
 
 	my $frame;
 
-	$client->prefSet( "powerOnBrightness", 4);
-	$client->prefSet( "powerOffBrightness", 1);
-	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
-	
-	my $oldsize = $client->textSize();
-	$client->textSize(0);
-	
-	# disable visualizer in this mode
+	# disable visualizer is this mode
 	$client->modeParam('visu',[0]);
+
+	# force brightness to dim if off
+	if ($client->currBrightness() == 0) { $client->brightness(1); }
 
 	open FS, $filename || return("Open failed for: $filename\n");
 
@@ -343,6 +339,16 @@ sub upgradeFirmware_SDK5 {
 	my $size = -s $filename;	
 	
 	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+
+	# place in block mode so that brightness key is now ignored
+	$client->block( {
+		'line1' => $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
+		'fonts' => { 
+			'graphic-320x32' => 'light',
+			'graphic-280x16' => 'small',
+			'text'           => 2,
+		},
+	}, 'upgrade', 1 );
 	
 	my $bytesread=0;
 	my $totalbytesread=0;
@@ -361,26 +367,26 @@ sub upgradeFirmware_SDK5 {
 		
 		my $fraction = $totalbytesread/$size;
 		
-		if (($fraction - $lastFraction) > (1/20)) {
-			$client->showBriefly(
-				$client->string('UPDATING_FIRMWARE_' . uc($client->model())),
-				Slim::Display::Display::progressBar($client, $client->displayWidth(), $totalbytesread/$size)
-			);
+		if (($fraction - $lastFraction) > (1/40)) {
+			$client->showBriefly( {
+				'line1' => $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
+				'line2' => $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)),
+				'fonts' => { 
+					'graphic-320x32' => 'light',
+					'graphic-280x16' => 'small',
+					'text'           => 2,
+				},
+			} );
 			$lastFraction = $fraction;
 		}
 	}
+
+	$client->unblock();
 	
-	$client->showBriefly(
-		$client->string('UPDATING_FIRMWARE_' . uc($client->model())),
-				
-		Slim::Display::Display::progressBar($client, $client->displayWidth(), 1)
-	);
 	$client->sendFrame('updn',\(' ')); # upgrade done
 
 	$::d_firmware && msg("Firmware updated successfully.\n");
 	
-	$client->textSize($oldsize);
-
 #	Slim::Utils::Network::blocking($client->tcpsock, 0);
 	
 	return undef;

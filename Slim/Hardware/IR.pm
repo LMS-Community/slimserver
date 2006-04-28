@@ -136,6 +136,33 @@ sub idle {
 	return 1;
 }
 
+sub forgetQueuedIR {
+	my $client = shift;
+
+	my $i = 0;
+
+	while ( my $clientIR = $queuedClient[$i] ) {
+
+		if ( $clientIR eq $client ) {
+
+			splice @queuedServerAbsoluteTime, $i, 1;
+			splice @queuedClient, $i, 1;
+			splice @queuedBytes, $i, 1;
+			splice @queuedTime, $i, 1;
+			
+			if ($::d_irtm) {
+				splice @queuedClientTime, $i, 1;
+				splice @queuedServerTime, $i, 1;
+			}
+
+		} else {
+			
+			$i++;
+
+		}
+	}
+}
+
 sub init {
 
 	%irCodes = ();
