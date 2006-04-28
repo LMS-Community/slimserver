@@ -116,24 +116,52 @@ BEGIN {
 
 	# Given a list of modules, attempt to load them, otherwise pass back
 	# the failed list to the caller.
+
+	# Allow command line debugging.
+	my $d_startup = (grep { /d_startup/ } @ARGV) ? 1 : 0;
+
 	sub tryModuleLoad {
 		my @modules = @_;
 
 		my @failed  = ();
 
+		my (%oldINC, @newModules);
+
 		for my $module (@modules) {
+
+			%oldINC = %INC;
+
+			# Don't spit out any redefined warnings
+			local $^W = 0;
 
 			eval "use $module";
 
 			if ($@) {
-				Symbol::delete_package($module);
-
 				push @failed, $module;
 
-				$module =~ s|::|/|g;
-				$module .= '.pm';
+				@newModules = grep { !$oldINC{$_} } keys %INC;
 
-				delete $INC{$module};
+				for my $newModule (@newModules) {
+
+					# Don't bother removing/reloading
+					# these, as they're part of core Perl.
+					if ($newModule =~ /^(?:DynaLoader|Carp|overload)/) {
+						next;
+					}
+
+					delete $INC{$newModule};
+
+					$newModule =~ s|/|::|g;
+					$newModule =~ s|\.pm$||;
+
+					$d_startup && print "Removing [$newModule] from the symbol table. It (or it's parent) failed to load.\n";
+
+					Symbol::delete_package($newModule);
+				}
+
+			} else {
+
+				$d_startup && print "Loaded module: [$module] ok!\n";
 			}
 		}
 
@@ -142,10 +170,16 @@ BEGIN {
 
 	# Here's what we want to try and load. This will need to be updated
 	# when a new XS based module is added to our CPAN tree.
-	my @modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib);
+	my @required_modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib Digest::SHA1);
+
+	# Bug 3324
+	# In some cases, GD wasn't loading even though there was a working
+	# installation in the user's CPAN path. This is an attempt to use the
+	# use the system described above to load GD if possible.
+	my @optional_modules = qw(GD Locale::Hebrew);
 
 	if ($] <= 5.007) {
-		push @modules, qw(Storable Digest::MD5);
+		push @required_modules, qw(Storable Digest::MD5);
 	}
 
 	my @SlimINC = ();
@@ -167,24 +201,42 @@ BEGIN {
 		);
 	}
 
+	$d_startup && printf("Got @" . "INC containing:\n%s\n\n", join("\n", @INC));
+
 	my %libPaths = map { $_ => 1 } @SlimINC;
 
 	# This works like 'use lib'
 	# prepend our directories to @INC so we look there first.
 	unshift @INC, @SlimINC;
 
+	$d_startup && printf("Extended @" . "INC to contain:\n%s\n\n", join("\n", @INC));
+
 	# Try and load the modules - some will fail if we don't include the
 	# binaries for that version/architecture combo
-	my @failed = tryModuleLoad(@modules);
+	my @required_failed = tryModuleLoad(@required_modules);
+	my @optional_failed = tryModuleLoad(@optional_modules);
+
+	if (scalar @required_failed && $d_startup) {
+		printf("The following modules failed to load on the first attempt: [%s] - will try again.\n\n", join(', ', @required_failed));
+	}
+
+	if (scalar @optional_failed && $d_startup) {
+		printf("The following optional modules failed to load on the first attempt: [%s] - will try again\n\n", join(', ', @optional_failed));
+	}
 
 	# Remove our paths so we can try loading the failed modules from the default system @INC
 	@INC = grep { !$libPaths{$_} } @INC;
 
-	my @reallyFailed = tryModuleLoad(@failed);
+	my @required_really_failed = tryModuleLoad(@required_failed);
+	my @optional_really_failed = tryModuleLoad(@optional_failed);
 
-	if (scalar @reallyFailed) {
+	if (scalar @optional_really_failed && $d_startup) {
+		printf("The following optional modules failed to load: [%s] after their second try.\n\n", join(', ', @optional_really_failed));
+	}
 
-		printf("The following modules failed to load: %s\n\n", join(' ', @reallyFailed));
+	if (scalar @required_really_failed) {
+
+		printf("The following modules failed to load: %s\n\n", join(' ', @required_really_failed));
 
 		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl\n\n";
 		print "Exiting..\n";
@@ -194,6 +246,12 @@ BEGIN {
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
+
+	if ($d_startup) {
+		print "The following modules are loaded:\n";
+		print map { "\t$_ => $INC{$_}\n" } keys %INC;
+		print "\n";
+	}
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	if (!Slim::Utils::OSDetect::isDebian()) {
@@ -329,6 +387,7 @@ use vars qw(
 	$d_source
 	$d_source_v
 	$d_sql
+	$d_startup
 	$d_stdio
 	$d_stream
 	$d_stream_v
@@ -754,6 +813,7 @@ to the console via stderr:
     --d_source_v     => Verbose information about source audio files
     --d_sql          => Verbose SQL debugging
     --d_stdio        => Standard I/O command debugging
+    --d_startup      => Startup/Bootstrap debugging for @INC
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
     --d_sync         => Information about multi player synchronization
@@ -839,6 +899,7 @@ sub initOptions {
 		'd_source_v'		=> \$d_source_v,
 		'd_sql'				=> \$d_sql,
 		'd_stdio'			=> \$d_stdio,
+		'd_startup'			=> \$d_startup,
 		'd_stream'			=> \$d_stream,
 		'd_stream_v'		=> \$d_stream_v,
 		'd_sync'			=> \$d_sync,
