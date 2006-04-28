@@ -12,7 +12,7 @@ use Slim::Web::XMLBrowser;
 my $FEED = 'http://content.us.squeezenetwork.com:8080/lma/artists.opml';
 
 sub enabled {
-	return ($::VERSION ge '6.5');
+	return ($::VERSION ge '6.3');
 }
 
 sub initPlugin {

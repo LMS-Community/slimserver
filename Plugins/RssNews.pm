@@ -63,7 +63,7 @@ my $screensaver_items_per_feed;
 my $refresh_sec = 60 * 60;
 
 sub enabled {
-	return ($::VERSION ge '6.1');
+	return ($::VERSION ge '6.3');
 }
 
 sub initPlugin {

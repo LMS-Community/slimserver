@@ -14,7 +14,7 @@ my $FEED   = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
 my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.xml';
 
 sub enabled {
-	return ($::VERSION ge '6.1');
+	return ($::VERSION ge '6.3');
 }
 
 sub initPlugin {

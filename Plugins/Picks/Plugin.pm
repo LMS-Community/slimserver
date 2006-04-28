@@ -15,7 +15,7 @@ use Slim::Web::XMLBrowser;
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
 
 sub enabled {
-	return ($::VERSION ge '6.1');
+	return ($::VERSION ge '6.3');
 }
 
 sub initPlugin {
