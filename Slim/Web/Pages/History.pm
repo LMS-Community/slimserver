@@ -31,7 +31,7 @@ sub hitlist {
 	# generation.
 	my $tracks = $ds->find({
 		'field'  => 'track',
-		'find'   => { 'playCount' => { '>' => 0 } },
+		'find'   => { 'playcount' => { '>' => 0 } },
 		'sortBy' => 'playCount',
 		'limit'  => 50,
 		'offset' => 0,
@@ -39,11 +39,11 @@ sub hitlist {
 
 	for my $track (@$tracks) {
 
-		if (!blessed($track) || !$track->can('playCount')) {
+		if (!blessed($track) || !$track->can('playcount') || !$track->playcount) {
 			next;
 		}
 
-		my $playCount = $track->playCount;
+		my $playCount = $track->playcount;
 
 		if ($maxPlayed == 0) {
 			$maxPlayed = $playCount;
