@@ -105,18 +105,18 @@ sub radioIOURL {
 sub webPages {
 	my $title = 'PLUGIN_RADIOIO_MODULE_NAME';
 	
-	Slim::Web::Pages->addPageLinks(
-		'radio' => {
-			$title => 'plugins/RadioIO/index.html',
-		},
-	);
+	if (grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RadioIO/index.html' });
+	}
 	
 	my %pages = ( 
 		'index.html' => sub {
 			my $client = $_[0];
 			my $url = radioIOURL($client);
 			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $FEED,
+				feed   => $url,
 				title  => $title,
 				args   => \@_
 			} );
