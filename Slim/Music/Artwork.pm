@@ -9,6 +9,7 @@ package Slim::Music::Artwork;
 
 use strict;
 
+use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -31,25 +32,22 @@ sub getImageContentAndType {
 	my $class = shift;
 	my $path  = shift;
 
-	use bytes;
-	my $content = '';
+	# Bug 3245 - for systems who's locale is not UTF-8 - turn our UTF-8
+	# path into the current locale.
+	my $locale = Slim::Utils::Unicode::currentLocale();
 
-	# Bug 3245
-	$path = Slim::Utils::Unicode::encode(Slim::Utils::Unicode::currentLocale(), $path);
-
-	if (open(IMAGE, $path)) { 
-		local $/ = undef;
-		binmode(IMAGE);
-		$content = <IMAGE>;
-		close IMAGE;
+	if ($locale ne 'utf8') {
+		$path = Slim::Utils::Unicode::encode($locale, $path);
 	}
+
+	my $content = eval { read_file($path, 'binmode' => ':raw') };
 
 	if (defined($content) && length($content)) {
 
 		return ($content, $class->_imageContentType(\$content));
 	}
 
-	$::d_artwork && msg("getImageContent: Image File empty or couldn't read: $path : $!\n");
+	$::d_artwork && msg("getImageContent: Image File empty or couldn't read: $path : $! [$@]\n");
 
 	return undef;
 }
@@ -200,7 +198,7 @@ sub _readCoverArtFiles {
 			$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
 		}
 
-		my $artPath = $parentDir->file($artwork);
+		my $artPath = $parentDir->file($artwork)->stringify;
 
 		my ($body, $contentType) = $class->getImageContentAndType($artPath);
 
@@ -208,7 +206,7 @@ sub _readCoverArtFiles {
 
 		if (!$body && defined $artDir) {
 
-			$artPath = $artDir->file($artwork);
+			$artPath = $artDir->file($artwork)->stringify;
 
 			($body, $contentType) = $class->getImageContentAndType($artPath);
 		}
@@ -250,9 +248,9 @@ sub _readCoverArtFiles {
 
 	for my $file (@filestotry) {
 
-		$file = $parentDir->file($file);
+		$file = $parentDir->file($file)->stringify;
 
-		next unless -r $file;
+		next unless -f $file;
 
 		my ($body, $contentType) = $class->getImageContentAndType($file);
 
