@@ -165,7 +165,7 @@ sub writeNoBlock {
 	my $segment = shift(@{$writeQueue{$socket}});
 	
 	if (!defined $segment) {
-		addWrite($socket);
+		removeWrite($socket);
 		return;
 	}
 
@@ -181,7 +181,8 @@ sub writeNoBlock {
 	if (!defined($sentbytes)) {
 
 		$::d_select && msg("writeNoBlock: Send to socket had error, aborting.\n");
-		delete($writeQueue{$socket});
+		removeWrite($socket);
+		removeWriteNoBlockQ($socket);
 		return;
 	}
 
@@ -208,6 +209,17 @@ sub writeNoBlockQLen {
 	}
 
 	return -1;
+}
+
+sub removeWriteNoBlockQ {
+	my $socket = shift;
+	
+	if ( exists($writeQueue{$socket}) ) {
+		
+		$::d_select && msgf("removing writeNoBlock Queue for %d\n", fileno($socket));
+
+		delete($writeQueue{$socket});
+	}
 }
 
 1;

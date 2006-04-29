@@ -380,6 +380,7 @@ sub write_request_async {
 	# write request in non-blocking fashion
 	# this method will return immediately
 	Slim::Networking::Select::writeNoBlock($self, \$request);
+	Slim::Networking::Select::addError($self, \&errorCallback);
 }
 
 # don't use.  Use _async version instead.
@@ -518,9 +519,7 @@ sub errorCallback {
 	my $state = ${*$self}{'httpasync_state'};
 	$state->{'state'} = 'error';
 
-	# remove self from select loop
-	Slim::Networking::Select::removeError($self);
-	Slim::Networking::Select::removeRead($self);
+	$self->close();
 
 	$::d_http_async && msgf("AsyncHTTP: Error!! for fileno: %d\n", fileno($self));
 
@@ -537,6 +536,7 @@ sub close {
 	Slim::Networking::Select::removeError($self);
 	Slim::Networking::Select::removeRead($self);
 	Slim::Networking::Select::removeWrite($self);
+	Slim::Networking::Select::removeWriteNoBlockQ($self);
 
 	$self->SUPER::close();
 }

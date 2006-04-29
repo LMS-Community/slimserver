@@ -159,9 +159,10 @@ sub slimproto_close {
 	$::d_slimproto && msg("Slimproto connection closed\n");
 
 	# stop selecting
-	Slim::Networking::Select::addRead($clientsock, undef);
-	Slim::Networking::Select::addError($clientsock, undef);
-	Slim::Networking::Select::addWrite($clientsock, undef);
+	Slim::Networking::Select::removeRead($clientsock);
+	Slim::Networking::Select::removeError($clientsock);
+	Slim::Networking::Select::removeWrite($clientsock);
+	Slim::Networking::Select::removeWriteNoBlockQ($clientsock);
 
 	# close socket
 	$clientsock->close();
