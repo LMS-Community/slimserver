@@ -53,7 +53,7 @@ function setProgressBarWidth() {
 		doRefresh();
 	}
 	p = ( _progressBarWidth / _progressEnd) * _progressAt;
-	document.getElementById("progressBar").width=p+" ";
+	$("progressBar").width=p+" ";
 }
 
 // parses the data if it has not been done already
@@ -142,10 +142,10 @@ function refreshVolumeControl(theData) {
 			turnOff = activeKey;
 		}
 		if ($(turnOff)) {
-			document.getElementById(turnOff).style.display = "none";
+			Element.hide(turnOff);
 		}
 		if ($(turnOn)) {
-			document.getElementById(turnOn).style.display = "block";
+			Element.show(turnOn);
 		}
 	}
 }
@@ -184,17 +184,20 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 			turnOff = playerRepeatOrShuffle+'control_active_'+controls[i];
 		}
 		if ($(turnOff)) {
-			document.getElementById(turnOff).style.display = "none";
+			Element.hide(turnOff);
 		}
 		if ($(turnOn)) {
+			// still haven't figured this out, but prototype's Element.show here kills the progress bar. Bizarre
+			//Element.show(turnOn);
+			// go with this instead
 			document.getElementById(turnOn).style.display = "block";
 		}
 	}
 	if (noRequest) {
 		return true;
 	} else if (selected == 'prev' || selected == 'next') {
-		document.getElementById('playercontrol_prev').src = 'html/images/smaller/prev.gif';
-		document.getElementById('playercontrol_next').src = 'html/images/smaller/next.gif';
+		$('playercontrol_prev').src = 'html/images/smaller/prev.gif';
+		$('playercontrol_next').src = 'html/images/smaller/next.gif';
 		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'player') {
 		getStatusData(param, refreshPlayerStatus);
@@ -220,7 +223,7 @@ function playerControl(selected, param) {
 		}
 		var key = 'playercontrol_'+controls[i];
 		if ($(key)) {
-			document.getElementById(key).src = imgSrc;
+			$(key).src = imgSrc;
 		}
 	}
 }
@@ -229,7 +232,7 @@ function refreshOtherElements(theData) {
 	var parsedData = fillDataHash(theData);
 	// refresh cover art
 	if ($('albumhref')) {
-		document.getElementById('albumhref').href = 'browsedb.html?hierarchy=track&level=0&album='+parsedData['albumid']+'&amp;player='+player;
+		$('albumhref').href = 'browsedb.html?hierarchy=track&level=0&album='+parsedData['albumid']+'&amp;player='+player;
 	}
 	if ($('coverartpath')) {
 		var coverPath = null;
@@ -238,7 +241,7 @@ function refreshOtherElements(theData) {
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover.jpg';
 		}
-		document.getElementById('coverartpath').src = coverPath;
+		$('coverartpath').src = coverPath;
 	}
 
 	// refresh song info

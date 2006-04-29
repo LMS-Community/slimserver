@@ -1,3 +1,5 @@
+var pageFirstItem = [% pageinfo.startitem %];
+var pageLastItem =  [% playlist_items.last.num %];
 var player = '[% playerURI %]';
 var url = 'playlist.html';
 var timeoutID = false;
@@ -56,12 +58,22 @@ function refreshAll(theData) {
 			}
 		}
 	}
-	// truncate rows that need not be there
-	var cullRowStart = parseInt(parsedData['last_item'])+1;
-	truncateAt('playlist_table', cullRowStart);
 
-	for (r=startTrack; r <= parsedData['last_item']; r++) {
-		refreshPlaylistElements(parsedData, r);
+	// if the startTrack is not on this page, then all elements on this page are 'not playing'
+	var startTrackKey = 'byfrominfo_' + startTrack;
+	if ($(startTrackKey)) {
+		// truncate rows that need not be there
+		var cullRowStart = parseInt(parsedData['last_item'])+1;
+		truncateAt('playlist_table', cullRowStart);
+
+		//for (r=startTrack; r <= parsedData['last_item']; r++) {
+		for (r=pageFirstItem; r <= pageLastItem; r++) {
+			refreshPlaylistElements(parsedData, r);
+		}
+	} else {
+		for (r=pageFirstItem; r <= pageLastItem; r++) {
+			refreshPlaylistElements(parsedData, r);
+		}
 	}
 }
 
@@ -113,16 +125,16 @@ function refreshItemClass(theData, r) {
 		for (i=0; i<=otherIds.length; i++) {
 			var thisId = otherIds[i] + r.toString();
 			if ($(thisId)) {
-				$(thisId).style.display = 'none';
+				Element.hide(thisId);
 			}
 		}
 		for (i=0; i<=playingIds.length; i++) {
 			var thisId = playingIds[i] + r.toString();
 			if ($(thisId)) {
 				if (r == parseInt(parsedData['last_item']) && playingIds[i] == 'playnext_')  {
-						$(thisId).style.display = 'none';
+						Element.hide(thisId);
 				} else {
-					$(thisId).style.display = 'block';
+					Element.show(thisId);
 				}
 			}
 		}
@@ -139,17 +151,17 @@ function refreshItemClass(theData, r) {
 			if ($(thisId)) {
 				if (	(r == parseInt(parsedData['last_item']) && otherIds[i] == 'down_') ||
 					(r == parseInt(parsedData['first_item']) && otherIds[i] == 'up_' )
-				) {
-						$(thisId).style.display = 'none';
+				   )   {
+					Element.hide(thisId);
 				} else {
-					$(thisId).style.display = 'block';
+					Element.show(thisId);
 				}
 			}
 		}
 		for (i=0; i<=playingIds.length; i++) {
 			var thisId = playingIds[i] + r.toString();
 			if ($(thisId)) {
-				$(thisId).style.display = 'none';
+				Element.hide(thisId);
 			}
 		}
 	}
@@ -201,7 +213,7 @@ function refreshProgress(theData) {
 }
 
 function doPlaylistRefresh() {
-        var args = 'player='+player+'&ajaxRequest=1';
+        var args = 'player='+player+'&ajaxRequest=1&start=[% pageinfo.startitem %]';
         getStatusData(args, refreshAll);
 	setRefreshTime();
 }

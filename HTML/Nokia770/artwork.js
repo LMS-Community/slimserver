@@ -25,14 +25,14 @@ function fillDataHash(theData) {
 
 function showArrows(firstOne, secondOne, lastOne) {
 	if (firstOne == '0') {
-		$('last_cover').style.display = 'none';
-		$('next_cover').style.display = 'block';
+		Element.hide('last_cover');
+		Element.show('next_cover');
 	} else if (secondOne == lastOne) {
-		$('last_cover').style.display = 'block';
-		$('next_cover').style.display = 'none';
+		Element.show('last_cover');
+		Element.hide('next_cover');
 	} else {
-		$('last_cover').style.display = 'block';
-		$('next_cover').style.display = 'block';
+		Element.show('last_cover');
+		Element.show('next_cover');
 	}
 }
 
