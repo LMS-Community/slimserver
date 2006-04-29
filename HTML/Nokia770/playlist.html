@@ -23,7 +23,7 @@
 	</tr>
 	<tr>
 		<td class = 'pagebartext'>
-			[% IF pageinfo.totalpages > 1 %]&nbsp;[% PROCESS pagebar prefix = 'header_' %]&nbsp;|&nbsp;[% PROCESS pagebarheader prefix = 'header_' %][% END %]
+			[% IF pageinfo.totalpages > 1 %]&nbsp;[% PROCESS pagebar pageinfo.path = 'playlist.html' prefix = 'header_' %]&nbsp;|&nbsp;[% PROCESS pagebarheader prefix = 'header_' %][% END %]
 		</td>
 	</tr>
 </table>
