@@ -149,14 +149,20 @@ BEGIN {
 						next;
 					}
 
-					delete $INC{$newModule};
+					my $newModuleSymbol = $newModule;
 
-					$newModule =~ s|/|::|g;
-					$newModule =~ s|\.pm$||;
+					$newModuleSymbol =~ s|/|::|g;
+					$newModuleSymbol =~ s|\.pm$||;
 
-					$d_startup && print "Removing [$newModule] from the symbol table. It (or it's parent) failed to load.\n";
+					# This relies on delete_package returning a true value if it succeeded.
+					my $removed = eval {
+						Symbol::delete_package($newModuleSymbol);
+					};
 
-					Symbol::delete_package($newModule);
+					if ($removed) {
+						$d_startup && print "Removing [$newModuleSymbol] from the symbol table - load failed.\n";
+						delete $INC{$newModule};
+					}
 				}
 
 			} else {
