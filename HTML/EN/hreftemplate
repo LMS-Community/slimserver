@@ -111,6 +111,18 @@ href="[% webroot %][% statusroot %]?[%
 	END; %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# ajaxCmdHRef supplies only the URL args necessary for an add/play/insert/remove 
+this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 %]
+[% BLOCK ajaxCmdHRef -%]
+[%- IF numcmdFor.$cmdType; # better way to determine this?
+		PROCESS cmdNumericQuery;
+	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		PROCESS cmdRemoteURLQuery;
+	ELSE;
+		PROCESS cmdLocalQuery;
+	END; %]&amp;player=[% playerURI %]&amp;ajaxRequest=1
+[%- END %]
+
 [%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
 href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
