@@ -141,6 +141,8 @@ sub forgetQueuedIR {
 
 	my $i = 0;
 
+	Slim::Utils::Timers::killTimers($client, \&checkRelease);
+
 	while ( my $clientIR = $queuedClient[$i] ) {
 
 		if ( $clientIR eq $client ) {
