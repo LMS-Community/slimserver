@@ -52,7 +52,8 @@ sub read {
 			my $entry = $entry_info->{'src'};
 
 			$::d_parse && msg("  entry from file: $entry\n");
-		
+
+			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 			if ($class->playlistEntryIsValid($entry, $url)) {
