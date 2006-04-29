@@ -2205,6 +2205,7 @@ sub fillAlarmOptions {
 			'validate' => \&Slim::Utils::Validate::number
 			,'PrefChoose' => 'SETUP_ALARMVOLUME'
 			,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
+			,'changeIntro' => string('SETUP_ALARMVOLUME').' '.string('ALARM_DAY'.$i).string('COLON')
 			,'currentValue' => sub {
 				my $client = shift;
 				return if (!defined($client));
@@ -2216,7 +2217,7 @@ sub fillAlarmOptions {
 			'validate' => \&Slim::Utils::Validate::isTime
 			,'validateArgs' => [0,undef],
 			,'PrefChoose' => 'ALARM_SET'
-			,'changeIntro' => 'ALARM_SET'
+			,'changeIntro' => string('ALARM_SET').' '.string('ALARM_DAY'.$i).string('COLON')
 			,'rejectIntro' => 'ALARM_SET'
 			,'currentValue' => sub {
 				my $client = shift;
@@ -2238,6 +2239,7 @@ sub fillAlarmOptions {
 					'1' => 'ON',
 					'0' => 'OFF',
 				}
+			,'changeIntro' => string('SETUP_ALARM').' '.string('ALARM_DAY'.$i).string('COLON')
 			,'currentValue' => sub {
 					my $client = shift;
 					return if (!defined($client));
@@ -2249,6 +2251,7 @@ sub fillAlarmOptions {
 			,'PrefChoose' => 'ALARM_SELECT_PLAYLIST'
 			,'validateArgs' => undef
 			,'options' => undef
+			,'changeIntro' => string('ALARM_SELECT_PLAYLIST').' '.string('ALARM_DAY'.$i).string('COLON')
 			,'currentValue' => sub {
 					my $client = shift;
 					return if (!defined($client));
@@ -2940,7 +2943,9 @@ sub setup_changes_HTTP {
 		if (exists $settingsref->{$keyA}{'noWarning'}) {
 			next;
 		}
-		if (exists $settingsref->{$keyA}{'changeIntro'}) {
+		if (exists $settingsref->{$keyA.$keyI}{'changeIntro'}) {
+			$changebase = $settingsref->{$keyA.$keyI}{'changeIntro'};
+		} elsif (exists $settingsref->{$keyA}{'changeIntro'}) {
 			$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeIntro'});
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
 			$changebase = string('SETUP_' . uc($keyA) . '_OK');
