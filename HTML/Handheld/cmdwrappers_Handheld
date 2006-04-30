@@ -21,6 +21,13 @@
 [% BLOCK infolink %]
 [% END %]
 
+[% BLOCK descendlink -%]
+	[% PROCESS cmdlink
+		cmdtitle = "NEXT"
+		cmdimage = "b_next" 
+		noTarget = 1 %]
+[%- END %]
+
 [% BLOCK listitem %]
 	<td align="left" bgcolor="[% PROCESS oddOrEvenC %]">
 		[% IF content == '' %]
@@ -36,6 +43,7 @@
 
 [%- BLOCK crumblist -%]
  [%- FOREACH item = pwd_list.list -%]
+  [%- IF not noHomeLink or not loop.first %] / [% END -%]
   [%- PROCESS crumblistitem -%]
  [%- END -%]
 [%- END -%]
@@ -49,16 +57,17 @@
 [%- END %]
 
 [% BLOCK contentitem -%]
-<tr ><td bgcolor="[% PROCESS oddOrEvenC %]">
+[% IF not odd.defined; odd = 1; END %]
+<tr><td bgcolor="[% PROCESS oddOrEvenC %]">
 	[%- IF anchor %]
 		<a name="[% anchor | uri%]"></a>
 	[%- END %]
 	
 	[%- content | indent(4) %]
-		[%- IF controls -%]
+	[%- IF controls -%]
 		[%- PROCESS $controls -%]
 	[%- END %]
-</tr>
+</td></tr>
 [%- END %]
 
 [% BLOCK playlistcontrols %]

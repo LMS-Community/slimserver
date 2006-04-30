@@ -49,7 +49,7 @@
 			</tr>
 		[% IF browse_items %]
 			[% FOREACH item = browse_items %]
-				[% PROCESS browsedbitems_list.html %]
+				[% IF item.text; PROCESS browsedbitems_list.html; END %]
 			[% END %]
 		[% END %]
 	</table>
