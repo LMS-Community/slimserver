@@ -208,16 +208,16 @@ div#miniControls {
 	top: 0;
 	left: 0;
 	height: 22;
-	overflow: hidden;
+	overflow: visible;
 	z-index: 10;
 	background-color: #333333;
-	width: 50;
+	width: 55;
 }
 
 div#topbar {
 	position: absolute;
 	top: 0;
-	left: 55;
+	left: 0;
 	height: 20;
 	overflow: visible;
 }
