@@ -201,10 +201,23 @@ div#page_with_bar {
 	overflow: visible;
 }
 
+div#miniControls {
+	position: absolute;
+	padding-top: 3px;
+	padding-left: 5px;
+	top: 0;
+	left: 0;
+	height: 22;
+	overflow: hidden;
+	z-index: 10;
+	background-color: #333333;
+	width: 50;
+}
+
 div#topbar {
 	position: absolute;
 	top: 0;
-	left: 0;
+	left: 55;
 	height: 20;
 	overflow: visible;
 }

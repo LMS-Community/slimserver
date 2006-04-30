@@ -174,7 +174,7 @@ function refreshPlayingTrack(theData) {
 }
 
 // this function should be used solely for the more complicated 'next' request
-function refreshNothing(theData) {
+function refreshOnNext(theData) {
 	var parsedData = fillDataHash(theData);
 	previousState = parsedData;
 	var extraArg = parseInt(previousState['currentsongnum']);
@@ -225,7 +225,7 @@ function playlistPlayTrack(urlArgs) {
 
 function playlistNextTrack(urlArgs, thisRow) {
 	thisTrack = thisRow;
-	getStatusData(playlistBlankRequest, refreshNothing);
+	getStatusData(playlistBlankRequest, refreshOnNext);
 	setRefreshTime();
 }
 

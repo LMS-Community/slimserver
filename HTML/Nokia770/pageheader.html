@@ -2,19 +2,23 @@
 <html>
       <head>
             [% PROCESS standardheader.html %]
-		[%- IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' || thispage == 'browse' -%]
 		<script src="/html/prototype.js"></script>
 		<script>
-		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' %][% PROCESS artwork.js %][% ELSIF thispage == 'browse' %][% PROCESS browse.js %][% END %]
+		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' %][% PROCESS artwork.js %][% ELSE %][% PROCESS browse.js %][% END %]
 		</script>
-		[% END %]
       </head>
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
-[% IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' || thispage == 'browse' %]
+[%# IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' || thispage == 'browse' %]
 <div id='systemWorking' style='display:none'><img src='[% webroot %]html/images/moonwalker.gif'></div>
-[% END %]
+[%# END %]
+
+<div id = 'miniControls'>
+	<img src = '[% webroot %]html/images/smaller/play_transparent.gif' onClick='miniControls("play");'>
+&nbsp;
+	<img src = '[% webroot %]html/images/smaller/pause_transparent.gif' onClick='miniControls("pause");'>
+</div>
 
 <div id = 'page[% UNLESS thispage == 'artwork' || thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>
 <div id = 'topbar'>
