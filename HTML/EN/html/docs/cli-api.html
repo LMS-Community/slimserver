@@ -3709,612 +3709,10 @@ and saves in the top level of the playlists directory.</p>
 <p>
 
 
-<h5>Shoutcast Browser</h5>
+<h5>XMLBrowser based plugins: Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO, RSS</h5>
 <p>
-	The Shoutcast Browser plugin allows for browsing internet radio stations
-	provided by shoutcast. It's fetching a list of available stations from 
-	shoutcast.com.
-	<br>Programmers using this CLI have to be aware of a possible
-	delay when the plugin has to download that list: while it's fetching the
-	file, the CLI won't return any value, thus possibly blocking your process.
-	This can take a few seconds.
-</p>
-
-<p>
-	<strong>
-		<code>
-			shoutcast
-			genres
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast genres&quot; query returns a list of genres 
-	made available by the shoutcast plugin. The plugin must be enabled in the 
-	server preferences for this query to work.
-</p>
-<p>Accepted tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
-	</tr>
-</table>
-<p>
-	Returned tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100">
-			<b>
-				Tag
-			</b>
-		</td>
-		<td>
-			<b>
-				Description
-			</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			networkerror
-		</td>
-		<td>
-			Returns 1, if the plugin has enountered a network error while downloading stream information.
-			Client applications using the CLI have to handle this case themselves.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			count
-		</td>
-		<td>
-			Number of stations returned.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<em>
-				<br>For each genre:
-			</em>
-		</td>
-		<td>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>id</b>
-		</td>
-		<td>
-			A numerical ID for the genre. Item delimiter.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;genre
-		</td>
-		<td>
-			The genre's name.
-		</td>
-	</tr>
-</table>
-
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;shoutcast genres 0 10 search:pop&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;shoutcast genres 0 10
-		search:pop
-		count:4
-		id:0 genre:Jpop 
-		id:1 genre:Pop 
-		id:2 genre:Popular music of korea 
-		id:3 genre:Republic of koreapop
-		&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-
-<p>
-	<strong>
-		<code>
-			shoutcast
-			stations
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast stations&quot; query returns all internet radio stations
-	made available by the shoutcast plugin. The plugin must be enabled in the 
-	server preferences for this query to work.
-</p>
-<p>Accepted tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
-	</tr>
-	<tr>
-		<td>genre_id</td>
-		<td>Genre ID, to restrict the results to those stations of that genre.<br>
-		There are two special IDs available: "recent" and "mostpopular". These can 
-		be used as shortcuts for the "recentlyplayed" and "popularstations" queries.
-		</td>
-	</tr>
-	<tr>
-		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified by a letter (see below). The default value is the url.</td>
-	</tr>
-</table>
-<p>
-	Returned tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100">
-			<b>
-				Tag
-			</b>
-		</td>
-		<td>
-			<b>
-				Description
-			</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			networkerror
-		</td>
-		<td>
-			Returns 1, if the plugin has enountered a network error while downloading stream information.
-			Client applications using the CLI have to handle this case themselves.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			count
-		</td>
-		<td>
-			Number of stations returned.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<em>
-				<br>For each station:
-			</em>
-		</td>
-		<td>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>station</b>
-		</td>
-		<td>
-			Station name. Item delimiter.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>url</b>
-		</td>
-		<td>
-			URL of the station. The station can be played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			r&nbsp;bitrate
-		</td>
-		<td>
-			Station bitrate.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			l&nbsp;listeners
-		</td>
-		<td>
-			The number of listeners.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			p&nbsp;last playing
-		</td>
-		<td>
-			The station's last playing song.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			g&nbsp;genre
-		</td>
-		<td>
-			The station's genre.
-		</td>
-	</tr>
-</table>
-
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;shoutcast stations 0 2 search:fm&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;shoutcast stations 0 2
-		count:282
-		station:1.FM - 80's and 90's url:http://www.shoutcast.com/sbin/tunein-station.pls?id=8164&filename&playlist.pls
-		station:1.FM - Channel X url:http://www.shoutcast.com/sbin/tunein-station.pls?id=3211&filename&playlist.pls
-		&lt;LF&gt;&quot;
-		<br><br>
-		Request: &quot;shoutcast stations 199 1 tags:urlpg&quot;
-		<br>
-		Response: &quot;shoutcast stations 199 1 tags:urlpg
-		count:282
-		station:radiocafe 98.6 
-		url:http://www.shoutcast.com/sbin/tunein-station.pls?id=7505&filename=playlist.pls
-		bitrate:128
-		listeners:333
-		lastplaying:Van Morrison - Tupelo Honey
-		genre:live radio
-		&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<p>
-	<strong>
-		<code>
-			shoutcast
-			popularstations
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast popularstations&quot; query returns the most popular internet 
-	radio stations made available by the shoutcast plugin. The popularity is
-	defined by the number of listeners. This command is a shortcut to the "shoutcast 
-	stations genre_id:mostpopular" query
-	<br>The plugin must be enabled in the server preferences for this query to work.
-</p>
-<p>Accepted/Returned tagged parameters: see "shoutcast stations" above.
-</p>
-
-<p>
-	<strong>
-		<code>
-			&lt;playerid&gt;
-			shoutcast
-			recentlyplayed
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast recentlyplayed&quot; query returns the internet 
-	radio stations made available by the shoutcast plugin that were recently listened 
-	to from the given player.  The plugin must be enabled in the server preferences 
-	for this query to work.
-</p>
-<p>Accepted tagged parameters:</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
-	</tr>
-	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive.</td>
-	</tr>
-</table>
-<p>
-	Returned tagged parameters: see "shoutcast stations" above.
-</p>
-
-<p>
-	<strong>
-		<code>
-			&lt;playerid&gt;
-			shoutcast
-			playlist
-			&lt;cmd&gt;
-			&lt;url&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast playlist&quot; adds or plays the url of a radio station made available 
-	by the shoutcast plugin on the given player. Though playback of these stations 
-	could be achieved by the standard playlist methods, this query is added to support
-	the plugin's own "recently played" mechanism.
-	<br>The plugin must be enabled in the server preferences for this query to work.
-</p>
-<p>Accepted tagged parameters: none</p>
-<p>Returned tagged parameters: see "shoutcast stations" above.</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;6e:ef:54:e9:02:b0 
-		shoutcast playlist play 
-		http://www.shoutcast.com/sbin/tunein-station.pls?id=633926&filename=playlist.pls&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<p>
-	<strong>
-		<code>
-			shoutcast
-			stationinfo
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;shoutcast stationinfo&quot; query returns details on a shoutcast
-	station. The shoutcast plugin must be enabled in the server preferences for 
-	this query to work.
-	<br>
-	The query can return more than one set of information for a given station, 
-	if the station is available with different bitrates.
-</p>
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150">
-			<b>Tag</b>
-		</td>
-		<td>
-			<b>Description</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			station
-		</td>
-		<td>
-			Station to return information on.
-		</td>
-	</tr>
-</table>
-<p>
-	Returned tagged parameters: see "shoutcast stations" above.
-</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;shoutcast stationinfo station:radioio70s&lt;LF&gt;&quot;
-		<br>
-		Request: &quot;shoutcast stationinfo 1.FM - 80's and 90's&lt;LF&gt;&quot;
-		Response: &quot;shoutcast stationinfo 1.FM - 80's and 90's
-		station:1.FM - 80's and 90's
-		bitrate:128 
-		url:http://www.shoutcast.com/sbin/tunein-station.pls?id=8164&filename=playlist.pls
-		listeners:593
-		lastplaying:George Clinton - Atomic Dog 
-		genre:80s 90s
-	</p>
-</blockquote>
-
-
-<h5>radioio</h5>
-
-<p>
-	<strong>
-		<code>
-			radioio
-			stations
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;radioio stations&quot; query returns all internet radio stations
-	made available by the radioio plugin. The plugin must be enabled in the 
-	server preferences for this query to work.
-</p>
-<p>
-	Returned tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100">
-			<b>
-				Tag
-			</b>
-		</td>
-		<td>
-			<b>
-				Description
-			</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			count
-		</td>
-		<td>
-			Number of stations returned.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<em>
-				For each station:
-			</em>
-		</td>
-		<td>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>station</b>
-		</td>
-		<td>
-			Station name. Item delimiter.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;url
-		</td>
-		<td>
-			URL of the station. The station can be played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command.
-		</td>
-	</tr>
-</table>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;radioio stations 0 4&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;radioio stations 0 4
-		count:19 
-		station:radioio70s url:radioio%3A%2F%2Fradioio70s.mp3 
-		station:radioio70sPOP url:radioio%3A%2F%2Fradioio70sPOP.mp3 
-		station:radioio80s url:radioio%3A%2F%2Fradioio80s.mp3
-		station:radioio80sPOP url:radioio%3A%2F%2Fradioio80sPOP.mp3
-		&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p>
-	<strong>
-		<code>
-			radioio
-			stationinfo
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;radioio stationinfo&quot; query returns details on a radioio
-	station. The radioio plugin must be enabled in the server preferences for 
-	this query to work.
-	<br>
-	The server must connect to the radioio server to fetch information
-	on a station, which may induce a significant (>1s) delay in answering this
-	query.
-</p>
-<p>
-	Accepted tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150">
-			<b>Tag</b>
-		</td>
-		<td>
-			<b>Description</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			station
-		</td>
-		<td>
-			Station to return information on.
-		</td>
-	</tr>
-</table>
-<p>
-	Returned tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100">
-			<b>
-				Tag
-			</b>
-		</td>
-		<td>
-			<b>
-				Description
-			</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			fulltitle
-		</td>
-		<td>
-			Complete station title.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			bitrate
-		</td>
-		<td>
-			Station bitrate.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			type
-		</td>
-		<td>
-			Stream content type.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			url
-		</td>
-		<td>
-			URL of the station. The station can be played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command.
-		</td>
-	</tr>
-</table>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;radioio stationinfo station:radioio70s&lt;LF&gt;&quot;
-		<br>
-		Response: To be completed when radioio is fixed.
-	</p>
-</blockquote>
-
-
-<h5>XMLBrowser based plugins: Slimdevices Picks, Podcast, Live Music Archive</h5>
-<p>
-	The following instructions are valid for all XMLBrowser based plugins:
-	Slimdevices Picks, Podcast, Live Music Archive. While the CLI calls are
-	identical, the results can vary.
+	The following instructions are valid for all XMLBrowser based plugins:. 
+	While the CLI calls are	identical, the results can vary, though.
 	<br>Programmers using this CLI have to be aware of a possible delay while 
 	the plugins are fetching data from the internet: the CLI won't return any
 	value, thus possibly blocking the CLI request. This can take a few seconds.
@@ -4340,7 +3738,7 @@ and saves in the top level of the playlists directory.</p>
 <p>
 	<strong>
 		<code>
-			&lt;picks|podcast|lma&gt;
+			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt; items
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 		</code>
@@ -4479,6 +3877,60 @@ and saves in the top level of the playlists directory.</p>
 		name:Alternative | KCRW Music
 		hasitems:0 
 		id:0.1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<p>
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt; items
+			playlist
+			&lt;cmd&gt;
+			&lt;item_id:id&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist&quot; adds or plays an item referenced to in the XML file.
+	Though playback of these stations could be achieved by the standard playlist 
+	methods, calling this command will ensure that the station's name is displayed,
+	not only it's url (if possible). This command accepts "play", "insert" and "add"
+	as playlist commands.
+	<br>If item_id defines an item that can't be played, but contains playable subitems,
+	then these will be played instead. This allows to eg. play all tracks of a genre.
+	<br>The plugin must be enabled in the server preferences for this query to work.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of an item to be played. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;6e:ef:54:e9:02:b0 
+		shoutcast playlist play item_id:1.1
 	</p>
 </blockquote>
 
