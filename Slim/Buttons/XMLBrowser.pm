@@ -756,25 +756,55 @@ sub _cliQuery_done {
 		my $client = $request->client();
 		my $method = $request->getParam('_method');
 
-		if ($client && $method =~ /^(add|play|insert)$/i
-			&& (defined $subFeed->{'url'} || defined $subFeed->{'enclosure'})
-			&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})) {
-
-			my $title = $subFeed->{'name'} || $subFeed->{'title'};
-			my $url   = $subFeed->{'url'};
-
-			# Podcast enclosures
-			if ( my $enc = $subFeed->{'enclosure'} ) {
-				$url = $enc->{'url'};
+		if ($client && $method =~ /^(add|play|insert|load)$/i) {
+			# single item
+			if ((defined $subFeed->{'url'} || defined $subFeed->{'enclosure'})
+				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})) {
+	
+				my $title = $subFeed->{'name'} || $subFeed->{'title'};
+				my $url   = $subFeed->{'url'};
+	
+				# Podcast enclosures
+				if ( my $enc = $subFeed->{'enclosure'} ) {
+					$url = $enc->{'url'};
+				}
+	
+				if ( $url ) {
+					$::d_plugins && msg("XMLBrowser: $method $url\n");
+				
+					Slim::Music::Info::setTitle( $url, $title );
+				
+					$client->execute([ 'playlist', 'clear' ]) if ($method =~ /play|load/i);
+					$client->execute([ 'playlist', $method, $url ]);
+				}
 			}
-
-			if ( $url ) {
-				$::d_plugins && msg("XMLBrowser: $method $url\n");
 			
-				Slim::Music::Info::setTitle( $url, $title );
-			
-				$client->execute([ 'playlist', 'clear' ]) if ($method =~ /play/i);
-				$client->execute([ 'playlist', $method, $url ]);
+			# play all streams of an item
+			else {
+				my @urls;
+				for my $item ( @{ $subFeed->{'items'} } ) {
+					if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
+						push @urls, $item->{'url'};
+						Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+					}
+					elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'url'} ) {
+						push @urls, $item->{'enclosure'}->{'url'};
+						Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+					}
+				}
+				
+				if ( @urls ) {
+					$::d_plugins && msgf("XMLBrowser: playing/adding all items:\n%s\n",
+						join "\n", @urls
+					);
+					
+					if ( $method =~ /play|load/i ) {
+						$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
+					}
+					else {
+						$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+					}
+				}
 			}
 		}
 	}	
