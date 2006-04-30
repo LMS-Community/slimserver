@@ -39,6 +39,16 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
 
 	Slim::Buttons::Common::addMode('PLUGIN.RadioIO', getFunctions(), \&setMode);
+
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+    Slim::Control::Request::addDispatch(['radioio', 'items', '_index', '_quantity'],
+        [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['radioio', 'playlist', '_method' ],
+		[1, 1, 1, \&cliQuery]);
 }
 
 sub addMenu {
@@ -124,6 +134,14 @@ sub webPages {
 	);
 	
 	return \%pages;
+}
+
+sub cliQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("RadioIO: cliQuery()\n");
+	
+	Slim::Buttons::XMLBrowser::cliQuery('radioio', radioIOURL(), $request);
 }
 
 sub setupGroup {

@@ -197,9 +197,9 @@ sub webPages {
 	my $title = 'PLUGIN_RSSNEWS';
 	
 	if (grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+		Slim::Web::Pages->addPageLinks('plugins', { $title => undef });
 	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RssNews/index.html' });
+		Slim::Web::Pages->addPageLinks('plugins', { $title => 'plugins/RssNews/index.html' });
 	}
 
 	my %pages = ( 
@@ -227,7 +227,7 @@ sub cliQuery {
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
 	my $opml = $cache->get( 'rss_opml' );
-	Slim::Buttons::XMLBrowser::cliQuery('rss', $opml, $request);
+	Slim::Buttons::XMLBrowser::cliQuery('rss', $opml, $request, $refresh_sec);
 }
 
 

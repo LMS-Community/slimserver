@@ -640,7 +640,7 @@ sub playItem {
 }
 
 sub cliQuery {
-	my ( $query, $feed, $request ) = @_;
+	my ( $query, $feed, $request, $expires ) = @_;
 	
 	$::d_plugins && msg("XMLBrowser: cliQuery()\n");
 
@@ -657,7 +657,8 @@ sub cliQuery {
 		_cliQuery_done( $feed, {
 			'request' => $request,
 			'url'     => $feed->{'url'},
-			'query'   => $query
+			'query'   => $query,
+			'expires' => $expires
 		} );
 		return;
 	}
@@ -668,7 +669,8 @@ sub cliQuery {
 		{
 			'request' => $request,
 			'url'     => $feed,
-			'query'   => $query
+			'query'   => $query,
+			'expires' => $expires
 		}
 	);
 }
@@ -680,6 +682,7 @@ sub _cliQuery_done {
 
 	my $request = $params->{'request'};
 	my $query   = $params->{'query'};
+	my $expires = $params->{'expires'};
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
 	if ($request->isQuery([[$query], ['playlist']])) {
@@ -714,7 +717,8 @@ sub _cliQuery_done {
 						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 						'currentIndex' => \@crumbIndex,
 						'request'      => $request,
-						'query'        => $query
+						'query'        => $query,
+						'expires'      => $expires
 					},
 				);
 				return;
@@ -801,7 +805,7 @@ sub _cliQuery_done {
 		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
 		# only add item count if there are any items to add
-		if ($count) {	
+		if ($count) {
 			$request->addResult('count', $count);
 		
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
