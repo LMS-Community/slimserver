@@ -1,6 +1,6 @@
-	[% IF not Suppress_PrefHead %]
-		<table bgcolor="[% subtitleC %]" width=100%><tr><td><h4>[% PrefHead %]</h4></td></tr></table>
+	[% IF not Suppress_PrefHead && PrefHead %]
+		<table bgcolor="[% subtitleC %]" width=100%><tr><td><h4>[% PrefHead | getstring | upper | html %]</h4></td></tr></table>
 	[% END %]
-	[% IF not Suppress_PrefDesc %]<p>[% PrefDesc %]</p>[% END %]
+	[% IF not Suppress_PrefDesc && PrefDesc %]<p>[% PrefDesc | getstring %]</p>[% END %]
 	[% PrefInput %]
 	<p></p>
