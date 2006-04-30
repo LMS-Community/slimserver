@@ -156,3 +156,13 @@ function truncateAt(tableId, lastRow) {
 		}
         }
 }
+
+// miniControls is for putting play/pause on any page. ajax request is made via status.html
+function miniControls(action) {
+	var args = "p0="+action+"&player="+player+"&ajaxRequest=1";
+	// always use status.html for this request
+	var old_url = url;
+	url = 'status.html';
+	getStatusData(args, refreshNothing);
+	url = old_url;
+}
