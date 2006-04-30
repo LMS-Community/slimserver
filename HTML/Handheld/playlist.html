@@ -2,7 +2,7 @@
 	[% PROCESS pageheader.html %]
 
 	[% pwd_list = BLOCK %]
-		[% "CURRENT_PLAYLIST" | string %]: [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] [% IF myClientState || pageinfo %]([% IF pageinfo %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% ELSE; IF myClientState; myClientState.playlist.size; %] [% "SONGS" | string %][% END %][% END %])[% END %]
+		[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %] [% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %] [% IF playlistname %]<b>[% playlistname %]</b>[% END %] [% IF myClientState || pageinfo %]([% IF pageinfo %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% ELSE; IF myClientState; myClientState.playlist.size; %] [% "SONGS" | string %][% END %][% END %])[% END %]
 	[% END %]
 	[% WRAPPER submenu %]
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]

@@ -49,7 +49,7 @@
         <tr>
                 <td>
                         <nobr><font size="+1">
-                                [% "TITLE" | string %]:
+                                [% "TITLE" | string %][% "COLON" | string %]
                         </nobr>
                 </td>
                 <td>
@@ -78,7 +78,7 @@
         [% END %] [% IF itemobj.album %]
         <tr>
                 <td><font size="+1">
-                        [% "ALBUM" | string %]:
+                        [% "ALBUM" | string %][% "COLON" | string %]
                 </td>
                 <td>
 			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
@@ -90,7 +90,7 @@
         [% IF genres %]
         <tr>
                 <td><font size="+1">
-                        [% "GENRE" | string %]:
+                        [% "GENRE" | string %][% "COLON" | string %]
                 </td>
                 <td>
                 [% FOREACH genre = genres %]
@@ -101,7 +101,7 @@
         [% END %] [% IF itemobj.tracknum %]
         <tr>
                 <td><font size="+1">
-                        [% "TRACK" | string %]:
+                        [% "TRACK" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.tracknum %]
@@ -110,7 +110,7 @@
         [% END %] [% IF itemobj.duration %]
         <tr>
                 <td><font size="+1">
-                        [% "LENGTH" | string %]:
+                        [% "LENGTH" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.duration %]
@@ -119,7 +119,7 @@
         [% END %] [% IF itemobj.year %]
         <tr>
                 <td><font size="+1">
-                        [% "YEAR" | string %]:
+                        [% "YEAR" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.year %]
@@ -138,7 +138,7 @@
         [% END %] [% IF comment %]
         <tr>
                 <td><font size="+1">
-                        [% "COMMENT" | string %]:
+                        [% "COMMENT" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% comment %]
@@ -147,7 +147,7 @@
 	[% END %] [% IF itemobj.lyrics %]
         <tr>
                 <td><font size="+1">
-                        [% "LYRICS" | string %]:
+                        [% "LYRICS" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.lyrics %]
@@ -156,7 +156,7 @@
         [% END %] [% IF filelength %]
         <tr>
                 <td><font size="+1">
-                        [% "FILELENGTH" | string %]:
+                        [% "FILELENGTH" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% filelength %] [% "BYTES" | string %]
@@ -165,7 +165,7 @@
         [% END %] [% IF itemobj.bitrate %]
         <tr>
                 <td><font size="+1">
-                        [% "BITRATE" | string %]:
+                        [% "BITRATE" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.bitrate %]
@@ -179,7 +179,7 @@
         [% END %] [% IF itemobj.tagversion %]
         <tr>
                 <td><font size="+1">
-                        [% "TAGVERSION" | string %]:
+                        [% "TAGVERSION" | string %][% "COLON" | string %]
                 </td>
                 <td>
                         <font size="+1">[% itemobj.tagversion %]

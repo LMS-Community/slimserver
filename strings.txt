@@ -1523,7 +1523,8 @@ ABOUT_SHORT
 	ZH_CN	关于
 
 WEB_XML_ERROR
-	EN	There was an error loading the remote feed for
+	DE	Beim Laden von %s trat ein Fehler auf: %s
+	EN	There was an error loading the remote feed for %s: (%s)
 
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
@@ -1533,6 +1534,7 @@ NUMBER_OF_LISTENERS
 	NL	Aantal luisteraars
 
 DESCRIPTION
+	DE	Beschreibung
 	EN	Description
 
 #

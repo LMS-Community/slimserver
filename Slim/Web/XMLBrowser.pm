@@ -261,7 +261,7 @@ sub handleError {
 	
 	my $title = string($params->{'title'});
 	$stash->{'pagetitle'} = $title;
-	$stash->{'msg'} = string('WEB_XML_ERROR') . " $title: ($error)";
+	$stash->{'msg'} = sprintf(string('WEB_XML_ERROR'), $title, $error);
 	
 	my $output = processTemplate($template, $stash);
 	

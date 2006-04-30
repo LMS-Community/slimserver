@@ -63,7 +63,7 @@
 					[% IF pluginRandomNowPlaying != '' %]
 						<tr>
 							<td>
-								<strong>[% "NOW_PLAYING" | string %]:</strong>
+								<strong>[% "NOW_PLAYING" | string %][% "COLON" | string %]</strong>
 								[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]
 							</td>
 						</tr>

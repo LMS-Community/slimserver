@@ -238,6 +238,7 @@ PLUGIN_RADIOIO_LOADING
 	EN	Loading RadioIO...
 	
 SETUP_GROUP_PLUGIN_RADIOIO_DESC
+	DE	Falls Sie einen RadioIO Account besitzen, so können Sie hier Benutzername und Passwort eingeben. <a href='http://www.radioio.com/registration.php' target='_new'>Registrierte Benutzer</a> erhalten qualitativ hochwertige 128k Streams, <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass Mitglieder</a> haben Zugriff auf werbefreie Streams.
 	EN	If you have a RadioIO account, enter your username and password. <a href='http://www.radioio.com/registration.php' target='_new'>Registered members</a> get high quality 128k streams, and <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass members</a> have access to high quality, commercial-free streams.
 
 SETUP_PLUGIN_RADIOIO_USERNAME

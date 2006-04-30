@@ -172,7 +172,7 @@
 [% BLOCK song_info_display %]
 	<table border="0" cellspacing="0" cellpadding="0">
 		<tr>
-			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "TITLE" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			<a href="http://google.com" id = 'songtitle_link'>
 			<span id = 'songtitle'></span>
@@ -181,7 +181,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %]:</td>
+			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			<a href="http://google.com" id = 'artist_link' style="text-decoration:none">
 			<span id = 'artist'></span>
@@ -189,7 +189,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %]:</td>
+			<td class = 'normaltext' valign = 'top' nowrap height = '35'>[% "ALBUM" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
 			<a href="http://google.com" id = 'album_link' style="text-decoration:none">
 			<span id = 'album'></span>
@@ -197,7 +197,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %]:</td>
+			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
 			<a href="http://google.com" id = 'genre_link' style="text-decoration:none">
 			<span id = 'genre'></span>

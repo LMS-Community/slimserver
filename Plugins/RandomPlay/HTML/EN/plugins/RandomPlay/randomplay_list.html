@@ -6,7 +6,7 @@
 [% END -%]
 [%- pageHeaderInfo = BLOCK %]
 	[% IF pluginRandomNowPlaying != '' %]
-		<strong>[% "NOW_PLAYING" | string %]:</strong>
+		<strong>[% "NOW_PLAYING" | string %][% "COLON" | string %]</strong>
 		<span class="exboldnowplaying">[% "PLUGIN_RANDOM_" _ pluginRandomNowPlaying | upper | string %]</span>
 	[% END %]
 [% END -%]

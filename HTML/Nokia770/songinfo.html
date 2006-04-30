@@ -39,7 +39,7 @@
 				<table border = '0'>
         			<tr>
                				<td class = 'smallitemtext'>
-					<nobr>[% "TITLE" | string %]:</nobr>
+					<nobr>[% "TITLE" | string %][% "COLON" | string %]</nobr>
 					</td>
 					<td class = 'smallitemtext'>
 					[% itemobj.title %]
@@ -62,7 +62,7 @@
 			        [% END %] [% IF itemobj.album %]
 			        <tr>
 			                <td class = 'smallitemtext'>
-		                        [% "ALBUM" | string %]:
+		                        [% "ALBUM" | string %][% "COLON" | string %]
                				 </td>
 			                <td class = 'smallitemtext'>
 						<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
@@ -73,7 +73,7 @@
 			        [% IF genres %]
 			        <tr>
 			                <td class = 'smallitemtext'>
-		                        [% "GENRE" | string %]:
+		                        [% "GENRE" | string %][% "COLON" | string %]
        				         </td>
 			                <td class = 'smallitemtext'>
 			                [% FOREACH genre = genres %]
@@ -89,7 +89,7 @@
 			[% IF itemobj.tracknum %]
 			        <tr>
 			                <td class = 'smallitemtext'>
-		                        [% "TRACK" | string %]:
+		                        [% "TRACK" | string %][% "COLON" | string %]
 			                </td>
 			                <td class = 'smallitemtext'>
 		                        [% itemobj.tracknum %]
@@ -98,7 +98,7 @@
 			        [% END %] [% IF itemobj.duration %]
 			        <tr>
                 			<td class = 'smallitemtext'>
-		                        [% "LENGTH" | string %]:
+		                        [% "LENGTH" | string %][% "COLON" | string %]
 			                </td>
 			                <td class = 'smallitemtext'>
 		                        [% itemobj.duration %]
@@ -107,7 +107,7 @@
 			        [% END %] [% IF itemobj.year %]
 			        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "YEAR" | string %]:
+		                        [% "YEAR" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% itemobj.year %]
@@ -126,7 +126,7 @@
 		        [% END %] [% IF comment %]
 		        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "COMMENT" | string %]:
+		                        [% "COMMENT" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% comment %]
@@ -135,7 +135,7 @@
 			[% END %] [% IF itemobj.lyrics %]
 		        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "LYRICS" | string %]:
+		                        [% "LYRICS" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% itemobj.lyrics %]
@@ -144,7 +144,7 @@
 		        [% END %] [% IF filelength %]
 		        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "FILELENGTH" | string %]:
+		                        [% "FILELENGTH" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% filelength %] [% "BYTES" | string %]
@@ -153,7 +153,7 @@
 		        [% END %] [% IF itemobj.bitrate %]
 		        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "BITRATE" | string %]:
+		                        [% "BITRATE" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% itemobj.bitrate %]
@@ -167,7 +167,7 @@
 		        [% END %] [% IF itemobj.tagversion %]
 		        <tr>
 		                <td class = 'smallitemtext'>
-		                        [% "TAGVERSION" | string %]:
+		                        [% "TAGVERSION" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
 		                        [% itemobj.tagversion %]
