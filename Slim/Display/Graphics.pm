@@ -220,7 +220,7 @@ sub string {
 				@ords = ();
 			}
 			# if we've got non latin characters, make sure the hebrew is in the right order for printing
-			if ($canUseBiDi) {
+			if ($canUseBiDi && $string =~ /\p{BidiClass:R}/) {
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();
 			}
