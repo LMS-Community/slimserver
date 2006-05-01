@@ -412,12 +412,8 @@ sub parseOpenSearch {
 
 #### Some routines for munging strings
 sub unescape {
-	my $data = shift;
+	my $data = shift || return '';
 
-	return '' unless(defined($data));
-
-	use utf8; # required for 5.6
-	
 	# Decode all entities in-place
 	decode_entities($data);
 
@@ -425,8 +421,8 @@ sub unescape {
 }
 
 sub trim {
-	my $data = shift;
-	return '' unless(defined($data));
+	my $data = shift || return '';
+
 	use utf8; # important for regexps that follow
 
 	$data =~ s/\s+/ /g; # condense multiple spaces
@@ -439,15 +435,18 @@ sub trim {
 # unescape and also remove unnecesary spaces
 # also get rid of markup tags
 sub unescapeAndTrim {
-	my $data = shift;
-	return '' unless(defined($data));
-	use utf8; # important for regexps that follow
-	my $olddata = $data;
-	
-	$data = unescape($data);
+	my $data = shift || return '';
 
+	if (ref($data)) {
+		return '';
+	}
+
+	# important for regexps that follow
+	use utf8;
+
+	$data = unescape($data);
 	$data = trim($data);
-	
+
 	# strip all markup tags
 	$data =~ s/<[a-zA-Z\/][^>]*>//gi;
 
