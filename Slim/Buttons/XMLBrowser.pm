@@ -56,6 +56,11 @@ sub setMode {
 		
 		# Grab expires param here, as the block will change the param stack
 		my $expires = $client->param('expires');
+		
+		# Callbacks to report success/failure of feeds.  This is used by the
+		# RSS plugin on SN to log errors.
+		my $onSuccess = $client->param('onSuccess');
+		my $onFailure = $client->param('onFailure');
 
 		# give user feedback while loading
 		$client->block(
@@ -67,9 +72,11 @@ sub setMode {
 			\&gotFeed,
 			\&gotError,
 			{
-				'client'  => $client,
-				'url'     => $url,
-				'expires' => $expires,
+				'client'    => $client,
+				'url'       => $url,
+				'expires'   => $expires,
+				'onSuccess' => $onSuccess,
+				'onFailure' => $onFailure,
 			},
 		);
 
@@ -85,6 +92,12 @@ sub gotFeed {
 
 	# must unblock now, before pushMode is called by getRSS or gotOPML
 	$client->unblock;
+	
+	# notify success callback if necessary
+	if ( ref $params->{'onSuccess'} eq 'CODE' ) {
+		my $cb = $params->{'onSuccess'};
+		$cb->( $client, $url );
+	}
 
 	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
 	if ($feed->{'type'} eq 'rss') {
@@ -111,6 +124,12 @@ sub gotError {
 
 	# unblock client
 	$client->unblock;
+	
+	# notify failure callback if necessary
+	if ( ref $params->{'onFailure'} eq 'CODE' ) {
+		my $cb = $params->{'onFailure'};
+		$cb->( $client, $url, $err );
+	}
 
 	my @lines = (
 		"{PODCAST_GET_FAILED} <$url>",
