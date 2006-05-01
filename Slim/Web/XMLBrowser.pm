@@ -20,28 +20,31 @@ use Slim::Web::Pages;
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
-	my $feed    = $args->{'feed'};
-	my $title   = $args->{'title'};
-	my $search  = $args->{'search'};
-	my $expires = $args->{'expires'};
-	my $args    = $args->{'args'};
+
+	my $feed      = $args->{'feed'};
+	my $title     = $args->{'title'};
+	my $search    = $args->{'search'};
+	my $expires   = $args->{'expires'};
+	my $asyncArgs = $args->{'args'};
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
+
 		handleFeed( $feed, {
 			'url'     => $feed->{'url'},
 			'title'   => $title,
 			'search'  => $search,
 			'expires' => $expires,
-			'args'    => $args,
+			'args'    => $asyncArgs,
 		} );
+
 		return;
 	}
-	
+
 	# Handle search queries
-	if ( my $query = $args->[1]->{'query'} ) {
+	if ( my $query = $asyncArgs->[1]->{'query'} ) {
 		$::d_plugins && msg("XMLBrowser: Search query [$query]\n");
-		
+
 		Slim::Formats::XML->openSearch(
 			\&handleFeed,
 			\&handleError,
@@ -49,10 +52,10 @@ sub handleWebIndex {
 				'search' => $search,
 				'query'  => $query,
 				'title'  => $title,
-				'args'   => $args,
+				'args'   => $asyncArgs,
 			},
 		);
-		
+
 		return;
 	}
 
@@ -65,10 +68,10 @@ sub handleWebIndex {
 			'title'   => $title,
 			'search'  => $search,
 			'expires' => $expires,
-			'args'    => $args,
+			'args'    => $asyncArgs,
 		},
 	);
-	
+
 	return;
 }
 
