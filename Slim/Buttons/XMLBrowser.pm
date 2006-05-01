@@ -53,6 +53,9 @@ sub setMode {
 		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
 
 	} else {
+		
+		# Grab expires param here, as the block will change the param stack
+		my $expires = $client->param('expires');
 
 		# give user feedback while loading
 		$client->block(
@@ -66,7 +69,7 @@ sub setMode {
 			{
 				'client'  => $client,
 				'url'     => $url,
-				'expires' => $client->param('expires'),
+				'expires' => $expires,
 			},
 		);
 
