@@ -1813,7 +1813,9 @@ sub _postCheckAttributes {
 				# Check if the album name is one of the "common album names"
 				# we've identified in prefs. If so, we require a match on
 				# both album name and primary artist name.
-				$search->{'contributor'} = $contributor->id;
+				if (blessed($contributor)) {
+					$search->{'contributor'} = $contributor->id;
+				}
 			}
 
 			($albumObj) = eval { Slim::DataStores::DBI::Album->search($search) };
