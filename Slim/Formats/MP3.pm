@@ -50,35 +50,38 @@ INIT: {
 	$MP3::Info::v2_to_v1_names{'TSOT'} = 'TITLESORT';
 
 	# get composers
-	$MP3::Info::v2_to_v1_names{'TCM'} = 'COMPOSER';
+	$MP3::Info::v2_to_v1_names{'TCM'}  = 'COMPOSER';
 	$MP3::Info::v2_to_v1_names{'TCOM'} = 'COMPOSER';
 
 	# get band/orchestra
-	$MP3::Info::v2_to_v1_names{'TP2'} = 'BAND';
+	$MP3::Info::v2_to_v1_names{'TP2'}  = 'BAND';
 	$MP3::Info::v2_to_v1_names{'TPE2'} = 'BAND';	
 
 	# get artwork
-	$MP3::Info::v2_to_v1_names{'PIC'} = 'PIC';
+	$MP3::Info::v2_to_v1_names{'PIC'}  = 'PIC';
 	$MP3::Info::v2_to_v1_names{'APIC'} = 'PIC';	
 
 	# Set info
-	$MP3::Info::v2_to_v1_names{'TPA'} = 'SET';
+	$MP3::Info::v2_to_v1_names{'TPA'}  = 'SET';
 	$MP3::Info::v2_to_v1_names{'TPOS'} = 'SET';	
 
 	# get conductors
-	$MP3::Info::v2_to_v1_names{'TP3'} = 'CONDUCTOR';
+	$MP3::Info::v2_to_v1_names{'TP3'}  = 'CONDUCTOR';
 	$MP3::Info::v2_to_v1_names{'TPE3'} = 'CONDUCTOR';
 	
-	$MP3::Info::v2_to_v1_names{'TBP'} = 'BPM';
+	$MP3::Info::v2_to_v1_names{'TBP'}  = 'BPM';
 	$MP3::Info::v2_to_v1_names{'TBPM'} = 'BPM';
 
-	$MP3::Info::v2_to_v1_names{'ULT'} = 'LYRICS';
+	$MP3::Info::v2_to_v1_names{'ULT'}  = 'LYRICS';
 	$MP3::Info::v2_to_v1_names{'USLT'} = 'LYRICS';
 
 	# Pull the Relative Volume Adjustment tags
 	$MP3::Info::v2_to_v1_names{'RVA'}  = 'RVAD';
 	$MP3::Info::v2_to_v1_names{'RVAD'} = 'RVAD';
 	$MP3::Info::v2_to_v1_names{'RVA2'} = 'RVA2';
+
+	# TDRC is a valid field for a year.
+	$MP3::Info::v2_to_v1_names{'TDRC'} = 'YEAR';
 
 	# iTunes writes out it's own tag denoting a compilation
 	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
