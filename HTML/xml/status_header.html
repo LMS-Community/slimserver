@@ -66,6 +66,7 @@
 				<remove_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=delete&p2=[% thissongnum %]&player=[% playerURI %]]]></remove_url>
 				<seconds_elapsed>[% songtime | html %]</seconds_elapsed>
 				<seconds_total>[% durationseconds | html %]</seconds_total>
+				<current_title>[% songtitle | html %]</current_title>
 		[% END %]
 			[% IF title %]<song>[% END %]
 				[% PROCESS _xml_song.html %]

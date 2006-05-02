@@ -170,6 +170,7 @@ replaced by the desired level.
 				remove_url,
 				seconds_elapsed, 
 				seconds_total, 
+				current_title, 
 				song_id, 
 				title, 
 				(genre_id, genre, genre_browse_url)?,
@@ -206,6 +207,7 @@ replaced by the desired level.
 -->
 <!ELEMENT seconds_elapsed	(#PCDATA)>	<!-- Seconds elapsed in this song	-->
 <!ELEMENT seconds_total		(#PCDATA)>	<!-- Number of seconds in song		-->
+<!ELEMENT current_title		(#PCDATA)>	<!-- Current title as it's displayed	-->
 
 <!ELEMENT playlist 	(	#PCDATA|
 				save_url| 
