@@ -1,10 +1,18 @@
 package MP3::Info;
 
+# JRF: Added support for ID3v2.4 spec-valid frame size processing (falling back to old
+#      non-spec valid frame size processing)
+#      Added support for ID3v2.4 footers.
+#      Updated text frames to correct mis-terminated frame content.
+#      Added ignoring of encrypted frames.
+#      TODO: sort out flags for compression / DLI
+
 require 5.006;
 
-use overload;
 use strict;
+use overload;
 use Carp;
+use Fcntl qw(:seek);
 
 use vars qw(
 	@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $VERSION $REVISION
@@ -12,6 +20,7 @@ use vars qw(
 	@t_bitrate @t_sampling_freq @frequency_tbl %v1_tag_fields
 	@v1_tag_names %v2_tag_names %v2_to_v1_names $AUTOLOAD
 	@mp3_info_fields %rva2_channel_types
+	$debug_24 $debug_Tencoding
 );
 
 @ISA = 'Exporter';
@@ -28,7 +37,11 @@ use vars qw(
 
 # $Id$
 ($REVISION) = ' $Revision: 1.19 $ ' =~ /\$Revision:\s+([^\s]+)/;
-$VERSION = '1.20';
+$VERSION = '1.21';
+
+# JRF: Whether we're debugging the ID3v2.4 support
+$debug_24 = 0;
+$debug_Tencoding = 0;
 
 =pod
 
@@ -255,7 +268,7 @@ sub remove_mp3tag {
 	binmode $fh;
 
 	if ($version eq 1 || $version eq 'ALL') {
-		seek $fh, -128, 2;
+		seek $fh, -128, SEEK_END;
 		my $tell = tell $fh;
 		if (<$fh> =~ /^TAG/) {
 			truncate $fh, $tell or carp "Can't truncate '$file': $!";
@@ -267,14 +280,14 @@ sub remove_mp3tag {
 		my $v2h = _get_v2head($fh);
 		if ($v2h) {
 			local $\;
-			seek $fh, 0, 2;
+			seek $fh, 0, SEEK_END;
 			my $eof = tell $fh;
 			my $off = $v2h->{tag_size};
 
 			while ($off < $eof) {
-				seek $fh, $off, 0;
+				seek $fh, $off, SEEK_SET;
 				read $fh, my($bytes), $buf;
-				seek $fh, $off - $v2h->{tag_size}, 0;
+				seek $fh, $off - $v2h->{tag_size}, SEEK_SET;
 				print $fh $bytes;
 				$off += $buf;
 			}
@@ -283,6 +296,9 @@ sub remove_mp3tag {
 				or carp "Can't truncate '$file': $!";
 			$return += $v2h->{tag_size};
 		}
+
+		# JRF: I've not written the code to strip ID3v2.4 footers.
+		#      Sorry, I'm lazy.
 	}
 
 	_close($file, $fh);
@@ -400,9 +416,9 @@ EOT
 
 	binmode $fh;
 	$oldfh = select $fh;
-	seek $fh, -128, 2;
-	# go to end of file if no tag, beginning of file if tag
-	seek $fh, (<$fh> =~ /^TAG/ ? -128 : 0), 2;
+	seek $fh, -128, SEEK_END;
+	# go to end of file if no ID3v1 tag, beginning of existing tag if tag present
+	seek $fh, (<$fh> =~ /^TAG/ ? -128 : 0), SEEK_END;
 
 	# get genre value
 	$info{GENRE} = $info{GENRE} && exists $mp3_genres{$info{GENRE}} ?
@@ -425,7 +441,7 @@ EOT
 
 =pod
 
-=item get_mp3tag (FILE [, VERSION, RAW_V2])
+=item get_mp3tag (FILE [, VERSION, RAW_V2, APE2])
 
 Returns hash reference containing tag information in MP3 file.  The keys
 returned are the same as those supplied for C<set_mp3tag>, except in the
@@ -444,6 +460,8 @@ are in the global %v2_tag_names).
 If RAW_V2 is C<2>, the ID3v2 tag data is returned, manipulating for Unicode if
 necessary, etc.  It also takes multiple values for a given key (such as comments)
 and puts them in an arrayref.
+
+If APE is C<1>, an APE tag will be located before all other tags.
 
 If the ID3v2 version is older than ID3v2.2.0 or newer than ID3v2.4.0, it will
 not be read.
@@ -554,7 +572,7 @@ sub get_mp3tag {
 sub _get_v1tag {
 	my ($fh, $info) = @_;
 
-	seek $fh, -128, 2;
+	seek $fh, -128, SEEK_END;
 	read($fh, my $tag, 128);
 
 	if (!defined($tag) || $tag !~ /^TAG/) {
@@ -652,7 +670,7 @@ sub _parse_v2tag {
 
 	my $hash = $raw_v2 == 2 ? { map { ($_, $_) } keys %v2_tag_names } : \%v2_to_v1_names;
 
-	for my $id (keys %$hash) {
+	for my $id (keys %{$hash}) {
 
 		next if !exists $v2->{$id};
 
@@ -715,6 +733,11 @@ sub _parse_v2tag {
 			my $pic = $v2->{$id};
 
 			# if there is more than one picture, just grab the first one.
+			# JRF: Should consider looking for either the thumbnail or the front cover,
+			#      rather than just returning the first one.
+			#      Possibly also checking that the format is actually understood,
+			#      but that's really down to the caller - we can't say whether the
+			#      format is understood here.
 			if (ref($pic) eq 'ARRAY') {
 				$pic = (@$pic)[0];
 			}
@@ -742,7 +765,7 @@ sub _parse_v2tag {
 
 			} elsif ($pic && $id eq 'APIC') {
 
-				# look for ID3 v2.3 picture
+				# look for ID3 v2.3/2.4 picture
 				my ($encoding, $format) = unpack 'C Z*', $pic;
 
 				$pic_len = length($format) + 2;
@@ -781,7 +804,7 @@ sub _parse_v2tag {
 			# this is tricky ... if this is an arrayref,
 			# we want to only return one, so we pick the
 			# first one.  but if it is a comment, we pick
-			# the first one where the first charcter after
+			# the first one where the first character after
 			# the language is NULL and not an additional
 			# sub-comment, because that is most likely to be
 			# the user-supplied comment
@@ -978,10 +1001,94 @@ sub _parse_v2tag {
 
 sub _get_v2tag {
 	my ($fh, $ver, $raw, $info) = @_;
-	my ($off, $end, $myseek, $hlen, $num, $wholetag);
+	my $eof;
+	my $gotanyv2 = 0;
 
-	my $v2  = {};
-	my $v2h = _get_v2head($fh) or return 0;
+	# First we need to check the end of the file for any footer
+
+	seek $fh, -128, SEEK_END;
+	$eof = (tell $fh) + 128;
+
+	# go to end of file if no ID3v1 tag, beginning of existing tag if tag present
+	if (<$fh> =~ /^TAG/) {
+		$eof -= 128;
+	}
+
+	seek $fh, $eof, SEEK_SET;
+	# print STDERR "Checking for footer at $eof\n";
+
+	if (my $v2f = _get_v2foot($fh)) {
+		$eof -= $v2f->{tag_size};
+		# We have a ID3v2.4 footer. Must read it.
+		$gotanyv2 |= (_get_v2tagdata($fh, $ver, $raw, $info, $eof) ? 2 : 0);
+	}
+
+	# Now read any ID3v2 header
+	$gotanyv2 |= (_get_v2tagdata($fh, $ver, $raw, $info, undef) ? 1 : 0);
+
+	# Because we've merged the entries it makes sense to trim any duplicated
+	# values - for example if there's a footer and a header that contain the same
+	# data then this results in every entry being an array containing two
+	# identical values.
+	for my $name (keys %{$info})
+	{
+	  # Note: We must not sort these elements to do the comparison because that
+	  #       changes the order in which they are claimed to appear. Whilst this
+	  #       probably isn't important, it may matter for default display - for
+	  #       example a lyric should be shown by default with the first entry
+	  #       in the tag in the case where the user has not specified a language
+	  #       preference. If we sorted the array it would destroy that order.
+	  # This is a longwinded way of checking for duplicates and only writing the
+	  # first element - we check the array for duplicates and clear all subsequent
+	  # entries which are duplicates of earlier ones.
+	  if (ref $info->{$name} eq 'ARRAY')
+	  {
+	    my @array = ();
+	    my ($i, $o);
+	    my @chk = @{$info->{$name}};
+	    for $i ( 0..$#chk )
+	    {
+	      my $ielement = $chk[$i];
+	      if (defined $chk[$i])
+	      {
+	        for $o ( ($i+1)..$#chk )
+	        {
+	          $chk[$o] = undef if ($ielement eq $chk[$o]);
+	        }
+	        push @array, $chk[$i];
+	      }
+	    }
+	    # We may have reduced the array to a single element. If so, just assign
+	    # a regular scalar instead of the array.
+	    if ($#array == 0)
+	    { 
+	      $info->{$name} = $array[0];
+	    }
+	    else
+	    { 
+	      $info->{$name} = \@array;
+	    }
+	  }
+	}
+
+	return $gotanyv2;
+}
+
+# $has_v2 = &_get_v2tagdata($filehandle, $ver, $raw, $info, $startinfile);
+# $info is a hash reference which will be updated with the new ID3v2 details
+# if the updated bit is set, and set to the new details if the updated bit
+# is clear.
+# If undefined, $startinfile will be treated as 0 (see _get_v2head).
+# $v2h is a reference to a hash of the frames present within the tag.
+# Any frames which are repeated within the tag (eg USLT with different
+# languages) will be supplied as an array rather than a scalar. All client
+# code needs to be aware that any frame may be duplicated.
+sub _get_v2tagdata {
+	my($fh, $ver, $raw, $info, $start) = @_;
+	my($off, $end, $myseek, $v2, $v2h, $hlen, $num, $wholetag);
+
+	$v2 = {};
+	$v2h = _get_v2head($fh, $start) or return 0;
 
 	if ($v2h->{major_version} < 2) {
 		carp "This is $v2h->{version}; " .
@@ -991,12 +1098,15 @@ sub _get_v2tag {
 	}
 
 	# use syncsafe bytes if using version 2.4
-	# my $bytesize = ($v2h->{major_version} > 3) ? 128 : 256;
+	my $id3v2_4_frame_size_broken = 0;
+	my $bytesize = ($v2h->{major_version} > 3) ? 128 : 256;
 
 	# alas, that's what the spec says, but iTunes and others don't syncsafe
 	# the length, which breaks MP3 files with v2.4 tags longer than 128 bytes,
 	# like every image file.
-	my $bytesize = 256;
+	# Because we should not break the spec conformant files due to
+	# spec-inconformant programs, we first try the correct form and if the
+	# data looks wrong we revert to broken behaviour.
 
 	if ($v2h->{major_version} == 2) {
 		$hlen = 6;
@@ -1009,53 +1119,252 @@ sub _get_v2tag {
 	$off = $v2h->{ext_header_size} + 10;
 	$end = $v2h->{tag_size} + 10; # should we read in the footer too?
 
-	seek $fh, $v2h->{offset}, 0;
+	# JRF: If the format was ID3v2.2 and the compression bit was set, then we can't
+	#      actually read the content because there are no defined compression schemes
+	#      for ID3v2.2. Perform no more processing, and return failure because we
+	#      cannot read anything.
+	return 0 if ($v2h->{major_version} == 2 && $v2h->{compression});
+
+	# JRF: If the update flag is set then the input data is the same as that which was
+	#      passed in. ID3v2.4 section 3.2.
+	if ($v2h->{update}) {
+		$v2 = $info;
+	}
+
+	seek $fh, $v2h->{offset}, SEEK_SET;
 	read $fh, $wholetag, $end;
+
+        # JRF: The discrepency between ID3v2.3 and ID3v2.4 is that :
+        #          2.3: unsync flag indicates that unsync is used on the entire tag
+        #          2.4: unsync flag indicates that all frames have the unsync bit set
+        #      In 2.4 this means that the size of the frames which have the unsync bit
+        #      set will be the unsync'd size (section 4. in the ID3v2.4.0 structure
+        #      specification).
+        #      This means that when processing 2.4 files we should perform all the
+        #      unsynchronisation processing at the frame level, not the tag level.
+        #      The tag unsync bit is redundant (IMO).
+        if ($v2h->{major_version} == 4) {
+		$v2h->{unsync} = 0
+        }
 
 	$wholetag =~ s/\xFF\x00/\xFF/gs if $v2h->{unsync};
 
+	# JRF: If we /knew/ there would be something special in the tag which meant
+	#      that the ID3v2.4 frame size was broken we could check it here. If,
+	#      for example, the iTunes files had the word 'iTunes' somewhere in the
+	#      tag and we knew that it was broken for versions below 3.145 (which is
+	#      a number I just picked out of the air), then we could do something like this :
+	# if ($v2h->{major_version} == 4) &&
+	#    $wholetag =~ /iTunes ([0-9]+\.[0-9]+)/ &&
+	#    $1 < 3.145)
+	# {
+	#   $id3v2_4_frame_size_broken = 1;
+	# }
+	# However I have not included this because I don't have examples of broken
+	# files - and in any case couldn't guarentee I'd get it right.
+
 	$myseek = sub {
 		my $bytes = substr($wholetag, $off, $hlen);
-		return unless $bytes =~ /^([A-Z0-9]{$num})/
-			|| ($num == 4 && $bytes =~ /^(COM )/);  # stupid iTunes
-		my($id, $size) = ($1, $hlen);
+
+		# iTunes is stupid and sticks ID3v2.2 3 byte frames in a
+		# ID3v2.3 or 2.4 header. Ignore tags with a space in them.
+		if ($bytes !~ /^([A-Z0-9 ]{$num})/) {
+			return;
+		}
+
+		my ($id, $size) = ($1, $hlen);
 		my @bytes = reverse unpack "C$num", substr($bytes, $num, $num);
 
 		for my $i (0 .. ($num - 1)) {
 			$size += $bytes[$i] * $bytesize ** $i;
 		}
 
+		# JRF: Now provide the fall back for the broken ID3v2.4 frame size
+		#      (which will persist for subsequent frames if detected).
+
+		#      Part 1: If the frame size cannot be valid according to the
+		#              specification (or if it would be larger than the tag
+		#              size allows).
+		if ($v2h->{major_version}==4 && 
+		    $id3v2_4_frame_size_broken == 0 && # we haven't detected brokenness yet
+		    ((($bytes[0] | $bytes[1] | $bytes[2] | $bytes[3]) & 0x80) != 0 || # 0-bits set in size
+		     $off + $size > $end)  # frame size would excede the tag end
+		    )
+		{
+		  # The frame is definately not correct for the specification, so drop to
+		  # broken frame size system instead.
+		  $bytesize = 128;
+		  $size -= $hlen; # hlen has alread been added, so take that off again
+		  $size = (($size & 0x0000007f)) | 
+		          (($size & 0x00003f80)<<1) |
+		          (($size & 0x001fc000)<<2) |
+		          (($size & 0x0fe00000)<<3); # convert spec to non-spec sizes
+
+		  $size += $hlen; # and re-add header len so that the entire frame's size is known
+
+		  $id3v2_4_frame_size_broken = 1;
+
+		  print "Frame size cannot be valid ID3v2.4 (part 1); reverting to broken behaviour\n" if ($debug_24);
+
+		}
+
+		#      Part 2: If the frame size would result in the following frame being
+		#              invalid.
+		if ($v2h->{major_version}==4 && 
+		    $id3v2_4_frame_size_broken == 0 && # we haven't detected brokenness yet
+		    $size > 0x80+$hlen && # ignore frames that are too short to ever be wrong
+		    $off + $size < $end)
+		{
+
+		  print "Frame size might not be valid ID3v2.4 (part 2); checking for following frame validity\n" if ($debug_24);
+
+		  my $morebytes = substr($wholetag, $off+$size, 4);
+
+		  if (! ($morebytes =~ /^([A-Z0-9]{4})/ || $morebytes =~ /^\x00{4}/) ) {
+
+		    # The next tag cannot be valid because its name is wrong, which means that
+		    # either the size must be invalid or the next frame truely is broken.
+		    # Either way, we can try to reduce the size to see.
+		    my $retrysize;
+
+		    print "  following frame isn't valid using spec\n" if ($debug_24);
+
+		    $retrysize = $size - $hlen; # remove already added header length
+		    $retrysize = (($retrysize & 0x0000007f)) | 
+		                 (($retrysize & 0x00003f80)<<1) |
+		                 (($retrysize & 0x001fc000)<<2) |
+		                 (($retrysize & 0x0fe00000)<<3); # convert spec to non-spec sizes
+
+		    $retrysize += $hlen; # and re-add header len so that the entire frame's size is known
+		    
+		    $morebytes = substr($wholetag, $off+$retrysize, 4);
+		    if (! ($morebytes =~ /^([A-Z0-9]{4})/ ||
+		           $morebytes =~ /^\x00{4}/ ||
+		           $off + $retrysize > $end) )
+		    {
+		      # With the retry at the smaller size, the following frame still isn't valid
+		      # so the only thing we can assume is that this frame is just broken beyond
+		      # repair. Give up right now - there's no way we can recover.
+		      print "  and isn't valid using broken-spec support; giving up\n" if ($debug_24);
+		      return;
+		    }
+		    
+		    print "  but is fine with broken-spec support; reverting to broken behaviour\n" if ($debug_24);
+		    
+		    # We're happy that the non-spec size looks valid to lead us to the next frame.
+		    # We might be wrong, generating false-positives, but that's really what you
+		    # get for trying to handle applications that don't handle the spec properly -
+		    # use something that isn't broken.
+		    # (this is a copy of the recovery code in part 1)
+		    $size = $retrysize;
+		    $bytesize = 128;
+		    $id3v2_4_frame_size_broken = 1;
+
+		  } else {
+
+		    print "  looks like valid following frame; keeping spec behaviour\n" if ($debug_24);
+
+		  }
+		}
+
 		my $flags = {};
-		if ($v2h->{major_version} > 3) {
+
+		# JRF: was > 3, but that's not true; future versions may be incompatible
+		if ($v2h->{major_version} == 4) {
 			my @bits = split //, unpack 'B16', substr($bytes, 8, 2);
+			$flags->{frame_zlib}         = $bits[12]; # JRF: need to know about compressed
+			$flags->{frame_encrypt}      = $bits[13]; # JRF: ... and encrypt
 			$flags->{frame_unsync}       = $bits[14];
 			$flags->{data_len_indicator} = $bits[15];
 		}
 
-		return($id, $size, $flags);
+		# JRF: version 3 was in a different order
+		elsif ($v2h->{major_version} == 3) {
+			my @bits = split //, unpack 'B16', substr($bytes, 8, 2);
+			$flags->{frame_zlib}         = $bits[8]; # JRF: need to know about compressed
+			$flags->{data_len_indicator} = $bits[8]; # JRF:   and compression implies the DLI is present
+			$flags->{frame_encrypt}      = $bits[9]; # JRF: ... and encrypt
+		}
+
+		return ($id, $size, $flags);
 	};
 
 	while ($off < $end) {
-		my($id, $size, $flags) = &$myseek or last;
+		my ($id, $size, $flags) = &$myseek or last;
+		my ($hlenextra) = 0;
 
-		my $bytes = substr($wholetag, $off+$hlen, $size-$hlen);
+		# NOTE: Wrong; the encrypt comes after the DLI. maybe.
+		# JRF: Encrypted frames need to be decrypted first
+		if ($flags->{frame_encrypt}) {
+
+			my ($encypt_method) = substr($wholetag, $off+$hlen+$hlenextra, 1);
+
+			$hlenextra++;
+
+			# We don't actually know how to decrypt anything, so we'll just skip the entire frame.
+			$off += $size;
+
+			next;
+		}
+
+		my $bytes = substr($wholetag, $off+$hlen+$hlenextra, $size-$hlen-$hlenextra);
 
 		my $data_len;
 		if ($flags->{data_len_indicator}) {
 			$data_len = 0;
+
 			my @data_len_bytes = reverse unpack 'C4', substr($bytes, 0, 4);
+
 			$bytes = substr($bytes, 4);
+
 		        for my $i (0..3) {
 				$data_len += $data_len_bytes[$i] * 128 ** $i;
 		        }
 		}
 
+		print "got $id, length " . length($bytes) . " frameunsync: ".$flags->{frame_unsync}." tag unsync: ".$v2h->{unsync} ."\n" if ($debug_24);
+
 		# perform frame-level unsync if needed (skip if already done for whole tag)
 		$bytes =~ s/\xFF\x00/\xFF/gs if $flags->{frame_unsync} && !$v2h->{unsync};
 
+		# JRF: Decompress now if compressed.
+		#      (FIXME: Not implemented yet)
+
 		# if we know the data length, sanity check it now.
 		if ($flags->{data_len_indicator} && defined $data_len) {
-		        carp "Size mismatch on $id\n" unless $data_len == length($bytes);
+		        carp("Size mismatch on $id\n") unless $data_len == length($bytes);
+		}
+
+		# JRF: Apply small sanity check on text elements - they must end with :
+		#        a 0 if they are ISO8859-1
+		#        0,0 if they are unicode
+		# (This is handy because it can be caught by the 'duplicate elements'
+		# in array checks)
+		# There is a question in my mind whether I should be doing this here - it
+		# is introducing knowledge of frame content format into the raw reader
+		# which is not a good idea. But if the frames are broken we at least
+		# recover.
+		if (($v2h->{major_version} == 3 || $v2h->{major_version} == 4) && $id =~ /^T/) {
+
+			my $encoding = substr($bytes, 0, 1);
+		  
+			# Both these cases are candidates for providing some warning, I feel.
+			# ISO-8859-1 or UTF-8 $bytes
+			if (($encoding eq "\x00" || $encoding eq "\x03") && $bytes !~ /\x00$/) { 
+
+				$bytes .= "\x00"; 
+				print "Text frame $id has malformed ISO-8859-1/UTF-8 content\n" if ($debug_Tencoding);
+
+			# # UTF-16, UTF-16BE
+			} elsif ( ($encoding eq "\x01" || $encoding eq "\x02") && $bytes !~ /\x00\x00$/) { 
+
+				$bytes .= "\x00\x00";
+				print "Text frame $id has malformed UTF-16/UTF-16BE content\n" if ($debug_Tencoding);
+
+			} else {
+
+				# Other encodings cannot be fixed up (we don't know how 'cos they're not defined).
+			}
 		}
 
 		if (exists $v2->{$id}) {
@@ -1076,9 +1385,9 @@ sub _get_v2tag {
 
 	if (($ver == 0 || $ver == 2) && $v2) {
 
-		if ($raw && $ver == 2) {
+		if ($raw == 1 && $ver == 2) {
 
-			$info = $v2;
+			%$info = %$v2;
 
 			$info->{'TAGVERSION'} = $v2h->{'version'};
 
@@ -1164,15 +1473,13 @@ sub get_mp3info {
 	}
 
 	binmode $fh;
-	seek $fh, $off, 0;
+	seek $fh, $off, SEEK_SET;
 	read $fh, $byte, 4;
 
-	if ($off == 0) {
-		if (my $v2h = _get_v2head($fh)) {
-			$tot += $off += $v2h->{tag_size};
-			seek $fh, $off, 0;
-			read $fh, $byte, 4;
-		}
+	if (my $v2h = _get_v2head($fh)) {
+		$tot += $off += $v2h->{tag_size};
+		seek $fh, $off, SEEK_SET;
+		read $fh, $byte, 4;
 	}
 
 	$h = _get_head($byte);
@@ -1183,7 +1490,7 @@ sub get_mp3info {
 
 		# do only one read - it's _much_ faster
 		$off++;
-		seek $fh, $off, 0;
+		seek $fh, $off, SEEK_SET;
 		read $fh, $byte, $tot;
 		 
 		my $i;
@@ -1215,10 +1522,18 @@ sub get_mp3info {
 
 	my $vbr = _get_vbr($fh, $h, \$off);
 
-	seek $fh, 0, 2;
+	seek $fh, 0, SEEK_END;
 	$eof = tell $fh;
-	seek $fh, -128, 2;
+	seek $fh, -128, SEEK_END;
 	$eof -= 128 if <$fh> =~ /^TAG/ ? 1 : 0;
+
+	# JRF: Check for an ID3v2.4 footer and if present, remove it from
+	#      the size.
+	seek($fh, $eof, SEEK_SET);
+
+	if (my $v2f = _get_v2foot($fh)) {
+		$eof -= $v2f->{tag_size};
+	}
 
 	_close($file, $fh);
 
@@ -1342,7 +1657,7 @@ sub _vbr_seek {
 	my $bytes = shift;
 	my $n     = shift || 4;
 
-	seek $fh, $$off, 0;
+	seek $fh, $$off, SEEK_SET;
 	read $fh, $$bytes, $n;
 
 	$$off += $n;
@@ -1395,20 +1710,27 @@ sub _get_vbr {
 	return \%vbr;
 }
 
+# _get_v2head(file handle, start offset in file);
+# The start offset can be used to check ID3v2 headers anywhere
+# in the MP3 (eg for 'update' frames).
 sub _get_v2head {
 	my $fh = $_[0] or return;
 	my($v2h, $bytes, @bytes);
-	$v2h->{offset} = 0;
+	$v2h->{offset} = $_[1] || 0;
 
 	# check first three bytes for 'ID3'
-	seek $fh, 0, 0;
+	seek $fh, $v2h->{offset}, SEEK_SET;
 	read $fh, $bytes, 3;
 
-	# TODO: add support for tags at the end of the file
-	if ($bytes eq 'RIF' || $bytes eq 'FOR') {
-		_find_id3_chunk($fh, $bytes) or return;
-		$v2h->{offset} = tell $fh;
-		read $fh, $bytes, 3;
+	# (Note: Footers are dealt with in v2foot)
+	if ($v2h->{offset} == 0) {
+
+		# JRF: Only check for special headers if we're at the start of the file.
+		if ($bytes eq 'RIF' || $bytes eq 'FOR') {
+			_find_id3_chunk($fh, $bytes) or return;
+			$v2h->{offset} = tell $fh;
+			read $fh, $bytes, 3;
+		}
 	}
 
 	return unless $bytes eq 'ID3';
@@ -1424,7 +1746,7 @@ sub _get_v2head {
 	my @bits = split //, unpack 'b8', $bytes;
 	if ($v2h->{major_version} == 2) {
 		$v2h->{unsync}       = $bits[7];
-		$v2h->{compression}  = $bits[8];
+		$v2h->{compression}  = $bits[6]; # Should be ignored - no defined form
 		$v2h->{ext_header}   = 0;
 		$v2h->{experimental} = 0;
 	} else {
@@ -1444,7 +1766,12 @@ sub _get_v2head {
 		$v2h->{tag_size} += $bytes[$i] * 128 ** $i;
 	}
 
-	# get extended header size
+	# JRF: I think this is done wrongly - this should be part of the main frame,
+	#      and therefore under ID3v2.3 it's subject to unsynchronisation
+	#      (ID3v2.3, section 3.2).
+	#      FIXME.
+
+	# get extended header size (2.3/2.4 only)
 	$v2h->{ext_header_size} = 0;
 	if ($v2h->{ext_header}) {
 		read $fh, $bytes, 4;
@@ -1455,10 +1782,122 @@ sub _get_v2head {
 		for my $i (0..3) {
 			$v2h->{ext_header_size} += $bytes[$i] * $bytesize ** $i;
 		}
+
+		# Read the extended header
+		my $ext_data;
+		if ($v2h->{major_version} == 3) {
+			# On ID3v2.3 the extended header size excludes the whole header
+			read $fh, $bytes, 6 + $v2h->{ext_header_size};
+			my @bits = split //, unpack 'b16', substr $bytes, 0, 2;
+			$v2h->{crc_present}      = $bits[15];
+			my $padding_size;
+			for my $i (0..3) {
+				$padding_size += $bytes[2 + $i] * $bytesize ** $i;
+			}
+			$ext_data = substr $bytes, 6, $v2h->{ext_header_size} - $padding_size;
+		}
+		elsif ($v2h->{major_version} == 4) {
+			# On ID3v2.4, the extended header size includes the whole header
+			read $fh, $bytes, $v2h->{ext_header_size} - 4;
+			my @bits = split //, unpack 'b8', substr $bytes, 5, 1;
+			$v2h->{update}           = $bits[6];
+			$v2h->{crc_present}      = $bits[5];
+			$v2h->{tag_restrictions} = $bits[4];
+			$ext_data = substr $bytes, 2, $v2h->{ext_header_size} - 6;
+		}
+
+		# JRF: I'm not actually working out what the CRC or the tag
+		#      restrictions are just yet. It doesn't seem to be
+		#      all that worthwhile.
+		# However, if this is implemented...
+		#    Under ID3v2.3, the CRC is not sync-safe (4 bytes).
+		#    Under ID3v2.4, the CRC is sync-safe (5 bytes, excluding the flag data
+		#      length)
+		#    Under ID3v2.4, every flag byte that's set is given a flag data byte
+		#      in the extended data area, the first byte of which is the size of
+		#      the flag data (see ID3v2.4 section 3.2).
 	}
 
 	return $v2h;
 }
+
+# JRF: We assume that we have seeked to the expected EOF (ie start of the ID3v1 tag)
+#      The 'offset' value will hold the start of the ID3v1 header (NOT the footer)
+#      The 'tag_size' value will hold the entire tag size, including the footer.
+sub _get_v2foot {
+	my $fh = $_[0] or return;
+	my($v2h, $bytes, @bytes);
+	my $eof;
+
+	$eof = tell $fh;
+
+	# check first three bytes for 'ID3'
+	seek $fh, $eof-10, SEEK_SET; # back 10 bytes for footer
+	read $fh, $bytes, 3;
+
+	return undef unless $bytes eq '3DI';
+
+	# get version
+	read $fh, $bytes, 2;
+	$v2h->{version} = sprintf "ID3v2.%d.%d",
+		@$v2h{qw[major_version minor_version]} =
+			unpack 'c2', $bytes;
+
+	# get flags
+	read $fh, $bytes, 1;
+	my @bits = split //, unpack 'b8', $bytes;
+	if ($v2h->{major_version} != 4) {
+		# JRF: This should never happen - only v4 tags should have footers.
+		#      Think about raising some warnings or something ?
+		# print STDERR "Invalid ID3v2 footer version number\n";
+	} else {
+		$v2h->{unsync}       = $bits[7];
+		$v2h->{ext_header}   = $bits[6];
+		$v2h->{experimental} = $bits[5];
+		$v2h->{footer}       = $bits[4];
+		if (!$v2h->{footer})
+		{
+		  # JRF: This is an invalid footer marker; it doesn't make sense
+		  #      for the footer to not be marked as the tag having a footer
+		  #      so strictly it's an invalid tag.
+		  #      A warning might be nice, but for now we'll ignore.
+		  # print STDERR "Warning: Footer doesn't have footer bit set\n";
+		}
+	}
+
+	# get ID3v2 tag length from bytes 7-10
+	$v2h->{tag_size} = 10;  # include ID3v2 header size
+	$v2h->{tag_size} += 10; # always account for the footer
+	read $fh, $bytes, 4;
+	@bytes = reverse unpack 'C4', $bytes;
+	foreach my $i (0 .. 3) {
+		# whoaaaaaa nellllllyyyyyy!
+		$v2h->{tag_size} += $bytes[$i] * 128 ** $i;
+	}
+
+	# Note that there are no extended header details on the footer; it's
+	# just a copy of it so that clients can seek backward to find the
+	# footer's start.
+
+	$v2h->{offset} = $eof - $v2h->{tag_size};
+
+	# Just to be really sure, read the start of the ID3v2.4 header here.
+	seek $fh, $v2h->{offset}, 0; # SEEK_SET
+	read $fh, $bytes, 3;
+	if ($bytes ne "ID3") {
+	  # Not really an ID3v2.4 tag header; a warning would be nice but ignore
+	  # for now.
+	  # print STDERR "Invalid ID3v2 footer (header check) at " . $v2h->{offset} . "\n";
+	  return undef;
+	}
+
+	# We could check more of the header. I'm not sure it's really worth it
+	# right now but at some point in the future checking the details match
+	# would be nice.
+
+	return $v2h;
+  
+};
 
 sub _find_id3_chunk {
 	my($fh, $filetype) = @_;
@@ -1474,12 +1913,12 @@ sub _find_id3_chunk {
 		$pat = 'a4N';
 		$mat = 'ID3 ';
 	}
-	seek $fh, 12, 0;  # skip to the first chunk
+	seek $fh, 12, SEEK_SET;  # skip to the first chunk
 
 	while ((read $fh, $bytes, 8) == 8) {
 		($tag, $size)  = unpack $pat, $bytes;
 		return 1 if $tag eq $mat;
-		seek $fh, $size, 1;
+		seek $fh, $size, SEEK_CUR;
 	}
 
 	return 0;
@@ -1515,14 +1954,14 @@ sub _parse_ape_tag {
 
 	my $ape_tag_id = 'APETAGEX';
 
-	seek $fh, -256, 2;
+	seek $fh, -256, SEEK_END;
 	read($fh, my $tag, 256);
 	my $pre_tag = substr($tag, 0, 128, '');
 
 	# Try and bail early if there's no ape tag.
 	if (substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
 
-		seek($fh, 0, 0);
+		seek($fh, 0, SEEK_SET);
 		return 0;
 	}
 
@@ -1532,7 +1971,7 @@ sub _parse_ape_tag {
 	my $tag_offset_start    = 0;
 	my $tag_offset_end      = 0;
 
-	seek($fh, (0 - $id3v1_tag_size - $ape_tag_header_size - $lyrics3_tag_size), 2);
+	seek($fh, (0 - $id3v1_tag_size - $ape_tag_header_size - $lyrics3_tag_size), SEEK_END);
 
 	read($fh, my $ape_footer_id3v1, $id3v1_tag_size + $ape_tag_header_size + $lyrics3_tag_size);
 
@@ -1545,7 +1984,7 @@ sub _parse_ape_tag {
 		$tag_offset_end = $filesize;
 	}
 
-	seek($fh, $tag_offset_end - $ape_tag_header_size, 0);
+	seek($fh, $tag_offset_end - $ape_tag_header_size, SEEK_SET);
 
 	read($fh, my $ape_footer_data, 32);
 
@@ -1557,7 +1996,7 @@ sub _parse_ape_tag {
 
 		if ($ape_footer->{'flags'}->{'header'}) {
 
-			seek($fh, ($tag_offset_end - $ape_footer->{'tag_size'} - $ape_tag_header_size), 0);
+			seek($fh, ($tag_offset_end - $ape_footer->{'tag_size'} - $ape_tag_header_size), SEEK_SET);
 
 			$tag_offset_start = tell($fh);
 
@@ -1567,7 +2006,7 @@ sub _parse_ape_tag {
 
 			$tag_offset_start = $tag_offset_end - $ape_footer->{'tag_size'};
 
-			seek($fh, $tag_offset_start, 0);
+			seek($fh, $tag_offset_start, SEEK_SET);
 
 			read($fh, $ape_tag_data, $ape_footer->{'tag_size'});
 		}
@@ -1589,7 +2028,7 @@ sub _parse_ape_tag {
 		}
 	}
 
-	seek($fh, 0, 0);
+	seek($fh, 0, SEEK_SET);
 
 	return 1;
 }
@@ -2156,8 +2595,8 @@ Ronan Waide,
 Andy Waite,
 Ken Williams,
 Ben Winslow,
-Meng Weng Wong.
-
+Meng Weng Wong,
+Justin Fletcher.
 
 =head1 CURRENT AUTHOR 
 
