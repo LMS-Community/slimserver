@@ -749,6 +749,8 @@ sub _cliQuery_done {
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
 			if ( $isItemQuery && $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
 				$request->addResult('id', join '.', @index);
+				$request->addResult('name', $subFeed->{'name'}) if defined $subFeed->{'name'};
+				$request->addResult('title', $subFeed->{'title'}) if defined $subFeed->{'title'};
 				
 				foreach my $data (keys %{$subFeed}) {
 					if (ref($subFeed->{$data}) eq 'ARRAY') {
@@ -763,7 +765,7 @@ sub _cliQuery_done {
 							}
 						}
 					}
-					elsif ($subFeed->{$data}) {
+					elsif ($subFeed->{$data} && $data !~ /^(name|title)$/) {
 						$request->addResult($data, $subFeed->{$data});
 					}
 				}
@@ -864,16 +866,20 @@ sub _cliQuery_done {
 		
 			my $loopname = '@loop';
 			my $cnt = 0;
-			my $haveAudio = 0;
+			my $hasItems = 0;
 		
 			if ($valid) {
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
+					$hasItems = 0;
 					$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
-	
+					$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'}) if defined $item->{'name'};
+					$request->addResultLoop($loopname, $cnt, 'title', $item->{'title'}) if defined $item->{'title'};
+
 					foreach my $data (keys %{$item}) {
 						if (ref($item->{$data}) eq 'ARRAY') {
 							if (scalar @{$item->{$data}}) {
-								$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}});
+								$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}}) if !$hasItems;
+								$hasItems++;
 							}
 						}
 						elsif ($data =~ /enclosure/i && defined $item->{$data}) {
@@ -883,22 +889,18 @@ sub _cliQuery_done {
 								}
 							}
 						}
-						elsif ($item->{$data}) {
+						elsif ($data =~ 'type' && $item->{$data} =~ 'link') {
+								$request->addResultLoop($loopname, $cnt, 'hasitems', 1) if !$hasItems;
+								$hasItems++;
+						}
+						elsif ($item->{$data} && $data !~ /^(name|title)$/) {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
 						}
 					}
-	
-					# Check if any of our items contain audio, so we can display an
-					# 'All Songs' link
-					if ( $item->{'type'} eq 'audio' || $item->{'enclosure'} ) {
-						$haveAudio++;
-					}
-					
 					$cnt++;
 				}
 			}
-			
-			$request->addResult('itemshaveaudio', $haveAudio) if ($haveAudio);
+
 		}
 	}
 	
