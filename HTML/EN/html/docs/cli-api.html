@@ -71,8 +71,7 @@
 	</li>
 	<li>
 		Updated the &quot;<a href="#status">status</a>&quot; query to return
-		the current song title as formatted for the player and/or containing
-		the current radio station title.
+		the current song title for remote sources.
 	</li>
 	<li>
 		Command &quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;
@@ -109,6 +108,17 @@
 	</li>
 	<li>
 		Added the &quot;<a href="#subscribe">subscribe</a>&quot; command.
+	</li>
+	<li>
+		Added the &quot;<a href="#title">remote</a>&quot; and 
+		&quot;<a href="#playlistXinfo">playlist remote</a>&quot; queries.
+		Likewise, added the &quot;remote&quot; field to the 
+		<a href="#status">status</a>&quot; query.
+	</li>
+	<li>
+		Added the &quot;<a href="#title">current_title</a>&quot; query.
+		Likewise, added the &quot;current_title&quot; field to the 
+		<a href="#status">status</a>&quot; query.
 	</li>
 	<li>
 		Added the &quot;<a href="#show">show</a>&quot; command.
@@ -1713,7 +1723,7 @@ preferences values.</p>
   <p>Request: &quot;bd:a5:a9:9b:9d:df alarms 0 3&lt;LF&gt;&quot;
 <br>Response: &quot;bd:a5:a9:9b:9d:df alarms 0 3 count:2 fade:0 dow:1 enabled:1 
 	time:3600 volume:50 playlist url:PLUGIN_RANDOM_TRACK dow:5 enabled:1 time:81000 
-	volume:77 playlist url:file:///Volumes/Sid/slimp3/Playlists/AAA.m3u
+	volume:77 playlist url:file:///Volumes/Smurf/playlists/Playlists/AAA.m3u
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 
@@ -2861,23 +2871,81 @@ preferences values.</p>
     </p>
 </blockquote>
 
-<br><p id="title"><strong><code>&lt;playerid&gt; genre ?</code></strong><br>
-  <strong><code>&lt;playerid&gt; artist ?</code></strong><br>
-  <strong><code>&lt;playerid&gt; album ?</code></strong><br>
-  <strong><code>&lt;playerid&gt; title ?</code></strong><br>
-  <strong><code>&lt;playerid&gt; duration ?</code></strong><br>
-  <strong><code>&lt;playerid&gt; path ?</code></strong></p>
-<p>The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, &quot;title&quot; 
-  &quot;duration&quot; and &quot;path&quot; commands allow for querying information 
-  about the song currently playing.</p>
-<p>Examples: </p>
+<br>
+<p id="title">
+	<strong>
+		<code>
+			&lt;playerid&gt; genre ?
+			<br>
+			&lt;playerid&gt; artist ?
+			<br>
+			&lt;playerid&gt; album ?
+			<br>
+			&lt;playerid&gt; title ?
+			<br>
+			&lt;playerid&gt; duration ?
+			<br>
+			&lt;playerid&gt; remote ?
+			<br>
+			&lt;playerid&gt; current_title ?
+			<br>
+			&lt;playerid&gt; path ?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;genre&quot;, &quot;artist&quot;, &quot;album&quot;, 
+	&quot;title&quot; &quot;duration&quot;, &quot;remote&quot;, 
+	&quot;current_title&quot; and &quot;path&quot; commands allow for querying 
+	information about the song currently playing. &quot;remote&quot; returns 1 
+	if the current song is a remote stream. &quot;current_title&quot; returns
+	the current title for remote streams or the song title as formatted for
+	the player.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 genre ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 genre Rock&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 artist ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 artist Abba&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 album ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 album Greatest%20Hits&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 title ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 title Voulez%20vous&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 duration ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 duration 103.2&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 path ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 path pathtofile&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 genre ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 genre Rock&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 artist ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 artist Abba&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 album ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 album Greatest%20Hits&lt;LF&gt;&quot;
+	</p>	
+	<p>
+		Request: &quot;04:20:00:12:23:45 title ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 title Voulez%20vous&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 duration ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 duration 103.2&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 remote ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 remote 0&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 current_title ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 current_title 1-Voulez%20vous%20(ABBA)&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 path ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 path pathtofile&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br>
@@ -3096,26 +3164,74 @@ and saves in the top level of the playlists directory.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist index ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist index 5&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist genre &lt;index&gt; ?<br>
-  &lt;playerid&gt; playlist artist &lt;index&gt; ?<br>
-  &lt;playerid&gt; playlist album &lt;index&gt; ?<br>
-  &lt;playerid&gt; playlist title &lt;index&gt; ?<br>
-  &lt;playerid&gt; playlist duration &lt;index&gt; ?<br>
-  &lt;playerid&gt; playlist path &lt;index&gt; ?</code></strong></p>
-<p>The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
-  album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot; and &quot;playlist 
-  duration&quot; commands return the requested information for a given song 
-  at an index position in the current playlist. The path may be a path to the 
-  file or a URL.</p>
-<p>Examples:</p>
+<br>
+<p id="playlistXinfo">
+	<strong>
+		<code>
+			&lt;playerid&gt; playlist genre &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist artist &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist album &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist title &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist path &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist remote &lt;index&gt; ?
+			<br>
+			&lt;playerid&gt; playlist duration &lt;index&gt; ?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist genre&quot;, &quot;playlist artist&quot;, &quot;playlist 
+	album&quot;, &quot;playlist title&quot;, &quot;playlist path&quot;,  
+	&quot;playlist remote&quot; and &quot;playlist duration&quot; queries 
+	return the requested information for a given song at an index position in 
+	the current playlist. &quot;playlist remote&quot; returns 1 if the 
+	&quot;song&quot; is a remote stream.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist genre 3 ?&lt;LF&gt;&quot;<br>Request: &quot;04:20:00:12:23:45 playlist genre 3 Rock&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist artist 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist artist 3 Abba&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist album 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist album 3 Greatest Hits&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist title 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist title 3 Voulez Vous&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist path 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist path 3 &lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist duration 3 ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist duration 3 103.2&lt;LF&gt;&quot;</p>
- </blockquote>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist genre 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist genre 3 Rock&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist artist 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist artist 3 Abba&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist album 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist album 3 Greatest Hits&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist title 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist title 3 Voulez Vous&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist path 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist path 3 file:///Volumes/Music/ABBA/...&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist remote 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist remote 3 0&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist duration 3 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist duration 3 103.2&lt;LF&gt;&quot;
+	</p>
+</blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; playlist tracks ?</code></strong></p>
 <p>The &quot;playlist tracks&quot; command returns the the total number 
@@ -3403,10 +3519,10 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			&nbsp;&nbsp;rate
+			&nbsp;&nbsp;remote
 		</td>
 		<td>
-			Player rate. Only if there is a current song.
+			Returns 1 if a remote stream is currently playing.
 		</td>
 	</tr>
 	<tr>
@@ -3414,8 +3530,8 @@ and saves in the top level of the playlists directory.</p>
 			&nbsp;&nbsp;current_title
 		</td>
 		<td>
-			Returns the current title as formatted for the player display. Also
-			contains the title for radio stations. Only if current song.
+			Returns the current title for remote streams. Only if remote stream
+			is playing.
 		</td>
 	</tr>
 	<tr>
@@ -3425,6 +3541,14 @@ and saves in the top level of the playlists directory.</p>
 		<td>
 			Elapsed time into the current song. Decimal seconds. Only if current
 			song.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;rate
+		</td>
+		<td>
+			Player rate. Only if there is a current song.
 		</td>
 	</tr>
 	<tr>
@@ -3699,7 +3823,9 @@ and saves in the top level of the playlists directory.</p>
 </p>
 
 <hr>
-<h4 id="PG">Plugins commands and queries</h4>
+<h4 id="PG">
+	Plugins commands and queries
+</h4>
 <p>
 	The following command and queries are proposed by SlimServer plugins. The
 	plugin must be enabled in the SlimServer configuration for the commands
@@ -3709,43 +3835,26 @@ and saves in the top level of the playlists directory.</p>
 <p>
 
 
-<h5>XMLBrowser based plugins: Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO, RSS</h5>
-<p>
-	The following instructions are valid for all XMLBrowser based plugins:. 
-	While the CLI calls are	identical, the results can vary, though.
-	<br>Programmers using this CLI have to be aware of a possible delay while 
-	the plugins are fetching data from the internet: the CLI won't return any
-	value, thus possibly blocking the CLI request. This can take a few seconds.
-</p>
-<p>
-	Plugins which would like to use the XMLBrowser's CLI only need to add a 
-	handler in the initPlugin() section:
-</p>
-<code> 
-#        |requires Client<br>
-#        |  |is a Query<br>
-#        |  |  |has Tags<br>
-#        |  |  |  |Function to call<br>
-#        C  Q  T  F<br>
-    Slim::Control::Request::addDispatch(['myplugin', '_index', '_quantity'],<br>
-        [0, 1, 1, sub{<br>
-        	my $request = shift;<br>
-        	Slim::Buttons::XMLBrowser::cliQuery('myplugin', $urlToFeed, $request);<br>
-        }]);
-</code> 
-
-
+<h5>
+	Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO & RSS
+</h5>
 <p>
 	<strong>
 		<code>
-			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt; items
+			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt;
+			items
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 		</code>
 	</strong>
 </p>
-</p>
-	The "picks|podcast|lma" query returns items out of a supported XML file.
+<p>
+	These instructions are valid for all XMLBrowser based plugins.
+	While the CLI queries are identical, returned values may vary between
+	plugins. All queries to fetch data from the Internet, and consequently,
+	as experienced in the web interface, there may be a significant delay 
+	before these queries return data. Data is cached however so subsequent
+	queries performed immediately return much faster.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -3774,8 +3883,8 @@ and saves in the top level of the playlists directory.</p>
 			search
 		</td>
 		<td>
-			When a list of items is to be returned, it can be filtered by it's name
-			or title.
+			When a list of items is to be returned, it can be filtered by it's
+			name or title.
 		</td>
 	</tr>
 </table>
@@ -3800,12 +3909,27 @@ and saves in the top level of the playlists directory.</p>
 			count
 		</td>
 		<td>
-			The number of items available.
+			The number of items available at the selected level.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			name
+			<em>For each element:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			An item's hierarchical id. Item delimiter.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;name
 		</td>
 		<td>
 			An item's  (station, track, podcast etc.) name or title.
@@ -3813,7 +3937,7 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			hasitems
+			&nbsp;&nbsp;hasitems
 		</td>
 		<td>
 			Whether or not an item has sub-items.
@@ -3821,15 +3945,16 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			type
+			&nbsp;&nbsp;type
 		</td>
 		<td>
-			Stream content type.
+			Stream content type. Value &quot;link&quot; means sub-items must
+			be fetched.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			url
+			&nbsp;&nbsp;url
 		</td>
 		<td>
 			URL of the station or track. The station can be played using the 
@@ -3838,7 +3963,7 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			description
+			&nbsp;&nbsp;description
 		</td>
 		<td>
 			Some streams (podcasts) provide further information than the title.
@@ -3846,18 +3971,10 @@ and saves in the top level of the playlists directory.</p>
 	</tr>
 	<tr>
 		<td>
-			length
+			&nbsp;&nbsp;length
 		</td>
 		<td>
 			Some streams (podcasts) contain information about their size/length.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			id
-		</td>
-		<td>
-			An item's hierarchical id.
 		</td>
 	</tr>
 </table>
@@ -3884,22 +4001,23 @@ and saves in the top level of the playlists directory.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt; items
+			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt;
 			playlist
 			&lt;cmd&gt;
-			&lt;item_id:id&gt;
+			&lt;taggedParameters&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;playlist&quot; adds or plays an item referenced to in the XML file.
-	Though playback of these stations could be achieved by the standard playlist 
-	methods, calling this command will ensure that the station's name is displayed,
-	not only it's url (if possible). This command accepts "play", "insert" and "add"
-	as playlist commands.
-	<br>If item_id defines an item that can't be played, but contains playable subitems,
-	then these will be played instead. This allows to eg. play all tracks of a genre.
-	<br>The plugin must be enabled in the server preferences for this query to work.
+	This command adds or plays an item. Though playback of these stations could 
+	be achieved by the standard playlist methods, calling this command will 
+	ensure that the station's name is displayed, not only it's url (if 
+	possible). This command accepts "play", "insert" and "add" as playlist 
+	commands.
+	<br>
+	If item_id defines an item that can't be played, but contains playable 
+	subitems, then these will be played instead. This allows to eg. play all 
+	tracks of a genre.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -3929,8 +4047,9 @@ and saves in the top level of the playlists directory.</p>
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;6e:ef:54:e9:02:b0 
-		shoutcast playlist play item_id:1.1
+		Request: &quot;6e:ef:54:e9:02:b0 shoutcast playlist play item_id:1.1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;6e:ef:54:e9:02:b0 shoutcast playlist play item_id:1.1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

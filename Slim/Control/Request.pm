@@ -53,6 +53,7 @@ package Slim::Control::Request;
 # Y    power           <0|1|?|>
 # Y    sleep           <0..n|?>
 # Y    sync            <playerindex|playerid|-|?>
+# Y    mode            ?
 
 # Y    alarms          <startindex>                <numitems>                  <tagged parameters>
 # Y    signalstrength  ?
@@ -104,11 +105,23 @@ package Slim::Control::Request;
 # Y    duration        ?
 # Y    genre           ?
 # Y    title           ?
-# Y    mode            ?
 # Y    path            ?
+# Y    current_title   ?
+# Y    remote          ?
+
 # Y    playlist        name                        ?
 # Y    playlist        url                         ?
 # Y    playlist        modified                    ?
+# Y    playlist        tracks                      ?
+
+# Y    playlist        genre                       <index>                     ?
+# Y    playlist        artist                      <index>                     ?
+# Y    playlist        album                       <index>                     ?
+# Y    playlist        title                       <index>                     ?
+# Y    playlist        duration                    <index>                     ?
+# Y    playlist        path                        <index>                     ?
+# Y    playlist        remote                      <index>                     ?
+
 # Y    status          <startindex>                <numitems>                  <tagged parameters>
 
 # DEPRECATED (BUT STILL SUPPORTED)
@@ -404,6 +417,7 @@ sub init {
     addDispatch(['button',         '_buttoncode',  '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
     addDispatch(['client',         'forget'],                                                        [1, 0, 0, \&Slim::Control::Commands::clientForgetCommand]);
     addDispatch(['connected',      '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::connectedQuery]);
+    addDispatch(['current_title',  '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['debug',          '_debugflag',   '?'],                                             [0, 1, 0, \&Slim::Control::Queries::debugQuery]);
     addDispatch(['debug',          '_debugflag',   '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::debugCommand]);
     addDispatch(['display',        '?',            '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displayQuery]);
@@ -473,6 +487,7 @@ sub init {
     addDispatch(['playlist',       'play',         '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
     addDispatch(['playlist',       'playalbum',    '_genre',     '_artist',     '_album', '_title'], [1, 0, 0, \&Slim::Control::Commands::playlistXalbumCommand]);
     addDispatch(['playlist',       'playtracks',   '_what',      '_listref'],                        [1, 0, 0, \&Slim::Control::Commands::playlistXtracksCommand]);
+    addDispatch(['playlist',       'remote',       '_index',     '?'],                               [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'repeat',       '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playlistXQuery]);
     addDispatch(['playlist',       'repeat',       '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playlistRepeatCommand]);
     addDispatch(['playlist',       'resume',       '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
@@ -492,6 +507,7 @@ sub init {
     addDispatch(['pref',           '_prefname',    '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
     addDispatch(['rate',           '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::rateQuery]);
     addDispatch(['rate',           '_newvalue'],                                                     [1, 0, 0, \&Slim::Control::Commands::rateCommand]);
+    addDispatch(['remote',         '?'],                                                             [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['rescan',         '?'],                                                             [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
     addDispatch(['rescan',         '_playlists'],                                                    [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
     addDispatch(['search',         '_index',       '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);

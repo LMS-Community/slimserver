@@ -200,7 +200,8 @@ sub cursonginfoQuery {
 	$d_queries && msg("cursonginfoQuery()\n");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre', 'path']])) {
+	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre',
+			'path', 'remote', 'current_title']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -217,10 +218,20 @@ sub cursonginfoQuery {
 			
 			$request->addResult("_$method", $url);
 		
+		} elsif ($method eq 'remote') {
+			
+			$request->addResult("_$method", 
+				Slim::Music::Info::isRemoteURL($url));
+			
+		} elsif ($method eq 'current_title') {
+			
+			$request->addResult("_$method", 
+				Slim::Music::Info::getCurrentTitle($client, $url));
+
 		} else {
 			
 			my $ds = Slim::Music::Info::getCurrentDataStore();
-			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client));
 			
 			if (!blessed($track) || !$track->can('secs')) {
 				msg("Couldn't fetch object for URL: [$url] - skipping track\n");
@@ -556,7 +567,7 @@ sub playlistXQuery {
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
 			'tracks', 'duration', 'artist', 'album', 'title', 'genre', 'path', 
-			'repeat', 'shuffle', 'index', 'jump']])) {
+			'repeat', 'shuffle', 'index', 'jump', 'remote']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -590,6 +601,11 @@ sub playlistXQuery {
 	} elsif ($entity eq 'path') {
 		$request->addResult("_$entity", Slim::Player::Playlist::song($client, $index) || 0);
 
+	} elsif ($entity eq 'remote') {
+		if (defined (my $url = Slim::Player::Playlist::song($client, $index))) {
+			$request->addResult("_$entity", Slim::Music::Info::isRemoteURL($url));
+		}
+		
 	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
 		my $ds = Slim::Music::Info::getCurrentDataStore();
@@ -1059,12 +1075,16 @@ sub statusQuery {
 
 		if (my $song = Slim::Player::Playlist::song($client)) {
 
-			$request->addResult('rate', 
-				Slim::Player::Source::rate($client));
-			$request->addResult('current_title', 
-				Slim::Music::Info::getCurrentTitle($client, $song));
+			if (Slim::Music::Info::isRemoteURL($song)) {
+				$request->addResult('remote', 1);
+				$request->addResult('current_title', 
+					Slim::Music::Info::getCurrentTitle($client, $song));
+			}
+			
 			$request->addResult('time', 
 				Slim::Player::Source::songTime($client));
+			$request->addResult('rate', 
+				Slim::Player::Source::rate($client));
 			
 			my $track = $ds->objectForUrl($song);
 
