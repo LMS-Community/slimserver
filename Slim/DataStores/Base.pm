@@ -665,9 +665,19 @@ sub init {
 				my $type = shift || 'contributor';
 				my $idOnly = shift;
 
+				my $find = {
+					'contributor.namesearch' => $terms,
+				};
+
+				# Bug: 2479 - Don't include roles if the user has them unchecked.
+				if (my $roles = $ds->artistOnlyRoles) {
+
+					$find->{'contributor.role'} = $roles;
+				}
+
 				return $ds->find({
 					'field'  => $type,
-					'find'   => { "contributor.namesearch" => $terms },
+					'find'   => $find,
 					'sortBy' => $type,
 					'idOnly' => $idOnly,
 				});

@@ -211,6 +211,12 @@ sub advancedSearch {
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
+	# Bug: 2479 - Don't include roles if the user has them unchecked.
+	if (my $roles = $ds->artistOnlyRoles) {
+
+		$query{'contributor.role'} = $roles;
+	}
+
 	# Do the actual search
 	my $results = $ds->find({
 		'field'  => 'track',
