@@ -1180,6 +1180,7 @@ sub showBriefly {}
 sub pushLeft {}
 sub pushRight {}
 sub doEasterEgg {}
+sub displayHeight {}
 sub bumpLeft {}
 sub bumpRight {}
 sub bumpUp {}
