@@ -10,10 +10,13 @@ var intervalID = false;
 // Update the progress dialog with the current state
 function refreshProgressBar(theData) {
 	var parsedData = fillDataHash(theData);
-	// update duration time
-	if ($('duration')) {
-		if (parsedData['duration']) {
-			refreshElement('duration', parsedData['duration']);
+	var elements = [ 'duration', 'elapsed' ];
+	for (var i=0; i < elements.length; i++) {
+		var key = elements[i];
+		if ($(key)) {
+			if (parsedData[key]) {
+				refreshElement(key, parsedData[key]);
+			}
 		}
 	}
 	_progressAt = parseInt(parsedData['songtime'], 10);
