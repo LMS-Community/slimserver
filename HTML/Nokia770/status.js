@@ -56,6 +56,13 @@ function setProgressBarWidth() {
 	$("progressBar").width=p+" ";
 }
 
+function resetProgressBar() {
+	if ($('progressBar')) {
+		$('progressBar').width=0+" ";
+		_progressAt = 0;
+		clearIntervalCall();
+	}
+}
 // parses the data if it has not been done already
 function fillDataHash(theData) {
 	var returnData = null;
@@ -192,6 +199,9 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 			// go with this instead
 			document.getElementById(turnOn).style.display = "block";
 		}
+	}
+	if (selected == 'stop') {
+		resetProgressBar();
 	}
 	if (noRequest) {
 		return true;
