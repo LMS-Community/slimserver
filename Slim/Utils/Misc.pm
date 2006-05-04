@@ -112,12 +112,22 @@ sub setPriority {
 
 		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
-		my $processHandle     = $getCurrentProcess->Call(0) or errorMsg("setPriority: Can't get process handle ($^E)\n");
 
-		if ($setPriorityClass) {
+		if (blessed($setPriorityClass) && blessed($getCurrentProcess)) {
 
-			$setPriorityClass->Call($processHandle, Win32::Process::NORMAL_PRIORITY_CLASS()) or 
-				errorMsg("setPriority: Couldn't set priority ($^E)\n");
+			my $processHandle = eval { $getCurrentProcess->Call(0) };
+
+			if (!$processHandle || $@) {
+
+				errorMsg("setPriority: Can't get process handle ($^E) [$@]\n");
+				return;
+			};
+
+			eval { $setPriorityClass->Call($processHandle, Win32::Process::NORMAL_PRIORITY_CLASS()) };
+
+			if ($@) {
+				errorMsg("setPriority: Couldn't set priority to NORMAL ($^E) [$@]\n");
+			}
 		}
 
 	} elsif ($priority) {
