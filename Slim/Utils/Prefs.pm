@@ -453,6 +453,13 @@ sub makeCacheDir {
 	}
 }
 
+sub homeURL {
+        my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
+        my $port = Slim::Utils::Prefs::get('httpport');
+
+        return "http://$host:$port/";
+}
+
 # Some routines to add and remove preference change handlers
 sub addPrefChangeHandler {
 	my ($pref,$handlerRef,$forClient) = @_;

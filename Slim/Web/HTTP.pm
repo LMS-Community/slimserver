@@ -422,7 +422,7 @@ sub processHTTP {
 					
 					# throw 404
 					$params->{'suggestion'} = qq(There is no "$desiredskin")
-						. qq( skin, try ) . HomeURL() . qq( instead.);
+						. qq( skin, try ) . Slim::Utils::Prefs::homeURL() . qq( instead.);
 					$::d_http && msg("Invalid skin requested: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
 			
 					$response->code(RC_NOT_FOUND);
@@ -1759,10 +1759,10 @@ sub _getFileContent {
 }
 
 sub HomeURL {
-	my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
-	my $port = Slim::Utils::Prefs::get('httpport');
+	msg("Info: Slim::Web::HTTP::HomeURL is deprecated. Please call Slim::Utils::Prefs::homeURL() instead.\n");
+	bt(); 
 
-	return "http://$host:$port/";
+	return Slim::Utils::Prefs::homeURL();
 }
 
 sub HTMLTemplateDirs {

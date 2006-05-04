@@ -1098,7 +1098,7 @@ sub checkDataSource {
 
 		msg("Your data source needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
-		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Web::HTTP::HomeURL() . "\n");
+		msg(string('SETUP_URL_WILL_BE') . "\n\t" . Slim::Utils::Prefs::homeURL() . "\n");
 
 	} else {
 

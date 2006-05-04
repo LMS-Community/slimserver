@@ -2022,11 +2022,11 @@ sub initSetupConfig {
 						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1025,65535,undef,1]
 						,'changeAddlText' => string('SETUP_NEW_VALUE')
-									. '<blockquote><a target="_top" href="[EVAL]Slim::Web::HTTP::HomeURL()[/EVAL]">'
-									. '[EVAL]Slim::Web::HTTP::HomeURL()[/EVAL]</a></blockquote>'
+									. '<blockquote><a target="_top" href="[EVAL]Slim::Utils::Prefs::homeURL()[/EVAL]">'
+									. '[EVAL]Slim::Utils::Prefs::homeURL()[/EVAL]</a></blockquote>'
 						,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
-									$paramref->{'HomeURL'} = Slim::Web::HTTP::HomeURL();
+									$paramref->{'HomeURL'} = Slim::Utils::Prefs::homeURL();
 								}
 					}
 			,'webproxy'	=> {

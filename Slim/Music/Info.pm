@@ -91,6 +91,7 @@ sub init {
 		'pls' => 'Slim::Formats::Playlists::PLS',
 		'wpl' => 'Slim::Formats::Playlists::WPL',
 		'wax' => 'Slim::Formats::Playlists::ASX',
+		'xpf' => 'Slim::Formats::Playlists::XSPF',
 
 		# Remote types
 		'http' => 'Slim::Formats::HTTP',
