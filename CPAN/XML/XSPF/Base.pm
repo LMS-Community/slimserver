@@ -1,6 +1,6 @@
 package XML::XSPF::Base;
 
-# $Id$
+# $Id: /mirror/slim/trunk/server/CPAN/XML/XSPF/Base.pm 12555 2006-05-04T20:40:11.700353Z dsully  $
 
 use strict;
 use base qw(Class::Accessor);

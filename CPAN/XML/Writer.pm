@@ -4,7 +4,7 @@
 # Copyright (c) 2004, 2005 by Joseph Walton <joe@kafsemo.org>.
 # No warranty.  Commercial and non-commercial use freely permitted.
 #
-# $Id$
+# $Id: /mirror/slim/trunk/server/CPAN/XML/Writer.pm 12555 2006-05-04T20:40:11.700353Z dsully  $
 ########################################################################
 
 package XML::Writer;
