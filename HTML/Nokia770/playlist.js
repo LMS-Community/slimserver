@@ -59,21 +59,11 @@ function refreshAll(theData) {
 		}
 	}
 
-	// if the startTrack is not on this page, then all elements on this page are 'not playing'
-	var startTrackKey = 'byfrominfo_' + startTrack;
-	if ($(startTrackKey)) {
-		// truncate rows that need not be there
-		var cullRowStart = parseInt(parsedData['last_item'])+1;
-		truncateAt('playlist_table', cullRowStart);
-
-		//for (r=startTrack; r <= parsedData['last_item']; r++) {
-		for (r=pageFirstItem; r <= pageLastItem; r++) {
-			refreshPlaylistElements(parsedData, r);
-		}
-	} else {
-		for (r=pageFirstItem; r <= pageLastItem; r++) {
-			refreshPlaylistElements(parsedData, r);
-		}
+	// truncate rows that need not be there
+	var cullRowStart = parseInt(parsedData['last_item']) - parseInt(parsedData['first_item']) + 1;
+	truncateAt('playlist_table', cullRowStart);
+	for (r=pageFirstItem; r <= pageLastItem; r++) {
+		refreshPlaylistElements(parsedData, r);
 	}
 }
 
