@@ -9,6 +9,9 @@ var player = '[% playerURI %]';
 // an example
 var myGlobalHandlers = {
 	onCreate: function(){
+		if ($('systemNotWorking')) {
+			Element.hide('systemNotWorking');
+		}
 		if ($('systemWorking')) {
 			Element.show('systemWorking');
 		}
@@ -18,6 +21,17 @@ var myGlobalHandlers = {
 			if ($('systemWorking')) {
 				Element.hide('systemWorking');
 			}
+			if ($('systemNotWorking')) {
+				Element.show('systemNotWorking');
+			}
+		}
+	},
+	onException: function() {
+		if ($('systemWorking')) {
+			Element.hide('systemWorking');
+		}
+		if ($('systemNotWorking')) {
+			Element.show('systemNotWorking');
 		}
 	}
 };
@@ -154,6 +168,7 @@ function truncateAt(tableId, lastRow) {
 		for (var r=startRow; r <= tableObj.rows.length; r++ ) {
 			tableObj.deleteRow(r);
 		}
+		return null;
         }
 }
 
