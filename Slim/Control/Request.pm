@@ -136,7 +136,7 @@ package Slim::Control::Request;
 # Y    client          new
 # Y    client          reconnect
 # Y    playlist        load_done
-# Y    playlist        newsong
+# Y    playlist        newsong                     <current_title>
 # Y    playlist        open                        <url>
 # Y    playlist        sync
 # Y    playlist        cant_open                   <url>

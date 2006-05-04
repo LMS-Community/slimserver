@@ -3813,13 +3813,16 @@ and saves in the top level of the playlists directory.</p>
 			&lt;playerid&gt;
 			playlist
 			newsong
+			[&lt;current_title&gt;]
 		</code>
 	</strong>
 </p>
 <p>
 	This signals the start of a new song as reported by the player hardware
 	(SB1/2/3 only; for SliMP3 players, this happens a couple of seconds before
-	music starts on the player).
+	music starts on the player) and/or the start of a new song as reported
+	by the listened to radio station (in which case the &quot;current_title
+	&quot; information is provided for convenience).
 </p>
 
 <hr>

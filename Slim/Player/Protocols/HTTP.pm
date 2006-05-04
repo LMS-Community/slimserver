@@ -146,7 +146,7 @@ sub parseMetadata {
 			}
 			
 			# For some purposes, a change of title is a newsong...
-			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
+			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
 		}
 
 		$::d_remotestream && msg("shoutcast title = $newTitle\n");
