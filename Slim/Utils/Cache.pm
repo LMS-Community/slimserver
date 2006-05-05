@@ -6,7 +6,6 @@
 # version 2.
 
 # A simple cache for arbitrary data using FileCache.
-# TODO: use timers to periodically clean up expired entries. (currently does lazy cleanup)
 
 package Slim::Utils::Cache;
 
@@ -21,9 +20,10 @@ sub _new_instance {
 	my $class = shift;
 	
 	my $cache = Cache::FileCache->new( {
-		namespace          => 'FileCache',
-		default_expires_in => $Cache::FileCache::EXPIRES_NEVER,
-		cache_root         => Slim::Utils::Prefs::get('cachedir'),
+		namespace           => 'FileCache',
+		default_expires_in  => $Cache::FileCache::EXPIRES_NEVER,
+		cache_root          => Slim::Utils::Prefs::get('cachedir'),
+		auto_purge_interval => '1 hour',
 	} );
 	
 	my $self = bless {

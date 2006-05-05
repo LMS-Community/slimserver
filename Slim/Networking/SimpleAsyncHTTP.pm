@@ -284,13 +284,14 @@ sub bodyCB {
 				_time   => time,
 			};
 			
-			# By default, cached content never expires
-			# The ETag/Last Modified code will handle stale data
-			my $expires = $self->{'params'}->{'expires'} || undef;
-					
+			# By default, cached content can live for at most 1 day, this helps control the
+			# size of the cache.  We use ETag/Last Modified to check for stale data during
+			# this time.
+			my $max = 60 * 60 * 24;
+			my $expires = $self->{'params'}->{'expires'} || $max;
 			my $no_cache;
 			
-			if ( !$expires ) {
+			if ( $expires >= $max ) {
 				
 				# If we see max-age or an Expires header, use them
 				if ( my $cc = $self->{'headers'}->{'Cache-Control'} ) {
@@ -306,7 +307,7 @@ sub bodyCB {
 				}
 			
 				# If there is no ETag/Last Modified, don't cache
-				if (   !$expires
+				if (   $expires >= $max
 					&& !$self->{'headers'}->{'Last-Modified'} 
 					&& !$self->{'headers'}->{'ETag'}
 				) {
@@ -317,12 +318,12 @@ sub bodyCB {
 				}
 			}
 			
-			if ( defined $expires && $expires > 0) {
+			if ( $expires < $max ) {
 				# if we have an explicit expiration time, we can avoid revalidation
 				$data->{'_no_revalidate'} = 1;
 			}
 			
-			if ( !$no_cache && $expires > 0 ) {
+			if ( !$no_cache ) {
 				$data->{'_expires'} = $expires;
 				$cache->set( $self->{'url'}, $data, $expires );
 				
