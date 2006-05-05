@@ -948,10 +948,10 @@ sub _parse_v2tag {
 
 						$data = \@genres;
 
-					} elsif ($data =~ /^(\w+)\000/) {
+					} elsif ($data =~ /^[^\000]\000/) {
 
 						# name genres separated by nulls.
-						$data = [ split /\0/, $data ];
+						$data = [ split /\000/, $data ];
 					}
 
 					# Text based genres will fall through.
