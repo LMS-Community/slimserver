@@ -53,6 +53,9 @@ BEGIN {
 		require Errno;
 		import Errno qw(EWOULDBLOCK EINPROGRESS);
 	}
+	
+	# Use our custom Template::Context subclass
+	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
 }
 
 use constant defaultSkin => 'Default';
