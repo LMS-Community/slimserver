@@ -320,7 +320,7 @@ sub simpleHeader {
 # otherParams : used to build the query portion of the url
 # path : used to build the path portion of the url
 # start : starting index of the displayed page in the list of items
-# PerPage : items per page to display, preference used by default
+# perPage : items per page to display, preference used by default
 # addAlpha : flag determining whether to build the alpha map, requires itemsRef
 # currentItem : the index of the "current" item in the list, 
 #                if start not supplied this will be used to determine starting page
@@ -344,7 +344,7 @@ sub pageInfo {
 	my $itemsref     = $args->{'itemsRef'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
-	my $itemsperpage = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $itemsperpage = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my %pageinfo = ();
 	my $end;
