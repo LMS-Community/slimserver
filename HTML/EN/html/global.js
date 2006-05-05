@@ -13,6 +13,10 @@ var myGlobalHandlers = {
 			Element.hide('systemNotWorking');
 		}
 		if ($('systemWorking')) {
+			// this causes spinner.gif to start at beginning of animation
+			if ($('spinner')) {
+				$('spinner').src = "[% webroot %]html/images/spinner.gif";
+			}
 			Element.show('systemWorking');
 		}
 	},
