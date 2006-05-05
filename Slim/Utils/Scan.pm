@@ -787,7 +787,6 @@ sub checkConnect {
 	my $http = Slim::Networking::AsyncHTTP->new(
 		Host     => $server,
 		PeerPort => $port,
-		Timeout  => 5,
 		
 		errorCallback => \&checkConnectError,
 		writeCallback => \&checkConnectResponse,
