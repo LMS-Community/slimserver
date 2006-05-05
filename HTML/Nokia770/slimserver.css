@@ -353,4 +353,10 @@ div#systemWorking{
 	top: 25;
 	z-index: 10;
 }
+div#systemNotWorking{
+	position: absolute;
+	left: 0;
+	top: 25;
+	z-index: 9;
+}
 
