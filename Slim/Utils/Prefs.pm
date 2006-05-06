@@ -111,6 +111,13 @@ sub init {
 				$prefs{'language'} = $newLang;
 			}
 		},
+		'6.5b1-2006-05-06' => sub {
+			#check for empty date time setitngs and set defaults to current formats
+			Slim::Utils::Prefs::set('screensaverTimeFormat', Slim::Utils::Prefs::get('timeFormat'))
+				unless Slim::Utils::Prefs::get('screensaverTimeFormat');
+			Slim::Utils::Prefs::set('screensaverDateFormat', Slim::Utils::Prefs::get('longdateFormat'))
+				unless Slim::Utils::Prefs::get('screensaverDateFormat');
+		},
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -207,6 +214,8 @@ sub init {
 		'upgrade-6.2b1-2005-09-19-script' => 1,
 		'upgrade-6.2.1-2005-11-07-script' => 1,
 		'upgrade-6.5b1-2006-01-25-script' => 1,
+		'upgrade-6.5b1-2006-02-03-script' => 1,
+		'upgrade-6.5b1-2006-05-06-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'databaseTempStorage'   => 'MEMORY',
 		'databaseCacheSize'     => 10000,
