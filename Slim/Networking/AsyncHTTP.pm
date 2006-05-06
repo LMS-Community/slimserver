@@ -21,6 +21,7 @@ package Slim::Networking::AsyncHTTP;
 use strict;
 use base qw(Net::HTTP::NB);
 
+use HTTP::Headers;
 use Net::DNS;
 use Net::IP;
 use Scalar::Util qw(blessed);
@@ -450,7 +451,7 @@ sub readHeaderCallback {
 
 	# Wrap call to base in an eval to prevent dying. An error should
 	# result in an error callback invocation for the next layer up.
-	my ($code, $mess, %h) = eval { $self->SUPER::read_response_headers };
+	my ($code, $mess, @h) = eval { $self->SUPER::read_response_headers };
 
 	if ($@) {
 		$::d_http_async && msg("AsyncHTTP: Error reading headers: $@\n");
@@ -468,14 +469,16 @@ sub readHeaderCallback {
 		$state->{'state'}   = 'headers-done';
 		$state->{'code'}    = $code;
 		$state->{'mess'}    = $mess;
-		$state->{'headers'} = \%h;
+		
+		my $headers = HTTP::Headers->new( @h );	
+		$state->{'headers'} = $headers;
 		
 		$::d_http_async && msg("AsyncHTTP: State: headers-done\n");
 
 		# all headers complete.  Call callback
 		if (defined $state->{'callback'} && ref($state->{'callback'}) eq 'CODE') {
 
-			$state->{'callback'}($state->{'args'}, undef, $code, $mess, %h);
+			$state->{'callback'}($state->{'args'}, undef, $code, $mess, $headers);
 		}
 	}
 

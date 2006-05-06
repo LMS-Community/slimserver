@@ -82,7 +82,7 @@ sub gotViaHTTP {
 	my $params = $http->params();
 
 	$::d_plugins && msg("Formats::XML: got " . $http->url() . "\n");
-	$::d_plugins && msg("Formats::XML: content type is " . $http->headers()->{'Content-Type'} . "\n");
+	$::d_plugins && msg("Formats::XML: content type is " . $http->headers()->content_type . "\n");
 
 	# Try and turn the content we fetched into a parsed data structure.
 	my $feed = eval { parseXMLIntoFeed($http->contentRef) };

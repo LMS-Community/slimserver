@@ -172,8 +172,8 @@ sub writeCallback {
 	# If cached, add If-None-Match and If-Modified-Since headers
 	if ( my $data = $self->{'cachedResponse'} ) {			
 		push @{ $self->{'args'} }, (
-			'If-None-Match'     => $data->{'headers'}->{'ETag'} || undef,
-			'If-Modified-Since' => $data->{'headers'}->{'Last-Modified'} || undef,
+			'If-None-Match'     => $data->{'headers'}->header('ETag') || undef,
+			'If-Modified-Since' => $data->{'headers'}->last_modified || undef,
 		);
 	}
 
@@ -198,7 +198,7 @@ sub writeCallback {
 }
 
 sub headerCB {
-	my ($state, $error, $code, $mess, %h) = @_;
+	my ($state, $error, $code, $mess, $headers) = @_;
 	
 	# Don't leak the reference to ourselves.
 	my $self = delete $state->{'simple'};
@@ -207,11 +207,11 @@ sub headerCB {
 	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
 
 	# verbose debug
-	#use Data::Dumper;
-	#print Dumper(\%h);
+	use Data::Dumper;
+	print Dumper($headers);
 
 	# handle http redirect
-	my $location = $h{'Location'} || $h{'location'};
+	my $location = $headers->header('Location');
 
 	if (defined $location) {
 
@@ -246,7 +246,7 @@ sub headerCB {
 
 		$self->{'code'}    = $code;
 		$self->{'mess'}    = $mess;
-		$self->{'headers'} = \%h;
+		$self->{'headers'} = $headers;
 
 		# headers read OK, get the body
 		$http->read_entity_body_async(\&bodyCB, {
@@ -294,7 +294,7 @@ sub bodyCB {
 			if ( $expires >= $max ) {
 				
 				# If we see max-age or an Expires header, use them
-				if ( my $cc = $self->{'headers'}->{'Cache-Control'} ) {
+				if ( my $cc = $self->{'headers'}->header('Cache-Control') ) {
 					if ( $cc =~ /no-cache|must-revalidate/ ) {
 						$no_cache = 1;
 					}
@@ -302,14 +302,14 @@ sub bodyCB {
 						$expires = $1;
 					}
 				}			
-				elsif ( my $expire_date = $self->{'headers'}->{'Expires'} ) {
+				elsif ( my $expire_date = $self->{'headers'}->header('Expires') ) {
 					$expires = HTTP::Date::str2time($expire_date) - time;
 				}
 			
 				# If there is no ETag/Last Modified, don't cache
 				if (   $expires >= $max
-					&& !$self->{'headers'}->{'Last-Modified'} 
-					&& !$self->{'headers'}->{'ETag'}
+					&& !$self->{'headers'}->last_modified
+					&& !$self->{'headers'}->header('ETag')
 				) {
 					$no_cache = 1;
 					$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
