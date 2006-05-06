@@ -61,7 +61,7 @@ sub checkTimers {
 	# return if already inside one
 	if ($checkingHighTimers) {
 	
-		$::d_time && msg("blocked checking high timers - already processing a high timer!\n");
+		$::d_time && msg("[high] blocked checking - already processing a high timer!\n");
 		return;
 	}
 
@@ -82,14 +82,17 @@ sub checkTimers {
 		my $high_objRef = $high_timer->{'objRef'};
 		my $high_args   = $high_timer->{'args'};
 
-		$::d_time && msg("firing high timer " . ($now - $high_timer->{'when'}) . " late.\n");
+		if ( $::d_time && $high_subptr ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($high_subptr);
+			msg("[high] firing $name " . ($now - $high_timer->{'when'}) . " late.\n");
+		}
 			
 		if ( $high_subptr ) {
 			no strict 'refs';	
 			&$high_subptr($high_objRef, @{$high_args});
 		}
 		else {
-			msg("High timer with no subptr: " . Data::Dumper::Dumper($high_timer));
+			msg("[high] no subptr: " . Data::Dumper::Dumper($high_timer));
 		}
 
 		$nextHigh = $high->get_next_priority();
@@ -107,7 +110,7 @@ sub checkTimers {
 	
 	# Check Normal timers - return if already inside one
 	if ($checkingNormalTimers) {
-		$::d_time && msg("blocked checking normal timers - already processing a normal timer!\n");
+		$::d_time && msg("[norm] blocked checking - already processing a normal timer!\n");
 		$::d_time && bt();
 		return;
 	}
@@ -124,7 +127,10 @@ sub checkTimers {
 		my $objRef = $timer->{'objRef'};
 		my $args   = $timer->{'args'};
 
-		$::d_time && msg("firing timer " . ($now - $timer->{'when'}) . " late.\n");
+		if ( $::d_time && $subptr ) {
+			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+			msg("[norm] firing $name " . ($now - $timer->{'when'}) . " late.\n");
+		}
 		$::perfmon && $timerLate->log($now - $timer->{'when'});
 			
 		if ( $subptr ) {
@@ -221,7 +227,9 @@ sub setHighTimer {
 
 		my $now = Time::HiRes::time();
 
-		msg("settimer High: $subptr, now: $now, time: $when \n");
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+		my $diff = $when - $now;
+		msg("[high] set $name, in $diff sec\n");
 
 		if ($when < $now) {
 			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
@@ -250,7 +258,9 @@ sub setTimer {
 
 	if ($::d_time) {
 		my $now = Time::HiRes::time();
-		msg("settimer Normal: $subptr, now: $now, time: $when \n");
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
+		my $diff = $when - $now;
+		msg("[norm] set $name, in $diff sec\n");
 		if ($when < $now) {
 			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
 		}
