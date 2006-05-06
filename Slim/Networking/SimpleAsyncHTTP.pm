@@ -207,8 +207,8 @@ sub headerCB {
 	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
 
 	# verbose debug
-	use Data::Dumper;
-	print Dumper($headers);
+	# use Data::Dumper;
+	# print Dumper($headers);
 
 	# handle http redirect
 	my $location = $headers->header('Location');
