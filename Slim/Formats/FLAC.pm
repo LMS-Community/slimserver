@@ -62,13 +62,11 @@ sub getTag {
 	my $file   = shift || return {};
 	my $anchor = shift || "";
 
-	my $flac   = Audio::FLAC::Header->new($file);
-
-	if (ref($flac) && scalar keys %{$flac} == 0) {
+	my $flac   = Audio::FLAC::Header->new($file) || do {
 
 		errorMsg("Couldn't open file: [$file] for reading: $!\n");
 		return {};
-	}
+	};
 
 	my $tags = getStandardTag($file, $flac);
 	my $cuesheet = $flac->cuesheet();

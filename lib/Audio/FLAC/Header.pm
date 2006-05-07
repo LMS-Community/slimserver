@@ -57,7 +57,7 @@ sub new_PP {
 	# open up the file
 	open(FILE, $file) or do {
 		warn "[$file] does not exist or cannot be read: $!";
-		return $self;
+		return undef;
 	};
 
 	# make sure dos-type systems can handle it...
@@ -73,7 +73,7 @@ sub new_PP {
 		warn "[$file] does not appear to be a FLAC file!";
 		close FILE;
 		undef $self->{'fileHandle'};
-		return $self;
+		return undef;
 	};
 
 	# Grab the metadata blocks from the FLAC file
@@ -82,7 +82,7 @@ sub new_PP {
 		warn "[$file] Unable to read metadata from FLAC!";
 		close FILE;
 		undef $self->{'fileHandle'};
-		return $self;
+		return undef;
 	};
 
 	# This is because we don't write out tags in XS yet.
@@ -94,7 +94,7 @@ sub new_PP {
 			warn "[$file] Can't find streaminfo metadata block!";
 			close FILE;
 			undef $self->{'fileHandle'};
-			return $self;
+			return undef;
 		};
 
 		# Parse vorbis tags
@@ -103,7 +103,7 @@ sub new_PP {
 			warn "[$file] Can't find/parse vorbis comment metadata block!";
 			close FILE;
 			undef $self->{'fileHandle'};
-			return $self;
+			return undef;
 		};
 
 		# Parse cuesheet
@@ -112,7 +112,7 @@ sub new_PP {
 			warn "[$file] Problem parsing cuesheet metadata block!";
 			close FILE;
 			undef $self->{'fileHandle'};
-			return $self;
+			return undef;
 		};
 
 		# Parse seekpoint table
@@ -121,7 +121,7 @@ sub new_PP {
 			warn "[$file] Problem parsing seekpoint table!";
 			close FILE;
 			undef $self->{'fileHandle'};
-			return $self;
+			return undef;
 		};
 
 		# Parse third-party application metadata block
@@ -130,7 +130,7 @@ sub new_PP {
 			warn "[$file] Problem parsing application metadata block!";
 			close FILE;
 			undef $self->{'fileHandle'};
-			return $self;
+			return undef;
 		};
 	}
 
@@ -354,8 +354,8 @@ sub _checkHeader {
 		$self->{'ID3V2Tag'} = 1;
 
 		# How big is the ID3 header?
-		# Skip the next two bytes
-		read($fh, $buffer, 2) or return -1;
+		# Skip the next three bytes - major & minor version number.
+		read($fh, $buffer, 3) or return -1;
 
 		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
 		# Read the next 4 bytes one at a time, unpack each one B7,
