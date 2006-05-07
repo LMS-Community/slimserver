@@ -37,34 +37,37 @@ my %mapping = (
 );
 
 my %mainModeFunctions = (
-   'play' => sub {
-	   my $client = shift;
-	   
-	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-	   my $urls = Slim::Buttons::Common::param($client, 'urls');
+	'play' => sub {
+		my $client = shift;
+		
+		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
+		my $urls = Slim::Buttons::Common::param($client, 'urls');
 
-	   $client->showBriefly( {
-	       'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1),
-	       'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
-	   });
-	   
-	   $client->execute([ 'playlist', 'clear' ] );
-	   $client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
-	   $client->execute([ 'play' ] );
-   },
-   'add' => sub {
-	   my $client = shift;
+		$client->showBriefly( {
+			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1),
+			 'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
+		});
+		
+		# Bug 3399 problems with playlist 'add' leave this command set non-working.
+		# use 'play' as a workaround.
+		#$client->execute([ 'playlist', 'clear' ] );
+		#$client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
+		#$client->execute([ 'play' ] );
+		$client->execute([ 'playlist', 'play', $urls->[$listIndex]] );
+	},
+	'add' => sub {
+		my $client = shift;
 
-	   my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-	   my $urls = Slim::Buttons::Common::param($client, 'urls');
+		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
+		my $urls = Slim::Buttons::Common::param($client, 'urls');
 
-	   $client->showBriefly( {
-	       'line1' => sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1),
-	       'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
-	   });  
-	   
-	   Slim::Control::Request::executeRequest( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
-   },
+		$client->showBriefly( {
+			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1),
+			 'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
+		});  
+		
+		Slim::Control::Request::executeRequest( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
+	},
 );
 
 sub getDisplayName {
@@ -229,17 +232,21 @@ sub playFavorite {
 
 	if (!$urls[$index]) {
 		$client->showBriefly( {
-		    'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
+			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
 		});
 	} else {
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
 		$client->showBriefly( {
-		    'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
-		    'line2' => $titles[$index],
+			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
+			 'line2' => $titles[$index],
 		});
-		$client->execute(['playlist', 'clear']);
-		$client->execute(['playlist', 'add', $urls[$index]]);
-		$client->execute(['play']);
+		
+		# Bug 3399 problems with playlist 'add' leave this command set non-working.
+		# use 'play' as a workaround.
+		#$client->execute([ 'playlist', 'clear' ] );
+		#$client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
+		#$client->execute([ 'play' ] );
+		$client->execute([ 'playlist', 'play', $urls->[$listIndex]] );
 	}
 }
 
@@ -259,21 +266,21 @@ sub enabled {
 sub initPlugin {
 	$::d_favorites && msg("Favorites Plugin: initPlugin\n");
 	Slim::Buttons::Common::addMode('PLUGIN.Favorites', 
-								   \%mainModeFunctions, 
-								   \&setMode);
+									\%mainModeFunctions, 
+									\&setMode);
 	#Slim::Buttons::Home::addMenuOption('FAVORITES', 
-	#								   {'useMode' => 'PLUGIN.Favorites'});
+	#									{'useMode' => 'PLUGIN.Favorites'});
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 	#Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
 
 	# register our functions
 	
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
+#		  |requires Client
+#		  |  |is a Query
+#		  |  |  |has Tags
+#		  |  |  |  |Function to call
+#		  C  Q  T  F
 	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'],  
 		[0, 1, 1, \&listQuery]);
 	Slim::Control::Request::addDispatch(['favorites', 'move', '_fromindex', '_toindex'],  
@@ -294,9 +301,9 @@ sub moveCommand {
 	}
 	
 	# get the parameters
-	my $client     = $request->client();
+	my $client	  = $request->client();
 	my $fromindex  = $request->getParam('_fromindex');;
-	my $toindex    = $request->getParam('_toindex');;
+	my $toindex	 = $request->getParam('_toindex');;
 	
 	if (!defined $fromindex || !defined $toindex) {
 		$request->setStatusBadParams();
@@ -319,8 +326,8 @@ sub deleteCommand {
 	}
 	
 	# get the parameters
-	my $client     = $request->client();
-	my $index      = $request->getParam('_index');;
+	my $client	  = $request->client();
+	my $index		= $request->getParam('_index');;
 
 	if (!defined $index) {
 		$request->setStatusBadParams();
@@ -342,13 +349,13 @@ sub listQuery {
 	}
 
 	# get our parameters
-	my $client   = $request->client();
-	my $index    = $request->getParam('_index');
+	my $client	= $request->client();
+	my $index	 = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	
-	my $favs   = Slim::Utils::Favorites->new($client);
+	my $favs	= Slim::Utils::Favorites->new($client);
 	my @titles = $favs->titles();
-	my @urls   = $favs->urls();
+	my @urls	= $favs->urls();
 	
 	my $count = scalar(@titles);
 	$request->addResult('count', $count);
