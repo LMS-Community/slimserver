@@ -305,7 +305,6 @@ sub findMusicLibraryFile {
 		}
 
 		if (-r $explicit_xml_path) {
-			$::d_itunes && msg("iTunes: found path via config file at: $explicit_xml_path\n");
 			return $explicit_xml_path;
 		}
 	}		
@@ -319,6 +318,7 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 		$::d_itunes && msg("iTunes: found path via iTunes preferences at: $path\n");
+		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 		return $path;
 	}
 
@@ -326,6 +326,7 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 		$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
+		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 		return $path;
 	}
 
@@ -351,6 +352,7 @@ sub findMusicLibraryFile {
 
 		if ($path && -r $path) {
 			$::d_itunes && msg("iTunes: found path via directory search at: $path\n");
+			Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 			return $path;
 		}
 
