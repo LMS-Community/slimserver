@@ -730,13 +730,14 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--cliport <portnumber> [--cliaddr <listenip>]]
           [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
+          [--perfmon] [--perfwarn=<threshold>]
           [--d_various]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --playlistdir    => The path to a directory of your playlist files.
     --cachedir       => Directory for SlimServer to save cached music and web data
-    --diag			 => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
+    --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --noLogTimestamp => Don't add timestamp to log output
     --daemon         => Run the server in the background.
@@ -771,6 +772,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
     --perfmon        => Enable internal server performance monitoring
+    --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
 
 The following are debugging flags which will print various information 
 to the console via stderr:
@@ -803,7 +805,7 @@ to the console via stderr:
     --d_memory       => Turns on memory debugging interface - developers only.
     --d_moodlogic    => MoodLogic synchronization information
     --d_musicmagic   => MusicMagic synchronization information
-    --d_mp3    		 => MP3 frame detection
+    --d_mp3          => MP3 frame detection
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
     --d_parse        => Playlist parsing information
@@ -822,7 +824,7 @@ to the console via stderr:
     --d_source_v     => Verbose information about source audio files
     --d_sql          => Verbose SQL debugging
     --d_stdio        => Standard I/O command debugging
-    --d_startup      => Startup/Bootstrap debugging for @INC
+    --d_startup      => Startup/Bootstrap debugging for \@INC
     --d_stream       => Information about player streaming protocol 
     --d_stream_v     => Verbose information about player streaming protocol 
     --d_sync         => Information about multi player synchronization
