@@ -37,8 +37,6 @@ our $cleanupIds;
 our $lastPingTime = 0;
 our $pingInterval = 1800;
 
-our $databaseAccessTime = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], undef, $::perfwarn);
-
 INIT: {
 	my $class = __PACKAGE__;
 
@@ -599,8 +597,6 @@ sub find {
 	my $idOnly = $args->{'idOnly'};
 	my $c;
 
-	$::perfmon && (my $now = Time::HiRes::time());
-
 	# Build up a SQL query
 	my $columns = "DISTINCT ";
 
@@ -824,8 +820,6 @@ sub find {
 
 		$sth->finish();
 
-		$::perfmon && $databaseAccessTime->log(Time::HiRes::time() - $now) && msg("  Find\n");
-
 		return $count;
 	}
 
@@ -835,8 +829,6 @@ sub find {
 		my $objects = [ $c->sth_to_objects($sth) ];
 
 		$sth->finish();
-
-		$::perfmon && $databaseAccessTime->log(Time::HiRes::time() - $now) && msg("  Find\n");
 	
 		return $objects;
 	}
@@ -847,8 +839,6 @@ sub find {
 	my $objects = [ grep((defined($_) && $_ ne ''), (map $_->[0], @$ref)) ];
 
 	$sth->finish();
-
-	$::perfmon && $databaseAccessTime->log(Time::HiRes::time() - $now) && msg("  Find\n");
 
 	return $objects;
 }
@@ -974,8 +964,6 @@ sub update {
 		return 1;
 	}
 
-	$::perfmon && (my $now = Time::HiRes::time());
-
 	my $sth  = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
 
 	# Get the list of values to insert - deflating relationships on the fly.
@@ -1002,8 +990,6 @@ sub update {
 
 	$dirtyCount++;
 	delete $self->{'__Changed'};
-
-	$::perfmon && $databaseAccessTime->log(Time::HiRes::time() - $now) && msg("  Update\n");
 
 	return 1;
 }
