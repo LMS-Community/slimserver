@@ -17,7 +17,7 @@ use base 'Template::Context';
 sub process {
 	my $self = shift;
 	
-	main::idleStreams(0);
+	main::idleStreams(0, 1);
 	
 	return $self->SUPER::process(@_);
 }

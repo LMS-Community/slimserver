@@ -27,9 +27,12 @@ our $callbacks  = {};
 our %writeQueue = ();
 
 our $selects = {
-	'read'  => IO::Select->new,
-	'write' => IO::Select->new,
-	'error' => IO::Select->new,
+	'read'    => IO::Select->new, # vectors used for normal select
+	'write'   => IO::Select->new,
+	'error'   => IO::Select->new,
+	's_read'  => IO::Select->new, # alternatives for streaming sockets only
+	's_write' => IO::Select->new,
+	's_error' => IO::Select->new,
 };
 
 our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
@@ -70,7 +73,7 @@ sub removeError {
 }
 
 sub _updateSelect {
-	my ($type, $sock, $callback) = @_;
+	my ($type, $sock, $callback, $stream) = @_;
 
 	my $fileno = fileno($sock);
 
@@ -81,6 +84,8 @@ sub _updateSelect {
 		if (!$selects->{$type}->exists($sock)) {
 
 			$selects->{$type}->add($sock);
+
+			$selects->{'s_'.$type}->add($sock) if $stream;
 
 			$::d_select && msg("adding select $type $fileno $callback\n");
 		}
@@ -95,15 +100,25 @@ sub _updateSelect {
 
 			$::d_select && msg("removing select $type $fileno\n");
 		}
+
+		if ($selects->{'s_'.$type}->exists($sock)) {
+
+			$selects->{'s_'.$type}->remove($sock);
+
+		}
+
 	}
 }
 
 sub select {
 	my $select_time = shift;
+	my $streamOnly = shift; # set by some callers of idleStreams to use streaming only vectors
 
 	$::perfmon && $endSelectTime && $responseTime->log(Time::HiRes::time() - $endSelectTime);
 
-	my ($r, $w, $e) = IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
+	my ($r, $w, $e) = ( $streamOnly )
+		? IO::Select->select($selects->{'s_read'}, $selects->{'s_write'}, $selects->{'s_error'}, $select_time)
+		: IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
 
@@ -119,12 +134,12 @@ sub select {
 		'error' => $e,
 	);
 
-	$::d_select && msgf("select returns (%s):\n", $select_time);
+	$::d_select && msgf("%sselect returns (%s):\n", $streamOnly ? 'stream only ' : '', $select_time);
 
 	while (my ($type, $handle) = each %handles) {
 
 		$::d_select && msgf("\t%ss: %d of %d\n",
-			$type, (defined($handle) && scalar(@$handle)), $selects->{$type}->count
+			$type, (defined($handle) && scalar(@$handle)), $streamOnly ? $selects->{'s_'.$type}->count : $selects->{$type}->count
 		);
 
 		foreach my $sock (@$handle) {

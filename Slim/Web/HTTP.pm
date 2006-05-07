@@ -1273,7 +1273,7 @@ sub addStreamingResponse {
 #   May want to enable this later, if we find that that it has any effect on some platforms...
 #	setsockopt $httpClient, SOL_SOCKET, SO_SNDBUF, MAXCHUNKSIZE;
 	
-	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse);
+	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 
 	# we aren't going to read from this socket anymore so don't select on it...
 	Slim::Networking::Select::addRead($httpClient, undef);
@@ -1521,7 +1521,7 @@ sub sendStreamingResponse {
 sub tryStreamingLater {
 	my $client = shift;
 	my $httpClient = shift;
-	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse);
+	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
 sub nonBreaking {
@@ -1880,9 +1880,9 @@ sub closeHTTPSocket {
 	my $httpClient = shift;
 	my $streaming = shift;
 	
-	Slim::Networking::Select::addRead($httpClient, undef);
-	Slim::Networking::Select::addWrite($httpClient, undef);
-	Slim::Networking::Select::addError($httpClient, undef);
+	Slim::Networking::Select::removeRead($httpClient);
+	Slim::Networking::Select::removeWrite($httpClient);
+	Slim::Networking::Select::removeError($httpClient);
 
 	# clean up the various caches
 	delete($outbuf{$httpClient});
