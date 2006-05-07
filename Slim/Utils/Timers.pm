@@ -49,7 +49,7 @@ my $checkingNormalTimers = 0; # Semaphore to avoid normal timer callbacks execut
 my $checkingHighTimers = 0;   # Semaphore for high priority timers
 
 our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
-our $timerLength = Slim::Utils::PerfMon->new('Timer Length', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
   
 #
 # Call any pending timers which have now elapsed.
@@ -141,7 +141,8 @@ sub checkTimers {
 			msg("Normal timer with no subptr: " . Data::Dumper::Dumper($timer));
 		}
 
-		$::perfmon && $timerLength->log(Time::HiRes::time() - $now);
+		$::perfmon && $timerTask->log(Time::HiRes::time() - $now) && 
+			msgf("  %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($subptr));
 
 		$nextNormal = $normal->get_next_priority();
 

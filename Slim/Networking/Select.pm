@@ -32,7 +32,9 @@ our $selects = {
 	'error' => IO::Select->new,
 };
 
-our $selectPerf = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $selectTask = Slim::Utils::PerfMon->new('Select Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+
 my $endSelectTime;
 
 my $selectInstance = 0;
@@ -99,8 +101,8 @@ sub _updateSelect {
 sub select {
 	my $select_time = shift;
 
-	$::perfmon && $endSelectTime && $selectPerf->logLite(Time::HiRes::time() - $endSelectTime);
-	
+	$::perfmon && $endSelectTime && $responseTime->log(Time::HiRes::time() - $endSelectTime);
+
 	my ($r, $w, $e) = IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
@@ -130,8 +132,13 @@ sub select {
 			my $callback = $callbacks->{$type}->{fileno($sock)};
 
 			if (defined $callback && ref($callback) eq 'CODE') {
+				
+				$::perfmon && (my $now = Time::HiRes::time());
 
 				$callback->($sock);
+
+				$::perfmon && $now && $selectTask->log(Time::HiRes::time() - $now) &&
+					msgf("  %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($callback));
 			}
 
 			$count++;

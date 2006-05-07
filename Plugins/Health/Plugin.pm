@@ -13,9 +13,6 @@ package Plugins::Health::Plugin;
 
 use strict;
 
-use vars qw($VERSION);
-$VERSION = "0.2";
-
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -73,11 +70,11 @@ sub clearAllCounters {
 			}
 		}
 	}
-	$Slim::Networking::Select::selectPerf->clear();
+	$Slim::Networking::Select::responseTime->clear();
 	$Slim::Networking::Select::endSelectTime = undef;
 	$Slim::Utils::Timers::timerLate->clear();
-	$Slim::Utils::Timers::timerLength->clear();
-	$Slim::Utils::Scheduler::schedulerPerf->clear();
+	$Slim::Utils::Timers::timerTask->clear();
+	$Slim::Utils::Scheduler::schedulerTask->clear();
 	$Slim::Hardware::IR::irPerf->clear();
 }
 	
@@ -151,10 +148,10 @@ sub summary {
 		push @warn, string("PLUGIN_HEALTH_NO_PLAYER_DESC");
 	}
 
-	if ($Slim::Networking::Select::selectPerf->percentAbove(1) < 0.01 || 
-		$Slim::Networking::Select::selectPerf->above(1) < 3 ) {
+	if ($Slim::Networking::Select::responseTime->percentAbove(1) < 0.01 || 
+		$Slim::Networking::Select::responseTime->above(1) < 3 ) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_OK");
-	} elsif ($Slim::Networking::Select::selectPerf->percentAbove(1) < 0.5) {
+	} elsif ($Slim::Networking::Select::responseTime->percentAbove(1) < 0.5) {
 		$summary .= sprintf "%-22s : %s\n", string("PLUGIN_HEALTH_RESPONSE"), string("PLUGIN_HEALTH_RESPONSE_INTERMIT");
 		push @warn, string("PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC");
 	} else {
@@ -262,10 +259,10 @@ sub handleIndex {
 	}
 
 	# generic server info
-	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
+	$params->{'response'} = $Slim::Networking::Select::responseTime->sprint();
 	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
-	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
-	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerPerf->sprint();
+	$params->{'timerlength'} = $Slim::Utils::Timers::timerTask->sprint();
+	$params->{'scheduler'} = $Slim::Utils::Scheduler::schedulerTask->sprint();
 	$params->{'irresponse'} = $Slim::Hardware::IR::irPerf->sprint();
 
 	$params->{'refresh'} = $refresh;

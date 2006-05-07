@@ -32,7 +32,7 @@ my $curtask = 0;            # the next task to run
 our @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
 my $lastpass = 0;
 
-our $schedulerPerf = Slim::Utils::PerfMon->new('Scheduler Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], undef, 0.5);
 
 #
 # add a task
@@ -108,8 +108,8 @@ sub run_tasks {
 			$curtask = 0;
 		}
 
-		$::perfmon && $schedulerPerf->log(Time::HiRes::time() - $now);
-
+		$::perfmon && $schedulerTask->log(Time::HiRes::time() - $now) && 
+			msgf("  %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($subptr));
 	}
 		
 	return 1;

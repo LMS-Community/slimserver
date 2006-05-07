@@ -9,7 +9,6 @@ package Slim::Web::HTTP;
 
 use strict;
 
-use Benchmark;
 use Digest::MD5;
 use FileHandle;
 use File::Basename qw(basename);
@@ -95,6 +94,8 @@ our @templateDirs = ();
 
 our %pageFunctions = ();
 tie %pageFunctions, 'Tie::RegexpHash';
+
+our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
 our %dangerousCommands = (
 	# name of command => regexp for URI patterns that make it dangerous
@@ -737,7 +738,8 @@ sub generateHTTPResponse {
 
 		# if we match one of the page functions as defined above,
 		# execute that, and hand it a callback to send the data.
-		my $startTime = Benchmark->new if $::perfmon;
+
+		$::perfmon && (my $startTime = Time::HiRes::time());
 
 		$body = &{$pageFunctions{$path}}(
 			$client,
@@ -747,16 +749,8 @@ sub generateHTTPResponse {
 			$response,
 		);
 
-		if ($::perfmon && defined($startTime)) {
-
-			my $endTime = Benchmark->new;
-
-			if (!$path) {
-				$path = '/';
-			}
-
-			msgf("Generating page for %s took: %s\n", $path, timestr(timediff($endTime, $startTime)));
-		}
+		$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime) &&
+			msgf ("  Generating page for %s\n", $path || '/');
 
 	} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
 

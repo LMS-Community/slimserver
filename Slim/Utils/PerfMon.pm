@@ -81,43 +81,30 @@ sub clear {
 
 sub log {
 	# normal logging method including checking of warning thresholds
+	# returns 1 if threshold crossing msg produced to allow caller to add more details
 	# [optimised for speed by use of && rather than if statements]
 	my $ref = shift;
 	my $val = shift;
+
+	my $warn;
 
 	$ref->{sum} += $val;
 	($val > $ref->{max}) && ($ref->{max} = $val);
 	($val < $ref->{min}) && ($ref->{min} = $val);
 
 	# test for crossing warning threshold and log msg if appropriate
-	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." below threshold: ".$val."\n");
-	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." above threshold: ".$val."\n");
+	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." < ".$ref->{warnlo}." : ".$val."\n") && ($warn = 1);
+	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." > ".$ref->{warnhi}." : ".$val."\n") && ($warn = 1);
 
 	# shortcut for hits on first bucket
-	($val < $ref->{thresL}) && ++$ref->{valL} && return;
+	($val < $ref->{thresL}) && ++$ref->{valL} && return $warn;
 
 	# shortcut for overflows past all buckets
-	($val >= $ref->{thresH}) && ++$ref->{over} && return;
+	($val >= $ref->{thresH}) && ++$ref->{over} && return $warn;
 
 	# update appropriate other bucket
 	for my $entry (1..$ref->{buckets}) {
-		($val < $ref->{thres}[$entry]) && ++$ref->{val}[$entry] && return;
-	}
-}
-
-sub logLite {
-	# light weight logger with no warnings >10% faster than log for lowest bucket
-	my $ref = shift;
-	my $val = shift;
-
-	$ref->{sum} += $val;
-	($val > $ref->{max}) && ($ref->{max} = $val);
-	($val < $ref->{min}) && ($ref->{min} = $val);
-	($val < $ref->{thresL}) && ++$ref->{valL} && return;
-	($val>= $ref->{thresH}) && ++$ref->{over} && return;
-
-	for my $entry (1..$ref->{buckets}) {
-		($val < $ref->{thres}[$entry]) && ++$ref->{val}[$entry] && return;
+		($val < $ref->{thres}[$entry]) && ++$ref->{val}[$entry] && return $warn;
 	}
 }
 

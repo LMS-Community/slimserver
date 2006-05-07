@@ -386,6 +386,8 @@ my $callExecuteCallback = 0;    # flag to know if we must call the legacy
 my $d_notify = 1;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
 
+our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+
 ################################################################################
 # Package methods
 ################################################################################
@@ -1353,6 +1355,8 @@ sub execute {
 	$::d_command && msg("\n");
 #	$::d_command && $self->dump("Request");
 
+	$::perfmon && (my $now = Time::HiRes::time());
+
 	# some time may have elapsed between the request creation
 	# and its execution, and the client, f.e., could have disappeared
 	# check all is OK once more...
@@ -1385,6 +1389,9 @@ sub execute {
 	
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
+
+	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) &&
+		msgf("  Execute: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'}));
 }
 
 # perform end of execution, calling the callback etc...
@@ -1485,8 +1492,15 @@ sub notify {
 			$::d_command && $d_notify && msg("Request: Notifying $funcName of " 
 				. $self->getRequestString() . " =~ "
 				. __filterString($requestsRef) . "\n");
+
+			
+			$::perfmon && (my $now = Time::HiRes::time());
 		
 			&$notifyFuncRef($self);
+
+			$::perfmon && $requestTask->log(Time::HiRes::time() - $now) && 
+				msgf("  Notify: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef));
+
 		}
 	}
 	

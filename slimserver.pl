@@ -432,6 +432,7 @@ use vars qw(
 	$stdio
 	$stop
 	$perfmon
+	$perfwarn
 );
 
 sub init {
@@ -914,11 +915,22 @@ sub initOptions {
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
 		'd_filehandle'		=> \$d_filehandle,
-		'perfmon'		=> \$perfmon,
+		'perfmon'			=> \$perfmon,
+		'perfwarn=f'		=> \$perfwarn, 
 	)) {
 		showUsage();
 		exit(1);
 	};
+
+	if ($perfwarn) {
+		# enable performance monitoring and set warning thresholds on performance monitors
+		$perfmon = 1;
+		$Slim::Networking::Select::responseTime->setWarnHigh($perfwarn);
+		$Slim::Networking::Select::selectTask->setWarnHigh($perfwarn);
+		$Slim::Utils::Timers::timerTask->setWarnHigh($perfwarn);
+		$Slim::Utils::Scheduler::schedulerTask->setWarnHigh($perfwarn);
+		$Slim::Control::Request::requestTask->setWarnHigh($perfwarn);
+	}
 }
 
 sub initSettings {
