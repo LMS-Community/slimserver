@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.06';
+$VERSION = '1.08';
 
 my $debug = 0;
 
@@ -449,7 +449,14 @@ sub parse_atom
     }
 
     ($size,$id) = unpack 'Na4', $header;
-    if ($size == 1)
+    if ($size==0)
+    {
+	# Special zero-sized atom at top-level means we're done (14496-12 S4.2)
+	return 0 if $level==1;
+	$@ = 'Parse error';
+	return -1;
+    }
+    elsif ($size == 1)
     {
 	# extended size
 	my ($hi, $lo);
@@ -478,10 +485,8 @@ sub parse_atom
 	}
 	$size -= 8;
     }
-    if ($size<=0)
+    if ($size<0)
     {
-	# Special zero-sized atom means we're done
-	($size==0) && ($level==1) && return 0;
 	$@ = 'Parse error';
 	return -1;
     }
@@ -721,16 +726,14 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
-
-    # Seen in the wild - cover art with type 1. Set it to 13 so it's not
-    # treated as character data.
-    if ($type == 1 && $id eq 'COVR') {
-	$type = 13;
-    }
-
     printf "  %sType=$type, Size=$size\n", ' 'x(2*$level) if $debug;
 
-    if ($type==0)	# 16bit int data
+    if ($id eq 'COVR')
+    {
+	# iTunes appears to use random data types for cover art
+	$tags->{$id} = $data;
+    }
+    elsif ($type==0)	# 16bit int data
     {
 	my @ints = unpack 'n' x ($size / 2), $data;
 	if ($id eq 'GNRE')
@@ -803,10 +806,6 @@ sub parse_data
 	    # Non-standard size - just return the raw data
 	    $tags->{$id} = $data;
 	}
-    }
-    elsif ($type==13 || $type==14)	# Raw. Appears that 13=jpeg, 14=other
-    {
-	$tags->{$id} = $data;
     }
 
     # Silently ignore other data types
