@@ -665,8 +665,19 @@ sub readList {   # reads a directory or playlist and returns the contents as an 
 		#
 		# Bug 2048 - Don't add playlist files from the audiodir,
 		# unless they are cue sheets.
-		} elsif ((Slim::Music::Import::stillScanning() && Slim::Music::Info::isCUE($playlisturl)) || 
-			Slim::Utils::Misc::inPlaylistFolder($playlisturl)) {
+		#
+		# Bug 2790 - People decide that playlist directories with
+		# windows shortcuts are a good idea. !inAudioFolder() was
+		# inPlaylistFolder() - but a shortcut points out of the
+		# playlist folder. So what we really want here is:
+		#
+		# Add a cue sheet from anywhere, as long as we're still
+		# scanning.
+		#
+		# Otherwise, playlists can be from anywhere but the audiodir.
+		} elsif (
+			(Slim::Music::Import::stillScanning() && Slim::Music::Info::isCUE($playlisturl)) || 
+			!Slim::Utils::Misc::inAudioFolder($playlisturl)) {
 
 			# it's a playlist file
 			$playlist_filehandle = FileHandle->new();

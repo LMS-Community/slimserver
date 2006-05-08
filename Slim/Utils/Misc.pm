@@ -624,17 +624,26 @@ sub virtualToAbsolute {
 	}
 }
 
+sub inAudioFolder {
+	return _checkInFolder(shift, 'audiodir');
+}
+
 sub inPlaylistFolder {
+	return _checkInFolder(shift, 'playlistdir');
+}
+
+sub _checkInFolder {
 	my $path = shift || return;
+	my $pref = shift;
 
 	# Fully qualify the path - and strip out any url prefix.
 	$path = fixPath($path) || return 0;
 	$path = virtualToAbsolute($path) || return 0;
 	$path = pathFromFileURL($path) || return 0;
 
-	my $playlistdir = Slim::Utils::Prefs::get("playlistdir");
+	my $checkdir = Slim::Utils::Prefs::get($pref);
 
-	if ($playlistdir && $path =~ /^\Q$playlistdir\E/) {
+	if ($checkdir && $path =~ /^\Q$checkdir\E/) {
 		return 1;
 	} else {
 		return 0;
