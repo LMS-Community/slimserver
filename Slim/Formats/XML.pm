@@ -21,6 +21,9 @@ use Slim::Music::Info;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
+# How long to cache parsed XML data
+our $XML_CACHE_TIME = 300;
+
 sub getFeedAsync {
 	my $class = shift;
 	my ( $cb, $ecb, $params ) = @_;
@@ -101,16 +104,10 @@ sub gotViaHTTP {
 		return;
 	}
 	
-	# Cache the feed at least 5 minutes, using the same expiration as SimpleAsyncHTTP if possible
+	# Cache the parsed XML
 	my $cache = Slim::Utils::Cache->new();
-	my $expires = 300;
-	if ( my $data = $cache->get( $http->url() ) ) {
-		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
-			$expires = ( $data->{'_time'} + $data->{'_expires'} ) - time;
-		}
-	}
-	$::d_plugins && msg("Formats::XML: caching parsed XML for $expires seconds\n");
-	$cache->set( $http->url() . '_parsedXML', $feed, $expires );
+	$::d_plugins && msg("Formats::XML: caching parsed XML for $XML_CACHE_TIME seconds\n");
+	$cache->set( $http->url() . '_parsedXML', $feed, $XML_CACHE_TIME );
 
 	# call cb
 	my $cb = $params->{'cb'};
