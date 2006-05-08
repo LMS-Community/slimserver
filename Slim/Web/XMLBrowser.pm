@@ -289,12 +289,7 @@ sub handleSubFeed {
 	
 	# re-cache the parsed XML to include the sub-feed
 	my $cache = Slim::Utils::Cache->new();
-	my $expires = 300;
-	if ( my $data = $cache->get( $params->{'parentURL'} ) ) {
-		if ( defined $data->{'_expires'} && $data->{'_expires'} > 0 ) {
-			$expires = ( $data->{'_time'} + $data->{'_expires'} ) - time;
-		}
-	}
+	my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
 	$::d_plugins && msg("Web::XML: re-caching parsed XML for $expires seconds\n");
 	$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
 	
