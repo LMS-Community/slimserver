@@ -162,16 +162,16 @@ sub renderItem {
 		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist()) {
 
 			$artist = sprintf(
-				' %s <a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=%d\&amp;player=$player">%s</a>',
-				string('BY'), $item->artist->id(), $item->artist()
+				' %s <a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=%d&amp;player=%s">%s</a>',
+				string('BY'), $item->artist->id(), $player, $item->artist()
 			);
 		}
 
 		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album()) {
 
 			$album = sprintf(
-				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album=%d\&amp;player=$player">%s</a>',
-				string('FROM'), $item->album->id(), $item->album()
+				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album=%d&amp;player=%s">%s</a>',
+				string('FROM'), $item->album->id(), $player, $item->album()
 			);
 		}
 
