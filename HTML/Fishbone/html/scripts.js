@@ -236,8 +236,10 @@ function selectLink(lnk,reset) {
 	if (reset == 1) {
 		document.forms[0].browse.options[0].selected = "true";
 	} else {
+		if (reset && homestring) {reset = page;}
+
 		for (var i=0;i < document.forms[0].browse.options.length; i++){
-			if (document.forms[0].browse.options[i] == reset) {
+			if (document.forms[0].browse.options[i].value == reset) {
 				document.forms[0].browse.options[i].selected = "true";
 			}
 		}

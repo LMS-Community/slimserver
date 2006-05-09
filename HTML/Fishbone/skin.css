@@ -675,7 +675,7 @@ A.linkbtn:link {
 	float: left;
 }
 
-#playlistLinks, #playerlinks, #serverlinks, #searchForm {
+#playlistLinks, #playerlinks, #serverlinks, #HeaderSearchForm {
 	float: right;
 }
 

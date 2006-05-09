@@ -12,7 +12,7 @@
 		[% FOREACH link = links %]
 		case "[% link.key %]":
 			url = "[% link.value %]"
-			page = "[% link.key %]"
+			[% IF cookie %]page = "[% link.key %]"[% END %]
 			suffix = "page=" + page
 			[% IF cookie %]homestring = "[% link.key | string %]"
 			cookie = [% cookie %][% END %]
@@ -28,6 +28,7 @@
 	[% IF home %]<script language="JavaScript">
 	<!--Hide
 	var homestring;
+	var page;
 	function doSearch(value)
 	{
 		selectLink();
@@ -131,7 +132,7 @@
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
 
-	<FORM id="SearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
+	<FORM id="HeaderSearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
 		[% "SEARCH" | string %]
 		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 		<input type=hidden value="[% player %]" name="player">
