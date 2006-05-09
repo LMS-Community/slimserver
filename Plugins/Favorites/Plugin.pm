@@ -53,7 +53,7 @@ my %mainModeFunctions = (
 		#$client->execute([ 'playlist', 'clear' ] );
 		#$client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
 		#$client->execute([ 'play' ] );
-		$client->execute([ 'playlist', 'play', $urls->[$listIndex]] );
+		Slim::Control::Request::executeRequest($client, [ 'playlist', 'play', $urls->[$listIndex]] );
 	},
 	'add' => sub {
 		my $client = shift;
@@ -224,39 +224,32 @@ sub playFavorite {
 	if ($digit == 0) {
 		$digit = 10;
 	}
-	my $index = $digit - 1;
+	my $listIndex = $digit - 1;
 
 	my $favs = Slim::Utils::Favorites->new($client);
 	my @titles = $favs->titles();
-	my @urls = $favs->urls();
+	
+	#grab urls into array ref
+	my $urls = [$favs->urls()];
 
-	if (!$urls[$index]) {
+	if (!$urls->[$listIndex]) {
 		$client->showBriefly( {
 			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
 		});
 	} else {
-		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$index] . "\n");
+		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$listIndex] . "\n");
 		$client->showBriefly( {
 			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
-			 'line2' => $titles[$index],
+			 'line2' => $titles[$listIndex],
 		});
 		
 		# Bug 3399 problems with playlist 'add' leave this command set non-working.
 		# use 'play' as a workaround.
 		#$client->execute([ 'playlist', 'clear' ] );
-		#$client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
+		#$client->execute([ 'playlist', 'add', $urls[$index]] );
 		#$client->execute([ 'play' ] );
-		$client->execute([ 'playlist', 'play', $urls->[$listIndex]] );
+		Slim::Control::Request::executeRequest($client, [ 'playlist', 'play', $urls->[$listIndex]] );
 	}
-}
-
-sub addFavorite {
-	my $client = shift;
-
-	my $url = Slim::Player::Playlist::song($client);
-	my $title = Slim::Music::Info::standardTitle($client, $url);
-
-	$client->execute(['favorite', 'add', $url, $title]);
 }
 
 sub enabled {
@@ -272,7 +265,6 @@ sub initPlugin {
 	#									{'useMode' => 'PLUGIN.Favorites'});
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
-	#Slim::Buttons::Common::setFunction('addFavorite', \&addFavorite);
 
 	# register our functions
 	
@@ -287,6 +279,8 @@ sub initPlugin {
 		[0, 0, 0, \&moveCommand]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'],
 		[0, 0, 0, \&deleteCommand]);
+	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'],
+		[0, 0, 0, \&addCommand]);
 
 }
 
@@ -310,7 +304,32 @@ sub moveCommand {
 		return;
 	}
 
-	Slim::Utils::Favorites::moveItem($client, $fromindex, $toindex);
+	Slim::Utils::Favorites->moveItem($client, $fromindex, $toindex);
+
+	$request->setStatusDone();
+}
+
+# add to favorites
+sub addCommand {
+	my $request = shift;
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['favorites'], ['add']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client  = $request->client();
+	my $url     = $request->getParam('_url');;
+	my $title   = $request->getParam('_title');;
+	
+	if (!defined $url || !defined $title) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	Slim::Utils::Favorites->clientAdd($client, $url, $title);
 
 	$request->setStatusDone();
 }

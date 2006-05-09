@@ -40,15 +40,15 @@ sub clientAdd {
 		$::d_favorites && msg("No url passed to $class\::clientAdd, skipping.\n");
 		return undef;
 	}
-	
+
 	if (blessed($url)) {
-		if ($url->can('url') && defined($url->url)) { 
+		if ($url->can('url') && defined($url->url)) {
 			$url = $url->url;
 		} else {
-			return undef;
+			$url = ref($url).":".$url->id;
 		}
 	}
-	
+
 	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
 	# if its already a favorite, don't add it again
@@ -112,6 +112,7 @@ sub findByClientAndURL {
 }
 
 sub moveItem {
+	my $class = shift;
 	my $client = shift;
 	my $from = shift;
 	my $to = shift;
