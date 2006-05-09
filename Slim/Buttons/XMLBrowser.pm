@@ -11,8 +11,6 @@ package Slim::Buttons::XMLBrowser;
 # This file create the 'xmlbrowser' mode.  The mode allows users to scroll
 # through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
 
-# XXX: Trim titles to fit on display
-
 use strict;
 
 use Slim::Buttons::Common;
