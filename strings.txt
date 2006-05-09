@@ -10625,6 +10625,9 @@ SEARCH_FOR_SONGS
 	SV	Sök låt
 	ZH_CN	搜查歌曲
 
+SEARCH_STREAMS
+	EN	Search
+
 SEARCHING
 	CS	Hledám...
 	DE	Suchen...

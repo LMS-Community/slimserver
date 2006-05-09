@@ -11,6 +11,8 @@ package Slim::Buttons::XMLBrowser;
 # This file create the 'xmlbrowser' mode.  The mode allows users to scroll
 # through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
 
+# XXX: Trim titles to fit on display
+
 use strict;
 
 use Slim::Buttons::Common;
@@ -35,7 +37,9 @@ sub setMode {
 		return;
 	}
 
-	my $url = $client->param('url');
+	my $title  = $client->param('title');
+	my $url    = $client->param('url');
+	my $search = $client->param('search');
 
 	# if no url, error
 	if (!$url) {
@@ -64,8 +68,8 @@ sub setMode {
 
 		# give user feedback while loading
 		$client->block(
-			$client->string( $client->param('header') || 'PODCAST_LOADING' ),
-			$client->param('title') || $url,
+			$client->string('PODCAST_LOADING'),
+			$title || $url,
 		);
 		
 		Slim::Formats::XML->getFeedAsync( 
@@ -74,9 +78,11 @@ sub setMode {
 			{
 				'client'    => $client,
 				'url'       => $url,
+				'search'    => $search,
 				'expires'   => $expires,
 				'onSuccess' => $onSuccess,
 				'onFailure' => $onFailure,
+				'feedTitle' => $title,
 			},
 		);
 
@@ -106,7 +112,7 @@ sub gotFeed {
 
 	} elsif ($feed->{'type'} eq 'opml') {
 
-		gotOPML($client, $url, $feed);
+		gotOPML($client, $url, $feed, $params);
 
 	} else {
 		$client->update();
@@ -229,7 +235,7 @@ sub gotRSS {
 		'feed'     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		'modeName' => "XMLBrowser:$url",
-		'header'   => $feed->{'title'} . ' {count}',
+		'header'   => fitTitle( $client, $feed->{'title'} ),
 
 		# TODO: we show only items here, we skip the description of the entire channel
 		'listRef'  => $feed->{'items'},
@@ -275,16 +281,25 @@ sub gotRSS {
 #
 # recusively browse OPML outline
 sub gotOPML {
-	my ($client, $url, $opml) = @_;
+	my ($client, $url, $opml, $params) = @_;
 
 	my $title = $opml->{'name'} || $opml->{'title'};
+	
+	# Add search option only if we are at the top level
+	if ( $params->{'search'} && $title eq $params->{'feedTitle'} ) {
+		push @{ $opml->{'items'} }, {
+			name   => $client->string('SEARCH_STREAMS'),
+			search => $params->{'search'},
+			items  => [],
+		};
+	}
 
 	my %params = (
 		'url'        => $url,
 		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		'modeName'   => "XMLBrowser:$url:$title",
-		'header'     => "$title {count}",
+		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
 		'listRef'    => $opml->{'items'},
 
 		'isSorted'   => 1,
@@ -307,8 +322,9 @@ sub gotOPML {
 
 				# follow a link
 				my %params = (
-					'url'   => $itemURL,
-					'title' => $title,
+					'url'    => $itemURL,
+					'title'  => $title,
+					'header' => fitTitle( $client, $title ),
 				);
 
 				if ($isAudio) {
@@ -336,12 +352,30 @@ sub gotOPML {
 					Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 				}
 
-			} elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
+			}
+			elsif ( $item->{'search'} ) {
+				
+				my %params = (
+					'header'          => $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS'),
+					'cursorPos'       => 0,
+					'charsRef'        => 'UPPER',
+					'numberLetterRef' => 'UPPER',
+					'callback'        => \&handleSearch,
+					'overlayRef'      => sub {
+						return (undef, $client->symbols('rightarrow'))
+					},
+					'_search'         => $item->{'search'},
+				);
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
+			}
+			elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
 
 				# recurse into OPML item
 				gotOPML($client, $client->param('url'), $item);
 
-			} else {
+			}
+			else {
 
 				$client->bumpRight();
 			}
@@ -364,6 +398,49 @@ sub gotOPML {
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
+}
+
+sub handleSearch {
+	my ( $client, $exitType ) = @_;
+	
+	$exitType = uc $exitType;
+	
+	if ( $exitType eq 'BACKSPACE' ) {
+		
+		Slim::Buttons::Common::popModeRight($client);
+	}
+	elsif ( $exitType eq 'NEXTCHAR' ) {
+		
+		my $searchURL    = $client->param('_search');
+		my $searchString = ${ $client->param('valueRef') };
+		
+		# Don't allow null search string
+		my $rightarrow = Slim::Display::Display::symbol('rightarrow');
+		return $client->bumpRight if $searchString eq $rightarrow;
+		
+		$searchString =~ s/$rightarrow//;
+				
+		$client->block( 
+			$client->string('SEARCHING'),
+			$searchString
+		);
+		
+		$::d_plugins && msg("XMLBrowser: Search query [$searchString]\n");
+
+		Slim::Formats::XML->openSearch(
+			\&gotFeed,
+			\&gotError,
+			{
+				'search' => $searchURL,
+				'query'  => $searchString,
+				'client' => $client,
+			},
+		);
+	}
+	else {
+		
+		$client->bumpRight();
+	}
 }
 
 sub overlaySymbol {
@@ -481,7 +558,8 @@ sub displayItemDescription {
 
 		# its a remote audio source, use remotetrackinfo
 		my %params = (
-			'title'     =>$item->{'title'},
+			'header'    => fitTitle( $client, $item->{'title'} ),
+			'title'     => $item->{'title'},
 			'url'       => $item->{'enclosure'}->{'url'},
 			'details'   => \@lines,
 			'onRight'   => sub {
@@ -568,7 +646,7 @@ sub displayFeedDescription {
 		'url'       => $client->param('url'),
 		'title'     => $feed->{'title'},
 		'feed'      => $feed,
-		'header'    => $feed->{'title'} . ' {count}',
+		'header'    => fitTitle( $client, $feed->{'title'} ),
 		'details'   => \@lines,
 		'hideTitle' => 1,
 		'hideURL'   => 1,
@@ -636,7 +714,7 @@ sub playItem {
 		# URL is remote, load it asynchronously...
 		# give user feedback while loading
 		$client->block(
-			$client->string( $client->param('header') || 'PODCAST_LOADING' ),
+			$client->string('PODCAST_LOADING'),
 			$title || $url,
 		);
 		
@@ -659,6 +737,27 @@ sub playItem {
 
 		$client->showBriefly($title, $client->string("PODCAST_NOTHING_TO_PLAY"));
 	}
+}
+
+# Fit a title into the available display, truncating if necessary
+sub fitTitle {
+	my ( $client, $title, $numItems ) = @_;
+	
+	# number of items in the list, to fit the (xx of xx) text properly
+	$numItems ||= 2;
+	my $num = '?' x length $numItems;
+	
+	my $max    = $client->displayWidth;
+	my $length = $client->measureText( $title . " ($num of $num) ", 1 );
+	
+	return $title . ' {count}' if $length <= $max;
+	
+	while ( $length > $max ) {
+		$title  = substr $title, 0, -1;
+		$length = $client->measureText( $title . "... ($num of $num) ", 1 );
+	}
+	
+	return $title . '... {count}';
 }
 
 sub cliQuery {

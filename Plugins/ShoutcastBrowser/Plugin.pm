@@ -60,6 +60,7 @@ sub setMode {
 		header   => 'PLUGIN_SHOUTCASTBROWSER_CONNECTING',
 		modeName => 'ShoutcastBrowser Plugin',
 		url      => $FEED,
+		search   => $SEARCH,
 		title    => $client->string(getDisplayName()),
 	);
 
