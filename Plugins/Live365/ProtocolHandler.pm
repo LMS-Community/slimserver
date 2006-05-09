@@ -36,6 +36,7 @@ use Plugins::Live365::Live365API;
 use vars qw( $VERSION );
 $VERSION = 1.20;
 
+# XXX: I don't believe new() is called at all when direct streaming
 sub new {
 	my $class = shift;
 	my $args = shift;
@@ -84,6 +85,31 @@ sub canDirectStream {
 
 	my $realURL = $url;
 	$realURL =~ s/live365\:/http\:/;
+	
+	if ( $client->playmode eq 'stop' ) {
+		# playmode stop means we were called from S::P::Squeezebox to check if
+		# direct streaming is supported, not to actually direct stream
+		return 1;
+	}
+	
+	my( $station, $handle ) = $url =~ m{live365://(www.live365.com/play/([^/?]+).*)$};
+	$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
+
+	# a fake $self for getPlaylist
+	my $self = IO::Socket->new;
+
+	if( $handle =~ /[a-zA-Z]/ ) {  # if our URL doesn't look like a handle, don't try to get a playlist
+		my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
+		
+		$::d_plugins && msg("Live365.protocolHandler: Setting getPlaylist timer\n");
+		
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time() + 5,
+			\&getPlaylist,
+			( $self, $handle, $url, $isVIP )
+		);
+	}
 
 	return $realURL;
 }
