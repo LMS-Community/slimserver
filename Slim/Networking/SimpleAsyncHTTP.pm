@@ -28,6 +28,20 @@ use Slim::Utils::Misc;
 use HTTP::Date ();
 use MIME::Base64 qw(encode_base64);
 
+BEGIN {
+	my $hasZlib;
+	
+	sub hasZlib {
+		return $hasZlib if defined $hasZlib;
+		
+		$hasZlib = 0;
+		eval { 
+			require Compress::Zlib;
+			$hasZlib = 1;
+		};
+	}
+}
+
 sub new {
 	my $class    = shift;
 	my $callback = shift;
@@ -184,6 +198,13 @@ sub writeCallback {
 		);
 	}
 	
+	# request compressed data if we have zlib
+	if ( hasZlib() ) {
+		push @{ $self->{'args'} }, (
+			'Accept-Encoding' => 'gzip, deflate',
+		);
+	}
+	
 	$http->write_request_async( 
 		$self->{'type'} => $self->{'path'}, 
 		@{ $self->{'args'} } 
@@ -271,6 +292,26 @@ sub bodyCB {
 
 		$self->{'content'} = \$content;
 		
+		# unzip if necessary
+		if ( hasZlib() ) {
+			if ( my $ce = $self->{'headers'}->header('Content-Encoding') ) {
+				if ( $ce eq 'gzip' ) {
+					$::d_http_async && msg("Decompressing gzip'ed content\n");
+					# Formats::XML requires a scalar ref
+					$self->{'content'} = \Compress::Zlib::memGunzip(\$content);
+				}
+				elsif ( $ce eq 'deflate' ) {
+					$::d_http_async && msg("Decompressing deflated content\n");
+					my $i = Compress::Zlib::inflateInit(
+						-WindowBits => -Compress::Zlib::MAX_WBITS(),
+					);
+					my $output = $i->inflate(\$content);
+					# Formats::XML requires a scalar ref
+					$self->{'content'} = \$output;
+				}
+			}
+		}					
+		
 		# cache the response if requested
 		if ( $self->{'params'}->{'cache'} ) {
 			
@@ -280,7 +321,7 @@ sub bodyCB {
 				code    => $self->{'code'},
 				mess    => $self->{'mess'},
 				headers => $self->{'headers'},
-				content => \$content,
+				content => $self->{'content'},
 				_time   => time,
 			};
 			
