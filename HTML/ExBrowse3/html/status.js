@@ -219,11 +219,16 @@ function getStatusResponse(statusobj) {
 	if (songCount == undefined) songCount = 0;
 
 	// Only redownload the playlist if it seems to have changed.
-	if ((!playlistObj) ||
+	if (!statusobj.force && ((!playlistObj) ||
 	    (songCount != playlistObj.length) ||
 	    (!playlistObj[currentSong]) ||
-	    (Math.round(playlistObj[currentSong].secs) != Math.round(so.duration))) {
-		getPlaylist();
+	    (Math.round(playlistObj[currentSong].secs) != Math.round(so.duration)))) {
+		// if there is a new playlist, we can't update until it's
+		// loaded, since it has the song title etc. So hold on to the
+		// statusobj and get the playlist first.
+		statusobj.force = true;
+		getPlaylist(function() { getStatusResponse(statusobj); });
+		return;
 	} 
 
 	curPlayMode = so.mode;

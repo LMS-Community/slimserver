@@ -1,7 +1,7 @@
 [% IF isClient; clink='2'; ELSE; clink='1'; END; PROCESS header.html pwd="yes" nokbd="yes" %]
 
 <div id="pwd">
-[% linktree %] /
+ [%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 </div>
 
 <p>

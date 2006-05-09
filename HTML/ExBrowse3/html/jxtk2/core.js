@@ -138,9 +138,11 @@ JXTK2.JSONRPC.Proxy = function(url) {
 
 	this.call = function (methodName, methodParams, onResp) {
 
-		if (typeof methodParams != 'object') methodParams = [];
+		if (methodName) {
+			if (typeof methodParams != 'object') methodParams = [];
+			this.queueCall(methodName, methodParams);
+		}
 
-		this.queueCall(methodName, methodParams);
 		var json = JXTK2.JSON.serialize(queue.length > 1 ? queue : queue[0]);
 		queue = [];
 

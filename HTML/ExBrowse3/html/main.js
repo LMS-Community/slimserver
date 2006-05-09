@@ -1,6 +1,5 @@
 var ss = new JXTK2.JSONRPC.Proxy('/plugins/RPC/rpc.js');
 var players;
-var curPlayer;
 var loadState = 0;
 
 var globalStrings = [ "FROM", "BY", "EMPTY" ];
@@ -20,12 +19,18 @@ function mainload() {
 	if (loadSteps[loadState]) {
 		document.getElementById("loading").firstChild.firstChild.data = loadSteps[loadState].str;
 		var rv = loadSteps[loadState].func();
-		if (typeof rv == "boolean") {
+		if (rv == true) {
 			// abort
 			return false;
 		}
+
 		loadState++;
-		setTimeout(mainload, 50);
+
+		// if the init function returns {async: true}, it'll handle
+		// re-calling mainload on its own. getPlaylistInit does this.
+		if (!(rv && rv.async)) {
+			setTimeout(mainload, 50);
+		}
 	} else {
 		document.getElementsByTagName("body")[0].className = "mainpage";
 		document.getElementById("loading").style.display = "none";
@@ -90,3 +95,4 @@ function handlekey(e) {
 
 function abortkey(e) {
 }
+

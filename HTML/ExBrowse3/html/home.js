@@ -1,6 +1,7 @@
 var homecookie;
 var playercookie;
 var homelinks;
+var curPlayer;
 
 var playerlistbox;
 
@@ -48,7 +49,7 @@ function updatePlayer(nosub) {
 	playercookie.setValue(curPlayer);
 
 	if(nosub != true) {
-		getPlaylist();
+		playlistObj = null;
 		getStatus();
 	}
 }
@@ -81,6 +82,8 @@ function goradio() {
 function initHome() {
 	playercookie = new JXTK2.Cookie("ExBrowse2Player");
 
+	curPlayer = playercookie.getValue();
+
 	playerlistbox = new JXTK2.ListBox("playersel");
 	playerlistbox.addHandler(updatePlayer);
 
@@ -90,10 +93,10 @@ function initHome() {
 		homelinks = new Array(
 			new JXTK2.Button("homebrowse", gobrowse),
 			new JXTK2.Button("homessettings", function() {
-				browseurl("setup.html?page=server");
+				browseurl("setup.html?page=SERVER_SETTINGS");
 			}),
 			new JXTK2.Button("homepsettings", function() {
-				browseurl("setup.html?page=player&playerid=" + escape(curPlayer));
+				browseurl("setup.html?page=PLAYER_SETTINGS&playerid=" + escape(curPlayer));
 			}),
 			new JXTK2.Button("homehelp", gohelp)
 		);
@@ -125,4 +128,9 @@ function initHome() {
 
 function loadHome() {
 	if (homecookie) gobrowseindex(homecookie.getValue(), 0, true);
+}
+
+
+function chooseSettings(option, value) {
+	browseurl("setup.html?page=" + value);
 }

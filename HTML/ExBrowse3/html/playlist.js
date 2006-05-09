@@ -5,20 +5,32 @@
 var playlistcombo;
 var playlistObj;
 
+var itemsPerCall = 50;
+
 function getPlaylistInit() {
-	if (!curPlayer) return;
-	playlistObj = ss.call("slim.getPlaylist", [ curPlayer, 0, 100 ]).result;
-	updatePlaylist();
+	// get the playlist, then go back to continue loading the page
+	getPlaylist(mainload);
+	return { async: true };
 }
 
-function getPlaylist() {
+function getPlaylist(callbackfunc, newArr) {
 	if (!curPlayer) return;
 	if (playlistcombo.getEl().isDragging) return;
 
-	ss.call("slim.getPlaylist", [ curPlayer, 0, 100 ], function(rv) {
-		playlistObj = rv.result;
-		updatePlaylist();
-	});
+	if (!newArr) newArr = [];
+
+	// recursively download new playlist items
+	ss.call("slim.getPlaylist", [ curPlayer, newArr.length, itemsPerCall ], function(rv) {
+		if (rv.result.length == itemsPerCall) {
+			// if we got all the items we requested, then check for more
+			getPlaylist(callbackfunc, newArr.concat(rv.result));
+		} else {
+			// otherwise, we've hit the end - save, update, and callback
+			playlistObj = newArr.concat(rv.result);
+			updatePlaylist();
+			if (callbackfunc) callbackfunc();
+		}
+	} );
 }
 
 function updatePlaylist() {

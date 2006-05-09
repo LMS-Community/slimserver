@@ -2,7 +2,7 @@
  * Common elements *
 \*******************/
 
-p, td, ol, ul, h3, h4, body, .formfield {
+p, td, ol, ul, h3, h4, body, select, input {
 	font-size: 10px;
 	font-family: verdana,tahoma,arial,helvetica,geneva,sans-serif;
 	color: #ccc;
@@ -121,7 +121,7 @@ h4, h5 {
 	margin-left: 10px;
 }
 
-.formfield {
+input, select {
 	background: #ddd;
 	color: #444;
 }
@@ -706,5 +706,19 @@ td.infotitlecol {
 	padding-right: 5px;
 	text-align: right;
 	white-space: nowrap;
+}
+
+/* Setup */
+
+.settingSection {
+	position: relative;
+	border-bottom:2px solid #bbb;
+	padding: 5px;
+}
+
+.groupHead, .prefHead {
+	font-weight: bold;
+	color: white;
+	padding-top: 2px;
 }
 
