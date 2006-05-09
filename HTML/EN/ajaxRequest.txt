@@ -17,6 +17,19 @@ nextsong|(next) [% item.title %]
 	[%- LAST IF item.num > next -%]
 [%- END -%]
 
+[%- IF page == 'home' %]
+# special vars from home.html
+[%- IF additionalLinks.plugins %]
+[%- FOREACH link = additionalLinks.plugins %]
+[% link.key | string | replace('\s+', '_') %]|[% link.value %]
+[%- END -%]
+[% END %]
+album_count|[% album_count %]
+artist_count|[% artist_count %]
+song_count|[% song_count %]
+playercount|[% playercount %]
+[%- END -%]
+
 [%- IF page == 'artwork' %]
 # ajaxed artwork browser
 start|[% start %]
@@ -70,6 +83,16 @@ genreid|[% itemobj.genre.id %]
 
 # mm:ss length of song
 duration|[% itemobj.duration %]
+# mm:ss elapsed
+elapsed|[% songtime %]
+[%- IF songtime == 0 %]
+elapsed|0:00
+[%- ELSE %]
+[%- USE date %]
+elapsed|[% date.format(songtime, '%M:%S') %]
+[% END %]
+
+[%# USE Dumper; Dumper.dump(itemobj) %]
 # length of song
 durationseconds|[% durationseconds %]
 # elapsed time 
