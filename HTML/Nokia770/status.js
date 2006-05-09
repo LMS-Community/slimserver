@@ -119,7 +119,7 @@ function refreshPlugins(theData) {
 		if (homeParsedData[thisDiv].match(/\w/)) {
 			if ($(thisDiv)) {
 				var linkName = thisDiv.replace('_',' ');
-				$(thisDiv).innerHTML = '<a href = "[% webroot %]'+homeParsedData[thisDiv]+'player='+player+'>('+linkName+')</a>';
+				$(thisDiv).innerHTML = '<a href = "[% webroot %]'+homeParsedData[thisDiv]+'player='+player+'">('+linkName+')</a>';
 			}
 		}
 	});
