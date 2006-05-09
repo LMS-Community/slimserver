@@ -31,6 +31,12 @@
 	[%- thispage = 'home' -%]
 [%- END -%]
 
+[%- IF ajaxRequest -%]
+        <pre>
+        [% PROCESS ajaxRequest.txt page = thispage %]
+        </pre>
+[%- ELSE -%]
+
 [% PROCESS pageheader.html class = 'custom' thispage = thispage %]
 
 <!-- home.html -->
@@ -76,6 +82,7 @@
 [% PROCESS detailed_footer.html %]
 </div>
 [% PROCESS pagefooter.html %]
+[%- END -%]
 
 [% BLOCK tune_in_form %]
         <form name="tune" method="get" action="status.html">

@@ -7,18 +7,19 @@ var inc = 0;
 var intervalID = false;
 
 [% PROCESS html/global.js %]
+var args = 'player='+player+'&ajaxRequest=1';
+
 // Update the progress dialog with the current state
 function refreshProgressBar(theData) {
 	var parsedData = fillDataHash(theData);
 	var elements = [ 'duration', 'elapsed' ];
-	for (var i=0; i < elements.length; i++) {
-		var key = elements[i];
+	elements.each(function(key) {
 		if ($(key)) {
 			if (parsedData[key]) {
 				refreshElement(key, parsedData[key]);
 			}
 		}
-	}
+	});
 	_progressAt = parseInt(parsedData['songtime'], 10);
 	_progressEnd = parseInt(parsedData['durationseconds'], 10);
 	setProgressBarWidth();
@@ -34,7 +35,6 @@ function progressUpdate() {
 		setProgressBarWidth();
 		// do an ajax update every 10 seconds while playing
 		if (inc == 10) {
-		        var args = 'player='+player+'&ajaxRequest=1';
 			getStatusData(args, refreshAll);
 			inc = 0;
 		}
@@ -105,6 +105,24 @@ function refreshAll(theData) {
 	refreshControls(parsedData);
 	refreshOtherElements(parsedData);
 	refreshProgressBar(parsedData);
+	url = 'home.html';
+	getStatusData(args, refreshPlugins);
+	url = 'status.html';
+}
+
+function refreshPlugins(theData) {
+	var myData = theData.responseText;
+	var homeParsedData = parseData(myData);
+	// create Plugin links, if applicable
+	var pluginDivs = [ 'Biography', 'Album_Review' ];
+	pluginDivs.each( function (thisDiv) {
+		if (homeParsedData[thisDiv].match(/\w/)) {
+			if ($(thisDiv)) {
+				var linkName = thisDiv.replace('_',' ');
+				$(thisDiv).innerHTML = '<a href = "[% webroot %]'+homeParsedData[thisDiv]+'player='+player+'>('+linkName+')</a>';
+			}
+		}
+	});
 }
 
 function refreshControls(theData) {
@@ -132,19 +150,19 @@ function refreshControls(theData) {
 function refreshVolumeControl(theData) {
 	var parsedData = fillDataHash(theData);
 	var levels = [0, 20, 35, 50, 75, 80, 85, 90, 95, 100];
-	for (var i=0; i < levels.length; i++) {
-		var key = 'bar_'+levels[i];
-		var activeKey = 'bar_active_'+levels[i];
+	levels.each( function(thisLevel) {
+		var key = 'bar_'+thisLevel;
+		var activeKey = 'bar_active_'+thisLevel;
 		var turnOn = null;
 		var turnOff = null;
 		var intVolume = parseInt(parsedData['volume'], 10);
-		if (intVolume == 0 && levels[i] == 0) {
+		if (intVolume == 0 && thisLevel == 0) {
 			turnOn = activeKey;
 			turnOff = key;
-		} else if (levels[i] == 0) {
+		} else if (thisLevel == 0) {
 			turnOn = key;
 			turnOff = activeKey;
-		} else if (intVolume >= levels[i]) {
+		} else if (intVolume >= thisLevel) {
 			turnOn = activeKey;
 			turnOff = key;
 		} else {
@@ -157,18 +175,17 @@ function refreshVolumeControl(theData) {
 		if ($(turnOn)) {
 			Element.show(turnOn);
 		}
-	}
+	});
 }
 
 function refreshPlayerStatus(theData) {
 	var parsedData = fillDataHash(theData);
 	var controls = ['playtextmode', 'thissongnum', 'songcount'];
-	for (var i=0; i < controls.length; i++) {
-		var key = controls[i];
+	controls.each(function(key) {
 		if ($(key)) {
 			refreshElement(key, parsedData[key]);
 		}
-	}
+	});
 	if (!intervalID) {
 		progressUpdate();
 	}
@@ -185,13 +202,13 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 	var controls = ['off', 'song', 'album', 'playlist', 'play', 'pause', 'stop'];
 	var turnOn = null;
 	var turnOff = null;
-	for (var i=0; i < controls.length; i++) {
-		if (controls[i] == selected) {
-			turnOn = playerRepeatOrShuffle+'control_active_'+controls[i];
-			turnOff = playerRepeatOrShuffle+'control_'+controls[i];
+	controls.each(function(thisControl) {
+		if (thisControl == selected) {
+			turnOn = playerRepeatOrShuffle+'control_active_'+thisControl;
+			turnOff = playerRepeatOrShuffle+'control_'+thisControl;
 		} else {
-			turnOn = playerRepeatOrShuffle+'control_'+controls[i];
-			turnOff = playerRepeatOrShuffle+'control_active_'+controls[i];
+			turnOn = playerRepeatOrShuffle+'control_'+thisControl;
+			turnOff = playerRepeatOrShuffle+'control_active_'+thisControl;
 		}
 		if ($(turnOff)) {
 			Element.hide(turnOff);
@@ -202,7 +219,7 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 			// go with this instead
 			document.getElementById(turnOn).style.display = "block";
 		}
-	}
+	});
 	if (selected == 'stop') {
 		resetProgressBar();
 	}
@@ -227,18 +244,18 @@ function playerControl(selected, param) {
 	// make the rest not active
 	var imgStub = 'html/images/smaller/';
 	var controls = ['play', 'pause', 'stop'];
-	for (var i=0; i < controls.length; i++) {
+	controls.each(function(thisControl) {
 		var imgSrc = null;
-		if (controls[i] == selected) {
-			imgSrc = imgStub + controls[i] + '_active.gif';
+		if (thisControl == selected) {
+			imgSrc = imgStub + thisControl + '_active.gif';
 		} else {
-			imgSrc = imgStub + controls[i] + '.gif';
+			imgSrc = imgStub + thisControl + '.gif';
 		}
-		var key = 'playercontrol_'+controls[i];
+		var key = 'playercontrol_'+thisControl;
 		if ($(key)) {
 			$(key).src = imgSrc;
 		}
-	}
+	});
 }
 
 function refreshOtherElements(theData) {
@@ -265,22 +282,20 @@ function refreshOtherElements(theData) {
 			'browsedb.html?hierarchy=track&level=0&album=',
 			'browsedb.html?hierarchy=artist,album,track&level=0&genre='
 			];
-	for (var i=0; i < songinfoArray.length; i++) {
-		var key = songinfoArray[i];
+	songinfoArray.each(function(key) {
 		refreshElement(key, parsedData[key], 50);
 		var linkIdKey = key + '_link';
 		var linkKey = key + 'id';
 		var newHref = linkStubs[i] + parsedData[linkKey] + '&amp;player=' + player;
 		refreshHref(linkIdKey, newHref);
-	}
+	});
 	if (parsedData['streamtitle']) {
 		refreshElement('streamtitle', parsedData['streamtitle'], 50);
 	}
 	// refresh links in song info section
 	// refresh playlist
 	var playlistArray = ['previoussong', 'currentsong', 'nextsong' ];
-	for (var i=0; i < playlistArray.length; i++) {
-		var key = playlistArray[i];
+	playlistArray.each(function(key) {
 		if ($(key)) {
 			var value;
 			if (parsedData[key]) {
@@ -290,12 +305,11 @@ function refreshOtherElements(theData) {
 			}
 			refreshElement(key, value, 40);
 		} 
-	}
+	});
 	// refresh player ON/OFF
 }
 
 window.onload= function() {
-	var args = 'player='+player+'&ajaxRequest=1';
 	getStatusData(args, refreshAll);
-	progressUpdate()
+	progressUpdate();
 }
