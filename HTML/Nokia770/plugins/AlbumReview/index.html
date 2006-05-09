@@ -1,0 +1,38 @@
+[% pagetitle = 'PLUGIN_ALBUMREVIEW' | string %]
+[% IF refresh;
+	SET refreshurl = "$webroot$path?";
+   END;
+%]
+
+[% PROCESS pageheader.html %]
+<div id = 'innerSanctum'>
+[% linktitle = BLOCK %]
+	<a href="[% webroot %][% path %]?player=[% playerURI %]">[% pagetitle %]</a> (<a href="[% webroot %][% path %]?player=[% playerURI %]">[% "PLUGIN_ALBUMREVIEW_RELOAD" | string %]</a>)
+[% END %]
+	<h3>[% album %] - [% artist %][% IF albumyear %], [% albumyear %][% END %][% albumrating %]</h3>
+	[% IF albumreview %]<p>[% albumreview %]</p>[% END %]
+	[% IF albumimages %]<p><img src="/music/[% albumimages %]/thumb.jpg" border="0"></p>[% END %]
+	<p>&nbsp;</p>
+
+	[% IF albumtracks %]
+		<table width="100%">
+			<tr bgcolor="[% evenC %]">
+				<th>[% 'TITLE' | string %]</th>
+				<th>[% 'COMPOSER' | string %]</th>
+			</tr>
+			[% odd = 0 %]
+			[% FOREACH track = albumtracks %]
+				[% trackinfo = track.value %]
+				<tr bgcolor="[% NOT odd ? oddC : evenC %]">
+					<td>[% track.key %]. [% track.value.title %]</td>
+					<td>[% track.value.composer %]</td>
+				</tr>
+				[% odd = (not odd) %]
+			[% END %]
+		</table>
+	[% END %]
+
+	<p>Information provided by <a href="http://www.allmusic.com/" target="_blank"><img src="http://www.allmusic.com/i/pages/site/header/logo.gif" alt="AMG all music" width="92" height="50" align="middle" border="0"></a></p>
+[% PROCESS detailed_footer.html %]
+</div>
+[% PROCESS pagefooter.html %]
