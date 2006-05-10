@@ -266,7 +266,7 @@ sub setupGroup {
 	
 	my %prefs = (
 		'rescan-scheduled' => {
-			'validate' => \&Slim::Web::Setup::validateTrueFalse,
+			'validate' => \&Slim::Utils::Validate::trueFalse,
 			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_NAME'),
 			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_NAME'),
 			'options' => {
@@ -276,7 +276,7 @@ sub setupGroup {
 		},
 
 		'rescan-time' => {
-			'validate' => \&Slim::Web::Setup::validateAcceptAll,
+			'validate' => \&Slim::Utils::Validate::acceptAll,
 			'validateArgs' => [0,undef],
 			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_SET'),
 			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_SET'),

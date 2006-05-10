@@ -86,7 +86,7 @@ sub setupGroup {
 			options => \%sort_options
 		},
                 plugin_live365_web_show_details => {
-                        validate => \&Slim::Web::Setup::validateTrueFalse,
+                        validate => \&Slim::Utils::Validate::trueFalse,
                         options  => {
                                 1 => string('ON'),
                                 0 => string('OFF')
