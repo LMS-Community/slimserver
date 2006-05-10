@@ -114,7 +114,7 @@ sub setupGroup {
 	
 	my %setupPrefs = (
 		'cliport'	=> {
-			'validate' => \&Slim::Web::Setup::validatePort,
+			'validate' => \&Slim::Utils::Validate::port,
 			'onChange' => \&cli_socket_change,
 		}
 	);

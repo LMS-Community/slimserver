@@ -110,7 +110,7 @@ sub setupGroup {
 	
 	my %setupPrefs = (
 		'xplinterval' => {
-					'validate' => \&Slim::Web::Setup::validateInt
+					'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [5,30,1,1]
 				}
 		,'xplir' => {
