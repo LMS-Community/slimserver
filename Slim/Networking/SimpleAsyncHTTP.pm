@@ -185,7 +185,7 @@ sub writeCallback {
 	
 	# If cached, add If-None-Match and If-Modified-Since headers
 	if ( my $data = $self->{'cachedResponse'} ) {			
-		push @{ $self->{'args'} }, (
+		unshift @{ $self->{'args'} }, (
 			'If-None-Match'     => $data->{'headers'}->header('ETag') || undef,
 			'If-Modified-Since' => $data->{'headers'}->last_modified || undef,
 		);
@@ -193,14 +193,14 @@ sub writeCallback {
 
 	# handle basic auth if username, password provided
 	if ( $self->{'user'} || $self->{'password'} ) {
-		push @{ $self->{'args'} }, (
+		unshift @{ $self->{'args'} }, (
 			'Authorization' => 'Basic ' . encode_base64( $self->{'user'} . ":" . $self->{'password'} ),
 		);
 	}
 	
 	# request compressed data if we have zlib
 	if ( hasZlib() ) {
-		push @{ $self->{'args'} }, (
+		unshift @{ $self->{'args'} }, (
 			'Accept-Encoding' => 'gzip, deflate',
 		);
 	}
