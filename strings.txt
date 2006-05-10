@@ -10458,7 +10458,7 @@ SEARCHFOR
 	EN	Search For
 	ES	Buscar
 	FI	Hae
-	FR	Rechercher_SEARCHFOR
+	FR	Rechercher
 	IT	Ricerca
 	JA	検索する
 	NL	Zoek naar
@@ -10626,6 +10626,7 @@ SEARCH_FOR_SONGS
 	ZH_CN	搜查歌曲
 
 SEARCH_STREAMS
+	DE	Suchen
 	EN	Search
 
 SEARCHING
