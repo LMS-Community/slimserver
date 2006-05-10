@@ -42,6 +42,9 @@ sub new {
 		$args{'PeerAddr'} = '127.0.0.1';
 	}
 	
+	# Timeout defaults to the Radio Station Timeout pref
+	$args{'Timeout'} ||= Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+	
 	# Skip async DNS if we know the IP address
 	if ( $args{'PeerAddr'} || Net::IP::ip_is_ipv4( $args{'Host'} ) ) {
 		
@@ -49,8 +52,9 @@ sub new {
 	}
 	else {
 		
-		$::d_http_async && msgf("AsyncHTTP: Starting async DNS lookup for [%s]\n",
+		$::d_http_async && msgf("AsyncHTTP: Starting async DNS lookup for [%s] [timeout %d]\n",
 			$args{'Host'},
+			$args{'Timeout'},
 		);
 		
 		my $resolver = Net::DNS::Resolver->new;
@@ -82,10 +86,9 @@ sub new {
 		Slim::Networking::Select::addRead($bgsock, \&dnsAnswerCallback);
 		
 		# handle the DNS timeout by using our own timer
-		my $timeout = $args{'Timeout'} || 10;
 		Slim::Utils::Timers::setTimer(
 			$bgsock,
-			Time::HiRes::time + $timeout,
+			Time::HiRes::time + $args{'Timeout'},
 			\&dnsErrorCallback
 		);
 	}
