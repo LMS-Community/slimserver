@@ -83,6 +83,9 @@ function chooseSettings(value,option)
 
 function switchPlayer(player_List) {
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
+	
+	setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
+	
 	parent.playlist.location="playlist.html?player"+newPlayer;
 	window.location="status_header.html?player"+newPlayer;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
@@ -99,6 +102,14 @@ function switchPlayer(player_List) {
 
 		parent.browser.location=myString.replace(rExp, newPlayer);
 	}
+}
+
+function setCookie(name, value) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + 1000*60*60*24*365);
+	document.cookie =
+		name + "=" + escape(value) +
+		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
 
 function resize(src,width)

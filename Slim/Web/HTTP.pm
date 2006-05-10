@@ -9,6 +9,7 @@ package Slim::Web::HTTP;
 
 use strict;
 
+use CGI::Cookie;
 use Digest::MD5;
 use FileHandle;
 use File::Basename qw(basename);
@@ -299,6 +300,11 @@ sub processHTTP {
 		$request->uri($plainURI);
 		# store the cauth code in the request object (headers are handy!)
 		$request->push_header("X-Slim-CSRF",$csrfAuth);
+	}
+	
+	# Read cookie(s)
+	if ( my $cookie = $request->header('Cookie') ) {
+		$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
 	}
 
 	# this bundles up all our response headers and content
@@ -607,6 +613,13 @@ sub processURL {
 			$client->prefSet('transcodeBitrate',undef);
 		}
 	}
+	
+	# player specified from cookie
+	if ( !defined $client && $params->{'cookies'} ) {
+		if ( my $player = $params->{'cookies'}->{'SlimServer-player'} ) {
+			$client = Slim::Player::Client::getClient( $player->value );
+		}
+	}
 
 	# if we don't have a player specified, just pick one if there is one...
 #	if (!defined($client) && Slim::Player::Client::clientCount() > 0) {
@@ -713,6 +726,14 @@ sub generateHTTPResponse {
 	if (defined($client)) {
 		$params->{'player'} = $client->id();
 		$params->{'myClientState'} = $client;
+		
+		# save the player id in a cookie
+		my $cookie = CGI::Cookie->new(
+			-name    => 'SlimServer-player',
+			-value   => $params->{'player'},
+			-expires => '+1y',
+		);
+		$response->headers->push_header( 'Set-Cookie' => $cookie );
 	}
 
 	# this might do well to break up into methods
