@@ -126,17 +126,17 @@ sub handleFeed {
 				);
 				return;
 			}
+		}
 			
-			# If the feed contains no sub-items, display item details
-			if ( !$subFeed->{'items'} 
-				 ||
-				 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
-			) {
-				$stash->{'streaminfo'} = {
-					'item'  => $subFeed,
-					'index' => join '.', @index,
-				};
-			}
+		# If the feed contains no sub-items, display item details
+		if ( !$subFeed->{'items'} 
+			 ||
+			 ( ref $subFeed->{'items'} eq 'ARRAY' && !scalar @{ $subFeed->{'items'} } ) 
+		) {
+			$stash->{'streaminfo'} = {
+				'item'  => $subFeed,
+				'index' => join '.', @index,
+			};
 		}
 					
 		$stash->{'pagetitle'} = $subFeed->{'name'};

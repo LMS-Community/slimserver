@@ -515,6 +515,15 @@ PODCAST_FEEDS_CHANGE
 	EN	Podcast list changed.
 	ES	Lista de Podcast modificada.
 	NL	Podcast lijst gewijzigd.
+	
+PODCAST_SUBTITLE
+	EN	Subtitle
+	
+PODCAST_SUMMARY
+	EN	Summary
+	
+PODCAST_EXPLICIT
+	EN	Explicit
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts

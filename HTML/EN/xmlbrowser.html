@@ -28,10 +28,29 @@
 				[% END %]
 				
 			<div class="songInfo">
+				
+				[% IF streaminfo.item.image %]
+				<ul>
+					<img src="[% streaminfo.item.image %]" />
+				</ul>
+				[% END %]
+				
 				<ul>
 					<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% (streaminfo.item.name || streaminfo.item.title) | html %]</div>
 					</li>
+					
+					[% IF streaminfo.item.subtitle %]
+					<li><div class="songInfoTitle">[% "PODCAST_SUBTITLE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.subtitle | html %]</div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.pubdate %]
+					<li><div class="songInfoTitle">[% "PODCAST_DATE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.pubdate | html %]</div>
+					</li>
+					[% END %]					
 					
 					[% IF streaminfo.item.url %]
 					<li><div class="songInfoTitle">[% "URL" | string; "COLON" | string %]</div>
@@ -43,7 +62,13 @@
 					<li><div class="songInfoTitle">[% "DESCRIPTION" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.description | html %]</div>
 					</li>
-					[% END %]					
+					[% END %]
+					
+					[% IF streaminfo.item.summary %]
+					<li><div class="songInfoTitle">[% "PODCAST_SUMMARY" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.summary | html %]</div>
+					</li>
+					[% END %]								
 					
 					[% IF streaminfo.item.link %]
 					<li><div class="songInfoTitle">[% "PODCAST_LINK" | string; "COLON" | string %]</div>
@@ -59,6 +84,18 @@
 						</div>
 					</li>
 					[% END %]
+					
+					[% IF streaminfo.item.duration %]
+					<li><div class="songInfoTitle">[% "LENGTH" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.duration | html %]</div>
+					</li>
+					[% END %]
+					
+					[% IF streaminfo.item.explicit %]
+					<li><div class="songInfoTitle">[% "PODCAST_EXPLICIT" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.explicit | html %]</div>
+					</li>
+					[% END %]					
 					
 					[% IF streaminfo.item.bitrate %]
 					<li><div class="songInfoTitle">[% "BITRATE" | string; "COLON" | string %]</div>

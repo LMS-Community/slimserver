@@ -183,6 +183,22 @@ sub parseRSS {
 		'managingEditor' => unescapeAndTrim($xml->{'channel'}->{'managingEditor'}),
 		'xmlns:slim'     => unescapeAndTrim($xml->{'xmlsns:slim'}),
 	);
+	
+	# look for an image
+	if ( my $image = $xml->{'channel'}->{'image'} ) {
+		
+		my $url = $image->{'url'};
+		
+		# some Podcasts have the image URL in the link tag
+		if ( !$url && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
+			$url = $image->{'link'};
+		}
+		
+		$feed{'image'} = $url;
+	}
+	elsif ( $xml->{'itunes:image'} ) {
+		$feed{'image'} = $xml->{'itunes:image'}->{'href'};
+	}
 
 	# some feeds (slashdot) have items at same level as channel
 	my $items;
@@ -202,7 +218,26 @@ sub parseRSS {
 			'title'       => unescapeAndTrim($itemXML->{'title'}),
 			'link'        => unescapeAndTrim($itemXML->{'link'}),
 			'slim:link'   => unescapeAndTrim($itemXML->{'slim:link'}),
+			'pubdate'     => unescapeAndTrim($itemXML->{'pubDate'}),
+			# image is included in each item due to the way XMLBrowser works
+			'image'       => $feed{'image'},
 		);
+
+		# Add iTunes-specific data if available
+		# http://www.apple.com/itunes/podcasts/techspecs.html
+		if ( $xml->{'xmlns:itunes'} ) {
+			$item{'duration'} = unescapeAndTrim($itemXML->{'itunes:duration'});
+			$item{'explicit'} = unescapeAndTrim($itemXML->{'itunes:explicit'});
+			
+			# don't duplicate data
+			if ( $itemXML->{'itunes:subtitle'} ne $itemXML->{'title'} ) {
+				$item{'subtitle'} = unescapeAndTrim($itemXML->{'itunes:subtitle'});
+			}
+			
+			if ( $itemXML->{'itunes:summary'} ne $itemXML->{'description'} ) {
+				$item{'summary'} = unescapeAndTrim($itemXML->{'itunes:summary'});
+			}
+		}
 
 		my $enclosure = $itemXML->{'enclosure'};
 
@@ -222,7 +257,7 @@ sub parseRSS {
 
 		push @{$feed{'items'}}, \%item;
 	}
-
+	
 	return \%feed;
 }
 
