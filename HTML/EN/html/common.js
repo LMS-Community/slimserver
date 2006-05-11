@@ -28,6 +28,14 @@ function refreshStatus() {
 				var plloc = top.frames.playlist.location;
 				var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
 					+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+					
+				// Bug 3404
+				// We also need to make sure the player param in the playlist frame matches ours
+				var q = window.location.search;
+				var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+				var player = q.match( playerExp );
+				newloc = newloc.replace(playerExp, player);
+				
 				plloc.replace(newloc);
 			}
 		}
