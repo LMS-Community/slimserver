@@ -354,8 +354,8 @@ sub _checkHeader {
 		$self->{'ID3V2Tag'} = 1;
 
 		# How big is the ID3 header?
-		# Skip the next three bytes - major & minor version number.
-		read($fh, $buffer, 3) or return -1;
+		# Skip the next two bytes - major & minor version number.
+		read($fh, $buffer, 2) or return -1;
 
 		# The size of the ID3 tag is a 'synchsafe' 4-byte uint
 		# Read the next 4 bytes one at a time, unpack each one B7,
