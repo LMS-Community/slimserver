@@ -117,9 +117,13 @@ function refreshPlugins(theData) {
 	var pluginDivs = [ 'Biography', 'Album_Review' ];
 	pluginDivs.each( function (thisDiv) {
 		if (homeParsedData[thisDiv].match(/\w/)) {
+			var linkName = thisDiv.replace('_',' ');
+			var streamDiv = "Stream"+thisDiv;
 			if ($(thisDiv)) {
-				var linkName = thisDiv.replace('_',' ');
 				$(thisDiv).innerHTML = '<a href = "[% webroot %]'+homeParsedData[thisDiv]+'player='+player+'">('+linkName+')</a>';
+			}
+			if ($(streamDiv)) {
+				$(streamDiv).innerHTML = '<a href = "[% webroot %]'+homeParsedData[thisDiv]+'player='+player+'">('+linkName+')</a>';
 			}
 		}
 	});
