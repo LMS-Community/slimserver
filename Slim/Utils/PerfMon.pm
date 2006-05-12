@@ -51,6 +51,14 @@ sub adjust {
 	return $ref;
 }
 
+sub warnLow {
+	shift->{warnlo};
+}
+
+sub warnHigh {
+	shift->{warnhi};
+}
+
 sub setWarnLow {
 	my $ref = shift || return;
 	my $val = shift;
@@ -114,21 +122,34 @@ sub sprint {
 
 	my $str = '';
 
-	my $total = $ref->count() || return $str;
+	my $total = $ref->count();
 
 	$str .= $ref->{name}.":\n" if $displayTitle;
 
-	for my $entry (0..$ref->{buckets}) {
-		my $val = $entry ? $ref->{val}[$entry] : $ref->{valL};
-		my $percent = $val/$total*100;
-		$str .= sprintf "%8s : %8d :%3.0f%% %s\n","< ".$ref->{thres}[$entry], $val, $percent, "#" x ($percent/2);
-	}
-	$str .= sprintf "%8s : %8d :%3.0f%% %s\n", ">=".$ref->{thres}[$ref->{buckets}], $ref->{over}, $ref->{over}/$total*100, "#" x ($ref->{over}/$total*100/2);
-	$str .= sprintf "    max  : %8f\n", $ref->{max};
-	$str .= sprintf "    min  : %8f\n", $ref->{min};
-	$str .= sprintf "    avg  : %8f\n", $ref->{sum}/$total;
+	if ($total > 0) {
 
-	return $str
+		for my $entry (0..$ref->{buckets}) {
+			my $val = $entry ? $ref->{val}[$entry] : $ref->{valL};
+			my $percent = $val/$total*100;
+			$str .= sprintf "%8s : %8d :%3.0f%% %s\n","< ".$ref->{thres}[$entry], $val, $percent, "#" x ($percent/2);
+		}
+		$str .= sprintf "%8s : %8d :%3.0f%% %s\n", ">=".$ref->{thres}[$ref->{buckets}], $ref->{over}, $ref->{over}/$total*100, "#" x ($ref->{over}/$total*100/2);
+		$str .= sprintf "    max  : %8f\n", $ref->{max};
+		$str .= sprintf "    min  : %8f\n", $ref->{min};
+		$str .= sprintf "    avg  : %8f\n", $ref->{sum}/$total;
+
+	} else {
+		
+		for my $entry (0..$ref->{buckets}) {
+			$str .= sprintf "%8s : %8d :%3.0f%%\n","< ".$ref->{thres}[$entry], 0, 0;
+		}
+		$str .= sprintf "%8s : %8d :%3.0f%%\n", ">=".$ref->{thres}[$ref->{buckets}], 0, 0;
+		$str .= sprintf "    max  : %8f\n", 0;
+		$str .= sprintf "    min  : %8f\n", 0;
+		$str .= sprintf "    avg  : %8f\n", 0;
+	}
+
+	return $str;
 }
 
 sub print {
