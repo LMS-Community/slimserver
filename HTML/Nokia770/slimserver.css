@@ -170,13 +170,10 @@ div#hidden {
 }
 
 div#footer {
-	position: relative;
+	position: fixed;
+	bottom: 0;
 	clear: both;
-}
-div#absolute_footer {
-	position: absolute;
-	top: 372;
-	left: 0;
+	z-index: 10;
 }
 
 tr.playing {
@@ -205,31 +202,33 @@ div#page_with_bar {
 }
 
 div#miniControls {
-	position: absolute;
+	position: fixed;
 	padding-top: 3px;
 	padding-left: 5px;
 	top: 0;
 	left: 0;
 	height: 22;
 	overflow: visible;
-	z-index: 10;
+	z-index: 11;
 	background-color: #333333;
 	width: 55;
 }
 
 div#topbar {
-	position: absolute;
+	position: fixed;
 	top: 0;
 	left: 0;
 	height: 20;
 	overflow: visible;
+	z-index: 10;
 }
 
 div#menu {
-	position: absolute;
+	position: fixed;
 	top: 25;
 	left: 0;
 	overflow: visible;
+	z-index: 10;
 }
 
 div#emptyplayer {
@@ -351,15 +350,15 @@ div#next_cover{
 }
 
 div#systemWorking{
-	position: absolute;
+	position: fixed;
 	left: 0;
 	top: 25;
-	z-index: 10;
+	z-index: 12;
 }
 div#systemNotWorking{
-	position: absolute;
+	position: fixed;
 	left: 0;
 	top: 25;
-	z-index: 9;
+	z-index: 12;
 }
 

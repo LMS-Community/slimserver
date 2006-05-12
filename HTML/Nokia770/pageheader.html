@@ -10,6 +10,8 @@
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
+<div id = 'page[% UNLESS thispage == 'artwork' || thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>
+
 [%# IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' || thispage == 'browse' %]
 <div id='systemWorking' style='display:none'><img src='[% webroot %]html/images/spinner.gif' id = 'spinner'></div>
 [%# END %]
@@ -20,7 +22,6 @@
 	<img src = '[% webroot %]html/images/smaller/pause_transparent.gif' onClick='miniControls("pause");'>
 </div>
 
-<div id = 'page[% UNLESS thispage == 'artwork' || thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>
 <div id = 'topbar'>
 <table width="100%" bgcolor="#333333">
       <tr>
