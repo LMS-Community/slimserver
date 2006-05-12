@@ -9,7 +9,7 @@
 		<a class = 'statusbartext' href="[% webroot %]setup.html?page=PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
 [% IF isplayer %]
 		&nbsp;|&nbsp;
-		[% IF mode == 'off' %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=1&p2=&player=[% playerURI %]&start=" class= 'statusbartext'>ON</a>[% ELSE %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=0&p2=&player=[% playerURI %]&start=" class = 'statusbartext'>OFF</a>[% END %]
+		[% IF mode == 'off' %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=1&p2=&player=[% playerURI %]&start=" class= 'statusbartext'>[% 'ON' | string %]</a>[% ELSE %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=0&p2=&player=[% playerURI %]&start=" class = 'statusbartext'>[% 'OFF' | string %]</a>[% END %]
 [% END %]
 	</td>
 	</tr>
