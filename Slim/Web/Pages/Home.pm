@@ -26,7 +26,7 @@ sub init {
 	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
 	$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
 	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	$class->addPageLinks("help",{'FAQ' => "html/docs/faq.html"});
+	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"});
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 }
@@ -49,7 +49,7 @@ sub home {
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
-		$class->addPageLinks("search", {'SEARCH' => "livesearch.html"});
+		$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
 		$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	}
 

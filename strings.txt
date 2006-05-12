@@ -256,7 +256,7 @@ BROWSEMENU
 	CS	Procházet muziku
 	DE	Musik nachschlagen
 	DA	Gennemse musik
-	EN	Browse Music
+	EN	Browse
 	ES	Examinar música
 	FI	Selaa
 	FR	Parcourir la musique
@@ -4503,7 +4503,7 @@ SETUP_COVERTHUMB
 SETUP_COVERTHUMB_DESC
 	CS	Pro procházení podle náhledů obalů, server použije stejné nastavení názvů souboru jako výše a hodnoty obsažené v ID3 tazích. Nicméně pokud sii přejete použít odlišné názvy, nebo vlastní soubory, zadejte jejich jména zde.
 	DE	Für das Nachschlagen von Plattenhüllen wird der Server nach den selben Dateien wie oben, sowie in ID3 Tags suchen. Falls Sie ein anderes Namensschema verwenden wollen, definieren Sie dieses hier.
-	EN	For Browse By Artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
+	EN	For artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 	FI	Selataksesi kansikuvia pikkukuvien avulla, palvelin hakee kuvia samoilla oletusasetuksilla kuin yllä. Jos kuitenkin haluat käyttää muokattuja kuvatiedostojen nimiä, syötä nimeämiskäytäntösi tähän.
 	HE	נגעת? מגיע לך
@@ -4589,7 +4589,7 @@ SETUP_INCLUDENOART_1
 SETUP_INCLUDENOART
 	CS	Procházet podle obalů
 	DE	Plattenhüllen nachschlagen
-	EN	Browse By Artwork
+	EN	Artwork
 	ES	Examinar por Arte de Tapa
 	FI	Selaa kansikuvilla
 	FR	Parcourir les pochettes
@@ -7720,7 +7720,7 @@ SAVED_PLAYLISTS
 	CS	Procházet playlisty
 	DE	Wiedergabelisten nachschlagen
 	DA	Gemte playlister
-	EN	Browse Playlists
+	EN	Playlists
 	ES	Elegir de  Listas Guardadas
 	FI	Tallennetut soittolistat
 	FR	Listes de lecture enregistrées
@@ -8333,6 +8333,12 @@ BYTES
 	SV	Bytes
 	ZH_CN	字节
 
+SAMPLESIZE
+	EN	Sample Size
+
+BITS
+	EN	Bits
+
 SAMPLERATE
 	EN	Sample Rate
 	ES	Tasa de Muestreo
@@ -8781,7 +8787,7 @@ BROWSE_MUSIC
 	CS	Procházet archiv
 	DE	Musik nachschlagen
 	DA	Gennemse musik
-	EN	Browse Music
+	EN	Browse
 	ES	Examinar Música
 	FI	Selaa
 	FR	Parcourir la musique
@@ -8798,7 +8804,7 @@ BROWSE_BY_GENRE
 	CS	Procházet podle žánrů
 	DE	Stilrichtung nachschlagen
 	DA	Gennemse genrer
-	EN	Browse Genres
+	EN	Genres
 	ES	Examinar por Género
 	FI	Selaa lajeittain
 	FR	Parcourir les genres
@@ -8818,7 +8824,7 @@ BROWSE_BY_ARTIST
 	CS	Procházet podle interpretů
 	DE	Interpret nachschlagen
 	DA	Gennemse kunstnere
-	EN	Browse Artists
+	EN	Artists
 	ES	Examinar por Artista
 	FI	Selaa esittäjittäin
 	FR	Parcourir les artistes
@@ -8838,7 +8844,7 @@ BROWSE_BY_ALBUM
 	CS	Procházet podle alb
 	DE	Album nachschlagen
 	DA	Gennemse albums
-	EN	Browse Albums
+	EN	Albums
 	ES	Examinar por Álbum
 	FI	Selaa levyittäin
 	FR	Parcourir les albums
@@ -8857,7 +8863,7 @@ BROWSE_BY_ALBUM_DBL
 BROWSE_BY_ARTWORK
 	CS	Procházet podle obalů
 	DE	Plattenhülle nachschlagen
-	EN	Browse Artwork
+	EN	Artwork
 	ES	Examinar por Arte de Tapa
 	FI	Selaa kansikuvia
 	FR	Parcourir les pochettes
@@ -8888,7 +8894,7 @@ BROWSE_BY_SONG
 	CS	Procházet podle skladeb
 	DE	Titel nachschlagen
 	DA	Gennemse sange
-	EN	Browse Songs
+	EN	Songs
 	ES	Examinar por canción
 	FI	Selaa kappaleittain
 	FR	Parcourir les morceaux
@@ -8907,7 +8913,7 @@ BROWSE_BY_SONG_DBL
 BROWSE_BY_YEAR
 	CS	Procházet podle roku vydání
 	DE	Jahrgänge nachschlagen
-	EN	Browse Years
+	EN	Years
 	ES	Examinar por Año
 	FI	Selaa vuosittain
 	FR	Parcourir les années
@@ -8920,7 +8926,7 @@ BROWSE_MUSIC_FOLDER
 	CS	Procházet podle adresářů
 	DE	Musikverzeichnis durchsuchen
 	DA	Gennemse hele musiksamlingen
-	EN	Browse Music Folder
+	EN	Music Folder
 	ES	Examinar Carpeta de Música
 	FI	Selaa kansiota
 	FR	Parcourir le dossier de musique
@@ -10435,6 +10441,23 @@ ADVANCEDSEARCH
 	ZH_CN	高等搜查
 
 SEARCH
+	CS	Hledat v archivu
+	DE	Suche
+	DA	Søg efter musik
+	EN	Search
+	ES	Buscar
+	FI	Hae musiikkia
+	FR	Rechercher
+	HE	חיפוש
+	IT	Ricerca musica
+	JA	音楽を検索する
+	NL	Zoek muziek
+	NO	Søk Musikk
+	PT	Procurar Música
+	SV	Sök musik
+	ZH_CN	搜查音乐
+
+SEARCHMUSIC
 	CS	Hledat v archivu
 	DE	Suche
 	DA	Søg efter musik
@@ -12300,7 +12323,7 @@ SETUP_SORTBROWSEART
 
 SETUP_SORTBROWSEART_DESC
 	DE	Wählen Sie die Standard Sortierreihenfolge, die beim Nachschlagen von Plattenhüllen verwendet werden soll.
-	EN	Choose the default order that the Browse Artwork web page displays albums.
+	EN	Choose the default order that the Artwork web page displays albums.
 
 SETUP_SORTBROWSEART_ALBUM
 	EN	Album
