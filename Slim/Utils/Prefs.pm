@@ -14,7 +14,7 @@ use File::Path;
 use File::Slurp;
 use FindBin qw($Bin);
 use Digest::MD5;
-use YAML qw(DumpFile LoadFile Dump);
+use YAML::Syck qw(DumpFile LoadFile Dump);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;

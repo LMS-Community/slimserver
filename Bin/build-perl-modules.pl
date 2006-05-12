@@ -31,6 +31,7 @@ my @packages = qw(
 	Template-Toolkit-2.14.tar.gz
 	Time-HiRes-1.86.tar.gz
 	XML-Parser-2.34.tar.gz
+	YAML-Syck-0.44.tar.gz
 );
 
 # Options for specific packages

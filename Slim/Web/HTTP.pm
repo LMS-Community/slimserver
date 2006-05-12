@@ -27,7 +27,7 @@ use Socket qw(:DEFAULT :crlf);
 use Template;
 use Tie::RegexpHash;
 use URI::Escape;
-use YAML qw(LoadFile);
+use YAML::Syck qw(LoadFile);
 
 use Slim::Formats::Playlists::M3U;
 use Slim::Networking::mDNS;

@@ -176,7 +176,7 @@ BEGIN {
 
 	# Here's what we want to try and load. This will need to be updated
 	# when a new XS based module is added to our CPAN tree.
-	my @required_modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib Digest::SHA1);
+	my @required_modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib Digest::SHA1 YAML::Syck);
 
 	# Bug 3324
 	# In some cases, GD wasn't loading even though there was a working
