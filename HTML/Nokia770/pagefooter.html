@@ -1,9 +1,28 @@
+<!-- pagefooter.html -->
+
+<div id = '[% footer || 'footer' %]'>
+<table width="100%" bgcolor="#666666">
+	<tr>
+	<td align="right">
+		<a href="[% webroot %]html/about.html" class = 'statusbartext'>[% "ABOUT_SHORT" | string %]</a>&nbsp;|&nbsp;
+		<a href="[% webroot %]setup.html?player=[% playerURI %]&page=SERVER_SETTINGS" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
+		<a class = 'statusbartext' href="[% webroot %]setup.html?page=PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
+[% IF isplayer %]
+		&nbsp;|&nbsp;
+		[% IF mode == 'off' %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=1&p2=&player=[% playerURI %]&start=" class= 'statusbartext'>ON</a>[% ELSE %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=0&p2=&player=[% playerURI %]&start=" class = 'statusbartext'>OFF</a>[% END %]
+[% END %]
+	</td>
+	</tr>
+</table>
+<!-- end footer div -->
+</div>
+
 <!-- end pagecontainer div -->
 </div>
 
 <!-- end page div-->
 </div>
 
+
 </body>
 </html>
-

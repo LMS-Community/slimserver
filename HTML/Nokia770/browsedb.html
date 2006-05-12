@@ -100,22 +100,9 @@
 </table>
 [% END %]
 
-<!--
-<div style="float:left">
-[% IF song_count %]
-<table width="100%" bgcolor="#666666">
-	<tr>
-		<td>
-		<font class="statusbartext">[% "BROWSING_MUSIC" | string %] <b>[% album_count %]</b> [% "WITH" | string %] <b>[% song_count %]</b> [% "BY" | string %] <b>[% artist_count %]</b></font>
-		</td>
-	</tr>
-</table>
+[% PROCESS heightSpacer buffer = '20' %]
 
-[% END %]
-</div>
--->
 [%# /Page browsedb.html %]
-[% PROCESS detailed_footer.html footer = 'footer' %]
 [% PROCESS pagefooter.html %]
 [% END %]
 

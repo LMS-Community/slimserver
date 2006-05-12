@@ -241,3 +241,9 @@ Items <span id = '[% prefix %]first_item'>[% pageinfo.startitem + 1%]</span> [% 
 
 [%# The following is the end of the null filter, don't put anything below it %]
 [% END -%]
+
+[% BLOCK heightSpacer %]
+<table>
+<tr><td height = '[% buffer %]'>&nbsp;</tr>
+</table>
+[% END -%]
