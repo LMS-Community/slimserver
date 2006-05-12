@@ -114,7 +114,8 @@ function refreshPlugins(theData) {
 	var myData = theData.responseText;
 	var homeParsedData = parseData(myData);
 	// create Plugin links, if applicable
-	var pluginDivs = [ 'Biography', 'Album_Review' ];
+	var pluginDivs = [ '[% "BIOGRAPHY" | string %]', '[% "ALBUM_REVIEW" | string %]' ];
+
 	pluginDivs.each( function (thisDiv) {
 		if (homeParsedData[thisDiv].match(/\w/)) {
 			var linkName = thisDiv.replace('_',' ');
