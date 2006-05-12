@@ -183,7 +183,7 @@
 			<a href="http://google.com" id = 'artist_link' style="text-decoration:none">
 			<span id = 'artist'></span>
 			</a>
-                        <span id = 'Biography' class = 'supertinytext'></span>
+                        <span id = '[% "BIOGRAPHY" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
 			</td>
 		</tr>
 		<tr>
@@ -192,7 +192,7 @@
 			<a href="http://google.com" id = 'album_link' style="text-decoration:none">
 			<span id = 'album'></span>
 			</a>
-			<span id = 'Album_Review' class = 'supertinytext'></span>
+			<span id = '[% "ALBUM_REVIEW" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
 			</td>
 		</tr>
 		<tr>
@@ -349,6 +349,6 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 	<div id = 'streaminfo' style = 'display: none;'>
 		<p>[% "REMOTE_STREAMING" | string %]:<br>
 		<span id = 'streamtitle' class = 'playingitemtext'></span>
-                <span id = 'StreamBiography' class = 'supertinytext'></span>
+                <span id = 'Stream[% "BIOGRAPHY" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
 	</div>
 [% END %]
