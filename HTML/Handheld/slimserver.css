@@ -36,6 +36,15 @@ small {
 	font-size: 100%;
 }
 
+.odd {
+	background-color: #ffffff;
+}
+
+.even {
+	background-color: #d0d0d0;
+}
+
+
 .browsedbListItem {
 	position: relative;
 	padding: 1px;
