@@ -225,6 +225,11 @@ sub headerCB {
 	my $self = delete $state->{'simple'};
 	my $http = delete $state->{'socket'};
 
+	if ($error || !ref $headers) {
+		&{$self->{'ecb'}}($self);
+		return;
+	}
+
 	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
 
 	# verbose debug
@@ -245,36 +250,29 @@ sub headerCB {
 		return;
 	}
 
-	if ($error) {
-
-		&{$self->{'ecb'}}($self);
-
-	} else {
+	# Check if we are cached and got a "Not Modified" response
+	if ( $self->{'cachedResponse'} && $code == 304) {
 		
-		# Check if we are cached and got a "Not Modified" response
-		if ( $self->{'cachedResponse'} && $code == 304) {
-			
-			$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
-			
-			# update the cache time so we get another 5 minutes with no revalidation
-			my $cache = Slim::Utils::Cache->new();
-			$self->{'cachedResponse'}->{'_time'} = time;
-			my $expires = $self->{'cachedResponse'}->{'_expires'} || undef;
-			$cache->set( $self->{'url'}, $self->{'cachedResponse'}, $expires );
-			
-			return $self->sendCachedResponse();
-		}
-
-		$self->{'code'}    = $code;
-		$self->{'mess'}    = $mess;
-		$self->{'headers'} = $headers;
-
-		# headers read OK, get the body
-		$http->read_entity_body_async(\&bodyCB, {
-			'simple' => $self,
-			'socket' => $http
-		});
+		$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
+		
+		# update the cache time so we get another 5 minutes with no revalidation
+		my $cache = Slim::Utils::Cache->new();
+		$self->{'cachedResponse'}->{'_time'} = time;
+		my $expires = $self->{'cachedResponse'}->{'_expires'} || undef;
+		$cache->set( $self->{'url'}, $self->{'cachedResponse'}, $expires );
+		
+		return $self->sendCachedResponse();
 	}
+
+	$self->{'code'}    = $code;
+	$self->{'mess'}    = $mess;
+	$self->{'headers'} = $headers;
+
+	# headers read OK, get the body
+	$http->read_entity_body_async(\&bodyCB, {
+		'simple' => $self,
+		'socket' => $http
+	});
 }
 
 sub bodyCB {
