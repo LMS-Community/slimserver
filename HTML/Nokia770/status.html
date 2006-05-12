@@ -18,7 +18,7 @@
 [%- PROCESS pageheader.html thispage = 'status' -%]
 
 	<div id = 'emptyplayer' style = 'display: none;'>
-	<span class = 'playingitemtext'><p>Playlist for this player is empty</span>
+	<span class = 'playingitemtext'><p>[% "PLAYLIST_EMPTY" | string %]</span>
 	</div>
 
 	<div id = 'coverart' style = 'display: none;'>
@@ -174,7 +174,6 @@
 			<td class = 'normaltext' valign = 'top' nowrap height = '35'>
 			<a href="http://google.com" id = 'songtitle_link'>
 			<span id = 'songtitle'></span>
-			[%# songtitle | truncate(50) %]
 			</a>
 			</td>
 		</tr>
@@ -201,7 +200,6 @@
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
 			<a href="http://google.com" id = 'genre_link' style="text-decoration:none">
 			<span id = 'genre'></span>
-			[%# itemobj.genre | truncate(50) %]
 			</a>
 			</td>
 		</tr>
@@ -349,7 +347,7 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 
 [% BLOCK radio_info_display %]
 	<div id = 'streaminfo' style = 'display: none;'>
-		<p>Internet Stream URL:<br>
+		<p>[% "REMOTE_STREAMING" | string %]:<br>
 		<span id = 'streamtitle' class = 'playingitemtext'></span>
                 <span id = 'StreamBiography' class = 'supertinytext'></span>
 	</div>
