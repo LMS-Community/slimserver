@@ -1,5 +1,8 @@
 <!-- pagefooter.html -->
 
+[% UNLESS noBuffer %]
+[% PROCESS heightSpacer buffer = '25' %]
+[% END %]
 <div id = '[% footer || 'footer' %]'>
 <table width="100%" bgcolor="#666666">
 	<tr>

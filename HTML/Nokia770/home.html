@@ -42,12 +42,13 @@
 <!-- home.html -->
 <table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
 	<tr>
-		<td rowspan="2" valign="middle" class = 'headertext'>
+		<td valign="middle" class = 'headertext'>
 			[% IF browse_radio %]
 				[% "RADIO" | string %]
 			[% ELSE %]
-				[% "BROWSE" | string %][% END %]</td>
-		<td align = 'right'>
+				[% "BROWSE" | string %][% END %]
+		</td>
+		<td align = 'right' valign = 'bottom'>
 			[% IF browse_radio %]
 				[% INCLUDE tune_in_form %]
 			[% ELSE %]&nbsp;[% END %]
@@ -78,9 +79,12 @@
 		<td height="13"></td>
 	</tr>
 </table>
-
-</div>
+[% IF browse_radio %]
 [% PROCESS pagefooter.html %]
+[% ELSE %]
+[% PROCESS pagefooter.html noBuffer = '1' %]
+[% END %]
+</div>
 [%- END -%]
 
 [% BLOCK tune_in_form %]
@@ -88,10 +92,10 @@
         <input type="hidden" name="p0" value="playlist">
         <input type="hidden" name="p1" value="play">
         <input type="hidden" name="player" value="[% player %]">
-        Radio URL:
+        <br>Radio URL:
         <input type="text" class="stdedit" name="p2" size="40">
         <input type="submit" class="stdclick" value="[% "RADIO_TUNEIN_CHOOSE" | string %]">
-</form>
+	</form>
 [% END %]
 
 [% BLOCK library_stats %]

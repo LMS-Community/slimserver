@@ -159,6 +159,7 @@ div#pagecontainer {
 	position: absolute;
 	top: 80;
 	height: 364px;
+	width: 100%;
 	overflow: visible;
 }
 
@@ -173,6 +174,7 @@ div#hidden {
 div#footer {
 	position: fixed;
 	bottom: 0;
+	width: 100%;
 	clear: both;
 	z-index: 10;
 }
@@ -222,6 +224,7 @@ div#topbar {
 	height: 20;
 	overflow: visible;
 	z-index: 10;
+	width: 100%;
 }
 
 div#menu {
@@ -230,6 +233,7 @@ div#menu {
 	left: 0;
 	overflow: visible;
 	z-index: 10;
+	width: 100%;
 }
 
 div#emptyplayer {
@@ -290,7 +294,7 @@ div#playlistbox {
         position: absolute;
 	text-align: right;
 	top: 130;
-	right: -245;
+	right: 5;
 	width: auto;
 	z-index: 0;
 	overflow: hidden;
@@ -307,7 +311,8 @@ div#controls {
 div#progressbar {
 	position: absolute;
 	left: 6;
-	width: 780;
+	right: 6;
+	width: auto;
 	top: 220;
 	z-index: 2;
 }
@@ -315,7 +320,8 @@ div#progressbar {
 div#progressbar_overlay {
 	position: absolute;
 	left: 6;
-	width: 780;
+	right: 6;
+	width: auto;
 	top: 220;
 	z-index: 3;
 }
