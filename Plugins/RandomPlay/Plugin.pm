@@ -189,7 +189,7 @@ sub playRandom {
 	$type = lc($type);
 	
 	# Whether to keep adding tracks after generating the initial playlist
-	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');;
+	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
 	
 	# If this is a new mix, store the start time
 	my $startTime = undef;
@@ -253,9 +253,9 @@ sub playRandom {
 		
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
-		# add another artist/album/year or the plugin would never add more when the first finished. 
+		# add another artist/album/year or the plugin would never add more when the first finished in continuous mode.
 		for (my $i = 0; $i < 2; $i++) {
-			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1)) {
+			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1 && $continuousMode)) {
 				# Genre filters don't apply in year mode as I don't know how to restrict the
 				# random year to a genre.
 				my $year;
@@ -519,7 +519,7 @@ sub commandCallback {
 		return;
 	}
 
-	if (!defined $client || !defined $mixInfo{$client}) {
+	if (!defined $client || !defined $mixInfo{$client}->{'type'}) {
 		# This is nothing unexpected - some events don't provide $client
 		# e.g. rescan
 		return;

@@ -19,7 +19,7 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
 							document.genreForm.submit();
-							return false;'
+							refreshStatus(); return false;'
 [% END %]
 
 [% BLOCK randomLink %]
