@@ -9052,7 +9052,7 @@ PREV
 	CS	Předchozí
 	DE	Vorherige
 	DA	Forrige
-	EN	Previous
+	EN	Prev
 	ES	Anterior
 	FI	Edellinen
 	FR	Précédent
