@@ -266,6 +266,11 @@ sub string {
 					# in the libgd manual page at
 					# http://www.boutell.com/gd/manual2.0.9.html#gdImageStringFT.
 					#
+
+					# GD doesn't at present support characters with 6 or more digits
+					if ($ord >= 99999) {
+						$ord = 0x25af; # 0x25af  = 'White Vertical Rectangle'
+					}
 					my @GDBounds = $gd->stringFT(-1*$GDBlack, $TTFFontFile, $GDFontSize, 0, 0, $GDBaseline, "&#${ord};");
 
 					# Construct the bitmap
