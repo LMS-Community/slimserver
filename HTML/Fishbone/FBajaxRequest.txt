@@ -4,6 +4,7 @@ year|[% itemobj.year %]
 sleeptime|[% sleeptime %]
 rate|[% rate %]
 playermodel|[% playermodel %]
+sync|[% sync %]
 
 # path to cover art 
 coverartpath|

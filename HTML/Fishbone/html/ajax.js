@@ -40,6 +40,12 @@ function refreshState(theData) {
 		}
 	}
 	
+	if (parsedData['sync']) {
+		showElements(['unsync'],'inline');
+	} else {
+		hideElements(['unsync']);
+	}
+	
 	return true;
 }
 

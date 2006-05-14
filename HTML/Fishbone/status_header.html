@@ -84,8 +84,8 @@
 			<div id="playerlinks">
 			[% IF undock %]<span id="inc"></span>  [% END %]
 				[% IF sync %]
-					<a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
-					 / 
+					<span id="unsync"><a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
+					 / </span>
 				[% END %]
 				[% IF mode != 'off' %]
 					<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');">Sleep</a><span id='sleeptime'>[% IF sleeptime %] ([% sleep %])[% END %]</span>
