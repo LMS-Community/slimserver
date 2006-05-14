@@ -333,14 +333,21 @@ sub gotOPML {
 						push @details, '{BITRATE}: ' . $item->{'bitrate'} . ' {KBPS}';
 					}
 					if ( $item->{'listeners'} ) {
+					    # Shoutcast
 						push @details, '{NUMBER_OF_LISTENERS}: ' . $item->{'listeners'}
 					}
 					if ( $item->{'current_track'} ) {
+					    # Shoutcast
 						push @details, '{NOW_PLAYING}: ' . $item->{'current_track'};
 					}
 					if ( $item->{'genre'} ) {
+					    # Shoutcast
 						push @details, '{GENRE}: ' . $item->{'genre'};
 					}
+					if ( $item->{'source'} ) {
+					    # LMA Source
+					    push @details, '{SOURCE}: ' . $item->{'source'};
+				    }
 					$params{'details'} = \@details;
 					
 					Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);

@@ -1536,6 +1536,9 @@ NUMBER_OF_LISTENERS
 DESCRIPTION
 	DE	Beschreibung
 	EN	Description
+	
+SOURCE
+	EN	Source
 
 #
 # Setup page strings

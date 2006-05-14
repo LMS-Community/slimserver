@@ -119,7 +119,13 @@
 					<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.genre | html %]</div>
 					</li>
-					[% END %]												
+					[% END %]
+					
+					[% IF streaminfo.item.source %]
+					<li><div class="songInfoTitle">[% "SOURCE" | string; "COLON" | string %]</div>
+						<div class="songInfoText">[% streaminfo.item.source | html %]</div>
+					</li>
+					[% END %]																	
 				</ul>
 			</div>
 			[% END %]
