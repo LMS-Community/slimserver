@@ -279,18 +279,18 @@ function refreshOtherElements(theData) {
 	}
 
 	// refresh song info
-	var songinfoArray = [ 'songtitle', 'artist', 'album', 'genre' ];
-	var linkStubs = [
-			'songinfo.html?item=', 
-			'browsedb.html?hierarchy=album,track&level=0&artist=',
-			'browsedb.html?hierarchy=track&level=0&album=',
-			'browsedb.html?hierarchy=artist,album,track&level=0&genre='
-			];
+	var songinfoArray = new Array();
+	songinfoArray[songinfoArray.length] = {name: 'songtitle', stub:'songinfo.html?item='};
+	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=0&artist='};
+	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=track&level=0&album='};
+	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=artist,album,track&level=0&genre='};
 	songinfoArray.each(function(key) {
-		refreshElement(key, parsedData[key], 50);
-		var linkIdKey = key + '_link';
-		var linkKey = key + 'id';
-		var newHref = linkStubs[i] + parsedData[linkKey] + '&amp;player=' + player;
+		var thisName = key.name;
+		var thisStub = key.stub;
+		refreshElement(thisName, parsedData[thisName], 50);
+		var linkIdKey = thisName + '_link';
+		var linkKey = thisName + 'id';
+		var newHref = thisStub + parsedData[linkKey] + '&amp;player=' + player;
 		refreshHref(linkIdKey, newHref);
 	});
 	if (parsedData['streamtitle']) {
