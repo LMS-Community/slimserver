@@ -620,6 +620,17 @@ sub handleTrack {
 	if (Slim::Music::Info::isFileURL($url)) {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
+		
+		# Bug 3402
+		# If the file can't be found using itunes_library_music_path,
+		# we want to fall back to the real file path from the XML file
+		if ( !-e $file ) {
+			
+			if ( Slim::Utils::Prefs::get('itunes_library_music_path') ) {
+				$url  = normalize_location( $location, 'fallback' ); 
+				$file = Slim::Utils::Misc::pathFromFileURL($url);
+			}
+		}
 
 		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
 
@@ -1022,6 +1033,7 @@ sub resetScanState {
 
 sub normalize_location {
 	my $location = shift;
+	my $fallback = shift;   # if set, ignore itunes_library_music_path
 	my $url;
 
 	my $stripped = strip_automounter($location);
@@ -1029,7 +1041,7 @@ sub normalize_location {
 	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
 	my $explicit_path = Slim::Utils::Prefs::get('itunes_library_music_path');
 	
-	if ($explicit_path) {
+	if ( $explicit_path && !$fallback ) {
 
 		# find the new base location.  make sure it ends with a slash.
 		my $base = Slim::Utils::Misc::fileURLFromPath($explicit_path);
