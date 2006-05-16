@@ -212,4 +212,16 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	pagenext = (pageinfo.currentpage < lastpage) ? ((pageinfo.currentpage + 1) * pageinfo.itemsperpage) : '';
    END %]
 
+[% BLOCK alphapagecalc;
+	IF pageinfo.alphamap;
+	  FOREACH alphapage = pageinfo.alphamap.values.nsort.unique;
+	    IF alphapage == pageinfo.startitem;
+	      pageprev = loop.prev();
+	      pagenext = loop.next();
+	      LAST;
+	    END;
+	  END;
+	END;
+  END %]
+
 [% END -%]
