@@ -42,7 +42,7 @@
 			<tr>
 				<td align = 'right' id = 'previoussong' class = 'supertinytext'></td>
 				<td align = 'right' class = 'supertinytext'>
-					<img id = 'previoussong_link' src = 'html/images/smaller/prev_active.gif' onClick="javascript:playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
+					<img id = 'previoussong_link' src = 'html/images/smaller/prev.gif' onClick="javascript:playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
 				</td>
 			</tr>
 			<tr>
@@ -52,7 +52,7 @@
 			<tr>
 				<td align = 'right' id = 'nextsong' class = 'supertinytext'></td>
 				<td align = 'right' >
-					<img id = 'nextsong_link' src="html/images/smaller/next_active.gif" border="0" name="next" onclick="playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
+					<img id = 'nextsong_link' src="html/images/smaller/next.gif" border="0" name="next" onclick="playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" height = '15'>
 				</td>
 			</tr>
 		</table>
@@ -109,8 +109,8 @@
 		<td width="100"><img src="html/images/repeat_symbol.gif" title = 'repeat settings'></td>
 		[% FOREACH type= ['off','song','playlist'] %]
 		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = 'repeat [% type %]'>
-		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" width = '20' height = '20' style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
-		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" width = '20' height = '20' style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
+		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
+		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -125,8 +125,8 @@
 		<td width = '100'><img src="html/images/shuffle_symbol.gif" title = 'shuffle settings'></td>
 		[% FOREACH type = ['off','song','album'] %]
 		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = 'shuffle [% type %]'>
-			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" width="20" height="20" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
-			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" width="20" height="20" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
+			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
+			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -230,26 +230,26 @@
 <table class = 'thinborder' width = 100%>
 	<tr>
 	<td>
-	<table bgcolor="#FFFFFF" border="0" cellspacing="10" cellpadding="0" width = 100%>
+	<table bgcolor="#FFFFFF" border="0" cellspacing="2" cellpadding="0" width = 100%>
 		<tr align="center">
 		<td onClick="playerButtonControl('player', 'play', 'p0=play&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_play' src = "html/images/smaller/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];' title = 'play'>
-		<img id = 'playercontrol_play' src = "html/images/smaller/play.gif" border="0" style = 'display:[% IF modeplay %]none[% ELSE %]block[% END %];' title = 'play'>
+		<img id = 'playercontrol_active_play' src = "html/images/larger/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];' title = 'play'>
+		<img id = 'playercontrol_play' src = "html/images/larger/play.gif" border="0" style = 'display:[% IF modeplay %]none[% ELSE %]block[% END %];' title = 'play'>
 		</td>
         
 		<td onclick="playerButtonControl('player', 'pause','p0=pause&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_pause' src = "html/images/smaller/pause_active.gif" border="0" style = 'display:[% IF modepause %]block[% ELSE %]none[% END %];' title = 'pause'>
-		<img id = 'playercontrol_pause' src = "html/images/smaller/pause.gif" border="0" style = 'display:[% IF modepause %]none[% ELSE %]block[% END %];' title = 'pause'>
+		<img id = 'playercontrol_active_pause' src = "html/images/larger/pause_active.gif" border="0" style = 'display:[% IF modepause %]block[% ELSE %]none[% END %];' title = 'pause'>
+		<img id = 'playercontrol_pause' src = "html/images/larger/pause.gif" border="0" style = 'display:[% IF modepause %]none[% ELSE %]block[% END %];' title = 'pause'>
 		</td>
         
 		<td onclick="playerButtonControl('player', 'stop','p0=stop&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_stop' src = "html/images/smaller/stop_active.gif" border="0" style = 'display:[% IF modestop %]block[% ELSE %]none[% END %];' title = 'stop'>
-		<img id = 'playercontrol_stop' src = "html/images/smaller/stop.gif" border="0" style = 'display:[% IF modestop %]none[% ELSE %]block[% END %];' title = 'stop'>
+		<img id = 'playercontrol_active_stop' src = "html/images/larger/stop_active.gif" border="0" style = 'display:[% IF modestop %]block[% ELSE %]none[% END %];' title = 'stop'>
+		<img id = 'playercontrol_stop' src = "html/images/larger/stop.gif" border="0" style = 'display:[% IF modestop %]none[% ELSE %]block[% END %];' title = 'stop'>
 		</td>   
         
 		<td> 
-		<img id = 'playercontrol_prev' src="html/images/smaller/prev.gif" border="0" name="prev"
-onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" title = 'previous'> 
+		<img id = 'playercontrol_prev' src="html/images/larger/prev.gif" border="0" name="prev"
+onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" title = 'previous'> 
 		</td>
       
 <!-- ffw and rewind are really lame from a web browser. really lame
@@ -262,7 +262,7 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 
 -->
 
-		<td><img id = 'playercontrol_next' src="html/images/smaller/next.gif" border="0" name="next" onclick="document.next.src = 'html/images/smaller/next_active.gif'; playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" title = 'next'>
+		<td><img id = 'playercontrol_next' src="html/images/larger/next.gif" border="0" name="next" onclick="document.next.src = 'html/images/larger/next_active.gif'; playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" title = 'next'>
 		</td>
 
 	</tr>
@@ -279,8 +279,8 @@ onclick="document.prev.src = 'html/images/smaller/prev_active.gif'; playerButton
 	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif" title = 'volume settings'></td>
 
 	<td width="25" onclick='volumeControl("0","p0=mixer&p1=volume&p2=0&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
-	<img src="html/images/off_symbol_active.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'muted'>
-	<img src="html/images/off_symbol.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];" title = 'mute player'>
+	<img src="html/images/off_symbol.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'muted'>
+	<img src="html/images/off_symbol_gray.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];" title = 'mute player'>
 	</td>
 	[% vol= [20, 35, 50, 75, 80, 85, 90, 95, 100]  %]
 	[% FOREACH level IN vol %]
