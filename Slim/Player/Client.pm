@@ -667,7 +667,7 @@ sub new {
 	$client->[33] = 0; # bufferThreshold
 	$client->[34] = 0; # visualizer
 	$client->[35] = 0; # outputBufferFullness
-	# $client->[36] = undef; # unused
+	$client->[36] = undef; # irRefTime
 	$client->[37] = 0; # bytesReceived
 	$client->[38] = undef; # currentplayingsong
 	$client->[39] = undef; # currentSleepTime
@@ -709,7 +709,7 @@ sub new {
 	$client->[76] = Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[77] = Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[78] = Slim::Utils::PerfMon->new("Slimproto QLen ($id)", [1, 2, 5, 10, 20]);
-	#$client->[79] = undef; # unused
+	$client->[79] = undef; # irRefTimeStored
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
 	$client->[82] = undef; # browseMenuSelection
@@ -1621,6 +1621,11 @@ sub outputBufferFullness {
 	@_ ? ($r->[35] = shift) : $r->[35];
 }
 
+sub irRefTime {
+	my $r = shift;
+	@_ ? ($r->[36] = shift) : $r->[36];
+}
+
 sub bytesReceived {
 	my $r = shift;
 	@_ ? ($r->[37] = shift) : $r->[37];
@@ -1684,6 +1689,10 @@ sub irtimediff {
 sub irrepeattime {
 	my $r = shift;
 	@_ ? ($r->[52] = shift) : $r->[52];
+}
+sub showBrieflyData {
+	my $r = shift;
+	@_ ? ($r->[53] = shift) : $r->[53];
 }
 sub epochirtime {
 	my $r = shift;
@@ -1802,6 +1811,10 @@ sub bufferFullnessLog {
 sub slimprotoQLenLog {
 	my $r = shift;
 	@_ ? ($r->[78]->log(shift)) : $r->[78];
+}
+sub irRefTimeStored {
+	my $r = shift;
+	@_ ? ($r->[79] = shift) : $r->[79];
 }
 sub syncSelection {
 	my $r = shift;
@@ -1943,9 +1956,5 @@ sub lastDigitTime {
 	@_ ? ($r->[107] = shift) : $r->[107];
 }
 
-sub showBrieflyData {
-	my $r = shift;
-	@_ ? ($r->[53] = shift) : $r->[53];
-}
 
 1;

@@ -17,10 +17,7 @@ use Slim::Utils::Misc;
 my %irCodes = ();
 my %irMap   = ();
 
-my @queuedBytes = ();
-my @queuedTime = ();
-my @queuedClient = ();
-my @queuedServerAbsoluteTime = ();
+my @irQueue = ();
 
 my @buttonPressStyles = ( '','.single','.double','.repeat','.hold','.hold_release');
 my $defaultMapFile;
@@ -35,14 +32,10 @@ $Slim::Hardware::IR::IRHOLDTIME  = 0.512;
 $Slim::Hardware::IR::IRSINGLETIME = 0.256;
 
 # Max time an IR key code is queued for before being discarded [if server is busy]
-my $maxIRQTime = 5.0;
+my $maxIRQTime = 3.0;
 
 # and more things for diagnostics.  Define d_irtm to turn diagnostics on.
 my ($serverStartSeconds, $serverStartMicros);
-
-# queued variables used for diagnostics.
-my @queuedClientTime = ();
-my @queuedServerTime = ();
 
 our $irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
@@ -58,15 +51,28 @@ sub enqueue {
 	my $clientTime = shift;
 
 	my $irTime = $clientTime / $client->ticspersec;
+	my $now = Time::HiRes::time();
 
 	assert($client);
 	assert($irCodeBytes);
 	assert($irTime);
-	
-	push @queuedBytes, $irCodeBytes;
-	push @queuedTime, $irTime;
-	push @queuedClient, $client;
-	push @queuedServerAbsoluteTime, Time::HiRes::time();
+
+	# estimate time of actual key press as $irTime + $ref, $ref = min($now - $irTime) over set of key presses
+	# allows estimation of delay for IR key presses queued in slimproto tcp session while server busy/network congested
+	# assumes most IR interaction lasts < 60s, reset estimate after this to ensure recovery from clock adjustments
+	my $offset = $now - $irTime;
+	my $ref = $client->irRefTime();
+	if ($offset < $ref || $offset - $ref + abs($now - $client->irRefTimeStored()) > 60) {
+		$ref = $client->irRefTime($offset);
+		$client->irRefTimeStored($now);
+	}
+
+	my $entry = {
+		'client' => $client,
+		'bytes'  => $irCodeBytes,
+		'irTime' => $irTime,
+		'estTime'=> $irTime + $ref,
+	};
 
 	if ($::d_irtm) {
 
@@ -82,32 +88,32 @@ sub enqueue {
 
 		$serverTime += $serverMicros;
 
-		push @queuedClientTime, $clientTime;
-		push @queuedServerTime, $serverTime;
+		$entry->{'irtm_cTime'} = $clientTime;
+		$entry->{'irtm_sTime'} = $serverTime;
 	}
+
+	push @irQueue, $entry;
 }
 
 sub idle {
 	# return 0 only if no IR in queue
-	return 0 if (!scalar(@queuedBytes));
+	return 0 if (!scalar(@irQueue));
+
+	my $entry = shift @irQueue;
+	my $client = $entry->{'client'};
 
 	my $now = Time::HiRes::time();
-	my $receivedTime = shift @queuedServerAbsoluteTime;
-	my $client = shift @queuedClient;		
+	
+	$::perfmon && $irPerf->log($now - $entry->{'estTime'});
 
-	if (($now - $receivedTime) < $maxIRQTime) {
+	if (($now - $entry->{'estTime'}) < $maxIRQTime) {
 		# process IR code
-		$::perfmon && $irPerf->log($now - $receivedTime);
-		$client->execute(['ir', (shift @queuedBytes), (shift @queuedTime)]);
+		$client->execute(['ir', $entry->{'bytes'}, $entry->{'irTime'}]);
 
 	} else {
-		# discard all queued IR as they are potentially stale
-		@queuedServerAbsoluteTime = ();
-		@queuedClient = ();
-		@queuedBytes = ();
-		@queuedTime = ();
-		@queuedClientTime = ();
-		@queuedServerTime = ();
+		# discard all queued IR for this client as they are potentially stale
+		forgetQueuedIR($client);
+		$::d_ir && msgf("Discarded stale IR for client: %s\n", $client->id());
 		return 1;
 	}
 		
@@ -118,9 +124,8 @@ sub idle {
 		
 		$nowTime += $nowMicros;
 
-		# pop diagnostic info off stack
-		my $clientTime = shift(@queuedClientTime);
-		my $serverReceivedTime = shift(@queuedServerTime);
+		my $clientTime = $entry->{'irtm_cTime'};
+		my $serverReceivedTime = $entry->{'irtm_sTime'};
 		my $clientCount = Slim::Player::Client::clientCount();
 		
 		# send a message to the client that the IR has been processed.
@@ -140,29 +145,15 @@ sub forgetQueuedIR {
 	my $client = shift;
 
 	my $i = 0;
-
-	Slim::Utils::Timers::killTimers($client, \&checkRelease);
-
-	while ( my $clientIR = $queuedClient[$i] ) {
-
-		if ( $clientIR eq $client ) {
-
-			splice @queuedServerAbsoluteTime, $i, 1;
-			splice @queuedClient, $i, 1;
-			splice @queuedBytes, $i, 1;
-			splice @queuedTime, $i, 1;
-			
-			if ($::d_irtm) {
-				splice @queuedClientTime, $i, 1;
-				splice @queuedServerTime, $i, 1;
-			}
-
+	while ( my $entry = $irQueue[$i] ) {
+		if ( $entry->{'client'} eq $client ) {
+			splice @irQueue, $i, 1;
 		} else {
-			
 			$i++;
-
 		}
 	}
+
+	Slim::Utils::Timers::killTimers($client, \&checkRelease);
 }
 
 sub init {
