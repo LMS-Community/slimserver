@@ -230,8 +230,8 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 	if (noRequest) {
 		return true;
 	} else if (selected == 'prev' || selected == 'next') {
-		$('playercontrol_prev').src = 'html/images/smaller/prev.gif';
-		$('playercontrol_next').src = 'html/images/smaller/next.gif';
+		$('playercontrol_prev').src = 'html/images/larger/prev.gif';
+		$('playercontrol_next').src = 'html/images/larger/next.gif';
 		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'player') {
 		getStatusData(param, refreshPlayerStatus);
@@ -246,7 +246,7 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 function playerControl(selected, param) {
 	// make the image selected 'active'
 	// make the rest not active
-	var imgStub = 'html/images/smaller/';
+	var imgStub = 'html/images/larger/';
 	var controls = ['play', 'pause', 'stop'];
 	controls.each(function(thisControl) {
 		var imgSrc = null;
