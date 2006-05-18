@@ -222,12 +222,18 @@ BEGIN {
 	my @required_failed = tryModuleLoad(@required_modules);
 	my @optional_failed = tryModuleLoad(@optional_modules);
 
-	if (scalar @required_failed && $d_startup) {
-		printf("The following modules failed to load on the first attempt: [%s] - will try again.\n\n", join(', ', @required_failed));
+	if ($d_startup) {
+		print "The following modules are loaded after the first attempt:\n";
+		print map { "\t$_ => $INC{$_}\n" } keys %INC;
+		print "\n";
 	}
 
 	if (scalar @optional_failed && $d_startup) {
 		printf("The following optional modules failed to load on the first attempt: [%s] - will try again\n\n", join(', ', @optional_failed));
+	}
+
+	if (scalar @required_failed && $d_startup) {
+		printf("The following modules failed to load on the first attempt: [%s] - will try again.\n\n", join(', ', @required_failed));
 	}
 
 	# Remove our paths so we can try loading the failed modules from the default system @INC
@@ -235,6 +241,12 @@ BEGIN {
 
 	my @required_really_failed = tryModuleLoad(@required_failed);
 	my @optional_really_failed = tryModuleLoad(@optional_failed);
+
+	if ($d_startup) {
+		print "The following modules are loaded after the second attempt:\n";
+		print map { "\t$_ => $INC{$_}\n" } keys %INC;
+		print "\n";
+	}
 
 	if (scalar @optional_really_failed && $d_startup) {
 		printf("The following optional modules failed to load: [%s] after their second try.\n\n", join(', ', @optional_really_failed));
@@ -252,12 +264,6 @@ BEGIN {
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
-
-	if ($d_startup) {
-		print "The following modules are loaded:\n";
-		print map { "\t$_ => $INC{$_}\n" } keys %INC;
-		print "\n";
-	}
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	if (!Slim::Utils::OSDetect::isDebian()) {
