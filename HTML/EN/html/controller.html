@@ -1,9 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>Web controller</title>
+
+<script type="text/javascript">
+	function processIR(irCode)
+	{
+		parent.status.location.replace("[% webroot %]status.txt?p0=ir&p1="+irCode+"&p2="+new Date().getTime()+"&player=[% player | uri %]");
+	}
+</script>
+
 </head>
 <body>
 <img src="images/remote.gif" usemap="#Map" border="0"> 
-<map name="Map"><area shape="rect" coords="98,484,125,511" href="%7bwebroot%7dstatus.txt?p0=button&p1=repeat&player=[% player | uri %]" target="status"><area shape="rect" coords="86,157,136,194" href="%7bwebroot%7dstatus.txt?p0=button&p1=up&player=[% player | uri %]" target="status"><area shape="rect" coords="34,471,84,508" href="%7bwebroot%7dstatus.txt?p0=button&p1=shuffle&player=[% player | uri %]" target="status"><area shape="rect" coords="134,199,169,242" href="[% webroot %]status.txt?p0=button&p1=right&player=[% player | uri %]" target="status"><area shape="rect" coords="88,252,132,280" href="[% webroot %]status.txt?p0=button&p1=down&player=[% player | uri %]" target="status"><area shape="rect" coords="48,202,78,243" href="[% webroot %]status.txt?p0=button&p1=left&player=[% player | uri %]" target="status"><area shape="rect" coords="93,69,130,109" href="[% webroot %]status.txt?p0=button&p1=volup&player=[% player | uri %]" target="status"><area shape="rect" coords="140,517,180,554" href="%7bwebroot%7dstatus.txt?p0=button&p1=brightness&player=[% player | uri %]" target="status"><area shape="rect" coords="44,73,81,105" href="[% webroot %]status.txt?p0=button&p1=voldown&player=[% player | uri %]" target="status"><area shape="rect" coords="142,450,172,477" href="%7bwebroot%7dstatus.txt?p0=button&p1=search&player=[% player | uri %]" target="status"><area shape="rect" coords="99,521,122,544" href="%7bwebroot%7dstatus.txt?p0=button&p1=size&player=[% player | uri %]" target="status"><area shape="rect" coords="144,487,168,510" href="[% webroot %]status.txt?p0=button&p1=sleep&player=[% player | uri %]" target="status"><area shape="rect" coords="48,163,77,183" href="%7bwebroot%7dstatus.txt?p0=button&p1=add&player=[% player | uri %]" target="status"><area shape="rect" coords="93,121,125,142" href="[% webroot %]status.txt?p0=button&p1=pause&player=[% player | uri %]" target="status"><area shape="rect" coords="45,122,79,144" href="[% webroot %]status.txt?p0=button&p1=rew&player=[% player | uri %]" target="status"><area shape="rect" coords="140,162,178,190" href="[% webroot %]status.txt?p0=button&p1=play&player=[% player | uri %]" target="status"><area shape="rect" coords="143,118,172,147" href="[% webroot %]status.txt?p0=button&p1=fwd&player=[% player | uri %]" target="status"><area shape="rect" coords="49,521,78,550" href="%7bwebroot%7dstatus.txt?p0=button&p1=now_playing&player=[% player | uri %]" target="status"><area shape="rect" coords="94,445,124,472" href="[% webroot %]status.txt?p0=button&p1=0&player=[% player | uri %]" target="status"><area shape="rect" coords="136,57,174,105" href="[% webroot %]status.txt?p0=button&p1=power&player=[% player | uri %]" target="status"><area shape="rect" coords="45,301,74,328" href="[% webroot %]status.txt?p0=button&p1=1&player=[% player | uri %]" target="status"><area shape="rect" coords="95,303,122,331" href="[% webroot %]status.txt?p0=button&p1=2&player=[% player | uri %]" target="status"><area shape="rect" coords="140,300,170,329" href="[% webroot %]status.txt?p0=button&p1=3&player=[% player | uri %]" target="status"><area shape="rect" coords="47,343,79,382" href="[% webroot %]status.txt?p0=button&p1=4&player=[% player | uri %]" target="status"><area shape="rect" coords="92,349,123,379" href="[% webroot %]status.txt?p0=button&p1=5&player=[% player | uri %]" target="status"><area shape="rect" coords="142,352,172,375" href="[% webroot %]status.txt?p0=button&p1=6&player=[% player | uri %]" target="status"><area shape="rect" coords="45,398,80,436" href="[% webroot %]status.txt?p0=button&p1=7&player=[% player | uri %]" target="status"><area shape="rect" coords="96,401,123,428" href="[% webroot %]status.txt?p0=button&p1=8&player=[% player | uri %]" target="status"><area shape="rect" coords="141,398,168,425" href="[% webroot %]status.txt?p0=button&p1=9&player=[% player | uri %]" target="status"></map>
+<map name="Map">
+	<area shape="rect" coords="98,484,125,511" onClick="processIR('768938c7');" target="status">
+	<area shape="rect" coords="86,157,136,194" onClick="processIR('7689e01f');" target="status">
+	<area shape="rect" coords="34,471,84,508" onClick="processIR('7689d827');" target="status">
+	<area shape="rect" coords="134,199,169,242" onClick="processIR('7689d02f');" target="status">
+	<area shape="rect" coords="88,252,132,280" onClick="processIR('7689b04f');" target="status">
+	<area shape="rect" coords="48,202,78,243" onClick="processIR('7689906f');" target="status">
+	<area shape="rect" coords="93,69,130,109" onClick="processIR('7689807f');" target="status">
+	<area shape="rect" coords="140,517,180,554" onClick="processIR('768904fb');" target="status">
+	<area shape="rect" coords="44,73,81,105" onClick="processIR('768900ff');" target="status">
+	<area shape="rect" coords="142,450,172,477" onClick="processIR('768958a7');" target="status">
+	<area shape="rect" coords="99,521,122,544" onClick="processIR('7689f807');" target="status">
+	<area shape="rect" coords="144,487,168,510" onClick="processIR('7689b847');" target="status">
+	<area shape="rect" coords="48,163,77,183" onClick="processIR('7689609f');" target="status">
+	<area shape="rect" coords="93,121,125,142" onClick="processIR('768920df');" target="status">
+	<area shape="rect" coords="45,122,79,144" onClick="processIR('7689c03f');" target="status">
+	<area shape="rect" coords="140,162,178,190" onClick="processIR('768910ef');" target="status">
+	<area shape="rect" coords="143,118,172,147" onClick="processIR('7689a05f');" target="status">
+	<area shape="rect" coords="49,521,78,550" onClick="processIR('76897887');" target="status">
+	<area shape="rect" coords="94,445,124,472" onClick="processIR('76899867');" target="status">
+	<area shape="rect" coords="136,57,174,105" onClick="processIR('768940bf');" target="status">
+	<area shape="rect" coords="45,301,74,328" onClick="processIR('7689f00f');" target="status">
+	<area shape="rect" coords="95,303,122,331" onClick="processIR('768908f7');" target="status">
+	<area shape="rect" coords="140,300,170,329" onClick="processIR('76898877');" target="status">
+	<area shape="rect" coords="47,343,79,382" onClick="processIR('768948b7');" target="status">
+	<area shape="rect" coords="92,349,123,379" onClick="processIR('7689c837');" target="status">
+	<area shape="rect" coords="142,352,172,375" onClick="processIR('768928d7');" target="status">
+	<area shape="rect" coords="45,398,80,436" onClick="processIR('7689a857');" target="status">
+	<area shape="rect" coords="96,401,123,428" onClick="processIR('76896897');" target="status">
+	<area shape="rect" coords="141,398,168,425" onClick="processIR('7689e817');" target="status">
+</map>
 </body>
 </html>

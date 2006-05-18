@@ -15,7 +15,6 @@ function refreshStatus() {
 	}
 }
 
-
 [% IF refresh %]
 	function doLoad() {
 	
