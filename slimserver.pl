@@ -583,6 +583,9 @@ sub init {
 	
 		$::d_server && msg("mDNS init...\n");
 		Slim::Networking::mDNS->init;
+		
+		$::d_server && msg("AsyncHTTP init...\n");
+		Slim::Networking::AsyncHTTP->init;
 	
 		$::d_server && msg("SlimServer HTTP init...\n");
 		Slim::Web::HTTP::init();

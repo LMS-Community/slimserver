@@ -32,6 +32,42 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+our $nameserver;
+
+# At startup time, we need to query all available nameservers to make sure
+# we use a valid server during bgsend() calls
+sub init {
+	my $class = shift;
+	
+	my $res = Net::DNS::Resolver->new;
+	$res->tcp_timeout( 10 );
+	$res->udp_timeout( 10 );
+	
+	my @ns = $res->nameservers();
+	
+	# domain to check
+	my $domain = 'www.google.com';
+	
+	for my $ns ( @ns ) {
+		$::d_http_async && msg("AsyncHTTP: Verifying if we can use nameserver $ns...\n");
+
+		$::d_http_async && msg("  Testing lookup of $domain\n");
+		$res->nameservers( $ns );
+		my $packet = $res->send( $domain, 'A' );
+		if ( defined $packet ) {
+			if ( scalar $packet->answer > 0 ) {
+				$::d_http_async && msg("  Lookup successful, using $ns for DNS lookups\n");
+				$nameserver = $ns;
+				return;
+			}
+		}
+		
+		$::d_http_async && msg("  Lookup failed\n");
+	}
+	
+	msg("AysncHTTP: No DNS servers responded, you may have trouble with network connections.  Please check your network settings.\n");
+}
+
 # we override new in case we are using a proxy
 sub new {
 	my $class = shift;
@@ -52,12 +88,17 @@ sub new {
 	}
 	else {
 		
-		$::d_http_async && msgf("AsyncHTTP: Starting async DNS lookup for [%s] [timeout %d]\n",
+		my $resolver = Net::DNS::Resolver->new;
+		if ( defined $nameserver ) {
+			$resolver->nameservers( $nameserver );
+		}
+		
+		$::d_http_async && msgf("AsyncHTTP: Starting async DNS lookup for [%s] using server [%s] [timeout %d]\n",
 			$args{'Host'},
+			($resolver->nameservers)[0],
 			$args{'Timeout'},
 		);
 		
-		my $resolver = Net::DNS::Resolver->new;
 		my $bgsock   = $resolver->bgsend( $args{'Host'} );
 		
 		if ( !defined $bgsock ) {
