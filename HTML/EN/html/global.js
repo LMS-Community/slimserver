@@ -157,6 +157,23 @@ function parseData(thisData) {
 	return returnData;
 }
 
+function refreshLibraryInfo() {
+	var prevURL = url;
+	url = '[% webroot %]home.html';
+	var homeArgs = 'player='+player+'&ajaxRequest=1';
+	getStatusData(homeArgs, displayLibraryInfo);
+	url = prevURL;
+}
+
+function displayLibraryInfo(theData) {
+        var myData = theData.responseText;
+        var homeParsedData = parseData(myData);
+	var libraryString = homeParsedData['song_count'] +', '+ homeParsedData['artist_count'] +', '+ homeParsedData['album_count'];
+	if ($('libraryInfo')) {
+		$('libraryInfo').innerHTML = libraryString;
+	}
+}
+
 // METHOD:  truncateAt: truncate specified tableId at specified length
 function truncateAt(tableId, lastRow) {
 	var tableObj, oTr;
@@ -181,7 +198,14 @@ function miniControls(action) {
 	var args = "p0="+action+"&player="+player+"&ajaxRequest=1";
 	// always use status.html for this request
 	var old_url = url;
-	url = 'status.html';
+	url = '[% webroot %]status.html';
 	getStatusData(args, refreshNothing);
 	url = old_url;
+}
+
+// put global.js functions here that you want to be run after the page loads
+// requires a window.onLoad function in the js script that calls global.js
+// see Nokia770/browse.js for example
+function globalOnload() {
+	refreshLibraryInfo();
 }
