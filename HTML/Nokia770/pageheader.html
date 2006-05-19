@@ -39,17 +39,21 @@
 	</form>
 [% ELSE %]
 	[%- USE Clients; players = Clients.get("id") -%]
+	[% IF thispage == 'playlist' %]
 	[% IF players.size > 1 %]
 	<form method="get">Current player:
 		<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">
 	[% FOREACH playerobj IN players -%]
 		<option value="[% playerobj.id %]" [% IF player == playerobj.id %]SELECTED[% END %]>[% playerobj.name %]</option>
 	[%- END %]
-	[% END %]
 		</select>
+	[% END %]
 	[% IF page %]<input type = 'hidden' name = 'page' value = '[% page %]'>[% END %]
 	[% IF playerid %]<input type = 'hidden' name = 'playerid' value = '[% playerid %]'>[% END %]
 	</form>
+	[% ELSE %]
+		[% FOREACH playerobj IN players %][% IF player == playerobj.id %]Current Player: [% playerobj.name %][% END %][% END %]
+	[% END %]
 [% END %]
 </td></tr>
 </table>
