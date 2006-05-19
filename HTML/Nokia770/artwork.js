@@ -1,4 +1,4 @@
-var url = 'browsedb.html';
+var url = '[% webroot %]browsedb.html';
 var parsedData;
 var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=artist,album,track&amp;artist=ARTIST&amp;level=1&player=[% playerURI %]';
 var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=ALBUM&player=[% playerURI %]';
@@ -94,5 +94,6 @@ function artworkBrowse(urlArgs, thisId, thatId) {
 
 window.onload= function() {
 	artworkBrowse(blankRequest, 0, 1);
+	globalOnload();
 }
 
