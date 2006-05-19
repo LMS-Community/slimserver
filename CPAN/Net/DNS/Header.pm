@@ -1,6 +1,6 @@
 package Net::DNS::Header;
 #
-# $Id: Header.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 
 use strict;
@@ -16,7 +16,7 @@ use Net::DNS;
 
 use constant MAX_ID => 65535;
 
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 546 $)[1];
 
 =head1 NAME
 
@@ -49,6 +49,8 @@ the data is incomplete).
 
 =cut
 
+
+
 {
 	my $id = int rand(MAX_ID);
 	
@@ -64,7 +66,7 @@ sub new {
 	if (@_) {
 		my $data = shift;
 
-		if (length($$data) < Net::DNS::HFIXEDSZ()) {
+		if (length($$data) < Net::DNS::HFIXEDSZ() ) {
 			return undef;
 		}
 
@@ -294,7 +296,7 @@ sub AUTOLOAD {
 	my ($self) = @_;
 
 	my $name = $AUTOLOAD;
-	$name =~ s/.*://;
+	$name =~ s/.*://o;
 
 	Carp::croak "$name: no such method" unless exists $self->{$name};
 	

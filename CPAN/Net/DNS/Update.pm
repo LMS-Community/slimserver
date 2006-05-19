@@ -1,6 +1,6 @@
 package Net::DNS::Update;
 #
-# $Id: Update.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -11,7 +11,7 @@ use vars qw($VERSION @ISA);
 use Net::DNS;
 
 @ISA     = qw(Net::DNS::Packet);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 517 $)[1];
 
 =head1 NAME
 
@@ -128,7 +128,7 @@ show only the creation of the update packet.
 
     my $update = Net::DNS::Update->new('example.com');
     $update->push(pre    => nxdomain('info.example.com'));
-    $update->push(update => rr_add('info.example.com TXT 'yabba dabba doo''));
+    $update->push(update => rr_add('info.example.com TXT "yabba dabba doo"'));
 
 =head2 Delete all A records for a name
 

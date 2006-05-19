@@ -1,6 +1,6 @@
 package Net::DNS::Packet;
 #
-# $Id: Packet.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 
@@ -22,7 +22,7 @@ require Exporter;
 @EXPORT_OK = qw(dn_expand);
 
 
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 546 $)[1];
 
 
 
@@ -812,7 +812,7 @@ sub dn_expand_PP {
 
 	
 
-	$name =~ s/\.$//;
+	$name =~ s/\.$//o;
 	return ($name, $offset);
 }
 

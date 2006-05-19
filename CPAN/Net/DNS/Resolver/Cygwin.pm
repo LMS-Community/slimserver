@@ -1,6 +1,6 @@
 package Net::DNS::Resolver::Cygwin;
 #
-# $Id: Cygwin.pm 291 2005-05-21 07:40:58Z olaf $
+# $Id$
 #
 
 use strict;

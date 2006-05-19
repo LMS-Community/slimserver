@@ -1,6 +1,6 @@
 package Net::DNS::RR::NAPTR;
 #
-# $Id: NAPTR.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,36 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 551 $)[1];
+
+
+
+
+__PACKAGE__->set_rrsort_func("order",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $a->{'order'} <=> $b->{'order'}
+				   ||
+				       $a->{'preference'} <=> $b->{'preference'}
+}
+);
+
+
+__PACKAGE__->set_rrsort_func("default_sort",
+			       __PACKAGE__->get_rrsort_func("order")
+
+    );
+
+__PACKAGE__->set_rrsort_func("preference",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $a->{"preference"} <=> $b->{"preference"}
+				   ||
+				       $a->{"order"} <=> $b->{"order"}
+}
+);
+
+
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -165,6 +194,7 @@ Returns the replacement field.
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
+Portions Copyright (c) 2005 Olaf Kolkman NLnet Labs.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

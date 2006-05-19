@@ -1,12 +1,12 @@
 package Net::DNS::Resolver;
 #
-# $Id: Resolver.pm 290 2005-05-20 11:42:59Z olaf $
+# $Id$
 #
 
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = (qw$LastChangedRevision: 290 $)[1];
+$VERSION = (qw$LastChangedRevision: 513 $)[1];
 
 BEGIN {
 	if ($^O eq 'MSWin32') {
@@ -153,7 +153,7 @@ An array reference of domains.
 
 =item retry
 
-=item usecv
+=item usevc
 
 =item stayopen
 
@@ -729,12 +729,14 @@ Error reporting and handling needs to be improved.
 The current implementation supports TSIG only on outgoing packets.
 No validation of server replies is performed.
 
+bgsend does not honor the usevc flag and only uses UDP for transport.
+
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
-Portions Copyright (c) 2005 Olaf M. Kolkman
+Portions Copyright (c) 2005 Olaf M. Kolkman, NLnet Labs.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

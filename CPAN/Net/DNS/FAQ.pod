@@ -41,5 +41,5 @@ from the libresolv C library, which has similar behaviors.
 
 =head1 VERSION
 
- $Id: FAQ.pod 264 2005-04-06 09:16:15Z olaf $
+ $Id$
  

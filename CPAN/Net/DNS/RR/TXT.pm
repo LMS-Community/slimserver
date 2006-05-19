@@ -1,6 +1,6 @@
 package Net::DNS::RR::TXT;
 #
-# $Id: TXT.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -11,7 +11,7 @@ use vars qw(@ISA $VERSION);
 use Text::ParseWords;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 515 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -125,6 +125,7 @@ be deprecated.
 
 Use C<< $txt->rdatastr() >> or C<< $txt->char_str_list() >> instead.
 
+
 =head2 char_str_list
 
  print "Individual <character-string> list: \n\t", 
@@ -133,11 +134,36 @@ Use C<< $txt->rdatastr() >> or C<< $txt->char_str_list() >> instead.
 Returns a list of the individual <character-string> elements, 
 as unquoted strings.  Used by TXT->rdatastr and TXT->rr_rdata.
 
+
+=head1 FEATURES
+
+The RR.pm module accepts semi-colons as a start of a comment. This is
+to allow the RR.pm to deal with RFC1035 specified zonefile format.
+
+For some applications of the TXT RR the semicolon is relevant, you
+will need to escape it on input.
+
+Also note that you should specify the several character strings
+separately. The easiest way to do so is to include the whole argument
+in single quotes and the several character strings in double
+quotes. Double quotes inside the character strings will need to be
+escaped.
+
+my $TXTrr=Net::DNS::RR->new('txt2.t.net-dns.org.	60	IN
+	TXT  "Test1 \" \; more stuff"  "Test2"');
+
+would result in 
+$TXTrr->char_str_list())[0] containing 'Test1 " ; more stuff'
+and
+$TXTrr->char_str_list())[1] containing 'Test2'
+
+
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
+Portions Copyright (c) 2005 Olaf Kolkman (NLnet Labs)
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

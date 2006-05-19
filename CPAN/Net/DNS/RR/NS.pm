@@ -1,6 +1,6 @@
 package Net::DNS::RR::NS;
 #
-# $Id: NS.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 554 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -81,13 +81,17 @@ Class for DNS Name Server (NS) resource records.
 
     print "nsdname = ", $rr->nsdname, "\n";
 
-Returns the domain name of the nameserver.
+Returns the name of the nameserver.
 
 =head1 COPYRIGHT
 
 Copyright (c) 1997-2002 Michael Fuhr. 
 
 Portions Copyright (c) 2002-2004 Chris Reinhardt.
+
+Portions Copyright (c) 2005 O.M, Kolkman, RIPE NCC.
+
+Portions Copyright (c) 2005-2006 O.M, Kolkman, NLnet Labs.
 
 All rights reserved.  This program is free software; you may redistribute
 it and/or modify it under the same terms as Perl itself.

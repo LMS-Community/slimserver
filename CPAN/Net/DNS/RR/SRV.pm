@@ -1,6 +1,6 @@
 package Net::DNS::RR::SRV;
 #
-# $Id: SRV.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -9,7 +9,35 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 548 $)[1];
+
+
+
+__PACKAGE__->set_rrsort_func("priority",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $a->{'priority'} <=> $b->{'priority'}
+				   ||
+				       $b->{'weight'} <=> $a->{'weight'}
+}
+);
+
+
+__PACKAGE__->set_rrsort_func("default_sort",
+			       __PACKAGE__->get_rrsort_func("priority")
+
+    );
+
+__PACKAGE__->set_rrsort_func("weight",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $b->{"weight"} <=> $a->{"weight"}
+				   ||
+				       $a->{"priority"} <=> $b->{"priority"}
+}
+);
+
+
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -42,6 +70,7 @@ sub rdatastr {
 
 	if (exists $self->{'priority'}) {
 		$rdatastr = join(' ', @{$self}{qw(priority weight port target)});
+		$rdatastr =~ s/(.*[^\.])$/$1./;
 	} else {
 		$rdatastr = '';
 	}
@@ -68,7 +97,7 @@ sub _canonicalRdata {
 	
 	if (exists $self->{'priority'}) {
 		$rdata .= pack('n3', @{$self}{qw(priority weight port)});
-		$rdata .= $self->name_2wire($self->{'target'});
+		$rdata .= $self->_name2wire($self->{'target'});
 	}
 
 	return $rdata;

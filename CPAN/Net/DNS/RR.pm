@@ -1,6 +1,6 @@
 package Net::DNS::RR;
 #
-# $Id: RR.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 
@@ -8,14 +8,13 @@ BEGIN {
     eval { require bytes; }
 } 
 
-use vars qw($VERSION $AUTOLOAD);
+use vars qw($VERSION $AUTOLOAD     %rrsortfunct );
 use Carp;
 use Net::DNS;
 use Net::DNS::RR::Unknown;
 
 
-
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 552 $)[1];
 
 =head1 NAME
 
@@ -80,6 +79,7 @@ BEGIN {
 		X25
 		OPT
 		SSHFP
+		SPF
 	);
 
 	#  Only load DNSSEC if available
@@ -186,7 +186,7 @@ sub build_regex {
  $a     = Net::DNS::RR->new("foo.example.com. 86400 A 10.1.2.3");
  $mx    = Net::DNS::RR->new("example.com. 7200 MX 10 mailhost.example.com.");
  $cname = Net::DNS::RR->new("www.example.com 300 IN CNAME www1.example.com");
- $txt   = Net::DNS::RR->new("baz.example.com 3600 HS TXT 'text record'");
+ $txt   = Net::DNS::RR->new('baz.example.com 3600 HS TXT "text record"');
 
 Returns a C<Net::DNS::RR> object of the appropriate type and
 initialized from the string passed by the user.  The format of the
@@ -278,7 +278,7 @@ sub new_from_string {
 	# strip out comments
 	# Test for non escaped ";" by means of the look-behind assertion
 	# (the backslash is escaped)
-	$rrstring   =~ s/(?<!\\);.*//g;
+	$rrstring   =~ s/(?<!\\);.*//og;
 	
 	($rrstring =~ m/$RR_REGEX/xso) || 
 		confess qq|qInternal Error: "$rrstring" did not match RR pat.\nPlease report this to the author!\n|;
@@ -291,8 +291,8 @@ sub new_from_string {
 	my $rrtype  = $4 || '';
 	my $rdata   = $5 || '';
 
-	$rdata =~ s/\s+$// if $rdata;
-	$name  =~ s/\.$//  if $name;
+	$rdata =~ s/\s+$//o if $rdata;
+	$name  =~ s/\.$//o  if $name;
 
 	
 
@@ -300,8 +300,8 @@ sub new_from_string {
 
 	# RFC3597 tweaks
 	# This converts to known class and type if specified as TYPE###
-	$rrtype  = Net::DNS::typesbyval(Net::DNS::typesbyname($rrtype))      if $rrtype  =~ m/^TYPE\d+/;
-	$rrclass = Net::DNS::classesbyval(Net::DNS::classesbyname($rrclass)) if $rrclass =~ m/^CLASS\d+/;
+	$rrtype  = Net::DNS::typesbyval(Net::DNS::typesbyname($rrtype))      if $rrtype  =~ m/^TYPE\d+/o;
+	$rrclass = Net::DNS::classesbyval(Net::DNS::classesbyname($rrclass)) if $rrclass =~ m/^CLASS\d+/o;
 
 
 	if (!$rrtype && $rrclass && $rrclass eq 'ANY') {
@@ -334,9 +334,9 @@ sub new_from_string {
 			$rrclass = 'NONE';
 			$rrtype  = 'ANY';
 			$rdata   = '';
-		} elsif ($update_type =~ /^(rr_)?add$/) {
+		} elsif ($update_type =~ /^(rr_)?add$/o) {
 			$ttl = 86400 unless $ttl;
-		} elsif ($update_type =~ /^(rr_)?del(ete)?$/) {
+		} elsif ($update_type =~ /^(rr_)?del(ete)?$/o) {
 			$ttl     = 0;
 			$rrclass = $rdata ? 'NONE' : 'ANY';
 		}
@@ -355,16 +355,16 @@ sub new_from_string {
 	};
 
 
-	if ($RR{$rrtype} && $rdata !~ m/^\s*\\#/ ) {
+	if ($RR{$rrtype} && $rdata !~ m/^\s*\\#/o ) {
 		my $subclass = $class->_get_subclass($rrtype);
 		
 		return $subclass->new_from_string($self, $rdata);
 	} elsif ($RR{$rrtype}) {   # A RR type known to Net::DNS starting with \#
-		$rdata =~ m/\\\#\s+(\d+)\s+(.*)$/;
+		$rdata =~ m/\\\#\s+(\d+)\s+(.*)$/o;
 
 		my $rdlength = $1;
 		my $hexdump  = $2;		
-		$hexdump =~ s/\s*//g;
+		$hexdump =~ s/\s*//og;
 
 		die "$rdata is inconsistent; length does not match content" 
 			if length($hexdump) != $rdlength*2;
@@ -380,14 +380,14 @@ sub new_from_string {
 			\$rdata, 
 			length($rdata) - $rdlength
 		);
-	} elsif ($rdata=~/\s*\\\#\s+\d+\s+/) {   
+	} elsif ($rdata=~/\s*\\\#\s+\d+\s+/o) {   
 		#We are now dealing with the truly unknown.
 		die 'Expected RFC3597 representation of RDATA' 
-			unless $rdata =~ m/\\\#\s+(\d+)\s+(.*)$/;
+			unless $rdata =~ m/\\\#\s+(\d+)\s+(.*)$/o;
 
 		my $rdlength = $1;
 		my $hexdump  = $2;		
-		$hexdump =~ s/\s*//g;
+		$hexdump =~ s/\s*//og;
 
 		die "$rdata is inconsistent; length does not match content" 
 			if length($hexdump) != $rdlength*2;
@@ -446,7 +446,7 @@ sub new_from_hash {
 			# documentation
 			return $subclass->new_from_hash($self);
 	    }
-	} elsif ($self->{'type'} =~ /TYPE\d+/) {
+	} elsif ($self->{'type'} =~ /TYPE\d+/o) {
 		bless $self, 'Net::DNS::RR::Unknown';
 		return $self;
 	} else {
@@ -615,11 +615,11 @@ sub data {
 
 
 	my $qtype     = uc($self->{'type'});
-	my $qtype_val = ($qtype =~ m/^\d+$/) ? $qtype : Net::DNS::typesbyname($qtype);
+	my $qtype_val = ($qtype =~ m/^\d+$/o) ? $qtype : Net::DNS::typesbyname($qtype);
 	$qtype_val    = 0 if !defined($qtype_val);
 
 	my $qclass     = uc($self->{'class'});
-	my $qclass_val = ($qclass =~ m/^\d+$/) ? $qclass : Net::DNS::classesbyname($qclass);
+	my $qclass_val = ($qclass =~ m/^\d+$/o) ? $qclass : Net::DNS::classesbyname($qclass);
 	$qclass_val    = 0 if !defined($qclass_val);
 	$data .= pack('n', $qtype_val);
 	
@@ -636,7 +636,6 @@ sub data {
 	$offset += length($data) + &Net::DNS::INT16SZ;	# allow for rdlength
 
 	my $rdata = $self->rdata($packet, $offset);
-
 
 	$data .= pack('n', length $rdata);
 	$data.=$rdata;
@@ -663,7 +662,7 @@ sub _canonicaldata {
 	    my @dname=Net::DNS::name2labels($name);
 	    for (my $i=0;$i<@dname;$i++){
 		$data .= pack ('C',length $dname[$i] );
-		$data .= $dname[$i] ;
+		$data .= lc($dname[$i] );
 	    }
 	    $data .= pack ('C','0');
 	}
@@ -688,9 +687,11 @@ sub _canonicaldata {
 # have domain names in the RDATA and _name2wire is used to convert a
 # domain name to "wire format"
 
+
 sub _canonicalRdata {
-    my $self = shift;
-    my $rdata = $self->rr_rdata;
+    my $self=shift;
+    my $packet=Net::DNS::Packet->new();
+    my $rdata = $self->rr_rdata($packet,0);
     return $rdata;
 }
 
@@ -715,16 +716,24 @@ sub _name2wire   {
     return $rdata;
 }
 
+
+
+
+
 sub AUTOLOAD {
 	my ($self) = @_;  # If we do shift here, it will mess up the goto below.
-	
-	my ($name) = $AUTOLOAD =~ m/^.*::(.*)$/;
-	
+	my ($name) = $AUTOLOAD =~ m/^.*::(.*)$/o;
+	if ($name =~ /set_rrsort_func/){
+	    return Net::DNS::RR::set_rrsort_func(@_);
+	}
+	if ($name =~ /get_rrsort_func/){
+	    return Net::DNS::RR::get_rrsort_func(@_);
+	}
 	# XXX -- We should test that we do in fact carp on unknown methods.	
 	unless (exists $self->{$name}) {
-		my $rr_string = $self->string;
-		Carp::carp(<<"AMEN");
-
+	    my $rr_string = $self->string;
+	    Carp::carp(<<"AMEN");
+	    
 ***
 ***  WARNING!!!  The program has attempted to call the method
 ***  "$name" for the following RR object:
@@ -741,25 +750,26 @@ sub AUTOLOAD {
 *** 
 
 AMEN
-		return;
+return;
 	}
 	
 	no strict q/refs/;
 	
 	# Build a method in the class.
 	*{$AUTOLOAD} = sub {
-		my ($self, $new_val) = @_;
-				
-		if (defined $new_val) {
-			$self->{$name} = $new_val;
-		}
-		
-		return $self->{$name};
+	    my ($self, $new_val) = @_;
+	    
+	    if (defined $new_val) {
+		$self->{$name} = $new_val;
+	    }
+	    
+	    return $self->{$name};
 	};
 	
 	# And jump over to it.
 	goto &{$AUTOLOAD};
 }
+
 
 
 #
@@ -782,7 +792,116 @@ sub _get_subclass {
 	
 	return $subclass;
 }	
+
+
+
+
+=head1 Sorting of RR arrays
+
+As of version 0.55 there is functionality to help you sort RR
+arrays. The sorting is done by Net::DNS::rrsort(), see the
+L<Net::DNS> documentation. This package provides class methods to set
+the sorting functions used for a particular RR based on a particular
+attribute.
+
+
+=head2 set_rrsort_func
+
+Net::DNS::RR::SRV->set_rrsort_func("priority",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $a->priority <=> $b->priority
+				   ||
+				   $b->weight <=> $a->weight
+                     }
+
+Net::DNS::RR::SRV->set_rrsort_func("default_sort",
+			       sub {
+				   my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+				   $a->priority <=> $b->priority
+				   ||
+				   $b->weight <=> $a->weight
+                     }
+
+set_rrsort_func needs to be called as a class method. The first
+argument is the attribute name on which the sorting will need to take
+place. If you specify "default_sort" than that is the sort algorithm
+that will be used in the case that rrsort() is called without an RR
+attribute as argument.
+
+The second argument is a reference to a function that uses the
+variables $a and $b global to the C<from Net::DNS>(!!)package for the
+sorting. During the sorting $a and $b will contain references to
+objects from the class you called the set_prop_sort from. In other
+words, you can rest assured that the above sorting function will only
+get Net::DNS::RR::SRV objects.
+
+The above example is the sorting function that actually is implemented in 
+SRV.
+
+=cut
+
+
+
+
+sub set_rrsort_func{
+    my $class=shift;
+    my $attribute=shift;
+    my $funct=shift;
+#    print "Using ".__PACKAGE__."set_rrsort: $class\n";
+    my ($type) = $class =~ m/^.*::(.*)$/o;
+    $Net::DNS::RR::rrsortfunct{$type}{$attribute}=$funct;
+}
 		
+sub get_rrsort_func {
+    my $class=shift;    
+    my $attribute=shift;  #can be undefined.
+    my $sortsub;
+    my ($type) = $class =~ m/^.*::(.*)$/o;
+
+
+#    print "Using ".__PACKAGE__." get_rrsort: $class ($type,$attribute)\n";
+#    use Data::Dumper;
+#    print Dumper %Net::DNS::rrsortfunct;
+
+    if (defined($attribute) &&
+	exists($Net::DNS::RR::rrsortfunct{$type}) &&
+	exists($Net::DNS::RR::rrsortfunct{$type}{$attribute})
+	){
+	#  The default overwritten by the class variable in Net::DNS
+	return $Net::DNS::RR::rrsortfunct{$type}{$attribute};
+    }elsif(
+	! defined($attribute) &&
+	exists($Net::DNS::RR::rrsortfunct{$type}) &&
+	exists($Net::DNS::RR::rrsortfunct{$type}{'default_sort'})
+	){
+	#  The default overwritten by the class variable in Net::DNS
+	return $Net::DNS::RR::rrsortfunct{$type}{'default_sort'};
+    }
+    elsif( defined($attribute) ){
+	
+	return sub{
+	    my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+	    ( exists($a->{$attribute}) &&   
+	      $a->{$attribute} <=> $b->{$attribute})
+		||
+		$a->_canonicaldata() cmp $b->_canonicaldata()
+	};
+    }else{
+	return sub{
+	    my ($a,$b)=($Net::DNS::a,$Net::DNS::b);
+	    $a->_canonicaldata() cmp $b->_canonicaldata()
+	};
+    }    
+
+    return $sortsub;
+}
+
+
+
+
+
+
 	
 sub STORABLE_freeze {
 	my ($self, $cloning) = @_;

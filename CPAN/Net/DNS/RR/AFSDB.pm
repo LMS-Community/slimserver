@@ -1,6 +1,6 @@
 package Net::DNS::RR::AFSDB;
 #
-# $Id: AFSDB.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 

@@ -1,6 +1,6 @@
 package Net::DNS::Question;
 #
-# $Id: Question.pm 388 2005-06-22 10:06:05Z olaf $
+# $Id$
 #
 use strict;
 BEGIN { 
@@ -12,7 +12,7 @@ use vars qw($VERSION $AUTOLOAD);
 use Carp;
 use Net::DNS;
 
-$VERSION = (qw$LastChangedRevision: 388 $)[1];
+$VERSION = (qw$LastChangedRevision: 546 $)[1];
 
 =head1 NAME
 
@@ -63,8 +63,8 @@ sub new {
 		($qtype, $qclass) = ($qclass, $qtype);
 	}
 
-	$qname =~ s/^\.+//;
-	$qname =~ s/\.+$//;
+	$qname =~ s/^\.+//o;
+	$qname =~ s/\.+$//o;
 
 	$self{"qname"}  = $qname;
 	$self{"qtype"}  = $qtype;
@@ -112,7 +112,7 @@ sub AUTOLOAD {
 	my ($self) = @_;
 	
 	my $name = $AUTOLOAD;
-	$name =~ s/.*://;
+	$name =~ s/.*://o;
 
 	Carp::croak "$name: no such method" unless exists $self->{$name};
 
