@@ -6,3 +6,6 @@ function addItem(args) {
 	getStatusData(args, refreshNothing);
 }
 
+window.onload= function() {
+	refreshLibraryInfo();
+}

@@ -316,4 +316,5 @@ function refreshOtherElements(theData) {
 window.onload= function() {
 	getStatusData(args, refreshAll);
 	progressUpdate();
+	globalOnload();
 }

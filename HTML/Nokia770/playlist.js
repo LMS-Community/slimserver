@@ -239,5 +239,6 @@ function setRefreshTime() {
 
 window.onload= function() {
 	setRefreshTime();
+	globalOnload();
 }
 
