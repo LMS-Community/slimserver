@@ -50,7 +50,7 @@ my $checkingHighTimers = 0;   # Semaphore for high priority timers
 
 our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
 our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
-  
+
 #
 # Call any pending timers which have now elapsed.
 #
@@ -197,22 +197,28 @@ sub nextTimer {
 #  For debugging - prints out a list of all pending timers
 #
 sub listTimers {
-	msg("High timers: \n");
+	msgf( "High timers: (%d)\n", $high->get_item_count );
+	
+	my $now = Time::HiRes::time();
 
 	for my $item ( $high->peek_items( sub { 1 } ) ) {
 		
 		my $timer = $item->[ITEM_PAYLOAD];
+		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
+		my $diff  = $timer->{'when'} - $now;
 
-		msg(join("\t", $timer->{'objRef'}, $timer->{'when'}, $timer->{'subptr'}, "\n"));
+		msgf( "%30.30s %.6s %s\n", $timer->{'objRef'}, $diff, $name );
 	}
 
-	msg("Normal timers: \n");
+	msgf( "Normal timers: (%d)\n", $normal->get_item_count );
 
 	for my $item ( $normal->peek_items( sub { 1 } ) ) {
-
-		my $timer = $item->[ITEM_PAYLOAD];
 		
-		msg(join("\t", $timer->{'objRef'}, $timer->{'when'}, $timer->{'subptr'}, "\n"));
+		my $timer = $item->[ITEM_PAYLOAD];
+		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
+		my $diff  = $timer->{'when'} - $now;
+
+		msgf( "%30.30s %.6s %s\n", $timer->{'objRef'}, $diff, $name );
 	}
 }
 
@@ -301,11 +307,11 @@ sub setTimer {
 sub killTimers {
 	my $objRef = shift || return;
 	my $subptr = shift || return;
-
+	
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -324,8 +330,8 @@ sub killHighTimers {
 
 	my @killed = $high->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -347,8 +353,8 @@ sub killOneTimer {
 	
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -361,8 +367,8 @@ sub killOneTimer {
 	
 	$high->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -397,7 +403,7 @@ sub forgetTimer {
 # Kill a specific timer
 #
 sub killSpecific {
-	my $timer     = shift;
+	my $timer = shift;
 
 	return 
 		killHighTimers( $timer->{objRef}, $timer->{subptr} )
@@ -417,8 +423,8 @@ sub firePendingTimer {
 	
 	my @normal = $normal->peek_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -446,8 +452,8 @@ sub pendingTimers {
 	
 	$high->peek_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
@@ -455,8 +461,8 @@ sub pendingTimers {
 	
 	$normal->peek_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
-			if ( $timer->{subptr} eq $subptr ) {
+		if ( $timer->{subptr} eq $subptr ) {
+			if ( $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
