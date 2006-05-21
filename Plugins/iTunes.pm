@@ -412,12 +412,12 @@ sub checker {
 	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
 		startScan();
 	}
-
+	
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
-
-	# Call ourselves again after 10 seconds
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 10.0), \&checker);
+	
+	my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 
 sub startScan {
@@ -439,9 +439,6 @@ sub startScan {
 
 	$isScanning = 1;
 	$iTunesScanStartTime = time();
-
-	# start the checker
-	checker();
 
 	$iTunesParser = XML::Parser->new(
 		'ErrorContext'     => 2,
