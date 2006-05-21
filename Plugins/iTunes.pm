@@ -417,6 +417,12 @@ sub checker {
 	Slim::Utils::Timers::killTimers(0, \&checker);
 	
 	my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
+	
+	# the very first time, we do want to scan right away
+	if ( $firstTime ) {
+		$interval = 10;
+	}
+	
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 
