@@ -256,9 +256,7 @@ sub quickstart {
 			$line2       = Slim::Music::Info::standardTitle($client, $track);
 		}
 		
-		$client->showBriefly( $line1, $line2, {
-			duration  => 0.5,	# longer than 0.25 to ensure we don't get screen flicker
-		} );
+		$client->showBriefly( $line1, $line2, 0.5 );
 		
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.25, \&quickstart );
 	}

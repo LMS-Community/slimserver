@@ -712,9 +712,7 @@ sub playItem {
 			}
 		}
 
-		$client->showBriefly( $string, $title, {
-			duration  => 10,
-		} );
+		$client->showBriefly( $string, $title, 10 );
 
 	} elsif ($type eq 'playlist') {
 
