@@ -1391,7 +1391,7 @@ CONNECTING_FOR
 	CS	Připojuji ke hraní:
 	DE	Verbinde zum Abspielen:
 	DA	Forbinder for afspilning:
-	EN	Connecting to play:
+	EN	Connecting...
 	ES	Conectando a:
 	FI	Yhdistetään soittaakseni:
 	FR	Connexion à :
@@ -1401,6 +1401,9 @@ CONNECTING_FOR
 	PT	Ligando a
 	SV	Ansluter för uppspelning:
 	ZH_CN	连接中：
+
+BUFFERING
+	EN	Buffering
 
 PROBLEM_CONNECTING
 	CS	Chyba: nelze se připojit k serveru:

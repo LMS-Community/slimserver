@@ -708,11 +708,13 @@ sub playItem {
 			if (Slim::Player::Playlist::shuffle($client)) {
 				$string = 'PLAYING_RANDOMLY_FROM';
 			} else {
-				$string = 'NOW_PLAYING_FROM';
+				$string = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
 			}
 		}
 
-		$client->showBriefly($client->string($string), $title);
+		$client->showBriefly( $string, $title, {
+			duration  => 10,
+		} );
 
 	} elsif ($type eq 'playlist') {
 

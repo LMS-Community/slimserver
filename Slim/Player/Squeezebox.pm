@@ -17,6 +17,7 @@ use IO::Socket;
 use MIME::Base64;
 
 use base qw(Slim::Player::Player);
+use Scalar::Util qw(blessed);
 
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
@@ -152,12 +153,12 @@ sub play {
 	$client->volume($client->volume(),
 					defined($client->tempVolume()));
 
-	# if this is a remote stream, then let's start after 5 seconds even if we haven't filled the buffer yet.
-	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 5 : undef;
+	# if this is a remote stream, start playback as soon as we have enough buffer filled
+	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 0.25 : undef;
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 	if ($quickstart) {
-		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + $quickstart,\&quickstart);
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
 	}
 	
 	return 1;
@@ -212,14 +213,54 @@ sub flush {
 
 sub quickstart {
 	my $client = shift;
+	
+	$client->requestStatus();
+	
 	my $fullness = $client->bufferFullness();
+	
+	# begin playback once we have this much data in the buffer
+	my $threshold = 20 * 1024;
 
-	# make sure we have at least 10K before starting with a quickstart.  If not, then check again in a second.
-	if ($fullness > 10 * 1024) {
+	if ( $fullness >= $threshold ) {
 		$client->resume();
-	} else {
-		$client->requestStatus();
-		Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&quickstart);
+	}
+	else {
+
+		# Bug 1827, display better buffering feedback while we wait for data
+		my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
+		
+		my ( $line1, $line2 );
+		
+		if ( $percent == 0 ) {
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
+			
+			if ( $client->linesPerScreen() == 1 ) {
+				$line2 = $client->string('CONNECTING_FOR');
+			}
+		}
+		else {
+			my $buffering = $client->string('BUFFERING') . ' ' . $percent . '%';
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $buffering . ')';
+			
+			# Display only buffering text in large text mode
+			if ( $client->linesPerScreen() == 1 ) {
+				$line2 = $buffering;
+			}
+		}
+		
+		# Find the track title
+		if ( $client->linesPerScreen() > 1 ) {
+			my $ds       = Slim::Music::Info::getCurrentDataStore();
+			my $objOrUrl = Slim::Player::Playlist::song( $client, Slim::Player::Source::streamingSongIndex($client) );
+			my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+			$line2       = Slim::Music::Info::standardTitle($client, $track);
+		}
+		
+		$client->showBriefly( $line1, $line2, {
+			duration  => 0.5,	# longer than 0.25 to ensure we don't get screen flicker
+		} );
+		
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.25, \&quickstart );
 	}
 }
 

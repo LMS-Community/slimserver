@@ -1172,11 +1172,6 @@ sub openSong {
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
 
-		my $line1 = $client->string('CONNECTING_FOR');
-		my $line2 = Slim::Music::Info::standardTitle($client, $track);
-
-		$client->showBriefly($line1, $line2, undef, 1);
-
 		if ($client->canDirectStream($fullpath)) {
 
 			$directStream = 1;
