@@ -96,7 +96,7 @@ sub canDirectStream {
 	$::d_plugins && msg( "Live365.protocolHandler requested: $url ($handle)\n" );	
 
 	# a fake $self for getPlaylist
-	my $self = IO::Socket->new;
+	$self = IO::Socket->new;
 
 	if( $handle =~ /[a-zA-Z]/ ) {  # if our URL doesn't look like a handle, don't try to get a playlist
 		my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );

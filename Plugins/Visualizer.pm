@@ -206,8 +206,8 @@ sub configLines {
 	my ($line1, $line2, $select);
 	my $item = $client_context{$client}->{list}->[$client_context{$client}->{position}];
 
-	my $line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');
-	my $line2 = $client->string($screensaver_info{$item}->{name});
+	$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');
+	$line2 = $client->string($screensaver_info{$item}->{name});
 	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq $item);
 
 	return {
