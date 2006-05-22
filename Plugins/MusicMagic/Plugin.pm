@@ -1398,7 +1398,7 @@ sub setupGroup {
 
 	$category->{'parent'}     = 'PLAYER_SETTINGS';
 	$category->{'GroupOrder'} = ['Default'];
-	$category->{'Groups'}     = %{ &playerGroup->{'Groups'} };
+	$category->{'Groups'}     = &playerGroup->{'Groups'};
 
 	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
 }
@@ -1413,7 +1413,7 @@ sub setupPort {
 		);
 
 	my %setupPrefs;
-	$setupPrefs{'MMSport'} = %{ &setupCategory->{'Prefs'}->{'MMSport'} };
+	$setupPrefs{'MMSport'} = &setupCategory->{'Prefs'}->{'MMSport'};
 
 	return (\%setupGroup,\%setupPrefs);
 };
