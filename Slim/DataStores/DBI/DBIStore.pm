@@ -845,80 +845,74 @@ sub variousArtistsObject {
 sub mergeVariousArtistsAlbums {
         my $self = shift;
 
-	unless ($variousAlbumIds) {
-
-		$variousAlbumIds = Slim::DataStores::DBI::Album->retrieveAllOnlyIds;
-	}
+	my $variousAlbumIds = Slim::DataStores::DBI::Album->retrieveAllOnlyIds;
 
 	# fetch one at a time to keep memory usage in check.
-	my $item     = shift(@{$variousAlbumIds});
-	my $albumObj = Slim::DataStores::DBI::Album->retrieve($item) if defined $item;
+	ALBUM: for my $id (@{$variousAlbumIds}) {
 
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($albumObj) && !defined $item && scalar @{$variousAlbumIds} == 0) {
+		next unless defined $id;
 
-		Slim::Music::Import->endImporter('mergeVariousAlbums');
+		my $albumObj = Slim::DataStores::DBI::Album->retrieve($id);
 
-		$variousAlbumIds = ();
+		# XXX - exception should go here. Comming soon.
+		if (!blessed($albumObj) || !$albumObj->can('tracks')) {
 
-		return 0;
-	}
+			$::d_import && msg("Import: mergeVariousArtistsAlbums: Couldn't fetch album for id: [$id]\n");
 
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($albumObj) || !$albumObj->can('tracks')) {
-		$::d_import && msg("Import: mergeVariousArtistsAlbums: Couldn't fetch album for item: [$item]\n");
-		return 0;
-	}
-
-	# This is a catch all - but don't mark it as VA.
-	return 1 if $albumObj->title eq string('NO_ALBUM');
-
-	# Don't need to process something we've already marked as a compilation.
-	return 1 if $albumObj->compilation;
-
-	my %trackArtists      = ();
-	my $markAsCompilation = 0;
-
-	for my $track ($albumObj->tracks) {
-
-		# Bug 2066: If the user has an explict Album Artist set -
-		# don't try to mark it as a compilation.
-		for my $artist ($track->contributorsOfType('ALBUMARTIST')) {
-
-			return 1;
+			next;
 		}
 
-		# Create a composite of the artists for the track to compare below.
-		my $artistComposite = join(':', sort map { $_->id } $track->contributorsOfType('ARTIST'));
+		# This is a catch all - but don't mark it as VA.
+		next if $albumObj->title eq string('NO_ALBUM');
 
-		$trackArtists{$artistComposite} = 1;
-	}
+		# Don't need to process something we've already marked as a compilation.
+		next if $albumObj->compilation;
 
-	# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
-	if (scalar values %trackArtists > 1) {
+		my %trackArtists      = ();
+		my $markAsCompilation = 0;
 
-		$markAsCompilation = 1;
+		for my $track ($albumObj->tracks) {
 
-	} else {
+			# Bug 2066: If the user has an explict Album Artist set -
+			# don't try to mark it as a compilation.
+			for my $artist ($track->contributorsOfType('ALBUMARTIST')) {
 
-		my ($artistId) = keys %trackArtists;
+				next ALBUM;
+			}
 
-		if ($artistId == $self->variousArtistsObject->id) {
+			# Create a composite of the artists for the track to compare below.
+			my $artistComposite = join(':', sort map { $_->id } $track->contributorsOfType('ARTIST'));
+
+			$trackArtists{$artistComposite} = 1;
+		}
+
+		# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
+		if (scalar values %trackArtists > 1) {
 
 			$markAsCompilation = 1;
+
+		} else {
+
+			my ($artistId) = keys %trackArtists;
+
+			if ($artistId == $self->variousArtistsObject->id) {
+
+				$markAsCompilation = 1;
+			}
+		}
+
+		if ($markAsCompilation) {
+
+			$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
+
+			$albumObj->compilation(1);
+			$albumObj->update;
 		}
 	}
 
-	if ($markAsCompilation) {
+	$variousAlbumIds = ();
 
-		$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
-
-		$albumObj->compilation(1);
-		$albumObj->contributor($self->variousArtistsObject->id);
-		$albumObj->update;
-	}
-
-	return 1;
+	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
 
 sub wipeCaches {
