@@ -252,6 +252,11 @@ sub handleIndex {
 		}
 	}
 
+	# generic server info
+	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
+	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
+	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
+
 	$params->{'refresh'} = $refresh;
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Health/index.html',$params);
