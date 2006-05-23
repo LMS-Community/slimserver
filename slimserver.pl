@@ -372,6 +372,9 @@ sub init {
 	$::d_server && msg("SlimServer Dispatch init...\n");
 	Slim::Control::Dispatch::init();
 	
+	$::d_server && msg("SlimServer IR init...\n");
+	Slim::Hardware::IR::init();
+	
 	$::d_server && msg("SlimServer Buttons init...\n");
 	Slim::Buttons::Common::init();
 
@@ -384,7 +387,7 @@ sub init {
 	}
 
 	$::d_server && msg("Old SLIMP3 Protocol init...\n");
-	Slim::Networking::Protocol::init();
+	Slim::Networking::SliMP3::Protocol::init();
 
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
@@ -400,7 +403,7 @@ sub init {
 
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
-	
+
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
 
