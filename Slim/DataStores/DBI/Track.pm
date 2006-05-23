@@ -387,6 +387,10 @@ sub contributorRoles {
 	return Slim::DataStores::DBI::Contributor->contributorRoles;
 }
 
+package Slim::DataStores::DBI::LightWeightTrack;
+
+our @ISA = ('Slim::DataStores::DBI::Track');
+
 1;
 
 __END__
