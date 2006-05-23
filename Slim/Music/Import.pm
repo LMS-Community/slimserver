@@ -98,6 +98,7 @@ sub startScan {
 	$class->useFolderImporter(0);
 
 	$::d_import && msg("Import: Finished background scanning.\n");
+	Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
 }
 
 sub deleteImporter {

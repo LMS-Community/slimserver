@@ -20,6 +20,7 @@ use Slim::Buttons::Common;
 use Slim::Control::Command;
 use Slim::Music::Info;
 use Slim::Music::Info;
+use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 
 use Plugins::RadioIO::ProtocolHandler;
