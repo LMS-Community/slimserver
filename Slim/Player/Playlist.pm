@@ -586,6 +586,13 @@ sub scheduleWriteOfPlaylist {
 		return 0;
 	}
 
+	if ($playlistObj->title eq $client->string('UNTITLED')) {
+
+		$::d_playlist && msg("Not writing out untitled playlist.\n");
+
+		return 0;
+	}
+
 	Slim::Formats::Parse::writeM3U( 
 		[ $playlistObj->tracks ],
 		undef,
