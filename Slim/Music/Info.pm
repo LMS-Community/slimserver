@@ -164,6 +164,74 @@ sub init {
 			'getTag' => \&Slim::Formats::APE::getTag,
 		},
 	);
+
+	%tagFunctions = (
+		'mp3' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
+
+		'mp2' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
+
+		'ogg' => {
+			'module' => 'Slim::Formats::Ogg',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Ogg::getTag,
+		},
+
+		'flc' => {
+			'module' => 'Slim::Formats::FLAC',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::FLAC::getTag,
+		},
+
+		'wav' => {
+			'module' => 'Slim::Formats::Wav',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Wav::getTag,
+		},
+
+		'aif' => {
+			'module' => 'Slim::Formats::AIFF',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::AIFF::getTag,
+		},
+
+		'wma' => {
+			'module' => 'Slim::Formats::WMA',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::WMA::getTag,
+		},
+
+		'mov' => {
+			'module' => 'Slim::Formats::Movie',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Movie::getTag,
+		},
+
+		'shn' => {
+			'module' => 'Slim::Formats::Shorten',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Shorten::getTag,
+		},
+
+		'mpc' => {
+			'module' => 'Slim::Formats::Musepack',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Musepack::getTag,
+		},
+
+		'ape' => {
+			'module' => 'Slim::Formats::APE',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::APE::getTag,
+		},
+	);
 }
 
 sub getCurrentDataStore {

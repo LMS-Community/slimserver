@@ -515,10 +515,6 @@ sub stripRel {
 	return $file;
 }
 
-sub inAudioFolder {
-	return _checkInFolder(shift, 'audiodir');
-}
-
 sub inPlaylistFolder {
 	return _checkInFolder(shift, 'playlistdir');
 }

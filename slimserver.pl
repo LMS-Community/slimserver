@@ -84,14 +84,6 @@ BEGIN {
 	use bootstrap;
 
 	bootstrap->loadModules();
-
-	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
-	if (!Slim::Utils::OSDetect::isDebian()) {
-
-		unlink("$Bin/CPAN/MP3/Info.pm");
-		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-		unlink("$Bin/CPAN/XML/Simple.pm");
-	}
 };
 
 use Time::HiRes;
@@ -256,7 +248,6 @@ our (
 	$stdio,
 	$stop,
 	$perfmon,
-	$perfwarn
 );
 
 sub init {
@@ -469,7 +460,11 @@ sub idle {
 	# loop through once a second, at a minimum
 	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 
-	$::d_time && msg("select_time: $select_time\n");
+	# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
+	$select_time = Slim::Utils::Timers::nextTimer();
+	
+	# loop through once a second, at a minimum
+	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 	
 	$::d_time && msg("select_time: $select_time\n");
 	
@@ -696,8 +691,7 @@ sub initOptions {
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
-		'perfmon'			=> \$perfmon,
-		'perfwarn=f'		=> \$perfwarn, 
+		'perfmon'		=> \$perfmon,
 	)) {
 		showUsage();
 		exit(1);

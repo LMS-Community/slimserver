@@ -36,6 +36,9 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
 
+# cached value of commonAlbumTitles pref
+our $common_albums;
+
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
 
@@ -100,6 +103,10 @@ sub new {
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	
+	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
+
+	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
+
 	return $self;
 }
 
