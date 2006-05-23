@@ -67,13 +67,13 @@ sub loadModules {
 
 	my @SlimINC = (
 		$Bin, 
-		catdir($Bin,'CPAN'), 
-		catdir($Bin,'lib'), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}), 
 		catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'), 
-		catdir($Bin,'CPAN','arch',$Config::Config{'archname'})
+		catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($Bin,'lib'), 
+		catdir($Bin,'CPAN'), 
 	);
 
 	# This works like 'use lib'
@@ -101,6 +101,11 @@ sub loadModules {
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
+
+	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
+	unlink("$Bin/CPAN/MP3/Info.pm");
+	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
+	unlink("$Bin/CPAN/XML/Simple.pm");
 
 	$SIG{'CHLD'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
