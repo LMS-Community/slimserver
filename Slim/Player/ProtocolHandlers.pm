@@ -30,7 +30,7 @@ my %loadedHandlers = ();
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
-	if (defined $protocolHandlers{$protocol}) {
+	if ($protocolHandlers{$protocol}) {
 		return 1;
 	}
 
