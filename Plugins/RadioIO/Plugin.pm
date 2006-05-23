@@ -17,8 +17,9 @@ use strict;
 use MIME::Base64;
 
 use Slim::Buttons::Common;
-use Slim::Buttons::XMLBrowser;
+use Slim::Control::Command;
 use Slim::Music::Info;
+use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
 
 use Plugins::RadioIO::ProtocolHandler;

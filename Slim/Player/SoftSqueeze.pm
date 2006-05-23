@@ -12,6 +12,8 @@ package Slim::Player::SoftSqueeze;
 
 use strict;
 
+use base qw(Slim::Player::Squeezebox2);
+
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Squeezebox2;
 use Slim::Utils::Prefs;
