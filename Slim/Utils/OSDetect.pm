@@ -154,7 +154,7 @@ sub dirsFor {
 		}
 	}
 
-	return @dirs;
+	return wantarray() ? @dirs : $dirs[0];
 }
 
 sub details {

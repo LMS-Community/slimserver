@@ -16,7 +16,7 @@ package Slim::DataStores::DBI::DataModel;
 use strict;
 
 use base 'DBIx::Class';
-use DBI;
+use DBIx::Migration;
 use File::Basename;
 use File::Path;
 use Scalar::Util qw(blessed);
@@ -74,6 +74,7 @@ sub init {
 	my $password = Slim::Utils::Prefs::get('dbpassword');
 	my $driver   = $class->driver;
 
+	# Call DBIx::Class's connection method.
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 0,
@@ -81,53 +82,25 @@ sub init {
 		Taint      => 1,
 	});
 
-	my $dbh = $class->storage->dbh || do {
+	if (!$class->storage->dbh) {
 
 		# Not much we can do if there's no DB.
-		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
+		msg("DataModel: Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
 		bt();
 		exit;
-	};
-
-	$::d_info && msg("Connected to database $source\n");
-
-	# XXX - this is a mess. Replace with DBIx::Migration
-	my $version;
-	my $nextversion;
-	do {
-		if (grep { /metainformation/ } $dbh->tables()) {
-			($version) = $dbh->selectrow_array("SELECT value FROM metainformation WHERE name = 'version'");
-		}
-
-		if (defined $version) {
-
-			$nextversion = Slim::Utils::SQLHelper->findUpgrade($driver, $version);
-			
-			if ($nextversion && ($nextversion ne 99999)) {
-
-				my $upgradeFile = catdir("Upgrades", $nextversion.".sql" );
-				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
-
-				Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, $upgradeFile);
-
-			} elsif ($nextversion && ($nextversion eq 99999)) {
-
-				$::d_info && msg("Database schema out of date and purge required. Purging db.\n");
-
-				Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, "dbdrop.sql");
-
-				$version = undef;
-				$nextversion = 0;
-			}
-		}
-
-	} while ($nextversion);
-	
-	if (!defined($version)) {
-		$::d_info && msg("Creating new database.\n");
-
-		Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, "dbcreate.sql");
 	}
+
+	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
+	my $dbix = DBIx::Migration->new({
+		'dsn'      => $source,
+		'username' => $username,
+		'password' => $password,
+		'dir'      => sprintf('%s/%s', Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
+	});
+
+	$dbix->migrate;
+
+	$::d_info && msgf("Connected to database $source - schema version: [%d]\n", $dbix->version);
 }
 
 sub driver {
@@ -146,7 +119,7 @@ sub wipeDB {
 	my $class = shift;
 
 	Slim::Utils::SQLHelper->executeSQLFile(
-		$class->driver, $class->storage->dbh, "dbclear.sql"
+		$class->driver, $class->storage->dbh, "schema_clear.sql"
 	);
 
 	$class->storage->dbh->commit;

@@ -6,7 +6,7 @@ use DBI;
 use File::Slurp;
 use File::Spec;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 __PACKAGE__->mk_accessors(qw/debug dir dsn password username/);
 
@@ -170,12 +170,12 @@ sub _create_migration_table {
     my $self = shift;
     $self->{_dbh}->do(<<"EOF");
 CREATE TABLE dbix_migration (
-    key CHAR(64) PRIMARY KEY,
+    name CHAR(64) PRIMARY KEY,
     value CHAR(64)
 );
 EOF
     $self->{_dbh}->do(<<"EOF");
-    INSERT INTO dbix_migration ( key, value ) VALUES ( 'version', '0' );
+    INSERT INTO dbix_migration ( name, value ) VALUES ( 'version', '0' );
 EOF
 }
 
@@ -212,7 +212,7 @@ sub _newest {
 sub _update_migration_table {
     my ( $self, $version ) = @_;
     $self->{_dbh}->do(<<"EOF");
-UPDATE dbix_migration SET value = '$version' WHERE key = 'version';
+UPDATE dbix_migration SET value = '$version' WHERE name = 'version';
 EOF
 }
 
@@ -221,7 +221,7 @@ sub _version {
     my $version = undef;
     eval {
         my $sth = $self->{_dbh}->prepare(<<"EOF");
-SELECT value FROM dbix_migration WHERE key = ?;
+SELECT value FROM dbix_migration WHERE name = ?;
 EOF
         $sth->execute('version');
         for my $val ( $sth->fetchrow_arrayref ) {

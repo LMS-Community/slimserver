@@ -1,7 +1,3 @@
--- Increment the version below when you change the schema.
--- You also need to add an Upgrade script to the Upgrades 
--- directory and alter sql.version
-
 -- It's important that there is a newline between all 
 -- SQL statements, otherwise the parser will skip them.
 
@@ -16,7 +12,6 @@ CREATE TABLE metainformation (
   PRIMARY KEY (name)
 ) TYPE=InnoDB CHARACTER SET utf8;
 
-INSERT INTO metainformation VALUES ('version', 21);
 INSERT INTO metainformation VALUES ('trackCount', 0);
 INSERT INTO metainformation VALUES ('totalTime', 0);
 INSERT INTO metainformation VALUES ('lastRescanTime', 0);
@@ -133,7 +128,7 @@ CREATE TABLE albums (
   titlesort text,
   titlesearch text,
   customsearch text,
-  contributor int(10) unsigned,
+  contributor int(10) unsigned NOT NULL,
   compilation tinyint(1) unsigned,
   year  smallint(5) unsigned,
   artwork int(10) unsigned, -- pointer to a track id that contains artwork

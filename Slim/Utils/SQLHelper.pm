@@ -3,8 +3,7 @@ package Slim::Utils::SQLHelper;
 # $Id$
 
 # Utility functions to handle reading of SQL files and executing them on the
-# DB. This may be replaced by a combination of DBIx::Class's deploy
-# functionality, in combination with DBIx::Migration.
+# DB. This may be replaced by DBIx::Class's deploy functionality.
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -72,49 +71,6 @@ sub executeSQLFile {
 	close $fh;
 
 	return 1;
-}
-
-# This is a mess. Use DBIx::Migration instead.
-sub findUpgrade {
-	my $class       = shift;
-	my $driver      = shift;
-	my $currVersion = shift;
-
-	my $sqlVerFilePath = catdir($Bin, "SQL", $driver, "sql.version");
-
-	my $versionFile;
-
-	open($versionFile, $sqlVerFilePath) or do {
-
-		errorMsg("findUpgrade: Can't open file [$sqlVerFilePath] : $!\n");
-		return 0;
-	};
-
-	my ($line, $from, $to);
-
-	while ($line = <$versionFile>) {
-		$line=~/^(\d+)\s+(\d+)\s*$/ || next;
-		($from, $to) = ($1, $2);
-		$from == $currVersion && last;
-	}
-
-	close($versionFile);
-
-	if ((!defined $from) || ($from != $currVersion)) {
-		$::d_info && msg("No upgrades found for database v. ". $currVersion."\n");
-		return 0;
-	}
-
-	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
-
-	if (!-f $file && ($to != 99999)) {
-		$::d_info && msg("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
-		return 0;
-	}
-
-	$::d_info && msg("database v. ".$currVersion." requires upgrade to $to\n");
-
-	return $to;
 }
 
 1;
