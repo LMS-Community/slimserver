@@ -15,12 +15,7 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
+use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
@@ -56,14 +51,9 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
 # Map our tag functions - so they can be dynamically loaded.
-our %tagFunctions = ();
+our (%tagClasses, %loadedTagClasses);
 
-		'ape' => {
-			'module' => 'Slim::Formats::APE',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::APE::getTag,
-		},
-	);
+sub init {
 
 	# Allow external programs to use Slim::Utils::Misc, without needing
 	# the entire DBI stack.
@@ -72,189 +62,37 @@ our %tagFunctions = ();
 
 	Slim::Music::TitleFormatter::init();
 
-		'flc' => {
-			'module' => 'Slim::Formats::FLAC',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::FLAC::getTag,
-		},
+	loadTypesConfig();
 
-		'wav' => {
-			'module' => 'Slim::Formats::Wav',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Wav::getTag,
-		},
+	# precompute the valid extensions
+	validTypeExtensions();
 
-		'aif' => {
-			'module' => 'Slim::Formats::AIFF',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::AIFF::getTag,
-		},
+	# Our loader classes for tag formats.
+	%tagClasses = (
+		'mp3' => 'Slim::Formats::MP3',
+		'mp2' => 'Slim::Formats::MP3',
+		'ogg' => 'Slim::Formats::Ogg',
+		'flc' => 'Slim::Formats::FLAC',
+		'wav' => 'Slim::Formats::Wav',
+		'aif' => 'Slim::Formats::AIFF',
+		'wma' => 'Slim::Formats::WMA',
+		'mov' => 'Slim::Formats::Movie',
+		'shn' => 'Slim::Formats::Shorten',
+		'mpc' => 'Slim::Formats::Musepack',
+		'ape' => 'Slim::Formats::APE',
 
-		'wma' => {
-			'module' => 'Slim::Formats::WMA',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::WMA::getTag,
-		},
+		# Playlist types
+		'asx' => 'Slim::Formats::Playlists::ASX',
+		'cue' => 'Slim::Formats::Playlists::CUE',
+		'm3u' => 'Slim::Formats::Playlists::M3U',
+		'pls' => 'Slim::Formats::Playlists::PLS',
+		'wpl' => 'Slim::Formats::Playlists::WPL',
+		'wax' => 'Slim::Formats::Playlists::ASX',
+		'xpf' => 'Slim::Formats::Playlists::XSPF',
 
-		'mov' => {
-			'module' => 'Slim::Formats::Movie',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Movie::getTag,
-		},
-
-		'shn' => {
-			'module' => 'Slim::Formats::Shorten',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Shorten::getTag,
-		},
-
-		'mpc' => {
-			'module' => 'Slim::Formats::Musepack',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Musepack::getTag,
-		},
-
-		'ape' => {
-			'module' => 'Slim::Formats::APE',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::APE::getTag,
-		},
-	);
-
-	%tagFunctions = (
-		'mp3' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
-
-		'mp2' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
-
-		'ogg' => {
-			'module' => 'Slim::Formats::Ogg',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Ogg::getTag,
-		},
-
-		'flc' => {
-			'module' => 'Slim::Formats::FLAC',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::FLAC::getTag,
-		},
-
-		'wav' => {
-			'module' => 'Slim::Formats::Wav',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Wav::getTag,
-		},
-
-		'aif' => {
-			'module' => 'Slim::Formats::AIFF',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::AIFF::getTag,
-		},
-
-		'wma' => {
-			'module' => 'Slim::Formats::WMA',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::WMA::getTag,
-		},
-
-		'mov' => {
-			'module' => 'Slim::Formats::Movie',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Movie::getTag,
-		},
-
-		'shn' => {
-			'module' => 'Slim::Formats::Shorten',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Shorten::getTag,
-		},
-
-		'mpc' => {
-			'module' => 'Slim::Formats::Musepack',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Musepack::getTag,
-		},
-
-		'ape' => {
-			'module' => 'Slim::Formats::APE',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::APE::getTag,
-		},
-	);
-
-	%tagFunctions = (
-		'mp3' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
-
-		'mp2' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
-
-		'ogg' => {
-			'module' => 'Slim::Formats::Ogg',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Ogg::getTag,
-		},
-
-		'flc' => {
-			'module' => 'Slim::Formats::FLAC',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::FLAC::getTag,
-		},
-
-		'wav' => {
-			'module' => 'Slim::Formats::Wav',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Wav::getTag,
-		},
-
-		'aif' => {
-			'module' => 'Slim::Formats::AIFF',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::AIFF::getTag,
-		},
-
-		'wma' => {
-			'module' => 'Slim::Formats::WMA',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::WMA::getTag,
-		},
-
-		'mov' => {
-			'module' => 'Slim::Formats::Movie',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Movie::getTag,
-		},
-
-		'shn' => {
-			'module' => 'Slim::Formats::Shorten',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Shorten::getTag,
-		},
-
-		'mpc' => {
-			'module' => 'Slim::Formats::Musepack',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Musepack::getTag,
-		},
-
-		'ape' => {
-			'module' => 'Slim::Formats::APE',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::APE::getTag,
-		},
+		# Remote types
+		'http' => 'Slim::Formats::HTTP',
+		'mms'  => 'Slim::Formats::MMS',
 	);
 }
 
@@ -958,14 +796,9 @@ sub isHTTPURL {
 }
 
 sub isMMSURL {
-	my $url = shift || return 0;
+	my $url = shift;
 
-	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1)) {
-
-		return 1;
-	}
-
-	return 0;
+	return (defined($url) && ($url =~ /^mms:\/\//i));
 }
 
 sub isRemoteURL {
