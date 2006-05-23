@@ -239,8 +239,6 @@ our (
 	$httpaddr,
 	$lastlooptime,
 	$logfile,
-	$loopcount,
-	$loopsecond,
 	$localClientNetAddr,
 	$localStreamAddr,
 	$newVersion,
@@ -431,7 +429,6 @@ sub init {
 	}
 
 	checkVersion();
-	keepSlimServerInMemory();
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
@@ -1035,7 +1032,6 @@ sub cleanup {
 		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
-
 
 	remove_pid_file();
 }
