@@ -31,6 +31,15 @@ INIT {
 sub init {
 	my $class = shift;
 
+	# Check to see if our private port is being used. If not, we'll assume
+	# the user has setup their own copy of MySQL.
+	if (Slim::Utils::Prefs::get('dbsource') =~ /port=9092/) {
+
+		$::d_mysql && msg("MySQLHelper: init() Not starting MySQL - looks to be user configured.\n");
+
+		return 1;
+	}
+
 	for my $dir (Slim::Utils::OSDetect::dirsFor('MySQL')) {
 
 		if (-r catdir($dir, 'my.tt')) {
@@ -47,6 +56,9 @@ sub init {
 	$class->confFile( $class->createConfig($cacheDir) );
 
 	if ($class->needSystemTables) {
+
+		$::d_mysql && msg("MySQLHelper: init() Creating system tables..\n");
+
 		$class->createSystemTables;
 	}
 
@@ -89,6 +101,8 @@ sub createConfig {
 		}
 	}
 
+	$::d_mysql && msg("MySQLHelper: createConfig() Creating config from file: [$ttConf] -> [$output].\n");
+
 	my $template = Template->new({ 'ABSOLUTE' => 1 });
            $template->process($ttConf, \%config, $output) || die $template->error;
 
@@ -99,17 +113,17 @@ sub startServer {
 	my $class = shift;
 
 	if (Slim::Utils::OSDetect::isDebian()) {
-		$::d_mysql && msg("startMySQLServer: Not starting MySQL server on Debian..\n");
+		$::d_mysql && msg("MySQLHelper: startServer() Not starting MySQL server on Debian..\n");
 		return 1;
 	}
 
 	if ($class->pidFile && $class->processObj && $class->processObj->alive) {
-		errorMsg("startMySQLServer: MySQL is already running!\n");
+		errorMsg("MySQLHelper: startServer(): MySQL is already running!\n");
 		return 0;
 	}
 
 	my $mysqld = Slim::Utils::Misc::findbin('mysqld') || do {
-		errorMsg("startMySQLServer: Couldn't find a executable for 'mysqld'! This is a fatal error. Exiting.\n");
+		errorMsg("MySQLHelper: startServer() Couldn't find a executable for 'mysqld'! This is a fatal error. Exiting.\n");
 		exit;
 	};
 
@@ -124,6 +138,8 @@ sub startServer {
 		sprintf('--defaults-file=%s', $class->confFile),
 		sprintf('--pid-file=%s', $class->pidFile),
 	);
+
+	$::d_mysql && msgf("MySQLHelper: startServer() About to start MySQL with command: [%s]\n", join(' ', @commands));
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
@@ -148,7 +164,7 @@ sub startServer {
 	}
 
 	if ($@) {
-		errorMsg("MySQLHelper: startServer() - server didn't startup in 30 seconds!\n");
+		errorMsg("MySQLHelper: startServer() - server didn't startup in 30 seconds! Fatal! Exiting!\n");
 		exit;
 	}
 
