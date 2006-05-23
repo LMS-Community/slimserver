@@ -24,6 +24,7 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::ProtocolHandlers;
 
 use Plugins::RadioIO::ProtocolHandler;
 
