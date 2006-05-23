@@ -53,8 +53,6 @@ my $currentITunesMusicLibraryDate = 0;
 my $iTunesScanStartTime = 0;
 
 my $isScanning = 0;
-my $opened = 0;
-my $locked = 0;
 my $iBase = '';
 
 my $inPlaylists;
@@ -62,8 +60,6 @@ my $inTracks;
 our %tracks;
 
 my $iTunesLibraryFile;
-my $iTunesParser;
-my $iTunesParserNB;
 my $offset = 0;
 
 my ($inKey, $inDict, $inValue, %item, $currentKey, $nextIsMusicFolder, $nextIsPlaylistName, $inPlaylistArray);
@@ -99,6 +95,7 @@ our %filetypes = (
 # of $newValue, since set or not we still called canUseiTunesLibrary().
 # All the extra code wasn't really gaining us anything.
 sub useiTunesLibrary {
+	my $class    = shift;
 	my $newValue = shift;
 
 	if (defined($newValue)) {
@@ -110,7 +107,7 @@ sub useiTunesLibrary {
 	my $can = canUseiTunesLibrary();
 
 
-	Slim::Music::Import->useImporter('ITUNES', $use && $can);
+	Slim::Music::Import->useImporter($class, $use && $can);
 
 	$::d_itunes && msg("iTunes: using itunes library: $use\n");
 
@@ -147,7 +144,9 @@ sub initPlugin {
 		addGroups();
 	}
 
-	return unless canUseiTunesLibrary();
+	if (!$class->canUseiTunesLibrary) {
+		return;
+	}
 
 	Slim::Music::Import->addImporter($class, {
 		'reset'        => \&resetState,
@@ -171,15 +170,16 @@ sub initPlugin {
 	# what we want. That needs to be set when we're really done scanning.
 	#checker($initialized);
 
-	if ($INC{'Slim::Web::Pages'}) {
-
-		setPodcasts();
-	}
+	$class->setPodcasts;
 
 	return 1;
 }
 
 sub setPodcasts {
+
+	if (!$INC{'Slim::Web::Pages'}) {
+		return;
+	}
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
@@ -439,6 +439,7 @@ sub checker {
 }
 
 sub startScan {
+	my $class = shift;
 
 	if (!useiTunesLibrary()) {
 		return;
@@ -448,20 +449,15 @@ sub startScan {
 
 	$::d_itunes && msg("iTunes: startScan on file: $file\n");
 
-	if (!defined($file)) {
-		warn "Trying to scan an iTunes file that doesn't exist.";
+	if (!defined $file) {
+
+		errorMsg("iTunes: Trying to scan an iTunes XML file that doesn't exist.");
 		return;
 	}
 
-	#stopScan();
-
-	$isScanning = 1;
 	$iTunesScanStartTime = time();
 
-	# start the checker
-	#checker();
-
-	$iTunesParser = XML::Parser->new(
+	my $iTunesParser = XML::Parser->new(
 		'ErrorContext'     => 2,
 		'ProtocolEncoding' => 'UTF-8',
 		'NoExpand'         => 1,
@@ -474,7 +470,14 @@ sub startScan {
 		},
 	);
 
-	scanFunction();
+	$iTunesParser->parsefile($file);
+
+	#$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
+
+	$::d_itunes && msg("iTunes: Finished scanning iTunes XML\n");
+
+	$class->doneScanning;
+
 }
 
 sub stopScan {
@@ -484,11 +487,8 @@ sub stopScan {
 		$::d_itunes && msg("iTunes: Was stillScanning - stopping old scan.\n");
 
 		$isScanning = 0;
-		$locked = 0;
-		$opened = 0;
-		
-		close(ITUNESLIBRARY);
-		$iTunesParser = undef;
+
+		#$iTunesParser = undef;
 		resetScanState();
 	}
 
@@ -500,120 +500,29 @@ sub stillScanning {
 }
 
 sub doneScanning {
-	$::d_itunes && msg("iTunes: done Scanning: unlocking and closing\n");
+	my $class = shift;
 
-	if (defined $iTunesParserNB) {
+	$::d_itunes && msg("iTunes: Finished Scanning\n");
 
-		# This spews, but it's harmless.
-		eval { $iTunesParserNB->parse_done };
-	}
-
-	$iTunesParserNB = undef;
-	$iTunesParser   = undef;
-
-	$locked = 0;
-	$opened = 0;
+	#$iTunesParser   = undef;
 
 	$iTunesLibraryFile = undef;
 	$lastMusicLibraryFinishTime = time();
 	$isScanning = 0;
 
-	# Don't leak filehandles.
-	close(ITUNESLIBRARY);
+	# Set the last change time for the next go-round.
+	my $file  = findMusicLibraryFile();
+	my $mtime = (stat($file))[9];
 
-	setPodcasts();
+	$class->setPodcasts;
 
 	if ($::d_itunes) {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $currentITunesMusicLibraryDate);
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $mtime);
 
-	Slim::Music::Import->endImporter('ITUNES');
-}
-
-sub scanFunction {
-	$iTunesLibraryFile ||= findMusicLibraryFile();
-
-	# this assumes that iTunes uses file locking when writing the xml file out.
-	if (!$opened) {
-
-		$::d_itunes && msg("iTunes: opening iTunes Library XML file.\n");
-
-		open(ITUNESLIBRARY, $iTunesLibraryFile) || do {
-			$::d_itunes && warn "iTunes: Couldn't open iTunes Library: $iTunesLibraryFile";
-			return 0;
-		};
-
-		$opened = 1;
-
-		resetScanState();
-
-		# Set the last change time for the next go-round.
-		my $mtime = (stat($iTunesLibraryFile))[9];
-	
-		$currentITunesMusicLibraryDate = $mtime;
-	}
-
-	if ($opened && !$locked) {
-
-		$::d_itunes && msg("iTunes: Attempting to get lock on iTunes Library XML file.\n");
-
-		$locked = 1;
-		$locked = flock(ITUNESLIBRARY, LOCK_SH | LOCK_NB) unless ($^O eq 'MSWin32'); 
-
-		if ($locked) {
-
-			$::d_itunes && msg("iTunes: Got file lock on iTunes Library\n");
-
-			$locked = 1;
-
-			if (defined $iTunesParser) {
-
-				$::d_itunes && msg("iTunes: Created a new Non-blocking XML parser.\n");
-
-				$iTunesParserNB = $iTunesParser->parse_start();
-
-			} else {
-
-				$::d_itunes && msg("iTunes: No iTunesParser was defined!\n");
-			}
-
-		} else {
-
-			$::d_itunes && warn "iTunes: Waiting on lock for iTunes Library";
-			return 1;
-		}
-	}
-
-	# parse a little more from the stream.
-	if (defined $iTunesParserNB) {
-
-		#$::d_itunes && msg("iTunes: Parsing next bit of XML..\n");
-
-		local $/ = '</dict>';
-		my $line = <ITUNESLIBRARY>;
-
-		for (my $i = 0; $i < 5000; $i++) {
-
-			$line .= <ITUNESLIBRARY>;
-
-			if (eof(ITUNESLIBRARY)) {
-
-				last;
-			}
-		}
-
-		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
-
-		$iTunesParserNB->parse_more($line);
-
-		return 1;
-	}
-
-	$::d_itunes && msg("iTunes: No iTunesParserNB defined!\n");
-
-	return 0;
+	Slim::Music::Import->endImporter($class);
 }
 
 sub handleTrack {
@@ -855,7 +764,7 @@ sub handlePlaylist {
 	$cacheEntry->{'TAG'}   = 1;
 	$cacheEntry->{'VALID'} = '1';
 
-	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
+	#Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
 
 	# Check for podcasts and add to custom Genre
 	if ($name =~ /podcasts/i) {			
@@ -1028,15 +937,6 @@ sub handleEndElement {
 
 		%item = ();
 	}
-
-	# Finish up
-	if ($element eq 'plist') {
-		$::d_itunes && msg("iTunes: Finished scanning iTunes XML\n");
-
-		doneScanning();
-
-		return 0;
-	}
 }
 
 sub resetScanState {
@@ -1142,6 +1042,7 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($tempClient);
 				}
 
+				#XXXX - need to be fixed for the new scanner world.
 				Slim::Music::Import->useImporter('ITUNES',$changeref->{'itunes'}{'new'});
 				Slim::Music::Import->startScan('ITUNES');
 			},
