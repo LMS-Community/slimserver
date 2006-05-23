@@ -113,7 +113,6 @@ sub lines {
 
 	my ($line1, $line2, $arrow);
 	
-	my $ds       = Slim::Music::Info::getCurrentDataStore();
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
 		catfile(Slim::Utils::Prefs::get('playlistdir'), $context{$client} . '.m3u')
 	);
@@ -123,7 +122,7 @@ sub lines {
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');
 
-	} elsif ($ds->objectForUrl($newUrl)) {
+	} elsif (Slim::Schema->objectForUrl($newUrl)) {
 		
 		# Special text for overwriting an existing playlist
 		# if large text, make sure we show the message instead of the playlist name

@@ -5,7 +5,7 @@ use base qw/DBIx::Class/;
 use strict;
 use warnings;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::PK::Auto - Automatic primary key class
 

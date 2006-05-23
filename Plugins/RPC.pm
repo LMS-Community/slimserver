@@ -65,24 +65,14 @@ sub getPlaylist {
 	my ($valid, $start, $end) = Slim::Control::Request::normalize(undef, $p1, $p2, $songCount);
 
 	if ($valid) {
-		my $ds = Slim::Music::Info::getCurrentDataStore();
 
 		my $idx;
 
 		for ($idx = $start; $idx <= $end; $idx++) {
 
-			my $track = $ds->objectForUrl(Slim::Player::Playlist::song($client, $idx));
+			my $track = Slim::Schema->objectForUrl(Slim::Player::Playlist::song($client, $idx));
 
-			if (blessed($track) && $track->can('contributors')) {
-
-				# place the contributors all in an array for easy access
-				my @contribs = $track->contributors();
-				$track->{contributors} = \@contribs;
-				$_->name() foreach @contribs;
-
-				# make sure to read the track and album data from the db as well
-				$track->album()->title() if $track->album();
-				$track->title();
+			if (blessed($track)) {
 
 				push @returnArray, $track;
 			}

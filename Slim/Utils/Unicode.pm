@@ -506,6 +506,7 @@ sub utf8on {
 sub looks_like_ascii {
 	use bytes;
 
+	return 1 if !$_[0];
 	return 1 if $_[0] !~ /[^\x00-\x7F]/;
 	return 0;
 }

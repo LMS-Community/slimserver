@@ -106,7 +106,7 @@ sub searchExitHandler {
 
 	} elsif ($exitType eq 'RIGHT') {
 
-		my $current = $client->param( 'valueRef');
+		my $current = $client->param('valueRef');
 
 		my %nextParams = searchFor($client, $$current) ;
 
@@ -154,25 +154,25 @@ sub startSearch {
 	if ($client->searchFor eq 'ARTISTS') {
 
 		Slim::Buttons::Common::pushMode($client, 'browsedb', {
-			'search' => $term,
-			'hierarchy' => 'artist,album,track',
-			'level' => 0,
+			'search'    => $term,
+			'hierarchy' => 'contributor,album,track',
+			'level'     => 0,
 		});
 
 	} elsif ($client->searchFor eq 'ALBUMS') {
 
 		Slim::Buttons::Common::pushMode($client, 'browsedb', {
-			'search' => $term,
+			'search'    => $term,
 			'hierarchy' => 'album,track',
-			'level' => 0,
+			'level'     => 0,
 		});
 
 	} else {
 
 		Slim::Buttons::Common::pushMode($client, 'browsedb', {
-			'search' => $term,
+			'search'    => $term,
 			'hierarchy' => 'track',
-			'level' => 0,
+			'level'     => 0,
 		});
 	}
 
@@ -200,7 +200,7 @@ sub searchTerm {
 		}
 	}
 
-	$term .= '*';
+	$term .= '%';
 
 	# If we're searching in substrings, return - otherwise append another
 	# search which is effectively \b for the query. We might (should?)
@@ -209,7 +209,7 @@ sub searchTerm {
 		return [ $term ];
 	}
 
-	return [ $term, "* $term" ];
+	return [ $term, "% $term" ];
 }
 
 1;

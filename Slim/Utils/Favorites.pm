@@ -28,12 +28,10 @@ use Slim::Utils::Prefs;
 # Adds a favorite for the given client to the database.  
 # Should station titles be localized??  Should they be pulled from tags in the stream?
 sub clientAdd {
-	my $class = shift;
+	my ($class, $client, $url, $title) = @_;
+
 	# this is a class only method.
-	assert (!ref($class), "call clientAdd as a class method, not an instance\n");
-	my $client = shift;
-	my $url = shift;
-	my $title = shift;
+	assert(!ref($class), "call clientAdd as a class method, not an instance\n");
 
 	# don't crash if no url
 	if (!$url) {
@@ -47,21 +45,27 @@ sub clientAdd {
 		} else {
 			$url = ref($url).":".$url->id;
 		}
-	}
+	} 
 
 	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
+	my $fav = undef;
+
 	# if its already a favorite, don't add it again
-	my $fav = findByClientAndURL($class, $client, $url);
+	$fav = findByClientAndURL($class, $client, $url);
+
 	if (defined($fav)) {
 		return $fav->{'num'};
 	}
 	
 	# find any vacated spots
-	my $fav = findByClientAndURL($class, $client, '');
+	$fav = findByClientAndURL($class, $client, '');
+
 	if (defined($fav)) {
+
 		Slim::Utils::Prefs::set('favorite_urls', $url, $fav->{'num'}-1);
 		Slim::Utils::Prefs::set('favorite_titles', $title, $fav->{'num'}-1);
+
 		return $fav->{'num'};
 	}
 

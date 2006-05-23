@@ -73,37 +73,42 @@ sub init {
 			my $track  = $client->param('song');
 			my $artist = $client->param('artist');
 			my $genre  = $client->param('genre');
-			my $ds     = Slim::Music::Info::getCurrentDataStore();
 			
 			if (defined $track) {
 
-				$instantMix = Plugins::MoodLogic::Plugin::getMix($track->moodlogic_id(), undef, 'song');
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($track->moodlogic_id, undef, 'song');
 
 			} elsif (defined $mood && defined $artist) {
 
-				$instantMix = Plugins::MoodLogic::Plugin::getMix($artist->moodlogic_id(), $mood, 'artist');
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($artist->moodlogic_id, $mood, 'artist');
 
 			} elsif (defined $mood && defined $genre) {
 
-				$instantMix = Plugins::MoodLogic::Plugin::getMix($genre->moodlogic_id(), $mood, 'genre');
+				$instantMix = Plugins::MoodLogic::Plugin::getMix($genre->moodlogic_id, $mood, 'genre');
 			}
 
 			if (scalar @$instantMix) {
+
 				Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', { 'mix' => $instantMix });
 				specialPushLeft($client, 0);
+
 			} else {
+
 				$client->bumpRight()
 			}
 		},
 
 		'play' => sub  {
 			my $client = shift;
-			my $currentItem;
+
 			if (defined $client->param( 'song')) {
-				$currentItem = $client->param( 'song');
+
+				my $currentItem = $client->param( 'song');
 				Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', {'song' => $client->param( 'song')});
 				specialPushLeft($client, 0);
+
 			} else {
+
 				$client->bumpRight()
 			}
 		},

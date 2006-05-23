@@ -81,10 +81,10 @@ use Socket qw(:DEFAULT :crlf);
 use lib $Bin;
 
 BEGIN {
-	use bootstrap;
+	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	bootstrap->loadModules();
+	Slim::bootstrap->loadModules();
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	unlink("$Bin/CPAN/MP3/Info.pm");
@@ -224,6 +224,7 @@ our (
 	$d_source_v,
 	$d_sql,
 	$d_stdio,
+	$d_startup,
 	$d_stream,
 	$d_stream_v,
 	$d_sync,
@@ -255,6 +256,7 @@ our (
 	$stdio,
 	$stop,
 	$perfmon,
+	$perfwarn
 );
 
 sub init {
@@ -294,9 +296,9 @@ sub init {
 	}		
 
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
-		$SIG{'QUIT'} = \&bootstrap::ignoresigquit; 
+		$SIG{'QUIT'} = \&Slim::bootstrap::ignoresigquit; 
 	} else {
-		$SIG{'QUIT'} = \&bootstrap::sigquit;
+		$SIG{'QUIT'} = \&Slim::bootstrap::sigquit;
 	}
 
 	$SIG{__WARN__} = sub { msg($_[0]) };
@@ -376,7 +378,7 @@ sub init {
 
 	$::d_server && msg("SlimServer IR init...\n");
 	Slim::Hardware::IR::init();
-		
+
 	$::d_server && msg("SlimServer Request init...\n");
 	Slim::Control::Request::init();
 	
@@ -403,6 +405,9 @@ sub init {
 	$::d_server && msg("mDNS init...\n");
 	Slim::Networking::mDNS->init;
 
+	$::d_server && msg("AsyncHTTP init...\n");
+	Slim::Networking::AsyncHTTP->init;
+
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
 
@@ -427,8 +432,7 @@ sub init {
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 
 		Slim::Control::Request::subscribe(
-			\&Slim::Player::Playlist::modifyPlaylistCallback, 
-			[['playlist']]
+			\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
 		);
 	}
 
@@ -717,7 +721,8 @@ sub initOptions {
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
-		'perfmon'		=> \$perfmon,
+		'perfmon'			=> \$perfmon,
+		'perfwarn=f'		=> \$perfwarn, 
 	)) {
 		showUsage();
 		exit(1);
@@ -729,7 +734,6 @@ sub initOptions {
 		$Slim::Networking::Select::responseTime->setWarnHigh($perfwarn);
 		$Slim::Networking::Select::selectTask->setWarnHigh($perfwarn);
 		$Slim::Utils::Timers::timerTask->setWarnHigh($perfwarn);
-		$Slim::Utils::Scheduler::schedulerTask->setWarnHigh($perfwarn);
 		$Slim::Control::Request::requestTask->setWarnHigh($perfwarn);
 	}
 }
@@ -921,9 +925,7 @@ sub checkDataSource {
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
 
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-
-		if ($ds->count('track') == 0) {
+		if (Slim::Schema->count('Track') == 0) {
 
 			 # Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
@@ -1001,11 +1003,7 @@ sub cleanup {
 	$::d_server && msg("SlimServer cleaning up.\n");
 
 	# Make sure to flush anything in the database to disk.
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if ($ds) {
-		$ds->forceCommit;
-	}
+	Slim::Schema->forceCommit;
 
 	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;

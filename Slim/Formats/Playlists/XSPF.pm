@@ -69,13 +69,12 @@ sub write {
 
 	my $homeURL = Slim::Utils::Prefs::homeURL();
 
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
 	my $xspf    = XML::XSPF->new;
 	my @tracks  = ();
 
 	for my $item (@{$listref}) {
 
-		my $obj = $ds->objectForUrl($item);
+		my $obj = Slim::Schema->objectForUrl($item);
 
 		if (!blessed($obj) || !$obj->can('title')) {
 

@@ -13,7 +13,6 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
-use Slim::DataStores::Base;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -25,7 +24,6 @@ use Slim::Web::Pages::Status;
 use Slim::Web::Pages::Playlist;
 use Slim::Web::Pages::History;
 use Slim::Web::Pages::EditPlaylist;
-
 
 our %additionalLinks = ();
 
@@ -103,19 +101,12 @@ sub addPageLinks {
 }
 
 sub addLibraryStats {
-	my ($class,$params, $genre, $artist, $album) = @_;
+	my ($class, $params, $genre, $artist, $album) = @_;
 	
 	if (Slim::Music::Import->stillScanning) {
 		$params->{'warn'} = 1;
 		return;
 	}
-
-	my $ds   = Slim::Music::Info::getCurrentDataStore();
-	my $find = {};
-
-	$find->{'genre'}       = $genre  if $genre  && !$album;
-	$find->{'contributor'} = $artist if $artist && !$album;
-	$find->{'album'}       = $album  if $album;
 
 	if (Slim::Utils::Prefs::get('disableStatistics')) {
 
@@ -123,37 +114,97 @@ sub addLibraryStats {
 		$params->{'album_count'}  = 0;
 		$params->{'artist_count'} = 0;
 
-	} else {
+		return;
+	}
 
-		$params->{'song_count'}   = $class->_lcPlural($ds->count('track', $find), 'SONG', 'SONGS');
-		$params->{'album_count'}  = $class->_lcPlural($ds->count('album', $find), 'ALBUM', 'ALBUMS');
-	
+	# Build up basic ResultSets - with a distinct base id.
+	my $trackRS  = Slim::Schema->resultset('Track');
+	my $albumRS  = Slim::Schema->resultset('Album');
+	my $artistRS = Slim::Schema->resultset('Contributor');
+
+	my $roles    = undef;
+
+	if ($genre && !$album) {
+
+		my $find = {
+			'genreTracks.genre' => $genre,
+		};
+
+		my @trackJoins  = qw(genreTracks);
+		my @albumJoins  = ({ 'tracks' => 'genreTracks' });
+		my @artistJoins = ({ 'contributorTracks' => { 'track' => 'genreTracks' } });
+
+		# If we have an artist, addtional joins need to be made.
+		if ($artist) {
+
+			$find->{'contributorTracks.contributor'} = $artist;
+
+			push @trackJoins, 'contributorTracks';
+			push @albumJoins, ({ 'tracks' => 'contributorTracks' });
+		}
+
+		$trackRS  = $trackRS->search($find,  { 'join' => \@trackJoins });
+		$albumRS  = $albumRS->search($find,  { 'join' => \@albumJoins });
+		$artistRS = $artistRS->search($find, { 'join' => \@artistJoins });
+	}
+
+	if ($artist && !$album && !$genre) {
+
+		#my $roles = Slim::Schema->artistOnlyRoles;
+
+		$trackRS = $trackRS->search({
+			'contributorTracks.role' => { 'in' => Slim::Schema->artistOnlyRoles },
+			'contributor.id'         => $artist,
+		}, {
+			'join' => { 'contributorTracks' => 'contributor' }
+		});
+
+		$albumRS = $albumRS->search(
+			{ 'contributorTracks.contributor' => $artist },
+			{ 'join' => { 'tracks' => 'contributorTracks' } },
+		);
+
+		$artistRS = $artistRS->search({
+			'me.id'                  => $artist,
+			'contributorTracks.role' => { 'in' => Slim::Schema->artistOnlyRoles },
+		}, {
+			'join' => 'contributorTracks',
+		});
+	}
+
+	my %artistFind  = ();
+	my @artistJoins = ({ 'contributorAlbums' => 'album' });
+
+	if ($album) {
+
+		$trackRS  = $trackRS->search({ 'album.id' => $album }, { 'join' => 'album' });
+		$albumRS  = $albumRS->search({ 'me.id' => $album });
+
+		$artistFind{'track.album'} = $album;
+
+		push @artistJoins, ({ 'contributorTracks' => 'track' });
+	}
+
+	$params->{'song_count'}   = $class->_lcPlural($trackRS->distinct->count, 'SONG', 'SONGS');
+	$params->{'album_count'}  = $class->_lcPlural($albumRS->distinct->count, 'ALBUM', 'ALBUMS');
+
+	# Handle the VA cases
+	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+		$artistFind{'album.compilation'} = 0;
+
+	} elsif ($artist && $artist eq Slim::Schema->variousArtistsObject->id) {
+
 		# Bug 1913 - don't put counts for contributor & tracks when an artist
 		# is a composer on a different artist's tracks.
-		if ($artist && $artist eq $ds->variousArtistsObject->id) {
-	
-			delete $find->{'contributor'};
-	
-			$find->{'album.compilation'} = 1;
-	
-			# Don't display wonked or zero counts when we're working on the meta VA object
-			delete $params->{'song_count'};
-			delete $params->{'album_count'};
-		}
-	
-		$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
+		# delete $find{'contributor.id'};
+
+		$artistFind{'album.compilation'} = 1;
 	}
 
-	# Bug 1913 - don't put counts for contributor & tracks when an artist
-	# is a composer on a different artist's tracks.
-	if ($artist && $artist eq $ds->variousArtistsObject->id) {
+	$artistRS = $artistRS->search(\%artistFind, { 'join' => \@artistJoins });
 
-		delete $find->{'contributor'};
-
-		$find->{'album.compilation'} = 1;
-	}
-
-	$params->{'artist_count'} = $class->_lcPlural($ds->count('contributor', $find), 'ARTIST', 'ARTISTS');
+	$params->{'artist_count'} = $class->_lcPlural($artistRS->distinct->count, 'ARTIST', 'ARTISTS');
 }
 
 sub addPlayerList {
@@ -197,16 +248,19 @@ sub addSongInfo {
 		return;
 	}
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my $track;
 
 	if ($url) {
 
-		$track = $ds->objectForUrl($url, 1, 1);
+		$track = Slim::Schema->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1
+		});
 
 	} elsif ($id) {
 
-		$track = $ds->objectForId('track', $id);
+		$track = Slim::Schema->find('Track', $id);
 		$url   = $track->url() if $track;
 	}
 
@@ -215,8 +269,8 @@ sub addSongInfo {
 		# let the template access the object directly.
 		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
 
-		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize());
-		$params->{'bitrate'}    = $track->bitrate();
+		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize);
+		$params->{'bitrate'}    = $track->bitrate;
 
 		if ($getCurrentTitle) {
 			$params->{'songtitle'} = Slim::Music::Info::getCurrentTitle(undef, $track);
@@ -225,7 +279,7 @@ sub addSongInfo {
 		}
 
 		# make urls in comments into links
-		for my $comment ($track->comment()) {
+		for my $comment ($track->comment) {
 
 			next unless defined $comment && $comment !~ /^\s*$/;
 
@@ -249,7 +303,7 @@ sub addSongInfo {
 
 		} else {
 
-			$params->{'download'} = sprintf('%smusic/%d/download', $params->{'webroot'}, $track->id());
+			$params->{'download'} = sprintf('%smusic/%d/download', $params->{'webroot'}, $track->id);
 		}
 	}
 }
@@ -358,7 +412,7 @@ sub pageInfo {
 	my $results      = $args->{'results'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
-	my $itemsPerPage = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $itemsPerPage = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my %pageinfo  = ();
 	my %alphamap  = ();
@@ -368,7 +422,13 @@ sub pageInfo {
 	# Use the ResultSet from pageBarResults to build our offset list.
 	if ($args->{'addAlpha'}) {
 
-		for my $row ($results->all) {
+		my $first = $results->first;
+
+		$alphamap{$first->get_column('letter')} = 0;
+
+		$itemCount += $first->get_column('count');
+
+		while (my $row = $results->next) {
 
 			my $count  = $row->get_column('count');
 			my $letter = $row->get_column('letter');
@@ -380,10 +440,22 @@ sub pageInfo {
 
 	} else {
 
-		$itemCount = $results->count;
+		if ($args->{'itemCount'}) {
+
+			$itemCount = $args->{'itemCount'}
+
+		} elsif ($results) {
+
+			$itemCount = $results->count;
+
+		} else {
+
+			$itemCount = 0;
+		}
 	}
 
 	if (!$itemsPerPage || $itemsPerPage > $itemCount) {
+
 		# we divide by this, so make sure it will never be 0
 		$itemsPerPage = $itemCount || 1;
 	}
@@ -415,21 +487,26 @@ sub pageInfo {
 		$end = $itemCount - 1;
 	}
 
+	# Don't let a negative end through.
+	if ($end < 0) {
+		$end = $itemCount;
+	}
+
 	$pageinfo{'enditem'}      = $end;
 	$pageinfo{'totalitems'}   = $itemCount;
-	$pageinfo{'itemsPerPage'} = $itemsPerPage;
+	$pageinfo{'itemsperpage'} = $itemsPerPage;
 	$pageinfo{'currentpage'}  = int($start/$itemsPerPage);
-	$pageinfo{'totalpages'}   = POSIX::ceil($itemCount/$itemsPerPage);
+	$pageinfo{'totalpages'}   = POSIX::ceil($itemCount/$itemsPerPage) || 0;
 	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
 	$pageinfo{'path'}         = $args->{'path'};
-	
+
 	if ($args->{'addAlpha'} && $itemCount) {
 
 		my @letterstarts = sort { $a <=> $b } values %alphamap;
-		my @pagestarts   = (@letterstarts[0]);
+		my @pagestarts   = $letterstarts[0];
 
 		# some cases of alphamap shift the start index from 0, trap this.
-		$start = @letterstarts[0] unless $args->{'start'} ;
+		$start = $letterstarts[0] unless $args->{'start'} ;
 
 		my $newend = $end;
 
@@ -467,7 +544,7 @@ sub pageInfo {
 	}
 
 	# set the start index, accounding for alpha cases
-	$pageinfo{'startitem'} = 0; #$start;
+	$pageinfo{'startitem'} = $start || 0;
 
 	#print Data::Dumper::Dumper(\%pageinfo);
 

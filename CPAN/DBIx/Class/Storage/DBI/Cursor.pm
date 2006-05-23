@@ -160,7 +160,7 @@ sub DESTROY {
   my ($self) = @_;
 
   $self->_check_forks_threads;
-  $self->{sth}->finish if $self->{sth}->{Active};
+  $self->{sth}->finish if $self->{sth} && $self->{sth}->{Active};
 }
 
 1;

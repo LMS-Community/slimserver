@@ -33,6 +33,8 @@ our %prefChange = ();
 
 sub init {
 
+	my $dbsource = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
+
 	# These are scripts that are run once on old prefs file to bring them
 	# up-to-date with specific changes we want to push out to default prefs.
 	%upgradeScripts = (
@@ -111,6 +113,15 @@ sub init {
 				$prefs{'language'} = $newLang;
 			}
 		},
+
+		'6.5b1-2006-03-31' => sub {
+
+			# Upgrade SQLite to MySQL
+			if ($prefs{'dbsource'} =~ /SQLite/) {
+				$prefs{'dbsource'} = $dbsource;
+			}
+		},
+
 		'6.5b1-2006-05-06' => sub {
 			#check for empty date time setitngs and set defaults to current formats
 			Slim::Utils::Prefs::set('screensaverTimeFormat', Slim::Utils::Prefs::get('timeFormat'))
@@ -202,7 +213,7 @@ sub init {
 		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
 		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
 		'prefsWriteDelay'	=> 30,
-		'dbsource'		=> 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s',
+		'dbsource'		=> $dbsource,
 		'dbusername'		=> 'slimserver',
 		'dbpassword'		=> '',
 		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
@@ -215,6 +226,7 @@ sub init {
 		'upgrade-6.2.1-2005-11-07-script' => 1,
 		'upgrade-6.5b1-2006-01-25-script' => 1,
 		'upgrade-6.5b1-2006-02-03-script' => 1,
+		'upgrade-6.5b1-2006-03-31-script' => 1,
 		'upgrade-6.5b1-2006-05-06-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'sortBrowseArt'     => 'album',
@@ -259,6 +271,7 @@ sub init {
 			my $newvalue = shift;
 
 			Slim::Buttons::BrowseTree::init();
+			return;
 
 			my $musicFolderClass = 'Slim::Music::MusicFolderScan';
 
@@ -269,7 +282,6 @@ sub init {
 			} else {
 				Slim::Music::Import->useImporter($musicFolderClass, 0);
 			}
-
 		},
 
 		'lookForArtwork' => sub {
@@ -323,7 +335,6 @@ sub init {
 		'httpport' => sub {
 			Slim::Web::HTTP::adjustHTTPPort();
 		}
-
 	);
 }
 

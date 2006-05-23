@@ -265,9 +265,7 @@ sub _trackDataForCurrentItem {
 	my $client = shift;
 	my $item   = shift || return;
 
-	# Pull directly from the datasource
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
-	my $track   = $ds->objectForUrl(track($client));
+	my $track  = Slim::Schema->objectForUrl(track($client));
 
 	if (!blessed($track) || !$track->can('genre')) {
 
@@ -285,7 +283,7 @@ sub _trackDataForCurrentItem {
 
 		$line2 = $genre;
 
-		push @search, "genre=".$genre->id;
+		push @search, join('=', 'genre.id', $genre->id);
 
 	# TODO make this work for other contributors
 	#} elsif ($item =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
@@ -295,19 +293,19 @@ sub _trackDataForCurrentItem {
 
 		$line2 = $track->artist;
 
-		push @search, "artist=".$track->artist->id;
+		push @search, join('=', 'contributor.id', $track->artist->id);
 
 	} elsif ($item eq 'ALBUM') {
 
 		$line2 = $track->album->title;
 
-		push @search, "album=".$track->album->id;
+		push @search, join('=', 'album.id', $track->album->id);
 
 	} elsif ($item eq 'YEAR') {
 
 		$line2 = $track->year;
 
-		push @search, "year=".$track->year;
+		push @search, join('=', 'album.year', $track->year);
 	}
 
 	return ($line2, join('&', @search));
@@ -320,6 +318,7 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
+
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -339,8 +338,8 @@ sub setMode {
 		
 		# carry some params forward
 		'track'          => $client->param('track'),
-		'current'          => $client->param('current'),
-		'favorite'          => $client->param('favorite'),
+		'current'        => $client->param('current'),
+		'favorite'       => $client->param('favorite'),
 	);
 	
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
@@ -349,7 +348,8 @@ sub setMode {
 # get (and optionally set) the track URL
 sub track {
 	my $client = shift;
-	return $client->param( 'track', shift);
+
+	return $client->param('track', shift);
 }
 
 sub preloadLines {
@@ -359,8 +359,7 @@ sub preloadLines {
 	@{$client->trackInfoLines}   = ();
 	@{$client->trackInfoContent} = ();
 
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
-	my $track = $ds->objectForUrl($url);
+	my $track = Slim::Schema->objectForUrl($url);
 
 	# Couldn't get a track or URL? How do people get in this state?
 	if (!$url || !blessed($track) || !$track->can('title')) {
@@ -388,7 +387,7 @@ sub preloadLines {
 	my $album = $track->album;
 
 	if ($album) {
-		push (@{$client->trackInfoLines}, $client->string('ALBUM') . ": $album");
+		push (@{$client->trackInfoLines}, join(': ', $client->string('ALBUM'), $album->name));
 		push (@{$client->trackInfoContent}, 'ALBUM');
 	}
 
@@ -403,11 +402,11 @@ sub preloadLines {
 	}
 
 	if (my $genre = $track->genre) {
-		push (@{$client->trackInfoLines}, $client->string('GENRE') . ": $genre");
+		push (@{$client->trackInfoLines}, join(': ', $client->string('GENRE'), $genre->name));
 		push (@{$client->trackInfoContent}, 'GENRE');
 	}
 
-	if (my $ct = $ds->contentType($track)) {
+	if (my $ct = Slim::Schema->contentType($track)) {
 		push (@{$client->trackInfoLines}, $client->string('TYPE') . ": " . $client->string(uc($ct)));
 		push (@{$client->trackInfoContent}, undef);
 	}
@@ -433,6 +432,7 @@ sub preloadLines {
 	}
 	
 	if (blessed($album) && $album->can('replay_gain')) {
+
 		if (my $albumreplaygain = $album->replay_gain) {
 			push (@{$client->trackInfoLines}, $client->string('ALBUMREPLAYGAIN') . ": " . sprintf("%2.2f",$albumreplaygain) . " dB");
 			push (@{$client->trackInfoContent}, undef);
@@ -497,11 +497,15 @@ sub preloadLines {
 
 sub listExitHandler {
 	my ($client,$exittype) = @_;
+
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
 		
 	} elsif ($exittype eq 'RIGHT') {
+
 		my $push     = 1;
 		# Look up if this is an artist, album, year etc
 		my $curitem  = $client->trackInfoContent->[$client->param('listIndex')];
@@ -513,8 +517,7 @@ sub listExitHandler {
 
 		# Get object for currently being browsed song from the datasource
 		# This probably isn't necessary as track($client) is already an object!
-		my $ds      = Slim::Music::Info::getCurrentDataStore();
-		my $track   = $ds->objectForUrl(track($client));
+		my $track = Slim::Schema->objectForUrl(track($client));
 
 		if (!blessed($track) || !$track->can('album') || !$track->can('artist')) {
 
@@ -540,17 +543,19 @@ sub listExitHandler {
 			}
 		}
 
+		my $selectionCriteria = {
+			'track.id'       => $track->id,
+			'album.id'       => $album->id,
+			'contributor.id' => $artist->id,
+		};
+
 		if ($curitem eq 'ALBUM') {
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'    => 'track',
-				'level'        => 0,
-				'findCriteria' => { 'album' => $album->id },
-				'selectionCriteria' => {
-					'track'  => $track->id,
-					'album'  => $album->id,
-					'artist' => $artist->id,
-				},
+				'hierarchy'         => 'track',
+				'level'             => 0,
+				'findCriteria'      => { 'album.id' => $album->id },
+				'selectionCriteria' => $selectionCriteria,
 			});
 
 		} elsif ($curitem =~ /^(?:ARTIST|COMPOSER|CONDUCTOR|BAND)$/) {
@@ -560,28 +565,20 @@ sub listExitHandler {
 			my ($contributor) = $track->$lcItem();
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'    => 'album,track',
-				'level'        => 0,
-				'findCriteria' => { 'artist' => $contributor->id },
-				'selectionCriteria' => {
-					'track'  => $track->id,
-					'album'  => $album->id,
-					'artist' => $artist->id,
-				},
+				'hierarchy'         => 'album,track',
+				'level'             => 0,
+				'findCriteria'      => { 'contributor.id' => $contributor->id },
+				'selectionCriteria' => $selectionCriteria,
 			});
 
 		} elsif ($curitem eq 'GENRE') {
 
 			my $genre = $track->genre;
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'  => 'artist,album,track',
-				'level'      => 0,
-				'findCriteria' => { 'genre' => $genre->id,},
-				'selectionCriteria' => {
-					'track'  => $track->id,
-					'album'  => $album->id,
-					'artist' => $artist->id,
-				},
+				'hierarchy'         => 'contributor,album,track',
+				'level'             => 0,
+				'findCriteria'      => { 'genre.id' => $genre->id },
+				'selectionCriteria' => $selectionCriteria,
 			});
 
 		} elsif ($curitem eq 'YEAR') {
@@ -589,14 +586,10 @@ sub listExitHandler {
 			my $year = $track->year;
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'  => 'album,track',
-				'level'      => 0,
-				'findCriteria' => { 'year' => $year,},
-				'selectionCriteria' => {
-					'track'  => $track->id,
-					'album'  => $album->id,
-					'artist' => $artist->id,
-				},
+				'hierarchy'         => 'album,track',
+				'level'             => 0,
+				'findCriteria'      => { 'album.year' => $year },
+				'selectionCriteria' => $selectionCriteria,
 			});
 
 		} elsif ($curitem eq 'FAVORITE') {
@@ -605,7 +598,7 @@ sub listExitHandler {
 
 			if ($num < 0) {
 
-				my $num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
+				$num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title);
 
 				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
 

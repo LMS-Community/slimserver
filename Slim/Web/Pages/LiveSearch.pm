@@ -20,17 +20,15 @@ use constant MAXRESULTS => 10;
 my @allTypes = qw(artist album track);
 
 our %queries = (
-	'artist' => [qw(contributor contributor.namesearch)],
-	'album'  => [qw(album album.titlesearch)],
-	'track'  => [qw(track track.titlesearch)],
+	'artist' => [qw(contributor me.namesearch)],
+	'album'  => [qw(album me.titlesearch)],
+	'track'  => [qw(track me.titlesearch)],
 );
 
 sub query {
 	my ($class, $query, $types, $limit, $offset) = @_;
 
-	my @data  = ();
-	my $ds    = Slim::Music::Info->getCurrentDataStore();
-
+	my @data   = ();
 	my $search = Slim::Web::Pages::Search::searchStringSplit($query);
 
 	# Default to a valid list of types
@@ -50,28 +48,24 @@ sub query {
 		# based on the compilation bit.
 		if ($type eq 'artist') {
 
-			if (my $roles = $ds->artistOnlyRoles) {
+			if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-				$find->{'contributor.role'} = $roles;
+				#$find->{'contributor.role'} = $roles;
 			}
 
-			$find->{'album.compilation'} = undef;
+			# $find->{'album.compilation'} = undef;
 		}
 
-		my $count   = $ds->count($queries{$type}->[0], $find);
-		my $results = [];
+		my $rs      = Slim::Schema->rs($queries{$type}->[0])->search_like($find);
+		my $count   = $rs->count;
+		my @results = ();
 
 		if ($count) {
 
-			$results = $ds->find({
-				'field'  => $queries{$type}->[0],
-				'find'   => $find,
-				'limit'  => $limit,
-				'offset' => $offset,
-			});
+			@results = $rs->slice($offset, $limit);
 		}
 
-		push @data, [ $type, $count, $results ];
+		push @data, [ $type, $count, \@results ];
 	}
 
 	return \@data;
@@ -159,51 +153,52 @@ sub renderItem {
 		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb")) || '';
 
 		# This is rather redundant from Pages.pm
-		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist()) {
+		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist) {
 
 			$artist = sprintf(
-				' %s <a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=%d&amp;player=%s">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
 				string('BY'), $item->artist->id(), $player, $item->artist()
 			);
 		}
 
-		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album()) {
+		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album) {
 
 			$album = sprintf(
-				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album=%d&amp;player=%s">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album.id=%d\&amp;player=%s">%s</a>',
 				string('FROM'), $item->album->id(), $player, $item->album()
 			);
 		}
 
-	} elsif ($item->can('title')) {
-
-		$name = $item->title();
-
 	} else {
 
-		$name = $item->name();
+		$name = $item->name;
 	}
-	
+
 	# We need to handle the different urls that are needed for different result types
 	my $url;
+
 	if ($type eq 'track') {
-	   $url = "songinfo.html?item=$id";
+
+		$url = "songinfo.html?item=$id";
+
 	} elsif ($type eq 'album') {
-	   $url = "browsedb.html?hierarchy=album,track\&amp;level=1\&amp;album=$id";
+
+		$url = "browsedb.html?hierarchy=album,track\&amp;level=1\&amp;album.id=$id";
+
 	} elsif ($type eq 'artist') {
-	   $url = "browsedb.html?hierarchy=artist,album,track\&amp;level=1\&amp;artist=$id";
+
+		$url = "browsedb.html?hierarchy=artist,album,track\&amp;level=1\&amp;contributor.id=$id";
 	}
-	
+
 	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
-			<a href=\"$url\&amp;player=$player\">$name</a>$artist $album
-		";
-		
+			<a href=\"$url\&amp;player=$player\">$name</a>$artist $album";
+
 	push @xml,"<div class=\"browsedbControls\">
 
-		<a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type.id=$id\&amp;player=$player\" target=\"status\">\n
 		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a>\n\n
 
-		<a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type=$id\&amp;player=$player\" target=\"status\">\n
+		<a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type.id=$id\&amp;player=$player\" target=\"status\">\n
 		<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a> \n
 		</div>\n</div>\n</div>\n";
 
@@ -237,8 +232,7 @@ sub outputAsXML {
 			if ($count <= MAXRESULTS) {
 
 				push @output, sprintf('<livesearchitem id="%s">%s</livesearchitem>',
-					$item->id(),
-					($item->can('title') ? $item->title() : $item->name()),
+					$item->id, $item->name,
 				);
 			}
 

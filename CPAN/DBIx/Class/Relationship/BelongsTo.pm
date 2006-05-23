@@ -18,9 +18,9 @@ sub belongs_to {
 
     my ($pri, $too_many) = keys %f_primaries;
     $class->throw_exception("Can't infer join condition for ${rel} on ${class}; ${f_class} has no primary keys")
-      unless defined $pri;      
+      unless defined $pri;
     $class->throw_exception("Can't infer join condition for ${rel} on ${class}; ${f_class} has multiple primary keys")
-      if $too_many;      
+      if $too_many;
 
     my $fk = defined $cond ? $cond : $rel;
     $class->throw_exception("Can't infer join condition for ${rel} on ${class}; $fk is not a column")

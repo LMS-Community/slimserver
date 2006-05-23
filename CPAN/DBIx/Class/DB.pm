@@ -29,7 +29,7 @@ sub resultset_instance {
   return $source->resultset;
 }
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::DB - Non-recommended classdata schema component
 
@@ -67,7 +67,7 @@ Sets or gets the storage backend. Defaults to L<DBIx::Class::Storage::DBI>.
 
 ****DEPRECATED****
 
-Sets or gets the class to use for resolving a class. Defaults to 
+Sets or gets the class to use for resolving a class. Defaults to
 L<DBIx::Class::ClassResolver::Passthrough>, which returns whatever you give
 it. See resolve_class below.
 

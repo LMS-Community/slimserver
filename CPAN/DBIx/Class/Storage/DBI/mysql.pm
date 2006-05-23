@@ -17,7 +17,7 @@ sub sqlt_type {
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Storage::DBI::mysql - Automatic primary key class for MySQL
 

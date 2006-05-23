@@ -1,4 +1,4 @@
-package # hide from PAUSE 
+package # hide from PAUSE
     DBIx::Class::ResultSourceProxy;
 
 use strict;
@@ -22,20 +22,20 @@ sub add_columns {
   }
 }
 
-sub has_column {                                                                
-  my ($self, $column) = @_;                                                     
-  return $self->result_source_instance->has_column($column);                    
+sub has_column {
+  my ($self, $column) = @_;
+  return $self->result_source_instance->has_column($column);
 }
 
-sub column_info {                                                               
-  my ($self, $column) = @_;                                                     
-  return $self->result_source_instance->column_info($column);                   
+sub column_info {
+  my ($self, $column) = @_;
+  return $self->result_source_instance->column_info($column);
 }
 
                                                                                 
-sub columns {                                                                   
-  return shift->result_source_instance->columns(@_);                            
-}                                                                               
+sub columns {
+  return shift->result_source_instance->columns(@_);
+}
                                                                                 
 sub set_primary_key {
   shift->result_source_instance->set_primary_key(@_);

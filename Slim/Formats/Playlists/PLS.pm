@@ -88,19 +88,17 @@ sub write {
 	my $playlistname = shift || "SlimServer " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename     = shift;
 
-	my $string = '';
-	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
+	my $string  = '';
+	my $output  = $class->_filehandleFromNameOrString($filename, \$string) || return;
+	my $itemnum = 0;
 
 	print $output "[playlist]\nPlaylistName=$playlistname\n";
-
-	my $itemnum = 0;
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
 
 	for my $item (@{$listRef}) {
 
 		$itemnum++;
 
-		my $track = $ds->objectForUrl($item);
+		my $track = Slim::Schema->objectForUrl($item);
 
 		if (!blessed($track) || !$track->can('title')) {
 

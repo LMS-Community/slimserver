@@ -41,19 +41,17 @@ sub processCoverArtRequest {
 
 	my ($obj, $imageData);
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
 	if ($trackid eq "current" && defined $client) {
 
 		# If the object doesn't have any cover art - fall
 		# through to the generic cover image.
-		$obj  = $ds->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
+		$obj = Slim::Schema->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
 			Slim::Player::Playlist::song($client)
 		));
 
 	} else {
 
-		$obj = $ds->objectForId('track', $trackid);
+		$obj = Slim::Schema->objectForId('track', $trackid);
 	}
 
 	$::d_http && msg("Cover Art asking for: $image" . 

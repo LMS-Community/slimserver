@@ -19,6 +19,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Alarms;
 use Slim::Utils::Misc qw(msg errorMsg specified);
 use Slim::Utils::Scanner;
+use Slim::Utils::Misc qw(msg errorMsg specified);
+use Slim::Utils::Scanner;
 
 
 
@@ -470,17 +472,17 @@ sub playlistDeleteitemCommand {
 	}
 
 	# get the parameters
-	my $client      = $request->client();
-	my $item        = $request->getParam('_item');;
+	my $client = $request->client();
+	my $item   = $request->getParam('_item');;
 	
-	if (!defined $item || $item eq '') {
+	if (!$item) {
 		$request->setStatusBadParams();
 		return;
 	}
 
 	# This used to update $p2; anybody depending on this behaviour needs
 	# to be changed to used the returned result (commented below)
-	my $absitem = Slim::Utils::Misc::virtualToAbsolute($item);
+	my $absitem = $item; # XXXX Slim::Utils::Misc::virtualToAbsolute($item);
 	#$request->addResult('__absitem', $absitem);
 
 	my $contents;
@@ -645,13 +647,14 @@ sub playlistSaveCommand {
 	# get the parameters
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
-	my $ds     = Slim::Music::Info::getCurrentDataStore();
 
-	my $playlistObj = $ds->updateOrCreate({
+	my $playlistObj = Slim::Schema->updateOrCreate({
 
-		'url'        => Slim::Utils::Misc::fileURLFromPath(
-				catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
+		'url' => Slim::Utils::Misc::fileURLFromPath(
+			catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
 		),
+
+		'playlist'   => 1,
 
 		'attributes' => {
 			'TITLE' => $title,
@@ -733,41 +736,51 @@ sub playlistXalbumCommand {
 	my $album    = $request->getParam('_album'); #p4
 	my $title    = $request->getParam('_title'); #p5
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $find = {};
+	# Pass to Schema
+	my $find     = {};
+	my @joins    = ();
+	my $attrs    = {
+		'order_by' => 'tracks.disc, tracks.tracknum, tracks.titlesort'
+	};
 
 	# Find the songs for the passed params
 	my $sort = 'track';
 
 	if (specified($genre)) {
-		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
-	}
-	if (specified($artist)) {
-		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
-	}
-	if (specified($album)) {
-		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
-		$sort = 'tracknum';
-	}
-	if (specified($title)) {
-		$find->{'track.title'} = _playlistXalbum_singletonRef($title);
-	}
-	
-	msg("$sort\n");
 
-	my $results = $ds->find({
-		'field'  => 'lightweighttrack',
-		'find'   => $find,
-		'sortBy' => $sort,
-		});
+		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
+
+		push @joins, { 'genreTracks' => 'genre' };
+	}
+
+	if (specified($artist)) {
+
+		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
+
+		push @joins, { 'contributorTracks' => 'contributor' };
+	}
+
+	if (specified($album)) {
+
+		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
+
+		push @joins, 'album';
+	}
+
+	if (specified($title)) {
+
+		$find->{'me.title'} = _playlistXalbum_singletonRef($title);
+	}
+
+	if (scalar @joins) {
+		$attrs->{'join'} = \@joins;
+	}
+
+	my @results = Slim::Schema->search('Track', $find, $attrs)->all;
 
 	$cmd =~ s/album/tracks/;
 
-	Slim::Control::Request::executeRequest(
-			$client, 
-			['playlist', $cmd, 'listref', $results]
-		);
-
+	Slim::Control::Request::executeRequest($client, ['playlist', $cmd, 'listRef', \@results]);
 
 	$request->setStatusDone();
 }
@@ -794,22 +807,22 @@ sub playlistXitemCommand {
 		return;
 	}
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $find = {};
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
 
-	# Strip off leading and trailing whitespace. PEBKAC
-	$item =~ s/^\s*//;
-	$item =~ s/\s*$//;
+	my $url  = blessed($item) ? $item->url : $item;
 
-	my $path = $item;
+	# Strip off leading and trailing whitespace. PEBKAC
+	$url =~ s/^\s*//;
+	$url =~ s/\s*$//;
+
+	my $path = $url;
 
 	# correct the path
 	# this only seems to be useful for playlists?
 	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
 
-		my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($item) . ".m3u");
+		my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($url) . ".m3u");
 
 		if (-e $easypath) {
 
@@ -817,7 +830,7 @@ sub playlistXitemCommand {
 
 		} else {
 
-			$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($item) . ".pls");
+			$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($url) . ".pls");
 
 			if (-e $easypath) {
 				$path = $easypath;
@@ -940,14 +953,13 @@ sub playlistXtracksCommand {
 		return;
 	}
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $jumpToIndex; # This should be undef - see bug 2085
+	# This should be undef - see bug 2085
+	my $jumpToIndex = undef;
 
 	my $load   = ($cmd eq 'loadtracks' || $cmd eq 'playtracks');
 	my $insert = ($cmd eq 'inserttracks');
 	my $add    = ($cmd eq 'addtracks');
 	my $delete = ($cmd eq 'deletetracks');
-
 
 	# if loading, start by stopping it all...
 	if ($load) {
@@ -956,23 +968,33 @@ sub playlistXtracksCommand {
 	}
 
 	# parse the param
-	my @songs;
+	my @tracks = ();
+
 	if ($what =~ /listref/i) {
-		@songs = _playlistXtracksCommand_parseListRef($client, $what, $listref);
+		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
 	} else {
-		@songs = _playlistXtracksCommand_parseSearchTerms($client, $what);
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
 	}
 
-	my $size  = scalar(@songs);
+	my $size  = scalar(@tracks);
 	my $playListSize = Slim::Player::Playlist::count($client);
 
 	# add or remove the found songs
-	push(@{Slim::Player::Playlist::playList($client)}, @songs)                  if $load || $add || $insert;
-	_insert_done($client, $playListSize, $size)                                 if                  $insert;
+	if ($load || $add || $insert) {
+		push(@{Slim::Player::Playlist::playList($client)}, @tracks);
+	}
 
-	Slim::Player::Playlist::removeMultipleTracks($client, \@songs)              if                             $delete;
+	if ($insert) {
+		_insert_done($client, $playListSize, $size);
+	}
 
-	Slim::Player::Playlist::reshuffle($client, $load?1:undef)                   if $load || $add;
+	if ($delete) {
+		Slim::Player::Playlist::removeMultipleTracks($client, \@tracks);
+	}
+
+	if ($load || $add) {
+		Slim::Player::Playlist::reshuffle($client, $load ? 1 : undef);
+	}
 
 	if ($load) {
 		# The user may have stopped in the middle of a
@@ -991,19 +1013,23 @@ sub playlistXtracksCommand {
 		}
 
 		Slim::Player::Source::jumpto($client, $jumpToIndex);
+		$client->currentPlaylistModified(0);
 	}
 
-	$client->currentPlaylistModified(0)                                         if $load;
-	$client->currentPlaylistModified(1)                                         if          $add || $insert || $delete;
-	$client->currentPlaylistChangeTime(time())                                  if $load || $add || $insert || $delete;
+	if ($add || $insert || $delete) {
+		$client->currentPlaylistModified(1);
+	}
+
+	if ($load || $add || $insert || $delete) {
+		$client->currentPlaylistChangeTime(time);
+	}
 
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 	$request->setStatusDone();
 }
 
-
- sub playlistZapCommand {
+sub playlistZapCommand {
 	my $request = shift;
 	
 	$d_commands && msg("Commands::playlistZapCommand()\n");
@@ -1015,11 +1041,9 @@ sub playlistXtracksCommand {
 	}
 
 	# get the parameters
-	my $client = $request->client();
-	my $index  = $request->getParam('_index');;
+	my $client   = $request->client();
+	my $index    = $request->getParam('_index');;
 	
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
 	my $zapped   = Slim::Utils::Strings::string('ZAPPED_SONGS');
 	my $zapindex = defined $index ? $index : Slim::Player::Source::playingSongIndex($client);
 	my $zapsong  = Slim::Player::Playlist::song($client, $zapindex);
@@ -1027,12 +1051,13 @@ sub playlistXtracksCommand {
 	#  Remove from current playlist
 	if (Slim::Player::Playlist::count($client) > 0) {
 
-		# Callo ourselves.
+		# Call ourselves.
 		Slim::Control::Request::executeRequest($client, ["playlist", "delete", $zapindex]);
 	}
 
-	my $playlistObj = $ds->updateOrCreate({
+	my $playlistObj = Slim::Schema->updateOrCreate({
 		'url'        => "playlist://$zapped",
+		'playlist'   => 1,
 		'attributes' => {
 			'TITLE' => $zapped,
 			'CT'    => 'ssp',
@@ -1077,13 +1102,11 @@ sub playlistcontrolCommand {
 		return;
 	}
 
-	my $load = ($cmd eq 'load');
+	my $load   = ($cmd eq 'load');
 	my $insert = ($cmd eq 'insert');
-	my $add = ($cmd eq 'add');
+	my $add    = ($cmd eq 'add');
 	my $delete = ($cmd eq 'delete');
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
- 			
 	# if loading, first stop everything
 	if ($load) {
 		Slim::Player::Source::playmode($client, "stop");
@@ -1091,65 +1114,74 @@ sub playlistcontrolCommand {
 	}
 
 	# find the songs
-	my $find = {};
-	my @songs;
+	my @tracks = ();
 
-	if (defined(my $playlist_id = $request->getParam('playlist_id'))){
+	if (defined(my $playlist_id = $request->getParam('playlist_id'))) {
+
 		# Special case...
-
-		my $playlist = $ds->objectForId('track', $playlist_id);
+		my $playlist = Slim::Schema->find('Playlist', $playlist_id);
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
 			# We want to add the playlist name to the client object.
 			$client->currentPlaylist($playlist) if $load && defined $playlist;
 
-			@songs = $playlist->tracks();
+			@tracks = $playlist->tracks();
 		}
-	}
-	elsif (defined(my $track_id_list = $request->getParam('track_id'))){
+
+	} elsif (defined(my $track_id_list = $request->getParam('track_id'))) {
+
 		# split on commas
 		my @track_ids = split(/,/, $track_id_list);
-		
-		foreach my $id (@track_ids) {
-			push @songs, $ds->objectForId('lightweighttrack', $id);
-		}
-	}
-	else {
-		if (defined(my $genre_id = $request->getParam('genre_id'))){
-			$find->{'genre'} = $genre_id;
-		}
-		if (defined(my $artist_id = $request->getParam('artist_id'))){
-			$find->{'artist'} = $artist_id;
-		}
-		if (defined(my $album_id = $request->getParam('album_id'))){
-			$find->{'album'} = $album_id;
-		}
-		if (defined(my $year_id = $request->getParam('year_id'))){
-			$find->{'year'} = $year_id;
-		}
-			
-		my $sort = exists $find->{'album'} ? 'tracknum' : 'track';
 
-		@songs = @{ $ds->find({
-			'field'  => 'lightweighttrack',
-			'find'   => $find,
-			'sortBy' => $sort,
-		}) };
+		@tracks = Slim::Schema->search('Track', { 'id' => { 'in' => \@track_ids } })->all;
+
+	} else {
+
+		my $find  = {};
+		my @joins = ();
+
+		if (defined(my $genre_id = $request->getParam('genre_id'))) {
+
+			$find->{'genreTracks.genre'} = $genre_id;
+
+			push @joins, 'genreTracks';
+		}
+
+		if (defined(my $artist_id = $request->getParam('artist_id'))) {
+
+			$find->{'contributorTracks.contributor'} = $artist_id;
+
+			push @joins, 'contributorTracks';
+		}
+
+		if (defined(my $album_id = $request->getParam('album_id'))) {
+
+			$find->{'me.album'} = $album_id;
+		}
+
+		if (defined(my $year_id = $request->getParam('year_id'))) {
+
+			$find->{'me.year'} = $year_id;
+		}
+
+		@tracks = Slim::Schema->search('Track', $find, {
+			'order_by' => 'tracks.disc tracks.tracknum tracks.titlesort',
+			'join'     => \@joins,
+		})->all;
 	}
 
 	# don't call Xtracks if we got no songs
-	if (@songs) {
-	
+	if (@tracks) {
+
 		$cmd .= "tracks";
-	
+
 		Slim::Control::Request::executeRequest(
-				$client, 
-				['playlist', $cmd, 'listref', \@songs]
-			);
+			$client, ['playlist', $cmd, 'listRef', \@tracks]
+		);
 	}
-	
-	$request->addResult('count', scalar(@songs));
+
+	$request->addResult('count', scalar(@tracks));
 
 	$request->setStatusDone();
 }
@@ -1280,6 +1312,85 @@ sub rescanCommand {
 	}
 
 	$request->setStatusDone();
+}
+
+sub showCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::showCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['show']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $client     = $request->client();
+	my $line1      = $request->getParam('line1');
+	my $line2      = $request->getParam('line2');
+	my $duration   = $request->getParam('duration');
+	my $brightness = $request->getParam('brightness');
+	my $font       = $request->getParam('font');
+	my $centered   = $request->getParam('centered');
+	
+	if (!defined $line1 && !defined $line2) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$brightness = $client->maxBrightness() unless defined($brightness);
+	$duration = 3 unless defined($duration);
+
+	my $hash = {};
+	
+	if ($centered) {
+		$hash->{'center1'} = $line1;
+		$hash->{'center2'} = $line2;
+	}
+	else {
+		$hash->{'line1'} = $line1;
+		$hash->{'line2'} = $line2;
+	}
+	
+	if ($font eq 'huge') {
+		$hash->{'fonts'} = {
+			'graphic-320x32' => 'full',
+			'graphic-280x16' => 'huge',
+			'text'           => 1,
+		};		
+	}
+	else {
+		$hash->{'fonts'} = {
+			'graphic-320x32' => 'standard',
+			'graphic-280x16' => 'medium',
+			'text'           => 2,
+		};
+	}
+
+	# get out of the screensaver if one is active
+	# we'll get back to it as soon as done (automatically)
+	if (Slim::Buttons::Common::mode($client) =~ /screensaver/i) {
+		Slim::Buttons::Common::popMode($client);
+	}
+
+	# call showBriefly for the magic!
+	$client->showBriefly(	$hash, 
+							$duration, 
+							0, 			# line2 is single line
+							1, 			# block updates
+							1,			# scroll to end
+							$brightness,# brightness
+										# callback function
+							\&Slim::Control::Commands::_showCommand_done,
+										# callback arguments
+							{
+								'request' => $request,
+							}
+						);
+
+	# we're not done yet
+	$request->setStatusProcessing();
 }
 
 sub sleepCommand {
@@ -1470,6 +1581,150 @@ sub debugCommand {
 		# toggle if we don't have a new value
 		$$debugFlag = ($$debugFlag ? 0 : 1);
 	}
+
+	Slim::Player::Playlist::refreshPlaylist($client);
+
+	$callbackf && (&$callbackf(@$callbackargs));
+
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
+
+}
+
+
+sub _playlistXalbum_singletonRef {
+	my $arg = shift;
+
+	if (!defined($arg)) {
+		return [];
+	} elsif ($arg eq '*') {
+		return [];
+	} elsif ($arg) {
+		# force stringification of a possible object.
+		return ["" . $arg];
+	} else {
+		return [];
+	}
+}
+
+
+sub _playlistXtracksCommand_parseSearchTerms {
+	my $client = shift;
+	my $terms  = shift;
+
+	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchTerms()\n");
+
+	my %find   = ();
+	my @fields = map { lc($_) } Slim::Schema->sources;
+	my ($sort, $limit, $offset);
+
+	# Setup joins as needed - we want to end up with Tracks in the end.
+	my %joinMap = ();
+
+	for my $term (split '&', $terms) {
+
+		if ($term =~ /^(.*)=(.*)$/ && grep { $1 =~ /$_\.?/ } @fields) {
+
+			my $key   = URI::Escape::uri_unescape($1);
+			my $value = URI::Escape::uri_unescape($2);
+
+			# Turn 'track.*' into 'me.*'
+			if ($key =~ /^track(\.?.*)$/) {
+				$key = "me$1";
+			}
+
+			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
+
+			# Setup the join mapping
+			if ($key =~ /^genre\./) {
+
+				$joinMap{'genre'} = { 'genreTrack' => 'genre' };
+
+			} elsif ($key =~ /^album\./) {
+
+				$joinMap{'album'} = 'album';
+
+			} elsif ($key =~ /^(?:contributor|artist)\./) {
+
+				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
+			}
+
+		} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
+
+			$find{$1} = $2;
+		}
+
+		# modifiers to the search
+		$sort   = $2 if $1 eq 'sort';
+		$limit  = $2 if $1 eq 'limit';
+		$offset = $2 if $1 eq 'offset';
+	}
+
+	# We can poke directly into the field info if requested - for more complicated queries.
+	if (my $fieldKey = $find{'fieldInfo'}) {
+
+		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
+
+	} elsif ($find{'playlist'}) {
+
+		# Treat playlists specially - they are containers.
+		my $obj = Slim::Schema->find('Playlist', $find{'playlist'});
+
+		if (blessed($obj) && $obj->can('tracks')) {
+
+			# Side effect - (this would never fly in Haskell! :)
+			# We want to add the playlist name to the client object.
+			$client->currentPlaylist($obj);
+
+			return $obj->tracks;
+		}
+
+		return ();
+
+	} else {
+
+		# Bug 2271 - allow VA albums.
+		if ($find{'album.compilation'}) {
+
+			delete $find{'contributor.id'};
+		}
+
+		my $rs = Slim::Schema->rs('Track')->search(\%find, {
+
+			'order_by' => $sort || 'me.disc, me.tracknum, me.titlesort',
+			'join'     => [ map { $_ } values %joinMap ],
+		});
+
+		if ($limit && $offset) {
+
+			return $rs->slice($offset, $limit);
+
+		} else {
+
+			return $rs->all;
+		}
+	}
+}
+
+sub _playlistXtracksCommand_parseListRef {
+	my $client  = shift;
+	my $term    = shift;
+	my $listRef = shift;
+
+	$d_commands && msg("Commands::_playlistXtracksCommand_parseListRef()\n");
+
+	if ($term =~ /listref=(\w+)&?/i) {
+		$listRef = $client->param($1);
+	}
+
+	if (defined $listRef && ref $listRef eq "ARRAY") {
+
+		return @$listRef;
+	}
+}
+
+
+sub _showCommand_done {
+	my $args = shift;
 	
 	$request->setStatusDone();
 }

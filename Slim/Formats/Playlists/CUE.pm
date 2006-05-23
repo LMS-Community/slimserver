@@ -171,8 +171,7 @@ sub parse {
 
 		$::d_parse && msg("Reading tags to get ending time of $filename\n");
 
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-		my $track = $ds->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate({
 			'url'        => $filename,
 			'readTags'   => 1,
 		});
@@ -291,7 +290,6 @@ sub read {
 	return @items unless defined $tracks && keys %$tracks > 0;
 
 	#
-	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $basetrack = undef;
 
 	# Process through the individual tracks
@@ -313,7 +311,7 @@ sub read {
 
 			$::d_parse && msg("Creating new track for: $track->{'FILENAME'}\n");
 
-			$basetrack = $ds->updateOrCreate({
+			$basetrack = Slim::Schema->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
 				'attributes' => {
 					'CONTENT_TYPE'    => 'cur',
@@ -323,17 +321,7 @@ sub read {
 			});
 
 			# Remove entries from other sources. This cuesheet takes precedence.
-			my $find = {'url', $track->{'FILENAME'} . "#*" };
-
-			my @oldtracks = $ds->find({
-				'field' => 'url',
-				'find'  => $find,
-			});
-
-			for my $oldtrack (@oldtracks) {
-				$::d_parse && msg("Deleting previous entry for $oldtrack\n");
-				$ds->delete($oldtrack);
-			}
+			Slim::Schema->search('Track', { 'url' => $track->{'FILENAME'} . '#*' })->delete_all;
 		}
 
 		push @items, $track->{'URI'}; #url;
@@ -356,7 +344,7 @@ sub read {
 
 		# Do the actual data store
 		# Skip readTags since we'd just be reading the same file over and over
-		$ds->updateOrCreate({
+		Slim::Schema->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # no need to read tags, since we did it for the base file

@@ -21,7 +21,6 @@ use HTTP::Headers::ETag;
 use HTTP::Status;
 use MIME::Base64;
 use MIME::QuotedPrint;
-use HTML::Entities;
 use Scalar::Util qw(blessed);
 use Socket qw(:DEFAULT :crlf);
 use Template;
@@ -797,8 +796,7 @@ sub generateHTTPResponse {
 
 	} elsif ($path =~ /music\/(\d+)\/download$/) {
 
-		my $ds  = Slim::Music::Info::getCurrentDataStore();
-		my $obj = $ds->objectForId('track', $1);
+		my $obj = Slim::Schema->find('Track', $1);
 
 		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj)) {
 
@@ -1293,9 +1291,16 @@ sub addStreamingResponse {
 
 	push @{$outbuf{$httpClient}}, \%segment;
 
-#   May want to enable this later, if we find that that it has any effect on some platforms...
-#	setsockopt $httpClient, SOL_SOCKET, SO_SNDBUF, MAXCHUNKSIZE;
-	
+	# Set the kernel's send buffer to be higher so that there is less
+	# chance of audio skipping if/when we block elsewhere in the code.
+	# 
+	# Check to make sure that our target size isn't smaller than the
+	# kernel's default size.
+	if (unpack('I', getsockopt($httpClient, SOL_SOCKET, SO_SNDBUF)) < (MAXCHUNKSIZE * 2)) {
+
+		setsockopt($httpClient, SOL_SOCKET, SO_SNDBUF, (MAXCHUNKSIZE * 2));
+	}
+
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 
 	# we aren't going to read from this socket anymore so don't select on it...
@@ -1836,12 +1841,12 @@ sub buildStatusHeaders {
 		}	
 		
 		if ($client && Slim::Player::Playlist::count($client)) { 
-			my $ds      = Slim::Music::Info::getCurrentDataStore();
-			my $track   = $ds->objectForUrl(Slim::Player::Playlist::song($client));
+
+			my $track = Slim::Schema->objectForUrl(Slim::Player::Playlist::song($client));
 	
-			$headers{"x-playertrack"}    = Slim::Player::Playlist::song($client); 
-			$headers{"x-playerindex"}    = Slim::Player::Source::currentSongIndex($client) + 1;
-			$headers{"x-playertime"}     = Slim::Player::Source::songTime($client);
+			$headers{"x-playertrack"} = Slim::Player::Playlist::song($client); 
+			$headers{"x-playerindex"} = Slim::Player::Source::currentSongIndex($client) + 1;
+			$headers{"x-playertime"}  = Slim::Player::Source::songTime($client);
 
 			if (blessed($track) && $track->can('artist')) {
 

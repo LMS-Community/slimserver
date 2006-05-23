@@ -10,9 +10,9 @@ __PACKAGE__->mk_group_accessors('component_class' => 'table_class');
 __PACKAGE__->table_class('DBIx::Class::ResultSource::Table');
 
 __PACKAGE__->mk_classdata('table_alias'); # FIXME: Doesn't actually do
-					  # anything yet!
+                                          # anything yet!
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::ResultSourceProxy::Table - provides a classdata table
 object and method proxies
@@ -47,7 +47,7 @@ sub table {
   unless (ref $table) {
     $table = $class->table_class->new({
         $class->can('result_source_instance') ?
-	  %{$class->result_source_instance} : (),
+          %{$class->result_source_instance} : (),
         name => $table,
         result_class => $class,
     });
@@ -73,7 +73,7 @@ Returns 1 if the class has a column of this name, 0 otherwise.
 
 Returns the column metadata hashref for a column. For a description of
 the various types of column data in this hashref, see
-L<DBIx::Class::ResultSource/add_column> 
+L<DBIx::Class::ResultSource/add_column>
 
 =cut
 

@@ -204,11 +204,9 @@ sub browseTreeItemName {
 	my ($client, $item, $index) = @_;
 
 	if (!ref($item)) {
+
 		# Dynamically pull the object from the DB. This prevents us from
 		# having to do so at initial load time of possibly hundreds of items.
-
-		my $ds  = Slim::Music::Info::getCurrentDataStore();
-
 		my $url = Slim::Utils::Misc::fixPath($item, $client->param('topLevelPath')) || return;
 
 		if (Slim::Music::Info::isWinShortcut($url)) {
@@ -218,12 +216,18 @@ sub browseTreeItemName {
 
 		my $items = $client->param('listRef');
 
-		$item = $items->[$index] = $ds->objectForUrl($url, 1, 1, 1) || return $url;
+		my $track = Slim::Schema->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1,
+			'commit'   => 1,
 
-		${$client->param('valueRef')} = $item;
+		}) || return $url;
+
+		${$client->param('valueRef')} = $item = $items->[$index] = $track;
 	}
 
-	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item) );
+	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) );
 }
 
 # Method invoked by INPUT.List to map an item in the list
@@ -235,7 +239,7 @@ sub browseTreeOverlay {
 	my ($overlay1, $overlay2);
 
 	# A text item generally means ALL_, so overlay an arrow
-	unless (ref $item) {
+	if (!ref $item) {
 		return (undef, Slim::Display::Display::symbol('rightarrow'));
 	}
 
@@ -258,9 +262,8 @@ sub setMode {
 	}
 
 	# Parse the hierarchy list into an array
-	my $hierarchy   = $client->param('hierarchy');
-	my @levels      = split(/\//, $hierarchy);
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
+	my $hierarchy = $client->param('hierarchy');
+	my @levels    = split(/\//, $hierarchy);
 
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
 
@@ -274,20 +277,9 @@ sub setMode {
 
 	} else {
 
-		my $obj;
 		# one level down we show the folder name, below that we show two levels
-
-		if (scalar @levels > 2) {
-
-			$obj = $ds->objectForId('track', $levels[-2]);
-
-			if (blessed($obj) && $obj->can('title')) {
-
-				push @headers, $obj->title;
-			}
-		}
-
-		$obj = $ds->objectForId('track', $levels[-1]);
+		my $level = (scalar @levels > 2) ? $levels[-2] : $levels[-1];
+		my $obj   = Slim::Schema->find('Track', $level);
 
 		if (blessed($obj) && $obj->can('title')) {
 

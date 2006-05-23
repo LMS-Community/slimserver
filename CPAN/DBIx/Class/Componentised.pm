@@ -1,4 +1,4 @@
-package # hide from PAUSE 
+package # hide from PAUSE
     DBIx::Class::Componentised;
 
 use strict;
@@ -10,7 +10,11 @@ sub inject_base {
   my ($class, $target, @to_inject) = @_;
   {
     no strict 'refs';
-    unshift(@{"${target}::ISA"}, grep { $target ne $_ && !$target->isa($_)} @to_inject);
+    my %seen;
+    unshift( @{"${target}::ISA"},
+        grep { !$seen{ $_ }++ && $target ne $_ && !$target->isa($_) }
+            @to_inject
+    );
   }
 
   # Yes, this is hack. But it *does* work. Please don't submit tickets about

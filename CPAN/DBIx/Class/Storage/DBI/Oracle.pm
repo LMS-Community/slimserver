@@ -5,7 +5,7 @@ use warnings;
 
 use Carp qw/croak/;
 
-use base qw/DBIx::Class::Storage::DBI/;
+use base qw/DBIx::Class::Storage::DBI::MultiDistinctEmulation/;
 
 # __PACKAGE__->load_components(qw/PK::Auto/);
 
@@ -14,7 +14,7 @@ sub last_insert_id {
   my $seq = ($source->column_info($col)->{sequence} ||= $self->get_autoinc_seq($source,$col));
   my $sql = "SELECT " . $seq . ".currval FROM DUAL";
   my ($id) = $self->_dbh->selectrow_array($sql);
-  return $id;  
+  return $id;
 }
 
 sub get_autoinc_seq {
@@ -40,7 +40,7 @@ sub get_autoinc_seq {
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Storage::DBI::Oracle - Automatic primary key class for Oracle
 

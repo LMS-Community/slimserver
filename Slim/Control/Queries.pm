@@ -100,7 +100,6 @@ sub alarmsQuery {
 	$request->setStatusDone();
 }
 
-
 sub browseXQuery {
 	my $request = shift;
 
@@ -116,26 +115,29 @@ sub browseXQuery {
 	my $label    = $request->getRequest(0);
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $search	 = $request->getParam('search');
-	my $genreID	 = $request->getParam('genre_id');
+	my $search   = $request->getParam('search');
+	my $genreID  = $request->getParam('genre_id');
 	my $artistID = $request->getParam('artist_id');
-	my $albumID	 = $request->getParam('album_id');
+	my $albumID  = $request->getParam('album_id');
+	my $find     = {};
 
 	chop($label);
 
-	my $ds 		= Slim::Music::Info::getCurrentDataStore();
-	my $find = {};
-
 	# Normalize any search parameters
 	if (defined $searchMap{$label} && specified($search)) {
+
 		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
 	}
+
 	if (defined $genreID){
+
 		$find->{'genre'} = $genreID;
 	}
+
 	if (defined $artistID){
 		$find->{'artist'} = $artistID;
 	}
+
 	if (defined $albumID){
 		$find->{'album'} = $albumID;
 	}
@@ -143,18 +145,19 @@ sub browseXQuery {
 	if ($label eq 'artist') {
 
 		# The user may not want to include all the composers/conductors
-		if (my $roles = $ds->artistOnlyRoles) {
+		if (my $roles = Slim::Schema->artistOnlyRoles) {
 
 			$find->{'contributor.role'} = $roles;
 		}
 	}
-	
+
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
 
-	my $results = $ds->find({
-		'field'  => $label,
+	# XXXX - need to convert to Schema
+	# Who calls this?
+	my $results = Slim::Schema->search($label, {
 		'find'   => $find,
 		'sortBy' => $label,
 #		'limit'  => $cmdRef->{'_p2'},
@@ -171,7 +174,7 @@ sub browseXQuery {
 
 		my $loopname = '@' . $label . 's';
 		my $cnt = 0;
-		
+
 		for my $eachitem (@$results[$start..$end]) {
 			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
 			$request->addResultLoop($loopname, $cnt, $label, $eachitem);
@@ -181,7 +184,6 @@ sub browseXQuery {
 
 	$request->setStatusDone();
 }
-
 
 sub cursonginfoQuery {
 	my $request = shift;
@@ -205,29 +207,30 @@ sub cursonginfoQuery {
 		if ($method eq 'path') {
 			
 			$request->addResult("_$method", $url);
-		
+
 		} else {
-			
-			my $ds = Slim::Music::Info::getCurrentDataStore();
-			my $track  = $ds->objectForUrl(Slim::Player::Playlist::song($client));
-			
+
+			my $track = Slim::Schema->objectForUrl($url);
+
 			if (!blessed($track) || !$track->can('secs')) {
-				msg("Couldn't fetch object for URL: [$url] - skipping track\n");
+
+				errorMsg("cursonginfoQuery: Couldn't fetch object for URL: [$url] - skipping track\n");
 				bt();
+
 			} else {
-			
+
 				if ($method eq 'duration') {
-			
+
 					$request->addResult("_$method", $track->secs() || 0);
-				
+
 				} else {
-					
+
 					$request->addResult("_$method", $track->$method() || 0);
 				}
 			}
 		}
 	}
-	
+
 	$request->setStatusDone();
 }
 
@@ -340,20 +343,22 @@ sub infoTotalQuery {
 	
 	# get our parameters
 	my $entity = $request->getRequest(2);
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	
+
 	if ($entity eq 'albums') {
-		$request->addResult("_$entity", $ds->count('album'));
+		$request->addResult("_$entity", Slim::Schema->count('Album'));
 	}
+
 	if ($entity eq 'artists') {
-		$request->addResult("_$entity", $ds->count('contributor'));
+		$request->addResult("_$entity", Slim::Schema->count('Contributor'));
 	}
+
 	if ($entity eq 'genres') {
-		$request->addResult("_$entity", $ds->count('genre'));
+		$request->addResult("_$entity", Slim::Schema->count('Genre'));
 	}
+
 	if ($entity eq 'songs') {
-		$request->addResult("_$entity", $ds->count('track'));
-	}			
+		$request->addResult("_$entity", Slim::Schema->count('Track'));
+	}
 	
 	$request->setStatusDone();
 }
@@ -581,18 +586,20 @@ sub playlistXQuery {
 
 	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
-		my $ds = Slim::Music::Info::getCurrentDataStore();
-		my $url = Slim::Player::Playlist::song($client, $index);
-		my $obj = $ds->objectForUrl($url, 1, 1);
+		my $track = Slim::Schema->objectForUrl({
+			'url'      => Slim::Player::Playlist::song($client, $index),
+			'create'   => 1,
+			'readTags' => 1,
+		});
 
-		if (blessed($obj) && $obj->can('secs')) {
+		if (blessed($track) && $track->can('secs')) {
 
 			# Just call the method on Track
 			if ($entity eq 'duration') {
-				$request->addResult("_$entity", $obj->secs());
+				$request->addResult("_$entity", $track->secs());
 			}
 			else {
-				$request->addResult("_$entity", $obj->$entity());
+				$request->addResult("_$entity", $track->$entity());
 			}
 		}
 	}
@@ -612,14 +619,11 @@ sub playlisttracksQuery {
 		return;
 	}
 
-	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
-	my $find  = {};
-	my $tags  = 'gald';
-
 	# get our parameters
+	my $tags       = 'gald';
 	my $index      = $request->getParam('_index');
 	my $quantity   = $request->getParam('_quantity');
-	my $tagsprm	   = $request->getParam('tags');
+	my $tagsprm    = $request->getParam('tags');
 	my $playlistID = $request->getParam('playlist_id');
 
 	if (!defined $playlistID) {
@@ -637,8 +641,8 @@ sub playlisttracksQuery {
 		$request->addResult("rescan", 1);
 	}
 
-	my $playlistObj = $ds->objectForId('track', $playlistID);
-				
+	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
+
 	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
 		$iterator = $playlistObj->tracks();
 	}
@@ -692,8 +696,6 @@ sub playlistsQuery {
 	my $search	 = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
 
-	my $ds 		= Slim::Music::Info::getCurrentDataStore();
-
 	# Normalize any search parameters
 	if (defined $search) {
 		$search = Slim::Web::Pages::Search::searchStringSplit($search);
@@ -703,11 +705,11 @@ sub playlistsQuery {
 		$request->addResult("rescan", 1);
 	}
 
-	my $iterator = $ds->getPlaylists('all', $search);
+	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
 
-	if (defined $iterator) {
+	if (defined $rs) {
 
-		my $numitems = scalar @$iterator;
+		my $numitems = $rs->count;
 		
 		$request->addResult("count", $numitems);
 		
@@ -715,10 +717,13 @@ sub playlistsQuery {
 
 		if ($valid) {
 			my $cnt = 0;
-			for my $eachitem (@$iterator[$start..$end]) {
+
+			for my $eachitem ($rs->slice($start, $end)) {
+
 				$request->addResultLoop('@playlists', $cnt, "id", $eachitem->id);
 				$request->addResultLoop('@playlists', $cnt, "playlist", Slim::Music::Info::standardTitle(undef, $eachitem));
 				$request->addResultLoop('@playlists', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
+
 				$cnt++;
 			}
 		}
@@ -850,8 +855,6 @@ sub debugQuery {
 	my $SB2  = ($client->model() eq 'squeezebox2');
 	my $RSC  = ($client->model() eq 'http');
 	
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	
 	my $connected = $client->connected() || 0;
 	my $power     = $client->power();
 	my $repeat    = Slim::Player::Playlist::repeat($client);
@@ -889,7 +892,7 @@ sub debugQuery {
 			$request->addResult('time', 
 				Slim::Player::Source::songTime($client));
 			
-			my $track = $ds->objectForUrl($song);
+			my $track = Slim::Schema->objectForUrl($song);
 
 			my $dur   = 0;
 
@@ -968,10 +971,11 @@ sub debugQuery {
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
-			_addSong(	$request, $loop, 0, 
-						Slim::Player::Playlist::song($client, $idx), $tags,
-						'playlist index', $idx
-					);
+			_addSong($request, $loop, 0, 
+				Slim::Player::Playlist::song($client, $idx), $tags,
+				'playlist index', $idx
+			);
+
 		} else {
 
 			my ($valid, $start, $end);
@@ -1009,14 +1013,16 @@ sub debugQuery {
 					if ($valid) {
 
 						for ($idx = $start; $idx <= $end; $idx++){
-							_addSong(	$request, $loop, $count, 
-										Slim::Player::Playlist::song($client, $idx), $tags,
-										'playlist index', $idx
-									);
+
+							_addSong($request, $loop, $count, 
+								Slim::Player::Playlist::song($client, $idx), $tags,
+								'playlist index', $idx
+							);
+
 							$count++;
 							::idleStreams() ;
 						}
-					}						
+					}
 				}
 			}
 		}
@@ -1037,8 +1043,6 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
-	my $find  = {};
 	my $tags  = 'abcdefghijklmnopqrstvwyz'; # all letter EXCEPT u AND x
 	my $track;
 
@@ -1051,15 +1055,66 @@ sub songinfoQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $url	     = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
-	my $tagsprm	 = $request->getParam('tags');
+	my $tagsprm  = $request->getParam('tags');
 
 	if (!defined $trackID && !defined $url) {
 		$request->setStatusBadParams();
 		return;
 	}
+
+	# did we have override on the defaults?
+	$tags = $tagsprm if defined $tagsprm;
+
+	# find the track
+	if (defined $trackID){
+
+		if ($tags !~ /u/) {
+			$tags .= 'u';
+		}
+
+		$track = Slim::Schema->find('Track', $trackID);
+
+	} else {
+
+		if (defined $url && Slim::Music::Info::isSong($url)){
+
+			if ($tags !~ /x/) {
+				$tags .= 'x';
+			}
+
+			$track = Slim::Schema->objectForUrl($url)
+		}
+	}
 	
-	$debugFlag = "::" . $debugFlag;
-	no strict 'refs';
+	if (blessed($track) && $track->can('id')) {
+
+		my $hashRef = _songData($track, $tags);
+		my $count = scalar (keys %{$hashRef});
+
+		$request->addResult("count", $count);
+
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+		if ($valid) {
+			my $idx = 0;
+
+			while (my ($key, $val) = each %{$hashRef}) {
+
+				if ($idx >= $start && $idx <= $end) {
+					$request->addResult($key, $val);
+				}
+
+				$idx++;
+ 			}
+		}
+	}
+
+	$request->setStatusDone();
+}
+
+
+sub syncQuery {
+	my $request = shift;
 	
 	my $isValue = $$debugFlag;
 	$isValue ||= 0;
@@ -1068,7 +1123,6 @@ sub songinfoQuery {
 	
 	$request->setStatusDone();
 }
-
 
 sub timeQuery {
 	my $request = shift;
@@ -1089,7 +1143,6 @@ sub timeQuery {
 	$request->setStatusDone();
 }
 
-
 sub titlesQuery {
 	my $request = shift;
 
@@ -1101,7 +1154,6 @@ sub titlesQuery {
 		return;
 	}
 
-	my $ds 	  = Slim::Music::Info::getCurrentDataStore();
 	my $find  = {};
 	my $label = 'track';
 	my $sort  = 'title';
@@ -1110,12 +1162,12 @@ sub titlesQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $tagsprm	 = $request->getParam('tags');
-	my $sortprm	 = $request->getParam('sort');
-	my $search	 = $request->getParam('search');
-	my $genreID	 = $request->getParam('genre_id');
+	my $tagsprm  = $request->getParam('tags');
+	my $sortprm  = $request->getParam('sort');
+	my $search   = $request->getParam('search');
+	my $genreID  = $request->getParam('genre_id');
 	my $artistID = $request->getParam('artist_id');
-	my $albumID	 = $request->getParam('album_id');
+	my $albumID  = $request->getParam('album_id');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
@@ -1128,12 +1180,15 @@ sub titlesQuery {
 	if (defined $searchMap{$label} && specified($search)) {
 		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
 	}
+
 	if (defined $genreID){
 		$find->{'genre'} = $genreID;
 	}
+
 	if (defined $artistID){
 		$find->{'artist'} = $artistID;
 	}
+
 	if (defined $albumID){
 		$find->{'album'} = $albumID;
 	}
@@ -1141,13 +1196,14 @@ sub titlesQuery {
 	if ($sort eq "tracknum" && !($tags =~ /t/)) {
 		$tags = $tags . "t";
 	}
-	
+
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	my $results = $ds->find({
-		'field'  => $label,
+	# XXXX - need to convert to schema!
+	# Who calls this?
+	my $results = Slim::Schema->search($label, {
 		'find'   => $find,
 		'sortBy' => $sort,
 #		'limit'  => $cmdRef->{'_p2'},
@@ -1224,18 +1280,19 @@ sub _addSong {
 sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
-	
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
-	my $track = blessed($pathOrObj) && $pathOrObj->can('id') ? $pathOrObj : $ds->objectForUrl($pathOrObj);
-	
+
+	my $track     = Slim::Schema->objectForUrl($pathOrObj);
+
 #	msg("REMOTE STREAM\n") if Slim::Music::Info::isRemoteURL($pathOrObj);
-	
+
 	if (!blessed($track) || !$track->can('id')) {
 
 		errorMsg("Queries::_songData called with invalid object or path: $pathOrObj!\n");
 		
 		# For some reason, $pathOrObj may be an id... try that before giving up...
-		$track = $ds->objectForId('track', $pathOrObj);
+		if ($pathOrObj =~ /^\d+$/) {
+			$track = Slim::Schema->find('Track', $pathOrObj);
+		}
 
 		if (!blessed($track) || !$track->can('id')) {
 
@@ -1248,9 +1305,9 @@ sub _songData {
 	tie (my %returnHash, "Tie::LLHash", {lazy => 1});
 
 	# add fields present no matter $tags
-	$returnHash{'id'}    = $track->id();
-	$returnHash{'title'} = $track->title();
-	
+	$returnHash{'id'}    = $track->id;
+	$returnHash{'title'} = $track->title;
+
 	# Allocation map: capital letters are still free:
 	#  a b c d e f g h i j k l m n o p q r s t u v X y z
 
@@ -1296,68 +1353,66 @@ sub _songData {
 			next;
 		}
 
-		if ($tag eq 'b' && (my @bands = $track->band())) {
+		if ($tag eq 'b' && (my @bands = $track->band)) {
 			$returnHash{'band'} = $bands[0];
 			next;
 		}
-		
-		if ($tag eq 'c' && (my @composers = $track->composer())) {
+
+		if ($tag eq 'c' && (my @composers = $track->composer)) {
 			$returnHash{'composer'} = $composers[0];
 			next;
 		}
 
-		if ($tag eq 'd' && defined(my $duration = $track->secs())) {
+		if ($tag eq 'd' && defined(my $duration = $track->secs)) {
 			$returnHash{'duration'} = $duration;
 			next;
 		}
 
-		if ($tag eq 'h' && (my @conductors = $track->conductor())) {
+		if ($tag eq 'h' && (my @conductors = $track->conductor)) {
 			$returnHash{'conductor'} = $conductors[0];
 			next;
 		}
 
-		if ($tag eq 'i' && defined(my $disc = $track->disc())) {
+		if ($tag eq 'i' && defined(my $disc = $track->disc)) {
 			$returnHash{'disc'} = $disc;
 			next;
 		}
 
-		if ($tag eq 'j' && $track->coverArt()) {
+		if ($tag eq 'j' && $track->coverArt) {
 			$returnHash{'coverart'} = 1;
 			next;
 		}
 
-		if ($tag eq 'o' && defined(my $ct = $track->content_type())) {
+		if ($tag eq 'o' && defined(my $ct = $track->content_type)) {
 			$returnHash{'type'} = Slim::Utils::Strings::string(uc($ct));
 			next;
 		}
 
-		if ($tag eq 'p' && defined(my $genre = $track->genre())) {
-			if (defined(my $id = $genre->id())) {
+		if ($tag eq 'p' && defined(my $genre = $track->genre)) {
+			if (defined(my $id = $genre->id)) {
 				$returnHash{'genre_id'} = $id;
 				next;
 			}
 		}
 
-		if ($tag eq 's' && defined(my $artist = $track->artist())) {
-			if (defined(my $id = $artist->id())) {
-				$returnHash{'artist_id'} = $id;
-				next;
-			}
+		if ($tag eq 's' && defined(my $artist = $track->artist)) {
+
+			$returnHash{'artist_id'} = $artist->id;
+			next;
 		}
-		
-		if (defined(my $album = $track->album())) {
-		
-			if ($tag eq 'e' && defined(my $id = $album->id())) {
-				$returnHash{'album_id'} = $id;
+
+		if (defined(my $album = $track->album)) {
+
+			if ($tag eq 'e') {
+				$returnHash{'album_id'} = $album->id;
 				next;
 			}
-	
-			if ($tag eq 'q' && defined(my $discc = $album->discc())) {
+
+			if ($tag eq 'q' && defined(my $discc = $album->discc)) {
 				$returnHash{'disccount'} = $discc unless $discc eq '';
 				next;
 			}
 		}
-
 	}
 
 	return \%returnHash;

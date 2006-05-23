@@ -5,7 +5,7 @@ use warnings;
 
 use base qw/DBIx::Class::Row/;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::PK - Primary Key class
 
@@ -13,7 +13,7 @@ DBIx::Class::PK - Primary Key class
 
 =head1 DESCRIPTION
 
-This class contains methods for handling primary keys and methods 
+This class contains methods for handling primary keys and methods
 depending on them.
 
 =head1 METHODS
@@ -70,7 +70,7 @@ sub id {
 =head2 ID
 
 Returns a unique id string identifying a row object by primary key.
-Used by L<DBIx::Class::CDBICompat::LiveObjectIndex> and 
+Used by L<DBIx::Class::CDBICompat::LiveObjectIndex> and
 L<DBIx::Class::ObjectCache>.
 
 =cut
@@ -88,7 +88,7 @@ sub _create_ID {
   my ($self,%vals) = @_;
   return undef unless 0 == grep { !defined } values %vals;
   return join '|', ref $self || $self, $self->result_source->name,
-    map { $_ . '=' . $vals{$_} } sort keys %vals;    
+    map { $_ . '=' . $vals{$_} } sort keys %vals;
 }
 
 sub ident_condition {

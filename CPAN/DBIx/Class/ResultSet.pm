@@ -51,7 +51,7 @@ In the examples below, the following table classes are used:
 
 =head1 METHODS
 
-=head2 new 
+=head2 new
 
 =over 4
 
@@ -184,7 +184,7 @@ sub new {
                  # year = 2005 OR year = 2004
 
 If you need to pass in additional attributes but no additional condition,
-call it as C<search(undef, \%attrs);>.
+call it as C<search(undef, \%attrs)>.
 
   # "SELECT name, artistid FROM $artist_table"
   my @all_artists = $schema->resultset('Artist')->search(undef, {
@@ -195,44 +195,44 @@ call it as C<search(undef, \%attrs);>.
 
 sub search {
   my $self = shift;
-
-  my $rs;
-  if( @_ ) {
     
-    my $attrs = { %{$self->{attrs}} };
-    my $having = delete $attrs->{having};
-    $attrs = { %$attrs, %{ pop(@_) } } if @_ > 1 and ref $_[$#_] eq 'HASH';
+  my $attrs = { %{$self->{attrs}} };
+  my $having = delete $attrs->{having};
+  $attrs = { %$attrs, %{ pop(@_) } } if @_ > 1 and ref $_[$#_] eq 'HASH';
 
-    my $where = (@_
-                  ? ((@_ == 1 || ref $_[0] eq "HASH")
-                      ? shift
-                      : ((@_ % 2)
-                          ? $self->throw_exception(
-                              "Odd number of arguments to search")
-                          : {@_}))
-                  : undef());
-    if (defined $where) {
-      $attrs->{where} = (defined $attrs->{where}
-                ? { '-and' =>
-                    [ map { ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_ }
-                        $where, $attrs->{where} ] }
-                : $where);
-    }
-
-    if (defined $having) {
-      $attrs->{having} = (defined $attrs->{having}
-                ? { '-and' =>
-                    [ map { ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_ }
-                        $having, $attrs->{having} ] }
-                : $having);
-    }
-
-    $rs = (ref $self)->new($self->result_source, $attrs);
+  my $where = (@_
+                ? ((@_ == 1 || ref $_[0] eq "HASH")
+                    ? shift
+                    : ((@_ % 2)
+                        ? $self->throw_exception(
+                            "Odd number of arguments to search")
+                        : {@_}))
+                : undef());
+  if (defined $where) {
+    $attrs->{where} = (defined $attrs->{where}
+              ? { '-and' =>
+                  [ map { ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_ }
+                      $where, $attrs->{where} ] }
+              : $where);
   }
-  else {
-    $rs = $self;
-    $rs->reset;
+
+  if (defined $having) {
+    $attrs->{having} = (defined $attrs->{having}
+              ? { '-and' =>
+                  [ map { ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_ }
+                      $having, $attrs->{having} ] }
+              : $having);
   }
+
+  my $rs = (ref $self)->new($self->result_source, $attrs);
+
+  unless (@_) { # no search, effectively just a clone
+    my $rows = $self->get_cache;
+    if ($rows) {
+      $rs->set_cache($rows);
+    }
+  }
+  
   return (wantarray ? $rs->all : $rs);
 }
 
@@ -326,8 +326,8 @@ sub find {
       return keys %{$rs->{collapse}} ? $rs->next : $rs->single;
   } else {
       return keys %{$self->{collapse}} ?
-	$self->search($query)->next :
-	$self->single($query);
+        $self->search($query)->next :
+        $self->single($query);
   }
 }
 
@@ -345,7 +345,7 @@ sub find {
     name => 'Emo-R-Us',
   });
 
-Search the specified relationship, optionally specify a condition and
+Searches the specified relationship, optionally specifying a condition and
 attributes for matching records. See L</ATTRIBUTES> for more information.
 
 =cut
@@ -392,6 +392,10 @@ sub cursor {
 Inflates the first result without creating a cursor if the resultset has
 any records in it; if not returns nothing. Used by find() as an optimisation.
 
+Can optionally take an additional condition *only* - this is a fast-code-path
+method; if you need to add extra joins or similar call ->search and then
+->single without a condition on the $rs returned from that.
+
 =cut
 
 sub single {
@@ -400,7 +404,7 @@ sub single {
   if ($where) {
     if (defined $attrs->{where}) {
       $attrs->{where} = {
-        '-and' => 
+        '-and' =>
             [ map { ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_ }
                $where, delete $attrs->{where} ]
       };
@@ -428,7 +432,7 @@ sub single {
   # WHERE title LIKE '%blue%'
   $cd_rs = $rs->search_like({ title => '%blue%'});
 
-Perform a search, but use C<LIKE> instead of C<=> as the condition. Note
+Performs a search, but uses C<LIKE> instead of C<=> as the condition. Note
 that this is simply a convenience method. You most likely want to use
 L</search> with specific operators.
 
@@ -455,8 +459,8 @@ sub search_like {
 =back
 
 Returns a resultset or object list representing a subset of elements from the
-resultset slice is called on.  Indexes are from 0 - i.e. to get the first
-three records, call
+resultset slice is called on. Indexes are from 0, i.e., to get the first
+three records, call:
 
   my ($one, $two, $three) = $rs->slice(0, 2);
 
@@ -464,12 +468,13 @@ three records, call
 
 sub slice {
   my ($self, $min, $max) = @_;
-  my $attrs = { %{ $self->{attrs} || {} } };
-  $attrs->{offset} ||= 0;
+  my $attrs = {}; # = { %{ $self->{attrs} || {} } };
+  $attrs->{offset} = $self->{attrs}{offset} || 0;
   $attrs->{offset} += $min;
   $attrs->{rows} = ($max ? ($max - $min + 1) : 1);
-  my $slice = (ref $self)->new($self->result_source, $attrs);
-  return (wantarray ? $slice->all : $slice);
+  return $self->search(undef(), $attrs);
+  #my $slice = (ref $self)->new($self->result_source, $attrs);
+  #return (wantarray ? $slice->all : $slice);
 }
 
 =head2 next
@@ -491,21 +496,25 @@ Can be used to efficiently iterate over records in the resultset:
     print $cd->title;
   }
 
+Note that you need to store the resultset object, and call C<next> on it. 
+Calling C<< resultset('Table')->next >> repeatedly will always return the
+first record from the resultset.
+
 =cut
 
 sub next {
   my ($self) = @_;
-  if (@{$self->{all_cache} || []}) {
+  if (my $cache = $self->get_cache) {
     $self->{all_cache_position} ||= 0;
-    return $self->{all_cache}->[$self->{all_cache_position}++];
+    return $cache->[$self->{all_cache_position}++];
   }
   if ($self->{attrs}{cache}) {
     $self->{all_cache_position} = 1;
     return ($self->all)[0];
   }
   my @row = (exists $self->{stashed_row} ?
-	       @{delete $self->{stashed_row}} :
-	       $self->cursor->next
+               @{delete $self->{stashed_row}} :
+               $self->cursor->next
   );
 #  warn Dumper(\@row); use Data::Dumper;
   return unless (@row);
@@ -562,7 +571,7 @@ sub _collapse_result {
   my @collapse;
   if (defined $prefix) {
     @collapse = map {
-	m/^\Q${prefix}.\E(.+)$/ ? ($1) : ()
+        m/^\Q${prefix}.\E(.+)$/ ? ($1) : ()
     } keys %{$self->{collapse}}
   } else {
     @collapse = keys %{$self->{collapse}};
@@ -581,15 +590,15 @@ sub _collapse_result {
     my (@final, @raw);
     while ( !(grep {
                 !defined($tree->[0]->{$_}) ||
-		$co_check{$_} ne $tree->[0]->{$_}
+                $co_check{$_} ne $tree->[0]->{$_}
               } @co_key) ) {
       push(@final, $tree);
       last unless (@raw = $self->cursor->next);
       $row = $self->{stashed_row} = \@raw;
       $tree = $self->_collapse_result($as, $row, $c_prefix);
-      #warn Data::Dumper::Dumper($tree, $row);
     }
-    @$target = @final;
+    @$target = (@final ? @final : [ {}, {} ]);
+      # single empty result to indicate an empty prefetched has_many
   }
 
   return $info;
@@ -636,7 +645,7 @@ clause.
 sub count {
   my $self = shift;
   return $self->search(@_)->count if @_ and defined $_[0];
-  return scalar @{ $self->get_cache } if @{ $self->get_cache };
+  return scalar @{ $self->get_cache } if $self->get_cache;
 
   my $count = $self->_count;
   return 0 unless $count;
@@ -662,7 +671,7 @@ sub _count { # Separated out so pager can get the full count
           @distinct = ($column);
           last;
         }
-      } 
+      }
     }
 
     $select = { count => { distinct => \@distinct } };
@@ -713,7 +722,7 @@ is returned in list context.
 
 sub all {
   my ($self) = @_;
-  return @{ $self->get_cache } if @{ $self->get_cache };
+  return @{ $self->get_cache } if $self->get_cache;
 
   my @obj;
 
@@ -770,13 +779,78 @@ sub reset {
 =back
 
 Resets the resultset and returns an object for the first result (if the
-resultset contains anything).
+resultset returns anything).
 
 =cut
 
 sub first {
   return $_[0]->reset->next;
 }
+
+# _cond_for_update_delete
+#
+# update/delete require the condition to be modified to handle
+# the differing SQL syntax available.  This transforms the $self->{cond}
+# appropriately, returning the new condition.
+
+sub _cond_for_update_delete {
+  my ($self) = @_;
+  my $cond = {};
+
+  if (!ref($self->{cond})) {
+    # No-op. No condition, we're updating/deleting everything
+  }
+  elsif (ref $self->{cond} eq 'ARRAY') {
+    $cond = [
+      map {
+        my %hash;
+        foreach my $key (keys %{$_}) {
+          $key =~ /([^.]+)$/;
+          $hash{$1} = $_->{$key};
+        }
+        \%hash;
+      } @{$self->{cond}}
+    ];
+  }
+  elsif (ref $self->{cond} eq 'HASH') {
+    if ((keys %{$self->{cond}})[0] eq '-and') {
+      $cond->{-and} = [];
+
+      my @cond = @{$self->{cond}{-and}};
+      for (my $i = 0; $i < @cond - 1; $i++) {
+        my $entry = $cond[$i];
+
+        my %hash;
+        if (ref $entry eq 'HASH') {
+          foreach my $key (keys %{$entry}) {
+            $key =~ /([^.]+)$/;
+            $hash{$1} = $entry->{$key};
+          }
+        }
+        else {
+          $entry =~ /([^.]+)$/;
+          $hash{$entry} = $cond[++$i];
+        }
+
+        push @{$cond->{-and}}, \%hash;
+      }
+    }
+    else {
+      foreach my $key (keys %{$self->{cond}}) {
+        $key =~ /([^.]+)$/;
+        $cond->{$1} = $self->{cond}{$key};
+      }
+    }
+  }
+  else {
+    $self->throw_exception(
+      "Can't update/delete on resultset with condition unless hash or array"
+    );
+  }
+
+  return $cond;
+}
+
 
 =head2 update
 
@@ -798,8 +872,11 @@ sub update {
   my ($self, $values) = @_;
   $self->throw_exception("Values for update must be a hash")
     unless ref $values eq 'HASH';
+
+  my $cond = $self->_cond_for_update_delete;
+
   return $self->result_source->storage->update(
-    $self->result_source->from, $values, $self->{cond}
+    $self->result_source->from, $values, $cond
   );
 }
 
@@ -813,8 +890,8 @@ sub update {
 
 =back
 
-Fetches all objects and updates them one at a time.  Note that C<update_all>
-will run cascade triggers while L</update> will not.
+Fetches all objects and updates them one at a time. Note that C<update_all>
+will run DBIC cascade triggers, while L</update> will not.
 
 =cut
 
@@ -839,7 +916,8 @@ sub update_all {
 =back
 
 Deletes the contents of the resultset from its result source. Note that this
-will not run cascade triggers. See L</delete_all> if you need triggers to run.
+will not run DBIC cascade triggers. See L</delete_all> if you need triggers
+to run.
 
 =cut
 
@@ -847,43 +925,9 @@ sub delete {
   my ($self) = @_;
   my $del = {};
 
-  if (!ref($self->{cond})) {
+  my $cond = $self->_cond_for_update_delete;
 
-    # No-op. No condition, we're deleting everything
-
-  } elsif (ref $self->{cond} eq 'ARRAY') {
-
-    $del = [ map { my %hash;
-      foreach my $key (keys %{$_}) {
-        $key =~ /([^.]+)$/;
-        $hash{$1} = $_->{$key};
-      }; \%hash; } @{$self->{cond}} ];
-
-  } elsif (ref $self->{cond} eq 'HASH') {
-
-    if ((keys %{$self->{cond}})[0] eq '-and') {
-
-      $del->{-and} = [ map { my %hash;
-        foreach my $key (keys %{$_}) {
-          $key =~ /([^.]+)$/;
-          $hash{$1} = $_->{$key};
-        }; \%hash; } @{$self->{cond}{-and}} ];
-
-    } else {
-
-      foreach my $key (keys %{$self->{cond}}) {
-        $key =~ /([^.]+)$/;
-        $del->{$1} = $self->{cond}{$key};
-      }
-    }
-
-  } else {
-    $self->throw_exception(
-      "Can't delete on resultset with condition unless hash or array"
-    );
-  }
-
-  $self->result_source->storage->delete($self->result_source->from, $del);
+  $self->result_source->storage->delete($self->result_source->from, $cond);
   return 1;
 }
 
@@ -897,8 +941,8 @@ sub delete {
 
 =back
 
-Fetches all objects and deletes them one at a time.  Note that C<delete_all>
-will run cascade triggers while L</delete> will not.
+Fetches all objects and deletes them one at a time. Note that C<delete_all>
+will run DBIC cascade triggers, while L</delete> will not.
 
 =cut
 
@@ -945,7 +989,7 @@ sub pager {
 
 Returns a resultset for the $page_number page of the resultset on which page
 is called, where each page contains a number of rows equal to the 'rows'
-attribute set on the resultset, or 10 by default
+attribute set on the resultset (10 by default).
 
 =cut
 
@@ -1067,9 +1111,9 @@ sub find_or_create {
 
   $class->update_or_create({ col => $val, ... });
 
-First, search for an existing row matching one of the unique constraints
-(including the primary key) on the source of this resultset.  If a row is
-found, update it with the other given column values.  Otherwise, create a new
+First, searches for an existing row matching one of the unique constraints
+(including the primary key) on the source of this resultset. If a row is
+found, updates it with the other given column values. Otherwise, creates a new
 row.
 
 Takes an optional C<key> attribute to search on a specific unique constraint.
@@ -1088,7 +1132,7 @@ For example:
 If no C<key> is specified, it searches on all unique constraints defined on the
 source, including the primary key.
 
-If the C<key> is specified as C<primary>, search only on the primary key.
+If the C<key> is specified as C<primary>, it searches only on the primary key.
 
 See also L</find> and L</find_or_create>.
 
@@ -1119,8 +1163,7 @@ sub update_or_create {
   if (@unique_hashes) {
     my $row = $self->single(\@unique_hashes);
     if (defined $row) {
-      $row->set_columns($hash);
-      $row->update;
+      $row->update($hash);
       return $row;
     }
   }
@@ -1138,12 +1181,12 @@ sub update_or_create {
 
 =back
 
-Gets the contents of the cache for the resultset if the cache is set
+Gets the contents of the cache for the resultset, if the cache is set.
 
 =cut
 
 sub get_cache {
-  shift->{all_cache} || [];
+  shift->{all_cache};
 }
 
 =head2 set_cache
@@ -1166,13 +1209,7 @@ than re-querying the database even if the cache attr is not set.
 sub set_cache {
   my ( $self, $data ) = @_;
   $self->throw_exception("set_cache requires an arrayref")
-    if ref $data ne 'ARRAY';
-  my $result_class = $self->result_class;
-  foreach( @$data ) {
-    $self->throw_exception(
-      "cannot cache object of type '$_', expected '$result_class'"
-    ) if ref $_ ne $result_class;
-  }
+    if defined($data) && (ref $data ne 'ARRAY');
   $self->{all_cache} = $data;
 }
 
@@ -1191,7 +1228,7 @@ Clears the cache for the resultset.
 =cut
 
 sub clear_cache {
-  shift->set_cache([]);
+  shift->set_cache(undef);
 }
 
 =head2 related_resultset
@@ -1358,6 +1395,10 @@ use C<get_column> instead:
 You can create your own accessors if required - see
 L<DBIx::Class::Manual::Cookbook> for details.
 
+Please note: This will NOT insert an C<AS employee_count> into the SQL statement
+produced, it is used for internal access only. Thus attempting to use the accessor
+in an C<order_by> clause or similar will fail misrably.
+
 =head2 join
 
 =over 4
@@ -1419,7 +1460,7 @@ below.
 
 =back
 
-Contains one or more relationships that should be fetched along with the main 
+Contains one or more relationships that should be fetched along with the main
 query (when they are accessed afterwards they will have already been
 "prefetched").  This is useful for when you know you will need the related
 objects, because it saves at least one query:
@@ -1452,6 +1493,83 @@ C<prefetch> can be used with the following relationship types: C<belongs_to>,
 C<has_one> (or if you're using C<add_relationship>, any relationship declared
 with an accessor type of 'single' or 'filter').
 
+=head2 page
+
+=over 4
+
+=item Value: $page
+
+=back
+
+Makes the resultset paged and specifies the page to retrieve. Effectively
+identical to creating a non-pages resultset and then calling ->page($page)
+on it.
+
+=head2 rows
+
+=over 4
+
+=item Value: $rows
+
+=back
+
+Specifes the maximum number of rows for direct retrieval or the number of
+rows per page if the page attribute or method is used.
+
+=head2 group_by
+
+=over 4
+
+=item Value: \@columns
+
+=back
+
+A arrayref of columns to group by. Can include columns of joined tables.
+
+  group_by => [qw/ column1 column2 ... /]
+
+=head2 having
+
+=over 4
+
+=item Value: $condition
+
+=back
+
+HAVING is a select statement attribute that is applied between GROUP BY and
+ORDER BY. It is applied to the after the grouping calculations have been
+done. 
+
+  having => { 'count(employee)' => { '>=', 100 } }
+
+=head2 distinct
+
+=over 4
+
+=item Value: (0 | 1)
+
+=back
+
+Set to 1 to group by all columns.
+
+=head2 cache
+
+Set to 1 to cache search results. This prevents extra SQL queries if you
+revisit rows in your ResultSet:
+
+  my $resultset = $schema->resultset('Artist')->search( undef, { cache => 1 } );
+  
+  while( my $artist = $resultset->next ) {
+    ... do stuff ...
+  }
+
+  $rs->first; # without cache, this would issue a query
+
+By default, searches are not cached.
+
+For more examples of using these attributes, see
+L<DBIx::Class::Manual::Cookbook>.
+
 =head2 from
 
 =over 4
@@ -1465,21 +1583,35 @@ statements generated by L<DBIx::Class>, allowing you to express custom C<JOIN>
 clauses.
 
 NOTE: Use this on your own risk.  This allows you to shoot off your foot!
+
 C<join> will usually do what you need and it is strongly recommended that you
 avoid using C<from> unless you cannot achieve the desired result using C<join>.
+And we really do mean "cannot", not just tried and failed. Attempting to use
+this because you're having problems with C<join> is like trying to use x86
+ASM because you've got a syntax error in your C. Trust us on this.
 
-In simple terms, C<from> works as follows:
+Now, if you're still really, really sure you need to use this (and if you're
+not 100% sure, ask the mailing list first), here's an explanation of how this
+works.
 
+The syntax is as follows -
+
+  [
+    { <alias1> => <table1> },
     [
-        { <alias> => <table>, -join-type => 'inner|left|right' }
-        [] # nested JOIN (optional)
-        { <table.column> => <foreign_table.foreign_key> }
-    ]
+      { <alias2> => <table2>, -join_type => 'inner|left|right' },
+      [], # nested JOIN (optional)
+      { <table1.column1> => <table2.column2>, ... (more conditions) },
+    ],
+    # More of the above [ ] may follow for additional joins
+  ]
 
-    JOIN
-        <alias> <table>
-        [JOIN ...]
-    ON <table.column> = <foreign_table.foreign_key>
+  <table1> <alias1>
+  JOIN
+    <table2> <alias2>
+    [JOIN ...]
+  ON <table1.column1> = <table2.column2>
+  <more joins may follow>
 
 An easy way to follow the examples below is to remember the following:
 
@@ -1534,7 +1666,7 @@ with a father in the person table, we could explicitly use C<INNER JOIN>:
             from => [
                 { child => 'person' },
                 [
-                    { father => 'person', -join-type => 'inner' },
+                    { father => 'person', -join_type => 'inner' },
                     { 'father.id' => 'child.father_id' }
                 ],
             ]
@@ -1544,69 +1676,6 @@ with a father in the person table, we could explicitly use C<INNER JOIN>:
     # Equivalent SQL:
     # SELECT child.* FROM person child
     # INNER JOIN person father ON child.father_id = father.id
-
-=head2 page
-
-=over 4
-
-=item Value: $page
-
-=back
-
-Makes the resultset paged and specifies the page to retrieve. Effectively
-identical to creating a non-pages resultset and then calling ->page($page)
-on it.
-
-=head2 rows
-
-=over 4
-
-=item Value: $rows
-
-=back
-
-Specifes the maximum number of rows for direct retrieval or the number of
-rows per page if the page attribute or method is used.
-
-=head2 group_by
-
-=over 4
-
-=item Value: \@columns
-
-=back
-
-A arrayref of columns to group by. Can include columns of joined tables.
-
-  group_by => [qw/ column1 column2 ... /]
-
-=head2 distinct
-
-=over 4
-
-=item Value: (0 | 1)
-
-=back
-
-Set to 1 to group by all columns.
-
-=head2 cache
-
-Set to 1 to cache search results. This prevents extra SQL queries if you
-revisit rows in your ResultSet:
-
-  my $resultset = $schema->resultset('Artist')->search( undef, { cache => 1 } );
-  
-  while( my $artist = $resultset->next ) {
-    ... do stuff ...
-  }
-
-  $rs->first; # without cache, this would issue a query 
-
-By default, searches are not cached.
-
-For more examples of using these attributes, see
-L<DBIx::Class::Manual::Cookbook>.
 
 =cut
 

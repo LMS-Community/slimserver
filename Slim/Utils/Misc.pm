@@ -515,6 +515,10 @@ sub stripRel {
 	return $file;
 }
 
+sub inAudioFolder {
+	return _checkInFolder(shift, 'audiodir');
+}
+
 sub inPlaylistFolder {
 	my $path = shift || return;
 	my $pref = shift;
@@ -633,19 +637,23 @@ sub findAndScanDirectoryTree {
 	# Find the db entry that corresponds to the requested directory.
 	# If we don't have one - that means we're starting out from the root audiodir.
 	my $topLevelObj;
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	if (ref $urlOrObj) {
+	if (blessed($urlOrObj)) {
 
 		$topLevelObj = $urlOrObj;
 
 	} elsif (scalar @$levels) {
 
-		$topLevelObj = $ds->objectForId('track', $levels->[-1]);
+		$topLevelObj = Slim::Schema->find('Track', $levels->[-1]);
 
 	} else {
 
-		$topLevelObj = $ds->objectForUrl($urlOrObj, 1, 1, 1);
+		$topLevelObj = Slim::Schema->objectForUrl({
+			'url'      => $urlOrObj,
+			'create'   => 1,
+			'readTags' => 1,
+			'commit'   => 1,
+		});
 
 		if (blessed($topLevelObj) && $topLevelObj->can('id')) {
 
@@ -691,7 +699,7 @@ sub findAndScanDirectoryTree {
 	}
 
 	# Now read the raw directory and return it. This should always be really fast.
-	my $items = [ Slim::Music::Info::sortFilename( readDirectory( $topLevelObj->path ) ) ];
+	my $items = [ Slim::Music::Info::sortFilename( readDirectory($path) ) ];
 	my $count = scalar @$items;
 
 	return ($topLevelObj, $items, $count);

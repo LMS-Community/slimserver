@@ -138,6 +138,8 @@ any of your aliases using either of these:
     }
   );
 
+  my $count = $rs->next->get_column('count');
+
 =head3 SELECT COUNT(DISTINCT colname)
 
   my $rs = $schema->resultset('Foo')->search(
@@ -199,6 +201,26 @@ Then call your new method in your code:
 
    my $ordered_cds = $schema->resultset('CD')->search_cds_ordered();
 
+
+=head3 Predefined searches without writing a ResultSet class
+
+Alternatively you can automatically generate a DBIx::Class::ResultSet
+class by using the ResultSetManager component and tagging your method
+as ResultSet:
+
+  __PACKAGE__->load_components(qw/ ResultSetManager Core /);
+
+  sub search_cds_ordered : ResultSet {
+      my ($self) = @_;
+      return $self->search(
+          {},
+          { order_by => 'name DESC' },
+      );
+  } 
+
+Then call your method in the same way from your code:
+
+   my $ordered_cds = $schema->resultset('CD')->search_cds_ordered();
 
 =head2 Using joins and prefetch
 
@@ -291,9 +313,8 @@ L<DBIx::Class> has now prefetched all matching data from the C<artist> table,
 so no additional SQL statements are executed. You now have a much more
 efficient query.
 
-Note that as of L<DBIx::Class> 0.04, C<prefetch> cannot be used with
-C<has_many> relationships. You will get an error along the lines of "No
-accessor for prefetched ..." if you try.
+Note that as of L<DBIx::Class> 0.05999_01, C<prefetch> I<can> be used with
+C<has_many> relationships.
 
 Also note that C<prefetch> should only be used when you know you will
 definitely use data from a related table. Pre-fetching related tables when you
@@ -469,6 +490,13 @@ C<next::method>.
     $class->next::method($attrs);
   }
 
+For more information about C<next::method>, look in the L<Class::C3> 
+documentation. See also L<DBIx::Class::Manual::Component> for more
+ways to write your own base classes to do this.
+
+People looking for ways to do "triggers" with DBIx::Class are probably
+just looking for this.
+
 =head2 Stringification
 
 Employ the standard stringification technique by using the C<overload>
@@ -533,8 +561,8 @@ instead:
                          },
   );
   
-  $translator->parser('DBIx::Class');
-  $translator->producer('DBIx::Class::File');
+  $translator->parser('SQL::Translator::Parser::DBIx::Class');
+  $translator->producer('SQL::Translator::Producer::DBIx::Class::File');
   
   my $output = $translator->translate(@args) or die
           "Error: " . $translator->error;
@@ -660,5 +688,114 @@ The first sets the quotesymbols. If the quote i "symmetric" as " or '
 is enough. If the left quote differs form the right quote, the first 
 notation should be used. name_sep needs to be set to allow the 
 SQL generator to put the quotes the correct place. 
+
+=head2 Overloading methods
+
+L<DBIx::Class> uses the L<Class::C3> package, which provides for redispatch of 
+method calls.  You have to use calls to C<next::method> to overload methods.  
+More information on using L<Class::C3> with L<DBIx::Class> can be found in 
+L<DBIx::Class::Manual::Component>.
+
+=head3 Changing one field whenever another changes
+
+For example, say that you have three columns, C<id>, C<number>, and 
+C<squared>.  You would like to make changes to C<number> and have
+C<squared> be automagically set to the value of C<number> squared.
+You can accomplish this by overriding C<store_column>:
+
+  sub store_column {
+    my ( $self, $name, $value ) = @_;
+    if ($name eq 'number') {
+      $self->squared($value * $value);
+    }
+    $self->next::method($name, $value);
+  }
+
+Note that the hard work is done by the call to C<next::method>, which
+redispatches your call to store_column to the superclass(es).
+
+=head3 Automatically creating related objects
+
+You might have a class C<Artist> which has many C<CD>s.  Further, you
+want to create a C<CD> object every time you insert an C<Artist> object.
+You can accomplish this by overriding C<insert>:
+
+  sub insert {
+    my ( $class, $args_ref ) = @_;
+    my $self = $class->next::method($args_ref);
+    $self->cds->new({})->fill_from_artist($self)->insert;
+    return $self;
+  }
+
+where C<fill_from_artist> is a method you specify in C<CD> which sets
+values in C<CD> based on the data in the C<Artist> object you pass in.
+
+=head2 Debugging DBIx::Class objects with Data::Dumper
+
+L<Data::Dumper> can be a very useful tool for debugging, but sometimes it can
+be hard to find the pertinent data in all the data it can generate.
+Specifically, if one naively tries to use it like so,
+
+  use Data::Dumper;
+
+  my $cd = $schema->resultset('CD')->find(1);
+  print Dumper($cd);
+
+several pages worth of data from the CD object's schema and result source will
+be dumped to the screen. Since usually one is only interested in a few column
+values of the object, this is not very helpful.
+
+Luckily, it is possible to modify the data before L<Data::Dumper> outputs
+it. Simply define a hook that L<Data::Dumper> will call on the object before
+dumping it. For example,
+
+  package My::DB::CD;
+
+  sub _dumper_hook {
+    $_[0] = bless {
+      %{ $_[0] },
+      result_source => undef,
+    }, ref($_[0]);
+  }
+
+  [...]
+
+  use Data::Dumper;
+
+  $Data::Dumper::Freezer = '_dumper_hook';
+
+  my $cd = $schema->resultset('CD')->find(1);
+  print Dumper($cd);
+         # dumps $cd without its ResultSource
+
+If the structure of your schema is such that there is a common base class for
+all your table classes, simply put a method similar to C<_dumper_hook> in the
+base class and set C<$Data::Dumper::Freezer> to its name and L<Data::Dumper>
+will automagically clean up your data before printing it. See
+L<Data::Dumper/EXAMPLES> for more information.
+
+=head2 Retrieving a row object's Schema
+
+It is possible to get a Schema object from a row object like so,
+
+  my $schema = $cd->result_source->schema;
+  my $artist_rs = $schema->resultset('Artist');
+           # for example
+
+This can be useful when you don't want to pass around a Schema object to every
+method.
+
+=head2 Getting the value of the primary key for the last database insert
+
+AKA getting last_insert_id
+
+If you are using PK::Auto, this is straightforward:
+
+  my $foo = $rs->create(\%blah);
+  # do more stuff
+  my $id = $foo->id; # foo->my_primary_key_field will also work.
+
+If you are not using autoincrementing primary keys, this will probably
+not work, but then you already know the value of the last primary key anyway.
 
 =cut

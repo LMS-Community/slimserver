@@ -17,7 +17,7 @@ __PACKAGE__->load_components(qw/
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Core - Core set of DBIx::Class modules
 
@@ -34,6 +34,8 @@ L<DBIx::Class> core features.  You almost certainly want these.
 The core modules currently are:
 
 =over 4
+
+=item L<DBIx::Class::Serialize::Storable>
 
 =item L<DBIx::Class::InflateColumn>
 

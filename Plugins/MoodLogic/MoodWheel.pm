@@ -82,17 +82,16 @@ sub setMode {
 	my $client = shift;
 	my $push   = shift;
 
-	my $ds     = Slim::Music::Info::getCurrentDataStore();
-	my $genre  = $client->param( 'genre');
-	my $artist = $client->param( 'artist');
+	my $genre  = $client->param('genre');
+	my $artist = $client->param('artist');
 
 	if (defined $genre) {
 
-		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($genre->moodlogic_id(), 'genre')};
+		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($genre->moodlogic_id, 'genre')};
 
 	} elsif (defined $artist) {
 
-		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($artist->moodlogic_id(), 'artist')};
+		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($artist->moodlogic_id, 'artist')};
 
 	} else {
 		die 'no/unknown type specified for mood wheel';

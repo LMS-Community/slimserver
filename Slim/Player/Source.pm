@@ -1116,11 +1116,11 @@ sub errorOpening {
 
 sub explodeSong {
 	my $client = shift;
-	my $items = shift;
+	my $tracks = shift;
 
 	# insert the list onto the playlist
-	splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @{$items};
-	
+	splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @{$tracks};
+
 	# update the shuffle list
 	Slim::Player::Playlist::reshuffle($client);
 }
@@ -1135,12 +1135,14 @@ sub openSong {
 	
 	closeSong($client);
 
-	my $ds       = Slim::Music::Info::getCurrentDataStore();
 	my $song     = streamingSong($client);
-
 	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 
-	my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : $ds->objectForUrl($objOrUrl, 1, 1);
+	my $track    = Slim::Schema->objectForUrl({
+		'url'      => $objOrUrl,
+		'create'   => 1,
+		'readTags' => 1
+	});
 
 	if (!blessed($track) || !$track->can('url')) {
 
@@ -1161,19 +1163,21 @@ sub openSong {
 		# 1. The remote URL may not have a file extension therefore we can't guess the content-type
 		# 2. The URL might redirect (a lot of Podcasts do this)
 		# 3. The extension might not match the content-type sent by the server.
-		
+
 		my $contentType;
-		
+
 		my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
-		if ( $sock ) {
+
+		if ($sock) {
+
 			$contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;	
-			
+
 			# Bug 3396, some m4a audio is incorrectly served as audio/mpeg.
 			# In this case, prefer the file extension to the content-type
 			if ( $fullpath =~ /(m4a|aac)$/i && $contentType eq 'mp3' ) {
 				$contentType = 'mov';
 			}	
-			
+
 			$track->content_type( $contentType );
 			$track->update;
 			$::d_source && msg("openSong: Remote content type is $contentType [$fullpath]\n");
@@ -1482,7 +1486,8 @@ sub openSong {
 		$track->set('playcount'  => ($track->playcount() || 0) + 1);
 		$track->set('lastplayed' => time());
 		$track->update();
-		$ds->forceCommit();
+
+		Slim::Schema->forceCommit();
 
 	} else {
 
@@ -1576,12 +1581,11 @@ sub readNextChunk {
 					);
 					
 				} else {
+
 					# starting a new trick segment, calculate the chunk offset and length
-					
 					my $now   = $client->songBytes() + $song->{offset};
-					my $ds    = Slim::Music::Info::getCurrentDataStore();
 					my $url   = Slim::Player::Playlist::song($client, streamingSongIndex($client));
-					my $track = $ds->objectForUrl($url);
+					my $track = Slim::Schema->objectForUrl($url);
 
 					if (!blessed($track) || !$track->can('bitrate')) {
 

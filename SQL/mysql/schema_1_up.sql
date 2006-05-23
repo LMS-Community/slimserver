@@ -12,8 +12,6 @@ CREATE TABLE metainformation (
   PRIMARY KEY (name)
 ) TYPE=InnoDB CHARACTER SET utf8;
 
-INSERT INTO metainformation VALUES ('trackCount', 0);
-INSERT INTO metainformation VALUES ('totalTime', 0);
 INSERT INTO metainformation VALUES ('lastRescanTime', 0);
 INSERT INTO metainformation VALUES ('isScanning', 0);
 
@@ -51,26 +49,26 @@ CREATE TABLE tracks (
   titlesort text,
   titlesearch text,
   customsearch text,
-  album  int(10) unsigned,
-  tracknum  int(10) unsigned,
+  album int(10) unsigned,
+  tracknum int(10) unsigned,
   content_type varchar(255),
-  tag  bool,
-  timestamp  int(10) unsigned,
-  filesize  int(10) unsigned,
-  audio_size  int(10) unsigned,
-  audio_offset  int(10) unsigned,
-  year  smallint(5) unsigned,
-  secs  float unsigned,
+  tag bool,
+  timestamp int(10) unsigned,
+  filesize int(10) unsigned,
+  audio_size int(10) unsigned,
+  audio_offset int(10) unsigned,
+  year smallint(5) unsigned,
+  secs float unsigned,
   cover varchar(255),
   thumb varchar(255),
   vbr_scale varchar(255),
-  bitrate  float unsigned,
-  samplerate  int(10) unsigned,
-  samplesize  int(10) unsigned,
-  channels  tinyint(1) unsigned,
-  block_alignment  int(10) unsigned,
-  endian  tinyint(1) unsigned,
-  bpm  smallint(5) unsigned,
+  bitrate float unsigned,
+  samplerate int(10) unsigned,
+  samplesize int(10) unsigned,
+  channels tinyint(1) unsigned,
+  block_alignment int(10) unsigned,
+  endian  bool,
+  bpm smallint(5) unsigned,
   tagversion varchar(255),
   drm bool,
   rating tinyint(1) unsigned,
@@ -80,14 +78,14 @@ CREATE TABLE tracks (
   audio bool,
   remote bool,
   lossless bool,
-  lyrics  text,
+  lyrics text,
   moodlogic_id  int(10) unsigned,
-  moodlogic_mixable  tinyint(1) unsigned,
+  moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
-  musicmagic_mixable  tinyint(1) unsigned,
+  musicmagic_mixable bool,
   replay_gain float,
   replay_peak float,
-  multialbumsortkey  text,
+  multialbumsortkey text,
   INDEX trackTitleIndex (title(255)),
   INDEX trackAlbumIndex (album),
   INDEX ctSortIndex (content_type),
@@ -103,7 +101,7 @@ CREATE TABLE tracks (
   INDEX urlIndex (url(255)),
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -116,7 +114,7 @@ CREATE TABLE playlist_track (
   track  int(10) unsigned,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -128,8 +126,8 @@ CREATE TABLE albums (
   titlesort text,
   titlesearch text,
   customsearch text,
-  contributor int(10) unsigned NOT NULL,
-  compilation tinyint(1) unsigned,
+  contributor int(10) unsigned,
+  compilation bool,
   year  smallint(5) unsigned,
   artwork int(10) unsigned, -- pointer to a track id that contains artwork
   disc  tinyint(1) unsigned,
@@ -137,7 +135,7 @@ CREATE TABLE albums (
   replay_gain float,
   replay_peak float,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
-  musicmagic_mixable tinyint(1) unsigned,
+  musicmagic_mixable bool,
   INDEX albumsTitleIndex (title(255)),
   INDEX albumsSortIndex (titlesort(255)),
   INDEX albumsSearchIndex (titlesearch(255)),
@@ -158,9 +156,9 @@ CREATE TABLE contributors (
   namesearch text,
   customsearch text,
   moodlogic_id  int(10) unsigned,
-  moodlogic_mixable tinyint(1) unsigned,
+  moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
-  musicmagic_mixable tinyint(1) unsigned,
+  musicmagic_mixable bool,
   INDEX contributorsNameIndex (name(255)),
   INDEX contributorsSortIndex (namesort(255)),
   INDEX contributorsSearchIndex (namesearch(255)),
@@ -179,8 +177,8 @@ CREATE TABLE contributor_track (
   INDEX contributor_trackTrackIndex (track),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE 
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -194,8 +192,8 @@ CREATE TABLE contributor_album (
   INDEX contributor_trackAlbumIndex (album),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,album),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -208,8 +206,8 @@ CREATE TABLE genres (
   namesearch text,
   customsearch text,
   moodlogic_id  int(10) unsigned,
-  moodlogic_mixable tinyint(1) unsigned,
-  musicmagic_mixable tinyint(1) unsigned,
+  moodlogic_mixable bool,
+  musicmagic_mixable bool,
   INDEX genreNameIndex (name(255)),
   INDEX genreSortIndex (namesort(255)),
   INDEX genreSearchIndex (namesearch(255)),
@@ -226,8 +224,8 @@ CREATE TABLE genre_track (
   INDEX genre_trackGenreIndex (genre),
   INDEX genre_trackTrackIndex (track),
   PRIMARY KEY (genre,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
-  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -239,7 +237,7 @@ CREATE TABLE comments (
   value text,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --

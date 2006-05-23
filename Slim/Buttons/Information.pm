@@ -106,29 +106,11 @@ sub init {
 			],
 
 			'valueFunctRef' => [
-				sub { 
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					return $ds->totalTime();
-				},
-				sub { 
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					return $ds->count('album');
-				},
-
-				sub { 
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					return $ds->count('track');
-				},
-
-				sub { 
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					return $ds->count('contributor');
-				},
-
-				sub { 
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					return $ds->count('genre');
-				},
+				sub { return Slim::Schema->totalTime },
+				sub { return Slim::Schema->count('Album') },
+				sub { return Slim::Schema->count('Track') },
+				sub { return Slim::Schema->count('Contributor') },
+				sub { return Slim::Schema->count('Genre') },
 			],
 
 			'menuName' => 'library'

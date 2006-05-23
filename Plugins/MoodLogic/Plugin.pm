@@ -300,8 +300,6 @@ sub getPlaylistItems {
 
 sub exportFunction {
 	
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
-
 	my $prefix = Slim::Utils::Prefs::get('MoodLogicplaylistprefix');
 	my $suffix = Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
 
@@ -396,9 +394,9 @@ sub exportFunction {
 		$::d_moodlogic && msg("MoodLogic: Creating entry for track $isScanning: $url\n");
 
 		# that's all for the track
-		my $track = $ds->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate({
 
-			'url' => $url,
+			'url'        => $url,
 			'attributes' => \%cacheEntry,
 			'readTags'   => 1,
 
@@ -543,30 +541,36 @@ sub mixerFunction {
 	my $hierarchy = $paramref->{'hierarchy'};
 	my $level	   = $paramref->{'level'} || 0;
 	my $descend   = $paramref->{'descend'};
-	
+
 	my $currentItem = $items->[$listIndex];
 	my $all = !ref($currentItem);
-	
+
 	my @levels = split(",", $hierarchy);
-	
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
+
 	my $mix;
 
 	# if we've chosen a particular song
 	if ($levels[$level] eq 'track' && $currentItem && $currentItem->moodlogic_mixable()) {
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
-			$client->pushLeft();
-	# if we've picked an artist 
+
+		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
+		$client->pushLeft();
+
 	} elsif ($levels[$level] eq 'artist' && $currentItem && $currentItem->moodlogic_mixable()) {
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
-			$client->pushLeft();
-	# if we've picked a genre 
+
+		# if we've picked an artist 
+		Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
+		$client->pushLeft();
+
 	} elsif ($levels[$level] eq 'genre' && $currentItem && $currentItem->moodlogic_mixable()) {
-			Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
-			$client->pushLeft();
-	# don't do anything if nothing is mixable
+
+		# if we've picked a genre 
+		Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'genre' => $currentItem});
+		$client->pushLeft();
+
 	} else {
-			$client->bumpRight();
+
+		# don't do anything if nothing is mixable
+		$client->bumpRight();
 	}
 }
 
@@ -786,17 +790,15 @@ sub mood_wheel {
 	my $genre  = $params->{'genre'};
 	my $player = $params->{'player'};
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	
 	my $itemnumber = 0;
-	
+
 	if (defined $artist && $artist ne "") {
 
-		$items = getMoodWheel($ds->objectForId('contributor', $artist)->moodlogic_id(), 'artist');
+		$items = getMoodWheel(Slim::Schema->find('Contributor', $artist)->moodlogic_id, 'artist');
 
 	} elsif (defined $genre && $genre ne "" && $genre ne "*") {
 
-		$items = getMoodWheel($ds->objectForId('genre', $genre)->moodlogic_id(), 'genre');
+		$items = getMoodWheel(Slim::Schema->find('Genre', $genre)->moodlogic_id, 'genre');
 
 	} else {
 
@@ -827,8 +829,8 @@ sub instant_mix {
 	my $p0     = $params->{'p0'};
 
 	my $itemnumber = 0;
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $track = $ds->objectForId('track',$song);
+	my $track      = Slim::Schema->find('Track', $song);
+
 	$params->{'browse_items'} = [];
 
 	if (defined $mood && $mood ne "") {
@@ -845,18 +847,15 @@ sub instant_mix {
 
 	if (defined $song && $song ne "") {
 
-		$items = getMix($track->moodlogic_id(), undef, 'song');
+		$items = getMix($track->moodlogic_id, undef, 'song');
 
 	} elsif (defined $artist && $artist ne "" && $artist ne "*" && $mood ne "") {
 
-		$items = getMix($ds->objectForId('contributor', $artist)->moodlogic_id(), $mood, 'artist');
+		$items = getMix(Slim::Schema->find('Contributor', $artist)->moodlogic_id, $mood, 'artist');
 
 	} elsif (defined $genre && $genre ne "" && $genre ne "*" && $mood ne "") {
 
-		# XXX - only grab the first genre. This may be wrong
-		#my $genre = ($trackObj->genres())[0];
-
-		$items = getMix($ds->objectForId('genre', $genre)->moodlogic_id(), $mood, 'genre');
+		$items = getMix(Slim::Schema->find('Genre', $genre)->moodlogic_id, $mood, 'genre');
 
 	} else {
 
@@ -889,20 +888,19 @@ sub instant_mix {
 
 	for my $item (@$items) {
 
-		my %list_form = '';
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
+		my %form = ();
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj  = $ds->objectForUrl($item) || next;
-		
-		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
+		my $trackObj  = Slim::Schema->objectForUrl($item) || next;
 
-		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
-		$list_form{'attributes'} = '&track=' . Slim::Utils::Misc::escape($trackObj->id());
+		$trackObj->displayAsHTML(\%form, 0);
+
+		$form{'attributes'} = join('=', '&track.id', $trackObj->id);
+
 		$itemnumber++;
 
-		push @{$params->{'browse_items'}}, \%list_form;
+		push @{$params->{'browse_items'}}, \%form;
 		
 	}
 

@@ -107,7 +107,7 @@ sub readCurTrackForM3U {
 
 sub writeCurTrackForM3U {
 	my $class = shift;
-	my $path  = shift;
+	my $path  = shift || return 0;
 	my $track = shift || 0;
 
 	# do nothing to the index if we can't open the list
@@ -149,13 +149,11 @@ sub write {
 	print $output "#CURTRACK $resumetrack\n" if defined($resumetrack);
 	print $output "#EXTM3U\n" if $addTitles;
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
 	for my $item (@{$listref}) {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
-			my $track = $ds->objectForUrl($item);
+			my $track = Slim::Schema->objectForUrl($item);
 
 			if (!blessed($track) || !$track->can('title')) {
 

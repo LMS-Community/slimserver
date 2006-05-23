@@ -10,7 +10,7 @@ __PACKAGE__->load_components(qw/AccessorGroup/);
 
 __PACKAGE__->mk_group_accessors('simple' => 'result_source');
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Row - Basic row methods
 
@@ -38,10 +38,10 @@ sub new {
   if ($attrs) {
     $new->throw_exception("attrs must be a hashref")
       unless ref($attrs) eq 'HASH';
-    while (my ($k, $v) = each %$attrs) {
+    foreach my $k (keys %$attrs) {
       $new->throw_exception("No such column $k on $class")
-	unless $class->has_column($k);
-      $new->store_column($k => $v);
+        unless $class->has_column($k);
+      $new->store_column($k => $attrs->{$k});
     }
   }
   return $new;
@@ -122,8 +122,8 @@ sub update {
 
   $obj->delete
 
-Deletes the object from the database. The object is still perfectly usable, 
-but ->in_storage() will now return 0 and the object must re inserted using 
+Deletes the object from the database. The object is still perfectly usable,
+but ->in_storage() will now return 0 and the object must re inserted using
 ->insert() before ->update() can be used on it.
 
 =cut
@@ -136,8 +136,8 @@ sub delete {
     $self->throw_exception("Cannot safely delete a row in a PK-less table")
       if ! keys %$ident_cond;
     foreach my $column (keys %$ident_cond) {
-	    $self->throw_exception("Can't delete the object unless it has loaded the primary keys")
-	      unless exists $self->{_column_data}{$column};
+            $self->throw_exception("Can't delete the object unless it has loaded the primary keys")
+              unless exists $self->{_column_data}{$column};
     }
     $self->result_source->storage->delete(
       $self->result_source->from, $ident_cond);
@@ -232,8 +232,8 @@ Sets more than one column value at once.
 
 sub set_columns {
   my ($self,$data) = @_;
-  while (my ($col,$val) = each %$data) {
-    $self->set_column($col,$val);
+  foreach my $col (keys %$data) {
+    $self->set_column($col,$data->{$col});
   }
   return $self;
 }
@@ -255,6 +255,7 @@ sub copy {
       if $self->result_source->column_info($col)->{is_auto_increment};
   }
   my $new = bless { _column_data => $col_data }, ref $self;
+  $new->result_source($self->result_source);
   $new->set_columns($changes);
   $new->insert;
   foreach my $rel ($self->result_source->relationships) {
@@ -280,9 +281,9 @@ Sets a column value without marking it as dirty.
 
 sub store_column {
   my ($self, $column, $value) = @_;
-  $self->throw_exception( "No such column '${column}'" ) 
+  $self->throw_exception( "No such column '${column}'" )
     unless exists $self->{_column_data}{$column} || $self->has_column($column);
-  $self->throw_exception( "set_column called for ${column} without value" ) 
+  $self->throw_exception( "set_column called for ${column} without value" )
     if @_ < 3;
   return $self->{_column_data}{$column} = $value;
 }
@@ -312,7 +313,7 @@ sub inflate_result {
     if (ref($pre_val->[0]) eq 'ARRAY') { # multi
       my @pre_objects;
       foreach my $pre_rec (@$pre_val) {
-        unless ($pre_source->primary_columns == grep { exists $pre_rec->[0]{$_} 
+        unless ($pre_source->primary_columns == grep { exists $pre_rec->[0]{$_}
            and defined $pre_rec->[0]{$_} } $pre_source->primary_columns) {
           next;
         }
@@ -322,11 +323,11 @@ sub inflate_result {
       $new->related_resultset($pre)->set_cache(\@pre_objects);
     } elsif (defined $pre_val->[0]) {
       my $fetched;
-      unless ($pre_source->primary_columns == grep { exists $pre_val->[0]{$_} 
+      unless ($pre_source->primary_columns == grep { exists $pre_val->[0]{$_}
          and !defined $pre_val->[0]{$_} } $pre_source->primary_columns)
       {
         $fetched = $pre_source->result_class->inflate_result(
-                      $pre_source, @{$pre_val});      
+                      $pre_source, @{$pre_val});
       }
       my $accessor = $source->relationship_info($pre)->{attrs}{accessor};
       $class->throw_exception("No accessor for prefetched $pre")

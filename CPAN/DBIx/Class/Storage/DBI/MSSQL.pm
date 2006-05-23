@@ -14,7 +14,7 @@ sub last_insert_id {
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Storage::DBI::MSSQL - Automatic primary key class for MSSQL
 

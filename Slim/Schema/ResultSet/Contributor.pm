@@ -1,0 +1,93 @@
+package Slim::Schema::ResultSet::Contributor;
+
+# $Id$
+
+use strict;
+use base qw(Slim::Schema::ResultSet::Base);
+
+use Slim::Utils::Prefs;
+
+sub pageBarResults {
+	my $self = shift;
+
+	my $table = $self->{'attrs'}{'alias'};
+	my $name  = "$table.namesort";
+
+	$self->search(undef, {
+		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
+		as           => [ 'letter', 'count' ],
+		group_by     => \"LEFT($name, 1)",
+		result_class => 'Slim::Schema::PageBar',
+	});
+}
+
+sub title {
+        my $self = shift;
+
+        return 'BROWSE_BY_ARTIST';
+}
+
+sub allTitle {
+        my $self = shift;
+
+        return 'ALL_ARTISTS';
+}
+
+sub alphaPageBar { 1 }
+sub ignoreArticles { 1 }
+
+sub searchNames {
+	my ($self, $terms) = @_;
+
+	my $find = {
+		'me.namesearch' => $terms,
+	};
+
+	# Bug: 2479 - Don't include roles if the user has them unchecked.
+	if (my $roles = Slim::Schema->artistOnlyRoles) {
+
+		$find->{'contributor.role'} = $roles;
+	}
+
+	return $self->search_like($find, { 'order_by' => 'me.namesort', 'distinct' => 'me.id' });
+}
+
+sub browse {
+	my $self = shift;
+	my $find = shift;
+	my $sort = shift;
+
+	my @joins = ();
+	my $roles = Slim::Schema->artistOnlyRoles;
+
+	# The user may not want to include all the composers / conductors
+	if ($roles) {
+
+		$find->{'contributorTracks.role'} = { 'in' => $roles };
+
+		push @joins, 'contributorTracks';
+	}
+
+	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+		$find->{'album.compilation'} = 0;
+
+		push @joins, { 'contributorAlbums' => 'album' };
+	}
+
+	return $self->search($find, {
+		'order_by' => 'me.namesort',
+		'group_by' => 'me.id',
+		'join'     => \@joins,
+	});
+}
+
+sub descendAlbum {
+	my ($self, $find) = @_;
+
+	print Data::Dumper::Dumper($find);
+
+	return $self->search_related('contributorAlbums', $find)->search_related('album');
+}
+
+1;

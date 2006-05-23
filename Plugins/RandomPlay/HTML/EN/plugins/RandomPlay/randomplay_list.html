@@ -108,7 +108,7 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 						<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
 						[%- END %]
 						<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
-						<label for="[% genreid %]">[% genre | html %]</label></td>
+						<label for="[% genreid %]">[% pluginRandomGenreList.$genre.name | html %]</label></td>
 					[%- END %]
 					</tr>
 				[%- END %]

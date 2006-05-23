@@ -13,7 +13,6 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
-use Slim::DataStores::Base;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
@@ -27,6 +26,12 @@ sub init {
 	} else {
 		Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 	}
+
+	if (Slim::Utils::Prefs::get('playlistdir')) {
+		Slim::Web::Pages->addPageLinks("browse",{'SAVED_PLAYLISTS'   => "browsetree.html?topDir=playlistdir"});
+	} else {
+		Slim::Web::Pages->addPageLinks("browse",{'SAVED_PLAYLISTS' => undef});
+	}
 }
 
 sub browsetree {
@@ -34,27 +39,36 @@ sub browsetree {
 
 	my $hierarchy  = $params->{'hierarchy'} || '';
 	my $player     = $params->{'player'};
+	my $topDir     = $params->{'topDir'} || 'audiodir';
 	my $itemsPer   = $params->{'itemsPerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
-	my $ds         = Slim::Music::Info::getCurrentDataStore();
 	my @levels     = split(/\//, $hierarchy);
 	my $itemnumber = 0;
 
-	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
+	# We can browse either directory.
+	# Set the page title as well
+	if ($topDir eq 'playlistdir') {
+		$topDir = Slim::Utils::Prefs::get('playlistdir');
+		$params->{'browseby'} = 'SAVED_PLAYLISTS';
+	} else {
+		$topDir = Slim::Utils::Prefs::get('audiodir');
+		$params->{'browseby'} = 'MUSIC';
+	}
 
-	# Page title
-	$params->{'browseby'} = 'MUSIC';
+	# Pull the directory list, which will be used for looping.
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels, $topDir);
+
+	unshift @$items, $ds->getPlaylists('external');
 
 	for (my $i = 0; $i < scalar @levels; $i++) {
 
-		my $obj = $ds->objectForId('track', $levels[$i]);
+		my $obj = Slim::Schema->find('Track', $levels[$i]);
 
 		if (blessed($obj) && $obj->can('title')) {
 
 			push @{$params->{'pwd_list'}}, {
 				'hreftype'     => 'browseTree',
-				'title'        => $i == 0 ? string('MUSIC') : $obj->title,
+				'title'        => $i == 0 ? string($params->{'browseby'}) : $obj->title,
 				'hierarchy'    => join('/', @levels[0..$i]),
 			};
 		}
@@ -81,15 +95,15 @@ sub browsetree {
 	# Setup an 'All' button.
 	# I believe this will play only songs, and not playlists.
 	if ($count) {
-		my %list_form = %$params;
+		my %form = %$params;
 
-		$list_form{'hierarchy'}	  = undef;
-		$list_form{'descend'}     = 1;
-		$list_form{'text'}        = string('ALL_SONGS');
-		$list_form{'itemobj'}     = $topLevelObj;
-		$list_form{'hreftype'}    = 'browseTree';
+		$form{'hierarchy'}	  = undef;
+		$form{'descend'}     = 1;
+		$form{'text'}        = string('ALL_SONGS');
+		$form{'itemobj'}     = $topLevelObj;
+		$form{'hreftype'}    = 'browseTree';
 
-		push @{$params->{'browse_items'}}, \%list_form;
+		push @{$params->{'browse_items'}}, \%form;
 	}
 
 	#
@@ -107,7 +121,11 @@ sub browsetree {
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
-		my $item = $ds->objectForUrl($url, 1, 1, 1);
+		my $item = Slim::Schema->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1,
+		});
 
 		if (!blessed($item) || !$item->can('content_type')) {
 
@@ -117,27 +135,43 @@ sub browsetree {
 		# Bug: 1360 - Don't show files referenced in a cuesheet
 		next if ($item->content_type eq 'cur');
 
-		my %list_form = '';
-
 		# Turn the utf8 flag on for proper display - since this is
 		# coming directly from the filesystem.
-		$list_form{'text'}	    = Slim::Utils::Unicode::utf8decode_locale($relPath);
+		my %form = (
+			'text'	    => Slim::Utils::Unicode::utf8decode_locale($relPath),
+			'hierarchy' => join('/', @levels, $item->id),
+			'descend'   => Slim::Music::Info::isList($item) ? 1 : 0,
+			'odd'       => ($itemnumber + 1) % 2,
+			'itemobj'   => $item,
+			'hreftype'  => 'browseTree',
+		);
 
-		$list_form{'hierarchy'}  = join('/', @levels, $item->id);
-		$list_form{'descend'}    = Slim::Music::Info::isList($item) ? 1 : 0;
-		$list_form{'odd'}        = ($itemnumber + 1) % 2;
-		$list_form{'itemobj'}    = $item;
-		$list_form{'hreftype'}   = 'browseTree';
+		if (Slim::Music::Info::isPlaylist($item)) {
 
-		# Don't display the edit dialog for cue sheets.
-		if ($item->isCUE) {
-			$list_form{'noEdit'} = '&noEdit=1';
+			$list_form{'descend'}  = 1;
+			$list_form{'hreftype'} = 'browsePlaylist';
+
+		} elsif (Slim::Music::Info::isList($item)) {
+
+			$list_form{'descend'}  = 1;
+			$list_form{'hreftype'} = 'browseTree';
+
+		} else {
+
+			$list_form{'descend'}  = 0;
+			$list_form{'hreftype'} = 'browseTree';
+		}
+
+		# Don't display the edit dialog for playlists (includes CUE sheets).
+		if (($topDir eq 'playlistdir' && $item->isCUE) || 
+		    ($topDir eq 'audiodir'    && $item->isPlaylist)) {
+
+			$form{'noEdit'} = '&noEdit=1';
 		}
 
 		$itemnumber++;
 
-		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
-		push @{$params->{'browse_items'}}, \%list_form;
+		push @{$params->{'browse_items'}}, \%form;
 
 		if (!$params->{'coverArt'} && $item->coverArt) {
 			$params->{'coverArt'} = $item->id;
@@ -152,7 +186,7 @@ sub browsetree {
 
 	# we might have changed - flush to the db to be in sync.
 	$topLevelObj->update;
-	
+
 	return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
 }
 

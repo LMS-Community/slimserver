@@ -23,25 +23,16 @@ sub hitlist {
 	my $itemNumber = 0;
 	my $maxPlayed  = 0;
 
-	my $ds     = Slim::Music::Info::getCurrentDataStore();
-
 	# Fetch 50 tracks that have been played at least once.
 	# Limit is hardcoded for now.. This should make use of
 	# Class::DBI::Pager or similar. Requires reworking of template
 	# generation.
-	my $tracks = $ds->find({
-		'field'  => 'track',
-		'find'   => { 'playcount' => { '>' => 0 } },
-		'sortBy' => 'playCount',
-		'limit'  => 50,
-		'offset' => 0,
-	});
+	my @tracks = Slim::Schema->search('Track',
+		{ 'playCount' => { '>' => 0 } },
+		{ 'order_by'  => 'tracks.playCount desc' },
+	)->slice(0, 49);
 
-	for my $track (@$tracks) {
-
-		if (!blessed($track) || !$track->can('playcount') || !$track->playcount) {
-			next;
-		}
+	for my $track (@tracks) {
 
 		my $playCount = $track->playcount;
 
@@ -49,11 +40,9 @@ sub hitlist {
 			$maxPlayed = $playCount;
 		}
 
-		my %form  = '';
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
-		my $levelInfo = $fieldInfo->{'track'};
+		my %form  = ();
 
-		&{$levelInfo->{'listItem'}}($ds, \%form, $track);
+		$track->displayAsHTML(\%form);
 
 		$form{'title'} 	          = Slim::Music::Info::standardTitle(undef, $track);
 
@@ -62,7 +51,7 @@ sub hitlist {
 		$form{'player'}	          = $params->{'player'};
 		$form{'skinOverride'}     = $params->{'skinOverride'};
 		$form{'song_count'}       = $playCount;
-		$form{'attributes'}       = '&track='.$track->id;
+		$form{'attributes'}       = '&track.id='.$track->id;
 		$form{'itemobj'}          = $track;
 
 		push @{$params->{'browse_items'}}, \%form;

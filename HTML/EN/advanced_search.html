@@ -38,7 +38,7 @@
 		<tbody>
 
 [% WRAPPER field title='TRACK' %]
-	<input name="search.track_titlesearch" value="[% search.track_titlesearch.value %]" size="35" maxlength="100" type="text">
+	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value %]" size="35" maxlength="100" type="text">
 [% END %]
 
 [% WRAPPER field title='ARTIST' %]
@@ -53,7 +53,7 @@
 	<select name="search.genre">
 		<option value="">[% "ANY_GENRE" | string %]</option>
 
-		[% FOREACH genre = genres %]
+		[% WHILE (genre = genres.next) %]
 
 			[% NEXT IF NOT genre.name %]
 

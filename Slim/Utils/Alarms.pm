@@ -25,10 +25,7 @@ my %possibleSpecialPlaylistsIDs = (
 # Package methods
 ################################################################################
 
-sub init {
-}
-
-
+sub init { }
 
 ################################################################################
 # Constructors
@@ -142,42 +139,42 @@ sub undefined {
 	my $self = shift;
 	
 	return (
-			$self->{'_enabled'} == 0 &&
-			$self->{'_time'} == 0 &&
-			$self->{'_volume'} == 50 &&
-			$self->{'_playlist'} eq ''
-		   );
+		$self->{'_enabled'} == 0 &&
+		$self->{'_time'} == 0 &&
+		$self->{'_volume'} == 50 &&
+		$self->{'_playlist'} eq ''
+	);
 }
 
 sub playlistid {
 	my $self = shift;
 	my $newvalue = shift;
-	
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $playlistObj;
-	
-	if (defined $newvalue){
 
-		$playlistObj = $ds->objectForId( 'lightweighttrack', $newvalue);
+	if (defined $newvalue) {
+
+		my $playlistObj = Slim::Schema->find('Playlist', $newvalue);
 
 		if (blessed($playlistObj) && $playlistObj->can('url')) {
-			$self->playlist($playlistObj->url());
+
+			$self->playlist($playlistObj->url);
+
 			return $newvalue;
 		}
 
 	} else {
 
-		my $playlist = $self->playlist();
+		my $playlist  = $self->playlist();
 		my $specialID = $possibleSpecialPlaylistsIDs{$playlist};
 		
 		return $specialID if defined $specialID;
 
-		$playlistObj = $ds->objectForUrl($playlist);
+		my $playlistObj = Slim::Schema->search('Playlist', { 'url' => $playlist })->single;
 
 		if (blessed($playlistObj) && $playlistObj->can('id')) {
-			return $playlistObj->id();
+			return $playlistObj->id;
 		}
 	}
+
 	return undef;
 }
 

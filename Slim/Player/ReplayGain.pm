@@ -25,8 +25,6 @@ sub fetchGainMode {
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
 
-	my $ds  = Slim::Music::Info::getCurrentDataStore();
-
 	my $url = Slim::Player::Playlist::song($client, Slim::Player::Source::streamingSongIndex($client));
 
 	if (!$url) {
@@ -34,7 +32,11 @@ sub fetchGainMode {
 		return 0;
 	}
 
-	my $track = $ds->objectForUrl($url, 1, 1);
+	my $track = Slim::Schema->objectForUrl({
+		'url'      => $url,
+		'create'   => 1,
+		'readTags' => 1,
+	});
 
 	if (!blessed($track) || !$track->can('replay_gain')) {
 
@@ -59,7 +61,7 @@ sub fetchGainMode {
 	}
 
 	# Mode 3 is determine dynamically whether to use album or track
-	if (defined $album->replay_gain() && ($class->trackAlbumMatch($ds, $client, -1) || $class->trackAlbumMatch($ds, $client, 1))) {
+	if (defined $album->replay_gain() && ($class->trackAlbumMatch($client, -1) || $class->trackAlbumMatch($client, 1))) {
 
 		return $album->replay_gain();
 	}
@@ -72,7 +74,6 @@ sub fetchGainMode {
 # other in the playlist are similarly adjacent within the same album.
 sub trackAlbumMatch {
 	my $class  = shift;
-	my $ds     = shift;
 	my $client = shift;
 	my $offset = shift;
 
@@ -93,21 +94,21 @@ sub trackAlbumMatch {
 		# No repeat means we don't match around the edges
 		return 0 unless $repeat;
 		
-		return $class->trackAlbumMatch($ds, $client, $count - 1);
+		return $class->trackAlbumMatch($client, $count - 1);
 	}
 	elsif ($compare_index >= $count) {
 		# No repeat means we don't match around the edges
 		return 0 unless $repeat;
 
-		return $class->trackAlbumMatch($ds, $client, -$current_index);
+		return $class->trackAlbumMatch($client, -$current_index);
 	}
 
 	# Get the track objects
 	my $current_url   = Slim::Player::Playlist::song($client, $current_index);
-	my $current_track = $ds->objectForUrl($current_url, 1, 1);
+	my $current_track = Slim::Schema->objectForUrl({ 'url' => $current_url, 'create' => 1, 'readTags' => 1 });
 	
 	my $compare_url   = Slim::Player::Playlist::song($client, $compare_index);
-	my $compare_track = $ds->objectForUrl($compare_url, 1, 1);
+	my $compare_track = Slim::Schema->objectForUrl({ 'url' => $compare_url, 'create' => 1, 'readTags' => 1 });
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 

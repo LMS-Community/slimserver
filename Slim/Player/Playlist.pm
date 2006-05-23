@@ -58,8 +58,6 @@ sub song {
 
 	my $objOrUrl;
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
 	if (defined ${shuffleList($client)}[$index]) {
 
 		$objOrUrl = ${playList($client)}[${shuffleList($client)}[$index]];
@@ -69,9 +67,13 @@ sub song {
 		$objOrUrl = ${playList($client)}[$index];
 	}
 
-	if (!blessed($objOrUrl) || !$objOrUrl->can('url')) {
+	if ($objOrUrl && !blessed($objOrUrl)) {
 
-		 $objOrUrl = $ds->objectForUrl($objOrUrl, 1, 1, 1);
+		 $objOrUrl = Slim::Schema->objectForUrl({
+			'url'      => $objOrUrl,
+			'create'   => 1,
+			'readTags' => 1,
+		});
 	}
 
 	return $objOrUrl;
@@ -145,7 +147,7 @@ sub removeTrack {
 	my $playlistIndex = ${shuffleList($client)}[$tracknum];
 
 	my $stopped = 0;
-	my $oldmode = Slim::Player::Source::playmode($client);
+	my $oldMode = Slim::Player::Source::playmode($client);
 	
 	if (Slim::Player::Source::playingSongIndex($client) == $tracknum) {
 		$::d_source && msg("Removing currently playing track.\n");
@@ -193,7 +195,7 @@ sub removeTrack {
 		if ($tracknum >= $songcount) {
 			$tracknum = $songcount - 1;
 		}
-		if ($oldmode eq "play") {
+		if ($oldMode eq "play") {
 			Slim::Player::Source::jumpto($client, $tracknum);
 		} else {
 			Slim::Player::Source::streamingSongIndex($client, $tracknum, 1);
@@ -207,87 +209,111 @@ sub removeTrack {
 
 sub removeMultipleTracks {
 	my $client = shift;
-	my $songlist = shift;
+	my $tracks = shift;
 
-	my %songlistentries;
-	if (defined($songlist) && ref($songlist) eq 'ARRAY') {
+	my %trackEntries = ();
 
-		for my $item (@$songlist) {
-			$songlistentries{$item} = 1;
+	if (defined($tracks) && ref($tracks) eq 'ARRAY') {
+
+		for my $track (@$tracks) {
+			$trackEntries{$track->url} = 1;
 		}
 	}
 
 	my $stopped = 0;
-	my $oldmode = Slim::Player::Source::playmode($client);
-	
-	my $playingtrack = ${shuffleList($client)}[Slim::Player::Source::playingSongIndex($client)];
-	my $streamingtrack = ${shuffleList($client)}[Slim::Player::Source::streamingSongIndex($client)];
+	my $oldMode = Slim::Player::Source::playmode($client);
 
-	my $i = 0;
-	my $oldcount = 0;
+	my $playingTrackPos   = ${shuffleList($client)}[Slim::Player::Source::playingSongIndex($client)];
+	my $streamingTrackPos = ${shuffleList($client)}[Slim::Player::Source::streamingSongIndex($client)];
+
 	# going to need to renumber the entries in the shuffled list
 	# will need to map the old position numbers to where the track ends
 	# up after all the deletes occur
-	my %oldToNew = () ;
+	my %oldToNew = ();
+	my $i        = 0;
+	my $oldCount = 0;
  
 	while ($i <= $#{playList($client)}) {
+
 		#check if this file meets all criteria specified
-		my $thistrack=${playList($client)}[$i];
-		if (exists($songlistentries{$thistrack})) {
+		my $thisTrack = ${playList($client)}[$i];
+
+		if ($trackEntries{$thisTrack->url}) {
+
 			splice(@{playList($client)}, $i, 1);
-			if ($playingtrack == $oldcount) {
+
+			if ($playingTrackPos == $oldCount) {
+
 				Slim::Player::Source::playmode($client, "stop");
 				$stopped = 1;
-			}
-			elsif ($streamingtrack == $oldcount) {
+
+			} elsif ($streamingTrackPos == $oldCount) {
+
 				Slim::Player::Source::flushStreamingSong($client);
 			}
+
 		} else {
-			$oldToNew{$oldcount}=$i;
+
+			$oldToNew{$oldCount} = $i;
 			$i++;
 		}
-		$oldcount++;
+
+		$oldCount++;
 	}
 	
-	my @reshuffled;
-	my $newtrack;
-	my $getnext = 0;
+	my @reshuffled = ();
+	my $newTrack;
+	my $getNext = 0;
 	my %oldToNewShuffled = ();
 	my $j = 0;
-	# renumber all of the entries in the shuffle list with their 
-	# new positions, also get an update for the current track, if the 
-	# currently playing track was deleted, try to play the next track 
-	# in the new list
 
+	# renumber all of the entries in the shuffle list with their new
+	# positions, also get an update for the current track, if the
+	# currently playing track was deleted, try to play the next track in
+	# the new list
 	while ($j <= $#{shuffleList($client)}) {
-		my $oldnum = shuffleList($client)->[$j];
-		if ($oldnum == $playingtrack) { $getnext=1; }
-		if (exists($oldToNew{$oldnum})) { 
-			push(@reshuffled,$oldToNew{$oldnum});
+
+		my $oldNum = shuffleList($client)->[$j];
+
+		if ($oldNum == $playingTrackPos) {
+			$getNext = 1;
+		}
+
+		if (exists($oldToNew{$oldNum})) { 
+
+			push(@reshuffled,$oldToNew{$oldNum});
+
 			$oldToNewShuffled{$j} = $#reshuffled;
-			if ($getnext) {
-				$newtrack=$#reshuffled;
-				$getnext=0;
+
+			if ($getNext) {
+				$newTrack = $#reshuffled;
+				$getNext  = 0;
 			}
 		}
+
 		$j++;
 	}
 
 	# if we never found a next, we deleted eveything after the current
 	# track, wrap back to the beginning
-	if ($getnext) {	$newtrack=0; }
+	if ($getNext) {
+		$newTrack = 0;
+	}
 
 	$client = Slim::Player::Sync::masterOrSelf($client);
 	
 	@{$client->shufflelist} = @reshuffled;
 
-	if ($stopped && ($oldmode eq "play")) {
-		Slim::Player::Source::jumpto($client,$newtrack);
-	}
-	else {
+	if ($stopped && ($oldMode eq "play")) {
+
+		Slim::Player::Source::jumpto($client,$newTrack);
+
+	} else {
+
 		my $queue = $client->currentsongqueue();
+
 		for my $song (@{$queue}) {
-			$song->{index} = $oldToNewShuffled{$song->{index}} || 0;
+			$song->{'index'} = $oldToNewShuffled{$song->{'index'}} || 0;
 		}
 	}
 
@@ -451,7 +477,6 @@ sub reshuffle {
 		my %albumTracks     = ();
 		my %trackToPosition = ();
 		my $i  = 0;
-		my $ds = Slim::Music::Info::getCurrentDataStore();
 
 		my $defaultAlbumTitle = Slim::Utils::Text::matchCase($client->string('NO_ALBUM'));
 
@@ -468,8 +493,7 @@ sub reshuffle {
 
 				$::d_playlist && msg("Track: $track isn't an object - fetching\n");
 
-				# Try to fetch a LightWeightTrack object
-				$trackObj = $ds->objectForUrl($track, 0, 0, 1);
+				$trackObj = Slim::Schema->objectForUrl($track);
 			}
 
 			# Pull out the album id, and accumulate all of the
@@ -505,7 +529,7 @@ sub reshuffle {
 
 		# This shouldn't happen - but just in case.
 		if (!blessed($currentTrack) || !$currentTrack->can('albumid')) {
-			$currentTrack = $ds->objectForUrl($currentTrack);
+			$currentTrack = Slim::Schema->objectForUrl($currentTrack);
 		}
 
 		if (blessed($currentTrack) && $currentTrack->can('albumid')) {
@@ -593,7 +617,7 @@ sub scheduleWriteOfPlaylist {
 		return 0;
 	}
 
-	Slim::Formats::Parse::writeM3U( 
+	Slim::Formats::Playlists::M3U->write( 
 		[ $playlistObj->tracks ],
 		undef,
 		$playlistObj->path,
@@ -657,7 +681,6 @@ sub modifyPlaylistCallback {
 
 		my $playlist = Slim::Player::Playlist::playList($client);
 		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
-		my $ds       = Slim::Music::Info::getCurrentDataStore();
 
 		$client->currentPlaylistChangeTime(time());
 
@@ -668,9 +691,10 @@ sub modifyPlaylistCallback {
 
 				# Create a virtual track that is our pointer
 				# to the list of tracks that make up this playlist.
-				my $playlistObj = $ds->updateOrCreate({
+				my $playlistObj = Slim::Schema->updateOrCreate({
 
 					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
+					'playlist'   => 1,
 					'attributes' => {
 						'TITLE' => sprintf('%s - %s', 
 							Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),

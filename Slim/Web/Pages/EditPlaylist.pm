@@ -49,9 +49,7 @@ sub editplaylist {
 		return deletePlaylist($client, $params);
 	}
 
-	my $ds       = Slim::Music::Info::getCurrentDataStore();
-
-	my $playlist = $ds->objectForId('playlist', $params->{'playlist'});
+	my $playlist = Slim::Schema->find('Playlist', $params->{'playlist'});
 
 	if (!blessed($playlist) || !$playlist->tracks) {
 
@@ -82,7 +80,7 @@ sub editplaylist {
 
 		if ($title && $url) {
 
-			my $playlistTrack = $ds->updateOrCreate({
+			my $playlistTrack = Slim::Schema->updateOrCreate({
 				'url'      => $url,
 				'readTags' => 1,
 				'commit'   => 1,
@@ -152,8 +150,8 @@ sub editplaylist {
 			Slim::Formats::Playlists->writeList(\@items, undef, $playlist->url);
 		}
 
-		$ds->forceCommit;
-		$ds->wipeCaches;
+		Slim::Schema->forceCommit;
+		Slim::Schema->wipeCaches;
 
 		# If we've changed the files - make sure that we clear the
 		# format display cache - otherwise we'll show bogus data.
@@ -176,8 +174,6 @@ sub editplaylist {
 
 sub saveCurrentPlaylist {
 	my ($client, $params) = @_;
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	if (defined $client && Slim::Player::Playlist::count($client)) {
 
@@ -216,8 +212,7 @@ sub renamePlaylist {
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 	$params->{'level'}     = 0;
 
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my $playlistObj = $ds->objectForId('track', $params->{'playlist'});
+	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist'});
 
 	if (blessed($playlistObj) && $playlistObj->can('id') && $params->{'newname'}) {
 
@@ -230,7 +225,10 @@ sub renamePlaylist {
 			catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
 		);
 
-		my $existingPlaylist = $ds->objectForUrl($newUrl);
+		my $existingPlaylist = Slim::Schema->objectForUrl({
+			'url'      => $newUrl,
+			'playlist' => 1,
+		});
 
 		# Warn the user if the playlist already exists.
 		if (blessed($existingPlaylist) && !$params->{'overwrite'}) {
@@ -245,15 +243,17 @@ sub renamePlaylist {
 
 				# Quickly remove a playlist from the database.
 				$existingPlaylist->setTracks([]);
-
-				$ds->delete($existingPlaylist, 1);
+				$existingPlaylist->delete;
 
 				$existingPlaylist = undef;
+
+				Slim::Schema->forceCommit;
 			}
+
 			removePlaylistFromDisk($playlistObj);
 
-			$playlistObj->set('url', $newUrl);
-			$playlistObj->set('title', $newName);
+			$playlistObj->set_column('url', $newUrl);
+			$playlistObj->set_column('title', $newName);
 			$playlistObj->update;
 
 			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
@@ -269,8 +269,7 @@ sub renamePlaylist {
 sub deletePlaylist {
 	my ($client, $params) = @_;
 
-	my $ds          = Slim::Music::Info::getCurrentDataStore();
-	my $playlistObj = $ds->objectForId('track', $params->{'playlist'});
+	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist'});
 
 	$params->{'level'}     = 0;
 	
@@ -287,8 +286,11 @@ sub deletePlaylist {
 
 		# Do a fast delete, and then commit it.
 		$playlistObj->setTracks([]);
+		$playlistObj->delete;
 
-		$ds->delete($playlistObj, 1);
+		$playlistObj = undef;
+
+		Slim::Schema->forceCommit;
 	}
 
 	# Send the user off to the top level browse playlists

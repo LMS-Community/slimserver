@@ -37,13 +37,13 @@ sub new {
 		'url'    => $pls,
 		'client' => $client
 	}) || return undef;
-	
+
 	my @items = Slim::Formats::Playlists->parseList($pls, $sock);
 
 	return undef unless scalar(@items);
 
 	return $class->SUPER::new({
-		'url'     => $items[0],
+		'url'     => $items[0]->url,
 		'client'  => $client,
 		'infoUrl' => $url,
 	});
@@ -67,7 +67,7 @@ sub parseDirectBody {
 	my $url = shift;
 	my $body = shift;
 
-	my $io = IO::String->new($body);
+	my $io    = IO::String->new($body);
 
 	# Need to tell the parser that the playlist is in pls format.
 	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($url);
@@ -75,16 +75,15 @@ sub parseDirectBody {
 
 	return () unless scalar(@items);
 
-	my $stream = $items[0];
+	my $stream = $items[0]->url;
 	$stream =~ s/http:\/\///;
 	$stream = 'radioio://stream/' . Plugins::RadioIO::Plugin::decrypt($stream);
 
-	my $currentDB = Slim::Music::Info::getCurrentDataStore();
-	my $track = $currentDB->objectForUrl($url);
+	my $track = Slim::Schema->objectForUrl($url);
 
 	if (blessed($track) && $track->can('title')) {
 
-		Slim::Music::Info::setTitle($stream, $track->title());
+		Slim::Music::Info::setTitle($stream, $track->title);
 	}
 
 	return ($stream);

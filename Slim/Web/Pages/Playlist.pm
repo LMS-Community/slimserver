@@ -13,7 +13,6 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
-use Slim::DataStores::Base;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
@@ -100,7 +99,7 @@ sub playlist {
 
 	my %listBuild = ();
 	my $item;
-	my %list_form;
+	my %form;
 
 	$params->{'cansave'} = 1;
 	
@@ -147,8 +146,6 @@ sub playlist {
 	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
 	my $starttime    = Time::HiRes::time();
 
-	my $ds           = Slim::Music::Info::getCurrentDataStore();
-
 	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
 
@@ -164,7 +161,7 @@ sub playlist {
 
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
-			$track = $ds->objectForUrl($objOrUrl) || do {
+			$track = Slim::Schema->objectForUrl($objOrUrl) || do {
 				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
 				$listBuild{'item'}++;
 				$itemCount++;
@@ -172,26 +169,32 @@ sub playlist {
 			};
 		}
 
-		my %list_form = ();
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
-		my $levelInfo = $fieldInfo->{'track'};
+		my %form = ();
 
-		&{$levelInfo->{'listItem'}}($ds, \%list_form, $track);
+		$track->displayAsHTML(\%form);
 
-		$list_form{'num'} = $listBuild{'item'};
-		$list_form{'odd'} = ($listBuild{'item'} + $listBuild{'offset'}) % 2;
+		$form{'num'}       = $itemnum;
+		$form{'levelName'} = 'track';
+		$form{'odd'}       = ($itemnum + $offset) % 2;
 
 		if ($listBuild{'item'} == $listBuild{'currsongind'}) {
-			$list_form{'currentsong'} = "current";
-			$list_form{'title'}    = Slim::Music::Info::isRemoteURL($track) ? Slim::Music::Info::standardTitle(undef, $track) : Slim::Music::Info::getCurrentTitle(undef, $track);
+			$form{'currentsong'} = "current";
+
+			if (Slim::Music::Info::isRemoteURL($track)) {
+				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track);
+			} else {
+				$form{'title'} = Slim::Music::Info::getCurrentTitle(undef, $track);
+			}
+
 		} else {
-			$list_form{'currentsong'} = undef;
-			$list_form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
+
+			$form{'currentsong'} = undef;
+			$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
 		}
 
-		$list_form{'nextsongind'} = $listBuild{'currsongind'} + (($listBuild{'item'} > $listBuild{'currsongind'}) ? 1 : 0);
+		$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 
-		push @{$params->{'playlist_items'}}, \%list_form;
+		push @{$params->{'playlist_items'}}, \%form;
 
 		$listBuild{'item'}++;
 		$itemCount++;

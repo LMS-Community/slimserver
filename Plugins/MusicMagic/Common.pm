@@ -1,6 +1,6 @@
 package Plugins::MusicMagic::Common;
 
-# $Id: /slim/trunk/server/Plugins/MusicMagic/Plugin.pm 213 2005-11-09T17:07:36.536715Z dsully  $
+# $Id$
 
 use strict;
 

@@ -517,7 +517,7 @@ sub sysread {
 		$::d_source && msg("reduced chunksize to $chunkSize for metadata\n");
 	}
 
-	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1]));
+	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
 
 	if ($metaInterval && $readLength) {
 

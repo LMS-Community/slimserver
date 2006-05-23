@@ -162,7 +162,7 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 
 [%# this is the href to the browsetree page for item %]
 [% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsetree.html?topDir=[% topDir %]&amp;hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is a generic href for item, or the item itself if no href present %]

@@ -21,15 +21,18 @@ use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 my %stopcommands = ();
+
 # Information on each clients random mix
 my %mixInfo      = ();
+
 # Display text for each mix type
 my %displayText  = ();
+
 # Genres for each client (don't access this directly - use getGenres())
 my %genres       = ();
+my %genreNameMap = ();
 
 my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
-my $ds = Slim::Music::Info::getCurrentDataStore();
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
@@ -40,56 +43,69 @@ sub findAndAdd {
 	my ($client, $type, $find, $limit, $addOnly) = @_;
 
 	$::d_plugins && msg("RandomPlay: Starting random selection of $limit items for type: $type\n");
-	
-	my $items = $ds->find({
-		'field'  => $type,
-		'find'   => $find,
-		'sortBy' => 'random',
-		'limit'  => $limit,
-		'cache'  => 0,
-	});
 
-	$::d_plugins && msgf("RandomPlay: Find returned %i items\n", scalar @$items);
-			
+	my @joins  = ();
+
+	# Pull in the right tables to do our searches
+	if ($type eq 'track' || $type eq 'year') {
+
+		push @joins, 'genreTracks';
+
+	} elsif ($type eq 'album') {
+
+		push @joins, { 'tracks' => 'genreTracks' };
+
+	} elsif ($type eq 'contributor') {
+
+		push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+	}
+
+	# Search the database for the number of track we need. Use MySQL's
+	# RAND() function to get back a random list. Restrict by the genre's we've selected.
+	my @results = Slim::Schema->rs($type)->search($find, {
+
+		'order_by' => \'RAND()',
+		'join'     => \@joins,
+
+	})->slice(0, ($limit-1));
+
+	$::d_plugins && msgf("RandomPlay: Find returned %i items\n", scalar @results);
+
 	# Pull the first track off to add / play it if needed.
-	my $item = shift @{$items};
+	my $obj = shift @results;
 
-	if ($item && ref($item)) {
-		my $string = $type eq 'artist' ? $item->name : $item->title;
-		$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n",
-							 $addOnly ? 'Adding' : 'Playing',
-							 $type, $string, $item->id);
+	if (!$obj || !ref($obj)) {
 
-		# Replace the current playlist with the first item / track or add it to end
-		my $request = $client->execute(['playlist', 
-				                        $addOnly ? 'addtracks' : 'loadtracks',
-		                                sprintf('%s=%d', $type, $item->id())]);
-		# indicate request source
-		$request->source('PLUGIN_RANDOM');
-		
-		# Add the remaining items to the end
-		if ($type eq 'track') {
-
-			if (! defined $limit || $limit > 1) {
-
-				$::d_plugins && 
-					msgf("RandomPlay: Adding %i tracks to end of playlist\n", 
-					scalar @$items);
-					
-				$request = $client->execute(['playlist', 
-				                             'addtracks', 
-				                             'listRef', 
-				                             $items]);
-				$request->source('PLUGIN_RANDOM');
-			}
-		}
-
-		return $string;
-
-	} else {
-
+		errorMsg("RandomPlay: Didn't get a valid object for findAndAdd()!\n");
 		return undef;
 	}
+
+	$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n",
+		$addOnly ? 'Adding' : 'Playing', $type, $obj->name, $obj->id
+	);
+
+	# Replace the current playlist with the first item / track or add it to end
+	my $request = $client->execute([
+		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
+	]);
+
+	# indicate request source
+	$request->source('PLUGIN_RANDOM');
+
+	# Add the remaining items to the end
+	if ($type eq 'track') {
+
+		if (!defined $limit || $limit > 1) {
+
+			$::d_plugins && msgf("RandomPlay: Adding %i tracks to end of playlist\n", scalar @results);
+
+			$request = $client->execute(['playlist', 'addtracks', 'listRef', \@results ]);
+
+			$request->source('PLUGIN_RANDOM');
+		}
+	}
+
+	return $obj->name;
 }
 
 # Returns a hash whose keys are the genres in the db
@@ -97,65 +113,57 @@ sub getGenres {
 	my ($client) = @_;
 
 	# Should use genre.name in following find, but a bug in find() doesn't allow this	
-   	my $items = $ds->find({
-		'field'  => 'genre',
-		'cache'  => 0,
-	});
-	
+	# XXXX - how does the above comment translate into DBIx::Class world?
+   	my $rs = Slim::Schema->search('Genre');
+
 	# Extract each genre name into a hash
 	my %clientGenres = ();
-	foreach my $item (@$items) {
-		$clientGenres{$item->{'name'}} = {
-		                                 # Put the name here as well so the hash can be passed to
-		                                 # INPUT.Choice as part of listRef later on
-		                                 name    => $item->{'name'},
-		                                 id      => $item->{'id'},
-		                                 enabled => 1,
-									 };
-	}
+	my @exclude      = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
 
-	my @exclude = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
+	for my $genre ($rs->all) {
 
-	# Set excluded genres to 0 in genres hash
-	foreach my $item (@exclude) {
-		# excluded genres could include some that no longer exist
-		if ($clientGenres{$item}) {
-			$clientGenres{$item}{'enabled'} = 0;
+		# Put the name here as well so the hash can be passed to
+		# INPUT.Choice as part of listRef later on
+		my $name = $genre->name;
+		my $id   = $genre->id;
+		my $ena  = 1;
+
+		if (grep { $_ eq $name } @exclude) {
+			$ena = 0;
 		}
-	}
-	$genres{$client} = {%clientGenres};
 
-	return %{$genres{$client}};
+		$clientGenres{$id} = {
+			'id'      => $id,
+			'name'    => $name,
+			'enabled' => $ena,
+		};
+	}
+
+	$genres{$client} = \%clientGenres;
+
+	return $genres{$client};
 }
 
 # Returns an array of the non-excluded genres in the db
 sub getFilteredGenres {
 	my ($client, $returnExcluded) = @_;
-	my %clientGenres;
 
-	# If $returnExcluded, just return the current state of excluded genres
-	if (! $returnExcluded) {
-		%clientGenres = getGenres($client);
-	} else {
-		%clientGenres = %{$genres{$client}};
-	}
-	
 	my @filteredGenres = ();
 	my @excludedGenres = ();
 
-	for my $genre (keys %clientGenres) {
-		if ($clientGenres{$genre}{'enabled'}) {
-			push (@filteredGenres, $genre) unless $returnExcluded;
+	# If $returnExcluded, just return the current state of excluded genres
+	my $clientGenres = $returnExcluded ? $genres{$client} : getGenres($client);
+
+	for my $id (keys %{$clientGenres}) {
+
+		if ($clientGenres->{$id}->{'enabled'}) {
+			push (@filteredGenres, $id) if !$returnExcluded;
 		} else {
-			push (@excludedGenres, $genre) unless ! $returnExcluded;
+			push (@excludedGenres, $id) if $returnExcluded;
 		}
 	}
 
-	if ($returnExcluded) {
-		return @excludedGenres;
-	} else {
-		return @filteredGenres;
-	}
+	return $returnExcluded ? \@excludedGenres : \@filteredGenres;
 }
 
 sub getRandomYear {
@@ -163,19 +171,14 @@ sub getRandomYear {
 	
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
 
-   	my $items = $ds->find({
-		'field'  => 'year',
-		'find'   => {
-			'genre.name' => $filteredGenresRef,
-		},
-		'sortBy' => 'random',
-		'limit'  => 1,
-		'cache'  => 0,
-	});
-	
-	$::d_plugins && msgf("RandomPlay: Selected year %s\n", @$items[0]);
+   	my $year = Slim::Schema->rs('Track')->search(
+		{ 'genreTracks.genre' => $filteredGenresRef },
+		{ 'order_by' => \'RAND()', 'join' => 'genreTracks' }
+	)->single->year;
 
-	return @$items[0];	
+	$::d_plugins && msg("RandomPlay: Selected year $year\n");
+
+	return $year;
 }
 
 # Add random tracks to playlist if necessary
@@ -187,13 +190,14 @@ sub playRandom {
 
 	$type ||= 'track';
 	$type = lc($type);
-	
+
 	# Whether to keep adding tracks after generating the initial playlist
 	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-	
+
 	# If this is a new mix, store the start time
 	my $startTime = undef;
-	if ($continuousMode && $mixInfo{$client}->{'type'} ne $type) {
+
+	if ($continuousMode && $type && $mixInfo{$client->id} && $mixInfo{$client->id}->{'type'} ne $type) {
 		$startTime = time();
 	}
 
@@ -203,78 +207,100 @@ sub playRandom {
 
 	# Work out how many items need adding
 	my $numItems = 0;
+
 	if ($type eq 'track') {
+
 		# Add new tracks if there aren't enough after the current track
 		my $numRandomTracks = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+
 		if (! $addOnly) {
+
 			$numItems = $numRandomTracks;
+
 		} elsif ($songsRemaining < $numRandomTracks - 1) {
+
 			$numItems = $numRandomTracks - 1 - $songsRemaining;
+
 		} else {
+
 			$::d_plugins && msgf("RandomPlay: $songsRemaining items remaining so not adding new track\n");
 		}
 
-	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
+	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->id}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
+
 		# Old artist/album/year is finished or new random mix started.  Add a new one
 		$numItems = 1;
 	}
 
 	if ($numItems) {
-		unless ($addOnly) {
+
+		if (!$addOnly) {
 			$client->execute(['stop']);
 			$client->execute(['power', '1']);
 		}
+
 		Slim::Player::Playlist::shuffle($client, 0);
-		
+
 		# Initialize find to only include user's selected genres.  If they've deselected
 		# all genres, this clause will be ignored by find, so all genres will be used.
-		my @filteredGenres = getFilteredGenres($client);
-		my $find = {'genre.name' => \@filteredGenres};
+		my $filteredGenres = getFilteredGenres($client);
+
+		my $find = {
+			'genreTracks.genre' => { 'in' => $filteredGenres }
+		};
 
 		# Prevent items that have already been played from being played again
 		# Following doesn't work as it excludes tracks that haven't
 		# ever been played.  Need to be able to say NULL OR < startTime
 		# Additionally, this fails when multiple clients are playing
 		# random mixes.  -- Max
-		#if ($mixInfo{$client}->{'startTime'}) {
-		#	$find->{'lastPlayed'} = {'<' => $mixInfo{$client}->{'startTime'}};
+		#if ($mixInfo{$client->id}->{'startTime'}) {
+		#	$find->{'lastPlayed'} = {'<' => $mixInfo{$client->id}->{'startTime'}};
 		#}
-		
+
 		if ($type eq 'track' || $type eq 'year') {
-			# Find only tracks, not albums etc
+
+			# Find only tracks, not directories or remote streams etc
 			$find->{'audio'} = 1;
 		}
-		
+
 		# String to show with showBriefly
 		my $string = '';
+
 		if ($type ne 'track') {
-			$string = $client->string('PLUGIN_RANDOM_' . $type . '_ITEM') . ': ';
+			$string = $client->string('PLUGIN_RANDOM_' . uc($type) . '_ITEM') . ': ';
 		}
-		
+
 		# If not track mode, add tracks then go round again to check whether the playlist only
 		# contains one track (i.e. the artist/album/year only had one track in it).  If so,
 		# add another artist/album/year or the plugin would never add more when the first finished in continuous mode.
 		for (my $i = 0; $i < 2; $i++) {
+
 			if ($i == 0 || ($type ne 'track' && Slim::Player::Playlist::count($client) == 1 && $continuousMode)) {
+
 				# Genre filters don't apply in year mode as I don't know how to restrict the
 				# random year to a genre.
 				my $year;
+
 				if($type eq 'year') {
-					$year = getRandomYear(\@filteredGenres);
+					$year = getRandomYear($filteredGenres);
 					$find->{'year'} = $year;
 				}
-				
+
 				if ($i == 1) {
 					$string .= ' // ';
 				}
+
 				# Get the tracks.  year is a special case as we do a find for all tracks that match
 				# the previously selected year
 				my $findString = findAndAdd($client,
-				                            $type eq 'year' ? 'track' : $type,
-				                            $find,
-				                            $type eq 'year' ? undef : $numItems,
-								            # 2nd time round just add tracks to end
-										    $i == 0 ? $addOnly : 1);
+				    $type eq 'year' ? 'track' : $type,
+				    $find,
+				    $type eq 'year' ? undef : $numItems,
+					# 2nd time round just add tracks to end
+					$i == 0 ? $addOnly : 1
+				);
+
 				if ($type eq 'year') {
 					$string .= $year;
 				} else {
@@ -285,14 +311,19 @@ sub playRandom {
 
 		# Do a show briefly the first time things are added, or every time a new album/artist/year
 		# is added
-		if (!$addOnly || $type ne $mixInfo{$client}->{'type'} || $type ne 'track') {
+		if (!$addOnly || $type ne $mixInfo{$client->id}->{'type'} || $type ne 'track') {
+
 			if ($type eq 'track') {
 				$string = $client->string("PLUGIN_RANDOM_TRACK");
 			}
+
 			# Don't do showBrieflys if visualiser screensavers are running as the display messes up
 			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
-				$client->showBriefly(string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-									 $string, 2, undef, undef, 1);
+
+				$client->showBriefly(
+					string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
+					$string, 2, undef, undef, 1
+				);
 			}
 		}
 
@@ -314,22 +345,23 @@ sub playRandom {
 			$client->showBriefly(string('PLUGIN_RANDOM'), 
                                  string('PLUGIN_RANDOM_DISABLED'));
 		}
-		$mixInfo{$client} = undef;
+
+		$mixInfo{$client->id} = undef;
 
 	} else {
 
-		$::d_plugins && msgf("RandomPlay: Playing %s %s mode with %i items\n",
-							 $continuousMode ? 'continuous' : 'static',
-							 $type,
-							 Slim::Player::Playlist::count($client));
+		$::d_plugins && msgf(
+			"RandomPlay: Playing %s %s mode with %i items\n",
+			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
+		);
 
 		# $startTime will only be defined if this is a new (or restarted) mix
 		if (defined $startTime) {
 			# Record current mix type and the time it was started.
 			# Do this last to prevent menu items changing too soon
 			$::d_plugins && msgf("RandomPlay: New mix started at %i\n", $startTime);
-			$mixInfo{$client}->{'type'} = $type;
-			$mixInfo{$client}->{'startTime'} = $startTime;
+			$mixInfo{$client->id}->{'type'} = $type;
+			$mixInfo{$client->id}->{'startTime'} = $startTime;
 		}
 	}
 }
@@ -337,25 +369,33 @@ sub playRandom {
 # Returns the display text for the currently selected item in the menu
 sub getDisplayText {
 	my ($client, $item) = @_;
-	if (! %displayText) {
+
+	if (!scalar keys %displayText) {
+
 		%displayText = (
-			track  => 'PLUGIN_RANDOM_TRACK',
-			album  => 'PLUGIN_RANDOM_ALBUM',
-			artist => 'PLUGIN_RANDOM_ARTIST',
-			year   => 'PLUGIN_RANDOM_YEAR',
-			genreFilter => 'PLUGIN_RANDOM_GENRE_FILTER'
+			'track'       => 'PLUGIN_RANDOM_TRACK',
+			'album'       => 'PLUGIN_RANDOM_ALBUM',
+			'contributor' => 'PLUGIN_RANDOM_CONTRIBUTOR',
+			'year'        => 'PLUGIN_RANDOM_YEAR',
+			'genreFilter' => 'PLUGIN_RANDOM_GENRE_FILTER'
 		)
-	}	
+	}
+
 	# if showing the current mode, show altered string
-	if ($item eq $mixInfo{$client}->{'type'}) {
+	if (defined $mixInfo{$client->id}->{'type'} && $item eq $mixInfo{$client->id}->{'type'}) {
+
 		return string($displayText{$item} . '_PLAYING');
 		
 	# if a mode is active, handle the temporarily added disable option
-	} elsif ($item eq 'disable' && $mixInfo{$client}) {
-		return string('PLUGIN_RANDOM_PRESS_RIGHT')
-			   . ' '
-			   . string('PLUGIN_RANDOM_' . uc($mixInfo{$client}->{'type'}) . '_DISABLE');
+	} elsif ($item eq 'disable' && $mixInfo{$client->id}) {
+
+		return join(' ',
+			string('PLUGIN_RANDOM_PRESS_RIGHT'),
+			string('PLUGIN_RANDOM_' . uc($mixInfo{$client->id}->{'type'}) . '_DISABLE')
+		);
+
 	} else {
+
 		return string($displayText{$item});
 	}
 }
@@ -379,24 +419,31 @@ sub getOverlay {
 # Returns the overlay for the select genres mode i.e. the checkbox state
 sub getGenreOverlay {
 	my ($client, $item) = @_;
-	my $rv = 0;
-	my %genres = getGenres($client);	
-	
+
+	my $rv     = 0;
+	my $genres = getGenres($client);	
+
 	if ($item->{'selectAll'}) {
+
 		# This item should be ticked if all the genres are selected
 		my $genresEnabled = 0;
-		foreach my $genre (keys %genres) {
-			if ($genres{$genre}{'enabled'}) {
-				$genresEnabled ++;
+
+		for my $id (keys %{$genres}) {
+
+			if ($genres->{$id}->{'enabled'}) {
+				$genresEnabled++;
 			}
 		}
-		$rv = $genresEnabled == scalar keys %genres;
+
+		$rv = $genresEnabled == scalar keys %{$genres};
 		$item->{'enabled'} = $rv;
+
 	} else {
-		$rv = $genres{$item->{'name'}}{'enabled'};
+
+		$rv = $genres->{$item->{'id'}}->{'enabled'};
 	}
-	
-	if($rv) {
+
+	if ($rv) {
 		return [undef, '[X]'];
 	} else {
 		return [undef, '[ ]'];
@@ -408,39 +455,47 @@ sub toggleGenreState {
 	my ($client, $item) = @_;
 	
 	if ($item->{'selectAll'}) {
+
 		$item->{'enabled'} = ! $item->{'enabled'};
+
 		# Enable/disable every genre
 		foreach my $genre (keys %{$genres{$client}}) {
 			$genres{$client}{$genre}{'enabled'} = $item->{'enabled'};
 		}
+
 	} else {
+
 		# Toggle the selected state of the current item
-		$genres{$client}{$item->{'name'}}{'enabled'} = ! $genres{$client}{$item->{'name'}}{'enabled'};		
+		$genres{$client}{$item->name}{'enabled'} = ! $genres{$client}{$item->name}{'enabled'};		
 	}
-	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [getFilteredGenres($client, 1)]);
-	$client->update();
+
+	Slim::Utils::Prefs::set('plugin_random_exclude_genres', getFilteredGenres($client, 1));
+
+	$client->update;
 }
 
 # Do what's necessary when play or add button is pressed
 sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
+
 	$::d_plugins && msgf("RandomPlay: %s button pushed on type %s\n", $add ? 'Add' : 'Play', $item);
-	
+
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
 		my $listRef = Slim::Buttons::Common::param($client, 'listRef');
-		
+
 		if ($item eq 'disable') {
 			pop @$listRef;
-		
+
 		# only add disable option if starting a mode from idle state
-		} elsif (! $mixInfo{$client}) {
+		} elsif (! $mixInfo{$client->id}) {
 			push @$listRef, 'disable';
 		}
+
 		Slim::Buttons::Common::param($client, 'listRef', $listRef);
 
 		# Clear any current mix type in case user is restarting an already playing mix
-		$mixInfo{$client} = undef;
+		$mixInfo{$client->id} = undef;
 
 		# Go go go!
 		playRandom($client, $item, $add);
@@ -459,29 +514,27 @@ sub setMode {
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header     => '{PLUGIN_RANDOM} {count}',
-		listRef    => [qw(track album artist year genreFilter)],
+		listRef    => [qw(track album contributor year genreFilter)],
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
 		modeName   => 'RandomPlay',
-		onPlay     => sub {
-			my ($client, $item) = @_;
-			handlePlayOrAdd($client, $item, 0);		
-		},
-		onAdd      => sub {
-			my ($client, $item) = @_;
-			handlePlayOrAdd($client, $item, 1);
-		},
+		onPlay     => sub { handlePlayOrAdd(@_, 0) },
+		onAdd      => sub { handlePlayOrAdd(@_, 1) },
 		onRight    => sub {
 			my ($client, $item) = @_;
+
 			if ($item eq 'genreFilter') {
-				my %genreList = getGenres($client);
+
+				my $genres    = getGenres($client);
+				my %genreList = map { $genres->{$_}->{'name'}, $genres->{$_} } keys %{$genres};
 
 				# Insert Select All option at top of genre list
 				my @listRef = ({
-							       name => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
-							       # Mark the fact that isn't really a genre
-								   selectAll => 1
-							   });
+					name => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
+					# Mark the fact that isn't really a genre
+					selectAll => 1
+				});
+
 				# Add the genres
 				foreach my $genre (sort keys %genreList) {
 					push @listRef, $genreList{$genre};
@@ -494,6 +547,7 @@ sub setMode {
 					overlayRef => \&getGenreOverlay,
 					onRight    => \&toggleGenreState,
 				});
+
 			} elsif ($item eq 'disable') {
 				handlePlayOrAdd($client, $item, 0);
 			} else {
@@ -503,7 +557,7 @@ sub setMode {
 	);
 
 	# if we have an active mode, temporarily add the disable option to the list.
-	if ($mixInfo{$client} && $mixInfo{$client}->{'type'}) {
+	if ($mixInfo{$client->id} && $mixInfo{$client->id}->{'type'}) {
 		push @{$params{listRef}},'disable';
 	}
 
@@ -512,24 +566,24 @@ sub setMode {
 
 sub commandCallback {
 	my $request = shift;
-	
+
 	my $client = $request->client();
 
-	if ($request->source() eq 'PLUGIN_RANDOM') {
+	if (!$request->source || $request->source() eq 'PLUGIN_RANDOM') {
 		return;
 	}
 
-	if (!defined $client || !defined $mixInfo{$client}->{'type'}) {
+	if (!defined $client || !defined $mixInfo{$client->id}->{'type'}) {
 		# This is nothing unexpected - some events don't provide $client
 		# e.g. rescan
 		return;
 	}
-	
+
 	if ($::d_plugins) {
 		msgf("RandomPlay: received command %s\n", 
 				$request->getRequestString());
 		msgf("RandomPlay: while in mode: %s, from %s\n",
-				$mixInfo{$client}->{'type'}, $client->name);
+				$mixInfo{$client->id}->{'type'}, $client->name);
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -538,35 +592,34 @@ sub commandCallback {
 	    $request->isCommand([['playlist'], ['delete']]) && 
 	    $request->getParam('_index') > $songIndex) {
 
-        if ($::d_plugins) {
+		if ($::d_plugins) {
+
 			if ($request->isCommand([['playlist'], ['newsong']])) {
 				msg("RandomPlay: new song detected ($songIndex)\n");
 			} else {
-				msg("RandomPlay: deletion detected (" 
-					. $request->getParam('_index') . ")\n");
+				msg("RandomPlay: deletion detected (" . $request->getParam('_index') . ")\n");
 			}
 		}
 		
-		my $songsToKeep = 
-			Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 			
 		if ($songIndex && $songsToKeep ne '') {
-			$::d_plugins && 
-				msg("RandomPlay: Stripping off completed track(s)\n");
+
+			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
 
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
-			
+
 				my $request = $client->execute(['playlist', 'delete', 0]);
 				$request->source('PLUGIN_RANDOM');
 			}
 		}
 
-		playRandom($client, $mixInfo{$client}->{'type'}, 1);
+		playRandom($client, $mixInfo{$client->id}->{'type'}, 1);
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
-		$::d_plugins && msgf("RandomPlay: cyclic mode ending due to playlist: %s command\n", $request->getRequestString());
+		$::d_plugins && msgf("RandomPlay: cyclic mode ending due to playlist: %s command\n", $request->getRequestString);
 		playRandom($client, 'disable');
 	}
 }
@@ -574,16 +627,22 @@ sub commandCallback {
 sub initPlugin {
 	# playlist commands that will stop random play
 	%stopcommands = (
-		'clear'		 => 1,
+		'clear'	     => 1,
 		'loadtracks' => 1, # multiple play
 		'playtracks' => 1, # single play
-		'load'		 => 1, # old style url load (no play)
-		'play'		 => 1, # old style url play
-		'loadalbum'	 => 1, # old style multi-item load
-		'playalbum'	 => 1, # old style multi-item play
+		'load'       => 1, # old style url load (no play)
+		'play'       => 1, # old style url play
+		'loadalbum'  => 1, # old style multi-item load
+		'playalbum'  => 1, # old style multi-item play
 	);
 	
 	checkDefaults();
+
+	# Populate the genreMap, so we can use IDs
+	for my $genre (Slim::Schema->search('Genre')->all) {
+
+		$genreNameMap{$genre->name} = $genre->id;
+	}
 
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
@@ -622,31 +681,13 @@ sub shutdownPlugin {
 }
 
 sub getFunctions {
+
 	# Functions to allow mapping of mixes to keypresses
 	return {
-		'tracks' => sub {
-			my $client = shift;
-	
-			playRandom($client, 'track');
-		},
-	
-		'albums' => sub {
-			my $client = shift;
-	
-			playRandom($client, 'album');
-		},
-	
-		'artists' => sub {
-			my $client = shift;
-	
-			playRandom($client, 'artist');
-		},
-		
-		'year' => sub {
-			my $client = shift;
-	
-			playRandom($client, 'year');
-		},
+		'tracks'       => sub { playRandom(shift, 'track') },
+		'albums'       => sub { playRandom(shift, 'album') },
+		'contributors' => sub { playRandom(shift, 'contributor') },
+		'year'         => sub { playRandom(shift, 'year') },
 	}
 }
 
@@ -675,11 +716,11 @@ sub handleWebList {
 	my ($client, $params) = @_;
 
 	# Pass on the current pref values and now playing info
-	$params->{'pluginRandomGenreList'} = {getGenres($client)};
+	$params->{'pluginRandomGenreList'} = getGenres($client);
 	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 	$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-	$params->{'pluginRandomNowPlaying'} = $mixInfo{$client}->{'type'};
+	$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->id}->{'type'};
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }
@@ -687,19 +728,23 @@ sub handleWebList {
 # Handles play requests from plugin's web page
 sub handleWebMix {
 	my ($client, $params) = @_;
+
 	if (defined $client && $params->{'type'}) {
 		playRandom($client, $params->{'type'}, $params->{'addOnly'});
 	}
+
 	handleWebList($client, $params);
 }
 
 # Handles settings changes from plugin's web page
 sub handleWebSettings {
 	my ($client, $params) = @_;
+
 	my %genres = getGenres($client);
 
 	# Build a lookup table to go from genre id to genre name	
 	my @lookup = ();
+
 	foreach my $genre (keys %genres) {
 		@lookup[$genres{$genre}{'id'}] = $genre;
 	}
@@ -710,6 +755,7 @@ sub handleWebSettings {
 			delete($genres{$lookup[$genre]});
 		}
 	}
+
 	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys(%genres)]);	
 
 	if ($params->{'numTracks'} =~ /^[0-9]+$/) {
@@ -717,11 +763,13 @@ sub handleWebSettings {
 	} else {
 		$::d_plugins && msg("RandomPlay: Invalid value for numTracks\n");
 	}
+
 	if ($params->{'numOldTracks'} eq '' || $params->{'numOldTracks'} =~ /^[0-9]+$/) {
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
 	} else {
 		$::d_plugins && msg("RandomPlay: Invalid value for numOldTracks\n");
 	}
+
 	Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', $params->{'continuousMode'} ? 1 : 0);
 
 	# Pass on to check if the user requested a new mix as well
@@ -730,12 +778,14 @@ sub handleWebSettings {
 
 sub checkDefaults {
 	my $prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+
 	if (! defined $prefVal || $prefVal !~ /^[0-9]+$/) {
 		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_tracks to 10\n");
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
 	}
 	
 	$prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+
 	if (! defined $prefVal || $prefVal !~ /^$|^[0-9]+$/) {
 		# Default to keeping all tracks
 		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_old_tracks to ''\n");
@@ -815,26 +865,26 @@ PLUGIN_RANDOM_ALBUM_DISABLE
 	EN	stop adding albums
 	NL	Stoppen toevoegen albums
 
-PLUGIN_RANDOM_ARTIST
+PLUGIN_RANDOM_CONTRIBUTOR
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
 	ES	Mezcla por Artista al Azar
 	HE	מיקס אמן אקראי
 	NL	Willekeurige artiesten mix
 
-PLUGIN_RANDOM_ARTIST_ITEM
+PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	DE	Zufälliger Interpret
 	EN	Random Artist
 	ES	Artista al Azar
 	NL	Willekeurige artiesten
 
-PLUGIN_RANDOM_ARTIST_PLAYING
+PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
 	DE	Spiele zufälligen Interpreten
 	EN	Playing Random Artists
 	ES	Reproduciendo Artistas al Azar
 	NL	Afspelen willekeurige artiesten
 
-PLUGIN_RANDOM_ARTIST_DISABLE
+PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	DE	keine Interpreten mehr hinzuzufügen
 	EN	stop adding artists
 	ES	dejar de añadir artistas
@@ -902,7 +952,7 @@ PLUGIN_RANDOM_TRACK_WEB
 	HE	שירים באקראי
 	NL	Willekeurige liedjes
 
-PLUGIN_RANDOM_ARTIST_WEB
+PLUGIN_RANDOM_CONTRIBUTOR_WEB
 	DE	Zufällige Interpreten
 	EN	Random artists
 	ES	Artistas al azar

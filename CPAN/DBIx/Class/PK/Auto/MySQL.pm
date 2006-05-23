@@ -9,7 +9,7 @@ __PACKAGE__->load_components(qw/PK::Auto/);
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::PK::Auto::MySQL - (DEPRECATED) Automatic primary key class for MySQL
 

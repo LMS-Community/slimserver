@@ -22,11 +22,11 @@ sub get_autoinc_seq {
     : (undef,$source->name);
   while (my $col = shift @pri) {
     my $info = $dbh->column_info(undef,$schema,$table,$col)->fetchrow_arrayref;
-    if (defined $info->[12] and $info->[12] =~ 
+    if (defined $info->[12] and $info->[12] =~
       /^nextval\(+'([^']+)'::(?:text|regclass)\)/)
     {
       return $1; # may need to strip quotes -- see if this works
-    } 
+    }
   }
 }
 
@@ -36,7 +36,7 @@ sub sqlt_type {
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Storage::DBI::Pg - Automatic primary key class for PostgreSQL
 

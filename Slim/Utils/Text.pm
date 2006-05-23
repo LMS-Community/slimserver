@@ -77,7 +77,14 @@ sub ignoreCaseArticles {
 		%caseArticlesCache = ();
 	}
 
-	return $caseArticlesCache{$s} ||= ignorePunct(ignoreArticles(matchCase($s)));
+	if (!$caseArticlesCache{$s}) {
+
+		use locale;
+
+		$caseArticlesCache{$s} = ignorePunct(ignoreArticles(uc($s)));
+	}
+
+	return $caseArticlesCache{$s};
 }
 
 sub clearCaseArticleCache {

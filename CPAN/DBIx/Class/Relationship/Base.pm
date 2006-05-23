@@ -5,7 +5,7 @@ use warnings;
 
 use base qw/DBIx::Class/;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Relationship::Base - Inter-table relationships
 
@@ -15,7 +15,7 @@ DBIx::Class::Relationship::Base - Inter-table relationships
 
 This class provides methods to describe the relationships between the
 tables in your database model. These are the "bare bones" relationships
-methods, for predefined ones, look in L<DBIx::Class::Relationship>. 
+methods, for predefined ones, look in L<DBIx::Class::Relationship>.
 
 =head1 METHODS
 
@@ -29,27 +29,42 @@ methods, for predefined ones, look in L<DBIx::Class::Relationship>.
 
   __PACKAGE__->add_relationship('relname', 'Foreign::Class', $cond, $attrs);
 
-The condition needs to be an SQL::Abstract-style representation of the
-join between the tables. When resolving the condition for use in a JOIN,
-keys using the pseudo-table I<foreign> are resolved to mean "the Table on the
-other side of the relationship", and values using the pseudo-table I<self>
+The condition needs to be an L<SQL::Abstract>-style representation of the
+join between the tables. When resolving the condition for use in a C<JOIN>,
+keys using the pseudo-table C<foreign> are resolved to mean "the Table on the
+other side of the relationship", and values using the pseudo-table C<self>
 are resolved to mean "the Table this class is representing". Other
 restrictions, such as by value, sub-select and other tables, may also be
-used. Please check your database for JOIN parameter support.
+used. Please check your database for C<JOIN> parameter support.
 
-For example, if you're creating a rel from Author to Book, where the Book
-table has a column author_id containing the ID of the Author row:
+For example, if you're creating a relationship from C<Author> to C<Book>, where
+the C<Book> table has a column C<author_id> containing the ID of the C<Author>
+row:
 
   { 'foreign.author_id' => 'self.id' }
 
-will result in the JOIN clause
+will result in the C<JOIN> clause
 
-  author me JOIN book book ON bar.author_id = me.id
+  author me JOIN book book ON book.author_id = me.id
 
-You can specify as many foreign => self mappings as necessary. Each key/value
-pair provided in a hashref will be used as ANDed conditions, to add an ORed
-condition, use an arrayref of hashrefs. See the L<SQL::Abstract> documentation
-for more details.
+For multi-column foreign keys, you will need to specify a C<foreign>-to-C<self>
+mapping for each column in the key. For example, if you're creating a
+relationship from C<Book> to C<Edition>, where the C<Edition> table refers to a
+publisher and a type (e.g. "paperback"):
+
+  {
+    'foreign.publisher_id' => 'self.publisher_id',
+    'foreign.type_id'      => 'self.type_id',
+  }
+
+This will result in the C<JOIN> clause:
+
+  book me JOIN edition edition ON edition.publisher_id = me.publisher_id
+    AND edition.type_id = me.type_id
+
+Each key-value pair provided in a hashref will be used as C<AND>ed conditions.
+To add an C<OR>ed condition, use an arrayref of hashrefs. See the
+L<SQL::Abstract> documentation for more details.
 
 Valid attributes are as follows:
 
@@ -97,7 +112,7 @@ created, which calls C<create_related> for the relationship.
 =back
 
 Registers a relationship on the class. This is called internally by
-L<DBIx::Class::ResultSourceProxy> to set up Accessors and Proxies.
+DBIx::Class::ResultSourceProxy to set up Accessors and Proxies.
 
 =cut
 
@@ -249,7 +264,8 @@ L<DBIx::Class::ResultSet/"find_or_create"> for details.
 
 sub find_or_create_related {
   my $self = shift;
-  return $self->find_related(@_) || $self->create_related(@_);
+  my $obj = $self->find_related(@_);
+  return (defined($obj) ? $obj : $self->create_related(@_));
 }
 
 =head2 set_from_related
@@ -276,9 +292,11 @@ sub set_from_related {
     "condition for $rel is of type ".
     (ref $cond ? ref $cond : 'plain scalar')
   ) unless ref $cond eq 'HASH';
-  my $f_class = $self->result_source->schema->class($rel_obj->{class});
-  $self->throw_exception( "Object $f_obj isn't a ".$f_class )
-    unless $f_obj->isa($f_class);
+  if (defined $f_obj) {
+    my $f_class = $self->result_source->schema->class($rel_obj->{class});
+    $self->throw_exception( "Object $f_obj isn't a ".$f_class )
+      unless $f_obj->isa($f_class);
+  }
   $self->set_columns(
     $self->result_source->resolve_condition(
        $rel_obj->{cond}, $f_obj, $rel));

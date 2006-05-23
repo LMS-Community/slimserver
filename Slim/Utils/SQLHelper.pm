@@ -44,7 +44,7 @@ sub executeSQLFile {
 		next if $line =~ /^--/;
 		next if $line =~ /^\s*$/;
 
-		if ($line =~ /^\s*(?:CREATE|USE|SET|INSERT|UPDATE|DELETE|DROP|SELECT)\s+/oi) {
+		if ($line =~ /^\s*(?:ALTER|CREATE|USE|SET|INSERT|UPDATE|DELETE|DROP|SELECT)\s+/oi) {
 			$inStatement = 1;
 		}
 

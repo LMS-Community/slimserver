@@ -339,13 +339,13 @@ sub sendXplHBeatMsg {
 	if ($playmode eq 'play') {
 		$playmode = "playing";
 
-		my $ds  = Slim::Music::Info::getCurrentDataStore();
+		my $track = Slim::Schema->objectForUrl({
+			'url'      => Slim::Player::Playlist::song($client),
+			'create'   => 1,
+			'readTags' => 1,
+		});
 
-		my $url = Slim::Player::Playlist::song($client);
-
-		my $track = blessed($url) && $url->can('id') ? $url : $ds->objectForUrl($url, 1, 1);
-
-		if (blessed($track) && $track->can('album')) {
+		if (blessed($track)) {
 
 			my $albumObj = $track->album;
 
@@ -353,9 +353,6 @@ sub sendXplHBeatMsg {
 
 				$album = $albumObj->title;
 			}
-		}
-
-		if (blessed($track) && $track->can('artist')) {
 
 			my $artistObj = $track->artist;
 

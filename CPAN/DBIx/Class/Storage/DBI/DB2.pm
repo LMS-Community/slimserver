@@ -23,7 +23,7 @@ sub last_insert_id
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::Storage::DBI::DB2 - Automatic primary key class for DB2
 

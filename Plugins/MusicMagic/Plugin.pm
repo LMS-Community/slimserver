@@ -478,7 +478,6 @@ sub mixerFunction {
 	my $descend   = $paramref->{'descend'};
 
 	my @levels    = split(",", $hierarchy);
-	my $ds        = Slim::Music::Info::getCurrentDataStore();
 	my $mix       = [];
 	my $mixSeed   = '';
 
@@ -737,11 +736,14 @@ sub musicmagic_mix {
 	my $p0       = $params->{'p0'};
 
 	my $itemnumber = 0;
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
 
 	if ($playlist) {
-		my ($obj) = $ds->objectForUrl($playlist);
+
+		my ($obj) = Slim::Schema->objectForUrl({
+			'url'      => $playlist,
+			'playlist' => 1,
+		});
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
 
@@ -753,9 +755,10 @@ sub musicmagic_mix {
 
 			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
 		}
+
 	} elsif ($song) {
 
-		my ($obj) = $ds->objectForId('track', $song);
+		my ($obj) = Slim::Schema->find('Track', $song);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
 
@@ -770,7 +773,7 @@ sub musicmagic_mix {
 
 	} elsif ($artist && !$album) {
 
-		my ($obj) = $ds->objectForId('contributor', $artist);
+		my ($obj) = Slim::Schema->find('Contributor', $artist);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
@@ -780,7 +783,7 @@ sub musicmagic_mix {
 
 	} elsif ($album) {
 
-		my ($obj) = $ds->objectForId('album', $album);
+		my ($obj) = Slim::Schema->find('Album', $album);
 		
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
@@ -795,7 +798,7 @@ sub musicmagic_mix {
 		
 	} elsif ($genre && $genre ne "*") {
 
-		my ($obj) = $ds->objectForId('genre', $genre);
+		my ($obj) = Slim::Schema->find('Genre', $genre);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable') && $obj->musicmagic_mixable) {
 
@@ -836,29 +839,25 @@ sub musicmagic_mix {
 
 	for my $item (@$mix) {
 
-		my %list_form = %$params;
-		my $fieldInfo = Slim::DataStores::Base->fieldInfo;
+		my %form = %$params;
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj  = $ds->objectForUrl($item);
+		my $trackObj = Slim::Schema->objectForUrl($item);
 
 		if (!blessed($trackObj) || !$trackObj->can('id')) {
 
 			next;
 		}
 		
-		my $itemname = &{$fieldInfo->{'track'}->{'resultToName'}}($trackObj);
+		$trackObj->displayAsHTML(\%form, 0);
 
-		&{$fieldInfo->{'track'}->{'listItem'}}($ds, \%list_form, $trackObj, $itemname, 0);
-
-		$list_form{'attributes'} = '&track=' . Slim::Utils::Misc::escape($trackObj->id);
-
-		$list_form{'odd'}        = ($itemnumber + 1) % 2;
+		$form{'attributes'} = join('=', '&track.id', $trackObj->id);
+		$form{'odd'}        = ($itemnumber + 1) % 2;
 
 		$itemnumber++;
 
-		push @{$params->{'browse_items'}}, \%list_form;
+		push @{$params->{'browse_items'}}, \%form;
 	}
 
 	if (defined $p0 && defined $client) {
@@ -925,29 +924,31 @@ sub setupUse {
 }
 
 sub setupGroup {
-	my $category = &setupCategory;
+	my $category = setupCategory();
+	my $group    = playerGroup();
 
 	$category->{'parent'}     = 'PLAYER_SETTINGS';
 	$category->{'GroupOrder'} = ['Default'];
-	$category->{'Groups'}     = %{&playerGroup}->{'Groups'};
+	$category->{'Groups'}     = $group->{'Groups'};
 	
 	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
 }
 
-
 sub setupPort {
-
 	my $client = shift;
 
+	my $category   = setupCategory();
+
 	my %setupGroup = (
-			'PrefOrder' => [qw(MMSport)]
-		);
+		'PrefOrder' => [qw(MMSport)]
+	);
 
-	my %setupPrefs;
-	$setupPrefs{'MMSport'} = &setupCategory->{'Prefs'}->{'MMSport'};
+	my %setupPrefs = (
+		'MMSport' => $category->{'Prefs'}->{'MMSport'}
+	);
 
-	return (\%setupGroup,\%setupPrefs);
-};
+	return (\%setupGroup, \%setupPrefs);
+}
 
 sub setupCategory {
 	

@@ -20,22 +20,18 @@ use Slim::Utils::Unicode;
 our ($elemstring, @elements, $elemRegex, %parsedFormats);
 
 sub init {
-	my $currentDB  = shift;
 
 	%parsedFormats = ();
 
 	# for relating track attributes to album/artist attributes
 	my @trackAttrs = ();
 
-	# Pull the class for the track attributes
-	my $trackClass = $currentDB->classForType('track');
-
 	# Subs for all regular track attributes
-	for my $attr (keys %{$trackClass->attributes}) {
+	for my $attr (keys %{Slim::Schema::Track->attributes}) {
 
 		$parsedFormats{uc $attr} = sub {
 
-			my $output = $_[0]->get($attr);
+			my $output = $_[0]->get_column($attr);
 			return (defined $output ? $output : '');
 		};
 	}
@@ -58,7 +54,7 @@ sub init {
 		my $output = '';
 		my $album = $_[0]->album();
 		if ($album) {
-			$output = $album->get('namesort');
+			$output = $album->get_column('namesort');
 		}
 		return (defined $output ? $output : '');
 	};
@@ -105,7 +101,7 @@ sub init {
 
 		for my $artist (@artists) {
 
-			my $name = $artist->get('name');
+			my $name = $artist->get_column('name');
 
 			next if $name eq string('NO_ARTIST');
 
@@ -120,7 +116,7 @@ sub init {
 		my $output = '';
 		my $artist = $_[0]->artist();
 		if ($artist) {
-			$output = $artist->get('namesort');
+			$output = $artist->get_column('namesort');
 		}
 		return (defined $output ? $output : '');
 	};
@@ -439,14 +435,16 @@ sub infoFormat {
 	my $output    = '';
 	my $format;
 
-	my $currentDB = Slim::Music::Info::getCurrentDataStore();
-	my $track     = blessed($fileOrObj) && $fileOrObj->can('id') ? $fileOrObj : $currentDB->objectForUrl($fileOrObj, 1);
+	my $track     = Slim::Schema->objectForUrl({
+		'url'    => $fileOrObj,
+		'create' => 1,
+	});
 
 	if (!blessed($track) || !$track->can('id')) {
 
 		return '';
 	}
-	
+
 	# use a safe format string if none specified
 	# Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.

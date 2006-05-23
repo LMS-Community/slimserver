@@ -35,7 +35,7 @@ sub init {
 
 	# Term::ProgressBar requires Class::MethodMaker, which is rather large and is
 	# compiled. Many platforms have it already though..
-	if ($::d_scan) {
+	if ($::progress) {
 
 		eval "use Term::ProgressBar";
 
@@ -86,6 +86,10 @@ sub scanPathOrURL {
 		if (Slim::Music::Info::isFileURL($pathOrUrl)) {
 
 			$pathOrUrl = Slim::Utils::Misc::pathFromFileURL($pathOrUrl);
+
+		} else {
+
+			$pathOrUrl = Slim::Utils::Misc::fixPathCase($pathOrUrl);
 		}
 
 		# Always let the user know what's going on..
@@ -105,9 +109,8 @@ sub scanDirectory {
 		return;
 	}
 
-	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $os     = Slim::Utils::OSDetect::OS();
-	my $last   = 0; # $ds->lastRescanTime;
+	my $last   = Slim::Schema->lastRescanTime;
 
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
@@ -169,7 +172,7 @@ sub scanDirectory {
 			# directory above us - if so, that's a loop and we need to break it.
 			if (dir($file)->subsumes($topDir)) {
 
-				errorMsg("Found an infinite loop! Breaking out: $file -> $topDir\n");
+				msg("scanDirectory: Warning- Found an infinite loop! Breaking out: $file -> $topDir\n");
 				next;
 			}
 
@@ -187,12 +190,15 @@ sub scanDirectory {
 			}
 		}
 
+		# If we're starting with a clean db - don't bother with searching for a track
+		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
+
 		# If we have an audio file or a CUE sheet (in the music dir), scan it.
 		if (Slim::Music::Info::isSong($url) || Slim::Music::Info::isCUE($url)) {
 
-			# $::d_scan && msg("ScanDirectory: Adding $url to database.\n");
+			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
-			push @objects, $ds->updateOrCreate({
+			push @objects, Slim::Schema->$method({
 				'url'        => $url,
 				'readTags'   => 1,
 				'checkMTime' => 1,
@@ -202,15 +208,16 @@ sub scanDirectory {
 			 Slim::Utils::Misc::inPlaylistFolder($url) && $url !~ /ShoutcastBrowser_Recently_Played/) {
 
 			# Only read playlist files if we're in the playlist dir
-			# $::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
+			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
-			my $track = $ds->updateOrCreate({
+			my $playlist = Slim::Schema->$method({
 				'url'        => $url,
 				'readTags'   => 0,
 				'checkMTime' => 1,
+				'playlist'   => 1,
 			});
 
-			push @objects, $class->scanPlaylistFileHandle($track, FileHandle->new($file));
+			push @objects, $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
 		}
 
 		if ($class->useProgressBar) {
@@ -231,7 +238,6 @@ sub scanRemoteURL {
 	my $args  = shift;
 
 	my $url   = $args->{'url'} || return;
-	my $ds    = Slim::Music::Info::getCurrentDataStore();
 
 	if (!Slim::Music::Info::isRemoteURL($url)) {
 
@@ -249,9 +255,9 @@ sub scanRemoteURL {
 	}
 
 	#
-	my $track = $ds->updateOrCreate({
+	my $track = Slim::Schema->updateOrCreate({
 		'url'      => $url,
-		'readTags' => 0,
+		'readTags' => 1,
 	});
 
 	# Check if it's still a playlist after we open the
@@ -271,7 +277,13 @@ sub scanRemoteURL {
 
 	} else {
 
-		@objects = $class->scanPlaylistFileHandle($track, $remoteFH);
+		# Re-fetch as a playlist.
+		my $playlist = Slim::Schema->objectForUrl({
+			'url'      => $url,
+			'playlist' => 1,
+		});
+
+		@objects = $class->scanPlaylistFileHandle($playlist, $remoteFH);
 	}
 
 	# If the caller wants the list of objects we found.
@@ -285,18 +297,17 @@ sub scanRemoteURL {
 
 sub scanPlaylistFileHandle {
 	my $class      = shift;
-	my $track      = shift;
+	my $playlist   = shift;
 	my $playlistFH = shift || return;
 
-	my $url        = $track->url;
+	my $url        = $playlist->url;
 	my $parentDir  = undef;
-	my $ds         = Slim::Music::Info::getCurrentDataStore();
 
 	if (Slim::Music::Info::isFileURL($url)) {
 
 		#XXX This was removed before in 3427, but it really works best this way
 		#XXX There is another method that comes close if this shouldn't be used.
-		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($track->path)->parent );
+		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($playlist->path)->parent );
 
 		$::d_scan && msgf("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
 	}
@@ -330,12 +341,12 @@ sub scanPlaylistFileHandle {
 	if (scalar @playlistTracks) {
 
 		# Create a playlist container
-		if (!$track->title) {
+		if (!$playlist->title) {
 
 			my $title = Slim::Utils::Misc::unescape(basename($url));
 			   $title =~ s/\.\w{3}$//;
 
-			$track->title($title);
+			$playlist->title($title);
 		}
 
 		# With the special url if the playlist is in the
@@ -346,7 +357,7 @@ sub scanPlaylistFileHandle {
 		#
 		# Don't include the Shoutcast playlists or cuesheets
 		# in our Browse Playlist view either.
-		my $ct = $ds->contentType($track);
+		my $ct = Slim::Schema->contentType($playlist);
 
 		if (Slim::Music::Info::isFileURL($url) && 
 		    Slim::Utils::Misc::inPlaylistFolder($url) &&
@@ -355,9 +366,9 @@ sub scanPlaylistFileHandle {
 			$ct = 'ssp';
 		}
 
-		$track->content_type($ct);
-		$track->setTracks(\@playlistTracks);
-		$track->update;
+		$playlist->content_type($ct);
+		$playlist->setTracks(\@playlistTracks);
+		$playlist->update;
 	}
 
 	$::d_scan && msgf("scanPlaylistFileHandle: found %d items in playlist.\n", scalar @playlistTracks);

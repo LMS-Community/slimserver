@@ -18,10 +18,10 @@ use FindBin qw($Bin);
 use lib $Bin;
 
 BEGIN {
-	use bootstrap;
+	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	bootstrap->loadModules(qw(Time::HiRes DBD::mysql DBI XML::Parser));
+	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI XML::Parser)], []);
 };
 
 use Getopt::Long;
@@ -39,37 +39,38 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
-	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup);
+	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
+	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup, $prefsFile, $progress);
 
 	our $LogTimestamp = 1;
 
 	GetOptions(
-		'force'      => \$force,
-		'cleanup'    => \$cleanup,
-		'rescan'     => \$rescan,
-		'wipe'       => \$wipe,
-		'playlists'  => \$playlists,
-		'itunes'     => \$itunes,
-		'musicmagic' => \$musicmagic,
-		'd_info'     => \$d_info,
-		'd_server'   => \$d_server,
-		'd_import'   => \$d_import,
-		'd_parse'    => \$d_parse,
-		'd_scan'     => \$d_scan,
-		'd_sql'      => \$d_sql,
-		'd_itunes'   => \$d_itunes,
+		'force'       => \$force,
+		'cleanup'     => \$cleanup,
+		'rescan'      => \$rescan,
+		'wipe'        => \$wipe,
+		'playlists'   => \$playlists,
+		'itunes'      => \$itunes,
+		'musicmagic'  => \$musicmagic,
+		'd_info'      => \$d_info,
+		'd_server'    => \$d_server,
+		'd_import'    => \$d_import,
+		'd_parse'     => \$d_parse,
+		'd_scan'      => \$d_scan,
+		'd_sql'       => \$d_sql,
+		'd_startup'   => \$d_startup,
+		'd_itunes'    => \$d_itunes,
+		'prefsfile=s' => \$prefsFile,
+		'progress'    => \$progress,
 	);
 
-	if (!$rescan && !$wipe && !$musicmagic && !$itunes && !scalar @ARGV) {
+	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV) {
 		usage();
 		exit;
 	}
 
 	# Bring up strings, database, etc.
 	initializeFrameworks();
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 
 	if (!$force && Slim::Music::Import->stillScanning) {
 
@@ -83,9 +84,12 @@ sub main {
 	Slim::Utils::Scanner->init;
 
 	if ($playlists) {
+
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Music::Import->scanPlaylistsOnly(1);
-	} else {
+
+	} elsif (!$musicmagic && !$itunes) {
+
 		Slim::Music::MusicFolderScan->init;
 	}
 
@@ -126,7 +130,10 @@ sub main {
 		Slim::Music::Import->startScan;
 	}
 
-	# $ds->setLastRescanTime(time);
+	Slim::Schema->rs('MetaInformation')->update_or_create({
+		'name'  => 'lastRescanTime',
+		'value' => time,
+	});
 }
 
 sub initializeFrameworks {
@@ -140,7 +147,7 @@ sub initializeFrameworks {
 	$::d_server && msg("SlimServer settings init...\n");
 
 	Slim::Utils::Prefs::init();
-	Slim::Utils::Prefs::load();
+	Slim::Utils::Prefs::load($::prefsFile);
 
 	Slim::Utils::Prefs::set('prefsWriteDelay', 0);
 
@@ -158,6 +165,28 @@ sub initializeFrameworks {
 sub usage {
 	print <<EOF;
 Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
+
+Command line options:
+
+	--force       Force a scan, even if we think a scan is already taking place.
+	--cleanup     Run a database cleanup job at the end of the scan
+	--rescan      Look for new files since the last scan.
+	--wipe        Wipe the DB and start from scratch
+	--playlists   Only scan files in your playlistdir.
+	--itunes      Run the iTunes Importer.
+	--musicmagic  Run the MusicMagig Importer.
+	--progress    Show a progress bar of the scan.
+	--prefsfile   Specify an alternate prefs file.
+
+Debug flags:
+
+	--d_info      Miscellaneous Info
+	--d_server    Initialization phase
+	--d_import    Show Import Stages
+	--d_parse     Playlist parsing, etc.
+	--d_scan      Show the files that are being scanned.
+	--d_sql       Show all SQL statements being executed. (Lots of output)
+	--d_itunes    iTunes debugging / XML file parsing.
 
 Examples:
 
@@ -186,10 +215,8 @@ sub cleanup {
 	$::d_server && msg("SlimServer cleaning up.\n");
 
 	# Make sure to flush anything in the database to disk.
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if ($ds) {
-		$ds->forceCommit;
+	if ($INC{'Slim/Schema.pm'}) {
+		Slim::Schema->forceCommit;
 	}
 }
 

@@ -247,13 +247,16 @@ sub addPlugin {
 
 	# only run initPlugin() once
 	if ((not $plugins{$plugin}{initialized}) && (not $disabledPlugins->{$plugin}) && UNIVERSAL::can("Plugins::${plugin}", "initPlugin")) {
-		eval { &{"Plugins::${plugin}::initPlugin"}() };
+
+		eval { $fullname->initPlugin };
+
 		if ($@) {
 			$::d_plugins && msg("Initialization of $fullname failed: $@\n");
 			$brokenplugins{$plugin} = 1;
 			delete $plugins{$plugin};
 			return 0;
 		}
+
 		$plugins{$plugin}{initialized} = 1;
 	}
 

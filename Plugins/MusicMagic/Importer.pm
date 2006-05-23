@@ -8,6 +8,7 @@ use File::Spec::Functions qw(:ALL);
 use Data::VString qw(vstring_cmp);
 use LWP::Simple;
 use Scalar::Util qw(blessed);
+use Socket qw($LF);
 
 use Plugins::MusicMagic::Common;
 
@@ -26,8 +27,8 @@ sub useMusicMagic {
 	my $class    = shift;
 	my $newValue = shift;
 
-	my $can      = canUseMusicMagic();
-	
+	my $can      = $class->canUseMusicMagic();
+
 	if (defined($newValue)) {
 
 		if (!$can) {
@@ -36,7 +37,7 @@ sub useMusicMagic {
 			Slim::Utils::Prefs::set('musicmagic', $newValue);
 		}
 	}
-	
+
 	my $use = Slim::Utils::Prefs::get('musicmagic');
 
 	if (!defined($use) && $can) { 
@@ -58,7 +59,9 @@ sub useMusicMagic {
 }
 
 sub canUseMusicMagic {
-	return $initialized || initPlugin();
+	my $class = shift;
+
+	return $initialized || $class->initPlugin();
 }
 
 sub shutdownPlugin {
@@ -77,7 +80,7 @@ sub initPlugin {
 	my $class = shift;
 
 	return 1 if $initialized;
-	
+
 	Plugins::MusicMagic::Common::checkDefaults();
 
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
@@ -240,11 +243,8 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
-	# We need to use the datastore to get at our id's
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
-	# down the entire library, separated by ^M's - this allows us to make
+	# down the entire library, separated by $LF$LF - this allows us to make
 	# 1 HTTP request, and the process the file.
 	if (vstring_cmp($MMMVersion, '>=', '1.5')) {
 
@@ -270,11 +270,11 @@ sub exportSongs {
 
 		$::d_musicmagic && msg("MusicMagic: done fetching - processing.\n");
 
-		local $/ = "\cM";
+		local $/ = "$LF$LF";
 
 		while(my $content = <MMMDATA>) {
 
-			$class->processSong($ds, $content);
+			$class->processSong($content);
 		}
 
 		close(MMMDATA);
@@ -286,15 +286,14 @@ sub exportSongs {
 
 			my $content = get("http://$MMSHost:$MMSport/api/getSong?index=$scan");
 
-			$class->processSong($ds, $content);
+			$class->processSong($content);
 		}
 	}
 }
 
 sub processSong {
 	my $class   = shift;
-	my $ds      = shift;
-	my $content = shift;
+	my $content = shift || return;
 
 	my %attributes = ();
 	my %songInfo   = ();
@@ -325,6 +324,10 @@ sub processSong {
 
 		for my $key (qw(album artist genre name)) {
 
+			if (!$songInfo{$key}) {
+				next;
+			}
+
 			my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
 
 			$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
@@ -350,7 +353,7 @@ sub processSong {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 	}
 
-	my $track = $ds->updateOrCreate({
+	my $track = Slim::Schema->updateOrCreate({
 
 		'url'        => $fileurl,
 		'attributes' => \%attributes,
@@ -397,7 +400,11 @@ sub processSong {
 sub exportPlaylists {
 	my $class = shift;
 
-	my @playlist = split(/\n/, get("http://$MMSHost:$MMSport/api/playlists"));
+	my @playlists = split(/\n/, get("http://$MMSHost:$MMSport/api/playlists"));
+
+	if (!scalar @playlists) {
+		return;
+	}
 
 	for (my $i = 0; $i <= scalar @playlists; $i++) {
 
@@ -429,6 +436,10 @@ sub exportDuplicates {
 	
 sub _updatePlaylist {
 	my ($class, $name, $songs) = @_;
+
+	if (!$name || !scalar @$songs) {
+		return;
+	}
 
 	my %attributes = ();
 	my $url        = 'musicmagicplaylist:' . Slim::Utils::Misc::escape($name);

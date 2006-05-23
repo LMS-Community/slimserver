@@ -1,7 +1,14 @@
 
 =head1 NAME
 
-DBIx::Class::Manual::Component - Existing components and how to develop new ones.
+DBIx::Class::Manual::Component - Developing DBIx::Class Components
+
+=head1 WHAT IS A COMPONENT
+
+A component is a module that can be added in to your DBIx::Class
+classes to provide extra functionality. A good example is the PK::Auto
+component which automatically retrieves primary keys that the database
+itself creates, after the insert has happened.
 
 =head1 USING
 
@@ -10,7 +17,7 @@ DBIx::Class classes.
 
   package My::Thing;
   use base qw( DBIx::Class );
-  __PACKAGE__->load_components(qw( PK::Auto Core ));
+  __PACKAGE__->load_components(qw/ PK::Auto Core /);
 
 Generally you do not want to specify the full package name 
 of a component, instead take off the DBIx::Class:: part of 
@@ -18,7 +25,7 @@ it and just include the rest.  If you do want to load a
 component outside of the normal namespace you can do so 
 by prepending the component name with a +.
 
-  __PACKAGE__->load_components(qw( +My::Component ));
+  __PACKAGE__->load_components(qw/ +My::Component /);
 
 Once a component is loaded all of it's methods, or otherwise, 
 that it provides will be available in your class.
@@ -30,6 +37,45 @@ load core ones last.  If you are not sure, then read the
 docs for the components you are using and see if they 
 mention anything about the order in which you should load 
 them.
+
+=head1 CREATING COMPONENTS
+
+Making your own component is very easy.
+
+  package DBIx::Class::MyComp;
+  use base qw(DBIx::Class);
+  # Create methods, accessors, load other components, etc.
+  1;
+
+When a component is loaded it is included in the calling 
+class' inheritance chain using L<Class::C3>.  As well as 
+providing custom utility methods, a component may also 
+override methods provided by other core components, like 
+L<DBIx::Class::Row> and others.  For example, you 
+could override the insert and delete methods.
+
+  sub insert {
+    my $self = shift;
+    # Do stuff with $self, like set default values.
+    return $self->next::method( @_ );
+  }
+  
+  sub delete {
+    my $self = shift;
+    # Do stuff with $self.
+    return $self->next::method( @_ );
+  }
+
+Now, the order that a component is loaded is very important.  Components 
+that are loaded first are the first ones in the inheritance stack.  So, if 
+you override insert() but the DBIx::Class::Row component is loaded first 
+then your insert() will never be called, since the DBIx::Class::Row insert() 
+will be called first.  If you are unsure as to why a given method is not 
+being called try printing out the Class::C3 inheritance stack.
+
+  print join ', ' => Class::C3::calculateMRO('YourClass::Name');
+
+Check out the L<Class::C3> docs for more information about inheritance.
 
 =head1 EXISTING COMPONENTS
 
@@ -90,50 +136,9 @@ L<DBIx::Class::ResultSourceProxy::Table> - Provides a classdata table object and
 
 L<DBIx::Class::Row> - Basic row methods.
 
-=head1 CREATEING COMPONENTS
-
-Making your own component is very easy.
-
-  package DBIx::Class::MyComp;
-  use base qw(DBIx::Class);
-  # Create methods, accessors, load other components, etc.
-  1;
-
-When a component is loaded it is included in the calling 
-class' inheritance chain using L<Class::C3>.  As well as 
-providing custom utility methods, a component may also 
-override methods provided by other core components, like 
-L<DBIx::Class::Row> and others.  For example, you 
-could override the insert and delete methods.
-
-  sub insert {
-    my $self = shift;
-    # Do stuff with $self, like set default values.
-    return $self->nest::method( @_ );
-  }
-  
-  sub delete {
-    my $self = shift;
-    # Do stuff with $self.
-    return $self->nest::method( @_ );
-  }
-
-Now, the order that a component is loaded is very important.  Components 
-that are loaded first are the first ones in the inheritance stack.  So, if 
-you override insert() but the DBIx::Class::Row component is loaded first 
-then your insert() will never be called, since the DBIx::Class::Row insert() 
-will be called first.  If you are unsure as to why a given method is not 
-being called try printing out the Class::C3 inheritance stack.
-
-  print join ', ' => Class::C3::calculateMRO('YourClass::Name');
-
-Check out the L<Class::C3> docs for more information about inheritance.
-
 =head1 SEE ALSO
 
 L<DBIx::Class::Manual::Cookbook>
-
-L<DBIx::Class::Manual::FAQ>
 
 =head1 AUTHOR
 

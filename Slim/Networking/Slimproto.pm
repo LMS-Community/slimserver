@@ -300,7 +300,7 @@ GETMORE:
 			
 			my $handler_ref = $message_handlers{$op};
 			
-			if (defined($handler_ref)) {
+			if ($handler_ref && ref($handler_ref) eq 'CODE') {
 
 				my $client = Slim::Player::Client::getClient($sock2client{$s});
 
@@ -312,7 +312,7 @@ GETMORE:
 
 					} else {
 
-						msg("Client not found for slimproto msg op: $op\n");
+						msg("client_readable: Client not found for slimproto msg op: $op\n");
 					}
 
 				} else {

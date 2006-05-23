@@ -18,7 +18,7 @@ __END__
 
 =head1 NAME
 
-DBIx::Class::UUIDMaker::Win32:::Guidgen - Create uuids using Win32::Guidgen
+DBIx::Class::UUIDMaker::Win32::Guidgen - Create uuids using Win32::Guidgen
 
 =head1 SYNOPSIS
 

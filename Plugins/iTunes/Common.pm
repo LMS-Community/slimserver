@@ -79,36 +79,31 @@ sub canUseiTunesLibrary {
 sub setPodcasts {
 	my $class = shift;
 
-	if (!$INC{'Slim::Web::Pages'}) {
+	if (!$INC{'Slim/Web/Pages.pm'}) {
 		return;
 	}
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $genre = Slim::Schema->search('Genre', { 'name' => 'Podcasts' })->single;
 
-	my @podcasts  = $ds->find({
-		'field' => 'genre',
-		'find'  => { 'genre.name' => 'Podcasts' },
-	});
-
-	if ($podcasts[0]) {
-		my $id = $podcasts[0]->id;
+	if ($genre) {
+		my $id = $genre->id;
 		
 		Slim::Web::Pages->addPageLinks("browse", {
-			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,artist,album,track&level=2&&genre=".$id
+			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,contributor,album,track&level=2&&genre.id=".$id
 		});
 
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
 			'useMode'      => 'browsedb',
-			'hierarchy'    => 'genre,artist,album,track',
+			'hierarchy'    => 'genre,contributor,album,track',
 			'level'        => 2,
-			'findCriteria' => {'genre' => $id},
+			'findCriteria' => { 'genre.id' => $id },
 		});
 
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
 			'useMode'      => 'browsedb',
-			'hierarchy'    => 'genre,artist,album,track',
+			'hierarchy'    => 'genre,contributor,album,track',
 			'level'        => 2,
-			'findCriteria' => {'genre' => $id},
+			'findCriteria' => { 'genre.id' => $id },
 		});
 	}
 }
@@ -119,9 +114,13 @@ sub findLibraryFromPlist {
 
 	my $path  = undef;
 
-	my $plist = catfile(($base, 'Library', 'Preferences'), 'com.apple.iApps.plist');
+	my @parts = qw(Library Preferences com.apple.iApps.plist);
 
-	open (PLIST, $plist) || return $path;
+	if ($base) {
+		unshift @parts, $base;
+	}
+
+	open (PLIST, catfile(@parts)) || return $path;
 
 	while (<PLIST>) {
 
@@ -178,18 +177,14 @@ sub findMusicLibraryFile {
 	if ($explicit_xml_path) {
 
 		if (-d $explicit_xml_path) {
-
 			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Music Library.xml');
 		}
 			 
 		if (-r $explicit_xml_path) {
-
-			$::d_itunes && msg("iTunes: found path via config file at: $explicit_xml_path\n");
-
 			return $explicit_xml_path;
 		}
 	}
-		 
+
 	$::d_itunes && msg("iTunes: attempting to locate iTunes Music Library.xml automatically\n");
 
 	my $base = $ENV{'HOME'} || '';
@@ -199,6 +194,7 @@ sub findMusicLibraryFile {
 	if ($path && -r $path) {
 
 		$::d_itunes && msg("iTunes: found path via iTunes preferences at: $path\n");
+		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 
 		return $path;
 	}
@@ -206,7 +202,10 @@ sub findMusicLibraryFile {
 	$path = findLibraryFromRegistry();
 
 	if ($path && -r $path) {
+
 		$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
+		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
+
 		return $path;
 	}
 
@@ -304,13 +303,20 @@ sub checker {
 	# make sure we aren't doing this more than once...
 	#Slim::Utils::Timers::killTimers(0, \&checker);
 
-	# Call ourselves again after 10 seconds
-	#Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 10.0), \&checker);
+	#my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
+
+	# the very first time, we do want to scan right away
+	#if ( $firstTime ) {
+	#	$interval = 10;
+	#}
+
+	#Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 
 sub normalize_location {
 	my $class    = shift;
 	my $location = shift;
+	my $fallback = shift;   # if set, ignore itunes_library_music_path
 	my $url;
 
 	my $stripped = $class->strip_automounter($location);
@@ -318,7 +324,7 @@ sub normalize_location {
 	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
 	my $explicit_path = Slim::Utils::Prefs::get('itunes_library_music_path');
 
-	if ($explicit_path) {
+	if ( $explicit_path && !$fallback ) {
 
 		# find the new base location.  make sure it ends with a slash.
 		my $base = Slim::Utils::Misc::fileURLFromPath($explicit_path);
@@ -369,6 +375,10 @@ sub checkDefaults {
 
 	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistprefix')) {
 		Slim::Utils::Prefs::set('iTunesplaylistprefix','iTunes: ');
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistsuffix')) {
+		Slim::Utils::Prefs::set('iTunesplaylistsuffix','');
 	}
 
 	if (!Slim::Utils::Prefs::isDefined('ignoredisableditunestracks')) {

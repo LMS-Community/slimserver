@@ -153,7 +153,6 @@ sub handleTrack {
 	my $class    = shift;
 	my $curTrack = shift;
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
 	my %cacheEntry = ();
 
 	my $id       = $curTrack->{'Track ID'};
@@ -168,6 +167,8 @@ sub handleTrack {
 
 	if (defined $location) {
 		$location = Slim::Utils::Unicode::utf8off($location);
+	} else {
+		return 1;
 	}
 
 	if ($location =~ /^((\d+\.\d+\.\d+\.\d+)|([-\w]+(\.[-\w]+)*)):\d+$/) {
@@ -181,9 +182,25 @@ sub handleTrack {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
 
-		if ($] > 5.007 && $file && $Slim::Utils::Unicode::locale ne 'utf8') {
+		# Bug 3402 
+		# If the file can't be found using itunes_library_music_path,
+		# we want to fall back to the real file path from the XML file
+		if (!-e $file) {
 
-			eval { Encode::from_to($file, 'utf8', $Slim::Utils::Unicode::locale) };
+			if (Slim::Utils::Prefs::get('itunes_library_music_path')) {
+
+				$url  = normalize_location($location, 'fallback');
+				$file = Slim::Utils::Misc::pathFromFileURL($url);
+			}
+		}
+
+		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
+
+			eval { Encode::from_to($file, 'utf8', Slim::Utils::Unicode::currentLocale()) };
+
+			if ($@) {
+				errorMsg("iTunes: handleTrack: [$@]\n");
+			}
 
 			# If the user is using both iTunes & a music folder,
 			# iTunes stores the url as encoded utf8 - but we want
@@ -195,6 +212,19 @@ sub handleTrack {
 
 	# Use this for playlist verification.
 	$tracks{$id} = $url;
+
+	# skip track if Disabled in iTunes
+	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+
+		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+
+		Slim::Schema->markEntryAsInvalid($url);
+
+		# Don't show these tracks in the playlists either.
+		delete $tracks{$id};
+
+		return 1;
+	}
 
 	if (Slim::Music::Info::isFileURL($url)) {
 
@@ -217,7 +247,8 @@ sub handleTrack {
 		if ($lastITunesMusicLibraryDate &&
 		    $lastITunesMusicLibraryDate != -1 &&
 		    ($ctime && $ctime < $lastITunesMusicLibraryDate) &&
-		    ($mtime && $mtime < $lastITunesMusicLibraryDate)) {
+		    ($mtime && $mtime < $lastITunesMusicLibraryDate) &&
+		    Slim::Schema->count('Track', { 'url' => $url })) {
 
 			$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
 
@@ -229,25 +260,12 @@ sub handleTrack {
 			$::d_itunes && msg("iTunes: file not found: $file\n");
 
 			# Tell the database to cleanup.
-			$ds->markEntryAsInvalid($url);
+			Slim::Schema->markEntryAsInvalid($url);
 
 			delete $tracks{$id};
 
 			return 1;
 		}
-	}
-
-	# skip track if Disabled in iTunes
-	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
-
-		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
-
-		$ds->markEntryAsInvalid($url);
-
-		# Don't show these tracks in the playlists either.
-		delete $tracks{$id};
-
-		return 1;
 	}
 
 	# We don't need to do all the track processing if we just want to map
@@ -323,7 +341,7 @@ sub handleTrack {
 		$cacheEntry{'VALID'} = 1;
 
 		# Only read tags if we don't have a music folder defined.
-		my $track = $ds->updateOrCreate({
+		my $track = Slim::Schema->updateOrCreate({
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
@@ -380,13 +398,13 @@ sub handlePlaylist {
 
 	# Check for podcasts and add to custom Genre
 	if ($name =~ /podcasts/i) {			
-		my $ds = Slim::Music::Info::getCurrentDataStore();
 
 		for my $url (@{$cacheEntry->{'LIST'}}) {
+
 			# update with Podcast genre
-			my $track = $ds->updateOrCreate({
+			my $track = Slim::Schema->updateOrCreate({
 				'url'        => $url,
-				'attributes' => {'GENRE' => 'Podcasts'},
+				'attributes' => { 'GENRE' => 'Podcasts' },
 			});
 		}
 	}

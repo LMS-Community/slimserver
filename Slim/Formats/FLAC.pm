@@ -90,14 +90,6 @@ sub getTag {
 	#
 	# cue parsing will return file url references with start/end anchors
 	# we can now pretend that this (bare no-anchor) file is a playlist
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if (!defined $ds) {
-		$::d_parse && msg("FLAC getTag has no datastore\n");
-		return $tags; # should we return a more severe error?
-	}
-
 	push(@$cuesheet, "    REM END " . sprintf("%02d:%02d:%02d",
 		int(int($tags->{'SECS'})/60),
 		int($tags->{'SECS'} % 60),
@@ -145,7 +137,7 @@ sub getTag {
 
 		Slim::Formats::Playlists::CUE->processAnchor($track);
 
-		$ds->updateOrCreate({
+		Slim::Schema->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # avoid the loop, don't read tags

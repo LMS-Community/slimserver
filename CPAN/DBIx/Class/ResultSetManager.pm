@@ -4,7 +4,7 @@ use warnings;
 use base 'DBIx::Class';
 use Class::Inspector;
 
-=head1 NAME 
+=head1 NAME
 
     DBIx::Class::ResultSetManager - helpful methods for managing
     resultset classes (EXPERIMENTAL)
@@ -22,7 +22,7 @@ use Class::Inspector;
     my $cond = shift;
     my $attrs = shift || {};
     $attrs->{order_by} = 'year DESC';
-    $self->next::method($cond, $attrs);
+    $self->search($cond, $attrs);
   }
 
   $rs = $schema->resultset('CD')->search_by_year_desc({ artist => 'Tool' });
@@ -50,7 +50,7 @@ sub table {
     my $ret = $self->next::method(@rest);
     if (@rest) {
         $self->_register_attributes;
-        $self->_register_resultset_class;        
+        $self->_register_resultset_class;
     }
     return $ret;
 }
@@ -96,7 +96,7 @@ sub _register_resultset_class {
         $self->result_source_instance->resultset_class($resultset_class);
     } else {
         $self->result_source_instance->resultset_class
-	  ($self->base_resultset_class);        
+          ($self->base_resultset_class);
     }
 }
 

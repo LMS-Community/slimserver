@@ -888,8 +888,9 @@ sub debug {
 	}
 }
 
+# If the ID is undef, that means we have a new client.
 sub getClient {
-	my $id = shift;
+	my $id  = shift || return undef;
 	my $ret = $clientHash{$id};
 
 	# Try a brute for match for the client.

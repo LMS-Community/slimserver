@@ -5,7 +5,7 @@ use warnings;
 
 use Carp::Clan qw/^DBIx::Class/;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::AccessorGroup -  Lets you build groups of accessors
 
@@ -290,7 +290,7 @@ sub get_component_class {
       return $self->{$get};
   } else {
       $get = "_$get";
-      return $self->can($get) ? $self->$get : undef;      
+      return $self->can($get) ? $self->$get : undef;
   }
 }
 
@@ -318,9 +318,9 @@ sub set_component_class {
   } else {
       $set = "_$set";
       return $self->can($set) ?
-	$self->$set($val) :
-	$self->mk_classdata($set => $val);      
-  }  
+        $self->$set($val) :
+        $self->mk_classdata($set => $val);
+  }
 }
 
 1;

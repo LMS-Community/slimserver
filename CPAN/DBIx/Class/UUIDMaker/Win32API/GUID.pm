@@ -15,7 +15,7 @@ __END__
 
 =head1 NAME
 
-DBIx::Class::UUIDMaker::Win32API:::GUID - Create uuids using Win32API::GUID
+DBIx::Class::UUIDMaker::Win32API::GUID - Create uuids using Win32API::GUID
 
 =head1 SYNOPSIS
 

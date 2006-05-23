@@ -49,8 +49,6 @@ tie our %currentTitles, 'Tie::Cache::LRU', 64;
 our %currentTitleCallbacks = ();
 our $validTypeRegex = undef;
 
-my $currentDB;
-
 # Save our stats.
 tie our %isFile, 'Tie::Cache::LRU', 16;
 
@@ -67,26 +65,12 @@ our %tagFunctions = ();
 		},
 	);
 
-	%tagFunctions = (
-		'mp3' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
+	# Allow external programs to use Slim::Utils::Misc, without needing
+	# the entire DBI stack.
+	require Slim::Schema;
+	Slim::Schema->init;
 
-		'mp2' => {
-			'module' => 'Slim::Formats::MP3',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::MP3::getTag,
-		},
-
-	# XXXX - need to convert fully to schema, or else scanner won't work.
-	if ($0 !~ /scanner\.pl/) {
-		require Slim::DataStores::DBI;
-		Slim::DataStores::DBI->init;
-	}
-
-	Slim::Music::TitleFormatter::init($currentDB);
+	Slim::Music::TitleFormatter::init();
 
 		'flc' => {
 			'module' => 'Slim::Formats::FLAC',
@@ -275,7 +259,9 @@ our %tagFunctions = ();
 }
 
 sub getCurrentDataStore {
-	return $currentDB;
+	msg("Warning: Slim::Music::Info::getCurrentDataStore() is deprecated. Please use Slim::Schema directly.\n");
+
+	return 'Slim::Schema';
 }
 
 sub loadTypesConfig {
@@ -342,7 +328,7 @@ sub loadTypesConfig {
 
 sub resetClientsToHomeMenu {
 
-	if (!$INC{'Slim::Player::Client'}) {
+	if (!$INC{'Slim/Player/Client.pm'}) {
 		return;
 	}
 
@@ -362,10 +348,10 @@ sub wipeDBCache {
 	resetClientsToHomeMenu();
 	clearFormatDisplayCache();
 
-	$currentDB->wipeAllData();
+	Slim::Schema->wipeAllData();
 
 	# Remove any HTML templates we have around.
-	if ($INC{'Slim::Web::HTTP'}) {
+	if ($INC{'Slim/Web/HTTP.pm'}) {
 
 		rmtree( Slim::Web::HTTP::templateCacheDir() );
 	}
@@ -373,7 +359,7 @@ sub wipeDBCache {
 
 sub clearStaleCacheEntries {
 	resetClientsToHomeMenu();
-	$currentDB->clearStaleEntries();
+	Slim::Schema->clearStaleEntries();
 }
 
 sub clearFormatDisplayCache {
@@ -385,36 +371,34 @@ sub clearFormatDisplayCache {
 sub playlistForClient {
 	my $client = shift;
 
-	return $currentDB->getPlaylistForClient($client);
+	return Slim::Schema->rs('Playlist')->getPlaylistForClient($client);
 }
 
 sub clearPlaylists {
 	my $type = shift;
 
-	if (!defined $currentDB) {
-		return;
-	}
-
 	resetClientsToHomeMenu();
 
-	$currentDB->wipeCaches;
+	Slim::Schema->forceCommit;
+
+	my $rs = Slim::Schema->rs('Playlist');
 
 	# Didn't specify a type? Clear everything
 	if (!defined $type) {
 
-		$currentDB->clearExternalPlaylists;
-		$currentDB->clearInternalPlaylists;
+		$rs->clearExternalPlaylists;
+		$rs->clearInternalPlaylists;
 
 		return;
 	}
 
 	if ($type eq 'internal') {
 
-		$currentDB->clearInternalPlaylists;
+		$rs->clearInternalPlaylists;
 
 	} else {
 
-		$currentDB->clearExternalPlaylists($type);
+		$rs->clearExternalPlaylists($type);
 	}
 }
 
@@ -435,21 +419,29 @@ sub updateCacheEntry {
 		$url = Slim::Utils::Misc::fileURLFromPath($url); 
 	}
 
-	my $list;
-	if ($cacheEntryHash->{'LIST'}) {
-		$list = $cacheEntryHash->{'LIST'};
-	}
+	my $list     = $cacheEntryHash->{'LIST'} || [];
 
-	my $song = $currentDB->updateOrCreate({
+	my $playlist = Slim::Schema->updateOrCreate({
 		'url'        => $url,
+		'playlist'   => 1,
 		'attributes' => $cacheEntryHash,
 	});
 
-	if ($list && ref($list) eq 'ARRAY' && blessed($song) && $song->can('setTracks')) {
+	if (ref($list) eq 'ARRAY' && blessed($playlist) && $playlist->can('setTracks')) {
 
-		my @tracks = map { $currentDB->objectForUrl($_, 1, 0); } @$list;
+		my @tracks = ();
 
-		$song->setTracks(\@tracks);
+		for my $url (@$list) {
+
+			push @tracks, Slim::Schema->objectForUrl({
+				'url'    => $url,
+				'create' => 1,
+			});
+		}
+
+		if (scalar @tracks) {
+			$playlist->setTracks(\@tracks);
+		}
 	}
 }
 
@@ -484,7 +476,7 @@ sub setContentType {
 	$urlToTypeCache{$url} = $type;
 
 	# Commit, since we might use it again right away.
-	$currentDB->updateOrCreate({
+	Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'CT' => $type },
 		'commit'     => 1,
@@ -497,14 +489,13 @@ sub setContentType {
 sub title {
 	my $url = shift;
 
-	my $track = $currentDB->objectForUrl($url, 1, 1);
+	my $track = Slim::Schema->updateOrCreate({
+		'url'      => $url,
+		'commit'   => 1,
+		'readTags' => isRemoteURL($url) ? 0 : 1,
+	});
 
-	if (blessed($track) && $track->can('title')) {
-
-		return $track->title;
-	}
-
-	return '';
+	return $track->title;
 }
 
 sub setTitle {
@@ -515,7 +506,7 @@ sub setTitle {
 
 	# Only readTags if we're not a remote URL. Otherwise, we'll
 	# overwrite the title with the URL.
-	$currentDB->updateOrCreate({
+	Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
@@ -526,7 +517,7 @@ sub setBitrate {
 	my $url = shift;
 	my $bitrate = shift;
 
-	$currentDB->updateOrCreate({
+	Slim::Schema->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'BITRATE' => $bitrate },
 		'readTags'   => 1,
@@ -619,7 +610,7 @@ sub standardTitle {
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	# XXX - exception should go here. comming soon.
-	my $track     = blessed($pathOrObj) ? $pathOrObj : $currentDB->objectForUrl($pathOrObj, 1, 1);
+	my $track     = Slim::Schema->objectForUrl({ 'url' => $pathOrObj, 'create' => 1, 'readTags' => 1 });
 	my $fullpath  = blessed($track) && $track->can('url') ? $track->url : $track;
 	my $format;
 
@@ -768,9 +759,12 @@ sub cachedPlaylist {
 
 	# We might have gotten an object passed in for effeciency. Check for
 	# that, and if not, make sure we get a valid object from the db.
-	my $obj = blessed($urlOrObj) && $urlOrObj->can('tracks') ? $urlOrObj : $currentDB->objectForUrl($urlOrObj, 0);
+	my $playlist = Slim::Schema->objectForUrl({
+		'url'      => $urlOrObj,
+		'playlist' => 1,
+	});
 
-	if (!blessed($obj) || !$obj->can('tracks')) {
+	if (!blessed($playlist) || !$playlist->can('tracks')) {
 
 		return undef;
 	}
@@ -778,7 +772,7 @@ sub cachedPlaylist {
 	# We want any PlayListTracks this item may have
 	my @urls = ();
 
-	for my $track ($obj->tracks) {
+	for my $track ($playlist->tracks) {
 
 		if (blessed($track) && $track->can('url')) {
 
@@ -786,13 +780,13 @@ sub cachedPlaylist {
 
 		} else {
 
-			$::d_info && msgf("Invalid track object for playlist [%s]!\n", $obj->url);
+			$::d_info && msgf("Invalid track object for playlist [%s]!\n", $playlist->url);
 		}
 	}
 
 	# Otherwise, we're actually a directory.
 	if (!scalar @urls) {
-		@urls = $obj->diritems;
+		@urls = $playlist->diritems;
 	}
 
 	return \@urls if scalar(@urls);
@@ -1020,7 +1014,7 @@ sub _isContentTypeHelper {
 
 		} else {
 
-			$type = $currentDB->contentType($pathOrObj);
+			$type = Slim::Schema->contentType($pathOrObj);
 		}
 	}
 
@@ -1211,7 +1205,7 @@ sub mimeToType {
 sub contentType { 
 	my $url = shift;
 
-	return $currentDB->contentType($url); 
+	return Slim::Schema->contentType($url); 
 }
 
 sub typeFromSuffix {

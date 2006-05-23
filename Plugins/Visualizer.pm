@@ -203,7 +203,6 @@ sub configLines {
 	
 	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 	
-	my ($line1, $line2, $select);
 	my $item = $client_context{$client}->{list}->[$client_context{$client}->{position}];
 
 	$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');

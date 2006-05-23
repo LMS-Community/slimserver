@@ -14,7 +14,6 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
-use Slim::DataStores::Base;
 use Slim::Music::LiveSearch;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -101,7 +100,6 @@ sub advancedSearch {
 	my $player  = $params->{'player'};
 	my %query   = ();
 	my @qstring = ();
-	my $ds      = Slim::Music::Info::getCurrentDataStore();
 
 	# template defaults
 	$params->{'browse_list'} = " ";
@@ -193,10 +191,7 @@ sub advancedSearch {
 	$params->{'fileTypes'} = \%types;
 
 	# load up the genres we know about.
-	$params->{'genres'}    = $ds->find({
-		'field'  => 'genre',
-		'sortBy' => 'genre',
-	});
+	$params->{'genres'}    = Slim::Schema->search('Genre', undef, { 'order_by' => 'namesort' });
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
@@ -204,22 +199,41 @@ sub advancedSearch {
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
+	# Bug: 2479 - Don't include roles if the user has them unchecked.
+	if (my $roles = Slim::Schema->artistOnlyRoles) {
+
+		$query{'contributor.role'} = $roles;
+	}
+
 	# Do the actual search
-	my $results = $ds->find({
-		'field'  => 'track',
-		'find'   =>  \%query,
-		'sortBy' => 'title',
-	});
+	my $rs    = Slim::Schemas->rs('Track')->search_like(\%query, { 'order_by' => 'titlesort' });
+	my $count = $rs->count;
 
-	$client->param('searchResults', $results) if defined $client;
+	my $start = ($params->{'start'} || 0),
+	my $end   = $params->{'itemsPerPage'};
 
-	fillInSearchResults($params, $results, undef, \@qstring, $ds);
+	if (defined $client && !$params->{'start'}) {
+
+		# stash the full resultset if not paging through the results
+		# assumes that when the start parameter is 0 or undefined that
+		# the query has just been run
+		$client->param('searchResults', [ $rs->all ]);
+
+		$rs->reset;
+	}
+
+	if ($count == $params->{'itemsPerPage'}) {
+
+		$params->{'numresults'} = $count;
+	}
+	
+	fillInSearchResults($params, [ $rs->slice($start, $end) ], undef, \@qstring, 1);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
 
 sub fillInSearchResults {
-	my ($params, $results, $descend, $qstring, $ds) = @_;
+	my ($params, $results, $descend, $qstring, $typeSeparator) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
@@ -239,42 +253,29 @@ sub fillInSearchResults {
 	}
 
 	# put in the type separator
-	if ($type && !$ds) {
+	if ($type && !$typeSeparator) {
 
-		$params->{'browse_list'} .= sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": %d<br/><br/></td></tr>",
-			Slim::Utils::Strings::string(uc($type . 'SMATCHING')), $params->{'numresults'},
-		);
+		# add reduced item for type headings
+		push @{$params->{'browse_items'}}, {
+			'numresults' => $params->{'numresults'},
+			'query'   => $query,
+			'heading' => $type,
+		};
 	}
 
 	if ($params->{'numresults'}) {
 
-		my ($start, $end);
+		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 
-		if (defined $params->{'nopagebar'}) {
+			'itemCount'    => $params->{'numresults'},
+			'path'         => $params->{'path'},
+			'otherParams'  => $otherParams,
+			'start'        => $params->{'start'},
+			'perPage'      => $params->{'itemsPerPage'},
+		});
 
-			($start, $end) = Slim::Web::Pages->simpleHeader({
-					'itemCount'    => $params->{'numresults'},
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'        => $params->{'itemsPerPage'},
-				}
-			);
-
-		} else {
-
-			($start, $end) = Slim::Web::Pages->pageBar({
-					'itemCount'    => $params->{'numresults'},
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherParams,
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'searchlist_header'},
-					'pageBarRef'   => \$params->{'searchlist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
-		}
+		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+		$end   = $params->{'pageinfo'}{'enditem'};
 		
 		my $itemnumber = 0;
 		my $lastAnchor = '';
@@ -284,18 +285,13 @@ sub fillInSearchResults {
 			next unless defined $item && ref($item);
 
 			# Contributor/Artist uses name, Album & Track uses title.
-			my $title     = $item->can('title')     ? $item->title()     : $item->name();
-			my $sorted    = $item->can('titlesort') ? $item->titlesort() : $item->namesort();
-			my %list_form = %$params;
+			my %form = %$params;
 
-			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
-			$list_form{'descend'}      = $descend;
-			$list_form{'odd'}          = ($itemnumber + 1) % 2;
+			$form{'attributes'} = '&' . join('.id=', $type, $item->id);
+			$form{'descend'}    = $descend;
+			$form{'odd'}        = ($itemnumber) % 2;
 
 			if ($type eq 'track') {
-				
-				# if $ds is undefined here, make sure we have it now.
-				$ds = Slim::Music::Info::getCurrentDataStore() unless $ds;
 				
 				# If we can't get an object for this url, skip it, as the
 				# user's database is likely out of date. Bug 863
@@ -303,41 +299,43 @@ sub fillInSearchResults {
 
 				if (!blessed($itemObj) || !$itemObj->can('id')) {
 
-					$itemObj = $ds->objectForUrl($item);
+					$itemObj = Slim::Schema->objectForUrl($item);
 				}
 
 				if (!blessed($itemObj) || !$itemObj->can('id')) {
 
 					next;
 				}
-				
-				my $fieldInfo = Slim::DataStores::Base->fieldInfo;
-				my $itemname = &{$fieldInfo->{$type}->{'resultToName'}}($itemObj);
 
-				&{$fieldInfo->{$type}->{'listItem'}}($ds, \%list_form, $itemObj, $itemname, 0);
+				$itemObj->displayAsHTML(\%form, 0);
 
 			} else {
+
 				if ($type eq 'artist') {
-					$list_form{'hierarchy'}	   = 'artist,album,track';
-					$list_form{'level'}        = 1;
+
+					$form{'hierarchy'} = 'contributor,album,track';
+					$form{'level'}     = 1;
+					$form{'hreftype'}  = 'browseDb';
+
 				} elsif ($type eq 'album') {
-					$list_form{'hierarchy'}	   = 'album,track';
-					$list_form{'level'}        = 1;				
+
+					$form{'hierarchy'} = 'album,track';
+					$form{'level'}     = 1;
+					$form{'hreftype'}  = 'browseDb';
 				}
 				
-				$list_form{'text'} = $title;
+				$form{'text'} = $item->name;
 			}
 
 			$itemnumber++;
 
-			my $anchor = substr($sorted, 0, 1);
+			my $anchor = substr($item->namesort, 0, 1);
 
 			if ($lastAnchor ne $anchor) {
-				$list_form{'anchor'} = $lastAnchor = $anchor;
+				$form{'anchor'} = $lastAnchor = $anchor;
 			}
 
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
-			push @{$params->{'browse_items'}}, \%list_form;
+			push @{$params->{'browse_items'}}, \%form;
 		}
 	}
 }
@@ -359,11 +357,11 @@ sub searchStringSplit {
 
 		if ($searchSubString) {
 
-			push @strings, "\*$string\*";
+			push @strings, "\%$string\%";
 
 		} else {
 
-			push @strings, [ "$string\*", "\* $string\*" ];
+			push @strings, [ "$string\%", "\% $string\%" ];
 		}
 	#}
 

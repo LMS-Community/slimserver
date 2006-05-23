@@ -13,7 +13,7 @@ __PACKAGE__->uuid_class( __PACKAGE__->_find_uuid_module );
 sub uuid_columns {
     my $self = shift;
     for (@_) {
-	$self->throw_exception("column $_ doesn't exist") unless $self->has_column($_);
+        $self->throw_exception("column $_ doesn't exist") unless $self->has_column($_);
     }
     $self->uuid_auto_columns(\@_);
 }
@@ -39,8 +39,8 @@ sub uuid_class {
 sub insert {
     my $self = shift;
     for my $column (@{$self->uuid_auto_columns}) {
-	$self->store_column( $column, $self->get_uuid )
-	    unless defined $self->get_column( $column );
+        $self->store_column( $column, $self->get_uuid )
+            unless defined $self->get_column( $column );
     }
     $self->next::method(@_);
 }

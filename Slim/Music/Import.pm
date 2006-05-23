@@ -35,6 +35,12 @@ my $folderScanClass = 'Slim::Music::MusicFolderScan';
 sub launchScan {
 	my ($class, $args) = @_;
 
+	# Pass along the prefs file - might need to do this for other flags,
+	# such as logfile as well.
+	if (defined $::prefsfile && -r $::prefsfile) {
+		$args->{"prefsfile=$::prefsfile"} = 1;
+	}
+
 	my $command  = "$Bin/scanner.pl";
 	my @scanArgs = map { "--$_" } keys %{$args};
 
@@ -50,9 +56,6 @@ sub launchScan {
 sub startScan {
 	my $class  = shift;
 	my $import = shift;
-
-	# Only start if the database has been initialized
-	my $ds     = Slim::Music::Info->getCurrentDataStore || return;
 
 	# If we are scanning a music folder, do that first - as we'll gather
 	# the most information from files that way and subsequent importers
@@ -97,7 +100,7 @@ sub startScan {
 
 	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
 
-	$ds->mergeVariousArtistsAlbums;
+	Slim::Schema->mergeVariousArtistsAlbums;
 
 	# Remove and dangling references.
 	if ($class->cleanupDatabase) {
@@ -107,7 +110,7 @@ sub startScan {
 
 		$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
 
-		$ds->cleanupStaleTrackEntries;
+		Slim::Schema->cleanupStaleTrackEntries;
 	}
 
 	# Reset
@@ -199,7 +202,11 @@ sub importers {
 
 sub useImporter {
 	my ($class, $importer, $newValue) = @_;
-	
+
+	if (!$importer) {
+		return 0;
+	}
+
 	if (defined $newValue && exists $Importers{$importer}) {
 
 		$Importers{$importer}->{'use'} = $newValue;
@@ -268,22 +275,18 @@ sub artwork {
 }
 
 sub artScan {
-	my $class = shift;
+	my $class  = shift;
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	if (!scalar values %artwork) {
+		return 1;
+	}
 
-	while (my ($albumId, $trackId) = each %artwork) {
+	my @tracks = Slim::Schema->search('Track', { 'id' => { 'in' => [ values %artwork ] } })->all;
 
-		if ($albumId && $albumId =~ /^\d+$/) {
+	for my $track (@tracks) {
 
-			my $track = $ds->objectForId('lightweighttrack', $trackId); 
-
-			# Make sure we have an object for the url, and it has a thumbnail.	 
-			if (blessed($track) && $track->can('coverArt') && $track->coverArt('thumb')) {
-
-				$ds->setAlbumArtwork($track);
-			}
-		}
+		# Make sure we have an object for the url, and it has a thumbnail.	 
+		Slim::Schema->setAlbumArtwork($track);
 	}
 
 	%artwork = ();

@@ -1,0 +1,63 @@
+=head1 NAME
+
+DBIx::Class::Manual::DocMap - What documentation do we have?
+
+=head1 Manuals
+
+=over 4
+
+=item L<DBIx::Class::Manual> - User's Manual overview.
+
+=item L<DBIx::Class::Manual::Intro> - Introduction to setting up and using DBIx::Class.
+
+=item L<DBIx::Class::Manual::Example> - Full example Schema.
+
+=item L<DBIx::Class::Manual::Cookbook> - Various short recipes on how to do things.
+
+=item L<DBIx::Class::Manual::Troubleshooting> - What to do if things go wrong (diagnostics of known error messages).
+
+=item L<DBIx::Class::Manual::Component> - How to write your own DBIx::Class components.
+
+=item L<DBIx::Class::Manual::Glossary> - What do all those terms mean?
+
+=back
+
+=head1 Setting up
+
+=over 4
+
+=item L<DBIx::Class::Schema> - Overall schemas, and connection container.
+
+=item L<DBIx::Class::ResultSource> - Source/Table definition functions.
+
+=item L<DBIx::Class::Relationship> - Simple relationships.
+
+=item L<DBIx::Class::Relationship::Base> - Relationship details.
+
+=item L<DBIx::Class::PK::Auto> - Magically retrieve auto-incrementing fields.
+
+=item L<DBIx::Class::Core> - Set of standard components.
+
+=item L<DBIx::Class::Serialize::Storable> - ?
+
+=item L<DBIx::Class::InflateColumn> - Making objects out of your columns.
+
+=item L<DBIx::Class::PK> - Dealing with primary keys.
+
+=item L<DBIx::Class::ResultSourceProxy::Table> - Turns the resultsource into a table.
+
+=item L<DBIx::Class::AccessorGroup> - Accessor grouping.
+
+=back
+
+=head1 Retrieving and creating data
+
+=over 4
+
+=item L<DBIx::Class::ResultSet> - Selecting and manipulating sets.
+
+=item L<DBIx::Class::Row> - Dealing with actual data.
+
+=item L<DBIx::Class::Storage::DBI> - Storage using L<DBI> and L<SQL::Abstract>.
+
+=back

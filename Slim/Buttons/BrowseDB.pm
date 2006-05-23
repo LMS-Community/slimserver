@@ -9,6 +9,7 @@ package Slim::Buttons::BrowseDB;
 
 use strict;
 use Scalar::Util qw(blessed);
+use Storable;
 
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
@@ -34,13 +35,13 @@ sub init {
 
 		'BROWSE_BY_GENRE'  => {
 			'useMode'   => 'browsedb',
-			'hierarchy' => 'genre,artist,album,track',
+			'hierarchy' => 'genre,contributor,album,track',
 			'level'     => 0,
 		},
 
 		'BROWSE_BY_ARTIST' => {
 			'useMode'   => 'browsedb',
-			'hierarchy' => 'artist,album,track',
+			'hierarchy' => 'contributor,album,track',
 			'level'     => 0,
 		},
 
@@ -86,9 +87,7 @@ sub init {
 
 			my $items       = $client->param('listRef');
 			my $listIndex   = $client->param('listIndex');
-			my $currentItem = $items->[$listIndex];
-
-			return unless defined($currentItem);
+			my $currentItem = $items->[$listIndex] || return;
 
 			my ($command, $line1, $line2, $string);
 
@@ -137,25 +136,22 @@ sub init {
 			my $descend      = $client->param('descend');
 			my $findCriteria = $client->param('findCriteria');
 			
-			my @levels = split(",", $hierarchy);
-			my $all = (!ref($currentItem) && $levels[$level] ne 'year');
+			my @levels       = split(',', $hierarchy);
+			my $all          = (!ref($currentItem) && $levels[$level] ne 'year');
 
-			my $ds = Slim::Music::Info::getCurrentDataStore();
-			my $fieldInfo = Slim::DataStores::Base->fieldInfo();
+			# Create the search term list that we will send along with our command.
+			my @terms        = ();
+			my $field        = $levels[$level];
 
-			# Create the search term list that we will send along with
-			# our command.
-			my @terms = ();
-			my $field = $levels[$level];
-			my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
+			my $levelRS      = Slim::Schema->rs($field);
 		
-			if (my $transform = $info->{'nameTransform'}) {
+			if (my $transform = $levelRS->nameTransform) {
 				$field = $transform;
 			}
 				
 			# Include the current item
 			if ($field ne 'track' && !$all) {
-				push @terms, $field . '=' . &{$info->{'resultToId'}}($currentItem);
+				push @terms, join('=', $field, $currentItem->id);
 			}
 
 			# And all the search terms for the current mode
@@ -173,17 +169,15 @@ sub init {
 				# perform the search and play the track results
 				if ($all && $search) {
 
-					$info = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
-
-					my $items = &{$info->{'search'}}($ds, $search, 'track');
+					my $items = [ Slim::Schema->search('Track', $search)->all ];
 
 					$client->execute(["playlist", $command, 'listref', $items]); 
 
 				} else {
 
-					if ($all && $info->{'allTransform'}) {
+					if ($all && $levelRS->allTransform) {
 
-						$termlist .= sprintf('&fieldInfo=%s', $info->{'allTransform'});
+						$termlist .= sprintf('&fieldInfo=%s', $levelRS->allTransform);
 					}
 
 					# Otherwise rely on the execute to do the search for us
@@ -241,23 +235,21 @@ sub init {
 				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
 				
 			} elsif (@mixers) {
-				my $params;
-				
+
 				# store existing browsedb params for use later.
-				$params->{'parentParams'} = $client->modeParameterStack(-1);
-				
-				$params->{'listRef'}         = \@mixers;
-				$params->{'stringExternRef'} = 1;
-				
-				$params->{'header'}         = 'INSTANT_MIX';
-				$params->{'headerAddCount'} = 1;
-				$params->{'callback'}       = \&mixerExitHandler;
-		
-				$params->{'overlayRef'} = sub { return (undef, Slim::Display::Display::symbol('rightarrow')) };
-		
-				$params->{'overlayRefArgs'} = '';
-				$params->{'valueRef'}       = \$mixer;
-				
+				my $params = {
+
+					'parentParams'    => $client->modeParameterStack(-1),
+					'listRef'         => \@mixers,
+					'stringExternRef' => 1,
+					'header'          => 'INSTANT_MIX',
+					'headerAddCount'  => 1,
+					'callback'        => \&mixerExitHandler,
+					'overlayRef'      => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+					'overlayRefArgs'  => '',
+					'valueRef'        => \$mixer,
+				};
+
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
 			
 			} else {
@@ -270,26 +262,27 @@ sub init {
 }
 
 sub mixerExitHandler {
-	my ($client,$exittype) = @_;
-	
+	my ($client, $exittype) = @_;
+
 	$exittype = uc($exittype);
-	
+
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
-	
+
 	} elsif ($exittype eq 'RIGHT') {
 
 		my $Imports = Slim::Music::Import->importers;
-	
+
 		if (defined $Imports->{$mixer}->{'mixer'}) {
+
 			$::d_plugins && msg("Running Mixer $mixer\n");
 			&{$Imports->{$mixer}->{'mixer'}}($client);
+
 		} else {
+
 			$client->bumpRight();
 		}
-	
-	} else {
-		return;
 	}
 }
 
@@ -311,17 +304,28 @@ sub browsedbExitCallback {
 	} 
 	# Right means select the current item
 	elsif ($exittype eq 'RIGHT') {
-		my $items     = $client->param('listRef');
-		my $hierarchy = $client->param('hierarchy');
-		my $level     = $client->param('level');
-		my $descend   = $client->param('descend');
+
+		my $items       = $client->param('listRef');
+		my $hierarchy   = $client->param('hierarchy');
+		my $level       = $client->param('level');
+		my $descend     = $client->param('descend');
 
 		my $currentItem = $items->[$listIndex];
-		my $fieldInfo   = Slim::DataStores::Base->fieldInfo();
-		my $ds          = Slim::Music::Info::getCurrentDataStore();
-		my @levels      = split(",", $hierarchy);
+		my @levels      = split(',', $hierarchy);
 
-		my $all = 1 if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $currentItem);
+		my $levelRS     = Slim::Schema->rs($levels[$level]);
+
+		my $all         = 0;
+
+		if (defined $currentItem && $levels[$level+1]) {
+
+			my $nextRS = Slim::Schema->rs($levels[$level+1]);
+
+			if ($nextRS->allTitle && $nextRS->allTitle eq $currentItem) {
+
+				$all = 1;
+			}
+		}
 
 		if (!defined($currentItem)) {
 			$client->bumpRight();
@@ -330,7 +334,7 @@ sub browsedbExitCallback {
 		elsif ($currentItem eq 'FAVORITE') {
 
 			my $num   = $client->param('favorite');
-			my $track = $ds->objectForId('track', $client->param('findCriteria')->{'playlist'});
+			my $track = Slim::Schema->find('Track', $client->param('findCriteria')->{'playlist'});
 
 			if (!blessed($track) || !$track->can('title')) {
 
@@ -343,7 +347,7 @@ sub browsedbExitCallback {
 
 			if ($num < 0) {
 
-				my $num = Slim::Utils::Favorites->clientAdd($client, $track, $track->title);
+				$num = Slim::Utils::Favorites->clientAdd($client, $track, $track->title);
 
 				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
 
@@ -361,27 +365,26 @@ sub browsedbExitCallback {
 		# If we're dealing with a container or an ALL list
 		elsif ($descend || $all) {
 
-			my $findCriteria = { %{$client->param('findCriteria')} };
+			my $findCriteria      = { %{$client->param('findCriteria')} };
 			my $selectionCriteria = $client->param('selectionCriteria');
-			my $field = $levels[$level];
-			my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
-				
-			if (my $transform = $info->{'nameTransform'}) {
+			my $field             = $levels[$level];
+
+			if (my $transform = $levelRS->nameTransform) {
 				$field = $transform;
 			}
 
 			# Include the current item in the find criteria for the next level down.
 			if (!$all) {
 
-				if ($field eq 'artist' && 
-					$currentItem eq $ds->variousArtistsObject &&
+				if ($field eq 'contributor' && 
+					$currentItem->id eq Slim::Schema->variousArtistsObject->id &&
 					Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 					$findCriteria->{'album.compilation'} = 1;
 
 				} else {
 
-					$findCriteria->{$field} = &{$info->{'resultToId'}}($currentItem);
+					$findCriteria->{"$field.id"} = $currentItem->id;
 				}
 			}
 
@@ -398,8 +401,7 @@ sub browsedbExitCallback {
 				$params{'search'} = $client->param('search');
 			}
 
-			# Push recursively in to the same mode for the next level
-			# down.
+			# Push recursively in to the same mode for the next level down.
 			Slim::Buttons::Common::pushModeLeft($client, 'browsedb', \%params);
 		}
 		# For a track, push into the track information mode
@@ -416,48 +418,54 @@ sub browsedbExitCallback {
 # to a display name.
 sub browsedbItemName {
 	my $client = shift;
-	my $item = shift;
-	my $index = shift;
+	my $item   = shift;
+	my $index  = shift;
 
 	my $hierarchy = $client->param('hierarchy');
 	my $level     = $client->param('level');
 
-	my @levels = split(",", $hierarchy);
+	my @levels    = split(',', $hierarchy);
 	
-	my $fieldInfo = Slim::DataStores::Base->fieldInfo();
-	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
+	my $levelRS   = Slim::Schema->rs($levels[$level]);
+	my $blessed   = blessed($item) ? 1 : 0;
 
-	if ($fieldInfo->{$levels[$level+1]}->{'allTitle'} eq $item) {
-		return $client->string($item);
+	if (!$blessed && $levels[$level+1]) {
+
+		my $nextRS = Slim::Schema->rs($levels[$level+1]);
+
+		if ($nextRS->allTitle eq $item) {
+
+			return $client->string($item);
+		}
 	}
-	
+
 	# special case favorites line, which must be determined dynamically
-	if ($item eq 'FAVORITE') {
+	if (!$blessed && $item eq 'FAVORITE') {
+
 		if ((my $num = $client->param('favorite')) < 0) {
 			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
 			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
 		}
+
 		return $item
 	}
 	
 	# Inflate IDs to objects on the fly.
-	if (!ref($item) && $levels[$level] ne 'year') {
-
-		my $ds = Slim::Music::Info::getCurrentDataStore();
+	if (!$blessed) {
 
 		# Short circuit for the VA/Compilation string
-		if ($levels[$level] eq 'artist' && $item eq $ds->variousArtistsObject) {
+		if ($levels[$level] eq 'contributor' && 
+			$item->id eq Slim::Schema->variousArtistsObject->id) {
 
-			return $item;
+			return $item->name;
 		}
 
-		my $items = $client->param('listRef');
+		my $items  = $client->param('listRef');
 
 		# Pull the nameTransform if needed - for New Music, etc
-		my $field  = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
-
-		my $newObj = $ds->objectForId($field, $item);
+		my $field  = $levelRS->nameTransform || $levels[$level];
+		my $newObj = Slim::Schema->find($field, $item);
 
 		if (!defined $newObj) {
 
@@ -477,20 +485,23 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif (($levels[$level] eq 'album') || ($levelInfo->{'nameTransform'} eq 'album')) {
+	} elsif ($levels[$level] eq 'year') {
 
-		#my @name = &{$levelInfo->{'resultToName'}}($item);
-		my @name = $item->name;
+		return $item->year;
+
+	} elsif (($levels[$level] eq 'album') || ($levelRS->nameTransform eq 'album')) {
+
+		my @name         = $item->name;
 		my $findCriteria = $client->param('findCriteria') || {};
 
-		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year'}) {
+		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'album.year'}) {
 
 			my $year = $item->year;
 
 			push @name, " ($year)" if $year;
 		}
 
-		if (Slim::Utils::Prefs::get('showArtist') && !$findCriteria->{'artist'}) {
+		if (Slim::Utils::Prefs::get('showArtist') && !$findCriteria->{'contributor.id'}) {
 
 			my @artists  = ();
 			my $noArtist = $client->string('NO_ARTIST');
@@ -512,7 +523,7 @@ sub browsedbItemName {
 
 	} else {
 
-		return &{$levelInfo->{'resultToName'}}($item);
+		return $item->name;
 	}
 }
 
@@ -537,6 +548,7 @@ sub browsedbOverlay {
 	}
 
 	my $descend   = $client->param('descend');
+
 	if ($descend) {
 		$overlay2 = Slim::Display::Display::symbol('rightarrow');
 	}
@@ -556,64 +568,123 @@ sub setMode {
 		return;
 	}
 
-	my $hierarchy    = $client->param('hierarchy') || "genre";
-	my $level        = $client->param('level') || 0;
-	my $findCriteria = $client->param('findCriteria') || {};
-	my $search       = $client->param('search');
+	my $hierarchy = $client->param('hierarchy');
+	my $level     = $client->param('level') || 0;
+	my $filters   = $client->param('findCriteria') || {};
+	my $search    = $client->param('search');
+	my %find      = ();
 
-	$::d_files && msg("browsedb - hierarchy: $hierarchy level: $level\n");
+	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
+	msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
 	# Parse the hierarchy list into an array
-	my @levels = split(",", $hierarchy);
+	my @levels   = split(',', $hierarchy);
 
 	my $maxLevel = scalar(@levels) - 1;
 
 	if ($level > $maxLevel)	{
 		$level = $maxLevel;
 	}
-	my $descend = ($level >= $maxLevel) ? undef : 'true';
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-	my $fieldInfo = Slim::DataStores::Base::fieldInfo();
+	my $descend = ($level >= $maxLevel) ? undef : 1;
 
-	# First get the names of the specified parameters. These
-	# could be necessary for titles.
-	my %names = ();
+	my $levelRS = Slim::Schema->rs($levels[$level]);
+	my $topRS   = Slim::Schema->rs($levels[0]);
+
+	# First get the names of the specified parameters.
+	# These could be necessary for titles.
+	my %names      = ();
 	my $setAllName = 0;
+
+	my %levelMap = ();
+
+	for (my $i = 1; $i < scalar @levels; $i++) {
+
+		$levelMap{ lc($levels[$i-1]) } = lc($levels[$i]);
+	}
+
+	msg("levelmap:\n");
+	print Data::Dumper::Dumper(\%levelMap);
+	msg("filters:\n");
+	print Data::Dumper::Dumper($filters);
+
+	# hierarchy: contributor,album,track level: 2
+
+	while (my ($param, $value) = each %{$filters}) {
+
+		my ($levelName) = ($param =~ /^(\w+)(\.\w+)?$/);
+
+		msg("param 1: [$param] value: [$value]\n");
+
+		# Turn into me.* for the top level
+		if ($param =~ /^$levels[0]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $topRS->{'attrs'}{'alias'}, $1);
+			msg("param 2: [$param] value: [$value]\n");
+		}
+
+		# Turn into me.* for the current level
+		if ($param =~ /^$levels[$level]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $levelRS->{'attrs'}{'alias'}, $1);
+			msg("param 3: [$param] value: [$value]\n");
+		}
+
+		msg("working on levelname: [$levelName]\n");
+
+		if (my $mapKey = $levelMap{$levelName}) {
+
+			msg("mapKey: [$mapKey]\n");
+
+			$find{$mapKey} = { $param => $value };
+		}
+
+		msg("\n");
+	}
+
+	msg("find:\n");
+	print Data::Dumper::Dumper(\%find);
+
+	# Build up the names for the top line
 	for my $i (0..$#levels) {
+
 		my $field = $levels[$i];
-		my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
-		
-		if (my $transform = $info->{'nameTransform'}) {
-			$field = $transform;
+		my $rs    = Slim::Schema->rs($field) || next;
+
+		if (my $transform = $rs->nameTransform) {
+			# $field = $transform;
 		}
 
-		if ($setAllName && $info->{'allTitle'}) {
-			$names{$levels[$i-1]} = $client->string($info->{'allTitle'});
+		if ($setAllName && $rs->allTitle) {
+
+			$names{$levels[$i-1]} = $client->string($rs->allTitle);
 		}
 
-		if (defined($findCriteria->{$field})) {
-			$names{$levels[$i]} = &{$info->{'idToName'}}($ds, $findCriteria->{$field});
+		if (defined($filters->{"$field.id"})) {
+
+			$names{$levels[$i]} = $rs->find($filters->{"$field.id"})->name;
+
 			$setAllName = 0;
-		}
-		else {
+
+		} else {
+
 			$setAllName = 1;
 		}
 	}
 
-	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
+	msg("levels: [$hierarchy]: names:\n");
+	print Data::Dumper::Dumper(\%names);
 
 	# Next to the actual query to get the items to display
 	#
 	# Ask for only IDs - so we can inflate on the fly.
-	my $items;
-	if (defined($search)) {
-		my $info = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
+	my @items = ();
 
-		$items = &{$info->{'search'}}($ds, $search, $levels[$level], 1);
-	}
-	else {
-		$items = &{$levelInfo->{'find'}}($ds, $levels[$level], $findCriteria, 1);
+	if (defined $search) {
+
+		@items = $levelRS->searchNames($search)->all;
+
+	} else {
+
+		@items = $topRS->descend(\%find, {}, @levels[0..$level])->distinct->all;
 	}
 
 	if (blessed($items)) {
@@ -622,60 +693,71 @@ sub setMode {
 
 	# Next get the first line of the mode
 	my $header;
+	my $count = scalar @items;
+
 	if ($level == 0) {
+
 		if ($search) {
-			my $plural = scalar @$items > 1 ? 'S' : '';
+
+			my $plural = $count > 1 ? 'S' : '';
+
 			$header = $client->string(uc($levels[$level]).$plural.'MATCHING') . " \"" . searchTerm($search->[0]) . "\"";
+
+		} else {
+
+			$header = $client->string($levelRS->title);
 		}
-		else {
-			$header = $client->string($levelInfo->{'title'});
-		}
-	}
-	elsif ($level == 1) {
+
+	} elsif ($level == 1) {
+
+		msg("working in level == 1. \$level-1 is: [$levels[$level-1]]\n");
+
 		$header = $names{$levels[$level-1]}; 
-	}
-	else {
+
+	} else {
+
+		msg("working in level > 1. \$level-2 is: [$levels[$level-2]] level-1 is: $levels[$level-1]]\n");
+
 		$header = $names{$levels[$level-2]} . "/" . $names{$levels[$level-1]};
 	}
 
 	# Then see if we have to add an ALL option
-	if (($descend || $search) && scalar @$items > 1 && !$levelInfo->{'suppressAll'}) {
-
-		# Since we're going to modify, we have to make a copy
-		$items = [ @$items ];
+	if (($descend || $search) && $count > 1 && !$levelRS->suppressAll) {
 
 		# Use the ALL_ version of the next level down in the hirearchy
 		if ($descend) {
-			my $nextLevel  = $levels[$level+1];
-			my $nextLevelInfo = $fieldInfo->{$nextLevel} || $fieldInfo->{'default'};
 
-			push @$items, $nextLevelInfo->{'allTitle'};
-		}
-		
-		# Unless this is a list of songs at the top level, in which
-		# case, we add an ALL_SONGS
-		elsif ($level == 0) {
-			push @$items, $levelInfo->{'allTitle'};
+			push @items, Slim::Schema->rs($levels[$level+1])->allTitle;
+
+		} elsif ($level == 0) {
+
+			# Unless this is a list of songs at the top level, in which
+			# case, we add an ALL_SONGS
+			push @items, $levelRS->allTitle;
 		}
 	}
 
 	# Dynamically create a VA/Compilation item under artists, like iTunes does.
-	if ($levels[$level] eq 'artist' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if ($levels[$level] eq 'contributor' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		# Only show VA if there exists valid data below this level.
-		my %find = %{$findCriteria};
+		my %vaFind = %{$filters};
 
-		$find{'album.compilation'} = 1;
+		$vaFind{'me.compilation'} = 1;
 
-		if ($ds->count('album', \%find)) {
+		delete $vaFind{'genre.id'};
 
-			unshift @$items, $ds->variousArtistsObject;
+		if (Slim::Schema->count('Album', \%vaFind)) {
+
+			unshift @items, Slim::Schema->variousArtistsObject;
 		}
 	}
 
+	# If the previous level is a playlist. IE: We're in playlistTracks -
+	# let the user add a favorite for this playlist.
 	if ($levels[$level-1] eq 'playlist') {
 
-		my $track = $ds->objectForId('track', $findCriteria->{'playlist'});
+		my $track = Slim::Schema->find('Track', $filters->{'playlist'});
 
 		if (blessed($track) && $track->can('id')) {
 		
@@ -687,54 +769,57 @@ sub setMode {
 				$client->param('favorite', -1);
 			}
 
-			push @$items, 'FAVORITE';
+			push @items, 'FAVORITE';
 		}
 	}
 
 	# Finally get the last selection position within the list	
-	my $listIndex;
+	my $listIndex = 0;
 	my $selectionKey;
 	my $selectionCriteria;
-	if (defined($search)) {
+
+	if (defined $search) {
+
 		$listIndex = 0;
 	
-	# Entering from trackinfo, so we need to set the selected item
-	} elsif (defined $client->param('selectionCriteria')) {
-	
-		# grab selection info
-		$selectionCriteria = $client->param('selectionCriteria');
+	} elsif ($selectionCriteria = $client->param('selectionCriteria')) {
+
+		# Entering from trackinfo, so we need to set the selected item
 		my $selection = $selectionCriteria->{$levels[$level]};
-		my $i = 0;
-		for my $item (@{$items}) {
-			last if $selection == $item;
-			$i++;
+		my $j = 0;
+
+		for my $item (@items) {
+
+			# XXXX - need to optimize
+			last if $selection == $item->name;
+			$j++;
 		}
 		
 		# set index to matching item from this level
-		$listIndex = $i;
-	}
-	else {
-		$selectionKey = $hierarchy . ':' . $level . ':';
-		while (my ($k, $v) = each %$findCriteria) {
-			$selectionKey .= $k . '=' . (ref($v) eq 'ARRAY' ? join('', @{$v}): $v);
-		}
+		$listIndex = $j;
+
+	} else {
+
+		$selectionKey = join(':', $hierarchy, $level, Storable::freeze(\%find));
+
 		$listIndex = $client->lastID3Selection($selectionKey) || 0;
-		$::d_files && msg("last position from selection key $selectionKey is $listIndex\n");
+
+		$::d_info && msg("last position from selection key $selectionKey is $listIndex\n");
 	}
 
 	my %params = (
 
 		# Parameters for INPUT.List
 		header            => $header,
-		headerAddCount    => (scalar(@$items) > 0),
-		listRef           => $items,
+		headerAddCount    => (scalar(@items) > 0),
+		listRef           => \@items,
 		listIndex         => $listIndex,
-		noWrap            => (scalar(@$items) <= 1),
+		noWrap            => (scalar(@items) <= 1),
 		callback          => \&browsedbExitCallback,
 		externRef         => \&browsedbItemName,
 		externRefArgs     => 'CVI',
 		overlayRef        => \&browsedbOverlay,
-		onChange          => sub { $_[0]->lastID3Selection($selectionKey,$_[1]) },
+		onChange          => sub { $_[0]->lastID3Selection($selectionKey, $_[1]) },
 		onChangeArgs      => 'CI',
 
 		# Parameters that reflect the state of this mode
@@ -743,7 +828,7 @@ sub setMode {
 		descend           => $descend,
 		search            => $search,
 		selectionKey      => $selectionKey,
-		findCriteria      => $findCriteria,
+		findCriteria      => \%find,
 		selectionCriteria => $selectionCriteria,
 	);
 
@@ -752,26 +837,25 @@ sub setMode {
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
 	# sort at simple track level as well.
-	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $findCriteria->{'album'} && !$search)) {
-		$params{'isSorted'} = 'L';
+	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $find{'album.id'} && !$search)) {
+
+		$params{'isSorted'}  = 'L';
 
 		$params{'lookupRef'} = sub {
 			my $index = shift;
-			my $item = $items->[$index];
-
-			my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
+			my $item  = $items[$index];
 
 			# Pull the nameTransform if needed - for New Music, etc
-			if (defined($item) && !ref($item)) {
+			if (!ref($item)) {
 
-				my $field = $fieldInfo->{$levels[$level]}->{'nameTransform'} || $levels[$level];
-
-				$item = $items->[$index] = $ds->objectForId($field, $item) || return $client->string($item);
+				return $client->string($item);
 			}
 
-			return &{$levelInfo->{'resultToSortedName'}}($item);
+			return $item->namesort;
 		};
 	}
+
+	msg("-" x 120 . "\n");
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
@@ -779,7 +863,8 @@ sub setMode {
 sub searchTerm {
 	my $t = shift;
 	
-	$t =~ s/^\*?(.+)\*$/$1/;
+	$t =~ s/^[\*\%]?(.+)[\*\%]$/$1/;
+
 	return $t;
 }
 

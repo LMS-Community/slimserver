@@ -1926,7 +1926,6 @@ sub initSetupConfig {
 					lookForArtwork
 					itemsPerPass
 					prefsWriteDelay
-					keepUnswappedInterval
 				)],
 			},
 		},
@@ -1955,10 +1954,6 @@ sub initSetupConfig {
 			'prefsWriteDelay' => {
 				'validate' => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,undef,1],
-			},
-
-			'keepUnswappedInterval' => {
-				'validate' => \&Slim::Utils::Validate::isInt,
 			},
 		},
 	} #end of setup{'performance'} hash
@@ -2755,13 +2750,11 @@ sub preprocessArray {
 sub playlists {
 	my %lists = ();
 
-	my $ds   = Slim::Music::Info::getCurrentDataStore();
-
-	for my $playlist ($ds->getPlaylists()) {
+	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
 
 		if (Slim::Music::Info::isURL($playlist)) {
 
-			$lists{$playlist} = Slim::Music::Info::standardTitle(undef, $playlist);
+			$lists{$playlist->name} = Slim::Music::Info::standardTitle(undef, $playlist);
 		}
 	}
 

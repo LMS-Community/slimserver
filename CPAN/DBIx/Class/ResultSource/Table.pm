@@ -10,7 +10,7 @@ use Carp qw/croak/;
 use base qw/DBIx::Class/;
 __PACKAGE__->load_components(qw/ResultSource/);
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::ResultSource::Table - Table object
 

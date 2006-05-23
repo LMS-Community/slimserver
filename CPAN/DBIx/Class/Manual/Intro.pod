@@ -324,8 +324,6 @@ L<DBIx::Class::ResultSet/ATTRIBUTES>.
 
 =item * L<DBIx::Class::Manual::Cookbook>
 
-=item * L<DBIx::Class::Manual::FAQ>
-
 =back
 
 =cut

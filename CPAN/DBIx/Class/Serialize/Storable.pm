@@ -21,10 +21,9 @@ sub STORABLE_thaw {
 
 __END__
 
-=head1 NAME 
+=head1 NAME
 
     DBIx::Class::Serialize::Storable - hooks for Storable freeze/thaw
-    (EXPERIMENTAL)
 
 =head1 SYNOPSIS
 
@@ -33,16 +32,14 @@ __END__
     
     # meanwhile, in a nearby piece of code
     my $cd = $schema->resultset('CD')->find(12);
-    $cache->set($cd->ID, $cd); # if the cache uses Storable, this
-			       # will work automatically
+    # if the cache uses Storable, this will work automatically
+    $cache->set($cd->ID, $cd);
 
 =head1 DESCRIPTION
 
 This component adds hooks for Storable so that row objects can be
 serialized. It assumes that your row object class (C<result_class>) is
-the same as your table class, which is the normal situation. However,
-this code is not yet well tested, and so should be considered
-experimental.
+the same as your table class, which is the normal situation.
 
 =head1 AUTHORS
 

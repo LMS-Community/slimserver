@@ -185,12 +185,6 @@ sub init {
 	);
 }
 
-
-sub getPlaylists {
-	my $ds   = Slim::Music::Info::getCurrentDataStore();
-	return $ds->getPlaylists();
-}
-
 # the routines
 sub setMode {
 	my $client = shift;
@@ -313,7 +307,10 @@ sub alarmExitHandler {
 			} elsif ($nextParams{'useMode'} =~ /INPUT\./ && exists($nextParams{'initialValue'})) {
 				
 				if ($nextmenu eq 'alarm/ALARM_SELECT_PLAYLIST') {
-					$nextParams{'listRef'} = [ getPlaylists(), keys %specialPlaylists];
+
+					my @playlists = Slim::Schema->rs('Playlist')->getPlaylists;
+
+					$nextParams{'listRef'} = [ \@playlists, keys %specialPlaylists];
 				}
 				
 				#set up valueRef for current pref
@@ -412,8 +409,10 @@ sub checkAlarms {
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 					
-					my $ds = Slim::Music::Info::getCurrentDataStore();
-					my $playlistObj = $ds->objectForUrl($playlist);
+					my $playlistObj = Slim::Schema->objectForUrl({
+						'url'      => $playlist,
+						'playlist' => 1,
+					});
 
 					if (blessed($playlistObj) && $playlistObj->can('id')) {
 

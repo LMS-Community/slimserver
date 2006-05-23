@@ -3,7 +3,7 @@ package DBIx::Class::Storage::DBI::SQLite;
 use strict;
 use warnings;
 
-use base qw/DBIx::Class::Storage::DBI/;
+use base qw/DBIx::Class::Storage::DBI::MultiDistinctEmulation/;
 
 sub last_insert_id {
   return $_[0]->dbh->func('last_insert_rowid');
@@ -11,7 +11,7 @@ sub last_insert_id {
 
 1;
 
-=head1 NAME 
+=head1 NAME
 
 DBIx::Class::PK::Auto::SQLite - Automatic primary key class for SQLite
 

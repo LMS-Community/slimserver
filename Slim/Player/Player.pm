@@ -618,8 +618,10 @@ sub update {
 		$scrollMode = 2 if ($parts->{scrollmode} eq 'noscroll');
 		$scrollMode = 3 if ($parts->{scrollmode} eq 'ticker');
 		$scrollMode = 4 if ($parts->{scrollmode} eq 'scrollonceend');
-	} elsif (!defined($scrollMode)) {
-		$scrollMode = $client->paramOrPref('scrollMode');
+	}
+
+	if (!defined($scrollMode)) {
+		$scrollMode = $client->paramOrPref('scrollMode') || 0;
 	}
 
 	my ($scroll, $scrollonce, $ticker);

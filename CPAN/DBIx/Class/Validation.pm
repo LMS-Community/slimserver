@@ -95,14 +95,14 @@ And then somewhere else:
     auto => 1,
   );
 
-Calls validation_module(), validation_profile(), and validation_auto() if the corresponding 
+Calls validation_module(), validation_profile(), and validation_auto() if the corresponding
 argument is defined.
 
 =head2 validation_module
 
   __PACKAGE__->validation_module('Data::FormValidator');
 
-Sets the validation module to use.  Any module that supports a check() method just like 
+Sets the validation module to use.  Any module that supports a check() method just like
 Data::FormValidator's can be used here, such as FormValidator::Simple.
 
 Defaults to FormValidator::Simple.
@@ -119,24 +119,24 @@ Sets the profile that will be passed to the validation module.
 
   __PACKAGE__->validation_auto( 1 );
 
-This flag, when enabled, causes any updates or inserts of the class 
+This flag, when enabled, causes any updates or inserts of the class
 to call validate() before actually executing.
 
 =head2 validate
 
   $obj->validate();
 
-Validates all the data in the object against the pre-defined validation 
-module and profile.  If there is a problem then a hard error will be 
-thrown.  If you put the validation in an eval you can capture whatever 
+Validates all the data in the object against the pre-defined validation
+module and profile.  If there is a problem then a hard error will be
+thrown.  If you put the validation in an eval you can capture whatever
 the module's check() method returned.
 
 =head2 auto_validate
 
   __PACKAGE__->auto_validate( 0 );
 
-Turns on and off auto-validation.  This feature makes all UPDATEs and 
-INSERTs call the validate() method before doing anything.  The default 
+Turns on and off auto-validation.  This feature makes all UPDATEs and
+INSERTs call the validate() method before doing anything.  The default
 is for auto-validation to be on.
 
 Defaults to on.
