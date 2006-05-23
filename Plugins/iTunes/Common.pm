@@ -10,12 +10,6 @@ package Plugins::iTunes::Common;
 #	itunes	-- 1 to attempt to use iTunes library XML file,
 #		0 to simply scan filesystem.
 #
-#	itunes_library_autolocate
-#		-- if this is set (1), attempt to automatically set both
-#		itunes_library_xml_path or itunes_library_music_path.  If
-#		this is unset (0) or undefined, you MUST explicitly set both
-#		itunes_library_xml_path and itunes_library_music_path.
-#
 #	itunes_library_xml_path
 #		-- full path to 'iTunes Music Library.xml' file.
 #
@@ -44,7 +38,6 @@ use Slim::Utils::Strings qw(string);
 INIT: {
 	my $class = __PACKAGE__;
 
-	$class->mk_classdata('iTunesLibraryPath');
 	$class->mk_classdata('iTunesLibraryBasePath');
 	$class->mk_classdata('lastMusicLibraryFinishTime');
 	$class->mk_classdata('lastITunesMusicLibraryDate');
@@ -64,19 +57,7 @@ sub useiTunesLibrary {
 	}
 
 	my $use = Slim::Utils::Prefs::get('itunes');
-	
 	my $can = $class->canUseiTunesLibrary();
-
-	if (!defined($use) && $can) {
-
-		Slim::Utils::Prefs::set('itunes', 1);
-
-	} elsif (!defined($use) && !$can) {
-
-		Slim::Utils::Prefs::set('itunes', 0);
-	}
-
-	$use = Slim::Utils::Prefs::get('itunes');
 
 	Slim::Music::Import->useImporter($class, $use && $can);
 
@@ -92,24 +73,7 @@ sub canUseiTunesLibrary {
 
 	$class->checkDefaults;
 
-	my $oldMusicPath = Slim::Utils::Prefs::get('itunes_library_music_path');
-
-	if (!defined $class->iTunesLibraryPath) {
-
-		 $class->iTunesLibraryPath( $class->findMusicLibrary );
-	}
-
-	# The user may have moved their music folder location. We need to nuke the db.
-	if ($class->iTunesLibraryPath && $oldMusicPath && $oldMusicPath ne $class->iTunesLibraryPath) {
-
-		$::d_itunes && msg("iTunes: Music Folder has changed from previous - wiping db\n");
-
-		Slim::Music::Info::wipeDBCache();
-
-		$class->lastITunesMusicLibraryDate(-1);
-	}
-
-	return defined $class->findMusicLibraryFile && defined $class->iTunesLibraryPath;
+	return defined $class->findMusicLibraryFile;
 }
 
 sub setPodcasts {
@@ -129,7 +93,7 @@ sub setPodcasts {
 	if ($podcasts[0]) {
 		my $id = $podcasts[0]->id;
 		
-		Slim::Web::Pages::addLinks("browse", {
+		Slim::Web::Pages->addPageLinks("browse", {
 			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,artist,album,track&level=2&&genre=".$id
 		});
 
@@ -209,111 +173,73 @@ sub findLibraryFromRegistry {
 sub findMusicLibraryFile {
 	my $class = shift;
 
-	my $path = undef;
-	my $base = $ENV{'HOME'} || '';
+	my $explicit_xml_path = Slim::Utils::Prefs::get('itunes_library_xml_path');
 
-	my $audiodir   = Slim::Utils::Prefs::get('audiodir');
-	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
+	if ($explicit_xml_path) {
 
-	if ($autolocate) {
-		$::d_itunes && msg("iTunes: attempting to locate iTunes Music Library.xml\n");
+		if (-d $explicit_xml_path) {
 
-		# This defines the list of directories we will search for
-		# the 'iTunes Music Library.xml' file.
-		my @searchdirs = (
-			catdir($base, 'Music', 'iTunes'),
-			catdir($base, 'Documents', 'iTunes'),
-			$base,
-		);
-
-		if (defined $audiodir) {
-			push @searchdirs, (
-				catdir($audiodir, 'My Music', 'iTunes'),
-				catdir($audiodir, 'iTunes'),
-				$audiodir
-			);
+			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Music Library.xml');
 		}
+			 
+		if (-r $explicit_xml_path) {
 
-		$path = $class->findLibraryFromPlist($base);
+			$::d_itunes && msg("iTunes: found path via config file at: $explicit_xml_path\n");
 
-		if ($path && -r $path) {
-			$::d_itunes && msg("iTunes: found path via iTunes preferences at: $path\n");
-			return $path;
-		}
-
-		$path = $class->findLibraryFromRegistry();
-
-		if ($path && -r $path) {
-			$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
-			return $path;
-		}
-
-		for my $dir (@searchdirs) {
-			$path = catfile(($dir), 'iTunes Music Library.xml');
-
-			if ($path && -r $path) {
-				$::d_itunes && msg("iTunes: found path via directory search at: $path\n");
-				Slim::Utils::Prefs::set('itunes_library_xml_path',$path);
-				return $path;
-			}
-
+			return $explicit_xml_path;
 		}
 	}
+		 
+	$::d_itunes && msg("iTunes: attempting to locate iTunes Music Library.xml automatically\n");
 
-	if (!$path) {
-		$path = Slim::Utils::Prefs::get('itunes_library_xml_path');
+	my $base = $ENV{'HOME'} || '';
 
-		if ($path && -d $path) {
-			$path = catfile(($path), 'iTunes Music Library.xml');
-		}
+	my $path = findLibraryFromPlist($base);
+
+	if ($path && -r $path) {
+
+		$::d_itunes && msg("iTunes: found path via iTunes preferences at: $path\n");
+
+		return $path;
+	}
+
+	$path = findLibraryFromRegistry();
+
+	if ($path && -r $path) {
+		$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
+		return $path;
+	}
+
+	# This defines the list of directories we will search for
+	# the 'iTunes Music Library.xml' file.
+	my @searchdirs = (
+		catdir($base, 'Music', 'iTunes'),
+		catdir($base, 'Documents', 'iTunes'),
+		$base,
+	);
+
+	my $audiodir = Slim::Utils::Prefs::get('audiodir');
+
+	if (defined $audiodir) {
+		push @searchdirs, (
+			catdir($audiodir, 'My Music', 'iTunes'),
+			catdir($audiodir, 'iTunes'),
+			$audiodir
+		);
+	}
+
+	for my $dir (@searchdirs) {
+		$path = catfile(($dir), 'iTunes Music Library.xml');
 
 		if ($path && -r $path) {
-			Slim::Utils::Prefs::set('itunes_library_xml_path',$path);
-			$::d_itunes && msg("iTunes: found path via config file at: $path\n");
+			$::d_itunes && msg("iTunes: found path via directory search at: $path\n");
 			return $path;
 		}
-	}		
+	}
 
 	$::d_itunes && msg("iTunes: unable to find iTunes Music Library.xml.\n");
 
 	return undef;
-}
-
-sub findMusicLibrary {
-	my $class = shift;
-
-	my $autolocate = Slim::Utils::Prefs::get('itunes_library_autolocate');
-	my $path = undef;
-
-	my $file = $class->findMusicLibraryFile();
-
-	if (defined($file) && $autolocate) {
-		$::d_itunes && msg("iTunes: attempting to locate iTunes library relative to $file.\n");
-
-		my $itunesdir = dirname($file);
-		$path = catdir($itunesdir, 'iTunes Music');
-
-		if ($path && -d $path) {
-			$::d_itunes && msg("iTunes: set iTunes library relative to $file: $path\n");
-			Slim::Utils::Prefs::set('itunes_library_music_path',$path);
-			return $path;
-		}
-	}
-
-	$path = Slim::Utils::Prefs::get('itunes_library_music_path');
-
-	if ($path && -d $path) {
-		$::d_itunes && msg("iTunes: set iTunes library to itunes_library_music_path value of: $path\n");
-		return $path;
-	}
-
-	$path = Slim::Utils::Prefs::get('audiodir') || return undef;
-
-	$::d_itunes && msg("iTunes: set iTunes library to audiodir value of: $path\n");
-
-	Slim::Utils::Prefs::set('itunes_library_music_path', $path);
-
-	return $path;
 }
 
 sub isMusicLibraryFileChanged {
@@ -390,11 +316,12 @@ sub normalize_location {
 	my $stripped = $class->strip_automounter($location);
 
 	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
-	if (Slim::Utils::OSDetect::OS() eq 'unix') {
+	my $explicit_path = Slim::Utils::Prefs::get('itunes_library_music_path');
+
+	if ($explicit_path) {
 
 		# find the new base location.  make sure it ends with a slash.
-		my $path = $class->iTunesLibraryPath || $class->findMusicLibrary;
-		my $base = Slim::Utils::Misc::fileURLFromPath($path);
+		my $base = Slim::Utils::Misc::fileURLFromPath($explicit_path);
 
 		$url = $stripped;
 		$url =~ s/$class->iTunesLibraryBasePath/$base/isg;
@@ -448,16 +375,12 @@ sub checkDefaults {
 		Slim::Utils::Prefs::set('ignoredisableditunestracks',0);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('itunes_library_music_path')) {
-		Slim::Utils::Prefs::set('itunes_library_music_path',Slim::Utils::Prefs::defaultAudioDir());
-	}
-
-	if (!Slim::Utils::Prefs::isDefined('itunes_library_autolocate')) {
-		Slim::Utils::Prefs::set('itunes_library_autolocate',1);
-	}
-
 	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
 		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
+	}
+
+	if (!Slim::Utils::Prefs::isDefined('itunes') && defined findMusicLibraryFile()) {
+		Slim::Utils::Prefs::set('itunes', 1);
 	}
 }
 

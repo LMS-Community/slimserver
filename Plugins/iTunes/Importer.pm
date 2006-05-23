@@ -25,6 +25,7 @@ use Slim::Utils::Strings qw(string);
 
 my $lastMusicLibraryFinishTime = undef;
 my $lastITunesMusicLibraryDate = 0;
+my $currentITunesMusicLibraryDate = 0;
 my $iTunesScanStartTime = 0;
 
 my $inPlaylists;
@@ -95,6 +96,9 @@ sub startScan {
 		
 	my $file = $class->findMusicLibraryFile;
 
+	# Set the last change time for the next go-round.
+	$currentITunesMusicLibraryDate = (stat($class->findMusicLibraryFile))[9];
+
 	$::d_itunes && msg("iTunes: startScan on file: $file\n");
 
 	if (!defined $file) {
@@ -120,8 +124,6 @@ sub startScan {
 
 	$iTunesParser->parsefile($file);
 
-	#$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
-
 	$::d_itunes && msg("iTunes: Finished scanning iTunes XML\n");
 
 	$class->doneScanning;
@@ -142,7 +144,7 @@ sub doneScanning {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $mtime);
+	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $currentITunesMusicLibraryDate);
 
 	Slim::Music::Import->endImporter($class);
 }
@@ -298,10 +300,12 @@ sub handleTrack {
 			$cacheEntry{'SECS'} = $curTrack->{'Total Time'} / 1000;
 		}
 
-		$cacheEntry{'BITRATE'} = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
-		$cacheEntry{'YEAR'}    = $curTrack->{'Year'};
-		$cacheEntry{'COMMENT'} = $curTrack->{'Comments'};
-		$cacheEntry{'RATE'}    = $curTrack->{'Sample Rate'};
+		$cacheEntry{'BITRATE'}   = $curTrack->{'Bit Rate'} * 1000 if $curTrack->{'Bit Rate'};
+		$cacheEntry{'YEAR'}      = $curTrack->{'Year'};
+		$cacheEntry{'COMMENT'}   = $curTrack->{'Comments'};
+		$cacheEntry{'RATE'}      = $curTrack->{'Sample Rate'};
+		$cacheEntry{'RATING'}    = $curTrack->{'Rating'};
+		$cacheEntry{'PLAYCOUNT'} = $curTrack->{'Play Count'};
 		
 		my $gain = $curTrack->{'Volume Adjustment'};
 		
@@ -324,6 +328,7 @@ sub handleTrack {
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
 			'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
+			'checkMTime' => 1,
 
 		}) || do {
 
@@ -459,9 +464,9 @@ sub handleCharElement {
 	if ($inTracks && $inValue) {
 
 		if ($] > 5.007) {
-			$item{$currentKey} = $value;
+			$item{$currentKey} .= $value;
 		} else {
-			$item{$currentKey} = Slim::Utils::Unicode::utf8toLatin1($value);
+			$item{$currentKey} .= Slim::Utils::Unicode::utf8toLatin1($value);
 		}
 
 		return;

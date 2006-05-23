@@ -53,20 +53,20 @@ sub shutdownPlugin {
 	$class->initialized(0);
 
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('itunes');
-	Slim::Web::Setup::delGroup('server','itunes',1);
+	Slim::Web::Setup::delCategory('ITUNES');
+	Slim::Web::Setup::delGroup('SERVER_SETTINGS','itunes',1);
 
 	# set importer to not use
 	Slim::Utils::Prefs::set('itunes', 0);
 }
 
 sub addGroups {
-	Slim::Web::Setup::addChildren('server','itunes',3);
-	Slim::Web::Setup::addCategory('itunes',&setupCategory);
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS','ITUNES',3);
+	Slim::Web::Setup::addCategory('ITUNES',&setupCategory);
 
 	my ($groupRef,$prefRef) = setupUse();
 
-	Slim::Web::Setup::addGroup('server','itunes',$groupRef,2,$prefRef);
+	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'itunes', $groupRef, 2, $prefRef);
 }
 
 sub setupUse {
@@ -122,15 +122,19 @@ sub setupCategory {
 
 		'title' => string('SETUP_ITUNES'),
 
-		'parent' => 'server',
+		'parent' => 'SERVER_SETTINGS',
 
 		'GroupOrder' => [qw(Default iTunesPlaylistFormat)],
 
 		'Groups' => {
 
 			'Default' => {
-				'PrefOrder' => ['itunesscaninterval','ignoredisableditunestracks',
-					'itunes_library_autolocate','itunes_library_xml_path','itunes_library_music_path']
+				'PrefOrder' => [qw(
+					itunesscaninterval
+					ignoredisableditunestracks
+					itunes_library_xml_path
+					itunes_library_music_path
+				)]
 			},
 
 			'iTunesPlaylistFormat' => {
@@ -175,6 +179,7 @@ sub setupCategory {
 
 			'itunes_library_xml_path' => {
 				'validate' => \&Slim::Web::Setup::validateIsFile,
+				'validateArgs' => [1],
 				'changeIntro' => string('SETUP_OK_USING'),
 				'rejectMsg' => string('SETUP_BAD_FILE'),
 				'PrefSize' => 'large',
@@ -182,17 +187,10 @@ sub setupCategory {
 
 			'itunes_library_music_path' => {
 				'validate' => \&Slim::Web::Setup::validateIsDir,
+				'validateArgs' => [1],
 				'changeIntro' => string('SETUP_OK_USING'),
 				'rejectMsg' => string('SETUP_BAD_DIRECTORY'),
 				'PrefSize' => 'large',
-			},
-
-			'itunes_library_autolocate' => {
-				'validate' => \&Slim::Web::Setup::validateTrueFalse,
-				'options' => {
-					'1' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_1'),
-					'0' => string('SETUP_ITUNES_LIBRARY_AUTOLOCATE_0'),
-				},
 			},
 		}
 	);
