@@ -21,7 +21,7 @@ BEGIN {
 	use bootstrap;
 	use Slim::Utils::OSDetect;
 
-	bootstrap->loadModules(qw(Time::HiRes DBD::SQLite DBI XML::Parser));
+	bootstrap->loadModules(qw(Time::HiRes DBD::mysql DBI XML::Parser));
 };
 
 use Getopt::Long;

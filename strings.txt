@@ -12276,54 +12276,6 @@ SETUP_LARGETEXTFONT_1
 	IT	Moderno
 	NL	Modern
 
-SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD
-	DE	Optimierung des temporären Speichers (SQLite)
-	EN	Database Temporary File Tuning (SQLite)
-	ES	Afinamiento del Archivo Temporario de Base de Datos (SQLite)
-	HE	קביעת שיטת עבודה מול מאגר הנתונים
-	IT	Impostazione del file temporaneo del database (SQLite)
-	NL	Tijdelijke bestandeninstelling database (SQLite)
-
-SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC
-	DE	Die Performance der standardmässig verwendeten Datenbank SQLite kann optimiert werden. Falls Sie eine grosse Musiksammlung besitzen und ihr Rechner über viel Arbeitsspeicher (RAM) verfügt, so kann die Leistung durch Vergrössern des Caches und die Verwendung von RAM als temporären Speicherort verbessert werden. Wir haben sinnvolle Voreinstellungen für die meisten Systeme definiert.
-	EN	Using the default backend of SQLite - one can tune the database parameters for better performance. If you have a large audio collection & lots of memory, use RAM as temporary storage, and increase the cache size. We have set resonable defaults for most systems.
-	ES	Utilizando la marco por defecto de SQLite - uno puede afinar los parámetros de la base de datos para una mejor perfomance. Si se tiene una colección muy grande de audio y mucha memoria, utilizar RAM como almacenamiento temporario, e incrementear el tamañoo del cache. Hemos definido valores por defecto razonables para la mayoría de los sistemas.
-	HE	במידה והספרייה גדולה, השתמש בזכרון. במידה ולא, השתמש בדיסק
-	IT	Usando il backend di default di SQLite, si possono regolare i parametri del database per ottenere migliori prestazioni. Se avete una ampia collezione audio & quantita' di memoria, usate la RAM come archivio temporaneo e incrementate la dimensione della cache. Abbiamo creato diverse impostazioni per la maggior parte dei sistemi.
-	NL	In het standaard databaseprogramma SQLite kun je de database instellingen aanpassen voor betere prestaties. Als je een grote muziekcollectie hebt en veel intern geheugen in de server hebt kun je RAM geheugen gebruiken als tijdelijke opslag waardoor de cache groter wordt. De standaard instellingen zijn  redelijke waarden voor de meeste systemen.
-
-SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY
-	DE	RAM als temporären Speicher verwenden (Schnell)
-	EN	Use RAM as temporary storage. (Faster)
-	ES	Utilizar RAM como almacenamiento temporario (Más rápido)
-	HE	השתמש בזכרון
-	IT	Usa la RAM come archivio temporaneo (Piu' Veloce)
-	NL	Gebruik als RAM als tijdelijke opslag (Sneller)
-
-SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE
-	DE	Harddisk als temporären Speicher verwenden (langsam)
-	EN	Use disk as temporary storage. (Slower)
-	ES	utilizar disco como almacenamiento temporario (Más lento)
-	HE	השתמש בדיסק
-	IT	Usa il disco come archivio temporaneo (Piu' lento)
-	NL	Gebruik harde schijf als tijdelijke opslag (Langzamer)
-
-SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD
-	DE	Optimierung des Datenbank Caches (SQLite)
-	EN	Database Cache Size Tuning (SQLite)
-	ES	Afinación del Tamaño de Cache de la Base de Datos (SQLite)
-	HE	זכרון מטמון
-	IT	Regolazione dimensione cache database (SQLite)
-	NL	Databasecachegrootte instelling (SQLite)
-
-SETUP_DATBASE_TUNE_CACHE_SIZE_DESC
-	DE	Wählen Sie die Grösse des Datenbank Caches. Grössere Werte benötigen mehr Arbeitsspeicher. Der Vorgabewert von 10000 Speicherseiten belegt ca. 15MB RAM.
-	EN	Set the database cache size. A larger number will use more memory. The default value of 10000 pages uses about 15MB RAM.
-	ES	Indicar el tamaño para cache de base de datos. Un número mayor utilizará más memoria.
-	HE	גודל זכרון המטמון עבור מאגר הנתונים
-	IT	Imposta la dimensione della cache del database. Un numero piu' grande usera' piu' memoria. L'impostazione di default di 10000 pagine usa circa 15MB di RAM.
-	NL	Stel de databasecache in. Een hoger getal zal tot meer geheugengebruik leiden. De standaardwaarde is 10000 pagina's en gebruikt ongeveer 15MB RAM.
-
 SETUP_SORTBROWSEART
 	DE	Sortierreihenfolge für Plattenhüllen
 	EN	Browse By Artwork Order

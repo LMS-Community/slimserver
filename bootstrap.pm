@@ -50,7 +50,7 @@ use Symbol;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @defaultModules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib);
+my @defaultModules = qw(Time::HiRes DBD::mysql DBI XML::Parser HTML::Parser Compress::Zlib);
 
 sub loadModules {
 	my $class   = shift;

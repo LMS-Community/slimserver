@@ -202,6 +202,7 @@ our (
 	$d_itunes_verbose,
 	$d_import,
 	$d_mdns,
+	$d_mysql,
 	$d_memory,
 	$d_moodlogic,
 	$d_mp3,
@@ -604,7 +605,8 @@ to the console via stderr:
     --d_memory       => Turns on memory debugging interface - developers only.
     --d_moodlogic    => MoodLogic synchronization information
     --d_musicmagic   => MusicMagic synchronization information
-    --d_mp3          => MP3 frame detection
+    --d_mp3    	     => MP3 frame detection
+    --d_mysql        => MySQL Process Information
     --d_os           => Operating system detection information
     --d_paths        => File path processing information
     --d_parse        => Playlist parsing information
@@ -689,6 +691,7 @@ sub initOptions {
 		'd_moodlogic'		=> \$d_moodlogic,
 		'd_mp3'				=> \$d_mp3,
 		'd_musicmagic'		=> \$d_musicmagic,
+		'd_mysql'		=> \$d_mysql,
 		'd_os'				=> \$d_os,
 		'd_paths'			=> \$d_paths,
 		'd_parse'			=> \$d_parse,
