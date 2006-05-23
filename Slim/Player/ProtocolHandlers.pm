@@ -1,6 +1,6 @@
 package Slim::Player::ProtocolHandlers;
 
-# $Id: Source.pm 5124 2005-11-10 01:24:47Z dsully $
+# $Id$
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -30,11 +30,11 @@ my %loadedHandlers = ();
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
-	if (defined $protocolHandlers{$class}) {
+	if (defined $protocolHandlers{$protocol}) {
 		return 1;
 	}
 
-	if (exists $protocolHandlers{$class}) {
+	if (exists $protocolHandlers{$protocol}) {
 		return 0;
 	}
 
