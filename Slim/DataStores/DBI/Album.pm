@@ -30,9 +30,6 @@ use Slim::Utils::Misc;
 
 	$class->set_primary_key('id');
 
-	# XXXX - DBIx::Class
-	#$class->columns(UTF8 => qw/title titlesort/);
-
 	$class->belongs_to('contributor' => 'Slim::DataStores::DBI::Contributor');
 
 	$class->has_many(
@@ -42,6 +39,10 @@ use Slim::Utils::Misc;
 	);
 
 	$class->has_many('contributorAlbums' => 'Slim::DataStores::DBI::ContributorAlbum');
+
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/title titlesort/);
+	}
 }
 
 # Do a proper join

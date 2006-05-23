@@ -23,10 +23,11 @@ use Scalar::Util qw(blessed);
 
 	$class->set_primary_key('id');
 
-	# XXXX - DBIx::Class
-	#$class->columns(UTF8 => qw/name namesort/);
-
 	$class->has_many('genreTracks' => 'Slim::DataStores::DBI::GenreTrack' => 'genre');
+
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/name namesort/);
+	}
 }
 
 sub tracks { shift->genreTracks->search_related('track' => @_); }

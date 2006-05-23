@@ -14,10 +14,11 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->set_primary_key('id');
 
-	# XXXX - DBIx::Class
-	#$class->columns(UTF8 => qw/value/);
-
 	$class->belongs_to(track => 'Slim::DataStores::DBI::Track');
+
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/value/);
+	}
 }
 
 1;

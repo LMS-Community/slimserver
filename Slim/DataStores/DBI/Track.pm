@@ -28,10 +28,6 @@ our @allColumns = (qw(
 
 	$class->set_primary_key('id');
 
-	# Columns that need to be upgraded to UTF8
-	# XXXX - how to do this for DBIx::Class ?
-	# $class->columns(UTF8 => qw/title titlesort/);
-
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::DataStores::DBI::Album');
 
@@ -43,6 +39,10 @@ our @allColumns = (qw(
 	$class->has_many('playlist_tracks'   => 'Slim::DataStores::DBI::PlaylistTrack' => 'playlist');
 		#'playlist' => { order_by => 'playlist_tracks.position' }
 	#);
+
+	if ($] > 5.007) {
+		$class->utf8_columns(qw/title titlesort/);
+	}
 }
 
 sub tracks {

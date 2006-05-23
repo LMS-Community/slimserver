@@ -32,11 +32,12 @@ our %contributorToRoleMap = (
 
 	$class->set_primary_key('id');
 
-	# XXXX - how to do this for DBIx::Class ?
-	# $class->columns(UTF8 => qw/name namesort/);
-
         $class->has_many('contributorTracks' => 'Slim::DataStores::DBI::ContributorTrack');
         $class->has_many('contributorAlbums' => 'Slim::DataStores::DBI::ContributorAlbum');
+
+	if ($] > 5.007) {
+	$class->utf8_columns(qw/name namesort/);
+	}
 }
 
 # Do a proper join

@@ -53,10 +53,17 @@ our $pingInterval = 1800;
 {
 	my $class = __PACKAGE__;
 
+	my @components = qw(PK::Auto Core DB);
+	
+	if ($] > 5.007) {
+		unshift @components, 'UTF8Columns';
+	}
+
 	# DBIx::Class config
 	# XXX - move to ::Schema
 	$class->mk_classdata(schema_instance => bless({}, 'DBIx::Class::Schema'));
-	$class->load_components(qw/UTF8Columns PK::Auto Core DB/);
+
+	$class->load_components(@components);
 }
 
 sub init {
@@ -120,39 +127,6 @@ sub init {
 		$::d_info && msg("Creating new database.\n");
 
 		Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, "dbcreate.sql");
-	}
-
-	# XXXX - need a DBIx::Class solution here.
-	if (0 && $] > 5.007) {
-		require Encode;
-
-		$class->add_trigger('select' => sub {
-			my $self = shift;
-
-			for my $column ($self->columns('UTF8')) {
-
-				if (ref $self->{$column} || !defined $self->{$column}) {
-					next;
-				}
-
-				# flip the bit..
-				Encode::_utf8_on($self->{$column});
-
-				# ..sanity check
-				# XXX - disabled for now - Dean found a
-				# crasher, not sure how to reproduce yet. We
-				# didn't have this in the old ::get() subclassing.
-				if (0 && !utf8::valid($self->{$column})) {
-
-					# if we're in an eval, let's at least not _completely_ stuff
-					# the process. Turn the bit off again.
-					Encode::_utf8_off($self->{$column});
-
-					# ..and die
-					$self->_croak("Invalid UTF8 from database in class: [%s], column '$column'", ref($self));
-				}
-			}
-		});
 	}
 }
 
