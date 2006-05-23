@@ -231,7 +231,7 @@ sub checkScanTimer {
 
 			if ($time == $scantime && !Slim::Music::Import->stillScanning) {
 
-				Slim::Control::Command::execute(undef,['rescan']);
+				Slim::Control::Request::executeRequest(undef, ['rescan']);
 			}
 		}
 	}

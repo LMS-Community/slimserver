@@ -369,8 +369,8 @@ sub init {
 	$::d_server && msg("SlimServer IR init...\n");
 	Slim::Hardware::IR::init();
 		
-	$::d_server && msg("SlimServer Dispatch init...\n");
-	Slim::Control::Dispatch::init();
+	$::d_server && msg("SlimServer Request init...\n");
+	Slim::Control::Request::init();
 	
 	$::d_server && msg("SlimServer IR init...\n");
 	Slim::Hardware::IR::init();
@@ -415,13 +415,18 @@ sub init {
 
 	# regular server has a couple more initial operations.
 	$::d_server && msg("SlimServer persist playlists...\n");
+
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
-		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
+
+		Slim::Control::Request::subscribe(
+			\&Slim::Player::Playlist::modifyPlaylistCallback, 
+			[['playlist']]
+		);
 	}
 
 	checkVersion();
 	keepSlimServerInMemory();
-	
+
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
 			
@@ -902,8 +907,8 @@ sub checkDataSource {
 		if ($ds->count('track') == 0) {
 
 			# Let's go through Command rather than calling
-			# Slim::Music::Import->startScan() directly...
-			#Slim::Control::Command::execute(undef, ["rescan"], undef, undef);
+			# Slim::Music::Import::startScan() directly...
+			#Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 	}
 }
