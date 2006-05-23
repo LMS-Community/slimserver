@@ -45,17 +45,15 @@ use Slim::Utils::Strings qw(string);
 INIT: {
 	my $class = __PACKAGE__;
 
-	$class->mk_classdata(qw(
-		iTunesLibraryPath
-		iTunesLibraryBasePath
-		lastMusicLibraryFinishTime
-		lastITunesMusicLibraryDate
-		iTunesScanInterval
-		initialized
-	));
+	$class->mk_classdata('iTunesLibraryPath');
+	$class->mk_classdata('iTunesLibraryBasePath');
+	$class->mk_classdata('lastMusicLibraryFinishTime');
+	$class->mk_classdata('lastITunesMusicLibraryDate');
+	$class->mk_classdata('iTunesScanInterval');
+	$class->mk_classdata('initialized');
 
-	#$class->lastITunesMusicLibraryDate(0);
-	#$class->iTunesScanInterval(3600);
+	$class->lastITunesMusicLibraryDate(0);
+	$class->iTunesScanInterval(3600);
 }
 
 sub useiTunesLibrary {
