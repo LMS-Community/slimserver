@@ -80,7 +80,9 @@ use Socket qw(:DEFAULT :crlf);
 use lib $Bin;
 
 BEGIN {
-	require 'bootstrap.pl';
+	use bootstrap;
+
+	bootstrap->loadModules();
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	if (!Slim::Utils::OSDetect::isDebian()) {

@@ -15,12 +15,13 @@ use strict;
 use warnings;
 
 BEGIN {
-	require 'bootstrap.pl';
+	use bootstrap;
+
+	bootstrap->loadModules(qw(Time::HiRes DBD::SQLite DBI XML::Parser));
 };
 
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
-use Time::HiRes;
 
 use Slim::Music::Info;
 use Slim::Music::Import;
