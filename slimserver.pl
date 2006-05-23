@@ -139,6 +139,7 @@ use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Prefs;
+use Slim::Utils::Scanner;
 use Slim::Networking::SliMP3::Protocol;
 use Slim::Networking::Select;
 use Slim::Web::Setup;
@@ -286,19 +287,14 @@ sub init {
 
 	$::d_server && msg("SlimServer OS Specific init...\n");
 
-	$SIG{CHLD} = 'IGNORE';
-	$SIG{PIPE} = 'IGNORE';
-	$SIG{TERM} = \&sigterm;
-	$SIG{INT}  = \&sigint;
-
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
-		$SIG{HUP} = \&initSettings;
+		$SIG{'HUP'} = \&initSettings;
 	}		
 
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
-		$SIG{QUIT} = \&ignoresigquit; 
+		$SIG{'QUIT'} = \&bootstrap::ignoresigquit; 
 	} else {
-		$SIG{QUIT} = \&sigquit;
+		$SIG{'QUIT'} = \&bootstrap::sigquit;
 	}
 
 	$SIG{__WARN__} = sub { msg($_[0]) };
@@ -370,6 +366,9 @@ sub init {
 	$::d_server && msg("SlimServer setting language...\n");
 	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
 
+	$::d_server && msg("SlimServer Info init...\n");
+	Slim::Music::Info::init();
+
 	$::d_server && msg("SlimServer IR init...\n");
 	Slim::Hardware::IR::init();
 		
@@ -408,11 +407,11 @@ sub init {
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 
-	$::d_server && msg("SlimServer Info init...\n");
-	Slim::Music::Info::init();
-
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Utils::PluginManager::init();
+
+	$::d_server && msg("SlimServer Scanner init...\n");
+	Slim::Utils::Scanner->init;
 
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
@@ -914,13 +913,12 @@ sub checkDataSource {
 			$audiodir =~ s|[/\\]$||;
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
+
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
 		if ($ds->count('track') == 0) {
 
-			# Let's go through Command rather than calling
-			# Slim::Music::Import::startScan() directly...
-			#Slim::Control::Request::executeRequest(undef, ['rescan']);
+			Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 	}
 }
@@ -991,28 +989,6 @@ sub stopServer {
 	exit();
 }
 
-sub sigint {
-	$::d_server && msg("Got sigint.\n");
-	cleanup();
-	exit();
-}
-
-sub sigterm {
-	$::d_server && msg("Got sigterm.\n");
-	cleanup();
-	exit();
-}
-
-sub ignoresigquit {
-	$::d_server && msg("Ignoring sigquit.\n");
-}
-
-sub sigquit {
-	$::d_server && msg("Got sigquit.\n");
-	cleanup();
-	exit();
-}
-
 sub cleanup {
 
 	$::d_server && msg("SlimServer cleaning up.\n");
@@ -1054,11 +1030,6 @@ sub remove_pid_file {
 	 }
 }
  
-sub END {
-	$::d_server && msg("Got to the END.\n");
-	sigint();
-}
-
 # start up the server if we're not running as a service.	
 if (!defined($PerlSvc::VERSION)) { 
 	main()

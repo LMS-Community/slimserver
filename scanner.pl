@@ -39,18 +39,23 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes);
+	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
 	our ($rescan, $wipe, $itunes, $musicmagic);
 
 	our $LogTimestamp = 1;
-	our $d_server     = 1;
-	our $d_import     = 1;
 
 	GetOptions(
 		'rescan'     => \$rescan,
 		'wipe'       => \$wipe,
 		'itunes'     => \$itunes,
 		'musicmagic' => \$musicmagic,
+		'd_info'     => \$d_info,
+		'd_server'   => \$d_server,
+		'd_import'   => \$d_import,
+		'd_parse'    => \$d_parse,
+		'd_scan'     => \$d_scan,
+		'd_sql'      => \$d_sql,
+		'd_itunes'   => \$d_itunes,
 	);
 
 	if (!$rescan && !$wipe && !$musicmagic && !$itunes && !scalar @ARGV) {
@@ -125,12 +130,6 @@ sub initializeFrameworks {
 
 	$::d_server && msg("SlimServer OS Specific init...\n");
 
-	$SIG{'CHLD'} = 'IGNORE';
-	$SIG{'PIPE'} = 'IGNORE';
-	$SIG{'TERM'} = \&bootstrap::sigterm;
-	$SIG{'INT'}  = \&bootstrap::sigint;
-	$SIG{'QUIT'} = \&bootstrap::sigquit;
-
 	# initialize slimserver subsystems
 	$::d_server && msg("SlimServer settings init...\n");
 
@@ -152,7 +151,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
 
 Examples:
 

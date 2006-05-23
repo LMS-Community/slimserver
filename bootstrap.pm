@@ -112,7 +112,7 @@ sub loadModules {
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
 
-	$SIG{'CHLD'} = 'IGNORE';
+	# $SIG{'CHLD'} = 'IGNORE';
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'TERM'} = \&sigterm;
 	$SIG{'INT'}  = \&sigint;

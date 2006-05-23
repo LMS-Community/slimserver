@@ -24,7 +24,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Formats::Parse;
 use Slim::Music::Info;
-use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 
 sub init {
@@ -36,11 +35,14 @@ sub init {
 
 	# Term::ProgressBar requires Class::MethodMaker, which is rather large and is
 	# compiled. Many platforms have it already though..
-	eval "use Term::ProgressBar";
+	if ($::d_scan) {
 
-	if (!$@ && -t STDOUT) {
+		eval "use Term::ProgressBar";
 
-		$class->useProgressBar(1);
+		if (!$@ && -t STDOUT) {
+
+			$class->useProgressBar(1);
+		}
 	}
 }
 
@@ -77,7 +79,7 @@ sub scanPathOrURL {
 
 		msg("scanPathOrURL: Reading metdata from remote URL: $pathOrUrl\n");
 
-		$class->scanRemoteURL({ 'url' => $pathOrUrl });
+		$class->scanRemoteURL($args);
 
 	} else {
 
@@ -89,7 +91,7 @@ sub scanPathOrURL {
 		# Always let the user know what's going on..
 		msg("scanPathOrURL: Finding valid files in: $pathOrUrl\n");
 
-		$class->scanDirectory({ 'url' => $pathOrUrl });
+		$class->scanDirectory($args);
 	}
 }
 
@@ -105,6 +107,7 @@ sub scanDirectory {
 
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $os     = Slim::Utils::OSDetect::OS();
+	my $last   = $ds->lastRescanTime;
 
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
@@ -122,14 +125,20 @@ sub scanDirectory {
 	$rule->extras($extras);
 
 	# Only rescan the file if it's changed since our last scan time.
-	if ($::rescan) {
-		$rule->mtime( sprintf('>%d', $ds->lastRescanTime) );
+	if ($::rescan && $last) {
+		$rule->mtime( sprintf('>%d', $last) );
+	}
+
+	# Honor recursion
+	if (defined $args->{'recursive'} && $args->{'recursive'} == 0) {
+		$rule->maxdepth(0);
 	}
 
 	# validTypeExtensions returns a qr// regex.
 	$rule->name( Slim::Music::Info::validTypeExtensions() );
 
-        my @files = $rule->in($topDir);
+	my @files   = $rule->in($topDir);
+	my @objects = ();
 
 	if (!scalar @files) {
 
@@ -169,7 +178,11 @@ sub scanDirectory {
 
 				$::d_scan && msg("scanDirectory: Following Windows Shortcut to: $url\n");
 
-				$class->scanDirectory({ 'url' => $file });
+				$class->scanDirectory({
+					'url'     => $file,
+					'listRef' => $args->{'listRef'},
+				});
+
 				next;
 			}
 		}
@@ -179,9 +192,10 @@ sub scanDirectory {
 
 			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
-			$ds->updateOrCreate({
-				'url'      => $url,
-				'readTags' => 1,
+			push @objects, $ds->updateOrCreate({
+				'url'        => $url,
+				'readTags'   => 1,
+				'checkMTime' => 1,
 			});
 
 		} elsif (Slim::Music::Info::isPlaylist($url) && 
@@ -191,17 +205,24 @@ sub scanDirectory {
 			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
 			my $track = $ds->updateOrCreate({
-				'url'      => $url,
-				'readTags' => 0,
+				'url'        => $url,
+				'readTags'   => 0,
+				'checkMTime' => 1,
 			});
 
-			$class->scanPlaylistFileHandle($track, FileHandle->new($file));
+			push @objects, $class->scanPlaylistFileHandle($track, FileHandle->new($file));
 		}
 
 		if ($class->useProgressBar) {
 
 			$progress->update;
 		}
+	}
+
+	# If the caller wants the list of objects we found.
+	if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {
+
+		push @{$args->{'listRef'}}, @objects;
 	}
 }
 
@@ -269,7 +290,7 @@ sub scanPlaylistFileHandle {
 		$::d_scan && msgf("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
 	}
 
-	if (ref($playlistFH) eq 'Slim::Player::Protocols::HTTP') {
+	if (ref($playlistFH) eq 'Slim::Formats::HTTP') {
 
 		# we've just opened a remote playlist.  Due to the synchronous
 		# nature of our parsing code and our http socket code, we have
