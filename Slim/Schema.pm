@@ -515,7 +515,7 @@ sub updateOrCreate {
 		# Force a re-read if requested.
 		# But not for remote / non-audio files.
 		# 
-		# Bug: 2335 - readTags is set in Slim::Formats::Parse - when
+		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
 		# we create/update a cue sheet to have a CT of 'cur'
 		if ($readTags && $track->get('audio') && !$track->get('remote') && 
 			defined $attributeHash->{'CONTENT_TYPE'} &&

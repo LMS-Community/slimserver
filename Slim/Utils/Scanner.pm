@@ -22,7 +22,7 @@ use IO::String;
 use Path::Class;
 use Scalar::Util qw(blessed);
 
-use Slim::Formats::Parse;
+use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 
@@ -329,7 +329,7 @@ sub scanPlaylistFileHandle {
 		$playlistFH = IO::String->new($playlistString);
 	}
 
-	my @playlistTracks = Slim::Formats::Parse::parseList($url, $playlistFH, $parentDir);
+	my @playlistTracks = Slim::Formats::Playlists->parseList($url, $playlistFH, $parentDir);
 
 	# Be sure to remove the reference to this handle.
 	if (ref($playlistFH) eq 'IO::String') {
