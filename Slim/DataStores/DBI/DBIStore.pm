@@ -1524,7 +1524,7 @@ sub _postCheckAttributes {
 
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
-	my $isLocal = $trackAudio && !$trackRemote;
+	my $isLocal = Slim::Music::Info::isSong($trackUrl) && !Slim::Music::Info::isRemoteURL($trackUrl);
 
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
@@ -1569,9 +1569,9 @@ sub _postCheckAttributes {
 		});
 
 		Slim::DataStores::DBI::Contributor->add({
-			'artist' => $_unknownArtist,
+			'artist' => $_unknownArtist->name,
 			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			'track'  => $track,
+			'track'  => $track->id,
 		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
@@ -1581,9 +1581,9 @@ sub _postCheckAttributes {
 		# Otherwise - reuse the singleton object, since this is the
 		# second time through.
 		Slim::DataStores::DBI::Contributor->add({
-			'artist' => $_unknownArtist,
+			'artist' => $_unknownArtist->name,
 			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			'track'  => $track,
+			'track'  => $track->id,
 		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
@@ -1762,7 +1762,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if (defined($album) && blessed($albumObj) && $albumObj->can('title') && ($albumObj ne $_unknownAlbum)) {
+	if (defined($album) && blessed($albumObj) && (!blessed($_unknownAlbum) || $albumObj->title ne $_unknownAlbum->title)) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
