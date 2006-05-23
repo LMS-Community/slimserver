@@ -81,6 +81,8 @@ use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Music::Info;
+use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
@@ -363,6 +365,12 @@ sub detailsSetMode {
 		valueRef   => \$context{$client}->{'detailsModeIndex'},
 		parentMode => Slim::Buttons::Common::mode($client),
 		stationURL => $stationURL,
+
+		overlayRef => sub {
+			my $client = shift;
+
+			return (undef, Slim::Display::Display::symbol('notesymbol'));
+		},
 
 		overlayRef => sub {
 			my $client = shift;
