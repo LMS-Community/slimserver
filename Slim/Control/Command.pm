@@ -680,9 +680,9 @@ sub execute {
 
 						$client->currentPlaylistModified(1);
 					}
-					
+
 					#$path = Slim::Utils::Misc::virtualToAbsolute($path);
-					
+
 					if ($p1 =~ /^(play|load)$/) { 
 
 						$jumpToIndex = 0;

@@ -16,6 +16,8 @@ use IO::Socket qw(:DEFAULT :crlf);
 
 use base qw(Slim::Player::Pipeline);
 
+use Slim::Player::Source;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 
 # The following are class variables, since they hold state used during
