@@ -41,36 +41,11 @@ our %contributorToRoleMap = (
 
 # Do a proper join
 sub albums {
-
-  return shift->contributorAlbums->search_related(
-           'album', undef, { distinct => 1 })->search(@_);
-
 	my $self = shift;
 
-	my @albums = Slim::DataStores::DBI::Album->search(
-		{ 'contributor.id' => $self->id },
-		{
-			'join'     => { 'contributorAlbums' => 'contributor' },
-			'order_by' => 'me.titlesort, me.disc',
-		},
-	);
-
-	# Waiting for mst to implement DISTINCT
-	my %seen   = ();
-	my @unique = ();
-
-	for my $album (@albums) {
-
-		my $id = $album->id;
-
-		next if $seen{$id};
-
-		push @unique, $album;
-
-		$seen{$id} = 1;
-	}
-
-	return @unique;
+	return $self->contributorAlbums->search_related(
+		'album', undef, { distinct => 1 }
+	)->search(@_);
 }
 
 sub tracks {

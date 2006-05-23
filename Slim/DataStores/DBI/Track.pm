@@ -45,19 +45,30 @@ our @allColumns = (qw(
 }
 
 sub tracks {
-  return shift->playlist_tracks->search_related('track' => @_);
+	my $self = shift;
+
+	return $self->playlist_tracks->search_related('track' => @_);
 }
 
 sub contributors {
+	my $self = shift;
 
-  return shift->contributorTracks->search_related(
-           'contributor', undef, { distinct => 1, order_by => 'tracknum' }
-             )->search(@_);
+	return $self->contributorTracks->search_related(
+		'contributor', undef, { distinct => 1, order_by => 'tracknum' }
+	)->search(@_);
 }
 
-sub comments { return map { $_->value } shift->comment_objects(@_); }
+sub comments {
+	my $self = shift;
 
-sub genres { shift->genre_tracks->search_related('track', @_); }
+	return map { $_->value } $self->comment_objects(@_);
+}
+
+sub genres {
+	my $self = shift;
+
+	return $self->genre_tracks->search_related('track', @_);
+}
 
 sub attributes {
 	my $class = shift;

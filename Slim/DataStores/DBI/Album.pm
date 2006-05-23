@@ -46,23 +46,11 @@ use Slim::Utils::Misc;
 
 # Do a proper join
 sub contributors {
-
-  return shift->contributorAlbums->search_related(
-	'contributor', undef, { distinct => 1 })->search(@_);
-
 	my $self = shift;
 
-	# XXX - we need to do our own 'DISTINCT' until mst adds support.
-        # MST - I did
-
-	my @contributors = Slim::DataStores::DBI::Contributor->search(
-		{ 'album.id' => $self->id },
-		{ 'join'     => { 'contributorAlbums' => 'album' } }
-	);
-
-	my %unique = map { $_->id => $_ } @contributors;
-
-	return values %unique;
+	return $self->contributorAlbums->search_related(
+		'contributor', undef, { distinct => 1 }
+	)->search(@_);
 }
 
 sub hasArtwork {

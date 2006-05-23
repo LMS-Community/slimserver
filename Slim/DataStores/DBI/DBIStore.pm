@@ -1561,6 +1561,7 @@ sub _postCheckAttributes {
 	} elsif (!$create && $isLocal && $genre && $genre ne $track->genre) {
 
                 # (mst) $track->genre is ($self->genres)[0]. XXX is this right?
+		# (dsully) - yes, that's right.
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
@@ -1844,12 +1845,8 @@ sub _postCheckAttributes {
 		# Now create a contributors <-> album mapping
 		if (!$create) {
 
-			# Did the user change the album title?
-			#if ($albumObj->title ne $album) {
-                        # (mst) I can't quite see the point of this
-
-				$albumObj->title($album);
-			#}
+			# Update the album title - the user might have changed it.
+			$albumObj->title($album);
 
 			# Remove all the previous mappings
 			Slim::DataStores::DBI::ContributorAlbum->search('album' => $albumObj->id)->delete_all;
