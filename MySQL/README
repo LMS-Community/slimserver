@@ -1,0 +1,20 @@
+$Id$
+
+Notes:
+
+* These are binaries downloaded from:
+  http://dev.mysql.com/downloads/mysql/5.0.html
+
+* Currently at version 5.0.19.
+
+* Excess files have been removed, to keep the bare minimum.
+
+* Please see COPYING in this directory for license information.
+
+Changes:
+
+* The OS X precompiled binaries for 10.3 PPC and 10.4 x86 have been merged
+  using the 'lipo' command on OS X to create a single Universal binary.
+
+  lipo mysql-standard-5.0.19-osx10.3-powerpc/bin/mysqld \
+       mysql-standard-5.0.19-osx10.4-i686/bin/mysqld -create -output mysqld
