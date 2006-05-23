@@ -777,7 +777,6 @@ sub findWithJoins {
 		my @objects;
 
 		while (my $h = $sth->fetchrow_hashref) {
-                        use Data::Dumper; print Dumper($h);
 			my $r = $c->inflate_result($c->result_source_instance, $h);
                         push(@objects, $r);
 		}
