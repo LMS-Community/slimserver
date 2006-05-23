@@ -168,9 +168,6 @@ sub initPlugin {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
 			});
-			Slim::Web::Pages->addPageLinks("browse", {
-				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
-			});
 		}
 	}
 	
@@ -361,6 +358,76 @@ sub grabFilters {
 	}
 
 	return %filterHash;
+}
+
+sub grabMoods {
+	my @moods;
+	my %moodHash;
+	
+	return unless $initialized;
+	
+	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		$::d_musicmagic && msg("MusicMagic: don't get moods list, it's disabled\n");
+		return %moodHash;
+	}
+	
+	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
+	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
+
+	$::d_musicmagic && msg("MusicMagic: get moods list\n");
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/moods",
+		'create' => 0,
+	});
+
+	if ($http) {
+
+		@moods = split(/\n/, $http->content);
+		$http->close;
+
+		if ($::d_musicmagic && scalar @moods) {
+
+			msg("MusicMagic: found moods:\n");
+
+			for my $mood (@moods) {
+				msg("MusicMagic:\t$mood\n");
+			}
+		}
+	}
+
+	return \@moods;
+}
+
+sub setMoodMode {
+	my $client = shift;
+	my $method = shift;
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	my %params = (
+		'header'         => $client->string('MUSICMAGIC_MOODS'),
+		'listRef'        => &grabMoods,
+		'headerAddCount' => 1,
+		'overlayRef'     => sub {return (undef, $client->symbols('rightarrow'));},
+		'mood'           => 'none',
+		'callback'       => sub {
+			my $client = shift;
+			my $method = shift;
+
+			if ($method eq 'right') {
+				
+				mixerFunction($client);
+			}
+			elsif ($method eq 'left') {
+				Slim::Buttons::Common::popModeRight($client);
+			}
+		},
+	);
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 }
 
 sub specialPushLeft {
@@ -665,7 +732,6 @@ sub musicmagic_mix {
 	my $artist   = $params->{'artist'};
 	my $album    = $params->{'album'};
 	my $genre    = $params->{'genre'};
-	my $mood     = $params->{'mood'};
 	my $player   = $params->{'player'};
 	my $playlist = $params->{'playlist'};
 	my $p0       = $params->{'p0'};
@@ -674,11 +740,7 @@ sub musicmagic_mix {
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
 
-	if ($mood) {
-		$mix = getMix($client, $mood, 'mood');
-		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $mood);
-
-	} elsif ($playlist) {
+	if ($playlist) {
 		my ($obj) = $ds->objectForUrl($playlist);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
@@ -834,7 +896,7 @@ sub setupUse {
 	my %setupPrefs = (
 
 		'musicmagic'  => {
-			'validate'    => \&Slim::Utils::Validate::trueFalse,
+			'validate'    => \&Slim::Web::Setup::validateTrueFalse,
 			'changeIntro' => "",
 
 			'options' => {
@@ -867,8 +929,8 @@ sub setupGroup {
 
 	$category->{'parent'}     = 'PLAYER_SETTINGS';
 	$category->{'GroupOrder'} = ['Default'];
-	$category->{'Groups'}     = &playerGroup->{'Groups'};
-
+	$category->{'Groups'}     = %{&playerGroup}->{'Groups'};
+	
 	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
 }
 
@@ -938,28 +1000,28 @@ sub setupCategory {
 			},
 
 			'musicmagicscaninterval' => {
-				'validate'     => \&Slim::Utils::Validate::number,
+				'validate'     => \&Slim::Web::Setup::validateNumber,
 				'validateArgs' => [0,undef,1000],
 			},
 
 			,'MMMFilter' => {
-				'validate'      => \&Slim::Utils::Validate::inHash
+				'validate'      => \&Slim::Web::Setup::validateInHash
 				,'validateArgs' => [\&grabFilters]
 				,'options'      => {grabFilters()}
 			},
 			
 			'MMMSize' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMRejectSize' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1,undef,1]
 			},
 			
 			'MMMMixType' => {
-				'validate'     => \&Slim::Utils::Validate::inList,
+				'validate'     => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
 				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
@@ -969,7 +1031,7 @@ sub setupCategory {
 			},
 			
 			'MMMRejectType' => {
-				'validate'     => \&Slim::Utils::Validate::inList,
+				'validate'     => \&Slim::Web::Setup::validateInList,
 				'validateArgs' => [0,1,2],
 				'options'      => {
 					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
@@ -987,17 +1049,17 @@ sub setupCategory {
 			},
 			
 			'MMMStyle' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [0,200,1,1],
 			},
 
 			'MMMVariety' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [0,9,1,1],
 			},
 
 			'MMSport' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validate'     => \&Slim::Web::Setup::validateInt,
 				'validateArgs' => [1025,65535,undef,1],
 			},
 
