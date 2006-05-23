@@ -487,9 +487,6 @@ sub idle {
 		$::d_time && msg("select_time: $select_time\n");
 	}
 
-	# loop through once a second, at a minimum
-	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
-	
 	$::d_time && msg("select_time: $select_time\n");
 	
 	Slim::Networking::Select::select($select_time);
