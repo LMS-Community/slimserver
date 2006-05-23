@@ -204,7 +204,6 @@ our (
 	$d_mp3,
 	$d_musicmagic,
 	$d_os,
-	$d_perf,
 	$d_parse,
 	$d_paths,
 	$d_playlist,
@@ -461,6 +460,7 @@ sub idle {
 		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
 		$::d_time && msg("finished adjustalltimers: " . Time::HiRes::time() . "\n");
 	} 
+
 	$lastlooptime = $now;
 
 	my $select_time = 0; # default to not waiting in select
@@ -474,9 +474,19 @@ sub idle {
 	# loop through once a second, at a minimum
 	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 
-	# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
-	$select_time = Slim::Utils::Timers::nextTimer();
-	
+		# handle notifications once IR queue is empty
+		Slim::Control::Request::checkNotifications();
+
+		# set timeout to wait in select based on when next timer is due, or once per second
+		$select_time = Slim::Utils::Timers::nextTimer();
+
+		if (!defined($select_time) || $select_time > 1) {
+			$select_time = 1
+		}
+
+		$::d_time && msg("select_time: $select_time\n");
+	}
+
 	# loop through once a second, at a minimum
 	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 	
