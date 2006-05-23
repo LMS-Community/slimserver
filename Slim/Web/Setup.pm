@@ -1926,8 +1926,6 @@ sub initSetupConfig {
 					lookForArtwork
 					itemsPerPass
 					prefsWriteDelay
-					databaseTempStorage
-					databaseCacheSize
 				)],
 			},
 		},
@@ -1958,41 +1956,8 @@ sub initSetupConfig {
 				'validateArgs' => [0,undef,1],
 			},
 
-			'databaseCacheSize' => {
-				'PrefHead' => 'SETUP_DATBASE_TUNE_CACHE_SIZE_HEAD',
-				'PrefDesc' => 'SETUP_DATBASE_TUNE_CACHE_SIZE_DESC',
-
+			'keepUnswappedInterval' => {
 				'validate' => \&Slim::Utils::Validate::isInt,
-
-				'onChange' => sub {
-					my ($client, $changeref) = @_;
-
-					my $ds = Slim::Music::Info->getCurrentDataStore;
-
-					$ds->modifyDatabaseCacheSize($changeref->{'databaseCacheSize'}{'new'});
-				},
-			},
-
-			'databaseTempStorage' => {
-				'PrefHead' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_HEAD',
-				'PrefDesc' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_DESC',
-
-				'options' => {
-					'MEMORY' => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_MEMORY',
-					'FILE'   => 'SETUP_DATBASE_TUNE_TEMP_STORAGE_FILE',
-				},
-
-				'onChange' => sub {
-					my ($client, $changeref) = @_;
-
-					my $ds  = Slim::Music::Info->getCurrentDataStore;
-					my $val = $changeref->{'databaseTempStorage'}{'new'};
-
-					if ($val eq 'MEMORY' || $val eq 'FILE') {
-
-						$ds->modifyDatabaseTempStorage($val);
-					}
-				},
 			},
 		},
 	} #end of setup{'performance'} hash

@@ -84,7 +84,7 @@ sub init {
 	my $nextversion;
 	do {
 		if (grep { /metainformation/ } $dbh->tables()) {
-			($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
+			($version) = $dbh->selectrow_array("SELECT value FROM metainformation WHERE name = 'version'");
 		}
 
 		if (defined $version) {
@@ -264,42 +264,6 @@ sub wipeDB {
 
 	$class->storage->dbh->commit;
 	$class->storage->dbh->disconnect;
-}
-
-sub clearObjectCaches {
-	my $class = shift;
-
-	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorAlbum 
-		ContributorTrack GenreTrack PlaylistTrack) {
-
-		my $package = 'Slim::DataStores::DBI::' . $c;
-
-		#$package->clear_object_index;
-	}
-}
-
-sub getLastRescanTime {
-	my $class = shift;
-
-	$class->storage->dbh->selectrow_array("SELECT last_rescan_time FROM metainformation");
-}
-
-sub setLastRescanTime {
-	my ($class, $time) = @_;
-
-	$class->storage->dbh->do("UPDATE metainformation SET last_rescan_time = $time");
-}
-
-sub getMetaInformation {
-	my $class = shift;
-
-	$class->storage->dbh->selectrow_array("SELECT track_count, total_time FROM metainformation");
-}
-
-sub setMetaInformation {
-	my ($class, $track_count, $total_time) = @_;
-
-	$class->storage->dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
 }
 
 sub getWhereValues {

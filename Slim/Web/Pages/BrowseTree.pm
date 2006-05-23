@@ -146,7 +146,7 @@ sub browsetree {
 
 	$params->{'descend'} = 1;
 	
-	if (Slim::Music::Import::stillScanning()) {
+	if (Slim::Music::Import->stillScanning()) {
 		$params->{'warn'} = 1;
 	}
 

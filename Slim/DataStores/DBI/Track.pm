@@ -35,13 +35,14 @@ our @allColumns = (qw(
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::DataStores::DBI::Album');
 
-	$class->has_many('genre_tracks'       => 'Slim::DataStores::DBI::GenreTrack' => 'track');
-	$class->has_many('comment_objects'     => 'Slim::DataStores::DBI::Comment' => 'track');
+	$class->has_many('genre_tracks'      => 'Slim::DataStores::DBI::GenreTrack' => 'track');
+	$class->has_many('comment_objects'   => 'Slim::DataStores::DBI::Comment'    => 'track');
 
 	$class->has_many('contributorTracks' => 'Slim::DataStores::DBI::ContributorTrack');
 
-	$class->has_many('playlist_tracks' => 'Slim::DataStores::DBI::PlaylistTrack' => 'playlist' => { order_by => 'playlist_tracks.position' });
-
+	$class->has_many('playlist_tracks'   => 'Slim::DataStores::DBI::PlaylistTrack' => 'playlist');
+		#'playlist' => { order_by => 'playlist_tracks.position' }
+	#);
 }
 
 sub tracks {

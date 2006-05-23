@@ -40,11 +40,13 @@ use Slim::Utils::Strings qw(string);
 sub main {
 
 	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
-	our ($rescan, $wipe, $itunes, $musicmagic);
+	our ($rescan, $wipe, $itunes, $musicmagic, $force, $cleanup);
 
 	our $LogTimestamp = 1;
 
 	GetOptions(
+		'force'      => \$force,
+		'cleanup'    => \$cleanup,
 		'rescan'     => \$rescan,
 		'wipe'       => \$wipe,
 		'itunes'     => \$itunes,
@@ -67,6 +69,14 @@ sub main {
 	initializeFrameworks();
 
 	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	if (!$force && Slim::Music::Import->stillScanning) {
+
+		msg("Import: There appears to be an existing scanner running.\n");
+		msg("Import: If this is not the case, run with --force\n");
+		msg("Exiting!\n");
+		exit;
+	}
 
 	#
 	Slim::Utils::Scanner->init;
@@ -105,6 +115,10 @@ sub main {
 		Slim::Music::Info::wipeDBCache();
 	}
 
+	if ($cleanup) {
+		Slim::Music::Import->cleanupDatabase(1);
+	}
+
 	# We've been passed an explict path or URL - deal with that.
 	if (scalar @ARGV) {
 
@@ -120,7 +134,7 @@ sub main {
 		Slim::Music::Import->startScan;
 	}
 
-	$ds->setLastRescanTime(time);
+	# $ds->setLastRescanTime(time);
 }
 
 sub initializeFrameworks {

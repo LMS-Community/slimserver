@@ -26,6 +26,7 @@ use Slim::DataStores::DBI::Comment;
 use Slim::DataStores::DBI::Contributor;
 use Slim::DataStores::DBI::ContributorAlbum;
 use Slim::DataStores::DBI::Genre;
+use Slim::DataStores::DBI::MetaInformation;
 use Slim::DataStores::DBI::Rescan;
 use Slim::DataStores::DBI::Track;
 
@@ -100,26 +101,19 @@ sub new {
 	bless $self, $class;
 
 	Slim::DataStores::DBI::DataModel->init;
-	
-	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
-	
+
+	for my $name (qw(trackCount totalTime)) {
+
+		my ($obj) = Slim::DataStores::DBI::MetaInformation->search('name' => $name);
+
+		$self->{$name} = $obj->value || 0;
+	}
+
 	$common_albums = Slim::Utils::Prefs::get('commonAlbumTitles');
 
 	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 
 	return $self;
-}
-
-sub setLastRescanTime {
-	my ($class, $time) = @_;
-
-	Slim::DataStores::DBI::DataModel->setLastRescanTime($time);
-}
-
-sub lastRescanTime {
-	my $class = shift;
-
-	Slim::DataStores::DBI::DataModel->getLastRescanTime;
 }
 
 sub dbh {
@@ -132,38 +126,6 @@ sub driver {
 	my $self = shift;
 
 	return Slim::DataStores::DBI::DataModel->driver;
-}
-
-# SQLite has some tuning parameters available via it's PRAGMA interface. See
-# http://www.sqlite.org/pragma.html for more details.
-#
-# These wrappers allow us to set the params.
-sub modifyDatabaseTempStorage {
-	my $self  = shift;
-	my $value = shift || Slim::Utils::Prefs::get('databaseTempStorage');
-
-	if ($self->driver eq 'SQLite') {
-
-		eval { $self->dbh->do("PRAGMA temp_store = $value") };
-
-		if ($@) {
-			errorMsg("Couldn't change the database temp_store value to: [$value]: [$@]\n");
-		}
-	}
-}
-
-sub modifyDatabaseCacheSize {
-	my $self  = shift;
-	my $value = shift || Slim::Utils::Prefs::get('databaseCacheSize');
-
-	if ($self->driver eq 'SQLite') {
-
-		eval { $self->dbh->do("PRAGMA cache_size = $value") };
-
-		if ($@) {
-			errorMsg("Couldn't change the database cache_size value to: [$value]: [$@]\n");
-		}
-	}
 }
 
 sub classForType {
@@ -927,8 +889,6 @@ sub wipeCaches {
 	$self->{'lastTrack'}    = {};
 	$self->{'zombieList'}   = {};
 
-	Slim::DataStores::DBI::DataModel->clearObjectCaches;
-
 	$::d_import && msg("Import: Wiped all in-memory caches.\n");
 }
 
@@ -956,7 +916,14 @@ sub forceCommit {
 	my $self = shift;
 
 	# Update the track count
-	Slim::DataStores::DBI::DataModel->setMetaInformation($self->{'trackCount'}, $self->{'totalTime'});
+	Slim::DataStores::DBI::MetaInformation->find_or_create({
+
+	for my $name (qw(trackCount totalTime)) {
+
+		my ($obj) = Slim::DataStores::DBI::MetaInformation->search('name' => $name);
+		    $obj->value($self->{$name});
+		    $obj->update;
+	}
 
 	for my $zombie (keys %{$self->{'zombieList'}}) {
 

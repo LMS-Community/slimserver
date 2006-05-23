@@ -11,13 +11,16 @@ SET foreign_key_checks = 0;
 -- Table: metainformation
 --
 CREATE TABLE metainformation (
-  version  int(10) unsigned,
-  track_count  int(10) unsigned,
-  total_time  int(10) unsigned,
-  last_rescan_time int(10) unsigned
-) TYPE=InnoDB;
+  name  varchar(255) NOT NULL DEFAULT '',
+  value varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (name)
+) TYPE=InnoDB CHARACTER SET utf8;
 
-INSERT INTO metainformation VALUES (20, 0, 0, 0);
+INSERT INTO metainformation VALUES ('version', 21);
+INSERT INTO metainformation VALUES ('trackCount', 0);
+INSERT INTO metainformation VALUES ('totalTime', 0);
+INSERT INTO metainformation VALUES ('lastRescanTime', 0);
+INSERT INTO metainformation VALUES ('isScanning', 0);
 
 --
 -- Table: rescans
@@ -29,7 +32,7 @@ CREATE TABLE rescans (
   start_time int(10) unsigned,
   end_time int(10) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: unreadable_tracks
@@ -41,7 +44,7 @@ CREATE TABLE unreadable_tracks (
   reason text NOT NULL,
   PRIMARY KEY (id),
   INDEX unreadableRescanIndex (rescan)
-) TYPE=InnoDB;
+) TYPE=InnoDB CHARACTER SET utf8;
 
 --
 -- Table: tracks
@@ -105,7 +108,7 @@ CREATE TABLE tracks (
   INDEX urlIndex (url(255)),
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -118,7 +121,7 @@ CREATE TABLE playlist_track (
   track  int(10) unsigned,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -181,8 +184,8 @@ CREATE TABLE contributor_track (
   INDEX contributor_trackTrackIndex (track),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -196,8 +199,8 @@ CREATE TABLE contributor_album (
   INDEX contributor_trackAlbumIndex (album),
   INDEX contributor_trackRoleIndex (role),
   PRIMARY KEY (role,contributor,album),
-  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE NO ACTION,
+  FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -228,8 +231,8 @@ CREATE TABLE genre_track (
   INDEX genre_trackGenreIndex (genre),
   INDEX genre_trackTrackIndex (track),
   PRIMARY KEY (genre,track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION,
+  FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
@@ -241,7 +244,7 @@ CREATE TABLE comments (
   value text,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE NO ACTION
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --

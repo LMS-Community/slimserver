@@ -107,7 +107,7 @@ sub scanDirectory {
 
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $os     = Slim::Utils::OSDetect::OS();
-	my $last   = $ds->lastRescanTime;
+	my $last   = 0; # $ds->lastRescanTime;
 
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
