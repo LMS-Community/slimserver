@@ -82,6 +82,7 @@ sub clearAllCounters {
 	$Slim::Networking::Select::endSelectTime = undef;
 	$Slim::Utils::Timers::timerLate->clear();
 	$Slim::Utils::Timers::timerLength->clear();
+	$Slim::Hardware::IR::irPerf->clear();
 }
 
 # Summary info which attempts to categorise common problems based on performance measurments taken
@@ -256,6 +257,7 @@ sub handleIndex {
 	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
 	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
 	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
+	$params->{'irresponse'} = $Slim::Hardware::IR::irPerf->sprint();
 
 	$params->{'refresh'} = $refresh;
 
