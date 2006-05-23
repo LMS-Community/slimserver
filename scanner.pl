@@ -15,10 +15,11 @@ use strict;
 use warnings;
 
 use FindBin qw($Bin);
-use lib "$Bin";
+use lib $Bin;
 
 BEGIN {
 	use bootstrap;
+	use Slim::Utils::OSDetect;
 
 	bootstrap->loadModules(qw(Time::HiRes DBD::SQLite DBI XML::Parser));
 };
@@ -38,11 +39,12 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($d_info, $d_remotestream, $d_parse, $d_import, $d_scan, $d_sql, $d_itunes);
+	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes);
 	our ($rescan, $wipe, $itunes, $musicmagic);
 
 	our $LogTimestamp = 1;
 	our $d_server     = 1;
+	our $d_import     = 1;
 
 	GetOptions(
 		'rescan'     => \$rescan,
