@@ -9,8 +9,8 @@ use strict;
 use base qw(Class::Data::Inheritable);
 use DBI;
 use File::Path;
-use File::Slurp;
 use File::Spec::Functions qw(:ALL);
+use Proc::Background;
 use Template;
 
 use Slim::Utils::Misc;
@@ -21,7 +21,7 @@ use Slim::Utils::SQLHelper;
 INIT {
         my $class = __PACKAGE__;
 
-        for my $accessor (qw(confFile mysqlDir pidFile socketFile needSystemTables)) {
+        for my $accessor (qw(confFile mysqlDir pidFile socketFile needSystemTables processObj)) {
 
                 $class->mk_classdata($accessor);
         }
@@ -80,6 +80,14 @@ sub createConfig {
 		$class->needSystemTables(1);
 	}
 
+	# MySQL on Windows wants forward slashes.
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		for my $key (keys %config) {
+			$config{$key} =~ s/\\/\//g;
+		}
+	}
+
 	my $template = Template->new({ 'ABSOLUTE' => 1 });
            $template->process($ttConf, \%config, $output) || die $template->error;
 
@@ -94,7 +102,7 @@ sub startServer {
 		return 1;
 	}
 
-	if ($class->pidFile && $class->serverIsRunning) {
+	if ($class->pidFile && $class->processObj && $class->processObj->alive) {
 		errorMsg("startMySQLServer: MySQL is already running!\n");
 		return 0;
 	}
@@ -106,21 +114,22 @@ sub startServer {
 
 	# Create the command we're going to run, sending output to the logfile
 	# if it exists - otherwise, to /dev/null
-	my $command = sprintf('%s --defaults-file=%s --pid-file=%s 2>%s &',
+	my $command = sprintf('%s --defaults-file=%s --pid-file=%s %s',
 		$mysqld,
 		$class->confFile,
 		$class->pidFile,
-		$::logfile ? $::logfile : (Slim::Utils::OSDetect::OS() eq 'win' ? 'nul' : '/dev/null'),
+		Slim::Utils::OSDetect::OS() eq 'win' ? '' : ($::logfile ? "2>$::logfile" : '2>/dev/null'),
 	);
 
 	$::d_mysql && msg("MySQLHelper: startServer() running: [$command]\n");
 
-	system($command);
+	# This works for both Windows & *nix
+	my $proc = Proc::Background->new($command);
 
 	# Give MySQL time to get going..
 	eval {
 		local $SIG{'ALRM'} = sub { die "alarm\n" };
-		alarm 30;
+		alarm 10;
 
 		while (1) {
 			last if -r $class->pidFile;
@@ -134,20 +143,17 @@ sub startServer {
 		exit;
 	}
 
+	$class->processObj($proc);
+
 	return 1;
 }
 
 sub stopServer {
 	my $class = shift;
 
-	my $pid = $class->pid || do {
-		errorMsg("MySQLHelper: stopServer called with an invalid pid!\n");
-		return 0;
-	};
+	$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $class->processObj->pid);
 
-	$::d_mysql && msg("MySQLHelper: stopServer() Killing pid: [$pid]\n");
-
-	my $ret = kill('TERM', $pid);
+	$class->processObj->die;
 
 	# Wait for the PID file to go away.
 	eval {
@@ -156,6 +162,7 @@ sub stopServer {
 
 		while (1) {
 			last if !-r $class->pidFile;
+			last if !$class->processObj->alive;
 		}
 
 		alarm 0;
@@ -166,33 +173,10 @@ sub stopServer {
 		exit;
 	}
 
-	$class->pid(0);
+	# The pid file may be left around..
+	unlink($class->pidFile);
 
-	return $ret;
-}
-
-sub pid {
-	my $class = shift;
-
-	if (!$class->pidFile || !-r $class->pidFile) {
-		return 0;
-	}
-
-	chomp(my $pid = read_file($class->pidFile));
-
-	return $pid;
-}
-
-sub serverIsRunning {
-	my $class = shift;
-
-	my $pid = $class->pid;
-
-	if ($pid && kill(0, $pid)) {
-		return 1;
-	}
-
-	return 0;
+	$class->processObj(undef);
 }
 
 sub createSystemTables {
@@ -204,11 +188,25 @@ sub createSystemTables {
 
 	my $sqlFile = catdir($class->mysqlDir, 'system.sql');
 	my $ranOk   = 0;
+	my $dsn     = '';
 
 	# Connect to the database - doesn't matter what user and no database,
-	# in order to setup the system tables. We need to use the mysql_socket
-	# here, as mysql won't bring up the network port until the tables are installed.
-	my $dsn = sprintf('dbi:mysql:mysql_socket=%s', $class->socketFile);
+	# in order to setup the system tables. 
+	#
+	# We need to use the mysql_socket on *nix platforms here, as mysql
+	# won't bring up the network port until the tables are installed.
+	#
+	# On Windows, TCP is the default.
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		$dsn = Slim::Utils::Prefs::get('dbsource');
+		$dsn =~ s/;database=.+;?//;
+
+	} else {
+
+		$dsn = sprintf('dbi:mysql:mysql_socket=%s', $class->socketFile);
+	}
 
 	my $dbh = DBI->connect($dsn) or do {
 		errorMsg("MySQLHelper: createSystemTables() Couldn't connect to database: [$dsn] - [$DBI::errstr]\n");
