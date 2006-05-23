@@ -157,17 +157,71 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]
-	href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%]&amp;[% IF item.sort %]sort=[% item.sort %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the browsetree page for item %]
 [% BLOCK browseTreeItemHRef -%]
-href="[% webroot %]browsetree.html?topDir=[% topDir %]&amp;hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is a generic href for item, or the item itself if no href present %]
 [% BLOCK ItemHRef -%]
 [% item.href ? item.href : item %]
 [%- END %]
+
+[%# img tag for album thumbnail in browse artwork context %]
+[% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
+ [%- "<span style=\"width:";height;"px; height:";height;"px;\"><img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
+ [%- " alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %]
+ [%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"></span>" -%]
+[%- END %]
+
+[%# img tag for album thumbnail in browse artwork context %]
+[% BLOCK dummyItemImg -%]
+	[%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
+	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
+[%- END %]
+
+[% BLOCK pagebarcalc;
+	pagebarstart = pageinfo.currentpage - (pagesperbar div 2);
+	IF (pagebarstart < 0) || (pagesperbar >= pageinfo.totalpages); pagebarstart = 0; END;
+	lastpage = pageinfo.totalpages - 1;
+	pagebarend = pagebarstart + pagesperbar - 1;
+	IF pagebarend > lastpage; pagebarend = lastpage; END;
+	IF pagebarstart > 0; 
+	  pagesstart = 1;
+	  pagesprev = pageinfo.currentpage - pagesperbar;
+	  IF pagesprev < 0; pagesprev = 0; END;
+	  pagesprev = pagesprev * pageinfo.itemsperpage;
+	ELSE; 
+	  pagesstart = 0;
+	  pagesprev = '';
+	END;
+	IF pagebarend < lastpage;
+	  pagesend = lastpage * pageinfo.itemsperpage;
+	  pagesnext = pageinfo.currentpage + pagesperbar;
+	  IF pagesnext > lastpage; pagesnext = lastpage; END;
+	  pagesnext = pagesnext * pageinfo.itemsperpage;
+	ELSE;
+	  pagesend = 0;
+	  pagesnext = '';
+	END;
+	pageprev = pageinfo.currentpage > 0 ? ((pageinfo.currentpage - 1) * pageinfo.itemsperpage) : '';
+	pagenext = (pageinfo.currentpage < lastpage) ? ((pageinfo.currentpage + 1) * pageinfo.itemsperpage) : '';
+   END %]
+
+[% BLOCK alphapagecalc;
+	IF pageinfo.alphamap;
+	  FOREACH alphapage = pageinfo.alphamap.values.nsort.unique;
+	    IF alphapage == pageinfo.startitem;
+	      pageprev = loop.prev();
+	      pagenext = loop.next();
+	      LAST;
+	    END;
+	  END;
+	END;
+  END %]
 
 [% END -%]

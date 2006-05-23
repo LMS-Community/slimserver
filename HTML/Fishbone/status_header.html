@@ -28,19 +28,16 @@
 			'30' => '84', '32' => '90', '34' => '95', '36' => '100',
 		}
 	%]
-	[% FOREACH level = vols.nsort %]
-		<td valign="bottom">
-			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% playerURI %]&start=[% start %]">
-				<img valign="bottom" src="[% webroot %]html/images/spacer.gif" width="3" height="[% level %]" hspace="0" vspace="0">
-			</a>
-		</td>
-		<td valign="bottom">
-			<a href="[% statusroot %]?p0=mixer&p1=volume&p2=[% vols.$level %]&player=[% playerURI %]&start=[% start %]">
-				<img valign="bottom" src="[% webroot %]html/images/pixel.green[% IF volume < vols.$level %]_s[% END %].gif" width="4" height="[% level %]" hspace="0" vspace="0">
-			</a>
-		</td>
-	[% END %]
-[% END %]
+	[%- FOREACH level = vols.nsort.reverse %]
+	<div id="volumeBar[% level %]" class="volumeBar">
+		<div style="height: [% 37-level %]px;">[% PROCESS volumectl vol = vols.$level %]</div>
+		<div id="volDiv[% level %]" style="height: [% level %]px;background-color: [% IF volume < vols.$level %]#808080[% ELSE %]#00C000[% END %];">[% PROCESS volumectl vol = vols.$level %]</div>
+	</div>
+	<div class="volumeSpacer">
+		[% PROCESS volumectl vol = vols.$level %]
+	</div>
+	[%- END -%]
+[% END -%]
 
 [% BLOCK statectrl %]
 	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]');[% IF command == 'shuffle' %]refreshPlaylist();[% END %]"><b>[% cmdstring | string | upper%]</b></a>

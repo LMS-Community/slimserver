@@ -17,13 +17,11 @@ use strict;
 use MIME::Base64;
 
 use Slim::Buttons::Common;
-use Slim::Control::Request;
+use Slim::Buttons::XMLBrowser;
 use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Misc;
+use Slim::Utils::Strings qw( string );
+use Slim::Web::XMLBrowser;
 
 use Plugins::RadioIO::ProtocolHandler;
 
@@ -34,12 +32,7 @@ sub enabled {
 }                             
 
 sub initPlugin {
-	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
-}
-
-# Just so we don't have plain text URLs in the code.
-sub decrypt {
-	my $str = shift;
+	$::d_plugins && msg("RadioIO Plugin initializing.\n");
 	
 	# Backwards-compat with radioio:// protocol links
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
@@ -122,9 +115,9 @@ sub webPages {
 	my $title = 'PLUGIN_RADIOIO_MODULE_NAME';
 	
 	if (grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => undef });
+		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
 	} else {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_RADIOIO_MODULE_NAME' => "plugins/RadioIO/index.html" });
+		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RadioIO/index.html' });
 	}
 	
 	my %pages = ( 

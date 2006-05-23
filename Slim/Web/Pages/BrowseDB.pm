@@ -31,6 +31,7 @@ sub browsedb {
 	# XXX - why do we default to genre?
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
+	my $sort      = $params->{'sort'};
 	my $player    = $params->{'player'};
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
@@ -191,6 +192,7 @@ sub browsedb {
 		'title'	       => string($title),
 		'hierarchy'    => $hierarchy,
 		'level'	       => 0,
+		'sort'         => $sort,
 		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	};
 
@@ -318,8 +320,7 @@ sub browsedb {
 			$nextLevelRS = Slim::Schema->rs('Track');
 		}
 
-		# Generate the 'All $noun' link based on the next level down.
-		if ($count > 1 && !$rs->suppressAll) {
+		if ($level == 0) {
 
 			# Sometimes we want a special transform for
 			# the 'All' case - such as New Music.
@@ -341,12 +342,7 @@ sub browsedb {
 
 			$form{'level'} = 0;
 
-				# Sometimes we want a special transform for
-				# the 'All' case - such as New Music.
-				#
-				# Otherwise we might have a regular descend
-				# transform, such as the artwork case.
-				if ($rs->allTransform) {
+		} else {
 
 			$form{'hierarchy'} = $hierarchy;
 			$form{'level'}	   = $descend ? $level+1 : $level;
@@ -376,9 +372,8 @@ sub browsedb {
 		push @{$params->{'browse_items'}}, \%form;
 	}
 
-				$form{'hierarchy'} = $hierarchy;
-				$form{'level'}	   = $descend ? $level+1 : $level;
-			}
+	# Dynamic VA/Compilation listing
+	if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		my $vaObj      = Slim::Schema->variousArtistsObject;
 		my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
@@ -453,9 +448,7 @@ sub browsedb {
 
 			push @{$params->{'browse_items'}}, \%form;
 
-			if ($needIdleStreams) {
-				main::idleStreams();
-			}
+			main::idleStreams() if $needIdleStreams;
 		}
 
 		# If we're at the track level, and it's at the bottom of the
@@ -472,7 +465,7 @@ sub browsedb {
 	}
 
 	# Give players a bit of time.
-	main::idleStreams();
+	main::idleStreams() if $needIdleStreams;
 
 	$params->{'descend'} = $descend;
 

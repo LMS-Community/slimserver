@@ -897,11 +897,13 @@ sub status_memory_usage {
 
 		next if $package =~ /Slim::Utils::MemoryUsage/;
 		next if $package =~ /^B::/;
+		next if $package =~ /^B$/;
 		next if $package =~ /^Devel::/;
 		next if $package =~ /^Data::\w*?Dumper/;
 		next if $package =~ /::SUPER$/;
+		next if $package =~ /::ISA::CACHE$/;
 
-		my ($subs, $opcount, $opsize) = total_package_size($package);
+		my ($subs, $opcount, $opsize) = package_size($package);
 
 		$total{$package} = {'count' => $opcount, 'size' => $opsize};
 

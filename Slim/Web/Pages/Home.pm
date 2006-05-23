@@ -26,7 +26,7 @@ sub init {
 	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
 	$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
 	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	$class->addPageLinks("help",{'FAQ' => "html/docs/faq.html"});
+	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"});
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 }
@@ -35,10 +35,6 @@ sub home {
 	my ($class, $client, $params) = @_;
 	
 	my %listform = %$params;
-
-	if (defined $params->{'forget'}) {
-		Slim::Player::Client::forgetClient(Slim::Player::Client::getClient($params->{'forget'}));
-	}
 
 	$params->{'nosetup'}  = 1 if $::nosetup;
 	$params->{'noserver'} = 1 if $::noserver;
@@ -53,7 +49,7 @@ sub home {
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
-		$class->addPageLinks("search", {'SEARCH' => "livesearch.html"});
+		$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
 		$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 	}
 
@@ -105,7 +101,7 @@ sub home {
 		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
 
-	Slim::Buttons::Plugins::addSetupGroups();
+	Slim::Utils::PluginManager::addSetupGroups();
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);

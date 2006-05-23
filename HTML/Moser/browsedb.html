@@ -5,16 +5,7 @@
   [%- FILTER indent(2) %]
    [%- PROCESS pagebar pagebarid = 'topbrowselistpagebar' %]
   [%- END %]
-  [%- IF browselist_pagebar %]
-    <div id="topbrowselistpagebar" class="pagebar">
-      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-      <div class="controls">
-        <ul class="alpha">
-[% browselist_pagebar -%]
-        </ul>
-      </div>
-    </div>
-   [%- END %]
+ [%- END %]
    [%- IF coverArt %]
     <div class="coverArt">
       <a [% coverArtHRef %] target="cover">[% PROCESS coverImg | replace('">', '" />')%]</a>
@@ -27,27 +18,26 @@
        END;
          %]
    [%- WRAPPER contentcontainer listid = 'browselist' %]
-    [%- FOREACH item = browse_items %]
+    [%- IF browse_items %]
+     [%- FOREACH item = browse_items %]
 
-     [%- WRAPPER $contentwrapper
-	     lineclass = 'browseline'
-	     controls = 'browsecontrols'
-         itemobj = item.itemobj
-         attributes = item.attributes
-         mixerlinks = item.mixerlinks
-	     odd = item.odd %]
-	  [%- PROCESS iteminfo IF contentwrapper == 'contentitem' -%]
-     [%- END %]
-    [%- END %]
-   [%- END %]
-[% IF browselist_pagebar -%]
-    <div id="bottombrowselistpagebar" class="pagebar">
-      <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
-      <div class="controls">
-        <ul class="alpha">
-[% browselist_pagebar -%]
-        </ul>
-      </div>
-    </div>
-[% END -%]
+      [%- WRAPPER $contentwrapper
+	      lineclass = 'browseline'
+	      controls = 'browsecontrols'
+          itemobj = item.itemobj
+          attributes = item.attributes
+          mixerlinks = item.mixerlinks
+	      odd = item.odd %]
+	   [%- PROCESS iteminfo IF contentwrapper == 'contentitem' -%]
+      [%- END %][%# end contentitem wrapper %]
+     [%- END %][%# end for browse_items %]
+    [%- ELSE %][%# no browse_items %]
+        <li>[% "EMPTY" | string %]</li>
+    [%- END %][%# end if browse_items %]
+   [%- END %][%# end contentcontainer wrapper %]
+ [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
+  [%- FILTER indent(2) %]
+   [%- PROCESS pagebar pagebarid = 'bottombrowselistpagebar' %]
+  [%- END %]
+ [%- END %]
 [%- END -%]

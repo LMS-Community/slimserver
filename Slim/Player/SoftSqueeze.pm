@@ -15,7 +15,6 @@ use strict;
 use base qw(Slim::Player::Squeezebox2);
 
 use Slim::Player::ProtocolHandlers;
-use Slim::Player::Squeezebox2;
 use Slim::Utils::Prefs;
 
 sub new {

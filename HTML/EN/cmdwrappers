@@ -193,26 +193,26 @@ END %]
 
 [%# this formats the track item %]
 [% BLOCK trackinfo %]
-		[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
-		
-		[% IF item.num || item.num == 0 %]
-				[% UNLESS item.noHref %]<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% END %]
-				[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
-		[%# browse list items %]
-		[%# no level info means its a music folder item %]
-		[% ELSIF item.item || !item.defined('level') %]
-			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
-		[% ELSIF item.songtitle %]
-			<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
-		[% ELSE %]
-			[% item.text | html %]
-		[% END %]
-		
-		[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-		
-		[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != item.noAlbum %][% "FROM" | string %]
-		<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
- 		[% IF item.currentsong %]</b>[% END %]
+	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
+	
+	[% IF item.num || item.num == 0 %]
+			[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
+			[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
+	[%# browse list items %]
+	[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
+	[% ELSIF item.item || !item.defined('level') && item.itemobj %]
+		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+	[% ELSIF item.songtitle %]
+		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
+	[% ELSE %]
+		[% item.text | html %]
+	[% END %]
+	
+	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+	
+	[% IF item.includeAlbum && item.itemobj.album.title && item.itemobj.album.title != item.noAlbum %][% "FROM" | string %]
+	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+	[% IF item.currentsong %]</b>[% END %]
 [% END %]
 
 [% BLOCK iteminfo %]

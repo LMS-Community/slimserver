@@ -80,9 +80,6 @@ sub clearAllCounters {
 		}
 	}
 	$Slim::Networking::Select::endSelectTime = undef;
-	$Slim::Utils::Timers::timerLate->clear();
-	$Slim::Utils::Timers::timerLength->clear();
-	$Slim::Hardware::IR::irPerf->clear();
 }
 
 # Summary info which attempts to categorise common problems based on performance measurments taken
@@ -174,18 +171,7 @@ sub summary {
 	return ($summary, \@warn);
 }
 
-sub webPages {
-	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
-
-	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
-	}
-
-	return (\%pages);
-}
-
+# Main page
 sub handleIndex {
 	my ($client, $params) = @_;
 	
@@ -235,9 +221,28 @@ sub handleIndex {
 		$params->{'playername'} = $client->name();
 		$params->{'nettest_options'} = \@Plugins::Health::NetTest::testRates;
 
-	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
-	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
-	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
+		if (!$client->isa("Slim::Player::SqueezeboxG")) {
+			$params->{'nettest_notsupported'} = 1;
+			
+		} elsif (Slim::Buttons::Common::mode($client) eq 'PLUGIN.Health::Plugin') {
+			# network test currently running on this player
+			my $modeParam = $client->modeParam('Health.NetTest');
+			if ($stoptest) {
+				# stop tests
+				Plugins::Health::NetTest::exitMode($client);
+				Slim::Buttons::Common::popMode($client);
+				$client->update();
+				$refresh = 2;
+			} elsif (defined($newtest)) {
+				# change test rate
+				Plugins::Health::NetTest::setTest($client, undef, $newtest, $modeParam);
+				$refresh = 2;
+			} 
+			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
+				# display current results
+				$params->{'nettest_rate'} = $modeParam->{'rate'};
+				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
+			}
 
 		} elsif (defined($newtest)) {
 			# start tests - power on if necessary
@@ -252,12 +257,6 @@ sub handleIndex {
 			$refresh = 2;
 		}
 	}
-
-	# generic server info
-	$params->{'response'} = $Slim::Networking::Select::selectPerf->sprint();
-	$params->{'timerlate'} = $Slim::Utils::Timers::timerLate->sprint();
-	$params->{'timerlength'} = $Slim::Utils::Timers::timerLength->sprint();
-	$params->{'irresponse'} = $Slim::Hardware::IR::irPerf->sprint();
 
 	$params->{'refresh'} = $refresh;
 

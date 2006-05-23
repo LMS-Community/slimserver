@@ -22,15 +22,9 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^browsetree\.(?:htm|xml)/,\&browsetree);
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
+		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
-		Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
-	}
-
-	if (Slim::Utils::Prefs::get('playlistdir')) {
-		Slim::Web::Pages->addPageLinks("browse",{'SAVED_PLAYLISTS'   => "browsetree.html?topDir=playlistdir"});
-	} else {
-		Slim::Web::Pages->addPageLinks("browse",{'SAVED_PLAYLISTS' => undef});
+		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 	}
 }
 
@@ -39,26 +33,16 @@ sub browsetree {
 
 	my $hierarchy  = $params->{'hierarchy'} || '';
 	my $player     = $params->{'player'};
-	my $topDir     = $params->{'topDir'} || 'audiodir';
 	my $itemsPer   = $params->{'itemsPerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
 	my @levels     = split(/\//, $hierarchy);
 	my $itemnumber = 0;
 
-	# We can browse either directory.
-	# Set the page title as well
-	if ($topDir eq 'playlistdir') {
-		$topDir = Slim::Utils::Prefs::get('playlistdir');
-		$params->{'browseby'} = 'SAVED_PLAYLISTS';
-	} else {
-		$topDir = Slim::Utils::Prefs::get('audiodir');
-		$params->{'browseby'} = 'MUSIC';
-	}
-
 	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels, $topDir);
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
 
-	unshift @$items, $ds->getPlaylists('external');
+	# Page title
+	$params->{'browseby'} = 'MUSIC';
 
 	for (my $i = 0; $i < scalar @levels; $i++) {
 
@@ -68,7 +52,7 @@ sub browsetree {
 
 			push @{$params->{'pwd_list'}}, {
 				'hreftype'     => 'browseTree',
-				'title'        => $i == 0 ? string($params->{'browseby'}) : $obj->title,
+				'title'        => $i == 0 ? string('MUSIC') : $obj->title,
 				'hierarchy'    => join('/', @levels[0..$i]),
 			};
 		}
@@ -76,21 +60,16 @@ sub browsetree {
 
 	my ($start, $end) = (0, $count);
 
-	# Create a numeric pagebar if we need to.
-	if ($count > $itemsPer) {
+	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+		'itemCount'    => $count,
+		'path'         => $params->{'path'},
+		'otherParams'  => "hierarchy=$hierarchy&player=$player",
+		'start'        => $params->{'start'},
+		'perPage'      => $params->{'itemsPerPage'},
+	});
 
-		($start, $end) = Slim::Web::Pages->pageBar({
-				'itemCount'    => $count,
-				'path'         => $params->{'path'},
-				'otherParams'  => "hierarchy=$hierarchy&player=$player",
-				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'browselist_header'},
-				'pageBarRef'   => \$params->{'browselist_pagebar'},
-				'skinOverride' => $params->{'skinOverride'},
-				'perPage'      => $params->{'itemsPerPage'},
-			}
-		);
-	}
+	$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+	$end = $params->{'pageinfo'}{'enditem'};
 
 	# Setup an 'All' button.
 	# I believe this will play only songs, and not playlists.
@@ -146,26 +125,8 @@ sub browsetree {
 			'hreftype'  => 'browseTree',
 		);
 
-		if (Slim::Music::Info::isPlaylist($item)) {
-
-			$list_form{'descend'}  = 1;
-			$list_form{'hreftype'} = 'browsePlaylist';
-
-		} elsif (Slim::Music::Info::isList($item)) {
-
-			$list_form{'descend'}  = 1;
-			$list_form{'hreftype'} = 'browseTree';
-
-		} else {
-
-			$list_form{'descend'}  = 0;
-			$list_form{'hreftype'} = 'browseTree';
-		}
-
 		# Don't display the edit dialog for playlists (includes CUE sheets).
-		if (($topDir eq 'playlistdir' && $item->isCUE) || 
-		    ($topDir eq 'audiodir'    && $item->isPlaylist)) {
-
+		if ($item->isPlaylist) {
 			$form{'noEdit'} = '&noEdit=1';
 		}
 

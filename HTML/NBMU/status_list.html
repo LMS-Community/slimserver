@@ -1,10 +1,10 @@
 <tr class="[% IF item.odd; "odd"; END %][% IF not item.odd; "even"; END %]" cellpadding="0">
 <td>&nbsp;</td>
 <td class="nowrap" width="72px">[% num = item.num; useStart = 1 %]
+<a class="linkbtn" [% PROCESS cmdHRef cmdType = 'jump' %]>&gt;</a>
 <a class="linkbtn" [% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %]>&uarr;</a>
 <a class="linkbtn" [% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %]>&darr;</a>
 <a class="linkbtn" [% PROCESS cmdHRef cmdType = 'delete'                 %]>&times;</a>
-</td>
 
 &nbsp;&nbsp;
 

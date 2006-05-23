@@ -58,9 +58,9 @@ sub init {
 	Slim::Web::Pages::BrowseTree::init();
 	Slim::Web::Pages::Search::init();
 	Slim::Web::Pages::Status::init();
+	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
 	Slim::Web::Pages::Playlist::init();
 	Slim::Web::Pages::History::init();
-	Slim::Web::Pages::EditPlaylist::init();
 }
 
 ### DEPRECATED stub for third party plugins
@@ -545,8 +545,6 @@ sub pageInfo {
 
 	# set the start index, accounding for alpha cases
 	$pageinfo{'startitem'} = $start || 0;
-
-	#print Data::Dumper::Dumper(\%pageinfo);
 
 	return \%pageinfo;
 }

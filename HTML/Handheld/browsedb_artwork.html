@@ -1,18 +1,15 @@
-	<div align="left" width="100%" style="float:left">
-		<table cellpadding="5" cellspacing="0" border="0" align="left">
-			<tr><td width="[% item.size %]">
-				[% IF item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]><center>[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a></td></table>[% END %]
-				[% IF not item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]><center>[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</center></a></td><td><a href=""><img src="html/images/spacer.gif" border="0" height="[% size %]" width="0" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"></a></td></table>[% END %]
-			</td></tr>
-			<tr><td>
-				<table cellspacing="0" border="0" align="left">
-				[% PROCESS browsecontrols
-					itemobj = item.itemobj
-					attributes = item.attributes
-					odd = item.odd
-					mixerlinks = item.mixerlinks %]
-				</table>
-			</td></tr>
+<table class="floater" cellpadding="0" cellspacing="0" border="0">
+	<tr><td width="[% item.size %]">
+		[% IF item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]><center>[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a></td></table>[% END %]
+		[% IF not item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]><center>[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size\"" %]</a></td></table>[% END %]
+	</td></tr>
+	<tr><td>
+		<table cellspacing="0" border="0" align="left">
+		[% PROCESS browsecontrols
+			itemobj = item.itemobj
+			attributes = item.attributes
+			odd = 1
+			mixerlinks = item.mixerlinks %]
 		</table>
 	</td></tr>
 </table>

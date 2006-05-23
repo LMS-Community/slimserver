@@ -60,7 +60,7 @@
 [%- END %]
 
 [% BLOCK scanwarning -%]
-<div id="warning>[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
+<div id="warning">[% "NOTE" | string %] [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
 		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
 	[%- END %]
@@ -76,28 +76,25 @@
     <ul>
       <li>[% PROCESS homelink %]</li>
       [%- FOREACH item = pwd_list.list %]
-        [% PROCESS crumblistitem %]
-      [% END -%]
+        [%- PROCESS crumblistitem | indent(6) -%]
+      [% END %]
     </ul>
   </div>
 [%- END %]
 
 [% BLOCK crumblistitem -%]
-[%- IF item.title -%]
+[%- IF item.title %]
 <li> / <a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a></li>
-[%- ELSE -%]
-<li> / [% item %]</li>
+[%- ELSE %]
+<li> / [%- item | replace('^\s*/','') %]</li>
 [%- END -%]
 [%- END %]
 
 [% BLOCK playlistcontrols %]
-<div class="controls">
-  <ul class="songctl">
+    [% WRAPPER playlink     %][% PROCESS cmdHRef cmdType = 'jump'                   %][% END %]
     [% WRAPPER moveuplink   %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp   %][% END %]
     [% WRAPPER movedownlink %][% PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown %][% END %]
     [% WRAPPER removelink   %][% PROCESS cmdHRef cmdType = 'delete'                 %][% END %]
-  </ul>
-</div>
 [% END %]
 
 [% BLOCK contentcontainer %]
@@ -111,21 +108,25 @@
 [% BLOCK contentitem -%]
 <li class="[% odd ? "odd" : "even" %]">
   [%- IF anchor %]
-  <a name="[% anchor %]"></a>
+  <a name="[% anchor | uri %]"></a>
   [%- END %]
-
-  [%- PROCESS $controls | indent(2) %]
+  [%- IF controls %][%# allow for a line with no controls %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $controls | indent(2) -%]
+    </ul>
+  </div>
+  [%- END %]
   <div class="[% lineclass || 'browseline' %]">
-
   [%- content | indent(4) %]
   </div>
 </li>
-[%- END %]
+[% END %]
 
 [% BLOCK galleryitem -%]
 <li class="gallery">
   [%- IF anchor %]
-  <a name="[% anchor %]"></a>
+  <a name="[% anchor | uri %]"></a>
   [%- END %]
   <div class="galleryitem">
    [%- IF item.coverThumb %][% IF not item.artist; item.artist = item.itemobj.artistsWithAttributes.first.artist.name; END; %]
@@ -134,24 +135,23 @@
     <a [% PROCESS browseDbItemHRef %] target="browser">[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</a>
 [% END %]
   </div>
-
-  [%- PROCESS $controls | indent(2) %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $controls | indent(2) %]
+    </ul>
+  </div>
 </li>
 [%- END %]
 
 [% BLOCK browsecontrols -%]
-<div class="controls">
-  <ul class="songctl">
     [% WRAPPER playlink   %][% PROCESS cmdHRef cmdType = "play"   %][% END %]
     [% WRAPPER insertlink %][% PROCESS cmdHRef cmdType = "insert" %][% END %]
     [% WRAPPER addlink    %][% PROCESS cmdHRef cmdType = "add"    %][% END %]
     [% WRAPPER removelink %][% PROCESS cmdHRef cmdType = "remove" %][% END %]
-  </ul>
-</div>
 [%- END %]
 
 [% BLOCK trackinfo -%]
-<span class="songtitle"><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% IF item.currentsong %] id="currentsong"[% END %]>[% item.title | html %]</a></span>
+<span class="songtitle"><a [% PROCESS songinfoItemHRef %][% IF item.currentsong %] id="currentsong"[% END %] target="browser">[% item.title | html %]</a></span>
 [% IF item.album %]
   [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
 [%- END %]
@@ -160,7 +160,7 @@
 
 [% BLOCK iteminfo -%]
 [%- IF item.descend -%]
-  [% IF item.hierarchy %]<a [% PROCESS browseDbItemHRef %]>[% END %][% item.text | html %]
+  [% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]
   [%- IF item.hierarchy %]</a>[% END %]
   [%- IF item.showYear and item.year %]
   (<a [% PROCESS yearItemHRef %]>[% item.year %]</a>)
@@ -176,6 +176,44 @@
  [%- END %]
   <span class="artist">[%- IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END -%]</span>
 [%- END %]
+[%- END %]
+
+[% BLOCK pagebar %]
+[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 7; END %]
+<div [% IF pagebarid %]id="[% pagebarid %]" [% END %]class="pagebar">
+  <span class="label">[% "PAGES" | string %][% "COLON" | string %]</span>
+  <div class="controls">
+    <ul[% IF pageinfo.alphamap %] class="alpha"[% END %]>
+[% IF pagesstart -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=0"><span>|&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pagesprev || pagesprev == '0' -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesprev %]"><span>&lt;&lt;</span></a></li>
+[% END -%]
+[%- IF pageprev || pageprev == '0' -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageprev %]"><span>&lt;</span></a></li>
+[% END -%]
+[%- IF pageinfo.alphamap %]
+[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+      <li[% IF pageinfo.alphamap.item(alphakey) == pageinfo.startitem %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey %]"><span>[% alphakey %]</span></a></li>
+[% END %]
+[%- ELSE %]
+[%- FOREACH ind=[pagebarstart..pagebarend] -%]
+      <li[% IF ind == pageinfo.currentpage %] class="currctl"[% END %]><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% ind * pageinfo.itemsperpage %]"><span>[% ind + 1 %]</span></a></li>
+[% END %]
+[%- END %]
+[%- IF pagenext -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagenext %]"><span>&gt;</span></a></li>
+[% END -%]
+[%- IF pagesnext -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesnext %]"><span>&gt;&gt;</span></a></li>
+[% END -%]
+[%- IF pagesend -%]
+      <li><a href="[% pageinfo.path %]?[% pageinfo.otherparams | html %]&amp;start=[% pagesend %]"><span>&gt;&gt;|</span></a></li>
+[% END -%]
+    </ul>
+  </div>
+</div>
 [%- END %]
 
 [%# This is the end, never put anything below this next END or the FILTER will not work %]

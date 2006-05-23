@@ -12,16 +12,27 @@ package Slim::Control::Commands;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+################################################################################
+
+# This module implements most SlimServer commands and is designed to 
+# be exclusively called through Request.pm and the mechanisms it defines.
+
+# The code for the "alarm" command is heavily commented and corresponds to
+# a "model" synchronous command.
+# Check CLI handling code in the Shoutcast plugin for an asynchronous command.
+
+
 use strict;
 
-use Slim::Utils::Misc;
+use Scalar::Util qw(blessed);
+use File::Spec::Functions qw(catfile);
+use File::Basename qw(basename);
 
 use Slim::Utils::Alarms;
 use Slim::Utils::Misc qw(msg errorMsg specified);
 use Slim::Utils::Scanner;
-use Slim::Utils::Misc qw(msg errorMsg specified);
-use Slim::Utils::Scanner;
 
+my $d_commands = 0; # local debug flag
 
 
 sub alarmCommand {
@@ -280,7 +291,7 @@ sub mixerCommand {
 			$newvalue = !$curmute;
 		}
 		
-		if ($newvalue != $curmute) {		
+		if ($newvalue != $curmute) {
 			my $vol = $client->volume();
 			my $fade;
 			
@@ -517,7 +528,7 @@ sub playlistDeleteitemCommand {
 
 			} else {
 
-				$contents = [Slim::Formats::Parse::parseList($absitem, $playlist_filehandle, dirname($absitem))];
+				$contents = [Slim::Formats::Playlists->parseList($absitem, $playlist_filehandle, dirname($absitem))];
 			}
 		}
 
@@ -608,23 +619,6 @@ sub playlistRepeatCommand {
 	if (!defined $newvalue) {
 		# original code: (Slim::Player::Playlist::repeat($client) + 1) % 3
 		$newvalue = (1,2,0)[Slim::Player::Playlist::repeat($client)];
-	}
-	
-	# Check the buffers for the client and reset based on repeat change
-	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
-		
-		if ($everyclient->playmode() =~ /playout/) {
-			
-			if ($newvalue) {
-				
-				# changing to repeat all or one, set to continue playback
-				$everyclient->playmode('playout-play');
-			} else {
-				
-				# repeat off, set to stop at end of track
-				$everyclient->playmode('playout-stop');
-			}
-		}
 	}
 	
 	Slim::Player::Playlist::repeat($client, $newvalue);
@@ -874,7 +868,7 @@ sub playlistXitemCommand {
 
 	} elsif ($cmd eq "resume" && Slim::Music::Info::isM3U($path)) {
 
-		$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U($path);
+		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
 					
 	if ($cmd =~ /^(insert|insertlist)$/) {
@@ -1003,8 +997,8 @@ sub playlistXtracksCommand {
 
 		if ($playlistObj && ref($playlistObj) && $playlistObj->content_type =~ /^(?:ssp|m3u)$/) {
 
-			unless  (Slim::Player::Playlist::shuffle($client)) {
-				$jumpToIndex = Slim::Formats::Parse::readCurTrackForM3U( $client->currentPlaylist->path );
+			if (!Slim::Player::Playlist::shuffle($client)) {
+				$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $client->currentPlaylist->path );
 			}
 
 			# And set a callback so that we can
@@ -1056,7 +1050,9 @@ sub playlistZapCommand {
 	}
 
 	my $playlistObj = Slim::Schema->updateOrCreate({
-		'url'        => "playlist://$zapped",
+		'url'        => Slim::Utils::Misc::fileURLFromPath(
+			catfile( Slim::Utils::Prefs::get('playlistdir'), $zapped . '.m3u')
+		),
 		'playlist'   => 1,
 		'attributes' => {
 			'TITLE' => $zapped,
@@ -1069,6 +1065,7 @@ sub playlistZapCommand {
 
 	$playlistObj->setTracks(\@list);
 	$playlistObj->update();
+	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
 	$client->currentPlaylistModified(1);
 	$client->currentPlaylistChangeTime(time());
@@ -1261,14 +1258,16 @@ sub powerCommand {
 sub prefCommand {
 	my $request = shift;
 	
-	if ($request->isNotCommand(['pref'])) {
+	$d_commands && msg("Commands::prefCommand()\n");
+
+	if ($request->isNotCommand([['pref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# uses positional things as backups
-	my $prefName = $request->getParam('prefName') || $request->getParam('_p1');
-	my $newValue = $request->getParam('newValue') || $request->getParam('_p2');
+	# get our parameters
+	my $prefName = $request->getParam('_prefname');
+	my $newValue = $request->getParam('_newvalue');
 
 	if (!defined $prefName || !defined $newValue) {
 		$request->setStatusBadParams();
@@ -1281,15 +1280,49 @@ sub prefCommand {
 }
 
 
-sub rescanCommand {
+sub rateCommand {
 	my $request = shift;
 	
-	if ($request->isNotCommand(['rescan'])) {
+	$d_commands && msg("Commands::rateCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['rate']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	my $playlistsOnly = $request->getParam('playlistsOnly') || $request->getParam('_p1') || 0;
+	# get our parameters
+	my $client  = $request->client();
+	my $newrate = $request->getParam('_newvalue');
+	
+	if (!defined $newrate) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	if ($client->directURL() || $client->audioFilehandleIsSocket) {
+		Slim::Player::Source::rate($client, 1);
+		# shouldn't we return an error here ???
+	} else {
+		Slim::Player::Source::rate($client, $newrate);
+	}
+	
+	$request->setStatusDone();
+}
+
+
+sub rescanCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::rescanCommand()\n");
+
+	if ($request->isNotCommand([['rescan']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $playlistsOnly = $request->getParam('_playlists') || 0;
 	
 	# if we're scanning allready, don't do it twice
 	if (!Slim::Music::Import->stillScanning()) {
@@ -1528,7 +1561,9 @@ sub timeCommand {
 sub wipecacheCommand {
 	my $request = shift;
 	
-	if ($request->isNotCommand(['wipecache'])) {
+	$d_commands && msg("Commands::wipecacheCommand()\n");
+
+	if ($request->isNotCommand([['wipecache']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1554,32 +1589,104 @@ sub wipecacheCommand {
 	$request->setStatusDone();
 }
 
-sub debugCommand {
-	my $request = shift;
+################################################################################
+# Helper functions
+################################################################################
+
+sub _sleepStartFade {
+	my $client = shift;
+	my $fadeDuration = shift;
+
+	$d_commands && msg("Commands::_sleepStartFade()\n");
 	
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotCommand(['debug'])) {
-		$request->setStatusBadDispatch();
-		return;
+	if ($client->isPlayer()) {
+		$client->fade_volume(-$fadeDuration);
+	}
+}
+
+sub _sleepPowerOff {
+	my $client = shift;
+	
+	$d_commands && msg("Commands::_sleepPowerOff()\n");
+
+	$client->sleepTime(0);
+	$client->currentSleepTime(0);
+	
+	Slim::Control::Request::executeRequest($client, ['stop']);
+	Slim::Control::Request::executeRequest($client, ['power', 0]);
+}
+
+
+sub _mixer_mute {
+	my $client = shift;
+
+	$d_commands && msg("Commands::_mixer_mute()\n");
+
+	$client->mute();
+}
+
+
+sub _playlistXitem_load_done {
+	my ($client, $index, $callbackf, $callbackargs, $count, $url) = @_;
+
+	$d_commands && msg("Commands::_playlistXitem_load_done()\n");
+
+	# dont' keep current song on loading a playlist
+	Slim::Player::Playlist::reshuffle($client,
+		(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
+	);
+
+	if (defined($index)) {
+		Slim::Player::Source::jumpto($client, $index);
 	}
 	
-	# use positional parameters as backups
-	my $debugFlag = $request->getParam('debugFlag') || $request->getParam('_p1');
-	my $newValue = $request->getParam('newValue') || $request->getParam('_p2');
-	
-	if ( !defined $debugFlag || !($debugFlag =~ /^d_/) ) {
-		$request->setStatusBadParams();
-		return;
+	if ( !$count && $url ) {
+		# If the playlist was unable to load a remote URL, notify
+		# This is used for logging broken stream links
+		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url]);
+		
+		# Show an error message
+		$client->showBriefly({
+			'line1'    => $client->string('PROBLEM_OPENING_REMOTE_URL'),
+			'line2'    => $url,
+		}, { 'duration' => 2, 'block' => 1, 'scroll' => 1, 'firstline' => 1 });
 	}
-	
-	$debugFlag = "::" . $debugFlag;
-	no strict 'refs';
-	
-	if (defined($newValue)) {
-		$$debugFlag = $newValue;
+
+	$callbackf && (&$callbackf(@$callbackargs));
+
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'load_done']);
+}
+
+
+sub _insert_done {
+	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
+
+	$d_commands && msg("Commands::_insert_done()\n");
+
+	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
+	my @reshuffled;
+
+	if (Slim::Player::Playlist::shuffle($client)) {
+
+		for (my $i = 0; $i < $size; $i++) {
+			push @reshuffled, ($listsize + $i);
+		};
+			
+		$client = Slim::Player::Sync::masterOrSelf($client);
+		
+		if (Slim::Player::Playlist::count($client) != $size) {	
+			splice @{$client->shufflelist}, $playlistIndex, 0, @reshuffled;
+		}
+		else {
+			push @{$client->shufflelist}, @reshuffled;
+		}
 	} else {
-		# toggle if we don't have a new value
-		$$debugFlag = ($$debugFlag ? 0 : 1);
+
+		if (Slim::Player::Playlist::count($client) != $size) {
+			Slim::Player::Playlist::moveSong($client, $listsize, $playlistIndex, $size);
+		}
+
+		Slim::Player::Playlist::reshuffle($client);
 	}
 
 	Slim::Player::Playlist::refreshPlaylist($client);
@@ -1726,9 +1833,16 @@ sub _playlistXtracksCommand_parseListRef {
 sub _showCommand_done {
 	my $args = shift;
 	
+	$d_commands && msg("Commands::_showCommand_done()\n");
+
+	my $request = $args->{'request'};
+	my $client = $request->client();
+	
+	# now we're done!
 	$request->setStatusDone();
 }
 
 
-
 1;
+
+__END__

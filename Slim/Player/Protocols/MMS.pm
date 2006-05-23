@@ -14,8 +14,7 @@ use Audio::WMA;
 use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
 
-use base qw(Slim::Player::Pipeline);
-
+use Slim::Formats::Playlists;
 use Slim::Player::Source;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;

@@ -687,10 +687,6 @@ sub setMode {
 		@items = $topRS->descend(\%find, {}, @levels[0..$level])->distinct->all;
 	}
 
-	if (blessed($items)) {
-		$items = [ $items->all ];
-	}
-
 	# Next get the first line of the mode
 	my $header;
 	my $count = scalar @items;

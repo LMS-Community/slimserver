@@ -587,9 +587,10 @@ sub mixerlink {
 	
 	if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
 		#set up a musicmagic link
-		Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+		#Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+		$form->{'mixerlinks'}{'MOODLOGIC'} = "plugins/MoodLogic/mixerlink.html";
 	} else {
-		Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => undef});
+		#Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => undef});
 	}
 	
 	return $form;
@@ -832,6 +833,7 @@ sub instant_mix {
 	my $track      = Slim::Schema->find('Track', $song);
 
 	$params->{'browse_items'} = [];
+	$params->{'levelName'} = "track";
 
 	if (defined $mood && $mood ne "") {
 		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_pwdlist.html", $params)};

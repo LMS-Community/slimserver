@@ -86,9 +86,8 @@ sub playlist {
 
 		$::d_playlist && msg("Skipping playlist build - not modified.\n");
 
-		$params->{'playlist_header'}  = $client->currentPlaylistRender()->[3];
-		$params->{'playlist_pagebar'} = $client->currentPlaylistRender()->[4];
-		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[5];
+		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[3];
+		$params->{'pageinfo'}         = $client->currentPlaylistRender()->[4];
 
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	}
@@ -97,54 +96,32 @@ sub playlist {
 		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 	}
 
-	my %listBuild = ();
 	my $item;
 	my %form;
 
 	$params->{'cansave'} = 1;
 	
-	my ($start, $end);
-	
-	if (defined $params->{'nopagebar'}) {
-
-		($start, $end) = Slim::Web::Pages->simpleHeader({
-				'itemCount'    => $songcount,
-				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'playlist_header'},
-				'skinOverride' => $params->{'skinOverride'},
-				'perPage'        => $params->{'itemsPerPage'},
-			}
-		);
-
-	} else {
-
-		($start, $end) = Slim::Web::Pages->pageBar({
+	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'    => $songcount,
 				'currentItem'  => Slim::Player::Source::playingSongIndex($client),
 				'path'         => $params->{'path'},
-				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()) . "&",
-				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'browselist_header'},
-				'pageBarRef'   => \$params->{'browselist_pagebar'},
-				'skinOverride' => $params->{'skinOverride'},
+				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()),
+				'start'        => $params->{'start'},
 				'perPage'      => $params->{'itemsPerPage'},
-			}
-		);
-	}
+	});
+	
+	my ($start,$end);
+	$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+	$end = $params->{'pageinfo'}{'enditem'};
+	
+	my $offset = $start % 2 ? 0 : 1; 
 
-	$listBuild{'start'} = $start;
-	$listBuild{'end'}   = $end;
-
-	$listBuild{'offset'} = $listBuild{'start'} % 2 ? 0 : 1; 
-
-	$listBuild{'currsongind'}   = Slim::Player::Source::playingSongIndex($client);
-	$listBuild{'item'}          = $listBuild{'start'};
+	my $currsongind   = Slim::Player::Source::playingSongIndex($client);
 
 	my $itemCount    = 0;
 	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
 	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
 	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
-	my $starttime    = Time::HiRes::time();
 
 	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
@@ -153,17 +130,16 @@ sub playlist {
 
 	# This is a hot loop.
 	# But it's better done all at once than through the scheduler.
-	while ($listBuild{'item'} < ($listBuild{'end'} + 1) && $itemCount < $itemsPerPage) {
+	for my $itemnum ($start..$end) {
 
 		# These should all be objects - but be safe.
-		my $objOrUrl = Slim::Player::Playlist::song($client, $listBuild{'item'});
+		my $objOrUrl = Slim::Player::Playlist::song($client, $itemnum);
 		my $track    = $objOrUrl;
 
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
 			$track = Slim::Schema->objectForUrl($objOrUrl) || do {
 				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
-				$listBuild{'item'}++;
 				$itemCount++;
 				next;
 			};
@@ -177,7 +153,7 @@ sub playlist {
 		$form{'levelName'} = 'track';
 		$form{'odd'}       = ($itemnum + $offset) % 2;
 
-		if ($listBuild{'item'} == $listBuild{'currsongind'}) {
+		if ($itemnum == $currsongind) {
 			$form{'currentsong'} = "current";
 
 			if (Slim::Music::Info::isRemoteURL($track)) {
@@ -196,19 +172,16 @@ sub playlist {
 
 		push @{$params->{'playlist_items'}}, \%form;
 
-		$listBuild{'item'}++;
 		$itemCount++;
 
-		# don't neglect the streams for over 0.25 seconds
-		if ($needIdleStreams && $itemCount > 1 && !($itemCount % $itemsPerPass) && (Time::HiRes::time() - $starttime) > 0.25) {
+		# don't neglect the streams too long, every itemsPerPass idle them
+		if ($needIdleStreams && !($itemCount % $itemsPerPass)) {
 
 			main::idleStreams();
 		}
 	}
 
 	$::d_playlist && msg("End playlist build. $itemCount items\n");
-
-	undef %listBuild;
 
 	# Give some player time after the loop, but before rendering.
 	main::idleStreams();
@@ -221,9 +194,8 @@ sub playlist {
 			time(),
 			($params->{'skinOverride'} || ''),
 			($params->{'start'}),
-			$params->{'playlist_header'},
-			$params->{'playlist_pagebar'},
-			$params->{'playlist_items'}
+			$params->{'playlist_items'},
+			$params->{'pageinfo'},
 		]);
 	}
 

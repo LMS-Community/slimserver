@@ -28,21 +28,21 @@ BEGIN {
 	}
 }
 
-use Slim::Control::Command;
+use Slim::Control::Request;
+use Slim::Formats::Playlists;
+use Slim::Player::Pipeline;
+use Slim::Player::ProtocolHandlers;
+use Slim::Player::ReplayGain;
+use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
-use Slim::Player::Pipeline;
-use Slim::Player::ProtocolHandlers;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 use constant STATUS_STREAMING => 0;
 use constant STATUS_PLAYING => 1;
-
-our %commandTable = ();
-our %binaries = ();
 
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('sysseek');
@@ -353,11 +353,26 @@ sub playmode {
 		
 		# if we couldn't open the song, then stop...
 		my $opened = openSong($master, $seekoffset) || do {
-			errorMsg("Couldn't open song.\n");
-			trackStartEvent($client);
-			if (!gotoNext($client,1)) {
-				errorMsg("Couldn't gotoNext, stopping\n");
+
+			# If there aren't anymore items in the
+			# playlist - just return, don't try and play again.
+			if (noMoreValidTracks($client)) {
+
+				$::d_source && msg("playmode: No more valid tracks on the playlist. Stopping.\n");
+
 				$newmode = 'stop';
+
+			} else {
+
+				# Otherwise, try and open the next item on the list.
+				trackStartEvent($client);
+
+				if (!gotoNext($client,1)) {
+
+					# Still couldn't open? Stop the player.
+					errorMsg("playmode: Couldn't gotoNext song on playlist, stopping\n");
+					$newmode = 'stop';
+				}
 			}
 		};
 
@@ -1192,10 +1207,7 @@ sub openSong {
 
 		if (!$directStream) {
 
-			$::d_source && msg("URL is remote : $fullpath\n");
-
-			# we don't get the content type until after the stream is opened
-			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($fullpath, $client);
+			$::d_source && msg("openSong: URL is remote [$fullpath]\n");
 	
 			if ($sock) {
 	

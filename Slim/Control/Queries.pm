@@ -12,12 +12,23 @@ package Slim::Control::Queries;
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 
+################################################################################
+
+# This module implements most SlimServer queries and is designed to 
+# be exclusively called through Request.pm and the mechanisms it defines.
+
+# There are no important differences between the code for a query and one for
+# a command. Please check the commented command in Commands.pm.
+
+
 use strict;
 
-use Slim::Utils::Misc;
+use Scalar::Util qw(blessed);
 
-use Slim::Control::Request;
+use Slim::Utils::Misc qw(msg errorMsg specified);
+use Slim::Utils::Alarms;
 
+my $d_queries = 0; # local debug flag
 
 our %searchMap = (
 
@@ -191,7 +202,8 @@ sub cursonginfoQuery {
 	$d_queries && msg("cursonginfoQuery()\n");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre', 'path']])) {
+	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre',
+			'path', 'remote', 'current_title']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -207,6 +219,16 @@ sub cursonginfoQuery {
 		if ($method eq 'path') {
 			
 			$request->addResult("_$method", $url);
+
+		} elsif ($method eq 'remote') {
+			
+			$request->addResult("_$method", 
+				Slim::Music::Info::isRemoteURL($url));
+			
+		} elsif ($method eq 'current_title') {
+			
+			$request->addResult("_$method", 
+				Slim::Music::Info::getCurrentTitle($client, $url));
 
 		} else {
 
@@ -550,7 +572,7 @@ sub playlistXQuery {
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
 			'tracks', 'duration', 'artist', 'album', 'title', 'genre', 'path', 
-			'repeat', 'shuffle', 'index', 'jump']])) {
+			'repeat', 'shuffle', 'index', 'jump', 'remote']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -584,6 +606,11 @@ sub playlistXQuery {
 	} elsif ($entity eq 'path') {
 		$request->addResult("_$entity", Slim::Player::Playlist::song($client, $index) || 0);
 
+	} elsif ($entity eq 'remote') {
+		if (defined (my $url = Slim::Player::Playlist::song($client, $index))) {
+			$request->addResult("_$entity", Slim::Music::Info::isRemoteURL($url));
+		}
+		
 	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
 		my $track = Slim::Schema->objectForUrl({
@@ -782,31 +809,55 @@ sub powerQuery {
 sub prefQuery {
 	my $request = shift;
 	
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['pref'])) {
+	$d_queries && msg("prefQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['pref']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
-	my $prefName = $request->getParam('prefName') || $request->getParam('_p1');
+	# get the parameters
+	my $prefName = $request->getParam('_prefname');
 	
 	if (!defined $prefName) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	my $isValue = Slim::Utils::Prefs::get($prefName);
-	
-	$request->addResult('isValue', $isValue);
+	$request->addResult('_p2', Slim::Utils::Prefs::get($prefName));
 	
 	$request->setStatusDone();
 }
 
+
+sub rateQuery {
+	my $request = shift;
+	
+	$d_queries && msg("rateQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['rate']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client = $request->client();
+
+	$request->addResult('_rate', Slim::Player::Source::rate($client));
+	
+	$request->setStatusDone();
+}
+
+
 sub rescanQuery {
 	my $request = shift;
 	
-	if ($request->isNotQuery(['rescan'])) {
+	$d_queries && msg("rescanQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['rescan']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -815,39 +866,181 @@ sub rescanQuery {
 
 	$request->addResult('_rescan', Slim::Music::Import->stillScanning() ? 1 : 0);
 	
-	$request->addResult('isValue', $isValue);
-	
 	$request->setStatusDone();
 }
 
-sub versionQuery {
+
+sub searchQuery {
 	my $request = shift;
 	
-	if ($request->isNotQuery(['version'])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
+	$d_queries && msg("searchQuery()\n");
 
-	# no params for the version query
-
-	my $isValue = $::VERSION;
-	
-	$request->addResult('isValue', $isValue);
-	
-	$request->setStatusDone();
-}
-
-sub debugQuery {
-	my $request = shift;
-	
-	# check this is the correct command. Syntax approved by Dean himself!
-	if ($request->isNotQuery(['debug'])) {
+	# check this is the correct query
+	if ($request->isNotQuery([['search']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	# use positional parameters as backups
-	my $debugFlag = $request->getParam('debugFlag') || $request->getParam('_p1');
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $query    = $request->getParam('term');
+
+	if (!defined $query || $query eq '') {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	if (Slim::Music::Import::stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+	
+	my $data = Slim::Web::Pages::LiveSearch->query($query, undef, $quantity);
+	#print Data::Dumper::Dumper($data);
+	
+	my $songCount = 0;
+	for my $item (@$data) {
+		$songCount += $item->[1];
+	}
+	
+	$request->addResult("count", $songCount);
+
+	for my $item (@$data) {
+		my $type = $item->[0];
+		$request->addResult("$type" . "s_count", $item->[1]);
+	}
+
+	if ($songCount > 0) {
+	
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $songCount);
+			
+		if ($valid) {
+
+			my $skip = 0;
+			my $idx = 0;
+
+			for my $item (@$data) {
+				
+				#msg("Considering " . $item->[0] . "...,idx=$idx, start=$start, end=$end\n");
+				
+				# check if we can skip this $item
+				# we can skip this $item if once done, we're still below $start
+				if (($idx + $item->[1]) < $start) {
+					$idx = $idx + $item->[1];
+					#msg("..Skipped, idx=" . $idx . "\n");
+					next;
+				}
+				# ... or because we're done
+				if ($idx > $end) {
+					#msg("..Skipped, done\n");
+					last;
+				}
+
+				# process the item
+				my $results = $item->[2];
+				
+
+				my $loopname = '@' . $item->[0] . 's';
+				my $cnt = 0;
+
+				for my $result (@$results) {
+				
+					#msg("Considering idx=$idx, start=$start, end=$end\n");
+					
+					# check if we can skip this $result
+					if ($idx < $start) {
+						$idx++;
+						#msg(".. Skipped, idx=$idx\n");
+						next;
+					}
+					if ($idx > $end) {
+						#msg(".. Skipped, done idx=$idx\n");
+						last;
+					}
+					
+					# check for valid result
+					if (!blessed($result) || !$result->can('id')) {
+						next;
+					}
+
+					# add result to loop
+					$request->addResultLoop($loopname, $cnt, $item->[0] . '_id', $result->id());
+
+					if ($item->[0] eq 'track') {
+						$request->addResultLoop($loopname, $cnt, $item->[0], $result->title());
+					}
+					else {
+						$request->addResultLoop($loopname, $cnt, $item->[0], $result);
+					}
+
+					$cnt++;
+					$idx++;
+				}
+			}
+		}
+	}
+	
+	$request->setStatusDone();
+}
+
+
+sub signalstrengthQuery {
+	my $request = shift;
+	
+	$d_queries && msg("signalstrengthQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['signalstrength']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client = $request->client();
+
+	$request->addResult('_signalstrength', $client->signalStrength() || 0);
+	
+	$request->setStatusDone();
+}
+
+
+sub sleepQuery {
+	my $request = shift;
+	
+	$d_queries && msg("sleepQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['sleep']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client = $request->client();
+
+	my $isValue = $client->sleepTime() - Time::HiRes::time();
+	if ($isValue < 0) {
+		$isValue = 0;
+	}
+	
+	$request->addResult('_sleep', $isValue);
+	
+	$request->setStatusDone();
+}
+
+
+sub statusQuery {
+	my $request = shift;
+	
+	$d_queries && msg("statusQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['status']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the initial parameters
+	my $client = $request->client();
 	
 	my $SP3  = ($client->model() eq 'slimp3');
 	my $SQ   = ($client->model() eq 'softsqueeze');
@@ -885,12 +1078,16 @@ sub debugQuery {
 
 		if (my $song = Slim::Player::Playlist::song($client)) {
 
-			$request->addResult('rate', 
-				Slim::Player::Source::rate($client));
-			$request->addResult('current_title', 
-				Slim::Music::Info::getCurrentTitle($client, $song));
+			if (Slim::Music::Info::isRemoteURL($song)) {
+				$request->addResult('remote', 1);
+				$request->addResult('current_title', 
+					Slim::Music::Info::getCurrentTitle($client, $song));
+			}
+			
 			$request->addResult('time', 
 				Slim::Player::Source::songTime($client));
+			$request->addResult('rate', 
+				Slim::Player::Source::rate($client));
 			
 			my $track = Slim::Schema->objectForUrl($song);
 
@@ -1116,10 +1313,27 @@ sub songinfoQuery {
 sub syncQuery {
 	my $request = shift;
 	
-	my $isValue = $$debugFlag;
-	$isValue ||= 0;
+	$d_queries && msg("syncQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['sync']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
 	
-	$request->addResult('isValue', $isValue);
+	# get the parameters
+	my $client = $request->client();
+
+	if (Slim::Player::Sync::isSynced($client)) {
+	
+		my @buddies = Slim::Player::Sync::syncedWith($client);
+		my @sync_buddies = map { $_->id() } @buddies;
+
+		$request->addResult('_sync', join(",", @sync_buddies));
+	} else {
+	
+		$request->addResult('_sync', '-');
+	}
 	
 	$request->setStatusDone();
 }
@@ -1419,3 +1633,5 @@ sub _songData {
 }
 
 1;
+
+__END__

@@ -87,9 +87,12 @@ BEGIN {
 	Slim::bootstrap->loadModules();
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
-	unlink("$Bin/CPAN/MP3/Info.pm");
-	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-	unlink("$Bin/CPAN/XML/Simple.pm");
+	if (!Slim::Utils::OSDetect::isDebian()) {
+
+		unlink("$Bin/CPAN/MP3/Info.pm");
+		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
+		unlink("$Bin/CPAN/XML/Simple.pm");
+	}
 };
 
 use Time::HiRes;
@@ -474,11 +477,8 @@ sub idle {
 	# empty IR queue
 	if (!Slim::Hardware::IR::idle()) {
 
-	# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
-	$select_time = Slim::Utils::Timers::nextTimer();
-	
-	# loop through once a second, at a minimum
-	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
+		# empty notifcation queue
+		if (!Slim::Control::Request::checkNotifications()) {
 
 			my $timer_due = Slim::Utils::Timers::nextTimer();		
 

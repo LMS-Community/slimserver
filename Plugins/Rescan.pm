@@ -229,9 +229,16 @@ sub checkScanTimer {
 				$interval = 1;
 			}
 
-			if ($time == $scantime && !Slim::Music::Import->stillScanning) {
+			my $rescanType = ['rescan'];
+			my $rescanPref = Slim::Utils::Prefs::get('rescan-type');
 
-				Slim::Control::Request::executeRequest(undef, ['rescan']);
+			if ($rescanPref eq '2wipedb') {
+
+				$rescanType = ['wipecache'];
+
+			} elsif ($rescanPref eq '3playlist') {
+
+				$rescanType = [qw(rescan playlists)];
 			}
 
 			if ($time == $scantime && !Slim::Music::Import->stillScanning()) {
