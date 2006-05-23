@@ -1,7 +1,7 @@
 package Slim::Formats::APE;
 
 # $tagsd: APE.pm,v 1.0 2004/01/27 00:00:00 daniel Exp $
-# $Id$
+# $Id: /mirror/slim/branches/split-scanner/Slim/Formats/APE.pm 1758 2005-01-18T21:22:50.586870Z dsully  $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

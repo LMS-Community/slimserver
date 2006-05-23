@@ -114,6 +114,8 @@ sub init {
 
 	push @templateDirs, Slim::Utils::OSDetect::dirsFor('HTML');
 
+	push @templateDirs, catdir($Bin, 'HTML');
+
 	# Try and use the faster XS module if it's available.
 	eval { require Template::Stash::XS };
 

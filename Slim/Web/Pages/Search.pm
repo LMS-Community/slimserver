@@ -15,19 +15,18 @@ use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::DataStores::Base;
-use Slim::Player::TranscodingHelper;
+use Slim::Music::LiveSearch;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
-use Slim::Web::Pages::LiveSearch;
 
 sub init {
 	
 	Slim::Web::HTTP::addPageFunction(qr/^search\.(?:htm|xml)/,\&basicSearch);
 	Slim::Web::HTTP::addPageFunction(qr/^advanced_search\.(?:htm|xml)/,\&advancedSearch);
 	
-	Slim::Web::Pages->addPageLinks("search", {'SEARCHMUSIC' => "search.html?liveSearch=1"});
-	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+	Slim::Web::Pages::Home::addLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
+	Slim::Web::Pages::Home::addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 }
 
 sub basicSearch {
@@ -40,7 +39,6 @@ sub basicSearch {
 	$params->{'browse_list'} = " ";
 	$params->{'numresults'}  = -1;
 	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
-	$params->{'browse_items'} = [];
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
@@ -53,7 +51,7 @@ sub basicSearch {
 	}
 
 	# Don't kill the database - use limit & offsets
-	my $data = Slim::Web::Pages::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
+	my $data = Slim::Music::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
 
 	# The user has hit enter, or has a browser that can't handle the javascript.
 	if ($params->{'manualSearch'}) {
@@ -81,12 +79,9 @@ sub basicSearch {
 			fillInSearchResults($params, $item->[2], $descend, \@qstring);
 		}
 
-		if (defined $client && scalar @results && !$params->{'start'}) {
-			# stash the full resultset if not paging through the results
-			# assumes that when the start parameter is 0 or undefined that
-			# the query has just been run
-			my $fulldata = Slim::Web::Pages::LiveSearch->query($query, [ 'track' ]);
-			$client->param('searchResults', $fulldata->[0][2]);
+		if (defined $client && scalar @results) {
+
+			$client->param('searchResults', @results);
 		}
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
@@ -94,9 +89,9 @@ sub basicSearch {
 
 	# do it live - and send back the div
 	if ($params->{'xmlmode'}) {
-		return Slim::Web::Pages::LiveSearch->outputAsXML($query, $data, $player);
+		return Slim::Music::LiveSearch->outputAsXML($query, $data, $player);
 	} else {
-		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, $data, $player);
+		return Slim::Music::LiveSearch->outputAsXHTML($query, $data, $player);
 	}
 }
 
@@ -111,8 +106,6 @@ sub advancedSearch {
 	# template defaults
 	$params->{'browse_list'} = " ";
 	$params->{'liveSearch'}  = 0;
-	$params->{'browse_items'} = [];
-	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
 
 	# Prep the date format
 	$params->{'dateFormat'} = Slim::Utils::Misc::shortDateF();
@@ -149,7 +142,7 @@ sub advancedSearch {
 
 			# Bitrate needs to changed a bit
 			if ($key =~ /bitrate$/) {
-				$params->{$key} *= 1000;
+				$params->{$key} *= 100;
 			}
 
 			# Duration is also special
@@ -190,7 +183,7 @@ sub advancedSearch {
 	# Turn our conversion list into a nice type => name hash.
 	my %types  = ();
 
-	for my $type (keys %{ Slim::Player::TranscodingHelper::Conversions() }) {
+	for my $type (keys %{ Slim::Player::Source::Conversions() }) {
 
 		$type = (split /-/, $type)[0];
 
@@ -211,37 +204,15 @@ sub advancedSearch {
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
-	# Bug: 2479 - Don't include roles if the user has them unchecked.
-	if (my $roles = $ds->artistOnlyRoles) {
-
-		$query{'contributor.role'} = $roles;
-	}
-
 	# Do the actual search
 	my $results = $ds->find({
 		'field'  => 'track',
 		'find'   =>  \%query,
 		'sortBy' => 'title',
-		'limit'  => $params->{'itemsPerPage'},
-		'offset' => ($params->{'start'} || 0),
 	});
 
-	if (defined $client && !$params->{'start'}) {
-		# stash the full resultset if not paging through the results
-		# assumes that when the start parameter is 0 or undefined that
-		# the query has just been run
-		my $fullresults = $ds->find({
-			'field'  => 'track',
-			'find'   =>  \%query,
-			'sortBy' => 'title',
-		});
-		$client->param('searchResults', $fullresults);
-	}
-	
-	if (scalar(@$results) == $params->{'itemsPerPage'}) {
-		$params->{'numresults'} = $ds->count('track', \%query);
-	}
-	
+	$client->param('searchResults', $results) if defined $client;
+
 	fillInSearchResults($params, $results, undef, \@qstring, $ds);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
@@ -257,9 +228,8 @@ sub fillInSearchResults {
 	$params->{'type'} = $type;
 	
 	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 
-			  ($type ?'&type='. $type : '') . 
-			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
-			  '&' .
+			  '&type=' . ($type ? $type : ''). 
+			  '&query=' . Slim::Utils::Misc::escape($query) . '&' .
 			  join('&', @$qstring);
 
 	# Make sure that we have something to show.
@@ -271,30 +241,42 @@ sub fillInSearchResults {
 	# put in the type separator
 	if ($type && !$ds) {
 
-		# add reduced item for type headings
-		push @{$params->{'browse_items'}}, {'numresults' => $params->{'numresults'},
-											'query'   => $query,
-											'heading' => $type,
-										};
+		$params->{'browse_list'} .= sprintf("<tr><td><hr width=\"75%%\"/><br/>%s \"$query\": %d<br/><br/></td></tr>",
+			Slim::Utils::Strings::string(uc($type . 'SMATCHING')), $params->{'numresults'},
+		);
 	}
-
-	my ($start, $end);
 
 	if ($params->{'numresults'}) {
 
-		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
-				'itemCount'    => $params->{'numresults'},
-				'path'         => $params->{'path'},
-				'otherParams'  => $otherParams,
-				'start'        => $params->{'start'},
-				'perPage'      => $params->{'itemsPerPage'},
-			}
-		);
+		my ($start, $end);
 
-		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
-		$end = $params->{'pageinfo'}{'enditem'};
+		if (defined $params->{'nopagebar'}) {
+
+			($start, $end) = Slim::Web::Pages->simpleHeader({
+					'itemCount'    => $params->{'numresults'},
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'browselist_header'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'        => $params->{'itemsPerPage'},
+				}
+			);
+
+		} else {
+
+			($start, $end) = Slim::Web::Pages->pageBar({
+					'itemCount'    => $params->{'numresults'},
+					'path'         => $params->{'path'},
+					'otherParams'  => $otherParams,
+					'startRef'     => \$params->{'start'},
+					'headerRef'    => \$params->{'searchlist_header'},
+					'pageBarRef'   => \$params->{'searchlist_pagebar'},
+					'skinOverride' => $params->{'skinOverride'},
+					'perPage'      => $params->{'itemsPerPage'},
+				}
+			);
+		}
 		
-		my $itemnumber = 1;
+		my $itemnumber = 0;
 		my $lastAnchor = '';
 
 		for my $item (@$results) {
@@ -308,7 +290,7 @@ sub fillInSearchResults {
 
 			$list_form{'attributes'}   = '&' . join('=', $type, $item->id());
 			$list_form{'descend'}      = $descend;
-			$list_form{'odd'}          = ($itemnumber) % 2;
+			$list_form{'odd'}          = ($itemnumber + 1) % 2;
 
 			if ($type eq 'track') {
 				
@@ -338,11 +320,9 @@ sub fillInSearchResults {
 				if ($type eq 'artist') {
 					$list_form{'hierarchy'}	   = 'artist,album,track';
 					$list_form{'level'}        = 1;
-					$list_form{'hreftype'}        = 'browseDb';
 				} elsif ($type eq 'album') {
 					$list_form{'hierarchy'}	   = 'album,track';
-					$list_form{'level'}        = 1;
-					$list_form{'hreftype'}        = 'browseDb';
+					$list_form{'level'}        = 1;				
 				}
 				
 				$list_form{'text'} = $title;
@@ -356,6 +336,7 @@ sub fillInSearchResults {
 				$list_form{'anchor'} = $lastAnchor = $anchor;
 			}
 
+			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
 			push @{$params->{'browse_items'}}, \%list_form;
 		}
 	}

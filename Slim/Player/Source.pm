@@ -353,26 +353,11 @@ sub playmode {
 		
 		# if we couldn't open the song, then stop...
 		my $opened = openSong($master, $seekoffset) || do {
-
-			# If there aren't anymore items in the
-			# playlist - just return, don't try and play again.
-			if (noMoreValidTracks($client)) {
-
-				$::d_source && msg("playmode: No more valid tracks on the playlist. Stopping.\n");
-
+			errorMsg("Couldn't open song.\n");
+			trackStartEvent($client);
+			if (!gotoNext($client,1)) {
+				errorMsg("Couldn't gotoNext, stopping\n");
 				$newmode = 'stop';
-
-			} else {
-
-				# Otherwise, try and open the next item on the list.
-				trackStartEvent($client);
-
-				if (!gotoNext($client,1)) {
-
-					# Still couldn't open? Stop the player.
-					errorMsg("playmode: Couldn't gotoNext song on playlist, stopping\n");
-					$newmode = 'stop';
-				}
 			}
 		};
 

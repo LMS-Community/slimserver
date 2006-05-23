@@ -82,9 +82,9 @@ sub webPages {
 	my $title = 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
 
 	if (grep {$_ eq 'ShoutcastBrowser::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' => undef });
 	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/ShoutcastBrowser/index.html' });
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME' => "plugins/ShoutcastBrowser/index.html" });
 	}
 
 	my %pages = ( 

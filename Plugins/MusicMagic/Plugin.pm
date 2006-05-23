@@ -480,10 +480,9 @@ sub mixerlink {
 
 	if ($item->musicmagic_mixable && canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
 		#set up a musicmagic link
-		#Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
-		$form->{'mixerlinks'}{'MUSICMAGIC'} = "plugins/MusicMagic/mixerlink.html";
+		Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
 	} else {
-		#Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => undef});
+		Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => undef});
 	}
 
 	return $form;
@@ -674,7 +673,6 @@ sub musicmagic_mix {
 	my $itemnumber = 0;
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 	$params->{'browse_items'} = [];
-	$params->{'levelName'} = "track";
 
 	if ($mood) {
 		$mix = getMix($client, $mood, 'mood');

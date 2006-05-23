@@ -15,6 +15,9 @@ use URI::Escape;
 use Slim::Control::Request;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+use Slim::Web::Pages::Search;
+
+use Slim::Control::Request;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -559,6 +562,14 @@ sub cli_process {
 			$exit = 1;
 		}
 
+		elsif ($cmd eq 'albums') {
+			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
+		}
+		
+		elsif ($cmd eq 'artists') {
+			cli_cmd_artists_albums_genres($client_socket, $cmdRef);
+		}
+
 		elsif ($cmd eq 'shutdown') {
 			# delay execution so we have time to reply...
 			Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.2,
@@ -572,32 +583,6 @@ sub cli_process {
 
 			$request->execute();
 
-			if ($request->isStatusError()) {
-
-				$::d_cli && msg ("CLI: Request [$cmd] failed with error: "
-					. $request->getStatusText() . "\n");
-
-			} else {
-
-				# check if this command or query needs CLI subscription 
-				# processing
-				cli_request_check_subscribe($client_socket, $request);
-				
-				
-				# handle async commands
-				if ($request->isStatusProcessing()) {
-				
-					$::d_cli && msg ("CLI: Request [$cmd] is async: will be back\n");
-					
-					# add our write routine as a callback
-					$request->callbackParameters(\&cli_request_write);
-					
-					# return async info to caller
-					return 2;
-				}
-			}
-		} 
-		
 		else {
 
 			$::d_cli && msg("CLI: Request [$cmd] unkown or missing client -- will echo as is...\n");
@@ -915,7 +900,18 @@ sub cli_subscribe_manage {
 	my $subscribe = 0;
 	foreach my $client_socket (keys %connections) {
 
-		if (keys(%{$connections{$client_socket}{'subscribe'}})) {
+	if (defined $searchMap{$label} && specified($cmdRef->{'search'})) {
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($cmdRef->{'search'});
+	}
+	if (defined $cmdRef->{'genre_id'}){
+		$find->{'genre'} = $cmdRef->{'genre_id'};
+	}
+	if (defined $cmdRef->{'artist_id'}){
+		$find->{'artist'} = $cmdRef->{'artist_id'};
+	}
+	if (defined $cmdRef->{'album_id'}){
+		$find->{'album'} = $cmdRef->{'album_id'};
+	}
 
 			$subscribe++;
 			last;
@@ -940,8 +936,24 @@ sub cli_subscribe_manage {
 sub cli_subscribe_notification {
 	my $request = shift;
 
-	$::d_cli && msg("CLI: cli_subscribe_notification(" 
-		. $request->getRequestString() . ")\n");
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $find = {};
+	my $label = 'track';
+	my $sort  = 'title';
+	my $tags  = 'gald';
+	
+	if (defined $searchMap{$label} && specified($cmdRef->{'search'})) {
+		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($cmdRef->{'search'});
+	}
+	if (defined $cmdRef->{'genre_id'}){
+		$find->{'genre'} = $cmdRef->{'genre_id'};
+	}
+	if (defined $cmdRef->{'artist_id'}){
+		$find->{'artist'} = $cmdRef->{'artist_id'};
+	}
+	if (defined $cmdRef->{'album_id'}){
+		$find->{'album'} = $cmdRef->{'album_id'};
+	}
 
 
 	# iterate over each connection, we have a single notification handler
@@ -978,9 +990,30 @@ sub cli_subscribe_notification {
 				# send if needed
 				if ($sent) {
 
-					# write request
-					cli_request_write($request, $client_socket);
-				}
+	# Normalize any search parameters
+	if (defined $search) {
+		$search = Slim::Web::Pages::Search::searchStringSplit($search);
+	}
+
+	if (Slim::Utils::Misc::stillScanning()) {
+		cli_response_push($client_socket, "rescan:1");
+	}
+
+	my $iterator = $ds->getPlaylists('all', $search);
+
+	if (defined $iterator) {
+
+		my $numitems = scalar @$iterator;
+		
+		cli_response_push($client_socket, "count:$numitems");
+		
+		my ($valid, $start, $end) = cli_normalize($cmdRef, $numitems);
+
+		if ($valid) {
+			for my $eachitem (@$iterator[$start..$end]) {
+				cli_response_push($client_socket, "id:"  . $eachitem->id);
+				cli_response_push($client_socket, "playlist:" . Slim::Music::Info::standardTitle(undef, $eachitem));
+				cli_response_push($client_socket, "url:" . $eachitem->url) if ($tags =~ /u/);
 			}
 		}
 

@@ -1,22 +1,27 @@
-[%- IF browseby == 'BROWSE_BY_ARTWORK' and level == 0; 
-		contentwrapper = 'galleryitem';
-	ELSE;
-		contentwrapper = 'contentitem';
-	END;
-%]
-[% IF item.heading %]
-	<div class="searchHeader">
-		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
-	</div>
-[% ELSE %]
-	[% WRAPPER $contentwrapper
-			controls = 'browsecontrols'
-			itemobj = item.itemobj
-			attributes = item.attributes
-			odd = item.odd
-			mixerlinks = item.mixerlinks
-			anchor = item.anchor %]
-		
-	[% PROCESS iteminfo %]
+
+<tr>
+  <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+	[% IF item.anchor %]<a name="[% item.anchor %]"></a>[% END %]
+	
+	[% IF item.artwork %]
+
+		<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% PROCESS thumbnailItemImg height=30 alt="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF$ item.year; ($item.year); END;" title="$item.item | html; IF $item.artist; "BY" | string; $item.artist; END; IF $item.year; ($item.year); END;"%]</a>
+
 	[% END %]
-[% END %]
+	
+	[% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.showYear && item.year %] ([% item.year %])[% END %]</a>
+
+		<!-- Include the artist for the album view -->
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+
+	[% ELSE %]
+		[% PROCESS trackinfo %]
+	[% END %][% item.artist %][% item.mixerlinks.keys %]
+  </td>
+	[% PROCESS browsecontrols
+		itemobj = item.itemobj
+		attributes = item.attributes
+		odd = item.odd
+		mixerlinks = item.mixerlinks %]
+</tr>
+

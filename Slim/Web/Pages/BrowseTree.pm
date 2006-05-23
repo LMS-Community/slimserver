@@ -23,9 +23,9 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^browsetree\.(?:htm|xml)/,\&browsetree);
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
+		Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
-		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
+		Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 	}
 }
 
@@ -62,16 +62,21 @@ sub browsetree {
 
 	my ($start, $end) = (0, $count);
 
-	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
-		'itemCount'    => $count,
-		'path'         => $params->{'path'},
-		'otherParams'  => "hierarchy=$hierarchy&player=$player",
-		'start'        => $params->{'start'},
-		'perPage'      => $params->{'itemsPerPage'},
-	});
+	# Create a numeric pagebar if we need to.
+	if ($count > $itemsPer) {
 
-	$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
-	$end = $params->{'pageinfo'}{'enditem'};
+		($start, $end) = Slim::Web::Pages->pageBar({
+				'itemCount'    => $count,
+				'path'         => $params->{'path'},
+				'otherParams'  => "hierarchy=$hierarchy&player=$player",
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'browselist_header'},
+				'pageBarRef'   => \$params->{'browselist_pagebar'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'      => $params->{'itemsPerPage'},
+			}
+		);
+	}
 
 	# Setup an 'All' button.
 	# I believe this will play only songs, and not playlists.
@@ -124,13 +129,14 @@ sub browsetree {
 		$list_form{'itemobj'}    = $item;
 		$list_form{'hreftype'}   = 'browseTree';
 
-		# Don't display the edit dialog for playlists (includes CUE sheets).
-		if ($item->isPlaylist) {
+		# Don't display the edit dialog for cue sheets.
+		if ($item->isCUE) {
 			$list_form{'noEdit'} = '&noEdit=1';
 		}
 
 		$itemnumber++;
 
+		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsetree_list.html", \%list_form)};
 		push @{$params->{'browse_items'}}, \%list_form;
 
 		if (!$params->{'coverArt'} && $item->coverArt) {

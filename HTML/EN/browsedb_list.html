@@ -22,3 +22,13 @@
 	</div>
 </div>
 
+		<!-- Include the artist for the album view -->
+		[% IF includeArtist && artist && artist != noArtist; PROCESS artistsAsHTML.html; END %]
+
+	[% ELSE %]
+		[% PROCESS tracklink.html %]
+	[% END %]
+</td>
+[% PROCESS browselistcontrols.html %]
+</tr>
+

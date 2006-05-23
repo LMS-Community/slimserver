@@ -1,6 +1,6 @@
 package Plugins::MoodLogic::InstantMix;
 
-#$Id$
+#$Id: /mirror/slim/branches/split-scanner/Plugins/MoodLogic/InstantMix.pm 4113 2005-08-29T19:51:42.434193Z adrian  $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

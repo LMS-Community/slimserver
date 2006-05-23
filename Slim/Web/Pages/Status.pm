@@ -12,11 +12,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use POSIX ();
 
-use Slim::Player::Playlist;
-use Slim::Player::Source;
-use Slim::Player::TranscodingHelper;
 use Slim::Utils::Strings qw(string);
-use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
 sub init {
@@ -156,12 +152,10 @@ sub status {
 		Slim::Web::Pages->addSongInfo($client, $params, 1);
 
 		# for current song, display the playback bitrate instead.
-		my $undermax = Slim::Player::TranscodingHelper::underMax($client,Slim::Player::Playlist::song($client));
-
+		my $undermax = Slim::Player::Source::underMax($client,Slim::Player::Playlist::song($client));
 		if (defined $undermax && !$undermax) {
 			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).string('KBPS').' ABR';
 		}
-
 		if (Slim::Utils::Prefs::get("playlistdir")) {
 			$params->{'cansave'} = 1;
 		}

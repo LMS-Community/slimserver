@@ -11,7 +11,8 @@
 [% IF not item.coverThumb %]
 <table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]">
 <a [% PROCESS browseDbItemHRef %]>
-<center>[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size\"" style='STYLE="border: dashed #DDDDDD 10px"' %]</a></tr></td></table>[% END %]
+<center>[% item.album | html %]</center></a></td><td>
+<a href=""><img src="html/images/spacer.gif" border="0" height="80" width="0" alt="[% album | html %]"></a></td></table>[% END %]
 
 </td></tr><tr><td>
 

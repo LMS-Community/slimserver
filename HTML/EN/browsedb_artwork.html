@@ -1,19 +1,19 @@
-<li><div style="width:[% item.size %]px;">
-	<div >
-		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
-		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size\" width=\"$item.size" %]</a>[% END %]
-	</div>
-	<div class="artworkControls">
-			[% SET class = 'even' odd = 0 %]
-					[% PROCESS browsecontrols
-						itemobj = item.itemobj
-						attributes = item.attributes
-						odd = item.odd
-						mixerlinks = item.mixerlinks %]
-	</div>
-	<div class="artworkText"><span style="width:[% item.size %]px;">
-	<a [% PROCESS browseDbItemHRef %] target="browser">[% item.item | html %]</a>
-	[% IF item.artist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
-	[% IF item.year %] <a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]</span>
-	</div>
-</div></li>
+<div align="left" width="100%" style="float:left"><table class="even" cellpadding="5" cellspacing="0" border="0" align="left">
+	<tr><td width="[% size %]">
+		[% IF item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size\" width=\"$item.size\"" %]</a></td></table>[% END %]
+		[% IF not item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><td width="[% size %]"><a [% PROCESS browseDbItemHRef %] target="browser"><center>[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</center></a></td>
+		<td><a href=""><img src="html/images/spacer.gif" border="0" height="[% item.size %]" width="0" alt="[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]"></a></td></table>[% END %]
+	</td></tr>
+	<tr><td><table cellspacing="0" border="0" align="left">
+	
+		[% SET class = 'even' odd = 0 %]
+
+				[% PROCESS browsecontrols
+					itemobj = item.itemobj
+					attributes = item.attributes
+					odd = item.odd
+					mixerlinks = item.mixerlinks %]
+
+	</table></td></tr>
+</table></div>
+

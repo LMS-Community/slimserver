@@ -2,31 +2,22 @@
 	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
 [% END; END %]  
 
-[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %] [% PROCESS pageheader.html %]
-
-<div id="browsedbHeader">
-	[% IF browseby != 'BROWSE_BY_ARTWORK' %]
-		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
-	[% END %]
-	[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
-
-	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
-</div>
-[%- IF browseby == 'BROWSE_BY_ARTWORK' and level == 0; 
-		container = 'gallerycontainer';
-	ELSE;
-		container = 'contentcontainer';
-	END;
-%]
-[% WRAPPER $container %]
-	[% IF coverArt %]
-		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
-	[% END %]
-	[% FOREACH item = browse_items %]
-		[% PROCESS browsedbitems_list.html %]
-	[% END %]
-[% END %]
-<div id="browsedbFooter">
-[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
-</div>
+	[% IF warn %][% PROCESS scanwarning %]<p><hr><p>[% END %]
+	[% IF browselist_header %][% browselist_header %][% END %]
+	[% IF browselist_pagebar %][% browselist_pagebar %]<br>[% END %]
+			[% IF browseby != 'BROWSE_BY_SONG' %][% IF coverArt %]<center>
+				<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+		[% END %][% END %]<p>
+		<table cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td>
+			[% IF browseby != 'BROWSE_BY_ARTWORK' %]<table cellpadding="0" cellspacing="0" border="0" width="100%">[% END %]
+			[% IF browse_items %]
+				[% FOREACH item = browse_items %]
+					[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
+					[% ELSE; PROCESS browsedbitems_list.html; END %]
+				[% END %]
+			[% ELSE; browse_list; END %]
+			[% IF browseby != 'BROWSE_BY_ARTWORK' %]</table>[% END %]
+			</td></tr><tr><td>
+			[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+		</td></tr></table>
 [% PROCESS pagefooter.html %]

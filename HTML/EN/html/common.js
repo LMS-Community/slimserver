@@ -48,39 +48,14 @@ function refreshStatus() {
 	}
 [% END %]
 
-[% BLOCK addSetupCaseLinks %]
-	[% IF setuplinks %]
-		[% FOREACH setuplink = setuplinks %]
-		case "[% setuplink.key %]":
-			url = "[% setuplink.value %]"
-			page = "[% setuplink.key %]"
-			suffix = "page=" + page
-			[% IF cookie %]homestring = "[% setuplink.key | string %]"
-			cookie = [% cookie %][% END %]
-		break
-		[% END %]
-	[% END %]
-[% END %]
-
-function chooseSettings(value,option)
-{
-	var url;
-
-	switch(option)
-	{
-		[% IF playerid -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
-						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
-		[%- ELSE -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
-				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][%- END %]
-		case "HOME":
-			url = "[% webroot %]home.html?"
-		break
-		case "PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
-		break
-		case "SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=SERVER_SETTINGS&amp;"
-		break
+	if (parent.playlist.location.host != '') {
+		// Putting a time-dependant string in the URL seems to be the only way to make Safari
+		// refresh properly. Stitching it together as below is needed to put the salt before
+		// the hash (#currentsong).
+		var plloc = top.frames.playlist.location;
+		var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
+			+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+		plloc.replace(newloc);
 	}
 
 	if (option) {

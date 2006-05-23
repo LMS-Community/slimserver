@@ -326,12 +326,10 @@ sub webPages {
 	);
 
 	if (grep {$_ eq 'Picks::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => undef });
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => undef });
 
 	} else {
-
-		Slim::Web::Pages::addLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => "plugins/Picks/index.html" });
+		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_PICKS_MODULE_NAME' => "plugins/Picks/index.html" });
 	}
 
 	return \%pages;

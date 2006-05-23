@@ -1,6 +1,6 @@
 package Plugins::MoodLogic::MoodWheel;
 
-#$Id$
+#$Id: /mirror/slim/branches/split-scanner/Plugins/MoodLogic/MoodWheel.pm 4595 2005-10-12T17:20:52.108083Z dsully  $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

@@ -173,7 +173,18 @@ sub summary {
 	return ($summary, \@warn);
 }
 
-# Main page
+sub webPages {
+	my %pages = ("index\.(?:htm|xml)" => \&handleIndex);
+
+	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => undef });
+	} else {
+		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
+	}
+
+	return (\%pages);
+}
+
 sub handleIndex {
 	my ($client, $params) = @_;
 	

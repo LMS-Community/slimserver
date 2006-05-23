@@ -17,7 +17,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
-use Slim::Control::Execute;
+use Slim::Control::Dispatch;
 
 our %executeCallbacks = ();
 
@@ -30,6 +30,7 @@ our %executeCallbacks = ();
 #   a list of callback function args
 #
 # returns an array containing the given parameters
+
 sub execute {
 
 	my $p0 = $parrayref->[0];
@@ -45,7 +46,57 @@ sub execute {
 	my @returnArray = ();
 	my $pushParams = 1;
 
-	$::d_command && msg(" Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
+
+	# Try and go through dispatch
+
+	# Determine if this is a query
+	my $query = 0;
+	for my $p (@$parrayref) {
+		# if a param is ? then it is a query...
+		if ($p eq '?') {
+			$query = 1;
+			last;
+		}
+	}
+	
+	my $cmdText = $p0;
+	
+	# create a request
+	my $cmd = new Slim::Control::Request($cmdText, $query, $client);
+	
+	# add all parameters by position
+	my $first = 1;
+	for my $p (@$parrayref) {
+		# need to skip $p0 without changing the array
+		# there is probably a more elegant Perl solution but this works...
+		if (!$first && $p ne '?') {
+			$cmd->addParamPos($p);
+		}
+		$first = 0;
+	}
+	
+	$::d_command && $cmd->dump();
+	
+	$cmd->execute();
+	
+	if ($cmd->wasStatusDispatched()){
+	
+		$::d_command && $cmd->dump();
+		
+		# make sure we don't execute again if ever dispatch knows
+		# about a command still below
+		$p0 .= "(was dispatched)";
+		
+		# prevent pushing $p0 again..
+		$pushParams = 0;
+	
+		# patch the return array so that callbacks function as before
+		@returnArray = $cmd->getArray();
+	}
+		
+# END
+
+	$::d_command && msg("Executing command " . ($client ? $client->id() : "no client") . ": $p0 (" .
 			(defined $p1 ? $p1 : "") . ") (" .
 			(defined $p2 ? $p2 : "") . ") (" .
 			(defined $p3 ? $p3 : "") . ") (" .
@@ -53,6 +104,8 @@ sub execute {
 			(defined $p5 ? $p5 : "") . ") (" .
 			(defined $p6 ? $p6 : "") . ") (" .
 			(defined $p7 ? $p7 : "") . ")\n");
+	
+	
 
 # The first parameter is the client identifier to execute the command. Column C in the
 # table below indicates if a client is required (Y) or not (N) for the command.
@@ -157,86 +210,89 @@ sub execute {
 
 		# ignore empty commands
 
-	} elsif ($p0 eq "pref") {
+# handled by dispatch
+#	} elsif ($p0 eq "pref") {
+#		
+#		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
+#			Slim::Utils::Prefs::set($p1, $p2);
+#		}
+#
+#		$p2 = Slim::Utils::Prefs::get($p1);
+#
+#		$client = undef;
+
+# handled by dispatch
+#	} elsif ($p0 eq "rescan") {
+#	
+#		if (defined $p1 && $p1 eq '?') {
+#
+#			$p1 = Slim::Utils::Misc::stillScanning() ? 1 : 0;
+#
+#		} elsif (!Slim::Utils::Misc::stillScanning()) {
+#
+#			if (defined $p1 && $p1 eq 'playlists') {
+#
+#				Slim::Music::Import::scanPlaylistsOnly(1);
+#
+#			} else {
+#
+#				Slim::Music::Import::cleanupDatabase(1);
+#			}
+#
+#			Slim::Music::Info::clearPlaylists();
+#			Slim::Music::Import::resetImporters();
+#			Slim::Music::Import::startScan();
+#		}
+#
+#		$client = undef;
+
+# handled by dispatch
+#	} elsif ($p0 eq "wipecache") {
+#
+#		if (!Slim::Utils::Misc::stillScanning()) {
+#
+#			# Clear all the active clients's playlists
+#			for my $client (Slim::Player::Client::clients()) {
+#
+#				$client->execute([qw(playlist clear)]);
+#			}
+#
+#			Slim::Music::Info::clearPlaylists();
+#			Slim::Music::Info::wipeDBCache();
+#			Slim::Music::Import::resetImporters();
+#			Slim::Music::Import::startScan();
+#		}
+#		
+#		$client = undef;
 		
-		#return execute_new( $client, $parrayref, $callbackf, $callbackargs );
+# handled by dispatch
+#	} elsif ($p0 eq "version") {
+#		$p1 = $::VERSION;
 
-		if (defined($p2) && $p2 ne '?' && !$::nosetup) {
-			Slim::Utils::Prefs::set($p1, $p2);
-		}
-
-		$p2 = Slim::Utils::Prefs::get($p1);
-
-		$client = undef;
-
-	} elsif ($p0 eq "rescan") {
-	
-		if (defined $p1 && $p1 eq '?') {
-
-			$p1 = Slim::Utils::Misc::stillScanning() ? 1 : 0;
-
-		} elsif (!Slim::Utils::Misc::stillScanning()) {
-
-			if (defined $p1 && $p1 eq 'playlists') {
-
-				Slim::Music::Import->scanPlaylistsOnly(1);
-
-			} else {
-
-				Slim::Music::Import->cleanupDatabase(1);
-			}
-
-			Slim::Music::Info::clearPlaylists();
-			Slim::Music::Import->resetImporters;
-			Slim::Music::Import->startScan;
-		}
-
-		$client = undef;
-
-	} elsif ($p0 eq "wipecache") {
-
-		if (!Slim::Utils::Misc::stillScanning()) {
-
-			# Clear all the active clients's playlists
-			for my $client (Slim::Player::Client::clients()) {
-
-				$client->execute([qw(playlist clear)]);
-			}
-
-			Slim::Music::Info::clearPlaylists();
-			Slim::Music::Info::wipeDBCache();
-			Slim::Music::Import->resetImporters;
-			Slim::Music::Import->startScan;
-		}
-		
-		$client = undef;
-		
-	} elsif ($p0 eq "version") {
-		$p1 = $::VERSION;
-
-	} elsif ($p0 eq "debug") {
-
-		if ($p1 =~ /^d_/) {
-
-			my $debugsymbol = "::" . $p1;
-			no strict 'refs';
-
-			if (!defined($p2)) {
-
-				$$debugsymbol = ($$debugsymbol ? 0 : 1);
-
-			} elsif ($p2 eq "?")  {
-
-				$p2 = $$debugsymbol;
-				$p2 ||= 0;
-
-			} else {
-
-				$$debugsymbol = $p2;
-			}
-		}
-
- 		$client = undef;
+# handled by dispatch
+#	} elsif ($p0 eq "debug") {
+#
+#		if ($p1 =~ /^d_/) {
+#
+#			my $debugsymbol = "::" . $p1;
+#			no strict 'refs';
+#
+#			if (!defined($p2)) {
+#
+#				$$debugsymbol = ($$debugsymbol ? 0 : 1);
+#
+#			} elsif ($p2 eq "?")  {
+#
+#				$p2 = $$debugsymbol;
+#				$p2 ||= 0;
+#
+#			} else {
+#
+#				$$debugsymbol = $p2;
+#			}
+#		}
+#
+#		$client = undef;
  		
  		
 ################################################################################
@@ -1306,11 +1362,7 @@ sub execute {
  				}
  			}
 
- 		} else {
-
- 			#treat anything we don't know as a query so that we don't bcast it!
- 			# ${$pcmdIsQuery} = 1;
-  		}
+ 		}
  	}				
  		
  	# extended CLI API calls do push their return values directly
@@ -1329,14 +1381,14 @@ sub execute {
 
 	executeCallback($client, \@returnArray);
 	
-	$::d_command && msg(" Returning array: $p0 (" .
-			(defined $p1 ? $p1 : "") . ") (" .
-			(defined $p2 ? $p2 : "") . ") (" .
-			(defined $p3 ? $p3 : "") . ") (" .
-			(defined $p4 ? $p4 : "") . ") (" .
-			(defined $p5 ? $p5 : "") . ") (" .
-			(defined $p6 ? $p6 : "") . ") (" .
-			(defined $p7 ? $p7 : "") . ")\n");
+	$::d_command && msg(" Returning array: " . $returnArray[0] . " (" .
+			(defined $returnArray[1] ? $returnArray[1] : "") . ") (" .
+			(defined $returnArray[2] ? $returnArray[2] : "") . ") (" .
+			(defined $returnArray[3] ? $returnArray[3] : "") . ") (" .
+			(defined $returnArray[4] ? $returnArray[4] : "") . ") (" .
+			(defined $returnArray[5] ? $returnArray[5] : "") . ") (" .
+			(defined $returnArray[6] ? $returnArray[6] : "") . ") (" .
+			(defined $returnArray[7] ? $returnArray[7] : "") . ")\n");
 	
 	return @returnArray;
 }

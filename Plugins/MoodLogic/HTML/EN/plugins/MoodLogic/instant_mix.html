@@ -2,8 +2,11 @@
 [%- pagetitle = "MOODLOGIC_INSTANT_MIX" | string -%]
 [%- PROCESS pageheader.html -%] 
 
-[% IF browselist_header %][% browselist_header %][% END %]
-[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+	[% IF browselist_header %][% browselist_header %][% END %]
+	[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+	<table cellspacing="0" border="0" cellpadding="4" width="100%">
+	<tr><td class="listing">[% "THIS_ENTIRE_PLAYLIST" | string %]</td><td></td>
+	[% WRAPPER playlink %]
 
 [% WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items %]
@@ -11,12 +14,11 @@
 	[% END %]
 [% END %]
 
+	[% END %]
+	</tr>
+	[% FOREACH item = browse_items %]
+		[% PROCESS browsedbitems_list.html %]
+	[% END %]
+	</table>
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
-
-[% IF p0 %]
-	<script type="text/javascript">
-		refreshStatus();
-	</script>
-[% END %]
-
-[%- PROCESS pagefooter.html -%]
+[% PROCESS pagefooter.html %]

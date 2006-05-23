@@ -220,8 +220,8 @@ sub maxBass { 50 };
 sub minBass { 50 };
 sub maxTreble { 50 };
 sub minTreble { 50 };
-sub maxPitch { 100 };
-sub minPitch { 100 };
+sub maxPitch { 50 };
+sub minPitch { 50 };
 
 sub model {
 	return 'squeezebox2';
