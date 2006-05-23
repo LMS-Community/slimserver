@@ -10,7 +10,7 @@ use base qw(Class::Data::Inheritable);
 
 use Plugins::iTunes::Common;
 
-use Slim::Player::Source;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -39,7 +39,7 @@ sub initPlugin {
 		return;
 	}
 
-	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	$class->initialized(1);
 
@@ -52,7 +52,7 @@ sub shutdownPlugin {
 	my $class = shift;
 
 	# disable protocol handler
-	Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	$class->initialized(0);
 

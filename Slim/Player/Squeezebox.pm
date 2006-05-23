@@ -21,8 +21,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Misc;
-use Slim::Utils::Network;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -606,9 +604,7 @@ sub stream {
 		my $handler;
 		my $server_url = $client->canDirectStream($url);
 		if ($server_url) {
-
-			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
-
+			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);			
 			if ($handler->can("getFormatForURL")) {
 				$format = $handler->getFormatForURL($server_url, $format);
 			}

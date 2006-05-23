@@ -689,7 +689,7 @@ sub directHeaders {
 	# to return a specific number of bytes or look for a specific 
 	# byte sequence and make this less HTTP specific. For now, we only
 	# support this type of direct streaming for HTTP-esque protocols.
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);	
 
 	# Trim embedded nulls 
 	$headers =~ s/[\0]*$//;
@@ -959,6 +959,13 @@ sub hasPreAmp {
 }
 
 # SB2 can display Unicode fonts via a TTF
+sub isValidClientLanguage {
+	my $class = shift;
+	my $lang  = shift;
+
+	return 1;
+}
+
 sub string {
         my $client = shift;
         my $string = shift;

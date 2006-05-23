@@ -88,7 +88,7 @@ sub shutdownPlugin {
 	# remove playlists
 	
 	# disable protocol handler?
-	#Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
+	Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
 	
 	$initialized = 0;
 

@@ -35,7 +35,7 @@ use Plugins::Live365::Live365API;
 use constant ROWS_TO_RETRIEVE => 50;
 
 # {{{ Initialize
-our $live365 = {};
+our $live365;
 
 Slim::Player::ProtocolHandlers->registerHandler("live365", "Plugins::Live365::ProtocolHandler");
 

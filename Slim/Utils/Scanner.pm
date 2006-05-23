@@ -24,7 +24,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Formats::Parse;
 use Slim::Music::Info;
-use Slim::Player::Source;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 
 sub init {
@@ -184,7 +184,7 @@ sub scanRemoteURL {
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 
-	my $remoteFH  = Slim::Player::Source::openRemoteStream($url);
+	my $remoteFH = Slim::Player::ProtocolHandlers->openRemoteStream($url);
 
 	if (!$remoteFH) {
 		errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist.\n");
@@ -213,7 +213,7 @@ sub scanRemoteURL {
 		}
 	}
 
-	$class->scanPlaylistFileHandle($track, $remoteFH);
+	return $class->scanPlaylistFileHandle($track, $remoteFH);
 }
 
 sub scanPlaylistFileHandle {
@@ -293,7 +293,7 @@ sub scanPlaylistFileHandle {
 
 	$::d_scan && msgf("scanPlaylistFileHandle: found %d items in playlist.\n", scalar @playlistTracks);
 
-	return 1;
+	return wantarray ? @playlistTracks : \@playlistTracks;
 }
 
 1;

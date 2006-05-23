@@ -23,11 +23,11 @@ BEGIN {
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
-use Slim::Music::Info;
 use Slim::Music::Import;
-use Slim::Utils::Misc;
+use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;

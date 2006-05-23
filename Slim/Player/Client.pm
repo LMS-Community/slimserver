@@ -1209,6 +1209,17 @@ sub flush {}
 
 sub power {}
 
+sub isValidClientLanguage {
+	my $class = shift;
+	my $lang  = shift;
+
+	if ($validClientLanguages{$lang}) {
+		return 1;
+	}
+
+	return 0;
+}
+
 #
 sub string {
 	my $client = shift;

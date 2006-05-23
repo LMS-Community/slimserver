@@ -38,7 +38,6 @@ use base qw(Class::Data::Inheritable);
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
 
-use Slim::Player::Source;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 

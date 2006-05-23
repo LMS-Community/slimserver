@@ -10,6 +10,7 @@ package Slim::Formats::Parse;
 use strict;
 
 use Slim::Formats::Playlists;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 
 sub registerParser {
@@ -257,7 +258,7 @@ sub readASX {
 							$href = $url->as_string();
 						}
 
-						if (exists $Slim::Player::Source::protocolHandlers{lc $scheme}) {
+						if (Slim::Player::ProtocolHandlers->loadHandler(lc $scheme)) {
 
 							$::d_parse && msg("Found a handler for: $url\n");
 							$path = $href;

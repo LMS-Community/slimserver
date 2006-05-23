@@ -20,9 +20,6 @@ use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Misc;
-use Slim::Utils::Strings qw( string );
-use Slim::Web::XMLBrowser;
 
 use Plugins::RadioIO::ProtocolHandler;
 
@@ -33,7 +30,12 @@ sub enabled {
 }                             
 
 sub initPlugin {
-	$::d_plugins && msg("RadioIO Plugin initializing.\n");
+	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
+}
+
+# Just so we don't have plain text URLs in the code.
+sub decrypt {
+	my $str = shift;
 	
 	# Backwards-compat with radioio:// protocol links
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');

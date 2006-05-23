@@ -27,6 +27,7 @@ use URI::file;
 require Slim::Music::Info;
 require Slim::Player::ProtocolHandlers;
 require Slim::Utils::OSDetect;
+require Slim::Utils::Scanner;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
 require Slim::Utils::DateTime;
@@ -331,6 +332,7 @@ sub crackURL {
 	my ($string) = @_;
 
 	my $urlstring = join('|', Slim::Player::ProtocolHandlers->registeredHandlers);
+
 	$string =~ m|[$urlstring]://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
 	my $user = $1;
@@ -513,117 +515,6 @@ sub stripRel {
 	return $file;
 }
 
-sub virtualToAbsolute {
-	my ($virtual, $recursion) = @_;
-
-	my $curdir  = Slim::Utils::Prefs::get('audiodir') || return $virtual;
-
-	if (!defined $virtual) {
-		$virtual = ""
-	}
-	
-	if (Slim::Music::Info::isURL($virtual)) {
-		return $virtual;
-	}
-	
-	if (file_name_is_absolute($virtual)) {
-		$::d_paths && msg("virtualToAbsolute: $virtual is already absolute.\n");
-		return $virtual;
-	}
-
-	# Always unescape ourselves
-	$virtual = unescape($virtual);
-
-	$curdir = fileURLFromPath($curdir);	
-
-	my @levels = ();
-
-	if (defined($virtual)) {
-		@levels = splitdir($virtual);
-	}
-
-	my $level;
-
-	if ($::d_paths) {
-		foreach $level (@levels) {
-			msg("    $level\n");
-		}
-	}
-
-	my @items;
-	foreach	$level (@levels) {
-
-		next if $level eq "";
-
-		# this was breaking songinfo and other pages when using windows .lnk files.
-		#last if $level eq "..";
-
-		# optimization for pre-cached imported playlists.
-		if (Slim::Music::Info::isPlaylistURL($curdir)) {
-			my $listref = Slim::Music::Info::cachedPlaylist(fileURLFromPath($curdir));
-			if ($listref) {
-				return @{$listref}[$level];
-			}
-		} 
-		
-		if (Slim::Music::Info::isPlaylist(fileURLFromPath($curdir))) {
-
-			@items = ();
-
-			Slim::Utils::Scan::addToList({
-				'listRef'   => \@items,
-				'url'       => $curdir,
-				'recursive' => 0,
-			});
-
-			if (scalar(@items)) {
-				if (defined $items[$level]) {
-					$curdir = $items[$level];
-				} else {
-					last;
-				}
-				#continue traversing if the item was found in the list
-				#and the item found is itself a list
-				next if (Slim::Music::Info::isList(fileURLFromPath($curdir)));
-				#otherwise stop traversing, curdir is either the playlist
-				#if no entry found or the located entry in the playlist
-				last;
-			}
-		} else {
-			if (Slim::Music::Info::isURL($curdir)) {
-				#URLs always use / as separator
-				$curdir .= '/' . escape($level);
-			} else {
-				$curdir = catdir($curdir,$level);
-			}
-		}
-
-		next if (Slim::Music::Info::isDir(fileURLFromPath($curdir)));
-
-		if ($^O =~ /Win32/ && Slim::Music::Info::isWinShortcut(fileURLFromPath($curdir))) {
-
-			if (defined($Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)})) {
-				$curdir = $Slim::Utils::Scan::playlistCache{fileURLFromPath($curdir)}
-			} else {
-				$curdir = pathFromWinShortcut(fileURLFromPath($curdir));
-			}
-		}
-
-		#continue traversing if curdir is a list
-		next if (Slim::Music::Info::isList(fileURLFromPath($curdir)));
-		#otherwise stop traversing, non-list items cannot be traversed
-		last;
-	}
-	
-	$::d_paths && msg("became: $curdir\n");
-	
-	if (Slim::Music::Info::isFileURL($curdir)) {
-		return $curdir;
-	} else {
-		return fileURLFromPath($curdir);  
-	}
-}
-
 sub inAudioFolder {
 	return _checkInFolder(shift, 'audiodir');
 }
@@ -638,7 +529,6 @@ sub _checkInFolder {
 
 	# Fully qualify the path - and strip out any url prefix.
 	$path = fixPath($path) || return 0;
-	$path = virtualToAbsolute($path) || return 0;
 	$path = pathFromFileURL($path) || return 0;
 
 	my $checkdir = Slim::Utils::Prefs::get($pref);
@@ -802,7 +692,7 @@ sub findAndScanDirectoryTree {
 		$topLevelObj->update;
 
 		# Do a quick directory scan.
-		Slim::Utils::Scan::addToList({
+		Slim::Utils::Scanner->scanDirectory({
 			'url'       => $path,
 			'recursive' => 0,
 		});
@@ -827,6 +717,39 @@ sub shortDateF {
 
 sub timeF {
 	return Slim::Utils::DateTime::timeF(@_);
+}
+
+sub localeStrftime {
+	my $format = shift;
+	my $ltime = shift;
+	
+	(my $language = Slim::Utils::Prefs::get('language')) =~ tr/A-Z/a-z/;
+
+	# we can't display japanese or chinese, etc right now.
+	if (!Slim::Player::Client->isValidClientLanguage($language)) {
+
+		$language = Slim::Utils::Strings->failsafeLanguage;
+	}
+
+	(my $country = $language) =~ tr/a-z/A-Z/;
+
+	# This is for when we can display japanese on the display.
+	# We might want to consider changing s/JP/JA/ in strings.txt ?
+	if ($language eq 'jp') {
+		$language = 'ja';
+	}
+	
+	my $serverlocale = $language . "_" . $country;
+
+	my $saved_locale = setlocale(LC_TIME, $serverlocale);
+	my $time = strftime $format, localtime($ltime);
+	
+	# XXX - we display in utf8 now
+	# these strings may come back as utf8, make sure they are latin1 when we display them
+	# $time = utf8toLatin1($time);
+	
+	setlocale(LC_TIME, "");
+	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
 
 sub fracSecToMinSec {

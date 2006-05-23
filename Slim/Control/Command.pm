@@ -14,6 +14,7 @@ use Slim::DataStores::Base;
 use Slim::Display::Display;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
 use Slim::Control::Execute;
@@ -624,7 +625,7 @@ sub execute {
 						$client->currentPlaylistModified(1);
 					}
 					
-					$path = Slim::Utils::Misc::virtualToAbsolute($path);
+					#$path = Slim::Utils::Misc::virtualToAbsolute($path);
 					
 					if ($p1 =~ /^(play|load)$/) { 
 
@@ -822,9 +823,7 @@ sub execute {
  
 				if (defined($p2) && $p2 ne '') {
 
-					$p2 = Slim::Utils::Misc::virtualToAbsolute($p2);
-
-					my $contents;
+					my $contents = [];
 
 					if (!Slim::Music::Info::isList($p2)) {
 
@@ -832,19 +831,18 @@ sub execute {
 
 					} elsif (Slim::Music::Info::isDir($p2)) {
 
-						Slim::Utils::Scan::addToList({
-							'listRef' => \@{$contents},
-							'url' => $p2,
-							'recursive'    => 1
+						$contents = Slim::Utils::Scanner->scanDirectory({
+							'url'       => $p2,
+							'recursive' => 1,
 						});
 
-						Slim::Player::Playlist::removeMultipleTracks($client,\@{$contents});
+						Slim::Player::Playlist::removeMultipleTracks($client, $contents);
 
 					} else {
 
 						$contents = Slim::Music::Info::cachedPlaylist($p2);
 
-						if (!defined $contents) {
+						if (!scalar @$contents) {
 
 							my $playlist_filehandle;
 
@@ -858,9 +856,9 @@ sub execute {
 
 								$contents = [Slim::Formats::Parse::parseList($p2,$playlist_filehandle,dirname($p2))];
 							}
-						}
+
+						} else {
 			 
-						if (defined($contents)) {
 							Slim::Player::Playlist::removeMultipleTracks($client,$contents);
 						}
 					}

@@ -15,7 +15,6 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
-use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
@@ -53,7 +52,7 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
 # Map our tag functions - so they can be dynamically loaded.
-our (%tagClasses, %loadedTagClasses);
+our %tagFunctions = ();
 
 sub init {
 
@@ -96,6 +95,74 @@ sub init {
 		# Remote types
 		'http' => 'Slim::Formats::HTTP',
 		'mms'  => 'Slim::Formats::MMS',
+	);
+
+	%tagFunctions = (
+		'mp3' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
+
+		'mp2' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
+
+		'ogg' => {
+			'module' => 'Slim::Formats::Ogg',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Ogg::getTag,
+		},
+
+		'flc' => {
+			'module' => 'Slim::Formats::FLAC',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::FLAC::getTag,
+		},
+
+		'wav' => {
+			'module' => 'Slim::Formats::Wav',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Wav::getTag,
+		},
+
+		'aif' => {
+			'module' => 'Slim::Formats::AIFF',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::AIFF::getTag,
+		},
+
+		'wma' => {
+			'module' => 'Slim::Formats::WMA',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::WMA::getTag,
+		},
+
+		'mov' => {
+			'module' => 'Slim::Formats::Movie',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Movie::getTag,
+		},
+
+		'shn' => {
+			'module' => 'Slim::Formats::Shorten',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Shorten::getTag,
+		},
+
+		'mpc' => {
+			'module' => 'Slim::Formats::Musepack',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Musepack::getTag,
+		},
+
+		'ape' => {
+			'module' => 'Slim::Formats::APE',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::APE::getTag,
+		},
 	);
 }
 
@@ -625,22 +692,6 @@ sub cachedPlaylist {
 	return undef;
 }
 
-sub cacheDirectory {
-	my ($url, $list, $age) = @_;
-
-	my $obj = $currentDB->objectForUrl($url, 1, 1);
-
-	if (blessed($obj) && $obj->can('setDirItems')) {
-
-		$obj->setDirItems($list);
-		$obj->timestamp( ($age || time) );
-
-		$currentDB->updateTrack($obj);
-		
-		$::d_info && msg("cached an " . (scalar @$list) . " item playlist for $url\n");
-	}
-}
-
 sub fileName {
 	my $j = shift;
 
@@ -805,9 +856,14 @@ sub isHTTPURL {
 }
 
 sub isMMSURL {
-	my $url = shift;
+	my $url = shift || return 0;
 
-	return (defined($url) && ($url =~ /^mms:\/\//i));
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1)) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub isRemoteURL {

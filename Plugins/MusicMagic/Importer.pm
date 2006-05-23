@@ -7,10 +7,10 @@ use Scalar::Util qw(blessed);
 
 use Plugins::MusicMagic::Common;
 
-use Slim::Player::Source;
+use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
-use Slim::Utils::Strings;
+use Slim::Utils::Strings qw(string);
 
 my $isScanning = 0;
 my $initialized = 0;
@@ -115,7 +115,7 @@ sub initPlugin {
 
 		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('musicmagic'));
 
-		Slim::Player::Source::registerProtocolHandler("musicmagicplaylist", "0");
+		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 	}
 
 	return $initialized;

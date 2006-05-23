@@ -86,12 +86,11 @@ sub shutdownPlugin {
 	# remove playlists
 	
 	# disable protocol handler
-	#Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
+	Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
 	
 	# reset last scan time
 
 	$lastMusicLibraryFinishTime = undef;
-
 
 	$initialized = 0;
 	

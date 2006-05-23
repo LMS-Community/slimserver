@@ -19,7 +19,7 @@ INIT: {
 	}
 }
 
-use Slim::Player::Source;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -68,10 +68,7 @@ sub initPlugin {
 
 	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
 
-	if ($INC{'Slim::Player::Source'}) {
-
-		Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
-	}
+	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	$class->initialized(1);
 

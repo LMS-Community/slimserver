@@ -1,6 +1,6 @@
 package Slim::Player::ProtocolHandlers;
 
-# $Id$
+# $Id: Source.pm 5124 2005-11-10 01:24:47Z dsully $
 
 # SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,6 +11,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
@@ -29,11 +30,11 @@ my %loadedHandlers = ();
 sub isValidHandler {
 	my ($class, $protocol) = @_;
 
-	if ($protocolHandlers{$protocol}) {
+	if (defined $protocolHandlers{$class}) {
 		return 1;
 	}
 
-	if (exists $protocolHandlers{$protocol}) {
+	if (exists $protocolHandlers{$class}) {
 		return 0;
 	}
 
@@ -54,9 +55,18 @@ sub registerHandler {
 
 sub openRemoteStream {
 	my $class  = shift;
-	my $url    = shift;
+	my $track  = shift;
 	my $client = shift;
 
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	# Make sure we're dealing with a track object.
+	if (!blessed($track) || !$track->can('url')) {
+
+		$track = $ds->objectForUrl($track, 1);
+	}
+
+	my $url        = $track->url;
 	my $protoClass = $class->handlerForURL($url);
 
 	$::d_source && msg("Trying to open protocol stream for $url\n");
@@ -66,8 +76,10 @@ sub openRemoteStream {
 		$::d_source && msg("Found handler for $url - using $protoClass\n");
 
 		return $protoClass->new({
+			'track'  => $track,
 			'url'    => $url,
 			'client' => $client,
+			'create' => 1,
 		});
 	}
 
@@ -102,11 +114,6 @@ sub loadHandler {
 	if ($handlerClass && !$loadedHandlers{$handlerClass}) {
 
 		eval "use $handlerClass";
-
-		if ($@) {
-			errorMsg("loadHandler: Couldn't load class: [$handlerClass] - [$@]\n");
-			return undef;
-		}
 
 		$loadedHandlers{$handlerClass} = 1;
 	}

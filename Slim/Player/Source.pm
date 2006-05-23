@@ -28,25 +28,21 @@ BEGIN {
 	}
 }
 
-use Slim::Control::Request;
-use Slim::Formats::Playlists;
-use Slim::Player::Pipeline;
-use Slim::Player::ProtocolHandlers;
-use Slim::Player::ReplayGain;
-use Slim::Player::TranscodingHelper;
+use Slim::Control::Command;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
 use Slim::Player::Pipeline;
-use Slim::Web::RemoteStream;
-use Slim::Player::Protocols::HTTP;
-use Slim::Player::Protocols::MMS;
+use Slim::Player::ProtocolHandlers;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 use constant STATUS_STREAMING => 0;
 use constant STATUS_PLAYING => 1;
+
+our %commandTable = ();
+our %binaries = ();
 
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('sysseek');
@@ -1207,7 +1203,10 @@ sub openSong {
 
 		if (!$directStream) {
 
-			$::d_source && msg("openSong: URL is remote [$fullpath]\n");
+			$::d_source && msg("URL is remote : $fullpath\n");
+
+			# we don't get the content type until after the stream is opened
+			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
 	
 			if ($sock) {
 	
