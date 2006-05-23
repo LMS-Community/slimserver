@@ -472,18 +472,18 @@ sub idle {
 	# loop through once a second, at a minimum
 	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 
-		# handle notifications once IR queue is empty
-		Slim::Control::Request::checkNotifications();
+			my $timer_due = Slim::Utils::Timers::nextTimer();		
 
-		# set timeout to wait in select based on when next timer is due, or once per second
-		$select_time = Slim::Utils::Timers::nextTimer();
+			if (!defined($timer_due) || $timer_due > 0) {
 
-		if (!defined($select_time) || $select_time > 1) {
-			$select_time = 1
+				$select_time = $timer_due;
+				if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
+
+			}
 		}
-
-		$::d_time && msg("select_time: $select_time\n");
 	}
+
+	$::d_time && msg("select_time: $select_time\n");
 
 	# call select and process any IO
 	Slim::Networking::Select::select($select_time);
