@@ -6,15 +6,11 @@ package Plugins::iTunes::Plugin;
 # version 2.
 
 use strict;
-use base qw(Class::Data::Inheritable);
-
-use Plugins::iTunes::Common;
+use base qw(Plugins::iTunes::Common);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
-
-__PACKAGE__->mk_classdata('initialized');
 
 sub getDisplayName {
 	return 'SETUP_ITUNES';
@@ -35,7 +31,7 @@ sub initPlugin {
 
 	addGroups();
 
-	if (!Plugins::iTunes::Common->canUseiTunesLibrary) {
+	if (!$class->canUseiTunesLibrary) {
 		return;
 	}
 
@@ -43,7 +39,7 @@ sub initPlugin {
 
 	$class->initialized(1);
 
-	Plugins::iTunes::Common->setPodcasts;
+	$class->setPodcasts;
 
 	return 1;
 }
