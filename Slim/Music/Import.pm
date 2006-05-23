@@ -9,6 +9,8 @@ use strict;
 
 use base qw(Class::Data::Inheritable);
 
+use FindBin qw($Bin);
+use Proc::Background;
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
@@ -17,7 +19,7 @@ use Slim::Utils::Misc;
 INIT: {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly useFolderImporter)) {
+	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly useFolderImporter scanningProcess)) {
 
 		$class->mk_classdata($accessor);
 	}
@@ -30,7 +32,21 @@ our %artwork        = ();
 
 my $folderScanClass = 'Slim::Music::MusicFolderScan';
 
+sub launchScan {
+	my ($class, $args) = @_;
+
+	my $command  = "$Bin/scanner.pl";
+	my @scanArgs = map { "--$_" } keys %{$args};
+
+	$class->scanningProcess(
+		Proc::Background->new($command, @scanArgs)
+	);
+
+	return 1;
+}
+
 # Force a rescan of all the importers.
+# This is called by the scanner.pl helper program.
 sub startScan {
 	my $class  = shift;
 	my $import = shift;
@@ -73,7 +89,7 @@ sub startScan {
 
 		$importsRunning{'artwork'} = Time::HiRes::time();
 
-		$class->artScan();
+		$class->artScan;
 	}
 
 	# Auto-identify VA/Compilation albums
@@ -91,13 +107,15 @@ sub startScan {
 
 		$importsRunning{'cleanupStaleEntries'} = Time::HiRes::time();
 
-		$ds->cleanupStaleTrackEntries();
+		$ds->cleanupStaleTrackEntries;
 	}
 
 	# Reset
 	$class->useFolderImporter(0);
 
 	$::d_import && msg("Import: Finished background scanning.\n");
+
+	# This needs to be moved for split-scanner
 	Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
 }
 
@@ -210,6 +228,12 @@ sub endImporter {
 sub stillScanning {
 	my $class   = shift;
 	my $imports = scalar keys %importsRunning;
+
+	if (blessed($class->scanningProcess) && $class->scanningProcess->alive) {
+		return 1;
+	} else {
+		return 0;
+	}
 
 	if ($::d_import && $imports) {
 

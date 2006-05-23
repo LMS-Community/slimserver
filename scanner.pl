@@ -40,7 +40,7 @@ use Slim::Utils::Strings qw(string);
 sub main {
 
 	our ($d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
-	our ($rescan, $wipe, $itunes, $musicmagic, $force, $cleanup);
+	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup);
 
 	our $LogTimestamp = 1;
 
@@ -49,6 +49,7 @@ sub main {
 		'cleanup'    => \$cleanup,
 		'rescan'     => \$rescan,
 		'wipe'       => \$wipe,
+		'playlists'  => \$playlists,
 		'itunes'     => \$itunes,
 		'musicmagic' => \$musicmagic,
 		'd_info'     => \$d_info,
@@ -78,32 +79,23 @@ sub main {
 		exit;
 	}
 
-	#
+	# Start up the file scanner code
 	Slim::Utils::Scanner->init;
 
-	Slim::Music::MusicFolderScan->init;
-	Slim::Music::PlaylistFolderScan->init;
+	if ($playlists) {
+		Slim::Music::PlaylistFolderScan->init;
+		Slim::Music::Import->scanPlaylistsOnly(1);
+	} else {
+		Slim::Music::MusicFolderScan->init;
+	}
 
+	# Various importers - should these be hardcoded?
 	if ($itunes) {
-
-		eval "use Plugins::iTunes::Importer";
-
-		if ($@) {
-			errorMsg("Couldn't load iTunes Importer: $@\n");
-		} else {
-			Plugins::iTunes::Importer->initPlugin;
-		}
+		initClass('Plugins::iTunes::Importer');
 	}
 
 	if ($musicmagic) {
-
-		eval "use Plugins::MusicMagic::Importer";
-
-		if ($@) {
-			errorMsg("Couldn't load MusicMagic Importer: $@\n");
-		} else {
-			Plugins::MusicMagic::Importer->initPlugin;
-		}
+		initClass('Plugins::MusicMagic::Importer');
 	}
 
 	#$::d_server && msg("SlimServer checkDataSource...\n");
@@ -175,6 +167,18 @@ Examples:
 
 EOF
 
+}
+
+sub initClass {
+	my $class = shift;
+
+	eval "use $class";
+
+	if ($@) {
+		errorMsg("Couldn't load $class: $@\n");
+	} else {
+		$class->initPlugin;
+	}
 }
 
 sub cleanup {

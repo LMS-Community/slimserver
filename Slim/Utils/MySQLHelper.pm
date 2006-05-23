@@ -33,7 +33,7 @@ sub init {
 
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
-	if (Slim::Utils::Prefs::get('dbsource') =~ /port=9092/) {
+	if (Slim::Utils::Prefs::get('dbsource') !~ /port=9092/) {
 
 		$::d_mysql && msg("MySQLHelper: init() Not starting MySQL - looks to be user configured.\n");
 

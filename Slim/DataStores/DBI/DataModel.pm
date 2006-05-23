@@ -16,13 +16,6 @@ package Slim::DataStores::DBI::DataModel;
 use strict;
 
 use base 'DBIx::Class';
-__PACKAGE__->load_components(
-  qw/PK::Auto::MySQL Core DB/ );
-
-sub get { my $self = shift; return @{$self->{_column_data}}{@_}; }
-
-sub set { return shift->set_column(@_); }
-
 use DBI;
 use File::Basename;
 use File::Path;
@@ -57,7 +50,14 @@ our $dirtyCount = 0;
 our $lastPingTime = 0;
 our $pingInterval = 1800;
 
-__PACKAGE__->mk_classdata(schema_instance => bless({}, 'DBIx::Class::Schema'));
+{
+	my $class = __PACKAGE__;
+
+	# DBIx::Class config
+	# XXX - move to ::Schema
+	$class->mk_classdata(schema_instance => bless({}, 'DBIx::Class::Schema'));
+	$class->load_components(qw/UTF8Columns PK::Auto Core DB/);
+}
 
 sub init {
 	my $class = shift;
@@ -170,8 +170,6 @@ sub driver {
 
 sub wipeDB {
 	my $class = shift;
-
-	$class->clearObjectCaches;
 
 	Slim::Utils::SQLHelper->executeSQLFile(
 		$class->driver, $class->storage->dbh, "dbclear.sql"
@@ -733,6 +731,16 @@ sub update {
 	}
 
 	return 1;
+}
+
+sub get {
+	my $self = shift;
+
+	return @{$self->{_column_data}}{@_};
+}
+
+sub set {
+	return shift->set_column(@_);
 }
 
 # Walk any table and check for foreign rows that still exist.
