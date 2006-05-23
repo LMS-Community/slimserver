@@ -25,8 +25,8 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^search\.(?:htm|xml)/,\&basicSearch);
 	Slim::Web::HTTP::addPageFunction(qr/^advanced_search\.(?:htm|xml)/,\&advancedSearch);
 	
-	Slim::Web::Pages::Home::addLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
-	Slim::Web::Pages::Home::addLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
+	Slim::Web::Pages::Home->addPageLinks("search", {'SEARCH' => "search.html?liveSearch=1"});
+	Slim::Web::Pages::Home->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
 }
 
 sub basicSearch {

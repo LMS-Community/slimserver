@@ -73,6 +73,7 @@ package main;
 
 use Getopt::Long;
 use FindBin qw($Bin);
+use lib "$Bin";
 use File::Spec::Functions qw(:ALL);
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);

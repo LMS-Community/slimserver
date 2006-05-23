@@ -23,9 +23,9 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^browsetree\.(?:htm|xml)/,\&browsetree);
 	
 	if (Slim::Utils::Prefs::get('audiodir')) {
-		Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
+		Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
-		Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
+		Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
 	}
 }
 

@@ -14,6 +14,8 @@
 use strict;
 use warnings;
 
+use FindBin qw($Bin);
+use lib "$Bin";
 BEGIN {
 	use bootstrap;
 
@@ -21,7 +23,6 @@ BEGIN {
 };
 
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 
 use Slim::Music::Import;
 use Slim::Music::Info;

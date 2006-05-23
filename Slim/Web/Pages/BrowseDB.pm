@@ -27,11 +27,11 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^browsedb\.(?:htm|xml)/,\&browsedb);
 	Slim::Web::HTTP::addPageFunction(qr/^browseid3\.(?:htm|xml)/,\&browseid3);
 	
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-	Slim::Web::Pages::Home::addLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
+	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
+	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
+	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
+	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
 }
 
 sub browsedb {
