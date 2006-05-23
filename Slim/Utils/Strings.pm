@@ -8,13 +8,13 @@ package Slim::Utils::Strings;
 # version 2.
 
 use strict;
-use vars qw(@EXPORT_OK);
 use base qw(Exporter);
 
 # we export string() so it's less typing to use it
-@EXPORT_OK = qw(string);
+our @EXPORT_OK = qw(string);
 
 use File::Spec::Functions qw(:ALL);
+
 use Slim::Utils::Misc;
 
 #-------------------------------------------------
