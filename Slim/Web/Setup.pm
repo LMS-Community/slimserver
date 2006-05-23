@@ -1926,6 +1926,7 @@ sub initSetupConfig {
 					lookForArtwork
 					itemsPerPass
 					prefsWriteDelay
+					keepUnswappedInterval
 				)],
 			},
 		},

@@ -26,7 +26,6 @@ my @packages = qw(
 	Compress-Zlib-1.41.tar.gz
 	DBI-1.50.tar.gz
 	DBD-mysql-3.0002.tar.gz
-	Digest-SHA1-2.11.tar.gz
 	HTML-Parser-3.48.tar.gz
 	Template-Toolkit-2.14.tar.gz
 	Time-HiRes-1.86.tar.gz
