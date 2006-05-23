@@ -1,0 +1,664 @@
+=head1 NAME 
+
+DBIx::Class::Manual::Cookbook - Miscellaneous recipes
+
+=head1 RECIPES
+
+=head2 Searching
+
+=head3 Paged results
+
+When you expect a large number of results, you can ask L<DBIx::Class> for a
+paged resultset, which will fetch only a small number of records at a time:
+
+  my $rs = $schema->resultset('Artist')->search(
+    undef,
+    {
+      page => 1,  # page to return (defaults to 1)
+      rows => 10, # number of results per page
+    },
+  );
+
+  return $rs->all(); # all records for page 1
+
+The C<page> attribute does not have to be specified in your search:
+
+  my $rs = $schema->resultset('Artist')->search(
+    undef,
+    {
+      rows => 10,
+    }
+  );
+
+  return $rs->page(1); # DBIx::Class::ResultSet containing first 10 records
+
+In either of the above cases, you can return a L<Data::Page> object for the
+resultset (suitable for use in e.g. a template) using the C<pager> method:
+
+  return $rs->pager();
+
+=head3 Complex WHERE clauses
+
+Sometimes you need to formulate a query using specific operators:
+
+  my @albums = $schema->resultset('Album')->search({
+    artist => { 'like', '%Lamb%' },
+    title  => { 'like', '%Fear of Fours%' },
+  });
+
+This results in something like the following C<WHERE> clause:
+
+  WHERE artist LIKE '%Lamb%' AND title LIKE '%Fear of Fours%'
+
+Other queries might require slightly more complex logic:
+
+  my @albums = $schema->resultset('Album')->search({
+    -or => [
+      -and => [
+        artist => { 'like', '%Smashing Pumpkins%' },
+        title  => 'Siamese Dream',
+      ],
+      artist => 'Starchildren',
+    ],
+  });
+
+This results in the following C<WHERE> clause:
+
+  WHERE ( artist LIKE '%Smashing Pumpkins%' AND title = 'Siamese Dream' )
+    OR artist = 'Starchildren'
+
+For more information on generating complex queries, see
+L<SQL::Abstract/WHERE CLAUSES>.
+
+=head3 Using specific columns
+
+When you only want selected columns from a table, you can use C<cols> to
+specify which ones you need:
+
+  my $rs = $schema->resultset('Artist')->search(
+    undef,
+    {
+      columns => [qw/ name /]
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT artist.name FROM artist
+
+=head3 Using database functions or stored procedures
+
+The combination of C<select> and C<as> can be used to return the result of a
+database function or stored procedure as a column value. You use C<select> to
+specify the source for your column value (e.g. a column name, function, or
+stored procedure name). You then use C<as> to set the column name you will use
+to access the returned value:
+
+  my $rs = $schema->resultset('Artist')->search(
+    undef,
+    {
+      select => [ 'name', { LENGTH => 'name' } ],
+      as     => [qw/ name name_length /],
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT name name, LENGTH( name ) name_length
+  # FROM artist
+
+If your alias exists as a column in your base class (i.e. it was added with
+C<add_columns>), you just access it as normal. Our C<Artist> class has a C<name>
+column, so we just use the C<name> accessor:
+
+  my $artist = $rs->first();
+  my $name = $artist->name();
+
+If on the other hand the alias does not correspond to an existing column, you
+can get the value using the C<get_column> accessor:
+
+  my $name_length = $artist->get_column('name_length');
+
+If you don't like using C<get_column>, you can always create an accessor for
+any of your aliases using either of these:
+
+  # Define accessor manually:
+  sub name_length { shift->get_column('name_length'); }
+    
+  # Or use DBIx::Class::AccessorGroup:
+  __PACKAGE__->mk_group_accessors('column' => 'name_length');
+
+=head3 SELECT DISTINCT with multiple columns
+
+  my $rs = $schema->resultset('Foo')->search(
+    undef,
+    {
+      select => [
+        { distinct => [ $source->columns ] }
+      ],
+      as => [ $source->columns ]
+    }
+  );
+
+=head3 SELECT COUNT(DISTINCT colname)
+
+  my $rs = $schema->resultset('Foo')->search(
+    undef,
+    {
+      select => [
+        { count => { distinct => 'colname' } }
+      ],
+      as => [ 'count' ]
+    }
+  );
+
+=head3 Grouping results
+
+L<DBIx::Class> supports C<GROUP BY> as follows:
+
+  my $rs = $schema->resultset('Artist')->search(
+    undef,
+    {
+      join     => [qw/ cds /],
+      select   => [ 'name', { count => 'cds.cdid' } ],
+      as       => [qw/ name cd_count /],
+      group_by => [qw/ name /]
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT name, COUNT( cds.cdid ) FROM artist me
+  # LEFT JOIN cd cds ON ( cds.artist = me.artistid )
+  # GROUP BY name
+
+=head3 Predefined searches
+
+You can write your own DBIx::Class::ResultSet class by inheriting from it
+and define often used searches as methods:
+
+  package My::DBIC::ResultSet::CD;
+  use strict;
+  use warnings;
+  use base 'DBIx::Class::ResultSet';
+
+  sub search_cds_ordered {
+      my ($self) = @_;
+
+      return $self->search(
+          {},
+          { order_by => 'name DESC' },
+      );
+  }
+
+  1;
+
+To use your resultset, first tell DBIx::Class to create an instance of it
+for you, in your My::DBIC::Schema::CD class:
+
+  __PACKAGE__->resultset_class('My::DBIC::ResultSet::CD');
+
+Then call your new method in your code:
+
+   my $ordered_cds = $schema->resultset('CD')->search_cds_ordered();
+
+
+=head2 Using joins and prefetch
+
+You can use the C<join> attribute to allow searching on, or sorting your
+results by, one or more columns in a related table. To return all CDs matching
+a particular artist name:
+
+  my $rs = $schema->resultset('CD')->search(
+    {
+      'artist.name' => 'Bob Marley'    
+    },
+    {
+      join => [qw/artist/], # join the artist table
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT cd.* FROM cd
+  # JOIN artist ON cd.artist = artist.id
+  # WHERE artist.name = 'Bob Marley'
+
+If required, you can now sort on any column in the related tables by including
+it in your C<order_by> attribute:
+
+  my $rs = $schema->resultset('CD')->search(
+    {
+      'artist.name' => 'Bob Marley'
+    },
+    {
+      join     => [qw/ artist /],
+      order_by => [qw/ artist.name /]
+    }
+  };
+
+  # Equivalent SQL:
+  # SELECT cd.* FROM cd
+  # JOIN artist ON cd.artist = artist.id
+  # WHERE artist.name = 'Bob Marley'
+  # ORDER BY artist.name
+
+Note that the C<join> attribute should only be used when you need to search or
+sort using columns in a related table. Joining related tables when you only
+need columns from the main table will make performance worse!
+
+Now let's say you want to display a list of CDs, each with the name of the
+artist. The following will work fine:
+
+  while (my $cd = $rs->next) {
+    print "CD: " . $cd->title . ", Artist: " . $cd->artist->name;
+  }
+
+There is a problem however. We have searched both the C<cd> and C<artist> tables
+in our main query, but we have only returned data from the C<cd> table. To get
+the artist name for any of the CD objects returned, L<DBIx::Class> will go back
+to the database:
+
+  SELECT artist.* FROM artist WHERE artist.id = ?
+
+A statement like the one above will run for each and every CD returned by our
+main query. Five CDs, five extra queries. A hundred CDs, one hundred extra
+queries!
+
+Thankfully, L<DBIx::Class> has a C<prefetch> attribute to solve this problem.
+This allows you to fetch results from related tables in advance:
+
+  my $rs = $schema->resultset('CD')->search(
+    {
+      'artist.name' => 'Bob Marley'
+    },
+    {
+      join     => [qw/ artist /],
+      order_by => [qw/ artist.name /],
+      prefetch => [qw/ artist /] # return artist data too!
+    }
+  );
+
+  # Equivalent SQL (note SELECT from both "cd" and "artist"):
+  # SELECT cd.*, artist.* FROM cd
+  # JOIN artist ON cd.artist = artist.id
+  # WHERE artist.name = 'Bob Marley'
+  # ORDER BY artist.name
+
+The code to print the CD list remains the same:
+
+  while (my $cd = $rs->next) {
+    print "CD: " . $cd->title . ", Artist: " . $cd->artist->name;
+  }
+
+L<DBIx::Class> has now prefetched all matching data from the C<artist> table,
+so no additional SQL statements are executed. You now have a much more
+efficient query.
+
+Note that as of L<DBIx::Class> 0.04, C<prefetch> cannot be used with
+C<has_many> relationships. You will get an error along the lines of "No
+accessor for prefetched ..." if you try.
+
+Also note that C<prefetch> should only be used when you know you will
+definitely use data from a related table. Pre-fetching related tables when you
+only need columns from the main table will make performance worse!
+
+=head3 Multi-step joins
+
+Sometimes you want to join more than one relationship deep. In this example,
+we want to find all C<Artist> objects who have C<CD>s whose C<LinerNotes>
+contain a specific string:
+
+  # Relationships defined elsewhere:
+  # Artist->has_many('cds' => 'CD', 'artist');
+  # CD->has_one('liner_notes' => 'LinerNotes', 'cd');
+
+  my $rs = $schema->resultset('Artist')->search(
+    {
+      'liner_notes.notes' => { 'like', '%some text%' },
+    },
+    {
+      join => {
+        'cds' => 'liner_notes'
+      }
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT artist.* FROM artist
+  # JOIN ( cd ON artist.id = cd.artist )
+  # JOIN ( liner_notes ON cd.id = liner_notes.cd )
+  # WHERE liner_notes.notes LIKE '%some text%'
+
+Joins can be nested to an arbitrary level. So if we decide later that we
+want to reduce the number of Artists returned based on who wrote the liner
+notes:
+
+  # Relationship defined elsewhere:
+  # LinerNotes->belongs_to('author' => 'Person');
+
+  my $rs = $schema->resultset('Artist')->search(
+    {
+      'liner_notes.notes' => { 'like', '%some text%' },
+      'author.name' => 'A. Writer'
+    },
+    {
+      join => {
+        'cds' => {
+          'liner_notes' => 'author'
+        }
+      }
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT artist.* FROM artist
+  # JOIN ( cd ON artist.id = cd.artist )
+  # JOIN ( liner_notes ON cd.id = liner_notes.cd )
+  # JOIN ( author ON author.id = liner_notes.author )
+  # WHERE liner_notes.notes LIKE '%some text%'
+  # AND author.name = 'A. Writer'
+
+=head2 Multi-step prefetch
+
+From 0.04999_05 onwards, C<prefetch> can be nested more than one relationship
+deep using the same syntax as a multi-step join:
+
+  my $rs = $schema->resultset('Tag')->search(
+    undef,
+    {
+      prefetch => {
+        cd => 'artist'
+      }
+    }
+  );
+
+  # Equivalent SQL:
+  # SELECT tag.*, cd.*, artist.* FROM tag
+  # JOIN cd ON tag.cd = cd.cdid
+  # JOIN artist ON cd.artist = artist.artistid
+
+Now accessing our C<cd> and C<artist> relationships does not need additional
+SQL statements:
+
+  my $tag = $rs->first;
+  print $tag->cd->artist->name;
+
+=head2 Transactions
+
+As of version 0.04001, there is improved transaction support in
+L<DBIx::Class::Storage::DBI> and L<DBIx::Class::Schema>.  Here is an
+example of the recommended way to use it:
+
+  my $genus = $schema->resultset('Genus')->find(12);
+
+  my $coderef1 = sub {
+    my ($schema, $genus, $code) = @_;
+    $genus->add_to_species({ name => 'troglodyte' });
+    $genus->wings(2);
+    $genus->update;
+    $schema->txn_do($code, $genus); # Can have a nested transaction
+    return $genus->species;
+  };
+
+  my $coderef2 = sub {
+    my ($genus) = @_;
+    $genus->extinct(1);
+    $genus->update;
+  };
+
+  my $rs;
+  eval {
+    $rs = $schema->txn_do($coderef1, $schema, $genus, $coderef2);
+  };
+
+  if ($@) {                             # Transaction failed
+    die "the sky is falling!"           #
+      if ($@ =~ /Rollback failed/);     # Rollback failed
+
+    deal_with_failed_transaction();
+  }
+
+Nested transactions will work as expected. That is, only the outermost
+transaction will actually issue a commit to the $dbh, and a rollback
+at any level of any transaction will cause the entire nested
+transaction to fail. Support for savepoints and for true nested
+transactions (for databases that support them) will hopefully be added
+in the future.
+
+=head2 Many-to-many relationships
+
+This is straightforward using L<DBIx::Class::Relationship::ManyToMany>:
+
+  package My::DB;
+  # ... set up connection ...
+
+  package My::User;
+  use base 'My::DB';
+  __PACKAGE__->table('user');
+  __PACKAGE__->add_columns(qw/id name/);
+  __PACKAGE__->set_primary_key('id');
+  __PACKAGE__->has_many('user_address' => 'My::UserAddress', 'user');
+  __PACKAGE__->many_to_many('addresses' => 'user_address', 'address');
+
+  package My::UserAddress;
+  use base 'My::DB';
+  __PACKAGE__->table('user_address');
+  __PACKAGE__->add_columns(qw/user address/);
+  __PACKAGE__->set_primary_key(qw/user address/);
+  __PACKAGE__->belongs_to('user' => 'My::User');
+  __PACKAGE__->belongs_to('address' => 'My::Address');
+
+  package My::Address;
+  use base 'My::DB';
+  __PACKAGE__->table('address');
+  __PACKAGE__->add_columns(qw/id street town area_code country/);
+  __PACKAGE__->set_primary_key('id');
+  __PACKAGE__->has_many('user_address' => 'My::UserAddress', 'address');
+  __PACKAGE__->many_to_many('users' => 'user_address', 'user');
+
+  $rs = $user->addresses(); # get all addresses for a user
+  $rs = $address->users(); # get all users for an address
+
+=head2 Setting default values for a row
+
+It's as simple as overriding the C<new> method.  Note the use of
+C<next::method>.
+
+  sub new {
+    my ( $class, $attrs ) = @_;
+
+    $attrs->{foo} = 'bar' unless defined $attrs->{foo};
+
+    $class->next::method($attrs);
+  }
+
+=head2 Stringification
+
+Employ the standard stringification technique by using the C<overload>
+module.  Replace C<foo> with the column/method of your choice.
+
+  use overload '""' => 'foo', fallback => 1;
+
+=head2 Disconnecting cleanly
+
+If you find yourself quitting an app with Control-C a lot during
+development, you might like to put the following signal handler in
+your main database class to make sure it disconnects cleanly:
+
+  $SIG{INT} = sub {
+    __PACKAGE__->storage->disconnect;
+  };
+
+=head2 Schema import/export
+
+This functionality requires you to have L<SQL::Translator> (also known as
+"SQL Fairy") installed.
+
+To create a DBIx::Class schema from an existing database:
+
+ sqlt --from DBI
+      --to DBIx::Class::File
+      --prefix "MySchema" > MySchema.pm
+
+To create a MySQL database from an existing L<DBIx::Class> schema, convert the
+schema to MySQL's dialect of SQL:
+
+  sqlt --from DBIx::Class --to MySQL --DBIx::Class "MySchema.pm" > Schema1.sql
+  
+And import using the mysql client:
+
+  mysql -h "host" -D "database" -u "user" -p < Schema1.sql
+
+=head2 Easy migration from class-based to schema-based setup
+
+You want to start using the schema-based approach to L<DBIx::Class>
+(see L<SchemaIntro.pod>), but have an established class-based setup with lots
+of existing classes that you don't want to move by hand. Try this nifty script
+instead:
+
+  use MyDB;
+  use SQL::Translator;
+  
+  my $schema = MyDB->schema_instance;
+  
+  my $translator           =  SQL::Translator->new( 
+      debug                => $debug          ||  0,
+      trace                => $trace          ||  0,
+      no_comments          => $no_comments    ||  0,
+      show_warnings        => $show_warnings  ||  0,
+      add_drop_table       => $add_drop_table ||  0,
+      validate             => $validate       ||  0,
+      parser_args          => {
+         'DBIx::Schema'    => $schema,
+                              },
+      producer_args   => {
+          'prefix'         => 'My::Schema',
+                         },
+  );
+  
+  $translator->parser('DBIx::Class');
+  $translator->producer('DBIx::Class::File');
+  
+  my $output = $translator->translate(@args) or die
+          "Error: " . $translator->error;
+  
+  print $output;
+
+You could use L<Module::Find> to search for all subclasses in the MyDB::*
+namespace, which is currently left as an exercise for the reader.
+
+=head2 Schema versioning
+
+The following example shows simplistically how you might use DBIx::Class to
+deploy versioned schemas to your customers. The basic process is as follows:
+
+=over 4
+
+=item 1.
+
+Create a DBIx::Class schema
+
+=item 2.
+
+Save the schema
+
+=item 3.
+
+Deploy to customers
+
+=item 4.
+
+Modify schema to change functionality
+
+=item 5.
+
+Deploy update to customers
+
+=back
+
+=head3 Create a DBIx::Class schema
+
+This can either be done manually, or generated from an existing database as
+described under C<Schema import/export>.
+
+=head3 Save the schema
+
+Use C<sqlt> to transform your schema into an SQL script suitable for your
+customer's database. E.g. for MySQL:
+
+  sqlt --from DBIx::Class
+       --to MySQL
+       --DBIx::Class "MySchema.pm" > Schema1.mysql.sql
+
+If you need to target databases from multiple vendors, just generate an SQL
+script suitable for each. To support PostgreSQL too:
+
+  sqlt --from DBIx::Class
+       --to PostgreSQL
+       --DBIx::Class "MySchema.pm" > Schema1.pgsql.sql
+
+=head3 Deploy to customers
+
+There are several ways you could deploy your schema. These are probably
+beyond the scope of this recipe, but might include:
+
+=over 4
+
+=item 1.
+
+Require customer to apply manually using their RDBMS.
+
+=item 2.
+
+Package along with your app, making database dump/schema update/tests
+all part of your install.
+
+=back
+
+=head3 Modify the schema to change functionality
+
+As your application evolves, it may be necessary to modify your schema to
+change functionality. Once the changes are made to your schema in DBIx::Class,
+export the modified schema as before, taking care not to overwrite the original:
+
+  sqlt --from DBIx::Class
+       --to MySQL
+       --DBIx::Class "Anything.pm" > Schema2.mysql.sql
+
+Next, use sqlt-diff to create an SQL script that will update the customer's
+database schema:
+
+  sqlt-diff --to MySQL Schema1=MySQL Schema2=MySQL > SchemaUpdate.mysql.sql
+
+=head3 Deploy update to customers
+
+The schema update can be deployed to customers using the same method as before.
+
+=head2 Setting limit dialect for SQL::Abstract::Limit
+
+In some cases, SQL::Abstract::Limit cannot determine the dialect of the remote
+SQL-server by looking at the database-handle. This is a common problem when
+using the DBD::JDBC, since the DBD-driver only know that in has a Java-driver
+available, not which JDBC-driver the Java component has loaded.
+This specifically sets the limit_dialect to Microsoft SQL-server (Se more names
+in SQL::Abstract::Limit -documentation.
+
+  __PACKAGE__->storage->sql_maker->limit_dialect('mssql');
+
+The JDBC-bridge is one way of getting access to a MSSQL-server from a platform
+that Microsoft doesn't deliver native client libraries for. (e.g. Linux)
+
+=head2 Setting quotes for the generated SQL. 
+
+If the database contains columnames with spaces and/or reserved words, the
+SQL-query needs to be quoted. This is done using:
+
+  __PACKAGE__->storage->sql_maker->quote_char([ qw/[ ]/] );
+  __PACKAGE__->storage->sql_maker->name_sep('.');
+
+The first sets the quotesymbols. If the quote i "symmetric" as " or '
+  
+  __PACKAGE__->storage->sql_maker->quote_char('"');
+
+is enough. If the left quote differs form the right quote, the first 
+notation should be used. name_sep needs to be set to allow the 
+SQL generator to put the quotes the correct place. 
+
+=cut

@@ -1,0 +1,331 @@
+=head1 NAME
+
+DBIx::Class::Manual::Intro - Introduction to DBIx::Class
+
+=head1 INTRODUCTION
+
+So, you are bored with SQL, and want a native Perl interface for your
+database?  Or you've been doing this for a while with L<Class::DBI>,
+and think there's a better way?  You've come to the right place.
+Let's look at how you can set and use your first native L<DBIx::Class>
+tree.
+
+First we'll see how you can set up your classes yourself.  If you want
+them to be auto-discovered, just skip to the next section, which shows
+you how to use L<DBIx::Class::Schema::Loader>.
+
+=head2 Setting it up manually
+
+First, you should create your base schema class, which inherits from
+L<DBIx::Class::Schema>:
+
+  package My::Schema;
+  use base qw/DBIx::Class::Schema/;
+
+In this class you load your result_source ("table", "model") classes, which
+we will define later, using the load_classes() method. You can specify which
+classes to load manually: 
+
+  # load My::Schema::Album and My::Schema::Artist
+  __PACKAGE__->load_classes(qw/ Album Artist /);
+
+Or load classes by namespace:
+
+  # load My::Schema::Album, My::Schema::Artist and My::OtherSchema::LinerNotes
+  __PACKAGE__->load_classes(
+    {
+      'My::Schema' => [qw/ Album Artist /],
+      'My::OtherSchema' => [qw/ LinerNotes /]
+    }
+  );
+
+Or let your schema class load all classes in its namespace automatically:
+
+   # load My::Schema::*
+  __PACKAGE__->load_classes();
+
+Next, create each of the classes you want to load as specified above:
+
+  package My::Schema::Album;
+  use base qw/DBIx::Class/;
+
+Load any components required by each class with the load_components() method.
+This should consist of "Core" plus any additional components you want to use.
+For example, if you want serial/auto-incrementing primary keys:
+
+  __PACKAGE__->load_components(qw/ PK::Auto Core /);
+
+C<PK::Auto> is supported for many databases; see
+L<DBIx::Class::Storage::DBI> for more information.
+
+Set the table for your class:
+
+  __PACKAGE__->table('album');
+
+Add columns to your class:
+
+  __PACKAGE__->add_columns(qw/ albumid artist title /);
+
+Each column can also be set up with its own accessor, data_type and other
+pieces of information that it may be useful to have, just pass C<add_columns>
+a hash such as:
+
+  __PACKAGE__->add_columns(albumid =>
+                            { accessor  => 'album',
+                              data_type => 'integer',
+                              size      => 16,
+                              is_nullable => 0,
+                              is_auto_increment => 1,
+                              default_value => '',
+                            },
+                          artist =>
+                            { data_type => 'integer',
+                              size      => 16,
+                              is_nullable => 0,
+                              is_auto_increment => 0,
+                              default_value => '',
+                            },
+                          title  => 
+                            { data_type => 'varchar',
+                              size      => 256,
+                              is_nullable => 0,
+                              is_auto_increment => 0,
+                              default_value => '',
+                            }
+                         );
+
+Most of this data isn't yet used directly by DBIx::Class, but various related
+modules such as L<DBIx::Class::WebForm> make use of it. Also it allows you
+to create your database tables from your Schema, instead of the other way
+around. See L<SQL::Translator> for details.
+
+See L<DBIx::Class::ResultSource> for more details of the possible column
+attributes.
+
+Accessors are created for each column automatically, so My::Schema::Album will
+have albumid() (or album(), when using the accessor), artist() and title()
+methods.
+
+Define a primary key for your class:
+
+  __PACKAGE__->set_primary_key('albumid');
+
+If you have a multi-column primary key, just pass a list instead:
+
+  __PACKAGE__->set_primary_key( qw/ albumid artistid / );
+
+Define relationships that the class has with any other classes by using
+either C<belongs_to> to describe a column which contains an ID of another
+table, or C<has_many> to make a predefined accessor for fetching objects
+that contain this tables foreign key in one of their columns:
+
+  __PACKAGE__->has_many('albums', 'My::Schema::Artist', 'album_id');
+
+More information about the various types of relationships available, and
+how you can design your own, can be found in L<DBIx::Class::Relationship>.
+
+
+=head2 Using L<DBIx::Class::Schema::Loader>
+
+This is an external module, and not part of the L<DBIx::Class>
+distribution.  Like L<Class::DBI::Loader>, it inspects your database,
+and automatically creates classes for all the tables in your database.
+Here's a simple setup:
+
+  package My::Schema;
+  use base qw/DBIx::Class::Schema::Loader/;
+
+  __PACKAGE__->load_from_connection(
+    connect_info = [ 'dbi:SQLite:/home/me/myapp/my.db' ]
+  );
+
+  1;
+
+This should be equivalent to the manual setup in the section above.
+L<DBIx::Class::Schema::Loader> takes lots of other options.  For more
+information, consult its documentation.
+
+=head2 Connecting
+
+L<DBIx::Class::Schema::Loader> already contains the connection info for the
+database, so to get started all you need to do is create an instance of your
+class:
+
+  my $schema = My::Schema->new();
+
+To connect to your manually created Schema, you also need to provide the
+connection details:
+
+  my $schema = My::Schema->connect('dbi:SQLite:/home/me/myapp/my.db');
+
+You can create as many different schema instances as you need. So if you have
+a second database you want to access:
+
+  my $other_schema = My::Schema->connect( $dsn, $user, $password, $attrs );
+
+Note that L<DBIx::Class::Schema> does not cache connections for you. If you
+use multiple connections, you need to do this manually.
+
+To execute some sql statements on every connect you can pass them to your schema after the connect:
+
+  $schema->storage->on_connect_do(\@on_connect_sql_statments);
+
+=head2 Basic usage
+
+Once you've defined the basic classes, either manually or using
+L<DBIx::Class::Schema::Loader>, you can start interacting with your database.
+
+To access your database using your $schema object, you can fetch a L<DBIx::Class::Manual::Glossary/"ResultSet">
+representing each of your tables by calling the ->resultset method.
+
+The simplest way to get a record is by primary key:
+
+  my $album = $schema->resultset('Album')->find(14);
+
+This will run a C<SELECT> with C<albumid = 14> in the C<WHERE> clause,
+and return an instance of C<My::Schema::Album> that represents this
+row.  Once you have that row, you can access and update columns:
+
+  $album->title('Physical Graffiti');
+  my $title = $album->title; # $title holds 'Physical Graffiti'
+
+If you prefer, you can use the C<set_column> and C<get_column>
+accessors instead:
+
+  $album->set_column('title', 'Presence');
+  $title = $album->get_column('title');
+
+Just like with L<Class::DBI>, you call C<update> to commit your
+changes to the database:
+
+  $album->update;
+
+If needed, you can throw away your local changes like this:
+
+  $album->discard_changes if $album->is_changed;
+
+As you can see, C<is_changed> allows you to check if there are local
+changes to your object.
+
+=head2 Adding and removing rows
+
+To create a new record in the database, you can use the C<create>
+method.  It returns an instance of C<My::Schema::Album> that can be
+used to access the data in the new record:
+
+  my $new_album = $schema->resultset('Album')->create({ 
+    title  => 'Wish You Were Here',
+    artist => 'Pink Floyd'
+  });
+
+Now you can add data to the new record:
+
+  $new_album->label('Capitol');
+  $new_album->year('1975');
+  $new_album->update;
+
+Likewise, you can remove it from the database like this:
+
+  $new_album->delete;
+
+You can also remove records without retrieving them first, by calling
+delete directly on a ResultSet object.
+
+  # Delete all of Falco's albums
+  $schema->resultset('Album')->search({ artist => 'Falco' })->delete;
+
+=head2 Finding your objects
+
+L<DBIx::Class> provides a few different ways to retrieve data from
+your database.  Here's one example:
+
+  # Find all of Santana's albums
+  my $rs = $schema->resultset('Album')->search({ artist => 'Santana' });
+
+In scalar context, as above, C<search> returns a
+L<DBIx::Class::ResultSet> object.  It can be used to peek at the first
+album returned by the database:
+
+  my $album = $rs->first;
+  print $album->title;
+
+You can loop over the albums and update each one:
+
+  while (my $album = $rs->next) {
+    print $album->artist . ' - ' . $album->title;
+    $album->year(2001);
+    $album->update;
+  }
+
+Or, you can update them all at once:
+
+  $rs->update({ year => 2001 });
+
+For more information on what you can do with a
+L<DBIx::Class::ResultSet>, see L<DBIx::Class::ResultSet/METHODS>.
+
+In list context, the C<search> method returns all of the matching
+rows:
+
+  # Fetch immediately all of Carlos Santana's albums
+  my @albums = $schema->resultset('Album')->search(
+    { artist => 'Carlos Santana' }
+  );
+  foreach my $album (@albums) {
+    print $album->artist . ' - ' . $album->title;
+  }
+
+We also provide a handy shortcut for doing a C<LIKE> search:
+
+  # Find albums whose artist starts with 'Jimi'
+  my $rs = $schema->resultset('Album')->search_like({ artist => 'Jimi%' });
+
+Or you can provide your own C<WHERE> clause, like:
+
+  # Find Peter Frampton albums from the year 1986
+  my $where = 'artist = ? AND year = ?';
+  my @bind  = ( 'Peter Frampton', 1986 );
+  my $rs    = $schema->resultset('Album')->search_literal( $where, @bind );
+
+The preferred way to generate complex queries is to provide a
+L<SQL::Abstract> construct to C<search>:
+
+  my $rs = $schema->resultset('Album')->search({
+    artist  => { '!=', 'Janis Joplin' },
+    year    => { '<' => 1980 },
+    albumid => [ 1, 14, 15, 65, 43 ]
+  });
+
+This results in something like the following C<WHERE> clause:
+
+  WHERE artist != 'Janis Joplin'
+    AND year < 1980
+    AND albumid IN (1, 14, 15, 65, 43)
+
+For more examples of complex queries, see
+L<DBIx::Class::Manual::Cookbook>.
+
+The search can also be modified by passing another hash with
+attributes:
+
+  my @albums = My::Schema->resultset('Album')->search(
+    { artist => 'Bob Marley' },
+    { rows => 2, order_by => 'year DESC' }
+  );
+
+C<@albums> then holds the two most recent Bob Marley albums.
+
+For a complete overview of the available attributes, see
+L<DBIx::Class::ResultSet/ATTRIBUTES>.
+
+=head1 SEE ALSO
+
+=over 4
+
+=item * L<DBIx::Class::Manual::Cookbook>
+
+=item * L<DBIx::Class::Manual::FAQ>
+
+=back
+
+=cut

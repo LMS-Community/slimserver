@@ -1,0 +1,45 @@
+=head1 NAME
+
+DBIx::Class::Manual::Glossary - Clarification of terms used.
+
+=head1 INTRODUCTION
+
+This document lists various terms used in DBIx::Class and attempts to explain them.
+
+=head1 TERMS
+
+=head2 ORM
+
+=head2 ResultSet
+
+This is an object representing a set of data. It can either be an
+entire table, or the results of a query. The actual data is not held
+in the ResultSet, it is only a description of how to fetch the data.
+
+See also: L<DBIx::Class::ResultSet/METHODS>
+
+=head2 ResultSource
+
+ResultSource objects represent the source of your data, they are also known as
+a table objects. 
+
+See also: L<DBIx::Class::ResultSource/METHODS>
+
+=head2 Record
+
+See Row.
+
+=head2 Row
+
+Row objects contain your actual data. They are returned from ResultSet objects.
+
+=head2 Object
+
+See Row.
+
+=head2 Schema
+
+A Schema object represents your entire table collection, plus the
+connection to the database. You can create one or more schema objects,
+connected to various databases, with various users, using the same set
+of table (ResultSource) definitions.

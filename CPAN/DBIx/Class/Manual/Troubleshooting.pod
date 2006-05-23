@@ -1,0 +1,51 @@
+=head1 NAME
+
+DBIx::Class::Manual::Troubleshooting - Got a problem? Shoot it.
+
+=head2  "Can't locate storage blabla"
+
+You're trying to make a query on a non-connected schema. Make sure you got
+the current resultset from $schema->resultset('Artist') on a schema object
+you got back from connect().
+
+=head2 Tracing SQL
+
+The C<DBIX_CLASS_STORAGE_DBI_DEBUG> environment variable controls
+SQL tracing, so to see what is happening try
+
+  export DBIX_CLASS_STORAGE_DBI_DEBUG=1
+
+Alternatively use the C<storage->debug> class method:-
+
+  $class->storage->debug(1);
+
+To send the output somewhere else set debugfh:-
+
+  $class->storage->debugfh(IO::File->new('/tmp/trace.out', 'w');
+
+Alternatively you can do this with the environment variable too:-
+
+  export DBIX_CLASS_STORAGE_DBI_DEBUG="1=/tmp/trace.out"
+
+=head2 Can't locate method result_source_instance
+
+For some reason the table class in question didn't load fully, so the
+ResultSource object for it hasn't been created. Debug this class in
+isolation, then try loading the full schema again.
+
+=head2 Can't get last insert ID under Postgres with serial primary keys
+
+Older L<DBI> and L<DBD::Pg> versions do not handle C<last_insert_id>
+correctly, causing code that uses auto-incrementing primary key
+columns to fail with a message such as:
+
+  Can't get last insert id at /.../DBIx/Class/Row.pm line 95
+
+In particular the RHEL 4 and FC3 Linux distributions both ship with
+combinations of L<DBI> and L<DBD::Pg> modules that do not work
+correctly.
+
+L<DBI> version 1.50 and L<DBD::Pg> 1.43 are known to work.
+
+=cut
+

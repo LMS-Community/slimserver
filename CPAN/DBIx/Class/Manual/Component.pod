@@ -1,0 +1,141 @@
+
+=head1 NAME
+
+DBIx::Class::Manual::Component - Existing components and how to develop new ones.
+
+=head1 USING
+
+Components are loaded using the load_components() method within your 
+DBIx::Class classes.
+
+  package My::Thing;
+  use base qw( DBIx::Class );
+  __PACKAGE__->load_components(qw( PK::Auto Core ));
+
+Generally you do not want to specify the full package name 
+of a component, instead take off the DBIx::Class:: part of 
+it and just include the rest.  If you do want to load a 
+component outside of the normal namespace you can do so 
+by prepending the component name with a +.
+
+  __PACKAGE__->load_components(qw( +My::Component ));
+
+Once a component is loaded all of it's methods, or otherwise, 
+that it provides will be available in your class.
+
+The order in which is you load the components may be 
+very important, depending on the component.  The general 
+rule of thumb is to first load extra components and then 
+load core ones last.  If you are not sure, then read the 
+docs for the components you are using and see if they 
+mention anything about the order in which you should load 
+them.
+
+=head1 EXISTING COMPONENTS
+
+=head2 Extra
+
+These components provide extra functionality beyond 
+basic functionality that you can't live without.
+
+L<DBIx::Class::CDBICompat> - Class::DBI Compatibility layer.
+
+L<DBIx::Class::FormTools> - Build forms with multiple interconnected objects.
+
+L<DBIx::Class::HTMLWidget> - Like FromForm but with DBIx::Class and HTML::Widget.
+
+L<DBIx::Class::PK::Auto> - Retrieve automatically created primary keys upon insert.
+
+L<DBIx::Class::QueriesTime> - Display the amount of time it takes to run queries.
+
+L<DBIx::Class::RandomStringColumns> - Declare virtual columns that return random strings.
+
+L<DBIx::Class::UTF8Columns> - Force UTF8 (Unicode) flag on columns.
+
+L<DBIx::Class::UUIDColumns> - Implicit UUID columns.
+
+L<DBIx::Class::WebForm> - CRUD methods.
+
+=head2 Experimental
+
+These components are under development, there interfaces may 
+change, they may not work, etc.  So, use them if you want, but 
+be warned.
+
+L<DBIx::Class::Serialize> - Hooks for Storable freeze/thaw.
+
+L<DBIx::Class::Serialize::Storable> - Hooks for Storable freeze/thaw.
+
+L<DBIx::Class::Validation> - Validate all data before submitting to your database.
+
+=head2 Core
+
+These are the components that all, or nearly all, people will use 
+without even knowing it.  These components provide most of 
+DBIx::Class' functionality.
+
+L<DBIx::Class::AccessorGroup> - Lets you build groups of accessors.
+
+L<DBIx::Class::Core> - Loads various components that "most people" would want.
+
+L<DBIx::Class::DB> - Non-recommended classdata schema component.
+
+L<DBIx::Class::InflateColumn> - Automatically create objects from column data.
+
+L<DBIx::Class::PK> - This class contains methods for handling primary keys and methods depending on them.
+
+L<DBIx::Class::Relationship> - Inter-table relationships.
+
+L<DBIx::Class::ResultSourceProxy::Table> - Provides a classdata table object and method proxies.
+
+L<DBIx::Class::Row> - Basic row methods.
+
+=head1 CREATEING COMPONENTS
+
+Making your own component is very easy.
+
+  package DBIx::Class::MyComp;
+  use base qw(DBIx::Class);
+  # Create methods, accessors, load other components, etc.
+  1;
+
+When a component is loaded it is included in the calling 
+class' inheritance chain using L<Class::C3>.  As well as 
+providing custom utility methods, a component may also 
+override methods provided by other core components, like 
+L<DBIx::Class::Row> and others.  For example, you 
+could override the insert and delete methods.
+
+  sub insert {
+    my $self = shift;
+    # Do stuff with $self, like set default values.
+    return $self->nest::method( @_ );
+  }
+  
+  sub delete {
+    my $self = shift;
+    # Do stuff with $self.
+    return $self->nest::method( @_ );
+  }
+
+Now, the order that a component is loaded is very important.  Components 
+that are loaded first are the first ones in the inheritance stack.  So, if 
+you override insert() but the DBIx::Class::Row component is loaded first 
+then your insert() will never be called, since the DBIx::Class::Row insert() 
+will be called first.  If you are unsure as to why a given method is not 
+being called try printing out the Class::C3 inheritance stack.
+
+  print join ', ' => Class::C3::calculateMRO('YourClass::Name');
+
+Check out the L<Class::C3> docs for more information about inheritance.
+
+=head1 SEE ALSO
+
+L<DBIx::Class::Manual::Cookbook>
+
+L<DBIx::Class::Manual::FAQ>
+
+=head1 AUTHOR
+
+Aran Clary Deltac <bluefeet@cpan.org>
+
