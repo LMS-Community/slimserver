@@ -17,7 +17,7 @@ CREATE TABLE metainformation (
   last_rescan_time int(10) unsigned
 ) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (18, 0, 0, 0);
+INSERT INTO metainformation VALUES (19, 0, 0, 0);
 
 --
 -- Table: rescans
