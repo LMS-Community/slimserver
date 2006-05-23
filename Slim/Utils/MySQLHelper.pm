@@ -9,6 +9,7 @@ use strict;
 use base qw(Class::Data::Inheritable);
 use DBI;
 use File::Path;
+use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use Proc::Background;
 use Template;
@@ -114,29 +115,37 @@ sub startServer {
 
 	# Create the command we're going to run, sending output to the logfile
 	# if it exists - otherwise, to /dev/null
-	my $command = sprintf('%s --defaults-file=%s --pid-file=%s %s',
-		$mysqld,
-		$class->confFile,
-		$class->pidFile,
-		Slim::Utils::OSDetect::OS() eq 'win' ? '' : ($::logfile ? "2>$::logfile" : '2>/dev/null'),
+	#
+	# This works for both Windows & *nix
+	my $proc     = undef;
+
+	my @commands = (
+		$mysqld, 
+		sprintf('--defaults-file=%s', $class->confFile),
+		sprintf('--pid-file=%s', $class->pidFile),
 	);
 
-	$::d_mysql && msg("MySQLHelper: startServer() running: [$command]\n");
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-	# This works for both Windows & *nix
-	my $proc = Proc::Background->new($command);
+		$proc = Proc::Background->new(@commands);
 
-	# Give MySQL time to get going..
-	eval {
-		local $SIG{'ALRM'} = sub { die "alarm\n" };
-		alarm 10;
+	} else {
 
-		while (1) {
-			last if -r $class->pidFile;
+		if ($::logfile) {
+			push @commands, ">> $::logfile 2>&1";
+		} else {
+			push @commands, '> /dev/null 2>&1';
 		}
 
-		alarm 0;
-	};
+		$proc = Proc::Background->new(join(' ', @commands));
+	}
+
+	# Give MySQL time to get going..
+	for (my $i = 0; $i < 10; $i++) {
+
+		last if -r $class->pidFile;
+		sleep 1;
+	}
 
 	if ($@) {
 		errorMsg("MySQLHelper: startServer() - server didn't startup in 30 seconds!\n");
@@ -151,24 +160,23 @@ sub startServer {
 sub stopServer {
 	my $class = shift;
 
-	$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $class->processObj->pid);
+	# The ->pid from Proc::Background isn't the right one on *nix.
+	chomp(my $pid = read_file($class->pidFile));
 
-	$class->processObj->die;
+	$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $pid);
+
+	kill('TERM', $pid);
 
 	# Wait for the PID file to go away.
-	eval {
-		local $SIG{'ALRM'} = sub { die "alarm\n" };
-		alarm 30;
+	$class->_checkForDeadProcess;
 
-		while (1) {
-			last if !-r $class->pidFile;
-			last if !$class->processObj->alive;
-		}
+	# Try harder.
+	kill('KILL', $pid);
 
-		alarm 0;
-	};
+	$class->_checkForDeadProcess;
 
-	if ($@) {
+	if (kill(0, $pid)) {
+
 		errorMsg("MySQLHelper: stopServer() - server didn't shutdown in 30 seconds!\n");
 		exit;
 	}
@@ -177,6 +185,18 @@ sub stopServer {
 	unlink($class->pidFile);
 
 	$class->processObj(undef);
+}
+
+sub _checkForDeadProcess {
+	my $class = shift;
+
+	for (my $i = 0; $i < 10; $i++) {
+
+		last if !-r $class->pidFile;
+		last if !$class->processObj->alive;
+
+		sleep 1;
+	}
 }
 
 sub createSystemTables {
@@ -261,7 +281,11 @@ sub createDatabase {
 
 # Shut down MySQL when the server is done..
 END {
-	__PACKAGE__->stopServer() if __PACKAGE__->pidFile;
+	my $class = __PACKAGE__;
+
+	if ($class->pidFile) {
+		$class->stopServer;
+	}
 }
 
 1;
