@@ -84,6 +84,11 @@ BEGIN {
 	use bootstrap;
 
 	bootstrap->loadModules();
+
+	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
+	unlink("$Bin/CPAN/MP3/Info.pm");
+	unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
+	unlink("$Bin/CPAN/XML/Simple.pm");
 };
 
 use Time::HiRes;
