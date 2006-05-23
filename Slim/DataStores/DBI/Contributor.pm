@@ -19,17 +19,70 @@ our %contributorToRoleMap = (
 
 	$class->table('contributors');
 
-	$class->columns(Primary => qw/id/);
+	$class->add_columns(qw(
+		id
+		name
+		namesort
+		moodlogic_id
+		moodlogic_mixable
+		musicmagic_mixable
+		namesearch
+		musicbrainz_id
+	));
 
-	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
+	$class->set_primary_key('id');
 
-	$class->columns(Others => qw/namesearch customsearch musicbrainz_id/);
+	# XXXX - how to do this for DBIx::Class ?
+	# $class->columns(UTF8 => qw/name namesort/);
 
-	$class->columns(Stringify => qw/name/);
+        $class->has_many('contributorTracks' => 'Slim::DataStores::DBI::ContributorTrack');
+        $class->has_many('contributorAlbums' => 'Slim::DataStores::DBI::ContributorAlbum');
+}
 
-	$class->columns(UTF8 => qw/name namesort/);
+# Do a proper join
+sub albums {
 
-	$class->has_many('contributorTracks' => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor']);
+  return shift->contributorAlbums->search_related(
+           'album', undef, { distinct => 1 })->search(@_);
+
+	my $self = shift;
+
+	my @albums = Slim::DataStores::DBI::Album->search(
+		{ 'contributor.id' => $self->id },
+		{
+			'join'     => { 'contributorAlbums' => 'contributor' },
+			'order_by' => 'me.titlesort, me.disc',
+		},
+	);
+
+	# Waiting for mst to implement DISTINCT
+	my %seen   = ();
+	my @unique = ();
+
+	for my $album (@albums) {
+
+		my $id = $album->id;
+
+		next if $seen{$id};
+
+		push @unique, $album;
+
+		$seen{$id} = 1;
+	}
+
+	return @unique;
+}
+
+sub tracks {
+	my $self = shift;
+
+	return Slim::DataStores::DBI::Track->search(
+		{ 'contributor.id' => $self->id },
+		{
+			'join'     => { 'contributorTracks' => 'contributor' },
+			'order_by' => 'me.disc, me.tracknum, me.titlesort',
+		},
+	);
 }
 
 sub contributorRoles {
@@ -100,13 +153,19 @@ sub add {
 
 		# Create a contributor <-> track mapping table.
 		Slim::DataStores::DBI::ContributorTrack->find_or_create({
-			'track'       => $track,
-			'contributor' => $contributorObj,
+			'track'       => (ref $track ? $track->id : $track),
+			'contributor' => $contributorObj->id,
 			'role'        => $role,
 		});
 	}
 
 	return wantarray ? @contributors : $contributors[0];
+}
+
+sub stringify {
+	my $self = shift;
+
+	return $self->get_column('name');
 }
 
 1;

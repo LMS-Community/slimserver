@@ -26,7 +26,6 @@ use Slim::DataStores::DBI::Comment;
 use Slim::DataStores::DBI::Contributor;
 use Slim::DataStores::DBI::ContributorAlbum;
 use Slim::DataStores::DBI::Genre;
-use Slim::DataStores::DBI::LightWeightTrack;
 use Slim::DataStores::DBI::Rescan;
 use Slim::DataStores::DBI::Track;
 
@@ -95,12 +94,12 @@ sub new {
 		zombieList   => {},
 
 		# Only do this once.
-		trackAttrs   => Slim::DataStores::DBI::Track::attributes(),
+		trackAttrs   => Slim::DataStores::DBI::Track->attributes(),
 	};
 
 	bless $self, $class;
 
-	Slim::DataStores::DBI::DataModel->db_Main(1);
+	Slim::DataStores::DBI::DataModel->init;
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	
@@ -126,7 +125,7 @@ sub lastRescanTime {
 sub dbh {
 	my $self = shift;
 
-	return Slim::DataStores::DBI::DataModel->dbh;
+	return Slim::DataStores::DBI::DataModel->storage->dbh;
 }
 
 sub driver {
@@ -290,27 +289,28 @@ sub objectForId {
 	my $field = shift;
 	my $id    = shift;
 
-	if ($field eq 'track' || $field eq 'playlist') {
+	if ($field =~ /track$/ || $field eq 'playlist') {
 
-		my $track = Slim::DataStores::DBI::Track->retrieve($id) || return;
+		my $track = Slim::DataStores::DBI::Track->find($id) || return;
+
+		if ($field eq 'lightweighttrack') {
+
+			return $track;
+		}
 
 		return $self->_checkValidity($track);
 
-	} elsif ($field eq 'lightweighttrack') {
-
-		return Slim::DataStores::DBI::LightWeightTrack->retrieve($id);
-
 	} elsif ($field eq 'genre') {
 
-		return Slim::DataStores::DBI::Genre->retrieve($id);
+		return Slim::DataStores::DBI::Genre->find($id);
 
 	} elsif ($field eq 'album') {
 
-		return Slim::DataStores::DBI::Album->retrieve($id);
+		return Slim::DataStores::DBI::Album->find($id);
 
 	} elsif ($field eq 'contributor' || $field eq 'artist') {
 
-		return Slim::DataStores::DBI::Contributor->retrieve($id);
+		return Slim::DataStores::DBI::Contributor->find($id);
 	}
 }
 
@@ -360,11 +360,11 @@ sub find {
 		# refcnt-- if we can, to prevent leaks.
 		if ($Class::DBI::Weaken_Is_Available && !$args->{'count'}) {
 
-			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($args));
+			Scalar::Util::weaken($lastFind{$findKey} = Slim::DataStores::DBI::DataModel->findWithJoins($args));
 
 		} else {
 
-			$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->find($args);
+			$lastFind{$findKey} = Slim::DataStores::DBI::DataModel->findWithJoins($args);
 		}
 
 	} else {
@@ -431,15 +431,15 @@ sub count {
 
 		} elsif ($field eq 'genre') {
 
-			return Slim::DataStores::DBI::Genre->count_all;
+			return Slim::DataStores::DBI::Genre->count;
 
 		} elsif ($field eq 'album') {
 
-			return Slim::DataStores::DBI::Album->count_all;
+			return Slim::DataStores::DBI::Album->count;
 
 		} elsif ($field eq 'contributor') {
 
-			return Slim::DataStores::DBI::Contributor->count_all;
+			return Slim::DataStores::DBI::Contributor->count;
 		}
 	}
 
@@ -448,6 +448,12 @@ sub count {
 		'find'  => \%findCriteria,
 		'count' => 1,
 	});
+}
+
+sub albumsWithArtwork {
+	my $self = shift;
+	
+	return [ Slim::DataStores::DBI::Album->hasArtwork ];
 }
 
 sub totalTime {
@@ -540,8 +546,8 @@ sub newTrack {
 		}
 	}
 
-	# Tag and rename set URL to the Amazon image path. Smack that. We
-	# don't use it anyways.
+	# Tag and rename set URL to the Amazon image path. Smack that.
+	# We don't use it anyways.
 	$columnValueHash->{'url'} = $url;
 
 	# Create the track - or bail. We should probably spew an error.
@@ -582,6 +588,16 @@ sub newTrack {
 
 	return $track;
 }
+
+my %tagMapping = (
+	'size'       => 'audio_size',
+	'offset'     => 'audio_offset',
+	'rate'       => 'samplerate',
+	'age'        => 'timestamp',
+	'ct'         => 'content_type',
+	'fs'         => 'filesize',
+	'blockalign' => 'block_alignment',
+);
 
 # Update the attributes of a track or create one if one doesn't already exist.
 sub updateOrCreate {
@@ -645,8 +661,6 @@ sub updateOrCreate {
 			'attributes' => $attributeHash,
 		});
 
-		my %set = ();
-
 		while (my ($key, $val) = each %$attributeHash) {
 
 			$key = lc($key);
@@ -655,12 +669,9 @@ sub updateOrCreate {
 
 				$::d_info && msg("Updating $url : $key to $val\n");
 
-				$set{$key} = $val;
+				$track->set_column($key, $val);
 			}
 		}
-
-		# Just make one call.
-		$track->set(%set);
 
 		# _postCheckAttributes does an update
 		$self->_postCheckAttributes({
@@ -706,15 +717,11 @@ sub delete {
 
 		# XXX - make sure that playlisttracks are deleted on cascade 
 		# otherwise call $track->setTracks() with an empty list
-		my ($audio, $secs) = $track->getFast(qw(audio secs));
-
-		if ($audio) {
+		if ($track->get_column('audio')) {
 
 			$self->{'trackCount'}--;
 
-			if ($secs) {
-				$self->{'totalTime'} -= $secs;
-			}
+			$self->{'totalTime'} -= $track->get_column('secs') || 0;
 		}
 
 		# Be sure to clear the track out of the cache as well.
@@ -786,24 +793,10 @@ sub cleanupStaleTrackEntries {
 
 	$::d_import && msg("Import: Starting db garbage collection..\n");
 
-	my $cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
+	my $iterator = Slim::DataStores::DBI::Track->search({ 'audio' => 1 });
 
 	# fetch one at a time to keep memory usage in check.
-	for my $id (@{$cleanupIds}) { 
-
-		next unless defined $id;
-
-		my $track = Slim::DataStores::DBI::Track->retrieve($id);
-
-		# Not sure how we get here, but we can. See bug 1756
-		# XXX - exception should go here. Comming soon.
-		if (!blessed($track) || !$track->can('audio')) {
-			next;
-		}
-
-		if (!$track->audio) {
-			next;
-		}
+	while (my $track = $iterator->next) {
 
 		# _hasChanged will delete tracks
 		if ($self->_hasChanged($track, $track->url)) {
@@ -815,8 +808,6 @@ sub cleanupStaleTrackEntries {
 	$::d_import && msg(
 		"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
 	);
-
-	$cleanupIds = undef;
 
 	# Walk the Album, Contributor and Genre tables to see if we have any dangling
 	# entries, pointing to non-existant tracks.
@@ -865,28 +856,15 @@ sub variousArtistsObject {
 sub mergeVariousArtistsAlbums {
         my $self = shift;
 
-	my $variousAlbumIds = Slim::DataStores::DBI::Album->retrieveAllOnlyIds;
+	# Don't need to process albums we've already marked as a compilation,
+	# or albums that are marked as 'No Album'
+	my $iterator = Slim::DataStores::DBI::Album->search({
+		'compilation' => { '!=' => 1 },
+		'title'       => { '!=' => string('NO_ALBUM') },
+	});
 
 	# fetch one at a time to keep memory usage in check.
-	ALBUM: for my $id (@{$variousAlbumIds}) {
-
-		next unless defined $id;
-
-		my $albumObj = Slim::DataStores::DBI::Album->retrieve($id);
-
-		# XXX - exception should go here. Comming soon.
-		if (!blessed($albumObj) || !$albumObj->can('tracks')) {
-
-			$::d_import && msg("Import: mergeVariousArtistsAlbums: Couldn't fetch album for id: [$id]\n");
-
-			next;
-		}
-
-		# This is a catch all - but don't mark it as VA.
-		next if $albumObj->title eq string('NO_ALBUM');
-
-		# Don't need to process something we've already marked as a compilation.
-		next if $albumObj->compilation;
+	ALBUM: while (my $albumObj = $iterator->next) {
 
 		my %trackArtists      = ();
 		my $markAsCompilation = 0;
@@ -929,8 +907,6 @@ sub mergeVariousArtistsAlbums {
 			$albumObj->update;
 		}
 	}
-
-	$variousAlbumIds = ();
 
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
@@ -1292,10 +1268,6 @@ sub _retrieveTrack {
 
 		$track = $self->{'lastTrack'}->{$dirname};
 
-	} elsif ($lightweight) {
-
-		($track) = Slim::DataStores::DBI::LightWeightTrack->search('url' => $url);
-
 	} else {
 
 		($track) = Slim::DataStores::DBI::Track->search('url' => $url);
@@ -1334,16 +1306,16 @@ sub _checkValidity {
 
 	# XXX - exception should go here. Comming soon.
 	return undef unless blessed($track);
-	return undef unless $track->can('url');
+	return undef unless $track->can('get_column');
 
-	my ($url, $audio, $remote) = $track->getFast(qw(url audio remote));
+	my $url = $track->get_column('url');
 
 	return undef if $self->{'zombieList'}->{$url};
 
 	$::d_info && msg("_checkValidity: Checking to see if $url has changed.\n");
 
 	# Don't check for remote tracks, or things that aren't audio
-	if ($audio && !$remote && $self->_hasChanged($track, $url)) {
+	if ($track->get_column('audio') && !$track->get_column('remote') && $self->_hasChanged($track, $url)) {
 
 		$::d_info && msg("_checkValidity: Re-reading tags from $url as it has changed.\n");
 
@@ -1388,7 +1360,8 @@ sub _hasChanged {
 	# Reuse _, as we only need to stat() once.
 	if (-e $filepath) {
 
-		my ($filesize, $timestamp) = $track->getFast(qw(filesize timestamp));
+		my $filesize  = $track->get_column('filesize');
+		my $timestamp = $track->get_column('timestamp');
 
 		# Check filesize and timestamp to decide if we use the cached data.
 		my $fsdef   = (defined $filesize);
@@ -1544,13 +1517,15 @@ sub _postCheckAttributes {
 	my $create     = $args->{'create'} || 0;
 
 	# XXX - exception should go here. Comming soon.
-	if (!blessed($track) || !$track->can('get')) {
+	if (!blessed($track) || !$track->can('get_columns')) {
 		return undef;
 	}
 
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
-	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = $track->getFast(qw(id url content_type audio remote));
+        my %cols = $track->get_columns;
+	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote)
+             = (@cols{qw/id url content_type audio remote/});
 
 	if ($trackType eq 'dir' || $trackType eq 'lnk') {
 
@@ -1585,9 +1560,16 @@ sub _postCheckAttributes {
 
 	} elsif (!$create && $isLocal && $genre && $genre ne $track->genre) {
 
+                # (mst) $track->genre is ($self->genres)[0]. XXX is this right?
+
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
-		Slim::DataStores::DBI::GenreTrack->sql_fastDelete->execute($track->id);
+
+                # (mst) This smells wrong; modifying and hoping I got it right
+		#for my $genreObj ($track->genres) {
+		#	$genreObj->delete;
+		#}
+                $track->genre_tracks->delete;
 
 		Slim::DataStores::DBI::Genre->add($genre, $track);
 	}
@@ -1608,7 +1590,7 @@ sub _postCheckAttributes {
 		Slim::DataStores::DBI::Contributor->add({
 			'artist' => $_unknownArtist->name,
 			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			'track'  => $track->id,
+			'track'  => $trackId,
 		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
@@ -1620,7 +1602,7 @@ sub _postCheckAttributes {
 		Slim::DataStores::DBI::Contributor->add({
 			'artist' => $_unknownArtist->name,
 			'role'   => Slim::DataStores::DBI::Contributor->typeToRole('ARTIST'),
-			'track'  => $track->id,
+			'track'  => $trackId,
 		});
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
@@ -1689,16 +1671,17 @@ sub _postCheckAttributes {
 		# For some reason here we do not apply the same criterias as below:
 		# Path, compilation, etc are ignored...
 
+                my ($t, $a); # temp vars to make the conditional sane
 		if (
-			$self->{'lastTrack'}->{$basename} && 
-			$self->{'lastTrack'}->{$basename}->albumid &&
-			blessed($self->{'lastTrack'}->{$basename}->album) eq 'Slim::DataStores::DBI::Album' &&
-			$self->{'lastTrack'}->{$basename}->album->get('title') eq $album &&
-			(!$checkDisc || ($disc eq $self->{'lastTrack'}->{$basename}->album->disc))
+			($t = $self->{'lastTrack'}->{$basename}) && 
+			$t->albumid &&
+			blessed($a = $t->album) eq 'Slim::DataStores::DBI::Album' &&
+			$a->title eq $album &&
+			(!$checkDisc || ($disc eq $a->disc))
 
 			) {
 
-			$albumObj = $self->{'lastTrack'}->{$basename}->album;
+			$albumObj = $a;
 
 			$::d_info && msg("_postCheckAttributes: Same album '$album' than previous track\n");
 
@@ -1849,45 +1832,38 @@ sub _postCheckAttributes {
 			$set{'disc'} = $disc;
 		}
 
-		if (defined $discc && $discc =~ /^\d+$/) {
-			$set{'discc'} = $discc;
-		}
-
-		if (defined $track->year && $track->year =~ /^\d+$/) {
-			$set{'year'} = $track->year;
-		}
-
-		$albumObj->set(%set);
+		$albumObj->set_columns(\%set);
 		$albumObj->update;
 
 		# Don't add an album to container tracks - See bug 2337
 		if (!Slim::Music::Info::isContainer($track, $trackType)) {
 
-			$track->album($albumObj);
+			$track->album($albumObj->id);
 		}
 
 		# Now create a contributors <-> album mapping
 		if (!$create) {
 
 			# Did the user change the album title?
-			if ($albumObj->title ne $album) {
+			#if ($albumObj->title ne $album) {
+                        # (mst) I can't quite see the point of this
 
-				$albumObj->set('title', $album);
-			}
+				$albumObj->title($album);
+			#}
 
 			# Remove all the previous mappings
-			Slim::DataStores::DBI::ContributorAlbum->search('album' => $albumObj)->delete_all;
+			Slim::DataStores::DBI::ContributorAlbum->search('album' => $albumObj->id)->delete_all;
 
 			$albumObj->update;
 		}
 
 		while (my ($role, $contributors) = each %{$contributors}) {
 
-			for my $contributor (@{$contributors}) {
+			for my $contributorObj (@{$contributors}) {
 
 				Slim::DataStores::DBI::ContributorAlbum->find_or_create({
-					album       => $albumObj,
-					contributor => $contributor,
+					album       => $albumObj->id,
+					contributor => $contributorObj->id,
 					role        => Slim::DataStores::DBI::Contributor->typeToRole($role),
 				});
 			}

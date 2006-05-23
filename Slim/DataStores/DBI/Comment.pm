@@ -10,13 +10,14 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('comments');
 
-	$class->columns(Primary => qw/id/);
+	$class->add_columns(qw(id track value));
 
-	$class->columns(Essential => qw/track value/);
+	$class->set_primary_key('id');
 
-	$class->columns(UTF8 => qw/value/);
+	# XXXX - DBIx::Class
+	#$class->columns(UTF8 => qw/value/);
 
-	$class->has_a(track => 'Slim::DataStores::DBI::Track');
+	$class->belongs_to(track => 'Slim::DataStores::DBI::Track');
 }
 
 1;

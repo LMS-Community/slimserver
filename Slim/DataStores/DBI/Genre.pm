@@ -11,18 +11,25 @@ use Scalar::Util qw(blessed);
 
 	$class->table('genres');
 
-	$class->columns(Primary => qw/id/);
+	$class->add_columns(qw(
+		id
+		name
+		namesort
+		namesearch
+		moodlogic_id
+		moodlogic_mixable
+		musicmagic_mixable
+	));
 
-	$class->columns(Essential => qw/name namesort moodlogic_id moodlogic_mixable musicmagic_mixable/);
+	$class->set_primary_key('id');
 
-	$class->columns(Others => qw/namesearch customsearch/);
+	# XXXX - DBIx::Class
+	#$class->columns(UTF8 => qw/name namesort/);
 
-	$class->columns(Stringify => qw/name/);
-
-	$class->columns(UTF8 => qw/name namesort/);
-
-	$class->has_many('genreTracks' => ['Slim::DataStores::DBI::GenreTrack' => 'genre']);
+	$class->has_many('genreTracks' => 'Slim::DataStores::DBI::GenreTrack' => 'genre');
 }
+
+sub tracks { shift->genreTracks->search_related('track' => @_); }
 
 sub add {
 	my $class = shift;
@@ -54,12 +61,18 @@ sub add {
 		push @genres, $genreObj;
 		
 		Slim::DataStores::DBI::GenreTrack->find_or_create({
-			track => $track,
-			genre => $genreObj,
+			track => $track->id,
+			genre => $genreObj->id,
 		});
 	}
 
 	return wantarray ? @genres : $genres[0];
+}
+
+sub stringify {
+	my $self = shift;
+
+	return $self->get_column('name');
 }
 
 1;

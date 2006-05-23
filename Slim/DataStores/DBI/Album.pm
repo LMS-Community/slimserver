@@ -12,29 +12,81 @@ use Slim::Utils::Misc;
 
 	$class->table('albums');
 
-	$class->columns(Primary => qw/id/);
+	$class->add_columns(qw(
+		id
+		titlesort
+		contributor
+		compilation
+		year
+		artwork
+		disc
+		discc
+		musicmagic_mixable
+		titlesearch
+		replay_gain
+		replay_peak
+		musicbrainz_id
+	), title => { accessor => undef() });
 
-	$class->columns(Essential => qw/title titlesort contributor compilation year artwork disc discc musicmagic_mixable/);
+	$class->set_primary_key('id');
 
-	$class->columns(Others    => qw/titlesearch customsearch replay_gain replay_peak musicbrainz_id/);
+	# XXXX - DBIx::Class
+	#$class->columns(UTF8 => qw/title titlesort/);
 
-	$class->columns(Stringify => qw/title/);
+	$class->belongs_to('contributor' => 'Slim::DataStores::DBI::Contributor');
 
-	$class->columns(UTF8 => qw/title titlesort/);
+	$class->has_many(
+		'tracks' => 'Slim::DataStores::DBI::Track',
+		undef,
+		{ 'order_by' => 'disc,tracknum,titlesort' }
+	);
 
-	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
+	$class->has_many('contributorAlbums' => 'Slim::DataStores::DBI::ContributorAlbum');
+}
 
-	$class->has_many(tracks => 'Slim::DataStores::DBI::Track', { order_by => 'disc,tracknum,titlesort'});
-	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorAlbum' => 'contributor'] => 'album');
+# Do a proper join
+sub contributors {
+
+  return shift->contributorAlbums->search_related(
+	'contributor', undef, { distinct => 1 })->search(@_);
+
+	my $self = shift;
+
+	# XXX - we need to do our own 'DISTINCT' until mst adds support.
+        # MST - I did
+
+	my @contributors = Slim::DataStores::DBI::Contributor->search(
+		{ 'album.id' => $self->id },
+		{ 'join'     => { 'contributorAlbums' => 'album' } }
+	);
+
+	my %unique = map { $_->id => $_ } @contributors;
+
+	return values %unique;
+}
+
+sub hasArtwork {
+	my $class = shift;
+
+	# This has the same sort order as %DataModel::sortFieldMap{'album'}
+	return $class->search_literal('artwork IS NOT NULL ORDER BY titlesort, disc');
+}
+
+sub stringify {
+	my $self = shift;
+
+	return $self->get_column('title');
 }
 
 # Update the title dynamically if we're part of a set.
 sub title {
 	my $self = shift;
 
+	return $self->set_column(shift) if @_;
+
 	if (Slim::Utils::Prefs::get('groupdiscs')) {
 
-		return $self->get('title');
+		return $self->get_column('title');
 	}
 
 	return Slim::Music::Info::addDiscNumberToAlbumTitle( $self->get(qw(title disc discc)) );

@@ -7,17 +7,17 @@ package Slim::DataStores::DBI::GenreTrack;
 use strict;
 use base 'Slim::DataStores::DBI::DataModel';
 
-{
+INIT: {
 	my $class = __PACKAGE__;
 
 	$class->table('genre_track');
 
-	$class->columns(Primary => qw/genre track/);
+	$class->add_columns(qw/genre track/);
 
-	$class->set_sql('fastDelete' => 'DELETE FROM __TABLE__ WHERE track = ?');
+	$class->set_primary_key(qw/genre track/);
 
-	$class->has_a(genre => 'Slim::DataStores::DBI::Genre');
-	$class->has_a(track => 'Slim::DataStores::DBI::Track');
+	$class->belongs_to('genre' => 'Slim::DataStores::DBI::Genre');
+	$class->belongs_to('track' => 'Slim::DataStores::DBI::Track');
 }
 
 1;

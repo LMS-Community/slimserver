@@ -10,9 +10,8 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('rescans');
 
-	$class->columns(Primary => qw/id/);
-
-	$class->columns(Essential => qw/files_scanned files_to_scan start_time end_time/);
+	$class->add_columns(qw/id files_scanned files_to_scan start_time end_time/);
+	$class->set_primary_key('id');
 }
 
 sub totalTime {

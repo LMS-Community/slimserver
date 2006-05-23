@@ -12,12 +12,18 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('contributor_album');
 
-	$class->columns(Primary => qw/role contributor album/);
+	$class->add_columns(qw/role contributor album/);
 
-	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
-	$class->has_a(album       => 'Slim::DataStores::DBI::Album');
+	$class->set_primary_key(qw/role contributor album/);
 
-	$class->add_constructor('contributorsForAlbumAndRole' => 'album = ? AND role = ?');
+	$class->belongs_to('contributor' => 'Slim::DataStores::DBI::Contributor');
+	$class->belongs_to('album'       => 'Slim::DataStores::DBI::Album');
+}
+
+sub contributorsForAlbumAndRole {
+	my $class = shift;
+
+	$class->search_literal('album = ? AND role = ?', @_);
 }
 
 1;

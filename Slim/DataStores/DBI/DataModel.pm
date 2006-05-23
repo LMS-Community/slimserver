@@ -15,11 +15,19 @@ package Slim::DataStores::DBI::DataModel;
 
 use strict;
 
-use base 'Class::DBI';
+use base 'DBIx::Class';
+__PACKAGE__->load_components(
+  qw/PK::Auto::MySQL Core DB/ );
+
+sub get { my $self = shift; return @{$self->{_column_data}}{@_}; }
+
+sub set { return shift->set_column(@_); }
+
 use DBI;
 use File::Basename;
 use File::Path;
 use Scalar::Util qw(blessed);
+use FindBin qw($Bin);
 use SQL::Abstract;
 use SQL::Abstract::Limit;
 use Scalar::Util qw(blessed);
@@ -28,7 +36,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
 
-our $dbh;
 our $driver;
 our $dirtyCount = 0;
 
@@ -36,16 +43,69 @@ our $dirtyCount = 0;
 our $lastPingTime = 0;
 our $pingInterval = 1800;
 
-INIT: {
-	my $class = __PACKAGE__;
+__PACKAGE__->mk_classdata(schema_instance => bless({}, 'DBIx::Class::Schema'));
 
-	# The Live Object Index causes far more trouble than it's worth.
-	Class::DBI->use_object_index(0);
+sub init {
+	my $class = shift;
 
-	# Create a low-memory & cpu usage call for DB cleanup
-	$class->set_sql('retrieveAllOnlyIds' => 'SELECT id FROM __TABLE__');
+	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
+	my $username = Slim::Utils::Prefs::get('dbusername');
+	my $password = Slim::Utils::Prefs::get('dbpassword');
 
-	if ($] > 5.007) {
+	$class->connection($source, $username, $password, { 
+		RaiseError => 1,
+		AutoCommit => 0,
+		PrintError => 1,
+		Taint      => 1,
+	});
+
+	my $dbh = $class->storage->dbh || do {
+
+		# Not much we can do if there's no DB.
+		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
+		bt();
+		exit;
+	};
+
+	$::d_info && msg("Connected to database $source\n");
+
+	my $version;
+	my $nextversion;
+	do {
+		if (grep { /metainformation/ } $dbh->tables()) {
+			($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
+		}
+
+		if (defined $version) {
+
+			$nextversion = $class->findUpgrade($version);
+			
+			if ($nextversion && ($nextversion ne 99999)) {
+
+				my $upgradeFile = catdir("Upgrades", $nextversion.".sql" );
+				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
+				$class->executeSQLFile($upgradeFile);
+
+			} elsif ($nextversion && ($nextversion eq 99999)) {
+
+				$::d_info && msg("Database schema out of date and purge required. Purging db.\n");
+				$class->executeSQLFile("dbdrop.sql");
+				$version = undef;
+				$nextversion = 0;
+			}
+		}
+
+	} while ($nextversion);
+	
+	if (!defined($version)) {
+		$::d_info && msg("Creating new database.\n");
+		$class->executeSQLFile("dbcreate.sql");
+	}
+
+	$dbh->commit;
+
+	# XXXX - need a DBIx::Class solution here.
+	if (0 && $] > 5.007) {
 		require Encode;
 
 		$class->add_trigger('select' => sub {
@@ -94,7 +154,7 @@ sub executeSQLFile {
 	my $class = shift;
 	my $file  = shift;
 
-	my $sqlFile = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $class->driver, $file );
+	my $sqlFile = catdir($Bin, "SQL", $class->driver, $file);
 
 	$::d_info && msg("Executing SQL file $sqlFile\n");
 
@@ -127,7 +187,7 @@ sub executeSQLFile {
 
 			$::d_sql && msg("Executing SQL statement: [$statement]\n");
 
-			eval { $class->dbh->do($statement) };
+			eval { $class->storage->dbh->do($statement) };
 
 			if ($@) {
 				msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
@@ -141,112 +201,16 @@ sub executeSQLFile {
 		$statement .= $line if $inStatement;
 	}
 
-	$class->dbh->commit;
+	$class->storage->dbh->commit;
 
 	close $fh;
-}
-
-sub dbh {
-	my $class = shift;
-
-	# Do we need to ping the database?
-	# 
-	# Logic from Apache::DBI
-	my $nowTime   = time;
-	my $needPing  = ($nowTime - ($lastPingTime || 0)) >= $pingInterval ? 1 : 0;
-	$lastPingTime = $nowTime;
-
-	# Keep MySQL alive here.
-	if (defined $dbh && (!$needPing || eval { $dbh->ping }) ) {
-
-		return $dbh;
-	}
-
-	$::d_info && msg("Couldn't ping DB server - need to reconnect!\n");
-
-	# Reconnect.
-	return $class->db_Main(1);
-}
-
-sub db_Main {
-	my $class = shift;
-	my $check = shift;
-
-	if (!$check && $class->dbh) {
-		return $class->dbh;
-	}
-
-	my $dbname = 'slimserversql.db';
-
-	$dbname = catdir(Slim::Utils::Prefs::get('cachedir'), $dbname);
-
-	my $source = sprintf(Slim::Utils::Prefs::get('dbsource'), $dbname);
-	my $username = Slim::Utils::Prefs::get('dbusername');
-	my $password = Slim::Utils::Prefs::get('dbpassword');
-
-	$::d_info && msg("Metadata database saving into: $source\n");
-
-	$dbh = DBI->connect($source, $username, $password, { 
-		RaiseError => 1,
-		AutoCommit => 0,
-		PrintError => 1,
-		RootClass  => "DBIx::ContextualFetch"
-	});
-
-	# Not much we can do if there's no DB.
-	if (!$dbh) {
-		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
-		bt();
-		exit;
-	}
-
-	$::d_info && msg("Connected to database $source\n");
-
-	my $version;
-	my $nextversion;
-	do {
-		if (grep { /metainformation/ } $dbh->tables()) {
-			($version) = $dbh->selectrow_array("SELECT version FROM metainformation");
-		}
-
-		if (defined $version) {
-
-			$nextversion = $class->findUpgrade($version);
-			
-			if ($nextversion && ($nextversion ne 99999)) {
-
-				my $upgradeFile = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), 'Upgrades', "$nextversion.sql" );
-
-				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
-				$class->executeSQLFile($upgradeFile);
-
-			} elsif ($nextversion && ($nextversion eq 99999)) {
-
-				$::d_info && msg("Database schema out of date and purge required. Purging db.\n");
-				$class->executeSQLFile("dbdrop.sql");
-				$version = undef;
-				$nextversion = 0;
-			}
-		}
-
-	} while ($nextversion);
-	
-	if (!defined($version)) {
-
-		$::d_info && msg("Creating new database.\n");
-		$class->executeSQLFile("dbcreate.sql");
-	}
-
-	$dbh->commit();
-	
-  	return $dbh;
 }
 
 sub findUpgrade {
 	my $class       = shift;
 	my $currVersion = shift;
 
-	my $sqlVerFilePath = catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $class->driver, 'sql.version' );
+	my $sqlVerFilePath = catdir($Bin, "SQL", $class->driver, "sql.version");
 
 	my $versionFile;
 
@@ -270,7 +234,7 @@ sub findUpgrade {
 		return 0;
 	}
 
-	my $file = shift || catdir( Slim::Utils::OSDetect::dirsFor('SQL'), $driver, 'Upgrades', "$to.sql" );
+	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
 
 	if (!-f $file && ($to != 99999)) {
 		$::d_info && msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
@@ -287,9 +251,8 @@ sub wipeDB {
 	$class->clearObjectCaches;
 	$class->executeSQLFile("dbclear.sql");
 
-	$class->dbh->commit;
-	$class->dbh->disconnect;
-	$dbh = undef;
+	$class->storage->dbh->commit;
+	$class->storage->dbh->disconnect;
 }
 
 sub clearObjectCaches {
@@ -300,32 +263,32 @@ sub clearObjectCaches {
 
 		my $package = 'Slim::DataStores::DBI::' . $c;
 
-		$package->clear_object_index;
+		#$package->clear_object_index;
 	}
 }
 
 sub getLastRescanTime {
 	my $class = shift;
 
-	$class->dbh->selectrow_array("SELECT last_rescan_time FROM metainformation");
+	$class->storage->dbh->selectrow_array("SELECT last_rescan_time FROM metainformation");
 }
 
 sub setLastRescanTime {
 	my ($class, $time) = @_;
 
-	$class->dbh->do("UPDATE metainformation SET last_rescan_time = $time");
+	$class->storage->dbh->do("UPDATE metainformation SET last_rescan_time = $time");
 }
 
 sub getMetaInformation {
 	my $class = shift;
 
-	$class->dbh->selectrow_array("SELECT track_count, total_time FROM metainformation");
+	$class->storage->dbh->selectrow_array("SELECT track_count, total_time FROM metainformation");
 }
 
 sub setMetaInformation {
 	my ($class, $track_count, $total_time) = @_;
 
-	$class->dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
+	$class->storage->dbh->do("UPDATE metainformation SET track_count = " . $track_count . ", total_time  = " . $total_time);
 }
 
 sub getWhereValues {
@@ -372,7 +335,6 @@ our %fieldHasClass = (
 	'playlist' => 'Slim::DataStores::DBI::LightWeightTrack',
 	'genre' => 'Slim::DataStores::DBI::Genre',
 	'album' => 'Slim::DataStores::DBI::Album',
-	'artwork' => 'Slim::DataStores::DBI::Album',
 	'artist' => 'Slim::DataStores::DBI::Contributor',
 	'contributor' => 'Slim::DataStores::DBI::Contributor',
 	'conductor' => 'Slim::DataStores::DBI::Contributor',
@@ -389,20 +351,19 @@ our %searchFieldMap = (
 	'track.title' => 'tracks.title', 
 	'track.titlesort' => 'tracks.titlesort', 
 	'track.titlesearch' => 'tracks.titlesearch', 
-        'track.customsearch' => 'tracks.customsearch',
 	'tracknum' => 'tracks.tracknum', 
 	'ct' => 'tracks.content_type', 
-	'content_type' => 'tracks.content_type',
+	'content_type' => 'tracks.content_type', 
 	'age' => 'tracks.timestamp', 
 	'timestamp' => 'tracks.timestamp', 
 	'size' => 'tracks.audio_size', 
-	'audio_size' => 'tracks.audio_size',
+	'audio_size' => 'tracks.audio_size', 
 	'year' => 'tracks.year', 
 	'secs' => 'tracks.secs', 
 	'vbr_scale' => 'tracks.vbr_scale',
 	'bitrate' => 'tracks.bitrate', 
 	'rate' => 'tracks.samplerate', 
-	'samplerate' => 'tracks.samplerate',
+	'samplerate' => 'tracks.samplerate', 
 	'samplesize' => 'tracks.samplesize', 
 	'channels' => 'tracks.channels', 
 	'bpm' => 'tracks.bpm', 
@@ -414,25 +375,19 @@ our %searchFieldMap = (
 	'album.title' => 'albums.title',
 	'album.titlesort' => 'albums.titlesort',
 	'album.titlesearch' => 'albums.titlesearch',
-	'album.customsearch' => 'albums.customsearch',
 	'album.compilation' => 'albums.compilation',
-	'album.artwork' => 'albums.artwork',
 	'genre' => 'genre_track.genre', 
 	'genre.name' => 'genres.name', 
 	'genre.namesort' => 'genres.namesort', 
 	'genre.namesearch' => 'genres.namesearch', 
-	'genre.customsearch' => 'genres.customsearch',
 	'contributor' => 'contributor_track.contributor', 
-	'contributorId' => 'contributors.id', 
 	'contributor.name' => 'contributors.name', 
 	'contributor.namesort' => 'contributors.namesort', 
 	'contributor.namesearch' => 'contributors.namesearch', 
-	'contributor.customsearch' => 'contributors.customsearch',
 	'artist' => 'contributor_track.contributor', 
 	'artist.name' => 'contributors.name', 
 	'artist.namesort' => 'contributors.namesort', 
 	'artist.namesearch' => 'contributors.namesearch', 
-	'artist.customsearch' => 'contributors.customsearch',
 	'conductor' => 'contributor_track.contributor', 
 	'conductor.name' => 'contributors.name', 
 	'composer' => 'contributor_track.contributor', 
@@ -454,11 +409,6 @@ our %cmpFields = (
 	'album.titlesearch' => 1,
 	'track.titlesearch' => 1,
 
-	'contributor.customsearch' => 1,
-	'genre.customsearch' => 1,
-	'album.customsearch' => 1,
-	'track.customsearch' => 1,
-
 	'comment' => 1,
 	'comment.value' => 1,
 	'url' => 1,
@@ -476,20 +426,6 @@ our %sortFieldMap = (
 	'lastPlayed' => ['tracks.lastPlayed'],
 	'playCount' => ['tracks.playCount desc'],
 	'age' => ['tracks.timestamp desc', 'tracks.disc', 'tracks.tracknum', 'tracks.titlesort'],
-
-	# following sort definitions used to allow complex sorts of browse views
-	'artist,album' => ['contributors.namesort', 'albums.titlesort', 'albums.disc'],
-	'artist,year,album' => ['contributors.namesort', 'tracks.year', 'albums.titlesort', 'albums.disc'],
-	'year,album' => ['tracks.year', 'albums.titlesort', 'albums.disc'],
-	'year,artist' => ['tracks.year', 'contributors.namesort'],
-	'year,artist,album' => ['tracks.year', 'contributors.namesort', 'albums.titlesort', 'albums.disc'],
-	'year,genre,album' => ['tracks.year', 'genres.namesort', 'albums.titlesort', 'albums.disc'],
-	'year,genre,artist' => ['tracks.year', 'genres.namesort', 'contributors.namesort'],
-	'year,genre,artist,album' => ['tracks.year', 'genres.namesort', 'contributors.namesort', 'albums.titlesort', 'albums.disc'],
-	'genre,album' => ['genres.namesort', 'albums.titlesort', 'albums.disc'],
-	'genre,artist' => ['genres.namesort', 'contributors.namesort'],
-	'genre,artist,album' => ['genres.namesort', 'contributors.namesort', 'albums.titlesort', 'albums.disc'],
-	'genre,artist,year,album' => ['genres.namesort', 'contributors.namesort', 'tracks.year', 'albums.titlesort', 'albums.disc'],
 );
 
 our %sortRandomMap = (
@@ -588,7 +524,6 @@ our %queryPath = (
 
 our %fieldToNodeMap = (
 	'album' => 'album',
-	'artwork' => 'albumartwork', # dummy node for artwork query
 	'genre' => 'genre',
 	'contributor' => 'contributor',
 	'artist' => 'contributor',
@@ -598,7 +533,7 @@ our %fieldToNodeMap = (
 	'comment' => 'comment',
 );
 
-sub find {
+sub findWithJoins {
 	my ($class, $args) = @_;
 	
 	my $field  = $args->{'field'};
@@ -768,7 +703,7 @@ sub find {
 		}
 	}
 
-	my $abstract = SQL::Abstract::Limit->new('limit_dialect' => $class->dbh);
+	my $abstract = SQL::Abstract::Limit->new('limit_dialect' => $class->storage->dbh);
 
 	my ($where, @bind) = $abstract->where(\%whereHash, $sortFields, $args->{'limit'}, $args->{'offset'});
 
@@ -812,7 +747,7 @@ sub find {
 	my $sth;
 
 	eval {
-		$sth = $class->dbh->prepare_cached($sql);
+		$sth = $class->storage->dbh->prepare_cached($sql);
 	   	$sth->execute(@bind);
 	};
 
@@ -837,11 +772,18 @@ sub find {
 	# Always remember to finish() the statement handle, otherwise DBI will complain.
 	if (!$idOnly && ($c = $fieldHasClass{$field})) {
 
-		my $objects = [ $c->sth_to_objects($sth) ];
+		#my $objects = [ $c->sth_to_objects($sth) ];
+		my @objects;
+
+		while (my $h = $sth->fetchrow_hashref) {
+                        use Data::Dumper; print Dumper($h);
+			my $r = $c->inflate_result($c->result_source_instance, $h);
+                        push(@objects, $r);
+		}
 
 		$sth->finish();
 	
-		return $objects;
+		return \@objects;
 	}
 
 	# Handle idOnly requests and any table that doesn't have a matching class.
@@ -877,13 +819,10 @@ sub print {
 	my $class  = ref($self);
 
 	# array context lets us handle multi-column primary keys.
-	print $fh join('.', $self->id()) . "\n";
+	print $fh join('.', $self->id) . "\n";
 
 	# XXX - handle meta_info here, and recurse.
-	for my $column (sort ($class->columns('All'))) {
-
-		# this is needed if the accessor was mutated.
-		$column = $class->accessor_name($column) || next;
+	for my $column (sort $class->columns) {
 
 		my $value = defined($self->$column()) ? $self->$column() : '';
 
@@ -904,103 +843,15 @@ sub print {
 	}
 }
 
-# Class::DBI overrides.
-sub create {
-	my $class = shift;
-
-	# Take a copy of the incoming hash ref
-	my $data = { %{ +shift } };
-
-	my $self = bless {}, $class;
-           $self->_attribute_store(%$data);
-
-	# Make sure that HasA relationships are properly deflated.
-	while (my ($col, $val) = each %{$data}) {
-
-		$data->{$col} = $self->_deflated_column($col, $val);
-	}
-
-	my @primary_columns = $self->primary_columns;
-
-	$self->_prepopulate_id if $self->_undefined_primary;
-	$self->_insert_row($data, \@primary_columns);
-
-	if (scalar @primary_columns == 1) {
-
-		$self->_attribute_store($primary_columns[0] => $data->{ $primary_columns[0] });
-	}
-
-	delete $self->{'__Changed'};
-
-	return $self;
-}
-
-sub _insert_row {
-	my ($self, $data, $primary_columns) = @_;
-
-	eval {
-		my @columns = keys %$data;
-		my $sth     = $self->sql_MakeNewObj(
-			join(', ', @columns), join(', ', map { '?' } @columns),
-		);
-
-		$sth->execute(values %$data);
-
-		if (scalar @{$primary_columns} == 1 && !defined $data->{ $primary_columns->[0] }) {
-
-			$data->{ $primary_columns->[0] } = $self->_auto_increment_value;
-		}
-	};
-
-	if ($@) {
-		my $class = ref $self;
-
-		return $self->_croak(
-			"Can't insert new $class: $@",
-			err    => $@,
-			method => 'create'
-		);
-	}
-
-	return 1;
-}
-
+# DBIx::Class overrides.
 sub update {
 	my $self  = shift;
-	my $class = ref($self) or return $self->_croak("Can't call update as a class method");
 
-	my @changed_cols = $self->is_changed;
+	if ($self->is_changed) {
 
-	if (!scalar @changed_cols) {
-		return 1;
+		$dirtyCount++;
+		$self->SUPER::update;
 	}
-
-	my $sth  = $self->sql_update( join(', ', map { "$_ = ?" } @changed_cols) );
-
-	# Get the list of values to insert - deflating relationships on the fly.
-	my @vals = ();
-
-	# Anything that is a DataModel - deflate to ->id. Stringify everything else.
-	for my $value ($self->_attrs(@changed_cols)) {
-
-		if (blessed($value) && $value->isa('Slim::DataStores::DBI::DataModel')) {
-
-			push @vals, $value->id;
-
-		} else {
-
-			push @vals, (defined $value ? "$value" : undef);
-		}
-	}
-
-	eval { $sth->execute(@vals, $self->id) };
-
-	if ($@) {
-		return $self->_croak("Can't update $self: $@", err => $@);
-	}
-
-	$dirtyCount++;
-	delete $self->{'__Changed'};
 
 	return 1;
 }
@@ -1012,14 +863,10 @@ sub removeStaleDBEntries {
 
 	$::d_import && msg("Import: Starting stale cleanup for class $class / $foreign\n");
 
-	my $cleanupIds = $class->retrieveAllOnlyIds;
+	my $iterator = $class->search;
 
 	# fetch one at a time to keep memory usage in check.
-	for my $id (@{$cleanupIds}) {
-
-		next unless defined $id;
-
-		my $obj = $class->retrieve($id);
+	while (my $obj = $iterator->next) {
 
 		if (blessed($obj) && $obj->$foreign()->count() == 0) {
 
@@ -1034,19 +881,6 @@ sub removeStaleDBEntries {
 	$::d_import && msg("Import: Finished stale cleanup for class $class / $foreign\n");
 
 	return 1;
-}
-
-sub retrieveAllOnlyIds {
-	my ($class, @args) = @_;
-
-	my $sth = $class->sql_retrieveAllOnlyIds;
-	   $sth->execute(@args);
-
-	my $ids = $sth->fetchall();
-	   $sth->finish();
-
-	# Turn this into a nicer array.
-	return [ map { $_->[0] } @{$ids} ];
 }
 
 1;

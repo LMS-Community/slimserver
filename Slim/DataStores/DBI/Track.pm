@@ -13,53 +13,69 @@ use Slim::Utils::Misc;
 
 our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum timestamp
-	customsearch filesize tag disc thumb remote audio audio_size audio_offset
+	filesize tag disc thumb remote audio audio_size audio_offset
 	year secs cover vbr_scale bitrate samplerate samplesize channels block_alignment
 	endian bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
 	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
 ));
 
-INIT: {
+{
 	my $class = __PACKAGE__;
 
 	$class->table('tracks');
 
-	$class->columns(Primary => 'id');
-	$class->columns(Essential => @allColumns);
-	$class->columns(Stringify => qw/url/);
+	$class->add_columns(@allColumns);
+
+	$class->set_primary_key('id');
 
 	# Columns that need to be upgraded to UTF8
-	$class->columns(UTF8 => qw/title titlesort/);
+	# XXXX - how to do this for DBIx::Class ?
+	# $class->columns(UTF8 => qw/title titlesort/);
 
 	# setup our relationships
-	$class->has_a(album => 'Slim::DataStores::DBI::Album');
+	$class->belongs_to('album' => 'Slim::DataStores::DBI::Album');
 
-	$class->has_many(genres => ['Slim::DataStores::DBI::GenreTrack' => 'genre'] => 'track');
-	$class->has_many(comments => ['Slim::DataStores::DBI::Comment' => 'value'] => 'track');
-	$class->has_many(contributors => ['Slim::DataStores::DBI::ContributorTrack' => 'contributor'] => 'track');
+	$class->has_many('genre_tracks'       => 'Slim::DataStores::DBI::GenreTrack' => 'track');
+	$class->has_many('comment_objects'     => 'Slim::DataStores::DBI::Comment' => 'track');
 
-	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist' => {
-		'order_by'    => 'position',
-	});
+	$class->has_many('contributorTracks' => 'Slim::DataStores::DBI::ContributorTrack');
+
+	$class->has_many('playlist_tracks' => 'Slim::DataStores::DBI::PlaylistTrack' => 'playlist' => { order_by => 'playlist_tracks.position' });
+
 }
+
+sub tracks {
+  return shift->playlist_tracks->search_related('track' => @_);
+}
+
+sub contributors {
+
+  return shift->contributorTracks->search_related(
+           'contributor', undef, { distinct => 1, order_by => 'tracknum' }
+             )->search(@_);
+}
+
+sub comments { return map { $_->value } shift->comment_objects(@_); }
+
+sub genres { shift->genre_tracks->search_related('track', @_); }
 
 sub attributes {
 	my $class = shift;
 
+	# Return a hash ref of column names
 	return { map { $_ => 1 } @allColumns };
 }
 
-sub getFast {
+sub stringify {
 	my $self = shift;
 
-	# Bypass all the find_column crap when we have an object.
-	return $self->_attrs(@_);
+	return $self->get_column('url');
 }
 
 sub albumid {
 	my $self = shift;
 
-	return ($self->_attrs('album'));
+	return $self->get_column('album');
 }
 
 sub artist {
@@ -167,7 +183,7 @@ sub bitrate {
 	my $self = shift;
 	my $only = shift;
 
-	my ($bitrate, $vbrScale) = $self->get(qw(bitrate vbr_scale));
+	my ($bitrate, $vbrScale) = $self->get_columns(qw(bitrate vbr_scale));
 
 	# Source only wants the raw bitrate
 	if ($only) {
@@ -245,7 +261,7 @@ sub coverArt {
 	# metdata tags.
 	# 
 	# Otherwise we'll have a path to a file on disk.
-	my $artwork = $self->get($artType);
+	my $artwork = $self->get_column($artType);
 
 	if ($artwork && $artwork != 1) {
 

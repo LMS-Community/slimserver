@@ -12,12 +12,18 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('contributor_track');
 
-	$class->columns(Primary => qw/role contributor track/);
+	$class->add_columns(qw/role contributor track/);
 
-	$class->has_a(contributor => 'Slim::DataStores::DBI::Contributor');
-	$class->has_a(track => 'Slim::DataStores::DBI::Track');
+	$class->set_primary_key(qw/role contributor track/);
 
-	$class->add_constructor('contributorsForTrackAndRole' => 'track = ? AND role = ?');
+	$class->belongs_to('contributor' => 'Slim::DataStores::DBI::Contributor');
+	$class->belongs_to('track'       => 'Slim::DataStores::DBI::Track');
+}
+
+sub contributorsForTrackAndRole {
+	my ($class, $track, $role) = @_;
+
+	return $class->search({ track => $track, role => $role });
 }
 
 1;

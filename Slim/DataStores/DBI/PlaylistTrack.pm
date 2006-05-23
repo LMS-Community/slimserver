@@ -12,14 +12,18 @@ use base 'Slim::DataStores::DBI::DataModel';
 
 	$class->table('playlist_track');
 
-	$class->columns(Primary => qw/id/);
+	$class->add_columns(qw(id position playlist track));
 
-	$class->columns(Essential => qw/position playlist track/);
+	$class->set_primary_key('id');
 
-	$class->has_a(playlist => 'Slim::DataStores::DBI::Track');
-	$class->has_a(track => 'Slim::DataStores::DBI::Track');
+	$class->belongs_to(playlist => 'Slim::DataStores::DBI::Track');
+	$class->belongs_to(track => 'Slim::DataStores::DBI::Track');
+}
 
-	$class->set_sql('deletePlaylist' => 'DELETE FROM __TABLE__ WHERE playlist = ?');
+sub deletePlaylist {
+	my $class = shift;
+
+	$class->search_literal('DELETE FROM __TABLE__ WHERE playlist = ?', @_);
 }
 
 1;
