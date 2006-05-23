@@ -1213,7 +1213,7 @@ sub initSetupConfig {
 					Slim::Utils::PluginManager::clearPlugins();
 					Slim::Utils::Strings::init();
 					Slim::Web::Setup::initSetup();
-					Slim::Buttons::Plugins::initPlugins();
+					Slim::Utils::PluginManager::initPlugins();
 					Slim::Music::Import->resetSetupGroups;
 				},
 			},
