@@ -50,10 +50,14 @@ sub scanProgressBar {
 
 	if ($class->useProgressBar) {
 
-		return Term::ProgressBar->new({
+		my $progress = Term::ProgressBar->new({
 			'count' => $count,
 			'ETA'   => 'linear',
 		});
+
+		$progress->minor(0);
+
+		return $progress;
 	}
 
 	return undef;

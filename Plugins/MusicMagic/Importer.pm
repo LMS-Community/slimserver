@@ -1,19 +1,22 @@
 package Plugins::MusicMagic::Importer;
 
-# $Id: /slim/trunk/server/Plugins/MusicMagic/Plugin.pm 213 2005-11-09T17:07:36.536715Z dsully  $
+# $Id$
 
 use strict;
+
+use File::Spec::Functions qw(:ALL);
+use Data::VString qw(vstring_cmp);
+use LWP::Simple;
 use Scalar::Util qw(blessed);
 
 use Plugins::MusicMagic::Common;
 
 use Slim::Player::ProtocolHandlers;
-use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-my $isScanning = 0;
 my $initialized = 0;
+my $MMMVersion  = 0;
 my $MMSHost;
 my $MMSport;
 
@@ -90,24 +93,16 @@ sub initPlugin {
 
 	$::d_musicmagic && msg("MusicMagic: Testing for API on $MMSHost:$MMSport\n");
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'     => "http://$MMSHost:$MMSport/api/version",
-		'create'  => 0,
-		'timeout' => 5,
-	});
+	my $initialized = get("http://$MMSHost:$MMSport/api/version");
 
-	if (!$http) {
-
-		$initialized = 0;
-		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
-
-	} else {
+	if (defined $initialized) {
 
 		# Note: Check version restrictions if any
-		$initialized = $http->content;
-		$http->close;
+		chomp($initialized);
 
 		$::d_musicmagic && msg("MusicMagic: $initialized\n");
+
+		($MMMVersion) = ($initialized =~ /Version ([\d\.]+)$/);
 
 		Slim::Music::Import->addImporter($class, {
 			'playlistOnly' => 1,
@@ -116,6 +111,11 @@ sub initPlugin {
 		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
+
+	} else {
+
+		$initialized = 0;
+		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
 	}
 
 	return $initialized;
@@ -123,29 +123,16 @@ sub initPlugin {
 
 sub isMusicLibraryFileChanged {
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'     => "http://$MMSHost:$MMSport/api/cacheid?contents",
-		'create'  => 0,
-		'timeout' => 5,
-	}) || return 0;
+	my $fileMTime = get("http://$MMSHost:$MMSport/api/cacheid?contents");
+	my $MMMstatus = get("http://$MMSHost:$MMSport/api/getStatus");
 
-	my $fileMTime = $http->content;
+	if ($::d_musicmagic) {
+		msg("MusicMagic: read cacheid of $fileMTime");
+		msg("MusicMagic: got status - $MMMstatus");
+	}
 
-	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime");
-
-	$http->close;
-
-	$http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/getStatus",
-		'create' => 0,
-		'timeout' => 5,
-	}) || return 0;
-
-	my $MMMstatus = $http->content;
-
-	$::d_musicmagic && msg("MusicMagic: got status - $MMMstatus");
-
-	$http->close;
+	chomp($fileMTime);
+	chomp($MMMstatus);
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -156,18 +143,18 @@ sub isMusicLibraryFileChanged {
 
 	if ($fileMTime > $oldTime) {
 
-		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
+		my $musicMagicScanInterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
 
 		if ($::d_musicmagic) {
 
 			msg("MusicMagic: music library has changed! Details:\n");
 			msg("\tCacheid - $fileMTime\n");
 			msg("\tLastCacheid - $oldTime\n");
-			msg("\tReload Interval - $musicmagicscaninterval\n");
+			msg("\tReload Interval - $musicMagicScanInterval\n");
 			msg("\tLast Scan - $lastMusicLibraryFinishTime\n");
 		}
 		
-		if (!$musicmagicscaninterval) {
+		if (!$musicMagicScanInterval) {
 
 			# only scan if musicmagicscaninterval is non-zero.
 			$::d_musicmagic && msg("MusicMagic: Scan Interval set to 0, rescanning disabled\n");
@@ -175,12 +162,12 @@ sub isMusicLibraryFileChanged {
 			return 0;
 		}
 
-		if (time - $lastMusicLibraryFinishTime > $musicmagicscaninterval) {
+		if (time - $lastMusicLibraryFinishTime > $musicMagicScanInterval) {
 
 			return 1;
 		}
 
-		$::d_musicmagic && msg("MusicMagic: waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
+		$::d_musicmagic && msg("MusicMagic: waiting for $musicMagicScanInterval seconds to pass before rescanning\n");
 	}
 
 	return 0;
@@ -195,8 +182,6 @@ sub startScan {
 		
 	$::d_musicmagic && msg("MusicMagic: start export\n");
 
-	#$class->stopScan;
-
 	if (Slim::Music::Import->scanPlaylistsOnly) {
 
 		$class->exportPlaylists;
@@ -209,41 +194,20 @@ sub startScan {
 	$class->doneScanning;
 } 
 
-sub stopScan {
-	my $class = shift;
-
-	if ($class->stillScanning) {
-
-		$::d_musicmagic && msg("MusicMagic: Scan already in progress. Restarting\n");
-		$isScanning = 0;
-	}
-}
-
-sub stillScanning {
-	my $class = shift;
-
-	return $isScanning;
-}
-
 sub doneScanning {
 	my $class = shift;
 
 	$::d_musicmagic && msg("MusicMagic: done Scanning\n");
 
-	$isScanning = 0;
+	Slim::Utils::Prefs::set('MMMlastMusicLibraryFinishTime', time);
 
-	Slim::Utils::Prefs::set('MMMlastMusicLibraryFinishTime',time);
+	my $lastDate = get("http://$MMSHost:$MMSport/api/cacheid?contents");
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/cacheid?contents",
-		'create' => 0,
-	}) || return 0;
+	if ($lastDate) {
 
-	if ($http) {
+		chomp($lastDate);
 
-		Slim::Utils::Prefs::set('MMMlastMusicMagicLibraryDate', $http->content);
-
-		$http->close;
+		Slim::Utils::Prefs::set('MMMlastMusicMagicLibraryDate', $lastDate);
 	}
 
 	Slim::Music::Import->endImporter($class);
@@ -252,23 +216,15 @@ sub doneScanning {
 sub exportFunction {
 	my $class = shift;
 
-	my $count = 0;
-
-	$isScanning = 1;
-
 	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/getSongCount",
-		'create' => 0,
-	});
+	my $count = get("http://$MMSHost:$MMSport/api/getSongCount");
 
-	if ($http) {
+	if ($count) {
+
 		# convert to integer
-		chomp($count = $http->content);
-
-		$http->close;
+		chomp($count);
 
 		$count += 0;
 	}
@@ -287,110 +243,153 @@ sub exportSongs {
 	# We need to use the datastore to get at our id's
 	my $ds = Slim::Music::Info::getCurrentDataStore();
 
-	for (my $scan = 0; $scan <= $count; $scan++) {
+	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
+	# down the entire library, separated by ^M's - this allows us to make
+	# 1 HTTP request, and the process the file.
+	if (vstring_cmp($MMMVersion, '>=', '1.5')) {
 
-		my %attributes = ();
-		my %songInfo   = ();
-		
-		my $http = Slim::Player::Protocols::HTTP->new({
-			'url'    => "http://$MMSHost:$MMSport/api/getSong?index=$scan",
-			'create' => 0,
-		}) || next;
+		$::d_musicmagic && msg("MusicMagic: Fetching ALL song data via songs/extended..\n");
 
-		my @lines  = split(/\n/, $http->content);
-		my $count2 = scalar @lines;
+		my $MMMSongData = catdir( Slim::Utils::Prefs::get('cachedir'), 'mmm-song-data.txt' );
 
-		$http->close;
+		my $MMMDataURL  = "http://$MMSHost:$MMSport/api/songs?extended";
 
-		for (my $j = 0; $j < $count2; $j++) {
+		getstore($MMMDataURL, $MMMSongData);
 
-			my ($song_field, $song_value) = $lines[$j] =~ /(\w+) (.*)/;
+		if (!-r $MMMSongData) {
 
-			$songInfo{$song_field} = $song_value;
+			errorMsg("MusicMagic: Couldn't connect to $MMMDataURL ! : $!\n");
+			return;
 		}
 
-		# If we've already read tags on these items - save trips to the db.
-		if (!Slim::Music::Import->useFolderImporter) {
+		open(MMMDATA, $MMMSongData) || do {
 
-			$attributes{'TRACKNUM'} = $songInfo{'track'};
-
-			if ($songInfo{'bitrate'}) {
-				$attributes{'BITRATE'} = $songInfo{'bitrate'} * 1000;
-			}
-
-			$attributes{'YEAR'}  = $songInfo{'year'};
-			$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
-			$attributes{'TAG'}   = 1;
-			$attributes{'VALID'} = 1;
-			$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
-
-			for my $key (qw(album artist genre name)) {
-
-				my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
-
-				$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
-			}
-
-			# Assign these after they may have been verified as UTF-8
-			$attributes{'ALBUM'}  = $songInfo{'album'};
-			$attributes{'TITLE'}  = $songInfo{'name'};
-			$attributes{'ARTIST'} = $songInfo{'artist'};
-			$attributes{'GENRE'}  = $songInfo{'genre'};
-		}
-	
-		my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
-
-		if ($songInfo{'active'} eq 'yes') {
-			$attributes{'MUSICMAGIC_MIXABLE'} = 1;
-		}
-
-		$::d_musicmagic && msg("MusicMagic: Exporting song $scan: $songInfo{'file'}\n");
-
-		# Both Linux & Windows need conversion to the current charset.
-		if (Slim::Utils::OSDetect::OS() ne 'mac') {
-			$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
-		}
-
-		my $track = $ds->updateOrCreate({
-
-			'url'        => $fileurl,
-			'attributes' => \%attributes,
-			'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
-
-		}) || do {
-
-			$::d_musicmagic && msg("MusicMagic: Couldn't create track for $fileurl!\n");
-			next;
+			errorMsg("MusicMagic: Couldn't read file: $MMMSongData : $!\n");
+			return;
 		};
 
-		my $albumObj = $track->album;
+		$::d_musicmagic && msg("MusicMagic: done fetching - processing.\n");
 
-		# NYI: MMM has more ways to access artwork...
-		if (!Slim::Music::Import->useFolderImporter) {
+		local $/ = "\cM";
 
-			if (Slim::Utils::Prefs::get('lookForArtwork') && defined $albumObj) {
+		while(my $content = <MMMDATA>) {
 
-				if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb) {
-
-					Slim::Music::Import->artwork($albumObj, $track);
-				}
-			}
+			$class->processSong($ds, $content);
 		}
 
-		if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
+		close(MMMDATA);
+		unlink($MMMSongData);
 
-			$albumObj->musicmagic_mixable(1);
-			$albumObj->update;
+	} else {
 
-			for my $artistObj ($track->contributors) {
-				$artistObj->musicmagic_mixable(1);
-				$artistObj->update;
+		for (my $scan = 0; $scan <= $count; $scan++) {
+
+			my $content = get("http://$MMSHost:$MMSport/api/getSong?index=$scan");
+
+			$class->processSong($ds, $content);
+		}
+	}
+}
+
+sub processSong {
+	my $class   = shift;
+	my $ds      = shift;
+	my $content = shift;
+
+	my %attributes = ();
+	my %songInfo   = ();
+	my @lines      = split(/\n/, $content);
+
+	for my $line (@lines) {
+
+		if ($line =~ /^(\w+)\s+(.*)/) {
+
+			$songInfo{$1} = $2;
+		}
+	}
+
+	# If we've already read tags on these items - save trips to the db.
+	if (!Slim::Music::Import->useFolderImporter) {
+
+		$attributes{'TRACKNUM'} = $songInfo{'track'};
+
+		if ($songInfo{'bitrate'}) {
+			$attributes{'BITRATE'} = $songInfo{'bitrate'} * 1000;
+		}
+
+		$attributes{'YEAR'}  = $songInfo{'year'};
+		$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
+		$attributes{'TAG'}   = 1;
+		$attributes{'VALID'} = 1;
+		$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
+
+		for my $key (qw(album artist genre name)) {
+
+			my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
+
+			$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
+		}
+
+		# Assign these after they may have been verified as UTF-8
+		$attributes{'ALBUM'}  = $songInfo{'album'};
+		$attributes{'TITLE'}  = $songInfo{'name'};
+		$attributes{'ARTIST'} = $songInfo{'artist'};
+		$attributes{'GENRE'}  = $songInfo{'genre'};
+	}
+
+	my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
+
+	if ($songInfo{'active'} eq 'yes') {
+		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
+	}
+
+	$::d_musicmagic && msg("MusicMagic: Exporting song: $songInfo{'file'}\n");
+
+	# Both Linux & Windows need conversion to the current charset.
+	if (Slim::Utils::OSDetect::OS() ne 'mac') {
+		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
+	}
+
+	my $track = $ds->updateOrCreate({
+
+		'url'        => $fileurl,
+		'attributes' => \%attributes,
+		'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
+
+	}) || do {
+
+		$::d_musicmagic && msg("MusicMagic: Couldn't create track for $fileurl!\n");
+
+		return;
+	};
+
+	my $albumObj = $track->album;
+
+	# NYI: MMM has more ways to access artwork...
+	if (!Slim::Music::Import->useFolderImporter) {
+
+		if (defined $albumObj && Slim::Utils::Prefs::get('lookForArtwork')) {
+
+			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb) {
+
+				Slim::Music::Import->artwork($albumObj, $track);
 			}
-			
-			for my $genreObj ($track->genres) {
-				$genreObj->musicmagic_mixable(1);
-				$genreObj->update;
-			}
+		}
+	}
+
+	if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
+
+		$albumObj->musicmagic_mixable(1);
+		$albumObj->update;
+
+		for my $artistObj ($track->contributors) {
+			$artistObj->musicmagic_mixable(1);
+			$artistObj->update;
+		}
+		
+		for my $genreObj ($track->genres) {
+			$genreObj->musicmagic_mixable(1);
+			$genreObj->update;
 		}
 	}
 }
@@ -398,29 +397,12 @@ sub exportSongs {
 sub exportPlaylists {
 	my $class = shift;
 
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/playlists",
-		'create' => 0,
-
-	}) || return;
-
-	my @playlists = split(/\n/, $http->content);
-
-	$http->close;
+	my @playlist = split(/\n/, get("http://$MMSHost:$MMSport/api/playlists"));
 
 	for (my $i = 0; $i <= scalar @playlists; $i++) {
 
-		my $http = Slim::Player::Protocols::HTTP->new({
-			'url'    => "http://$MMSHost:$MMSport/api/getPlaylist?index=$i",
-			'create' => 0,
+		my @songs = split(/\n/, get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i"));
 
-		}) || next;
-
-		my @songs = split(/\n/, $http->content);
-		my $count = scalar @songs;
-
-		$http->close;
-	
 		$::d_musicmagic && msgf("MusicMagic: got playlist %s with %d items\n", $playlists[$i], scalar @songs);
 
 		$class->_updatePlaylist($playlists[$i], \@songs);
@@ -432,21 +414,13 @@ sub exportDuplicates {
 	my $class = shift;
 
 	# check for dupes, but not with 1.1.3
-	if ($initialized =~ m/1\.1\.3$/) {
+	if (vstring_cmp($MMMVersion, '<=', '1.1.3')) {
 		return;
 	}
 
 	$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
 	
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/duplicates",
-		'create' => 0,
-
-	}) || return;
-
-	my @songs = split(/\n/, $http->content);
-
-	$http->close;
+	my @songs = split(/\n/, get("http://$MMSHost:$MMSport/api/duplicates"));
 
 	$class->_updatePlaylist('Duplicates', \@songs);
 

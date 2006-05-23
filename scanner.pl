@@ -51,7 +51,7 @@ sub main {
 		'musicmagic' => \$musicmagic,
 	);
 
-	if (!$rescan && !$wipe && !scalar @ARGV) {
+	if (!$rescan && !$wipe && !$musicmagic && !$itunes && !scalar @ARGV) {
 		usage();
 		exit;
 	}
