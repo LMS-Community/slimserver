@@ -32,7 +32,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
-use Plugins::iTunes;
+use Plugins::iTunes::Plugin;
 use Plugins::MusicMagic::Importer;
 
 sub main {
@@ -79,7 +79,7 @@ sub main {
 
 	Slim::Music::MusicFolderScan->init;
 	Slim::Music::PlaylistFolderScan->init;
-	Plugins::iTunes->initPlugin;
+	Plugins::iTunes::Plugin->initPlugin;
 	Plugins::MusicMagic::Importer->initPlugin;
 
 	#$::d_server && msg("SlimServer Plugins init...\n");
