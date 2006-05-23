@@ -10,7 +10,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
-use Slim::Utils::Scan;
 use Slim::Utils::Strings qw(string);
 
 my %rpcFunctions = (
