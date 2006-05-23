@@ -181,6 +181,7 @@ our (
 	$d_client,
 	$d_control,
 	$d_command,
+	$d_datamodel,
 	$d_directstream,
 	$d_display,
 	$d_factorytest,
@@ -580,6 +581,7 @@ to the console via stderr:
     --d_client       => Display per-client debugging.
     --d_command      => Display internal command execution
     --d_control      => Low level player control information
+    --d_datamodel    => Data model search and field mapping debugging
     --d_directstream => Debugging info on direct streaming 
     --d_display      => Show what (should be) on the player's display 
     --d_factorytest  => Information used during factory testing
@@ -663,6 +665,7 @@ sub initOptions {
 		'd_client'			=> \$d_client,
 		'd_command'			=> \$d_command,
 		'd_control'			=> \$d_control,
+		'd_datamodel'		=> \$d_datamodel,
 		'd_directstream'	=> \$d_directstream,
 		'd_display'			=> \$d_display,
 		'd_factorytest'		=> \$d_factorytest,

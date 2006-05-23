@@ -896,6 +896,21 @@ sub init {
 	# Allow these items to be used as parameters.
 	$fieldInfo{'album.compilation'} = {};
 
+	if ($::d_datamodel) {
+		foreach my $field (keys %fieldInfo) {
+			my $info = $fieldInfo{$field};
+			foreach my $entry (keys %$info) {
+				if (ref($info->{$entry}) eq 'CODE') {
+					my $sub = $info->{$entry};
+					$info->{$entry} = sub { 
+						msg("Calling fieldInfo{$field}{$entry}\n");
+						goto &$sub;
+					}
+				}
+			}
+		}
+	}
+
 	$init = 1;
 }
 
