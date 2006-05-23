@@ -108,7 +108,7 @@ sub initPlugin {
 	return 1 if $initialized;
 	
 	Plugins::MusicMagic::Common::checkDefaults();
-
+	
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
 
 		$::d_musicmagic && msg("MusicMagic: don't initialize, it's disabled\n");
