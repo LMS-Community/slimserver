@@ -17,6 +17,7 @@ use Tie::Cache::LRU;
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
