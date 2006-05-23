@@ -487,8 +487,6 @@ sub idle {
 		$::d_time && msg("select_time: $select_time\n");
 	}
 
-	$::d_time && msg("select_time: $select_time\n");
-	
 	Slim::Networking::Select::select($select_time);
 
 	# check the timers for any new tasks
