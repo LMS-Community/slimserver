@@ -925,7 +925,7 @@ sub checkDataSource {
 
 		if ($ds->count('track') == 0) {
 
-			Slim::Control::Request::executeRequest(undef, ['rescan']);
+			 # Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 	}
 }
@@ -1015,6 +1015,8 @@ sub cleanup {
 		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
+
+	Slim::Utils::MySQLHelper->cleanup;
 
 	remove_pid_file();
 }

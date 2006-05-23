@@ -28,9 +28,28 @@ use Scalar::Util qw(blessed);
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/name namesort/);
 	}
+
+	$class->resultset_class('Slim::DataStores::DBI::ResultSet::Genre');
 }
 
-sub tracks { shift->genreTracks->search_related('track' => @_); }
+sub tracks {
+	my $self = shift;
+
+	return $self->genreTracks->search_related('track' => @_);
+}
+
+sub displayAsHTML {
+	my ($self, $form, $descend, $sort) = @_;
+
+	my $Imports = Slim::Music::Import->importers;
+
+	for my $mixer (keys %{$Imports}) {
+
+		if (defined $Imports->{$mixer}->{'mixerlink'}) {
+			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend);
+		}
+	}
+}
 
 sub add {
 	my $class = shift;

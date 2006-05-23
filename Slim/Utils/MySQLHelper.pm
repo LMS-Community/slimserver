@@ -296,8 +296,8 @@ sub createDatabase {
 }
 
 # Shut down MySQL when the server is done..
-END {
-	my $class = __PACKAGE__;
+sub cleanup {
+	my $class = shift;
 
 	if ($class->pidFile) {
 		$class->stopServer;

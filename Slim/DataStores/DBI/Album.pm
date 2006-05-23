@@ -28,6 +28,10 @@ use Slim::Utils::Misc;
 		musicbrainz_id
 	), title => { accessor => undef() });
 
+	$class->register_column('title', { accessor => 'name' });
+	$class->register_column('titlesort', { accessor => 'namesort' });
+	$class->register_column('titlesearch', { accessor => 'namesearch' });
+
 	$class->set_primary_key('id');
 
 	$class->belongs_to('contributor' => 'Slim::DataStores::DBI::Contributor');
@@ -43,6 +47,8 @@ use Slim::Utils::Misc;
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/title titlesort/);
 	}
+
+	$class->resultset_class('Slim::DataStores::DBI::ResultSet::Album');
 }
 
 # Do a proper join
@@ -79,6 +85,47 @@ sub title {
 	}
 
 	return Slim::Music::Info::addDiscNumberToAlbumTitle( $self->get(qw(title disc discc)) );
+}
+
+sub displayAsHTML {
+	my ($self, $form, $descend, $sort) = @_;
+
+	$form->{'text'}       = $self->title;
+	$form->{'coverThumb'} = $self->artwork || 0;
+	$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
+
+	$form->{'item'}       = $self->title;
+
+	# XXXX - need to pass sort along?
+	if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort =~ /^year/) {
+
+		# Don't show years when browsing years..
+		#if (!$findCriteria->{'year'}) {
+		#	$form->{'showYear'} = $showYear;
+		#	$form->{'year'} = $self->year;
+		#}
+	}
+
+	# Show the artist in the album view
+	if (Slim::Utils::Prefs::get('showArtist') || $sort =~ /^artist/) {
+
+		if (my $contributor = $self->contributor) {
+
+			$form->{'artist'}        = $contributor;
+			#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
+			$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+
+		}
+	}
+
+	my $Imports = Slim::Music::Import->importers;
+
+	for my $mixer (keys %{$Imports}) {
+	
+		if (defined $Imports->{$mixer}->{'mixerlink'}) {
+			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend);
+		}
+	}
 }
 
 sub artistsForRole {

@@ -80,11 +80,13 @@ our %tagFunctions = ();
 			'getTag' => \&Slim::Formats::MP3::getTag,
 		},
 
-		'ogg' => {
-			'module' => 'Slim::Formats::Ogg',
-			'loaded' => 0,
-			'getTag' => \&Slim::Formats::Ogg::getTag,
-		},
+	# XXXX - need to convert fully to schema, or else scanner won't work.
+	if ($0 !~ /scanner\.pl/) {
+		require Slim::DataStores::DBI;
+		Slim::DataStores::DBI->init;
+	}
+
+	Slim::Music::TitleFormatter::init($currentDB);
 
 		'flc' => {
 			'module' => 'Slim::Formats::FLAC',

@@ -9,29 +9,21 @@ package Slim::Web::Pages::BrowseDB;
 
 use strict;
 
-use File::Spec::Functions qw(:ALL);
-use POSIX ();
-use Scalar::Util qw(blessed);
-
-use Slim::DataStores::Base;
+use Slim::DataStores::DBI;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
 
-our $fieldInfo;
-
 sub init {
-	
-	$fieldInfo = Slim::DataStores::Base->fieldInfo;
-	
+
 	Slim::Web::HTTP::addPageFunction(qr/^browsedb\.(?:htm|xml)/,\&browsedb);
 	Slim::Web::HTTP::addPageFunction(qr/^browseid3\.(?:htm|xml)/,\&browseid3);
-	
-	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0"});
-	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0"});
-	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
-	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-	Slim::Web::Pages::Home->addPageLinks("browse",{'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+
+	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=artist,album,track&level=0" });
+	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,artist,album,track&level=0" });
+	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0" });
+	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0" });
+	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0" });
 }
 
 sub browsedb {
@@ -44,73 +36,150 @@ sub browsedb {
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
-	my @levels = split(",", $hierarchy);
+	# Turn any artist into a contributor
+	my @levels = map {
+		$_ = ($_ eq 'artist' ? 'contributor' : $_);
+	} split(',', $hierarchy);
 
+	# Make sure we're not out of bounds.
 	my $maxLevel = scalar(@levels) - 1;
 
 	if ($level > $maxLevel)	{
 		$level = $maxLevel;
 	}
 
-	my $ds = Slim::Music::Info::getCurrentDataStore();
+	my $itemCount = 0;
+	my $descend   = 0;
 
-	my $itemnumber = 0;
-	my $lastAnchor = '';
-	my $descend;
-	my %names = ();
-	my @attrs = ();
-	my %findCriteria = ();	
+	# Hold the real name of the level for the breadcrumb list.
+	my %names    = ();
 
+	# Build up a list of params to include in the href links.
+	my @attrs    = ();
+
+	# Pass these to the ->descend method
+	my %find     = ();
+	#my %sort     = ();
+
+	# Filters builds up the list of params passed that we want to filter
+	# on. They are massaged into the %find hash.
+	my %filters  = ();
+	my @sources  = map { lc($_) } Slim::DataStores::DBI->sources;
+
+	my $ds       = Slim::Music::Info::getCurrentDataStore();
+	my $rs       = Slim::DataStores::DBI->resultset(ucfirst($levels[$level]));
+	my $topRS    = Slim::DataStores::DBI->resultset(ucfirst($levels[0]));
+	my $title    = $params->{'browseby'} = $topRS->title;
+
+	# Create a map pointing to the previous RS for each level.
+	# 
+	# Example: For the navigation from Genres to Contributors, the
+	# hierarchy would be:
+	# 
+	# genre,contributor,album,track
+	# 
+	# we want the key in the level above us in order to descend.
+	#
+	# Which would give us: $find->{'genre'} = { 'contributor.id' => 33 }
+	my %levelMap = ();
+
+	for (my $i = 1; $i < scalar @levels; $i++) {
+
+		$levelMap{ lc($levels[$i-1]) } = lc($levels[$i]);
+	}
+
+	# Build up the list of valid parameters we may pass to the db.
+	while (my ($param, $value) = each %{$params}) {
+
+		if (!grep { $param =~ /^$_(\.\w+)?$/ } @sources) {
+
+			next;
+		}
+
+		$filters{$param} = $value;
+	}
+
+	#print Data::Dumper::Dumper(\%levelMap);
+	#print Data::Dumper::Dumper(\%filters);
+
+	# Turn parameters in the form of: album.sort into the appropriate sort
+	# string. We specify a sortMap to turn something like:
+	# tracks.timestamp desc, tracks.disc, tracks.titlesort
+	while (my ($param, $value) = each %filters) {
+
+		if ($param =~ /^(\w+)\.sort$/) {
+
+			#$sort{$1} = $sortMap{$value} || $value;
+			#$sort{$1} = $value;
+
+			delete $filters{$param};
+		}
+	}
+
+	# Now turn each filter we have into the find hash ref we'll pass to ->descend
+	while (my ($param, $value) = each %filters) {
+
+		my ($levelName) = ($param =~ /^(\w+)\.\w+$/);
+
+		# Turn into me.* for the top level
+		if ($param =~ /^$levels[0]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $topRS->{'attrs'}{'alias'}, $1);
+		}
+
+		# Turn into me.* for the current level
+		if ($param =~ /^$levels[$level]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
+		}
+
+		msg("working on levelname: [$levelName]\n");
+
+		if (my $mapKey = $levelMap{$levelName}) {
+
+			$find{$mapKey} = { $param => $value };
+		}
+
+		# Pre-populate the attrs list with all query parameters that 
+		# are not part of the hierarchy. This allows a URL to put
+		# query constraints on a hierarchy using a field that isn't
+		# necessarily part of the hierarchy.
+		if (!grep { $_ eq $levelName } @levels) {
+
+			push @attrs, join('=', $param, $value);
+		}
+	}
+
+	# Build up the names we use for the breadcrumb list
 	for my $field (@levels) {
 
-		my $info = $fieldInfo->{$field} || $fieldInfo->{'default'};
+		my $levelRS = Slim::DataStores::DBI->resultset(ucfirst($field)) || next;
 
 		# XXX - is this the right thing to do?
 		# For artwork browsing - we want to display the album.
-		if (my $transform = $info->{'nameTransform'}) {
+		if (my $transform = $levelRS->nameTransform) {
 			push @levels, $transform;
 		}
 
+		my $attrKey = sprintf('%s.id', $field);
+
 		# If we don't have this check, we'll create a massive query
 		# for each level in the hierarchy, even though it's not needed
-		next unless defined $params->{$field};
+		next unless defined $params->{$attrKey};
 
-		$names{$field} = &{$info->{'idToName'}}($ds, $params->{$field});
+		if (my $obj = $levelRS->find(ucfirst($params->{$attrKey}))) {
+
+			$names{$field} = $obj->name;
+		}
 	}
 
 	# Just go directly to the params.
 	# Don't show stats when only showing playlists - extra queries that
 	# aren't needed.
 	if (!grep { /playlist/ } @levels) {
-		Slim::Web::Pages->addLibraryStats($params, $params->{'genre'}, $params->{'artist'}, $params->{'album'});
+		# Slim::Web::Pages->addLibraryStats($params, $params->{'genre'}, $params->{'artist'}, $params->{'album'});
 	}
 
-	# This pulls the appropriate anonymous function list out of the
-	# fieldInfo hash, which we then retrieve data from.
-	my $firstLevelInfo = $fieldInfo->{$levels[0]} || $fieldInfo->{'default'};
-	my $title = $params->{'browseby'} = $firstLevelInfo->{'title'};
-
-	for my $key (keys %{$fieldInfo}) {
-
-		if (defined($params->{$key})) {
-
-			# Populate the find criteria with all query parameters in the URL
-			$findCriteria{$key} = $params->{$key};
-
-			# Skip this for the top level
-			next if $key eq 'album.compilation';
-
-			# Pre-populate the attrs list with all query parameters that 
-			# are not part of the hierarchy. This allows a URL to put
-			# query constraints on a hierarchy using a field that isn't
-			# necessarily part of the hierarchy.
-			if (!grep {$_ eq $key} @levels) {
-				push @attrs, $key . '=' . Slim::Utils::Misc::escape($params->{$key});
-			}
-		}
-	}
-	# This gets reused later, during the main item list build
-	my %list_form = (
+	# This hash is reused later, during the main item list build
+	my %form = (
 		'player'       => $player,
 		'pwditem'      => string($title),
 		'skinOverride' => $params->{'skinOverride'},
@@ -130,39 +199,51 @@ sub browsedb {
 
 	# We want to include Compilations in the pwd, so we need the artist,
 	# but not in the actual search.
-	if ($findCriteria{'artist'} && $findCriteria{'album.compilation'}) {
+	if ($find{'contributor.id'} && $find{'album.compilation'}) {
 
-		delete $findCriteria{'artist'};
+		delete $find{'contributor.id'};
 
 		push @attrs, 'album.compilation=1';
 	}
 
+	# browsetree might pass this along - we want to keep it in the attrs
+	# for the breadcrumbs so cue sheets aren't edited. See bug: 1360
+	if (defined $params->{'noEdit'}) {
+
+		push @attrs, join('=', 'noEdit', $params->{'noEdit'});
+	}
+
+	# editplaylist might pass this along - we want to keep it in the attrs
+	# for the pagebar and pwd_list so that we don't go into edit mode. Bug 2870
+	if (defined $params->{'saveCurrentPlaylist'}) {
+
+		push @attrs, join('=', 'saveCurrentPlaylist', $params->{'saveCurrentPlaylist'});
+	}
+
+	# Generate the breadcrumb list for the current level.
 	for (my $i = 0; $i < $level ; $i++) {
 
 		my $attr = $levels[$i];
 
 		# XXX - is this the right thing to do?
 		# For artwork browsing - we want to display the album.
-		if (my $transform = $firstLevelInfo->{'nameTransform'}) {
+		if (my $transform = $topRS->nameTransform) {
 			$attr = $transform;
 		}
 
-		# browsetree might pass this along - we want to keep it in the attrs
-		# for the breadcrumbs so cue sheets aren't edited. See bug: 1360
-		if (defined $params->{'noEdit'}) {
+		my $lcKey   = lc($attr);
+		my $attrKey = sprintf('%s.id', $lcKey);
 
-			push @attrs, join('=', 'noEdit', $params->{'noEdit'});
-		}
+		if ($params->{$attrKey}) {
 
-		if ($params->{$attr}) {
-
-			push @attrs, $attr . '=' . Slim::Utils::Misc::escape($params->{$attr});
+			push @attrs, join('=', $attrKey, $params->{$attrKey});
 
 			push @{$params->{'pwd_list'}}, {
-				 'hreftype' => 'browseDb',
-				 'title'      => $names{$attr},
-				 'hierarchy'	=> $hierarchy,
-				 'level'	=> $i+1,
+				 'hreftype'     => 'browseDb',
+				 'title'        => $names{$lcKey},
+				 'hierarchy'    => $hierarchy,
+				 'level'        => $i+1,
+				 'sort'         => $sort,
 				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 			};
 
@@ -171,7 +252,7 @@ sub browsedb {
 			# These may be overwritten below.
 			# This is useful/needed for the playlist case where we
 			# want access to the containing playlist object.
-			$params->{$attr} = $ds->objectForId($attr, $params->{$attr});
+			$params->{$attr} = Slim::DataStores::DBI->find(ucfirst($attr), $params->{$attrKey});
 		}
 	}
 
@@ -182,73 +263,56 @@ sub browsedb {
 		@attrs,
 	);
 
-	my $levelInfo = $fieldInfo->{$levels[$level]} || $fieldInfo->{'default'};
-	my $items     = &{$levelInfo->{'find'}}($ds, $levels[$level], \%findCriteria);
+	if (defined $sort) {
+		$otherparams .= '&' . "sort=$sort";
+	}
 
-	if ($items && scalar(@$items)) {
+	msg("find:\n");
+	print Data::Dumper::Dumper(\%find);
+	msg("sort: [$sort]. running resultset on: $levels[$level]\n");
 
-		my ($start, $end);
+	#my $browseRS = $topRS->descend(\%find, \%sort, @levels[0..$level])->distinct;
+	my $browseRS = $topRS->descend(\%find, {}, @levels[0..$level])->distinct;
 
-		my $ignoreArticles = $levelInfo->{'ignoreArticles'};
+	if ($browseRS) {
 
-		if (defined $params->{'nopagebar'}) {
-	
-			($start, $end) = Slim::Web::Pages->simpleHeader({
-					'itemCount'    => scalar(@$items),
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'        => $params->{'itemsPerPage'},
-					'offset'       => $ignoreArticles ? (scalar(@$items) > 1) : 0,
-				}
-			);
+		my $count = $browseRS->count;
 
-		} elsif (&{$levelInfo->{'alphaPageBar'}}(\%findCriteria)) {
+		my $ignoreArticles = $rs->ignoreArticles;
+		my $alphaitems;
 
-			my $alphaitems = [ map &{$levelInfo->{'resultToSortedName'}}($_), @$items ];
+		if (!defined $params->{'nopagebar'} && $rs->alphaPageBar) {
 
-			($start, $end) = Slim::Web::Pages->alphaPageBar({
-					'itemsRef'    => $alphaitems,,
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherparams,
-					'startRef'     => \$params->{'start'},
-					'pageBarRef'   => \$params->{'browselist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
-
-		} else {
-
-			($start, $end) = Slim::Web::Pages->pageBar({
-					'itemCount'    => scalar(@$items),
-					'path'         => $params->{'path'},
-					'otherParams'  => $otherparams,
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'pageBarRef'   => \$params->{'browselist_pagebar'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'      => $params->{'itemsPerPage'},
-				}
-			);
+			$alphaitems = $browseRS->pageBarResults;
 		}
 
-		#$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browsedb_list.html", \%list_form)};
+		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+			'results'      => $alphaitems ? $alphaitems : $browseRS,
+			'addAlpha'     => defined $alphaitems,
+			'path'         => $params->{'path'},
+			'otherParams'  => $otherparams,
+			'start'        => $params->{'start'},
+			'perPage'      => $params->{'itemsPerPage'},
+		});
+
+		my $start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
+		my $end   = $params->{'pageinfo'}{'enditem'};
+
+		msg("start: [$start] end: [$end]\n");
+
+		#print Data::Dumper::Dumper($params->{'pageinfo'});
 
 		$descend = ($level >= $maxLevel) ? undef : 'true';
 
-		if (scalar(@$items) > 1 && !$levelInfo->{'suppressAll'}) {
+		# Generate the 'All $noun' link based on the next level down.
+		if ($count > 1 && !$rs->suppressAll) {
 
-			if ($params->{'includeItemStats'} && !Slim::Utils::Misc::stillScanning()) {
-				# XXX include statistics
-			}
-
-			my $nextLevelInfo;
+			my $nextLevelRS;
 
 			if ($descend) {
-				$nextLevelInfo = $fieldInfo->{ $levels[$level+1] } || $fieldInfo->{'default'};
+				$nextLevelRS = Slim::DataStores::DBI->resultset(ucfirst($levels[$level+1]));
 			} else {
-				$nextLevelInfo = $fieldInfo->{'track'};
+				$nextLevelRS = Slim::DataStores::DBI->resultset('Track');
 			}
 
 			if ($level == 0) {
@@ -258,54 +322,54 @@ sub browsedb {
 				#
 				# Otherwise we might have a regular descend
 				# transform, such as the artwork case.
-				if ($levelInfo->{'allTransform'}) {
+				if ($rs->allTransform) {
 
-					 $list_form{'hierarchy'} = $levelInfo->{'allTransform'};
+					 $form{'hierarchy'} = $rs->allTransform;
 
-				} elsif ($levelInfo->{'descendTransform'}) {
+				} elsif ($rs->descendTransform) {
 
-					 $list_form{'hierarchy'} = $levelInfo->{'descendTransform'};
+					 $form{'hierarchy'} = $rs->descendTransform;
 
 				} else {
 
-					 $list_form{'hierarchy'} = join(',', @levels[1..$#levels]);
+					 $form{'hierarchy'} = join(',', @levels[1..$#levels]);
 				}
 
-				$list_form{'level'} = 0;
+				$form{'level'} = 0;
 
 			} else {
 
-				$list_form{'hierarchy'}	= $hierarchy;
-				$list_form{'level'}	= $descend ? $level+1 : $level;
+				$form{'hierarchy'} = $hierarchy;
+				$form{'level'}	   = $descend ? $level+1 : $level;
 			}
 
-			if ($nextLevelInfo->{'allTitle'}) {
-				$list_form{'text'} = string($nextLevelInfo->{'allTitle'});
+			if ($nextLevelRS->allTitle) {
+				$form{'text'} = string($nextLevelRS->allTitle);
 			}
 
-			$list_form{'descend'}      = 1;
-			$list_form{'hreftype'}     = 'browseDb';
-			$list_form{'player'}       = $player;
-			$list_form{'odd'}          = ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'} = $params->{'skinOverride'};
-			$list_form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+			$form{'descend'}      = 1;
+			$form{'hreftype'}     = 'browseDb';
+			$form{'player'}       = $player;
+			$form{'sort'}         = $sort;
+			$form{'odd'}          = ($itemCount + 1) % 2;
+			$form{'skinOverride'} = $params->{'skinOverride'};
+			$form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
 
 			# For some queries - such as New Music - we want to
 			# get the list of tracks to play from the fieldInfo
-			if ($levels[$level] eq 'age' && $levelInfo->{'allTransform'}) {
+			if ($levels[$level] eq 'age' && $rs->allTransform) {
 
-				$list_form{'attributes'} .= sprintf('&fieldInfo=%s', $levelInfo->{'allTransform'});
+				$form{'attributes'} .= sprintf('&fieldInfo=%s', $rs->allTransform);
 			}
 
-			$itemnumber++;
+			$itemCount++;
 
-			push @{$params->{'browse_items'}}, \%list_form;
+			push @{$params->{'browse_items'}}, \%form;
 		}
 
 		# Dynamic VA/Compilation listing
 		if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-			my %list_form  = %$params;
 			my $vaObj      = $ds->variousArtistsObject;
 			my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
 
@@ -313,87 +377,87 @@ sub browsedb {
 			# the current level.
 			my %find = map { split /=/ } @attrs, 'album.compilation=1';
 
+			# XXX - DBIC RS
 			if ($ds->count('album', \%find)) {
 
-				$list_form{'text'}        = $vaObj->name;
-				$list_form{'descend'}     = $descend;
-				$list_form{'hreftype'}    = 'browseDb';
-				$list_form{'hiearchy'}    = $hierarchy;
-				$list_form{'level'}       = $level + 1;
-				$list_form{'odd'}         = ($itemnumber + 1) % 2;
-				$list_form{'attributes'}  = (scalar(@attributes) ? ('&' . join("&", @attributes, )) : '');
+				push @{$params->{'browse_items'}}, {
+					'text'        => $vaObj->name,
+					'descend'     => $descend,
+					'hreftype'    => 'browseDb',
+					'hierarchy'   => $hierarchy,
+					'level'       => $level + 1,
+					'sort'        => $sort,
+					'odd'         => ($itemCount + 1) % 2,
+					'attributes'  => (scalar(@attributes) ? ('&' . join("&", @attributes, )) : ''),
+				};
 
-				push @{$params->{'browse_items'}}, \%list_form;
-
-				$itemnumber++;
+				$itemCount++;
 			}
 		}
 
+		# This will get filled in with our returned data from the DB, and
+		# handed to the Templates
+		$params->{'browse_items'} = [];
+
 		# Don't bother with idle streams if we only have SB2 clients
 		my $needIdleStreams = Slim::Player::Client::needIdleStreams();
+		my $lastAnchor      = '';
 
-		for my $item ( @{$items}[$start..$end] ) {
-
-			my %list_form = %$params;
-
-			my $attrName  = $levelInfo->{'nameTransform'} || $levels[$level];
-
-			# We might not be inflated yet...(but skip for years)
-			if (!blessed($item) && $item =~ /^\d+$/ && $levels[$level] ne 'year') {
-
-				$item = $ds->objectForId($attrName, $item);
-			}
+		for my $item ($browseRS->slice($start, $end)) {
 
 			# The track might have been deleted out from under us.
 			# XXX - should we have some sort of error message here?
-			if (!defined $item || (blessed($item) && !$item->can('id'))) {
-
+			if (!$item->in_storage) {
 				next;
 			}
 
-			my $itemid   = &{$levelInfo->{'resultToId'}}($item);
-			my $itemname = &{$levelInfo->{'resultToName'}}($item);
-			my $itemsort = &{$levelInfo->{'resultToSortedName'}}($item);
+			my $attrName = $rs->nameTransform || lc($levels[$level]);
+			my $itemid   = $item->id;
 
-			$list_form{'hierarchy'}     = $hierarchy;
-			$list_form{'level'}         = $level + 1;
-			$list_form{'levelName'}     = $attrName;
-			$list_form{'text'}          = $itemname;
-			$list_form{'hreftype'}      = 'browseDb';
-			$list_form{'descend'}       = $descend;
-			$list_form{'odd'}	        = ($itemnumber + 1) % 2;
-			$list_form{'skinOverride'}  = $params->{'skinOverride'};
-			$list_form{'itemnumber'}    = $itemnumber;
-			$list_form{'itemobj'}       = $item;
-			$list_form{'attributes'}    = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '') . '&' .
-				$attrName . '=' . Slim::Utils::Misc::escape($itemid);
+			my %form = (
+				'hierarchy'    => $hierarchy,
+				'level'        => $level + 1,
+				'sort'         => $sort,
+				'levelName'    => $attrName,
+				'text'         => $item->name,
+				'hreftype'     => 'browseDb',
+				'descend'      => $descend,
+				'odd'          => ($itemCount + 1) % 2,
+				'skinOverride' => $params->{'skinOverride'},
+				'itemobj'      => $item,
+				$attrName      => $itemid,
+			);
 
-			$list_form{$levelInfo->{'nameTransform'} || $levels[$level]} = $itemid;
+			# XXXX - need to generate attributes for the current
+			# RS's value. So album.year - not year.id
+			$form{'attributes'}    = (scalar(@attrs) ? ('&' . join('&', @attrs)) : '') . '&' .
+				sprintf('%s.id=%d', $attrName, $itemid);
 
-			# This is calling into the %fieldInfo hash
-			&{$levelInfo->{'listItem'}}($ds, \%list_form, $item, $itemname, $descend, \%findCriteria);
+			$item->displayAsHTML(\%form, $descend, $sort);
 
-			if (defined $itemsort) {
+			if (my $itemsort = $item->namesort) {
 
 				my $anchor = substr($itemsort, 0, 1);
 
 				if ($lastAnchor ne $anchor) {
-					$list_form{'anchor'} = $lastAnchor = $anchor;
+					$form{'anchor'} = $lastAnchor = $anchor;
 				}
 			}
 
-			$itemnumber++;
+			$itemCount++;
 
-			push @{$params->{'browse_items'}}, \%list_form;
+			push @{$params->{'browse_items'}}, \%form;
 
 			if ($needIdleStreams) {
 				main::idleStreams();
 			}
 		}
 
+		# If we're at the track level, and it's at the bottom of the
+		# hierarchy, display cover art if we have it.
 		if ($level == $maxLevel && $levels[$level] eq 'track') {
 
-			my $track = $items->[$start];
+			my $track = $browseRS->first;
 
 			if ($track->can('coverArt') && $track->coverArt) {
 
@@ -408,7 +472,7 @@ sub browsedb {
 	$params->{'descend'} = $descend;
 
 	# override the template for the playlist case.
-	my $template = $levelInfo->{'browseBodyTemplate'} || 'browsedb.html';
+	my $template = $rs->browseBodyTemplate || 'browsedb.html';
 
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }

@@ -479,7 +479,8 @@ sub browsedbItemName {
 
 	} elsif (($levels[$level] eq 'album') || ($levelInfo->{'nameTransform'} eq 'album')) {
 
-		my @name = &{$levelInfo->{'resultToName'}}($item);
+		#my @name = &{$levelInfo->{'resultToName'}}($item);
+		my @name = $item->name;
 		my $findCriteria = $client->param('findCriteria') || {};
 
 		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year'}) {
@@ -615,6 +616,10 @@ sub setMode {
 		$items = &{$levelInfo->{'find'}}($ds, $levels[$level], $findCriteria, 1);
 	}
 
+	if (blessed($items)) {
+		$items = [ $items->all ];
+	}
+
 	# Next get the first line of the mode
 	my $header;
 	if ($level == 0) {
@@ -634,8 +639,7 @@ sub setMode {
 	}
 
 	# Then see if we have to add an ALL option
-	if (($descend || $search) && scalar(@$items) > 1 && 
-		!$levelInfo->{'suppressAll'}) {
+	if (($descend || $search) && scalar @$items > 1 && !$levelInfo->{'suppressAll'}) {
 
 		# Since we're going to modify, we have to make a copy
 		$items = [ @$items ];
@@ -644,7 +648,7 @@ sub setMode {
 		if ($descend) {
 			my $nextLevel  = $levels[$level+1];
 			my $nextLevelInfo = $fieldInfo->{$nextLevel} || $fieldInfo->{'default'};
-			
+
 			push @$items, $nextLevelInfo->{'allTitle'};
 		}
 		
@@ -730,9 +734,7 @@ sub setMode {
 		externRef         => \&browsedbItemName,
 		externRefArgs     => 'CVI',
 		overlayRef        => \&browsedbOverlay,
-		onChange          => sub {
-							$_[0]->lastID3Selection($selectionKey,$_[1]);
-						},
+		onChange          => sub { $_[0]->lastID3Selection($selectionKey,$_[1]) },
 		onChangeArgs      => 'CI',
 
 		# Parameters that reflect the state of this mode

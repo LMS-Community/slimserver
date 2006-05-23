@@ -116,7 +116,7 @@ sub startScan {
 	$::d_import && msg("Import: Finished background scanning.\n");
 
 	# This needs to be moved for split-scanner
-	Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
+	# Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
 }
 
 sub deleteImporter {

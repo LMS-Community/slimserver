@@ -343,7 +343,7 @@ sub simpleHeader {
 # startitem : index in list of first item on page
 # enditem : index in list of last item on page
 # totalitems : number of items in the list
-# itemsperpage : number of items on each page
+# itemsPerPage : number of items on each page
 # currentpage : index of current page in list of pages
 # totalpages : number of pages of items
 # otherparams : as above
@@ -355,275 +355,123 @@ sub simpleHeader {
 sub pageInfo {
 	my ($class, $args) = @_;
 	
-	my $itemsref     = $args->{'itemsRef'};
+	my $results      = $args->{'results'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
-	my $itemsperpage = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $itemsPerPage = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
 
-	my %pageinfo = ();
+	my %pageinfo  = ();
+	my %alphamap  = ();
+	my $itemCount = 0;
 	my $end;
-	my $itemcount;
 
-	if ($itemsref && ref($itemsref) eq 'ARRAY') {
-		$itemcount = scalar(@$itemsref);
+	# Use the ResultSet from pageBarResults to build our offset list.
+	if ($args->{'addAlpha'}) {
+
+		for my $row ($results->all) {
+
+			my $count  = $row->get_column('count');
+			my $letter = $row->get_column('letter');
+
+			$itemCount += $count;
+
+			$alphamap{$letter} = $itemCount;
+		}
+
 	} else {
-		$itemcount = $args->{'itemCount'} || 0;
+
+		$itemCount = $results->count;
 	}
 
-	if (!$itemsperpage || $itemsperpage > $itemcount) {
+	if (!$itemsPerPage || $itemsPerPage > $itemCount) {
 		# we divide by this, so make sure it will never be 0
-		$itemsperpage = $itemcount || 1;
+		$itemsPerPage = $itemCount || 1;
 	}
 
 	if (!defined($start) || $start eq '') {
+
 		if ($args->{'currentItem'}) {
-			$start = int($args->{'currentItem'} / $itemsperpage) * $itemsperpage;
+
+			$start = int($args->{'currentItem'} / $itemsPerPage) * $itemsPerPage;
 		
 		} else {
+
 			$start = 0;
 		}
 	}
 
-	if ($start >= $itemcount) {
-		$start = $itemcount - $itemsperpage;
+	if ($start >= $itemCount) {
+
+		$start = $itemCount - $itemsPerPage;
+
 		if ($start < 0) {
 			$start = 0;
 		}
 	}
 	
-	$end = $start + $itemsperpage - 1;
+	$end = $start + $itemsPerPage - 1;
 
-	if ($end >= $itemcount) {
-		$end = $itemcount - 1;
+	if ($end >= $itemCount) {
+		$end = $itemCount - 1;
 	}
 
 	$pageinfo{'enditem'}      = $end;
-	$pageinfo{'totalitems'}   = $itemcount;
-	$pageinfo{'itemsperpage'} = $itemsperpage;
-	$pageinfo{'currentpage'}  = int($start/$itemsperpage);
-	$pageinfo{'totalpages'}   = POSIX::ceil($itemcount/$itemsperpage);
+	$pageinfo{'totalitems'}   = $itemCount;
+	$pageinfo{'itemsPerPage'} = $itemsPerPage;
+	$pageinfo{'currentpage'}  = int($start/$itemsPerPage);
+	$pageinfo{'totalpages'}   = POSIX::ceil($itemCount/$itemsPerPage);
 	$pageinfo{'otherparams'}  = defined($otherparams) ? $otherparams : '';
 	$pageinfo{'path'}         = $args->{'path'};
 	
-	if ($args->{'addAlpha'} && $itemcount && $itemsref && ref($itemsref) eq 'ARRAY') {
-		my %alphamap = ();
-		for my $index (reverse(0..$#$itemsref)) {
-			my $curletter = substr($itemsref->[$index],0,1);
-			if (defined($curletter) && $curletter ne '') {
-				$alphamap{$curletter} = $index;
-			}
-		}
-		my @letterstarts = sort {$a <=> $b} values(%alphamap);
-		my @pagestarts = (@letterstarts[0]);
-		
+	if ($args->{'addAlpha'} && $itemCount) {
+
+		my @letterstarts = sort { $a <=> $b } values %alphamap;
+		my @pagestarts   = (@letterstarts[0]);
+
 		# some cases of alphamap shift the start index from 0, trap this.
 		$start = @letterstarts[0] unless $args->{'start'} ;
-		
+
 		my $newend = $end;
+
 		for my $nextend (@letterstarts) {
+
 			if ($nextend > $end && $newend == $end) {
 				$newend = $nextend - 1;
 			}
-			if ($pagestarts[0] + $itemsperpage < $nextend) {
+
+			if ($pagestarts[0] + $itemsPerPage < $nextend) {
+
 				# build pagestarts in descending order
 				unshift @pagestarts, $nextend;
 			}
 		}
-		$pageinfo{'enditem'} = $newend;
+
+		$pageinfo{'enditem'}         = $newend;
 		$pageinfo{'totalalphapages'} = scalar(@pagestarts);
+
 		KEYLOOP: for my $alphakey (keys %alphamap) {
+
 			my $alphavalue = $alphamap{$alphakey};
+
 			for my $pagestart (@pagestarts) {
+
 				if ($alphavalue >= $pagestart) {
+
 					$alphamap{$alphakey} = $pagestart;
 					next KEYLOOP;
 				}
 			}
 		}
+
 		$pageinfo{'alphamap'} = \%alphamap;
 	}
-	
+
 	# set the start index, accounding for alpha cases
-	$pageinfo{'startitem'} = $start;
+	$pageinfo{'startitem'} = 0; #$start;
+
+	#print Data::Dumper::Dumper(\%pageinfo);
 
 	return \%pageinfo;
-}
-
-# Build a bar of links to multiple pages of items
-# Deprecated, use pageInfo instead, and [% PROCESS pagebar %] in the page
-sub pageBar {
-	my ($class, $args) = @_;
-	
-	my $itemcount    = $args->{'itemCount'};
-	my $path         = $args->{'path'};
-	my $currentitem  = $args->{'currentItem'} || 0;
-	my $otherparams  = $args->{'otherParams'};
-	my $startref     = $args->{'startRef'}; #will be modified
-	my $headerref    = $args->{'headerRef'}; #will be modified
-	my $pagebarref   = $args->{'pageBarRef'}; #will be modified
-	my $skinOverride = $args->{'skinOverride'};
-	my $count        = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
-
-	my $start = (defined($$startref) && $$startref ne '') ? $$startref : (int($currentitem/$count)*$count);
-
-	if ($start >= $itemcount) {
-		$start = $itemcount - $count;
-	}
-
-	$$startref = $start;
-
-	my $end = $start+$count-1;
-
-	if ($end >= $itemcount) {
-		$end = $itemcount - 1;
-	}
-
-	# Don't bother with a pagebar on a non-pagable item.
-	if ($itemcount < $count) {
-		return ($start, $end);
-	}
-
-	if ($itemcount > $count) {
-
-		$$headerref = ${Slim::Web::HTTP::filltemplatefile("pagebarheader.html", {
-			"start"        => ($start+1),
-			"end"          => ($end+1),
-			"itemcount"    => $itemcount,
-			'skinOverride' => $skinOverride
-		})};
-
-		my %pagebar = ();
-
-		my $numpages  = POSIX::ceil($itemcount/$count);
-		my $curpage   = int($start/$count);
-		my $pagesperbar = 25; #make this a preference
-		my $pagebarstart = (($curpage - int($pagesperbar/2)) < 0 || $numpages <= $pagesperbar) ? 0 : ($curpage - int($pagesperbar/2));
-		my $pagebarend = ($pagebarstart + $pagesperbar) > $numpages ? $numpages : ($pagebarstart + $pagesperbar);
-
-		$pagebar{'pagesstart'} = ($pagebarstart > 0);
-
-		if ($pagebar{'pagesstart'}) {
-			$pagebar{'pagesprev'} = ($curpage - $pagesperbar) * $count;
-			if ($pagebar{'pagesprev'} < 0) { $pagebar{'pagesprev'} = 0; };
-		}
-
-		if ($pagebarend < $numpages) {
-			$pagebar{'pagesend'} = ($numpages -1) * $count;
-			$pagebar{'pagesnext'} = ($curpage + $pagesperbar) * $count;
-			if ($pagebar{'pagesnext'} > $pagebar{'pagesend'}) { $pagebar{'pagesnext'} = $pagebar{'pagesend'}; }
-		}
-
-		$pagebar{'pageprev'} = $curpage > 0 ? (($curpage - 1) * $count) : undef;
-		$pagebar{'pagenext'} = ($curpage < ($numpages - 1)) ? (($curpage + 1) * $count) : undef;
-		$pagebar{'otherparams'} = defined($otherparams) ? $otherparams : '';
-		$pagebar{'skinOverride'} = $skinOverride;
-		$pagebar{'path'} = $path;
-
-		for (my $j = $pagebarstart;$j < $pagebarend;$j++) {
-			$pagebar{'pageslist'} .= ${Slim::Web::HTTP::filltemplatefile('pagebarlist.html'
-							,{'currpage' => ($j == $curpage)
-							,'itemnum0' => ($j * $count)
-							,'itemnum1' => (($j * $count) + 1)
-							,'pagenum' => ($j + 1)
-							,'otherparams' => $otherparams
-							,'skinOverride' => $skinOverride
-							,'path' => $path})};
-		}
-		$$pagebarref = ${Slim::Web::HTTP::filltemplatefile("pagebar.html", \%pagebar)};
-	}
-	return ($start, $end);
-}
-
-# Deprecated, use pageInfo instead, and [% PROCESS pagebar %] in the page
-sub alphaPageBar {
-	my ($class, $args) = @_;
-	
-	my $itemsref     = $args->{'itemsRef'};
-	my $path         = $args->{'path'};
-	my $otherparams  = $args->{'otherParams'};
-	my $startref     = $args->{'startRef'}; #will be modified
-	my $pagebarref   = $args->{'pageBarRef'}; #will be modified
-	my $skinOverride = $args->{'skinOverride'};
-	my $maxcount     = $args->{'PerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
-
-	my $itemcount = scalar(@$itemsref);
-
-	my $start = $$startref;
-
-	if (!$start) { 
-		$start = 0;
-	}
-
-	if ($start >= $itemcount) { 
-		$start = $itemcount - $maxcount; 
-	}
-
-	$$startref = $start;
-
-	my $end = $itemcount - 1;
-
-	# Don't bother with a pagebar on a non-pagable item.
-	if ($itemcount < $maxcount) {
-		return ($start, $end);
-	}
-
-	if ($itemcount > ($maxcount / 2)) {
-
-		my $lastLetter = '';
-		my $lastLetterIndex = 0;
-		my $pageslist = '';
-
-		$end = -1;
-
-		# This could be more efficient.
-		for (my $j = 0; $j < $itemcount; $j++) {
-
-			my $curLetter = substr($itemsref->[$j], 0, 1);
-			$curLetter = '' if (!defined($curLetter));
-
-			if ($lastLetter ne $curLetter) {
-
-				if ($curLetter ne '') {
-					
-					if (($j - $lastLetterIndex) > $maxcount) {
-						if ($end == -1 && $j > $start) {
-							$end = $j - 1;
-						}
-						$lastLetterIndex = $j;
-					}
-
-					$pageslist .= ${Slim::Web::HTTP::filltemplatefile('alphapagebarlist.html', {
-						'currpage'     => ($lastLetterIndex == $start),
-						'itemnum0'     => $lastLetterIndex,
-						'itemnum1'     => ($lastLetterIndex + 1),
-						'pagenum'      => $curLetter,
-						'fragment'     => ("#" . $curLetter),
-						'otherparams'  => ($otherparams || ''),
-						'skinOverride' => $skinOverride,
-						'path'         => $path
-						})};
-					
-					$lastLetter = $curLetter;
-
-				}
-
-			}
-		}
-
-		if ($end == -1) {
-			$end = $itemcount - 1;
-		}
-
-		my %pagebar_params = (
-			'otherparams'  => ($otherparams || ''),
-			'pageslist'    => $pageslist,
-			'skinOverride' => $skinOverride,
-		);
-
-		$$pagebarref = ${Slim::Web::HTTP::filltemplatefile("pagebar.html", \%pagebar_params)};
-	}
-	
-	return ($start, $end);
 }
 
 ## The following are smaller web page handlers, and are not class methods.

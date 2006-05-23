@@ -35,30 +35,18 @@ our %contributorToRoleMap = (
         $class->has_many('contributorTracks' => 'Slim::DataStores::DBI::ContributorTrack');
         $class->has_many('contributorAlbums' => 'Slim::DataStores::DBI::ContributorAlbum');
 
+	$class->many_to_many('tracks', 'contributorTracks' => 'contributor', undef, {
+		'distinct' => 1,
+		'order_by' => 'me.disc, me.tracknum, me.titlesort',
+	});
+
+	$class->many_to_many('albums', 'contributorAlbums' => 'album', undef, { 'distinct' => 1 });
+
 	if ($] > 5.007) {
-	$class->utf8_columns(qw/name namesort/);
+		$class->utf8_columns(qw/name namesort/);
 	}
-}
 
-# Do a proper join
-sub albums {
-	my $self = shift;
-
-	return $self->contributorAlbums->search_related(
-		'album', undef, { distinct => 1 }
-	)->search(@_);
-}
-
-sub tracks {
-	my $self = shift;
-
-	return Slim::DataStores::DBI::Track->search(
-		{ 'contributor.id' => $self->id },
-		{
-			'join'     => { 'contributorTracks' => 'contributor' },
-			'order_by' => 'me.disc, me.tracknum, me.titlesort',
-		},
-	);
+	$class->resultset_class('Slim::DataStores::DBI::ResultSet::Contributor');
 }
 
 sub contributorRoles {
@@ -78,6 +66,21 @@ sub typeToRole {
 	my $type  = shift;
 
 	return $contributorToRoleMap{$type};
+}
+
+sub displayAsHTML {
+	my ($self, $form, $descend, $sort) = @_;
+
+	$form->{'text'} = $self->name;
+
+	my $Imports = Slim::Music::Import->importers;
+
+	for my $mixer (keys %{$Imports}) {
+
+		if (defined $Imports->{$mixer}->{'mixerlink'}) {
+			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend);
+		}
+	}
 }
 
 sub add {

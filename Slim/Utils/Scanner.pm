@@ -190,7 +190,7 @@ sub scanDirectory {
 		# If we have an audio file or a CUE sheet (in the music dir), scan it.
 		if (Slim::Music::Info::isSong($url) || Slim::Music::Info::isCUE($url)) {
 
-			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
+			# $::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
 			push @objects, $ds->updateOrCreate({
 				'url'        => $url,
@@ -202,7 +202,7 @@ sub scanDirectory {
 			 Slim::Utils::Misc::inPlaylistFolder($url) && $url !~ /ShoutcastBrowser_Recently_Played/) {
 
 			# Only read playlist files if we're in the playlist dir
-			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
+			# $::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
 			my $track = $ds->updateOrCreate({
 				'url'        => $url,

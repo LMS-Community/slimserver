@@ -28,6 +28,10 @@ our @allColumns = (qw(
 
 	$class->set_primary_key('id');
 
+	$class->register_column('title', { accessor => 'name' });
+	$class->register_column('titlesort', { accessor => 'namesort' });
+	$class->register_column('titlesearch', { accessor => 'namesearch' });
+
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::DataStores::DBI::Album');
 
@@ -43,6 +47,8 @@ our @allColumns = (qw(
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/title titlesort/);
 	}
+
+	$class->resultset_class('Slim::DataStores::DBI::ResultSet::Track');
 }
 
 sub tracks {
@@ -386,6 +392,37 @@ sub contributorRoles {
 	my $self = shift;
 
 	return Slim::DataStores::DBI::Contributor->contributorRoles;
+}
+
+sub displayAsHTML {
+	my ($self, $form, $descend, $sort) = @_;
+
+	$form->{'text'}  = Slim::Music::Info::standardTitle(undef, $self);
+
+	$form->{'artist'} = $self->artist;
+	$form->{'album'}  = $self->album;
+
+	my ($id, $url) = $self->get(qw(id url));
+
+	$form->{'item'}            = $id;
+	$form->{'itempath'}        = $url;
+	$form->{'itemobj'}         = $self;
+
+	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+
+	$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
+	$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
+	$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
+	$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
+
+	my $Imports = Slim::Music::Import->importers;
+
+	for my $mixer (keys %{$Imports}) {
+
+		if (defined $Imports->{$mixer}->{'mixerlink'}) {
+			&{$Imports->{$mixer}->{'mixerlink'}}($self,$form,0);
+		}
+	}
 }
 
 package Slim::DataStores::DBI::LightWeightTrack;
