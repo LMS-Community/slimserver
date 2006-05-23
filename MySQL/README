@@ -2,7 +2,9 @@ $Id$
 
 Notes:
 
-* These are binaries downloaded from:
+* Binaries are in ../Bin/$OS/
+
+  These are binaries downloaded from:
   http://dev.mysql.com/downloads/mysql/5.0.html
 
 * Currently at version 5.0.19.
