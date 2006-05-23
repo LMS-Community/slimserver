@@ -1311,6 +1311,23 @@ sub _retrieveTrack {
 	return $track;
 }
 
+sub _commitDBTimer {
+	my $self = shift;
+	my $items = $Slim::DataStores::DBI::DataModel::dirtyCount;
+
+	if ($items > 0) {
+		$::d_info && msg("DBI: Periodic commit - $items dirty items\n");
+		$self->forceCommit();
+	} else {
+		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
+	}
+
+	if ($INC{'Slim::Utils::Timers'}) {
+
+		#Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_SAVE_INTERVAL, \&_commitDBTimer);
+	}
+}
+
 sub _checkValidity {
 	my $self  = shift;
 	my $track = shift;
