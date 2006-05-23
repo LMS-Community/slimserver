@@ -9199,7 +9199,7 @@ SCAN_WARNING
 
 HOME_SCAN_WARNING
 	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Bitte gedulden Sie sich etwas, da dieser Prozess einige Zeit in Anspruch nehmen kann.
-	EN	SlimServer is still scanning your music library, please be patient as this may take a while.
+	EN	SlimServer is still scanning your music library. Please be patient as this may take a while.
 	ES	SlimServer está todavía recopilando la colección musical, por favor sea paciente ya que esto puede llevar un cierto tiempo.
 	FR	Le SlimServer répertorie le contenu de votre collection, veuillez patienter.
 	HE	השרת עדיין סורק את ספריית המוזיקה, הזדיין בסבלנות
