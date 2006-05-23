@@ -916,8 +916,6 @@ sub forceCommit {
 	my $self = shift;
 
 	# Update the track count
-	Slim::DataStores::DBI::MetaInformation->find_or_create({
-
 	for my $name (qw(trackCount totalTime)) {
 
 		my ($obj) = Slim::DataStores::DBI::MetaInformation->search('name' => $name);

@@ -46,6 +46,7 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::OSDetect;
+use Slim::Utils::SQLHelper;
 
 our $driver;
 our $dirtyCount = 0;
@@ -62,6 +63,7 @@ sub init {
 	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
 	my $username = Slim::Utils::Prefs::get('dbusername');
 	my $password = Slim::Utils::Prefs::get('dbpassword');
+	my $driver   = $class->driver;
 
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
@@ -80,6 +82,7 @@ sub init {
 
 	$::d_info && msg("Connected to database $source\n");
 
+	# XXX - this is a mess. Replace with DBIx::Migration
 	my $version;
 	my $nextversion;
 	do {
@@ -89,18 +92,21 @@ sub init {
 
 		if (defined $version) {
 
-			$nextversion = $class->findUpgrade($version);
+			$nextversion = Slim::Utils::SQLHelper->findUpgrade($driver, $version);
 			
 			if ($nextversion && ($nextversion ne 99999)) {
 
 				my $upgradeFile = catdir("Upgrades", $nextversion.".sql" );
 				$::d_info && msg("Upgrading to version ".$nextversion." from version ".$version.".\n");
-				$class->executeSQLFile($upgradeFile);
+
+				Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, $upgradeFile);
 
 			} elsif ($nextversion && ($nextversion eq 99999)) {
 
 				$::d_info && msg("Database schema out of date and purge required. Purging db.\n");
-				$class->executeSQLFile("dbdrop.sql");
+
+				Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, "dbdrop.sql");
+
 				$version = undef;
 				$nextversion = 0;
 			}
@@ -110,10 +116,9 @@ sub init {
 	
 	if (!defined($version)) {
 		$::d_info && msg("Creating new database.\n");
-		$class->executeSQLFile("dbcreate.sql");
-	}
 
-	$dbh->commit;
+		Slim::Utils::SQLHelper->executeSQLFile($driver, $dbh, "dbcreate.sql");
+	}
 
 	# XXXX - need a DBIx::Class solution here.
 	if (0 && $] > 5.007) {
@@ -161,106 +166,14 @@ sub driver {
 	return $driver;
 }
 
-sub executeSQLFile {
-	my $class = shift;
-	my $file  = shift;
-
-	my $sqlFile = catdir($Bin, "SQL", $class->driver, $file);
-
-	$::d_info && msg("Executing SQL file $sqlFile\n");
-
-	open(my $fh, $sqlFile) or do {
-
-		msg("Couldn't open: $sqlFile : $!\n");
-		return;
-	};
-
-	my $statement   = '';
-	my $inStatement = 0;
-
-	for my $line (<$fh>) {
-		chomp $line;
-
-		# skip and strip comments & empty lines
-		$line =~ s/\s*--.*?$//o;
-		$line =~ s/^\s*//o;
-
-		next if $line =~ /^--/;
-		next if $line =~ /^\s*$/;
-
-		if ($line =~ /^\s*(?:CREATE|SET|INSERT|UPDATE|DELETE|DROP|SELECT)\s+/oi) {
-			$inStatement = 1;
-		}
-
-		if ($line =~ /;/ && $inStatement) {
-
-			$statement .= $line;
-
-			$::d_sql && msg("Executing SQL statement: [$statement]\n");
-
-			eval { $class->storage->dbh->do($statement) };
-
-			if ($@) {
-				msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
-			}
-
-			$statement   = '';
-			$inStatement = 0;
-			next;
-		}
-
-		$statement .= $line if $inStatement;
-	}
-
-	$class->storage->dbh->commit;
-
-	close $fh;
-}
-
-sub findUpgrade {
-	my $class       = shift;
-	my $currVersion = shift;
-
-	my $sqlVerFilePath = catdir($Bin, "SQL", $class->driver, "sql.version");
-
-	my $versionFile;
-
-	open($versionFile, $sqlVerFilePath) or do {
-		warn("can't open $sqlVerFilePath\n");
-		return 0;
-	};
-
-	my ($line, $from, $to);
-
-	while ($line = <$versionFile>) {
-		$line=~/^(\d+)\s+(\d+)\s*$/ || next;
-		($from, $to) = ($1, $2);
-		$from == $currVersion && last;
-	}
-
-	close($versionFile);
-
-	if ((!defined $from) || ($from != $currVersion)) {
-		$::d_info && msg ("No upgrades found for database v. ". $currVersion."\n");
-		return 0;
-	}
-
-	my $file = shift || catdir($Bin, "SQL", $driver, "Upgrades", "$to.sql");
-
-	if (!-f $file && ($to != 99999)) {
-		$::d_info && msg ("database v. ".$currVersion." should be upgraded to v. $to but the files does not exist!\n");
-		return 0;
-	}
-
-	$::d_info && msg ("database v. ".$currVersion." requires upgrade to $to\n");
-	return $to;
-}
-
 sub wipeDB {
 	my $class = shift;
 
 	$class->clearObjectCaches;
-	$class->executeSQLFile("dbclear.sql");
+
+	Slim::Utils::SQLHelper->executeSQLFile(
+		$class->driver, $class->storage->dbh, "dbclear.sql"
+	);
 
 	$class->storage->dbh->commit;
 	$class->storage->dbh->disconnect;
@@ -404,8 +317,6 @@ our %sortFieldMap = (
 );
 
 our %sortRandomMap = (
-
-	'SQLite' => 'RANDOM()',
 	'mysql'  => 'RAND()',
 );
 
@@ -694,15 +605,7 @@ sub findWithJoins {
 
 	$sql .= $where;
 
-	# SQLite doesn't implement SELECT COUNT(DISTINCT ...
-	# http://www.sqlite.org/omitted.html
-	#
-	# Oh, for a real database..
-	if ($count && $driver eq 'SQLite') {
-
-		$sql = sprintf('SELECT COUNT(*) FROM (%s)', $sql);
-
-	} elsif ($count && $driver eq 'mysql') {
+	if ($count && $driver eq 'mysql') {
 
 		$sql =~ s/^SELECT DISTINCT (\w+\.id) AS.*? FROM /SELECT COUNT\(DISTINCT $1\) FROM /;
 	}

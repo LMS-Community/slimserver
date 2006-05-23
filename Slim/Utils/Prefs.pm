@@ -202,8 +202,8 @@ sub init {
 		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
 		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
 		'prefsWriteDelay'	=> 30,
-		'dbsource'		=> 'dbi:SQLite:dbname=%s',
-		'dbusername'		=> '',
+		'dbsource'		=> 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s',
+		'dbusername'		=> 'slimserver',
 		'dbpassword'		=> '',
 		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
 		'commonAlbumTitlesToggle' => 0,
@@ -217,8 +217,6 @@ sub init {
 		'upgrade-6.5b1-2006-02-03-script' => 1,
 		'upgrade-6.5b1-2006-05-06-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
-		'databaseTempStorage'   => 'MEMORY',
-		'databaseCacheSize'     => 10000,
 		'sortBrowseArt'     => 'album',
 	);
 

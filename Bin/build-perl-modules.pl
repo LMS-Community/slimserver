@@ -25,7 +25,7 @@ my $dlext  = $Config{'dlext'};
 my @packages = qw(
 	Compress-Zlib-1.41.tar.gz
 	DBI-1.50.tar.gz
-	DBD-SQLite-1.11.tar.gz
+	DBD-mysql-3.0002.tar.gz
 	Digest-SHA1-2.11.tar.gz
 	HTML-Parser-3.48.tar.gz
 	Template-Toolkit-2.14.tar.gz
@@ -52,7 +52,7 @@ my %packageOptions = (
 		)),
 	},
 
-	'DBD-SQLite-1.11' => {
+	'DBD-mysql-3.0002' => {
 
 		'env' => [qw(DBI-1.50/blib/lib: DBI-1.50/blib/arch)],
 	},

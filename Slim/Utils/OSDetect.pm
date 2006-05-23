@@ -77,7 +77,7 @@ sub dirsFor {
 
 	if ($OS eq 'mac') {
 
-		if ($dir =~ /^(?:Graphics|HTML|IR|Plugins)$/) {
+		if ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
 
 			# For some reason the dir is lowercase on OS X.
 			if ($dir eq 'HTML') {
@@ -126,6 +126,10 @@ sub dirsFor {
 		} elsif ($dir eq 'cache') {
 
 			push @dirs, "/var/cache/slimserver";
+
+		} elsif ($dir eq 'MySQL') {
+
+			# Do nothing - use the depended upon MySQL install.
 
 		} else {
 

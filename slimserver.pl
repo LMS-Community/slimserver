@@ -146,6 +146,7 @@ use Slim::Web::Setup;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Timers;
+use Slim::Utils::MySQLHelper;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 
@@ -365,6 +366,9 @@ sub init {
 	# initialize all player UI subsystems
 	$::d_server && msg("SlimServer setting language...\n");
 	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+
+	$::d_server && msg("SlimServer MySQL init...\n");
+	Slim::Utils::MySQLHelper->init();
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
