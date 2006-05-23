@@ -54,47 +54,65 @@ tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 # Map our tag functions - so they can be dynamically loaded.
 our %tagFunctions = ();
 
-sub init {
+		'mp2' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
 
-	# Allow external programs to use Slim::Utils::Misc, without needing
-	# the entire DBI stack.
-	require Slim::DataStores::DBI::DBIStore;
+		'ogg' => {
+			'module' => 'Slim::Formats::Ogg',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Ogg::getTag,
+		},
 
-	$currentDB = Slim::DataStores::DBI::DBIStore->new();
+		'flc' => {
+			'module' => 'Slim::Formats::FLAC',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::FLAC::getTag,
+		},
 
-	Slim::Music::TitleFormatter::init($currentDB);
+		'wav' => {
+			'module' => 'Slim::Formats::Wav',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Wav::getTag,
+		},
 
-	loadTypesConfig();
+		'aif' => {
+			'module' => 'Slim::Formats::AIFF',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::AIFF::getTag,
+		},
 
-	# precompute the valid extensions
-	validTypeExtensions();
+		'wma' => {
+			'module' => 'Slim::Formats::WMA',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::WMA::getTag,
+		},
 
-	# Our loader classes for tag formats.
-	%tagClasses = (
-		'mp3' => 'Slim::Formats::MP3',
-		'mp2' => 'Slim::Formats::MP3',
-		'ogg' => 'Slim::Formats::Ogg',
-		'flc' => 'Slim::Formats::FLAC',
-		'wav' => 'Slim::Formats::Wav',
-		'aif' => 'Slim::Formats::AIFF',
-		'wma' => 'Slim::Formats::WMA',
-		'mov' => 'Slim::Formats::Movie',
-		'shn' => 'Slim::Formats::Shorten',
-		'mpc' => 'Slim::Formats::Musepack',
-		'ape' => 'Slim::Formats::APE',
+		'mov' => {
+			'module' => 'Slim::Formats::Movie',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Movie::getTag,
+		},
 
-		# Playlist types
-		'asx' => 'Slim::Formats::Playlists::ASX',
-		'cue' => 'Slim::Formats::Playlists::CUE',
-		'm3u' => 'Slim::Formats::Playlists::M3U',
-		'pls' => 'Slim::Formats::Playlists::PLS',
-		'wpl' => 'Slim::Formats::Playlists::WPL',
-		'wax' => 'Slim::Formats::Playlists::ASX',
-		'xpf' => 'Slim::Formats::Playlists::XSPF',
+		'shn' => {
+			'module' => 'Slim::Formats::Shorten',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Shorten::getTag,
+		},
 
-		# Remote types
-		'http' => 'Slim::Formats::HTTP',
-		'mms'  => 'Slim::Formats::MMS',
+		'mpc' => {
+			'module' => 'Slim::Formats::Musepack',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::Musepack::getTag,
+		},
+
+		'ape' => {
+			'module' => 'Slim::Formats::APE',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::APE::getTag,
+		},
 	);
 
 	%tagFunctions = (

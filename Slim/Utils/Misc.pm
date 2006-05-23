@@ -515,10 +515,6 @@ sub stripRel {
 	return $file;
 }
 
-sub inPlaylistFolder {
-	return _checkInFolder(shift, 'playlistdir');
-}
-
 sub _checkInFolder {
 	my $path = shift || return;
 	my $pref = shift;
