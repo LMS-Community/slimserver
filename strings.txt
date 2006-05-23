@@ -1389,7 +1389,7 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
-	DE	Verbinde zum Abspielen:
+	DE	Verbinde...
 	DA	Forbinder for afspilning:
 	EN	Connecting...
 	ES	Conectando a:
@@ -1403,6 +1403,7 @@ CONNECTING_FOR
 	ZH_CN	连接中：
 
 BUFFERING
+	DE	Fülle Puffer
 	EN	Buffering
 
 PROBLEM_CONNECTING
