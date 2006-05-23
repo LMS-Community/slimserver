@@ -1214,7 +1214,7 @@ sub initSetupConfig {
 					Slim::Utils::Strings::init();
 					Slim::Web::Setup::initSetup();
 					Slim::Utils::PluginManager::initPlugins();
-					Slim::Music::Import::resetSetupGroups();
+					Slim::Music::Import->resetSetupGroups;
 				},
 			},
 

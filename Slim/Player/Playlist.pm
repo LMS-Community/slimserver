@@ -574,40 +574,24 @@ sub scheduleWriteOfPlaylist {
 	my ($client, $playlistObj) = @_;
 
 	# This should proably be more configurable / have writeM3U or a
-	# wrapper know about the scheduler, so we can write out a file at a
-	# time.
-	Slim::Utils::Timers::setTimer(
-		$client,
-		Time::HiRes::time() + 5,
+	# wrapper know about the scheduler, so we can write out a file at a time.
+	#
+	# Need to fork!
+	#
+	# This can happen if the user removes the
+	# playlist - because this is a closure, we get
+	# a bogus object back)
+	if (!blessed($playlistObj) || !$playlistObj->can('tracks')) {
 
-		sub {
-			Slim::Utils::Scheduler::add_task(sub {
+		return 0;
+	}
 
-				# This can happen if the user removes the
-				# playlist - because this is a closure, we get
-				# a bogus object back)
-				if (!$playlistObj->can('tracks')) {
-					return 0;
-				}
-
-				if ($playlistObj->title eq $client->string('UNTITLED')) {
-
-					$::d_playlist && msg("Not writing out untitled playlist.\n");
-
-					return 0;
-				}
-
-				Slim::Formats::Playlists::M3U->write( 
-					[ $playlistObj->tracks ],
-					undef,
-					$playlistObj->path,
-					1,
-					Slim::Player::Source::playingSongIndex($client),
-				);
-
-				return 0;
-			});
-		},
+	Slim::Formats::Parse::writeM3U( 
+		[ $playlistObj->tracks ],
+		undef,
+		$playlistObj->path,
+		1,
+		Slim::Player::Source::playingSongIndex($client),
 	);
 }
 

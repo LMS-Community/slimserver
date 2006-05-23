@@ -36,13 +36,6 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
 
-# Save the persistant DB cache on an interval
-my $DB_SAVE_INTERVAL = 30;
-
-# hold the current cleanup state
-our $cleanupIds;
-our $cleanupStage;
-
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
 
@@ -51,9 +44,6 @@ tie our %lastFind, 'Tie::Cache::LRU::Expires', EXPIRES => 60, ENTRIES => 5;
 
 # Optimization to cache content type for track entries rather than look them up everytime.
 tie our %contentTypeCache, 'Tie::Cache::LRU::Expires', EXPIRES => 300, ENTRIES => 128;
-
-# Don't spike the CPU on cleanup.
-our $staleCounter = 0;
 
 # For the VA album merging & scheduler globals.
 my ($variousAlbumIds, $vaObj);
@@ -110,8 +100,6 @@ sub new {
 	
 	($self->{'trackCount'}, $self->{'totalTime'}) = Slim::DataStores::DBI::DataModel->getMetaInformation();
 	
-	$self->_commitDBTimer();
-
 	return $self;
 }
 
@@ -271,6 +259,8 @@ sub objectForUrl {
 			'readTags' => $readTag,
 		});
 	}
+
+	delete $self->{'zombieList'}->{$url};
 
 	return $track;
 }
@@ -755,148 +745,73 @@ sub markEntryAsInvalid {
 	$self->{'zombieList'}->{$url} = 1;
 }
 
-sub cleanupStaleEntries {
-	my $self = shift;
-
-	# Setup a little state machine so that the db cleanup can be
-	# scheduled appropriately - ie: one record per run.
-	$::d_import && msg("Import: Adding task for cleanupStaleTrackEntries()..\n");
-
-	Slim::Utils::Scheduler::add_task(\&cleanupStaleTrackEntries, $self);
-}
-
-# Clear all stale track entries.
 sub cleanupStaleTrackEntries {
 	my $self = shift;
 
-	# Sun Mar 20 22:29:03 PST 2005
-	# XXX - dsully - a lot of this is commented out, as myself
-	# and Vidur decided that lazy track cleanup was best for now. This
-	# means that if a user selects (via browsedb) a list of tracks which
-	# is now longer there, it will be run through _checkValidity, and
-	# marked as invalid. We still want to do Artist/Album/Genre cleanup
-	# however.
+	# Cleanup any stale entries in the database.
+	# 
+	# First walk the list of tracks, checking to see if the
+	# file/directory/shortcut still exists on disk. If it doesn't, delete
+	# it. This will cascade ::Track's has_many relationships, including
+	# contributor_track, etc.
+	#
+	# After that, walk the Album, Contributor & Genre tables, to see if
+	# each item has valid tracks still. If it doesn't, remove the object.
 	#
 	# At Some Point in the Future(tm), Class::DBI should be modified, so
 	# that retrieve_all() is lazy, and only fetches a $sth->row when
 	# $obj->next is called.
+	#
+	# Or just move to DBIx::Class
 
-	unless ($cleanupIds) {
+	$::d_import && msg("Import: Starting db garbage collection..\n");
 
-		# Cleanup any stale entries in the database.
-		# 
-		# First walk the list of tracks, checking to see if the
-		# file/directory/shortcut still exists on disk. If it doesn't, delete
-		# it. This will cascade ::Track's has_many relationships, including
-		# contributor_track, etc.
-		#
-		# After that, walk the Album, Contributor & Genre tables, to see if
-		# each item has valid tracks still. If it doesn't, remove the object.
-
-		$::d_import && msg("Import: Starting db garbage collection..\n");
-
-		$cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
-	}
-
-	# Only cleanup every 20th time through the scheduler.
-	$staleCounter++;
-	return 1 if $staleCounter % 20;
+	my $cleanupIds = Slim::DataStores::DBI::Track->retrieveAllOnlyIds;
 
 	# fetch one at a time to keep memory usage in check.
-	my $item  = shift(@{$cleanupIds});
-	my $track = Slim::DataStores::DBI::Track->retrieve($item) if defined $item;
+	for my $id (@{$cleanupIds}) { 
 
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($track) && !defined $item && scalar @{$cleanupIds} == 0) {
+		next unless defined $id;
 
-		$::d_import && msg(
-			"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
-		);
+		my $track = Slim::DataStores::DBI::Track->retrieve($id);
 
-		$cleanupIds = undef;
-
-		# Proceed with Albums, Genres & Contributors
-		$cleanupStage = 'contributors';
-		$staleCounter = 0;
-
-		# Setup a little state machine so that the db cleanup can be
-		# scheduled appropriately - ie: one record per run.
-		Slim::Utils::Scheduler::add_task(\&cleanupStaleTableEntries, $self);
-
-		return 0;
-	};
-
-	# Not sure how we get here, but we can. See bug 1756
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($track) || !$track->can('url')) {
-		return 1;
-	}
-
-	my $url = $track->url;
-
-	# return 1 to move onto the next track
-	unless (Slim::Music::Info::isFileURL($url)) {
-		return 1;
-	}
-	
-	my $filepath = Slim::Utils::Misc::pathFromFileURL($url);
-
-	# Don't use _hasChanged - because that does more than we want.
-	if (!-r $filepath) {
-
-		$::d_import && msg("Import: Track $filepath no longer exists. Removing.\n");
-
-		$self->delete($track, 1);
-	}
-
-	$track = undef;
-
-	return 1;
-}
-
-# Walk the Album, Contributor and Genre tables to see if we have any dangling
-# entries, pointing to non-existant tracks.
-sub cleanupStaleTableEntries {
-	my $self = shift;
-
-	$staleCounter++;
-	return 1 if $staleCounter % 20;
-
-	if ($cleanupStage eq 'contributors') {
-
-		unless (Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks')) {
-			$cleanupStage = 'albums';
+		# Not sure how we get here, but we can. See bug 1756
+		# XXX - exception should go here. Comming soon.
+		if (!blessed($track) || !$track->can('audio')) {
+			next;
 		}
 
-		return 1;
-	}
-
-	if ($cleanupStage eq 'albums') {
-
-		unless (Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks')) {
-			$cleanupStage = 'genres';
+		if (!$track->audio) {
+			next;
 		}
 
-		return 1;
-	}
+		# _hasChanged will delete tracks
+		if ($self->_hasChanged($track, $track->url)) {
 
-	if ($cleanupStage eq 'genres') {
-
-		if (Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks')) {
-
-			return 1;
+			$track = undef;
 		}
 	}
+
+	$::d_import && msg(
+		"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
+	);
+
+	$cleanupIds = undef;
+
+	# Walk the Album, Contributor and Genre tables to see if we have any dangling
+	# entries, pointing to non-existant tracks.
+	Slim::DataStores::DBI::Contributor->removeStaleDBEntries('contributorTracks');
+	Slim::DataStores::DBI::Album->removeStaleDBEntries('tracks');
+	Slim::DataStores::DBI::Genre->removeStaleDBEntries('genreTracks');
 
 	# We're done.
 	$self->dbh->commit;
 
-	Slim::Music::Import::endImporter('cleanupStaleEntries');
+	Slim::Music::Import->endImporter('cleanupStaleEntries');
 
 	%lastFind = ();
 
-	$staleCounter = 0;
-	return 0;
+	return 1;
 }
 
 sub variousArtistsObject {
@@ -942,7 +857,7 @@ sub mergeVariousArtistsAlbums {
 	# XXX - exception should go here. Comming soon.
 	if (!blessed($albumObj) && !defined $item && scalar @{$variousAlbumIds} == 0) {
 
-		Slim::Music::Import::endImporter('mergeVariousAlbums');
+		Slim::Music::Import->endImporter('mergeVariousAlbums');
 
 		$variousAlbumIds = ();
 
@@ -1380,23 +1295,6 @@ sub _retrieveTrack {
 	}
 
 	return $track;
-}
-
-sub _commitDBTimer {
-	my $self = shift;
-	my $items = $Slim::DataStores::DBI::DataModel::dirtyCount;
-
-	if ($items > 0) {
-		$::d_info && msg("DBI: Periodic commit - $items dirty items\n");
-		$self->forceCommit();
-	} else {
-		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
-	}
-
-	if ($INC{'Slim::Utils::Timers'}) {
-
-		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_SAVE_INTERVAL, \&_commitDBTimer);
-	}
 }
 
 sub _checkValidity {
@@ -1863,9 +1761,9 @@ sub _postCheckAttributes {
 		# Associate cover art with this album, and keep it cached.
 		if (!$self->{'artworkCache'}->{$albumObj->id}) {
 
-			if (!Slim::Music::Import::artwork($albumObj) && (!$track->thumb || !$track->cover)) {
+			if (!Slim::Music::Import->artwork($albumObj) && (!$track->thumb || !$track->cover)) {
 
-				Slim::Music::Import::artwork($albumObj, $track);
+				Slim::Music::Import->artwork($albumObj, $track);
 			}
 		}
 	}

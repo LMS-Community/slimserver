@@ -224,7 +224,7 @@ sub init {
 		'create_mix' => sub  {
 			my $client = shift;
 
-			my $Imports = Slim::Music::Import::importers();
+			my $Imports = Slim::Music::Import->importers;
 		
 			my @mixers = ();
 			
@@ -278,7 +278,8 @@ sub mixerExitHandler {
 		Slim::Buttons::Common::popModeRight($client);
 	
 	} elsif ($exittype eq 'RIGHT') {
-		my $Imports = Slim::Music::Import::importers();
+
+		my $Imports = Slim::Music::Import->importers;
 	
 		if (defined $Imports->{$mixer}->{'mixer'}) {
 			$::d_plugins && msg("Running Mixer $mixer\n");

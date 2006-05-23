@@ -167,6 +167,10 @@ sub loadTypesConfig {
 
 sub resetClientsToHomeMenu {
 
+	if (!$INC{'Slim::Player::Client'}) {
+		return;
+	}
+
 	# Force all clients back to the home menu - otherwise if they are in a
 	# menu that has objects that might change out from under
 	# them, we're hosed, and serve a ::Deleted object.
@@ -186,7 +190,10 @@ sub wipeDBCache {
 	$currentDB->wipeAllData();
 
 	# Remove any HTML templates we have around.
-	rmtree( Slim::Web::HTTP::templateCacheDir() );
+	if ($INC{'Slim::Web::HTTP'}) {
+
+		rmtree( Slim::Web::HTTP::templateCacheDir() );
+	}
 }
 
 sub clearStaleCacheEntries {
@@ -198,13 +205,6 @@ sub clearFormatDisplayCache {
 
 	%displayCache  = ();
 	%currentTitles = ();
-}
-
-# Mark an item as having been rescanned
-sub markAsScanned {
-	my $item = shift;
-
-	$currentDB->markEntryAsValid($item);
 }
 
 sub playlistForClient {

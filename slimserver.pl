@@ -71,199 +71,16 @@ sub Help {
 
 package main;
 
-use Config;
 use Getopt::Long;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
-use FileHandle;
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
 
 use lib $Bin;
 
 BEGIN {
-	use Symbol;
-	use Slim::Utils::OSDetect;
-
-	# This begin statement contains some trickery to deal with modules
-	# that need to load XS code. Previously, we would check in a module
-	# under CPAN/arch/$VERSION/auto/... including it's binary parts and
-	# the pure perl parts. This got to be messy and unwieldly, as we have
-	# many copies of DBI.pm (and associated modules) in each version and
-	# arch directory. The new world has only the binary modules in the
-	# arch/$VERSION/auto directories - and single copies of the
-	# corresponding .pm files at the top CPAN/ level.
-	#
-	# This causes a problem in that when we 'use' one of these modules,
-	# the CPAN/Foo.pm would be loaded, and then Dynaloader would be
-	# called, which loads the architecture specifc parts - But Dynaloader
-	# ignores @INC, and tries to pull from the system install of perl. If
-	# that module exists in the system perl, but the $VERSION's aren't the
-	# same, Dynaloader fails.
-	#
-	# The workaround is to munge @INC and eval'ing the known modules that
-	# we include with SlimServer, first checking our CPAN path, then if
-	# there are any modules that couldn't be loaded, splicing CPAN/ out,
-	# and attempting to load the system version of the module. When we are
-	# done, put our CPAN/ path back in @INC.
-	#
-	# We use Symbol's (included with 5.6+) delete_package() function &
-	# removing the "require" style name from %INC and attempt to load
-	# these modules two different ways. Only the failed modules are tried again.
-	#
-	# Hopefully the actual implmentation below is fairly straightforward
-	# once the problem domain is understood.
-
-	# Given a list of modules, attempt to load them, otherwise pass back
-	# the failed list to the caller.
-
-	# Allow command line debugging.
-	my $d_startup = (grep { /d_startup/ } @ARGV) ? 1 : 0;
-
-	sub tryModuleLoad {
-		my @modules = @_;
-
-		my @failed  = ();
-
-		my (%oldINC, @newModules);
-
-		for my $module (@modules) {
-
-			%oldINC = %INC;
-
-			# Don't spit out any redefined warnings
-			local $^W = 0;
-
-			eval "use $module";
-
-			if ($@) {
-				push @failed, $module;
-
-				@newModules = grep { !$oldINC{$_} } keys %INC;
-
-				for my $newModule (@newModules) {
-
-					# Don't bother removing/reloading
-					# these, as they're part of core Perl.
-					if ($newModule =~ /^(?:DynaLoader|Carp|overload)/) {
-						next;
-					}
-
-					my $newModuleSymbol = $newModule;
-
-					$newModuleSymbol =~ s|/|::|g;
-					$newModuleSymbol =~ s|\.pm$||;
-
-					# This relies on delete_package returning a true value if it succeeded.
-					my $removed = eval {
-						Symbol::delete_package($newModuleSymbol);
-					};
-
-					if ($removed) {
-						$d_startup && print "Removing [$newModuleSymbol] from the symbol table - load failed.\n";
-						delete $INC{$newModule};
-					}
-				}
-
-			} else {
-
-				$d_startup && print "Loaded module: [$module] ok!\n";
-			}
-		}
-
-		return @failed;
-	}
-
-	# Here's what we want to try and load. This will need to be updated
-	# when a new XS based module is added to our CPAN tree.
-	my @required_modules = qw(Time::HiRes DBD::SQLite DBI XML::Parser HTML::Parser Compress::Zlib Digest::SHA1 YAML::Syck);
-
-	# Bug 3324
-	# In some cases, GD wasn't loading even though there was a working
-	# installation in the user's CPAN path. This is an attempt to use the
-	# use the system described above to load GD if possible.
-	my @optional_modules = qw(GD Locale::Hebrew);
-
-	if ($] <= 5.007) {
-		push @required_modules, qw(Storable Digest::MD5);
-	}
-
-	my @SlimINC = ();
-
-	if (Slim::Utils::OSDetect::isDebian()) {
-
-		@SlimINC = Slim::Utils::OSDetect::dirsFor('lib');
-
-	} else {
-
-		@SlimINC = (
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-			catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
-			catdir($Bin,'lib'), 
-			catdir($Bin,'CPAN'), 
-		);
-	}
-
-	$d_startup && printf("Got @" . "INC containing:\n%s\n\n", join("\n", @INC));
-
-	my %libPaths = map { $_ => 1 } @SlimINC;
-
-	# This works like 'use lib'
-	# prepend our directories to @INC so we look there first.
-	unshift @INC, @SlimINC;
-
-	$d_startup && printf("Extended @" . "INC to contain:\n%s\n\n", join("\n", @INC));
-
-	# Try and load the modules - some will fail if we don't include the
-	# binaries for that version/architecture combo
-	my @required_failed = tryModuleLoad(@required_modules);
-	my @optional_failed = tryModuleLoad(@optional_modules);
-
-	if ($d_startup) {
-		print "The following modules are loaded after the first attempt:\n";
-		print map { "\t$_ => $INC{$_}\n" } keys %INC;
-		print "\n";
-	}
-
-	if (scalar @optional_failed && $d_startup) {
-		printf("The following optional modules failed to load on the first attempt: [%s] - will try again\n\n", join(', ', @optional_failed));
-	}
-
-	if (scalar @required_failed && $d_startup) {
-		printf("The following modules failed to load on the first attempt: [%s] - will try again.\n\n", join(', ', @required_failed));
-	}
-
-	# Remove our paths so we can try loading the failed modules from the default system @INC
-	@INC = grep { !$libPaths{$_} } @INC;
-
-	my @required_really_failed = tryModuleLoad(@required_failed);
-	my @optional_really_failed = tryModuleLoad(@optional_failed);
-
-	if ($d_startup) {
-		print "The following modules are loaded after the second attempt:\n";
-		print map { "\t$_ => $INC{$_}\n" } keys %INC;
-		print "\n";
-	}
-
-	if (scalar @optional_really_failed && $d_startup) {
-		printf("The following optional modules failed to load: [%s] after their second try.\n\n", join(', ', @optional_really_failed));
-	}
-
-	if (scalar @required_really_failed) {
-
-		printf("The following modules failed to load: %s\n\n", join(' ', @required_really_failed));
-
-		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl\n\n";
-		print "Exiting..\n";
-
-		exit;
-	}
-
-	# And we're done with the trying - put our CPAN path back on @INC.
-	unshift @INC, @SlimINC;
+	require 'bootstrap.pl';
 
 	# Bug 2659 - maybe. Remove old versions of modules that are now in the $Bin/lib/ tree.
 	if (!Slim::Utils::OSDetect::isDebian()) {
@@ -316,8 +133,6 @@ use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::Import;
-use Slim::Music::MusicFolderScan;
-use Slim::Music::PlaylistFolderScan;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
@@ -325,7 +140,6 @@ use Slim::Player::Source;
 use Slim::Utils::Prefs;
 use Slim::Networking::SliMP3::Protocol;
 use Slim::Networking::Select;
-use Slim::Utils::Scheduler;
 use Slim::Web::Setup;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
@@ -346,104 +160,105 @@ use vars qw($VERSION $REVISION @AUTHORS);
 	'Scott McIntyre',
 	'Robert Moser',
 	'Dave Nanian',
+	'Jacob Potter',
+	'Sam Saffron',
 	'Roy M. Silvernail',
 	'Richard Smith',
-	'Sam Saffron',
+	'Max Spicer',
 	'Dan Sully',
 );
 
 $VERSION  = '6.5b1';
 
-use vars qw(
-	$d_artwork
-	$d_cli
-	$d_client
-	$d_control
-	$d_command
-	$d_directstream
-	$d_display
-	$d_factorytest
-	$d_favorites
-	$d_files
-	$d_firmware
-	$d_formats
-	$d_graphics
-	$d_http
-	$d_http_async
-	$d_http_verbose
-	$d_info
-	$d_ir
-	$d_irtm
-	$d_itunes
-	$d_itunes_verbose
-	$d_import
-	$d_mdns
-	$d_memory
-	$d_moodlogic
-	$d_mp3
-	$d_musicmagic
-	$d_os
-	$d_parse
-	$d_paths
-	$d_playlist
-	$d_plugins
-	$d_protocol
-	$d_prefs
-	$d_remotestream
-	$d_scan
-	$d_server
-	$d_select
-	$d_scheduler
-	$d_slimproto
-	$d_slimproto_v
-	$d_source
-	$d_source_v
-	$d_sql
-	$d_startup
-	$d_stdio
-	$d_stream
-	$d_stream_v
-	$d_sync
-	$d_sync_v
-	$d_time
-	$d_ui
-	$d_usage
-	$d_filehandle
+# old preferences settings, only used by the .slim.conf configuration.
+# real settings are stored in the new preferences file:  .slim.pref
+our ($audiodir, $playlistdir, $httpport);
 
-	$audiodir
-	$playlistdir
-	$httpport
-	$cachedir
-	$user
-	$group
-	$cliaddr
-	$cliport
-	$daemon
-	$diag
-	$httpaddr
-	$lastlooptime
-	$logfile
-	$localClientNetAddr
-	$localStreamAddr
-	$newVersion
-	$LogTimestamp
-	$pidfile
-	$prefsfile
-	$priority
-	$quiet
-	$nosetup
-	$noserver
-	$scanOnly
-	$noScan
-	$stdio
-	$stop
-	$perfmon
+our (
+	$d_artwork,
+	$d_cli,
+	$d_client,
+	$d_control,
+	$d_command,
+	$d_directstream,
+	$d_display,
+	$d_factorytest,
+	$d_favorites,
+	$d_files,
+	$d_firmware,
+	$d_formats,
+	$d_graphics,
+	$d_http,
+	$d_http_async,
+	$d_http_verbose,
+	$d_info,
+	$d_ir,
+	$d_irtm,
+	$d_itunes,
+	$d_itunes_verbose,
+	$d_import,
+	$d_mdns,
+	$d_memory,
+	$d_moodlogic,
+	$d_mp3,
+	$d_musicmagic,
+	$d_os,
+	$d_perf,
+	$d_parse,
+	$d_paths,
+	$d_playlist,
+	$d_plugins,
+	$d_protocol,
+	$d_prefs,
+	$d_remotestream,
+	$d_scan,
+	$d_server,
+	$d_select,
+	$d_slimproto,
+	$d_slimproto_v,
+	$d_source,
+	$d_source_v,
+	$d_sql,
+	$d_stdio,
+	$d_stream,
+	$d_stream_v,
+	$d_sync,
+	$d_sync_v,
+	$d_time,
+	$d_ui,
+	$d_usage,
+
+	$cachedir,
+	$user,
+	$group,
+	$cliaddr,
+	$cliport,
+	$daemon,
+	$diag,
+	$httpaddr,
+	$lastlooptime,
+	$logfile,
+	$loopcount,
+	$loopsecond,
+	$localClientNetAddr,
+	$localStreamAddr,
+	$newVersion,
+	$LogTimestamp,
+	$pidfile,
+	$prefsfile,
+	$priority,
+	$quiet,
+	$nosetup,
+	$noserver,
+	$stdio,
+	$stop,
+	$perfmon,
 	$perfwarn
 );
 
 sub init {
 
-# initialize the process and daemonize, etc...
+	# initialize the process and daemonize, etc...
 	srand();
 
 	autoflush STDERR;
@@ -553,58 +368,47 @@ sub init {
 	$::d_server && msg("SlimServer Setup init...\n");
 	Slim::Web::Setup::initSetup();
 
-	# initialize all player UI subsystems (if it's not just a scan process)
-	if (!$scanOnly) {
-		$::d_server && msg("SlimServer setting language...\n");
-		Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+	# initialize all player UI subsystems
+	$::d_server && msg("SlimServer setting language...\n");
+	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
+
+	$::d_server && msg("SlimServer IR init...\n");
+	Slim::Hardware::IR::init();
 		
 		$::d_server && msg("SlimServer Request init...\n");
 		Slim::Control::Request::init();
 	
-		$::d_server && msg("SlimServer IR init...\n");
-		Slim::Hardware::IR::init();
-		
-		$::d_server && msg("SlimServer Buttons init...\n");
-		Slim::Buttons::Common::init();
-	
-		$::d_server && msg("SlimServer Graphics init...\n");
-		Slim::Display::Graphics::init();
-	
-		if ($stdio) {
-			$::d_server && msg("SlimServer Stdio init...\n");
-			Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
-		}
-	
-		$::d_server && msg("Old SLIMP3 Protocol init...\n");
-		Slim::Networking::SliMP3::Protocol::init();
-	
-		$::d_server && msg("Slimproto Init...\n");
-		Slim::Networking::Slimproto::init();
-	
-		$::d_server && msg("mDNS init...\n");
-		Slim::Networking::mDNS->init;
-		
-		$::d_server && msg("AsyncHTTP init...\n");
-		Slim::Networking::AsyncHTTP->init;
-	
-		$::d_server && msg("SlimServer HTTP init...\n");
-		Slim::Web::HTTP::init();
-	
-		$::d_server && msg("mDNS startAdvertising...\n");
-		Slim::Networking::mDNS->startAdvertising;
-	
-		$::d_server && msg("Source conversion init..\n");
-		Slim::Player::Source::init();
+	$::d_server && msg("SlimServer Buttons init...\n");
+	Slim::Buttons::Common::init();
+
+	$::d_server && msg("SlimServer Graphics init...\n");
+	Slim::Display::Graphics::init();
+
+	if ($stdio) {
+		$::d_server && msg("SlimServer Stdio init...\n");
+		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
+
+	$::d_server && msg("Old SLIMP3 Protocol init...\n");
+	Slim::Networking::Protocol::init();
+
+	$::d_server && msg("Slimproto Init...\n");
+	Slim::Networking::Slimproto::init();
+
+	$::d_server && msg("mDNS init...\n");
+	Slim::Networking::mDNS->init;
+
+	$::d_server && msg("SlimServer HTTP init...\n");
+	Slim::Web::HTTP::init();
+
+	$::d_server && msg("mDNS startAdvertising...\n");
+	Slim::Networking::mDNS->startAdvertising;
+
+	$::d_server && msg("Source conversion init..\n");
+	Slim::Player::Source::init();
 	
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
-
-	$::d_server && msg("SlimServer MusicFolderScan init...\n");
-	Slim::Music::MusicFolderScan::init();
-
-	$::d_server && msg("SlimServer PlaylistFolderScan init...\n");
-	Slim::Music::PlaylistFolderScan::init();
 
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Utils::PluginManager::init();
@@ -613,17 +417,13 @@ sub init {
 	checkDataSource();
 
 	# regular server has a couple more initial operations.
-	if (!$scanOnly) {
-		$::d_server && msg("SlimServer persist playlists...\n");
-		if (Slim::Utils::Prefs::get('persistPlaylists')) {
-
-			Slim::Control::Request::subscribe(
-				\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
-			);
-		}
-
-		checkVersion();
+	$::d_server && msg("SlimServer persist playlists...\n");
+	if (Slim::Utils::Prefs::get('persistPlaylists')) {
+		Slim::Control::Command::setExecuteCallback(\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}
+
+	checkVersion();
+	keepSlimServerInMemory();
 	
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
@@ -638,22 +438,9 @@ sub main {
 	# all other initialization
 	init();
 	
-	if ($scanOnly) {
-		while (scanOnlyIdle()) {};
-		# no need to do explicit cleanup
-		exit;
-	} else {
-		while (!idle()) {}
-	}
+	while (!idle()) {}
 	
 	stopServer();
-}
-
-sub scanOnlyIdle {
-	Slim::Utils::Timers::checkTimers();
-	Slim::Utils::Scheduler::run_tasks();
-
-	return Slim::Music::Import::stillScanning();
 }
 
 sub idle {
@@ -673,30 +460,16 @@ sub idle {
 	# empty IR queue
 	if (!Slim::Hardware::IR::idle()) {
 
-		# empty notifcation queue
-		if (!Slim::Control::Request::checkNotifications()) {
-
-			my $timer_due = Slim::Utils::Timers::nextTimer();
-
-			if (!defined($timer_due) || $timer_due > 0) {
-				
-				# run scheduled task if no timers overdue
-				if (!Slim::Utils::Scheduler::run_tasks()) {
-
-					# set select time if no scheduled task
-					$select_time = $timer_due;
-					if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
-				}
-
-			}
-
-		}
-
-	}
+	# undefined if there are no timers, 0 if overdue, otherwise delta to next timer
+	$select_time = Slim::Utils::Timers::nextTimer();
+	
+	# loop through once a second, at a minimum
+	if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
 
 	$::d_time && msg("select_time: $select_time\n");
 	
-	# call select and process any IO
+	$::d_time && msg("select_time: $select_time\n");
+	
 	Slim::Networking::Select::select($select_time);
 
 	# check the timers for any new tasks
@@ -776,8 +549,6 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
                         no effect on non-Unix platforms
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
-    --scanonly       => Only run the library scanner, then exit.
-    --noscan         => Don't scan the music library.
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
     --perfmon        => Enable internal server performance monitoring
@@ -797,7 +568,6 @@ to the console via stderr:
     --d_factorytest  => Information used during factory testing
     --d_favorites    => Information about favorite tracks
     --d_files        => Files, paths, opening and closing
-    --d_filehandle   => Information about the custom FileHandle object
     --d_firmware     => Information during Squeezebox firmware updates 
     --d_formats      => Information about importing data from various file formats
     --d_graphics     => Information bitmap graphic display 
@@ -826,7 +596,6 @@ to the console via stderr:
     --d_scan         => Information about scanning directories and filelists
     --d_select       => Information about the select process
     --d_server       => Basic server functionality
-    --d_scheduler    => Internal scheduler information
     --d_slimproto    => Slimproto debugging information
     --d_slimproto_v  => Slimproto verbose debugging information
     --d_source       => Information about source audio files and conversion
@@ -870,8 +639,6 @@ sub initOptions {
 		'streamaddr=s'		=> \$localStreamAddr,
 		'prefsfile=s'		=> \$prefsfile,
 		'quiet'				=> \$quiet,
-		'scanonly'			=> \$scanOnly,
-		'noscan'			=> \$noScan,
 		'nosetup'			=> \$nosetup,
 		'noserver'			=> \$noserver,
 		'd_artwork'			=> \$d_artwork,
@@ -910,7 +677,6 @@ sub initOptions {
 		'd_prefs'			=> \$d_prefs,
 		'd_remotestream'	=> \$d_remotestream,
 		'd_scan'			=> \$d_scan,
-		'd_scheduler'		=> \$d_scheduler,
 		'd_select'			=> \$d_select,
 		'd_server'			=> \$d_server,
 		'd_slimproto'		=> \$d_slimproto,
@@ -927,7 +693,6 @@ sub initOptions {
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
 		'd_usage'			=> \$d_usage,
-		'd_filehandle'		=> \$d_filehandle,
 		'perfmon'			=> \$perfmon,
 		'perfwarn=f'		=> \$perfwarn, 
 	)) {
@@ -1119,7 +884,7 @@ sub checkDataSource {
 	# warn if there's no audiodir preference
 	# FIXME put the strings in strings.txt
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
-		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import::countImporters()) {
+		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import->countImporters()) {
 
 		msg("Your data source needs to be configured. Please open your web browser,\n");
 		msg("go to the following URL, and click on the \"Server Settings\" link.\n\n");
@@ -1134,11 +899,11 @@ sub checkDataSource {
 		}
 		my $ds = Slim::Music::Info::getCurrentDataStore();
 
-		if (!$::noScan && $ds->count('track') == 0) {
+		if ($ds->count('track') == 0) {
 
 			# Let's go through Command rather than calling
-			# Slim::Music::Import::startScan() directly...
-			Slim::Control::Request::executeRequest(undef, ['rescan']);
+			# Slim::Music::Import->startScan() directly...
+			#Slim::Control::Command::execute(undef, ["rescan"], undef, undef);
 		}
 	}
 }

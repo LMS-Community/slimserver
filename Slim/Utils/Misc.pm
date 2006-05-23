@@ -977,6 +977,215 @@ sub specified {
 }
 
 
+	my @hostnames = ('localhost', hostname());
+	
+	foreach my $hostname (@hostnames) {
+
+		next if !$hostname;
+
+		if ($hostname =~ /^\d+(?:\.\d+(?:\.\d+(?:\.\d+)?)?)?$/) {
+			push @hostaddr, addrToHost($hostname);
+		} else {
+			push @hostaddr, hostToAddr($hostname);
+		}
+	}
+
+	return @hostaddr;
+}
+
+sub hostName {
+	return hostname();
+}
+
+sub hostToAddr {
+	my $host  = shift;
+	my @addrs = (gethostbyname($host))[4];
+
+	my $addr  = defined $addrs[0] ? inet_ntoa($addrs[0]) : $host;
+
+	return $addr;
+}
+
+sub addrToHost {
+	my $addr = shift;
+	my $aton = inet_aton($addr);
+
+	return $addr unless defined $aton;
+
+	my $host = (gethostbyaddr($aton, Socket::AF_INET()))[0];
+
+	return $host if defined $host;
+	return $addr;
+}
+
+sub stillScanning {
+	return Slim::Music::Import->stillScanning;
+}
+
+# this function based on a posting by Tom Christiansen: http://www.mail-archive.com/perl5-porters@perl.org/msg71350.html
+sub at_eol($) { $_[0] =~ /\n\z/ }
+sub sysreadline(*;$) { 
+	my($handle, $maxnap) = @_;
+	$handle = qualify_to_ref($handle, caller());
+
+	return undef unless $handle;
+
+	my $infinitely_patient = @_ == 1;
+
+	my $start_time = Time::HiRes::time();
+
+	# Try to use an existing IO::Select object if we have one.
+	my $selector = ${*$handle}{'_sel'} || IO::Select->new($handle);
+
+	my $line = '';
+	my $result;
+
+	SLEEP:
+	until (at_eol($line)) {
+
+		unless ($infinitely_patient) {
+
+			if (Time::HiRes::time() > $start_time + $maxnap) {
+				return $line;
+			} 
+		} 
+
+		my @ready_handles;
+
+		unless (@ready_handles = $selector->can_read(.1)) {  # seconds
+
+			unless ($infinitely_patient) {
+				my $time_left = $start_time + $maxnap - Time::HiRes::time();
+			} 
+
+			next SLEEP;
+		}
+
+		INPUT_READY:
+		while (() = $selector->can_read(0.0)) {
+
+			my $was_blocking = blocking($handle,0);
+
+			CHAR:
+			while ($result = sysread($handle, my $char, 1)) {
+				$line .= $char;
+				last CHAR if $char eq "\n";
+			} 
+
+			my $err = $!;
+
+			next CHAR if (!defined($result) and $err == EINTR);
+
+			blocking($handle, $was_blocking);
+
+			unless (at_eol($line)) {
+
+				if (!defined($result) && $err != EWOULDBLOCK) {
+					return undef;
+				}
+
+				if (defined($result) and $result == 0) {
+
+					# part of a line may have been read...
+					# but we got eof before end of line...
+					return undef;
+				}
+
+				next SLEEP;
+			} 
+
+			last INPUT_READY;
+		}
+	} 
+
+	return $line;
+}
+
+# Use Tie::Watch to keep track of a variable, and report when it changes.
+sub watchVariable {
+	my $var = shift;
+
+	unless ($watch) {
+		eval "use Tie::Watch";
+
+		if ($@) {
+			return;
+		} else {
+			$watch = 1;
+		}
+	}
+
+	# See the Tie::Watch manpage for more info.
+	Tie::Watch->new(
+		-variable => $var,
+		-shadow   => 0,
+
+		-clear    => sub {
+			msg("In clear callback for $var!\n");
+			bt();
+		},
+
+		-destroy  => sub {
+			msg("In destroy callback for $var!\n");
+			bt();
+		},
+
+		-fetch   => sub {
+			my ($self, $key) = @_;
+
+			my $val  = $self->Fetch($key);
+			my $args = $self->Args(-fetch);
+
+			bt();
+			msgf("In fetch callback, key=$key, val=%s, args=('%s')\n",
+				$self->Say($val), ($args ? join("', '",  @$args) : 'undef')
+			);
+
+			return $val;
+		},
+
+		-store    => sub {
+			my ($self, $key, $new_val) = @_;
+
+			my $val  = $self->Fetch($key);
+			my $args = $self->Args(-store);
+
+			$self->Store($key, $new_val);
+
+			bt();
+			msgf("In store callback, key=$key, val=%s, new_val=%s, args=('%s')\n",
+				$self->Say($val), $self->Say($new_val), ($args ? join("', '",  @$args) : 'undef')
+			);
+
+			return $new_val;
+		},
+	);
+}
+
+sub deparseCoderef {
+	my $coderef = shift;
+
+	eval "use B::Deparse ()";
+	my $deparse = B::Deparse->new('-si8T') unless $@ =~ /Can't locate/;
+
+	eval "use Devel::Peek ()";
+	my $peek = 1 unless $@ =~ /Can't locate/;
+
+	return 0 unless $deparse;
+		
+	my $body = $deparse->coderef2text($coderef) || return 0;
+	my $name;
+
+	if ($peek) {
+		my $gv = Devel::Peek::CvGV($coderef);
+		$name  = join('::', *$gv{'PACKAGE'}, *$gv{'NAME'});
+	}
+
+	$name ||= 'ANON';
+
+	return "sub $name $body";
+}
+
 1;
 
 __END__

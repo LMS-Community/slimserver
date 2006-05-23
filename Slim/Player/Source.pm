@@ -37,6 +37,10 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
+use Slim::Player::Pipeline;
+use Slim::Web::RemoteStream;
+use Slim::Player::Protocols::HTTP;
+use Slim::Player::Protocols::MMS;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;

@@ -43,7 +43,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-use Slim::Player::ProtocolHandlers;
+use Slim::Player::Source;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -109,7 +109,8 @@ sub useiTunesLibrary {
 	
 	my $can = canUseiTunesLibrary();
 
-	Slim::Music::Import::useImporter('ITUNES',$use && $can);
+
+	Slim::Music::Import->useImporter('ITUNES', $use && $can);
 
 	$::d_itunes && msg("iTunes: using itunes library: $use\n");
 
@@ -138,21 +139,29 @@ sub getFunctions {
 }
 
 sub initPlugin {
+	my $class = shift;
+
 	return 1 if $initialized;
 
-	addGroups();
+	if ($INC{'Slim::Web::Setup'}) {
+		addGroups();
+	}
 
 	return unless canUseiTunesLibrary();
 
-	Slim::Music::Import::addImporter('ITUNES', {
-		'scan'  => \&startScan,
-		'reset' => \&resetState,
+	Slim::Music::Import->addImporter($class, {
+		'reset'        => \&resetState,
+		'playlistOnly' => 1,
 		'setup' => \&addGroups,
 	});
 
-	Slim::Music::Import::useImporter('ITUNES',Slim::Utils::Prefs::get('itunes'));
-	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
-	
+	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
+
+	if ($INC{'Slim::Player::Source'}) {
+
+		Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	}
+
 	$initialized = 1;
 
 	# Pass checker a value, to let it know that we're just seeing if we're
@@ -160,9 +169,12 @@ sub initPlugin {
 	# Otherwise, doneScanning() will be called when Slim::Music::Import
 	# kicks off, and it will reset the lastiTunesCheck time, which isn't
 	# what we want. That needs to be set when we're really done scanning.
-	checker($initialized);
+	#checker($initialized);
 
-	setPodcasts();
+	if ($INC{'Slim::Web::Pages'}) {
+
+		setPodcasts();
+	}
 
 	return 1;
 }
@@ -173,7 +185,7 @@ sub setPodcasts {
 
 	my @podcasts  = $ds->find({
 		'field' => 'genre',
-		'find' => { 'genre.name' => 'Podcasts' },
+		'find'  => { 'genre.name' => 'Podcasts' },
 	});
 
 	if ($podcasts[0]) {
@@ -184,16 +196,16 @@ sub setPodcasts {
 		});
 
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
-			'useMode'  => 'browsedb',
-			'hierarchy' => 'genre,artist,album,track',
-			'level' => 2,
+			'useMode'      => 'browsedb',
+			'hierarchy'    => 'genre,artist,album,track',
+			'level'        => 2,
 			'findCriteria' => {'genre' => $id},
 		});
 
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
-			'useMode'  => 'browsedb',
-			'hierarchy' => 'genre,artist,album,track',
-			'level' => 2,
+			'useMode'      => 'browsedb',
+			'hierarchy'    => 'genre,artist,album,track',
+			'level'        => 2,
 			'findCriteria' => {'genre' => $id},
 		});
 	}
@@ -212,24 +224,30 @@ sub resetState {
 
 sub shutdownPlugin {
 	# turn off checker
-	Slim::Utils::Timers::killTimers(0, \&checker);
+	#Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# remove playlists
 
 	# disable protocol handler
-	#Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
+	if ($INC{'Slim::Player::Source'}) {
+
+		Slim::Player::Source::registerProtocolHandler("itunesplaylist", "0");
+	}
 
 	# reset last scan time
 	$lastMusicLibraryFinishTime = undef;
 	$initialized = 0;
 
 	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('ITUNES');
-	Slim::Web::Setup::delGroup('SERVER_SETTINGS','itunes',1);
+	if ($INC{'Slim::Web::Setup'}) {
+
+		Slim::Web::Setup::delCategory('itunes');
+		Slim::Web::Setup::delGroup('server','itunes',1);
+	}
 
 	# set importer to not use
 	#Slim::Utils::Prefs::set('itunes', 0);
-	Slim::Music::Import::useImporter('ITUNES',0);
+	Slim::Music::Import->useImporter('ITUNES', 0);
 }
 
 sub addGroups {
@@ -410,20 +428,14 @@ sub checker {
 	return unless (Slim::Utils::Prefs::get('itunes'));
 
 	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
-		startScan();
+		#startScan();
 	}
 	
 	# make sure we aren't doing this more than once...
-	Slim::Utils::Timers::killTimers(0, \&checker);
-	
-	my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
-	
-	# the very first time, we do want to scan right away
-	if ( $firstTime ) {
-		$interval = 10;
-	}
-	
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
+	#Slim::Utils::Timers::killTimers(0, \&checker);
+
+	# Call ourselves again after 10 seconds
+	#Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 10.0), \&checker);
 }
 
 sub startScan {
@@ -441,10 +453,13 @@ sub startScan {
 		return;
 	}
 
-	stopScan();
+	#stopScan();
 
 	$isScanning = 1;
 	$iTunesScanStartTime = time();
+
+	# start the checker
+	#checker();
 
 	$iTunesParser = XML::Parser->new(
 		'ErrorContext'     => 2,
@@ -459,7 +474,7 @@ sub startScan {
 		},
 	);
 
-	Slim::Utils::Scheduler::add_task(\&scanFunction);
+	scanFunction();
 }
 
 sub stopScan {
@@ -468,7 +483,6 @@ sub stopScan {
 
 		$::d_itunes && msg("iTunes: Was stillScanning - stopping old scan.\n");
 
-		Slim::Utils::Scheduler::remove_task(\&scanFunction);
 		$isScanning = 0;
 		$locked = 0;
 		$opened = 0;
@@ -515,10 +529,7 @@ sub doneScanning {
 
 	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $currentITunesMusicLibraryDate);
 
-	# Take the scanner off the scheduler.
-	Slim::Utils::Scheduler::remove_task(\&scanFunction);
-
-	Slim::Music::Import::endImporter('ITUNES');
+	Slim::Music::Import->endImporter('ITUNES');
 }
 
 sub scanFunction {
@@ -582,6 +593,18 @@ sub scanFunction {
 
 		local $/ = '</dict>';
 		my $line = <ITUNESLIBRARY>;
+
+		for (my $i = 0; $i < 5000; $i++) {
+
+			$line .= <ITUNESLIBRARY>;
+
+			if (eof(ITUNESLIBRARY)) {
+
+				last;
+			}
+		}
+
+		$line =~ s/&#(\d*);/Slim::Utils::Misc::escape(chr($1))/ge;
 
 		$iTunesParserNB->parse_more($line);
 
@@ -713,7 +736,7 @@ sub handleTrack {
 
 	# We don't need to do all the track processing if we just want to map
 	# the ID to url, and then proceed to the playlist parsing.
-	if (Slim::Music::Import::scanPlaylistsOnly()) {
+	if (Slim::Music::Import->scanPlaylistsOnly) {
 		return 1;
 	}
 
@@ -783,11 +806,12 @@ sub handleTrack {
 
 		$cacheEntry{'VALID'} = 1;
 
+		# Only read tags if we don't have a music folder defined.
 		my $track = $ds->updateOrCreate({
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
-			'readTags'   => 1,
+			'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
 			'checkMTime' => 1,
 
 		}) || do {
@@ -801,9 +825,9 @@ sub handleTrack {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
 
-			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb) {
+			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb) {
 
-				Slim::Music::Import::artwork($albumObj, $track);
+				Slim::Music::Import->artwork($albumObj, $track);
 			}
 		}
 
@@ -1118,8 +1142,8 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($tempClient);
 				}
 
-				Slim::Music::Import::useImporter('ITUNES',$changeref->{'itunes'}{'new'});
-				Slim::Music::Import::startScan('ITUNES');
+				Slim::Music::Import->useImporter('ITUNES',$changeref->{'itunes'}{'new'});
+				Slim::Music::Import->startScan('ITUNES');
 			},
 
 			'optionSort' => 'KR',

@@ -262,12 +262,14 @@ sub init {
 
 			Slim::Buttons::BrowseTree::init();
 
+			my $musicFolderClass = 'Slim::Music::MusicFolderScan';
+
 			if (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir")) {
 
-				Slim::Music::Import::useImporter('FOLDER', 1);
-				Slim::Music::Import::startScan('FOLDER');
+				Slim::Music::Import->useImporter($musicFolderClass, 1);
+				Slim::Music::Import->startScan($musicFolderClass);
 			} else {
-				Slim::Music::Import::useImporter('FOLDER', 0);
+				Slim::Music::Import->useImporter($musicFolderClass, 0);
 			}
 
 		},
@@ -275,7 +277,7 @@ sub init {
 		'lookForArtwork' => sub {
 			my $lookForArtwork = shift;
 
-			Slim::Music::Import::startScan() if $lookForArtwork;
+			Slim::Music::Import->startScan if $lookForArtwork;
 		},
 
 		'playlistdir' => sub {

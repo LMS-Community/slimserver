@@ -190,7 +190,7 @@ sub init {
 				$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
 				$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
 
-				my $Imports = Slim::Music::Import::importers();
+				my $Imports = Slim::Music::Import->importers;
 
 				for my $mixer (keys %{$Imports}) {
 				
@@ -263,7 +263,7 @@ sub init {
 				my $itemname = shift;
 				my $descend = shift;
 
-				my $Imports = Slim::Music::Import::importers();
+				my $Imports = Slim::Music::Import->importers;
 
 				for my $mixer (keys %{$Imports}) {
 				
@@ -426,7 +426,7 @@ sub init {
 					}
 				}
 
-				my $Imports = Slim::Music::Import::importers();
+				my $Imports = Slim::Music::Import->importers;
 
 				for my $mixer (keys %{$Imports}) {
 				
@@ -581,7 +581,7 @@ sub init {
 					}
 				}
 
-				my $Imports = Slim::Music::Import::importers();
+				my $Imports = Slim::Music::Import->importers;
 
 				for my $mixer (keys %{$Imports}) {
 				
@@ -692,7 +692,8 @@ sub init {
 
 				$form->{'text'} = $item->name;
 
-				my $Imports = Slim::Music::Import::importers();
+				my $Imports = Slim::Music::Import->importers;
+
 				for my $mixer (keys %{$Imports}) {
 				
 					if (defined $Imports->{$mixer}->{'mixerlink'}) {

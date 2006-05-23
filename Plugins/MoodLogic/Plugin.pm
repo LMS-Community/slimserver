@@ -60,7 +60,7 @@ sub useMoodLogic {
 	}
 	
 	$use = Slim::Utils::Prefs::get('moodlogic') && $can;
-	Slim::Music::Import::useImporter('MOODLOGIC',$use);
+	Slim::Music::Import->useImporter('MOODLOGIC',$use);
 	
 	$::d_moodlogic && msg("MoodLogic: using moodlogic: $use\n");
 	
@@ -101,7 +101,7 @@ sub shutdownPlugin {
 	
 	# set importer to not use
 	#Slim::Utils::Prefs::set('moodlogic', 0);
-	Slim::Music::Import::useImporter('MOODLOGIC',0);
+	Slim::Music::Import->useImporter('MOODLOGIC',0);
 }
 
 sub initPlugin {
@@ -169,14 +169,15 @@ sub initPlugin {
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
-	Slim::Music::Import::addImporter('MOODLOGIC', {
+	Slim::Music::Import->addImporter('MOODLOGIC', {
 		'scan'      => \&startScan,
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
+		'playlistOnly' => 1,
 	});
 
-	Slim::Music::Import::useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
+	Slim::Music::Import->useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
 	addGroups();
 
 	Plugins::MoodLogic::InstantMix::init();
@@ -256,14 +257,13 @@ sub startScan {
 	
 	stopScan();
 	
-	Slim::Utils::Scheduler::add_task(\&exportFunction);
+	exportFunction();
 } 
 
 sub stopScan {
 	
 	if (stillScanning()) {
 		$::d_moodlogic && msg("MoodLogic: Scan already in progress. Restarting\n");
-		Slim::Utils::Scheduler::remove_task(\&exportFunction);
 		$isScanning = 0;
 		%genre_hash = ();
 	}
@@ -283,7 +283,7 @@ sub doneScanning {
 
 	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
 	
-	Slim::Music::Import::endImporter('MOODLOGIC');
+	Slim::Music::Import->endImporter('MOODLOGIC');
 }
 
 sub getPlaylistItems {
@@ -434,9 +434,9 @@ sub exportFunction {
 
 		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
 
-			if (!Slim::Music::Import::artwork($albumObj) && !defined $track->thumb()) {
+			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb()) {
 
-				Slim::Music::Import::artwork($albumObj, $track);
+				Slim::Music::Import->artwork($albumObj, $track);
 			}
 		}
 		
@@ -682,9 +682,9 @@ sub setupUse {
 					foreach my $client (Slim::Player::Client::clients()) {
 						Slim::Buttons::Home::updateMenu($client);
 					}
-					Slim::Music::Import::useImporter('MOODLOGIC',$changeref->{'moodlogic'}{'new'});
+					Slim::Music::Import->useImporter('MOODLOGIC',$changeref->{'moodlogic'}{'new'});
 					Slim::Music::Info::clearPlaylists('moodlogicplaylist:');
-					Slim::Music::Import::startScan('MOODLOGIC');
+					Slim::Music::Import->startScan('MOODLOGIC');
 				}
 			,'optionSort' => 'KR'
 			,'inputTemplate' => 'setup_input_radio.html'

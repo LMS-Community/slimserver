@@ -19,7 +19,7 @@ use base 'Class::DBI';
 use DBI;
 use File::Basename;
 use File::Path;
-use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
 use SQL::Abstract;
 use SQL::Abstract::Limit;
 use Scalar::Util qw(blessed);
@@ -31,7 +31,6 @@ use Slim::Utils::OSDetect;
 our $dbh;
 our $driver;
 our $dirtyCount = 0;
-our $cleanupIds;
 
 # Pref or not? pingInterval is in seconds.
 our $lastPingTime = 0;
@@ -999,34 +998,28 @@ sub removeStaleDBEntries {
 	my $class   = shift;
 	my $foreign = shift;
 
-	unless ($cleanupIds) {
+	$::d_import && msg("Import: Starting stale cleanup for class $class / $foreign\n");
 
-		$::d_import && msg("Import: Starting stale cleanup for class $class / $foreign\n");
-
-		$cleanupIds = $class->retrieveAllOnlyIds();
-	}
+	my $cleanupIds = $class->retrieveAllOnlyIds;
 
 	# fetch one at a time to keep memory usage in check.
-	my $item = shift(@{$cleanupIds});
-	my $obj  = $class->retrieve($item) if defined $item;
+	for my $id (@{$cleanupIds}) {
 
-	if (!defined $obj && !defined $item && scalar @{$cleanupIds} == 0) {
+		next unless defined $id;
 
-		$::d_import && msg("Import: Finished stale cleanup for class $class / $foreign\n");
+		my $obj = $class->retrieve($id);
 
-		$cleanupIds = undef;
+		if (blessed($obj) && $obj->$foreign()->count() == 0) {
 
-		return 0;
-	};
+			$::d_import && msg("Import: DB garbage collection - removing $class: $obj - no more tracks!\n");
 
-	if ($obj && $obj->$foreign()->count() == 0) {
+			$obj->delete;
 
-		$::d_import && msg("Import: DB garbage collection - removing $class: $obj - no more tracks!\n");
-
-		$obj->delete();
-
-		$dirtyCount++;
+			$dirtyCount++;
+		}
 	}
+
+	$::d_import && msg("Import: Finished stale cleanup for class $class / $foreign\n");
 
 	return 1;
 }

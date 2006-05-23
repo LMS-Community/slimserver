@@ -8,20 +8,19 @@ package Slim::Music::MusicFolderScan;
 # version 2.
 
 use strict;
+use base qw(Class::Data::Inheritable);
+
 use Slim::Music::Info;
 use Slim::Utils::Misc;
-use Slim::Utils::Scan;
+use Slim::Utils::Scanner;
 
-# background scanning and cache prefilling of music information to speed up UI...
+INIT: {
 
-my @dummylist = ();
-my $stillScanning = 0;
+	__PACKAGE__->mk_classdata('stillScanning');
+}
 
 sub init {
-
-	Slim::Music::Import::addImporter('FOLDER', {
-		'scan' => \&startScan
-	});
+	my $class = shift;
 
 	# Enable Folder scan only if audiodir is set and is a valid directory
 	my $enabled  = 0;
@@ -32,61 +31,46 @@ sub init {
 		$enabled = 1;
 	}
 
-	Slim::Music::Import::useImporter('FOLDER', $enabled);
+	Slim::Music::Import->addImporter($class);
+	Slim::Music::Import->useImporter($class, $enabled);
 }
 
 sub startScan {
+	my $class    = shift;
 	my $audioDir = shift || Slim::Utils::Prefs::get('audiodir');
 	my $recurse  = shift;
 
 	if (!defined $audioDir || !-d $audioDir) {
-		$::d_info && msg("Skipping music folder scan - audiodir is undefined.\n");
+		$::d_info && msg("Skipping music folder scan - audiodir is undefined. [$audioDir]\n");
 		doneScanning();
 		return;
 	}
 
-	if ($stillScanning) {
+	if ($class->stillScanning) {
+
 		$::d_info && msg("Scan already in progress. Restarting\n");
-		$stillScanning = 0;
-		Slim::Utils::Scan::stopAddToList(\@dummylist);
-		@dummylist = ();
+
+		$class->stillScanning(0);
 	}
 
-	$stillScanning = 1;
+	$class->stillScanning(1);
 
 	if (!defined $recurse) {
 		$recurse = 1;
 	}
 
-	$::d_info && msg("Starting music folder scan\n");
+	$::d_info && msg("Starting music folder scan in $audioDir\n");
 
-	Slim::Utils::Scan::addToList({
-		'listRef'      => \@dummylist,
+	Slim::Utils::Scanner->scanDirectory({
 		'url'          => $audioDir,
 		'recursive'    => $recurse,
-		'callback'     => \&doneScanning,
 	});
-}
 
-sub startScanNoRecursive {
-	my $path = shift;
-
-	startScan($path, 0);
-}
-
-sub doneScanning {
-	#If scan aborted, $stillScanning will already be false.
-	return unless $stillScanning;
-	
 	$::d_info && msg("finished background scan of music folder.\n");
 
-	$stillScanning = 0;
-	@dummylist = ();
-	Slim::Music::Import::endImporter('FOLDER');
-}
+	$class->stillScanning(0);
 
-sub stillScanning {
-	return $stillScanning;
+	Slim::Music::Import->endImporter($class);
 }
 
 1;

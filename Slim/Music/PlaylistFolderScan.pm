@@ -8,15 +8,20 @@ package Slim::Music::PlaylistFolderScan;
 # version 2.
 
 use strict;
+use base qw(Class::Data::Inheritable);
+
 use Slim::Utils::Misc;
 
-my @dummylist = ();
-my $stillScanning = 0;
+INIT: {
+
+	__PACKAGE__->mk_classdata('stillScanning');
+}
 
 sub init {
+	my $class = shift;
 
-	Slim::Music::Import::addImporter('PLAYLIST', {
-		'scan' => \&startScan
+	Slim::Music::Import->addImporter($class, {
+		'playlistOnly' => 1,
 	});
 
 	# Enable Folder scan only if playlistdir is set and is a valid directory
@@ -28,12 +33,12 @@ sub init {
 		$enabled = 1;
 	}
 
-	Slim::Music::Import::useImporter('PLAYLIST', $enabled);
+	Slim::Music::Import->useImporter($class, $enabled);
 }
 
 sub startScan {
-
-	my $playlistDir = Slim::Utils::Prefs::get('playlistdir');
+	my $class       = shift;
+	my $playlistDir = shift || Slim::Utils::Prefs::get('playlistdir');
 
 	if (!defined $playlistDir || !-d $playlistDir) {
 		$::d_info && msg("Skipping playlist folder scan - playlistdir is undefined.\n");
@@ -41,38 +46,35 @@ sub startScan {
 		return;
 	}
 
-	if ($stillScanning) {
+	if ($class->stillScanning) {
+
 		$::d_info && msg("Scan already in progress. Restarting\n");
-		$stillScanning = 0;
-		Slim::Utils::Scan::stopAddToList(\@dummylist);
-		@dummylist = ();
+
+		$class->stillScanning(0);
 	} 
 
-	$stillScanning = 1;
+	$class->stillScanning(1);
 
 	$::d_info && msg("Starting playlist folder scan\n");
 
-	Slim::Utils::Scan::addToList({
-		'listRef'      => \@dummylist,
-		'url'          => $playlistDir,
-		'recursive'    => 1,
-		'callback'     => \&doneScanning,
+	Slim::Utils::Scanner->scanDirectory({
+		'url' => $playlistDir,
 	});
+
+	$class->doneScanning;
 }
 
 sub doneScanning {
-	#If scan aborted, $stillScanning will already be false.
-	return unless $stillScanning;
+	my $class = shift;
+
+	# If scan aborted, $stillScanning will already be false.
+	return if !$class->stillScanning;
 
 	$::d_info && msg("finished background scan of playlist folder.\n");
 
-	$stillScanning = 0;
-	@dummylist = ();
-	Slim::Music::Import::endImporter('PLAYLIST');
-}
+	$class->stillScanning(0);
 
-sub stillScanning {
-	return $stillScanning;
+	Slim::Music::Import->endImporter('PLAYLIST');
 }
 
 1;
