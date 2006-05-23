@@ -32,7 +32,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
-use Plugins::iTunes::Plugin;
+use Plugins::iTunes::Importer;
 use Plugins::MusicMagic::Importer;
 
 sub main {
@@ -43,6 +43,8 @@ sub main {
 	our $d_import = 1;
 	our $d_server = 0;
 	our $d_scan = 0;
+	our $d_sql = 0;
+	our $d_itunes = 0;
 	our $LogTimestamp = 1;
 
 	$::d_server && msg("SlimServer OSDetect init...\n");
@@ -79,7 +81,7 @@ sub main {
 
 	Slim::Music::MusicFolderScan->init;
 	Slim::Music::PlaylistFolderScan->init;
-	Plugins::iTunes::Plugin->initPlugin;
+	Plugins::iTunes::Importer->initPlugin;
 	Plugins::MusicMagic::Importer->initPlugin;
 
 	#$::d_server && msg("SlimServer Plugins init...\n");
