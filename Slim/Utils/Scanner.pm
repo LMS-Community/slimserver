@@ -144,15 +144,11 @@ sub scanDirectory {
 				'url'      => $url,
 				'readTags' => 1,
 			});
-		}
 
-		# Only read playlist files if we're in the playlist dir, and
-		# it's not a CUE, which we've scanned above.
-		if (Slim::Music::Info::isPlaylist($url) && 
-		    Slim::Utils::Misc::inPlaylistFolder($url) && 
-		    !Slim::Music::Info::isCUE($url) &&
-		    $url !~ /ShoutcastBrowser_Recently_Played/) {
+		} elsif (Slim::Music::Info::isPlaylist($url) && 
+			 Slim::Utils::Misc::inPlaylistFolder($url) && $url !~ /ShoutcastBrowser_Recently_Played/) {
 
+			# Only read playlist files if we're in the playlist dir
 			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
 			my $track = $ds->updateOrCreate({
@@ -221,16 +217,17 @@ sub scanPlaylistFileHandle {
 	my $track      = shift;
 	my $playlistFH = shift || return;
 
+	my $url        = $track->url;
 	my $parentDir  = undef;
 	my $ds         = Slim::Music::Info::getCurrentDataStore();
 
-	if (Slim::Music::Info::isFileURL($track)) {
+	if (Slim::Music::Info::isFileURL($url)) {
 
 		#XXX This was removed before in 3427, but it really works best this way
 		#XXX There is another method that comes close if this shouldn't be used.
 		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($track->path)->parent );
 
-		$::d_scan && msg("scanPlaylistFileHandle: will scan $track, base: $parentDir\n");
+		$::d_scan && msgf("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
 	}
 
 	if (ref($playlistFH) eq 'Slim::Player::Protocols::HTTP') {
@@ -250,7 +247,7 @@ sub scanPlaylistFileHandle {
 		$playlistFH = IO::String->new($playlistString);
 	}
 
-	my @playlistTracks = Slim::Formats::Parse::parseList($track, $playlistFH, $parentDir);
+	my @playlistTracks = Slim::Formats::Parse::parseList($url, $playlistFH, $parentDir);
 
 	# Be sure to remove the reference to this handle.
 	if (ref($playlistFH) eq 'IO::String') {
@@ -264,7 +261,7 @@ sub scanPlaylistFileHandle {
 		# Create a playlist container
 		if (!$track->title) {
 
-			my $title = Slim::Utils::Misc::unescape(basename($track->url));
+			my $title = Slim::Utils::Misc::unescape(basename($url));
 			   $title =~ s/\.\w{3}$//;
 
 			$track->title($title);
@@ -280,8 +277,9 @@ sub scanPlaylistFileHandle {
 		# in our Browse Playlist view either.
 		my $ct = $ds->contentType($track);
 
-		if (Slim::Music::Info::isFileURL($track) && Slim::Utils::Misc::inPlaylistFolder($track) &&
-			$track !~ /ShoutcastBrowser_Recently_Played/ && !Slim::Music::Info::isCUE($track)) {
+		if (Slim::Music::Info::isFileURL($url) && 
+		    Slim::Utils::Misc::inPlaylistFolder($url) &&
+			$url !~ /ShoutcastBrowser_Recently_Played/) {
 
 			$ct = 'ssp';
 		}
