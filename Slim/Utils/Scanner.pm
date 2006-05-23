@@ -59,6 +59,36 @@ sub scanProgressBar {
 	return undef;
 }
 
+# Handle any type of URI thrown at us.
+sub scanPathOrURL {
+	my ($class, $args) = @_;
+
+	my $pathOrUrl = $args->{'url'} || do {
+
+		errorMsg("scanPathOrURL: No path or URL was requested!\n");
+		return;
+	};
+
+	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
+
+		msg("scanPathOrURL: Reading metdata from remote URL: $pathOrUrl\n");
+
+		$class->scanRemoteURL({ 'url' => $pathOrUrl });
+
+	} else {
+
+		if (Slim::Music::Info::isFileURL($pathOrUrl)) {
+
+			$pathOrUrl = Slim::Utils::Misc::pathFromFileURL($pathOrUrl);
+		}
+
+		# Always let the user know what's going on..
+		msg("scanPathOrURL: Finding valid files in: $pathOrUrl\n");
+
+		$class->scanDirectory({ 'url' => $pathOrUrl });
+	}
+}
+
 # Scan a directory on disk, and depending on the type of file, add it to the database.
 sub scanDirectory {
 	my $class = shift;
@@ -72,7 +102,7 @@ sub scanDirectory {
 	my $ds     = Slim::Music::Info::getCurrentDataStore();
 	my $os     = Slim::Utils::OSDetect::OS();
 
-	# Create a Path::Class::Dir object ofr later use.
+	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
 	# See perldoc File::Find::Rule for more information.
@@ -86,6 +116,11 @@ sub scanDirectory {
 	}
 
 	$rule->extras($extras);
+
+	# Only rescan the file if it's changed since our last scan time.
+	if ($::rescan) {
+		$rule->mtime( sprintf('>%d', $ds->lastRescanTime) );
+	}
 
 	# validTypeExtensions returns a qr// regex.
 	$rule->name( Slim::Music::Info::validTypeExtensions() );

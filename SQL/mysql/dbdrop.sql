@@ -2,6 +2,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE metainformation;
 
+DROP TABLE unreadable_tracks;
+
+DROP TABLE rescans;
+
 DROP TABLE tracks;
 
 DROP TABLE playlist_track;

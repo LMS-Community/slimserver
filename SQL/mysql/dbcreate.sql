@@ -13,10 +13,35 @@ SET foreign_key_checks = 0;
 CREATE TABLE metainformation (
   version  int(10) unsigned,
   track_count  int(10) unsigned,
-  total_time   int(10) unsigned
-) TYPE=InnoDB CHARACTER SET utf8;
+  total_time  int(10) unsigned,
+  last_rescan_time int(10) unsigned
+) TYPE=InnoDB;
 
-INSERT INTO metainformation VALUES (20, 0, 0);
+INSERT INTO metainformation VALUES (18, 0, 0, 0);
+
+--
+-- Table: rescans
+--
+CREATE TABLE rescans (
+  id int(10) unsigned NOT NULL auto_increment,
+  files_scanned int(10) unsigned,
+  files_to_scan int(10) unsigned,
+  start_time int(10) unsigned,
+  end_time int(10) unsigned,
+  PRIMARY KEY (id)
+) TYPE=InnoDB;
+
+--
+-- Table: unreadable_tracks
+--
+CREATE TABLE unreadable_tracks (
+  id int(10) unsigned NOT NULL auto_increment,
+  rescan int(10) unsigned,
+  url text NOT NULL,
+  reason text NOT NULL,
+  PRIMARY KEY (id),
+  INDEX unreadableRescanIndex (rescan)
+) TYPE=InnoDB;
 
 --
 -- Table: tracks

@@ -304,6 +304,18 @@ sub clearObjectCaches {
 	}
 }
 
+sub getLastRescanTime {
+	my $class = shift;
+
+	$class->dbh->selectrow_array("SELECT last_rescan_time FROM metainformation");
+}
+
+sub setLastRescanTime {
+	my ($class, $time) = @_;
+
+	$class->dbh->do("UPDATE metainformation SET last_rescan_time = $time");
+}
+
 sub getMetaInformation {
 	my $class = shift;
 

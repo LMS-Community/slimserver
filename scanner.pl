@@ -16,12 +16,14 @@ use warnings;
 
 use FindBin qw($Bin);
 use lib "$Bin";
+
 BEGIN {
 	use bootstrap;
 
 	bootstrap->loadModules(qw(Time::HiRes DBD::SQLite DBI XML::Parser));
 };
 
+use Getopt::Long;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Music::Import;
@@ -34,20 +36,87 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
-use Plugins::iTunes::Importer;
-use Plugins::MusicMagic::Importer;
-
 sub main {
 
-	our $d_info = 0;
-	our $d_remotestream = 0;
-	our $d_parse = 0;
-	our $d_import = 1;
-	our $d_server = 0;
-	our $d_scan = 0;
-	our $d_sql = 0;
-	our $d_itunes = 0;
+	our ($d_info, $d_remotestream, $d_parse, $d_import, $d_scan, $d_sql, $d_itunes);
+	our ($rescan, $wipe, $itunes, $musicmagic);
+
 	our $LogTimestamp = 1;
+	our $d_server     = 1;
+
+	GetOptions(
+		'rescan'     => \$rescan,
+		'wipe'       => \$wipe,
+		'itunes'     => \$itunes,
+		'musicmagic' => \$musicmagic,
+	);
+
+	if (!$rescan && !$wipe && !scalar @ARGV) {
+		usage();
+		exit;
+	}
+
+	# Bring up strings, database, etc.
+	initializeFrameworks();
+
+	my $ds = Slim::Music::Info::getCurrentDataStore();
+
+	#
+	Slim::Utils::Scanner->init;
+
+	Slim::Music::MusicFolderScan->init;
+	Slim::Music::PlaylistFolderScan->init;
+
+	if ($itunes) {
+
+		eval "use Plugins::iTunes::Importer";
+
+		if ($@) {
+			errorMsg("Couldn't load iTunes Importer: $@\n");
+		} else {
+			Plugins::iTunes::Importer->initPlugin;
+		}
+	}
+
+	if ($musicmagic) {
+
+		eval "use Plugins::MusicMagic::Importer";
+
+		if ($@) {
+			errorMsg("Couldn't load MusicMagic Importer: $@\n");
+		} else {
+			Plugins::MusicMagic::Importer->initPlugin;
+		}
+	}
+
+	#$::d_server && msg("SlimServer checkDataSource...\n");
+	#checkDataSource();
+
+	$::d_server && msg("SlimServer done init...\n");
+
+	if ($wipe) {
+		Slim::Music::Info::wipeDBCache();
+	}
+
+	# We've been passed an explict path or URL - deal with that.
+	if (scalar @ARGV) {
+
+		for my $url (@ARGV) {
+
+			Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url });
+		}
+
+	} else {
+
+		# Otherwise just use our Importers to scan.
+		Slim::Music::Import->resetImporters;
+		Slim::Music::Import->startScan;
+	}
+
+	$ds->setLastRescanTime(time);
+}
+
+sub initializeFrameworks {
 
 	$::d_server && msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
@@ -77,30 +146,20 @@ sub main {
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
+}
 
-	#
-	Slim::Utils::Scanner->init;
+sub usage {
+	print <<EOF;
+Usage: $0 [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
 
-	Slim::Music::MusicFolderScan->init;
-	Slim::Music::PlaylistFolderScan->init;
-	Plugins::iTunes::Importer->initPlugin;
-	Plugins::MusicMagic::Importer->initPlugin;
+Examples:
 
-	#$::d_server && msg("SlimServer Plugins init...\n");
-	#Slim::Buttons::Plugins::init();
+	$0 --rescan /Users/dsully/Music
 
-	#$::d_server && msg("SlimServer checkDataSource...\n");
-	#checkDataSource();
+	$0 http://www.somafm.com/groovesalad.pls
 
-	$::d_server && msg("SlimServer done init...\n");
+EOF
 
-	Slim::Music::Info::wipeDBCache();
-	Slim::Music::Import->resetImporters;
-	Slim::Music::Import->startScan;
-
-	#Slim::Utils::Scanner->scanRemoteURL({
-	#	'url' => 'http://www.somafm.com/groovesalad.pls',
-	#});
 }
 
 sub cleanup {

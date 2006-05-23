@@ -27,6 +27,7 @@ use Slim::DataStores::DBI::Contributor;
 use Slim::DataStores::DBI::ContributorAlbum;
 use Slim::DataStores::DBI::Genre;
 use Slim::DataStores::DBI::LightWeightTrack;
+use Slim::DataStores::DBI::Rescan;
 use Slim::DataStores::DBI::Track;
 
 use Slim::Player::ProtocolHandlers;
@@ -108,6 +109,18 @@ sub new {
 	Slim::Utils::Prefs::addPrefChangeHandler('commonAlbumTitles', \&commonAlbumTitlesChanged);
 
 	return $self;
+}
+
+sub setLastRescanTime {
+	my ($class, $time) = @_;
+
+	Slim::DataStores::DBI::DataModel->setLastRescanTime($time);
+}
+
+sub lastRescanTime {
+	my $class = shift;
+
+	Slim::DataStores::DBI::DataModel->getLastRescanTime;
 }
 
 sub dbh {
