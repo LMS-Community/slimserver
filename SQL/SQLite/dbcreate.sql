@@ -92,13 +92,6 @@ CREATE TABLE playlist_track (
   track integer         -- track object
 );
 
-CREATE TABLE dirlist_track (
-  id integer UNIQUE PRIMARY KEY NOT NULL,
-  position integer,     -- order of item in the dirlist
-  dirlist integer,      -- dirlist object
-  item varchar          -- dirlist item
-);
-
 CREATE TABLE albums (
   id integer UNIQUE PRIMARY KEY NOT NULL,
   title varchar,           -- title

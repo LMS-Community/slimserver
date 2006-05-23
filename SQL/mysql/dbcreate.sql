@@ -97,17 +97,6 @@ CREATE TABLE playlist_track (
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --
--- Table: dirlist_track
---
-CREATE TABLE dirlist_track (
-  id int(10) unsigned NOT NULL auto_increment,
-  position  int(10) unsigned,
-  dirlist  int(10) unsigned,
-  item text,
-  PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
-
---
 -- Table: albums
 --
 CREATE TABLE albums (

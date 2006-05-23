@@ -8,8 +8,6 @@ DELETE FROM tracks;
 
 DELETE FROM playlist_track;
 
-DELETE FROM dirlist_track;
-
 DELETE FROM albums;
 
 DELETE FROM contributors;

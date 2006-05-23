@@ -20,6 +20,4 @@ DROP TABLE genre_track;
 
 DROP TABLE comments;
 
-DROP TABLE dirlist_track;
-
 DROP TABLE pluginversion;

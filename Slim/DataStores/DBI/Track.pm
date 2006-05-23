@@ -41,8 +41,6 @@ INIT: {
 	$class->has_many(tracks => [ 'Slim::DataStores::DBI::PlaylistTrack' => 'track' ] => 'playlist' => {
 		'order_by'    => 'position',
 	});
-
-	$class->has_many(diritems => [ 'Slim::DataStores::DBI::DirlistTrack' => 'item' ] => 'dirlist');
 }
 
 sub attributes {
@@ -339,42 +337,6 @@ sub setTracks {
 	# With playlists in the database - we want to make sure the playlist
 	# is consistent to the user.
 	$ds->forceCommit;
-}
-
-sub setDirItems {
-	my $self    = shift;
-	my $entries = shift;
-	
-	# One fell swoop to delete.
-	eval {
-		Slim::DataStores::DBI::DirlistTrack->sql_deleteDirItems->execute($self->id);
-	};
-
-	my $ds = Slim::Music::Info::getCurrentDataStore();
-
-	if (defined $entries && ref($entries) eq 'ARRAY') {
-
-		my $i = 0;
-
-		for my $dirEntry (@$entries) {
-
-			# If tracks are being added via Browse Music Folder -
-			# which still deals with URLs - get the objects to add.
-			if (!blessed($dirEntry) || !$dirEntry->can('id')) {
-
-				$dirEntry = $ds->objectForUrl($dirEntry, 1, 1, 1) || next;
-			}
-
-			if (blessed($dirEntry) && $dirEntry->can('id')) {
-
-				Slim::DataStores::DBI::DirlistTrack->create({
-					dirlist  => $self,
-					item     => $dirEntry->id,
-					position => $i++
-				});
-			}
-		}
-	}
 }
 
 sub contributorsOfType {

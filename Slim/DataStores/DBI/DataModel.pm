@@ -296,7 +296,7 @@ sub clearObjectCaches {
 	my $class = shift;
 
 	for my $c qw(Track LightWeightTrack Album Contributor Genre Comment ContributorAlbum 
-		ContributorTrack DirlistTrack GenreTrack PlaylistTrack) {
+		ContributorTrack GenreTrack PlaylistTrack) {
 
 		my $package = 'Slim::DataStores::DBI::' . $c;
 
