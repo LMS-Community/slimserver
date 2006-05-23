@@ -13,6 +13,7 @@ use Slim::Formats::Playlists;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 
 sub registerParser {

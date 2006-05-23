@@ -54,6 +54,13 @@ tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 # Map our tag functions - so they can be dynamically loaded.
 our %tagFunctions = ();
 
+	%tagFunctions = (
+		'mp3' => {
+			'module' => 'Slim::Formats::MP3',
+			'loaded' => 0,
+			'getTag' => \&Slim::Formats::MP3::getTag,
+		},
+
 		'mp2' => {
 			'module' => 'Slim::Formats::MP3',
 			'loaded' => 0,
