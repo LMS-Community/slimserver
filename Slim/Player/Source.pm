@@ -1191,7 +1191,7 @@ sub openSong {
 			$::d_source && msg("URL is remote : $fullpath\n");
 
 			# we don't get the content type until after the stream is opened
-			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
+			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($fullpath, $client);
 	
 			if ($sock) {
 	

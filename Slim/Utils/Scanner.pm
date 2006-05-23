@@ -241,6 +241,7 @@ sub scanRemoteURL {
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 
 	my $remoteFH = Slim::Player::ProtocolHandlers->openRemoteStream($url);
+	my @objects  = ();
 
 	if (!$remoteFH) {
 		errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist.\n");
@@ -265,11 +266,21 @@ sub scanRemoteURL {
 			$remoteFH->close;
 			$remoteFH = undef;
 
-			return 0;
+			push @objects, $track;
 		}
+
+	} else {
+
+		@objects = $class->scanPlaylistFileHandle($track, $remoteFH);
 	}
 
-	return $class->scanPlaylistFileHandle($track, $remoteFH);
+	# If the caller wants the list of objects we found.
+	if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {
+
+		push @{$args->{'listRef'}}, @objects;
+	}
+
+	return @objects;
 }
 
 sub scanPlaylistFileHandle {
@@ -290,7 +301,7 @@ sub scanPlaylistFileHandle {
 		$::d_scan && msgf("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
 	}
 
-	if (ref($playlistFH) eq 'Slim::Formats::HTTP') {
+	if (ref($playlistFH) eq 'Slim::Formats::HTTP' || ref($playlistFH) eq 'Slim::Player::Protocols::HTTP') {
 
 		# we've just opened a remote playlist.  Due to the synchronous
 		# nature of our parsing code and our http socket code, we have
