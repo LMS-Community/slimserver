@@ -1198,7 +1198,7 @@ sub openSong {
 
 			$directStream = 1;
 			$client->streamformat(Slim::Music::Info::contentType($track));
-			$sock->close;
+			$sock->close if $sock;
 		}
 
 		if (!$directStream) {
