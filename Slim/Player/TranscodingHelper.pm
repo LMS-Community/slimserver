@@ -304,6 +304,11 @@ sub tokenizeConvertCommand {
 		$fullpath =~ s/([\$\"\`])/\\$1/g;
 	}
 	
+	# Bug 3396, mov123 commands for URLs must pass the URL to mov123, instead of using stdin
+	if ( $command =~ /mov123/ && $fullpath =~ /^http/ ) {
+		$filepath = $fullpath;
+	}
+	
 	$command =~ s/\$FILE\$/"$filepath"/g;
 	$command =~ s/\$URL\$/"$fullpath"/g;
 	$command =~ s/\$RATE\$/$sampleRate/g;

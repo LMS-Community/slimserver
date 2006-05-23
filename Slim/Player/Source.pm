@@ -1171,23 +1171,41 @@ sub openSong {
 	####################
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
+		
+		# Even when direct streaming, we need to connect to the remote stream to check a few things:
+		# 1. The remote URL may not have a file extension therefore we can't guess the content-type
+		# 2. The URL might redirect (a lot of Podcasts do this)
+		# 3. The extension might not match the content-type sent by the server.
+		
+		my $contentType;
+		
+		my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
+		if ( $sock ) {
+			$contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;	
+			
+			# Bug 3396, some m4a audio is incorrectly served as audio/mpeg.
+			# In this case, prefer the file extension to the content-type
+			if ( $fullpath =~ /(m4a|aac)$/i && $contentType eq 'mp3' ) {
+				$contentType = 'mov';
+			}	
+			
+			$track->content_type( $contentType );
+			$track->update;
+			$::d_source && msg("openSong: Remote content type is $contentType [$fullpath]\n");
+		}
 
 		if ($client->canDirectStream($fullpath)) {
 
 			$directStream = 1;
 			$client->streamformat(Slim::Music::Info::contentType($track));
-		} 
+			$sock->close;
+		}
 
 		if (!$directStream) {
 
 			$::d_source && msg("openSong: URL is remote [$fullpath]\n");
-
-			# we don't get the content type until after the stream is opened
-			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
 	
 			if ($sock) {
-
-				my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
 	
 				# if it's an audio stream, try to stream,
 				# either directly, or via transcoding.
@@ -1204,6 +1222,8 @@ sub openSong {
 						return undef;
 					}
 	
+					# XXX: getConvertCommand is already called above during canDirectStream
+					# We shouldn't run it twice...
 					my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand(
 						$client, $track, $contentType,
 					);
