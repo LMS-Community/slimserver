@@ -82,6 +82,7 @@ use lib $Bin;
 
 BEGIN {
 	use bootstrap;
+	use Slim::Utils::OSDetect;
 
 	bootstrap->loadModules();
 
