@@ -180,7 +180,7 @@ sub tryModuleLoad {
 
 				# Don't bother removing/reloading
 				# these, as they're part of core Perl.
-				if ($newModule =~ /^(?:DynaLoader|Carp|overload)/) {
+				if ($newModule =~ /^(?:DynaLoader|Carp|overload|IO|Fcntl|Socket|FileHandle)/) {
 					next;
 				}
 
