@@ -19,7 +19,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
 
-INIT {
+{
         my $class = __PACKAGE__;
 
         for my $accessor (qw(confFile mysqlDir pidFile socketFile needSystemTables processObj)) {
@@ -36,6 +36,18 @@ sub init {
 	if (Slim::Utils::Prefs::get('dbsource') !~ /port=9092/) {
 
 		$::d_mysql && msg("MySQLHelper: init() Not starting MySQL - looks to be user configured.\n");
+
+		if (Slim::Utils::OSDetect::OS() ne 'win') {
+
+			# The user might have a socket file in a non-standard
+			# location. See bug 3443
+			my $socket = `mysql_config --socket`;
+			chomp($socket);
+
+			if ($socket && -S $socket) {
+				$class->socketFile($socket);
+			}
+		}
 
 		return 1;
 	}

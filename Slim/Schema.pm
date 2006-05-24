@@ -60,6 +60,13 @@ sub init {
 	my $password = Slim::Utils::Prefs::get('dbpassword');
 	my ($driver) = ($source =~ /^dbi:(\w+):/);
 
+	# Bug 3443 - append a socket if needed
+	# Windows doesn't use named sockets (it uses TCP instead)
+	if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
+
+		$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+	}
+
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 0,

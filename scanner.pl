@@ -32,6 +32,7 @@ use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
 use Slim::Utils::Misc;
+use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
@@ -158,6 +159,9 @@ sub initializeFrameworks {
 	$::d_server && msg("SlimServer strings init...\n");
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
+	$::d_server && msg("SlimServer MySQL init...\n");
+	Slim::Utils::MySQLHelper->init();
+
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
 }
@@ -218,6 +222,8 @@ sub cleanup {
 	if ($INC{'Slim/Schema.pm'}) {
 		Slim::Schema->forceCommit;
 	}
+
+	Slim::Utils::MySQLHelper->cleanup;
 }
 
 main();
