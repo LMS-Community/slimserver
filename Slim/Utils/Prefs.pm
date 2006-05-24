@@ -1086,7 +1086,7 @@ sub load {
 	};
 
 	if ($@) {
-		die "There was an error reading your SlimServer configuration file - it might be corrupted!\n";
+		die "There was an error reading your SlimServer configuration file - it might be corrupted!: [$@]\n";
 	}
 	
 	# see if we can write out the real prefs file

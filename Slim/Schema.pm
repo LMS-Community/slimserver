@@ -134,6 +134,14 @@ sub init {
 	$initialized = 1;
 }
 
+sub disconnect {
+	my $class = shift;
+
+	eval { $class->storage->dbh->disconnect };
+
+	$initialized = 0;
+}
+
 sub rs {
 	my $class   = shift;
 	my $rsClass = shift;

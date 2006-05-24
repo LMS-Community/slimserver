@@ -221,6 +221,7 @@ sub cleanup {
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
 		Slim::Schema->forceCommit;
+		Slim::Schema->disconnect;
 	}
 
 	Slim::Utils::MySQLHelper->cleanup;

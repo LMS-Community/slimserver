@@ -189,21 +189,29 @@ sub stopServer {
 	my $class = shift;
 
 	# The ->pid from Proc::Background isn't the right one on *nix.
-	chomp(my $pid = read_file($class->pidFile));
+	my $pid = undef;
+
+	if (-f $class->pidFile) {
+		chomp($pid = read_file($class->pidFile));
+	}
 
 	$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $pid);
 
-	kill('TERM', $pid);
+	if ($pid) {
+		kill('TERM', $pid);
+	}
 
 	# Wait for the PID file to go away.
 	$class->_checkForDeadProcess;
 
 	# Try harder.
-	kill('KILL', $pid);
+	if ($pid) {
+		kill('KILL', $pid);
+	}
 
 	$class->_checkForDeadProcess;
 
-	if (kill(0, $pid)) {
+	if ($pid && kill(0, $pid)) {
 
 		errorMsg("MySQLHelper: stopServer() - server didn't shutdown in 30 seconds!\n");
 		exit;

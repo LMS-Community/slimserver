@@ -55,6 +55,8 @@ my @default_optional_modules = qw(GD Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
 
+my $sigINTcalled             = 0;
+
 sub loadModules {
 	my ($class, $required_modules, $optional_modules) = @_;
 
@@ -212,6 +214,8 @@ sub tryModuleLoad {
 sub sigint {
 	$::d_server && Slim::Utils::Misc::msg("Got sigint.\n");
 
+	$sigINTcalled = 1;
+
 	main::cleanup();
 
 	exit();
@@ -241,7 +245,9 @@ sub END {
 
 	$::d_server && Slim::Utils::Misc::msg("Got to the END.\n");
 
-	sigint();
+	if (!$sigINTcalled) {
+		sigint();
+	}
 }
 
 1;

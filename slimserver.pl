@@ -1004,6 +1004,7 @@ sub cleanup {
 
 	# Make sure to flush anything in the database to disk.
 	Slim::Schema->forceCommit;
+	Slim::Schema->disconnect;
 
 	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;
