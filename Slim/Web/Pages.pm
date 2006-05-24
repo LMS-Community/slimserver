@@ -252,7 +252,7 @@ sub addSongInfo {
 
 	if ($url) {
 
-		$track = Slim::Schema->objectForUrl({
+		$track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1

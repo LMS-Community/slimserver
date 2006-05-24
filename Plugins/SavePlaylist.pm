@@ -122,7 +122,7 @@ sub lines {
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');
 
-	} elsif (Slim::Schema->objectForUrl($newUrl)) {
+	} elsif (Slim::Schema->rs('Track')->objectForUrl($newUrl)) {
 		
 		# Special text for overwriting an existing playlist
 		# if large text, make sure we show the message instead of the playlist name

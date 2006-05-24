@@ -80,7 +80,7 @@ sub editplaylist {
 
 		if ($title && $url) {
 
-			my $playlistTrack = Slim::Schema->updateOrCreate({
+			my $playlistTrack = Slim::Schema->rs('Track')->updateOrCreate({
 				'url'      => $url,
 				'readTags' => 1,
 				'commit'   => 1,
@@ -225,7 +225,7 @@ sub renamePlaylist {
 			catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
 		);
 
-		my $existingPlaylist = Slim::Schema->objectForUrl({
+		my $existingPlaylist = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $newUrl,
 			'playlist' => 1,
 		});

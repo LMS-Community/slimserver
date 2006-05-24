@@ -45,7 +45,7 @@ sub processCoverArtRequest {
 
 		# If the object doesn't have any cover art - fall
 		# through to the generic cover image.
-		$obj = Slim::Schema->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
+		$obj = Slim::Schema->rs('Track')->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
 			Slim::Player::Playlist::song($client)
 		));
 

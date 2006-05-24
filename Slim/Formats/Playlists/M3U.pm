@@ -153,7 +153,7 @@ sub write {
 
 		if ($addTitles && Slim::Music::Info::isURL($item)) {
 
-			my $track = Slim::Schema->objectForUrl($item);
+			my $track = Slim::Schema->rs('Track')->objectForUrl($item);
 
 			if (!blessed($track) || !$track->can('title')) {
 

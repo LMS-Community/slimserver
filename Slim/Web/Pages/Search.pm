@@ -309,7 +309,7 @@ sub fillInSearchResults {
 
 				if (!blessed($itemObj) || !$itemObj->can('id')) {
 
-					$itemObj = Slim::Schema->objectForUrl($item);
+					$itemObj = Slim::Schema->rs('Track')->objectForUrl($item);
 				}
 
 				if (!blessed($itemObj) || !$itemObj->can('id')) {

@@ -652,7 +652,7 @@ sub findAndScanDirectoryTree {
 
 	} else {
 
-		$topLevelObj = Slim::Schema->objectForUrl({
+		$topLevelObj = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $urlOrObj,
 			'create'   => 1,
 			'readTags' => 1,

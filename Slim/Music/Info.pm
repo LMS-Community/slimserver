@@ -259,7 +259,7 @@ sub updateCacheEntry {
 
 	my $list     = $cacheEntryHash->{'LIST'} || [];
 
-	my $playlist = Slim::Schema->updateOrCreate({
+	my $playlist = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'playlist'   => 1,
 		'attributes' => $cacheEntryHash,
@@ -271,7 +271,7 @@ sub updateCacheEntry {
 
 		for my $url (@$list) {
 
-			push @tracks, Slim::Schema->objectForUrl({
+			push @tracks, Slim::Schema->rs('Track')->objectForUrl({
 				'url'    => $url,
 				'create' => 1,
 			});
@@ -314,7 +314,7 @@ sub setContentType {
 	$urlToTypeCache{$url} = $type;
 
 	# Commit, since we might use it again right away.
-	Slim::Schema->updateOrCreate({
+	Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'CT' => $type },
 		'commit'     => 1,
@@ -327,7 +327,7 @@ sub setContentType {
 sub title {
 	my $url = shift;
 
-	my $track = Slim::Schema->updateOrCreate({
+	my $track = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'      => $url,
 		'commit'   => 1,
 		'readTags' => isRemoteURL($url) ? 0 : 1,
@@ -344,7 +344,7 @@ sub setTitle {
 
 	# Only readTags if we're not a remote URL. Otherwise, we'll
 	# overwrite the title with the URL.
-	Slim::Schema->updateOrCreate({
+	Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
@@ -355,7 +355,7 @@ sub setBitrate {
 	my $url = shift;
 	my $bitrate = shift;
 
-	Slim::Schema->updateOrCreate({
+	Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => { 'BITRATE' => $bitrate },
 		'readTags'   => 1,
@@ -448,7 +448,7 @@ sub standardTitle {
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	# XXX - exception should go here. comming soon.
-	my $track     = Slim::Schema->objectForUrl({ 'url' => $pathOrObj, 'create' => 1, 'readTags' => 1 });
+	my $track     = Slim::Schema->rs('Track')->objectForUrl({ 'url' => $pathOrObj, 'create' => 1, 'readTags' => 1 });
 	my $fullpath  = blessed($track) && $track->can('url') ? $track->url : $track;
 	my $format;
 
@@ -597,7 +597,7 @@ sub cachedPlaylist {
 
 	# We might have gotten an object passed in for effeciency. Check for
 	# that, and if not, make sure we get a valid object from the db.
-	my $playlist = Slim::Schema->objectForUrl({
+	my $playlist = Slim::Schema->rs('Track')->objectForUrl({
 		'url'      => $urlOrObj,
 		'playlist' => 1,
 	});

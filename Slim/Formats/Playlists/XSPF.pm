@@ -74,7 +74,7 @@ sub write {
 
 	for my $item (@{$listref}) {
 
-		my $obj = Slim::Schema->objectForUrl($item);
+		my $obj = Slim::Schema->rs('Track')->objectForUrl($item);
 
 		if (!blessed($obj) || !$obj->can('title')) {
 

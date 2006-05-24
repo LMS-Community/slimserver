@@ -69,7 +69,7 @@ sub song {
 
 	if ($objOrUrl && !blessed($objOrUrl)) {
 
-		 $objOrUrl = Slim::Schema->objectForUrl({
+		 $objOrUrl = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $objOrUrl,
 			'create'   => 1,
 			'readTags' => 1,
@@ -493,7 +493,7 @@ sub reshuffle {
 
 				$::d_playlist && msg("Track: $track isn't an object - fetching\n");
 
-				$trackObj = Slim::Schema->objectForUrl($track);
+				$trackObj = Slim::Schema->rs('Track')->objectForUrl($track);
 			}
 
 			# Pull out the album id, and accumulate all of the
@@ -529,7 +529,7 @@ sub reshuffle {
 
 		# This shouldn't happen - but just in case.
 		if (!blessed($currentTrack) || !$currentTrack->can('albumid')) {
-			$currentTrack = Slim::Schema->objectForUrl($currentTrack);
+			$currentTrack = Slim::Schema->rs('Track')->objectForUrl($currentTrack);
 		}
 
 		if (blessed($currentTrack) && $currentTrack->can('albumid')) {
@@ -691,7 +691,7 @@ sub modifyPlaylistCallback {
 
 				# Create a virtual track that is our pointer
 				# to the list of tracks that make up this playlist.
-				my $playlistObj = Slim::Schema->updateOrCreate({
+				my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
 
 					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
 					'playlist'   => 1,

@@ -138,7 +138,7 @@ sub playlist {
 
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
-			$track = Slim::Schema->objectForUrl($objOrUrl) || do {
+			$track = Slim::Schema->rs('Track')->objectForUrl($objOrUrl) || do {
 				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
 				$itemCount++;
 				next;

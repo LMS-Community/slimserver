@@ -216,7 +216,7 @@ sub browseTreeItemName {
 
 		my $items = $client->param('listRef');
 
-		my $track = Slim::Schema->objectForUrl({
+		my $track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,

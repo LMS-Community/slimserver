@@ -394,7 +394,7 @@ sub exportFunction {
 		$::d_moodlogic && msg("MoodLogic: Creating entry for track $isScanning: $url\n");
 
 		# that's all for the track
-		my $track = Slim::Schema->updateOrCreate({
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
@@ -894,7 +894,7 @@ sub instant_mix {
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj  = Slim::Schema->objectForUrl($item) || next;
+		my $trackObj  = Slim::Schema->rs('Track')->objectForUrl($item) || next;
 
 		$trackObj->displayAsHTML(\%form, 0);
 

@@ -344,7 +344,7 @@ sub underMax {
 	# input bitrate is under the maximum.
 	if (defined($type) && $type eq 'mp3') {
 
-		my $track = Slim::Schema->objectForUrl($fullpath);
+		my $track = Slim::Schema->rs('Track')->objectForUrl($fullpath);
 		my $rate  = 0;
 
 		if (blessed($track) && $track->can('bitrate')) {

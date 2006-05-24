@@ -112,4 +112,20 @@ sub browse {
 
 }
 
+# XXX  - These are wrappers around the methods in Slim::Schema, which need to
+# be moved here. This is the proper API, and we want to have people using this
+# now, and we can migrate the code underneath later.
+
+sub objectForUrl {
+	my $self = shift;
+
+	return Slim::Schema->objectForUrl(@_);
+}
+
+sub updateOrCreate {
+	my $self = shift;
+
+	return Slim::Schema->updateOrCreate(@_);
+}
+
 1;

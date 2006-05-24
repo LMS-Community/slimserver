@@ -353,7 +353,7 @@ sub processSong {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 	}
 
-	my $track = Slim::Schema->updateOrCreate({
+	my $track = Slim::Schema->rs('Track')->updateOrCreate({
 
 		'url'        => $fileurl,
 		'attributes' => \%attributes,

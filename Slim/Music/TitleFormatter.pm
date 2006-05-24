@@ -435,7 +435,7 @@ sub infoFormat {
 	my $output    = '';
 	my $format;
 
-	my $track     = Slim::Schema->objectForUrl({
+	my $track     = Slim::Schema->rs('Track')->objectForUrl({
 		'url'    => $fileOrObj,
 		'create' => 1,
 	});

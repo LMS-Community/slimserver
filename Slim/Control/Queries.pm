@@ -232,7 +232,7 @@ sub cursonginfoQuery {
 
 		} else {
 
-			my $track = Slim::Schema->objectForUrl($url);
+			my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
 			if (!blessed($track) || !$track->can('secs')) {
 
@@ -613,7 +613,7 @@ sub playlistXQuery {
 		
 	} elsif ($entity =~ /(duration|artist|album|title|genre)/) {
 
-		my $track = Slim::Schema->objectForUrl({
+		my $track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => Slim::Player::Playlist::song($client, $index),
 			'create'   => 1,
 			'readTags' => 1,
@@ -1089,7 +1089,7 @@ sub statusQuery {
 			$request->addResult('rate', 
 				Slim::Player::Source::rate($client));
 			
-			my $track = Slim::Schema->objectForUrl($song);
+			my $track = Slim::Schema->rs('Track')->objectForUrl($song);
 
 			my $dur   = 0;
 
@@ -1279,7 +1279,7 @@ sub songinfoQuery {
 				$tags .= 'x';
 			}
 
-			$track = Slim::Schema->objectForUrl($url)
+			$track = Slim::Schema->rs('Track')->objectForUrl($url)
 		}
 	}
 	
@@ -1495,7 +1495,7 @@ sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
 
-	my $track     = Slim::Schema->objectForUrl($pathOrObj);
+	my $track     = Slim::Schema->rs('Track')->objectForUrl($pathOrObj);
 
 #	msg("REMOTE STREAM\n") if Slim::Music::Info::isRemoteURL($pathOrObj);
 

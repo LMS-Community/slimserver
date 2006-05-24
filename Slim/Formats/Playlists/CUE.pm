@@ -171,7 +171,7 @@ sub parse {
 
 		$::d_parse && msg("Reading tags to get ending time of $filename\n");
 
-		my $track = Slim::Schema->updateOrCreate({
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 			'url'        => $filename,
 			'readTags'   => 1,
 		});
@@ -311,7 +311,7 @@ sub read {
 
 			$::d_parse && msg("Creating new track for: $track->{'FILENAME'}\n");
 
-			$basetrack = Slim::Schema->updateOrCreate({
+			$basetrack = Slim::Schema->rs('Track')->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
 				'attributes' => {
 					'CONTENT_TYPE'    => 'cur',
@@ -344,7 +344,7 @@ sub read {
 
 		# Do the actual data store
 		# Skip readTags since we'd just be reading the same file over and over
-		Slim::Schema->updateOrCreate({
+		Slim::Schema->rs('Track')->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # no need to read tags, since we did it for the base file

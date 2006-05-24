@@ -48,7 +48,7 @@ sub setTracks {
 		# which still deals with URLs - get the objects to add.
 		if (!blessed($track) || !$track->can('url')) {
 
-			$track = Slim::Schema->objectForUrl({
+			$track = Slim::Schema->rs('Track')->objectForUrl({
 				'url'      => $track,
 				'create'   => 1,
 				'readTags' => 1,

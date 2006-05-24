@@ -6,6 +6,7 @@ SET foreign_key_checks = 0;
 --
 -- Table: metainformation
 --
+DROP TABLE IF EXISTS metainformation;
 CREATE TABLE metainformation (
   name  varchar(255) NOT NULL DEFAULT '',
   value varchar(255) NOT NULL DEFAULT '',
@@ -18,6 +19,7 @@ INSERT INTO metainformation VALUES ('isScanning', 0);
 --
 -- Table: rescans
 --
+DROP TABLE IF EXISTS rescans;
 CREATE TABLE rescans (
   id int(10) unsigned NOT NULL auto_increment,
   files_scanned int(10) unsigned,
@@ -30,6 +32,7 @@ CREATE TABLE rescans (
 --
 -- Table: unreadable_tracks
 --
+DROP TABLE IF EXISTS unreadable_tracks;
 CREATE TABLE unreadable_tracks (
   id int(10) unsigned NOT NULL auto_increment,
   rescan int(10) unsigned,
@@ -42,6 +45,7 @@ CREATE TABLE unreadable_tracks (
 --
 -- Table: tracks
 --
+DROP TABLE IF EXISTS tracks;
 CREATE TABLE tracks (
   id int(10) unsigned NOT NULL auto_increment,
   url text NOT NULL,
@@ -107,6 +111,7 @@ CREATE TABLE tracks (
 --
 -- Table: playlist_track
 --
+DROP TABLE IF EXISTS playlist_track;
 CREATE TABLE playlist_track (
   id int(10) unsigned NOT NULL auto_increment,
   position  int(10) unsigned,
@@ -120,6 +125,7 @@ CREATE TABLE playlist_track (
 --
 -- Table: albums
 --
+DROP TABLE IF EXISTS albums;
 CREATE TABLE albums (
   id int(10) unsigned NOT NULL auto_increment,
   title text,
@@ -149,6 +155,7 @@ CREATE TABLE albums (
 --
 -- Table: contributors
 --
+DROP TABLE IF EXISTS contributors;
 CREATE TABLE contributors (
   id int(10) unsigned NOT NULL auto_increment,
   name text,
@@ -169,6 +176,7 @@ CREATE TABLE contributors (
 --
 -- Table: contributor_track
 --
+DROP TABLE IF EXISTS contributor_track;
 CREATE TABLE contributor_track (
   role  int(10) unsigned,
   contributor  int(10) unsigned,
@@ -184,6 +192,7 @@ CREATE TABLE contributor_track (
 --
 -- Table: contributor_album
 --
+DROP TABLE IF EXISTS contributor_album;
 CREATE TABLE contributor_album (
   role  int(10) unsigned,
   contributor  int(10) unsigned,
@@ -199,6 +208,7 @@ CREATE TABLE contributor_album (
 --
 -- Table: genres
 --
+DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
   id int(10) unsigned NOT NULL auto_increment,
   name text,
@@ -218,6 +228,7 @@ CREATE TABLE genres (
 --
 -- Table: genre_track
 --
+DROP TABLE IF EXISTS genre_track;
 CREATE TABLE genre_track (
   genre  int(10) unsigned,
   track  int(10) unsigned,
@@ -231,6 +242,7 @@ CREATE TABLE genre_track (
 --
 -- Table: comments
 --
+DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
   id int(10) unsigned NOT NULL auto_increment,
   track  int(10) unsigned,
@@ -243,6 +255,7 @@ CREATE TABLE comments (
 --
 -- Table: pluginversion
 --
+DROP TABLE IF EXISTS pluginversion;
 CREATE TABLE pluginversion (
   id int(10) unsigned NOT NULL auto_increment,
   name varchar(255),

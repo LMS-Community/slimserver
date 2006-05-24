@@ -251,7 +251,7 @@ sub quickstart {
 		# Find the track title
 		if ( $client->linesPerScreen() > 1 ) {
 			my $objOrUrl = Slim::Player::Playlist::song( $client, Slim::Player::Source::streamingSongIndex($client) );
-			my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : Slim::Schema->objectForUrl($objOrUrl, 1, 1);
+			my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : Slim::Schema->rs('Track')->objectForUrl($objOrUrl, 1, 1);
 			$line2       = Slim::Music::Info::standardTitle($client, $track);
 		}
 		

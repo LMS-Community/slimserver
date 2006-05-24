@@ -1840,7 +1840,7 @@ sub buildStatusHeaders {
 		
 		if ($client && Slim::Player::Playlist::count($client)) { 
 
-			my $track = Slim::Schema->objectForUrl(Slim::Player::Playlist::song($client));
+			my $track = Slim::Schema->rs('Track')->objectForUrl(Slim::Player::Playlist::song($client));
 	
 			$headers{"x-playertrack"} = Slim::Player::Playlist::song($client); 
 			$headers{"x-playerindex"} = Slim::Player::Source::currentSongIndex($client) + 1;

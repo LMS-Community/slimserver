@@ -70,7 +70,7 @@ sub getPlaylist {
 
 		for ($idx = $start; $idx <= $end; $idx++) {
 
-			my $track = Slim::Schema->objectForUrl(Slim::Player::Playlist::song($client, $idx));
+			my $track = Slim::Schema->rs('Track')->objectForUrl(Slim::Player::Playlist::song($client, $idx));
 
 			if (blessed($track)) {
 

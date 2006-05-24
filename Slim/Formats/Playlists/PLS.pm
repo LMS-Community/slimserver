@@ -98,7 +98,7 @@ sub write {
 
 		$itemnum++;
 
-		my $track = Slim::Schema->objectForUrl($item);
+		my $track = Slim::Schema->rs('Track')->objectForUrl($item);
 
 		if (!blessed($track) || !$track->can('title')) {
 

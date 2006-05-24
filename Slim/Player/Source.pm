@@ -1153,7 +1153,7 @@ sub openSong {
 	my $song     = streamingSong($client);
 	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 
-	my $track    = Slim::Schema->objectForUrl({
+	my $track    = Slim::Schema->rs('Track')->objectForUrl({
 		'url'      => $objOrUrl,
 		'create'   => 1,
 		'readTags' => 1
@@ -1597,7 +1597,7 @@ sub readNextChunk {
 					# starting a new trick segment, calculate the chunk offset and length
 					my $now   = $client->songBytes() + $song->{offset};
 					my $url   = Slim::Player::Playlist::song($client, streamingSongIndex($client));
-					my $track = Slim::Schema->objectForUrl($url);
+					my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
 					if (!blessed($track) || !$track->can('bitrate')) {
 

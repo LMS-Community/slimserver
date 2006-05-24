@@ -218,7 +218,7 @@ sub handleTrack {
 
 		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
 
-		Slim::Schema->markEntryAsInvalid($url);
+		Slim::Schema->search('Track', { 'url' => $url })->delete;
 
 		# Don't show these tracks in the playlists either.
 		delete $tracks{$id};
@@ -260,7 +260,7 @@ sub handleTrack {
 			$::d_itunes && msg("iTunes: file not found: $file\n");
 
 			# Tell the database to cleanup.
-			Slim::Schema->markEntryAsInvalid($url);
+			Slim::Schema->search('Track', { 'url' => $url })->delete;
 
 			delete $tracks{$id};
 
@@ -341,7 +341,7 @@ sub handleTrack {
 		$cacheEntry{'VALID'} = 1;
 
 		# Only read tags if we don't have a music folder defined.
-		my $track = Slim::Schema->updateOrCreate({
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
@@ -402,7 +402,7 @@ sub handlePlaylist {
 		for my $url (@{$cacheEntry->{'LIST'}}) {
 
 			# update with Podcast genre
-			my $track = Slim::Schema->updateOrCreate({
+			my $track = Slim::Schema->rs('Track')->updateOrCreate({
 				'url'        => $url,
 				'attributes' => { 'GENRE' => 'Podcasts' },
 			});

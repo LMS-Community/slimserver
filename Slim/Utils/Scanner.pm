@@ -255,7 +255,7 @@ sub scanRemoteURL {
 	}
 
 	#
-	my $track = Slim::Schema->updateOrCreate({
+	my $track = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'      => $url,
 		'readTags' => 1,
 	});
@@ -278,7 +278,7 @@ sub scanRemoteURL {
 	} else {
 
 		# Re-fetch as a playlist.
-		my $playlist = Slim::Schema->objectForUrl({
+		my $playlist = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
 			'playlist' => 1,
 		});

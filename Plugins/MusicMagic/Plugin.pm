@@ -750,7 +750,7 @@ sub musicmagic_mix {
 
 	} elsif ($playlist) {
 
-		my ($obj) = Slim::Schema->objectForUrl({
+		my ($obj) = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $playlist,
 			'playlist' => 1,
 		});
@@ -853,7 +853,7 @@ sub musicmagic_mix {
 
 		# If we can't get an object for this url, skip it, as the
 		# user's database is likely out of date. Bug 863
-		my $trackObj = Slim::Schema->objectForUrl($item);
+		my $trackObj = Slim::Schema->rs('Track')->objectForUrl($item);
 
 		if (!blessed($trackObj) || !$trackObj->can('id')) {
 

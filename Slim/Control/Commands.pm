@@ -642,7 +642,7 @@ sub playlistSaveCommand {
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
 
-	my $playlistObj = Slim::Schema->updateOrCreate({
+	my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
 			catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
@@ -1049,7 +1049,7 @@ sub playlistZapCommand {
 		Slim::Control::Request::executeRequest($client, ["playlist", "delete", $zapindex]);
 	}
 
-	my $playlistObj = Slim::Schema->updateOrCreate({
+	my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => Slim::Utils::Misc::fileURLFromPath(
 			catfile( Slim::Utils::Prefs::get('playlistdir'), $zapped . '.m3u')
 		),

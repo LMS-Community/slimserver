@@ -137,7 +137,7 @@ sub getTag {
 
 		Slim::Formats::Playlists::CUE->processAnchor($track);
 
-		Slim::Schema->updateOrCreate({
+		Slim::Schema->rs('Track')->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # avoid the loop, don't read tags

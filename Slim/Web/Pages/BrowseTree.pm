@@ -100,7 +100,7 @@ sub browsetree {
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
-		my $item = Slim::Schema->objectForUrl({
+		my $item = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,

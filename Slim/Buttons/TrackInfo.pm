@@ -86,7 +86,7 @@ sub _trackDataForCurrentItem {
 	my $client = shift;
 	my $item   = shift || return;
 
-	my $track  = Slim::Schema->objectForUrl(track($client));
+	my $track  = Slim::Schema->rs('Track')->objectForUrl(track($client));
 
 	if (!blessed($track) || !$track->can('genre')) {
 
@@ -180,7 +180,7 @@ sub preloadLines {
 	@{$client->trackInfoLines}   = ();
 	@{$client->trackInfoContent} = ();
 
-	my $track = Slim::Schema->objectForUrl($url);
+	my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
 	# Couldn't get a track or URL? How do people get in this state?
 	if (!$url || !blessed($track) || !$track->can('title')) {
@@ -338,7 +338,7 @@ sub listExitHandler {
 
 		# Get object for currently being browsed song from the datasource
 		# This probably isn't necessary as track($client) is already an object!
-		my $track = Slim::Schema->objectForUrl(track($client));
+		my $track = Slim::Schema->rs('Track')->objectForUrl(track($client));
 
 		if (!blessed($track) || !$track->can('album') || !$track->can('artist')) {
 

@@ -79,7 +79,7 @@ sub parseDirectBody {
 	$stream =~ s/http:\/\///;
 	$stream = 'radioio://stream/' . Plugins::RadioIO::Plugin::decrypt($stream);
 
-	my $track = Slim::Schema->objectForUrl($url);
+	my $track = Slim::Schema->rs('Track')->objectForUrl($url);
 
 	if (blessed($track) && $track->can('title')) {
 

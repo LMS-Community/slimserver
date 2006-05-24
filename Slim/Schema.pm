@@ -106,12 +106,12 @@ sub init {
 	/);
 
 	# Build all our class accessors and populate them.
-	for my $accessor (qw(artworkCache lastTrackURL lastTrack zombieList trackAttrs driver)) {
+	for my $accessor (qw(artworkCache lastTrackURL lastTrack trackAttrs driver)) {
 
 		$class->mk_classaccessor($accessor);
 	}
 
-	for my $name (qw(artworkCache lastTrack zombieList)) {
+	for my $name (qw(artworkCache lastTrack)) {
 
 		$class->$name({});
 	}
@@ -348,8 +348,6 @@ sub objectForUrl {
 		});
 	}
 
-	delete $self->zombieList->{$url};
-
 	return $track;
 }
 
@@ -397,7 +395,7 @@ sub newTrack {
 
 		$::d_info && msg("readTag was ". $args->{'readTags'}  ." for $url\n");
 
-		$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
+		$attributeHash = { %{$self->_readTags($url)}, %$attributeHash  };
 	}
 
 	# Abort early and don't add the track if it's DRM'd
@@ -489,10 +487,6 @@ sub updateOrCreate {
 		return undef;
 	}
 
-	# Always remove from the zombie list, since we're about to update or
-	# create this item.
-	delete $self->zombieList->{$url};
-
 	# Track will be defined or not based on the assignment above.
 	if (!defined $track) {
 		$track = $self->_retrieveTrack($url);
@@ -521,7 +515,7 @@ sub updateOrCreate {
 			defined $attributeHash->{'CONTENT_TYPE'} &&
 			$attributeHash->{'CONTENT_TYPE'} ne 'cur') {
 
-			$attributeHash = { %{$self->readTags($url)}, %$attributeHash  };
+			$attributeHash = { %{$self->_readTags($url)}, %$attributeHash  };
 		}
 
 		my $deferredAttributes;
@@ -569,73 +563,6 @@ sub updateOrCreate {
 	}
 
 	return $track;
-}
-
-# Delete a track from the database.
-sub delete {
-	my $self = shift;
-	my $urlOrObj = shift;
-	my $commit = shift;
-
-	# XXX - exception should go here. Comming soon.
-	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
-	my $url   = blessed($track) && $track->can('get') ? $track->get('url') : $urlOrObj;
-
-	if (!defined($track)) {
-		$track = $self->_retrieveTrack($url);
-	}
-
-	# _retrieveTrack will always return undef or a track object
-	if ($track) {
-
-		# XXX - make sure that playlisttracks are deleted on cascade 
-		# otherwise call $track->setTracks() with an empty list
-
-		# Be sure to clear the track out of the cache as well.
-		if ($self->lastTrackURL && $url eq $self->lastTrackURL) {
-			$self->lastTrackURL('');
-		}
-
-		my $dirname = dirname($url);
-
-		if (defined $self->lastTrack->{$dirname} && $self->lastTrack->{$dirname}->url eq $url) {
-			delete $self->lastTrack->{$dirname};
-		}
-
-		$track->delete;
-
-		$self->storage->dbh->commit if $commit;
-
-		$track = undef;
-
-		$::d_info && msg("cleared $url from database\n");
-	}
-}
-
-# Mark all track entries as being stale in preparation for scanning for validity.
-sub markAllEntriesStale {
-	my $self = shift;
-
-	%contentTypeCache = ();
-
-	$self->artworkCache({});
-}
-
-# Mark a track entry as valid.
-sub markEntryAsValid {
-	my $self = shift;
-	my $url = shift;
-
-	delete $self->zombieList->{$url};
-}
-
-# Mark a track entry as invalid.
-# Does the reverse of above.
-sub markEntryAsInvalid {
-	my $self = shift;
-	my $url  = shift || return undef;
-
-	$self->zombieList->{$url} = 1;
 }
 
 sub cleanupStaleTrackEntries {
@@ -809,7 +736,6 @@ sub wipeCaches {
 	$self->artworkCache({});
 	$self->lastTrackURL('');
 	$self->lastTrack({});
-	$self->zombieList({});
 
 	$::d_import && msg("Import: Wiped all in-memory caches.\n");
 }
@@ -837,19 +763,6 @@ sub forceCommit {
 		return;
 	}
 
-	for my $zombie (keys %{$self->zombieList}) {
-
-		my $track = $self->search('Track', { 'url' => $zombie })->single;
-
-		if ($track) {
-
-			delete $self->zombieList->{$zombie};
-
-			$self->delete($track, 0) if $track;
-		}
-	}
-
-	$self->zombieList({});
 	$self->lastTrackURL('');
 	$self->lastTrack({});
 
@@ -860,7 +773,7 @@ sub forceCommit {
 	$dirtyCount = 0;
 }
 
-sub readTags {
+sub _readTags {
 	my $self  = shift;
 	my $file  = shift;
 
@@ -1053,7 +966,6 @@ sub _retrieveTrack {
 
 	return undef if !$url;
 	return undef if ref($url);
-	return undef if $self->zombieList->{$url};
 
 	my $track;
 
@@ -1113,8 +1025,6 @@ sub _checkValidity {
 	return undef unless $track->can('get');
 
 	my $url = $track->get('url');
-
-	return undef if $self->zombieList->{$url};
 
 	$::d_info && msg("_checkValidity: Checking to see if $url has changed.\n");
 
@@ -1192,9 +1102,21 @@ sub _hasChanged {
 
 		$::d_info && msg("_hasChanged: removing [$filepath] from the db as it no longer exists.\n");
 
-		$self->delete($track, 1);
+		# Be sure to clear the track out of the cache as well.
+		if ($self->lastTrackURL && $url eq $self->lastTrackURL) {
+			$self->lastTrackURL('');
+		}
 
+		my $dirname = dirname($url);
+
+		if (defined $self->lastTrack->{$dirname} && $self->lastTrack->{$dirname}->url eq $url) {
+			delete $self->lastTrack->{$dirname};
+		}
+
+		$track->delete;
 		$track = undef;
+
+		$self->storage->dbh->commit;
 
 		return 0;
 	}

@@ -25,7 +25,7 @@ sub _updateMetaData {
 	# Update title MetaData only if its not a local file with Title information already cached.
 	if ($title && Slim::Music::Info::isRemoteURL($entry)) {
 
-		my $track = Slim::Schema->objectForUrl($entry);
+		my $track = Slim::Schema->rs('Track')->objectForUrl($entry);
 
 		if ((blessed($track) && $track->can('title') && (!$track->title || $track->title ne $title)) || !blessed($track)) {
 
@@ -33,7 +33,7 @@ sub _updateMetaData {
 		}
 	}
 
-	return Slim::Schema->updateOrCreate({
+	return Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $entry,
 		'attributes' => $attributes,
 		'readTags'   => 1,
