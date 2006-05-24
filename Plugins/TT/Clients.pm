@@ -1,6 +1,6 @@
 package Plugins::TT::Clients;
 
-# $Id: Prefs.pm 1757 2005-01-18 21:22:50Z dsully $
+# $Id$
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -28,7 +28,7 @@ sub get {
 		# Schwartian Transform here
 		my @sorted_clients =
 		    map { $_->[0] }
-		    sort { $b->[1] <=> $a->[1] } 
+		    sort { $b->[1] cmp $a->[1] } 
 		    map { [ $_, $_->$sortBy ] } 
 		    @clients;
 		return \@sorted_clients;
