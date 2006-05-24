@@ -67,7 +67,8 @@ sub main {
 	print "Welcome to the Slim Devices perl module installer.\n\n";
 	print "These packages are needed for SlimServer to function.\n";
 	print "You will need a C compiler (gcc), make, and perl installed.\n\n";
-	print "You may also need development libraries for expat. eg: libexpat1-dev\n\n";
+	print "You will need development libraries for MySQL. eg: libmysqlclient\n\n";
+	print "You will need development libraries for expat. eg: libexpat1-dev\n\n";
 
 	print "*** Ignore any warnings about AppConfig. ***\n\n";
 

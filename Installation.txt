@@ -25,6 +25,9 @@ build-perl-modules script to run successfully, you must have You must have:
 - Perl 5.6.1 or greater, and the required development libs (if any; some
   platforms put this in a separate package, such as 'libperl-dev')
 
+- For DBD::mysql to build properly, the MySQL client libs - http://www.mysql.com/
+  This might also be a package on your system, such as libdbd-mysql-perl
+
 - For XML::Parser to build properly - http://expat.sourceforge.net/
   This might also be a package on your system, such as expat-dev, libexpat-dev, etc.
 
