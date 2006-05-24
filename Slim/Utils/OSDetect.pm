@@ -94,7 +94,7 @@ sub dirsFor {
 		}
 
 		# These are all at the top level.
-		if ($dir =~ /^(?:Plugins|strings|convert|types)$/) {
+		if ($dir =~ /^(?:strings|convert|types)$/) {
 
 			push @dirs, $Bin;
 		}
@@ -102,13 +102,8 @@ sub dirsFor {
 	# Debian specific paths.
 	} elsif (isDebian()) {
 
-		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|SQL|lib|Bin)$/) {
+		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|SQL|lib|Bin)$/) {
 
-			push @dirs, "/usr/share/slimserver/$dir";
-
-		} elsif ($dir eq 'Plugins') {
-
-			push @dirs, "/usr/share/slimserver";
 			push @dirs, "/usr/share/slimserver/$dir";
 
 		} elsif ($dir eq 'strings') {
@@ -142,11 +137,6 @@ sub dirsFor {
 		if ($dir =~ /^(?:strings|convert|types)$/) {
 
 			push @dirs, $Bin;
-
-		} elsif ($dir eq 'Plugins') {
-
-			push @dirs, $Bin;
-			push @dirs, catdir($Bin, $dir);
 
 		} else {
 
