@@ -100,6 +100,9 @@ sub installedPlugins {
 
 	for my $plugindir (pluginDirs()) {
 
+		# Don't try and load plugins in our root dir.
+		next if $plugindir eq $FindBin::Bin;
+
 		opendir(DIR, $plugindir) || next;
 
 		for my $plugin ( sort(readdir(DIR)) ) {
