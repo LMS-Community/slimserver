@@ -434,10 +434,20 @@ sub browsedb {
 				$attrName      => $itemid,
 			);
 
-			# XXXX - need to generate attributes for the current
-			# RS's value. So album.year - not year.id
-			$form{'attributes'}    = (scalar(@attrs) ? ('&' . join('&', @attrs)) : '') . '&' .
-				sprintf('%s.id=%d', $attrName, $itemid);
+			# If we're at the track level - only append the track
+			# id for each item - it's a unique value and doesn't
+			# need any joins.
+			if (lc($levels[$level]) eq 'track') {
+
+				$form{'attributes'}    = sprintf(sprintf('&%s.id=%d', $attrName, $itemid));
+
+			} else {
+
+				# XXXX - need to generate attributes for the current
+				# RS's value. So album.year - not year.id
+				$form{'attributes'}    = (scalar(@attrs) ? ('&' . join('&', @attrs)) : '') . '&' .
+					sprintf('%s.id=%d', $attrName, $itemid);
+			}
 
 			$item->displayAsHTML(\%form, $descend, $sort);
 

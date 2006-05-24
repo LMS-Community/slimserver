@@ -51,14 +51,16 @@ sub processCoverArtRequest {
 
 	} else {
 
-		$obj = Slim::Schema->objectForId('track', $trackid);
+		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
 	$::d_http && msg("Cover Art asking for: $image" . 
 		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
 
 	if (blessed($obj) && $obj->can('coverArt')) {
+
 		$::d_http && msg("can CoverArt\n");
+
 		($imageData, $contentType, $mtime) = $obj->coverArt($image);
 	}
 
@@ -71,12 +73,15 @@ sub processCoverArtRequest {
 	$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
 	
 
-	if (serverResizesArt()){
+	if (serverResizesArt()) {
+
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
 		if ($image eq "thumb" || $requestedWidth || ($contentType eq "image/png" && ($requestedBackColour >> 24) != 0x7F)) {
+
 			GD::Image->trueColor(1);
+
 			my $origImage = GD::Image->new($imageData);
 
 			if ($origImage) {
@@ -92,18 +97,18 @@ sub processCoverArtRequest {
 					if ($requestedHeight eq "X") {
 						$returnedWidth = $origImage->width;
 						$returnedHeight = $origImage->height;
-					}else{
+					} else {
 						$returnedWidth = $origImage->width / $origImage->height * $requestedHeight;
 						$returnedHeight = $requestedHeight;
 					}
-				}elsif($requestedHeight eq "X"){
+				}elsif($requestedHeight eq "X") {
 					$returnedWidth =  $requestedWidth;
 					$returnedHeight =  $origImage->height / $origImage->width * $requestedWidth;
-				}else{
+				} else {
 					if ($image eq "cover") {
 						$returnedWidth = $requestedWidth || $origImage->width;
 						$returnedHeight = $requestedHeight || $origImage->height;
-					}else{
+					} else {
 						$returnedWidth = $requestedWidth || Slim::Utils::Prefs::get('thumbSize') || 100;
 						$returnedHeight = $requestedHeight || Slim::Utils::Prefs::get('thumbSize') || 100;
 					}
@@ -170,26 +175,26 @@ sub processCoverArtRequest {
 						$newImage->saveAlpha(1);
 						$newImageData = $newImage->png;
 						$contentType = 'image/png';
-					}else{
+					} else {
 						$newImageData = $newImage->jpeg;
 						$contentType = 'image/jpeg';
 					}
 
 					$::d_http && msg("outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
 					$body = \$newImageData;
-				}else{
+				} else {
 					$::d_http && msg("not resizing\n");
 					$body = \$imageData;
 				}
-			}else{
+			} else {
 				$::d_http && msg("GD wouldn't create image object\n");
 				$body = \$imageData;
 			}
-		}else{
+		} else {
 			$::d_http && msg("no need to process image\n");
 			$body = \$imageData;
 		}
-	}else{
+	} else {
 		$::d_http && msg("can't use GD\n");
 		$body = \$imageData;
 	}
@@ -208,7 +213,7 @@ sub processCoverArtRequest {
 		}
 	};
 
-	sub serverResizesArt(){
+	sub serverResizesArt {
 		return $canUseGD;
 	}
 }
@@ -230,7 +235,7 @@ sub getResizeCoords {
 		$destWidth = $destImageWidth;
 		$destHeight = $destImageWidth / $sourceImageAR;
 		$destY = ($destImageHeight - $destHeight) / 2
-	}else{
+	} else {
 		$destY = 0;
 		$destHeight = $destImageHeight;
 		$destWidth = $destImageHeight * $sourceImageAR;
