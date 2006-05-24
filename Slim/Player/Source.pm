@@ -1181,7 +1181,7 @@ sub openSong {
 
 		my $contentType;
 
-		my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($track, $client);
+		my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($fullpath, $client);
 
 		if ($sock) {
 

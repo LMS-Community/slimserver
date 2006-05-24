@@ -246,7 +246,7 @@ sub scanRemoteURL {
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 
-	my $remoteFH = Slim::Player::ProtocolHandlers->openRemoteStream($url);
+	my $remoteFH = Slim::Player::ProtocolHandlers->openRemoteStream( $url, $args->{'client'} );
 	my @objects  = ();
 
 	if (!$remoteFH) {

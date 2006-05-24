@@ -880,6 +880,7 @@ sub playlistXitemCommand {
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'     => $path,
 			'listRef' => \@dirItems,
+			'client'  => $client,
 		});
 
 		_insert_done(
@@ -896,6 +897,7 @@ sub playlistXitemCommand {
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'     => $path,
 			'listRef' => Slim::Player::Playlist::playList($client),
+			'client'  => $client,
 		});
 
 		_playlistXitem_load_done(

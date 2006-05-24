@@ -65,8 +65,9 @@ sub readMetaData {
 			 	$::d_remotestream && msg("Metadata byte not read! $!\n");  
 			 	return;
 			 } else {
-			 	$::d_remotestream && msg("Metadata byte not read, trying again: $!\n");  
-			 }			 
+			 	# too verbose!
+				#$::d_remotestream && msg("Metadata byte not read, trying again: $!\n");  
+			 }
 		}
 
 		$byteRead = defined $byteRead ? $byteRead : 0;
