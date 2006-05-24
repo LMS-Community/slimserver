@@ -684,7 +684,16 @@ sub setMode {
 
 	} else {
 
-		@items = $topRS->descend(\%find, {}, @levels[0..$level])->distinct->all;
+		$topRS = $topRS->descend(\%find, {}, @levels[0..$level])->distinct;
+
+		if ($levels[$level] eq 'age') {
+
+			@items = $topRS->slice(0, (Slim::Utils::Prefs::get('browseagelimit') - 1));
+
+		} else {
+
+			@items = $topRS->all;
+		}
 	}
 
 	# Next get the first line of the mode

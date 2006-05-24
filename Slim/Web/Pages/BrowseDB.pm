@@ -279,6 +279,12 @@ sub browsedb {
 	my $descend  = ($level >= $maxLevel) ? undef : 'true';
 
 	if ($browseRS) {
+
+		# Force the limit if we're going by age.
+		if ($levels[$level] eq 'age') {
+			$browseRS = $browseRS->slice(0, (Slim::Utils::Prefs::get('browseagelimit') - 1));
+		}
+
 		$count = $browseRS->count;
 	}
 
