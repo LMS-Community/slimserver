@@ -61,8 +61,9 @@ sub enqueue {
 	# allows estimation of delay for IR key presses queued in slimproto tcp session while server busy/network congested
 	# assumes most IR interaction lasts < 60s, reset estimate after this to ensure recovery from clock adjustments
 	my $offset = $now - $irTime;
-	my $ref = $client->irRefTime();
-	if ($offset < $ref || $offset - $ref + abs($now - $client->irRefTimeStored()) > 60) {
+	my $ref    = $client->irRefTime || 0;
+
+	if ($offset < $ref || $offset - $ref + abs($now - ($client->irRefTimeStored || 0)) > 60) {
 		$ref = $client->irRefTime($offset);
 		$client->irRefTimeStored($now);
 	}
