@@ -129,7 +129,9 @@ sub init {
 
 	if ($::d_sql) {
 		$class->storage->debug(1);
-		$class->storage->debugcb(sub { Slim::Utils::Misc::msg($_[1]) });
+		if ($::LogTimestamp) {
+			$class->storage->debugcb(sub { Slim::Utils::Misc::msg($_[1]) });
+		}
 	}
 
 	$initialized = 1;
