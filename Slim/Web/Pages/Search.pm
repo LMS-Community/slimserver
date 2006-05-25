@@ -207,13 +207,21 @@ sub advancedSearch {
 	}
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
+	my @joins = ();
+
 	if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-		$query{'contributor.role'} = $roles;
+		$query{'contributorTracks.role'} = $roles;
+
+		push @joins, 'contributorTracks';
 	}
 
 	# Do the actual search
-	my $rs    = Slim::Schemas->rs('Track')->search_like(\%query, { 'order_by' => 'titlesort' });
+	my $rs    = Slim::Schema->rs('Track')->search_like(
+		\%query,
+		{ 'order_by' => 'titlesort', 'join' => \@joins }
+	);
+
 	my $count = $rs->count;
 
 	my $start = ($params->{'start'} || 0),
