@@ -230,7 +230,7 @@ sub checkScanTimer {
 			}
 
 			my $rescanType = ['rescan'];
-			my $rescanPref = Slim::Utils::Prefs::get('rescan-type');
+			my $rescanPref = Slim::Utils::Prefs::get('rescan-type') || '';
 
 			if ($rescanPref eq '2wipedb') {
 
