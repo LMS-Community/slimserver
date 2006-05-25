@@ -157,7 +157,7 @@ sub renderItem {
 
 			$artist = sprintf(
 				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
-				string('BY'), $item->artist->id(), $player, $item->artist()
+				string('BY'), $item->artist->id, $player, $item->artist->name,
 			);
 		}
 
@@ -165,7 +165,7 @@ sub renderItem {
 
 			$album = sprintf(
 				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album.id=%d\&amp;player=%s">%s</a>',
-				string('FROM'), $item->album->id(), $player, $item->album()
+				string('FROM'), $item->album->id, $player, $item->album->title,
 			);
 		}
 
