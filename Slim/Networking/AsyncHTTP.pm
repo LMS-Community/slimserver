@@ -21,6 +21,7 @@ package Slim::Networking::AsyncHTTP;
 use strict;
 use base qw(Net::HTTP::NB);
 
+use Data::Dump ();
 use HTTP::Headers;
 use Net::DNS;
 use Net::IP;
@@ -269,6 +270,13 @@ sub nonBlockingConnect {
 	return $self;
 }
 
+# Net::HTTP::Methods doesn't get the right peerport since we are making an 
+# async connection, so we store it ourselves
+sub peerport {
+	my $self = shift;
+	return ${*$self}{'AsyncPeerPort'};
+}
+
 # IO::Socket::INET's connect method blocks, so we use our own connect method 
 # which is non-blocking.  Based on: http://www.perlmonks.org/?node_id=66135
 sub connect {
@@ -289,6 +297,10 @@ sub connect {
 	# which usually handles timeouts, blocking
 	# and error handling.
 	connect($sock, $addr);
+	
+	# Workaround for an issue in Net::HTTP::Methods where peerport is not yet
+	# available during an async connection
+	${*$sock}{'AsyncPeerPort'} = (sockaddr_in($addr))[0];
 	
 	# handle the timeout by using our own timer
 	my $timeout = ${*$sock}{'io_socket_timeout'} || 10;
@@ -361,11 +373,7 @@ sub format_request {
 	my $method = shift;
 	my $path = shift;
 
-	# Workaround for an issue with Net::HTTP::Methods where $self->peerport
-	# is not yet defined on our async connection.  This causes http_configure
-	# to setup the host string as "www.hostname.com:"
 	my $host = ${*$self}{'http_host'};
-	$host =~ s/:$//;
 
 	# Don't proxy for localhost requests.
 	if (Slim::Utils::Prefs::get('webproxy') && ${*$self}{'httpasync_host'}) {
@@ -426,15 +434,6 @@ sub write_request_async {
 	# this method will return immediately
 	Slim::Networking::Select::writeNoBlock($self, \$request);
 	Slim::Networking::Select::addError($self, \&errorCallback);
-}
-
-# don't use.  Use _async version instead.
-sub read_response_headers {
-	my $self = shift;
-
-	assert(0, "Called ". __PACKAGE__ ."::read_response_headers.  You should call read_response_headers_async instead!\n");
-
-	$self->SUPER::read_response_headers(@_);
 }
 
 sub read_response_headers_async {
@@ -508,8 +507,6 @@ sub readHeaderCallback {
 		Slim::Networking::Select::removeError($self);
 		Slim::Networking::Select::removeRead($self);
 
-		$::d_http_async && msg("AsyncHTTP: Headers read. code: $code status: $mess\n");
-		
 		$state->{'state'}   = 'headers-done';
 		$state->{'code'}    = $code;
 		$state->{'mess'}    = $mess;
@@ -517,7 +514,10 @@ sub readHeaderCallback {
 		my $headers = HTTP::Headers->new( @h );	
 		$state->{'headers'} = $headers;
 		
-		$::d_http_async && msg("AsyncHTTP: State: headers-done\n");
+		if ( $::d_http_async ) {
+			msg("AsyncHTTP: Headers read. code: $code status: $mess\n");
+			warn Data::Dump::dump($headers) . "\n";
+		}
 
 		# all headers complete.  Call callback
 		if (defined $state->{'callback'} && ref($state->{'callback'}) eq 'CODE') {
@@ -527,6 +527,35 @@ sub readHeaderCallback {
 	}
 
 	# else, we will be called again later, after all headers are read
+}
+
+# Copy of Net::HTTP::NB's sysread method, so we can handle ICY 200 OK responses
+sub sysread {
+    my $self = $_[0];
+
+    if (${*$self}{'httpnb_read_count'}++) {
+		${*$self}{'http_buf'} = ${*$self}{'httpnb_save'};
+		die "Multi-read\n";
+    }
+
+    my $buf;
+    my $offset = $_[3] || 0;
+    my $n = sysread($self, $_[1], $_[2], $offset);
+    ${*$self}{'httpnb_save'} .= substr($_[1], $offset);
+
+	if ( !${*$self}{'parsed_status_line'} ) {
+		if ( ${*$self}{'httpnb_save'} =~ /^(HTTP|ICY)/ ) {
+			my $icy = ${*$self}{'httpnb_save'} =~ s/ICY 200 OK/HTTP\/1.0 200 OK/;
+			${*$self}{'parsed_status_line'} = 1;
+			
+			if ( $icy ) {
+				$n += 5;
+				$_[1] =~ s/ICY 200 OK/HTTP\/1.0 200 OK/;
+			}
+		}
+	}
+
+    return $n;
 }
 
 # readCallback is called by select loop when our socket has data

@@ -876,52 +876,62 @@ sub playlistXitemCommand {
 		my $playListSize = Slim::Player::Playlist::count($client);
 		my @dirItems     = ();
 
-		# XXXX - need async version?
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'     => $path,
 			'listRef' => \@dirItems,
 			'client'  => $client,
+			'callback' => sub {
+				_insert_done(
+					$client,
+					$playListSize,
+					scalar @dirItems,
+					$request->callbackFunction,
+					$request->callbackArguments,
+				);
+				
+				playlistXitemCommand_done( $client, $request, $path );
+			},
 		});
-
-		_insert_done(
-			$client,
-			$playListSize,
-			scalar @dirItems,
-			$request->callbackFunction,
-			$request->callbackArguments,
-		);
 
 	} else {
 
-		# XXXX - need async version?
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'     => $path,
 			'listRef' => Slim::Player::Playlist::playList($client),
 			'client'  => $client,
+			'callback' => sub {
+				_playlistXitem_load_done(
+					$client,
+					$jumpToIndex,
+					$request->callbackFunction,
+					$request->callbackArguments,
+					scalar @{Slim::Player::Playlist::playList($client)},
+					$path,
+				);
+				
+				playlistXitemCommand_done( $client, $request, $path );
+			},
 		});
 
-		_playlistXitem_load_done(
-			$client,
-			$jumpToIndex,
-			$request->callbackFunction,
-			$request->callbackArguments,
-			scalar @{Slim::Player::Playlist::playList($client)},
-			$path,
-		);
 	}
-					
+}
+
+# Called after insert/load async callbacks are finished
+sub playlistXitemCommand_done {
+	my ( $client, $request, $path ) = @_;
+
 	# The callback, if any, will be called by _load/_insert_done, so
 	# don't call it now
 	# Hmm, in fact the request is not done until load/insert is called.
 	# addToList is asynchronous. load/insert should call request done...
 	$request->callbackEnabled(0);
-	
+
 	# Update the parameter item with the correct path
 	# Not sure anyone depends on this behaviour...
 	$request->addParam('_item', $path);
 
 	$client->currentPlaylistChangeTime(time());
-			
+
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
 	$request->setStatusDone();
