@@ -927,7 +927,7 @@ sub checkDataSource {
 
 		if (Slim::Schema->count('Track') == 0) {
 
-			 # Slim::Control::Request::executeRequest(undef, ['rescan']);
+			 Slim::Control::Request::executeRequest(undef, ['rescan']);
 		}
 	}
 }

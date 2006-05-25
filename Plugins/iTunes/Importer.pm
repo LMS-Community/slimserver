@@ -392,9 +392,9 @@ sub handlePlaylist {
 
 	$cacheEntry->{'CT'}    = 'itu';
 	$cacheEntry->{'TAG'}   = 1;
-	$cacheEntry->{'VALID'} = '1';
+	$cacheEntry->{'VALID'} = 1;
 
-	#Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
+	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
 
 	# Check for podcasts and add to custom Genre
 	if ($name =~ /podcasts/i) {			
@@ -402,7 +402,7 @@ sub handlePlaylist {
 		for my $url (@{$cacheEntry->{'LIST'}}) {
 
 			# update with Podcast genre
-			my $track = Slim::Schema->rs('Track')->updateOrCreate({
+			Slim::Schema->rs('Track')->updateOrCreate({
 				'url'        => $url,
 				'attributes' => { 'GENRE' => 'Podcasts' },
 			});

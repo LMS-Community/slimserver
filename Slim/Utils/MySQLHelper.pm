@@ -115,7 +115,7 @@ sub createConfig {
 
 	$::d_mysql && msg("MySQLHelper: createConfig() Creating config from file: [$ttConf] -> [$output].\n");
 
-	my $template = Template->new({ 'ABSOLUTE' => 1 });
+	my $template = Template->new({ 'ABSOLUTE' => 1 }) or die Template->error(), "\n";
            $template->process($ttConf, \%config, $output) || die $template->error;
 
 	$class->confFile($output);

@@ -89,8 +89,9 @@ sub main {
 		Slim::Music::PlaylistFolderScan->init;
 		Slim::Music::Import->scanPlaylistsOnly(1);
 
-	} elsif (!$musicmagic && !$itunes) {
+	} else {
 
+		Slim::Music::PlaylistFolderScan->init;
 		Slim::Music::MusicFolderScan->init;
 	}
 
