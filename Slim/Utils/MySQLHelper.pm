@@ -11,6 +11,7 @@ use DBI;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
+use File::Which qw(which);
 use Proc::Background;
 use Template;
 
@@ -39,13 +40,18 @@ sub init {
 
 		if (Slim::Utils::OSDetect::OS() ne 'win') {
 
+			my $mysql_config = which('mysql_config');
+
 			# The user might have a socket file in a non-standard
 			# location. See bug 3443
-			my $socket = `mysql_config --socket`;
-			chomp($socket);
+			if ($mysql_config && -x $mysql_config) {
 
-			if ($socket && -S $socket) {
-				$class->socketFile($socket);
+				my $socket = `$mysql_config --socket`;
+				chomp($socket);
+
+				if ($socket && -S $socket) {
+					$class->socketFile($socket);
+				}
 			}
 		}
 
