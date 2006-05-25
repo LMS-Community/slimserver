@@ -59,13 +59,6 @@ sub browse {
 
 	my @join = ();
 
-	if (defined $find->{'playlist'}) {
-
-		my $obj = $self->find($find->{'playlist'}) || return [];
-
-		return [ $obj->tracks ];
-	}
-
 	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre'}) {
 
 		if (defined $find->{'album'}) {

@@ -409,9 +409,8 @@ sub checkAlarms {
 
 					Slim::Buttons::Block::block($client, alarmLines($client));
 					
-					my $playlistObj = Slim::Schema->rs('Track')->objectForUrl({
-						'url'      => $playlist,
-						'playlist' => 1,
+					my $playlistObj = Slim::Schema->rs('Playlist')->objectForUrl({
+						'url' => $playlist,
 					});
 
 					if (blessed($playlistObj) && $playlistObj->can('id')) {

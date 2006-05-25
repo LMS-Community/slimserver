@@ -24,7 +24,7 @@ sub browse {
 	return $self->getPlaylists;
 }
 
-sub descendTrack {
+sub descendPlaylistTrack {
 	my $self = shift;
 	my $find = shift;
 	my $sort = shift;
@@ -119,6 +119,24 @@ sub getPlaylistForClient {
 	return $self->search({
 		'url' => sprintf('clientplaylist://%s', $client->id),
 	})->single;
+}
+
+sub objectForUrl {
+	my $self = shift;
+	my $args = shift;
+
+	$args->{'playlist'} = 1;
+
+	return Slim::Schema->objectForUrl($args);
+}
+
+sub updateOrCreate {
+	my $self = shift;
+	my $args = shift;
+
+	$args->{'playlist'} = 1;
+
+	return Slim::Schema->updateOrCreate($args);
 }
 
 1;

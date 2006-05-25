@@ -278,9 +278,8 @@ sub scanRemoteURL {
 	} else {
 
 		# Re-fetch as a playlist.
-		my $playlist = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => $url,
-			'playlist' => 1,
+		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl({
+			'url' => $url,
 		});
 
 		@objects = $class->scanPlaylistFileHandle($playlist, $remoteFH);

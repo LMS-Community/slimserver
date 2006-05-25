@@ -642,13 +642,11 @@ sub playlistSaveCommand {
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
 
-	my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
+	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
 			catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
 		),
-
-		'playlist'   => 1,
 
 		'attributes' => {
 			'TITLE' => $title,
@@ -670,11 +668,13 @@ sub playlistSaveCommand {
 	}
 
 	$playlistObj->setTracks($annotatedList);
-	$playlistObj->update();
+	$playlistObj->update;
+
+	Slim::Schema->forceCommit;
 
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
-	$request->addResult('__playlist_id', $playlistObj->id());
+	$request->addResult('__playlist_id', $playlistObj->id);
 	$request->addResult('__playlist_obj', $playlistObj);
 
 	$request->setStatusDone();
@@ -1051,11 +1051,11 @@ sub playlistZapCommand {
 		Slim::Control::Request::executeRequest($client, ["playlist", "delete", $zapindex]);
 	}
 
-	my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
+	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 		'url'        => Slim::Utils::Misc::fileURLFromPath(
 			catfile( Slim::Utils::Prefs::get('playlistdir'), $zapped . '.m3u')
 		),
-		'playlist'   => 1,
+
 		'attributes' => {
 			'TITLE' => $zapped,
 			'CT'    => 'ssp',

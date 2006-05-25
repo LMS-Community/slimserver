@@ -750,9 +750,8 @@ sub musicmagic_mix {
 
 	} elsif ($playlist) {
 
-		my ($obj) = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => $playlist,
-			'playlist' => 1,
+		my ($obj) = Slim::Schema->rs('Playlist')->objectForUrl({
+			'url' => $playlist,
 		});
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {

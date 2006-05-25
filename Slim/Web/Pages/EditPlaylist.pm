@@ -188,7 +188,7 @@ sub saveCurrentPlaylist {
 
 		if (defined $request) {
 		
-			$params->{'playlist'} = $request->getResult('__playlist_id');
+			$params->{'playlist.id'} = $request->getResult('__playlist_id');
 		}
 
 		# setup browsedb params to view the current playlist
@@ -201,6 +201,9 @@ sub saveCurrentPlaylist {
 	}
 
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
+
+	# Don't add this back to the breadcrumbs
+	delete $params->{'saveCurrentPlaylist'};
 
 	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
@@ -225,9 +228,8 @@ sub renamePlaylist {
 			catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
 		);
 
-		my $existingPlaylist = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => $newUrl,
-			'playlist' => 1,
+		my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
+			'url' => $newUrl,
 		});
 
 		# Warn the user if the playlist already exists.
@@ -271,8 +273,8 @@ sub deletePlaylist {
 
 	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist'});
 
-	$params->{'level'}     = 0;
-	
+	$params->{'level'} = 0;
+
 	# Warn the user if the playlist already exists.
 	if (blessed($playlistObj) && !$params->{'confirm'}) {
 

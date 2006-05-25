@@ -18,6 +18,8 @@ use base 'Slim::Schema::DBI';
 
 	$class->belongs_to(playlist => 'Slim::Schema::Track');
 	$class->belongs_to(track => 'Slim::Schema::Track');
+
+	$class->resultset_class('Slim::Schema::ResultSet::PlaylistTrack');
 }
 
 sub deletePlaylist {

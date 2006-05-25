@@ -691,10 +691,9 @@ sub modifyPlaylistCallback {
 
 				# Create a virtual track that is our pointer
 				# to the list of tracks that make up this playlist.
-				my $playlistObj = Slim::Schema->rs('Track')->updateOrCreate({
+				my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
 					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
-					'playlist'   => 1,
 					'attributes' => {
 						'TITLE' => sprintf('%s - %s', 
 							Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),

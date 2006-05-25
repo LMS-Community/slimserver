@@ -259,9 +259,8 @@ sub updateCacheEntry {
 
 	my $list     = $cacheEntryHash->{'LIST'} || [];
 
-	my $playlist = Slim::Schema->rs('Track')->updateOrCreate({
+	my $playlist = Slim::Schema->rs('Playlist')->updateOrCreate({
 		'url'        => $url,
-		'playlist'   => 1,
 		'attributes' => $cacheEntryHash,
 	});
 
@@ -597,9 +596,8 @@ sub cachedPlaylist {
 
 	# We might have gotten an object passed in for effeciency. Check for
 	# that, and if not, make sure we get a valid object from the db.
-	my $playlist = Slim::Schema->rs('Track')->objectForUrl({
-		'url'      => $urlOrObj,
-		'playlist' => 1,
+	my $playlist = Slim::Schema->rs('Playlist')->objectForUrl({
+		'url' => $urlOrObj,
 	});
 
 	if (!blessed($playlist) || !$playlist->can('tracks')) {

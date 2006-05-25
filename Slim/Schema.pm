@@ -129,8 +129,16 @@ sub init {
 
 	if ($::d_sql) {
 		$class->storage->debug(1);
+
 		if ($::LogTimestamp) {
-			$class->storage->debugcb(sub { Slim::Utils::Misc::msg($_[1]) });
+			$class->storage->debugcb(sub {
+
+				#if ($_[0] eq 'SELECT') {
+				#	Slim::Utils::Misc::bt();
+				#}
+
+				Slim::Utils::Misc::msg($_[1]);
+			});
 		}
 	}
 
@@ -1157,7 +1165,7 @@ sub _preCheckAttributes {
 
 		if (exists $tagMapping{lc $key}) {
 
-			$attributes->{ $tagMapping{lc $key} } = delete $attributes->{$key};
+			$attributes->{ uc($tagMapping{lc $key}) } = delete $attributes->{$key};
 		}
 	}
 
