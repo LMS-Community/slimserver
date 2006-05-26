@@ -245,7 +245,7 @@ sub END {
 
 	$::d_server && Slim::Utils::Misc::msg("Got to the END.\n");
 
-	if (!$sigINTcalled) {
+	if (!$sigINTcalled && !$main::daemon) {
 		sigint();
 	}
 }
