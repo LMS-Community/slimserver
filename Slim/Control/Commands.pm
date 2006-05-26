@@ -1746,17 +1746,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			my $key   = URI::Escape::uri_unescape($1);
 			my $value = URI::Escape::uri_unescape($2);
 
-			# Turn 'track.*' into 'me.*'
-			if ($key =~ /^track(\.?.*)$/) {
-				$key = "me$1";
-			}
-
-			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
-
 			# Setup the join mapping
 			if ($key =~ /^genre\./) {
 
-				$joinMap{'genre'} = { 'genreTrack' => 'genre' };
+				$joinMap{'genre'} = { 'genreTracks' => 'genre' };
 
 			} elsif ($key =~ /^album\./) {
 
@@ -1766,6 +1759,25 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
 			}
+
+			# Turn 'track.*' into 'me.*'
+			if ($key =~ /^track(\.?.*)$/) {
+				$key = "me$1";
+			}
+
+			# Year browsing is working on the albums.year column.
+			if ($key =~ /^(year|age)\.id$/) {
+
+				if ($key =~ /^year/) {
+					$key = 'album.year';
+				} else {
+					$key = 'album.id';
+				}
+
+				$joinMap{'album'} = 'album';
+			}
+
+			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
 
 		} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
 
@@ -1783,18 +1795,16 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
 
-	} elsif ($find{'playlist'}) {
+	} elsif ($find{'playlist.id'}) {
 
 		# Treat playlists specially - they are containers.
-		my $obj = Slim::Schema->find('Playlist', $find{'playlist'});
+		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});
 
-		if (blessed($obj) && $obj->can('tracks')) {
+		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			# Side effect - (this would never fly in Haskell! :)
-			# We want to add the playlist name to the client object.
-			$client->currentPlaylist($obj);
+			$client->currentPlaylist($playlist);
 
-			return $obj->tracks;
+			return $playlist->tracks;
 		}
 
 		return ();

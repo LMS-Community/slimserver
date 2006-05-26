@@ -63,9 +63,7 @@ sub browse {
 	# The user may not want to include all the composers / conductors
 	if ($roles) {
 
-		$find->{'contributorTracks.role'} = { 'in' => $roles };
-
-		push @joins, 'contributorTracks';
+		$find->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
 	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
@@ -73,6 +71,10 @@ sub browse {
 		$find->{'album.compilation'} = 0;
 
 		push @joins, { 'contributorAlbums' => 'album' };
+
+	} elsif ($roles) {
+
+		push @joins, 'contributorAlbums';
 	}
 
 	return $self->search($find, {
