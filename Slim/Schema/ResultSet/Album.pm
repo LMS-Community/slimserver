@@ -112,8 +112,16 @@ sub browse {
 
 sub descendTrack {
 	my $self = shift;
+	my $find = shift;
+	my $attr = shift;
 
-	return $self->search_related('tracks', @_);
+	# Create a "clean" resultset, without any joins on it - since we'll
+	# just want information from the album.
+	my $rs   = $self->result_source->resultset;
+
+	return $rs->search_related('tracks', $rs->fixupFindKeys($find), $attr);
+
+	# return $self->search_related('tracks', @_);
 }
 
 1;

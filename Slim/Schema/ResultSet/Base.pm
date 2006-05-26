@@ -29,6 +29,25 @@ sub distinct {
 	});
 }
 
+# Turn find keys into their table aliased versions.
+sub fixupFindKeys {
+	my $self = shift;
+	my $find = shift;
+
+	my $match = lc($self->result_class);
+	   $match =~ s/^.+:://;
+
+	while (my ($key, $value) = each %{$find}) {
+
+		if ($key =~ /^$match\.(\w+)$/) {
+
+		$find->{sprintf('%s.%s', $self->{'attrs'}{'alias'}, $1)} = delete $find->{$key};
+		}
+	}
+
+	return $find;
+}
+
 sub descend {
 	my ($self, $find, $sort, @levels) = @_;
 
@@ -45,7 +64,7 @@ sub descend {
 
 		print "working on level: [$level]\n";
 
-		if (0) {
+		if ($::d_sql) {
 			printf("\$self->result_class: [%s]\n", $self->result_class);
 			printf("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
 				$self->result_source->schema->source($level)->result_class
