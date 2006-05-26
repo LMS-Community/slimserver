@@ -422,6 +422,7 @@ sub handleStartElement {
 
 	if ($element eq 'key') {
 		$inKey = 1;
+		undef $currentKey;
 	}
 
 	# If we're inside the playlist element, and the array is starting,
@@ -475,7 +476,7 @@ sub handleCharElement {
 	}
 
 	if ($inKey) {
-		$currentKey = $value;
+		$currentKey .= $value;
 		return;
 	}
 
