@@ -22,6 +22,10 @@ sub processCoverArtRequest {
 	my $resizeMode = $5; # stretch, pad or crop
 	my $requestedBackColour = defined($6) ? hex $6 : 0x7FFFFFFF; # bg color used when padding
 
+	if (!defined $resizeMode) {
+		$resizeMode = '';
+	}
+
 	# It a size is specified then default to stretch, else default to squash
 	if ($resizeMode eq "f") {
 		$resizeMode = "fitstretch";

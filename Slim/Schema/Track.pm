@@ -265,7 +265,7 @@ sub coverArt {
 	# Otherwise we'll have a path to a file on disk.
 	my $artwork = $self->get_column($artType);
 
-	if ($artwork && $artwork != 1) {
+	if ($artwork && $artwork ne 1) {
 
 		($body, $contentType) = Slim::Music::Artwork->getImageContentAndType($artwork);
 
@@ -278,7 +278,7 @@ sub coverArt {
 	}
 
 	# If we didn't already store an artwork value - look harder.
-	if (!$artwork || $artwork == 1 || !$body) {
+	if (!$artwork || $artwork eq 1 || !$body) {
 
 		($body, $contentType, $path) = Slim::Music::Artwork->readCoverArt($self, $artType);
 	}
