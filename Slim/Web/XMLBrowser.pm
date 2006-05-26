@@ -90,7 +90,7 @@ sub handleFeed {
 	} );
 		
 	# select the proper list of items
-	my @index = split /\./, $stash->{'index'};
+	my @index = split /\./, $stash->{'index'} || '';
 	
 	if ( scalar @index ) {
 		
@@ -110,7 +110,7 @@ sub handleFeed {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+			if ( $subFeed->{'type'} && $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
 
 				Slim::Formats::XML->getFeedAsync(
 					\&handleSubFeed,
@@ -220,7 +220,7 @@ sub handleFeed {
 		# Check if any of our items contain audio, so we can display an
 		# 'All Songs' link
 		for my $item ( @{ $stash->{'items'} } ) {
-			if ( $item->{'type'} eq 'audio' || $item->{'enclosure'} ) {
+			if ( ( $item->{'type'} && $item->{'type'} eq 'audio' ) || $item->{'enclosure'} ) {
 				$stash->{'itemsHaveAudio'} = 1;
 				$stash->{'currentIndex'}   = join '.', @index;
 				last;

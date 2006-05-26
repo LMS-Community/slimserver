@@ -384,7 +384,7 @@ sub format_request {
 	}
 
 	# pull out POST body
-	my $body;
+	my $body = '';
 	if ( @_ % 2 ) {
 		$body = pop @_;
 	}
@@ -396,7 +396,7 @@ sub format_request {
 		'Accept'        => "*/*",
 		'Cache-Control' => "no-cache",
 		'Connection'    => "close",
-		'Icy-Metadata'  => "1",
+		'Icy-Metadata'  => 1,
 		@_,
 	);
 	

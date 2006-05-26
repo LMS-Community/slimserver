@@ -74,7 +74,7 @@ sub getFeedAsync {
 	$ua =~ s{iTunes/4.7.1}{Mozilla/5.0};
 	my %headers = (
 		'User-Agent'   => $ua,
-		'Icy-Metadata' => undef,
+		'Icy-Metadata' => '',
 	);
 
 	$http->get( $url, %headers );
