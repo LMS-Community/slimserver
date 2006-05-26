@@ -466,6 +466,7 @@ sub _stat_handler {
 	#	STMl - FULL		// triggers start of synced playback
 	#	STMd - DECODE_READY	// decoder has no more data
 	#	STMs - TRACK_STARTED	// a new track started playing
+	#	STMn - NOT_SUPPORTED	// decoder does not support the track format
 
 	my ($fullnessA, $fullnessB);
 	
