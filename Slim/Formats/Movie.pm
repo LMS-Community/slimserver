@@ -20,8 +20,7 @@ my %tagMapping = (
 
 my $tagCache = [];
 
-INIT: {
-
+{
 	if ($] > 5.007) {
 
 		MP4::Info::use_mp4_utf8(1)

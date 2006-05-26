@@ -17,7 +17,7 @@ my %tagMapping = (
 	'VBR'		=> 'VBR_SCALE',
 );
 
-INIT: {
+{
 	# WMA tags are stored as UTF-16 by default.
 	if ($] > 5.007) {
 		Audio::WMA->setConvertTagsToUTF8(1);

@@ -37,7 +37,7 @@ our $log = "";
 our %pathToFileCache = ();
 our %fileToPathCache = ();
 
-INIT: {
+{
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;

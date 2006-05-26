@@ -16,7 +16,7 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 
-INIT: {
+{
 	my $class = __PACKAGE__;
 
 	for my $accessor (qw(cleanupDatabase scanPlaylistsOnly useFolderImporter scanningProcess)) {

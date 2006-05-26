@@ -14,7 +14,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
 
-INIT: {
+{
 
 	__PACKAGE__->mk_classdata('stillScanning');
 }

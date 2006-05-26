@@ -12,7 +12,7 @@ use base qw(Class::Data::Inheritable);
 
 use Slim::Utils::Misc;
 
-INIT: {
+{
 
 	__PACKAGE__->mk_classdata('stillScanning');
 }

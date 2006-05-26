@@ -32,8 +32,7 @@ my %tagMapping = (
 # Allow us to reuse tag data when fetching artwork if we can.
 my $tagCache = [];
 
-INIT: {
-
+{
 	# Don't try and convert anything to latin1
 	if ($] > 5.007) {
 

@@ -7,7 +7,7 @@ package Slim::Schema::GenreTrack;
 use strict;
 use base 'Slim::Schema::DBI';
 
-INIT: {
+{
 	my $class = __PACKAGE__;
 
 	$class->table('genre_track');

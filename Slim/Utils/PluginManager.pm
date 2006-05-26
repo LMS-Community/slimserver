@@ -31,8 +31,7 @@ my %plugins = ();
 my %playerplugins = ();
 my %brokenplugins = ();
 
-INIT {
-
+{
 	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 
 	unshift @INC, @pluginDirs;

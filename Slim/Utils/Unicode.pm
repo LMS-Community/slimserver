@@ -29,7 +29,7 @@ our (
 	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE,
 );
 
-INIT: {
+{
 	if ($] > 5.007) {
 		require Encode;
 		require Encode::Guess;
