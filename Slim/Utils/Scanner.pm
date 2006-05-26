@@ -147,6 +147,9 @@ sub scanDirectory {
 	# validTypeExtensions returns a qr// regex.
 	$rule->name( Slim::Music::Info::validTypeExtensions() );
 
+	# Don't include old style internal playlists.
+	$rule->not_name(qr/\W__\S+\.m3u$/);
+
 	my @files   = $rule->in($topDir);
 	my @objects = ();
 
