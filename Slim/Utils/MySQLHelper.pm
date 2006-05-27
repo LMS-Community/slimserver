@@ -130,10 +130,11 @@ sub createConfig {
 sub startServer {
 	my $class = shift;
 
-	if (Slim::Utils::OSDetect::isDebian()) {
-		$::d_mysql && msg("MySQLHelper: startServer() Not starting MySQL server on Debian..\n");
-		return 1;
-	}
+	# Start on Debian - but use the private port/socket.
+	# if (Slim::Utils::OSDetect::isDebian()) {
+	#	$::d_mysql && msg("MySQLHelper: startServer() Not starting MySQL server on Debian..\n");
+	#	return 1;
+	#}
 
 	if ($class->pidFile && $class->processObj && $class->processObj->alive) {
 		errorMsg("MySQLHelper: startServer(): MySQL is already running!\n");

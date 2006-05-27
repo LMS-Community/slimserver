@@ -15,6 +15,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 
 {
 	my $class = __PACKAGE__;
@@ -42,6 +43,17 @@ sub launchScan {
 	}
 
 	my $command  = "$Bin/scanner.pl";
+
+	# Check for different scanner types.
+	if (Slim::Utils::OSDetect::OS() eq 'win' && -x "$Bin/scanner.exe") {
+
+		$command  = "$Bin/scanner.exe";
+
+	} elsif (Slim::Utils::OSDetect::isDebian() && -x '/usr/sbin/slimserver-scanner') {
+
+		$command  = '/usr/sbin/slimserver-scanner';
+	}
+
 	my @scanArgs = map { "--$_" } keys %{$args};
 
 	$class->scanningProcess(

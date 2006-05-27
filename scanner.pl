@@ -21,7 +21,7 @@ BEGIN {
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI XML::Parser)], []);
+	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI XML::Parser YAML::Syck)], []);
 };
 
 use Getopt::Long;
@@ -224,8 +224,6 @@ sub cleanup {
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;
 	}
-
-	Slim::Utils::MySQLHelper->cleanup;
 }
 
 main();

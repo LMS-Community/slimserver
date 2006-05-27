@@ -890,7 +890,7 @@ sub searchQuery {
 		return;
 	}
 	
-	if (Slim::Music::Import::stillScanning()) {
+	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
 	}
 	

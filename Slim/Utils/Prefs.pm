@@ -298,10 +298,10 @@ sub init {
 			}
 			
 			if (defined(Slim::Utils::Prefs::get('playlistdir')) && -d Slim::Utils::Prefs::get("playlistdir")) {
-				Slim::Music::Import::useImporter('PLAYLIST', 1);
+				Slim::Music::Import->useImporter('PLAYLIST', 1);
 				Slim::Music::Import->startScan('PLAYLIST');
 			} else {
-				Slim::Music::Import::useImporter('PLAYLIST', 0);
+				Slim::Music::Import->useImporter('PLAYLIST', 0);
 			}
 
 			for my $client (Slim::Player::Client::clients()) {
