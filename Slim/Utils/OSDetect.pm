@@ -102,7 +102,7 @@ sub dirsFor {
 	# Debian specific paths.
 	} elsif (isDebian()) {
 
-		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|SQL|lib|Bin)$/) {
+		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
 			push @dirs, "/usr/share/slimserver/$dir";
 
