@@ -57,7 +57,6 @@ my @perfmonLogs = (
 	{ 'type' => 'server', 'name' => 'response',     'monitor' => \$Slim::Networking::Select::responseTime,  },
 	{ 'type' => 'server', 'name' => 'timerlate',    'monitor' => \$Slim::Utils::Timers::timerLate,          },
 	{ 'type' => 'server', 'name' => 'selecttask',   'monitor' => \$Slim::Networking::Select::selectTask,    },
-	{ 'type' => 'server', 'name' => 'schedulertask','monitor' => \$Slim::Utils::Scheduler::schedulerTask,   },
 	{ 'type' => 'server', 'name' => 'timertask',    'monitor' => \$Slim::Utils::Timers::timerTask,          },
 	{ 'type' => 'server', 'name' => 'request',      'monitor' => \$Slim::Control::Request::requestTask,     },
 	{ 'type' => 'server', 'name' => 'pagebuild',    'monitor' => \$Slim::Web::HTTP::pageBuild,              },
@@ -276,7 +275,7 @@ sub handleGraphs {
 
 		my $monitor = ($type eq 'server') ? ${$mon->{'monitor'}} : $mon->{'monitor'}($client);
 
-		if ($params->{'monitor'} eq $mon->{'name'} || $params->{'monitor'} eq 'all') {
+		if (defined $params->{'monitor'} && ($params->{'monitor'} eq $mon->{'name'} || $params->{'monitor'} eq 'all') ) {
 			if (exists($params->{'setwarn'})) {
 				$monitor->setWarnHigh(Slim::Utils::Validate::number($params->{'warnhi'}));
 				$monitor->setWarnLow(Slim::Utils::Validate::number($params->{'warnlo'}));
