@@ -110,7 +110,8 @@ sub handleFeed {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( $subFeed->{'type'} && $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+			$subFeed->{'type'} ||= '';
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
 
 				Slim::Formats::XML->getFeedAsync(
 					\&handleSubFeed,
