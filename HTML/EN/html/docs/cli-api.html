@@ -990,7 +990,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 </p>
 <p>
 	Returns the connected state of the player.  HTTP and Squeezebox players
-	will indicate 1 or 0 depending on the state of the TCP connection to the 
+	will indicate 1 or 0 depending on the state of the TCP connection to the
 	player. SLIMP3 players, since they use UDP, always return 1.
 </p>
 <p>
@@ -1013,18 +1013,28 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 <p>The &quot;mixer volume&quot; command returns or sets the current volume 
 	setting for the player. The scale is 0 to 100, in real numbers (i.e. 34.5 
 	is valid). If the player is muted, the volume is returned as a negative
-	value. Note that players display a 0 to 40 scale, that is, the 0..100 volume 
-   	divided by 2,5. Likewise, using the &quot;<a href="#button">button</a>&quot;
-   	command with &quot;volume_up&quot; or &quot;volume_down&quot;
-   	parameters increases or decreases the volume by 2,5.</p>
+	value. Note that players display a 0 to 40 scale, that is, the 0..100 
+	volume divided by 2,5. Likewise, using the 
+	&quot;<a href="#button">button</a>&quot;command with &quot;volume_up&quot;
+	or &quot;volume_down&quot; parameters increases or decreases the volume by
+	2,5.</p>
 <p> Example: </p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;<br>
-  	 Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;<br>
-     Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;<br>
-     Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer volume 98&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer volume +10&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br><p id="mixermuting">

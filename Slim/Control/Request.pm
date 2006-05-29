@@ -1408,7 +1408,7 @@ sub executeDone {
 		# remove the notification if we pushed it...
 		my $notif = pop @notificationQueue;
 		
-		if ($notif != $self) {
+		if ((defined $notif) && ($notif != $self)) {
 		
 			# oops wrong one, repush it...
 			push @notificationQueue, $notif;

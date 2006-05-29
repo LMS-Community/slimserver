@@ -323,6 +323,10 @@ sub client_socket_read {
 
 	# buffer the data
 	$connections{$client_socket}{'inbuff'} .= $indata;
+
+	if ($::d_cli) {
+		msg("CLI: " . $connections{$client_socket}{'id'} . " - Buffered [$indata]\n");
+	}
 	
 	# only parse when we're not busy
 	if ($connections{$client_socket}{'busy'}) {
@@ -332,7 +336,7 @@ sub client_socket_read {
 		
 		if ($::d_cli) {
 			my $numpending = scalar keys %pending;
-			msg("CLI: BUSY!!!!! ($numpending pending)\n");
+			msg("CLI: " . $connections{$client_socket}{'id'} . " - BUSY!!!!! ($numpending pending)\n");
 		}
 	}
 	else {
@@ -367,7 +371,7 @@ sub client_socket_buf_parse {
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)
 	while ($connections{$client_socket}{'inbuff'}) {
 
-		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)([$CR|$LF|$CR$LF|\x0]+)(.*)/s) {
+		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)([$CR|$LF|$CR$LF|\x00]+)(.*)/s) {
 			
 			# $1 : command
 			# $2 : terminator used
@@ -425,10 +429,10 @@ sub client_socket_write {
 	return unless $message;
 
 	if ($::d_cli) {
-		my $msg = substr($message, 0, 40);
+		my $msg = substr($message, 0, 100);
 		chop($msg);
 		chop($msg);
-		msg("CLI: Sending response [$msg...] to " . $connections{$client_socket}{'id'} ."\n");
+		msg("CLI: " . $connections{$client_socket}{'id'} . " - Sending response [$msg...]\n");
 	}
 	
 	$sentbytes = send($client_socket, $message, 0);
@@ -513,7 +517,7 @@ sub cli_process {
 	$request->source('CLI');
 	$request->privateData($client_socket);
 	
-	my $cmd = $request->getRequest();
+	my $cmd = $request->getRequest(0);
 	
 	# if a command cannot be found in the dispatch table, then the request
 	# name is partial or even empty. In this last case, consider the first
