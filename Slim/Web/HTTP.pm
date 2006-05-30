@@ -561,7 +561,7 @@ sub processURL {
 	# This is trumped by query parameters 'command' and 'subcommand'.
 	# These are passed as the first two command parameters (p0 and p1), 
 	# while the rest of the query parameters are passed as third (p3).
-	if (defined $params->{'command'}) {
+	if (defined $params->{'command'} && $path !~ /^memoryusage/) {
 		$p[0] = $params->{'command'};
 		$p[1] = $params->{'subcommand'};
 		$p[2] = join '&', map $_ . '=' . $params->{$_},  keys %{$params};

@@ -556,7 +556,7 @@ sub PADLIST_size {
 		my $byteinfo = sprintf "[%-4s %3d bytes]", $class, $entsize;
 
 		push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n", $i, $names_pv[$i], $byteinfo, 
-			($is_fake ? '__SvFAKE__' : $vals[$i]->sizeval);
+			($is_fake ? '__SvFAKE__' : (defined $vals[$i] ? 0 : $vals[$i]->sizeval));
 	}
 
 	undef @names;
