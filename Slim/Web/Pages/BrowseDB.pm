@@ -535,9 +535,9 @@ sub browseid3 {
 
 			# Search for each real name - normalize the query,
 			# then turn it into the ID suitable for browsedb()
-			my $cat = $params->{$category} = Slim::Schema->search($category, {
+			my $cat = $params->{$category} = Slim::Schema->single($category, {
 				$queryMap{$category} => $params->{$category},
-			})->single;
+			});
 
 			return browsedb($client, $params) unless $cat;
 

@@ -83,7 +83,7 @@ sub setPodcasts {
 		return;
 	}
 
-	my $genre = Slim::Schema->search('Genre', { 'name' => 'Podcasts' })->single;
+	my $genre = Slim::Schema->single('Genre', { 'name' => 'Podcasts' });
 
 	if ($genre) {
 		my $id = $genre->id;

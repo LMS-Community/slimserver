@@ -487,7 +487,7 @@ sub browsedbItemName {
 
 	} elsif ($levels[$level] eq 'year') {
 
-		return $item->year;
+		return $item->year || $client->string('UNK');
 
 	} elsif (($levels[$level] eq 'album') || ($levelRS->nameTransform eq 'album')) {
 

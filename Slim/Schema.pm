@@ -176,6 +176,13 @@ sub search {
 	return $class->resultset(ucfirst($rsClass))->search(@_);
 }
 
+sub single {
+	my $class   = shift;
+	my $rsClass = shift;
+
+	my $rs = $class->resultset(ucfirst($rsClass))->single(@_);
+}
+
 sub count {
 	my $class   = shift;
 	my $rsClass = ucfirst(shift);
@@ -235,7 +242,7 @@ sub find {
 sub lastRescanTime {
 	my $class = shift;
 
-	return $class->search('MetaInformation', { 'name' => 'lastRescanTime' })->single->value;
+	return $class->single('MetaInformation', { 'name' => 'lastRescanTime' })->value;
 }
 
 sub wipeDB {
@@ -674,12 +681,12 @@ sub totalTime {
 
 	# Pull out the total time dynamically.
 	# What a breath of fresh air. :)
-	return $self->search('Track', undef, {
+	return $self->single('Track', undef, {
 
 		'select' => [ \'SUM(secs)' ],
                 'as'     => [ 'sum' ],
 
-        })->single->get_column('sum');
+        })->get_column('sum');
 }
 
 # This is a post-process on the albums and contributor_tracks tables, in order
@@ -1005,7 +1012,7 @@ sub _retrieveTrack {
 
 	} else {
 
-		$track = $self->resultset($source)->search({ 'url' => $url })->single;
+		$track = $self->resultset($source)->single({ 'url' => $url });
 	}
 
 	# XXX - exception should go here. Comming soon.
@@ -1423,7 +1430,7 @@ sub _postCheckAttributes {
 			($t = $self->lastTrack->{$basename}) && 
 			$t->get('album') &&
 			blessed($a = $t->album) eq 'Slim::Schema::Album' &&
-			$a->title eq $album &&
+			$a->get('title') eq $album &&
 			(!$checkDisc || ($disc eq ($a->disc || 0)))
 
 			) {
@@ -1477,7 +1484,7 @@ sub _postCheckAttributes {
 				}
 			}
 
-			$albumObj = $self->search('Album', $search)->single;
+			$albumObj = $self->single('Album', $search);
 
 			$::d_info && msg("_postCheckAttributes: Searched for album '$album'\n");
 

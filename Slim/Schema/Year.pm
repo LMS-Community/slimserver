@@ -6,6 +6,7 @@ use strict;
 use base 'Slim::Schema::Album';
 
 use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
 
 {
 	my $class = __PACKAGE__;
@@ -19,7 +20,7 @@ use Slim::Utils::Misc;
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	$form->{'text'} = $self->year;
+	$form->{'text'} = $self->year || string('UNK');
 }
 
 1;

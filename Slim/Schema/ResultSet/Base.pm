@@ -41,7 +41,7 @@ sub fixupFindKeys {
 
 		if ($key =~ /^$match\.(\w+)$/) {
 
-		$find->{sprintf('%s.%s', $self->{'attrs'}{'alias'}, $1)} = delete $find->{$key};
+			$find->{sprintf('%s.%s', $self->{'attrs'}{'alias'}, $1)} = delete $find->{$key};
 		}
 	}
 

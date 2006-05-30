@@ -168,7 +168,7 @@ sub playlistid {
 		
 		return $specialID if defined $specialID;
 
-		my $playlistObj = Slim::Schema->search('Playlist', { 'url' => $playlist })->single;
+		my $playlistObj = Slim::Schema->single('Playlist', { 'url' => $playlist });
 
 		if (blessed($playlistObj) && $playlistObj->can('id')) {
 			return $playlistObj->id;

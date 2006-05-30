@@ -171,10 +171,10 @@ sub getRandomYear {
 	
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
 
-   	my $year = Slim::Schema->rs('Track')->search(
+   	my $year = Slim::Schema->rs('Track')->single(
 		{ 'genreTracks.genre' => $filteredGenresRef },
 		{ 'order_by' => \'RAND()', 'join' => 'genreTracks' }
-	)->single->year;
+	)->year;
 
 	$::d_plugins && msg("RandomPlay: Selected year $year\n");
 

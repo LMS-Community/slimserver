@@ -116,9 +116,9 @@ sub getPlaylistForClient {
 	my $self   = shift;
 	my $client = shift;
 
-	return $self->search({
+	return $self->single({
 		'url' => sprintf('clientplaylist://%s', $client->id),
-	})->single;
+	});
 }
 
 sub objectForUrl {
