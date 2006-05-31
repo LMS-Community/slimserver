@@ -456,6 +456,12 @@ sub playmode {
 			
 			my $currentSong = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 			
+			if ( ref $currentSong ) {
+				if ( $currentSong->can('url') ) {
+					$currentSong = $currentSong->url;
+				}
+			}
+			
 			$everyclient->play(
 				Slim::Player::Sync::isSynced($everyclient),
 				$master->streamformat(),
@@ -1173,43 +1179,22 @@ sub openSong {
 	####################
 	# parse the filetype
 	if (Slim::Music::Info::isRemoteURL($fullpath)) {
-		
-		# Even when direct streaming, we need to connect to the remote stream to check a few things:
-		# 1. The remote URL may not have a file extension therefore we can't guess the content-type
-		# 2. The URL might redirect (a lot of Podcasts do this)
-		# 3. The extension might not match the content-type sent by the server.
-
-		my $contentType;
-
-		my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($fullpath, $client);
-
-		if ($sock) {
-
-			$contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;	
-
-			# Bug 3396, some m4a audio is incorrectly served as audio/mpeg.
-			# In this case, prefer the file extension to the content-type
-			if ( $fullpath =~ /(m4a|aac)$/i && $contentType eq 'mp3' ) {
-				$contentType = 'mov';
-			}	
-
-			$track->content_type( $contentType );
-			$track->update;
-			$::d_source && msg("openSong: Remote content type is $contentType [$fullpath]\n");
-		}
 
 		if ($client->canDirectStream($fullpath)) {
 
 			$directStream = 1;
 			$client->streamformat(Slim::Music::Info::contentType($track));
-			$sock->close if $sock;
 		}
 
 		if (!$directStream) {
 
 			$::d_source && msg("openSong: URL is remote [$fullpath]\n");
+			
+			my $sock = Slim::Player::ProtocolHandlers->openRemoteStream($fullpath, $client);
 	
 			if ($sock) {
+				
+				my $contentType = Slim::Music::Info::mimeToType($sock->contentType) || $sock->contentType;
 	
 				# if it's an audio stream, try to stream,
 				# either directly, or via transcoding.
@@ -1557,7 +1542,7 @@ sub readNextChunk {
 				$silence = $asilence;
 			}
 		}
-
+		
 		$::d_source && msg("We need to send $silence seconds of silence...\n");
 		
 		while ($silence > 0) {

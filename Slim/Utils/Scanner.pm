@@ -289,10 +289,17 @@ sub readRemoteHeaders {
 	# In this case, prefer the file extension to the content-type
 	if ( $url =~ /(m4a|aac)$/i && $type eq 'mp3' ) {
 		$type = 'mov';
-	}	
-
+	}
+	
+	# Content-Type may have multiple elements, i.e. audio/x-mpegurl; charset=ISO-8859-1
+	if ( ref $type eq 'ARRAY' ) {
+		$type = $type->[0];
+	}
+	
 	$track->content_type( $type );
 	$track->update;
+	
+	Slim::Music::Info::setContentType( $url, $type );
 	
 	my @objects  = ();
 
@@ -348,11 +355,16 @@ sub readPlaylistBody {
 	}
 	
 	# Bugs 2589, 2723
-	# Update the title for all playlist items to match the parent title
+	# If a playlist item has no title or is just a URL, give it
+	# a friendlier title from the parent item
 	my $title = $args->{'playlist'}->title;
 	for my $item ( @{ $args->{'listRef'} } ) {
-		$item->title( $title );
-		$item->update;
+		if ( blessed $item ) {
+			if ( !$item->title || $item->title =~ /^(http|mms)/i ) {
+				$item->title( $title );
+				$item->update;
+			}
+		}
 	}
 
 	my $cb = $args->{'callback'};
