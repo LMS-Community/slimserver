@@ -741,7 +741,7 @@ sub directHeaders {
 						$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 					}
 					
-					if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
+					if ($header =~ /^icy-br:\s*(.+)/i) {
 						$bitrate = $1 * 1000;
 					}
 				
