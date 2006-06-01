@@ -50,7 +50,7 @@ sub getTag {
 	}
 
 	# Add additional info
-	$tags->{'SIZE'}	    = $wma->info('filesize');
+	$tags->{'SIZE'}	    = -s $file;
 	$tags->{'SECS'}	    = $wma->info('playtime_seconds');
 	$tags->{'RATE'}	    = $wma->info('sample_rate');
 
