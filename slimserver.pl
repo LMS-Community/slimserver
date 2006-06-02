@@ -423,6 +423,22 @@ sub init {
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Utils::PluginManager::init();
 
+	# Create a batch file for those running on ActiveState
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		my $pl2bat  = Slim::Utils::Misc::findbin('pl2bat.bat');
+		my $scanner = "$Bin/scanner.pl";
+
+		if ($pl2bat) {
+
+			$::d_server && msg("SlimServer creating scanner.bat file...\n");
+
+			system($pl2bat, $scanner);
+			chmod(0755, $scanner);
+		}
+	}
+
+
 	$::d_server && msg("SlimServer Scanner init...\n");
 	Slim::Utils::Scanner->init;
 
@@ -440,21 +456,6 @@ sub init {
 	}
 
 	checkVersion();
-
-	# Create a batch file for those running on ActiveState
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		my $pl2bat  = Slim::Utils::Misc::findbin('pl2bat');
-		my $scanner = "$Bin/scanner.pl";
-
-		if ($pl2bat) {
-
-			$::d_server && msg("SlimServer creating scanner.bat file...\n");
-
-			system($pl2bat, $scanner);
-			chmod(0755, $scanner);
-		}
-	}
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
