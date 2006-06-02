@@ -89,6 +89,10 @@ sub browsedb {
 	# Build up the list of valid parameters we may pass to the db.
 	while (my ($param, $value) = each %{$params}) {
 
+		if ($param eq 'artist') {
+			$param = 'contributor';
+		}
+
 		if (!grep { $param =~ /^$_(\.\w+)?$/ } @sources) {
 
 			next;
@@ -379,16 +383,15 @@ sub browsedb {
 	}
 
 	# Dynamic VA/Compilation listing
-	if ($levels[$level] eq 'artist' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if ($levels[$level] eq 'contributor' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-		my $vaObj      = Slim::Schema->variousArtistsObject;
-		my @attributes = (@attrs, 'album.compilation=1', sprintf('artist=%d', $vaObj->id));
+		# Only show VA item if there's valid listings below the current level.
+		my %find = map { split /=/ } @attrs;
 
-		# Only show VA item if there's valid listings below
-		# the current level.
-		my %find = map { split /=/ } @attrs, 'me.compilation=1';
+		if (Slim::Schema->variousArtistsAlbumCount(\%find)) {
 
-		if (Slim::Schema->count('Album', \%find)) {
+			my $vaObj      = Slim::Schema->variousArtistsObject;
+			my @attributes = (@attrs, 'album.compilation=1', sprintf('contributor.id=%d', $vaObj->id));
 
 			push @{$params->{'browse_items'}}, {
 				'text'        => $vaObj->name,

@@ -381,11 +381,9 @@ sub browsedbExitCallback {
 					Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 					$findCriteria->{'album.compilation'} = 1;
-
-				} else {
-
-					$findCriteria->{"$field.id"} = $currentItem->id;
 				}
+
+				$findCriteria->{"$field.id"} = $currentItem->id;
 			}
 
 			my %params = (
@@ -746,13 +744,7 @@ sub setMode {
 	if ($levels[$level] eq 'contributor' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		# Only show VA if there exists valid data below this level.
-		my %vaFind = %{$filters};
-
-		$vaFind{'me.compilation'} = 1;
-
-		delete $vaFind{'genre.id'};
-
-		if (Slim::Schema->count('Album', \%vaFind)) {
+		if (Slim::Schema->variousArtistsAlbumCount(Storable::dclone($filters))) {
 
 			unshift @items, Slim::Schema->variousArtistsObject;
 		}

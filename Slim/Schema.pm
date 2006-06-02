@@ -64,7 +64,9 @@ sub init {
 	# Windows doesn't use named sockets (it uses TCP instead)
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
 
-		$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+		if (Slim::Utils::MySQLHelper->socketFile) {
+			$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+		}
 	}
 
 	$class->connection($source, $username, $password, { 
@@ -228,7 +230,7 @@ sub count {
 		# $cond->{'audio'} = 1;
 	}
 
-	return $rs->search($cond, $attrs)->count;
+	return $rs->count($cond, $attrs);
 }
 
 sub find {
@@ -681,10 +683,40 @@ sub variousArtistsObject {
 	return $vaObj;
 }
 
+# Wrapper for the common case of checking the level below the current one
+# (always Albums), to see if any VA albums exist.
+sub variousArtistsAlbumCount {
+	my $class = shift;
+	my $find  = shift;
+
+	my %attr = ();
+	my @join = ();
+
+	# We always want to search for compilation
+	$find->{'me.compilation'} = 1;
+
+	if (exists $find->{'genre.id'}) {
+		$find->{'genreTracks.genre'} = delete $find->{'genre.id'};
+		push @join, { 'tracks' => 'genreTracks' };
+	}
+
+	if (my $roles = $class->artistOnlyRoles) {
+
+		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+		push @join, 'contributorAlbums';
+	}
+
+	if (scalar @join) {
+		$attr{'join'} = \@join;
+	}
+
+	return $class->count('Album', $find, \%attr);
+}
+
 sub trackCount {
 	my $self = shift;
 
-	return $self->search('Track')->count;
+	return $self->count('Track');
 }
 
 sub totalTime {
