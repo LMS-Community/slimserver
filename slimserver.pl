@@ -441,9 +441,24 @@ sub init {
 
 	checkVersion();
 
+	# Create a batch file for those running on ActiveState
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		my $pl2bat  = Slim::Utils::Misc::findbin('pl2bat');
+		my $scanner = "$Bin/scanner.pl";
+
+		if ($pl2bat) {
+
+			$::d_server && msg("SlimServer creating scanner.bat file...\n");
+
+			system($pl2bat, $scanner);
+			chmod(0755, $scanner);
+		}
+	}
+
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
-			
+
 	$::d_server && msg("SlimServer done init...\n");
 }
 
@@ -1003,8 +1018,10 @@ sub cleanup {
 	$::d_server && msg("SlimServer cleaning up.\n");
 
 	# Make sure to flush anything in the database to disk.
-	Slim::Schema->forceCommit;
-	Slim::Schema->disconnect;
+	if ($INC{'Slim/Schema.pm'}) {
+		Slim::Schema->forceCommit;
+		Slim::Schema->disconnect;
+	}
 
 	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
 	Slim::Networking::mDNS->stopAdvertising;

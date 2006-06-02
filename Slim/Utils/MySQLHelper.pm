@@ -80,7 +80,12 @@ sub init {
 		$class->createSystemTables;
 	}
 
-	$class->startServer;
+	# The DB server might already be up.. if it didn't get shutdown last
+	# time. That's ok.
+	if (!$class->dbh) {
+
+		$class->startServer;
+	}
 
 	return 1;
 }
@@ -146,44 +151,29 @@ sub startServer {
 		exit;
 	};
 
-	# Create the command we're going to run, sending output to the logfile
-	# if it exists - otherwise, to /dev/null
-	#
-	# This works for both Windows & *nix
-	my $proc     = undef;
-
 	my @commands = (
 		$mysqld, 
 		sprintf('--defaults-file=%s', $class->confFile),
 		sprintf('--pid-file=%s', $class->pidFile),
 	);
 
+	if ($::logfile) {
+		push @commands, sprintf('--log=%s', $::logfile);
+	}
+
 	$::d_mysql && msgf("MySQLHelper: startServer() About to start MySQL with command: [%s]\n", join(' ', @commands));
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		$proc = Proc::Background->new(@commands);
-
-	} else {
-
-		if ($::logfile) {
-			push @commands, ">> $::logfile 2>&1";
-		} else {
-			push @commands, '> /dev/null 2>&1';
-		}
-
-		$proc = Proc::Background->new(join(' ', @commands));
-	}
+	my $proc = Proc::Background->new(@commands);
 
 	# Give MySQL time to get going..
 	for (my $i = 0; $i < 10; $i++) {
 
-		last if -r $class->pidFile;
+		last if -r $class->pidFile && $proc->alive;
 		sleep 1;
 	}
 
 	if ($@) {
-		errorMsg("MySQLHelper: startServer() - server didn't startup in 30 seconds! Fatal! Exiting!\n");
+		errorMsg("MySQLHelper: startServer() - server didn't startup in 10 seconds! Fatal! Exiting!\n");
 		exit;
 	}
 
@@ -194,40 +184,58 @@ sub startServer {
 
 sub stopServer {
 	my $class = shift;
+	my $dbh   = shift || $class->dbh;
 
-	# The ->pid from Proc::Background isn't the right one on *nix.
-	my $pid = undef;
+	# We have a running server & handle. Shut it down internally.
+	if ($dbh) {
+
+		$::d_mysql && msg("MySQLHelper: stopServer() Running shutdown.\n");
+
+		$dbh->func('shutdown', 'admin');
+		$dbh->disconnect;
+
+		if ($class->_checkForDeadProcess) {
+			return;
+		}
+	}
+
+	# If the shutdown failed, try to find the pid
+	my @pids = ();
+
+	if (ref($class->processObj)) {
+		push @pids, $class->processObj->pid;
+	}
 
 	if (-f $class->pidFile) {
-		chomp($pid = read_file($class->pidFile));
+		chomp(my $pid = read_file($class->pidFile));
+		push @pids, $pid;
 	}
 
-	$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $pid);
+	for my $pid (@pids) {
 
-	if ($pid) {
+		next if !$pid || !kill(0, $pid);
+
+		$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $pid);
+
 		kill('TERM', $pid);
-	}
 
-	# Wait for the PID file to go away.
-	$class->_checkForDeadProcess;
+		# Wait for the PID file to go away.
+		last if $class->_checkForDeadProcess;
 
-	# Try harder.
-	if ($pid) {
+		# Try harder.
 		kill('KILL', $pid);
-	}
 
-	$class->_checkForDeadProcess;
+		last if $class->_checkForDeadProcess;
 
-	if ($pid && kill(0, $pid)) {
+		if (kill(0, $pid)) {
 
-		errorMsg("MySQLHelper: stopServer() - server didn't shutdown in 30 seconds!\n");
-		exit;
+			errorMsg("MySQLHelper: stopServer() - server didn't shutdown in 20 seconds!\n");
+			exit;
+		}
 	}
 
 	# The pid file may be left around..
 	unlink($class->pidFile);
-
-	$class->processObj(undef);
 }
 
 sub _checkForDeadProcess {
@@ -235,11 +243,16 @@ sub _checkForDeadProcess {
 
 	for (my $i = 0; $i < 10; $i++) {
 
-		last if !-r $class->pidFile;
-		last if !$class->processObj->alive;
+		if (!-r $class->pidFile) {
+
+			$class->processObj(undef);
+			return 1;
+		}
 
 		sleep 1;
 	}
+
+	return 0;
 }
 
 sub createSystemTables {
@@ -250,8 +263,6 @@ sub createSystemTables {
 	$class->startServer;
 
 	my $sqlFile = catdir($class->mysqlDir, 'system.sql');
-	my $ranOk   = 0;
-	my $dsn     = '';
 
 	# Connect to the database - doesn't matter what user and no database,
 	# in order to setup the system tables. 
@@ -260,6 +271,38 @@ sub createSystemTables {
 	# won't bring up the network port until the tables are installed.
 	#
 	# On Windows, TCP is the default.
+
+	my $dbh = $class->dbh or do {
+
+		errorMsg("MySQLHelper: createSystemTables() Couldn't connect to database: [$DBI::errstr]\n");
+
+		$class->stopServer;
+
+		exit;
+	};
+
+	if (Slim::Utils::SQLHelper->executeSQLFile('mysql', $dbh, $sqlFile)) {
+
+		$class->createDatabase($dbh);
+
+		# Bring the server down again.
+		$class->stopServer($dbh);
+
+		$dbh->disconnect;
+
+		$class->needSystemTables(0);
+
+	} else {
+
+		errorMsg("MySQLHelper: createSystemTables() - couldn't run executeSQLFile on [$sqlFile]!\n");
+		errorMsg("MySQLHelper: createSystemTables() - this is a fatal error. Exiting.\n");
+		exit;
+	}
+}
+
+sub dbh {
+	my $class = shift;
+	my $dsn   = '';
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
@@ -271,33 +314,7 @@ sub createSystemTables {
 		$dsn = sprintf('dbi:mysql:mysql_socket=%s', $class->socketFile);
 	}
 
-	my $dbh = DBI->connect($dsn) or do {
-		errorMsg("MySQLHelper: createSystemTables() Couldn't connect to database: [$dsn] - [$DBI::errstr]\n");
-		exit;
-	};
-
-	#
-	if (Slim::Utils::SQLHelper->executeSQLFile('mysql', $dbh, $sqlFile)) {
-
-		$ranOk = 1;
-
-		$class->createDatabase($dbh);
-	}
-
-	# Bring the server down again.
-	$dbh->disconnect;
-	$class->stopServer;
-
-	if ($ranOk) {
-
-		$class->needSystemTables(0);
-
-	} else {
-
-		errorMsg("MySQLHelper: createSystemTables() - couldn't run executeSQLFile on [$sqlFile]!\n");
-		errorMsg("MySQLHelper: createSystemTables() - this is a fatal error. Exiting.\n");
-		exit;
-	}
+	return eval { DBI->connect($dsn) };
 }
 
 sub createDatabase {

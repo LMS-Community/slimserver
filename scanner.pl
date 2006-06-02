@@ -109,33 +109,55 @@ sub main {
 
 	$::d_server && msg("SlimServer done init...\n");
 
-	if ($wipe) {
-		Slim::Music::Info::wipeDBCache();
-	}
+	# Start our transaction for the entire scan - this will enable an
+	# atomic commit at the end.
+	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+	Slim::Schema->storage->txn_begin;
 
-	if ($cleanup) {
-		Slim::Music::Import->cleanupDatabase(1);
-	}
+	eval {
 
-	# We've been passed an explict path or URL - deal with that.
-	if (scalar @ARGV) {
-
-		for my $url (@ARGV) {
-
-			Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url });
+		if ($wipe) {
+			Slim::Music::Info::wipeDBCache();
 		}
 
-	} else {
+		if ($cleanup) {
+			Slim::Music::Import->cleanupDatabase(1);
+		}
 
-		# Otherwise just use our Importers to scan.
-		Slim::Music::Import->resetImporters;
-		Slim::Music::Import->startScan;
+		# We've been passed an explict path or URL - deal with that.
+		if (scalar @ARGV) {
+
+			for my $url (@ARGV) {
+
+				Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url });
+			}
+
+		} else {
+
+			# Otherwise just use our Importers to scan.
+			Slim::Music::Import->resetImporters;
+			Slim::Music::Import->startScan;
+		}
+
+		Slim::Schema->rs('MetaInformation')->update_or_create({
+			'name'  => 'lastRescanTime',
+			'value' => time,
+		});
+
+		Slim::Schema->storage->txn_commit;
+	};
+
+	if ($@) {
+		my $error = $@;
+
+		errorMsg("scanner - while running txn_commit: [$error]\n");
+
+		eval { Slim::Schema->storage->txn_rollback };
+
+		if ($@ && $error ne $@) {
+			errorMsg("scanner: Rollback failed: [$@]\n");
+		}
 	}
-
-	Slim::Schema->rs('MetaInformation')->update_or_create({
-		'name'  => 'lastRescanTime',
-		'value' => time,
-	});
 }
 
 sub initializeFrameworks {
@@ -160,8 +182,8 @@ sub initializeFrameworks {
 	$::d_server && msg("SlimServer strings init...\n");
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-	$::d_server && msg("SlimServer MySQL init...\n");
-	Slim::Utils::MySQLHelper->init();
+	# $::d_server && msg("SlimServer MySQL init...\n");
+	# Slim::Utils::MySQLHelper->init();
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();

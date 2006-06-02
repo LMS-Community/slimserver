@@ -2023,6 +2023,12 @@ sub initSetupConfig {
 					no strict 'refs';
 					foreach my $debugItem (@{$pageref->{'Groups'}{'Default'}{'PrefOrder'}}) {
 						my $debugSet = "::" . $debugItem;
+
+						# Lame. Our debugging sucks.
+						if ($debugItem eq 'd_sql') {
+							Slim::Schema->toggleDebug($$debugSet);
+						}
+
 						if (!exists $paramref->{$debugItem}) {
 							$paramref->{$debugItem} = $$debugSet;
 						}

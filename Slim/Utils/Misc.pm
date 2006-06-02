@@ -74,9 +74,18 @@ sub findbin {
 	}
 
 	if (Slim::Utils::OSDetect::OS() ne "win") {
+
 		push @paths, (split(/:/, $ENV{'PATH'}), qw(/usr/bin /usr/local/bin /sw/bin /usr/sbin));
+
 	} else {
-		$executable .= '.exe';
+
+		push @paths, 'C:\Perl\bin';
+
+		# Don't add .exe on - we may be looking for a .bat file.
+		if ($executable !~ /\.\w{3}$/) {
+
+			$executable .= '.exe';
+		}
 	}
 
 	foreach my $path (@paths) {

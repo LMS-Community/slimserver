@@ -69,15 +69,21 @@ sub init {
 
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
-		AutoCommit => 0,
+		AutoCommit => 1,
 		PrintError => 1,
 		Taint      => 1,
-	});
+
+	}) or do {
+
+		errorMsg("Couldn't connect to database! Fatal error: [$!] Exiting!\n");
+		bt();
+		exit;
+	};
 
 	my $dbh = $class->storage->dbh || do {
 
 		# Not much we can do if there's no DB.
-		msg("Couldn't connect to info database! Fatal error: [$!] Exiting!\n");
+		errorMsg("Couldn't connect to database! Fatal error: [$!] Exiting!\n");
 		bt();
 		exit;
 	};
@@ -127,22 +133,28 @@ sub init {
 	$trackAttrs = Slim::Schema::Track->attributes;
 	$class->driver($driver);
 
-	if ($::d_sql) {
-		$class->storage->debug(1);
-
-		if ($::LogTimestamp) {
-			$class->storage->debugcb(sub {
-
-				#if ($_[0] eq 'SELECT') {
-				#	Slim::Utils::Misc::bt();
-				#}
-
-				Slim::Utils::Misc::msg($_[1]);
-			});
-		}
-	}
+	$class->toggleDebug($::d_sql);
 
 	$initialized = 1;
+}
+
+sub toggleDebug {
+	my $class = shift;
+	my $debug = shift;
+
+	$class->storage->debug($debug);
+
+	if ($::LogTimestamp) {
+
+		$class->storage->debugcb(sub {
+
+			#if ($_[0] eq 'SELECT') {
+			#	Slim::Utils::Misc::bt();
+			#}
+
+			Slim::Utils::Misc::msg($_[1]);
+		});
+	}
 }
 
 sub disconnect {
@@ -252,8 +264,7 @@ sub wipeDB {
 		$class->driver, $class->storage->dbh, "schema_clear.sql"
 	);
 
-	$class->storage->dbh->commit;
-	$class->storage->dbh->disconnect;
+	$class->forceCommit;
 }
 
 # Fetch the content type for a URL or Track Object.
@@ -490,7 +501,7 @@ sub newTrack {
 		}
 	}
 
-	$self->storage->dbh->commit if $args->{'commit'};
+	$self->forceCommit if $args->{'commit'};
 
 	return $track;
 }
@@ -578,7 +589,7 @@ sub updateOrCreate {
 			});
 		}
 
-		$self->storage->dbh->commit if $commit;
+		$self->forceCommit if $commit;
 
 	} else {
 
@@ -638,7 +649,7 @@ sub cleanupStaleTrackEntries {
 	Slim::Schema::Genre->removeStaleDBEntries('genreTracks');
 
 	# We're done.
-	$self->storage->dbh->commit;
+	$self->forceCommit;
 
 	Slim::Music::Import->endImporter('cleanupStaleEntries');
 
@@ -793,17 +804,27 @@ sub forceCommit {
 	my $self = shift;
 
 	if (!$initialized) {
+
+		errorMsg("forceCommit: Trying to commit transactions before DB is initialized!\n");
 		return;
 	}
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
 
-	$::d_info && msg("forceCommit: syncing to the database.\n");
+	if (!$self->storage->dbh->{'AutoCommit'}) {
 
-	$self->storage->dbh->commit;
+		$::d_info && msg("forceCommit: syncing to the database.\n");
 
-	$dirtyCount = 0;
+		eval { $self->storage->dbh->commit };
+
+		if ($@) {
+			errorMsg("forceCommit: Couldn't commit transactions to DB: [$@]\n");
+			return;
+		}
+
+		$dirtyCount = 0;
+	}
 }
 
 sub _readTags {
@@ -1149,7 +1170,7 @@ sub _hasChanged {
 		$track->delete;
 		$track = undef;
 
-		$self->storage->dbh->commit;
+		$self->forceCommit;
 
 		return 0;
 	}

@@ -45,9 +45,16 @@ sub launchScan {
 	my $command  = "$Bin/scanner.pl";
 
 	# Check for different scanner types.
-	if (Slim::Utils::OSDetect::OS() eq 'win' && -x "$Bin/scanner.exe") {
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		$command  = "$Bin/scanner.exe";
+		if (-x "$Bin/scanner.bat") {
+
+			$command  = "$Bin/scanner.bat";
+
+		} elsif (-x "$Bin/scanner.exe") {
+
+			$command  = "$Bin/scanner.exe";
+		}
 
 	} elsif (Slim::Utils::OSDetect::isDebian() && -x '/usr/sbin/slimserver-scanner') {
 
