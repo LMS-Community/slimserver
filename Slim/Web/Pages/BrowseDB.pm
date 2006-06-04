@@ -33,6 +33,7 @@ sub browsedb {
 	my $level     = $params->{'level'} || 0;
 	my $sort      = $params->{'sort'};
 	my $player    = $params->{'player'};
+	my $artwork   = $params->{'artwork'};
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
@@ -268,6 +269,10 @@ sub browsedb {
 
 	if (defined $sort) {
 		$otherparams .= '&' . "sort=$sort";
+	}
+
+	if (defined $artwork) {
+		$otherparams .= '&' . "artwork=$artwork";
 	}
 
 	msg("find:\n");
