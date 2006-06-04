@@ -15,6 +15,7 @@ package Slim::Utils::PluginManager;
 
 use strict;
 
+use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 
@@ -34,7 +35,14 @@ my %brokenplugins = ();
 {
 	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 
-	unshift @INC, @pluginDirs;
+	# dirsFor('Plugins') returns a list of paths like this:
+	#
+	# /usr/share/slimserver/Plugins
+	#
+	# We need to use the path for both the @INC and reading the plugin
+	# directory. @INC needs the path one level up. IE:
+	# /usr/share/slimserver, so that modules can be loaded properly
+	unshift @INC, (map { dirname($_) } @pluginDirs);
 }
 
 sub pluginDirs {
