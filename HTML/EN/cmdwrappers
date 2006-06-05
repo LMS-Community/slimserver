@@ -220,7 +220,7 @@ END %]
 	[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
 
 		<!-- Include the artist for the album view -->
-		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+		[% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
 
 	[% ELSE %]
 		[% PROCESS trackinfo %]
