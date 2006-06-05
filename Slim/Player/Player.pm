@@ -171,7 +171,7 @@ our %upgradeScripts = (
 		if (ref $menuItem eq 'ARRAY') {
 			my $insertPos = undef;
 			my $randomMixFound = 0;
-			for (my $i; $i < @$menuItem; $i++) {
+			for (my $i = 0; $i < @$menuItem; $i++) {
 				if (@$menuItem[$i] eq 'RandomPlay::Plugin') {
 					$randomMixFound = 1;
 					last;
