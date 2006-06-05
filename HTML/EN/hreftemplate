@@ -1,7 +1,7 @@
 [%- FILTER null %]
 [% 
 playerURI = player | uri;
-albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album=$itemobj.album.id&amp;player=$playerURI\"";
+albumHRef = "href=\"${webroot}browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=$itemobj.album.id&amp;player=$playerURI\"";
 songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$playerURI\"";
 browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
