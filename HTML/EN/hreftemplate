@@ -125,7 +125,7 @@ this should be identical to the URL args supplied in cmdHRef plus ajaxRequest=1 
 
 [%# this is the href to the album of item %]
 [% BLOCK albumItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the year of item %]
