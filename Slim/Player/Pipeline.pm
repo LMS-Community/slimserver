@@ -14,6 +14,7 @@ use bytes;
 
 use IPC::Open2;
 use IO::Handle;
+use POSIX qw(:sys_wait_h);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -114,7 +115,8 @@ sub new {
 		$reader = IO::Handle->new();
 		$writer = IO::Handle->new();
 
-		my $child_pid = open2($reader, $writer, $command);
+		${*$self}{'pipeline_pid'} = open2($reader, $writer, $command);
+
 		unless (defined(Slim::Utils::Network::blocking($reader, 0))) {
 			$::d_source && msg "Cannot set pipe line reader to nonblocking\n";
 			$reader->close();
@@ -311,6 +313,27 @@ sub close {
 	my $source = ${*$self}{'pipeline_source'};
 	if (defined($source)) {
 		$source->close();
+	}
+
+	my $pid = ${*$self}{'pipeline_pid'};
+	if (defined($pid)) {
+		Slim::Utils::Timers::setTimer($pid, Time::HiRes::time() + 2, \&reapProcess);
+	}
+}
+
+sub reapProcess {
+	# avoid Zombie processes on non Windows systems by calling waitpid to reap them
+	# required as SIGCHLD handler is no longer set to 'IGNORE'
+	my $pid = shift;
+	my $giveup = shift;
+
+	if (waitpid($pid, WNOHANG) == 0) {
+		if ($giveup) {
+			errorMsg("pipeline child (pid:$pid) still running - unable to kill");
+		} else {
+			kill('TERM', $pid);
+			Slim::Utils::Timers::setTimer($pid, Time::HiRes::time() + 2, \&reapProcess, 1);
+		}
 	}
 }
 
