@@ -12,6 +12,7 @@ use base qw(DBIx::Class::Schema);
 
 use DBIx::Migration;
 use File::Basename qw(dirname);
+use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU::Expires;
@@ -95,7 +96,7 @@ sub init {
 		'dsn'      => $source,
 		'username' => $username,
 		'password' => $password,
-		'dir'      => sprintf('%s/%s', Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
+		'dir'      => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
 	});
 
 	$dbix->migrate;

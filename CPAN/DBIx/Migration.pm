@@ -188,12 +188,13 @@ sub _files {
     my ( $self, $type, $need ) = @_;
     my @files;
     for my $i (@$need) {
-        my @matches =
-          glob( File::Spec->catfile( $self->dir, "*${i}_$type.sql" ) );
-        for my $file (@matches) {
-            $file = File::Spec->rel2abs($file);
+        opendir(DIR, $self->dir) or die $!;
+        while (my $file = readdir(DIR)) {
+            next unless $file =~ /${i}_$type\.sql$/;
+            $file = File::Spec->catdir($self->dir, $file);
             push @files, { name => $file, version => $i };
         }
+        closedir(DIR);
     }
     return undef unless @$need == @files;
     return @files ? \@files : undef;
@@ -202,10 +203,15 @@ sub _files {
 sub _newest {
     my $self   = shift;
     my $newest = 0;
-    for my $up ( glob( File::Spec->catfile( $self->dir, "*_up.sql" ) ) ) {
-        $up =~ /\D*(\d+)_up.sql$/;
+
+    opendir(DIR, $self->dir) or die $!;
+    while (my $file = readdir(DIR)) {
+        next unless $file =~ /_up\.sql$/;
+        $file =~ /\D*(\d+)_up.sql$/;
         $newest = $1 if $1 > $newest;
     }
+    closedir(DIR);
+
     return $newest;
 }
 
