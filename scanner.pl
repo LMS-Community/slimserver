@@ -201,7 +201,7 @@ Command line options:
 	--wipe        Wipe the DB and start from scratch
 	--playlists   Only scan files in your playlistdir.
 	--itunes      Run the iTunes Importer.
-	--musicmagic  Run the MusicMagig Importer.
+	--musicmagic  Run the MusicMagic Importer.
 	--progress    Show a progress bar of the scan.
 	--prefsfile   Specify an alternate prefs file.
 
