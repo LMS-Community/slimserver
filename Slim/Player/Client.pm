@@ -1190,6 +1190,7 @@ sub scrollBottom {}
 sub parseLines {}
 sub playingModeOptions {}
 sub block{}
+sub symbols{}
 sub unblock{}
 
 sub pause {
