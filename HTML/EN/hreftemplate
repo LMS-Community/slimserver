@@ -130,7 +130,7 @@ href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=
 
 [%# this is the href to the year of item %]
 [% BLOCK yearItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% item.year %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% item.year %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]

@@ -26,7 +26,7 @@
 	
 					<div class="songInfoText">[% FOREACH contributor = contributors.sort %]
 	
-						[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
+						[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
 	
 						[% contributorsHTML.push(contributorHTMLFrag) %]
 	
@@ -40,7 +40,7 @@
 	
 		[% IF itemobj.album %] 
 			<li><div class="songInfoTitle">[% "ALBUM" | string; "COLON" | string %]</div>
-				<div class="songInfoText"><a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a></div>
+				<div class="songInfoText"><a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title | html %]</a></div>
 			</li>
 		[% END %]
 	
@@ -48,7 +48,7 @@
 		[% IF genres %] 
 			<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
 				<div class="songInfoText">[% FOREACH genre = genres %]
-					<a href="browsedb.html?hierarchy=artist,album,track&amp;level=0&amp;genre=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name | html %]</a>
+					<a href="browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name | html %]</a>
 				[% END %]</div>
 			</li>
 		[% END %]
@@ -97,7 +97,7 @@
 	
 		[% IF itemobj.year %] 
 			<li><div class="songInfoTitle">[% "YEAR" | string; "COLON" | string %]</div>
-				<div class="songInfoText"><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a></div>
+				<div class="songInfoText"><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a></div>
 			</li>
 		[% END %]
 		

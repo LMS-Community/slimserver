@@ -25,7 +25,7 @@
 				<td>[% role | upper | string %][% "COLON" | string %]</td>
 				<td>
 				[% FOREACH contributor = contributors.sort %]
-					<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% playerURI %]">[% contributor.name | html %]</a>
+					<a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]">[% contributor.name | html %]</a>
 				[% END %]
 				</td>
 			</tr>
@@ -36,7 +36,7 @@
 		<tr>
 			<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 			<td>
-				<a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&amp;player=[% playerURI %]">[% itemobj.album.title | html %]</a>
+				<a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]">[% itemobj.album.title | html %]</a>
 			</td>
 		</tr>
 		[% END %]
@@ -46,7 +46,7 @@
 			<td>[% "GENRE" | string %][% "COLON" | string %]</td>
 			<td>
 			[% FOREACH genre = itemobj.genres %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]" >[% genre.name %]</a>
+				<a href="browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]&amp;player=[% playerURI %]" >[% genre.name %]</a>
 			[% END %]
 			</td>
 		</tr>
@@ -83,7 +83,7 @@
 		[% IF itemobj.year %]
 		<tr>
 			<td>[% "YEAR" | string %][% "COLON" | string %]</td>
-			<td><a href="browsedb.html?hierarchy=year,album,track&level=1&year=[% itemobj.year %]&amp;player=[% playerURI %]">[% itemobj.year| html %]</a></td>
+			<td><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]">[% itemobj.year| html %]</a></td>
 		</tr>
 		[% END %]
 		

@@ -101,7 +101,7 @@ sub artistsWithAttributes {
 
 		push @artists, {
 			'artist'     => $artist,
-			'attributes' => join('=', 'artist', $artist->id),
+			'attributes' => join('=', 'contributor.id', $artist->id),
 		};
 	}
 

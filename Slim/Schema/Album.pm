@@ -195,7 +195,7 @@ sub artistsWithAttributes {
 
 	for my $artist ($self->artists) {
 
-		my @attributes = join('=', 'artist', $artist->id);
+		my @attributes = join('=', 'contributor.id', $artist->id);
 
 		if ($artist->name eq Slim::Music::Info::variousArtistString()) {
 
