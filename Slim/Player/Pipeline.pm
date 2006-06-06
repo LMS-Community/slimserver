@@ -266,6 +266,8 @@ sub sysread {
 				}			
 			}
 			else {
+				${*$self}{'pipeline_pending_bytes'} = $pendingBytes;
+				${*$self}{'pipeline_pending_size'} = $pendingSize;
 				return $writelen;
 			}
 			$loop = 1;
