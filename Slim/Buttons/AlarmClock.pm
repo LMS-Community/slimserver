@@ -69,7 +69,7 @@ sub init {
 			%specialPlaylists = (
 				'PLUGIN_RANDOM_TRACK'	=> 'track',
 				'PLUGIN_RANDOM_ALBUM'	=> 'album',
-				'PLUGIN_RANDOM_ARTIST'	=> 'artist',
+				'PLUGIN_RANDOM_CONTRIBUTOR'	=> 'artist',
 		);
 	}
 	

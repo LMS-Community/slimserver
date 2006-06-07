@@ -2758,10 +2758,7 @@ sub playlists {
 
 	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
 
-		if (Slim::Music::Info::isURL($playlist)) {
-
-			$lists{$playlist->name} = Slim::Music::Info::standardTitle(undef, $playlist);
-		}
+		$lists{$playlist->name} = Slim::Music::Info::standardTitle(undef, $playlist);
 	}
 
 	return \%lists;
