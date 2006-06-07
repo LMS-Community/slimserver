@@ -151,9 +151,16 @@ sub startServer {
 		exit;
 	};
 
+	my $confFile = $class->confFile;                                                                                                                    
+
+	# Bug: 3461
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		$confFile = Win32::GetShortPathName($confFile);
+	}
+
 	my @commands = (
 		$mysqld, 
-		sprintf('--defaults-file=%s', $class->confFile),
+		sprintf('--defaults-file=%s', $confFile),
 		sprintf('--pid-file=%s', $class->pidFile),
 	);
 
