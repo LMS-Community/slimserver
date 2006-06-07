@@ -15,10 +15,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 my %possibleSpecialPlaylistsIDs = (
-	'CURRENT_PLAYLIST'      => -1,
-	'PLUGIN_RANDOM_TRACK'	=> -2,
-	'PLUGIN_RANDOM_ALBUM'	=> -3,
-	'PLUGIN_RANDOM_ARTIST'	=> -4,
+	'CURRENT_PLAYLIST'          => -1,
+	'PLUGIN_RANDOM_TRACK'	    => -2,
+	'PLUGIN_RANDOM_ALBUM'	    => -3,
+	'PLUGIN_RANDOM_CONTRIBUTOR' => -4,
 );
 
 ################################################################################

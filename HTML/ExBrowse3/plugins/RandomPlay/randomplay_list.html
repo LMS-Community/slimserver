@@ -51,7 +51,7 @@
 					</tr>
 					
 					<td><table>
-					[% FOREACH type IN ['track','artist','album','year'] %]
+					[% FOREACH type IN ['track','contributor','album','year'] %]
 					<tr>
 						<td class="browselistbuttons">[% PROCESS playLink type="$type" addOnly="0" %]</td>
 						<td class="browselistbuttons">[% PROCESS playLink type="$type" addOnly="1" %]</td>
