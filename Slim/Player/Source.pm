@@ -1159,17 +1159,29 @@ sub openSong {
 	my $song     = streamingSong($client);
 	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 
+	# Bug: 3390 - reload the track if it's changed.
+	my $url      = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl->url : $objOrUrl;
+
 	my $track    = Slim::Schema->rs('Track')->objectForUrl({
-		'url'      => $objOrUrl,
-		'create'   => 1,
+		'url'      => $url,
 		'readTags' => 1
 	});
 
 	if (!blessed($track) || !$track->can('url')) {
 
-		errorMsg("openSong: Error finding an object for [$objOrUrl]!\n");
+		# Try and create the track if we weren't able to fetch it.
+		$track = Slim::Schema->rs('Track')->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1
+		});
 
-		return undef;
+		if (!blessed($track) || !$track->can('url')) {
+
+			errorMsg("openSong: Error finding an object for [$objOrUrl]!\n");
+
+			return undef;
+		}
 	}
 
 	my $fullpath = $track->url;
