@@ -4698,7 +4698,7 @@ SETUP_HTTPPORT_DESC
 	FR	Vous pouvez changer le port utilisé pour accéder au serveur à partir d'un navigateur web. Le port par défaut est 9000.
 	HE	ציין מספר פורט, ברירת המחדל הינה 9000
 	IT	Puoi cambiare il numero della porta che viene usata dal browser per accedere al server. (Di default e' la 9000).
-	JA	ウェブ ブラウザーからサーバーにアクセスする為のポート ナンバーを変更することができ¾す （標準は9000）。
+	JA	ウェブ ブラウザーからサーバーにアクセスする為のポート ナンバーを変更することができます （標準は9000）。
 	NL	Het poortnummer om te gebruiken in de webinterface. (Standaard is dit poort 9000).
 	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en webleser. (Standardverdi er 9000)
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
