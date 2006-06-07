@@ -744,7 +744,7 @@ sub mergeVariousArtistsAlbums {
 
 	my $cursor  = $self->search('Album', {
 
-		'me.compilation' => { '!=' => 1 },
+		'me.compilation' => undef,
 		'me.title'       => { '!=' => string('NO_ALBUM') },
 
 	}, { 'prefetch' => { 'tracks' => 'contributorTracks' } });
@@ -1426,12 +1426,18 @@ sub _postCheckAttributes {
 	my $discc    = $attributes->{'DISCC'};
 
 	# Make a local variable for COMPILATION, that is easier to handle
-	my $isCompilation = 0;
+	my $isCompilation = undef;
 
-	if (defined $attributes->{'COMPILATION'} &&
-		($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} == 1)) {
+	if (defined $attributes->{'COMPILATION'}) {
 
-		$isCompilation = 1;
+		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} == 1) {
+
+			$isCompilation = 1;
+
+		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} == 0) {
+
+			$isCompilation = 0;
+		}
 	}
 
 	# we may have an album object already..
@@ -1523,7 +1529,7 @@ sub _postCheckAttributes {
 			# of trying to match on the artist. Having the
 			# compilation bit means that this is 99% of the time a
 			# Various Artist album, so a contributor match would fail.
-			if ($isCompilation) {
+			if (defined $isCompilation) {
 
 				# in the database this is 0 or 1
 				$search->{'compilation'} = $isCompilation;
@@ -1549,7 +1555,7 @@ sub _postCheckAttributes {
 			# the other track is not in our current directory. If
 			# so, then we need to create a new album. If not, the
 			# album object is valid.
-			if ($albumObj && $checkDisc && !$isCompilation) {
+			if ($albumObj && $checkDisc && !defined $isCompilation) {
 
 				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
 				my $matchTrack = $tracks{ $track->tracknum };
