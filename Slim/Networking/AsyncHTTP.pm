@@ -511,7 +511,11 @@ sub readHeaderCallback {
 		$state->{'code'}    = $code;
 		$state->{'mess'}    = $mess;
 		
-		my $headers = HTTP::Headers->new( @h );	
+		my $headers = HTTP::Headers->new;
+		while (@h) {
+			my ($k, $v) = splice @h, 0, 2;
+			$headers->push_header( $k => $v );
+		}
 		$state->{'headers'} = $headers;
 		
 		if ( $::d_http_async ) {
