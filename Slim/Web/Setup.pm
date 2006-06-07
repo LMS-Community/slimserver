@@ -2903,7 +2903,11 @@ sub setup_changes_HTTP {
 			next;
 		}
 		if (exists $settingsref->{$keyA.$keyI}{'changeIntro'}) {
-			$changebase = $settingsref->{$keyA.$keyI}{'changeIntro'};
+			if (Slim::Utils::Strings::stringExists($settingsref->{$keyA.$keyI}{'changeIntro'})) {
+				$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA.$keyI}{'changeIntro'});
+			} else {
+				$changebase = $settingsref->{$keyA.$keyI}{'changeIntro'};
+			}
 		} elsif (exists $settingsref->{$keyA}{'changeIntro'}) {
 			$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeIntro'});
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
