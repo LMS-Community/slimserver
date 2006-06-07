@@ -21,7 +21,7 @@ BEGIN {
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
 
-	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI XML::Parser YAML::Syck)], []);
+	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI XML::Parser::Expat YAML::Syck)], []);
 };
 
 use Getopt::Long;

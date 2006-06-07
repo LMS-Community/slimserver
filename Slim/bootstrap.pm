@@ -50,7 +50,7 @@ use Symbol;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(Time::HiRes DBD::mysql DBI XML::Parser HTML::Parser Compress::Zlib Digest::SHA1 YAML::Syck);
+my @default_required_modules = qw(Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser Compress::Zlib Digest::SHA1 YAML::Syck);
 my @default_optional_modules = qw(GD Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
@@ -92,15 +92,13 @@ sub loadModules {
 		);
 	}
 
-	$d_startup && printf("Got @" . "INC containing:\n%s\n\n", join("\n", @INC));
-
-	my %libPaths = map { $_ => 1 } @SlimINC;
+	$d_startup && printf("Got \@INC containing:\n%s\n\n", join("\n", @INC));
 
 	# This works like 'use lib'
 	# prepend our directories to @INC so we look there first.
 	unshift @INC, @SlimINC;
 
-	$d_startup && printf("Extended @" . "INC to contain:\n%s\n\n", join("\n", @INC));
+	$d_startup && printf("Extended \@INC to contain:\n%s\n\n", join("\n", @INC));
 
 	# Try and load the modules - some will fail if we don't include the
 	# binaries for that version/architecture combo
@@ -122,7 +120,7 @@ sub loadModules {
 	}
 
 	# Remove our paths so we can try loading the failed modules from the default system @INC
-	@INC = grep { !$libPaths{$_} } @INC;
+	splice(@INC, 0, scalar @SlimINC);
 
 	my @required_really_failed = tryModuleLoad(@required_failed);
 	my @optional_really_failed = tryModuleLoad(@optional_failed);
