@@ -329,7 +329,7 @@ sub fillInSearchResults {
 
 			} else {
 
-				if ($type eq 'artist') {
+				if ($type eq 'contributor') {
 
 					$form{'hierarchy'} = 'contributor,album,track';
 					$form{'level'}     = 1;

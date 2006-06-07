@@ -17,12 +17,12 @@ use Slim::Web::Pages;
 
 use constant MAXRESULTS => 10;
 
-my @allTypes = qw(artist album track);
+my @allTypes = qw(contributor album track);
 
 our %queries = (
-	'artist' => [qw(contributor me.namesearch)],
-	'album'  => [qw(album me.titlesearch)],
-	'track'  => [qw(track me.titlesearch)],
+	'contributor' => [qw(contributor me.namesearch)],
+	'album'       => [qw(album me.titlesearch)],
+	'track'       => [qw(track me.titlesearch)],
 );
 
 sub query {
@@ -46,7 +46,7 @@ sub query {
 		# Don't do an unneeded join for albums & tracks.
 		# Also we want to search across all artists - so don't limit
 		# based on the compilation bit.
-		if ($type eq 'artist') {
+		if ($type eq 'contributor') {
 
 			if (my $roles = Slim::Schema->artistOnlyRoles) {
 
@@ -185,9 +185,9 @@ sub renderItem {
 
 		$url = "browsedb.html?hierarchy=album,track\&amp;level=1\&amp;album.id=$id";
 
-	} elsif ($type eq 'artist') {
+	} elsif ($type eq 'contributor') {
 
-		$url = "browsedb.html?hierarchy=artist,album,track\&amp;level=1\&amp;contributor.id=$id";
+		$url = "browsedb.html?hierarchy=contributor,album,track\&amp;level=1\&amp;contributor.id=$id";
 	}
 
 	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
