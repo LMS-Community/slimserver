@@ -339,6 +339,7 @@ sub handleTrack {
 		}
 
 		$cacheEntry{'VALID'} = 1;
+		$cacheEntry{'AUDIO'} = 1;
 
 		# Only read tags if we don't have a music folder defined.
 		my $track = Slim::Schema->rs('Track')->updateOrCreate({
