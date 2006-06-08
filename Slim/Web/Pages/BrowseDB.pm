@@ -259,6 +259,13 @@ sub browsedb {
 			$params->{$attr} = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
 		}
 	}
+	
+	# Bug 3311, disable editing for iTunes playlists
+	if ( $params->{'playlist'} ) {
+		if ( $params->{'playlist'}->title =~ /^iTunes: / ) {
+			$params->{'noEdit'} = 1;
+		}
+	}
 
 	my $otherparams = join('&',
 		'player=' . Slim::Utils::Misc::escape($player || ''),
