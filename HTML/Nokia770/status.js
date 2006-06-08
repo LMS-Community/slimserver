@@ -234,7 +234,7 @@ function playerButtonControl(playerRepeatOrShuffle, selected, param, noRequest) 
 		$('playercontrol_next').src = 'html/images/larger/next.gif';
 		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'player') {
-		getStatusData(param, refreshPlayerStatus);
+		getStatusData(param, refreshAll);
 	} else if (playerRepeatOrShuffle == 'shuffle') {
 		getStatusData(param, refreshAll);
 	} else {
@@ -281,9 +281,10 @@ function refreshOtherElements(theData) {
 	// refresh song info
 	var songinfoArray = new Array();
 	songinfoArray[songinfoArray.length] = {name: 'songtitle', stub:'songinfo.html?item='};
-	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=0&artist='};
-	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=track&level=0&album='};
-	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=artist,album,track&level=0&genre='};
+	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=0&artist.name='};
+	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=album,track&level=1&album.id='};
+	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=artist,album,track&level=0&genre.name='};
+
 	songinfoArray.each(function(key) {
 		var thisName = key.name;
 		var thisStub = key.stub;
