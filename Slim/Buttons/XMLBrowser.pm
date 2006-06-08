@@ -714,7 +714,8 @@ sub playItem {
 
 		$client->showBriefly( $string, $title, 10 );
 
-	} elsif ($type eq 'playlist') {
+	}
+	elsif ($type eq 'playlist') {
 
 		# URL is remote, load it asynchronously...
 		# give user feedback while loading
@@ -732,15 +733,22 @@ sub playItem {
 			},
 		);
 
-	} elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url) ne 'unk')) {
+	}
+	elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url) ne 'unk')) {
 		
 		Slim::Music::Info::setTitle( $url, $title );
 		
 		$client->execute([ 'playlist', $action, $url, $title ]);
+		
+	}
+	elsif ( scalar @{$item->{'items'}} && ref($item->{'items'}) eq 'ARRAY' ) {
 
-	} else {
+		# it's not an audio item, so recurse into OPML item
+		gotOPML($client, $client->param('url'), $item);
+	}
+	else {
 
-		$client->showBriefly($title, $client->string("PODCAST_NOTHING_TO_PLAY"));
+		$client->bumpRight();
 	}
 }
 
