@@ -47,6 +47,9 @@ sub clientAdd {
 		}
 	} 
 
+	# Bug 3362, ignore sessionID's within URLs (Live365)
+	$url =~ s/\?sessionid.+//i;
+	
 	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
 	my $fav = undef;
@@ -80,13 +83,18 @@ sub clientAdd {
 # for internal use only.  Get pref index for given url
 sub _indexByUrl {
 	my $url = shift;
+	
+	# Bug 3362, ignore sessionID's within URLs (Live365)
+	# This allows either a URL with session or without to be found properly
+	my $strippedURL = $url;
+	$strippedURL    =~ s/\?sessionid.+//i;
 
 	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
 
 	my $i = 0;
 	my $found = 0;
 	while (!$found && $i < scalar(@urls)) {
-		if ($urls[$i] eq $url) {
+		if ( $urls[$i] eq $url || $urls[$i] eq $strippedURL ) {
 			$found = 1;
 		} else {
 			$i++;
