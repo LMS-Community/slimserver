@@ -4,6 +4,7 @@ package Audio::Musepack;
 
 use strict;
 use Audio::APETags;
+use Fcntl qw(:seek);
 use MP3::Info;
 
 our $VERSION = '0.02';
@@ -128,6 +129,7 @@ sub _checkHeader {
 	}
 
 	# Next, check for APE tag
+	my $buffer = '';
 	read ($fh, $buffer, 8) or return -1;
 
 	if ($buffer eq APEHEADERFLAG) {
