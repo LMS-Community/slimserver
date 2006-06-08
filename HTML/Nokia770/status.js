@@ -281,9 +281,9 @@ function refreshOtherElements(theData) {
 	// refresh song info
 	var songinfoArray = new Array();
 	songinfoArray[songinfoArray.length] = {name: 'songtitle', stub:'songinfo.html?item='};
-	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=0&artist.name='};
-	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=album,track&level=1&album.id='};
-	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=artist,album,track&level=0&genre.name='};
+	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id='};
+	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=contributor,album,track&level=2&album.id='};
+	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=genre,contributor,album,track&level=1&genre.id='};
 
 	songinfoArray.each(function(key) {
 		var thisName = key.name;
