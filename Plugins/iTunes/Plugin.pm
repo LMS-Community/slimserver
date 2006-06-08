@@ -27,9 +27,9 @@ sub getFunctions {
 sub initPlugin {
 	my $class = shift;
 
-	return 1 if $class->initialized;
-
 	addGroups();
+
+	return 1 if $class->initialized;
 
 	if (!$class->canUseiTunesLibrary) {
 		return;
