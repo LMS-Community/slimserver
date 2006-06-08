@@ -55,7 +55,7 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 		</tr>
 
 			[% odd = 1 %]
-			[% FOREACH type IN ['track','artist','album','year'] %]
+			[% FOREACH type IN ['track','contributor','album','year'] %]
 				[% BLOCK controls %]
 					[% PROCESS randomLink type="$type" addOnly="0" %]
 					[% PROCESS randomLink type="$type" addOnly="1" %]

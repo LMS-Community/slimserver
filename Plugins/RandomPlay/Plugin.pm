@@ -566,10 +566,10 @@ sub setMode {
 
 sub commandCallback {
 	my $request = shift;
+	my $client  = $request->client;
 
-	my $client = $request->client();
-
-	if (!$request->source || $request->source() eq 'PLUGIN_RANDOM') {
+	# Don't respond to callback for ourself.
+	if ($request->source && $request->source eq 'PLUGIN_RANDOM') {
 		return;
 	}
 
@@ -580,10 +580,8 @@ sub commandCallback {
 	}
 
 	if ($::d_plugins) {
-		msgf("RandomPlay: received command %s\n", 
-				$request->getRequestString());
-		msgf("RandomPlay: while in mode: %s, from %s\n",
-				$mixInfo{$client->id}->{'type'}, $client->name);
+		msgf("RandomPlay: received command %s\n", $request->getRequestString);
+		msgf("RandomPlay: while in mode: %s, from %s\n", $mixInfo{$client->id}->{'type'}, $client->name);
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -600,9 +598,9 @@ sub commandCallback {
 				msg("RandomPlay: deletion detected (" . $request->getParam('_index') . ")\n");
 			}
 		}
-		
+
 		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
-			
+
 		if ($songIndex && $songsToKeep ne '') {
 
 			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
