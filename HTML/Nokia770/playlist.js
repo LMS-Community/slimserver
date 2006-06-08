@@ -6,8 +6,8 @@ var timeoutID = false;
 
 var playlistBlankRequest = '[% webroot %]playlist.html?player=[% playerURI %]&ajaxRequest=1&start=[% pageinfo.startitem %]';
 var trackHrefTemplate = '[% webroot %]songinfo.html?item=ITEM&amp;player=[% playerURI %]';
-var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=artist,album,track&amp;artist=ARTIST&amp;level=1&player=[% playerURI %]';
-var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=ALBUM&player=[% playerURI %]';
+var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=ARTIST&amp;level=1&player=[% playerURI %]';
+var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=contributor,album,track&level=1&album.id=ALBUM&player=[% playerURI %]';
 
 var deleteTrackNum = null;
 var thisTrack;
