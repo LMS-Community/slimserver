@@ -479,7 +479,7 @@ sub browsedbItemName {
 		}
 	}
 
-	if ($levels[$level] eq 'track') {
+	if ( $levels[$level] =~ /(?:track|playlistTrack)/ ) {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
