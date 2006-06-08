@@ -79,20 +79,12 @@ sub read {
 					# should URL escape before continuing.
 					$href =~ s/ /%20/;
 
-					my $url = URI->new($href);
+					# Bug 3160 (partial)
+					# 'ref' tags refer to audio content, so we need to force
+					# the use of the MMS protocol handler by making sure the URI starts with mms
+					$href =~ s/^http/mms/;
 
-					$::d_parse && msg("Checking if we can handle the url: $url\n");
-					
-					my $scheme = $url->scheme;
-
-					if ($scheme =~ s/^mms(.?)/mms/) {
-						$url->scheme($scheme);
-						$href = $url->as_string;
-					}
-
-					if (Slim::Player::ProtocolHandlers->loadHandler(lc $scheme)) {
-
-						$::d_parse && msg("Found a handler for: $url\n");
+					if ( $href =~ /^mms/ ) {
 						$path = $href;
 						last;
 					}
