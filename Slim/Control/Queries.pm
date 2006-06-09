@@ -166,16 +166,16 @@ sub browseXQuery {
 		$request->addResult('rescan', 1);
 	}
 
-	# XXXX - need to convert to Schema
 	# Who calls this?
-	my $results = Slim::Schema->search($label, {
-		'find'   => $find,
-		'sortBy' => $label,
-#		'limit'  => $cmdRef->{'_p2'},
-#		'offset' => $cmdRef->{'_p1'},
-	});
+	my $rs = Slim::Schema->search($label, $find, { 'order_by' => $label });
 
-	my $count = scalar @$results;
+	# offset is _p1, limit is _p2
+	# if (defined $cmdRef->{'_p1'} && defined $cmdRef->{'_p2'}) {
+
+	#	$rs = $rs->slice($cmdRef->{'_p1'}, $cmdRef->{'_p2'});
+	#}
+
+	my $count = $rs->count;
 
 	$request->addResult('count', $count);
 
@@ -186,7 +186,7 @@ sub browseXQuery {
 		my $loopname = '@' . $label . 's';
 		my $cnt = 0;
 
-		for my $eachitem (@$results[$start..$end]) {
+		for my $eachitem ($rs->slice($start, $end)) {
 			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
 			$request->addResultLoop($loopname, $cnt, $label, $eachitem);
 			$cnt++;
@@ -1415,16 +1415,16 @@ sub titlesQuery {
 		$request->addResult("rescan", 1);
 	}
 
-	# XXXX - need to convert to schema!
 	# Who calls this?
-	my $results = Slim::Schema->search($label, {
-		'find'   => $find,
-		'sortBy' => $sort,
-#		'limit'  => $cmdRef->{'_p2'},
-#		'offset' => $cmdRef->{'_p1'},
-	});
-	
-	my $count = scalar @$results;
+	my $rs = Slim::Schema->search($label, $find, { 'order_by' => $sort });
+
+	# offset is _p1, limit is _p2
+	# if (defined $cmdRef->{'_p1'} && defined $cmdRef->{'_p2'}) {
+
+	#	$rs = $rs->slice($cmdRef->{'_p1'}, $cmdRef->{'_p2'});
+	#}
+
+	my $count = $rs->count;
 
 	$request->addResult("count", $count);
 
@@ -1434,7 +1434,7 @@ sub titlesQuery {
 		
 		my $cnt = 0;
 	
-		for my $item (@$results[$start..$end]) {
+		for my $item ($rs->slice($start, $end)) {
 
 			_addSong($request, '@titles', $cnt++, $item, $tags);
 
