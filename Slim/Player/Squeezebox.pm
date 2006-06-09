@@ -221,7 +221,8 @@ sub quickstart {
 	# begin playback once we have this much data in the buffer
 	my $threshold = 20 * 1024;
 
-	if ( $fullness >= $threshold ) {
+	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
+	if ( $fullness >= $threshold && !Slim::Player::Sync::isSynced($client) ) {
 		$client->resume();
 	}
 	else {
@@ -239,12 +240,21 @@ sub quickstart {
 			}
 		}
 		else {
-			my $buffering = $client->string('BUFFERING') . ' ' . $percent . '%';
-			$line1 = $client->string('NOW_PLAYING') . ' (' . $buffering . ')';
+			my $status;
+			
+			# When synced, a player may have to wait longer than the buffering time
+			if ( Slim::Player::Sync::isSynced($client) && $percent >= 100 ) {
+				$status = $client->string('WAITING_TO_SYNC');
+			}
+			else {
+				$status = $client->string('BUFFERING') . ' ' . $percent . '%';
+			}
+			
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
 			
 			# Display only buffering text in large text mode
 			if ( $client->linesPerScreen() == 1 ) {
-				$line2 = $buffering;
+				$line2 = $status;
 			}
 		}
 		

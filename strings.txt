@@ -1406,6 +1406,9 @@ BUFFERING
 	DE	Fülle Puffer
 	EN	Buffering
 
+WAITING_TO_SYNC
+	EN	Waiting to sync...
+
 PROBLEM_CONNECTING
 	CS	Chyba: nelze se připojit k serveru:
 	DE	Problem: Der Player kann nicht zum Server verbinden:

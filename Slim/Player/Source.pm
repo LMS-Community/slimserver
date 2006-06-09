@@ -462,8 +462,10 @@ sub playmode {
 				}
 			}
 			
+			my $paused = ( Slim::Player::Sync::isSynced($everyclient) ) ? 1 : 0;
+			
 			$everyclient->play(
-				Slim::Player::Sync::isSynced($everyclient),
+				$paused,
 				$master->streamformat(),
 				$currentSong,
 				(defined($seekoffset) && $seekoffset > 0),
@@ -766,8 +768,10 @@ sub gototime {
 		$::d_source && msg("gototime: restarting playback\n");
 
 		$everybuddy->readytosync(0);
+		
+		my $paused = ( Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
 
-		$everybuddy->play(Slim::Player::Sync::isSynced($client), $client->streamformat(),
+		$everybuddy->play($paused, $client->streamformat(),
 				Slim::Player::Playlist::song($client));
 
 		$everybuddy->playmode("play");
