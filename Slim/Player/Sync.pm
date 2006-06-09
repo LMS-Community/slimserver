@@ -345,12 +345,21 @@ sub checkSync {
 	# that we're ready to be unpaused.  If everyone else is now ready,
 	# unpause all the clients at once.
 	if ($client->readytosync == 0) {
+		
+		my $threshold = $client->prefGet('syncBufferThreshold');
+		
+		# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
+		my $playlist = Slim::Player::Playlist::playList($client);
+		my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
+		if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
+			$threshold += 20480;
+		}
 
 		my $fullness = $client->bufferFullness();
 		my $usage = $client->usage();
-		$::d_sync && msg($client->id()." checking buffer fullness: $fullness\n");
+		$::d_sync && msg($client->id()." checking buffer fullness: $fullness (threshold: $threshold)\n");
 
-		if 	((defined($fullness) && $fullness > $client->prefGet('syncBufferThreshold')) ||
+		if 	((defined($fullness) && $fullness > $threshold) ||
 			 (defined($usage) && $usage > 0.90)) {
 			$client->readytosync(1);
 		
