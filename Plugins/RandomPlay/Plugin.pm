@@ -114,7 +114,7 @@ sub getGenres {
 
 	# Should use genre.name in following find, but a bug in find() doesn't allow this	
 	# XXXX - how does the above comment translate into DBIx::Class world?
-   	my $rs = Slim::Schema->search('Genre');
+	my $rs = Slim::Schema->search('Genre');
 
 	# Extract each genre name into a hash
 	my %clientGenres = ();
@@ -128,7 +128,7 @@ sub getGenres {
 		my $id   = $genre->id;
 		my $ena  = 1;
 
-		if (grep { $_ eq $name } @exclude) {
+		if (grep { $_ eq $id } @exclude) {
 			$ena = 0;
 		}
 
@@ -171,7 +171,7 @@ sub getRandomYear {
 	
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
 
-   	my $year = Slim::Schema->rs('Track')->single(
+	my $year = Slim::Schema->rs('Track')->single(
 		{ 'genreTracks.genre' => $filteredGenresRef },
 		{ 'order_by' => \'RAND()', 'join' => 'genreTracks' }
 	)->year;
@@ -460,13 +460,13 @@ sub toggleGenreState {
 
 		# Enable/disable every genre
 		foreach my $genre (keys %{$genres{$client}}) {
-			$genres{$client}{$genre}{'enabled'} = $item->{'enabled'};
+			$genres{$client}->{$genre}->{'enabled'} = $item->{'enabled'};
 		}
 
 	} else {
 
 		# Toggle the selected state of the current item
-		$genres{$client}{$item->name}{'enabled'} = ! $genres{$client}{$item->name}{'enabled'};		
+		$genres{$client}->{$item->{'id'}}->{'enabled'} = ! $genres{$client}->{$item->{'id'}}->{'enabled'};
 	}
 
 	Slim::Utils::Prefs::set('plugin_random_exclude_genres', getFilteredGenres($client, 1));
