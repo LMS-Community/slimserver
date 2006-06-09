@@ -189,7 +189,7 @@ sub handleTrack {
 
 			if (Slim::Utils::Prefs::get('itunes_library_music_path')) {
 
-				$url  = normalize_location($location, 'fallback');
+				$url  = $class->normalize_location($location, 'fallback');
 				$file = Slim::Utils::Misc::pathFromFileURL($url);
 			}
 		}

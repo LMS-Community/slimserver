@@ -796,7 +796,7 @@ sub generateHTTPResponse {
 
 		my $obj = Slim::Schema->find('Track', $1);
 
-		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj)) {
+		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url())) {
 
 			$::d_http && msg("Opening $obj to stream...\n");
 
