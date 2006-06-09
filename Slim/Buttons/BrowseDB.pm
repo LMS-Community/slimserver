@@ -65,7 +65,7 @@ sub init {
 
 		'SAVED_PLAYLISTS'  => {
 			'useMode'   => 'browsedb',
-			'hierarchy' => 'playlist,track',
+			'hierarchy' => 'playlist,playlistTrack',
 			'level'     => 0,
 		},
 	);
@@ -155,9 +155,27 @@ sub init {
 			}
 
 			# And all the search terms for the current mode
-			push @terms, map { $_ . '=' . 
-				(ref $findCriteria->{$_} eq 'ARRAY' ? join '',@{$findCriteria->{$_}} : $findCriteria->{$_}) } 
-					(keys %$findCriteria);
+			# XXXX - it'd be nice to just serialize this using
+			# Storable and send it to Slim::Control::*
+			while (my ($key, $value) = each %{$findCriteria}) {
+
+				if (ref($value) eq 'ARRAY') {
+
+					push @terms, join('=', $key, (join '', @$value));
+
+				} elsif (ref($value) eq 'HASH') {
+
+					while (my ($subkey, $subvalue) = each %{$value}) {
+
+						push @terms, join('=', $subkey, $subvalue);
+					}
+
+				} else {
+
+					push @terms, join('=', $key, $value);
+				}
+			}
+
 			my $termlist = join '&', @terms;
 
 			# If we're dealing with a group of tracks...
@@ -187,7 +205,11 @@ sub init {
 			# Else if we pick a single song
 			else {
 				# find out if this item is part of a container, such as an album or playlist previously selected.
-				my $container = ${$client->param('findCriteria')}{'album'} || ${$client->param('findCriteria')}{'playlist'};
+				my $container = 0;
+
+				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me\.id/ } @terms) {
+					$container = 1;
+				}
 
 				# In some cases just deal with the song individually
 				if ($addorinsert || !$container || !Slim::Utils::Prefs::get('playtrackalbum')) {
@@ -545,9 +567,7 @@ sub browsedbOverlay {
 		$overlay1 = Slim::Display::Display::symbol('mixable');
 	}
 
-	my $descend   = $client->param('descend');
-
-	if ($descend) {
+	if ($client->param('descend')) {
 		$overlay2 = Slim::Display::Display::symbol('rightarrow');
 	}
 	else {
@@ -573,7 +593,6 @@ sub setMode {
 	my %find      = ();
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
-	msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
 	# Parse the hierarchy list into an array
 	my @levels   = split(',', $hierarchy);
@@ -586,25 +605,27 @@ sub setMode {
 
 	my $descend = ($level >= $maxLevel) ? undef : 1;
 
-	my $levelRS = Slim::Schema->rs($levels[$level]);
+	my $rs      = Slim::Schema->rs($levels[$level]);
 	my $topRS   = Slim::Schema->rs($levels[0]);
 
 	# First get the names of the specified parameters.
 	# These could be necessary for titles.
 	my %names      = ();
+	my %levelMap   = ();
 	my $setAllName = 0;
-
-	my %levelMap = ();
 
 	for (my $i = 1; $i < scalar @levels; $i++) {
 
 		$levelMap{ lc($levels[$i-1]) } = lc($levels[$i]);
 	}
 
-	msg("levelmap:\n");
-	print Data::Dumper::Dumper(\%levelMap);
-	msg("filters:\n");
-	print Data::Dumper::Dumper($filters);
+	# info doesn't seem right, but we don't have a browse debug.
+	if ($::d_info) {
+		msg("levelmap:\n");
+		print Data::Dumper::Dumper(\%levelMap);
+		msg("filters:\n");
+		print Data::Dumper::Dumper($filters);
+	}
 
 	# hierarchy: contributor,album,track level: 2
 
@@ -612,34 +633,40 @@ sub setMode {
 
 		my ($levelName) = ($param =~ /^(\w+)(\.\w+)?$/);
 
-		msg("param 1: [$param] value: [$value]\n");
+		$::d_info && msg("param 1: [$param] value: [$value] level0: [$levels[0]] curlevel: [$levels[$level]]\n");
 
 		# Turn into me.* for the top level
 		if ($param =~ /^$levels[0]\.(\w+)$/) {
+
 			$param = sprintf('%s.%s', $topRS->{'attrs'}{'alias'}, $1);
-			msg("param 2: [$param] value: [$value]\n");
+
+			$::d_info && msg("param 2: [$param] value: [$value]\n");
 		}
 
 		# Turn into me.* for the current level
 		if ($param =~ /^$levels[$level]\.(\w+)$/) {
-			$param = sprintf('%s.%s', $levelRS->{'attrs'}{'alias'}, $1);
-			msg("param 3: [$param] value: [$value]\n");
+
+			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
+
+			$::d_info && msg("param 3: [$param] value: [$value]\n");
 		}
 
-		msg("working on levelname: [$levelName]\n");
+		$::d_info && msg("working on levelname: [$levelName]\n");
 
 		if (my $mapKey = $levelMap{$levelName}) {
 
-			msg("mapKey: [$mapKey]\n");
-
-			$find{$mapKey} = { $param => $value };
+			if (ref($value)) {
+				$find{$mapKey} = $value;
+			} else {
+				$find{$mapKey} = { $param => $value };
+			}
 		}
-
-		msg("\n");
 	}
 
-	msg("find:\n");
-	print Data::Dumper::Dumper(\%find);
+	if ($::d_info) {
+		msg("find:\n");
+		print Data::Dumper::Dumper(\%find);
+	}
 
 	# Build up the names for the top line
 	for my $i (0..$#levels) {
@@ -668,9 +695,6 @@ sub setMode {
 		}
 	}
 
-	msg("levels: [$hierarchy]: names:\n");
-	print Data::Dumper::Dumper(\%names);
-
 	# Next to the actual query to get the items to display
 	#
 	# Ask for only IDs - so we can inflate on the fly.
@@ -678,7 +702,7 @@ sub setMode {
 
 	if (defined $search) {
 
-		@items = $levelRS->searchNames($search)->all;
+		@items = $rs->searchNames($search)->all;
 
 	} else {
 
@@ -708,24 +732,20 @@ sub setMode {
 
 		} else {
 
-			$header = $client->string($levelRS->title);
+			$header = $client->string($rs->title);
 		}
 
 	} elsif ($level == 1) {
-
-		msg("working in level == 1. \$level-1 is: [$levels[$level-1]]\n");
 
 		$header = $names{$levels[$level-1]}; 
 
 	} else {
 
-		msg("working in level > 1. \$level-2 is: [$levels[$level-2]] level-1 is: $levels[$level-1]]\n");
-
 		$header = $names{$levels[$level-2]} . "/" . $names{$levels[$level-1]};
 	}
 
 	# Then see if we have to add an ALL option
-	if (($descend || $search) && $count > 1 && !$levelRS->suppressAll) {
+	if (($descend || $search) && $count > 1 && !$rs->suppressAll) {
 
 		# Use the ALL_ version of the next level down in the hirearchy
 		if ($descend) {
@@ -736,7 +756,7 @@ sub setMode {
 
 			# Unless this is a list of songs at the top level, in which
 			# case, we add an ALL_SONGS
-			push @items, $levelRS->allTitle;
+			push @items, $rs->allTitle;
 		}
 	}
 
@@ -788,7 +808,10 @@ sub setMode {
 		for my $item (@items) {
 
 			# XXXX - need to optimize
-			last if $selection == $item->name;
+			if (blessed($item) && defined $selection && defined $item->name && $selection eq $item->name) {
+				last;
+			}
+
 			$j++;
 		}
 		
@@ -851,8 +874,6 @@ sub setMode {
 			return $item->namesort;
 		};
 	}
-
-	msg("-" x 120 . "\n");
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }

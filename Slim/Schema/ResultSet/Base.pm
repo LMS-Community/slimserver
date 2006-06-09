@@ -8,6 +8,7 @@ use strict;
 use base qw(DBIx::Class::ResultSet);
 
 use Slim::Schema::PageBar;
+use Slim::Utils::Misc;
 
 sub suppressAll        { 0 }
 sub nameTransform      { '' }
@@ -62,11 +63,11 @@ sub descend {
 
 		$level           = ucfirst($level);
 
-		print "working on level: [$level]\n";
+		$::d_sql && msg("descend: working on level: [$level]\n");
 
 		if ($::d_sql) {
-			printf("\$self->result_class: [%s]\n", $self->result_class);
-			printf("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
+			msg("\$self->result_class: [%s]\n", $self->result_class);
+			msg("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
 				$self->result_source->schema->source($level)->result_class
 			);
 		}
@@ -74,13 +75,13 @@ sub descend {
 		# If we're at the top level for a Level, just browse.
 		if ($self->result_class eq $self->result_source->schema->source($level)->result_class) {
 
-			print "Calling method: [browse]\n";
+			$::d_sql && msg("Calling method: [browse]\n");
 			$rs = $rs->browse($findForLevel, $sortForLevel);
 
 		} else {
 
 			my $method = "descend${level}";
-			print "Calling method: [$method]\n";
+			$::d_sql && msg("Calling method: [$method]\n");
 			$rs = $rs->$method($findForLevel, $sortForLevel);
 		}
 	}

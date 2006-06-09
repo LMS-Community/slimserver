@@ -180,7 +180,7 @@ sub countImporters {
 	for my $importer (keys %Importers) {
 		
 		# Don't count Folder Scan for this since we use this as a test to see if any other importers are in use
-		if ($Importers{$importer}->{'use'} && $importer ne 'Slim::Music::MusicFolderScan') {
+		if ($Importers{$importer}->{'use'} && $importer ne $folderScanClass) {
 
 			$count++;
 		}

@@ -87,8 +87,6 @@ sub browse {
 sub descendAlbum {
 	my ($self, $find) = @_;
 
-	print Data::Dumper::Dumper($find);
-
 	return $self->search_related('contributorAlbums', $find)->search_related('album');
 }
 

@@ -1746,6 +1746,22 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			my $key   = URI::Escape::uri_unescape($1);
 			my $value = URI::Escape::uri_unescape($2);
 
+			# Do some mapping from the player browse mode. This is
+			# already done in the web ui.
+			if ($key =~ /^(playlist|age|album|genre|year)$/) {
+				$key = "$1.id";
+			}
+
+			# Year browsing is working on the albums.year column.
+			if ($key =~ /^(year|age)\.id$/) {
+
+				if ($key =~ /^year/) {
+					$key = 'album.year';
+				} else {
+					$key = 'album.id';
+				}
+			}
+
 			# Setup the join mapping
 			if ($key =~ /^genre\./) {
 
@@ -1763,18 +1779,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			# Turn 'track.*' into 'me.*'
 			if ($key =~ /^track(\.?.*)$/) {
 				$key = "me$1";
-			}
-
-			# Year browsing is working on the albums.year column.
-			if ($key =~ /^(year|age)\.id$/) {
-
-				if ($key =~ /^year/) {
-					$key = 'album.year';
-				} else {
-					$key = 'album.id';
-				}
-
-				$joinMap{'album'} = 'album';
 			}
 
 			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
@@ -1812,7 +1816,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	} else {
 
 		# Bug 2271 - allow VA albums.
-		if ($find{'album.compilation'}) {
+		if (defined $find{'album.compilation'} && $find{'album.compilation'} == 1) {
 
 			delete $find{'contributor.id'};
 		}
