@@ -31,10 +31,8 @@ sub new {
 		return undef;
 	}
 
-	my $url = Plugins::RadioIO::Plugin::getHTTPURL($1);
-
 	my $sock = $class->SUPER::new({
-		'url'    => $url,
+		'url'    => Plugins::RadioIO::Plugin::getHTTPURL($1),
 		'client' => $client
 	}) || return undef;
 }
@@ -53,14 +51,14 @@ sub canDirectStream {
 }
 
 sub parseDirectBody {
-	my $self = shift;
-	my $url = shift;
-	my $body = shift;
+	my $self  = shift;
+	my $url   = shift;
+	my $body  = shift;
 
-	my $io = IO::String->new($body);
+	my $io    = IO::String->new($body);
 
 	# Need to tell the parser that the playlist is in pls format.
-	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($url);
+	my $pls   = Plugins::RadioIO::Plugin::getHTTPURL($url);
 	my @items = Slim::Formats::Parse::parseList($pls, $io);
 
 	return () unless scalar(@items);
