@@ -738,23 +738,17 @@ sub handleWebMix {
 sub handleWebSettings {
 	my ($client, $params) = @_;
 
-	my %genres = getGenres($client);
-
-	# Build a lookup table to go from genre id to genre name	
-	my @lookup = ();
-
-	foreach my $genre (keys %genres) {
-		@lookup[$genres{$genre}{'id'}] = $genre;
-	}
+	my $genres = getGenres($client);
 
 	# %$params will contain a key called genre_<genre id> for each ticked checkbox on the page
-	foreach my $genre (keys(%$params)) {
+	foreach my $genre (keys %{$params}) {
+
 		if ($genre =~ s/^genre_//) {
-			delete($genres{$lookup[$genre]});
+			delete($genres->{$genre});
 		}
 	}
 
-	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys(%genres)]);	
+	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys %{$genres}]);	
 
 	if ($params->{'numTracks'} =~ /^[0-9]+$/) {
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});
