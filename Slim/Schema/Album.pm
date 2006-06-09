@@ -176,7 +176,7 @@ sub artists {
 	# Still nothing? Use the singular contributor - which might be the $vaObj
 	if (@artists == 0 && $self->compilation) {
 
-		@artists = Slim::Schema::DBIStore->variousArtistsObject;
+		@artists = Slim::Schema->variousArtistsObject;
 
 	} elsif (@artists == 0 && $self->contributor) {
 
