@@ -181,16 +181,12 @@ sub modificationTime {
 	return join(', ', Slim::Utils::Misc::longDateF($time), Slim::Utils::Misc::timeF($time));
 }
 
-sub bitrate {
+sub prettyBitRate {
 	my $self = shift;
 	my $only = shift;
 
-	my ($bitrate, $vbrScale) = $self->get_columns(qw(bitrate vbr_scale));
-
-	# Source only wants the raw bitrate
-	if ($only) {
-		return $bitrate || 0;
-	}
+	my $bitrate  = $self->bitrate;
+	my $vbrScale = $self->vbr_scale;
 
 	my $mode = defined $vbrScale ? 'VBR' : 'CBR';
 

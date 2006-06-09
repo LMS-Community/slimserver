@@ -81,7 +81,7 @@ sub browse {
 
 	# Bug: 2192 - Don't filter out compilation
 	# albums at the artist level - we want to see all of them for an artist.
-	if ($find->{'artist'} && !$find->{'album.compilation'}) {
+	if ($find->{'artist'} && $find->{'album.compilation'} != 1) {
 
 		delete $find->{'album.compilation'};
 	}

@@ -793,11 +793,12 @@ sub jumpto {
 	if ($songcount != 1) {
 
 		my $index;
-		if ($offset =~ /[\+\-]\d+/) {
+
+		if (defined $offset && $offset =~ /[\+\-]\d+/) {
 			$index = playingSongIndex($client) + $offset;
 			$::d_source && msgf("jumping by %s\n", $offset);
 		} else {
-			$index = $offset;
+			$index = $offset || 0;
 			$::d_source && msgf("jumping to %s\n", $offset);
 		}
 	
@@ -1384,7 +1385,7 @@ sub openSong {
 		}
 
 		# smart bitrate calculations
-		my $rate    = ($track->bitrate(1) || 0) / 1000;
+		my $rate    = ($track->bitrate || 0) / 1000;
 
 		# if http client has used the query param, use transcodeBitrate. otherwise we can use maxBitrate.
 		my $maxRate = Slim::Utils::Prefs::maxRate($client);
@@ -1606,8 +1607,8 @@ sub readNextChunk {
 						return undef;
 					}
 
-					my $byterate = $track->bitrate(1) / 8;
-				
+					my $byterate = $track->bitrate / 8;
+
 					my $howfar = int(($rate -  $TRICKSEGMENTDURATION) * $byterate);					
 					$howfar -= $howfar % $song->{blockalign};
 					$::d_source && msg("trick mode seeking: $howfar from: $now\n");

@@ -349,7 +349,7 @@ sub underMax {
 
 		if (blessed($track) && $track->can('bitrate')) {
 
-			$rate = ($track->bitrate(1) || 0)/1000;
+			$rate = ($track->bitrate || 0)/1000;
 		}
 
 		return ($maxRate >= $rate);

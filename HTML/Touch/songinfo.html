@@ -162,13 +162,13 @@
                         <font size="+1">[% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [% END %] [% IF itemobj.bitrate %]
+        [% END %] [% IF itemobj.prettyBitRate %]
         <tr>
                 <td><font size="+1">
                         [% "BITRATE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <font size="+1">[% itemobj.bitrate %]
+                        <font size="+1">[% itemobj.prettyBitRate %]
                 </td>
         </tr>
         [% END %][% IF itemobj.samplerate %] 

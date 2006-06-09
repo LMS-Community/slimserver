@@ -68,7 +68,7 @@ sub browse {
 
 	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-		$find->{'album.compilation'} = 0;
+		$find->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
 
 		push @joins, { 'contributorAlbums' => 'album' };
 

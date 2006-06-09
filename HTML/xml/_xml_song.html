@@ -29,7 +29,7 @@
 [% IF itemobj.year %]<year>[% itemobj.year | html %]</year>[% END %]
 [% IF comment %]<comment>[% comment | html %]</comment>[% END %]
 [% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
-[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
+[% IF itemobj.prettyBitRate %]<bitrate>[% itemobj.prettyBitRate | html %]</bitrate>[% END %]
 [% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
 [% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
 <song_url><![CDATA[[% itemobj.url %]]]></song_url>

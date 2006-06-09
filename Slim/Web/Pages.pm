@@ -191,7 +191,7 @@ sub addLibraryStats {
 	# Handle the VA cases
 	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-		$artistFind{'album.compilation'} = 0;
+		$artistFind{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
 
 	} elsif ($artist && $artist eq Slim::Schema->variousArtistsObject->id) {
 
@@ -270,7 +270,7 @@ sub addSongInfo {
 		$params->{'itemobj'}    = $track unless $params->{'itemobj'};
 
 		$params->{'filelength'} = Slim::Utils::Misc::delimitThousands($track->filesize);
-		$params->{'bitrate'}    = $track->bitrate;
+		$params->{'bitrate'}    = $track->prettyBitRate;
 
 		if ($getCurrentTitle) {
 			$params->{'songtitle'} = Slim::Music::Info::getCurrentTitle(undef, $track);

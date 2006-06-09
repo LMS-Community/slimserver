@@ -150,13 +150,13 @@
 		                        [% filelength %] [% "BYTES" | string %]
 		                </td>
 		        </tr>
-		        [% END %] [% IF itemobj.bitrate %]
+		        [% END %] [% IF itemobj.prettyBitRate %]
 		        <tr>
 		                <td class = 'smallitemtext'>
 		                        [% "BITRATE" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
-		                        [% itemobj.bitrate %]
+		                        [% itemobj.prettyBitRate %]
 		                </td>
 		        </tr>
 		        [% END %][% IF itemobj.samplerate %] 

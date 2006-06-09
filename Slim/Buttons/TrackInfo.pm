@@ -260,7 +260,7 @@ sub preloadLines {
 		}
 	}
 
-	if (my $bitrate = $track->bitrate) {
+	if (my $bitrate = $track->prettyBitRate) {
 
 		my $undermax = Slim::Player::TranscodingHelper::underMax($client, $url);
 
@@ -373,8 +373,8 @@ sub listExitHandler {
 		if ($curitem eq 'ALBUM') {
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'         => 'track',
-				'level'             => 0,
+				'hierarchy'         => 'album,track',
+				'level'             => 1,
 				'findCriteria'      => { 'album.id' => $album->id },
 				'selectionCriteria' => $selectionCriteria,
 			});
@@ -386,8 +386,8 @@ sub listExitHandler {
 			my ($contributor) = $track->$lcItem();
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'         => 'album,track',
-				'level'             => 0,
+				'hierarchy'         => 'contributor,album,track',
+				'level'             => 1,
 				'findCriteria'      => { 'contributor.id' => $contributor->id },
 				'selectionCriteria' => $selectionCriteria,
 			});
@@ -396,8 +396,8 @@ sub listExitHandler {
 
 			my $genre = $track->genre;
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'         => 'contributor,album,track',
-				'level'             => 0,
+				'hierarchy'         => 'genre,contributor,album,track',
+				'level'             => 1,
 				'findCriteria'      => { 'genre.id' => $genre->id },
 				'selectionCriteria' => $selectionCriteria,
 			});
@@ -407,8 +407,8 @@ sub listExitHandler {
 			my $year = $track->year;
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy'         => 'album,track',
-				'level'             => 0,
+				'hierarchy'         => 'year,album,track',
+				'level'             => 1,
 				'findCriteria'      => { 'album.year' => $year },
 				'selectionCriteria' => $selectionCriteria,
 			});

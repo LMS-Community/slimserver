@@ -203,7 +203,7 @@ sub browsedb {
 
 	# We want to include Compilations in the pwd, so we need the artist,
 	# but not in the actual search.
-	if ($find{'contributor.id'} && $find{'album.compilation'}) {
+	if ($find{'contributor.id'} && $find{'album.compilation'} == 1) {
 
 		delete $find{'contributor.id'};
 

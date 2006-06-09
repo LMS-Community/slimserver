@@ -125,9 +125,9 @@
 			</li>
 		[% END %]
 	
-		[% IF itemobj.bitrate %] 
+		[% IF itemobj.prettyBitRate %] 
 			<li><div class="songInfoTitle">[% "BITRATE" | string; "COLON" | string %]</div>
-				<div class="songInfoText">[% itemobj.bitrate | html %]</div>
+				<div class="songInfoText">[% itemobj.prettyBitRate | html %]</div>
 			</li>
 		[% END %]
 	

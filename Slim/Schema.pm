@@ -222,7 +222,7 @@ sub count {
 
 		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !exists $cond->{'album.compilation'}) {
 
-			$cond->{'album.compilation'} = 0;
+			$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
 		}
 	}
 
