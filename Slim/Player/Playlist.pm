@@ -440,6 +440,11 @@ sub reshuffle {
 	} elsif ($realsong > $songcount) {
 		$realsong = $songcount;
 	}
+	
+	$::d_playlist && msgf("Reshuffling, current song index: %d, preserve song? %s\n",
+		$realsong,
+		( $dontpreservecurrsong ) ? 'no' : 'yes',
+	);
 
 	my @realqueue;
 	my $song;
@@ -456,19 +461,23 @@ sub reshuffle {
 
 		fischer_yates_shuffle($listRef);
 
-		for (my $i = 0; $i < $songcount; $i++) {
+		# If we're preserving the current song
+		# this places it at the top of the playlist
+		if ( $realsong > -1 ) {
+			for (my $i = 0; $i < $songcount; $i++) {
 
-			if ($listRef->[$i] == $realsong) {
+				if ($listRef->[$i] == $realsong) {
 
-				if (shuffle($client)) {
+					if (shuffle($client)) {
+					
+						my $temp = $listRef->[$i];
+						$listRef->[$i] = $listRef->[0];
+						$listRef->[0] = $temp;
+						$i = 0;
+					}
 
-					my $temp = $listRef->[$i];
-					$listRef->[$i] = $listRef->[0];
-					$listRef->[0] = $temp;
-					$i = 0;
+					last;
 				}
-
-				last;
 			}
 		}
 

@@ -975,7 +975,7 @@ sub streamingSong {
 }
 
 sub playingSongIndex {
-	my $client = shift;
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
 	my $song = playingSong($client);
 	return 0 if !defined($song);
