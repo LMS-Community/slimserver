@@ -1407,6 +1407,7 @@ BUFFERING
 	EN	Buffering
 
 WAITING_TO_SYNC
+	DE	Warte auf Synchronisierung...
 	EN	Waiting to sync...
 
 PROBLEM_CONNECTING
