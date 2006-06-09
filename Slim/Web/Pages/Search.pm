@@ -173,7 +173,7 @@ sub advancedSearch {
 		# We need the _'s in the form, because . means hash key.
 		if ($newKey =~ s/_(titlesearch|namesearch)$/\.$1/) {
 
-			$params->{$key} = searchStringSplit($params->{$key});
+			$params->{$key} = { 'like' => searchStringSplit($params->{$key}) };
 		}
 
 		# Wildcard comment searches
@@ -208,16 +208,31 @@ sub advancedSearch {
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
 	my @joins = ();
+	my $roles = Slim::Schema->artistOnlyRoles;
 
-	if (my $roles = Slim::Schema->artistOnlyRoles) {
+	if ($roles || $query{'contributor.namesearch'}) {
 
-		$query{'contributorTracks.role'} = $roles;
+		if ($roles) {
+			$query{'contributorTracks.role'} = $roles;
+		}
 
-		push @joins, 'contributorTracks';
+		if ($query{'contributor.namesearch'}) {
+
+			push @joins, { 'contributorTracks' => 'contributor' };
+
+		} else {
+
+			push @joins, 'contributorTracks';
+		}
+	}
+
+	if ($query{'album.titlesearch'}) {
+
+		push @joins, 'album';
 	}
 
 	# Do the actual search
-	my $rs    = Slim::Schema->rs('Track')->search_like(
+	my $rs    = Slim::Schema->search('Track',
 		\%query,
 		{ 'order_by' => 'titlesort', 'join' => \@joins }
 	);
