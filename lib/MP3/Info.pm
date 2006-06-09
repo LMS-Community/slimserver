@@ -1964,7 +1964,7 @@ sub _parse_ape_tag {
 	my $pre_tag = substr($tag, 0, 128, '');
 
 	# Try and bail early if there's no ape tag.
-	if (substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
+	if ((!$pre_tag || !$tag) || substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
 
 		seek($fh, 0, SEEK_SET);
 		return 0;
