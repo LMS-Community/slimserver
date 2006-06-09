@@ -349,11 +349,13 @@ sub checkSync {
 		my $threshold = $client->prefGet('syncBufferThreshold');
 		
 		# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
-		my $playlist = Slim::Player::Playlist::playList($client);
-		my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
-		if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-			$threshold += 20480;
-		}
+		eval {
+			my $playlist = Slim::Player::Playlist::playList($client);
+			my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
+			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
+				$threshold += 20480;
+			}
+		};
 
 		my $fullness = $client->bufferFullness();
 		my $usage = $client->usage();
