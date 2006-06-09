@@ -17,7 +17,7 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use Scalar::Util qw(blessed);
 
-use Slim::Formats::Playlists;
+use Slim::Formats::Parse;
 use Slim::Player::Source;
 
 sub new {
@@ -31,22 +31,12 @@ sub new {
 		return undef;
 	}
 
-	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($1);
+	my $url = Plugins::RadioIO::Plugin::getHTTPURL($1);
 
 	my $sock = $class->SUPER::new({
-		'url'    => $pls,
+		'url'    => $url,
 		'client' => $client
 	}) || return undef;
-
-	my @items = Slim::Formats::Playlists->parseList($pls, $sock);
-
-	return undef unless scalar(@items);
-
-	return $class->SUPER::new({
-		'url'     => $items[0]->url,
-		'client'  => $client,
-		'infoUrl' => $url,
-	});
 }
 
 sub canDirectStream {
@@ -67,23 +57,24 @@ sub parseDirectBody {
 	my $url = shift;
 	my $body = shift;
 
-	my $io    = IO::String->new($body);
+	my $io = IO::String->new($body);
 
 	# Need to tell the parser that the playlist is in pls format.
 	my $pls  = Plugins::RadioIO::Plugin::getHTTPURL($url);
-	my @items = Slim::Formats::Playlists->parseList($pls, $io);
+	my @items = Slim::Formats::Parse::parseList($pls, $io);
 
 	return () unless scalar(@items);
 
-	my $stream = $items[0]->url;
+	my $stream = $items[0];
 	$stream =~ s/http:\/\///;
 	$stream = 'radioio://stream/' . Plugins::RadioIO::Plugin::decrypt($stream);
 
-	my $track = Slim::Schema->rs('Track')->objectForUrl($url);
+	my $currentDB = Slim::Music::Info::getCurrentDataStore();
+	my $track = $currentDB->objectForUrl($url);
 
 	if (blessed($track) && $track->can('title')) {
 
-		Slim::Music::Info::setTitle($stream, $track->title);
+		Slim::Music::Info::setTitle($stream, $track->title());
 	}
 
 	return ($stream);

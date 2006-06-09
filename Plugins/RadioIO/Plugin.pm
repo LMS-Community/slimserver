@@ -213,8 +213,7 @@ sub decrypt {
 sub getHTTPURL {
 	my $key = shift;
 	my $port = $stations{$key};
-	my $url = "http://" . decrypt("enqvbvb.fp.yyajq.arg") . ":" .
-		decrypt($port) . "/" . decrypt("yvfgra.cyf");
+	my $url = "http://" . decrypt("enqvbvb.fp.yyajq.arg") . ":" . decrypt($port);
 	return $url;
 }
 
