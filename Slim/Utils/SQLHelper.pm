@@ -7,8 +7,8 @@ package Slim::Utils::SQLHelper;
 
 use strict;
 use File::Spec::Functions qw(:ALL);
-use FindBin qw($Bin);
 
+use Slim::Utils::OSDetect;
 use Slim::Utils::Misc;
 
 sub executeSQLFile {
@@ -20,7 +20,7 @@ sub executeSQLFile {
 	my $sqlFile = $file;
 
 	if (!file_name_is_absolute($file)) {
-		$sqlFile = catdir($Bin, "SQL", $driver, $file);
+		$sqlFile = catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver, $file);
 	}
 
 	$::d_info && msg("Executing SQL file $sqlFile\n");
