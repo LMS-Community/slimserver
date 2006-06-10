@@ -274,8 +274,8 @@ sub browsedb {
 		@attrs,
 	);
 
-	if (defined $sort) {
-		$otherparams .= '&' . "sort=$sort";
+	if (defined $orderBy) {
+		$otherparams .= '&' . "orderBy=$orderBy";
 	}
 
 	if (defined $artwork) {
@@ -464,7 +464,7 @@ sub browsedb {
 					sprintf('%s.id=%d', $attrName, $itemid);
 			}
 
-			$item->displayAsHTML(\%form, $descend, $sort);
+			$item->displayAsHTML(\%form, $descend, $orderBy);
 
 			if (my $itemsort = $item->namesort) {
 
