@@ -41,9 +41,6 @@
     <jar href="lib/jflac-1.0.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
 
-<!-- skins -->
-    <jar href="skin/slimdevices.jar"/>
-
 <!-- Set the following properties to configure the server and firmware  -->
 
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
