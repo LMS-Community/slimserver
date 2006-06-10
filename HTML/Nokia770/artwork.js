@@ -5,7 +5,7 @@ var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=
 var thumbHrefTemplate = '/music/COVER/cover.jpg';
 var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album=ALBUM&player=[% playerURI %]';
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album=ALBUM&player=[% playerURI %]';
-var blankRequest = 'hierarchy=artwork,track&level=0&sort=artist,year,album&&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
+var blankRequest = 'hierarchy=artwork,track&level=0&orderBy=contributor,year,album&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
 
 var thisAlbum, thatAlbum;
 

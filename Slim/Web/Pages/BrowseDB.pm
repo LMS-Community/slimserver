@@ -31,7 +31,7 @@ sub browsedb {
 	# XXX - why do we default to genre?
 	my $hierarchy = $params->{'hierarchy'} || "genre";
 	my $level     = $params->{'level'} || 0;
-	my $sort      = $params->{'sort'};
+	my $orderBy   = $params->{'orderBy'};
 	my $player    = $params->{'player'};
 	my $artwork   = $params->{'artwork'};
 
@@ -197,7 +197,7 @@ sub browsedb {
 		'title'	       => string($title),
 		'hierarchy'    => $hierarchy,
 		'level'	       => 0,
-		'sort'         => $sort,
+		'orderBy'      => $orderBy,
 		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	};
 
@@ -247,7 +247,7 @@ sub browsedb {
 				 'title'        => $names{$lcKey},
 				 'hierarchy'    => $hierarchy,
 				 'level'        => $i+1,
-				 'sort'         => $sort,
+				 'orderBy'      => $orderBy,
 				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 			};
 
@@ -377,7 +377,7 @@ sub browsedb {
 		$form{'descend'}      = 1;
 		$form{'hreftype'}     = 'browseDb';
 		$form{'player'}       = $player;
-		$form{'sort'}         = $sort;
+		$form{'orderBy'}      = $orderBy;
 		$form{'odd'}          = ($itemCount + 1) % 2;
 		$form{'skinOverride'} = $params->{'skinOverride'};
 		$form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
@@ -411,7 +411,7 @@ sub browsedb {
 				'hreftype'    => 'browseDb',
 				'hierarchy'   => $hierarchy,
 				'level'       => $level + 1,
-				'sort'        => $sort,
+				'orderBy'     => $orderBy,
 				'odd'         => ($itemCount + 1) % 2,
 				'attributes'  => (scalar(@attributes) ? ('&' . join("&", @attributes, )) : ''),
 			};
@@ -438,7 +438,7 @@ sub browsedb {
 			my %form = (
 				'hierarchy'    => $hierarchy,
 				'level'        => $level + 1,
-				'sort'         => $sort,
+				'orderBy'      => $orderBy,
 				'levelName'    => $attrName,
 				'text'         => $item->name,
 				'hreftype'     => 'browseDb',
