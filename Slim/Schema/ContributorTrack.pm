@@ -20,18 +20,6 @@ use base 'Slim::Schema::DBI';
 	$class->belongs_to('track'       => 'Slim::Schema::Track');
 }
 
-sub contributorsForTrackAndRole {
-	my ($class, $track, $role) = @_;
-
-	return $class->search({ track => $track, role => $role });
-}
-
 1;
 
 __END__
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

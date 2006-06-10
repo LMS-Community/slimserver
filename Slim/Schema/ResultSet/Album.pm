@@ -115,6 +115,10 @@ sub descendTrack {
 	my $find = shift;
 	my $attr = shift;
 
+	if (!$attr->{'order_by'}) {
+		$attr->{'order_by'} = 'tracks.disc, tracks.tracknum, tracks.titlesort';
+	}
+
 	# Create a "clean" resultset, without any joins on it - since we'll
 	# just want information from the album.
 	my $rs   = $self->result_source->resultset;

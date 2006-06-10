@@ -406,12 +406,6 @@ sub objectForId {
 	return $self->find(@_);
 }
 
-sub albumsWithArtwork {
-	my $self = shift;
-
-	return [ Slim::Schema::Album->hasArtwork ];
-}
-
 # Create a new track with the given attributes
 sub newTrack {
 	my $self = shift;

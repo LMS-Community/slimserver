@@ -60,12 +60,6 @@ sub contributors {
 	)->search(@_);
 }
 
-sub hasArtwork {
-	my $class = shift;
-
-	return $class->search_literal('artwork IS NOT NULL ORDER BY titlesort, disc');
-}
-
 # Update the title dynamically if we're part of a set.
 sub title {
 	my $self = shift;
@@ -94,11 +88,8 @@ sub displayAsHTML {
 	# XXXX - need to pass sort along?
 	if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort && $sort =~ /^year/) {
 
-		# Don't show years when browsing years..
-		#if (!$findCriteria->{'year'}) {
-		#	$form->{'showYear'} = $showYear;
-		#	$form->{'year'} = $self->year;
-		#}
+		$form->{'showYear'} = $showYear;
+		$form->{'year'} = $self->year;
 	}
 
 	# Show the artist in the album view
@@ -124,32 +115,13 @@ sub displayAsHTML {
 }
 
 sub artistsForRole {
-	my ($self, $role) = @_;
+	my ($self, $type) = @_;
 
-	my %artists = ();
+	my $role = Slim::Schema::Contributor->typeToRole($type) || return ();
 
-	my $it = Slim::Schema::ContributorAlbum->contributorsForAlbumAndRole(
-		$self->id,
-		Slim::Schema::Contributor->typeToRole($role),
-	);
-
-	while (my $contributorAlbum = $it->next) {
-
-		my $artist = $contributorAlbum->contributor;
-
-		$artists{ $artist->id } = $artist;
-	}
-
-	if ($::d_info) {
-
-		msgf("\tFetching contributors for role: [%s]\n", $role);
-
-		while (my ($id, $artist) = each %artists) {
-			msgf("\tArtist: [%s]\n", $artist->name);
-		}
-	}
-
-	return values %artists;
+	return $self
+		->search_related('contributorAlbums', { 'role' => $role })
+		->search_related('contributor')->all;
 }
 
 # Return an array of artists associated with this album.
@@ -178,7 +150,7 @@ sub artists {
 
 		@artists = Slim::Schema->variousArtistsObject;
 
-	} elsif (@artists == 0 && $self->contributor) {
+	} elsif (@artists == 0) {
 
 		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributor);
 
@@ -191,13 +163,14 @@ sub artists {
 sub artistsWithAttributes {
 	my $self = shift;
 
-	my @artists = ();
+	my @artists  = ();
+	my $vaString = Slim::Music::Info::variousArtistString();
 
 	for my $artist ($self->artists) {
 
 		my @attributes = join('=', 'contributor.id', $artist->id);
 
-		if ($artist->name eq Slim::Music::Info::variousArtistString()) {
+		if ($artist->name eq $vaString) {
 
 			push @attributes, join('=', 'album.compilation', 1);
 		}

@@ -3,7 +3,7 @@ package Slim::Schema::ResultSet::Age;
 # $Id$
 
 use strict;
-use base qw(Slim::Schema::ResultSet::Base);
+use base qw(Slim::Schema::ResultSet::Album);
 
 use Slim::Utils::Prefs;
 
@@ -19,6 +19,10 @@ sub allTitle {
 	return 'ALL_ALBUMS';
 }
 
+sub pageBarResults     { 0 }
+sub alphaPageBar       { 0 }
+sub ignoreArticles     { 0 }
+
 sub browse {
 	my $self = shift;
 	my $find = shift;
@@ -29,12 +33,6 @@ sub browse {
 		'join'     => 'tracks',
 		'limit'    => (Slim::Utils::Prefs::get('browseagelimit') - 1),
 	});
-}
-
-sub descendTrack {
-        my $self = shift;
-
-        return $self->search_related('tracks', @_);
 }
 
 1;

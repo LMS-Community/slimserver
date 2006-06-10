@@ -83,13 +83,13 @@ sub albumid {
 sub artist {
 	my $self = shift;
 
-	return ($self->artists)[0];
+	return $self->contributorsOfType('ARTIST')->single;
 }
 
 sub artists {
 	my $self = shift;
 
-	return $self->contributorsOfType('ARTIST');
+	return $self->contributorsOfType('ARTIST')->all;
 }
 
 sub artistsWithAttributes {
@@ -111,25 +111,25 @@ sub artistsWithAttributes {
 sub composer {
 	my $self = shift;
 
-	return $self->contributorsOfType('COMPOSER');
+	return $self->contributorsOfType('COMPOSER')->all;
 }
 
 sub conductor {
 	my $self = shift;
 
-	return $self->contributorsOfType('CONDUCTOR');
+	return $self->contributorsOfType('CONDUCTOR')->all;
 }
 
 sub band {
 	my $self = shift;
 
-	return $self->contributorsOfType('BAND');
+	return $self->contributorsOfType('BAND')->all;
 }
 
 sub genre {
 	my $self = shift;
 
-	return ($self->genres)[0];
+	return $self->genres->single;
 }
 
 sub comment {
@@ -138,7 +138,7 @@ sub comment {
 	my $comment;
 
 	# extract multiple comments and concatenate them
-	for my $c ($self->comments()) {
+	for my $c ($self->comments) {
 
 		next unless $c;
 
@@ -162,7 +162,7 @@ sub comment {
 sub duration {
 	my $self = shift;
 
-	my $secs = $self->secs();
+	my $secs = $self->secs;
 
 	return sprintf('%s:%02s', int($secs / 60), $secs % 60) if defined $secs;
 }
@@ -170,13 +170,13 @@ sub duration {
 sub durationSeconds {
 	my $self = shift;
 
-	return $self->secs();
+	return $self->secs;
 }
 
 sub modificationTime {
 	my $self = shift;
 
-	my $time = $self->timestamp();
+	my $time = $self->timestamp;
 
 	return join(', ', Slim::Utils::Misc::longDateF($time), Slim::Utils::Misc::timeF($time));
 }
@@ -317,15 +317,12 @@ sub contributorsOfType {
 	my $self = shift;
 	my $type = shift;
 
-	# Not a valid role!
-	if (!Slim::Schema::Contributor->typeToRole($type)) {
+	# Check for valid roles.
+	my $role = Slim::Schema::Contributor->typeToRole($type) || return ();
 
-		return ();
-	}
-
-	return map { $_->contributor } Slim::Schema::ContributorTrack->contributorsForTrackAndRole(
-		$self->id, Slim::Schema::Contributor->typeToRole($type),
-	);
+	return $self
+		->search_related('contributorTracks', { 'role' => $role })
+		->search_related('contributor');
 }
 
 sub contributorRoles {
@@ -337,10 +334,8 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	$form->{'text'}  = Slim::Music::Info::standardTitle(undef, $self);
-
+	$form->{'text'}   = Slim::Music::Info::standardTitle(undef, $self);
 	$form->{'artist'} = $self->artist;
-	$form->{'album'}  = $self->album;
 
 	my ($id, $url) = $self->get(qw(id url));
 
