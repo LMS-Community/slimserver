@@ -14,7 +14,7 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 2.2</title>
+    <title>Softsqueeze 2.4</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
@@ -41,9 +41,12 @@
     <jar href="lib/jflac-1.0.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
 
+<!-- skins -->
+    <jar href="skin/slimdevices.jar"/>
+
 <!-- Set the following properties to configure the server and firmware  -->
 
     <property name="slimserver" value="[% host.match('([^:]*)').0 %]"/>    
   </resources>
-  <application-desc main-class="com.slim.softsqueeze.Application"/>
+  <application-desc main-class="org.titmuss.softsqueeze.Application"/>
 </jnlp> 
