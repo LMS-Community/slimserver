@@ -61,6 +61,15 @@ sub launchScan {
 		$command  = '/usr/sbin/slimserver-scanner';
 	}
 
+	# Add in the various importer flags
+	for my $importer (qw(itunes musicmagic moodlogic)) {
+
+		if (Slim::Utils::Prefs::get($importer)) {
+
+			$args->{$importer} = 1;
+		}
+	}
+
 	my @scanArgs = map { "--$_" } keys %{$args};
 
 	$class->scanningProcess(
@@ -300,11 +309,11 @@ sub artScan {
 		return 1;
 	}
 
-	my @tracks = Slim::Schema->search('Track', { 'id' => { 'in' => [ values %artwork ] } })->all;
+	my $rs = Slim::Schema->search('Track', { 'id' => { 'in' => [ values %artwork ] } });
 
-	for my $track (@tracks) {
+	for my $track ($rs->next) {
 
-		# Make sure we have an object for the url, and it has a thumbnail.	 
+		# Make sure we have an object for the url, and it has a thumbnail.
 		Slim::Schema->setAlbumArtwork($track);
 	}
 

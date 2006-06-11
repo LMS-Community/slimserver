@@ -41,7 +41,7 @@ use Slim::Utils::Strings qw(string);
 sub main {
 
 	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
-	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup, $prefsFile, $progress);
+	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress);
 
 	our $LogTimestamp = 1;
 
@@ -53,6 +53,7 @@ sub main {
 		'playlists'   => \$playlists,
 		'itunes'      => \$itunes,
 		'musicmagic'  => \$musicmagic,
+		'moodlogic'   => \$moodlogic,
 		'd_info'      => \$d_info,
 		'd_server'    => \$d_server,
 		'd_import'    => \$d_import,
@@ -65,7 +66,7 @@ sub main {
 		'progress'    => \$progress,
 	);
 
-	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV) {
+	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$moodlogic && !$itunes && !scalar @ARGV) {
 		usage();
 		exit;
 	}
@@ -102,6 +103,10 @@ sub main {
 
 	if ($musicmagic) {
 		initClass('Plugins::MusicMagic::Importer');
+	}
+
+	if ($moodlogic) {
+		initClass('Plugins::MoodLogic::Importer');
 	}
 
 	#$::d_server && msg("SlimServer checkDataSource...\n");
@@ -191,7 +196,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] [--moodlogic] <path or URL>
 
 Command line options:
 
@@ -201,7 +206,8 @@ Command line options:
 	--wipe        Wipe the DB and start from scratch
 	--playlists   Only scan files in your playlistdir.
 	--itunes      Run the iTunes Importer.
-	--musicmagic  Run the MusicMagic Importer.
+	--musicmagic  Run the MusicMagic/MusicIP Importer.
+	--moodlogic   Run the MoodLogic Importer.
 	--progress    Show a progress bar of the scan.
 	--prefsfile   Specify an alternate prefs file.
 
