@@ -358,12 +358,10 @@ sub handleTrack {
 
 		my $albumObj = $track->album;
 
-		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
+		if ($albumObj && !$albumObj->artwork && !defined $track->thumb) {
 
-			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb) {
-
-				Slim::Music::Import->artwork($albumObj, $track);
-			}
+			$albumObj->artwork($track->id);
+			$albumObj->update;
 		}
 
 	} else {

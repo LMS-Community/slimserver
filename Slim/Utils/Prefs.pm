@@ -166,7 +166,6 @@ sub init {
 		"udpChunkSize"		=> 1400,
 		'itemsPerPage'		=> 50,
 		'disableStatistics'	=> 0,
-		'lookForArtwork'	=> 1,
 		'includeNoArt'		=> 0,
 		'artfolder'		=> '',
 		'coverThumb'		=> '',
@@ -282,12 +281,6 @@ sub init {
 			} else {
 				Slim::Music::Import->useImporter($musicFolderClass, 0);
 			}
-		},
-
-		'lookForArtwork' => sub {
-			my $lookForArtwork = shift;
-
-			Slim::Music::Import->startScan if $lookForArtwork;
 		},
 
 		'playlistdir' => sub {

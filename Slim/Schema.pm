@@ -122,12 +122,12 @@ sub init {
 	/);
 
 	# Build all our class accessors and populate them.
-	for my $accessor (qw(artworkCache lastTrackURL lastTrack trackAttrs driver)) {
+	for my $accessor (qw(lastTrackURL lastTrack trackAttrs driver)) {
 
 		$class->mk_classaccessor($accessor);
 	}
 
-	for my $name (qw(artworkCache lastTrack)) {
+	for my $name (qw(lastTrack)) {
 
 		$class->$name({});
 	}
@@ -804,7 +804,6 @@ sub wipeCaches {
 	# clear the references to these singletons
 	$vaObj            = undef;
 
-	$self->artworkCache({});
 	$self->lastTrackURL('');
 	$self->lastTrack({});
 
@@ -978,34 +977,6 @@ sub _readTags {
 	}
 
 	return $attributesHash;
-}
-
-sub setAlbumArtwork {
-	my $self  = shift;
-	my $track = shift;
-	
-	if (!Slim::Utils::Prefs::get('lookForArtwork')) {
-		return undef
-	}
-
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($track) || !$track->can('album')) {
-		return undef;
-	}
-
-	my $album   = $track->album;
-	my $albumId = $album->id if blessed($album);
-
-	# only cache albums once each
-	if ($albumId && !exists $self->artworkCache->{$albumId}) {
-
-		$::d_artwork && msg("Updating $album artwork cache: $track\n");
-
-		$self->artworkCache->{$albumId} = 1;
-
-		$album->artwork($track->id);
-		$album->update;
-	}
 }
 
 # The user may want to constrain their browse view by either or both of
@@ -1570,15 +1541,6 @@ sub _postCheckAttributes {
 				$albumObj = $self->resultset('Album')->create({ 'title' => $album });
 			}
 		}
-
-		# Associate cover art with this album, and keep it cached.
-		if (!$self->artworkCache->{$albumObj->id}) {
-
-			if (!Slim::Music::Import->artwork($albumObj) && (!$track->thumb || !$track->cover)) {
-
-				Slim::Music::Import->artwork($albumObj, $track);
-			}
-		}
 	}
 
 	if (defined($album) && blessed($albumObj) && (!blessed($_unknownAlbum) ||
@@ -1642,6 +1604,11 @@ sub _postCheckAttributes {
 
 		if (defined $track->year && $track->year =~ /^\d+$/) {
 			$set{'year'} = $track->year;
+		}
+
+		if (!$albumObj->artwork && (!$track->thumb || !$track->cover)) {
+
+			$set{'artwork'} = $track->id;
 		}
 
 		$albumObj->set_columns(\%set);

@@ -29,7 +29,6 @@ use Slim::Utils::OSDetect;
 # Total of how many file scanners are running
 our %importsRunning = ();
 our %Importers      = ();
-our %artwork        = ();
 
 my $folderScanClass = 'Slim::Music::MusicFolderScan';
 
@@ -113,15 +112,6 @@ sub startScan {
 	}
 
 	$class->scanPlaylistsOnly(0);
-
-	if (Slim::Utils::Prefs::get('lookForArtwork')) {
-
-		$::d_import && msg("Import: Starting artScan().\n");
-
-		$importsRunning{'artwork'} = Time::HiRes::time();
-
-		$class->artScan;
-	}
 
 	# Auto-identify VA/Compilation albums
 	$::d_import && msg("Import: Starting mergeVariousArtistsAlbums().\n");
@@ -283,47 +273,6 @@ sub stillScanning {
 	}
 
 	return $imports;
-}
-
-sub artwork {
-	my $class = shift;
-	my $album = shift;
-	my $track = shift;
-
-	my $key   = $album->id() || 1;
-
-	if (defined $track) {
-
-		$artwork{$key} = $track->id();
-
-	} else {
-
-		return exists $artwork{$key};
-	}
-}
-
-sub artScan {
-	my $class  = shift;
-
-	if (!scalar values %artwork) {
-		return 1;
-	}
-
-	my $rs = Slim::Schema->search('Track', { 'id' => { 'in' => [ values %artwork ] } });
-
-	for my $track ($rs->next) {
-
-		# Make sure we have an object for the url, and it has a thumbnail.
-		Slim::Schema->setAlbumArtwork($track);
-	}
-
-	%artwork = ();
-
-	$::d_artwork && msg("Completed Artwork Scan\n");
-
-	$class->endImporter('artwork');
-
-	return 1;
 }
 
 1;

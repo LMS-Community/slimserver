@@ -21,8 +21,6 @@ my $MMMVersion  = 0;
 my $MMSHost;
 my $MMSport;
 
-our %artwork = ();
-
 sub useMusicMagic {
 	my $class    = shift;
 	my $newValue = shift;
@@ -368,19 +366,16 @@ sub processSong {
 
 	my $albumObj = $track->album;
 
-	# NYI: MMM has more ways to access artwork...
-	if (!Slim::Music::Import->useFolderImporter) {
+	if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
 
-		if (defined $albumObj && Slim::Utils::Prefs::get('lookForArtwork')) {
+		# NYI: MMM has more ways to access artwork...
+		if (!Slim::Music::Import->useFolderImporter) {
 
-			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb) {
+			if (!$albumObj->artwork && !defined $track->thumb) {
 
-				Slim::Music::Import->artwork($albumObj, $track);
+				$albumObj->artwork($track->id);
 			}
 		}
-	}
-
-	if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
 
 		$albumObj->musicmagic_mixable(1);
 		$albumObj->update;

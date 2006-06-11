@@ -65,15 +65,11 @@ sub home {
 		$class->addPageLinks("help", {'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	}
 
-	if (Slim::Utils::Prefs::get('lookForArtwork')) {
+	# Dynamically figure out if there is any cover art. Do we need both cover & thumb?
+	if (Slim::Schema->count('Track', { -or => [ { 'cover' => { '!=' => undef } }, { 'thumb' => { '!=' => undef } } ] })) {
 
 		my $sort = Slim::Utils::Prefs::get('sortBrowseArt');
 		$class->addPageLinks("browse", {'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=album,track&level=0&sort=$sort&artwork=1"});
-
-	} else {
-
-		$class->addPageLinks("browse", {'BROWSE_BY_ARTWORK' => undef});
-		$params->{'noartwork'} = 1;
 	}
 
 	if (Slim::Utils::Prefs::get('audiodir')) {
@@ -86,8 +82,11 @@ sub home {
 		$params->{'nofolder'} = 1;
 	}
 
-	# Always show Browse Playlists, as it's stored in the db now.
-	$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
+	# Show playlists if any exists
+	if (Slim::Schema->rs('Playlist')->getPlaylists->count) {
+
+		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
+	}
 
 	# fill out the client setup choices
 	for my $player (sort { $a->name() cmp $b->name() } Slim::Player::Client::clients()) {

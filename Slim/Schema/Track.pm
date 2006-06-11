@@ -240,8 +240,7 @@ sub coverArt {
 
 	# return with nothing if this isn't a file. 
 	# We don't need to search on streams, for example.
-	if (!Slim::Utils::Prefs::get('lookForArtwork') || !$self->audio) {
-
+	if (!$self->audio) {
 		return undef;
 	}
 

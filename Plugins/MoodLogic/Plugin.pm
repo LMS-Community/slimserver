@@ -24,7 +24,6 @@ my $isScanning = 0;
 my $initialized = 0;
 our @mood_names;
 our %mood_hash;
-our %artwork;
 my $last_error = 0;
 my $isauto = 1;
 my %genre_hash = ();
@@ -429,12 +428,10 @@ sub exportFunction {
 
 		my $albumObj = $track->album();
 
-		if (Slim::Utils::Prefs::get('lookForArtwork') && $albumObj) {
+		if ($albumObj && !$albumObj->artwork && !defined $track->thumb) {
 
-			if (!Slim::Music::Import->artwork($albumObj) && !defined $track->thumb()) {
-
-				Slim::Music::Import->artwork($albumObj, $track);
-			}
+			$albumObj->artwork($track->id);
+			$albumObj->update;
 		}
 		
 		$isScanning++;
