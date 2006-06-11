@@ -412,7 +412,7 @@ sub newTrack {
 	my $args = shift;
 
 	my $url           = $args->{'url'};
- 	my $attributeHash = $args->{'attributes'} || {};
+	my $attributeHash = $args->{'attributes'} || {};
 	my $playlist      = $args->{'playlist'} || 0;
 	my $source        = $playlist ? 'Playlist' : 'Track';
 
@@ -722,9 +722,9 @@ sub totalTime {
 	return $self->single('Track', undef, {
 
 		'select' => [ \'SUM(secs)' ],
-                'as'     => [ 'sum' ],
+		'as'     => [ 'sum' ],
 
-        })->get_column('sum');
+	})->get_column('sum');
 }
 
 # This is a post-process on the albums and contributor_tracks tables, in order
@@ -1303,7 +1303,7 @@ sub _postCheckAttributes {
 
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
-        my %cols = $track->get_columns;
+	my %cols = $track->get_columns;
 
 	my ($trackId, $trackUrl, $trackType, $trackAudio, $trackRemote) = 
 		(@cols{qw/id url content_type audio remote/});
@@ -1343,7 +1343,7 @@ sub _postCheckAttributes {
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
-                $track->genreTracks->delete;
+		$track->genreTracks->delete;
 
 		Slim::Schema::Genre->add($genre, $track);
 	}
@@ -1450,7 +1450,7 @@ sub _postCheckAttributes {
 		# For some reason here we do not apply the same criterias as below:
 		# Path, compilation, etc are ignored...
 
-                my ($t, $a); # temp vars to make the conditional sane
+		my ($t, $a); # temp vars to make the conditional sane
 		if (
 			($t = $self->lastTrack->{$basename}) && 
 			$t->get('album') &&
