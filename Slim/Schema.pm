@@ -1650,10 +1650,10 @@ sub _postCheckAttributes {
 	# Add comments if we have them:
 	for my $comment (@{$attributes->{'COMMENT'}}) {
 
-		$self->resultset('Comment', {
+		$self->resultset('Comment')->find_or_create({
 			'track' => $trackId,
 			'value' => $comment,
-		})->find_or_create;
+		});
 	}
 
 	# refcount--
