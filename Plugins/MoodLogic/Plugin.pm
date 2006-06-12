@@ -12,21 +12,17 @@ use Slim::Utils::Strings qw(string);
 use Plugins::MoodLogic::VarietyCombo;
 use Plugins::MoodLogic::InstantMix;
 use Plugins::MoodLogic::MoodWheel;
-
-my $conn;
-my $rs;
-my $auto;
-my $playlist;
+use Plugins::MoodLogic::Common;
 
 my $mixer;
-my $browser;
 my $isScanning = 0;
+
 my $initialized = 0;
+my $browser;
+
 our @mood_names;
 our %mood_hash;
 my $last_error = 0;
-my $isauto = 1;
-my %genre_hash = ();
 
 my $lastMusicLibraryFinishTime = undef;
 
@@ -38,38 +34,6 @@ sub getFunctions {
 	return '';
 }
 
-sub useMoodLogic {
-	my $newValue = shift;
-	my $can = canUseMoodLogic();
-	
-	if (defined($newValue)) {
-		if (!$can) {
-			Slim::Utils::Prefs::set('moodlogic', 0);
-		} else {
-			Slim::Utils::Prefs::set('moodlogic', $newValue);
-		}
-	}
-	
-	my $use = Slim::Utils::Prefs::get('moodlogic');
-	
-	if (!defined($use) && $can) { 
-		Slim::Utils::Prefs::set('moodlogic', 1);
-	} elsif (!defined($use) && !$can) {
-		Slim::Utils::Prefs::set('moodlogic', 0);
-	}
-	
-	$use = Slim::Utils::Prefs::get('moodlogic') && $can;
-	Slim::Music::Import->useImporter('MOODLOGIC',$use);
-	
-	$::d_moodlogic && msg("MoodLogic: using moodlogic: $use\n");
-	
-	return $use;
-}
-
-sub canUseMoodLogic {
-	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
-}
-
 sub getDisplayName {
 	return 'SETUP_MOODLOGIC';
 }
@@ -77,6 +41,13 @@ sub getDisplayName {
 sub enabled {
 	return ($::VERSION ge '6.1') && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
 }
+
+sub canUseMoodLogic {
+	my $class = shift;
+
+	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
+}
+
 
 sub shutdownPlugin {
 	# turn off checker
@@ -106,12 +77,12 @@ sub initPlugin {
 	return 1 if $initialized; 
 	return 0 if Slim::Utils::OSDetect::OS() ne 'win';
 	
-	checkDefaults();
+	Plugins::MoodLogic::Common::checkDefaults();
 	
 	require Win32::OLE;
 	import Win32::OLE qw(EVENTS);
 	
-	Win32::OLE->Option(Warn => \&OLEError);
+	Win32::OLE->Option(Warn => \&Plugins::MoodLogic::Common::OLEError);
 	my $name = "mL_MixerCenter";
 	
 	$mixer = Win32::OLE->new("$name.MlMixerComponent");
@@ -133,7 +104,7 @@ sub initPlugin {
 		return 0;
 	}
 	
-	Win32::OLE->WithEvents($mixer, \&event_hook);
+	Win32::OLE->WithEvents($mixer, \&Plugins::MoodLogic::Common::event_hook);
 	
 	$mixer->{JetPwdMixer} = 'C393558B6B794D';
 	$mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
@@ -168,7 +139,6 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
 	Slim::Music::Import->addImporter('MOODLOGIC', {
-		'scan'      => \&startScan,
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
@@ -183,7 +153,6 @@ sub initPlugin {
 	Plugins::MoodLogic::VarietyCombo::init();
 
 	$initialized = 1;
-	checker($initialized);
 
 	return $initialized;
 }
@@ -195,93 +164,16 @@ sub addGroups {
 	Slim::Web::Setup::addCategory('MOODLOGIC',&setupCategory);
 }
 
-sub isMusicLibraryFileChanged {
-	my $file = $mixer->{JetFilePublic};
-
-	my $fileMTime = (stat $file)[9];
-	
-	# Only say "yes" if it has been more than one minute since we last finished scanning
-	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
-	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
-		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
-		
-		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
-		
-		unless ($moodlogicscaninterval) {
-			
-			# only scan if moodlogicscaninterval is non-zero.
-			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
-
-			return 0;
-		}
-
-		return 1 if (!$lastMusicLibraryFinishTime);
-		
-		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {
-			return 1;
-		} else {
-			$::d_moodlogic && msg("MoodLogic: waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
-		}
-	}
-	
-	return 0;
-}
-
 sub checker {
 	my $firstTime = shift || 0;
 
 	return unless (Slim::Utils::Prefs::get('moodlogic'));
 	
-	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
-		startScan();
-	}
-
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# Call ourselves again after 5 seconds
 	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
-}
-
-sub startScan {
-	
-	if (!useMoodLogic()) {
-		return;
-	}
-		
-	$::d_moodlogic && msg("MoodLogic: start export\n");
-	
-	stopScan();
-	
-	exportFunction();
-} 
-
-sub stopScan {
-	
-	if (stillScanning()) {
-		$::d_moodlogic && msg("MoodLogic: Scan already in progress. Restarting\n");
-		$isScanning = 0;
-		%genre_hash = ();
-	}
-}
-
-sub stillScanning {
-	return $isScanning;
-}
-
-sub doneScanning {
-	$::d_moodlogic && msg("MoodLogic: done Scanning\n");
-
-	$isScanning = 0;
-	%genre_hash = ();
-	
-	$lastMusicLibraryFinishTime = time();
-
-	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
-	
-	Slim::Music::Import->endImporter('MOODLOGIC');
 }
 
 sub getPlaylistItems {
@@ -295,211 +187,6 @@ sub getPlaylistItems {
 	}
 	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
 	return \@list;
-}
-
-sub exportFunction {
-	
-	my $prefix = Slim::Utils::Prefs::get('MoodLogicplaylistprefix');
-	my $suffix = Slim::Utils::Prefs::get('MoodLogicplaylistsuffix');
-
-	if (!$isScanning) {
-		$conn = Win32::OLE->new("ADODB.Connection");
-		$rs   = Win32::OLE->new("ADODB.Recordset");
-		$playlist   = Win32::OLE->new("ADODB.Recordset");
-		$auto   = Win32::OLE->new("ADODB.Recordset");
-
-		$::d_moodlogic && msg("MoodLogic: Opening Object Link...\n");
-		$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
-		$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
-		#PLAYLIST QUERY
-		$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
-		{
-			# AUTO PLAYLIST QUERY: 
-			local $Win32::OLE::Warn = 0;
-			$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
-			if (Win32::OLE->LastError) {
-				$isauto = 0;
-				$::d_moodlogic && msg("MoodLogic: No AutoPlaylists Found\n");
-			};
-		}
-		
-		$browser->filterExecute();
-		
-		my $count = $browser->FLT_Genre_Count();
-		
-		for (my $i = 1; $i <= $count; $i++) {
-			my $genre_id = $browser->FLT_Genre_MGID($i);
-			$mixer->{Seed_MGID} = -$genre_id;
-			my $genre_name = $mixer->Mix_GenreName(-1);
-			$mixer->{Seed_MGID} = $genre_id;
-			my $genre_mixable = $mixer->Seed_MGID_Mixable();
-			$genre_hash{$genre_id} = [$genre_name, $genre_mixable];
-		}
-		$isScanning = 1;
-		$::d_moodlogic && msg("MoodLogic: Begin song scan for ".$browser->FLT_Song_Count()." tracks. \n");
-		
-		return 1;
-	}
-
-	if ($isScanning <= $browser->FLT_Song_Count()) {
-		my @album_data = (-1, undef, undef);
-	
-		my $url;
-		my %cacheEntry = ();
-		my $song_id = $browser->FLT_Song_SID($isScanning);
-		
-		$mixer->{Seed_SID} = -$song_id;
-		$url = Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile(-1));
-
-		# merge album info, from query ('cause it is not available via COM)
-		while (defined $rs && !$rs->EOF && $album_data[0] < $song_id && defined $rs->Fields('songId')) {
-
-			@album_data = (
-				$rs->Fields('songId')->value,
-				$rs->Fields('name')->value,
-				$rs->Fields('tocAlbumTrack')->value,
-				$rs->Fields('bitrate')->value,
-				$rs->Fields('profileReleaseYear')->value,
-			);
-			$rs->MoveNext;
-		}
-		
-		if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
-			$cacheEntry{'ALBUM'} = $album_data[1];
-			$cacheEntry{'TRACKNUM'} = $album_data[2];
-			$cacheEntry{'BITRATE'} = $album_data[3];
-			$cacheEntry{'YEAR'} = $album_data[4] if defined $album_data[4];
-		}
-
-		$cacheEntry{'CT'}         = Slim::Music::Info::typeFromPath($url,'mp3');
-		$cacheEntry{'TAG'}        = 1;
-		$cacheEntry{'VALID'}      = 1;
-		
-		$cacheEntry{'TITLE'}      = $mixer->Mix_SongName(-1);
-		$cacheEntry{'ARTIST'}     = $mixer->Mix_ArtistName(-1);
-		$cacheEntry{'GENRE'}      = $genre_hash{$browser->FLT_Song_MGID($isScanning)}[0] if (defined $genre_hash{$browser->FLT_Song_MGID($isScanning)});
-		$cacheEntry{'SECS'}       = int($mixer->Mix_SongDuration(-1) / 1000);
-		
-		$cacheEntry{'MOODLOGIC_ID'} = $mixer->{'Seed_SID'} = $song_id;
-		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
-
-		if ($] > 5.007) {
-
-			for my $key (qw(ALBUM ARTIST GENRE TITLE)) {
-				$cacheEntry{$key} = Slim::Utils::Unicode::utf8encode($cacheEntry{$key}) if defined $cacheEntry{$key};
-			}
-		}
-
-		$::d_moodlogic && msg("MoodLogic: Creating entry for track $isScanning: $url\n");
-
-		# that's all for the track
-		my $track = Slim::Schema->rs('Track')->updateOrCreate({
-
-			'url'        => $url,
-			'attributes' => \%cacheEntry,
-			'readTags'   => 1,
-
-		}) || do {
-
-			$::d_moodlogic && msg("MoodLogic: Couldn't create track for: $url\n");
-
-			return 1;
-		};
-
-		# Now add to the contributors and genres
-		for my $contributor ($track->contributors()) {
-			$mixer->{'Seed_AID'} = $browser->FLT_Song_AID($isScanning);
-
-			$contributor->moodlogic_id($mixer->{'Seed_AID'});
-			$contributor->moodlogic_mixable($mixer->Seed_AID_Mixable());
-			$contributor->update();
-		}
-
-		for my $genre ($track->genres()) {
-
-			$genre->moodlogic_id($browser->FLT_Song_MGID($isScanning));
-
-			if (defined $genre_hash{$browser->FLT_Song_MGID($isScanning)}) {
-				$genre->moodlogic_mixable($genre_hash{$browser->FLT_Song_MGID($isScanning)}[1]);
-			}
-
-			$genre->update();
-		}
-
-		my $albumObj = $track->album();
-
-		if ($albumObj && !$albumObj->artwork && !defined $track->thumb) {
-
-			$albumObj->artwork($track->id);
-			$albumObj->update;
-		}
-		
-		$isScanning++;
-		
-		return 1;
-	}
-	
-	$::d_moodlogic && msg("MoodLogic: Song scan complete, checking playlists\n");
-
-
-	if (defined $playlist && !$playlist->EOF) {
-
-		my $name = $playlist->Fields('name')->value;
-		my %cacheEntry = ();
-		my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
-
-		$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
-
-		# add this playlist to our playlist library
-		$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
-		$cacheEntry{'LIST'} = getPlaylistItems($playlist);
-		$cacheEntry{'CT'} = 'mlp';
-		$cacheEntry{'TAG'} = 1;
-		$cacheEntry{'VALID'} = '1';
-
-		Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-
-		$playlist->MoveNext unless $playlist->EOF;
-		return 1;
-	}
-	
-	#TODO find a way to prevent a crash if no auto playlists exist.  they don't for old versions of moodlogic.
-	if ($isauto) {
-
-		if (defined $auto && !$auto->EOF) {
-
-			my $name= $auto->Fields('name')->value;
-			
-			my %cacheEntry = ();
-			my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
-			$url = Slim::Utils::Misc::fixPath($url);
-
-			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Auto Playlist: $url\n");
-
-			# add this playlist to our playlist library
-			$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
-			$cacheEntry{'LIST'} = getPlaylistItems($auto);
-			$cacheEntry{'CT'} = 'mlp';
-			$cacheEntry{'TAG'} = 1;
-			$cacheEntry{'VALID'} = '1';
-
-			Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-
-			$auto->MoveNext unless $auto->EOF;
-			return 1;
-		}
-	}
-
-	$rs->Close;
-	$playlist->Close;
-	$auto->Close if $isauto;
-	$conn->Close;
-
-	$::d_moodlogic && msgf("MoodLogic: finished export (%d records)\n", $isScanning - 1);
-	
-	doneScanning();
-
-	return 0;
 }
 
 sub getMoodWheel {
@@ -552,7 +239,7 @@ sub mixerFunction {
 		Slim::Buttons::Common::pushMode($client, 'moodlogic_variety_combo', {'song' => $currentItem});
 		$client->pushLeft();
 
-	} elsif ($levels[$level] eq 'artist' && $currentItem && $currentItem->moodlogic_mixable()) {
+	} elsif ($levels[$level] eq 'contributor' && $currentItem && $currentItem->moodlogic_mixable()) {
 
 		# if we've picked an artist 
 		Slim::Buttons::Common::pushMode($client, 'moodlogic_mood_wheel', {'artist' => $currentItem});
@@ -643,22 +330,6 @@ sub getMix {
 	return \@instant_mix;
 }
 
-sub event_hook {
-	my ($mixer,$event,@args) = @_;
-	return if ($event eq "TaskProgress");
-	$last_error = $args[0]->Value();
-	print "MoodLogic Error Event triggered: '$event',".join(",", $args[0]->Value())."\n";
-	print $mixer->ErrorDescription()."\n";
-}
-
-sub OLEError {
-	$::d_moodlogic && msg(Win32::OLE->LastError() . "\n");
-}
-
-sub DESTROY {
-	Win32::OLE->Uninitialize();
-}
-
 sub setupUse {
 	my $client = shift;
 	my %setupGroup = (
@@ -689,33 +360,6 @@ sub setupUse {
 		}
 	);
 	return (\%setupGroup,\%setupPrefs);
-}
-
-sub checkDefaults {
-
-	if (!Slim::Utils::Prefs::isDefined('moodlogic')) {
-		Slim::Utils::Prefs::set('moodlogic',0)
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('moodlogicscaninterval')) {
-		Slim::Utils::Prefs::set('moodlogicscaninterval',60)
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistprefix')) {
-		Slim::Utils::Prefs::set('MoodLogicplaylistprefix','MoodLogic: ');
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('MoodLogicplaylistsuffix')) {
-		Slim::Utils::Prefs::set('MoodLogicplaylistsuffix','');
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('instantMixMax')) {
-		Slim::Utils::Prefs::set('instantMixMax',12);
-	}
-	
-	if (!Slim::Utils::Prefs::isDefined('varietyCombo')) {
-		Slim::Utils::Prefs::set('varietyCombo',50);
-	}
 }
 
 sub setupCategory {
