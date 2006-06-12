@@ -151,13 +151,14 @@ sub initPlugin {
 
 		#checker($initialized);
 
+		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 		Slim::Music::Import->addImporter('MUSICMAGIC', {
 			'mixer'     => \&mixerFunction,
 			'setup'     => \&addGroups,
 			'mixerlink' => \&mixerlink,
 		});
 
-		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('musicmagic'));
+		Slim::Music::Import->useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
@@ -500,8 +501,14 @@ sub mixerFunction {
 
 		$mixSeed = $currentItem->tracks->next->path;
 
-	} elsif ($levels[$level] eq 'artist' || $levels[$level] eq 'genre') {
-
+	} elsif ($levels[$level] eq 'contributor') {
+		
+		# MusicMagic uses artist instead of contributor.
+		$levels[$level] = 'artist';
+		$mixSeed = $currentItem->name;
+	
+	} elsif ($levels[$level] eq 'genre') {
+		
 		$mixSeed = $currentItem->name;
 	}
 
@@ -596,49 +603,53 @@ sub getMix {
 	if (defined $client) {
 		%args = (
 			# Set the size of the list (default 12)
-			size	   => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+			'size'       => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			sizetype   => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+			'sizetype'   => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
 	
 			# Set the style slider (default 20)
-			style	   => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+			'style'      => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
 	
 			# Set the variety slider (default 0)
-			variety	   => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+			'variety'    => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
 
 			# mix genres or stick with that of the seed. (Default: match seed)
-			mixgenre   => $client->prefGet('MMMMixGenre') || Slim::Utils::Prefs::get('MMMMixGenre'),
+			'mixgenre'   => $client->prefGet('MMMMixGenre') || Slim::Utils::Prefs::get('MMMMixGenre'),
 	
 			# Set the number of songs before allowing dupes (default 12)
-			rejectsize => $client->prefGet('MMMRejectSize') || Slim::Utils::Prefs::get('MMMRejectSize'),
-	
-			# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
-			rejecttype => $type[$client->prefGet('MMMRejectType') || Slim::Utils::Prefs::get('MMMRejectType')],
+			'rejectsize' => $client->prefGet('MMMRejectSize') || Slim::Utils::Prefs::get('MMMRejectSize'),
 		);
 	} else {
 		%args = (
 			# Set the size of the list (default 12)
-			size	   => Slim::Utils::Prefs::get('MMMSize') || 12,
+			'size'       => Slim::Utils::Prefs::get('MMMSize') || 12,
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			sizetype   => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
+			'sizetype'   => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
 	
 			# Set the style slider (default 20)
-			style	   => Slim::Utils::Prefs::get('MMMStyle') || 20,
+			'style'      => Slim::Utils::Prefs::get('MMMStyle') || 20,
 	
 			# Set the variety slider (default 0)
-			variety	   => Slim::Utils::Prefs::get('MMMVariety') || 0,
+			'variety'    => Slim::Utils::Prefs::get('MMMVariety') || 0,
 
 			# mix genres or stick with that of the seed. (Default: match seed)
-			mixgenre   => Slim::Utils::Prefs::get('MMMMixGenre') || 0,
+			'mixgenre'   => Slim::Utils::Prefs::get('MMMMixGenre') || 0,
 	
 			# Set the number of songs before allowing dupes (default 12)
-			rejectsize => Slim::Utils::Prefs::get('MMMRejectSize') || 12,
-	
-			# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
-			rejecttype => $type[Slim::Utils::Prefs::get('MMMRejectType') || 0],
+			'rejectsize' => Slim::Utils::Prefs::get('MMMRejectSize') || 12,
 		);
+	}
+
+	# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
+	my $rejectType = defined $client ?
+		($client->prefGet('MMMRejectType') || Slim::Utils::Prefs::get('MMMRejectType')) : 
+		(Slim::Utils::Prefs::get('MMMRejectType') || 0);
+	
+	# assign only if a rejectType found.  suppresses a warning when trying to access the array with no value.
+	if ($rejectType) {
+		$args{'rejecttype'} = $type[$rejectType];
 	}
 
 	my $filter = defined $client ? $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter') : Slim::Utils::Prefs::get('MMMFilter');

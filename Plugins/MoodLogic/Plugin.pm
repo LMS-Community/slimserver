@@ -138,11 +138,11 @@ sub initPlugin {
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
+	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 	Slim::Music::Import->addImporter('MOODLOGIC', {
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
-		'playlistOnly' => 1,
 	});
 
 	Slim::Music::Import->useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
@@ -262,7 +262,7 @@ sub mixerlink {
 	my $item = shift;
 	my $form = shift;
 	my $descend = shift;
-	
+
 	if ($descend) {
 		$form->{'mixable_descend'} = 1;
 	} else {
