@@ -287,7 +287,7 @@ sub _parseOPMLOutline {
 
 	for my $itemXML (@$outlines) {
 
-		my $url = $itemXML->{'url'} || $itemXML->{'URL'};
+		my $url = $itemXML->{'url'} || $itemXML->{'URL'} || $itemXML->{'xmlUrl'};
 
 		# Some programs, such as OmniOutliner put garbage in the URL.
 		if ($url) {
@@ -297,14 +297,14 @@ sub _parseOPMLOutline {
 		# Pull in all attributes we find
 		my %attrs;
 		for my $attr ( keys %{$itemXML} ) {
-		    next if $attr =~ /text|type|URL/i;
+		    next if $attr =~ /text|type|URL|xmlUrl/i;
 		    $attrs{$attr} = $itemXML->{$attr};
 	    }
 
 		push @items, {
 
 			# compatable with INPUT.Choice, which expects 'name' and 'value'
-			'name'  => $itemXML->{'text'},
+			'name'  => unescapeAndTrim( $itemXML->{'text'} ),
 			'value' => $url || $itemXML->{'text'},
 			'url'   => $url,
 			'type'  => $itemXML->{'type'},
@@ -448,6 +448,9 @@ sub unescape {
 
 	# Decode all entities in-place
 	decode_entities($data);
+	
+	# Unescape URI (some Odeo OPML needs this)
+	$data =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
 
 	return $data;
 }
