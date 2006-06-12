@@ -108,7 +108,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'playlistOnly' => 1,
 		});
-
+		
 		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);

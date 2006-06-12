@@ -105,7 +105,6 @@ sub setupUse {
 
 				#XXXX - need to be fixed for the new scanner world.
 				Slim::Music::Import->useImporter('ITUNES',$changeref->{'itunes'}{'new'});
-				Slim::Music::Import->startScan('ITUNES');
 			},
 
 			'optionSort' => 'KR',

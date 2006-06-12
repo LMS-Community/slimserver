@@ -683,8 +683,6 @@ sub setupUse {
 						Slim::Buttons::Home::updateMenu($client);
 					}
 					Slim::Music::Import->useImporter('MOODLOGIC',$changeref->{'moodlogic'}{'new'});
-					Slim::Music::Info::clearPlaylists('moodlogicplaylist:');
-					Slim::Music::Import->startScan('MOODLOGIC');
 				}
 			,'optionSort' => 'KR'
 			,'inputTemplate' => 'setup_input_radio.html'

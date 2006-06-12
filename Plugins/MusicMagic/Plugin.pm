@@ -920,8 +920,6 @@ sub setupUse {
 				}
 
 				Slim::Music::Import->useImporter('MUSICMAGIC',$changeref->{'musicmagic'}{'new'});
-				Slim::Music::Info::clearPlaylists('musicmagicplaylist:');
-				Slim::Music::Import->startScan('MUSICMAGIC');
 			},
 
 			'optionSort' => 'KR',
