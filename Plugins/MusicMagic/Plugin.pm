@@ -541,6 +541,10 @@ sub mixerlink {
 	my $form = shift;
 	my $descend = shift;
 
+	if ($form->{'levelName'} && $form->{'levelName'} eq 'year') {
+		return $form;
+	}
+
 	if ($descend) {
 		$form->{'mmmixable_descend'} = 1;
 	} else {
