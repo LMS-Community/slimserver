@@ -435,7 +435,7 @@ sub pageInfo {
 
 			$itemCount += $count;
 
-			$alphamap{$letter} = $itemCount;
+			$alphamap{Slim::Utils::Unicode::utf8decode($letter)} = $itemCount;
 		}
 
 	} else {

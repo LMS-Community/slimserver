@@ -91,6 +91,9 @@ sub init {
 		exit;
 	};
 
+	# Tell the DB that we're handing it UTF-8
+	$dbh->do('SET NAMES UTF8;');
+
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({
 		'dsn'      => $source,
@@ -621,9 +624,7 @@ sub cleanupStaleTrackEntries {
 
 	$::d_import && msg("Import: Starting db garbage collection..\n");
 
-	my $iterator = $self->search('Track', {
-		'audio'     => 1,
-	});
+	my $iterator = $self->search('Track', { 'audio' => 1 });
 
 	# fetch one at a time to keep memory usage in check.
 	while (my $track = $iterator->next) {
@@ -1633,10 +1634,10 @@ sub _postCheckAttributes {
 
 			for my $contributorObj (@{$contributors}) {
 
-				Slim::Schema->resultset('ContributorAlbum')->find_or_create({
-					album       => $albumObj->id,
-					contributor => $contributorObj->id,
-					role        => Slim::Schema::Contributor->typeToRole($role),
+				$self->resultset('ContributorAlbum')->find_or_create({
+					'album'       => $albumObj->id,
+					'contributor' => $contributorObj->id,
+					'role'        => Slim::Schema::Contributor->typeToRole($role),
 				});
 			}
 		}
