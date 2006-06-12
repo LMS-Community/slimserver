@@ -83,6 +83,7 @@ my $tagCache = [];
 	$MP3::Info::v2_to_v1_names{'TDRC'} = 'YEAR';
 
 	# iTunes writes out it's own tag denoting a compilation
+	$MP3::Info::v2_to_v1_names{'TCP'}  = 'COMPILATION';
 	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
 }
 
