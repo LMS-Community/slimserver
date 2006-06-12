@@ -36,6 +36,9 @@ sub playlist {
 		$params->{'player_needs_upgrade'} = '1';
 		return Slim::Web::HTTP::filltemplatefile("playlist_needs_upgrade.html", $params);
 	}
+	
+	# If synced, use the master's playlist
+	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	$params->{'playercount'} = Slim::Player::Client::clientCount();
 	
