@@ -289,8 +289,8 @@ sub preloadLines {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::isURL($url)) {
-		push (@{$client->trackInfoLines}, "URL: ". Slim::Utils::Misc::unescape($url));
+	if (blessed($track) && $track->can('url')) {
+		push (@{$client->trackInfoLines}, "URL: ". Slim::Utils::Misc::unescape($track->url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 
