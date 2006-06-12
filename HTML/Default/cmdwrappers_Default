@@ -62,10 +62,10 @@ END %]
 			[% item.text | html %]
 		[% END %]
 
-		[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
+		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 
 			[% "FROM" | string %]
-			<a [% PROCESS albumItemHRef %] target="browser">[% item.album.title | html %]</a>
+			<a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a>
 		[% END %]
 
 		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]

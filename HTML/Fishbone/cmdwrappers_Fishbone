@@ -80,12 +80,12 @@
 	
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
-	[% IF item.includeAlbum && item.album && item.album != item.noAlbum && item.album != "" %][% "FROM" | string %]
+	[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %][% "FROM" | string %]
 	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
 [% END %]
 
 [% BLOCK pagebar %]
-[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
+[%- IF pageinfo.alphamap; PROCESS alphapagecalc; ELSE; PROCESS pagebarcalc pagesperbar = 15; END %]
 <div class="pagebar">[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
 [% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
