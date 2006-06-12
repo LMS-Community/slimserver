@@ -1915,7 +1915,8 @@ sub currentPlaylistRender {
 }
 
 sub currentPlaylistChangeTime {
-	my $r = shift;
+	# This needs to be the same for all synced clients
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[96] = shift) : $r->[96];
 }
 

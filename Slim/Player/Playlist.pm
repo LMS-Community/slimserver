@@ -417,7 +417,7 @@ sub fischer_yates_shuffle {
 #reshuffle - every time the playlist is modified, the shufflelist should be updated
 #		We also invalidate the htmlplaylist at this point
 sub reshuffle {
-	my $client = shift;
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
 	my $dontpreservecurrsong = shift;
   
 	my $songcount = count($client);

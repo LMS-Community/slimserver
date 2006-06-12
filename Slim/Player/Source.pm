@@ -780,7 +780,8 @@ sub gototime {
 
 # jumpto - set the current song to a given offset
 sub jumpto {
-	my ($client, $offset, $noplay) = @_;
+	my $client = Slim::Player::Sync::masterOrSelf(shift);
+	my ($offset, $noplay) = @_;
 
 	my ($songcount) = Slim::Player::Playlist::count($client);
 
