@@ -72,7 +72,7 @@ sub descendContributor {
 		->search_related('genreTracks')
 		->search_related('track')
 		->search_related('contributorTracks', $ctFind)
-		->search_related('contributor');
+		->search_related('contributor', {}, { 'order_by' => 'contributor.namesort' });
 }
 
 1;

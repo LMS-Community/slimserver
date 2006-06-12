@@ -87,7 +87,9 @@ sub browse {
 sub descendAlbum {
 	my ($self, $find) = @_;
 
-	return $self->search_related('contributorAlbums', $find)->search_related('album');
+	return $self
+		->search_related('contributorAlbums', $find)
+		->search_related('album', {}, { 'order_by' => 'album.titlesort, album.disc' });
 }
 
 1;
