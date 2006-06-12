@@ -684,11 +684,14 @@ sub variousArtistsAlbumCount {
 	my $class = shift;
 	my $find  = shift;
 
-	my %attr = ();
-	my @join = ();
+	my %attr = ( 'group_by' => 'me.id' );
+	my @join = ( 'contributorAlbums' );
 
 	# We always want to search for compilation
 	$find->{'me.compilation'} = 1;
+
+	# And the VA object.
+	$find->{'contributorAlbums.contributor'} = $class->variousArtistsObject->id;
 
 	if (exists $find->{'genre.id'}) {
 		$find->{'genreTracks.genre'} = delete $find->{'genre.id'};
@@ -698,12 +701,9 @@ sub variousArtistsAlbumCount {
 	if (my $roles = $class->artistOnlyRoles) {
 
 		$find->{'contributorAlbums.role'} = { 'in' => $roles };
-		push @join, 'contributorAlbums';
 	}
 
-	if (scalar @join) {
-		$attr{'join'} = \@join;
-	}
+	$attr{'join'} = \@join;
 
 	return $class->count('Album', $find, \%attr);
 }
