@@ -1,4 +1,4 @@
-<a href="[% webroot %]plugins/MusicMagic/musicmagic_mix.html?[% IF item.playlist %]playlist=[% item.itempath | uri %][% ELSIF item.levelName == "track" %]song=[% item.item | uri %][% END %][% IF item.genre %]&amp;genre=[% item.genre | uri %][% END %][% IF item.artist %]&amp;artist=[% item.artist.id | uri %][% END %][% IF item.album %]&amp;album=[% item.album | uri %][% END %]&amp;player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+<a href="[% webroot %]plugins/MusicMagic/musicmagic_mix.html?[% IF item.playlist %]playlist=[% item.itempath | uri %][% ELSIF item.levelName == "track" %]song=[% item.item | uri %][% END %][% IF item.genre %]&amp;genre=[% item.genre | uri %][% END %][% IF item.contributor %]&amp;artist=[% item.contributor | uri %][% END %][% IF item.artist %]&amp;artist=[% item.artist.id | uri %][% END %][% IF item.album %]&amp;album=[% item.album | uri %][% END %]&amp;player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
 [%- IF controlGraphics %]<img src="[% webroot %]html/images/b_mmmix.gif"
 		alt='[% "MUSICMAGIC_MIX" | string %]' 
 		title='[% "MUSICMAGIC_MIX" | string %]' 
