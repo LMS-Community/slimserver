@@ -255,6 +255,21 @@ sub scanRemoteURL {
 		return $cb->();
 	}
 
+	if (Slim::Music::Info::isAudioURL($url)) {
+
+		$::d_scan && msg("scanRemoteURL: remote stream $url known to be audio\n");
+
+		my $track = Slim::Schema->rs('Track')->updateOrCreate({
+			'url'      => $url,
+		});
+
+		$track->content_type( Slim::Music::Info::typeFromPath($url) );
+		
+		push @{$args->{'listRef'}}, $track if (ref($args->{'listRef'}) eq 'ARRAY');
+
+		return $cb->();
+	}
+
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 	
 	my $stream = Slim::Networking::Stream->new();

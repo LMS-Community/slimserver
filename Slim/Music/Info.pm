@@ -821,6 +821,13 @@ sub isPlaylistURL {
 	return 0;
 }
 
+sub isAudioURL {
+	# return true if url scheme (http: etc) defined as audio in types
+	my $url = shift;
+
+	return ($url =~ /^([a-z]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
+}
+
 sub isURL {
 	my $url = shift || return 0;
 
