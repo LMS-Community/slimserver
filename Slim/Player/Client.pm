@@ -13,6 +13,7 @@ package Slim::Player::Client;
 # GNU General Public License for more details.
 
 use strict;
+use Scalar::Util qw(blessed);
 
 use Slim::Control::Request;
 use Slim::Player::Sync;
@@ -939,29 +940,27 @@ sub startup {
 	Slim::Player::Sync::restoreSync($client);
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!Slim::Player::Sync::isSynced($client) && Slim::Utils::Prefs::get('persistPlaylists')) {	
+	if (!Slim::Player::Sync::isSynced($client) && Slim::Utils::Prefs::get('persistPlaylists')) {
 
 		my $playlist = Slim::Music::Info::playlistForClient($client);
 		my $currsong = $client->prefGet('currentSong');
 
-		if (defined $playlist) {
+		if (blessed($playlist)) {
 
 			my $tracks = [ $playlist->tracks ];
 
 			# Only add on to the playlist if there are tracks.
-			if (scalar @$tracks && defined $tracks->[0] && ref $tracks->[0] && $tracks->[0]->id != 0) {
+			if (scalar @$tracks && defined $tracks->[0] && blessed($tracks->[0]) && $tracks->[0]->id) {
 
 				$client->debug("found nowPlayingPlaylist - will loadtracks");
 
 				# We don't want to re-setTracks on load - so mark a flag.
-				$client->param('startupPlaylistLoading', 1);
+				$client->startupPlaylistLoading(1);
 
 				$client->execute(
 					['playlist', 'addtracks', 'listref', $tracks ],
 					\&initial_add_done, [$client, $currsong],
 				);
-
-				$client->param('startupPlaylistLoading', 0);
 			}
 		}
 	}
@@ -1887,7 +1886,7 @@ sub currentPlaylist {
 	my $playlist = $r->[91];
 
 	# Force the caller to do the right thing.
-	if (ref($playlist) && ref($playlist) ne 'Class::DBI::Object::Has::Been::Deleted') {
+	if (ref($playlist)) {
 		return $playlist;
 	}
 
@@ -1918,6 +1917,11 @@ sub currentPlaylistChangeTime {
 	# This needs to be the same for all synced clients
 	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[96] = shift) : $r->[96];
+}
+
+sub startupPlaylistLoading {
+	my $r = shift;
+	@_ ? ($r->[97] = shift) : $r->[97];
 }
 
 sub directURL {

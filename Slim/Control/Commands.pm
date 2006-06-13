@@ -430,6 +430,15 @@ sub playlistClearCommand {
 
 	Slim::Player::Playlist::clear($client);
 	Slim::Player::Source::playmode($client, "stop");
+
+	my $playlistObj = Slim::Music::Info::playlistForClient($client);
+
+	if (blessed($playlistObj)) {
+
+		$playlistObj->playlist_tracks->delete;
+		$playlistObj->update;
+	}
+
 	$client->currentPlaylist(undef);
 	$client->currentPlaylistChangeTime(time());
 	

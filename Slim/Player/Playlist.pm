@@ -614,14 +614,14 @@ sub scheduleWriteOfPlaylist {
 	# This can happen if the user removes the
 	# playlist - because this is a closure, we get
 	# a bogus object back)
-	if (!blessed($playlistObj) || !$playlistObj->can('tracks')) {
+	if (!blessed($playlistObj) || !$playlistObj->can('tracks') || !Slim::Utils::Prefs::get('playlistdir')) {
 
 		return 0;
 	}
 
 	if ($playlistObj->title eq $client->string('UNTITLED')) {
 
-		$::d_playlist && msg("Not writing out untitled playlist.\n");
+		$::d_playlist && msg("scheduleWriteOfPlaylist: Not writing out untitled playlist.\n");
 
 		return 0;
 	}
@@ -642,13 +642,7 @@ sub newSongPlaylistCallback {
 
 	my $playlist = '';
 
-	if ($client->currentPlaylist && ref($client->currentPlaylist)) {
-
-		if (ref($client->currentPlaylist) eq 'Class::DBI::Object::Has::Been::Deleted') {
-
-			msg("Warning: \$client->currentPlaylist has been deleted out from under us!");
-			return;
-		}
+	if ($client->currentPlaylist && blessed($client->currentPlaylist)) {
 
 		$playlist = $client->currentPlaylist->path;
 
@@ -659,12 +653,15 @@ sub newSongPlaylistCallback {
 
 	return if Slim::Music::Info::isRemoteURL($playlist) || Slim::Player::Playlist::shuffle($client);
 
-	$::d_playlist && msg("Playlist: newSongPlaylistCallback() writeCurTrackForM3U()\n");
+	if (Slim::Utils::Prefs::get('playlistdir')) {
 
-	Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
-		$playlist,
-		$request->getParam('reset') ? 0 : Slim::Player::Source::playingSongIndex($client)
-	);
+		$::d_playlist && msg("newSongPlaylistCallback() writeCurTrackForM3U()\n");
+
+		Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
+			$playlist,
+			$request->getParam('reset') ? 0 : Slim::Player::Source::playingSongIndex($client)
+		);
+	}
 }
 
 sub modifyPlaylistCallback {
@@ -672,7 +669,7 @@ sub modifyPlaylistCallback {
 	
 	my $client = $request->client();
 	
-	if ($client && Slim::Utils::Prefs::get('playlistdir') && Slim::Utils::Prefs::get('persistPlaylists')) {
+	if ($client && Slim::Utils::Prefs::get('persistPlaylists')) {
 
 		my $saveplaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
 
@@ -682,7 +679,7 @@ sub modifyPlaylistCallback {
 			$request->isCommand([['playlist'], ['open']]) || 
 			($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
 
-		$::d_playlist && msg("Playlist: modifyPlaylistCallback() savecurrsong is $savecurrsong\n");
+		$::d_playlist && msg("modifyPlaylistCallback: savecurrsong is $savecurrsong\n");
 
 		return if !$savecurrsong;
 
@@ -696,13 +693,15 @@ sub modifyPlaylistCallback {
 		for my $eachclient (@syncedclients) {
 
 			# Don't save all the tracks again if we're just starting up!
-			if (!$eachclient->param('startupPlaylistLoading') && $saveplaylist) {
+			if (!$eachclient->startupPlaylistLoading && $saveplaylist) {
+
+				$::d_playlist && msgf("modifyPlaylistCallback: finding client playlist for: [%s]\n", $eachclient->id);
 
 				# Create a virtual track that is our pointer
 				# to the list of tracks that make up this playlist.
 				my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
-					'url'        => sprintf('clientplaylist://%s', $eachclient->id()),
+					'url'        => sprintf('clientplaylist://%s', $eachclient->id),
 					'attributes' => {
 						'TITLE' => sprintf('%s - %s', 
 							Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),
@@ -713,12 +712,26 @@ sub modifyPlaylistCallback {
 					},
 				});
 
-				$playlistObj->setTracks($playlist);
+				if (defined $playlistObj) {
+
+					$::d_playlist && msg("modifyPlaylistCallback: calling setTracks()\n");
+
+					$playlistObj->setTracks($playlist);
+				}
 			}
 
 			if ($savecurrsong) {
 				Slim::Utils::Prefs::clientSet($eachclient, 'currentSong', $currsong);
 			}
+		}
+
+		# Because this callback is asyncronous, reset the flag here.
+		# there's only one place that sets it - in Client::startup()
+		if ($client->startupPlaylistLoading) {
+
+			$::d_playlist && msg("modifyPlaylistCallback: resetting startupPlaylistLoading flag.\n");
+
+			$client->startupPlaylistLoading(0);
 		}
 	}
 }

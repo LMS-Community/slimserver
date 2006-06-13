@@ -535,7 +535,7 @@ sub updateOrCreate {
 
 	# Track will be defined or not based on the assignment above.
 	if (!defined $track) {
-		$track = $self->_retrieveTrack($url);
+		$track = $self->_retrieveTrack($url, $playlist);
 	}
 
 	# XXX - exception should go here. Comming soon.

@@ -17,7 +17,6 @@ use base qw(Class::Data::Inheritable);
 
 use FileHandle;
 use File::Basename qw(basename);
-use File::Find::Rule;
 use IO::String;
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -122,6 +121,8 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
+	eval "use File::Find::Rule";
+
 	# See perldoc File::Find::Rule for more information.
 	# follow symlinks.
 	my $rule   = File::Find::Rule->new;
@@ -150,6 +151,8 @@ sub scanDirectory {
 	# Don't include old style internal playlists.
 	$rule->not_name(qr/\W__\S+\.m3u$/);
 
+	msg("About to look for files in $topDir\n");
+
 	my @files   = $rule->in($topDir);
 	my @objects = ();
 
@@ -157,6 +160,10 @@ sub scanDirectory {
 
 		$::d_scan && msg("scanDirectory: Didn't find any valid files in: [$topDir]\n");
 		return;
+
+	} else {
+
+		msgf("Found %d files in %s\n", scalar @files, $topDir);
 	}
 
 	# Give the user a progress indicator if available.

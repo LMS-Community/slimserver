@@ -11,6 +11,7 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use POSIX ();
+use Scalar::Util qw(blessed);
 
 use Slim::Player::Playlist;
 use Slim::Player::Source;
@@ -183,10 +184,7 @@ sub status {
 	} else {
 		# Special case, we need the playlist info even if we don't want
 		# the playlist itself
-		if ($client &&
-			defined $client->currentPlaylist && 
-			ref($client->currentPlaylist) ne 'Class::DBI::Object::Has::Been::Deleted' && 
-			!Slim::Music::Info::isRemoteURL($client->currentPlaylist)) {
+		if ($client && blessed($client->currentPlaylist) && !Slim::Music::Info::isRemoteURL($client->currentPlaylist)) {
 
 			$params->{'current_playlist'} = $client->currentPlaylist;
 			$params->{'current_playlist_modified'} = $client->currentPlaylistModified;
