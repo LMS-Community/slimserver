@@ -122,6 +122,13 @@ sub add {
 			'musicbrainz_id' => $brainzID,
 		}, { 'key' => 'namesearch' });
 
+		if ($contributorObj && $search ne $sort) {
+
+			# Bug 3069: update the namesort only if it's different than namesearch
+			$contributorObj->namesort($sort);
+			$contributorObj->update;
+		}
+
 		# Create a contributor <-> track mapping table.
 		Slim::Schema::ContributorTrack->find_or_create({
 			'track'       => (ref $track ? $track->id : $track),
