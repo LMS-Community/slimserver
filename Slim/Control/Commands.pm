@@ -1783,6 +1783,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			} elsif ($key =~ /^(?:contributor|artist)\./) {
 
 				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
+
+			} elsif ($key eq 'contributor') {
+
+				$key = 'contributorTracks.contributor';
+				$joinMap{'contributor'} = 'contributorTracks';
 			}
 
 			# Turn 'track.*' into 'me.*'

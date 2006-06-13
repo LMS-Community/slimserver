@@ -167,7 +167,7 @@ sub init {
 
 					while (my ($subkey, $subvalue) = each %{$value}) {
 
-						push @terms, join('=', $subkey, $subvalue);
+						push @terms, join('=', $levels[$level-1], $subvalue);
 					}
 
 				} else {
