@@ -32,6 +32,7 @@ our %validMixTypes = (
 	'genre'    => 'genre',
 	'mood'     => 'mood',
 	'playlist' => 'playlist',
+	'year'     => 'filter=?year',
 );
 
 sub strings {
@@ -548,10 +549,6 @@ sub mixerlink {
 	my $form = shift;
 	my $descend = shift;
 
-	if ($form->{'levelName'} && $form->{'levelName'} eq 'year') {
-		return $form;
-	}
-
 	if ($descend) {
 		$form->{'mmmixable_descend'} = 1;
 	} else {
@@ -750,6 +747,7 @@ sub musicmagic_mix {
 	my $artist   = $params->{'artist'};
 	my $album    = $params->{'album'};
 	my $genre    = $params->{'genre'};
+	my $year     = $params->{'year'};
 	my $mood     = $params->{'mood'};
 	my $player   = $params->{'player'};
 	my $playlist = $params->{'playlist'};
@@ -830,6 +828,10 @@ sub musicmagic_mix {
 			$mix = getMix($client, $obj->name, 'genre');
 		}
 	
+	} elsif (defined $year) {
+		
+		$mix = getMix($client, $year, 'year');
+		
 	} else {
 
 		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix\n');
