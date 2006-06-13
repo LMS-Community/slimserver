@@ -563,7 +563,7 @@ sub opened {
 
 # Squeezebox control for tcp stream
 #
-#	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 't' = status
+#	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 'f' = flush
 #	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start, '2' = direct streaming
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 24, '3' = 32
