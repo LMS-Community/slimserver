@@ -100,7 +100,6 @@ sub displayAsHTML {
 			$form->{'artist'}        = $contributor;
 			#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 			$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
-
 		}
 	}
 
@@ -114,13 +113,13 @@ sub displayAsHTML {
 	}
 }
 
-sub artistsForRole {
-	my ($self, $type) = @_;
+sub artistsForRoles {
+	my ($self, @types) = @_;
 
-	my $role = Slim::Schema::Contributor->typeToRole($type) || return ();
+	my @roles = map { Slim::Schema::Contributor->typeToRole($_) } @types;
 
 	return $self
-		->search_related('contributorAlbums', { 'role' => $role })
+		->search_related('contributorAlbums', { 'role' => { 'in' => \@roles } }, { 'order_by' => 'role desc' })
 		->search_related('contributor')->all;
 }
 
@@ -128,29 +127,29 @@ sub artistsForRole {
 sub artists {
 	my $self = shift;
 
-	$::d_info && msgf("Album: [%s]\n", $self->title);
-
 	# First try to fetch an explict album artist
-	my @artists = $self->artistsForRole('ALBUMARTIST');
+	my @types = qw(ALBUMARTIST);
 
 	# If the user wants to use TPE2 as album artist, pull that.
-	if (@artists == 0 && Slim::Utils::Prefs::get('useBandAsAlbumArtist')) {
+	if (Slim::Utils::Prefs::get('useBandAsAlbumArtist')) {
 
-		@artists = $self->artistsForRole('BAND');
+		push @types, 'BAND';
 	}
 
 	# Nothing there, and we're not a compilation? Get a list of artists.
-	if (@artists == 0 && (!Slim::Utils::Prefs::get('variousArtistAutoIdentification') || !$self->compilation)) {
+	if (!Slim::Utils::Prefs::get('variousArtistAutoIdentification') || !$self->compilation) {
 
-		@artists = $self->artistsForRole('ARTIST');
+		push @types, 'ARTIST';
 	}
 
+	my @artists = $self->artistsForRoles(@types);
+
 	# Still nothing? Use the singular contributor - which might be the $vaObj
-	if (@artists == 0 && $self->compilation) {
+	if (scalar @artists == 0 && $self->compilation) {
 
 		@artists = Slim::Schema->variousArtistsObject;
 
-	} elsif (@artists == 0) {
+	} elsif (scalar @artists == 0) {
 
 		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributor);
 
