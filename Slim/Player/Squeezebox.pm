@@ -154,7 +154,7 @@ sub play {
 					defined($client->tempVolume()));
 
 	# if this is a remote stream, start playback as soon as we have enough buffer filled
-	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 0.25 : undef;
+	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 0.125 : undef;
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 	if ($quickstart) {
@@ -267,7 +267,7 @@ sub quickstart {
 		
 		$client->showBriefly( $line1, $line2, 0.5 );
 		
-		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.25, \&quickstart );
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart );
 	}
 }
 
@@ -674,46 +674,54 @@ sub stream {
 		
 		my $request_string;
 		my ($server_port, $server_ip);
-		if ($command eq 's' && $server_url) {
-			$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
-		
-			my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
-			my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
-			if ($port && $addrs[0]) {
-				$server_port = $port;
-				$server_ip = unpack('N',$addrs[0]);
-			}
-
-			$request_string = $handler->requestString($server_url);  
-			$autostart += 2;
-			if (!$server_port || !$server_ip) {
-				$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
-				$client->failedDirectStream();
-				Slim::Networking::Slimproto::stop($client);
-				return;
-			} else {
-				$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
-				$::d_directstream && msg("request string: $request_string\n");
-				$client->directURL($url);
-			}			
-	
-		} else {
-			my $path = '/stream.mp3?player='.$client->id;
-		
-			$request_string = "GET $path HTTP/1.0\n";
+		if ($command eq 's') {
 			
-			if (Slim::Utils::Prefs::get('authorize')) {
-				$client->password(generate_random_string(10));
+			# When streaming a new song, we reset the buffer fullness value so quickstart()
+			# doesn't get an outdated fullness result and unpause too early
+			Slim::Networking::Slimproto::fullness( $client, 0 );
+			
+			if ($server_url) {
 				
-				my $password = encode_base64('squeezeboxXXX:' . $client->password);
+				$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
+		
+				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
+				my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
+				if ($port && $addrs[0]) {
+					$server_port = $port;
+					$server_ip = unpack('N',$addrs[0]);
+				}
+
+				$request_string = $handler->requestString($server_url);  
+				$autostart += 2;
+				if (!$server_port || !$server_ip) {
+					$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
+					$client->failedDirectStream();
+					Slim::Networking::Slimproto::stop($client);
+					return;
+				} else {
+					$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
+					$::d_directstream && msg("request string: $request_string\n");
+					$client->directURL($url);
+				}			
+	
+			} else {
+				my $path = '/stream.mp3?player='.$client->id;
+		
+				$request_string = "GET $path HTTP/1.0\n";
+			
+				if (Slim::Utils::Prefs::get('authorize')) {
+					$client->password(generate_random_string(10));
 				
-				$request_string .= "Authorization: Basic $password\n";
-			}
-			$server_port = Slim::Utils::Prefs::get('httpport');		# port
-			$server_ip = 0;		# server IP of 0 means use IP of control server
-			$request_string .= "\n";
-			if (length($request_string) % 2) {
+					my $password = encode_base64('squeezeboxXXX:' . $client->password);
+				
+					$request_string .= "Authorization: Basic $password\n";
+				}
+				$server_port = Slim::Utils::Prefs::get('httpport');		# port
+				$server_ip = 0;		# server IP of 0 means use IP of control server
 				$request_string .= "\n";
+				if (length($request_string) % 2) {
+					$request_string .= "\n";
+				}
 			}
 		}
 		

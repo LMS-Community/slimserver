@@ -350,6 +350,11 @@ sub signalStrength {
 
 sub fullness {
 	my $client = shift;
+	my $value  = shift;
+	
+	if ( defined $value ) {
+		return $status{$client}->{'fullness'} = $value;
+	}
 	
 	return $status{$client}->{'fullness'};
 }
