@@ -86,8 +86,10 @@ sub init {
 		'cue' => 'Slim::Formats::Playlists::CUE',
 		'm3u' => 'Slim::Formats::Playlists::M3U',
 		'pls' => 'Slim::Formats::Playlists::PLS',
-		'wpl' => 'Slim::Formats::Playlists::WPL',
+		'pod' => 'Slim::Formats::Playlists::XML',
 		'wax' => 'Slim::Formats::Playlists::ASX',
+		'wpl' => 'Slim::Formats::Playlists::WPL',
+		'xml' => 'Slim::Formats::Playlists::XML',
 		'xpf' => 'Slim::Formats::Playlists::XSPF',
 
 		# Remote types
