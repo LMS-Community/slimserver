@@ -31,6 +31,7 @@ our %contributorToRoleMap = (
 	));
 
 	$class->set_primary_key('id');
+	$class->add_unique_constraint('namesearch' => [qw/id namesearch/]);
 
         $class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
         $class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
@@ -114,21 +115,12 @@ sub add {
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 
-		my ($contributorObj) = Slim::Schema::Contributor->search({
-			'namesearch' => $search,
-		});
-
-		if (!$contributorObj) {
-
-			$contributorObj = Slim::Schema::Contributor->create({ 
-				'namesearch'     => $search,
-				'name'           => $name,
-				'namesort'       => $sort,
-				'musicbrainz_id' => $brainzID,
-			});
-		}
-
-		push @contributors, $contributorObj;
+		my $contributorObj = Slim::Schema::Contributor->find_or_create({ 
+			'namesearch'     => $search,
+			'name'           => $name,
+			'namesort'       => $sort,
+			'musicbrainz_id' => $brainzID,
+		}, { 'key' => 'namesearch' });
 
 		# Create a contributor <-> track mapping table.
 		Slim::Schema::ContributorTrack->find_or_create({
@@ -136,6 +128,8 @@ sub add {
 			'contributor' => $contributorObj->id,
 			'role'        => $role,
 		});
+
+		push @contributors, $contributorObj;
 	}
 
 	return wantarray ? @contributors : $contributors[0];

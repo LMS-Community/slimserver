@@ -22,6 +22,7 @@ use Scalar::Util qw(blessed);
 	));
 
 	$class->set_primary_key('id');
+	$class->add_unique_constraint('namesearch' => [qw/id namesearch/]);
 
 	$class->has_many('genreTracks' => 'Slim::Schema::GenreTrack' => 'genre');
 
@@ -62,28 +63,21 @@ sub add {
 
 		my $namesort = Slim::Utils::Text::ignoreCaseArticles($genreSub);
 
-		my ($genreObj) = Slim::Schema::Genre->search({ 
-			'namesort' => $namesort,
-		});
+		# So that ucfirst() works properly.
+		use locale;
 
-		if (!defined $genreObj) {
+		my $genreObj = Slim::Schema::Genre->find_or_create({ 
+			'namesort'   => $namesort,
+			'name'       => ucfirst($genreSub),
+			'namesearch' => $namesort,
+		}, { 'key' => 'namesearch' });
 
-			# So that ucfirst() works properly.
-			use locale;
-
-			$genreObj = Slim::Schema::Genre->create({ 
-				'namesort'   => $namesort,
-				'name'       => ucfirst($genreSub),
-				'namesearch' => $namesort,
-			});
-		}
-
-		push @genres, $genreObj;
-		
 		Slim::Schema::GenreTrack->find_or_create({
 			track => $track->id,
 			genre => $genreObj->id,
 		});
+
+		push @genres, $genreObj;
 	}
 
 	return wantarray ? @genres : $genres[0];
