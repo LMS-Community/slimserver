@@ -50,8 +50,8 @@ sub ignoreArticles {
 sub searchNames {
 	my ($self, $terms) = @_;
 
-	return $self->search_like(
-		{ 'me.titlesearch' => $terms },
+	return $self->search(
+		{ 'me.titlesearch' => { 'like' => $terms } },
 		{ 'order_by' => 'me.titlesort, me.disc', 'distinct' => 'me.id' }
 	);
 }

@@ -39,17 +39,23 @@ sub ignoreArticles { 1 }
 sub searchNames {
 	my ($self, $terms) = @_;
 
-	my $find = {
-		'me.namesearch' => $terms,
+	my @joins = ();
+	my $find  = {
+		'me.namesearch' => { 'like' => $terms },
 	};
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
 	if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-		$find->{'contributor.role'} = $roles;
+		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+		push @joins, 'contributorAlbums';
 	}
 
-	return $self->search_like($find, { 'order_by' => 'me.namesort', 'distinct' => 'me.id' });
+	return $self->search($find, {
+		'order_by' => 'me.namesort',
+		'distinct' => 'me.id',
+		'join'     => \@joins,
+	});
 }
 
 sub browse {

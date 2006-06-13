@@ -38,8 +38,8 @@ sub alphaPageBar { 1 }
 sub searchNames {
 	my ($self, $terms) = @_;
 
-	return $self->search_like(
-		{ 'me.namesearch' => $terms },
+	return $self->search(
+		{ 'me.namesearch' => { 'like' => $terms } },
 		{ 'order_by' => 'me.namesort', 'distinct' => 'me.id' }
 	);
 }
