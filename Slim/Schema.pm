@@ -368,7 +368,7 @@ sub objectForUrl {
 	# XXX - exception should go here. Comming soon.
 	if (blessed($url) || ref($url)) {
 
-		$::d_info && msg("Returning already blessed url\n");
+		# returning already blessed url
 		return $url;
 	}
 
