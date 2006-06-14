@@ -130,7 +130,7 @@ href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=
 
 [%# this is the href to the year of item %]
 [% BLOCK yearItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% item.year %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.year=[% item.year %][% IF artwork %]&amp;artwork=1[% END %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the songinfo for item %]
@@ -157,7 +157,7 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 [%# this is the href to the browsedb page for item %]
 [%# no level info means its a music folder item %]
 [% BLOCK browseDbItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%]&amp;[% IF item.orderBy %]orderBy=[% item.orderBy %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%][% IF artwork %]&amp;artwork=1[% END %][% IF item.orderBy %]&amp;orderBy=[% item.orderBy %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the href to the browsetree page for item %]
