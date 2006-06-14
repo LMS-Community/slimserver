@@ -56,23 +56,16 @@ sub launchScan {
 	my $command  = "$Bin/scanner.pl";
 
 	# Bug: 3530 - use the same version of perl we were started with.
-	if ($Config{'perlpath'}) {
+	if ($Config{'perlpath'} && -x $Config{'perlpath'}) {
 
 		unshift @scanArgs, $command;
 		$command  = $Config{'perlpath'};
 	}
 
 	# Check for different scanner types.
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if (Slim::Utils::OSDetect::OS() eq 'win' && -x "$Bin/scanner.exe") {
 
-		if (-x "$Bin/scanner.bat") {
-
-			$command  = "$Bin/scanner.bat";
-
-		} elsif (-x "$Bin/scanner.exe") {
-
-			$command  = "$Bin/scanner.exe";
-		}
+		$command  = "$Bin/scanner.exe";
 
 	} elsif (Slim::Utils::OSDetect::isDebian() && -x '/usr/sbin/slimserver-scanner') {
 
