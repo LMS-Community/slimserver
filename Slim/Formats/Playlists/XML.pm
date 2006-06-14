@@ -14,6 +14,8 @@ use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
 use Scalar::Util qw(blessed);
+use XML::Simple;
+use File::Slurp;
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
@@ -23,7 +25,9 @@ use Slim::Utils::Unicode;
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
-	my $xml    = eval { XMLin($file, 'forcearray' => ['item'], 'keyattr' => []) };
+	my $content = read_file($file);
+
+	my $xml = eval { XMLin($content, 'forcearray' => ['item'], 'keyattr' => []) };
 
 	if ($@ || !$xml) {
 
@@ -33,22 +37,24 @@ sub read {
 		return ();
 	}
 
-        # Some feeds (slashdot) have items at same level as channel
-        my $items  = $xml->{'item'} ? $xml->{'item'} : $xml->{'channel'}->{'item'};
+	# Some feeds (slashdot) have items at same level as channel
+	my $items  = $xml->{'item'} ? $xml->{'item'} : $xml->{'channel'}->{'item'};
 	my @urls   = ();
 
 	for my $item (@$items) {
 
 		my $enclosure = ref($item->{'enclosure'}) eq 'ARRAY' ? $item->{'enclosure'}->[0] : $item->{'enclosure'};
 
-		next if ref($enclosure) ne 'HASH' || $enclosure->{'type'} !~ /audio/i;
-
-		push @urls, $enclosure->{'url'};
+		next if ref($enclosure) ne 'HASH' || !defined $enclosure->{'url'} || $enclosure->{'type'} !~ /audio/i;
 
 		if ($item->{'title'}) {
 
-			# associate a title with the url
-			push @items, $class->_updateMetaData($enclosure->{'url'}, $item->{'title'});
+			push @urls, $class->_updateMetaData($enclosure->{'url'}, $item->{'title'});
+
+		} else {
+
+			push @urls, $enclosure->{'url'};
+
 		}
 	}
 
