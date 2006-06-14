@@ -19,7 +19,7 @@ sub ignorePunct {
 
 	my $orig = $s;
 
-	$s =~ s/[!\*?,=+<>#%&()\"\'\$\.\\:-]+/ /go;
+	$s =~ s/[!\*?,;=+<>#%&()\"\'\$\.\\:-]+/ /go;
 	$s =~ s/  +/ /go; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
 	$s =~ s/^ +//o; # zap leading/trailing spaces.
 	$s =~ s/ +$//o;
