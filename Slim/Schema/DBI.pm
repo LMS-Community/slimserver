@@ -12,6 +12,8 @@ use base qw(DBIx::Class);
 
 use Slim::Utils::Misc;
 
+my $dirtyCount = 0;
+
 {
 	my $class = __PACKAGE__;
 
@@ -29,8 +31,16 @@ sub update {
 
 	if ($self->is_changed) {
 
-		$Slim::Schema::dirtyCount++;
+		$dirtyCount++;
 		$self->SUPER::update;
+	}
+
+	# This is only applicable to the scanner, as the main process is in AutoCommit mode.
+	# Commit to the DB every 500 updates.. just a random number.
+	if (($dirtyCount % 500) == 0) {
+
+		Slim::Schema->forceCommit;
+		$dirtyCount = 0;
 	}
 
 	return 1;

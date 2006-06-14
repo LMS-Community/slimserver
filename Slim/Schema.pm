@@ -46,12 +46,8 @@ my %tagMapping = (
 	'blockalign' => 'block_alignment',
 );
 
-our $dirtyCount;
 our $initialized = 0;
-
-my $DB_COMMIT_SECS = 300;
-
-my $trackAttrs = {};
+my $trackAttrs   = {};
 
 sub init {
 	my $class = shift;
@@ -851,8 +847,6 @@ sub forceCommit {
 			errorMsg("forceCommit: Couldn't commit transactions to DB: [$@]\n");
 			return;
 		}
-
-		$dirtyCount = 0;
 	}
 }
 
@@ -1049,26 +1043,6 @@ sub _retrieveTrack {
 	}
 
 	return undef;
-}
-
-sub _commitDBTimer {
-	my $self  = shift;
-	my $items = $dirtyCount;
-
-	if ($items > 0) {
-
-		$::d_info && msg("DBI: Periodic commit - $items dirty items\n");
-		$self->forceCommit;
-
-	} else {
-
-		$::d_info && msg("DBI: Supressing periodic commit - no dirty items\n");
-	}
-
-	if ($INC{'Slim/Utils/Timers.pm'}) {
-
-		Slim::Utils::Timers::setTimer($self, Time::HiRes::time() + $DB_COMMIT_SECS, \&_commitDBTimer);
-	}
 }
 
 sub _checkValidity {
