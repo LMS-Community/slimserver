@@ -9,6 +9,7 @@ use strict;
 
 use base qw(Class::Data::Inheritable);
 
+use Config;
 use FindBin qw($Bin);
 use Proc::Background;
 use Scalar::Util qw(blessed);
@@ -41,7 +42,25 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
+	# Add in the various importer flags
+	for my $importer (qw(itunes musicmagic moodlogic)) {
+
+		if (Slim::Utils::Prefs::get($importer)) {
+
+			$args->{$importer} = 1;
+		}
+	}
+
+	my @scanArgs = map { "--$_" } keys %{$args};
+
 	my $command  = "$Bin/scanner.pl";
+
+	# Bug: 3530 - use the same version of perl we were started with.
+	if ($Config{'perlpath'}) {
+
+		unshift @scanArgs, $command;
+		$command  = $Config{'perlpath'};
+	}
 
 	# Check for different scanner types.
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
@@ -59,17 +78,6 @@ sub launchScan {
 
 		$command  = '/usr/sbin/slimserver-scanner';
 	}
-
-	# Add in the various importer flags
-	for my $importer (qw(itunes musicmagic moodlogic)) {
-
-		if (Slim::Utils::Prefs::get($importer)) {
-
-			$args->{$importer} = 1;
-		}
-	}
-
-	my @scanArgs = map { "--$_" } keys %{$args};
 
 	$class->scanningProcess(
 		Proc::Background->new($command, @scanArgs)
