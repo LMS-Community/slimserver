@@ -269,18 +269,8 @@ sub init {
 		'audiodir' => sub {
 			my $newvalue = shift;
 
-			Slim::Buttons::BrowseTree::init();
-			return;
-
-			my $musicFolderClass = 'Slim::Music::MusicFolderScan';
-
-			if (defined(Slim::Utils::Prefs::get('audiodir')) && -d Slim::Utils::Prefs::get("audiodir")) {
-
-				Slim::Music::Import->useImporter($musicFolderClass, 1);
-				Slim::Music::Import->startScan($musicFolderClass);
-			} else {
-				Slim::Music::Import->useImporter($musicFolderClass, 0);
-			}
+			Slim::Buttons::BrowseTree->init;
+			Slim::Music::MusicFolderScan->init;
 		},
 
 		'playlistdir' => sub {
@@ -289,13 +279,8 @@ sub init {
 			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
 				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
 			}
-			
-			if (defined(Slim::Utils::Prefs::get('playlistdir')) && -d Slim::Utils::Prefs::get("playlistdir")) {
-				Slim::Music::Import->useImporter('PLAYLIST', 1);
-				Slim::Music::Import->startScan('PLAYLIST');
-			} else {
-				Slim::Music::Import->useImporter('PLAYLIST', 0);
-			}
+
+			Slim::Music::PlaylistFolderScan->init;
 
 			for my $client (Slim::Player::Client::clients()) {
 				Slim::Buttons::Home::updateMenu($client);

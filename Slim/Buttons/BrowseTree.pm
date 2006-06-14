@@ -15,7 +15,6 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
-use Slim::Music::MusicFolderScan;
 use Slim::Utils::Misc;
 
 our %functions = ();

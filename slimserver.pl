@@ -137,6 +137,8 @@ use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
 use Slim::Music::Import;
+use Slim::Music::MusicFolderScan;
+use Slim::Music::PlaylistFolderScan;
 use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
