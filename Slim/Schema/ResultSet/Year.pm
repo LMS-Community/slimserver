@@ -45,7 +45,7 @@ sub descendAlbum {
 	#return $self->search($find, {
 	return Slim::Schema->search('Album', $find, {
 		'group_by'     => 'me.id',
-		'order_by'     => 'me.titlesort, me.disc',
+		'order_by'     => 'me.titlesort + 0, me.disc',
 	});
 }
 

@@ -100,11 +100,10 @@ sub browse {
 		push @join, $1;
 	}
 
-	#print "XXXX - in Album sort: [$sort]\n";
-	#print Data::Dumper::Dumper($find);
-
+	# Bug: 2563 - force a numeric compare on an alphanumeric column.
+	# Not sure if we need this logic anywhere else..
 	return $self->search($find, {
-		'order_by' => $sort || 'me.titlesort, me.disc',
+		'order_by' => $sort || 'me.titlesort + 0, me.disc',
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});

@@ -21,7 +21,7 @@ sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
 	$form->{'text'} = $self->year || string('UNK');
-	
+
 	my $Imports = Slim::Music::Import->importers;
 
 	for my $mixer (keys %{$Imports}) {

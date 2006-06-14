@@ -95,7 +95,7 @@ sub descendAlbum {
 
 	return $self
 		->search_related('contributorAlbums', $find)
-		->search_related('album', {}, { 'order_by' => 'album.titlesort, album.disc' });
+		->search_related('album', {}, { 'order_by' => 'album.titlesort + 0, album.disc' });
 }
 
 1;
