@@ -40,30 +40,32 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import);
+	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import, $d_moodlogic, $d_musicmagic);
 	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress);
 
 	our $LogTimestamp = 1;
 
 	GetOptions(
-		'force'       => \$force,
-		'cleanup'     => \$cleanup,
-		'rescan'      => \$rescan,
-		'wipe'        => \$wipe,
-		'playlists'   => \$playlists,
-		'itunes'      => \$itunes,
-		'musicmagic'  => \$musicmagic,
-		'moodlogic'   => \$moodlogic,
-		'd_info'      => \$d_info,
-		'd_server'    => \$d_server,
-		'd_import'    => \$d_import,
-		'd_parse'     => \$d_parse,
-		'd_scan'      => \$d_scan,
-		'd_sql'       => \$d_sql,
-		'd_startup'   => \$d_startup,
-		'd_itunes'    => \$d_itunes,
-		'prefsfile=s' => \$prefsFile,
-		'progress'    => \$progress,
+		'force'        => \$force,
+		'cleanup'      => \$cleanup,
+		'rescan'       => \$rescan,
+		'wipe'         => \$wipe,
+		'playlists'    => \$playlists,
+		'itunes'       => \$itunes,
+		'musicmagic'   => \$musicmagic,
+		'moodlogic'    => \$moodlogic,
+		'd_info'       => \$d_info,
+		'd_server'     => \$d_server,
+		'd_import'     => \$d_import,
+		'd_parse'      => \$d_parse,
+		'd_scan'       => \$d_scan,
+		'd_sql'        => \$d_sql,
+		'd_startup'    => \$d_startup,
+		'd_itunes'     => \$d_itunes,
+		'd_moodlogic'  => \$d_moodlogic,
+		'd_musicmagic' => \$d_musicmagic,
+		'prefsfile=s'  => \$prefsFile,
+		'progress'     => \$progress,
 	);
 
 	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$moodlogic && !$itunes && !scalar @ARGV) {
@@ -213,13 +215,15 @@ Command line options:
 
 Debug flags:
 
-	--d_info      Miscellaneous Info
-	--d_server    Initialization phase
-	--d_import    Show Import Stages
-	--d_parse     Playlist parsing, etc.
-	--d_scan      Show the files that are being scanned.
-	--d_sql       Show all SQL statements being executed. (Lots of output)
-	--d_itunes    iTunes debugging / XML file parsing.
+	--d_info       Miscellaneous Info
+	--d_server     Initialization phase
+	--d_import     Show Import Stages
+	--d_parse      Playlist parsing, etc.
+	--d_scan       Show the files that are being scanned.
+	--d_sql        Show all SQL statements being executed. (Lots of output)
+	--d_itunes     iTunes debugging / XML file parsing.
+	--d_moodlogic  MoodLogic debugging, import parsing.
+	--d_musicmagic Musicmagic debugging, import parsing.
 
 Examples:
 
