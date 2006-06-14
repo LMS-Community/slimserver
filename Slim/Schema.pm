@@ -1038,9 +1038,9 @@ sub _retrieveTrack {
 	}
 
 	# XXX - exception should go here. Comming soon.
-	if (blessed($track) && ($playlist || ($track->can('get') && $track->get('audio')))) {
+	if (blessed($track)) {
 
-		if (!$playlist) {
+		if (!$playlist || $track->audio) {
 			$self->lastTrackURL($url);
 			$self->lastTrack->{$dirname} = $track;
 		}
@@ -1546,8 +1546,7 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if (defined($album) && blessed($albumObj) && (!blessed($_unknownAlbum) ||
-		$albumObj->get_column('title') ne $_unknownAlbum->get_column('title'))) {
+	if (blessed($albumObj) && !$self->_albumIsUnknownAlbum($albumObj)) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
@@ -1615,6 +1614,10 @@ sub _postCheckAttributes {
 		}
 
 		$albumObj->set_columns(\%set);
+	}
+
+	# Always do this, no matter if we don't have an Album title.
+	if (blessed($albumObj)) {
 
 		# Don't add an album to container tracks - See bug 2337
 		if (!Slim::Music::Info::isContainer($track, $trackType)) {
@@ -1623,7 +1626,7 @@ sub _postCheckAttributes {
 		}
 
 		# Now create a contributors <-> album mapping
-		if (!$create) {
+		if (!$create && !$self->_albumIsUnknownAlbum($albumObj)) {
 
 			# Update the album title - the user might have changed it.
 			$albumObj->title($album);
@@ -1661,6 +1664,18 @@ sub _postCheckAttributes {
 
 	# refcount--
 	%{$contributors} = ();
+}
+
+sub _albumIsUnknownAlbum {
+	my ($self, $albumObj) = @_;
+
+	if (blessed($_unknownAlbum) && 
+	    $albumObj->get_column('title') eq $_unknownAlbum->get_column('title')) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub _mergeAndCreateContributors {

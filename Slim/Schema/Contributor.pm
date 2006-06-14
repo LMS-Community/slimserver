@@ -115,7 +115,7 @@ sub add {
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 
-		my $contributorObj = Slim::Schema::Contributor->find_or_create({ 
+		my $contributorObj = Slim::Schema->resultset('Contributor')->find_or_create({ 
 			'namesearch'     => $search,
 			'name'           => $name,
 			'namesort'       => $sort,
@@ -130,7 +130,7 @@ sub add {
 		}
 
 		# Create a contributor <-> track mapping table.
-		Slim::Schema::ContributorTrack->find_or_create({
+		Slim::Schema->resultset('ContributorTrack')->find_or_create({
 			'track'       => (ref $track ? $track->id : $track),
 			'contributor' => $contributorObj->id,
 			'role'        => $role,
