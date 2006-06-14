@@ -22,15 +22,15 @@ sub pageBarResults {
 }
 
 sub title {
-        my $self = shift;
+	my $self = shift;
 
-        return 'BROWSE_BY_ARTIST';
+	return 'BROWSE_BY_ARTIST';
 }
 
 sub allTitle {
-        my $self = shift;
+	my $self = shift;
 
-        return 'ALL_ARTISTS';
+	return 'ALL_ARTISTS';
 }
 
 sub alphaPageBar { 1 }
@@ -95,7 +95,7 @@ sub descendAlbum {
 
 	return $self
 		->search_related('contributorAlbums', $find)
-		->search_related('album', {}, { 'order_by' => 'album.titlesort + 0, album.disc' });
+		->search_related('album', {}, { 'order_by' => 'concat(album.titlesort,\'0\'), album.disc' });
 }
 
 1;

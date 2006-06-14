@@ -82,6 +82,9 @@ sub ignoreCaseArticles {
 		use locale;
 
 		$caseArticlesCache{$s} = ignorePunct(ignoreArticles(uc($s)));
+
+		# Remove characters beyond U+FFFF as MySQL doesn;t like them in TEXT fields
+		$caseArticlesCache{$s} =~ s/[\x{10000}-\x{10ffff}]//g;
 	}
 
 	return $caseArticlesCache{$s};

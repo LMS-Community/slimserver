@@ -49,7 +49,7 @@ DROP TABLE IF EXISTS tracks;
 CREATE TABLE tracks (
   id int(10) unsigned NOT NULL auto_increment,
   url text NOT NULL,
-  title text,
+  title blob,
   titlesort text,
   titlesearch text,
   customsearch text,

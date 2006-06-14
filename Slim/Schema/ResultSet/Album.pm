@@ -103,7 +103,7 @@ sub browse {
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.
 	# Not sure if we need this logic anywhere else..
 	return $self->search($find, {
-		'order_by' => $sort || 'me.titlesort + 0, me.disc',
+		'order_by' => $sort || 'concat(me.titlesort, \'0\'), me.disc',
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});

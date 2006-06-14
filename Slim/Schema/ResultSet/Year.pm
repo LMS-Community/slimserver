@@ -37,7 +37,7 @@ sub distinct {
 }
 
 sub descendAlbum {
-        my $self = shift;
+	my $self = shift;
 	my $find = shift;
 
 	# Force result_class to be of the Album type. Because Year ISA Album,
@@ -45,7 +45,7 @@ sub descendAlbum {
 	#return $self->search($find, {
 	return Slim::Schema->search('Album', $find, {
 		'group_by'     => 'me.id',
-		'order_by'     => 'me.titlesort + 0, me.disc',
+		'order_by'     => 'concat(me.titlesort, \'0\'), me.disc',
 	});
 }
 
