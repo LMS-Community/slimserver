@@ -272,7 +272,7 @@ sub exportFunction {
 		$genre_hash{$genre_id} = [$genre_name, $genre_mixable];
 	}
 
-	my $count = $browser->FLT_Song_Count();
+	$count = $browser->FLT_Song_Count();
 	$::d_moodlogic && msg("MoodLogic: Begin song scan for ".$count." tracks. \n");
 
 	$class->exportSongs($count);
