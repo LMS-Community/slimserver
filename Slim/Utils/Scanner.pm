@@ -232,6 +232,9 @@ sub scanDirectory {
 				'readTags'   => 0,
 				'checkMTime' => 1,
 				'playlist'   => 1,
+				'attributes' => {
+					'MUSICMAGIC_MIXABLE'    => 1,
+				}
 			});
 
 			push @objects, $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
