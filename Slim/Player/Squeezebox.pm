@@ -746,8 +746,8 @@ sub stream {
 			$flags,		# flags	     
 			0,		# reserved
 			$client->canDoReplayGain($replay_gain),		
-			$server_port,  # use slim server's IP
-			$server_ip
+			$server_port || Slim::Utils::Prefs::get('httpport'),  # use slim server's IP
+			$server_ip || 0,
 		);
 	
 		assert(length($frame) == 24);
