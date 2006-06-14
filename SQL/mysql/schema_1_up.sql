@@ -82,7 +82,7 @@ CREATE TABLE tracks (
   audio bool,
   remote bool,
   lossless bool,
-  lyrics text,
+  lyrics blob,
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
@@ -128,7 +128,7 @@ CREATE TABLE playlist_track (
 DROP TABLE IF EXISTS albums;
 CREATE TABLE albums (
   id int(10) unsigned NOT NULL auto_increment,
-  title text,
+  title blob,
   titlesort text,
   titlesearch text,
   customsearch text,
@@ -158,7 +158,7 @@ CREATE TABLE albums (
 DROP TABLE IF EXISTS contributors;
 CREATE TABLE contributors (
   id int(10) unsigned NOT NULL auto_increment,
-  name text,
+  name blob,
   namesort text,
   namesearch text,
   customsearch text,
@@ -211,7 +211,7 @@ CREATE TABLE contributor_album (
 DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
   id int(10) unsigned NOT NULL auto_increment,
-  name text,
+  name blob,
   namesort text,
   namesearch text,
   customsearch text,
@@ -246,7 +246,7 @@ DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
   id int(10) unsigned NOT NULL auto_increment,
   track  int(10) unsigned,
-  value text,
+  value blob,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
