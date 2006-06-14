@@ -108,7 +108,7 @@
 [% IF itemobj.lyrics %] 
  <tr>
   <td class="fc"> [% "LYRICS" | string %][% "COLON" | string %] </td>
-  <td> [% itemobj.lyrics | html %] </td>
+  <td> [% itemobj.lyrics | html | html_para %] </td>
  </tr>
  [% END %]
 

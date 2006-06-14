@@ -110,7 +110,7 @@
 		[% IF itemobj.lyrics %]
 		<tr>
 			<td>[% "LYRICS" | string %][% "COLON" | string %]</td>
-			<td>[% itemobj.lyrics %]</td>
+			<td>[% itemobj.lyrics | html | html_para %]</td>
 		</tr>
 		[% END %]
 		

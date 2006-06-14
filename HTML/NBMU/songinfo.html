@@ -113,7 +113,7 @@
 			[% "LYRICS" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% itemobj.lyrics %] 
+			[% itemobj.lyrics | html | html_para %] 
 		</td>
 	</tr>
 	[% END %] [% IF filelength %] 

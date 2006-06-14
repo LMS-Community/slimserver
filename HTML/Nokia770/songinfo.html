@@ -138,7 +138,7 @@
 		                        [% "LYRICS" | string %][% "COLON" | string %]
 		                </td>
 		                <td class = 'smallitemtext'>
-		                        [% itemobj.lyrics %]
+		                        [% itemobj.lyrics | html | html_para %]
 		                </td>
 		        </tr>
 		        [% END %] [% IF filelength %]
