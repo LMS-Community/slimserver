@@ -64,8 +64,8 @@ function getStatusData(params, action) {
 // refreshes all elements on the page with ajaxRequest
 // refreshAll needs to be defined in the page specific javascript file 
 function doRefresh() {
-        var args = 'player='+player+'&ajaxRequest=1';
-        getStatusData(args, refreshAll);
+	var args = 'player='+player+'&ajaxRequest=1';
+	getStatusData(args, refreshAll);
 }
 
 // clears setInterval() defined by intervalID
