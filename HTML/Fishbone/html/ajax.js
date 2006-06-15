@@ -1,5 +1,6 @@
 var player = '[% playerURI %]';
 var url = 'status_header.html';
+var mp = 0;
 
 [% PROCESS html/global.js %]
 
@@ -98,10 +99,10 @@ function processPlayControls(param) {
 }
 
 function refreshPlayControls(theData) {
-
 	var parsedData = fillDataHash(theData);
+	
 	var controls = ['stop', 'play', 'pause'];
-	var mp = 0;
+
 	var activestyle = getActiveStyleSheet();
 	var curstyle = '';
 	
@@ -112,7 +113,6 @@ function refreshPlayControls(theData) {
 
 	for (var i=0; i < controls.length; i++) {
 		var objID = $('playCtl' + controls[i]);
-
 		
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
@@ -146,12 +146,13 @@ function refreshPlayControls(theData) {
 		if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
 	}
 	
+	// For newly started playback, make sure we force an update in case it's a new playlist add.
 	if (parsedData['playmode'] == 1) {
+		if (!mp) {refreshInfo(parsedData,1);}
 		mp = 1;
+	} else {
+		mp = 0;
 	}
-	
-	refreshInfo(parsedData);
-	//DumperPopup(theData.responseText);
 }
 
 // refresh song and artwork
@@ -159,14 +160,16 @@ function refreshInfo(theData,force) {
 	var parsedData = fillDataHash(theData);
 
 	refreshSleepTime(parsedData);
-
+	
+	// regular expression handler to grab the current song id from the html
 	var myString = new String($('songtitlehref').innerHTML);
 	var rExp= new RegExp("item=(.+?)&amp;player","i");
-	if (rExp.exec(myString) == null) rExp= new RegExp("item=(.+?)&player","i");
+	if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.+?)&player","i");}
 	var a = rExp.exec(myString);
-	var newsong = 1;
 	
-	// check to see if server is on a new track
+	var newsong = 1;
+
+	// short-circuit if song is still the same, unless a forced update
 	if (force != 1) {
 		if (a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
