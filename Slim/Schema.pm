@@ -177,6 +177,10 @@ sub rs {
 	if (lc($rsClass) eq 'artist') {
 		$rsClass = 'contributor';
 	}
+	# *double-sigh*
+	if (lc($rsClass) eq 'artwork') {
+		$rsClass = 'album';
+	}
 
 	if (!$rsClass) {
 		bt();
