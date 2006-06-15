@@ -1,0 +1,30 @@
+[%- pageicon = 'MusicMagic' -%]
+[%- pagetitle = "MUSICMAGIC_MOODS" | string -%]
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/MusicMagic/musicmagic_moods.html?player=[% playerURI %]">
+		[% "MUSICMAGIC_MOODS" | string %]
+	</a>
+[% END -%]
+[%- PROCESS pageheader.html %]
+
+[% IF browselist_header %][% browselist_header %][% END %]
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+[% WRAPPER contentcontainer %]
+[% odd = 1 %]
+	[% FOREACH mood = mood_list %]
+		[% BLOCK controls %]
+			[% WRAPPER playlink %][% IF browserTarget %][% target =  browserTarget %][% END %]
+				href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]&amp;p0=play"
+			[% END %]
+			[% WRAPPER addlink noTarget=1 %]
+				href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]&amp;p0=append"
+			[% END %]
+		[% END %]
+		[% WRAPPER contentitem controls='controls'%]
+			<a href="musicmagic_mix.html?player=[% player | uri %]&amp;mood=[% mood %]">[% mood %]</a>
+		[% END %]
+		[% odd = (not odd) %]
+	[% END %]
+[% END %]
+[% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
+[% PROCESS pagefooter.html %]
