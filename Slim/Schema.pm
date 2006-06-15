@@ -215,8 +215,8 @@ sub count {
 
 		if (my $roles = $class->artistOnlyRoles) {
 
-			$rs = $rs->search_related('contributorTracks',
-				{ 'contributorTracks.role' => { 'in' => $roles } },
+			$rs = $rs->search_related('contributorAlbums',
+				{ 'contributorAlbums.role' => { 'in' => $roles } },
 				{ 'group_by' => 'me.id' },
 			);
 		}
@@ -224,12 +224,14 @@ sub count {
 		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !exists $cond->{'album.compilation'}) {
 
 			$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
+
+			push @{$attrs->{'join'}}, 'album';
 		}
 	}
 
 	if ($rsClass eq 'Track') {
 
-		# $cond->{'audio'} = 1;
+		$cond->{'me.audio'} = 1;
 	}
 
 	return $rs->count($cond, $attrs);
@@ -718,12 +720,12 @@ sub totalTime {
 
 	# Pull out the total time dynamically.
 	# What a breath of fresh air. :)
-	return $self->single('Track', undef, {
+	return $self->search('Track', undef, {
 
 		'select' => [ \'SUM(secs)' ],
 		'as'     => [ 'sum' ],
 
-	})->get_column('sum');
+	})->single->get_column('sum');
 }
 
 # This is a post-process on the albums and contributor_tracks tables, in order

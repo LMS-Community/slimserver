@@ -122,7 +122,7 @@ sub addLibraryStats {
 	my $albumRS  = Slim::Schema->resultset('Album');
 	my $artistRS = Slim::Schema->resultset('Contributor');
 
-	my $roles    = undef;
+	my $roles    = Slim::Schema->artistOnlyRoles;
 
 	if ($genre && !$album) {
 
@@ -150,10 +150,8 @@ sub addLibraryStats {
 
 	if ($artist && !$album && !$genre) {
 
-		#my $roles = Slim::Schema->artistOnlyRoles;
-
 		$trackRS = $trackRS->search({
-			'contributorTracks.role' => { 'in' => Slim::Schema->artistOnlyRoles },
+			'contributorTracks.role' => { 'in' => $roles },
 			'contributor.id'         => $artist,
 		}, {
 			'join' => { 'contributorTracks' => 'contributor' }
@@ -166,9 +164,7 @@ sub addLibraryStats {
 
 		$artistRS = $artistRS->search({
 			'me.id'                  => $artist,
-			'contributorTracks.role' => { 'in' => Slim::Schema->artistOnlyRoles },
-		}, {
-			'join' => 'contributorTracks',
+			'contributorAlbums.role' => { 'in' => $roles },
 		});
 	}
 
@@ -180,13 +176,17 @@ sub addLibraryStats {
 		$trackRS  = $trackRS->search({ 'album.id' => $album }, { 'join' => 'album' });
 		$albumRS  = $albumRS->search({ 'me.id' => $album });
 
-		$artistFind{'track.album'} = $album;
-
-		push @artistJoins, ({ 'contributorTracks' => 'track' });
+		$artistFind{'contributorAlbums.album'} = $album;
 	}
 
-	$params->{'song_count'}   = $class->_lcPlural($trackRS->distinct->count, 'SONG', 'SONGS');
+	$params->{'song_count'}   = $class->_lcPlural($trackRS->distinct->count({ 'me.audio' => 1 }), 'SONG', 'SONGS');
 	$params->{'album_count'}  = $class->_lcPlural($albumRS->distinct->count, 'ALBUM', 'ALBUMS');
+
+	# Main page summary
+	if (scalar keys %artistFind == 0 && $roles) {
+
+		$artistFind{'contributorAlbums.role'} = { 'in' => $roles };
+	}
 
 	# Handle the VA cases
 	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
