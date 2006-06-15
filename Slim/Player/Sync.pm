@@ -96,7 +96,11 @@ sub unsync {
 		@{$client->slaves} = ();
 		$client->master(undef);
 		# and copy the playlist to the new master
-		Slim::Player::Playlist::copyPlaylist($newmaster, $client);	
+		Slim::Player::Playlist::copyPlaylist($newmaster, $client);
+		
+		# copy the song queue from the master
+		@{$newmaster->currentsongqueue()} = @{$client->currentsongqueue()};
+		
 		$newmaster->audioFilehandle($client->audioFilehandle);
 		$client->audioFilehandle(undef);	
 
