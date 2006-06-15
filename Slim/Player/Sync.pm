@@ -113,11 +113,12 @@ sub unsync {
 	
 		# and copy the playlist to the now freed slave
 		my $master = $client->master;
+		
+		$client->master(undef);
+		
 		Slim::Player::Playlist::copyPlaylist($client, $master);
 
 		$lastInGroup = $master if !scalar(@{$master->slaves});
-	
-		$client->master(undef);
 
 	} else {
 		$lastInGroup = $client;
