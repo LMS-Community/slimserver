@@ -672,7 +672,7 @@ sub stream {
 			$pcmchannels = '?';
 		}
 		
-		my $request_string;
+		my $request_string = '';
 		my ($server_port, $server_ip);
 		if ($command eq 's') {
 			

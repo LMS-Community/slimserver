@@ -108,8 +108,8 @@ sub init {
 			'valueFunctRef' => [
 				sub { return Slim::Schema->totalTime },
 				sub { return Slim::Schema->count('Album') },
-				sub { return Slim::Schema->count('Track') },
-				sub { return Slim::Schema->count('Contributor') },
+				sub { return Slim::Schema->count('Track', { 'me.audio' => 1 }) },
+				sub { return Slim::Schema->rs('Contributor')->browse->count },
 				sub { return Slim::Schema->count('Genre') },
 			],
 

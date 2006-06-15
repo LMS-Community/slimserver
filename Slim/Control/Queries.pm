@@ -371,7 +371,7 @@ sub infoTotalQuery {
 	}
 
 	if ($entity eq 'artists') {
-		$request->addResult("_$entity", Slim::Schema->count('Contributor'));
+		$request->addResult("_$entity", Slim::Schema->rs('Contributor')->browse->count);
 	}
 
 	if ($entity eq 'genres') {
@@ -379,7 +379,7 @@ sub infoTotalQuery {
 	}
 
 	if ($entity eq 'songs') {
-		$request->addResult("_$entity", Slim::Schema->count('Track'));
+		$request->addResult("_$entity", Slim::Schema->count('Track', { 'me.audio' => 1 }));
 	}
 	
 	$request->setStatusDone();

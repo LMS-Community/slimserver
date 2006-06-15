@@ -173,15 +173,6 @@ sub rs {
 	my $class   = shift;
 	my $rsClass = shift;
 
-	# *sigh*
-	if (lc($rsClass) eq 'artist') {
-		$rsClass = 'contributor';
-	}
-
-	if (!$rsClass) {
-		bt();
-	}
-
 	return $class->resultset(ucfirst($rsClass), @_);
 }
 
@@ -196,45 +187,14 @@ sub single {
 	my $class   = shift;
 	my $rsClass = shift;
 
-	my $rs = $class->resultset(ucfirst($rsClass))->single(@_);
+	return $class->resultset(ucfirst($rsClass))->single(@_);
 }
 
 sub count {
 	my $class   = shift;
-	my $rsClass = ucfirst(shift);
-	my $cond    = shift || {};
-	my $attrs   = shift || {};
+	my $rsClass = shift;
 
-	my $rs      = $class->resultset($rsClass);
-
-	# The user may not want to include all the composers / conductors
-	#
-	# But don't restrict if we have an album (this may be wrong) for VA
-	# albums, we want the correct count.
-	if ($rsClass eq 'Contributor' && !$cond->{'album.id'} && !$cond->{'genre.id'}) {
-
-		if (my $roles = $class->artistOnlyRoles) {
-
-			$rs = $rs->search_related('contributorAlbums',
-				{ 'contributorAlbums.role' => { 'in' => $roles } },
-				{ 'group_by' => 'me.id' },
-			);
-		}
-
-		if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') && !exists $cond->{'album.compilation'}) {
-
-			$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
-
-			push @{$attrs->{'join'}}, 'album';
-		}
-	}
-
-	if ($rsClass eq 'Track') {
-
-		$cond->{'me.audio'} = 1;
-	}
-
-	return $rs->count($cond, $attrs);
+	return $class->resultset(ucfirst($rsClass))->count(@_);
 }
 
 sub find {
