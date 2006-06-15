@@ -31,9 +31,9 @@ our %upgradeScripts = ();
 our %DEFAULT = ();
 our %prefChange = ();
 
-sub init {
+my $DEFAULT_DBSOURCE = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
 
-	my $dbsource = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
+sub init {
 
 	# These are scripts that are run once on old prefs file to bring them
 	# up-to-date with specific changes we want to push out to default prefs.
@@ -111,14 +111,6 @@ sub init {
 
 			if (defined $newLang) {
 				$prefs{'language'} = $newLang;
-			}
-		},
-
-		'6.5b1-2006-03-31' => sub {
-
-			# Upgrade SQLite to MySQL
-			if ($prefs{'dbsource'} =~ /SQLite/) {
-				$prefs{'dbsource'} = $dbsource;
 			}
 		},
 
@@ -212,7 +204,7 @@ sub init {
 		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
 		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
 		'prefsWriteDelay'	=> 30,
-		'dbsource'		=> $dbsource,
+		'dbsource'		=> $DEFAULT_DBSOURCE,
 		'dbusername'		=> 'slimserver',
 		'dbpassword'		=> '',
 		'commonAlbumTitles'	=> ['Greatest Hits', 'Best of...', 'Live'],
@@ -226,7 +218,6 @@ sub init {
 		'upgrade-6.5b1-2006-01-25-script' => 1,
 		'upgrade-6.5b1-2006-02-03-script' => 1,
 		'upgrade-6.5b1-2006-03-31-script' => 1,
-		'upgrade-6.5b1-2006-05-06-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'sortBrowseArt'     => 'album',
 	);
@@ -521,6 +512,11 @@ sub checkServerPrefs {
 				}
 			}
 		}
+	}
+
+	# Always Upgrade SQLite to MySQL
+	if ($prefs{'dbsource'} =~ /SQLite/) {
+		$prefs{'dbsource'} = $DEFAULT_DBSOURCE;
 	}
 
 	for my $version (sort keys %upgradeScripts) {
