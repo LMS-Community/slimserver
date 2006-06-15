@@ -197,8 +197,11 @@ function goHome(plyr)
 
 function getHomeCookie(Name) 
 {
-	url = getCookie(Name);
-	if (!url) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	var url = getCookie(Name);
+	// look for old artwork cookie and work around it
+	var re  = new RegExp(/artwork,/i);
+	var m   = re.exec(url);
+	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 	return url;
 }
 
