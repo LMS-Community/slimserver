@@ -130,7 +130,7 @@ sub new {
 		# handle the DNS timeout by using our own timer
 		Slim::Utils::Timers::setTimer(
 			$bgsock,
-			Time::HiRes::time + $args{'Timeout'},
+			Time::HiRes::time() + $args{'Timeout'},
 			\&dnsErrorCallback
 		);
 	}
@@ -306,7 +306,7 @@ sub connect {
 	my $timeout = ${*$sock}{'io_socket_timeout'} || 10;
 	Slim::Utils::Timers::setTimer(
 		$sock,
-		Time::HiRes::time + $timeout,
+		Time::HiRes::time() + $timeout,
 		\&connectError
 	);
 	
