@@ -41,6 +41,7 @@ our %fileToPathCache = ();
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
+		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
 		require Win32::Shortcut;

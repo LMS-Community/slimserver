@@ -130,7 +130,13 @@ sub scanDirectory {
 
 	# File::Find doesn't like follow on Windows.
 	if ($os ne 'win') {
+
 		$extras->{'follow'} = 1;
+
+	} else {                                                                                                                                            
+
+		# skip hidden files on Windows
+		$rule->exec(\&_skipWindowsHiddenFiles);
 	}
 
 	$rule->extras($extras);
@@ -464,6 +470,12 @@ sub scanPlaylistFileHandle {
 	$::d_scan && msgf("scanPlaylistFileHandle: found %d items in playlist.\n", scalar @playlistTracks);
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
+}
+
+sub _skipWindowsHiddenFiles {
+	my $attribs;
+
+	return Win32::File::GetAttributes($_, $attribs) && !($attribs & Win32::File::HIDDEN());
 }
 
 1;
