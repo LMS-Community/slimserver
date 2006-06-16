@@ -5,6 +5,7 @@ sleeptime|[% sleeptime %]
 rate|[% rate %]
 playermodel|[% playermodel %]
 sync|[% sync %]
+by|[% "BY" | string %]
 
 # path to cover art 
 coverartpath|

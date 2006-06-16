@@ -3,6 +3,7 @@ var url = 'status_header.html';
 var mp = 0;
 
 [% PROCESS html/global.js %]
+[% PROCESS datadumper.js %]
 
 function processState(param) {
 	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshState);
@@ -146,7 +147,6 @@ function refreshPlayControls(theData) {
 		if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
 	}
 	
-	// For newly started playback, make sure we force an update in case it's a new playlist add.
 	if (parsedData['playmode'] == 1) {
 		if (!mp) {refreshInfo(parsedData,1);}
 		mp = 1;
@@ -160,16 +160,12 @@ function refreshInfo(theData,force) {
 	var parsedData = fillDataHash(theData);
 
 	refreshSleepTime(parsedData);
-	
-	// regular expression handler to grab the current song id from the html
 	var myString = new String($('songtitlehref').innerHTML);
 	var rExp= new RegExp("item=(.+?)&amp;player","i");
 	if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.+?)&player","i");}
 	var a = rExp.exec(myString);
-	
 	var newsong = 1;
 
-	// short-circuit if song is still the same, unless a forced update
 	if (force != 1) {
 		if (a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
@@ -201,13 +197,27 @@ function refreshInfo(theData,force) {
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100_f_000000.jpg';
 		}
-		$('coverartpath').src = coverPath;
+		$('coverartpath').src   = coverPath;
+		
+		var tooltip = "";
+		if (parsedData['album']) {
+			tooltip = parsedData['album'];
+			if (parsedData['artist']) {
+				tooltip += " " + parsedData['by'] + " " + parsedData['artist'];
+			}
+			if (parsedData['year'] && parsedData['year'] != 0) {
+				tooltip += " (" + parsedData['year'] + ")";
+			}
+		}
+		
+		$('coverartpath').title = tooltip;
+		$('coverartpath').alt   = tooltip;
 	}
 	
 	// refresh href content
 	if (newsong) {
-		refreshHrefElement('albumhref',parsedData['albumid'],"album=");
-		refreshHrefElement('coverhref',parsedData['albumid'],"album=");
+		refreshHrefElement('albumhref',parsedData['albumid'],"album.id=");
+		refreshHrefElement('coverhref',parsedData['albumid'],"album.id=");
 		refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
 		refreshHrefElement('removeartisthref',parsedData['artist'],"p3=");
 		refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
