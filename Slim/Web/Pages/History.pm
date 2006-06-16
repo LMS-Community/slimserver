@@ -28,8 +28,8 @@ sub hitlist {
 	# Class::DBI::Pager or similar. Requires reworking of template
 	# generation.
 	my @tracks = Slim::Schema->search('Track',
-		{ 'playCount' => { '>' => 0 } },
-		{ 'order_by'  => 'tracks.playCount desc' },
+		{ 'playcount' => { '>' => 0 } },
+		{ 'order_by'  => 'me.playcount desc' },
 	)->slice(0, 49);
 
 	for my $track (@tracks) {
