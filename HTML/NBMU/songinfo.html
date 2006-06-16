@@ -31,7 +31,7 @@
                         <td>
 
 			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% playerURI %]" target="browser">[% contributor.name | html %]</a>
+				<a href="browsedb.html?hierarchy=artist,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" target="browser">[% contributor.name | html %]</a>
 			[% END %]
 
 			</td>
@@ -45,7 +45,7 @@
 			[% "ALBUM" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			<a href="browsedb.html?hierarchy=album,track&level=1&album=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title %]</a> 
+			<a href="browsedb.html?hierarchy=album,track&level=1&album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% itemobj.album.title %]</a> 
 		</td>
 	</tr>
 	[% END %]
@@ -57,7 +57,7 @@
 		</td>
 		<td>
 		[% FOREACH genre = genres %]
-                        <a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre %]</a>
+                        <a href="browsedb.html?hierarchy=artist,album,track&level=0&genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name %]</a>
 		[% END %]
 		</td>
 	</tr>
@@ -113,7 +113,7 @@
 			[% "LYRICS" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% itemobj.lyrics | html | html_para %] 
+			[% itemobj.lyrics %] 
 		</td>
 	</tr>
 	[% END %] [% IF filelength %] 
@@ -125,13 +125,13 @@
 			[% filelength %] [% "BYTES" | string %] 
 		</td>
 	</tr>
-	[% END %] [% IF itemobj.prettyBitRate %] 
+	[% END %] [% IF itemobj.bitrate %] 
 	<tr>
 		<td>
 			[% "BITRATE" | string %][% "COLON" | string %]
 		</td>
 		<td>
-			[% itemobj.prettyBitRate %] 
+			[% itemobj.bitrate %] 
 		</td>
 	</tr>
 	[% IF itemobj.samplerate %] 

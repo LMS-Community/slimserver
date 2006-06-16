@@ -5,7 +5,7 @@
 	[% FOREACH genre = genres %]
 		<genre_id>[% genre.id | html %]</genre_id>
 		<genre>[% genre.name | html %]</genre>
-		<genre_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=genre%2Cartist%2Calbum%2Ctrack&level=1&genre=[% genre.id %]]]></genre_browse_url>
+		<genre_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=genre%2Cartist%2Calbum%2Ctrack&level=1&genre.id=[% genre.id %]]]></genre_browse_url>
 	[% END %]
 [% END %]
 [% FOREACH role = itemobj.contributorRoles.sort %]
@@ -14,14 +14,14 @@
 		[% FOREACH contributor = contributors %]
 			<[% role | lower %]_id>[% contributor.id | html %]</[% role | lower %]_id>
 			<[% role | lower %]>[% contributor.name | html %]</[% role | lower %]>
-			<[% role | lower %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&artist=[% contributor.id %]]]></[% role | lower %]_browse_url>
+			<[% role | lower %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&contributor.id=[% contributor.id %]]]></[% role | lower %]_browse_url>
 		[% END %]
 	[% END %]
 [% END %]
 [% IF itemobj.album %]
 	<album_id>[% itemobj.album.id | html %]</album_id>
 	<album>[% itemobj.album.title | html %]</album>
-	<album_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=album%2Ctrack&level=1&album=[% itemobj.album.id %]]]></album_browse_url>
+	<album_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=album%2Ctrack&level=1&album.id=[% itemobj.album.id %]]]></album_browse_url>
 [% END %]
 [% IF itemobj.tracknum %]<track>[% itemobj.tracknum | html %]</track>[% END %]
 [% IF itemobj.content_type %]<type>[% itemobj.content_type | string | html %]</type>[% END %]
@@ -29,7 +29,7 @@
 [% IF itemobj.year %]<year>[% itemobj.year | html %]</year>[% END %]
 [% IF comment %]<comment>[% comment | html %]</comment>[% END %]
 [% IF filelength %]<filelength>[% filelength | html %]</filelength>[% END %]
-[% IF itemobj.prettyBitRate %]<bitrate>[% itemobj.prettyBitRate | html %]</bitrate>[% END %]
+[% IF itemobj.bitrate %]<bitrate>[% itemobj.bitrate | html %]</bitrate>[% END %]
 [% IF itemobj.tagversion %]<tagversion>[% itemobj.tagversion | html %]</tagversion>[% END %]
 [% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
 <song_url><![CDATA[[% itemobj.url %]]]></song_url>

@@ -6,9 +6,9 @@
 [% PROCESS pageheader.html %] 
 
 <div id="songInfoHeader">
-<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
 <br>
-<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
 </div>
 <div class="songInfo">
 	<ul>
@@ -115,7 +115,7 @@
 	
 		[% IF itemobj.lyrics %] 
 			<li><div class="songInfoTitle">[% "LYRICS" | string; "COLON" | string %]</div>
-				<div class="songInfoText">[% itemobj.lyrics | html | html_para %]</div>
+				<div class="songInfoText">[% itemobj.lyrics | html %]</div>
 			</li>
 		[% END %]
 	

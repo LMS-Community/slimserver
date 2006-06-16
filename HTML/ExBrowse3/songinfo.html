@@ -18,7 +18,7 @@
 			<td class="infotitlecol"> [% role | upper | string %][% "COLON" | string %] </td>
 			<td>
 			[% FOREACH contributor = contributors.sort %]
-				<a onclick="parent.browseurl('browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;artist=[%contributor.id%]')">[% contributor.name | html %]</a>
+				<a onclick="parent.browseurl('browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;contributor.id=[%contributor.id%]')">[% contributor.name | html %]</a>
 			[% END %]
 			</td>
 		</tr>
@@ -29,7 +29,7 @@
  <tr>
   <td class="infotitlecol"> [% "ALBUM" | string %] </td>
   <td>
-   <a onclick="parent.browseurl('browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[% itemobj.album.id %]')">[% itemobj.album.title | html %]</a>
+   <a onclick="parent.browseurl('browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]')">[% itemobj.album.title | html %]</a>
   </td>
  </tr>
  [% END %]
@@ -40,7 +40,7 @@
   <td class="infotitlecol">[% "GENRE" | string %][% "COLON" | string %] </td>
   <td>
 	[% FOREACH genre = genres %]
-   		<a onclick="parent.browseurl('browsedb.html?hierarchy=genre,artist,album,track&amp;level=1&amp;genre=[% genre.id %]')">[% genre.name | html %]</a>
+   		<a onclick="parent.browseurl('browsedb.html?hierarchy=genre,artist,album,track&amp;level=1&amp;genre.id=[% genre.id %]')">[% genre.name | html %]</a>
 	[% END %]
   </td>
  </tr>
@@ -71,10 +71,10 @@
   <td class="infotitlecol"> [% "FILELENGTH" | string %][% "COLON" | string %] </td>
   <td> [% filelength | html %] [% "BYTES" | string %] </td>
  </tr>
- [% END %] [% IF itemobj.prettyBitRate %] 
+ [% END %] [% IF itemobj.bitrate %] 
  <tr>
   <td class="infotitlecol"> [% "BITRATE" | string %][% "COLON" | string %] </td>
-  <td> [% itemobj.prettyBitRate | html %] </td>
+  <td> [% itemobj.bitrate | html %] </td>
  </tr>
  [% END %] [% IF itemobj.tagversion %] 
  <tr>
@@ -106,9 +106,9 @@
 </table>
 
 <div class="browselistbuttons" style="margin:10px">
- <img src="html/images/add.gif" onclick="parent.doBrowseCommand('add', 'track=[% item %]')"
+ <img src="html/images/add.gif" onclick="parent.doBrowseCommand('add', 'track.id=[% itemobj.id %]')"
   class="fakelink" width="8" height="8" alt="[% ADD %]" title="[% ADD %]" />
- <img src="html/images/play.this.gif" onclick="parent.doBrowseCommand('load', 'track=[% item %]')"
+ <img src="html/images/play.this.gif" onclick="parent.doBrowseCommand('load', 'track.id=[% itemobj.id %]')"
   class="fakelink" width="5" height="9" alt="[% PLAY %]" title="[% PLAY %]" />
 </div>
 

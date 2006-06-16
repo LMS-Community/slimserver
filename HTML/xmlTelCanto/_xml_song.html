@@ -1,7 +1,7 @@
 
 	[% IF itemobj.title %]<title>[% itemobj.title | html %]</title>[% END %]
-	[% IF itemobj.artist %]<artist>[% itemobj.artist | html %]</artist>[% END %]
-	[% IF itemobj.album %]<album>[% itemobj.album | html %]</album>[% END %]
+	[% IF itemobj.artist %]<artist>[% itemobj.artist.name | html %]</artist>[% END %]
+	[% IF itemobj.album %]<album>[% itemobj.album.title | html %]</album>[% END %]
 	[% IF itemobj.tracknum %]<track>[% itemobj.tracknum | html %]</track>[% END %]
 	<track_url><![CDATA[[% itemobj.url | html %]]]></track_url>
 	[% IF itemobj.id %]<track_id>[% itemobj.id %]</track_id>[% END %]

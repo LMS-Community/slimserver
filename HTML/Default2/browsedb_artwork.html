@@ -12,9 +12,9 @@
  <span class="browselistbuttons">[% IF descend %]
  <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% attributes | html %]&quot;)"
  >[% "PLAY" | string %]</a>&nbsp;&nbsp;<a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[% attributes | html %]&quot;)">[% "ADD_TO_PLAYLIST" | string %]</a>[% ELSE %]
-  <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track=[%
+  <a onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks&amp;track.id=[%
   item %]&quot;)">[% "PLAY" | string %]</a>&nbsp;&nbsp;<a
-  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track=[% item %]&quot;)"
+  onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks&amp;track.id=[% item %]&quot;)"
   >[% "ADD_TO_PLAYLIST" | string %]</a>[% END %]
  </span>
 </div>
