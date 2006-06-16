@@ -321,7 +321,9 @@ sub dbh {
 		$dsn = sprintf('dbi:mysql:mysql_socket=%s', $class->socketFile);
 	}
 
-	return eval { DBI->connect($dsn) };
+	$^W = 0;
+
+	return eval { DBI->connect($dsn, undef, undef, { 'PrintError' => 0, 'RaiseError' => 0 }) };
 }
 
 sub createDatabase {
