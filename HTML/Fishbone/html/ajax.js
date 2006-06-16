@@ -3,7 +3,6 @@ var url = 'status_header.html';
 var mp = 0;
 
 [% PROCESS html/global.js %]
-[% PROCESS datadumper.js %]
 
 function processState(param) {
 	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshState);
