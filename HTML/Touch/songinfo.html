@@ -18,7 +18,7 @@
 
 
 [% IF itemobj.coverArt('cover', 1) %]
-<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]"><p align="center"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
+<a href="browsedb.html?hierarchy=track&level=0&album.id=[% itemobj.album.id %]&player=[% playerURI %]"><p align="center"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: dashed #666666 15px"></a>
 [% END %]
 
 <br><br>
@@ -68,7 +68,7 @@
 			<td>
 
 			[% FOREACH contributor = contributors.sort %]
-				<font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
+				<font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
 			[% END %]
 
 			</td>
@@ -81,7 +81,7 @@
                         [% "ALBUM" | string %][% "COLON" | string %]
                 </td>
                 <td>
-			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
+			<font size="+2"><a href="browsedb.html?hierarchy=track&level=0&album.id=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
                 </td>
         </tr>
         [% END %] 
@@ -94,7 +94,7 @@
                 </td>
                 <td>
                 [% FOREACH genre = genres %]
-                        <font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre %]</a>
+                        <font size="+2"><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre.id=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
                 [% END %]
                 </td>
         </tr><tr><td height="30"></td><td>
@@ -150,7 +150,7 @@
                         [% "LYRICS" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <font size="+1">[% itemobj.lyrics | html | html_para %]
+                        <font size="+1">[% itemobj.lyrics %]
                 </td>
         </tr>
         [% END %] [% IF filelength %]
@@ -162,13 +162,13 @@
                         <font size="+1">[% filelength %] [% "BYTES" | string %]
                 </td>
         </tr>
-        [% END %] [% IF itemobj.prettyBitRate %]
+        [% END %] [% IF itemobj.bitrate %]
         <tr>
                 <td><font size="+1">
                         [% "BITRATE" | string %][% "COLON" | string %]
                 </td>
                 <td>
-                        <font size="+1">[% itemobj.prettyBitRate %]
+                        <font size="+1">[% itemobj.bitrate %]
                 </td>
         </tr>
         [% END %][% IF itemobj.samplerate %] 
