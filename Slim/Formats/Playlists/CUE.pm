@@ -26,18 +26,9 @@ sub parse {
 	my $baseDir  = shift;
 	my $embedded = shift || 0;
 
-	my $artist;
-	my $album;
-	my $year;
-	my $genre;
-	my $comment;
-	my $filename;
-	my $currtrack;
-	my $replaygain_track_peak;
-	my $replaygain_track_gain;
-	my $replaygain_album_peak;
-	my $replaygain_album_gain;
-	my $tracks = {};
+	my ($filename, $currtrack);
+	my $cuesheet = {};
+	my $tracks   = {};
 
 	$::d_parse && msg("parseCUE: baseDir: [$baseDir]\n");
 
@@ -64,33 +55,25 @@ sub parse {
 
 			} else {
 
-				$album = $1;
+				$cuesheet->{'ALBUM'} = $1;
 			}
 
 		} elsif ($line =~ /^PERFORMER\s+\"(.*)\"/i) {
 
-			$artist = $1;
+			$cuesheet->{'ARTIST'} = $1;
 
-		} elsif ($line =~ /^(?:REM\s+)?YEAR\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?(YEAR|GENRE|DISC|DISCC|COMMENT)\s+\"(.*)\"/i) {
 
-			$year = $1;
+			$cuesheet->{uc($1)} = $2;
 
-		} elsif ($line =~ /^(?:REM\s+)?GENRE\s+\"(.*)\"/i) {
+		} elsif ($line =~ /^(?:REM\s+)?(REPLAYGAIN_ALBUM_GAIN)\s+(.*)dB/i) {
 
-			$genre = $1;
-			
-		} elsif ($line =~ /^(?:REM\s+)?COMMENT\s+\"(.*)\"/i) {
+			$cuesheet->{uc($1)} = $2;
 
-			$comment = $1;
+		} elsif ($line =~ /^(?:REM\s+)?(REPLAYGAIN_ALBUM_PEAK)\s+(.*)/i) {
 
-		} elsif ($line =~ /^(?:REM\s+)?REPLAYGAIN_ALBUM_GAIN\s+(.*)dB/i) {
+			$cuesheet->{uc($1)} = $2;
 
-			$replaygain_album_gain = $1;
-		
-		} elsif ($line =~ /^(?:REM\s+)?REPLAYGAIN_ALBUM_PEAK\s+(.*)/i) {
-
-			$replaygain_album_peak = $1;
-						
 		} elsif ($line =~ /^FILE\s+\"(.*)\"/i) {
 
 			$filename = $1;
@@ -233,41 +216,15 @@ sub parse {
 		}
 
 		# Merge in file level attributes
-		if (!exists $track->{'ARTIST'} && defined $artist) {
-			$track->{'ARTIST'} = $artist;
-			$::d_parse && msg("    ARTIST: " . $track->{'ARTIST'} . "\n");
+		for my $attribute (qw(ARTIST ALBUM YEAR GENRE COMMENT REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
+
+			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
+
+				$track->{$attribute} = $cuesheet->{$attribute};
+				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");
+			}
 		}
 
-		if (!exists $track->{'ALBUM'} && defined $album) {
-			$track->{'ALBUM'} = $album;
-			$::d_parse && msg("    ALBUM: " . $track->{'ALBUM'} . "\n");
-		}
-
-		if (!exists $track->{'YEAR'} && defined $year) {
-			$track->{'YEAR'} = $year;
-			$::d_parse && msg("    YEAR: " . $track->{'YEAR'} . "\n");
-		}
-
-		if (!exists $track->{'GENRE'} && defined $genre) {
-			$track->{'GENRE'} = $genre;
-			$::d_parse && msg("    GENRE: " . $track->{'GENRE'} . "\n");
-		}
-
-		if (!exists $track->{'COMMENT'} && defined $comment) {
-			$track->{'COMMENT'} = $comment;
-			$::d_parse && msg("    COMMENT: " . $track->{'COMMENT'} . "\n");
-		}
-		
-		if (!exists $track->{'REPLAYGAIN_ALBUM_GAIN'} && defined $replaygain_album_gain) {
-			$track->{'REPLAYGAIN_ALBUM_GAIN'} = $replaygain_album_gain;
-			$::d_parse && msg("    REPLAYGAIN_ALBUM_GAIN: " . $track->{'REPLAYGAIN_ALBUM_GAIN'} . "\n");
-		}
-
-		if (!exists $track->{'REPLAYGAIN_ALBUM_PEAK'} && defined $replaygain_album_peak) {
-			$track->{'REPLAYGAIN_ALBUM_PEAK'} = $replaygain_album_peak;
-			$::d_parse && msg("    REPLAYGAIN_ALBUM_PEAK: " . $track->{'REPLAYGAIN_ALBUM_PEAK'} . "\n");
-		}
-			
 		# Everything in a cue sheet should be marked as audio.
 		$track->{'AUDIO'} = 1;
 	}
