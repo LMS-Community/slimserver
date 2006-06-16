@@ -429,36 +429,37 @@ sub scanPlaylistFileHandle {
 
 	if (scalar @playlistTracks) {
 
-		# Create a playlist container
-		if (!$playlist->title) {
-
-			my $title = Slim::Utils::Misc::unescape(basename($url));
-			   $title =~ s/\.\w{3}$//;
-
-			$playlist->title($title);
-		}
-
-		# With the special url if the playlist is in the
-		# designated playlist folder. Otherwise, Dean wants
-		# people to still be able to browse into playlists
-		# from the Music Folder, but for those items not to
-		# show up under Browse Playlists.
-		#
-		# Don't include the Shoutcast playlists or cuesheets
-		# in our Browse Playlist view either.
-		my $ct = Slim::Schema->contentType($playlist);
-
-		if (Slim::Music::Info::isFileURL($url) && 
-		    Slim::Utils::Misc::inPlaylistFolder($url) &&
-			$url !~ /ShoutcastBrowser_Recently_Played/) {
-
-			$ct = 'ssp';
-		}
-
-		$playlist->content_type($ct);
 		$playlist->setTracks(\@playlistTracks);
-		$playlist->update;
 	}
+
+	# Create a playlist container
+	if (!$playlist->title) {
+
+		my $title = Slim::Utils::Misc::unescape(basename($url));
+		   $title =~ s/\.\w{3}$//;
+
+		$playlist->title($title);
+	}
+
+	# With the special url if the playlist is in the
+	# designated playlist folder. Otherwise, Dean wants
+	# people to still be able to browse into playlists
+	# from the Music Folder, but for those items not to
+	# show up under Browse Playlists.
+	#
+	# Don't include the Shoutcast playlists or cuesheets
+	# in our Browse Playlist view either.
+	my $ct = Slim::Schema->contentType($playlist);
+
+	if (Slim::Music::Info::isFileURL($url) && 
+	    Slim::Utils::Misc::inPlaylistFolder($url) &&
+		$url !~ /ShoutcastBrowser_Recently_Played/) {
+
+		$ct = 'ssp';
+	}
+
+	$playlist->content_type($ct);
+	$playlist->update;
 
 	$::d_scan && msgf("scanPlaylistFileHandle: found %d items in playlist.\n", scalar @playlistTracks);
 
