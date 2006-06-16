@@ -713,12 +713,14 @@ sub webPages {
 sub handleWebList {
 	my ($client, $params) = @_;
 
-	# Pass on the current pref values and now playing info
-	$params->{'pluginRandomGenreList'} = getGenres($client);
-	$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
-	$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
-	$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-	$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->id}->{'type'};
+	if ($client) {
+		# Pass on the current pref values and now playing info
+		$params->{'pluginRandomGenreList'} = getGenres($client);
+		$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+		$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+		$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
+		$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->id}->{'type'};
+	}
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
 }

@@ -50,9 +50,9 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 				[% "PLUGIN_RANDOM_CHOOSE_BELOW" | string %]
 			[% END %]
 
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
 
 			[% odd = 1 %]
 			[% FOREACH type IN ['track','contributor','album','year'] %]
@@ -86,121 +86,122 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 					<td>&nbsp;</td>
 				</tr>
 			[% END %]
-		[% END %]
+		
 
-		<tr>
-			<td colspan="4"><hr></td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		[%- WRAPPER contentitem %][% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %][% END %]
-
-		[%- WRAPPER contentitem %]
-			<table border="0">[% USE table pluginRandomGenreList.keys.sort, cols=2, pad=0 %]
-				[%- FOREACH genrerow = table.rows %]
-					<tr>
-					[%- FOREACH genre = genrerow %]
-					[%- genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
-						[%- IF not loop.first %]
-						<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+			<tr>
+				<td colspan="4"><hr></td>
+			</tr>
+	
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+	
+			[%- WRAPPER contentitem %][% "PLUGIN_RANDOM_GENRE_FILTER_WEB" | string %][% END %]
+	
+			[%- WRAPPER contentitem %]
+				<table border="0">[% USE table pluginRandomGenreList.keys.sort, cols=2, pad=0 %]
+					[%- FOREACH genrerow = table.rows %]
+						<tr>
+						[%- FOREACH genre = genrerow %]
+						[%- genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
+							[%- IF not loop.first %]
+							<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+							[%- END %]
+							<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
+							<label for="[% genreid %]">[% pluginRandomGenreList.$genre.name | html %]</label></td>
 						[%- END %]
-						<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
-						<label for="[% genreid %]">[% pluginRandomGenreList.$genre.name | html %]</label></td>
+						</tr>
 					[%- END %]
-					</tr>
-				[%- END %]
-			</table>
-			<script type="text/javascript">
-			<!--
-				var f = document.genreForm;
-				var numSelected = 0;
-				var numCheckBoxes = 0;
-				var selectAllString = '[% "PLUGIN_RANDOM_SELECT_ALL" | string %]';
-				var selectNoneString = '[% "PLUGIN_RANDOM_SELECT_NONE" | string %]';
-
-				// Work out how many checkboxes are initially selected
-				for (var i=0; i < f.elements.length; i++) {
-					if (f.elements[i].type == 'checkbox') {
-						numCheckBoxes++;
-						if (f.elements[i].checked) {
-							numSelected++;
-						}
-					}
-				}
-
-				// Select none if all are selected, else select all
-				function selectAll() {
-					var newState = numSelected != numCheckBoxes;
-
+				</table>
+				<script type="text/javascript">
+				<!--
+					var f = document.genreForm;
+					var numSelected = 0;
+					var numCheckBoxes = 0;
+					var selectAllString = '[% "PLUGIN_RANDOM_SELECT_ALL" | string %]';
+					var selectNoneString = '[% "PLUGIN_RANDOM_SELECT_NONE" | string %]';
+	
+					// Work out how many checkboxes are initially selected
 					for (var i=0; i < f.elements.length; i++) {
 						if (f.elements[i].type == 'checkbox') {
-							f.elements[i].checked = newState;
+							numCheckBoxes++;
+							if (f.elements[i].checked) {
+								numSelected++;
+							}
 						}
 					}
-					if (newState) {
-						numSelected = numCheckBoxes;
-						f.selectAllButton.value = selectNoneString;
-					} else {
-						numSelected = 0;
-						f.selectAllButton.value = selectAllString;
+	
+					// Select none if all are selected, else select all
+					function selectAll() {
+						var newState = numSelected != numCheckBoxes;
+	
+						for (var i=0; i < f.elements.length; i++) {
+							if (f.elements[i].type == 'checkbox') {
+								f.elements[i].checked = newState;
+							}
+						}
+						if (newState) {
+							numSelected = numCheckBoxes;
+							f.selectAllButton.value = selectNoneString;
+						} else {
+							numSelected = 0;
+							f.selectAllButton.value = selectAllString;
+						}
 					}
-				}
-
-				// Increase/decrease num selected every time a checkbox changes
-				function changeNumSelected(checkBox) {
-					if (checkBox.checked) {
-						numSelected++;
-					} else {
-						numSelected--;
+	
+					// Increase/decrease num selected every time a checkbox changes
+					function changeNumSelected(checkBox) {
+						if (checkBox.checked) {
+							numSelected++;
+						} else {
+							numSelected--;
+						}
+	
+						if (numSelected == numCheckBoxes) {
+						  f.selectAllButton.value = selectNoneString;
+						} else {
+							f.selectAllButton.value = selectAllString;
+						}
 					}
-
-					if (numSelected == numCheckBoxes) {
-					  f.selectAllButton.value = selectNoneString;
-					} else {
-						f.selectAllButton.value = selectAllString;
-					}
-				}
-
-				// Write the button using js, so it won't appear if js isn't enabled/available
-				document.write('<input type="button" value="'
-							   + (numSelected == numCheckBoxes ? selectNoneString : selectAllString)
-											 + '" id="selectAllButton" onclick="selectAll()">');
-			// -->
-			</script>
+	
+					// Write the button using js, so it won't appear if js isn't enabled/available
+					document.write('<input type="button" value="'
+								   + (numSelected == numCheckBoxes ? selectNoneString : selectAllString)
+												 + '" id="selectAllButton" onclick="selectAll()">');
+				// -->
+				</script>
+			[% END %]
+	
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+	
+			[%- WRAPPER contentitem %]
+				<label>
+					<input class="stdedit" type="checkbox" name="continuousMode" value="1"
+					[% IF pluginRandomContinuousMode %]checked[% END %]>
+					[% "PLUGIN_RANDOM_CONTINUOUS_MODE" | string %]
+				</label>
+			[% END %]
+	
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+	
+			[%- WRAPPER contentitem %]
+				[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
+				<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
+				[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
+				<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
+				[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
+			[% END %]
+	
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+	
+			[%- WRAPPER contentitem %]<input type="submit" value="[% "SAVE" | string %]">[% END %]
 		[% END %]
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		[%- WRAPPER contentitem %]
-			<label>
-				<input class="stdedit" type="checkbox" name="continuousMode" value="1"
-				[% IF pluginRandomContinuousMode %]checked[% END %]>
-				[% "PLUGIN_RANDOM_CONTINUOUS_MODE" | string %]
-			</label>
-		[% END %]
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		[%- WRAPPER contentitem %]
-			[% "PLUGIN_RANDOM_BEFORE_NUM_TRACKS" | string %]
-			<input class="stdedit" type="text" size="2" name="numTracks" value="[% pluginRandomNumTracks %]">
-			[% "PLUGIN_RANDOM_AFTER_NUM_TRACKS" | string %]
-			<input class="stdedit" type="text" size="2" name="numOldTracks" value="[% pluginRandomNumOldTracks %]">
-			[% "PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS" | string %]
-		[% END %]
-
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-
-		[%- WRAPPER contentitem %]<input type="submit" value="[% "SAVE" | string %]">[% END %]
 	[% END %]
 </form>
 [% PROCESS pagefooter.html %]
