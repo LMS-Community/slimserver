@@ -637,7 +637,7 @@ sub new {
 	$client->[5] = undef; # macaddress		string     client's MAC (V2.0 firmware)
 	$client->[6] = undef; # paddr			sockaddr_in client's ip and port
 	
-	# $client->[7] = undef; # unused
+	$client->[7] = undef; # startupPlaylistLoading
 	# $client->[8] = undef; # unused
 
 	# client hardware information
@@ -1511,6 +1511,10 @@ sub paddr {
 	my $r = shift;
 	@_ ? ($r->[6] = shift) : $r->[6];
 }
+sub startupPlaylistLoading {
+	my $r = shift;
+	@_ ? ($r->[7] = shift) : $r->[7];
+}
 sub udpsock {
 	my $r = shift;
 	@_ ? ($r->[9] = shift) : $r->[9];
@@ -1917,11 +1921,6 @@ sub currentPlaylistChangeTime {
 	# This needs to be the same for all synced clients
 	my $r = Slim::Player::Sync::masterOrSelf(shift);
 	@_ ? ($r->[96] = shift) : $r->[96];
-}
-
-sub startupPlaylistLoading {
-	my $r = shift;
-	@_ ? ($r->[97] = shift) : $r->[97];
 }
 
 sub directURL {
