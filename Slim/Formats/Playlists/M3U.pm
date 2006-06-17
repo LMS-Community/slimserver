@@ -151,15 +151,15 @@ sub write {
 
 	for my $item (@{$listref}) {
 
-		if ($addTitles && Slim::Music::Info::isURL($item)) {
+		my $track = Slim::Schema->rs('Track')->objectForUrl($item);
+	
+		if (!blessed($track) || !$track->can('title')) {
+	
+			errorMsg("writeM3U: Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+			next;
+		};
 
-			my $track = Slim::Schema->rs('Track')->objectForUrl($item);
-
-			if (!blessed($track) || !$track->can('title')) {
-
-				errorMsg("writeM3U: Couldn't retrieve objectForUrl: [$item] - skipping!\n");
-				next;
-			};
+		if ($addTitles) {
 			
 			my $title = Slim::Utils::Unicode::utf8decode( $track->title );
 
@@ -171,7 +171,7 @@ sub write {
 		# XXX - we still have a problem where there can be decomposed
 		# unicode characters. I don't know how this happens - it's
 		# coming from the filesystem.
-		my $path = Slim::Utils::Unicode::utf8decode( $class->_pathForItem($item, 1) );
+		my $path = Slim::Utils::Unicode::utf8decode( $class->_pathForItem($track->url, 1) );
 
 		print $output "$path\n";
 	}

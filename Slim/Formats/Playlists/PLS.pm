@@ -107,7 +107,7 @@ sub write {
 			next;
 		}
 
-		printf($output "File%d=%s\n", $itemnum, $class->_pathForItem($item));
+		printf($output "File%d=%s\n", $itemnum, $class->_pathForItem($track->url));
 
 		my $title = $track->title();
 
