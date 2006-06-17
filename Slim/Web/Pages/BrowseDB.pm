@@ -261,8 +261,8 @@ sub browsedb {
 	}
 	
 	# Bug 3311, disable editing for iTunes playlists
-	if ( $params->{'playlist.id'} ) {
-		if ( $params->{'playlist.id'}->title =~ /^iTunes: / ) {
+	if ( ref $params->{'playlist'} ) {
+		if ( $params->{'playlist'}->title =~ /^iTunes: / ) {
 			$params->{'noEdit'} = 1;
 		}
 	}
