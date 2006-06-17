@@ -36,7 +36,7 @@ END
   <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="40"/>
   <input name="submit" type="submit" value="[% saveButtonName | string %]"/>
   <input type="hidden" name="renamePlaylist" value="1"/>
-  <input type="hidden" name="playlist" value="[% playlist.id %]"/>
+  <input type="hidden" name="playlist.id" value="[% playlist.id %]"/>
   <input type="hidden" value="[% player %]" name="player"/>
   [% IF RENAME_WARNING %]<input type="checkbox" name="overwrite" class="stdedit"/>
   [% "CONFIRM_OVERWRITE" | string %][% END %]
@@ -46,7 +46,7 @@ END
 <p style="margin-bottom: 5px;">
  <!--<a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?dir=[% dir | html %]&quot;)">[% "EDIT_PLAYLIST"
   | string %]</a><br> playlist editing, not complete yet - need to implement with jxtk -->
- <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
+ <a class="fakelink" onclick="parent.browseurl(&quot;edit_playlist.html?playlist.id=[% playlist.id %]&amp;deletePlaylist=1&quot;)">[%
   "DELETE_THIS_PLAYLIST" | string %]</a><br>
 </p>
 [% END %]
@@ -58,7 +58,7 @@ END
     <img src="html/images/add.gif" onclick="parent.doBrowseCommand('add','playlist=[% playlist.id %]')"
     alt="[% 'ADD' | string %]" title="[% 'ADD' | string %]" width="8" height="8"/><img width="5"
     src="html/images/play.this.gif" height="9" alt="[% 'PLAY' | string %]" title="[% 'PLAY' | string %]"
-    onclick="parent.doBrowseCommand('load','playlist=[% playlist.id %]')"/>
+    onclick="parent.doBrowseCommand('load','playlist.id=[% playlist.id %]')"/>
    </td>
    <td>[% "THIS_ENTIRE_PLAYLIST" | string %]</td>
   </tr>

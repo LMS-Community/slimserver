@@ -1,7 +1,7 @@
 [% IF loop.count % 2; odd = 1; ELSE; odd = 0; END %]
 
 [% BLOCK editcmd %]
-		href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist=[% playlist.id %]&amp;item=[% loop.count %]"
+		href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;item=[% loop.count %]"
 [% END %]
 
 [% BLOCK editcontrols %]

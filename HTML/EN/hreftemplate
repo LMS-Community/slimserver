@@ -6,7 +6,7 @@ songinfoHRef = "href=\"${webroot}songinfo.html?item=$itemobj.id&amp;player=$play
 browseDbHRef = "href=\"${webroot}browsedb.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\" target=\"browser\"";
 coverArtHRef = "href=\"/music/$coverArt/cover.jpg\"";
 browseTreeHRef = "href=\"${webroot}browsetree.html?hierarchy=$hierarchy&amp;level=$level$attributes&amp;player=$playerURI\"";
-browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=$itemobj.id$noEdit&amp;player=$playerURI\"";
+browsePlaylistHRef = "href=\"${webroot}browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist.id=$playlist.id$noEdit&amp;player=$playerURI\"";
 MoveUp   = "%2D1"; # -1
 minusOne = "%2D1"; # -1
 plusOne  = "%2B1"; # +1
@@ -145,7 +145,7 @@ href="/music/[% item.coverArt %]/cover.jpg"
 
 [%# this is the href to the playlist item %]
 [% BLOCK browsePlaylistItemHRef -%]
-href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
+href="[% webroot %]browsedb.html?hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist.id=[% item.itemobj.id %][% noEdit %]&amp;player=[% playerURI %]"
 [%- END %]
 
 [%# this is the link tree for the setup pages %]

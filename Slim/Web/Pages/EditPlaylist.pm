@@ -49,7 +49,7 @@ sub editplaylist {
 		return deletePlaylist($client, $params);
 	}
 
-	my $playlist = Slim::Schema->find('Playlist', $params->{'playlist'});
+	my $playlist = Slim::Schema->find('Playlist', $params->{'playlist.id'});
 
 	if (!blessed($playlist) || !$playlist->tracks) {
 
@@ -215,7 +215,7 @@ sub renamePlaylist {
 	$params->{'hierarchy'} = 'playlist,playlistTrack';
 	$params->{'level'}     = 0;
 
-	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist'});
+	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist.id'});
 
 	if (blessed($playlistObj) && $playlistObj->can('id') && $params->{'newname'}) {
 
@@ -271,7 +271,7 @@ sub renamePlaylist {
 sub deletePlaylist {
 	my ($client, $params) = @_;
 
-	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist'});
+	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist.id'});
 
 	$params->{'level'} = 0;
 

@@ -261,8 +261,8 @@ sub browsedb {
 	}
 	
 	# Bug 3311, disable editing for iTunes playlists
-	if ( $params->{'playlist'} ) {
-		if ( $params->{'playlist'}->title =~ /^iTunes: / ) {
+	if ( $params->{'playlist.id'} ) {
+		if ( $params->{'playlist.id'}->title =~ /^iTunes: / ) {
 			$params->{'noEdit'} = 1;
 		}
 	}
@@ -498,7 +498,8 @@ sub browsedb {
 	# Give players a bit of time.
 	main::idleStreams() if $needIdleStreams;
 
-	$params->{'descend'} = $descend;
+	$params->{'descend'}   = $descend;
+	$params->{'levelName'} = $rs->nameTransform || lc($levels[$level]);
 
 	# override the template for the playlist case.
 	my $template = $rs->browseBodyTemplate || 'browsedb.html';

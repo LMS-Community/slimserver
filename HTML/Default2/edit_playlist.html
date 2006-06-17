@@ -2,7 +2,7 @@
 
 <div id="pwd">
  <a class="fakelink" onclick="browseurl('browsedb.html?hierarchy=playlist,playlistTrack&level=0')">[% "SAVED_PLAYLISTS" | string %]</a> /
- <a class="fakelink" onclick="browseurl(&quot;browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist=[% playlist.id %]&quot;)">[% playlistname %]</a> /
+ <a class="fakelink" onclick="browseurl(&quot;browsedb.html?hierarchy=playlist,playlistTrack&level=1&playlist.id=[% playlist.id %]&quot;)">[% playlistname %]</a> /
  <a class="fakelink" onclick="browseurl(&quot;edit_playlist.html?dir=[% dir | uri %]&quot;)">[% "EDIT_PLAYLIST" | string
  %]</a> / 
 </div>

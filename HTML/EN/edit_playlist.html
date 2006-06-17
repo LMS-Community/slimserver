@@ -1,7 +1,7 @@
 [%- pagetitle = "EDIT_PLAYLIST" | string -%] 
 [%- pageicon = 'EDIT_PLAYLIST' -%] 
 [%- pwd_list = BLOCK -%]
-	/ [% "EDIT_PLAYLIST" | string %] / <a href="browsedb.html?player=[% playerURI %]&amp;hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% playlist.id %]">[% playlist.title %]</a>
+	/ [% "EDIT_PLAYLIST" | string %] / <a [% browsePlaylistHRef %]>[% playlist.title %]</a>
 [% END -%]
 [% PROCESS pageheader.html %] 
 
@@ -18,10 +18,10 @@
 				<td colspan="2"><input type=text class="stdedit" name="form_url" value="[% form_url %]" size=40></td>
 			</tr>
 		</table>
-		<input type=hidden name="playlist" value="[% playlist.id %]">
+		<input type=hidden name="playlist.id" value="[% playlist.id %]">
 		<input type=hidden name="player" value="[% player %]">
 	</form>
-	<p><a href="browsedb.html?player=[% playerURI %]&amp;hierarchy=playlist,playlistTrack&amp;level=1&amp;playlist=[% playlist.id %]">[% "DONE_EDITING" | string %]</a>
+	<p><a [% browsePlaylistHRef %]>[% "DONE_EDITING" | string %]</a>
 	[% FOREACH item = items %]
 		[% PROCESS $listTemplate %]
 	[% END %]
