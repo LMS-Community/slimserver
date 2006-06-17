@@ -37,16 +37,16 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [%# img tag for album thumbnail in browse artwork context %]
 [%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %]
 	[% "<img src=\"/music/$coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\" 
-		alt=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\" 
-		title=\"";item | html; IF artist; " "; "BY" | string; " "; artist | html ; END ; IF year; " ($year)"; END; "\">" %] 
+		alt=\"";item | html; IF artist; PROCESS artistsAsText.html; END ; IF year; " ($year)"; END; "\" 
+		title=\"";item | html; IF artist; PROCESS artistsAsText.html; END ; IF year; " ($year)"; END; "\">" %] 
 [% END -%]
 
 [%# img tag for album thumbnail in the now playing status context %]
 [% BLOCK statusImg -%][% IF NOT height; height = 100; END %][% IF NOT width; width = height; END %]
 	[% "<span style=\"width:";height;"px; height:";height;"px;\"><img src=\"/music/$coverThumb/cover_";width;"x"; height;"_f_000000.jpg\""; IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END;
 		"id=\"coverartpath\"
-		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; " "; "BY" | string; " "; itemobj.artist.name ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
-		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; " "; "BY" | string; " "; itemobj.artist.name ; END ; IF itemobj.year; " ($itemobj.year)"; END; "\"></span>" -%]
+		alt=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; "FROM" | string; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\" 
+		title=\"";IF itemobj.album.title && itemobj.album.title != noAlbum; itemobj.album.title | html; END; IF itemobj.artist && itemobj.artist.name != noArtist; PROCESS artistsAsText.html; END ; IF itemobj.year; " ($itemobj.year)"; END; "\"></span>" -%]
 [%- END %]
 
 [%# img tag for cover art in browsedb context %]
@@ -173,15 +173,15 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
  [%- "<span style=\"width:";height;"px; height:";height;"px;\"><img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
- [%- " alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist.name | html ; END ; IF item.year; " ($item.year)"; END; "\"" %]
- [%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist.name | html ; END ; IF item.year; " ($item.year)"; END; "\"></span>" -%]
+ [%- " alt=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\"" %]
+ [%- " title=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\"></span>" -%]
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK dummyItemImg -%]
 	[%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
-	[%-	" alt=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist.name | html ; END ; IF item.year; " ($item.year)"; END; "\"" %] 
-	[%- " title=\"";item.item | html; IF item.artist; " "; "BY" | string; " "; item.artist.name | html ; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
+	[%-	" alt=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\"" %] 
+	[%- " title=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
 [% BLOCK pagebarcalc;
