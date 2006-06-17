@@ -197,7 +197,7 @@ sub playRandom {
 	# If this is a new mix, store the start time
 	my $startTime = undef;
 
-	if ($continuousMode && $type && $mixInfo{$client->id} && $mixInfo{$client->id}->{'type'} ne $type) {
+	if ($continuousMode && $type && $mixInfo{$client->id} && (!$mixInfo{$client->id}->{'type'} || $mixInfo{$client->id}->{'type'} ne $type)) {
 		$startTime = time();
 	}
 
@@ -495,7 +495,7 @@ sub handlePlayOrAdd {
 		Slim::Buttons::Common::param($client, 'listRef', $listRef);
 
 		# Clear any current mix type in case user is restarting an already playing mix
-		$mixInfo{$client->id} = undef;
+		$mixInfo{$client->id}->{'type'} = undef;
 
 		# Go go go!
 		playRandom($client, $item, $add);
@@ -566,7 +566,7 @@ sub setMode {
 
 sub commandCallback {
 	my $request = shift;
-	my $client  = $request->client;
+	my $client  = $request->client();
 
 	# Don't respond to callback for ourself.
 	if ($request->source && $request->source eq 'PLUGIN_RANDOM') {
