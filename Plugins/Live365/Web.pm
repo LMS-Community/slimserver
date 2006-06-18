@@ -385,15 +385,12 @@ sub buildStationBrowseHTML {
 			);
 	
 		} else {
-	
-			Slim::Web::Pages->pageBar({
+
+			$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'    => $totalcount,
 				'path'         => $targetPage,
 				'otherParams'  => $targetParms,
-				'startRef'     => \$params->{'start'},
-				'headerRef'    => \$params->{'browselist_header'},
-				'pageBarRef'   => \$params->{'browselist_pagebar'},
-				'skinOverride' => $params->{'skinOverride'},
+				'start'        => $params->{'start'},
 				'perPage'      => ROWS_TO_RETRIEVE,
 			});
 		}
