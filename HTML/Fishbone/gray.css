@@ -1,5 +1,5 @@
 BODY {
-	font-size : 12px;
+	font-size : 11px;
 	background : #222222;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color : #e8e8e8;
@@ -17,7 +17,7 @@ H3 {
 
 TD, P, A {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size : 12px;
+	font-size : 11px;
 	margin:0px;
 	padding: 0px;
 	margin-bottom:1pt;
@@ -26,7 +26,7 @@ TD, P, A {
 
 DIV {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size : 12px;
+	font-size : 11px;
 	line-height: 150%;
 	_height: 0%;
 }
@@ -166,6 +166,24 @@ A.linkbtn:link {
 	font-weight:bold;
 	line-height: 100%;
 }	
+
+#TopMenu2 {
+	top: -6px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#TopMenu2 #playControls, #TopMenu2 #volumeControl {
+	top: -3px;
+}
+
+#TopMenu3 {
+	top: -10px;
+}
+
+#playlistStatus {
+	top: -15px;
+}
 
 .listing, .listing2, .even, .odd
 {

@@ -176,6 +176,33 @@ A.linkbtn:link {
 	line-height: 100%;
 }	
 
+.songInfo {
+	background: #fcf2d4;
+}
+
+.songInfo ul {
+	/* the list of song info items */
+	background-color: #fcf2d4;
+}
+
+#TopMenu2 {
+	top: -6px;
+	padding: 0px;
+	margin: 0px;
+}
+
+#TopMenu2 #playControls, #TopMenu2 #volumeControl {
+	top: -3px;
+}
+
+#TopMenu3 {
+	top: -10px;
+}
+
+#playlistStatus {
+	top: -18px;
+}
+
 .listing, .listing2, .even, .odd
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
