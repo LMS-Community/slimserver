@@ -74,7 +74,8 @@ sub scanPathOrURL {
 	my $pathOrUrl = $args->{'url'} || do {
 
 		errorMsg("scanPathOrURL: No path or URL was requested!\n");
-		return $cb->();
+
+		return $cb->() if ref($cb) eq 'CODE';
 	};
 
 	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
@@ -100,8 +101,8 @@ sub scanPathOrURL {
 
 		# Non-async directory scan
 		$class->scanDirectory($args);
-		
-		return $cb->();
+
+		return $cb->() if ref($cb) eq 'CODE';
 	}
 }
 
@@ -264,11 +265,11 @@ sub scanRemoteURL {
 	my $args  = shift;
 	
 	my $cb    = $args->{'callback'};
-	my $url   = $args->{'url'} || return $cb->();
+	my $url   = $args->{'url'} || (return $cb->() if ref($cb) eq 'CODE');
 
 	if (!Slim::Music::Info::isRemoteURL($url)) {
 
-		return $cb->();
+		return $cb->() if ref($cb) eq 'CODE';
 	}
 
 	if (Slim::Music::Info::isAudioURL($url)) {
@@ -283,7 +284,7 @@ sub scanRemoteURL {
 		
 		push @{$args->{'listRef'}}, $track if (ref($args->{'listRef'}) eq 'ARRAY');
 
-		return $cb->();
+		return $cb->() if ref($cb) eq 'CODE';
 	}
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
@@ -296,8 +297,10 @@ sub scanRemoteURL {
 		'onError'   => sub {
 			my $stream = shift;
 			my $error = $stream->error;
+
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
-			return $cb->();
+
+			return $cb->() if ref($cb) eq 'CODE';
 		},
 	} );
 }
@@ -351,8 +354,10 @@ sub readRemoteHeaders {
 			push @{$args->{'listRef'}}, @objects;
 		}
 
-		my $cb = $args->{'callback'};
-		return $cb->();
+		if (ref($args->{'callback'}) eq 'CODE') {
+
+			return $args->{'callback'}->();
+		}
 	} 
 	else {
 		
@@ -398,8 +403,10 @@ sub readPlaylistBody {
 		}
 	}
 
-	my $cb = $args->{'callback'};
-	return $cb->();
+	if (ref($args->{'callback'}) eq 'CODE') {
+
+		return $args->{'callback'}->();
+	}
 }
 
 sub scanPlaylistFileHandle {
