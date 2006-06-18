@@ -90,7 +90,7 @@ sub handleFeed {
 	} );
 		
 	# select the proper list of items
-	my @index = split /\./, $stash->{'index'} || '';
+	my @index = split /\./, $stash->{'index'};
 	
 	if ( scalar @index ) {
 		
