@@ -75,7 +75,7 @@ sub scanPathOrURL {
 
 		errorMsg("scanPathOrURL: No path or URL was requested!\n");
 
-		return $cb->() if ref($cb) eq 'CODE';
+		return ref($cb) eq 'CODE' ? $cb->() : undef;
 	};
 
 	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
@@ -102,7 +102,7 @@ sub scanPathOrURL {
 		# Non-async directory scan
 		$class->scanDirectory($args);
 
-		return $cb->() if ref($cb) eq 'CODE';
+		return ref($cb) eq 'CODE' ? $cb->() : undef;
 	}
 }
 
@@ -265,11 +265,15 @@ sub scanRemoteURL {
 	my $args  = shift;
 	
 	my $cb    = $args->{'callback'};
-	my $url   = $args->{'url'} || (return $cb->() if ref($cb) eq 'CODE');
+	my $url   = $args->{'url'};
+
+	if (!$url) {
+		return ref($cb) eq 'CODE' ? $cb->() : undef;
+	}
 
 	if (!Slim::Music::Info::isRemoteURL($url)) {
 
-		return $cb->() if ref($cb) eq 'CODE';
+		return ref($cb) eq 'CODE' ? $cb->() : undef;
 	}
 
 	if (Slim::Music::Info::isAudioURL($url)) {
@@ -284,12 +288,13 @@ sub scanRemoteURL {
 		
 		push @{$args->{'listRef'}}, $track if (ref($args->{'listRef'}) eq 'ARRAY');
 
-		return $cb->() if ref($cb) eq 'CODE';
+		return ref($cb) eq 'CODE' ? $cb->() : undef;
 	}
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 	
 	my $stream = Slim::Networking::Stream->new();
+
 	$stream->open( $url, {
 		'client'    => $args->{'client'},
 		'args'      => $args,
@@ -300,7 +305,7 @@ sub scanRemoteURL {
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
-			return $cb->() if ref($cb) eq 'CODE';
+			return ref($cb) eq 'CODE' ? $cb->() : undef;
 		},
 	} );
 }
@@ -354,10 +359,7 @@ sub readRemoteHeaders {
 			push @{$args->{'listRef'}}, @objects;
 		}
 
-		if (ref($args->{'callback'}) eq 'CODE') {
-
-			return $args->{'callback'}->();
-		}
+		return ref($args->{'callback'}) eq 'CODE' ? $args->{'callback'}->() : undef;
 	} 
 	else {
 		
@@ -403,10 +405,7 @@ sub readPlaylistBody {
 		}
 	}
 
-	if (ref($args->{'callback'}) eq 'CODE') {
-
-		return $args->{'callback'}->();
-	}
+	return ref($args->{'callback'}) eq 'CODE' ? $args->{'callback'}->() : undef;
 }
 
 sub scanPlaylistFileHandle {
