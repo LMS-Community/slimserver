@@ -3,8 +3,6 @@ package Plugins::MoodLogic::Plugin;
 #$Id$
 use strict;
 
-use File::Spec::Functions qw(catfile);
-
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
