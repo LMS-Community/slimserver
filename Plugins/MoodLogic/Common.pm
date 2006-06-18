@@ -3,6 +3,7 @@ package Plugins::MoodLogic::Common;
 # $Id$
 
 use strict;
+use Slim::Utils::Misc;
 
 my $last_error = 0;
 	

@@ -7,6 +7,7 @@ use strict;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Misc;
+use File::Spec::Functions qw(catfile);
 
 use Plugins::MoodLogic::Common;
 
@@ -385,16 +386,18 @@ sub exportPlaylists {
 	$auto   = Win32::OLE->new("ADODB.Recordset");
 
 	#PLAYLIST QUERY
-	eval {$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);}
+	eval {$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);};
 	
-	unless ($@) { 
+	if ($@) {
+		$::d_moodlogic && msg("MoodLogic: No Playlists Found: $@\n");
+	} else {
 		$class->processPlaylists($playlist);
 		$playlist->Close;
 	}
 	
 	# AUTO PLAYLIST QUERY: 
 	local $Win32::OLE::Warn = 0;
-	eval {$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);}
+	eval {$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);};
 
 	if (Win32::OLE->LastError) {
 		$::d_moodlogic && msg("MoodLogic: No AutoPlaylists Found\n");
@@ -431,6 +434,20 @@ sub processPlaylists {
 		$playlist->MoveNext unless $playlist->EOF;
 	}
 }
+
+sub getPlaylistItems {
+	my $playlist = shift;
+	my $item = $playlist->Fields('name')->value;
+	my @list;
+	
+	while (!$playlist->EOF && defined($playlist->Fields('name')->value) && ($playlist->Fields('name')->value eq $item)) {
+		push @list,Slim::Utils::Misc::fileURLFromPath(catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value));
+		$playlist->MoveNext;
+	}
+	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
+	return \@list;
+}
+
 
 1;
 

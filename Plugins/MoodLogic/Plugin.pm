@@ -176,19 +176,6 @@ sub checker {
 	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
 }
 
-sub getPlaylistItems {
-	my $playlist = shift;
-	my $item = $playlist->Fields('name')->value;
-	my @list;
-	
-	while (!$playlist->EOF && defined($playlist->Fields('name')->value) && ($playlist->Fields('name')->value eq $item)) {
-		push @list,Slim::Utils::Misc::fileURLFromPath(catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value));
-		$playlist->MoveNext;
-	}
-	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
-	return \@list;
-}
-
 sub getMoodWheel {
 	my $id = shift @_;
 	my $for = shift @_;
