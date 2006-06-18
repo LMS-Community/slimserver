@@ -416,7 +416,7 @@ sub processPlaylists {
 
 	while (defined $playlist && !$playlist->EOF) {
 
-		my $name = $playlist->Fields('name')->value;
+		my $name = defined $playlist->Fields('name') ? $playlist->Fields('name')->value : "Unnamed";
 		my %cacheEntry = ();
 		my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
 
