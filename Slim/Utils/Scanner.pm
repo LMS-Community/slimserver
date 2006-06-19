@@ -451,6 +451,7 @@ sub scanPlaylistFileHandle {
 		   $title =~ s/\.\w{3}$//;
 
 		$playlist->title($title);
+		$playlist->titlesort( Slim::Utils::Text::ignoreCaseArticles( $title ) );
 	}
 
 	# With the special url if the playlist is in the
