@@ -650,6 +650,7 @@ sub playlistSaveCommand {
 	# get the parameters
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
+	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
 
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
@@ -676,6 +677,7 @@ sub playlistSaveCommand {
 		$annotatedList = Slim::Player::Playlist::playList($client);
 	}
 
+	$playlistObj->set_column('titlesort', $titlesort);
 	$playlistObj->setTracks($annotatedList);
 	$playlistObj->update;
 

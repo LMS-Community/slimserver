@@ -256,6 +256,7 @@ sub renamePlaylist {
 
 			$playlistObj->set_column('url', $newUrl);
 			$playlistObj->set_column('title', $newName);
+			$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
 			$playlistObj->update;
 
 			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
