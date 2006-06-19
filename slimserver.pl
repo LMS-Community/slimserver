@@ -145,6 +145,7 @@ use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
+use Slim::Utils::Scheduler;
 use Slim::Networking::SliMP3::Protocol;
 use Slim::Networking::Select;
 use Slim::Web::Setup;
@@ -223,6 +224,7 @@ our (
 	$d_remotestream,
 	$d_scan,
 	$d_server,
+	$d_scheduler,
 	$d_select,
 	$d_slimproto,
 	$d_slimproto_v,
@@ -487,9 +489,16 @@ sub idle {
 
 			if (!defined($timer_due) || $timer_due > 0) {
 
-				$select_time = $timer_due;
-				if (!defined($select_time) || $select_time > 1) { $select_time = 1 };
+				# run scheduled task if no timers overdue
+				if (!Slim::Utils::Scheduler::run_tasks()) {
 
+					# set select time if no scheduled task
+					$select_time = $timer_due;
+
+					if (!defined $select_time || $select_time > 1) {
+						$select_time = 1
+					}
+				}
 			}
 		}
 	}
@@ -623,6 +632,7 @@ to the console via stderr:
     --d_prefs        => Preferences file information
     --d_remotestream => Information about remote HTTP streams and playlists
     --d_scan         => Information about scanning directories and filelists
+    --d_scheduler    => Internal scheduler information
     --d_select       => Information about the select process
     --d_server       => Basic server functionality
     --d_slimproto    => Slimproto debugging information
@@ -709,6 +719,7 @@ sub initOptions {
 		'd_prefs'			=> \$d_prefs,
 		'd_remotestream'	=> \$d_remotestream,
 		'd_scan'			=> \$d_scan,
+		'd_scheduler'			=> \$d_scheduler,
 		'd_select'			=> \$d_select,
 		'd_server'			=> \$d_server,
 		'd_slimproto'		=> \$d_slimproto,
@@ -738,6 +749,7 @@ sub initOptions {
 		$Slim::Networking::Select::responseTime->setWarnHigh($perfwarn);
 		$Slim::Networking::Select::selectTask->setWarnHigh($perfwarn);
 		$Slim::Utils::Timers::timerTask->setWarnHigh($perfwarn);
+		$Slim::Utils::Scheduler::schedulerTask->setWarnHigh($perfwarn);
 		$Slim::Control::Request::requestTask->setWarnHigh($perfwarn);
 	}
 }
