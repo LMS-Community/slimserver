@@ -54,7 +54,7 @@
 					</td>
 					<td class = 'smallitemtext'>
 					[% FOREACH contributor = contributors.sort %]
-					<a href="browsedb.html?hierarchy=artist,album,track&level=1&artist=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
+					<a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
 					[% END %]
 					</td>
 				</tr>
@@ -65,7 +65,7 @@
 		                        [% "ALBUM" | string %][% "COLON" | string %]
                				 </td>
 			                <td class = 'smallitemtext'>
-						<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
+						<a href="browsedb.html?hierarchy=contributor,album,track&level=2&album.id=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
 			                </td>
 			        </tr>
 			        [% END %] 
@@ -77,7 +77,7 @@
        				         </td>
 			                <td class = 'smallitemtext'>
 			                [% FOREACH genre = genres %]
-		                        <a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
+		                        <a href="browsedb.html?hierarchy=contributor,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
                				 [% END %]
 			                </td>
 				        [% END %]
