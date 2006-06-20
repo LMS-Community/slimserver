@@ -220,6 +220,9 @@ sub pathFromFileURL {
 
 		$url = Slim::Utils::Unicode::utf8off($url);
 	}
+	
+	# Bug 3589, support win32 backslashes in URLs, file://C:\foo\bar
+	$url =~ s/\\/\//g;
 
 	my $uri = URI->new($url);
 
