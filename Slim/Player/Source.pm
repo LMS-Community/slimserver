@@ -909,6 +909,12 @@ sub gotoNext {
 				"opening next song (old format: $oldstreamformat, " .
 				"new: $newstreamformat) current playmode: " . playmode($client) . "\n"
 			);
+			
+			# Fail if the next song index is the same as the current song index,
+			# as this can cause an infinite loop
+			if ( $nextsong == streamingSongIndex($client) ) {
+				return 0;
+			}
 
 			streamingSongIndex($client, $nextsong);
 			return 1 if !$open;
