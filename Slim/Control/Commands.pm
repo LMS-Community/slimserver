@@ -502,8 +502,7 @@ sub playlistDeleteitemCommand {
 
 	# This used to update $p2; anybody depending on this behaviour needs
 	# to be changed to used the returned result (commented below)
-	my $absitem = $item; # XXXX Slim::Utils::Misc::virtualToAbsolute($item);
-	#$request->addResult('__absitem', $absitem);
+	my $absitem = blessed($item) ? $item->url : $item;
 
 	my $contents;
 
@@ -512,15 +511,16 @@ sub playlistDeleteitemCommand {
 		Slim::Player::Playlist::removeMultipleTracks($client, [$absitem]);
 
 	} elsif (Slim::Music::Info::isDir($absitem)) {
-
-		Slim::Utils::Scan::addToList({
-			'listRef' 	=> \@{$contents},
-			'url'		=> $absitem,
-			'recursive' => 1
+		
+		Slim::Utils::Scanner->scanPathOrURL({
+			'url'      => Slim::Utils::Misc::pathFromFileURL($absitem),
+			'listRef'  => \@{$contents},
+			'client'   => $client,
+			'callback' => sub {
+				Slim::Player::Playlist::removeMultipleTracks($client, \@{$contents});
+			},
 		});
-
-		Slim::Player::Playlist::removeMultipleTracks($client, \@{$contents});
-
+	
 	} else {
 
 		$contents = Slim::Music::Info::cachedPlaylist($absitem);

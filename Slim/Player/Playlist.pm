@@ -216,7 +216,13 @@ sub removeMultipleTracks {
 	if (defined($tracks) && ref($tracks) eq 'ARRAY') {
 
 		for my $track (@$tracks) {
-			$trackEntries{$track->url} = 1;
+	
+			# Handle raw file urls (from BMF, of course)
+			if (ref $track) {
+				$track = $track->url;
+			};
+			
+			$trackEntries{$track} = 1;
 		}
 	}
 
