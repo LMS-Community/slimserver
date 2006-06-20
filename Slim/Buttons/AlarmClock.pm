@@ -57,6 +57,12 @@ sub useWeekday {
 	return $client->prefGetArrayMax($pref) ? weekDay($client) : undef;
 }
 
+sub playlistName {
+	return exists $specialPlaylists{$_[1]} 
+			? $_[0]->string($_[1]) 
+			: Slim::Music::Info::standardTitle($_[0],$_[1]->url);
+}
+
 # some initialization code, adding modes for this module
 sub init {
 
@@ -133,15 +139,14 @@ sub init {
 		'alarm/ALARM_SELECT_PLAYLIST' => {
 			'useMode'        => 'INPUT.List',
 			'listRef'        => undef,
-			'externRef'      => sub { exists $specialPlaylists{$_[1]} 
-									? $_[0]->string($_[1]) 
-									: Slim::Music::Info::standardTitle(@_) 
+			'externRef'      => sub { 
+									return playlistName(@_);
 								},
 			'externRefArgs'  => 'CV',
 			'header'         => 'ALARM_SELECT_PLAYLIST',
 			'headerAddCount' => 1,
 			'stringHeader'   => 1,
-			'onChange'       => sub { $_[0]->prefSet("alarmplaylist", $_[1], weekDay($_[0])) },
+			'onChange'       => sub { $_[0]->prefSet("alarmplaylist", exists $specialPlaylists{$_[1]} ? $_[1] : $_[1]->url,weekDay($_[0]))},
 			'onChangeArgs'   => 'CV',
 			'initialValue'   => sub { return $_[0]->prefGet("alarmplaylist", weekDay($_[0])) },
 		},
@@ -310,7 +315,7 @@ sub alarmExitHandler {
 
 					my @playlists = Slim::Schema->rs('Playlist')->getPlaylists;
 
-					$nextParams{'listRef'} = [ \@playlists, keys %specialPlaylists];
+					$nextParams{'listRef'} = [ @playlists, keys %specialPlaylists];
 				}
 				
 				#set up valueRef for current pref
