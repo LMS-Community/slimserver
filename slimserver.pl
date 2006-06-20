@@ -598,6 +598,7 @@ to the console via stderr:
                         command line interface interface
     --d_client       => Display per-client debugging.
     --d_command      => Display internal command execution
+    --d_commands     => Display command subroutine information
     --d_control      => Low level player control information
     --d_datamodel    => Data model search and field mapping debugging
     --d_directstream => Debugging info on direct streaming 
