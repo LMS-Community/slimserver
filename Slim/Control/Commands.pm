@@ -892,6 +892,9 @@ sub playlistXitemCommand {
 			'listRef'  => \@dirItems,
 			'client'   => $client,
 			'callback' => sub {
+				
+				push @{Slim::Player::Playlist::playList($client)},@dirItems;
+				
 				_insert_done(
 					$client,
 					$playListSize,
