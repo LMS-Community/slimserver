@@ -380,7 +380,16 @@ sub parse_file
     $tags->{YEAR}     = $tags->{DAY}     if defined ($tags->{DAY});
     $tags->{COMMENT}  = $tags->{CMT}     if defined ($tags->{CMT});
     $tags->{GENRE}    = $tags->{GNRE}    if defined ($tags->{GNRE});
-    $tags->{TRACKNUM} = $tags->{TRKN}[0] if defined ($tags->{TRKN});
+
+    # Seen in the wild - a non-array ref TRKN
+    if (defined $tags->{TRKN}) {
+
+        if (ref($tags->{TRKN}) eq 'ARRAY') { 
+            $tags->{TRACKNUM} = $tags->{TRKN}[0];
+        } else {
+            $tags->{TRACKNUM} = $tags->{TRKN};
+        }
+    }
 
     # remaining get_mp4info() stuff
     $tags->{VERSION}  = 4;
