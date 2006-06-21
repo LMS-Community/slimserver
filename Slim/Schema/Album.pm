@@ -120,7 +120,7 @@ sub artistsForRoles {
 
 	return $self
 		->search_related('contributorAlbums', { 'role' => { 'in' => \@roles } }, { 'order_by' => 'role desc' })
-		->search_related('contributor')->all;
+		->search_related('contributor')->distinct->all;
 }
 
 # Return an array of artists associated with this album.
@@ -128,21 +128,19 @@ sub artists {
 	my $self = shift;
 
 	# First try to fetch an explict album artist
-	my @types = qw(ALBUMARTIST);
+	my @artists = $self->artistsForRoles('ALBUMARTIST');
 
 	# If the user wants to use TPE2 as album artist, pull that.
-	if (Slim::Utils::Prefs::get('useBandAsAlbumArtist')) {
+	if (scalar @artists == 0 && Slim::Utils::Prefs::get('useBandAsAlbumArtist')) {
 
-		push @types, 'BAND';
+		@artists = $self->artistsForRoles('BAND');
 	}
 
 	# Nothing there, and we're not a compilation? Get a list of artists.
-	if (!Slim::Utils::Prefs::get('variousArtistAutoIdentification') || !$self->compilation) {
+	if (scalar @artists == 0 && (!Slim::Utils::Prefs::get('variousArtistAutoIdentification') || !$self->compilation)) {
 
-		push @types, 'ARTIST';
+		@artists = $self->artistsForRoles('ARTIST');
 	}
-
-	my @artists = $self->artistsForRoles(@types);
 
 	# Still nothing? Use the singular contributor - which might be the $vaObj
 	if (scalar @artists == 0 && $self->compilation) {
