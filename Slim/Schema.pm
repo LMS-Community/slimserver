@@ -226,9 +226,13 @@ sub lastRescanTime {
 sub wipeDB {
 	my $class = shift;
 
+	$::d_import && msg("Import: Start schema_clear\n");
+
 	Slim::Utils::SQLHelper->executeSQLFile(
 		$class->driver, $class->storage->dbh, "schema_clear.sql"
 	);
+
+	$::d_import && msg("Import: End schema_clear\n");
 
 	$class->forceCommit;
 }
@@ -736,7 +740,10 @@ sub mergeVariousArtistsAlbums {
 
 			my ($artistId) = keys %trackArtists;
 
-			if ($artistId && $artistId == $vaObjId) {
+			# Use eq here instead of ==, because the artistId
+			# might be a composite from above, if all of the
+			# tracks in an album have the same (multiple) artists.
+			if ($artistId && $artistId eq $vaObjId) {
 
 				$markAsCompilation = 1;
 			}
@@ -1346,7 +1353,7 @@ sub _postCheckAttributes {
 
 	# we may have an album object already..
 	my $albumObj = $track->album if !$create;
-	
+
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
 	if ($create && $isLocal && !$album && !$_unknownAlbum) {
@@ -1355,6 +1362,7 @@ sub _postCheckAttributes {
 			'title'       => string('NO_ALBUM'),
 			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
+			'compilation' => $isCompilation,
 		});
 
 		$track->album($_unknownAlbum->id);
