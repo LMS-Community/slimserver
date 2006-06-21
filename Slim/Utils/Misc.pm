@@ -505,6 +505,12 @@ sub fixPath {
 		}
 
 		$fixed = canonpath(fixPathCase($fixed));
+
+		# Bug: 2757
+		if (-l $fixed) {
+
+			$fixed = readlink($fixed);
+		}
 	}
 
 	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
