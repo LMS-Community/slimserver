@@ -24,15 +24,13 @@ sub hitlist {
 	my $maxPlayed  = 0;
 
 	# Fetch 50 tracks that have been played at least once.
-	# Limit is hardcoded for now.. This should make use of
-	# Class::DBI::Pager or similar. Requires reworking of template
-	# generation.
-	my @tracks = Slim::Schema->search('Track',
+	# Limit is hardcoded for now..
+	my $rs = Slim::Schema->search('Track',
 		{ 'playcount' => { '>' => 0 } },
 		{ 'order_by'  => 'me.playcount desc' },
 	)->slice(0, 49);
 
-	for my $track (@tracks) {
+	for my $track ($rs->next) {
 
 		my $playCount = $track->playcount;
 
