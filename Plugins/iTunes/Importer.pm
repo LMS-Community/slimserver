@@ -30,7 +30,8 @@ my $iTunesScanStartTime = 0;
 
 my $inPlaylists;
 my $inTracks;
-our %tracks;
+my %tracks = ();
+my $progress;
 
 my ($inKey, $inDict, $inValue, %item, $currentKey, $nextIsMusicFolder, $nextIsPlaylistName, $inPlaylistArray);
 
@@ -87,6 +88,30 @@ sub resetState {
 	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
 }
 
+sub getTotalTrackCount {
+	my ($class, $file) = @_;
+
+	# Get the total count of tracks for the progress bar.
+	open(XML, $file) or do {
+
+		errorMsg("iTunes: Couldn't open [$file]: [$@]\n");
+		return 0;
+	};
+
+	my $count = 0;
+
+	while(<XML>) {
+
+		if (/<key>Location/) {
+			$count++;
+		}
+	}
+
+	close(XML);
+
+	return $count;
+}
+
 sub startScan {
 	my $class = shift;
 
@@ -97,7 +122,7 @@ sub startScan {
 	my $file = $class->findMusicLibraryFile;
 
 	# Set the last change time for the next go-round.
-	$currentITunesMusicLibraryDate = (stat($class->findMusicLibraryFile))[9];
+	$currentITunesMusicLibraryDate = (stat($file))[9];
 
 	$::d_itunes && msg("iTunes: startScan on file: $file\n");
 
@@ -106,6 +131,8 @@ sub startScan {
 		errorMsg("iTunes: Trying to scan an iTunes XML file that doesn't exist.");
 		return;
 	}
+
+	$progress = Slim::Utils::ProgressBar->scanProgressBar( $class->getTotalTrackCount($file) );
 
 	$iTunesScanStartTime = time();
 
@@ -159,6 +186,9 @@ sub handleTrack {
 	my $location = $curTrack->{'Location'};
 	my $filetype = $curTrack->{'File Type'};
 	my $type     = undef;
+
+	# Always update the progress, even if we return.
+	$progress->update if $progress;
 
 	# We got nothin
 	if (scalar keys %{$curTrack} == 0) {
@@ -374,6 +404,9 @@ sub handleTrack {
 sub handlePlaylist {
 	my $class      = shift;
 	my $cacheEntry = shift;
+
+	# Always update the progress.
+	$progress->update if $progress;
 
 	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
 	my $url  = 'itunesplaylist:' . $cacheEntry->{'TITLE'};
