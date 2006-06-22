@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.08';
+$VERSION = '1.09';
 
 my $debug = 0;
 
@@ -380,16 +380,7 @@ sub parse_file
     $tags->{YEAR}     = $tags->{DAY}     if defined ($tags->{DAY});
     $tags->{COMMENT}  = $tags->{CMT}     if defined ($tags->{CMT});
     $tags->{GENRE}    = $tags->{GNRE}    if defined ($tags->{GNRE});
-
-    # Seen in the wild - a non-array ref TRKN
-    if (defined $tags->{TRKN}) {
-
-        if (ref($tags->{TRKN}) eq 'ARRAY') { 
-            $tags->{TRACKNUM} = $tags->{TRKN}[0];
-        } else {
-            $tags->{TRACKNUM} = $tags->{TRKN};
-        }
-    }
+    $tags->{TRACKNUM} = $tags->{TRKN}[0] if defined ($tags->{TRKN});
 
     # remaining get_mp4info() stuff
     $tags->{VERSION}  = 4;
@@ -735,28 +726,27 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
-    printf "  %sType=$type, Size=$size\n", ' 'x(2*$level) if $debug;
+    printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
 
     if ($id eq 'COVR')
     {
 	# iTunes appears to use random data types for cover art
 	$tags->{$id} = $data;
     }
-    elsif ($type==0)	# 16bit int data
+    elsif ($type==0)	# 16bit int data array
     {
 	my @ints = unpack 'n' x ($size / 2), $data;
 	if ($id eq 'GNRE')
 	{
 	    $tags->{$id} = $mp4_genres[$ints[0]];
 	}
-	elsif ($size>=6)
+	elsif ($id eq 'DISK' or $id eq 'TRKN')
 	{
-	    # Not sure what's going on here
-	    $tags->{$id} = [$ints[1], $ints[2]];
+	    # Real 10.0 sometimes omits the second integer, but we require it
+	    $tags->{$id} = [$ints[1], ($size>=6 ? $ints[2] : 0)] if ($size>=4);
 	}
-	else
+	elsif ($size>=4)
 	{
-	    # Or here
 	    $tags->{$id} = $ints[1];
 	}
     }
