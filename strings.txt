@@ -10886,6 +10886,7 @@ MUSICMAGIC_MOODS
 	EN	MusicMagic Mood Mix
 
 CREATE_MIX
+	DE	Mix erstellen
 	EN	Create Mix
 
 MOODLOGIC_INSTANT_MIX
