@@ -308,39 +308,31 @@ sub processSong {
 		}
 	}
 
-	# If we've already read tags on these items - save trips to the db.
-	if (!Slim::Music::Import->useFolderImporter) {
+	$attributes{'TRACKNUM'} = $songInfo{'track'};
 
-		$attributes{'TRACKNUM'} = $songInfo{'track'};
-
-		if ($songInfo{'bitrate'}) {
-			$attributes{'BITRATE'} = $songInfo{'bitrate'} * 1000;
-		}
-
-		$attributes{'YEAR'}  = $songInfo{'year'};
-		$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
-		$attributes{'AUDIO'} = 1;
-		$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
-
-		for my $key (qw(album artist genre name)) {
-
-			if (!$songInfo{$key}) {
-				next;
-			}
-
-			my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
-
-			$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
-		}
-
-		# Assign these after they may have been verified as UTF-8
-		$attributes{'ALBUM'}  = $songInfo{'album'};
-		$attributes{'TITLE'}  = $songInfo{'name'};
-		$attributes{'ARTIST'} = $songInfo{'artist'};
-		$attributes{'GENRE'}  = $songInfo{'genre'};
+	if ($songInfo{'bitrate'}) {
+		$attributes{'BITRATE'} = $songInfo{'bitrate'} * 1000;
 	}
 
-	my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
+	$attributes{'YEAR'}  = $songInfo{'year'};
+	$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
+	$attributes{'AUDIO'} = 1;
+	$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
+
+	for my $key (qw(album artist genre name)) {
+
+		next if !$songInfo{$key};
+
+		my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
+
+		$songInfo{$key} = Slim::Utils::Unicode::utf8decode_guess($songInfo{$key}, $enc);
+	}
+
+	# Assign these after they may have been verified as UTF-8
+	$attributes{'ALBUM'}  = $songInfo{'album'};
+	$attributes{'TITLE'}  = $songInfo{'name'};
+	$attributes{'ARTIST'} = $songInfo{'artist'};
+	$attributes{'GENRE'}  = $songInfo{'genre'};
 
 	if ($songInfo{'active'} eq 'yes') {
 		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
@@ -353,7 +345,9 @@ sub processSong {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 	}
 
-	my $track = Slim::Schema->rs('Track')->updateOrCreate({
+	my $fileurl = Slim::Utils::Misc::fileURLFromPath($songInfo{'file'});
+
+	my $track   = Slim::Schema->rs('Track')->updateOrCreate({
 
 		'url'        => $fileurl,
 		'attributes' => \%attributes,
