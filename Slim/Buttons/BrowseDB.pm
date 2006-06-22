@@ -89,6 +89,12 @@ sub init {
 			my $listIndex   = $client->param('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 
+			if ($client->param('header') eq 'CREATE_MIX') {
+				#Bug 3459: short circuit for mixers
+				mixerExitHandler($client,'RIGHT');
+				return;
+			}
+
 			my ($command, $line1, $line2, $string);
 
 			# Based on the button pressed, we determine what to display
@@ -264,8 +270,9 @@ sub init {
 					'parentParams'    => $client->modeParameterStack(-1),
 					'listRef'         => \@mixers,
 					'stringExternRef' => 1,
-					'header'          => 'INSTANT_MIX',
+					'header'          => 'CREATE_MIX',
 					'headerAddCount'  => 1,
+					'stringHeader'    => 1,
 					'callback'        => \&mixerExitHandler,
 					'overlayRef'      => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
 					'overlayRefArgs'  => '',

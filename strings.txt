@@ -10885,6 +10885,9 @@ MUSICMAGIC_MOODS
 	DE	MusicMagic Stimmungs-Mix
 	EN	MusicMagic Mood Mix
 
+CREATE_MIX
+	EN	Create Mix
+
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
 	ES	Mezcla instantánea de MoodLogic
@@ -12244,7 +12247,7 @@ ARTWORK
 
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
-	EN	SlimServer failed retrive the resource you were looking for.
+	EN	SlimServer failed retrieve the resource you were looking for.
 	ES	SlimServer no pudo recuperar el recurso que estaba buscando.
 	FI	Slimserver epäonnistui noutaessaan pyytämääsi resurssia.
 	IT	Lo SlimServer non ha trovato la risorsa che stavi cercando.
