@@ -323,6 +323,7 @@ sub exportSongs {
 		
 		$cacheEntry{'MOODLOGIC_ID'}      = $mixer->{'Seed_SID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
+		$cacheEntry{'AUDIO'}      = 1;
 
 		if ($] > 5.007) {
 
