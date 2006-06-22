@@ -171,16 +171,23 @@ sub startServer {
 	$::d_mysql && msgf("MySQLHelper: startServer() About to start MySQL with command: [%s]\n", join(' ', @commands));
 
 	my $proc = Proc::Background->new(@commands);
+	my $dbh  = undef;
+	my $secs = 30;
 
 	# Give MySQL time to get going..
-	for (my $i = 0; $i < 10; $i++) {
+	for (my $i = 0; $i < $secs; $i++) {
 
-		last if -r $class->pidFile && $proc->alive;
+		# If we can connect, the server is up.
+		if ($dbh = $class->dbh) {
+			$dbh->disconnect;
+			last;
+		}
+
 		sleep 1;
 	}
 
 	if ($@) {
-		errorMsg("MySQLHelper: startServer() - server didn't startup in 10 seconds! Fatal! Exiting!\n");
+		errorMsg("MySQLHelper: startServer() - server didn't startup in $secs seconds! Fatal! Exiting!\n");
 		exit;
 	}
 
