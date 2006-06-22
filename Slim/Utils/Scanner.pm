@@ -25,45 +25,7 @@ use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Networking::Stream;
 use Slim::Utils::Misc;
-
-sub init {
-	my $class = shift;
-
-        $class->mk_classdata('useProgressBar');
-
-	$class->useProgressBar(0);
-
-	# Term::ProgressBar requires Class::MethodMaker, which is rather large and is
-	# compiled. Many platforms have it already though..
-	if ($::progress) {
-
-		eval "use Term::ProgressBar";
-
-		if (!$@ && -t STDOUT) {
-
-			$class->useProgressBar(1);
-		}
-	}
-}
-
-sub scanProgressBar {
-	my $class = shift;
-	my $count = shift;
-
-	if ($class->useProgressBar) {
-
-		my $progress = Term::ProgressBar->new({
-			'count' => $count,
-			'ETA'   => 'linear',
-		});
-
-		$progress->minor(0);
-
-		return $progress;
-	}
-
-	return undef;
-}
+use Slim::Utils::ProgressBar;
 
 # Handle any type of URI thrown at us.
 sub scanPathOrURL {
@@ -174,7 +136,7 @@ sub scanDirectory {
 	}
 
 	# Give the user a progress indicator if available.
-	my $progress = $class->scanProgressBar(scalar @files);
+	my $progress = Slim::Utils::ProgressBar->scanProgressBar(scalar @files);
 
         for my $file (@files) {
 
@@ -247,8 +209,7 @@ sub scanDirectory {
 			push @objects, $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
 		}
 
-		if ($class->useProgressBar) {
-
+		if ($progress) {
 			$progress->update;
 		}
 	}

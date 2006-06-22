@@ -241,6 +241,8 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
+	my $progress = Slim::Utils::ProgressBar->scanProgressBar($count);
+
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
 	# down the entire library, separated by $LF$LF - this allows us to make
 	# 1 HTTP request, and the process the file.
@@ -272,7 +274,7 @@ sub exportSongs {
 
 		while(my $content = <MMMDATA>) {
 
-			$class->processSong($content);
+			$class->processSong($content, $progress);
 		}
 
 		close(MMMDATA);
@@ -284,14 +286,15 @@ sub exportSongs {
 
 			my $content = get("http://$MMSHost:$MMSport/api/getSong?index=$scan");
 
-			$class->processSong($content);
+			$class->processSong($content, $progress);
 		}
 	}
 }
 
 sub processSong {
-	my $class   = shift;
-	my $content = shift || return;
+	my $class    = shift;
+	my $content  = shift || return;
+	my $progress = shift;
 
 	my %attributes = ();
 	my %songInfo   = ();
@@ -316,8 +319,7 @@ sub processSong {
 
 		$attributes{'YEAR'}  = $songInfo{'year'};
 		$attributes{'CT'}    = Slim::Music::Info::typeFromPath($songInfo{'file'},'mp3');
-		$attributes{'TAG'}   = 1;
-		$attributes{'VALID'} = 1;
+		$attributes{'AUDIO'} = 1;
 		$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
 
 		for my $key (qw(album artist genre name)) {
@@ -390,6 +392,10 @@ sub processSong {
 			$genreObj->update;
 		}
 	}
+
+	if ($progress) {
+		$progress->update;
+	}
 }
 
 sub exportPlaylists {
@@ -403,7 +409,8 @@ sub exportPlaylists {
 
 	for (my $i = 0; $i <= scalar @playlists; $i++) {
 
-		my @songs = split(/\n/, get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i"));
+		my $playlist = get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i") || next;
+		my @songs    = split(/\n/, $playlist);
 
 		$::d_musicmagic && msgf("MusicMagic: got playlist %s with %d items\n", $playlists[$i], scalar @songs);
 

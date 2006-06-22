@@ -428,9 +428,6 @@ sub init {
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Utils::PluginManager::init();
 
-	$::d_server && msg("SlimServer Scanner init...\n");
-	Slim::Utils::Scanner->init;
-
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();
 

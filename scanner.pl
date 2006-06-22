@@ -35,6 +35,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
+use Slim::Utils::ProgressBar;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
@@ -85,7 +86,7 @@ sub main {
 	}
 
 	# Start up the file scanner code
-	Slim::Utils::Scanner->init;
+	Slim::Utils::ProgressBar->init;
 
 	if ($playlists) {
 
