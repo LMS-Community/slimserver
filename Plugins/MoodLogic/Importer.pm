@@ -282,6 +282,8 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
+	my $progress = Slim::Utils::ProgressBar->scanProgressBar($count);
+
 	for (my $scan = 0; $scan <= $count; $scan++) {
 		my @album_data = (-1, undef, undef);
 	
@@ -305,7 +307,9 @@ sub exportSongs {
 			$rs->MoveNext;
 		}
 		
-		if (defined $album_data[0] && $album_data[0] == $song_id && $album_data[1] ne "") {
+		if (defined $album_data[0] && $album_data[0] == $song_id
+		 && defined $album_data[1] && $album_data[1] ne "") 
+		{
 			$cacheEntry{'ALBUM'}    = $album_data[1];
 			$cacheEntry{'TRACKNUM'} = $album_data[2];
 			$cacheEntry{'BITRATE'}  = $album_data[3];
@@ -313,8 +317,7 @@ sub exportSongs {
 		}
 
 		$cacheEntry{'CT'}         = Slim::Music::Info::typeFromPath($url,'mp3');
-		$cacheEntry{'TAG'}        = 1;
-		$cacheEntry{'VALID'}      = 1;
+		$cacheEntry{'AUDIO'}      = 1;
 		
 		$cacheEntry{'TITLE'}      = $mixer->Mix_SongName(-1);
 		$cacheEntry{'ARTIST'}     = $mixer->Mix_ArtistName(-1);
@@ -323,7 +326,6 @@ sub exportSongs {
 		
 		$cacheEntry{'MOODLOGIC_ID'}      = $mixer->{'Seed_SID'} = $song_id;
 		$cacheEntry{'MOODLOGIC_MIXABLE'} = $mixer->Seed_SID_Mixable();
-		$cacheEntry{'AUDIO'}      = 1;
 
 		if ($] > 5.007) {
 
@@ -346,7 +348,12 @@ sub exportSongs {
 			$::d_moodlogic && msg("MoodLogic: Couldn't create track for: $url\n");
 
 		};
+		
 		$class->exportContribGenres($track,$scan);
+		
+		if ($progress) {
+			$progress->update;
+		}
 	}
 }
 
