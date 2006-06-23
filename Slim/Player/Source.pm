@@ -912,8 +912,11 @@ sub gotoNext {
 			
 			# Fail if the next song index is the same as the current song index,
 			# as this can cause an infinite loop
+			# The only case where this is OK is Rhapsody Radio
 			if ( $nextsong == streamingSongIndex($client) ) {
-				return 0;
+				if ( $client->lastSong !~ /\.rhr$/ ) {	
+					return 0;
+				}
 			}
 
 			streamingSongIndex($client, $nextsong);
