@@ -12,25 +12,11 @@ package Slim::Networking::SliMP3::Protocol;
 
 use strict;
 
-use IO::Socket;
-
 use Slim::Player::SLIMP3;
+use Slim::Networking::Discovery;
 use Slim::Networking::Select;
-use Slim::Networking::SliMP3::Discovery;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
-
-# The following settings are for testing the new streaming protocol.
-# They allow easy simulation of latency and packet loss in the receive direction.
-# This is just to for *very* basic testing - for real network simulation, use Dummynet.
-my $SIMULATE_RX_LOSS  = 0.00;  # packet loss, 0..1
-my $SIMULATE_RX_DELAY = 000;  # delay, milliseconds
-
-#-------- You probably don't want to change this -----------------#
-my $SERVERPORT = 3483;		# IANA-assigned port for the Slim protocol, used in firmware 1.3+
-#-----------------------------------------------------------------#
-
-use vars qw( $udpsock );
 
 sub processMessage {
 	my ($client,$msg) = @_;
@@ -74,129 +60,27 @@ sub processMessage {
 	return 1;
 }
 
-sub init {
-
-	$udpsock = IO::Socket::INET->new(
-		Proto     => 'udp',
-		LocalPort => $SERVERPORT,
-		LocalAddr => $main::localClientNetAddr
-
-	) or do {
-		msg("Problem: There is already another copy of the SlimServer running on this machine. ($!)\n");
-		# XXX - exiting in a deep sub is kinda bad. should propagate
-		# up. Too bad perl doesn't have real exceptions.
-		exit 1;
-	};
-	
-	defined(Slim::Utils::Network::blocking($udpsock,0)) || die "Cannot set port nonblocking";
-
-	Slim::Networking::Select::addRead($udpsock, \&readUDP);
-	
-	# say hello to the old slimp3 clients that we might remember...
-	for my $clientid (Slim::Utils::Prefs::getKeys("clients")) {
-
-		# make sure any new preferences get set to default values
-		assert($clientid);
-
-		# skip client addrs that aren't dotted-4 with a port
-		next unless ($clientid =~ /\d+\.\d+\.\d+\.\d+:\d+/);
-
-		$::d_protocol && msg("Saying hello to $clientid\n");
-
-		Slim::Networking::SliMP3::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientid));
-		
-		# throttle the broadcasts
-		select(undef,undef,undef,0.05);
-	}
-}
-
-sub readUDP {
-	my $sock = shift || $udpsock;
-	my $clientpaddr;
-	my $msg = '';
-
-	do {
-		$clientpaddr = recv($sock,$msg,1500,0);
-		
-		if ($clientpaddr) {
-
-			# check that it's a message type we know: starts with i r 2 d a or h (but not h followed by 0x00 0x00)
-			if ($msg =~ /^(?:[ir2a]|h(?!\x00\x00))/) {
-				my $client = getUdpClient($clientpaddr, $sock, $msg);
-	
-				if (!defined($client)) {
-					return;
-				}
-	
-				if ($SIMULATE_RX_DELAY) {
-					# simulate rx delay
-					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $SIMULATE_RX_DELAY/1000, \&processMessage, $msg);
-				} else {
-					processMessage($client, $msg);
-				}
-	
-			} elsif ($msg =~/^d/) {
-				# Discovery request: note that slimp3 sends deviceid and revision in the discovery
-				# request, but the revision is wrong (v 2.2 sends revision 1.1). Oops. 
-				# also, it does not send the MAC address until the [h]ello packet.
-				# Squeezebox sends all fields correctly.
-	
-				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
-
-				my $mac = join(':', @mac);
-
-				Slim::Networking::SliMP3::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, $mac);
-	
-			# Playlist::executecommand can be accessed over the UDP port
-			} elsif ($msg=~/^executecommand\((.*)\)$/) {
-				my $ecArgs=$1;
-				my @ecArgs=split(/, ?/, $ecArgs);
-				$::d_protocol && msg("UDP: executecommand($ecArgs)\n");
-				my $clientipport = shift(@ecArgs);
-				my $client = Slim::Player::Client::getClient($clientipport);
-				$client->execute(\@ecArgs);
-
-			} else {
-
-				if ($::d_protocol) {
-					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
-					msg("ignoring Client: ".inet_ntoa($clientip).":$clientport that sent bogus message $msg\n");
-				}
-			}
-		}
-
-	} while $clientpaddr;
-}
-
 ###################
 # return the client based on IP address and socket.  will create a new one if
 # necessary 
 sub getUdpClient {
-	my ($clientpaddr,$sock, $msg) = @_;
+	my ($clientpaddr, $sock, $msg) = @_;
 
 	my ($msgtype, $deviceid, $revision, @mac) = unpack 'aCCxxxxxxxxxH2H2H2H2H2H2', $msg;
-	
+
 	my $mac = join(':', @mac);
 	my $id  = $mac;
 
 	my $client = Slim::Player::Client::getClient($id);
-
-# DISABLING FIRMWARE 2.0 SUPPORT
-#	# alas, pre 2.2 clients don't always include the MAC address, so we use the IP address as the ID.
-#	if (!defined($client)) {
-#		$id = paddr2ipaddress($clientpaddr);
-#		$client = Slim::Player::Client::getClient($id);
-#	}
 
 	if (!defined($client)) {
 
 		if ($msgtype eq 'h') {
 
 			$revision = int($revision / 16) + ($revision % 16)/10.0;
-			
-			if ($revision >= 2.2) { $id = $mac; }
-			
-			if ($deviceid != 0x01) { return undef;}
+
+			if ($revision >= 2.2)  { $id = $mac }
+			if ($deviceid != 0x01) { return undef }
 
 			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .
 				Slim::Utils::Network::paddr2ipaddress($clientpaddr) . "\n");
@@ -204,11 +88,11 @@ sub getUdpClient {
 			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);			
 
 			$client->macaddress($mac);
-			$client->init();
+			$client->init;
 
 		} else {
 
-			Slim::Networking::SliMP3::Discovery::sayHello($sock, $clientpaddr);
+			Slim::Networking::Discovery::sayHello($sock, $clientpaddr);
 
 			return undef;
 		} 

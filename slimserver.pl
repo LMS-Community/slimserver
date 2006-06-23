@@ -146,8 +146,8 @@ use Slim::Player::Source;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
-use Slim::Networking::SliMP3::Protocol;
 use Slim::Networking::Select;
+use Slim::Networking::UDP;
 use Slim::Web::Setup;
 use Slim::Control::Stdio;
 use Slim::Utils::Strings qw(string);
@@ -404,8 +404,8 @@ sub init {
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
-	$::d_server && msg("Old SLIMP3 Protocol init...\n");
-	Slim::Networking::SliMP3::Protocol::init();
+	$::d_server && msg("UDP init...\n");
+	Slim::Networking::UDP::init();
 
 	$::d_server && msg("Slimproto Init...\n");
 	Slim::Networking::Slimproto::init();
