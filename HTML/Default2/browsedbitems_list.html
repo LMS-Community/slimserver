@@ -1,0 +1,35 @@
+<tr class="[% IF item.odd %]odd[% ELSE %]even[% END %]">
+ <td class="browselisting">
+  [% IF item.anchor %]<a name="[% item.anchor | uri %]"></a>[% END %]
+
+  [% IF item.descend %]
+   [% IF item.hierarchy %]<a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[%item.hierarchy%]&amp;level=[%item.level;item.attributes|html%]&quot;)">[% END %]
+    [% item.text | html %]
+   </a>
+   [% IF item.level == 1 && includeArtist && artist; PROCESS artistsAsHTML.html artist=item.artist; END %]
+  [% ELSE %]
+
+   [% IF item.item %]
+   <a onclick="parent.browseurl(&quot;songinfo.html?[%IF item%]item=[%item.item; ELSE%]itempath=[%item.itempath|uri; END %]&quot;)">
+    [% item.text | html %]
+   </a>
+   [% ELSE %]
+    [% item.text | html %]
+   [% END %]
+
+   [% IF item.includeAlbum && item.album ; "FROM" | string %]
+    <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=album,track&amp;level=1&amp;album=[%item.album.id%]&quot;)">
+     [% item.album.title | html %]
+    </a>
+   [% END ; IF item.includeArtist && item.artist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+  [% END %]
+ </td>
+ <td class="browselistbuttons">
+  <img width="13" alt="Play" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=loadtracks[%IF
+  item.descend; item.attributes|html; ELSE %]&amp;track=[% item.item; END %]&quot;)" src="[% webroot %]html/images/b/b_play.gif" height="13"/><img
+  alt="Add" onclick="parent.updateStatusCombined(&quot;&amp;command=playlist&amp;subcommand=addtracks[% IF item.descend;
+  item.attributes|html; ELSE %]&amp;track=[% item.item; END %]&quot;)" src="[% webroot %]html/images/b/b_add.gif" width="13" height="13"/>
+[% FOREACH mixer = item.mixerlinks.values.sort ; PROCESS $mixer ; END %]
+ </td>
+</tr>
+

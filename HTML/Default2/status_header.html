@@ -8,7 +8,7 @@
  <songcount>[% songcount | html %]</songcount>
  <songtitle>[% songtitle | html %]</songtitle>
  <album>[% itemobj.album.title | html; IF year %] ([% year | html %])[% END %]</album>
- <artist>[% itemobj.artist | html %]</artist>
+ <artist>[% itemobj.contributors.name | html %]</artist>
  <repeat>[% IF repeatone %]1[% ELSIF repeatall %]2[% ELSE %]0[% END %]</repeat>
  <shuffle>[% IF shuffleon %]1[% ELSIF shufflealbum %]2[% ELSE %]0[% END %]</shuffle>
  <playmode>[% IF modeplay %]play[% ELSIF modepause %]pause[% ELSE %]stop[% END %]</playmode>

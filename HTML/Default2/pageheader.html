@@ -23,5 +23,14 @@
 </div>
 
 <div id="pagebody">
- <div id="pagehead2">
+	 <div id="pagehead2">
  </div>
+ <p id="pagetitle">
+[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+[%- PROCESS crumblist IF pwd_list %]
+[% IF pageHeaderInfo %]
+	<div id="pageHeaderInfo">
+		[% pageHeaderInfo %]
+	</div>
+[% END %]
+</p>

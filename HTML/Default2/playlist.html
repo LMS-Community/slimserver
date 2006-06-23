@@ -6,6 +6,10 @@
   [% "SONGS" | string %]) [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END; END %]
  </playlistinfo>
  <playlist>
-  [% FOREACH item = playlist_items; PROCESS status_list.html itemobj = item.itemobj; END; %]
+[% IF playlist_items %]
+	[% FOREACH item = playlist_items %]
+		[% PROCESS status_list.html itemobj = item.itemobj %]
+	[% END %]
+[% END %]
  </playlist>
 </playliststatus>

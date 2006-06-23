@@ -20,6 +20,12 @@
  [% END %]
  </searchlinks>
 
+ <radiolinks>
+ [% FOREACH link = additionalLinks.radio %]
+  <radiolink loc="[% link.value | uri %]">[% link.key | string | html %]</radiolink>
+ [% END %]
+ </radiolinks>
+
  <helplinks>
  [% FOREACH link = additionalLinks.help %]
   <searchlink loc="[% link.value | uri %]">[% link.key | string | html %]</searchlink>
@@ -27,33 +33,48 @@
  </helplinks>
  <strings from="[% "FROM" | string %]" by="[% "BY" | string %]"/>
 </slimhome>
-[% ELSE ; PROCESS pageheader.html pageicon='home'%]
+[% ELSE %]
 
-<p id="pagetitle" style="color:white;">
-[% IF song_count %]
- [% "LIBRARY_CONTAINS" | string %] [% album_count %]
- [% "WITH" | string %] [% song_count %]
-  [% "BY" | string %] [% artist_count %].
+[% pagetitle = "HOME" | string; noSpacer = 1; noHomeLink = 1 %]
+[% pageHeaderMenu = BLOCK %]
+		[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %] [% END %]
+
+		[% IF song_count %]
+			[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] 
+			[% song_count %] [% "BY" | string %] [% artist_count %].
+		[% END %]
+
+		[% IF newVersion %]
+			<br><br>[% newVersion %]
+		[% END %]
 [% END %]
-[% IF newVersion %]<br><br>[% newVersion %][% END %]
-</p>
 
-<p class="sectiontitle"><img src="html/images/sub_h_browse_music.gif" alt="" height="13"></p>
+[% PROCESS pageheader.html pageicon='home'%]
+
+<p class="sectiontitle"><b>[% "BROWSE_MUSIC" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.browse ; FOREACH link = additionalLinks.browse %]
  <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
  [% END ; END %]
 </ul>
 
-<p class="sectiontitle"><img src="html/images/sub_h_search_music.gif" alt="" height="13"></p>
+<p class="sectiontitle"><b>[% "SEARCH" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.search ; FOREACH key = additionalLinks.search.keys %]
  <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.search.$key %]&quot;)">[% key | string %]</a></li>
  [% END ; END %]
 </ul>
 
+<p class="sectiontitle"><b>[% "RADIO" | string | upper %]</b></p>
+<ul class="homelist">
+	[%- FOREACH key = additionalLinks.radio.keys %]
+		<li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.radio.$key %]&quot;)">[% key | string %]</a></li>
+	[%- END %]
+		<li>&bull; <a onclick="parent.browseurl(&quot;tunein.html?&quot;)">[% "RADIO_TUNEIN" | string %]</a></li>
+</ul>
+
 [% IF not nosetup %]
-<p class="sectiontitle"><img src="html/images/sub_h_settings.gif" alt="" height="13"></p>
+<p class="sectiontitle"><b>[% "SETTINGS" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF not noserver %]<li>&bull; <a onclick="parent.browseurl('setup.html?page=SERVER_SETTINGS')">[% "SERVER_SETTINGS" | string %]</a></li>[% END %]
 
@@ -66,7 +87,7 @@
 [% END %]
 
 [% IF additionalLinks.plugins %]
-<p class="sectiontitle"><img src="html/images/sub_h_plugins.gif" alt="" height="13"></p>
+<p class="sectiontitle"><b>[% "PLUGINS" | string | upper %]</b></p>
 <ul class="homelist">
  [% FOREACH key = additionalLinks.plugins.keys %]
  <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.plugins.$key %]&quot;)">[% key | string %]</a></li>
@@ -74,7 +95,7 @@
 </ul>
 [% END %]
 
-<p class="sectiontitle"><img src="html/images/sub_h_help.gif" alt="" height="13"></p>
+<p class="sectiontitle"><b>[% "HELP" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.help ; FOREACH link = additionalLinks.help %]
  <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
