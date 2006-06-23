@@ -741,7 +741,7 @@ sub playItem {
 		$client->execute([ 'playlist', $action, $url, $title ]);
 		
 	}
-	elsif ( scalar @{$item->{'items'}} && ref($item->{'items'}) eq 'ARRAY' ) {
+	elsif ( ref($item->{'items'}) eq 'ARRAY' && scalar @{$item->{'items'}} ) {
 
 		# it's not an audio item, so recurse into OPML item
 		gotOPML($client, $client->param('url'), $item);
