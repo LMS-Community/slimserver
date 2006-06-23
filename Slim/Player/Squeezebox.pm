@@ -692,7 +692,7 @@ sub stream {
 				}
 
 				$request_string = $handler->requestString($server_url);  
-				$autostart += 2;
+				$autostart = 2;
 				if (!$server_port || !$server_ip) {
 					$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
 					$client->failedDirectStream();
