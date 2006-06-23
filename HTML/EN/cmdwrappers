@@ -15,10 +15,13 @@
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
 [% browserTarget  = 0 %]
 
-
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
 [%- END -%]
+
+[% # this block can be called for filling in space for an unused control item, or mixer link %]
+[% BLOCK dummylink -%]
+[%- END %]
 
 [%# this is to wrap around an href which does a play command, with a default image for skins that support it %]
 [%- BLOCK playlink -%]

@@ -1,15 +1,12 @@
-[% IF item.mixable_descend %]
-	<a href="[% webroot %]plugins/MoodLogic/mood_wheel.html?[% IF item.genre %]genre=[% item.genre | uri %]&amp;[% END %][% IF item.contributor %]artist=[% item.contributor | uri %]&amp;[% END %][% IF item.album %]album=[% item.album.id | uri %]&amp;[% END %]player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
-[% ELSIF item.mixable_not_descend %]
-	<a href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;[% IF item.genre %]genre=[% item.genre | uri %]&amp;[% END %][% IF item.contributor %]artist=[% item.contributor | uri %]&amp;[% END %][% IF item.album %]album=[% item.album.id | uri %]&amp;[% END %]player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+[% IF- item.mixable -%]
+[%- IF item.mixable_descend -%]<a href="[% webroot %]plugins/MoodLogic/mood_wheel.html?[% IF item.genre %]genre=[% item.genre | uri %]&amp;[% END %][% IF item.contributor %]artist=[% item.contributor | uri %]&amp;[% END %][% IF item.album %]album=[% item.album.id | uri %]&amp;[% END %]player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
+[% ELSIF item.mixable_not_descend %]<a href="[% webroot %]plugins/MoodLogic/instant_mix.html?song=[% item.item | uri %]&amp;[% IF item.genre %]genre=[% item.genre | uri %]&amp;[% END %][% IF item.contributor %]artist=[% item.contributor | uri %]&amp;[% END %][% IF item.album %]album=[% item.album.id | uri %]&amp;[% END %]player=[% playerURI %]" [% IF browserTarget %]target="[% browserTarget %]"[% END %]>
 [% END %]
 [%- IF controlGraphics %]
-		<img src="[% webroot %]html/images/b_mix.gif"
-				alt='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
-				title='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
-				onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
+	<img src="[% webroot %]html/images/b_mix.gif"
+			alt='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+			title='[% "MOODLOGIC_INSTANT_MIX" | string %]' 
+			onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
 [% ELSE %]
 		[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]
-[% END %]
-	</a>
-
+[% END %]</a>[%- ELSE -%][%- PROCESS dummylink -%][% END %]

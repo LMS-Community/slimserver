@@ -125,7 +125,7 @@ div#browsedbHeader {
 .browsedbListItem {
 	position: relative;
 	padding: 0px;
-	padding-right: 80px;
+	padding-right: 100px;
 }
 
 .browsedbControls,.playlistControls {
@@ -133,12 +133,11 @@ div#browsedbHeader {
 	padding: 0px;
 	margin: 0px;
 	float: right;
-	width: 100px;
 }
 
 .browsedbControls a, .playlistControls a {
 	vertical-align: middle;
-	float: right;
+	float: left;
 	position: relative;
 	padding-right: 2px;
 	padding-top: 2px;
