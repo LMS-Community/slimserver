@@ -149,6 +149,7 @@ div#browsedbHeader {
 }
 
 .artworkText {
+	clear: left;
 	text-align: center;
 	overflow: hidden;
 	color: #999;
@@ -189,17 +190,15 @@ div#browsedbHeader {
 
 .artworkControls a {
 	vertical-align: middle;
-	float: right;
+	float: left;
 	position: relative;
-	margin: 0px;
-	top: 0px;
+	padding-right: 2px;
+	padding-top: 2px;
 }
 
 .artworkControls img {
 	padding: 0px;
 	margin: 0px;
-	padding-top: 1px;
-	padding-right: 2px;
 }
 
 .pagebar{
