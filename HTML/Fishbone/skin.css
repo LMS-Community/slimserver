@@ -143,7 +143,7 @@ div#browsedbHeader {
 	padding-top: 2px;
 }
 
-.browsedbControls img {
+.browsedbControls img, .playlistControls img {
 	padding: 0px;
 	margin: 0px;
 }
@@ -351,7 +351,7 @@ A.linkbtn:link {
 	text-decoration : none; 
 }
 
-.stdclick {
+.stdclick, input[type=submit], input[type=button] {
 	font : 9px Arial; 
 	color: Yellow;
 	background-color : rgb(25,25,25);
@@ -359,7 +359,7 @@ A.linkbtn:link {
 	margin-top: 2px;
 }
 
-.stdedit {
+.stdedit, input[type=checkbox], input[type=text] {
 	font-family: Verdana, Arial, Helvetica, sans-serif; 
 	background-color : rgb(255,255,255); 
 	padding : 1px;
