@@ -527,7 +527,7 @@ PODCAST_SUMMARY
 	NL	Samenvatting
 	
 PODCAST_EXPLICIT
-	DE	Ähem... deutliche Worte
+	DE	Anstössig
 	EN	Explicit
 	NL	Expliciet
 
