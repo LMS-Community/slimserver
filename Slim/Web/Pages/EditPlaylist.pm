@@ -241,18 +241,12 @@ sub renamePlaylist {
 
 			if (blessed($existingPlaylist) && $existingPlaylist ne $playlistObj) {
 
-				removePlaylistFromDisk($existingPlaylist);
-
-				# Quickly remove a playlist from the database.
-				$existingPlaylist->setTracks([]);
-				$existingPlaylist->delete;
-
+				Slim::Control::Request::executeRequest(undef, ['playlist', 'deleteplaylist', $existingPlaylist->id]);
+				
 				$existingPlaylist = undef;
-
-				Slim::Schema->forceCommit;
 			}
 
-			removePlaylistFromDisk($playlistObj);
+			Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
 
 			$playlistObj->set_column('url', $newUrl);
 			$playlistObj->set_column('title', $newName);
@@ -271,8 +265,9 @@ sub renamePlaylist {
 
 sub deletePlaylist {
 	my ($client, $params) = @_;
-
-	my $playlistObj = Slim::Schema->find('Playlist', $params->{'playlist.id'});
+	
+	my $playlist_id = $params->{'playlist.id'};
+	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
 
 	$params->{'level'} = 0;
 
@@ -280,20 +275,14 @@ sub deletePlaylist {
 	if (blessed($playlistObj) && !$params->{'confirm'}) {
 
 		$params->{'DELETE_WARNING'} = 1;
-		$params->{'level'}     = 1;
-		$params->{'playlist'}  = $playlistObj->id;
+		$params->{'level'}          = 1;
+		$params->{'playlist'}       = $playlist_id;
 
 	} elsif (blessed($playlistObj)) {
-
-		removePlaylistFromDisk($playlistObj);
-
-		# Do a fast delete, and then commit it.
-		$playlistObj->setTracks([]);
-		$playlistObj->delete;
+	
+		Slim::Control::Request::executeRequest(undef, ['playlist', 'deleteplaylist', $playlist_id]);
 
 		$playlistObj = undef;
-
-		Slim::Schema->forceCommit;
 	}
 
 	# Send the user off to the top level browse playlists
@@ -302,24 +291,6 @@ sub deletePlaylist {
 	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
 }
 
-sub removePlaylistFromDisk {
-	my $playlistObj = shift;
-
-	if (!$playlistObj->can('path')) {
-		return;
-	}
-
-	my $path = $playlistObj->path;
-
-	if (-e $path) {
-
-		unlink $path;
-
-	} else {
-
-		unlink catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u');
-	}
-}
 
 1;
 

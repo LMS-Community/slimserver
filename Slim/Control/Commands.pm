@@ -554,6 +554,44 @@ sub playlistDeleteitemCommand {
 }
 
 
+sub playlistDeleteplaylistCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::playlistDeleteplaylistCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlist'], ['deleteplaylist']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $playlist_id = $request->getParam('_playlist_id');;
+	
+	if (!$playlist_id) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
+	
+	if (blessed($playlistObj)) {
+	
+		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
+		
+		# Do a fast delete, and then commit it.
+		$playlistObj->setTracks([]);
+		$playlistObj->delete;
+
+		$playlistObj = undef;
+
+		Slim::Schema->forceCommit;
+	}
+
+	$request->setStatusDone();
+}
+
+
 sub playlistJumpCommand {
 	my $request = shift;
 	

@@ -641,6 +641,25 @@ sub scheduleWriteOfPlaylist {
 	);
 }
 
+sub removePlaylistFromDisk {
+	my $playlistObj = shift;
+
+	if (!$playlistObj->can('path')) {
+		return;
+	}
+
+	my $path = $playlistObj->path;
+
+	if (-e $path) {
+
+		unlink $path;
+
+	} else {
+
+		unlink catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u');
+	}
+}
+
 sub newSongPlaylistCallback {
 	my $request = shift;
 	

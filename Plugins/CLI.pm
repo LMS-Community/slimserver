@@ -10,7 +10,6 @@ use strict;
 use IO::Socket;
 use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
-use URI::Escape;
 
 use Slim::Control::Request;
 use Slim::Utils::Misc;

@@ -8,6 +8,7 @@ package Slim::Control::Stdio;
 use strict;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
+use URI::Escape;
 
 use Slim::Networking::Select;
 use Slim::Utils::Strings qw(string);

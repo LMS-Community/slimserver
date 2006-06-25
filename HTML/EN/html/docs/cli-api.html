@@ -131,6 +131,11 @@
 		&quot;<a href="#status">status</a>&quot; query.
 	</li>
 	<li>
+		Added the 
+		&quot;<a href="#playlist deleteplaylist">playlist deleteplaylist</a>&quot;
+		command to delete a playlist by id.
+	</li>
+	<li>
 		Updated command 
 		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
 		to accept a list of comma-separated track_ids as parameter.
@@ -3071,7 +3076,7 @@ Any songs currently playing or already on the playlist are not affected.</p>
 
 <br><p><strong><code>&lt;playerid&gt; playlist resume &lt;playlist&gt;</code></strong></p>
 <p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when
-the file was saved. (Resuming works only with M3U files saved with the playlist save command below.) 
+the file was saved. (Resuming works only with M3U files saved with the &quot;playlist save&quot; command below.) 
 Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist 
 in the saved playlists folder.</p>
 <p>Examples:</p>
@@ -3079,12 +3084,56 @@ in the saved playlists folder.</p>
 <p>Request: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist resume abba&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist save &lt;playlist&gt;</code></strong></p>
-<p>Save a playlist file in the saved playlists directory. Accepts a playlist filename (without .m3u suffix) 
-and saves in the top level of the playlists directory.</p>
-<p>Examples:</p>
+<br>
+<p id="playlist save">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			save
+			&lt;filename&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	Saves a playlist file in the saved playlists directory. Accepts a playlist 
+	filename (without .m3u suffix) and saves in the top level of the playlists 
+	directory.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote>
-	<p>Request: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist save abba&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="playlist deleteplaylist">
+	<strong>
+		<code>
+			playlist
+			deleteplaylist
+			&lt;playlist_id&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	Deletes a playlist file in the saved playlists directory. Accepts a 
+	playlist_id as returned by the &quot;playlists&quot; query.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;playlist deleteplaylist 22&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;playlist deleteplaylist 22&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br><p><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
