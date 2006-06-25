@@ -1405,10 +1405,12 @@ CONNECTING_FOR
 BUFFERING
 	DE	Fülle Puffer
 	EN	Buffering
+	NL	Bufferen
 
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
 	EN	Waiting to sync...
+	NL	Wachten op sync...
 
 PROBLEM_CONNECTING
 	CS	Chyba: nelze se připojit k serveru:
@@ -1442,6 +1444,7 @@ PROBLEM_OPENING
 PROBLEM_OPENING_REMOTE_URL
 	DE	Fehler beim Öffnen der URL
 	EN	Error: Can't open remote URL
+	NL	Fout: kan URL niet op afstand niet openen
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
@@ -1533,6 +1536,7 @@ ABOUT_SHORT
 WEB_XML_ERROR
 	DE	Beim Laden von %s trat ein Fehler auf: %s
 	EN	There was an error loading the remote feed for %s: (%s)
+	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
 
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
@@ -1544,10 +1548,12 @@ NUMBER_OF_LISTENERS
 DESCRIPTION
 	DE	Beschreibung
 	EN	Description
-	
+	NL	Beschrijving
+
 SOURCE
 	DE	Quelle
 	EN	Source
+	NL	Bron
 
 #
 # Setup page strings
@@ -10888,6 +10894,7 @@ MUSICMAGIC_MOODS
 CREATE_MIX
 	DE	Mix erstellen
 	EN	Create Mix
+	NL	Maak mix
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix

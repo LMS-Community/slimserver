@@ -517,13 +517,19 @@ PODCAST_FEEDS_CHANGE
 	NL	Podcast lijst gewijzigd.
 	
 PODCAST_SUBTITLE
+	DE	Untertitel
 	EN	Subtitle
-	
+	NL	Subtitel
+
 PODCAST_SUMMARY
+	DE	Zusammenfassung
 	EN	Summary
+	NL	Samenvatting
 	
 PODCAST_EXPLICIT
+	DE	Ähem... deutliche Worte
 	EN	Explicit
+	NL	Expliciet
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts
