@@ -1798,6 +1798,12 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			my $key   = URI::Escape::uri_unescape($1);
 			my $value = URI::Escape::uri_unescape($2);
 
+			# Bug: 3582 - reconstitute from 0 for album.compilation.
+			if ($key eq 'album.compilation' && $value == 0) {
+
+				$find{$key} = [ { 'is' => undef }, { '=' => 0 } ];
+			}
+
 			# Do some mapping from the player browse mode. This is
 			# already done in the web ui.
 			if ($key =~ /^(playlist|age|album|genre|year)$/) {

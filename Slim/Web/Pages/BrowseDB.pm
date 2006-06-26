@@ -51,128 +51,19 @@ sub browsedb {
 
 	my $itemCount = 0;
 
-	# Hold the real name of the level for the breadcrumb list.
-	my %names    = ();
-
 	# Build up a list of params to include in the href links.
 	my @attrs    = ();
-
-	# Pass these to the ->descend method
-	my %find     = ();
-	#my %sort     = ();
-
-	# Filters builds up the list of params passed that we want to filter
-	# on. They are massaged into the %find hash.
-	my %filters  = ();
-	my @sources  = map { lc($_) } Slim::Schema->sources;
 
 	my $rs       = Slim::Schema->rs($levels[$level]);
 	my $topRS    = Slim::Schema->rs($levels[0]);
 	my $title    = $params->{'browseby'} = $topRS->title;
 
-	# Create a map pointing to the previous RS for each level.
-	# 
-	# Example: For the navigation from Genres to Contributors, the
-	# hierarchy would be:
-	# 
-	# genre,contributor,album,track
-	# 
-	# we want the key in the level above us in order to descend.
-	#
-	# Which would give us: $find->{'genre'} = { 'contributor.id' => 33 }
-	my %levelMap = ();
-
-	for (my $i = 1; $i < scalar @levels; $i++) {
-
-		$levelMap{ lc($levels[$i-1]) } = lc($levels[$i]);
-	}
-
-	# Build up the list of valid parameters we may pass to the db.
-	while (my ($param, $value) = each %{$params}) {
-
-		if ($param eq 'artist') {
-			$param = 'contributor';
-		}
-
-		if (!grep { $param =~ /^$_(\.\w+)?$/ } @sources) {
-
-			next;
-		}
-
-		$filters{$param} = $value;
-	}
-
-	print Data::Dumper::Dumper(\%levelMap);
-	print Data::Dumper::Dumper(\%filters);
-
-	# Turn parameters in the form of: album.sort into the appropriate sort
-	# string. We specify a sortMap to turn something like:
-	# tracks.timestamp desc, tracks.disc, tracks.titlesort
-	while (my ($param, $value) = each %filters) {
-
-		if ($param =~ /^(\w+)\.sort$/) {
-
-			#$sort{$1} = $sortMap{$value} || $value;
-			#$sort{$1} = $value;
-
-			delete $filters{$param};
-		}
-	}
-
-	# Now turn each filter we have into the find hash ref we'll pass to ->descend
-	while (my ($param, $value) = each %filters) {
-
-		my ($levelName) = ($param =~ /^(\w+)\.\w+$/);
-
-		# Turn into me.* for the top level
-		if ($param =~ /^$levels[0]\.(\w+)$/) {
-			$param = sprintf('%s.%s', $topRS->{'attrs'}{'alias'}, $1);
-		}
-
-		# Turn into me.* for the current level
-		if ($param =~ /^$levels[$level]\.(\w+)$/) {
-			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
-		}
-
-		msg("working on levelname: [$levelName]\n");
-
-		if (my $mapKey = $levelMap{$levelName}) {
-
-			$find{$mapKey} = { $param => $value };
-		}
-
-		# Pre-populate the attrs list with all query parameters that 
-		# are not part of the hierarchy. This allows a URL to put
-		# query constraints on a hierarchy using a field that isn't
-		# necessarily part of the hierarchy.
-		if (!grep { $_ eq $levelName } @levels) {
-
-			push @attrs, join('=', $param, $value);
-		}
-	}
-
-	# Build up the names we use for the breadcrumb list
-	for my $field (@levels) {
-
-		my $levelRS = Slim::Schema->rs($field) || next;
-
-		# XXX - is this the right thing to do?
-		# For artwork browsing - we want to display the album.
-		if (my $transform = $levelRS->nameTransform) {
-			push @levels, $transform;
-		}
-
-		my $attrKey = sprintf('%s.id', $field);
-
-		# If we don't have this check, we'll create a massive query
-		# for each level in the hierarchy, even though it's not needed
-		next unless defined $params->{$attrKey};
-
-		if (my $obj = $levelRS->find($params->{$attrKey})) {
-
-			$names{$field} = $obj->name;
-		}
-	}
+	my ($filters, $find, $sort) = $topRS->generateConditionsFromFilters({
+		'rs'      => $rs,
+		'level'   => $level,
+		'levels'  => \@levels,
+		'params'  => $params,
+	});
 
 	# Just go directly to the params.
 	# Don't show stats when only showing playlists - extra queries that
@@ -203,9 +94,9 @@ sub browsedb {
 
 	# We want to include Compilations in the pwd, so we need the artist,
 	# but not in the actual search.
-	if ($find{'contributor.id'} && $find{'album.compilation'} == 1) {
+	if ($find->{'contributor.id'} && $find->{'album.compilation'} == 1) {
 
-		delete $find{'contributor.id'};
+		delete $find->{'contributor.id'};
 
 		push @attrs, 'album.compilation=1';
 	}
@@ -227,42 +118,48 @@ sub browsedb {
 	# Generate the breadcrumb list for the current level.
 	for (my $i = 0; $i < $level ; $i++) {
 
-		my $attr = $levels[$i];
-
-		# XXX - is this the right thing to do?
-		# For artwork browsing - we want to display the album.
-		if (my $transform = $topRS->nameTransform) {
-			$attr = $transform;
-		}
-
+		my $attr    = $levels[$i];
 		my $lcKey   = lc($attr);
 		my $attrKey = sprintf('%s.id', $lcKey);
 
+		# XXXX ick.
+		if ($attrKey eq 'year.id') {
+			$attrKey = 'album.year';
+		}
+
 		if ($params->{$attrKey}) {
-
-			push @attrs, join('=', $attrKey, $params->{$attrKey});
-
-			push @{$params->{'pwd_list'}}, {
-				 'hreftype'     => 'browseDb',
-				 'title'        => $names{$lcKey},
-				 'hierarchy'    => $hierarchy,
-				 'level'        => $i+1,
-				 'orderBy'      => $orderBy,
-				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
-			};
 
 			# Send down the attributes down to the template
 			#
 			# These may be overwritten below.
 			# This is useful/needed for the playlist case where we
 			# want access to the containing playlist object.
-			$params->{$attr} = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
+			my $title = $params->{$attrKey};
+
+			if ($attrKey ne 'album.year') {
+
+				$params->{$attr} = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
+				$title           = $params->{$attr}->name;
+			}
+
+			push @attrs, join('=', $attrKey, $params->{$attrKey});
+
+			push @{$params->{'pwd_list'}}, {
+				 'hreftype'     => 'browseDb',
+				 'title'        => $title,
+				 'hierarchy'    => $hierarchy,
+				 'level'        => $i+1,
+				 'orderBy'      => $orderBy,
+				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+			}
 		}
 	}
 	
 	# Bug 3311, disable editing for iTunes, MoodLogic, and MusicMagic playlists
-	if ( ref $params->{'playlist'} ) {
-		if ( $params->{'playlist'}->content_type =~ /(?:itu|mlp|mmp)/ ) {
+	if (ref $params->{'playlist'}) {
+
+		if ($params->{'playlist'}->content_type =~ /(?:itu|mlp|mmp)/) {
+
 			$params->{'noEdit'} = 1;
 		}
 	}
@@ -282,12 +179,7 @@ sub browsedb {
 		$otherparams .= '&' . "artwork=$artwork";
 	}
 
-	msg("find:\n");
-	print Data::Dumper::Dumper(\%find);
-	msg("running resultset on: $levels[$level]\n");
-
-	#my $browseRS = $topRS->descend(\%find, \%sort, @levels[0..$level])->distinct;
-	my $browseRS = $topRS->descend(\%find, {}, @levels[0..$level])->distinct;
+	my $browseRS = $topRS->descend($find, $sort, @levels[0..$level])->distinct;
 	my $count    = 0;
 	my $start    = 0;
 	my $end      = 0;
@@ -432,7 +324,7 @@ sub browsedb {
 				next;
 			}
 
-			my $attrName = $rs->nameTransform || lc($levels[$level]);
+			my $attrName = lc($levels[$level]);
 			my $itemid   = $item->id;
 
 			my %form = (
@@ -454,12 +346,14 @@ sub browsedb {
 			# need any joins.
 			if (lc($levels[$level]) eq 'track') {
 
-				$form{'attributes'}    = sprintf(sprintf('&%s.id=%d', $attrName, $itemid));
+				$form{'attributes'}    = sprintf('&%s.id=%d', $attrName, $itemid);
+
+			} elsif (lc($levels[$level]) eq 'year') {
+
+				$form{'attributes'}    = sprintf('&album.year=%d', $item->year);
 
 			} else {
 
-				# XXXX - need to generate attributes for the current
-				# RS's value. So album.year - not year.id
 				$form{'attributes'}    = (scalar(@attrs) ? ('&' . join('&', @attrs)) : '') . '&' .
 					sprintf('%s.id=%d', $attrName, $itemid);
 			}
@@ -499,7 +393,7 @@ sub browsedb {
 	main::idleStreams() if $needIdleStreams;
 
 	$params->{'descend'}   = $descend;
-	$params->{'levelName'} = $rs->nameTransform || lc($levels[$level]);
+	$params->{'levelName'} = lc($levels[$level]);
 
 	# override the template for the playlist case.
 	my $template = $rs->browseBodyTemplate || 'browsedb.html';

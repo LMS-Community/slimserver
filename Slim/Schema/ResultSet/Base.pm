@@ -11,7 +11,6 @@ use Slim::Schema::PageBar;
 use Slim::Utils::Misc;
 
 sub suppressAll        { 0 }
-sub nameTransform      { '' }
 sub allTransform       { '' }
 sub descendTransform   { '' }
 sub browseBodyTemplate { '' }
@@ -47,6 +46,118 @@ sub fixupFindKeys {
 	}
 
 	return $find;
+}
+
+sub generateConditionsFromFilters {
+	my ($self, $attrs) = @_;
+
+	my $rs      = $attrs->{'rs'};
+	my $level   = $attrs->{'level'};
+	my $levels  = $attrs->{'levels'};
+	my $params  = $attrs->{'params'} || {};
+
+	my %filters = ();
+	my %find    = ();
+	my %sort    = ();
+
+	# Create a map pointing to the previous RS for each level.
+	# 
+	# Example: For the navigation from Genres to Contributors, the
+	# hierarchy would be:
+	# 
+	# genre,contributor,album,track
+	# 
+	# we want the key in the level above us in order to descend.
+	#
+	# Which would give us: $find->{'genre'} = { 'contributor.id' => 33 }
+	my %levelMap = ();
+
+	for (my $i = 1; $i < scalar @{$levels}; $i++) {
+
+		$levelMap{ lc($levels->[$i-1]) } = lc($levels->[$i]);
+	}
+
+	# Filters builds up the list of params passed that we want to filter
+	# on. They are massaged into the %find hash.
+	my @sources  = map { lc($_) } Slim::Schema->sources;
+
+	# Build up the list of valid parameters we may pass to the db.
+	while (my ($param, $value) = each %{$params}) {
+	
+		if (!grep { $param =~ /^$_(\.\w+)?$/ } @sources) {
+			next;
+		}
+
+		$filters{$param} = $value;
+	}
+
+	if ($::d_sql) {
+		msg("levelMap:\n");
+		print Data::Dumper::Dumper(\%levelMap);
+		msg("filters:\n");
+		print Data::Dumper::Dumper(\%filters);
+	}
+
+	# Turn parameters in the form of: album.sort into the appropriate sort
+	# string. We specify a sortMap to turn something like:
+	# tracks.timestamp desc, tracks.disc, tracks.titlesort
+	while (my ($param, $value) = each %filters) {
+
+		if ($param =~ /^(\w+)\.sort$/) {
+
+			#$sort{$1} = $sortMap{$value} || $value;
+			#$sort{$1} = $value;
+
+			delete $filters{$param};
+		}
+	}
+
+	# Now turn each filter we have into the find hash ref we'll pass to ->descend
+	while (my ($param, $value) = each %filters) {
+
+		my ($levelName) = ($param =~ /^(\w+)\.\w+$/);
+
+		if ($param eq 'album.year') {
+			$levelName = 'year';
+		}
+
+		# Turn into me.* for the top level
+		if ($param =~ /^$levels->[0]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $self->{'attrs'}{'alias'}, $1);
+		}
+
+		# Turn into me.* for the current level
+		if ($param =~ /^$levels->[$level]\.(\w+)$/) {
+			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
+		}
+
+		$::d_sql && msg("working on levelname: [$levelName]\n");
+
+		if (my $mapKey = $levelMap{$levelName}) {
+
+			if (ref($value)) {
+				$find{$mapKey} = $value;
+			} else {
+				$find{$mapKey} = { $param => $value };
+			}
+		}
+
+		# Pre-populate the attrs list with all query parameters that 
+		# are not part of the hierarchy. This allows a URL to put
+		# query constraints on a hierarchy using a field that isn't
+		# necessarily part of the hierarchy.
+		if (!grep { $_ eq $levelName } @{$levels}) {
+
+			#push @{$attrs}, join('=', $param, $value);
+		}
+	}
+
+	if ($::d_sql) {
+		msg("find:\n");
+		print Data::Dumper::Dumper(\%find);
+	}
+
+	return (\%filters, \%find, \%sort);
 }
 
 sub descend {

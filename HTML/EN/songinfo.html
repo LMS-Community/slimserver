@@ -97,7 +97,7 @@
 	
 		[% IF itemobj.year %] 
 			<li><div class="songInfoTitle">[% "YEAR" | string; "COLON" | string %]</div>
-				<div class="songInfoText"><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.year=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a></div>
+				<div class="songInfoText"><a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;album.year=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a></div>
 			</li>
 		[% END %]
 		

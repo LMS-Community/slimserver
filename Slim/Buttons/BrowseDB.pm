@@ -148,13 +148,8 @@ sub init {
 			# Create the search term list that we will send along with our command.
 			my @terms        = ();
 			my $field        = $levels[$level];
-
 			my $levelRS      = Slim::Schema->rs($field);
-		
-			if (my $transform = $levelRS->nameTransform) {
-				$field = $transform;
-			}
-				
+
 			# Include the current item
 			if ($field ne 'track' && !$all) {
 				push @terms, join('=', $field, $currentItem->id);
@@ -164,6 +159,13 @@ sub init {
 			# XXXX - it'd be nice to just serialize this using
 			# Storable and send it to Slim::Control::*
 			while (my ($key, $value) = each %{$findCriteria}) {
+
+				# Bug: 3582 - pass along album.compilation as
+				# 0, and reconstitute it in parseSearchTerms.
+				if (ref($value) eq 'ARRAY' && $key eq 'album.compilation') {
+
+					$value = 0;
+				}
 
 				if (ref($value) eq 'ARRAY') {
 
@@ -398,10 +400,6 @@ sub browsedbExitCallback {
 			my $selectionCriteria = $client->param('selectionCriteria');
 			my $field             = $levels[$level];
 
-			if (my $transform = $levelRS->nameTransform) {
-				$field = $transform;
-			}
-
 			# Include the current item in the find criteria for the next level down.
 			if (!$all) {
 
@@ -412,7 +410,13 @@ sub browsedbExitCallback {
 					$findCriteria->{'album.compilation'} = 1;
 				}
 
-				$findCriteria->{"$field.id"} = $currentItem->id;
+				# XXX - this sucks. I'd really like to find a
+				# better way to do this.
+				if ($field eq 'year') {
+					$findCriteria->{"album.year"} = $currentItem->year;
+				} else {
+					$findCriteria->{"$field.id"} = $currentItem->id;
+				}
 			}
 
 			my %params = (
@@ -489,9 +493,7 @@ sub browsedbItemName {
 		}
 
 		my $items  = $client->param('listRef');
-
-		# Pull the nameTransform if needed - for New Music, etc
-		my $field  = $levelRS->nameTransform || $levels[$level];
+		my $field  = $levels[$level];
 		my $newObj = Slim::Schema->find($field, $item);
 
 		if (!defined $newObj) {
@@ -516,16 +518,17 @@ sub browsedbItemName {
 
 		return $item->year || $client->string('UNK');
 
-	} elsif (($levels[$level] eq 'album') || ($levelRS->nameTransform eq 'album')) {
+	} elsif (($levels[$level] eq 'album')) {
 
 		my @name         = $item->name;
 		my $findCriteria = $client->param('findCriteria') || {};
 
 		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'album.year'}) {
 
-			my $year = $item->year;
+			if (my $year = $item->year) {
 
-			push @name, " ($year)" if $year;
+				push @name, " ($year)";
+			}
 		}
 
 		if (Slim::Utils::Prefs::get('showArtist') && !$findCriteria->{'contributor.id'}) {
@@ -595,9 +598,8 @@ sub setMode {
 
 	my $hierarchy = $client->param('hierarchy');
 	my $level     = $client->param('level') || 0;
-	my $filters   = $client->param('findCriteria') || {};
+	my $params    = $client->param('findCriteria') || {};
 	my $search    = $client->param('search');
-	my %find      = ();
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
@@ -614,76 +616,24 @@ sub setMode {
 
 	my $rs      = Slim::Schema->rs($levels[$level]);
 	my $topRS   = Slim::Schema->rs($levels[0]);
+	my %names   = ();
 
 	# First get the names of the specified parameters.
 	# These could be necessary for titles.
-	my %names      = ();
-	my %levelMap   = ();
 	my $setAllName = 0;
 
-	for (my $i = 1; $i < scalar @levels; $i++) {
-
-		$levelMap{ lc($levels[$i-1]) } = lc($levels[$i]);
-	}
-
-	# info doesn't seem right, but we don't have a browse debug.
-	if ($::d_info) {
-		msg("levelmap:\n");
-		print Data::Dumper::Dumper(\%levelMap);
-		msg("filters:\n");
-		print Data::Dumper::Dumper($filters);
-	}
-
-	# hierarchy: contributor,album,track level: 2
-
-	while (my ($param, $value) = each %{$filters}) {
-
-		my ($levelName) = ($param =~ /^(\w+)(\.\w+)?$/);
-
-		$::d_info && msg("param 1: [$param] value: [$value] level0: [$levels[0]] curlevel: [$levels[$level]]\n");
-
-		# Turn into me.* for the top level
-		if ($param =~ /^$levels[0]\.(\w+)$/) {
-
-			$param = sprintf('%s.%s', $topRS->{'attrs'}{'alias'}, $1);
-
-			$::d_info && msg("param 2: [$param] value: [$value]\n");
-		}
-
-		# Turn into me.* for the current level
-		if ($param =~ /^$levels[$level]\.(\w+)$/) {
-
-			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
-
-			$::d_info && msg("param 3: [$param] value: [$value]\n");
-		}
-
-		$::d_info && msg("working on levelname: [$levelName]\n");
-
-		if (my $mapKey = $levelMap{$levelName}) {
-
-			if (ref($value)) {
-				$find{$mapKey} = $value;
-			} else {
-				$find{$mapKey} = { $param => $value };
-			}
-		}
-	}
-
-	if ($::d_info) {
-		msg("find:\n");
-		print Data::Dumper::Dumper(\%find);
-	}
+	my ($filters, $find, $sort) = $topRS->generateConditionsFromFilters({
+		'rs'      => $rs,
+		'level'   => $level,
+		'levels'  => \@levels,
+		'params'  => $params,
+	});
 
 	# Build up the names for the top line
 	for my $i (0..$#levels) {
 
 		my $field = $levels[$i];
 		my $rs    = Slim::Schema->rs($field) || next;
-
-		if (my $transform = $rs->nameTransform) {
-			# $field = $transform;
-		}
 
 		if ($setAllName && $rs->allTitle) {
 
@@ -703,8 +653,6 @@ sub setMode {
 	}
 
 	# Next to the actual query to get the items to display
-	#
-	# Ask for only IDs - so we can inflate on the fly.
 	my @items = ();
 
 	if (defined $search) {
@@ -713,7 +661,7 @@ sub setMode {
 
 	} else {
 
-		$topRS = $topRS->descend(\%find, {}, @levels[0..$level])->distinct;
+		$topRS = $topRS->descend($find, $sort, @levels[0..$level])->distinct;
 
 		if ($levels[$level] eq 'age') {
 
@@ -827,7 +775,7 @@ sub setMode {
 
 	} else {
 
-		$selectionKey = join(':', $hierarchy, $level, Storable::freeze(\%find));
+		$selectionKey = join(':', $hierarchy, $level, Storable::freeze($find));
 
 		$listIndex = $client->lastID3Selection($selectionKey) || 0;
 
@@ -855,7 +803,7 @@ sub setMode {
 		descend           => $descend,
 		search            => $search,
 		selectionKey      => $selectionKey,
-		findCriteria      => \%find,
+		findCriteria      => $find,
 		selectionCriteria => $selectionCriteria,
 	);
 
@@ -864,7 +812,7 @@ sub setMode {
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
 	# sort at simple track level as well.
-	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $find{'album.id'} && !$search)) {
+	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $find->{'album.id'} && !$search)) {
 
 		$params{'isSorted'}  = 'L';
 
@@ -872,9 +820,7 @@ sub setMode {
 			my $index = shift;
 			my $item  = $items[$index];
 
-			# Pull the nameTransform if needed - for New Music, etc
 			if (!ref($item)) {
-
 				return $client->string($item);
 			}
 
