@@ -301,8 +301,7 @@ sub _parseASFFilePropertiesObject {
 
 	my %info = ();
 
-	$info{'fileid'}			= $self->_readAndIncrementOffset($GUID);
-	$info{'fileid_guid'}		= _byteStringToGUID($info{'fileid'});
+	$info{'fileid_guid'}		= _byteStringToGUID($self->_readAndIncrementOffset($GUID));
 
 	$info{'filesize'}		= _parse64BitString($self->_readAndIncrementOffset($QWORD));
 
