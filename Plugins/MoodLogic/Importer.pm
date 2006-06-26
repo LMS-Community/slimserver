@@ -282,7 +282,7 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
-	my $progress = Slim::Utils::ProgressBar->scanProgressBar($count);
+	my $progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
 
 	for (my $scan = 0; $scan <= $count; $scan++) {
 		my @album_data = (-1, undef, undef);
@@ -351,10 +351,10 @@ sub exportSongs {
 		
 		$class->exportContribGenres($track,$scan);
 		
-		if ($progress) {
-			$progress->update;
-		}
+		$progress->update if $progress;
 	}
+
+	$progress->final($count);
 }
 
 sub exportContribGenres {

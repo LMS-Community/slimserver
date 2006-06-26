@@ -136,7 +136,7 @@ sub scanDirectory {
 	}
 
 	# Give the user a progress indicator if available.
-	my $progress = Slim::Utils::ProgressBar->scanProgressBar(scalar @files);
+	my $progress = Slim::Utils::ProgressBar->new({ 'total' => scalar @files });
 
         for my $file (@files) {
 
@@ -209,10 +209,10 @@ sub scanDirectory {
 			push @objects, $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
 		}
 
-		if ($progress) {
-			$progress->update;
-		}
+		$progress->update if $progress;
 	}
+
+	$progress->final if $progress;
 
 	# If the caller wants the list of objects we found.
 	if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {

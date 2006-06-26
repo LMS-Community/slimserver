@@ -241,7 +241,7 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
-	my $progress = Slim::Utils::ProgressBar->scanProgressBar($count);
+	my $progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
 
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
 	# down the entire library, separated by $LF$LF - this allows us to make
@@ -289,6 +289,8 @@ sub exportSongs {
 			$class->processSong($content, $progress);
 		}
 	}
+
+	$progress->final($count);
 }
 
 sub processSong {
@@ -357,6 +359,8 @@ sub processSong {
 
 		$::d_musicmagic && msg("MusicMagic: Couldn't create track for $fileurl!\n");
 
+		$progress->update if $progress;
+
 		return;
 	};
 
@@ -387,9 +391,7 @@ sub processSong {
 		}
 	}
 
-	if ($progress) {
-		$progress->update;
-	}
+	$progress->update if $progress;
 }
 
 sub exportPlaylists {

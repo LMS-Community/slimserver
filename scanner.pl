@@ -85,9 +85,6 @@ sub main {
 		exit;
 	}
 
-	# Start up the file scanner code
-	Slim::Utils::ProgressBar->init;
-
 	if ($playlists) {
 
 		Slim::Music::PlaylistFolderScan->init;

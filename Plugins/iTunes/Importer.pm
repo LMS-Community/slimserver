@@ -132,7 +132,7 @@ sub startScan {
 		return;
 	}
 
-	$progress = Slim::Utils::ProgressBar->scanProgressBar( $class->getTotalTrackCount($file) );
+	$progress = Slim::Utils::ProgressBar->new({ 'total' => $class->getTotalTrackCount($file) });
 
 	$iTunesScanStartTime = time();
 
@@ -158,6 +158,8 @@ sub startScan {
 
 sub doneScanning {
 	my $class = shift;
+
+	$progress->final if $progress;
 
 	$::d_itunes && msg("iTunes: Finished Scanning\n");
 

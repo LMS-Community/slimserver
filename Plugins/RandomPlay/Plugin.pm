@@ -637,6 +637,8 @@ sub initPlugin {
 	checkDefaults();
 
 	# Populate the genreMap, so we can use IDs
+	# XXX - we should do this after every rescan, to make sure our genres
+	# are up to date.
 	for my $genre (Slim::Schema->search('Genre')->all) {
 
 		$genreNameMap{$genre->name} = $genre->id;
@@ -651,7 +653,7 @@ sub initPlugin {
 #        |  |  |has Tags
 #        |  |  |  |Function to call
 #        C  Q  T  F
-    Slim::Control::Request::addDispatch(['randomplay', '_mode'],
+	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
         [1, 0, 0, \&cliRequest]);
 }
 
