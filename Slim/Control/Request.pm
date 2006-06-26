@@ -1507,7 +1507,7 @@ sub notify {
 	}
 	
 	# if we must call executeCallback (there are entries in its queue) and
-	# this is not where we're been call from, render as Array and call
+	# this is not where we're been called from, render as Array and call
 	# executeCallback with the array.
 	# The reason for the first parameter is that renderAsArray is somewhat
 	# expensive and we try to avoid it if we can.

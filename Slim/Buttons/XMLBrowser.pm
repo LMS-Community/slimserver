@@ -943,6 +943,10 @@ sub _cliQuery_done {
 				}
 			}
 		}
+		else {
+			$request->setStatusBadParams();
+			return;
+		}
 	}	
 
 	elsif ($isItemQuery) {
@@ -952,6 +956,7 @@ sub _cliQuery_done {
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
 		my $search   = $request->getParam('search');
+		my $want_url = $request->getParam('want_url') || 0;
 	
 		# allow searching in the name field
 		if ($search && @{$subFeed->{'items'}}) {
@@ -1005,6 +1010,14 @@ sub _cliQuery_done {
 								$request->addResultLoop($loopname, $cnt, 'hasitems', 1) if !$hasItems;
 								$hasItems++;
 						}
+						# Only add value if different from url
+						elsif ($data eq 'value') {
+							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if ($item->{$data} ne $item->{'url'});
+						}
+						# Only add url if requested
+						elsif ($data eq 'url') {
+							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if $want_url;
+						}						
 						elsif ($item->{$data} && $data !~ /^(name|title)$/) {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
 						}

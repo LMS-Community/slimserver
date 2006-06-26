@@ -3949,6 +3949,14 @@ in the saved playlists folder.</p>
 			name or title.
 		</td>
 	</tr>
+	<tr>
+		<td>
+			want_url
+		</td>
+		<td>
+			If set to 1, urls are returned by the query, otherwise they aren't.
+		</td>
+	</tr>
 </table>
 <p>
 	Returned tagged parameters:
@@ -4002,7 +4010,8 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;hasitems
 		</td>
 		<td>
-			Whether or not an item has sub-items.
+			Whether or not an item has sub-items. May indicate the number of
+			sub-items.
 		</td>
 	</tr>
 	<tr>
@@ -4019,8 +4028,11 @@ in the saved playlists folder.</p>
 			&nbsp;&nbsp;url
 		</td>
 		<td>
-			URL of the station or track. The station can be played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command.
+			URL of the station or track (only returned if parameter 
+			&quot;want_url&quot; is set to 1). Although, the station can be 
+			played using the 
+			&quot;<a href="#playlist play">playlist play</a>&quot; command, an 
+			equivalent command that operates on the id is provided below.
 		</td>
 	</tr>
 	<tr>
@@ -4045,9 +4057,9 @@ in the saved playlists folder.</p>
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;picks 0 2 item_id:0&lt;LF&gt;&quot;
+		Request: &quot;picks items 0 2 item_id:0&lt;LF&gt;&quot;
 		<br>
-		Response: "picks 0 2 
+		Response: "picks items 0 2 
 		item_id:0 
 		count:19 
 		id:0.0
@@ -4066,7 +4078,7 @@ in the saved playlists folder.</p>
 			&lt;playerid&gt;
 			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt;
 			playlist
-			&lt;cmd&gt;
+			&lt;play|load|insert|add&gt;
 			&lt;taggedParameters&gt;
 		</code>
 	</strong>
@@ -4075,8 +4087,7 @@ in the saved playlists folder.</p>
 	This command adds or plays an item. Though playback of these stations could 
 	be achieved by the standard playlist methods, calling this command will 
 	ensure that the station's name is displayed, not only it's url (if 
-	possible). This command accepts "play", "insert" and "add" as playlist 
-	commands.
+	possible). 
 	<br>
 	If item_id defines an item that can't be played, but contains playable 
 	subitems, then these will be played instead. This allows to eg. play all 
