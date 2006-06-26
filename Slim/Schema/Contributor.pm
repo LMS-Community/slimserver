@@ -12,6 +12,7 @@ our %contributorToRoleMap = (
 	'CONDUCTOR'   => 3,
 	'BAND'        => 4,
 	'ALBUMARTIST' => 5,
+	'TRACKARTIST' => 6,
 );
 
 {

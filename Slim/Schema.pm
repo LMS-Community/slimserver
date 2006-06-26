@@ -589,6 +589,8 @@ sub cleanupStaleTrackEntries {
 	$::d_import && msg("Import: Starting db garbage collection..\n");
 
 	my $iterator = $self->search('Track', { 'audio' => 1 });
+	my $count    = $iterator->count;
+	my $progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
 
 	# fetch one at a time to keep memory usage in check.
 	while (my $track = $iterator->next) {
@@ -598,11 +600,13 @@ sub cleanupStaleTrackEntries {
 
 			$track = undef;
 		}
+
+		$progress->update if $progress;
 	}
 
-	$::d_import && msg(
-		"Import: Finished with stale track cleanup. Adding tasks for Contributors, Albums & Genres.\n"
-	);
+	$progress->final($count) if $progress;
+
+	$::d_import && msg("Import: Finished with stale track cleanup.\n");
 
 	# Walk the Album, Contributor and Genre tables to see if we have any dangling
 	# entries, pointing to non-existant tracks.
@@ -706,7 +710,14 @@ sub mergeVariousArtistsAlbums {
 		'me.compilation' => undef,
 		'me.title'       => { '!=' => string('NO_ALBUM') },
 
-	}, { 'prefetch' => { 'tracks' => 'contributorTracks' } });
+	}, { 'prefetch' => { 'tracks' => 'contributorTracks' } })->distinct;
+
+	my $progress = undef;
+	my $count    = $cursor->count;
+
+	if ($count) {
+		$progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+	}
 
 	# fetch one at a time to keep memory usage in check.
 	ALBUM: while (my $albumObj = $cursor->next) {
@@ -757,7 +768,11 @@ sub mergeVariousArtistsAlbums {
 			$albumObj->contributor($vaObjId);
 			$albumObj->update;
 		}
+
+		$progress->update if $progress;
 	}
+
+	$progress->final($count) if $progress;
 
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
@@ -930,9 +945,6 @@ sub _readTags {
 
 	# Only set if we couldn't read it from the file.
 	$attributesHash->{'CONTENT_TYPE'} ||= $type;
-
-	# note that we've read in the tags.
-	$attributesHash->{'TAG'} = 1;
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	while (my ($tag, $value) = each %{$attributesHash}) {
@@ -1261,6 +1273,21 @@ sub _postCheckAttributes {
 		return undef;
 	}
 
+	# Make a local variable for COMPILATION, that is easier to handle
+	my $isCompilation = undef;
+
+	if (defined $attributes->{'COMPILATION'}) {
+
+		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} == 1) {
+
+			$isCompilation = 1;
+
+		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} == 0) {
+
+			$isCompilation = 0;
+		}
+	}
+
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
 	my $isLocal = $trackAudio && !$trackRemote;
@@ -1295,7 +1322,7 @@ sub _postCheckAttributes {
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
-	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes);
+	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation);
 	my $foundContributor = scalar keys %{$contributors};
 
 	# Create a singleton for "No Artist"
@@ -1335,21 +1362,6 @@ sub _postCheckAttributes {
 	my $album    = $attributes->{'ALBUM'};
 	my $disc     = $attributes->{'DISC'};
 	my $discc    = $attributes->{'DISCC'};
-
-	# Make a local variable for COMPILATION, that is easier to handle
-	my $isCompilation = undef;
-
-	if (defined $attributes->{'COMPILATION'}) {
-
-		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} == 1) {
-
-			$isCompilation = 1;
-
-		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} == 0) {
-
-			$isCompilation = 0;
-		}
-	}
 
 	# we may have an album object already..
 	my $albumObj = $track->album if !$create;
@@ -1435,6 +1447,11 @@ sub _postCheckAttributes {
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
 				$search->{'discc'} = $discc;
+
+			} else {
+
+				$search->{'disc'}  = undef;
+				$search->{'discc'} = undef;
 			}
 
 			# If we have a compilation bit set - use that instead
@@ -1623,14 +1640,26 @@ sub _albumIsUnknownAlbum {
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $track, $attributes) = @_;
+	my ($self, $track, $attributes, $isCompilation) = @_;
 
 	my %contributors = ();
 
-	# XXXX - This order matters! Album artist should always be first,
-	# since we grab the 0th element from the contributors array below when
-	# creating the Album.
-	my @tags = qw(ALBUMARTIST ARTIST BAND COMPOSER CONDUCTOR);
+	my @tags = qw(ALBUMARTIST ARTIST TRACKARTIST BAND COMPOSER CONDUCTOR);
+
+	# Bug: 2317 & 2638
+	#
+	# Bring back the TRACKARTIST role.
+	#
+	# If the user has not explictly set a compilation flag, _and_ the user
+	# has explict album artist(s) set, make the artist(s) tags become
+	# TRACKARTIST contributors for this track.
+	if (!defined $isCompilation) {
+
+		if ($attributes->{'ARTIST'} && $attributes->{'ALBUMARTIST'}) {
+
+			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
+		}
+	}
 
 	for my $tag (@tags) {
 
