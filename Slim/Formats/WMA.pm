@@ -17,6 +17,8 @@ my %tagMapping = (
 	'VBR'		=> 'VBR_SCALE',
 );
 
+my $tagCache  = [];
+
 {
 	# WMA tags are stored as UTF-16 by default.
 	if ($] > 5.007) {
@@ -32,15 +34,15 @@ sub getTag {
 	my $tags = {};
 
 	my $wma  = Audio::WMA->new($file) || return $tags;
-	
+
 	# We can have stacked tags for multple artists.
-	if ($wma->tags()) {
-		foreach my $key (keys %{$wma->tags()}) {
+	if ($wma->tags) {
+		foreach my $key (keys %{$wma->tags}) {
 			$tags->{uc $key} = $wma->tags($key);
 		}
 	}
 	
-	# Correct ogginfo tags
+	# Map tags onto SlimServer's preferred.
 	while (my ($old,$new) = each %tagMapping) {
 
 		if (exists $tags->{$old}) {
@@ -64,7 +66,34 @@ sub getTag {
 
 	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
 	
+	$tagCache = [ $file, $tags ];
+
 	return $tags;
+}
+
+sub getCoverArt {
+	my $class = shift;
+	my $file  = shift || return undef;
+
+	# Try to save a re-read
+	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+
+		my $pic = $tagCache->[1]->{'PICTURE'}->{'DATA'};
+
+		# Don't leave anything around.
+		$tagCache = [];
+
+		return $pic;
+	}
+
+	my $tags = $class->getTag($file);
+
+	if (ref($tags) eq 'HASH' && defined $tags->{'PICTURE'}) {
+
+		return $tags->{'PICTURE'}->{'DATA'};
+	}
+
+	return undef;
 }
 
 1;

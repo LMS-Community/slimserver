@@ -73,7 +73,8 @@ sub getTag {
 }
 
 sub getCoverArt {
-	my $file = shift;
+	my $class = shift;
+	my $file  = shift;
 
 	# Try to save a re-read
 	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {

@@ -83,7 +83,13 @@ sub _imageContentType {
 
 		return 'image/png';
 
-	} elsif ($$body =~ /^\xff\xd8\xff\xe0..JFIF/) {
+	} elsif ($$body =~ /^.*?(\xff\xd8\xff\xe0..JFIF)/) {
+
+		my $header = $1;
+
+		# jpeg images must start with ff d8 ff e0 or they are not jpeg,
+		# sometimes there is junk before.
+		$$body =~ s/^.*?$header/$header/;
 
 		return 'image/jpeg';
 	}
@@ -96,51 +102,31 @@ sub _readCoverArtTags {
 	my $track = shift;
 	my $file  = shift;
 
-	my ($body, $contentType);
-	
 	$::d_artwork && msg("readCoverArtTags: Looking for a covert art image in the tags of: [$file]\n");
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
-		if (Slim::Music::Info::isMP3($track) || Slim::Music::Info::isWav($track) || Slim::Music::Info::isAIFF($track)) {
+		my $ct          = Slim::Schema->contentType($track);
+		my $formatClass = Slim::Music::Info::classForFormat($ct);
+		my $body        = undef;
 
-			Slim::Music::Info::loadTagFormatForType('mp3');
+		if (Slim::Music::Info::loadTagFormatForType($ct) && $formatClass->can('getCoverArt')) {
 
-			$body = Slim::Formats::MP3::getCoverArt($file);
-
-		} elsif (Slim::Music::Info::isMOV($track)) {
-
-			Slim::Music::Info::loadTagFormatForType('mov');
-
-			$body = Slim::Formats::Movie::getCoverArt($file);
-
-		} elsif (Slim::Music::Info::isFLAC($track)) {
-
-			Slim::Music::Info::loadTagFormatForType('flc');
-
-			$body = Slim::Formats::FLAC::getCoverArt($file);
+			$body = $formatClass->getCoverArt($file);
 		}
 
 		if ($body) {
 
-			$::d_artwork && msg("found image in $file of length " . length($body) . " bytes \n");
+			my $contentType = $class->_imageContentType(\$body);
 
-			$contentType = $class->_imageContentType(\$body);
-
-			$::d_info && msg( "found $contentType image\n");
-
-			# jpeg images must start with ff d8 ff e0 or they ain't jpeg, sometimes there is junk before.
-			if ($contentType && $contentType eq 'image/jpeg') {
-
-				$body =~ s/^.*?\xff\xd8\xff\xe0/\xff\xd8\xff\xe0/;
-			}
+			$::d_artwork && msgf("readCoverArtTags: Found image of length [%d] bytes with type: [$contentType]\n", length($body));
 
 			return ($body, $contentType, 1);
 		}
 
  	} else {
 
-		$::d_info && msg("readCoverArtTags: Not file we can extract artwork from. Skipping: $file\n");
+		$::d_info && msg("readCoverArtTags: Not file we can extract artwork from. Skipping.\n");
 	}
 
 	return undef;

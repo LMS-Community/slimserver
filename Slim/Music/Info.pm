@@ -1157,7 +1157,7 @@ sub typeFromPath {
 sub loadTagFormatForType {
 	my $type  = shift;
 
-	return if $loadedTagClasses{$type};
+	return 1 if $loadedTagClasses{$type};
 
 	$::d_info && msg("Trying to load $tagClasses{$type}\n");
 
@@ -1167,10 +1167,12 @@ sub loadTagFormatForType {
 
 		msg("Couldn't load module: $tagClasses{$type} : [$@]\n");
 		bt();
+		return 0;
 
 	} else {
 
 		$loadedTagClasses{$type} = 1;
+		return 1;
 	}
 }
 
