@@ -10,7 +10,7 @@ package Slim::Schema::Storage;
 # Shim to get a backtrace out of throw_exception
 
 use strict;
-use base qw(DBIx::Class::Storage::DBI);
+use base qw(DBIx::Class::Storage::DBI::mysql);
 
 use Slim::Utils::Misc;
 
@@ -20,6 +20,17 @@ sub throw_exception {
 	errorMsg($msg);
 	errorMsg("Backtrace follows:\n");
 	bt();
+}
+
+# XXXX - hack to work around a bug in DBIx::Class 0.06xxx
+sub _populate_dbh {
+	my $self  = shift;
+	my $class = ref($self);
+
+	$self->next::method(@_);
+	bless($self, $class);
+
+	return;
 }
 
 1;

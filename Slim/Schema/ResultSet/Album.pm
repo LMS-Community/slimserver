@@ -71,17 +71,17 @@ sub browse {
 		push @join, 'contributorAlbums';
 	}
 
-	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre'} && defined $find->{'artist'}) {
+	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'} && defined $find->{'contributor.id'}) {
 
 		# Don't filter by genre - it's unneccesary and
 		# creates a intensive query. We're already at
 		# the album level for an artist
-		delete $find->{'genre'};
+		delete $find->{'genre.id'};
 	}
 
 	# Bug: 2192 - Don't filter out compilation
 	# albums at the artist level - we want to see all of them for an artist.
-	if ($find->{'artist'} && $find->{'album.compilation'} != 1) {
+	if ($find->{'contributor.id'} && $find->{'album.compilation'} != 1) {
 
 		delete $find->{'album.compilation'};
 	}
