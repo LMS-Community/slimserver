@@ -66,6 +66,9 @@ sub init {
 		}
 	}
 
+	# For custom exceptions
+	$class->storage_type('Slim::Schema::Storage');
+
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 1,
@@ -228,9 +231,21 @@ sub wipeDB {
 
 	$::d_import && msg("Import: Start schema_clear\n");
 
-	Slim::Utils::SQLHelper->executeSQLFile(
-		$class->driver, $class->storage->dbh, "schema_clear.sql"
-	);
+	$class->storage->txn_begin;
+
+	eval {
+
+		Slim::Utils::SQLHelper->executeSQLFile(
+			$class->driver, $class->storage->dbh, "schema_clear.sql"
+		);
+
+		$class->storage->txn_commit;
+	}
+
+	if ($@) {
+		errorMsg("wipeDB: [$@]\n");
+		$class->storage->txn_rollback;
+	}
 
 	$::d_import && msg("Import: End schema_clear\n");
 
@@ -881,10 +896,6 @@ sub _readTags {
 			return $attributesHash;
 		}
 
-		if (defined $attributesHash->{'TRACKNUM'}) {
-			$attributesHash->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributesHash->{'TRACKNUM'});
-		}
-		
 		# Turn the tag SET into DISC and DISCC if it looks like # or #/#
 		if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
 
@@ -1185,12 +1196,16 @@ sub _preCheckAttributes {
 
 	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
 	# Same for DISC - Bug 2821
-	for my $tag (qw(YEAR DISC DISCC TRACKNUM)) {
+	for my $tag (qw(YEAR DISC DISCC)) {
 
 		if (defined $attributes->{$tag} && $attributes->{$tag} !~ /^\d+$/) {
 
 			delete $attributes->{$tag};
 		}
+	}
+
+	if (defined $attributes->{'TRACKNUM'}) {
+		$attributes->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributes->{'TRACKNUM'});
 	}
 
 	# Munge the replaygain values a little

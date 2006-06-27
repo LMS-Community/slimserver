@@ -1374,10 +1374,7 @@ sub openSong {
 			$endian     = $track->endian() || '';
 			$drm        = $track->drm();
 
-			$::d_source && msg(
-				"openSong: getting duration  $duration, size $size, endian " .
-				"$endian and offset $offset for $fullpath\n"
-			);
+			$::d_source && msg("openSong: duration: [$duration] size: [$size] endian [$endian] offset: [$offset] for $fullpath\n");
 
 			if ($drm) {
 
