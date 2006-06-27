@@ -65,6 +65,10 @@ sub new {
 
 	$class = ref($class) || $class;
 
+	if (!$::progress) {
+		return undef;
+	}
+
 	# Treat a single value as a count.
 	if (!ref($args) eq 'HASH') {
 		$args = { 'total' => $args };
