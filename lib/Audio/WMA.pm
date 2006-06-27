@@ -266,7 +266,7 @@ sub _parseWMAHeader {
 			my $value = $v->{'value'} || 0;
 
 			# Append onto an existing item, as an array ref
-			if (exists $self->{'TAGS'}->{$name}) {
+			if (exists $self->{'TAGS'}->{$name} && $name ne 'VBR') {
 
 				if (ref($self->{'TAGS'}->{$name}) eq 'ARRAY') {
 
