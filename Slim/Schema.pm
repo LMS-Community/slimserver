@@ -240,7 +240,7 @@ sub wipeDB {
 		);
 
 		$class->storage->txn_commit;
-	}
+	};
 
 	if ($@) {
 		errorMsg("wipeDB: [$@]\n");
