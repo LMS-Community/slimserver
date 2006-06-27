@@ -119,7 +119,8 @@ CREATE TABLE playlist_track (
   track  int(10) unsigned,
   PRIMARY KEY (id),
   INDEX trackIndex (track),
-  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`playlist`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
 ) TYPE=InnoDB CHARACTER SET utf8;
 
 --

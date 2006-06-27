@@ -10,15 +10,15 @@ ALTER TABLE tracks AUTO_INCREMENT = 1;
 
 DELETE FROM playlist_track;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE playlist_track AUTO_INCREMENT = 1;
 
 DELETE FROM albums;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE albums AUTO_INCREMENT = 1;
 
 DELETE FROM contributors;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE contributors AUTO_INCREMENT = 1;
 
 DELETE FROM contributor_track;
 
@@ -26,17 +26,17 @@ DELETE FROM contributor_album;
 
 DELETE FROM genres;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE genres AUTO_INCREMENT = 1;
 
 DELETE FROM genre_track;
 
 DELETE FROM comments;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE comments AUTO_INCREMENT = 1;
 
 DELETE FROM pluginversion;
 
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+ALTER TABLE pluginversion AUTO_INCREMENT = 1;
 
 DELETE FROM unreadable_tracks;
 
