@@ -270,7 +270,7 @@ sub seekNextFrame {
 	$startoffset = $filelen if ($startoffset > $filelen); 
 
 	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$::d_mp3 && Slim::Utils::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	$::d_mp3 && Slim::Utils::Misc::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread $fh, $buf, $MAXDISTANCE, 0;
 
