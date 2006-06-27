@@ -93,13 +93,21 @@ sub getTag {
 
 	open(my $fh, $file) or return {};
 
-	# Try to pull ID3v2 tags first. If those don't exist, proceed to v1
-	# Also try and get an APE tag, which may have ReplayGain data.
-	my $tags = MP3::Info::get_mp3tag($fh, 2, undef, 1); 
+	# This is somewhat messy - Use a customized version of MP3::Info's
+	# get_mp3tag, as we need custom logic.
+	my (%tags, %ape) = ();
 
-	if (!scalar keys %$tags) {
+	# Always take a v2 tag if we have it.
+	if (!MP3::Info::_get_v2tag($fh, 2, 0, \%tags)) {
 
-		$tags = MP3::Info::get_mp3tag($fh, 1); 
+		# Only use v1 tags if there are no v2 tags.
+		MP3::Info::_get_v1tag($fh, \%tags);
+	}
+
+	# Always add on any APE tags at the end. It may have ReplayGain data.
+	if (MP3::Info::_parse_ape_tag($fh, -s $file, \%ape)) {
+
+		%tags = (%tags, %ape);
 	}
 
 	# Now fetch the audio header information.
@@ -116,11 +124,20 @@ sub getTag {
 		$MP3::Info::try_harder = 0;
 	}
 
-	doTagMapping($tags);
+	doTagMapping(\%tags);
 
 	# we'll always have $info, as it's machine generated.
-	if ($tags && $info) {
-		%$info = (%$info, %$tags);
+	if (scalar keys %tags && scalar keys %{$info}) {
+		%$info = (%$info, %tags);
+	}
+
+	# Strip out any nulls.
+	for my $key (keys %{$info}) {
+
+		if (defined $info->{$key}) {
+			$info->{$key} =~ s/\000+.*//g;
+			$info->{$key} =~ s/\s+$//;
+		}
 	}
 
 	# sometimes we don't get this back correctly
@@ -135,6 +152,7 @@ sub getTag {
 
 	if ($start) {
 		$info->{'OFFSET'} = $start;
+
 		if ($end) {
 			$info->{'SIZE'} = $end - $start + 1;
 		}
