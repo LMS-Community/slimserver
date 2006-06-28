@@ -144,10 +144,14 @@ sub main {
 			Slim::Music::Import->startScan;
 		}
 
-		Slim::Schema->rs('MetaInformation')->update_or_create({
-			'name'  => 'lastRescanTime',
-			'value' => time,
+		my $lastRescan = Slim::Schema->rs('MetaInformation')->find_or_create({
+			'name' => 'lastRescanTime'
 		});
+
+		if ($lastRescan) {
+			$lastRescan->value(time);
+			$lastRescan->update;
+		}
 
 		Slim::Schema->storage->txn_commit;
 	};
