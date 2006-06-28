@@ -177,8 +177,8 @@ sub descend {
 		$::d_sql && msg("descend: working on level: [$level]\n");
 
 		if ($::d_sql) {
-			msg("\$self->result_class: [%s]\n", $self->result_class);
-			msg("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
+			msgf("\$self->result_class: [%s]\n", $self->result_class);
+			msgf("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
 				$self->result_source->schema->source($level)->result_class
 			);
 		}

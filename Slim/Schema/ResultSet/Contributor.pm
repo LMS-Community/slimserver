@@ -93,8 +93,19 @@ sub browse {
 sub descendAlbum {
 	my ($self, $find) = @_;
 
-	return $self
-		->search_related('contributorAlbums', $find)
+	# XXXX This may be able to go away when DBIx::Class -current becomes
+	# release (0.07?), and tables are unique in the join. Otherwise, using
+	# $self, an album_2 alias is created, so our sort below doesn't work.
+	my $rs    = $self->result_source->resultset;
+	my $roles = Slim::Schema->artistOnlyRoles;
+
+	if ($roles) {
+		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+	}
+
+	# Use a clean rs
+	return $rs
+		->search_related('contributorAlbums', $rs->fixupFindKeys($find))
 		->search_related('album', {}, { 'order_by' => 'concat(album.titlesort,\'0\'), album.disc' });
 }
 

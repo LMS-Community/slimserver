@@ -647,8 +647,10 @@ sub variousArtistsObject {
 	if (!blessed($vaObj) || !$vaObj->can('name')) {
 
 		$vaObj  = $self->resultset('Contributor')->find_or_create({
-			'name' => $vaString,
-		});
+			'name'       => $vaString,
+			'namesearch' => Slim::Utils::Text::ignoreCaseArticles($vaString),
+			'namesort'   => Slim::Utils::Text::ignoreCaseArticles($vaString),
+		}, { 'key' => 'namesearch' });
 	}
 
 	if ($vaObj && $vaObj->name ne $vaString) {
@@ -782,6 +784,14 @@ sub mergeVariousArtistsAlbums {
 			$albumObj->compilation(1);
 			$albumObj->contributor($vaObjId);
 			$albumObj->update;
+
+			# And update the contributor_albums table.
+			$self->resultset('ContributorAlbum')->find_or_create({
+				'album'       => $albumObj->id,
+				'contributor' => $vaObjId,
+				'role'        => Slim::Schema::Contributor->typeToRole($role),
+			});
+
 		}
 
 		$progress->update if $progress;
@@ -1529,7 +1539,15 @@ sub _postCheckAttributes {
 		my %set = ();
 
 		# Add an album artist if it exists.
-		$set{'contributor'} = $contributor->id if blessed($contributor);
+		# But set the album artist to various if there is no album artist.
+		if ($isCompilation && !$contributors->{'ALBUMARTIST'}) {
+
+			$set{'contributor'} = $self->variousArtistsObject->id;
+
+		} elsif (blessed($contributor)) {
+
+			$set{'contributor'} = $contributor->id;
+		}
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$set{'titlesort'}   = $sortable_title;
@@ -1614,6 +1632,12 @@ sub _postCheckAttributes {
 		while (my ($role, $contributors) = each %{$contributors}) {
 
 			for my $contributorObj (@{$contributors}) {
+
+				# XXXX - is this correct? VA albums need to be
+				# added to the contributor_album table somehow.
+				if ($isCompilation) {
+					$contributorObj = $self->variousArtistsObject;
+				}
 
 				$self->resultset('ContributorAlbum')->find_or_create({
 					'album'       => $albumObj->id,
