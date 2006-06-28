@@ -1585,7 +1585,7 @@ XML_EDITOR
 	NL	Redacteur
 
 XML_ENCLOSURE
-	DE	Anhänge
+	DE	Anhang
 	EN	Enclosure
 	NL	Bijlage
 
