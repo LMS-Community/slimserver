@@ -1338,7 +1338,7 @@ sub _postCheckAttributes {
 
 		Slim::Schema::Genre->add($genre, $track);
 
-	} elsif (!$create && $isLocal && $genre && $genre ne $track->genres->single) {
+	} elsif (!$create && $isLocal && $genre && $genre ne $track->genres->single->name) {
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
