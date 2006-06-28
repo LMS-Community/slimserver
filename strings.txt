@@ -1538,6 +1538,83 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
 
+XML_ERROR
+	DE	Fehler
+	EN	Error
+	IT	Errore
+	NL	Fout
+
+XML_ERROR
+	DE	Fehler
+	EN	Error
+	IT	Errore
+	NL	Fout
+
+XML_GET_FAILED
+	DE	Fehler beim Auslesen
+	EN	Failed to parse
+	ES	Error de parse
+	NL	Decoderen podcast mislukte
+
+XML_LOADING
+	DE	Hole Casts...
+	EN	Fetching...
+	ES	Recuperando...
+	FI	Haetaan...
+	NL	Ophalen...
+
+XML_LINK
+	EN	Link
+	IT	Collegamento
+	ES	Vínculo
+
+XML_URL
+	EN	Url
+	NL	URL
+
+XML_DATE
+	DE	Datum
+	EN	Date
+	ES	Fecha
+	IT	Data
+	NL	Datum
+
+XML_EDITOR
+	DE	Herausgeber
+	EN	Editor
+	NL	Redacteur
+
+XML_ENCLOSURE
+	DE	Anhänge
+	EN	Enclosure
+	NL	Bijlage
+
+XML_AUDIO_ENCLOSURES
+	DE	Audio Anhänge
+	EN	Audio Enclosures
+	NL	Audio bijlage
+
+XML_FEED_DESCRIPTION
+	DE	Über diesen Feed
+	EN	About this feed
+	ES	Acerca de este feed
+	NL	Over deze feed
+
+XML_SUBTITLE
+	DE	Untertitel
+	EN	Subtitle
+	NL	Subtitel
+
+XML_SUMMARY
+	DE	Zusammenfassung
+	EN	Summary
+	NL	Samenvatting
+	
+XML_EXPLICIT
+	DE	Anstössig
+	EN	Explicit
+	NL	Expliciet
+
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
 	EN	Number of listeners
@@ -2151,18 +2228,23 @@ STREAM_FORMAT
 	ZH_CN	流出格式
 
 SETUP_GROUP_FORMATS_EXTENSIONS
+	DE	Scanner-Einstellungen für Dateiendungen
 	EN	File Extensions Scanning Setup
 
 SETUP_DISABLEDEXTENSIONSAUDIO
+	DE	Deaktivierte Audio-Dateiendungen
 	EN	Disabled Audio File Extensions
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
+	DE	SlimServer wird nach allen Audio-Formaten suchen, die er unterstützt. Falls Sie dennoch einige Dateiendungen vom Durchsuchen ausschliessen möchten, so geben Sie diese hier an. Trennen Sie einzelne Einträge mit einem Komma.
 	EN	SlimServer will look for all audio files it supports. To disable specific file extensions from being scanned, enter a comma separated list below.
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
+	DE	Deaktivierte Wiedergabelisten-Dateiendungen
 	EN	Disabled Playlist File Extensions
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
+	DE	SlimServer wird nach allen Wiedergabelisten suchen, die er unterstützt. Falls Sie dennoch einige Dateiendungen vom Durchsuchen ausschliessen möchten, so geben Sie diese hier an. Trennen Sie einzelne Einträge mit einem Komma.
 	EN	SlimServer will look for all playlist files it supports. To disable specific file extensions from being scanned, enter a comma separated list below.
 
 PLAYER_TYPE

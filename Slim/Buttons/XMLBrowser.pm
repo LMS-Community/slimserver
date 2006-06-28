@@ -48,7 +48,7 @@ sub setMode {
 
 		#TODO: display the error on the client
 		my %params = (
-			'header'  => "{PODCAST_ERROR} {count}",
+			'header'  => "{XML_ERROR} {count}",
 			'listRef' => \@lines,
 		);
 
@@ -66,7 +66,7 @@ sub setMode {
 
 		# give user feedback while loading
 		$client->block(
-			$client->string('PODCAST_LOADING'),
+			$client->string('XML_LOADING'),
 			$title || $url,
 		);
 		
@@ -136,13 +136,13 @@ sub gotError {
 	}
 
 	my @lines = (
-		"{PODCAST_GET_FAILED} <$url>",
+		"{XML_GET_FAILED} <$url>",
 		$err,
 	);
 
 	#TODO: display the error on the client
 	my %params = (
-		'header'  => "{PODCAST_ERROR} {count}",
+		'header'  => "{XML_ERROR} {count}",
 		'listRef' => \@lines,
 	);
 
@@ -180,7 +180,7 @@ sub gotRSS {
 		!($feed->{'xmlns:slim'} && !$feed->{'description'})) {
 
 		my %desc = (
-			'name'       => '{PODCAST_FEED_DESCRIPTION}',
+			'name'       => '{XML_FEED_DESCRIPTION}',
 			'value'      => 'description',
 			'onRight'    => sub {
 				my $client = shift;
@@ -547,7 +547,7 @@ sub displayItemDescription {
 	if (my $link = hasLink($item)) {
 
 		push @lines, {
-			'name'       => '{PODCAST_LINK}: ' . $link,
+			'name'       => '{XML_LINK}: ' . $link,
 			'value'      => $link,
 			'overlayRef' => [ undef, Slim::Display::Display::symbol('rightarrow') ],
 		}
@@ -556,7 +556,7 @@ sub displayItemDescription {
 	if (hasAudio($item)) {
 
 		push @lines, {
-			'name'       => '{PODCAST_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
+			'name'       => '{XML_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
 			'value'      => $item->{'enclosure'}->{'url'},
 			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
 		};
@@ -633,16 +633,16 @@ sub displayFeedDescription {
 
 	if ($count) {
 		push @lines, {
-			'name'       => '{PODCAST_AUDIO_ENCLOSURES}: ' . $count,
+			'name'       => '{XML_AUDIO_ENCLOSURES}: ' . $count,
 			'value'      => $feed,
 			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
 		};
 	}
 
-	push @lines, '{PODCAST_URL}: ' . $client->param('url');
+	push @lines, '{XML_URL}: ' . $client->param('url');
 
-	$feed->{'lastBuildDate'}  && push @lines, '{PODCAST_DATE}: ' . $feed->{'lastBuildDate'};
-	$feed->{'managingEditor'} && push @lines, '{PODCAST_EDITOR}: ' . $feed->{'managingEditor'};
+	$feed->{'lastBuildDate'}  && push @lines, '{XML_DATE}: ' . $feed->{'lastBuildDate'};
+	$feed->{'managingEditor'} && push @lines, '{XML_EDITOR}: ' . $feed->{'managingEditor'};
 	
 	# TODO: more lines to show feed date, ttl, source, etc.
 	# even a line to play all enclosures
@@ -720,7 +720,7 @@ sub playItem {
 		# URL is remote, load it asynchronously...
 		# give user feedback while loading
 		$client->block(
-			$client->string('PODCAST_LOADING'),
+			$client->string('XML_LOADING'),
 			$title || $url,
 		);
 		

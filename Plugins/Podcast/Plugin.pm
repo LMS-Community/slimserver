@@ -430,67 +430,12 @@ PLUGIN_PODCAST
 	ES	Navegador de Podcasts
 	NL	Podcast browser
 
-PODCAST_ERROR
-	DE	Fehler
-	EN	Error
-	IT	Errore
-	NL	Fout
-
-PODCAST_GET_FAILED
-	DE	Fehler beim Auslesen
-	EN	Failed to parse
-	ES	Error de parse
-	NL	Decoderen podcast mislukte
-
-PODCAST_LOADING
-	DE	Hole Casts...
-	EN	Fetching...
-	ES	Recuperando...
-	FI	Haetaan...
-	NL	Ophalen...
-
-PODCAST_LINK
-	EN	Link
-	IT	Collegamento
-	ES	Vínculo
-
-PODCAST_URL
-	EN	Url
-	NL	URL
-
-PODCAST_DATE
-	DE	Datum
-	EN	Date
-	ES	Fecha
-	IT	Data
-	NL	Datum
-
-PODCAST_EDITOR
-	DE	Herausgeber
-	EN	Editor
-	NL	Redacteur
-
-PODCAST_ENCLOSURE
-	EN	Enclosure
-	NL	Bijlage
-
-PODCAST_AUDIO_ENCLOSURES
-	DE	Audio Enclosure
-	EN	Audio Enclosures
-	NL	Audio bijlage
-
 PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play
 	ES	Nada para escuchar
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
-
-PODCAST_FEED_DESCRIPTION
-	DE	Über diesen Feed
-	EN	About this feed
-	ES	Acerca de este feed
-	NL	Over deze feed
 
 PODCAST_GROUP_DESC
 	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
@@ -515,21 +460,6 @@ PODCAST_FEEDS_CHANGE
 	EN	Podcast list changed.
 	ES	Lista de Podcast modificada.
 	NL	Podcast lijst gewijzigd.
-	
-PODCAST_SUBTITLE
-	DE	Untertitel
-	EN	Subtitle
-	NL	Subtitel
-
-PODCAST_SUMMARY
-	DE	Zusammenfassung
-	EN	Summary
-	NL	Samenvatting
-	
-PODCAST_EXPLICIT
-	DE	Anstössig
-	EN	Explicit
-	NL	Expliciet
 
 SETUP_PLUGIN_PODCAST_FEEDS
 	EN	Podcasts

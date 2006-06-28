@@ -41,13 +41,13 @@
 					</li>
 					
 					[% IF streaminfo.item.subtitle %]
-					<li><div class="songInfoTitle">[% "PODCAST_SUBTITLE" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_SUBTITLE" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.subtitle | html %]</div>
 					</li>
 					[% END %]
 					
 					[% IF streaminfo.item.pubdate %]
-					<li><div class="songInfoTitle">[% "PODCAST_DATE" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_DATE" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.pubdate | html %]</div>
 					</li>
 					[% END %]					
@@ -65,19 +65,19 @@
 					[% END %]
 					
 					[% IF streaminfo.item.summary %]
-					<li><div class="songInfoTitle">[% "PODCAST_SUMMARY" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_SUMMARY" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.summary | html %]</div>
 					</li>
 					[% END %]								
 					
 					[% IF streaminfo.item.link %]
-					<li><div class="songInfoTitle">[% "PODCAST_LINK" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_LINK" | string; "COLON" | string %]</div>
 						<div class="songInfoText"><a href="[% streaminfo.item.link | html %]" target="_blank">[% streaminfo.item.link | html %]</a></div>
 					</li>
 					[% END %]
 					
 					[% IF streaminfo.item.enclosure %]
-					<li><div class="songInfoTitle">[% "PODCAST_ENCLOSURE" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_ENCLOSURE" | string; "COLON" | string %]</div>
 						<div class="songInfoText">
 							<a href="[% streaminfo.item.enclosure.url | html %]" target="_blank">[% streaminfo.item.enclosure.url | html %]</a><br />
 							[% FILTER format('%.2f'); streaminfo.item.enclosure.length / 1048576; END %] MB
@@ -92,7 +92,7 @@
 					[% END %]
 					
 					[% IF streaminfo.item.explicit %]
-					<li><div class="songInfoTitle">[% "PODCAST_EXPLICIT" | string; "COLON" | string %]</div>
+					<li><div class="songInfoTitle">[% "XML_EXPLICIT" | string; "COLON" | string %]</div>
 						<div class="songInfoText">[% streaminfo.item.explicit | html %]</div>
 					</li>
 					[% END %]					
