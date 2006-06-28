@@ -59,50 +59,33 @@ sub browse {
 
 	my @join = ();
 
-	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre'}) {
+	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'}) {
 
-		if (defined $find->{'album'}) {
+		if (defined $find->{'album.id'}) {
 
 			# Don't filter by genre - it's unneccesary and
 			# creates a intensive query. We're already at
 			# the track level for an album. Same goes for artist.
-			delete $find->{'genre'};
-			delete $find->{'artist'};
-			delete $find->{'contributor_track.role'};
+			delete $find->{'genre.id'};
+			delete $find->{'contributor.id'};
+			delete $find->{'contributorTracks.role'};
 
-		} elsif (defined($find->{'artist'})) {
+		} elsif (defined($find->{'contributor.id'})) {
 
 			# Don't filter by genre - it's unneccesary and
 			# creates a intensive query. We're already at
 			# the track level for an artist.
-			delete $find->{'genre'};
+			delete $find->{'genre.id'};
 		}
 	}
 
-	# Check to see if our only criteria is an
-	# Album. If so, we can simply get the album's tracks.
-	if (scalar keys %$find == 1 && defined $find->{'album'}) {
-
-		my $albumObj = Slim::Schema->find('Album', $find->{'album'});
-
-		if ($albumObj && $albumObj->can('tracks')) {
-
-			return [ $albumObj->tracks ];
-		}
-	}
-
-	# Because we store directories, etc in the tracks table - only pull
-	# out items that are 'audio' this is needed because we're using idOnly
-	# - so ->find doesn't call ->_includeInTrackCount. That should be able
-	# to go away shortly as well.
-	$find->{'audio'} = 1;
+	#$find->{'me.audio'} = 1;
 
 	return $self->search($find, {
-		'order_by' => exists $find->{'album'} ? 'me.disc, me.tracknum, me.titlesort' : 'me.titlesort',
+		'order_by' => 'me.disc, me.tracknum, me.titlesort',
 		'distinct' => 'me.id',
 		# 'join'     => \@join,
 	});
-
 }
 
 # XXX  - These are wrappers around the methods in Slim::Schema, which need to

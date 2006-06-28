@@ -65,13 +65,6 @@ sub browsedb {
 		'params'  => $params,
 	});
 
-	# Just go directly to the params.
-	# Don't show stats when only showing playlists - extra queries that
-	# aren't needed.
-	if (!grep { /playlist/ } @levels) {
-		Slim::Web::Pages->addLibraryStats($params, $params->{'genre.id'}, $params->{'contributor.id'}, $params->{'album.id'});
-	}
-
 	# This hash is reused later, during the main item list build
 	my %form = (
 		'player'       => $player,
@@ -314,7 +307,8 @@ sub browsedb {
 
 	if ($count) {
 
-		my $lastAnchor      = '';
+		my $lastAnchor = '';
+		my $attrName   = lc($levels[$level]);
 
 		for my $item ($browseRS->slice($start, $end)) {
 
@@ -324,8 +318,7 @@ sub browsedb {
 				next;
 			}
 
-			my $attrName = lc($levels[$level]);
-			my $itemid   = $item->id;
+			my $itemid = $item->id;
 
 			my %form = (
 				'hierarchy'    => $hierarchy,
@@ -394,6 +387,14 @@ sub browsedb {
 
 	$params->{'descend'}   = $descend;
 	$params->{'levelName'} = lc($levels[$level]);
+
+	# Don't show stats when only showing playlists - extra queries that aren't needed.
+	#
+	# Pass in the current result set, and the previous level.
+	if (!grep { /playlist/ } @levels) {
+
+		Slim::Web::Pages->addLibraryStats($params, $browseRS, $levels[$level-1]);
+	}
 
 	# override the template for the playlist case.
 	my $template = $rs->browseBodyTemplate || 'browsedb.html';

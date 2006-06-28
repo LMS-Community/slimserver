@@ -101,8 +101,8 @@ sub addPageLinks {
 }
 
 sub addLibraryStats {
-	my ($class, $params, $genre, $artist, $album) = @_;
-	
+	my ($class, $params, $rs, $previousLevel) = @_;
+
 	if (Slim::Music::Import->stillScanning) {
 		$params->{'warn'} = 1;
 		return;
@@ -117,94 +117,48 @@ sub addLibraryStats {
 		return;
 	}
 
-	# Build up basic ResultSets - with a distinct base id.
-	my $trackRS  = Slim::Schema->resultset('Track');
-	my $albumRS  = Slim::Schema->resultset('Album');
-	my $artistRS = Slim::Schema->resultset('Contributor');
+	my %counts = ();
+	my $level  = $params->{'levelName'} || '';
 
-	my $roles    = Slim::Schema->artistOnlyRoles;
+	# Albums needs a roles check, as it doesn't go through contributors first.
+	my $find   = {};
 
-	if ($genre && !$album) {
+	if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-		my $find = {
-			'genreTracks.genre' => $genre,
-		};
-
-		my @trackJoins  = qw(genreTracks);
-		my @albumJoins  = ({ 'tracks' => 'genreTracks' });
-		my @artistJoins = ({ 'contributorTracks' => { 'track' => 'genreTracks' } });
-
-		# If we have an artist, addtional joins need to be made.
-		if ($artist) {
-
-			$find->{'contributorTracks.contributor'} = $artist;
-
-			push @trackJoins, 'contributorTracks';
-			push @albumJoins, ({ 'tracks' => 'contributorTracks' });
-		}
-
-		$trackRS  = $trackRS->search($find,  { 'join' => \@trackJoins });
-		$albumRS  = $albumRS->search($find,  { 'join' => \@albumJoins });
-		$artistRS = $artistRS->search($find, { 'join' => \@artistJoins });
+		$find->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
-	if ($artist && !$album && !$genre) {
+	$::d_sql && msg("currentLevel: [$level] previousLevel: [$previousLevel]\n");
 
-		$trackRS = $trackRS->search({
-			'contributorTracks.role' => { 'in' => $roles },
-			'contributor.id'         => $artist,
-		}, {
-			'join' => { 'contributorTracks' => 'contributor' }
-		});
+	# The current level will always be a ->browse call, so just reuse the resultset.
+	if ($level eq 'album') {
 
-		$albumRS = $albumRS->search(
-			{ 'contributorTracks.contributor' => $artist },
-			{ 'join' => { 'tracks' => 'contributorTracks' } },
-		);
+		$counts{'album'}       = $rs;
+		$counts{'contributor'} = $rs->search_related('contributorAlbums', $find)->search_related('contributor');
+		$counts{'track'}       = $rs->search_related('tracks');
 
-		$artistRS = $artistRS->search({
-			'me.id'                  => $artist,
-			'contributorAlbums.role' => { 'in' => $roles },
-		});
+	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
+
+		$counts{'album'}       = $rs->search_related('contributorAlbums')->search_related('album');
+		$counts{'contributor'} = $rs;
+		$counts{'track'}       = $rs->search_related('contributorTracks')->search_related('track');
+
+	} elsif ($level eq 'track') {
+
+		$counts{'album'}       = $rs->search_related('album');
+		$counts{'contributor'} = $rs->search_related('contributorTracks')->search_related('contributor');
+		$counts{'track'}       = $rs;
+
+	} else {
+
+		$counts{'album'}       = Slim::Schema->resultset('Album')->browse;
+		$counts{'track'}       = Slim::Schema->resultset('Track')->browse({ 'me.audio' => 1 });
+		$counts{'contributor'} = Slim::Schema->resultset('Contributor')->browse;
 	}
 
-	my %artistFind  = ();
-	my @artistJoins = ({ 'contributorAlbums' => 'album' });
-
-	if ($album) {
-
-		$trackRS  = $trackRS->search({ 'album.id' => $album }, { 'join' => 'album' });
-		$albumRS  = $albumRS->search({ 'me.id' => $album });
-
-		$artistFind{'contributorAlbums.album'} = $album;
-	}
-
-	$params->{'song_count'}   = $class->_lcPlural($trackRS->distinct->count({ 'me.audio' => 1 }), 'SONG', 'SONGS');
-	$params->{'album_count'}  = $class->_lcPlural($albumRS->distinct->count, 'ALBUM', 'ALBUMS');
-
-	# Main page summary
-	if (scalar keys %artistFind == 0 && $roles) {
-
-		$artistFind{'contributorAlbums.role'} = { 'in' => $roles };
-	}
-
-	# Handle the VA cases
-	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
-
-		$artistFind{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
-
-	} elsif ($artist && $artist eq Slim::Schema->variousArtistsObject->id) {
-
-		# Bug 1913 - don't put counts for contributor & tracks when an artist
-		# is a composer on a different artist's tracks.
-		# delete $find{'contributor.id'};
-
-		$artistFind{'album.compilation'} = 1;
-	}
-
-	$artistRS = $artistRS->search(\%artistFind, { 'join' => \@artistJoins });
-
-	$params->{'artist_count'} = $class->_lcPlural($artistRS->distinct->count, 'ARTIST', 'ARTISTS');
+	$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
+	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
+	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 }
 
 sub addPlayerList {
