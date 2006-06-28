@@ -29,7 +29,9 @@ sub descendPlaylistTrack {
 	my $find = shift;
 	my $sort = shift;
 
-	my $playlist = $self->find($find->{'me.id'}) || return undef;
+	# Get a clean resultset - otherwise we may be restricting by content
+	# type, which doesn't make sense when explictly browsing a playlist.
+	my $playlist = $self->result_source->resultset->find($find->{'me.id'}) || return undef;
 
 	return $playlist->tracks;
 }

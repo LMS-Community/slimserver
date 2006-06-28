@@ -127,7 +127,11 @@ sub browsetree {
 
 		# Don't display the edit dialog for playlists (includes CUE sheets).
 		if ($item->isPlaylist) {
-			$form{'noEdit'} = '&noEdit=1';
+
+			$form{'hreftype'}   = 'browseDb';
+			$form{'hierarchy'}  = 'playlist,playlistTrack';
+			$form{'level'}      = 1;
+			$form{'attributes'} = sprintf('&noEdit=1&playlist.id=%d', $item->id);
 		}
 
 		$itemnumber++;
@@ -154,8 +158,3 @@ sub browsetree {
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

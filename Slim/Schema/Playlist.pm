@@ -24,7 +24,7 @@ use Slim::Utils::Misc;
 sub tracks {
 	my $self = shift;
 
-	return $self->playlist_tracks->search_related('track' => @_);
+	return $self->playlist_tracks->search_related('track' => @_)->distinct;
 }
 
 sub setTracks {
