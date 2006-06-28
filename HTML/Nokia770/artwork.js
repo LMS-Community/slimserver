@@ -5,7 +5,7 @@ var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=
 var thumbHrefTemplate = '/music/COVER/cover.jpg';
 var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]';
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
-var blankRequest = 'hierarchy=artwork,track&level=0&orderBy=contributor,year,album&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
+var blankRequest = 'hierarchy=album,track&level=0&artwork=1&orderBy=contributor,year,album&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
 
 var thisAlbum, thatAlbum;
 
@@ -24,7 +24,7 @@ function fillDataHash(theData) {
 }
 
 function showArrows(firstOne, secondOne, lastOne) {
-	if (firstOne == '0') {
+	if (firstOne == '1') {
 		Element.hide('last_cover');
 		Element.show('next_cover');
 	} else if (secondOne == lastOne) {
@@ -93,7 +93,7 @@ function artworkBrowse(urlArgs, thisId, thatId) {
 }
 
 window.onload= function() {
-	artworkBrowse(blankRequest, 0, 1);
+	artworkBrowse(blankRequest, 1, 2);
 	globalOnload();
 }
 
