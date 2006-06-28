@@ -727,7 +727,7 @@ sub mergeVariousArtistsAlbums {
 		'me.compilation' => undef,
 		'me.title'       => { '!=' => string('NO_ALBUM') },
 
-	}, { 'prefetch' => { 'tracks' => 'contributorTracks' } })->distinct;
+	}, {'prefetch' => { 'tracks' => 'contributorTracks' } });
 
 	my $progress = undef;
 	my $count    = $cursor->count;
@@ -747,16 +747,15 @@ sub mergeVariousArtistsAlbums {
 		for my $track ($albumObj->tracks) {
 
 			# Bug 2066: If the user has an explict Album Artist set -
-			# don't try to mark it as a compilation. So only fetch
-			# ARTIST roles.
-			my @artists = $track
-				->search_related('contributorTracks', { 'role' => $role })
-				->search_related('contributor')->all;
+			# don't try to mark it as a compilation. So only fetch ARTIST roles.
+			my @artists = $track->artists;
+
+			if (!scalar @artists) {
+				next ALBUM;
+			}
 
 			# Create a composite of the artists for the track to compare below.
-			my $artistComposite = join(':', sort map { $_->id } @artists) || next ALBUM;
-
-			$trackArtists{$artistComposite} = 1;
+			$trackArtists{ join(':', sort map { $_->id } @artists) } = 1;
 		}
 
 		# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
@@ -789,7 +788,7 @@ sub mergeVariousArtistsAlbums {
 			$self->resultset('ContributorAlbum')->find_or_create({
 				'album'       => $albumObj->id,
 				'contributor' => $vaObjId,
-				'role'        => Slim::Schema::Contributor->typeToRole($role),
+				'role'        => $role,
 			});
 
 		}
@@ -1323,9 +1322,10 @@ sub _postCheckAttributes {
 	if ($create && $isLocal && !$genre && (!defined $_unknownGenre || ref($_unknownGenre) ne 'Slim::Schema::Genre')) {
 
 		$_unknownGenre = $self->resultset('Genre')->find_or_create({
-			'name'     => string('NO_GENRE'),
-			'namesort' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
-		});
+			'name'       => string('NO_GENRE'),
+			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
+			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
+		}, { 'key' => 'namesearch' });
 
 		Slim::Schema::Genre->add($_unknownGenre->name, $track);
 
@@ -1357,7 +1357,7 @@ sub _postCheckAttributes {
 			'name'       => string('NO_ARTIST'),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
-		});
+		}, { 'key' => 'namesearch' });
 
 		Slim::Schema::Contributor->add({
 			'artist' => $_unknownArtist->name,
@@ -1400,7 +1400,7 @@ sub _postCheckAttributes {
 			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'compilation' => $isCompilation,
-		});
+		}, { 'key' => 'titlesearch' });
 
 		$track->album($_unknownAlbum->id);
 		$albumObj = $_unknownAlbum;

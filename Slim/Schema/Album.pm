@@ -34,6 +34,7 @@ use Slim::Utils::Misc;
 	$class->register_column('titlesearch', { accessor => 'namesearch' });
 
 	$class->set_primary_key('id');
+	$class->add_unique_constraint('titlesearch' => [qw/id titlesearch/]);
 
 	$class->belongs_to('contributor' => 'Slim::Schema::Contributor');
 
