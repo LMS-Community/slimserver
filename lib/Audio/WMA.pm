@@ -255,6 +255,8 @@ sub _parseWMAHeader {
 	}
 
 	# pull these out and normalize them.
+	my @arrayOk = qw(ALBUMARTIST GENRE COMPOSER AUTHOR);
+
 	for my $ext (@{$self->{'EXT'}}) {
 
 		while (my ($k,$v) = each %{$ext->{'content'}}) {
@@ -266,7 +268,7 @@ sub _parseWMAHeader {
 			my $value = $v->{'value'} || 0;
 
 			# Append onto an existing item, as an array ref
-			if (exists $self->{'TAGS'}->{$name} && $name ne 'VBR') {
+			if (exists $self->{'TAGS'}->{$name} && grep { /^$name$/ } @arrayOk) {
 
 				if (ref($self->{'TAGS'}->{$name}) eq 'ARRAY') {
 
