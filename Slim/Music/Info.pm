@@ -42,7 +42,6 @@ tie our %displayCache, 'Tie::Cache::LRU', 64;
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 
 our %currentTitleCallbacks = ();
-our $validTypeRegex = undef;
 
 # Save our stats.
 tie our %isFile, 'Tie::Cache::LRU', 16;
@@ -63,9 +62,6 @@ sub init {
 	Slim::Music::TitleFormatter::init();
 
 	loadTypesConfig();
-
-	# precompute the valid extensions
-	validTypeExtensions();
 
 	# Our loader classes for tag formats.
 	%tagClasses = (
@@ -989,12 +985,9 @@ sub isContainer {
 	return 0;
 }
 
+# Return a list of valid extensions for a particular type as listed in types.conf
 sub validTypeExtensions {
-
-	# Try and use the pre-computed version
-	if ($validTypeRegex) {
-		return $validTypeRegex;
-	}
+	my $findTypes  = shift || qr/(?:list|audio)/;
 
 	my @extensions = ();
 	my $osType     = Slim::Utils::OSDetect::OS();
@@ -1002,7 +995,7 @@ sub validTypeExtensions {
 	while (my ($ext, $type) = each %slimTypes) {
 
 		next unless $type;
-		next unless $type =~ /(?:list|audio)/;
+		next unless $type =~ /$findTypes/;
 
 		while (my ($suffix, $value) = each %suffixes) {
 
@@ -1012,17 +1005,21 @@ sub validTypeExtensions {
 				next;
 			}
 
-			if ($ext eq $value && $suffix !~ /playlist:/) {
+			# Don't return values for 'internal' or iTunes type playlists.
+			if ($ext eq $value && $suffix !~ /:/) {
 				push @extensions, $suffix;
 			}
 		}
 	}
 
+	# Always look for cue sheets when looking for audio.
+	if ($findTypes eq 'audio') {
+		push @extensions, 'cue';
+	}
+
 	my $regex = join('|', @extensions);
 
-	$validTypeRegex = qr/\.(?:$regex)$/i;
-
-	return $validTypeRegex;
+	return qr/\.(?:$regex)$/i;
 }
 
 sub mimeType {

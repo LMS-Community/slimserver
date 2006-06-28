@@ -36,12 +36,12 @@ sub init {
 }
 
 sub startScan {
-	my $class    = shift;
-	my $audioDir = shift || Slim::Utils::Prefs::get('audiodir');
-	my $recurse  = shift;
+	my $class   = shift;
+	my $dir     = shift || Slim::Utils::Prefs::get('audiodir');
+	my $recurse = shift;
 
-	if (!defined $audioDir || !-d $audioDir) {
-		$::d_info && msg("Skipping music folder scan - audiodir is undefined. [$audioDir]\n");
+	if (!defined $dir || !-d $dir) {
+		$::d_info && msg("Skipping music folder scan - audiodir is undefined. [$dir]\n");
 		doneScanning();
 		return;
 	}
@@ -59,11 +59,12 @@ sub startScan {
 		$recurse = 1;
 	}
 
-	$::d_info && msg("Starting music folder scan in $audioDir\n");
+	$::d_info && msg("Starting music folder scan in $dir\n");
 
 	Slim::Utils::Scanner->scanDirectory({
-		'url'          => $audioDir,
-		'recursive'    => $recurse,
+		'url'       => $dir,
+		'recursive' => $recurse,
+		'types'     => 'audio',
 	});
 
 	$::d_info && msg("finished background scan of music folder.\n");

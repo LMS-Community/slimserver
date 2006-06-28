@@ -17,6 +17,7 @@ use base qw(Class::Data::Inheritable);
 
 use FileHandle;
 use File::Basename qw(basename);
+use File::Find::Rule;
 use IO::String;
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -84,8 +85,6 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
-	eval "use File::Find::Rule";
-
 	# See perldoc File::Find::Rule for more information.
 	# follow symlinks.
 	my $rule   = File::Find::Rule->new;
@@ -115,12 +114,16 @@ sub scanDirectory {
 	}
 
 	# validTypeExtensions returns a qr// regex.
-	$rule->name( Slim::Music::Info::validTypeExtensions() );
+	$rule->name( Slim::Music::Info::validTypeExtensions($args->{'types'}) );
 
 	# Don't include old style internal playlists.
 	$rule->not_name(qr/\W__\S+\.m3u$/);
 
+	# Don't include old Shoutcast recently played items.
+	$rule->not_name(qr/ShoutcastBrowser_Recently_Played/);
+
 	msg("About to look for files in $topDir\n");
+	msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
 
 	my @files   = $rule->in($topDir);
 	my @objects = ();
@@ -179,8 +182,7 @@ sub scanDirectory {
 		# If we're starting with a clean db - don't bother with searching for a track
 		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
 
-		# If we have an audio file or a CUE sheet (in the music dir), scan it.
-		if (Slim::Music::Info::isSong($url) || Slim::Music::Info::isCUE($url)) {
+		if (Slim::Music::Info::isSong($url)) {
 
 			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
@@ -190,10 +192,10 @@ sub scanDirectory {
 				'checkMTime' => 1,
 			});
 
-		} elsif (Slim::Music::Info::isPlaylist($url) && 
-			 Slim::Utils::Misc::inPlaylistFolder($url) && $url !~ /ShoutcastBrowser_Recently_Played/) {
+		} elsif (Slim::Music::Info::isCUE($url) || 
+			(Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url))) {
 
-			# Only read playlist files if we're in the playlist dir
+			# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
 			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
 			my $playlist = Slim::Schema->$method({

@@ -37,10 +37,11 @@ sub init {
 }
 
 sub startScan {
-	my $class       = shift;
-	my $playlistDir = shift || Slim::Utils::Prefs::get('playlistdir');
+	my $class   = shift;
+	my $dir     = shift || Slim::Utils::Prefs::get('playlistdir');
+	my $recurse = shift;
 
-	if (!defined $playlistDir || !-d $playlistDir) {
+	if (!defined $dir || !-d $dir) {
 		$::d_info && msg("Skipping playlist folder scan - playlistdir is undefined.\n");
 		doneScanning();
 		return;
@@ -55,10 +56,16 @@ sub startScan {
 
 	$class->stillScanning(1);
 
+	if (!defined $recurse) {
+		$recurse = 1;
+	}
+
 	$::d_info && msg("Starting playlist folder scan\n");
 
 	Slim::Utils::Scanner->scanDirectory({
-		'url' => $playlistDir,
+		'url'       => $dir,
+		'recursive' => $recurse,
+		'types'     => 'list',
 	});
 
 	$class->doneScanning;
