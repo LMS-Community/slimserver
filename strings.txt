@@ -2052,7 +2052,7 @@ SETUP_PLUGINS-ONTHEFLY_1
 	SV	Laddar tilläggsprogram
 	ZH_CN	即时装载插件程序
 
-SETUP_GROUP_FORMATS
+SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
 	DE	Dateikonvertierungseinstellungen
 	EN	File Format Conversion Setup
@@ -2066,7 +2066,7 @@ SETUP_GROUP_FORMATS
 	SV	Inställningar för konvertering mellan filformat
 	ZH_CN	文件格式转换设置
 
-SETUP_GROUP_FORMATS_DESC
+SETUP_GROUP_FORMATS_CONVERSION_DESC
 	CS	SlimServer kovertuje formát audio souborů pro okamžité přehrávání v přehrávači. Můúžete zakázat některé formáty tím, že je odznačíte. Je zde zobrazováno jen jméno. Pro editaci/prohlížení použijte příkazový řádek. Možná budete potřebovat editovat soubor convert.conf. Změny uložite teprve kliknutím na tlačítko 'Změnit'.
 	DE	SlimServer kann Audio-Dateien während der Laufzeit für die Wiedergabe konvertieren. Sie können hier einzelne Formate deaktivieren.
 	EN	SlimServer can convert audio file formats on-the-fly for playback on your player.  You can disable specific formats below by unchecking them.  Only the name of the binary is shown here. To see/edit the entire command line, you will need to open convert.conf.  Click Change to save your changes.
@@ -2149,6 +2149,21 @@ STREAM_FORMAT
 	NO	Streamingformat
 	SV	Format för strömmande ljud
 	ZH_CN	流出格式
+
+SETUP_GROUP_FORMATS_EXTENSIONS
+	EN	File Extensions Scanning Setup
+
+SETUP_DISABLEDEXTENSIONSAUDIO
+	EN	Disabled Audio File Extensions
+
+SETUP_DISABLEDEXTENSIONSAUDIO_DESC
+	EN	SlimServer will look for all audio files it supports. To disable specific file extensions from being scanned, enter a comma separated list below.
+
+SETUP_DISABLEDEXTENSIONSPLAYLIST
+	EN	Disabled Playlist File Extensions
+
+SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
+	EN	SlimServer will look for all playlist files it supports. To disable specific file extensions from being scanned, enter a comma separated list below.
 
 PLAYER_TYPE
 	CS	Typ přehrávače

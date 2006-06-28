@@ -991,6 +991,7 @@ sub validTypeExtensions {
 
 	my @extensions = ();
 	my $osType     = Slim::Utils::OSDetect::OS();
+	my $disabled   = disabledExtensions();
 
 	while (my ($ext, $type) = each %slimTypes) {
 
@@ -1005,6 +1006,11 @@ sub validTypeExtensions {
 				next;
 			}
 
+			# Don't add extensions that are disabled.
+			if ($disabled->{$suffix}) {
+				next;
+			}
+
 			# Don't return values for 'internal' or iTunes type playlists.
 			if ($ext eq $value && $suffix !~ /:/) {
 				push @extensions, $suffix;
@@ -1013,13 +1019,36 @@ sub validTypeExtensions {
 	}
 
 	# Always look for cue sheets when looking for audio.
-	if ($findTypes eq 'audio') {
+	if ($findTypes eq 'audio' && !$disabled->{'cue'}) {
 		push @extensions, 'cue';
 	}
 
 	my $regex = join('|', @extensions);
 
 	return qr/\.(?:$regex)$/i;
+}
+
+sub disabledExtensions {
+	my $findTypes = shift || '';
+
+	my @disabled  = ();
+	my @audio     = split(/\s*,\s*/, Slim::Utils::Prefs::get('disabledextensionsaudio'));
+	my @playlist  = split(/\s*,\s*/, Slim::Utils::Prefs::get('disabledextensionsplaylist'));
+
+	if ($findTypes eq 'audio') {
+
+		@disabled = @audio;
+
+	} elsif ($findTypes eq 'list') {
+
+		@disabled = @playlist;
+
+	} else {
+
+		@disabled = (@audio, @playlist);
+	}
+
+	return { map { $_, 1 } @disabled };
 }
 
 sub mimeType {

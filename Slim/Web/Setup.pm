@@ -20,6 +20,9 @@ use Slim::Utils::Validate;
 
 our %setup = ();
 our @newPlayerChildren;
+
+# XXXXXX This code is brain damaged. It needs to be gutted and rewritten.
+
 # Setup uses strings extensively, for many values it defaults to a certain combination of the
 # preference name with other characters.  For this reason it is important to follow the naming
 # convention when adding strings for preferences into strings.txt.
@@ -426,10 +429,10 @@ sub initSetupConfig {
 							,'PrefChoose' => 'SETUP_DOUBLESIZE'
 							,'currentValue' => sub { shift->textSize();}
 							,'onChange' => sub { 
-												my ($client,$changeref,$paramref,$pageref) = @_;
-												return if (!defined($client));
-												$client->textSize($changeref->{'textsize'}{'new'});
-									}
+								my ($client,$changeref,$paramref,$pageref) = @_;
+								return if (!defined($client));
+								$client->textSize($changeref->{'textsize'}{'new'});
+							}
 						}
 			,'offDisplaySize' => {
 							'validate' => \&Slim::Utils::Validate::inList
@@ -1426,142 +1429,164 @@ sub initSetupConfig {
 							}
 					}
 			,'sortBrowseArt' => {
-						'validate' => \&Slim::Utils::Validate::inHash,
-						'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
-						'options' => {
-								'album'              => 'SETUP_SORTBROWSEART_ALBUM',
-								'artist,album'       => 'SETUP_SORTBROWSEART_ARTISTALBUM',
-								'artist,year,album'  => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
-								'year,album'         => 'SETUP_SORTBROWSEART_YEARALBUM',
-								'year,artist,album'  => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
-								'genre,album'        => 'SETUP_SORTBROWSEART_GENREALBUM',
-								'genre,artist,album' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
-							},
-					}
+				'validate' => \&Slim::Utils::Validate::inHash,
+				'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
+				'options' => {
+					'album'              => 'SETUP_SORTBROWSEART_ALBUM',
+					'artist,album'       => 'SETUP_SORTBROWSEART_ARTISTALBUM',
+					'artist,year,album'  => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
+					'year,album'         => 'SETUP_SORTBROWSEART_YEARALBUM',
+					'year,artist,album'  => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
+					'genre,album'        => 'SETUP_SORTBROWSEART_GENREALBUM',
+					'genre,artist,album' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
+				},
 			}
-		}# end of setup{'INTERFACE_SETTINGS'} hash
+		}
+	}# end of setup{'INTERFACE_SETTINGS'} hash
 
 	,'FORMATS_SETTINGS' => {
 		'title' => string('FORMATS_SETTINGS')
 		,'parent' => 'SERVER_SETTINGS'
 		,'preEval' => sub {
-				my ($client,$paramref,$pageref) = @_;
-				my $i = 0;
-				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
-				my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
+			my ($client,$paramref,$pageref) = @_;
+			my $i = 0;
+			my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+			my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
 
-				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-					next if $formats =~ /\-transcode\-/;
-					my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::TranscodingHelper::checkBin($formats) ? 1 : 0);
-					if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
-						delete $paramref->{"formatslist$i"};
-					}
-					$i++;
+			foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
+				next if $formats =~ /\-transcode\-/;
+				my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::TranscodingHelper::checkBin($formats) ? 1 : 0);
+				if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
+					delete $paramref->{"formatslist$i"};
 				}
-				$pageref->{'Prefs'}{'formatslist'}{'arrayMax'} = $i - 1;
+				$i++;
 			}
+			$pageref->{'Prefs'}{'formatslist'}{'arrayMax'} = $i - 1;
+		}
 		,'postChange' => sub {
-				my ($client,$paramref,$pageref) = @_;
-				my $i = 0;
-				my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+			my ($client,$paramref,$pageref) = @_;
+			my $i = 0;
+			my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
 
-				Slim::Utils::Prefs::delete('disabledformats');
+			Slim::Utils::Prefs::delete('disabledformats');
 
-				my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
+			my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
 
-				foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-					next if $formats =~ /\-transcode\-/;
-					my $binAvailable = Slim::Player::TranscodingHelper::checkBin($formats);
+			foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
+				next if $formats =~ /\-transcode\-/;
+				my $binAvailable = Slim::Player::TranscodingHelper::checkBin($formats);
 
-					# First time through, set the value of the checkbox
-					# based on whether the conversion was explicitly 
-					# disabled or implicitly disallowed because the 
-					# corresponding binary does not exist.
-					if (!exists $paramref->{"formatslist$i"}) {
-						$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : ($binAvailable ? 1 : 0);					
-					} 
-					# If the conversion pref is checked confirm that 
-					# it's allowed to be checked.
-					elsif ($paramref->{"formatslist$i"} && !$binAvailable) {
-						$paramref->{'warning'} .= 
-							string('SETUP_FORMATSLIST_MISSING_BINARY') .
-								" " . $formatslistref->{$formats}."<br>";
-						$paramref->{"formatslist$i"} = $binAvailable;
-					} 
+				# First time through, set the value of the checkbox
+				# based on whether the conversion was explicitly 
+				# disabled or implicitly disallowed because the 
+				# corresponding binary does not exist.
+				if (!exists $paramref->{"formatslist$i"}) {
+					$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : ($binAvailable ? 1 : 0);
+				} 
+				# If the conversion pref is checked confirm that 
+				# it's allowed to be checked.
+				elsif ($paramref->{"formatslist$i"} && !$binAvailable) {
+					$paramref->{'warning'} .= 
+						string('SETUP_FORMATSLIST_MISSING_BINARY') .
+							" " . $formatslistref->{$formats}."<br>";
+					$paramref->{"formatslist$i"} = $binAvailable;
+				} 
 
-					# If the conversion pref is not checked, persist
-					# the pref only in the explicit change case: if
-					# the binary is available or if it previously was
-					# explicitly disabled.  This way we don't persist
-					# the pref if it wasn't explicitly changed.
-					if (!$paramref->{"formatslist$i"} &&
-						($binAvailable || exists $formats{$formats})) {
-						Slim::Utils::Prefs::push('disabledformats',$formats);
-					}
-					$i++;
+				# If the conversion pref is not checked, persist
+				# the pref only in the explicit change case: if
+				# the binary is available or if it previously was
+				# explicitly disabled.  This way we don't persist
+				# the pref if it wasn't explicitly changed.
+				if (!$paramref->{"formatslist$i"} && ($binAvailable || exists $formats{$formats})) {
+
+					Slim::Utils::Prefs::push('disabledformats',$formats);
 				}
-				foreach my $group (Slim::Utils::Prefs::getArray('disabledformats')) {
-					delGroup('formats',$group,1);
-				}
+
+				$i++;
 			}
-		,'GroupOrder' => ['Default']
-		# if more than one ir map exists the undef will be replaced by 'Default'
+
+			foreach my $group (Slim::Utils::Prefs::getArray('disabledformats')) {
+				delGroup('formats',$group,1);
+			}
+		}
+
+		,'GroupOrder' => [qw(Default FormatsList)]
 		,'Groups' => {
-				'Default' => {
-					'PrefOrder' => ['formatslist']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => 'SETUP_GROUP_FORMATS'
-					,'GroupDesc' => 'SETUP_GROUP_FORMATS_DESC'
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-					,'GroupPrefHead' => '<tr><th>&nbsp;' .
-										'</th><th>' . string('FILE_FORMAT') .
-										'</th><th>' . string('STREAM_FORMAT') .
-										'</th><th>' . string('DECODER') .
-										'</th></tr>'
+
+			'Default' => {
+				'PrefOrder' => [qw(disabledextensionsaudio disabledextensionsplaylist)],
+				'GroupHead' => 'SETUP_GROUP_FORMATS_EXTENSIONS',
+			},
+
+			'FormatsList' => {
+				'PrefOrder' => ['formatslist'],
+				'PrefsInTable' => 1,
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefDesc' => 1,
+				'Suppress_PrefLine' => 1,
+				'Suppress_PrefSub' => 1,
+				'GroupLine' => 1,
+				'GroupSub' => 1,
+				'GroupHead' => 'SETUP_GROUP_FORMATS_CONVERSION',
+				'GroupDesc' => 'SETUP_GROUP_FORMATS_CONVERSION_DESC',
+				'GroupPrefHead' => '<tr><th>&nbsp;' .
+					'</th><th>' . string('FILE_FORMAT') .
+					'</th><th>' . string('STREAM_FORMAT') .
+					'</th><th>' . string('DECODER') .
+					'</th></tr>',
+			}
+		},
+
+		'Prefs' => {
+			'disabledextensionsaudio' => {
+
+				'validate'      => \&Slim::Utils::Validate::acceptAll,
+				'inputTemplate' => 'setup_input_txt.html',
+				'PrefSize'      => 'large',
+			},
+
+			'disabledextensionsplaylist' => {
+
+				'validate'      => \&Slim::Utils::Validate::acceptAll,
+				'inputTemplate' => 'setup_input_txt.html',
+				'PrefSize'      => 'large',
+			},
+
+			'formatslist' => {
+				'isArray' => 1
+				,'dontSet' => 1
+				,'validate' => \&Slim::Utils::Validate::trueFalse
+				,'inputTemplate' => 'setup_input_array_chk.html'
+				,'arrayMax' => undef #set in preEval
+				,'changeMsg' => 'SETUP_FORMATSLIST_CHANGE'
+				,'externalValue' => sub {
+					my ($client,$value,$key) = @_;
+						
+					if ($key =~ /\D+(\d+)$/) {
+						my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
+						my $profile = (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref})))[$1];
+						my @profileitems = split('-', $profile);
+						pop @profileitems; # drop ID
+						$profileitems[0] = string($profileitems[0]);
+						$profileitems[1] = string($profileitems[1]);
+						$profileitems[2] = $formatslistref->{$profile}; #replace model with binary string
+						my $dec = $formatslistref->{$profile};
+						$dec =~ s{
+								^\[(.*?)\](.*?\|?\[(.*?)\].*?)?
+							}{
+								$profileitems[2] = $1;
+								if (defined $3) {$profileitems[2] .= "/".$3;}
+							}iegsx;
+						$profileitems[2] = '(built-in)' unless defined $profileitems[2] && $profileitems[2] ne '-';
+						
+						return join('</td><td>', @profileitems);
+					} else {
+						return $value;
+					}
 				}
 			}
-		,'Prefs' => {
-				'formatslist' => {
-					'isArray' => 1
-					,'dontSet' => 1
-					,'validate' => \&Slim::Utils::Validate::trueFalse
-					,'inputTemplate' => 'setup_input_array_chk.html'
-					,'arrayMax' => undef #set in preEval
-					,'changeMsg' => 'SETUP_FORMATSLIST_CHANGE'
-					,'externalValue' => sub {
-								my ($client,$value,$key) = @_;
-									
-								if ($key =~ /\D+(\d+)$/) {
-									my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
-									my $profile = (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref})))[$1];
-									my @profileitems = split('-', $profile);
-									pop @profileitems; # drop ID
-									$profileitems[0] = string($profileitems[0]);
-									$profileitems[1] = string($profileitems[1]);
-									$profileitems[2] = $formatslistref->{$profile}; #replace model with binary string
-									my $dec = $formatslistref->{$profile};
-									$dec =~ s{
-											^\[(.*?)\](.*?\|?\[(.*?)\].*?)?
-										}{
-											$profileitems[2] = $1;
-											if (defined $3) {$profileitems[2] .= "/".$3;}
-										}iegsx;
-									$profileitems[2] = '(built-in)' unless defined $profileitems[2] && $profileitems[2] ne '-';
-									
-									return join('</td><td>', @profileitems);
-								} else {
-									return $value;
-								}
-							}
-					}
-			}
-		} #end of setup{'formats'}
-
+		}
+	} #end of setup{'formats'}
 
 	,'BEHAVIOR_SETTINGS' => {
 		'title' => string('BEHAVIOR_SETTINGS'),
