@@ -1,10 +1,10 @@
 var url = '[% webroot %]browsedb.html';
 var parsedData;
-var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=artist,album,track&amp;artist=ARTIST&amp;level=1&player=[% playerURI %]';
-var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=ALBUM&player=[% playerURI %]';
+var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;artist.id=ARTIST&amp;level=1&player=[% playerURI %]';
+var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album.id=ALBUM&player=[% playerURI %]';
 var thumbHrefTemplate = '/music/COVER/cover.jpg';
-var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album=ALBUM&player=[% playerURI %]';
-var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album=ALBUM&player=[% playerURI %]';
+var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]';
+var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
 var blankRequest = 'hierarchy=artwork,track&level=0&orderBy=contributor,year,album&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
 
 var thisAlbum, thatAlbum;

@@ -27,7 +27,6 @@
 		<a href="browsetree.html?player=[% playerURI %]"><font class="pagebartext">[% "HERE" | string %]</a>.</font>
 	[% END %]
 [% END %]
-
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
 	<tr>
 		<td>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]</td>
@@ -41,7 +40,7 @@
 	</tr>
 </table>
 
-[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 && artwork == 2 %]
+[% IF level == 0 && artwork == 2 %]
 <div id = 'last_cover' style = "display: none;">
 	<img src = '[% webroot %]html/images/rew_active.gif' onClick = 'javascript:lastCover();'>
 </div>
@@ -60,7 +59,7 @@
 	<tr>
 [% IF coverArt %]
 		<td valign = 'top' width = '205'>
-			<a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% artist | uri %]&p4=[% album | uri %]&player=[% playerURI %]">
+			<a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% contributor.id | uri %]&p4=[% album.id | uri %]&player=[% playerURI %]">
 			<p align="center">
 			<img src="/music/[% coverArt %]/cover.jpg" STYLE="border: 1px solid black" width = '200'></a>
 		</td>
@@ -69,7 +68,8 @@
 		<table cellspacing="0" border="0" cellpadding="0" width="800" bgcolor = 'white' id = 'browsetable'>
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]
-					[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
+					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
+					[% IF artwork == 1 && level == 0 %]
 						[% IF loop.index mod 6 == 0 || loop.first %]<tr>[% END %]
 						<td>
 						[% PROCESS browsedb_artwork.html %]
