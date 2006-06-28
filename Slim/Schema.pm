@@ -527,16 +527,17 @@ sub updateOrCreate {
 			return $track;
 		}
 
-		$::d_info && msg("Merging entry for $url\n");
+		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
+		# we create/update a cue sheet to have a CT of 'cur'
+		if (defined $attributeHash->{'CONTENT_TYPE'} && $attributeHash->{'CONTENT_TYPE'} eq 'cur') {
+			$readTags = 0;
+		}
+
+		$::d_info && msg("Merging entry for $url readTags is: [$readTags]\n");
 
 		# Force a re-read if requested.
 		# But not for remote / non-audio files.
-		# 
-		# Bug: 2335 - readTags is set in Slim::Formats::Playlists::CUE - when
-		# we create/update a cue sheet to have a CT of 'cur'
-		if ($readTags && $track->get('audio') && !$track->get('remote') && 
-			defined $attributeHash->{'CONTENT_TYPE'} &&
-			$attributeHash->{'CONTENT_TYPE'} ne 'cur') {
+		if ($readTags && $track->get('audio') && !$track->get('remote')) {
 
 			$attributeHash = { %{$self->_readTags($url)}, %$attributeHash  };
 		}
@@ -1341,7 +1342,7 @@ sub _postCheckAttributes {
 
 		# Bug 1143: The user has updated the genre tag, and is
 		# rescanning We need to remove the previous associations.
-		$track->genreTracks->delete;
+		$track->genreTracks->delete_all;
 
 		Slim::Schema::Genre->add($genre, $track);
 	}
