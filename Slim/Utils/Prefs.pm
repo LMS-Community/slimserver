@@ -220,6 +220,8 @@ sub init {
 		'upgrade-6.5b1-2006-03-31-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'sortBrowseArt'     => 'album',
+		'disabledextensionsaudio' => '',
+		'disabledextensionsplaylist' => '',
 	);
 
 	# The following hash contains functions that are executed when the pref corresponding to
