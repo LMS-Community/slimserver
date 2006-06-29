@@ -129,8 +129,6 @@ sub playlist {
 	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
 
-	my $needIdleStreams = Slim::Player::Client::needIdleStreams();
-
 	# This is a hot loop.
 	# But it's better done all at once than through the scheduler.
 	for my $itemnum ($start..$end) {
@@ -178,7 +176,7 @@ sub playlist {
 		$itemCount++;
 
 		# don't neglect the streams too long, every itemsPerPass idle them
-		if ($needIdleStreams && !($itemCount % $itemsPerPass)) {
+		if (!($itemCount % $itemsPerPass)) {
 
 			main::idleStreams();
 		}

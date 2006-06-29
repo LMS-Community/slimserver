@@ -916,24 +916,6 @@ sub forgetClient {
 	}	
 }
 
-# Don't bother with idle streams if we only have clients with large buffers.
-sub needIdleStreams {
-
-	my $needIdleStreams = 0;
-
-	for my $client (clients()) {
-
-		if ($client->model =~ /^(?:squeezebox2|softsqueeze|http)$/) {
-			next;
-		}
-
-		$needIdleStreams = 1;
-		last;
-	}
-
-	return $needIdleStreams;
-}
-
 sub startup {
 	my $client = shift;
 

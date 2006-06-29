@@ -189,9 +189,6 @@ sub browsedb {
 		$count = $browseRS->count;
 	}
 
-	# Don't bother with idle streams if we only have SB2 clients
-	my $needIdleStreams = Slim::Player::Client::needIdleStreams();
-
 	# This will get filled in with our returned data from the DB, and handed to the Templates
 	$params->{'browse_items'} = [];
 
@@ -366,7 +363,7 @@ sub browsedb {
 
 			push @{$params->{'browse_items'}}, \%form;
 
-			main::idleStreams() if $needIdleStreams;
+			main::idleStreams();
 		}
 
 		# If we're at the track level, and it's at the bottom of the
@@ -383,7 +380,7 @@ sub browsedb {
 	}
 
 	# Give players a bit of time.
-	main::idleStreams() if $needIdleStreams;
+	main::idleStreams();
 
 	$params->{'descend'}   = $descend;
 	$params->{'levelName'} = lc($levels[$level]);
