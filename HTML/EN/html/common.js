@@ -92,14 +92,14 @@ function switchPlayer(player_List) {
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
 	
 	setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
-	
+
 	parent.playlist.location="playlist.html?player"+newPlayer;
 	window.location="status_header.html?player"+newPlayer;
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		for (var j=0;j < parent.browser.document.links.length; j++) {
 			var myString = new String(parent.browser.document.links[j].href);
 			var rString = newPlayer;
-			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+			var rExp = /(player=(\w\w(:|%3A)){5}(\w\w))|(player=(\d{1,3}\.){3}\d{1,3})/gi;
 
 			parent.browser.document.links[j].href = myString.replace(rExp, rString);
 		}
