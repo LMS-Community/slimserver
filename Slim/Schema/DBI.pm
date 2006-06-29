@@ -80,7 +80,7 @@ sub removeStaleDBEntries {
 
 			$obj->delete;
 
-			$Slim::Schema::dirtyCount++;
+			$dirtyCount++;
 		}
 	}
 

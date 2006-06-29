@@ -1,0 +1,49 @@
+#!/usr/bin/perl -w
+
+# $Id$
+# Small wrapper to get at the database.
+
+use strict;
+use warnings;
+
+use FindBin qw($Bin);
+use lib $Bin;
+
+BEGIN {
+        use Slim::bootstrap;
+        use Slim::Utils::OSDetect;
+
+	Slim::bootstrap->loadModules([qw(Time::HiRes DBD::mysql DBI YAML::Syck)], []);
+};
+
+use DBI::Shell;
+use Getopt::Long;
+use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+sub main {
+
+	my $prefsFile = undef;
+
+	GetOptions('prefsfile=s' => \$prefsFile);
+
+	msg("SlimServer OSDetect init...\n");
+	Slim::Utils::OSDetect::init();
+
+	msg("SlimServer settings init...\n");
+
+	Slim::Utils::Prefs::init();
+	Slim::Utils::Prefs::load($prefsFile);
+
+	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
+	my $username = Slim::Utils::Prefs::get('dbusername');
+	my $password = Slim::Utils::Prefs::get('dbpassword');
+
+	DBI::Shell->new($source, $username, $password)->run;
+}
+
+sub cleanup {}
+
+main();
+
+__END__

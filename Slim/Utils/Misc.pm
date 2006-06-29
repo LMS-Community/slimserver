@@ -27,7 +27,6 @@ use URI::file;
 require Slim::Music::Info;
 require Slim::Player::ProtocolHandlers;
 require Slim::Utils::OSDetect;
-require Slim::Utils::Scanner;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
 require Slim::Utils::DateTime;
