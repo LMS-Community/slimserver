@@ -13,6 +13,7 @@ use base qw(Slim::Formats::Playlists::Base);
 
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::Misc;
@@ -160,6 +161,25 @@ sub parse {
 		});
 
 		$lastpos = $track->secs();
+
+		# Also - check the original file for any information that may
+		# not be in the cue sheet. Bug 2668
+		for my $attribute (qw(ARTIST ALBUM YEAR GENRE REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_ALBUM_PEAK)) {
+
+			if (!$cuesheet->{$attribute}) {
+
+				my $method   = lc($attribute);
+				my $fromFile = eval { $track->$method };
+
+				if (blessed($fromFile) && $fromFile->can('name')) {
+					$fromFile = $fromFile->name;
+				}
+
+				if ($fromFile) {
+					$cuesheet->{$attribute} = $fromFile;
+				}
+			}
+		}
 	}
 
 	errorMsg("parseCUE: Couldn't get duration of $filename\n") unless $lastpos;
