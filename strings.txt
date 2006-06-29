@@ -2236,7 +2236,6 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	EN	Disabled Audio File Extensions
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
-	DE	SlimServer wird nach allen Audio-Formaten suchen, die er unterstützt. Falls Sie dennoch einige Dateiendungen vom Durchsuchen ausschliessen möchten, so geben Sie diese hier an. Trennen Sie einzelne Einträge mit einem Komma.
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
@@ -2244,7 +2243,6 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	EN	Disabled Playlist File Extensions
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
-	DE	SlimServer wird nach allen Wiedergabelisten suchen, die er unterstützt. Falls Sie dennoch einige Dateiendungen vom Durchsuchen ausschliessen möchten, so geben Sie diese hier an. Trennen Sie einzelne Einträge mit einem Komma.
 	EN	SlimServer will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
 
 PLAYER_TYPE
