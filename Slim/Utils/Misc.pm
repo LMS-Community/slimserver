@@ -486,7 +486,8 @@ sub fixPath {
 	# duplicate entries in the database.
 	if (!Slim::Music::Info::isFileURL($fixed)) {
 
-		if (Slim::Utils::OSDetect::OS() eq "win") {
+		# Don't map drive letters when running as a service.
+		if (Slim::Utils::OSDetect::OS() eq "win" && !$PerlSvc::VERSION) {
 
 			my ($volume, $dirs, $file) = splitpath($fixed);
 
