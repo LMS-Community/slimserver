@@ -135,9 +135,30 @@ sub parseXMLIntoFeed {
 	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
 	# async http request succeeded.  Parse XML
-	# forcearray to treat items as array,
-	# keyattr => [] prevents id attrs from overriding
-	our $xml = eval { XMLin($content, forcearray => ["item", "outline"], keyattr => []) };
+	my $xml     = undef;
+	my $timeout = (Slim::Utils::Prefs::get('remotestreamtimeout') || 5) * 2;
+
+	# Bug 3510 - check for bogus content.
+	if ($$content !~ /<xml>/) {
+
+		# Set $@, so the block below will catch it.
+		$@ = "Invalid XML feed - didn't find <xml>!\n";
+
+	} else {
+
+		eval {
+			# NB: \n required
+			local $SIG{'ALRM'} = sub { die "XMLin parsing timed out!\n" };
+
+			alarm $timeout;
+
+			# forcearray to treat items as array,
+			# keyattr => [] prevents id attrs from overriding
+			$xml = XMLin($content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
+
+			alarm 0;
+		};
+	}
 
 	if ($@) {
 		errorMsg("Formats::XML: failed to parse feed because:\n$@\n");
