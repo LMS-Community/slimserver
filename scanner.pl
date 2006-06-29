@@ -116,6 +116,8 @@ sub main {
 
 	# Start our transaction for the entire scan - this will enable an
 	# atomic commit at the end.
+	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+
 	Slim::Schema->txn_do(sub {
 
 		if ($wipe) {
