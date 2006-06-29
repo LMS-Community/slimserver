@@ -31,43 +31,43 @@ sub setTracks {
 	my $self   = shift;
 	my $tracks = shift;
 
-	# One fell swoop to delete.
-	eval {
-		Slim::Schema::PlaylistTrack->sql_deletePlaylist->execute($self->id);
-	};
+	# With playlists in the database - we want to make sure the playlist is consistent to the user.
+	Slim::Schema->txn_do(sub {
 
-	if (!$tracks || ref($tracks) ne 'ARRAY') {
-		return;
-	}
+		# Remove the old tracks associated with this playlist.
+		$self->playlist_tracks->delete;
 
-	my $i = 0;
-
-	for my $track (@$tracks) {
-
-		# If tracks are being added via Browse Music Folder -
-		# which still deals with URLs - get the objects to add.
-		if (!blessed($track) || !$track->can('url')) {
-
-			$track = Slim::Schema->rs('Track')->objectForUrl({
-				'url'      => $track,
-				'create'   => 1,
-				'readTags' => 1,
-			});
+		if (!$tracks || ref($tracks) ne 'ARRAY') {
+			$tracks = [];
 		}
 
-		if (blessed($track) && $track->can('id')) {
+		my $i = 0;
 
-			Slim::Schema->rs('PlaylistTrack')->create({
-				playlist => $self,
-				track    => $track,
-				position => $i++
-			});
+		for my $track (@$tracks) {
+
+			# If tracks are being added via Browse Music Folder -
+			# which still deals with URLs - get the objects to add.
+			if (!blessed($track) || !$track->can('url')) {
+
+				$track = Slim::Schema->rs('Track')->objectForUrl({
+					'url'      => $track,
+					'create'   => 1,
+					'readTags' => 1,
+				});
+			}
+
+			if (blessed($track) && $track->can('id')) {
+
+				Slim::Schema->rs('PlaylistTrack')->create({
+					playlist => $self,
+					track    => $track,
+					position => $i++
+				});
+			}
 		}
-	}
+	});
 
-	# With playlists in the database - we want to make sure the playlist
-	# is consistent to the user.
-	Slim::Schema->forceCommit;
+	Slim::Schema->toggleDebug(0);
 }
 
 1;

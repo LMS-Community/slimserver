@@ -116,10 +116,7 @@ sub main {
 
 	# Start our transaction for the entire scan - this will enable an
 	# atomic commit at the end.
-	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
-	Slim::Schema->storage->txn_begin;
-
-	eval {
+	Slim::Schema->txn_do(sub {
 
 		if ($wipe) {
 			Slim::Music::Info::wipeDBCache();
@@ -152,21 +149,7 @@ sub main {
 			$lastRescan->value(time);
 			$lastRescan->update;
 		}
-
-		Slim::Schema->storage->txn_commit;
-	};
-
-	if ($@) {
-		my $error = $@;
-
-		errorMsg("scanner - while running txn_commit: [$error]\n");
-
-		eval { Slim::Schema->storage->txn_rollback };
-
-		if ($@ && $error ne $@) {
-			errorMsg("scanner: Rollback failed: [$@]\n");
-		}
-	}
+	});
 }
 
 sub initializeFrameworks {

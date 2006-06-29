@@ -145,6 +145,20 @@ sub init {
 	$initialized = 1;
 }
 
+sub throw_exception {
+	my ($self, $msg) = @_;
+
+	# XXXX - txn_do doesn't actually need to be called as an instance
+	# method. That check has been removed in -current. However, we'll just
+	# ignore it until we upgrade.
+	if ($msg ne 'Cannot execute txn_do as a class method') {
+
+		errorMsg($msg);
+		errorMsg("Backtrace follows:\n");
+		bt();
+	}
+}
+
 sub toggleDebug {
 	my $class = shift;
 	my $debug = shift;
@@ -231,25 +245,14 @@ sub wipeDB {
 
 	$::d_import && msg("Import: Start schema_clear\n");
 
-	$class->storage->txn_begin;
-
-	eval {
+	$class->txn_do(sub {
 
 		Slim::Utils::SQLHelper->executeSQLFile(
 			$class->driver, $class->storage->dbh, "schema_clear.sql"
 		);
-
-		$class->storage->txn_commit;
-	};
-
-	if ($@) {
-		errorMsg("wipeDB: [$@]\n");
-		$class->storage->txn_rollback;
-	}
+	});
 
 	$::d_import && msg("Import: End schema_clear\n");
-
-	$class->forceCommit;
 }
 
 # Fetch the content type for a URL or Track Object.
