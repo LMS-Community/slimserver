@@ -353,7 +353,7 @@ sub processSong {
 
 		'url'        => $fileurl,
 		'attributes' => \%attributes,
-		'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
+		'readTags'   => 1,
 
 	}) || do {
 
@@ -369,12 +369,9 @@ sub processSong {
 	if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
 
 		# NYI: MMM has more ways to access artwork...
-		if (!Slim::Music::Import->useFolderImporter) {
+		if (!$albumObj->artwork && !defined $track->thumb) {
 
-			if (!$albumObj->artwork && !defined $track->thumb) {
-
-				$albumObj->artwork($track->id);
-			}
+			$albumObj->artwork($track->id);
 		}
 
 		$albumObj->musicmagic_mixable(1);

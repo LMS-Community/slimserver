@@ -370,7 +370,6 @@ sub handleTrack {
 			$cacheEntry{'REPLAYGAIN_TRACK_GAIN'} = $gain;
 		}
 
-		$cacheEntry{'VALID'} = 1;
 		$cacheEntry{'AUDIO'} = 1;
 
 		# Only read tags if we don't have a music folder defined.
@@ -378,7 +377,7 @@ sub handleTrack {
 
 			'url'        => $url,
 			'attributes' => \%cacheEntry,
-			'readTags'   => Slim::Music::Import->useFolderImporter ? 0 : 1,
+			'readTags'   => 1,
 			'checkMTime' => 1,
 
 		}) || do {
