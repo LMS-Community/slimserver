@@ -139,7 +139,7 @@ sub parseXMLIntoFeed {
 	my $timeout = (Slim::Utils::Prefs::get('remotestreamtimeout') || 5) * 2;
 
 	# Bug 3510 - check for bogus content.
-	if ($$content !~ /<xml>/) {
+	if ($$content !~ /<\??xml/) {
 
 		# Set $@, so the block below will catch it.
 		$@ = "Invalid XML feed - didn't find <xml>!\n";
