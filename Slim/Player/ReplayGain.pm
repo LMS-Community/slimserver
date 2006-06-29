@@ -21,7 +21,7 @@ sub fetchGainMode {
 	my $class  = shift;
 	my $client = shift;
 	my $rgmode = $client->prefGet('replayGainMode');
-	
+
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
 
@@ -125,7 +125,7 @@ sub trackAlbumMatch {
 	}
 	
 	# Check for album and tracknum matches as expected
-	if ($compare_track->album && ($compare_track->album == $current_track->album) && 
+	if ($compare_track->album->id && ($compare_track->album->id == $current_track->album->id) && 
 		(($current_track->tracknum + $offset) == $compare_track->tracknum)) {
 
 		return 1;
