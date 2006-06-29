@@ -188,6 +188,12 @@ sub playRandom {
 
 	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
 
+	if (!$mixInfo{$client->id}) {
+		
+		#init hash for each new client
+		$mixInfo{$client->id}->{'type'} = undef;
+	}
+	
 	$type ||= 'track';
 	$type = lc($type);
 
@@ -197,7 +203,7 @@ sub playRandom {
 	# If this is a new mix, store the start time
 	my $startTime = undef;
 
-	if ($continuousMode && $type && $mixInfo{$client->id} && (!$mixInfo{$client->id}->{'type'} || $mixInfo{$client->id}->{'type'} ne $type)) {
+	if ($continuousMode && $type && (!$mixInfo{$client->id}->{'type'} || $mixInfo{$client->id}->{'type'} ne $type)) {
 		$startTime = time();
 	}
 
