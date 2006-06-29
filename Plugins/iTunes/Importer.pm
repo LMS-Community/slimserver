@@ -89,7 +89,21 @@ sub resetState {
 }
 
 sub getTotalTrackCount {
-	my ($class, $file) = @_;
+	my $class = shift;
+
+	return $class->_getTotalCount('Location', @_);
+}
+
+sub getTotalPlaylistCount {
+	my $class = shift;
+
+	return $class->_getTotalCount('Playlist ID', @_);
+}
+
+sub _getTotalCount {
+	my $class = shift;
+	my $type  = shift;
+	my $file  = shift || $class->findMusicLibraryFile;
 
 	# Get the total count of tracks for the progress bar.
 	open(XML, $file) or do {
@@ -102,7 +116,7 @@ sub getTotalTrackCount {
 
 	while(<XML>) {
 
-		if (/<key>Location/) {
+		if (/<key>$type/) {
 			$count++;
 		}
 	}
@@ -159,7 +173,7 @@ sub startScan {
 sub doneScanning {
 	my $class = shift;
 
-	$progress->final if $progress;
+	$progress->final($class->getTotalPlaylistCount) if $progress;
 
 	$::d_itunes && msg("iTunes: Finished Scanning\n");
 
@@ -410,7 +424,7 @@ sub handlePlaylist {
 	$progress->update if $progress;
 
 	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
-	my $url  = 'itunesplaylist:' . $cacheEntry->{'TITLE'};
+	my $url  = join('', 'itunesplaylist:', Slim::Utils::Misc::escape($name));
 
 	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
 
@@ -482,8 +496,7 @@ sub handleStartElement {
 sub handleCharElement {
 	my ($p, $value) = @_;
 
-	# Not sure how to get this passed in..
-	my $class = 'Plugins::iTunes::Importer';
+	my $class = __PACKAGE__;
 
 	# Just need the one value here.
 	if ($nextIsMusicFolder && $inValue) {
@@ -542,6 +555,8 @@ sub handleCharElement {
 sub handleEndElement {
 	my ($p, $element) = @_;
 
+	my $class = __PACKAGE__;
+
 	# Start our state machine controller - tell the next char handler what to do next.
 	if ($element eq 'key') {
 
@@ -567,6 +582,10 @@ sub handleEndElement {
 
 			$inTracks = 0;
 			$inPlaylists = 1;
+
+			# Set the progress to final when we're done with tracks and have moved on to playlists.
+			$progress->final if $progress;
+			$progress = Slim::Utils::ProgressBar->new({ 'total' => $class->getTotalPlaylistCount });
 		}
 
 		if ($inPlaylists && $currentKey eq 'Name') {
@@ -585,7 +604,7 @@ sub handleEndElement {
 
 		$inDict = 0;
 
-		Plugins::iTunes::Importer->handleTrack(\%item);
+		$class->handleTrack(\%item);
 
 		%item = ();
 	}
@@ -600,7 +619,7 @@ sub handleEndElement {
 
 			$::d_itunes && msg("iTunes: got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
 
-			Plugins::iTunes::Importer->handlePlaylist(\%item);
+			$class->handlePlaylist(\%item);
 		}
 
 		%item = ();
