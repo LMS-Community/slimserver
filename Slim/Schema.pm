@@ -93,7 +93,10 @@ sub init {
 	# Tell the DB that we're handing it UTF-8
 	# MySQL < 4.1 doesn't support this - which really shouldn't matter to
 	# us. But some users *ahem*kdf*ahem* are stuck running 4.0.x
-	eval { $dbh->do('SET NAMES UTF8;') };
+	if (Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0) {
+
+		eval { $dbh->do('SET NAMES UTF8;') };
+	}
 
 	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
 	my $dbix = DBIx::Migration->new({

@@ -8,6 +8,7 @@ package Slim::Utils::MySQLHelper;
 use strict;
 use base qw(Class::Data::Inheritable);
 use DBI;
+use DBI::Const::GetInfoType;
 use File::Path;
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
@@ -353,6 +354,20 @@ sub createDatabase {
 		errorMsg("MySQLHelper: createDatabase() - this is a fatal error. Exiting.\n");
 		exit;
 	}
+}
+
+sub mysqlVersion {
+	my $class = shift;
+	my $dbh   = shift || return 0;
+
+	my $mysqlVersion = $dbh->get_info($GetInfoType{'SQL_DBMS_VER'}) || 0;
+
+	if ($mysqlVersion && $mysqlVersion =~ /^(\d+\.\d+)/) {
+
+        	return $1;
+	}
+
+	return $mysqlVersion || 0;
 }
 
 # Shut down MySQL when the server is done..
