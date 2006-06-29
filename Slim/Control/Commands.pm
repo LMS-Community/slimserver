@@ -1788,6 +1788,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my @fields = map { lc($_) } Slim::Schema->sources;
 	my ($sort, $limit, $offset);
 
+	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
+	my $albumSort = 'album.titlesort, me.disc, me.tracknum, me.titlesort';
+	my $trackSort = 'me.disc, me.tracknum, me.titlesort';
+
 	# Setup joins as needed - we want to end up with Tracks in the end.
 	my %joinMap = ();
 
@@ -1831,6 +1835,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			} elsif ($key =~ /^(?:contributor|artist)\./) {
 
+				$sort = $albumSort;
 				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
 
 			} elsif ($key eq 'contributor') {
@@ -1884,9 +1889,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'contributor.id'};
 		}
 
+		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
+		if ($sort eq $albumSort) {
+			$joinMap{'album'} = 'album';
+		}
+
 		my $rs = Slim::Schema->rs('Track')->search(\%find, {
 
-			'order_by' => $sort || 'me.disc, me.tracknum, me.titlesort',
+			'order_by' => $sort || $trackSort,
 			'join'     => [ map { $_ } values %joinMap ],
 		});
 
