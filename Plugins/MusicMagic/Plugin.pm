@@ -555,13 +555,18 @@ sub mixerlink {
 		$form->{'mmmixable_not_descend'} = 1;
 	}
 
-	if ($item->musicmagic_mixable && canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
-		$form->{'mixable'} = 1;
+	# only add link if enabled and usable
+	if (canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
+		#set up a musicmagic link
+		#Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
+		$form->{'mixerlinks'}{'MUSICMAGIC'} = "plugins/MusicMagic/mixerlink.html";
+		
+		# flag if mixable
+		if ($item->can('musicmagic_mixable') && $item->musicmagic_mixable) {
+			$form->{'musicmagic_mixabl'} = 1;
+		}
 	}
 	
-	#set up a musicmagic link
-	#Slim::Web::Pages->addPageLinks("mixer", {'MUSICMAGIC' => "plugins/MusicMagic/mixerlink.html"}, 1);
-	$form->{'mixerlinks'}{'MUSICMAGIC'} = "plugins/MusicMagic/mixerlink.html";
 
 	return $form;
 }

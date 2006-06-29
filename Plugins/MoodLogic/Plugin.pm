@@ -253,14 +253,20 @@ sub mixerlink {
 	} else {
 		$form->{'mixable_not_descend'} = 1;
 	}
-	
-	if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable() && canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic')) {
-		$form->{'mixable'} = 1;
+
+	# only add link if enabled and usable.  moodlogic doensn't do albums
+	if (canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic') && $form->{'levelName'} ne 'album') {
+		#set up a moodlogic link
+		#Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
+		$form->{'mixerlinks'}{'MOODLOGIC'} = "plugins/MoodLogic/mixerlink.html";
+
+		#flag if mixable
+		if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable) {
+			$form->{'moodlogic_mixable'} = 1;
+		}
 	}
 	
-	#set up a moodlogic link
-	#Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
-	$form->{'mixerlinks'}{'MOODLOGIC'} = "plugins/MoodLogic/mixerlink.html";
+
 	
 	return $form;
 }
