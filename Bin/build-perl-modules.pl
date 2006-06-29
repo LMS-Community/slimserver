@@ -174,8 +174,6 @@ sub main {
 
 		print "\nDownloading $package to: $pwd\n";
 
-		next;
-
 		# Remove any previous version.
 		unlink $package;
 
