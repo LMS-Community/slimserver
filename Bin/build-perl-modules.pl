@@ -10,7 +10,7 @@
 # A compiler is obviously needed too.
 
 use strict;
-use lib qw(CPAN);
+use lib qw(/usr/local/slimserver/CPAN CPAN);
 use Config;
 use Cwd;
 use File::Basename qw(dirname basename);
@@ -22,16 +22,16 @@ my $SOURCE = 'http://svn.slimdevices.com/vendor/src';
 my $dlext  = $Config{'dlext'};
 
 # The list of all the packages needed.
-my @packages = qw(
-	Compress-Zlib-1.41.tar.gz
-	DBI-1.50.tar.gz
-	DBD-mysql-3.0002.tar.gz
-	Digest-SHA1-2.11.tar.gz
-	HTML-Parser-3.48.tar.gz
-	Template-Toolkit-2.14.tar.gz
-	Time-HiRes-1.86.tar.gz
-	XML-Parser-2.34.tar.gz
-	YAML-Syck-0.44.tar.gz
+my %packages = (
+	'Compress::Zlib'     => 'Compress-Zlib-1.41.tar.gz',
+	'DBI'                => 'DBI-1.50.tar.gz',
+	'DBD::mysql'         => 'DBD-mysql-3.0002.tar.gz',
+	'Digest::SHA1'       => 'Digest-SHA1-2.11.tar.gz',
+	'HTML::Parser'       => 'HTML-Parser-3.48.tar.gz',
+	'Template'           => 'Template-Toolkit-2.14.tar.gz',
+	'Time::HiRes'        => 'Time-HiRes-1.86.tar.gz',
+	'XML::Parser::Expat' => 'XML-Parser-2.34.tar.gz',
+	'YAML::Syck'         => 'YAML-Syck-0.44.tar.gz',
 );
 
 # Options for specific packages
@@ -150,11 +150,31 @@ sub main {
 		print "Downloads will use $downloadUsing to fetch tarballs.\n";
 	}
 
+	# Only download the packages that were passsed.
+	my @packages = ();
+
+	if (scalar @ARGV) {
+
+		for my $package (@ARGV) {
+
+			if (grep { /$package/ } keys %packages) {
+
+				push @packages, $packages{$package};
+			}
+		}
+
+	} else {
+
+		@packages = values %packages;
+	}
+
 	for my $package (@packages) {
 
 		chdir($pwd) or die "Couldn't change to $pwd : $!";
 
 		print "\nDownloading $package to: $pwd\n";
+
+		next;
 
 		# Remove any previous version.
 		unlink $package;
@@ -242,27 +262,6 @@ sub main {
 	chdir($pwd) or die "Couldn't change to $pwd : $!";
 
 	print "All done!\n\n";
-	return;
-
-	# We don't really want the tarball..
-	print "Bundling up tarball to send to Slim Devices..\n";
-
-	open(PERLCONFIG, ">$cpanDest/perl-config") or die "Couldn't open $downloadPath/perl-config for writing!: $!\n";
-	print PERLCONFIG Config::myconfig();
-	close PERLCONFIG;
-
-	# Tar it up
-	my $fileList = join(' ', @libList, "$cpanDest/perl-config");
-	my $tarFile  = "$downloadPath/sdi-modules-$version-$archname.tar.gz";
-
-	`tar cfv - $fileList | gzip -c > $tarFile`;
-
-	unless (-f $tarFile) {
-		die "Couldn't write out $tarFile : $!\n";
-	}
-
-	print "All done!\n\n";
-	print "Please email $tarFile to dan\@slimdevices.com\n\n";
 }
 
 sub findLibraryInPath {

@@ -89,6 +89,7 @@ sub loadModules {
 			catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
 			catdir($Bin,'lib'), 
 			catdir($Bin,'CPAN'), 
+			$Bin,
 		);
 	}
 
@@ -137,9 +138,11 @@ sub loadModules {
 
 	if (scalar @required_really_failed) {
 
-		printf("The following modules failed to load: %s\n\n", join(' ', @required_really_failed));
+		my $failed = join(' ', @required_really_failed);
 
-		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl\n\n";
+		print "The following modules failed to load: $failed\n\n";
+
+		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl $failed\n\n";
 		print "Exiting..\n";
 
 		exit;
