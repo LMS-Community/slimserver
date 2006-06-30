@@ -1021,8 +1021,7 @@ sub validTypeExtensions {
 	my $findTypes  = shift || qr/(?:list|audio)/;
 
 	my @extensions = ();
-	my $osType     = Slim::Utils::OSDetect::OS();
-	my $disabled   = disabledExtensions();
+	my $disabled   = disabledExtensions($findTypes);
 
 	while (my ($ext, $type) = each %slimTypes) {
 
@@ -1030,12 +1029,6 @@ sub validTypeExtensions {
 		next unless $type =~ /$findTypes/;
 
 		while (my ($suffix, $value) = each %suffixes) {
-
-			# Don't display .lnk files on Non-Windows machines!
-			# We can't parse them. Bug: 2654
-			if ($osType ne 'win' && $suffix eq 'lnk') {
-				next;
-			}
 
 			# Don't add extensions that are disabled.
 			if ($disabled->{$suffix}) {
@@ -1047,6 +1040,12 @@ sub validTypeExtensions {
 				push @extensions, $suffix;
 			}
 		}
+	}
+
+	# Always look for Windows shortcuts - but only on Windows machines.
+	# We can't parse them. Bug: 2654
+	if (Slim::Utils::OSDetect::OS() eq 'win' && $disabled->{'lnk'}) {
+		push @extensions, 'lnk';
 	}
 
 	# Always look for cue sheets when looking for audio.
