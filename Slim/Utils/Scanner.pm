@@ -125,6 +125,12 @@ sub scanDirectory {
 	# Don't include old Shoutcast recently played items.
 	$rule->not_name(qr/ShoutcastBrowser_Recently_Played/);
 
+	# iTunes 4.x makes binary metadata files with the format of: ._filename.ext
+	# In the same directory as the real audio files. Ignore those, so we
+	# don't create bogus tracks and try to guess names based off the file,
+	# thus duplicating tracks & albums, etc.
+	$rule->not_name(qr/\/\._/);
+
 	msg("About to look for files in $topDir\n");
 	msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
 
