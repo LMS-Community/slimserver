@@ -449,7 +449,7 @@ sub handlePlaylist {
 		for my $url (@{$cacheEntry->{'LIST'}}) {
 
 			# update with Podcast genre
-			Slim::Schema->rs('Track')->updateOrCreate({
+			Slim::Schema->rs('Playlist')->updateOrCreate({
 				'url'        => $url,
 				'attributes' => { 'GENRE' => 'Podcasts' },
 			});
