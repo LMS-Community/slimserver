@@ -562,8 +562,8 @@ sub mixerlink {
 		$form->{'mixerlinks'}{'MUSICMAGIC'} = "plugins/MusicMagic/mixerlink.html";
 		
 		# flag if mixable
-		if ($item->can('musicmagic_mixable') && $item->musicmagic_mixable) {
-			$form->{'musicmagic_mixabl'} = 1;
+		if (($item->can('musicmagic_mixable') && $item->musicmagic_mixable) || $form->{'levelName'} eq 'year') {
+			$form->{'musicmagic_mixable'} = 1;
 		}
 	}
 	

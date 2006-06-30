@@ -9,4 +9,4 @@
 			onMouseOver="self.status='[% "MOODLOGIC_INSTANT_MIX" | string %]';return true">
 [% ELSE %]
 		[% FILTER nbsp %][% "MOODLOGIC_INSTANT_MIX" | string %][% END %]
-[% END %]</a>[%- ELSE -%][%- PROCESS dummylink -%][% END %]
+[% END %]</a>[%- ELSIF item.levelName != 'year' -%][%- PROCESS dummylink -%][% END %]
