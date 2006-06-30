@@ -190,7 +190,6 @@ our (
 	$d_client,
 	$d_control,
 	$d_command,
-	$d_commands,
 	$d_datamodel,
 	$d_directstream,
 	$d_display,
@@ -599,7 +598,6 @@ to the console via stderr:
                         command line interface interface
     --d_client       => Display per-client debugging.
     --d_command      => Display internal command execution
-    --d_commands     => Display command subroutine information
     --d_control      => Low level player control information
     --d_datamodel    => Data model search and field mapping debugging
     --d_directstream => Debugging info on direct streaming 
@@ -686,7 +684,6 @@ sub initOptions {
 		'd_cli'				=> \$d_cli,
 		'd_client'			=> \$d_client,
 		'd_command'			=> \$d_command,
-		'd_commands'		=> \$d_commands,
 		'd_control'			=> \$d_control,
 		'd_datamodel'		=> \$d_datamodel,
 		'd_directstream'	=> \$d_directstream,
