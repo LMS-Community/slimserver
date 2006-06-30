@@ -1044,7 +1044,7 @@ sub validTypeExtensions {
 
 	# Always look for Windows shortcuts - but only on Windows machines.
 	# We can't parse them. Bug: 2654
-	if (Slim::Utils::OSDetect::OS() eq 'win' && $disabled->{'lnk'}) {
+	if (Slim::Utils::OSDetect::OS() eq 'win' && !$disabled->{'lnk'}) {
 		push @extensions, 'lnk';
 	}
 
