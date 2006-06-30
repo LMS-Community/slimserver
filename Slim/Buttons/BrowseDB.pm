@@ -175,6 +175,7 @@ sub init {
 
 					while (my ($subkey, $subvalue) = each %{$value}) {
 
+						next if $subkey =~ /role$/;
 						push @terms, join('=', $levels[$level-1], $subvalue);
 					}
 
