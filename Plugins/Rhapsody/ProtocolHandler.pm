@@ -270,8 +270,6 @@ sub parseDirectBody {
 			$radioTracks{ $everybuddy->id }->{$url} = $trackURL;
 		}
 		
-		warn Data::Dump::dump(\%radioTracks);
-		
 		# Set title on a timer so it doesn't appear too early
 		my $elapsed  = $client->songElapsedSeconds;
 		my $tracklen = 
