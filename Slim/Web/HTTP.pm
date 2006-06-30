@@ -687,6 +687,13 @@ sub generateHTTPResponse {
 	$params->{'nosetup'} = 1   if $::nosetup;
 	$params->{'noserver'} = 1   if $::noserver;
 
+	# Check for the gallery view cookie.
+	if ($params->{'cookies'}->{'SlimServer-albumView'} && 
+	    $params->{'cookies'}->{'SlimServer-albumView'}->value) {
+
+		$params->{'artwork'} = 1;
+	}
+
 	if (Slim::Web::Graphics::serverResizesArt()) {
 		$params->{'serverResizesArt'} = 1;
 	}

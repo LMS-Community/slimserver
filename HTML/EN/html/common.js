@@ -15,6 +15,28 @@ function refreshStatus() {
 	}
 }
 
+function toggleGalleryView(artwork) {
+
+	for (var i=0; i < parent.frames.length; i++) {
+
+		if (parent.frames[i].name == "browser" && parent.frames[i].location.pathname != '') {
+
+			if (artwork) {
+
+				setCookie( 'SlimServer-albumView', "&artwork=1" );
+				parent.frames[i].location=parent.frames[i].location.href+"&artwork=1";
+
+			} else {
+
+				setCookie( 'SlimServer-albumView', "" );
+				myString = new String(parent.frames[i].location.href);
+				var rExp = /\&artwork=1/gi;
+				parent.frames[i].location=myString.replace(rExp, "");
+			}
+		}
+	}
+}
+
 [% IF refresh %]
 	function doLoad() {
 	
