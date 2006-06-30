@@ -353,7 +353,7 @@ sub _pushon {
 		'fonts' => { 'graphic-320x32' => 'high' },
 		'line1' => '',
 		'line2' => $client->string('NOW_PLAYING') . ': ' .
-					Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client)),
+					Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)),
 	};
 	
 	$client->pushLeft(undef, $screen);

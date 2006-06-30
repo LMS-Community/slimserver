@@ -212,7 +212,7 @@ sub newTitle {
 	my $url = shift;
 
 	for my $client (Slim::Player::Client::clients()) {
-		jump($client) if ((Slim::Player::Playlist::song($client) || '') eq $url);
+		jump($client) if ((Slim::Player::Playlist::url($client) || '') eq $url);
 	}
 }
 

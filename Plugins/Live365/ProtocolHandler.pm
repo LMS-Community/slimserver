@@ -119,7 +119,7 @@ sub getPlaylist {
 
 	return unless (defined($client));
 
-	my $currentSong = Slim::Player::Playlist::song($client);
+	my $currentSong = Slim::Player::Playlist::url($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
 	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
@@ -187,7 +187,7 @@ sub playlistLoaded {
 		$newTitle = ${*$self}{live365_original_title};
 	}
 
-	if ( $newTitle and $newTitle ne Slim::Music::Info::getCurrentTitle( $client, Slim::Player::Playlist::song($client) ) ) {
+	if ( $newTitle and $newTitle ne Slim::Music::Info::getCurrentTitle( $client, Slim::Player::Playlist::url($client) ) ) {
 		$::d_plugins && msg( "Live365 Now Playing: $newTitle\n" );
 		$::d_plugins && msg( "Live365 next update: $nextRefresh seconds\n" );
 		
@@ -202,7 +202,7 @@ sub playlistLoaded {
 		#$client->songduration($nextRefresh) if $nextRefresh;
 	}
 
-	my $currentSong = Slim::Player::Playlist::song($client);
+	my $currentSong = Slim::Player::Playlist::url($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
 	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');

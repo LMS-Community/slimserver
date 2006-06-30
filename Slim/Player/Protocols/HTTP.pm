@@ -121,7 +121,7 @@ sub parseMetadata {
 	# XXXX - find out how we're being called - $self->url should be set.
 	if (!$url) {
 
-		$url = Slim::Player::Playlist::song(
+		$url = Slim::Player::Playlist::url(
 			$client, Slim::Player::Source::streamingSongIndex($client)
 		);
 	}

@@ -147,7 +147,7 @@ sub status {
 	}
 	
 	if ($songcount > 0) {
-		my $song = Slim::Player::Playlist::song($client);
+		my $song = Slim::Player::Playlist::url($client);
 		
 		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);

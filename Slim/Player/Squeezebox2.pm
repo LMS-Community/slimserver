@@ -888,7 +888,7 @@ sub directMetadata {
 		Slim::Player::Protocols::MMS::parseMetadata( $client, $url, $metadata );
 	}
 	else {
-		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::song($client), $metadata );
+		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::url($client), $metadata );
 	}
 	
 	# new song, so reset counters
@@ -939,7 +939,7 @@ sub shouldLoop {
 		(Slim::Player::Playlist::repeat($client) == 2 &&
 		Slim::Player::Playlist::count($client) == 1));
 
-	my $url = Slim::Player::Playlist::song(
+	my $url = Slim::Player::Playlist::url(
 		$client,
 		Slim::Player::Source::streamingSongIndex($client)
 	);

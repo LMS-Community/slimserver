@@ -362,7 +362,7 @@ sub sendXplHBeatMsg {
 			}
 		}
 
-		$trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+		$trackname = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
 
 		# if the song name has the track number at the beginning, remove it
 		$trackname =~ s/^[0-9]*\.//g;

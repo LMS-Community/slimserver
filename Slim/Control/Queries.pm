@@ -433,7 +433,7 @@ sub cursonginfoQuery {
 
 	# get the query
 	my $method = $request->getRequest(0);
-	my $url = Slim::Player::Playlist::song($client);
+	my $url = Slim::Player::Playlist::url($client);
 	
 	if (defined $url) {
 
@@ -829,11 +829,11 @@ sub playlistXQuery {
 
 	} elsif ($entity eq 'path') {
 		my $result = Slim::Utils::Unicode::utf8decode_locale(
-			URI::Escape::uri_unescape(Slim::Player::Playlist::song($client, $index)));
+			URI::Escape::uri_unescape(Slim::Player::Playlist::url($client, $index)));
 		$request->addResult("_$entity",  $result || 0);
 
 	} elsif ($entity eq 'remote') {
-		if (defined (my $url = Slim::Player::Playlist::song($client, $index))) {
+		if (defined (my $url = Slim::Player::Playlist::url($client, $index))) {
 			$request->addResult("_$entity", Slim::Music::Info::isRemoteURL($url));
 		}
 		
@@ -1302,7 +1302,7 @@ sub statusQuery {
 	
 		$request->addResult('mode', Slim::Player::Source::playmode($client));
 
-		if (my $song = Slim::Player::Playlist::song($client)) {
+		if (my $song = Slim::Player::Playlist::url($client)) {
 
 			if (Slim::Music::Info::isRemoteURL($song)) {
 				$request->addResult('remote', 1);

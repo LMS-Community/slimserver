@@ -1290,7 +1290,7 @@ sub power {
 		if (Slim::Player::Source::playmode($client) eq 'play') {
 
 			if (Slim::Player::Playlist::song($client) && 
-				Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
+				Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
 				# always stop if currently playing remote stream
 				$client->execute(["stop"]);
 			
@@ -1341,7 +1341,7 @@ sub power {
 			}
 
 			if ($resumeOn =~ /Play/ && Slim::Player::Playlist::song($client) &&
-				!Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::song($client))) {
+				!Slim::Music::Info::isRemoteURL(Slim::Player::Playlist::url($client))) {
 				# play if current playlist item is not a remote url
 				$client->execute(["play"]);
 			}
@@ -1569,7 +1569,7 @@ sub currentSongLines {
 			}
 		} 
 
-		$parts->{line2} = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::song($client));
+		$parts->{line2} = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
 
 		$parts->{overlay2} = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
 

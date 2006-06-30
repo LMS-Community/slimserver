@@ -1453,9 +1453,9 @@ sub sendStreamingResponse {
 
 			unshift @{$outbuf{$httpClient}}, $segment;
 
-			my $song = Slim::Player::Playlist::song($client);
+			my $url = Slim::Player::Playlist::url($client);
 
-			my $title = $song ? Slim::Music::Info::getCurrentTitle($client, $song) : string('WELCOME_TO_SLIMSERVER');
+			my $title = $url ? Slim::Music::Info::getCurrentTitle($client, $url) : string('WELCOME_TO_SLIMSERVER');
 			$title =~ tr/'/ /;
 
 			my $metastring = "StreamTitle='" . $title . "';";
@@ -1842,7 +1842,7 @@ sub buildStatusHeaders {
 
 			my $track = Slim::Schema->rs('Track')->objectForUrl(Slim::Player::Playlist::song($client));
 	
-			$headers{"x-playertrack"} = Slim::Player::Playlist::song($client); 
+			$headers{"x-playertrack"} = Slim::Player::Playlist::url($client); 
 			$headers{"x-playerindex"} = Slim::Player::Source::currentSongIndex($client) + 1;
 			$headers{"x-playertime"}  = Slim::Player::Source::songTime($client);
 

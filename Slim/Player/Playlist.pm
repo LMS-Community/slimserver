@@ -79,6 +79,12 @@ sub song {
 	return $objOrUrl;
 }
 
+sub url {
+	my $objOrUrl = song( @_ );
+	
+	return ( blessed $objOrUrl ) ? $objOrUrl->url : $objOrUrl;
+}
+
 sub shuffleList {
 	my ($client) = shift;
 	
