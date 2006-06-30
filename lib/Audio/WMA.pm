@@ -17,7 +17,7 @@ my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
 my %objectParsers = _knownParsers();
 
-my $DEBUG	  = 0;
+my $DEBUG         = 0;
 
 my $WORD          = 2;
 my $DWORD         = 4;
@@ -869,13 +869,14 @@ sub _knownGUIDs {
 sub _knownParsers {
 	
 	return (
-		'ASF_Content_Description_Object'          => \&_parseASFContentDescriptionObject,
-		'ASF_Extended_Content_Description_Object' => \&_parseASFExtendedContentDescriptionObject,
-		'ASF_Content_Encryption_Object'           => \&_parseASFContentEncryptionObject,
-		'ASF_Extended_Content_Encryption_Object'  => \&_parseASFContentEncryptionObject,
 		'ASF_File_Properties_Object'              => \&_parseASFFilePropertiesObject,
-		'ASF_Header_Extension_Object'             => \&_parseASFHeaderExtensionObject,
-		'ASF_Stream_Properties_Object'            => \&_parseASFStreamPropertiesObject,
+		'ASF_Content_Description_Object'          => \&_parseASFContentDescriptionObject,
+		
+		# We don't currently use most of these, so no point in spending time parsing them
+		#'ASF_Extended_Content_Description_Object' => \&_parseASFExtendedContentDescriptionObject,
+		#'ASF_Content_Encryption_Object'           => \&_parseASFContentEncryptionObject,
+		#'ASF_Extended_Content_Encryption_Object'  => \&_parseASFContentEncryptionObject,
+		#'ASF_Stream_Properties_Object'            => \&_parseASFStreamPropertiesObject,
 	);
 }
 
