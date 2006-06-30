@@ -239,10 +239,10 @@ sub renamePlaylist {
 
 		} elsif (!blessed($existingPlaylist) || $params->{'overwrite'}) {
 
-			if (blessed($existingPlaylist) && $existingPlaylist ne $playlistObj) {
+			if (blessed($existingPlaylist) && $existingPlaylist->id ne $playlistObj->id) {
 
 				Slim::Control::Request::executeRequest(undef, ['playlist', 'deleteplaylist', $existingPlaylist->id]);
-				
+
 				$existingPlaylist = undef;
 			}
 
@@ -257,7 +257,7 @@ sub renamePlaylist {
 		}
 
 		$params->{'level'}     = 1;
-		$params->{'playlist'}  = $playlistObj->id;
+		$params->{'playlist.id'}  = $playlistObj->id;
 	}
 
 	return Slim::Web::Pages::BrowseDB::browsedb($client, $params);
@@ -276,7 +276,7 @@ sub deletePlaylist {
 
 		$params->{'DELETE_WARNING'} = 1;
 		$params->{'level'}          = 1;
-		$params->{'playlist'}       = $playlist_id;
+		$params->{'playlist.id'}    = $playlist_id;
 
 	} elsif (blessed($playlistObj)) {
 	

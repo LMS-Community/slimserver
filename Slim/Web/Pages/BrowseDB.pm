@@ -8,6 +8,7 @@ package Slim::Web::Pages::BrowseDB;
 # version 2.
 
 use strict;
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -131,8 +132,12 @@ sub browsedb {
 
 			if ($attrKey ne 'album.year') {
 
-				$params->{$attr} = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
-				$title           = $params->{$attr}->name;
+				my $obj = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
+
+				if (blessed($obj) && $obj->can('name')) {
+					$params->{$attr} = $obj;
+					$title           = $obj->name;
+				}
 			}
 
 			push @attrs, join('=', $attrKey, $params->{$attrKey});
