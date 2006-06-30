@@ -17,7 +17,6 @@ use base qw(Class::Data::Inheritable);
 
 use FileHandle;
 use File::Basename qw(basename);
-use File::Find::Rule;
 use IO::String;
 use Path::Class;
 use Scalar::Util qw(blessed);
@@ -25,6 +24,7 @@ use Scalar::Util qw(blessed);
 use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Networking::Stream;
+use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
 
@@ -82,12 +82,15 @@ sub scanDirectory {
 	my $os     = Slim::Utils::OSDetect::OS();
 	my $last   = Slim::Schema->lastRescanTime;
 
+	# If the caller wants the list of objects we found.
+	my $append = ref($args->{'listRef'}) eq 'ARRAY' ? 1 : 0;
+
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
 	# See perldoc File::Find::Rule for more information.
 	# follow symlinks.
-	my $rule   = File::Find::Rule->new;
+	my $rule   = Slim::Utils::FileFindRule->new;
 	my $extras = { 'no_chdir' => 1 };
 
 	# File::Find doesn't like follow on Windows.
@@ -125,23 +128,22 @@ sub scanDirectory {
 	msg("About to look for files in $topDir\n");
 	msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
 
-	my @files   = $rule->in($topDir);
-	my @objects = ();
+	my $files = $rule->in($topDir);
 
-	if (!scalar @files) {
+	if (!scalar @{$files}) {
 
 		$::d_scan && msg("scanDirectory: Didn't find any valid files in: [$topDir]\n");
 		return;
 
 	} else {
 
-		msgf("Found %d files in %s\n", scalar @files, $topDir);
+		msgf("Found %d files in %s\n", scalar @{$files}, $topDir);
 	}
 
 	# Give the user a progress indicator if available.
-	my $progress = Slim::Utils::ProgressBar->new({ 'total' => scalar @files });
+	my $progress = Slim::Utils::ProgressBar->new({ 'total' => scalar @{$files} });
 
-        for my $file (@files) {
+	for my $file (@{$files}) {
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
 
@@ -181,12 +183,13 @@ sub scanDirectory {
 
 		# If we're starting with a clean db - don't bother with searching for a track
 		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
+		my $track  = undef;
 
 		if (Slim::Music::Info::isSong($url)) {
 
 			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
-			push @objects, Slim::Schema->$method({
+			$track = Slim::Schema->$method({
 				'url'        => $url,
 				'readTags'   => 1,
 				'checkMTime' => 1,
@@ -208,19 +211,21 @@ sub scanDirectory {
 				}
 			});
 
-			push @objects, $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
+			$track = $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
 		}
+
+		# Bug: 3606 - only append to the listRef if a listRef exists.
+		if (defined $track && $append) {
+
+			push @{$args->{'listRef'}}, $track;
+		}
+
+		$track = undef;
 
 		$progress->update if $progress;
 	}
 
 	$progress->final if $progress;
-
-	# If the caller wants the list of objects we found.
-	if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {
-
-		push @{$args->{'listRef'}}, @objects;
-	}
 }
 
 sub scanRemoteURL {

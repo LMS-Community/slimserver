@@ -460,11 +460,10 @@ sub newTrack {
 	# We don't use it anyways.
 	$columnValueHash->{'url'} = $url;
 
-	# Create the track - or bail. We should probably spew an error.
-	my $track = eval { Slim::Schema->resultset($source)->create($columnValueHash) };
+	# Create the track - or bail. ->throw_exception will emit a backtrace.
+	my $track = Slim::Schema->resultset($source)->create($columnValueHash);
 
 	if ($@ || !$track) {
-		bt();
 		errorMsg("newTrack: Couldn't create $source for $url : $@\n");
 		return;
 	}
@@ -734,7 +733,7 @@ sub mergeVariousArtistsAlbums {
 		'me.compilation' => undef,
 		'me.title'       => { '!=' => string('NO_ALBUM') },
 
-	}, {'prefetch' => { 'tracks' => 'contributorTracks' } });
+	})->distinct;
 
 	my $progress = undef;
 	my $count    = $cursor->count;
@@ -744,25 +743,24 @@ sub mergeVariousArtistsAlbums {
 	}
 
 	# fetch one at a time to keep memory usage in check.
-	ALBUM: while (my $albumObj = $cursor->next) {
+	while (my $albumObj = $cursor->next) {
 
 		my %trackArtists      = ();
 		my $markAsCompilation = 0;
 
-		# Create a composite of the artists for the track to compare below.
-		# Only look for Artist roles.
-		for my $track ($albumObj->tracks) {
+		# Bug 2066: If the user has an explict Album Artist set -
+		# don't try to mark it as a compilation. So only fetch ARTIST roles.
+		my $tracks = $albumObj->tracks({ 'contributorTracks.role' => $role }, { 'prefetch' => 'contributorTracks' });
 
-			# Bug 2066: If the user has an explict Album Artist set -
-			# don't try to mark it as a compilation. So only fetch ARTIST roles.
-			my @artists = $track->artists;
+		while (my $track = $tracks->next) {
 
-			if (!scalar @artists) {
-				next ALBUM;
-			}
+			# Don't inflate the contributor object.
+			my @contributors = sort map {
+				$_->get_column('contributor')
+			} $track->search_related('contributorTracks')->all;
 
 			# Create a composite of the artists for the track to compare below.
-			$trackArtists{ join(':', sort map { $_->id } @artists) } = 1;
+			$trackArtists{ join(':', @contributors) } = 1;
 		}
 
 		# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
