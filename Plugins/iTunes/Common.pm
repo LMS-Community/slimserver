@@ -84,12 +84,12 @@ sub setPodcasts {
 	}
 
 	my $genre = Slim::Schema->single('Genre', { 'name' => 'Podcasts' });
-
+	
 	if ($genre) {
 		my $id = $genre->id;
 		
 		Slim::Web::Pages->addPageLinks("browse", {
-			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,contributor,album,track&level=2&&genre.id=".$id
+			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,contributor,album,track&level=1&&genre.id=".$id
 		});
 
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
