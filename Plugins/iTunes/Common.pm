@@ -95,14 +95,14 @@ sub setPodcasts {
 		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
 			'useMode'      => 'browsedb',
 			'hierarchy'    => 'genre,contributor,album,track',
-			'level'        => 2,
+			'level'        => 1,
 			'findCriteria' => { 'genre.id' => $id },
 		});
 
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
 			'useMode'      => 'browsedb',
 			'hierarchy'    => 'genre,contributor,album,track',
-			'level'        => 2,
+			'level'        => 1,
 			'findCriteria' => { 'genre.id' => $id },
 		});
 	}
