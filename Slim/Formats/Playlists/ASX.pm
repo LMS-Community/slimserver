@@ -97,7 +97,9 @@ sub read {
 
 				if ($class->playlistEntryIsValid($path, $url)) {
 
-					push @items, $class->_updateMetaData($path, $title);
+					push @items, $class->_updateMetaData( $path, {
+						'TITLE' => $title,
+					} );
 				}
 			}
 		}

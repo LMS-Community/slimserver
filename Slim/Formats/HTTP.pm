@@ -43,9 +43,10 @@ sub getFormatForURL {
 }
 
 sub requestString {
-	my $self = shift;
-	my $url  = shift;
-	my $post = shift;
+	my $self   = shift;
+	my $client = shift;
+	my $url    = shift;
+	my $post   = shift;
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  
@@ -105,9 +106,10 @@ sub parseHeaders {
 			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 		}
 
-		if ($header =~ /^icy-br:\s*(.+)\015\012$/i) {
+		if ($header =~ /^icy-br:\s*(.+)$CRLF$/i) {
 
 			${*$self}{'bitrate'} = $1 * 1000;
+			Slim::Music::Info::setBitrate( $self->url, ${*$self}{'bitrate'} );
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {

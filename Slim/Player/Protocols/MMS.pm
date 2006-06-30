@@ -111,8 +111,9 @@ sub canDirectStream {
 # to send to a WM streaming server. We construct a HTTP request string and
 # cross our fingers. 
 sub requestString {
-	my $self = shift;
-	my $url  = shift;
+	my $classOrSelf = shift;
+	my $client      = shift;
+	my $url         = shift;
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
@@ -292,8 +293,9 @@ sub handleBodyFrame {
 
 sub parseDirectBody {
 	my $classOrSelf = shift;
-	my $url = shift;
-	my $body = shift;
+	my $client      = shift;
+	my $url         = shift;
+	my $body        = shift;
 
 	my $io = IO::String->new($body);
 
@@ -321,8 +323,67 @@ sub parseDirectBody {
 		$stream_nums{$url} = $stream->{'flags_raw'} & 0x007F;
 
 		$::d_directstream && msg("Parsed body as WMA header.\n");
+		
+		_setMetadata( $client, $url, $wma );
 
 		return $url;
+	}
+}
+
+sub parseMetadata {
+	my $client = shift;
+	my $url = shift;
+	my $metadata = shift;
+	
+	my $wma = Audio::WMA->parseObject( $metadata );
+
+	_setMetadata( $client, $url, $wma );
+	
+	return;
+}
+
+sub _setMetadata {
+	my ( $client, $url, $wma ) = @_;
+	
+	# Set bitrate if available
+	if ( my $bitrate = $wma->info('bitrate') ) {
+		my $kbps = int( $bitrate / 1000 );
+		my $vbr  = $wma->tags('vbr') || undef;
+		Slim::Music::Info::setBitrate( $url, $kbps * 1000, $vbr );
+		$::d_directstream && msg("Setting bitrate to $kbps from WMA metadata\n");
+	}
+	
+	# Set duration and progress bar if available and this is not a broadcast stream
+	if ( my $secs = int( $wma->info('playtime_seconds' ) ) ) {
+		if ( $wma->info('flags') && $wma->info('flags')->{'broadcast'} != 1 ) {
+			if ( $secs > 0 ) {
+				my %cacheEntry = (
+					'SECS' => $secs,
+				);
+
+				Slim::Music::Info::updateCacheEntry( $url, \%cacheEntry );
+
+				# Set the duration so the progress bar appears	
+				$client->currentsongqueue()->[0]->{duration} = $secs;
+				
+				$::d_directstream && msg("Setting duration to $secs seconds from WMA metadata\n");
+			}
+		}
+	}
+	
+	# Set title if available
+	if ( my $title = $wma->tags('title') ) {
+		
+		# Ignore title metadata for Rhapsody tracks
+		if ( $url !~ /^rhap/ ) {
+			Slim::Music::Info::setCurrentTitle($url, $title);
+
+			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+				$everybuddy->update();
+			}
+		
+			$::d_directstream && msg("Setting title to '$title' from WMA metadata\n");
+		}
 	}
 }
 

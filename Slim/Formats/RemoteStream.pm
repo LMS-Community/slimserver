@@ -127,7 +127,7 @@ sub request {
 	my $post    = $args->{'post'};
 
 	my $class   = ref $self;
-	my $request = $self->requestString($url, $post);
+	my $request = $self->requestString($args->{'client'}, $url, $post);
 	
 	$::d_remotestream && msg("Request: \n$request\n");
 
@@ -266,6 +266,12 @@ sub bitrate {
 	return ${*$self}{'bitrate'};
 }
 
+sub client {
+	my $self = shift;
+
+	return ${*$self}{'client'};
+}
+
 sub contentLength {
 	my $self = shift;
 
@@ -276,6 +282,12 @@ sub contentType {
 	my $self = shift;
 
 	return ${*$self}{'contentType'};
+}
+
+sub duration {
+	my $self = shift;
+
+	return ${*$self}{'duration'};
 }
 
 sub redirect {

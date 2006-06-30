@@ -15,6 +15,7 @@ $VERSION = '0.9';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
+my %objectParsers = _knownParsers();
 
 my $DEBUG	  = 0;
 
@@ -61,6 +62,43 @@ sub new {
 		close  FILE;
 	}
 
+	return $self;
+}
+
+sub parseObject {
+	my $class = shift;
+	my $data  = shift;
+	
+	# Read the GUID for this object
+	my $hex = qr/[0-9A-F]/i;
+	my $gr  = qr/($hex{8})($hex{4})($hex{4})($hex{4})($hex{12})/;
+	
+	my $guid;
+	map { $guid .= $_ } unpack( 'H*', substr $data, 0, 16 );
+	$guid      = uc( join '-', ( $guid =~ /$gr/ ) );
+	my $name   = $reversedGUIDs{$guid};
+	
+	# Set up a new WMA object for parsing
+	my $self = {
+		headerData => $data,
+		offset     => 16,
+	};
+	bless $self, $class;
+	
+	# Read the size
+	my $objectSize = _parse64BitString($self->_readAndIncrementOffset(8));
+	return -1 if !defined $objectSize;
+	
+	my $parser = $objectParsers{$name};
+	
+	if ( ref $parser ) {
+		$DEBUG && warn "Parsing $name (size: $objectSize)\n";
+		$parser->( $self );
+	}
+	else {
+		$DEBUG && warn "No parser found for $name (size: $objectSize)\n";
+	}
+	
 	return $self;
 }
 
@@ -826,6 +864,19 @@ sub _knownGUIDs {
 	);
 
 	return %guidMapping;
+}
+
+sub _knownParsers {
+	
+	return (
+		'ASF_Content_Description_Object'          => \&_parseASFContentDescriptionObject,
+		'ASF_Extended_Content_Description_Object' => \&_parseASFExtendedContentDescriptionObject,
+		'ASF_Content_Encryption_Object'           => \&_parseASFContentEncryptionObject,
+		'ASF_Extended_Content_Encryption_Object'  => \&_parseASFContentEncryptionObject,
+		'ASF_File_Properties_Object'              => \&_parseASFFilePropertiesObject,
+		'ASF_Header_Extension_Object'             => \&_parseASFHeaderExtensionObject,
+		'ASF_Stream_Properties_Object'            => \&_parseASFStreamPropertiesObject,
+	);
 }
 
 sub _RIFFwFormatTagLookup {

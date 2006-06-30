@@ -32,6 +32,8 @@ sub init {
 			my $client = shift;
 			my $string = shift;
 
+			return $string unless Slim::Utils::Strings::stringExists($string);
+
 			if (defined $client && $client->linesPerScreen() == 1) {
 				return $client->doubleString($string);
 			}
@@ -406,6 +408,17 @@ sub homeExitHandler {
 	}
 }
 
+sub cmpString {
+	my $client = shift;
+	my $string = shift;
+
+	if (Slim::Utils::Strings::stringExists($string)) {
+		return $client->string($string);
+	}
+
+	return $string;
+}
+
 # load the submenu hash keys into an array of valid entries.
 sub createList {
 	my $client = shift;
@@ -417,7 +430,7 @@ sub createList {
 	
 	for my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
 				(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
-				    (lc($client->string($a)) cmp lc($client->string($b)))} 
+				    (lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
 			 keys %{$params->{'submenus'}}) {
 
 		next if exists $disabledplugins{$sub};

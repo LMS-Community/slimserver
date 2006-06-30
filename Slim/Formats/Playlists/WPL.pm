@@ -60,7 +60,7 @@ sub read {
 
 				$::d_parse && msg("    entry: $entry\n");
 
-				push @items, $class->_updateMetaData($entry, undef);
+				push @items, $class->_updateMetaData($entry);
 			}
 		}
 	}

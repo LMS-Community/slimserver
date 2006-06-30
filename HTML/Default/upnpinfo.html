@@ -1,0 +1,94 @@
+[% pagetitle = 'SongInfo' %]
+[% pageicon = 'SongInfo' %]
+[% PROCESS pageheader.html %] 
+<TR height="44">
+				<TD width="4" height="44">
+			<IMG SRC="html/images/spacer.gif" WIDTH=8 HEIGHT=39 ALT=""></TD>
+				<td valign="top" class="medgrey" height="44">
+					<table cellspacing="0" width=100% >
+						<tr height="5">
+							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
+							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
+							<td width="4" height="5"><img src="html/images/spacer.gif" width=4 height=5 alt=""></td>
+						</tr>
+						<tr>
+							<td width="8"><img src="html/images/spacer.gif" width=8 height=8 alt=""></td>
+							
+        <td class="exlisting" valign=top><a href="home.html?player=[% player | uri %]">[% "HOME" | string %]</a> / [% "SONG_INFO" | string %] [% "FOR" | string %] <i><a href="upnpinfo.html?device=[% device %]&hierarchy=[% hierarchy %]&trackid=[% track.id %]&player=[% player | uri %]">[% track.title | html %]</a></i> </td>
+							<td width="4"></td>
+						</tr>
+						<tr height="5">
+							<td width="8" height="5"><img src="html/images/spacer.gif" width=8 height=5 alt=""></td>
+							<td height="5"><img src="html/images/spacer.gif" width=305 height=5 alt=""></td>
+							<td width="4" height="5"></td>
+						</tr>
+					</table>
+				</td>
+				<TD width="4" height="44">
+			<p><IMG SRC="html/images/spacer.gif" WIDTH=4 HEIGHT=19 ALT=""></p></TD>
+			</TR>
+<tr height="100%">
+				<td width="4" height="100%"></td>
+				
+  <td valign="top" height="100%">
+    <br>
+    <p>
+    <a href="status_header.html?p0=playlist&p1=play&p2=[% track.url | uri %]&player=[% player | uri %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+    <p>
+    <a href="status_header.html?p0=playlist&p1=add&p2=[% track.url | uri %]&player=[% player | uri %]" target="status">[% FILTER nbsp; "ADD_THIS_SONG_TO_PLAYLIST" | string; END %]</a> 
+    </p>
+
+<table cellspacing="5">
+      <tr> 
+        <td class="nowrap">[% "TITLE" | string; "COLON" | string %]</td>
+        <td> [% track.title | html %] </td>
+      </tr>
+
+      [% IF track.artist %] 
+      <tr> 
+        <td class="nowrap"> [% "ARTIST" | string; "COLON" | string %]</td>
+        <td> [% track.artist | html %]</td>
+      </tr>
+      [% END %]
+
+      [% IF track.album %] 
+      <tr> 
+        <td class="nowrap"> [% "ALBUM" | string; "COLON" | string %]</td>
+        <td>[% track.album | html %]
+        </td>
+      </tr>
+      [% END %]
+
+      [% IF track.genre %] 
+      <tr> 
+        <td class="nowrap"> [% "GENRE" | string; "COLON" | string %]</td>
+        <td>[% track.genre | html %]
+        </td>
+      </tr>
+      [% END %]
+
+     [% IF track.duration %] 
+      <tr> 
+        <td class="nowrap"> [% "LENGTH" | string; "COLON" | string %]</td>
+        <td> [% track.duration | html %] </td>
+      </tr>
+     [% END %]
+
+     [% IF comment %] 
+      <tr> 
+        <td class="nowrap"> [% "COMMENT" | string; "COLON" | string %]</td>
+        <td>[% comment %]</td>
+      </tr>
+      [% END %]
+
+     [% IF track.albumArtURI %]
+      <tr>
+      	<td valign="top">[% "COVERART" | string; "COLON" | string %]</td>
+      	<td><a href="[% track.albumArtURI %]" target="cover"><img src="[% track.albumArtURI %]"></a></td>
+      </tr>
+     [% END %]
+
+    </table>
+    </td>
+	<td width="4" height="100%"></td>
+</tr>

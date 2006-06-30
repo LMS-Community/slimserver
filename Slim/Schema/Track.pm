@@ -19,6 +19,10 @@ our @allColumns = (qw(
 	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
 ));
 
+use overload
+	'""'     => sub { shift->url },
+	fallback => 1;
+
 {
 	my $class = __PACKAGE__;
 

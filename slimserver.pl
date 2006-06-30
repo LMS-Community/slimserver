@@ -155,6 +155,7 @@ use Slim::Utils::Timers;
 use Slim::Utils::MySQLHelper;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::UPnPMediaServer;
 
 use vars qw($VERSION $REVISION @AUTHORS);
 
@@ -415,6 +416,9 @@ sub init {
 
 	$::d_server && msg("AsyncHTTP init...\n");
 	Slim::Networking::AsyncHTTP->init;
+	
+	$::d_server && msg("UPnP init...\n");
+	Slim::Utils::UPnPMediaServer::init();
 
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();

@@ -49,7 +49,9 @@ sub read {
 
 		if ($item->{'title'}) {
 
-			push @urls, $class->_updateMetaData($enclosure->{'url'}, $item->{'title'});
+			push @urls, $class->_updateMetaData( $enclosure->{'url'}, {
+				'TITLE' => $item->{'title'},
+			} );
 
 		} else {
 

@@ -23,6 +23,8 @@ use MIME::Base64;
 use Slim::Formats::Playlists;
 use Slim::Player::Player;
 use Slim::Player::ProtocolHandlers;
+use Slim::Player::Protocols::HTTP;
+use Slim::Player::Protocols::MMS;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -145,6 +147,10 @@ sub nowPlayingModes {
 	# return scalar(keys %{$client->playingModeOptions()});
 	# which made tons of useless string calls!
 }
+
+my @WMA_FILE_PROPERTIES_OBJECT_GUID = (0x8c, 0xab, 0xdc, 0xa1, 0xa9, 0x47, 0x11, 0xcf, 0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65);
+my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
+my @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID = (0xd2, 0xd0, 0xa4, 0x40, 0xe3, 0x07, 0x11, 0xd2, 0x97, 0xf0, 0x00, 0xa0, 0xc9, 0x5e, 0xa8, 0x50);
 
 sub playingModeOptions { 
 	my $client = shift;
@@ -671,14 +677,7 @@ sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
 
-	if ($::d_directstream) {
-
-		require Data::Dumper;
-
-		msg("processing headers for direct streaming\n");
-		msg(Data::Dumper::Dumper($headers));
-		bt();
-	}
+	$::d_directstream && msg("processing headers for direct streaming:\n$headers");
 
 	my $url = $client->directURL || return;
 	
@@ -710,15 +709,19 @@ sub directHeaders {
 	
 		$response = $1;
 		
-		if ($response < 200) {
+		if (($response < 200) || $response > 399) {
 			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
-			$client->failedDirectStream();
-		} elsif ($response > 399) {
-			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
-			$client->failedDirectStream();
+			if ($handler && $handler->can("handleDirectError")) {
+				$handler->handleDirectError($client, $url, $response);
+			}
+			else {
+				$client->failedDirectStream();
+			}
 		} else {
 			my $redir = '';
 			my $metaint = 0;
+			my @guids = ();
+			my $guids_length = 0;
 			my $length;
 			my $title;
 			my $contentType = "audio/mpeg";  # assume it's audio.  Some servers don't send a content type.
@@ -772,6 +775,19 @@ sub directHeaders {
 
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
 
+			if ($contentType eq 'wma') {
+			    push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
+			    push @guids, @WMA_CONTENT_DESCRIPTION_OBJECT_GUID;
+			    push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
+
+			    $guids_length = $#guids;
+
+			    # sending a length of -1 will return all wma header objects
+			    # for debugging
+			    ##@guids = ();
+			    ##$guids_length = -1;
+			}
+
 			if ($redir) {
 				$::d_directstream && msg("Redirecting to: $redir\n");
 				$client->stop();
@@ -792,8 +808,7 @@ sub directHeaders {
 				my $loop = $client->shouldLoop($length);
 
 				$client->streamformat($contentType);
-
-				$client->sendFrame('cont', \(pack('NC',$metaint, $loop)));		
+				$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, $guids_length, @guids)));		
 
 			} else {
 
@@ -839,7 +854,7 @@ sub directBodyFrame {
 			# it a chance, else we parse based on the type we know
 			# already.
 			if ($handler && $handler->can('parseDirectBody')) {
-				@items = $handler->parseDirectBody($url, $client->directBody());
+				@items = $handler->parseDirectBody($client, $url, $client->directBody());
 			}
 			else {
 				my $io = IO::String->new($client->directBody());
@@ -865,8 +880,16 @@ sub directBodyFrame {
 sub directMetadata {
 	my $client = shift;
 	my $metadata = shift;
-
-	Slim::Player::Protocols::HTTP::parseMetadata($client, Slim::Player::Playlist::song($client), $metadata);
+	
+	my $url = $client->directURL;
+	my $type = Slim::Music::Info::contentType($url);
+	
+	if ( $type eq 'wma' ) {
+		Slim::Player::Protocols::MMS::parseMetadata( $client, $url, $metadata );
+	}
+	else {
+		Slim::Player::Protocols::HTTP::parseMetadata( $client, Slim::Player::Playlist::song($client), $metadata );
+	}
 	
 	# new song, so reset counters
 	$client->songBytes(0);
@@ -879,7 +902,7 @@ sub failedDirectStream {
 	$client->directURL(undef);
 	$client->directBody(undef);
 
-	Slim::Player::Source::errorOpening($client);
+	Slim::Player::Source::errorOpening($client, $client->string("PROBLEM_CONNECTING"));
 
 	# Similar to an underrun, but only continue if we're not at the
 	# end of a playlist (irrespective of the repeat mode).
@@ -889,6 +912,10 @@ sub failedDirectStream {
 	} else {
 		Slim::Player::Source::playmode($client, 'stop');
 	}
+	
+	# 6.3 Rhapsody code added this, why?
+	# 1 means underrun due to error
+	# Slim::Player::Source::underrun($client, 1);
 }
 
 # Should we use the inifinite looping option that some players

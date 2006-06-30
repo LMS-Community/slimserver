@@ -253,6 +253,9 @@ sub scanRemoteURL {
 
 		return ref($cb) eq 'CODE' ? $cb->() : undef;
 	}
+	
+	# Fix URL for Rhapsody playlists
+	$url =~ s/^rhap/http/;
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 	

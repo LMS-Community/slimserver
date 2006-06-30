@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Formats::HTTP);
 
 use File::Spec::Functions qw(:ALL);
+use MPEG::Audio::Frame;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -29,6 +30,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
+
+# CBR bitrates
+my %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 sub new {
 	my $class = shift;
@@ -204,6 +208,62 @@ sub sysread {
 
 			msg("Problem: the shoutcast metadata overshot the interval.\n");
 		}	
+	}
+	
+	# Use MPEG::Audio::Frame to detect the bitrate if we didn't see an icy header
+	# XXX: not used when direct streaming, so this code won't work in 6.5
+	if ( !$self->bitrate && $self->contentType eq 'mp3' ) {
+		my $frames = IO::String->new($_[1]);
+		my @bitrates;
+		my ($avg, $sum) = (0, 0);
+		while ( my $frame = MPEG::Audio::Frame->read( $frames ) ) {
+			# Sample all frames to try to see if we're VBR or not
+			if ( $frame->bitrate ) {
+				push @bitrates, $frame->bitrate;
+				$sum += $frame->bitrate;
+				$avg = int( $sum / @bitrates );
+			}
+			else {
+				${*$self}{'bitrate'} = 1;	# so we don't check again
+				last;
+			}
+		}
+
+		if ( $avg ) {			
+			my $vbr = undef;
+			if ( !$cbr{$avg} ) {
+				$vbr = 1;
+			}
+			
+			$::d_remotestream && msg("Read bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+		
+			Slim::Music::Info::setBitrate( $self->url, $avg * 1000, $vbr );
+			${*$self}{'bitrate'} = $avg * 1000;
+		}
+	}
+	
+	# If we know the bitrate and have a content-length, we can display a progress bar
+	if ( $self->contentLength && !$self->duration && $self->bitrate > 1 ) {
+		my $secs = int( ( $self->contentLength * 8 ) / $self->bitrate );
+		
+		my %cacheEntry = (
+			'SECS' => $secs,
+		);
+		
+		Slim::Music::Info::updateCacheEntry( $self->url, \%cacheEntry );
+		
+		# Set the duration so the progress bar appears
+		if ( $self->client ) {
+			$self->client->currentsongqueue()->[0]->{duration} = $secs;
+		}
+		
+		${*$self}{'duration'} = $secs;
+		$::d_remotestream && msgf(
+			"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
+			$self->duration,
+			$self->contentLength,
+			$self->bitrate
+		);
 	}
 
 	return $readLength;

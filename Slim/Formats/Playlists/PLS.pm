@@ -73,7 +73,9 @@ sub read {
 
 		if ($class->playlistEntryIsValid($entry, $url)) {
 
-			push @items, $class->_updateMetaData($entry, $titles[$i]);
+			push @items, $class->_updateMetaData( $entry, {
+				'TITLE' => $titles[$i]
+			} );
 		}
 	}
 

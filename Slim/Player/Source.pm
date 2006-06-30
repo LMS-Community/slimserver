@@ -1039,7 +1039,7 @@ sub markStreamingTrackAsPlayed {
 }
 
 sub trackStartEvent {
-	my $client = shift || return;
+	my $client = Slim::Player::Sync::masterOrSelf(shift) || return;
 
 	$::d_source && msg("Got a track starting event\n");
 	my $queue = $client->currentsongqueue();

@@ -43,7 +43,9 @@ sub read {
 
 			$::d_parse && msg("    entry: $location\n");
 
-			push @items, $class->_updateMetaData($location, $title);
+			push @items, $class->_updateMetaData( $location, {
+				'TITLE' => $title,
+			} );
 		}
 	}
 

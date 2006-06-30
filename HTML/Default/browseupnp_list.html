@@ -1,0 +1,36 @@
+<tr>
+
+<td width="100%" [% IF odd %]class="odd"[% END %] [% IF not odd %]class="even"[% END %]>
+
+[% IF anchor %]<a name="[% anchor %]"></a>[% END %]
+
+[% IF item.childCount %]
+<a href="[% webroot %]browseupnp.html?device=[% device %]&hierarchy=[% hierarchy %]&player=[% player | uri %]">[% item.title | html %]</a>
+[% ELSE %]
+<a href="[% webroot %]upnpinfo.html?device=[% device %]&hierarchy=[% hierarchy %]&trackid=[% item.id %]&player=[% player | uri %]">[% item.title | html %]</a>
+
+[% IF item.album %][% "FROM" | string %]&nbsp;[% item.album | html %][% END %]
+[% IF item.artist %][% "BY" | string %]&nbsp;[% item.artist | html %][% END %]
+[% END %]
+
+ </td>
+[% SET class = odd ? 'odd':'even'; width='13' height='13' header='1' target='status' %]
+
+
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] [% IF width %]width="[% width %]"[% END %]>
+		[% IF item.url %]
+			<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=play&p2=[% item.url | uri %]&player=[% player | uri %]" target="status">
+<img src="[% webroot %]html/images/b_play.gif" [% IF height %]height="[% height %]"[% END %] alt='[% "PLAY" | string %]' title='[% "PLAY" | string %]' onMouseOver="self.status='[% "PLAY" | string %]';return true">
+</a></nobr>
+		[% END %]
+</td>
+
+<td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] [% IF width %]width="[% width %]"[% END %]>
+		[% IF item.url %]
+			<nobr><a href="[% webroot %]status_header.html?p0=playlist&p1=add&p2=[% item.url | uri %]&player=[% player | uri %]" target="status">
+<img src="[% webroot %]html/images/b_add.gif" [% IF height %]height="[% height %]"[% END %] alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]' onMouseOver="self.status='[% "ADD_TO_PLAYLIST" | string %]';return true">
+</a></nobr>
+		[% END %]
+</td>
+
+</tr>

@@ -11,6 +11,7 @@ package Slim::Formats::Playlists::M3U;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
+use HTML::Entities;
 use Scalar::Util qw(blessed);
 use Socket qw(:crlf);
 
@@ -22,7 +23,7 @@ sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items  = ();
-	my $title;
+	my ($secs, $artist, $album, $title);
 	my $foundBOM = 0;
 
 	$::d_parse && msg("parsing M3U: $url\n");
@@ -37,6 +38,9 @@ sub read {
 		# strip whitespace from beginning and end
 		$entry =~ s/^\s*//; 
 		$entry =~ s/\s*$//; 
+		
+		# decode any HTML entities in-place
+		HTML::Entities::decode_entities($entry);
 
 		# Guess the encoding of each line in the file. Bug 1876
 		# includes a playlist that has latin1 titles, and utf8 paths.
@@ -54,10 +58,17 @@ sub read {
 
 		$::d_parse && msg("  entry from file: $entry\n");
 
-		if ($entry =~ /^#EXTINF:.*?,(.*)$/) {
-			$title = $1;	
+		if ($entry =~ /^#EXTINF\:(.*?),<(.*?)> - <(.*?)> - <(.*?)>/) {
+			$secs   = $1;
+			$artist = $2;
+			$album  = $3;
+			$title  = $4;
+			$::d_parse && msg("  found secs: $secs, title: $title, artist: $artist, album: $album\n");
 
-			$::d_parse && msg("  found title: $title\n");
+		} elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
+			$secs  = $1;
+			$title = $2;	
+			$::d_parse && msg("  found secs: $secs, title: $title\n");
 		}
 
 		next if $entry =~ /^#/;
@@ -72,7 +83,12 @@ sub read {
 
 			$::d_parse && msg("    entry: $entry\n");
 
-			push @items, $class->_updateMetaData($entry, $title);
+			push @items, $class->_updateMetaData( $entry, {
+				'TITLE'  => $title,
+				'ALBUM'  => $album,
+				'ARTIST' => $artist,
+				'SECS'   => ( $secs > 0 ) ? $secs : undef,
+			} );
 
 			# reset the title
 			$title = undef;

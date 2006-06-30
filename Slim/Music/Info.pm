@@ -40,6 +40,7 @@ our %slimTypes = ();
 # Make sure that these can't grow forever.
 tie our %displayCache, 'Tie::Cache::LRU', 64;
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
+tie our %currentBitrates, 'Tie::Cache::LRU', 64;
 
 our %currentTitleCallbacks = ();
 
@@ -202,6 +203,7 @@ sub clearFormatDisplayCache {
 
 	%displayCache  = ();
 	%currentTitles = ();
+	%currentBitrates = ();
 }
 
 sub playlistForClient {
@@ -348,15 +350,34 @@ sub setTitle {
 	});
 }
 
+sub getCurrentBitrate {
+	my $url = shift || return undef;
+	
+	if ( ref $url && $url->can('url') ) {
+		$url = $url->url;
+	}
+
+	return $currentBitrates{$url} || undef;
+}
+
 sub setBitrate {
-	my $url = shift;
+	my $url     = shift;
 	my $bitrate = shift;
+	my $vbr     = shift || undef;
 
 	Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
-		'attributes' => { 'BITRATE' => $bitrate },
+		'attributes' => { 
+			'BITRATE'   => $bitrate,
+			'VBR_SCALE' => $vbr,
+		},
 		'readTags'   => 1,
 	});
+	
+	# Cache the bitrate string so it will appear in TrackInfo
+	my $mode = $vbr ? 'VBR' : 'CBR';
+	my $str = int ( $bitrate / 1000 ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
+	$currentBitrates{$url} = $str;
 }
 
 sub setCurrentTitleChangeCallback {
@@ -810,6 +831,11 @@ sub isRemoteURL {
 
 sub isPlaylistURL {
 	my $url = shift || return 0;
+	
+	# XXX: This method is pretty wrong, it says every remote URL is a playlist
+	# Bug 3484, We want rhapsody tracks to display the proper title format so they can't be
+	# seen as a playlist which forces only the title to be displayed.
+	return if $url =~ /^rhap.+wma$/;
 
 	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1) && !isFileURL($url)) {
 
@@ -822,6 +848,11 @@ sub isPlaylistURL {
 sub isAudioURL {
 	# return true if url scheme (http: etc) defined as audio in types
 	my $url = shift;
+	
+	# Consider Rhapsody audio and radio URLs as audio so they won't be scanned
+	if ( $url =~ /^rhap.+(?:wma|rhr)$/ ) {
+		return 1;
+	}
 
 	return ($url =~ /^([a-z]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
 }

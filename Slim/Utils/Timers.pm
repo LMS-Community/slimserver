@@ -15,6 +15,9 @@ use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Utils::PerlRunTime;
 
+# Set to enable a list of all timers every 5 seconds
+my $d_watch_timers = 0;
+
 # Timers are stored in a list of hashes containing:
 # - the time at which the timer should fire, 
 # - a reference to an object
@@ -50,6 +53,8 @@ my $checkingHighTimers = 0;   # Semaphore for high priority timers
 
 our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
 our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+
+$d_watch_timers && setTimer( undef, time + 5, \&listTimers );
 
 #
 # Call any pending timers which have now elapsed.
@@ -206,8 +211,13 @@ sub listTimers {
 		my $timer = $item->[ITEM_PAYLOAD];
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
 		my $diff  = $timer->{'when'} - $now;
+		
+		my $obj = $timer->{'objRef'};
+		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
+			$obj = $obj->macaddress();
+		}
 
-		msgf( "%30.30s %.6s %s\n", $timer->{'objRef'}, $diff, $name );
+		msgf( "%50.50s %.6s %s\n", $obj, $diff, $name );
 	}
 
 	msgf( "Normal timers: (%d)\n", $normal->get_item_count );
@@ -217,9 +227,16 @@ sub listTimers {
 		my $timer = $item->[ITEM_PAYLOAD];
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
 		my $diff  = $timer->{'when'} - $now;
+		
+		my $obj = $timer->{'objRef'};
+		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
+			$obj = $obj->macaddress();
+		}
 
-		msgf( "%30.30s %.6s %s\n", $timer->{'objRef'}, $diff, $name );
+		msgf( "%50.50s %.6s %s\n", $obj, $diff, $name );
 	}
+	
+	$d_watch_timers && setTimer( undef, time + 5, \&listTimers );
 }
 
 #
@@ -358,7 +375,7 @@ sub killOneTimer {
 				return 1;
 			}
 		}
-		return 0;	
+		return 0;
 	}, 1 );
 	
 	return if @killed;
@@ -372,7 +389,7 @@ sub killOneTimer {
 				return 1;
 			}
 		}
-		return 0;	
+		return 0;
 	}, 1 );
 }
 

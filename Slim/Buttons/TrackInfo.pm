@@ -260,7 +260,7 @@ sub preloadLines {
 		}
 	}
 
-	if (my $bitrate = $track->prettyBitRate) {
+	if (my $bitrate = ( Slim::Music::Info::getCurrentBitrate($url) || $track->prettyBitRate ) ) {
 
 		my $undermax = Slim::Player::TranscodingHelper::underMax($client, $url);
 

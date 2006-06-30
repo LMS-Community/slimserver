@@ -16,20 +16,20 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 sub _updateMetaData {
-	my $class = shift;
-	my $entry = shift;
-	my $title = shift;
+	my $class    = shift;
+	my $entry    = shift;
+	my $metadata = shift;
 
 	my $attributes = {};
 
 	# Update title MetaData only if its not a local file with Title information already cached.
-	if ($title && Slim::Music::Info::isRemoteURL($entry)) {
+	if ($metadata && Slim::Music::Info::isRemoteURL($entry)) {
 
 		my $track = Slim::Schema->rs('Track')->objectForUrl($entry);
 
-		if ((blessed($track) && $track->can('title') && (!$track->title || $track->title ne $title)) || !blessed($track)) {
+		if ((blessed($track) && $track->can('title')) || !blessed($track)) {
 
-			$attributes->{'TITLE'} = $title;
+			$attributes = $metadata;
 		}
 	}
 

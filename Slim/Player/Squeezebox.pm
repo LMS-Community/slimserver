@@ -161,6 +161,8 @@ sub play {
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
 	}
 	
+	$client->lastSong($url);
+	
 	return 1;
 }
 
@@ -199,6 +201,7 @@ sub stop {
 	Slim::Networking::Slimproto::stop($client);
 	# disassociate the streaming socket to the client from the client.  HTTP.pm will close the socket on the next select.
 	$client->streamingsocket(undef);
+	$client->lastSong(undef);
 }
 
 sub flush {
@@ -261,8 +264,7 @@ sub quickstart {
 		# Find the track title
 		if ( $client->linesPerScreen() > 1 ) {
 			my $objOrUrl = Slim::Player::Playlist::song( $client, Slim::Player::Source::streamingSongIndex($client) );
-			my $track    = blessed($objOrUrl) && $objOrUrl->can('url') ? $objOrUrl : Slim::Schema->rs('Track')->objectForUrl($objOrUrl, 1, 1);
-			$line2       = Slim::Music::Info::standardTitle($client, $track);
+			$line2       = Slim::Music::Info::getCurrentTitle( $client, $objOrUrl );
 		}
 		
 		$client->showBriefly( $line1, $line2, 0.5 );
@@ -650,7 +652,12 @@ sub stream {
 			# to indicate whether the data coming in is
 			# going to have the mms/http chunking headers.
 			if ($server_url) {
-				$pcmsamplesize = '1';
+				if ($server_url =~ /^rhap:/) {
+					$pcmsamplesize = '2';
+				}
+				else {
+					$pcmsamplesize = '1';
+				}
 			}
 			else {
 				$pcmsamplesize = '0';
@@ -691,7 +698,7 @@ sub stream {
 					$server_ip = unpack('N',$addrs[0]);
 				}
 
-				$request_string = $handler->requestString($server_url);  
+				$request_string = $handler->requestString($client, $server_url, undef, 1);  
 				$autostart = 2;
 				if (!$server_port || !$server_ip) {
 					$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
@@ -723,6 +730,12 @@ sub stream {
 					$request_string .= "\n";
 				}
 			}
+		}
+		
+		# If we're sending an 's' command but got no request string, don't send it
+		# This is used when syncing Rhapsody radio stations so slaves don't request the radio playlist
+		if ( $command eq 's' && !$request_string ) {
+			return;
 		}
 		
 		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");

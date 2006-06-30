@@ -56,6 +56,7 @@ our %message_handlers = (
 	'BODY' => \&_http_body_handler,
 	'BUTN' => \&_button_handler,
 	'BYE!' => \&_bye_handler,	
+	'DBUG' => \&_debug_handler,
 	'DSCO' => \&_disco_handler,
 	'HELO' => \&_hello_handler,
 	'IR  ' => \&_ir_handler,
@@ -422,11 +423,35 @@ sub _http_response_handler {
 	}
 }
 
+sub _debug_handler {
+	my $client = shift;
+	my $data_ref = shift;
+	
+	$::d_firmware && msgf("[%s] %s\n",
+		$client->id,
+		$$data_ref,
+	);
+}
+
 sub _disco_handler {
 	my $client = shift;
 	my $data_ref = shift;
-
-	$::d_slimproto && msg("Squeezebox got disconnection on the data channel why: ". unpack('C', $$data_ref) . " \n");
+	
+	# disconnection reasons
+	my %reasons = (
+		0 => 'Connection closed normally',              # TCP_CLOSE_FIN
+		1 => 'Connection reset by local host',          # TCP_CLOSE_LOCAL_RST
+		2 => 'Connection reset by remote host',         # TCP_CLOSE_REMOTE_RST
+		3 => 'Connection is no longer able to work',    # TCP_CLOSE_UNREACHABLE
+		4 => 'Connection timed out',                    # TCP_CLOSE_LOCAL_TIMEOUT
+	);
+	
+	my $reason = unpack('C', $$data_ref);
+	$::d_slimproto && msg("Squeezebox got disconnection on the data channel why: ". $reasons{$reason} . " \n");
+	
+	if ($reason) {
+		$client->failedDirectStream();
+	}
 }
 
 sub _http_body_handler {
@@ -579,7 +604,7 @@ sub _http_metadata_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	$::d_directstream && msg("metadata (len: ". length($$data_ref) ."): $$data_ref\n");
+	$::d_directstream && msg("metadata (len: ". length($$data_ref) .")\n");
 	if ($client->can('directMetadata')) {
 		$client->directMetadata($$data_ref);
 	}

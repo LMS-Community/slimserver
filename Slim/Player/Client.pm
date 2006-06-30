@@ -738,6 +738,7 @@ sub new {
 	$client->[105] = 0; # scrollState
 	$client->[106] = undef; # lastDigitIndex
 	$client->[107] = undef; # lastDigitTime
+	$client->[108] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1955,5 +1956,9 @@ sub lastDigitTime {
 	@_ ? ($r->[107] = shift) : $r->[107];
 }
 
+sub lastSong {
+	my $r = shift;
+	@_ ? ($r->[108] = shift) : $r->[108];
+}
 
 1;
