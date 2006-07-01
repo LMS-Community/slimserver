@@ -1361,7 +1361,8 @@ PLUGIN_LIVE365_NO_INFO
 # Add web pages and handlers.  See Plugins::Live365::Web for handlers.
 #
 sub webPages {
-
+	$::d_plugins && msg("Live365: webPages()\n");
+	
 	# Only load when the web page is called.
 	eval { require Plugins::Live365::Web };
 
@@ -1380,6 +1381,20 @@ sub webPages {
 	}
 	
 	return (\%pages, undef);
+}
+
+sub initPlugin {
+	$::d_plugins && msg("Live365: initPlugin()\n");
+
+	# register our functions
+	
+#		  |requires Client
+#		  |  |is a Query
+#		  |  |  |has Tags
+#		  |  |  |  |Function to call
+#		  C  Q  T  F
+	Slim::Control::Request::addDispatch(['live365', 'genres', '_index', '_quantity'],  
+		 [0, 1, 1, \&Plugins::Live365::Web::cli_genresQuery]);
 }
 
 # }}}

@@ -461,7 +461,7 @@ sub handleBrowse {
 
 	return undef;
 }
-	
+
 #
 #  Handle searching stations by a variety of methods
 #    Play some async games here.  No response until we get a callback from the completion
@@ -629,7 +629,7 @@ sub showPlaylistMatches {
 
 #
 #  Handle main Index page.
-#    Nothing fancy, no async stuff here.
+#    Nothing fancy, no async stuff here unless login is needed
 #
 sub handleIndex {
 	my ($client, $params) = @_;
@@ -690,14 +690,14 @@ sub doLoginLogout() {
 
 	if ($action eq 'in') {
 		if( $userID and $password ) {
-			$::d_plugins && msg( "Logging in $userID\n" );
+			$::d_plugins && msg( "Live365: logging in $userID\n" );
 			my $loginStatus = $API->login( $userID, $password, $client, \&webLoginDone);
 		} else {
-			$::d_plugins && msg( "Live365.login: no credentials set\n" );
+			$::d_plugins && msg( "Live365: no credentials set for login\n" );
 			return 1;
 		}
 	} else {
-		$::d_plugins && msg( "Logging out $userID\n" );
+		$::d_plugins && msg( "Live365: logging out $userID\n" );
 		my $logoutStatus = $API->logout($client, \&webLogoutDone);
 	}
 	return 0;
@@ -723,12 +723,12 @@ sub webLoginDone {
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
 		$API->setLoggedIn( 1 );
-		$::d_plugins && msg( "Live365 logged in: " . $API->getSessionID() . "\n" );
+		$::d_plugins && msg( "Live365: logged in: " . $API->getSessionID() . "\n" );
 	} else {
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
 		$API->setLoggedIn( 0 );
-		$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
+		$::d_plugins && msg( "Live365: login failure: " . $statusText[ $loginStatus ] . "\n" );
 		$params->{'params'}->{'errmsg'} = $statusText[ $loginStatus ];
 	}
 
@@ -801,6 +801,84 @@ sub fetchAsyncRequest {
 #
 sub filltemplatefile {
 	return Slim::Web::HTTP::filltemplatefile(@_);
+}
+
+
+####
+# CLI access routines
+####
+
+# handles 'live365 genres'
+sub cli_genresQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Live365: cli_genresQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['live365'], ['genres']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# check we're logged in
+	if (!($API->isLoggedIn())) {
+		$request->addResult("login", 0);
+		$request->addResult('count', 0);
+
+		$request->setStatusDone();	
+		return;
+	}
+	
+	$API->loadGenreList($request, \&cli_completeBrowseGenre, \&cli_error);
+
+	$request->setStatusProcessing();
+}
+
+sub cli_completeBrowseGenre {
+	my $request = shift;
+	my $list = shift;
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	my @genreList = @$list;
+
+	if (!@genreList) {
+	
+		$request->addResult('networkerror', 1);
+		$request->addResult('count', 0);
+		
+	}
+	else {
+		
+		my $count = scalar @genreList;
+	
+		$request->addResult('count', $count);
+
+		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+		if ($valid) {
+
+			my $loopname = '@genres';
+			my $cnt = 0;
+			for my $genre (@genreList[$start..$end]) {
+				$request->addResultLoop($loopname, $cnt, 'id', @$genre[1]);
+				$request->addResultLoop($loopname, $cnt, 'name', @$genre[0]);
+				$cnt++;
+			}
+		}
+	}
+
+	$request->setStatusDone();	
+}
+
+sub cli_error {
+	my $request = shift;
+	
+	$request->addResult('networkerror', 1);
+	$request->addResult('count', 0);
+	$request->setStatusDone();	
 }
 
 1;
