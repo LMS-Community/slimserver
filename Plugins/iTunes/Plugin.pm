@@ -37,6 +37,8 @@ sub initPlugin {
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
+	Slim::Music::Import->addImporter('ITUNES', { 'use' => 1 });
+
 	$class->initialized(1);
 
 	$class->setPodcasts;
@@ -104,7 +106,7 @@ sub setupUse {
 				}
 
 				#XXXX - need to be fixed for the new scanner world.
-				Slim::Music::Import->useImporter('ITUNES',$changeref->{'itunes'}{'new'});
+				Slim::Music::Import->useImporter('ITUNES', $changeref->{'itunes'}{'new'});
 			},
 
 			'optionSort' => 'KR',

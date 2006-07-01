@@ -141,6 +141,7 @@ sub initPlugin {
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
+		'use'       => 1,
 	});
 
 	Slim::Music::Import->useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));

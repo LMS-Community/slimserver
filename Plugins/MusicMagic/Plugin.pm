@@ -157,6 +157,7 @@ sub initPlugin {
 			'mixer'     => \&mixerFunction,
 			'setup'     => \&addGroups,
 			'mixerlink' => \&mixerlink,
+			'use'       => 1,
 		});
 
 		Slim::Music::Import->useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
@@ -175,7 +176,7 @@ sub initPlugin {
 			});
 		}
 	}
-	
+
 	$mixFunctions{'play'} = \&playMix;
 
 	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);

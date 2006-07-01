@@ -241,18 +241,29 @@ sub string {
 	my $language   = shift || Slim::Utils::Prefs::get('language');
 	my $dontWarn   = shift || 0;
 
+	my $translate  = Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') || 0;
+
 	for my $tryLang ($language, $failsafe_language) {
 
-		next unless $strings{$stringname}->{$tryLang};
+		if (!$strings{$stringname}->{$tryLang}) {
+			next;
+		}
 
-		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') ? " {$stringname}" : '');
+		my $string = $strings{$stringname}->{$tryLang};
+
+		# Some code to help with Michael Herger's string translator plugin.
+		if (($tryLang ne $language) && $translate) {
+
+			 $string .= " {$stringname}";
+		}
+
+		return $string;
 	}
 
-	unless ($dontWarn) {
+	if (!$dontWarn) {
 		bt();
-		msg(
-			"Undefined string: $stringname\nrequested language: $language\nfailsafe language: $failsafe_language\n"
-		);
+		msg("string: Undefined string: $stringname\n");
+		msg("string: Requested language: $language - failsafe language: $failsafe_language\n");
 	}
 
 	return '';
@@ -261,17 +272,11 @@ sub string {
 # like string() above, but returns the string token if the string does not exist
 sub getString {
 	my $string = shift;
-	my $stringname = uc($string);
-	my $language   = shift || Slim::Utils::Prefs::get('language');
 
-	for my $tryLang ($language, $failsafe_language) {
+	# Call string, but don't warn on missing.
+	my $parsed = string($string, undef, 1);
 
-		next unless $strings{$stringname}->{$tryLang};
-
-		return $strings{$stringname}->{$tryLang} . (($tryLang ne $language) && Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') ? " {$stringname}" : '');
-	}
-
-	return $string;
+	return $parsed ? $parsed : $string;
 }
 
 #
