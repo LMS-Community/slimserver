@@ -63,8 +63,13 @@ sub getItemName {
 	# name not overridden, get it from the item
 	my $item = getItem($client, $index);
 
-	if (ref($item)) {
+	if ( ref($item) && $item->{'name'} ) {
 		return $item->{'name'};
+	}
+	
+	# use lookupRef to find the item name if available
+	if ( my $lookup = $client->param('lookupRef') ) {
+		return $lookup->( $client->param('listIndex') || 0 );
 	}
 
 	return $item;
