@@ -29,10 +29,15 @@ sub checkDeviceAdd {
 	my $device = shift;
 	my $callback = shift;
 
-	if (my ($menuName, $displayTitle) = &$callback($device, 'deviceAdded')) {
+	my ($menuName, $displayTitle) = &$callback($device, 'deviceAdded');
+
+	# Don't add any menus, etc if the callback returns undef.
+	if (defined $menuName && defined $displayTitle) {
+
 		$devices{$device->UDN}{'items'}{'0'} = {
 			'title' => $displayTitle,
 		};
+
 		addDeviceMenus($device, $menuName);
 	}
 }
@@ -115,7 +120,7 @@ sub addDeviceMenus {
 	);
 
 	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, \%params);
-	
+
 	Slim::Web::Pages->addPageLinks(
 		'browse', { $name => 'browseupnp.html?device='.$device->UDN.'&hierarchy=0' }
 	);
