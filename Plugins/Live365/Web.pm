@@ -339,10 +339,9 @@ sub buildStationBrowseHTML {
 	my $isSearch = shift;
 	my $start;
 	my $end;
-	my $totalcount;
 
 	# Get actual matched stations
-	$totalcount = $API->getStationListLength();
+	my $totalcount = $API->getStationListLength();
 
 	# Set up paging links for search vs. browse
 	my $targetPage;
@@ -676,6 +675,17 @@ sub handleLogin {
 	return undef;
 }
 
+my @login_statusText = qw(
+		PLUGIN_LIVE365_LOGIN_SUCCESS
+		PLUGIN_LIVE365_LOGIN_ERROR_NAME
+		PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+		PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+		PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+		PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+		PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+		);
+
+
 sub doLoginLogout() {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
@@ -707,16 +717,6 @@ sub webLoginDone {
 	my $client = shift;
 	my $loginStatus = shift;
 
-	my @statusText = qw(
-		PLUGIN_LIVE365_LOGIN_SUCCESS
-		PLUGIN_LIVE365_LOGIN_ERROR_NAME
-		PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-		PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-		PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-		PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-		PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-	);
-	
 	my $params = fetchAsyncRequest('xxx','login');
 
 	if( $loginStatus == 0 ) {
@@ -728,8 +728,8 @@ sub webLoginDone {
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
 		$API->setLoggedIn( 0 );
-		$::d_plugins && msg( "Live365: login failure: " . $statusText[ $loginStatus ] . "\n" );
-		$params->{'params'}->{'errmsg'} = $statusText[ $loginStatus ];
+		$::d_plugins && msg( "Live365: login failure: " . $login_statusText[ $loginStatus ] . "\n" );
+		$params->{'params'}->{'errmsg'} = $login_statusText[ $loginStatus ];
 	}
 
 	my $body = handleIndex($client,$params->{'params'});
@@ -808,6 +808,82 @@ sub filltemplatefile {
 # CLI access routines
 ####
 
+sub cli_login {
+	my $request = shift;
+	
+	# get user and password
+	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
+	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+
+	# unpack pwd
+	if (defined $password) {
+		$password = unpack('u', $password);
+	}
+
+	if( $userID and $password ) {
+		$::d_plugins && msg( "Live365: logging in $userID (from CLI)\n" );
+		my $loginStatus = $API->login( $userID, $password, $request, \&cli_login_cb);
+		return 1;
+	} 
+	else {
+		$::d_plugins && msg( "Live365: no credentials set for login (from CLI)\n" );
+		return 0;
+	}
+}
+
+sub cli_login_cb {
+	my $request = shift;
+	my $loginStatus = shift;
+
+	if( $loginStatus == 0 ) {
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
+		$API->setLoggedIn( 1 );
+		$::d_plugins && msg( "Live365: logged in: " . $API->getSessionID() . " (from CLI)\n" );
+	} else {
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+		$API->setLoggedIn( 0 );
+		
+		# remember we failed so we don't try it again...
+		$request->addParam('__loginfailed', 1);
+		
+		$::d_plugins && msg( "Live365: login failure: " . $login_statusText[ $loginStatus ] . " (from CLI)\n" );
+	}
+
+	# this will re-call the cli handling function we left for handling
+	# login
+	$request->jumpbacktofunc();
+}
+
+# login management for cli handling code
+sub cli_manage_login {
+	my $request = shift;
+
+	# check we're logged in
+	if (!($API->isLoggedIn())) {
+	
+		# try to login or check if we failed already
+		if (!cli_login($request) || $request->getParam('__loginfailed')) {
+			# cannot login for some reason
+			$request->addResult("loginerror", 1);
+			$request->addResult('count', 0);
+	
+			$request->setStatusDone();	
+			return 1;
+		}
+		
+		else {
+		
+			# login in progress, wave bye bye
+			$request->setStatusProcessing();
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
 # handles 'live365 genres'
 sub cli_genresQuery {
 	my $request = shift;
@@ -820,21 +896,14 @@ sub cli_genresQuery {
 		return;
 	}
 	
-	# check we're logged in
-	if (!($API->isLoggedIn())) {
-		$request->addResult("login", 0);
-		$request->addResult('count', 0);
-
-		$request->setStatusDone();	
-		return;
-	}
+	return if cli_manage_login($request);
 	
-	$API->loadGenreList($request, \&cli_completeBrowseGenre, \&cli_error);
+	$API->loadGenreList($request, \&cli_genresQuery_cb, \&cli_error_cb);
 
 	$request->setStatusProcessing();
 }
 
-sub cli_completeBrowseGenre {
+sub cli_genresQuery_cb {
 	my $request = shift;
 	my $list = shift;
 
@@ -873,7 +942,104 @@ sub cli_completeBrowseGenre {
 	$request->setStatusDone();	
 }
 
-sub cli_error {
+# handles 'live365 stations'
+sub cli_stationsQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Live365: cli_stationsQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['live365'], ['stations']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# manage login
+	return if cli_manage_login($request);
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $type     = $request->getParam('type');
+
+#	if ($request->paramUndefinedOrNotOneOf($type, ['presets', 'all', 'picks', 'pro'])) {
+#		$request->setStatusBadParams();
+#		return;
+#	}
+
+	$API->clearStationDirectory();
+
+	if ($type eq 'presets') {
+
+		$API->loadMemberPresets(
+			$type,
+			$request, 
+			\&cli_stationsQuery_cb, 
+			\&cli_error_cb);
+	}
+	else {
+	
+		# for all/picks/pro, lookup type/genreid. Any other thing is interpreted
+		# as a genreid.
+		if (defined $lookupGenres{$type}) {
+			$type = $lookupGenres{$type};
+		}
+
+		$API->loadStationDirectory(
+			$type, 
+			$request, 
+			\&cli_stationsQuery_cb, 
+			\&cli_error_cb, 
+			0,
+			genre			=> $type,
+			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			rows			=> $quantity,
+			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+			first			=> $index + 1
+		);
+
+	}
+
+	$request->setStatusProcessing();
+}
+
+sub cli_stationsQuery_cb {
+	my $request = shift;
+	my $list = shift;
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	my $count = $API->getStationListLength();
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@genres';
+		my $cnt = 0;
+		my $slist = $API->{Stations};
+		
+		for my $station (@$slist[$start..$end]) {
+			$request->addResultLoop($loopname, $cnt, 'id', $station->{STATION_ID});
+			$request->addResultLoop($loopname, $cnt, 'name', $station->{STATION_TITLE});
+			$request->addResultLoop($loopname, $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
+			$request->addResultLoop($loopname, $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
+			$request->addResultLoop($loopname, $cnt, 'connection', $station->{STATION_CONNECTION});
+			$request->addResultLoop($loopname, $cnt, 'rating', $station->{STATION_RATING});
+			$request->addResultLoop($loopname, $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
+			$request->addResultLoop($loopname, $cnt, 'access', $station->{LISTENER_ACCESS});
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();	
+}
+
+sub cli_error_cb {
 	my $request = shift;
 	
 	$request->addResult('networkerror', 1);

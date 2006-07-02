@@ -31,6 +31,7 @@ use Slim::Control::Request;
 # Need this to include the other modules now that we split up Live365.pm
 use Plugins::Live365::ProtocolHandler;
 use Plugins::Live365::Live365API;
+use Plugins::Live365::Web;
 
 use constant ROWS_TO_RETRIEVE => 50;
 
@@ -1363,9 +1364,6 @@ PLUGIN_LIVE365_NO_INFO
 sub webPages {
 	$::d_plugins && msg("Live365: webPages()\n");
 	
-	# Only load when the web page is called.
-	eval { require Plugins::Live365::Web };
-
 	my %pages = (
 		"browse\.(?:htm|xml)" => \&Plugins::Live365::Web::handleBrowse,
 		"search\.(?:htm|xml)" => \&Plugins::Live365::Web::handleSearch,
@@ -1395,6 +1393,8 @@ sub initPlugin {
 #		  C  Q  T  F
 	Slim::Control::Request::addDispatch(['live365', 'genres', '_index', '_quantity'],  
 		 [0, 1, 1, \&Plugins::Live365::Web::cli_genresQuery]);
+	Slim::Control::Request::addDispatch(['live365', 'stations', '_index', '_quantity'],  
+		 [0, 1, 1, \&Plugins::Live365::Web::cli_stationsQuery]);
 }
 
 # }}}

@@ -1420,6 +1420,44 @@ sub executeDone {
 	$::d_command && $self->dump('Request');
 }
 
+# allows re-calling the function. Basically a copycat of execute, without
+# notification. This enables 
+sub jumpbacktofunc {
+	my $self = shift;
+	
+	# do nothing if we're done
+	if ($self->isStatusDone()) {
+		errorMsg('Request (jumpbacktofunc): Called on done request, exiting');
+		return;
+	}
+
+	# check we're still good
+	$self->validate();
+
+	# do nothing if something's wrong
+	if ($self->isStatusError()) {
+		$::d_command && msg('Request (jumpbacktofunc): Request in error, exiting');
+		return;
+	}
+	
+	
+	# call the execute function
+	if (my $funcPtr = $self->{'_func'}) {
+
+		eval { &{$funcPtr}($self) };
+
+		if ($@) {
+			errorMsg("Request (jumpbacktofunc): Error when trying to run function coderef: [$@]\n");
+			$self->setStatusBadDispatch();
+			$self->dump('Request');
+		}
+	}
+	
+	# contine execution unless the Request is still work in progress (async)...
+	$self->executeDone() unless $self->isStatusProcessing();	
+}
+
+# perform callback if defined
 sub callback {
 	my $self = shift;
 
