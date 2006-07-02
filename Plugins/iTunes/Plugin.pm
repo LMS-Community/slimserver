@@ -41,8 +41,6 @@ sub initPlugin {
 
 	$class->initialized(1);
 
-	$class->setPodcasts;
-
 	return 1;
 }
 

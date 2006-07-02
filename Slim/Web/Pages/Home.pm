@@ -65,14 +65,6 @@ sub home {
 		$class->addPageLinks("help", {'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	}
 
-	# Dynamically figure out if there is any cover art. Do we need both cover & thumb?
-	# XXX - not quite correct. Only catches embedded artwork.
-	#if (Slim::Schema->count('Track', { -or => [ { 'cover' => { '!=' => undef } }, { 'thumb' => { '!=' => undef } } ] })) {
-
-		my $sort = Slim::Utils::Prefs::get('sortBrowseArt');
-		$class->addPageLinks("browse", {'BROWSE_BY_ARTWORK' => "browsedb.html?hierarchy=album,track&level=0&sort=$sort&artwork=1"});
-	#}
-
 	if (Slim::Utils::Prefs::get('audiodir')) {
 
 		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
@@ -84,7 +76,7 @@ sub home {
 	}
 
 	# Show playlists if any exists
-	if (Slim::Schema->rs('Playlist')->getPlaylists->count) {
+	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Schema->rs('Playlist')->getPlaylists->count) {
 
 		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
 	}

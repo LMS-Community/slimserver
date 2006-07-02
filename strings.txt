@@ -11094,12 +11094,7 @@ MOODLOGIC_MOOD_6
 	ZH_CN	狂野
 
 RADIO_TUNEIN
-	DE	Manuelle Radio Einwahl
-	EN	Radio Tune In
-	ES	Sintonizar Radio
-	HE	הקלדת שם תחנה
-	IT	Sintonizza radio
-	NL	Radio instellen
+	EN	Tune In URL
 
 RADIO_TUNEIN_NOW
 	DE	Manuelle Radio Einwahl

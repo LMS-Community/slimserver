@@ -432,29 +432,13 @@ sub handlePlaylist {
 	# 'LIST',  # list items (array)
 	# 'AGE',   # list age
 
+	$cacheEntry->{'CT'}    = 'itu';
 	$cacheEntry->{'TITLE'} = join($name, 
 		Slim::Utils::Prefs::get('iTunesplaylistprefix'),
 		Slim::Utils::Prefs::get('iTunesplaylistsuffix')
 	);
 
-	$cacheEntry->{'CT'}    = 'itu';
-	$cacheEntry->{'TAG'}   = 1;
-	$cacheEntry->{'VALID'} = 1;
-
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
-
-	# Check for podcasts and add to custom Genre
-	if ($name =~ /podcasts/i) {			
-
-		for my $url (@{$cacheEntry->{'LIST'}}) {
-
-			# update with Podcast genre
-			Slim::Schema->rs('Playlist')->updateOrCreate({
-				'url'        => $url,
-				'attributes' => { 'GENRE' => 'Podcasts' },
-			});
-		}
-	}
 
 	$::d_itunes && msg("iTunes: playlists now has " . scalar @{$cacheEntry->{'LIST'}} . " items...\n");
 }

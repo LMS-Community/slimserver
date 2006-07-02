@@ -1,11 +1,12 @@
-# Podcast Browser v0.0
-# Copyright (c) 2005 Slim Devices, Inc. (www.slimdevices.com)
+package Plugins::Podcast::Plugin;
+
+# $Id$
+
+# Copyright (c) 2005-2006 Slim Devices, Inc. (www.slimdevices.com)
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
-
-package Plugins::Podcast::Plugin;
 
 use strict;
 use constant FEEDS_VERSION => 1;
@@ -426,9 +427,7 @@ sub getFeedXml {
 
 sub strings { return q!
 PLUGIN_PODCAST
-	EN	Podcast Browser
-	ES	Navegador de Podcasts
-	NL	Podcast browser
+	EN	Podcasts
 
 PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen

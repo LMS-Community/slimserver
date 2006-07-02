@@ -76,38 +76,6 @@ sub canUseiTunesLibrary {
 	return defined $class->findMusicLibraryFile;
 }
 
-sub setPodcasts {
-	my $class = shift;
-
-	if (!$INC{'Slim/Web/Pages.pm'}) {
-		return;
-	}
-
-	my $genre = Slim::Schema->single('Genre', { 'name' => 'Podcasts' });
-	
-	if ($genre) {
-		my $id = $genre->id;
-		
-		Slim::Web::Pages->addPageLinks("browse", {
-			'ITUNES_PODCASTS' => "browsedb.html?hierarchy=genre,contributor,album,track&level=1&&genre.id=".$id
-		});
-
-		Slim::Buttons::Home::addMenuOption('ITUNES_PODCASTS', {
-			'useMode'      => 'browsedb',
-			'hierarchy'    => 'genre,contributor,album,track',
-			'level'        => 1,
-			'findCriteria' => { 'genre.id' => $id },
-		});
-
-		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC','ITUNES_PODCASTS', {
-			'useMode'      => 'browsedb',
-			'hierarchy'    => 'genre,contributor,album,track',
-			'level'        => 1,
-			'findCriteria' => { 'genre.id' => $id },
-		});
-	}
-}
-
 sub findLibraryFromPlist {
 	my $class = shift;
 	my $base  = shift;
