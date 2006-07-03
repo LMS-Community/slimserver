@@ -781,6 +781,7 @@ sub _hello_handler {
 		}
 
 		# make sure volume is set, without changing temp setting
+		$client->audio_outputs_enable($client->power());
 		$client->volume($client->volume(), defined($client->tempVolume()));
 	}
 }

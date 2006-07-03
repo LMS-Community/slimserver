@@ -278,6 +278,9 @@ sub dBToFixed {
 	# send as a new style volume to SB2 (FW 22+).
 	my $floatmult = 10 ** ($db/20);
 	
+
+print "$db $floatmult\n";
+
 	# use 8 bits of accuracy for dB values greater than -30dB to avoid rounding errors
 	if ($db >= -30 && $db <= 0) {
 		return int($floatmult * (1 << 8) + 0.5) * (1 << 8);
@@ -1005,6 +1008,15 @@ sub doubleString {
         my $string = shift;
 
 	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
+}
+
+sub audio_outputs_enable { 
+	my $client = shift;
+	my $enabled = shift;
+
+	# spdif enable / dac enable
+	my $data = pack('CC', $enabled, $enabled);
+	$client->sendFrame('aude', \$data);
 }
 
 1;

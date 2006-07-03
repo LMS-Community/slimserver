@@ -1304,8 +1304,13 @@ sub power {
 			}
 		}
 
+		# turn off audio outputs
+		$client->audio_outputs_enable(0);
+
 	} else {
 		# turning player on - reset mode & brightness, display welcome and sync/start playing
+
+		$client->audio_outputs_enable(1);
 
 		$client->update( {} );
 		$client->updateMode(2); # block updates to hide mode change
@@ -1348,6 +1353,8 @@ sub power {
 		}		
 	}
 }
+
+sub audio_outputs_enable { }
 
 sub maxVolume { return 100; }
 sub minVolume {	return 0; }
