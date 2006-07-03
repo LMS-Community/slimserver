@@ -16,7 +16,7 @@
 	[% IF page == 'player' %]
 		<table bgcolor="[% subtitleC %]" width=100%><tr><td><h4>[% "FORGET_PLAYER" | string %]</h4></td></tr></table>
 		<p>[% "FORGET_PLAYER_DESC" | string %]</p>
-		<p><a href="[% webroot %]home.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerURI %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
+		<p><a href="[% webroot %]home.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
 		<hr>
 	[% END %]
 

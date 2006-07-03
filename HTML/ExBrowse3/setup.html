@@ -22,7 +22,7 @@
  [% IF page == 'player' %] 
   <h3>[% "FORGET_PLAYER" | string %]</h3>
   <p>[% "FORGET_PLAYER_DESC" | string %]</p>
-  <p><a href="[% webroot %]home.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerURI %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
+  <p><a href="[% webroot %]home.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]">[% "FORGET_PLAYER_LINK" | string %]</a></p>
   <hr/>
  [% END %]
  [% IF versionInfo %]<p>[% versionInfo %]</p><hr/>[% END %]

@@ -21,7 +21,7 @@
   [% IF page == 'PLAYER_SETTINGS' %] 
   <div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
   <div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
-  <p><a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerURI %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a></p>
+  <p><a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a></p>
   <hr>
   [% END %] 
   [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
