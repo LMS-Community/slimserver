@@ -239,6 +239,7 @@ our (
 	$d_sync_v,
 	$d_time,
 	$d_ui,
+	$d_upnp,
 	$d_usage,
 
 	$cachedir,
@@ -648,6 +649,7 @@ to the console via stderr:
     --d_sync_v       => Verbose information about multi player synchronization
     --d_time         => Internal timer information
     --d_ui           => Player user interface information
+    --d_upnp         => UPnP device information
     --d_usage        => Display buffer usage codes on the player's display
     
 Commands may be sent to the server through standard in and will be echoed via
@@ -734,6 +736,7 @@ sub initOptions {
 		'd_sync_v'			=> \$d_sync_v,
 		'd_time'			=> \$d_time,
 		'd_ui'				=> \$d_ui,
+		'd_upnp'            => \$d_upnp,
 		'd_usage'			=> \$d_usage,
 		'perfmon'			=> \$perfmon,
 		'perfwarn=f'		=> \$perfwarn, 

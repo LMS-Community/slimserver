@@ -1,0 +1,358 @@
+package Slim::Networking::UPnP::ControlPoint;
+
+# SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+# An asynchronous UPnP Control Point 
+
+# $Id$
+
+use strict;
+use warnings;
+
+use IO::Socket qw(:DEFAULT :crlf);
+use HTML::Entities;
+use Net::UPnP;
+use Net::UPnP::Device;
+use IO::String;
+use Socket;
+
+use Slim::Networking::Select;
+use Slim::Networking::Async::Socket::UDP;
+use Slim::Utils::Misc;
+
+# all devices we currently know about
+our $devices = {};
+
+# device locations we've retrieved description documents from
+our $deviceLocations = {};
+
+# failed devices, we don't check these more than once every 30 minutes
+our $failedDevices = {};
+our $FAILURE_RETRY_TIME = 60;
+
+# Search for all devices on the network
+sub search {
+	my ( $class, $args ) = @_;
+	
+	my $st = $args->{deviceType} || 'upnp:rootdevice';   # search string
+	my $mx = $args->{mx} || 3;                           # max wait
+	
+	my $mcast_addr = $Net::UPnP::SSDP_ADDR . ':' . $Net::UPnP::SSDP_PORT;
+	
+	my $ssdp_header = 
+qq{M-SEARCH * HTTP/1.1
+Host: $mcast_addr
+Man: "ssdp:discover"
+ST: $st
+MX: $mx
+
+};
+
+	$ssdp_header =~ s/\r?\n/\r\n/g;
+	
+	my $sock = Slim::Networking::Async::Socket::UDP->new(
+		LocalPort => $Net::UPnP::SSDP_PORT,
+		ReuseAddr => 1,
+	);
+	
+	# listen for multicasts on this socket
+	$sock->mcast_add( $mcast_addr );
+	
+	# save arguments in socket
+	$sock->set( args => $args );
+	
+	# This socket will continue to live and receive events as
+	# long as SlimServer is running
+	Slim::Networking::Select::addRead( $sock, \&_readResult );
+	
+	# send the search query
+	$sock->mcast_send( $ssdp_header, $mcast_addr );
+}
+
+# A way for other code to remove a device
+sub removeDevice {
+	my ( $device, $callback ) = @_;
+		
+	$::d_upnp && msg("UPnP: Device went away: " . $device->getfriendlyname . "\n");
+
+	if ( $callback ) {
+		$callback->( $device, 'remove' );
+	}
+
+	delete $devices->{ $device->getudn };
+	delete $deviceLocations->{ $device->getlocation };
+}
+
+sub _readResult {
+	my $sock = shift;
+	
+	my $ssdp_res_msg;
+	
+	eval {
+		local $SIG{ALRM} = sub { die "recv timed out"; };
+		alarm 1;
+		$sock->recv( $ssdp_res_msg, 4096 ) or die "recv failed: $!";
+		alarm 0;
+	};
+	if ( $@ ) {
+		msg("UPnP: Read search result failed: $@\n");
+		return;
+	}
+	
+	return unless ( $ssdp_res_msg =~ m/LOCATION[ :]+(.*)\r/i );
+	my $dev_location = $1;
+	
+	my ($USN) = $ssdp_res_msg =~ m/USN[ :]+(.*)\r/i;
+	my ($udn) = _parseUSNHeader( $USN );
+	
+	my $args = $sock->get( 'args' );
+	
+	if ( $ssdp_res_msg =~ m/NOTIFY/i ) {
+		# notify requests
+		
+		# status message (alive/byebye)
+		my ($NTS) = $ssdp_res_msg =~ m/NTS[ :]+(.*)\r/i;
+		
+		# ignore failed devices
+		if ( my $retry = $failedDevices->{ $udn } ) {
+			if ( time < $retry ) {
+				$::d_upnp && msgf("UPnP: Notify from previously failed device at %s, ignoring for %s seconds\n",
+					$dev_location,
+					$retry - time,
+				);
+				return;
+			}
+			else {
+				delete $failedDevices->{ $udn };
+			}
+		}
+		
+		if ( my $device = $devices->{ $udn } ) {
+			# existing device, check for byebye messages
+			if ( $NTS =~ /byebye/ ) {
+				removeDevice( $device, $args->{callback} );
+			}
+		}
+		else {
+			if ( $NTS =~ /alive/ ) {
+				# new device, add it
+			
+				# get the device description if we haven't seen this location before
+				if ( !$deviceLocations->{ $dev_location } ) {
+				
+					$deviceLocations->{ $dev_location } = 1;
+				
+					my $device = Net::UPnP::Device->new();
+					$device->setssdp( $ssdp_res_msg );
+		
+					# make an async request for the device description XML document
+					_getDeviceDescription( {
+						device   => $device,
+						udn      => $udn,
+						location => $dev_location,
+						callback => $args->{callback},
+					} );
+				}
+			}
+		}
+	}
+	
+	# Responses to our initial search query will contain ST: <string we searched for>
+	elsif ( my ($st) = $ssdp_res_msg =~ m/ST[ :]+(.*)\r/i ) {
+		
+		if ( $st eq $args->{deviceType} ) {
+		
+			my $device = Net::UPnP::Device->new();
+			$device->setssdp( $ssdp_res_msg );
+		
+			# make an async request for the device description XML document
+			_getDeviceDescription( {
+				device   => $device,
+				udn      => $udn,
+				location => $dev_location,
+				callback => $args->{callback},
+			} );
+		}
+	}
+}
+
+sub _getDeviceDescription {
+	my $args = shift;
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&_gotDeviceDescription,
+		\&_gotError,
+		{
+			args => $args,
+		},
+	);
+	
+	$http->get( $args->{location} );
+}
+
+sub _gotDeviceDescription {
+	my $http = shift;
+	my $args = $http->params('args');
+	
+	my $device = $args->{device};
+	$device->setdescription( $http->content );
+	
+	my $udn = $device->getudn;
+	
+	# is it new?
+	if ( !$devices->{ $udn } ) {
+		
+		$::d_upnp && msgf("UPnP: New device found: %s [%s]\n",
+			$device->getfriendlyname,
+			$device->getlocation,
+		);
+		
+		# add the device to our list of known devices
+		$devices->{ $udn } = $device;
+
+		# callback
+		my $callback = $args->{callback};
+		$callback->( $device, 'add' );
+	}
+}
+
+sub _gotError {
+	my $http  = shift;
+	my $error = $http->error;
+	my $args  = $http->params('args');
+	
+	delete $deviceLocations->{ $args->{location} };
+	
+	# keep track of failures
+	$failedDevices->{ $args->{udn} } = time + $FAILURE_RETRY_TIME;
+	
+	$::d_upnp && msg("UPnP: Error retrieving device description: $error\n");
+}
+
+sub _parseUSNHeader {
+	my $usn = shift;
+
+	my ($udn, $deviceType, $serviceType);
+
+	if ($usn =~ /^uuid:schemas(.*?):device(.*?):(.*?):(.+)$/) {
+		$udn = 'uuid:' . $4;
+		$deviceType = 'urn:schemas' . $1 . ':device' . $2 . ':' . $3;
+	}
+	elsif ($usn =~ /^uuid:(.+?)::/) {
+		$udn = 'uuid:' . $1;
+		if ($usn =~ /urn:(.+)$/) {
+			my $urn = $1;
+			if ($usn =~ /:service:/) {
+				$serviceType = 'urn:' . $urn;
+			}
+			elsif ($usn =~ /:device:/) {
+				$deviceType = 'urn:' . $urn;
+			}
+		}
+	}
+	else {
+		$udn = $usn;
+	}
+
+	return ($udn, $deviceType, $serviceType);
+}
+
+sub browse {
+	my ( $class, $args ) = @_;
+	
+	if ( my $device = $devices->{ $args->{udn} } ) {
+		my ( $url, $action, $content ) = $class->_soap_request( $device, "Browse", $args );
+	
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			\&gotResponse,
+			\&gotError,
+			{
+				args => $args,
+			}
+		);
+	
+		$http->post( 
+			$url,
+			'Content-Type' => 'text/xml; charset="utf-8"',
+			SOAPACTION     => $action, 
+			$content
+		);
+	}
+}
+
+sub gotResponse {
+	my $http = shift;
+	my $args = $http->params('args');
+	
+	# To save memory, we return only a filehandle
+	my $contentRef = $http->contentRef;
+	HTML::Entities::decode( $$contentRef );
+	my $io = IO::String->new( $contentRef );
+	
+	my $callback    = $args->{callback};
+	my $passthrough = $args->{passthrough} || [];
+	$callback->( $io, @{$passthrough} );
+}
+
+sub gotError {
+	my $http = shift;
+	
+	my $args  = $http->params('args');
+	my $error = $http->error;
+	my $url   = $http->url;
+	
+	msg("UPnP: Error retrieving $url: $error\n");
+	
+	my $callback    = $args->{callback};
+	my $passthrough = $args->{passthrough} || [];
+	$callback->( undef, @{$passthrough} );
+}
+
+# Build a SOAP request by hand
+# Based on Net::UPnP::Service::postaction
+sub _soap_request {
+	my ( $class, $device, $action_name, $action_arg ) = @_;
+	
+	my $service = $device->getservicebyname( $action_arg->{service} );
+	
+	my $ctrl_url = $service->getposturl(  $service->getcontrolurl() );
+	
+	my $service_type = $service->getservicetype();
+	my $soap_action = "\"" . $service_type . "#" . $action_name . "\"";
+
+	my $soap_content = qq{
+<?xml version="1.0" encoding="utf-8"?>
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+	<s:Body>
+		<u:$action_name xmlns:u="$service_type">
+};
+
+	if ( ref $action_arg ) {
+		while ( my ($arg_name, $arg_value) = each %{$action_arg} ) {
+			
+			# skip internal items that don't belong in a SOAP request 
+			# (anything not starting with a capital letter)
+			next if $arg_name !~ /^[A-Z]/;
+			
+			if ( length($arg_value) <= 0 ) {
+				$soap_content .= qq{			<$arg_name />} . "\n";
+				next;
+			}
+			$soap_content .= qq{			<$arg_name>$arg_value</$arg_name>} . "\n";
+		}
+	}
+
+	$soap_content .= qq{
+		</u:$action_name>
+	</s:Body>
+</s:Envelope>
+};
+
+	return ( $ctrl_url, $soap_action, $soap_content );
+}
+
+
+1;

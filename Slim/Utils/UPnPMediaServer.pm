@@ -5,130 +5,156 @@ package Slim::Utils::UPnPMediaServer;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-use strict;
+# UPnP interface between the Control Point and player/web/plugins
 
-use XML::Simple;
-use UPnP::ControlPoint;
+use strict;
+use warnings;
+
+use HTML::Entities;
+use URI::Escape qw(uri_escape);
 
 use Slim::Buttons::BrowseUPnPMediaServer;
 use Slim::Web::UPnPMediaServer;
 use Slim::Networking::Select;
+use Slim::Networking::UPnP::ControlPoint;
 use Slim::Utils::Misc;
 
-my %devices = ();
-my $controlPoint = undef;
-my $deviceSearch = undef;
-my @callbacks = ();
+our $registeredCallbacks = [];
 
 sub init {
 	Slim::Buttons::BrowseUPnPMediaServer::init();
 	Slim::Web::UPnPMediaServer::init();
+	
+	# Look for all UPnP media servers on the network
+	Slim::Networking::UPnP::ControlPoint->search( {
+		callback   => \&foundDevice,
+		deviceType => 'urn:schemas-upnp-org:device:MediaServer:1',
+	} );
 }
 
-sub checkDeviceAdd {
-	my $device = shift;
-	my $callback = shift;
-
-	my ($menuName, $displayTitle) = &$callback($device, 'deviceAdded');
-
-	# Don't add any menus, etc if the callback returns undef.
-	if (defined $menuName && defined $displayTitle) {
-
-		$devices{$device->UDN}{'items'}{'0'} = {
-			'title' => $displayTitle,
-		};
-
-		addDeviceMenus($device, $menuName);
-	}
-}
-
-sub findServer {
-	my $callback = shift;
-
-	push @callbacks, $callback;
-	if (defined($deviceSearch)) {
-		for my $device (values %devices) {
-			checkDeviceAdd($device, $callback);
+sub foundDevice {
+	my ( $device, $event ) = @_;
+	
+	# We'll get a callback for all UPnP devices, but we only look for media servers
+	if ( $device->getdevicetype =~ /MediaServer/ ) {
+		my $menuName = HTML::Entities::decode( $device->getfriendlyname );
+		
+		if ( $event eq 'add' ) {
+			$::d_upnp && msg("UPnP: Adding new media server: $menuName\n");
+		
+			addDeviceMenus( $device, $menuName );
+			
+			# If a UPnP server crashes, it won't send out a byebye message, so we need to poll
+			# periodically to see if this server is still alive
+			Slim::Utils::Timers::setTimer( $device, time() + 60, \&checkServerHealth );
+		}
+		elsif ( $event eq 'remove' ) {
+			removeDeviceMenus( $device, $menuName );
+			
+			Slim::Utils::Timers::killTimers( $device, \&checkServerHealth );
+		}
+		
+		# notify anyone who is interested in devices (i.e. Rhapsody plugin)
+		for my $callback ( @{$registeredCallbacks} ) {
+			$callback->( $device, $event );
 		}
 	}
 	else {
-		$controlPoint = UPnP::ControlPoint->new();
-		my @sockets = $controlPoint->sockets;
-		for my $socket (@sockets) {
-			Slim::Networking::Select::addRead($socket, \&handleCallback);
-		}
-		$deviceSearch = $controlPoint->searchByType('urn:schemas-upnp-org:device:MediaServer:1', \&deviceCallback);
+		$::d_upnp && msgf("UPnP: %s is a %s %s (%s), ignoring\n",
+			$device->getfriendlyname,
+			$device->getmanufacturer,
+			$device->getmodelname,
+			$device->getdevicetype,
+		);
 	}
 }
 
-sub handleCallback {
-	my $socket = shift;
-
-	$controlPoint->handleOnce($socket);
+sub registerCallback {
+	my $callback = shift;
+	
+	push @{$registeredCallbacks}, $callback;
+	
+	if ( $::d_upnp ) {
+		my $func = Slim::Utils::PerlRunTime::realNameForCodeRef( $callback );
+		msg("UPnP: New device callback registered: $func\n");
+	}
 }
 
-sub deviceCallback {
-	my ($search, $device, $action) = @_;
-
-	if ($action eq 'deviceAdded') {
-		unless ($devices{$device->UDN}) {		
-			my $service = $device->getService("urn:upnp-org:serviceId:CDS_1-0");
-
-			if (!$service) {
-				$service = $device->getService("urn:upnp-org:serviceId:ContentDirectory");
-			}
-
-			my $proxy = $service->controlProxy if defined($service);
-
-			return unless defined($proxy);
-
-			$devices{$device->UDN} = {
-				'controlProxy' => $proxy,
-				'containers' => {},
-				'items' => {},
-			};
+sub checkServerHealth {
+	my $device = shift;
+		
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&checkServerHealthOK,
+		\&checkServerHealthError, 
+		{
+			device  => $device,
+			Timeout => 5,
 		}
+	);
+	$http->get( $device->getlocation );
+}
 
-		for my $callback (@callbacks) {
-			checkDeviceAdd($device, $callback);
-		}
-	}
-	elsif ($action eq 'deviceRemoved') {
-		if ($devices{$device->UDN}) {
-			for my $callback (@callbacks) {
-				if (my ($menuName, $displaytitle) = &$callback($device, $action)) {
-					removeDeviceMenus($device, $menuName);
-					last;
-				}
-			}
-			delete $devices{$device->UDN};
-		}
-	}
+sub checkServerHealthOK {
+	my $http   = shift;
+	my $device = $http->params('device');
+	
+	# Device is still alive, so just set a new check timer
+	Slim::Utils::Timers::setTimer( $device, time() + 60, \&checkServerHealth );
+}
+
+sub checkServerHealthError {
+	my $http = shift;
+	
+	my $device = $http->params('device');
+	my $error  = $http->error;
+	
+	$::d_upnp && msgf("UPnP: %s failed to respond at %s, removing. (%s)\n",
+		$device->getfriendlyname,
+		$device->getlocation,
+		$error,
+	);
+	
+	# Remove the device from the control point
+	Slim::Networking::UPnP::ControlPoint::removeDevice( $device );
+	
+	foundDevice( $device, 'remove' );
 }
 
 sub addDeviceMenus {
 	my $device = shift;
-	my $name = shift;
+	my $name   = shift;
 
-	if (!Slim::Utils::Strings::stringExists($name)) {
-		Slim::Utils::Strings::addStringPointer(uc($name), $name);
+	if ( !Slim::Utils::Strings::stringExists($name) ) {
+		Slim::Utils::Strings::addStringPointer( uc $name, $name );
 	}
+	
+	my $udn = $device->getudn;
 	
 	my %params = (
 		'useMode' => 'upnpmediaserver',
-		'device' => $device,
+		'device'  => $udn,
+		'title'   => $device->getfriendlyname,
 	);
+	
+	# cache special id=0 item
+	my $cache = Slim::Utils::Cache->new;
+	$cache->set( "upnp_item_info_${udn}_0", {
+		title => $device->getfriendlyname,
+	} );
 
 	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, \%params);
 
 	Slim::Web::Pages->addPageLinks(
-		'browse', { $name => 'browseupnp.html?device='.$device->UDN.'&hierarchy=0' }
+		'browse', { 
+			$name => 'browseupnp.html?device=' . $device->getudn 
+			       . '&hierarchy=0&title=' . uri_escape( $params{title} )
+		}
 	);
 }
 
 sub removeDeviceMenus {
 	my $device = shift;
-	my $name = shift;
+	my $name   = shift;
 
 	Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC', $name);	
 	
@@ -137,166 +163,202 @@ sub removeDeviceMenus {
 	);
 }
 
-sub getContainerInfo {
-	my $deviceUDN = shift;
-	my $id = shift;
-
-	my $container = $devices{$deviceUDN}{'containers'}{$id};
-	unless ($container) {
-		$container = loadContainer($deviceUDN, $id);
-	}
+sub loadContainer {
+	my $args = shift;
 	
-	return $container;
+	Slim::Networking::UPnP::ControlPoint->browse( {
+		udn            => $args->{udn},
+		service        => 'urn:schemas-upnp-org:service:ContentDirectory:1',
+		
+		# SOAP params
+		ObjectID       => $args->{id} || 0,
+		BrowseFlag     => $args->{method} || 'BrowseDirectChildren',
+		Filter         => '*',
+		StartingIndex  => $args->{start} || 0,
+		RequestedCount => $args->{limit} || 0,
+		SortCriteria   => '',
+		
+		callback       => \&gotContainer,
+		passthrough    => [ $args ],
+	} );
 }
 
-sub loadContainer {
-	my $deviceUDN = shift;
-	my $id = shift;
+sub gotContainer {
+	my $io   = shift;
+	my $args = shift;
+	my $udn  = $args->{udn};
+	
+	my $cache = Slim::Utils::Cache->new;
 
-	my $proxy = $devices{$deviceUDN}{'controlProxy'};
-	return undef unless defined($proxy);
-
-	my $result = $proxy->Browse($id, "BrowseDirectChildren", "*", 0, 0, "");
-
-	if ( defined $result && $result->isSuccessful ) {
-		# Regular expression based parsing of the XML. This is
-		# because we've seen cases of non well-formed XML and
-		# XML::Parser is not forgiving.
-		my $xml = $result->getValue("Result");
-		my @children;
-
-		my @containerNodes = ();
-		while ($xml =~ /<container(.*?)<\/container>/sg) {
-			push(@containerNodes, $1);
-		}
-
-		foreach my $node (@containerNodes) {
-			my ($title, $id, $type, $url, $childCount);
-			if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
-				$title = HTML::Entities::decode($1);
-			}
-			if ($node =~ /<upnp:class>(.*?)<\/upnp:class>/s) {
-				$type = $1;
-			}
-			if ($node =~ /id="(.*?)"/s) {
-				$id = $1;
-			}
-			if ($node =~ /childCount="(.*?)"/s) {
-				$childCount = $1;
-			}
-			if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
-				$url = $2;
-			}
-
-			my $props = {
-				'title' => $title,
-				'id' => $id,
-				'childCount' => $childCount,
-				'url' => $url,
-				'type' => $type,
-			};
-			$devices{$deviceUDN}{'items'}{$id} = $props;
+	my @children;
+	
+	if ( $io ) {		
+		# We use an IO::String object and parse in chunks to reduce memory usage
+		
+		local $/ = '</container>';
+		while ( my $chunk = <$io> ) {
 			
-			push @children, $props;
-		}
-
-		my @itemNodes = ();
-		while ($xml =~ /<item(.*?)<\/item>/sg) {
-			push(@itemNodes, $1);
-		}
-
-		foreach my $node (@itemNodes) {
-			my ($title, $id, $type, $url, $album, $artist, $artURI, $blurbURI);
+			# This can be slow if we have a huge file to process, so give back some time
+			main::idleStreams( 0, 1 );
 			
-			if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
-				$title = HTML::Entities::decode($1);
-			}
-			if ($node =~ /<upnp:class>(.*?)<\/upnp:class>/s) {
-				$type = $1;
-			}
-			if ($node =~ /id="(.*?)"/s) {
-				$id = $1;
-			}
-			if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
-				$url = $2;
-			}
-			if ($node =~ /<upnp:album>(.*?)<\/upnp:album>/s) {
-				$album = HTML::Entities::decode($1);
-			}
-			if ($node =~ /<upnp:artist>(.*?)<\/upnp:artist>/s) {
-				$artist = HTML::Entities::decode($1);
-			}
-			if ($node =~ /<upnp:albumArtURI>(.*?)<\/upnp:albumArtURI>/s) {
-				$artURI = HTML::Entities::decode($1);
-			}
-			if ($node =~ /<upnp:blurbURI>(.*?)<\/upnp:blurbURI>/s) {
-				$blurbURI = HTML::Entities::decode($1);
-			}
+			if ( $chunk =~ /<container(.*?)<\/container>/sg ) {
+				my $node = $1;
+			
+				my ($title, $id, $type, $url, $childCount);
+				if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
+					$title = HTML::Entities::decode($1);
+					# some Rhapsody titles contain '??'
+					$title =~ s/\?\?/ /g;
+				}
+				if ($node =~ /id="(.*?)"/s) {
+					$id = $1;
+				}
+				if ($node =~ /childCount="(.*?)"/s) {
+					$childCount = $1;
+				}
+				if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
+					$url = $2;
+				}
 
-			my $props = {
-				'title' => $title,
-				'id' => $id,
-				'url' => $url,
-				'type' => $type,
-				'album' => $album,
-				'artist' => $artist,
-				'albumArtURI' => $artURI,
-				'blurbURI' => $blurbURI,
-			};
-			$devices{$deviceUDN}{'items'}{$id} = $props;
-			if ($url) {
-				Slim::Music::Info::setTitle($url, $title);
+				my $props = {
+					'title'      => $title,
+					'id'         => $id,
+					'childCount' => $childCount,
+					'url'        => $url,
+				};
+			
+				# item info is cached for use in building crumb trails in the web UI
+				$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
+			
+				push @children, $props;
 			}
+			else {
+				# done with containers, do we also have items?
+				if ( $chunk =~ /<item/i ) {
+					$io = IO::String->new( \$chunk );
+					
+					local $/ = '</item>';
+					while ( my $itemChunk = <$io> ) {
+						
+						# This can be slow if we have a huge file to process, so give back some time
+						main::idleStreams( 0, 1 );
+						
+						if ( $itemChunk =~ /<item(.*?)<\/item>/sg ) {
+							my $node = $1;
+							
+							my ($title, $id, $type, $url);
 
-			push @children, $props;
+							if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
+								$title = HTML::Entities::decode($1);
+								# some Rhapsody titles contain '??'
+								$title =~ s/\?\?/ /g;
+							}
+							if ($node =~ /<upnp:class>(.*?)<\/upnp:class>/s) {
+								$type = $1;
+							}
+							if ($node =~ /id="(.*?)"/s) {
+								$id = $1;
+							}
+							if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
+								$url = $2;
+							}
+							
+							my $props = {
+								title => $title,
+								id    => $id,
+								url   => $url,
+								type  => $type,
+							};
+							
+							# grab all other namespace items
+							my %otherItems = $node =~ /<\w+:(\w+)>(.*?)<\/\w+:/sg;
+							for my $key ( keys %otherItems ) {
+								next if $key =~ /(?:title|class)/;	# we already grabbed these above
+								$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
+							}
+
+							if ($url) {
+								Slim::Music::Info::setTitle($url, $title);
+							}
+
+							$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
+
+							push @children, $props;
+						}
+					}
+				}
+			}
 		}
-
-		$devices{$deviceUDN}{'containers'}{$id} = {
-			'children' => \@children,
-		};
 	}
 	else {
 		# request failed, add 1 child with the failure message
-		$devices{$deviceUDN}{'containers'}{$id} = {
-			'children' => [ {
-				'title' => Slim::Utils::Strings::string('UPNP_REQUEST_FAILED'),
-			} ],
+		push @children, {
+			'title' => Slim::Utils::Strings::string('UPNP_REQUEST_FAILED'),
 		};
 	}
+	
+	my $container = { 
+		children => \@children
+	};
+	
+	# If we are a metadata request, and have a blurbURI, fetch the blurb text
+	if ( $args->{method} eq 'BrowseMetadata' ) {
+		if ( my $blurbURI = $container->{children}->[0]->{blurbURI} ) {
+			my $http = Slim::Networking::SimpleAsyncHTTP->new(
+				\&gotBlurb,
+				\&gotBlurbError,
+				{
+					args      => $args,
+					container => $container,
+				}
+			);
+			$http->get( $blurbURI );
+			return;
+		}
+	}		
 
-	return $devices{$deviceUDN}{'containers'}{$id};
+	my $callback    = $args->{callback};
+	my $passthrough = $args->{passthrough} || [];
+	$callback->( $container, @{$passthrough} );
 }
 
 sub getItemInfo {
-	my $deviceUDN = shift;
-	my $id = shift;
+	my $udn = shift;
+	my $id  = shift;
 
-	my $item = $devices{$deviceUDN}{'items'}{$id};
-
-	# If the item is a container, make sure it's loaded as well, since
-	# we will need information (child item titles, for instance) from
-	# it.
-	if ((defined($item) && $item->{'childCount'}) ||
-		($id eq '0')) {
-		my $container = getContainerInfo($deviceUDN, $id);
-	}
-
-	return $item;
+	my $cache = Slim::Utils::Cache->new;
+	return $cache->get( "upnp_item_info_${udn}_${id}");
 }
 
-sub getDisplayName {
-	my $deviceUDN = shift;
+sub gotBlurb {
+	my $http = shift;
+	my $args = $http->params('args');
+	
+	my $container = $http->params('container');
+	my $content   = $http->content;
+	
+	if ( $content ) {
+		$container->{children}->[0]->{blurbText} = $content;
+	}
 
-	return '' unless exists $devices{$deviceUDN};
+	my $callback    = $args->{callback};
+	my $passthrough = $args->{passthrough} || [];
+	$callback->( $container, @{$passthrough} );
+}
 
-	my $item = $devices{$deviceUDN}{'items'}{'0'};
-	return $item->{'title'};
+sub gotBlurbError {
+	my $http  = shift;
+	my $args  = $http->params('args');
+	
+	$::d_upnp && msgf("UPnP: Error while trying to fetch blurb text at %s: %s\n",
+		$http->url,
+		$http->error,
+	);
+
+	my $container   = $http->params('container');
+	my $callback    = $args->{callback};
+	my $passthrough = $args->{passthrough} || [];
+	$callback->( $container, @{$passthrough} );
 }
 
 1;
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

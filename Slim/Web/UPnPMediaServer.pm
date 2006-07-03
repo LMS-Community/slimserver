@@ -5,123 +5,173 @@ package Slim::Web::UPnPMediaServer;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+# Web UI for UPnP servers
+
 use strict;
 
-use URI::Escape;
+use URI::Escape qw(uri_escape uri_unescape);
 
 use Slim::Utils::UPnPMediaServer;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 sub init {
-	Slim::Web::HTTP::addPageFunction(qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP);
-	Slim::Web::HTTP::addPageFunction(qr/^upnpinfo\.(?:htm|xml)/, \&UPnPInfo);
-}
-
-sub UPnPInfo {
-	my ($client, $params, $callback, $httpClient, $response) = @_;
-
-	my $deviceUDN = $params->{'device'};
-	my $hierarchy = $params->{'hierarchy'};
-	my $player = $params->{'player'};
-	my $trackid = $params->{'trackid'};
-
-	my @levels = map { URI::Escape::uri_unescape($_) } split("/", $hierarchy);
-	my $containerId = $levels[-2];
-	my $container = Slim::Utils::UPnPMediaServer::getContainerInfo($deviceUDN, $containerId);
-
-	$params->{'browseby'} = uc(Slim::Utils::UPnPMediaServer::getDisplayName($deviceUDN)) || 'BROWSE';
-
-	unless ($container) {
-		$params->{'browse_list'} = $player ? $player->string('UPNP_CONNECTION_ERROR') : Slim::Utils::Strings::string('UPNP_CONNECTION_ERROR');
-
-		return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
-	}
-
-	my $item = Slim::Utils::UPnPMediaServer::getItemInfo($deviceUDN, $trackid);
-	$params->{'track'} = $item;
-
-	return Slim::Web::HTTP::filltemplatefile("upnpinfo.html", $params);
+	Slim::Web::HTTP::addPageFunction( qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP );
+	Slim::Web::HTTP::addPageFunction( qr/^upnpinfo\.(?:htm|xml)/, \&browseUPnP );
 }
 
 sub browseUPnP {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
-	my $deviceUDN = $params->{'device'};
-	my $hierarchy = $params->{'hierarchy'};
-	my $player = $params->{'player'};
-	my @levels = map { URI::Escape::uri_unescape($_) } split("/", $hierarchy);
+	my $device    = $params->{device};
+	my $hierarchy = $params->{hierarchy};
+	my $player    = $params->{player};
+	my @levels    = map { uri_unescape($_) } split("/", $hierarchy);
 	
-	$params->{'browseby'} = uc(Slim::Utils::UPnPMediaServer::getDisplayName($deviceUDN)) || 'BROWSE';
+	$params->{browseby} = uc( $params->{title} ) || 'BROWSE';
 
 	my $id = $levels[-1];
-	# Reload the container every time (as opposed to getting a cached
-	# one), since it may have changed.
-	my $container = Slim::Utils::UPnPMediaServer::loadContainer($deviceUDN, $id);
-	unless ($container) {
-		$params->{'browse_list'} = defined($client) ? $client->string('UPNP_CONNECTION_ERROR') : Slim::Utils::Strings::string('UPNP_CONNECTION_ERROR');
-
-		return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
+	
+	my $browse = 'BrowseDirectChildren';
+	if ( $params->{metadata} ) {
+		$browse = 'BrowseMetadata';
 	}
+	
+	# Async load of container
+	Slim::Utils::UPnPMediaServer::loadContainer( {
+		udn         => $device,
+		id          => $id,
+		method      => $browse,
+		limit       => $params->{itemsPerPage} || Slim::Utils::Prefs::get('itemsPerPage'),
+		start       => $params->{start} || 0,
+		callback    => \&gotContainer,
+		passthrough => [ $client, $params, $callback, $httpClient, $response ],
+	} );
+	
+	return;
+}
+
+sub gotContainer {
+	my $container = shift;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
+	
+	unless ( ref $container eq 'HASH' ) {
+		my $error = defined($client) 
+			? $client->string('UPNP_REQUEST_FAILED') 
+			: Slim::Utils::Strings::string('UPNP_REQUEST_FAILED');
+			
+		# Use the xmlbrowser template for errors
+		$params->{pagetitle} = $params->{title};
+		$params->{msg} = $error;
+
+		# done, send output back to Web module for display
+		my $output = Slim::Web::HTTP::filltemplatefile( 'xmlbrowser.html', $params );
+		$callback->( $client, $params, $output, $httpClient, $response );
+		return;
+	}
+	
+	my $device    = $params->{device};
+	my $hierarchy = $params->{hierarchy};
+	my $player    = $params->{player};
+	my @levels    = map { uri_unescape($_) } split("/", $hierarchy);
 
 	# Construct the pwd header
 	for (my $i = 0; $i < scalar @levels; $i++) {
 		
-		my $item = Slim::Utils::UPnPMediaServer::getItemInfo($deviceUDN, $levels[$i]);
+		my $item = Slim::Utils::UPnPMediaServer::getItemInfo( $device, $levels[$i] );
 		next unless defined($item);
 
-		my %list_form = (
-			'player'       => $player,
-			'device'       => $deviceUDN,
-			'pwditem'        => $item->{'title'},
-			'hierarchy'    => join('/', map URI::Escape::uri_escape($_), @levels[0..$i]),
-		);
+		my $hierarchy = join( '/', map { uri_escape($_) } @levels[0..$i] );
+		my $title     = HTML::Entities::decode( $item->{title} );
 		
-		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseupnp_pwdlist.html", \%list_form)};
+		my $href 
+			= 'href="browseupnp.html?device=' . uri_escape($device)
+			. '&hierarchy=' . $hierarchy
+			. '&player=' . uri_escape($player)
+			. '"';
+		
+		push @{ $params->{pwd_list} }, {
+			 href  => $href,
+			 title => $title,
+		};
 	}
 
-	if (defined $container->{'children'}) {
-		my $itemnumber = 0;
-
-		my $items = $container->{'children'};
+	if ( defined $container->{children} ) {
+		my $items = $container->{children};
+		
 		my $otherparams = join('&',
-			"device=$deviceUDN",
-			'player=' . Slim::Web::HTTP::escape($player || ''),
+			"device=$device",
+			'player=' . Slim::Utils::Misc::escape($player || ''),
 			"hierarchy=$hierarchy",
 		);
+		
+		# Get the itemCount value from the parent's childCount
+		my $parent = Slim::Utils::UPnPMediaServer::getItemInfo( $device, $levels[-1] ) || {};
+		
+		$params->{pageinfo} = Slim::Web::Pages->pageInfo( {
+			itemCount   => $parent->{childCount} || scalar @{$items},
+			path        => $params->{path},
+			otherParams => $otherparams,
+			start       => $params->{start},
+			perPage     => $params->{itemsPerPage},
+		} );
+		
+		$params->{start} = $params->{pageinfo}->{startitem};
 
-		my ($start, $end) = Slim::Web::Pages::pageBar(
-			scalar(@$items),
-			$params->{'path'},
-			0,
-			$otherparams,
-			\$params->{'start'},
-			\$params->{'browselist_header'},
-			\$params->{'browselist_pagebar'},
-			$params->{'skinOverride'},
-			$params->{'itemsPerPage'},
-		);
-
-		for my $item (@{$items}[$start..$end]) {
-			my %list_form = %$params;
-
-			$list_form{'player'} = $player;
-			$list_form{'device'} = $deviceUDN;
-			$list_form{'hierarchy'} = join('/', $hierarchy, URI::Escape::uri_escape($item->{'id'}));
-			$list_form{'item'} = $item;
-			$list_form{'odd'} = (++$itemnumber) % 2;
-
-			$params->{'browse_list'} .= ${Slim::Web::HTTP::filltemplatefile("browseupnp_list.html", \%list_form)};
+		my $count = 0;		
+		for my $item ( @{$items} ) {
+			
+			my $hier = join( '/', $hierarchy, uri_escape( $item->{id} ) );
+			
+			my $args
+				= '?device=' . uri_escape($device)
+				. '&hierarchy=' . $hier
+				. '&player=' . uri_escape($player);
+			
+			# browse link
+			my $href 
+				= 'href="' . $params->{webroot} 
+				. 'browseupnp.html' . $args . '"';
+			
+			# info link
+			my $infohref 
+				= 'href="' . $params->{webroot} 
+				. 'upnpinfo.html' . $args 
+				. '&metadata=1"';
+			
+			push @{ $params->{browse_items} }, {
+				hierarchy   => $hier,
+				descend     => ( $item->{childCount} || !$item->{url} ) ? 1 : 0,
+				showplay    => ( $item->{url} ) ? 1 : 0,
+				showdescend => ( $item->{childCount} || !$item->{url} ) ? 1 : 0,
+				text        => $item->{title},
+				href        => $href,
+				infohref    => $infohref,
+				odd         => $count % 2,
+				itemobj     => $item,
+			};
+			
+			$count++;
 		}
 	}
+	
+	my $output;
+	
+	if ( $params->{metadata} ) {
+		
+		# Item detail view
+		$params->{itemobj} = $params->{browse_items}->[0]->{itemobj};
+		
+		# Remove the last crumbtail item's link
+		delete $params->{pwd_list}->[-1]->{href};
+		
+		$output = Slim::Web::HTTP::filltemplatefile( 'upnpinfo.html', $params );
+	}
+	else {
+		$output = Slim::Web::HTTP::filltemplatefile( 'browsedb.html', $params );
+	}
 
-	return Slim::Web::HTTP::filltemplatefile("browsedb.html", $params);
+	$callback->( $client, $params, $output, $httpClient, $response );
 }
 
 1;
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

@@ -43,7 +43,7 @@ sub scanPathOrURL {
 
 	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
 
-		msg("scanPathOrURL: Reading metdata from remote URL: $pathOrUrl\n");
+		$::d_scan && msg("scanPathOrURL: Reading metdata from remote URL: $pathOrUrl\n");
 
 		# Async scan of remote URL, it will call the callback when done
 		$class->scanRemoteURL($args);

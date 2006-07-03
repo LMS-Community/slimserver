@@ -31,34 +31,32 @@ sub getFunctions {
 
 sub findCallback {
 	my $device = shift;
-	my $action = shift;
+	my $event = shift;
 
-	if ($device->modelName =~ /Rhapsody/) {
+	if ( $device->getmodelname =~ /Rhapsody/ ) {
 		
-		my ($host, $port) = $device->location =~ m|//([0-9.]+):(\d+)|;
+		my ($host, $port) = $device->getlocation =~ m|//([0-9.]+):(\d+)|;
 		
-		if ( $action eq 'deviceAdded' ) {
+		if ( $event eq 'add' ) {
 			$ports->{ $host } = {
 				'port'   => $port,
 				'device' => $device,
 			};
 			$::d_plugins && msgf("Rhapsody: New server detected: %s (%s)\n",
-				$device->friendlyName,
-				$device->location,
+				$device->getfriendlyname,
+				$device->getlocation,
 			);
 		}
 		else {
 			delete $ports->{ $host };
 			$::d_plugins && msgf("Rhapsody: Server went away: %s (%s)\n",
-				$device->friendlyName,
-				$device->location,
+				$device->getfriendlyname,
+				$device->getlocation,
 			);
 		}
-		
-		return ($device->friendlyName, 'Rhapsody');
 	}
 	
-	return (undef, undef);
+	return;
 }
 
 sub getPortForHost {
@@ -69,48 +67,8 @@ sub getPortForHost {
 
 sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler('rhap', 'Plugins::Rhapsody::ProtocolHandler');
-
-	Slim::Utils::UPnPMediaServer::findServer(\&findCallback);
 	
-	# If Rhapsody crashes, it won't send out a byebye message, so we need to poll
-	# periodically to see if all known servers are still alive
-	Slim::Utils::Timers::setTimer( undef, time() + 60, \&checkServerHealth );
-}
-
-sub checkServerHealth {
-	
-	# Make an async HTTP request to all known servers to make sure they return 
-	# a response.  Crashed servers will time out and be removed.
-	for my $host ( keys %{$ports} ) {
-		
-		my $http = Slim::Networking::SimpleAsyncHTTP->new(
-			sub {}, # we just ignore the response
-			\&checkServerHealthError, 
-			{
-				'host'    => $host,
-				'Timeout' => 5,
-			}
-		);
-		$http->get( 'http://' . $host . ':' . $ports->{$host}->{'port'} );
-	}
-	
-	Slim::Utils::Timers::setTimer( undef, time() + 60, \&checkServerHealth );
-}
-
-sub checkServerHealthError {
-	my $http = shift;
-	
-	my $host   = $http->params('host');
-	my $error  = $http->error;
-	my $device = $ports->{$host}->{'device'};
-	
-	$::d_plugins && msg("Rhapsody server on $host failed to respond, removing. ($error)\n");
-	
-	# fake a message that the device has disconnected
-	Slim::Utils::UPnPMediaServer::deviceCallback( undef, $device, 'deviceRemoved' );
-}
-
-sub shutdownPlugin {
+	Slim::Utils::UPnPMediaServer::registerCallback( \&findCallback );
 }
 
 sub strings {

@@ -12116,6 +12116,10 @@ SQUEEZENETWORK_SB2_REQUIRED
 	NL	Sorry, nieuwere Squeezebox nodig.
 	ZH_CN	抱歉，需要Squeezebox2。
 
+UPNP_REQUEST_FAILED
+	DE	Die UPnP Anfrage fehlgeschlagen. Bitte UPnP Server überprüfen.
+	EN	UPnP request failed, please check the UPnP server.
+
 SETUP_SCROLLMODE
 	DE	Scroll Modus
 	EN	Scroll Mode
