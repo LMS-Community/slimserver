@@ -6907,9 +6907,11 @@ LANGUAGE
 	ZH_CN	语言
 
 SETUP_DATASOURCE_1
+	DE	Sie müssen den Speicherort ihrer Musiksammlung definieren. Öffnen Sie den
 	EN	Your data source needs to be configured. Please open your web browser,
 
 SETUP_DATASOURCE_2
+	DE	Browser mit folgender URL, und gehen Sie zu den "Server Einstellungen".
 	EN	go to the following URL, and click on the "Server Settings" link.
 
 SETUP_URL_WILL_BE
@@ -11094,6 +11096,7 @@ MOODLOGIC_MOOD_6
 	ZH_CN	狂野
 
 RADIO_TUNEIN
+	DE	Internet Adresse abspielen
 	EN	Tune In URL
 
 RADIO_TUNEIN_NOW
