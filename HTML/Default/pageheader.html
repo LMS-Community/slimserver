@@ -22,7 +22,7 @@
 		<a href="http://www.slimdevices.com/" target="sdi"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" width="150" height="17"></a>
 	</div>
 	<div id="topGraphicMenu1">
-		<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] Gallery View[% END %]</div>
+		<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] [% "GALLERY" | string %][% END %]</div>
 	</div>
 	<div id="topGraphicMenu2">
 	</div>
@@ -32,12 +32,7 @@
 			[%- PROCESS crumblist IF pwd_list %]
 		</div>
 
-		[% IF levelName == 'album' %]
-		<div class="viewSelect" style="float:right;padding-right: 8px;">
-			<img src="html/images/gallery.png" onClick="toggleGalleryView(1);" alt="[% BROWSE_BY_ARTWORK | string %]" title="[% BROWSE_BY_ARTWORK | string %]">
-			<img src="html/images/list.png" onClick="toggleGalleryView(0);" alt="[% BROWSE_BY_ALBUM | string %]" title="[% BROWSE_BY_ALBUM | string %]">
-		</div>
-		[% END %]
+		[% PROCESS galleryselect.html %]
 
 	</div>
 </div>

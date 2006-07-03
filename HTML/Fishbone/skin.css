@@ -69,6 +69,12 @@ div#statusMessage form{
 	margin-top: 8px;
 }
 
+.viewSelect
+{
+	float: right;
+	padding-top: 6px;
+}
+
 .artistname
 {
 	margin:0px;

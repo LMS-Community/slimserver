@@ -142,14 +142,9 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] Gallery View[% END %]</div>[% END %]
+[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] [% "GALLERY" | string %][% END %]</div>[% END %]
 	
-[% IF levelName == 'album' %]
-<div class="viewSelect" style="float: right; padding-top: 6px;">
-	<img src="html/images/gallery.png" onClick="toggleGalleryView(1);" alt="[% BROWSE_BY_ARTWORK | string %]" title="[% BROWSE_BY_ARTWORK | string %]">
-	<img src="html/images/list.png" onClick="toggleGalleryView(0);" alt="[% BROWSE_BY_ALBUM | string %]" title="[% BROWSE_BY_ALBUM | string %]">
-</div>
-[% END %]
+[% PROCESS galleryselect.html %]
 	
 [% UNLESS pwd_list %]
 	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]

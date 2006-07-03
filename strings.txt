@@ -8891,6 +8891,15 @@ LCSONGS
 	SV	Låtar
 	ZH_CN	歌曲
 
+GALLERY
+	EN	Gallery
+
+SWITCH_TO_GALLERY
+	EN	To Gallery View
+
+SWITCH_TO_LIST
+	EN	To List View
+
 BROWSE
 	CS	Procházet
 	DE	Nachschlagen

@@ -21,6 +21,13 @@ body {
 .faq p, h5 {
 	font-size: 11px;
 }
+
+.viewSelect
+{
+	float: right;
+	padding-right: 8px;
+}
+
 a {
 	color: #333;
 	text-decoration: none;
