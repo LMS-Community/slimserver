@@ -31,7 +31,7 @@ our $deviceLocations = {};
 
 # failed devices, we don't check these more than once every 30 minutes
 our $failedDevices = {};
-our $FAILURE_RETRY_TIME = 60;
+our $FAILURE_RETRY_TIME = 60 * 30;
 
 # Search for all devices on the network
 sub search {
