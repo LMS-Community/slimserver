@@ -87,7 +87,7 @@ sub read {
 				'TITLE'  => $title,
 				'ALBUM'  => $album,
 				'ARTIST' => $artist,
-				'SECS'   => ( $secs > 0 ) ? $secs : undef,
+				'SECS'   => ( defined $secs && $secs > 0 ) ? $secs : undef,
 			} );
 
 			# reset the title
