@@ -942,6 +942,14 @@ sub cli_genresQuery_cb {
 	$request->setStatusDone();	
 }
 
+my %cli_sort_lookup = (
+	'name' 	=>	'T:A',
+	'bitrate' 	=>	'B:D',
+	'rating' 	=>	'R:D',
+	'listeners' =>	'L:D',
+	);
+
+
 # handles 'live365 stations'
 sub cli_stationsQuery {
 	my $request = shift;
@@ -960,19 +968,32 @@ sub cli_stationsQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
-	my $type     = $request->getParam('type');
+	my $genre    = $request->getParam('genreid');
+	my $sort     = $request->getParam('sort');
+	
+	if ($request->paramNotOneOfIfDefined($sort, [keys %cli_sort_lookup])) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	if (defined $sort) {
+		$sort = $cli_sort_lookup{$sort};
+	}
+	else {
+		$sort = Slim::Utils::Prefs::get( 'plugin_live365_sort_order' );
+	}
 
-#	if ($request->paramUndefinedOrNotOneOf($type, ['presets', 'all', 'picks', 'pro'])) {
-#		$request->setStatusBadParams();
-#		return;
-#	}
+	if (!defined $genre) {
+		$genre = 'all';
+	}
+
 
 	$API->clearStationDirectory();
 
-	if ($type eq 'presets') {
+	if ($genre eq 'presets') {
 
 		$API->loadMemberPresets(
-			$type,
+			$genre,
 			$request, 
 			\&cli_stationsQuery_cb, 
 			\&cli_error_cb);
@@ -981,22 +1002,25 @@ sub cli_stationsQuery {
 	
 		# for all/picks/pro, lookup type/genreid. Any other thing is interpreted
 		# as a genreid.
-		if (defined $lookupGenres{$type}) {
-			$type = $lookupGenres{$type};
+		if (defined $lookupGenres{$genre}) {
+			$genre = $lookupGenres{$genre};
 		}
 
 		$API->loadStationDirectory(
-			$type, 
+			$genre, 
 			$request, 
 			\&cli_stationsQuery_cb, 
 			\&cli_error_cb, 
 			0,
-			genre			=> $type,
-			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			genre			=> $genre,
+			sort			=> $sort,
 			rows			=> $quantity,
 			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
 			first			=> $index + 1
 		);
+
+# 			'searchfields'	=> $lookupSearchFields{$type},
+# 			'searchdesc'		=> $query,
 
 	}
 
@@ -1007,33 +1031,23 @@ sub cli_stationsQuery_cb {
 	my $request = shift;
 	my $list = shift;
 
-	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
+	$request->addResult('count', $API->getStationListLength());
 
-	my $count = $API->getStationListLength();
-
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-
-		my $loopname = '@genres';
-		my $cnt = 0;
-		my $slist = $API->{Stations};
-		
-		for my $station (@$slist[$start..$end]) {
-			$request->addResultLoop($loopname, $cnt, 'id', $station->{STATION_ID});
-			$request->addResultLoop($loopname, $cnt, 'name', $station->{STATION_TITLE});
-			$request->addResultLoop($loopname, $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
-			$request->addResultLoop($loopname, $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
-			$request->addResultLoop($loopname, $cnt, 'connection', $station->{STATION_CONNECTION});
-			$request->addResultLoop($loopname, $cnt, 'rating', $station->{STATION_RATING});
-			$request->addResultLoop($loopname, $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
-			$request->addResultLoop($loopname, $cnt, 'access', $station->{LISTENER_ACCESS});
-			$cnt++;
-		}
+	my $cnt = 0;
+	my $slist = $API->{Stations};
+	
+	for my $station (@$slist) {
+		$request->addResultLoop('@stations', $cnt, 'id', $station->{STATION_ID});
+		$request->addResultLoop('@stations', $cnt, 'name', $station->{STATION_TITLE});
+		$request->addResultLoop('@stations', $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
+		$request->addResultLoop('@stations', $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
+		$request->addResultLoop('@stations', $cnt, 'bitrate', $station->{STATION_CONNECTION});
+		$request->addResultLoop('@stations', $cnt, 'rating', $station->{STATION_RATING});
+		$request->addResultLoop('@stations', $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
+		$request->addResultLoop('@stations', $cnt, 'access', $station->{LISTENER_ACCESS});
+		$request->addResultLoop('@stations', $cnt, 'location', $station->{STATION_LOCATION});
+		$request->addResultLoop('@stations', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
+		$cnt++;
 	}
 
 	$request->setStatusDone();	
