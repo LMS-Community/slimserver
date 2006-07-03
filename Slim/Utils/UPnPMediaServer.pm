@@ -338,6 +338,8 @@ sub gotBlurb {
 	my $content   = $http->content;
 	
 	if ( $content ) {
+		# translate newlines
+		$content =~ s/\\n/\n\n/g;
 		$container->{children}->[0]->{blurbText} = $content;
 	}
 

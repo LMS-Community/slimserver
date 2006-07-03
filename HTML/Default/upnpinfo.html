@@ -52,7 +52,7 @@
 		
 		[% IF itemobj.blurbText %]
 			<li><div class="songInfoTitle">[% "COMMENT" | string; "COLON" | string %]</div>
-				<div class="songInfoText">[% itemobj.blurbText | html %]</div>
+				<div class="songInfoText">[% itemobj.blurbText | html_line_break %]</div>
 			</li>
 		[% END %]
 	

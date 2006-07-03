@@ -93,6 +93,8 @@ sub gotContainer {
 			push @details, '{TYPE}: ' . $item->{type};
 		}
 		if ( $item->{blurbText} ) {
+			# translate newlines into spaces
+			$item->{blurbText} =~ s/\n/ /g;
 			push @details, '{COMMENT}: ' . $item->{blurbText};
 		}
 		$params{details} = \@details;
