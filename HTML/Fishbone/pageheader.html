@@ -131,7 +131,7 @@
 		</SELECT>
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
-
+	
 	<FORM id="HeaderSearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
 		[% "SEARCH" | string %]
 		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
@@ -142,7 +142,15 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<h3>[% pagetitle %]</h3><p>[% END %]
+[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] Gallery View[% END %]</div>[% END %]
+	
+[% IF levelName == 'album' %]
+<div class="viewSelect" style="float: right; padding-top: 6px;">
+	<img src="html/images/gallery.png" onClick="toggleGalleryView(1);" alt="[% BROWSE_BY_ARTWORK | string %]" title="[% BROWSE_BY_ARTWORK | string %]">
+	<img src="html/images/list.png" onClick="toggleGalleryView(0);" alt="[% BROWSE_BY_ALBUM | string %]" title="[% BROWSE_BY_ALBUM | string %]">
+</div>
+[% END %]
+	
 [% UNLESS pwd_list %]
 	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
 	[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]<br>[% END %]
