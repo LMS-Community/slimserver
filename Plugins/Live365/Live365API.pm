@@ -785,6 +785,19 @@ sub getStationInfoString {
 	return $self->{StationInfo}->{LIVE365_STATION}->{$infoString};
 }
 
+sub getStationInfoURL {
+	my $self = shift;
+
+	my $url = $self->{StationInfo}->{LIVE365_STATION}->{STATION_ADDRESS};
+	$url =~ s/^http:/live365:/;
+	if( $loginInformation{sessionid} ) {
+		$url .= '?sessionid=' . $loginInformation{sessionid};
+	}
+
+	return $url;
+}
+
+
 1;
 
 # }}}

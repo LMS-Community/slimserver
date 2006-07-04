@@ -1395,6 +1395,8 @@ sub initPlugin {
 		 [0, 1, 1, \&Plugins::Live365::Web::cli_genresQuery]);
 	Slim::Control::Request::addDispatch(['live365', 'stations', '_index', '_quantity'],  
 		 [0, 1, 1, \&Plugins::Live365::Web::cli_stationsQuery]);
+	Slim::Control::Request::addDispatch(['live365', 'playlist', '_mode'],  
+		 [1, 0, 1, \&Plugins::Live365::Web::cli_playlistCommand]);
 }
 
 # }}}

@@ -53,8 +53,8 @@ my $API = Plugins::Live365::Live365API->new();
 
 #
 #  Handle play or add actions on a station
-#    Pretty straightforward... use the routine from Plugins::Live365::Plugin
 #
+
 sub handleAction {
 	my ($client, $params) = @_;
 
@@ -965,28 +965,8 @@ sub cli_stationsQuery {
 	# manage login
 	return if cli_manage_login($request);
 
-	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	my $genre    = $request->getParam('genreid');
-	my $sort     = $request->getParam('sort');
-	
-	if ($request->paramNotOneOfIfDefined($sort, [keys %cli_sort_lookup])) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
-	if (defined $sort) {
-		$sort = $cli_sort_lookup{$sort};
-	}
-	else {
-		$sort = Slim::Utils::Prefs::get( 'plugin_live365_sort_order' );
-	}
-
-	if (!defined $genre) {
-		$genre = 'all';
-	}
-
+	# get our parameter
+	my $genre = $request->getParam('genre_id');
 
 	$API->clearStationDirectory();
 
@@ -1000,28 +980,60 @@ sub cli_stationsQuery {
 	}
 	else {
 	
-		# for all/picks/pro, lookup type/genreid. Any other thing is interpreted
-		# as a genreid.
+		# get the rest of our parameters
+		my $index    = $request->getParam('_index');
+		my $quantity = $request->getParam('_quantity');
+		my $sort     = $request->getParam('sort');
+		my $query    = $request->getParam('search');
+		my $queryf   = $request->getParam('searchtype');
+		
+		# param checks & lookups
+		if ($request->paramNotOneOfIfDefined($sort, [keys %cli_sort_lookup])) {
+			$request->setStatusBadParams();
+			return;
+		}
+		
+		# use default sort or lookup definition
+		if (defined $sort) {
+			$sort = $cli_sort_lookup{$sort};
+		}
+		else {
+			$sort = Slim::Utils::Prefs::get( 'plugin_live365_sort_order' );
+		}
+		
+		# use default search field of lookup definition
+		if (defined $queryf) {
+			$queryf = $lookupSearchFields{$queryf};
+		}
+		else {
+			$queryf = Slim::Utils::Prefs::get( 'plugin_live365_search_fields' );
+		}
+	
+		# make sure genre is defined
+		if (!defined $genre) {
+			$genre = 'all';
+		}
+
+		# for pre-defined genres, look up the defition. Otherwise it is a genre id
+		# returned by "live365 genres".
 		if (defined $lookupGenres{$genre}) {
 			$genre = $lookupGenres{$genre};
 		}
 
+		# perform our async magic with all params
 		$API->loadStationDirectory(
 			$genre, 
 			$request, 
 			\&cli_stationsQuery_cb, 
 			\&cli_error_cb, 
 			0,
-			genre			=> $genre,
-			sort			=> $sort,
-			rows			=> $quantity,
-			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
-			first			=> $index + 1
+			'genre'			=> $genre,
+			'sort'			=> $sort,
+			'rows'			=> $quantity,
+			'first'			=> $index + 1,
+			'searchfields'	=> $queryf,
+			'searchdesc'	=> $query,
 		);
-
-# 			'searchfields'	=> $lookupSearchFields{$type},
-# 			'searchdesc'		=> $query,
-
 	}
 
 	$request->setStatusProcessing();
@@ -1029,28 +1041,152 @@ sub cli_stationsQuery {
 
 sub cli_stationsQuery_cb {
 	my $request = shift;
-	my $list = shift;
+	my $list    = shift;
 
-	$request->addResult('count', $API->getStationListLength());
+	my $count   = $API->getStationListLength();
+	my $slist   = $API->{Stations};
+	my $start   = 0;
+	my $end     = scalar @$slist - 1;
+	my $valid	= 1;
 
-	my $cnt = 0;
-	my $slist = $API->{Stations};
-	
-	for my $station (@$slist) {
-		$request->addResultLoop('@stations', $cnt, 'id', $station->{STATION_ID});
-		$request->addResultLoop('@stations', $cnt, 'name', $station->{STATION_TITLE});
-		$request->addResultLoop('@stations', $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
-		$request->addResultLoop('@stations', $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
-		$request->addResultLoop('@stations', $cnt, 'bitrate', $station->{STATION_CONNECTION});
-		$request->addResultLoop('@stations', $cnt, 'rating', $station->{STATION_RATING});
-		$request->addResultLoop('@stations', $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
-		$request->addResultLoop('@stations', $cnt, 'access', $station->{LISTENER_ACCESS});
-		$request->addResultLoop('@stations', $cnt, 'location', $station->{STATION_LOCATION});
-		$request->addResultLoop('@stations', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
-		$cnt++;
+	print Data::Dumper::Dumper($slist);
+
+	if ($API->getStationSource() eq 'presets') {
+		# need to handle paging here...
+		my $index    = $request->getParam('_index');
+		my $quantity = $request->getParam('_quantity');
+		
+		($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);		
 	}
 
+	$request->addResult('count', $count);
+		
+	if ($valid) {
+
+		my $cnt = 0;
+		for my $station (@$slist[$start..$end]) {
+			$request->addResultLoop('@stations', $cnt, 'id', $station->{STATION_ID});
+			$request->addResultLoop('@stations', $cnt, 'name', $station->{STATION_TITLE});
+			$request->addResultLoop('@stations', $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
+			$request->addResultLoop('@stations', $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
+			$request->addResultLoop('@stations', $cnt, 'bitrate', $station->{STATION_CONNECTION});
+			$request->addResultLoop('@stations', $cnt, 'rating', $station->{STATION_RATING});
+			$request->addResultLoop('@stations', $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
+			$request->addResultLoop('@stations', $cnt, 'access', $station->{LISTENER_ACCESS});
+			$request->addResultLoop('@stations', $cnt, 'location', $station->{STATION_LOCATION});
+			$request->addResultLoop('@stations', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
+			$cnt++;
+		}
+	}
 	$request->setStatusDone();	
+}
+
+#          {
+#            'STATION_TLH_30_DAYS' => '2254',
+ #           'STATION_LISTENERS_ACTIVE_REG' => '5',
+  #          'STATION_GENRE' => 'alternative, power pop, indie rock',
+   #         'STATION_BROADCASTER' => 'chickenjuggler',
+    #        'STATION_ADDRESS' => 'http://www.live365.com/play/chickenjuggler',
+     #       'STATION_CONNECTION' => '64',
+      #      'STATION_LISTENERS_ACTIVE_PM' => '0',
+       #     'STATION_BROADCASTER_URL' => 'http://www.live365.com/stations/chickenjuggler',
+        #    'STATION_SERVER_MODE' => 'OR',
+         #   'STATION_CODEC' => 'mp3PRO',
+          #  'LISTENER_ACCESS' => 'PUBLIC',
+           # 'STREAM_ID' => '730777',
+            #'STATION_PLAYLIST_INFO' => {
+             #                          'PlaylistEntry' => {
+              #                                            'Album' => 'RAISING HELL',
+               #                                           'Artist' => '   RUN-D.M.C.',
+                #                                          'Title' => 'YOU BE ILLIN\''
+                 #                                       }
+                  #                   },
+#            'STATION_LISTENERS_ACTIVE' => '5',
+ #           'STATION_TITLE' => 'The Sean Mulrooney Show',
+  #          'STATION_ID' => '201489',
+   #         'STATION_DESCRIPTION' => 'Music for people in their 30\'s who feel like they are in their 20\'s. No log-in needed to listen to my lit
+#tle station. Plus, I give a lot of cool stuff away for answering easy trivia questions.',
+ #           'STATION_LOCATION' => 'Salem OR (Oregon) United States',
+  #          'STATION_LISTENERS_MAX' => '1000',
+   #         'STATION_QUALITY_LEVEL' => '264',
+    #        'STATION_SEARCH_SCORE' => '0.002135992',
+     #       'LIVE365_ATTRIBUTES_CODES' => 'EPR',
+      #      'STATION_STATUS' => 'OK',
+       #     'STATION_KEYWORDS' => 'remix mix tivo itunes mobile dj party live free schedule email vip beer cigarettes rent',
+        #    'STATION_RATING' => '7.29',
+         #   'LIVE365_ATTRIBUTES' => {
+          #                          'STATION_ATTR' => [
+           #                                           '[Editor\'s pick]',
+            #                                          '[Professional]'
+             #                                       ]
+              #                    },
+#            'STATION_ADDR' => {},
+ #           'STATION_SOURCE' => 'live365'
+  #        }
+
+
+# handles "live365 playlist play..."
+sub cli_playlistCommand {
+	my $request = shift;
+	
+	$::d_plugins && msg("Live365: cli_playlistCommand()\n");
+
+	# check this is the correct query
+	if ($request->isNotCommand([['live365'], ['playlist']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# manage login
+	return if cli_manage_login($request);
+
+	# get our parameter
+	my $mode      = $request->getParam('_mode');
+	my $stationid = $request->getParam('station_id');
+
+	# param checks
+	if ($request->paramUndefinedOrNotOneOf($mode, ['play', 'add'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!defined $stationid) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	# load data about this station
+	$API->loadInfoForStation(
+		$stationid,
+		$request,
+		\&cli_playlistCommand_cb,
+		\&cli_error_cb);
+	
+	$request->setStatusProcessing();	
+}
+
+sub cli_playlistCommand_cb {
+	my $request = shift;
+
+	# get params	
+	my $mode   = $request->getParam('_mode');
+	my $client = $request->client();
+	
+	my $play = ($mode eq 'play');
+
+	# data was loaded, get URL
+	my $stationURL = $API->getStationInfoURL();
+	$::d_plugins && msg( "Live365: URL: $stationURL (from CLI)\n" );
+	
+	Slim::Music::Info::setContentType($stationURL, 'mp3');
+	Slim::Music::Info::setTitle($stationURL, 
+		 $API->getStationInfoString('STATION_TITLE'));
+	
+	$play and $client->execute([ 'playlist', 'clear' ] );
+	$client->execute([ 'playlist', 'add', $stationURL ] );
+	$play and $client->execute([ 'play' ] );
+
+	$request->setStatusDone();		
 }
 
 sub cli_error_cb {
