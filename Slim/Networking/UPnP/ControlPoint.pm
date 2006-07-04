@@ -26,6 +26,10 @@ use Slim::Utils::Misc;
 # all devices we currently know about
 our $devices = {};
 
+# devices we are currently trying to contact.  This prevents many
+# simultaneous requests when a device sends many notify packets at once
+our $deviceRequests = {};
+
 # device locations we've retrieved description documents from
 our $deviceLocations = {};
 
@@ -147,6 +151,11 @@ sub _readResult {
 				
 					my $device = Net::UPnP::Device->new();
 					$device->setssdp( $ssdp_res_msg );
+					
+					$::d_upnp && msgf("UPnP: Notify from new device [%s at %s]\n",
+						$USN,
+						$dev_location,
+					);
 		
 					# make an async request for the device description XML document
 					_getDeviceDescription( {
@@ -182,20 +191,26 @@ sub _readResult {
 sub _getDeviceDescription {
 	my $args = shift;
 	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&_gotDeviceDescription,
-		\&_gotError,
-		{
-			args => $args,
-		},
-	);
+	if ( !$deviceRequests->{ $args->{location} } ) {
+		$deviceRequests->{ $args->{location} } = 1;
 	
-	$http->get( $args->{location} );
+		my $http = Slim::Networking::SimpleAsyncHTTP->new(
+			\&_gotDeviceDescription,
+			\&_gotError,
+			{
+				args    => $args,
+				Timeout => 5,
+			},
+		);
+		$http->get( $args->{location} );
+	}
 }
 
 sub _gotDeviceDescription {
 	my $http = shift;
 	my $args = $http->params('args');
+	
+	delete $deviceRequests->{ $args->{location} };
 	
 	my $device = $args->{device};
 	$device->setdescription( $http->content );
@@ -224,6 +239,7 @@ sub _gotError {
 	my $error = $http->error;
 	my $args  = $http->params('args');
 	
+	delete $deviceRequests->{ $args->{location} };
 	delete $deviceLocations->{ $args->{location} };
 	
 	# keep track of failures
