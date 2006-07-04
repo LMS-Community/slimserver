@@ -121,7 +121,7 @@ sub _readResult {
 		my ($NTS) = $ssdp_res_msg =~ m/NTS[ :]+(.*)\r/i;
 		
 		# ignore failed devices
-		if ( my $retry = $failedDevices->{ $udn } ) {
+		if ( my $retry = $failedDevices->{ $dev_location } ) {
 			if ( time < $retry ) {
 				$::d_upnp && msgf("UPnP: Notify from previously failed device at %s, ignoring for %s seconds\n",
 					$dev_location,
@@ -130,7 +130,7 @@ sub _readResult {
 				return;
 			}
 			else {
-				delete $failedDevices->{ $udn };
+				delete $failedDevices->{ $dev_location };
 			}
 		}
 		
@@ -243,7 +243,7 @@ sub _gotError {
 	delete $deviceLocations->{ $args->{location} };
 	
 	# keep track of failures
-	$failedDevices->{ $args->{udn} } = time + $FAILURE_RETRY_TIME;
+	$failedDevices->{ $args->{location} } = time + $FAILURE_RETRY_TIME;
 	
 	$::d_upnp && msg("UPnP: Error retrieving device description: $error\n");
 }
