@@ -1435,16 +1435,20 @@ sub _postCheckAttributes {
 		# already exists. Because we keep contributors now, but an
 		# album can have many contributors, check the disc and
 		# album name, to see if we're actually the same.
-		
+		#
 		# For some reason here we do not apply the same criterias as below:
 		# Path, compilation, etc are ignored...
+		#
+		# Be sure to use get_column() for the title equality check, as
+		# get() doesn't run the UTF-8 trigger, and ->title() calls
+		# Slim::Schema::Album->title() which has different behavior.
 
 		my ($t, $a); # temp vars to make the conditional sane
 		if (
 			($t = $self->lastTrack->{$basename}) && 
 			$t->get('album') &&
 			blessed($a = $t->album) eq 'Slim::Schema::Album' &&
-			$a->get('title') eq $album &&
+			$a->get_column('title') eq $album &&
 			(!$checkDisc || ($disc eq ($a->disc || 0)))
 
 			) {
