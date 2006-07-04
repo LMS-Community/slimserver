@@ -8892,12 +8892,15 @@ LCSONGS
 	ZH_CN	歌曲
 
 GALLERY
+	DE	Gallerie-Ansicht
 	EN	Gallery
 
 SWITCH_TO_GALLERY
+	DE	Gallerie-Ansicht
 	EN	To Gallery View
 
 SWITCH_TO_LIST
+	DE	Listen-Ansicht
 	EN	To List View
 
 BROWSE
