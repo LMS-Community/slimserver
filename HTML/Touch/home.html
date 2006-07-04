@@ -21,13 +21,13 @@
 
 [% IF ! browse_radio %]
 <tr>
-<td><a href="browsedb.html?player=[% playerURI %]&hierarchy=playlist,playlistTrack&level=0" style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/playlist_active.gif';">
+<td><a href="browsedb.html?player=[% playerURI %]&amp;hierarchy=playlist,playlistTrack&amp;level=0" style="text-decoration:none" onMouseDown="document.bild1.src = 'html/images/playlist_active.gif';">
 <center><img src="html/images/playlist.gif" border="0" name="bild1"></a></td>
 
-<td><a href="browsedb.html?hierarchy=genre,artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/genre_active.gif';">
+<td><a href="browsedb.html?hierarchy=genre,artist,album,track&amp;level=0&amp;player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild2.src = 'html/images/genre_active.gif';">
 <center><img src="html/images/genre.gif" name="bild2" border="0"></a></td>
 
-<td><a href="browsedb.html?hierarchy=artist,album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild3.src = 'html/images/artist_active.gif';">
+<td><a href="browsedb.html?hierarchy=artist,album,track&amp;evel=0&amp;player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild3.src = 'html/images/artist_active.gif';">
 <center><img src="html/images/artist.gif" name="bild3" border="0"></a></td></tr>
 
 <tr>
@@ -38,13 +38,13 @@
 <tr><td height="45"></td></tr>
 
 <tr>
-<td><a href="browsedb.html?hierarchy=album,track&level=0&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild4.src = 'html/images/album_active.gif';">
+<td><a href="browsedb.html?hierarchy=album,track&amp;level=0&amp;player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild4.src = 'html/images/album_active.gif';">
 <center><img src="html/images/album.gif" name="bild4" border="0"></a></td>
 
-<td><a href="browsedb.html?hierarchy=artwork,track&level=0&player=[% playerURI %]&artwork=1" style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/artwork_active.gif';">
+<td><a href="browsedb.html?hierarchy=album,track&amp;level=0&amp;player=[% playerURI %]&amp;artwork=1" style="text-decoration:none" onMouseDown="document.bild5.src = 'html/images/artwork_active.gif';">
 <center><img src="html/images/artwork.gif" name="bild5" border="0"></a></td>
 
-<td><center><a href="home.html?browse_radio=1&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"></a>
+<td><center><a href="home.html?browse_radio=1&amp;player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"></a>
 </td></tr>
 
 <tr>
@@ -62,7 +62,7 @@
 
 [% END %]
 
-<td align="center"><a href="search.html?type=artist&player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/search_active.gif';"><img src="html/images/search.gif" name="bild7" border="0"></a></td>
+<td align="center"><a href="search.html?type=artist&amp;player=[% playerURI %]" style="text-decoration:none" onMouseDown="document.bild7.src = 'html/images/search_active.gif';"><img src="html/images/search.gif" name="bild7" border="0"></a></td>
 <td align="center"><a href="[% webroot %]hitlist.html" style="text-decoration:none" onMouseDown="document.bild9.src = 'html/images/statistics_active.gif';">
 <center><img src="html/images/statistics.gif" name="bild9" border="0"></a>
 </tr>
@@ -79,7 +79,7 @@
 
 	[% IF browse_radio %]
 		[% FOREACH key = additionalLinks.radio.keys %]
-				<tr><td height="15" valign="middle"><a href="[% additionalLinks.radio.$key %]player=[% playerURI %]" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"><font class="menutext">[% key | string %]</font></a></td></tr>
+				<tr><td height="15" valign="middle"><a href="[% additionalLinks.radio.$key %]&amp;player=[% playerURI %]" onMouseDown="document.bild8.src = 'html/images/radio_active.gif';"><img src="html/images/radio.gif" name="bild8" border="0"><font class="menutext">[% key | string %]</font></a></td></tr>
 		[% END %]
 	[% END %]
 	
