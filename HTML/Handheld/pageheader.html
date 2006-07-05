@@ -10,7 +10,7 @@
 
 [%- BLOCK submenu -%]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
-		<tr><td width="100%">[% PROCESS crumblist %]</td>[% content %]</tr>
+		<tr><td width="90%">[% PROCESS crumblist %]</td><td width="10%">[% PROCESS galleryselect.html %]</td></tr>[% content %]
 	</table>
 [%- END -%]
 
@@ -42,15 +42,16 @@
 	[% END %]
 
 	<table bgcolor="[% menuC %]" border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
+		<tr><td colspan="4"><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 		<tr align="center">
 			[% PROCESS menulink file='home' %]
 			[% PROCESS menulink file='status' %]
 			[% PROCESS menulink file='playlist' %]
 			[% PROCESS menulink file='search' %]
 		</tr>
-		<tr colspan="4"><td><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
+		<tr><td colspan="4"><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 	</table>
 
 [% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
 [%- PROCESS submenu IF pwd_list and not noSubMenu %]
+

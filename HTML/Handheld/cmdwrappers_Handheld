@@ -11,7 +11,7 @@
 
 [% BLOCK cmdlink -%]
 <td align="center" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
-	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %].gif" align="center" border=0 width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
+	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %].gif" align="middle" border=0 width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
 </td>
 [%- END %]
 
@@ -49,25 +49,52 @@
 [%- END -%]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="4" width="100%"><tr><td>
+<tr><td>
 
-		[%- content | indent(4) %]
+	[%- content | indent(4) %]
 	
-<tr><td></table>
+<tr><td>
+[%- END %]
+
+[% BLOCK gallerycontainer %]
+<tr><td>
+
+	[%- content | indent(4) %]
+
+</td></tr>
 [%- END %]
 
 [% BLOCK contentitem -%]
 [% IF not odd.defined; odd = 1; END %]
-<tr><td bgcolor="[% PROCESS oddOrEvenC %]">
+<table cellspacing="0" border="0" cellpadding="0" width="100%"><tr><td bgcolor="[% PROCESS oddOrEvenC %]">
 	[%- IF anchor %]
 		<a name="[% anchor | uri%]"></a>
 	[%- END %]
 	
 	[%- content | indent(4) %]
+	</td>
 	[%- IF controls -%]
 		[%- PROCESS $controls -%]
 	[%- END %]
-</td></tr>
+	</tr></table>
+[%- END %]
+
+[% BLOCK galleryitem %]
+[% odd = 1 %]
+<table class="floater" cellpadding="0" cellspacing="0" border="0">
+	<tr height="[% item.size +5 %]"><td width="[% item.size %]">
+[%- IF anchor %]
+	<a name="[% anchor | uri %]"></a>
+[%- END -%]
+		[% IF item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a></td></tr></table>[% END %]
+		[% IF not item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a></td></tr></table>[% END %]
+	</td></tr>
+	<tr height="20"><td>
+	<table cellspacing="0" border="0" align="left"><tr>
+		[%- PROCESS $controls -%]
+	</tr></table>
+	</td></tr>
+</table>
 [%- END %]
 
 [% BLOCK playlistcontrols %]
@@ -85,10 +112,10 @@
 [% BLOCK browsecontrols %]
 	[% SET width='13' height='13' -%]
 	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END -%]
-	<td>&nbsp;</td>
+	<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td>
 	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END -%]
 	[% FOREACH mixer = mixerlinks.values.sort %]
-		<td>&nbsp;</td><td>[% PROCESS $mixer %]</td>
+		<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td><td width="1" bgcolor="[% PROCESS oddOrEvenC %]">[% PROCESS $mixer %]</td>
 	[% END %]
 [% END %]
 

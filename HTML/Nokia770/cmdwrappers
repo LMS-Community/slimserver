@@ -9,6 +9,9 @@
 </td>
 [% END %]
 
+[% BLOCK dummylink -%]
+[%- END %]
+
 [% BLOCK playlink %]
 	[% PROCESS cmdlink
 		cmdtitle = "PLAY"

@@ -19,15 +19,20 @@
 	[% END %]
 	
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
-	[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
-		<tr><td>[% IF browse_items %][% FOREACH item = browse_items %][% PROCESS browsedb_artwork.html %][% END %][% ELSE; browse_list; END %]</td></tr>
-	[% ELSE %]
-			[% IF browse_items %]
-				[% FOREACH item = browse_items %]
-					[% PROCESS browsedbitems_list.html %]
-				[% END %]
-			[% ELSE; browse_list; END %]
+[%- IF artwork == 1; 
+		container = 'gallerycontainer'; %]
+[%- ELSE;
+		container = 'contentcontainer';
+	END;
+%]
+[% WRAPPER $container %]
+	[% IF coverArt %]
+		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 	[% END %]
+	[% FOREACH item = browse_items %]
+		[% PROCESS browsedbitems_list.html %]
+	[% END %]
+[% END %]
 	</table>
 
 	[% PROCESS pagefooter.html %]

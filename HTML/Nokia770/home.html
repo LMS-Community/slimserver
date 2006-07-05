@@ -181,14 +181,14 @@
 
 [% BLOCK ajax_artwork %]
 	[% INCLUDE link_head %]
-		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ARTWORK %]player=[% playerURI %]&artwork=2" style="text-decoration:none">
+		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]player=[% playerURI %]&artwork=2" style="text-decoration:none">
 		<img src="html/images/smaller/artwork.gif" width="120" height="101" name="bild2" border="0" alt = 'artwork'></a>
 	[% INCLUDE link_foot title = '1-by-1 Artwork' %]
 [% END %]
 
 [% BLOCK artwork %]
 	[% INCLUDE link_head %]
-		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ARTWORK %]player=[% playerURI %]" style="text-decoration:none">
+		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]artwork=1&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/artwork.gif" width="120" height="101" name="bild2" border="0" alt = 'artwork'></a>
 	[% INCLUDE link_foot title = 'Artwork' %]
 [% END %]
