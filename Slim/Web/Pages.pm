@@ -128,8 +128,6 @@ sub addLibraryStats {
 		$find->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
-	$::d_sql && msg("currentLevel: [$level] previousLevel: [$previousLevel]\n");
-
 	# The current level will always be a ->browse call, so just reuse the resultset.
 	if ($level eq 'album') {
 
@@ -378,7 +376,7 @@ sub pageInfo {
 
 		my $first = $results->first;
 
-		$alphamap{$first->get_column('letter')} = 0;
+		$alphamap{Slim::Utils::Unicode::utf8decode($first->get_column('letter'))} = 0;
 
 		$itemCount += $first->get_column('count');
 
@@ -387,9 +385,11 @@ sub pageInfo {
 			my $count  = $row->get_column('count');
 			my $letter = $row->get_column('letter');
 
-			$itemCount += $count;
-
+			# Set offset for subsequent letter rows to current # $itemCount
+			# (*before* we add number of items for this letter to $itemCount!)
 			$alphamap{Slim::Utils::Unicode::utf8decode($letter)} = $itemCount;
+
+			$itemCount += $count;
 		}
 
 	} else {
