@@ -42,7 +42,7 @@ use Slim::Utils::Strings qw(string);
 sub main {
 
 	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import, $d_moodlogic, $d_musicmagic);
-	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress);
+	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress, $priority);
 
 	our $LogTimestamp = 1;
 
@@ -67,6 +67,7 @@ sub main {
 		'd_musicmagic' => \$d_musicmagic,
 		'prefsfile=s'  => \$prefsFile,
 		'progress'     => \$progress,
+		'priority=i'   => \$priority,
 	);
 
 	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$moodlogic && !$itunes && !scalar @ARGV) {
@@ -76,6 +77,8 @@ sub main {
 
 	# Bring up strings, database, etc.
 	initializeFrameworks();
+
+	Slim::Utils::Misc::setPriority($priority);
 
 	if (!$force && Slim::Music::Import->stillScanning) {
 
@@ -199,6 +202,7 @@ Command line options:
 	--moodlogic   Run the MoodLogic Importer.
 	--progress    Show a progress bar of the scan.
 	--prefsfile   Specify an alternate prefs file.
+	--priority    set process priority from -20 (high) to 20 (low)
 
 Debug flags:
 

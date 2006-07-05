@@ -113,12 +113,12 @@ sub findbin {
 sub setPriority {
 	my $priority = shift;
 
-	# By default, set the Windows priority to be high - so we get swapped
-	# back in faster, and have a less likely chance of being swapped out
-	# in the first place.
+	# By default, set the Windows priority to be NORMAL
 	# 
 	# For *nix, including OSX, set whatever priority the user gives us.
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		my ($priorityClass, $priorityClassName) = priorityClassFromPriority($priority || 0);
 
 		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
@@ -133,17 +133,37 @@ sub setPriority {
 				return;
 			};
 
-			eval { $setPriorityClass->Call($processHandle, Win32::Process::NORMAL_PRIORITY_CLASS()) };
+			$::d_server && msg("SlimServer changing process priority to $priorityClassName\n");
+			eval { $setPriorityClass->Call($processHandle, $priorityClass) };
 
 			if ($@) {
-				errorMsg("setPriority: Couldn't set priority to NORMAL ($^E) [$@]\n");
+				errorMsg("setPriority: Couldn't set priority to $priorityClassName ($^E) [$@]\n");
 			}
 		}
 
 	} elsif ($priority) {
 
-		$::d_server && msg("SlimServer - changing process priority to $priority\n");
-                eval { setpriority (0, 0, $priority); };
+		$::d_server && msg("SlimServer changing process priority to $priority\n");
+		eval { setpriority (0, 0, $priority); };
+	}
+}
+
+sub priorityClassFromPriority {
+	my $priority = shift;
+
+	# ABOVE_NORMAL_PRIORITY_CLASS and BELOW_NORMAL_PRIORITY_CLASS aren't
+	# provided by Win32::Process so their values have been hardcoded.
+
+	if ($priority <= -16 ) {
+		return (Win32::Process::HIGH_PRIORITY_CLASS(), "HIGH");
+	} elsif ($priority <= -6) {
+		return (0x00008000, "ABOVE_NORMAL");
+	} elsif ($priority <= 4) {
+		return (Win32::Process::NORMAL_PRIORITY_CLASS(), "NORMAL");
+	} elsif ($priority <= 14) {
+		return (0x00004000, "BELOW_NORMAL");
+	} else {
+		return (Win32::Process::IDLE_PRIORITY_CLASS(), "LOW");
 	}
 }
 

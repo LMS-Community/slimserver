@@ -583,7 +583,6 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --playeraddr     => Specify the _server's_ IP address to use to connect 
                         to Slim players
     --priority       => set process priority from -20 (high) to 20 (low)
-                        no effect on non-Unix platforms
     --streamaddr     => Specify the _server's_ IP address to use to connect
                         to streaming audio sources
     --nosetup        => Disable setup via http.
