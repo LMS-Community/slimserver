@@ -686,8 +686,13 @@ sub variousArtistsAlbumCount {
 	$find->{'contributorAlbums.contributor'} = $class->variousArtistsObject->id;
 
 	if (exists $find->{'genre.id'}) {
+
 		$find->{'genreTracks.genre'} = delete $find->{'genre.id'};
 		push @join, { 'tracks' => 'genreTracks' };
+
+	} elsif (exists $find->{'genre.name'}) {
+
+		push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
 	}
 
 	if (my $roles = $class->artistOnlyRoles) {
@@ -1319,7 +1324,7 @@ sub _postCheckAttributes {
 
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
-	my $isLocal = $trackAudio && !$trackRemote;
+	my $isLocal = $trackAudio && !$trackRemote ? 1 : 0;
 
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
@@ -1394,7 +1399,12 @@ sub _postCheckAttributes {
 	my $discc    = $attributes->{'DISCC'};
 
 	# we may have an album object already..
-	my $albumObj = $track->album if !$create;
+	# But mark it undef first - bug 3685
+	my $albumObj = undef;
+
+	if (!$create && $isLocal) {
+		$albumObj = $track->album;
+	}
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
@@ -1481,12 +1491,12 @@ sub _postCheckAttributes {
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
 				$search->{'discc'} = $discc;
-
-			} else {
-
-				$search->{'disc'}  = undef;
-				$search->{'discc'} = undef;
 			}
+
+			# Bug 3662 - Only check for undefined/null values if the
+			# values are undefined.
+			$search->{'disc'}  = undef if !defined $disc; 
+			$search->{'discc'} = undef if !defined $disc && !defined $discc;
 
 			# If we have a compilation bit set - use that instead
 			# of trying to match on the artist. Having the
@@ -1601,14 +1611,20 @@ sub _postCheckAttributes {
 		# Check that these are the correct types. Otherwise MySQL will not accept the values.
 		if (defined $disc && $disc =~ /^\d+$/) {
 			$set{'disc'} = $disc;
+		} else {
+			$set{'disc'} = undef;
 		}
 
 		if (defined $discc && $discc =~ /^\d+$/) {
 			$set{'discc'} = $discc;
+		} else {
+			$set{'discc'} = undef;
 		}
 
 		if (defined $track->year && $track->year =~ /^\d+$/) {
 			$set{'year'} = $track->year;
+		} else {
+			$set{'year'} = undef;
 		}
 
 		if (!$albumObj->artwork && (!$track->thumb || !$track->cover)) {
