@@ -25,6 +25,8 @@ sub new {
 	);
 }
 
+# XXX: Don't die if these fail
+
 # send a multicast UDP packet
 sub mcast_send {
 	my ( $self, $msg, $host ) = @_;
@@ -36,7 +38,7 @@ sub mcast_send {
 		getprotobyname('ip') || 0,
 		_constant('IP_MULTICAST_TTL'),
 		pack 'I', 4,
-	) || die "Error setting multicast TTL: $!";
+	) || msg("UPnP: Error setting multicast TTL: $!\n");
 	
 	my $dest_addr = sockaddr_in( $port, inet_aton( $addr ) );
 	send( $self, $msg, 0, $dest_addr );
@@ -55,7 +57,7 @@ sub mcast_add {
 		getprotobyname('ip') || 0,
 		_constant('IP_ADD_MEMBERSHIP'),
 		$ip_mreq
-	) || die "Error adding multicast membership: $!";
+	) || msg("UPnP: Error adding multicast membership, UPnP may not work properly: $!\n");
 }
 
 sub _constant {
