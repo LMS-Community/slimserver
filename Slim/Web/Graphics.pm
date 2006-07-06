@@ -6,6 +6,22 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
 
+{
+	#art resizing support by using GD, requires JPEG support built in
+	my $canUseGD = eval {
+		require GD;
+		if (GD::Image->can('jpeg')) {
+			return 1;
+		} else {
+			return 0;
+		}
+	};
+
+	sub serverResizesArt {
+		return $canUseGD;
+	}
+}
+
 sub processCoverArtRequest {
 	#TODO: memoize thumb resizing, if necessary 
 
@@ -13,13 +29,14 @@ sub processCoverArtRequest {
 
 	my ($body, $mtime, $inode, $size, $contentType); 
 
+	# Allow the client to specify dimensions, etc.
 	$path =~ /music\/(\w+)\/(cover|thumb)(?:_(X|\d+)x(X|\d+))?(?:_([sSfFpc]))?(?:_([\da-fA-F]{6,8}))?\.jpg$/;
 
-	my $trackid = $1;
-	my $image = $2;
-	my $requestedWidth = $3; # it's ok if it didn't match and we get undef
-	my $requestedHeight = $4; # it's ok if it didn't match and we get undef
-	my $resizeMode = $5; # stretch, pad or crop
+	my $trackid             = $1;
+	my $image               = $2;
+	my $requestedWidth      = $3; # it's ok if it didn't match and we get undef
+	my $requestedHeight     = $4; # it's ok if it didn't match and we get undef
+	my $resizeMode          = $5; # stretch, pad or crop
 	my $requestedBackColour = defined($6) ? hex $6 : 0x7FFFFFFF; # bg color used when padding
 
 	if (!defined $resizeMode) {
@@ -75,7 +92,6 @@ sub processCoverArtRequest {
 	}
 
 	$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
-	
 
 	if (serverResizesArt()) {
 
@@ -89,6 +105,7 @@ sub processCoverArtRequest {
 			my $origImage = GD::Image->new($imageData);
 
 			if ($origImage) {
+
 				# deterime the size and of type image to be returned
 				my $returnedWidth;
 				my $returnedHeight;
@@ -98,24 +115,36 @@ sub processCoverArtRequest {
 				# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
 				# a resize mode of 'stretch' or 'squash'
 				if ($requestedWidth eq "X") {
+
 					if ($requestedHeight eq "X") {
-						$returnedWidth = $origImage->width;
+
+						$returnedWidth  = $origImage->width;
 						$returnedHeight = $origImage->height;
+
 					} else {
-						$returnedWidth = $origImage->width / $origImage->height * $requestedHeight;
+
+						$returnedWidth  = $origImage->width / $origImage->height * $requestedHeight;
 						$returnedHeight = $requestedHeight;
 					}
-				}elsif($requestedHeight eq "X") {
-					$returnedWidth =  $requestedWidth;
-					$returnedHeight =  $origImage->height / $origImage->width * $requestedWidth;
+
+				} elsif ($requestedHeight eq "X") {
+
+					$returnedWidth  = $requestedWidth;
+					$returnedHeight = $origImage->height / $origImage->width * $requestedWidth;
+
 				} else {
+
 					if ($image eq "cover") {
-						$returnedWidth = $requestedWidth || $origImage->width;
+
+						$returnedWidth  = $requestedWidth  || $origImage->width;
 						$returnedHeight = $requestedHeight || $origImage->height;
+
 					} else {
-						$returnedWidth = $requestedWidth || Slim::Utils::Prefs::get('thumbSize') || 100;
+
+						$returnedWidth  = $requestedWidth  || Slim::Utils::Prefs::get('thumbSize') || 100;
 						$returnedHeight = $requestedHeight || Slim::Utils::Prefs::get('thumbSize') || 100;
 					}
+
 					if ($resizeMode =~ /^fit/) {
 						my @r = getResizeCoords($origImage->width, $origImage->height, $returnedWidth, $returnedHeight);
 						($returnedWidth, $returnedHeight) = ($r[2], $r[3]);
@@ -125,7 +154,8 @@ sub processCoverArtRequest {
 				# if the image is a png, it still needs to be processed in case it has an alpha channel
 				# hence, if we're squashing the image, the size of the returned image needs to be corrected
 				if ($resizeMode =~ /squash$/ && $returnedWidth > $origImage->width && $returnedHeight > $origImage->height) {
-					$returnedWidth = $origImage->width;
+
+					$returnedWidth  = $origImage->width;
 					$returnedHeight = $origImage->height;
 				}
 
@@ -140,18 +170,23 @@ sub processCoverArtRequest {
 					my ($destX, $destY, $destWidth, $destHeight);
 
 					if ($resizeMode =~ /(stretch|squash)$/) {
+
 						$sourceX = 0; $sourceY = 0;
 						$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
 
 						$destX = 0; $destY = 0;
 						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
+
 					}elsif ($resizeMode eq "pad") {
+
 						$sourceX = 0; $sourceY = 0;
 						$sourceWidth = $origImage->width; $sourceHeight = $origImage->height;
 
 						($destX, $destY, $destWidth, $destHeight) = 
 							getResizeCoords($origImage->width, $origImage->height, $returnedWidth, $returnedHeight);
+
 					}elsif ($resizeMode eq "crop") {
+
 						$destX = 0; $destY = 0;
 						$destWidth = $returnedWidth; $destHeight = $returnedHeight;
 
@@ -165,61 +200,58 @@ sub processCoverArtRequest {
 					$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
 
 					$newImage->alphaBlending(1);
-					$newImage->copyResampled($origImage,
+					$newImage->copyResampled(
+						$origImage,
 						$destX, $destY,
 						$sourceX, $sourceY,
 						$destWidth, $destHeight,
-						$sourceWidth, $sourceHeight);
+						$sourceWidth, $sourceHeight
+					);
 
 					my $newImageData;
 
 					# if the source image was a png and GD can output png data
 					# then return a png, else return a jpg
 					if ($returnedType eq "png" && GD::Image->can('png')) {
+
 						$newImage->saveAlpha(1);
 						$newImageData = $newImage->png;
 						$contentType = 'image/png';
+
 					} else {
+
 						$newImageData = $newImage->jpeg;
 						$contentType = 'image/jpeg';
 					}
 
 					$::d_http && msg("outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
 					$body = \$newImageData;
+
 				} else {
+
 					$::d_http && msg("not resizing\n");
 					$body = \$imageData;
 				}
+
 			} else {
+
 				$::d_http && msg("GD wouldn't create image object\n");
 				$body = \$imageData;
 			}
+
 		} else {
+
 			$::d_http && msg("no need to process image\n");
 			$body = \$imageData;
 		}
+
 	} else {
+
 		$::d_http && msg("can't use GD\n");
 		$body = \$imageData;
 	}
 
 	return ($body, $mtime, $inode, $size, $contentType);
-}
-
-{
-	#art resizing support by using GD, requires JPEG support built in
-	my $canUseGD = eval {
-		require GD;
-		if (GD::Image->can('jpeg')) {
-			return 1;
-		} else {
-			return 0;
-		}
-	};
-
-	sub serverResizesArt {
-		return $canUseGD;
-	}
 }
 
 sub getResizeCoords {
