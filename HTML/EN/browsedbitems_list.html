@@ -1,8 +1,8 @@
-[%- IF artwork == 1 && item.levelName == 'album';
-		contentwrapper = 'galleryitem';
-	ELSE;
-		contentwrapper = 'contentitem';
-	END;
+[%- IF artwork == 1 && (item.levelName == 'album' || item.levelName == 'age');
+	contentwrapper = 'galleryitem';
+ELSE;
+	contentwrapper = 'contentitem';
+END;
 %]
 [% IF item.heading %]
 	<div class="searchHeader">

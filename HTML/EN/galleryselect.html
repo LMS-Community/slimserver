@@ -1,4 +1,4 @@
-[% IF levelName == 'album' %]
+[% IF levelName == 'album' || levelName == 'age' %]
 <div class="viewSelect">
 	[% IF controlGraphics %]
 		[% IF artwork %]<img src="html/images/list.png" onClick="toggleGalleryView(0);" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'>

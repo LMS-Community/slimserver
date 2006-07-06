@@ -80,7 +80,7 @@
 	</script>[% END %]
 	[% headScripts %]
 
-[% IF artwork %]
+[% IF artwork && levelName == 'album' %]
 <style type="text/css">
 	.browsedbListItem {
 		margin-bottom: 10px;
@@ -151,7 +151,7 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && levelName == 'album' %] [% "GALLERY" | string %][% END %]</div>[% END %]
+[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
 	
 [% PROCESS galleryselect.html %]
 	
