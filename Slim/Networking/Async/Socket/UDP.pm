@@ -25,8 +25,6 @@ sub new {
 	);
 }
 
-# XXX: Don't die if these fail
-
 # send a multicast UDP packet
 sub mcast_send {
 	my ( $self, $msg, $host ) = @_;

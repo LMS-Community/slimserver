@@ -12,8 +12,6 @@ package Slim::Networking::Async::Socket;
 use strict;
 use warnings;
 
-use Slim::Networking::Select;
-
 # store data within the socket
 sub set {
 	my ( $self, $key, $val ) = @_;
@@ -26,18 +24,6 @@ sub get {
 	my ( $self, $key ) = @_;
 	
 	return ${*$self}{$key};
-}
-
-sub close {
-	my $self = shift;
-
-	# remove self from select loop
-	Slim::Networking::Select::removeError($self);
-	Slim::Networking::Select::removeRead($self);
-	Slim::Networking::Select::removeWrite($self);
-	Slim::Networking::Select::removeWriteNoBlockQ($self);
-
-	$self->SUPER::close();
 }
 
 1;

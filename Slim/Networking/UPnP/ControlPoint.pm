@@ -55,7 +55,7 @@ MX: $mx
 
 };
 
-	$ssdp_header =~ s/\r?\n/\r\n/g;
+	$ssdp_header =~ s/\r?\n/\015\012/g;
 	
 	my $sock = Slim::Networking::Async::Socket::UDP->new(
 		LocalPort => $Net::UPnP::SSDP_PORT,

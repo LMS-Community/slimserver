@@ -23,10 +23,13 @@ use Scalar::Util qw(blessed);
 
 use Slim::Formats::Playlists;
 use Slim::Music::Info;
-use Slim::Networking::Stream;
+use Slim::Networking::Async::HTTP;
 use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
+
+# CBR bitrates
+our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 # Handle any type of URI thrown at us.
 sub scanPathOrURL {
@@ -270,28 +273,26 @@ sub scanRemoteURL {
 
 	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
 	
-	my $stream = Slim::Networking::Stream->new();
-
-	$stream->open( $url, {
-		'client'    => $args->{'client'},
-		'args'      => $args,
-		'onHeaders' => \&readRemoteHeaders,
-		'onError'   => sub {
-			my $stream = shift;
-			my $error = $stream->error;
+	my $http = Slim::Networking::Async::HTTP->new();
+	$http->send_request( {
+		'method'      => 'GET',
+		'url'         => $url,
+		'onHeaders'   => \&readRemoteHeaders,
+		'onError'     => sub {
+			my ( $http, $error ) = @_;
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
 			return ref($cb) eq 'CODE' ? $cb->() : undef;
 		},
+		'passthrough' => [ $args ],
 	} );
 }
 
 sub readRemoteHeaders {
-	my $stream  = shift;
-	my $args    = $stream->args->{'args'};
-	my $sock    = $stream->socket;
-	my $url     = $stream->url;
+	my ( $http, $args ) = @_;
+
+	my $url = $http->request->uri->as_string;
 
 	my $track = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'      => $url,
@@ -299,7 +300,9 @@ sub readRemoteHeaders {
 	});
 	
 	# Make sure the content type of the track is correct
-	my $type = Slim::Music::Info::mimeToType( $stream->content_type ) || $stream->content_type;
+	my $type 
+		= Slim::Music::Info::mimeToType( $http->response->content_type ) 
+		|| $http->response->content_type;
 	
 	# Bug 3396, some m4a audio is incorrectly served as audio/mpeg.
 	# In this case, prefer the file extension to the content-type
@@ -310,6 +313,11 @@ sub readRemoteHeaders {
 	# Content-Type may have multiple elements, i.e. audio/x-mpegurl; charset=ISO-8859-1
 	if ( ref $type eq 'ARRAY' ) {
 		$type = $type->[0];
+	}
+	
+	# Some Shoutcast/Icecast servers don't send content-type
+	if ( $http->response->header( 'icy-name' ) ) {
+		$type = 'mp3';
 	}
 	
 	$track->content_type( $type );
@@ -325,8 +333,52 @@ sub readRemoteHeaders {
 	if (Slim::Music::Info::isSong($track)) {
 
 		$::d_scan && msg("scanRemoteURL: found that $url is audio\n");
+		
+		# If the audio is mp3, we can read the bitrate from the header or stream
+		if ( $type eq 'mp3' ) {
+			if ( my $bitrate = $http->response->header( 'icy-br' ) * 1000 ) {
+				$::d_scan && msgf( "scanRemoteURL: Found bitrate in header: %d\n", $bitrate );
+				$track->bitrate( $bitrate );
+				$track->update;
+				Slim::Music::Info::setBitrate( $url, $bitrate );
+				
+				$http->disconnect;
+			}
+			else {
+				$::d_scan && msg("scanRemoteURL: scanning mp3 stream for bitrate\n");
+				
+				my @bitrates;
+				my ($avg, $sum) = (0, 0);
+				
+				$http->read_mpeg_frames( {
+					'onFrame'    => sub {
+						my $frame = shift;
+						if ( $frame->bitrate ) {
+							push @bitrates, $frame->bitrate;
+							$sum += $frame->bitrate;
+							$avg = int( $sum / @bitrates );
+						}
+						
+						if ( $avg && scalar @bitrates ) {		
+							my $vbr = undef;
+							if ( !$cbr{$avg} ) {
+								$vbr = 1;
+							}
 
-		$stream->close;
+							$::d_scan && msg("scanRemoteURL: Read bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+
+							Slim::Music::Info::setBitrate( $url, $avg * 1000, $vbr );
+						}
+					},
+					'maxFrames'  => 20,
+					'disconnect' => 1,   # disconnect after done reading frames
+				} );
+			}
+		}
+		else {
+			# We don't disconnect if reading mp3 frames
+			$http->disconnect;
+		}
 		
 		push @objects, $track;
 		
@@ -343,23 +395,24 @@ sub readRemoteHeaders {
 		$::d_scan && msg("scanRemoteURL: found that $url is a playlist\n");
 
 		# Re-fetch as a playlist.
-		$stream->args->{'args'}->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
+		$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
 			'url' => $url,
 		});
 		
 		# read the remote playlist body
-		$stream->readBody( \&readPlaylistBody );
+		$http->read_body( {
+			'onBody'      => \&readPlaylistBody,
+			'passthrough' => [ $args ],
+		} );
 	}
 }
 
 sub readPlaylistBody {
-	my $stream  = shift;
-	my $bodyref = $stream->bodyref;
-	my $args    = $stream->args->{'args'};
-
-	$stream->close;
+	my ( $http, $args ) = @_;
 	
-	my $playlistFH = IO::String->new($bodyref);
+	$http->disconnect;
+	
+	my $playlistFH = IO::String->new( $http->response->content_ref );
 	
 	my @objects = __PACKAGE__->scanPlaylistFileHandle( $args->{'playlist'}, $playlistFH );
 	

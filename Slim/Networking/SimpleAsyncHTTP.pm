@@ -20,13 +20,21 @@ package Slim::Networking::SimpleAsyncHTTP;
 # more documentation at end of file.
 
 use strict;
+use warnings;
 
-use Slim::Networking::AsyncHTTP;
+use base 'Class::Data::Accessor';
+
+use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
 use HTTP::Date ();
+use HTTP::Request;
 use MIME::Base64 qw(encode_base64);
+
+__PACKAGE__->mk_classaccessors( qw(
+	cb ecb type url error code mess headers contentRef cachedResponse async
+) );
 
 BEGIN {
 	my $hasZlib;
@@ -49,9 +57,9 @@ sub new {
 	my $params   = shift || {};
 
 	my $self = {
-		'cb'     => $callback,
-		'ecb'    => $errorcb,
-		'params' => $params,
+		cb     => $callback,
+		ecb    => $errorcb,
+		params => $params,
 	};
 
 	return bless $self, $class;
@@ -60,37 +68,22 @@ sub new {
 sub params {
 	my ($self, $key, $value) = @_;
 
-	if (!defined($key)) {
-
-		return $self->{'params'};
-
-	} elsif ($value) {
-
-		$self->{'params'}->{$key} = $value;
-
-	} else {
-
-		return $self->{'params'}->{$key};
+	if ( !defined $key ) {
+		return $self->{params};
+	}
+	elsif ( $value ) {
+		$self->{params}->{$key} = $value;
+	}
+	else {
+		return $self->{params}->{$key};
 	}
 }
 
-sub get {
-	my $self = shift;
+sub get { shift->_createHTTPRequest( GET => @_ ) }
 
-	$self->_createHTTPRequest('GET', @_);
-}
+sub post { shift->_createHTTPRequest( POST => @_ ) }
 
-sub post {
-	my $self = shift;
-
-	$self->_createHTTPRequest('POST', @_);
-}
-
-sub head {
-	my $self = shift;
-	
-	$self->_createHTTPRequest('HEAD', @_);
-}
+sub head { shift->_createHTTPRequest( HEAD => @_ ) }
 
 # Parameters are passed to Net::HTTP::NB::formatRequest, meaning you
 # can override default headers, and pass in content.
@@ -101,39 +94,27 @@ sub _createHTTPRequest {
 	my $self = shift;
 	my $type = shift;
 	my $url  = shift;
-	my @args = @_;
 
-	$self->{'type'} = $type;
-	$self->{'url'}  = $url;
-	$self->{'args'} = \@args;
+	$self->type( $type );
+	$self->url( $url );
 
 	$::d_http_async && msg("SimpleAsyncHTTP: ${type}ing $url\n");
 	
-	# start asynchronous get
-	# we'll be called back when its done.
-	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
-	
-	$self->{'server'}   = $server;
-	$self->{'port'}     = $port;
-	$self->{'path'}     = $path;
-	$self->{'user'}     = $user;
-	$self->{'password'} = $password;
-	
 	# Check for cached response
-	if ( $self->{'params'}->{'cache'} ) {
+	if ( $self->{params}->{cache} ) {
 		
 		my $cache = Slim::Utils::Cache->new();
 		
-		if ( my $data = $cache->get( $self->{'url'} ) ) {			
-			$self->{'cachedResponse'} = $data;
+		if ( my $data = $cache->get( $url ) ) {			
+			$self->cachedResponse( $data );
 			
 			# If the data was cached within the past 5 minutes,
 			# return it immediately without revalidation, to improve
 			# UI experience
-			if ( $data->{_no_revalidate} || time - $data->{'_time'} < 300 ) {
+			if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
 				
 				$::d_http_async && msgf("SimpleAsyncHTTP: Using cached response [%s]\n",
-					$self->{'url'},
+					$url,
 				);
 				
 				return $self->sendCachedResponse();
@@ -142,304 +123,210 @@ sub _createHTTPRequest {
 	}
 	
 	my $timeout 
-		=  $self->{'params'}->{'Timeout'} 
+		=  $self->{params}->{Timeout} 
 		|| Slim::Utils::Prefs::get('remotestreamtimeout')
 		|| 10;
-	
-	# This is now non-blocking
-	my $http = Slim::Networking::AsyncHTTP->new(
-		Host     => $server,
-		PeerPort => $port,
-		Timeout  => $timeout,
 		
-		errorCallback => \&errorCallback,
-		writeCallback => \&writeCallback,
-		callbackArgs  => [ $self ],
-	);
+	my $request = HTTP::Request->new( $type => $url );
+	
+	if ( @_ % 2 ) {
+		$request->content( pop @_ );
+	}
+	
+	# If cached, add If-None-Match and If-Modified-Since headers
+	if ( my $data = $self->{cachedResponse} ) {			
+		unshift @_, (
+			'If-None-Match'     => $data->{headers}->header('ETag') || undef,
+			'If-Modified-Since' => $data->{headers}->last_modified || undef,
+		);
+	}
+	
+	# handle basic auth if username, password provided
+	if ( my $userinfo = $request->uri->userinfo ) {
+		unshift @_, (
+			'Authorization' => 'Basic ' . encode_base64( $userinfo ),
+		);
+	}
+
+	# request compressed data if we have zlib
+	if ( hasZlib() ) {
+		unshift @_, (
+			'Accept-Encoding' => 'gzip, deflate',
+		);
+	}
+	
+	if ( @_ ) {
+		$request->header( @_ );
+	}
+	
+	my $http = Slim::Networking::Async::HTTP->new;
+	$http->send_request( {
+		request     => $request,
+		maxRedirect => $self->{params}->{maxRedirect},
+		onError     => \&onError,
+		onBody      => \&onBody,
+		passthrough => [ $self ],
+	} );
 }
 
-sub errorCallback {
-	my $http = shift;
-	my $self = shift;
-
-	my $server = $self->{'server'};
-	my $port   = $self->{'port'};
+sub onError {
+	my ( $http, $error, $self ) = @_;
+	
+	my $uri = $http->request->uri;
 	
 	# If we have a cached copy of this request, we can use it
-	if ( $self->{'cachedResponse'} ) {
+	if ( $self->cachedResponse ) {
 		$::d_http_async && msg(
-			"SimpleAsyncHTTP: Failed to connect to $server:$port, using cached copy.  Perl's error is '$!'.\n"
+			"SimpleAsyncHTTP: Failed to connect to $uri, using cached copy. ($error)\n"
 		);
 		
 		return $self->sendCachedResponse();
 	}
 	
-	$self->{'error'} = "Failed to connect to $server:$port.  Perl's error is '$!'.\n";
-	&{$self->{'ecb'}}($self);
+	$self->error( "Failed to connect to $uri ($error)\n" );
+	
+	$self->ecb->( $self, $error );
+	
 	return;
 }
 
-sub writeCallback {
-	my $http = shift;
-	my $self = shift;
+sub onBody {
+	my ( $http, $self ) = @_;
 	
-	# If cached, add If-None-Match and If-Modified-Since headers
-	if ( my $data = $self->{'cachedResponse'} ) {			
-		unshift @{ $self->{'args'} }, (
-			'If-None-Match'     => $data->{'headers'}->header('ETag') || undef,
-			'If-Modified-Since' => $data->{'headers'}->last_modified || undef,
-		);
-	}
-
-	# handle basic auth if username, password provided
-	if ( $self->{'user'} || $self->{'password'} ) {
-		unshift @{ $self->{'args'} }, (
-			'Authorization' => 'Basic ' . encode_base64( $self->{'user'} . ":" . $self->{'password'} ),
-		);
-	}
+	my $req = $http->request;
+	my $res = $http->response;
 	
-	# request compressed data if we have zlib
-	if ( hasZlib() ) {
-		unshift @{ $self->{'args'} }, (
-			'Accept-Encoding' => 'gzip, deflate',
-		);
-	}
+	$::d_http_async && msgf( "SimpleAsyncHTTP: status for %s is %s\n", $self->url, $res->status_line );
 	
-	$http->write_request_async( 
-		$self->{'type'} => $self->{'path'}, 
-		@{ $self->{'args'} } 
-	);
+	$self->code( $res->code );
+	$self->mess( $res->message );
+	$self->headers( $res->headers );
 	
-	$http->read_response_headers_async(\&headerCB, {
-		'simple' => $self,
-		'socket' => $http,
-	});
-
-	$self->{'socket'} = $http;
-}
-
-sub headerCB {
-	my ($state, $error, $code, $mess, $headers) = @_;
-	
-	# Don't leak the reference to ourselves.
-	my $self = delete $state->{'simple'};
-	my $http = delete $state->{'socket'};
-
-	if ($error || !ref $headers) {
-		&{$self->{'ecb'}}($self);
-		return;
-	}
-
-	$::d_http_async && msgf("SimpleAsyncHTTP: status for %s is %s - fileno: %d\n", $self->{'url'}, ($mess || $code), fileno($http));
-
-	# verbose debug
-	# use Data::Dumper;
-	# print Dumper($headers);
-
-	# handle http redirect
-	my $location = $headers->header('Location');
-
-	if (defined $location) {
-
-		$::d_http_async && msg("SimpleAsyncHTTP: redirecting to $location.  Original URL ". $self->{'url'} . "\n");
-
-		$self->get($location);
-
-		$http->close();
-
-		return;
-	}
-
 	# Check if we are cached and got a "Not Modified" response
-	if ( $self->{'cachedResponse'} && $code == 304) {
+	if ( $self->cachedResponse && $res->code == 304) {
 		
 		$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
 		
 		# update the cache time so we get another 5 minutes with no revalidation
 		my $cache = Slim::Utils::Cache->new();
-		$self->{'cachedResponse'}->{'_time'} = time;
-		my $expires = $self->{'cachedResponse'}->{'_expires'} || undef;
-		$cache->set( $self->{'url'}, $self->{'cachedResponse'}, $expires );
+		$self->cachedResponse->{_time} = time;
+		my $expires = $self->cachedResponse->{_expires} || undef;
+		$cache->set( $self->url, $self->cachedResponse, $expires );
 		
 		return $self->sendCachedResponse();
 	}
-
-	$self->{'code'}    = $code;
-	$self->{'mess'}    = $mess;
-	$self->{'headers'} = $headers;
-
-	# headers read OK, get the body
-	$http->read_entity_body_async(\&bodyCB, {
-		'simple' => $self,
-		'socket' => $http
-	});
-}
-
-sub bodyCB {
-	my ($state, $error, $content) = @_;
-
-	# Don't leak the reference to ourselves.
-	my $self = delete $state->{'simple'};
-	my $http = delete $state->{'socket'};
-
-	if ($error) {
-
-		&{$self->{'ecb'}}($self);
-
-	} else {
-
-		$self->{'content'} = \$content;
 		
-		# unzip if necessary
-		if ( hasZlib() ) {
-			if ( my $ce = $self->{'headers'}->header('Content-Encoding') ) {
-				if ( $ce eq 'gzip' ) {
-					$::d_http_async && msg("Decompressing gzip'ed content\n");
-					# Formats::XML requires a scalar ref
-					$self->{'content'} = \Compress::Zlib::memGunzip(\$content);
-				}
-				elsif ( $ce eq 'deflate' ) {
-					$::d_http_async && msg("Decompressing deflated content\n");
-					my $i = Compress::Zlib::inflateInit(
-						-WindowBits => -Compress::Zlib::MAX_WBITS(),
-					);
-					my $output = $i->inflate(\$content);
-					# Formats::XML requires a scalar ref
-					$self->{'content'} = \$output;
-				}
+	$self->contentRef( $res->content_ref );
+	
+	# unzip if necessary
+	if ( hasZlib() ) {
+		if ( my $ce = $res->header('Content-Encoding') ) {
+			if ( $ce eq 'gzip' ) {
+				$::d_http_async && msg("Decompressing gzip'ed content\n");
+				# Formats::XML requires a scalar ref
+				$self->contentRef( \Compress::Zlib::memGunzip( $res->content_ref ) );
 			}
-		}					
+			elsif ( $ce eq 'deflate' ) {
+				$::d_http_async && msg("Decompressing deflated content\n");
+				my $i = Compress::Zlib::inflateInit(
+					-WindowBits => -Compress::Zlib::MAX_WBITS(),
+				);
+				my $output = $i->inflate( $res->content_ref );
+				# Formats::XML requires a scalar ref
+				$self->contentRef( \$output );
+			}
+		}
+	}
 		
-		# cache the response if requested
-		if ( $self->{'params'}->{'cache'} ) {
+	# cache the response if requested
+	if ( $self->{params}->{cache} ) {
+		
+		my $cache = Slim::Utils::Cache->new();
+		
+		my $data = {
+			code    => $self->code,
+			mess    => $self->mess,
+			headers => $self->headers,
+			content => $self->content,
+			_time   => time,
+		};
+		
+		# By default, cached content can live for at most 1 day, this helps control the
+		# size of the cache.  We use ETag/Last Modified to check for stale data during
+		# this time.
+		my $max = 60 * 60 * 24;
+		my $expires = $self->{params}->{expires} || $max;
+		my $no_cache;
+		
+		if ( $expires >= $max ) {
 			
-			my $cache = Slim::Utils::Cache->new();
-			
-			my $data = {
-				code    => $self->{'code'},
-				mess    => $self->{'mess'},
-				headers => $self->{'headers'},
-				content => $self->{'content'},
-				_time   => time,
-			};
-			
-			# By default, cached content can live for at most 1 day, this helps control the
-			# size of the cache.  We use ETag/Last Modified to check for stale data during
-			# this time.
-			my $max = 60 * 60 * 24;
-			my $expires = $self->{'params'}->{'expires'} || $max;
-			my $no_cache;
-			
-			if ( $expires >= $max ) {
-				
-				# If we see max-age or an Expires header, use them
-				if ( my $cc = $self->{'headers'}->header('Cache-Control') ) {
-					if ( $cc =~ /no-cache|must-revalidate/ ) {
-						$no_cache = 1;
-					}
-					elsif ( $cc =~ /max-age=(-?\d+)/ ) {
-						$expires = $1;
-					}
-				}			
-				elsif ( my $expire_date = $self->{'headers'}->header('Expires') ) {
-					$expires = HTTP::Date::str2time($expire_date) - time;
-				}
-			
-				# If there is no ETag/Last Modified, don't cache
-				if (   $expires >= $max
-					&& !$self->{'headers'}->last_modified
-					&& !$self->{'headers'}->header('ETag')
-				) {
+			# If we see max-age or an Expires header, use them
+			if ( my $cc = $res->header('Cache-Control') ) {
+				if ( $cc =~ /no-cache|must-revalidate/ ) {
 					$no_cache = 1;
-					$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
-						$self->{'url'},
-					);
 				}
+				elsif ( $cc =~ /max-age=(-?\d+)/ ) {
+					$expires = $1;
+				}
+			}			
+			elsif ( my $expire_date = $res->header('Expires') ) {
+				$expires = HTTP::Date::str2time($expire_date) - time;
 			}
-			
-			if ( $expires < $max ) {
-				# if we have an explicit expiration time, we can avoid revalidation
-				$data->{'_no_revalidate'} = 1;
-			}
-			
-			if ( !$no_cache ) {
-				$data->{'_expires'} = $expires;
-				$cache->set( $self->{'url'}, $data, $expires );
-				
-				$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
-					$self->{'url'},
-					$expires,
+		
+			# If there is no ETag/Last Modified, don't cache
+			if (   $expires >= $max
+				&& !$res->last_modified
+				&& !$res->header('ETag')
+			) {
+				$no_cache = 1;
+				$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
+					$self->url,
 				);
 			}
 		}
-
-		&{$self->{'cb'}}($self);
+		
+		if ( $expires < $max ) {
+			# if we have an explicit expiration time, we can avoid revalidation
+			$data->{_no_revalidate} = 1;
+		}
+		
+		if ( !$no_cache ) {
+			$data->{_expires} = $expires;
+			$cache->set( $self->url, $data, $expires );
+			
+			$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
+				$self->url,
+				$expires,
+			);
+		}
 	}
+	
+	$::d_http_async && msg("SimpleAsyncHTTP: Done\n");
 
-	$self->close;
+	$self->cb->( $self );
+	
+	return;
 }
 
 sub sendCachedResponse {
 	my $self = shift;
 	
-	my $data = $self->{'cachedResponse'};
+	my $data = $self->{cachedResponse};
 	
 	# populate the object with cached data			
-	$self->{'code'}    = $data->{'code'};
-	$self->{'mess'}    = $data->{'mess'};
-	$self->{'headers'} = $data->{'headers'};
-	$self->{'content'} = $data->{'content'};
+	$self->code( $data->{code} );
+	$self->mess( $data->{mess} );
+	$self->headers( $data->{headers} );
+	$self->contentRef( \$data->{content} );
 		
-	&{$self->{'cb'}}($self);
+	$self->cb->( $self );
+	
 	return;
 }
 
-sub content {
-	my $self = shift;
+sub content { ${ shift->contentRef || \'' } }
 
-	return ${$self->{'content'}};
-}
-
-sub contentRef {
-	my $self = shift;
-
-	return $self->{'content'};
-}
-
-sub headers {
-	my $self = shift;
-
-	return $self->{'headers'};
-}
-
-sub url {
-	my $self = shift;
-
-	return $self->{'url'};
-}
-
-sub error {
-	my $self = shift;
-
-	return $self->{'error'};
-}
-
-sub close {
-	my $self = shift;
-
-	if (defined $self->{'socket'} && fileno($self->{'socket'})) {
-
-		$self->{'socket'}->close;
-	}
-}
-
-sub DESTROY {
-	my $self = shift;
-
-	$::d_http_async && msgf("SimpleAsyncHTTP(%s) destroy called.\n", $self->url);
-
-	$self->close;
-}
+sub close { }
 
 1;
 

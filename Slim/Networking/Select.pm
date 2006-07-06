@@ -87,7 +87,18 @@ sub _updateSelect {
 
 			$selects->{'s_'.$type}->add($sock) if $stream;
 
-			$::d_select && msg("adding select $type $fileno $callback\n");
+			$::d_select && msgf("Select: [%s] Adding %s -> %s\n",
+				$sock,
+				$type,
+				Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+			);
+		}
+		else {
+			$::d_select && msgf("Select: [%s] Not adding %s -> %s, already exists\n",
+				$sock,
+				$type,
+				Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+			);
 		}
 
 	} else {
@@ -97,16 +108,17 @@ sub _updateSelect {
 		if ($selects->{$type}->exists($sock)) {
 
 			$selects->{$type}->remove($sock);
-
-			$::d_select && msg("removing select $type $fileno\n");
 		}
 
 		if ($selects->{'s_'.$type}->exists($sock)) {
 
 			$selects->{'s_'.$type}->remove($sock);
-
 		}
-
+		
+		$::d_select && msgf("Select: [%s] Removing %s\n",
+			$sock,
+			$type,
+		);
 	}
 }
 
@@ -134,13 +146,7 @@ sub select {
 		'error' => $e,
 	);
 
-	$::d_select && msgf("%sselect returns (%s):\n", $streamOnly ? 'stream only ' : '', $select_time);
-
 	while (my ($type, $handle) = each %handles) {
-
-		$::d_select && msgf("\t%ss: %d of %d\n",
-			$type, (defined($handle) && scalar(@$handle)), $streamOnly ? $selects->{'s_'.$type}->count : $selects->{$type}->count
-		);
 
 		foreach my $sock (@$handle) {
 
@@ -149,8 +155,17 @@ sub select {
 			if (defined $callback && ref($callback) eq 'CODE') {
 				
 				$::perfmon && (my $now = Time::HiRes::time());
+				
+				$::d_select && msgf("Select: [%s] %s, calling %s\n",
+					$sock,
+					$type,
+					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+				);
 
-				$callback->($sock);
+				# the socket may have passthrough arguments set
+				my $passthrough = ${*$sock}{'passthrough'} || [];
+				
+				$callback->( $sock, @{$passthrough} );
 
 				$::perfmon && $now && $selectTask->log(Time::HiRes::time() - $now) &&
 					msgf("  %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($callback));
@@ -191,18 +206,21 @@ sub writeNoBlock {
 		return;
 	}
 
-	$::d_select && msg("writeNoBlock: writing a segment of length: " . $segment->{'length'} . "\n");
+	$::d_select && msgf("Select: [%s] Wrote %d bytes\n",
+		$socket,
+		$segment->{'length'},
+	);
 	
 	my $sentbytes = syswrite($socket, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 
 	if ($! == EWOULDBLOCK) {
-		$::d_select && msg("writeNoBlock: Would block while sending.\n");
+		$::d_select && msg("Select: Would block while sending.\n");
 		$sentbytes = 0 unless defined $sentbytes;
 	}
 
 	if (!defined($sentbytes)) {
 
-		$::d_select && msg("writeNoBlock: Send to socket had error, aborting.\n");
+		$::d_select && msg("Select: Send to socket had error, aborting.\n");
 		removeWrite($socket);
 		removeWriteNoBlockQ($socket);
 		return;
@@ -211,7 +229,7 @@ sub writeNoBlock {
 	# sent incomplete message
 	if ($sentbytes < $segment->{'length'}) {
 
-		$::d_select && msg("writeNoBlock: incomplete message, sent only: $sentbytes\n");
+		$::d_select && msg("Select: incomplete message, sent only: $sentbytes\n");
 
 		$segment->{'length'} -= $sentbytes;
 		$segment->{'offset'} += $sentbytes;
@@ -238,7 +256,7 @@ sub removeWriteNoBlockQ {
 	
 	if ( exists($writeQueue{$socket}) ) {
 		
-		$::d_select && msgf("removing writeNoBlock Queue for %d\n", fileno($socket));
+		$::d_select && msgf("Select: [%s] removing writeNoBlock queue\n", $socket);
 
 		delete($writeQueue{$socket});
 	}

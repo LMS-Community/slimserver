@@ -414,8 +414,8 @@ sub init {
 	$::d_server && msg("mDNS init...\n");
 	Slim::Networking::mDNS->init;
 
-	$::d_server && msg("AsyncHTTP init...\n");
-	Slim::Networking::AsyncHTTP->init;
+	$::d_server && msg("Async Networking init...\n");
+	Slim::Networking::Async->init;
 	
 	$::d_server && msg("UPnP init...\n");
 	Slim::Utils::UPnPMediaServer::init();

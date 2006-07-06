@@ -1,14 +1,18 @@
 package Class::Data::Accessor;
 use strict qw(vars subs);
+use Carp;
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 sub mk_classaccessor {
     my ($declaredclass, $attribute, $data) = @_;
 
     if( ref $declaredclass ) {
-        require Carp;
-        Carp::croak("mk_classaccessor() is a class method, not an object method");
+        croak("mk_classaccessor() is a class method, not an object method");
+    }
+
+    if( $attribute eq 'DESTROY' ) {
+        carp("Having a data accessor named DESTROY in '$declaredclass' is unwise.");
     }
 
     my $accessor = sub {
@@ -31,6 +35,14 @@ sub mk_classaccessor {
     *{$declaredclass.'::'.$attribute} = $accessor;
     *{$declaredclass.'::'.$alias}     = $accessor;
 }
+
+sub mk_classaccessors {
+    my ($declaredclass, @attributes) = @_;
+
+    foreach my $attribute (@attributes) {
+        $declaredclass->mk_classaccessor($attribute);
+    }
+};
 
 __END__
 
@@ -130,7 +142,10 @@ but
 
 If you don't want this behaviour use L<Class::Data::Inheritable> instead.
 
-=head1 Methods
+C<mk_classaccessor> will die if used as an object method instead of as a
+class method.
+
+=head1 METHODS
 
 =head2 mk_classaccessor
 
@@ -154,6 +169,17 @@ yet still get the benefits of inheritable class data.  For example.
 
       $self->_Suitcase_accessor(@_);
   }
+
+Overriding accessors does not work in the same class as you declare
+the accessor in.  It only works in subclasses due to the fact that
+subroutines are loaded at compile time and accessors are loaded at
+runtime, thus overriding any subroutines with the same name in the
+same class.
+
+=head2 mk_classaccessors(@accessornames)
+
+Takes a list of names and generates an accessor for each name in the list using
+C<mk_classaccessor>.
 
 =head1 AUTHORS
 
