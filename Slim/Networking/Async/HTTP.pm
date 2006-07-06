@@ -20,7 +20,7 @@ BEGIN {
 		
 		$hasSSL = 0;
 		eval { 
-			require IO::Socket::SSL;
+			require Slim::Networking::Async::Socket::HTTPS;
 			$hasSSL = 1;
 		};
 		if ($@) {
@@ -39,7 +39,6 @@ use MPEG::Audio::Frame;
 use URI;
 
 use Slim::Networking::Async::Socket::HTTP;
-use Slim::Networking::Async::Socket::HTTPS;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 

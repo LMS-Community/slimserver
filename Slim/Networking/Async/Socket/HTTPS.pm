@@ -12,7 +12,7 @@ use warnings;
 
 BEGIN {
 	# Force Net::HTTPS to use IO::Socket::SSL
-	eval { require IO::Socket::SSL };
+	use IO::Socket::SSL;
 }
 
 use base qw(Net::HTTPS Slim::Networking::Async::Socket);
