@@ -53,7 +53,7 @@ sub requestString {
 	my $proxy = Slim::Utils::Prefs::get('webproxy');
 
 	# Proxy not supported for direct streaming
-	if ( !$client->canDirectStream($url) ) {
+	if ( defined $client && !$client->canDirectStream($url) ) {
 		if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
 			$path = "http://$server:$port$path";
 		}
