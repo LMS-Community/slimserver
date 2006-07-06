@@ -211,13 +211,13 @@ sub prettySampleRate {
 sub isRemoteURL {
 	my $self = shift;
 
-	return Slim::Music::Info::isRemoteURL($self);
+	return Slim::Music::Info::isRemoteURL($self->url);
 }
 
 sub isPlaylist {
 	my $self = shift;
 
-	return Slim::Music::Info::isPlaylist($self);
+	return Slim::Music::Info::isPlaylist($self->url);
 }
 
 sub isCUE {
