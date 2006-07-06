@@ -285,12 +285,12 @@ sub scanRemoteURL {
 
 			return ref($cb) eq 'CODE' ? $cb->() : undef;
 		},
-		'passthrough' => [ $args ],
+		'passthrough' => [ $args, $url ],
 	} );
 }
 
 sub readRemoteHeaders {
-	my ( $http, $args ) = @_;
+	my ( $http, $args, $originalURL ) = @_;
 
 	my $url = $http->request->uri->as_string;
 
@@ -333,6 +333,13 @@ sub readRemoteHeaders {
 	if (Slim::Music::Info::isSong($track)) {
 
 		$::d_scan && msg("scanRemoteURL: found that $url is audio\n");
+		
+		# If we redirected, we need to update the title on the final URL to match
+		# the title for the original URL
+		if ( $url ne $originalURL ) {
+			my $title = Slim::Music::Info::title( $originalURL );
+			Slim::Music::Info::setTitle( $url, $title );
+		}
 		
 		# If the audio is mp3, we can read the bitrate from the header or stream
 		if ( $type eq 'mp3' ) {
