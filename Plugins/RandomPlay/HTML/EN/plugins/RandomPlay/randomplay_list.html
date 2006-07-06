@@ -136,7 +136,7 @@ href="[% webroot %]plugins/RandomPlay/randomplay_mix.html?type=[% type %]&player
 						var newState = numSelected != numCheckBoxes;
 	
 						for (var i=0; i < f.elements.length; i++) {
-							if (f.elements[i].type == 'checkbox') {
+							if (f.elements[i].type == 'checkbox' && f.elements[i].name != 'continuousMode') {
 								f.elements[i].checked = newState;
 							}
 						}
