@@ -75,23 +75,23 @@ sub processCoverArtRequest {
 		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
-	$::d_http && msg("Cover Art asking for: $image" . 
+	$::d_artwork && msg("Cover Art asking for: $image" . 
 		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
 
 	if (blessed($obj) && $obj->can('coverArt')) {
-
-		$::d_http && msg("can CoverArt\n");
 
 		($imageData, $contentType, $mtime) = $obj->coverArt($image);
 	}
 
 	if (!defined($imageData)) {
+		
+		$::d_artwork && msg("  missing artwork replaced by placeholder.\n");
 		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png");
 		$contentType = "image/png";
 		$imageData = $$body;
 	}
 
-	$::d_http && msg("got cover art image $contentType of ". length($imageData) . " bytes\n");
+	$::d_artwork && msg("  got cover art image $contentType of ". length($imageData) . " bytes\n");
 
 	if (serverResizesArt()) {
 
@@ -162,7 +162,7 @@ sub processCoverArtRequest {
 				# the image needs to be processed if the sizes differ, or the image is a png
 				if ($contentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
-					$::d_http && msg("resizing from " . $origImage->width . "x" . $origImage->height . " to " 
+					$::d_artwork && msg("  resizing from " . $origImage->width . "x" . $origImage->height . " to " 
 						 . $returnedWidth . "x" . $returnedHeight ." using " . $resizeMode . "\n");
 
 					# determine source and destination upper left corner and width / height
@@ -224,30 +224,30 @@ sub processCoverArtRequest {
 						$contentType = 'image/jpeg';
 					}
 
-					$::d_http && msg("outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
+					$::d_artwork && msg("  outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
 					$body = \$newImageData;
 
 				} else {
 
-					$::d_http && msg("not resizing\n");
+					$::d_artwork && msg("  not resizing\n");
 					$body = \$imageData;
 				}
 
 			} else {
 
-				$::d_http && msg("GD wouldn't create image object\n");
+				$::d_artwork && msg("GD wouldn't create image object\n");
 				$body = \$imageData;
 			}
 
 		} else {
 
-			$::d_http && msg("no need to process image\n");
+			$::d_artwork && msg("no need to process image\n");
 			$body = \$imageData;
 		}
 
 	} else {
 
-		$::d_http && msg("can't use GD\n");
+		$::d_artwork && msg("can't use GD\n");
 		$body = \$imageData;
 	}
 

@@ -1805,7 +1805,7 @@ sub fixHttpPath {
 
 	foreach my $dir (HTMLTemplateDirs()) {
 		my $fullpath = catdir($dir, $skin, $path);
-		$::d_http && msg("Checking for $fullpath.\n");
+		$::d_http && msg("  checking for $fullpath.\n");
 		return $fullpath if (-r $fullpath);
 	} 
 
