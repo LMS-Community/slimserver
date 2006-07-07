@@ -757,7 +757,7 @@ sub setMode {
 	} elsif ($selectionCriteria = $client->param('selectionCriteria')) {
 
 		# Entering from trackinfo, so we need to set the selected item
-		my $selection = $selectionCriteria->{$levels[$level]} || -1;
+		my $selection = $selectionCriteria->{sprintf('%s.id', $levels[$level])} || -1;
 		my $j = 0;
 
 		for my $item (@items) {

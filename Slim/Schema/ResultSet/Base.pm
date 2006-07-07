@@ -84,7 +84,7 @@ sub generateConditionsFromFilters {
 	# Build up the list of valid parameters we may pass to the db.
 	while (my ($param, $value) = each %{$params}) {
 	
-		if (!grep { $param =~ /^$_(\.\w+)?$/ } @sources) {
+		if (!grep { $param =~ /^$_(\.\w+)$/ } @sources) {
 			next;
 		}
 
@@ -133,7 +133,9 @@ sub generateConditionsFromFilters {
 
 		$::d_sql && msg("working on levelname: [$levelName]\n");
 
-		if (my $mapKey = $levelMap{$levelName}) {
+		if (exists $levelMap{$levelName} && defined $levelMap{$levelName}) {
+
+			my $mapKey = $levelMap{$levelName};
 
 			if (ref($value)) {
 				$find{$mapKey} = $value;
@@ -146,10 +148,10 @@ sub generateConditionsFromFilters {
 		# are not part of the hierarchy. This allows a URL to put
 		# query constraints on a hierarchy using a field that isn't
 		# necessarily part of the hierarchy.
-		if (!grep { $_ eq $levelName } @{$levels}) {
+		#if (!grep { $_ eq $levelName } @{$levels}) {
 
 			#push @{$attrs}, join('=', $param, $value);
-		}
+		#}
 	}
 
 	if ($::d_sql) {

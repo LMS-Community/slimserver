@@ -365,9 +365,9 @@ sub listExitHandler {
 		}
 
 		my $selectionCriteria = {
-			'track'       => $track->id,
-			'album'       => $album->id,
-			'contributor' => $artist->id,
+			'track.id'       => $track->id,
+			'album.id'       => $album->id,
+			'contributor.id' => $artist->id,
 		};
 
 		if ($curitem eq 'ALBUM') {
