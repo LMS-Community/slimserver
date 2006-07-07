@@ -118,6 +118,20 @@ sub descendTrack {
 		$attr->{'order_by'} = 'tracks.disc, tracks.tracknum, tracks.titlesort';
 	}
 
+	# XXXX - Go through some contortions to get the previous level's id -
+	# the contributor.id if it exists, so that we can only select tracks
+	# for the album for that contributor. See Bug: 3558
+	if (ref($self->{'attrs'}{'where'}) eq 'HASH' && exists $self->{'attrs'}{'where'}->{'-and'}) {
+
+		my $and = $self->{'attrs'}{'where'}->{'-and'};
+
+		if (ref($and) eq 'ARRAY' && ref($and->[1]) eq 'HASH' && exists $and->[1]->{'me.id'}) {
+
+			$attr->{'join'} = 'contributorTracks';
+			$find->{'contributorTracks.contributor'} = $and->[1]->{'me.id'};
+		}
+	}
+
 	# Create a "clean" resultset, without any joins on it - since we'll
 	# just want information from the album.
 	my $rs   = $self->result_source->resultset;
