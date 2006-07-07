@@ -1075,55 +1075,19 @@ sub cli_stationsQuery_cb {
 			$request->addResultLoop('@stations', $cnt, 'access', $station->{LISTENER_ACCESS});
 			$request->addResultLoop('@stations', $cnt, 'location', $station->{STATION_LOCATION});
 			$request->addResultLoop('@stations', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
+			
+			# can be added if requested. Need tag?
+			#$request->addResultLoop('@stations', $cnt, 'genres', $station->{STATION_GENRE}); # 'alternative, power pop, indie rock',
+			#$request->addResultLoop('@stations', $cnt, 'description', $station->{STATION_DESCRIPTION}); # 'Music for people in their 30\'s who feel like they are in their 20\'s',
+			#$request->addResultLoop('@stations', $cnt, 'broadcaster_url', $station->{STATION_BROADCASTER_URL}); # 'http://www.live365.com/stations/chickenjuggler',
+			#$request->addResultLoop('@stations', $cnt, 'playlist', $station->{STATION_PLAYLIST_INFO}); # {'PlaylistEntry' => { 'Album' => 'RAISING HELL', 'Artist' => '   RUN-D.M.C.', 'Title' => 'YOU BE ILLIN\'' }},
+			#$request->addResultLoop('@stations', $cnt, 'keywords', $station->{STATION_KEYWORDS}); # 'remix mix tivo itunes mobile dj party live free schedule email vip beer cigarettes rent'
+			#$request->addResultLoop('@stations', $cnt, 'live365_attr', $station->{LIVE365_ATTRIBUTES}); # {'STATION_ATTR' => [ [Editor\'s pick]', [Professional]' ] },
 			$cnt++;
 		}
 	}
 	$request->setStatusDone();	
 }
-
-#          {
-#            'STATION_TLH_30_DAYS' => '2254',
- #           'STATION_LISTENERS_ACTIVE_REG' => '5',
-  #          'STATION_GENRE' => 'alternative, power pop, indie rock',
-   #         'STATION_BROADCASTER' => 'chickenjuggler',
-    #        'STATION_ADDRESS' => 'http://www.live365.com/play/chickenjuggler',
-     #       'STATION_CONNECTION' => '64',
-      #      'STATION_LISTENERS_ACTIVE_PM' => '0',
-       #     'STATION_BROADCASTER_URL' => 'http://www.live365.com/stations/chickenjuggler',
-        #    'STATION_SERVER_MODE' => 'OR',
-         #   'STATION_CODEC' => 'mp3PRO',
-          #  'LISTENER_ACCESS' => 'PUBLIC',
-           # 'STREAM_ID' => '730777',
-            #'STATION_PLAYLIST_INFO' => {
-             #                          'PlaylistEntry' => {
-              #                                            'Album' => 'RAISING HELL',
-               #                                           'Artist' => '   RUN-D.M.C.',
-                #                                          'Title' => 'YOU BE ILLIN\''
-                 #                                       }
-                  #                   },
-#            'STATION_LISTENERS_ACTIVE' => '5',
- #           'STATION_TITLE' => 'The Sean Mulrooney Show',
-  #          'STATION_ID' => '201489',
-   #         'STATION_DESCRIPTION' => 'Music for people in their 30\'s who feel like they are in their 20\'s. No log-in needed to listen to my lit
-#tle station. Plus, I give a lot of cool stuff away for answering easy trivia questions.',
- #           'STATION_LOCATION' => 'Salem OR (Oregon) United States',
-  #          'STATION_LISTENERS_MAX' => '1000',
-   #         'STATION_QUALITY_LEVEL' => '264',
-    #        'STATION_SEARCH_SCORE' => '0.002135992',
-     #       'LIVE365_ATTRIBUTES_CODES' => 'EPR',
-      #      'STATION_STATUS' => 'OK',
-       #     'STATION_KEYWORDS' => 'remix mix tivo itunes mobile dj party live free schedule email vip beer cigarettes rent',
-        #    'STATION_RATING' => '7.29',
-         #   'LIVE365_ATTRIBUTES' => {
-          #                          'STATION_ATTR' => [
-           #                                           '[Editor\'s pick]',
-            #                                          '[Professional]'
-             #                                       ]
-              #                    },
-#            'STATION_ADDR' => {},
- #           'STATION_SOURCE' => 'live365'
-  #        }
-
 
 # handles "live365 playlist play..."
 sub cli_playlistCommand {
