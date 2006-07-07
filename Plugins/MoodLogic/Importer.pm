@@ -354,7 +354,7 @@ sub exportSongs {
 		$progress->update if $progress;
 	}
 
-	$progress->final($count);
+	$progress->final($count) if $progress;
 }
 
 sub exportContribGenres {

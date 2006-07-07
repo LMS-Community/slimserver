@@ -290,7 +290,7 @@ sub exportSongs {
 		}
 	}
 
-	$progress->final($count);
+	$progress->final($count) if $progress;
 }
 
 sub processSong {
