@@ -59,6 +59,7 @@ my @perfmonLogs = (
 	{ 'type' => 'server', 'name' => 'selecttask',   'monitor' => \$Slim::Networking::Select::selectTask,    },
 	{ 'type' => 'server', 'name' => 'timertask',    'monitor' => \$Slim::Utils::Timers::timerTask,          },
 	{ 'type' => 'server', 'name' => 'request',      'monitor' => \$Slim::Control::Request::requestTask,     },
+	{ 'type' => 'server', 'name' => 'dbaccess',     'monitor' => \$Slim::Schema::Storage::dbAccess,         },
 	{ 'type' => 'server', 'name' => 'pagebuild',    'monitor' => \$Slim::Web::HTTP::pageBuild,              },
 	{ 'type' => 'server', 'name' => 'irqueue',      'monitor' => \$Slim::Hardware::IR::irPerf,              },
 	{ 'type' => 'server', 'name' => 'schedulertask','monitor' => \$Slim::Utils::Scheduler::schedulerTask,   },
@@ -694,6 +695,11 @@ PLUGIN_HEALTH_IRQUEUE
 PLUGIN_HEALTH_IRQUEUE_DESC
 	EN	The delay between an IR key press being received and being processed.
 
+PLUGIN_HEALTH_DBACCESS
+	EN	Database Access
+
+PLUGIN_HEALTH_DBACCESS_DESC
+	EN	The time taken for information to be retrieved from the database.
 '
 }
 

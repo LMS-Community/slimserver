@@ -14,6 +14,8 @@ use base qw(DBIx::Class::Storage::DBI::mysql);
 
 use Slim::Utils::Misc;
 
+our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+
 sub throw_exception {
 	my ($self, $msg) = @_;
 
@@ -31,6 +33,30 @@ sub _populate_dbh {
 	bless($self, $class);
 
 	return;
+}
+
+sub select { 
+	my $self = shift;
+
+	$::perfmon && (my $now = Time::HiRes::time());
+
+	my $ret = $self->next::method(@_);
+
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select\n");
+
+	return $ret;
+}
+
+sub select_single { 
+	my $self = shift;
+
+	$::perfmon && (my $now = Time::HiRes::time());
+
+	my $ret = $self->next::method(@_);
+
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select_single\n");
+
+	return $ret;
 }
 
 1;
