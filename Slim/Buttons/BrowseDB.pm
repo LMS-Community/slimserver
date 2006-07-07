@@ -599,7 +599,6 @@ sub setMode {
 
 	my $hierarchy = $client->param('hierarchy');
 	my $level     = $client->param('level') || 0;
-	my $params    = $client->param('findCriteria') || {};
 	my $search    = $client->param('search');
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
@@ -627,7 +626,7 @@ sub setMode {
 		'rs'      => $rs,
 		'level'   => $level,
 		'levels'  => \@levels,
-		'params'  => $params,
+		'params'  => ($client->param('findCriteria') || {}),
 	});
 
 	# Build up the names for the top line
@@ -754,17 +753,16 @@ sub setMode {
 	if (defined $search) {
 
 		$listIndex = 0;
-	
+
 	} elsif ($selectionCriteria = $client->param('selectionCriteria')) {
 
 		# Entering from trackinfo, so we need to set the selected item
-		my $selection = $selectionCriteria->{$levels[$level]};
+		my $selection = $selectionCriteria->{$levels[$level]} || -1;
 		my $j = 0;
 
 		for my $item (@items) {
 
-			# XXXX - need to optimize
-			if (blessed($item) && defined $selection && defined $item->name && $selection eq $item->name) {
+			if (blessed($item) && $selection == $item->id) {
 				last;
 			}
 
@@ -777,8 +775,7 @@ sub setMode {
 	} else {
 
 		$selectionKey = join(':', $hierarchy, $level, Storable::freeze($find));
-
-		$listIndex = $client->lastID3Selection($selectionKey) || 0;
+		$listIndex    = $client->lastID3Selection($selectionKey) || 0;
 
 		$::d_info && msg("last position from selection key $selectionKey is $listIndex\n");
 	}
