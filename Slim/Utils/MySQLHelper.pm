@@ -165,9 +165,11 @@ sub startServer {
 		sprintf('--pid-file=%s', $class->pidFile),
 	);
 
-	if ($::logfile) {
-		push @commands, sprintf('--log=%s', $::logfile);
-	}
+	# Comment out for now - we want to log errors and the like, but MySQL
+	# thinks we want to log SQL commands, which we don't.
+	#if ($::logfile) {
+		# push @commands, sprintf('--log=%s', $::logfile);
+	#}
 
 	$::d_mysql && msgf("MySQLHelper: startServer() About to start MySQL with command: [%s]\n", join(' ', @commands));
 
