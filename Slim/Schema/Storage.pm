@@ -35,29 +35,31 @@ sub _populate_dbh {
 	return;
 }
 
-sub select { 
-	my $self = shift;
+# Following breaks scanning for some unknown reason - removing until I understand why - Adrian 
+#
+#sub select { 
+#	my $self = shift;
+#
+#	$::perfmon && (my $now = Time::HiRes::time());
+#
+#	my $ret = $self->SUPER::select(@_);
+#
+#	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select\n");
+#
+#	return $ret;
+#}
 
-	$::perfmon && (my $now = Time::HiRes::time());
-
-	my $ret = $self->next::method(@_);
-
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select\n");
-
-	return $ret;
-}
-
-sub select_single { 
-	my $self = shift;
-
-	$::perfmon && (my $now = Time::HiRes::time());
-
-	my $ret = $self->next::method(@_);
-
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select_single\n");
-
-	return $ret;
-}
+#sub select_single { 
+#	my $self = shift;
+#
+#	$::perfmon && (my $now = Time::HiRes::time());
+#
+#	my $ret = $self->SUPER::select_single(@_);
+#
+#	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select_single\n");
+#
+#	return $ret;
+#}
 
 1;
 
