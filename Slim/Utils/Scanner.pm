@@ -431,12 +431,18 @@ sub readPlaylistBody {
 	
 	# Bugs 2589, 2723
 	# If a playlist item has no title or is just a URL, give it
-	# a friendlier title from the parent item
+	# a friendlier title from the parent item, unless the parent title is
+	# also just a URL
 	my $title = $args->{'playlist'}->title;
 	for my $item ( @{ $args->{'listRef'} } ) {
 		if ( blessed $item ) {
-			if ( !$item->title || $item->title =~ /^(http|mms)/i ) {
-				$item->title( $title );
+			if ( !$item->title || $item->title =~ /^(?:http|mms)/i ) {
+				if ( $title =~ /^(?:http|mms)/ ) {
+					$item->title( $item->url );
+				}
+				else {
+					$item->title( $title );
+				}
 				$item->update;
 			}
 		}
