@@ -102,7 +102,7 @@ sub _readCoverArtTags {
 	my $track = shift;
 	my $file  = shift;
 
-	$::d_artwork && msg("readCoverArtTags: Looking for a covert art image in the tags of: [$file]\n");
+	$::d_artwork && msg("readCoverArtTags: Looking for a cover art image in the tags of: [$file]\n");
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
