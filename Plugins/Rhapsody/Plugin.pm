@@ -66,9 +66,11 @@ sub getPortForHost {
 }
 
 sub initPlugin {
-	Slim::Player::ProtocolHandlers->registerHandler('rhap', 'Plugins::Rhapsody::ProtocolHandler');
+	unless ( $noupnp ) {
+		Slim::Player::ProtocolHandlers->registerHandler('rhap', 'Plugins::Rhapsody::ProtocolHandler');
 	
-	Slim::Utils::UPnPMediaServer::registerCallback( \&findCallback );
+		Slim::Utils::UPnPMediaServer::registerCallback( \&findCallback );
+	}
 }
 
 sub strings {

@@ -262,6 +262,7 @@ our (
 	$quiet,
 	$nosetup,
 	$noserver,
+	$noupnp,
 	$stdio,
 	$stop,
 	$perfmon,
@@ -417,8 +418,10 @@ sub init {
 	$::d_server && msg("Async Networking init...\n");
 	Slim::Networking::Async->init;
 	
-	$::d_server && msg("UPnP init...\n");
-	Slim::Utils::UPnPMediaServer::init();
+	unless ( $noupnp ) {
+		$::d_server && msg("UPnP init...\n");
+		Slim::Utils::UPnPMediaServer::init();
+	}
 
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
@@ -587,6 +590,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
                         to streaming audio sources
     --nosetup        => Disable setup via http.
     --noserver       => Disable web access server settings, but leave player settings accessible. Settings changes arenot preserved.
+    --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
 
@@ -681,6 +685,7 @@ sub initOptions {
 		'quiet'				=> \$quiet,
 		'nosetup'			=> \$nosetup,
 		'noserver'			=> \$noserver,
+		'noupnp'			=> \$noupnp,
 		'd_artwork'			=> \$d_artwork,
 		'd_cli'				=> \$d_cli,
 		'd_client'			=> \$d_client,
