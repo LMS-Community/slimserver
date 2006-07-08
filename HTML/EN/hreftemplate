@@ -172,9 +172,9 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
- [%- "<span style=\"width:";height;"px; height:";height;"px;\"><img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
+ [%- "<img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
  [%- " alt=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\"" %]
- [%- " title=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\"></span>" -%]
+ [%- " title=\"";item.item | html; IF item.artist; PROCESS artistsAsText.html itemobj=item.itemobj; END ; IF item.year; " ($item.year)"; END; "\">" -%]
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]

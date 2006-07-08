@@ -23,14 +23,14 @@ function toggleGalleryView(artwork) {
 
 			if (artwork) {
 
-				setCookie( 'SlimServer-albumView', "&artwork=1" );
-				parent.frames[i].location=parent.frames[i].location.href+"&artwork=1";
+				setCookie( 'SlimServer-albumView', "1" );
+				parent.frames[i].location=parent.frames[i].location.href+"&amp;artwork=1";
 
 			} else {
 
 				setCookie( 'SlimServer-albumView', "" );
 				myString = new String(parent.frames[i].location.href);
-				var rExp = /\&artwork=1/gi;
+				var rExp = /\&amp\;artwork=1/gi;
 				parent.frames[i].location=myString.replace(rExp, "");
 			}
 		}

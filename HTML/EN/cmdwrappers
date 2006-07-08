@@ -155,7 +155,7 @@ END %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
 	<div class="artworkImage" style="width: [% item.size %];">
-		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>[% END %]
+		[% IF item.coverThumb %]<div style="width:[% item.size %]px;height:[% item.size %]px;"><a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a></div>[% END %]
 		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
 	</div>
 	[% SET class = 'even' odd = 0 %]
