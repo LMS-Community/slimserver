@@ -66,7 +66,7 @@ sub getPortForHost {
 }
 
 sub initPlugin {
-	unless ( $noupnp ) {
+	unless ( $::noupnp ) {
 		Slim::Player::ProtocolHandlers->registerHandler('rhap', 'Plugins::Rhapsody::ProtocolHandler');
 	
 		Slim::Utils::UPnPMediaServer::registerCallback( \&findCallback );
