@@ -382,12 +382,15 @@ PLUGIN_HEALTH_NETTEST_STOPTEST
 	NL	Stop test
 
 PLUGIN_HEALTH_PERF_SUMMARY
+	DE	Zusammenfassung Leistung
 	EN	Performance Summary
 
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
+	DE	Bitte erstellen Sie eine Playlist mit ein paar Titeln und starten Sie die Wiedergabe auf diesem Gerät. Drücken Sie dann "Zurücksetzen" um die Statistik neu zu erstellen und anzuzeigen.
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
 
 PLUGIN_HEALTH_PERF_RESET
+	DE	Zurücksetzen
 	EN	Reset
 
 PLUGIN_HEALTH_SUMMARY
@@ -403,12 +406,15 @@ PLUGIN_HEALTH_WARNINGS
 	NL	Waarschuwingen
 
 PLUGIN_HEALTH_PERF_STATISTICS
+	DE	Leistungsstatistik
 	EN	Performance Statistics
 
 PLUGIN_HEALTH_PLAYER
+	DE	Gerätestatistik
 	EN	Player Statistics
 
 PLUGIN_HEALTH_SERVER
+	DE	Serverstatistik
 	EN	Server Statistics
 
 PLUGIN_HEALTH_OK

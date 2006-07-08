@@ -10786,6 +10786,7 @@ SEARCH_FOR_SONGS
 SEARCH_STREAMS
 	DE	Suchen
 	EN	Search
+	NL	Zoeken
 
 SEARCHING
 	CS	Hledám...
@@ -12131,6 +12132,7 @@ SQUEEZENETWORK_SB2_REQUIRED
 UPNP_REQUEST_FAILED
 	DE	Die UPnP Anfrage fehlgeschlagen. Bitte UPnP Server überprüfen.
 	EN	UPnP request failed, please check the UPnP server.
+	NL	UPnP verzoek lukte niet. Controleer je UPnP server.
 
 SETUP_SCROLLMODE
 	DE	Scroll Modus
@@ -12196,7 +12198,7 @@ SETUP_VARIOUSARTISTS
 	ES	Compilaciones
 	FI	Kokoelmat
 	IT	Compilation
-	NL	Verzamelalbums
+	NL	Diverse artiesten
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
