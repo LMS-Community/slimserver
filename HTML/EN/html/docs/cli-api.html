@@ -71,7 +71,8 @@
 	</li>
 	<li>
 		Updated the &quot;<a href="#status">status</a>&quot; query to return
-		the current song title for remote sources.
+		the current song title for remote sources and to return the stored
+		playlist information if appropriate.
 	</li>
 	<li>
 		Command &quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;
@@ -79,6 +80,12 @@
 		&quot;<a href="#stop">stop</a>&quot; and
 		&quot;<a href="#pause">pause</a>&quot;. The query 
 		&quot;<a href="#mode">mode ?</a>&quot; is not affected by this change.
+	</li>
+	<li>
+		Query &quot;<a href="#playlisttracks">playlisttracks</a>&quot; is
+		deprecated and replaced by the 
+		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
+	</li>
 </ul>
 <p>
 	The following changes or new commands are available starting with
@@ -132,8 +139,16 @@
 	</li>
 	<li>
 		Added the 
-		&quot;<a href="#playlist deleteplaylist">playlist deleteplaylist</a>&quot;
-		command to delete a playlist by id.
+		&quot;<a href="#playlists edit">playlists edit</a>&quot;,
+		&quot;<a href="#playlists rename">playlists rename</a>&quot;,
+		and &quot;<a href="#playlists delete">playlists delete</a>&quot;
+		command to manipulate stored playlists.
+	</li>
+	<li>
+		Added the 
+		&quot;<a href="#playlist playlistsinfo">playlist playlistsinfo</a>&quot;
+		query to return information on the stored playlist currently playing,
+		including its id.
 	</li>
 	<li>
 		Updated command 
@@ -161,11 +176,10 @@
 	</li>
 	<li>
 		Added a <a href="#Notes">note</a> about paths and urls being double URL
-		encoded.
+		encoded and in the filesystem character set.
 	</li>
 	<li>
-		Added a <a href="#DC">Deprecated commands</a> section (for 
-		&quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;.)
+		Added a <a href="#DC">Deprecated commands</a> section.
 	</li>
 	<li>
 		Added a <a href="#NC">Notifications</a> section to describe
@@ -188,7 +202,7 @@
 	<li>
 		Changed &quot;<a href="#playlists">playlists</a>&quot; command to return
 		IDs for playlists. The new &quot;<a
-		href="#playlisttracks">playlisttracks</a>&quot; query returns the
+		href="#playlists tracks">playlists tracks</a>&quot; query returns the
 		playlist tracks. Finally, command &quot;<a
 		href="#playlistcontrol">playlistcontrol</a>&quot; now accepts a
 		playlist_id parameter.
@@ -196,31 +210,18 @@
 	<li>
 		Added optional &quot;charset&quot; parameter to all extended queries, 
 		allowing them to return data in something different than utf8. See the 
-		<a href="#Notes">charset notes</a> and the definitions of 
-		&quot;<a href="#players">players</a>&quot;, 
-		&quot;<a href="#genres">genres</a>&quot;, 
-		&quot;<a href="#artists">artists</a>&quot;, 
-		&quot;<a href="#albums">albums</a>&quot;, 
-		&quot;<a href="#titles">titles</a>&quot;, 
-		&quot;<a href="#playlists">playlists</a>&quot;, 
-		&quot;<a href="#playlisttracks">playlisttracks</a>&quot;, 
-		&quot;<a href="#songinfo">songinfo</a>&quot; and 
-		&quot;<a href="#status">status</a>&quot;.
+		<a href="#Notes">charset notes</a>.
 	</li>
 	<li>
 		Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
     	rescanning only the playlists.
     </li>
 	<li>
-		Due to internal changes to SlimServer, the 
-		&quot;<a href="#mode">mode</a>&quot; command or query does no longer
-		support parameter &quot;off&quot;.
-	</li>
-	<li>
 		&quot;<a href="#listen">listen</a>&quot; now supports a query mode:
 		&quot;listen ?&quot;.
 	</li>
 </ul>
+
 <hr>
 
 
@@ -239,7 +240,7 @@
 		player. Some commands are global to the SlimServer and do not
 		require a <code>&lt;playerid&gt;</code>. For commands requiring it,
 		a random player will be selected by the SlimServer if the
-		<code>&lt;playerid&gt;<</code> is omitted, and returned in the
+		<code>&lt;playerid&gt;</code> is omitted, and returned in the
 		server reply. <code>&lt;playerid&gt;</code> may be obtained by using
 		the &quot;player id&quot; or &quot;players&quot; command.</p>
 	<p><code>&lt;p0&gt;</code> through <code>&lt;pN&gt;</code> are
@@ -480,7 +481,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		</blockquote>
 	</li>
 
-	<li>For commands using positional parameters, any extra parameters
+	<li>
+		For commands using positional parameters, any extra parameters
 		(after all required ones) will be returned. For commands using
 		tagged parameters, parameters using unknown tags will be
 		returned as well. This allows the client to add to commands and
@@ -511,7 +513,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		All paths and URLs, for example the ones returned by the query
 		&quot;<a href="#songinfo">songinfo</a>&quot; are double URL escaped.
 		To get a useable path (that you can use with your file system), you will
-		need to unescape the field twice. 
+		need to unescape the field twice. Also note the URLs are not translated
+		into Unicode (or into any other charset requested). 
 	</li>
 </ul>
 
@@ -2097,10 +2100,25 @@ preferences values.</p>
   	 Response: &quot;playlists 0 2 search:SUPER tags:u count:1 id:57 name:SUPER url:playlist:///Volume/path/file.m3u&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="playlisttracks"><strong><code>playlisttracks &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;playlisttracks&quot; command returns the tracks of a given 
-   playlist.</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="playlists tracks">
+	<strong>
+		<code>
+			playlists
+			tracks
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlists tracks&quot; query returns the tracks of a given 
+	playlist.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
 		<td width="150"><b>Tag</b></td>
@@ -2153,6 +2171,239 @@ preferences values.</p>
 		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
 	</tr>
 </table>
+
+<br>
+<p id="playlists rename">
+	<strong>
+		<code>
+			playlists
+			rename
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This command renames a saved playlist.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			playlist_id
+		</td>
+		<td>
+			The id of the playlist to rename.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			newname
+		</td>
+		<td>
+			The new name of the playlist.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			dry_run
+		</td>
+		<td>
+			Used to check if the new name is already used by another playlist.
+			The command performs the name check but does not overwrite the
+			existing playlist. If a name conflict occurs, the command will
+			return a &quot;overwritten_playlist_id&quot; parameter.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			overwritten_playlist_id
+		</td>
+		<td>
+			This returns the playlist id of the playlist overwritten (if
+			&quot;dry_run&quot; is 0 or not present) by renaming the playlist.
+			Only present if a playlist is overwritten.
+		</td>
+	</tr>
+</table>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;playlists rename playlist_id:22 newname:Hello&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;playlists rename playlist_id:22 newname:Hello&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="playlists delete">
+	<strong>
+		<code>
+			playlists
+			delete
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This command deletes a saved playlist.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			playlist_id
+		</td>
+		<td>
+			The id of the playlist to delete.
+		</td>
+	</tr>
+</table>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;playlists delete playlist_id:22&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;playlists delete playlist_id:22&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="playlists edit">
+	<strong>
+		<code>
+			playlists
+			edit
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This command manipulates the track content of a saved playlist.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			playlist_id
+		</td>
+		<td>
+			The id of the playlist to manipulate.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			cmd
+		</td>
+		<td>
+			One of &quot;up&quot;, &quot;down&quot;, &quot;delete&quot; or 
+			&quot;add&quot, in order to move up, down, delete or add a track.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			index
+		</td>
+		<td>
+			For &quot;cmd:up&quot;, &quot;cmd:down&quot; and 
+			&quot;cmd:delete&quot; the index of the track to edit.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			title
+		</td>
+		<td>
+			For &quot;cmd:add&quot;, the title of the track to add.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			url
+		</td>
+		<td>
+			For &quot;cmd:add&quot;, the url of the track to add.
+		</td>
+	</tr>
+</table>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;playlists edit cmd:up 
+			playlist_id:22 index:3&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;playlists edit cmd:up 
+			playlist_id:22 index:3&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;playlists edit cmd:add 
+			playlist_id:22 title:Song url:file://...&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;playlists edit cmd:add 
+			playlist_id:22 title:Song url:file://...&lt;LF&gt;&quot;
+	</p>
+</blockquote>
 
 <br>
 	<p id="songinfo">
@@ -3111,31 +3362,6 @@ in the saved playlists folder.</p>
 	</p>
 </blockquote>
 
-<br>
-<p id="playlist deleteplaylist">
-	<strong>
-		<code>
-			playlist
-			deleteplaylist
-			&lt;playlist_id&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	Deletes a playlist file in the saved playlists directory. Accepts a 
-	playlist_id as returned by the &quot;playlists&quot; query.
-</p>
-<p>
-	Examples:
-</p>
-<blockquote>
-	<p>
-		Request: &quot;playlist deleteplaylist 22&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;playlist deleteplaylist 22&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
 <br><p><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p>The &quot;playlist loadalbum&quot; command puts songs matching the specified 
   genre artist and album criteria on the playlist. Songs previously in the 
@@ -3185,30 +3411,159 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist zap 3&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist name ?</code></strong></p>
-<p>The &quot;playlist name&quot; command returns the name of the saved playlist last loaded into the Now Playing playlist, if any.
-<p>Examples: </p>
+<br>
+<p id="playlist name">
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			playlist 
+			name 
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist name&quot; command returns the name of the saved 
+	playlist last loaded into the Now Playing playlist, if any.
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist name ?&lt;LF&gt;&quot;<br>
-     Response: &quot;04:20:00:12:23:45 playlist name Jazz%20Favorites&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist name ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist name Jazz%20Favorites
+			&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist url ?</code></strong></p>
-<p>The &quot;playlist url&quot; command returns the URL of the saved playlist last loaded into the Now Playing playlist, if any. 
-<p>Examples: </p>
+<br>
+<p id="playlist url">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			url
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist url&quot; command returns the URL of the saved playlist 
+	last loaded into the Now Playing playlist, if any. 
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist url ?&lt;LF&gt;&quot;<br>
-     Response: &quot;04:20:00:12:23:45 playlist url file:///Users/dean/Music/testmusic/Zapped%20Songs.m3u&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist url ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist url 
+			file:///Users/dean/Music/testmusic/Zapped%20Songs.m3u&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist modified ?</code></strong></p>
-<p>The &quot;playlist modified&quot; returns the modification state of the saved playlist last loaded into the Now Playing playlist, if any.
+<br>
+<p id="playlist modified">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			modified
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist modified&quot; returns the modification state of the 
+	saved playlist last loaded into the Now Playing playlist, if any.
 	If &quot;1&quot;, the playlist has been modified since it was loaded.
-<p>Examples: </p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist modified ?&lt;LF&gt;&quot;<br>
-     Response: &quot;04:20:00:12:23:45 playlist modified 0&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playlist modified ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playlist modified 0&lt;LF&gt;&quot;
+	</p>
 </blockquote>
+
+<br>
+<p id="playlist playlistsinfo">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			playlistsinfo
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlist playlistsinfo&quot; query returns information on the 
+	saved playlist last loaded into the Now Playing playlist, if any. 
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100"><b>Tag</b></td>
+		<td><b>Description</b></td>
+	</tr>
+	<tr>
+		<td>id</td>
+		<td>Playlist id.</td>
+	</tr>
+	<tr>
+		<td>name</td>
+		<td>Playlist name. Equivalent to 
+			&quot;<a href="#playlist name">playlist name ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>modified</td>
+		<td>Modification state of the saved playlist. Equivalent to 
+			&quot;<a href="#playlist modified">playlist modified ?</a>&quot;.
+	</td>
+	<tr>
+		<td>url</td>
+		<td>Playlist url. Equivalent to 
+			&quot;<a href="#playlist url">playlist url ?</a>&quot;.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;a5:41:d2:cd:cd:05 playlist playlistsinfo &lt;LF&gt;&quot;
+		<br>
+		Response: &quot;a5:41:d2:cd:cd:05 playlist playlistsinfo
+		id:267 name:A98 modified:0 url:file://Volumes/... &lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
 
 <br><p><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt;</code></strong></p>
 <p>The &quot;playlist index&quot; command sets or queries the song that is currently 
@@ -3702,6 +4057,34 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>
+			&nbsp;&nbsp;playlist_id
+		</td>
+		<td>
+			Playlist id, if the current playlist is a stored playlist.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;playlist_name
+		</td>
+		<td>
+			Playlist name, if the current playlist is a stored playlist. 
+			Equivalent to 
+			&quot;<a href="#playlist name">playlist name ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;playlist_modified
+		</td>
+		<td>
+			Modification state of the saved playlist (if the current playlist is
+			one). Equivalent to 
+			&quot;<a href="#playlist modified">playlist modified ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			&nbsp;&nbsp;playlist_cur_index
 		</td>
 		<td>
@@ -3808,13 +4191,14 @@ in the saved playlists folder.</p>
 <p>
 	All commands listed in this document are notifications as well as being
 	commands and can be received when using &quot;listen 1&quot; (if they do not
-	originate from the command-line; no command is echoed twice). Note that
+	originate from the command-line connection that issued them; no command is echoed twice). Note that
 	queries (for example, &quot;display ? ?&quot;) are not notified. Other
 	available notifications are listed below with their meaning. Please note
 	that other notifications or commands may exist, but internal to the server
 	and therefore not documented in this CLI document. Likewise, commands
 	originating from the server may have more parameters than those described
-	in this document.
+	in this document, or parameters consisting of internal Perl data structures
+	with strange text representations.
 </p>
 
 <p>
@@ -3827,7 +4211,7 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	A new client is notified using &quot;client new&quot. 
+	A new client is notified using &quot;client new&quot;. 
 	&quot;client disconnect&quot; is sent when a client disconnects. Unless it 
 	reconnects (as signaled by &quot;client reconnect&quot;) before a number of
 	minutes, the client will be automatically forgotten by SlimServer (as 
@@ -4710,36 +5094,14 @@ in the saved playlists folder.</p>
 		<code>
 			&lt;playerid&gt;
 			randomplay
-			&lt;mixtype&gt;
+			&lt;tracks|albums|artists|year&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;randomplay&quot; command starts a random mix based on the given 
+	The &quot;randomplay&quot; command starts a random mix of the given 
 	type.
 </p>
-<p>
-	Accepted parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="150">
-			<b>Tag</b>
-		</td>
-		<td>
-			<b>Description</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			mixmode
-		</td>
-		<td>
-			One of the possible mix types "tracks", "albums", "artists" or 
-			"year".
-		</td>
-	</tr>
-</table>
 <p>
 	Example:
 </p>
@@ -4771,17 +5133,27 @@ in the saved playlists folder.</p>
 </p>
 <p>
 	The &quot;mode&quot; command allows to set the player playlist
-	mode directly. &quot;mode play&quot; is equivalent to &quot;play&quot;,
-	&quot;mode stop&quot; to &quot;stop&quot; and &quot;mode pause&quot; to
-	&quot;pause 1&quot;.
+	mode directly. <b>It is deprecated</b>. &quot;mode play&quot; has been replaced
+	by &quot;<a href="#play">play</a>&quot; &quot;mode stop&quot; 
+	by &quot;<a href="#stop">stop</a>&quot; and &quot;mode pause&quot;
+	by &quot;<a href="#pause">pause 1</a>&quot;.
 </p>
-<blockquote>
-	<p>
-		Request:  &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;
-		<br>
-    	Response: &quot;04:20:00:12:23:45 mode stop&lt;LF&gt;&quot;
-    </p>
-</blockquote>
+
+<p id="playlisttracks">
+	<strong>
+		<code>
+			playlisttracks
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlisttracks&quot; command returns the tracks of a given 
+	playlist, <b>is deprecated</b>, and has been replaced by the 
+	&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
+</p>
 
 
 [% PROCESS helpfooter.html %]

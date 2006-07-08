@@ -554,44 +554,6 @@ sub playlistDeleteitemCommand {
 }
 
 
-sub playlistDeleteplaylistCommand {
-	my $request = shift;
-	
-	$d_commands && msg("Commands::playlistDeleteplaylistCommand()\n");
-
-	# check this is the correct command.
-	if ($request->isNotCommand([['playlist'], ['deleteplaylist']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get the parameters
-	my $playlist_id = $request->getParam('_playlist_id');;
-	
-	if (!$playlist_id) {
-		$request->setStatusBadParams();
-		return;
-	}
-	
-	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
-	
-	if (blessed($playlistObj)) {
-	
-		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
-		
-		# Do a fast delete, and then commit it.
-		$playlistObj->setTracks([]);
-		$playlistObj->delete;
-
-		$playlistObj = undef;
-
-		Slim::Schema->forceCommit;
-	}
-
-	$request->setStatusDone();
-}
-
-
 sub playlistJumpCommand {
 	my $request = shift;
 	
@@ -1184,10 +1146,17 @@ sub playlistcontrolCommand {
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
 
-			# We want to add the playlist name to the client object.
-			$client->currentPlaylist($playlist) if $load && defined $playlist;
+			$cmd .= "tracks";
 
-			@tracks = $playlist->tracks();
+			Slim::Control::Request::executeRequest(
+				$client, ['playlist', $cmd, 'playlist.id=' . $playlist_id]
+			);
+
+			$request->addResult('count', scalar($playlist->tracks()));
+
+			$request->setStatusDone();
+			
+			return;
 		}
 
 	} elsif (defined(my $track_id_list = $request->getParam('track_id'))) {
@@ -1247,6 +1216,268 @@ sub playlistcontrolCommand {
 	$request->setStatusDone();
 }
 
+
+sub playlistsEditCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::playlistsEditCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlists'], ['edit']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $playlist_id = $request->getParam('playlist_id');
+	my $cmd = $request->getParam('cmd');
+	my $itemPos = $request->getParam('index');
+
+	if ($request->paramUndefinedOrNotOneOf($cmd, ['up', 'down', 'delete', 'add'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!$playlist_id) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!defined($itemPos) && $cmd ne 'add') {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# transform the playlist id in a playlist obj
+	my $playlist = Slim::Schema->find('Playlist', $playlist_id);
+
+	if (!blessed($playlist)) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	# now perform the operation
+	
+	my @items = $playlist->tracks;
+	my $changed = 0;
+	
+	if ($cmd eq 'delete') {
+
+		splice(@items, $itemPos, 1);
+
+		$changed = 1;
+	
+	} elsif ($cmd eq 'up') {
+
+		# Up function - Move entry up in list
+		if ($itemPos != 0) {
+
+			my $item = $items[$itemPos];
+			$items[$itemPos] = $items[$itemPos - 1];
+			$items[$itemPos - 1] = $item;
+
+			$changed = 1;
+		}
+
+	} elsif ($cmd eq 'down') {
+
+		# Down function - Move entry down in list
+		if ($itemPos != scalar(@items) - 1) {
+
+			my $item = $items[$itemPos];
+			$items[$itemPos] = $items[$itemPos + 1];
+			$items[$itemPos + 1] = $item;
+
+			$changed = 1;
+		}
+	
+	} elsif ($cmd eq 'add') {
+
+		# Add function - Add entry it not already in list
+		my $found = 0;
+		my $title = $request->getParam('title');
+		my $url   = $request->getParam('url');
+
+		if ($title && $url) {
+
+			my $playlistTrack = Slim::Schema->rs('Track')->updateOrCreate({
+				'url'      => $url,
+				'readTags' => 1,
+				'commit'   => 1,
+			});
+
+			for my $item (@items) {
+
+				if ($item eq $playlistTrack) {
+					# The assignment below ensures that the object
+					# in the list is the one that we're going to 
+					# change. It may be different of a different class
+					# (Track vs LightWeightTrack) than the one just
+					# returned from updateOrCreate.
+					$playlistTrack = $item;
+					$found = 1;
+					last;
+				}
+			}
+
+			if ($found == 0) {
+				push @items, $playlistTrack;
+			}
+
+			$playlistTrack->title($title);
+			$playlistTrack->titlesort(Slim::Utils::Text::ignoreCaseArticles($title));
+			$playlistTrack->titlesearch(Slim::Utils::Text::ignoreCaseArticles($title));
+			$playlistTrack->update;
+
+			$changed = 1;
+		}
+	}
+
+	if ($changed) {
+		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
+
+		$playlist->setTracks(\@items);
+		$playlist->update;
+
+		if ($playlist->content_type eq 'ssp') {
+
+			$::d_playlist && msg("Writing out playlist to disk..\n");
+
+			Slim::Formats::Playlists->writeList(\@items, undef, $playlist->url);
+		}
+		
+		$playlist = undef;
+
+		Slim::Schema->forceCommit;
+		Slim::Schema->wipeCaches;
+
+		# If we've changed the files - make sure that we clear the
+		# format display cache - otherwise we'll show bogus data.
+		Slim::Music::Info::clearFormatDisplayCache();
+	}
+
+	$request->setStatusDone();
+}
+
+
+sub playlistsDeleteCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::playlistsDeleteCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlists'], ['delete']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $playlist_id = $request->getParam('playlist_id');
+
+	if (!$playlist_id) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# transform the playlist id in a playlist obj
+	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
+
+	if (!blessed($playlistObj)) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
+	
+	# Do a fast delete, and then commit it.
+	$playlistObj->setTracks([]);
+	$playlistObj->delete;
+
+	$playlistObj = undef;
+
+	Slim::Schema->forceCommit;
+
+	$request->setStatusDone();
+}
+
+
+sub playlistsRenameCommand {
+	my $request = shift;
+	
+	$d_commands && msg("Commands::playlistsRenameCommand()\n");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlists'], ['rename']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get the parameters
+	my $playlist_id = $request->getParam('playlist_id');
+	my $newName = $request->getParam('newname');
+	my $dry_run = $request->getParam('dry_run');
+
+	if (!$playlist_id || !$newName) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	# transform the playlist id in a playlist obj
+	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
+
+	if (!blessed($playlistObj)) {
+		$request->setStatusBadParams();
+		return;
+	}
+	
+	# now perform the operation
+		
+	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
+	$newName     =~ tr|.:\x00-\x1f\/\\| |s;
+	
+	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
+		catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
+	);
+
+	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
+		'url' => $newUrl,
+	});
+
+	if (blessed($existingPlaylist)) {
+
+		$request->addResult("overwritten_playlist_id", $existingPlaylist->id());
+	}
+	
+	if (!$dry_run) {
+
+		if (blessed($existingPlaylist) && $existingPlaylist->id ne $playlistObj->id) {
+
+			Slim::Control::Request::executeRequest(undef, ['playlists', 'delete', 'playlist_id:' . $existingPlaylist->id]);
+
+			$existingPlaylist = undef;
+		}
+		
+		my $index = Slim::Formats::Playlists::M3U->readCurTrackForM3U( $playlistObj->path );
+
+		Slim::Player::Playlist::removePlaylistFromDisk($playlistObj);
+
+		$playlistObj->set_column('url', $newUrl);
+		$playlistObj->set_column('title', $newName);
+		$playlistObj->set_column('titlesort', Slim::Utils::Text::ignoreCaseArticles($newName));
+		$playlistObj->update;
+
+#			Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
+		Slim::Formats::Playlists::M3U->write( 
+			[ $playlistObj->tracks ],
+			undef,
+			$playlistObj->path,
+			1,
+			$index,
+			);
+	}
+
+	$request->setStatusDone();
+}
 
 sub playerprefCommand {
 	my $request = shift;
@@ -1868,6 +2099,8 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
 
 	} elsif ($find{'playlist.id'}) {
+
+		
 
 		# Treat playlists specially - they are containers.
 		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});

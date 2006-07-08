@@ -785,6 +785,36 @@ sub playersQuery {
 	$request->setStatusDone();
 }
 
+sub playlistPlaylistsinfoQuery {
+	my $request = shift;
+	
+	$d_queries && msg("playlistPlaylistsinfoQuery()\n");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['playlist'], ['playlistsinfo']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client = $request->client();
+
+	my $playlistObj = $client->currentPlaylist();
+	
+	if (blessed($playlistObj)) {
+		if ($playlistObj->can('id')) {
+			$request->addResult("id", $playlistObj->id());
+		}
+
+		$request->addResult("name", $playlistObj->title());
+				
+		$request->addResult("modified", $client->currentPlaylistModified());
+
+		$request->addResult("url", $playlistObj->url());
+	}
+	
+	$request->setStatusDone();
+}
 
 sub playlistXQuery {
 	my $request = shift;
@@ -861,13 +891,15 @@ sub playlistXQuery {
 }
 
 
-sub playlisttracksQuery {
+sub playlistsTracksQuery {
 	my $request = shift;
 
-	$d_queries && msg("playlisttracksQuery()\n");
+	$d_queries && msg("playlistsTracksQuery()\n");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['playlisttracks']])) {
+	# "playlisttracks" is deprecated (July 06).
+	if ($request->isNotQuery([['playlisttracks']]) &&
+		$request->isNotQuery([['playlists'], ['tracks']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1365,6 +1397,12 @@ sub statusQuery {
 		$request->addResult("playlist repeat", $repeat); 
 		$request->addResult("playlist shuffle", $shuffle); 
 	
+		if (defined (my $playlistObj = $client->currentPlaylist())) {
+			$request->addResult("playlist_id", $playlistObj->id());
+			$request->addResult("playlist_name", $playlistObj->title());
+			$request->addResult("playlist_modified", $client->currentPlaylistModified());
+		}
+
 		if ($songCount > 0) {
 			$idx = Slim::Player::Source::playingSongIndex($client);
 			$request->addResult("playlist_cur_index", $idx);
