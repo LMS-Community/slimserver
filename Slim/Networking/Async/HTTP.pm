@@ -310,6 +310,15 @@ sub _http_read {
 			}
 			else {
 				$::d_http_async && msg("Async::HTTP: Redirection limit exceeded\n");
+				
+				$self->disconnect;
+				
+				if ( my $cb = $args->{onError} ) {
+					my $passthrough = $args->{passthrough} || [];
+					return $cb->( $self, 'Redirection limit exceeded', @{$passthrough} );
+				}
+				
+				return;
 			}
 		}
 		

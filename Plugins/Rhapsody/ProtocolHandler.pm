@@ -138,6 +138,7 @@ sub handleDirectError {
 	my $client = shift;
 	my $url = shift;
 	my $response = shift;
+	my $status_line = shift;
 
 	# Rhapsody errors:
 	# 401 - Unauthorized
@@ -182,7 +183,7 @@ sub handleDirectError {
 		} );
 	}
 	else {
-		$client->failedDirectStream();
+		$client->failedDirectStream($status_line);
 	}
 }
 

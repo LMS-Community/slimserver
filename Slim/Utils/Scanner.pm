@@ -35,13 +35,13 @@ our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 sub scanPathOrURL {
 	my ($class, $args) = @_;
 	
-	my $cb = $args->{'callback'};
+	my $cb = $args->{'callback'} || sub {};
 
 	my $pathOrUrl = $args->{'url'} || do {
 
 		errorMsg("scanPathOrURL: No path or URL was requested!\n");
 
-		return ref($cb) eq 'CODE' ? $cb->() : undef;
+		return $cb->();
 	};
 
 	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
@@ -68,7 +68,7 @@ sub scanPathOrURL {
 		# Non-async directory scan
 		$class->scanDirectory($args);
 
-		return ref($cb) eq 'CODE' ? $cb->() : undef;
+		return $cb->();
 	}
 }
 
@@ -241,16 +241,16 @@ sub scanRemoteURL {
 	my $class = shift;
 	my $args  = shift;
 	
-	my $cb    = $args->{'callback'};
+	my $cb    = $args->{'callback'} || sub {};
 	my $url   = $args->{'url'};
 
 	if (!$url) {
-		return ref($cb) eq 'CODE' ? $cb->() : undef;
+		return $cb->();
 	}
 
 	if (!Slim::Music::Info::isRemoteURL($url)) {
 
-		return ref($cb) eq 'CODE' ? $cb->() : undef;
+		return $cb->();
 	}
 
 	if (Slim::Music::Info::isAudioURL($url)) {
@@ -265,13 +265,13 @@ sub scanRemoteURL {
 		
 		push @{$args->{'listRef'}}, $track if (ref($args->{'listRef'}) eq 'ARRAY');
 
-		return ref($cb) eq 'CODE' ? $cb->() : undef;
+		return $cb->();
 	}
 	
 	# Fix URL for Rhapsody playlists
 	$url =~ s/^rhap/http/;
 
-	$::d_scan && msg("scanRemoteURL: opening remote stream $url\n");
+	$::d_scan && msg("scanRemoteURL: opening remote location $url\n");
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
@@ -283,7 +283,7 @@ sub scanRemoteURL {
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
-			return ref($cb) eq 'CODE' ? $cb->() : undef;
+			return $cb->( 'PLAYLIST_PROBLEM_CONNECTING' );
 		},
 		'passthrough' => [ $args, $url ],
 	} );
@@ -319,6 +319,8 @@ sub readRemoteHeaders {
 	if ( $http->response->header( 'icy-name' ) ) {
 		$type = 'mp3';
 	}
+	
+	$::d_scan && msg("scanRemoteURL: Content-Type is $type for $url\n");
 	
 	$track->content_type( $type );
 	$track->update;
@@ -395,7 +397,7 @@ sub readRemoteHeaders {
 			push @{$args->{'listRef'}}, @objects;
 		}
 
-		return ref($args->{'callback'}) eq 'CODE' ? $args->{'callback'}->() : undef;
+		return $args->{'callback'}->();
 	} 
 	else {
 		
@@ -447,8 +449,14 @@ sub readPlaylistBody {
 			}
 		}
 	}
+	
+	# report an error if the playlist contained no items
+	my $error;
+	if ( !@objects ) {
+		$error = 'PLAYLIST_NO_ITEMS_FOUND';
+	}
 
-	return ref($args->{'callback'}) eq 'CODE' ? $args->{'callback'}->() : undef;
+	return $args->{'callback'}->( $error );
 }
 
 sub scanPlaylistFileHandle {

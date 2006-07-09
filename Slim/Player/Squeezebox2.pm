@@ -704,18 +704,19 @@ sub directHeaders {
 	
 	if (!$response || $response !~ / (\d\d\d)/) {
 		$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
-		$client->failedDirectStream();
+		$client->failedDirectStream($response);
 	} else {
 	
+		my $status_line = $response;
 		$response = $1;
 		
 		if (($response < 200) || $response > 399) {
 			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
 			if ($handler && $handler->can("handleDirectError")) {
-				$handler->handleDirectError($client, $url, $response);
+				$handler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
-				$client->failedDirectStream();
+				$client->failedDirectStream($status_line);
 			}
 		} else {
 			my $redir = '';
@@ -867,7 +868,7 @@ sub directBodyFrame {
 			} else {
 				$::d_directstream && msg("body had no parsable items in it.\n");
 
-				$client->failedDirectStream()
+				$client->failedDirectStream( $client->string('PLAYLIST_NO_ITEMS_FOUND') );
 			}
 
 			$client->directBody('');
@@ -897,12 +898,13 @@ sub directMetadata {
 
 sub failedDirectStream {
 	my $client = shift;
+	my $error  = shift;
 	my $url = $client->directURL();
 	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url\n");
 	$client->directURL(undef);
-	$client->directBody(undef);
+	$client->directBody(undef);	
 
-	Slim::Player::Source::errorOpening($client, $client->string("PROBLEM_CONNECTING"));
+	Slim::Player::Source::errorOpening( $client, $error || $client->string("PROBLEM_CONNECTING") );
 
 	# Similar to an underrun, but only continue if we're not at the
 	# end of a playlist (irrespective of the repeat mode).

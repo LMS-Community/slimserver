@@ -914,6 +914,8 @@ sub playlistXitemCommand {
 			'listRef'  => Slim::Player::Playlist::playList($client),
 			'client'   => $client,
 			'callback' => sub {
+				my $error = shift;
+				
 				_playlistXitem_load_done(
 					$client,
 					$jumpToIndex,
@@ -921,6 +923,7 @@ sub playlistXitemCommand {
 					$request->callbackArguments,
 					scalar @{Slim::Player::Playlist::playList($client)},
 					$path,
+					$error,
 				);
 				
 				playlistXitemCommand_done( $client, $request, $path );
@@ -1922,7 +1925,7 @@ sub _mixer_mute {
 
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $callbackf, $callbackargs, $count, $url) = @_;
+	my ($client, $index, $callbackf, $callbackargs, $count, $url, $error) = @_;
 
 	$d_commands && msg("Commands::_playlistXitem_load_done()\n");
 
@@ -1938,11 +1941,11 @@ sub _playlistXitem_load_done {
 	if ( !$count && $url ) {
 		# If the playlist was unable to load a remote URL, notify
 		# This is used for logging broken stream links
-		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url]);
+		Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url, $error]);
 		
 		# Show an error message
 		$client->showBriefly({
-			'line1'    => $client->string('PROBLEM_OPENING_REMOTE_URL'),
+			'line1'    => $client->string( $error || 'PROBLEM_OPENING_REMOTE_URL' ),
 			'line2'    => $url,
 		}, { 'duration' => 2, 'block' => 1, 'scroll' => 1, 'firstline' => 1 });
 	}

@@ -1446,6 +1446,12 @@ PROBLEM_OPENING_REMOTE_URL
 	EN	Error: Can't open remote URL
 	NL	Fout: kan URL niet op afstand niet openen
 
+PLAYLIST_NO_ITEMS_FOUND
+	EN	Error: No items found in playlist
+
+PLAYLIST_PROBLEM_CONNECTING
+	EN	Error: Can't connect to retrieve playlist
+
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
 	DA	Problem: Der findes ingen folder med gemte playlister.

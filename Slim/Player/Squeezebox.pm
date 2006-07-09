@@ -264,7 +264,7 @@ sub quickstart {
 		# Find the track title
 		if ( $client->linesPerScreen() > 1 ) {
 			my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
-			$line2  = Slim::Music::Info::getCurrentTitle( $client, $url );
+			$line2  = Slim::Music::Info::title( $url );
 		}
 		
 		$client->showBriefly( $line1, $line2, 0.5 );
