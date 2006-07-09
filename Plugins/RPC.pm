@@ -60,7 +60,7 @@ sub getPlaylist {
 
 	my $songCount = Slim::Player::Playlist::count($client);
 
-	return \@returnArray if ($songCount == 0);
+	return \@returnArray if ($songCount == 0) or ($p1 >= $songCount);
 
 	my ($valid, $start, $end) = Slim::Control::Request::normalize(undef, $p1, $p2, $songCount);
 
@@ -73,8 +73,16 @@ sub getPlaylist {
 			my $track = Slim::Schema->rs('Track')->objectForUrl(Slim::Player::Playlist::song($client, $idx));
 
 			if (blessed($track)) {
-
-				push @returnArray, $track;
+				my @contribList;
+				foreach my $c ($track->contributors->all) {
+					my %c = $c->get_columns;
+					push @contribList, \%c;
+				}
+				my %data = $track->get_columns;
+				$data{"contributors"} = \@contribList;
+				my %album = $track->album->get_columns;
+				$data{"album"} = \%album;
+				push @returnArray, \%data;
 			}
 		}
 
