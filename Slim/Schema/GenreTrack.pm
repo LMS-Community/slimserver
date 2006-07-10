@@ -15,6 +15,7 @@ use base 'Slim::Schema::DBI';
 	$class->add_columns(qw/genre track/);
 
 	$class->set_primary_key(qw/genre track/);
+	$class->add_unique_constraint('genre_track' => [qw/genre track/]);
 
 	$class->belongs_to('genre' => 'Slim::Schema::Genre');
 	$class->belongs_to('track' => 'Slim::Schema::Track');
