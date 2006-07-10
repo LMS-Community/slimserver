@@ -33,6 +33,7 @@ BEGIN {
 
 use base 'Slim::Networking::Async';
 
+use HTTP::Headers;
 use HTTP::Request;
 use HTTP::Response;
 use MPEG::Audio::Frame;
@@ -269,7 +270,12 @@ sub _http_read {
 			push @{$previous}, $self->response->clone;
 		}
 		
-		$self->response( HTTP::Response->new( $code, $mess, \@h ) );
+		my $headers = HTTP::Headers->new;
+		while ( @h ) {
+			my ($k, $v) = splice @h, 0, 2;
+			$headers->push_header( $k => $v );
+		}
+		$self->response( HTTP::Response->new( $code, $mess, $headers ) );
 		
 		# Save previous response
 		$self->response->previous( $previous );
