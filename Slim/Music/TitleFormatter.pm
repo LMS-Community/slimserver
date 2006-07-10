@@ -419,11 +419,11 @@ sub parseFormat {
 		$index++;
 	}
 
-	$parsedFormats{$formatparsed} =
-		sub {
-			my $track = shift;
-			return fillFormat($track, \@prefixes, \@indprefixes, \@elemlookups, \@suffixes);
-		};
+	$parsedFormats{$formatparsed} = sub {
+		my $track = shift;
+
+		return fillFormat($track, \@prefixes, \@indprefixes, \@elemlookups, \@suffixes);
+	};
 	
 	return $parsedFormats{$formatparsed};
 }
@@ -435,10 +435,17 @@ sub infoFormat {
 	my $output    = '';
 	my $format;
 
-	my $track     = Slim::Schema->rs('Track')->objectForUrl({
-		'url'    => $fileOrObj,
-		'create' => 1,
-	});
+	# Optimize calls out to objectForUrl
+	my $blessed   = blessed($fileOrObj);
+	my $track     = $fileOrObj;
+
+	if (!$blessed || ($blessed ne 'Slim::Schema::Track' || $blessed ne 'Slim::Schema::Playlist')) {
+
+		$track = Slim::Schema->rs('Track')->objectForUrl({
+			'url'    => $fileOrObj,
+			'create' => 1,
+		});
+	}
 
 	if (!blessed($track) || !$track->can('id')) {
 

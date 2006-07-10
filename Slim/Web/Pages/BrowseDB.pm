@@ -112,39 +112,46 @@ sub browsedb {
 	# Generate the breadcrumb list for the current level.
 	for (my $i = 0; $i < $level ; $i++) {
 
-		my $attr    = $levels[$i];
-		my $lcKey   = lc($attr);
-		my $attrKey = sprintf('%s.id', $lcKey);
+		my $attr = $levels[$i];
 
 		# XXXX ick.
-		if ($attrKey eq 'year.id') {
-			$attrKey = 'album.year';
+		if ($attr eq 'year') {
+			$attr = 'album';
 		}
 
-		if ($params->{$attrKey}) {
+		for my $levelKey (grep { /^$attr\.\w+$/ } keys %{$params}) {
 
 			# Send down the attributes down to the template
 			#
 			# These may be overwritten below.
 			# This is useful/needed for the playlist case where we
 			# want access to the containing playlist object.
-			my $title = $params->{$attrKey};
+			my $value = $params->{$levelKey};
 
-			if ($attrKey ne 'album.year') {
+			# Don't search for years, we just use the string.
+			if ($levelKey ne 'album.year') {
 
-				my $obj = Slim::Schema->find(ucfirst($attr), $params->{$attrKey});
+				my $searchKey = $levelKey;
+				my $rs        = Slim::Schema->rs($attr);
+
+				if ($searchKey =~ /^(\w+)\.(\w+)$/) {
+
+					$searchKey = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $2);
+				}
+
+				my $obj = $rs->search({ $searchKey => $value })->single;
 
 				if (blessed($obj) && $obj->can('name')) {
 					$params->{$attr} = $obj;
-					$title           = $obj->name;
+					$value           = $obj->name;
 				}
 			}
 
-			push @attrs, join('=', $attrKey, $params->{$attrKey});
+			push @attrs, join('=', $levelKey, $params->{$levelKey});
 
 			push @{$params->{'pwd_list'}}, {
 				 'hreftype'     => 'browseDb',
-				 'title'        => $title,
+				 'title'        => $value,
 				 'hierarchy'    => $hierarchy,
 				 'level'        => $i+1,
 				 'orderBy'      => $orderBy,
@@ -311,6 +318,7 @@ sub browsedb {
 
 		my $lastAnchor = '';
 		my $attrName   = lc($levels[$level]);
+		my $firstItem  = undef;
 
 		for my $item ($browseRS->slice($start, $end)) {
 
@@ -366,6 +374,9 @@ sub browsedb {
 
 			$itemCount++;
 
+			# Save the first item so we don't need to refetch it for artwork.
+			$firstItem ||= $item;
+
 			push @{$params->{'browse_items'}}, \%form;
 
 			main::idleStreams();
@@ -373,13 +384,11 @@ sub browsedb {
 
 		# If we're at the track level, and it's at the bottom of the
 		# hierarchy, display cover art if we have it.
-		if ($level == $maxLevel && $levels[$level] eq 'track') {
+		if ($level == $maxLevel && $levels[$level] eq 'track' && defined $firstItem) {
 
-			my $track = $browseRS->first;
+			if ($firstItem->can('coverArt') && $firstItem->coverArt) {
 
-			if ($track->can('coverArt') && $track->coverArt) {
-
-				$params->{'coverArt'} = $track->id;
+				$params->{'coverArt'} = $firstItem->id;
 			}
 		}
 	}

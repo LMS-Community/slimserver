@@ -333,21 +333,26 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	$form->{'text'}   = Slim::Music::Info::standardTitle(undef, $self);
-	$form->{'artist'} = $self->artist;
+	$form->{'text'}     = Slim::Music::Info::standardTitle(undef, $self);
+	$form->{'item'}     = $self->id;
+	$form->{'itempath'} = $self->url;
+	$form->{'itemobj'}  = $self;
 
-	my ($id, $url) = $self->get(qw(id url));
+	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
 
-	$form->{'item'}            = $id;
-	$form->{'itempath'}        = $url;
-	$form->{'itemobj'}         = $self;
+	# Only include Artist & Album if the user doesn't have them defined in
+	# a custom title format.
+	if ($webFormat !~ /ARTIST/) {
+		$form->{'artist'}        = $self->artist;
+		$form->{'includeArtist'} = 1;
+	}
 
-	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb"));
+	if ($webFormat !~ /ALBUM/) {
+		$form->{'includeAlbum'}  = 1;
+	}
 
-	$form->{'includeArtist'}       = ($webFormat !~ /ARTIST/);
-	$form->{'includeAlbum'}        = ($webFormat !~ /ALBUM/) ;
-	$form->{'noArtist'}            = Slim::Utils::Strings::string('NO_ARTIST');
-	$form->{'noAlbum'}             = Slim::Utils::Strings::string('NO_ALBUM');
+	$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
+	$form->{'noAlbum'}  = Slim::Utils::Strings::string('NO_ALBUM');
 
 	my $Imports = Slim::Music::Import->importers;
 

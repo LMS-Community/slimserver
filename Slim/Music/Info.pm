@@ -466,9 +466,20 @@ sub standardTitle {
 
 	# Be sure to try and "readTags" - which may call into Formats::Parse for playlists.
 	# XXX - exception should go here. comming soon.
-	my $track     = Slim::Schema->rs('Track')->objectForUrl({ 'url' => $pathOrObj, 'create' => 1, 'readTags' => 1 });
-	my $fullpath  = blessed($track) && $track->can('url') ? $track->url : $track;
-	my $format;
+	my $blessed   = blessed($pathOrObj);
+	my $track     = $pathOrObj;
+
+	if (!$blessed || ($blessed ne 'Slim::Schema::Track' || $blessed ne 'Slim::Schema::Playlist')) {
+
+		$track = Slim::Schema->rs('Track')->objectForUrl({
+			'url'      => $pathOrObj,
+			'create'   => 1,
+			'readTags' => 1
+		});
+	}
+
+	my $fullpath = blessed($track) && $track->can('url') ? $track->url : $track;
+	my $format   = undef;
 
 	if (isPlaylistURL($fullpath) || isList($track)) {
 
