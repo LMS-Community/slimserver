@@ -2,9 +2,9 @@ package Plugins::RPC;
 
 # $Id$
 
+require JSON::Syck;
 use strict;
 use HTTP::Status;
-use JSON;
 use RPC::XML::Parser;
 use Scalar::Util qw(blessed);
 
@@ -200,7 +200,7 @@ sub handleReqJSON {
 
 	my @resparr;
 
-	my $objlist = jsonToObj($input);
+	my $objlist = JSON::Syck::Load($input);
 	$objlist = [ $objlist ] if ref($objlist) eq 'HASH';
 
 	if (ref($objlist) ne 'ARRAY') {
@@ -234,7 +234,7 @@ sub handleReqJSON {
 		$respobj = \@resparr;
 	}
 
-	my $rpcresponse = objToJson($respobj);
+	my $rpcresponse = JSON::Syck::Dump($respobj);
 
 	if ($params->{asyncId}) {
 		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{asyncId} . "," . $rpcresponse . ")";
