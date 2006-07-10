@@ -642,17 +642,14 @@ sub initPlugin {
 	
 	checkDefaults();
 
-	# Populate the genreMap, so we can use IDs
-	# XXX - we should do this after every rescan, to make sure our genres
-	# are up to date.
-	for my $genre (Slim::Schema->search('Genre')->all) {
-
-		$genreNameMap{$genre->name} = $genre->id;
-	}
+	generateGenreNameMap();
 
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
 		[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
+
+	# Regenerate the genre map after a rescan.
+	Slim::Control::Request::subscribe(\&generateGenreNameMap, [['rescan'], ['done']]);
 
 #        |requires Client
 #        |  |is a Query
@@ -660,7 +657,26 @@ sub initPlugin {
 #        |  |  |  |Function to call
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
-        [1, 0, 0, \&cliRequest]);
+	[1, 0, 0, \&cliRequest]);
+}
+
+sub generateGenreNameMap {
+	my $request = shift;
+
+	if ($request && $request->source && $request->source eq 'PLUGIN_RANDOM') {
+		return;
+	}
+
+	# Clear out the old map.
+	%genreNameMap = ();
+
+	# Populate the genreMap, so we can use IDs
+	my $rs = Slim::Schema->search('Genre');
+
+	while (my $genre = $rs->next) {
+
+		$genreNameMap{$genre->name} = $genre->id;
+	}
 }
 
 sub cliRequest {
