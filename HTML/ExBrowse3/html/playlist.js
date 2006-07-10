@@ -89,11 +89,11 @@ function doSelect(event) {
 }
 
 function doArtist(id) {
-        browseurl("browsedb.html?hierarchy=artist,album,track&level=1&artist=" + id);
+        browseurl("browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=" + id);
 }
 
 function doAlbum(id) {
-        browseurl("browsedb.html?hierarchy=album,track&level=1&album=" + id);
+        browseurl("browsedb.html?hierarchy=album,track&level=1&album.id=" + id);
 }
 
 function playlistXButtonHandler(button) {

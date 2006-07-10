@@ -2031,6 +2031,9 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 	for my $term (split '&', $terms) {
 
+		# If $terms has a leading &, split will generate an initial empty string
+		next if $term eq "";
+
 		if ($term =~ /^(.*)=(.*)$/ && grep { $1 =~ /$_\.?/ } @fields) {
 
 			my $key   = URI::Escape::uri_unescape($1);
@@ -2126,7 +2129,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		}
 
 		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
-		if ($sort eq $albumSort) {
+		if ($sort && $sort eq $albumSort) {
 			$joinMap{'album'} = 'album';
 		}
 
