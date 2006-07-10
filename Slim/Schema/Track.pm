@@ -333,21 +333,21 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	$form->{'text'}     = Slim::Music::Info::standardTitle(undef, $self);
+	my $format = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
+
+	# Go directly to infoFormat, as standardTitle is more client oriented.
+	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE');
 	$form->{'item'}     = $self->id;
 	$form->{'itempath'} = $self->url;
 	$form->{'itemobj'}  = $self;
 
-	my $webFormat = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
-
-	# Only include Artist & Album if the user doesn't have them defined in
-	# a custom title format.
-	if ($webFormat !~ /ARTIST/) {
+	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
+	if ($format !~ /ARTIST/) {
 		$form->{'artist'}        = $self->artist;
 		$form->{'includeArtist'} = 1;
 	}
 
-	if ($webFormat !~ /ALBUM/) {
+	if ($format !~ /ALBUM/) {
 		$form->{'includeAlbum'}  = 1;
 	}
 
