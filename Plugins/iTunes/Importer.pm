@@ -228,18 +228,6 @@ sub handleTrack {
 
 		$file  = Slim::Utils::Misc::pathFromFileURL($url);
 
-		# Bug 3402 
-		# If the file can't be found using itunes_library_music_path,
-		# we want to fall back to the real file path from the XML file
-		if (!-e $file) {
-
-			if (Slim::Utils::Prefs::get('itunes_library_music_path')) {
-
-				$url  = $class->normalize_location($location, 'fallback');
-				$file = Slim::Utils::Misc::pathFromFileURL($url);
-			}
-		}
-
 		if ($] > 5.007 && $file && Slim::Utils::Unicode::currentLocale() ne 'utf8') {
 
 			eval { Encode::from_to($file, 'utf8', Slim::Utils::Unicode::currentLocale()) };
@@ -250,9 +238,19 @@ sub handleTrack {
 
 			# If the user is using both iTunes & a music folder,
 			# iTunes stores the url as encoded utf8 - but we want
-			# it in the locale of the machine, so we won't get
-			# duplicates.
+			# it in the locale of the machine, so we won't get duplicates.
 			$url = Slim::Utils::Misc::fileURLFromPath($file);
+		}
+
+		# Bug 3402 
+		# If the file can't be found using itunes_library_music_path,
+		# we want to fall back to the real file path from the XML file
+		#
+		# Bug 3717 - check this after we've checked the locale above.
+		if (!-e $file && Slim::Utils::Prefs::get('itunes_library_music_path')) {
+
+			$url  = $class->normalize_location($location, 'fallback');
+			$file = Slim::Utils::Misc::pathFromFileURL($url);
 		}
 	}
 
