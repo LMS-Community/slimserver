@@ -127,6 +127,9 @@ sub main {
 			Slim::Music::Info::wipeDBCache();
 		}
 
+		# Must be set _after_ we wipe the db.
+		setIsScanning(1);
+
 		if ($cleanup) {
 			Slim::Music::Import->cleanupDatabase(1);
 		}
@@ -184,6 +187,22 @@ sub initializeFrameworks {
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
+}
+
+sub setIsScanning {
+	my $value = shift;
+
+	Slim::Schema->txn_do(sub {
+
+		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
+			'name' => 'isScanning'
+		});
+
+		if ($isScanning) {
+			$isScanning->value($value);
+			$isScanning->update;
+		}
+	});
 }
 
 sub usage {
@@ -244,6 +263,9 @@ sub cleanup {
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
+
+		setIsScanning(0);
+
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;
 	}

@@ -76,7 +76,26 @@ sub launchScan {
 		Proc::Background->new($command, @scanArgs)
 	);
 
+	# Set a timer to check on the scanning process.
+	$class->checkScanningStatus;
+
 	return 1;
+}
+
+sub checkScanningStatus {
+	my $class = shift || __PACKAGE__;
+
+	Slim::Utils::Timers::killTimers(0, \&checkScanningStatus);
+
+	# Run again if we're still scanning.
+	if ($class->stillScanning) {
+
+		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checkScanningStatus);
+
+	} else {
+
+		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
+	}
 }
 
 # Force a rescan of all the importers.
@@ -136,9 +155,6 @@ sub startScan {
 	$class->useFolderImporter(0);
 
 	$::d_import && msg("Import: Finished background scanning.\n");
-
-	# This needs to be moved for split-scanner
-	# Slim::Control::Request::notifyFromArray(undef, ['rescan', 'done']);
 }
 
 sub deleteImporter {
@@ -252,28 +268,24 @@ sub endImporter {
 }
 
 sub stillScanning {
-	my $class   = shift;
-	my $imports = scalar keys %importsRunning;
+	my $class    = shift;
+	my $imports  = scalar keys %importsRunning;
 
-	if (blessed($class->scanningProcess) && $class->scanningProcess->alive) {
+	# Check and see if there is a flag in the database, and the process is alive.
+	my $scanning = Slim::Schema->search('MetaInformation', { 'name' => 'isScanning' })->single->value;
+
+	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
+
+	# Return true if the process is still running, or the process is still
+	# running and the flag is set in the db. Return false if the process
+	# isn't running and the flag isn't set. Or if the process isn't
+	# running and the flag is set, as setting the flag is the last thing
+	# the scanner does.
+	if ($running || ($scanning && $running)) {
 		return 1;
-	} else {
-		return 0;
 	}
 
-	if ($::d_import && $imports) {
-
-		msg("Import: Scanning with $imports import plugins\n");
-
-		while (my ($importer, $started) = each %importsRunning) {
-
-			msgf("\t%s scan started at: %s\n", $importer, (localtime($started) . ''));
-		}
-
-		msg("\n");
-	}
-
-	return $imports;
+	return 0;
 }
 
 1;

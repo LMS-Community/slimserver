@@ -298,10 +298,13 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	my $firstTime = shift || 0;
 	
-	return unless (Slim::Utils::Prefs::get('musicmagic'));
-	
+	if (!Slim::Utils::Prefs::get('musicmagic')) {
+		return;
+	}
+
 	my $change = 0;
-	if (!$firstTime && !stillScanning() && isMusicLibraryFileChanged()) {
+
+	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
 		startScan();
 	}
 

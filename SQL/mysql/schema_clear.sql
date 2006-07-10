@@ -1,9 +1,5 @@
 SET foreign_key_checks = 0;
 
-UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
-
-UPDATE metainformation SET value = 0 WHERE name = 'isScanning';
-
 DELETE FROM tracks;
 
 ALTER TABLE tracks AUTO_INCREMENT = 1;
@@ -63,5 +59,9 @@ DELETE FROM unreadable_tracks;
 ALTER TABLE unreadable_tracks AUTO_INCREMENT = 1;
 
 OPTIMIZE TABLE unreadable_tracks;
+
+UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
+
+UPDATE metainformation SET value = 0 WHERE name = 'isScanning';
 
 SET foreign_key_checks = 1;
