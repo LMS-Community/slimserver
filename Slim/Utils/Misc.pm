@@ -526,10 +526,10 @@ sub fixPath {
 
 		$fixed = canonpath(fixPathCase($fixed));
 
-		# Bug: 2757
+		# Fixes Bug: 2757, but breaks a lot more: 3681, 3682 & 3683
 		if (-l $fixed) {
 
-			$fixed = readlink($fixed);
+			#$fixed = readlink($fixed);
 		}
 	}
 
