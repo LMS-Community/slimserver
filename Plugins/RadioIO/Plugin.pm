@@ -252,16 +252,19 @@ PLUGIN_RADIOIO_MODULE_TITLE
 PLUGIN_RADIOIO_LOADING
 	DE	Lade RadioIO...
 	EN	Loading RadioIO...
+	FR	Chargement RadioIO...
 	NL	Laden RadioIO...
 	
 SETUP_GROUP_PLUGIN_RADIOIO_DESC
 	DE	Falls Sie einen RadioIO Account besitzen, so können Sie hier Benutzername und Passwort eingeben. <a href='http://www.radioio.com/registration.php' target='_new'>Registrierte Benutzer</a> erhalten qualitativ hochwertige 128k Streams, <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass Mitglieder</a> haben Zugriff auf werbefreie Streams.
 	EN	If you have a RadioIO account, enter your username and password. <a href='http://www.radioio.com/registration.php' target='_new'>Registered members</a> get high quality 128k streams, and <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass members</a> have access to high quality, commercial-free streams.
+	FR	Le module d'extension Aggrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les changements effectués.
 
 SETUP_PLUGIN_RADIOIO_USERNAME
 	DE	RadioIO Benutzername
 	EN	RadioIO Username
 	ES	Usuario de RadioIO
+	FR	Nom d'utilisateur RadioIO
 	IT	Codice utente RadioIO
 	NL	RadioIO gebruikersnaam
 
@@ -269,6 +272,8 @@ SETUP_PLUGIN_RADIOIO_USERNAME_DESC
 	DE	Ihr RadioIO Benutzername, besuche <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> zum Einschreiben
 	EN	Your RadioIO username, visit <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> to sign up
 	ES	Tu nombre de usuario de RadioIO,  visitar <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> para registrarse
+	FR	Si vous avez un compte RadioIO, entrez votre nom d'utilisateur et votre mot de passe pour bénéficier des flux haute qualité 128K et des flux sans publicité si vous êtes membre SoundPass.
+	FR	Votre nom d'utilisateur RadioIO (visitez radioio.com pour vous inscrire) :
 	IT	Il tuo codice utente su RadioIO, visita <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> per registrarti
 	NL	Je RadioIO gebruikersnaam, bezoek <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> om aan te melden
 
@@ -276,12 +281,14 @@ SETUP_PLUGIN_RADIOIO_PASSWORD
 	DE	RadioIO Passwort
 	EN	RadioIO Password
 	ES	Contraseña para RadioIO
+	FR	Mot de passe RadioIO
 	NL	RadioIO wachtwoord
 
 SETUP_PLUGIN_RADIOIO_PASSWORD_DESC
 	DE	Dein RadioIO Passwort
 	EN	Your RadioIO password
 	ES	Tu contraseña para RadioIO
+	FR	Votre mot de passe RadioIO
 	IT	La tua password RadioIO
 	NL	Je RadioIO wachtwoord
 
@@ -289,6 +296,7 @@ SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED
 	DE	Dein RadioIO Passwort wurde geändert
 	EN	Your RadioIO password has been changed
 	ES	La contraseña para RadioIO ha sido cambiada
+	FR	Votre mot de passe RadioIO a été modifié
 	IT	La tua password RadioIO e' stata cambiata
 	NL	Je RadioIO wachtwoord is gewijzigd	
 ";}

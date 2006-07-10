@@ -359,6 +359,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
 	ES	Timer de Recopilación
+	FR	Répertorier musique :
 	HE	מצב התוסף
 	NL	Herscan timer
 
@@ -367,6 +368,7 @@ PLUGIN_RESCAN_TIMER_SET
 	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
 	ES	Establecer Horario de Recopilación
+	FR	Heure d'activation :
 	HE	שעת הסריקה
 	NL	Stel herscan tijd in
 
@@ -399,6 +401,7 @@ PLUGIN_RESCAN_TIMER_DESC
 	DE	Sie können ihre Musiksammlung automatisch alle 24h durchsuchen lassen. Setzen Sie den Zeitpunkt, und schalten Sie die Automatik ein oder aus.
 	EN	You can choose to allow a scheduled rescan of your music library every 24 hours.  Set the time, and set the Rescan Timer to ON to use this feature.
 	ES	Se puede elegir tener una recopilación programada de la colección musical cada 24 horas. Establecer la hora, y poner el Timer de Recopilación en ENCENDIDO para utilizar esta característica.
+	FR	Vous pouvez faire en sorte que le SlimServer répertorie à nouveau le contenu de votre bibliothèque toutes les 24 heures. Entrez l'heure et activez Répertorier musique pour utiliser cette fonctionnalité.
 	HE	תוסף זה מעדכן את הסיפריה בכל 24 שעות
 	NL	Je kunt het gepland herscannen van je muziekcollectie instellen per 24 uur. Stel de tijd in en zet de herscan timer op AAN om deze optie te gebruiken.
 

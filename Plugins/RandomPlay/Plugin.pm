@@ -936,6 +936,7 @@ PLUGIN_RANDOM_SELECT_NONE
 	DE	Alle abwählen
 	EN	Select None
 	ES	No Elegir Ninguno
+	FR	Aucun genre
 	NL	Niets selecteren
 
 PLUGIN_RANDOM_CHOOSE_BELOW

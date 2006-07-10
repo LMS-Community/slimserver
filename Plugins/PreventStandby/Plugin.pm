@@ -116,6 +116,7 @@ sub strings { return '
 PLUGIN_PREVENTSTANDBY
 	DE	Standby Modus während der Wiedergabe verhindern (nur in Windows)
 	EN	Windows: Prevent System Standby While Playing
+	FR	Windows : empêcher la mise en veille du système lors de la lecture
 	NL	Windows: Voorkom systeem slaapstand gedurende het afspelen
 '};
 

@@ -1205,6 +1205,7 @@ SETUP_GROUP_PLUGIN_LIVE365_DESC
 	DE	Suche und höre Live365 Radiostationen
 	EN	Search, browse, and tune Live365 stations
 	ES	Buscar, recorrer y sintonizar estaciones Live365
+	FR	Recherchez, parcourez et connectez-vous aux stations Live365
 	IT	Cerca, sfoglia e sintonizza stazioni Live365
 	NL	Zoek, bekijk en afstemmen Live365 stations
 
@@ -1212,6 +1213,7 @@ SETUP_PLUGIN_LIVE365_USERNAME
 	DE	Live365 Benutzername
 	EN	Live365 Username
 	ES	Usuario de Live365
+	FR	Nom d'utilisateur Live365
 	IT	Codice utente Live365
 	NL	Live365 gebruikersnaam
 
@@ -1219,6 +1221,7 @@ SETUP_PLUGIN_LIVE365_USERNAME_DESC
 	DE	Ihr Live365 Benutzername, besuche live365.com zum Einschreiben
 	EN	Your Live365 username, visit live365.com to sign up
 	ES	Tu nombre de usuario de Live365,  visitar live365.com para registrarse
+	FR	Votre nom d'utilisateur Live365 (visitez live365.com pour vous inscrire) :
 	IT	Il tuo codice utente su Live365, visita live365.com per registrarti
 	NL	Je Live365 gebruikersnaam, bezoek live365.com om aan te melden
 
@@ -1226,12 +1229,14 @@ SETUP_PLUGIN_LIVE365_PASSWORD
 	DE	Live365 Passwort
 	EN	Live365 Password
 	ES	Contraseña para Live365
+	FR	Mot de passe Live365
 	NL	Live365 wachtwoord
 
 SETUP_PLUGIN_LIVE365_PASSWORD_DESC
 	DE	Dein Live365 Passwort
 	EN	Your Live365 password
 	ES	Tu contraseña para Live365
+	FR	Votre mot de passe Live365 :
 	IT	La tua password Live365
 	NL	Je Live365 wachtwoord
 
@@ -1239,6 +1244,7 @@ SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED
 	DE	Dein Live365 Passwort wurde geändert
 	EN	Your Live365 password has been changed
 	ES	La contraseña para Live365 ha sido cambiada
+	FR	Votre mot de passe Live365 a été modifié
 	IT	La tua password Live365 e' stata cambiata
 	NL	Je Live365 wachtwoord is gewijzigd
 
@@ -1246,6 +1252,7 @@ SETUP_PLUGIN_LIVE365_SORT_ORDER
 	DE	Spalten sortieren
 	EN	Sort columns
 	ES	Columnas para ordenar
+	FR	Ordre de tri
 	IT	Ordina colonne
 	NL	Sorteer kolommen
 
@@ -1253,6 +1260,7 @@ SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC
 	DE	Sortierreihenfolge der Sender definieren
 	EN	Define the sort order of stations
 	ES	Definir la secuencia de ordenamiento para estaciones
+	FR	Spécifiez le paramètre de tri des stations
 	IT	Definisci l'ordinamento delle stazioni
 	NL	Definieer sorteer volgorde van stations
 
@@ -1261,6 +1269,7 @@ SETUP_PLUGIN_LIVE365_SORT_TITLE
 	DE	Sender Sortierung
 	EN	Station title
 	ES	Título de la estación
+	FR	Nom de la station
 	IT	Nome stazione
 	NL	Station titel
 
@@ -1268,6 +1277,7 @@ SETUP_PLUGIN_LIVE365_SORT_BPS
 	DE	Sender Bitrate
 	EN	Station bitrate
 	ES	Tasa de bits de la estación
+	FR	Taux binaire de la station
 	IT	Bitrate stazione
 	NL	Zender bitrate
 
@@ -1275,6 +1285,7 @@ SETUP_PLUGIN_LIVE365_SORT_RATING
 	DE	Sender Beurteilung
 	EN	Station rating
 	ES	Calificación de la estación
+	FR	Classement de la station
 	IT	Valutazione stazione
 	NL	Station beoordeling
 
@@ -1282,6 +1293,7 @@ SETUP_PLUGIN_LIVE365_SORT_LISTENERS
 	DE	Anzahl Hörer
 	EN	Number of listeners
 	ES	Número de Oyentes
+	FR	Nombre de connectés
 	IT	Numero di ascoltatori
 	NL	Aantal luisteraars
 
@@ -1289,6 +1301,7 @@ SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS
 	DE	Detaillierte Live365 Suchresultate
 	EN	Detailed Live365 search results
 	ES	Resultados detallados de búsqueda en Live365
+	FR	Résultats de recherche détaillés Live365
 	IT	Risultati di ricerca dettagliati su Live365
 	NL	Gedetailleerde zoekresultaten
 
@@ -1296,6 +1309,7 @@ SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC
 	DE	Zeige detaillierte Suchresultate, wenn im Live365 Webinterface gesucht wird. Dies beinhaltet Interpreten, Titel und Albuminformationen wenn nach einem dieser Kriterien gesucht wird. Dies kann die Suchresultate etwas unübersichtlicher machen.
 	EN	Show detailed results when searching Live365 through the web interface.  Includes artist, track, and album info when searching for one of these.  May make your search results longer and harder to browse.
 	ES	Mostrar resultados detallados cuando se busca en Live365 a través de la interface web. Se incluye información de  artista, canción y disco cuando se busca por alguno de ellos. Esto puede generar resultados más largos y dificiles de recorrer.
+	FR	Affiche des résultats détaillés (artiste, morceau, informations album) lors d'une recherche sur Live365 par l'interface web. La taille et la lisibilité des résultats peuvent s'en trouver affectées.
 	IT	Mostra risultati dettagliati quando cerchi su Live365 attraverso l'interfaccia web. Include artista, traccia e informazioni sull'album quando cerchi uno di questi. Puo' rendere il risultato della ricerca piu' lungo e difficile da sfogliare.
 	NL	Laat gedetailleerde resultaten zien bij het zoeken op Live365 via de web interface. Laat artiest, liedje en album informatie zien bij het zoeken op een van deze items. De resultatenlijst zal langer zijn en lastiger te lezen.
 

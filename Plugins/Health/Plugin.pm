@@ -313,6 +313,7 @@ PLUGIN_HEALTH
 	EN	Server & Network Health
 	ES	Salud del Servidor y la Red
 	FI	Palvelimen ja verkon tila
+	FR	Monitoring serveur et réseau
 	HE	תקינות השרת
 	NL	Server- en netwerktoestand
 

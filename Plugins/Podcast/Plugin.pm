@@ -440,12 +440,14 @@ PODCAST_GROUP_DESC
 	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
 	ES	El plugin Navegador de Podcasts permite ver y escuchar podcasts.
+	FR	Le module d'extension Podcast vous permet d'afficher et d'écouter des podcasts.
 	NL	Met de Podcast browser plugin kun je podcasts bekijken en beluisteren.
 
 PODCAST_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
 	ES	Reinicializar
+	FR	Défaut
 	NL	Herstel
 
 PODCAST_RESETTING
@@ -458,6 +460,7 @@ PODCAST_FEEDS_CHANGE
 	DE	Die Podcast Liste wurde geändert.
 	EN	Podcast list changed.
 	ES	Lista de Podcast modificada.
+	FR	Liste des podcasts modifiée.
 	NL	Podcast lijst gewijzigd.
 
 SETUP_PLUGIN_PODCAST_FEEDS
@@ -467,6 +470,7 @@ SETUP_PLUGIN_PODCAST_RESET
 	DE	Podcasts zurücksetzen
 	EN	Reset default Podcasts
 	ES	Reinicializar Podcasts por defecto
+	FR	Rétablir la liste des podcasts par défaut
 	NL	Herstel default podcasts
 !};
 

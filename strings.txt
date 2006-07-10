@@ -1447,9 +1447,11 @@ PROBLEM_OPENING_REMOTE_URL
 	NL	Fout: kan URL niet op afstand niet openen
 
 PLAYLIST_NO_ITEMS_FOUND
+	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 
 PLAYLIST_PROBLEM_CONNECTING
+	DE	Fehler: Kann keine Verbindung herstellen
 	EN	Error: Can't connect to retrieve playlist
 
 NO_PLAYLIST_DIR
@@ -2031,6 +2033,7 @@ SETUP_GROUP_ALARM_DESC
 	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist. Sie können auch festlegen, dass der Wecker über 20 Sekunden eingeblendet wird.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
 	FI	Tähän soittimeen voi määrittää kahdeksan hälytystä. Yksi päivittäinen hälytys ja yksittäisiä hälytyksiä mille tahansa viikon päivälle.
+	FR	La platine peut gérer jusqu'à 8 réveils indépendants : un réveil quotidien et un réveil pour chaque jour de la semaine.
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
 	IT	Questo lettore puo' avere sino ad 8 sveglie: una sveglia quotidiana e sveglie per ogni singolo giorno della settimana.
 	NL	Deze speler kan tot 8 wektijden hebben: één wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
@@ -3975,6 +3978,7 @@ SETUP_WIPEDB
 	EN	Clear library and rescan everything
 	ES	Limpiar la información previa de la colección y volver a recopilar todo
 	FI	Tyhjennä nykyinen kirjasto ja lue hakemiston sisältö uudelleen
+	FR	Effacer la bibliothèque et tout répertorier à nouveau
 	HE	סרוק הכל מחדש
 	IT	Cancella la libreria musicale e rianalizza tutto.
 	NL	Leeg muziekdatabase en scan alles opnieuw
@@ -3985,6 +3989,7 @@ SETUP_STANDARDRESCAN
 	EN	Look for new and changed music
 	ES	Buscar música nueva y modificada
 	FI	Etsi uudet ja muuttuneet kappaleet
+	FR	Rechercher les morceaux ajoutés ou modifiés
 	HE	מצא מוזיקה חדשה
 	IT	Cerca la musica nuova e modificata.
 	NL	Zoek naar nieuwe en gewijzigde muziek
@@ -3994,6 +3999,7 @@ SETUP_PLAYLISTRESCAN
 	EN	Only rescan playlists
 	ES	Solo volver a recopilar listas
 	FI	Lue uudelleen vain soittolistat
+	FR	Répertorier seulement les listes de lecture
 	HE	סרוק רשימות השמעה בלבד
 	IT	Rianalisi delle sole liste di esecuzione
 	NL	Scan alleen playlists opnieuw
@@ -4627,6 +4633,7 @@ SETUP_COVERTHUMB_DESC
 	EN	For artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para el caso de  Examinar por Muestras de Arte de Tapa, el servidor buscará en los mismos archivos de imagen por defecto que arriba, y en los TAGs ID3. Sin embargo, si se quiere tener la posibilidad de utilizar un nombre de archivo variable en el futuro, o especificar un nombre propio de archivo, se lo puede ingresar aquí.
 	FI	Selataksesi kansikuvia pikkukuvien avulla, palvelin hakee kuvia samoilla oletusasetuksilla kuin yllä. Jos kuitenkin haluat käyttää muokattuja kuvatiedostojen nimiä, syötä nimeämiskäytäntösi tähän.
+	FR	Pour afficher les vignettes dans le mode Parcourir les pochettes, le SlimServer utilise par défaut le même fichier image que pour les pochettes ; toutefois vous pouvez spécifier un autre fichier ici.
 	HE	נגעת? מגיע לך
 	IT	Per sfogliare le miniature delle copertine, il server cerchera' il file di default indicato sopra e quindi nelle tag ID3. Comunque, se desideri utilizzare la possibilita' di un nome file modificabile o specificarne uno di tua scelta, inseriscilo qui.
 	NL	Bij "Bekijk op hoezen" zal de server naar dezelfde standaard bestanden zoeken als hierboven en in de ID3 informatie. Indien je de optie met variabelen wilt gebruiken of je eigen bestandsnaam wilt specificeren moet je dat hier doen.
@@ -5262,12 +5269,12 @@ SETUP_HISTORYLENGTH_DESC
 
 SETUP_SCREENSAVER
 	CS	Spořič (hraje se)
-	DE	Bildschirmschoner (Wiedergabe)
 	DA	Pauseskærm
+	DE	Bildschirmschoner (Wiedergabe)
 	EN	Screensaver when playing
 	ES	Salvapantalla
 	FI	Näytönsäästäjä
-	FR	Ecran de veille
+	FR	Ecran de veille (lecture)
 	HE	שומר מסך בזמן ניגון
 	IT	Salvaschermo in riproduzione
 	JA	スクリーンセーバー
@@ -5282,6 +5289,7 @@ SETUP_OFFSAVER
 	DE	Bildschirmschoner (Aus)
 	EN	Screensaver when off
 	ES	Salvapantalla (Apagado)
+	FR	Ecran de veille (éteint)
 	HE	שומר מסך במצב כבוי
 	NL	Schermbeveiliger indien uit
 	SV	Skärmsläckare i avslaget läge
@@ -5292,6 +5300,7 @@ SETUP_IDLESAVER
 	DE	Bildschirmschoner (gestoppt)
 	EN	Screensaver when stopped
 	ES	Salvapantalla (Parado)
+	FR	Ecran de veille (arrêté)
 	NL	Schermbeveiliger indien gestopt
 	SV	Skärmsläckare i stoppat läge
 	ZH_CN	屏幕保护程序（停止播放时）
@@ -5305,7 +5314,7 @@ SETUP_SCREENSAVER_CHOOSE
 	DE	Wählen Sie einen Bildschirmschoner
 	EN	Choose a screensaver to use when playing:
 	ES	Elegir un salvapantalla para utilizar cuando se está escuchando:
-	FR	Choisissez un écran de veille
+	FR	Ecran de veille lorsque la platine est en lecture :
 	HE	בחר שומר מסך כאשר שיר מתנגן
 	IT	Scegli un salvaschermo da usare in riproduzione:
 	JA	お好きなスクリーンセーバーを選んでください:
@@ -5319,6 +5328,7 @@ SETUP_IDLESAVER_CHOOSE
 	DE	Wählen Sie den Bildschirmschoner, der bei Inaktivität angezeigt wird:
 	EN	Choose a screensaver to use when not playing:
 	ES	Elegir un salvapantalla para utilizar cuando no se está escuchando:
+	FR	Ecran de veille lorsque la platine est arrêtée :
 	HE	בחר שומר מסך כאשר לא מתנגן שיר
 	IT	Scegli un salvaschermo da usare quando fermo:
 	NL	Kies een schermbeveiliger wanneer de speler stopt:
@@ -5329,6 +5339,7 @@ SETUP_OFFSAVER_CHOOSE
 	DE	Wählen Sie den Bildschirmschoner, der in ausgeschaltetem Zustand angezeigt wird:
 	EN	Choose a screensaver to use when powered off:
 	ES	Elegir un salvapantalla para utilizar cuando está apagado:
+	FR	Ecran de veille lorsque la platine est éteinte :
 	HE	בחר שומר מסך כאשר הנגן כבוי
 	IT	Scegli un salvaschermo da usare quando spento:
 	NL	Kies een schermbeveiliger wanneer de speler op standby staat:
@@ -5339,6 +5350,7 @@ SETUP_SCREENSAVER_DESC
 	DE	Sie können einen Bildschirmschoner wählen, der nach einiger Zeit der Inaktivität aktiviert wird. Wählen Sie die Zeit, die ohne Eingabe verstreichen muss, bevor der Bildschirmschoner aktiv wird. Auch können Sie aus unterschiedliche Bildschirmschoner für die Zustände Wiedergabe, gestoppt und ausgeschaltet definieren.
 	EN	You can choose screensavers to display information after some duration of inactivity from the remote control.  You can choose and the duration to wait before enabling the screensaver. You can also choose different screensavers depending on if the player is playing audio, stopped, or powered off.
 	ES	Se pueden elegir salvapantallas que muestren información despues de algún tiempo de inactividad, desde el control remoto. Se puede elegir la duración de la espera antes de habilitar el salvapantalla. También se pueden elegir diferentes salvapantallas de acuerdo a si el reproductor está tocando, está parado, o apagado.
+	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine est en lecture, arrêtée ou éteinte.
 	HE	בחר סוג שומר מסך בפעילויות שונות
 	IT	Puoi scegliere un salvaschermo che visualizzi informazioni dopo un certo periodo di tempo di inattivita' del telecomando. Puoi scegliere l'attesa prima di attivare il salvaschermo. Puoi anche scegliere differenti salvaschermo a seconda che il lettore stia riproducendo musica, sia fermo oppure sia spento.
 	NL	Je kunt schermbeveiligers gebruiken om informatie te tonen op het scherm nadat de afstandsbediening enige tijd niet is gebruikt. Je kunt verschillende schermbeveiligers kiezen afhankelijk van of de speler audio aan het spelen is, gestopt is of in standby staat.
@@ -5389,6 +5401,7 @@ SCREENSAVER_NONE
 	EN	None
 	ES	Ninguno
 	FI	Ei mitään
+	FR	Aucun
 	HE	ללא שומר מסך
 	NL	Geen
 	ZH_CN	无
@@ -5476,6 +5489,7 @@ SETUP_SEARCHSUBSTRING
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 	FI	Etsi sanojen sisältä
+	FR	Rechercher à l'intérieur des mots
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
 	ZH_CN	在词内搜寻
@@ -5486,6 +5500,7 @@ SETUP_SEARCHSUBSTRING_0
 	EN	Search Beginning of Words
 	ES	Buscar Comienzos de Palabras
 	FI	Etsi sanojen alkuja
+	FR	Rechercher par début de mot
 	IT	Cerca all'inizio delle parole
 	NL	Zoek aan het begin van woorden
 	ZH_CN	由词的前头搜寻
@@ -5496,6 +5511,7 @@ SETUP_SEARCHSUBSTRING_1
 	EN	Search Within Words
 	ES	Buscar Dentro de Palabras
 	FI	Etsi sanojen sisältä
+	FR	Rechercher à l'intérieur des mots
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
 	ZH_CN	在词内搜寻
@@ -5505,6 +5521,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findet die Suche nach dem Wortanfang "RAIN" den Begriff "RAINBOW". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
 	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
+	FR	Lors d'une recherche dans la bibliothèque, le SlimServer peut afficher comme résultat les morceaux contenant les mots spécifiés ou seulement les morceaux dont le nom débute par les mots spécifiés. Par exemple, une recherche sur "RAIN" affichera les morceaux contenant le mot "RAINBOW" si vous sélectionnez la recherche par début de mot, mais trouvera aussi "TRAIN" si vous sélectionnez la recherche à l'intérieur des mots.
 	HE	שיטת חיפוש טקסט
 	IT	Quando ricerchi della musica, lo Slimserver puo' trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono dovunque. Per esempio, cercando solo le parole che iniziano con "RAIN", trovera' la parola "RAINBOW". Cercando all'interno delle parole avrebbe trovato anche voci che contengono la parola "TRAIN".
 	NL	Als je zoekt naar muziek kun je op twee verschillende manieren zoeken. Zoek tekst waarmee de te vinden woorden beginnen of zoek tekst die op elke plek in een woord mag voorkomen. Bijvoorbeeld: het zoeken aan het begin van een woord voor "RAIN" zal een woord vinden als "RAINBOW". Zoeken binnen woorden zal ook het woord "TRAIN" als resultaat geven.
@@ -5514,6 +5531,7 @@ SETUP_NOGENREFILTER
 	DE	Musikstil auf Album- und Liederebene ausfiltern
 	EN	Filter genres at the album & track level.
 	ES	Filtrar géneros a nivel de album y pista
+	FR	Filtrer les genres au niveau album et morceau
 	IT	Filtra i generi al livello di album & tracce.
 	NL	Filter genres op album- en liedjesniveau.
 	ZH_CN	在乐谱帖和轨道的层面过滤音乐风格。
@@ -5522,6 +5540,7 @@ SETUP_NOGENREFILTER_1
 	DE	Zeige alle Lieder und Alben eines Interpreten
 	EN	Show any tracks & albums for an artist
 	ES	Mostrar calquier canción y album de un artista
+	FR	Afficher tous les albums et morceaux de l'artiste
 	IT	Mostra qualsiasi traccia & album di un artista
 	NL	Laat alle liedjes en albums zien voor een artiest
 	ZH_CN	显示某个艺人所属的轨道和乐谱帖
@@ -5530,6 +5549,7 @@ SETUP_NOGENREFILTER_0
 	DE	Zeige nur zum gewählten Musikstil passende Alben und Lieder für den Interpreten
 	EN	Only show tracks or albums matching the selected genre for an artist
 	ES	Mostrar solo canciones o álbumes que correspondan al género seleccionado, para un artista.
+	FR	Afficher uniquement les albums et morceaux du genre sélectionné
 	IT	Mostra solamente le tracce o gli album che corrispondono al genere selezionato per un artista
 	NL	Laat alleen liedjes of albums zien die voldoen aan het geselecteerde genre voor een artiest
 	ZH_CN	只显示和某个艺人的音乐风格匹配的轨道和乐谱帖
@@ -5538,6 +5558,7 @@ SETUP_NOGENREFILTER_DESC
 	DE	Beim Durchsuchen von Musikstilen können Alben und Lieder so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
 	EN	Filtering can be done when Browsing Genres to only show the albums & tracks that match the selected genre.
 	ES	Cuando se examina por género, se puede filtrar para mostrar solo los dálbumes y canciones que coinciden con el género elegido. Existe una penalidad en la parformance por habilitar esto, sin embargo los resultados pueden ser mejores para artistas "multi-género".
+	FR	Le contenu de Parcourir les genres peut être filtré afin de n'afficher que les albums et les morceaux correspondant au genre sélectionné.
 	IT	L'uso di filtri puo' essere applicato quando sfogli per genere per mostrare solo gli album e le tracce che corrispondono al genere selezionato.
 	NL	Filteren kun je doen bij "Bekijk genre" om alleen de albums en liedjes te tonen die voldoen aan het geselecteerde genre.
 	ZH_CN	您可以在当浏览音乐风格时过滤并只显示和音乐风格匹配的乐谱帖和轨道。
@@ -5870,6 +5891,7 @@ SETUP_BROWSEAGELIMIT
 	DE	Anzahl neuer Musikstücke
 	EN	New Music Limit
 	ES	Límite para Música Nueva
+	FR	Nombre de nouveautés
 	IT	Limite alla musica recente
 	NL	Limiet nieuwe muziek
 	ZH_CN	新进音乐数量显示限制
@@ -5879,6 +5901,7 @@ SETUP_BROWSEAGELIMIT_DESC
 	DE	Geben Sie an, wieviele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
 	EN	Choose the number of tracks to display when browsing for new music. Default is 100
 	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
+	FR	Spécifiez le nombre d'éléments à afficher dans la rubrique Nouveautés. Le nombre par défaut est 100.
 	IT	Scegli il numero di tracce da visualizzare quando sfogli la musica recente. Di default sono 100.
 	NL	Kies het aantal te tonen liedjes bij "Bekijk nieuwe muziek". Standaard waarde is 100.
 	ZH_CN	请指定浏览新进音乐时显示歌曲的数量限制。缺省为100。
@@ -5915,21 +5938,25 @@ SETUP_ANIMATIONLEVEL_DESC
 SETUP_DISABLESTATISTICS
 	DE	Musiksammlungsstatistik
 	EN	Library Statistics
+	FR	Statistiques bibliothèque
 	NL	Databasestatistieken
 
 SETUP_DISABLESTATISTICS_DESC
 	DE	Beim Anzeigen der SlimServer Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Wenn Sie diese Funktion deaktivieren, kann die Startseite schneller angezeigt werden.
 	EN	When the SlimServer front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
+	FR	Lorsque la page d'accueil du SlimServer apparaît, celui-ci parcourt votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la bibliothèque est importante.
 	NL	Bij het tonen van de SlimServer webpagina wordt je muziekcollectie gescand om de statistieken op te halen en te tonen op de webpagina. Deze statistieken (aantal liedjes, albums, etc.) kun je uitschakelen. Het laden van de webpagina gaat dan sneller. Vooral bij een grote muziekcollectie is dit van invloed.
 
 SETUP_DISABLE_STATISTICS
 	DE	Statistik nicht anzeigen
 	EN	Disable library statistics
+	FR	Désactiver l'affichage des statistiques
 	NL	Uitschakelen databasestatistieken
 
 SETUP_ENABLE_STATISTICS
 	DE	Statistik anzeigen
 	EN	Enable library statistics
+	FR	Activer l'affichage des statistiques
 	NL	Inschakelen databasestatistieken
 
 SETUP_LOOKFORARTWORK
@@ -6002,6 +6029,7 @@ SETUP_PREFSWRITEDELAY
 	DE	Schreib-Intervall für Einstellungen
 	EN	Prefs write interval
 	ES	Intervalo de escritura de Preferencias
+	FR	Sauvegarde préférences
 	HE	קביעת פרק הזמן בין עדכוני נתונים בשרת
 	IT	Preferenze Intervallo di scrittura
 	NL	Schrijfinterval
@@ -6011,6 +6039,7 @@ SETUP_PREFSWRITEDELAY_DESC
 	DE	Diese Einstellung definiert, wie oft die Einstellungen auf die Harddisk geschrieben werden. Die Angabe "0" führt dazu, dass jede Änderung sofort geschrieben wird. Höhere Werte puffert die Änderungen und schreibt sie in einem Rutsch nach der angegeben Anzahl Sekunden.
 	EN	This setting determines how often preferences are written to disk.  Set to 0 to write every change to disk, higher values batch changes and writes the preferences after the given number of seconds pass.
 	ES	Esta configuración determina que tan seguido se graban en disco las preferencias. Poner en 0 para escribir cada cambio en el momento, o valores mayores para agrupar los cambios y grabarlos después del número indicado de segundos.
+	FR	Ce paramètre détermine à quelle fréquence les préférences sont sauvegardées sur le disque. Choisissez 0 pour forcer une sauvegarde sur disque immédiate à chaque changement, et une valeur supérieure pour fixer le nombre de secondes avant la sauvegarde programmée des changements.
 	HE	הגדרה זו קובעת כל כמה שינויים יתבצע עדכון לדיסק
 	IT	Questa impostazione determina quando vengono registrate sul disco le preferenze. Imposta a 0 per registrare ogni cambiamento sul disco, valori piu' elevati registreranno i cambiamenti cumulativamente dopo il numero di secondi impostato.
 	NL	Deze instelling geeft aan hoe vaak de voorkeuren naar de harde schijf geschreven worden. Kies 0 om elke wijziging direct naar de harde schijf te schrijven. Een hoger getal geeft aan na hoeveel seconden de voorkeuren naar de harde schijf geschreven moeten worden.
@@ -6342,6 +6371,7 @@ SETUP_CSRFPROTECTIONLEVEL
 	DE	CSRF Schutzlevel
 	EN	CSRF Protection Level
 	ES	Nivel de Protección CSRF
+	FR	Vérification contre CSRF
 	HE	מניעת התחזות
 	IT	Livello di protezione CSRF
 	NL	CSRF protectieniveau
@@ -6351,6 +6381,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	DE	Um Sie gegen "Cross Site Request Forgery" (CSRF) Sicherheitsprobleme zu schützen, prüft SlimServer HTTP Request spezielle, falls diese Änderungen an ihrem System, Wiedergabelisten oder Player-Einstellungen vornehmen wollen. Sie können das Niveau der Überprüfung für ihren Server definieren. Vorgabe ist "Mittel". Mehr Informationen (Englisch) sind in der <a href="html/docs/http.html#csrf">Hilfe</a> verfügbar.
 	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="html/docs/http.html#csrf">See Help Section</a> for more details.
 	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
+	FR	Pour se protéger contre les risques de sécurité de type "Cross Site Request Forgery" (CSRF), le SlimServer applique une vérification supplémentaire aux requêtes HTTP susceptibles d'altérer le système ou de manipuler des listes de lecture ou des platines. Vous pouvez spécifier le niveau de cette vérification. La valeur par défaut est Moyenne. Référez-vous à l'Aide pour plus d'informations.
 	HE	רמת בדיקת בקשות התחברות
 	IT	Per proteggersi da minacce alla sicurezza come i "Cross Site Request Forgery" (CSRF), lo SlimServer effettua un controllo accurato alle richieste HTTP per quelle funzioni che possono applicare cambiamenti al sistema, manipolare le liste di esecuzione o al lettore. Puoi scegliere il livello di controllo usato dal server. Di default e' Medio. Vedi la Sezione Aiuto per maggiori dettagli.
 	NL	Om te beschermen tegen "Cross Site Request Forgery" (CSRF) beveiligingsgevaren, voert SlimServer onderzoek uit op HTTP verzoeken die je systeem, playlists of player kunnen wijzigen. Je kunt het niveau van onderzoek kiezen in de server. De standaard is Gemiddeld. Zie de <a href="html/docs/http.html#csrf">help sectie</a> voor meer details.    
@@ -7714,6 +7745,7 @@ NONE
 	EN	None
 	ES	Ninguno
 	FI	Ei mitään
+	FR	Aucun
 	HE	ללא
 	IT	Nessuno
 	NL	Geen
@@ -7725,6 +7757,7 @@ HIGH
 	EN	High
 	ES	Alto
 	FI	Korkea
+	FR	Elevée
 	HE	גבוהה
 	IT	Micro
 	NL	Hoog
@@ -8835,6 +8868,7 @@ ITEMS
 	CS	Položky
 	DE	Einträge
 	EN	Items
+	FR	Eléments
 	HE	פריטים
 	IT	Voci
 	ZH_CN	项目
@@ -9458,6 +9492,7 @@ REMOTE_SETTINGS
 	DE	Fernsteuerung
 	EN	Remote
 	ES	Control Remoto
+	FR	Télécommande
 	HE	הגדרות שלט
 	IT	Telecomandi
 	JA	リモコン
@@ -11117,6 +11152,7 @@ MOODLOGIC_MOOD_6
 RADIO_TUNEIN
 	DE	Internet Adresse abspielen
 	EN	Tune In URL
+	FR	Connexion radio
 
 RADIO_TUNEIN_NOW
 	DE	Manuelle Radio Einwahl
@@ -11129,18 +11165,21 @@ RADIO_TUNEIN_DESC
 	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Wiedergabeliste, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
 	ES	Si ya conoce la URL de la estación que se quiere escuchar, ingrésela debajo y presione en el botón "Sintonizar". Se puede ingresar la URL tanto del stream de la radio (ej. http://62.49.59.50:8000) o el archivo de lista que apunta a ese stream (ej. http://www.hitzradio.com/hitzradio.pls).
+	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez l'entrer ci-dessous et cliquer sur Connecter pour l'écouter. Vous pouvez utiliser l'URL du flux lui-même (par ex. http://62.49.59.50:8000) ou de la liste de lecture pointant vers le flux (par ex. http://www.hitzradio.com/hitzradio.pls).
 	IT	Se gia' conosci l'URL della stazione che vuoi ascoltare, inseriscila piu' sotto e premi il tasto "Sintonizza". Puoi inserire l'URL sia dello stesso stream radio (es. http://62.49.59.50:8000) sia il file della lista di esecuzione che punta allo stream stesso (es. http://www.hitzradio.com/hitzradio.pls).
 	NL	Indien je de URL al weet van de zender die je wilt beluisteren, kun je het hieronder ingeven. Klik dan op de "Instellen" toets.  Je kunt de URL gebruiken van de radio stream zelf (bijv. http://62.49.59.50:8000) of de playlist dat naar de radio stream verwijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
 	ES	URL de Radio:
+	FR	URL radio :
 	IT	URL Radio:
 
 RADIO_TUNEIN_CHOOSE
 	DE	Station wählen
 	EN	Tune In
 	ES	Sintonizar
+	FR	Connecter
 	IT	Sintonizza
 	NL	Instellen
 
@@ -11968,6 +12007,7 @@ SETUP_GROUP_RADIO_DESC
 	DE	SlimServer unterstützt Internet Radio durch verschiedene Radiostationen. Sie können auf dieser Seite diese Unterstützung für einige Anbieter konfigurieren, inklusive der Angabe von Benutzername und Passwort für Premium-Zugänge.
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
 	ES	Slimserver incluye soporte para Radios por  Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
+	FR	Le SlimServer supporte différents fournisseurs de radios Internet. Vous pouvez activer ou désactiver le support de ces fournisseurs et fournir votre nom d'utilisateur et mot de passe pour l'accès à certains services. Cliquez sur Modifier pour enregistrer vos changements.
 	IT	Lo SlimServer include il supporto alle radio via Internet attraverso diversi fornitori. Puoi configurare in questa pagina, l'accesso per alcuni di questi fornitori, incluso l'inserimento di nome utente e password per l'accesso privilegiato. Per salvare le modifiche premi Cambia.
 	JA	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
 	NL	SlimServer ondersteunt Internet radio via verschillende radio providers. Je kunt de instellingen voor sommige van deze providers instellen op deze pagina waaronder het opgeven van gebruikersnaam en wachtwoord. Om de wijzigingen te bewaren klik je op de knop Veranderen.
@@ -12120,7 +12160,7 @@ SQUEEZENETWORK_CONNECTING
 	EN	Connecting to SqueezeNetwork...
 	ES	Conectándose a SqueezeNetwork...
 	FI	Yhdistetään SqueezeNetworkiin...
-	FR	Connecte à SqueezeNetwork...
+	FR	Connexion à SqueezeNetwork...
 	IT	In connessione a SqueezeNetwork...
 	NL	Connectie maken met SqueezeNetwork...
 	ZH_CN	SqueezeNetwork连接中...
@@ -12220,6 +12260,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
 	ES	Se puede elegir entre ubicar los álbumes  de compilaciones bajo "Varios Artistas" o ubicarles debajo de cada artista en la compilación.
 	FI	Voit valita näkyvätkö kokoelmalevyt yksittäisten artistien alla vai "Eri Esittäjiä" otsikon alla
+	FR	Vous pouvez spécifier si le contenu des albums de compilation apparait ensemble sous "Artistes divers" ou indépendamment sous chaque nom d'artiste.
 	IT	Puoi decidere di inserire gli album di compilation tutti assieme sotto "Artisti vari" o mostrarli sotto ogni voce di artista della compilation.
 	NL	Je kunt kiezen om verzamelalbums te tonen bij "Various Artists" of ze te tonen bij elke artiest in het verzamelalbum.
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
@@ -12229,6 +12270,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
 	EN	Group compilation albums together
 	ES	Agrupar juntos los álbumes de compilaciones
 	FI	Ryhmitä kokoelmalevyt yhteen
+	FR	Regrouper le contenu des compilations
 	IT	Raggruppa le compilation assieme
 	NL	Toon verzamelalbums bij elkaar
 	ZH_CN	把合辑组合在一起
@@ -12238,6 +12280,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	EN	List compilation albums under each artist
 	ES	Listar álbumes de compilaciones debajo de cada artista
 	FI	Näytä kokoelmalevy jokaisen artistin alla
+	FR	Faire apparaître indépendamment chaque artiste
 	IT	Elenca le compilation per singolo artista
 	NL	Toon verzamelalbums bij de individuele artiesten
 	ZH_CN	把合辑发表在个别艺人中
@@ -12247,6 +12290,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
 	ES	Cuando los álbumes compilados se agrupan juntos, aparecen bajo "Varios Artistas" por defecto. Se puede cambiar ese nombre debajo.
 	FI	Kun kokoelmalevyt on ryhmitelty yhteen, ne näkyvät oletusarvoisesti "Eri Esittäiä" otsikon alla. Voit vaihtaa tämän otsikon alla
+	FR	Lorsque le contenu des compilations est groupé, il apparaît par défaut sous le nom "Artistes divers". Vous pouvez spécifier un autre nom ci-dessous.
 	IT	Quando gli album di compilation sono raggruppati assieme, per default appaiono sotto "Artisti Vari". Puoi cambiare la denominazione piu' sotto.
 	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn komen ze standaard terecht bij "Various Artists". Je  kunt die naam hieronder wijzigen.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
@@ -12256,6 +12300,7 @@ VARIOUSARTISTS
 	EN	Various Artists
 	ES	Varios Artistas
 	FI	Eri Esittäjiä
+	FR	Artistes divers
 	IT	Artisti Vari
 	ZH_CN	多位艺人
 
@@ -12284,6 +12329,7 @@ SETUP_USEBANDASALBUMARTIST_DESC
 	EN	Albums that contain songs that are tagged with a band may be listed under that band name or with the other artists for that album.  The band tag is also known as TPE2 and may appear as the "album artist" in some software.
 	ES	Los álbumes que contienen canciones que estan marcadas ("tagged") con una banda pueden ser listados solo bajo el nombre de ese artista o junto a todos los artistas de ese álbum. El tag "band" es conocido también como TPE2 y puede aparecer como "album artist" en algún software.
 	FI	Albumit, jotka sisältävät kappaleita, joissa on yhtyeen tiedot voidaan listata yhtyeen nimen alla tai muiden saman albumin artistien kanssa. Artisti tag tunnetaan TPE2 tai "album artist" tagina eri ohjelmissa.
+	FR	Les albums qui contiennent des morceaux taggués avec un nom de groupe peuvent être groupés sous ce nom ou sous le nom d'autres artistes de l'album. Le repère spécifiant le nom du groupe est également appelé TPE2 et apparaît sous "Album artist" ou "Artiste de l'album" dans certains logiciels.
 	IT	Gli album che contengono brani con Gruppo tra le Tag possono essere elencati sotto quel nome o sotto il nome degli altri artisti di quell'album. La Tag Gruppo e' anche conosciuta come TPE2 e' puo' figurare come "artista album" in qualche programma.
 	NL	Albums die liedjes hebben die Band taginformatie hebben kunnen getoond worden bij die band of bij de andere artiesten van dat album.  De band tag is ook bekend als TPE2 en heet in andere programma's soms "Album artist".
 
@@ -12292,6 +12338,7 @@ SETUP_USEBANDASALBUMARTIST_1
 	EN	List albums by band
 	ES	Listar álbumes por banda
 	FI	Listaa albumit yhtyeittäin
+	FR	Lister les albums par groupe
 	IT	Elenca gli album per gruppo
 	NL	Toon albums per band
 
@@ -12300,6 +12347,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	EN	List albums by all artists for that album
 	ES	Listar álbumes con todos los artistas de ese álbum
 	FI	Listaa albumit kaikkien albumin artistien perusteella
+	FR	Lister les albums par tous les artistes
 	IT	Elenca gli album sotto ogni artista di quell'album
 	NL	Toon albums bij alle artiesten voor dat album
 
