@@ -724,7 +724,7 @@ sub playlistShuffleCommand {
 
 sub playlistXalbumCommand {
 	my $request = shift;
-	
+
 	$d_commands && msg("Commands::playlistXalbumCommand()\n");
 
 	# check this is the correct command.
@@ -745,7 +745,7 @@ sub playlistXalbumCommand {
 	my $find     = {};
 	my @joins    = ();
 	my $attrs    = {
-		'order_by' => 'tracks.disc, tracks.tracknum, tracks.titlesort'
+		'order_by' => 'me.disc, me.tracknum, me.titlesort'
 	};
 
 	# Find the songs for the passed params
@@ -1199,7 +1199,7 @@ sub playlistcontrolCommand {
 		}
 
 		@tracks = Slim::Schema->search('Track', $find, {
-			'order_by' => 'tracks.disc tracks.tracknum tracks.titlesort',
+			'order_by' => 'me.disc me.tracknum me.titlesort',
 			'join'     => \@joins,
 		})->all;
 	}
@@ -2047,7 +2047,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			# Do some mapping from the player browse mode. This is
 			# already done in the web ui.
-			if ($key =~ /^(playlist|age|album|genre|year)$/) {
+			if ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
 				$key = "$1.id";
 			}
 
@@ -2070,15 +2070,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$joinMap{'album'} = 'album';
 
-			} elsif ($key =~ /^(?:contributor|artist)\./) {
+			} elsif ($key =~ /^contributor\./) {
 
 				$sort = $albumSort;
 				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
-
-			} elsif ($key eq 'contributor') {
-
-				$key = 'contributorTracks.contributor';
-				$joinMap{'contributor'} = 'contributorTracks';
 			}
 
 			# Turn 'track.*' into 'me.*'
@@ -2105,8 +2100,6 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
 
 	} elsif ($find{'playlist.id'}) {
-
-		
 
 		# Treat playlists specially - they are containers.
 		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});
