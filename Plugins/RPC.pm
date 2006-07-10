@@ -246,12 +246,6 @@ sub handleReqJSON {
 		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{'asyncId'} . "," . $rpcresponse . ")";
 	}
 
-	my $rpcresponse = JSON::Syck::Dump($respobj);
-
-	if ($params->{'asyncId'}) {
-		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{'asyncId'} . "," . $rpcresponse . ")";
-	}
-
 	$::d_plugins && msg("JSON response ready\n");
 
 	return \$rpcresponse;
