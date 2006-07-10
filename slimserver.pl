@@ -520,7 +520,6 @@ sub idle {
 
 sub idleStreams {
 	my $timeout = shift || 0;
-	my $streamOnly = shift; # set for select to only check streaming sockets
 
 	my $select_time = 0;
 	my $check_timers = 1;
@@ -536,7 +535,7 @@ sub idleStreams {
 
 	$::d_time && msg("idleStreams: select_time: $select_time, checkTimers: $check_timers\n");
 
-	Slim::Networking::Select::select($select_time, $streamOnly);
+	Slim::Networking::Select::select($select_time, 1);
 
 	if ( $check_timers ) {
 		Slim::Utils::Timers::checkTimers();

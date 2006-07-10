@@ -30,9 +30,9 @@ our $selects = {
 	'read'    => IO::Select->new, # vectors used for normal select
 	'write'   => IO::Select->new,
 	'error'   => IO::Select->new,
-	's_read'  => IO::Select->new, # alternatives for streaming sockets only
-	's_write' => IO::Select->new,
-	's_error' => IO::Select->new,
+	'is_read'  => IO::Select->new, # alternatives for select within idleStreams
+	'is_write' => IO::Select->new,
+	'is_error' => IO::Select->new,
 };
 
 our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
@@ -73,7 +73,7 @@ sub removeError {
 }
 
 sub _updateSelect {
-	my ($type, $sock, $callback, $stream) = @_;
+	my ($type, $sock, $callback, $idle) = @_;
 
 	my $fileno = fileno($sock);
 
@@ -85,7 +85,7 @@ sub _updateSelect {
 
 			$selects->{$type}->add($sock);
 
-			$selects->{'s_'.$type}->add($sock) if $stream;
+			$selects->{'is_'.$type}->add($sock) if $idle;
 
 			$::d_select && msgf("Select: [%s] Adding %s -> %s\n",
 				$sock,
@@ -110,9 +110,9 @@ sub _updateSelect {
 			$selects->{$type}->remove($sock);
 		}
 
-		if ($selects->{'s_'.$type}->exists($sock)) {
+		if ($selects->{'is_'.$type}->exists($sock)) {
 
-			$selects->{'s_'.$type}->remove($sock);
+			$selects->{'is_'.$type}->remove($sock);
 		}
 		
 		$::d_select && msgf("Select: [%s] Removing %s\n",
@@ -124,12 +124,12 @@ sub _updateSelect {
 
 sub select {
 	my $select_time = shift;
-	my $streamOnly = shift; # set by some callers of idleStreams to use streaming only vectors
+	my $idleStreams = shift; # called from idleStreams
 
 	$::perfmon && $endSelectTime && $responseTime->log(Time::HiRes::time() - $endSelectTime);
 
-	my ($r, $w, $e) = ( $streamOnly )
-		? IO::Select->select($selects->{'s_read'}, $selects->{'s_write'}, $selects->{'s_error'}, $select_time)
+	my ($r, $w, $e) = ( $idleStreams )
+		? IO::Select->select($selects->{'is_read'}, $selects->{'is_write'}, $selects->{'is_error'}, $select_time)
 		: IO::Select->select($selects->{'read'}, $selects->{'write'}, $selects->{'error'}, $select_time);
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
@@ -236,7 +236,7 @@ sub writeNoBlock {
 
 		unshift @{$writeQueue{$socket}}, $segment;
 
-		addWrite($socket, \&writeNoBlock);
+		addWrite($socket, \&writeNoBlock, 1);
 	} 
 }
 
