@@ -111,6 +111,7 @@ sub init {
 	$::d_info && msgf("Connected to database $source - schema version: [%d]\n", $dbix->version);
 
 	# Load the DBIx::Class::Schema classes we've defined.
+	# If you add a class to the schema, you must add it here as well.
 	$class->load_classes(qw/
 		Age
 		Album
@@ -139,7 +140,6 @@ sub init {
 		$class->$name({});
 	}
 
-	#$class->trackAttrs( Slim::Schema::Track->attributes() );
 	$trackAttrs = Slim::Schema::Track->attributes;
 	$class->driver($driver);
 

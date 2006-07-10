@@ -66,8 +66,6 @@ sub setTracks {
 			}
 		}
 	});
-
-	Slim::Schema->toggleDebug(0);
 }
 
 1;

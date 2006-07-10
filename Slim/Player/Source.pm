@@ -806,11 +806,11 @@ sub jumpto {
 		return;
 	}
 	
-	if ($offset =~ /([\+\-])(\d+)/ &&
-		($1 eq '-' ||
-		 $2 eq '0')) {
+	if ($offset && $offset =~ /([\+\-])(\d+)/ && ($1 eq '-' || $2 eq '0')) {
+
 		my $currentURL = Slim::Player::Playlist::url($client, streamingSongIndex($client));
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
+
 		if ($handler && 
 			$handler->can("canDoAction") &&
 			!$handler->canDoAction($client, $currentURL, 'rew')) {
