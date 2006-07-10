@@ -439,7 +439,7 @@ sub infoFormat {
 	my $blessed   = blessed($fileOrObj);
 	my $track     = $fileOrObj;
 
-	if (!$blessed || ($blessed ne 'Slim::Schema::Track' || $blessed ne 'Slim::Schema::Playlist')) {
+	if (!$blessed || !($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
 
 		$track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'    => $fileOrObj,
