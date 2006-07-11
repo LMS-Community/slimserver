@@ -276,12 +276,7 @@ sub stillScanning {
 
 	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
 
-	# Return true if the process is still running, or the process is still
-	# running and the flag is set in the db. Return false if the process
-	# isn't running and the flag isn't set. Or if the process isn't
-	# running and the flag is set, as setting the flag is the last thing
-	# the scanner does.
-	if ($running || ($scanning && $running)) {
+	if ($running || $scanning) {
 		return 1;
 	}
 
