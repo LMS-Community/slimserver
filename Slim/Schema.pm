@@ -788,7 +788,7 @@ sub mergeVariousArtistsAlbums {
 
 		if ($markAsCompilation) {
 
-			$::d_import && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
+			$::d_import && !$progress && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
 
 			$albumObj->compilation(1);
 			$albumObj->contributor($vaObjId);
@@ -1625,11 +1625,6 @@ sub _postCheckAttributes {
 			$set{'year'} = $track->year;
 		} else {
 			$set{'year'} = undef;
-		}
-
-		if (!$albumObj->artwork && (!$track->thumb || !$track->cover)) {
-
-			$set{'artwork'} = $track->id;
 		}
 
 		$albumObj->set_columns(\%set);

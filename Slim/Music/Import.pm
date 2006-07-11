@@ -140,6 +140,14 @@ sub startScan {
 
 	Slim::Schema->mergeVariousArtistsAlbums;
 
+	# Post-process artwork, so we can use title formats, and use a generic
+	# image to speed up artwork loading.
+	$::d_import && msg("Import: Starting findArtwork().\n");
+
+	$importsRunning{'findArtwork'} = Time::HiRes::time();
+
+	Slim::Music::Artwork->findArtwork;
+
 	# Remove and dangling references.
 	if ($class->cleanupDatabase) {
 

@@ -28,6 +28,39 @@ my $artworkDir   = '';
 tie my %lastFile, 'Tie::Cache::LRU', 32;
 
 # Public class methods
+sub findArtwork {
+	my $class  = shift;
+
+	# Find distinct albums to check for artwork.
+	my $tracks = Slim::Schema->search('Track', { 'audio' => 1 }, { 'group_by' => 'album' });
+
+	my $progress = undef;
+	my $count    = $tracks->count;
+
+	if ($count) {
+		$progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+	}
+
+	while (my $track = $tracks->next) {
+
+		if ($track->coverArt('cover') || $track->coverArt('thumb')) {
+
+			my $album = $track->album;
+
+			$::d_import && !$progress && msgf("Import: Album [%s] has artwork.\n", $album->name);
+
+			$album->artwork($track->id);
+			$album->update;
+		}
+
+		$progress->update if $progress;
+	}
+
+	$progress->update($count) if $progress;
+
+	Slim::Music::Import->endImporter('findArtwork');
+}
+
 sub getImageContentAndType {
 	my $class = shift;
 	my $path  = shift;

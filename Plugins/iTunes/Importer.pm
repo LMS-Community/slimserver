@@ -399,14 +399,6 @@ sub handleTrack {
 			return 1;
 		};
 
-		my $albumObj = $track->album;
-
-		if ($albumObj && !$albumObj->artwork && !defined $track->thumb) {
-
-			$albumObj->artwork($track->id);
-			$albumObj->update;
-		}
-
 	} else {
 
 		$::d_itunes && msg("iTunes: unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL') . "\n");

@@ -368,12 +368,6 @@ sub processSong {
 
 	if ($songInfo{'active'} eq 'yes' && blessed($albumObj)) {
 
-		# NYI: MMM has more ways to access artwork...
-		if (!$albumObj->artwork && !defined $track->thumb) {
-
-			$albumObj->artwork($track->id);
-		}
-
 		$albumObj->musicmagic_mixable(1);
 		$albumObj->update;
 
