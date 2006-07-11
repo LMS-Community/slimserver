@@ -314,6 +314,8 @@ sub browsedb {
 		}
 	}
 
+	main::idleStreams();
+
 	if ($count) {
 
 		my $lastAnchor = '';
@@ -321,6 +323,8 @@ sub browsedb {
 		my $firstItem  = undef;
 
 		for my $item ($browseRS->slice($start, $end)) {
+
+			main::idleStreams();
 
 			# The track might have been deleted out from under us.
 			# XXX - should we have some sort of error message here?
@@ -378,8 +382,6 @@ sub browsedb {
 			$firstItem ||= $item;
 
 			push @{$params->{'browse_items'}}, \%form;
-
-			main::idleStreams();
 		}
 
 		# If we're at the track level, and it's at the bottom of the
