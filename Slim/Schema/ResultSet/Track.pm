@@ -33,14 +33,6 @@ sub pageBarResults {
 	});
 }
 
-sub alphaPageBar {
-	my $self = shift;
-	my $find = shift;
-	my $sort = shift;
-
-	return !exists $find->{'album'};
-}
-
 sub ignoreArticles { 1 }
 
 sub searchNames {
