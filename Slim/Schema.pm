@@ -1357,7 +1357,7 @@ sub _postCheckAttributes {
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
-	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation);
+	my $contributors     = $self->_mergeAndCreateContributors($track, $attributes, $isCompilation, $isLocal);
 	my $foundContributor = scalar keys %{$contributors};
 
 	# Create a singleton for "No Artist"
@@ -1704,7 +1704,11 @@ sub _albumIsUnknownAlbum {
 }
 
 sub _mergeAndCreateContributors {
-	my ($self, $track, $attributes, $isCompilation) = @_;
+	my ($self, $track, $attributes, $isCompilation, $isLocal) = @_;
+
+	if (!$isLocal) {
+		return;
+	}
 
 	my %contributors = ();
 

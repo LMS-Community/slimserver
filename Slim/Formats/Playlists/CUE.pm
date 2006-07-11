@@ -298,7 +298,7 @@ sub read {
 			});
 
 			# Remove entries from other sources. This cuesheet takes precedence.
-			Slim::Schema->search('Track', { 'url' => $track->{'FILENAME'} . '#*' })->delete_all;
+			Slim::Schema->search('Track', { 'url' => $track->{'FILENAME'} . '#%' })->delete_all;
 		}
 
 		push @items, $track->{'URI'}; #url;
@@ -308,14 +308,21 @@ sub read {
 		$track->{'SIZE'} = $basetrack->audio_size;
 
 		# our tracks won't be visible if we don't include some data from the base file
-		for my $attribute (keys %$basetrack) {
+		my %data = $basetrack->get_columns;
+
+		for my $attribute (keys %data) {
+
 			next if $attribute eq 'id';
 			next if $attribute eq 'url';
-			next if $attribute =~ /^_/;
-			next unless exists $basetrack->{$attribute};
+
+			if (defined defined $data{$attribute} && !exists $track->{uc $attribute}) {
 			
-			$track->{uc $attribute} = $basetrack->{$attribute} unless exists $track->{uc $attribute};
+				$track->{uc $attribute} = $data{$attribute};
+			}
 		}
+
+		# Remove the old track from the DB - this will remove spurious artists, etc.
+		Slim::Schema->search('Track', { 'url' => $track->{'FILENAME'} })->delete_all;
 
 		$class->processAnchor($track);
 
