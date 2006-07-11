@@ -165,7 +165,23 @@ sub main {
 
 	} else {
 
-		@packages = values %packages;
+		@packages = sort values %packages;
+	}
+
+	# DBI needs to be first.
+	if ((grep { /DBI/ } @packages) && (grep { /DBD/ } @packages)) {
+
+		for (my $i = 0; $i < scalar @packages; $i++) {
+
+			if ($packages[$i] =~ /DBD/) {
+
+				my $dbd = $packages[$i];
+
+				$packages[$i] = $packages[$i+1];
+				$packages[$i+1] = $dbd;
+				last;
+			}
+		}
 	}
 
 	for my $package (@packages) {
