@@ -151,13 +151,27 @@ END %]
 [% BLOCK galleryitem %]
 <li>
 <div style="width:[% item.size %]px;">
+
 [%- IF anchor %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
+
 	<div class="artworkImage" style="width: [% item.size %];">
-		[% IF item.coverThumb %]<div style="width:[% item.size %]px;height:[% item.size %]px;"><a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a></div>[% END %]
-		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
+
+		[% IF item.coverThumb %]
+
+			<div style="width:[% item.size %]px;height:[% item.size %]px;">
+			<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+			</div>
+
+		[% ELSE %]
+
+			<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>
+
+		[% END %]
+
 	</div>
+
 	[% SET class = 'even' odd = 0 %]
 	<div class="artworkControls">
 		[%- PROCESS $controls -%]
@@ -167,7 +181,6 @@ END %]
 	</span></div>
 </div></li>
 [%- END %]
-
 
 [%# these are the links to be shown with items on the playlist %]
 [% BLOCK playlistcontrols %]
