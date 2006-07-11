@@ -158,7 +158,6 @@ sub init {
 		"udpChunkSize"		=> 1400,
 		'itemsPerPage'		=> 50,
 		'disableStatistics'	=> 0,
-		'includeNoArt'		=> 0,
 		'artfolder'		=> '',
 		'coverThumb'		=> '',
 		'coverArt'		=> '',

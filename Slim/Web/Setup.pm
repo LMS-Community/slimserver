@@ -1378,7 +1378,7 @@ sub initSetupConfig {
 		,'Groups' => {
 			'Default' => {
 					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb',
-					'artfolder','thumbSize','includeNoArt','sortBrowseArt']
+					'artfolder','thumbSize','sortBrowseArt']
 				}
 			}
 		,'Prefs' => {
@@ -1421,13 +1421,6 @@ sub initSetupConfig {
 					'validate' => \&Slim::Utils::Validate::isInt
 					,'validateArgs' => [25,250,1,1]
 				}
-			,'includeNoArt' => {
-						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'options' => {
-								'1' => 'SETUP_INCLUDENOART_1',
-								'0' => 'SETUP_INCLUDENOART_0'
-							}
-					}
 			,'sortBrowseArt' => {
 				'validate' => \&Slim::Utils::Validate::inHash,
 				'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
