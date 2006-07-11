@@ -77,7 +77,12 @@ sub dirsFor {
 
 	if ($OS eq 'mac') {
 
-		if ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
+		# These are all at the top level.
+		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
+
+			push @dirs, $Bin;
+
+		} elsif ($dir =~ /^(?:Graphics|HTML|IR|Plugins|MySQL)$/) {
 
 			# For some reason the dir is lowercase on OS X.
 			if ($dir eq 'HTML') {
@@ -93,12 +98,6 @@ sub dirsFor {
 			push @dirs, catdir($Bin, $dir);
 		}
 
-		# These are all at the top level.
-		if ($dir =~ /^(?:strings|convert|types)$/) {
-
-			push @dirs, $Bin;
-		}
-
 	# Debian specific paths.
 	} elsif (isDebian()) {
 
@@ -106,7 +105,7 @@ sub dirsFor {
 
 			push @dirs, "/usr/share/slimserver/$dir";
 
-		} elsif ($dir eq 'strings') {
+		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
 			push @dirs, "/usr/share/slimserver";
 
@@ -134,7 +133,7 @@ sub dirsFor {
 	} else {
 
 		# Everyone else - Windows, and *nix.
-		if ($dir =~ /^(?:strings|convert|types)$/) {
+		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;
 

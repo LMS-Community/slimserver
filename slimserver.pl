@@ -74,6 +74,7 @@ package main;
 use Getopt::Long;
 use FindBin qw($Bin);
 use lib "$Bin";
+use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
 use Socket qw(:DEFAULT :crlf);
@@ -277,20 +278,10 @@ sub init {
 	autoflush STDERR;
 	autoflush STDOUT;
 
-	my $revision = catdir($Bin, 'revision.txt');
-
 	# The revision file may not exist for svn copies.
-	if (-e $revision) {
-
-		open(REV, $revision);
-		chomp($REVISION = <REV>);
-		close(REV);
-
-	} else {
-
-		$REVISION = 'trunk';
-
-	}
+	$REVISION = eval { File::Slurp::read_file(
+		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
+	) } || 'TRUNK';
 
 	if ($diag) { 
 		eval "use diagnostics";
@@ -1047,11 +1038,9 @@ sub save_pid_file {
 
 	$::d_server && msg("SlimServer saving pid file.\n");
 
-	return unless defined $pidfile;
-
-	open PIDFILE, ">$pidfile" or die "Couldn't open pidfile: [$pidfile] for writing!: $!";
-	print PIDFILE "$process_id\n";
-	close PIDFILE;
+	if (defined $pidfile) {
+		File::Slurp::write_file($pidfile, $process_id);
+	}
 }
  
 sub remove_pid_file {
