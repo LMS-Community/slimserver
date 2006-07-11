@@ -175,7 +175,6 @@ sub init {
 
 					while (my ($subkey, $subvalue) = each %{$value}) {
 
-						next if $subkey =~ /role$/;
 						push @terms, join('=', $levels[$level-1], $subvalue);
 					}
 
@@ -332,10 +331,11 @@ sub browsedbExitCallback {
 
 	# Left means pop out of this mode
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
-	} 
+
 	# Right means select the current item
-	elsif ($exittype eq 'RIGHT') {
+	} elsif ($exittype eq 'RIGHT') {
 
 		my $items       = $client->param('listRef');
 		my $hierarchy   = $client->param('hierarchy');
@@ -353,17 +353,17 @@ sub browsedbExitCallback {
 
 			my $nextRS = Slim::Schema->rs($levels[$level+1]);
 
-			if ($nextRS->allTitle && $nextRS->allTitle eq $currentItem) {
+			if ($nextRS && $nextRS->allTitle && $nextRS->allTitle eq $currentItem) {
 
 				$all = 1;
 			}
 		}
 
-		if (!defined($currentItem)) {
-			$client->bumpRight();
-		}
-		
-		elsif ($currentItem eq 'FAVORITE') {
+		if (!defined $currentItem) {
+
+			$client->bumpRight;
+
+		} elsif ($currentItem eq 'FAVORITE') {
 
 			my $num   = $client->param('favorite');
 			my $track = Slim::Schema->find('Track', $client->param('findCriteria')->{'playlist'});
@@ -393,11 +393,11 @@ sub browsedbExitCallback {
 
 				$client->param('favorite', -1);
 			}
-		}
-		# If we're dealing with a container or an ALL list
-		elsif ($descend || $all) {
 
-			my $findCriteria      = { %{$client->param('findCriteria')} };
+		} elsif ($descend || $all) {
+
+			# If we're dealing with a container or an ALL list
+			my $findCriteria      = Storable::dclone($client->param('findCriteria'));
 			my $selectionCriteria = $client->param('selectionCriteria');
 			my $field             = $levels[$level];
 
@@ -428,20 +428,22 @@ sub browsedbExitCallback {
 			);
 
 			# Only include the search terms (i.e. those associated with
-			# an actual tex search) if we're dealing with the ALL case.
+			# an actual text search) if we're dealing with the ALL case.
 			if ($all) {
 				$params{'search'} = $client->param('search');
 			}
 
 			# Push recursively in to the same mode for the next level down.
 			Slim::Buttons::Common::pushModeLeft($client, 'browsedb', \%params);
-		}
-		# For a track, push into the track information mode
-		else {
+
+		} else {
+
+			# For a track, push into the track information mode
 			Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', { 'track' => $currentItem });
 		}
-	}
-	else {
+
+	} else {
+
 		$client->bumpRight();
 	}
 }
@@ -661,7 +663,9 @@ sub setMode {
 
 	} else {
 
-		$topRS = $topRS->descend($find, $sort, @levels[0..$level])->distinct;
+		# Bug: 3654 Pass a copy of the find ref, so we don't modify it.
+		# This isn't an issue for the webUI, as it reconstructs $find every time.
+		$topRS = $topRS->descend(Storable::dclone($find), $sort, @levels[0..$level])->distinct;
 
 		if ($levels[$level] eq 'age') {
 
