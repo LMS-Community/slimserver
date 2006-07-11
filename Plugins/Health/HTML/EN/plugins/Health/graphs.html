@@ -30,6 +30,10 @@
 	<input type="text" class="stdedit" name="warnlo" size="5" value="[% log.warnlo %]">
 	[% "PLUGIN_HEALTH_HIGH" | string %]
 	<input type="text" class="stdedit" name="warnhi" size="5" value="[% log.warnhi %]">
+	[% IF type == 'server' %]
+		[% "PLUGIN_HEALTH_BT" | string %]
+		<input type="checkbox" name="warnbt" [% IF log.warnbt %]checked[% END %]>
+	[% END %]
 	<input type="submit" class="stdclick" value=[% "PLUGIN_HEALTH_SET" | string %]>
 </form>
 [% END %]

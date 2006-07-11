@@ -23,7 +23,7 @@ sub new {
 }
 
 sub adjust {
-	my ($ref, $name, $array, $warnLo, $warnHi) = @_;
+	my ($ref, $name, $array, $warnLo, $warnHi, $warnbt) = @_;
 
 	my $buckets = $#{$array};
 
@@ -37,6 +37,7 @@ sub adjust {
 	$ref->{thres} = [];                    # array holding thresholds per bucket
 	$ref->{warnlo} = $warnLo;              # low warning threshold - msg if crossed
 	$ref->{warnhi} = $warnHi;              # high warning threshold - msg if crossed
+	$ref->{warnbt} = $warnbt;              # bt() if warning threshold crossed
 
 	# optimise speed of logging to lowest & highest buckets by storing extra data in hash direct
 	$ref->{valL}   = 0;                    # val for bucket 0
@@ -59,6 +60,10 @@ sub warnHigh {
 	shift->{warnhi};
 }
 
+sub warnBt {
+	shift->{warnbt};
+}
+
 sub setWarnLow {
 	my $ref = shift || return;
 	my $val = shift;
@@ -72,6 +77,13 @@ sub setWarnHigh {
 
 	$ref->{warnhi} = $val;
 }
+
+sub setWarnBt {
+	my $ref = shift || return;
+	my $val = shift;
+
+	$ref->{warnbt} = $val;
+}	
 
 sub clear {
 	my $ref = shift;
@@ -101,8 +113,8 @@ sub log {
 	($val < $ref->{min}) && ($ref->{min} = $val);
 
 	# test for crossing warning threshold and log msg if appropriate
-	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." < ".$ref->{warnlo}." : ".$val."\n") && ($warn = 1);
-	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." > ".$ref->{warnhi}." : ".$val."\n") && ($warn = 1);
+	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." < ".$ref->{warnlo}." : ".$val."\n") && ($warn = 1) && $ref->{warnbt} && bt();
+	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." > ".$ref->{warnhi}." : ".$val."\n") && ($warn = 1) && $ref->{warnbt} && bt();
 
 	# shortcut for hits on first bucket
 	($val < $ref->{thresL}) && ++$ref->{valL} && return $warn;

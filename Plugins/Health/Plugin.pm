@@ -281,6 +281,7 @@ sub handleGraphs {
 			if (exists($params->{'setwarn'})) {
 				$monitor->setWarnHigh(Slim::Utils::Validate::number($params->{'warnhi'}));
 				$monitor->setWarnLow(Slim::Utils::Validate::number($params->{'warnlo'}));
+				$monitor->setWarnBt($params->{'warnbt'});
 			}
 			if (exists($params->{'clear'})) {
 				$monitor->clear();
@@ -292,6 +293,7 @@ sub handleGraphs {
 			'graph' => $monitor->sprint(),
 			'warnlo'=> $monitor->warnLow(),
 			'warnhi'=> $monitor->warnHigh(),
+			'warnbt'=> $monitor->warnBt(),
 		};
 	}
 
@@ -621,6 +623,9 @@ PLUGIN_HEALTH_LOW
 PLUGIN_HEALTH_HIGH
 	EN	High
 
+PLUGIN_HEALTH_BT
+	EN	Backtrace
+
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
 	EN	The server is currently collecting performance statistics for this player.  
 
@@ -628,7 +633,7 @@ PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 	EN	The server is currently collecting performance statistics for various internal server functions.  These graphs are intended to be used to help diagnose performance issues with the server and its plugins.
 
 PLUGIN_HEALTH_WARNING_DESC
-	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log">here</a>.
+	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log"><u>here</u></a>.
 
 PLUGIN_HEALTH_SIGNAL_DESC
 	DE	Diese Graphik zeigt die Signalstärke der Wireless Netzwerkverbindung ihres Players. Höhere Werte sind besser. Der Player gibt die Signalstärke während der Wiedergabe zurück.
@@ -649,13 +654,6 @@ PLUGIN_HEALTH_CONTROL_DESC
 	ES	Esta gráfico muestra el nómero de mensajes encolados para ser enviados al reproductor sobre la conexión de control. Una medición se toma cada vez que un nuevo mensaje es enviado hacia el reproductor. Los valores mayores a 1-2 indican una congestión potencial de la red o que el reprodcutor se ha desconectado.
 	HE	אם הערכים בגרף הם מעל 1 או 2 בדוק רשת
 	NL	Deze grafiek toont de hoeveelheid boodschappen in de rij gezet om te versturen naar de speler over de controleconnectie. Bij elke verstuurde boodschap wordt een meting gedaan. Waarden boven 1-2 geven een potentieel een netwerkcongestie aan of dat de speler losgekoppeld is van het netwerk.
-
-PLUGIN_HEALTH_RESPONSE_DESC
-	DE	Diese Graphik zeigt die Zeitdauer, die zwischen zwei Anfragen von beliebigen Playern vergeht. Die Masseinheit ist Sekunden. Geringere Werte sind besser. Antwortzeiten über einer Sekunde können zu Problemen bei der Audio-Wiedergabe führen.<p>Gründe für solche Verzögerungen können andere ausgeführte Programme oder komplexe Verarbeitungen im SlimServer sein.
-	EN	This graph shows the length of time between slimserver responding to requests from any player.  It is measured in seconds. Lower numbers are better.  If you notice response times of over 1 second this could lead to problems with audio performance.<p>The cause of long response times could be either other programs running on the server or slimserver processing a complex task.
-	ES	Este gráfico muestra el tiempo de respuesta de Slimserver a requerimientos de cualquier reproductor. Se mide en segundos. Valores bajos son mejores. Si se nota tiempos de respuesta de más de 1 segundo esto puede producir problemas con la perfomance de audio.    La causa de tiempos de respuesta grandes puede ser o bien otros programas corriendo en el servidor, o bien que Slimserver esté procesando una tarea compleja.
-	HE	במידה וגרף זה מציג זמנים מעל שניה אחת יש בעיה ברשת או שהשרת עמוס
-	NL	Deze grafiek toont de tijd waarbinnen SlimServer reageert op verzoeken van de speler. De uitkomst is in seconden. Lagere waardes zijn beter. Als je reactietijden hebt van meer dan 1 seconde kan dit leiden tot problemen bij afspelen van audio.  <br>De oorzaak van lange reactietijden kan liggen bij andere programma\'s die draaien op de server of dat SlimServer een complexe taak uitvoert.
 
 PLUGIN_HEALTH_RESPONSE_DESC
 	EN	The response time of the server - the time between successive calls to select.  
