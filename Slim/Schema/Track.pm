@@ -296,6 +296,12 @@ sub coverArt {
 	}
 }
 
+sub coverArtExists {
+	my $self = shift;
+
+	return defined($self->coverArt());
+}
+
 sub path {
 	my $self = shift;
 

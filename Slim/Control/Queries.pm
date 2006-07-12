@@ -1006,7 +1006,7 @@ sub playlistsQuery {
 			for my $eachitem ($rs->slice($start, $end)) {
 
 				$request->addResultLoop('@playlists', $cnt, "id", $eachitem->id);
-				$request->addResultLoop('@playlists', $cnt, "playlist", Slim::Music::Info::standardTitle(undef, $eachitem));
+				$request->addResultLoop('@playlists', $cnt, "playlist", $eachitem->title);
 				$request->addResultLoop('@playlists', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
 
 				$cnt++;
@@ -1633,8 +1633,8 @@ sub titlesQuery {
 	}
 
 	my $find  = {};
-	my $label = 'track';
-	my $sort  = 'title';
+
+	my $sort  = 'me.titlesort';
 	my $tags  = 'gald';
 
 	# get our parameters
@@ -1646,47 +1646,48 @@ sub titlesQuery {
 	my $genreID  = $request->getParam('genre_id');
 	my $artistID = $request->getParam('artist_id');
 	my $albumID  = $request->getParam('album_id');
+	my $year     = $request->getParam('year');
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
 	# $val = $param || $default;
 	# since when $default eq '' -> $val eq $param
-	$sort = $sortprm if defined $sortprm;
+#	$sort = $sortprm if defined $sortprm;
 	$tags = $tagsprm if defined $tagsprm;
 
 	# Normalize any search parameters
-	if (defined $searchMap{$label} && specified($search)) {
-		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
-	}
+#	if (defined $searchMap{$label} && specified($search)) {
+#		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
+#	}
 
-	if (defined $genreID){
-		$find->{'genre'} = $genreID;
-	}
+#	if (defined $genreID){
+#		$find->{'genre'} = $genreID;
+#	}
 
-	if (defined $artistID){
-		$find->{'artist'} = $artistID;
-	}
+#	if (defined $artistID){
+#		$find->{'artist'} = $artistID;
+#	}
 
 	if (defined $albumID){
 		$find->{'album'} = $albumID;
 	}
-
-	if ($sort eq "tracknum" && !($tags =~ /t/)) {
-		$tags = $tags . "t";
+	
+	if (defined $year) {
+		$find->('year') = $year;
 	}
+
+#	if ($sort eq "tracknum" && !($tags =~ /t/)) {
+#		$tags = $tags . "t";
+#	}
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	# Who calls this?
-	my $rs = Slim::Schema->search($label, $find, { 'order_by' => $sort });
+	# add this to get rid of playlists
+	$find->{'me.audio'} = 1;
 
-	# offset is _p1, limit is _p2
-	# if (defined $cmdRef->{'_p1'} && defined $cmdRef->{'_p2'}) {
-
-	#	$rs = $rs->slice($cmdRef->{'_p1'}, $cmdRef->{'_p2'});
-	#}
+	my $rs = Slim::Schema->search('track', $find, { 'order_by' => $sort, 'distinct' => 'me.id' });
 
 	my $count = $rs->count;
 
@@ -1786,117 +1787,252 @@ sub _songData {
 	$returnHash{'id'}    = $track->id;
 	$returnHash{'title'} = $track->title;
 
-	# Allocation map: capital letters are still free:
-	#  a b c d e f g h i j k l m n o p q r s t u v X y z
+	my %tagMap = (
+		# Tag    Tag name             Track method         Track field
+		#-------------------------------------------------------------
+		# '.' => ['id',               'id'],               #id
+		  'u' => ['url',              'url'],              #url
+		  'o' => ['type',             'content_type'],     #content_type
+		# '.' => ['title',            'title'],            #title
+		#                                                  #titlesort 
+		#                                                  #titlesearch 
+		  'e' => ['album_id',         'albumid'],          #album 
+		  't' => ['tracknum',         'tracknum'],         #tracknum
+		  'n' => ['modificationTime', 'modificationTime'], #timestamp
+		  'f' => ['filesize',         'filesize'],         #filesize
+		#                                                  #tag 
+		  'i' => ['disc',             'disc'],             #disc
+		  'j' => ['coverart',         'coverArtExists'],   #thumb, cover
+		#                                                  #remote 
+		#                                                  #audio 
+		#                                                  #audio_size 
+		#                                                  #audio_offset
+		  'y' => ['year',             'year'],             #year
+		  'd' => ['duration',         'secs'],             #secs
+		#                                                  #vbr_scale 
+		  'r' => ['bitrate',          'prettyBitRate'],    #bitrate
+		#                                                  #samplerate 
+		#                                                  #samplesize 
+		#                                                  #channels 
+		#                                                  #block_alignment
+		#                                                  #endian 
+		  'm' => ['bpm',              'bpm'],              #bpm
+		  'v' => ['tagversion',       'tagversion'],       #tagversion
+		  'z' => ['drm',              'drm'],              #drm
+		#                                                  #moodlogic_id 
+		#                                                  #moodlogic_mixable
+		#                                                  #musicmagic_mixable
+		#                                                  #musicbrainz_id 
+		#                                                  #playcount 
+		#                                                  #lastplayed 
+		#                                                  #lossless 
+		#                                                  #lyrics 
+		#                                                  #rating 
+		#                                                  #replay_gain 
+		#                                                  #replay_peak
 
-	my %tag2fieldMap = (
-		'g' => 'genre',
-		'a' => 'artist',
-		'l' => 'album',
-		't' => 'tracknum',
-		'y' => 'year',
-		'm' => 'bpm',
-		'k' => 'comment',
-		'v' => 'tagversion',
-		'r' => 'bitrate',
-		'z' => 'drm',
-		'n' => 'modificationTime',
-		'f' => 'filesize',
-# special cased		
-#		'c' => 'composer',
-#		'b' => 'band',
-#		'h' => 'conductor',
-# 		'd' => 'duration',
-# 		'i' => 'disc',
-# 		'j' => 'Cover art',
-# 		'o' => 'type',
-# 		'q' => 'disc count',
-# 		'e' => 'album_id',
-# 		'p' => 'genre_id',
-#		'u' => 'url',
-# 		's' => 'artist_id',
+		# Tag    Tag name             Relationship   Method         Track relationship
+		#--------------------------------------------------------------------
+		  'a' => ['artist',           'artist',      'name'],       #->contributors
+		  'b' => ['band',             'band'],                      #->contributors
+		  'c' => ['composer',         'composer'],                  #->contributors
+		  'h' => ['conductor',        'conductor'],                 #->contributors
+		  's' => ['artist_id',        'artist',      'id'],         #->contributors
+
+		  'l' => ['album',            'album',       'title'],      #->album.title
+		  'q' => ['disccount',        'album',       'discc'],      #->album.discc
+
+		  'g' => ['genre',            'genre',       'name'],       #->genre_track->genre.name
+		  'p' => ['genre_id',         'genre',       'id'],         #->genre_track->genre.id
+
+		  'k' => ['comment',          'comment'],                   #->comment_object
+
+		# Tag    Tag name             Track method         Track relationship
+		#--------------------------------------------------------------------
+		  'w' => ['undefined',        ''],
+		  'x' => ['undefined',        ''],
 	);
-	
+
+
+
+	# loop so that stuff is returned in the order given...
 	for my $tag (split //, $tags) {
 
-		if (my $method = $tag2fieldMap{$tag}) {
-
-			my $value = $track->$method();
-
-			if (defined $value && $value !~ /^\s*$/) {
-
-				$returnHash{$method} = $value;
-			}
-
-			next;
-		}
-
-		if ($tag eq 'u' && defined(my $url = $track->url())) {
-			$returnHash{'url'} =
-				Slim::Utils::Unicode::utf8decode_locale(URI::Escape::uri_unescape($url));
-			next;
-		}
-
-		if ($tag eq 'b' && (my @bands = $track->band)) {
-			$returnHash{'band'} = $bands[0];
-			next;
-		}
-
-		if ($tag eq 'c' && (my @composers = $track->composer)) {
-			$returnHash{'composer'} = $composers[0];
-			next;
-		}
-
-		if ($tag eq 'd' && defined(my $duration = $track->secs)) {
-			$returnHash{'duration'} = $duration;
-			next;
-		}
-
-		if ($tag eq 'h' && (my @conductors = $track->conductor)) {
-			$returnHash{'conductor'} = $conductors[0];
-			next;
-		}
-
-		if ($tag eq 'i' && defined(my $disc = $track->disc)) {
-			$returnHash{'disc'} = $disc;
-			next;
-		}
-
-		if ($tag eq 'j' && $track->coverArt) {
-			$returnHash{'coverart'} = 1;
-			next;
-		}
-
-		if ($tag eq 'o' && defined(my $ct = $track->content_type)) {
-			$returnHash{'type'} = Slim::Utils::Strings::string(uc($ct));
-			next;
-		}
-
-		if ($tag eq 'p' && defined(my $genre = $track->genre)) {
-			if (defined(my $id = $genre->id)) {
-				$returnHash{'genre_id'} = $id;
-				next;
+		# if we have a method for the tag
+		if (defined(my $method = $tagMap{$tag}->[1])) {
+			
+			if ($method ne '') {
+			
+				my $value;
+				
+				if (defined(my $submethod = $tagMap{$tag}->[2])) {
+					if (defined(my $related = $track->$method)) {
+						$value = $related->$submethod();
+					}
+				}
+				else {
+					$value = $track->$method();
+				}
+				
+				# if we have a value
+				if (defined $value && $value ne '') {
+					
+					# add the tag to the result
+					$returnHash{$tagMap{$tag}->[0]} = $value;
+				}
 			}
 		}
+	
+# a artist(s)
+	#	if ($tags =~ /a/ && defined(my $arti = $track->genres)) {
+	#	}
+		
+# b band
+#		if ($tag eq 'b' && (my @bands = $track->band)) {
+#			$returnHash{'band'} = $bands[0];
+#			next;
+#		}
 
-		if ($tag eq 's' && defined(my $artist = $track->artist)) {
+# c composer
+#		if ($tag eq 'c' && (my @composers = $track->composer)) {
+#			$returnHash{'composer'} = $composers[0];
+#			next;
+#		}
+		
+# d duration
+#		if ($tag eq 'd' && defined(my $value = $track->secs)) {
+#			$returnHash{'duration'} = $value;
+#			next;
+#		}
+	
+# e album_id
+#		if (defined(my $album = $track->album)) {
+#			if ($tag eq 'e') {
+#				$returnHash{'album_id'} = $album->id;
+#				next;
+#			}
+#		}
 
-			$returnHash{'artist_id'} = $artist->id;
-			next;
-		}
+# f filesize
+#		if ($tag eq 'f' && defined(my $value = $track->filesize)) {
+#			$returnHash{'filesize'} = $value;
+#			next;
+#		}
+		
+# g genre
+#		if ($tag eq 'g' && defined(my $genres = $track->genres)) {
+#			while (my $genre = $genres->next) {
+#    			$returnHash{'genre'} = $genre->name;
+# 			}
+#			
+#			next;
+#		}
+		
+# h conductor
+#		if ($tag eq 'h' && (my @conductors = $track->conductor)) {
+#			$returnHash{'conductor'} = $conductors[0];
+#			next;
+#		}
+	
+# i disc
+#		if ($tag eq 'i' && defined(my $disc = $track->disc)) {
+#			$returnHash{'disc'} = $disc;
+#			next;
+#		}
 
-		if (defined(my $album = $track->album)) {
+# j coverart
+#		if ($tag eq 'j' && $track->coverArt) {
+#			$returnHash{'coverart'} = 1;
+#			next;
+#		}
 
-			if ($tag eq 'e') {
-				$returnHash{'album_id'} = $album->id;
-				next;
-			}
+# k comment
+#		if ($tag eq 'k' && defined(my $value = $track->comment)) {
+#			$returnHash{'comment'} = $value;
+#			next;
+#		}
 
-			if ($tag eq 'q' && defined(my $discc = $album->discc)) {
-				$returnHash{'disccount'} = $discc unless $discc eq '';
-				next;
-			}
-		}
+# l album
+
+# m bpm
+#		if ($tag eq 'm' && defined(my $value = $track->bpm)) {
+#			$returnHash{'bpm'} = $value;
+#			next;
+#		}
+
+# n modificationTime
+#		if ($tag eq 'n' && defined(my $value = $track->modificationTime)) {
+#			$returnHash{'modificationTime'} = $value;
+#			next;
+#		}
+
+# o type
+#		if ($tag eq 'o' && defined(my $value = $track->content_type)) {
+#			$returnHash{'type'} = Slim::Utils::Strings::string(uc($value));
+#			next;
+#		}
+
+# p genre_id
+#		if ($tag eq 'p' && defined(my $genre = $track->genre)) {
+#			if (defined(my $id = $genre->id)) {
+#				$returnHash{'genre_id'} = $id;
+#				next;
+#			}
+#		}
+
+# q disccount
+#		if (defined(my $album = $track->album)) {
+#			if ($tag eq 'q' && defined(my $discc = $album->discc)) {
+#				$returnHash{'disccount'} = $discc unless $discc eq '';
+#				next;
+#			}
+#		}
+
+# r bitrate
+#		if ($tag eq 'r' && defined(my $value = $track->bitrate)) {
+#			$returnHash{'bitrate'} = $value;
+#			next;
+#		}
+
+# s artist_id
+#		if ($tag eq 's' && defined(my $artist = $track->artist)) {
+#
+#			$returnHash{'artist_id'} = $artist->id;
+#			next;
+#		}
+
+# t tracknum
+#		if ($tag eq 'r' && defined(my $value = $track->tracknum)) {
+#			$returnHash{'tracknum'} = $value;
+#			next;
+#		}
+
+# u url
+#		if ($tag eq 'u' && defined(my $url = $track->url())) {
+#			$returnHash{'url'} = $url;
+#			next;
+#		}
+
+# v tagversion
+#		if ($tag eq 'v' && defined(my $value = $track->tagversion)) {
+#			$returnHash{'tagversion'} = $value;
+#			next;
+#		}
+
+# y year
+#		if ($tag eq 'y' && defined(my $value = $track->year)) {
+#			$returnHash{'year'} = $value;
+#			next;
+#		}
+
+# z drm
+#		if ($tag eq 'z' && defined(my $value = $track->drm)) {
+#			$returnHash{'drm'} = $value;
+#			next;
+#		}
+
+
+	
 	}
 
 	return \%returnHash;
