@@ -600,39 +600,51 @@ PLUGIN_HEALTH_NORMAL
 	NL	Deze speler functioneert normaal.
 
 PLUGIN_HEALTH_REFRESH
+	DE	Aktualisieren
 	EN	Refresh
 
 PLUGIN_HEALTH_CLEAR
+	DE	Löschen
 	EN	Clear
 
 PLUGIN_HEALTH_CLEAR_ALL
+	DE	Alles Löschen
 	EN	Clear All
 
 PLUGIN_HEALTH_SET
+	DE	Setzen
 	EN	Set
 
 PLUGIN_HEALTH_SET_ALL
+	DE	Alle setzen
 	EN	Set All
 
 PLUGIN_HEALTH_WARNING_THRESHOLDS
+	DE	Schwellwert für Warnungen 
 	EN	Warning Thresholds
 
 PLUGIN_HEALTH_LOW
+	DE	Niedrig
 	EN	Low
 
 PLUGIN_HEALTH_HIGH
+	DE	Hoch
 	EN	High
 
 PLUGIN_HEALTH_BT
+	DE	Zurück verfolgen
 	EN	Backtrace
 
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
+	DE	Der Server sammelt derzeit Leistungsdaten für diesen Player.
 	EN	The server is currently collecting performance statistics for this player.  
 
 PLUGIN_HEALTH_GRAPHS_DESC_SERVER
+	DE	Der Server sammelt derzeit Leistungsdaten für diverse interne Funktionen. Diese Grafiken helfen bei der Diagnose von Leistungs-Problemen des Servers und seiner Plugins.
 	EN	The server is currently collecting performance statistics for various internal server functions.  These graphs are intended to be used to help diagnose performance issues with the server and its plugins.
 
 PLUGIN_HEALTH_WARNING_DESC
+	DE	Sie können Grenzwerte für jede Messung definieren, bei deren Überschreiten eine Warnung in die Log-Datei geschrieben wird. Die aktuellsten Log-Einträge können <a href="/log.txt" target="log"><u>hier</u></a> eingesehen werden.
 	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log"><u>here</u></a>.
 
 PLUGIN_HEALTH_SIGNAL_DESC
@@ -656,54 +668,70 @@ PLUGIN_HEALTH_CONTROL_DESC
 	NL	Deze grafiek toont de hoeveelheid boodschappen in de rij gezet om te versturen naar de speler over de controleconnectie. Bij elke verstuurde boodschap wordt een meting gedaan. Waarden boven 1-2 geven een potentieel een netwerkcongestie aan of dat de speler losgekoppeld is van het netwerk.
 
 PLUGIN_HEALTH_RESPONSE_DESC
+	DE	Antwortzeit des Servers - die Zeit, die zwischen zwei SELECT Aufrufen verstreicht.
 	EN	The response time of the server - the time between successive calls to select.  
 
 PLUGIN_HEALTH_SELECTTASK
+	DE	SELECT Ausführungszeit
 	EN	Select Task Duration
 
 PLUGIN_HEALTH_SELECTTASK_DESC
+	DE	Die Zeitdauer, die für die Abarbeiteung eines SELECTS gebraucht wird.
 	EN	The length of time taken by each task run by select.
 
 PLUGIN_HEALTH_SCHEDULERTASK
+	DE	Ausführungszeit geplanter Tasks
 	EN	Scheduler Task Duration
 
 PLUGIN_HEALTH_SCHEDULERTASK_DESC
+	DE	Die Zeitdauer, die für die Bearbeitung eines geplanten Tasks verwendet wird.
 	EN	The length of time taken by each scheduled task.
 
 PLUGIN_HEALTH_TIMERTASK
+	DE	Ausführungszeit getim
 	EN	Timer Task Duration
 
 PLUGIN_HEALTH_TIMERTASK_DESC
 	EN	The length of time taken by each timer task.
 
 PLUGIN_HEALTH_TIMERLATE
+	DE	Timer Verspätung
 	EN	Timer Lateness
 
 PLUGIN_HEALTH_TIMERLATE_DESC
+	DE	Die Zeit, die zwischen der geplanten und der tatsächlichen Ausführungszeit verstreicht.
 	EN	The time between when a timer task was scheduled and when it is run.
 
 PLUGIN_HEALTH_REQUEST
+	DE	Ausführungs- bzw. Benachrichtigungs-Ausführungszeit
 	EN	Execute / Notification Task Duration
 
 PLUGIN_HEALTH_REQUEST_DESC
+	DE	Die Zeitdauer, die für jeden Ausführungs- oder Benachrichtigungs-Callback aufgewendet wird. 
 	EN	The length of time taken by each execute command or notification callback.
 
 PLUGIN_HEALTH_PAGEBUILD
+	DE	Webseiten-Erstellung
 	EN	Web Page Build
 
 PLUGIN_HEALTH_PAGEBUILD_DESC
+	DE	Die Erstellungszeit für Webseiten
 	EN	The length of time taken to build each web page.
 
 PLUGIN_HEALTH_IRQUEUE
+	DE	Infrarot-Warteschlange
 	EN	IR Queue Length
 
 PLUGIN_HEALTH_IRQUEUE_DESC
+	DE	Die Zeit, die zwischen dem Auslösen eines Infrarot-Signals und dessen Bearbeitung verstreicht.
 	EN	The delay between an IR key press being received and being processed.
 
 PLUGIN_HEALTH_DBACCESS
+	DE	Datenbank Zugriff
 	EN	Database Access
 
 PLUGIN_HEALTH_DBACCESS_DESC
+	DE	Die Zeit, die für Datenbankzugriffe aufgewendet wird.
 	EN	The time taken for information to be retrieved from the database.
 '
 }
