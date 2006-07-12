@@ -146,8 +146,10 @@ sub add_headers {
 	if ( $self->request->uri->port != 80 ) {
 		$host .= ':' . $self->request->uri->port;
 	}
+
+	# Host doesn't use init_header so it will be changed if we're redirecting
+	$headers->header( Host => $host );
 	
-	$headers->init_header( Host            => $host );
 	$headers->init_header( 'User-Agent'    => Slim::Utils::Misc::userAgentString() );
 	$headers->init_header( Accept          => '*/*' );
 	$headers->init_header( 'Cache-Control' => 'no-cache' );
