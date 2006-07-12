@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -14,12 +14,9 @@
 require 5.006_000;
 use strict;
 use warnings;
-#use diagnostics;  # don't use this as it slows down regexp parsing dramatically
-#use utf8;
 
 # This package section is used for the windows service version of the application, 
 # as built with ActiveState's PerlSvc
-
 package PerlSvc;
 
 our %Config = (
@@ -71,14 +68,7 @@ sub Help {
 
 package main;
 
-use Getopt::Long;
 use FindBin qw($Bin);
-use lib "$Bin";
-use File::Slurp;
-use File::Spec::Functions qw(:ALL);
-use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
-use Socket qw(:DEFAULT :crlf);
-
 use lib $Bin;
 
 BEGIN {
@@ -96,6 +86,11 @@ BEGIN {
 	}
 };
 
+use File::Slurp;
+use Getopt::Long;
+use File::Spec::Functions qw(:ALL);
+use POSIX qw(:signal_h :errno_h :sys_wait_h setsid);
+use Socket qw(:DEFAULT :crlf);
 use Time::HiRes;
 
 # Force XML::Simple to use XML::Parser for speed. This is done
