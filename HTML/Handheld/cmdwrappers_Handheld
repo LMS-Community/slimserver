@@ -1,4 +1,5 @@
 [%- FILTER null %]
+[% controlGraphics  = 1 %]
 
 [% statusroot = 'status.html' %]
 [%-
