@@ -316,7 +316,7 @@ sub readRemoteHeaders {
 	}
 	
 	# Some Shoutcast/Icecast servers don't send content-type
-	if ( $http->response->header( 'icy-name' ) ) {
+	if ( !$type && $http->response->header( 'icy-name' ) ) {
 		$type = 'mp3';
 	}
 	
@@ -398,7 +398,7 @@ sub readRemoteHeaders {
 		}
 
 		return $args->{'callback'}->();
-	} 
+	}
 	else {
 		
 		$::d_scan && msg("scanRemoteURL: found that $url is a playlist\n");
