@@ -35,4 +35,6 @@
 [% END %]
 	</table>
 
+	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]<br>[% PROCESS pagebar addSummary = 1 %][% END %]
+	
 	[% PROCESS pagefooter.html %]
