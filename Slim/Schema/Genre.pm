@@ -22,7 +22,7 @@ use Scalar::Util qw(blessed);
 	));
 
 	$class->set_primary_key('id');
-	$class->add_unique_constraint('namesearch' => [qw/id namesearch/]);
+	$class->add_unique_constraint('namesearch' => [qw/namesearch/]);
 
 	$class->has_many('genreTracks' => 'Slim::Schema::GenreTrack' => 'genre');
 

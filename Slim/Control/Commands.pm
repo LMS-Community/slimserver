@@ -2023,8 +2023,8 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my ($sort, $limit, $offset);
 
 	# Bug: 3629 - sort by album, then disc, tracknum, titlesort
-	my $albumSort = 'album.titlesort, me.disc, me.tracknum, me.titlesort';
-	my $trackSort = 'me.disc, me.tracknum, me.titlesort';
+	my $albumSort = "concat(album.titlesort, '0'), me.disc, me.tracknum, concat(me.titlesort, '0')";
+	my $trackSort = "me.disc, me.tracknum, concat(me.titlesort, '0')";
 
 	# Setup joins as needed - we want to end up with Tracks in the end.
 	my %joinMap = ();
@@ -2068,6 +2068,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			} elsif ($key =~ /^album\./) {
 
+				$sort = $albumSort;
 				$joinMap{'album'} = 'album';
 
 			} elsif ($key =~ /^contributor\./) {

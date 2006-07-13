@@ -32,7 +32,7 @@ our %contributorToRoleMap = (
 	));
 
 	$class->set_primary_key('id');
-	$class->add_unique_constraint('namesearch' => [qw/id namesearch/]);
+	$class->add_unique_constraint('namesearch' => [qw/namesearch/]);
 
         $class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
         $class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');

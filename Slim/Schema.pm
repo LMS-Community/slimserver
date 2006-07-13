@@ -716,7 +716,7 @@ sub totalTime {
 
 	# Pull out the total time dynamically.
 	# What a breath of fresh air. :)
-	return $self->search('Track', undef, {
+	return $self->search('Track', { 'audio' => 1 }, {
 
 		'select' => [ \'SUM(secs)' ],
 		'as'     => [ 'sum' ],

@@ -22,11 +22,12 @@ sub allTitle {
 sub browse {
 	my $self = shift;
 	my $find = shift;
-	my $sort = shift;
+	my $cond = shift;
+	my $sort = shift || 'me.year';
 
-	return $self->search($find, {
+	return $self->search($cond, {
 		'group_by' => 'me.year',
-		'order_by' => 'me.year',
+		'order_by' => $sort,
 	});
 }
 
@@ -39,11 +40,13 @@ sub distinct {
 sub descendAlbum {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
+	my $sort = shift;
 
 	# Force result_class to be of the Album type. Because Year ISA Album,
 	# things are a little whack.
-	#return $self->search($find, {
-	return Slim::Schema->search('Album', $find, {
+	#return $self->search($cond, {
+	return Slim::Schema->search('Album', $cond, {
 		'group_by'     => 'me.id',
 		'order_by'     => 'concat(me.titlesort, \'0\'), me.disc',
 	});

@@ -59,7 +59,7 @@ sub browsedb {
 	my $topRS    = Slim::Schema->rs($levels[0]);
 	my $title    = $params->{'browseby'} = $topRS->title;
 
-	my ($filters, $find, $sort) = $topRS->generateConditionsFromFilters({
+	my ($filters, $cond, $sort) = $topRS->generateConditionsFromFilters({
 		'rs'      => $rs,
 		'level'   => $level,
 		'levels'  => \@levels,
@@ -88,9 +88,10 @@ sub browsedb {
 
 	# We want to include Compilations in the pwd, so we need the artist,
 	# but not in the actual search.
-	if ($find->{'contributor.id'} && $find->{'album.compilation'} == 1) {
+	if (defined $filters->{'contributor.id'} && 
+	    defined $filters->{'album.compilation'} && $filters->{'album.compilation'} == 1) {
 
-		delete $find->{'contributor.id'};
+		delete $filters->{'contributor.id'};
 
 		push @attrs, 'album.compilation=1';
 	}
@@ -129,7 +130,14 @@ sub browsedb {
 			my $value = $params->{$levelKey};
 
 			# Don't search for years, we just use the string.
-			if ($levelKey ne 'album.year') {
+			if ($levelKey eq 'album.year') {
+
+				# Special case Unknown Years
+				if (!$value) {
+					$value = string('UNK');
+				}
+
+			} else {
 
 				my $searchKey = $levelKey;
 				my $rs        = Slim::Schema->rs($attr);
@@ -184,7 +192,7 @@ sub browsedb {
 		$otherparams .= '&' . "artwork=$artwork";
 	}
 
-	my $browseRS = $topRS->descend($find, $sort, @levels[0..$level])->distinct;
+	my $browseRS = $topRS->descend($filters, $cond, $sort, @levels[0..$level])->distinct;
 	my $count    = 0;
 	my $start    = 0;
 	my $end      = 0;
@@ -357,7 +365,7 @@ sub browsedb {
 
 			} elsif (lc($levels[$level]) eq 'year') {
 
-				$form{'attributes'}    = sprintf('&album.year=%d', $item->year);
+				$form{'attributes'}    = sprintf('&album.year=%d', ($item->year || 0));
 
 			} else {
 

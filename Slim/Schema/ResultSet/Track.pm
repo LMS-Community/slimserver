@@ -47,36 +47,15 @@ sub searchNames {
 sub browse {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
-	my @join = ();
+	# Only search for audio
+	$cond->{'me.audio'} = 1;
 
-	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'}) {
-
-		if (defined $find->{'album.id'}) {
-
-			# Don't filter by genre - it's unneccesary and
-			# creates a intensive query. We're already at
-			# the track level for an album. Same goes for artist.
-			delete $find->{'genre.id'};
-			delete $find->{'contributor.id'};
-			delete $find->{'contributorTracks.role'};
-
-		} elsif (defined($find->{'contributor.id'})) {
-
-			# Don't filter by genre - it's unneccesary and
-			# creates a intensive query. We're already at
-			# the track level for an artist.
-			delete $find->{'genre.id'};
-		}
-	}
-
-	#$find->{'me.audio'} = 1;
-
-	return $self->search($find, {
+	return $self->search($self->fixupFindKeys($cond), {
 		'order_by' => 'me.disc, me.tracknum, me.titlesort',
 		'distinct' => 'me.id',
-		# 'join'     => \@join,
 	});
 }
 

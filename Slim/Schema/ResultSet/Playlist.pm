@@ -19,6 +19,7 @@ sub suppressAll { 1 }
 sub browse {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
 	return $self->getPlaylists;
@@ -27,11 +28,12 @@ sub browse {
 sub descendPlaylistTrack {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
 	# Get a clean resultset - otherwise we may be restricting by content
 	# type, which doesn't make sense when explictly browsing a playlist.
-	my $playlist = $self->result_source->resultset->find($find->{'me.id'}) || return undef;
+	my $playlist = $self->result_source->resultset->find($cond->{'me.id'}) || return undef;
 
 	return $playlist->tracks;
 }

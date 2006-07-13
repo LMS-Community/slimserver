@@ -128,7 +128,7 @@ sub init {
 		$Template::Config::STASH = 'Template::Stash::XS';
 	}
 
-	# this initializes the %fieldInfo structure
+	# Initialize all the web page handlers.
 	Slim::Web::Pages::init();
 
 	# if we've got an HTTP port specified, open it up!

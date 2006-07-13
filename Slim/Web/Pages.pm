@@ -121,18 +121,21 @@ sub addLibraryStats {
 	my $level  = $params->{'levelName'} || '';
 
 	# Albums needs a roles check, as it doesn't go through contributors first.
-	my $find   = {};
+	if (defined $rs && !grep { 'contributorAlbums' } @{$rs->{'attrs'}->{'join'}}) {
 
-	if (my $roles = Slim::Schema->artistOnlyRoles) {
+		if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+			#$rs = $rs->search_related('contributorAlbums', {
+			#	'contributorAlbums.role' => { 'in' => $roles }
+			#});
+		}
 	}
 
 	# The current level will always be a ->browse call, so just reuse the resultset.
 	if ($level eq 'album') {
 
 		$counts{'album'}       = $rs;
-		$counts{'contributor'} = $rs->search_related('contributorAlbums', $find)->search_related('contributor');
+		$counts{'contributor'} = $rs->search_related('contributor');
 		$counts{'track'}       = $rs->search_related('tracks');
 
 	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {

@@ -118,7 +118,14 @@ sub generateConditionsFromFilters {
 		my ($levelName) = ($param =~ /^(\w+)\.\w+$/);
 
 		if ($param eq 'album.year') {
+
 			$levelName = 'year';
+
+			# Unknown Year is passed as 0 in the web UI. But we
+			# need to query against NULL in the DB. Bug 3732
+			if (!$value) {
+				$value = undef;
+			}
 		}
 
 		# Turn into me.* for the top level
@@ -143,15 +150,6 @@ sub generateConditionsFromFilters {
 				$find{$mapKey} = { $param => $value };
 			}
 		}
-
-		# Pre-populate the attrs list with all query parameters that 
-		# are not part of the hierarchy. This allows a URL to put
-		# query constraints on a hierarchy using a field that isn't
-		# necessarily part of the hierarchy.
-		#if (!grep { $_ eq $levelName } @{$levels}) {
-
-			#push @{$attrs}, join('=', $param, $value);
-		#}
 	}
 
 	if ($::d_sql) {
@@ -163,23 +161,26 @@ sub generateConditionsFromFilters {
 }
 
 sub descend {
-	my ($self, $find, $sort, @levels) = @_;
+	my ($self, $find, $cond, $sort, @levels) = @_;
 
 	my $rs = $self;
 
+	$::d_sql && msgf("\$self->result_class: [%s]\n", $self->result_class);
+
 	# Walk the hierarchy we were passed, calling into the descend$level
 	# for each, which will build up a RS to hand back to the caller.
+	# 
+	# Pass in the top level search conditions, as well as the per-level conditions.
 	for my $level (@levels) {
 
-		my $findForLevel = $find->{lc($level)};
+		my $condForLevel = $cond->{lc($level)};
 		my $sortForLevel = $sort->{lc($level)};
 
 		$level           = ucfirst($level);
 
-		$::d_sql && msg("descend: working on level: [$level]\n");
-
 		if ($::d_sql) {
-			msgf("\$self->result_class: [%s]\n", $self->result_class);
+
+			msg("descend: working on level: [$level]\n");
 			msgf("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
 				$self->result_source->schema->source($level)->result_class
 			);
@@ -189,13 +190,13 @@ sub descend {
 		if ($self->result_class eq $self->result_source->schema->source($level)->result_class) {
 
 			$::d_sql && msg("Calling method: [browse]\n");
-			$rs = $rs->browse($findForLevel, $sortForLevel);
+			$rs = $rs->browse($find, $condForLevel, $sortForLevel);
 
 		} else {
 
 			my $method = "descend${level}";
 			$::d_sql && msg("Calling method: [$method]\n");
-			$rs = $rs->$method($findForLevel, $sortForLevel);
+			$rs = $rs->$method($find, $condForLevel, $sortForLevel);
 		}
 	}
 

@@ -35,10 +35,10 @@ sub pageBarResults {
 
 sub alphaPageBar {
 	my $self = shift;
-	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
-	return (!defined($sort) || $sort =~ /^artist|^album/ ) ? 1 : 0;
+	return (!defined($sort) || $sort =~ /^contributor|^album/ ) ? 1 : 0;
 }
 
 sub ignoreArticles {
@@ -59,61 +59,32 @@ sub searchNames {
 sub browse {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
 	my @join = ();
 
 	# The user may not want to include all the composers / conductors
-	if ($find->{'roles'}) {
+	if (my $roles  = Slim::Schema->artistOnlyRoles) {
 
-		$find->{'contributorAlbums.role'} = delete $find->{'roles'};
+		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 
 		push @join, 'contributorAlbums';
 	}
 
-
-	if (defined $find->{'genre.id'}) {
-		
-		# We want to filter albums by genre
-		
-		if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'contributor.id'}) {
-
-			# Don't filter by genre - it's unneccesary and
-			# creates a intensive query. We're already at
-			# the album level for an artist
-			delete $find->{'genre.id'};
-		}
-		else {
-			# join genres
-			push @join, {'tracks' => {'genreTracks' => 'genre'}};
-		}
-	}
-
-	# Bug: 2192 - Don't filter out compilation
-	# albums at the artist level - we want to see all of them for an artist.
-	if ($find->{'contributor.id'} && $find->{'album.compilation'} != 1) {
-
-		delete $find->{'album.compilation'};
-	}
-
-	# if sort includes artist ensure album contributor is used so all VA albums appear in one place
-	if ($sort && $sort =~ /artist/) {
+	# if sort includes contributor ensure album contributor is used so all VA albums appear in one place
+	if ($sort && $sort =~ /contributor/) {
 
 		# This allows SQL::Abstract to see a scalar
 		# reference passed and treat it as literal.
-		$find->{'contributors.id'} = \'= albums.contributor';
+		$cond->{'contributorAlbums.contributor'} = \'= me.contributor';
 
-		push @join, 'contributors';
-	}
-
-	if ($sort && $sort =~ /^(\w+)\./) {
-		push @join, $1;
+		push @join, 'contributorAlbums';
 	}
 
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.
-	# Not sure if we need this logic anywhere else..
-	return $self->search($find, {
-		'order_by' => $sort || 'concat(me.titlesort, \'0\'), me.disc',
+	return $self->search($cond, {
+		'order_by' => $sort || "concat(me.titlesort, '0'), me.disc",
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});
@@ -122,33 +93,42 @@ sub browse {
 sub descendTrack {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $attr = shift;
 
 	if (!$attr->{'order_by'}) {
-		$attr->{'order_by'} = 'tracks.disc, tracks.tracknum, tracks.titlesort';
+		$attr->{'order_by'} = "concat(me.titlesort, '0'), tracks.disc, tracks.tracknum, concat(tracks.titlesort, '0')";
 	}
 
-	# XXXX - Go through some contortions to get the previous level's id -
-	# the contributor.id if it exists, so that we can only select tracks
+	# Filter by genre if requested.
+	if (!Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'}) {
+
+		push @{$attr->{'join'}}, 'genreTracks';
+		$cond->{'genreTracks.genre'} = $find->{'genre.id'};
+	}
+
+	# Check if contributor.id exists, so that we can only select tracks
 	# for the album for that contributor. See Bug: 3558
-	if (ref($self->{'attrs'}{'where'}) eq 'HASH' && exists $self->{'attrs'}{'where'}->{'-and'}) {
+	if (my $contributor = $find->{'contributor.id'}) {
 
-		my $and = $self->{'attrs'}{'where'}->{'-and'};
+		if (Slim::Schema->variousArtistsObject->id != $contributor) {
 
-		if (ref($and) eq 'ARRAY' && ref($and->[1]) eq 'HASH' && exists $and->[1]->{'me.id'}) {
-
-			$attr->{'join'} = 'contributorTracks';
-			$find->{'contributorTracks.contributor'} = $and->[1]->{'me.id'};
+			push @{$attr->{'join'}}, 'contributorTracks';
+			$cond->{'contributorTracks.contributor'} = $contributor;
 		}
+	}
+
+	# Only select tracks for this album.
+	if (my $album = $find->{'album.id'}) {
+
+		$cond->{'me.id'} = $album;
 	}
 
 	# Create a "clean" resultset, without any joins on it - since we'll
 	# just want information from the album.
-	my $rs   = $self->result_source->resultset;
+	my $rs = $self->result_source->resultset;
 
-	return $rs->search_related('tracks', $rs->fixupFindKeys($find), $attr);
-
-	# return $self->search_related('tracks', @_);
+	return $rs->search_related('tracks', $rs->fixupFindKeys($cond), $attr);
 }
 
 1;

@@ -47,32 +47,43 @@ sub searchNames {
 sub browse {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 
-	return $self->search($find, {
-		'order_by' => 'me.namesort',
-	});
+	return $self->search($cond, { 'order_by' => 'me.namesort' });
 }
 
 sub descendContributor {
 	my $self = shift;
 	my $find = shift;
-	my $role = shift;
-
-	my $roles  = Slim::Schema->artistOnlyRoles;
-	my $ctFind = {};
-
-	# The user may not want to include all the composers / conductors
-	if ($roles) {
-
-		$ctFind->{'contributorTracks.role'} = { 'in' => $roles };
-	}
+	my $cond = shift;
+	my $sort = shift;
 
 	# Get our own RS first - then search for related, which builds up a LEFT JOIN query.
-	return $self->search($find)
-		->search_related('genreTracks')
-		->search_related('track')
-		->search_related('contributorTracks', $ctFind)
-		->search_related('contributor', {}, { 'order_by' => 'contributor.namesort' });
+	my $rs   = $self->search($cond)->search_related('genreTracks');
+
+	# If we are automatically identifiying VA albums, constrain the query.
+	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+
+		$rs = $rs->search_related('track', {
+			'album.compilation' => [ { 'is' => undef }, { '=' => 0 } ]
+		}, { 'join' => 'album' });
+
+	} else {
+
+		$rs = $rs->search_related('track');
+	}
+
+	# The user may not want to include all the composers / conductors
+	if (my $roles = Slim::Schema->artistOnlyRoles) {
+
+		$rs = $rs->search_related('contributorTracks', { 'contributorTracks.role' => { 'in' => $roles } });
+
+	} else {
+
+		$rs = $rs->search_related('contributorTracks');
+	}
+
+	return $rs->search_related('contributor', {}, { 'order_by' => $sort || 'contributor.namesort' });
 }
 
 1;

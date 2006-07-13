@@ -90,7 +90,8 @@ sub init {
 			my $currentItem = $items->[$listIndex] || return;
 
 			if ($client->param('header') eq 'CREATE_MIX') {
-				#Bug 3459: short circuit for mixers
+
+				# Bug 3459: short circuit for mixers
 				mixerExitHandler($client,'RIGHT');
 				return;
 			}
@@ -128,7 +129,6 @@ sub init {
 
 				$line1 = $client->string($string);
 				$line2 = browsedbItemName($client, $currentItem);
-
 			}
 
 			$client->showBriefly({
@@ -152,7 +152,16 @@ sub init {
 
 			# Include the current item
 			if ($field ne 'track' && !$all) {
-				push @terms, join('=', $field, $currentItem->id);
+
+				# year is special.
+				if ($levels[$level] eq 'year') {
+
+					push @terms, join('=', $field, $currentItem->year);
+
+				} else {
+
+					push @terms, join('=', $field, $currentItem->id);
+				}
 			}
 
 			# And all the search terms for the current mode
@@ -421,10 +430,10 @@ sub browsedbExitCallback {
 			}
 
 			my %params = (
-				hierarchy         => $hierarchy,
-				level             => $level + 1,
-				findCriteria      => $findCriteria,
-				selectionCriteria => $selectionCriteria,
+				'hierarchy'         => $hierarchy,
+				'level'             => $level + 1,
+				'findCriteria'      => $findCriteria,
+				'selectionCriteria' => $selectionCriteria,
 			);
 
 			# Only include the search terms (i.e. those associated with
@@ -665,7 +674,7 @@ sub setMode {
 
 		# Bug: 3654 Pass a copy of the find ref, so we don't modify it.
 		# This isn't an issue for the webUI, as it reconstructs $find every time.
-		$topRS = $topRS->descend(Storable::dclone($find), $sort, @levels[0..$level])->distinct;
+		$topRS = $topRS->descend(Storable::dclone($filters), Storable::dclone($find), $sort, @levels[0..$level])->distinct;
 
 		if ($levels[$level] eq 'age') {
 
@@ -766,10 +775,7 @@ sub setMode {
 
 		for my $item (@items) {
 
-			if (blessed($item) && $selection == $item->id) {
-				last;
-			}
-
+			last if blessed($item) && $selection == $item->id;
 			$j++;
 		}
 		
@@ -805,11 +811,10 @@ sub setMode {
 		descend           => $descend,
 		search            => $search,
 		selectionKey      => $selectionKey,
-		findCriteria      => $find,
+		findCriteria      => $filters,
 		selectionCriteria => $selectionCriteria,
+		favorite          => $client->param('favorite'),
 	);
-
-	$params{'favorite'}   = $client->param('favorite');
 
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.

@@ -40,18 +40,18 @@ sub searchNames {
 	my ($self, $terms) = @_;
 
 	my @joins = ();
-	my $find  = {
+	my $cond  = {
 		'me.namesearch' => { 'like' => $terms },
 	};
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
 	if (my $roles = Slim::Schema->artistOnlyRoles) {
 
-		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';
 	}
 
-	return $self->search($find, {
+	return $self->search($cond, {
 		'order_by' => 'me.namesort',
 		'distinct' => 'me.id',
 		'join'     => \@joins,
@@ -61,6 +61,7 @@ sub searchNames {
 sub browse {
 	my $self = shift;
 	my $find = shift;
+	my $cond = shift;
 	my $sort = shift;
 
 	my @joins = ();
@@ -69,12 +70,12 @@ sub browse {
 	# The user may not want to include all the composers / conductors
 	if ($roles) {
 
-		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
 	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
-		$find->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
+		$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
 
 		push @joins, { 'contributorAlbums' => 'album' };
 
@@ -83,7 +84,7 @@ sub browse {
 		push @joins, 'contributorAlbums';
 	}
 
-	return $self->search($find, {
+	return $self->search($cond, {
 		'order_by' => 'me.namesort',
 		'group_by' => 'me.id',
 		'join'     => \@joins,
@@ -91,22 +92,41 @@ sub browse {
 }
 
 sub descendAlbum {
-	my ($self, $find) = @_;
+	my ($self, $find, $cond, $sort) = @_;
 
-	# XXXX This may be able to go away when DBIx::Class -current becomes
-	# release (0.07?), and tables are unique in the join. Otherwise, using
-	# $self, an album_2 alias is created, so our sort below doesn't work.
-	my $rs    = $self->result_source->resultset;
-	my $roles = Slim::Schema->artistOnlyRoles;
+	# Create a clean resultset
+	my $rs     = $self->result_source->resultset;
+	my $attr   = {
+		'order_by' => 'concat(album.titlesort,\'0\'), album.disc',
+	};
 
-	if ($roles) {
-		$find->{'contributorAlbums.role'} = { 'in' => $roles };
+	if (my $roles = Slim::Schema->artistOnlyRoles) {
+
+		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
-	# Use a clean rs
+	# Bug: 2192 - Don't filter out compilation
+	# albums at the artist level - we want to see all of them for an artist.
+	if ($cond->{'me.id'} && $find->{'album.compilation'} && $find->{'album.compilation'} != 1) {
+
+		# $cond->{'album.compilation'} = $find->{'album.compilation'};
+	}
+
+	$rs = $rs->search_related('contributorAlbums', $rs->fixupFindKeys($cond));
+
+	# Constrain on the genre if it exists.
+	if (my $genre = $find->{'genre.id'}) {
+
+		$attr->{'join'} = { 'tracks' => 'genreTracks' };
+
+		$rs = $rs->search_related('album', { 'genreTracks.genre' => $genre }, $attr);
+
+	} else {
+
+		$rs = $rs->search_related('album', {}, $attr);
+	}
+
 	return $rs
-		->search_related('contributorAlbums', $rs->fixupFindKeys($find))
-		->search_related('album', {}, { 'order_by' => 'concat(album.titlesort,\'0\'), album.disc' });
 }
 
 1;
