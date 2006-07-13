@@ -113,6 +113,13 @@ sub readMetaData {
 	}
 }
 
+sub getFormatForURL {
+	my $classOrSelf = shift;
+	my $url = shift;
+
+	return Slim::Music::Info::typeFromSuffix($url);
+}
+
 sub parseMetadata {
 	my $client   = shift;
 	my $url      = shift;

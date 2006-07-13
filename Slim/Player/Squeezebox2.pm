@@ -237,7 +237,7 @@ sub model {
 sub formats {
 	my $client = shift;
 	
-	return qw(wma flc aif wav mp3);
+	return qw(wma ogg flc aif wav mp3);
 }
 
 # The original Squeezebox2 firmware supported a fairly narrow volume range

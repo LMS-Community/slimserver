@@ -578,7 +578,8 @@ sub opened {
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
 #	u8_t flags;		// [1]	0x80 - loop infinitely, 0x40 - stream
 #                               //      without restarting decoder
-#	u16_t reserved;	// [2]	reserved
+#	u8_t output_threshold;	// [1]	Amount of output buffer data before playback starts in tenths of second.
+#	u8_t reserved;		// [1]	reserved
 #	u32_t replay_gain;	// [4]	replay gain in 16.16 fixed point, 0 means none
 #	u16_t server_port;	// [2]	server's port
 #	u32_t server_ip;	// [4]	server's IP
@@ -613,6 +614,7 @@ sub stream {
 		my $pcmsamplerate;
 		my $pcmendian;
 		my $pcmchannels;
+		my $outputThreshold;
 
 		my $handler;
 		my $server_url = $client->canDirectStream($url);
@@ -634,18 +636,21 @@ sub stream {
 			$pcmsamplerate = '3';
 			$pcmendian = '1';
 			$pcmchannels = '2';
+			$outputThreshold = 0;
 		} elsif ($format eq 'aif') {
 			$formatbyte = 'p';
 			$pcmsamplesize = '1';
 			$pcmsamplerate = '3';
 			$pcmendian = '0';
 			$pcmchannels = '2';
+			$outputThreshold = 0;
 		} elsif ($format eq 'flc') {
 			$formatbyte = 'f';
 			$pcmsamplesize = '?';
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
+			$outputThreshold = 0;
 		} elsif ($format eq 'wma') {
 			$formatbyte = 'w';
 			# Commandeer the unused pcmsamplesize field
@@ -665,18 +670,21 @@ sub stream {
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
+			$outputThreshold = 10;
 		} elsif ($format eq 'ogg') {
                         $formatbyte = 'o';
                         $pcmsamplesize = '?';
                         $pcmsamplerate = '?';
                         $pcmendian = '?';
                         $pcmchannels = '?';
+			$outputThreshold = 20;
 		} else { # assume MP3
 			$formatbyte = 'm';
 			$pcmsamplesize = '?';
 			$pcmsamplerate = '?';
 			$pcmendian = '?';
 			$pcmchannels = '?';
+			$outputThreshold = 0;
 		}
 		
 		my $request_string = '';
@@ -744,7 +752,7 @@ sub stream {
 		$flags |= 0x40 if $reconnect;
 		$flags |= 0x80 if $loop;
 		$::d_slimproto && msg("flags: $flags\n");
-		my $frame = pack 'aaaaaaaCCCaCnNnN', (
+		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 			$command,	# command
 			$autostart,
 			$formatbyte,
@@ -757,6 +765,7 @@ sub stream {
 			$client->prefGet('transitionDuration') || 0,
 			$client->prefGet('transitionType') || 0,
 			$flags,		# flags	     
+			$outputThreshold,
 			0,		# reserved
 			$client->canDoReplayGain($replay_gain),		
 			$server_port || Slim::Utils::Prefs::get('httpport'),  # use slim server's IP
