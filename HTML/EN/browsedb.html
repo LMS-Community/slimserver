@@ -12,7 +12,7 @@
 
 	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 </div>
-[%- IF artwork == 1; 
+[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
 		container = 'gallerycontainer';
 	ELSE;
 		container = 'contentcontainer';
