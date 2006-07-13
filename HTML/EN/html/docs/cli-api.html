@@ -88,7 +88,7 @@
 	</li>
 </ul>
 <p>
-	The following changes or new commands are available starting with
+	The following changes or new commands & queries are available starting with
 	SlimServer 6.5. These changes should not have any impact on existing 
 	clients:
 </p>
@@ -118,7 +118,8 @@
 	</li>
 	<li>
 		Added year as a filter criteria for the 
-		&quot;<a href="#titles">titles</a>&quot; query.
+		&quot;<a href="#titles">titles</a>&quot; and 
+		&quot;<a href="#albums">albums/a>&quot; queries.
 	</li>
 	<li>
 		Added the &quot;<a href="#title">remote</a>&quot; and 
@@ -158,6 +159,16 @@
 		Updated command 
 		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
 		to accept a list of comma-separated track_ids as parameter.
+	</li>
+	<li>
+		Updated command 
+		&quot;<a href="#albums">albums</a>&quot; 
+		to return additional information about albums (year, artwork_track, etc).
+	</li>
+	<li>
+		Brought the notion of contributors to the CLI.
+		- Query &quot;<a href="#genres">genres</a>&quot; accepts contributor_id 
+		- Query &quot;<a href="#albums">albums</a>&quot; accepts contributor_id 
 	</li>
 	<li>
 		0x00 is now a valid end of line / command separator. In addition, the
@@ -1843,69 +1854,147 @@ preferences values.</p>
     Response: &quot;info total songs 18&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="genres"><strong><code>genres &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;genres&quot; command returns all genres known by the SlimServer.</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="genres">
+	<strong>
+		<code>
+			genres
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;genres&quot; command returns all genres known by the SlimServer.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>search</td>
-		<td>Search string. The search is case insensitive and obeys the
-			&quot;Search Within Words&quot; server parameter.</td>
+		<td>
+			search
+		</td>
+		<td>
+			Search string. The search is case insensitive and obeys the
+			&quot;Search Within Words&quot; server parameter.
+		</td>
 	</tr>
 	<tr>
-		<td>artist_id</td>
-		<td>Limit results to those genres proposed by the artist
-			identified by artist_id.</td>
+		<td>
+			contributor_id|artist_id
+		</td>
+		<td>
+			Limit results to those genres proposed by the contributor
+			identified by &quot;contributor_id&quot;. &quot;artist_id&quot; is
+			also accepted.
+		</td>
 	</tr>
 	<tr>
-		<td>album_id</td>
-		<td>Limit results to those genres available on the album
-			identified by album_id.</td>
+		<td>
+			album_id
+		</td>
+		<td>
+			Limit results to those genres available on the album
+			identified by &quot;album_id&quot;.
+		</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
 	</tr>
 </table>
-<p>Returned tagged parameters:</p>
+<p>
+	Returned tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
-		Not returned if no scan is in progress.</td>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning 
+			the database. The results may therefore be incomplete.
+			Not returned if no scan is in progress.
+		</td>
 	</tr>
 	<tr>
-		<td>count</td>
-		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total genres ?&quot;</td>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query. If no search 
+			string is present, this is the same value as returned
+			by &quot;info total genres ?&quot;.
+		</td>
 	</tr>
 	<tr>
-		<td><em>For each genre:</em></td>
-		<td></td>
+		<td>
+			<em>For each genre:</em>
+		</td>
+		<td>
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>id</b></td>
-		<td>Genre ID. Item delimiter.</td>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			Genre ID. Item delimiter.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;genre</td>
-		<td>Genre name.</td>
+		<td>
+			&nbsp;&nbsp;genre
+		</td>
+		<td>
+			Genre name.
+		</td>
 	</tr>
 </table>
-<p>Example:</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;genres 0 5&lt;LF&gt;&quot;<br>
-  	 Response: &quot;genres 0 5 rescan:1 count:6 id:3 genre:Acid%20Jazz id:4 genre:Alternative%20&%20Punk id:5 genre:French id:6 genre:No%20Genre id:7 genre:Pop&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;<br>
-  	 Response: genres 0 5 search:unk count:1 id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;</p>
+	<p>
+  		Request: &quot;genres 0 5&lt;LF&gt;&quot;
+  		<br>
+		Response: &quot;genres 0 5 rescan:1 count:6 
+		id:3 genre:Acid%20Jazz 
+		id:4 genre:Alternative%20&%20Punk 
+		id:5 genre:French 
+		id:6 genre:No%20Genre 
+		id:7 genre:Pop
+		&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;genres 0 5 search:unk&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;genres 0 5 search:unk count:1 
+		id:4 genre:Alternative%20&%20Punk&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br><p id="artists"><strong><code>artists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
@@ -1970,58 +2059,235 @@ preferences values.</p>
   	 Response: artists 0 5 genre_id:7 count:2 id:2 artist:Anastacia id:19 artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="albums"><strong><code>albums &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;albums&quot; command returns all albums known by the SlimServer.</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="albums">
+	<strong>
+		<code>
+			albums
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;albums&quot; command returns all albums known by SlimServer.
+	The results of this query depend in part on the &quot;Group discs&quot;
+	setting of SlimServer (Server settings, Behavior &quot;tab&quot;).
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
+		<td>
+			search
+		</td>
+		<td>
+			Search substring. The search is case insensitive and obeys 
+			the &quot;Search Within Words&quot; server parameter.
+		</td>
 	</tr>
 	<tr>
-		<td>genre_id</td>
-		<td>Genre ID, to restrict the results to those albums with songs of that genre.</td>
+		<td>
+			genre_id
+		</td>
+		<td>
+			Genre ID, to restrict the results to those albums with 
+			songs of that genre.
+		</td>
 	</tr>
 	<tr>
-		<td>artist_id</td>
-		<td>Artist ID, to restrict the results to those albums with songs of that artist.</td>
+		<td>
+			contributor_id|artist_id
+		</td>
+		<td>
+			Contributor ID, to restrict the results to those albums having
+			&quot;contributor_id&quot; as primary contributor. 
+			&quot;artist_id&quot; is also accepted.
+		</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
+		<td>
+			year
+		</td>
+		<td>
+			Year, to restrict the results to those albums of that year.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified 
+			by a letter (see below). The default value is &quot;l&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
 	</tr>
 </table>
-<p>Returned tagged parameters:</p>
+<p>
+	Returned tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
-		Not returned if no scan is in progress.</td>
+		<td></td>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning the 
+			database. The results may therefore be incomplete.
+			Not returned if no scan is in progress.
+		</td>
 	</tr>
 	<tr>
-		<td>count</td>
-		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total albums ?&quot;</td>
+		<td></td>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query. If no filter
+			is present, this is the same value as returned by 
+			&quot;info total albums ?&quot;
+		</td>
 	</tr>
 	<tr>
-	<tr>
-		<td><em>For each album:</em></td>
+		<td></td>
+		<td>
+			<em>For each album:</em>
+		</td>
 		<td></td>
 	</tr>
-		<td>&nbsp;&nbsp;<b>id</b></td>
-		<td>Album ID. Item delimiter.</td>
+		<td></td>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			Album ID. Item delimiter.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;album</td>
-		<td>Album name. </td>
+		<td>
+			l
+		</td>
+		<td>
+			&nbsp;&nbsp;album
+		</td>
+		<td>
+			Album name, including SlimServer's added &quot;(N of M)&quot; if
+			the server is set to group multi disc albums together. 
+			See tag &quot;title&quot; for the unmodified value.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			a
+		</td>
+		<td>
+			&nbsp;&nbsp;contributor_id
+		</td>
+		<td>
+			The album &quot;primary&quot; contributor, as determined by
+			the server (f.e. &quot;Various Artists&quot;).
+		</td>
+	</tr>
+	<tr>
+		<td>
+			y
+		</td>
+		<td>
+			&nbsp;&nbsp;year
+		</td>
+		<td>
+			Album year. This is determined by SlimServer based on the album
+			tracks.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			j
+		</td>
+		<td>
+			&nbsp;&nbsp;artwork_track_id
+		</td>
+		<td>
+			Identifier of one of the album tracks, used by the server to 
+			display the album's artwork.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			t
+		</td>
+		<td>
+			&nbsp;&nbsp;title
+		</td>
+		<td>
+			&quot;Raw&quot; album title as found in the album tracks ID3 tags,
+			as opposed to &quot;album&quot;. Note that &quot;title&quot; and
+			&quot;album&quot; are identical if the server is set to group discs
+			together.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			i
+		</td>
+		<td>
+			&nbsp;&nbsp;disc
+		</td>
+		<td>
+			Disc number of this album. Only if the server is not set to
+			group multi-disc albums together.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			q
+		</td>
+		<td>
+			&nbsp;&nbsp;disccount
+		</td>
+		<td>
+			Number of discs for this album. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			w
+		</td>
+		<td>
+			&nbsp;&nbsp;compilation
+		</td>
+		<td>
+			1 if this album is a compilation.
+		</td>
 	</tr>
 </table>
 <p>Example:</p>
@@ -2532,14 +2798,26 @@ preferences values.</p>
 		<td>Song duration in seconds.</td>
 	</tr>
 	<tr>
-		<td><b>i</b></td>
-		<td>disc</td>
-		<td>Disc number. Only if known.</td>
+		<td>
+			<b>i</b>
+		</td>
+		<td>
+			disc
+		</td>
+		<td>
+			Disc number. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>q</b></td>
-		<td>disccount</td>
-		<td>Number of discs. Only if known.</td>
+		<td>
+			<b>q</b>
+		</td>
+		<td>
+			disccount
+		</td>
+		<td>
+			Number of discs. Only if known.
+		</td>
 	</tr>
 	<tr>
 		<td><b>t</b></td>

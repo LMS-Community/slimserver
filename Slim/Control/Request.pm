@@ -416,7 +416,7 @@ sub init {
     addDispatch(['alarm'],                                                                             [1, 0, 1, \&Slim::Control::Commands::alarmCommand]);
     addDispatch(['alarms',         '_index',         '_quantity'],                                     [1, 1, 1, \&Slim::Control::Queries::alarmsQuery]);
     addDispatch(['album',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-    addDispatch(['albums',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
+    addDispatch(['albums',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::albumsQuery]);
     addDispatch(['artist',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['artists',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::browseXQuery]);
     addDispatch(['button',         '_buttoncode',    '_time',      '_orFunction'],                     [1, 0, 0, \&Slim::Control::Commands::buttonCommand]);
@@ -1170,6 +1170,19 @@ sub addResultLoop {
 	}
 	
 	${${$self->{'_results'}}{$loop}->[$loopidx]}{$key} = $val;
+}
+
+# same as addResultLoop but checks first the value is defined.
+sub addResultLoopIfValueDefined {
+	my $self = shift;
+	my $loop = shift;
+	my $loopidx = shift;
+	my $key = shift;
+	my $val = shift;
+
+	if (defined $val) {
+		$self->addResultLoop($loop, $loopidx, $key, $val);
+	}
 }
 
 sub setResultLoopHash {

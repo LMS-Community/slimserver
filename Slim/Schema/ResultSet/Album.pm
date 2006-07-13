@@ -71,12 +71,22 @@ sub browse {
 		push @join, 'contributorAlbums';
 	}
 
-	if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'} && defined $find->{'contributor.id'}) {
 
-		# Don't filter by genre - it's unneccesary and
-		# creates a intensive query. We're already at
-		# the album level for an artist
-		delete $find->{'genre.id'};
+	if (defined $find->{'genre.id'}) {
+		
+		# We want to filter albums by genre
+		
+		if (Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'contributor.id'}) {
+
+			# Don't filter by genre - it's unneccesary and
+			# creates a intensive query. We're already at
+			# the album level for an artist
+			delete $find->{'genre.id'};
+		}
+		else {
+			# join genres
+			push @join, {'tracks' => {'genreTracks' => 'genre'}};
+		}
 	}
 
 	# Bug: 2192 - Don't filter out compilation

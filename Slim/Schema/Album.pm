@@ -77,6 +77,13 @@ sub title {
 	);
 }
 
+# return the raw title untainted by slimserver logic
+sub rawtitle {
+	my $self = shift;
+	
+	return $self->get_column('title');
+}
+
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
@@ -181,6 +188,14 @@ sub artistsWithAttributes {
 
 	return \@artists;
 }
+
+# access the id, not the relation
+sub contributorid {
+	my $self = shift;
+
+	return $self->get_column('contributor');
+}
+
 
 1;
 
