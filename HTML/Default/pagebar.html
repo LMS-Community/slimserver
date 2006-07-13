@@ -1,6 +1,0 @@
-[% IF pagesstart %]  <a href="[% path %]?start=0&amp;[% otherparams %]"><img src="[% webroot %]html/images/b_first.gif" alt="" width="17" height="13" align="top"></a> [% END %]
-[% IF pageprev %] <a href="[% path %]?start=[% pageprev %]&amp;[% otherparams %]"><img src="[% webroot %]html/images/b_prev.gif" alt="" width="13" height="13" align="top"></a> [% END %]
-[% IF pageprev == '0' %] <a href="[% path %]?start=[% pageprev %]&amp;[% otherparams %]"><img src="[% webroot %]html/images/b_prev.gif" alt="" width="13" height="13" align="top"></a> [% END %]
-[% pageslist %]
-[% IF pagenext %] <a href="[% path %]?start=[% pagenext %]&amp;[% otherparams %]"><img src="[% webroot %]html/images/b_next.gif" alt="" width="13" height="13" align="top"></a> [% END %]
-[% IF pagesend %] <a href="[% path %]?start=[% pagesend %]&amp;[% otherparams %]"><img src="[% webroot %]html/images/b_last.gif" alt="" width="17" height="13" align="top"></a> [% END %]
