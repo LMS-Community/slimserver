@@ -166,7 +166,14 @@ sub addGroups {
 sub checker {
 	my $firstTime = shift || 0;
 
-	return unless (Slim::Utils::Prefs::get('moodlogic'));
+	if (!Slim::Utils::Prefs::get('moodlogic')) {
+		return;
+
+	}
+	
+	if (!$firstTime && !Slim::Music::Import->stillScanning && Plugins::MoodLogic::Importer::isMusicLibraryFileChanged()) {
+		startScan();
+	}
 	
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
@@ -257,8 +264,8 @@ sub mixerlink {
 
 	# only add link if enabled and usable.  moodlogic doensn't do albums
 	if (canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic') && $form->{'levelName'} ne 'album') {
+		
 		#set up a moodlogic link
-		#Slim::Web::Pages->addPageLinks("mixer", {'MOODLOGIC' => "plugins/MoodLogic/mixerlink.html"},1);
 		$form->{'mixerlinks'}{'MOODLOGIC'} = "plugins/MoodLogic/mixerlink.html";
 
 		#flag if mixable
@@ -266,8 +273,6 @@ sub mixerlink {
 			$form->{'moodlogic_mixable'} = 1;
 		}
 	}
-	
-
 	
 	return $form;
 }
