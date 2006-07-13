@@ -64,14 +64,14 @@
 	[% INCLUDE home_links %]
 	[% ELSE %]
 		[% FOREACH key = additionalLinks.radio.keys %]
-			<tr>
-				<td valign="middle" class = 'menutext' width = '90'>
-					<a href="[% webroot %][% additionalLinks.radio.$key %]player=[% playerURI %]"><img src="html/images/smaller/radio.gif" width = '90' height = '75' border="0" alt = 'radio'></a>
+			[% UNLESS loop.index % 2 %]<tr>[% END %]
+				<td valign="middle" class = 'menutext' width = '70' align = 'right'>
+					<a href="[% webroot %][% additionalLinks.radio.$key %]player=[% playerURI %]"><img src="html/images/smaller/radio.gif" width = '70' border="0" alt = 'radio'></a>
 				</td>
 				<td valign="middle" class = 'menutext' align = 'left'>
 					<a href="[% webroot %][% additionalLinks.radio.$key %]player=[% playerURI %]">[% key | string %]</a>
 				</td>
-			</tr>
+			[% IF loop.index % 2 || loop.last %]</tr>[% END %]
 		[% END %]
 	
 	[% END %]
