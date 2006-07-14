@@ -213,84 +213,6 @@ sub browseXQuery {
 	$request->setStatusDone();
 }
 
-sub genresQuery {
-	my $request = shift;
-
-	$d_queries && msg("genresQuery()\n");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['genres']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
-	my $search        = $request->getParam('search');
-	my $artistID      = $request->getParam('artist_id');
-	my $contributorID = $request->getParam('contributor_id');
-	my $albumID       = $request->getParam('album_id');
-	
-	# we prefer to get contributor_id but accept artist_id
-	if (defined $artistID && !defined $contributorID) {
-		$contributorID = $artistID;
-	}
-		
-	# get them all by default
-	my $where = {};
-	
-	# sort them
-	my $attr = {
-		order_by => 'me.namesort',
-	};
-
-	# Normalize and add any search parameters
-	if (specified($search)) {
-
-		$where->{'me.namesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
-	}
-
-	# Manage joins
-	if (defined $contributorID){
-		$where->{'contributor.id'} = $contributorID;
-		$attr->{'join'} = {'genreTracks' => {'track' => {'contributorTracks' => 'contributor'}}};
-		$attr->{'distinct'} = 1;
-	}
-
-	if (defined $albumID){
-		$where->{'album.id'} = $albumID;
-		$attr->{'join'} = {'genreTracks' => {'track' => 'album'}};
-		$attr->{'distinct'} = 1;
-	}
-
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
-	my $rs = Slim::Schema->resultset('Genre')->search($where, $attr);
-
-	my $count = $rs->count;
-
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-
-		my $loopname = '@genres';
-		my $cnt = 0;
-
-		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-			$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
-			$cnt++;
-		}
-	}
-
-	$request->setStatusDone();
-}
-
 sub contributorsQuery {
 	my $request = shift;
 
@@ -651,6 +573,87 @@ sub displaynowQuery {
 	$request->addResult('_line1', $client->prevline1());
 	$request->addResult('_line2', $client->prevline2());
 		
+	$request->setStatusDone();
+}
+
+
+sub genresQuery {
+	my $request = shift;
+
+	$d_queries && msg("genresQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['genres']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $search        = $request->getParam('search');
+	my $artistID      = $request->getParam('artist_id');
+	my $contributorID = $request->getParam('contributor_id');
+	my $albumID       = $request->getParam('album_id');
+	
+	# we prefer to get contributor_id but accept artist_id
+	if (defined $artistID && !defined $contributorID) {
+		$contributorID = $artistID;
+	}
+		
+	# get them all by default
+	my $where = {};
+	
+	# sort them
+	my $attr = {
+		order_by => 'me.namesort',
+	};
+
+	# Normalize and add any search parameters
+	if (specified($search)) {
+
+		$where->{'me.namesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
+	}
+
+	# Manage joins
+	if (defined $contributorID){
+		$where->{'contributorTracks.contributor'} = $contributorID;
+#		push @{$attr->{'join'}}, {'genreTracks' => {'track' => {'contributorTracks' => 'contributor'}}};
+		push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'contributorTracks'}};
+		$attr->{'distinct'} = 'me.id';
+	}
+
+	if (defined $albumID){
+		$where->{'track.album'} = $albumID;
+#		push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'album'}};
+		push @{$attr->{'join'}}, {'genreTracks' => 'track'};
+		$attr->{'distinct'} = 'me.id';
+	}
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
+	my $rs = Slim::Schema->resultset('Genre')->search($where, $attr);
+
+	my $count = $rs->count;
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@genres';
+		my $cnt = 0;
+
+		for my $eachitem ($rs->slice($start, $end)) {
+			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+			$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
+			$cnt++;
+		}
+	}
+
 	$request->setStatusDone();
 }
 
@@ -1768,8 +1771,15 @@ sub titlesQuery {
 	# add this to get rid of playlists
 	$find->{'me.audio'} = 1;
 
-	my $rs = Slim::Schema->search('track', $find, { 'order_by' => $sort, 'distinct' => 'me.id' });
-
+	my $rs = Slim::Schema->search(
+			'track', 
+			$find, 
+			{
+				'order_by' => $sort, #'distinct' => 'me.id' });
+				'prefetch' => 'album'
+      		}
+      	);
+      	
 	my $count = $rs->count;
 
 	$request->addResult("count", $count);
