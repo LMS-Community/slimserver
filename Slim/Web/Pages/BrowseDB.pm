@@ -30,7 +30,7 @@ sub browsedb {
 	my ($client, $params) = @_;
 
 	# XXX - why do we default to genre?
-	my $hierarchy = $params->{'hierarchy'} || "genre";
+	my $hierarchy = $params->{'hierarchy'} || 'genre';
 	my $level     = $params->{'level'} || 0;
 	my $orderBy   = $params->{'orderBy'};
 	my $player    = $params->{'player'};
@@ -51,14 +51,23 @@ sub browsedb {
 	}
 
 	my $itemCount = 0;
+	my $levelName = $levels[$level];
+
+	# Set the orderBy if requested
+	if ($levelName eq 'album' && Slim::Utils::Prefs::get('sortBrowseArt') && !$orderBy) {
+
+		$orderBy = Slim::Utils::Prefs::get('sortBrowseArt');
+	}
 
 	# Build up a list of params to include in the href links.
 	my @attrs    = ();
 
-	my $rs       = Slim::Schema->rs($levels[$level]);
+	my $rs       = Slim::Schema->rs($levelName);
 	my $topRS    = Slim::Schema->rs($levels[0]);
 	my $title    = $params->{'browseby'} = $topRS->title;
 
+	# XXXX - sort is not currently generated or used.
+	# The orderBy is used by the artwork/album sorting feature.
 	my ($filters, $cond, $sort) = $topRS->generateConditionsFromFilters({
 		'rs'      => $rs,
 		'level'   => $level,
@@ -192,7 +201,7 @@ sub browsedb {
 		$otherparams .= '&' . "artwork=$artwork";
 	}
 
-	my $browseRS = $topRS->descend($filters, $cond, $sort, @levels[0..$level])->distinct;
+	my $browseRS = $topRS->descend($filters, $cond, $orderBy, @levels[0..$level])->distinct;
 	my $count    = 0;
 	my $start    = 0;
 	my $end      = 0;
@@ -202,7 +211,7 @@ sub browsedb {
 	if ($browseRS) {
 
 		# Force the limit if we're going by age.
-		if ($levels[$level] eq 'age') {
+		if ($levelName eq 'age') {
 			$browseRS = $browseRS->slice(0, (Slim::Utils::Prefs::get('browseagelimit') - 1));
 		}
 
@@ -286,7 +295,7 @@ sub browsedb {
 
 		# For some queries - such as New Music - we want to
 		# get the list of tracks to play from the fieldInfo
-		if ($levels[$level] eq 'age' && $rs->allTransform) {
+		if ($levelName eq 'age' && $rs->allTransform) {
 
 			$form{'attributes'} .= sprintf('&fieldInfo=%s', $rs->allTransform);
 		}
@@ -297,7 +306,7 @@ sub browsedb {
 	}
 
 	# Dynamic VA/Compilation listing
-	if ($levels[$level] eq 'contributor' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if ($levelName eq 'contributor' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		# Only show VA item if there's valid listings below the current level.
 		my %find = map { split /=/ } @attrs;
@@ -327,7 +336,7 @@ sub browsedb {
 	if ($count) {
 
 		my $lastAnchor = '';
-		my $attrName   = lc($levels[$level]);
+		my $attrName   = lc($levelName);
 		my $firstItem  = undef;
 
 		for my $item ($browseRS->slice($start, $end)) {
@@ -359,11 +368,11 @@ sub browsedb {
 			# If we're at the track level - only append the track
 			# id for each item - it's a unique value and doesn't
 			# need any joins.
-			if (lc($levels[$level]) eq 'track') {
+			if (lc($levelName) eq 'track') {
 
 				$form{'attributes'}    = sprintf('&%s.id=%d', $attrName, $itemid);
 
-			} elsif (lc($levels[$level]) eq 'year') {
+			} elsif (lc($levelName) eq 'year') {
 
 				$form{'attributes'}    = sprintf('&album.year=%d', ($item->year || 0));
 
@@ -394,7 +403,7 @@ sub browsedb {
 
 		# If we're at the track level, and it's at the bottom of the
 		# hierarchy, display cover art if we have it.
-		if ($level == $maxLevel && $levels[$level] eq 'track' && defined $firstItem) {
+		if ($level == $maxLevel && $levelName eq 'track' && defined $firstItem) {
 
 			if ($firstItem->can('coverArt') && $firstItem->coverArt) {
 
@@ -407,7 +416,7 @@ sub browsedb {
 	main::idleStreams();
 
 	$params->{'descend'}   = $descend;
-	$params->{'levelName'} = lc($levels[$level]);
+	$params->{'levelName'} = lc($levelName);
 
 	# Don't show stats when only showing playlists - extra queries that aren't needed.
 	#

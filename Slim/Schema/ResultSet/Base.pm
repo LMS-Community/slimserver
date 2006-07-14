@@ -174,7 +174,12 @@ sub descend {
 	for my $level (@levels) {
 
 		my $condForLevel = $cond->{lc($level)};
-		my $sortForLevel = $sort->{lc($level)};
+
+		# XXXX - sortForLevel isn't being processed by
+		# generateConditionsFromFilters() yet. Instead, the only
+		# caller is the Sort Album Artwork feature.
+		#my $sortForLevel = $sort->{lc($level)};
+		my $sortForLevel = $sort;
 
 		$level           = ucfirst($level);
 

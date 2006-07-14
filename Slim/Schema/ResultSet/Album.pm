@@ -63,23 +63,54 @@ sub browse {
 	my $sort = shift;
 
 	my @join = ();
+	my $roles = Slim::Schema->artistOnlyRoles;
 
 	# The user may not want to include all the composers / conductors
-	if (my $roles  = Slim::Schema->artistOnlyRoles) {
+	if ($roles) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 
 		push @join, 'contributorAlbums';
 	}
 
-	# if sort includes contributor ensure album contributor is used so all VA albums appear in one place
-	if ($sort && $sort =~ /contributor/) {
+	# This sort/join logic is here to handle the 'Sort Browse Artwork'
+	# feature - which applies to albums, as artwork is just a view on the
+	# album list.
+	#
+	# Quick and dirty to get something working again. This code should be
+	# expanded to be generic per level. A UI feature would be to have a
+	# drop down on certain browse pages of how to order the items being
+	# displayed. Album is problably the most flexible of all our browse
+	# modes.
+	#
+	# Writing this code also brought up how we might be able to abstract
+	# out some join issues/duplications - if we resolve all potential
+	# joins first, like the contributorAlbums issue below.
+	if ($sort) {
 
-		# This allows SQL::Abstract to see a scalar
-		# reference passed and treat it as literal.
-		$cond->{'contributorAlbums.contributor'} = \'= me.contributor';
+		if ($sort =~ /contributor/) {
 
-		push @join, 'contributorAlbums';
+			# Only join contributorAlbums once.
+			if (!$roles) {
+				push @join, { 'contributorAlbums' => 'contributor' };
+			} else {
+				push @join, 'contributor';
+			}
+		}
+
+		if ($sort =~ /genre/) {
+
+			push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
+		}
+
+		# Turn all occurences of album into me, since this is an Album RS
+		$sort =~ s/(album)\./me./g;
+		$sort =~ s/(\w+?.\w+?sort)/concat($1, '0')/g;
+
+		# Always append disc
+		if ($sort !~ /me\.disc/) {
+			$sort .= ', me.disc';
+		}
 	}
 
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.

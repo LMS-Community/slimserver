@@ -1425,13 +1425,13 @@ sub initSetupConfig {
 				'validate' => \&Slim::Utils::Validate::inHash,
 				'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
 				'options' => {
-					'album'              => 'SETUP_SORTBROWSEART_ALBUM',
-					'artist,album'       => 'SETUP_SORTBROWSEART_ARTISTALBUM',
-					'artist,year,album'  => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
-					'year,album'         => 'SETUP_SORTBROWSEART_YEARALBUM',
-					'year,artist,album'  => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
-					'genre,album'        => 'SETUP_SORTBROWSEART_GENREALBUM',
-					'genre,artist,album' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
+					'album.titlesort'                                     => 'SETUP_SORTBROWSEART_ALBUM',
+					'contributor.namesort,album.titlesort'                => 'SETUP_SORTBROWSEART_ARTISTALBUM',
+					'contributor.namesort,album.year,album.titlesort'     => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
+					'album.year,album.titlesort'                          => 'SETUP_SORTBROWSEART_YEARALBUM',
+					'album.year,contributor.namesort,album.titlesort'     => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
+					'genre.namesort,album.titlesort'                      => 'SETUP_SORTBROWSEART_GENREALBUM',
+					'genre.namesort,contributor.namesort,album.titlesort' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
 				},
 			}
 		}

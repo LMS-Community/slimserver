@@ -218,7 +218,7 @@ sub init {
 		'upgrade-6.5b1-2006-02-03-script' => 1,
 		'upgrade-6.5b1-2006-03-31-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
-		'sortBrowseArt'     => 'album',
+		'sortBrowseArt'     => 'album.titlesort',
 		'disabledextensionsaudio' => '',
 		'disabledextensionsplaylist' => '',
 	);
