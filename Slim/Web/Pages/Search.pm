@@ -226,6 +226,11 @@ sub advancedSearch {
 		}
 	}
 
+	if ($query{'genre'}) {
+
+		push @joins, 'genreTracks';
+	}
+
 	if ($query{'album.titlesearch'}) {
 
 		push @joins, 'album';

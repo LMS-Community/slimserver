@@ -89,7 +89,7 @@
 		[% END %]
 
 		[% WRAPPER field title='TYPE' %]
-			<select name="search.ct">
+			<select name="search.content_type">
 				<option value="">[% "ANY_TYPE" | string %]</option>
 				[% FOREACH type = fileTypes.keys %]
 					<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
