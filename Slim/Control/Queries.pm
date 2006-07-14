@@ -1753,11 +1753,11 @@ sub titlesQuery {
 #	}
 
 	if (defined $albumID){
-		$find->{'album'} = $albumID;
+		$find->{'me.album'} = $albumID;
 	}
-	
+
 	if (defined $year) {
-		$find->('year') = $year;
+		$find->{'me.year'} = $year;
 	}
 
 #	if ($sort eq "tracknum" && !($tags =~ /t/)) {
@@ -1771,15 +1771,12 @@ sub titlesQuery {
 	# add this to get rid of playlists
 	$find->{'me.audio'} = 1;
 
-	my $rs = Slim::Schema->search(
-			'track', 
-			$find, 
-			{
-				'order_by' => $sort, #'distinct' => 'me.id' });
-				'prefetch' => 'album'
-      		}
-      	);
-      	
+	my $rs = Slim::Schema->search('Track', $find, {
+		'order_by' => $sort,
+		#'distinct' => 'me.id',
+		'prefetch' => 'album',
+	});
+
 	my $count = $rs->count;
 
 	$request->addResult("count", $count);
