@@ -520,6 +520,20 @@ sub checkServerPrefs {
 		$prefs{'dbsource'} = $DEFAULT_DBSOURCE;
 	}
 
+	# Fixup old sortBrowseArt prefs. Ugh.
+	if ($prefs{'sortBrowseArt'} eq 'album') {
+
+		$prefs{'sortBrowseArt'} = 'album.titlesort';
+
+	} elsif ($prefs{'sortBrowseArt'}) {
+
+		$prefs{'sortBrowseArt'} =~ s/artist/contributor/;
+		$prefs{'sortBrowseArt'} =~ s/year,/album.year/;
+		$prefs{'sortBrowseArt'} =~ s/(genre|contributor),/$1.namesort,/;
+		$prefs{'sortBrowseArt'} =~ s/album,/album.titlesort,/;
+		$prefs{'sortBrowseArt'} =~ s/album$/album.titlesort/;
+	}
+
 	for my $version (sort keys %upgradeScripts) {
 
 		if (Slim::Utils::Prefs::get("upgrade-$version-script")) {
