@@ -2131,7 +2131,8 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			'order_by' => $sort || $trackSort,
 			'join'     => [ map { $_ } values %joinMap ],
-		});
+
+		})->distinct;
 
 		if ($limit && $offset) {
 
