@@ -65,7 +65,7 @@ sub rate {
 	}
 
 	my $oldrate = $client->rate();
-	
+
 	# restart playback if we've changed and we're not pausing or unpauseing
 	if ($oldrate != $newrate) {
 
@@ -77,9 +77,9 @@ sub rate {
 		}
 
 		my $time = songTime($client);
-		
+
 		$client->rate($newrate);
-		
+
 	 	if ($newrate == 0) {
 			playmode($client, "pausenow");
 		} else {
@@ -87,7 +87,6 @@ sub rate {
 			gototime($client, $time);
 		}
 	}
-
 }
 
 sub time2offset {
@@ -95,10 +94,10 @@ sub time2offset {
 	my $time     = shift;
 	
 	my $song     = playingSong($client);
-	my $size     = $song->{totalbytes};
-	my $duration = $song->{duration};
-	my $align    = $song->{blockalign};
-	
+	my $size     = $song->{'totalbytes'};
+	my $duration = $song->{'duration'};
+	my $align    = $song->{'blockalign'};
+
 	# Short circuit the computation if the time for which we're asking
 	# the offset is the duration of the song - in that case, it's just
 	# the length of the song.
@@ -107,20 +106,19 @@ sub time2offset {
 	}
 
 	my $byterate = $duration ? ($size / $duration) : 0;
-
 	my $offset   = int($byterate * $time);
-	
-	if ($client->streamformat() eq 'mp3') {
-		Slim::Music::Info::loadTagFormatForType('mp3');
-		($offset, undef) = Slim::Formats::MP3::seekNextFrame($client->audioFilehandle(), $offset, 1);
-	} elsif ($client->streamformat() eq 'flc') {
-		Slim::Music::Info::loadTagFormatForType('flc');
-		$offset = Slim::Formats::FLAC::seekNextFrame($client->audioFilehandle(), $offset, 1);
+
+	if (my $streamClass = streamClassForFormat($client)) {
+
+		$offset  = $streamClass->findFrameBoundaries($client->audioFilehandle, $offset);
+
 	} else {
-		$offset     -= $offset % $align;
+
+		$offset -= $offset % $align;
 	}
-	$::d_source && msg( "$time to $offset (align: $align size: $size duration: $duration)\n");
-	
+
+	$::d_source && msg("time2offset: $time to $offset (align: $align size: $size duration: $duration)\n");
+
 	return $offset;
 }
 
@@ -750,6 +748,7 @@ sub gototime {
 
 		gototime($client, $newtime);
 		return;
+
 	} elsif (playingSongIndex($client) != streamingSongIndex($client)) {
 
 		my $rate = rate($client);
@@ -759,8 +758,6 @@ sub gototime {
 		gototime($client, $newtime, $rangecheck);
 		return;
 	}
-
-
 
 	foreach my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 		$::d_source && msg("gototime: stopping playback\n");
@@ -1617,6 +1614,7 @@ sub readNextChunk {
 	if ($client->audioFilehandle()) {
 
 		if (!$client->audioFilehandleIsSocket) {
+
 			# use the rate to seek to an appropriate place in the file.
 			my $rate = rate($client);
 			
@@ -1629,7 +1627,7 @@ sub readNextChunk {
 					$::d_source && msgf("still in the middle of a trick segment: %d bytes remaining\n",
 						$client->trickSegmentRemaining
 					);
-					
+
 				} else {
 
 					# starting a new trick segment, calculate the chunk offset and length
@@ -1645,8 +1643,9 @@ sub readNextChunk {
 
 					my $byterate = $track->bitrate / 8;
 
-					my $howfar = int(($rate -  $TRICKSEGMENTDURATION) * $byterate);					
-					$howfar -= $howfar % $song->{blockalign};
+					my $howfar   = int(($rate - $TRICKSEGMENTDURATION) * $byterate);					
+					   $howfar  -= $howfar % $song->{blockalign};
+
 					$::d_source && msg("trick mode seeking: $howfar from: $now\n");
 
 					my $seekpos = $now + $howfar;
@@ -1661,49 +1660,26 @@ sub readNextChunk {
 
 					$tricksegmentbytes -= $tricksegmentbytes % $song->{blockalign};
 
-					if ($client->streamformat() eq 'mp3') {
+					# Find the frame boundaries for the streaming format, and seek to them.
+					if (my $streamClass = streamClassForFormat($client)) {
 
-						Slim::Music::Info::loadTagFormatForType('mp3');
-
-						($seekpos, undef) = Slim::Formats::MP3::seekNextFrame(
-							$client->audioFilehandle(), $seekpos, 1
+						my ($start, $end) = $streamClass->findFrameBoundaries(
+							$client->audioFilehandle, $seekpos, $tricksegmentbytes
 						);
 
-						my (undef, $endsegment) = Slim::Formats::MP3::seekNextFrame(
-							$client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1
-						);
-						
-						if ($seekpos == 0 || $endsegment == 0) {
+						if ($start == 0 || $end == 0 || $start == $end) {
 							$endofsong = 1;
-							$::d_source && msg("trick mode couldn't seek: $seekpos/$endsegment\n");
+							$::d_source && msg("trick mode couldn't seek: $start/$end\n");
 							goto bail;
-						} else {
-							$tricksegmentbytes = $endsegment - $seekpos + 1;
 						}
+
+						$seekpos  = $start;
+						$seekpos += 1 if $streamClass eq 'Slim::Formats::MP3';
+
+						$tricksegmentbytes = $end - $seekpos;
 					}
-					elsif ($client->streamformat() eq 'flc') {
 
-						Slim::Music::Info::loadTagFormatForType('flc');
-
-						$seekpos = Slim::Formats::FLAC::seekNextFrame(
-							$client->audioFilehandle(), $seekpos, 1
-						);
-
-						my $endsegment = Slim::Formats::FLAC::seekNextFrame(
-							$client->audioFilehandle(), $seekpos + $tricksegmentbytes, -1
-						);
-
-						if ($seekpos == 0 || $endsegment == 0 ||
-							$seekpos == $endsegment) {
-							$endofsong = 1;
-							$::d_source && msg("trick mode couldn't seek: $seekpos/$endsegment\n");
-							goto bail;
-						} else {
-							$tricksegmentbytes = $endsegment - $seekpos;
-						}
-					}
-					
-					$::d_source && msg("new trick mode segment offset: $seekpos for length:$tricksegmentbytes\n");
+					$::d_source && msg("new trick mode segment offset: [$seekpos] for length: [$tricksegmentbytes]\n");
 
 					$client->audioFilehandle->sysseek($seekpos, 0);
 					$client->songBytes($client->songBytes() + $seekpos - $now);
@@ -1805,6 +1781,22 @@ bail:
 	}
 	
 	return \$chunk;
+}
+
+sub streamClassForFormat {
+	my $client = shift;
+
+	my $streamFormat = $client->streamformat;
+
+	if (Slim::Music::Info::loadTagFormatForType($streamFormat)) {
+
+		my $streamClass = Slim::Music::Info::classForFormat($streamFormat);
+
+		if ($streamClass && $streamClass->can('findFrameBoundaries')) {
+
+			return $streamClass;
+		}
+	}
 }
 
 sub pauseSynced {

@@ -8,8 +8,9 @@ package Slim::Formats::MP3;
 # version 2.
 
 use strict;
-use IO::Seekable qw(SEEK_SET);
+use Fcntl qw(:seek);
 use MP3::Info;
+use MPEG::Audio::Frame;
 
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
@@ -141,12 +142,11 @@ sub getTag {
 	# sometimes we don't get this back correctly
 	$info->{'OFFSET'} += 0;
 
-	return undef if (!$info->{'SIZE'});
+	if (!$info->{'SIZE'}) {
+		return undef;
+	}
 
-	my ($start, $end);
-
-	($start, undef) = seekNextFrame($fh, $info->{'OFFSET'}, 1);
-	(undef, $end)   = seekNextFrame($fh, $info->{'OFFSET'} + $info->{'SIZE'}, -1);
+	my ($start, $end) = $class->findFrameBoundaries($fh, $info->{'OFFSET'}, $info->{'SIZE'});
 
 	if ($start) {
 		$info->{'OFFSET'} = $start;
@@ -157,10 +157,10 @@ sub getTag {
 	}
 
 	close($fh);
-	
+
 	# when scanning we brokenly align by bytes.  
 	$info->{'BLOCKALIGN'} = 1;
-	
+
 	# bitrate is in bits per second, not kbits per second.
 	$info->{'BITRATE'} = $info->{'BITRATE'} * 1000 if ($info->{'BITRATE'});
 
@@ -241,99 +241,59 @@ sub doTagMapping {
 	}
 }
 
-my $MINFRAMELEN = 96;    # 144 * 32000 kbps / 48000 kHz + 0 padding
-my $MAXDISTANCE = 8192;  # (144 * 320000 kbps / 32000 kHz + 1 padding + fudge factor) for garbage data * 2 frames
+sub findFrameBoundaries {
+	my ($class, $fh, $offset, $seek) = @_;
 
-# seekNextFrame:
-# starts seeking from $startoffset (bytes relative to beginning of file) until 
-# it finds the next valid frame header. Returns the offset of the first and last
-# bytes of the frame if any is found, otherwise (0,0).
-#
-# when scanning forward ($direction=1), simply detects the next frame header.
-#
-# when scanning backwards ($direction=-1), returns the next frame header whose
-# frame length is within the distance scanned (so that when scanning backwards 
-# from EOF, it skips any truncated frame at the end of file.
-#
-sub seekNextFrame {
-	use bytes;
-	my ($fh, $startoffset, $direction) =@_;
-	defined($fh) || die;
-	defined($startoffset) || die;
-	defined($direction) || die;
+	my ($start, $end) = (0, 0);
 
-	my $foundsync=0;
-	my ($seekto, $buf, $len, $h, $pos, $start, $end,$calculatedlength, $numgarbagebytes, $head);
-	my ($found_at_offset);
-
-	my $filelen = -s $fh;
-	$startoffset = $filelen if ($startoffset > $filelen); 
-
-	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$::d_mp3 && Slim::Utils::Misc::msg("reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
-	sysseek($fh, $seekto, SEEK_SET);
-	sysread $fh, $buf, $MAXDISTANCE, 0;
-
-	$len = length($buf);
-	if ($len<4) {
-		$::d_mp3 && Slim::Utils::Misc::msg("got less than 4 bytes\n");
-		return (0,0) 
+	if (!defined $fh || !defined $offset) {
+		errorMsg("findFrameBoundaries: Invalid arguments!\n");
+		return wantarray ? ($start, $end) : $start;
 	}
 
-	if ($direction==1) {
-		$start = 0;
-		$end = $len-4;
-	} else {
-		#assert($direction==-1);
-		$start = $len-$MINFRAMELEN;
-		$end=0;
+	my $filelen   = -s $fh;
+	if ($offset > $filelen) {
+		$offset = $filelen;
 	}
 
-	$::d_mp3 && Slim::Utils::Misc::msg("scanning: len = $len, start = $start, end = $end\n");
-	for ($pos = $start; $pos!=$end; $pos+=$direction) {
-		#$::d_mp3 && Slim::Utils::Misc::msg("looking at $pos\n");
+	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
+	open(my $mpeg, '<&=', $fh) or do {
+		errorMsg("findFrameBoundaries: Couldn't dup filehandle!\n");
+		return wantarray ? ($start, $end) : $start;
+	};
 
-		$head = substr($buf, $pos, 4);
-		next if (ord($head) != 0xff);
+	seek($mpeg, $offset, SEEK_SET);
 
-		$h = MP3::Info::_get_head($head);
-		
-		next if !MP3::Info::_is_mp3($h);
-		
-		$found_at_offset = $seekto + $pos;
-		
-		$calculatedlength = int(144 * $h->{bitrate} * 1000 / $h->{fs}) + $h->{padding_bit};
+	# Find the first frame.
+	my $frame1 = MPEG::Audio::Frame->read($mpeg);
 
-		# skip if we haven't scanned back by the calculated length
-		next if (($pos + $calculatedlength + 4) > $len);
+	if (defined $frame1) {
+		$start = $frame1->offset;
+	}
 
-		# if we're scanning forward, double check by making sure the next frame has a good header
-		if ($direction == 1) {
-			my $j= MP3::Info::_get_head(substr($buf, $pos + $calculatedlength, 4));
-			next if !MP3::Info::_is_mp3($j);
-		} else {
-			# continue to scan backwards one frame and make sure that it's valid...
-			# TODO - we may get false positives at the end of some files.	
+	# If the caller (Source.pm) has requested a seek position, that means we want to look backwards.
+	if (defined $seek && defined $frame1) {
+
+		seek($mpeg, ($start - ($frame1->length * 1.5) + $seek), SEEK_SET);
+
+		while (my $frame2 = MPEG::Audio::Frame->read($mpeg)) {
+
+			if (($frame2->offset + ($frame2->length * 2)) > $start + $seek) {
+
+				$end = $frame2->offset + $frame2->length - 1;
+				last;
+			}
 		}
-		
-#		if ($::d_mp3) {
-#			Slim::Utils::Misc::msg(printf "sync at offset %d (%x %x %x %x)\n", $found_at_offset, (unpack 'CCCC', $head));
-#			
-#			foreach my $k (sort keys %$h) {
-#				Slim::Utils::Misc::msg(  $k . ":\t" . $h->{$k} . "\n");
-#			}
-#			Slim::Utils::Misc::msg( "Calculated length including header: $calculatedlength\n");
-#		}
-				
-		my $frame_end =  $found_at_offset + $calculatedlength - 1;
-#		$::d_mp3 && Slim::Utils::Misc::msg("Frame found at offset: $found_at_offset (started looking at $startoffset) frame end: $frame_end\n");
-
-		return($found_at_offset, $frame_end);
 	}
 
-	if (!$foundsync) {
-		$::d_mp3 && Slim::Utils::Misc::msg("Couldn't find any frame header\n");
-		return(0,0);
+	close($mpeg);
+
+	$::d_source && Slim::Utils::Misc::msgf("findFrameBoundaries: start: [%d] end: [%d]\n", $start, $end);
+
+	if (defined $seek) {
+		return ($start, $end);
+	} else {
+		return wantarray ? ($start, $end) : $start;
 	}
 }
 

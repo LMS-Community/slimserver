@@ -2,7 +2,7 @@ package Slim::Formats::FLAC;
 
 # $tagsd: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -18,8 +18,8 @@ package Slim::Formats::FLAC;
 use strict;
 
 use Audio::FLAC::Header;
+use Fcntl qw(:seek);
 use File::Basename;
-use IO::Seekable qw(SEEK_SET);
 use MIME::Base64 qw(decode_base64);
 
 use Slim::Formats::Playlists::CUE;
@@ -198,8 +198,12 @@ sub getStandardTag {
 	unless (defined $tags->{'TITLE'}) {
 
 		if (exists $flac->{'ID3V2Tag'}) {
-			# Get the ID3V2 tag on there, sucka
-			$tags = MP3::Info::get_mp3tag($file, 2);
+
+			if (Slim::Music::Info::loadTagFormatForType('mp3')) {
+
+				# Get the ID3V2 tag on there, sucka
+				$tags = MP3::Info::get_mp3tag($file, 2);
+			}
 		}
 	}
 
@@ -976,7 +980,7 @@ sub _isFLACHeader {
 	return 1;
 }
 
-my $HEADERLEN = 16;
+my $HEADERLEN   = 16;
 my $MAXDISTANCE = 18448;  # frame header size (16 bytes) + 4608 stereo 16-bit samples (higher than 4608 is possible, but not done)
 
 # seekNextFrame:
@@ -991,53 +995,89 @@ my $MAXDISTANCE = 18448;  # frame header size (16 bytes) + 4608 stereo 16-bit sa
 # from EOF, it skips any truncated frame at the end of block.
 #
 sub seekNextFrame {
-	use bytes;
-	my ($fh, $startoffset, $direction) =@_;
-	defined($fh) || return 0;
-	defined($startoffset) || return 0;
-	defined($direction) || return 0;
+	my ($class, $fh, $startoffset, $direction) = @_;
 
-	my ($seekto, $buf, $len, $head, $pos, $start, $end, $found_at_offset);
+	use bytes;
+
+	if (!defined $fh || !defined $startoffset || !defined $direction) {
+		errorMsg("seekNextFrame: Invalid arguments!\n");
+		return 0;
+	}
 
 	my $filelen = -s $fh;
-	$startoffset = $filelen if ($startoffset > $filelen); 
+	if ($startoffset > $filelen) {
+		$startoffset = $filelen;
+	}
 
-	$seekto = ($direction == 1) ? $startoffset : $startoffset-$MAXDISTANCE;
-	$::d_mp3 && msg("FLAC: reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
+
+	$::d_source && msg("seekNextFrame: reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+
 	sysseek($fh, $seekto, SEEK_SET);
-	sysread $fh, $buf, $MAXDISTANCE, 0;
+	sysread($fh, my $buf, $MAXDISTANCE, 0);
 
-	$len = length($buf);
-	if ($len<16) {
-		$::d_mp3 && msg("FLAC: got less than 16 bytes\n");
-		return 0; 
+	my $len = length($buf);
+
+	if ($len < 16) {
+		$::d_source && msg("seekNextFrame: got less than 16 bytes\n");
+		return 0;
 	}
 
-	if ($direction==1) {
+	my ($start, $end) = (0, 0);
+
+	if ($direction == 1) {
 		$start = 0;
-		$end = $len-$HEADERLEN;
+		$end   = $len - $HEADERLEN;
 	} else {
-		$start = $len-$HEADERLEN;
-		$end=0;
+		$start = $len - $HEADERLEN;
+		$end   = 0;
 	}
 
-	$::d_mp3 && msg("FLAC: scanning: len = $len, start = $start, end = $end\n");
-	for ($pos = $start; $pos!=$end; $pos+=$direction) {
+	$::d_source && msg("seekNextFrame: scanning: len = $len, start = $start, end = $end\n");
 
-		$head = substr($buf, $pos, 16);
-		next if (ord($head) != 0xff);
-		
-		next if !_isFLACHeader($head);
-		
-		$found_at_offset = $seekto + $pos;
+	for (my $pos = $start; $pos != $end; $pos += $direction) {
 
-		$::d_mp3 && msg("FLAC: Found frame header at $found_at_offset\n");
+		my $head = substr($buf, $pos, 16);
+
+		if (ord($head) != 0xff) {
+			next;
+		}
+
+		if (!_isFLACHeader($head)) {
+			next;
+		}
+
+		my $found_at_offset = $seekto + $pos;
+
+		$::d_source && msg("seekNextFrame: Found frame header at $found_at_offset\n");
 
 		return $found_at_offset;
 	}
 
-	$::d_mp3 && msg("FLAC: Couldn't find any frame header\n");
+	$::d_source && msg("seekNextFrame: Couldn't find any frame header\n");
+
 	return 0;
+}
+
+sub findFrameBoundaries {
+	my ($class, $fh, $offset, $seek) = @_;
+
+	if (!defined $fh || !defined $offset) {
+		errorMsg("findFrameBoundaries: Invalid arguments!\n");
+		return wantarray ? (0, 0) : 0;
+	}
+
+	my $start = $class->seekNextFrame($fh, $offset, 1);
+	my $end   = 0;
+
+	if (defined $seek) {
+
+		$end = $class->seekNextFrame($fh, $offset + $seek, -1);
+
+		return ($start, $end);
+	}
+
+	return wantarray ? ($start, $end) : $start;
 }
 
 1;
