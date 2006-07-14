@@ -236,6 +236,11 @@ sub advancedSearch {
 		push @joins, 'album';
 	}
 
+	# Disambiguate year
+	if ($query{'year'}) {
+		$query{'me.year'} = delete $query{'year'};
+	}
+
 	# Do the actual search
 	my $rs    = Slim::Schema->search('Track',
 		\%query,
