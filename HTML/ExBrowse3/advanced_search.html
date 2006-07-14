@@ -102,9 +102,9 @@
     <td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "MODTIME" | string %]&nbsp;</td>
     <td class="content" align="left" valign="middle" width="70%">
 
-     [% timeSelectionBlock(name='search.age.op') %]
+     [% timeSelectionBlock(name='search.timestamp.op') %]
 
-     <input name="search.age" value="[% search.age.value %]" size="10" maxlength="10" type="text"/>
+     <input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text"/>
      &nbsp; ex: [% dateFormat %]
     </td>
    </tr>
@@ -152,7 +152,7 @@
       <option value="">Any Type</option>
 
       [% FOREACH type = fileTypes.keys %]
-       <option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
+       <option value="[% type %]" [% IF search.content_type.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
       [% END %]
      </select>
     </td>
@@ -162,9 +162,9 @@
     <td class="content" align="right" nowrap="nowrap" valign="middle" width="30%">[% "FILELENGTH" | string %]&nbsp;</td>
     <td class="content" align="left" valign="middle" width="70%">
 
-     [% logicalSelectionBlock(name='search.size.op') %]
+     [% logicalSelectionBlock(name='search.filesize.op') %]
 
-     <input name="search.size" value="[% search.size.value %]" size="12" maxlength="12" style="text-align: right;" type="text"/>
+     <input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="12" style="text-align: right;" type="text"/>
      [% "BYTES" | string %]
     </td>
    </tr>

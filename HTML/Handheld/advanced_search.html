@@ -74,8 +74,8 @@
 		[% END %]
 
 		[% WRAPPER field title='MODTIME' %]
-			[% timeSelectionBlock(name='search.age.op') %]
-			<input name="search.age" value="[% search.age.value %]" size="10" maxlength="10" type="text">&nbsp; ex: [% dateFormat %]
+			[% timeSelectionBlock(name='search.timestamp.op') %]
+			<input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text">&nbsp; ex: [% dateFormat %]
 		[% END %]
 
 		[% WRAPPER field title='BITRATE' %]
@@ -92,14 +92,14 @@
 			<select name="search.content_type">
 				<option value="">[% "ANY_TYPE" | string %]</option>
 				[% FOREACH type = fileTypes.keys %]
-					<option value="[% type %]" [% IF search.ct.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
+					<option value="[% type %]" [% IF search.content_typet.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
 				[% END %]
 			</select>
 		[% END %]
 
 		[% WRAPPER field title='FILELENGTH' %]
-			[% logicalSelectionBlock(name='search.size.op') %]
-			<input name="search.size" value="[% search.size.value %]" size="12" maxlength="12" style="text-align: right;" type="text">
+			[% logicalSelectionBlock(name='search.filesize.op') %]
+			<input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="12" style="text-align: right;" type="text">
 			[% "BYTES" | string %]
 		[% END %]
 
