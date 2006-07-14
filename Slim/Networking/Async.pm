@@ -19,6 +19,7 @@ use Data::Dump ();	# because Data::Dump is able to dump typeglob objects (socket
 use Net::DNS;
 use Net::IP;
 use Scalar::Util qw(blessed weaken);
+use Socket;
 
 use Slim::Networking::Select;
 use Slim::Utils::Misc;
@@ -73,6 +74,12 @@ sub open {
 	# Don't bother resolving localhost
 	if ( $args->{Host} =~ /^localhost$/i ) {
 		$args->{PeerAddr} = '127.0.0.1';
+	}
+	elsif ( $args->{Host} !~ /\./ ) {	
+		# Resolve names without periods directly so we can support hosts files
+		if ( my $addr = scalar gethostbyname( $args->{Host} ) ) {
+			$args->{PeerAddr} = inet_ntoa( $addr );
+		}
 	}
 	
 	# Timeout defaults to the Radio Station Timeout pref
