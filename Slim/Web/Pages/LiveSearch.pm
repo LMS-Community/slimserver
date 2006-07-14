@@ -17,13 +17,7 @@ use Slim::Web::Pages;
 
 use constant MAXRESULTS => 10;
 
-my @allTypes = qw(contributor album track);
-
-our %queries = (
-	'contributor' => [qw(contributor me.namesearch)],
-	'album'       => [qw(album me.titlesearch)],
-	'track'       => [qw(track me.titlesearch)],
-);
+my @allTypes = qw(Contributor Album Track);
 
 sub query {
 	my ($class, $query, $types, $limit, $offset) = @_;
@@ -39,24 +33,7 @@ sub query {
 
 	for my $type (@$types) {
 
-		my $find = {
-			$queries{$type}->[1] => $search,
-		};
-
-		# Don't do an unneeded join for albums & tracks.
-		# Also we want to search across all artists - so don't limit
-		# based on the compilation bit.
-		if ($type eq 'contributor') {
-
-			if (my $roles = Slim::Schema->artistOnlyRoles) {
-
-				#$find->{'contributor.role'} = $roles;
-			}
-
-			# $find->{'album.compilation'} = undef;
-		}
-
-		my $rs      = Slim::Schema->rs($queries{$type}->[0])->search_like($find);
+		my $rs      = Slim::Schema->rs($type)->searchNames($search);
 		my $count   = $rs->count;
 		my @results = ();
 
