@@ -528,9 +528,9 @@ sub checkServerPrefs {
 	} elsif ($prefs{'sortBrowseArt'}) {
 
 		$prefs{'sortBrowseArt'} =~ s/artist/contributor/;
-		$prefs{'sortBrowseArt'} =~ s/year,/album.year,/;
+		$prefs{'sortBrowseArt'} =~ s/[^\.]year,/album.year,/;
 		$prefs{'sortBrowseArt'} =~ s/(genre|contributor),/$1.namesort,/;
-		$prefs{'sortBrowseArt'} =~ s/album,/album.titlesort,/;
+		$prefs{'sortBrowseArt'} =~ s/\balbum,/album.titlesort,/;
 		$prefs{'sortBrowseArt'} =~ s/album$/album.titlesort/;
 	}
 

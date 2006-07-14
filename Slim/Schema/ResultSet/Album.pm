@@ -125,11 +125,15 @@ sub descendTrack {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
-	my $attr = shift;
+	my $sort = shift;
 
-	if (!$attr->{'order_by'}) {
-		$attr->{'order_by'} = "concat(me.titlesort, '0'), tracks.disc, tracks.tracknum, concat(tracks.titlesort, '0')";
+	if (!$sort) {
+		$sort = "concat(me.titlesort, '0'), tracks.disc, tracks.tracknum, concat(tracks.titlesort, '0')";
 	}
+
+	my $attr = {
+		'order_by' => $sort,
+	};
 
 	# Filter by genre if requested.
 	if (!Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'}) {

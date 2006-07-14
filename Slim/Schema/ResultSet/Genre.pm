@@ -48,6 +48,7 @@ sub browse {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
+	my $sort = shift;
 
 	return $self->search($cond, { 'order_by' => 'me.namesort' });
 }
