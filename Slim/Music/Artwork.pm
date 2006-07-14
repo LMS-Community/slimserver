@@ -244,7 +244,7 @@ sub _readCoverArtFiles {
 
 	if (defined $artworkDir && $artworkDir eq $parentDir) {
 
-		if (exists $lastFile{$image} && $lastFile{$image} != 1) {
+		if (exists $lastFile{$image} && $lastFile{$image} ne 1) {
 
 			$::d_artwork && msg("Using existing $image: $lastFile{$image}\n");
 
