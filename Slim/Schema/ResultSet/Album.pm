@@ -118,10 +118,13 @@ sub descendTrack {
 		}
 	}
 
-	# Only select tracks for this album.
-	if (my $album = $find->{'album.id'}) {
+	# Only select tracks for this album or year
+	while (my ($key, $value) = each %{$find}) {
 
-		$cond->{'me.id'} = $album;
+		if ($key =~ /^album\.(\w+)$/) {
+
+			$cond->{"me.$1"} = $value;
+		}
 	}
 
 	# Create a "clean" resultset, without any joins on it - since we'll
