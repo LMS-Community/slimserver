@@ -190,7 +190,7 @@ sub searchTerm {
 	# Bug #738
 	# Which should be the default? Old - which is substring always?
 	if (Slim::Utils::Prefs::get('searchSubString')) {
-		$term = '*';
+		$term = '%';
 	}
 
 	for my $a (@{$client->searchTerm}) {
