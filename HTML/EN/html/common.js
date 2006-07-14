@@ -17,22 +17,25 @@ function refreshStatus() {
 
 function toggleGalleryView(artwork) {
 
-	for (var i=0; i < parent.frames.length; i++) {
-
-		if (parent.frames[i].name == "browser" && parent.frames[i].location.pathname != '') {
-
-			if (artwork) {
-
-				setCookie( 'SlimServer-albumView', "1" );
-				parent.frames[i].location=parent.frames[i].location.href+"&amp;artwork=1";
-
+	if (parent.browser.location.pathname != '') {
+		myString = new String(parent.browser.location.href);
+		
+		if (artwork) {
+			setCookie( 'SlimServer-albumView', "1" );
+			
+			if (parent.browser.location.href.indexOf('start') == -1) {
+				parent.browser.location=parent.browser.location.href+"&artwork=1";
 			} else {
-
-				setCookie( 'SlimServer-albumView', "" );
-				myString = new String(parent.frames[i].location.href);
-				var rExp = /\&amp\;artwork=1/gi;
-				parent.frames[i].location=myString.replace(rExp, "");
+				myString = new String(parent.browser.location.href);
+				var rExp = /\&start=/gi;
+				parent.browser.location=myString.replace(rExp, "&artwork=1&start=");
 			}
+		} else {
+
+			setCookie( 'SlimServer-albumView', "" );
+			
+			var rExp = /\&artwork=1/gi;
+			parent.browser.location=myString.replace(rExp, "");
 		}
 	}
 }
