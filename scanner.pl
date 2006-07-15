@@ -25,6 +25,7 @@ BEGIN {
 };
 
 use Getopt::Long;
+use File::Path;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Music::Import;
@@ -124,7 +125,7 @@ sub main {
 	Slim::Schema->txn_do(sub {
 
 		if ($wipe) {
-			Slim::Music::Info::wipeDBCache();
+			Slim::Schema->wipeAllData;
 		}
 
 		# Must be set _after_ we wipe the db.
@@ -158,6 +159,9 @@ sub main {
 			$lastRescan->update;
 		}
 	});
+
+	# Wipe templates if they exist.
+	rmtree( catdir(Slim::Utils::Prefs::get('cachedir'), 'templates') );
 }
 
 sub initializeFrameworks {

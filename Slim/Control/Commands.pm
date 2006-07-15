@@ -502,9 +502,8 @@ sub playlistDeleteitemCommand {
 
 	# This used to update $p2; anybody depending on this behaviour needs
 	# to be changed to used the returned result (commented below)
-	my $absitem = blessed($item) ? $item->url : $item;
-
-	my $contents;
+	my $contents = [];
+	my $absitem  = blessed($item) ? $item->url : $item;
 
 	if (!Slim::Music::Info::isList($absitem)) {
 
@@ -523,28 +522,33 @@ sub playlistDeleteitemCommand {
 	
 	} else {
 
-		$contents = Slim::Music::Info::cachedPlaylist($absitem);
+		my $playlist = Slim::Schema->rs('Playlist')->objectForUrl({ 'url' => $item });
 
-		if (!defined $contents) {
+		if ($playlist) {
+			$contents = [ map { $_->url } $playlist->tracks ];
+		}
 
-			my $playlist_filehandle;
+		if (!scalar @$contents) {
 
-			if (!open($playlist_filehandle, Slim::Utils::Misc::pathFromFileURL($absitem))) {
+			my $fh = undef;
+
+			if (!open($fh, Slim::Utils::Misc::pathFromFileURL($absitem))) {
 
 				errorMsg("Couldn't open playlist file $absitem : $!\n");
-
-				$playlist_filehandle = undef;
+				$fh = undef;
 
 			} else {
 
-				$contents = [Slim::Formats::Playlists->parseList($absitem, $playlist_filehandle, dirname($absitem))];
+				$contents = [Slim::Formats::Playlists->parseList($absitem, $fh, dirname($absitem))];
 			}
 		}
 
-		if (defined($contents)) {
+		if (scalar @$contents) {
 			Slim::Player::Playlist::removeMultipleTracks($client, $contents);
 		}
 	}
+
+	$contents = [];
 
 	$client->currentPlaylistModified(1);
 	$client->currentPlaylistChangeTime(time());
@@ -1638,7 +1642,6 @@ sub rescanCommand {
 			$args{'cleanup'} = 1;
 		}
 
-		Slim::Music::Info::clearPlaylists();
 		Slim::Music::Import->launchScan(\%args);
 	}
 
@@ -1876,8 +1879,6 @@ sub wipecacheCommand {
 
 			$client->execute([qw(playlist clear)]);
 		}
-
-		Slim::Music::Info::clearPlaylists();
 
 		Slim::Music::Import->launchScan({
 			'wipe' => 1,

@@ -163,81 +163,10 @@ sub loadTypesConfig {
 	}
 }
 
-sub resetClientsToHomeMenu {
-
-	if (!$INC{'Slim/Player/Client.pm'}) {
-		return;
-	}
-
-	# Force all clients back to the home menu - otherwise if they are in a
-	# menu that has objects that might change out from under
-	# them, we're hosed, and serve a ::Deleted object.
-	for my $client (Slim::Player::Client->clients) {
-
-		$client->showBriefly($client->string('RESCANNING_SHORT'), '');
-
-		Slim::Buttons::Common::setMode($client, 'home');
-	}
-}
-
-sub wipeDBCache {
-
-	resetClientsToHomeMenu();
-	clearFormatDisplayCache();
-
-	Slim::Schema->wipeAllData();
-
-	# Remove any HTML templates we have around.
-	if ($INC{'Slim/Web/HTTP.pm'}) {
-
-		rmtree( Slim::Web::HTTP::templateCacheDir() );
-	}
-}
-
-sub clearStaleCacheEntries {
-	resetClientsToHomeMenu();
-	Slim::Schema->clearStaleEntries();
-}
-
-sub clearFormatDisplayCache {
-
-	%displayCache  = ();
-	%currentTitles = ();
-	%currentBitrates = ();
-}
-
 sub playlistForClient {
 	my $client = shift;
 
 	return Slim::Schema->rs('Playlist')->getPlaylistForClient($client);
-}
-
-sub clearPlaylists {
-	my $type = shift;
-
-	resetClientsToHomeMenu();
-
-	Slim::Schema->forceCommit;
-
-	my $rs = Slim::Schema->rs('Playlist');
-
-	# Didn't specify a type? Clear everything
-	if (!defined $type) {
-
-		$rs->clearExternalPlaylists;
-		$rs->clearInternalPlaylists;
-
-		return;
-	}
-
-	if ($type eq 'internal') {
-
-		$rs->clearInternalPlaylists;
-
-	} else {
-
-		$rs->clearExternalPlaylists($type);
-	}
 }
 
 sub updateCacheEntry {
@@ -257,28 +186,16 @@ sub updateCacheEntry {
 		$url = Slim::Utils::Misc::fileURLFromPath($url); 
 	}
 
-	my $list     = $cacheEntryHash->{'LIST'} || [];
+	my $list = $cacheEntryHash->{'LIST'} || [];
 
 	my $playlist = Slim::Schema->rs('Playlist')->updateOrCreate({
 		'url'        => $url,
 		'attributes' => $cacheEntryHash,
 	});
 
-	if (ref($list) eq 'ARRAY' && blessed($playlist) && $playlist->can('setTracks')) {
+	if (ref($list) eq 'ARRAY' && scalar @$list && blessed($playlist) && $playlist->can('setTracks')) {
 
-		my @tracks = ();
-
-		for my $url (@$list) {
-
-			push @tracks, Slim::Schema->rs('Track')->objectForUrl({
-				'url'    => $url,
-				'create' => 1,
-			});
-		}
-
-		if (scalar @tracks) {
-			$playlist->setTracks(\@tracks);
-		}
+		$playlist->setTracks($list);
 	}
 }
 
@@ -413,16 +330,15 @@ sub getCurrentTitle {
 	return $currentTitles{$url} || standardTitle($client, $url);
 }
 
-# if no ID3 information is available,
+# If no metadata is available,
 # use this to get a title, which is derived from the file path or URL.
 # Also used to get human readable titles for playlist files and directories.
 #
 # for files, file URLs and directories:
-#             Any ending .mp3 is stripped off and only last part of the path
+#             Any extension is stripped off and only last part of the path
 #             is returned
 # for HTTP URLs:
 #             URL unescaping is undone.
-#
 
 sub plainTitle {
 	my $file = shift;
@@ -621,45 +537,6 @@ sub cleanTrackNumber {
 	return $tracknumber;
 }
 
-sub cachedPlaylist {
-	my $urlOrObj = shift || return;
-
-	# We might have gotten an object passed in for effeciency. Check for
-	# that, and if not, make sure we get a valid object from the db.
-	my $playlist = Slim::Schema->rs('Playlist')->objectForUrl({
-		'url' => $urlOrObj,
-	});
-
-	if (!blessed($playlist) || !$playlist->can('tracks')) {
-
-		return undef;
-	}
-
-	# We want any PlayListTracks this item may have
-	my @urls = ();
-
-	for my $track ($playlist->tracks) {
-
-		if (blessed($track) && $track->can('url')) {
-
-			push @urls, $track->url;
-
-		} else {
-
-			$::d_info && msgf("Invalid track object for playlist [%s]!\n", $playlist->url);
-		}
-	}
-
-	# Otherwise, we're actually a directory.
-	if (!scalar @urls) {
-		@urls = $playlist->diritems;
-	}
-
-	return \@urls if scalar(@urls);
-
-	return undef;
-}
-
 sub fileName {
 	my $j = shift;
 
@@ -742,9 +619,8 @@ sub splitTag {
 		return @$tag;
 	}
 
-	# Splitting this is probably not what the user wants.
-	# part of bug #774
-	if ($tag =~ /^\s*R\s*\&\s*B\s*$/oi) {
+	# Bug 774 - Splitting these genres is probably not what the user wants.
+	if ($tag =~ /^\s*R\s*\&\s*B\s*$/oi || $tag =~ /^\s*Rock\s*\&\s*Roll\s*$/oi) {
 		return $tag;
 	}
 

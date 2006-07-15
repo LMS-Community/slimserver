@@ -550,7 +550,7 @@ sub handleEndElement {
 
 		if ($inTracks && $currentKey eq 'Playlists') {
 
-			Slim::Music::Info::clearPlaylists('itunesplaylist:');
+			Slim::Schema->rs('Playlist')->clearExternalPlaylists('itunesplaylist:');
 
 			$::d_itunes && msg("iTunes: starting playlist parsing, cleared old playlists\n");
 
