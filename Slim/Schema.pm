@@ -1223,6 +1223,9 @@ sub _preCheckAttributes {
 		}
 	}
 
+	# Bug 3759 - Set undef years to 0, so they're included in the count.
+	$attributes->{'YEAR'} ||= 0;
+
 	if (defined $attributes->{'TRACKNUM'}) {
 		$attributes->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributes->{'TRACKNUM'});
 	}
