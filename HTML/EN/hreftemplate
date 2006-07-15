@@ -34,7 +34,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 	[% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>" -%]
 [%- END %]
 
-[%# img tag for album thumbnail %]
+[%# img tag for album thumbnail in browse artwork context %]
 [%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %]
 	[% "<img src=\"/music/$coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\" 
 		alt=\"";item | html; IF artist; PROCESS artistsAsText.html; END ; IF year; " ($year)"; END; "\" 
@@ -186,6 +186,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 
 [% BLOCK pagebarcalc;
 	pagebarstart = pageinfo.currentpage - (pagesperbar div 2);
+	IF (pagebarstart + pagesperbar) > pageinfo.totalpages; pagebarstart = pageinfo.totalpages - pagesperbar; END;
 	IF (pagebarstart < 0) || (pagesperbar >= pageinfo.totalpages); pagebarstart = 0; END;
 	lastpage = pageinfo.totalpages - 1;
 	pagebarend = pagebarstart + pagesperbar - 1;
