@@ -201,7 +201,11 @@ sub descend {
 
 			my $method = "descend${level}";
 			$::d_sql && msg("Calling method: [$method]\n");
-			$rs = $rs->$method($find, $condForLevel, $sortForLevel);
+
+			# XXX - Don't pass $sortForLevel to descend* right
+			# now, as they can't handle it yet.
+			#$rs = $rs->$method($find, $condForLevel, $sortForLevel);
+			$rs = $rs->$method($find, $condForLevel, undef);
 		}
 	}
 
