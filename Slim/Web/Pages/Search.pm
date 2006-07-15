@@ -250,7 +250,7 @@ sub advancedSearch {
 	my $count = $rs->count;
 
 	my $start = ($params->{'start'} || 0),
-	my $end   = $params->{'itemsPerPage'};
+	my $end   = $params->{'itemsPerPage'} - 1;
 
 	if (defined $client && !$params->{'start'}) {
 
