@@ -21,9 +21,14 @@ sub allTitle {
 
 sub pageBarResults {
 	my $self = shift;
+	my $sort = shift;
 
 	my $table = $self->{'attrs'}{'alias'};
 	my $name  = "$table.titlesort";
+
+	if ($sort =~ /^contributor.namesort/) {
+		$name  = "contributor.namesort";
+	}
 
 	$self->search(undef, {
 		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
@@ -35,10 +40,9 @@ sub pageBarResults {
 
 sub alphaPageBar {
 	my $self = shift;
-	my $cond = shift;
 	my $sort = shift;
 
-	return (!defined($sort) || $sort =~ /^contributor|^album/ ) ? 1 : 0;
+	return (!defined($sort) || $sort =~ /^contributor.namesort|^album.titlesort/ ) ? 1 : 0;
 }
 
 sub ignoreArticles {

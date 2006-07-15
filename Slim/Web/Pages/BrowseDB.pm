@@ -224,9 +224,9 @@ sub browsedb {
 	if ($count) {
 		my $alphaitems;
 
-		if (!defined $params->{'nopagebar'} && $rs->alphaPageBar) {
+		if (!defined $params->{'nopagebar'} && $rs->alphaPageBar($orderBy)) {
 
-			$alphaitems = $browseRS->pageBarResults;
+			$alphaitems = $browseRS->pageBarResults($orderBy);
 		}
 
 		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
