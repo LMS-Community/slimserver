@@ -17,7 +17,7 @@ use Slim::Web::Pages;
 
 use constant MAXRESULTS => 10;
 
-my @allTypes = qw(Contributor Album Track);
+my @allTypes = qw(contributor album track);
 
 sub query {
 	my ($class, $query, $types, $limit, $offset) = @_;
