@@ -26,10 +26,11 @@ sub pageBarResults {
 	my $table = $self->{'attrs'}{'alias'};
 	my $name  = "$table.titlesort";
 
-	#if ($sort =~ /^contributor.namesort/) {
-	#	$name  = "contributor.namesort";
-	#}
-	
+	# pagebar based on contibutors if first sort field and results already sorted by this
+	if ($sort =~ /^contributor.namesort/ && $self->{'attrs'}{'order_by'}[0] =~ /contributor.namesort/) {
+		$name  = "contributor.namesort";
+	}
+
 	$self->search(undef, {
 		'select'     => [ \"LEFT($name, 1)", { count => \"DISTINCT($table.id)" } ],
 		as           => [ 'letter', 'count' ],
