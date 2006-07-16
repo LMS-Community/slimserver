@@ -145,7 +145,7 @@ sub add_headers {
 	
 	# handle basic auth if username, password provided
 	if ( my $userinfo = $self->request->uri->userinfo ) {
-		$headers->init_header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
+		$headers->header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
 	}
 	
 	my $host = $self->request->uri->host;
