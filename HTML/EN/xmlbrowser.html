@@ -20,7 +20,7 @@
 			[% END %][% END %]
 
 			[% IF streaminfo %]
-				[% IF streaminfo.item.enclosure %]
+				[% IF streaminfo.item.enclosure || streaminfo.item.url %]
 				<div id="songInfoHeader">
 					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
 					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
