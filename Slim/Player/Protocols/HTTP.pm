@@ -251,26 +251,9 @@ sub sysread {
 	
 	# If we know the bitrate and have a content-length, we can display a progress bar
 	if ( $self->contentLength && !$self->duration && $self->bitrate > 1 ) {
-		my $secs = int( ( $self->contentLength * 8 ) / $self->bitrate );
-		
-		my %cacheEntry = (
-			'SECS' => $secs,
-		);
-		
-		Slim::Music::Info::updateCacheEntry( $self->url, \%cacheEntry );
-		
-		# Set the duration so the progress bar appears
 		if ( $self->client ) {
-			$self->client->currentsongqueue()->[0]->{duration} = $secs;
+			$self->client->streamingProgressBar( $self->url, $self->bitrate, $self->contentLength );
 		}
-		
-		${*$self}{'duration'} = $secs;
-		$::d_remotestream && msgf(
-			"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
-			$self->duration,
-			$self->contentLength,
-			$self->bitrate
-		);
 	}
 
 	return $readLength;

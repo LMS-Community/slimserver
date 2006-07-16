@@ -274,7 +274,17 @@ sub getCurrentBitrate {
 		$url = $url->url;
 	}
 
-	return $currentBitrates{$url} || undef;
+	return $currentBitrates{$url} || getBitrate($url) || undef;
+}
+
+sub getBitrate {
+	my $url = shift || return undef;
+	
+	my $track = Slim::Schema->rs('Track')->objectForUrl({
+		'url' => $url,
+	});
+	
+	return $track->bitrate;
 }
 
 sub setBitrate {
@@ -295,6 +305,19 @@ sub setBitrate {
 	my $mode = $vbr ? 'VBR' : 'CBR';
 	my $str = int ( $bitrate / 1000 ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
 	$currentBitrates{$url} = $str;
+}
+
+sub setDuration {
+	my $url      = shift;
+	my $duration = shift;
+
+	Slim::Schema->rs('Track')->updateOrCreate({
+		'url'        => $url,
+		'attributes' => { 
+			'SECS' => $duration,
+		},
+		'readTags'   => 1,
+	});
 }
 
 sub setCurrentTitleChangeCallback {

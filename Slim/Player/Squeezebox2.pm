@@ -773,6 +773,19 @@ sub directHeaders {
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;
 			Slim::Music::Info::setBitrate($url, $bitrate) if $bitrate;
 			Slim::Music::Info::setCurrentTitle($url, $title) if $title;
+			
+			# Bitrate may have been set in Scanner by reading the mp3 stream
+			if ( !$bitrate ) {
+				$bitrate = Slim::Music::Info::getCurrentBitrate( $url );
+			}
+			
+			if ( $bitrate && $length ) {
+				# if we know the bitrate and length of a stream, display a progress bar
+				if ( $bitrate < 1000 ) {
+					$bitrate *= 1000;
+				}
+				$client->streamingProgressBar( $url, $bitrate, $length );
+			}
 
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
 

@@ -1470,6 +1470,35 @@ sub shouldLoop {
 	return 0;
 }
 
+# Given bitrate and content-length of a stream, display a progress bar
+sub streamingProgressBar {
+	my ( $client, $url, $bitrate, $length ) = @_;
+	
+	my $secs = int( ( $length * 8 ) / $bitrate );
+	
+	my %cacheEntry = (
+		'SECS' => $secs,
+	);
+	
+	Slim::Music::Info::updateCacheEntry( $url, \%cacheEntry );
+	
+	Slim::Music::Info::setDuration( $url, $secs );
+	
+	# Set the duration so the progress bar appears
+	if ( ref $client->currentsongqueue->[0] eq 'HASH' ) {
+		$client->currentsongqueue()->[0]->{'duration'} = $secs;
+		
+		if ( $::d_remotestream || $::d_directstream ) {
+			msgf(
+				"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
+				$secs,
+				$length,
+				$bitrate
+			);
+		}
+	}
+}
+
 # data accessors
 
 sub id {
