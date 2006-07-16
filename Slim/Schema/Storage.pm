@@ -14,7 +14,7 @@ use base qw(DBIx::Class::Storage::DBI::mysql);
 
 use Slim::Utils::Misc;
 
-our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
 
 sub throw_exception {
 	my ($self, $msg) = @_;
@@ -42,7 +42,7 @@ sub select {
 
 	my @ret = $self->next::method(@_);
 
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select\n");
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("    DBIx select\n", undef, 1);
 
 	return wantarray ? @ret : $ret[0];
 }
@@ -54,7 +54,7 @@ sub select_single {
 
 	my @ret = $self->next::method(@_);
 
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("  select_single\n");
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("    DBIx select_single\n", undef, 1);
 
 	return wantarray ? @ret : $ret[0];
 }

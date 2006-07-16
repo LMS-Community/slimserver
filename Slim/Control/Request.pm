@@ -389,7 +389,7 @@ my $callExecuteCallback = 0;    # flag to know if we must call the legacy
 my $d_notify = 0;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
 
-our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], 1);
 
 ################################################################################
 # Package methods
@@ -1415,7 +1415,7 @@ sub execute {
 	$self->executeDone() unless $self->isStatusProcessing();
 
 	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) &&
-		msgf("  Execute: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'}));
+		msg(sprintf("    Execute: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'})), undef, 1);
 }
 
 # perform end of execution, calling the callback etc...
@@ -1561,7 +1561,7 @@ sub notify {
 			&$notifyFuncRef($self);
 
 			$::perfmon && $requestTask->log(Time::HiRes::time() - $now) && 
-				msgf("  Notify: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef));
+				msg(sprintf("    Notify: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef)), undef, 1);
 
 		}
 	}
