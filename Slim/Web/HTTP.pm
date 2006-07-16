@@ -663,7 +663,7 @@ sub processURL {
 
 =pod
 
-=HEAD1 Send the response to the client
+=head1 Send the response to the client
 
 =cut
 
@@ -1156,7 +1156,7 @@ sub _stringifyHeaders {
 
 =pod
 
-=HEAD1 This section handles standard HTTP responses
+=head1 This section handles standard HTTP responses
 
 =cut
 
@@ -1279,7 +1279,7 @@ sub sendResponse {
 
 =pod
 
-=HEAD1 These two routines handle HTTP streaming of audio (a la ShoutCast and IceCast)
+=head1 These two routines handle HTTP streaming of audio (a la ShoutCast and IceCast)
 
 =cut
 

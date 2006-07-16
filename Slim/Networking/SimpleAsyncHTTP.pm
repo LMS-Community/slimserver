@@ -324,11 +324,11 @@ sub close { }
 
 __END__
 
-=head NAME
+=head1 NAME
 
 Slim::Networking::SimpleAsyncHTTP - asynchronous non-blocking HTTP client
 
-=head SYNOPSIS
+=head1 SYNOPSIS
 
 use Slim::Networking::SimpleAsyncHTTP
 
@@ -372,4 +372,3 @@ because the server will remain responsive and continue streaming audio
 while your code waits for the response.
 
 =cut
-
