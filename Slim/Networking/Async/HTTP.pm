@@ -36,6 +36,7 @@ use base 'Slim::Networking::Async';
 use HTTP::Headers;
 use HTTP::Request;
 use HTTP::Response;
+use MIME::Base64 qw(encode_base64);
 use MPEG::Audio::Frame;
 use URI;
 
@@ -141,6 +142,11 @@ sub add_headers {
 	my $self = shift;
 	
 	my $headers = $self->request->headers;
+	
+	# handle basic auth if username, password provided
+	if ( my $userinfo = $self->request->uri->userinfo ) {
+		$headers->init_header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
+	}
 	
 	my $host = $self->request->uri->host;
 	if ( $self->request->uri->port != 80 ) {

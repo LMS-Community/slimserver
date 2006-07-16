@@ -30,7 +30,6 @@ use Slim::Utils::Misc;
 
 use HTTP::Date ();
 use HTTP::Request;
-use MIME::Base64 qw(encode_base64);
 
 __PACKAGE__->mk_classaccessors( qw(
 	cb ecb type url error code mess headers contentRef cachedResponse async
@@ -138,13 +137,6 @@ sub _createHTTPRequest {
 		unshift @_, (
 			'If-None-Match'     => $data->{headers}->header('ETag') || undef,
 			'If-Modified-Since' => $data->{headers}->last_modified || undef,
-		);
-	}
-	
-	# handle basic auth if username, password provided
-	if ( my $userinfo = $request->uri->userinfo ) {
-		unshift @_, (
-			'Authorization' => 'Basic ' . encode_base64( $userinfo ),
 		);
 	}
 
