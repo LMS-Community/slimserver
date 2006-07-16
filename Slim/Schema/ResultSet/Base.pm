@@ -177,9 +177,10 @@ sub descend {
 
 		# XXXX - sortForLevel isn't being processed by
 		# generateConditionsFromFilters() yet. Instead, the only
-		# caller is the Sort Album Artwork feature.
+		# supported caller is the Sort Album Artwork feature.
+		# Only accept the scalar used this at present.
 		#my $sortForLevel = $sort->{lc($level)};
-		my $sortForLevel = $sort;
+		my $sortForLevel = $sort unless ref $sort;
 
 		$level           = ucfirst($level);
 
