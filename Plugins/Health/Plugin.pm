@@ -59,10 +59,11 @@ my @perfmonLogs = (
 	{ 'type' => 'server', 'name' => 'selecttask',   'monitor' => \$Slim::Networking::Select::selectTask,    },
 	{ 'type' => 'server', 'name' => 'timertask',    'monitor' => \$Slim::Utils::Timers::timerTask,          },
 	{ 'type' => 'server', 'name' => 'request',      'monitor' => \$Slim::Control::Request::requestTask,     },
+	{ 'type' => 'server', 'name' => 'schedulertask','monitor' => \$Slim::Utils::Scheduler::schedulerTask,   },
 	{ 'type' => 'server', 'name' => 'dbaccess',     'monitor' => \$Slim::Schema::Storage::dbAccess,         },
 	{ 'type' => 'server', 'name' => 'pagebuild',    'monitor' => \$Slim::Web::HTTP::pageBuild,              },
+	{ 'type' => 'server', 'name' => 'proctemplate', 'monitor' => \$Slim::Web::Template::Context::procTemplate },
 	{ 'type' => 'server', 'name' => 'irqueue',      'monitor' => \$Slim::Hardware::IR::irPerf,              },
-	{ 'type' => 'server', 'name' => 'schedulertask','monitor' => \$Slim::Utils::Scheduler::schedulerTask,   },
 	{ 'type' => 'player', 'name' => 'signal',       'monitor' => \&Slim::Player::Client::signalStrengthLog, },
 	{ 'type' => 'player', 'name' => 'buffer',       'monitor' => \&Slim::Player::Client::bufferFullnessLog, },
 	{ 'type' => 'player', 'name' => 'control',      'monitor' => \&Slim::Player::Client::slimprotoQLenLog,  },
@@ -658,6 +659,12 @@ PLUGIN_HEALTH_DBACCESS
 
 PLUGIN_HEALTH_DBACCESS_DESC
 	EN	The time taken for information to be retrieved from the database.
+
+PLUGIN_HEALTH_PROCTEMPLATE
+	EN	Process Template
+
+PLUGIN_HEALTH_PROCTEMPLATE_DESC
+	EN	The time to process each Template Toolkit template when building web pages.
 '
 }
 

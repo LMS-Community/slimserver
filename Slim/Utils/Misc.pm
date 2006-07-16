@@ -863,8 +863,9 @@ sub msg {
 	use bytes;
 	my $entry = shift;
 	my $forceLog = shift || 0;
+	my $suppressTimestamp = shift;
 
-	if ( $::LogTimestamp ) {
+	if ( $::LogTimestamp && !$suppressTimestamp ) {
 		my $now = substr(int(Time::HiRes::time() * 10000),-4);
 		$entry = join( "", strftime( "%Y-%m-%d %H:%M:%S.", localtime ),
 			$now , ' ' , $entry );

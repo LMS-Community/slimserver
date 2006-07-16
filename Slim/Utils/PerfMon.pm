@@ -23,7 +23,7 @@ sub new {
 }
 
 sub adjust {
-	my ($ref, $name, $array, $warnLo, $warnHi, $warnbt) = @_;
+	my ($ref, $name, $array, $noend, $warnLo, $warnHi, $warnbt) = @_;
 
 	my $buckets = $#{$array};
 
@@ -35,6 +35,7 @@ sub adjust {
 	$ref->{sum} = 0;                       # sum of logged values
 	$ref->{val} = [];                      # array holding counts per bucket
 	$ref->{thres} = [];                    # array holding thresholds per bucket
+	$ref->{warnend} = $noend ? '' : "\n";  # line ending for warning message
 	$ref->{warnlo} = $warnLo;              # low warning threshold - msg if crossed
 	$ref->{warnhi} = $warnHi;              # high warning threshold - msg if crossed
 	$ref->{warnbt} = $warnbt;              # bt() if warning threshold crossed
@@ -113,8 +114,8 @@ sub log {
 	($val < $ref->{min}) && ($ref->{min} = $val);
 
 	# test for crossing warning threshold and log msg if appropriate
-	$ref->{warnlo} && ($val < $ref->{warnlo}) && msg($ref->{name}." < ".$ref->{warnlo}." : ".$val."\n") && ($warn = 1) && $ref->{warnbt} && bt();
-	$ref->{warnhi} && ($val > $ref->{warnhi}) && msg($ref->{name}." > ".$ref->{warnhi}." : ".$val."\n") && ($warn = 1) && $ref->{warnbt} && bt();
+	$ref->{warnlo} && ($val < $ref->{warnlo}) && msgf("%-16s < %5s : %8.5f%s", $ref->{name}, $ref->{warnlo}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
+	$ref->{warnhi} && ($val > $ref->{warnhi}) && msgf("%-16s > %5s : %8.5f%s", $ref->{name}, $ref->{warnhi}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
 
 	# shortcut for hits on first bucket
 	($val < $ref->{thresL}) && ++$ref->{valL} && return $warn;
