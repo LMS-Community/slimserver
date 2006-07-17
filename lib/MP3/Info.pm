@@ -949,9 +949,9 @@ sub _parse_v2tag {
 
 					$data = { $desc => $data };
 
-				} elsif ($desc && ($desc eq 'iTunNORM' || $desc eq 'iTunes_CDDB_IDs')) {
+				} elsif ($desc && $desc =~ /^iTun/) {
 
-					# leave the iTunNORM tag alone.
+					# leave iTunes tags alone.
 					$data = join(' ', $desc, $data);
 				}
 
