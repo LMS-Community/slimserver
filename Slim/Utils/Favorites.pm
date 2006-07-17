@@ -82,8 +82,8 @@ sub clientAdd {
 
 # for internal use only.  Get pref index for given url
 sub _indexByUrl {
-	my $url = shift;
-	
+	my $url = shift || return undef;
+
 	# Bug 3362, ignore sessionID's within URLs (Live365)
 	# This allows either a URL with session or without to be found properly
 	my $strippedURL = $url;
@@ -91,15 +91,18 @@ sub _indexByUrl {
 
 	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
 
-	my $i = 0;
+	my $i     = 0;
 	my $found = 0;
+
 	while (!$found && $i < scalar(@urls)) {
+
 		if ( $urls[$i] eq $url || $urls[$i] eq $strippedURL ) {
 			$found = 1;
 		} else {
 			$i++;
 		}
 	}
+
 	if ($found) {
 		return $i;
 	} else {
@@ -113,11 +116,20 @@ sub findByClientAndURL {
 	my $url = shift;
 
 	my $i = _indexByUrl($url);
+
 	if (defined($i)) {
+
 		$::d_favorites && msg("Favorites: found favorite number " . ($i+1) . ": $url\n");
 		my $title = Slim::Utils::Prefs::getInd('favorite_titles', $i);
-		return {'url' => $url, 'title' => $title, 'num' => $i+1};
+
+		return {
+			'url'   => $url,
+			'title' => $title,
+			'num'   => $i+1
+		};
+
 	} else {
+
 		$::d_favorites && msg("Favorites: not found: $url\n");
 		return undef;
 	}
@@ -134,7 +146,7 @@ sub moveItem {
 	}
 
 	my @titles = Slim::Utils::Prefs::getArray('favorite_titles');
-	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
+	my @urls   = Slim::Utils::Prefs::getArray('favorite_urls');
 
 	if (defined $from && defined $to && 
 		$from < scalar @titles && 
@@ -172,8 +184,10 @@ sub deleteByClientAndId {
 # if you need to modify the list, use add then call new again.
 sub new {
 	my $class = shift;
+
 	# this is a class only method.
 	assert (!ref($class), "new is a class method, not an instance\n");
+
 	# nothing really to do for this implementation
 	return bless({}, $class);
 }
@@ -181,22 +195,17 @@ sub new {
 # returns an array of titles
 sub titles {
 	ref(my $self = shift) or assert(0, __PACKAGE__."::titles is an instance-only method\n");
-	my @titles = Slim::Utils::Prefs::getArray('favorite_titles');
-	return @titles;
+
+	return Slim::Utils::Prefs::getArray('favorite_titles');
 }
+
 # returns an array of urls
 sub urls {
 	ref(my $self = shift) or assert(0, __PACKAGE__."::urls is an instance-only method\n");
-	my @urls = Slim::Utils::Prefs::getArray('favorite_urls');
-	return @urls;
-}
 
+	return Slim::Utils::Prefs::getArray('favorite_urls');
+}
 
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

@@ -96,10 +96,6 @@ sub webPages {
 sub handleWebIndex {
 	my ($client, $params) = @_;
 	
-# commented out by Fred
-# what's that for?
-#	my $now = Time::HiRes::time();
-
 	$params->{'favList'} = {};
 
 	my $favs = Slim::Utils::Favorites->new($client);
@@ -176,11 +172,14 @@ sub setMode {
 
 sub mainModeCallback {
 	my ($client,$exittype) = @_;
+
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT') {
+
 		Slim::Buttons::Common::popModeRight($client);
-	  } 
-	elsif ($exittype eq 'RIGHT') {
+
+	} elsif ($exittype eq 'RIGHT') {
 		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
 		my $urls = Slim::Buttons::Common::param($client, 'urls');
 
@@ -188,19 +187,16 @@ sub mainModeCallback {
 # 			stationTitle => $context{$client}->{mainModeIndex},
 # 			stationURL => $urls->[$listIndex],
 # 		);
-# 		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites.details',
-# 											\%params);
+# 		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites.details', \%params); 
 
 		my %params = (
 			title => $context{$client}->{mainModeIndex},
 			url => $urls->[$listIndex],
 		);
- 		Slim::Buttons::Common::pushModeLeft($client,
-											'remotetrackinfo',
-											\%params);
 
-	}
-	else {
+ 		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+
+	} else {
 		$client->bumpRight();
 	}
 }
@@ -219,25 +215,30 @@ sub getFunctions {
 sub playFavorite {
 	my $client = shift;
 	my $button = shift;
-	my $digit = shift;
+	my $digit  = shift;
 
 	if ($digit == 0) {
 		$digit = 10;
 	}
+
 	my $listIndex = $digit - 1;
 
-	my $favs = Slim::Utils::Favorites->new($client);
+	my $favs   = Slim::Utils::Favorites->new($client);
 	my @titles = $favs->titles();
 	
-	#grab urls into array ref
+	# grab urls into array ref
 	my $urls = [$favs->urls()];
 
 	if (!$urls->[$listIndex]) {
+
 		$client->showBriefly( {
 			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
 		});
+
 	} else {
+
 		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$listIndex] . "\n");
+
 		$client->showBriefly( {
 			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
 			 'line2' => $titles[$listIndex],
@@ -258,11 +259,10 @@ sub enabled {
 
 sub initPlugin {
 	$::d_favorites && msg("Favorites Plugin: initPlugin\n");
-	Slim::Buttons::Common::addMode('PLUGIN.Favorites', 
-									\%mainModeFunctions, 
-									\&setMode);
-	#Slim::Buttons::Home::addMenuOption('FAVORITES', 
-	#									{'useMode' => 'PLUGIN.Favorites'});
+
+	Slim::Buttons::Common::addMode('PLUGIN.Favorites', \%mainModeFunctions, \&setMode);
+
+	#Slim::Buttons::Home::addMenuOption('FAVORITES', {'useMode' => 'PLUGIN.Favorites'});
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 
@@ -293,12 +293,12 @@ sub moveCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	# get the parameters
-	my $client	  = $request->client();
-	my $fromindex  = $request->getParam('_fromindex');;
-	my $toindex	 = $request->getParam('_toindex');;
-	
+	my $client    = $request->client();
+	my $fromindex = $request->getParam('_fromindex');;
+	my $toindex   = $request->getParam('_toindex');;
+
 	if (!defined $fromindex || !defined $toindex) {
 		$request->setStatusBadParams();
 		return;
@@ -318,12 +318,12 @@ sub addCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	# get the parameters
-	my $client  = $request->client();
-	my $url     = $request->getParam('_url');;
-	my $title   = $request->getParam('_title');;
-	
+	my $client = $request->client();
+	my $url    = $request->getParam('_url');;
+	my $title  = $request->getParam('_title');;
+
 	if (!defined $url || !defined $title) {
 		$request->setStatusBadParams();
 		return;
@@ -343,10 +343,10 @@ sub deleteCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	# get the parameters
-	my $client	  = $request->client();
-	my $index		= $request->getParam('_index');;
+	my $client = $request->client();
+	my $index  = $request->getParam('_index');;
 
 	if (!defined $index) {
 		$request->setStatusBadParams();
@@ -368,15 +368,16 @@ sub listQuery {
 	}
 
 	# get our parameters
-	my $client	= $request->client();
-	my $index	 = $request->getParam('_index');
+	my $client   = $request->client();
+	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	
-	my $favs	= Slim::Utils::Favorites->new($client);
+	my $favs   = Slim::Utils::Favorites->new($client);
 	my @titles = $favs->titles();
-	my @urls	= $favs->urls();
+	my @urls   = $favs->urls();
 	
-	my $count = scalar(@titles);
+	my $count  = scalar(@titles);
+
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -396,7 +397,6 @@ sub listQuery {
 
 	$request->setStatusDone();
 }
-
 
 sub strings {
 	return "
