@@ -183,7 +183,7 @@ sub tryModuleLoad {
 
 				# Don't bother removing/reloading
 				# these, as they're part of core Perl.
-				if ($newModule =~ /^(?:AutoLoader|DynaLoader|XSLoader|Carp|overload|IO|Fcntl|Socket|FileHandle)/) {
+				if ($newModule =~ /^(?:AutoLoader|DynaLoader|XSLoader|Carp|overload|IO|Fcntl|Socket|FileHandle|SelectSaver)/) {
 					next;
 				}
 

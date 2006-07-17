@@ -125,7 +125,7 @@ sub open {
 	# handle the DNS timeout by using our own timer
 	Slim::Utils::Timers::setTimer(
 		$bgsock,
-		Time::HiRes::time + $args->{Timeout},
+		Time::HiRes::time() + $args->{Timeout},
 		\&_dns_error,
 		$self,
 		$args,
@@ -212,7 +212,7 @@ sub connect {
 	# handle the timeout by using our own timer
 	Slim::Utils::Timers::setTimer(
 		$socket,
-		Time::HiRes::time + $args->{'Timeout'},
+		Time::HiRes::time() + $args->{'Timeout'},
 		\&_connect_error,
 		$self,
 		$args,
@@ -297,7 +297,7 @@ sub write_async {
 	# Timeout if we never get any data
 	Slim::Utils::Timers::setTimer(
 		$self->socket,
-		Time::HiRes::time + $self->socket->get( 'io_socket_timeout' ),
+		Time::HiRes::time() + $self->socket->get( 'io_socket_timeout' ),
 		\&_async_error,
 		'Timed out waiting for data',
 		$self,
