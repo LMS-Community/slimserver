@@ -114,8 +114,8 @@ sub log {
 	($val < $ref->{min}) && ($ref->{min} = $val);
 
 	# test for crossing warning threshold and log msg if appropriate
-	$ref->{warnlo} && ($val < $ref->{warnlo}) && msgf("%-16s < %5s : %8.5f%s", $ref->{name}, $ref->{warnlo}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
-	$ref->{warnhi} && ($val > $ref->{warnhi}) && msgf("%-16s > %5s : %8.5f%s", $ref->{name}, $ref->{warnhi}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
+	defined $ref->{warnlo} && ($val < $ref->{warnlo}) && msgf("%-16s < %5s : %8.5f%s", $ref->{name}, $ref->{warnlo}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
+	defined $ref->{warnhi} && ($val > $ref->{warnhi}) && msgf("%-16s > %5s : %8.5f%s", $ref->{name}, $ref->{warnhi}, $val, $ref->{warnend}) && ($warn = 1) && $ref->{warnbt} && bt();
 
 	# shortcut for hits on first bucket
 	($val < $ref->{thresL}) && ++$ref->{valL} && return $warn;

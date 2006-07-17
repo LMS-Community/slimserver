@@ -734,7 +734,7 @@ sub initOptions {
 		exit(1);
 	};
 
-	if ($perfwarn) {
+	if (defined $perfwarn) {
 		# enable performance monitoring and set warning thresholds on performance monitors
 		$perfmon = 1;
 		$Slim::Networking::Select::responseTime->setWarnHigh($perfwarn);
