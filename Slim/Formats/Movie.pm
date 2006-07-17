@@ -9,7 +9,7 @@ package Slim::Formats::Movie;
 
 use strict;
 use MP4::Info;
-use Slim::Utils::Misc;
+use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
 	'WRT'       => 'COMPOSER',
@@ -20,11 +20,9 @@ my %tagMapping = (
 
 my $tagCache = [];
 
-{
-	if ($] > 5.007) {
+if ($] > 5.007) {
 
-		MP4::Info::use_mp4_utf8(1)
-	}
+	MP4::Info::use_mp4_utf8(1)
 }
 
 sub getTag {
@@ -53,7 +51,7 @@ sub getTag {
 		($tags->{'DISC'}, $tags->{'DISCC'}) = @{$tags->{'DISK'}};
 	}
 
-	# Check for aacgain info stuffed in the '----' atom.
+	# Check for aacgain or iTunes SoundCheck data stuffed in the '----' atom.
 	if ($tags->{'META'} && ref($tags->{'META'}) eq 'ARRAY') {
 
 		for my $meta (@{$tags->{'META'}}) {
@@ -61,6 +59,11 @@ sub getTag {
 			if ($meta->{'NAME'} =~ /replaygain/i) {
 
 				$tags->{ uc($meta->{'NAME'}) } = $meta->{'DATA'};
+			}
+
+			if ($meta->{'NAME'} eq 'iTunNORM') {
+
+				$tags->{'REPLAYGAIN_TRACK_GAIN'} = Slim::Utils::SoundCheck::normStringTodB($meta->{'DATA'});
 			}
 		}
 	}
@@ -94,7 +97,7 @@ sub getCoverArt {
 		return $tags->{'COVR'};
 	}
 
-	msg("Got invalid tag data back from file: [$file]\n");
+	Slim::Utils::Misc::msg("Got invalid tag data back from file: [$file]\n");
 }
 
 1;

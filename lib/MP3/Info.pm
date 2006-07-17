@@ -801,24 +801,7 @@ sub _parse_v2tag {
 		} else {
 			my $data1 = $v2->{$id};
 
-			# this is tricky ... if this is an arrayref,
-			# we want to only return one, so we pick the
-			# first one.  but if it is a comment, we pick
-			# the first one where the first character after
-			# the language is NULL and not an additional
-			# sub-comment, because that is most likely to be
-			# the user-supplied comment
-			if (ref $data1 && !$raw_v2) {
-				if ($id =~ /^COMM?$/) {
-					my($newdata) = grep /^(....\000)/, @{$data1};
-					$data1 = $newdata || $data1->[0];
-				} elsif ($id !~ /^(?:TXXX?|PRIV)$/) {
-					# We can get multiple User Defined Text frames in a mp3 file
-					$data1 = $data1->[0];
-				}
-			}
-
-			$data1 = [ $data1 ] if ! ref $data1;
+			$data1 = [ $data1 ] if ref($data1) ne 'ARRAY';
 
 			for my $data (@$data1) {
 				# TODO : this should only be done for certain frames;
@@ -963,7 +946,13 @@ sub _parse_v2tag {
 				}
 
 				if ($raw_v2 == 2 && $desc) {
+
 					$data = { $desc => $data };
+
+				} elsif ($desc && ($desc eq 'iTunNORM' || $desc eq 'iTunes_CDDB_IDs')) {
+
+					# leave the iTunNORM tag alone.
+					$data = join(' ', $desc, $data);
 				}
 
 				if ($raw_v2 == 2 && exists $info->{$hash->{$id}}) {
@@ -996,7 +985,25 @@ sub _parse_v2tag {
 
 					} else {
 
-						$info->{$hash->{$id}} = $data;
+						my $key = $hash->{$id};
+
+						# If we have multiple values
+						# for the same key - turn them
+						# into an array ref.
+						if ($info->{$key} && !ref($info->{$key})) {
+
+							my $old = delete $info->{$key};
+
+							@{$info->{$key}} = ($old, $data);
+
+						} elsif (ref($info->{$key}) eq 'ARRAY') {
+
+							push @{$info->{$key}}, $data;
+
+						} else {
+
+							$info->{$key} = $data;
+						}
 					}
 				}
 			}

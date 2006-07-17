@@ -12,6 +12,8 @@ use Fcntl qw(:seek);
 use MP3::Info;
 use MPEG::Audio::Frame;
 
+use Slim::Utils::SoundCheck;
+
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
 	'MUSICBRAINZ ALBUM ARTIST ID'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
@@ -195,6 +197,12 @@ sub getTag {
 		}
 
 		delete $info->{'RVA2'};
+	}
+
+	# Look for iTunes SoundCheck data
+	if ($info->{'COMMENT'}) {
+
+		Slim::Utils::SoundCheck::commentTagTodB($info);
 	}
 
 	# Allow getCoverArt to reuse what we just fetched.
