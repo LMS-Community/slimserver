@@ -48,33 +48,38 @@ sub setMode {
 
 	# is it a favorite?
 	# INPUT.Choice will display 'name' dynamically
-	unshift @list, {
-		value => $url,
-		name => sub {
-			my $client = shift;
+	# 
+	# Only allow adding to favorites if the URL is something we can play.
+	if (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) {
 
-			my $num = $client->param('favorite');
-			if ($num) {
-				return "{FAVORITES_FAVORITE_NUM}$num {FAVORITES_RIGHT_TO_DELETE}";
-			} else {
-				return "{FAVORITES_RIGHT_TO_ADD}";
-			}
-		},
+		unshift @list, {
+			value => $url,
+			name => sub {
+				my $client = shift;
 
-		onRight => sub {
-			my $client = shift;
-			my $num = $client->param('favorite');
-			if ($num) {
-				Slim::Utils::Favorites->deleteByClientAndURL($client, $client->param('url'));
-				$client->param('favorite', 0);
-				$client->showBriefly($client->string('FAVORITES_DELETING'), $client->param('title'));
-			} else {
-				$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
-				$client->param('favorite', $num);
-				$client->showBriefly($client->string('FAVORITES_ADDING'), $client->param('title'));
+				my $num = $client->param('favorite');
+				if ($num) {
+					return "{FAVORITES_FAVORITE_NUM}$num {FAVORITES_RIGHT_TO_DELETE}";
+				} else {
+					return "{FAVORITES_RIGHT_TO_ADD}";
+				}
+			},
+
+			onRight => sub {
+				my $client = shift;
+				my $num = $client->param('favorite');
+				if ($num) {
+					Slim::Utils::Favorites->deleteByClientAndURL($client, $client->param('url'));
+					$client->param('favorite', 0);
+					$client->showBriefly($client->string('FAVORITES_DELETING'), $client->param('title'));
+				} else {
+					$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
+					$client->param('favorite', $num);
+					$client->showBriefly($client->string('FAVORITES_ADDING'), $client->param('title'));
+				}
 			}
-		}
-	};
+		};
+	}
 
 	# is the url already a favorite?
 	my $favorite = Slim::Utils::Favorites->findByClientAndURL($client, $url);
