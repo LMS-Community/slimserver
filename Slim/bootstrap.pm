@@ -58,7 +58,7 @@ my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
 my $sigINTcalled             = 0;
 
 sub loadModules {
-	my ($class, $required_modules, $optional_modules) = @_;
+	my ($class, $required_modules, $optional_modules, $libPath) = @_;
 
 	if (!ref($required_modules) || !scalar @$required_modules) {
 		$required_modules = \@default_required_modules;
@@ -67,6 +67,11 @@ sub loadModules {
 	# It's ok to pass in an empty array ref to not load any optional modules.
 	if (!ref($optional_modules) || (!scalar @$optional_modules && !ref($optional_modules))) {
 		$optional_modules = \@default_optional_modules;
+	}
+
+	# If the caller passed in a libPath, use that. Otherwise, default to $Bin
+	if (!$libPath) {
+		$libPath = $Bin;
 	}
 
 	if ($] <= 5.007) {
@@ -82,14 +87,14 @@ sub loadModules {
 	} else {
 
 		@SlimINC = (
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-			catdir($Bin,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-			catdir($Bin,'CPAN','arch',$Config::Config{'archname'}),
-			catdir($Bin,'lib'), 
-			catdir($Bin,'CPAN'), 
-			$Bin,
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
+			catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+			catdir($libPath,'lib'), 
+			catdir($libPath,'CPAN'), 
+			$libPath,
 		);
 	}
 
@@ -142,7 +147,7 @@ sub loadModules {
 
 		print "The following modules failed to load: $failed\n\n";
 
-		print "To download and compile them, please run: $Bin/Bin/build-perl-modules.pl $failed\n\n";
+		print "To download and compile them, please run: $libPath/Bin/build-perl-modules.pl $failed\n\n";
 		print "Exiting..\n";
 
 		exit;

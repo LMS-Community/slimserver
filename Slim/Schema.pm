@@ -20,6 +20,7 @@ use URI;
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
+use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
 use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);
