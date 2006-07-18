@@ -116,7 +116,7 @@ sub add {
 		my $search = Slim::Utils::Text::ignoreCaseArticles($name);
 		my $sort   = Slim::Utils::Text::ignoreCaseArticles(($sortedList[$i] || $name));
 
-		my $contributorObj = Slim::Schema->resultset('Contributor')->find_or_create({ 
+		my $contributorObj = Slim::Schema->resultset('Contributor')->search_or_create({ 
 			'namesearch'     => $search,
 			'name'           => $name,
 			'namesort'       => $sort,

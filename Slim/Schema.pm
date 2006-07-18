@@ -476,7 +476,7 @@ sub newTrack {
 		return;
 	}
 
-	$::d_info && msg("newTrack(): Created track '" . $track->title . "' (id:". $track->id  .")\n");
+	$::d_info && msgf("newTrack(): Created track '%s' (id: [%d])\n", $track->title, $track->id);
 
 	# Now that we've created the track, and possibly an album object -
 	# update genres, etc - that we need the track ID for.
@@ -662,7 +662,7 @@ sub variousArtistsObject {
 	# XXX - exception should go here. Comming soon.
 	if (!blessed($vaObj) || !$vaObj->can('name')) {
 
-		$vaObj  = $self->resultset('Contributor')->find_or_create({
+		$vaObj  = $self->resultset('Contributor')->update_or_create({
 			'name'       => $vaString,
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles($vaString),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles($vaString),
@@ -1002,10 +1002,13 @@ sub _readTags {
 	$::d_info && $_dump_tags && msg("_readTags(): Report for $file:\n");
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
+	# Bug: 3769 - Strip trailing nulls
 	while (my ($tag, $value) = each %{$attributesHash}) {
 
 		if (defined $attributesHash->{$tag}) {
+
 			$attributesHash->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
+			$attributesHash->{$tag} =~ s/\000$//;
 		}
 		
 		$::d_info && $_dump_tags && $value && msg(". $tag : $value\n");
@@ -1389,7 +1392,7 @@ sub _postCheckAttributes {
 
 	if ($create && $isLocal && !$genre && (!defined $_unknownGenre || ref($_unknownGenre) ne 'Slim::Schema::Genre')) {
 
-		$_unknownGenre = $self->resultset('Genre')->find_or_create({
+		$_unknownGenre = $self->resultset('Genre')->update_or_create({
 			'name'       => string('NO_GENRE'),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
@@ -1436,7 +1439,7 @@ sub _postCheckAttributes {
 	# Create a singleton for "No Artist"
 	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
 
-		$_unknownArtist = $self->resultset('Contributor')->find_or_create({
+		$_unknownArtist = $self->resultset('Contributor')->update_or_create({
 			'name'       => string('NO_ARTIST'),
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
 			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
@@ -1496,7 +1499,7 @@ sub _postCheckAttributes {
 	# Album should probably have an add() method
 	if ($create && $isLocal && !$album && !$_unknownAlbum) {
 
-		$_unknownAlbum = $self->resultset('Album')->find_or_create({
+		$_unknownAlbum = $self->resultset('Album')->update_or_create({
 			'title'       => string('NO_ALBUM'),
 			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
@@ -1663,7 +1666,7 @@ sub _postCheckAttributes {
 
 				if ($::d_info && $_dump_postprocess_logic) {
 
-					 msgf("-- Created album '$album' (id: [%d]\n", $albumObj->id);
+					 msgf("-- Created album '$album' (id: [%d])\n", $albumObj->id);
 				}
 			}
 		}
@@ -1749,7 +1752,7 @@ sub _postCheckAttributes {
 
 		if ($::d_info && $_dump_postprocess_logic) {
 
-			msgf("-- Updating album '$album' (id: [%d] with columns:\n", $albumObj->id);
+			msgf("-- Updating album '$album' (id: [%d]) with columns:\n", $albumObj->id);
 
 			while (my ($tag, $value) = each %set) {
 
@@ -1768,7 +1771,7 @@ sub _postCheckAttributes {
 
 			if ($::d_info && $_dump_postprocess_logic) {
 
-				msgf("-- Track has album '%s' (id: [%d]\n", $albumObj->name, $albumObj->id);
+				msgf("-- Track has album '%s' (id: [%d])\n", $albumObj->name, $albumObj->id);
 			}
 		}
 

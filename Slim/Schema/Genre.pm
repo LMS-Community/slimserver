@@ -66,7 +66,7 @@ sub add {
 		# So that ucfirst() works properly.
 		use locale;
 
-		my $genreObj = Slim::Schema->resultset('Genre')->find_or_create({ 
+		my $genreObj = Slim::Schema->resultset('Genre')->search_or_create({ 
 			'namesort'   => $namesort,
 			'name'       => ucfirst($genreSub),
 			'namesearch' => $namesort,
