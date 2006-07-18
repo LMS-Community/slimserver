@@ -33,22 +33,24 @@ sub init {
 }
 
 sub buildValidHierarchies {
-	my @sources = Slim::Schema->sources();
-	my @browsable = ();
-	my @paths = ();
+
+	my @sources       = Slim::Schema->sources();
+	my @browsable     = ();
+	my @paths         = ();
 	my @finishedPaths = ();
-	my @hierarchies = ();
+	my @hierarchies   = ();
+
 	no strict 'refs';
 
-	# pare down sources list to ones with a browse method in their
-	# ResultSet class.
+	# pare down sources list to ones with a browse method in their ResultSet class.
 	for my $source (@sources) {
+
 		if (eval{"Slim::Schema::ResultSet::$source"->can('browse')}) {
 			push @browsable, $source;
 		}
 	}
 
-	my $max = $#browsable;
+	my $max     = $#browsable;
 	my $rsCount = $max + 1;
 	my @inEdges = () x $rsCount;
 
@@ -59,8 +61,11 @@ sub buildValidHierarchies {
 
 		# work out the inbound edges of the graph by looking for descendXXX methods
 		for my $nextI (0 .. $max) {
+
 			my $nextLevel = $browsable[$nextI];
+
 			if (eval{"Slim::Schema::ResultSet::$source"->can("descend$nextLevel")})	{
+
 				$hasOut = 1;
 				push @{$inEdges[$nextI]}, $sourceI;
 			}
@@ -78,12 +83,14 @@ sub buildValidHierarchies {
 
 	# Work the paths from the sink nodes to the source nodes
 	while (scalar(@paths)) {
-		my $currPath = shift @paths;
-		my $topNode = $currPath->[0][0];
+
+		my $currPath   = shift @paths;
+		my $topNode    = $currPath->[0][0];
 		my @toContinue = ();
 
 		# Find all source nodes which are not currently in path
 		for my $inEdge (@{$inEdges[$topNode]}) {
+
 			if ($currPath->[1][$inEdge]) {
 				next;
 			} else {
@@ -100,9 +107,10 @@ sub buildValidHierarchies {
 
 		# clone the path if it splits
 		while (scalar(@toContinue) > 1) {
+
 			my $newPath = Storable::dclone($currPath);
-			my $newTop = shift @toContinue;
-			
+			my $newTop  = shift @toContinue;
+
 			# add source node to the beginning of the path
 			# and mark it as used
 			unshift @{$newPath->[0]}, $newTop;
@@ -121,14 +129,15 @@ sub buildValidHierarchies {
 	# convert array indexes to rs names, and concatenate into a string
 	# also do all sub-paths ending in the sink nodes
 	for my $path (@finishedPaths) {
+
 		while (scalar(@{$path})) {
+
 			push @hierarchies, join(',', @browsable[@{$path}]);
 			shift @{$path};
 		}
 	}
 	
 	%validHierarchies = map {lc($_) => $_} @hierarchies;
-	
 }
 
 sub browsedb {
@@ -142,14 +151,16 @@ sub browsedb {
 
 	# validate hierarchy, converting invalid hierarchies to 'track'
 	if (!exists $validHierarchies{lc($hierarchy)}) {
+
 		$hierarchy = 'track';
+
 		$::d_info && msg("browsedb - invalid hierarchy: $hierarchy\n");
 	}
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
 	# code further down expects the lcfirst version of the levels
-	my @levels = map {lcfirst($_)} split(',', $validHierarchies{lc($hierarchy)});
+	my @levels = map { lcfirst($_) } split(',', $validHierarchies{lc($hierarchy)});
 
 	# Make sure we're not out of bounds.
 	my $maxLevel = scalar(@levels) - 1;
@@ -162,9 +173,16 @@ sub browsedb {
 	my $levelName = $levels[$level];
 
 	# Set the orderBy if requested
-	if ($levelName eq 'album' && Slim::Utils::Prefs::get('sortBrowseArt') && !$orderBy) {
+	if ($levelName eq 'album') {
 
-		$orderBy = Slim::Utils::Prefs::get('sortBrowseArt');
+		if (Slim::Utils::Prefs::get('sortBrowseArt') && !$orderBy) {
+
+			$orderBy = Slim::Utils::Prefs::get('sortBrowseArt');
+		}
+
+	} else {
+
+		$orderBy = '';
 	}
 
 	# Build up a list of params to include in the href links.

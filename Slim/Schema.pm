@@ -1501,6 +1501,7 @@ sub _postCheckAttributes {
 			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
 			'compilation' => $isCompilation,
+			'year'        => 0,
 		}, { 'key' => 'titlesearch' });
 
 		$track->album($_unknownAlbum->id);

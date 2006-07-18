@@ -120,12 +120,6 @@ sub generateConditionsFromFilters {
 		if ($param eq 'album.year') {
 
 			$levelName = 'year';
-
-			# Unknown Year is passed as 0 in the web UI. But we
-			# need to query against NULL in the DB. Bug 3732
-			if (!$value) {
-				$value = undef;
-			}
 		}
 
 		# Turn into me.* for the top level
