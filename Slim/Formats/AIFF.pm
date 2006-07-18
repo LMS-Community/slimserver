@@ -26,7 +26,6 @@ sub getTag {
 	#
 	# Often, ID3 tags will be stored in an AIFF file. See iTunes.
 	my $tags = MP3::Info::get_mp3tag($file) || {};
-#	print Data::Dumper::Dumper($tags);
 
 	my $chunkheader;
 
