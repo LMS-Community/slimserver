@@ -1802,7 +1802,7 @@ sub _postCheckAttributes {
 				if ($::d_info && $_dump_postprocess_logic) {
 
 					msgf("-- Contributor '%s' (id: [%d]) linked to album '%s' (id: [%d]) with role: '%s'\n",
-						$contributorObj->name, $contributorObj->id $albumObj->name, $albumObj->id, $role
+						$contributorObj->name, $contributorObj->id, $albumObj->name, $albumObj->id, $role
 					);
 				}
 			}
@@ -1868,7 +1868,7 @@ sub _mergeAndCreateContributors {
 			if ($::d_info && $_dump_postprocess_logic) {
 
 				msgf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'\n",
-					$attributes->{'TRACKARTIST'} . 
+					$attributes->{'TRACKARTIST'},
 				);
 			}
 		}
