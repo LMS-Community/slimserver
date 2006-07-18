@@ -9,10 +9,14 @@ package Slim::Web::Pages::BrowseDB;
 
 use strict;
 use Scalar::Util qw(blessed);
+use Storable;
 
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+
+# will be built in init using buildValidHierarchies
+my %validHierarchies = ();
 
 sub init {
 
@@ -24,24 +28,128 @@ sub init {
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0" });
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0" });
 	Slim::Web::Pages->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0" });
+
+	buildValidHierarchies();
+}
+
+sub buildValidHierarchies {
+	my @sources = Slim::Schema->sources();
+	my @browsable = ();
+	my @paths = ();
+	my @finishedPaths = ();
+	my @hierarchies = ();
+	no strict 'refs';
+
+	# pare down sources list to ones with a browse method in their
+	# ResultSet class.
+	for my $source (@sources) {
+		if (eval{"Slim::Schema::ResultSet::$source"->can('browse')}) {
+			push @browsable, $source;
+		}
+	}
+
+	my $max = $#browsable;
+	my $rsCount = $max + 1;
+	my @inEdges = () x $rsCount;
+
+	for my $sourceI (0 .. $max) {
+
+		my $source = $browsable[$sourceI];
+		my $hasOut = 0;
+
+		# work out the inbound edges of the graph by looking for descendXXX methods
+		for my $nextI (0 .. $max) {
+			my $nextLevel = $browsable[$nextI];
+			if (eval{"Slim::Schema::ResultSet::$source"->can("descend$nextLevel")})	{
+				$hasOut = 1;
+				push @{$inEdges[$nextI]}, $sourceI;
+			}
+		}
+
+		# Add sink nodes to list of paths to process
+		if (!$hasOut) {
+			push @paths, [[$sourceI],[(0) x $rsCount]];
+			# mark node as used in path
+			$paths[-1][1][$sourceI] = 1;
+		}
+	}
+	
+	use strict 'refs';
+
+	# Work the paths from the sink nodes to the source nodes
+	while (scalar(@paths)) {
+		my $currPath = shift @paths;
+		my $topNode = $currPath->[0][0];
+		my @toContinue = ();
+
+		# Find all source nodes which are not currently in path
+		for my $inEdge (@{$inEdges[$topNode]}) {
+			if ($currPath->[1][$inEdge]) {
+				next;
+			} else {
+				push @toContinue, $inEdge;
+			}
+		}
+
+		# No more nodes possible on this path, put it on the
+		# list of finished paths
+		if (!scalar(@toContinue)) {
+			push @finishedPaths, $currPath->[0];
+			next;
+		}
+
+		# clone the path if it splits
+		while (scalar(@toContinue) > 1) {
+			my $newPath = Storable::dclone($currPath);
+			my $newTop = shift @toContinue;
+			
+			# add source node to the beginning of the path
+			# and mark it as used
+			unshift @{$newPath->[0]}, $newTop;
+			$newPath->[1][$newTop] = 1;
+
+			push @paths,$newPath;
+		}
+
+		# reuse the original path
+		unshift @{$currPath->[0]}, $toContinue[0];
+		$currPath->[1][$toContinue[0]] = 1;
+
+		push @paths,$currPath;
+	}
+
+	# convert array indexes to rs names, and concatenate into a string
+	# also do all sub-paths ending in the sink nodes
+	for my $path (@finishedPaths) {
+		while (scalar(@{$path})) {
+			push @hierarchies, join(',', @browsable[@{$path}]);
+			shift @{$path};
+		}
+	}
+	
+	%validHierarchies = map {lc($_) => $_} @hierarchies;
+	
 }
 
 sub browsedb {
 	my ($client, $params) = @_;
 
-	# XXX - why do we default to genre?
-	my $hierarchy = $params->{'hierarchy'} || 'genre';
+	my $hierarchy = $params->{'hierarchy'} || 'track';
 	my $level     = $params->{'level'} || 0;
 	my $orderBy   = $params->{'orderBy'};
 	my $player    = $params->{'player'};
 	my $artwork   = $params->{'artwork'};
 
+	# validate hierarchy, converting invalid hierarchies to 'track'
+	if (!exists $validHierarchies{lc($hierarchy)}) {
+		$hierarchy = 'track';
+		$::d_info && msg("browsedb - invalid hierarchy: $hierarchy\n");
+	}
+
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
-	# Turn any artist into a contributor
-	my @levels = map {
-		$_ = ($_ eq 'artist' ? 'contributor' : $_);
-	} split(',', $hierarchy);
+	# code further down expects the lcfirst version of the levels
+	my @levels = map {lcfirst($_)} split(',', $validHierarchies{lc($hierarchy)});
 
 	# Make sure we're not out of bounds.
 	my $maxLevel = scalar(@levels) - 1;
