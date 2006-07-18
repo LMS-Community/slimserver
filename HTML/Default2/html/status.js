@@ -22,11 +22,11 @@ var controlLockout;
 var lastCoverArt;
 
 function initStatus() {
-        volumeContainer = document.getElementById("volume");
+	volumeContainer = document.getElementById("volume");
 
-        for (i = 0; i < 11; i++) {
-                theA = document.createElement('DIV');
-                theA.className = "fakelink volitem";
+	for (i = 0; i < 11; i++) {
+		theA = document.createElement('DIV');
+		theA.className = "fakelink volitem";
 		if (i > 8) {
 			theA.style.left = (i*17 - 36) + "px";
 			theA.style.width = "17px";
@@ -34,11 +34,11 @@ function initStatus() {
 			theA.style.left = (i*13) + "px";
 			theA.style.width = "13px";
 		}
-                theA.volval = i*10;
-                theA.onclick = doVolume;
+		theA.volval = i*10;
+		theA.onclick = doVolume;
 
-                volumeContainer.appendChild(theA);
-        }
+		volumeContainer.appendChild(theA);
+	}
 
 	document.getElementById("playlist").deleteRow(0);
 	// XXX ^ that should be in initPlaylist, but it's not worth making another function for
@@ -56,7 +56,11 @@ function handlekey(e) {
 	else if (e.which) kc = e.which;
 	else return true;
 
-        if (e.ctrlKey || e.altKey) return true;
+	var tg = (e.target) ? e.target : e.srcElement;
+
+	if (tg.name) return true;
+
+	if (e.ctrlKey || e.altKey) return true;
 
 	if (kc == 67) doPause();	// c
 	else if (kc == 88) doPlay();	// x

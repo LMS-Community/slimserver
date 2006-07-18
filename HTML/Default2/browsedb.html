@@ -1,4 +1,8 @@
-[% PROCESS pageheader.html pageicon=browseby %]
+[% IF song_count; pageHeaderInfo = BLOCK %]
+	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
+[% END; END %]  
+
+[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1; scripts="yes" %] [% PROCESS pageheader.html %]
 
 [% IF warn %]
  <p class="listing">
@@ -10,24 +14,29 @@
 [% END %] 
 
 <p class="pagebar">
-[% IF browselist_pagebar ; browselist_pagebar ; END %]
+	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </p>
 
-[% IF coverArt %]
- <p>
-  <a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg"></a>
- </p>
-[% END %]
+[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+		container = 'gallerycontainer';
+	ELSE;
+		container = 'contentcontainer';
+	END;
+%]
+[% WRAPPER $container %]
+	[% IF coverArt %]
+	 <p>
+	  <a href="/music/[% coverArt %]/cover.jpg" target="cover"><img src="/music/[% coverArt %]/cover.jpg"></a>
+	 </p>
+	[% END %]
 
-<table class="browsetable">
-[% FOREACH item = browse_items %]
-	[% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0; PROCESS browsedb_artwork.html %]
-	[% ELSE; PROCESS browsedbitems_list.html; END %]
+	[% FOREACH item = browse_items %]
+		[% PROCESS browsedbitems_list.html %]
+	[% END %]
 [% END %]
-</table>
 
 <p class="pagebar">
-[% IF browselist_pagebar ; browselist_pagebar ; END %]
+	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </p>
 
 [% PROCESS pagefooter.html %]

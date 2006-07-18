@@ -9,8 +9,8 @@ var playlist = new Array();
 var cansave = 0;
 var playlistinfo = "";
 
-var BY;
-var FROM;
+var BY = ' by ';
+var FROM = ' from ';
 
 //////////////////////////////////////
 //                                  //

@@ -13,8 +13,10 @@
 [% controlGraphics  = 1 %]
 
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
-[% browserTarget  = 0 %]
+[% browserTarget  = browser %]
 
+[% BLOCK dummylink -%]
+[%- END %]
 
 [% BLOCK cmdlink -%]
 	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
@@ -65,13 +67,13 @@
 
 [%# this is to wrap around browse list items %]
 [% BLOCK listitem %]
-	<td width="100%" [% IF odd %]class="odd" bgcolor="#d0d0d0"[% ELSE %]class="even" bgcolor="#FFFFFF"[% END %]>
+	<div class="[% odd ? "odd" : "even" %]">
 		[% IF content == '' %]
 			[% title %]		
 		[% ELSE %]
 			<a [% content %] >[% title %]</a>
 		[% END %]
-	</td>
+	</div>
 [% END %]
 
 [%# this is a link to the home page %]
@@ -120,55 +122,58 @@ END %]
 [%- END %]
 
 [% BLOCK contentcontainer %]
-<table id="[% listid || 'browsedbList' %]" width="100%">
+<table id="[% listid || 'browsetable' %]" width="100%">
 	[%- content | indent(4) %]
 </table>
 [%- END %]
 
 [% BLOCK gallerycontainer %]
-<table id="[% listid || 'browsedbList' %]" width="100%">
+<table id="[% listid || 'browsetable' %]" width="100%">
 	[%- content | indent(4) %]
 </table>
 [%- END %]
 
 [% BLOCK contentitem -%]
-<tr class="[% IF odd %]odd[% ELSE %]even[% END %]">
- <td class="browselisting">
+<div class="[% odd ? "odd" : "even" %]">
 	[%- IF anchor %]
 		<a name="[% anchor | uri %]"></a>
 	[%- END -%]
 	
-	
+	<div class="[% lineclass || 'browselisting' %]">
 		[%- content | indent(4) %]
 		[%- IF controls -%]
-			<td class="browselistbuttons">
+			<div class="browselistbuttons">
 			[%- PROCESS $controls -%]
-			</td>
+			</div>
 		[%- END %]
-	
-</td></tr>
+	</div>
+</div>
 [%- END %]
 
 [% BLOCK galleryitem %]
-<li>
-<div style="width:[% item.size %]px;">
+<div align="left" width="100%" class="coverartcell">
 [%- IF anchor %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
-	<div class="artworkImage" style="width: [% item.size %];">
-		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>[% END %]
-		[% IF not item.coverThumb %]<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
-	</div>
+ <div class="browseimagecell" style="width:[%item.size%]px;height:[%item.size%]px;text-align:center;">
+  [% IF item.coverThumb %]
+  <img src="/music/[% item.coverThumb %]/thumb.jpg" height="[% item.size %]" alt="[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year
+  %])[% END %]" border="0" onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][%
+  item.attributes | html %]&quot;)" width="[% item.size %]" title="[% item.item | html %][% IF item.artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]"/>
+  [% ELSE %]
+  <a onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level %][% item.attributes | html
+  %]&quot;)" class="fakelink">[% item.item | html %][% IF artist %] [% "BY" | string %] [% item.artist %][% END %][% IF item.year %] ([% item.year %])[% END %]</a>
+  [% END %]
+ </div>
 	[% SET class = 'even' odd = 0 %]
-	<div class="artworkControls">
+	<div class="browselistbuttons">
 		[%- PROCESS $controls -%]
 	</div>
 	<div class="artworkText"><span style="width:[% item.size %]px;">
 	[%- content | indent(4) %]
 	</span></div>
-</div></li>
+</div>
 [%- END %]
-
 
 [%# these are the links to be shown with items on the playlist %]
 [% BLOCK playlistcontrols %]
@@ -262,3 +267,77 @@ Items [% pageinfo.startitem %] [% "TO" | string %] [% pageinfo.enditem %] [% "OF
 [% END %]
 
 [% END -%]
+
+
+[%# hreftempalte replacements %]
+[%# this is the href to the browsedb page for item %]
+[%# no level info means its a music folder item %]
+[% BLOCK browseDbItemHRef -%]
+onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% item.hierarchy | html%][% IF artwork %]&amp;artwork=1[% END %][% IF item.orderBy %]&amp;orderBy=[% item.orderBy %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&quot;)"
+[%- END %]
+
+[%# this is the href to the browsetree page for item %]
+[% BLOCK browseTreeItemHRef -%]
+onclick="parent.browseurl(&quot;browsetree.html?hierarchy=[%item.hierarchy%]&amp;level=[%item.level;item.attributes|html%]&quot;)"
+[%- END %]
+
+[%# this is the href to the songinfo for item %]
+[% BLOCK songinfoItemHRef -%]
+onclick="parent.browseurl(&quot;songinfo.html?item=[%item.itemobj.id %]&quot;)"
+[%- END %]
+
+[%  
+	'urlcmdFor' => {
+					'play'   => 'play',
+					'add'    => 'add',
+					'insert' => 'insert',
+					'remove' => 'deleteitem',
+					}
+					
+	'cmdFor'    => {
+					'play'   => 'loadtracks',
+					'add'    => 'addtracks',
+					'insert' => 'inserttracks',
+					'remove' => 'deletetracks',
+					} 
+					
+	'numcmdFor' => {
+					'delete' => 'delete',
+					'move'   => 'move',
+					'jump'   => 'jump',
+					}
+
+	'p3For' => {
+					'move'   => 'moveTo',
+					}
+
+					%]
+														
+[%# command query params for commands above on remote urls %]
+[% BLOCK cmdRemoteURLQuery -%]
+p0=playlist&amp;p1=[% urlcmdFor.$cmdType %]&amp;p2=[% itemobj.url | uri %][% IF p3 %]&amp;p3=[% p3 %][% END %]
+[%- END %]
+
+[%# command query params for commands above on local urls %]
+[% BLOCK cmdLocalQuery -%]
+command=playlist&amp;subcommand=[% cmdFor.$cmdType %][% attributes | html %]
+[%- END %]
+
+[%# command query params for commands acting on the current playlist using numeric references %]
+[% BLOCK cmdNumericQuery -%]
+p0=playlist&amp;p1=[% numcmdFor.$cmdType %]&amp;p2=[% num %]
+	[%- IF p3For.$cmdType and ${p3For.$cmdType} %]&amp;p3=[% ${p3For.$cmdType} %][% END %]
+	[%- IF useStart and start %]&amp;start=[% start %][% END %]
+[%- END %]
+
+[%# use this to add/play/insert/remove tracks and remote URLs %]
+[% BLOCK cmdHRef -%]
+onclick="parent.updateStatusCombined(&quot;&amp;[%
+	IF numcmdFor.$cmdType; # better way to determine this?
+		PROCESS cmdNumericQuery;
+	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		PROCESS cmdRemoteURLQuery;
+	ELSE;
+		PROCESS cmdLocalQuery;
+	END; %]&quot;)"
+[%- END %]

@@ -9,6 +9,7 @@
  <script type="text/javascript">var webroot="[% webroot %]";</script>
  <script type="text/javascript" src="[% webroot %]html/postback.js"></script>
  <script type="text/javascript" src="[% webroot %]html/search.js"></script>[% END %]
+ [% PROCESS html/common.js %]
 </head>
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"[% IF not nokbd %] onload="document.onkeydown=function(e){if(!e)e=window.event;return parent.handlekey(e);};"[% END %]>

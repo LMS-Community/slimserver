@@ -1,4 +1,4 @@
-[% IF page == 'xml' %]<?xml version="1.0" encoding="[% LOCALE %]" standalone="no"?>
+[%- IF page == 'xml' -%]<?xml version="1.0" encoding="[% LOCALE %]" standalone="no"?>
 <slimhome>
  <playerlist>
  [% player_list %]
@@ -54,21 +54,21 @@
 <p class="sectiontitle"><b>[% "BROWSE_MUSIC" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.browse ; FOREACH link = additionalLinks.browse %]
- <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
+ <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value | html %]&quot;)">[% link.key | string %]</a></li>
  [% END ; END %]
 </ul>
 
 <p class="sectiontitle"><b>[% "SEARCH" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.search ; FOREACH key = additionalLinks.search.keys %]
- <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.search.$key %]&quot;)">[% key | string %]</a></li>
+ <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.search.$key | html %]&quot;)">[% key | string %]</a></li>
  [% END ; END %]
 </ul>
 
 <p class="sectiontitle"><b>[% "RADIO" | string | upper %]</b></p>
 <ul class="homelist">
 	[%- FOREACH key = additionalLinks.radio.keys %]
-		<li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.radio.$key %]&quot;)">[% key | string %]</a></li>
+		<li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.radio.$key | html %]&quot;)">[% key | string %]</a></li>
 	[%- END %]
 		<li>&bull; <a onclick="parent.browseurl(&quot;tunein.html?&quot;)">[% "RADIO_TUNEIN" | string %]</a></li>
 </ul>
@@ -81,7 +81,7 @@
  [% player_list %]
 
  [% IF additionalLinks.settings ; FOREACH key = additionalLinks.settings.keys %]
-  <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.settings.$key %]&quot;)">[% key | string %]</a></li>
+  <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.settings.$key | html %]&quot;)">[% key | string %]</a></li>
  [% END ; END %]
 </ul>
 [% END %]
@@ -90,7 +90,7 @@
 <p class="sectiontitle"><b>[% "PLUGINS" | string | upper %]</b></p>
 <ul class="homelist">
  [% FOREACH key = additionalLinks.plugins.keys %]
- <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.plugins.$key %]&quot;)">[% key | string %]</a></li>
+ <li>&bull; <a onclick="parent.browseurl(&quot;[% additionalLinks.plugins.$key | html %]&quot;)">[% key | string %]</a></li>
  [% END %]
 </ul>
 [% END %]
@@ -98,7 +98,7 @@
 <p class="sectiontitle"><b>[% "HELP" | string | upper %]</b></p>
 <ul class="homelist">
  [% IF additionalLinks.help ; FOREACH link = additionalLinks.help %]
- <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value %]&quot;)">[% link.key | string %]</a></li>
+ <li>&bull; <a onclick="parent.browseurl(&quot;[% link.value | html %]&quot;)">[% link.key | string %]</a></li>
  [% END ; END %]
 </ul>
 
