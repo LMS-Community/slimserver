@@ -475,9 +475,9 @@ sub newTrack {
 		errorMsg("newTrack(): Failed creating $source for $url : $@\n");
 		return;
 	}
-	
+
 	$::d_info && msg("newTrack(): Created track '" . $track->title . "' (id:". $track->id  .")\n");
-	
+
 	# Now that we've created the track, and possibly an album object -
 	# update genres, etc - that we need the track ID for.
 	if (!$playlist) {
@@ -811,7 +811,7 @@ sub mergeVariousArtistsAlbums {
 		if ($markAsCompilation) {
 
 			$::d_import && !$progress && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
-			$::d_info && $_dump_postprocess_logic && msg("--- Album is a VA\n");			
+			$::d_info && $_dump_postprocess_logic && msg("--- Album is a VA\n");
 
 			$albumObj->compilation(1);
 			$albumObj->contributor($vaObjId);
@@ -946,7 +946,7 @@ sub _readTags {
 			$attributesHash->{'DISCC'} = int($2) if defined $2;
 		}
 
-		if (!$attributesHash->{'TITLE'}) {
+		if (!defined $attributesHash->{'TITLE'}) {
 
 			$::d_info && msg("Info: no title found, using plain title for $file\n");
 			#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
