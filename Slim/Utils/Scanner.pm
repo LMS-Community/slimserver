@@ -98,9 +98,11 @@ sub scanDirectory {
 	my $extras = { 'no_chdir' => 1 };
 
 	# File::Find doesn't like follow on Windows.
+	# Bug: 3767 - Ignore items we've seen more than once, and don't die.
 	if ($os ne 'win') {
 
-		$extras->{'follow'} = 1;
+		$extras->{'follow'}      = 1;
+		$extras->{'follow_skip'} = 2;
 
 	} else {                                                                                                                                            
 
