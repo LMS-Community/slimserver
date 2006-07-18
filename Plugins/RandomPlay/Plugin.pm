@@ -844,6 +844,7 @@ PLUGIN_RANDOM_TRACK
 	DE	Zufälliger Lieder Mix
 	EN	Random Song Mix
 	ES	Mezcla por Canción al Azar
+	FR	Morceaux aléatoires
 	HE	מיקס שיר אקראי
 	NL	Willekeurige liedjes mix
 
@@ -863,6 +864,7 @@ PLUGIN_RANDOM_ALBUM
 	DE	Zufälliger Album Mix
 	EN	Random Album Mix
 	ES	Mezcla al azar por Álbum
+	FR	Albums aléatoires
 	HE	מיקס אלבום אקראי
 	NL	Willekeurige album mix
 
@@ -887,6 +889,7 @@ PLUGIN_RANDOM_CONTRIBUTOR
 	DE	Zufälliger Interpreten Mix
 	EN	Random Artist Mix
 	ES	Mezcla por Artista al Azar
+	FR	Artistes aléatoires
 	HE	מיקס אמן אקראי
 	NL	Willekeurige artiesten mix
 
@@ -912,6 +915,7 @@ PLUGIN_RANDOM_YEAR
 	DE	Zufälliger Jahr Mix
 	EN	Random Year Mix
 	ES	Mezcla por Año al Azar
+	FR	Années aléatoires
 	NL	Willekeurige jaar mix
 
 PLUGIN_RANDOM_YEAR_ITEM

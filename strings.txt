@@ -1590,6 +1590,7 @@ XML_DATE
 XML_EDITOR
 	DE	Herausgeber
 	EN	Editor
+	FR	Edition
 	NL	Redacteur
 
 XML_ENCLOSURE
@@ -1894,6 +1895,7 @@ SETUP_DOUBLESIZE_DESC
 	EN	Choose the size of text for player display
 	ES	Elegir el tamaño en el que se mostrará el texto
 	FI	Valitse soittimen näytön tekstin koko
+	FR	Choisissez la taille du texte utilisé par l'afficheur de la platine.
 	IT	Scegli la dimensione del testo per lo schermo del lettore
 	JA	プレーヤーディスプレイのテキストサイズを選んでください
 	NL	Kies een tekstgrootte voor het scherm van de speler
@@ -1996,6 +1998,7 @@ DOUBLE-LINE
 	EN	Double-Size
 	ES	Tamaño Doble
 	FI	Tuplakoko
+	FR	[Taille double]
 	HE	שורה כפולה
 	JA	ダブルサイズ
 	NL	Dubbele hoogte
@@ -2007,6 +2010,7 @@ SINGLE-LINE
 	EN	Single Line
 	ES	Línea única
 	FI	Yhden rivin
+	FR	[Taille normale]
 	HE	שורה בודדת
 	IT	Linea singola
 	NL	Enkele regel
@@ -2995,6 +2999,7 @@ SETUP_REPLAYGAINMODE
 	DE	Lautstärken-Normalisierung (Replay Gain)
 	EN	Volume Adjustment/Replay Gain
 	ES	Ajuste de Volumen/Replay Gain
+	FR	Ajustement du volume (Replay Gain)
 	HE	התאמת עוצמת שמע
 	IT	Regolazione del Volume / Replay Gain
 	NL	Volume aanpassing/Replay Gain
@@ -3003,6 +3008,7 @@ SETUP_REPLAYGAINMODE_DESC
 	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Squeezebox kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
 	EN	Some audio tracks contain volume adjustment, or "Replay Gain", information that can be used during playback to make sure that tracks and albums sound equally loud. Squeezebox can use this information if it is present. "Track gain" can be used to make sure that all tracks sound equally loud. "Album gain" can be used to make sure that all albums sound equally loud, but that volume differences between tracks within an album are preserved. "Smart" gain selection uses album gain if successive songs are from the same album or track gain for a mixed playlist.
 	ES	Algunas pistas de audio contienen ajustes de volumen, o "Replay Gain", información que puede ser utilizada durante la reproducción para lograr que todos los álbumes y canciones tengan el mismo nivel de volumen. Squeezebox puede usar esta inforamción, si está presente. "Track Gain" puede utilizarse para lograr que todas las canciones suenen a igual nivel. "Album Gain" puede utilizarse para lograr que todos los álbumes suenen a igual nivel, pero respetando la diferencia de niveles dentro de canciones un mismo álbum. La selección "Inteligente" de ganancia (Gain) utiliza "Album Gain" si las canciones presentes en una lista pertenecen al mismo álbum o "Track Gain" si la lista contiene canciones de diferentes álbumes.
+	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, dites "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. En mode "Gain morceau", le volume de chaque morceau sera normalisé. En mode "Gain album", le volume de chaque album dans son ensemble sera normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. En mode "Gain intelligent", le serveur utilisera le gain album si des morceaux consécutifs sont issus d'un même album et le gain morceau sinon.
 	HE	הנגן מסוגל לנרמל עוצמת שמע בין אלבומים ובין שירים שונים
 	IT	Alcune tracce audio contengono una regolazione del volume o "Replay Gain", informazione che puo' essere usata durante la riproduzione per assicurarsi che le tracce e gli album suonino allo stesso livello. Lo Squeezebox puo' usare queste informazioni se presenti. "Track gain" puo' essere usato per assicurarsi che tutte le tracce suonino allo stesso livello. "Album gain" puo' essere usato per assicurarsi che tutti gli album suonino allo stesso livello ma che le differenze di volume tra le tracce di uno stesso album siano mantenute. "Smart gain" usa "Album gain" se i brani successivi sono di uno stesso album o "Track gain" per una lista di esecuzione mixata.
 	NL	Sommige muziekbestanden bevatten volume aanpassingen, of "Replay Gain" informatie die gebruikt kan worden tijdens het afspelen om er voor te zorgen dat liedjes en albums met een gelijk volume af spelen.  SlimServer kan deze informatie gebruiken bij het afspelen. "Liedjes volume aanpassing" kun je gebruiken om liedjes met een gelijk volume af te spelen. "album volume aanpassing" gebruik je om albums met een gelijk volume af te spelen waarbij de volumeverschillen tussen de liedjes in een album bewaard blijven. "Slimme aanpassing selectie" gebruikt "album volume aanpassing" als opeenvolgende liedjes uit hetzelfde album komen en "Liedjes volume aanpassing" voor een gemixte playlist.
@@ -3011,6 +3017,7 @@ REPLAYGAIN_DISABLED
 	DE	Normalisierung ausschalten
 	EN	Disable Volume Adjustment
 	ES	Deshabilitar Ajuste de Volumen
+	FR	Désactiver l'ajustement du volume
 	HE	לא תודה
 	IT	Disabilita regolazione volume
 	NL	Schakel volume aanpassing uit
@@ -3019,6 +3026,7 @@ REPLAYGAIN_TRACK_GAIN
 	DE	Lieder Normalisierung verwenden (wenn möglich)
 	EN	Use Track Gain (If Present)
 	ES	Utilizar Ganancia por Pista (Si Está Presente)
+	FR	Utiliser le gain morceau si présent
 	HE	לפי שיר
 	IT	Usa Track Gain (se presente)
 	NL	Gebruik liedjes volume aanpassing (indien aanwezig)
@@ -3027,6 +3035,7 @@ REPLAYGAIN_ALBUM_GAIN
 	DE	Album Normalisierung verwenden (wenn möglich)
 	EN	Use Album Gain (If Present)
 	ES	Utilizar Ganancia por Álbum (Si Está Presente)
+	FR	Utiliser le gain album si présent
 	HE	לפי אלבום
 	IT	Usa Album Gain (se presente)
 	NL	Gebruik album volume aanpassing (indien aanwezig)
@@ -3035,6 +3044,7 @@ REPLAYGAIN_SMART_GAIN
 	DE	"Intelligente" Normalisierung verwenden
 	EN	"Smart" Gain Selection
 	ES	Selección "Inteligente" de Ganancia
+	FR	Utiliser le gain intelligent
 	HE	לפי שיר ואלבום
 	IT	Seleziona "Smart" Gain
 	NL	"Slimme" aanpassing selectie
@@ -3043,6 +3053,7 @@ REPLAYGAIN
 	DE	Lautstärken-Normalisierung
 	EN	Volume Adjustment
 	ES	Ajuste de Volumen
+	FR	Ajustement volume
 	HE	התאמת עוצמת שמע
 	IT	Regolazione volume
 	NL	Volume aanpassing
@@ -3212,6 +3223,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 ITUNES_PODCASTS
 	EN	iTunes Podcasts
 	ES	Podcasts de iTunes
+	FR	Podcasts iTunes
 	ZH_CN	iTunes Podcasts
 
 SETUP_MOODLOGICPLAYLISTFORMAT
@@ -7987,12 +7999,12 @@ MODIFIED
 
 MODTIME
 	CS	Změněno dne
-	DE	Änderungsdatum
 	DA	Dato ændret
+	DE	Änderungsdatum
 	EN	Date Modified
 	ES	Fecha de Modificación
 	FI	Muokattu
-	FR	Dernière modif.
+	FR	Dernière modification
 	HE	תאריך שינוי
 	JA	変更された日付
 	NL	Wijzigingsdatum
@@ -8115,7 +8127,7 @@ BYTES
 	EN	Bytes
 	ES	Bytes
 	FI	Tavua
-	FR	Octets
+	FR	octets
 	HE	בייט
 	JA	バイト
 	NL	Bytes
@@ -8133,6 +8145,7 @@ BITS
 SAMPLERATE
 	EN	Sample Rate
 	ES	Tasa de Muestreo
+	FR	Taux d'échantillonnage
 	HE	קצב דגימה
 	NL	Sample rate
 
@@ -9517,6 +9530,7 @@ VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	EN	Small Spectrum
 	ES	Espectro pequeño
 	FI	Pieni spektri
+	FR	Petit spectromètre
 	HE	קטן ספקטרום
 	IT	Spettro piccolo
 	NL	Klein spectrum
@@ -9528,6 +9542,7 @@ VISUALIZER_VUMETER_SMALL
 	EN	Small VU
 	ES	VU pequeño
 	FI	Pieni VU
+	FR	Petit VUmètre
 	HE	מחוגי עוצמה
 	IT	VU meter piccoli
 	NL	Kleine VU
@@ -9538,6 +9553,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum
 	ES	Espectro
 	FI	Spektri
+	FR	Spectromètre
 	HE	ספקטרום
 	IT	Spettro
 	ZH_CN	音谱
@@ -9568,12 +9584,12 @@ BLANK
 
 ELAPSED
 	CS	Uplynulý čas
-	DE	Vergangene Zeit
 	DA	Afspillet tid
+	DE	Vergangene Zeit
 	EN	Elapsed Time
 	ES	Tiempo transcurrido
 	FI	Kulunut aika
-	FR	Le temps écoulé
+	FR	Temps écoulé
 	HE	התנגן
 	IT	Tempo trascorso
 	JA	経過時間
@@ -9600,12 +9616,12 @@ PROGRESS_BAR
 
 REMAINING
 	CS	Zbývající čas
-	DE	Verbleibende Zeit
 	DA	Tilbageværende tid
+	DE	Verbleibende Zeit
 	EN	Remaining Time
 	ES	Tiempo restante
 	FI	Jäljellä oleva aika
-	FR	Le temps restant
+	FR	Temps restant
 	HE	נותר
 	IT	Tempo rimanente
 	JA	残り時間
@@ -10247,12 +10263,12 @@ ADVANCEDSEARCH
 
 SEARCH
 	CS	Hledat v archivu
-	DE	Suche
 	DA	Søg efter musik
+	DE	Suche
 	EN	Search
 	ES	Buscar
 	FI	Hae musiikkia
-	FR	Rechercher
+	FR	Recherche
 	HE	חיפוש
 	IT	Ricerca musica
 	JA	音楽を検索する
@@ -11184,7 +11200,7 @@ INFORMATION_MENU_MODULE
 	DE	Plugin Module
 	EN	Plugin Modules
 	ES	Módulos plugin
-	FR	Modules d'entension
+	FR	Modules d'extension
 	IT	Moduli Plugin
 	JA	プラグインモジュール
 	NL	Pluginmodules
@@ -11648,6 +11664,7 @@ SETUP_SCROLLPIXELS
 	EN	Scroll Pixels
 	ES	Desplazamiento de pixels
 	FI	Vieritys pikseleinä
+	FR	Pixels de défilement
 	HE	פיקסלים בגילגול
 	IT	Scorrimento dei pixel
 	NL	Tekstlooppixels
@@ -11658,6 +11675,7 @@ SETUP_SCROLLPIXELS_DESC
 	EN	On a player with a graphical display you can adjust the number of pixels (dots) that the player scrolls in each interval defined above.  Adjust this in conjunction with the Scroll Rate to adjust scrolling speed and quality.  Note that small values with low Scroll Rates look good, but require a higher performance server and uncongested network.  If in doubt leave as the default of 7 pixels.  (Min 1, Max 20).
 	ES	En un reproductor con pantalla gráfica, se puede ajustar el número de pixels (puntos) que el reproductor desplazará en cada intervalo definido arriba.  Para ajustar la velocidad y calidad de desplazamiento, ajustar este valor junto a la tasa de desplazamiento. Notar que valores muy pequeños, con una tasa de desplazamiento muy lenta se pueden ver muy bien, pero requieren un servidor con mayor perfomance y una red no congestionada. Si hay dudas, dejar el valor por defecto: 7 pixels. (Min 1, Max 20).
 	FI	Soittimessa, jossa on graafinen näyttö, vierityksen määrää voi säätää pikseleissä. Säädä tätä yhdessä vieritysnopeuden kanssa säätääksesi nopeutta ja laatua. Huomaa, että pienet arvot vieritysnopeudessa näyttävät hyvältä, mutta vaativat enemmän palvelimelta ja verkolta. Jos et ole varma, jätä asetus 7 pikselin oletusarvoon. (Minimi 1, Maksimi 20).
+	FR	Sur une platine équipée d'un afficheur graphique, vous pouvez ajuster le nombre de points, ou pixels, dont la platine avance à chaque intervalle défini précédemment. Ajustez cette valeur en même temps que la Vitesse de défilement ci-dessus. Notez que des valeurs trop faibles augmentent la fluidité de l'affichage mais requièrent un serveur et un réseau performants. Dans le doute, laissez la valeur par défaut de 7 pixels (minimum : 1, maximum : 20).
 	HE	קבע את מספר הפיקסלים בכל תזוזת טקסט
 	IT	Su un lettore con schermo grafico puoi impostare il numero di pixel che il lettore scorre nell'intervallo definito sopra. Imposta questo valore assieme alla velocita' di scorrimento per regolare la velocita' con la qualita'. Nota che valori minimi con una bassa velocita' di scorrimento danno un aspetto migliore ma richiedono un server piu' potente e una rete non congestionata. Nel dubbio lascia come impostato di default a 7 pixel (min 1, max 20).
 	NL	Op een grafisch scherm kun je het aantal pixels (punten) dat de tekst elke keer loopt. Pas dit aan in combinatie met de tekstloopsnelheid om de kwaliteit van de tekstloop in te stellen.  <br>Lage waardes met een lage tekstloopsnelheid tonen mooi maar hebben een hogere serverprestatie nodig en een goed netwerk. Laat bij twijfel de waarde op de standaard van 7 staan (minimum 1, maximum 20).
@@ -11814,6 +11832,7 @@ SETUP_SCROLLMODE
 	EN	Scroll Mode
 	ES	Modo de Desplazamiento
 	FI	Vieritystila
+	FR	Mode de défilement
 	HE	גילגול טקסט
 	IT	Modalita' di scorrimento
 	NL	Tekstloopmode
@@ -11824,6 +11843,7 @@ SETUP_SCROLLMODE_DESC
 	EN	You can select how a player will display text on the second line of the display which is too long to fit on the screen.  The standard horizontal scrolling mode will wait for the Scroll Pause interval and then scroll the text to show the whole line.  Scrolling will continue for as long as the player is displaying this screen.  The alternative modes support scrolling the text once and then stopping, or not scrolling the text at all.
 	ES	Se puede elegir la forma en que un reproductor mostrará texto en la segunda línea en los casos en que sea demasiado largo para mostrarse en la pantalla. El modo de desplazamiento horizontal esperará por el intervalo de Pausa de Desplazamiento y luego desplazará el texto para mostrar la línea completa. El desplazamiento continuará mientras el reproductor esé mostrando esta pantalla. Los modos alternativos permiten desplazar el texto una sola vez y luego parar, o no desplazar el texto en ningún momento.
 	FI	Voit valita mitä soitin näyttää ruudun toisella rivillä, kun teksti on liian pitkä mahtuakseen ruudulle. Vakio horisontaalinen vieritystila odottaa vierityksen taukointervallin verran ja vierittää sitten tekstiä näyttääkseen koko rivin. Vieritys jatkuu niin kauan kun soitin näyttää samaa tietoa. Vaihtoehtoiset tilat mahdollistavat tekstin vierityksen kerran tai ei vieritystä lainkaan.
+	FR	Vous pouvez modifier la façon dont la platine affichera un texte trop long pour tenir sur l'afficheur. Dans le mode de défilement par défaut, la platine attendra pendant la durée de Pause avant défilement puis fera défiler horizontalement le texte jusqu'à la fin, le défilement se répêtant tant que l'affichage de la platine n'est pas modifié. Vous pouvez choisir de ne faire défiler le texte qu'une fois ou de désactiver complètement le défilement.
 	HE	סוג הגלגול כאשר טקסט מוצג גדול מהתצוגה הנראית
 	IT	Puoi selezionare come il lettore visualizzera' il testo troppo lungo sulla seconda linea dello schermo. Il modo di scorrimento standard aspettera' il tempo impostato in Pausa di scorrimento e quindi scorrera' il testo per visualizzare l'intera linea. Lo scorrimento continuera' fino a che il lettore visualizzera' questa schermata. I modi alternativi sono lo scorrimento una sola volta o il non scorrimento.
 	NL	Je kunt selecteren hoe de speler de tekst op de tweede regel moet tonen als die te lang is om in één keer te laten zien.<br>De standaard "Tekst laten lopen" optie wacht tot de pauze interval voorbij is en laat dan de tekst lopen. Het lopen zal voortduren zolang de tekst op het scherm getoond wordt.<br>De alternatieve manieren laten  de tekst één keer lopen en stopt vervolgens of laat de tekst in het geheel niet lopen.
@@ -11834,6 +11854,7 @@ SETUP_SCROLLMODE_DEFAULT
 	EN	Standard scrolling
 	ES	Desplazamiento estándar
 	FI	Normaali vieritys
+	FR	Mode de défilement par défaut
 	HE	גלגול רגיל
 	IT	Scorrimento normale
 	NL	Tekst laten lopen
@@ -11844,6 +11865,7 @@ SETUP_SCROLLMODE_SCROLLONCE
 	EN	Scroll once and stop
 	ES	Desplazar una vez y parar
 	FI	Vieritä kerran ja pysähdy
+	FR	Défiler une fois seulement
 	HE	גלגול חד פעמי
 	IT	Scorri solo una volta
 	NL	Laat tekst &eacute;&eacute;n keer lopen en stop
@@ -11854,6 +11876,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	EN	Do not scroll
 	ES	No desplazar
 	FI	Älä vieritä
+	FR	Pas de défilement
 	HE	ללא גלגול
 	IT	Non scorrere
 	NL	Niet tekst laten lopen
@@ -11991,6 +12014,7 @@ SETUP_POWERONRESUME
 	DE	Startverhalten
 	EN	Power On Resume
 	ES	Power al reanudar
+	FR	Etat après rallumage
 	HE	הגדרות הפעלה
 	IT	Ripristino all'accensione
 	NL	Actie bij aanzetten speler
@@ -11999,6 +12023,7 @@ SETUP_POWERONRESUME_DESC
 	DE	Sie können bestimmen, wie SlimServer Wiedergabelisten behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
 	EN	You can choose how your player should resume the current playlist when you press the POWER button to turn the player off and then again to turn it on again later.  This setting applies to this player and other players while they are synchonized to this player.
 	ES	Se puede elegir como debe comportarse el reproductor al retomar la lista de canciones actual cuando se presiona el boton de POWER para apagar el reproductor y se lo vuelve a presionar para encenderlo más tarde. Esta configuración se aplica a este reproductor y a otros reproductores que estén sincronizados con este.
+	FR	Vous pouvez modifier la façon dont la platine reprend la lecture de la liste de lecture actuelle lorsque vous l'éteignez et la rallumez. Ce réglage s'applique à la platine actuelle ainsi qu'aux platines synchronisées.
 	HE	התנהגות הנגן בהפעלה
 	IT	Puoi scegliere come il lettore ripristinera' la lista di esecuzione corrente quando premi il tasto POWER prima per spegnere e poi per riaccendere. Questa impostazione si applica a questo lettore e agli altri lettori sincronizzati con questo.
 	NL	Je kunt kiezen hoe de speler moet starten met de huidige playlist als je de speler weer aan zet. Deze instelling is voor deze speler en andere spelers die gesynchroniseerd zijn met deze speler.
@@ -12007,6 +12032,7 @@ SETUP_POWERONRESUME_PAUSEOFF_NONEON
 	DE	Beim Ausschalten pausieren / Beim Einschalten nicht fortsetzen
 	EN	Pause at power off / Remain paused at power on
 	ES	Pausa al apagar / Seguir en Pausa al encender
+	FR	Mettre en pause à l'arrêt / Rester en pause à l'allumage
 	HE	הפסק בכיבוי/השאר במצב הפסק לאחר הדלקה
 	IT	Pausa allo spegnimento / Rimani in pausa all'accensione
 	NL	Pauze bij uitzetten / pauze blijft bij aanzetten
@@ -12015,6 +12041,7 @@ SETUP_POWERONRESUME_PAUSEOFF_PLAYON
 	DE	Beim Ausschalten pausieren / Beim Einschalten fortsetzen
 	EN	Pause at power off / Resume at power on
 	ES	Pausa al apagar / Volver a reproducir al encender
+	FR	Mettre en pause à l'arrêt / Reprendre à l'allumage
 	HE	הפסק נגינה בכיבוי/המשך נגינה בהדלקה
 	IT	Pausa allo spegnimento / Ripristino all'accensione
 	NL	Pauze bij uitzetten / hervatten bij aanzetten
@@ -12023,6 +12050,7 @@ SETUP_POWERONRESUME_STOPOFF_PLAYON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten neu starten
 	EN	Stop at power off / Restart song at power on
 	ES	Detener al apagar / Recomenzar la canción al encender
+	FR	Stopper à l'arrêt / Redémarrer le morceau à l'allumage
 	HE	עצור נגינה בכיבוי/נגן שיר מתחילתו בהדלקה
 	IT	Stop allo spegnimento / Riinizia brano all'accensione
 	NL	Stop bij uitzetten / herstart liedje bij aanzetten
@@ -12031,6 +12059,7 @@ SETUP_POWERONRESUME_STOPOFF_NONEON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten nicht neu starten
 	EN	Stop at power off / Remain stopped at power on
 	ES	Detener al apagar / Seguir detenido al encender
+	FR	Stopper à l'arrêt / Rester stoppé à l'allumage
 	HE	עצור נגינה בכיבוי/השאר במצב זה בהדלקה
 	IT	Stop allo spegnimento / Stop all'accensione
 	NL	Stop bij uitzetten / blijf gestopt bij aanzetten
@@ -12039,6 +12068,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten neu starten
 	EN	Stop at power off / Restart playlist at power on
 	ES	Detener al apagar / Reiniciar lista al encender
+	FR	Stopper à l'arrêt / Redémarrer la liste de lecture à l'allumage
 	HE	עצור נגינה בכיבוי/נגן רשימת ניגון מתחילתה בהדלקה
 	IT	Stop allo spegnimento / Riinizia lista di esecuzione all'accensione
 	NL	Stop bij uitzetten / herstart playlist bij aanzetten
@@ -12047,6 +12077,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten nicht neu starten
 	EN	Stop at power off / Reset playlist at power on
 	ES	Detener al apagar / Reset lista al encender
+	FR	Stopper à l'arrêt / Réinitialiser la liste de lecture à l'allumage
 	HE	עצור נגינה בכיבוי/בטל רשימת השמעה בהדלקה
 	IT	Stop allo spegnimento / Resetta lista di esecuzione all'accensione
 	NL	Stop bij uitzetten / reset playlist bij aanzetten
@@ -12073,6 +12104,7 @@ SETUP_LARGETEXTFONT
 	EN	Large Text Font
 	ES	Fuente de Texto Grande
 	FI	Suuren tekstin kirjaisin
+	FR	Grande police
 	IT	Carattere per testo grande
 	NL	Grote tekst font
 
@@ -12081,6 +12113,7 @@ SETUP_LARGETEXTFONT_DESC
 	EN	Choose which font you would like to use when displaying large text.
 	ES	Elegir que fuente utilizar cuando se muestra texto grande.
 	FI	Valitse mitä kirjaisinta haluat käyttää isolle tekstille.
+	FR	Choisissez la police utilisée en mode texte de grande taille.
 	IT	Scegli quale carattere usare quando visualizzi testo grande.
 	NL	Kies welk font je wilt gebruiken wanneer je grote tekst wil gebruiken.
 
@@ -12089,6 +12122,7 @@ SETUP_LARGETEXTFONT_0
 	EN	Classic
 	ES	Clásico
 	FI	Klassinen
+	FR	Classique
 	IT	Classico
 	NL	Klassiek
 
@@ -12096,6 +12130,7 @@ SETUP_LARGETEXTFONT_1
 	EN	Modern
 	ES	Moderno
 	FI	Moderni
+	FR	Moderne
 	IT	Moderno
 	NL	Modern
 

@@ -454,6 +454,7 @@ PODCAST_RESETTING
 	DE	Setze Podcasts zurück
 	EN	Resetting to default podcasts
 	ES	Reestableciendo podcasts por defecto
+	FR	Liste des podcasts par défaut rétablie
 	NL	Herstellen van de standaard podcasts
 
 PODCAST_FEEDS_CHANGE

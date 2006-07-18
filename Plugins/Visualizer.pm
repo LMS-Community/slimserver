@@ -105,6 +105,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
 	EN	Spectrum Analyzer
 	ES	Analizador de Espectro
+	FR	Spectromètre
 	IT	Analizzatore di spettro
 	NL	Spectrum analyser
 
