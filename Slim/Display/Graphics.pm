@@ -250,7 +250,7 @@ sub string {
 
 		} else {
 
-			if ($ord > 255 && $useTTFNow) {
+			if ($ord > 255 && $useTTFNow && $gd) {
 
 				my $bits_tmp = $useTTFCache ? $TTFCache{$fontname}{$ord} : '';
 
@@ -271,6 +271,7 @@ sub string {
 					if ($ord >= 99999) {
 						$ord = 0x25af; # 0x25af  = 'White Vertical Rectangle'
 					}
+
 					my @GDBounds = $gd->stringFT(-1*$GDBlack, $TTFFontFile, $GDFontSize, 0, 0, $GDBaseline, "&#${ord};");
 
 					# Construct the bitmap
