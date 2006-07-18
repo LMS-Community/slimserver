@@ -60,7 +60,7 @@ sub isAudioURL {
 sub isUnsupported {
 	my ( $class, $model ) = @_;
 	
-	if ( $model =~ /^(?:slimp3|squeezebox)$/ ) {
+	if ( $model =~ /^(?:slimp3|squeezebox|softsqueeze)$/ ) {
 		return 'PLUGIN_RHAPSODY_UNSUPPORTED';
 	}
 	
