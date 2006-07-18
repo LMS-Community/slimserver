@@ -81,6 +81,9 @@ PLUGIN_RHAPSODY_MODULE_NAME
 RHAPSODY
 	EN	Rhapsody
 
+PLUGIN_RHAPSODY_UNSUPPORTED
+	EN	Error: Rhapsody requires SB2 or higher
+
 PLUGIN_RHAPSODY_ERROR_UNAUTH
 	DE	Rhapsody: Unberechtigte Anfrage.
 	EN	Rhapsody: Unauthorized request.

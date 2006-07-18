@@ -123,11 +123,13 @@ sub request {
 	my $self = shift;
 	my $args = shift;
 
-	my $url     = $args->{'url'};
+	my $url     = ${*$self}{'url'} = $args->{'url'};
 	my $post    = $args->{'post'};
 
 	my $class   = ref $self;
 	my $request = $self->requestString($args->{'client'}, $url, $post);
+	
+	${*$self}{'client'} = $args->{'client'};
 	
 	$::d_remotestream && msg("Request: \n$request\n");
 
@@ -188,8 +190,9 @@ sub request {
 		$::d_remotestream && msg("Redirect to: $redir\n");
 
 		return $class->open({
-			'url'  => $redir,
-			'post' => $post,
+			'url'     => $redir,
+			'infoUrl' => $self->infoUrl,
+			'post'    => $post,
 		});
 	}
 
@@ -251,7 +254,13 @@ sub syswrite {
 sub url {
 	my $self = shift;
 
-	return ${*$self}{'infoUrl'};
+	return ${*$self}{'url'};
+}
+
+sub infoUrl {
+	my $self = shift;
+
+	return ${*$self}{'infoUrl'} || ${*$self}{'url'};
 }
 
 sub title {
@@ -294,6 +303,12 @@ sub redirect {
 	my $self = shift;
 
 	return ${*$self}{'redirect'};
+}
+
+sub title {
+	my $self = shift;
+	
+	return ${*$self}{'title'};
 }
 
 sub DESTROY {

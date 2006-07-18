@@ -81,7 +81,7 @@ sub song {
 
 sub url {
 	my $objOrUrl = song( @_ );
-	
+
 	return ( blessed $objOrUrl ) ? $objOrUrl->url : $objOrUrl;
 }
 

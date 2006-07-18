@@ -17,12 +17,15 @@ use base qw(Class::Data::Inheritable);
 
 use FileHandle;
 use File::Basename qw(basename);
+use HTTP::Request;
 use IO::String;
+use MPEG::Audio::Frame;
 use Path::Class;
 use Scalar::Util qw(blessed);
 
 use Slim::Formats::Playlists;
 use Slim::Music::Info;
+use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
@@ -41,12 +44,10 @@ sub scanPathOrURL {
 
 		errorMsg("scanPathOrURL: No path or URL was requested!\n");
 
-		return $cb->();
+		return $cb->( [] );
 	};
 
 	if (Slim::Music::Info::isRemoteURL($pathOrUrl)) {
-
-		$::d_scan && msg("scanPathOrURL: Reading metdata from remote URL: $pathOrUrl\n");
 
 		# Async scan of remote URL, it will call the callback when done
 		$class->scanRemoteURL($args);
@@ -66,27 +67,27 @@ sub scanPathOrURL {
 		msg("scanPathOrURL: Finding valid files in: $pathOrUrl\n");
 
 		# Non-async directory scan
-		$class->scanDirectory($args);
+		my $foundItems = $class->scanDirectory( $args, 'return' );
 
-		return $cb->();
+		return $cb->( $foundItems || [] );
 	}
 }
 
 # Scan a directory on disk, and depending on the type of file, add it to the database.
 sub scanDirectory {
-	my $class = shift;
-	my $args  = shift;
+	my $class  = shift;
+	my $args   = shift;
+	my $return = shift;	# if caller wants a list of items we found
+	
+	my $foundItems = $args->{'foundItems'} || [];
 
 	# Can't do much without a starting point.
 	if (!$args->{'url'}) {
-		return;
+		return $foundItems;
 	}
 
 	my $os     = Slim::Utils::OSDetect::OS();
 	my $last   = Slim::Schema->lastRescanTime;
-
-	# If the caller wants the list of objects we found.
-	my $append = ref($args->{'listRef'}) eq 'ARRAY' ? 1 : 0;
 
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
@@ -142,7 +143,7 @@ sub scanDirectory {
 	if (!scalar @{$files}) {
 
 		$::d_scan && msg("scanDirectory: Didn't find any valid files in: [$topDir]\n");
-		return;
+		return $foundItems;
 
 	} else {
 
@@ -182,8 +183,8 @@ sub scanDirectory {
 				$::d_scan && msg("scanDirectory: Following Windows Shortcut to: $url\n");
 
 				$class->scanDirectory({
-					'url'     => $file,
-					'listRef' => $args->{'listRef'},
+					'url'        => $file,
+					'foundItems' => $foundItems,
 				});
 
 				next;
@@ -224,9 +225,9 @@ sub scanDirectory {
 		}
 
 		# Bug: 3606 - only append to the listRef if a listRef exists.
-		if (defined $track && $append) {
+		if (defined $track && $return) {
 
-			push @{$args->{'listRef'}}, $track;
+			push @{$foundItems}, $track;
 		}
 
 		$track = undef;
@@ -235,6 +236,8 @@ sub scanDirectory {
 	}
 
 	$progress->final if $progress;
+	
+	return $foundItems;
 }
 
 sub scanRemoteURL {
@@ -242,55 +245,98 @@ sub scanRemoteURL {
 	my $args  = shift;
 	
 	my $cb    = $args->{'callback'} || sub {};
+	my $pt    = $args->{'passthrough'} || [];
 	my $url   = $args->{'url'};
+	
+	my $foundItems = [];
 
-	if (!$url) {
-		return $cb->();
+	if ( !$url ) {
+		return $cb->( $foundItems, @{$pt} );
 	}
 
-	if (!Slim::Music::Info::isRemoteURL($url)) {
+	if ( !Slim::Music::Info::isRemoteURL($url) ) {
 
-		return $cb->();
+		return $cb->( $foundItems, @{$pt} );
 	}
 
-	if (Slim::Music::Info::isAudioURL($url)) {
+	if ( Slim::Music::Info::isAudioURL($url) ) {
 
 		$::d_scan && msg("scanRemoteURL: remote stream $url known to be audio\n");
 
 		my $track = Slim::Schema->rs('Track')->updateOrCreate({
-			'url'      => $url,
+			'url' => $url,
 		});
 
 		$track->content_type( Slim::Music::Info::typeFromPath($url) );
 		
-		push @{$args->{'listRef'}}, $track if (ref($args->{'listRef'}) eq 'ARRAY');
+		push @{$foundItems}, $track;
 
-		return $cb->();
+		return $cb->( $foundItems, @{$pt} );
 	}
 	
-	# Fix URL for Rhapsody playlists
-	$url =~ s/^rhap/http/;
+	my $originalURL = $url;
+	
+	my $request = HTTP::Request->new( GET => $url );
+	
+	# Use WMP headers for MMS protocol URLs or ASF/ASX/WMA URLs
+	if ( $url =~ /(?:^mms|\.asf|\.asx|\.wma)/i ) {
+		$url =~ s/^mms/http/;
+		
+		$request->uri( $url );
+		
+		my $h = $request->headers;
+		$h->header( Accept => '*/*' );
+		$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
+		$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
+		$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
+		$h->header( Connection => 'close' );
+	}
+	elsif ( $url !~ /^http/ ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		
+		# check if protocol is supported on the current player (only for Rhapsody at the moment)
+		if ( $args->{'client'} && $handler && $handler->can('isUnsupported') ) {
+			if ( my $error = $handler->isUnsupported( $args->{'client'}->model ) ) {
+				push @{$pt}, $error;
+				return $cb->( $foundItems, @{$pt} );
+			}
+		}
+		
+		if ( $handler && $handler->can('getHTTPURL') ) {
+			# Use the protocol handler to normalize the URL
+			$url = $handler->getHTTPURL( $url );
+		}
+		else {
+			# just change it to HTTP
+			$url =~ s/^[a-z0-9]+:/http:/;
+		}
+		
+		$request->uri( $url );
+	}
 
 	$::d_scan && msg("scanRemoteURL: opening remote location $url\n");
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
-		'method'      => 'GET',
-		'url'         => $url,
+		'request'     => $request,
 		'onHeaders'   => \&readRemoteHeaders,
 		'onError'     => sub {
 			my ( $http, $error ) = @_;
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
-			return $cb->( 'PLAYLIST_PROBLEM_CONNECTING' );
+			push @{$pt}, 'PLAYLIST_PROBLEM_CONNECTING';
+			return $cb->( $foundItems, @{$pt} );
 		},
-		'passthrough' => [ $args, $url ],
+		'passthrough' => [ $args, $originalURL ],
 	} );
 }
 
 sub readRemoteHeaders {
 	my ( $http, $args, $originalURL ) = @_;
+	
+	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
 
 	my $url = $http->request->uri->as_string;
 
@@ -320,19 +366,23 @@ sub readRemoteHeaders {
 		$type = 'mp3';
 	}
 	
+	# mms URLs with application/octet-stream are audio, such as
+	# mms://ms2.capitalinteractive.co.uk/xfm_high
+	if ( $originalURL =~ /^mms/ && $type eq 'application/octet-stream' ) {
+		$type = 'wma';
+	}
+	
 	$::d_scan && msg("scanRemoteURL: Content-Type is $type for $url\n");
 	
 	$track->content_type( $type );
 	$track->update;
 	
 	Slim::Music::Info::setContentType( $url, $type );
-	
-	my @objects  = ();
 
 	# Check if it's still a playlist after we open the
 	# remote stream. We may have got a different content
 	# type while loading.
-	if (Slim::Music::Info::isSong($track)) {
+	if ( Slim::Music::Info::isSong($track) ) {
 
 		$::d_scan && msg("scanRemoteURL: found that $url is audio\n");
 		
@@ -341,11 +391,12 @@ sub readRemoteHeaders {
 		if ( $url ne $originalURL ) {
 			my $title = Slim::Music::Info::title( $originalURL );
 			Slim::Music::Info::setTitle( $url, $title );
+			Slim::Music::Info::setCurrentTitle( $url, $title );
 		}
 		
 		# If the audio is mp3, we can read the bitrate from the header or stream
 		if ( $type eq 'mp3' ) {
-			if ( my $bitrate = $http->response->header( 'icy-br' ) * 1000 ) {
+			if ( my $bitrate = ( $http->response->header( 'icy-br' ) || $http->response->header( 'x-audiocast-bitrate' ) ) * 1000 ) {
 				$::d_scan && msgf( "scanRemoteURL: Found bitrate in header: %d\n", $bitrate );
 				$track->bitrate( $bitrate );
 				$track->update;
@@ -356,31 +407,19 @@ sub readRemoteHeaders {
 			else {
 				$::d_scan && msg("scanRemoteURL: scanning mp3 stream for bitrate\n");
 				
-				my @bitrates;
-				my ($avg, $sum) = (0, 0);
-				
-				$http->read_mpeg_frames( {
-					'onFrame'    => sub {
-						my $frame = shift;
-						if ( $frame->bitrate ) {
-							push @bitrates, $frame->bitrate;
-							$sum += $frame->bitrate;
-							$avg = int( $sum / @bitrates );
-						}
+				$http->read_body( {
+					'readLimit'   => 8 * 1024,
+					'onBody'      => sub {
+						my $http = shift;
 						
-						if ( $avg && scalar @bitrates ) {		
-							my $vbr = undef;
-							if ( !$cbr{$avg} ) {
-								$vbr = 1;
-							}
-
-							$::d_scan && msg("scanRemoteURL: Read bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
-
-							Slim::Music::Info::setBitrate( $url, $avg * 1000, $vbr );
+						my $io = IO::String->new( $http->response->content_ref );
+						
+						my ($bitrate, $vbr) = scanBitrate($io);
+						
+						if ( $bitrate ) {
+							Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 						}
 					},
-					'maxFrames'  => 20,
-					'disconnect' => 1,   # disconnect after done reading frames
 				} );
 			}
 		}
@@ -389,15 +428,16 @@ sub readRemoteHeaders {
 			$http->disconnect;
 		}
 		
-		push @objects, $track;
-		
-		# If the caller wants the list of objects we found.
-		if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {
-
-			push @{$args->{'listRef'}}, @objects;
+		# If the original URL was mms:// fix it so direct streaming works properly
+		if ( $originalURL =~ /^mms/ ) {
+			my $url = $track->url;
+			$url =~ s/^http/mms/;
+			$track->url( $url );
+			$track->update;
 		}
-
-		return $args->{'callback'}->();
+		
+		my $foundItems = [ $track ];
+		return $cb->( $foundItems, @{$pt} );
 	}
 	else {
 		
@@ -419,16 +459,24 @@ sub readRemoteHeaders {
 sub readPlaylistBody {
 	my ( $http, $args ) = @_;
 	
+	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
+	
+	my $foundItems = [];
+	
 	$http->disconnect;
 	
 	my $playlistFH = IO::String->new( $http->response->content_ref );
 	
 	my @objects = __PACKAGE__->scanPlaylistFileHandle( $args->{'playlist'}, $playlistFH );
 	
-	# If the caller wants the list of objects we found.
-	if (scalar @objects && ref($args->{'listRef'}) eq 'ARRAY') {
-
-		push @{$args->{'listRef'}}, @objects;
+	# report an error if the playlist contained no items
+	if ( !@objects ) {
+		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( $foundItems, @{$pt} );
+	}
+	else {
+		push @{$foundItems}, @objects;
 	}
 	
 	# Bugs 2589, 2723
@@ -436,7 +484,7 @@ sub readPlaylistBody {
 	# a friendlier title from the parent item, unless the parent title is
 	# also just a URL
 	my $title = $args->{'playlist'}->title;
-	for my $item ( @{ $args->{'listRef'} } ) {
+	for my $item ( @objects ) {
 		if ( blessed $item ) {
 			if ( !$item->title || $item->title =~ /^(?:http|mms)/i ) {
 				if ( $title =~ /^(?:http|mms)/ ) {
@@ -449,14 +497,16 @@ sub readPlaylistBody {
 			}
 		}
 	}
-	
-	# report an error if the playlist contained no items
-	my $error;
-	if ( !@objects ) {
-		$error = 'PLAYLIST_NO_ITEMS_FOUND';
-	}
 
-	return $args->{'callback'}->( $error );
+	# Scan each playlist item until we find the first audio URL
+	if ( !$args->{'scanningPlaylist'} ) {
+		return scanPlaylistURLs( $foundItems, $args );
+	}
+	else {
+		my $cb = $args->{'callback'};
+		my $pt = $args->{'passthrough'} || [];
+		return $cb->( $foundItems, @{$pt} );
+	}
 }
 
 sub scanPlaylistFileHandle {
@@ -525,9 +575,138 @@ sub scanPlaylistFileHandle {
 	$playlist->content_type($ct);
 	$playlist->update;
 
-	$::d_scan && msgf("scanPlaylistFileHandle: found %d items in playlist.\n", scalar @playlistTracks);
+	if ( $::d_scan ) {
+		msgf( "scanPlaylistFileHandle: found %d items in playlist:\n", scalar @playlistTracks );
+		map { msgf( "  %s\n", $_->url ) } @playlistTracks;
+	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
+}
+
+sub scanPlaylistURLs {
+	my ( $foundItems, $args, $toScan, $error ) = @_;
+	
+	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
+	
+	my $offset = 0;
+	for my $item ( @{$foundItems} ) {
+		if ( Slim::Music::Info::isAudioURL( $item->url ) || Slim::Music::Info::isSong( $item ) ) {
+			# we finally found an audio URL, so we're done
+			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s\n", $item->url );
+			
+			# return a list with the first found audio URL at the top
+			unshift @{$foundItems}, splice @{$foundItems}, $offset, 1;
+			
+			return $cb->( $foundItems, @{$pt} );
+		}
+		$offset++;
+	}
+	
+	$toScan ||= [];
+	
+	push @{$toScan}, map { $_->url } @{$foundItems};
+	
+	# This counter makes sure we don't go into an infinite loop
+	$args->{'loopCount'} ||= 0;
+	
+	if ( $args->{'loopCount'} > 5 ) {
+		$::d_parse && msg("scanPlaylistURLs: recursion limit reached, giving up\n");
+		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( [], @{$pt} );
+	}
+	
+	$args->{'loopCount'}++;
+	
+	# Select the next URL to scan
+	if ( my $scanURL = shift @{$toScan} ) {
+		
+		__PACKAGE__->scanRemoteURL( {
+			'url'              => $scanURL,
+			'scanningPlaylist' => 1,
+			'callback'         => \&scanPlaylistURLs,
+			'passthrough'      => [ $args, $toScan ],
+		} );
+	}
+	else {
+		# no more items left to scan and no audio found, return error
+		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( $foundItems, @{$pt} );
+	}
+}
+
+sub scanBitrate {
+	my $io = shift;
+	
+	# Check if first frame has a Xing VBR header
+	# This will allow full files streamed from places like LMA or UPnP servers
+	# to have accurate bitrate/length information
+	my $frame = MPEG::Audio::Frame->read( $io );
+	if ( $frame && $frame->content =~ /(Xing.*)/ ) {
+		my $xing = IO::String->new( $1 );
+		my $vbr  = {};
+		my $off  = 4;
+		
+		# Xing parsing code from MP3::Info
+		my $unpack_head = sub { unpack('l', pack('L', unpack('N', $_[0]))) };
+
+		seek $xing, $off, 0;
+		read $xing, my $flags, 4;
+		$off += 4;
+		$vbr->{flags} = $unpack_head->($flags);
+		
+		if ( $vbr->{flags} & 1 ) {
+			seek $xing, $off, 0;
+			read $xing, my $bytes, 4;
+			$off += 4;
+			$vbr->{frames} = $unpack_head->($bytes);
+		}
+
+		if ( $vbr->{flags} & 2 ) {
+			seek $xing, $off, 0;
+			read $xing, my $bytes, 4;
+			$off += 4;
+			$vbr->{bytes} = $unpack_head->($bytes);
+		}
+		
+		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
+		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
+		
+		$::d_scan && msg("scanBitrate: Found Xing VBR header in stream, bitrate: $bitrate kbps VBR\n");
+		
+		return ($bitrate * 1000, 1);
+	}
+	
+	# No Xing header, take an average of frame bitrates
+
+	my @bitrates;
+	my ($avg, $sum) = (0, 0);
+	
+	seek $io, 0, 0;
+	while ( my $frame = MPEG::Audio::Frame->read( $io ) ) {
+		
+		# Sample all frames to try to see if we're VBR or not
+		if ( $frame->bitrate ) {
+			push @bitrates, $frame->bitrate;
+			$sum += $frame->bitrate;
+			$avg = int( $sum / @bitrates );
+		}
+	}
+
+	if ( $avg ) {			
+		my $vbr = undef;
+		if ( !$cbr{$avg} ) {
+			$vbr = 1;
+		}
+		
+		$::d_scan && msg("scanBitrate: Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+		
+		return ($avg * 1000, $vbr);
+	}
+	
+	$::d_scan && msg("scanBitrate: Unable to find any MP3 frames in stream\n");
+	
+	return (undef, undef);
 }
 
 sub _skipWindowsHiddenFiles {

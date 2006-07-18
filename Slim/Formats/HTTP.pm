@@ -104,15 +104,21 @@ sub parseHeaders {
 
 		$::d_remotestream && msg("header-rs: " . $header);
 
-		if ($header =~ /^ic[ey]-name:\s*(.+)$CRLF$/i) {
+		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+			Slim::Music::Info::setCurrentTitle( $self->url, $self->title );
 		}
 
-		if ($header =~ /^icy-br:\s*(.+)$CRLF$/i) {
+		if ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'bitrate'} = $1 * 1000;
-			Slim::Music::Info::setBitrate( $self->url, ${*$self}{'bitrate'} );
+			Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
+			
+			$::d_remotestream && msgf("parseHeaders: Bitrate for %s set to %d\n",
+				$self->infoUrl,
+				$self->bitrate,
+			);
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
@@ -137,6 +143,7 @@ sub parseHeaders {
 			}
 			
 			${*$self}{'contentType'} = $contentType;
+			Slim::Music::Info::setContentType( $self->url, $self->contentType );
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
@@ -149,6 +156,19 @@ sub parseHeaders {
 			$::d_remotestream && msg("Recieved final blank line...\n");
 			last; 
 		}
+	}
+	
+	# Bitrate may have been set in Scanner by reading the mp3 stream
+	if ( !$self->bitrate ) {
+		${*$self}{'bitrate'} = Slim::Music::Info::getCurrentBitrate( $self->url );
+	}
+	
+	if ( $self->client && $self->bitrate && $self->contentLength ) {
+		# if we know the bitrate and length of a stream, display a progress bar
+		if ( $self->bitrate < 1000 ) {
+			${*$self}{'bitrate'} *= 1000;
+		}
+		$self->client->streamingProgressBar( $self->url, $self->bitrate, $self->contentLength );
 	}
 }
 

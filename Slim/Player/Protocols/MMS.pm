@@ -237,9 +237,14 @@ sub handleBodyFrame {
 	my $client      = shift || 'noclient';
 	my $frame       = shift;
 
-	#
 	my $remaining   = length($frame);
 	my $position    = 0;
+	
+	# We may have an ASX playlist instead of WMA audio
+	if ( $frame =~ /asx/i ) {
+		$client->directBody( $client->directBody() . $frame );
+		return 0;
+	}
 
 	while ($remaining) {
 

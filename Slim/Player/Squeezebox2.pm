@@ -140,6 +140,9 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], fullness => 1 }
 );
 
+# Keep track of direct stream redirects
+our $redirects = {};
+
 sub nowPlayingModes {
 	return 13;
 	
@@ -740,12 +743,12 @@ sub directHeaders {
 				
 					$::d_directstream && msg("header-ds: " . $header . "\n");
 		
-					if ($header =~ /^ic[ey]-name:\s*(.+)/i) {
+					if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
 						
 						$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 					}
 					
-					if ($header =~ /^icy-br:\s*(.+)/i) {
+					if ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
 						$bitrate = $1 * 1000;
 					}
 				
@@ -804,6 +807,10 @@ sub directHeaders {
 
 			if ($redir) {
 				$::d_directstream && msg("Redirecting to: $redir\n");
+				
+				# Store the old URL so we can update its bitrate/content-type/etc
+				$redirects->{ $redir } = $url;			
+				
 				$client->stop();
 				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
 
@@ -814,15 +821,32 @@ sub directHeaders {
 
 				# we've got a playlist in all likelyhood, have the player send it to us
 				$client->sendFrame('body', \(pack('N', $length)));
+				
+			} elsif ( $contentType eq 'mp3' && !$bitrate ) {
+				
+				# if we're streaming mp3 audio and don't know the bitrate, request some body data
+				$::d_directstream && msg("MP3 stream with unknown bitrate, requesting body from player to parse\n");
+				
+				$client->sendFrame( 'body', \(pack('N', 8 * 1024)) );
 
 			} elsif ($client->contentTypeSupported($contentType)) {
+				
+				# If we redirected (Live365), update the original URL with the metadata from the real URL
+				if ( my $oldURL = delete $redirects->{ $url } ) {
+					Slim::Music::Info::setContentType( $oldURL, $contentType ) if $contentType;
+					Slim::Music::Info::setBitrate( $oldURL, $bitrate ) if $bitrate;
+					
+					# carry the original title forward to the new URL
+					my $title = Slim::Music::Info::title( $oldURL );
+					Slim::Music::Info::setTitle( $url, $title ) if $title;
+				}
 
 				$::d_directstream && msg("Beginning direct stream!\n");
 
 				my $loop = $client->shouldLoop($length);
 
 				$client->streamformat($contentType);
-				$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, $guids_length, @guids)));		
+				$client->sendFrame('cont', \(pack('NCnC*',$metaint, $loop, $guids_length, @guids)));
 
 			} else {
 
@@ -841,7 +865,8 @@ sub directBodyFrame {
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	my $done = 0;
 
-	$::d_directstream && msg("got some body from the player, length " . length($body) . ": $body\n");
+	$::d_directstream && msg("got some body from the player, length " . length($body) . "\n");
+	
 	if (length($body)) {
 		$::d_directstream && msg("saving away that body message until we get an empty body\n");
 

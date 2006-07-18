@@ -50,6 +50,12 @@ sub canDirectStream {
 	return undef;
 }
 
+sub getHTTPURL {
+	my ( $self, $url ) = @_;
+	
+	return $self->canDirectStream( undef, $url );
+}
+
 sub parseDirectBody {
 	my $self  = shift;
 	my $url   = shift;

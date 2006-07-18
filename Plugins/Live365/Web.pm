@@ -74,10 +74,14 @@ sub handleAction {
 		Slim::Music::Info::setContentType($stationURL, 'mp3');
 		Slim::Music::Info::setTitle($stationURL, 
 		   	$API->getCurrentStation()->{STATION_TITLE});
-	
-		$play and $client->execute([ 'playlist', 'clear' ] );
-		$client->execute([ 'playlist', 'add', $stationURL ] );
-		$play and $client->execute([ 'play' ] );
+		
+		if ( $play ) {
+			$client->execute([ 'playlist', 'clear' ]);
+			$client->execute([ 'playlist', 'play', $stationURL ]);
+		}
+		else {
+			$client->execute([ 'playlist', 'add', $stationURL ]);
+		}
 	}
 	my $webroot = $params->{'webroot'};
 	$webroot =~ s/(.*?)plugins.*$/$1/;

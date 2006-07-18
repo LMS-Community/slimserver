@@ -37,7 +37,6 @@ use HTTP::Headers;
 use HTTP::Request;
 use HTTP::Response;
 use MIME::Base64 qw(encode_base64);
-use MPEG::Audio::Frame;
 use URI;
 
 use Slim::Networking::Async::Socket::HTTP;
@@ -161,25 +160,6 @@ sub add_headers {
 	$headers->init_header( 'Cache-Control' => 'no-cache' );
 	$headers->init_header( Connection      => 'close' );
 	$headers->init_header( 'Icy-Metadata'  => 1 );
-}
-
-sub read_mpeg_frames {
-	my ( $self, $args ) = @_;
-	
-	if ( $self->socket && $args->{onFrame} ) {
-		
-		my $max = $args->{maxFrames} || 20;
-		while ( my $frame = MPEG::Audio::Frame->read( $self->socket ) ) {
-			last unless --$max;
-			
-			my $onFrame = $args->{onFrame};
-			$onFrame->( $frame );
-		}
-		
-		if ( $args->{disconnect} ) {
-			$self->disconnect;
-		}
-	}
 }
 
 sub _format_request {
@@ -357,6 +337,22 @@ sub _http_read_body {
 
 	# Add buffer to Response object
 	$self->response->add_content( $buf );
+	
+	# Does the caller want us to quit reading early (i.e. for mp3 frames)?
+	if ( $args->{readLimit} && length( $self->response->content ) >= $args->{readLimit} ) {
+		
+		# close and remove the socket
+		$self->disconnect;
+		
+		$::d_http_async && msgf("Async::HTTP: Body read (stopped after %d bytes)\n",
+			length( $self->response->content )
+		);
+		
+		if ( my $cb = $args->{onBody} ) {
+			my $passthrough = $args->{passthrough} || [];
+			return $cb->( $self, @{$passthrough} );
+		}
+	}
 	
 	if ( !defined $result || $result == 0 ) {
 		# if here, we've reached the end of the body

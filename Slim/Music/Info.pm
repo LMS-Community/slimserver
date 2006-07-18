@@ -759,12 +759,15 @@ sub isAudioURL {
 	# return true if url scheme (http: etc) defined as audio in types
 	my $url = shift;
 	
-	# Consider Rhapsody audio and radio URLs as audio so they won't be scanned
-	if ( $url =~ /^rhap.+(?:wma|rhr)$/ ) {
-		return 1;
+	# Let the protocol handler determine audio status
+	if ( $url !~ /^(?:http|mms)/ ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('isAudioURL') ) {
+			return $handler->isAudioURL( $url );
+		}
 	}
 
-	return ($url =~ /^([a-z]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
+	return ($url =~ /^([a-z0-9]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
 }
 
 sub isURL {

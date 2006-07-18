@@ -11,7 +11,7 @@ use strict;
 use base qw(Slim::Formats::HTTP);
 
 use File::Spec::Functions qw(:ALL);
-use MPEG::Audio::Frame;
+use IO::String;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -30,9 +30,6 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
-
-# CBR bitrates
-my %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 sub new {
 	my $class = shift;
@@ -79,7 +76,8 @@ sub readMetaData {
 	
 	$metadataSize = ord($metadataSize) * 16;
 	
-	$::d_remotestream && msg("metadata size: $metadataSize\n");
+	# too verbose
+	#$::d_remotestream && msg("metadata size: $metadataSize\n");
 
 	if ($metadataSize > 0) {
 		my $metadata;
@@ -125,13 +123,9 @@ sub parseMetadata {
 	my $url      = shift;
 	my $metadata = shift;
 
-	# XXXX - find out how we're being called - $self->url should be set.
-	if (!$url) {
-
-		$url = Slim::Player::Playlist::url(
-			$client, Slim::Player::Source::streamingSongIndex($client)
-		);
-	}
+	$url = Slim::Player::Playlist::url(
+		$client, Slim::Player::Source::streamingSongIndex($client)
+	);
 
 	if ($metadata =~ (/StreamTitle=\'(.*?)\'(;|$)/)) {
 
@@ -161,9 +155,11 @@ sub parseMetadata {
 			
 			# For some purposes, a change of title is a newsong...
 			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
+			
+			if ( $::d_remotestream || $::d_directstream ) {
+				msg("parseMetadata: Setting title for $url to $newTitle\n");
+			}
 		}
-
-		$::d_remotestream && msg("shoutcast title = $newTitle\n");
 
 		return $newTitle;
 	}
@@ -218,45 +214,51 @@ sub sysread {
 	}
 	
 	# Use MPEG::Audio::Frame to detect the bitrate if we didn't see an icy header
-	# XXX: not used when direct streaming, so this code won't work in 6.5
-	if ( !$self->bitrate && $self->contentType eq 'mp3' ) {
-		my $frames = IO::String->new($_[1]);
-		my @bitrates;
-		my ($avg, $sum) = (0, 0);
-		while ( my $frame = MPEG::Audio::Frame->read( $frames ) ) {
-			# Sample all frames to try to see if we're VBR or not
-			if ( $frame->bitrate ) {
-				push @bitrates, $frame->bitrate;
-				$sum += $frame->bitrate;
-				$avg = int( $sum / @bitrates );
-			}
-			else {
-				${*$self}{'bitrate'} = 1;	# so we don't check again
-				last;
-			}
-		}
-
-		if ( $avg ) {			
-			my $vbr = undef;
-			if ( !$cbr{$avg} ) {
-				$vbr = 1;
-			}
-			
-			$::d_remotestream && msg("Read bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+	if ( !$self->bitrate && $self->contentType =~ /^(?:mp3|audio\/mpeg)$/ ) {
+		my $io = IO::String->new($_[1]);
 		
-			Slim::Music::Info::setBitrate( $self->url, $avg * 1000, $vbr );
-			${*$self}{'bitrate'} = $avg * 1000;
+		$::d_remotestream && msg("Trying to read bitrate from stream\n");
+		
+		my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
+		if ( $bitrate ) {
+			Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate, $vbr );
+			${*$self}{'bitrate'} = $bitrate;
+			
+			if ( $self->client && $self->bitrate && $self->contentLength ) {
+				# if we know the bitrate and length of a stream, display a progress bar
+				if ( $self->bitrate < 1000 ) {
+					${*$self}{'bitrate'} *= 1000;
+				}
+				$self->client->streamingProgressBar( $self->url, $self->bitrate, $self->contentLength );
+			}	
 		}
-	}
-	
-	# If we know the bitrate and have a content-length, we can display a progress bar
-	if ( $self->contentLength && !$self->duration && $self->bitrate > 1 ) {
-		if ( $self->client ) {
-			$self->client->streamingProgressBar( $self->url, $self->bitrate, $self->contentLength );
+		else {
+			${*$self}{'bitrate'} = 1;	# so we don't check again
 		}
 	}
 
 	return $readLength;
+}
+
+sub parseDirectBody {
+	my ( $class, $client, $url, $body ) = @_;
+	
+	$::d_directstream && msgf( "parseDirectBody: Parsing %d bytes for MP3 frames\n", length($body) );
+
+	my $io = IO::String->new(\$body);
+	
+	my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
+	if ( $bitrate ) {
+		Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
+	}
+	
+	# Must return a track object to play
+	my $track = Slim::Schema->rs('Track')->objectForUrl({
+		'url'      => $url,
+		'readTags' => 1
+	});
+	
+	return ($track);
 }
 
 1;

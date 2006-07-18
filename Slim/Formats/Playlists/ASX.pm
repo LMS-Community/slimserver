@@ -41,7 +41,7 @@ sub read {
 			# but XML::Simple carps at it. Unfortunately, we don't 
 			# have a choice - we can't change the XML, as the
 			# XML::Simple warning suggests.
-			XMLin(\$content, ForceArray => ['ENTRY', 'REF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
+			XMLin(\$content, ForceArray => ['ENTRY', 'REF', 'ENTRYREF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
 		};
 
 		if ($@) {
@@ -51,56 +51,58 @@ sub read {
 		
 		$::d_parse && msg("parsing ASX: $file url: [$url]\n");
 
-		my $entries = $parsed->{'ENTRY'} || $parsed->{'REPEAT'}->{'ENTRY'};
+		my $entries = $parsed->{'ENTRY'} || $parsed->{'REPEAT'}->{'ENTRY'} || $parsed->{'ENTRYREF'};
 
 		if (!defined $entries || !ref($entries) || scalar @$entries == 0) {
 
 			return @items;
-		}
-
+		}	
+		
 		for my $entry (@$entries) {
 			
 			my $title = $entry->{'TITLE'};
 			my $refs  = $entry->{'REF'};
-			my $path  = undef;
+			
+			# ENTRYREF items are links to other ASX files
+			if ( $parsed->{'ENTRYREF'} ) {
+				$refs = $parsed->{'ENTRYREF'};
+			}
 
 			$::d_parse && msg("Found an entry title: $title\n");
 
 			if (defined($refs)) {
-
+				
 				for my $ref (@$refs) {
 
 					my $href = $ref->{'href'} || $ref->{'Href'} || $ref->{'HREF'};
 					
-					# We've found URLs in ASX files that should be
-					# escaped to be legal - specifically, they contain
-					# spaces. For now, deal with this specific case.
-					# If this seems to happen in other ways, maybe we
-					# should URL escape before continuing.
-					$href =~ s/ /%20/;
-
 					# Bug 3160 (partial)
-					# 'ref' tags refer to audio content, so we need to force
+					# 'ref' tags should refer to audio content, so we need to force
 					# the use of the MMS protocol handler by making sure the URI starts with mms
 					$href =~ s/^http/mms/;
 
-					if ( $href =~ /^mms/ ) {
-						$path = $href;
-						last;
+					if ( $href ) {
+						
+						# We've found URLs in ASX files that should be
+						# escaped to be legal - specifically, they contain
+						# spaces. For now, deal with this specific case.
+						# If this seems to happen in other ways, maybe we
+						# should URL escape before continuing.
+						$href =~ s/ /%20/;
+						
+						$href = Slim::Utils::Misc::fixPath($href, $baseDir);
+
+						if ($class->playlistEntryIsValid($href, $url)) {
+
+							push @items, $class->_updateMetaData( $href, {
+								'TITLE' => $title,
+							} );
+						}
 					}
 				}
-			}
-
-			if (defined($path)) {
-
-				$path = Slim::Utils::Misc::fixPath($path, $baseDir);
-
-				if ($class->playlistEntryIsValid($path, $url)) {
-
-					push @items, $class->_updateMetaData( $path, {
-						'TITLE' => $title,
-					} );
-				}
+				
+				# don't continue looping if we had an entryref tag
+				last if $parsed->{'ENTRYREF'};
 			}
 		}
 	}

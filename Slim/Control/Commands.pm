@@ -516,7 +516,9 @@ sub playlistDeleteitemCommand {
 			'listRef'  => \@{$contents},
 			'client'   => $client,
 			'callback' => sub {
-				Slim::Player::Playlist::removeMultipleTracks($client, \@{$contents});
+				my $foundItems = shift;
+				
+				Slim::Player::Playlist::removeMultipleTracks($client, $foundItems);
 			},
 		});
 	
@@ -896,13 +898,14 @@ sub playlistXitemCommand {
 			'listRef'  => \@dirItems,
 			'client'   => $client,
 			'callback' => sub {
+				my $foundItems = shift;
 				
-				push @{Slim::Player::Playlist::playList($client)},@dirItems;
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
 				
 				_insert_done(
 					$client,
 					$playListSize,
-					scalar @dirItems,
+					scalar @{$foundItems},
 					$request->callbackFunction,
 					$request->callbackArguments,
 				);
@@ -918,7 +921,9 @@ sub playlistXitemCommand {
 			'listRef'  => Slim::Player::Playlist::playList($client),
 			'client'   => $client,
 			'callback' => sub {
-				my $error = shift;
+				my ( $foundItems, $error ) = @_;
+				
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
 				
 				_playlistXitem_load_done(
 					$client,

@@ -142,6 +142,16 @@ sub getPlaylist {
 	});
 }
 
+sub isAudioURL {
+	my ( $class, $url ) = @_;
+	
+	if ( $url =~ m{^live365://www.live365.com/play/[^/?]+.*$} ) {
+	    return 1;
+	}
+	
+	return;
+}
+
 sub playlistLoaded {
 	my ( $playlist, $args ) = @_;
 

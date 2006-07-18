@@ -46,6 +46,27 @@ sub getFormatForURL {
 	return 'wma';
 }
 
+sub isAudioURL {
+	my ( $class, $url ) = @_;
+	
+	# Consider Rhapsody audio and radio URLs as audio so they won't be scanned
+	if ( $url =~ /^rhap.+(?:wma|rhr)$/ ) {
+		return 1;
+	}
+	
+	return;
+}
+
+sub isUnsupported {
+	my ( $class, $model ) = @_;
+	
+	if ( $model =~ /^(?:slimp3|squeezebox)$/ ) {
+		return 'PLUGIN_RHAPSODY_UNSUPPORTED';
+	}
+	
+	return;
+}
+
 sub requestString {
 	my $classOrSelf = shift;
 	my $client = shift;
