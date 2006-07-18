@@ -451,6 +451,7 @@ sub newTrack {
 
 	# Walk our list of valid attributes, and turn them into something ->create() can use.
 	$::d_info && $_dump_tags && msg("newTrack(): Creating $source with columns:\n");
+
 	while (my ($key, $val) = each %$attributeHash) {
 
 		$key = lc($key);
@@ -667,7 +668,7 @@ sub variousArtistsObject {
 			'namesort'   => Slim::Utils::Text::ignoreCaseArticles($vaString),
 		}, { 'key' => 'namesearch' });
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Created VARIOUS ARTIST (id:" . $vaObj->id .")\n");
+		$::d_info && $_dump_postprocess_logic && msgf("-- Created VARIOUS ARTIST (id: [%d])\n", $vaObj->id);
 	}
 
 	if ($vaObj && $vaObj->name ne $vaString) {
@@ -764,8 +765,10 @@ sub mergeVariousArtistsAlbums {
 		my %trackArtists      = ();
 		my $markAsCompilation = 0;
 
-		$::d_info && $_dump_postprocess_logic && msg("-- VA postcheck for album '".
-			$albumObj->name . "' (id:" . $albumObj->id .")\n");
+		if ($::d_info && $_dump_postprocess_logic) {
+
+			msgf("-- VA postcheck for album '%s' (id: [%d])\n", $albumObj->name, $albumObj->id);
+		}
 
 		# Bug 2066: If the user has an explict Album Artist set -
 		# don't try to mark it as a compilation. So only fetch ARTIST roles.
@@ -781,8 +784,10 @@ sub mergeVariousArtistsAlbums {
 			# Create a composite of the artists for the track to compare below.
 			$trackArtists{ join(':', @contributors) } = 1;
 			
-			$::d_info && $_dump_postprocess_logic && msg("--- Album has composite artist '".
-				join(':', @contributors) . "'\n");			
+			if ($::d_info && $_dump_postprocess_logic) {
+
+				msgf( "--- Album has composite artist '%s'\n", join(':', @contributors));
+			}
 		}
 
 		# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
@@ -1003,7 +1008,7 @@ sub _readTags {
 			$attributesHash->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
 		}
 		
-		$::d_info && $_dump_tags && msg(". $tag : $value\n") if defined $value;
+		$::d_info && $_dump_tags && $value && msg(". $tag : $value\n");
 	}
 
 	return $attributesHash;
@@ -1305,19 +1310,21 @@ sub _preCheckAttributes {
 	}
 
 	if ($::d_info && $_dump_tags) {
-		
+
 		msg("_preCheckAttributes(): Report for $url:\n");
 		msg("* Atributes *\n");
+
 		while (my ($tag, $value) = each %{$attributes}) {
 			msg(".. $tag : $value\n") if defined $value;
 		}
 
 		msg("* Deferred attributes *\n");
+
 		while (my ($tag, $value) = each %{$deferredAttributes}) {
 			msg(".. $tag : $value\n") if defined $value;
 		}
 	}
-	
+
 	return ($attributes, $deferredAttributes);
 }
 
@@ -1371,7 +1378,11 @@ sub _postCheckAttributes {
 	# We don't want to add "No ..." entries for remote URLs, or meta
 	# tracks like iTunes playlists.
 	my $isLocal = $trackAudio && !$trackRemote ? 1 : 0;
-	$::d_info && $_dump_postprocess_logic && msg("-- Track is a " . ($isLocal?'local':'remote') . " track\n");
+
+	if ($::d_info && $_dump_postprocess_logic) {
+
+		msgf("-- Track is a %s track\n", $isLocal ? 'local' : 'remote');
+	}
 
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
@@ -1386,7 +1397,7 @@ sub _postCheckAttributes {
 
 		Slim::Schema::Genre->add($_unknownGenre->name, $track);
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Created NO GENRE (id:" . $_unknownGenre->id .")\n");
+		$::d_info && $_dump_postprocess_logic && msgf("-- Created NO GENRE (id: [%d])\n", $_unknownGenre->id);
 		$::d_info && $_dump_postprocess_logic && msg("-- Track has no genre\n");
 
 	} elsif ($create && $isLocal && !$genre) {
@@ -1409,8 +1420,11 @@ sub _postCheckAttributes {
 
 		Slim::Schema::Genre->add($genre, $track);
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Deleted all previous genres for this track\n");
-		$::d_info && $_dump_postprocess_logic && msg("-- Track has genre '$genre'\n");
+		if ($::d_info && $_dump_postprocess_logic) {
+
+			msg("-- Deleted all previous genres for this track\n");
+			msg("-- Track has genre '$genre'\n");
+		}
 	}
 
 	# Walk through the valid contributor roles, adding them to the database for each track.
@@ -1418,7 +1432,6 @@ sub _postCheckAttributes {
 	my $foundContributor = scalar keys %{$contributors};
 
 	$::d_info && $_dump_postprocess_logic && msg("-- Track has $foundContributor contributor(s)\n");
-
 
 	# Create a singleton for "No Artist"
 	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
@@ -1437,8 +1450,11 @@ sub _postCheckAttributes {
 
 		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Created NO ARTIST (id:" . $_unknownArtist->id .")\n");
-		$::d_info && $_dump_postprocess_logic && msg("-- Track has no artist\n");
+		if ($::d_info && $_dump_postprocess_logic) {
+
+			msgf("-- Created NO ARTIST (id: [%d])\n", $_unknownArtist->id);
+			msg("-- Track has no artist\n");
+		}
 
 	} elsif ($create && $isLocal && !$foundContributor) {
 
@@ -1458,8 +1474,10 @@ sub _postCheckAttributes {
 	# The "primary" contributor
 	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
 
-	$::d_info && $_dump_postprocess_logic && msg("-- Track primary contributor is '" . $contributor->name . "' (id:" . $contributor->id . ")\n");
+	if ($::d_info && $_dump_postprocess_logic) {
 
+		msgf("-- Track primary contributor is '%s' (id: [%d])\n", $contributor->name, $contributor->id);
+	}
 
 	# Now handle Album creation
 	my $album    = $attributes->{'ALBUM'};
@@ -1488,8 +1506,11 @@ sub _postCheckAttributes {
 		$track->album($_unknownAlbum->id);
 		$albumObj = $_unknownAlbum;
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Created NO ALBUM as id " . $_unknownAlbum->id ."\n");
-		$::d_info && $_dump_postprocess_logic && msg("-- Track has no album\n");
+		if ($::d_info && $_dump_postprocess_logic) {
+
+			msgf("-- Created NO ALBUM as id: [%d]\n", $_unknownAlbum->id);
+			msg("-- Track has no album\n");
+		}
 
 	} elsif ($create && $isLocal && !$album && blessed($_unknownAlbum)) {
 
@@ -1513,7 +1534,8 @@ sub _postCheckAttributes {
 
 			$checkDisc = 1;
 		}
-		$::d_info && $_dump_postprocess_logic && msg("-- " . ($checkDisc?'NOT C':'C') . "hecking for discs\n");
+
+		$::d_info && $_dump_postprocess_logic && msgf("-- %shecking for discs\n", $checkDisc ? 'NOT C' : 'C');
 
 		# Go through some contortions to see if the album we're in
 		# already exists. Because we keep contributors now, but an
@@ -1539,7 +1561,10 @@ sub _postCheckAttributes {
 
 			$albumObj = $a;
 
-			$::d_info && $_dump_postprocess_logic && msg("-- Same album '$album' (id:" . $albumObj->id .") than previous track\n");
+			if ($::d_info && $_dump_postprocess_logic) {
+
+				 msgf("-- Same album '$album' (id: [%d]) than previous track\n", $albumObj->id);
+			}
 
 		} else {
 
@@ -1594,15 +1619,18 @@ sub _postCheckAttributes {
 			$albumObj = $self->single('Album', $search);
 
 			if ($::d_info && $_dump_postprocess_logic) {
+
 				msg("-- Searching for an album with:\n");
+
 				while (my ($tag, $value) = each %{$search}) {
+
 					msg("--- $tag : $value\n") if defined $value;
 				}
-			}
-			
-			$::d_info && $_dump_postprocess_logic && $albumObj &&
-				msg("-- Found the album id:" . $albumObj->id ."\n");
 
+				if ($albumObj) {
+					msgf("-- Found the album id: [%d]\n", $albumObj->id);
+				}
+			}
 
 			# We've found an album above - and we're not looking
 			# for a multi-disc or compilation album, check to see
@@ -1618,11 +1646,12 @@ sub _postCheckAttributes {
 
 				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
 
-					$::d_info && $_dump_postprocess_logic &&
-						 msg("-- Track number mismatch with album id:" . $albumObj->id . "\n");
+					if ($::d_info && $_dump_postprocess_logic) {
+
+						 msgf("-- Track number mismatch with album id: [%d]\n", $albumObj->id);
+					}
 
 					$albumObj = undef;
-
 				}
 			}
 
@@ -1631,7 +1660,10 @@ sub _postCheckAttributes {
 
 				$albumObj = $self->resultset('Album')->create({ 'title' => $album });
 
-				$::d_info && $_dump_postprocess_logic && msg("-- Created album '$album' (id:" . $albumObj->id .")\n");
+				if ($::d_info && $_dump_postprocess_logic) {
+
+					 msgf("-- Created album '$album' (id: [%d]\n", $albumObj->id);
+				}
 			}
 		}
 	}
@@ -1715,8 +1747,11 @@ sub _postCheckAttributes {
 		$albumObj->set_columns(\%set);
 
 		if ($::d_info && $_dump_postprocess_logic) {
-			msg("-- Updating album '$album' (id:" . $albumObj->id .") with columns:\n");
+
+			msgf("-- Updating album '$album' (id: [%d] with columns:\n", $albumObj->id);
+
 			while (my ($tag, $value) = each %set) {
+
 				msg("--- $tag : $value\n") if defined $value;
 			}
 		}
@@ -1729,7 +1764,11 @@ sub _postCheckAttributes {
 		if (!Slim::Music::Info::isContainer($track, $trackType)) {
 
 			$track->album($albumObj->id);
-			$::d_info && $_dump_postprocess_logic && msg("-- Track has album '" . $albumObj->name . "' (id:" . $albumObj->id .")\n");
+
+			if ($::d_info && $_dump_postprocess_logic) {
+
+				msgf("-- Track has album '%s' (id: [%d]\n", $albumObj->name, $albumObj->id);
+			}
 		}
 
 		# Now create a contributors <-> album mapping
@@ -1760,11 +1799,12 @@ sub _postCheckAttributes {
 					'role'        => Slim::Schema::Contributor->typeToRole($role),
 				});
 
-				$::d_info && $_dump_postprocess_logic && 
-					msg("-- Contributor '" . $contributorObj->name . 
-						"' (id:" . $contributorObj->id . ") linked to album '" . 
-						$albumObj->name . "' (id:" . $albumObj->id . ") with role '$role'\n");
+				if ($::d_info && $_dump_postprocess_logic) {
 
+					msgf("-- Contributor '%s' (id: [%d]) linked to album '%s' (id: [%d]) with role: '%s'\n",
+						$contributorObj->name, $contributorObj->id $albumObj->name, $albumObj->id, $role
+					);
+				}
 			}
 		}
 
@@ -1825,9 +1865,12 @@ sub _mergeAndCreateContributors {
 
 			$attributes->{'TRACKARTIST'} = delete $attributes->{'ARTIST'};
 
-			$::d_info && $_dump_postprocess_logic && msg("-- Contributor '" . 
-				$attributes->{'TRACKARTIST'} . 
-				"' of role 'ARTIST' transformed to role 'TRACKARTIST'\n");
+			if ($::d_info && $_dump_postprocess_logic) {
+
+				msgf("-- Contributor '%s' of role 'ARTIST' transformed to role 'TRACKARTIST'\n",
+					$attributes->{'TRACKARTIST'} . 
+				);
+			}
 		}
 	}
 
@@ -1846,9 +1889,10 @@ sub _mergeAndCreateContributors {
 			'sortBy'   => $attributes->{$tag.'SORT'},
 		});
 
-		$::d_info && $_dump_postprocess_logic && msg("-- Track has contributor '" .
-			$contributor . "' of role '$tag'\n");
+		if ($::d_info && $_dump_postprocess_logic) {
 
+			msg("-- Track has contributor '$contributor' of role '$tag'\n");
+		}
 	}
 
 	return \%contributors;
