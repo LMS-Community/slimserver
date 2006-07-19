@@ -45,6 +45,12 @@ sub getTag {
 	$tags->{'BITRATE'} = $tags->{'BITRATE'}   * 1000 if $tags->{'BITRATE'};
 	$tags->{'RATE'}    = $tags->{'FREQUENCY'} * 1000 if $tags->{'FREQUENCY'};
 
+	# If encoding is alac, the file is lossless.
+	if ($tags->{'ENCODING'} && $tags->{'ENCODING'} eq 'alac') {
+
+		$tags->{'LOSSLESS'} = 1;
+	}
+
 	# Unroll the disc info.
 	if ($tags->{'DISK'} && ref($tags->{'DISK'}) eq 'ARRAY') {
 

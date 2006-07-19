@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.09';
+$VERSION = '1.10';
 
 my $debug = 0;
 
@@ -87,7 +87,7 @@ sub new
 	 VERSION => 1, LAYER => 1,
 	 BITRATE => 1, FREQUENCY => 1, SIZE => 1,
 	 SECS => 1, MM => 1, SS => 1, MS => 1, TIME => 1,
-	 COPYRIGHT => 1, ENCRYPTED => 1,
+	 COPYRIGHT => 1, ENCODING => 1, ENCRYPTED => 1,
 	);
 
     my $tags = get_mp4tag ($file) or return undef;
@@ -177,9 +177,6 @@ synonyms for NAM, ART, ALB, DAY, CMT, GNRE and TRKN[0].
 Any and all of these keys may be undefined if the corresponding information
 is missing from the MPEG-4 file.
 
-Strings returned will be converted to Latin-1, unless UTF-8 is specified
-using C<use_mp4_utf8>.
-
 On error, returns nothing and sets C<$@>.
 
 =cut
@@ -211,6 +208,13 @@ The following keys may be defined:
 	TIME		time in MM:SS, rounded to nearest second
 
 	COPYRIGHT	boolean for audio is copyrighted
+	ENCODING        Audio codec name. Possible values include:
+			'mp4a' - AAC, aacPlus
+			'alac' - Apple lossless
+			'drms' - Apple encrypted AAC
+			'samr' - 3GPP narrow-band AMR
+			'sawb' - 3GPP wide-band AMR
+			'enca' - Unspecified encrypted audio
 	ENCRYPTED	boolean for audio data is encrypted
 
 Any and all of these keys may be undefined if the corresponding information
@@ -617,12 +621,14 @@ sub parse_stsd
     # Is this an audio track? (Ought to look for presence of an SMHD uncle
     # atom instead to allow for other audio data formats).
     if (($data_format eq 'mp4a') ||	# AAC, aacPlus
-	($data_format eq 'drms') ||	# Apple encryped AAC
+	($data_format eq 'alac') ||	# Apple lossless
+	($data_format eq 'drms') ||	# Apple encrypted AAC
 	($data_format eq 'samr') ||	# Narrow-band AMR
 	($data_format eq 'sawb') ||	# AMR wide-band
 	($data_format eq 'sawp') ||	# AMR wide-band +
-	($data_format eq 'enca'))	# Generic encryped audio
+	($data_format eq 'enca'))	# Generic encrypted audio
     {
+	$tags->{ENCODING} = $data_format;
 #	$version = unpack "n", substr ($data, 24, 2);
 #       s8.16 is inconsistent. In practice, channels always appears == 2.
 #	$tags->{STEREO}  = (unpack ("n", substr ($data, 32, 2))  >  1) ? 1 : 0;
@@ -632,11 +638,8 @@ sub parse_stsd
 	printf "  %sFreq=%s\n", ' 'x(2*$level), $tags->{FREQUENCY} if $debug;
     }
 
-    if (($data_format eq 'drms') ||
-	(substr($data_format, 0, 3) eq 'enc'))
-    {
-	$tags->{ENCRYPTED}=1
-    }
+    $tags->{ENCRYPTED}=1 if (($data_format eq 'drms') ||
+			     (substr($data_format, 0, 3) eq 'enc'));
 
     return 0;
 }
