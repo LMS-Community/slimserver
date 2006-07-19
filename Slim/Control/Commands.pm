@@ -29,7 +29,7 @@ use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 
 use Slim::Utils::Alarms;
-use Slim::Utils::Misc qw(msg errorMsg specified);
+use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
 
 my $d_commands = 0; # local debug flag

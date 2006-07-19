@@ -344,7 +344,9 @@ sub makeSecuritySecret {
 
 sub defaultAudioDir {
 	my $path;
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+
 		$path = ($ENV{'HOME'} . '/Music');
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
@@ -365,7 +367,7 @@ sub defaultAudioDir {
 			}
 		}		
 	}
-	
+
 	if ($path && -d $path) {
 		return $path;
 	} else {
@@ -811,7 +813,7 @@ sub set {
 
 	# must mark $ind as defined or indexed prefs cause an error in this msg
 	if (defined $ind) {
-			$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $value) ? $value : "undefined") . "\n");
+		$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $value) ? $value : "undefined") . "\n");
 	} else {
 		$::d_prefs && msg("Setting prefs $key equal to " . ((defined $value) ? $value : "undefined") . "\n");
 	}
