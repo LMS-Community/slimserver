@@ -1208,7 +1208,7 @@ sub playlistcontrolCommand {
 		}
 
 		@tracks = Slim::Schema->search('Track', $find, {
-			'order_by' => 'me.disc me.tracknum me.titlesort',
+			'order_by' => 'me.disc, me.tracknum, me.titlesort',
 			'join'     => \@joins,
 		})->all;
 	}
