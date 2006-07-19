@@ -16,15 +16,13 @@ use Slim::Utils::Misc;
 
 	$class->resultset_class('Slim::Schema::ResultSet::Playlist');
 
-	$class->has_many('playlist_tracks'   => 'Slim::Schema::PlaylistTrack' => 'playlist', undef, {
-		order_by => 'playlist_tracks.position'
-	});
+	$class->has_many('playlist_tracks' => 'Slim::Schema::PlaylistTrack' => 'playlist');
 }
 
 sub tracks {
 	my $self = shift;
 
-	return $self->playlist_tracks->search_related('track' => @_)->distinct;
+	return $self->playlist_tracks(undef, { 'order_by' => 'me.position' })->search_related('track' => @_)->distinct;
 }
 
 sub setTracks {
