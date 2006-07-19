@@ -94,14 +94,14 @@ sub displayAsHTML {
 	$form->{'item'}       = $self->title;
 
 	# Show the year if pref set or storted by year first
-	if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort && $sort =~ /^album.year/) {
+	if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort && $sort =~ /^album\.year/) {
 
 		$form->{'showYear'} = $showYear;
-		$form->{'year'} = $self->year;
+		$form->{'year'}     = $self->year;
 	}
 
 	# Show the artist in the album view
-	if (Slim::Utils::Prefs::get('showArtist') || $sort && $sort =~ /^contributor.namesort/) {
+	if (Slim::Utils::Prefs::get('showArtist') || $sort && $sort =~ /^contributor\.namesort/) {
 
 		if (my $contributor = $self->contributor) {
 
