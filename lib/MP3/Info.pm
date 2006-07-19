@@ -2026,17 +2026,20 @@ sub _parse_ape_tag {
 		my $ape_header_data = substr($ape_tag_data, 0, $ape_tag_header_size, '');
 		my $ape_header      = _parse_ape_header_or_footer($ape_header_data);
 
-		for (my $c = 0; $c < $ape_header->{'tag_items'}; $c++) {
-		
-			# Loop through the tag items
-			my $tag_len   = _grab_int_32(\$ape_tag_data);
-			my $tag_flags = _grab_int_32(\$ape_tag_data);
+		if (defined $ape_header->{'tag_items'} && $ape_header->{'tag_items'} =~ /^\d+$/) {
 
-			$ape_tag_data =~ s/^(.*?)\0//;
+			for (my $c = 0; $c < $ape_header->{'tag_items'}; $c++) {
+			
+				# Loop through the tag items
+				my $tag_len   = _grab_int_32(\$ape_tag_data);
+				my $tag_flags = _grab_int_32(\$ape_tag_data);
 
-			my $tag_item_key = uc($1 || 'UNKNOWN');
+				$ape_tag_data =~ s/^(.*?)\0//;
 
-			$info->{$tag_item_key} = substr($ape_tag_data, 0, $tag_len, '');
+				my $tag_item_key = uc($1 || 'UNKNOWN');
+
+				$info->{$tag_item_key} = substr($ape_tag_data, 0, $tag_len, '');
+			}
 		}
 	}
 

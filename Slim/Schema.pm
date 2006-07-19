@@ -1257,6 +1257,17 @@ sub _preCheckAttributes {
 	# Remote index.
 	$attributes->{'REMOTE'} = Slim::Music::Info::isRemoteURL($url) ? 1 : 0;
 
+	# Some formats stick a DISC tag such as 1/2 or 1-2 into the field.
+	if ($attributes->{'DISC'} && $attributes->{'DISC'} =~ m|^(\d+)[-/](\d+)$|) {
+
+		$attributes->{'DISC'}  = $1;
+
+		if (!$attributes->{'DISCC'}) {
+
+			$attributes->{'DISCC'} = $2;
+		}
+	}
+
 	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
 	# Same for DISC - Bug 2821
 	for my $tag (qw(YEAR DISC DISCC)) {
@@ -1268,7 +1279,25 @@ sub _preCheckAttributes {
 	}
 
 	# Bug 3759 - Set undef years to 0, so they're included in the count.
-	$attributes->{'YEAR'} ||= 0;
+	# Bug 3643 - rating is specified as a tinyint - users running their
+	# own SQL server may have strict mode turned on.
+	for my $tag (qw(YEAR RATING)) {
+
+		$attributes->{$tag} ||= 0;
+	}
+
+	# Some tag formats - APE? store the type of channels instead of the number of channels.
+	if (defined $attributes->{'CHANNELS'}) { 
+
+		if ($attributes->{'CHANNELS'} =~ /stereo/i) {
+
+			$attributes->{'CHANNELS'} = 2;
+
+		} elsif ($attributes->{'CHANNELS'} =~ /mono/i) {
+
+			$attributes->{'CHANNELS'} = 1;
+		}
+	}
 
 	if (defined $attributes->{'TRACKNUM'}) {
 		$attributes->{'TRACKNUM'} = Slim::Music::Info::cleanTrackNumber($attributes->{'TRACKNUM'});
@@ -1313,7 +1342,7 @@ sub _preCheckAttributes {
 	# Push these back until we have a Track object.
 	for my $tag (qw(
 		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
-		PIC APIC ALBUM ALBUMSORT DISCC ALBUMARTIST COMPILATION
+		PIC APIC ALBUM ALBUMSORT DISC DISCC ALBUMARTIST COMPILATION
 		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
 		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID
 		MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
