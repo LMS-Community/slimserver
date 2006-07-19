@@ -53,7 +53,7 @@ sub appendTracks {
 
 		})->single->get_column('maxPosition');
 
-		$self->_addTracksToPlaylist($tracks, $max);
+		$self->_addTracksToPlaylist($tracks, $max+1);
 	});
 }
 
