@@ -11,6 +11,7 @@ package Slim::Formats::Playlists::PLS;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
+use IO::Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
@@ -24,13 +25,29 @@ sub read {
 	my @urls   = ();
 	my @titles = ();
 	my @items  = ();
-	my $foundBOM = 0;
+	my $data   = '';
 
 	$::d_parse && msg("Parsing playlist: $url \n");
 
-	while (my $line = <$file>) {
+	# Bug: 3697 - Haven't seen pls files used on disk (or at least with
+	# multiple encodings perl file), but have seen UTF-16 playlists on
+	# remote sites. We need to decode the entire string as a UTF-16
+	# encoded chunk, instead of each line.
+	{
+		local $/ = undef;
 
-		chomp($line);
+		$data = <$file>;
+
+		my $enc  = Slim::Utils::Unicode::encodingFromString($data);
+
+		if ($enc eq 'utf8') {
+			$data = Slim::Utils::Unicode::stripBOM($data);
+		}
+
+		$data = Slim::Utils::Unicode::utf8decode_guess($data, $enc);
+	}
+
+	for my $line (split(/$CRLF/, $data)) {
 
 		$::d_parse && msg("Parsing line: $line\n");
 
@@ -39,20 +56,6 @@ sub read {
 
 		# strip whitespace from end
 		$line =~ s/\s*$//;
-
-		# Guess the encoding of each line in the file. Bug 1876
-		# includes a playlist that has latin1 titles, and utf8 paths.
-		my $enc = Slim::Utils::Unicode::encodingFromString($line);
-
-		# Only strip the BOM off of UTF-8 encoded bytes. Encode will
-		# handle UTF-16
-		if (!$foundBOM && $enc eq 'utf8') {
-
-			$line = Slim::Utils::Unicode::stripBOM($line);
-			$foundBOM = 1;
-		}
-
-		$line = Slim::Utils::Unicode::utf8decode_guess($line, $enc);
 
 		if ($line =~ m|File(\d+)=(.*)|i) {
 			$urls[$1] = Slim::Utils::Unicode::utf8encode_locale($2);
