@@ -35,35 +35,57 @@ sub setTracks {
 		# Remove the old tracks associated with this playlist.
 		$self->playlist_tracks->delete;
 
-		if (!$tracks || ref($tracks) ne 'ARRAY') {
-			$tracks = [];
-		}
-
-		my $i = 0;
-
-		for my $track (@$tracks) {
-
-			# If tracks are being added via Browse Music Folder -
-			# which still deals with URLs - get the objects to add.
-			if (!blessed($track) || !$track->can('url')) {
-
-				$track = Slim::Schema->rs('Track')->objectForUrl({
-					'url'      => $track,
-					'create'   => 1,
-					'readTags' => 1,
-				});
-			}
-
-			if (blessed($track) && $track->can('id')) {
-
-				Slim::Schema->rs('PlaylistTrack')->create({
-					playlist => $self,
-					track    => $track,
-					position => $i++
-				});
-			}
-		}
+		$self->_addTracksToPlaylist($tracks, 0);
 	});
+}
+
+sub appendTracks {
+	my $self   = shift;
+	my $tracks = shift;
+
+	Slim::Schema->txn_do(sub {
+
+		# Get the current max track in the DB
+		my $max = $self->search_related('playlist_tracks', undef, {
+
+			'select' => [ \'MAX(position)' ],
+			'as'     => [ 'maxPosition' ],
+
+		})->single->get_column('maxPosition');
+
+		$self->_addTracksToPlaylist($tracks, $max);
+	});
+}
+
+sub _addTracksToPlaylist {
+	my ($self, $tracks, $position) = @_;
+
+	if (!$tracks || ref($tracks) ne 'ARRAY' || !scalar @$tracks) {
+		$tracks = [];
+	}
+
+	for my $track (@$tracks) {
+
+		# If tracks are being added via Browse Music Folder -
+		# which still deals with URLs - get the objects to add.
+		if (!blessed($track) || !$track->can('url')) {
+
+			$track = Slim::Schema->rs('Track')->objectForUrl({
+				'url'      => $track,
+				'create'   => 1,
+				'readTags' => 1,
+			});
+		}
+
+		if (blessed($track) && $track->can('id')) {
+
+			Slim::Schema->rs('PlaylistTrack')->create({
+				playlist => $self,
+				track    => $track,
+				position => $position++
+			});
+		}
+	}
 }
 
 1;

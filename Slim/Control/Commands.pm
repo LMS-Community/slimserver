@@ -1098,11 +1098,9 @@ sub playlistZapCommand {
 		},
 	});
 
-	my @list = $playlistObj->tracks();
-	push @list, $zapsong;
+	$playlistObj->appendTracks([ $zapsong ]);
+	$playlistObj->update;
 
-	$playlistObj->setTracks(\@list);
-	$playlistObj->update();
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
 	$client->currentPlaylistModified(1);
@@ -1269,16 +1267,16 @@ sub playlistsEditCommand {
 	}
 	
 	# now perform the operation
-	
-	my @items = $playlist->tracks;
+	my @items   = $playlist->tracks;
 	my $changed = 0;
-	
+
+	# Once we move to using DBIx::Class::Ordered, most of this code can go away.
 	if ($cmd eq 'delete') {
 
 		splice(@items, $itemPos, 1);
 
 		$changed = 1;
-	
+
 	} elsif ($cmd eq 'up') {
 
 		# Up function - Move entry up in list
@@ -1320,18 +1318,14 @@ sub playlistsEditCommand {
 
 			for my $item (@items) {
 
-				if ($item eq $playlistTrack) {
-					# The assignment below ensures that the object
-					# in the list is the one that we're going to 
-					# change. It may be different of a different class
-					# (Track vs LightWeightTrack) than the one just
-					# returned from updateOrCreate.
-					$playlistTrack = $item;
+				if ($item->id eq $playlistTrack->id) {
+
 					$found = 1;
 					last;
 				}
 			}
 
+			# XXXX - call ->appendTracks() once this is reworked.
 			if ($found == 0) {
 				push @items, $playlistTrack;
 			}
