@@ -11,6 +11,7 @@ package Slim::Formats::Playlists::PLS;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
+use File::Slurp;
 use IO::Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
@@ -34,9 +35,7 @@ sub read {
 	# remote sites. We need to decode the entire string as a UTF-16
 	# encoded chunk, instead of each line.
 	{
-		local $/ = undef;
-
-		$data = <$file>;
+		$data = read_file($file);
 
 		my $enc  = Slim::Utils::Unicode::encodingFromString($data);
 
