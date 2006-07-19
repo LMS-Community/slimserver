@@ -110,7 +110,7 @@ sub browse {
 
 		# Turn all occurences of album into me, since this is an Album RS
 		$sort =~ s/(album)\./me./g;
-		$sort =~ s/(\w+?.\w+?sort)/concat($1, '0')/g;
+		$sort =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
 
 		# Always append disc
 		if ($sort !~ /me\.disc/) {
@@ -120,7 +120,7 @@ sub browse {
 
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.
 	return $self->search($cond, {
-		'order_by' => $sort || "concat(me.titlesort, '0'), me.disc",
+		'order_by' => $sort || "concat('0', me.titlesort), me.disc",
 		'distinct' => 'me.id',
 		'join'     => \@join,
 	});
@@ -133,7 +133,7 @@ sub descendTrack {
 	my $sort = shift;
 
 	if (!$sort) {
-		$sort = "concat(me.titlesort, '0'), tracks.disc, tracks.tracknum, concat(tracks.titlesort, '0')";
+		$sort = "concat('0', me.titlesort), tracks.disc, tracks.tracknum, concat('0', tracks.titlesort)";
 	}
 
 	my $attr = {

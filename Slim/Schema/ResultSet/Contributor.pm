@@ -97,7 +97,7 @@ sub descendAlbum {
 	# Create a clean resultset
 	my $rs     = $self->result_source->resultset;
 	my $attr   = {
-		'order_by' => 'concat(album.titlesort,\'0\'), album.disc',
+		'order_by' => "concat('0', album.titlesort), album.disc",
 	};
 
 	if (my $roles = Slim::Schema->artistOnlyRoles) {

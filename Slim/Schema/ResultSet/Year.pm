@@ -48,7 +48,7 @@ sub descendAlbum {
 	#return $self->search($cond, {
 	return Slim::Schema->search('Album', $cond, {
 		'group_by'     => 'me.id',
-		'order_by'     => 'concat(me.titlesort, \'0\'), me.disc',
+		'order_by'     => "concat('0', me.titlesort), me.disc",
 	});
 }
 
