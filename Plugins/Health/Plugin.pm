@@ -316,7 +316,7 @@ PLUGIN_HEALTH
 	EN	Server & Network Health
 	ES	Salud del Servidor y la Red
 	FI	Palvelimen ja verkon tila
-	FR	Monitoring serveur et réseau
+	FR	Contrôle serveur et réseau
 	HE	תקינות השרת
 	NL	Server- en netwerktoestand
 
@@ -324,12 +324,14 @@ PLUGIN_HEALTH_PERF_ENABLE
 	DE	Leistungsüberwachung aktivieren
 	EN	Enable Performance Monitoring
 	ES	Habilitar Monitoreo de Perfomance
+	FR	Activer le contrôle des performances
 	NL	Schakel prestatiemonitoring in
 
 PLUGIN_HEALTH_PERF_DISABLE
 	DE	Leistungsüberwachung deaktivieren
 	EN	Disable Performance Monitoring
 	ES	Deshabilitar Monitoreo de Perfomance
+	FR	Désactiver le contrôle des performances
 	NL	Schakel prestatiemonitoring uit
 
 PLUGIN_HEALTH_NETTEST
@@ -377,9 +379,11 @@ PLUGIN_HEALTH_NETTEST_STOPTEST
 
 PLUGIN_HEALTH_PERF_SUMMARY
 	EN	Performance Summary
+	FR	Résumé
 
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
+	FR	Ajoutez plusieurs morceaux à la liste de lecture de cette platine et jouez-les, puis cliquez sur le bouton Réinitialiser les compteurs ci-dessus pour mettre à jour les statistiques.
 
 PLUGIN_HEALTH_PERF_RESET
 	EN	Reset
@@ -392,6 +396,7 @@ PLUGIN_HEALTH_SUMMARY
 PLUGIN_HEALTH_WARNINGS
 	EN	Warnings
 	ES	Advertencias
+	FR	Alertes
 	NL	Waarschuwingen
 
 PLUGIN_HEALTH_PERF_STATISTICS
@@ -410,97 +415,115 @@ PLUGIN_HEALTH_CONGEST
 	EN	Congested
 	ES	Congestionado
 	FI	Ruuhkautunut
+	FR	Engorgée
 	NL	Congestie
 
 PLUGIN_HEALTH_FAIL
 	EN	Fail
 	ES	Falla
+	FR	Erreur
 	NL	Gefaald
 
 PLUGIN_HEALTH_INACTIVE
 	EN	Inactive
 	ES	Inactivo
 	FI	Ei aktiivinen
+	FR	Pas activé
 	IT	Inattivo
 	NL	Inactief
 
 PLUGIN_HEALTH_CONTROLCONGEST_DESC
 	EN	The control connection to this player has experienced congestion.  This usually is an indication of poor network connectivity (or the player being recently being disconnected from the network).
 	ES	La conexión de control a este reproductor ha experimentado congestión. Esto generalmente es indicador de una mala conectividad en la red (también puede deberse a que el reproductor se desconectó recientemente de la red).
+	FR	La connexion de contrôle de cette platine est engorgée. Ceci est généralement dû à une mauvaise connectivité du réseau ou à une déconnexion de la platine.
 	HE	הקישור בין הנגן לשרת נקטע מספר פעמים. בדוק רשת
 	NL	De controleconnectie naar deze speler heeft last gehad van congestie. Dit is meestal een indicatie van een slechte netwerkconnectie (of een speler die recent van het netwerk losgekoppeld is geweest).
 
 PLUGIN_HEALTH_CONTROLFAIL_DESC
 	EN	There is no currently active control connection to this player.  Please check the player is powered on.  If the player is unable to establish a connection, please check your network and and/or server firewall do not block connections to TCP & UDP port 3483.
 	ES	No existe una conexión de control activa a este reproductor. Por favor, verificar que el reproductor esté encendido. Si el reproductor no puede establecer una conexión,  por favor, verificar que la red y/o el firewall del servidor no estén bloqueando las conexiones TCP y UDP  en el puerto 3483.
+	FR	Il n\'y a actuellement aucune connexion de contrôle active pour cette platine. Vérifiez que la platine est en marche. Si la connexion de la platine est impossible, vérifiez l\'intégrité de votre réseau et/ou que votre pare-feu ne bloque pas les ports TCP et UDP 3483.
 	HE	הנגן לא מחובר. בדוק אם הוא מחובר לחשמל
 	NL	Er is momenteel geen actieve controleconnectie naar deze speler. Controleer of de speler aan staat. Controleer of je netwerk en/of server firewall geen connecties blokkeren naar TCP & UDP poort 3483 als je speler geen connectie kan maken.
 
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
 	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transfered to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
+	FR	Il n\'y a actuellement aucune connexion de flux active pour cette platine. Une connexion de flux est requise lors de la lecture d\'un fichier depuis le serveur (mais pas lors de la lecture d\'un flux distant sur une Squeezebox2).    Si vous tentez de lire un fichier local sur cette platine, ceci indique un problème réseau. Vérifiez l\'intégrité de votre réseau et/ou que votre pare-feu ne bloque pas le port TCP 9000.
 	NL	Er is op dit moment geen actieve connectie voor het streamen naar deze speler. Een connectie is altijd nodig om bestanden te spelen vanaf de server (maar niet als je een radiostream op afstand gebruikt bij een Squeezebox2 of 3)  <br>  Als je een lokaal bestand probeert af te spelen dan wijst dit op een netwerkprobleem. Controleer of je netwerk en/of server firewall niet TCP poort 9000 blokkeren.
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT
 	EN	Good, but Intermittent Drops
 	ES	Buena, pero con Cortes Intermitentes
 	FI	Hyvä, mutta satunnaisia katkoja
+	FR	OK, erreurs intermittentes
 	NL	Goed maar af en toe haperingen
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT_DESC
 	EN	The signal strength received by this player is normally good, but occasionally drops.  This may be caused by other wireless networks, cordless phones or microwaves nearby.  If you hear occasional audio dropouts on this player, you should investigate what is causing drops in signal strength.
 	ES	La energía de la señal recibida por este reproductor es normalmente buena, pero con cortes ocasionalmente. Esto puede estar causado por otras redes inalámbricas, teléfonos inalámbricos u hornos de microondas cercanos. Si se escuchan interrupciones de audio ocasionales en este reproductor, se debería investigar cuál es la causa de las caídas en la energía de la señal.
+	FR	Le signal reçu par cette platine est normal, mais s\'interrompt par intermittence, ce qui peut causer des coupures audio. Ce problème peut être dû à la présence d\'autres réseaux sans fil ou d\'appareils tels que téléphones sans fil ou fours micro-ondes.
 	NL	De signaalsterkte ontvangen door de speler is goed met af en toe haperingen. De oorzaak kunnen andere draadloze netwerken zijn, draadloze telefoons of magnetrons die dichtbij zijn. Als je haperingen hoort in de audio moet je de oorzaak onderzoeken van de haperingen in de signaalsterkte.
 
 PLUGIN_HEALTH_SIGNAL_POOR
 	EN	Poor
 	ES	Pobre
+	FR	Faible
 	NL	Matig
 
 PLUGIN_HEALTH_SIGNAL_POOR_DESC
 	EN	The signal strength received by this player is poor for significant periods, please check your wireless network.
 	ES	La energía de la señal recibida por este reproductor es pobre durante períodos importantes, por favor verificar la red inalámbrica.
+	FR	Le signal reçu par cette platine est anormalement faible pendant de longues périodes. Vérifiez votre réseau sans fil.
 	NL	De signaalsterkte ontvangen door de speler is matig over een langere periode. Controleer je draadloze netwerk.
 
 PLUGIN_HEALTH_SIGNAL_BAD
 	EN	Bad
 	ES	Mala
+	FR	Mauvais
 	FI	Huono
 	NL	Slecht
 
 PLUGIN_HEALTH_SIGNAL_BAD_DESC
 	EN	The signal strength received by this player is bad for significant periods, please check your wireless network.
 	ES	La energía de la señal recibida por este reproductor es mala durante períodos importantes, por favor verificar la red inalámbrica.
+	FR	Le signal reçu par cette platine est anormalement faible pendant de longues périodes. Vérifiez votre réseau sans fil.
 	NL	De signaalsterkte ontvangen door je speler is slecht over een  aanzienlijke periode. Controleer je draadloze netwerk.
 
 PLUGIN_HEALTH_CONTROL
 	EN	Control Connection
 	ES	Conexión de Control
 	FI	Hallintayhteys
+	FR	Connexion de contrôle
 	NL	Controleconnectie
 
 PLUGIN_HEALTH_STREAM
 	EN	Streaming Connection
 	ES	Conexión para Streaming
+	FR	Connexion de flux
 	NL	Streaming connectie
 
 PLUGIN_HEALTH_SIGNAL
 	EN	Signal Strength
+	FR	Signal de la platine
 
 PLUGIN_HEALTH_BUFFER_LOW
 	EN	Low
 	ES	Bajo
 	FI	Matala
+	FR	Bas
 	NL	Laag
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC1
 	EN	The playback buffer for this player is occasionally falling lower than ideal.  This may result in audio dropouts especually if you are streaming as WAV/AIFF.  If you are hearing these, please check your network signal strength and server response times.
 	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Esto puede producir interrupciones en el audio, especialmente si se está transmitiendo en formato WAV/AIFF. Si se escuchan estos, por favor, controlar la potencia de señal de red y los tiempos de respuesta del servidor.
+	FR	Le tampon de lecture de cette platine tombe occasionnellement à un niveau plus bas que la normale, ce qui peut générer des pertes audio, notamment avec un flux WAV/AIFF. Si ce problème se produit, vérifiez l\'intégrité de votre réseau ainsi que le temps de réponse du serveur.
 	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
 	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit kan resulteren in audio haperingen, zeker als je WAV/AIFF streamt. Controleer de netwerksignaalsterkte en de snelheid waarmee de server reageert als je haperingen hoort.
 
 PLUGIN_HEALTH_BUFFER_LOW_DESC2
 	EN	The playback buffer for this player is occasionally falling lower than ideal.  This is a Squeezebox2/3 and so the buffer fullness is expected to drop at the end of each track.  You may see this warning if you are playing lots of short tracks.  If you are hearing audio dropouts, please check our network signal strength.
 	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Este es un Squeezebox2/3 y por lo tanto es esperable que el buffer se vacíe al final de cada pista. Se puede recibir esta advertencia si se están reproduciendo muchas pistas de corta duración. Si se escuchan interrupciones de audio, por favor, controlar la potencia de señal de red.
+	FR	Le tampon de lecture de cette platine tombe occasionnellement à un niveau plus bas que la normale. La platine étant une Squeezebox2, il est normal que le tampon se vide à la fin de chaque morceau. Il est possible que cette alerte apparaisse si vous jouez un grand nombre de morceaux courts. Si le flux audio s\'interrompt, vérifiez l\'intégrité de votre réseau.
 	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
 	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit is een Squeezebox2. Daar mag het bufferniveau laag zijn aan het einde van een liedje. Je kunt deze waarschuwing krijgen als je veel korte liedjes afspeelt. Controleer de netwerksignaalsterkte als je haperingen hoort in het geluid.
 
@@ -508,33 +531,39 @@ PLUGIN_HEALTH_BUFFER
 	EN	Buffer Fullness
 	ES	Llenado del Buffer
 	FI	Puskurin täyttöaste
+	FR	Remplissage du tampon
 	NL	Bufferniveau
 
 PLUGIN_HEALTH_SLIMP3_DESC
 	EN	This is a SLIMP3 player.  Full performance measurements are not available for this player.
 	ES	Este es un reproductor SLIMP3. Medidas completas de perfomance no están disponibles para este reproductor.
+	FR	Cette platine est un SLIMP3 ; toutes les fonctions de mesure de performances ne sont pas disponibles.
 	NL	Dit is een Slimp3 speler. Volledige prestatiemonitoring is niet beschikbaar voor deze speler.
 
 PLUGIN_HEALTH_NO_PLAYER_DESC
 	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
 	ES	Slimserver no puede encontrar ningón reproductor. Si existe un reproductor esto puede deberse a bloqueos de conexión de red entre el servidor y el reproductor. Por favor, verificar que la red y/o el firewall del servidor no estén bloqueando las conexiones TCP y UDP en el puerto 3483.
+	FR	Le SlimServer ne trouve pas de platine connectée. Vérifiez que votre réseau permet la connexion entre le serveur et la platine et que votre pare-feu ne bloque pas les ports TCP et UDP 3483.
 	HE	השרת לא מוצא נגן, בדוק רשת וחומת אש
 	NL	SlimServer kan geen speler vinden. Als je een speler hebt kan dit komen door een netwerk dat connecties blokkeert tussen de speler en server. Controleer of je netwerk en/of server firewall niet TCP & UDP poort 3483 blokkeert.
 
 PLUGIN_HEALTH_RESPONSE
 	EN	Server Response Time
 	ES	Tiempo de Respuesta del Servidor
+	FR	Réponse du serveur
 	NL	Serverreactietijd
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT
 	EN	Occasional Poor Response
 	ES	Ocasionalmente Respuesta Pobre
 	FI	Satunnaista huonoa vastetta
+	FR	Faible par intermittence
 	NL	Af en toe slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
 	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.
 	ES	El tiempo de respuesta del servidor es ocasionalmente más alto que el deseado. Esto puede causar interrupciones audio, especialmente en los reproductores Slimp3 y Squeezebox1. Puede deberse a una carga de procesos de fondo, o a que una tarea de Slimserver está tomando más tiempo que el normal.
+	FR	Le temps de réponse du serveur est anormalement élevé par intermittence, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Ceci peut être causé par une charge élevée ou une opération complexe sur le serveur.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
 	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma\'s zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
 
@@ -542,11 +571,13 @@ PLUGIN_HEALTH_RESPONSE_POOR
 	EN	Poor Response
 	ES	Respuesta Pobre
 	FI	Huono vaste
+	FR	Faible
 	NL	Slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_POOR_DESC
 	EN	Your server response time is regularly falling below normal performance levels.  This may lead to audio dropouts, especially on Slimp3 and Squeezebox1 players.  Please check the performance of your server.  If this is OK, then check slimserver is not running intensive tasks (e.g. scanning music library) or a Plugin is not causing this.
 	ES	El tiempo de respuesta del servidor es regularmente más bajo que los niveles de perfomance normales. Esto puede causar interrupciones de  audio, especialmente en los reproductores Slimp3 y Squeezebox1. Por favor, verificar la perfomance del servidor. Si esto está OK, entonces verificar que Slimserver no está corriendo tareas intensivas (por ej. recopilando la colección musical) o que algón plugin no está causando esto.
+	FR	Le temps de réponse du serveur est anormalement élevé, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Vérifiez les performances de votre serveur. Si celles-ci sont normales, assurez-vous qu\'un module d\'extension ou une tâche complexe (comme le répertoriage de la bibliothèque musicale) n\'est pas à l\'origine du problème.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
 	NL	De serverreactietijd is regelmatig lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. Controleer de prestatie van je server. Is die goed, controleer dan of SlimServer geen intensieve taken draait (zoals scannen van de muziekcollectie) of dat een plugin dit veroorzaakt.
 
@@ -554,6 +585,7 @@ PLUGIN_HEALTH_NORMAL
 	EN	This player is performing normally.
 	ES	Este reproductor está funcionando normalmente.
 	FI	Tämä soitin toimii normaalisti.
+	FR	Les performances de cette platine sont normales.
 	NL	Deze speler functioneert normaal.
 
 PLUGIN_HEALTH_REFRESH
@@ -595,22 +627,26 @@ PLUGIN_HEALTH_WARNING_DESC
 PLUGIN_HEALTH_SIGNAL_DESC
 	EN	This graph shows the strength of the wireless signal received by your player.  Higher signal strength is better.  The player reports signal strength while it is playing.
 	ES	Este gráfico muestra la energía de la señal inalámbrica recibida por tu reproductor. Un valor alto de energía es mejor.El reproductor reporta la energía de la señal mientras está reproduciendo.
+	FR	Ce graphique montre la puissance du signal sans fil reçu par la platine lorsque celle-ci est en lecture.
 	NL	Deze grafiek toont de signaalsterkte van je draadloze netwerk zoals ontvangen door je speler. Hogere signaalsterkte is beter. De speler rapporteert de signaalsterkte tijdens het afspelen.
 
 PLUGIN_HEALTH_BUFFER_DESC
 	EN	This graph shows the fill of the player\'s buffer.  Higher buffer fullness is better.  Note the buffer is only filled while the player is playing tracks.<p>Squeezebox1 uses a small buffer and it is expected to stay full while playing.  If this value drops to 0 it will result in audio dropouts.  This is likely to be due to network problems.<p>Squeezebox2/3 uses a large buffer.  This drains to 0 at the end of each track and then refills for the next track.  You should only be concerned if the buffer fill is not high for the majority of the time a track is playing.<p>Playing remote streams can lead to low buffer fill as the player needs to wait for data from the remote server.  This is not a cause for concern.
 	ES	Este gráfico muestra el llenado del buffer del reproductor. Cuanto más lleno esté mejor es. Notar que el buffer solo se llena cuando el reproductor está reproduciendo pistas.    Squeezebox1 utiliza un buffer pequeño y se espera que permanezca lleno mientras se reproduce. Si este valor cae a 0 se producirán interrupciones en el audio. Esto se debe muy probablemente a problemas de red.    Squeezebox2/3 utiliza un buffer grande. Este se vacía (vuelve a 0) al final de cada pista y luego se llena nuevamente para la próxima pista. Solo debería precupar el caso en que el llenado del buffer no tiene un nivel alto durante la mayoría del tiempo en que se esta reproduciendo una pista.    El reproducir streams remotos puede producir que el buffer tenga un nivel de llenado bajo, ya que el reproductor necesitas esperar que lleguen datos del servidor remoto. Esto no es causa para preocuparse.
+	FR	Ce graphique montre le taux de remplissage du tampon de la platine. Plus le tampon est rempli, moins le flux audio risque d\'être interrompu. Notez que le tampon n\'est rempli que lors de la lecture.    La Squeezebox1 utilise un tampon réduit qui reste normalement rempli durant toute la lecture. Si le taux de remplissage tombe à 0, typiquement à cause d\'un problème réseau, le flux audio sera interrompu.    La Squeezebox2 utilise un tampon plus important, qui se vide à la fin de chaque morceau et se remplit à nouveau au début du suivant. Un taux de remplissage fluctuant est donc normal.    La lecture de flux à distance peut générer des taux de remplissage du tampon peu élevés lorsque la platine est en attente de données de la part du serveur distant ; ce comportement est normal.
 	HE	תצוגה גרפית של סטטיסטיקות
 	NL	Deze grafiek toont bufferniveau. Hoger niveau is beter. De buffer is alleen gevuld tijdens het afspelen van muziek.  <br>Squeezebox1 gebruikt een kleine buffer die normaal gesproken altijd vol is. Als het niveau naar 0 gaat zal er hapering in het geluid optreden. Dit komt vaak door netwerkproblemen.  <br>Squeezebox2/3 gebruikt een grote buffer. Hier loopt het bufferniveau naar 0 toe aan het einde van een liedje en vult zich weer aan het begin van het volgende liedje. Alleen als de buffer de meeste tijd niet gevuld is tijdens het spelen moet je actie nemen.  <br>Het spelen van streams op afstand (Internet radio) geeft een laag bufferniveau omdat de speler moet wachten op de server op afstand. Dit is geen gevolg van problemen.
 
 PLUGIN_HEALTH_CONTROL_DESC
 	EN	This graph shows the number of messages queued up to send to the player over the control connection.  A measurement is taken every time a new message is sent to the player.  Values above 1-2 indicate potential network congestion or that the player has become disconnected.
 	ES	Esta gráfico muestra el nómero de mensajes encolados para ser enviados al reproductor sobre la conexión de control. Una medición se toma cada vez que un nuevo mensaje es enviado hacia el reproductor. Los valores mayores a 1-2 indican una congestión potencial de la red o que el reprodcutor se ha desconectado.
+	FR	Ce graphique montre le nombre de messages de contrôle à envoyer à la platine. La valeur est mise à jour à chaque nouveau message de contrôle. Une valeur supérieure à 1 ou 2 peut indiquer un problème d\'engorgement du réseau ou une perte de connexion avec la platine.
 	HE	אם הערכים בגרף הם מעל 1 או 2 בדוק רשת
 	NL	Deze grafiek toont de hoeveelheid boodschappen in de rij gezet om te versturen naar de speler over de controleconnectie. Bij elke verstuurde boodschap wordt een meting gedaan. Waarden boven 1-2 geven een potentieel een netwerkcongestie aan of dat de speler losgekoppeld is van het netwerk.
 
 PLUGIN_HEALTH_RESPONSE_DESC
 	EN	The response time of the server - the time between successive calls to select.  
+	FR	Ce graphique montre le laps de temps en secondes nécessaire au serveur pour répondre aux instructions de la ou des platine(s) connectée(s). Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d\'altérer les performances audio.    Les temps de réponse trop élevés peuvent être le résultat d\'autres tâches ou de tâches complexes en cours d\'éxécution sur le serveur.
 
 PLUGIN_HEALTH_SELECTTASK
 	EN	Select Task Duration
@@ -632,9 +668,11 @@ PLUGIN_HEALTH_TIMERTASK_DESC
 
 PLUGIN_HEALTH_TIMERLATE
 	EN	Timer Lateness
+	FR	Précision de la programmation
 
 PLUGIN_HEALTH_TIMERLATE_DESC
 	EN	The time between when a timer task was scheduled and when it is run.
+	FR	Le SlimServer utilise un mécanisme de programmation pour déclencher certaines tâches, comme la mise à jour de l\'interface utilisateur. Ce graphique montre le décalage en secondes entre le déclenchement programmé d\'une tâche et son déclenchement réel.    Deux tâches programmées ne pouvant s\'éxécuter simultanément, il est possible que certaines tâches soient déclenchées par le serveur après un délai d\'attente. Si celui-ci est trop important, la réactivité de l\'interface utilisateur peut en être affectée.
 
 PLUGIN_HEALTH_REQUEST
 	EN	Execute / Notification Task Duration
