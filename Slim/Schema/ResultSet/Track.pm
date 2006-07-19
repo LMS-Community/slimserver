@@ -44,18 +44,38 @@ sub searchNames {
 	}, { 'order_by' => 'me.titlesort', 'distinct' => 'me.id' });
 }
 
+sub orderBy {
+	my $self = shift;
+
+	return 'album.titlesort,me.disc,me.tracknum,me.titlesort';
+}
+
 sub browse {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
-	my $sort = shift;
+	my $sort = shift || 'me.disc, me.tracknum, me.titlesort';;
+
+	my $join = '';
 
 	# Only search for audio
 	$cond->{'me.audio'} = 1;
 
+	# If we need to order by album,titlesort, etc - join on album.
+	if ($sort) {
+
+		if ($sort =~ /album\./) {
+			$join = 'album';
+		}
+
+		$sort =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
+	}
+
+	# Join on album
 	return $self->search($self->fixupFindKeys($cond), {
-		'order_by' => 'me.disc, me.tracknum, me.titlesort',
+		'order_by' => $sort,
 		'distinct' => 'me.id',
+		'join'     => $join,
 	});
 }
 

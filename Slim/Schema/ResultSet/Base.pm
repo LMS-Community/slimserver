@@ -14,6 +14,7 @@ sub suppressAll        { 0 }
 sub allTransform       { '' }
 sub descendTransform   { '' }
 sub browseBodyTemplate { '' }
+sub orderBy            { '' }
 sub pageBarResults     { 0 }
 sub alphaPageBar       { 0 }
 sub ignoreArticles     { 0 }

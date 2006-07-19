@@ -69,7 +69,7 @@ sub browsedb {
 			$orderBy = Slim::Utils::Prefs::get('sortBrowseArt');
 		}
 
-	} else {
+	} elsif ($levelName ne 'track') {
 
 		$orderBy = '';
 	}
@@ -283,15 +283,15 @@ sub browsedb {
 			# transform, such as the artwork case.
 			if ($rs->allTransform) {
 
-				 $form{'hierarchy'} = $rs->allTransform;
+				$form{'hierarchy'} = $rs->allTransform;
 
 			} elsif ($rs->descendTransform) {
 
-				 $form{'hierarchy'} = $rs->descendTransform;
+				$form{'hierarchy'} = $rs->descendTransform;
 
 			} else {
 
-				 $form{'hierarchy'} = join(',', @levels[1..$#levels]);
+				$form{'hierarchy'} = join(',', @levels[1..$#levels]);
 			}
 
 			$form{'level'} = 0;
@@ -309,7 +309,7 @@ sub browsedb {
 		$form{'descend'}      = 1;
 		$form{'hreftype'}     = 'browseDb';
 		$form{'player'}       = $player;
-		$form{'orderBy'}      = $orderBy;
+		$form{'orderBy'}      = $nextLevelRS->orderBy;
 		$form{'odd'}          = ($itemCount + 1) % 2;
 		$form{'skinOverride'} = $params->{'skinOverride'};
 		$form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
