@@ -1477,7 +1477,7 @@ sub _postCheckAttributes {
 	# The "primary" contributor
 	my $contributor = ($contributors->{'ALBUMARTIST'}->[0] || $contributors->{'ARTIST'}->[0]);
 
-	if ($::d_info && $_dump_postprocess_logic) {
+	if ($::d_info && $_dump_postprocess_logic && blessed($contributor)) {
 
 		msgf("-- Track primary contributor is '%s' (id: [%d])\n", $contributor->name, $contributor->id);
 	}
