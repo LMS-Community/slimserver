@@ -202,6 +202,11 @@ sub update {
 	my $msgs_since = $num_done - $self->{'prev_num_done'};
 	my $time_since = $time_now - $self->{'prev_time'};
 
+	# Avoid a divide by 0 error.
+	if ($time_since == 0) {
+		$time_since = 1;
+	}
+
 	if ($self->{'term'}) {
 
 		my $percentage = $num_done != 0 ? int(($num_done / $self->{'total'}) * 100) : 0;
