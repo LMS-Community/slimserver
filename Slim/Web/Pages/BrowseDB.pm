@@ -252,10 +252,16 @@ sub browsedb {
 
 		# XXXX ick.
 		if ($attr eq 'year') {
-			$attr = 'album';
+			$attr = 'album.year';
 		}
 
-		for my $levelKey (grep { /^$attr\.\w+$/ } keys %{$params}) {
+		for my $levelKey (grep { /^$attr/ } keys %{$params}) {
+
+			# Bug 3776 - because album & year are the same view,
+			# skip the album.year key when we're at the album level.
+			if ($levels[$i] eq 'album' && $levelKey eq 'album.year') {
+				next;
+			}
 
 			# Send down the attributes down to the template
 			#
