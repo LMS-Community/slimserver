@@ -305,12 +305,6 @@ sub redirect {
 	return ${*$self}{'redirect'};
 }
 
-sub title {
-	my $self = shift;
-	
-	return ${*$self}{'title'};
-}
-
 sub DESTROY {
 	my $self = shift;
  
