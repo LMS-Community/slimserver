@@ -15,6 +15,7 @@ use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use List::Util qw(max);
 use Scalar::Util qw(blessed);
+use Storable;
 use Tie::Cache::LRU::Expires;
 use URI;
 
@@ -50,6 +51,9 @@ my %tagMapping = (
 	'fs'         => 'filesize',
 	'blockalign' => 'block_alignment',
 );
+
+# will be built in init using _buildValidHierarchies
+my %validHierarchies = ();
 
 our $initialized = 0;
 my $trackAttrs   = {};
@@ -150,6 +154,8 @@ sub init {
 
 	$class->toggleDebug($::d_sql);
 
+	$class->_buildValidHierarchies;
+
 	$initialized = 1;
 }
 
@@ -246,6 +252,12 @@ sub lastRescanTime {
 	my $class = shift;
 
 	return $class->single('MetaInformation', { 'name' => 'lastRescanTime' })->value;
+}
+
+sub validHierarchies {
+	my $class = shift;
+
+	return \%validHierarchies;
 }
 
 sub wipeDB {
@@ -1900,6 +1912,116 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
+}
+
+sub _buildValidHierarchies {
+	my $class         = shift;
+
+	my @sources       = $class->sources;
+	my @browsable     = ();
+	my @paths         = ();
+	my @finishedPaths = ();
+	my @hierarchies   = ();
+
+	no strict 'refs';
+
+	# pare down sources list to ones with a browse method in their ResultSet class.
+	for my $source (@sources) {
+
+		if (eval{ "Slim::Schema::ResultSet::$source"->can('browse') }) {
+			push @browsable, $source;
+		}
+	}
+
+	my $max     = $#browsable;
+	my $rsCount = $max + 1;
+	my @inEdges = () x $rsCount;
+
+	for my $sourceI (0 .. $max) {
+
+		my $source = $browsable[$sourceI];
+		my $hasOut = 0;
+
+		# work out the inbound edges of the graph by looking for descendXXX methods
+		for my $nextI (0 .. $max) {
+
+			my $nextLevel = $browsable[$nextI];
+
+			if (eval{ "Slim::Schema::ResultSet::$source"->can("descend$nextLevel") }) {
+
+				$hasOut = 1;
+				push @{$inEdges[$nextI]}, $sourceI;
+			}
+		}
+
+		# Add sink nodes to list of paths to process
+		if (!$hasOut) {
+			push @paths, [[$sourceI],[(0) x $rsCount]];
+
+			# mark node as used in path
+			$paths[-1][1][$sourceI] = 1;
+		}
+	}
+	
+	use strict 'refs';
+
+	# Work the paths from the sink nodes to the source nodes
+	while (scalar(@paths)) {
+
+		my $currPath   = shift @paths;
+		my $topNode    = $currPath->[0][0];
+		my @toContinue = ();
+
+		# Find all source nodes which are not currently in path
+		for my $inEdge (@{$inEdges[$topNode]}) {
+
+			if ($currPath->[1][$inEdge]) {
+				next;
+			} else {
+				push @toContinue, $inEdge;
+			}
+		}
+
+		# No more nodes possible on this path, put it on the
+		# list of finished paths
+		if (!scalar(@toContinue)) {
+			push @finishedPaths, $currPath->[0];
+			next;
+		}
+
+		# clone the path if it splits
+		while (scalar(@toContinue) > 1) {
+
+			my $newPath = Storable::dclone($currPath);
+			my $newTop  = shift @toContinue;
+
+			# add source node to the beginning of the path
+			# and mark it as used
+			unshift @{$newPath->[0]}, $newTop;
+			$newPath->[1][$newTop] = 1;
+
+			push @paths,$newPath;
+		}
+
+		# reuse the original path
+		unshift @{$currPath->[0]}, $toContinue[0];
+		$currPath->[1][$toContinue[0]] = 1;
+
+		push @paths,$currPath;
+	}
+
+	# convert array indexes to rs names, and concatenate into a string
+	# also do all sub-paths ending in the sink nodes
+	for my $path (@finishedPaths) {
+
+		while (scalar(@{$path})) {
+
+			push @hierarchies, join(',', @browsable[@{$path}]);
+			shift @{$path};
+		}
+	}
+	
+	%validHierarchies = map {lc($_) => $_} @hierarchies;
 }
 
 1;
