@@ -35,7 +35,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 [%- END %]
 
 [%# img tag for album thumbnail in browse artwork context %]
-[%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %][% artlistlist = ''; IF artist; artistlist = PROCESS artistAsText.html; END %]
+[%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %][% artistlist = ''; IF artist; artistlist = PROCESS artistAsText.html; END %]
 	[% "<img src=\"/music/$coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\" 
 		alt=\"";item | html; artistlist ; IF year; " ($year)"; END; "\" 
 		title=\"";item | html; artistlist ; IF year; " ($year)"; END; "\">" %] 
