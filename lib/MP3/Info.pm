@@ -1248,8 +1248,16 @@ sub _get_v2tagdata {
 		                 (($retrysize & 0x0fe00000)<<3); # convert spec to non-spec sizes
 
 		    $retrysize += $hlen; # and re-add header len so that the entire frame's size is known
-		    
-		    $morebytes = substr($wholetag, $off+$retrysize, 4);
+
+		    if (length($wholetag) >= ($off+$retrysize+4)) {
+
+		    	$morebytes = substr($wholetag, $off+$retrysize, 4);
+
+		    } else {
+
+		    	$morebytes = '';
+		    }
+
 		    if (! ($morebytes =~ /^([A-Z0-9]{4})/ ||
 		           $morebytes =~ /^\x00{4}/ ||
 		           $off + $retrysize > $end) )
