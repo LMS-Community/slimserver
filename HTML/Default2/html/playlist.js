@@ -284,7 +284,7 @@ function doArtist(e) {
 	}
 	if (selIndex < 0 || selIndex >= songCount) return;
 
-	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&artist=" + playlist[selIndex].artistid);
+	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&contributor.id=" + playlist[selIndex].artistid);
 }
 
 function doAlbum(e) {
@@ -300,7 +300,7 @@ function doAlbum(e) {
 	}
 	if (selIndex < 0 || selIndex >= songCount) return;
 
-	browseurl("browsedb.html?hierarchy=album,track&level=1&album=" + playlist[selIndex].albumid);
+	browseurl("browsedb.html?hierarchy=album,track&level=1&album.id=" + playlist[selIndex].albumid);
 }
 
 function doSave() {

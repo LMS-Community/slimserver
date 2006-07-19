@@ -38,6 +38,8 @@ function initStatus() {
 		theA.onclick = doVolume;
 
 		volumeContainer.appendChild(theA);
+		updateStatus();
+		updatePlaylist();
 	}
 
 	document.getElementById("playlist").deleteRow(0);
@@ -110,7 +112,7 @@ function updateStatus_handler(req, url) {
 		currentSong = 0;
 		songCount = 0;
 		progressEnd = 0;
-	        totalTime = ' ' + timetostr(progressEnd);
+		totalTime = ' ' + timetostr(progressEnd);
 		displayPlayMode("stop");
 		songCounterUpdate();
 
@@ -167,27 +169,27 @@ function updateStatus_handler(req, url) {
 
 
 function displayPlayMode(mode) {
-        if (mode == "play") {
-                document.getElementById("playbutton").className = "active";
-                document.getElementById("pausebutton").className = "";
+	if (mode == "play") {
+		document.getElementById("playbutton").className = "active";
+		document.getElementById("pausebutton").className = "";
 		document.getElementById("stopbutton").className = "";
 		curPlayMode = "play";
-        } else if (mode == "pause") {
-                document.getElementById("playbutton").className = "";
-                document.getElementById("pausebutton").className = "active";
+	} else if (mode == "pause") {
+		document.getElementById("playbutton").className = "";
+		document.getElementById("pausebutton").className = "active";
 		document.getElementById("stopbutton").className = "";
 		curPlayMode = "pause";
-        } else if (mode == "stop") {
-                document.getElementById("playbutton").className = "";
-                document.getElementById("pausebutton").className = "";
+	} else if (mode == "stop") {
+		document.getElementById("playbutton").className = "";
+		document.getElementById("pausebutton").className = "";
 		document.getElementById("stopbutton").className = "active";
 		curPlayMode = "stop";
-        } else {
-                document.getElementById("playbutton").className = "";
-                document.getElementById("pausebutton").className = "";
+	} else {
+		document.getElementById("playbutton").className = "";
+		document.getElementById("pausebutton").className = "";
 		document.getElementById("stopbutton").className = "";
 		curPlayMode = "none";
-        }
+	}
 
 	displayPlayString();	
 }
@@ -205,8 +207,8 @@ function displayPlayString() {
 		playstring += " <b>" + currentSong + "</b> of <b>" + songCount + "</b>";
 	}
 
-        if (document.getElementById("playstring").innerHTML != playstring) {
-        	document.getElementById("playstring").innerHTML = playstring;
+	if (document.getElementById("playstring").innerHTML != playstring) {
+		document.getElementById("playstring").innerHTML = playstring;
 	}
 }
 
@@ -246,31 +248,31 @@ function displayRepeat(mode) {
 
 function displayShuffle(mode) {
 	shufMode = mode;
-        if (mode == 1) {
-                document.getElementById("shufsongs").className = "fakelink active";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink";
-        } else if (mode == 2) {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink active";
-                document.getElementById("shufnone").className = "fakelink";
-        } else if (mode == 0) {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink active";
-        } else {
-                document.getElementById("shufsongs").className = "fakelink";
-                document.getElementById("shufalbums").className = "fakelink";
-                document.getElementById("shufnone").className = "fakelink";
+	if (mode == 1) {
+		document.getElementById("shufsongs").className = "fakelink active";
+		document.getElementById("shufalbums").className = "fakelink";
+		document.getElementById("shufnone").className = "fakelink";
+	} else if (mode == 2) {
+		document.getElementById("shufsongs").className = "fakelink";
+		document.getElementById("shufalbums").className = "fakelink active";
+		document.getElementById("shufnone").className = "fakelink";
+	} else if (mode == 0) {
+		document.getElementById("shufsongs").className = "fakelink";
+		document.getElementById("shufalbums").className = "fakelink";
+		document.getElementById("shufnone").className = "fakelink active";
+	} else {
+		document.getElementById("shufsongs").className = "fakelink";
+		document.getElementById("shufalbums").className = "fakelink";
+		document.getElementById("shufnone").className = "fakelink";
 	}
 }
 
 function displayVolume(volume) {
 	curVol = volume;
 
-        for (i = 0; i < 11; i++) {
-                document.getElementById("volume").childNodes[i].style.background = "transparent";
-        }
+	for (i = 0; i < 11; i++) {
+		document.getElementById("volume").childNodes[i].style.background = "transparent";
+	}
 
 	i = Math.floor(volume / 10);
 	volnode = document.getElementById("volume").childNodes[i];
@@ -317,24 +319,24 @@ function displayPlayerModel(model) {
 /////////////////////////////////
 
 function doPlayerChange(event) {
-        currentPlayer = document.getElementById("playersel").value;
-        updateStatusCombined();
+	currentPlayer = document.getElementById("playersel").value;
+	updateStatusCombined();
 }
 
 function doPlay() {
 	if (controlLockout) return;
-        if (curPlayMode != "play") {
-                displayPlayMode("play");
-                updateStatus("&p0=play");
-        }
+	if (curPlayMode != "play") {
+		displayPlayMode("play");
+		updateStatus("&p0=play");
+	}
 }
 
 function doPause() {
 	if (controlLockout) return;
-        if (curPlayMode != "play") {
-                displayPlayMode("play");
-                updateStatus("&p0=play");
-        } else {
+	if (curPlayMode != "play") {
+		displayPlayMode("play");
+		updateStatus("&p0=play");
+	} else {
 		displayPlayMode("pause");
 		updateStatus("&p0=pause");
 	}
@@ -342,32 +344,32 @@ function doPause() {
 
 function doStop() {
 	if (controlLockout) return;
-        displayPlayMode("stop");
-        updateStatus("&p0=stop");
+	displayPlayMode("stop");
+	updateStatus("&p0=stop");
 }
 
 function doPrev() {
 	if (controlLockout) return;
-        currentSong--;
-        if (currentSong == 0) currentSong = songCount;
-        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
-        displayPlayMode("play");
+	currentSong--;
+	if (currentSong == 0) currentSong = songCount;
+	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
+	displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
 	highlightCurrentSong();
-        updateStatus('&p0=playlist&p1=jump&p2=-1');
+	updateStatus('&p0=playlist&p1=jump&p2=-1');
 }
 
 function doNext() {
 	if (controlLockout) return;
-        currentSong++;
-        if (currentSong > songCount) currentSong = 1;
-        displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
-        displayPlayMode("play");
+	currentSong++;
+	if (currentSong > songCount) currentSong = 1;
+	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
+	displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
 	highlightCurrentSong();
-        updateStatus('&p0=playlist&p1=jump&p2=%2b1');
+	updateStatus('&p0=playlist&p1=jump&p2=%2b1');
 }
 
 function doVolume(e) {
@@ -399,8 +401,8 @@ function decVolume() {
 function doRepeat(repmode) {
 	if (controlLockout) return;
 	displayRepeat(repmode);
-        cmdstring = "&p0=playlist&p1=repeat&p2=" + repmode;
-        updateStatus(cmdstring);
+	cmdstring = "&p0=playlist&p1=repeat&p2=" + repmode;
+	updateStatus(cmdstring);
 }
 
 function rotateRepeat() {
@@ -412,9 +414,9 @@ function rotateRepeat() {
 function doShuffle(shufmode) {
 	if (controlLockout) return;
 	displayShuffle(shufmode);
-        cmdstring = "&p0=playlist&p1=shuffle&p2=" + shufmode;
-        updateStatusCombined(cmdstring);
-        updatePlaylist();
+	cmdstring = "&p0=playlist&p1=shuffle&p2=" + shufmode;
+	updateStatusCombined(cmdstring);
+	updatePlaylist();
 }
 
 function rotateShuffle() {
@@ -429,9 +431,9 @@ function songCounterUpdate() {
 	if (curPlayMode == "stop" || curPlayMode == "none") {
 		if (clearedLastTime != 1) {
 			for (i = 0; i < 50; i++) { 
-        			progbar.childNodes[i].src = "html/images/pixel.png";
+				progbar.childNodes[i].src = "html/images/pixel.png";
 			}
-        		progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
+			progbar.lastChild.nodeValue = ' ' + timetostr(0) + ' / ' + totalTime;
 			clearedLastTime = 1;
 			lastCounterPos = 0;
 		}
@@ -442,17 +444,17 @@ function songCounterUpdate() {
 
 		if (p == lastCounterPos) {
 		} else if (p == lastCounterPos + 1) {
-        		progbar.childNodes[p].src = "html/images/pixel_s.png";
+			progbar.childNodes[p].src = "html/images/pixel_s.png";
 		} else {
 			for (i = 0; i < 50; i++) { 
-        			progbar.childNodes[i].src = "html/images/pixel" + (i <= p ? '_s' : '') + ".png";
+				progbar.childNodes[i].src = "html/images/pixel" + (i <= p ? '_s' : '') + ".png";
 			}
 		}
 
 		if (progressEnd == 0) {
-        		progbar.lastChild.nodeValue = ' ' + timetostr(progressAt);
+			progbar.lastChild.nodeValue = ' ' + timetostr(progressAt);
 		} else {
-        		progbar.lastChild.nodeValue = ' ' + timetostr(progressAt) + ' / ' + totalTime;
+			progbar.lastChild.nodeValue = ' ' + timetostr(progressAt) + ' / ' + totalTime;
 		}
 
 		lastCounterPos = p;
@@ -461,14 +463,14 @@ function songCounterUpdate() {
 }
 
 function timetostr(t) {
-        mins = Math.floor(t / 60);
-        secs = (t % 60);
-        if (secs == 0) {
-                return mins + ':00';
-        } else if (secs < 10) {
-                return mins + ':0' + secs;
-        } else {
-                return mins + ':' + secs;
+	mins = Math.floor(t / 60);
+	secs = (t % 60);
+	if (secs == 0) {
+		return mins + ':00';
+	} else if (secs < 10) {
+		return mins + ':0' + secs;
+	} else {
+		return mins + ':' + secs;
 	}
 }
 
@@ -477,12 +479,11 @@ function updateCounterPeriodically() {
 		counterResyncFlag = 0;
 		return;
 	}
-        setTimeout("updateCounterPeriodically()", 1000);
+	setTimeout("updateCounterPeriodically()", 1000);
 
 	if (curPlayMode == "play") { 
-	        progressAt++;
-        	if(progressAt > progressEnd && progressEnd > 0) progressAt = progressAt % progressEnd;
-
+		progressAt++;
+		if(progressAt > progressEnd && progressEnd > 0) progressAt = progressAt % progressEnd;
 	}
 	songCounterUpdate();
 }
