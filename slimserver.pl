@@ -784,16 +784,16 @@ sub initSettings {
 		Slim::Utils::Prefs::set("cliport", $cliport);
 	}
 
-	# make sure we are using the actual case of the directories
+	# Bug: 583 - make sure we are using the actual case of the directories
 	# and that they do not end in / or \
-
+	# 
+	# Bug: 3760 - don't strip the trailing slash before going to fixPath
 	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") ne '') {
 
 		$playlistdir = Slim::Utils::Prefs::get("playlistdir");
-		$playlistdir =~ s|[/\\]$||;
-
 		$playlistdir = Slim::Utils::Misc::fixPath($playlistdir);
 		$playlistdir = Slim::Utils::Misc::pathFromFileURL($playlistdir);
+		$playlistdir =~ s|[/\\]$||;
 
 		Slim::Utils::Prefs::set("playlistdir",$playlistdir);
 	}
@@ -801,10 +801,9 @@ sub initSettings {
 	if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") ne '') {
 
 		$audiodir = Slim::Utils::Prefs::get("audiodir");
-		$audiodir =~ s|[/\\]$||;
-
 		$audiodir = Slim::Utils::Misc::fixPath($audiodir);
 		$audiodir = Slim::Utils::Misc::pathFromFileURL($audiodir);
+		$audiodir =~ s|[/\\]$||;
 
 		Slim::Utils::Prefs::set("audiodir",$audiodir);
 	}
@@ -812,10 +811,9 @@ sub initSettings {
 	if (defined(Slim::Utils::Prefs::get("cachedir")) && Slim::Utils::Prefs::get("cachedir") ne '') {
 
 		$cachedir = Slim::Utils::Prefs::get("cachedir");
-		$cachedir =~ s|[/\\]$||;
-
 		$cachedir = Slim::Utils::Misc::fixPath($cachedir);
 		$cachedir = Slim::Utils::Misc::pathFromFileURL($cachedir);
+		$cachedir =~ s|[/\\]$||;
 
 		Slim::Utils::Prefs::set("cachedir",$cachedir);
 	}
