@@ -18,14 +18,24 @@
 
 	function toggleGalleryView(artwork) {
 	
+		myString = new String(parent.browser.location.href);
+		
 		if (artwork) {
-			setCookie( 'SlimServer-albumView', "&artwork=1" );
-			this.location=this.location.href+"&artwork=1";
+			setCookie( 'SlimServer-albumView', "1" );
+			
+			if (parent.browser.location.href.indexOf('start') == -1) {
+				parent.browser.location=parent.browser.location.href+"&artwork=1";
+			} else {
+				myString = new String(parent.browser.location.href);
+				var rExp = /\&start=/gi;
+				parent.browser.location=myString.replace(rExp, "&artwork=1&start=");
+			}
 		} else {
+
 			setCookie( 'SlimServer-albumView', "" );
-			myString = new String(this.location.href);
+			
 			var rExp = /\&artwork=1/gi;
-			this.location=myString.replace(rExp, "");
+			parent.browser.location=myString.replace(rExp, "");
 		}
 	}
 
