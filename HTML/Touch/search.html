@@ -10,9 +10,9 @@
 
 <font size="+1">
 [% IF numresults != '-1' %]
-    [% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %]
+    [% IF type == 'contributor' %][% "CONTRIBUTORSMATCHING" | string %][% END %]
     [% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %]
-    [% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]": [% numresults %]<p>
+    [% IF type == 'track' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]": [% numresults %]<p>
 [% END %]
 
 [% IF searchlist_pagebar %]<p><font size="-1">[% "PAGES" | string %][% 'COLON' | string %] <font size="+3">[% searchlist_pagebar %]</p>[% END %]

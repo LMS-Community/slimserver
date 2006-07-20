@@ -1,6 +1,6 @@
 var url = '[% webroot %]browsedb.html';
 var parsedData;
-var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;artist.id=ARTIST&amp;level=1&player=[% playerURI %]';
+var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=ARTIST&amp;level=1&player=[% playerURI %]';
 var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album.id=ALBUM&player=[% playerURI %]';
 var thumbHrefTemplate = '/music/COVER/cover.jpg';
 var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]';

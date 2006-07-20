@@ -18,7 +18,7 @@
 			<td class="infotitlecol"> [% role | upper | string %][% "COLON" | string %] </td>
 			<td>
 			[% FOREACH contributor = contributors.sort %]
-				<a onclick="parent.browseurl('browsedb.html?hierarchy=artist,album,track&amp;level=1&amp;contributor.id=[%contributor.id%]')">[% contributor.name | html %]</a>
+				<a onclick="parent.browseurl('browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=[%contributor.id%]')">[% contributor.name | html %]</a>
 			[% END %]
 			</td>
 		</tr>
@@ -40,7 +40,7 @@
   <td class="infotitlecol">[% "GENRE" | string %][% "COLON" | string %] </td>
   <td>
 	[% FOREACH genre = genres %]
-   		<a onclick="parent.browseurl('browsedb.html?hierarchy=genre,artist,album,track&amp;level=1&amp;genre.id=[% genre.id %]')">[% genre.name | html %]</a>
+   		<a onclick="parent.browseurl('browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]')">[% genre.name | html %]</a>
 	[% END %]
   </td>
  </tr>

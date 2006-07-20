@@ -421,8 +421,8 @@ sub mood_wheel {
 
 	my $items = "";
 
-	my $song   = $params->{'song'};
-	my $artist = $params->{'artist'};
+	my $song   = $params->{'song'}   || $params->{'track'};
+	my $artist = $params->{'artist'} || $params->{'contributor'};
 	my $album  = $params->{'album'};
 	my $genre  = $params->{'genre'};
 	my $player = $params->{'player'};
@@ -457,8 +457,8 @@ sub instant_mix {
 	my $output = "";
 	my $items  = "";
 
-	my $song   = $params->{'song'};
-	my $artist = $params->{'artist'};
+	my $song   = $params->{'song'}   || $params->{'track'};
+	my $artist = $params->{'artist'} || $params->{'contributor'};
 	my $album  = $params->{'album'};
 	my $genre  = $params->{'genre'};
 	my $player = $params->{'player'};

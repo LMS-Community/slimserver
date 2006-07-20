@@ -8,7 +8,7 @@
 	[% contributor = contributorTuple.artist %]
 	[% attrs  = contributorTuple.attributes | html %]
 
-	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=artist,album,track&amp;$attrs&amp;level=1&amp;player=$playerURI\">$contributor.name</a>" %]
+	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs&amp;level=1&amp;player=$playerURI\">$contributor.name</a>" %]
 
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 

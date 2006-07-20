@@ -47,7 +47,7 @@ return true;
 <table width = '100%' bgcolor = '#EEEEEE'>
 <tr><td>
 <!--
-type=artist&query=tricky&submit=Search+Music&manualSearch=1&player=00%3A04%3A20%3A05%3A1b%3A82
+type=contributor&query=tricky&submit=Search+Music&manualSearch=1&player=00%3A04%3A20%3A05%3A1b%3A82
 type=track&query=jones&Go=Search+Music&player=00%3A04%3A20%3A05%3A81%3A92
 -->
 <form name="FormSong" method="Get" action = '[% webroot %]search.html'>
@@ -131,7 +131,7 @@ type=track&query=jones&Go=Search+Music&player=00%3A04%3A20%3A05%3A81%3A92
 <tr><td></td><td>
 <center><input type=button value="[% "SONGS" | string %]" name="Song" onclick="Activate('Song');Mode('track')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td><td>
-<center><input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('artist')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+<center><input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('contributor')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td><td>
 <center><input type=button value="[% "ALBUMS" | string %]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td></tr>

@@ -31,7 +31,7 @@
                         <td>
 
 			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=artist,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" target="browser">[% contributor.name | html %]</a>
+				<a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" target="browser">[% contributor.name | html %]</a>
 			[% END %]
 
 			</td>
@@ -57,7 +57,7 @@
 		</td>
 		<td>
 		[% FOREACH genre = genres %]
-                        <a href="browsedb.html?hierarchy=artist,album,track&level=0&genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name %]</a>
+                        <a href="browsedb.html?hierarchy=contributor,album,track&level=0&genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name %]</a>
 		[% END %]
 		</td>
 	</tr>

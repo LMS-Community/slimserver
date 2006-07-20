@@ -23,15 +23,15 @@
 </small>
 <p>
    [% IF songtitle %]<a href="songinfo.html?item=[% item %]&player=[% playerURI %]">[% songtitle %]</a> [% END %]
-   [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]">[% artist %]</a>   [% END %]
-   [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">[% album %]</a>[% END %]
+   [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&contributor=[% artist | uri %]&player=[% playerURI %]">[% artist %]</a>   [% END %]
+   [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&contributor=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">[% album %]</a>[% END %]
    [% IF year %]&nbsp;([% year %])[% END %]
 </p>
 
 
 
 [% IF coverart %]
-<p><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></p>[% END %]
+<p><a href="browseid3.html?genre=*&contributor=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></p>[% END %]
 
 
 

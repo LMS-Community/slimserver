@@ -5,7 +5,7 @@
 	[% FOREACH genre = genres %]
 		<genre_id>[% genre.id | html %]</genre_id>
 		<genre>[% genre.name | html %]</genre>
-		<genre_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=genre%2Cartist%2Calbum%2Ctrack&level=1&genre.id=[% genre.id %]]]></genre_browse_url>
+		<genre_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=genre%2Ccontributor%2Calbum%2Ctrack&level=1&genre.id=[% genre.id %]]]></genre_browse_url>
 	[% END %]
 [% END %]
 [% FOREACH role = itemobj.contributorRoles.sort %]
@@ -14,7 +14,7 @@
 		[% FOREACH contributor = contributors %]
 			<[% role | lower %]_id>[% contributor.id | html %]</[% role | lower %]_id>
 			<[% role | lower %]>[% contributor.name | html %]</[% role | lower %]>
-			<[% role | lower %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=artist%2Calbum%2Ctrack&level=1&contributor.id=[% contributor.id %]]]></[% role | lower %]_browse_url>
+			<[% role | lower %]_browse_url><![CDATA[[% webroot %]browsedb.xml?hierarchy=contributor%2Calbum%2Ctrack&level=1&contributor.id=[% contributor.id %]]]></[% role | lower %]_browse_url>
 		[% END %]
 	[% END %]
 [% END %]

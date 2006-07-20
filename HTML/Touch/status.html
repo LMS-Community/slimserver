@@ -49,7 +49,7 @@
 
 <tr><td></td><td height="55"><p align="left"><font class="actiontext">[% "ARTIST" | string %][% "COLON" | string %]&nbsp;&nbsp;</p></td>
    
-[% IF itemobj.artist.id %]<td><a href="browsedb.html?hierarchy=album,track&level=0&artist=[% itemobj.artist.id %]&amp;player=[% playerURI %]" style="text-decoration:none"><font class="itemtext">[% itemobj.artist %]</a></td>
+[% IF itemobj.contributor.id %]<td><a href="browsedb.html?hierarchy=album,track&level=0&contributor=[% itemobj.contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none"><font class="itemtext">[% itemobj.artist %]</a></td>
 [% END %]
 </tr><tr>
           
@@ -58,7 +58,7 @@
 [% END %]
 
 <tr><td height="55"></td><td><p align="left"><font class="actiontext">[% "GENRE" | string %][% "COLON" | string %]&nbsp;&nbsp;</p></td>
-[% IF itemobj.genre.id %]<td><a href="browsedb.html?hierarchy=artist,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none"><font class="itemtext">[% itemobj.genre %]</a></td>
+[% IF itemobj.genre.id %]<td><a href="browsedb.html?hierarchy=contributor,album,track&level=0&genre=[% itemobj.genre.id %]&amp;player=[% playerURI %]" style="text-decoration:none"><font class="itemtext">[% itemobj.genre %]</a></td>
 [% END %]
 
 </tr>

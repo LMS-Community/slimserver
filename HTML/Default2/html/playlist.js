@@ -173,9 +173,9 @@ function doRemove(e) {
 	if (songCount == 1) {
 		displayCurrentSong("", "", "");
 	} else if ((selIndex == songCount - 1) && currentSong == songCount) {
-		displayCurrentSong(playlist[0].title, playlist[0].artist, playlist[0].album);
+		displayCurrentSong(playlist[0].title, playlist[0].contributor, playlist[0].album);
 	} else if (selIndex == currentSong - 1) { 
-		displayCurrentSong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
+		displayCurrentSong(playlist[selIndex].title, playlist[selIndex].contributor, playlist[selIndex].album);
 	}
 
 	if (selIndex < (currentSong - 1)) {
@@ -263,7 +263,7 @@ function doSelect(e) {
 	if (selIndex < 0 || selIndex >= songCount) return;
 	displayPlayMode("play");
 	currentSong = selIndex + 1;
-	displayCurrentSong(playlist[selIndex].title, playlist[selIndex].artist, playlist[selIndex].album);
+	displayCurrentSong(playlist[selIndex].title, playlist[selIndex].contributor, playlist[selIndex].album);
 	displayPlayString();
 	highlightCurrentSong();
 
@@ -284,7 +284,7 @@ function doArtist(e) {
 	}
 	if (selIndex < 0 || selIndex >= songCount) return;
 
-	browseurl("browsedb.html?hierarchy=artist,album,track&level=1&contributor.id=" + playlist[selIndex].artistid);
+	browseurl("browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=" + playlist[selIndex].artistid);
 }
 
 function doAlbum(e) {

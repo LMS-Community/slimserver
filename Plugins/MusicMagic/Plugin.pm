@@ -753,8 +753,8 @@ sub musicmagic_mix {
 	my $output = "";
 	my $mix;
 
-	my $song     = $params->{'song'};
-	my $artist   = $params->{'artist'};
+	my $song     = $params->{'song'} || $params->{'track'};
+	my $artist   = $params->{'artist'} || $params->{'contributor'};
 	my $album    = $params->{'album'};
 	my $genre    = $params->{'genre'};
 	my $year     = $params->{'year'};

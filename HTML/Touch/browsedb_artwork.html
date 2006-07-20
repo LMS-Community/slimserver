@@ -17,11 +17,11 @@
 
 <table cellpadding="0" cellspacing="0" border="0" align="center"><td class="even">
 [% IF item.mixable_descend %]
-<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
+<nobr><a href="mood_wheel.html?genre=[% genre | uri %]&contributor=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
 <img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_SELECT_MOOD_SHORT" | string %]"></a></nobr>[% END %]
 
 [% IF item.mixable_not_descend %]
-<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
+<nobr><a href="instant_mix.html?song=[% item | uri %]&genre=[% genre | uri %]&contributor=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">
 <img src="html/images/b_mix.gif" width=13 height=13 alt="[% "MOODLOGIC_MIX" | string %]"></a></nobr>[% END %]
 
 </td></tr><center><table cellspacing="0" cellpadding="0"><tr><td align="center">

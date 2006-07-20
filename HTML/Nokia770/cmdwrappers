@@ -192,7 +192,7 @@
 	<span class = 'smalltext' id = 'byfrominfo_[% item.num %]'>
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist %]
 		[% "BY" | string %]
-		<a href="[% webroot %]browsedb.html?hierarchy=artist,album,track&amp;artist=[% item.itemobj.artist.id %]&amp;level=1&amp;player=[% playerURI %]" id = 'artistlink_[% item.num %]'>[% item.artist.name %]</a>
+		<a href="[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=[% item.itemobj.artist.id %]&amp;level=1&amp;player=[% playerURI %]" id = 'artistlink_[% item.num %]'>[% item.artist.name %]</a>
 	[% END %]
 	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 		[% "FROM" | string %]

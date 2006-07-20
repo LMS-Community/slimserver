@@ -22,19 +22,14 @@
 [% IF currentsong %]<b>[% currentsong %]</b> [% "OUT_OF" | string %] <b>&nbsp;[% songcount %]</b>&nbsp;[% END %]
 </small>
 <p>
-   [% IF songtitle %]<a href="songinfo.html?item=[% item %]&player=[% playerURI %]">[% songtitle %]</a> [% END %]
-   [% IF artist %] [% "BY" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&player=[% playerURI %]">[% artist %]</a>   [% END %]
-   [% IF album %]  [% "FROM" | string %] <a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]">[% album %]</a>[% END %]
+   [% IF songtitle %]<a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% songtitle %]</a> [% END %]
+   [% IF itemobj.artist %] [% "BY" | string %] <a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=[% itemobj.artist.id %]&amp;player=[% playerURI %]">[% itemobj.artist.name %]</a>[% END %]
+   [% IF itemobj.album %]  [% "FROM" | string %] <a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]">[% itemobj.album.title %]</a>[% END %]
    [% IF year %]&nbsp;([% year %])[% END %]
 </p>
 
-
-
-[% IF coverart %]
-<p><a href="browseid3.html?genre=*&artist=[% artist | uri %]&album=[% album | uri %]&player=[% playerURI %]"><img src="/music/[% itempath | uri %]/cover.jpg" border="0" width="200"></a></p>[% END %]
-
-
-
+[% IF itemobj.coverArt && itemobj.album %]
+<p><a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% itemobj.album.id %]&amp;player=[% playerURI %]"><img src="/music/[% itemobj.id %]/cover.jpg" border="0" width="200"></a></p>[% END %]
 
 <table width=100% bgcolor="#c5c5c5">
    <tr align="center">

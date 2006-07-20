@@ -212,7 +212,7 @@ function displayPlayString() {
 	}
 }
 
-function displayCurrentSong(song, artist, album) {
+function displayCurrentSong(song, contributor, album) {
         // Checking first prevents flicker (at least with Firefox) on slow computers.
 
 	var songstring = "<b>" + song;
@@ -352,7 +352,7 @@ function doPrev() {
 	if (controlLockout) return;
 	currentSong--;
 	if (currentSong == 0) currentSong = songCount;
-	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
+	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].contributor, playlist[currentSong - 1].album);
 	displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
@@ -364,7 +364,7 @@ function doNext() {
 	if (controlLockout) return;
 	currentSong++;
 	if (currentSong > songCount) currentSong = 1;
-	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].artist, playlist[currentSong - 1].album);
+	displayCurrentSong(playlist[currentSong - 1].title, playlist[currentSong - 1].contributor, playlist[currentSong - 1].album);
 	displayPlayMode("play");
 	progressAt = 0;
 	resyncSongCounter();
