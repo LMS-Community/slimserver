@@ -17,25 +17,31 @@ function refreshStatus() {
 
 function toggleGalleryView(artwork) {
 
-	if (parent.browser.location.pathname != '') {
-		myString = new String(parent.browser.location.href);
+	[% IF browserTarget %]
+	var thisdoc = parent.[% browserTarget %];
+	[% ELSE %]
+	var thisdoc = this;
+	[% END %]
+
+	if (thisdoc.location.pathname != '') {
+		myString = new String(thisdoc.location.href);
 		
 		if (artwork) {
 			setCookie( 'SlimServer-albumView', "1" );
 			
-			if (parent.browser.location.href.indexOf('start') == -1) {
-				parent.browser.location=parent.browser.location.href+"&artwork=1";
+			if (thisdoc.location.href.indexOf('start') == -1) {
+				thisdoc.location=thisdoc.location.href+"&artwork=1";
 			} else {
-				myString = new String(parent.browser.location.href);
+				myString = new String(thisdoc.location.href);
 				var rExp = /\&start=/gi;
-				parent.browser.location=myString.replace(rExp, "&artwork=1&start=");
+				thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
 			}
 		} else {
 
 			setCookie( 'SlimServer-albumView', "" );
 			
 			var rExp = /\&artwork=1/gi;
-			parent.browser.location=myString.replace(rExp, "");
+			thisdoc.location=myString.replace(rExp, "");
 		}
 	}
 }
@@ -115,25 +121,31 @@ function chooseSettings(value,option)
 
 function switchPlayer(player_List) {
 	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
-	
 	setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
-
+	var doc = this;
+	
+	[% IF browserTarget %]
+	// change for skins with frames
+	doc = parent.[% browserTarget %];
+	
 	parent.playlist.location="playlist.html?player"+newPlayer;
 	window.location="status_header.html?player"+newPlayer;
-	if (parent.browser.location.href.indexOf('setup') == -1) {
-		for (var j=0;j < parent.browser.document.links.length; j++) {
-			var myString = new String(parent.browser.document.links[j].href);
+	
+	if (pdoc.location.href.indexOf('setup') == -1) {
+		for (var j=0;j < doc.document.links.length; j++) {
+			var myString = new String(doc.document.links[j].href);
 			var rString = newPlayer;
 			var rExp = /(player=(\w\w(:|%3A)){5}(\w\w))|(player=(\d{1,3}\.){3}\d{1,3})/gi;
 
-			parent.browser.document.links[j].href = myString.replace(rExp, rString);
+			doc.document.links[j].href = myString.replace(rExp, rString);
 		}
 	} else {
-		myString = new String(parent.browser.location.href);
+	[% END %]
+		myString = new String(doc.location.href);
 		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
-		parent.browser.location=myString.replace(rExp, newPlayer);
-	}
+		doc.location=myString.replace(rExp, newPlayer);
+	[% IF browserTarget %]}[% END %]
 }
 
 function setCookie(name, value) {
