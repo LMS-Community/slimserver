@@ -40,6 +40,10 @@ small {
 	font-size: 100%;
 }
 
+.mainMenuItem {
+	padding: 2px;
+}
+
 .odd {
 	background-color: #ffffff;
 }

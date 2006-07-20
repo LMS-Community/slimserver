@@ -68,7 +68,7 @@
 
 [% BLOCK contentitem -%]
 [% IF not odd.defined; odd = 1; END %]
-<table cellspacing="0" border="0" cellpadding="0" width="100%"><tr><td bgcolor="[% PROCESS oddOrEvenC %]">
+<table cellspacing="0" border="0" cellpadding="0" width="100%"><tr><td bgcolor="[% PROCESS oddOrEvenC %]" width="100%">
 	[%- IF anchor %]
 		<a name="[% anchor | uri%]"></a>
 	[%- END %]

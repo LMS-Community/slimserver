@@ -38,18 +38,16 @@
 	</table>
 
 	[% BLOCK menulink %]
-		<td><a href="[% webroot %][% file %].html?player=[% playerURI %]"><font color="#FFFFFF">[% file | upper | string %]</font></a></td>
+		<td class="mainMenuItem"><a href="[% webroot %][% file %].html?player=[% playerURI %]"><font color="#FFFFFF">[% file | upper | string %]</font></a></td>
 	[% END %]
 
 	<table bgcolor="[% menuC %]" border="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr><td colspan="4"><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 		<tr align="center">
 			[% PROCESS menulink file='home' %]
 			[% PROCESS menulink file='status' %]
 			[% PROCESS menulink file='playlist' %]
 			[% PROCESS menulink file='search' %]
 		</tr>
-		<tr><td colspan="4"><img src="[% webroot %]html/images/spacer.gif" border="0" width="4" height="2"></td></tr>
 	</table>
 
 [% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
