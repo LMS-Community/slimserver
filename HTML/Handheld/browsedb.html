@@ -14,12 +14,8 @@
 		<hr></p>
 	[% END %]
 	
-	[% IF coverArt %]
-		<p><a href="/music/[% coverArt %]/cover.jpg"><img src="/music/[% coverArt %]/thumb.jpg"></a></p>
-	[% END %]
-	
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
-[%- IF artwork == 1; 
+[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
 		container = 'gallerycontainer'; %]
 [%- ELSE;
 		container = 'contentcontainer';
@@ -27,7 +23,7 @@
 %]
 [% WRAPPER $container %]
 	[% IF coverArt %]
-		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+		<p><a href="/music/[% coverArt %]/cover.jpg"><img src="/music/[% coverArt %]/thumb.jpg"></a></p>
 	[% END %]
 	[% FOREACH item = browse_items %]
 		[% PROCESS browsedbitems_list.html %]

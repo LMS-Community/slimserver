@@ -12,6 +12,10 @@ pre, code, h3 {
 	font-size: 11px;
 }
 
+IMG {
+	border: 0;
+}
+
 a {
 	text-decoration:none;
 }

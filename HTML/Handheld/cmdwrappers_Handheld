@@ -1,5 +1,6 @@
 [%- FILTER null %]
-[% controlGraphics  = 1 %]
+
+[% controlGraphics = 1 %]
 
 [% statusroot = 'status.html' %]
 [%-
@@ -87,8 +88,8 @@
 [%- IF anchor %]
 	<a name="[% anchor | uri %]"></a>
 [%- END -%]
-		[% IF item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a></td></tr></table>[% END %]
-		[% IF not item.coverThumb %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a></td></tr></table>[% END %]
+		[% IF item.coverThumb %]<table border="0" cellspacing="1" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a></td></tr></table>
+		[% ELSE %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a></td></tr></table>[% END %]
 	</td></tr>
 	<tr height="20"><td>
 	<table cellspacing="0" border="0" align="left"><tr>
