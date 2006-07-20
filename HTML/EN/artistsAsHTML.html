@@ -8,6 +8,7 @@
 	[% attrs  = contributorTuple.attributes | html %]
 	[% target = notarget ? '' : 'target="browser"' %]
 	[% contrib = contributor.name | html %]
+	[% art = artwork ? "&amp;artwork=$artwork" : '' %]
 
 	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs&amp;artwork=$artwork&amp;level=1&amp;player=$playerURI\" $target>$contrib</a>" %]
 
