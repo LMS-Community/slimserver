@@ -430,6 +430,12 @@ GENREMODE: {
 			'overlayRef'     => sub {
 									return (undef, Slim::Display::Display::symbol('rightarrow'));
 								},
+			'isSorted'       => 'L',
+			'lookupRef'      => sub { 
+									my $index = shift;
+									return $genreList[$index][0];
+								},
+			'lookupRefArgs'  => 'I',
 			}
 		);
 	}
@@ -558,7 +564,15 @@ CHANNELMODE: {
 			{
 			'listRef'        => [1..$live365->{$client}->getStationListLength()],
 			'externRef'      => sub { 
-										return $live365->{$_[0]}->getCurrentStation()->{STATION_TITLE}
+										if (my $station = $live365->{$_[0]}->getCurrentStation()) {
+											return $station->{STATION_TITLE};
+										} else {
+											print $_[1];
+											$live365->{$_[0]}->setStationListPointer($_[1], 
+																	   $_[0],
+																	   \&channelAdditionalLoad,
+																	   \&channelAdditionalError);
+										}
 								},
 			'externRefArgs'  => 'C',
 			'header'         => sub {
@@ -584,6 +598,7 @@ CHANNELMODE: {
 			'overlayRef'     => sub {
 									return (undef, Slim::Display::Display::symbol('rightarrow'));
 								},
+			'isSorted'       => 1,
 			}
 		);
 	}
