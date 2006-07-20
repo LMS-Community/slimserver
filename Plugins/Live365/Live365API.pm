@@ -168,6 +168,7 @@ sub login {
 	my $password = shift;
 	my $client = shift;
 	my $callback = shift;
+	my $silent = shift;
 
 	my %args = (
 		'action'      => 'login',
@@ -184,7 +185,8 @@ sub login {
 							{self => $self,
 							 client => $client,
 							 callback => $callback,
-							 login => 1});
+							 login => 1,
+							 silent => $silent});
 }
 
 
@@ -192,6 +194,7 @@ sub logout {
 	my $self = shift;
 	my $client = shift;
 	my $callback = shift;
+	my $silent = shift;
 
 	if( !$loginInformation{sessionid} ) {
 		&$callback($client, 0);
@@ -209,7 +212,8 @@ sub logout {
 							\&authErrorSub,
 							{self => $self,
 							 client => $client,
-							 callback => $callback});
+							 callback => $callback,
+							 silent => $silent});
 }
 
 sub authLoadSub {
@@ -218,18 +222,19 @@ sub authLoadSub {
 	my $client = $http->params('client');
 	my $callback = $http->params('callback');
 	my $login = $http->params('login');
+	my $silent = $http->params('silent');
 
 	$self->{asyncHTTP} = undef;
 
 	if(!defined $http->contentRef) {
-		&$callback($client, 6); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+		&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 		return;  
 	}
 
 	my $resp = eval { XMLin($http->contentRef) }; 
 
 	if ($@) {
-		&$callback($client, 2); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+		&$callback($client, {'status' => 2, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
 		return;  
 	}
 
@@ -241,7 +246,7 @@ sub authLoadSub {
 		$loginInformation{sessionid} = undef;
 	}
 
-	&$callback($client, $resp->{Code});
+	&$callback($client, {'status' => $resp->{Code}, 'silent' => $silent});
 }
 
 sub authErrorSub {
@@ -249,9 +254,10 @@ sub authErrorSub {
 	my $self = $http->params('self');
 	my $client = $http->params('client');
 	my $callback = $http->params('callback');
+	my $silent = $http->params('silent');
 
 	$self->{asyncHTTP} = undef;
-	&$callback($client, 6); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 }
 
 sub getSessionID {
