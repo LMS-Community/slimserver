@@ -25,17 +25,17 @@
 		<tr>
 			<td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td>
 			<td align="right">
-				[% IF player_chooser_list %]
+				[%- USE Clients; players = Clients.get("id") -%]
+				[% IF players.size > 1 %]
 					<form method="get" action="[% webroot %]status.html">
 						<select name="player" onchange="switchPlayer(this);">
-							[% player_chooser_list %]
+						[% FOREACH playerobj IN players -%]
+							<option value="[% playerobj.id %]" [% IF player == playerobj.id %]SELECTED[% END %]>[% playerobj.name %]</option>
+						[% END %]
 						</select>
 						<input type="submit" value="&gt;" style="width: 18px;">
 					</form>
-				[% ELSE %]<div class="playerName">
-					[%- USE Clients; players = Clients.get("id") -%]
-					[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% playerobj.name %][% END %][% END %]
-				[% END %]</div>
+				[% END %]
 			</td>
 		</tr>
 	</table>
