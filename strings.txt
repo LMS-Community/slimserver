@@ -409,6 +409,11 @@ PLAYLIST
 	SV	Låtlista
 	ZH_CN	播放表
 
+PLAYLISTS
+	DE	Wiedergabelisten
+	EN	Playlists
+	FR	Listes de lecture
+
 PAUSED_ON
 	CS	Zapnuta pauza
 	DE	Pause bei
@@ -12090,6 +12095,10 @@ ARTWORK
 	FR	Pochette
 	IT	Copertina
 	NL	Hoesjes
+
+ONE_BY_ONE_ARTWORK
+	DE	Plattenhüllen einzeln
+	EN	1-by-1 Artwork
 
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.

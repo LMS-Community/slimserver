@@ -6,7 +6,7 @@
 		[% PROCESS html/common.js %]
 	</head>
 	<body  [% bodyscript %]>
-	[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age') %][% "GALLERY" | string %][% END %]</div>[% END %]
+	[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age') %] [% "GALLERY" | string %][% END %]</div>[% END %]
 	
 	[% PROCESS galleryselect.html %]
 	

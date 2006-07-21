@@ -238,7 +238,7 @@
 
 [% BLOCK pagebarheader %]
 <span class="pagebarheadertext">
-Items <span id = '[% prefix %]first_item'>[% pageinfo.startitem + 1%]</span> [% "TO" | string %] <span id = '[% prefix %]last_item'>[% pageinfo.enditem + 1 %]</span> [% "OF" | string %] <span id = '[% prefix %]playlistsize'>[% pageinfo.totalitems %]</span>
+[% "ITEMS" | string %] <span id = '[% prefix %]first_item'>[% pageinfo.startitem + 1%]</span> [% "TO" | string %] <span id = '[% prefix %]last_item'>[% pageinfo.enditem + 1 %]</span> [% "OF" | string %] <span id = '[% prefix %]playlistsize'>[% pageinfo.totalitems %]</span>
 </span>
 [% END %]
 
