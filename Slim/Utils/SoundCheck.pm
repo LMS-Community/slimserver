@@ -50,7 +50,7 @@ sub commentTagTodB {
 sub normStringTodB {
 	my $tag    = shift;
 
-	$tag =~ s/^iTunNORM\s*//;
+	$tag =~ s/^iTunNORM:?\s*//;
 	$tag =~ s/^\s*//g;
 	$tag =~ s/\s*$//g;
 
