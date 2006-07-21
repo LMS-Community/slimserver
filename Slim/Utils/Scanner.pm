@@ -31,13 +31,13 @@ use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
 
-# CBR bitrates
+# Constant Bitrates
 our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 # Handle any type of URI thrown at us.
 sub scanPathOrURL {
 	my ($class, $args) = @_;
-	
+
 	my $cb = $args->{'callback'} || sub {};
 
 	my $pathOrUrl = $args->{'url'} || do {
@@ -73,27 +73,14 @@ sub scanPathOrURL {
 	}
 }
 
-# Scan a directory on disk, and depending on the type of file, add it to the database.
-sub scanDirectory {
+sub findFilesMatching {
 	my $class  = shift;
+	my $topDir = shift;
 	my $args   = shift;
-	my $return = shift;	# if caller wants a list of items we found
-	
-	my $foundItems = $args->{'foundItems'} || [];
-
-	# Can't do much without a starting point.
-	if (!$args->{'url'}) {
-		return $foundItems;
-	}
 
 	my $os     = Slim::Utils::OSDetect::OS();
-	my $last   = Slim::Schema->lastRescanTime;
-
-	# Create a Path::Class::Dir object for later use.
-	my $topDir = dir($args->{'url'});
 
 	# See perldoc File::Find::Rule for more information.
-	# follow symlinks.
 	my $rule   = Slim::Utils::FileFindRule->new;
 	my $extras = { 'no_chdir' => 1 };
 
@@ -104,18 +91,13 @@ sub scanDirectory {
 		$extras->{'follow'}      = 1;
 		$extras->{'follow_skip'} = 2;
 
-	} else {                                                                                                                                            
+	} else {
 
 		# skip hidden files on Windows
 		$rule->exec(\&_skipWindowsHiddenFiles);
 	}
 
 	$rule->extras($extras);
-
-	# Only rescan the file if it's changed since our last scan time.
-	if ($::rescan && $last) {
-		$rule->mtime( sprintf('>%d', $last) );
-	}
 
 	# Honor recursion
 	if (defined $args->{'recursive'} && $args->{'recursive'} == 0) {
@@ -137,10 +119,124 @@ sub scanDirectory {
 	# thus duplicating tracks & albums, etc.
 	$rule->not_name(qr/\/\._/);
 
-	msg("About to look for files in $topDir\n");
-	msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
-
 	my $files = $rule->in($topDir);
+	my $found = $args->{'foundItems'} || [];
+
+	for my $file (@{$files}) {
+
+		# Only check for Windows Shortcuts on Windows.
+		# Are they named anything other than .lnk? I don't think so.
+		if ($file =~ /\.lnk$/i) {
+
+			if ($os ne 'win') {
+				next;
+			}
+
+			my $url = Slim::Utils::Misc::fileURLFromPath($file);
+
+			$url  = Slim::Utils::Misc::fileURLFromWinShortcut($url) || next;
+			$file = Slim::Utils::Misc::pathFromFileURL($url);
+
+			# Bug: 2485:
+			# Use Path::Class to determine if the file points to a
+			# directory above us - if so, that's a loop and we need to break it.
+			if (dir($file)->subsumes($topDir)) {
+
+				msg("findFilesMatching: Warning- Found an infinite loop! Breaking out: $file -> $topDir\n");
+				next;
+			}
+
+			# Recurse into additional shortcuts and directories.
+			if ($file =~ /\.lnk$/i || -d $file) {
+
+				$::d_scan && msg("findFilesMatching: Following Windows Shortcut to: $url\n");
+
+				$class->findFilesMatching($file, { 'foundItems' => $found });
+
+				next;
+			}
+		}
+
+		# Fix slashes
+		push @{$found}, File::Spec->canonpath($file);
+	}
+
+	return $found;
+}
+
+# Wrapper around findNewAndChangedFiles(), so that other callers (iTunes,
+# MusicMagic can reuse the logic.
+sub findFilesForRescan {
+	my $class  = shift;
+	my $topDir = shift;
+	my $args   = shift;
+
+	$::d_scan && msg("findFilesForRescan: Generating file list from disk & database...\n");
+
+	my $onDisk = $class->findFilesMatching($topDir, $args);
+	my $inDB   = Slim::Schema->rs('Track')->allTracksAsPaths;
+
+	return $class->findNewAndChangedFiles($onDisk, $inDB);
+}
+
+sub findNewAndChangedFiles {
+	my $class  = shift;
+	my $onDisk = shift;
+	my $inDB   = shift;
+
+	$::d_scan && msg("findNewAndChangedFiles: Comparing file list between disk & database to generate rescan list...\n");
+
+	# When rescanning: we need to find files:
+	#
+	# * That are new - not in the db
+	# * That have changed - are in the db, but timestamp or size is different.
+	#
+	# Generate a list of files that are on disk, but are not in the database.
+	my $last  = Slim::Schema->lastRescanTime;
+	my $found = Slim::Utils::Misc::arrayDiff($onDisk, $inDB);
+
+	# Check the file list against the last rescan time to determine changed files.
+	for my $file (@{$onDisk}) {
+
+		# Only rescan the file if it's changed since our last scan time.
+		if ($last && -r $file && (stat(_))[9] > $last) {
+
+			$found->{$file} = 1;
+		}
+	}
+
+	return [ keys %{$found} ];
+}
+
+# Scan a directory on disk, and depending on the type of file, add it to the database.
+sub scanDirectory {
+	my $class  = shift;
+	my $args   = shift;
+	my $return = shift;	# if caller wants a list of items we found
+
+	my $foundItems = $args->{'foundItems'} || [];
+
+	# Can't do much without a starting point.
+	if (!$args->{'url'}) {
+		return $foundItems;
+	}
+
+	# Create a Path::Class::Dir object for later use.
+	my $topDir = dir($args->{'url'});
+
+	if ($::d_scan) {
+
+		msg("About to look for files in $topDir\n");
+		msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
+	}
+
+	my $files  = [];
+
+	if ($::rescan) {
+		$files = $class->findFilesForRescan($topDir->stringify, $args);
+	} else {
+		$files = $class->findFilesMatching($topDir->stringify, $args);
+	}
 
 	if (!scalar @{$files}) {
 
@@ -158,40 +254,6 @@ sub scanDirectory {
 	for my $file (@{$files}) {
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
-
-		# Only check for Windows Shortcuts on Windows.
-		# Are they named anything other than .lnk? I don't think so.
-		if ($file =~ /\.lnk$/) {
-
-			if ($os ne 'win') {
-				next;
-			}
-
-			$url  = Slim::Utils::Misc::fileURLFromWinShortcut($url) || next;
-			$file = Slim::Utils::Misc::pathFromFileURL($url);
-
-			# Bug: 2485:
-			# Use Path::Class to determine if the file points to a
-			# directory above us - if so, that's a loop and we need to break it.
-			if (dir($file)->subsumes($topDir)) {
-
-				msg("scanDirectory: Warning- Found an infinite loop! Breaking out: $file -> $topDir\n");
-				next;
-			}
-
-			# Recurse
-			if (Slim::Music::Info::isDir($url) || Slim::Music::Info::isWinShortcut($url)) {
-
-				$::d_scan && msg("scanDirectory: Following Windows Shortcut to: $url\n");
-
-				$class->scanDirectory({
-					'url'        => $file,
-					'foundItems' => $foundItems,
-				});
-
-				next;
-			}
-		}
 
 		# If we're starting with a clean db - don't bother with searching for a track
 		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
@@ -219,7 +281,7 @@ sub scanDirectory {
 				'checkMTime' => 1,
 				'playlist'   => 1,
 				'attributes' => {
-					'MUSICMAGIC_MIXABLE'    => 1,
+					'MUSICMAGIC_MIXABLE' => 1,
 				}
 			});
 
@@ -238,7 +300,7 @@ sub scanDirectory {
 	}
 
 	$progress->final if $progress;
-	
+
 	return $foundItems;
 }
 

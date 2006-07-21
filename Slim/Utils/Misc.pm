@@ -215,14 +215,17 @@ sub fileURLFromWinShortcut {
 }
 
 sub pathFromFileURL {
-	my $url = shift;
-	my $file = '';
+	my $url     = shift;
+	my $noCache = shift || 0;
 
-	if ($fileToPathCache{$url}) {
+	if (!$noCache && $fileToPathCache{$url}) {
 		return $fileToPathCache{$url};
 	}
-	
-	assert(Slim::Music::Info::isFileURL($url), "Path isn't a file URL: $url\n");
+
+	if ($url !~ /^file:\/\//i) {
+		errorMsg("Path isn't a file URL: $url\n");
+		return $url;
+	}
 
 	# Bug: 1786
 	#
@@ -239,30 +242,25 @@ sub pathFromFileURL {
 
 		$url = Slim::Utils::Unicode::utf8off($url);
 	}
-	
+
 	# Bug 3589, support win32 backslashes in URLs, file://C:\foo\bar
 	$url =~ s/\\/\//g;
 
-	my $uri = URI->new($url);
+	my $uri  = URI->new($url);
+	my $file = undef;
 
 	# TODO - FIXME - this isn't mac or dos friendly with the path...
 	# Use File::Spec::rel2abs ? or something along those lines?
 	#
 	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
-	if ($uri->scheme() eq 'file') {
+	my $path = $uri->path;
 
-		my $path = $uri->path();
+	$::d_files && msg("Got $path from file url $url\n");
 
-		$::d_files && msg("Got $path from file url $url\n");
+	# only allow absolute file URLs and don't allow .. in files...
+	if ($path !~ /[\/\\]\.\.[\/\\]/) {
 
-		# only allow absolute file URLs and don't allow .. in files...
-		if ($path !~ /[\/\\]\.\.[\/\\]/) {
-			$file = fixPathCase($uri->file);
-		} 
-
-	} else {
-		msg("pathFromFileURL: $url isn't a file URL...\n");
-		bt();
+		$file = fixPathCase($uri->file);
 	}
 
 	if (!defined($file))  {
@@ -271,11 +269,13 @@ sub pathFromFileURL {
 		$::d_files && msg("extracted: $file from $url\n");
 	}
 
-	if (scalar keys %fileToPathCache > 32) {
+	if (!$noCache && scalar keys %fileToPathCache > 32) {
 		%fileToPathCache = ();
 	}
 
-	$fileToPathCache{$url} = $file;
+	if (!$noCache) {
+		$fileToPathCache{$url} = $file;
+	}
 
 	return $file;
 }
@@ -910,6 +910,23 @@ sub specified {
 	return $i !~ /\*/;
 }
 
+sub arrayDiff {
+	my ($left, $right) = @_;
+
+	my %lMap = ();
+	my %rMap = ();
+	my %diff = ();
+
+	map { $lMap{$_}++ } @$left;
+	map { $rMap{$_}++ } @$right;
+
+	for (keys %lMap) {
+
+		$diff{$_} = 1 if !exists $rMap{$_};
+	}
+
+	return \%diff;
+}
 
 1;
 

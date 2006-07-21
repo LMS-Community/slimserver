@@ -95,4 +95,21 @@ sub updateOrCreate {
 	return Slim::Schema->updateOrCreate(@_);
 }
 
+# Do a raw query against the DB to get a list of track urls, without inflating anything.
+sub allTracksAsPaths {
+	my $self  = shift;
+	my $path  = shift || '';
+
+	my $dbh   = $self->result_source->storage->dbh;
+	my $urls  = $dbh->selectcol_arrayref("SELECT url FROM tracks WHERE url LIKE 'file://$path%'");
+	my @paths = ();
+
+	for my $url (@$urls) {
+
+		push @paths, Slim::Utils::Misc::pathFromFileURL($url, 1);
+	}
+
+	return \@paths;
+}
+
 1;
