@@ -1,8 +1,8 @@
 [% IF levelName == 'album' || levelName == 'age' %]
 <div class="viewSelect">
 	[% IF controlGraphics %]
-		[% IF artwork %]<img src="html/images/list.png" onClick="toggleGalleryView(0);" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'>
-		[% ELSE %]<img src="html/images/gallery.png" onClick="toggleGalleryView(1);" alt='[% "SWITCH_TO_GALLERY" | string %]' title='[% "SWITCH_TO_GALLERY" | string %]'>
+		[% IF artwork %]<a href="javascript:toggleGalleryView(0);"><img src="html/images/list.png" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'></a>
+		[% ELSE %]<a href="javascript:toggleGalleryView(1);"><img src="html/images/gallery.png" alt='[% "SWITCH_TO_GALLERY" | string %]' title='[% "SWITCH_TO_GALLERY" | string %]'></a>
 		[% END %]
 	[% ELSE %]
 		([% IF artwork -%]<a href="javascript:toggleGalleryView(0);">[% "SWITCH_TO_LIST" | string %]</a>
