@@ -32,7 +32,10 @@
 						</select>
 						<input type="submit" value="&gt;" style="width: 18px;">
 					</form>
-				[% END %]
+				[% ELSE %]<div class="playerName">
+					[%- USE Clients; players = Clients.get("id") -%]
+					[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% playerobj.name %][% END %][% END %]
+				[% END %]</div>
 			</td>
 		</tr>
 	</table>

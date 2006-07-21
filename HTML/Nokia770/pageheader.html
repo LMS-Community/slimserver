@@ -30,7 +30,7 @@
       </td>
 	<td align = 'right' class = 'smallwhitetext'>
 [% IF player_chooser_list %]
-	<form method="get">Current player:
+	<form method="get">[% "CURRENT_PLAYER" | string %]
 		<select name="player" style="font-size: 14px; background: #666666; color: white;" onChange="submit();">
 		[% player_chooser_list %]
 		</select>
@@ -41,7 +41,7 @@
 	[%- USE Clients; players = Clients.get("id") -%]
 	[% IF thispage == 'playlist' %]
 	[% IF players.size > 1 %]
-	<form method="get">Current player:
+	<form method="get">[% "CURRENT_PLAYER" | string %]
 		<select name="player" style="font-size: 14px; background: #666666; color: white;"  onChange="submit();">
 	[% FOREACH playerobj IN players -%]
 		<option value="[% playerobj.id %]" [% IF player == playerobj.id %]SELECTED[% END %]>[% playerobj.name %]</option>
@@ -52,7 +52,7 @@
 	[% IF playerid %]<input type = 'hidden' name = 'playerid' value = '[% playerid %]'>[% END %]
 	</form>
 	[% ELSE %]
-		[% FOREACH playerobj IN players %][% IF player == playerobj.id %]Current Player: [% playerobj.name %][% END %][% END %]
+		[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% "CURRENT_PLAYER" | string %] [% playerobj.name %][% END %][% END %]
 	[% END %]
 [% END %]
 </td></tr>
