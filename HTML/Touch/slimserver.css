@@ -1,0 +1,374 @@
+body {
+	background-color: white;
+	color: #333333;
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	height: 480px;
+	overflow: visible;
+}
+
+body.default {
+	background-color: white;
+}
+
+body.home {
+	background-color: #666666;
+}
+body.search {
+	background-color: #EEEEEE;
+}
+
+a:hover, a:visited, a:active, a:link {
+	text-decoration:none;
+	color: #666666;
+}
+
+a:hover {
+	color:#AAAA44;
+}
+
+body, table, input, select, p, li, a {
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.itemtext {
+	font-size: 22px;
+	text-decoration: none;
+}
+.smallitemtext {
+	font-size: 18px;
+}
+
+.numbertext {
+	font-size: 14px;
+}
+
+.actiontext {
+	font-size: 14px;
+}
+
+.pagebartext {
+	font-size: 22px;
+}
+
+
+.playingitemtext, a.playingitemtext {
+	font-size: 22px;
+	font-weight: bold;
+	color: #BB5544;
+}
+a.playingitemtext:hover {
+	color: black;
+}
+
+.normaltext {
+	font-size: 20px;
+}
+
+.menutext {
+	font-size: 18px;
+	font-weight: bold;
+	color: #888888;
+}
+
+.headertext {
+	font-size: 26px;
+	padding-left: 10px;
+}
+
+.statusbartext {
+	font-size: 14px;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+a.statusbartext {
+	color: white;
+}
+
+a.statusbartext:hover {
+	color:#AAAA44;
+}
+.smalltext {
+	font-size: 14px;
+}
+
+.pbar {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.pbar_white {
+	font-size: 14px;
+	font-weight: bold;
+	color: white;
+}
+
+.smallplayingitemtext {
+	font-size: 12px;
+	color: #BB5544;
+}
+
+.smallwhitetext {
+	font-size: 14px;
+	color: white;
+}
+.supertinytext {
+	font-size: 12px;
+}
+
+.pagebarheadertext {
+	font-size: 16px;
+}
+
+.logotext {
+	font-size: 26px;
+}
+
+table.playlistbox { 
+	background-color: white;
+}
+table.thinborder { 
+	border: 1px solid black;
+}
+table.thinborder_grey { 
+	border: 1px solid black;
+}
+table.noborder { 
+	border: none;
+}
+table.playlistcontrols {
+	width: 125px;
+	overflow: hidden;
+}
+
+td.playlistcontrols {
+	width: 25px;
+}
+
+div {
+	overflow: visible;
+}
+
+img {
+	border: 0;
+}
+
+div#pagecontainer {
+	position: absolute;
+	top: 80;
+	height: 364px;
+	width: 100%;
+	overflow: visible;
+}
+
+div#innerSanctum {
+	position: absolute;
+	width: 780px;
+}
+div#hidden {
+	display: none;
+}
+
+div#footer {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	clear: both;
+	z-index: 10;
+}
+
+tr.playing {
+	background-color: #9ef5f6;
+}
+
+tr.odd, td.odd {
+	background-color: #d0d0d0;
+}
+tr.even, td.even {
+	background-color: #FFFFFF;
+}
+
+div#page {
+	width: 800px;
+	z-index: -100;
+	height: 480px;
+	overflow: visible;
+}
+
+div#page_with_bar {
+	width: 778px;
+	z-index: -100;
+	height: 480px;
+	overflow: visible;
+}
+
+div#miniControls {
+	position: fixed;
+	padding-top: 3px;
+	padding-left: 5px;
+	top: 0;
+	left: 0;
+	height: 22;
+	overflow: visible;
+	z-index: 11;
+	background-color: #333333;
+	width: 55;
+}
+
+div#topbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 20;
+	overflow: visible;
+	z-index: 10;
+	width: 100%;
+}
+
+div#menu {
+	position: fixed;
+	top: 25;
+	left: 0;
+	overflow: visible;
+	z-index: 10;
+	width: 100%;
+}
+
+div#emptyplayer {
+        position: absolute;
+        left: 180;
+        width: 788;
+        top: 70;
+	overflow: visible;
+	z-index: 1;
+}
+
+div#coverart {
+        position: absolute;
+        left: 6;
+        width: 200;
+        top: 15;
+	overflow: visible;
+	z-index: 1;
+}
+
+div#radioart {
+        position: absolute;
+        left: 6;
+        width: 200;
+        top: 15;
+	overflow: visible;
+	z-index: 1;
+}
+
+div#radioinfo {
+	position: relative;
+	left: 220;
+	top: 15;
+	width: 550;
+	overflow: visible;
+        z-index: 2;
+}
+
+div#songinfo {
+	position: relative;
+	left: 220;
+	top: 15;
+	width: 500;
+	overflow: visible;
+        z-index: 2;
+}
+
+div#playliststatus {
+	position: relative;
+	left: 220;
+	top: 15;
+	width: 550;
+	overflow: visible;
+        z-index: 2;
+}
+
+div#playlistbox {
+        position: absolute;
+	text-align: right;
+	top: 130;
+	right: 5;
+	width: auto;
+	z-index: 0;
+	overflow: hidden;
+}
+
+
+div#controls {
+       position: absolute;
+       top:241;
+	left: 0;
+       width: 800;
+}
+
+div#progressbar {
+	position: absolute;
+	left: 6;
+	right: 6;
+	width: auto;
+	top: 220;
+	z-index: 2;
+}
+
+div#progressbar_overlay {
+	position: absolute;
+	left: 6;
+	right: 6;
+	width: auto;
+	top: 220;
+	z-index: 3;
+}
+
+div#last_cover {
+	position: absolute;
+	left: 10;
+	width: 60;
+	top: 150;
+	border: 1px solid black;
+}
+
+div#cover1 {
+	position: absolute;
+	left: 75;
+	width: 300;
+	top: 50;
+}
+
+div#cover2 {
+	position: absolute;
+	left: 395;
+	width: 300;
+	top: 50;
+}
+
+div#next_cover{
+	position: absolute;
+	left: 705;
+	width: 60;
+	top: 150;
+	border: 1px solid black;
+}
+
+div#systemWorking{
+	position: fixed;
+	left: 0;
+	top: 25;
+	width: 1;
+	height: 58;
+	background-color: white;
+	z-index: 12;
+}
+div#systemNotWorking{
+	position: fixed;
+	left: 0;
+	top: 25;
+	z-index: 12;
+}
+
