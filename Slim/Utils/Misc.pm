@@ -913,14 +913,12 @@ sub specified {
 sub arrayDiff {
 	my ($left, $right) = @_;
 
-	my %lMap = ();
 	my %rMap = ();
 	my %diff = ();
 
-	map { $lMap{$_}++ } @$left;
 	map { $rMap{$_}++ } @$right;
 
-	for (keys %lMap) {
+	for (@$left) {
 
 		$diff{$_} = 1 if !exists $rMap{$_};
 	}
