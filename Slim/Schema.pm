@@ -1119,7 +1119,7 @@ sub _checkValidity {
 		# clear out Contributors, Genres, etc.
 		$track->delete;
 
-		$track = $self->updateOrCreate({
+		$track = $self->newTrack({
 			'url'      => $url,
 			'readTags' => 1,
 			'commit'   => 1,

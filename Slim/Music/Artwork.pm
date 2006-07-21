@@ -56,7 +56,7 @@ sub findArtwork {
 		$progress->update if $progress;
 	}
 
-	$progress->update($count) if $progress;
+	$progress->final($count) if $progress;
 
 	Slim::Music::Import->endImporter('findArtwork');
 }
