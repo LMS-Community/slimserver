@@ -943,6 +943,12 @@ sub _parse_v2tag {
 					} elsif (defined $index) {
 						$data = $mp3_genres[$index];
 					}
+
+					# Collapse single genres down, as we may have another tag.
+					if ($data && ref($data) eq 'ARRAY' && scalar @$data == 1) {
+
+						$data = $data->[0];
+					}
 				}
 
 				if ($raw_v2 == 2 && $desc) {
