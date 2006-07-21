@@ -235,11 +235,6 @@ sub handleTrack {
 			if ($@) {
 				errorMsg("iTunes: handleTrack: [$@]\n");
 			}
-
-			# If the user is using both iTunes & a music folder,
-			# iTunes stores the url as encoded utf8 - but we want
-			# it in the locale of the machine, so we won't get duplicates.
-			$url = Slim::Utils::Misc::fileURLFromPath($file);
 		}
 
 		# Bug 3402 
@@ -252,6 +247,14 @@ sub handleTrack {
 			$url  = $class->normalize_location($location, 'fallback');
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
 		}
+
+		# If the user is using both iTunes & a music folder,
+		# iTunes stores the url as encoded utf8 - but we want
+		# it in the locale of the machine, so we won't get duplicates.
+		#
+		# Likewise - iTunes uses stricter URI escaping than we care
+		# for. Re-escape it.
+		$url = Slim::Utils::Misc::fileURLFromPath($file);
 	}
 
 	# Use this for playlist verification.
