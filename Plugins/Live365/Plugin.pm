@@ -566,12 +566,8 @@ CHANNELMODE: {
 			'externRef'      => sub { 
 										if (my $station = $live365->{$_[0]}->getCurrentStation()) {
 											return $station->{STATION_TITLE};
-										} else {
-											print $_[1];
-											$live365->{$_[0]}->setStationListPointer($_[1], 
-																	   $_[0],
-																	   \&channelAdditionalLoad,
-																	   \&channelAdditionalError);
+										} elsif ( my $APImessage = $live365->{$client}->status() ) {
+											return $_[0]->string( $APImessage );
 										}
 								},
 			'externRefArgs'  => 'C',
@@ -588,17 +584,22 @@ CHANNELMODE: {
 			'stringHeader'   => 1,
 			'headerAddCount' => 1,
 			'onChange' => sub {
-									$live365->{$_[0]}->setStationListPointer($_[1], 
-															   $_[0],
-															   \&channelAdditionalLoad,
-															   \&channelAdditionalError);
-							},
+							if( $live365->{$client}->willRequireLoad( $_[1] ) ) {
+								$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
+								$client->update();
+								$live365->{$_[0]}->setStationListPointer($_[1], 
+												   $_[0],
+												   \&channelAdditionalLoad,
+												   \&channelAdditionalError);
+							} else {
+								$live365->{$client}->setStationListPointer( $_[1] );
+							};
+						},
 			'onChangeArgs' => 'CV',
 			'callback'       => \&channelExitHandler,
 			'overlayRef'     => sub {
 									return (undef, Slim::Display::Display::symbol('rightarrow'));
 								},
-			'isSorted'       => 1,
 			}
 		);
 	}
@@ -654,8 +655,20 @@ CHANNELMODE: {
 	sub channelAdditionalLoad {
 		my $client = shift;
 	
-		$live365->{$client}->clearBlockingStatus();
-		$client->update();
+		# if the numberscroll has been used, we may have to keep loading additional blocks until 
+		# it is in range of the new stationListPointer
+		if( $live365->{$client}->willRequireLoad( $live365->{$client}->getStationListPointer ) ) {
+			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
+			$client->update();
+			$live365->{$client}->setStationListPointer($live365->{$client}->getStationListPointer, 
+						   $client,
+						   \&channelAdditionalLoad,
+						   \&channelAdditionalError);
+		} else {
+	
+			$live365->{$client}->clearBlockingStatus();
+			$client->update();
+		}
 	}
 	
 	sub channelAdditionalError {
