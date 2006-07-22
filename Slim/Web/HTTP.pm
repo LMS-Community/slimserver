@@ -691,7 +691,7 @@ sub generateHTTPResponse {
 	if ($params->{'cookies'}->{'SlimServer-albumView'} && 
 	    $params->{'cookies'}->{'SlimServer-albumView'}->value) {
 
-		$params->{'artwork'} = 1;
+		$params->{'artwork'} = 1 unless defined $params->{'artwork'};
 	}
 
 	if (Slim::Web::Graphics::serverResizesArt()) {
