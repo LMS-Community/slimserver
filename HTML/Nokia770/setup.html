@@ -11,7 +11,7 @@
 
 [%- PROCESS crumblist pwd_list = linklist noHomeLink=1%] <span class="bar">|</span>[% PROCESS setting_tablist.html %]
 
-    <br>Current Page: [% page | string %]<br>
+    <br>[% 'SETUP_CURRENT' | string %][% 'COLON' | string %] [% page | string %]<br>
 
 [% IF warning %]
 <table width="100%" bgcolor="#cfcfcf">

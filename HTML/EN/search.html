@@ -44,7 +44,7 @@
 				</div>
 			</div>
 			[% ELSIF numresults == '0' %]
-				[% "EMPTY" | string%]
+				[% "NO_SEARCH_RESULTS" | string%]
 			[% END %]
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]

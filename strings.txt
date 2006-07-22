@@ -10511,6 +10511,10 @@ FOUND
 	SV	hittad
 	ZH_CN	已找到
 
+NO_SEARCH_RESULTS
+	DE	Nichts gefunden
+	EN	No search results
+
 CONTRIBUTORMATCHING
 	CS	Interpreti, kterří obsahují
 	DE	Passender Interpret
