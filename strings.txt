@@ -5604,6 +5604,30 @@ SETUP_ENABLE_STATISTICS
 	EN	Enable library statistics
 	FR	Activer l'affichage des statistiques
 	NL	Inschakelen databasestatistieken
+	
+SETUP_FORKEDWEB
+	EN	Webserver Forking (Mac OS X / Linux)
+	
+SETUP_FORKEDWEB_DESC
+	EN	To avoid stalling the main process, certain web pages can be handled by a child process.  This will most benefit players will small buffers such as Squeezebox1 which can experience audio dropouts while using the web interface.  It will also provide smoother scrolling and IR response while accessing the web interface. <b>Warning:</b> This is currently an experimental feature, and some things may not work properly with this option enabled.  <b>Please do not report bugs experienced when this option is enabled to Bugzilla; use the Beta forum instead.</b>
+	
+SETUP_FORKEDWEB_ENABLE
+	EN	Enable webserver forking
+	
+SETUP_FORKEDWEB_DISABLE
+	EN	Disable webserver forking
+	
+SETUP_FORKEDSTREAMING
+	EN	Audio Stream Forking (Mac OS X / Linux)
+	
+SETUP_FORKEDSTREAMING_DESC
+	EN	Enabling this option will provide a dedicated process to serve each audio stream to the player.  This should provide the ultimate in dropout protection.  <b>Warning:</b> This is currently an experimental feature, and some things may not work properly with this option enabled.  <b>Please do not report bugs experienced when this option is enabled to Bugzilla; use the Beta forum instead.</b>
+	
+SETUP_FORKEDSTREAMING_ENABLE
+	EN	Enable stream forking
+	
+SETUP_FORKEDSTREAMING_DISABLE
+	EN	Disable stream forking
 
 SETUP_LOOKFORARTWORK
 	CS	Hledat obal

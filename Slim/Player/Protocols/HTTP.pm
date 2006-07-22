@@ -148,6 +148,12 @@ sub parseMetadata {
 		if ($newTitle && ($oldTitle ne $newTitle)) {
 
 			Slim::Music::Info::setCurrentTitle($url, $newTitle);
+			
+			$client->sendParent( {
+				command => 'setCurrentTitle',
+				url     => $url,
+				title   => $newTitle,
+			} );
 
 			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 				$everybuddy->update();

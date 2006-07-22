@@ -83,7 +83,7 @@ sub rate {
 	 	if ($newrate == 0) {
 			playmode($client, "pausenow");
 		} else {
-	 		$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
+			$::d_source && msg("rate change, jumping to the current position in order to restart the stream\n");
 			gototime($client, $time);
 		}
 	}
@@ -131,7 +131,7 @@ sub progress {
 		return 0;
 	}
 
-	my $song     = playingSong($client);
+	my $song         = playingSong($client);
 	my $songduration = $song->{duration};
 
 	return 0 unless $songduration;
@@ -346,6 +346,12 @@ sub playmode {
 	if ($newmode eq "pause" && $client->rate != 1) {
 		$newmode = "pausenow";
 	}
+	
+	# notify parent of new playmode
+	$client->sendParent( {
+		command  => 'playmode',
+		playmode => $newmode,
+	} );
 	
 	# if we're playing, then open the new song the master.		
 	if ($newmode eq "resume") {
@@ -930,21 +936,14 @@ sub gotoNext {
 			return 0;
 
 		} else {
+			
+			# Reuse the connection for the next song, for SB1, HTTP streaming
 
 			$::d_source && msg(
 				"opening next song (old format: $oldstreamformat, " .
 				"new: $newstreamformat) current playmode: " . playmode($client) . "\n"
 			);
 			
-			# Fail if the next song index is the same as the current song index,
-			# as this can cause an infinite loop
-			# The only case where this is OK is Rhapsody Radio
-			if ( $nextsong == streamingSongIndex($client) ) {
-				if ( $client->lastSong !~ /\.rhr$/ ) {	
-					return 0;
-				}
-			}
-
 			streamingSongIndex($client, $nextsong);
 			return 1 if !$open;
 			$result = openSong($client);
@@ -999,6 +998,12 @@ sub streamingSongIndex {
 								 status => STATUS_STREAMING});
 		}
 		$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
+		
+		# notify parent of new queue
+		$client->sendParent( {
+			command => 'currentsongqueue',
+			queue   => $client->currentsongqueue(),
+		} );
 	}
 
 	$song = $client->currentsongqueue()->[0];
@@ -1053,6 +1058,11 @@ sub resetSongQueue {
 					(blessed($client) ? $client->id() : undef));
 	$request->addParam('reset',1);
 	Slim::Player::Playlist::newSongPlaylistCallback($request);
+	
+	$client->sendParent( {
+		command => 'currentsongqueue',
+		queue   => $client->currentsongqueue(),
+	} );
 }
 
 sub markStreamingTrackAsPlayed {
@@ -1062,6 +1072,11 @@ sub markStreamingTrackAsPlayed {
 	if (defined($song)) {
 		$song->{status} = STATUS_PLAYING;
 	}
+	
+	$client->sendParent( {
+		command => 'currentsongqueue',
+		queue   => $client->currentsongqueue(),
+	} );
 }
 
 sub trackStartEvent {
@@ -1160,6 +1175,10 @@ sub resetSong {
 	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
+	
+	$client->sendParent( {
+		command => 'resetSong',
+	} );
 }
 
 sub errorOpening {
@@ -1392,7 +1411,7 @@ sub openSong {
 		if (!-p $filepath) {
 
 			# XXX - endian can be undef here - set to ''.
-			$size       = $track->audio_size();
+			$size       = $track->audio_size() || -s $filepath;
 			$duration   = $track->durationSeconds();
 			$offset     = $track->audio_offset() || 0 + $seekoffset;
 			$samplerate = $track->samplerate();
@@ -1496,6 +1515,14 @@ sub openSong {
 		$song->{'duration'}   = $duration;
 		$song->{'offset'}     = $offset;
 		$song->{'blockalign'} = $blockalign;
+		
+		# Notify the parent of new song queue, and start/pause times
+		$client->sendParent( {
+			command   => 'currentsongqueue',
+			queue     => $client->currentsongqueue(),
+			remoteSST => $client->remoteStreamStartTime(),
+			pauseTime => $client->pauseTime(),
+		} );
 
 		$client->streamformat($format);
 

@@ -74,6 +74,8 @@ sub removeError {
 
 sub _updateSelect {
 	my ($type, $sock, $callback, $idle) = @_;
+	
+	return unless defined $sock;
 
 	my $fileno = fileno($sock);
 

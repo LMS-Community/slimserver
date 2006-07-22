@@ -14,6 +14,7 @@ package Slim::Player::Client;
 
 use strict;
 use Scalar::Util qw(blessed);
+use Storable qw(nfreeze);
 
 use Slim::Control::Request;
 use Slim::Player::Sync;
@@ -739,6 +740,7 @@ sub new {
 	$client->[106] = undef; # lastDigitIndex
 	$client->[107] = undef; # lastDigitTime
 	$client->[108] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
+	$client->[109] = {}; # pipe sockets used for parent/child communication
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1499,6 +1501,30 @@ sub streamingProgressBar {
 	}
 }
 
+# Send an IPC message to our parent process
+sub sendParent {
+	my ( $client, $msg ) = @_;
+	
+	return unless $Slim::Web::HTTP::inChild;
+	
+	if ( $client->pipes->{pw} ) {
+		$msg->{clientid} = $client->id;
+		$client->pipes->{pw}->syswrite( nfreeze( $msg ) );
+	}
+}
+
+# Send an IPC message to our child process
+sub sendChild {
+	my ( $client, $msg ) = @_;
+	
+	return if $Slim::Web::HTTP::inChild;
+	
+	if ( $client->pipes->{cw} ) {
+		$msg->{clientid} = $client->id;
+		$client->pipes->{cw}->syswrite( nfreeze( $msg ) );
+	}
+}
+
 # data accessors
 
 sub id {
@@ -1988,6 +2014,11 @@ sub lastDigitTime {
 sub lastSong {
 	my $r = shift;
 	@_ ? ($r->[108] = shift) : $r->[108];
+}
+
+sub pipes {
+	my $r = shift;
+	@_ ? ($r->[109] = shift) : $r->[109];
 }
 
 1;

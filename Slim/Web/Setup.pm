@@ -1943,6 +1943,8 @@ sub initSetupConfig {
 					disableStatistics
 					itemsPerPass
 					prefsWriteDelay
+					forkedWeb
+					forkedStreaming
 				)],
 			},
 		},
@@ -1964,6 +1966,22 @@ sub initSetupConfig {
 				'validate' => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [0,undef,1],
 			},
+			
+			'forkedWeb' => {
+				'validate' => \&Slim::Utils::Validate::trueFalse,
+				'options'  => {
+					'1' => 'SETUP_FORKEDWEB_ENABLE',
+					'0' => 'SETUP_FORKEDWEB_DISABLE',
+				},
+			},
+			
+			'forkedStreaming' => {
+				'validate' => \&Slim::Utils::Validate::trueFalse,
+				'options'  => {
+					'1' => 'SETUP_FORKEDSTREAMING_ENABLE',
+					'0' => 'SETUP_FORKEDSTREAMING_DISABLE',
+				},
+			},				
 		},
 	} #end of setup{'performance'} hash
 	,'NETWORK_SETTINGS' => {

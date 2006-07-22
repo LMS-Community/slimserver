@@ -22,8 +22,8 @@ use Slim::Web::Pages::LiveSearch;
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction(qr/^search\.(?:htm|xml)/,\&basicSearch);
-	Slim::Web::HTTP::addPageFunction(qr/^advanced_search\.(?:htm|xml)/,\&advancedSearch);
+	Slim::Web::HTTP::addPageFunction( qr/^search\.(?:htm|xml)/, \&basicSearch, 'fork' );
+	Slim::Web::HTTP::addPageFunction( qr/^advanced_search\.(?:htm|xml)/, \&advancedSearch, 'fork' );
 	
 	Slim::Web::Pages->addPageLinks("search", {'SEARCHMUSIC' => "search.html?liveSearch=1"});
 	Slim::Web::Pages->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});

@@ -342,6 +342,11 @@ sub refreshPlaylist {
 			Slim::Buttons::Playlist::jump($everybuddy,$index);
 		}
 	}
+	
+	$client->sendParent( {
+		command => 'refreshPlaylist',
+		index   => $index,
+	} );
 }
 
 sub moveSong {

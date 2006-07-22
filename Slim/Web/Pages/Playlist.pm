@@ -19,7 +19,7 @@ use Slim::Web::Pages;
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction(qr/^playlist\.(?:htm|xml)/,\&playlist);
+	Slim::Web::HTTP::addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist, 'fork' );
 }
 
 sub playlist {

@@ -17,6 +17,7 @@ use warnings;
 use Config;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
+use POSIX ":sys_wait_h";
 use Symbol;
 
 # This begin statement contains some trickery to deal with modules
@@ -56,6 +57,8 @@ my @default_optional_modules = qw(GD Locale::Hebrew);
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
 
 my $sigINTcalled             = 0;
+
+my $sigCHLD                  = {};
 
 sub loadModules {
 	my ($class, $required_modules, $optional_modules, $libPath) = @_;
@@ -155,12 +158,39 @@ sub loadModules {
 
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
-
-	$SIG{'CHLD'} = 'DEFAULT';
+	
+	sub REAPER {
+		my $kid;
+		
+		# Reap all dead children
+		while (($kid = waitpid(-1, WNOHANG)) > 0) {
+			if ( exists $sigCHLD->{$kid} ) {
+				
+				my $cb = $sigCHLD->{$kid}->{cb};
+				my $pt = $sigCHLD->{$kid}->{pt} || [];
+				$cb->( @{$pt} );
+				
+				delete $sigCHLD->{$kid};
+			}
+		}
+		
+		$SIG{'CHLD'} = \&REAPER;
+	}
+	$SIG{'CHLD'} = \&REAPER;
+	
 	$SIG{'PIPE'} = 'IGNORE';
 	$SIG{'TERM'} = \&sigterm;
 	$SIG{'INT'}  = \&sigint;
 	$SIG{'QUIT'} = \&sigquit;
+}
+
+sub sigCHLDCallback {
+	my ( $pid, $cb, @args ) = @_;
+	
+	$sigCHLD->{$pid} = {
+		cb => $cb,
+		pt => \@args,
+	};
 }
 
 sub tryModuleLoad {
@@ -222,7 +252,9 @@ sub sigint {
 
 	$sigINTcalled = 1;
 
-	main::cleanup();
+	if ( !$Slim::Web::HTTP::inChild ) {
+		main::cleanup();
+	}
 
 	exit();
 }
