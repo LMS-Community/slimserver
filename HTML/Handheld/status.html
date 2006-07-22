@@ -22,16 +22,14 @@
 		[% IF songtitle %]
 			<tr>
 				<td>[% "TITLE" | string %][% "COLON" | string %]</td>
-				<td><a href="songinfo.html?item=[% itemobj.id %]&player=[% playerURI %]">[% songtitle %]</a></td>
+				<td><a [% songinfoHRef %]>[% songtitle %]</a></td>
 			</tr>
 		[% END %]
 		
 		[% IF itemobj.artist && itemobj.artist != noArtist %]
 			<tr>
 				<td>[% "ARTIST" | string %][% "COLON" | string %]</td>
-				<td>
-					[% PROCESS artistsAsHTML.html noby=1 %]
-				</td>
+				<td>[% PROCESS artistsAsHTML.html noby=1 notarget=1 %]</td>
 			</tr>
 		[% END %]
 							
@@ -39,7 +37,7 @@
 			<tr>
 				<td>[% "ALBUM" | string %][% "COLON" | string %]</td>
 				<td>
-					<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]">[% itemobj.album.title %]</a>
+					<a [% albumHRef %]>[% itemobj.album.title | html %]</a>
 					[% IF itemobj.year %] ([% itemobj.year %])[% END %]
 				</td>
 			</tr>
