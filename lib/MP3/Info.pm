@@ -1071,7 +1071,7 @@ sub _get_v2tag {
 	      {
 	        for $o ( ($i+1)..$#chk )
 	        {
-	          $chk[$o] = undef if ($ielement eq $chk[$o]);
+	          $chk[$o] = undef if (defined $ielement && defined $o && defined $chk[$o] && $ielement eq $chk[$o]);
 	        }
 	        push @array, $chk[$i];
 	      }
