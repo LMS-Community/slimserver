@@ -131,7 +131,7 @@ function switchPlayer(player_List) {
 	parent.playlist.location="playlist.html?player"+newPlayer;
 	window.location="status_header.html?player"+newPlayer;
 	
-	if (pdoc.location.href.indexOf('setup') == -1) {
+	if (doc.location.href.indexOf('setup') == -1) {
 		for (var j=0;j < doc.document.links.length; j++) {
 			var myString = new String(doc.document.links[j].href);
 			var rString = newPlayer;
