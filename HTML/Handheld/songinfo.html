@@ -1,11 +1,8 @@
 	[% pagetitle = "SONG_INFO" | string %]
 	[%- PROCESS pageheader.html -%]
 
-	[% WRAPPER submenu pwd_list="/ $pagetitle / $itemobj.title" %]
-			[% SET width='13' height='13' attributes="&track.id=$itemobj.id" -%]
-			[% PROCESS browselinks.html cmdType='play' cmdstring='PLAY' img='b_play.gif' -%]
-			<td>&nbsp;</td>
-			[% PROCESS browselinks.html cmdType='add'  cmdstring='ADD_TO_PLAYLIST' img='b_add.gif' -%]
+	[% WRAPPER contentitem controls = 'browsecontrols' odd = item.odd %]
+		[% WRAPPER submenu pwd_list="/ $pagetitle / $itemobj.title" %][% END %]
 	[%- END -%]
 	
 	[% IF itemobj.coverArt('thumb', 1) %]
