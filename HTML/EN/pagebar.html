@@ -1,6 +1,0 @@
-[% IF pagesstart %]  <a href="[% path %]?start=0&amp;[% otherparams  | html %]">[% "FIRST" | string %]</a> [% END %]
-[% IF pageprev %] <a href="[% path %]?start=[% pageprev %]&amp;[% otherparams  | html %]">[% "PREVIOUS" | string %]</a> [% END %]
-[% IF pageprev == '0' %] <a href="[% path %]?start=[% pageprev %]&amp;[% otherparams  | html %]">[% "PREVIOUS" | string %]</a> [% END %]
-[% pageslist %]
-[% IF pagenext %] <a href="[% path %]?start=[% pagenext %]&amp;[% otherparams  | html %]">[% "NEXT" | string %]</a> [% END %]
-[% IF pagesend %] <a href="[% path %]?start=[% pagesend %]&amp;[% otherparams  | html %]">[% "LAST" | string %]</a> [% END %]
