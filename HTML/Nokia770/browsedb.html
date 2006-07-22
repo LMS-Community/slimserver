@@ -69,7 +69,7 @@
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]
 					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
-					[% IF artwork == 1 && level == 0 %]
+					[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
 						[% IF loop.index mod 6 == 0 || loop.first %]<tr>[% END %]
 						<td>
 						[% PROCESS browsedb_artwork.html %]
