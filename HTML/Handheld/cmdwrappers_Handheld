@@ -1,6 +1,7 @@
 [%- FILTER null %]
 
 [% controlGraphics = 1 %]
+[% maxInputSize = 20 %]
 
 [% statusroot = 'status.html' %]
 [%-

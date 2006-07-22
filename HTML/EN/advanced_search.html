@@ -14,6 +14,8 @@
 	</select>
 [% END %]
 
+[% size = maxInputSize ? maxInputSize : 35 %]
+
 [% MACRO timeSelectionBlock BLOCK %]
 	<select name="[% name %]">
 		<option value="=" >[% "IS" | string %]</option>
@@ -38,15 +40,15 @@
 		<tbody>
 
 [% WRAPPER field title='TRACK' %]
-	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value %]" size="35" maxlength="100" type="text">
+	<input name="search.me_titlesearch" value="[% search.me_titlesearch.value %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
 [% WRAPPER field title='ARTIST' %]
-	<input name="search.contributor_namesearch" value="[% search.contributor_namesearch.value %]" size="35" maxlength="100" type="text">
+	<input name="search.contributor_namesearch" value="[% search.contributor_namesearch.value %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
 [% WRAPPER field title='ALBUM' %]
-	<input name="search.album_titlesearch" value="[% search.album_titlesearch.value %]" size="35" maxlength="100" type="text">
+	<input name="search.album_titlesearch" value="[% search.album_titlesearch.value %]" size="[% size %]" maxlength="100" type="text">
 [% END %]
 
 [% WRAPPER field title='GENRE' %]
@@ -142,20 +144,21 @@
 	<tr>
 		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
 		<td class="content" align="left" valign="middle" width="75%">
-			<input name="search.comments" value="" size="35" maxlength="1000" type="text">
+			<input name="search.comments" value="" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
 
 	<tr>
 		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">Lyrics</td>
 		<td class="content" align="left" valign="middle" width="75%">
-		  <input name="search.lyrics" value="" size="35" maxlength="1000" type="text">
+		  <input name="search.lyrics" value="" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
 -->
 
 	<tr>
-		<td colspan="2" class="content" align="center" valign="middle">
+		<td>&nbsp;</td>
+		<td class="content" valign="middle">
 			<br>
 			<input value="[% "SEARCH" | string %]" type="submit">
 			<input value="[% "CLEAR"  | string %]" type="reset">

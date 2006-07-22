@@ -52,6 +52,10 @@ small {
 	background-color: #d0d0d0;
 }
 
+.searchHeader {
+	background-color: #ececec;
+	margin-top: 20px;
+}
 
 .browsedbListItem {
 	position: relative;

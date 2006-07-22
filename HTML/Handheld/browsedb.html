@@ -15,20 +15,20 @@
 	[% END %]
 	
 	<table cellspacing="0" border="0" cellpadding="4" width="100%">
-[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
-		container = 'gallerycontainer'; %]
-[%- ELSE;
-		container = 'contentcontainer';
-	END;
-%]
-[% WRAPPER $container %]
-	[% IF coverArt %]
-		<p><a href="/music/[% coverArt %]/cover.jpg"><img src="/music/[% coverArt %]/thumb.jpg"></a></p>
-	[% END %]
-	[% FOREACH item = browse_items %]
-		[% PROCESS browsedbitems_list.html %]
-	[% END %]
-[% END %]
+		[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+				container = 'gallerycontainer'; %]
+		[%- ELSE;
+				container = 'contentcontainer';
+			END;
+		%]
+		[% WRAPPER $container %]
+			[% IF coverArt %]
+				<p><a href="/music/[% coverArt %]/cover.jpg"><img src="/music/[% coverArt %]/thumb.jpg"></a></p>
+			[% END %]
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+		[% END %]
 	</table>
 
 	[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]<br>[% PROCESS pagebar addSummary = 1 %][% END %]
