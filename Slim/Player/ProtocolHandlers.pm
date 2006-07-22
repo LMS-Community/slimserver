@@ -20,6 +20,7 @@ my %protocolHandlers = (
 	http     => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
+	rtsp     => 1,
 	file     => 0,
 	playlist => 0,
 );
