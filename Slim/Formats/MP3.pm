@@ -13,6 +13,7 @@ use MP3::Info;
 use MPEG::Audio::Frame;
 
 use Slim::Utils::SoundCheck;
+use Slim::Utils::Misc;
 
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
