@@ -1,4 +1,0 @@
-<td [% IF class %]class="[% class %]"[% END %] [% IF width %]width="[% width %]"[% END %]>
-	<nobr><a [% PROCESS cmdHRef %][% IF target %] target="[% target %]"[% END %]>
-		[% IF img -%]<img src="[% webroot %]html/images/[% img %]" [% IF height %]height="[% height %]"[% END %] alt='[% cmdstring | string %]' title='[% cmdstring | string %]' onMouseOver="self.status='[% cmdstring | string %]';return true">[% ELSE %][% cmdstring | string -%][% END -%]</a></nobr>
-</td>
