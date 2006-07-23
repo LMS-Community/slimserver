@@ -16,13 +16,39 @@ use HTML::Entities;
 use Scalar::Util qw(weaken);
 use XML::Simple;
 
-use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Music::Info;
+use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
+
+# Get xml for a feed synchronously
+# Only used to support the web interface
+# when browsing, feeds are downloaded asynchronously, see Slim::Buttons::XMLBrowser
+sub getFeedSync {
+	my ($class, $url) = @_;
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => $url,
+		'create' => 0,
+	});
+
+	if (defined $http) {
+
+		my $content = $http->content;
+
+		$http->close;
+
+		return 0 unless defined $content;
+
+		return xmlToHash(\$content);
+	}
+
+	return 0;
+}
 
 sub getFeedAsync {
 	my $class = shift;
@@ -131,49 +157,7 @@ sub gotErrorViaHTTP {
 sub parseXMLIntoFeed {
 	my $content = shift || return undef;
 
-	# deal with windows encoding stupidity (see Bug #1392)
-	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
-
-	# async http request succeeded.  Parse XML
-	my $xml     = undef;
-	my $timeout = (Slim::Utils::Prefs::get('remotestreamtimeout') || 5) * 2;
-
-	# Bug 3510 - check for bogus content.
-	if ($$content !~ /<\??xml/) {
-
-		# Set $@, so the block below will catch it.
-		$@ = "Invalid XML feed - didn't find <xml>!\n";
-
-	} else {
-
-		eval {
-			# NB: \n required
-			local $SIG{'ALRM'} = sub { die "XMLin parsing timed out!\n" };
-
-			alarm $timeout;
-
-			# forcearray to treat items as array,
-			# keyattr => [] prevents id attrs from overriding
-			$xml = XMLin($content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
-
-			alarm 0;
-		};
-	}
-
-	if ($@) {
-		errorMsg("Formats::XML: failed to parse feed because:\n$@\n");
-
-		if (defined $content && ref($content) eq 'SCALAR') {
-			errorMsg("Formats::XML: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
-			undef $content;
-		}
-
-		# Ugh. Need real exceptions!
-		die $@;
-	}
-
-	# Release
-	undef $content;
+	my $xml = xmlToHash($content);
 
 	# convert XML into data structure
 	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
@@ -247,15 +231,18 @@ sub parseRSS {
 		# Add iTunes-specific data if available
 		# http://www.apple.com/itunes/podcasts/techspecs.html
 		if ( $xml->{'xmlns:itunes'} ) {
+
 			$item{'duration'} = unescapeAndTrim($itemXML->{'itunes:duration'});
 			$item{'explicit'} = unescapeAndTrim($itemXML->{'itunes:explicit'});
-			
+
 			# don't duplicate data
-			if ( $itemXML->{'itunes:subtitle'} ne $itemXML->{'title'} ) {
+			if ( $itemXML->{'itunes:subtitle'} && $itemXML->{'title'} && 
+				$itemXML->{'itunes:subtitle'} ne $itemXML->{'title'} ) {
 				$item{'subtitle'} = unescapeAndTrim($itemXML->{'itunes:subtitle'});
 			}
 			
-			if ( $itemXML->{'itunes:summary'} ne $itemXML->{'description'} ) {
+			if ( $itemXML->{'itunes:summary'} && $itemXML->{'description'} &&
+				$itemXML->{'itunes:summary'} ne $itemXML->{'description'} ) {
 				$item{'summary'} = unescapeAndTrim($itemXML->{'itunes:summary'});
 			}
 		}
@@ -364,8 +351,8 @@ sub openSearchDescription {
 	my $http = shift;
 	my $params = $http->params;
 
-	my $desc = eval { parseOpenSearch( $http->contentRef ) };
-	
+	my $desc = eval { xmlToHash( $http->contentRef ) };
+
 	if ($@) {
 		# call ecb
 		my $ecb = $params->{'ecb'};
@@ -430,23 +417,53 @@ sub openSearchResult {
 	$cb->( $feed, $params->{'params'} );
 }
 
-sub parseOpenSearch {
+sub xmlToHash {
 	my $content = shift || return undef;
 
 	# deal with windows encoding stupidity (see Bug #1392)
 	$$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
 
-	# async http request succeeded.  Parse XML
-	# forcearray to treat items as array,
-	# keyattr => [] prevents id attrs from overriding
-	my $xml = eval { 
-		XMLin( $content, 
-			KeyAttr => []
-		)
-	};
+	my $xml     = undef;
+	my $timeout = (Slim::Utils::Prefs::get('remotestreamtimeout') || 5) * 2;
+
+	# Bug 3510 - check for bogus content.
+	if ($$content !~ /<\??xml/) {
+
+		# Set $@, so the block below will catch it.
+		$@ = "Invalid XML feed - didn't find <xml>!\n";
+
+	} else {
+
+		# Some feeds have invalid (usually Windows encoding) in a UTF-8 XML file.
+		my @lines = ();
+
+		for my $line (split /\n/, $$content) {
+
+			$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8');
+
+			push @lines, $line;
+		}
+
+		$content = join('', @lines);
+
+		eval {
+			# NB: \n required
+			local $SIG{'ALRM'} = sub { die "XMLin parsing timed out!\n" };
+
+			alarm $timeout;
+
+			# forcearray to treat items as array,
+			# keyattr => [] prevents id attrs from overriding
+			$xml = XMLin(\$content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
+		};
+	}
+
+	# Always reset the alarm to 0.
+	alarm 0;
 
 	if ($@) {
-		errorMsg("Formats::XML: failed to parse feed because:\n$@\n");
+
+		errorMsg("Formats::XML: failed to parse feed because:\n[$@]\n");
 
 		if (defined $content && ref($content) eq 'SCALAR') {
 			errorMsg("Formats::XML: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
@@ -459,8 +476,8 @@ sub parseOpenSearch {
 
 	# Release
 	undef $content;
-	
-	return $xml;	
+
+	return $xml;
 }
 
 #### Some routines for munging strings

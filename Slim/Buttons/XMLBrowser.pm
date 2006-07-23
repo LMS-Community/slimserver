@@ -312,7 +312,7 @@ sub gotOPML {
 			my $item   = shift;
 
 			my $hasItems = scalar @{$item->{'items'}};
-			my $isAudio  = $item->{'type'} eq 'audio' ? 1 : 0;
+			my $isAudio  = ($item->{'type'} && $item->{'type'} eq 'audio') ? 1 : 0;
 			my $itemURL  = $item->{'url'}  || $item->{'value'};
 			my $title    = $item->{'name'} || $item->{'title'};
 

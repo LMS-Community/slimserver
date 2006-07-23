@@ -13,10 +13,10 @@ package Slim::Formats::Playlists::XML;
 use strict;
 use base qw(Slim::Formats::Playlists::Base);
 
-use Scalar::Util qw(blessed);
-use XML::Simple;
 use File::Slurp;
+use Scalar::Util qw(blessed);
 
+use Slim::Formats::XML;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
@@ -27,9 +27,9 @@ sub read {
 
 	my $content = read_file($file);
 
-	my $xml = eval { XMLin($content, 'forcearray' => ['item'], 'keyattr' => []) };
+	my $xml = Slim::Formats::XML::xmlToHash(\$content);
 
-	if ($@ || !$xml) {
+	if (!$xml) {
 
 		$::d_parse && msg("Slim::Formats::Playlists::XML->read: failed to parse XML/Podcast: [$@]\n");
 

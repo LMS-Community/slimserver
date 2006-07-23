@@ -332,7 +332,7 @@ sub updateFeedNames {
 				# does a synchronous get
 				# XXX: This should use async instead, but not a very high priority 
 				# as this code is not used very much
-				my $xml = getFeedXml($url);
+				my $xml = Slim::Formats::XML->getFeedSync($url);
 
 				if ($xml && exists $xml->{'channel'}->{'title'}) {
 
@@ -388,53 +388,6 @@ sub updateFeedNames {
 		updateOPMLCache( \@feeds );
 	}
 
-}
-
-#
-# XXX: Fix to use AsyncHTTP
-#
-
-# copied from RSS news plugin
-# gets the xml for a feed synchronously
-# only used to support the web interface
-# when browsing, feeds are downloaded asynchronously, see XMLBrowser.pm
-sub getFeedXml {
-	my $feed_url = shift;
-
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => $feed_url,
-		'create' => 0,
-	});
-
-	if (defined $http) {
-
-		my $content = $http->content;
-
-		$http->close;
-
-		return 0 unless defined $content;
-
-		# Deal with Windows encoding stupidity.
-		$content =~ s/encoding="windows-1252"/encoding="iso-8859-1"/i;
-
-		## Bug 2492
-		## not all entities are understood by XML::Simple, so skip this to allow
-		## parsing to complete
-		#HTML::Entities::encode_entities($content, "\x80-\xff");
-
-		# forcearray to treat items as array,
-		# keyattr => [] prevents id attrs from overriding
-		my $xml = eval { XMLin(\$content, forcearray => ["item"], keyattr => []) };
-
-		if ($@) {
-			$::d_plugins && msg("XMLBrowser failed to parse feed <$feed_url> because: $@\n");
-			return 0;
-		}
-
-		return $xml;
-	}
-
-	return 0;
 }
 
 ################################
