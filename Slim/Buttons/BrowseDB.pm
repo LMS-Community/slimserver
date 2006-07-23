@@ -550,9 +550,12 @@ sub browsedbItemName {
 
 			for my $artist ($item->artists) {
 
-				next if $artist->name eq $noArtist;
+				if (blessed($artist)) {
 
-				push @artists, $artist->name;
+					next if $artist->name eq $noArtist;
+
+					push @artists, $artist->name;
+				}
 			}
 
 			if (scalar @artists) {
