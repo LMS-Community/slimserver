@@ -1,6 +1,6 @@
 [% IF PrefsInTable %]<tr><td>&nbsp;</td><td class="PrefExtValue">[% END %]
 <b>[% PrefExtValue %]</b>
 [% IF PrefsInTable %]&nbsp;</td><td>[% END %]
-<a href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% playerURI %]&[% PrefNameRoot %]Action[% PrefIndex %]=Add">[% "ADD" | string %]</a>
+<a href="setup.html?page=[% page %]&playerid=[% playerid | uri %]&player=[% playerURI %]&[% PrefNameRoot %]Action[% PrefIndex %]=Add">[% IF controlGraphics %]<img src="html/images/b_add.gif" border=0 align="center">[% ELSE %][% "ADD" | string %][% END %]</a>
 [% IF PrefsInTable %]</td></tr>[% END %]
 [% IF not PrefsInTable %]<br>[% END %]

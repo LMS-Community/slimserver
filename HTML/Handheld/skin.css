@@ -12,7 +12,7 @@ pre, code, h3 {
 	font-size: 11px;
 }
 
-IMG {
+img {
 	border: 0;
 }
 
@@ -69,29 +69,18 @@ small {
 	right: 0px;
 }
 
-.homeMenuSection div,.settingSection .groupHead {
-	/* home menu list header */
+.settingSection {
+	border-bottom: none;
+	padding-bottom: 5px;
+}
+
+.prefHead, .groupHead {
+	margin-bottom: 10px;
 	background-color: #ececec;
-	height: 13px;
-	padding: 8px 6px 4px;
+	padding: 0px 1px 1px;
 	font-weight: bold;
-	font-size: 9px;
 }
 
-.prefHead {
-	height: 13px;
-	padding: 8px 6px 2px 0px;
-	font-weight: bold;
-	font-size: 9px;
-}
-
-.groupHead {
-	margin-top: 6px;
-}
-
-.prefDesc,.groupDesc,.groupHead {
-	padding-bottom: 10px;
-}
 
 .songInfoTitle {
 	float: left;

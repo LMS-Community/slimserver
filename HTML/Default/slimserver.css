@@ -161,7 +161,8 @@ img {
 }
 
 .PrefExtValue {
-	width: 200px;
+//	width: 200px;
+	width: 80%;
 }
 
 div#topGraphicBox {
