@@ -2078,8 +2078,8 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			}
 
 			# Turn 'track.*' into 'me.*'
-			if ($key =~ /^track(\.?.*)$/) {
-				$key = "me$1";
+			if ($key =~ /^(playlist)?track(\.?.*)$/) {
+				$key = "me$2";
 			}
 
 			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
@@ -2100,7 +2100,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
 
-	} elsif ($find{'playlist.id'}) {
+	} elsif ($find{'playlist.id'} && !$find{'me.id'}) {
 
 		# Treat playlists specially - they are containers.
 		my $playlist = Slim::Schema->find('Playlist', $find{'playlist.id'});
@@ -2120,6 +2120,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		if (defined $find{'album.compilation'} && $find{'album.compilation'} == 1) {
 
 			delete $find{'contributor.id'};
+		}
+
+		if ($find{'playlist.id'}) {
+		
+			delete $find{'playlist.id'};
 		}
 
 		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
