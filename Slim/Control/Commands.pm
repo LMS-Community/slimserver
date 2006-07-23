@@ -1356,10 +1356,6 @@ sub playlistsEditCommand {
 
 		Slim::Schema->forceCommit;
 		Slim::Schema->wipeCaches;
-
-		# If we've changed the files - make sure that we clear the
-		# format display cache - otherwise we'll show bogus data.
-		Slim::Music::Info::clearFormatDisplayCache();
 	}
 
 	$request->setStatusDone();
