@@ -30,7 +30,7 @@ sub hitlist {
 		{ 'order_by'  => 'me.playcount desc' },
 	)->slice(0, 49);
 
-	for my $track ($rs->next) {
+	while (my $track = $rs->next) {
 
 		my $playCount = $track->playcount;
 
@@ -38,19 +38,16 @@ sub hitlist {
 			$maxPlayed = $playCount;
 		}
 
-		my %form  = ();
+		my %form = (
+			'odd'          => ($itemNumber + 1) % 2,
+			'song_bar'     => hitlist_bar($params, $playCount, $maxPlayed),
+			'player'       => $params->{'player'},
+			'skinOverride' => $params->{'skinOverride'},
+			'song_count'   => $playCount,
+			'attributes'   => '&track.id='.$track->id,
+		);
 
 		$track->displayAsHTML(\%form);
-
-		$form{'title'} 	          = Slim::Music::Info::standardTitle(undef, $track);
-
-		$form{'odd'}	          = ($itemNumber + 1) % 2;
-		$form{'song_bar'}         = hitlist_bar($params, $playCount, $maxPlayed);
-		$form{'player'}	          = $params->{'player'};
-		$form{'skinOverride'}     = $params->{'skinOverride'};
-		$form{'song_count'}       = $playCount;
-		$form{'attributes'}       = '&track.id='.$track->id;
-		$form{'itemobj'}          = $track;
 
 		push @{$params->{'browse_items'}}, \%form;
 
