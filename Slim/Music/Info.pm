@@ -169,6 +169,13 @@ sub playlistForClient {
 	return Slim::Schema->rs('Playlist')->getPlaylistForClient($client);
 }
 
+sub clearFormatDisplayCache {
+
+	%displayCache    = ();
+	%currentTitles   = ();
+	%currentBitrates = ();
+}
+
 sub updateCacheEntry {
 	my $url = shift;
 	my $cacheEntryHash = shift;
