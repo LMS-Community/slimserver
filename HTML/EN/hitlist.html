@@ -21,6 +21,7 @@
     <h4>[% "MOSTPLAYED" | string %][% "COLON" | string %]</h4>
     <table cellspacing="0" border="0" cellpadding="2" width="100%">
 		[% FOREACH item = browse_items %]
+			[%- odd = (not odd) %]
 			[% PROCESS hitlist_list.html %]
 		[% END %]
     </table>
