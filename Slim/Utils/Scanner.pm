@@ -533,7 +533,7 @@ sub readPlaylistBody {
 	my $playlistFH = IO::String->new( $http->response->content_ref );
 	
 	my @objects = __PACKAGE__->scanPlaylistFileHandle( $args->{'playlist'}, $playlistFH );
-	
+
 	# report an error if the playlist contained no items
 	if ( !@objects ) {
 		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
@@ -587,7 +587,7 @@ sub scanPlaylistFileHandle {
 		#XXX There is another method that comes close if this shouldn't be used.
 		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($playlist->path)->parent );
 
-		$::d_scan && msgf("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
+		$::d_scan && msg("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
 	}
 
 	my @playlistTracks = Slim::Formats::Playlists->parseList(
