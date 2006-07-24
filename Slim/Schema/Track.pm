@@ -28,10 +28,6 @@ our @allColumns = (qw(
 
 	$class->set_primary_key('id');
 
-	$class->register_column('title', { accessor => 'name' });
-	$class->register_column('titlesort', { accessor => 'namesort' });
-	$class->register_column('titlesearch', { accessor => 'namesearch' });
-
 	# setup our relationships
 	$class->belongs_to('album' => 'Slim::Schema::Album');
 
@@ -45,6 +41,20 @@ our @allColumns = (qw(
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
+}
+
+# Wrappers - to make sure that the UTF-8 code is called. I really just want to
+# rename these in the database.
+sub name {
+	return shift->title;
+}
+
+sub namesort {
+	return shift->titlesort;
+}
+
+sub namesearch {
+	return shift->titlesearch;
 }
 
 sub contributors {
@@ -344,7 +354,6 @@ sub displayAsHTML {
 	# Go directly to infoFormat, as standardTitle is more client oriented.
 	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE');
 	$form->{'item'}     = $self->id;
-	$form->{'itempath'} = $self->url;
 	$form->{'itemobj'}  = $self;
 
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.

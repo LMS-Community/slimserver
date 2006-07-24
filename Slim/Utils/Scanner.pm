@@ -275,9 +275,10 @@ sub scanDirectory {
 			# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
 			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
 
+			# Bug: 3761 - readTags, so the title is properly decoded with the locale.
 			my $playlist = Slim::Schema->$method({
 				'url'        => $url,
-				'readTags'   => 0,
+				'readTags'   => 1,
 				'checkMTime' => 1,
 				'playlist'   => 1,
 				'attributes' => {

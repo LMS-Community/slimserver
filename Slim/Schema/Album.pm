@@ -28,11 +28,6 @@ use Slim::Utils::Misc;
 		musicbrainz_id
 	), title => { accessor => undef() });
 
-	# Add alias for ->name, so that everyone can use the same accessors.
-	$class->register_column('title', { accessor => 'name' });
-	$class->register_column('titlesort', { accessor => 'namesort' });
-	$class->register_column('titlesearch', { accessor => 'namesearch' });
-
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('titlesearch' => [qw/id titlesearch/]);
 
@@ -50,6 +45,18 @@ use Slim::Utils::Misc;
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Album');
+}
+
+sub name { 
+	return shift->title;
+}
+
+sub namesort {
+	return shift->titlesort;
+}
+
+sub namesearch {
+	return shift->titlesearch;
 }
 
 # Do a proper join
@@ -94,21 +101,26 @@ sub displayAsHTML {
 	$form->{'item'}       = $self->title;
 
 	# Show the year if pref set or storted by year first
-	if (my $showYear = Slim::Utils::Prefs::get('showYear') || $sort && $sort =~ /^album\.year/) {
+	if (my $showYear = Slim::Utils::Prefs::get('showYear') || ($sort && $sort =~ /^album\.year/)) {
 
 		$form->{'showYear'} = $showYear;
 		$form->{'year'}     = $self->year;
 	}
 
 	# Show the artist in the album view
-	if (Slim::Utils::Prefs::get('showArtist') || $sort && $sort =~ /^contributor\.namesort/) {
+	if (Slim::Utils::Prefs::get('showArtist') || ($sort && $sort =~ /^contributor\.namesort/)) {
 
-		if (my $contributor = $self->contributor) {
+		# XXX - only show the contributor when there are multiple
+		# contributors in the album view.
+		# if ($form->{'hierarchy'} ne 'contributor,album,track') {
 
-			$form->{'artist'}        = $contributor;
-			#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
-			$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
-		}
+			if (my $contributor = $self->contributor) {
+
+				$form->{'artist'}        = $contributor;
+				#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
+				$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+			}
+		# }
 	}
 
 	my $Imports = Slim::Music::Import->importers;
