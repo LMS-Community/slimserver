@@ -1975,44 +1975,91 @@ sub _grab_int_32 {
         return $value;
 }
 
+# From getid3 - lyrics
+# 
+# Just get the size and offset, so the APE tag can be parsed.
+sub _parse_lyrics3_tag {
+	my ($fh, $filesize, $info) = @_;
+
+	# end - ID3v1 - LYRICSEND - [Lyrics3size]
+	seek($fh, (0 - 128 - 9 - 6), SEEK_END);
+	read($fh, my $lyrics3_id3v1, 128 + 9 + 6);
+
+	my $lyrics3_lsz = substr($lyrics3_id3v1,  0,   6); # Lyrics3size
+	my $lyrics3_end = substr($lyrics3_id3v1,  6,   9); # LYRICSEND or LYRICS200
+	my $id3v1_tag   = substr($lyrics3_id3v1, 15, 128); # ID3v1
+
+	my ($lyrics3_size, $lyrics3_offset, $lyrics3_version);
+
+	# Lyrics3v1, ID3v1, no APE
+	if ($lyrics3_end eq 'LYRICSEND') {
+
+		$lyrics3_size    = 5100;
+		$lyrics3_offset  = $filesize - 128 - $lyrics3_size;
+		$lyrics3_version = 1;
+
+	} elsif ($lyrics3_end eq 'LYRICS200') {
+
+		# Lyrics3v2, ID3v1, no APE
+		# LSZ = lyrics + 'LYRICSBEGIN'; add 6-byte size field; add 'LYRICS200'
+		$lyrics3_size    = $lyrics3_lsz + 6 + length('LYRICS200');
+		$lyrics3_offset  = $filesize - 128 - $lyrics3_size;
+		$lyrics3_version = 2;
+
+	} elsif (substr(reverse($lyrics3_id3v1), 0, 9) eq 'DNESCIRYL') {
+
+		# Lyrics3v1, no ID3v1, no APE
+		$lyrics3_size    = 5100;
+		$lyrics3_offset  = $filesize - $lyrics3_size;
+		$lyrics3_version = 1;
+		$lyrics3_offset  = $filesize - $lyrics3_size;
+
+	} elsif (substr(reverse($lyrics3_id3v1), 0, 9) eq '002SCIRYL') {
+
+		# Lyrics3v2, no ID3v1, no APE
+		# LSZ = lyrics + 'LYRICSBEGIN'; add 6-byte size field; add 'LYRICS200' > 15 = 6 + strlen('LYRICS200')
+		$lyrics3_size    = reverse(substr(reverse($lyrics3_id3v1), 9, 6)) + 15;
+		$lyrics3_offset  = $filesize - $lyrics3_size;
+		$lyrics3_version = 2;
+	}
+
+	return $lyrics3_offset;
+}
+
 sub _parse_ape_tag {
 	my ($fh, $filesize, $info) = @_;
 
-	my $ape_tag_id = 'APETAGEX';
-
-	seek $fh, -256, SEEK_END;
-	read($fh, my $tag, 256);
-	my $pre_tag = substr($tag, 0, 128, '');
-
-	# Try and bail early if there's no ape tag.
-	if ((!$pre_tag || !$tag) || substr($pre_tag, 96, 8) ne $ape_tag_id && substr($tag, 96, 8) ne $ape_tag_id) {
-
-		seek($fh, 0, SEEK_SET);
-		return 0;
-	}
-
+	my $ape_tag_id          = 'APETAGEX';
 	my $id3v1_tag_size      = 128;
 	my $ape_tag_header_size = 32;
 	my $lyrics3_tag_size    = 10;
 	my $tag_offset_start    = 0;
 	my $tag_offset_end      = 0;
 
-	seek($fh, (0 - $id3v1_tag_size - $ape_tag_header_size - $lyrics3_tag_size), SEEK_END);
+	if (my $offset = _parse_lyrics3_tag($fh, $filesize, $info)) {
 
-	read($fh, my $ape_footer_id3v1, $id3v1_tag_size + $ape_tag_header_size + $lyrics3_tag_size);
+		seek($fh, $offset - $ape_tag_header_size, SEEK_SET);
+		$tag_offset_end = $offset;
 
-	if (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $id3v1_tag_size - $ape_tag_header_size), 8) eq $ape_tag_id) {
+	} else {
 
-		$tag_offset_end = $filesize - $id3v1_tag_size;
+		seek($fh, (0 - $id3v1_tag_size - $ape_tag_header_size - $lyrics3_tag_size), SEEK_END);
 
-	} elsif (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $ape_tag_header_size), 8) eq $ape_tag_id) {
+		read($fh, my $ape_footer_id3v1, $id3v1_tag_size + $ape_tag_header_size + $lyrics3_tag_size);
 
-		$tag_offset_end = $filesize;
+		if (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $id3v1_tag_size - $ape_tag_header_size), 8) eq $ape_tag_id) {
+
+			$tag_offset_end = $filesize - $id3v1_tag_size;
+
+		} elsif (substr($ape_footer_id3v1, (length($ape_footer_id3v1) - $ape_tag_header_size), 8) eq $ape_tag_id) {
+
+			$tag_offset_end = $filesize;
+		}
+
+		seek($fh, $tag_offset_end - $ape_tag_header_size, SEEK_SET);
 	}
 
-	seek($fh, $tag_offset_end - $ape_tag_header_size, SEEK_SET);
-
-	read($fh, my $ape_footer_data, 32);
+	read($fh, my $ape_footer_data, $ape_tag_header_size);
 
 	my $ape_footer = _parse_ape_header_or_footer($ape_footer_data);
 
