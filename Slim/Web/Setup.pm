@@ -1990,7 +1990,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['webproxy','httpport','mDNSname','remotestreamtimeout']
+					'PrefOrder' => ['webproxy','httpport','remotestreamtimeout']
 				}
 			,'TCP_Params' => {
 					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','udpChunkSize']
@@ -2093,6 +2093,15 @@ sub initSetupConfig {
 			}
 		} #end of setup{'debug'} hash
 	); #end of setup hash
+
+	# Bug 2724 - only show the mDNS settings if we have a binary for it.
+	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
+
+		push @{$setup{'NETWORK_SETTINGS'}{'Groups'}{'Default'}{'PrefOrder'}}, 'mDNSname';
+	}
+
+	# This hack pulls the --d_* debug keys from the main package and sets
+	# their current value.
 	foreach my $key (sort keys %main:: ) {
 		next unless $key =~ /^d_/;
 		my %debugTemp = %{$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{'d_'}};
@@ -2101,6 +2110,7 @@ sub initSetupConfig {
 		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'PrefChoose'} = $key;
 		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'changeIntro'} = $key;
 	}
+
 	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
 		Slim::Web::Setup::addChildren('SERVER_SETTINGS','PLUGINS');

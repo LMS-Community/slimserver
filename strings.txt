@@ -6468,64 +6468,64 @@ SETUP_SAVE_TAG_INFO
 
 SETUP_MDNSNAME
 	CS	Randezvous název
-	DE	Rendezvous Name
-	DA	Rendezvous-navn
-	EN	Rendezvous Name
-	ES	Nombre para Rendezvous
-	FR	Nom Rendezvous
-	IT	Nome in Rendezvous
+	DE	Bonjour Name
+	DA	Bonjour-navn
+	EN	Bonjour Name
+	ES	Nombre para Bonjour
+	FR	Nom Bonjour
+	IT	Nome in Bonjour
 	JA	ランデブー名
 	NL	Rendez-vousnaam
-	NO	Rendezvous navn
-	PT	Nome "Rendezvous"
-	SV	Rendezvous-namn
-	ZH_CN	Rendezvous名
+	NO	Bonjour navn
+	PT	Nome "Bonjour"
+	SV	Bonjour-namn
+	ZH_CN	Bonjour名
 
 SETUP_MDNSNAME_OK
-	CS	Rendezvous jméno serveru je:
-	DE	Der Rendezvous Name dieses Servers ist:
-	DA	Rendezvous-navnet for denne server er:
-	EN	The Rendezvous name for this server is:
-	ES	El nombre para Rendezvous de este servidor es:
-	FR	Le nom Rendezvous de ce serveur est :
-	IT	Il nome in Rendezvous per questo server e':
+	CS	Bonjour jméno serveru je:
+	DE	Der Bonjour Name dieses Servers ist:
+	DA	Bonjour-navnet for denne server er:
+	EN	The Bonjour name for this server is:
+	ES	El nombre para Bonjour de este servidor es:
+	FR	Le nom Bonjour de ce serveur est :
+	IT	Il nome in Bonjour per questo server e':
 	JA	このサーバーのランデブー名は:
 	NL	De Rendez-vousnaam voor deze server is:
-	NO	Rendezvousnavn for denne serveren:
-	PT	O nome Rendezvous para este servidor é
-	SV	Rendezvous-namnet för denna server är:
-	ZH_CN	此伺服器的Rendezvous名：
+	NO	Bonjournavn for denne serveren:
+	PT	O nome Bonjour para este servidor é
+	SV	Bonjour-namnet för denna server är:
+	ZH_CN	此伺服器的Bonjour名：
 
 SETUP_MDNSNAME_DESC
-	DE	Sie können einen Namen für diesen Server zur Verwendung mit Rendezvous auswählen. Lassen Sie das Feld leer, um Rendezvous zu deaktivieren. Um die Änderungen zu aktivieren, muss der Server neu gestartet werden.
+	DE	Sie können einen Namen für diesen Server zur Verwendung mit Bonjour auswählen. Lassen Sie das Feld leer, um Bonjour zu deaktivieren. Um die Änderungen zu aktivieren, muss der Server neu gestartet werden.
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SlimServer skal genstartes før denne indstilling har effekt.
-	EN	You can choose a name for this server to be used with Rendezvous.  Leave this field blank to disable Rendezvous advertising of SlimServer.  You will need to restart the server to see the effect of these changes.
-	ES	Se puede elegir que nombra utilizará este reproductor para Rendezvous. Dejar este campo en blanco para deshabilitar avisos comerciales de Rendezvous en el Slimserver. Se deberá reiniciar el servidor para que estos cambios tengan efecto.
-	FR	Vous pouvez choisir un nom de serveur reconnu par Rendezvous.
+	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SlimServer.  You will need to restart the server to see the effect of these changes.
+	ES	Se puede elegir que nombra utilizará este reproductor para Bonjour. Dejar este campo en blanco para deshabilitar avisos comerciales de Bonjour en el Slimserver. Se deberá reiniciar el servidor para que estos cambios tengan efecto.
+	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour.
 	HE	שם השרת עבור רנדוו
-	IT	Puoi scegliere un nome per questo server da utilizzare con Rendezvous. Lascia il campo vuoto per disabilitare il riconoscimento dello SlimServer da parte di Rendezvous. Devi far ripartire il server perche' il cambiamento abbia effetto.
+	IT	Puoi scegliere un nome per questo server da utilizzare con Bonjour. Lascia il campo vuoto per disabilitare il riconoscimento dello SlimServer da parte di Bonjour. Devi far ripartire il server perche' il cambiamento abbia effetto.
 	JA	ランデブーをお使いの時に、このサーバーに名前をつけることができます。このフィールドを空欄にしますと、ランデブー機能が無効になります。この変更にはサーバーの再起動が必要となります。
 	NL	Je kunt een naam voor deze server kiezen die gebruikt zal worden met de Rendez-vousfunctie van SlimServer.
-	NO	Du kan oppgi et Rendezvousnavn for denne serveren
-	PT	Pode escolher um nome Rendezvous para este servidor
-	SV	Du kan ange ett Rendezvous-namn för denna server
-	ZH_CN	您可以为这个伺服器取个让Rendezvous使用的名字。留空则表示撤销Rendezvous广播SlimServer的功能。更动后您必须重新启动伺服器方为有效。
+	NO	Du kan oppgi et Bonjournavn for denne serveren
+	PT	Pode escolher um nome Bonjour para este servidor
+	SV	Du kan ange ett Bonjour-namn för denna server
+	ZH_CN	您可以为这个伺服器取个让Bonjour使用的名字。留空则表示撤销Bonjour广播SlimServer的功能。更动后您必须重新启动伺服器方为有效。
 
 SETUP_MDNSNAME_CHOOSE
 	CS	Randezvous název:
-	DE	Rendezvous Name:
-	DA	Rendezvous-navn:
-	EN	Rendezvous name:
-	ES	Nombre para Rendezvous:
-	FR	Nom Rendezvous :
+	DE	Bonjour Name:
+	DA	Bonjour-navn:
+	EN	Bonjour name:
+	ES	Nombre para Bonjour:
+	FR	Nom Bonjour :
 	HE	שם
-	IT	Nome in Rendezvous:
+	IT	Nome in Bonjour:
 	JA	ランデブー名:
 	NL	Rendez-vousnaam:
-	NO	Rendezvous navn:
+	NO	Bonjour navn:
 	PT	Nome Rendezvour
-	SV	Rendezvous-namn:
-	ZH_CN	Rendezvous名：
+	SV	Bonjour-namn:
+	ZH_CN	Bonjour名：
 
 SETUP_REMOTESTREAMTIMEOUT
 	CS	Doba pro spojení s internetovými radii
