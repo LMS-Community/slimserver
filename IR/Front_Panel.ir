@@ -1,0 +1,66 @@
+# This mapping is for the front panel buttons
+
+##################################################################################
+# Button names to IR code mappings
+##################################################################################
+0						= 00010000
+1						= 00010001
+2						= 00010002
+3						= 00010003
+4						= 00010004
+5						= 00010005
+6						= 00010006
+7						= 00010007
+8						= 00010008
+9						= 00010009
+power					= 0001000a
+arrow_up				= 0001000b
+arrow_down				= 0001000c
+arrow_left				= 0001000d
+arrow_right				= 0001000e
+search					= 0001000f
+rew						= 00010010
+fwd						= 00010011
+play					= 00010012
+add						= 00010013
+brightness				= 00010014
+now_playing				= 00010015
+
+pause					= 00010017
+browse					= 00010018
+volup					= 00010019
+voldown					= 0001001a
+size					= 0001001b
+visual					= 0001001c
+volumemode				= 0001001d
+
+0.up					= 00020000
+1.up					= 00020001
+2.up					= 00020002
+3.up					= 00020003
+4.up					= 00020004
+5.up					= 00020005
+6.up					= 00020006
+7.up					= 00020007
+8.up					= 00020008
+9.up					= 00020009
+power.up				= 0002000a
+arrow_up.up				= 0002000b
+arrow_down.up			= 0002000c
+arrow_left.up			= 0002000d
+arrow_right.up			= 0002000e
+search.up				= 0002000f
+rew.up					= 00020010
+fwd.up					= 00020011
+play.up					= 00020012
+add.up					= 00020013
+brightness.up			= 00020014
+now_playing.up			= 00020015
+
+pause.up				= 00020017
+browse.up				= 00020018
+volup.up				= 00020019
+voldown.up				= 0002001a
+size.up					= 0002001b
+visual.up				= 0002001c
+volumego.up				= 0002001d
