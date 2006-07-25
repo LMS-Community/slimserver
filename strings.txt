@@ -220,6 +220,19 @@ SQUEEZEBOX2_HOME
 	SV	Squeezebox huvudmeny
 	ZH_CN	Squeezebox主页
 
+TRANSPORTER_HOME
+	DE	Transporter Hauptmenü
+	DK	Transporter Hovedmenu
+	EN	Transporter Home
+	ES	Inicio Transporter
+	FI	Transporter Alkuun
+	FR	Menu Transporter
+	JP	Transporter �ーム
+	NL	Transporter Hoofdmenu
+	NO	Transporter Hjem
+	PT	Início Transporter
+	SE	Transporter huvudmeny
+
 SOFTSQUEEZE_HOME
 	DE	SoftSqueeze Hauptmenü
 	DA	SoftSqueeze Hovedmenu
@@ -1259,6 +1272,9 @@ SQUEEZEBOX
 SQUEEZEBOX2
 	EN	Squeezebox2/v3
 
+TRANSPORTER
+	EN	Transporter
+
 SOFTSQUEEZE
 	EN	SoftSqueeze
 	ES	Softsqueeze
@@ -1329,6 +1345,21 @@ WELCOME_TO_SQUEEZEBOX2
 	SV	Välkommen till Squeezebox
 	ZH_CN	欢迎使用Squeezebox
 
+WELCOME_TO_TRANSPORTER
+	CZ	Vítá Vás Transporter
+	DE	Willkommen bei Transporter
+	DK	Velkommen til Transporter
+	EN	Welcome to Transporter
+	ES	Bienvenido al Transporter
+	FI	Transporter Tervetuloa!
+	FR	Bienvenue sur la Transporter
+	IT	Benvenuto a Transporter
+	JP	Transporterへようこそ
+	NL	Welkom bij Transporter
+	NO	Velkommen til Transporter
+	PT	Bem-vindo ao Transporter
+	SE	Välkommen till Transporter
+
 WELCOME_TO_SOFTSQUEEZE
 	CS	Vítejte v SoftSqueeze
 	DE	Willkommen bei SoftSqueeze
@@ -1391,6 +1422,16 @@ UPDATING_FIRMWARE_SQUEEZEBOX2
 	PT	Atualizando firmware ...
 	SV	Uppdaterar spelarens mjukvara
 	ZH_CN	更新Squeezebox韧件
+
+UPDATING_FIRMWARE_TRANSPORTER
+	DE	Firmware wird aktualisiert.
+	EN	Updating Transporter firmware.
+	ES	Actualizando firmware de Transporter
+	FR	Mise à jour du micrologiciel Transporter
+	JP	ファームウェアをアップデートしています
+	NO	Oppdaterer spillerens programvare ('firmware')
+	PT	Atualizando firmware ...
+	SE	Uppdaterar spelarens mjukvara
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
@@ -9939,6 +9980,19 @@ SQUEEZEBOX2_MUSIC_PLAYER
 	PT	Leitor de Música Squeezebox
 	SV	Squeezebox musikspelare
 	ZH_CN	Squeezebox播放机
+
+TRANSPORTER_MUSIC_PLAYER
+	DE	Transporter Musik Player
+	DK	Transporter-afspiller
+	EN	Transporter Music Player
+	ES	Reproductor de Música Transporter 
+	FI	Transporter soitin
+	FR	Platine Transporter
+	JP	Transporterプレーヤー
+	NL	Transporter Muziek Speler
+	NO	Transporter Musik Player
+	PT	Leitor de Música Transporter
+	SE	Transporter musikspelare
 
 SOFTSQUEEZE_MUSIC_PLAYER
 	DE	SoftSqueeze Musik Player
