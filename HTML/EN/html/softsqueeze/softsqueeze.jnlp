@@ -43,8 +43,6 @@
     <jar href="lib/jogg-0.0.7.jar"/>
     <jar href="lib/jorbis-0.0.15.jar"/>
     <jar href="lib/vorbisspi1.0.2.jar"/>
-    <jar href="lib/nativeskin.jar"/>
-    <nativelib href="lib/nativeskinlib.jar"/>
 
 <!-- Set the following properties to configure the server and firmware  -->
 
