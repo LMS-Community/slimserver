@@ -3,6 +3,10 @@
 	overflow-y: scroll;
 }
 
+a:active {
+	outline: none;
+}
+
 body {
 	background-color: #FFFFFF;
 }

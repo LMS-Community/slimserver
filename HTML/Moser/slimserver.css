@@ -81,6 +81,7 @@ A:hover {
 A:active {
    color : rgb(71,104,149); 
    text-decoration : none; 
+   outline: none;
 }
 
 .label {

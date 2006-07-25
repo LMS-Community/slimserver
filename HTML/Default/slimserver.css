@@ -35,6 +35,7 @@ a {
 
 a:active {
 	color: #555;
+	outline: none;
 }
 
 a:hover {

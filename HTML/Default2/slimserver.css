@@ -129,6 +129,10 @@ a:hover {
 	text-decoration: underline;
 }
 
+a:active {
+	outline: none;
+}
+
 .fakehover {
 	text-decoration: underline;
 }
