@@ -91,7 +91,7 @@ JXTK2.ButtonBar = function (elementid) {
 	};
 
 	this.setValue = function (newValue) {
-		for (i = 0; i < buttons.length; i++) {
+		for (var i = 0; i < buttons.length; i++) {
 			buttons[i].setState(i <= newValue);
 		}
 		value = newValue;
@@ -128,19 +128,19 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 		if (list.length < newlist.length) baselength = list.length;
 		else baselength = newlist.length;
 
-		for (i = 0; i < baselength; i++) {
+		for (var i = 0; i < baselength; i++) {
 			if (el.childNodes[i].childNodes[2].innerHTML != newlist[i].title) {
 				el.childNodes[i].childNodes[2].innerHTML = newlist[i].title;
 			}
 
-			newNum = i + 1 + "";
+			var newNum = i + 1 + "";
 			if (el.childNodes[i].childNodes[1].innerHTML != newNum) {
 				el.childNodes[i].childNodes[1].innerHTML = newNum;
 			}
 		}
 
 		if (list.length < newlist.length) {
-			for (i = baselength; i < newlist.length; i++) {
+			for (var i = baselength; i < newlist.length; i++) {
 				var theRow = document.createElement('li');
 
 				theRow.index = i;
@@ -168,7 +168,7 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 
 		if (newlist.length < list.length) {
 			extras = list.length - baselength;
-			for (i = 0; i < extras; i++) {
+			for (var i = 0; i < extras; i++) {
 				el.removeChild(el.childNodes[baselength]);
 			}
 		}
@@ -179,7 +179,7 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 	};
 
 	this.highlightSelected = function() {
-		for (i = 0; i < list.length; i++) {
+		for (var i = 0; i < list.length; i++) {
 			if (el.childNodes[i]) {
 				el.childNodes[i].className = (i % 2) ? "odd" : "even";
 				el.childNodes[i].isSelected = 0;
@@ -203,7 +203,7 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 		list.splice(index, 1);
 
 		// Renumber the elements after the removed row
-		for (i = index; i < list.length; i++) {
+		for (var i = index; i < list.length; i++) {
 			var cn = el.childNodes[i];
 			cn.childNodes[1].innerHTML = i + 1;
 			cn.index = i;
@@ -296,7 +296,7 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 				group.dragEndHandler(group.movecount, group.element.index);
 			}
 
-			for (i = 0; i < elementparent.childNodes.length; i++) {
+			for (var i = 0; i < elementparent.childNodes.length; i++) {
 				var cn = elementparent.childNodes[i];
 				cn.childNodes[1].innerHTML = i + 1;
 				cn.index = i;
@@ -338,7 +338,7 @@ JXTK2.ListBox = function (element) {
 	el.options.length = 0;
 
 	el.onchange = function(event) {
-		for (i = 0; i < changeHandlers.length; i++) {
+		for (var i = 0; i < changeHandlers.length; i++) {
 			changeHandlers[i](self);
 		}
 	}; 
@@ -351,13 +351,13 @@ JXTK2.ListBox = function (element) {
 		if (curList.length < newlist.length) baselength = curList.length;
 		else baselength = newlist.length;
 
-		for (i = 0; i < baselength; i++) {
+		for (var i = 0; i < baselength; i++) {
 			el.options[i].text = newlist[i].name;
 			el.options[i].value = newlist[i].value;
 		}
 
 		if (curList.length < newlist.length) {
-			for (i = baselength; i < newlist.length; i++) {
+			for (var i = baselength; i < newlist.length; i++) {
 				var newopt = new Option (newlist[i].name, newlist[i].value);
 				el.options[el.options.length] = newopt;
 			}

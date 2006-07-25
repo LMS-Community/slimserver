@@ -83,7 +83,7 @@ function getStrings() {
 function unCLI(arr) {
 	var obj = new Object();
 	for (var i = 0; i < arr.length; i++) {
-		ti = arr[i].split(':');
+		var ti = arr[i].split(':');
 		obj[ti[0]] = ti[1];
 	}
 	return obj;

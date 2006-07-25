@@ -143,7 +143,7 @@ _ToolManDragGroup.prototype = {
 					group.factory._createEvent('dragstart', event, group))
 		}
 
-		for (i = 0; i <  group._transforms.length; i++) {
+		for (var i = 0; i <  group._transforms.length; i++) {
 			var transform = group._transforms[i]
 			newTopLeftOffset = transform(newTopLeftOffset, dragEvent)
 		}
@@ -179,7 +179,7 @@ _ToolManDragGroup.prototype = {
 
 	_notifyListeners : function(dragEvent) {
 		var listeners = this._listeners[dragEvent.type]
-		for (i = 0; i < listeners.length; i++) {
+		for (var i = 0; i < listeners.length; i++) {
 			listeners[i](dragEvent)
 		}
 	}
