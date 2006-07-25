@@ -3,6 +3,7 @@ package DBIx::Class::Relationship::Base;
 use strict;
 use warnings;
 
+use Scalar::Util ();
 use base qw/DBIx::Class/;
 
 =head1 NAME
@@ -175,7 +176,8 @@ sub related_resultset {
 
 =head2 search_related
 
-  $rs->search_related('relname', $cond, $attrs);
+  @objects = $rs->search_related('relname', $cond, $attrs);
+  $objects_rs = $rs->search_related('relname', $cond, $attrs);
 
 Run a search on a related resultset. The search will be restricted to the
 item or items represented by the L<DBIx::Class::ResultSet> it was called
@@ -185,6 +187,19 @@ upon. This method can be called on a ResultSet, a Row or a ResultSource class.
 
 sub search_related {
   return shift->related_resultset(shift)->search(@_);
+}
+
+=head2 search_related_rs
+
+  ( $objects_rs ) = $rs->search_related_rs('relname', $cond, $attrs);
+
+This method works exactly the same as search_related, except that 
+it garauntees a restultset, even in list context.
+
+=cut
+
+sub search_related_rs {
+  return shift->related_resultset(shift)->search_rs(@_);
 }
 
 =head2 count_related
@@ -208,9 +223,10 @@ sub count_related {
   my $new_obj = $obj->new_related('relname', \%col_data);
 
 Create a new item of the related foreign class. If called on a
-L<DBIx::Class::Manual::Glossary/"Row"> object, it will magically set any
-primary key values into foreign key columns for you. The newly created item
-will not be saved into your storage until you call L<DBIx::Class::Row/insert>
+L<Row|DBIx::Class::Manual::Glossary/"Row"> object, it will magically 
+set any foreign key columns of the new object to the related primary 
+key columns of the source object for you.  The newly created item will 
+not be saved into your storage until you call L<DBIx::Class::Row/insert>
 on it.
 
 =cut
@@ -253,12 +269,27 @@ sub find_related {
   return $self->search_related($rel)->find(@_);
 }
 
+=head2 find_or_new_related
+
+  my $new_obj = $obj->find_or_new_related('relname', \%col_data);
+
+Find an item of a related class. If none exists, instantiate a new item of the
+related class. The object will not be saved into your storage until you call
+L<DBIx::Class::Row/insert> on it.
+
+=cut
+
+sub find_or_new_related {
+  my $self = shift;
+  return $self->find_related(@_) || $self->new_related(@_);
+}
+
 =head2 find_or_create_related
 
   my $new_obj = $obj->find_or_create_related('relname', \%col_data);
 
 Find or create an item of a related class. See
-L<DBIx::Class::ResultSet/"find_or_create"> for details.
+L<DBIx::Class::ResultSet/find_or_create> for details.
 
 =cut
 
@@ -266,6 +297,21 @@ sub find_or_create_related {
   my $self = shift;
   my $obj = $self->find_related(@_);
   return (defined($obj) ? $obj : $self->create_related(@_));
+}
+
+=head2 update_or_create_related
+
+  my $updated_item = $obj->update_or_create_related('relname', \%col_data, \%attrs?);
+
+Update or create an item of a related class. See
+L<DBIx::Class::ResultSet/update_or_create> for details.
+
+=cut
+
+sub update_or_create_related {
+  my $self = shift;
+  my $rel = shift;
+  return $self->related_resultset($rel)->update_or_create(@_);
 }
 
 =head2 set_from_related
@@ -295,7 +341,7 @@ sub set_from_related {
   if (defined $f_obj) {
     my $f_class = $self->result_source->schema->class($rel_obj->{class});
     $self->throw_exception( "Object $f_obj isn't a ".$f_class )
-      unless $f_obj->isa($f_class);
+      unless Scalar::Util::blessed($f_obj) and $f_obj->isa($f_class);
   }
   $self->set_columns(
     $self->result_source->resolve_condition(
@@ -333,7 +379,74 @@ sub delete_related {
   return $obj;
 }
 
-1;
+=head2 add_to_$rel
+
+B<Currently only available for C<has_many>, C<many-to-many> and 'multi' type
+relationships.>
+
+=over 4
+
+=item Arguments: ($foreign_vals | $obj), $link_vals?
+
+=back
+
+  my $role = $schema->resultset('Role')->find(1);
+  $actor->add_to_roles($role);
+      # creates a My::DBIC::Schema::ActorRoles linking table row object
+
+  $actor->add_to_roles({ name => 'lead' }, { salary => 15_000_000 });
+      # creates a new My::DBIC::Schema::Role row object and the linking table
+      # object with an extra column in the link
+
+Adds a linking table object for C<$obj> or C<$foreign_vals>. If the first
+argument is a hash reference, the related object is created first with the
+column values in the hash. If an object reference is given, just the linking
+table object is created. In either case, any additional column values for the
+linking table object can be specified in C<$link_vals>.
+
+=head2 set_$rel
+
+B<Currently only available for C<many-to-many> relationships.>
+
+=over 4
+
+=item Arguments: (@hashrefs |  @objs)
+
+=back
+
+  my $actor = $schema->resultset('Actor')->find(1);
+  my @roles = $schema->resultset('Role')->search({ role => 
+     { '-in' -> ['Fred', 'Barney'] } } );
+
+  $actor->set_roles(@roles);
+     # Replaces all of $actors previous roles with the two named
+
+Replace all the related objects with the given list of objects. This does a
+C<delete> B<on the link table resultset> to remove the association between the
+current object and all related objects, then calls C<add_to_$rel> repeatedly to
+link all the new objects.
+
+Note that this means that this method will B<not> delete any objects in the
+table on the right side of the relation, merely that it will delete the link
+between them.
+
+=head2 remove_from_$rel
+
+B<Currently only available for C<many-to-many> relationships.>
+
+=over 4
+
+=item Arguments: $obj
+
+=back
+
+  my $role = $schema->resultset('Role')->find(1);
+  $actor->remove_from_roles($role);
+      # removes $role's My::DBIC::Schema::ActorRoles linking table row object
+
+Removes the link between the current object and the related object. Note that
+the related object itself won't be deleted unless you call ->delete() on
+it. This method just removes the link between the two objects.
 
 =head1 AUTHORS
 
@@ -345,3 +458,4 @@ You may distribute this code under the same terms as Perl itself.
 
 =cut
 
+1;

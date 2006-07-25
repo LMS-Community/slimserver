@@ -19,19 +19,9 @@ __PACKAGE__->load_components(qw/ResultSetProxy/);
 
 sub storage { shift->schema_instance(@_)->storage; }
 
-sub resultset_instance {
-  my $class = ref $_[0] || $_[0];
-  my $source = $class->result_source_instance;
-  if ($source->result_class ne $class) {
-    $source = $source->new($source);
-    $source->result_class($class);
-  }
-  return $source->resultset;
-}
-
 =head1 NAME
 
-DBIx::Class::DB - Non-recommended classdata schema component
+DBIx::Class::DB - (DEPRECATED) classdata schema component
 
 =head1 SYNOPSIS
 
@@ -54,8 +44,8 @@ DBIx::Class::DB - Non-recommended classdata schema component
 
 This class is designed to support the Class::DBI connection-as-classdata style
 for DBIx::Class. You are *strongly* recommended to use a DBIx::Class::Schema
-instead; DBIx::Class::DB will continue to be supported but new development
-will be focused on Schema-based DBIx::Class setups.
+instead; DBIx::Class::DB will not undergo new development and will be moved
+to being a CDBICompat-only component before 1.0.
 
 =head1 METHODS
 
@@ -150,7 +140,41 @@ sub txn_do { shift->schema_instance->txn_do(@_); }
   }
 }
 
-1;
+=head2 resultset_instance
+
+Returns an instance of a resultset for this class - effectively
+mapping the L<Class::DBI> connection-as-classdata paradigm into the
+native L<DBIx::Class::ResultSet> system.
+
+=cut
+
+sub resultset_instance {
+  my $class = ref $_[0] || $_[0];
+  my $source = $class->result_source_instance;
+  if ($source->result_class ne $class) {
+    $source = $source->new($source);
+    $source->result_class($class);
+  }
+  return $source->resultset;
+}
+
+=head2 resolve_class
+
+****DEPRECATED****
+
+See L<class_resolver>
+
+=head2 dbi_commit
+
+****DEPRECATED****
+
+Alias for L<txn_commit>
+
+=head2 dbi_rollback
+
+****DEPRECATED****
+
+Alias for L<txn_rollback>
 
 =head1 AUTHORS
 
@@ -162,3 +186,4 @@ You may distribute this code under the same terms as Perl itself.
 
 =cut
 
+1;

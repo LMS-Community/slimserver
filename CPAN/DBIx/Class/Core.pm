@@ -10,6 +10,7 @@ __PACKAGE__->load_components(qw/
   Serialize::Storable
   InflateColumn
   Relationship
+  PK::Auto
   PK
   Row
   ResultSourceProxy::Table
@@ -40,6 +41,8 @@ The core modules currently are:
 =item L<DBIx::Class::InflateColumn>
 
 =item L<DBIx::Class::Relationship>
+
+=item L<DBIx::Class::PK::Auto>
 
 =item L<DBIx::Class::PK>
 

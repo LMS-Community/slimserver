@@ -3,9 +3,15 @@ package DBIx::Class::Storage::DBI::Pg;
 use strict;
 use warnings;
 
+use DBD::Pg;
+
 use base qw/DBIx::Class::Storage::DBI/;
 
 # __PACKAGE__->load_components(qw/PK::Auto/);
+
+# Warn about problematic versions of DBD::Pg
+warn "DBD::Pg 1.49 is strongly recommended"
+  if ($DBD::Pg::VERSION < 1.49);
 
 sub last_insert_id {
   my ($self,$source,$col) = @_;
@@ -21,11 +27,12 @@ sub get_autoinc_seq {
   my ($schema,$table) = $source->name =~ /^(.+)\.(.+)$/ ? ($1,$2)
     : (undef,$source->name);
   while (my $col = shift @pri) {
-    my $info = $dbh->column_info(undef,$schema,$table,$col)->fetchrow_arrayref;
-    if (defined $info->[12] and $info->[12] =~
+    my $info = $dbh->column_info(undef,$schema,$table,$col)->fetchrow_hashref;
+    if (defined $info->{COLUMN_DEF} and $info->{COLUMN_DEF} =~
       /^nextval\(+'([^']+)'::(?:text|regclass)\)/)
     {
-      return $1; # may need to strip quotes -- see if this works
+	my $seq = $1;
+      return $seq =~ /\./ ? $seq : $info->{TABLE_SCHEM} . "." . $seq; # may need to strip quotes -- see if this works
     }
   }
 }
@@ -33,6 +40,8 @@ sub get_autoinc_seq {
 sub sqlt_type {
   return 'PostgreSQL';
 }
+
+sub datetime_parser_type { return "DateTime::Format::Pg"; }
 
 1;
 

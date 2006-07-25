@@ -4,11 +4,37 @@ DBIx::Class::Manual::Glossary - Clarification of terms used.
 
 =head1 INTRODUCTION
 
-This document lists various terms used in DBIx::Class and attempts to explain them.
+This document lists various terms used in DBIx::Class and attempts to
+explain them.
 
 =head1 TERMS
 
+=head2 Inflation
+
+The act of turning database row data into objects in
+language-space. DBIx::Class further allows you to inflate your data
+into perl objects which more usefully represent their contents. For
+example: L<DBIx::Class::InflateColumn::DateTime> for datetime or
+timestamp column data.
+
+=head2 Join
+
+This is an SQL keyword that gets mentioned a lot. It is used to fetch
+data from more than one table at once, by C<join>ing the tables on
+fields where they have common data.
+
+=head2 Normalisation
+
+A normalised database is a sane database. Each table contains only
+data belonging to one concept, related tables refer to the key field
+or fields of each other. Some links to webpages about normalisation
+can be found in L<DBIx::Class::Manual::FAQ|the FAQ>.
+
 =head2 ORM
+
+Object-relational mapping, or Object-relationship modelling. Either
+way it's a method of mapping the contents of database tables (rows),
+to objects in programming-language-space. DBIx::Class is an ORM.
 
 =head2 ResultSet
 

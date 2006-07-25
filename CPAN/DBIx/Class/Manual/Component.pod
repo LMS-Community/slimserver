@@ -90,6 +90,8 @@ L<DBIx::Class::FormTools> - Build forms with multiple interconnected objects.
 
 L<DBIx::Class::HTMLWidget> - Like FromForm but with DBIx::Class and HTML::Widget.
 
+L<DBIx::Class::Ordered> - Modify the position of objects in an ordered list.
+
 L<DBIx::Class::PK::Auto> - Retrieve automatically created primary keys upon insert.
 
 L<DBIx::Class::QueriesTime> - Display the amount of time it takes to run queries.

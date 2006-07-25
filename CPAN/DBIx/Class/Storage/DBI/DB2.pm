@@ -21,6 +21,8 @@ sub last_insert_id
                          
 }
 
+sub datetime_parser_type { "DateTime::Format::DB2"; }
+
 1;
 
 =head1 NAME

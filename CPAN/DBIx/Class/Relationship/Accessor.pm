@@ -48,6 +48,7 @@ sub add_relationship_accessor {
     );
   } elsif ($acc_type eq 'multi') {
     $meth{$rel} = sub { shift->search_related($rel, @_) };
+    $meth{"${rel}_rs"} = sub { shift->search_related_rs($rel, @_) };
     $meth{"add_to_${rel}"} = sub { shift->create_related($rel, @_); };
   } else {
     $class->throw_exception("No such relationship accessor type $acc_type");

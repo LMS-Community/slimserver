@@ -29,7 +29,7 @@ __END__
 
     # in a table class definition
     __PACKAGE__->load_components(qw/Serialize::Storable/);
-    
+
     # meanwhile, in a nearby piece of code
     my $cd = $schema->resultset('CD')->find(12);
     # if the cache uses Storable, this will work automatically
@@ -40,6 +40,22 @@ __END__
 This component adds hooks for Storable so that row objects can be
 serialized. It assumes that your row object class (C<result_class>) is
 the same as your table class, which is the normal situation.
+
+=head1 HOOKS
+
+The following hooks are defined for L<Storable> - see the
+documentation for L<Storable/Hooks> for detailed information on these
+hooks.
+
+=head2 STORABLE_freeze
+
+The serializing hook, called on the object during serialization. It
+can be inherited, or defined in the class itself, like any other
+method.
+
+=head2 STORABLE_thaw
+
+The deserializing hook called on the object during deserialization.
 
 =head1 AUTHORS
 

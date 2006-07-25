@@ -12,7 +12,7 @@ __PACKAGE__->load_components(qw/AccessorGroup/);
 
 __PACKAGE__->mk_group_accessors('simple' => qw/_ordered_columns
   _columns _primaries _unique_constraints name resultset_attributes
-  schema from _relationships/);
+  schema from _relationships source_name/);
 
 __PACKAGE__->mk_group_accessors('component_class' => qw/resultset_class
   result_class/);
@@ -29,6 +29,16 @@ A ResultSource is a component of a schema from which results can be directly
 retrieved, most usually a table (see L<DBIx::Class::ResultSource::Table>)
 
 =head1 METHODS
+
+=pod
+
+=head2 new
+
+  $class->new();
+
+  $class->new({attribute_name => value});
+
+Creates a new ResultSource object.  Not normally called directly by end users.
 
 =cut
 
@@ -127,7 +137,7 @@ Convenience alias to add_columns.
 sub add_columns {
   my ($self, @cols) = @_;
   $self->_ordered_columns(\@cols) unless $self->_ordered_columns;
-  
+
   my @added;
   my $columns = $self->_columns;
   while (my $col = shift @cols) {
@@ -176,13 +186,15 @@ sub column_info {
   {
     $self->{_columns_info_loaded}++;
     my $info;
+    my $lc_info;
     # eval for the case of storage without table
-    eval { $info = $self->storage->columns_info_for($self->from) };
+    eval { $info = $self->storage->columns_info_for( $self->from, keys %{$self->_columns} ) };
     unless ($@) {
+      for my $realcol ( keys %{$info} ) {
+        $lc_info->{lc $realcol} = $info->{$realcol};
+      }
       foreach my $col ( keys %{$self->_columns} ) {
-        foreach my $i ( keys %{$info->{$col}} ) {
-            $self->_columns->{$col}{$i} = $info->{$col}{$i};
-        }
+        $self->_columns->{$col} = { %{ $self->_columns->{$col}}, %{$info->{$col} || $lc_info->{lc $col}} };
       }
     }
   }
@@ -204,6 +216,41 @@ sub columns {
   ) if (@_ > 1);
   return @{$self->{_ordered_columns}||[]};
 }
+
+=head2 remove_columns
+
+  $table->remove_columns(qw/col1 col2 col3/);
+
+Removes columns from the result source.
+
+=head2 remove_column
+
+  $table->remove_column('col');
+
+Convenience alias to remove_columns.
+
+=cut
+
+sub remove_columns {
+  my ($self, @cols) = @_;
+
+  return unless $self->_ordered_columns;
+
+  my $columns = $self->_columns;
+  my @remaining;
+
+  foreach my $col (@{$self->_ordered_columns}) {
+    push @remaining, $col unless grep(/$col/, @cols);
+  }
+
+  foreach (@cols) {
+    undef $columns->{$_};
+  };
+
+  $self->_ordered_columns(\@remaining);
+}
+
+*remove_column = \&remove_columns;
 
 =head2 set_primary_key
 
@@ -248,19 +295,31 @@ sub primary_columns {
 =head2 add_unique_constraint
 
 Declare a unique constraint on this source. Call once for each unique
-constraint. Unique constraints are used when you call C<find> on a
-L<DBIx::Class::ResultSet>. Only columns in the constraint are searched,
-for example:
+constraint.
 
   # For UNIQUE (column1, column2)
   __PACKAGE__->add_unique_constraint(
     constraint_name => [ qw/column1 column2/ ],
   );
 
+Alternatively, you can specify only the columns:
+
+  __PACKAGE__->add_unique_constraint([ qw/column1 column2/ ]);
+
+This will result in a unique constraint named C<table_column1_column2>, where
+C<table> is replaced with the table name.
+
+Unique constraints are used, for example, when you call
+L<DBIx::Class::ResultSet/find>. Only columns in the constraint are searched.
+
 =cut
 
 sub add_unique_constraint {
-  my ($self, $name, $cols) = @_;
+  my $self = shift;
+  my $cols = pop @_;
+  my $name = shift;
+
+  $name ||= $self->name_unique_constraint($cols);
 
   foreach my $col (@$cols) {
     $self->throw_exception("No such column $col on table " . $self->name)
@@ -272,6 +331,22 @@ sub add_unique_constraint {
   $self->_unique_constraints(\%unique_constraints);
 }
 
+=head2 name_unique_constraint
+
+Return a name for a unique constraint containing the specified columns. These
+names consist of the table name and each column name, separated by underscores.
+
+For example, a constraint on a table named C<cd> containing the columns
+C<artist> and C<title> would result in a constraint name of C<cd_artist_title>.
+
+=cut
+
+sub name_unique_constraint {
+  my ($self, $cols) = @_;
+
+  return join '_', $self->name, @$cols;
+}
+
 =head2 unique_constraints
 
 Read-only accessor which returns the list of unique constraints on this source.
@@ -280,6 +355,38 @@ Read-only accessor which returns the list of unique constraints on this source.
 
 sub unique_constraints {
   return %{shift->_unique_constraints||{}};
+}
+
+=head2 unique_constraint_names
+
+Returns the list of unique constraint names defined on this source.
+
+=cut
+
+sub unique_constraint_names {
+  my ($self) = @_;
+
+  my %unique_constraints = $self->unique_constraints;
+
+  return keys %unique_constraints;
+}
+
+=head2 unique_constraint_columns
+
+Returns the list of columns that make up the specified unique constraint.
+
+=cut
+
+sub unique_constraint_columns {
+  my ($self, $constraint_name) = @_;
+
+  my %unique_constraints = $self->unique_constraints;
+
+  $self->throw_exception(
+    "Unknown unique constraint $constraint_name on '" . $self->name . "'"
+  ) unless exists $unique_constraints{$constraint_name};
+
+  return @{ $unique_constraints{$constraint_name} };
 }
 
 =head2 from
@@ -342,11 +449,11 @@ the SQL command immediately before C<JOIN>.
 
 An arrayref containing a list of accessors in the foreign class to proxy in
 the main class. If, for example, you do the following:
-  
+
   CD->might_have(liner_notes => 'LinerNotes', undef, {
     proxy => [ qw/notes/ ],
   });
-  
+
 Then, assuming LinerNotes has an accessor named notes, you can do:
 
   my $cd = CD->find(1);
@@ -386,10 +493,7 @@ sub add_relationship {
 
   my $f_source = $self->schema->source($f_source_name);
   unless ($f_source) {
-    eval "require $f_source_name;";
-    if ($@) {
-      die $@ unless $@ =~ /Can't locate/;
-    }
+    $self->ensure_class_loaded($f_source_name);
     $f_source = $f_source_name->result_source;
     #my $s_class = ref($self->schema);
     #$f_source_name =~ m/^${s_class}::(.*)$/;
@@ -451,6 +555,113 @@ Returns true if the source has a relationship of this name, false otherwise.
 sub has_relationship {
   my ($self, $rel) = @_;
   return exists $self->_relationships->{$rel};
+}
+
+=head2 reverse_relationship_info
+
+=over 4
+
+=item Arguments: $relname
+
+=back
+
+Returns an array of hash references of relationship information for
+the other side of the specified relationship name.
+
+=cut
+
+sub reverse_relationship_info {
+  my ($self, $rel) = @_;
+  my $rel_info = $self->relationship_info($rel);
+  my $ret = {};
+
+  return $ret unless ((ref $rel_info->{cond}) eq 'HASH');
+
+  my @cond = keys(%{$rel_info->{cond}});
+  my @refkeys = map {/^\w+\.(\w+)$/} @cond;
+  my @keys = map {$rel_info->{cond}->{$_} =~ /^\w+\.(\w+)$/} @cond;
+
+  # Get the related result source for this relationship
+  my $othertable = $self->related_source($rel);
+
+  # Get all the relationships for that source that related to this source
+  # whose foreign column set are our self columns on $rel and whose self
+  # columns are our foreign columns on $rel.
+  my @otherrels = $othertable->relationships();
+  my $otherrelationship;
+  foreach my $otherrel (@otherrels) {
+    my $otherrel_info = $othertable->relationship_info($otherrel);
+
+    my $back = $othertable->related_source($otherrel);
+    next unless $back->name eq $self->name;
+
+    my @othertestconds;
+
+    if (ref $otherrel_info->{cond} eq 'HASH') {
+      @othertestconds = ($otherrel_info->{cond});
+    }
+    elsif (ref $otherrel_info->{cond} eq 'ARRAY') {
+      @othertestconds = @{$otherrel_info->{cond}};
+    }
+    else {
+      next;
+    }
+
+    foreach my $othercond (@othertestconds) {
+      my @other_cond = keys(%$othercond);
+      my @other_refkeys = map {/^\w+\.(\w+)$/} @other_cond;
+      my @other_keys = map {$othercond->{$_} =~ /^\w+\.(\w+)$/} @other_cond;
+      next if (!$self->compare_relationship_keys(\@refkeys, \@other_keys) ||
+               !$self->compare_relationship_keys(\@other_refkeys, \@keys));
+      $ret->{$otherrel} =  $otherrel_info;
+    }
+  }
+  return $ret;
+}
+
+=head2 compare_relationship_keys
+
+=over 4
+
+=item Arguments: $keys1, $keys2
+
+=back
+
+Returns true if both sets of keynames are the same, false otherwise.
+
+=cut
+
+sub compare_relationship_keys {
+  my ($self, $keys1, $keys2) = @_;
+
+  # Make sure every keys1 is in keys2
+  my $found;
+  foreach my $key (@$keys1) {
+    $found = 0;
+    foreach my $prim (@$keys2) {
+      if ($prim eq $key) {
+        $found = 1;
+        last;
+      }
+    }
+    last unless $found;
+  }
+
+  # Make sure every key2 is in key1
+  if ($found) {
+    foreach my $prim (@$keys2) {
+      $found = 0;
+      foreach my $key (@$keys1) {
+        if ($prim eq $key) {
+          $found = 1;
+          last;
+        }
+      }
+      last unless $found;
+    }
+  }
+
+  return $found;
 }
 
 =head2 resolve_join
@@ -723,6 +934,26 @@ sub resultset {
     $self, $self->{resultset_attributes}
   );
 }
+
+=head2 source_name
+
+=over 4
+
+=item Arguments: $source_name
+
+=back
+
+Set the name of the result source when it is loaded into a schema.
+This is usefull if you want to refer to a result source by a name other than
+its class name.
+
+  package ArchivedBooks;
+  use base qw/DBIx::Class/;
+  __PACKAGE__->table('books_archive');
+  __PACKAGE__->source_name('Books');
+
+  # from your schema...
+  $schema->resultset('Books')->find(1);
 
 =head2 throw_exception
 

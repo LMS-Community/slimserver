@@ -91,6 +91,16 @@ sub _create_ID {
     map { $_ . '=' . $vals{$_} } sort keys %vals;
 }
 
+=head2 ident_condition
+
+  my $cond = $result_source->ident_condition();
+
+  my $cond = $result_source->ident_condition('alias');
+
+Produces a condition hash to locate a row based on the primary key(s).
+
+=cut
+
 sub ident_condition {
   my ($self, $alias) = @_;
   my %cond;

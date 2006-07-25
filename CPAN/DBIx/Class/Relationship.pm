@@ -118,6 +118,19 @@ instead of a join condition hash, that is used as the name of the column
 holding the foreign key. If $cond is not given, the relname is used as
 the column name.
 
+If the relationship is optional - ie the column containing the foreign
+key can be NULL - then the belongs_to relationship does the right
+thing - so in the example above C<$obj->author> would return C<undef>.
+However in this case you would probably want to set the C<join_type>
+attribute so that a C<LEFT JOIN> is done, which makes complex
+resultsets involving C<join> or C<prefetch> operations work correctly.
+The modified declaration is shown below:-
+
+  # in a Book class (where Author has many Books)
+  __PACKAGE__->belongs_to(author => 'My::DBIC::Schema::Author',
+                          'author', {join_type => 'left'});
+
+
 Cascading deletes are off per default on a C<belongs_to> relationship, to turn
 them on, pass C<< cascade_delete => 1 >> in the $attr hashref.
 
@@ -134,6 +147,8 @@ of C<has_a>.
     { prefetch => [qw/book/],
   });
   my @book_objs = $obj->books;
+  my $books_rs = $obj->books;
+  ( $books_rs ) = $obj->books_rs;
 
   $obj->add_to_books(\%col_data);
 
@@ -142,9 +157,14 @@ foreign class store the calling class's primary key in one (or more) of its
 columns. You should pass the name of the column in the foreign class as the
 $cond argument, or specify a complete join condition.
 
-As well as the accessor method, a method named C<< add_to_<relname> >>
-will also be added to your Row items, this allows you to insert new
-related items, using the same mechanism as in L<DBIx::Class::Relationship::Base/"create_related">.
+Three methods are created when you create a has_many relationship.  The first
+method is the expected accessor method.  The second is almost exactly the same
+as the accessor method but "_rs" is added to the end of the method name.  This
+method works just like the normal accessor, except that it returns a resultset
+no matter what, even in list context. The third method, named
+C<< add_to_<relname> >>, will also be added to your Row items, this allows
+you to insert new related items, using the same mechanism as in
+L<DBIx::Class::Relationship::Base/"create_related">.
 
 If you delete an object in a class with a C<has_many> relationship, all
 the related objects will be deleted as well. However, any database-level
@@ -180,6 +200,12 @@ left join.
 
 =head2 many_to_many
 
+=over 4
+
+=item Arguments: $accessor_name, $link_rel_name, $foreign_rel_name
+
+=back
+
   My::DBIC::Schema::Actor->has_many( actor_roles =>
                                      'My::DBIC::Schema::ActorRoles',
                                      'actor' );
@@ -191,13 +217,10 @@ left join.
   My::DBIC::Schema::Actor->many_to_many( roles => 'actor_roles',
                                          'role' );
 
-  ...
+Creates a accessors bridging two relationships; not strictly a relationship in
+its own right, although the accessor will return a resultset or collection of
+objects just as a has_many would.
 
-  my @role_objs = $actor->roles;
-
-Creates an accessor bridging two relationships; not strictly a relationship
-in its own right, although the accessor will return a resultset or collection
-of objects just as a has_many would.
 To use many_to_many, existing relationships from the original table to the link
 table, and from the link table to the end table must already exist, these
 relation names are then used in the many_to_many call.

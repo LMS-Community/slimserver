@@ -7,6 +7,66 @@ DBIx::Class::Manual::Intro - Introduction to DBIx::Class
 So, you are bored with SQL, and want a native Perl interface for your
 database?  Or you've been doing this for a while with L<Class::DBI>,
 and think there's a better way?  You've come to the right place.
+
+=head1 THE DBIx::Class WAY
+
+Here are a few simple tips that will help you get your bearings 
+with DBIx::Class.  
+
+=head2 Tables become ResultSources
+
+DBIx::Class needs to know what your Table structure looks like.  You do that
+by defining L<DBIx::Class::ResultSource>s.  Each table get's a ResultSource,
+which defines the Columns it has, along with any Relationships it has to
+other tables.  (And oh, so much more besides)  The important thing to 
+understand:
+  
+  A ResultSource == Table
+  
+(most of the time, but just bear with my simplification)
+
+=head2 It's all about the ResultSet
+
+So, we've got some ResultSources defined.  Now, we want to actually use 
+those definitions to help us translate the queries we need into
+handy perl objects!  
+
+Let's say we defined a ResultSource for an "album" table with three 
+columns: "albumid", "artist", and "title".  Any time we want to query
+this table, we'll be creating a L<DBIx::Class::ResultSet> from it's
+ResultSource.  For example, the results of:
+
+    SELECT albumid, artist, title FROM album;
+    
+Would be retrieved by creating a ResultSet object from the album
+table's ResultSource, likely by using the "search" method.  
+
+DBIx::Class doesn't limit you to creating only simple ResultSets --
+if you wanted to do something like:
+
+    SELECT title FROM album GROUP BY title;
+   
+You could easily achieve it. 
+
+The important thing to understand: 
+
+   Any time you would reach for a SQL query in DBI, you are 
+   creating a DBIx::Class::ResultSet.
+
+=head2 Search is like "prepare"
+
+DBIx::Class tends to wait until it absolutely must fetch information
+from the database.  If you are returning a ResultSet, the query won't
+execute until you use a method that wants to access the data. (Such
+as "next", or "first")
+
+The important thing to understand:
+
+   Setting up a ResultSet does not execute the query; retrieving
+   the data does.
+
+=head1 SETTING UP DBIx::Class
+
 Let's look at how you can set and use your first native L<DBIx::Class>
 tree.
 
@@ -124,7 +184,6 @@ that contain this tables foreign key in one of their columns:
 More information about the various types of relationships available, and
 how you can design your own, can be found in L<DBIx::Class::Relationship>.
 
-
 =head2 Using L<DBIx::Class::Schema::Loader>
 
 This is an external module, and not part of the L<DBIx::Class>
@@ -135,26 +194,20 @@ Here's a simple setup:
   package My::Schema;
   use base qw/DBIx::Class::Schema::Loader/;
 
-  __PACKAGE__->load_from_connection(
-    connect_info = [ 'dbi:SQLite:/home/me/myapp/my.db' ]
-  );
+  __PACKAGE__->loader_options( relationships => 1 );
 
   1;
 
-This should be equivalent to the manual setup in the section above.
+The actual autoloading process will occur when you create a connected
+instance of your schema below.
+
 L<DBIx::Class::Schema::Loader> takes lots of other options.  For more
 information, consult its documentation.
 
 =head2 Connecting
 
-L<DBIx::Class::Schema::Loader> already contains the connection info for the
-database, so to get started all you need to do is create an instance of your
-class:
-
-  my $schema = My::Schema->new();
-
-To connect to your manually created Schema, you also need to provide the
-connection details:
+To connect to your Schema, you also need to provide the connection details.
+The arguments are the same as you would use for L<DBI/connect>:
 
   my $schema = My::Schema->connect('dbi:SQLite:/home/me/myapp/my.db');
 
@@ -166,9 +219,19 @@ a second database you want to access:
 Note that L<DBIx::Class::Schema> does not cache connections for you. If you
 use multiple connections, you need to do this manually.
 
-To execute some sql statements on every connect you can pass them to your schema after the connect:
+To execute some sql statements on every connect you can add them as an option
+in a special fifth argument to connect, like so:
 
-  $schema->storage->on_connect_do(\@on_connect_sql_statments);
+  my $another_schema = My::Schema->connect(
+      $dsn,
+      $user,
+      $password,
+      $attrs,
+      { on_connect_do => \@on_connect_sql_statments }
+  );
+
+For more information about this and other special C<connect()>-time options,
+see L<DBIx::Class::Schema::Storage::DBI/connect_info>.
 
 =head2 Basic usage
 

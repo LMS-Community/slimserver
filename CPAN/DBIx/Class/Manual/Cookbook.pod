@@ -401,6 +401,24 @@ SQL statements:
   my $tag = $rs->first;
   print $tag->cd->artist->name;
 
+=head2 Using relationships
+
+=head3 Create a new row in a related table
+
+  my $book->create_related('author', { name => 'Fred'});
+
+=head3 Search in a related table
+
+Only searches for books named 'Titanic' by the author in $author.
+
+  my $author->search_related('books', { name => 'Titanic' });
+
+=head3 Delete data in a related table
+
+Deletes only the book named Titanic by the author in $author.
+
+  my $author->delete_related('books', { name => 'Titanic' });
+
 =head2 Transactions
 
 As of version 0.04001, there is improved transaction support in
@@ -409,24 +427,22 @@ example of the recommended way to use it:
 
   my $genus = $schema->resultset('Genus')->find(12);
 
-  my $coderef1 = sub {
-    my ($schema, $genus, $code) = @_;
-    $genus->add_to_species({ name => 'troglodyte' });
-    $genus->wings(2);
-    $genus->update;
-    $schema->txn_do($code, $genus); # Can have a nested transaction
-    return $genus->species;
-  };
-
   my $coderef2 = sub {
-    my ($genus) = @_;
     $genus->extinct(1);
     $genus->update;
   };
 
+  my $coderef1 = sub {
+    $genus->add_to_species({ name => 'troglodyte' });
+    $genus->wings(2);
+    $genus->update;
+    $schema->txn_do($coderef2); # Can have a nested transaction
+    return $genus->species;
+  };
+
   my $rs;
   eval {
-    $rs = $schema->txn_do($coderef1, $schema, $genus, $coderef2);
+    $rs = $schema->txn_do($coderef1);
   };
 
   if ($@) {                             # Transaction failed
@@ -718,11 +734,11 @@ redispatches your call to store_column to the superclass(es).
 
 You might have a class C<Artist> which has many C<CD>s.  Further, you
 want to create a C<CD> object every time you insert an C<Artist> object.
-You can accomplish this by overriding C<insert>:
+You can accomplish this by overriding C<insert> on your objects:
 
   sub insert {
-    my ( $class, $args_ref ) = @_;
-    my $self = $class->next::method($args_ref);
+    my ( $self, @args ) = @_;
+    $self->next::method(@args);
     $self->cds->new({})->fill_from_artist($self)->insert;
     return $self;
   }
@@ -762,7 +778,7 @@ dumping it. For example,
 
   use Data::Dumper;
 
-  $Data::Dumper::Freezer = '_dumper_hook';
+  local $Data::Dumper::Freezer = '_dumper_hook';
 
   my $cd = $schema->resultset('CD')->find(1);
   print Dumper($cd);
@@ -784,6 +800,66 @@ It is possible to get a Schema object from a row object like so,
 
 This can be useful when you don't want to pass around a Schema object to every
 method.
+
+=head2 Profiling
+
+When you enable L<DBIx::Class::Storage::DBI>'s debugging it prints the SQL
+executed as well as notifications of query completion and transaction
+begin/commit.  If you'd like to profile the SQL you can subclass the
+L<DBIx::Class::Storage::Statistics> class and write your own profiling
+mechanism:
+
+  package My::Profiler;
+  use strict;
+
+  use base 'DBIx::Class::Storage::Statistics';
+
+  use Time::HiRes qw(time);
+
+  my $start;
+
+  sub query_start {
+    my $self = shift();
+    my $sql = shift();
+    my $params = @_;
+
+    print "Executing $sql: ".join(', ', @params)."\n";
+    $start = time();
+  }
+
+  sub query_end {
+    my $self = shift();
+    my $sql = shift();
+    my @params = @_;
+
+    printf("Execution took %0.4f seconds.\n", time() - $start);
+    $start = undef;
+  }
+
+  1;
+
+You can then install that class as the debugging object:
+
+  __PACKAGE__->storage()->debugobj(new My::Profiler());
+  __PACKAGE__->storage()->debug(1);
+
+A more complicated example might involve storing each execution of SQL in an
+array:
+
+  sub query_end {
+    my $self = shift();
+    my $sql = shift();
+    my @params = @_;
+
+    my $elapsed = time() - $start;
+    push(@{ $calls{$sql} }, {
+        params => \@params,
+        elapsed => $elapsed
+    });
+  }
+
+You could then create average, high and low execution times for an SQL
+statement and dig down to see if certain parameters cause aberrant behavior.
 
 =head2 Getting the value of the primary key for the last database insert
 

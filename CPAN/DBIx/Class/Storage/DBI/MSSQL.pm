@@ -5,28 +5,38 @@ use warnings;
 
 use base qw/DBIx::Class::Storage::DBI/;
 
-# __PACKAGE__->load_components(qw/PK::Auto/);
-
 sub last_insert_id {
   my( $id ) = $_[0]->_dbh->selectrow_array('SELECT @@IDENTITY' );
   return $id;
+}
+
+sub build_datetime_parser {
+  my $self = shift;
+  my $type = "DateTime::Format::Strptime";
+  eval "use ${type}";
+  $self->throw_exception("Couldn't load ${type}: $@") if $@;
+  return $type->new( pattern => '%m/%d/%Y %H:%M:%S' );
 }
 
 1;
 
 =head1 NAME
 
-DBIx::Class::Storage::DBI::MSSQL - Automatic primary key class for MSSQL
+DBIx::Class::Storage::DBI::MSSQL - Storage::DBI subclass for MSSQL
 
 =head1 SYNOPSIS
 
-  # In your table classes
-  __PACKAGE__->load_components(qw/PK::Auto Core/);
-  __PACKAGE__->set_primary_key('id');
+This subclass supports MSSQL, and can in theory be used directly
+via the C<storage_type> mechanism:
 
-=head1 DESCRIPTION
+  $schema->storage_type('::DBI::MSSQL');
+  $schema->connect_info('dbi:....', ...);
 
-This class implements autoincrements for MSSQL.
+However, as there is no L<DBD::MSSQL>, you will probably want to use
+one of the other DBD-specific MSSQL classes, such as
+L<DBIx::Class::Storage::DBI::Sybase::MSSQL>.  These classes will
+merge this class with a DBD-specific class to obtain fully
+correct behavior for your scenario.
 
 =head1 AUTHORS
 

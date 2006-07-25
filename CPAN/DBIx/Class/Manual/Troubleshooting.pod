@@ -10,12 +10,12 @@ you got back from connect().
 
 =head2 Tracing SQL
 
-The C<DBIX_CLASS_STORAGE_DBI_DEBUG> environment variable controls
+The C<DBIC_TRACE> environment variable controls
 SQL tracing, so to see what is happening try
 
-  export DBIX_CLASS_STORAGE_DBI_DEBUG=1
+  export DBIC_TRACE=1
 
-Alternatively use the C<storage->debug> class method:-
+Alternatively use the C<< storage->debug >> class method:-
 
   $class->storage->debug(1);
 
@@ -25,7 +25,7 @@ To send the output somewhere else set debugfh:-
 
 Alternatively you can do this with the environment variable too:-
 
-  export DBIX_CLASS_STORAGE_DBI_DEBUG="1=/tmp/trace.out"
+  export DBIC_TRACE="1=/tmp/trace.out"
 
 =head2 Can't locate method result_source_instance
 

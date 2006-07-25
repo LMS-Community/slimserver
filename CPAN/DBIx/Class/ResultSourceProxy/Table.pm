@@ -50,6 +50,7 @@ sub table {
           %{$class->result_source_instance} : (),
         name => $table,
         result_class => $class,
+        source_name => undef,
     });
   }
   $class->mk_classdata('result_source_instance' => $table);

@@ -8,9 +8,13 @@ sub new { die "Virtual method!" }
 sub debug { die "Virtual method!" }
 sub debugcb { die "Virtual method!" }
 sub debugfh { die "Virtual method!" }
+sub debugobj { die "Virtual method!" }
+sub cursor { die "Virtual method!" }
 sub disconnect { die "Virtual method!" }
 sub connected { die "Virtual method!" }
 sub ensure_connected { die "Virtual method!" }
+sub on_connect_do { die "Virtual method!" }
+sub connect_info { die "Virtual method!" }
 sub sql_maker { die "Virtual method!" }
 sub txn_begin { die "Virtual method!" }
 sub txn_commit { die "Virtual method!" }

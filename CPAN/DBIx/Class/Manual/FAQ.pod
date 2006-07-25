@@ -1,0 +1,316 @@
+=head1 NAME
+
+DBIx::Class::Manual::FAQ - Frequently Asked Questions (in theory)
+
+=head1 DESCRIPTION
+
+This document is intended as an anti-map of the documentation. If you
+know what you want to do, but not how to do it in L<DBIx::Class>, then
+look here. It does B<not> contain much code or examples, it just gives
+explanations and pointers to the correct pieces of documentation to
+read.
+
+=head1 FAQs
+
+How Do I:
+
+=head2 Getting started
+
+=over 4
+
+=item .. create a database to use?
+
+First, choose a database. For testing/experimenting, we reccommend
+L<DBD::SQLite>, which is a self-contained small database. (i.e. all
+you need to do is to install the DBD from CPAN, and it's usable).
+
+Next, spend some time defining which data you need to store, and how
+it relates to the other data you have. For some help on normalisation,
+go to L<http://b62.tripod.com/doc/dbbase.htm> or
+L<http://209.197.234.36/db/simple.html>.
+
+Now, decide whether you want to have the database itself be the
+definitive source of information about the data layout, or your
+DBIx::Class schema. If it's the former, look up the documentation for
+your database, eg. L<http://sqlite.org/lang_createtable.html>, on how
+to create tables, and start creating them. For a nice universal
+interface to your database, you can try L<DBI::Shell>. If you decided
+on the latter choice, read the FAQ on setting up your classes
+manually, and the one on creating tables from your schema.
+
+=item .. use DBIx::Class with L<Catalyst>?
+
+Install L<Catalyst::Model::DBIC::Schema> from CPAN. See it's
+documentation, or below, for further details.
+
+=item .. set up my DBIx::Class classes automatically from my database?
+
+Install L<DBIx::Class::Schema::Loader> from CPAN, and read it's documentation. 
+
+=item .. set up my DBIx::Class classes manually?
+
+Look at the L<DBIx::Class::Manual::Example>, come back here if you get lost.
+
+=item .. create my database tables from my DBIx::Class schema?
+
+Create your classes manually, as above. Write a script that calls
+L<DBIx::Class::Schema/deploy>. See there for details, or the
+L<DBIx::Class::Manual::Cookbook>.
+
+=item .. connect to my database?
+
+Once you have created all the appropriate table/source classes, and an
+overall L<Schema|DBIx::Class::Schema> class, you can start using
+them in an application. To do this, you need to create a central
+Schema object, which is used to access all the data in the various
+tables. See L<DBIx::Class::Schema/connect> for details. The actual
+connection does not happen until you actually request data, so don't
+be alarmed if the error from incorrect connection details happens a
+lot later.
+
+
+=back 
+
+=head2 Relationships
+
+=over 4
+
+=item .. tell DBIx::Class about relationships between my tables?
+
+There are a vareity of relationship types that come pre-defined for you to use. These are all listed in L<DBIx::Class::Relationship>. If you need a non-standard type, or more information, look in L<DBIx::Class::Relationship::Base>.
+
+=item .. define a one-to-many relationship?
+
+This is called a C<has_many> relationship on the one side, and a C<belongs_to> relationship on the many side. Currently these need to be set up individually on each side. See L<DBIx::Class::Relationship> for details.
+
+=item .. define a relationship where this table contains another table's primary key? (foreign key)
+
+Create a C<belongs_to> relationship for the field containing the foreign key. L<DBIx::Class::Relationship/belongs_to>.
+
+=item .. define a foreign key relationship where the key field may contain NULL?  
+
+Just create a C<belongs_to> relationship, as above. If
+the column is NULL then the inflation to the foreign object will not
+happen. This has a side effect of not always fetching all the relevant
+data, if you use a nullable foreign-key relationship in a JOIN, then
+you probably want to set the join_type to 'left'.
+
+=item .. define a relationship where the key consists of more than one column?
+
+Instead of supplying a single column name, all relationship types also
+allow you to supply a hashref containing the condition across which
+the tables are to be joined. The condition may contain as many fields
+as you like. See L<DBIx::Class::Relationship::Base>.
+
+=item .. define a relatiopnship across an intermediate table? (many-to-many)
+
+Read the documentation on L<DBIx::Class::Relationship/many_to_many>.
+
+=item .. stop DBIx::Class from attempting to cascade deletes on my has_many relationships?
+
+By default, DBIx::Class cascades deletes and updates across
+C<has_many> relationships. If your database already does this (and
+probably better), turn it off by supplying C<< cascade_delete => 0 >> in
+the relationship attributes. See L<DBIx::Class::Relationship::Base>.
+
+=item .. use a relationship?
+
+Use it's name. An accessor is created using the name. See examples in L<DBIx::Class::Manual::Cookbook/Using relationships>.
+
+=back
+
+=head2 Searching
+
+=over 4
+
+=item .. search for data?
+
+Create a C<$schema> object, as mentioned above in ".. connect to my
+database". Find the
+L<ResultSet|DBIx::Class::Manual::Glossary/ResultSet> that you want
+to search in, and call C<search> on it. See
+L<DBIx::Class::ResultSet/search>.
+
+=item .. search using database functions?
+
+Supplying something like:
+
+ ->search({'mydatefield' => 'now()'})
+
+to search, will probably not do what you expect. It will quote the
+text "now()", instead of trying to call the function. To provide
+literal, unquoted text you need to pass in a scalar reference, like
+so:
+
+ ->search({'mydatefield' => \'now()'})
+
+=item .. sort the results of my search?
+
+Supply a list of columns you want to sort by, to the C<order_by>
+attribute, see L<DBIx::Class::ResultSet/order_by>.
+
+=item .. sort my results based on fields I've aliased using C<as>?
+
+You don't. You'll need to supply the same functions/expressions to
+C<order_by>, as you did to C<select>. 
+
+To get "fieldname AS alias" in your SQL, you'll need to supply a literal chunk of SQL in your C<select> attribute, such as:
+
+ ->search({}, { select => [ \'now() AS currenttime'] })
+
+Then you can use the alias in your C<order_by> attribute.
+
+=item .. group the results of my search?
+
+Supply a list of columns you want to group on, to the C<group_by>
+attribute, see L<DBIx::Class::ResultSet/group_by>.
+
+=item .. group my results based on fields I've aliased using C<as>?
+
+You don't. You'll need to supply the same functions/expressions to
+C<group_by>, as you did to C<select>.
+
+To get "fieldname AS alias" in your SQL, you'll need to supply a
+literal chunk of SQL in your C<select> attribute, such as:
+
+ ->search({}, { select => [ \'now() AS currenttime'] })
+
+Then you can use the alias in your C<group_by> attribute.
+
+=item .. filter the results of my search?
+
+The first argument to C<search> is a hashref of accessor names and
+values to filter them by, for example:
+
+ ->search({'created_time' => { '>=', '2006-06-01 00:00:00'} })
+
+Note that to use a function here you need to make the whole value into
+a scalar reference:
+
+ ->search({'created_time' => \'>= yesterday() })
+
+=item .. search in several tables simultaneously?
+
+To search in two related tables, you first need to set up appropriate
+relationships between their respective classes. When searching you
+then supply the name of the relationship to the C<join> attribute in
+your search, for example when searching in the Books table for all the
+books by the author "Fred Bloggs":
+
+ ->search({'authors.name' => 'Fred Bloggs'}, { join => 'authors'})
+
+The type of join created in your SQL depends on the type of
+relationship between the two tables, see L<DBIx::Class::Relationship>
+for the join used by each relationship.
+
+=item .. create joins with conditions other than column equality?
+
+Currently, L<DBIx::Class> can only create join conditions using
+equality, so you're probably better off creating a C<view> in your
+database, and using that as your source. A C<view> is a stored SQL query,
+which can be accessed similarly to a table, see your database
+documentation for details.
+
+=item .. search using greater-than or less-than and database functions?
+
+To use functions or literal SQL with conditions other than equality
+you need to supply the entire condition, for example:
+
+ my $interval = "< now() - interval '12 hours'";
+ ->search({last_attempt => \$interval})
+
+and not:
+
+ my $interval = "now() - interval '12 hours'";
+ ->search({last_attempt => { '<' => \$interval } })
+
+=item .. find more help on constructing searches?
+
+Behind the scenes, DBIx::Class uses L<SQL::Abstract> to help construct
+it's SQL searches. So if you fail to find help in the
+L<DBIx::Class::Manual::Cookbook>, try looking in the SQL::Abstract
+documentation.
+
+=back
+
+=head2 Fetching data
+
+=over 4
+
+=item .. fetch as much data as possible in as few select calls as possible? (prefetch)
+
+See the prefetch examples in the L<Cookbook|DBIx::Class::Manual::Cookbook>.
+
+=back
+
+=head2 Inserting and updating data
+
+=over 4
+
+=item .. insert a row with an auto incrementing primary key?
+
+In versions of L<DBIx::Class> less than 0.07, you need to ensure your
+table class loads the L<PK::Auto|DBIx::Class::PK::Auto>
+component. This will attempt to fetch the value of your primary key
+from the database after the insert has happened, and store it in the
+created object. In versions 0.07 and above, this component is
+automatically loaded.
+
+=item .. insert a row with a primary key that uses a sequence?
+
+You need to create a trigger in your database that updates your
+primary key field from the sequence. To help PK::Auto find your
+inserted key, you can tell it the name of the sequence in the
+C<column_info> supplied with C<add_columns>.
+
+ ->add_columns({ id => { sequence => 'mysequence' } });
+
+=item .. insert many rows of data efficiently?
+
+=item .. update a collection of rows at the same time?
+
+Create a resultset using a search, to filter the rows of data you
+would like to update, then call update on the resultset to change all
+the rows at once.
+
+=item .. use database functions when updating rows?
+
+=item .. update a column using data from another column?
+
+To stop the column name from being quoted, you'll need to supply a
+scalar reference:
+
+ ->update({ somecolumn => '\othercolumn'})
+
+=back
+
+=head2 Misc
+
+=over 4
+
+=item How do I store my own (non-db) data in my DBIx::Class objects?
+
+You can add your own data accessors to your classes.
+
+=item How do I use DBIx::Class objects in my TT templates?
+
+Like normal objects, mostly. However you need to watch out for TTs
+calling methods in list context, this means that when calling
+relationship accessors you will not get resultsets, but a list of all
+the related objects.
+
+=item See the SQL statements my code is producing?
+
+Turn on debugging! See L<DBIx::Class::Storage::DBI> for details of how
+to turn on debugging in the environment, pass your own filehandle to
+save debug to, or create your own callback.
+
+=item Why didn't my search run any SQL?
+
+L<DBIx::Class> runs the actual SQL statement as late as possible, thus
+if you create a resultset using C<search> in scalar context, no query
+is executed. You can create further resultset refinements by calling
+search again or relationship accessors. The SQL query is only run when
+you ask the resultset for an actual Row object.
+
+=back

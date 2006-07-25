@@ -14,6 +14,7 @@ sub count_literal    { shift->resultset_instance->count_literal(@_);    }
 sub find             { shift->resultset_instance->find(@_);             }
 sub create           { shift->resultset_instance->create(@_);           }
 sub find_or_create   { shift->resultset_instance->find_or_create(@_);   }
+sub find_or_new      { shift->resultset_instance->find_or_new(@_);      }
 sub update_or_create { shift->resultset_instance->update_or_create(@_); }
 
 1;
