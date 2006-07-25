@@ -255,14 +255,18 @@ sub init {
 
 		'create_mix' => sub  {
 			my $client = shift;
+			my $item   = shift;
 
 			my $Imports = Slim::Music::Import->importers;
-		
+
 			my @mixers = ();
-			
+
 			for my $import (keys %{$Imports}) {
-			
-				if (defined $Imports->{$import}->{'mixer'} && $Imports->{$import}->{'use'}) {
+
+				next if !$Imports->{$import}->{'mixer'};
+				next if !$Imports->{$import}->{'use'};
+
+				if ($import->mixable($item)) {
 					push @mixers, $import;
 				}
 			}
@@ -276,10 +280,10 @@ sub init {
 
 				# store existing browsedb params for use later.
 				my $params = {
-
 					'parentParams'    => $client->modeParameterStack(-1),
 					'listRef'         => \@mixers,
-					'stringExternRef' => 1,
+					'externRef'       => sub { return $_[0]->string($_[1]->title) },
+					'externRefArgs'   => 'CV',
 					'header'          => 'CREATE_MIX',
 					'headerAddCount'  => 1,
 					'stringHeader'    => 1,
@@ -580,21 +584,28 @@ sub browsedbOverlay {
 
 	# No overlay if the list is empty
 	if (!defined($item)) {
+
 		return (undef, undef);
-	}
-	# A text item generally means ALL_, so overlay an arrow
-	elsif (!ref($item)) {
+
+	} elsif (!ref($item)) {
+
+		# A text item generally means ALL_, so overlay an arrow
 		return (undef, Slim::Display::Display::symbol('rightarrow'));
-	}
-	# Music Magic is everywhere, MoodLogic doesn't exist on albums
-	elsif (($item->can('moodlogic_mixable') && $item->moodlogic_mixable()) || $item->musicmagic_mixable()) {
-		$overlay1 = Slim::Display::Display::symbol('mixable');
+
+	} else {
+		# Music Magic is everywhere, MoodLogic doesn't exist on albums
+		my $Imports = Slim::Music::Import->importers;
+
+		for my $import (keys %{$Imports}) {
+			if ($import->can('mixable') && $import->mixable($item)) {
+				$overlay1 = Slim::Display::Display::symbol('mixable');
+			}
+		}
 	}
 
 	if ($client->param('descend')) {
 		$overlay2 = Slim::Display::Display::symbol('rightarrow');
-	}
-	else {
+	} else {
 		$overlay2 = Slim::Display::Display::symbol('notesymbol');
 	}
 

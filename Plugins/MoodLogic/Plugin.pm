@@ -1,7 +1,9 @@
 package Plugins::MoodLogic::Plugin;
 
-#$Id$
+# $Id$
+
 use strict;
+use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -46,7 +48,6 @@ sub canUseMoodLogic {
 	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
 }
 
-
 sub shutdownPlugin {
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
@@ -68,7 +69,29 @@ sub shutdownPlugin {
 	
 	# set importer to not use
 	#Slim::Utils::Prefs::set('moodlogic', 0);
-	Slim::Music::Import->useImporter('MOODLOGIC',0);
+	Slim::Music::Import->useImporter('Plugins::MoodLogic::Plugin',0);
+}
+
+sub prefName {
+	my $class = shift;
+
+	return lc($class->title);
+}
+
+sub title {
+	my $class = shift;
+
+	return 'MOODLOGIC';
+}
+
+sub mixable {
+	my $class = shift;
+	my $item  = shift;
+	
+	if (blessed($item) && $item->can('moodlogic_mixable')) {
+
+		return $item->moodlogic_mixable;
+	}
 }
 
 sub initPlugin {
@@ -135,16 +158,18 @@ sub initPlugin {
 
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
+	
+	my $class = __PACKAGE__;
 
 	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
-	Slim::Music::Import->addImporter('MOODLOGIC', {
+	Slim::Music::Import->addImporter($class, {
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
 		'use'       => 1,
 	});
 
-	Slim::Music::Import->useImporter('MOODLOGIC',Slim::Utils::Prefs::get('moodlogic'));
+	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get($class->prefName));
 	addGroups();
 
 	Plugins::MoodLogic::InstantMix::init();
@@ -266,7 +291,7 @@ sub mixerlink {
 	if (canUseMoodLogic() && Slim::Utils::Prefs::get('moodlogic') && $form->{'levelName'} ne 'album') {
 		
 		#set up a moodlogic link
-		$form->{'mixerlinks'}{'MOODLOGIC'} = "plugins/MoodLogic/mixerlink.html";
+		$form->{'mixerlinks'}{Plugins::MoodLogic::Plugin->title()} = "plugins/MoodLogic/mixerlink.html";
 
 		#flag if mixable
 		if ($item->can('moodlogic_mixable') && $item->moodlogic_mixable) {

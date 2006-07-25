@@ -100,7 +100,7 @@ sub shutdownPlugin {
 	# set importer to not use, but only for this session.
 	# leave server pref as is to support reenabling the features, 
 	# without needing a forced rescan
-	#Slim::Music::Import->useImporter('MUSICMAGIC',0);
+	#Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin',0);
 }
 
 sub initPlugin {
@@ -152,19 +152,22 @@ sub initPlugin {
 
 		#checker($initialized);
 
+		my $class = __PACKAGE__;
+
 		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
-		Slim::Music::Import->addImporter('MUSICMAGIC', {
+		Slim::Music::Import->addImporter($class, {
 			'mixer'     => \&mixerFunction,
 			'setup'     => \&addGroups,
 			'mixerlink' => \&mixerlink,
 			'use'       => 1,
 		});
 
-		Slim::Music::Import->useImporter('MUSICMAGIC', Slim::Utils::Prefs::get('musicmagic'));
+		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get($class->prefName));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 		addGroups();
+
 		if (scalar @{grabMoods()}) {
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
 			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', {
@@ -369,6 +372,28 @@ sub grabFilters {
 	return %filterHash;
 }
 
+sub prefName {
+	my $class = shift;
+
+	return lc($class->title);
+}
+
+sub title {
+	my $class = shift;
+
+	return 'MUSICMAGIC';
+}
+
+sub mixable {
+	my $class = shift;
+	my $item  = shift;
+	
+	if (blessed($item) && $item->can('musicmagic_mixable')) {
+
+		return $item->musicmagic_mixable;
+	}
+}
+
 sub grabMoods {
 	my @moods;
 	my %moodHash;
@@ -563,7 +588,7 @@ sub mixerlink {
 	if (canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
 
 		# set up a musicmagic link
-		$form->{'mixerlinks'}{'MUSICMAGIC'} = "plugins/MusicMagic/mixerlink.html";
+		$form->{'mixerlinks'}{Plugins::MusicMagic::Plugin->title()} = "plugins/MusicMagic/mixerlink.html";
 		
 		# flag if mixable
 		if (($item->can('musicmagic_mixable') && $item->musicmagic_mixable) ||
@@ -946,7 +971,7 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($client);
 				}
 
-				Slim::Music::Import->useImporter('MUSICMAGIC',$changeref->{'musicmagic'}{'new'});
+				Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin',$changeref->{'musicmagic'}{'new'});
 			},
 
 			'optionSort' => 'KR',
