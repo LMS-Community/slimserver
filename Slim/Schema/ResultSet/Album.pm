@@ -27,7 +27,7 @@ sub pageBarResults {
 	my $name  = "$table.titlesort";
 
 	# pagebar based on contibutors if first sort field and results already sorted by this
-	if ($sort && $sort =~ /^contributor\.namesort/ && $self->{'attrs'}{'order_by'}[0] =~ /contributor\.namesort/) {
+	if ($sort && $sort =~ /^contributor\.namesort/ && $self->{'attrs'}{'order_by'} =~ /contributor\.namesort/) {
 		$name  = "contributor.namesort";
 	}
 
