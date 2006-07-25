@@ -1,0 +1,10 @@
+# Transporter firmware 
+#
+# from        to
+# from1..from2 to
+
+1..5 5 
+
+# future versions may be downgraded to this one
+* 5 
+
