@@ -155,8 +155,6 @@ sub render {
 
 				$screen->{fonts} ||= undef;
 			}
-	return $fontextents->{$fontname} || 0;
-}
 
 			$sc->{fonts} = {}; # force component caches to be cleared below
 			$sc->{extent} = Slim::Display::Lib::Fonts::extent($dfonts->{line}[1]);
@@ -190,12 +188,6 @@ sub render {
 
 			my $cfonts = $sc->{fonts};
 			if (($sfonts || 0) != ($cfonts || 0)) {
-	
-	# U - unpacks Unicode chars into ords, much faster than split(//, $string)
-	# C - is needed for older 5.6 perl's
-	if ($] > 5.007) {
-		$unpackTemplate = 'U*';
-	}
 
 				# screen contains non default font definition which differs from cache - clear caches
 				foreach my $c (qw(line overlay center)) {
@@ -509,13 +501,6 @@ sub maxTextSize {
 
 	my $prefname = ($display->client->power()) ? "activeFont" : "idleFont";
 	$display->client->prefGetArrayMax($prefname);
-
-	$fonthash = $fonts->{fonthash};
-	$fontheight = $fonts->{fontheight};
-	$fontextents = $fonts->{fontextents};
-
-	$::d_graphics && msg( "Writing font cache: $fontCache\n");
-	store($fonts, $fontCache);
 }
 
 sub measureText {
@@ -602,10 +587,6 @@ sub sliderBar {
 			} else {
 				$chart .= ($i > $dots) ? $prog3e : $prog3;
 			}
-		}
-		if ($charIndex == 0 && unpack( '%32b*', $fonttable->[$charIndex]) > 0) {
-			# pixels in interspace character indicate no interspace
-			$fonttable->[$charIndex] = '';
 		}
 	}
 	$chart .= $progEnd . $display->symbols('/tight');
