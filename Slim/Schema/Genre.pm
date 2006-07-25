@@ -33,6 +33,12 @@ use Scalar::Util qw(blessed);
 	$class->resultset_class('Slim::Schema::ResultSet::Genre');
 }
 
+sub url {
+	my $self = shift;
+
+	return sprintf('genre.namesearch://%s', $self->namesearch);
+}
+
 sub tracks {
 	my $self = shift;
 

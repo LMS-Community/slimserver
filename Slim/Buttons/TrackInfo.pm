@@ -296,8 +296,8 @@ sub loadDataForTrack {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (blessed($track) && $track->can('url')) {
-		push (@{$client->trackInfoLines}, "URL: ". Slim::Utils::Misc::unescape($track->url));
+	if (my $url = $track->url) {
+		push (@{$client->trackInfoLines}, "URL: ". Slim::Utils::Misc::unescape($url));
 		push (@{$client->trackInfoContent}, undef);
 	}
 

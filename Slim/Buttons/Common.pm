@@ -470,8 +470,8 @@ our %functions = (
 
 					my $title;
 
-					if ($obj->can('title')) {
-						$title = $obj->title;
+					if ($obj->can('name')) {
+						$title = $obj->name;
 					} else {
 						$title = Slim::Music::Info::standardTitle($client, $obj);
 					}

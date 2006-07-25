@@ -54,7 +54,7 @@ our %contributorToRoleMap = (
 sub contributorRoles {
 	my $class = shift;
 
-	return keys %contributorToRoleMap;
+	return sort keys %contributorToRoleMap;
 }
 
 sub totalContributorRoles {
@@ -83,6 +83,13 @@ sub displayAsHTML {
 			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend);
 		}
 	}
+}
+
+# For saving favorites.
+sub url {
+	my $self = shift;
+
+	return sprintf('contributor.namesearch://%s', $self->namesearch);
 }
 
 sub add {

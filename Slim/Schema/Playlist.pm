@@ -68,7 +68,7 @@ sub _addTracksToPlaylist {
 
 		# If tracks are being added via Browse Music Folder -
 		# which still deals with URLs - get the objects to add.
-		if (!blessed($track) || !$track->can('url')) {
+		if (!blessed($track) || !$track->can('id')) {
 
 			$track = Slim::Schema->rs('Track')->objectForUrl({
 				'url'      => $track,

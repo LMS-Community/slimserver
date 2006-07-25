@@ -23,7 +23,6 @@ use Slim::Utils::Strings qw(string);
 
 use Slim::Utils::Prefs;
 
-
 # Class-only method, not an instance method
 # Adds a favorite for the given client to the database.  
 # Should station titles be localized??  Should they be pulled from tags in the stream?
@@ -39,30 +38,25 @@ sub clientAdd {
 		return undef;
 	}
 
-	if (blessed($url)) {
-		if ($url->can('url') && defined($url->url)) {
-			$url = $url->url;
-		} else {
-			$url = ref($url).":".$url->id;
-		}
+	if (blessed($url) && $url->can('url')) {
+
+		$url = $url->url;
 	} 
 
 	# Bug 3362, ignore sessionID's within URLs (Live365)
 	$url =~ s/\?sessionid.+//i;
-	
-	$::d_favorites && msg("Favorites::add(". $client->id().", $url, $title)\n");
 
-	my $fav = undef;
+	$::d_favorites && msgf("Favorites::add(%s, %s, %s)\n", $client->id, $url, $title);
 
 	# if its already a favorite, don't add it again
-	$fav = findByClientAndURL($class, $client, $url);
+	my $fav = $class->findByClientAndURL($client, $url);
 
 	if (defined($fav)) {
 		return $fav->{'num'};
 	}
-	
+
 	# find any vacated spots
-	$fav = findByClientAndURL($class, $client, '');
+	$fav = $class->findByClientAndURL($client, '');
 
 	if (defined($fav)) {
 
@@ -111,9 +105,9 @@ sub _indexByUrl {
 }
 
 sub findByClientAndURL {
-	my $class = shift;
+	my $class  = shift;
 	my $client = shift;
-	my $url = shift;
+	my $url    = shift;
 
 	my $i = _indexByUrl($url);
 
@@ -136,10 +130,10 @@ sub findByClientAndURL {
 }
 
 sub moveItem {
-	my $class = shift;
+	my $class  = shift;
 	my $client = shift;
-	my $from = shift;
-	my $to = shift;
+	my $from   = shift;
+	my $to     = shift;
 
 	if (defined $to && $to =~ /^[\+-]/) {
 		$to = $from + $to;
@@ -160,19 +154,20 @@ sub moveItem {
 }
 
 sub deleteByClientAndURL {
-	my $class = shift;
+	my $class  = shift;
 	my $client = shift;
-	my $url = shift;
+	my $url    = shift;
 
 	$class->deleteByClientAndId($client, _indexByUrl($url));
 }
 
 sub deleteByClientAndId {
-	my $class = shift;
+	my $class  = shift;
 	my $client = shift;
-	my $i = shift;
+	my $i      = shift;
 
 	if (defined($i)) {
+
 		Slim::Utils::Prefs::set('favorite_titles','', $i);
 		Slim::Utils::Prefs::set('favorite_urls','', $i);
 		

@@ -1,6 +1,8 @@
-# $Id: Favorites.pm,v 1.1 2005/01/10 22:24:47 dave Exp $
+package Plugins::Favorites::Plugin;
+
+# $Id$
 #
-# Copyright (C) 2005 Sean Adams, Slim Devices Inc.
+# Copyright (C) 2005-2006 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -16,23 +18,20 @@
 # displayed as well.  The mode also adds a line allowing the user to
 # add the url to his/her favorites.
 
-package Plugins::Favorites::Plugin;
-
 use strict;
-use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
-use Slim::Utils::Misc;
-use Slim::Utils::Favorites;
-use Slim::Buttons::Common;
+use Scalar::Util qw(blessed);
 
-use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.1 $,10);
+use Slim::Buttons::Common;
+use Slim::Utils::Favorites;
+use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
 
 my %context = ();
 
 my %mapping = (
-	'play' => 'dead',
-	'play.hold' => 'play',
+	'play'        => 'dead',
+	'play.hold'   => 'play',
 	'play.single' => 'play',
 );
 
@@ -226,34 +225,73 @@ sub playFavorite {
 
 # Allow any URL to be a favorite - this includes things like iTunes playlists.
 sub _addOrPlayFavoriteUrl {
-	my $client = shift;
-	my $url    = shift;
-	my $index  = shift;
-	my $add    = shift || 0;
+	my $client  = shift;
+	my $url     = shift;
+	my $index   = shift;
+	my $add     = shift || 0;
 
-	my $class  = 'Track';
-	my $string = $add ? 'PLUGIN_FAVORITES_ADDING' : 'PLUGIN_FAVORITES_PLAYING';
+	my $class   = 'Track';
+	my $obj     = undef;
+	my $title   = undef;
+	my $terms   = undef;
+	my $string  = $add ? 'PLUGIN_FAVORITES_ADDING' : 'PLUGIN_FAVORITES_PLAYING';
+	my $command = $add ? 'inserttracks' : 'loadtracks';
 
+	# Bug: 2569
 	# We need to ask for the right type of object.
-	if (Slim::Music::Info::isPlaylist($url)) {
+	# 
+	# Contributors, Genres & Albums have a url of:
+	# contributor.namesearch://BEATLES
+	#
+	# Years are once again special (ugh).
+	#
+	# Remote playlists are Track objects, not Playlist objects.
+	if ($url =~ m|^(\w+?)\.(\w+?search)://(.+)|) {
+
+		$obj = Slim::Schema->single(ucfirst($1), { $2 => $3 });
+
+	} elsif ($url =~ m|^album\.year://(.+)|) {
+
+		$class = 'Year';
+		$obj   = $1;
+
+	} elsif (Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url)) {
+
 		$class = 'Playlist';
 	}
 
-	my $track = Slim::Schema->rs($class)->objectForUrl({
-		'url'      => $url,
-		'create'   => 1,
-		'readTags' => 1
-	});
+	#
+	if ($class eq 'Track' || $class eq 'Playlist') {
+
+		$obj = Slim::Schema->rs($class)->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1
+		});
+	}
+
+	my $blessed = blessed($obj);
+
+	if ($blessed && $blessed eq 'Slim::Schema::Track') {
+
+		$title = Slim::Music::Info::standardTitle($client, $obj),
+		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
+
+	} elsif ($blessed) {
+
+		$title = $obj->name;
+		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
+
+	} elsif ($class eq 'Year') {
+
+		# Special case for Year, until I can figure out a better way.
+		$title = $obj;
+		$terms = sprintf('album.year=%d', $obj);
+	}
 
 	$client->showBriefly({
-		'line' => [ 
-			sprintf($client->string($string), $index+1),	
-			Slim::Music::Info::standardTitle($client, $track),
-		],
+		'line' => [ sprintf($client->string($string), $index+1), $title ],
 	});
-
-	my $terms   = sprintf('%s.id=%d', lc($class), $track->id);
-	my $command = $add ? 'inserttracks' : 'loadtracks';
 
 	$::d_favorites && msg("Favorites Plugin: Calling $command on favorite [$url] with terms: [$terms]\n");
 

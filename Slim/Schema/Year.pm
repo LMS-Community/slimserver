@@ -17,6 +17,13 @@ use Slim::Utils::Strings qw(string);
 	$class->resultset_class('Slim::Schema::ResultSet::Year');
 }
 
+# For saving favorites
+sub url {
+	my $self = shift;
+
+	return sprintf('album.year://%s', $self->year);
+}
+
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 

@@ -114,15 +114,14 @@ sub outputAsXHTML {
 sub renderItem {
 	my ($rowType, $type, $item, $player) = @_;
 
-	my $id = $item->id(),
-	my @xml = ();
-	
+	my $id     = $item->id,
+	my @xml    = ();
 	my $name   = '';
 	my $album  = '';
 	my $artist = '';
 
 	# Track case, followed by album & artist.
-	if ($item->can('url')) {
+	if (blessed($item) eq 'Slim::Schema::Track') {
 
 		$name = Slim::Music::Info::standardTitle(undef, $item) || '';
 		

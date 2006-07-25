@@ -47,6 +47,12 @@ use Slim::Utils::Misc;
 	$class->resultset_class('Slim::Schema::ResultSet::Album');
 }
 
+sub url {
+	my $self = shift;
+
+	return sprintf('album.titlesearch://%s', $self->titlesearch);
+}
+
 sub name { 
 	return shift->title;
 }
