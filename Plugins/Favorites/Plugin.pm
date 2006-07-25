@@ -37,36 +37,23 @@ my %mapping = (
 );
 
 my %mainModeFunctions = (
+
 	'play' => sub {
-		my $client = shift;
+		my $client    = shift;
 		
 		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls = Slim::Buttons::Common::param($client, 'urls');
+		my $urls      = Slim::Buttons::Common::param($client, 'urls');
 
-		$client->showBriefly( {
-			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $listIndex+1),
-			 'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
-		});
-		
-		# Bug 3399 problems with playlist 'add' leave this command set non-working.
-		# use 'play' as a workaround.
-		#$client->execute([ 'playlist', 'clear' ] );
-		#$client->execute([ 'playlist', 'add', $urls->[$listIndex]] );
-		#$client->execute([ 'play' ] );
-		Slim::Control::Request::executeRequest($client, [ 'playlist', 'play', $urls->[$listIndex]] );
+		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex);
 	},
+
 	'add' => sub {
-		my $client = shift;
+		my $client    = shift;
 
 		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls = Slim::Buttons::Common::param($client, 'urls');
+		my $urls      = Slim::Buttons::Common::param($client, 'urls');
 
-		$client->showBriefly( {
-			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_ADDING'), $listIndex+1),
-			 'line2' => Slim::Music::Info::standardTitle($client, $urls->[$listIndex]),
-		});  
-		
-		Slim::Control::Request::executeRequest( $client, [ 'playlist', 'add', $urls->[$listIndex]] );
+		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex, 'add');
 	},
 );
 
@@ -98,24 +85,23 @@ sub handleWebIndex {
 	
 	$params->{'favList'} = {};
 
-	my $favs = Slim::Utils::Favorites->new($client);
-	my @titles = $favs->titles();
-	my @urls = $favs->urls();
-	my $i = 0;
+	my $favs   = Slim::Utils::Favorites->new($client);
+	my @titles = $favs->titles;
+	my @urls   = $favs->urls;
+	my $i      = 0;
 
 	if (scalar @titles) {
-		$params->{'titles'}= \@titles;
-		$params->{'urls'}= \@urls;
-		foreach (@titles) {
-			$params->{'faves'}{$_} = $urls[$i];
-			$i++;
+
+		$params->{'titles'} = \@titles;
+		$params->{'urls'}   = \@urls;
+
+		for (@titles) {
+			$params->{'faves'}{$_} = $urls[$i++];
 		}
+
 	} else {
-		if ($client) {
-			$params->{'warning'} = $client->string('PLUGIN_FAVORITES_NONE_DEFINED');
-		} else {
-			$params->{'warning'} = string('PLUGIN_FAVORITES_NONE_DEFINED');
-		}
+
+		$params->{'warning'} = string('PLUGIN_FAVORITES_NONE_DEFINED');
 	}
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favorites_list.html', $params);
@@ -124,9 +110,9 @@ sub handleWebIndex {
 sub listFavorites {
 	my $client = shift;
 
-	my $favs = Slim::Utils::Favorites->new($client);
-	my @titles = $favs->titles();
-	my @urls = $favs->urls();
+	my $favs   = Slim::Utils::Favorites->new($client);
+	my @titles = $favs->titles;
+	my @urls   = $favs->urls;
 
 	# don't give list mode an empty list!
 	if (!scalar @titles) {
@@ -134,25 +120,25 @@ sub listFavorites {
 	}
 
 	my %params = (
-		stringHeader => 1,
-		header => 'PLUGIN_FAVORITES_MODULE_NAME',
-		listRef => \@titles,
-		callback => \&mainModeCallback,
-		valueRef => \$context{$client}->{mainModeIndex},
-		externRef => sub {return $_[1] || $_[0]->string('EMPTY')},
+		stringHeader   => 1,
+		header         => 'PLUGIN_FAVORITES_MODULE_NAME',
+		listRef        => \@titles,
+		callback       => \&mainModeCallback,
+		valueRef       => \$context{$client}->{mainModeIndex},
+		externRef      => sub {return $_[1] || $_[0]->string('EMPTY')},
 		headerAddCount => scalar (@urls) ? 1 : 0,
-		urls => \@urls,
-		overlayRef => sub {
+		urls           => \@urls,
+		parentMode     => Slim::Buttons::Common::mode($client),
+		overlayRef     => sub {
 			if (scalar @urls) {
 				return (undef,Slim::Display::Display::symbol('notesymbol'));
 			} else {
 				return undef;
 			}
 		},
-		parentMode => Slim::Buttons::Common::mode($client),
 	);
 
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
 # the routines
@@ -161,9 +147,11 @@ sub setMode {
 	my $method = shift;
 
 	if ($method eq 'pop') {
-		if (!$context{$client}->{blocking}) {
+
+		if (!$context{$client}->{'blocking'}) {
 			Slim::Buttons::Common::popMode($client);
 		}
+
 		return;
 	}
 
@@ -180,23 +168,19 @@ sub mainModeCallback {
 		Slim::Buttons::Common::popModeRight($client);
 
 	} elsif ($exittype eq 'RIGHT') {
-		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls = Slim::Buttons::Common::param($client, 'urls');
 
-# 		my %params = (
-# 			stationTitle => $context{$client}->{mainModeIndex},
-# 			stationURL => $urls->[$listIndex],
-# 		);
-# 		Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites.details', \%params); 
+		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
+		my $urls      = Slim::Buttons::Common::param($client, 'urls');
 
 		my %params = (
-			title => $context{$client}->{mainModeIndex},
-			url => $urls->[$listIndex],
+			title => $context{$client}->{'mainModeIndex'},
+			url   => $urls->[$listIndex],
 		);
 
  		Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
 
 	} else {
+
 		$client->bumpRight();
 	}
 }
@@ -222,35 +206,62 @@ sub playFavorite {
 	}
 
 	my $listIndex = $digit - 1;
+	my $favs      = Slim::Utils::Favorites->new($client);
+	my @titles    = $favs->titles;
+	my @urls      = $favs->urls;
 
-	my $favs   = Slim::Utils::Favorites->new($client);
-	my @titles = $favs->titles();
-	
-	# grab urls into array ref
-	my $urls = [$favs->urls()];
+	if (!$urls[$listIndex]) {
 
-	if (!$urls->[$listIndex]) {
-
-		$client->showBriefly( {
-			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit)
+		$client->showBriefly({
+			 'line' => [ sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit) ],
 		});
 
-	} else {
-
-		$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, " . $titles[$listIndex] . "\n");
-
-		$client->showBriefly( {
-			 'line1' => sprintf($client->string('PLUGIN_FAVORITES_PLAYING'), $digit), 
-			 'line2' => $titles[$listIndex],
-		});
-		
-		# Bug 3399 problems with playlist 'add' leave this command set non-working.
-		# use 'play' as a workaround.
-		#$client->execute([ 'playlist', 'clear' ] );
-		#$client->execute([ 'playlist', 'add', $urls[$index]] );
-		#$client->execute([ 'play' ] );
-		Slim::Control::Request::executeRequest($client, [ 'playlist', 'play', $urls->[$listIndex]] );
+		return;
 	}
+
+	$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, $titles[$listIndex]\n");
+
+	_addOrPlayFavoriteUrl($client, $urls[$listIndex], $listIndex);
+}
+
+# Allow any URL to be a favorite - this includes things like iTunes playlists.
+sub _addOrPlayFavoriteUrl {
+	my $client = shift;
+	my $url    = shift;
+	my $index  = shift;
+	my $add    = shift || 0;
+
+	my $class  = 'Track';
+	my $string = $add ? 'PLUGIN_FAVORITES_ADDING' : 'PLUGIN_FAVORITES_PLAYING';
+
+	# We need to ask for the right type of object.
+	if (Slim::Music::Info::isPlaylist($url)) {
+		$class = 'Playlist';
+	}
+
+	my $track = Slim::Schema->rs($class)->objectForUrl({
+		'url'      => $url,
+		'create'   => 1,
+		'readTags' => 1
+	});
+
+	$client->showBriefly({
+		'line' => [ 
+			sprintf($client->string($string), $index+1),	
+			Slim::Music::Info::standardTitle($client, $track),
+		],
+	});
+
+	my $terms   = sprintf('%s.id=%d', lc($class), $track->id);
+	my $command = $add ? 'inserttracks' : 'loadtracks';
+
+	$::d_favorites && msg("Favorites Plugin: Calling $command on favorite [$url] with terms: [$terms]\n");
+
+	if (!$add) {
+		$client->execute([ 'playlist', 'clear' ] );
+	}
+
+	$client->execute([ 'playlist', $command, $terms ]);
 }
 
 sub enabled {
@@ -281,7 +292,6 @@ sub initPlugin {
 		[0, 0, 0, \&deleteCommand]);
 	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'],
 		[0, 0, 0, \&addCommand]);
-
 }
 
 # move from to command
@@ -372,11 +382,11 @@ sub listQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	
-	my $favs   = Slim::Utils::Favorites->new($client);
-	my @titles = $favs->titles();
-	my @urls   = $favs->urls();
+	my $favs     = Slim::Utils::Favorites->new($client);
+	my @titles   = $favs->titles;
+	my @urls     = $favs->urls;
 	
-	my $count  = scalar(@titles);
+	my $count    = scalar(@titles);
 
 	$request->addResult('count', $count);
 
