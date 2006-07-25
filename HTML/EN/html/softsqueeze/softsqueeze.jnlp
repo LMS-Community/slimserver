@@ -14,7 +14,7 @@
   codebase="http://[% host %]/html/softsqueeze/"
   href="softsqueeze.jnlp">
   <information>
-    <title>Softsqueeze 2.8</title>
+    <title>Softsqueeze 3.0b2</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
     <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
@@ -40,6 +40,11 @@
     <jar href="lib/jl1.0.jar"/>
     <jar href="lib/jflac-1.0.jar"/>
     <jar href="lib/jsch-20040429.jar"/>
+    <jar href="lib/jogg-0.0.7.jar"/>
+    <jar href="lib/jorbis-0.0.15.jar"/>
+    <jar href="lib/vorbisspi1.0.2.jar"/>
+    <jar href="lib/nativeskin.jar"/>
+    <nativelib href="lib/nativeskinlib.jar"/>
 
 <!-- Set the following properties to configure the server and firmware  -->
 
