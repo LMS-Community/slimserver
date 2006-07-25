@@ -12,7 +12,6 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Timers;
-use Slim::Hardware::VFD;
 
 # button functions for browse directory
 our @instantMix = ();
