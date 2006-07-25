@@ -4,6 +4,6 @@
   [% FOREACH artistobj IN itemobj.artistsWithAttributes %]<artist id="[% artistobj.artist.id %]"[% IF artistobj.artist.name == noArtist %] no="1"[% END %]>[% artistobj.artist.name | html %]</artist>[% END %]
  </artists>
  <album>[% itemobj.album.title | html %][% IF itemobj.year %] ([% itemobj.year | html %])[% END %]</album>
- <url>[% itemobj.itempath | html %]</url>
+ <url>[% itemobj.url | html %]</url>
  <coverart>[% itemobj.coverthumb | html %]</coverart>
 </playlistitem>

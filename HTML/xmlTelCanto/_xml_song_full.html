@@ -43,7 +43,7 @@
 
 	[% IF itemobj.modificationTime %]<modtime>[% itemobj.modificationTime | html %]</modtime>[% END %]
 
- 	<track_url><![CDATA[[% itempath %]]]></track_url>
+ 	<track_url><![CDATA[[% itemobj.url %]]]></track_url>
 
  	[% IF itemobj.url %]<path>[% itemobj.url | unuri | utf8on | html %]</path>[% END %]
 

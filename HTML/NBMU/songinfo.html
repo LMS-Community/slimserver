@@ -160,7 +160,10 @@
 	</tr>
 	[% END %] 
 </table>
-<p>	<a href="status.html?p0=playlist&amp;p1=play&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a> <a href="status.html?p0=playlist&amp;p1=append&amp;p2=[% itempath | uri %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a> 
+
+<p>
+<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
 </p>
 </body>
 </html>
