@@ -19,10 +19,13 @@ body.search {
 	background-color: #EEEEEE;
 }
 
+a {
+	outline: none;
+}
+
 a:hover, a:visited, a:active, a:link {
 	text-decoration:none;
 	color: #666666;
-	outline: none;
 }
 
 a:hover {

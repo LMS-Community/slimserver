@@ -31,11 +31,11 @@ body {
 a {
 	color: #333;
 	text-decoration: none;
+	outline: none;
 }
 
 a:active {
 	color: #555;
-	outline: none;
 }
 
 a:hover {

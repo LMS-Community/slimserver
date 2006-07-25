@@ -116,6 +116,7 @@ a {
 	text-decoration:none;
 	color: black;
 	cursor: pointer;
+	outline: none;
 }
 
 .screenshot {
@@ -127,10 +128,6 @@ a {
 
 a:hover {
 	text-decoration: underline;
-}
-
-a:active {
-	outline: none;
 }
 
 .fakehover {
