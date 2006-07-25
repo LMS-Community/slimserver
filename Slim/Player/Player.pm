@@ -22,46 +22,46 @@ use Slim::Buttons::SqueezeNetwork;
 use base qw(Slim::Player::Client);
 
 our $defaultPrefs = {
-		 'bass'					=> 50
-		,'digitalVolumeControl'	=> 1
-		,'preampVolumeControl'	=> 0
-		,'disabledirsets'		=> []
-		,'doublesize'			=> 0
-		,'irmap'				=> Slim::Hardware::IR::defaultMapFile()
-		,'menuItem'				=> [qw( NOW_PLAYING
-										BROWSE_MUSIC
-										SEARCH
-										RandomPlay::Plugin
-										SAVED_PLAYLISTS
-										RADIO
-										SETTINGS
-										PLUGINS
-							   )]
-		,'mp3SilencePrelude' 	=> 0
-		,'offDisplaySize'		=> 0
-		,'pitch'				=> 100
-		,'playingDisplayModes'	=> [0..5]
-		,'power'				=> 1
-		,'powerOffBrightness'	=> 1
-		,'powerOnBrightness'	=> 4
-		,'screensaver'			=> 'playlist'
-		,'idlesaver'			=> 'nosaver'
-		,'offsaver'				=> 'SCREENSAVER.datetime'
-		,'screensavertimeout'	=> 30
-		,'silent'				=> 0
-		,'syncPower'			=> 0
-		,'syncVolume'			=> 0
-		,'treble'				=> 50
-		,'upgrade-5.4b1-script'		=> 1
-		,'upgrade-5.4b2-script'		=> 1
-		,'upgrade-6.1b1-script'		=> 1
-		,'upgrade-6.2-script'		=> 1
-		,'upgrade-R4627-script'		=> 1
-		,'volume'				=> 50
-		,'syncBufferThreshold'		=> 128
-		,'bufferThreshold'		=> 255
-		,'powerOnResume'        => 'PauseOff-NoneOn'
-	};
+	'bass'                 => 50,
+	'digitalVolumeControl' => 1,
+	'preampVolumeControl'  => 0,
+	'disabledirsets'       => [],
+	'doublesize'           => 0,
+	'irmap'                => Slim::Hardware::IR::defaultMapFile(),
+	'menuItem'             => [qw(
+		NOW_PLAYING
+		BROWSE_MUSIC
+		SEARCH
+		RandomPlay::Plugin
+		SAVED_PLAYLISTS
+		RADIO
+		SETTINGS
+		PLUGINS
+	)],
+	'mp3SilencePrelude'    => 0,
+	'offDisplaySize'       => 0,
+	'pitch'                => 100,
+	'power'                => 1,
+	'powerOffBrightness'   => 1,
+	'powerOnBrightness'    => 4,
+	'screensaver'          => 'playlist',
+	'idlesaver'            => 'nosaver',
+	'offsaver'             => 'SCREENSAVER.datetime',
+	'screensavertimeout'   => 30,
+	'silent'               => 0,
+	'syncPower'            => 0,
+	'syncVolume'           => 0,
+	'treble'               => 50,
+	'upgrade-5.4b1-script' => 1,
+	'upgrade-5.4b2-script' => 1,
+	'upgrade-6.1b1-script' => 1,
+	'upgrade-6.2-script'   => 1,
+	'upgrade-R4627-script' => 1,
+	'volume'               => 50,
+	'syncBufferThreshold'  => 128,
+	'bufferThreshold'      => 255,
+	'powerOnResume'        => 'PauseOff-NoneOn',
+};
 
 our %upgradeScripts = (
 
@@ -267,11 +267,6 @@ sub power {
 	
 	my $currOn = $client->prefGet('power') || 0;
 
-	if (defined($callback)) {
-		$sbData->{'callback'} = $callback;
-		$sbData->{'callbackargs'} = $callbackargs;
-	}
-	
 	return $currOn unless defined $on;
 	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
@@ -324,7 +319,6 @@ sub power {
 		$client->update( { 'screen1' => {}, 'screen2' => {} } );
 
 		$client->updateMode(2); # block updates to hide mode change
-	return "\x1F$line\x1F" if Slim::Hardware::VFD::isCustomChar($line);
 
 		Slim::Buttons::Common::setMode($client, 'home');
 

@@ -32,7 +32,7 @@ my $SLIMPROTO_PORT = 3483;
 
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3');
 
-my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this 
+my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
 
 my $slimproto_socket;
 
@@ -151,7 +151,7 @@ sub slimproto_accept {
 	Slim::Networking::Select::addRead($clientsock, \&client_readable);
 	Slim::Networking::Select::addError($clientsock, \&slimproto_close);
 
-	$::d_slimproto && msg ("Slimproto accepted connection from: [" . $ipport{$clientsock} . "]\n");
+	$::d_slimproto && msg ("Slimproto accepted connection from: [" .  $ipport{$clientsock} . "]\n");
 
 	# Set a timer to close the connection if we haven't recieved a HELO in 5 seconds.
 	$::d_slimproto && msg ("Setting timer in 5 seconds to close bogus connection\n");
@@ -179,7 +179,7 @@ sub slimproto_close {
 		# notify of disconnect
 		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 	}
-	
+
 	# forget state
 	delete($ipport{$clientsock});
 	delete($parser_state{$clientsock});
@@ -246,7 +246,6 @@ GETMORE:
 
 	my $bytes_read = 0;
 	my $indata = '';
-
 	if ($bytes_remaining) {
 		$::d_slimproto_v && msg("attempting to read $bytes_remaining bytes\n");
 	
@@ -263,7 +262,6 @@ GETMORE:
 			return;
 		}
 	}
-
 	$total_bytes_read += $bytes_read;
 
 	$inputbuffer{$s}.=$indata;
@@ -274,9 +272,7 @@ GETMORE:
 	assert ($bytes_remaining>=0);
 
 	if ($bytes_remaining == 0) {
-
 		if ($parser_state{$s} eq 'OP') {
-
 			assert(length($inputbuffer{$s}) == 4);
 			$parser_frametype{$s} = $inputbuffer{$s};
 			$inputbuffer{$s} = '';
@@ -285,7 +281,6 @@ GETMORE:
 			$::d_slimproto_v && msg("got op: ". $parser_frametype{$s}."\n");
 
 		} elsif ($parser_state{$s} eq 'LENGTH') {
-
 			assert(length($inputbuffer{$s}) == 4);
 			$parser_framelength{$s} = unpack('N', $inputbuffer{$s});
 			$parser_state{$s} = 'DATA';
@@ -416,7 +411,6 @@ sub _http_response_handler {
 	if ($client->can('directHeaders')) {
 		$client->directHeaders($$data_ref);
 	}
-}
 
 }
 
@@ -721,17 +715,12 @@ sub _hello_handler {
 		Slim::Player::Client::forgetClient($client);
 		$client = undef;
 	}
-	
-sub _update_request_handler {
-	my $client = shift;
-	my $data_ref = shift;
 
 	if (defined $client && blessed($client->display) && blessed($client->display) ne $display_class) {
 		$::d_slimproto && msg("change display for $client_class to $display_class\n");
 		$client->display->forgetDisplay();
 
 		eval "use $display_class"; 
-	my $data_ref = shift;
 
 		if ($@) {
 			msg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
@@ -844,13 +833,5 @@ sub _knob_handler {
 	
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
 }
-
-	# handle hard buttons
-	my ($time, $button) = unpack( 'NH8', $$data_ref);
-
-	Slim::Hardware::IR::enqueue($client, $button, $time);
-
-	$::d_slimproto && msg("hard button: $button time: $time\n");
-} 
 
 1;

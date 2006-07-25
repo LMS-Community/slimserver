@@ -592,13 +592,4 @@ sub audio_outputs_enable {
 	$client->sendFrame('aude', \$data);
 }
 
-sub audio_outputs_enable { 
-	my $client = shift;
-	my $enabled = shift;
-
-	# spdif enable / dac enable
-	my $data = pack('CC', $enabled, $enabled);
-	$client->sendFrame('aude', \$data);
-}
-
 1;

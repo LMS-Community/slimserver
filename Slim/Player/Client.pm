@@ -738,11 +738,7 @@ sub new {
 	$client->[108] = undef; # lastDigitIndex
 	$client->[109] = undef; # lastDigitTime
 	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
-	$client->[109] = {}; # pipe sockets used for parent/child communication
-	$client->[106] = undef; # lastDigitIndex
-	$client->[107] = undef; # lastDigitTime
-	$client->[108] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
-	$client->[109] = {}; # pipe sockets used for parent/child communication
+	$client->[111] = {}; # pipe sockets used for parent/child communication
 
 	$::d_protocol && msg("New client connected: $id\n");
 	$client->lastirtime(0);
@@ -1635,11 +1631,6 @@ sub irRefTime {
 	@_ ? ($r->[36] = shift) : $r->[36];
 }
 
-sub irRefTime {
-	my $r = shift;
-	@_ ? ($r->[36] = shift) : $r->[36];
-}
-
 sub bytesReceived {
 	my $r = shift;
 	@_ ? ($r->[37] = shift) : $r->[37];
@@ -1963,12 +1954,12 @@ sub lastDigitTime {
 
 sub lastSong {
 	my $r = shift;
-	@_ ? ($r->[108] = shift) : $r->[110];
+	@_ ? ($r->[110] = shift) : $r->[110];
 }
 
 sub pipes {
 	my $r = shift;
-	@_ ? ($r->[109] = shift) : $r->[109];
+	@_ ? ($r->[111] = shift) : $r->[111];
 }
 
 1;
