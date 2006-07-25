@@ -109,9 +109,6 @@ if (!$@) {
 
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
-use Slim::Display::Animation;
-use Slim::Display::Display;
-use Slim::Hardware::VFD;
 use Slim::Buttons::Common;
 use Slim::Buttons::Home;
 use Slim::Buttons::Power;
@@ -124,11 +121,11 @@ use Slim::Buttons::Input::Time;
 use Slim::Buttons::Input::List;
 use Slim::Buttons::Input::Choice;
 use Slim::Buttons::Input::Bar;
+use Slim::Buttons::Settings;
 use Slim::Player::Client;
 #use Slim::Control::Command;
 use Slim::Control::Request;
-use Slim::Display::Display;
-use Slim::Display::Graphics;
+use Slim::Display::Lib::Fonts;
 use Slim::Web::HTTP;
 use Slim::Hardware::IR;
 use Slim::Music::Info;
@@ -384,8 +381,8 @@ sub init {
 	$::d_server && msg("SlimServer Buttons init...\n");
 	Slim::Buttons::Common::init();
 
-	$::d_server && msg("SlimServer Graphics init...\n");
-	Slim::Display::Graphics::init();
+	$::d_server && msg("SlimServer Graphic Fonts init...\n");
+	Slim::Display::Lib::Fonts::init();
 
 	if ($stdio) {
 		$::d_server && msg("SlimServer Stdio init...\n");
