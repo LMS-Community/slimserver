@@ -160,7 +160,7 @@ sub slimproto_accept {
 
 sub slimproto_close {
 	my $clientsock = shift;
-	bt();
+
 	$::d_slimproto && msg("Slimproto connection closed\n");
 
 	# stop selecting
