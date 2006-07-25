@@ -1033,6 +1033,7 @@ sub _readTags {
 # 'composer' and 'track artists'.
 sub artistOnlyRoles {
 	my $self  = shift;
+	my $find  = shift || {};
 
 	my %roles = (
 		'ARTIST'      => 1,
@@ -1040,11 +1041,17 @@ sub artistOnlyRoles {
 	);
 
 	# Loop through each pref to see if the user wants to show that contributor role.
-	for my $role (qw(COMPOSER CONDUCTOR BAND)) {
+	for my $role (Slim::Schema::Contributor->contributorRoles) {
 
 		my $pref = sprintf('%sInArtists', lc($role));
 
 		if (Slim::Utils::Prefs::get($pref)) {
+
+			$roles{$role} = 1;
+		}
+
+		# If the user has requested that a specific role be added.
+		if (exists $find->{'contributor.role'} && $find->{'contributor.role'} eq $role) {
 
 			$roles{$role} = 1;
 		}
@@ -1227,11 +1234,6 @@ sub _preCheckAttributes {
 		}
 	}
 
-	# We also need these in _postCheckAttributes, but they should be set during create()
-	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
-	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
-	$deferredAttributes->{'DISC'}    = $attributes->{'DISC'};
-	
 	# We've seen people with multiple TITLE tags in the wild.. why I don't
 	# know. Merge them. Do the same for ALBUM, as you never know.
 	for my $tag (qw(TITLE ALBUM)) {
@@ -1340,18 +1342,22 @@ sub _preCheckAttributes {
 	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
-	for my $tag (qw(
-		COMMENT BAND COMPOSER CONDUCTOR GENRE ARTIST ARTISTSORT 
-		PIC APIC ALBUM ALBUMSORT DISC DISCC ALBUMARTIST COMPILATION
-		REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN
-		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID
-		MUSICBRAINZ_ALBUM_ID MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
+	for my $tag (Slim::Schema::Contributor->contributorRoles, qw(
+		COMMENT GENRE ARTISTSORT PIC APIC ALBUM ALBUMSORT DISCC
+		COMPILATION REPLAYGAIN_ALBUM_PEAK REPLAYGAIN_ALBUM_GAIN 
+		MUSICBRAINZ_ARTIST_ID MUSICBRAINZ_ALBUM_ARTIST_ID MUSICBRAINZ_ALBUM_ID 
+		MUSICBRAINZ_ALBUM_TYPE MUSICBRAINZ_ALBUM_STATUS
 	)) {
 
 		next unless defined $attributes->{$tag};
 
 		$deferredAttributes->{$tag} = delete $attributes->{$tag};
 	}
+
+	# We also need these in _postCheckAttributes, but they should be set during create()
+	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
+	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
+	$deferredAttributes->{'DISC'}    = $attributes->{'DISC'};
 
 	if ($::d_info && $_dump_tags) {
 
@@ -1893,10 +1899,6 @@ sub _mergeAndCreateContributors {
 		return;
 	}
 
-	my %contributors = ();
-
-	my @tags = qw(ALBUMARTIST ARTIST TRACKARTIST BAND COMPOSER CONDUCTOR);
-
 	# Bug: 2317 & 2638
 	#
 	# Bring back the TRACKARTIST role.
@@ -1919,7 +1921,9 @@ sub _mergeAndCreateContributors {
 		}
 	}
 
-	for my $tag (@tags) {
+	my %contributors = ();
+
+	for my $tag (Slim::Schema::Contributor->contributorRoles) {
 
 		my $contributor = $attributes->{$tag} || next;
 
