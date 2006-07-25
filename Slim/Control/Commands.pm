@@ -899,9 +899,9 @@ sub playlistXitemCommand {
 			'client'   => $client,
 			'callback' => sub {
 				my $foundItems = shift;
-				
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
-				
+
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems->[0]};
+
 				_insert_done(
 					$client,
 					$playListSize,
@@ -909,7 +909,7 @@ sub playlistXitemCommand {
 					$request->callbackFunction,
 					$request->callbackArguments,
 				);
-				
+
 				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
@@ -922,9 +922,9 @@ sub playlistXitemCommand {
 			'client'   => $client,
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
-				
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
-				
+
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems->[0]};
+
 				_playlistXitem_load_done(
 					$client,
 					$jumpToIndex,
@@ -934,7 +934,7 @@ sub playlistXitemCommand {
 					$path,
 					$error,
 				);
-				
+
 				playlistXitemCommand_done( $client, $request, $path );
 			},
 		});
