@@ -295,7 +295,7 @@ sub browseplaylistindex {
 	my $client = shift;
 	my $playlistindex = shift;
 
-	if (defined($playlistindex)) {
+	if ( $::d_playlist && defined($playlistindex) ) {
 		bt();
 		msg("new playlistindex: $playlistindex\n");
 	}

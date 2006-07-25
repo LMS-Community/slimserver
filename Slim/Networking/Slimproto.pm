@@ -68,7 +68,6 @@ our %message_handlers = (
 	'RESP' => \&_http_response_handler,
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
-	'DBUG' => \&_firmware_debug_handler,
 );
 
 sub setCallbackRAWI {
@@ -161,6 +160,7 @@ sub slimproto_accept {
 
 sub slimproto_close {
 	my $clientsock = shift;
+	bt();
 	$::d_slimproto && msg("Slimproto connection closed\n");
 
 	# stop selecting
@@ -565,14 +565,6 @@ sub _stat_handler {
 
 	&$callback($client) if $callback;
 	
-} 
-
-
-sub _firmware_debug_handler {
-	my $client = shift;
-	my $data_ref = shift;
-
-	msg("Firmware debug: $$data_ref\n");
 }
 	
 sub _update_request_handler {
@@ -622,6 +614,11 @@ sub _bye_handler {
 sub _hello_handler {
 	my $s = shift;
 	my $data_ref = shift;
+	
+	# killing timer once we get a valid hello 	 
+	$::d_slimproto && msg("_hello_handler: Killing bogus player timer.\n"); 	 
+ 
+	Slim::Utils::Timers::killOneTimer($s, \&slimproto_close);
 	
 	my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
 
