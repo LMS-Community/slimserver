@@ -51,7 +51,7 @@ our %functions = (
 sub setMode {
 	my $client = shift;
 
-	if (!$client->isa("Slim::Player::SqueezeboxG")) {
+	if (!$client->display->isa("Slim::Display::Graphics")) {
 		$client->lines(\&errorLines);
 		return;
 	} 
@@ -65,8 +65,8 @@ sub setMode {
 		'Qlen0'  => 0,
 		'Qlen1'  => 0, 
 		'log'    => Slim::Utils::PerfMon->new('Network Throughput', [10, 20, 30, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100]),
-		'header' => $client->scrollHeader(),
-		'frameLen'=> length($client->scrollHeader()) + $client->screenBytes(),
+		'header' => $client->display->scrollHeader(),
+		'frameLen'=> length($client->display->scrollHeader()) + $client->display->screenBytes(),
 		'refresh'=> Time::HiRes::time(), 
 	};
 
@@ -112,7 +112,7 @@ sub setTest {
 
 	$params->{'test'} = $test;
 	$params->{'rate'} = $rate;
-	$params->{'int'} = ($client->screenBytes() + 10) * 8 / $params->{'rate'} / 1000;
+	$params->{'int'} = ($client->display->screenBytes() + 10) * 8 / $params->{'rate'} / 1000;
 	$params->{'Qlen0'} = 0;
 	$params->{'Qlen1'} = 0;
 	$params->{'log'}->clear();
@@ -137,7 +137,7 @@ sub updateDisplay {
 		return;
 	}
 
-	$client->render(lines($client, $params));
+	$client->display->render(lines($client, $params));
 
 	$params->{'Qlen0'} = 0;
 	$params->{'Qlen1'} = 0;
@@ -154,7 +154,7 @@ sub sendDisplay {
 		return;
 	}
 
-	my $frame = $params->{'header'} . ${$client->renderCache()->{'bitsref'}};
+	my $frame = $params->{'header'} . ${$client->display->renderCache()->{'screen1'}->{'bitsref'}};
 
 	my $slimprotoQLen = Slim::Networking::Select::writeNoBlockQLen($client->tcpsock);
 
@@ -191,9 +191,9 @@ sub lines {
 	my $avgPercent = $logTotal ? $params->{'log'}->{'sum'} / $logTotal : 0;
 
 	return {
-		'line1'    => $client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE'),
-		'overlay1' => $client->symbols($client->progressBar(100, $inst)),
-		'overlay2' => sprintf("%i kbps : %3i%% Avg: %3i%%", $rate, $inst * 100, $avgPercent),
+		'line'    => [$client->string('PLUGIN_HEALTH_NETTEST_SELECT_RATE') ],
+		'overlay' => [ $client->symbols($client->progressBar(100, $inst)),
+					   sprintf("%i kbps : %3i%% Avg: %3i%%", $rate, $inst * 100, $avgPercent) ],
 		'fonts'    => {
 			'graphic-320x32' => 'standard',
 			'graphic-280x16' => 'medium',
@@ -203,7 +203,7 @@ sub lines {
 
 sub errorLines {
 	my $client = shift;
-	return { 'line1' => $client->string('PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED') };
+	return { 'line' => [ $client->string('PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED') ] };
 }
 
 1;

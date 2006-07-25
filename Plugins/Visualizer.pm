@@ -51,7 +51,10 @@ my %screensaver_info = (
 
 	'SCREENSAVER.visualizer_spectrum' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
-		params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
+		params => {
+				'transporter' =>     [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 320, 0, 4, 1, 1, 1, 3, 320, 320, 1, 4, 1, 1, 1, 3],
+				'squeezebox2' => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
+			},
 		showtext => 1,
 	},
 
@@ -71,7 +74,10 @@ my %screensaver_info = (
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
 		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER',
-		params => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
+		params => {
+				'transporter' =>     [$VISUALIZER_VUMETER, 0, 0, 20, 280, 340, 280],
+				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
+			},
 		showtext => 1,
 	},
 	'screensaver' => {
@@ -211,9 +217,8 @@ sub configLines {
 	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq $item);
 
 	return {
-		'line1'    => $line1,
-		'line2'    => $line2, 
-		'overlay2' => $overlay2,
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $overlay2 ],
 	};
 }
 
@@ -261,12 +266,12 @@ our %screensaverFunctions = (
 
 sub screensaverLines {
 	my $client = shift;
-	if( $client->isa( "Slim::Player::Squeezebox2")) {
+	if( $client->display->isa( "Slim::Display::Squeezebox2")) {
 	}
 	else {
 		return {
-			'line1' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER'),
-			'line2' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2'),
+			'line' => [ $client->string('PLUGIN_SCREENSAVER_VISUALIZER'),
+						$client->string('PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2') ]
 		};
 	}
 }
@@ -313,7 +318,14 @@ sub setVisualizerMode() {
 	}
 
 	my $mode = Slim::Buttons::Common::mode($client);
-	$client->modeParam('visu', $screensaver_info{$mode}->{params});
+	my $paramsRef;
+	if (ref($screensaver_info{$mode}->{params}) eq 'ARRAY') {
+		$paramsRef = $screensaver_info{$mode}->{params};
+	} else {
+		$paramsRef = $screensaver_info{$mode}->{params}->{$client->model()};
+	}
+	
+	$client->modeParam('visu', $paramsRef);
 
 	$client->lines(\&screensaverLines);
 
@@ -352,9 +364,8 @@ sub _pushon {
 
 	my $screen = {
 		'fonts' => { 'graphic-320x32' => 'high' },
-		'line1' => '',
-		'line2' => $client->string('NOW_PLAYING') . ': ' .
-					Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)),
+		'line' => [ '', $client->string('NOW_PLAYING') . ': ' . 
+					Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client)) ]
 	};
 	
 	$client->pushLeft(undef, $screen);
@@ -371,8 +382,7 @@ sub _pushoff {
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 
 	my $screen = {
-		'line1' => '',
-		'line2' => '' 
+		'line' => ['','']
 	};
 	$client->pushRight(undef,$screen);
 	# do it again at the next period

@@ -144,9 +144,8 @@ sub lines {
 	}
 	
 	return {
-		'line1'    => $line1,
-		'line2'    => $line2, 
-		'overlay2' => $arrow,
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $arrow ]
 	};
 }
 
@@ -155,8 +154,8 @@ sub savePlaylist {
 	my $playlistfile = shift;
 	$client->execute(['playlist', 'save', $playlistfile]);
 	$client->showBriefly( {
-		'line1' => $client->string('PLAYLIST_SAVING'),
-		'line2' => $playlistfile,
+		'line' => [ $client->string('PLAYLIST_SAVING'),
+					$playlistfile ]
 	});
 }
 

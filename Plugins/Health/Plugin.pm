@@ -223,7 +223,7 @@ sub handleIndex {
 		$params->{'playername'} = $client->name();
 		$params->{'nettest_options'} = \@Plugins::Health::NetTest::testRates;
 
-		if (!$client->isa("Slim::Player::SqueezeboxG")) {
+		if (!$client->display->isa("Slim::Display::Graphics")) {
 			$params->{'nettest_notsupported'} = 1;
 			
 		} elsif (Slim::Buttons::Common::mode($client) eq 'PLUGIN.Health::Plugin') {

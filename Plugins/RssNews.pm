@@ -565,9 +565,8 @@ sub blankLines {
 	my $client = shift;
 
 	my $parts = {
-		'line1' => $client->param('PLUGIN.RssNews.line1') || '',
-		'line2' => undef,
-		'scrollmode' => 'ticker'
+		'line'   => [ $client->param('PLUGIN.RssNews.line1') || '' ],
+		'ticker' => [],
 	};
 
 	# check after the update calling this function is complete to see if ticker is empty
@@ -672,9 +671,8 @@ sub tickerLines {
 		}
 
 		$parts = {
-			'line1'      => $line1,
-			'line2'      => $line2,
-			'scrollmode' => 'ticker',
+			'line'   => [ $line1 ],
+			'ticker' => [ undef, $line2 ],
 		};
 
 		$client->param( 'PLUGIN.RssNews.line1', $line1 );
@@ -683,8 +681,7 @@ sub tickerLines {
 	else {
 
 		$parts = {
-			'line1' => "RSS News - ". $feed->{'title'},
-			'line2' => $client->string('PLUGIN_RSSNEWS_WAIT'),
+			'line' => [ "RSS News - ". $feed->{'title'}, $client->string('PLUGIN_RSSNEWS_WAIT') ]
 		};
 
 		$new_feed_next = 1;

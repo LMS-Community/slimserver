@@ -142,9 +142,8 @@ sub lines {
 	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq 'SCREENSAVER.datetime');
 	
 	return {
-		'line1'    => $client->string('PLUGIN_SCREENSAVER_DATETIME'),
-		'line2'    => $line2,
-		'overlay2' => $overlay2,
+		'line'    => [ $client->string('PLUGIN_SCREENSAVER_DATETIME'), $line2 ],
+		'overlay' => [ undef, $overlay2 ]
 	};
 }
 
@@ -194,6 +193,14 @@ sub setScreensaverDateTimeMode() {
 	$client->param('modeUpdateInterval', 1); # seconds
 }
 
+
+# following is a an optimisation for graphics rendering given the frequency DateTime is displayed
+# by always returning the same hash for the font definition render does less work
+my $fontDef = {	'graphic-280x16'  => { 'overlay' => [ 'small.1'    ] },
+				'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
+				'text'            => { 'displayoverlays' => 1        },
+};
+
 sub screensaverDateTimelines {
 	my $client = shift;
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -203,13 +210,10 @@ sub screensaverDateTimelines {
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
 
 	return {
-		'center1' => Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat')),
-		'center2' => Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')),
-		'overlay1'=> ($alarmOn ? $client->symbols('bell') : undef),
-		'fonts'   => {	'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
-						'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
-						'text'            => { 'displayoverlays' => 1 },
-					},
+		'center' => [ Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat')),
+				  Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')), ],
+		'overlay'=> [ ($alarmOn ? $client->symbols('bell') : undef) ],
+		'fonts'  => $fontDef,
 	};
 }
 

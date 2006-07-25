@@ -19,9 +19,8 @@ use strict;
 
 use Slim::Control::Request;
 use Slim::Utils::Timers;
-use Slim::Hardware::VFD;
+use Slim::Display::Text;
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision$,10);
@@ -215,6 +214,9 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 our %snow;
 our %lastTime;
 our %flakes;
+
+# flag to avoid loading custom fonts multiple times
+my $loadedTextCustomChars = 0; 
 
 # for the player settings menu
 #sub setupGroup{
@@ -443,16 +445,25 @@ sub setScreensaverSnowMode {
 	if ($client->power()) {
 		# save time on later lookups - we know these can't change while we're active
 		$snow{$client}->{snowStyle} = $client->prefGet('snowStyle') || 6;
+
 	} else {
 		$snow{$client}->{snowStyle} = $client->prefGet('snowStyleOff') || 6;
 	}
+
 	$snow{$client}->{snowQuantity} = $client->prefGet('snowQuantity') || 1;
 	if ($client->isa( "Slim::Player::Squeezebox2")) {
+
 		$snow{$client}->{clientType} = 'SB2';
-	} elsif  ($client->isa( "Slim::Player::SqueezeboxG" )) {
+	
+	} elsif  ($client->display->isa( "Slim::Display::SqueezeboxG" )) {
 		$snow{$client}->{clientType} = 'SBG';
+	
 	} else {
-		$snow{$client}->{clientType} = 'SB1';
+		$snow{$client}->{clientType} = 'SB1';		
+		if ($client->display->isa( "Slim::Display::Text") && !$loadedTextCustomChars) {
+			loadTextCustomChars();
+			$loadedTextCustomChars = 1;
+		}
 	}
 }
 
@@ -516,7 +527,8 @@ sub insertChar {
 		($col < (40-$len) ? Slim::Display::Display::subString($line, $col+$len, 40 - $len - $col) : '');
 }
 
-Slim::Hardware::VFD::setCustomChar('snow01',
+sub loadTextCustomChars {
+	Slim::Display::Text::setCustomChar('snow01',
                                  ( 0b00000010,
                                    0b00000111,
                                    0b00000010,
@@ -525,7 +537,7 @@ Slim::Hardware::VFD::setCustomChar('snow01',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow00',
+	Slim::Display::Text::setCustomChar('snow00',
                                  ( 0b00001000,
                                    0b00011100,
                                    0b00001000,
@@ -534,7 +546,7 @@ Slim::Hardware::VFD::setCustomChar('snow00',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow11',
+	Slim::Display::Text::setCustomChar('snow11',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000010,
@@ -543,7 +555,7 @@ Slim::Hardware::VFD::setCustomChar('snow11',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow10',
+	Slim::Display::Text::setCustomChar('snow10',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00001000,
@@ -552,7 +564,7 @@ Slim::Hardware::VFD::setCustomChar('snow10',
                                    0b00000000,
                                    0b00000000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow21',
+	Slim::Display::Text::setCustomChar('snow21',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000000,
@@ -561,7 +573,7 @@ Slim::Hardware::VFD::setCustomChar('snow21',
                                    0b00000111,
                                    0b00000010,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow20',
+	Slim::Display::Text::setCustomChar('snow20',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00000000,
@@ -570,7 +582,7 @@ Slim::Hardware::VFD::setCustomChar('snow20',
                                    0b00011100,
                                    0b00001000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow7',
+	Slim::Display::Text::setCustomChar('snow7',
                                  ( 0b00001000,
                                    0b00011100,
                                    0b00001000,
@@ -579,7 +591,7 @@ Slim::Hardware::VFD::setCustomChar('snow7',
                                    0b00011100,
                                    0b00001000,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow8',
+	Slim::Display::Text::setCustomChar('snow8',
                                  ( 0b00000000,
                                    0b00000000,
                                    0b00001000,
@@ -588,7 +600,7 @@ Slim::Hardware::VFD::setCustomChar('snow8',
                                    0b00000111,
                                    0b00000010,
                                    0b00000000 ));
-Slim::Hardware::VFD::setCustomChar('snow9',
+	Slim::Display::Text::setCustomChar('snow9',
                                  ( 0b00001000,
                                    0b00011100,
                                    0b00001000,
@@ -597,6 +609,7 @@ Slim::Hardware::VFD::setCustomChar('snow9',
                                    0b00000111,
                                    0b00000010,
                                    0b00000000 ));
+}
 
 our %flakeMap = (0 => ' ',
 	1  => Slim::Display::Display::symbol('snow00'),

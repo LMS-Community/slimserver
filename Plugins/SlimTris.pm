@@ -19,6 +19,9 @@ my $height = 4;
 my $width = 39;
 my $customchar = 1;
 
+# flag to avoid loading custom chars multiple times
+my $loadedcustomchar = 0;
+
 sub getDisplayName { 'SlimTris' }
 
 #
@@ -370,7 +373,7 @@ sub lines {
 		$dispgrid[$x][$y] = 1;
 	}
 
-	if ($client->isa( "Slim::Player::Squeezebox2")) {
+	if ($client->display->isa( "Slim::Display::Squeezebox2")) {
 		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
 			{	
@@ -381,7 +384,7 @@ sub lines {
 				$bits .= $column;
 			}
 		$parts->{bits} = $bits;
-	} elsif ($client->isa( "Slim::Player::SqueezeboxG")) {
+	} elsif ($client->display->isa( "Slim::Display::SqueezeboxG")) {
 		my $bits = '';
 		for (my $x = 1; $x < $width+2; $x++)
 			{	
@@ -430,7 +433,11 @@ sub grid2char {
 sub loadCustomChars {
 	my $client = shift;
 
-	Slim::Hardware::VFD::setCustomChar( 'slimtristop', ( 
+	return unless $client->display->isa('Slim::Display::Text');
+
+	return if $loadedcustomchar;
+	
+	Slim::Display::Text::setCustomChar( 'slimtristop', ( 
 		0b00000000, 
 		0b00000000, 
 		0b00000000, 
@@ -441,7 +448,7 @@ sub loadCustomChars {
 
 		0b00000000
 		));
-	Slim::Hardware::VFD::setCustomChar( 'slimtrisbottom', ( 
+	Slim::Display::Text::setCustomChar( 'slimtrisbottom', ( 
 		0b11111110, 
 		0b11111111, 
 		0b01111111, 
@@ -452,7 +459,7 @@ sub loadCustomChars {
 		
 		0b00000000
 		));
-	Slim::Hardware::VFD::setCustomChar( 'slimtrisboth', ( 
+	Slim::Display::Text::setCustomChar( 'slimtrisboth', ( 
 		0b11111110, 
 		0b11111111, 
 		0b01111111, 
@@ -471,9 +478,10 @@ sub loadCustomChars {
 #                  0b00010101,
 #                  0b00011111,
 #                  0b00000000
-		
 
 		));
+		
+	$loadedcustomchar = 1;
 
 	}
 	

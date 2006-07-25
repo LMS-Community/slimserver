@@ -86,7 +86,7 @@ sub initPlugin {
 				Slim::Utils::Prefs::set("rescan-scheduled", 0);
 				$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_OFF');
 				$client->showBriefly( {
-				    'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF'),
+				    'line' => [ $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF') ]
 				});
 				setTimer($client);
 			
@@ -119,8 +119,8 @@ sub initPlugin {
 				$client->execute(\@pargs, undef, undef);
 
 				$client->showBriefly( {
-				    'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-				    'line2' => $client->string('PLUGIN_RESCAN_RESCANNING'),
+				    'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+								$client->string('PLUGIN_RESCAN_RESCANNING') ]
 				});
 
 			} else {
@@ -169,9 +169,9 @@ sub lines {
 	}
 
 	return {
-	    'line1' => $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-	    'line2' => $browseMenuChoices[$menuSelection{$client}] || '',
-	    'overlay2' => $client->symbols('rightarrow'),
+	    'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+					$browseMenuChoices[$menuSelection{$client}] || '' ],
+	    'overlay' => [ undef, $client->symbols('rightarrow') ],
 	};
 }
 
