@@ -83,7 +83,7 @@ sub getPlaylist {
 
 		my @contribList = ();
 
-		while (my $contributor = $track->contributors->next) {
+		for my $contributor ($track->contributors->all) {
 
 			push @contribList, { $contributor->get_columns };
 		}
