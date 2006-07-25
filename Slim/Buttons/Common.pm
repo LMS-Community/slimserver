@@ -415,7 +415,7 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 
-		my $vm = $client->prefGet("playingDisplayMode");
+		my $vm = $client->prefGet('visuMode');
 
 		unless (defined $vm) { $vm = 1; };
 		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
@@ -427,7 +427,8 @@ our %functions = (
 				$vm = $buttonarg;
 			}
 		}
-		$client->prefSet("playingDisplayMode", $vm);
+
+		$client->prefSet('visuMode', $vm);
 		$client->update();
 	},
 

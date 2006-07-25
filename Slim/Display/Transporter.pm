@@ -26,7 +26,8 @@ our $defaultPrefs = {
 	'idleFont_curr'       => 1,
 	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 0,
-	'playingDisplayModes' => [0..5]
+	'playingDisplayModes' => [0..5],
+	'visuMode'            => 0,
 };
 
 # Display modes for Transporter:
@@ -241,7 +242,7 @@ sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
+	my $visu = $client->prefGet('visuMode');
 	
 	$visu = 0 if (!$display->showVisualizer());
 	
