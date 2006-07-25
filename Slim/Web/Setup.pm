@@ -849,6 +849,12 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[6] = undef;
 					}
 
+					if ($client && $client->hasExternalClock()) {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = 'clockSource';
+					}
+					else {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = undef;
+					}
 		}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -887,7 +893,7 @@ sub initSetupConfig {
 					'PrefOrder' => ['synchronize','syncVolume','syncPower']
 				}
 			,'Digital' => {
-					'PrefOrder' => ['digitalVolumeControl','preampVolumeControl','mp3SilencePrelude']
+					'PrefOrder' => ['digitalVolumeControl','preampVolumeControl','mp3SilencePrelude','clockSource']
 				}
 			,'Transition' => {
 					'PrefOrder' => ['transitionType', 'transitionDuration']
@@ -1037,6 +1043,20 @@ sub initSetupConfig {
 			,'mp3SilencePrelude' => {
 							'validate' => \&Slim::Utils::Validate::number  
 							,'validateArgs' => [0, 5]
+						}
+			,'clockSource' => {
+							'validate' => \&Slim::Utils::Validate::isInt
+							,'validateArgs' => [0,2,0,0]
+							,'optionSort' => 'NK'
+							,'options' => {
+									'0' => 'CLOCKSOURCE_INTERNAL',
+									'1' => 'CLOCKSOURCE_WORD_CLOCK',
+									'2' => 'CLOCKSOURCE_SPDIF_SLAVE',
+								}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->updateClockSource();
+							}
 						}
 			,'transitionType' => {
 							'validate' => \&Slim::Utils::Validate::isInt

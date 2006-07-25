@@ -26,6 +26,31 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 
+our $defaultPrefs = {
+	'clockSource'		=> 0,
+};
+
+sub init {
+	my $client = shift;
+	# make sure any preferences unique to this client may not have set are set to the default
+	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	$client->SUPER::init();
+}
+
+sub reconnect {
+	my $client = shift;
+	$client->SUPER::reconnect(@_);
+
+	$client->updateClockSource();
+}
+
+sub updateClockSource {
+    my $client = shift;
+
+	my $data = pack('C', $client->prefGet("clockSource"));
+	$client->sendFrame('audc', \$data);	
+}
+
 sub updateKnob {
 	my $client    = shift;
 	my $forceSend = shift || 0;
@@ -71,4 +96,14 @@ sub model {
 	return 'transporter';
 };
 
+sub hasExternalClock {
+	return 1;
+}
+
 1;
+
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:
