@@ -526,17 +526,9 @@ sub checkServerPrefs {
 	}
 
 	# Fixup old sortBrowseArt prefs. Ugh.
-	if ($prefs{'sortBrowseArt'} eq 'album') {
+	if ($prefs{'sortBrowseArt'} !~ /\./) {
 
 		$prefs{'sortBrowseArt'} = 'album.titlesort';
-
-	} elsif ($prefs{'sortBrowseArt'}) {
-
-		$prefs{'sortBrowseArt'} =~ s/artist/contributor/;
-		$prefs{'sortBrowseArt'} =~ s/[^\.]year,/album.year,/;
-		$prefs{'sortBrowseArt'} =~ s/(genre|contributor),/$1.namesort,/;
-		$prefs{'sortBrowseArt'} =~ s/\balbum,/album.titlesort,/;
-		$prefs{'sortBrowseArt'} =~ s/album$/album.titlesort/;
 	}
 
 	for my $version (sort keys %upgradeScripts) {
