@@ -69,6 +69,8 @@ trebledown				= treble_down
 trebledown.repeat		= treble_down
 trebleup				= treble_up
 trebleup.repeat			= treble_up
+volume					= volume
+volumemode				= volumemode
 
 # playing display modes
 now_playing				= playdisp_toggle
@@ -96,10 +98,12 @@ repeat_off				= repeat_0
 repeat_one				= repeat_1
 repeat_all				= repeat_2
 
-# search button
+# special buttons
+browse					= browse
 search					= search
 favorites.single		= favorites
 favorites.hold			= favorites_add
+visual					= visual_toggle
 
 # menu shortcuts
 menu_playlist			= menu_playlist
@@ -167,6 +171,7 @@ shuffle.*				= dead
 shuffle_off				= dead
 shuffle_on				= dead
 search					= dead
+browse.*				= dead
 favorites.*				= dead
 sleep					= dead
 stop					= dead
@@ -290,6 +295,7 @@ pause.*					= done_passback
 play					= done
 add						= done
 stop					= done_passback
+knob					= done
 
 [INPUT.Time]
 0						= numberLetter_0
