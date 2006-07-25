@@ -209,13 +209,13 @@
 [% BLOCK progress_bar_display %]
 
 <div id = 'progressbar_overlay' style = 'display: none;'>
-	<table width="788" class = "thinborder_grey" cellspacing="0" cellpadding="0">
+	<table width = '100%' class = "thinborder_grey" cellspacing="0" cellpadding="0">
 		<td class = "pbar_white" align = 'left' nowrap id = 'elapsed'>0:00</td>
 		<td class = "pbar" align = 'right' nowrap id = "duration"></td>
 	</table>
 </div>
 <div id = 'progressbar' style = 'display: none;'>
-	<table width="788" cellspacing="0" cellpadding="0">
+	<table width = '100%'cellspacing="0" cellpadding="0">
 		<tr>
 		<td valign = 'middle'>
 			<img id="progressBar" name="progressBar" src="html/images/progress_color.gif" width="1" height="18">
@@ -227,10 +227,10 @@
 [% END %]
 
 [% BLOCK player_controls %]
-<table class = 'thinborder' width = 100%>
+<table class = 'thinborder' width = '100%'>
 	<tr>
 	<td>
-	<table bgcolor="#FFFFFF" border="0" cellspacing="2" cellpadding="0" width = 100%>
+	<table bgcolor="#FFFFFF" border="0" cellspacing="2" cellpadding="0" width = '100%'>
 		<tr align="center">
 		<td onClick="playerButtonControl('player', 'play', 'p0=play&player=[% playerURI %]&ajaxRequest=1');">
 		<img id = 'playercontrol_active_play' src = "html/images/larger/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];' title = 'play'>
@@ -274,7 +274,7 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 
 [% BLOCK volume_settings %]
 	[% IF isplayer %]
-<table class = 'thinborder' width = 100% cellpadding = '3' bgcolor = 'white'>
+<table class = 'thinborder' width = '100%' cellpadding = '3' bgcolor = 'white'>
 	<tr>
 	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif" title = 'volume settings'></td>
 
