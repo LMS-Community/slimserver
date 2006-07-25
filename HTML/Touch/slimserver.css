@@ -169,7 +169,7 @@ div#pagecontainer {
 
 div#innerSanctum {
 	position: absolute;
-	width: 780px;
+	width: 100%;
 }
 div#hidden {
 	display: none;
@@ -195,16 +195,14 @@ tr.even, td.even {
 }
 
 div#page {
-	width: 800px;
+	width: 100%;
 	z-index: -100;
-	height: 480px;
 	overflow: visible;
 }
 
 div#page_with_bar {
-	width: 778px;
+	width: 100%;
 	z-index: -100;
-	height: 480px;
 	overflow: visible;
 }
 
@@ -243,7 +241,7 @@ div#menu {
 div#emptyplayer {
         position: absolute;
         left: 180;
-        width: 788;
+        width: 100%;
         top: 70;
 	overflow: visible;
 	z-index: 1;
@@ -252,7 +250,7 @@ div#emptyplayer {
 div#coverart {
         position: absolute;
         left: 6;
-        width: 200;
+        width: 300;
         top: 15;
 	overflow: visible;
 	z-index: 1;
@@ -261,7 +259,7 @@ div#coverart {
 div#radioart {
         position: absolute;
         left: 6;
-        width: 200;
+        width: 300;
         top: 15;
 	overflow: visible;
 	z-index: 1;
@@ -309,7 +307,7 @@ div#controls {
        position: absolute;
        top:241;
 	left: 0;
-       width: 800;
+       width: 100%;
 }
 
 div#progressbar {
