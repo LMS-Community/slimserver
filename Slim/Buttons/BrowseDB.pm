@@ -255,7 +255,10 @@ sub init {
 
 		'create_mix' => sub  {
 			my $client = shift;
-			my $item   = shift;
+
+			my $items       = $client->param('listRef');
+			my $listIndex   = $client->param('listIndex');
+			my $currentItem = $items->[$listIndex] || return;
 
 			my $Imports = Slim::Music::Import->importers;
 
@@ -266,7 +269,7 @@ sub init {
 				next if !$Imports->{$import}->{'mixer'};
 				next if !$Imports->{$import}->{'use'};
 
-				if ($import->mixable($item)) {
+				if ($import->mixable($currentItem)) {
 					push @mixers, $import;
 				}
 			}
