@@ -452,19 +452,23 @@ our %functions = (
 	},
 
 	'favorites' => sub  {
-		my $client = shift;
-		my $button = shift;
+		my $client    = shift;
+		my $button    = shift;
 		my $buttonarg = shift;
-		my $playdisp = undef;
+		my $playdisp  = undef;
 		
-		if ($buttonarg eq "add") {
+		if (defined $buttonarg && $buttonarg eq "add") {
+
 			my $list = $client->param('listRef');
+
 			if ($list) {
 			
 				my $obj = $list->[$client->param('listIndex')];
 				
 				if (blessed($obj) && $obj->can('url')) {
+
 					my $title;
+
 					if ($obj->can('title')) {
 						$title = $obj->title;
 					} else {
@@ -477,12 +481,14 @@ our %functions = (
 					}
 
 				} else {
-					use Data::Dumper;
+
 					$::d_favorites && msg("list item is not an object, not adding favorite\n");
-					$::d_favorites && msg(Dumper($obj));
+					$::d_favorites && msg(Data::Dumper::Dumper($obj));
 				}
 			}			
+
 		} elsif (mode($client) ne 'PLUGIN.Favorites') {
+
 			Slim::Buttons::Common::setMode($client, 'home');
 			Slim::Buttons::Home::jump($client, 'PLUGIN.Favorites');
 			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites');
