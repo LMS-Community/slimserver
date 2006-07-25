@@ -269,7 +269,7 @@ sub initSetupConfig {
 
 					if ($client->isPlayer()) {
 						$pageref->{'GroupOrder'}[0] = 'Brightness';
-						if ($client->isa("Slim::Player::SqueezeboxG")) {
+						if ($client->display->isa("Slim::Display::Graphics")) {
 							$pageref->{'GroupOrder'}[1] = 'activeFont'; 
 							$pageref->{'GroupOrder'}[2] = 'idleFont';
 							$pageref->{'GroupOrder'}[6] = 'ScrollPixels';
@@ -2134,25 +2134,36 @@ sub getSetupOptions {
 
 sub getPlayingDisplayModes {
 	my $client = shift || return {};
-	my $displayHash = $client->playingModeOptions();
-	$displayHash->{-1} = ' ' ;
+	
+	my $displayHash = {	'-1' => ' '	};
+	my $modes = $client->display->modes();
+
+	foreach my $i (0..$client->display->nmodes()) {
+		my $desc = $modes->[$i]{'desc'};
+		foreach my $j (0..$#{$desc}){
+			$displayHash->{"$i"} .= ' ' if ($j > 0);
+			$displayHash->{"$i"} .= string(@{$desc}[$j]);
+		}
+	}
 	return $displayHash;
 }
 
 sub getFontOptions {
-	my $client = shift || return {};
-	my $fonts = Slim::Display::Graphics::fontnames();
-	my %allowedfonts;
+	my $client = shift;
 
+	return {} if (!$client || !exists &Slim::Display::Lib::Fonts::fontnames);
+
+	my $fonts = Slim::Display::Lib::Fonts::fontnames();
+	my %allowedfonts;
 	my $displayHeight = $client->displayHeight();
-	foreach my $f (keys %$fonts) {
-		
-		if ($displayHeight == Slim::Display::Graphics::fontheight($f . '.2')) {
+
+	foreach my $f (@$fonts) {
+		if ($displayHeight == Slim::Display::Lib::Fonts::fontheight($f . '.2')) {
 			$allowedfonts{$f} = $f;
 		}
 	}
 	
-	$allowedfonts{'-1'} = ' ';;
+	$allowedfonts{'-1'} = ' ';
 
 	return \%allowedfonts;
 }
@@ -2280,25 +2291,6 @@ sub fillSetupOptions {
 	my ($set,$pref,$hash) = @_;
 	$setup{$set}{'Prefs'}{$pref}{'options'} = {hash_of_prefs($hash)};
 	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{$set}{'Prefs'}{$pref}{'options'}];
-}
-
-sub fillFontOptions {
-	my ($client,$set,$pref,$hash) = @_;
-	my $fonts = Slim::Display::Graphics::fontnames();
-	my %allowedfonts;
-
-	my $displayHeight = $client->displayHeight();
-	foreach my $f (keys %$fonts) {
-		
-		if ($displayHeight == Slim::Display::Graphics::fontheight($f . '.2')) {
-			$allowedfonts{$f} = $f;
-		}
-	}
-	
-	$allowedfonts{'-1'} = ' ';;
-
-	$setup{$set}{'Prefs'}{$pref}{'options'} = \%allowedfonts;
-	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [\%allowedfonts];
 }
 
 sub playerChildren {

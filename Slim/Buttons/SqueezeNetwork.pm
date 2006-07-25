@@ -73,7 +73,9 @@ sub lines {
 		$line2 = $client->string('SQUEEZENETWORK_SB2_REQUIRED');
 	}
 
-	return ($line1, $line2, undef, undef);
+	return {
+		'line' => [ $line1, $line2 ]
+	};
 }
 
 sub getFunctions() {

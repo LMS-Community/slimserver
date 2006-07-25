@@ -14,7 +14,7 @@ package Slim::Player::Squeezebox2;
 #
 
 use strict;
-use base qw(Slim::Player::SqueezeboxG);
+use base qw(Slim::Player::Squeezebox);
 
 use File::Spec::Functions qw(:ALL);
 use IO::Socket;
@@ -29,155 +29,17 @@ use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
-	'activeFont'			=> [qw(light standard full)],
-	'activeFont_curr'		=> 1,
-	'idleFont'				=> [qw(light standard full)],
-	'idleFont_curr'			=> 1,
-	'idleBrightness'		=> 2,
 	'transitionType'		=> 0,
 	'transitionDuration'	=> 0,
 	'replayGainMode'		=> '3',
-	'playingDisplayMode'	=> 5,
-	'playingDisplayModes'	=> [0..11]
 };
 
-# Parameters for the vumeter:
-#   0 - Channels: stereo == 0, mono == 1
-#   1 - Style: digital == 0, analog == 1
-# Left channel parameters:
-#   2 - Position in pixels
-#   3 - Width in pixels
-# Right channel parameters (not required for mono):
-#   4-5 - same as left channel parameters
-
-# Parameters for the spectrum analyzer:
-#   0 - Channels: stereo == 0, mono == 1
-#   1 - Bandwidth: 0..22050Hz == 0, 0..11025Hz == 1
-#   2 - Preemphasis in dB per KHz
-# Left channel parameters:
-#   3 - Position in pixels
-#   4 - Width in pixels
-#   5 - orientation: left to right == 0, right to left == 1
-#   6 - Bar width in pixels
-#   7 - Bar spacing in pixels
-#   8 - Clipping: show all subbands == 0, clip higher subbands == 1
-#   9 - Bar intensity (greyscale): 1-3
-#   10 - Bar cap intensity (greyscale): 1-3
-# Right channel parameters (not required for mono):
-#   11-18 - same as left channel parameters
-
-
-# sb2 display modes:
-#    0 - just text
-#    1 - text and progress bar and time
-#    2 - text + vu on side
-#    3 - text + progress bar + vu
-#    4 - text + spectrum analyzer
-#    5 - text + full screen spectrum analyser
-#    6 - text + indicator
-
-my $VISUALIZER_NONE = 0;
-my $VISUALIZER_VUMETER = 1;
-my $VISUALIZER_SPECTRUM_ANALYZER = 2;
-my $VISUALIZER_WAVEFORM = 3;
-
-my @modes = ( 	
-	{ bar => 0, 
-	  secs => 0, 
-	  width => 320, 
-	  params => [$VISUALIZER_NONE] } , 
-	{ bar => 1, 
-	  secs => 1,
-	  width => 320, 
-	  params => [$VISUALIZER_NONE] } , 
-	{ bar => 1, 
-	  secs => -1, 
-	  width => 320, 
-	  params => [$VISUALIZER_NONE] } , 
-	  
-	{ bar => 0, 
-	  secs => 0, 
-	  width => 278, 
-	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
-	{ bar => 1, 
-	  secs => 1,
-	  width => 278, 
-	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
-	{ bar => 1, 
-	  secs => -1, 
-	  width => 278, 
-	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
-	  
-	{ bar => 0, 
-	  secs => 0, 
-	  width => 278, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
-	{ bar => 1, 
-	  secs => 1,
-	  width => 278, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
-	{ bar => 1, 
-	  secs => -1, 
-	  width => 278, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] } , 
-	  
-	{ bar => 0, 
-	  secs => 0, 
-	  width => 320, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
-	{ bar => 1, 
-	  secs => 1,
-	  width => 320, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
-	{ bar => 1, 
-	  secs => -1, 
-	  width => 320, 
-	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
-	  
-	{ bar => 1, 
-	  secs => 0, 
-	  width => 320, 
-	  params => [$VISUALIZER_NONE], fullness => 1 }
-);
-
 # Keep track of direct stream redirects
-our $redirects = {};
-
-sub nowPlayingModes {
-	return 13;
-	
-	# Optimization: This used to be:
-	# return scalar(keys %{$client->playingModeOptions()});
-	# which made tons of useless string calls!
-}
+	 our $redirects = {};
 
 my @WMA_FILE_PROPERTIES_OBJECT_GUID = (0x8c, 0xab, 0xdc, 0xa1, 0xa9, 0x47, 0x11, 0xcf, 0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65);
 my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
 my @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID = (0xd2, 0xd0, 0xa4, 0x40, 0xe3, 0x07, 0x11, 0xd2, 0x97, 0xf0, 0x00, 0xa0, 0xc9, 0x5e, 0xa8, 0x50);
-
-sub playingModeOptions { 
-	my $client = shift;
-	
-	# NOTE: if you add an option here, update the count in nowPlayingModes above
-	
-	my %options = (
-		'0' => $client->string('BLANK'),
-		'1' => $client->string('ELAPSED'),
-		'2' => $client->string('REMAINING') ,
-		'3' => $client->string('VISUALIZER_VUMETER_SMALL'),
-		'4' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
-		'5' => $client->string('VISUALIZER_VUMETER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
-		'6' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'),
-		'7' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
-		'8' => $client->string('VISUALIZER_SPECTRUM_ANALYZER_SMALL'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
-		'9' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'),
-		'10' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('ELAPSED'),
-		'11' => $client->string('VISUALIZER_SPECTRUM_ANALYZER'). ' ' . $client->string('AND') . ' ' . $client->string('REMAINING'),
-		'12' => $client->string('SETUP_SHOWBUFFERFULLNESS'),
-	);
-	
-	return \%options;
-}
 
 sub new {
 	my $class = shift;
@@ -189,40 +51,11 @@ sub new {
 	return $client;
 }
 
-sub vfdmodel {
-	return 'graphic-320x32';
-}
-
 sub init {
 	my $client = shift;
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
 	$client->SUPER::init();
-}
-
-sub showVisualizer {
-	my $client = shift;
-	
-	# show the always-on visualizer while browsing or when playing.
-	return (Slim::Player::Source::playmode($client) eq 'play') || (Slim::Buttons::Playlist::showingNowPlaying($client));
-}
-
-sub displayWidth {
-	my $client = shift;
-	
-	# if we're showing the always-on visualizer & the current buttonmode 
-	# hasn't overridden, then use the playing display mode to index
-	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($client->showVisualizer() && !defined($client->modeParam('visu'))) ? ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")] : 0;
-	return $modes[$mode || 0]{width};
-}
-
-sub bytesPerColumn {
-	return 4;
-}
-
-sub displayHeight {
-	return 32;
 }
 
 sub maxBass { 50 };
@@ -318,227 +151,10 @@ sub volume {
 	return $volume;
 }
 
-sub drawFrameBuf {
-	my $client = shift;
-	my $framebufref = shift;
-	my $parts = shift;
-	my $transition = shift || 'c';
-	my $param = shift || 0;
-
-	if ($client->opened()) {
-		# for now, we'll send a visu packet with each screen update.	
-		$client->visualizer();
-
-		my $framebuf = pack('n', 0) .   # offset of zero
-						   $transition . # transition
-						   pack('c', $param) . # param byte
-						   substr($$framebufref, 0, $client->displayWidth() * $client->bytesPerColumn()); # truncate if necessary
-	
-		$client->sendFrame('grfe', \$framebuf);
-	}
-}	
-
-
 sub periodicScreenRefresh {
     my $client = shift;
     # noop for this player - not required
 }    
-
-# update screen - supressing unchanged screens
-sub updateScreen {
-	my $client = shift;
-	my $render = shift;
-	if ($render->{changed}) {
-	    $client->drawFrameBuf($render->{bitsref});
-	} else {
-	    # check to see if visualiser has changed even if screen display has not
-	    $client->visualizer();
-	}
-}
-
-# update visualizer and init scrolling
-sub scrollInit {
-    my $client = shift;
-    $client->visualizer();    
-    $client->SUPER::scrollInit(@_);
-}
-
-# update visualiser and scroll background - suppressing unchanged backgrounds
-sub scrollUpdateBackground {
-    my $client = shift;
-    my $render = shift;
-    $client->visualizer();
-    $client->SUPER::scrollUpdateBackground($render) if $render->{changed};
-}
-
-# preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
-sub scrollHeader {
-	my $client = shift;
-	my $header = 'grfe' . pack('n', 0) . 'c' . pack ('c', 0);
-
-	return pack('n', length($header) + $client->screenBytes ) . $header;
-}
-
-# set the visualizer and update the player.  If blank, just update the player with the current mode setting.
-sub visualizer {
-	my $client = shift;
-	my $forceSend = shift || 0;
-	
-	my $paramsref = $client->modeParam('visu');
-	
-	if (!$paramsref) {
-		my $visu = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
-
-		$visu = 0 if (!$client->showVisualizer());
-		
-		if (!defined $visu || $visu < 0) { 
-			$visu = 0; 
-		}
-		my $nmodes = $client->nowPlayingModes();
-		if ($visu >= $nmodes) { 
-			$visu = $nmodes - 1;
-		}
-		
-		$paramsref = $modes[$visu]{params};
-	}
-	
-	return if (!$forceSend && defined($paramsref) && ($paramsref == $client->lastVisMode())); 
-
-	my @params = @{$paramsref};
-	
-	my $which = shift @params;
-	my $count = scalar(@params);
-
-	my $parambytes = pack "CC", $which, $count;
-	for my $param (@params) {
-		$parambytes .= pack "N", $param;
-	}
-
-	$client->sendFrame('visu', \$parambytes);
-	$client->lastVisMode($paramsref);
-}
-
-sub pushUp {
-	my $client = shift;
-	my $end = shift || $client->curLines();
-
-	$client->pushUpDown($end, 'u');
-}
-
-sub pushDown {
-	my $client = shift;
-	my $end = shift || $client->curLines();
-
-	$client->pushUpDown($end, 'd');
-}
-
-sub pushUpDown {
-	my $client = shift;
-	my $end = shift;
-	my $dir = shift;
-	
-	$client->killAnimation();
-	$client->animateState(1);
-	$client->updateMode(1);
-	
-	my $render = $client->render($end);
-
-	# start the push animation, passing in the extent of the second line
-	$client->drawFrameBuf($render->{bitsref}, undef, $dir, $render->{line2height});
-}
-
-# push the old screen off the left side
-sub pushLeft {
-	my $client = shift;
-	my $start = shift;
-	my $end = shift || $client->curLines();
-
-	$client->killAnimation();
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($client->render($end)->{bitsref}, undef, 'r', 0);
-}
-
-# push the old screen off the right side
-sub pushRight {
-	my $client = shift;
-	my $start = shift;
-	my $end = shift || $client->curLines();
-
-	$client->killAnimation();	
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($client->render($end)->{bitsref}, undef, 'l', 0);
-}
-
-# bump left against the edge
-sub bumpLeft {
-	my $client = shift;
-	my $startbits = $client->render($client->renderCache())->{bitsref};
-	
-	$client->killAnimation();	
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($startbits, undef, 'L', 0);
-}
-
-# bump right against the edge
-sub bumpRight {
-	my $client = shift;
-	my $startbits = $client->render($client->renderCache())->{bitsref};
-	
-	$client->killAnimation();	
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($startbits, undef, 'R', 0);
-}
-
-sub bumpDown {
-	my $client = shift;
-	my $startbits = $client->render($client->renderCache())->{bitsref};
-	
-	$client->killAnimation();
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($startbits, undef, 'U', 0);
-}
-
-sub bumpUp {
-	my $client = shift;
-	my $startbits = $client->render($client->renderCache())->{bitsref};
-
-	$client->killAnimation();	
-	$client->animateState(1);
-	$client->updateMode(1);
-	$client->drawFrameBuf($startbits, undef, 'D', 0);
-}
-
-my @brightmap = (
-	65535,
-	0,
-	1,
-	3,
-	4,
-);
-
-sub brightness {
-	my $client = shift;
-	my $delta = shift;
-	
-	my $brightness = $client->Slim::Player::Player::brightness($delta, 1);
-		
-	if (defined($delta)) {
-		
-		my $brightnesscode = pack('n', $brightmap[$brightness]);
-		$client->sendFrame('grfb', \$brightnesscode); 
-	}
-	
-	return $brightness;
-}
-
-sub maxBrightness {
-	return 4;
-}
 
 sub upgradeFirmware {
 	my $client = shift;
@@ -568,63 +184,6 @@ sub upgradeFirmware {
 	} else {
 		$client->forgetClient();
 	}
-}
-
-sub nowPlayingModeLines {
-	my ($client, $parts) = @_;
-	my $overlay;
-	my $fractioncomplete   = 0;
-	
-	my $mode = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
-
-	my $songtime = '';
-	
-	Slim::Buttons::Common::param(
-		$client,
-		'animateTop',
-		(Slim::Player::Source::playmode($client) ne "stop") ? $mode : 0
-	);
-
-	unless (defined $mode) {
-		$mode = 1;
-	};
-
-	my $showBar =  $modes[$mode]{bar};
-	my $showTime = $modes[$mode]{secs};
-	my $showFullness = $modes[$mode]{fullness};
-	
-	# check if we don't know how long the track is...
-	if (!Slim::Player::Source::playingSongDuration($client)) {
-		$showBar = 0;
-	}
-	
-	if ($showFullness) {
-		$fractioncomplete = $client->usage();
-	} elsif ($showBar) {
-		$fractioncomplete = Slim::Player::Source::progress($client);
-	}
-	
-	if ($showFullness) {
-		$songtime = ' ' . int($fractioncomplete * 100 + 0.5)."%";
-	} elsif ($showTime) { 
-		$songtime = ' ' . $client->textSongTime($showTime < 0);
-	}
-
-	if ($showTime || $showFullness) {
-		$overlay = $songtime;
-	}
-	
-	if ($showBar) {
-		# show both the bar and the time
-		my $leftLength = $client->measureText($parts->{line1}, 1);
-		my $barlen = $client->displayWidth() - $leftLength - $client->measureText($overlay, 1);
-		my $bar    = $client->symbols($client->progressBar($barlen, $fractioncomplete));
-
-		$overlay = $bar . $songtime;
-	}
-	
-	$parts->{overlay1} = $overlay if defined($overlay);
-	
 }
 
 sub maxTransitionDuration {
@@ -1020,31 +579,17 @@ sub canDoReplayGain {
 	return 0;
 }
 
-
 sub hasPreAmp {
 	return 1;
 }
 
-# SB2 can display Unicode fonts via a TTF
-sub isValidClientLanguage {
-	my $class = shift;
-	my $lang  = shift;
+sub audio_outputs_enable { 
+	my $client = shift;
+	my $enabled = shift;
 
-	return 1;
-}
-
-sub string {
-        my $client = shift;
-        my $string = shift;
-
-	return Slim::Utils::Strings::string($string, Slim::Utils::Strings::getLanguage());
-}
-
-sub doubleString {
-        my $client = shift;
-        my $string = shift;
-
-	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
+	# spdif enable / dac enable
+	my $data = pack('CC', $enabled, $enabled);
+	$client->sendFrame('aude', \$data);
 }
 
 sub audio_outputs_enable { 

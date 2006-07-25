@@ -46,7 +46,8 @@ sub getFunctions {
 
 sub screenSaver {
 	my $client = shift;
-	
+	my $display = $client->display;
+
 	my $now = Time::HiRes::time();
 
 	$::d_time && msg("screenSaver idle display " . (
@@ -72,17 +73,17 @@ sub screenSaver {
 	
 	# dim the screen if we're not playing...  will restore brightness on next IR input.
 	# only ned to do this once, but its hard to ensure all cases, so it might be repeated.
-	if ( $timeout && $client->brightness() && 
-			$client->brightness() != $dim &&
+	if ( $timeout && $display->brightness() && 
+			$display->brightness() != $dim &&
 			$client->prefGet('autobrightness') &&
 			$irtime &&
 			$irtime < $now - $timeout && 
 			$mode ne 'block' &&
 			$client->power()) {
-		$client->brightness($dim);
+		$display->brightness($dim);
 	}
 
-	if ($client->updateMode() == 2 || $client->animateState() ) {
+	if ($display->updateMode() == 2 || $display->animateState() ) {
 		# don't change whilst updates blocked or animating (non scrolling)
 	} elsif ($mode eq 'block') {
 		# blocked mode handles its own updating of the screen.
@@ -111,7 +112,7 @@ sub screenSaver {
 				Slim::Buttons::Common::pushMode($client,'screensaver');
 			}
 		}
-		$client->update();
+		$display->update();
 
 	} elsif (!$client->power()) {
 		$saver = $client->prefGet('offsaver');
@@ -125,7 +126,7 @@ sub screenSaver {
 				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
 				Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
 			}
-			$client->update();
+			$display->update();
 		}
 	} else {
 		# do nothing - periodic updates handled per client where required
@@ -137,6 +138,8 @@ sub screenSaver {
 sub wakeup {
 	my $client = shift;
 	my $button = shift;
+	
+	my $display = $client->display;
 	
 	return if ($button && ($button =~ "brightness" || $button eq "dead"));
 	
@@ -152,8 +155,8 @@ sub wakeup {
 		$curBrightnessPref = $client->prefGet('powerOnBrightness');
 	} 
 	
-	if ($curBrightnessPref != $client->brightness()) {
-		$client->brightness($curBrightnessPref);
+	if ($curBrightnessPref != $display->brightness()) {
+		$display->brightness($curBrightnessPref);
 	}
 	
 	# Bug 2293: jump to now playing index if we were showing the current song before the screensaver kicked in
@@ -167,10 +170,10 @@ sub wakeup {
 		$button ne 'brightness_down' &&
 		$button ne 'brightness_up' && 
 		$button ne 'brightness_toggle' &&
-		$client->brightness() == 0 &&
+		$display->brightness() == 0 &&
 		$client->power()) { 
 			$client->prefSet('powerOnBrightness', 1);
-			$client->brightness(1);
+			$display->brightness(1);
 	}
 } 
 

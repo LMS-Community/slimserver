@@ -11,7 +11,6 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
-use Slim::Hardware::VFD;
 
 our $DOUBLEWIDTH = 10;
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
@@ -81,6 +80,10 @@ our %functions = (
 			my ($client,$funct,$functarg) = @_;
 			changeChar($client,1);
 		}
+	,'knob' => sub {
+			my ($client,$funct,$functarg) = @_;
+			changeChar($client, $client->knobPos() - $client->param('listIndex'));
+		}
 	#delete current, moving one position to the left, exiting on leftmost position
 	,'backspace' => sub {
 			my ($client,$funct,$functarg) = @_;
@@ -96,7 +99,7 @@ our %functions = (
 			}
 			checkCursorDisplay($client,$cursorPos);
 			$client->param('cursorPos',$cursorPos);
-			$client->param('charIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
+			$client->param('listIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	#delete current, staying in place, moving left if in the rightmost position
@@ -116,7 +119,7 @@ our %functions = (
 				$client->param('cursorPos',$cursorPos);
 			}
 			checkCursorDisplay($client,$cursorPos);
-			$client->param('charIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
+			$client->param('listIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	#advance to next character, exiting if last char is right arrow
@@ -204,7 +207,7 @@ our %functions = (
 			my $valueRef = $client->param('valueRef');
 			my $charsRef = $client->param('charsRef');
 			$$valueRef = $charsRef->[$charIndex];
-			$client->param('charIndex',$charIndex);
+			$client->param('listIndex',$charIndex);
 			$client->param('cursorPos',0);
 			$client->param('displayPos',0);
 			$client->param('displayPos2X',0);
@@ -223,7 +226,7 @@ our %functions = (
 			my $cursorPos = $client->param('cursorPos');
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,$char);
 			my $charIndex = charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos));
-			$client->param('charIndex',$charIndex);
+			$client->param('listIndex',$charIndex);
 			# set up a timer to automatically skip ahead
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			#update the display
@@ -359,7 +362,10 @@ sub init {
 			$client->param('charsRef',\@UpperChars);
 		}
 	}
+
 	$charsRef = $client->param('charsRef');
+	$client->param('listLen', $#$charsRef + 1);
+	
 	cleanArray($charsRef);
 	# check for numberLetterRef and set defaults if needed
 	my $numberLetterRef = $client->param('numberLetterRef');
@@ -394,11 +400,11 @@ sub init {
 	}
 	$client->param('displayPos',(($cursorPos < ($client->displayWidth/2)) ? 0 : $cursorPos - (($client->displayWidth/2)-1)));
 	$client->param('displayPos2X',(($cursorPos < $DOUBLEWIDTH) ? 0 : $cursorPos - $DOUBLEWIDTH));
-	my $charIndex = $client->param('charIndex');
+	my $charIndex = $client->param('listIndex');
 	if ($cursorPos == $valueRefLen) {
 		if (!defined($charIndex) || $charIndex < 0 || $charIndex > $#$charsRef) {
 			$charIndex = ($rightIndex >= 0) ? $rightIndex : 0;
-			$client->param('charIndex',$charIndex);
+			$client->param('listIndex',$charIndex);
 		}
 		$$valueRef .= ($client->param('charsRef'))->[$charIndex];
 	} else {
@@ -407,7 +413,7 @@ sub init {
 			$charIndex = ($rightIndex == 0) ? 1 : 0;
 			#some debug message here
 		}
-		$client->param('charIndex',$charIndex);
+		$client->param('listIndex',$charIndex);
 	}
 }
 
@@ -415,7 +421,7 @@ sub changeChar {
 	my ($client,$dir) = @_;
 	Slim::Utils::Timers::killTimers($client, \&nextChar);
 	my $charsRef = $client->param('charsRef');
-	my $charIndex = Slim::Buttons::Common::scroll($client, $dir, scalar(@{$charsRef}), $client->param('charIndex'));
+	my $charIndex = Slim::Buttons::Common::scroll($client, $dir, scalar(@{$charsRef}), $client->param('listIndex'));
 	my $valueRef = $client->param('valueRef');
 	my $cursorPos = $client->param('cursorPos');
 	if ($charIndex == $client->param('rightIndex') && $cursorPos != (Slim::Display::Display::lineLength($$valueRef) - 1)) {
@@ -434,7 +440,8 @@ sub changeChar {
 	}
 	Slim::Display::Display::subString($$valueRef,$cursorPos,1,$charsRef->[$charIndex]);
 	checkCursorDisplay($client,$cursorPos);
-	$client->param('charIndex',$charIndex);
+	
+	$client->param('listIndex',$charIndex);
 	$client->update();
 }
 
@@ -551,7 +558,7 @@ sub moveCursor {
 		$charIndex = charIndex($charsRef,Slim::Display::Display::subString($$valueRef,$cursorPos,1));
 	}
 	checkCursorDisplay($client,$cursorPos);
-	$client->param('charIndex',$charIndex);
+	$client->param('listIndex',$charIndex);
 	$client->param('cursorPos',$cursorPos);
 	$client->update();
 	return;

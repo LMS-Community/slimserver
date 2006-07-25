@@ -547,10 +547,10 @@ sub displayQuery {
 	# get our parameters
 	my $client = $request->client();
 	
-	my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
+	my $parsed = $client->parseLines($client->curLines());
 
-	$request->addResult('_line1', $parsed->{line1} || '');
-	$request->addResult('_line2', $parsed->{line2} || '');
+	$request->addResult('_line1', $parsed->{line}[0] || '');
+	$request->addResult('_line2', $parsed->{line}[1] || '');
 		
 	$request->setStatusDone();
 }

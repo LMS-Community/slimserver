@@ -476,11 +476,16 @@ sub jumpToMenu {
 	
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
 
-	Slim::Buttons::Common::pushModeLeft(
-		$client,
-		'INPUT.List',
-		$nextParams,
-	);
+
+	if (exists $nextParams->{'listRef'}) {
+		Slim::Buttons::Common::pushModeLeft(
+			$client,
+			'INPUT.List',
+			$nextParams,
+		);
+	} else {
+		homeExitHandler($client,"RIGHT");
+	}
 }
 
 sub homeheader {
@@ -489,8 +494,10 @@ sub homeheader {
 	
 	if ($client->isa("Slim::Player::SLIMP3")) {
 		$line1 = $client->string('SLIMP3_HOME');
-	} elsif ($client->isa("Slim::Player::Softsqueeze")) {
-		$line1 = $client->string('SOFTSQUEEZE_HOME');
+        } elsif ($client->isa("Slim::Player::SoftSqueeze")) {
+                $line1 = $client->string('SOFTSQUEEZE_HOME');
+	} elsif ($client->isa("Slim::Player::Transporter")) {
+		$line1 = $client->string('TRANSPORTER_HOME');
 	} else {
 		$line1 = $client->string('SQUEEZEBOX_HOME');
 	}

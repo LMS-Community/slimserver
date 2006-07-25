@@ -35,7 +35,7 @@ sub new {
 
 	# dsully - Mon Mar 21 20:17:44 PST 2005
 	# Load these modules on the fly to save approx 700k of memory.
-	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::SliMP3::Stream)) {
+	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::SliMP3::Stream Slim::Display::Text)) {
 
 		$::d_protocol && msg("Loading module: $module\n");
 
@@ -47,6 +47,8 @@ sub new {
 			$@ = '';
 		}
 	}
+
+	$client->display ( Slim::Display::Text->new($client) );
 
 	return $client;
 }

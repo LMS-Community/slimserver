@@ -235,7 +235,7 @@ sub moduleDisplay {
 		push @info, $client->string('INFORMATION_VERSION') . ": $version";
 	}
 
-	return join(' ' . Slim::Display::Display::symbol('rightarrow') . ' ', @info);
+	return join(' ' . $client->symbols('rightarrow') . ' ', @info);
 }	
 
 # callback function for the main menu, handles descending into the submenus

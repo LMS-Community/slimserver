@@ -1,6 +1,6 @@
 package Slim::Formats::APE;
 
-# $Id: APE.pm,v 1.1 2005/01/02 22:28:08 kdf Exp $
+# $Id: APE.pm 5405 2005-12-14 22:02:37Z dean $
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or

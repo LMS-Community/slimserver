@@ -675,7 +675,7 @@ sub get {
 	return $prefs{$_[0]};
 }
 
-# getInd($pref,$index)
+# getIjd($pref,$index)
 # for indexed (array or hash) prefs
 sub getInd {
 	my ($pref,$index) = @_;

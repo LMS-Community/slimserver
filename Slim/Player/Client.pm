@@ -611,10 +611,6 @@ our $defaultPrefs = {
 		,'titleFormatCurr'		=> 1
 	};
 
-# Do this once for speed.
-our $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
-our %validClientLanguages = Slim::Utils::Strings::validClientLanguages();
-
 sub new {
 	my ($class, $id, $paddr) = @_;
 	
@@ -659,15 +655,15 @@ sub new {
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
 	$client->[25] = undef; # currBrightness
-	$client->[26] = undef; # prevline1
-	$client->[27] = undef; # prevline2
+	# $client->[26] = undef; # unused
+	# $client->[27] = undef; # unused
 	$client->[28] = []; # playlist
 	$client->[29] = []; # shufflelist
 	$client->[30] = []; # currentsongqueue
 	$client->[31] = undef; # playmode
 	$client->[32] = undef; # rate
 	$client->[33] = 0; # bufferThreshold
-	$client->[34] = 0; # visualizer
+	$client->[34] = undef; # unused
 	$client->[35] = 0; # outputBufferFullness
 	$client->[36] = undef; # irRefTime
 	$client->[37] = 0; # bytesReceived
@@ -725,18 +721,24 @@ sub new {
 	$client->[91] = undef; # currentPlaylist
 	$client->[92] = undef; # currentPlaylistModified
 	$client->[93] = undef; # songElapsedSeconds
-	$client->[94] = 0; # updateMode [0 = normal, 1 = periodic update blocked, 2 = all updates blocked]
+	$client->[94] = undef; # unused
 	# 95 is currentPlaylistRender
 	# 96 is currentPlaylistChangeTime
 	$client->[97] = undef; # tempVolume temporary volume setting
 	$client->[98] = undef; # directurl
 	$client->[99] = undef; # directbody
-	$client->[100] = undef; # renderCache
-	$client->[101] = undef; # scrollData
+	$client->[100] = undef; # display object
+	$client->[101] = undef; # unused
 	$client->[102] = 0; # periodicUpdateTime
-	$client->[103] = 0; # lastVisMode
-	$client->[104] = 0; # animateState
-	$client->[105] = 0; # scrollState
+	$client->[103] = undef; # unused
+	$client->[104] = undef; # unused
+	$client->[105] = undef; # unused
+	$client->[106] = undef; # knobPos
+	$client->[107] = undef; # knobTime
+	$client->[108] = undef; # lastDigitIndex
+	$client->[109] = undef; # lastDigitTime
+	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
+	$client->[109] = {}; # pipe sockets used for parent/child communication
 	$client->[106] = undef; # lastDigitIndex
 	$client->[107] = undef; # lastDigitTime
 	$client->[108] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
@@ -759,9 +761,6 @@ sub new {
 	$client->_prefs(Slim::Utils::Prefs::getClientPrefs($client->id()));
 	$client->prevwptr(-1);
 	$client->pwd('');  # start browsing at the root MP3 directory
-
-	$client->prevline1('');
-	$client->prevline2('');
 
 	$client->lastircode('');
 
@@ -803,6 +802,11 @@ sub init {
 
 	# make sure any preferences unique to this client may not have set are set to the default
 	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+
+	# init display including setting any display specific preferences to default
+	if ($client->display) {
+		$client->display->init();
+	}
 }
 
 
@@ -913,6 +917,7 @@ sub forgetClient {
 	my $client = shift;
 	
 	if ($client) {
+		$client->display->forgetDisplay();
 		Slim::Web::HTTP::forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		delete $clientHash{$client->id()};
@@ -1176,6 +1181,7 @@ sub playingModeOptions {}
 sub block{}
 sub symbols{}
 sub unblock{}
+sub updateKnob{}
 
 sub pause {
 	my $client = shift;
@@ -1195,49 +1201,9 @@ sub flush {}
 
 sub power {}
 
-sub isValidClientLanguage {
-	my $class = shift;
-	my $lang  = shift;
-
-	if ($validClientLanguages{$lang}) {
-		return 1;
-	}
-
-	return 0;
-}
-
-#
-sub string {
-	my $client = shift;
-	my $string = shift;
-
-	my $language = Slim::Utils::Strings::getLanguage();
-
-	# We're in the list - ok.
-	if ($validClientLanguages{$language}) {
-
-		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
-	}
-
-	# Otherwise return using the failsafe.
-	return Slim::Utils::Strings::string($string, $failsafeLanguage);
-}
-
-sub doubleString {
-	my $client = shift;
-	my $string = shift;
-
-	my $language = Slim::Utils::Strings::getLanguage();
-
-	# We're in the list - ok.
-	if ($validClientLanguages{$language}) {
-
-		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::doubleString($string, $language));
-	}
-
-	# Otherwise return using the failsafe.
-	return Slim::Utils::Strings::doubleString($string, $failsafeLanguage);
-}
+# string processing is display object specific
+sub string       { shift->display->string(@_); }
+sub doubleString { shift->display->doubleString(@_); }
 
 sub maxTransitionDuration {
 	return 0;
@@ -1625,14 +1591,8 @@ sub currBrightness {
 	my $r = shift;
 	@_ ? ($r->[25] = shift) : $r->[25];
 }
-sub prevline1 {
-	my $r = shift;
-	@_ ? ($r->[26] = shift) : $r->[26];
-}
-sub prevline2 {
-	my $r = shift;
-	@_ ? ($r->[27] = shift) : $r->[27];
-}
+sub prevline1 {}
+sub prevline2 {}
 sub playlist {
 	my $r = shift;
 	my $i;
@@ -1665,14 +1625,14 @@ sub bufferThreshold {
 	@_ ? ($r->[33] = shift) : $r->[33];
 }
 
-sub visualizer {
-	my $r = shift;
-	@_ ? ($r->[34] = shift) : $r->[34];
-}
-
 sub outputBufferFullness {
 	my $r = shift;
 	@_ ? ($r->[35] = shift) : $r->[35];
+}
+
+sub irRefTime {
+	my $r = shift;
+	@_ ? ($r->[36] = shift) : $r->[36];
 }
 
 sub irRefTime {
@@ -1945,11 +1905,6 @@ sub songElapsedSeconds {
 	@_ ? ($r->[93] = shift) : $r->[93];
 }
 
-sub updateMode {
-	my $r = shift;
-	@_ ? ($r->[94] = shift) : $r->[94];
-}
-
 sub currentPlaylistRender {
 	my $r = shift;
 	@_ ? ($r->[95] = shift) : $r->[95];
@@ -1971,49 +1926,44 @@ sub directBody {
 	@_ ? ($r->[99] = shift) : $r->[99];
 }
 
-sub renderCache {
+sub display {
 	my $r = shift;
 	@_ ? ($r->[100] = shift) : $r->[100];
-}    
-
-sub scrollData {
-	my $r = shift;
-	@_ ? ($r->[101] = shift) : $r->[101];
-}    
+}
 
 sub periodicUpdateTime {
 	my $r = shift;
 	@_ ? ($r->[102] = shift) : $r->[102];
-}    
-
-sub lastVisMode {
-	my $r = shift;
-	@_ ? ($r->[103] = shift) : $r->[103];
-}    
-
-sub animateState {
-	my $r = shift;
-	@_ ? ($r->[104] = shift) : $r->[104];
-}    
+}
 
 sub scrollState {
 	my $r = shift;
 	@_ ? ($r->[105] = shift) : $r->[105];
-}    
+}
 
-sub lastDigitIndex {
+sub knobPos {
 	my $r = shift;
 	@_ ? ($r->[106] = shift) : $r->[106];
 }
 
-sub lastDigitTime {
+sub knobTime {
 	my $r = shift;
 	@_ ? ($r->[107] = shift) : $r->[107];
 }
 
-sub lastSong {
+sub lastDigitIndex {
 	my $r = shift;
 	@_ ? ($r->[108] = shift) : $r->[108];
+}
+
+sub lastDigitTime {
+	my $r = shift;
+	@_ ? ($r->[109] = shift) : $r->[109];
+}
+
+sub lastSong {
+	my $r = shift;
+	@_ ? ($r->[108] = shift) : $r->[110];
 }
 
 sub pipes {

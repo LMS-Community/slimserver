@@ -1,16 +1,19 @@
-package Slim::Hardware::VFD;
+package Slim::Display::Lib::TextVFD;
 
-# $Id$
-
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+#
+# $Id: VFD.pm 5033 2005-11-04 19:38:24Z dsully $
+#
+# Library functions for text based displays
 
 use strict;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
-use Slim::Display::Display;
+
+our $MAXBRIGHTNESS = 4;
 
 my %vfdCommand = ();
 
@@ -49,8 +52,6 @@ my $noritakeBrightPrelude =
 
 my $vfdReset = $vfdCodeCmd . $vfdCommand{"INCSC"} . $vfdCodeCmd . $vfdCommand{"HOME"};
 
-$Slim::Hardware::VFD::MAXBRIGHTNESS = 4;
-
 my $spaces = ' ' x 40;
 
 my %symbolmap = (
@@ -74,23 +75,6 @@ my %symbolmap = (
 	}
 );
 
-# depricated, use the Slim::Display functions
-sub symbol {
-	return Slim::Display::Display::symbol(@_);
-}
-
-sub lineLength {
-	return Slim::Display::Display::lineLength(@_);
-}
-
-sub splitString {
-	return Slim::Display::Display::splitString(@_);
-}
-
-sub subString {
-	return Slim::Display::Display::subString(@_);
-}
-	
 
 #
 # Given the address of the character to edit, followed by an array of eight numbers specifying
@@ -317,7 +301,7 @@ sub vfdUpdate {
 
 # the following are the custom character definitions for the new progress/level bar...
 
-Slim::Hardware::VFD::setCustomChar('notesymbol',
+setCustomChar('notesymbol',
 				 ( 0b00000100, 
 				   0b00000110, 
 				   0b00000101, 
@@ -327,7 +311,7 @@ Slim::Hardware::VFD::setCustomChar('notesymbol',
 				   0b00011000, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('leftprogress0',
+setCustomChar('leftprogress0',
 				 ( 0b00000111, 
 				   0b00001000, 
 				   0b00010000, 
@@ -337,7 +321,7 @@ Slim::Hardware::VFD::setCustomChar('leftprogress0',
 				   0b00000111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('leftprogress1',
+setCustomChar('leftprogress1',
 				 ( 0b00000111, 
 				   0b00001000, 
 				   0b00011000, 
@@ -347,7 +331,7 @@ Slim::Hardware::VFD::setCustomChar('leftprogress1',
 				   0b00000111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('leftprogress2',
+setCustomChar('leftprogress2',
 				 ( 0b00000111, 
 				   0b00001100, 
 				   0b00011100, 
@@ -357,7 +341,7 @@ Slim::Hardware::VFD::setCustomChar('leftprogress2',
 				   0b00000111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('leftprogress3',
+setCustomChar('leftprogress3',
 				 ( 0b00000111, 
 				   0b00001110, 
 				   0b00011110, 
@@ -367,7 +351,7 @@ Slim::Hardware::VFD::setCustomChar('leftprogress3',
 				   0b00000111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('leftprogress4',
+setCustomChar('leftprogress4',
 				 ( 0b00000111, 
 				   0b00001111, 
 				   0b00011111, 
@@ -377,7 +361,7 @@ Slim::Hardware::VFD::setCustomChar('leftprogress4',
 				   0b00000111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress0',
+setCustomChar('middleprogress0',
 				 ( 0b01111111, 
 				   0b00000000, 
 				   0b00000000, 
@@ -387,7 +371,7 @@ Slim::Hardware::VFD::setCustomChar('middleprogress0',
 				   0b01111111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress1',
+setCustomChar('middleprogress1',
 				 ( 0b01111111, 
 				   0b01110000, 
 				   0b01110000, 
@@ -397,7 +381,7 @@ Slim::Hardware::VFD::setCustomChar('middleprogress1',
 				   0b01111111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress2',
+setCustomChar('middleprogress2',
 				 ( 0b01111111, 
 				   0b01111000, 
 				   0b01111000, 
@@ -407,7 +391,7 @@ Slim::Hardware::VFD::setCustomChar('middleprogress2',
 				   0b01111111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress3',
+setCustomChar('middleprogress3',
 				 ( 0b01111111, 
 				   0b01111100, 
 				   0b01111100, 
@@ -417,7 +401,7 @@ Slim::Hardware::VFD::setCustomChar('middleprogress3',
 				   0b01111111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('middleprogress4',
+setCustomChar('middleprogress4',
 				 ( 0b01111111, 
 				   0b01111110, 
 				   0b01111110, 
@@ -427,7 +411,7 @@ Slim::Hardware::VFD::setCustomChar('middleprogress4',
 				   0b01111111, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('rightprogress0',
+setCustomChar('rightprogress0',
 				 ( 0b01111100, 
 				   0b00000010, 
 				   0b00000001, 
@@ -437,7 +421,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress0',
 				   0b01111100, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('rightprogress1',
+setCustomChar('rightprogress1',
 				 ( 0b01111100, 
 				   0b01110010, 
 				   0b01110001, 
@@ -447,7 +431,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress1',
 				   0b01111100, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('rightprogress2',
+setCustomChar('rightprogress2',
 				 ( 0b01111100, 
 				   0b01111010, 
 				   0b01111001, 
@@ -457,7 +441,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress2',
 				   0b01111100, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('rightprogress3',
+setCustomChar('rightprogress3',
 				 ( 0b01111100, 
 				   0b01111110, 
 				   0b01111101, 
@@ -467,7 +451,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress3',
 				   0b01111100, 
 				   0b00000000 ));
 
-Slim::Hardware::VFD::setCustomChar('rightprogress4',
+setCustomChar('rightprogress4',
 				 ( 0b01111100, 
 				   0b01111110, 
 				   0b01111111, 
@@ -477,7 +461,7 @@ Slim::Hardware::VFD::setCustomChar('rightprogress4',
 				   0b01111100, 
 				   0b00000000 ));
 				   
-Slim::Hardware::VFD::setCustomChar('mixable', (
+setCustomChar('mixable', (
 					0b00011111,
 					0b00000000,
 					0b00011010,
@@ -487,7 +471,7 @@ Slim::Hardware::VFD::setCustomChar('mixable', (
 					0b00011111,
 					0b00000000   ));
 
-Slim::Hardware::VFD::setCustomChar('bell', (
+setCustomChar('bell', (
 					0b00000100,
 					0b00001010,
 					0b00001010,
@@ -499,7 +483,7 @@ Slim::Hardware::VFD::setCustomChar('bell', (
 					
 # replaces ~ in format string
 # setup the special characters
-Slim::Hardware::VFD::setCustomChar( 'toplinechar',	
+setCustomChar( 'toplinechar',	
 					(	0b01111111, 
 						0b00000000, 
 						0b00000000, 
@@ -510,7 +494,7 @@ Slim::Hardware::VFD::setCustomChar( 'toplinechar',
 						0b00000000	 ));
 
 # replaces = in format string
-Slim::Hardware::VFD::setCustomChar( 'doublelinechar', 
+setCustomChar( 'doublelinechar', 
 					(	0b01111111, 
 						0b00000000, 
 						0b00000000, 
@@ -520,7 +504,7 @@ Slim::Hardware::VFD::setCustomChar( 'doublelinechar',
 						0b01111111, 
 						0b00000000	 ));
 
-Slim::Hardware::VFD::setCustomChar( 'doublelinecharM',  # alternate used by Modern Font
+setCustomChar( 'doublelinecharM',  # alternate used by Modern Font
 					(	0b00011111, 
 						0b00000000, 
 						0b00000000, 
@@ -531,7 +515,7 @@ Slim::Hardware::VFD::setCustomChar( 'doublelinecharM',  # alternate used by Mode
 						0b00011111	 ));
 
 # replaces ? in format string.  Used in Z, ?, 7
-Slim::Hardware::VFD::setCustomChar( 'Ztop', 		
+setCustomChar( 'Ztop', 		
 			(      		0b01111111,
 						0b00000001,
 						0b00000001,
@@ -542,7 +526,7 @@ Slim::Hardware::VFD::setCustomChar( 'Ztop',
 						0b00100000   ));
                   
 # replaces < in format string.  Used in Z, 2, 6
-Slim::Hardware::VFD::setCustomChar( 'Zbottom', 		
+setCustomChar( 'Zbottom', 		
 			(   		0b00000001,
 						0b00000010,
 						0b00000100,
@@ -553,7 +537,7 @@ Slim::Hardware::VFD::setCustomChar( 'Zbottom',
 						0b00000000   ));
                   
 # replaces / in format string.
-Slim::Hardware::VFD::setCustomChar( 'slash', 	
+setCustomChar( 'slash', 	
 			 (     		0b00000001,
 						0b00000001,
 						0b00000010,
@@ -563,7 +547,7 @@ Slim::Hardware::VFD::setCustomChar( 'slash',
 						0b00010000,
 						0b00000000   ));
 
-Slim::Hardware::VFD::setCustomChar( 'slashM',  # alternate used by Modern Font
+setCustomChar( 'slashM',  # alternate used by Modern Font
 				(     	0b00000011,
 						0b00000100,
 						0b00001000,
@@ -573,7 +557,7 @@ Slim::Hardware::VFD::setCustomChar( 'slashM',  # alternate used by Modern Font
 						0b00010000,
 						0b00000000   ));
                   
-Slim::Hardware::VFD::setCustomChar( 'backslash', 	
+setCustomChar( 'backslash', 	
 				( 		0b00010000,
 						0b00010000,
 						0b00001000,
@@ -583,17 +567,17 @@ Slim::Hardware::VFD::setCustomChar( 'backslash',
 						0b00000001,
 						0b00000000   ));
 
-Slim::Hardware::VFD::setCustomChar( 'backslashM', # alternate used by Modern Font
+setCustomChar( 'backslashM', # alternate used by Modern Font
 				( 		0b00011000,
 						0b00000100,
 						0b00000010,
-						0b00000010,
+ 						0b00000010,
 						0b00000001,
 						0b00000001,
 						0b00000001,
 						0b00000000   ));
 
-Slim::Hardware::VFD::setCustomChar( 'islash', 	
+setCustomChar( 'islash', 	
 				(     	0b00010000,
 						0b00010000,
 						0b00010000,
@@ -603,7 +587,7 @@ Slim::Hardware::VFD::setCustomChar( 'islash',
 						0b00000011,
 						0b00000000   ));
                    
-Slim::Hardware::VFD::setCustomChar( 'ibackslash', 	
+setCustomChar( 'ibackslash', 	
 				( 		0b00000001,
 						0b00000001,
 						0b00000001,
@@ -613,7 +597,7 @@ Slim::Hardware::VFD::setCustomChar( 'ibackslash',
 						0b00011000,
 						0b00000000   ));
 
-Slim::Hardware::VFD::setCustomChar( 'filledcircle',		
+setCustomChar( 'filledcircle',		
 					 ( 	0b00000001,
 						0b00001111,
 						0b00011111,
@@ -623,7 +607,7 @@ Slim::Hardware::VFD::setCustomChar( 'filledcircle',
 						0b00000000,
 						0b00000000   ));	
 
-Slim::Hardware::VFD::setCustomChar( 'leftvbar',		
+setCustomChar( 'leftvbar',		
 					 ( 	0b00010000,
 						0b00010000,
 						0b00010000,
@@ -633,7 +617,7 @@ Slim::Hardware::VFD::setCustomChar( 'leftvbar',
 						0b00010000,
 						0b00000000   ));	
 
-Slim::Hardware::VFD::setCustomChar( 'rightvbar',		
+setCustomChar( 'rightvbar',		
 					 ( 	0b00000001,
 						0b00000001,
 						0b00000001,
@@ -643,7 +627,7 @@ Slim::Hardware::VFD::setCustomChar( 'rightvbar',
 						0b00000001,
 						0b00000000   ));	
 
-Slim::Hardware::VFD::setCustomChar('leftmark',
+setCustomChar('leftmark',
  					(   0b00011111,
 						0b00000001,
 						0b00000001,
@@ -653,7 +637,7 @@ Slim::Hardware::VFD::setCustomChar('leftmark',
 						0b00011111,
 						0b00000000   ));
                   
-Slim::Hardware::VFD::setCustomChar('rightmark',
+setCustomChar('rightmark',
 					( 	0b00011111,
 						0b00010000,
 						0b00010000,
@@ -664,25 +648,25 @@ Slim::Hardware::VFD::setCustomChar('rightmark',
 						0b00000000   ));
                   
 
-my $leftvbar = Slim::Display::Display::symbol('leftvbar');
-my $rightvbar = Slim::Display::Display::symbol('rightvbar');
-my $slash = Slim::Display::Display::symbol('slash');
-my $backslash = Slim::Display::Display::symbol('backslash');
-my $slashM = Slim::Display::Display::symbol('slashM');
-my $backslashM = Slim::Display::Display::symbol('backslashM');
-my $islash = Slim::Hardware::VFD::symbol('islash');
-my $ibackslash = Slim::Hardware::VFD::symbol('ibackslash');
-my $toplinechar = Slim::Display::Display::symbol('toplinechar');
-my $doublelinechar = Slim::Display::Display::symbol('doublelinechar');
-my $doublelinecharM = Slim::Display::Display::symbol('doublelinecharM');
-my $Zbottom = Slim::Display::Display::symbol('Zbottom');
-my $Ztop = Slim::Display::Display::symbol('Ztop');
-my $notesymbol = Slim::Display::Display::symbol('notesymbol');
-my $filledcircle = Slim::Display::Display::symbol('filledcircle');
-my $rightarrow = Slim::Display::Display::symbol('rightarrow');
-my $cursorpos = Slim::Display::Display::symbol('cursorpos');
-my $hardspace = Slim::Display::Display::symbol('hardspace');
-my $centerchar = Slim::Display::Display::symbol('center');
+my $leftvbar        = "\x1f" . "leftvbar"    . "\x1f";
+my $rightvbar       = "\x1f" . "rightvbar"   . "\x1f";
+my $slash           = "\x1f" . "slash"       . "\x1f";
+my $backslash       = "\x1f" . "backslash"   . "\x1f";
+my $slashM          = "\x1f" . "slashM"      . "\x1f";
+my $backslashM      = "\x1f" . "backslashM"  . "\x1f";
+my $islash          = "\x1f" . "islash"      . "\x1f";
+my $ibackslash      = "\x1f" . "ibackslash"  . "\x1f";
+my $toplinechar     = "\x1f" . "toplinechar" . "\x1f";
+my $doublelinechar  = "\x1f" . "doublelinechar" . "\x1f";
+my $doublelinecharM = "\x1f" . "doublelinecharM". "\x1f";
+my $Zbottom         = "\x1f" . "Zbottom"     . "\x1f";
+my $Ztop            = "\x1f" . "Ztop"        . "\x1f";
+my $notesymbol      = "\x1f" . "notesymbol"  . "\x1f"; 
+my $filledcircle    = "\x1f" . "filledcircle". "\x1f";
+my $rightarrow      = "\x1f" . "rightarrow"  . "\x1f";
+my $cursorpos       = "\x1f" . "cursorpos"   . "\x1f";
+my $hardspace       = "\x1f" . "hardspace"   . "\x1f";
+my $centerchar      = "\x1f" . "center"      . "\x1f";
 
 # double sized characters - Classic Font
 my $doubleClassic = {

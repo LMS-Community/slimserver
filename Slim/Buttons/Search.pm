@@ -98,11 +98,12 @@ sub searchExitHandler {
 	$exitType = uc($exitType);
 
 	if ($exitType eq 'LEFT') {
-		my @oldlines = Slim::Display::Display::curLines($client);
+		my $oldlines = $client->curLines();
 
 		Slim::Buttons::Home::jump($client, 'SEARCH');
 		Slim::Buttons::Common::setMode($client, 'home');
-		$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
+
+		$client->pushRight($oldlines, $client->curLines());
 
 	} elsif ($exitType eq 'RIGHT') {
 
@@ -146,7 +147,7 @@ sub searchHandler {
 sub startSearch {
 	my $client = shift;
 	my $mode = shift;
-	my @oldlines = Slim::Display::Display::curLines($client);
+	my $oldlines = $client->curLines();
 
 	my $term = searchTerm($client);
 	$client->showBriefly($client->string('SEARCHING'));
@@ -176,7 +177,7 @@ sub startSearch {
 		});
 	}
 
-	$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	$client->pushLeft($oldlines, $client->curLines());
 }
 
 sub searchTerm {

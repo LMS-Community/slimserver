@@ -28,6 +28,10 @@ our %functions = (
 			my ($client,$funct,$functarg) = @_;
 			scroll($client,-1);
 		}
+	,'knob' => sub {
+			my ($client,$funct,$functarg) = @_;
+			# todo: make work with knob!
+		}
 	#moving one position to the left, exiting on leftmost position
 	,'left' => sub {
 			my ($client,$funct,$functarg) = @_;
@@ -163,16 +167,19 @@ sub lines {
 	my ($line1, $line2);
 	
 	$line1 = $client->param('header');
+
 	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
 	
 	my $timestring = timeString($client,timeDigits($client,$client->param('valueRef')));
 	
-	if (!defined($timestring)) { return ('',''); }
+	if (!defined($timestring)) { return ( {} ); }
 	$line2 = $timestring;
 	
-	return ($line1,$line2);
+	return {
+		'line' => [ $line1, $line2 ]
+	};
 }
 
 sub getFunctions {
@@ -283,7 +290,7 @@ sub timeDigitsToTime {
 sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p, $c) = @_;
 		
-	my $cs = Slim::Display::Display::symbol('cursorpos');
+	my $cs = $client->symbols('cursorpos');
 	$c = $c || $client->param('cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');

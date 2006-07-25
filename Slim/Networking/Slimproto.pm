@@ -14,21 +14,23 @@ use IO::Socket;
 use FileHandle;
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
 
 use Slim::Networking::Select;
 use Slim::Player::Squeezebox;
-use Slim::Player::SqueezeboxG;
 use Slim::Player::Squeezebox2;
+use Slim::Player::Transporter;
 use Slim::Player::SoftSqueeze;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 
+
 use Errno qw(:POSIX);
 
 my $SLIMPROTO_PORT = 3483;
 
-my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2');
+my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3');
 
 my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this 
 
@@ -60,11 +62,13 @@ our %message_handlers = (
 	'DSCO' => \&_disco_handler,
 	'HELO' => \&_hello_handler,
 	'IR  ' => \&_ir_handler,
+	'KNOB' => \&_knob_handler,
 	'META' => \&_http_metadata_handler,
 	'RAWI' => \&_raw_ir_handler,
 	'RESP' => \&_http_response_handler,
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
+	'DBUG' => \&_firmware_debug_handler,
 );
 
 sub setCallbackRAWI {
@@ -302,27 +306,19 @@ GETMORE:
 			my $handler_ref = $message_handlers{$op};
 			
 			if ($handler_ref && ref($handler_ref) eq 'CODE') {
-
-				my $client = Slim::Player::Client::getClient($sock2client{$s});
-
+				
+				my $client = $sock2client{$s};
+			
 				if (!defined($client)) {
-
 					if ($op eq 'HELO') {
-
 						$handler_ref->($s, \$inputbuffer{$s});
-
 					} else {
-
 						msg("client_readable: Client not found for slimproto msg op: $op\n");
 					}
-
 				} else {
-
 					$handler_ref->($client, \$inputbuffer{$s});
-				}
-
+				}		
 			} else {
-
 				$::d_slimproto && msg("Unknown slimproto op: $op\n");
 			}	
 
@@ -339,14 +335,14 @@ GETMORE:
 
 # returns the signal strength (0 to 100), outside that range, it's not a wireless connection, so return undef
 sub signalStrength {
+
 	my $client = shift;
 
 	if (exists($status{$client}) && ($status{$client}->{'signal_strength'} <= 100)) {
-
 		return $status{$client}->{'signal_strength'};
+	} else {
+		return undef;
 	}
-
-	return undef;
 }
 
 sub fullness {
@@ -417,10 +413,11 @@ sub _http_response_handler {
 
 	# HTTP stream headers
 	$::d_slimproto && msg("Squeezebox got HTTP response:\n$$data_ref\n");
-
 	if ($client->can('directHeaders')) {
 		$client->directHeaders($$data_ref);
 	}
+}
+
 }
 
 sub _debug_handler {
@@ -459,7 +456,6 @@ sub _http_body_handler {
 	my $data_ref = shift;
 
 	$::d_slimproto && msg("Squeezebox got body response\n");
-
 	if ($client->can('directBodyFrame')) {
 		$client->directBodyFrame($$data_ref);
 	}
@@ -514,34 +510,28 @@ sub _stat_handler {
 		$status{$client}->{'output_buffer_fullness'},
 		$status{$client}->{'elapsed_seconds'},
 	) = unpack ('a4CCCNNNNnNNNN', $$data_ref);
-
+	
+	
 	$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 
-	if ($client->model() ne 'squeezebox2' && $client->model() ne 'softsqueeze' &&
-			$client->revision() < 20 && $client->revision() > 0) {
-
+	if ($client->model() eq 'squeezebox' &&
+		$client->revision() < 20 && $client->revision() > 0) {
 		$client->bufferSize(262144);
 		$status{$client}->{'rptr'} = $fullnessA;
 		$status{$client}->{'wptr'} = $fullnessB;
 
 		my $fullness = $status{$client}->{'wptr'} - $status{$client}->{'rptr'};
-
 		if ($fullness < 0) {
 			$fullness = $client->bufferSize() + $fullness;
-		}
-
+		};
 		$status{$client}->{'fullness'} = $fullness;
-
 	} else {
-
 		$client->bufferSize($fullnessA);
 		$status{$client}->{'fullness'} = $fullnessB;
 	}
-
+	
 	$client->songElapsedSeconds($status{$client}->{'elapsed_seconds'});
-
 	if (defined($status{$client}->{'output_buffer_fullness'})) {
-
 		$client->outputBufferFullness($status{$client}->{'output_buffer_fullness'});
 	}
 
@@ -555,18 +545,21 @@ sub _stat_handler {
 # TODO make a "verbose" option for this
 #		0 &&
 	$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
-#		"	event_code:      $status{$client}->{'event_code'}\n".
+		"	event_code:      $status{$client}->{'event_code'}\n".
 #		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 #		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
 #		"	mas_mode:        $status{$client}->{'mas_mode'}\n".
-#		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
-#		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
+		"	bytes_rec_H      $status{$client}->{'bytes_received_H'}\n".
+		"	bytes_rec_L      $status{$client}->{'bytes_received_L'}\n".
 	"	fullness:        $status{$client}->{'fullness'} (" . int($status{$client}->{'fullness'}/$client->bufferSize()*100) . "%)\n".
+                "       bufferSize      " . $client->bufferSize(). "\n".
+                "       fullness        $status{$client}->{'fullness'}\n".
+
 	"	bytes_received   $status{$client}->{'bytes_received'}\n".
 #		"	signal_strength: $status{$client}->{'signal_strength'}\n".
-#		"	jiffies:         $status{$client}->{'jiffies'}\n".
+		"	jiffies:         $status{$client}->{'jiffies'}\n".
 	"");
-	$::d_slimproto_v && defined($status{$client}->{'output_buffer_size'}) && msg("".
+	$::d_slimproto && defined($status{$client}->{'output_buffer_size'}) && msg("".
 	"	output size:     $status{$client}->{'output_buffer_size'}\n".
 	"	output fullness: $status{$client}->{'output_buffer_fullness'}\n".
 	"	elapsed seconds: $status{$client}->{'elapsed_seconds'}\n".
@@ -576,10 +569,16 @@ sub _stat_handler {
 	
 	my $callback = $callbacks{$status{$client}->{'event_code'}};
 
-	if ($callback && ref($callback) eq 'CODE') {
+	&$callback($client) if $callback;
+	
+} 
 
-		eval { &$callback($client) };
-	}
+
+sub _firmware_debug_handler {
+	my $client = shift;
+	my $data_ref = shift;
+
+	msg("Firmware debug: $$data_ref\n");
 }
 	
 sub _update_request_handler {
@@ -597,7 +596,7 @@ sub _animation_complete_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	$client->endAnimation(0.5);
+	$client->display->clientAnimationComplete();
 }
 
 sub _http_metadata_handler {
@@ -613,30 +612,23 @@ sub _http_metadata_handler {
 sub _bye_handler {
 	my $client = shift;
 	my $data_ref = shift;
-
 	# THIS IS ONLY FOR THE OLD SDK4.X UPDATER
+
 	$::d_slimproto && msg("Slimproto: Saying goodbye\n");
-
 	if ($$data_ref eq chr(1)) {
-
 		$::d_slimproto && msg("Going out for upgrade...\n");
 		# give the player a chance to get into upgrade mode
 		sleep(2);
 		$client->unblock();
 		$client->upgradeFirmware();
 	}
+	
 } 
 
 sub _hello_handler {
 	my $s = shift;
 	my $data_ref = shift;
-
-	# killing timer once we get a valid hello
-	$::d_slimproto && msg("_hello_handler: Killing bogus player timer.\n");
-
-	Slim::Utils::Timers::killOneTimer($s, \&slimproto_close);
-
-	#
+	
 	my ($deviceid, $revision, @mac, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
 
 	(	$deviceid, $revision, 
@@ -646,15 +638,12 @@ sub _hello_handler {
 
 	$bitmapped = $wlan_channellist & 0x8000;
 	$reconnect = $wlan_channellist & 0x4000;
-
 	$wlan_channellist = sprintf('%04x', $wlan_channellist & 0x3fff);
-
 	if (defined($bytes_received_H)) {
 		$bytes_received = $bytes_received_H * 2**32 + $bytes_received_L; 
 	}
 
 	my $mac = join(':', @mac);
-
 	$::d_slimproto && msg(	
 		"Squeezebox says hello.\n".
 		"\tDeviceid: $deviceid\n".
@@ -663,27 +652,27 @@ sub _hello_handler {
 		"\tbitmapped: $bitmapped\n".
 		"\treconnect: $reconnect\n".
 		"\twlan_channellist: $wlan_channellist\n"
-	);
-
-	if (defined($bytes_received) && $::d_slimproto) {
-
-		msg("Squeezebox also says.\n\tbytes_received: $bytes_received\n");
+		);
+	if (defined($bytes_received)) {
+		$::d_slimproto && msg(
+			"Squeezebox also says.\n".
+			"\tbytes_received: $bytes_received\n"
+		);
 	}
 
 	$::d_factorytest && msg("FACTORYTEST\tevent=helo\tmac=$mac\tdeviceid=$deviceid\trevision=$revision\twlan_channellist=$wlan_channellist\n");
 
-	my $id = $mac;
+	my $id=$mac;
 	
-	# Sanity check on socket
+	#sanity check on socket
 	return if (!$s->peerport || !$s->peeraddr);
 	
 	my $paddr = sockaddr_in($s->peerport, $s->peeraddr);
 	my $client = Slim::Player::Client::getClient($id); 
 	
-	my $client_class;
+	my ($client_class, $display_class);
 
 	if (!defined($deviceids[$deviceid])) {
-
 		$::d_slimproto && msg("unknown device id $deviceid in HELO framem closing connection\n");
 		slimproto_close($s);
 		return;
@@ -691,30 +680,66 @@ sub _hello_handler {
 	} elsif ($deviceids[$deviceid] eq 'squeezebox2') {
 
 		$client_class = 'Slim::Player::Squeezebox2';
+		$display_class = 'Slim::Display::Squeezebox2';
+
+	} elsif ($deviceids[$deviceid] eq 'transporter') {
+
+		$client_class = 'Slim::Player::Transporter';
+		$display_class = 'Slim::Display::Transporter';
 
 	} elsif ($deviceids[$deviceid] eq 'squeezebox') {	
 
+		$client_class = 'Slim::Player::Squeezebox';
+
 		if ($bitmapped) {
-			$client_class = 'Slim::Player::SqueezeboxG';
+
+				$display_class = 'Slim::Display::SqueezeboxG';
+
 		} else {
-			$client_class = 'Slim::Player::Squeezebox';
+
+				$display_class = 'Slim::Display::Text';
 		}
 
 	} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
 
 		$client_class = 'Slim::Player::SoftSqueeze';
+		$display_class = 'Slim::Display::Squeezebox2';
+
+	} elsif ($deviceids[$deviceid] eq 'softsqueeze3') {
+
+		$client_class = 'Slim::Player::SoftSqueeze';
+		$display_class = 'Slim::Display::Transporter';
 
 	} else {
-
 		$::d_slimproto && msg("unknown device type for $deviceid in HELO framem closing connection\n");
 		slimproto_close($s);
 		return;
 	}			
 
-	if (defined $client && !$client->isa($client_class)) {
-		msg("forgetting client, it is not a $client_class\n");
+	if (defined $client && blessed($client) && blessed($client) ne $client_class) {
+		$::d_slimproto && msg("forgetting client, it is not a $client_class\n");
 		Slim::Player::Client::forgetClient($client);
 		$client = undef;
+	}
+	
+sub _update_request_handler {
+	my $client = shift;
+	my $data_ref = shift;
+
+	if (defined $client && blessed($client->display) && blessed($client->display) ne $display_class) {
+		$::d_slimproto && msg("change display for $client_class to $display_class\n");
+		$client->display->forgetDisplay();
+
+		eval "use $display_class"; 
+	my $data_ref = shift;
+
+		if ($@) {
+			msg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
+			bt();
+			$@ = '';
+		}
+
+		$client->display( $display_class->new($client) );
 	}
 
 	if (!defined($client)) {
@@ -727,12 +752,20 @@ sub _hello_handler {
 			$s		# tcp sock
 		);
 
+		eval "use $display_class"; 
+
+		if ($@) {
+			msg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
+			bt();
+			$@ = '';
+		}
+			
+		$client->display( $display_class->new($client) );
+
 		$client->macaddress($mac);
 		$client->init();
 		$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
-
 	} else {
-
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
 
 		my $oldsock = $client->tcpsock();
@@ -748,11 +781,9 @@ sub _hello_handler {
 		Slim::Utils::Timers::killTimers($client, \&_forgetDisconnectedClient);
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
-
-		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
 	}
 	
-	$sock2client{$s} = $client->id;
+	$sock2client{$s}=$client;
 	
 	if ($client->needsUpgrade()) {
 		# don't start playing if we're upgrading
@@ -764,31 +795,55 @@ sub _hello_handler {
 		$client->brightness($client->maxBrightness());
 		
 		$client->block( {
-			'line1' => string('PLAYER_NEEDS_UPGRADE_1'), 
-			'line2' => string('PLAYER_NEEDS_UPGRADE_2'),
+			'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2') ],
 			'fonts' => { 
 				'graphic-320x32' => 'light',
 				'graphic-280x16' => 'small',
 				'text'           => 2,
 			}
 		}, 'upgrade');
-
 	} else {
-
 		# workaround to handle multiple firmware versions causing blocking modes to stack
 		while (Slim::Buttons::Common::mode($client) eq 'block') {
 			$client->unblock();
 		}
-
 		# make sure volume is set, without changing temp setting
 		$client->audio_outputs_enable($client->power());
-		$client->volume($client->volume(), defined($client->tempVolume()));
+		$client->volume($client->volume(), 
+			defined($client->tempVolume()));
 	}
+	return;
 }
 
 sub _button_handler {
 	my $client = shift;
 	my $data_ref = shift;
+
+	# handle hard buttons
+	my ($time, $button) = unpack( 'NH8', $$data_ref);
+
+	Slim::Hardware::IR::enqueue($client, $button, $time);
+
+	$::d_slimproto && msg("hard button: $button time: $time\n");
+} 
+
+
+sub _knob_handler {
+	my $client = shift;
+	my $data_ref = shift;
+
+	# handle knob movement
+	my ($time, $position) = unpack( 'NNN', $$data_ref);
+	
+	my $oldPos = $client->knobPos();
+		
+	$::d_slimproto && msg("knob position: $position (old: $oldPos) time: $time\n");
+
+	$client->knobPos($position);
+	$client->knobTime($time);
+	
+	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
+}
 
 	# handle hard buttons
 	my ($time, $button) = unpack( 'NH8', $$data_ref);

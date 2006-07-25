@@ -26,6 +26,10 @@ our %functions = (
 			my ($client,$funct,$functarg) = @_;
 			changePos($client,1,$funct);
 		}
+	,'knob' => sub {
+			my ($client,$funct,$functarg) = @_;
+			changePos($client, $client->knobPos() - $client->param('listIndex') ,$funct,);
+		}
 	,'numberScroll' => sub {
 			my ($client,$funct,$functarg) = @_;
 			my $isSorted = $client->param('isSorted');
@@ -89,6 +93,8 @@ sub changePos {
 		}
 	}
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
+#	print "changepos: newpos: $newposition = scroll dir:$dir listindex: $listIndex\n";
+	
 	my $valueRef = $client->param('valueRef');
 	$$valueRef = $listRef->[$newposition];
 	$client->param('listIndex',$newposition);
@@ -147,8 +153,16 @@ sub lines {
 			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
 		}
 	}
-	my @overlay = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
-	return ($line1,$line2,@overlay);
+	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
+	$overlay1 = $client->symbols($overlay1) if defined($overlay1);
+	$overlay2 = $client->symbols($overlay2) if defined($overlay2);
+	
+	my $parts = {
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ $overlay1, $overlay2 ]
+	};
+
+	return $parts;
 }
 
 sub getExtVal {

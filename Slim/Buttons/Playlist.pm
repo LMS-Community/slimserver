@@ -16,7 +16,6 @@ use Slim::Utils::Misc;
 our %functions = ();
 
 sub init {
-
 	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode);
 	
 	Slim::Music::Info::setCurrentTitleChangeCallback(\&Slim::Buttons::Playlist::newTitle);
@@ -42,9 +41,10 @@ sub init {
 			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
 			if ($button eq 'playdisp_toggle') {
 				my $playlistlen = Slim::Player::Playlist::count($client);
-				
+
 				if (($playlistlen > 0) && (showingNowPlaying($client))) {
 					$pdm = ($pdm + 1) % ($client->prefGetArrayMax('playingDisplayModes') +1);
+					print "display mode: $pdm\n";
 				} elsif ($playlistlen > 0) {
 					browseplaylistindex($client,Slim::Player::Source::playingSongIndex($client));
 				}
@@ -58,6 +58,26 @@ sub init {
 			$client->param('animateTop',${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
 			$client->prefSet("playingDisplayMode", $pdm);
 			$client->update();
+		},
+		'knob' => sub {
+				my ($client,$funct,$functarg) = @_;
+				
+				my $newindex = $client->knobPos();
+				my $oldindex = browseplaylistindex($client);
+				
+				if ($oldindex != $newindex) {
+					browseplaylistindex($client,$newindex);
+				}
+				
+				$client->param('showingnowplaying',0);
+
+				msg("old: $oldindex new: $newindex is after setting:" . browseplaylistindex($client) . "\n");
+
+				if ($oldindex > $newindex) {
+					$client->pushUp();
+				} elsif ($oldindex < $newindex) {
+					$client->pushDown();
+				}
 		},
 		'up' => sub  {
 			my $client = shift;
@@ -95,10 +115,10 @@ sub init {
 		},
 		'left' => sub  {
 			my $client = shift;
-			my @oldlines = Slim::Display::Display::curLines($client);
+			my $oldlines = $client->curLines();
 			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
 			Slim::Buttons::Common::setMode($client, 'home');
-			$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushRight($oldlines, $client->curLines());
 		},
 		'right' => sub  {
 			my $client = shift;
@@ -106,14 +126,14 @@ sub init {
 			if ($playlistlen < 1) {
 				$client->bumpRight();
 			} else {
-				my @oldlines = Slim::Display::Display::curLines($client);
+				my $oldlines = $client->curLines();
 
 				Slim::Buttons::Common::pushMode($client, 'trackinfo', {
 					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),
 					'current' => browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client)
 				} );
 
-				$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+				$client->pushLeft($oldlines, $client->curLines());
 			}
 		},
 		'numberScroll' => sub  {
@@ -177,6 +197,7 @@ sub init {
 			$client->update();
 		}
 	);
+	
 }
 
 sub getFunctions {
@@ -188,6 +209,8 @@ sub setMode {
 	my $how = shift;
 	$client->lines(\&lines);
 	if ($how ne 'pop') { jump($client); }
+
+	browseplaylistindex($client);
 
 	# update client every second in this mode
 	$client->param('modeUpdateInterval', 1); # seconds
@@ -203,7 +226,7 @@ sub jump {
 		}
 		
 		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
-		
+
 		browseplaylistindex($client,$pos);
 	}
 }
@@ -245,9 +268,8 @@ sub lines {
 	);
 
 	return {
-		'line1'    => $line1,
-		'line2'    => $line2,
-		'overlay2' => $client->symbols('notesymbol'),
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $client->symbols('notesymbol') ]
 	};
 }
 
@@ -273,8 +295,16 @@ sub browseplaylistindex {
 	my $client = shift;
 	my $playlistindex = shift;
 
+	if (defined($playlistindex)) {
+		bt();
+		msg("new playlistindex: $playlistindex\n");
+	}
+	
+	# update list length for the knob.  ### HACK ATTACK ###
+	$client->param('listLen', Slim::Player::Playlist::count($client));
+	
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
-	return $client->param( 'browseplaylistindex', $playlistindex);
+	return $client->param('listIndex', $playlistindex);
 }
 
 # DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();

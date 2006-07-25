@@ -1674,12 +1674,10 @@ sub showCommand {
 	my $hash = {};
 	
 	if ($centered) {
-		$hash->{'center1'} = $line1;
-		$hash->{'center2'} = $line2;
+		$hash->{'center'} = [$line1, $line2];
 	}
 	else {
-		$hash->{'line1'} = $line1;
-		$hash->{'line2'} = $line2;
+		$hash->{'line'} = [$line1, $line2];
 	}
 	
 	if ($font eq 'huge') {

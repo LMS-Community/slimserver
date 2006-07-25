@@ -422,10 +422,10 @@ sub forgetTimer {
 sub killSpecific {
 	my $timer = shift;
 
-	return 
-		killHighTimers( $timer->{objRef}, $timer->{subptr} )
+	return
+		$high->remove_items( sub { $timer == shift } )
 		||
-		killTimers( $timer->{objRef}, $timer->{subptr} );
+		$normal->remove_items( sub { $timer == shift } );
 }
 
 #

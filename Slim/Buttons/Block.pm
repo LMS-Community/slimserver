@@ -91,9 +91,9 @@ sub lines {
 	
 	if (!$parts->{static}) {
 		if (!defined($parts->{fonts}) && $client->linesPerScreen == 1) {
-			$parts->{overlay2} = $tickchars[$pos];
+			$parts->{overlay}[1] = $tickchars[$pos];
 		} else {
-			$parts->{overlay1} = $tickchars[$pos];
+			$parts->{overlay}[0] = $tickchars[$pos];
 		}
 	}
 	

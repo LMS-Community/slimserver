@@ -27,6 +27,17 @@ our %functions = (
 			my ($client,$funct,$functarg) = @_;
 			changePos($client,-1,$funct);
 		}
+	,'knob' => sub {
+			my ($client,$funct,$functarg) = @_;
+			
+			my $knobPos = $client->knobPos();
+			my $listIndex = $client->param('listIndex');
+			
+			print "got a knob event for the bar: knobpos: $knobPos listindex: $listIndex\n";
+			changePos($client, $knobPos - $listIndex ,$funct,);
+			$listIndex = $client->param('listIndex');
+			print "new listindex: $listIndex\n";
+		}
 	#call callback procedure
 	,'exit' => sub {
 			my ($client,$funct,$functarg) = @_;
@@ -56,7 +67,6 @@ sub changePos {
 	
 	my $accel = 8; # Hz/sec
 	my $rate = 50; # Hz
-	my $inc = 1;
 	my $mid = $client->param('mid')||0;
 	my $min = $client->param('min')||0;
 	my $max = $client->param('max')||100;
@@ -64,21 +74,21 @@ sub changePos {
 	my $newposition;
 	
 	if (Slim::Hardware::IR::holdTime($client) > 0) {
-		$inc *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
+		$dir *= Slim::Hardware::IR::repeatCount($client,$rate,$accel);
 	}
 	
 	my $currVal = $listIndex;
 	
-	if ($dir == 1) {
-		$newposition = $listIndex+$inc;
-		if ($currVal < ($midpoint - .5) && ($currVal + $inc) >= ($midpoint - .5)) {
+	$newposition = $listIndex + $dir;
+
+	if ($dir > 0) {
+		if ($currVal < ($midpoint - .5) && ($currVal + $dir) >= ($midpoint - .5)) {
 			# make the midpoint sticky by resetting the start of the hold
 			$newposition = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);
 		}
 	} else {
-		$newposition = $listIndex-$inc;
-		if ($currVal > ($midpoint + .5) && ($currVal - $inc) <= ($midpoint + .5)) {
+		if ($currVal > ($midpoint + .5) && ($currVal + $dir) <= ($midpoint + .5)) {
 			# make the midpoint sticky by resetting the start of the hold
 			$newposition = $midpoint;
 			Slim::Hardware::IR::resetHoldStart($client);
@@ -169,6 +179,7 @@ sub setMode {
 	#}
 	$client->lines(\&lines);
 }
+
 # set unsupplied parameters to the defaults
 # header = '' # message displayed on top line, can be a scalar, a code ref
 	# , or an array ref to a list of scalars or code refs

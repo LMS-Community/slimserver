@@ -149,7 +149,10 @@ my %functions = (
 
 		changePos($client, 1, $funct);
 	},
-
+	'knob' => sub {
+			my ($client,$funct,$functarg) = @_;
+			changePos($client, $client->knobPos() - $client->param('listIndex') ,$funct,);
+	},
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;
 
@@ -342,7 +345,7 @@ sub lines {
 
 	if (!defined($listRef)) {
 
-		return ('','');
+		return ({});
 	}
 
 	if ($listIndex == scalar(@$listRef)) {
@@ -393,10 +396,22 @@ sub lines {
 		}
 	}
 
-	# overlayRef must refer to 2 element array, overlays for both lines
+	my ($overlay1, $overlay2);
+
 	my $overlayref = getExtVal($client, getParam($client, 'overlayRef'));
 
-	return ($line1, $line2, (ref($overlayref) eq 'ARRAY' ? @$overlayref : undef));
+	if (ref($overlayref) eq 'ARRAY') {
+		($overlay1, $overlay2) = @$overlayref;
+		$overlay1 = $client->symbols($overlay1) if (defined($overlay1));
+		$overlay2 = $client->symbols($overlay2) if (defined($overlay2));
+	}
+
+	my $parts = {
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ $overlay1, $overlay2 ],
+	};
+
+	return $parts;
 }
 
 sub getFunctions {

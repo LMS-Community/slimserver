@@ -86,9 +86,8 @@ sub playOrAdd {
 	}
 
 	$client->showBriefly( {
-		'line1'    => $line1,
-		'line2'    => $line2,
-		'overlay2' => $client->symbols('notesymbol'),
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $client->symbols('notesymbol') ]
 	});
 
 	$client->execute(['playlist', $command, $termlist]);
@@ -344,7 +343,7 @@ sub listExitHandler {
 
 		# Look up if this is an artist, album, year etc
 		my $curItem  = $client->trackInfoContent->[$client->param('listIndex')] || '';
-		my @oldlines = Slim::Display::Display::curLines($client);
+		my $oldlines = $client->curLines();
 
 		# Get object for currently being browsed song from the datasource
 		# This probably isn't necessary as track($client) is already an object!
@@ -465,7 +464,7 @@ sub listExitHandler {
 		}
 
 		if ($push) {
-			$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+			$client->pushLeft($oldlines, $client->curLines());
 		}
 	}
 }

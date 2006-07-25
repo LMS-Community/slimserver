@@ -18,6 +18,7 @@ use Slim::Utils::PluginManager;
 use Slim::Display::Display;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;
+use Slim::Buttons::Volume;
 
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
@@ -81,6 +82,7 @@ sub init {
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
+	Slim::Buttons::Volume::init();
 
 	$savers{'playlist'} = Slim::Utils::Strings::string('NOW_PLAYING');
 }
@@ -277,7 +279,7 @@ our %functions = (
 		my $buttonarg = shift;
 		
 		my $jump = $client->curSelection($client->curDepth());
-		my @oldlines = Slim::Display::Display::curLines($client);
+		
 		
 		Slim::Buttons::Common::setMode($client, 'home');
 		
@@ -393,12 +395,13 @@ our %functions = (
 		}
 		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
 		if ($buttonarg eq 'toggle') {
-			$::d_files && msg("Switching to playlist view\n");
+			$::d_ui && msg("Switching to playlist view\n");
 			if (Slim::Player::Playlist::count($client) == 0) {
 				$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
 			} else {
-				Slim::Buttons::Common::pushMode($client, 'playlist');
-				$client->showBriefly($client->string('VIEWING_PLAYLIST'), "");
+				Slim::Buttons::Common::setMode($client, 'home');
+				Slim::Buttons::Home::jump($client, 'playlist');
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 			}
 		} else {
 			if ($buttonarg =~ /^[0-5]$/) {
@@ -406,6 +409,28 @@ our %functions = (
 			}
 		}
 	},
+	'visual' => sub {
+		# toggle display mod for now playing...
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+
+		my $vm = $client->prefGet("playingDisplayMode");
+
+		unless (defined $vm) { $vm = 1; };
+		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+
+		if ($button eq 'visual_toggle') {
+			$vm = ($vm + 1) % $client->display->visualizerModes();
+		} else {
+			if ($buttonarg && $buttonarg < $client->display->visualizerModes()) {
+				$vm = $buttonarg;
+			}
+		}
+		$client->prefSet("playingDisplayMode", $vm);
+		$client->update();
+	},
+
 	'search' => sub  {
 		my $client = shift;
 		my $button = shift;
@@ -416,6 +441,16 @@ our %functions = (
 			$client->update();
 		}
 	},	
+
+	'browse' => sub  {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		my $playdisp = undef;
+		Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
+		$client->update();
+	},
+
 	'favorites' => sub  {
 		my $client = shift;
 		my $button = shift;
@@ -472,6 +507,19 @@ our %functions = (
 			$client->showBriefly($client->string('REPEAT_ALL'), "");
 		}
 	},
+
+	'volumemode' => sub {
+		my $client = shift;
+		my $button = shift;
+		my $buttonarg = shift;
+		
+		if ($client->param('parentMode') && $client->param('parentMode') eq 'volume') {
+			popModeRight($client);
+		} else {
+			pushModeLeft($client, 'volume');
+		}
+	},
+
 	'volume' => sub {
 		my $client = shift;
 		my $button = shift;
@@ -479,6 +527,7 @@ our %functions = (
 		
 		mixer($client,'volume',$buttonarg);
 	},
+
 
 	'pitch' => sub {
 		my $client = shift;
@@ -891,13 +940,13 @@ sub mixer {
 		$cmd = $1;
 	} else {
 		# just display current value
-		Slim::Display::Display::mixerDisplay($client,$feature);
+		$client->mixerDisplay($feature);
 		return;
 	}
 		
 	$client->execute(["mixer", $feature, $cmd]);
 	
-	Slim::Display::Display::mixerDisplay($client,$feature);
+	$client->mixerDisplay($feature);
 }
 
 sub numberLetter {
@@ -1055,7 +1104,7 @@ sub pushMode {
 	my $setmode = shift;
 	my $paramHashRef = shift;
 
-	$::d_files && msg("pushing button mode: $setmode\n");
+	$::d_ui && msg("pushing button mode: $setmode\n");
 
 	my $oldmode = mode($client);
 
@@ -1097,11 +1146,14 @@ sub pushMode {
 
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
+	
+	$client->updateKnob(1);
 }
 
 sub popMode {
 	my $client = shift;
 	if (scalar(@{$client->modeStack}) < 1) {
+		$client->updateKnob(1);
 		return undef;
 	}
 
@@ -1126,8 +1178,9 @@ sub popMode {
 		&$fun($client,'pop');
 	}
 
-	$::d_files && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
+	$::d_ui && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
 
+	$client->updateKnob(1);
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
 	
@@ -1149,12 +1202,12 @@ sub pushModeLeft {
 	my $setmode = shift;
 	my $paramHashRef = shift;
 
-	my @oldlines = Slim::Display::Display::curLines($client);
+	my $oldlines = $client->curLines();
 
 	pushMode($client, $setmode, $paramHashRef);
 
 	if (!$client->param('handledTransition')) {
-		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft($oldlines, $client->curLines());
 		$client->param('handledTransition',0);
 	}
 }
@@ -1162,11 +1215,11 @@ sub pushModeLeft {
 sub popModeRight {
 	my $client = shift;
 
-	my @oldlines = Slim::Display::Display::curLines($client);
+	my $oldlines = $client->curLines();
 
 	Slim::Buttons::Common::popMode($client);
 
-	$client->pushRight(\@oldlines, [Slim::Display::Display::curLines($client)]);
+	$client->pushRight($oldlines, $client->curLines());
 }
 
 sub dateTime {
@@ -1227,7 +1280,7 @@ sub _periodicUpdate {
 	$client->periodicUpdateTime($time);
 
 	# do the update if there's no block on updates
-	$client->update() unless ($client->updateMode());
+	$client->display->update() unless ($client->display->updateMode());
 }
 
 

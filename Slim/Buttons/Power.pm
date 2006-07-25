@@ -49,7 +49,7 @@ sub setMode {
 }
 
 sub lines {
-	return {};
+	return { 'screen1' => {}, 'screen2' => {} };
 }
 
 1;

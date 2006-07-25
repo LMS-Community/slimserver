@@ -83,9 +83,8 @@ sub init {
 			}
 
 			$client->showBriefly( {
-				'line1' => $line1,
-				'line2' => $line2,
-				'overlay2' => $client->symbols('notesymbol'),
+				'line'    => [ $line1, $line2 ],
+				'overlay' => [ undef, $client->symbols('notesymbol') ]
 			});
 
 			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum') || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {

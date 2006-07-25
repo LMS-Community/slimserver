@@ -14,6 +14,8 @@ use strict;
 use vars qw(@ISA);
 use Slim::Player::Client;
 
+use Slim::Display::NoDisplay;
+
 @ISA = qw(Slim::Player::Client);
 
 sub new {
@@ -24,6 +26,8 @@ sub new {
 	$client->streamingsocket($tcpsock);
 
 	bless $client, $class;
+
+	$client->display( Slim::Display::NoDisplay->new($client) );
 
 	return $client;
 }

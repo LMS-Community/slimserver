@@ -168,7 +168,7 @@ sub init {
 			'externRef' => \&_fontExists,
 			'header' => 'TEXTSIZE',
 			'stringHeader' => 1,
-			'onChange' => sub { $_[0]->textSize($_[1]) },
+			'onChange' => sub { $_[0]->textSize($_[1], 1) },
 			'onChangeArgs' => 'CV',
 			'initialValue' => sub { $_[0]->textSize() },
 		},
@@ -280,8 +280,8 @@ sub _fontExists {
 	
 	my $fontname;
 
-	if ($client->isa( "Slim::Player::SqueezeboxG" )) {
-		$fontname = ${$client->fonts()->{line2}};
+	if ($client->display->isa( "Slim::Display::Graphics" )) {
+		$fontname = $client->display->fonts()->{line}[1];
 		$fontname =~ s/(\.2)?//go;
 	} else {
 		$fontname = $client->textSize() ? 'large' : 'small';

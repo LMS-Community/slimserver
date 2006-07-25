@@ -945,9 +945,9 @@ sub generateHTTPResponse {
 		if ($path =~ /status/) {
 
 			if (defined($client)) {
-				my $parsed = $client->parseLines(Slim::Display::Display::curLines($client));
-				my $line1 = $parsed->{line1} || '';
-				my $line2 = $parsed->{line2} || '';
+				my $parsed = $client->parseLines($client->curLines());
+				my $line1 = $parsed->{line}[0] || '';
+				my $line2 = $parsed->{line}[1] || '';
 				$$body = $line1 . $CRLF . $line2 . $CRLF;
 			} else {
 				$$body = '';

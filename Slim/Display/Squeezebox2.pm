@@ -1,0 +1,411 @@
+package Slim::Display::Squeezebox2;
+
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License,
+# version 2.
+
+# $Id$
+
+# Display class for Squeezebox 2/3 class display
+#  - 320 x 32 pixel display
+#  - client side animations
+
+use strict;
+
+use base qw(Slim::Display::Graphics);
+
+# constants
+my $display_maxLine = 2; # render up to 3 lines [0..$display_maxLine]
+
+# Mode definitions - including visualizer
+
+# Parameters for the vumeter:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Style: digital == 0, analog == 1
+# Left channel parameters:
+#   2 - Position in pixels
+#   3 - Width in pixels
+# Right channel parameters (not required for mono):
+#   4-5 - same as left channel parameters
+
+# Parameters for the spectrum analyzer:
+#   0 - Channels: stereo == 0, mono == 1
+#   1 - Bandwidth: 0..22050Hz == 0, 0..11025Hz == 1
+#   2 - Preemphasis in dB per KHz
+# Left channel parameters:
+#   3 - Position in pixels
+#   4 - Width in pixels
+#   5 - orientation: left to right == 0, right to left == 1
+#   6 - Bar width in pixels
+#   7 - Bar spacing in pixels
+#   8 - Clipping: show all subbands == 0, clip higher subbands == 1
+#   9 - Bar intensity (greyscale): 1-3
+#   10 - Bar cap intensity (greyscale): 1-3
+# Right channel parameters (not required for mono):
+#   11-18 - same as left channel parameters
+
+my $VISUALIZER_NONE = 0;
+my $VISUALIZER_VUMETER = 1;
+my $VISUALIZER_SPECTRUM_ANALYZER = 2;
+my $VISUALIZER_WAVEFORM = 3;
+
+my @modes = (
+	# mode 0
+	{ desc => ['BLANK'],
+	  bar => 0, secs => 0,  width => 320, 
+	  params => [$VISUALIZER_NONE] },
+	# mode 1
+	{ desc => ['ELAPSED'],
+	  bar => 1, secs => 1,  width => 320,
+	  params => [$VISUALIZER_NONE] },
+	# mode 2
+	{ desc => ['REMAINING'],
+	  bar => 1, secs => -1, width => 320,
+	  params => [$VISUALIZER_NONE] },
+	# mode 3
+	{ desc => ['VISUALIZER_VUMETER_SMALL'],
+	  bar => 0, secs => 0,  width => 278,
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] },
+	# mode 4
+	{ desc => ['VISUALIZER_VUMETER_SMALL', 'AND', 'ELAPSED'],
+	  bar => 1, secs => 1,  width => 278,
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] },
+	# mode 5
+	{ desc => ['VISUALIZER_VUMETER_SMALL', 'AND', 'REMAINING'],
+	  bar => 1, secs => -1, width => 278, 
+	  params => [$VISUALIZER_VUMETER, 0, 0, 280, 18, 302, 18] } , 
+	# mode 6 
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL'],
+	  bar => 0, secs => 0,  width => 278, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] },
+	# mode 7
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL', 'AND', 'ELAPSED'],
+	  bar => 1, secs => 1,  width => 278,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] },
+	# mode 8
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER_SMALL', 'AND', 'REMAINING'],
+	  bar => 1, secs => -1, width => 278,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 1, 1, 0x10000, 280, 40, 0, 4, 1, 0, 1, 3] },
+	# mode 9  
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER'],
+	  bar => 0, secs => 0,  width => 320, 
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] },
+	# mode 10
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'ELAPSED'],
+	  bar => 1, secs => 1,  width => 320,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] },
+	# mode 11
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'REMAINING'],
+	  bar => 1, secs => -1, width => 320,
+	  params => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 1, 160, 160, 1, 4, 1, 1, 1, 1] } , 
+	# mode 12	  
+	{ desc => ['SETUP_SHOWBUFFERFULLNESS'],
+	  bar => 1, secs => 0,  width => 320, fullness => 1,
+	  params => [$VISUALIZER_NONE], },
+);
+
+my $nmodes = $#modes;
+
+our $defaultPrefs = {
+	'activeFont'          => [qw(light standard full)],
+	'activeFont_curr'     => 1,
+	'idleFont'            => [qw(light standard full)],
+	'idleFont_curr'       => 1,
+	'idleBrightness'      => 2,
+	'playingDisplayMode'  => 5,
+	'playingDisplayModes' => [0..11]
+};
+
+sub init {
+	my $display = shift;
+
+	# load fonts for this display if not already loaded and remember to load at startup in future
+	if (!Slim::Utils::Prefs::get('loadFontsSqueezeboxII')) {
+		Slim::Utils::Prefs::set('loadFontsSqueezeboxII', 1); # 'II' as set prefs can't take numbers!
+		Slim::Display::Lib::Fonts::loadFonts(1);
+	}
+
+	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	$display->SUPER::init();
+}
+
+sub resetDisplay {
+	my $display = shift;
+
+	my $cache = $display->renderCache();
+	$cache->{'screens'} = 1;
+	$cache->{'maxLine'} = $display_maxLine;
+	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };
+
+	$display->killAnimation();
+}	
+
+sub bytesPerColumn {
+	return 4;
+}
+
+sub displayHeight {
+	return 32;
+}
+
+sub displayWidth {
+	my $display = shift;
+	my $client = $display->client;
+
+	# if we're showing the always-on visualizer & the current buttonmode 
+	# hasn't overridden, then use the playing display mode to index
+	# into the display width, otherwise, it's fullscreen.
+	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ? ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")] : 0;
+
+	return $display->modes->[$mode || 0]{width};
+}
+
+sub vfdmodel {
+	return 'graphic-320x32';
+}
+
+sub brightnessMap {
+	return (65535, 0, 1, 3, 4);
+}
+
+# update screen - supressing unchanged screens
+sub updateScreen {
+	my $display = shift;
+	my $screen = shift;
+	if ($screen->{changed}) {
+	    $display->drawFrameBuf($screen->{bitsref});
+	} else {
+	    # check to see if visualiser has changed even if screen display has not
+		$display->visualizer();
+	}
+}
+
+# send display frame to player
+sub drawFrameBuf {
+	my $display = shift;
+	my $framebufref = shift;
+	my $offset = shift || 0;
+	my $transition = shift || 'c';
+	my $param = shift || 0;
+
+	my $client = $display->client;
+
+	if ($client->opened()) {
+
+		$display->visualizer();
+
+		my $framebuf = pack('n', $offset) .    # offset [transporter screen 2 = offset of 640]
+						   $transition .       # transition
+						   pack('c', $param) . # param byte
+						   substr($$framebufref, 0, $display->screenBytes(1) + $display->screenBytes(2) );
+	
+		$client->sendFrame('grfe', \$framebuf);
+	}
+}	
+
+sub showVisualizer {
+	my $client = shift->client;
+	
+	# show the always-on visualizer while browsing or when playing.
+	return (Slim::Player::Source::playmode($client) eq 'play') || (Slim::Buttons::Playlist::showingNowPlaying($client));
+}
+
+sub visualizer {
+	my $display   = shift;
+	my $forceSend = shift || 0;
+	my $client    = $display->client;
+
+	my $paramsref = $client->modeParam('visu');
+
+	if (!$paramsref) {
+		$paramsref = $display->visualizerParams()
+	}
+
+	if (!$forceSend && defined($paramsref) && defined($display->lastVisMode) && $paramsref == $display->lastVisMode) {
+		return;
+	}
+
+	my @params = @{$paramsref};
+
+	my $which = shift @params;
+	my $count = scalar(@params);
+
+	my $parambytes = pack "CC", $which, $count;
+
+	for my $param (@params) {
+		$parambytes .= pack "N", $param;
+	}
+
+	$client->sendFrame('visu', \$parambytes);
+	$display->lastVisMode($paramsref);
+}
+
+sub visualizerParams {
+	my $display = shift;
+	my $client = $display->client;
+
+	my $visu = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
+	
+	$visu = 0 if (!$display->showVisualizer());
+	
+	if (!defined $visu || $visu < 0) { 
+		$visu = 0; 
+	}
+	
+	if ($visu >= nmodes()) { 
+		$visu = nmodes() - 1;
+	}
+	
+	return $display->modes()->[$visu]{params};
+}
+
+sub modes {
+	return \@modes;
+}
+
+sub nmodes {
+	return $nmodes;
+}
+
+# update visualizer and init scrolling
+sub scrollInit {
+    my $display = shift;
+	$display->visualizer();
+    $display->SUPER::scrollInit(@_);
+}
+
+# update visualiser and scroll background - suppressing unchanged backgrounds
+sub scrollUpdateBackground {
+    my $display = shift;
+    my $screen = shift;
+	my $screenNo = shift;
+	$display->visualizer();
+    $display->SUPER::scrollUpdateBackground($screen, $screenNo) if $screen->{changed};
+}
+
+# preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
+sub scrollHeader {
+	my $display = shift;
+	my $header = 'grfe' . pack('n', 0) . 'c' . pack ('c', 0);
+
+	return pack('n', length($header) + $display->screenBytes ) . $header;
+}
+
+sub pushLeft {
+	my $display = shift;
+	my $start = shift;
+	my $end = shift || $display->curLines();
+
+	my $render = $display->render($end);
+	$display->pushBumpAnimate($render, 'r');
+}
+
+sub pushRight {
+	my $display = shift;
+	my $start = shift;
+	my $end = shift || $display->curLines();
+
+	my $render = $display->render($end);
+	$display->pushBumpAnimate($render, 'l');
+}
+
+sub pushUp {
+	my $display = shift;
+	my $start = shift;
+	my $end = shift || $display->curLines();
+
+	my $render = $display->render($end);
+	$display->pushBumpAnimate($render, 'u', $render->{screen1}->{extent});
+}
+
+sub pushDown {
+	my $display = shift;
+	my $start = shift;
+	my $end = shift || $display->curLines();
+
+	my $render = $display->render($end);
+	$display->pushBumpAnimate($render, 'd', $render->{screen1}->{extent});
+}
+
+sub bumpLeft {
+	my $display = shift;
+	$display->pushBumpAnimate($display->render($display->renderCache()), 'L');
+}
+
+sub bumpRight {
+	my $display = shift;
+	$display->pushBumpAnimate($display->render($display->renderCache()), 'R');
+}
+
+sub bumpDown {
+	my $display = shift;
+	$display->pushBumpAnimate($display->render($display->renderCache()), 'U');
+}
+
+sub bumpUp {
+	my $display = shift;
+	$display->pushBumpAnimate($display->render($display->renderCache()), 'D');
+}
+
+sub pushBumpAnimate {
+	my $display = shift;
+	my $render = shift;
+	my $trans = shift;
+	my $param = shift || 0;
+
+	$display->killAnimation();
+	$display->animateState(1);
+	$display->updateMode(1);
+
+	$display->drawFrameBuf($render->{screen1}->{bitsref}, 0, $trans, $param);
+}
+
+sub clientAnimationComplete {
+	# Called when client sents ANIC frame
+	# Ensures scrolling is started by setting a timer to call update in 0.5 seconds
+	my $display = shift;
+
+	$display->animateState(2);
+	$display->updateMode(1);
+	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 0.5, \&Slim::Display::Display::update, $display->renderCache());
+}
+
+sub killAnimation {
+	# kill all server side animation in progress and clear state
+	my $display = shift;
+	my $exceptScroll = shift; # all but scrolling to be killed
+	my $screenNo = shift || 1;  
+
+	my $animate = $display->animateState();
+	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::update) if ($animate == 2);
+	Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation) if ($animate >= 4);	
+	$display->scrollStop($screenNo) if (($display->scrollState($screenNo) > 0) && !$exceptScroll);
+	$display->animateState(0);
+	$display->updateMode(0);
+	$display->endShowBriefly() if ($animate == 5);
+}
+
+# We can display Unicode fonts via a TTF
+sub string {
+	my $display = shift;
+	my $string = shift;
+
+	return Slim::Utils::Strings::string($string, Slim::Utils::Strings::getLanguage());
+}
+
+sub doubleString {
+	my $display = shift;
+	my $string = shift;
+
+	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
+}
+
+1;
+
+# Local Variables:
+# tab-width:4
+# indent-tabs-mode:t
+# End:
+
+

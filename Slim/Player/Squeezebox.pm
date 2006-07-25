@@ -47,8 +47,9 @@ sub init {
 # periodic screen refresh for players requiring it
 sub periodicScreenRefresh {
 	my $client = shift;
+	my $display = $client->display;
 
-	$client->update() unless ($client->updateMode() || $client->scrollState() == 2 || $client->param('modeUpdateInterval'));
+	$display->update() unless ($display->updateMode() || $display->scrollState() == 2 || $client->param('modeUpdateInterval'));
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }
@@ -100,20 +101,18 @@ sub reconnect {
 		}
 	}
 
-	$client->killAnimation();
-
 	# reinitialize the irtime to the current time so that
 	# (re)connecting counts as activity (and we don't
 	# immediately switch into a screensaver).
 	my $now = Time::HiRes::time();
 	$client->epochirtime($now);
 
+	$client->display->resetDisplay();
+
 	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
-	# update display and force visualizer to correct mode if SB2
-	$client->renderCache()->{screensize} = 0; # force reinit of render cache
 	$client->update();	
-	$client->visualizer(1) if ($client->isa('Slim::Player::Squeezebox2'));
+	$client->display->visualizer(1) if ($client->display->isa('Slim::Display::Squeezebox2'));
 }
 
 sub connected { 
@@ -392,7 +391,7 @@ sub upgradeFirmware_SDK5 {
 
 	# place in block mode so that brightness key is now ignored
 	$client->block( {
-		'line1' => $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
+		'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())) ],
 		'fonts' => { 
 			'graphic-320x32' => 'light',
 			'graphic-280x16' => 'small',
@@ -419,8 +418,8 @@ sub upgradeFirmware_SDK5 {
 		
 		if (($fraction - $lastFraction) > (1/40)) {
 			$client->showBriefly( {
-				'line1' => $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
-				'line2' => $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)),
+				'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
+							 $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
 				'fonts' => { 
 					'graphic-320x32' => 'light',
 					'graphic-280x16' => 'small',

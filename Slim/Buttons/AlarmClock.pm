@@ -477,7 +477,9 @@ sub alarmLines {
 		$line2 = Slim::Music::Info::standardTitle($client, $playlist);
 	}
 
-	return ($line1, $line2);
+	return {
+		'line' => [ $line1, $line2 ]
+	};
 }
 
 sub visibleAlarm {

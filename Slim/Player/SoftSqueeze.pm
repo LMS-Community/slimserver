@@ -11,14 +11,17 @@ package Slim::Player::SoftSqueeze;
 # GNU General Public License for more details.
 
 use strict;
+use base qw(Slim::Player::Transporter);
 
-use base qw(Slim::Player::Squeezebox2);
+use Slim::Player::ProtocolHandlers;
+use Slim::Player::Transporter;
+use Slim::Utils::Prefs;
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Prefs;
 
 sub new {
-        my $class = shift;
+	my $class = shift;
 
 	my $client = $class->SUPER::new(@_);
 
@@ -71,6 +74,7 @@ sub canDirectStream {
 	
 	return undef;
 }
+
 
 1;
 

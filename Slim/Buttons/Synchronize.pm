@@ -127,7 +127,7 @@ sub syncExitHandler {
 	} elsif ($exittype eq 'RIGHT') {
 		my $selectedClient = $client->syncSelections($client->syncSelection);
 	
-		my @oldlines = Slim::Display::Display::curLines($client);
+		my @oldlines = $client->curLines();
 	
 		if (Slim::Player::Sync::isSyncedWith($client, $selectedClient) || ($client eq $selectedClient)) {
 			Slim::Player::Sync::unsync($client);
@@ -135,7 +135,7 @@ sub syncExitHandler {
 			Slim::Player::Sync::sync($client, $selectedClient);
 		}
 
-		$client->pushLeft(\@oldlines, [Slim::Display::Display::curLines($client)]);
+		$client->pushLeft(\@oldlines, $client->curLines());
 	} else {
 		return;
 	}

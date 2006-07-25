@@ -34,8 +34,8 @@ our %contributorToRoleMap = (
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('namesearch' => [qw/namesearch/]);
 
-        $class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
-        $class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
+	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
+	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
 
 	$class->many_to_many('tracks', 'contributorTracks' => 'contributor', undef, {
 		'distinct' => 1,
@@ -123,7 +123,7 @@ sub add {
 			'musicbrainz_id' => $brainzID,
 		}, { 'key' => 'namesearch' });
 
-		if ($contributorObj && $search ne $sort) {
+	if ($contributorObj && $search ne $sort) {
 
 			# Bug 3069: update the namesort only if it's different than namesearch
 			$contributorObj->namesort($sort);
