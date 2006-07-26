@@ -189,8 +189,8 @@ sub update {
 		}
 	}
 
-	# return any old display if stored and not redisplaying render cache
-	$display->returnOldDisplay($render) if ($display->sbOldDisplay() && $render != $parts);
+	# return any old display if stored
+	$display->returnOldDisplay($render) if $display->sbOldDisplay();
 }
 
 # show text briefly and then return to original display

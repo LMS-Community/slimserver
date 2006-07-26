@@ -486,6 +486,13 @@ sub textSize {
 	if (defined($newsize)) {
 		my $size = $client->prefSet($prefname."_curr", $newsize);
 
+		if ($display->animateState() == 5) {
+			# currently in showBriefly - end it
+			Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation);	
+			$display->endAnimation();
+		}
+
+		# update screen with existing text and new font
 		$display->renderCache()->{defaultfont} = undef;
 		$display->update($display->renderCache()) unless $suppressUpdate;
 		
