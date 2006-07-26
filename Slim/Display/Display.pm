@@ -125,13 +125,12 @@ sub sbOldDisplay {
 
 # main display function - all screen updates [other than push/bumps] are driven by this function
 sub update {
-	my $display    = shift;
-	my $lines      = shift;
+	my $display = shift;
+	my $lines   = shift;
 
-	my $client     = $display->client;
+	my $client  = $display->client;
 
-	# 0 = normal scroll, 1 = scroll once only, 
-        # 2 = no scroll, 3 = scroll once and end
+	# 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = scroll once and end
 	my $scrollMode = shift || $client->paramOrPref('scrollMode') || 0;
 
 	# return if updates are blocked
@@ -190,8 +189,8 @@ sub update {
 		}
 	}
 
-	# return any old display if stored
-	$display->returnOldDisplay($render) if $display->sbOldDisplay();
+	# return any old display if stored and not redisplaying render cache
+	$display->returnOldDisplay($render) if ($display->sbOldDisplay() && $render != $parts);
 }
 
 # show text briefly and then return to original display
