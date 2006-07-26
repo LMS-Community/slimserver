@@ -241,16 +241,16 @@ sub _addOrPlayFavoriteUrl {
 	# We need to ask for the right type of object.
 	# 
 	# Contributors, Genres & Albums have a url of:
-	# contributor.namesearch://BEATLES
+	# db:contributor.namesearch=BEATLES
 	#
 	# Years are once again special (ugh).
 	#
 	# Remote playlists are Track objects, not Playlist objects.
-	if ($url =~ m|^(\w+?)\.(\w+?search)://(.+)|) {
+	if ($url =~ /^db:(\w+)\.(\w+)=(.+)/) {
 
-		$obj = Slim::Schema->single(ucfirst($1), { $2 => $3 });
+		$obj = Slim::Schema->single(ucfirst($1), { $2 => Slim::Utils::Misc::unescape($3) });
 
-	} elsif ($url =~ m|^album\.year://(.+)|) {
+	} elsif ($url =~ /^db:album\.year=(.+)/) {
 
 		$class = 'Year';
 		$obj   = $1;
@@ -260,7 +260,7 @@ sub _addOrPlayFavoriteUrl {
 		$class = 'Playlist';
 	}
 
-	#
+	# else we assume it's a track
 	if ($class eq 'Track' || $class eq 'Playlist') {
 
 		$obj = Slim::Schema->rs($class)->objectForUrl({

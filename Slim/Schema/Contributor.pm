@@ -6,6 +6,8 @@ use strict;
 use base 'Slim::Schema::DBI';
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Misc;
+
 our %contributorToRoleMap = (
 	'ARTIST'      => 1,
 	'COMPOSER'    => 2,
@@ -89,7 +91,7 @@ sub displayAsHTML {
 sub url {
 	my $self = shift;
 
-	return sprintf('contributor.namesearch://%s', $self->namesearch);
+	return Slim::Utils::Misc::escape(sprintf('db:contributor.namesearch=%s', $self->namesearch));
 }
 
 sub add {

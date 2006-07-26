@@ -50,7 +50,7 @@ use Slim::Utils::Misc;
 sub url {
 	my $self = shift;
 
-	return sprintf('album.titlesearch://%s', $self->titlesearch);
+	return Slim::Utils::Misc::escape(sprintf('db:album.titlesearch=%s', $self->titlesearch));
 }
 
 sub name { 

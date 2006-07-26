@@ -21,7 +21,7 @@ use Slim::Utils::Strings qw(string);
 sub url {
 	my $self = shift;
 
-	return sprintf('album.year://%s', $self->year);
+	return Slim::Utils::Misc::escape(sprintf('db:album.year=%s', $self->year));
 }
 
 sub displayAsHTML {

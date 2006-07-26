@@ -6,6 +6,8 @@ use strict;
 use base 'Slim::Schema::DBI';
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Misc;
+
 {
 	my $class = __PACKAGE__;
 
@@ -36,7 +38,7 @@ use Scalar::Util qw(blessed);
 sub url {
 	my $self = shift;
 
-	return sprintf('genre.namesearch://%s', $self->namesearch);
+	return Slim::Utils::Misc::escape(sprintf('db:genre.namesearch=%s', $self->namesearch));
 }
 
 sub tracks {
