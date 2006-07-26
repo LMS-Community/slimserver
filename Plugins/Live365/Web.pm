@@ -719,7 +719,9 @@ sub doLoginLogout() {
 
 sub webLoginDone {
 	my $client = shift;
-	my $loginStatus = shift;
+	my $args   = shift;
+	
+	my $loginStatus = $args->{'status'};
 
 	my $params = fetchAsyncRequest('xxx','login');
 
