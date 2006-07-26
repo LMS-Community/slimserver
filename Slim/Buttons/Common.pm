@@ -448,6 +448,8 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
+		
+		setMode($client, 'home');
 		Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
 		$client->update();
 	},
