@@ -134,6 +134,18 @@ sub init {
 
 	$class->_buildValidHierarchies;
 
+	# XXXX - Leave this in for a few days to let the Year table be built -
+	# then remove it.
+	if (Slim::Schema->count('Track') && !Slim::Schema->count('Year')) {
+
+		my $albums = Slim::Schema->search('Album', {}, { 'group_by' => 'year' });
+
+		while (my $album = $albums->next) {
+
+			Slim::Schema->rs('Year')->find_or_create({ 'id' => $album->year });
+		}
+	}
+
 	$initialized = 1;
 }
 
