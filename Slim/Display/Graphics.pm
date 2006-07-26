@@ -194,8 +194,8 @@ sub render {
 
 					foreach my $l (0..$maxLine) {
 
-						if (!$sfonts || !$cfonts || $sfonts->{$c}[$l] ne $cfonts->{$c}[$l] || $changed) {
-
+						if (!$sfonts || !$cfonts || 
+							( ($sfonts->{$c}[$l] || '')  ne ($cfonts->{$c}[$l] || '') ) || $changed) {
 							$sc->{"$c"}[$l] = undef;
 							$sc->{"$c"."bits"}[$l] = '';
 							$sc->{"$c"."finish"}[$l] = 0 if ($c eq 'line');
