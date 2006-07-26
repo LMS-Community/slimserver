@@ -70,6 +70,12 @@ our %message_handlers = (
 	'UREQ' => \&_update_request_handler,
 );
 
+sub addHandler {
+	my $op = shift;
+	my $callbackRef = shift;       
+	$message_handlers{$op} = $callbackRef;
+}
+
 sub setCallbackRAWI {
 	my $callbackRef = shift;
 	$callbacksRAWI{$callbackRef} = $callbackRef;
