@@ -21,12 +21,12 @@ sub getDisplayName {
 }
 
 sub initPlugin {
-    msg("RS232 plugin enabled\n");
+	$::d_plugins && msg("RS232 plugin enabled\n");
 
-    Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
-    Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
-    Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
-    Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
+	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
+	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
+	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
+	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 }
 
 sub enabled {
@@ -50,43 +50,43 @@ sub rs232rx {
 }
 
 sub rs232tx {
-    my $request = shift;
+	my $request = shift;
 
-    # check this is the correct query.
-    if ($request->isNotCommand([['rs232', 'tx']])) {
+	# check this is the correct query.
+	if ($request->isNotCommand([['rs232', 'tx']])) {
 		$request->setStatusBadDispatch();
 		return;
-    }
+	}
 
-    # get our parameters
-    my $client   = $request->client();
-    my $data    = $request->getParam('_data');
+	# get our parameters
+	my $client = $request->client();
+	my $data   = $request->getParam('_data');
 
-    # only for transporter
-    return unless $client && $client->isa('Slim::Player::Transporter');
+	# only for transporter
+	return unless $client && $client->isa('Slim::Player::Transporter');
 
-    $client->sendFrame('rstx', \$data);
+	$client->sendFrame('rstx', \$data);
 	$request->setStatusDone();
 }
 
 sub rs232baud {
-    my $request = shift;
+	my $request = shift;
 
-    # check this is the correct query.
-    if ($request->isNotCommand([['rs232', 'tx']])) {
+	# check this is the correct query.
+	if ($request->isNotCommand([['rs232', 'tx']])) {
 		$request->setStatusBadDispatch();
 		return;
-    }
+	}
 
-    # get our parameters
-    my $client   = $request->client();
-    my $rate    = $request->getParam('_rate');
+	# get our parameters
+	my $client = $request->client();
+	my $rate   = $request->getParam('_rate');
 
-    # only for transporter
-    return unless $client && $client->isa('Slim::Player::Transporter');
+	# only for transporter
+	return unless $client && $client->isa('Slim::Player::Transporter');
 
-    my $data = pack('N', $rate);
-    $client->sendFrame('rsps', \$data);
+	my $data = pack('N', $rate);
+	$client->sendFrame('rsps', \$data);
 	$request->setStatusDone();
 }
 
