@@ -42,6 +42,19 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
+	# Ugh - need real logging via Log::Log4perl
+	# Hardcode the list of debugging options that the scanner accepts.
+	my @debug = qw(d_info d_server d_import d_parse d_parse d_sql d_startup d_itunes d_moodlogic d_musicmagic);
+
+	# Search the main namespace hash to see if they're defined.
+	for my $opt (@debug) {
+
+		no strict 'refs';
+		my $check = '::' . $opt;
+
+		$args->{$opt} = 1 if $$check;
+	}
+
 	# Add in the various importer flags
 	for my $importer (qw(itunes musicmagic moodlogic)) {
 
