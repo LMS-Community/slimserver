@@ -900,7 +900,7 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my $foundItems = shift;
 
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems->[0]};
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
 
 				_insert_done(
 					$client,
@@ -923,7 +923,7 @@ sub playlistXitemCommand {
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
 
-				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems->[0]};
+				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
 
 				_playlistXitem_load_done(
 					$client,

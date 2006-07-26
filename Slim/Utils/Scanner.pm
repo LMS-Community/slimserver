@@ -257,17 +257,20 @@ sub scanDirectory {
 
 		# If we're starting with a clean db - don't bother with searching for a track
 		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
-		my $track  = undef;
 
 		if (Slim::Music::Info::isSong($url)) {
 
 			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
 
-			$track = Slim::Schema->$method({
+			my $track = Slim::Schema->$method({
 				'url'        => $url,
 				'readTags'   => 1,
 				'checkMTime' => 1,
 			});
+			
+			if ( defined $track && $return ) {
+				push @{$foundItems}, $track;
+			}
 
 		} elsif (Slim::Music::Info::isCUE($url) || 
 			(Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url))) {
@@ -286,16 +289,12 @@ sub scanDirectory {
 				}
 			});
 
-			$track = $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
+			my @tracks = $class->scanPlaylistFileHandle($playlist, FileHandle->new($file));
+			
+			if ( scalar @tracks && $return ) {
+				push @{$foundItems}, @tracks;
+			}
 		}
-
-		# Bug: 3606 - only append to the listRef if a listRef exists.
-		if (defined $track && $return) {
-
-			push @{$foundItems}, $track;
-		}
-
-		$track = undef;
 
 		$progress->update if $progress;
 	}
