@@ -12261,12 +12261,15 @@ SETUP_SORTBROWSEART_GENREARTISTALBUM
 	EN	Genre, Artist, Album
 
 SETUP_CLOCKSOURCE
+	DE	Tacktgeber
 	EN	Clock Source
 
 SETUP_CLOCKSOURCE_DESC
+	DE	Die Ausgänge des Transporters könne mit internen oder externen Quellen synchronisiert werden. Bitte wählen Sie.
 	EN	Transporter's outputs can be synchronized with internal or external sources. Choose a clock source below.
 
 CLOCKSOURCE_INTERNAL
+	DE	Interner Taktgeber
 	EN	Internal Clock
 
 CLOCKSOURCE_WORD_CLOCK
