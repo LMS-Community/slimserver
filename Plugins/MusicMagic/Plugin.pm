@@ -476,17 +476,17 @@ sub specialPushLeft {
 	if ($step == 0) {
 
 		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(undef, { 'line1' => $mixer });
+		$client->pushLeft(undef, { 'line' => [$mixer,''] });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 
 	} elsif ($step == 3) {
 
 		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft( { 'line1' => $mixer."..." }, undef);
+		$client->pushLeft( { 'line' => [$mixer."...",''] }, undef);
 
 	} else {
 
-		$client->update( { 'line1' => $mixer.("." x $step) });
+		$client->update( { 'line' => [$mixer.("." x $step),''] });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }
