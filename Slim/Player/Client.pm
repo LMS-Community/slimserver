@@ -1437,9 +1437,28 @@ sub shouldLoop {
 
 # Given bitrate and content-length of a stream, display a progress bar
 sub streamingProgressBar {
-	my ( $client, $url, $bitrate, $length ) = @_;
+	my ( $client, $args ) = @_;
 	
-	my $secs = int( ( $length * 8 ) / $bitrate );
+	my $url = $args->{'url'};
+	
+	# Duration specified directly (i.e. from a plugin)
+	my $duration = $args->{'duration'};
+	
+	# Duration can be calculated from bitrate + length
+	my $bitrate = $args->{'bitrate'};
+	my $length  = $args->{'length'};
+	
+	my $secs;
+	
+	if ( $duration ) {
+		$secs = $duration;
+	}
+	elsif ( $bitrate > 0 && $length > 0 ) {
+		$secs = int( ( $length * 8 ) / $bitrate );
+	}
+	else {
+		return;
+	}
 	
 	my %cacheEntry = (
 		'SECS' => $secs,
@@ -1454,12 +1473,17 @@ sub streamingProgressBar {
 		$client->currentsongqueue()->[0]->{'duration'} = $secs;
 		
 		if ( $::d_remotestream || $::d_directstream ) {
-			msgf(
-				"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
-				$secs,
-				$length,
-				$bitrate
-			);
+			if ( $duration ) {
+				msgf("Duration of stream set to %d seconds\n", $duration );
+			}
+			else {
+				msgf(
+					"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
+					$secs,
+					$length,
+					$bitrate
+				);
+			}
 		}
 	}
 }

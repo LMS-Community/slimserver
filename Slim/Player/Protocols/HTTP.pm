@@ -235,7 +235,11 @@ sub sysread {
 				if ( $self->bitrate < 1000 ) {
 					${*$self}{'bitrate'} *= 1000;
 				}
-				$self->client->streamingProgressBar( $self->url, $self->bitrate, $self->contentLength );
+				$self->client->streamingProgressBar( {
+					'url'     => $self->url,
+					'bitrate' => $self->bitrate,
+					'length'  => $self->contentLength,
+				} );
 			}	
 		}
 		else {

@@ -291,7 +291,7 @@ sub getBitrate {
 		'url' => $url,
 	});
 	
-	return $track->bitrate;
+	return ( blessed $track ) ? $track->bitrate : undef;
 }
 
 sub setBitrate {
@@ -325,6 +325,16 @@ sub setDuration {
 		},
 		'readTags'   => 1,
 	});
+}
+
+sub getDuration {
+	my $url = shift;
+	
+	my $track = Slim::Schema->rs('Track')->objectForUrl({
+		'url' => $url,
+	});
+	
+	return ( blessed $track ) ? $track->secs : undef;
 }
 
 sub setCurrentTitleChangeCallback {

@@ -341,12 +341,28 @@ sub directHeaders {
 				$bitrate = Slim::Music::Info::getCurrentBitrate( $url );
 			}
 			
-			if ( $bitrate && $length ) {
-				# if we know the bitrate and length of a stream, display a progress bar
-				if ( $bitrate < 1000 ) {
-					$bitrate *= 1000;
+			# See if we have an existing track object with duration info for this stream.
+			if ( my $secs = Slim::Music::Info::getDuration($url) ) {
+				
+				# Display progress bar
+				$client->streamingProgressBar( {
+					'url'      => $url,
+					'duration' => $secs,
+				} );
+			}
+			else {
+			
+				if ( $bitrate && $length ) {
+					# if we know the bitrate and length of a stream, display a progress bar
+					if ( $bitrate < 1000 ) {
+						$bitrate *= 1000;
+					}
+					$client->streamingProgressBar( {
+						'url'     => $url,
+						'bitrate' => $bitrate,
+						'length'  => $length,
+					} );
 				}
-				$client->streamingProgressBar( $url, $bitrate, $length );
 			}
 
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
