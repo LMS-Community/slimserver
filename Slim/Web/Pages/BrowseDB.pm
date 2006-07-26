@@ -62,7 +62,7 @@ sub browsedb {
 	my $levelName = $levels[$level];
 
 	# Set the orderBy if requested
-	if ($levelName eq 'album') {
+	if ($levelName eq 'album' && $artwork) {
 
 		if (Slim::Utils::Prefs::get('sortBrowseArt') && !$orderBy) {
 

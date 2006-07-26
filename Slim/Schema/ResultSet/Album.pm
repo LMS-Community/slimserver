@@ -43,7 +43,7 @@ sub alphaPageBar {
 	my $self = shift;
 	my $sort = shift;
 
-	return (!defined($sort) || $sort =~ /^(?:contributor\.namesort|album\.titlesort)/ ) ? 1 : 0;
+	return (!$sort || $sort =~ /^(?:contributor\.namesort|album\.titlesort)/) ? 1 : 0;
 }
 
 sub ignoreArticles {

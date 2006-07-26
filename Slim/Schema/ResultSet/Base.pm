@@ -19,18 +19,6 @@ sub pageBarResults     { 0 }
 sub alphaPageBar       { 0 }
 sub ignoreArticles     { 0 }
 
-# Because DBIx::Class don't have this method - the ability to search for a
-# non-primary key constraint as the only WHERE value.
-sub search_or_create {
-	my $self = shift;
-	my $data = shift;
-	my $attr = shift;
-
-	my $key  = $attr->{'key'};
-
-	return $self->single({ $key => $data->{$key} }) || $self->create($data);
-}
-
 sub distinct {
 	my $self = shift;
 

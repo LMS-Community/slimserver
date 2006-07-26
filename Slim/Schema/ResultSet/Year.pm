@@ -30,20 +30,12 @@ sub browse {
 	});
 }
 
-sub distinct {
-	my $self = shift;
-
-	return $self;
-}
-
 sub descendAlbum {
 	my $self = shift;
 	my $find = shift;
 	my $cond = shift;
 	my $sort = shift;
 
-	# Force result_class to be of the Album type. Because Year ISA Album,
-	# things are a little whack.
 	return $self->search_related('albums', $cond, { 'order_by' => "concat('0', albums.titlesort), albums.disc" });
 }
 
