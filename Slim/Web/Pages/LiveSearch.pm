@@ -11,6 +11,8 @@ package Slim::Web::Pages::LiveSearch;
 
 use strict;
 
+use Scalar::Util qw(blessed);
+
 use Slim::Music::Info;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
