@@ -1849,13 +1849,15 @@ sub _postCheckAttributes {
 			$::d_info && $_dump_postprocess_logic && msg("-- Deleting previous contributorAlbum links\n");
 		}
 
-		while (my ($role, $contributors) = each %{$contributors}) {
+		while (my ($role, $contributorList) = each %{$contributors}) {
 
-			for my $contributorObj (@{$contributors}) {
+			for my $contributorObj (@{$contributorList}) {
 
 				# XXXX - is this correct? VA albums need to be
 				# added to the contributor_album table somehow.
-				if ($isCompilation) {
+				#
+				# Bug 3815 - Only set to VA if there isn't an explict ALBUMARTIST.
+				if ($isCompilation && !exists $contributors->{'ALBUMARTIST'}) {
 					$contributorObj = $self->variousArtistsObject;
 				}
 
