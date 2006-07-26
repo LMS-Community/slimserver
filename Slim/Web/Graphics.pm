@@ -5,6 +5,7 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Misc;
+use Slim::Utils::Cache;
 
 {
 	#art resizing support by using GD, requires JPEG support built in
@@ -60,7 +61,7 @@ sub processCoverArtRequest {
 		$resizeMode = "squash";
 	}
 
-	my ($obj, $imageData);
+	my ($obj, $imagePath, $imageData, $cachedImage, $cacheKey);
 
 	if ($trackid eq "current" && defined $client) {
 
@@ -78,17 +79,54 @@ sub processCoverArtRequest {
 	$::d_artwork && msg("Cover Art asking for: $image" . 
 		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
 
-	if (blessed($obj) && $obj->can('coverArt')) {
+	if (blessed($obj) && $obj->can('coverArtPath')) {
 
-		($imageData, $contentType, $mtime) = $obj->coverArt($image);
+		($imagePath, $mtime) = $obj->coverArtPath($image);
+
+		if ($imagePath) {
+
+			$cacheKey = "$imagePath-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+
+			$::d_artwork && msg("  artwork cache key: $cacheKey\n");
+
+			$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
+		
+			if ($cachedImage && $cachedImage->{'mtime'} != $mtime) {
+				$cachedImage = undef;
+			}
+			
+		}
+
+		unless ($cachedImage) {
+
+			($imageData, $contentType, $mtime) = $obj->coverArt($image);
+
+		}
+
 	}
 
-	if (!defined($imageData)) {
+	unless ($cachedImage || $imageData) {
 		
 		$::d_artwork && msg("  missing artwork replaced by placeholder.\n");
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png");
-		$contentType = "image/png";
-		$imageData = $$body;
+
+		$cacheKey = "BLANK-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+
+		$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
+
+		unless ($cachedImage) {
+
+			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png");
+			$contentType = "image/png";
+			$imageData = $$body;
+
+		}
+	}
+
+	if ($cachedImage) {
+
+		$::d_artwork && msg("  returning cached artwork image.\n");
+
+		return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 	}
 
 	$::d_artwork && msg("  got cover art image $contentType of ". length($imageData) . " bytes\n");
@@ -141,8 +179,19 @@ sub processCoverArtRequest {
 
 					} else {
 
-						$returnedWidth  = $requestedWidth  || Slim::Utils::Prefs::get('thumbSize') || 100;
-						$returnedHeight = $requestedHeight || Slim::Utils::Prefs::get('thumbSize') || 100;
+						$returnedWidth  = $requestedWidth;
+						$returnedHeight = $requestedHeight;
+
+						# don't cache if width or height not set so pref can be changed
+						unless (defined($returnedWidth)) {
+							$returnedWidth = Slim::Utils::Prefs::get('thumbSize') || 100;
+							$cacheKey = undef;
+						}
+						unless (defined($returnedHeight)) {
+							$returnedHeight = Slim::Utils::Prefs::get('thumbSize') || 100;
+							$cacheKey = undef;
+						}
+
 					}
 
 					if ($resizeMode =~ /^fit/) {
@@ -249,6 +298,20 @@ sub processCoverArtRequest {
 
 		$::d_artwork && msg("can't use GD\n");
 		$body = \$imageData;
+	}
+
+	if ($cacheKey) {
+	
+		my $cached = {
+			'mtime'       => $mtime,
+			'body'        => $body,
+			'contentType' => $contentType,
+			'size'        => $size,
+		};
+
+		$::d_artwork && msg("  caching result key: $cacheKey\n");
+
+		Slim::Utils::Cache->new()->set($cacheKey, $cached, "10days");
 	}
 
 	return ($body, $mtime, $inode, $size, $contentType);
