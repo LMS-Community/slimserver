@@ -191,7 +191,7 @@ sub addSongInfo {
 	my ($class, $client, $params, $getCurrentTitle) = @_;
 
 	# 
-	my $url = $params->{'itempath'};
+	my $url = Slim::Player::Playlist::url($client);
 	my $id  = $params->{'item'};
 
 	# kinda pointless, but keeping with compatibility
