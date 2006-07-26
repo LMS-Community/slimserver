@@ -281,12 +281,6 @@ sub _addOrPlayFavoriteUrl {
 
 		$title = $obj->name;
 		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
-
-	} elsif ($class eq 'Year') {
-
-		# Special case for Year, until I can figure out a better way.
-		$title = $obj;
-		$terms = sprintf('album.year=%d', $obj);
 	}
 
 	$client->showBriefly({

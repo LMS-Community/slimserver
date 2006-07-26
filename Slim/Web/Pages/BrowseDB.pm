@@ -139,18 +139,7 @@ sub browsedb {
 
 		my $attr = $levels[$i];
 
-		# XXXX ick.
-		if ($attr eq 'year') {
-			$attr = 'album.year';
-		}
-
 		for my $levelKey (grep { /^$attr/ } keys %{$params}) {
-
-			# Bug 3776 - because album & year are the same view,
-			# skip the album.year key when we're at the album level.
-			if ($levels[$i] eq 'album' && $levelKey eq 'album.year') {
-				next;
-			}
 
 			# Send down the attributes down to the template
 			#
@@ -159,30 +148,19 @@ sub browsedb {
 			# want access to the containing playlist object.
 			my $value = $params->{$levelKey};
 
-			# Don't search for years, we just use the string.
-			if ($levelKey eq 'album.year') {
+			my $searchKey = $levelKey;
+			my $rs        = Slim::Schema->rs($attr);
 
-				# Special case Unknown Years
-				if (!$value) {
-					$value = string('UNK');
-				}
+			if ($searchKey =~ /^(\w+)\.(\w+)$/) {
 
-			} else {
+				$searchKey = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $2);
+			}
 
-				my $searchKey = $levelKey;
-				my $rs        = Slim::Schema->rs($attr);
+			my $obj = $rs->search({ $searchKey => $value })->single;
 
-				if ($searchKey =~ /^(\w+)\.(\w+)$/) {
-
-					$searchKey = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $2);
-				}
-
-				my $obj = $rs->search({ $searchKey => $value })->single;
-
-				if (blessed($obj) && $obj->can('name')) {
-					$params->{$attr} = $obj;
-					$value           = $obj->name;
-				}
+			if (blessed($obj) && $obj->can('name')) {
+				$params->{$attr} = $obj;
+				$value           = $obj->name;
 			}
 
 			push @attrs, join('=', $levelKey, $params->{$levelKey});
@@ -392,10 +370,6 @@ sub browsedb {
 			if (lc($levelName) eq 'track') {
 
 				$form{'attributes'}    = sprintf('&%s.id=%d', $attrName, $itemid);
-
-			} elsif (lc($levelName) eq 'year') {
-
-				$form{'attributes'}    = sprintf('&album.year=%d', ($item->year || 0));
 
 			} else {
 

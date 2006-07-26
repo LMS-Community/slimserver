@@ -1,27 +1,29 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE metainformation;
+DROP TABLE IF EXISTS metainformation;
 
-DROP TABLE unreadable_tracks;
+DROP TABLE IF EXISTS unreadable_tracks;
 
-DROP TABLE rescans;
+DROP TABLE IF EXISTS rescans;
 
-DROP TABLE tracks;
+DROP TABLE IF EXISTS tracks;
 
-DROP TABLE playlist_track;
+DROP TABLE IF EXISTS playlist_track;
 
-DROP TABLE albums;
+DROP TABLE IF EXISTS albums;
 
-DROP TABLE contributors;
+DROP TABLE IF EXISTS years;
 
-DROP TABLE contributor_track;
+DROP TABLE IF EXISTS contributors;
 
-DROP TABLE contributor_album;
+DROP TABLE IF EXISTS contributor_track;
 
-DROP TABLE genres;
+DROP TABLE IF EXISTS contributor_album;
 
-DROP TABLE genre_track;
+DROP TABLE IF EXISTS genres;
 
-DROP TABLE comments;
+DROP TABLE IF EXISTS genre_track;
 
-DROP TABLE pluginversion;
+DROP TABLE IF EXISTS comments;
+
+DROP TABLE IF EXISTS pluginversion;

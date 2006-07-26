@@ -100,15 +100,10 @@ sub _trackDataForCurrentItem {
 	my $curType = $item->{'type'} || '';
 	my $curObj  = $item->{'obj'}  || '';
 
-	# Handle object and years
 	my $line2  = blessed($curObj) ? $curObj->name : $curObj;
 	my $search = '';
 
-	if ($curType eq 'YEAR') {
-
-		$search = sprintf('album.year=%d', $curObj);
-
-	} elsif (grep { /^$curType$/ } Slim::Schema::Contributor->contributorRoles) {
+	if (grep { /^$curType$/ } Slim::Schema::Contributor->contributorRoles) {
 
 		$search = sprintf('contributor.id=%d', $curObj->id);
 
@@ -430,7 +425,7 @@ sub listExitHandler {
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
 				'hierarchy'         => 'year,album,track',
 				'level'             => 1,
-				'findCriteria'      => { 'album.year' => $curObj },
+				'findCriteria'      => { 'year.id' => $curObj->id },
 				'selectionCriteria' => $selectionCriteria,
 			});
 

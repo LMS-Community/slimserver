@@ -105,6 +105,7 @@ sub generateConditionsFromFilters {
 	}
 
 	if ($::d_sql) {
+		eval "use Data::Dumper";
 		msg("levelMap:\n");
 		print Data::Dumper::Dumper(\%levelMap);
 		msg("filters:\n");
@@ -129,11 +130,6 @@ sub generateConditionsFromFilters {
 	while (my ($param, $value) = each %filters) {
 
 		my ($levelName) = ($param =~ /^(\w+)\.\w+$/);
-
-		if ($param eq 'album.year') {
-
-			$levelName = 'year';
-		}
 
 		# Turn into me.* for the top level
 		if ($param =~ /^$levels->[0]\.(\w+)$/) {

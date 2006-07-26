@@ -2045,14 +2045,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 				$key = "$1.id";
 			}
 
-			# Year browsing is working on the albums.year column.
-			if ($key =~ /^(year|age)\.id$/) {
+			# New Music browsing is working on the
+			# tracks.timestamp column, but shows years
+			if ($key =~ /^age\.id$/) {
 
-				if ($key =~ /^year/) {
-					$key = 'album.year';
-				} else {
-					$key = 'album.id';
-				}
+				$key = 'album.id';
 			}
 
 			# Setup the join mapping
@@ -2064,6 +2061,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 				$sort = $albumSort;
 				$joinMap{'album'} = 'album';
+
+			} elsif ($key =~ /^year\./) {
+
+				$sort = $albumSort;
+				$joinMap{'year'} = 'year';
 
 			} elsif ($key =~ /^contributor\./) {
 

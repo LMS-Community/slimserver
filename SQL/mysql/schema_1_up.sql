@@ -151,8 +151,15 @@ CREATE TABLE albums (
   PRIMARY KEY (id)
 ) TYPE=InnoDB CHARACTER SET utf8;
 
+--
+-- Table: years
+--
+DROP TABLE IF EXISTS years;
+CREATE TABLE years (
+  id smallint(5) unsigned,
+  PRIMARY KEY (id)
+) TYPE=InnoDB CHARACTER SET utf8;
 
--- Testing
 --
 -- Table: contributors
 --

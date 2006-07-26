@@ -152,7 +152,6 @@ sub status {
 		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
-		$params->{'itempath'}    = $song;
 		
 		Slim::Web::Pages->addSongInfo($client, $params, 1);
 

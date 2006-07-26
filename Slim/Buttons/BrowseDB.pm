@@ -142,7 +142,7 @@ sub init {
 			my $findCriteria = $client->param('findCriteria');
 			
 			my @levels       = split(',', $hierarchy);
-			my $all          = (!ref($currentItem) && $levels[$level] ne 'year');
+			my $all          = !ref($currentItem);
 
 			# Create the search term list that we will send along with our command.
 			my @terms        = ();
@@ -152,15 +152,7 @@ sub init {
 			# Include the current item
 			if ($field ne 'track' && !$all) {
 
-				# year is special.
-				if ($levels[$level] eq 'year') {
-
-					push @terms, join('=', $field, $currentItem->year);
-
-				} else {
-
-					push @terms, join('=', $field, $currentItem->id);
-				}
+				push @terms, join('=', $field, $currentItem->id);
 			}
 
 			# And all the search terms for the current mode
@@ -426,13 +418,7 @@ sub browsedbExitCallback {
 					$findCriteria->{'album.compilation'} = 1;
 				}
 
-				# XXX - this sucks. I'd really like to find a
-				# better way to do this.
-				if ($field eq 'year') {
-					$findCriteria->{"album.year"} = $currentItem->year;
-				} else {
-					$findCriteria->{"$field.id"} = $currentItem->id;
-				}
+				$findCriteria->{"$field.id"} = $currentItem->id;
 			}
 
 			my %params = (
@@ -532,16 +518,12 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif ($levels[$level] eq 'year') {
-
-		return $item->year || $client->string('UNK');
-
-	} elsif (($levels[$level] eq 'album')) {
+	} elsif ($levels[$level] eq 'album') {
 
 		my @name         = $item->name;
 		my $findCriteria = $client->param('findCriteria') || {};
 
-		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'album.year'}) {
+		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year.id'}) {
 
 			if (my $year = $item->year) {
 

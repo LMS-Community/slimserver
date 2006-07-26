@@ -61,19 +61,7 @@ my $trackAttrs   = {};
 sub init {
 	my $class = shift;
 
-	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
-	my $username = Slim::Utils::Prefs::get('dbusername');
-	my $password = Slim::Utils::Prefs::get('dbpassword');
-	my ($driver) = ($source =~ /^dbi:(\w+):/);
-
-	# Bug 3443 - append a socket if needed
-	# Windows doesn't use named sockets (it uses TCP instead)
-	if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
-
-		if (Slim::Utils::MySQLHelper->socketFile) {
-			$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
-		}
-	}
+	my ($driver, $source, $username, $password) = $class->sourceInformation;
 
 	# For custom exceptions
 	$class->storage_type('Slim::Schema::Storage');
@@ -107,17 +95,7 @@ sub init {
 		eval { $dbh->do('SET NAMES UTF8;') };
 	}
 
-	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
-	my $dbix = DBIx::Migration->new({
-		'dsn'      => $source,
-		'username' => $username,
-		'password' => $password,
-		'dir'      => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
-	});
-
-	$dbix->migrate;
-
-	$::d_info && msgf("Connected to database $source - schema version: [%d]\n", $dbix->version);
+	$class->migrateDB;
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
@@ -200,6 +178,67 @@ sub disconnect {
 	$initialized = 0;
 }
 
+sub validHierarchies {
+	my $class = shift;
+
+	return \%validHierarchies;
+}
+
+sub sourceInformation {
+	my $class = shift;
+
+	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
+	my $username = Slim::Utils::Prefs::get('dbusername');
+	my $password = Slim::Utils::Prefs::get('dbpassword');
+	my ($driver) = ($source =~ /^dbi:(\w+):/);
+
+	# Bug 3443 - append a socket if needed
+	# Windows doesn't use named sockets (it uses TCP instead)
+	if (Slim::Utils::OSDetect::OS() ne 'win' && $source =~ /mysql/i && $source !~ /mysql_socket/i) {
+
+		if (Slim::Utils::MySQLHelper->socketFile) {
+			$source .= sprintf(':mysql_socket=%s', Slim::Utils::MySQLHelper->socketFile);
+		}
+	}
+
+	return ($driver, $source, $username, $password);
+}
+
+sub wipeDB {
+	my $class = shift;
+
+	$::d_import && msg("Import: Start schema_clear\n");
+
+	$class->txn_do(sub {
+
+		Slim::Utils::SQLHelper->executeSQLFile(
+			$class->driver, $class->storage->dbh, "schema_clear.sql"
+		);
+
+		$class->migrateDB;
+	});
+
+	$::d_import && msg("Import: End schema_clear\n");
+}
+
+sub migrateDB {
+	my $class = shift;
+
+	my ($driver, $source, $username, $password) = $class->sourceInformation;
+
+	# Migrate to the latest schema version - see SQL/$driver/schema_\d+_up.sql
+	my $dbix = DBIx::Migration->new({
+		'dsn'      => $source,
+		'username' => $username,
+		'password' => $password,
+		'dir'      => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
+	});
+
+	$dbix->migrate;
+
+	$::d_info && msgf("Connected to database $source - schema version: [%d]\n", $dbix->version);
+}
+
 sub rs {
 	my $class   = shift;
 	my $rsClass = shift;
@@ -252,27 +291,6 @@ sub lastRescanTime {
 	my $class = shift;
 
 	return $class->single('MetaInformation', { 'name' => 'lastRescanTime' })->value;
-}
-
-sub validHierarchies {
-	my $class = shift;
-
-	return \%validHierarchies;
-}
-
-sub wipeDB {
-	my $class = shift;
-
-	$::d_import && msg("Import: Start schema_clear\n");
-
-	$class->txn_do(sub {
-
-		Slim::Utils::SQLHelper->executeSQLFile(
-			$class->driver, $class->storage->dbh, "schema_clear.sql"
-		);
-	});
-
-	$::d_import && msg("Import: End schema_clear\n");
 }
 
 # Fetch the content type for a URL or Track Object.
@@ -1405,9 +1423,6 @@ sub _postCheckAttributes {
 		return undef;
 	}
 
-#	$::d_info && msg("_postCheckAttributes()\n");
-
-
 	# Make a local variable for COMPILATION, that is easier to handle
 	my $isCompilation = undef;
 
@@ -1864,6 +1879,12 @@ sub _postCheckAttributes {
 
 	# Save any changes - such as album.
 	$track->update;
+
+	# Years are special
+	if (defined $track->year && $track->year =~ /^\d+$/) {
+
+		Slim::Schema->rs('Year')->find_or_create({ 'id' => $track->year });
+	}
 
 	# Add comments if we have them:
 	for my $comment (@{$attributes->{'COMMENT'}}) {

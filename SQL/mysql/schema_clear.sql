@@ -1,67 +1,58 @@
 SET foreign_key_checks = 0;
 
-DELETE FROM tracks;
-
-ALTER TABLE tracks AUTO_INCREMENT = 1;
+TRUNCATE tracks;
 
 OPTIMIZE TABLE tracks;
 
-DELETE FROM playlist_track;
-
-ALTER TABLE playlist_track AUTO_INCREMENT = 1;
+TRUNCATE playlist_track;
 
 OPTIMIZE TABLE playlist_track;
 
-DELETE FROM albums;
-
-ALTER TABLE albums AUTO_INCREMENT = 1;
+TRUNCATE albums;
 
 OPTIMIZE TABLE albums;
 
-DELETE FROM contributors;
+TRUNCATE years;
 
-ALTER TABLE contributors AUTO_INCREMENT = 1;
+OPTIMIZE TABLE years;
+
+TRUNCATE contributors;
 
 OPTIMIZE TABLE contributors;
 
-DELETE FROM contributor_track;
+TRUNCATE contributor_track;
 
 OPTIMIZE TABLE contributor_track;
 
-DELETE FROM contributor_album;
+TRUNCATE contributor_album;
 
 OPTIMIZE TABLE contributor_album;
 
-DELETE FROM genres;
-
-ALTER TABLE genres AUTO_INCREMENT = 1;
+TRUNCATE genres;
 
 OPTIMIZE TABLE genres;
 
-DELETE FROM genre_track;
+TRUNCATE genre_track;
 
 OPTIMIZE TABLE genre_track;
 
-DELETE FROM comments;
-
-ALTER TABLE comments AUTO_INCREMENT = 1;
+TRUNCATE comments;
 
 OPTIMIZE TABLE comments;
 
-DELETE FROM pluginversion;
-
-ALTER TABLE pluginversion AUTO_INCREMENT = 1;
+TRUNCATE pluginversion;
 
 OPTIMIZE TABLE pluginversion;
 
-DELETE FROM unreadable_tracks;
-
-ALTER TABLE unreadable_tracks AUTO_INCREMENT = 1;
+TRUNCATE unreadable_tracks;
 
 OPTIMIZE TABLE unreadable_tracks;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
 UPDATE metainformation SET value = 0 WHERE name = 'isScanning';
+
+-- Clear the migration table so the schema is recreated
+TRUNCATE dbix_migration;
 
 SET foreign_key_checks = 1;

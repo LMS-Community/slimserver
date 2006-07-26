@@ -165,6 +165,11 @@ sub descendTrack {
 
 			$cond->{"me.$1"} = $value;
 		}
+
+		if ($key =~ /^(year)\.\w+$/) {
+
+			$cond->{"me.$1"} = $value;
+		}
 	}
 
 	# Create a "clean" resultset, without any joins on it - since we'll
