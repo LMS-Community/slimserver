@@ -621,7 +621,10 @@ sub stream {
 
 			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
 
-			if ($handler->can("getFormatForURL")) {
+			# use getFormatForURL only if the format is not already given
+			# This method is bad because it only looks at the URL suffix and can cause
+			# (for example) Ogg HTTP streams to be played using the mp3 decoder!
+			if ( !$format && $handler->can("getFormatForURL") ) {
 				$format = $handler->getFormatForURL($server_url, $format);
 			}
 		}
