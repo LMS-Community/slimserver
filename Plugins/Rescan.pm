@@ -414,6 +414,7 @@ PLUGIN_RESCAN_TIMER_OFF
 	NL	Herscan timer UIT
 
 PLUGIN_RESCAN_TIMER_TYPE
+	DE	Art des Scans
 	EN	Rescan Type
 ^;
 }
