@@ -163,16 +163,30 @@ sub parseHeaders {
 		${*$self}{'bitrate'} = Slim::Music::Info::getCurrentBitrate( $self->url );
 	}
 	
-	if ( $self->client && $self->bitrate && $self->contentLength ) {
-		# if we know the bitrate and length of a stream, display a progress bar
-		if ( $self->bitrate < 1000 ) {
-			${*$self}{'bitrate'} *= 1000;
-		}
+	return unless $self->client;
+	
+	# See if we have an existing track object with duration info for this stream.
+	if ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
+		
+		# Display progress bar
 		$self->client->streamingProgressBar( {
-			'url'     => $self->url,
-			'bitrate' => $self->bitrate,
-			'length'  => $self->contentLength,
+			'url'      => $self->url,
+			'duration' => $secs,
 		} );
+	}
+	else {
+	
+		if ( $self->bitrate && $self->contentLength ) {
+			# if we know the bitrate and length of a stream, display a progress bar
+			if ( $self->bitrate < 1000 ) {
+				${*$self}{'bitrate'} *= 1000;
+			}
+			$self->client->streamingProgressBar( {
+				'url'     => $self->url,
+				'bitrate' => $self->bitrate,
+				'length'  => $self->length,
+			} );
+		}
 	}
 }
 

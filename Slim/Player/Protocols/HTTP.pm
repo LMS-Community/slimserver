@@ -235,11 +235,17 @@ sub sysread {
 				if ( $self->bitrate < 1000 ) {
 					${*$self}{'bitrate'} *= 1000;
 				}
-				$self->client->streamingProgressBar( {
-					'url'     => $self->url,
-					'bitrate' => $self->bitrate,
-					'length'  => $self->contentLength,
-				} );
+				
+				# But don't update the progress bar if it was already set in parseHeaders
+				# using previously-known duration info
+				unless ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
+									
+					$self->client->streamingProgressBar( {
+						'url'     => $self->url,
+						'bitrate' => $self->bitrate,
+						'length'  => $self->contentLength,
+					} );
+				}
 			}	
 		}
 		else {
