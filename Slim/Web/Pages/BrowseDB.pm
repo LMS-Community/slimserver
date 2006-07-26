@@ -424,7 +424,8 @@ sub browsedb {
 
 		# If we're at the track level, and it's at the bottom of the
 		# hierarchy, display cover art if we have it.
-		if ($level == $maxLevel && $levelName eq 'track' && defined $firstItem && defined $params->{'album.id'}) {
+		if ($level == $maxLevel && $levelName eq 'track' && defined $firstItem 
+			&& (defined $params->{'album.id'} || defined $params->{'age.id'}) {
 
 			if ($firstItem->can('coverArt') && $firstItem->coverArt) {
 
