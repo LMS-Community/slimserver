@@ -165,7 +165,7 @@ sub setupGroup {
 				chomp $encoded;
 				Slim::Utils::Prefs::set( 'plugin_radioio_password', $encoded );
 			},
-			inputTemplate => 'setup_input_pwd.html',
+			inputTemplate => 'setup_input_passwd.html',
 			changeMsg     => string('SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED')
 		},
 	);
