@@ -1955,7 +1955,15 @@ sub initSetupConfig {
 		'title' => string('PERFORMANCE_SETTINGS'),
 		'parent' => 'SERVER_SETTINGS',
 		'GroupOrder' => ['Default'],
-
+		'preEval' => sub {
+			my ( undef, $paramref, $pageref ) = @_;
+			# Add forking options for Mac/Linux
+			if ( $^O !~ /Win32/ ) {
+				push @{ $pageref->{'Groups'}->{'Default'}->{'PrefOrder'} },
+					'forkedWeb',
+					'forkedStreaming';
+			}
+		},
 		'Groups' => {
 
 			'Default' => {
@@ -1963,8 +1971,6 @@ sub initSetupConfig {
 					disableStatistics
 					itemsPerPass
 					prefsWriteDelay
-					forkedWeb
-					forkedStreaming
 				)],
 			},
 		},
