@@ -226,30 +226,26 @@ sub sysread {
 		$::d_remotestream && msg("Trying to read bitrate from stream\n");
 		
 		my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
-		if ( $bitrate ) {
-			Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate, $vbr );
-			${*$self}{'bitrate'} = $bitrate;
+
+		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate, $vbr );
+		${*$self}{'bitrate'} = $bitrate;
+		
+		if ( $self->client && $self->bitrate > 0 && $self->contentLength > 0 ) {
+			# if we know the bitrate and length of a stream, display a progress bar
+			if ( $self->bitrate < 1000 ) {
+				${*$self}{'bitrate'} *= 1000;
+			}
 			
-			if ( $self->client && $self->bitrate && $self->contentLength ) {
-				# if we know the bitrate and length of a stream, display a progress bar
-				if ( $self->bitrate < 1000 ) {
-					${*$self}{'bitrate'} *= 1000;
-				}
-				
-				# But don't update the progress bar if it was already set in parseHeaders
-				# using previously-known duration info
-				unless ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
-									
-					$self->client->streamingProgressBar( {
-						'url'     => $self->url,
-						'bitrate' => $self->bitrate,
-						'length'  => $self->contentLength,
-					} );
-				}
-			}	
-		}
-		else {
-			${*$self}{'bitrate'} = 1;	# so we don't check again
+			# But don't update the progress bar if it was already set in parseHeaders
+			# using previously-known duration info
+			unless ( my $secs = Slim::Music::Info::getDuration( $self->url ) ) {
+								
+				$self->client->streamingProgressBar( {
+					'url'     => $self->url,
+					'bitrate' => $self->bitrate,
+					'length'  => $self->contentLength,
+				} );
+			}
 		}
 	}
 

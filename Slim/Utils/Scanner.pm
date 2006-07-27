@@ -479,10 +479,8 @@ sub readRemoteHeaders {
 						my $io = IO::String->new( $http->response->content_ref );
 						
 						my ($bitrate, $vbr) = scanBitrate($io);
-						
-						if ( $bitrate ) {
-							Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
-						}
+
+						Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 					},
 				} );
 			}
@@ -769,8 +767,7 @@ sub scanBitrate {
 	}
 	
 	$::d_scan && msg("scanBitrate: Unable to find any MP3 frames in stream\n");
-	
-	return (undef, undef);
+	return (-1, undef);
 }
 
 sub _skipWindowsHiddenFiles {

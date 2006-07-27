@@ -176,7 +176,7 @@ sub parseHeaders {
 	}
 	else {
 	
-		if ( $self->bitrate && $self->contentLength ) {
+		if ( $self->bitrate > 0 && $self->contentLength > 0 ) {
 			# if we know the bitrate and length of a stream, display a progress bar
 			if ( $self->bitrate < 1000 ) {
 				${*$self}{'bitrate'} *= 1000;

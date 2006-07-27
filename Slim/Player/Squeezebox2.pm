@@ -352,7 +352,7 @@ sub directHeaders {
 			}
 			else {
 			
-				if ( $bitrate && $length ) {
+				if ( $bitrate > 0 && $length > 0 ) {
 					# if we know the bitrate and length of a stream, display a progress bar
 					if ( $bitrate < 1000 ) {
 						$bitrate *= 1000;
