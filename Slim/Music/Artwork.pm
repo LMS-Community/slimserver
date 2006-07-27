@@ -125,6 +125,10 @@ sub _imageContentType {
 		$$body =~ s/^.*?$header/$header/;
 
 		return 'image/jpeg';
+
+	} elsif ($$body =~ /^BM/) {
+
+		return 'image/bmp';
 	}
 
 	return 'application/octet-stream';
