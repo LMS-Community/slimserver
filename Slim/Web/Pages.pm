@@ -191,21 +191,20 @@ sub addSongInfo {
 	my ($class, $client, $params, $getCurrentTitle) = @_;
 
 	# 
-	my $url = Slim::Player::Playlist::url($client);
-	my $id  = $params->{'item'};
+	my $track = $params->{'itemobj'};
+	my $id    = $params->{'item'};
+	my $url;
 
 	# kinda pointless, but keeping with compatibility
-	if (!defined $url && !defined $id) {
+	if (!defined $track && !defined $id) {
 		return;
 	}
 
-	if (ref($url) && !$url->can('id')) {
+	if (ref($track) && !$track->can('id')) {
 		return;
 	}
 
-	my $track;
-
-	if ($url) {
+	if ($track && !blessed($track)) {
 
 		$track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
@@ -218,6 +217,8 @@ sub addSongInfo {
 		$track = Slim::Schema->find('Track', $id);
 		$url   = $track->url() if $track;
 	}
+
+	$url   = $track->url() if $track;
 
 	if (blessed($track) && $track->can('filesize')) {
 
