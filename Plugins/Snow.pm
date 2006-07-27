@@ -501,12 +501,12 @@ sub screensaverSnowlines {
 
 	if($style == 1 || $style == 2) {
 		# Now Playing
-		$lines = $client->renderOverlay($client->currentSongLines());
+		$lines = $client->currentSongLines();
 		$onlyInSpaces = ($style == 1);
 	
 	} elsif($style == 3) {
 		# Date/Time
-		$lines = $client->renderOverlay(&Slim::Buttons::Common::dateTime($client));
+		$lines = Slim::Buttons::Common::dateTime($client);
 		$onlyInSpaces = 1;
 	
 	} else {

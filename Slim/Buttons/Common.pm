@@ -1234,14 +1234,9 @@ sub popModeRight {
 sub dateTime {
 	my $client = shift;
 
-	my @line = (Slim::Utils::Misc::longDateF(), Slim::Utils::Misc::timeF());
-
-	for my $i (0..$#line) {
-		# center the strings on the display by space padding them
-		$line[$i] = Slim::Display::Display::center($line[$i]);
-	}
-
-	return @line;
+	return {
+		'center' => [ Slim::Utils::Misc::longDateF(), Slim::Utils::Misc::timeF() ]
+	};
 }
 
 # if and only if the mode has set the modeUpdateInterval parameter,
