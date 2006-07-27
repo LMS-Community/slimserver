@@ -142,7 +142,10 @@ sub init {
 
 		while (my $album = $albums->next) {
 
-			Slim::Schema->rs('Year')->find_or_create({ 'id' => $album->year });
+			if ($album->year && $album->year =~ /^\d+$/) {
+
+				Slim::Schema->rs('Year')->find_or_create({ 'id' => $album->year });
+			}
 		}
 	}
 
