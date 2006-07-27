@@ -1,10 +1,11 @@
 package YAML::Syck;
 use strict;
-use vars qw( @ISA @EXPORT $VERSION $ImplicitTyping $SortKeys );
+use vars qw( @ISA @EXPORT $VERSION $ImplicitTyping $UseCode $LoadCode $DumpCode $SortKeys $DeparseObject );
 use 5.00307;
+use Exporter;
 
 BEGIN {
-    $VERSION = '0.44';
+    $VERSION = '0.64';
     @EXPORT  = qw( Dump Load DumpFile LoadFile );
     @ISA     = qw( Exporter );
 
@@ -13,7 +14,7 @@ BEGIN {
     local $@;
     eval {
         require XSLoader;
-        XSLoader::load(__PACKAGE__ => $VERSION);
+        XSLoader::load(__PACKAGE__, $VERSION);
         1;
     } or do {
         require DynaLoader;
@@ -23,6 +24,11 @@ BEGIN {
 
     *Load = \&YAML::Syck::LoadYAML;
     *Dump = \&YAML::Syck::DumpYAML;
+
+    eval {
+        require B::Deparse;
+        $DeparseObject = B::Deparse->new;
+    }
 }
 
 

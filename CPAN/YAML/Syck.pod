@@ -1,0 +1,108 @@
+=pod
+
+=head1 NAME 
+
+YAML::Syck - Fast, lightweight YAML loader and dumper
+
+=head1 VERSION
+
+This document describes version 0.64 of YAML::Syck, released
+July 22, 2006.
+
+=head1 SYNOPSIS
+
+    use YAML::Syck;
+
+    # Set this for interoperability with other YAML/Syck bindings:
+    # e.g. Load('Yes') becomes 1 and Load('No') becomes undef.
+    $YAML::Syck::ImplicitTyping = 1;
+
+    $data = Load($yaml);
+    $data = LoadFile($file);
+    $yaml = Dump($data);
+    DumpFile($file, $data);
+
+=head1 DESCRIPTION
+
+This module provides a Perl interface to the B<libsyck> data serialization
+library.  It exports the C<Dump> and C<Load> functions for converting
+Perl data structures to YAML strings, and the other way around.
+
+B<NOTE>: If you are working with other language's YAML/Syck bindings
+(such as Ruby), please set C<$YAML::Syck::ImplicitTyping> to C<1> before
+calling the C<Load>/C<Dump> functions.  The default setting is for
+preserving backward-compatibility with C<YAML.pm>.
+
+=head1 FLAGS
+
+=head2 $YAML::Syck::Headless
+
+Defaults to false.  Setting this to a true value will make C<Dump> omit the
+leading C<---\n> marker.
+
+=head2 $YAML::Syck::SortKeys
+
+Defaults to false.  Setting this to a true value will make C<Dump> sort
+hash keys.
+
+=head2 $YAML::Syck::ImplicitTyping
+
+Defaults to false.  Setting this to a true value will make C<Load> recognize
+various implicit types in YAML, such as unquoted C<true>, C<false>, as well as
+integers and floating-point numbers.  Otherwise, only C<~> is recognized to
+be C<undef>.
+
+=head2 $YAML::Syck::ImplicitUnicode
+
+Defaults to false.  For Perl 5.8.0 or later, setting this to a true value will
+make C<Load> set Unicode flag on for every string that contains valid UTF8
+sequences, and make C<Dump> return a unicode string.
+
+Regardless of this flag, Unicode strings are dumped verbatim without escaping;
+byte strings with high-bit set will be dumped with backslash escaping.
+
+However, because YAML does not distinguish between these two kinds of strings,
+so this flag will affect loading of both variants of strings.
+
+=head2 $YAML::Syck::UseCode
+
+=head2 $YAML::Syck::LoadCode
+
+=head2 $YAML::Syck::DumpCode
+
+These control whether or not to try and eval/deparse perl source code.
+
+=head1 CAVEATS
+
+The current implementation bundles libsyck source code; if your system has a
+side-wide shared libsyck, it will I<not> be used.
+
+Tag names such as C<!!perl/hash:Foo> is blessed into the package C<Foo>, but
+the C<!hs/foo> and C<!!hs/Foo> tags are blessed into C<hs::Foo>.  Note that
+this holds true even if the tag contains non-word characters; for example,
+C<!haskell.org/Foo> is blessed into C<haskell.org::Foo>.  Please use
+L<Class::Rebless> to cast it into other user-defined packages.
+
+=head1 SEE ALSO
+
+L<YAML>, L<JSON::Syck>
+
+L<http://www.yaml.org/>
+
+=head1 AUTHORS
+
+Audrey Tang E<lt>cpan@audreyt.orgE<gt>
+
+=head1 COPYRIGHT
+
+Copyright 2005, 2006 by Audrey Tang E<lt>cpan@audreyt.orgE<gt>.
+
+The F<libsyck> code bundled with this library by I<why the lucky stiff>,
+under a BSD-style license.  See the F<COPYING> file for details.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+See L<http://www.perl.com/perl/misc/Artistic.html>
+
+=cut
