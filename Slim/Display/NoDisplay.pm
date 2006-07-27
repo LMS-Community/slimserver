@@ -34,6 +34,8 @@ sub scrollUpdate {}
 sub killAnimation {}
 sub resetDisplay {}
 sub endAnimation {}
+sub modes() { [] }
+sub nmodes() { 0 }
 
 1;
 
