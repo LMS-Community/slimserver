@@ -209,7 +209,7 @@ END %]
 
 [%# this formats the track item %]
 [% BLOCK trackinfo %]
-	[% IF item.currentsong %][% item.noHref=1 %]<b><a name="currentsong"></a>[% END %]
+	[% IF item.currentsong %][% item.noHref=1 %]<b>[% END %]
 	
 	[% IF item.num || item.num == 0 %]
 			[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
