@@ -351,39 +351,45 @@ sub checkSync {
 	# unpause all the clients at once.
 	if ($client->readytosync == 0) {
 		
-		my $threshold = $client->prefGet('syncBufferThreshold');
-		
-		# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
-		eval {
-			my $playlist = Slim::Player::Playlist::playList($client);
-			my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
-			if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-				$threshold += 20480;
-			}
-		};
-
-		my $fullness = $client->bufferFullness();
-		my $usage = $client->usage();
-		$::d_sync && msg($client->id()." checking buffer fullness: $fullness (threshold: $threshold)\n");
-
-		if 	((defined($fullness) && $fullness > $threshold) ||
-			 (defined($usage) && $usage > 0.90)) {
-			$client->readytosync(1);
-		
-			$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
-			my $allReady=1;
-			my $everyclient;
-			foreach $everyclient (@group) {
-				if (!($everyclient->readytosync)) {
-					$allReady=0;
-				}
-			}
+		# Bug 1869, there is a race condition where the player will keep sending STAT responses
+		# from the previous track even though we think it's starting to buffer the current
+		# track.  This situation is detected if $client->songElapsedSeconds is not 0
+		if ( $client->songElapsedSeconds == 0 ) {
 			
-			if ($allReady) {
-				$::d_sync && msg("all clients ready to sync now. unpausing them.\n");
+			my $threshold = $client->prefGet('syncBufferThreshold');
+		
+			# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
+			eval {
+				my $playlist = Slim::Player::Playlist::playList($client);
+				my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
+				if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
+					$threshold += 20480;
+				}
+			};
 
+			my $fullness = $client->bufferFullness();
+			my $usage = $client->usage();
+			$::d_sync && msg($client->id()." checking buffer fullness: $fullness (threshold: $threshold)\n");
+
+			if 	((defined($fullness) && $fullness > $threshold) ||
+				 (defined($usage) && $usage > 0.90)) {
+				$client->readytosync(1);
+		
+				$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
+				my $allReady=1;
+				my $everyclient;
 				foreach $everyclient (@group) {
-					$everyclient->resume();
+					if (!($everyclient->readytosync)) {
+						$allReady=0;
+					}
+				}
+			
+				if ($allReady) {
+					$::d_sync && msg("all clients ready to sync now. unpausing them.\n");
+
+					foreach $everyclient (@group) {
+						$everyclient->resume();
+					}
 				}
 			}
 		}
