@@ -175,7 +175,9 @@ sub check_all_clients {
 		$client->requestStatus();
 		
 		# check when we last heard a stat response from the player
-		my $last_heard = time - $heartbeat{ $client->id };
+		my $now        = time();
+		my $last_heard = $now - ($heartbeat{ $client->id } || $now);
+
 		if ( $last_heard > 10 ) {
 			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
 				$client->id,
