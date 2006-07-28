@@ -2957,13 +2957,8 @@ sub setup_changes_HTTP {
 		if (exists $settingsref->{$keyA}{'noWarning'}) {
 			next;
 		}
-		if (exists $settingsref->{$keyA.$keyI}{'changeIntro'}) {
-			if (Slim::Utils::Strings::stringExists($settingsref->{$keyA.$keyI}{'changeIntro'})) {
-				$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA.$keyI}{'changeIntro'});
-			} else {
-				$changebase = $settingsref->{$keyA.$keyI}{'changeIntro'};
-			}
-		} elsif (exists $settingsref->{$keyA}{'changeIntro'}) {
+		
+		if (exists $settingsref->{$keyA}{'changeIntro'}) {
 			$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeIntro'});
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
 			$changebase = string('SETUP_' . uc($keyA) . '_OK');
