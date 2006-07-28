@@ -70,6 +70,9 @@ sub reconnect {
 	if ($client->isa("Slim::Player::SoftSqueeze") || $revision > 39) {
 		$client->sendFrame('vers', \$::VERSION);
 	}
+	
+	# check if there is a sync group to restore
+	Slim::Player::Sync::restoreSync($client);
 
 	# The reconnect bit for Squeezebox means that we're
 	# reconnecting after the control connection went down, but we

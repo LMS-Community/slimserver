@@ -42,6 +42,7 @@ our %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
 our %parser_framelength; # total number of bytes for data frame
 our %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
 our %sock2client;	# reference to client for each sonnected sock
+our %heartbeat;     # the last time we heard from a client
 our %status;
 
 our %callbacks;
@@ -110,6 +111,9 @@ sub init {
 	defined(Slim::Utils::Network::blocking($slimproto_socket,0)) || die "Cannot set port nonblocking";
 
 	Slim::Networking::Select::addRead($slimproto_socket, \&slimproto_accept);
+	
+	# Bug 2707, This timer checks for players that have gone away due to a power loss and disconnects them
+	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 5, \&check_all_clients );
 
 	$::d_slimproto && msg "Squeezebox protocol listening on port $listenerport\n";	
 }
@@ -164,6 +168,26 @@ sub slimproto_accept {
 	Slim::Utils::Timers::setTimer($clientsock, Time::HiRes::time () + 5, \&slimproto_close, $clientsock);
 }
 
+sub check_all_clients {
+	
+	for my $client ( values %sock2client ) {
+		
+		$client->requestStatus();
+		
+		# check when we last heard a stat response from the player
+		my $last_heard = time - $heartbeat{ $client->id };
+		if ( $last_heard > 10 ) {
+			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
+				$client->id,
+				$last_heard,
+			);
+			slimproto_close( $client->tcpsock );
+		}
+	}
+	
+	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 5, \&check_all_clients );
+}	
+
 sub slimproto_close {
 	my $clientsock = shift;
 
@@ -178,12 +202,21 @@ sub slimproto_close {
 	# close socket
 	$clientsock->close();
 
-	if (defined(my $client = Slim::Player::Client::getClient($sock2client{$clientsock}))) {
+	if ( my $client = $sock2client{$clientsock} ) {
+		
+		delete $heartbeat{ $client->id };
 
 		# set timer to forget client
 		Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
+		
 		# notify of disconnect
 		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
+		
+		# Bug 2707, If a synced player disconnects, unsync it temporarily
+		if ( Slim::Player::Sync::isSynced($client) ) {
+			$::d_sync && msg("Player disconnected, temporary unsync ". $client->id . "\n");
+			Slim::Player::Sync::unsync( $client, 1 );
+		}
 	}
 
 	# forget state
@@ -464,6 +497,9 @@ sub _http_body_handler {
 sub _stat_handler {
 	my $client = shift;
 	my $data_ref = shift;
+	
+	# update the heartbeat value for this player
+	$heartbeat{ $client->id } = time;
 
 	#struct status_struct {
 	#        u32_t event;
