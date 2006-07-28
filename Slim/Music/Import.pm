@@ -293,7 +293,8 @@ sub stillScanning {
 	my $imports  = scalar keys %importsRunning;
 
 	# Check and see if there is a flag in the database, and the process is alive.
-	my $scanning = Slim::Schema->search('MetaInformation', { 'name' => 'isScanning' })->single->value;
+	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
+	my $scanning = blessed($scanRS) ? $scanRS->value : 0;
 
 	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
 
