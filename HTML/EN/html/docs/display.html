@@ -4,24 +4,50 @@
 [% PROCESS helpheader.html %]
 <h4>Display Hash</h4>
 
-<p>As of 6.2, the preferred method to define the display for a player's
-screen is via a display hash.  All display functions have
-been updated to support the hash based api.</p>
+<p>The format of the display hash is updated with 6.5 to provide additional
+features.  This page describes the new 6.5 display hash and its use
+with the display api.</p>
+
+<p> 6.5 provides backwards compatibility with the 6.2 display hash for common
+functions, but to use any of the following features, the new hash must be used:</p>
+<ul>
+<li>ticker scrolling</li>
+<li>specifying fonts per display component
+<li>2 displays [for Transporter and Softsqueeze Transporter emulation]
+<li>3 line rendering on SB2/SB3/Transporter
+</ul>
 
 <p>The standard 2 line display with 2 overlays is described as:</p>
 
 <pre>my $hash = {
-   'line1'    => 'Text to appear on top line',
-   'line2'    => 'Text to appear on bottom line and possibly scroll',
-   'overlay1' => 'Overlay to appear at right of top line',
-   'overlay2' => 'Overlay to appear at right of bottom line',
+   'line'    => [ 'Text to appear on top line',
+                  'Text to appear on bottom line and possibly scroll' ],
+   'overlay' => [ 'Overlay to appear at right of top line',
+                  'Overlay to appear at right of bottom line' ],
 }</pre>
+
+<p>Arrays are used for each component of the display as the rendering code
+supports more than 2 lines of text.  This is restricted to 2 lines for
+SBG and 3 for SB2/SB3/Tranporter at present [requires appropriate
+fonts].  For example:</p> 
+
+<pre>my $hash = {
+   'line'    => [ 'Line1',
+                  'Line2',
+                  'Line3' ],
+}</pre>
+
+<p>The examples given on the rest of this page only include 2 lines,
+but 3 lines may be used for all line, overlay and center components.</p>
+
+<p>Note that scrolling is possible on any line of the display if it is
+too long, but this is disabled for the top line.</p>
 
 <p>Centered text is described as:</p>
 
 <pre>my $hash = {
-   'center1' => 'Text to be centered on top line',
-   'center2' => 'Text to be centered on bottom line',
+   'center' => [ 'Text to be centered on line 1',
+                 'Text to be centered on bottom line' ],
 }</pre>
 
 <p>Symbols are typically displayed in one of the overlays but can exist in
@@ -29,43 +55,72 @@ any component.  Individual symbols can be added to the hash using
 $client->symbols():</p>
 
 <pre>my $hash = {
-   'line1'    => 'Text to appear on top line',
-   'line2'    => 'Text to appear on bottom line and possibly scroll',
-   'overlay1' => $client->symbols('notesymbol'),
+   'line'    => [ 'Text to appear on top line',
+                  'Text to appear on bottom line and possibly scroll' ],
+   'overlay' => [ $client->symbols('notesymbol') ],
 }</pre>
 
 <p>See $client->symbols() below for valid symbol names.</p>
 
+<p>6.5 adds support for 2 screens for use with Transporter players.
+The second display is described within the 'screen2' hash component.
+Screen 1 may be described at the root of the hash, or within a
+'screen1' component:<p>
+
+<pre>my $hash = {
+   'line'    => [ 'Screen 1 Line 1',
+                  'Screen 1 Line 2' ],
+   'screen2' => {
+       'line' => [ 'Screen 2 Line 1',
+                   'Screen 2 Line 2' ]
+   }
+}</pre>
+
+or
+
+<pre>my $hash = {
+   'screen1' => {
+       'line'    => [ 'Screen 1 Line 1',
+                      'Screen 1 Line 2' ],
+   },
+   'screen2' => {
+       'line' => [ 'Screen 2 Line 1',
+                   'Screen 2 Line 2' ]
+   }
+}</pre>
+
+
+
 <h5>Player Specifics</h5>
 
-<p>All player types (Slimp3/Squeezebox/Squeezebox-Graphics/Squeezebox2)
-are intended to display in as similar way as possible.  However there
-are some specifics due to the limited screen resolution of some hardware:</p>
+<p>All player types are intended to display in as similar way as
+possible. However there are some specifics due to the limited screen
+resolution of some hardware:</p>
 
 <p><b>Text Displays (Slimp3/Squeezebox):</b></p>
 
-<p>In two line mode overlays are displayed.  If center1/2 exists for a
-line then this takes precedence over line1/2 such that only the
+<p>In two line mode overlays are displayed.  If center exists for a
+line then this takes precedence over line such that only the
 centered text and overlay are displayed.</p>
 
-<p>Overlays truncate line1/2 so that the overlay is always displayed.
-In the case of line1, text is simply truncated so the overlay fits.
-In the case of line2, text will potentially scroll within the region of
-the screen to the left of overlay2.  Centered text will also be
+<p>Overlays truncate line so that the overlay is always displayed.
+In the case of line[0], text is simply truncated so the overlay fits.
+In the case of line[1], text will potentially scroll within the region of
+the screen to the left of overlay[1].  Centered text will also be
 truncated by overlays if they appear in the same position.</p>
 
 <p>In single line mode overlays are not displayed by default.  Again
-centered text takes precedence such that if center2 exists then line2
+centered text takes precedence such that if center[1] exists then line[1]
 will not be displayed.</p>
 
-<p><b>Graphic Displays (Squeezebox-Graphics, Squeezebox2):</b></p>
+<p><b>Graphic Displays (Squeezebox-Graphics, Squeezebox2/3, Transporter):</b></p>
 
 <p>Graphics players attempt to display all components at the same time, so
-that both center1/2 and line1/2 are displayed.  Overlay1/2 truncate
-line1/2 in the same way as for text players.  However centered text is not
+that both center and line are displayed.  Overlays truncate
+line in the same way as for text players.  However centered text is not
 truncated by the overlays.  As the resulting bitmaps for each text
 component are displayed on top of each other, it is the calling
-function's responsibility to avoid overlapping text - e.g. by centered
+function's responsibility to avoid overlapping text - e.g. centered
 text overlapping overlays.</p>
 
 <h5>Bitmaps</h5>
@@ -84,9 +139,9 @@ text defined in the same display hash.</p>
 the top 8 bits of the left most display column the second byte defining
 the lower 8 bits. The 3rd & 4th byte describe the second column etc.</p>
 
-<p>Squeezebox 2 takes a 320 x 4 byte bitmap, with the first byte defining
-the top 8 bits of the first column, the next 3 defining the rest of
-the first column etc.</p>
+<p>Squeezebox 2, 3 & Transporter take a 320 x 4 byte bitmap, with the
+first byte defining the top 8 bits of the first column, the next 3
+defining the rest of the first column etc.</p>
 
 <h5>Fonts</h5>
 
@@ -98,20 +153,20 @@ font for the player.</p>
 components of the display:</p>
 
 <pre>my $hash = {
-   'line1' => 'Text to appear on top line',
-   'line2' => 'Text to appear on bottom line and possibly scroll',
+   'line' => [ 'Text to appear on top line',
+               'Text to appear on bottom line and possibly scroll' ],
    'fonts' => {
        'graphic-320x32' => 'standard',
        'graphic-280x16' => 'small',
        'text'           => 2,
-       }
+   }
 }</pre>
 
 <p>As different player use different fonts, it is normal to define the
 font for each type of player:</p>
 
 <ul>
-	<li>'graphic-320x32' is the font used for Squeezebox2
+	<li>'graphic-320x32' is the font used for Squeezebox2/3/Transporter
 	<li>'graphic-280x16' is the font used for Squeezebox1-Graphics
 	<li>'text' defines the number of lines to display on
 	Slimp3/Squeezebox1
@@ -121,36 +176,34 @@ font for each type of player:</p>
 more complex displays to be defined.</p>
 
 <p>For graphics players, the specific font for each of
-line1/line2/overlay1/overlay2/center1/center2 can defined.  If the
-font for only some components are defined, other components take the
-current active font for the player.</p>
+line/overlay/center can defined.  If the font for only some components
+are defined, other components take the current active font for the player.</p>
 
-<p>The following fixes the font for overlay1, but leaves all other fonts
+<p>The following fixes the font for overlay[0], but leaves all other fonts
 as the currently active player font:</p>
 
 <pre>my $hash = {
+   ...
    'fonts' => { 
-       'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
-       'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
+       'graphic-280x16'  => { 'overlay' => [ 'small.1' ] },
+       'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
        }
 }</pre>
 
 <p>Note: the font name should be the font file name including the line
-number.  It is specified as a reference to a string. [This is used to
-speed up the font rendering code]</pre>
+number.  It is specified as a string (rather than a reference to a
+string, as used in the 6.2 hash.)</pre>
 
 <p>By setting non standard fonts for each component it is possible to
-create new types of display.  For example using 'standard.1' for line2
-and 'standard.2' for line1 means that the top line of the display can
-be made to scroll.  [Only line2 scrolls, but by changing the font it
-appears on a different portion of the screen.]  Care should be taken
-in setting the overlay fonts to match as the point at which line1 &
-line2 are truncated is based on the respective overlays.</p>
+create new types of display.  Care should be taken in setting the
+overlay fonts to match the line font as the point at which lines are
+truncated is based on the respective overlays.</p>
 
 <p>For text players, the font element may define the number of lines and
 also force display of overlays in single line mode:</p>
 
 <pre>my $hash = {
+   ...
    'fonts' => { 
        'text'  => { 'lines' => 1,
                     'displayoverlays' => 1
@@ -166,27 +219,23 @@ mode.
 
 <h5>Scrolling</h5>
 
-<p>For all players, text in line2 will scroll if it is too long to fit
-into the space to the left of overlay2.  The default operation of
+<p>For all players, text in line[1] will scroll if it is too long to fit
+into the space to the left of overlay[1].  With 6.5 on graphic
+players, scrolling may also occur on line[2].  The default operation of
 scrolling for a player is set via preference 'scrollMode', but can be
-overridden by setting 'scrollmode' in the display hash:</p>
+overridden by the parameter sent to update.  It is no longer
+overridden by a component in the display hash.</p>
 
-<pre>my $hash = {
-   'scrollmode' => < 'scrollonce' | 'noscroll' | 'ticker' >
-}</pre>
-
-<p>Where 'scrollonce' means line2 will scroll round once but then stop
-scrolling until it changes.  'noscroll' indicates that line2 should
-not scroll.  'ticker' is a special scroll mode which is described below.</p>
-
-<p>Normal scrolling of line2 shows as much of line2 as will fit to the
-left of overlay2.  This is displayed without scrolling for the
-'scrollPause' interval.  Line2 then rotates to the left to the point
-when the start of line2 is displayed again.  At this point the display
-pauses again before continuing the rotation.</p>
+<p>Normal scrolling of line[1] shows as much of line[1] as will fit to the
+left of overlay[1].  This is displayed without scrolling for the
+'scrollPause' interval.  Line[1] then rotates to the point when the
+start of line[1] is displayed again.  At this point the display
+pauses again before continuing the rotation.  With 6.5 scrolling may
+be either right to left or left to right.  This is automatically
+selected so that Hebrew text scrolls left to right.</p>
 
 <p>During scrolling, if update is called with a display hash which
-changes line1, overlay1 or overlay2 these are updated without
+changes non scrolling components these are updated without
 interrupting scrolling.  This allows scrolling to continue while
 elapsed times etc are updated, for example in the Now Playing screen.</p>
 
@@ -198,25 +247,25 @@ display - text appears from the right edge, scrolls across the screen
 and off the left side.  It does not rotate in the manner of normal
 scrolling.</p>
 
-<p>Ticker scrolling is activated by setting the 'scrollmode' to 'ticker'
-in the display hash and is cleared as soon as a display hash without
-this is sent to update.</p>
-
-<p>Items are added to the ticker by calling update with a display hash
-such as:</p>
+<p>With 6.5 ticker scrolling supports scrolling on any line of the
+display and uses a new component of the display hash.  Items are added
+o the ticker by calling update with a display hash such as:</p>
 
 <pre>my $hash = {
-   'line1' => 'Non scrolling top line',
-   'line2' => 'New item to be added to ticker',
-   'scrollmode => 'ticker',
+   'line'  => [ 'Non scrolling top line' ],
+   'ticker => [ undef, 'New item to be added to ticker' ],
 }</pre>
 
-<p>If line1/overlay1/overlay2 changes during ticker mode these are
-displayed immediately.  However if anything is defined for line2, this
-is added to the ticker queue and will appear once items currently in
+<p>Note that the hash should not define text for a line[x] if it also
+defines text for ticker[x] as both will be displayed at once.</p>
+
+<p>If line/overlay components change during ticker mode these are
+displayed immediately.  However text defined in the ticker component
+will be added to the ticker queue and will appear once items currently in
 the ticker queue have been displayed.</p>
 
-<p>The function: $client->scrollTickerTimeLeft() is used to find the
+<p>The function: $client->scrollTickerTimeLeft()
+[$client->display->scrollTickerTimeLeft()] is used to find the
 current length of the ticker queue and is used to optimise when new
 items are added to the queue:</p>
 
@@ -228,7 +277,7 @@ approx number of seconds worth of text which is queued up but has not
 yet appeared on the right edge of the display.</p>
 
 <p>A lines function may use this to decide whether to return undef or
-text for line2.  If undef is returned for line2, nothing is added to
+text for a ticker component.  If undef is returned, nothing is added to
 the ticker queue allowing it to drain.</p>
 
 <p>For example to maintain a ticker using a lines function which is
@@ -241,14 +290,22 @@ called once per second:</p>
    my $text = 'Whatever you want to add to the ticker';
 
    return( {
-      'line1' => 'Fixed top line',
-      'line2' => ($queue < 1) ? $text : undef,
-      'scrollmode' => 'ticker',
+      'line'   => [ 'Fixed top line' ],
+      'ticker' => [ undef, ($queue < 1) ? $text : undef ],
    });
 }</pre>
 
 <hr>
 <h4>Display Functions</h4>
+
+<p>As of 6.5 all display functions are methods of the display object
+rather than the client object.  The display object is stored in the client
+object and is returned by $client->display().</p>
+
+<p>All common display methods may still be accessed via client methods
+as wrappers are included to call the display object.  Note however if
+you call display functions which are not part of the api below, these
+methods will have moved to the display object.</p>
 
 <p>Displays are sent to the screen via one of the display functions:</p>
 
@@ -262,9 +319,9 @@ for the current mode is called to determine the display hash.</p>
 than the current lines immediately:</p>
 
 <pre>$client->update( {
-   'line1' => 'line1 display',
-   'line2' => 'line2 display',
-}</pre>
+   'line' => [ 'line 1 display',
+               'line 2 display' ],
+} );</pre>
 
 <p>However as the server may call $client->update() to refresh the
 display this is not recommended.  It is normal to use the lines
@@ -283,7 +340,8 @@ will automatically call update every X seconds whilst in this mode.</p>
 period of time, before returning to the normal display of the mode.</p>
 
 <p>showBriefly should always be called with a display hash and one or more
-optional parameters.  The optional parameters may either be positional parameters or named parameters in a parameter hash.</p>
+optional parameters.  The optional parameters may either be positional
+parameters or named parameters in a parameter hash.</p>
 
 <pre>$client->showBriefly($hash, $duration, $firstline, $blockupdate, $scrolltoend, $brightness, $callback, $callbackargs)
 or 
@@ -298,7 +356,7 @@ $client->showBriefly($hash,
 <ul>
 	<li>$hash - the display hash
 	<li>$duration - number of seconds to display for (defaults to 1)
-	<li>$firstline - display only line1 if in single line mode (otherwise displays line2 in single line mode)
+	<li>$firstline - display only line[0] if in single line mode (otherwise displays line[1] in single line mode)
 	<li>$blockupdate - block display so that calls to update during	$duration do not cancel the showBriefly display (defaults to false)
 	<li>$scrolltoend - if line is too long scroll display and continue until whole line is seen.  This overrides duration.
 	<li>$brightness - brightness to display at ('powerOn', 'powerOff', 'idle' or brightness value) 
@@ -310,9 +368,8 @@ $client->showBriefly($hash,
 <p>For example:</pre>
 
 <pre>$client->showBriefly( {
-   'line1' => $line1,
-   'line2' => $line2,
-   'overlay2' => $client->symbols('notesymbol'),
+   'line'       => [ $line1, $line2 ],
+   'overlay'    => [ $client->symbols('notesymbol') ],
 }, { 'duration' => 5, 'block' => 1 } );</pre>
 
 <p>Displays two lines plus an overlay for 5 seconds and is not cancelled by
@@ -326,9 +383,9 @@ $client->renderOverlay() to build a display to send to showBriefly]</p>
 <h5>$client->block()</h5>
 
 <p>This is used to display a message for a period of time with a spinning
-activity notification in overlay1.  The message is displayed using the
+activity notification in overlay[0].  The message is displayed using the
 'block' mode so that it is not interrupted and is only cleared by a
-call to $client->upblock().</p>
+call to $client->unblock().</p>
 
 <pre>$client->block($hash)</pre>
 
@@ -337,8 +394,8 @@ call to $client->upblock().</p>
 <p>For example:</p>
 
 <pre>$client->block( {
-   'line1' => string('PLAYER_NEEDS_UPGRADE_1'), 
-   'line2' => string('PLAYER_NEEDS_UPGRADE_2'),
+   'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), 
+               string('PLAYER_NEEDS_UPGRADE_2') ],
    'fonts' => { 
       'graphic-320x32' => 'standard',
       'graphic-280x16' => 'small',
@@ -362,26 +419,23 @@ $client->update() is called.</p>
     my $client = shift;
 
     return {
-       'line1'    => 'Line1 text',
-       'line2'    => 'Line2 text',
-       'overlay1' => $client->symbols('notesymbol'),
+       'line'    => [ 'Line1 text',
+                      'Line2 text' ],
+       'overlay' => [ $client->symbols('notesymbol') ],
     };
 }</pre>
 
-<p>A more complex lines function which specifies the fonts and scrolling
-mode would be:</p>
+<p>A more complex lines function which specifies the fonts would be:</p>
 
 <pre>sub lines {
     my $client = shift;
 
     return {
-       'line1'      => 'Line1 text',
-       'line2'      => 'Line2 text',
-       'overlay1'   => $client->symbols('bell'),
-       'scrollmode' => 'scrollonce',
+       'line'      => [ 'Line1 text', 'Line2 text' ],
+       'overlay'   => [ $client->symbols('bell') ],
        'fonts'      => { 
-           'graphic-280x16'  => { 'overlay1' => \ 'small.1' },
-           'graphic-320x32'  => { 'overlay1' => \ 'standard.1' },
+           'graphic-280x16'  => { 'overlay' => [ 'small.1' ] },
+           'graphic-320x32'  => { 'overlay' => [ 'standard.1' ] },
            'text' =>            { 'lines' => 2,
                                   'displayoverlays' => 1,
                                   },
@@ -407,8 +461,8 @@ character.</p>
 <p>Preferred use:</p>
 
 <pre>return {
-   'line1'    => 'text '.$client->symbols('bell').' more text',
-   'overlay2' => $client->symbols('bell'),
+   'line'    => [ 'text '.$client->symbols('bell').' more text' ],
+   'overlay' => [ $client->symbols('bell') ],
 }</pre>
 
 <p>Valid symbol names are currently:
@@ -427,27 +481,34 @@ character.</p>
 	<li>'progressEnd'
 </ul>
 
+<p>Use of custom characters extends this list with custom entries -
+see Custom Fonts below.</p>
+
 <h5>$client->curLines()</h5>
 
 <p>$client->curLines() returns a display hash using the current lines
 function.  This is equivalent to the display that would result from
 calling $client->update().<p>
 
-<p>The method returns the same information as
-Slim::Display::Display::curLines(), but always returns a display hash
+<p>As of 6.5 this method replaces Slim::Display::Display::curLines()
+which is depreciated.  Note that it always returns a display hash
 even if the lines function itself does not return a display hash.</p>
 
 <h5>$client->curDisplay()</h5>
 
 <p>$client->curDisplay() returns a display hash containing the text
-components of the current display.  [It contains each of line1, line2,
-overlay1, overlay2, center1, center2 but does not contain font or
-scrolling elements.]</p>
+components of the current display.</p>
+
+<p>Note curDisplay returns a display hash including the screen name ('screen1'
+and 'screen2') and all line, overlay, center and font components on the
+current screen.  This is different from previous versions.</p> 
 
 <p>The difference between $client->curDisplay() and $client->curLines()
 is that $client->curLines() makes a call to the mode's lines function
 and hence potentially gets a new display, whereas
-$client->curDisplay() returns what is currently being displayed.</p>
+$client->curDisplay() returns what is currently being displayed.  In
+the case of two screen players this includes what is on both screens,
+even if the current lines function only covers one screen.</p>
 
 <hr>
 <h4>Menu Transitions</h4>
@@ -477,15 +538,15 @@ acceptable to use e.g. $client->pushLeft() to carry out a menu transition.</p>
 
 <h5>$client->pushUp($end), $client->pushDown($end)</h5>
 <ul>
-	<li>$end - undef or display hash for new screen [SB2 only]
+	<li>$end - undef or display hash for new screen
 </ul>
 
 <p>On SB2 this scrolls the bottom line (or all text if in one line
-mode) to move to the next menu or list item.  On all other player it
+mode) to move to the next menu or list item.  On text and SBG players it
 simply calls $client->update() to display a new screen with the new
-display.  As $end can only be set for SB2 it is not normally used.
-The new screen to display is therefore defined by the current lines
-function.  Normally called as e.g. $client->pushUp().</p>
+display.  As $end can only be set for SB2/SB3/Transporter it is not
+normally used.  The new screen to display is therefore defined by the
+current lines function.  Normally called as e.g. $client->pushUp().</p>
 
 <h5>$client->bumpLeft(), $client->bumpRight()</h5>
 <h5>$client->bumpUp(), $client->bumpDown()</h5>
@@ -496,35 +557,41 @@ indicate that no additional menu items are available.</p>
 <hr>
 <h4>Custom Characters</h4>
 
-Custom characters may be defined for both character and graphic
+<p>Custom characters may be defined for both character and graphic
 display players. These enable lines functions to display customised
-symbols as icons and to build up complex displays for e.g. games like SlimTris.
+symbols as icons and to build up complex displays for e.g. games like
+SlimTris.</p>
+
+<p>Note that as of 6.5, display code is dynamically loaded based on
+the types of player attached.  This means that custom characters must
+be defined once a player has attached - this is different from
+previous versions.</p>
 
 <h5>Character Displays</h5>
 
-The character display hardware uses a fixed font definition for all
+<p>The character display hardware uses a fixed font definition for all
 normal characters (See <a
 href="http://www.slimdevices.com/downloads/datasheets/vfd-chars.gif"
-target="displaychars">here</a>).
+target="displaychars">here</a>).</p>
 <p>It also supports definition of up to 8 custom characters per
 display.  These may be defined by plugins and used anywhere on the
-display.
+display.</p>
 
-<p>Slimserver allows you to define as many custom characters using:
-Slim::Hardware::VFD::setCustomChar().  
-<p>Each display screen can then use
-up to 8 custom characters.  If more custom characters exist on a
-screen they will be replaced with a blank character.  [NB slimserver
-also uses custom characters for the predefined symbols which also
-count towards this limit.]
+<p>Slimserver allows you to define many custom characters using:
+Slim::Display::Text::setCustomChar().</p>
+
+<p>Each display screen can use up to 8 custom characters.  If more
+custom characters exist on a screen they will be replaced with a blank
+character.  [NB slimserver also uses custom characters for the
+predefined symbols which also count towards this limit.]</p>
 
 <p>Each custom character is 5 pixels wide and 7 pixels high plus an
 underline which is either on or off [equivalent of a single wide
-pixel].
+pixel].</p>
 
-<p>For example to define a custom character to be called 'slimtristop':
+<p>For example to define a custom character to be called 'my-icon':</p>
 
-<pre>Slim::Hardware::VFD::setCustomChar( 'slimtristop', ( 
+<pre>Slim::Display::Text::setCustomChar( 'my-icon', ( 
 		0b00000000, 
 		0b00000000, 
 		0b00000000, 
@@ -536,60 +603,83 @@ pixel].
 		0b00000000
 		));
 </pre>	
-Note: The 3 most signifcant bits of each line are not used.
+<p>Note: The 3 most signifcant bits of each line are not used.</p>
 
-<p>Custom characters do not work in 1 line mode on character displays.
+<p>Custom characters may then be added to a display via
+$client->symbols():</p>
+<pre>
+$display = {
+    'line' => [ 'text ' . $client->symbols('my-icon'). ' more text' ],
+};
+</pre>
+
+<p>Custom characters do not work in 1 line mode on character
+displays.</p>
+
+<p>Note: Slim::Display::Text::setCustomChar() should only be
+called once the text display code is loaded - e.g. from the setMode
+within a plugin, see SlimTris for an example.</p>
 
 <h5>Graphics Displays</h5>
 
-Graphic displays may display custom characters through the use of
-custom font files.
+<p>Graphic displays may display custom characters through the use of
+custom font files.</p>
 
 <p>Custom font files define a bitmap to use for each character in the
 custom font.  The format of font files is described <a
-href="fonts.html">here</a>.
+href="fonts.html">here</a>.  For plugins, custom font files are
+normally placed in the plugin's root directory.</p>
 
-<p>The function Slim::Player::SqueezeboxG::setCustomChar() is used to
-register a name to associate with specific characters.  This may be
-used to give names for each character in a custom font.
+<p>The function Slim::Display::Graphics::setCustomChar() is used to
+register a name to associate with specific custom characters.  This may be
+used to name each character in a custom font file.</p>
 
-<p>For example:
+<p>Once custom characters have been defined they may be included
+within display strings via $client->symbols('character name').</p>
+
+<p>For example:</p>
+
 <pre>
-Slim::Player::SqueezeboxG::setCustomChar( 'slimtristop', "\x02" );
+Slim::Player::SqueezeboxG::setCustomChar( 'my-icon', "\x02", 'icon.1' );
 </pre>
-Registers the 'slimtristop' for character "\x02".
-<p>Note that name to character mappings are independant of font, but only make sense when
-used with the appropriate font - see below.
 
-<h5>Displaying Custom Characters</h5>
+<p>This registers the symbol name 'my-icon' for character "\x02" within the font file
+'icon.1'.  This may then be included within a display using:<p>
 
-Custom characters may be included in a display by using the character
-name with $client->symbols().  
-
-For example:
 <pre>
-$parts = {
-    'line1' => $client->symbols('slimtristop').$client->symbols('slimtristop'),
-    'fonts' => {
-    'graphic-320x32' => { 'line1' => \ 'trisSB2.1' },
-    'graphic-280x16' => { 'line1' => \ 'trisSBG.1' },
-      },
+$display = {
+    'line' => [ 'text ' . $client->symbols('my-icon') . ' more text' ],
 };
 </pre>
-Will display 2 'slimtristop' custom characters on line1 of the
-display.  
-<p>For character displays it assumes this character has
-been defined using Slim::Hardware::VFD::setCustomChar().
-<p>For graphic displays it assumes the name to character mapping has
-been defined using Slim::Player::SqueezeboxG::setCustomChar() and that
-the font file defined in the display hash contains this character.  An
-appropriate font file should be defined for each type of graphic display.
 
-<p>Note at present, Graphic displays can only mix text and custom
-characters in a display component (e.g. line1) if the font file
-defines both the custom characters and all text characters.  This is
-because each display component must use a single font.
+<p>This allows custom characters to be used in the same way for
+character and graphics displays.</p>
 
-<p>Character displays may mix standard and custom characters in 2 line mode. 
-<p>
+<p>If a custom font is to be used for all characters within a display
+component, it is more efficient to define that component to use a
+specific font within the display hash and not register the font name
+as part of the custom character name.</p>
+
+<pre>
+Slim::Player::SqueezeboxG::setCustomChar( 'my-icon', "\x02" );
+
+$display = {
+    'overlay' => [ $client->symbols('my-icon') ],
+    'fonts'   => { 'graphic-320x32'  => { 'overlay' => [ 'icon.1' ] } },
+};
+</pre>
+
+<p>Note: Slim::Player::SqueezeboxG::setCustomChar should only be
+called once a graphics player is attached - e.g. by calling from the
+setMode of a plugin if it has not been previously called [see SlimTris
+for an example of this for text custom characters].</p>
+
+<hr>
+<h4>Two Screen Displays</h4>
+
+<p>Transporter introduces two screens which may display text or
+visualizer.  Full details of how to make use of the second screen and
+manage the interaction with the visualizer will be added here once this
+is finalised.<p>
+
 [% PROCESS helpfooter.html %]

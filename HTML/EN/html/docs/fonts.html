@@ -16,8 +16,7 @@
 
 <p>Open these files in a bitmap editor (photoshop, windows paint etc) and you'll see a long horizontal line of characters.  
 
-<p>For SqueezeboxG, the file is 17 pixels high.  For Squeezebox2 it is
-33 pixels high.
+<p>For SqueezeboxG, the file is 17 pixels high.  For Squeezebox2/3/Transporter it is 33 pixels high.
 
 <P>The first 16 (SqueezeboxG) or 32 (Squeezebox2) rows
 are the font bitmaps themselves.  The last row is used to mark the beginning and end of characters.
@@ -77,7 +76,7 @@ spacing and following characters define characters "\x01", "\x02",
 characters are reserved and so character "\x01" onwards is normally used.
 <p>Although a plugin may build strings using character values, it is
 normal to register a name for each character using
-Slim::Player::Squeezebox::setCustomChar.
+Slim::Display::Graphics::setCustomChar.
 
 <p>See <a href="display.html">Display API</a> for a description of how custom characters are displayed.
 
