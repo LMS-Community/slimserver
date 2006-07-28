@@ -176,9 +176,9 @@ END %]
 	<div class="artworkControls">
 		[%- PROCESS $controls -%]
 	</div>
-	<div class="artworkText" style="width:[% item.size %]px;">
+	<div class="artworkText" style="width:[% item.size %]px;"><span style="width:[% item.size %]px;">
 	[%- content | indent(4) %]
-	</div>
+	</span></div>
 </div></li>
 [%- END %]
 
