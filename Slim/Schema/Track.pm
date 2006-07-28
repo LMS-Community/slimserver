@@ -9,6 +9,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Music::Artwork;
 use Slim::Music::Info;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 
 our @allColumns = (qw(
@@ -188,7 +189,7 @@ sub modificationTime {
 
 	my $time = $self->timestamp;
 
-	return join(', ', Slim::Utils::Misc::longDateF($time), Slim::Utils::Misc::timeF($time));
+	return join(', ', Slim::Utils::DateTime::longDateF($time), Slim::Utils::DateTime::timeF($time));
 }
 
 sub prettyBitRate {

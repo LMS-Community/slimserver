@@ -13,6 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
@@ -232,15 +233,15 @@ sub init {
 
 	# Add date/time elements
 	$parsedFormats{'LONGDATE'}  = sub {
-		return Slim::Utils::Misc::longDateF(); 
+		return Slim::Utils::DateTime::longDateF(); 
 	};
 	
 	$parsedFormats{'SHORTDATE'} = sub {
-		return Slim::Utils::Misc::shortDateF();
+		return Slim::Utils::DateTime::shortDateF();
 	};
 	
 	$parsedFormats{'CURRTIME'}  = sub {
-		Slim::Utils::Misc::timeF();
+		Slim::Utils::DateTime::timeF();
 	};
 	
 	# Add localized from/by

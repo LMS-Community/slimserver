@@ -15,6 +15,7 @@ use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
@@ -113,7 +114,7 @@ sub advancedSearch {
 	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
 
 	# Prep the date format
-	$params->{'dateFormat'} = Slim::Utils::Misc::shortDateF();
+	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();
 
 	# Check for valid search terms
 	for my $key (keys %$params) {

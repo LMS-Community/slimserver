@@ -13,6 +13,7 @@ use File::Spec::Functions qw(updir);
 use Scalar::Util qw(blessed);
 
 use Slim::Player::Client;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Display::Display;
@@ -1235,7 +1236,7 @@ sub dateTime {
 	my $client = shift;
 
 	return {
-		'center' => [ Slim::Utils::Misc::longDateF(), Slim::Utils::Misc::timeF() ]
+		'center' => [ Slim::Utils::DateTime::longDateF(), Slim::Utils::DateTime::timeF() ]
 	};
 }
 

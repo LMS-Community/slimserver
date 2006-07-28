@@ -14,6 +14,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Player::Sync;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -283,8 +284,8 @@ sub tokenizeConvertCommand {
 
 		my ($start, $end) = ($1, $2);
 
-		$command =~ s/\$START\$/Slim::Utils::Misc::fracSecToMinSec($start)/eg;
-		$command =~ s/\$END\$/Slim::Utils::Misc::fracSecToMinSec($end)/eg;
+		$command =~ s/\$START\$/Slim::Utils::DateTime::fracSecToMinSec($start)/eg;
+		$command =~ s/\$END\$/Slim::Utils::DateTime::fracSecToMinSec($end)/eg;
 
 	} else {
 
