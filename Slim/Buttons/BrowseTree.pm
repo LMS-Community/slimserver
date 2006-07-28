@@ -327,7 +327,8 @@ sub setMode {
 		'lookupRef'    => sub {
 			my $index = shift;
 
-			return Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
+			return ref $items->[$index] && $items->[$index]->can('titlesort') ? 
+				$items->[$index]->titlesort : Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
 		},
 	);
 
