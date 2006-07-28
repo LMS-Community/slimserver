@@ -31,7 +31,7 @@ my %packages = (
 	'Template'           => 'Template-Toolkit-2.14.tar.gz',
 	'Time::HiRes'        => 'Time-HiRes-1.86.tar.gz',
 	'XML::Parser::Expat' => 'XML-Parser-2.34.tar.gz',
-	'YAML::Syck'         => 'YAML-Syck-0.44.tar.gz',
+	'YAML::Syck'         => 'YAML-Syck-0.64.tar.gz',
 );
 
 # Options for specific packages
