@@ -86,7 +86,7 @@
 	<div>[% "HELP" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.help %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+		<li><a href="[% link.value | html %]player=[% playerURI %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a></li>
 	[%- END %]
 	</ul>
 </div>
