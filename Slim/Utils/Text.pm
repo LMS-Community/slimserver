@@ -73,6 +73,11 @@ sub ignoreArticles {
 sub ignoreCaseArticles {
 	my $s = shift || return undef;
 
+	# We don't handle references of any kind.
+	if (ref($s)) {
+		return $s;
+	}
+
 	if (scalar keys %caseArticlesCache > 256) {
 		%caseArticlesCache = ();
 	}

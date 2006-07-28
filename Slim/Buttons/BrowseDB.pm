@@ -92,7 +92,7 @@ sub init {
 			if ($client->param('header') eq 'CREATE_MIX') {
 
 				# Bug 3459: short circuit for mixers
-				mixerExitHandler($client,'RIGHT');
+				mixerExitHandler($client, 'RIGHT');
 				return;
 			}
 
@@ -121,7 +121,7 @@ sub init {
 				}
 			}
 	
-			if ($client->linesPerScreen() == 1) {
+			if ($client->linesPerScreen == 1) {
 
 				$line2 = $client->doubleString($string);
 
@@ -140,82 +140,56 @@ sub init {
 			my $level        = $client->param('level');
 			my $descend      = $client->param('descend');
 			my $findCriteria = $client->param('findCriteria');
-			
-			my @levels       = split(',', $hierarchy);
-			my $all          = !ref($currentItem);
+			my $search       = $client->param('search');
 
-			# Create the search term list that we will send along with our command.
-			my @terms        = ();
-			my $field        = $levels[$level];
-			my $levelRS      = Slim::Schema->rs($field);
+			my @levels       = split(',', $hierarchy);
+			my $all          = !blessed($currentItem);
+			my $levelName    = $levels[$level];
 
 			# Include the current item
-			if ($field ne 'track' && !$all) {
+			if ($levelName ne 'track' && !$all) {
 
-				push @terms, join('=', $field, $currentItem->id);
+				$findCriteria->{"$levelName.id"} = $currentItem->id;
 			}
 
-			# And all the search terms for the current mode
-			# XXXX - it'd be nice to just serialize this using
-			# Storable and send it to Slim::Control::*
-			while (my ($key, $value) = each %{$findCriteria}) {
+			# Handle the ALL_* case from a search. Pass off to Commands.
+			if ($all && $search) {
 
-				# Bug: 3582 - pass along album.compilation as
-				# 0, and reconstitute it in parseSearchTerms.
-				if (ref($value) eq 'ARRAY' && $key eq 'album.compilation') {
+				my $field = 'me.titlesearch';
 
-					$value = 0;
+				if ($levelName eq 'contributor') {
+
+					$field = 'contributor.titlesearch';
+
+				} elsif ($levelName eq 'album') {
+
+					$field = 'album.titlesearch';
 				}
 
-				if (ref($value) eq 'ARRAY') {
-
-					push @terms, join('=', $key, (join '', @$value));
-
-				} elsif (ref($value) eq 'HASH') {
-
-					while (my ($subkey, $subvalue) = each %{$value}) {
-
-						push @terms, join('=', $levels[$level-1], $subvalue);
-					}
-
-				} else {
-
-					push @terms, join('=', $key, $value);
-				}
+				$findCriteria->{$field} = { 'like' => $search };
 			}
-
-			my $termlist = join '&', @terms;
 
 			# If we're dealing with a group of tracks...
 			if ($descend || $all) {
 
-				my $search = $client->param('search');
-
 				# If we're dealing with the ALL option of a search,
 				# perform the search and play the track results
-				if ($all && $search) {
+				#my $levelRS = Slim::Schema->rs($levelName);
 
-					my $items = [ Slim::Schema->search('Track', $search)->all ];
+				#if ($all && $levelRS->allTransform) {
 
-					$client->execute(["playlist", $command, 'listref', $items]); 
+					# $termlist .= sprintf('&fieldInfo=%s', $levelRS->allTransform);
+				#}
 
-				} else {
-
-					if ($all && $levelRS->allTransform) {
-
-						$termlist .= sprintf('&fieldInfo=%s', $levelRS->allTransform);
-					}
-
-					# Otherwise rely on the execute to do the search for us
-					$client->execute(["playlist", $command, $termlist]);
-				}
+				# Otherwise rely on the execute to do the search for us
+				$client->execute(["playlist", $command, $findCriteria]);
 			}
 			# Else if we pick a single song
 			else {
 				# find out if this item is part of a container, such as an album or playlist previously selected.
 				my $container = 0;
 
-				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me\.id/ } @terms) {
+				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me\.id/ } keys %{$findCriteria}) {
 					$container = 1;
 				}
 
@@ -235,7 +209,7 @@ sub init {
 					Slim::Player::Playlist::shuffle($client, 0);
 
 					$client->execute(["playlist", "clear"]);
-					$client->execute(["playlist", "addtracks", $termlist]);
+					$client->execute(["playlist", "addtracks", $findCriteria]);
 					$client->execute(["playlist", "jump", $listIndex]);
 
 					if ($wasShuffled) {
@@ -364,6 +338,12 @@ sub browsedbExitCallback {
 
 				$all = 1;
 			}
+
+		} elsif (!ref($currentItem) && $levels[$level] eq 'track') {
+
+			# If we're at all and the track level - bump right.
+			# Getting the same list of songs again is pointless.
+			$currentItem = undef;
 		}
 
 		if (!defined $currentItem) {
@@ -472,6 +452,13 @@ sub browsedbItemName {
 
 			return $client->string($item);
 		}
+
+	} elsif (!$blessed && $levels[$level] eq 'track') {
+
+		if ($levelRS->allTitle eq $item) {
+
+			return $client->string($item);
+		}
 	}
 
 	# special case favorites line, which must be determined dynamically
@@ -564,8 +551,13 @@ sub browsedbItemName {
 # to overlay characters.
 sub browsedbOverlay {
 	my $client = shift;
-	my $item = shift;
+	my $item   = shift;
+
 	my ($overlay1, $overlay2);
+
+	my $hierarchy = $client->param('hierarchy');
+	my $level     = $client->param('level') || 0;
+	my @levels    = split(',', $hierarchy);
 
 	# No overlay if the list is empty
 	if (!defined($item)) {
@@ -574,8 +566,19 @@ sub browsedbOverlay {
 
 	} elsif (!ref($item)) {
 
-		# A text item generally means ALL_, so overlay an arrow
-		return (undef, Slim::Display::Display::symbol('rightarrow'));
+		# A text item means ALL_, so overlay a note & arrow. But not
+		# for the track item, which we're already at the lowest level.
+		if ($levels[$level] ne 'track') {
+
+			return (undef, join('', 
+				Slim::Display::Display::symbol('notesymbol'),
+				Slim::Display::Display::symbol('rightarrow')
+			));
+
+		} else {
+
+			return (undef, Slim::Display::Display::symbol('notesymbol'));
+		}
 
 	} else {
 		# Music Magic is everywhere, MoodLogic doesn't exist on albums

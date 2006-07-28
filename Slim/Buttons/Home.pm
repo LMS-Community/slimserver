@@ -111,14 +111,18 @@ sub init {
 					Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING'), $client->string('EVERYTHING'));
 				}
 
-				my $command = [qw(playlist loadalbum * * *)];
+				my $command = [qw(playlist loadtracks)];
 
 				# Hand a special command if we only want to play new music.
 				if ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC') {
 
 					my $limit = Slim::Utils::Prefs::get('browseagelimit');
 
-					$command = ['playlist', 'loadtracks', "sort=age&offset=0&limit=$limit"];
+					$command = ['playlist', 'loadtracks', {
+						'sort'   => 'age',
+						'offset' => 0,
+						'limit'  => $limit,
+					} ];
 				}
 
 				$client->execute($command, \&Slim::Buttons::Block::unblock, [$client]);

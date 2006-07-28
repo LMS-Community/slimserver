@@ -2008,11 +2008,13 @@ sub _playlistXalbum_singletonRef {
 
 sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
-	my $terms  = shift;
+	my $what   = shift;
 
 	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchTerms()\n");
 
 	my %find   = ();
+	my $terms  = {};
+	my %attrs  = ();
 	my @fields = map { lc($_) } Slim::Schema->sources;
 	my ($sort, $limit, $offset);
 
@@ -2023,75 +2025,95 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	# Setup joins as needed - we want to end up with Tracks in the end.
 	my %joinMap = ();
 
-	for my $term (split '&', $terms) {
+	# Accept both the old key=value "termlist", and internal use by passing a hash ref.
+	if (ref($what) eq 'HASH') {
 
-		# If $terms has a leading &, split will generate an initial empty string
-		next if $term eq "";
+		$terms = $what;
 
-		if ($term =~ /^(.*)=(.*)$/ && grep { $1 =~ /$_\.?/ } @fields) {
+	} else {
 
-			my $key   = URI::Escape::uri_unescape($1);
-			my $value = URI::Escape::uri_unescape($2);
+		for my $term (split '&', $what) {
 
-			# Bug: 3582 - reconstitute from 0 for album.compilation.
-			if ($key eq 'album.compilation' && $value == 0) {
+			# If $terms has a leading &, split will generate an initial empty string
+			next if !$term;
 
-				$find{$key} = [ { 'is' => undef }, { '=' => 0 } ];
+			if ($term =~ /^(.*)=(.*)$/ && grep { $1 =~ /$_\.?/ } @fields) {
+
+				my $key   = URI::Escape::uri_unescape($1);
+				my $value = URI::Escape::uri_unescape($2);
+
+				$terms->{$key} = $value;
+
+			} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
+
+				$terms->{$1} = $2;
 			}
-
-			# Do some mapping from the player browse mode. This is
-			# already done in the web ui.
-			if ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
-				$key = "$1.id";
-			}
-
-			# New Music browsing is working on the
-			# tracks.timestamp column, but shows years
-			if ($key =~ /^age\.id$/) {
-
-				$key = 'album.id';
-			}
-
-			# Setup the join mapping
-			if ($key =~ /^genre\./) {
-
-				$joinMap{'genre'} = { 'genreTracks' => 'genre' };
-
-			} elsif ($key =~ /^album\./) {
-
-				$sort = $albumSort;
-				$joinMap{'album'} = 'album';
-
-			} elsif ($key =~ /^year\./) {
-
-				$sort = $albumSort;
-				$joinMap{'year'} = 'year';
-
-			} elsif ($key =~ /^contributor\./) {
-
-				$sort = $albumSort;
-				$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
-			}
-
-			# Turn 'track.*' into 'me.*'
-			if ($key =~ /^(playlist)?track(\.?.*)$/) {
-				$key = "me$2";
-			}
-
-			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
-
-		} elsif ($term =~ /^(fieldInfo)=(\w+)$/) {
-
-			$find{$1} = $2;
 		}
-
-		# modifiers to the search
-		$sort   = $2 if $1 eq 'sort';
-		$limit  = $2 if $1 eq 'limit';
-		$offset = $2 if $1 eq 'offset';
 	}
 
-	# We can poke directly into the field info if requested - for more complicated queries.
+	while (my ($key, $value) = each %{$terms}) {
+
+		# Bug: 3582 - reconstitute from 0 for album.compilation.
+		if ($key eq 'album.compilation' && $value == 0) {
+
+			$find{$key} = [ { 'is' => undef }, { '=' => 0 } ];
+		}
+
+		# Do some mapping from the player browse mode. This is
+		# already done in the web ui.
+		if ($key =~ /^(playlist|age|album|contributor|genre|year)$/) {
+			$key = "$1.id";
+		}
+
+		# New Music browsing is working on the
+		# tracks.timestamp column, but shows years
+		if ($key =~ /^age\.id$/) {
+
+			$key = 'album.id';
+		}
+
+		# Setup the join mapping
+		if ($key =~ /^genre\./) {
+
+			$joinMap{'genre'} = { 'genreTracks' => 'genre' };
+
+		} elsif ($key =~ /^album\./) {
+
+			$sort = $albumSort;
+			$joinMap{'album'} = 'album';
+
+		} elsif ($key =~ /^year\./) {
+
+			$sort = $albumSort;
+			$joinMap{'year'} = 'year';
+
+		} elsif ($key =~ /^contributor\./) {
+
+			$sort = $albumSort;
+			$joinMap{'contributor'} = { 'contributorTracks' => 'contributor' };
+		}
+
+		# Turn 'track.*' into 'me.*'
+		if ($key =~ /^(playlist)?track(\.?.*)$/) {
+			$key = "me$2";
+		}
+
+		# Meta tags that are passed.
+		if ($key =~ /^(?:limit|offset)$/) {
+
+			$attrs{$key} = $value;
+
+		} elsif ($key eq 'sort') {
+
+			$sort = $value;
+
+		} else {
+
+			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
+		}
+	}
+
+	# 
 	if (my $fieldKey = $find{'fieldInfo'}) {
 
 		return Slim::Schema->rs($fieldKey)->browse({ 'audio' => 1 });
@@ -2128,21 +2150,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			$joinMap{'album'} = 'album';
 		}
 
-		my $rs = Slim::Schema->rs('Track')->search(\%find, {
+		# limit & offset may have been populated above.
+		$attrs{'order_by'} = $sort || $trackSort;
+		$attrs{'join'}     = [ map { $_ } values %joinMap ];
 
-			'order_by' => $sort || $trackSort,
-			'join'     => [ map { $_ } values %joinMap ],
-
-		})->distinct;
-
-		if ($limit && $offset) {
-
-			return $rs->slice($offset, $limit);
-
-		} else {
-
-			return $rs->all;
-		}
+		return Slim::Schema->rs('Track')->search(\%find, \%attrs)->distinct->all;
 	}
 }
 
