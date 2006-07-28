@@ -6,15 +6,11 @@ SET foreign_key_checks = 0;
 --
 -- Table: metainformation
 --
-DROP TABLE IF EXISTS metainformation;
-CREATE TABLE metainformation (
+CREATE TABLE IF NOT EXISTS metainformation (
   name  varchar(255) NOT NULL DEFAULT '',
   value varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (name)
 ) TYPE=InnoDB CHARACTER SET utf8;
-
-INSERT INTO metainformation VALUES ('lastRescanTime', 0);
-INSERT INTO metainformation VALUES ('isScanning', 0);
 
 --
 -- Table: rescans

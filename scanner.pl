@@ -124,12 +124,11 @@ sub main {
 
 	Slim::Schema->txn_do(sub {
 
+		setIsScanning(1);
+
 		if ($wipe) {
 			Slim::Schema->wipeAllData;
 		}
-
-		# Must be set _after_ we wipe the db.
-		setIsScanning(1);
 
 		if ($cleanup) {
 			Slim::Music::Import->cleanupDatabase(1);

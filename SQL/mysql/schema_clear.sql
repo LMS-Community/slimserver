@@ -50,8 +50,6 @@ OPTIMIZE TABLE unreadable_tracks;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
-UPDATE metainformation SET value = 0 WHERE name = 'isScanning';
-
 -- Clear the migration table so the schema is recreated
 TRUNCATE dbix_migration;
 
