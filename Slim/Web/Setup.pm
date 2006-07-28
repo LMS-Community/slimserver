@@ -1955,15 +1955,6 @@ sub initSetupConfig {
 		'title' => string('PERFORMANCE_SETTINGS'),
 		'parent' => 'SERVER_SETTINGS',
 		'GroupOrder' => ['Default'],
-		'preEval' => sub {
-			my ( undef, $paramref, $pageref ) = @_;
-			# Add forking options for Mac/Linux
-			if ( $^O !~ /Win32/ ) {
-				push @{ $pageref->{'Groups'}->{'Default'}->{'PrefOrder'} },
-					'forkedWeb',
-					'forkedStreaming';
-			}
-		},
 		'Groups' => {
 
 			'Default' => {
@@ -2124,6 +2115,13 @@ sub initSetupConfig {
 	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
 
 		push @{$setup{'NETWORK_SETTINGS'}{'Groups'}{'Default'}{'PrefOrder'}}, 'mDNSname';
+	}
+	
+	# Add forking performance options for non-Windows
+	if ( $^O !~ /Win32/ ) {
+		push @{ $setup{'PERFORMANCE_SETTINGS'}->{'Groups'}->{'Default'}->{'PrefOrder'} },
+			'forkedWeb',
+			'forkedStreaming';
 	}
 
 	# This hack pulls the --d_* debug keys from the main package and sets
