@@ -24,8 +24,6 @@ use Slim::Utils::Cache;
 }
 
 sub processCoverArtRequest {
-	#TODO: memoize thumb resizing, if necessary 
-
 	my ($client, $path) = @_;
 
 	my ($body, $mtime, $inode, $size, $contentType); 
@@ -65,11 +63,7 @@ sub processCoverArtRequest {
 
 	if ($trackid eq "current" && defined $client) {
 
-		# If the object doesn't have any cover art - fall
-		# through to the generic cover image.
-		$obj = Slim::Schema->rs('Track')->objectForUrl(Slim::Utils::Misc::fileURLFromPath(
-			Slim::Player::Playlist::song($client)
-		));
+		$obj = Slim::Player::Playlist::song($client);
 
 	} else {
 
