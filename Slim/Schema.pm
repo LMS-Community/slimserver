@@ -305,7 +305,9 @@ sub find {
 sub lastRescanTime {
 	my $class = shift;
 
-	return $class->single('MetaInformation', { 'name' => 'lastRescanTime' })->value;
+	my $last  = $class->single('MetaInformation', { 'name' => 'lastRescanTime' });
+
+	return blessed($last) ? $last->value : 0;
 }
 
 # Fetch the content type for a URL or Track Object.
