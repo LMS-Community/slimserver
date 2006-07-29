@@ -223,9 +223,9 @@ sub playRandom {
 
 			$numItems = $numRandomTracks;
 
-		} elsif ($songsRemaining < $numRandomTracks - 1) {
+		} elsif ($songsRemaining < $numRandomTracks) {
 
-			$numItems = $numRandomTracks - 1 - $songsRemaining;
+			$numItems = $numRandomTracks - $songsRemaining;
 
 		} else {
 
@@ -607,9 +607,9 @@ sub commandCallback {
 
 		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 
-		if ($songIndex && $songsToKeep ne '') {
+		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
 
-			$::d_plugins && msg("RandomPlay: Stripping off completed track(s)\n");
+			$::d_plugins && msgf("RandomPlay: Stripping off %i completed track(s)\n",$songIndex - $songsToKeep);
 
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
