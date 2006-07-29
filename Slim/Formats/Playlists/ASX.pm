@@ -41,7 +41,7 @@ sub read {
 			# but XML::Simple carps at it. Unfortunately, we don't 
 			# have a choice - we can't change the XML, as the
 			# XML::Simple warning suggests.
-			XMLin(\$content, ForceArray => ['ENTRY', 'REF', 'ENTRYREF'], ParserOpts => [ ProtocolEncoding => 'ISO-8859-1' ]);
+			XMLin(\$content, ForceArray => ['ENTRY', 'REF', 'ENTRYREF']);
 		};
 
 		if ($@) {
