@@ -355,7 +355,7 @@ sub contributorsQuery {
 	if (specified($search)) {
 
 #		$find->{$searchMap2{$label}->[0]} = Slim::Web::Pages::Search::searchStringSplit($search);
-		$where->{'contributor.namesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
+		$where->{'contributor.namesearch'} = { 'like' => Slim::Web::Pages::Search::searchStringSplit($search) };
 	}
 
 	if (defined($role)) {
@@ -1225,7 +1225,7 @@ sub rescanQuery {
 
 sub searchQuery {
 	my $request = shift;
-	
+
 	$d_queries && msg("searchQuery()\n");
 
 	# check this is the correct query
@@ -1233,7 +1233,7 @@ sub searchQuery {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $query    = $request->getParam('term');
@@ -1242,93 +1242,46 @@ sub searchQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-	
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', "1");
-	}
-	
-	my $data = Slim::Web::Pages::LiveSearch->query($query, undef, $quantity);
-	#print Data::Dumper::Dumper($data);
-	
-	my $songCount = 0;
-	for my $item (@$data) {
-		$songCount += $item->[1];
-	}
-	
-	$request->addResult("count", $songCount);
 
-	for my $item (@$data) {
-		my $type = $item->[0];
-		$request->addResult("$type" . "s_count", $item->[1]);
+	if (Slim::Music::Import->stillScanning) {
+		$request->addResult('rescan', 1);
 	}
 
-	if ($songCount > 0) {
-	
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $songCount);
-			
-		if ($valid) {
+	my $totalCount = 0;
+        my $search     = Slim::Web::Pages::Search::searchStringSplit($query);
+	my %results    = ();
+	my @types      = Slim::Schema->searchTypes;
 
-			my $skip = 0;
-			my $idx = 0;
+	# Ugh - we need two loops here, as "count" needs to come first.
+	for my $type (@types) {
 
-			for my $item (@$data) {
-				
-				#msg("Considering " . $item->[0] . "...,idx=$idx, start=$start, end=$end\n");
-				
-				# check if we can skip this $item
-				# we can skip this $item if once done, we're still below $start
-				if (($idx + $item->[1]) < $start) {
-					$idx = $idx + $item->[1];
-					#msg("..Skipped, idx=" . $idx . "\n");
-					next;
-				}
-				# ... or because we're done
-				if ($idx > $end) {
-					#msg("..Skipped, done\n");
-					last;
-				}
+		my $rs      = Slim::Schema->rs($type)->searchNames($search);
+		my $count   = $rs->count || 0;
 
-				# process the item
-				my $results = $item->[2];
-				
+		$results{$type}->{'rs'}    = $rs;
+		$results{$type}->{'count'} = $count;
 
-				my $loopname = '@' . $item->[0] . 's';
-				my $cnt = 0;
+		$totalCount += $count;
+	}
 
-				for my $result (@$results) {
-				
-					#msg("Considering idx=$idx, start=$start, end=$end\n");
-					
-					# check if we can skip this $result
-					if ($idx < $start) {
-						$idx++;
-						#msg(".. Skipped, idx=$idx\n");
-						next;
-					}
-					if ($idx > $end) {
-						#msg(".. Skipped, done idx=$idx\n");
-						last;
-					}
-					
-					# check for valid result
-					if (!blessed($result) || !$result->can('id')) {
-						next;
-					}
+	$request->addResult('count', $totalCount);
 
-					# add result to loop
-					$request->addResultLoop($loopname, $cnt, $item->[0] . '_id', $result->id());
+	for my $type (@types) {
 
-					if ($item->[0] eq 'track') {
-						$request->addResultLoop($loopname, $cnt, $item->[0], $result->title());
-					}
-					else {
-						$request->addResultLoop($loopname, $cnt, $item->[0], $result);
-					}
+		my $count = $results{$type}->{'count'};
 
-					$cnt++;
-					$idx++;
-				}
-			}
+		$request->addResult("${type}s_count", $count);
+
+		my $loopName  = "\@${type}s";
+		my $loopCount = 0;
+
+		for my $result ($results{$type}->{'rs'}->slice(0, $quantity)) {
+
+			# add result to loop
+			$request->addResultLoop($loopName, $loopCount, "${type}_id", $result->id);
+			$request->addResultLoop($loopName, $loopCount, $type, $result->name);
+
+			$loopCount++;
 		}
 	}
 	
