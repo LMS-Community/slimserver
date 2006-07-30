@@ -38,7 +38,7 @@ use Slim::Utils::Misc;
 sub url {
 	my $self = shift;
 
-	return Slim::Utils::Misc::escape(sprintf('db:genre.namesearch=%s', $self->namesearch));
+	return sprintf('db:genre.namesearch=%s', Slim::Utils::Misc::escape($self->namesearch));
 }
 
 sub tracks {

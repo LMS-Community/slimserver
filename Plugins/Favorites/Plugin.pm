@@ -40,8 +40,8 @@ my %mainModeFunctions = (
 	'play' => sub {
 		my $client    = shift;
 		
-		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls      = Slim::Buttons::Common::param($client, 'urls');
+		my $listIndex = $client->param('listIndex');
+		my $urls      = $client->param('urls');
 
 		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex);
 	},
@@ -49,8 +49,8 @@ my %mainModeFunctions = (
 	'add' => sub {
 		my $client    = shift;
 
-		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls      = Slim::Buttons::Common::param($client, 'urls');
+		my $listIndex = $client->param('listIndex');
+		my $urls      = $client->param('urls');
 
 		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex, 'add');
 	},
@@ -168,8 +168,8 @@ sub mainModeCallback {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $listIndex = Slim::Buttons::Common::param($client, 'listIndex');
-		my $urls      = Slim::Buttons::Common::param($client, 'urls');
+		my $listIndex = $client->param('listIndex');
+		my $urls      = $client->param('urls');
 
 		my %params = (
 			title => $context{$client}->{'mainModeIndex'},
@@ -248,7 +248,8 @@ sub _addOrPlayFavoriteUrl {
 	# Remote playlists are Track objects, not Playlist objects.
 	if ($url =~ /^db:(\w+)\.(\w+)=(.+)/) {
 
-		$obj = Slim::Schema->single(ucfirst($1), { $2 => Slim::Utils::Misc::unescape($3) });
+		$class = ucfirst($1);
+		$obj   = Slim::Schema->single($class, { $2 => Slim::Utils::Misc::unescape($3) });
 
 	} elsif ($url =~ /^db:album\.year=(.+)/) {
 

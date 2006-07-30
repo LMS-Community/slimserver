@@ -27,7 +27,7 @@ use Slim::Utils::Strings qw(string);
 sub url {
 	my $self = shift;
 
-	return Slim::Utils::Misc::escape(sprintf('db:year.id=%s', $self->id));
+	return sprintf('db:year.id=%s', Slim::Utils::Misc::escape($self->id));
 }
 
 sub name {

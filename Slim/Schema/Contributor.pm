@@ -91,7 +91,7 @@ sub displayAsHTML {
 sub url {
 	my $self = shift;
 
-	return Slim::Utils::Misc::escape(sprintf('db:contributor.namesearch=%s', $self->namesearch));
+	return sprintf('db:contributor.namesearch=%s', Slim::Utils::Misc::escape($self->namesearch));
 }
 
 sub add {
