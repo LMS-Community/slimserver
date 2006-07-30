@@ -1,56 +1,57 @@
 SET foreign_key_checks = 0;
 
-TRUNCATE tracks;
+-- Use DELETE instead of TRUNCATE, as TRUNCATE seems to need unlocked tables.
+DELETE FROM tracks;
 
 OPTIMIZE TABLE tracks;
 
-TRUNCATE playlist_track;
+DELETE FROM playlist_track;
 
 OPTIMIZE TABLE playlist_track;
 
-TRUNCATE albums;
+DELETE FROM albums;
 
 OPTIMIZE TABLE albums;
 
-TRUNCATE years;
+DELETE FROM years;
 
 OPTIMIZE TABLE years;
 
-TRUNCATE contributors;
+DELETE FROM contributors;
 
 OPTIMIZE TABLE contributors;
 
-TRUNCATE contributor_track;
+DELETE FROM contributor_track;
 
 OPTIMIZE TABLE contributor_track;
 
-TRUNCATE contributor_album;
+DELETE FROM contributor_album;
 
 OPTIMIZE TABLE contributor_album;
 
-TRUNCATE genres;
+DELETE FROM genres;
 
 OPTIMIZE TABLE genres;
 
-TRUNCATE genre_track;
+DELETE FROM genre_track;
 
 OPTIMIZE TABLE genre_track;
 
-TRUNCATE comments;
+DELETE FROM comments;
 
 OPTIMIZE TABLE comments;
 
-TRUNCATE pluginversion;
+DELETE FROM pluginversion;
 
 OPTIMIZE TABLE pluginversion;
 
-TRUNCATE unreadable_tracks;
+DELETE FROM unreadable_tracks;
 
 OPTIMIZE TABLE unreadable_tracks;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
 -- Clear the migration table so the schema is recreated
-TRUNCATE dbix_migration;
+DELETE FROM dbix_migration;
 
 SET foreign_key_checks = 1;
