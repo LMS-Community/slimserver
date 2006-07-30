@@ -1953,9 +1953,11 @@ sub _generateContentFromFile {
 
 	$::d_http && msg("generating from $path\n");
 
+	# Make sure we have a skin template for fixHttpPath to use.
+	my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
+
 	if ($type eq 'fill') {
 		
-		my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
 		my $output = '';
 
 		# Always set the locale
@@ -1993,8 +1995,8 @@ sub _generateContentFromFile {
 	}
 }
 
-# Retrieves the file specified as $path, relative to HTMLTemplateDir() and
-# the specified $skin or the $baseskin if not present in the $skin.
+# Retrieves the file specified as $path, relative to the 
+# INCLUDE_PATH of the given skin.
 # Uses binmode to read file if $binary is specified.
 # Returns a reference to the file data.
 
@@ -2003,35 +2005,12 @@ sub _getFileContent {
 
 	my ($content, $template, $mtime, $inode, $size);
 
-	my $skinkey = "${skin}/${path}";
-
 	$::d_http && msg("reading http file for ($skin $path)\n");
 
 	my $skinpath = fixHttpPath($skin, $path);
 
-	if (!defined($skinpath) || 
-		(!open($template, $skinpath . '.' . lc(Slim::Utils::Prefs::get('language'))) && !open($template, $skinpath))
-	   ) {
-
-		my $baseSkin = baseSkin();
-
-		$::d_http && msg("couldn't find $skin $path trying for $baseSkin\n");
-
-		my $defaultpath = fixHttpPath($baseSkin, $path);
-
-		if (defined($defaultpath)) {
-			$::d_http && msg("reading file: $defaultpath\n");
-
-			# try to open language specific files, and if not, the specified one.
-			open($template, $defaultpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $defaultpath);
-
-			($inode, $size, $mtime) = (stat($template))[1,7,9];
-		} 
-
-	} else {
-
-		($inode, $size, $mtime) = (stat($template))[1,7,9];
-	}
+	open($template, $skinpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $skinpath);
+	($inode, $size, $mtime) = (stat($template))[1,7,9];
 
 	# If we only want the file attributes and not the content - close the
 	# filehandle before slurping in the bits.
@@ -2066,12 +2045,18 @@ sub HTMLTemplateDirs {
 	return @templateDirs;
 }
 
+# Finds the first occurance of a file specified by $path in the
+# list of directories in the INCLUDE_PATH of the specified $skin
+
 sub fixHttpPath {
 	my $skin = shift;
 	my $path = shift;
 
-	foreach my $dir (HTMLTemplateDirs()) {
-		my $fullpath = catdir($dir, $skin, $path);
+	my $template = $skinTemplates{$skin} || return undef;
+	my $skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
+
+	for my $dir (@{$skindirs}) {
+		my $fullpath = catdir($dir, $path);
 		$::d_http && msg("  checking for $fullpath.\n");
 		return $fullpath if (-r $fullpath);
 	} 
