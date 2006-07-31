@@ -60,8 +60,6 @@ sub findAndAdd {
 		push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
 	}
 
-	Slim::Schema->toggleDebug(1);
-
 	# Search the database for the number of track we need. Use MySQL's
 	# RAND() function to get back a random list. Restrict by the genre's we've selected.
 	my @results = Slim::Schema->rs($type)->search($find, {
@@ -107,7 +105,6 @@ sub findAndAdd {
 		}
 	}
 
-	Slim::Schema->toggleDebug(0);
 	return $obj->name;
 }
 
@@ -613,7 +610,7 @@ sub commandCallback {
 
 		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
 
-			$::d_plugins && msgf("RandomPlay: Stripping off %i completed track(s)\n",$songIndex - $songsToKeep);
+			$::d_plugins && msgf("RandomPlay: Stripping off %i completed track(s)\n", $songIndex - $songsToKeep);
 
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
