@@ -16,6 +16,8 @@ use base qw(IO::Socket::INET Slim::Networking::Async::Socket);
 
 use Socket;
 
+use Slim::Utils::Misc;
+
 sub new {
 	my $class = shift;
 	
