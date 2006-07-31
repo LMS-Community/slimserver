@@ -60,6 +60,8 @@ sub findAndAdd {
 		push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
 	}
 
+	Slim::Schema->toggleDebug(1);
+
 	# Search the database for the number of track we need. Use MySQL's
 	# RAND() function to get back a random list. Restrict by the genre's we've selected.
 	my @results = Slim::Schema->rs($type)->search($find, {
@@ -86,7 +88,7 @@ sub findAndAdd {
 
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
-		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
+		'playlist', $addOnly ? 'addtracks' : 'loadtracks', 'listRef', [ $obj ],
 	]);
 
 	# indicate request source
@@ -105,6 +107,7 @@ sub findAndAdd {
 		}
 	}
 
+	Slim::Schema->toggleDebug(0);
 	return $obj->name;
 }
 
@@ -112,15 +115,13 @@ sub findAndAdd {
 sub getGenres {
 	my ($client) = @_;
 
-	# Should use genre.name in following find, but a bug in find() doesn't allow this	
-	# XXXX - how does the above comment translate into DBIx::Class world?
 	my $rs = Slim::Schema->search('Genre');
 
 	# Extract each genre name into a hash
 	my %clientGenres = ();
 	my @exclude      = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
 
-	for my $genre ($rs->all) {
+	while (my $genre = $rs->next) {
 
 		# Put the name here as well so the hash can be passed to
 		# INPUT.Choice as part of listRef later on
@@ -339,7 +340,7 @@ sub playRandom {
 		# Never show random as modified, since its a living playlist
 		$client->currentPlaylistModified(0);		
 	}
-	
+
 	if ($type eq 'disable') {
 
 		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
@@ -488,17 +489,20 @@ sub handlePlayOrAdd {
 
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
-		my $listRef = Slim::Buttons::Common::param($client, 'listRef');
+
+		my $listRef = $client->param('listRef');
 
 		if ($item eq 'disable') {
+
 			pop @$listRef;
 
-		# only add disable option if starting a mode from idle state
-		} elsif (! $mixInfo{$client->id}) {
+		} elsif (!$mixInfo{$client->id}) {
+
+			# only add disable option if starting a mode from idle state
 			push @$listRef, 'disable';
 		}
 
-		Slim::Buttons::Common::param($client, 'listRef', $listRef);
+		$client->param('listRef', $listRef);
 
 		# Clear any current mix type in case user is restarting an already playing mix
 		$mixInfo{$client->id}->{'type'} = undef;
@@ -545,7 +549,7 @@ sub setMode {
 				foreach my $genre (sort keys %genreList) {
 					push @listRef, $genreList{$genre};
 				}
-				
+
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
 					header     => '{PLUGIN_RANDOM_GENRE_FILTER} {count}',
 					listRef    => \@listRef,
@@ -564,7 +568,7 @@ sub setMode {
 
 	# if we have an active mode, temporarily add the disable option to the list.
 	if ($mixInfo{$client->id} && $mixInfo{$client->id}->{'type'}) {
-		push @{$params{listRef}},'disable';
+		push @{$params{'listRef'}}, 'disable';
 	}
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
