@@ -3,7 +3,20 @@ var url = 'status.html';
 [% PROCESS html/global.js %]
 
 function addItem(args) {
-	getStatusData(args, refreshNothing);
+	getStatusData(args, showAdded);
+}
+
+function showAdded() {
+	if ($(addedToPlaylist)) {
+		$(addedToPlaylist).style.display = 'block';
+	}
+	var intervalID = setInterval("hideAdded()", 2000);
+}
+
+function hideAdded() {
+	if ($(addedToPlaylist)) {
+		$(addedToPlaylist).style.display = 'none';
+	}
 }
 
 window.onload= function() {

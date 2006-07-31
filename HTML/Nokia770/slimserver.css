@@ -375,4 +375,15 @@ div#systemNotWorking{
 	top: 25;
 	z-index: 12;
 }
+div#addedToPlaylist{
+	position: fixed;
+	z-index: 100;
+	top: 240;
+	left: 500;
+	background-color: white;
+	color: black;
+	font-weight: bold;
+	padding: 5px;
+	border: 1px solid black;
+}
 

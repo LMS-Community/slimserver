@@ -10,6 +10,7 @@
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
 
+<div id = 'addedToPlaylist' style='display:none'>Added to playlist</div>
 <div id = 'page[% UNLESS thispage == 'artwork' || thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>
 
 [%# IF thispage == 'status' || thispage == 'playlist' || thispage == 'artwork' || thispage == 'browse' %]
