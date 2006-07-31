@@ -10,7 +10,7 @@ function showAdded() {
 	if ($(addedToPlaylist)) {
 		$(addedToPlaylist).style.display = 'block';
 	}
-	var intervalID = setInterval("hideAdded()", 2000);
+	var intervalID = setTimeout("hideAdded()", 2000);
 }
 
 function hideAdded() {
