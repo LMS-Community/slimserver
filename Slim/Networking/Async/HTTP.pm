@@ -143,8 +143,10 @@ sub add_headers {
 	my $headers = $self->request->headers;
 	
 	# handle basic auth if username, password provided
-	if ( my $userinfo = $self->request->uri->userinfo ) {
-		$headers->header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
+	if ( $self->request->uri->can('userinfo') ) {
+		if ( my $userinfo = $self->request->uri->userinfo ) {
+			$headers->header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
+		}
 	}
 	
 	my $host = $self->request->uri->host;
