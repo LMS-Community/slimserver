@@ -36,6 +36,8 @@ my $forget_disconnected_time = 300; # disconnected clients will be forgotten unl
 
 my $slimproto_socket;
 
+my $last_check = 0; # last time check_all_clients ran
+
 our %ipport;		# ascii IP:PORT
 our %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
 our %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
@@ -169,16 +171,20 @@ sub slimproto_accept {
 }
 
 sub check_all_clients {
+
+	my $now = time();
 	
 	for my $client ( values %sock2client ) {
 		
-		$client->requestStatus();
-		
 		# check when we last heard a stat response from the player
-		my $now        = time();
+
 		my $last_heard = $now - ($heartbeat{ $client->id } || $now);
 
-		if ( $last_heard > 10 ) {
+		if ( $last_heard > 2 ) {
+			$client->requestStatus();
+		}
+
+		if ( $last_heard > 15 && ($now - $last_check) < 10 ) {
 			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
 				$client->id,
 				$last_heard,
@@ -186,8 +192,10 @@ sub check_all_clients {
 			slimproto_close( $client->tcpsock );
 		}
 	}
-	
-	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 5, \&check_all_clients );
+
+	$last_check = $now;
+
+	Slim::Utils::Timers::setTimer( undef, $now + 5, \&check_all_clients );
 }	
 
 sub slimproto_close {
@@ -208,16 +216,20 @@ sub slimproto_close {
 		
 		delete $heartbeat{ $client->id };
 
-		# set timer to forget client
-		Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&_forgetDisconnectedClient);
+		# check client not already forgotten
+		if ( Slim::Player::Client::getClient( $client->id ) ) {
+
+			# set timer to forget client
+			Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
 		
-		# notify of disconnect
-		Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
+			# notify of disconnect
+			Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
 		
-		# Bug 2707, If a synced player disconnects, unsync it temporarily
-		if ( Slim::Player::Sync::isSynced($client) ) {
-			$::d_sync && msg("Player disconnected, temporary unsync ". $client->id . "\n");
-			Slim::Player::Sync::unsync( $client, 1 );
+			# Bug 2707, If a synced player disconnects, unsync it temporarily
+			if ( Slim::Player::Sync::isSynced($client) ) {
+				$::d_sync && msg("Player disconnected, temporary unsync ". $client->id . "\n");
+				Slim::Player::Sync::unsync( $client, 1 );
+			}
 		}
 	}
 
@@ -228,7 +240,7 @@ sub slimproto_close {
 	delete($sock2client{$clientsock});
 }		
 
-sub _forgetDisconnectedClient {
+sub forget_disconnected_client {
 	my $client = shift;
 	$::d_slimproto && msg("Slimproto - forgetting disconnected client\n");
 	Slim::Control::Request::executeRequest($client, ['client', 'forget']);
@@ -808,7 +820,7 @@ sub _hello_handler {
 			slimproto_close($client->tcpsock());
 		}
 
-		Slim::Utils::Timers::killTimers($client, \&_forgetDisconnectedClient);
+		Slim::Utils::Timers::killTimers($client, \&forget_disconnected_client);
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 	}
