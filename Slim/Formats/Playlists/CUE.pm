@@ -104,6 +104,7 @@ sub parse {
 			$tracks->{$currtrack}->{'REPLAYGAIN_TRACK_PEAK'} = $1;
 			
 		} elsif (defined $currtrack and
+
 			$line =~ /^(?:\s+REM )?\s*(TITLE|YEAR|GENRE|COMMENT|COMPOSER|CONDUCTOR|BAND|DISC|DISCC)\s+\"(.*)\"/i) {
 
 			$tracks->{$currtrack}->{uc $1} = $2;
@@ -227,8 +228,8 @@ sub parse {
 		$track->{'TRACKNUM'} = $key;
 		$::d_parse && msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
 
-		for my $attribute (qw(TITLE ARTIST ALBUM CONDUCTOR COMPOSER BAND YEAR 
-			GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
+		for my $attribute (Slim::Schema::Contributor->contributorRoles,
+			qw(TITLE ALBUM YEAR GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
 
 			if (exists $track->{$attribute}) {
 				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");

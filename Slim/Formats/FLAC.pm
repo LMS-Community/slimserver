@@ -46,7 +46,7 @@ my %tagMapping = (
 	'DISC #'			=> 'DISC',
 );
 
-my @tagNames = qw(ALBUM ARTIST BAND COMPOSER CONDUCTOR DISCNUMBER TITLE TRACKNUMBER DATE);
+my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE));
 my $tagCache = [];
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
