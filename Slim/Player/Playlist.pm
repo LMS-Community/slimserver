@@ -356,6 +356,8 @@ sub moveSong {
 	my $size = shift;
 	my $listref;
 	
+	$client = Slim::Player::Sync::masterOrSelf($client);
+	
 	if (!defined($size)) {
 		$size = 1;
 	}
