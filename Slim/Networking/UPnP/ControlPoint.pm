@@ -109,6 +109,9 @@ sub _readResult {
 	return unless ( $ssdp_res_msg =~ m/LOCATION[ :]+(.*)\r/i );
 	my $dev_location = $1;
 	
+	# Some UPnP devices report a Location of '*' (Xbox 360), so we must check for a proper URL
+	return unless $dev_location =~ /^http/i;
+	
 	my ($USN) = $ssdp_res_msg =~ m/USN[ :]+(.*)\r/i;
 	my ($udn) = _parseUSNHeader( $USN );
 	

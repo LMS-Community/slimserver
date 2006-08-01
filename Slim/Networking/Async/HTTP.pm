@@ -119,6 +119,11 @@ sub send_request {
 		HTTP::Request->new( $args->{method} => $args->{url} )
 	);
 	
+	if ( $self->request->uri !~ /^http/i ) {
+		my $error = 'Cannot request non-HTTP URL ' . $self->request->uri;
+		return $self->_http_error( $error, $args );
+	}
+	
 	if ( !$self->request->protocol ) {
 		$self->request->protocol( 'HTTP/1.0' );
 	}
@@ -143,10 +148,8 @@ sub add_headers {
 	my $headers = $self->request->headers;
 	
 	# handle basic auth if username, password provided
-	if ( $self->request->uri->can('userinfo') ) {
-		if ( my $userinfo = $self->request->uri->userinfo ) {
-			$headers->header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
-		}
+	if ( my $userinfo = $self->request->uri->userinfo ) {
+		$headers->header( Authorization => 'Basic ' . encode_base64( $userinfo ) );
 	}
 	
 	my $host = $self->request->uri->host;
