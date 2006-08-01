@@ -307,18 +307,17 @@ sub coverArt {
 	}
 }
 
-sub coverArtPath {
+sub coverArtMtime {
 	my $self = shift;
 	my $artType = shift || 'cover';
 
 	my $artwork = $self->get_column($artType);
 
 	if ($artwork && -r $artwork) {
-		my $mtime = (stat($artwork))[9];
-		return ($artwork, $mtime);
+		return (stat($artwork))[9];
 	}
 
-	return undef;
+	return -1;
 }
 
 sub coverArtExists {

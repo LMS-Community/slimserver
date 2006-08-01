@@ -65,7 +65,7 @@ sub processCoverArtRequest {
 		$resizeMode = "squash";
 	}
 
-	my ($obj, $imagePath, $imageData, $cachedImage, $cacheKey);
+	my ($obj, $imageData, $cachedImage, $cacheKey);
 
 	if ($trackid eq "current" && defined $client) {
 
@@ -76,24 +76,19 @@ sub processCoverArtRequest {
 		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
-	$::d_artwork && msg("Cover Art asking for: $image" . 
+	$::d_artwork && msg("Cover Art asking for trackid: $trackid - $image" . 
 		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
 
-	if (blessed($obj) && $obj->can('coverArtPath')) {
+	if (blessed($obj) && $obj->can('coverArt')) {
 
-		($imagePath, $mtime) = $obj->coverArtPath($image);
+		$cacheKey = "$trackid-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
 
-		if ($trackid) {
+		$::d_artwork && msg("  artwork cache key: $cacheKey\n");
 
-			$cacheKey = "$trackid-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
-
-			$::d_artwork && msg("  artwork cache key: $cacheKey\n");
-
-			$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
+		$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
 		
-			if ($cachedImage && $cachedImage->{'mtime'} != $mtime) {
-				$cachedImage = undef;
-			}
+		if ($cachedImage && $cachedImage->{'mtime'} != $obj->coverArtMtime($image)) {
+			$cachedImage = undef;
 		}
 
 		unless ($cachedImage) {
