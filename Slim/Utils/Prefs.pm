@@ -826,6 +826,27 @@ sub clientSet {
 	$client->pref([$key,$ind], $value);
 }
 
+sub setArray {
+	my $key   = shift;
+	my $value = shift;
+	
+	my $prefs = \%prefs;
+	
+	my $oldvalue = $prefs->{$key};
+	
+	$prefs->{$key} = $value;
+	
+	onChange($key, $value);
+	
+	$::d_prefs && msgf("Prefs: %s => %s\n",
+		$key,
+		Data::Dump::dump($value),
+	);
+	
+	scheduleWrite() unless $writePending;
+	return $oldvalue;
+}
+
 sub maxRate {
 	my $client   = shift || return 0;
 	my $soloRate = shift;

@@ -30,7 +30,7 @@
 		[% END %]
 	
 		[% WRAPPER contentitem controls = 'favcontrols' %]
-			 <a href="favorites_list.html?p0=[% fav | uri %]&amp;player=[% player | uri %]">[% loop.count _ '. ' _ text %]</a>
+			 [% loop.count _ '. ' _ text %]
 		[% END %]
 		[% odd = (not odd) %]
 	[% END %]

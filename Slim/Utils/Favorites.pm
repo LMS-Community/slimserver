@@ -139,8 +139,8 @@ sub moveItem {
 		$to = $from + $to;
 	}
 
-	my @titles = Slim::Utils::Prefs::getArray('favorite_titles');
-	my @urls   = Slim::Utils::Prefs::getArray('favorite_urls');
+	my @titles = titles();
+	my @urls   = urls();
 
 	if (defined $from && defined $to && 
 		$from < scalar @titles && 
@@ -167,9 +167,15 @@ sub deleteByClientAndId {
 	my $i      = shift;
 
 	if (defined($i)) {
-
-		Slim::Utils::Prefs::set('favorite_titles','', $i);
-		Slim::Utils::Prefs::set('favorite_urls','', $i);
+		
+		my @titles = titles();
+		my @urls   = urls();
+		
+		splice @titles, $i, 1;
+		splice @urls,   $i, 1;
+		
+		Slim::Utils::Prefs::setArray( 'favorite_titles', \@titles );
+		Slim::Utils::Prefs::setArray( 'favorite_urls', \@urls );
 		
 		$::d_favorites && msg("Favorites: deleting favorite number " . ($i+1) . "\n");
 	}
@@ -189,15 +195,11 @@ sub new {
 
 # returns an array of titles
 sub titles {
-	ref(my $self = shift) or assert(0, __PACKAGE__."::titles is an instance-only method\n");
-
 	return Slim::Utils::Prefs::getArray('favorite_titles');
 }
 
 # returns an array of urls
 sub urls {
-	ref(my $self = shift) or assert(0, __PACKAGE__."::urls is an instance-only method\n");
-
 	return Slim::Utils::Prefs::getArray('favorite_urls');
 }
 
