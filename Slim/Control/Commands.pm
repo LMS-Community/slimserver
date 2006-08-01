@@ -1002,9 +1002,16 @@ sub playlistXtracksCommand {
 	# parse the param
 	my @tracks = ();
 
-	if ($what =~ /listref/i) {
+	if ($what =~ /listRef/i) {
+
 		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
+
+	} elsif ($what =~ /searchRef/i) {
+
+		@tracks = _playlistXtracksCommand_parseSearchRef($client, $what, $listref);
+
 	} else {
+
 		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
 	}
 
@@ -2109,7 +2116,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 		} else {
 
-			$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
+			if ($key =~ /\.(?:name|title)search$/) {
+
+				$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
+
+			} else {
+
+				$find{$key} = Slim::Utils::Text::ignoreCaseArticles($value);
+			}
 		}
 	}
 
@@ -2175,6 +2189,28 @@ sub _playlistXtracksCommand_parseListRef {
 	}
 }
 
+sub _playlistXtracksCommand_parseSearchRef {
+	my $client    = shift;
+	my $term      = shift;
+	my $searchRef = shift;
+
+	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchRef()\n");
+
+	if ($term =~ /searchRef=(\w+)&?/i) {
+		$searchRef = $client->param($1);
+	}
+
+	my $cond = $searchRef->{'cond'} || {};
+	my $attr = $searchRef->{'attr'} || {};
+
+	# XXX - For some reason, the join key isn't passed along with the ref.
+	# Perl bug because 'join' is a keyword?
+	if (!$attr->{'join'} && $attr->{'joins'}) {
+		$attr->{'join'} = delete $attr->{'joins'};
+	}
+
+	return Slim::Schema->rs('Track')->search($cond, $attr)->distinct->all;
+}
 
 sub _showCommand_done {
 	my $args = shift;

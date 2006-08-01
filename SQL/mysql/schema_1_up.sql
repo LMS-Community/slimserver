@@ -78,7 +78,7 @@ CREATE TABLE tracks (
   audio bool,
   remote bool,
   lossless bool,
-  lyrics blob,
+  lyrics text, -- needs to be text so that searches are case insensitive.
   moodlogic_id  int(10) unsigned,
   moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
@@ -250,7 +250,7 @@ DROP TABLE IF EXISTS comments;
 CREATE TABLE comments (
   id int(10) unsigned NOT NULL auto_increment,
   track  int(10) unsigned,
-  value blob,
+  value text, -- needs to be text so that searches are case insensitive.
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE

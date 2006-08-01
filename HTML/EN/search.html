@@ -6,53 +6,44 @@
 [% PROCESS pageheader.html %]
 <script type="text/javascript" src="/html/prototype.js"></script>
 
-	[% IF liveSearch %]
+[% IF liveSearch %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<input type="text" id="query" name="query" size="40" autocomplete="off" />
 
-	[% ELSE %]
+[% ELSE %]
 
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
 
-	[% END %]
+[% END %]
 
 		<input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
 
-	<div id="search-results"></div>
+<div id="search-results"></div>
 
-	<div id="browsedbHeader">
-		[% IF searchError %]
-			[% searchError %]
+<div id="browsedbHeader">
+	[% IF searchError %]
+		[% searchError %]
+	[% END %]
+	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+</div>
+
+<div id="browsedbList">
+
+	[% IF browse_items.size %]
+
+		[% FOREACH item = browse_items %]
+			[% PROCESS browsedbitems_list.html %]
 		[% END %]
-		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
-	</div>
 
-	<div id="browsedbList">
-			[% IF numresults != '-1' && numresults != '0' %]
-			<div class="even">
-				<div class="browsedbListItem">
-					[% "ALL_SONGS" | string %]
-					<div class="browsedbControls">
-						[% WRAPPER playlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=playtracks&amp;listref=searchResults"[% END %]
-						[% WRAPPER addlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=addtracks&amp;listref=searchResults"[% END %]
-					</div>
-				</div>
-			</div>
-			[% ELSIF numresults == '0' %]
-				[% "NO_SEARCH_RESULTS" | string%]
-			[% END %]
-			[% IF browse_items %]
-				[% FOREACH item = browse_items %]
-					[% PROCESS browsedbitems_list.html %]
-				[% END %]
-			[% END %]
-	</div>
-[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+	[% END %]
+</div>
+
+[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
 [% IF liveSearch; INCLUDE "search-observer.html"; END %]
 

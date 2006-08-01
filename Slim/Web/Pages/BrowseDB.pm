@@ -98,7 +98,6 @@ sub browsedb {
 		'title'	       => $title,
 		'hierarchy'    => $hierarchy,
 		'level'	       => 0,
-		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	);
 
 	push @{$params->{'pwd_list'}}, {
@@ -107,7 +106,6 @@ sub browsedb {
 		'hierarchy'    => $hierarchy,
 		'level'	       => 0,
 		'orderBy'      => $orderBy,
-		'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
 	};
 
 	# We want to include Compilations in the pwd, so we need the artist,

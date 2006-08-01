@@ -36,8 +36,16 @@ sub allTitle {
 sub alphaPageBar { 1 }
 sub ignoreArticles { 1 }
 
+sub searchColumn {
+	my $self  = shift;
+
+	return 'namesearch';
+}
+
 sub searchNames {
-	my ($self, $terms) = @_;
+	my $self  = shift;
+	my $terms = shift;
+	my $attrs = shift || {};
 
 	my @joins = ();
 	my $cond  = {
@@ -51,11 +59,11 @@ sub searchNames {
 		push @joins, 'contributorAlbums';
 	}
 
-	return $self->search($cond, {
-		'order_by' => 'me.namesort',
-		'distinct' => 'me.id',
-		'join'     => \@joins,
-	});
+	$attrs->{'order_by'} ||= 'me.namesort';
+	$attrs->{'distinct'} ||= 'me.id';
+	$attrs->{'join'}     ||= \@joins;
+
+	return $self->search($cond, $attrs);
 }
 
 sub browse {

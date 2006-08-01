@@ -35,13 +35,24 @@ sub pageBarResults {
 
 sub ignoreArticles { 1 }
 
+sub searchColumn {
+	my $self  = shift;
+
+	return 'titlesearch';
+}
+
 sub searchNames {
-	my ($self, $terms) = @_;
+	my $self  = shift;
+	my $terms = shift;
+	my $attrs = shift || {};
+
+	$attrs->{'order_by'} ||= 'me.disc, me.titlesort';
+	$attrs->{'distinct'} ||= 'me.id';
 
 	return $self->search({
 		'me.titlesearch' => { 'like' => $terms },
 		'me.audio'       => 1,
-	}, { 'order_by' => 'me.titlesort', 'distinct' => 'me.id' });
+	}, $attrs);
 }
 
 sub orderBy {

@@ -13,10 +13,10 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 
 our @allColumns = (qw(
-	id url content_type title titlesort titlesearch album tracknum timestamp
-	filesize tag disc thumb remote audio audio_size audio_offset
-	year secs cover vbr_scale bitrate samplerate samplesize channels block_alignment
-	endian bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
+	id url content_type title titlesort titlesearch album tracknum
+	timestamp filesize disc thumb remote audio audio_size audio_offset year secs
+	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
+	bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
 	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
 ));
 
@@ -33,7 +33,7 @@ our @allColumns = (qw(
 	$class->belongs_to('album' => 'Slim::Schema::Album');
 
 	$class->has_many('genreTracks'       => 'Slim::Schema::GenreTrack' => 'track');
-	$class->has_many('comment_objects'   => 'Slim::Schema::Comment'    => 'track');
+	$class->has_many('comments'          => 'Slim::Schema::Comment'    => 'track');
 
 	$class->has_many('contributorTracks' => 'Slim::Schema::ContributorTrack');
 
@@ -64,12 +64,6 @@ sub contributors {
 	return $self->contributorTracks->search_related(
 		'contributor', undef, { distinct => 1 }
 	)->search(@_);
-}
-
-sub comments {
-	my $self = shift;
-
-	return map { $_->value } $self->comment_objects(@_);
 }
 
 sub genres {
@@ -149,7 +143,7 @@ sub comment {
 	my $comment;
 
 	# extract multiple comments and concatenate them
-	for my $c ($self->comments) {
+	for my $c (map { $_->value } $self->comments) {
 
 		next unless $c;
 
@@ -388,7 +382,7 @@ sub displayAsHTML {
 	for my $mixer (keys %{$Imports}) {
 
 		if (defined $Imports->{$mixer}->{'mixerlink'}) {
-			&{$Imports->{$mixer}->{'mixerlink'}}($self,$form,0);
+			&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, 0);
 		}
 	}
 }

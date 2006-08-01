@@ -35,13 +35,21 @@ sub allTitle {
 
 sub alphaPageBar { 1 }
 
-sub searchNames {
-	my ($self, $terms) = @_;
+sub searchColumn {
+	my $self  = shift;
 
-	return $self->search(
-		{ 'me.namesearch' => { 'like' => $terms } },
-		{ 'order_by' => 'me.namesort', 'distinct' => 'me.id' }
-	);
+	return 'namesearch';
+}
+
+sub searchNames {
+	my $self  = shift;
+	my $terms = shift;
+	my $attrs = shift || {};
+
+	$attrs->{'order_by'} ||= 'me.namesort';
+	$attrs->{'distinct'} ||= 'me.id';
+
+	return $self->search({ 'me.namesearch' => { 'like' => $terms } }, $attrs);
 }
 
 sub browse {

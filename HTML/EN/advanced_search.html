@@ -138,23 +138,20 @@
 	<input name="search.filesize" value="[% search.filesize.value %]" size="12" maxlength="12" style="text-align: right;" type="text">
 	[% "BYTES" | string %]
 [% END %]
-<!-- 
-	Not yet.
 
 	<tr>
 		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
 		<td class="content" align="left" valign="middle" width="75%">
-			<input name="search.comments" value="" size="[% size %]" maxlength="1000" type="text">
+			<input name="search.comments.value" value="" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
 
 	<tr>
-		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">Lyrics</td>
+		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "LYRICS" | string %]&nbsp;</td>
 		<td class="content" align="left" valign="middle" width="75%">
-		  <input name="search.lyrics" value="" size="[% size %]" maxlength="1000" type="text">
+		  <input name="search.lyrics" value="[% search.lyrics.value %]" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
--->
 
 	<tr>
 		<td>&nbsp;</td>
@@ -178,23 +175,17 @@
 	</div>
 
 	<div id="browsedbList">
-		[% IF numresults != '-1' && numresults != '0' %]
-		<div class="even">
-			<div class="browsedbListItem">
-				[% "ALL_SONGS" | string %]
-				<div class="browsedbControls">
-					[% WRAPPER playlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=playtracks&amp;listref=searchResults"[% END %]
-					[% WRAPPER addlink %]href="[% webroot %][% statusroot %]?player=[% playerURI %]&amp;command=playlist&amp;subcommand=addtracks&amp;listref=searchResults"[% END %]
-				</div>
-			</div>
-		</div>
-		[% ELSIF numresults == '0' %]
-			[% "EMPTY" | string%]
-		[% END %]
-		[% IF browse_items %]
+
+		[% IF browse_items.size %]
+
 			[% FOREACH item = browse_items %]
 				[% PROCESS browsedbitems_list.html %]
 			[% END %]
+
+		[% ELSE %]
+
+			[% "NO_SEARCH_RESULTS" | string %]
+
 		[% END %]
 	</div>
 

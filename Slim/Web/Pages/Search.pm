@@ -11,13 +11,13 @@ use strict;
 
 use Date::Parse qw(str2time);
 use File::Spec::Functions qw(:ALL);
-use POSIX ();
 use Scalar::Util qw(blessed);
 
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Text;
 use Slim::Web::Pages;
 use Slim::Web::Pages::LiveSearch;
 
@@ -37,10 +37,10 @@ sub basicSearch {
 	my $query  = $params->{'query'};
 
 	# set some defaults for the template
-	$params->{'browse_list'} = " ";
-	$params->{'numresults'}  = -1;
-	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
+	$params->{'browse_list'}  = " ";
+	$params->{'numresults'}   = -1;
 	$params->{'browse_items'} = [];
+	$params->{'artwork'}      = 0;
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
@@ -53,50 +53,45 @@ sub basicSearch {
 	}
 
 	# Don't kill the database - use limit & offsets
-	my $data = Slim::Web::Pages::LiveSearch->queryWithLimit($query, [ $params->{'type'} ], $params->{'itemsPerPage'}, $params->{'start'});
+	my $types  = [ $params->{'type'} ];
+	my $limit  = $params->{'itemPerPage'} || 10;
+	my $offset = $params->{'start'} || 0;
+	my $search = Slim::Utils::Text::searchStringSplit($query);
+
+	# Default to a valid list of types
+	if (!ref($types) || !defined $types->[0]) {
+
+		$types = [ Slim::Schema->searchTypes ];
+	}
+
+	my @rsList = ();
+
+	# Create a ResultSet for each of Contributor, Album & Track
+	for my $type (@$types) {
+
+		my $rs = Slim::Schema->rs($type)->searchNames($search);
+		push @rsList, $rs;
+	}
 
 	# The user has hit enter, or has a browser that can't handle the javascript.
 	if ($params->{'manualSearch'}) {
 
 		# Tell the template not to do a livesearch request anymore.
 		$params->{'liveSearch'} = 0;
+		$params->{'path'}       = 'search.html';
 
-		my @results = ();
-		my $descend = 1;
-		my @qstring = ('manualSearch=1');
+		for my $rs (@rsList) {
 
-		for my $item (@$data) {
-
-			$params->{'type'}       = $item->[0];
-			$params->{'numresults'} = $item->[1];
-			$params->{'path'}       = 'search.html';
-
-			if ($params->{'type'} eq 'track' && $params->{'numresults'}) {
-
-				push @results, $item->[2];
-
-				$descend = undef;
-			}
-
-			fillInSearchResults($params, $item->[2], $descend, \@qstring);
-		}
-
-		if (defined $client && scalar @results && !$params->{'start'}) {
-			# stash the full resultset if not paging through the results
-			# assumes that when the start parameter is 0 or undefined that
-			# the query has just been run
-			my $fulldata = Slim::Web::Pages::LiveSearch->query($query, [ 'track' ]);
-			$client->param('searchResults', $fulldata->[0][2]);
+			fillInSearchResults($params, $rs, [ 'manualSearch=1' ]);
 		}
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
-	}
 
-	# do it live - and send back the div
-	if ($params->{'xmlmode'}) {
-		return Slim::Web::Pages::LiveSearch->outputAsXML($query, $data, $player);
 	} else {
-		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, $data, $player);
+
+		# do it live - and send back the div
+		# this should be replaced with a call to filltemplatefile()
+		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, \@rsList, $player);
 	}
 }
 
@@ -108,10 +103,9 @@ sub advancedSearch {
 	my @qstring = ();
 
 	# template defaults
-	$params->{'browse_list'} = " ";
-	$params->{'liveSearch'}  = 0;
+	$params->{'browse_list'}  = " ";
+	$params->{'liveSearch'}   = 0;
 	$params->{'browse_items'} = [];
-	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
 
 	# Prep the date format
 	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();
@@ -174,13 +168,13 @@ sub advancedSearch {
 		# We need the _'s in the form, because . means hash key.
 		if ($newKey =~ s/_(titlesearch|namesearch)$/\.$1/) {
 
-			$params->{$key} = { 'like' => searchStringSplit($params->{$key}) };
+			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
 
-		# Wildcard comment searches
-		if ($newKey =~ /comment/) {
+		# Wildcard searches
+		if ($newKey =~ /comment/ || $newKey =~ /lyrics/) {
 
-			$params->{$key} = "\*$params->{$key}\*";
+			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
 
 		$query{$newKey} = $params->{$key};
@@ -203,7 +197,8 @@ sub advancedSearch {
 
 	# short-circuit the query
 	if (scalar keys %query == 0) {
-		$params->{'numresults'}  = -1;
+		$params->{'numresults'} = -1;
+
 		return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 	}
 
@@ -227,6 +222,7 @@ sub advancedSearch {
 		}
 	}
 
+	# Pull in the required joins
 	if ($query{'genre'}) {
 
 		push @joins, 'genreTracks';
@@ -237,186 +233,150 @@ sub advancedSearch {
 		push @joins, 'album';
 	}
 
+	if ($query{'comments.value'}) {
+
+		push @joins, 'comments';
+	}
+
 	# Disambiguate year
 	if ($query{'year'}) {
 		$query{'me.year'} = delete $query{'year'};
 	}
 
-	# Do the actual search
-	my $rs    = Slim::Schema->search('Track',
-		\%query,
-		{ 'order_by' => 'titlesort', 'join' => \@joins }
+	# XXXX - for some reason, the 'join' key isn't preserved when passed
+	# along as a ref. Perl bug because 'join' is a keyword? Use 'joins' as well.
+	my %attrs = (
+		'order_by' => 'me.disc, me.titlesort',
+		'join'     => \@joins,
+		'joins'    => \@joins,
 	);
 
-	my $count = $rs->count;
-
-	my $start = ($params->{'start'} || 0),
-	my $end   = $params->{'itemsPerPage'} - 1;
+	# Create a resultset - have fillInSearchResults do the actual search.
+	my $rs  = Slim::Schema->search('Track', \%query, \%attrs);
 
 	if (defined $client && !$params->{'start'}) {
 
-		# stash the full resultset if not paging through the results
-		# assumes that when the start parameter is 0 or undefined that
-		# the query has just been run
-		$client->param('searchResults', [ $rs->all ]);
-
-		$rs->reset;
+		# stash parameters used to generate this query, so if the user
+		# wants to play All Songs, we can run it again, but without
+		# keeping all the tracks in memory twice.
+		$client->param('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
 	}
 
-	if ($count == $params->{'itemsPerPage'}) {
-
-		$params->{'numresults'} = $count;
-	}
-	
-	fillInSearchResults($params, [ $rs->slice($start, $end) ], undef, \@qstring, 1);
+	fillInSearchResults($params, $rs, \@qstring, 1);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
 
 sub fillInSearchResults {
-	my ($params, $results, $descend, $qstring, $typeSeparator) = @_;
+	my ($params, $rs, $qstring, $typeSeparator) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
-	my $type   = $params->{'type'}   || 'track';
+	my $type   = lc($rs->result_source->source_name) || 'track';
+	my $count  = $rs->count || return 0;
 
-	$params->{'type'} = $type;
-	
+	# Set some reasonable defaults
+	$params->{'numresults'}   = $count;
+	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
+
+	# This is handed to pageInfo to generate the pagebar 1 2 3 >> links.
 	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 
 			  ($type ?'&type='. $type : '') . 
 			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
 			  '&' .
 			  join('&', @$qstring);
 
-	# Make sure that we have something to show.
-	if (!defined $params->{'numresults'} && defined $results && ref($results) eq 'ARRAY') {
-
-		$params->{'numresults'} = scalar @$results;
-	}
-
-	# put in the type separator
-	if ($type && !$typeSeparator) {
+	# Put in the type separator
+	if (!$typeSeparator && $count) {
 
 		# add reduced item for type headings
 		push @{$params->{'browse_items'}}, {
-			'numresults' => $params->{'numresults'},
-			'query'   => $query,
-			'heading' => $type,
+			'numresults' => $count,
+			'query'      => $query,
+			'heading'    => $type,
+			'odd'        => 0,
 		};
 	}
 
-	my ($start, $end);
+	# Add in ALL
+	if ($count > 1) {
 
-	if ($params->{'numresults'}) {
+		my $attributes = '';
 
-		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
-
-			'itemCount'    => $params->{'numresults'},
-			'path'         => $params->{'path'},
-			'otherParams'  => $otherParams,
-			'start'        => $params->{'start'},
-			'perPage'      => $params->{'itemsPerPage'},
-		});
-
-		$start = $params->{'start'} = $params->{'pageinfo'}{'startitem'};
-		$end   = $params->{'pageinfo'}{'enditem'};
-		
-		my $itemnumber = 1;
-		my $lastAnchor = '';
-
-		for my $item (@$results) {
-
-			next unless defined $item && ref($item);
-
-			# Contributor/Artist uses name, Album & Track uses title.
-			my %form = %$params;
-
-			$form{'attributes'} = '&' . join('.id=', $type, $item->id);
-			$form{'descend'}    = $descend;
-			$form{'odd'}        = ($itemnumber) % 2;
-
-			if ($type eq 'track') {
-				
-				# If we can't get an object for this url, skip it, as the
-				# user's database is likely out of date. Bug 863
-				my $itemObj = $item;
-
-				if (!blessed($itemObj) || !$itemObj->can('id')) {
-
-					$itemObj = Slim::Schema->rs('Track')->objectForUrl($item);
-				}
-
-				if (!blessed($itemObj) || !$itemObj->can('id')) {
-
-					next;
-				}
-
-				$itemObj->displayAsHTML(\%form, 0);
-
-			} else {
-
-				if ($type eq 'contributor') {
-
-					$form{'hierarchy'} = 'contributor,album,track';
-					$form{'level'}     = 1;
-					$form{'hreftype'}  = 'browseDb';
-
-				} elsif ($type eq 'album') {
-
-					$form{'hierarchy'} = 'album,track';
-					$form{'level'}     = 1;
-					$form{'hreftype'}  = 'browseDb';
-				}
-				
-				$form{'text'} = $item->name;
-			}
-
-			$itemnumber++;
-
-			my $anchor = substr($item->namesort, 0, 1);
-
-			if ($lastAnchor ne $anchor) {
-				$form{'anchor'} = $lastAnchor = $anchor;
-			}
-
-			push @{$params->{'browse_items'}}, \%form;
-		}
-	}
-}
-
-sub searchStringSplit {
-	my $search  = shift;
-	my $searchSubString = shift;
-	
-	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
-
-	# normalize the string
-	$search = Slim::Utils::Text::ignoreCaseArticles($search);
-	
-	my @strings = ();
-
-	# Don't split - causes an explict AND, which is what we want.. I think.
-	# for my $string (split(/\s+/, $search)) {
-	my $string = $search;
-
-		if ($searchSubString) {
-
-			push @strings, "\%$string\%";
-
+		if ($typeSeparator) {
+			$attributes = sprintf('&searchRef=search%sResults', ucfirst($type));
 		} else {
-
-			push @strings, [ "$string\%", "\% $string\%" ];
+			$attributes = sprintf('&%s.%s=%s', $type, $rs->searchColumn, $query);
 		}
-	#}
 
-	return \@strings;
+		push @{$params->{'browse_items'}}, {
+			'text'       => string('ALL_SONGS'),
+			'player'     => $params->{'player'},
+			'attributes' => $attributes,
+			'odd'        => 1,
+		};
+	}
+
+	my $offset = ($params->{'start'} || 0),
+	my $limit  = ($params->{'itemsPerPage'} || 10) - 1;
+
+	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+
+		'itemCount'    => $params->{'numresults'},
+		'path'         => $params->{'path'},
+		'otherParams'  => $otherParams,
+		'start'        => $params->{'start'},
+		'perPage'      => $params->{'itemsPerPage'},
+	});
+
+	$params->{'start'} = $params->{'pageinfo'}{'startitem'};
+	
+	my $itemCount  = 1;
+	my $lastAnchor = '';
+	my $descend    = $type eq 'track' ? 0 : 1;
+
+	# Get just the items we need for this loop.
+	$rs = $rs->slice($offset, $limit);
+
+	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
+	while (my $obj = $rs->next) {
+
+		my %form = (
+			'levelName'    => $type,
+			'hreftype'     => 'browseDb',
+			'descend'      => $descend,
+			'odd'          => ($itemCount + 1) % 2,
+			'skinOverride' => $params->{'skinOverride'},
+			'player'       => $params->{'player'},
+			'itemobj'      => $obj,
+			'level'        => 1,
+			'artwork'      => 0,
+			'attributes'   => sprintf('&%s.id=%d', $type, $obj->id),
+		);
+
+		if ($type eq 'contributor') {
+
+			$form{'hierarchy'} = 'contributor,album,track';
+
+		} elsif ($type eq 'album') {
+
+			$form{'hierarchy'} = 'album,track';
+		}
+
+		$obj->displayAsHTML(\%form, $descend);
+
+		$itemCount++;
+
+		my $anchor = substr($obj->namesort, 0, 1);
+
+		if ($lastAnchor ne $anchor) {
+			$form{'anchor'} = $lastAnchor = $anchor;
+		}
+
+		push @{$params->{'browse_items'}}, \%form;
+	}
 }
 
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

@@ -101,11 +101,34 @@ sub clearCaseArticleCache {
 	$ignoredArticles   = undef;
 }
 
+sub searchStringSplit {
+	my $search  = shift;
+	my $searchSubString = shift;
+
+	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
+
+	# normalize the string
+	$search = ignoreCaseArticles($search);
+	
+	my @strings = ();
+
+	# Don't split - causes an explict AND, which is what we want.. I think.
+	# for my $string (split(/\s+/, $search)) {
+	my $string = $search;
+
+		if ($searchSubString) {
+
+			push @strings, "\%$string\%";
+
+		} else {
+
+			push @strings, [ "$string\%", "\% $string\%" ];
+		}
+	#}
+
+	return \@strings;
+}
+
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

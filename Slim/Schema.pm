@@ -302,6 +302,13 @@ sub find {
 	return $object;
 }
 
+# Return the common searchable types.
+sub searchTypes {
+	my $class = shift;
+
+	return qw(contributor album track);
+}
+
 sub lastRescanTime {
 	my $class = shift;
 
@@ -1691,9 +1698,6 @@ sub _postCheckAttributes {
 
 			} else {
 
-				# Check if the album name is one of the "common album names"
-				# we've identified in prefs. If so, we require a match on
-				# both album name and primary artist name.
 				if (blessed($contributor)) {
 					$search->{'contributor'} = $contributor->id;
 				}

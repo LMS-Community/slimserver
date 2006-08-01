@@ -15,6 +15,7 @@ sub allTransform       { '' }
 sub descendTransform   { '' }
 sub browseBodyTemplate { '' }
 sub orderBy            { '' }
+sub searchColumn       { 'id' }
 sub pageBarResults     { 0 }
 sub alphaPageBar       { 0 }
 sub ignoreArticles     { 0 }
