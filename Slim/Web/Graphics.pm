@@ -7,8 +7,14 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
 
+my %typeToMethod = (
+	'image/gif'  => 'newFromGifData',
+	'image/jpeg' => 'newFromJpegData',
+	'image/png'  => 'newFromPngData',
+);
+
 {
-	#art resizing support by using GD, requires JPEG support built in
+	# Artwork resizing support by using GD, requires JPEG support built in
 	my $canUseGD = eval {
 		require GD;
 		if (GD::Image->can('jpeg')) {
@@ -88,15 +94,12 @@ sub processCoverArtRequest {
 			if ($cachedImage && $cachedImage->{'mtime'} != $mtime) {
 				$cachedImage = undef;
 			}
-			
 		}
 
 		unless ($cachedImage) {
 
 			($imageData, $contentType, $mtime) = $obj->coverArt($image);
-
 		}
-
 	}
 
 	unless ($cachedImage || $imageData) {
@@ -112,7 +115,6 @@ sub processCoverArtRequest {
 			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png");
 			$contentType = "image/png";
 			$imageData = $$body;
-
 		}
 	}
 
@@ -125,16 +127,22 @@ sub processCoverArtRequest {
 
 	$::d_artwork && msg("  got cover art image $contentType of ". length($imageData) . " bytes\n");
 
-	if (serverResizesArt()) {
+	if (serverResizesArt() && $typeToMethod{$contentType}) {
 
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
 		if ($image eq "thumb" || $requestedWidth || ($contentType eq "image/png" && ($requestedBackColour >> 24) != 0x7F)) {
 
+			# Bug: 3850 - new() can't auto-identify the
+			# ContentType (for things like non-JFIF JPEGs) - but
+			# we already have. So use the proper constructor for
+			# the CT. Set the image to true color.
+
 			GD::Image->trueColor(1);
 
-			my $origImage = GD::Image->new($imageData);
+			my $constructor = $typeToMethod{$contentType};
+			my $origImage   = GD::Image->$constructor($imageData);
 
 			if ($origImage) {
 
@@ -337,6 +345,5 @@ sub getResizeCoords {
 
 	return ($destX, $destY, $destWidth, $destHeight);
 }
-
 
 1;

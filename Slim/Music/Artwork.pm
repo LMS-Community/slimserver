@@ -116,11 +116,21 @@ sub _imageContentType {
 
 		return 'image/png';
 
-	} elsif ($$body =~ /^.*?(\xff\xd8\xff\xe0..JFIF)/) {
+	} elsif ($$body =~ /^GIF(\d\d)([a-z])/) {
+
+		return 'image/gif';
+
+	} elsif ($$body =~ /^.*?(\xff\xd8\xff)/) {
 
 		my $header = $1;
 
-		# jpeg images must start with ff d8 ff e0 or they are not jpeg,
+		# See http://www.obrador.com/essentialjpeg/headerinfo.htm for
+		# the JPEG header spec.
+		#
+		# jpeg images must start with ff d8 or they are not jpeg,
+		# the next table will always start with ff as well, so look
+		# for that. JFIF is an addition to the standard, we've seen
+		# baseline images (bug 3850) without a JFIF header.
 		# sometimes there is junk before.
 		$$body =~ s/^.*?$header/$header/;
 
