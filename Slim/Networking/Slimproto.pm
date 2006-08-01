@@ -523,8 +523,11 @@ sub _stat_handler {
 	#        u32_t rptr;
 	#        u32_t wptr;
 	#        u64_t bytes_received;
-	#		 u16_t  signal_strength;
-	#        u32_t  jiffies;
+	#		 u16_t signal_strength;
+	#        u32_t jiffies;
+	#        u32_t output_buffer_size;
+	#        u32_t output_buffer_fullness;
+	#        u32_t elapsed_seconds;
 	#
 	
 	# event types:
