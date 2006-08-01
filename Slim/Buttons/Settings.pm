@@ -252,9 +252,51 @@ sub init {
 			'stringHeader' => 1,
 			'initialValue' => 'idlesaver',
 		},
-
+		
+		'settings/DIGITAL_INPUT' => {
+			'useMode' => 'INPUT.Choice',
+			'listRef' => [
+				{
+					name => '{OFF}',
+					value => 0,
+				},
+				{
+					name => '{DIGITAL_INPUT_BALANCED_AES}',
+					value => 1,
+				},
+				{
+					name => '{DIGITAL_INPUT_BNC_SPDIF}',
+					value => 2,
+				},
+				{
+					name => '{DIGITAL_INPUT_RCA_SPDIF}',
+					value => 3,
+				},
+				{
+					name => '{DIGITAL_INPUT_OPTICAL_SPDIF}',
+					value => 4,
+				},
+			],
+			'onPlay' => \&updateDigitalInput,
+			'onAdd' => \&updateDigitalInput,
+			'onRight' => \&updateDigitalInput,
+			'header' => '{DIGITAL_INPUT}',
+			'overlayRef' => sub {
+					return [undef,Slim::Buttons::Common::checkBoxOverlay($_[0]->prefGet('digitalInput') eq $_[1]->{'value'})]
+				},
+		},
 	);
 }
+
+sub updateDigitalInput {
+	my $client = shift;
+	my $input = shift;
+
+	my $data = pack('C', $input->{'value'});
+	$client->prefSet('digitalInput', $input->{'value'});
+	$client->sendFrame('audp', \$data);
+	$client->update;
+};
 
 sub setPref {
 	my $client = shift;
@@ -409,7 +451,10 @@ sub setMode {
 	if ($client->isa( "Slim::Player::Squeezebox2" )) {
 		push @settingsChoices, 'SETUP_TRANSITIONTYPE';
 	}
-
+	if ($client->isa( "Slim::Player::Transporter" )) {
+		push @settingsChoices, 'DIGITAL_INPUT';
+	}
+	
 	if ($client->canDoReplayGain(0)) {
 		push @settingsChoices, 'REPLAYGAIN';
 	}

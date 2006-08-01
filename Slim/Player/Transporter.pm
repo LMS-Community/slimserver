@@ -28,6 +28,7 @@ use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
 	'clockSource'		=> 0,
+	'digitalInput'		=> 0,
 };
 
 sub init {
