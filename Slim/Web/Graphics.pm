@@ -77,9 +77,9 @@ sub processCoverArtRequest {
 
 		($imagePath, $mtime) = $obj->coverArtPath($image);
 
-		if ($imagePath) {
+		if ($trackid) {
 
-			$cacheKey = "$imagePath-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+			$cacheKey = "$trackid-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
 
 			$::d_artwork && msg("  artwork cache key: $cacheKey\n");
 
