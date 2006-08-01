@@ -17,6 +17,7 @@ use File::Basename qw(dirname basename);
 use File::Copy;
 use File::Find;
 use File::Path;
+use File::Which;
 
 my $SOURCE = 'http://svn.slimdevices.com/vendor/src';
 my $dlext  = $Config{'dlext'};
@@ -131,10 +132,7 @@ sub main {
 
 		for my $cmd (qw(curl wget)) {
 
-			system("which $cmd >/dev/null 2>&1");
-
-			unless ($? >> 8) {
-				$downloadUsing = $cmd;
+			if ($downloadUsing = which($cmd)) {
 				last;
 			}
 		}
