@@ -10687,6 +10687,12 @@ TRACKSMATCHING
 	SV	Låtar som matchar
 	ZH_CN	歌曲标题匹配
 
+MORE
+	DE	Mehr
+	EN	More
+	ES	Mas
+	NL	Meer
+
 MORE_MATCHES
 	DE	Mehr Treffer...
 	EN	More matches...
