@@ -157,7 +157,7 @@ sub scrollHeader {
 	my $display = shift;
 	my $screenNo = shift;
 
-	my $offset = ($screenNo == 2) ? 640 : 0;
+	my $offset = ($screenNo && $screenNo == 2) ? 640 : 0;
 	my $header = 'grfe' . pack('n', $offset) . 'c' . pack ('c', 0);
 
 	return pack('n', length($header) + $display->screenBytes ) . $header;
