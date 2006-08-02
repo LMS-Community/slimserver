@@ -1,3 +1,5 @@
 ---
 preprocess:
  - cmdwrappers_Handheld
+skinparents:
+ - Default
